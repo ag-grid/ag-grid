@@ -15,7 +15,7 @@ export declare class GridCore extends Component {
     private $scope;
     private quickFilterOnScope;
     private popupService;
-    private focusedCellController;
+    private focusController;
     loggerFactory: LoggerFactory;
     private columnApi;
     private gridApi;

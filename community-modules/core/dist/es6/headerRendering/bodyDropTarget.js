@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v22.1.1
+ * @version v23.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -69,7 +69,7 @@ var BodyDropTarget = /** @class */ (function () {
     BodyDropTarget.prototype.getDropType = function (draggingEvent) {
         if (this.columnController.isPivotMode()) {
             // in pivot mode, then if moving a column (ie didn't come from toolpanel) then it's
-            // a standard column move, however if it came from teh toolpanel, then we are introducing
+            // a standard column move, however if it came from the toolpanel, then we are introducing
             // dimensions or values to the grid
             if (draggingEvent.dragSource.type === DragSourceType.ToolPanel) {
                 return DropType.Pivot;

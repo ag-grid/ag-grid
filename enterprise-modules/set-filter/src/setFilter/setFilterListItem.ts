@@ -1,5 +1,5 @@
 import {
-    _,
+    AgCheckbox,
     AgEvent,
     Autowired,
     ColDef,
@@ -11,7 +11,9 @@ import {
     PostConstruct,
     Promise,
     UserComponentFactory,
-    ValueFormatterService
+    ValueFormatterService,
+    RefSelector,
+    _
 } from "@ag-grid-community/core";
 
 
@@ -26,20 +28,15 @@ export class SetFilterListItem extends Component {
 
     private static TEMPLATE = 
         `<label class="ag-set-filter-item">
-            <div class="ag-filter-checkbox"></div>
-            <span class="ag-filter-value"></span>
+            <ag-checkbox ref="eCheckbox" class="ag-set-filter-item-checkbox"></ag-checkbox>
+            <span class="ag-set-filter-item-value"></span>
         </label>`;
 
-    private eCheckbox: HTMLElement;
-    private eNativeCheckbox: HTMLInputElement;
-    private eClickableArea: HTMLElement;
-    private selected: boolean = true;
+    @RefSelector('eCheckbox') private eCheckbox: AgCheckbox;
 
+    private selected: boolean = true;
     private value: any;
     private column: Column;
-
-    private eCheckedIcon: HTMLElement;
-    private eUncheckedIcon: HTMLElement;
 
     constructor(value: any, column: Column) {
         super(SetFilterListItem.TEMPLATE);
@@ -64,33 +61,15 @@ export class SetFilterListItem extends Component {
 
     @PostConstruct
     private init(): void {
-        this.eCheckedIcon = _.createIconNoSpan('checkboxChecked', this.gridOptionsWrapper, this.column);
-        this.eUncheckedIcon = _.createIconNoSpan('checkboxUnchecked', this.gridOptionsWrapper, this.column);
-        this.eCheckbox = this.queryForHtmlElement('.ag-filter-checkbox');
-
-        if (this.gridOptionsWrapper.useNativeCheckboxes()) {
-            this.eNativeCheckbox = document.createElement('input');
-            this.eNativeCheckbox.type = 'checkbox';
-            this.eNativeCheckbox.className = 'ag-native-checkbox';
-            this.eCheckbox.appendChild(this.eNativeCheckbox);
-        }
-
-        this.eClickableArea = this.getGui();
-
-        this.updateCheckboxIcon();
         this.render();
 
-        const listener = (mouseEvent: MouseEvent) => {
-            mouseEvent.preventDefault();
-            _.addAgGridEventPath(mouseEvent);
-            this.selected = !this.selected;
-            this.updateCheckboxIcon();
+        this.eCheckbox.onValueChange((value) => {
+            this.selected = value;
             const event: SelectedEvent = {
                 type: SetFilterListItem.EVENT_SELECTED
             };
             return this.dispatchEvent(event);
-        };
-        this.addDestroyableEventListener(this.eClickableArea, 'click', listener);
+        });
     }
 
     public isSelected(): boolean {
@@ -103,24 +82,15 @@ export class SetFilterListItem extends Component {
     }
 
     private updateCheckboxIcon() {
-        if (this.gridOptionsWrapper.useNativeCheckboxes()) {
-            this.eNativeCheckbox.checked = this.isSelected();
-        } else {
-            _.clearElement(this.eCheckbox);
-
-            if (this.isSelected()) {
-                this.eCheckbox.appendChild(this.eCheckedIcon);
-            } else {
-                this.eCheckbox.appendChild(this.eUncheckedIcon);
-            }
-        }
+        this.eCheckbox.setValue(this.isSelected(), true);
     }
 
     public render(): void {
-        const valueElement = this.queryForHtmlElement('.ag-filter-value');
-        const valueFormatted = this.valueFormatterService.formatValue(this.column, null, null, this.value);
-
+        const valueElement = this.queryForHtmlElement('.ag-set-filter-item-value');
         const colDef = this.column.getColDef();
+        const filterValueFormatter = this.getFilterValueFormatter(colDef);
+        const valueFormatted = this.valueFormatterService.formatValue(this.column, null, null, this.value, filterValueFormatter);
+
         const params = {
             value: this.value,
             valueFormatted: valueFormatted,
@@ -136,5 +106,9 @@ export class SetFilterListItem extends Component {
                 this.addDestroyFunc(component.destroy.bind(component));
             }
         });
+    }
+
+    private getFilterValueFormatter(colDef: ColDef) {
+        return colDef.filterParams ? (<ISetFilterParams>colDef.filterParams).valueFormatter : undefined;
     }
 }

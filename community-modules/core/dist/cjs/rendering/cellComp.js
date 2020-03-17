@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v22.1.1
+ * @version v23.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -64,7 +64,7 @@ var CellComp = /** @class */ (function (_super) {
         _this.printLayout = printLayout;
         _this.createGridCellVo();
         _this.rangeSelectionEnabled = _this.beans.rangeController && beans.gridOptionsWrapper.isEnableRangeSelection();
-        _this.cellFocused = _this.beans.focusedCellController.isCellFocused(_this.cellPosition);
+        _this.cellFocused = _this.beans.focusController.isCellFocused(_this.cellPosition);
         _this.firstRightPinned = _this.column.isFirstRightPinned();
         _this.lastLeftPinned = _this.column.isLastLeftPinned();
         if (_this.rangeSelectionEnabled && _this.beans.rangeController) {
@@ -237,7 +237,7 @@ var CellComp = /** @class */ (function (_super) {
         // if we are putting the cell into a dummy container, to work out it's height,
         // then we don't put the height css in, as we want cell to fit height in that case.
         if (!this.autoHeightCell) {
-            cssClasses.push('ag-cell-with-height');
+            cssClasses.push('ag-cell-auto-height');
         }
         var doingFocusCss = !this.beans.gridOptionsWrapper.isSuppressCellSelection();
         if (doingFocusCss && this.cellFocused) {
@@ -697,8 +697,7 @@ var CellComp = /** @class */ (function (_super) {
         if (utils_1._.missing(this.cellRendererGui)) {
             return;
         }
-        // if async components, then it's possible the user started editing since
-        // this call was made
+        // if async components, then it's possible the user started editing since this call was made
         if (!this.editingCell) {
             this.eParentOfValue.appendChild(this.cellRendererGui);
         }
@@ -982,7 +981,7 @@ var CellComp = /** @class */ (function (_super) {
             // we only focus cell again if this cell is still focused. it is possible
             // it is not focused if the user cancelled the edit by clicking on another
             // cell outside of this one
-            if (this.beans.focusedCellController.isCellFocused(this.cellPosition)) {
+            if (this.beans.focusController.isCellFocused(this.cellPosition)) {
                 this.focusCell(true);
             }
         }
@@ -1057,7 +1056,7 @@ var CellComp = /** @class */ (function (_super) {
     };
     CellComp.prototype.focusCell = function (forceBrowserFocus) {
         if (forceBrowserFocus === void 0) { forceBrowserFocus = false; }
-        this.beans.focusedCellController.setFocusedCell(this.cellPosition.rowIndex, this.column, this.rowNode.rowPinned, forceBrowserFocus);
+        this.beans.focusController.setFocusedCell(this.cellPosition.rowIndex, this.column, this.rowNode.rowPinned, forceBrowserFocus);
     };
     CellComp.prototype.setFocusInOnEditor = function () {
         if (this.editingCell) {
@@ -1195,34 +1194,29 @@ var CellComp = /** @class */ (function (_super) {
         }
     };
     CellComp.prototype.onSpaceKeyPressed = function (event) {
-        if (!this.editingCell && this.beans.gridOptionsWrapper.isRowSelection()) {
-            var selected = this.rowNode.isSelected();
-            this.rowNode.setSelected(!selected);
+        var gridOptionsWrapper = this.beans.gridOptionsWrapper;
+        if (!this.editingCell && gridOptionsWrapper.isRowSelection()) {
+            var newSelection = !this.rowNode.isSelected();
+            if (newSelection || gridOptionsWrapper.isRowDeselection()) {
+                this.rowNode.setSelected(newSelection);
+            }
         }
         // prevent default as space key, by default, moves browser scroll down
         event.preventDefault();
     };
     CellComp.prototype.onMouseDown = function (mouseEvent) {
-        // we only need to pass true to focusCell in when the browser is IE
-        // and we are trying to focus a cell (has ag-cell class), otherwise
-        // we pass false, as we don't want the cell to focus also get the browser
-        // focus. if we did, then the cellRenderer could have a text field in it,
-        // for example, and as the user clicks on the text field, the text field,
-        // the focus doesn't get to the text field, instead to goes to the div
-        // behind, making it impossible to select the text field.
-        var forceBrowserFocus = false;
-        var button = mouseEvent.button, ctrlKey = mouseEvent.ctrlKey, metaKey = mouseEvent.metaKey, shiftKey = mouseEvent.shiftKey, target = mouseEvent.target;
+        var ctrlKey = mouseEvent.ctrlKey, metaKey = mouseEvent.metaKey, shiftKey = mouseEvent.shiftKey;
+        var target = mouseEvent.target;
         var _a = this.beans, eventService = _a.eventService, rangeController = _a.rangeController;
-        if (rangeController) {
-            var cellInRange = rangeController.isCellInAnyRange(this.getCellPosition());
-            if (cellInRange && button === 2) {
-                return;
-            }
-        }
-        if ((utils_1._.isBrowserIE() || utils_1._.isBrowserEdge()) && this.getGui().contains(target)) {
-            forceBrowserFocus = true;
+        // do not change the range for right-clicks inside an existing range
+        if (this.isRightClickInExistingRange(mouseEvent)) {
+            return;
         }
         if (!shiftKey || (rangeController && !rangeController.getCellRanges().length)) {
+            // We only need to pass true to focusCell when the browser is IE/Edge and we are trying
+            // to focus the cell itself (element with ag-cell). This should never be true if the
+            // mousedown was triggered due to a click on a cell editor for example.
+            var forceBrowserFocus = (utils_1._.isBrowserIE() || utils_1._.isBrowserEdge()) && target.classList.contains('ag-cell');
             this.focusCell(forceBrowserFocus);
         }
         else {
@@ -1231,14 +1225,10 @@ var CellComp = /** @class */ (function (_super) {
         }
         // if we are clicking on a checkbox, we need to make sure the cell wrapping that checkbox
         // is focused but we don't want to change the range selection, so return here.
-        if (utils_1._.isElementChildOfClass(target, 'ag-selection-checkbox', 3)) {
+        if (this.containsCheckbox(target)) {
             return;
         }
-        // if it's a right click, then if the cell is already in range,
-        // don't change the range, however if the cell is not in a range,
-        // we set a new range
-        var leftMouseButtonClick = utils_1._.isLeftClick(mouseEvent);
-        if (leftMouseButtonClick && rangeController) {
+        if (rangeController) {
             var thisCell = this.cellPosition;
             if (shiftKey) {
                 rangeController.extendLatestRangeToCell(thisCell);
@@ -1248,8 +1238,20 @@ var CellComp = /** @class */ (function (_super) {
                 rangeController.setRangeToCell(thisCell, ctrlKeyPressed);
             }
         }
-        var cellMouseDownEvent = this.createEvent(mouseEvent, events_1.Events.EVENT_CELL_MOUSE_DOWN);
-        eventService.dispatchEvent(cellMouseDownEvent);
+        eventService.dispatchEvent(this.createEvent(mouseEvent, events_1.Events.EVENT_CELL_MOUSE_DOWN));
+    };
+    CellComp.prototype.isRightClickInExistingRange = function (mouseEvent) {
+        var rangeController = this.beans.rangeController;
+        if (rangeController) {
+            var cellInRange = rangeController.isCellInAnyRange(this.getCellPosition());
+            if (cellInRange && mouseEvent.button === 2) {
+                return true;
+            }
+        }
+        return false;
+    };
+    CellComp.prototype.containsCheckbox = function (target) {
+        return utils_1._.isElementChildOfClass(target, 'ag-selection-checkbox', 3);
     };
     // returns true if on iPad and this is second 'click' event in 200ms
     CellComp.prototype.isDoubleClickOnIPad = function () {
@@ -1268,15 +1270,16 @@ var CellComp = /** @class */ (function (_super) {
             mouseEvent.preventDefault(); // if we don't do this, then iPad zooms in
             return;
         }
+        var _a = this.beans, eventService = _a.eventService, gridOptionsWrapper = _a.gridOptionsWrapper;
         var cellClickedEvent = this.createEvent(mouseEvent, events_1.Events.EVENT_CELL_CLICKED);
-        this.beans.eventService.dispatchEvent(cellClickedEvent);
+        eventService.dispatchEvent(cellClickedEvent);
         var colDef = this.getComponentHolder();
         if (colDef.onCellClicked) {
             // to make callback async, do in a timeout
             window.setTimeout(function () { return colDef.onCellClicked(cellClickedEvent); }, 0);
         }
-        var editOnSingleClick = (this.beans.gridOptionsWrapper.isSingleClickEdit() || colDef.singleClickEdit)
-            && !this.beans.gridOptionsWrapper.isSuppressClickEdit();
+        var editOnSingleClick = (gridOptionsWrapper.isSingleClickEdit() || colDef.singleClickEdit)
+            && !gridOptionsWrapper.isSuppressClickEdit();
         if (editOnSingleClick) {
             this.startRowOrCellEdit();
         }
@@ -1354,16 +1357,16 @@ var CellComp = /** @class */ (function (_super) {
         var bottom = false;
         var left = false;
         var thisCol = this.cellPosition.column;
-        var rangeController = this.beans.rangeController;
+        var _a = this.beans, rangeController = _a.rangeController, columnController = _a.columnController;
         var leftCol;
         var rightCol;
         if (isRtl) {
-            leftCol = this.beans.columnController.getDisplayedColAfter(thisCol);
-            rightCol = this.beans.columnController.getDisplayedColBefore(thisCol);
+            leftCol = columnController.getDisplayedColAfter(thisCol);
+            rightCol = columnController.getDisplayedColBefore(thisCol);
         }
         else {
-            leftCol = this.beans.columnController.getDisplayedColBefore(thisCol);
-            rightCol = this.beans.columnController.getDisplayedColAfter(thisCol);
+            leftCol = columnController.getDisplayedColBefore(thisCol);
+            rightCol = columnController.getDisplayedColAfter(thisCol);
         }
         var ranges = rangeController.getCellRanges().filter(function (range) { return rangeController.isCellInSpecificRange(_this.cellPosition, range); });
         // this means we are the first column in the grid
@@ -1493,7 +1496,7 @@ var CellComp = /** @class */ (function (_super) {
         return fillHandleIsAvailable &&
             cellRange.endRow != null &&
             rangeController.isContiguousRange(cellRange) &&
-            rangeController.isLastCellOfRange(cellRange, cellPosition);
+            rangeController.isBottomRightCell(cellRange, cellPosition);
     };
     CellComp.prototype.addSelectionHandle = function () {
         var _a = this.beans, gridOptionsWrapper = _a.gridOptionsWrapper, context = _a.context, rangeController = _a.rangeController;
@@ -1625,7 +1628,7 @@ var CellComp = /** @class */ (function (_super) {
         return this.rangeCount === 1 && rangeController && !rangeController.isMoreThanOneCell();
     };
     CellComp.prototype.onCellFocused = function (event) {
-        var cellFocused = this.beans.focusedCellController.isCellFocused(this.cellPosition);
+        var cellFocused = this.beans.focusController.isCellFocused(this.cellPosition);
         // see if we need to change the classes on this cell
         if (cellFocused !== this.cellFocused) {
             // if we are not doing cell selection, then the focus class does not change
@@ -1637,11 +1640,12 @@ var CellComp = /** @class */ (function (_super) {
         }
         // see if we need to force browser focus - this can happen if focus is programmatically set
         if (cellFocused && event && event.forceBrowserFocus) {
-            this.getGui().focus();
+            var focusEl = this.getFocusableElement();
+            focusEl.focus();
             // Fix for AG-3465 "IE11 - After editing cell's content, selection doesn't go one cell below on enter"
             // IE can fail to focus the cell after the first call to focus(), and needs a second call
             if (!document.activeElement || document.activeElement === document.body) {
-                this.getGui().focus();
+                focusEl.focus();
             }
         }
         // if another cell was focused, and we are editing, then stop editing
@@ -1673,6 +1677,7 @@ var CellComp = /** @class */ (function (_super) {
         }
         var newValueExists = false;
         var newValue;
+        var oldValue = this.getValue();
         if (!cancel) {
             // also have another option here to cancel after editing, so for example user could have a popup editor and
             // it is closed by user clicking outside the editor. then the editor will close automatically (with false
@@ -1722,7 +1727,7 @@ var CellComp = /** @class */ (function (_super) {
             }
         }
         this.setInlineEditingClass();
-        if (newValueExists) {
+        if (newValueExists && newValue !== oldValue) {
             // we suppressRefreshCell because the call to rowNode.setDataValue() results in change detection
             // getting triggered, which results in all cells getting refreshed. we do not want this refresh
             // to happen on this call as we want to call it explicitly below. otherwise refresh gets called twice.

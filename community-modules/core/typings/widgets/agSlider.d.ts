@@ -6,6 +6,7 @@ export declare class AgSlider extends AgAbstractLabel {
     private eText;
     protected labelAlignment: LabelAlignment;
     constructor();
+    private init;
     onValueChange(callbackFn: (newValue: number) => void): this;
     setSliderWidth(width: number): this;
     setTextFieldWidth(width: number): this;

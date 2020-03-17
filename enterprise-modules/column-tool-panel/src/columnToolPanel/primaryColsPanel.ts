@@ -4,7 +4,8 @@ import {
     Component,
     ToolPanelColumnCompParams,
     RefSelector,
-    IPrimaryColsPanel
+    IPrimaryColsPanel,
+    _
 } from "@ag-grid-community/core";
 import { PrimaryColsListPanel } from "./primaryColsListPanel";
 import { PrimaryColsHeaderPanel } from "./primaryColsHeaderPanel";
@@ -21,7 +22,7 @@ export interface BaseColumnItem {
 export class PrimaryColsPanel extends Component implements IPrimaryColsPanel {
 
     private static TEMPLATE =
-        `<div class="ag-column-select-panel">
+        `<div class="ag-column-select">
             <ag-primary-cols-header ref="primaryColsHeaderPanel"></ag-primary-cols-header>
             <ag-primary-cols-list ref="primaryColsListPanel"></ag-primary-cols-list>
         </div>`;

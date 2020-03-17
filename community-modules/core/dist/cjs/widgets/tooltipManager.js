@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v22.1.1
+ * @version v23.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -18,13 +18,16 @@ var TooltipManager = /** @class */ (function () {
     function TooltipManager() {
         this.DEFAULT_HIDE_TOOLTIP_TIMEOUT = 10000;
         this.MOUSEOUT_HIDE_TOOLTIP_TIMEOUT = 1000;
-        this.MOUSEOVER_SHOW_TOOLTIP_TIMEOUT = 2000;
         this.HIDE_SHOW_ONLY = true;
         this.showTimeoutId = 0;
         this.hideTimeoutId = 0;
         // map of compId to [tooltip component, close function]
         this.registeredComponents = {};
     }
+    TooltipManager.prototype.init = function () {
+        var customDelay = this.gridOptionsWrapper.getTooltipShowDelay();
+        this.MOUSEOVER_SHOW_TOOLTIP_TIMEOUT = customDelay || 2000;
+    };
     TooltipManager.prototype.registerTooltip = function (targetCmp) {
         var _this = this;
         var el = targetCmp.getGui();
@@ -209,6 +212,9 @@ var TooltipManager = /** @class */ (function () {
     __decorate([
         context_1.Autowired('gridOptionsWrapper')
     ], TooltipManager.prototype, "gridOptionsWrapper", void 0);
+    __decorate([
+        context_1.PostConstruct
+    ], TooltipManager.prototype, "init", null);
     TooltipManager = __decorate([
         context_1.Bean('tooltipManager')
     ], TooltipManager);

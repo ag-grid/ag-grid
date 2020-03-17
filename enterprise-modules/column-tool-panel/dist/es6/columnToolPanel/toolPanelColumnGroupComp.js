@@ -34,7 +34,8 @@ var ToolPanelColumnGroupComp = /** @class */ (function (_super) {
     ToolPanelColumnGroupComp.prototype.init = function () {
         this.setTemplate(ToolPanelColumnGroupComp.TEMPLATE);
         this.eDragHandle = _.createIconNoSpan('columnDrag', this.gridOptionsWrapper);
-        _.addCssClass(this.eDragHandle, 'ag-column-drag');
+        _.addCssClass(this.eDragHandle, 'ag-drag-handle');
+        _.addCssClass(this.eDragHandle, 'ag-column-select-column-group-drag-handle');
         this.cbSelect.getGui().insertAdjacentElement('afterend', this.eDragHandle);
         this.displayName = this.columnController.getDisplayNameForOriginalColumnGroup(null, this.columnGroup, 'toolPanel');
         if (_.missing(this.displayName)) {
@@ -42,7 +43,7 @@ var ToolPanelColumnGroupComp = /** @class */ (function (_super) {
         }
         this.eLabel.innerHTML = this.displayName ? this.displayName : '';
         this.setupExpandContract();
-        this.addCssClass('ag-toolpanel-indent-' + this.columnDept);
+        this.addCssClass('ag-column-select-indent-' + this.columnDept);
         this.addDestroyableEventListener(this.eventService, Events.EVENT_COLUMN_PIVOT_MODE_CHANGED, this.onColumnStateChanged.bind(this));
         this.addDestroyableEventListener(this.eLabel, 'click', this.onLabelClicked.bind(this));
         this.addDestroyableEventListener(this.cbSelect, AgCheckbox.EVENT_CHANGED, this.onCheckboxChanged.bind(this));
@@ -185,6 +186,7 @@ var ToolPanelColumnGroupComp = /** @class */ (function (_super) {
         this.processingColumnStateChange = true;
         this.cbSelect.setValue(selectedValue);
         this.cbSelect.setReadOnly(readOnlyValue);
+        _.addOrRemoveCssClass(this.getGui(), 'ag-column-select-column-group-readonly', readOnlyValue);
         this.processingColumnStateChange = false;
     };
     ToolPanelColumnGroupComp.prototype.workOutSelectedValue = function () {
@@ -296,7 +298,7 @@ var ToolPanelColumnGroupComp = /** @class */ (function (_super) {
     ToolPanelColumnGroupComp.prototype.setSelected = function (selected) {
         this.cbSelect.setValue(selected, true);
     };
-    ToolPanelColumnGroupComp.TEMPLATE = "<div class=\"ag-column-tool-panel-column-group\">\n            <span class=\"ag-column-group-icons\" ref=\"eColumnGroupIcons\" >\n                <span class=\"ag-column-group-closed-icon\" ref=\"eGroupClosedIcon\"></span>\n                <span class=\"ag-column-group-opened-icon\" ref=\"eGroupOpenedIcon\"></span>\n            </span>\n            <ag-checkbox ref=\"cbSelect\" class=\"ag-column-select-checkbox\"></ag-checkbox>\n            <span class=\"ag-column-tool-panel-column-label\" ref=\"eLabel\"></span>\n        </div>";
+    ToolPanelColumnGroupComp.TEMPLATE = "<div class=\"ag-column-select-column-group\">\n            <span class=\"ag-column-group-icons\" ref=\"eColumnGroupIcons\" >\n                <span class=\"ag-column-group-closed-icon\" ref=\"eGroupClosedIcon\"></span>\n                <span class=\"ag-column-group-opened-icon\" ref=\"eGroupOpenedIcon\"></span>\n            </span>\n            <ag-checkbox ref=\"cbSelect\" class=\"ag-column-select-checkbox\"></ag-checkbox>\n            <span class=\"ag-column-select-column-label\" ref=\"eLabel\"></span>\n        </div>";
     __decorate([
         Autowired('eventService')
     ], ToolPanelColumnGroupComp.prototype, "eventService", void 0);

@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v22.1.1
+ * @version v23.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -35,7 +35,7 @@ var TextInputFloatingFilter = /** @class */ (function (_super) {
         return _super !== null && _super.apply(this, arguments) || this;
     }
     TextInputFloatingFilter.prototype.postConstruct = function () {
-        this.setTemplate("<div class=\"ag-input-wrapper\" role=\"presentation\">\n                <input ref=\"eFloatingFilterText\" class=\"ag-floating-filter-input\">\n            </div>");
+        this.setTemplate("<div class=\"ag-floating-filter-input\" role=\"presentation\">\n                <ag-input-text-field ref=\"eFloatingFilterInput\"></ag-input-text-field>\n            </div>");
     };
     TextInputFloatingFilter.prototype.getDefaultDebounceMs = function () {
         return 500;
@@ -49,7 +49,7 @@ var TextInputFloatingFilter = /** @class */ (function (_super) {
         }
         this.setLastTypeFromModel(model);
         var modelString = this.getTextFromModel(model);
-        this.eFloatingFilterText.value = modelString;
+        this.eFloatingFilterInput.setValue(modelString);
         var editable = this.canWeEditAfterModelFromParentFilter(model);
         this.setEditable(editable);
     };
@@ -59,17 +59,18 @@ var TextInputFloatingFilter = /** @class */ (function (_super) {
         this.applyActive = ProvidedFilter.isUseApplyButton(this.params.filterParams);
         var debounceMs = ProvidedFilter.getDebounceMs(this.params.filterParams, this.getDefaultDebounceMs());
         var toDebounce = _.debounce(this.syncUpWithParentFilter.bind(this), debounceMs);
-        this.addDestroyableEventListener(this.eFloatingFilterText, 'input', toDebounce);
-        this.addDestroyableEventListener(this.eFloatingFilterText, 'keypress', toDebounce);
-        this.addDestroyableEventListener(this.eFloatingFilterText, 'keydown', toDebounce);
+        var filterGui = this.eFloatingFilterInput.getGui();
+        this.addDestroyableEventListener(filterGui, 'input', toDebounce);
+        this.addDestroyableEventListener(filterGui, 'keypress', toDebounce);
+        this.addDestroyableEventListener(filterGui, 'keydown', toDebounce);
         var columnDef = params.column.getDefinition();
         if (columnDef.filterParams && columnDef.filterParams.filterOptions && columnDef.filterParams.filterOptions.length === 1 && columnDef.filterParams.filterOptions[0] === 'inRange') {
-            this.eFloatingFilterText.disabled = true;
+            this.eFloatingFilterInput.setDisabled(true);
         }
     };
     TextInputFloatingFilter.prototype.syncUpWithParentFilter = function (e) {
         var _this = this;
-        var value = this.eFloatingFilterText.value;
+        var value = this.eFloatingFilterInput.getValue();
         var enterKeyPressed = _.isKeyPressed(e, Constants.KEY_ENTER);
         if (this.applyActive && !enterKeyPressed) {
             return;
@@ -82,11 +83,11 @@ var TextInputFloatingFilter = /** @class */ (function (_super) {
         });
     };
     TextInputFloatingFilter.prototype.setEditable = function (editable) {
-        this.eFloatingFilterText.disabled = !editable;
+        this.eFloatingFilterInput.setDisabled(!editable);
     };
     __decorate([
-        RefSelector('eFloatingFilterText')
-    ], TextInputFloatingFilter.prototype, "eFloatingFilterText", void 0);
+        RefSelector('eFloatingFilterInput')
+    ], TextInputFloatingFilter.prototype, "eFloatingFilterInput", void 0);
     __decorate([
         PostConstruct
     ], TextInputFloatingFilter.prototype, "postConstruct", null);

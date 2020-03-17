@@ -4,26 +4,16 @@ export declare enum EXPAND_STATE {
     COLLAPSED = 1,
     INDETERMINATE = 2
 }
-export declare enum SELECTED_STATE {
-    CHECKED = 0,
-    UNCHECKED = 1,
-    INDETERMINATE = 2
-}
 export declare class PrimaryColsHeaderPanel extends Component {
     private gridOptionsWrapper;
     private columnController;
     private eventService;
     private eExpand;
     private eSelect;
-    private eFilterWrapper;
     private eFilterTextField;
-    private eSelectChecked;
-    private eSelectUnchecked;
-    private eSelectIndeterminate;
     private eExpandChecked;
     private eExpandUnchecked;
     private eExpandIndeterminate;
-    private eSelectCheckbox;
     private expandState;
     private selectState;
     private onFilterTextChangedDebounced;
@@ -32,12 +22,11 @@ export declare class PrimaryColsHeaderPanel extends Component {
     postConstruct(): void;
     init(params: ToolPanelColumnCompParams): void;
     private createExpandIcons;
-    private createCheckIcons;
     private showOrHideOptions;
     private onFilterTextChanged;
     private onMiniFilterKeyPress;
     private onSelectClicked;
     private onExpandClicked;
     setExpandState(state: EXPAND_STATE): void;
-    setSelectionState(state: SELECTED_STATE): void;
+    setSelectionState(state?: boolean): void;
 }

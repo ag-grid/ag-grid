@@ -1,14 +1,18 @@
 import { Promise } from '../utils';
-export declare class TabbedLayout {
-    private eGui;
+import { ManagedTabComponent } from '../widgets/managedTabComponent';
+export declare class TabbedLayout extends ManagedTabComponent {
+    private focusController;
     private eHeader;
     private eBody;
     private params;
     private afterAttachedParams;
-    private static TEMPLATE;
     private items;
     private activeItem;
     constructor(params: TabbedLayoutParams);
+    init(): void;
+    private handleKeyDown;
+    protected onTabKeyDown(e: KeyboardEvent): void;
+    private static getTemplate;
     setAfterAttachedParams(params: any): void;
     getMinDimensions(): {
         width: number;
@@ -18,7 +22,6 @@ export declare class TabbedLayout {
     private addItem;
     showItem(tabbedItem: TabbedItem): void;
     private showItemWrapper;
-    getGui(): HTMLElement;
 }
 export interface TabbedLayoutParams {
     items: TabbedItem[];

@@ -5,11 +5,12 @@ import {
     AgSlider,
     Autowired,
     Component,
-    PostConstruct,
-    RefSelector,
-    LegendPosition,
     FontStyle,
     FontWeight,
+    LegendPosition,
+    PostConstruct,
+    RefSelector,
+    AgGroupComponentParams,
 } from "@ag-grid-community/core";
 import { ChartController } from "../../../chartController";
 import { Font, FontPanel, FontPanelParams } from "../fontPanel";
@@ -51,7 +52,11 @@ export class LegendPanel extends Component {
 
     @PostConstruct
     private init() {
-        this.setTemplate(LegendPanel.TEMPLATE);
+        const groupParams: AgGroupComponentParams = {
+            cssIdentifier: 'charts-format-top-level',
+            direction: 'vertical'
+        };
+        this.setTemplate(LegendPanel.TEMPLATE, {legendGroup: groupParams});
 
         this.initLegendGroup();
         this.initLegendPosition();
@@ -73,7 +78,7 @@ export class LegendPanel extends Component {
     }
 
     private initLegendPosition() {
-        const positions: LegendPosition[] = ["top", "right", "bottom", "left"];
+        const positions: LegendPosition[] = [LegendPosition.Top, LegendPosition.Right, LegendPosition.Bottom, LegendPosition.Left];
 
         this.legendPositionSelect
             .setLabel(this.chartTranslator.translate("position"))
@@ -89,11 +94,11 @@ export class LegendPanel extends Component {
 
     private initLegendPadding() {
         this.legendPaddingSlider
-            .setLabel(this.chartTranslator.translate("padding"))
-            .setValue(this.chartController.getChartProxy().getChartOption("legend.padding"))
+            .setLabel(this.chartTranslator.translate("spacing"))
+            .setValue(this.chartController.getChartProxy().getChartOption("legend.spacing"))
             .setTextFieldWidth(45)
             .setMaxValue(200)
-            .onValueChange(newValue => this.chartController.getChartProxy().setChartOption("legend.padding", newValue));
+            .onValueChange(newValue => this.chartController.getChartProxy().setChartOption("legend.spacing", newValue));
     }
 
     private initLegendItems() {
@@ -107,9 +112,9 @@ export class LegendPanel extends Component {
 
         initSlider("item.marker.size", "markerSize", this.markerSizeSlider, 40);
         initSlider("item.marker.strokeWidth", "markerStroke", this.markerStrokeSlider, 10);
-        initSlider("item.marker.padding", "markerPadding", this.markerPaddingSlider, 20);
-        initSlider("item.paddingX", "itemPaddingX", this.itemPaddingXSlider, 50);
-        initSlider("item.paddingY", "itemPaddingY", this.itemPaddingYSlider, 50);
+        initSlider("item.marker.padding", "itemSpacing", this.markerPaddingSlider, 20);
+        initSlider("item.paddingX", "layoutHorizontalSpacing", this.itemPaddingXSlider, 50);
+        initSlider("item.paddingY", "layoutVerticalSpacing", this.itemPaddingYSlider, 50);
     }
 
     private initLabelPanel() {
@@ -125,11 +130,21 @@ export class LegendPanel extends Component {
         const setFont = (font: Font) => {
             const chartProxy = this.chartController.getChartProxy();
 
-            if (font.family) { chartProxy.setChartOption("legend.item.label.fontFamily", font.family); }
-            if (font.weight) { chartProxy.setChartOption("legend.item.label.fontWeight", font.weight); }
-            if (font.style) { chartProxy.setChartOption("legend.item.label.fontStyle", font.style); }
-            if (font.size) { chartProxy.setChartOption("legend.item.label.fontSize", font.size); }
-            if (font.color) { chartProxy.setChartOption("legend.item.label.color", font.color); }
+            if (font.family) {
+                chartProxy.setChartOption("legend.item.label.fontFamily", font.family);
+            }
+            if (font.weight) {
+                chartProxy.setChartOption("legend.item.label.fontWeight", font.weight);
+            }
+            if (font.style) {
+                chartProxy.setChartOption("legend.item.label.fontStyle", font.style);
+            }
+            if (font.size) {
+                chartProxy.setChartOption("legend.item.label.fontSize", font.size);
+            }
+            if (font.color) {
+                chartProxy.setChartOption("legend.item.label.color", font.color);
+            }
         };
 
         const params: FontPanelParams = {

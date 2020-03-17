@@ -4,16 +4,17 @@ import {
     AgInputTextArea,
     Autowired,
     Component,
+    FontStyle,
+    FontWeight,
     PostConstruct,
     RefSelector,
-    FontStyle,
-    FontWeight
+    AgGroupComponentParams
 } from "@ag-grid-community/core";
 import { ChartController } from "../../../chartController";
 import { PaddingPanel } from "./paddingPanel";
 import { Font, FontPanel, FontPanelParams } from "../fontPanel";
 import { ChartTranslator } from "../../../chartTranslator";
-import { CaptionOptions } from "../../../../../charts/chartOptions";
+import { CaptionOptions } from "ag-charts-community";
 import { BackgroundPanel } from "./backgroundPanel";
 
 export class ChartPanel extends Component {
@@ -40,7 +41,11 @@ export class ChartPanel extends Component {
 
     @PostConstruct
     private init() {
-        this.setTemplate(ChartPanel.TEMPLATE);
+        const groupParams: AgGroupComponentParams = {
+            cssIdentifier: 'charts-format-top-level',
+            direction: 'vertical'
+        };
+        this.setTemplate(ChartPanel.TEMPLATE, { chartGroup: groupParams });
 
         this.initGroup();
         this.initTitles();

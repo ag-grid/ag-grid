@@ -22,6 +22,7 @@ export interface DataChangedEvent extends RowNodeEvent {
 export interface CellChangedEvent extends RowNodeEvent {
     column: Column;
     newValue: any;
+    oldValue: any;
 }
 export declare class RowNode implements IEventEmitter {
     private static OBJECT_ID_SEQUENCE;
@@ -40,6 +41,7 @@ export declare class RowNode implements IEventEmitter {
     static EVENT_EXPANDED_CHANGED: string;
     static EVENT_SELECTABLE_CHANGED: string;
     static EVENT_UI_LEVEL_CHANGED: string;
+    static EVENT_HIGHLIGHT_CHANGED: string;
     static EVENT_DRAGGING_CHANGED: string;
     private mainEventService;
     private gridOptionsWrapper;
@@ -160,6 +162,7 @@ export declare class RowNode implements IEventEmitter {
     __objectId: number;
     /** True when nodes with the same id are being removed and added as part of the same batch transaction */
     alreadyRendered: boolean;
+    highlighted: 'above' | 'below' | null;
     private selected;
     private eventService;
     setData(data: any): void;
@@ -180,6 +183,7 @@ export declare class RowNode implements IEventEmitter {
     setChildIndex(childIndex: number): void;
     setRowTop(rowTop: number | null): void;
     setDragging(dragging: boolean): void;
+    setHighlighted(highlighted: 'above' | 'below' | null): void;
     setAllChildrenCount(allChildrenCount: number | null): void;
     setRowHeight(rowHeight: number | undefined | null, estimated?: boolean): void;
     setRowIndex(rowIndex: number): void;

@@ -6,7 +6,6 @@ export declare type ColumnFilterResults = {
 };
 export declare class PrimaryColsListPanel extends Component {
     static TEMPLATE: string;
-    private gridOptionsWrapper;
     private columnController;
     private colDefService;
     private eventService;

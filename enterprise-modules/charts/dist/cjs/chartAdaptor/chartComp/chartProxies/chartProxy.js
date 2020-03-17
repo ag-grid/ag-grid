@@ -12,28 +12,39 @@ var __assign = (this && this.__assign) || function () {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var core_1 = require("@ag-grid-community/core");
-var palettes_1 = require("../../../charts/chart/palettes");
-var dropShadow_1 = require("../../../charts/scene/dropShadow");
-var padding_1 = require("../../../charts/util/padding");
-var categoryAxis_1 = require("../../../charts/chart/axis/categoryAxis");
+var ag_charts_community_1 = require("ag-charts-community");
 var ChartProxy = /** @class */ (function () {
     function ChartProxy(chartProxyParams) {
         var _this = this;
-        this.getChart = function () { return _this.chart; };
+        this.chartProxyParams = chartProxyParams;
         this.isDarkTheme = function () { return _this.chartProxyParams.isDarkTheme(); };
         this.getFontColor = function () { return _this.isDarkTheme() ? 'rgb(221, 221, 221)' : 'rgb(87, 87, 87)'; };
         this.getAxisGridColor = function () { return _this.isDarkTheme() ? 'rgb(100, 100, 100)' : 'rgb(219, 219, 219)'; };
         this.getBackgroundColor = function () { return _this.isDarkTheme() ? '#2d3436' : 'white'; };
         this.getChartPaddingOption = function (property) { return _this.chartOptions.padding ? "" + _this.chartOptions.padding[property] : ''; };
         this.getShadowEnabled = function () { return !!_this.getShadowProperty('enabled'); };
-        this.chartProxyParams = chartProxyParams;
+        this.chartId = chartProxyParams.chartId;
         this.chartType = chartProxyParams.chartType;
+        this.eventService = chartProxyParams.eventService;
+        this.gridApi = chartProxyParams.gridApi;
+        this.columnApi = chartProxyParams.columnApi;
     }
     ChartProxy.prototype.recreateChart = function (options) {
         if (this.chart) {
             this.destroyChart();
         }
-        this.chart = this.createChart(options || this.chartOptions);
+        this.chart = this.createChart(options);
+    };
+    ChartProxy.prototype.getChart = function () {
+        return this.chart;
+    };
+    ChartProxy.prototype.downloadChart = function () {
+        var chart = this.chart;
+        var fileName = chart.title ? chart.title.text : 'chart';
+        chart.scene.download(fileName);
+    };
+    ChartProxy.prototype.getChartImageDataURL = function (type) {
+        return this.chart.scene.getDataURL(type);
     };
     ChartProxy.prototype.initChartOptions = function () {
         var processChartOptions = this.chartProxyParams.processChartOptions;
@@ -81,18 +92,22 @@ var ChartProxy = /** @class */ (function () {
         return core_1._.get(this.chartOptions, expression, undefined);
     };
     ChartProxy.prototype.setChartOption = function (expression, value) {
+        if (core_1._.get(this.chartOptions, expression, undefined) === value) {
+            // option is already set to the specified value
+            return;
+        }
         core_1._.set(this.chartOptions, expression, value);
         var mappings = {
-            'legend.item.marker.strokeWidth': 'legend.markerStrokeWidth',
+            'legend.item.marker.strokeWidth': 'legend.strokeWidth',
             'legend.item.marker.size': 'legend.markerSize',
-            'legend.item.marker.padding': 'legend.markerPadding',
-            'legend.item.label.fontFamily': 'legend.labelFontFamily',
-            'legend.item.label.fontStyle': 'legend.labelFontStyle',
-            'legend.item.label.fontWeight': 'legend.labelFontWeight',
-            'legend.item.label.fontSize': 'legend.labelFontSize',
-            'legend.item.label.color': 'legend.labelColor',
-            'legend.item.paddingX': 'legend.itemPaddingX',
-            'legend.item.paddingY': 'legend.itemPaddingY',
+            'legend.item.marker.padding': 'legend.itemSpacing',
+            'legend.item.label.fontFamily': 'legend.fontFamily',
+            'legend.item.label.fontStyle': 'legend.fontStyle',
+            'legend.item.label.fontWeight': 'legend.fontWeight',
+            'legend.item.label.fontSize': 'legend.fontSize',
+            'legend.item.label.color': 'legend.color',
+            'legend.item.paddingX': 'legend.layoutHorizontalSpacing',
+            'legend.item.paddingY': 'legend.layoutVerticalSpacing',
         };
         core_1._.set(this.chart, mappings[expression] || expression, value);
         this.raiseChartOptionsChangedEvent();
@@ -101,21 +116,27 @@ var ChartProxy = /** @class */ (function () {
         return core_1._.get(this.chartOptions.seriesDefaults, expression, undefined);
     };
     ChartProxy.prototype.setSeriesOption = function (expression, value) {
+        if (core_1._.get(this.chartOptions.seriesDefaults, expression, undefined) === value) {
+            // option is already set to the specified value
+            return;
+        }
         core_1._.set(this.chartOptions.seriesDefaults, expression, value);
         var mappings = {
             'stroke.width': 'strokeWidth',
             'stroke.opacity': 'strokeOpacity',
             'fill.opacity': 'fillOpacity',
             'tooltip.enabled': 'tooltipEnabled',
-            'callout.colors': 'calloutColors',
-            'callout.strokeWidth': 'calloutStrokeWidth',
-            'callout.length': 'calloutLength',
+            'callout.colors': 'calloutColors'
         };
         var series = this.chart.series;
         series.forEach(function (s) { return core_1._.set(s, mappings[expression] || expression, value); });
         this.raiseChartOptionsChangedEvent();
     };
     ChartProxy.prototype.setTitleOption = function (property, value) {
+        if (core_1._.get(this.chartOptions.title, property, undefined) === value) {
+            // option is already set to the specified value
+            return;
+        }
         this.chartOptions.title[property] = value;
         if (!this.chart.title) {
             this.chart.title = {};
@@ -128,9 +149,13 @@ var ChartProxy = /** @class */ (function () {
     };
     ChartProxy.prototype.setChartPaddingOption = function (property, value) {
         var padding = this.chartOptions.padding;
+        if (core_1._.get(padding, property, undefined) === value) {
+            // option is already set to the specified value
+            return;
+        }
         if (!padding) {
             padding = this.chartOptions.padding = { top: 0, right: 0, bottom: 0, left: 0 };
-            this.chart.padding = new padding_1.Padding(0);
+            this.chart.padding = new ag_charts_community_1.Padding(0);
         }
         padding[property] = value;
         this.chart.padding[property] = value;
@@ -143,6 +168,10 @@ var ChartProxy = /** @class */ (function () {
     };
     ChartProxy.prototype.setShadowProperty = function (property, value) {
         var seriesDefaults = this.chartOptions.seriesDefaults;
+        if (core_1._.get(seriesDefaults.shadow, property, undefined) === value) {
+            // option is already set to the specified value
+            return;
+        }
         if (!seriesDefaults.shadow) {
             seriesDefaults.shadow = {
                 enabled: false,
@@ -156,7 +185,7 @@ var ChartProxy = /** @class */ (function () {
         var series = this.getChart().series;
         series.forEach(function (s) {
             if (!s.shadow) {
-                var shadow = new dropShadow_1.DropShadow();
+                var shadow = new ag_charts_community_1.DropShadow();
                 shadow.enabled = false;
                 shadow.blur = 0;
                 shadow.xOffset = 0;
@@ -171,11 +200,14 @@ var ChartProxy = /** @class */ (function () {
     ChartProxy.prototype.raiseChartOptionsChangedEvent = function () {
         var event = Object.freeze({
             type: core_1.Events.EVENT_CHART_OPTIONS_CHANGED,
+            chartId: this.chartId,
             chartType: this.chartType,
             chartPalette: this.chartProxyParams.getChartPaletteName(),
             chartOptions: this.chartOptions,
+            api: this.gridApi,
+            columnApi: this.columnApi,
         });
-        this.chartProxyParams.eventService.dispatchEvent(event);
+        this.eventService.dispatchEvent(event);
     };
     ChartProxy.prototype.getDefaultFontOptions = function () {
         return {
@@ -196,7 +228,7 @@ var ChartProxy = /** @class */ (function () {
         };
     };
     ChartProxy.prototype.getPredefinedPalette = function () {
-        return palettes_1.palettes.get(this.chartProxyParams.getChartPaletteName());
+        return ag_charts_community_1.palettes.get(this.chartProxyParams.getChartPaletteName());
     };
     ChartProxy.prototype.getPalette = function () {
         return this.customPalette || this.getPredefinedPalette();
@@ -209,8 +241,6 @@ var ChartProxy = /** @class */ (function () {
                 fill: this.getBackgroundColor(),
                 visible: true,
             },
-            width: 800,
-            height: 400,
             padding: {
                 top: 20,
                 right: 20,
@@ -221,12 +251,12 @@ var ChartProxy = /** @class */ (function () {
             subtitle: __assign(__assign({}, fontOptions), { enabled: false }),
             legend: {
                 enabled: true,
-                position: 'right',
-                padding: 20,
+                position: core_1.LegendPosition.Right,
+                spacing: 20,
                 item: {
                     label: __assign({}, fontOptions),
                     marker: {
-                        type: 'square',
+                        shape: 'square',
                         size: 15,
                         padding: 8,
                         strokeWidth: 1,
@@ -252,7 +282,7 @@ var ChartProxy = /** @class */ (function () {
         };
     };
     ChartProxy.prototype.transformData = function (data, categoryKey) {
-        if (this.chart.axes.filter(function (a) { return a instanceof categoryAxis_1.CategoryAxis; }).length < 1) {
+        if (this.chart.axes.filter(function (a) { return a instanceof ag_charts_community_1.CategoryAxis; }).length < 1) {
             return data;
         }
         // replace the values for the selected category with a complex object to allow for duplicated categories
@@ -268,17 +298,9 @@ var ChartProxy = /** @class */ (function () {
         this.destroyChart();
     };
     ChartProxy.prototype.destroyChart = function () {
-        var parentElement = this.chartProxyParams.parentElement;
-        var canvas = parentElement.querySelector('canvas');
-        if (canvas) {
-            parentElement.removeChild(canvas);
-        }
-        // store current width and height so any charts created in the future maintain the size
         if (this.chart) {
-            this.chartOptions.width = this.chart.width;
-            this.chartOptions.height = this.chart.height;
             this.chart.destroy();
-            this.chart = null;
+            this.chart = undefined;
         }
     };
     return ChartProxy;

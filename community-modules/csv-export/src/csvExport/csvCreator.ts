@@ -155,7 +155,7 @@ export class CsvSerializingSession extends BaseGridSerializingSession<CsvCustomC
     }
 
     public parse(): string {
-        return this.result + LINE_SEPARATOR;
+        return this.result;
     }
 
     private beginNewLine() {

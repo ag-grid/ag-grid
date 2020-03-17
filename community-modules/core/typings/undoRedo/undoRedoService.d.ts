@@ -1,6 +1,6 @@
 export declare class UndoRedoService {
     private gridOptionsWrapper;
-    private focusedCellController;
+    private focusController;
     private eventService;
     private gridApi;
     private rowModel;

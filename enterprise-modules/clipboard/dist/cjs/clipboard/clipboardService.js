@@ -22,14 +22,12 @@ var ClipboardService = /** @class */ (function () {
     ClipboardService.prototype.pasteFromClipboard = function () {
         var _this = this;
         this.logger.log('pasteFromClipboard');
-        this.executeOnTempElement(function (textArea) {
-            textArea.focus();
-        }, function (element) {
+        this.executeOnTempElement(function (textArea) { return textArea.focus(); }, function (element) {
             var data = element.value;
             if (core_1._.missingOrEmpty(data)) {
                 return;
             }
-            var parsedData = _this.dataToArray(data);
+            var parsedData = core_1.CsvUtils.stringToArray(data, _this.gridOptionsWrapper.getClipboardDeliminator());
             var userFunc = _this.gridOptionsWrapper.getProcessDataFromClipboardFunc();
             if (userFunc) {
                 parsedData = userFunc({ data: parsedData });
@@ -38,9 +36,8 @@ var ClipboardService = /** @class */ (function () {
                 return;
             }
             var pasteOperation = function (cellsToFlash, updatedRowNodes, focusedCell, changedPath) {
-                var singleCellInClipboard = parsedData.length == 1 && parsedData[0].length == 1;
                 var rangeActive = _this.rangeController && _this.rangeController.isMoreThanOneCell();
-                var pasteIntoRange = rangeActive && !singleCellInClipboard;
+                var pasteIntoRange = rangeActive && !_this.hasOnlyOneValueToPaste(parsedData);
                 if (pasteIntoRange) {
                     _this.pasteIntoActiveRange(parsedData, cellsToFlash, updatedRowNodes, changedPath);
                 }
@@ -51,13 +48,16 @@ var ClipboardService = /** @class */ (function () {
             _this.doPasteOperation(pasteOperation);
         });
     };
-    // common code to paste operations, eg past to cell, paste to range, and copy range down
+    // common code to paste operations, e.g. paste to cell, paste to range, and copy range down
     ClipboardService.prototype.doPasteOperation = function (pasteOperationFunc) {
+        var api = this.gridOptionsWrapper.getApi();
+        var columnApi = this.gridOptionsWrapper.getColumnApi();
+        var source = 'clipboard';
         this.eventService.dispatchEvent({
             type: core_1.Events.EVENT_PASTE_START,
-            api: this.gridOptionsWrapper.getApi(),
-            columnApi: this.gridOptionsWrapper.getColumnApi(),
-            source: 'clipboard'
+            api: api,
+            columnApi: columnApi,
+            source: source
         });
         var changedPath;
         if (this.clientSideRowModel) {
@@ -66,7 +66,7 @@ var ClipboardService = /** @class */ (function () {
         }
         var cellsToFlash = {};
         var updatedRowNodes = [];
-        var focusedCell = this.focusedCellController.getFocusedCell();
+        var focusedCell = this.focusController.getFocusedCell();
         pasteOperationFunc(cellsToFlash, updatedRowNodes, focusedCell, changedPath);
         if (changedPath) {
             this.clientSideRowModel.doAggregate(changedPath);
@@ -75,21 +75,21 @@ var ClipboardService = /** @class */ (function () {
         this.dispatchFlashCells(cellsToFlash);
         this.fireRowChanged(updatedRowNodes);
         if (focusedCell) {
-            this.focusedCellController.setFocusedCell(focusedCell.rowIndex, focusedCell.column, focusedCell.rowPinned, true);
+            this.focusController.setFocusedCell(focusedCell.rowIndex, focusedCell.column, focusedCell.rowPinned, true);
         }
         this.eventService.dispatchEvent({
             type: core_1.Events.EVENT_PASTE_END,
-            api: this.gridOptionsWrapper.getApi(),
-            columnApi: this.gridOptionsWrapper.getColumnApi(),
-            source: 'clipboard'
+            api: api,
+            columnApi: columnApi,
+            source: source
         });
     };
     ClipboardService.prototype.pasteIntoActiveRange = function (clipboardData, cellsToFlash, updatedRowNodes, changedPath) {
         var _this = this;
         // true if clipboard data can be evenly pasted into range, otherwise false
-        var abortRepeatingPasteIntoRows = this.rangeSize() % clipboardData.length != 0;
+        var abortRepeatingPasteIntoRows = this.getRangeSize() % clipboardData.length != 0;
         var indexOffset = 0, dataRowIndex = 0;
-        var rowCallback = function (currentRow, rowNode, columns, index, isLastRow) {
+        var rowCallback = function (currentRow, rowNode, columns, index) {
             var atEndOfClipboardData = index - indexOffset >= clipboardData.length;
             if (atEndOfClipboardData) {
                 if (abortRepeatingPasteIntoRows) {
@@ -102,6 +102,7 @@ var ClipboardService = /** @class */ (function () {
             var currentRowData = clipboardData[index - indexOffset];
             // otherwise we are not the first row, so copy
             updatedRowNodes.push(rowNode);
+            var processCellFromClipboardFunc = _this.gridOptionsWrapper.getProcessCellFromClipboardFunc();
             columns.forEach(function (column, idx) {
                 if (!column.isCellEditable(rowNode) || column.isSuppressPaste(rowNode)) {
                     return;
@@ -110,9 +111,7 @@ var ClipboardService = /** @class */ (function () {
                 if (idx >= currentRowData.length) {
                     idx = idx % currentRowData.length;
                 }
-                var newValue = currentRowData[idx];
-                var processCellFromClipboardFunc = _this.gridOptionsWrapper.getProcessCellFromClipboardFunc();
-                newValue = _this.userProcessCell(rowNode, column, newValue, processCellFromClipboardFunc, core_1.Constants.EXPORT_TYPE_DRAG_COPY);
+                var newValue = _this.processCell(rowNode, column, currentRowData[idx], core_1.Constants.EXPORT_TYPE_DRAG_COPY, processCellFromClipboardFunc);
                 _this.valueService.setValue(rowNode, column, newValue, core_1.Constants.SOURCE_PASTE);
                 if (changedPath) {
                     changedPath.addParentNode(rowNode.parent, [column]);
@@ -130,13 +129,15 @@ var ClipboardService = /** @class */ (function () {
         }
         var currentRow = { rowIndex: focusedCell.rowIndex, rowPinned: focusedCell.rowPinned };
         var columnsToPasteInto = this.columnController.getDisplayedColumnsStartingAt(focusedCell.column);
-        var onlyOneValueToPaste = parsedData.length === 1 && parsedData[0].length === 1;
-        if (onlyOneValueToPaste) {
+        if (this.hasOnlyOneValueToPaste(parsedData)) {
             this.pasteSingleValue(parsedData, updatedRowNodes, cellsToFlash, changedPath);
         }
         else {
             this.pasteMultipleValues(parsedData, currentRow, updatedRowNodes, columnsToPasteInto, cellsToFlash, core_1.Constants.EXPORT_TYPE_CLIPBOARD, changedPath);
         }
+    };
+    ClipboardService.prototype.hasOnlyOneValueToPaste = function (parsedData) {
+        return parsedData.length === 1 && parsedData[0].length === 1;
     };
     ClipboardService.prototype.copyRangeDown = function () {
         var _this = this;
@@ -145,15 +146,15 @@ var ClipboardService = /** @class */ (function () {
         }
         var firstRowValues = [];
         var pasteOperation = function (cellsToFlash, updatedRowNodes, focusedCell, changedPath) {
-            var rowCallback = function (currentRow, rowNode, columns, index, isLastRow) {
+            var processCellForClipboardFunc = _this.gridOptionsWrapper.getProcessCellForClipboardFunc();
+            var processCellFromClipboardFunc = _this.gridOptionsWrapper.getProcessCellFromClipboardFunc();
+            var rowCallback = function (currentRow, rowNode, columns) {
                 // take reference of first row, this is the one we will be using to copy from
                 if (!firstRowValues.length) {
                     // two reasons for looping through columns
                     columns.forEach(function (column) {
                         // get the initial values to copy down
-                        var value = _this.valueService.getValue(column, rowNode);
-                        var processCellForClipboardFunc = _this.gridOptionsWrapper.getProcessCellForClipboardFunc();
-                        value = _this.userProcessCell(rowNode, column, value, processCellForClipboardFunc, core_1.Constants.EXPORT_TYPE_DRAG_COPY);
+                        var value = _this.processCell(rowNode, column, _this.valueService.getValue(column, rowNode), core_1.Constants.EXPORT_TYPE_DRAG_COPY, processCellForClipboardFunc);
                         firstRowValues.push(value);
                     });
                 }
@@ -164,9 +165,7 @@ var ClipboardService = /** @class */ (function () {
                         if (!column.isCellEditable(rowNode)) {
                             return;
                         }
-                        var firstRowValue = firstRowValues[index];
-                        var processCellFromClipboardFunc = _this.gridOptionsWrapper.getProcessCellFromClipboardFunc();
-                        firstRowValue = _this.userProcessCell(rowNode, column, firstRowValue, processCellFromClipboardFunc, core_1.Constants.EXPORT_TYPE_DRAG_COPY);
+                        var firstRowValue = _this.processCell(rowNode, column, firstRowValues[index], core_1.Constants.EXPORT_TYPE_DRAG_COPY, processCellFromClipboardFunc);
                         _this.valueService.setValue(rowNode, column, firstRowValue, core_1.Constants.SOURCE_PASTE);
                         if (changedPath) {
                             changedPath.addParentNode(rowNode.parent, [column]);
@@ -210,8 +209,7 @@ var ClipboardService = /** @class */ (function () {
             if (rowNode) {
                 updatedRowNodes.push(rowNode);
                 clipboardRowData.forEach(function (value, index) {
-                    var column = columnsToPasteInto[index];
-                    _this.updateCellValue(rowNode, column, value, currentRow, cellsToFlash, type, changedPath);
+                    return _this.updateCellValue(rowNode, columnsToPasteInto[index], value, currentRow, cellsToFlash, type, changedPath);
                 });
                 // move to next row down for next set of values
                 currentRow = _this.cellNavigationService.getRowBelow({ rowPinned: currentRow.rowPinned, rowIndex: currentRow.rowIndex });
@@ -225,7 +223,7 @@ var ClipboardService = /** @class */ (function () {
         var rowCallback = function (currentRow, rowNode, columns) {
             updatedRowNodes.push(rowNode);
             columns.forEach(function (column) {
-                _this.updateCellValue(rowNode, column, value, currentRow, cellsToFlash, core_1.Constants.EXPORT_TYPE_CLIPBOARD, changedPath);
+                return _this.updateCellValue(rowNode, column, value, currentRow, cellsToFlash, core_1.Constants.EXPORT_TYPE_CLIPBOARD, changedPath);
             });
         };
         this.iterateActiveRanges(false, rowCallback);
@@ -234,11 +232,11 @@ var ClipboardService = /** @class */ (function () {
         if (!rowNode ||
             !currentRow ||
             !column ||
-            !column.isCellEditable ||
+            !column.isCellEditable(rowNode) ||
             column.isSuppressPaste(rowNode)) {
             return;
         }
-        var processedValue = this.userProcessCell(rowNode, column, value, this.gridOptionsWrapper.getProcessCellFromClipboardFunc(), type);
+        var processedValue = this.processCell(rowNode, column, value, type, this.gridOptionsWrapper.getProcessCellFromClipboardFunc());
         this.valueService.setValue(rowNode, column, processedValue, core_1.Constants.SOURCE_PASTE);
         var cellId = this.cellPositionUtils.createIdFromValues(currentRow.rowIndex, column, currentRow.rowPinned);
         cellsToFlash[cellId] = true;
@@ -249,9 +247,10 @@ var ClipboardService = /** @class */ (function () {
     ClipboardService.prototype.copyToClipboard = function (includeHeaders) {
         this.logger.log("copyToClipboard: includeHeaders = " + includeHeaders);
         // don't override 'includeHeaders' if it has been explicitly set to 'false'
-        if (typeof includeHeaders === 'undefined') {
+        if (includeHeaders == null) {
             includeHeaders = this.gridOptionsWrapper.isCopyHeadersToClipboard();
         }
+        var focusedCell = this.focusController.getFocusedCell();
         var selectedRowsToCopy = !this.selectionController.isEmpty()
             && !this.gridOptionsWrapper.isSuppressCopyRowsToClipboard();
         // default is copy range if exists, otherwise rows
@@ -262,7 +261,7 @@ var ClipboardService = /** @class */ (function () {
             // otherwise copy selected rows if they exist
             this.copySelectedRowsToClipboard(includeHeaders);
         }
-        else if (this.focusedCellController.isAnyCellFocused()) {
+        else if (this.focusController.isAnyCellFocused()) {
             // if there is a focused cell, copy this
             this.copyFocusedCellToClipboard(includeHeaders);
         }
@@ -274,6 +273,9 @@ var ClipboardService = /** @class */ (function () {
             // get executed).
             this.copySelectedRangeToClipboard(includeHeaders);
         }
+        if (focusedCell) {
+            this.focusController.setFocusedCell(focusedCell.rowIndex, focusedCell.column, focusedCell.rowPinned, true);
+        }
     };
     ClipboardService.prototype.iterateActiveRanges = function (onlyFirst, rowCallback, columnCallback) {
         var _this = this;
@@ -282,8 +284,7 @@ var ClipboardService = /** @class */ (function () {
         }
         var cellRanges = this.rangeController.getCellRanges();
         if (onlyFirst) {
-            var range = cellRanges[0];
-            this.iterateActiveRange(range, rowCallback, columnCallback, true);
+            this.iterateActiveRange(cellRanges[0], rowCallback, columnCallback, true);
         }
         else {
             cellRanges.forEach(function (range, idx) { return _this.iterateActiveRange(range, rowCallback, columnCallback, idx === cellRanges.length - 1); });
@@ -295,14 +296,14 @@ var ClipboardService = /** @class */ (function () {
         }
         var currentRow = this.rangeController.getRangeStartRow(range);
         var lastRow = this.rangeController.getRangeEndRow(range);
-        if (columnCallback && core_1._.exists(columnCallback) && range.columns) {
+        if (columnCallback && range.columns) {
             columnCallback(range.columns);
         }
         var rangeIndex = 0;
         var isLastRow = false;
         // the currentRow could be missing if the user sets the active range manually, and sets a range
         // that is outside of the grid (eg. sets range rows 0 to 100, but grid has only 20 rows).
-        while (!isLastRow && !core_1._.missing(currentRow) && currentRow) {
+        while (!isLastRow && currentRow != null) {
             var rowNode = this.rowPositionUtils.getRowNode(currentRow);
             isLastRow = this.rowPositionUtils.sameRow(currentRow, lastRow);
             rowCallback(currentRow, rowNode, range.columns, rangeIndex++, isLastRow && isLastRange);
@@ -323,23 +324,19 @@ var ClipboardService = /** @class */ (function () {
             if (!includeHeaders) {
                 return;
             }
-            columns.forEach(function (column, index) {
-                var value = _this.columnController.getDisplayNameForColumn(column, 'clipboard', true);
-                var processedValue = _this.userProcessHeader(column, value, _this.gridOptionsWrapper.getProcessHeaderForClipboardFunc());
-                if (index != 0) {
-                    data += deliminator;
-                }
-                if (core_1._.exists(processedValue)) {
-                    data += processedValue;
-                }
+            var processHeaderForClipboardFunc = _this.gridOptionsWrapper.getProcessHeaderForClipboardFunc();
+            var columnNames = columns.map(function (column) {
+                var name = _this.columnController.getDisplayNameForColumn(column, 'clipboard', true);
+                return _this.processHeader(column, name, processHeaderForClipboardFunc) || '';
             });
-            data += '\r\n';
+            data += columnNames.join(deliminator) + '\r\n';
         };
         // adds cell values to the data
-        var rowCallback = function (currentRow, rowNode, columns, index, isLastRow) {
+        var rowCallback = function (currentRow, rowNode, columns, _2, isLastRow) {
+            var processCellForClipboardFunc = _this.gridOptionsWrapper.getProcessCellForClipboardFunc();
             columns.forEach(function (column, index) {
                 var value = _this.valueService.getValue(column, rowNode);
-                var processedValue = _this.userProcessCell(rowNode, column, value, _this.gridOptionsWrapper.getProcessCellForClipboardFunc(), core_1.Constants.EXPORT_TYPE_CLIPBOARD);
+                var processedValue = _this.processCell(rowNode, column, value, core_1.Constants.EXPORT_TYPE_CLIPBOARD, processCellForClipboardFunc);
                 if (index != 0) {
                     data += deliminator;
                 }
@@ -360,8 +357,8 @@ var ClipboardService = /** @class */ (function () {
     ClipboardService.prototype.copyFocusedCellToClipboard = function (includeHeaders) {
         var _a;
         if (includeHeaders === void 0) { includeHeaders = false; }
-        var focusedCell = this.focusedCellController.getFocusedCell();
-        if (core_1._.missing(focusedCell)) {
+        var focusedCell = this.focusController.getFocusedCell();
+        if (focusedCell == null) {
             return;
         }
         var cellId = this.cellPositionUtils.createId(focusedCell);
@@ -369,19 +366,16 @@ var ClipboardService = /** @class */ (function () {
         var rowNode = this.rowPositionUtils.getRowNode(currentRow);
         var column = focusedCell.column;
         var value = this.valueService.getValue(column, rowNode);
-        var processedValue = this.userProcessCell(rowNode, column, value, this.gridOptionsWrapper.getProcessCellForClipboardFunc(), core_1.Constants.EXPORT_TYPE_CLIPBOARD);
-        if (core_1._.missing(processedValue)) {
-            // copy the new line character to clipboard instead of an empty string, as the 'execCommand' will ignore it.
-            // this behaviour is consistent with how Excel works!
-            processedValue = '\t';
-        }
-        var data = '';
+        var processedValue = this.processCell(rowNode, column, value, core_1.Constants.EXPORT_TYPE_CLIPBOARD, this.gridOptionsWrapper.getProcessCellForClipboardFunc());
+        processedValue = core_1._.missing(processedValue) ? '' : processedValue.toString();
+        var data;
         if (includeHeaders) {
             var headerValue = this.columnController.getDisplayNameForColumn(column, 'clipboard', true);
-            data = this.userProcessHeader(column, headerValue, this.gridOptionsWrapper.getProcessHeaderForClipboardFunc());
-            data += '\r\n';
+            data = this.processHeader(column, headerValue, this.gridOptionsWrapper.getProcessHeaderForClipboardFunc()) + '\r\n' + processedValue;
         }
-        data += processedValue.toString();
+        else {
+            data = processedValue;
+        }
         this.copyDataToClipboard(data);
         this.dispatchFlashCells((_a = {}, _a[cellId] = true, _a));
     };
@@ -397,7 +391,7 @@ var ClipboardService = /** @class */ (function () {
             _this.eventService.dispatchEvent(event);
         }, 0);
     };
-    ClipboardService.prototype.userProcessCell = function (rowNode, column, value, func, type) {
+    ClipboardService.prototype.processCell = function (rowNode, column, value, type, func) {
         if (func) {
             var params = {
                 column: column,
@@ -406,13 +400,13 @@ var ClipboardService = /** @class */ (function () {
                 api: this.gridOptionsWrapper.getApi(),
                 columnApi: this.gridOptionsWrapper.getColumnApi(),
                 context: this.gridOptionsWrapper.getContext(),
-                type: type
+                type: type,
             };
             return func(params);
         }
         return value;
     };
-    ClipboardService.prototype.userProcessHeader = function (column, value, func) {
+    ClipboardService.prototype.processHeader = function (column, value, func) {
         if (func) {
             var params = {
                 column: column,
@@ -426,14 +420,12 @@ var ClipboardService = /** @class */ (function () {
     };
     ClipboardService.prototype.copySelectedRowsToClipboard = function (includeHeaders, columnKeys) {
         if (includeHeaders === void 0) { includeHeaders = false; }
-        var skipHeader = !includeHeaders;
-        var deliminator = this.gridOptionsWrapper.getClipboardDeliminator();
         var params = {
             columnKeys: columnKeys,
-            skipHeader: skipHeader,
+            skipHeader: !includeHeaders,
             skipFooters: true,
             suppressQuotes: true,
-            columnSeparator: deliminator,
+            columnSeparator: this.gridOptionsWrapper.getClipboardDeliminator(),
             onlySelected: true,
             processCellCallback: this.gridOptionsWrapper.getProcessCellForClipboardFunc(),
             processHeaderCallback: this.gridOptionsWrapper.getProcessHeaderForClipboardFunc()
@@ -443,13 +435,12 @@ var ClipboardService = /** @class */ (function () {
     };
     ClipboardService.prototype.copyDataToClipboard = function (data) {
         var userProvidedFunc = this.gridOptionsWrapper.getSendToClipboardFunc();
-        if (userProvidedFunc && core_1._.exists(userProvidedFunc)) {
-            var params = { data: data };
-            userProvidedFunc(params);
+        if (userProvidedFunc) {
+            userProvidedFunc({ data: data });
         }
         else {
             this.executeOnTempElement(function (element) {
-                element.value = data;
+                element.value = data || ' '; // has to be non-empty value or execCommand will not do anything
                 element.select();
                 element.focus();
                 var result = document.execCommand('copy');
@@ -488,78 +479,11 @@ var ClipboardService = /** @class */ (function () {
             guiRoot.removeChild(eTempInput);
         }
     };
-    // From http://stackoverflow.com/questions/1293147/javascript-code-to-parse-csv-data
-    // This will parse a delimited string into an array of arrays.
-    // Note: this code fixes an issue with the example posted on stack overflow where it doesn't correctly handle
-    // empty values in the first cell.
-    ClipboardService.prototype.dataToArray = function (strData) {
-        var delimiter = this.gridOptionsWrapper.getClipboardDeliminator();
-        // Create a regular expression to parse the CSV values.
-        var objPattern = new RegExp((
-        // Delimiters.
-        '(\\' + delimiter + '|\\r?\\n|\\r|^)' +
-            // Quoted fields.
-            '(?:"([^\"]*(?:""[^\"]*)*)"|' +
-            // Standard fields.
-            '([^\\' + delimiter + '\\r\\n]*))'), "gi");
-        // Create an array to hold our data. Give the array
-        // a default empty first row.
-        var arrData = [[]];
-        // Create an array to hold our individual pattern matching groups.
-        var arrMatches;
-        // Required for handling edge case on first row copy
-        var atFirstRow = true;
-        // Keep looping over the regular expression matches
-        // until we can no longer find a match.
-        while (arrMatches = objPattern.exec(strData)) {
-            // Get the delimiter that was found.
-            var strMatchedDelimiter = arrMatches[1];
-            // Handles case when first row is an empty cell, insert an empty string before delimiter
-            if ((atFirstRow && strMatchedDelimiter) || !arrMatches.index && arrMatches[0].charAt(0) === delimiter) {
-                arrData[0].push('');
-            }
-            // Check to see if the given delimiter has a length
-            // (is not the start of string) and if it matches
-            // field delimiter. If id does not, then we know
-            // that this delimiter is a row delimiter.
-            if (strMatchedDelimiter.length && strMatchedDelimiter !== delimiter) {
-                // Since we have reached a new row of data,
-                // add an empty row to our data array.
-                arrData.push([]);
-            }
-            var strMatchedValue = void 0;
-            // Now that we have our delimiter out of the way,
-            // let's check to see which kind of value we
-            // captured (quoted or unquoted).
-            if (arrMatches[2]) {
-                // We found a quoted value. When we capture
-                // this value, unescaped any double quotes.
-                strMatchedValue = arrMatches[2].replace(new RegExp('""', 'g'), '"');
-            }
-            else {
-                // We found a non-quoted value.
-                strMatchedValue = arrMatches[3];
-            }
-            // Now that we have our value string, let's add
-            // it to the data array.
-            var lastItem = core_1._.last(arrData);
-            if (lastItem) {
-                lastItem.push(strMatchedValue);
-            }
-            atFirstRow = false;
-        }
-        // Return the parsed data.
-        return arrData;
-    };
-    ClipboardService.prototype.rangeSize = function () {
+    ClipboardService.prototype.getRangeSize = function () {
         var ranges = this.rangeController.getCellRanges();
-        var startRangeIndex;
-        var endRangeIndex;
+        var startRangeIndex = 0;
+        var endRangeIndex = 0;
         if (ranges.length > 0) {
-            startRangeIndex = 0;
-            endRangeIndex = 0;
-        }
-        else {
             startRangeIndex = this.rangeController.getRangeStartRow(ranges[0]).rowIndex;
             endRangeIndex = this.rangeController.getRangeEndRow(ranges[0]).rowIndex;
         }
@@ -584,8 +508,8 @@ var ClipboardService = /** @class */ (function () {
         core_1.Autowired('valueService')
     ], ClipboardService.prototype, "valueService", void 0);
     __decorate([
-        core_1.Autowired('focusedCellController')
-    ], ClipboardService.prototype, "focusedCellController", void 0);
+        core_1.Autowired('focusController')
+    ], ClipboardService.prototype, "focusController", void 0);
     __decorate([
         core_1.Autowired('rowRenderer')
     ], ClipboardService.prototype, "rowRenderer", void 0);

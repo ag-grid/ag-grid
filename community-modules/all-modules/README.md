@@ -73,10 +73,10 @@ Usage Overview
 
 #### Import the grid and styles
 
-    import {Grid} from "ag-grid/main";
+    import {Grid} from "@ag-grid-community/core";
 
-    import "ag-grid/dist/styles/ag-grid.css";
-    import "ag-grid/dist/styles/ag-theme-balham.css";
+    import "@ag-grid-community/core/dist/styles/ag-grid.css";
+    import "@ag-grid-community/core/dist/styles/ag-theme-balham.css";
 
 ### Set configuration
 
@@ -98,7 +98,7 @@ Usage Overview
     let eGridDiv = document.querySelector('#myGrid');
     new Grid(eGridDiv, this.gridOptions);
 
-For more information on how to integrate the grid into your project see [TypeScript - Building with Webpack 2](https://www.ag-grid.com/ag-grid-typescript-webpack-2?utm_source=ag-grid-readme&utm_medium=repository&utm_campaign=github).
+For more information on how to integrate the grid into your project see [TypeScript - Building with Webpack 2](https://www.ag-grid.com/ag-grid-building-typescript?utm_source=ag-grid-readme&utm_medium=repository&utm_campaign=github).
 
 Issue Reporting
 ----------

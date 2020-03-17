@@ -1,4 +1,4 @@
-// @ag-grid-community/react v22.1.1
+// @ag-grid-community/react v23.0.0
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -80,3 +80,5 @@ function addProperties(listOfProps, propType) {
         AgGridColumn[propKey] = propType;
     });
 }
+
+//# sourceMappingURL=agGridColumn.js.map

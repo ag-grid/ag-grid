@@ -11,10 +11,6 @@ export declare class DragService {
     private mouseStartEvent;
     private touchLastTime;
     private touchStart;
-    private onMouseUpListener;
-    private onMouseMoveListener;
-    private onTouchEndListener;
-    private onTouchMoveListener;
     private logger;
     private dragEndFunctions;
     private dragSources;
@@ -26,14 +22,15 @@ export declare class DragService {
     addDragSource(params: DragListenerParams, includeTouch?: boolean): void;
     private onTouchStart;
     private onMouseDown;
+    private addTemporaryEvents;
     private isEventNearStartEvent;
     private getFirstActiveTouch;
     private onCommonMove;
     private onTouchMove;
     private onMouseMove;
-    onTouchUp(touchEvent: TouchEvent): void;
-    onMouseUp(mouseEvent: MouseEvent): void;
-    onUpCommon(eventOrTouch: MouseEvent | Touch): void;
+    onTouchUp(touchEvent: TouchEvent, el: HTMLElement): void;
+    onMouseUp(mouseEvent: MouseEvent, el: HTMLElement): void;
+    onUpCommon(eventOrTouch: MouseEvent | Touch, el: HTMLElement): void;
 }
 export interface DragListenerParams {
     /** After how many pixels of dragging should the drag operation start. Default is 4px. */

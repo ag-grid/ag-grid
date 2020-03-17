@@ -4,22 +4,22 @@ import {
     AgCheckbox,
     AgGroupComponent,
     AgRadioButton,
+    AgToggleButton,
     Autowired,
-    Component,
-    PostConstruct,
     ChartType,
-    GridOptionsWrapper,
-    DragSource,
-    DragSourceType,
+    Component,
     DragAndDropService,
     DraggingEvent,
-    VerticalDirection,
+    DragSource,
+    DragSourceType,
     DropTarget,
-    AgToggleButton
+    GridOptionsWrapper,
+    PostConstruct,
+    VerticalDirection
 } from "@ag-grid-community/core";
-import { ChartController } from "../../chartController";
-import { ColState } from "../../chartDataModel";
-import { ChartTranslator } from "../../chartTranslator";
+import {ChartController} from "../../chartController";
+import {ColState} from "../../chartDataModel";
+import {ChartTranslator} from "../../chartTranslator";
 
 export class ChartDataPanel extends Component {
     public static TEMPLATE = `<div class="ag-chart-data-wrapper"></div>`;
@@ -83,6 +83,7 @@ export class ChartDataPanel extends Component {
 
     private addComponent(parent: HTMLElement, component: AgGroupComponent): void {
         const eDiv = document.createElement('div');
+        eDiv.className = 'ag-chart-data-section';
         eDiv.appendChild(component.getGui());
         parent.appendChild(eDiv);
     }
@@ -99,7 +100,8 @@ export class ChartDataPanel extends Component {
             title: this.getCategoryGroupTitle(),
             enabled: true,
             suppressEnabledCheckbox: true,
-            suppressOpenCloseIcons: false
+            suppressOpenCloseIcons: false,
+            cssIdentifier: 'charts-data'
         }));
 
         const inputName = `chartDimension${this.getCompId()}`;
@@ -124,7 +126,8 @@ export class ChartDataPanel extends Component {
             title: this.getSeriesGroupTitle(),
             enabled: true,
             suppressEnabledCheckbox: true,
-            suppressOpenCloseIcons: false
+            suppressOpenCloseIcons: false,
+            cssIdentifier: 'charts-data'
         }));
 
         if (this.chartController.isActiveXYChart()) {
@@ -135,7 +138,7 @@ export class ChartDataPanel extends Component {
                 .setLabel(this.chartTranslator.translate('paired'))
                 .setLabelAlignment('left')
                 .setLabelWidth('flex')
-                .setInputWidth(40)
+                .setInputWidth(45)
                 .setValue(chartProxy.getSeriesOption('paired') || false)
                 .onValueChange(newValue => {
                     chartProxy.setSeriesOption('paired', newValue);
@@ -177,7 +180,8 @@ export class ChartDataPanel extends Component {
     private addDragHandle(comp: AgCheckbox, col: ColState): void {
         const eDragHandle = _.createIconNoSpan('columnDrag', this.gridOptionsWrapper);
 
-        _.addCssClass(eDragHandle, 'ag-column-drag');
+        _.addCssClass(eDragHandle, 'ag-drag-handle');
+        _.addCssClass(eDragHandle, 'ag-chart-data-column-drag-handle');
 
         comp.getGui().insertAdjacentElement('beforeend', eDragHandle);
 
@@ -185,6 +189,7 @@ export class ChartDataPanel extends Component {
             type: DragSourceType.ChartPanel,
             eElement: eDragHandle,
             dragItemName: col.displayName,
+            defaultIconName: DragAndDropService.ICON_MOVE,
             getDragItem: () => ({ columns: [col.column] }),
             onDragStopped: () => { this.insertIndex = undefined; }
         };

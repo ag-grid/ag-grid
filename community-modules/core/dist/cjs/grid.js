@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v22.1.1
+ * @version v23.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -32,7 +32,7 @@ var standardMenu_1 = require("./headerRendering/standardMenu");
 var dragAndDropService_1 = require("./dragAndDrop/dragAndDropService");
 var dragService_1 = require("./dragAndDrop/dragService");
 var sortController_1 = require("./sortController");
-var focusedCellController_1 = require("./focusedCellController");
+var focusController_1 = require("./focusController");
 var mouseEventService_1 = require("./gridPanel/mouseEventService");
 var cellNavigationService_1 = require("./cellNavigationService");
 var events_1 = require("./events");
@@ -216,7 +216,7 @@ var Grid = /** @class */ (function () {
             selectionController_1.SelectionController, filterManager_1.FilterManager, columnController_1.ColumnController, paginationProxy_1.PaginationProxy, rowRenderer_1.RowRenderer, expressionService_1.ExpressionService,
             columnFactory_1.ColumnFactory, templateService_1.TemplateService, alignedGridsService_1.AlignedGridsService,
             navigationService_1.NavigationService, valueCache_1.ValueCache, valueService_1.ValueService, logger_1.LoggerFactory, columnUtils_1.ColumnUtils, autoWidthCalculator_1.AutoWidthCalculator,
-            standardMenu_1.StandardMenuFactory, dragAndDropService_1.DragAndDropService, columnApi_1.ColumnApi, focusedCellController_1.FocusedCellController, mouseEventService_1.MouseEventService, environment_1.Environment,
+            standardMenu_1.StandardMenuFactory, dragAndDropService_1.DragAndDropService, columnApi_1.ColumnApi, focusController_1.FocusController, mouseEventService_1.MouseEventService, environment_1.Environment,
             cellNavigationService_1.CellNavigationService, valueFormatterService_1.ValueFormatterService, stylingService_1.StylingService, scrollVisibleService_1.ScrollVisibleService, sortController_1.SortController,
             columnHoverService_1.ColumnHoverService, columnAnimationService_1.ColumnAnimationService, selectableService_1.SelectableService, autoGroupColService_1.AutoGroupColService,
             changeDetectionService_1.ChangeDetectionService, animationFrameService_1.AnimationFrameService, tooltipManager_1.TooltipManager, detailRowCompCache_1.DetailRowCompCache, undoRedoService_1.UndoRedoService

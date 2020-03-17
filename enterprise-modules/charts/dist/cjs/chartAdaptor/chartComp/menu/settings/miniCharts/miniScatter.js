@@ -15,13 +15,11 @@ var __extends = (this && this.__extends) || (function () {
 Object.defineProperty(exports, "__esModule", { value: true });
 var core_1 = require("@ag-grid-community/core");
 var miniChartWithAxes_1 = require("./miniChartWithAxes");
-var linearScale_1 = require("../../../../../charts/scale/linearScale");
-var clipRect_1 = require("../../../../../charts/scene/clipRect");
-var arc_1 = require("../../../../../charts/scene/shape/arc");
+var ag_charts_community_1 = require("ag-charts-community");
 var MiniScatter = /** @class */ (function (_super) {
     __extends(MiniScatter, _super);
-    function MiniScatter(parent, fills, strokes) {
-        var _this = _super.call(this, parent, "scatterTooltip") || this;
+    function MiniScatter(container, fills, strokes) {
+        var _this = _super.call(this, container, "scatterTooltip") || this;
         var size = _this.size;
         var padding = _this.padding;
         // [x, y] pairs
@@ -29,17 +27,17 @@ var MiniScatter = /** @class */ (function (_super) {
             [[0.3, 3], [1.1, 0.9], [2, 0.4], [3.4, 2.4]],
             [[0, 0.3], [1, 2], [2.4, 1.4], [3, 0]]
         ];
-        var xScale = linearScale_1.default();
+        var xScale = ag_charts_community_1.linearScale();
         xScale.domain = [-0.5, 4];
         xScale.range = [padding * 2, size - padding];
-        var yScale = linearScale_1.default();
+        var yScale = ag_charts_community_1.linearScale();
         yScale.domain = [-0.5, 3.5];
         yScale.range = [size - padding, padding];
         var points = [];
         data.forEach(function (series) {
             series.forEach(function (_a) {
                 var x = _a[0], y = _a[1];
-                var arc = new arc_1.Arc();
+                var arc = new ag_charts_community_1.Arc();
                 arc.strokeWidth = 1;
                 arc.centerX = xScale.convert(x);
                 arc.centerY = yScale.convert(y);
@@ -49,7 +47,7 @@ var MiniScatter = /** @class */ (function (_super) {
         });
         _this.points = points;
         _this.updateColors(fills, strokes);
-        var clipRect = new clipRect_1.ClipRect();
+        var clipRect = new ag_charts_community_1.ClipRect();
         clipRect.x = clipRect.y = padding;
         clipRect.width = clipRect.height = size - padding * 2;
         clipRect.append(_this.points);

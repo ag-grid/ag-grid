@@ -18,7 +18,7 @@ export declare class BeanStub implements IEventEmitter {
     removeEventListener(eventType: string, listener: Function): void;
     dispatchEventAsync(event: AgEvent): void;
     dispatchEvent<T extends AgEvent>(event: T): void;
-    addDestroyableEventListener(object: Window | HTMLElement | IEventEmitter | GridOptionsWrapper, event: string, listener: (event?: any) => void): (() => void) | undefined;
+    addDestroyableEventListener(object: Window | HTMLElement | IEventEmitter | GridOptionsWrapper, event: string, listener: (event?: any) => void): (() => null) | undefined;
     isAlive: () => boolean;
     addDestroyFunc(func: () => void): void;
     wireDependentBean<T extends BeanStub>(bean: T, context?: Context): T;

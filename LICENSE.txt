@@ -18,4 +18,4 @@ The following packages are MIT licensed:
 The following packages are Commercial licensed:
 + ag-grid-enterprise
 
-To view the commercial license for ag-grid-enterprise, see the file packages/ag-grid-enterprise/LICENSE.md
+To view the commercial license for ag-grid-enterprise, see the file grid-packages/ag-grid-enterprise/LICENSE.md

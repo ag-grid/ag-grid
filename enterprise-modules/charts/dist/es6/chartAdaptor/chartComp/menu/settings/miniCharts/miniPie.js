@@ -15,8 +15,8 @@ import { ChartType } from "@ag-grid-community/core";
 import { MiniDoughnut } from "./miniDoughnut";
 var MiniPie = /** @class */ (function (_super) {
     __extends(MiniPie, _super);
-    function MiniPie(parent, fills, strokes) {
-        return _super.call(this, parent, fills, strokes, 0, "pieTooltip") || this;
+    function MiniPie(container, fills, strokes) {
+        return _super.call(this, container, fills, strokes, 0, "pieTooltip") || this;
     }
     MiniPie.chartType = ChartType.Pie;
     return MiniPie;

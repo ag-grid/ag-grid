@@ -15,14 +15,16 @@ import { Component, DragSourceType, Events, HorizontalDirection, VerticalDirecti
 import { DropZoneColumnComp } from "./dropZoneColumnComp";
 var BaseDropZonePanel = /** @class */ (function (_super) {
     __extends(BaseDropZonePanel, _super);
-    function BaseDropZonePanel(horizontal, valueColumn, name) {
-        var _this = _super.call(this, "<div class=\"ag-column-drop ag-unselectable ag-column-drop-" + (horizontal ? 'horizontal' : 'vertical') + " ag-column-drop-" + name + "\"></div>") || this;
+    function BaseDropZonePanel(horizontal, valueColumn) {
+        var _this = _super.call(this, "<div class=\"ag-unselectable\"></div>") || this;
+        _this.horizontal = horizontal;
+        _this.valueColumn = valueColumn;
         _this.state = BaseDropZonePanel.STATE_NOT_DRAGGING;
         _this.guiDestroyFunctions = [];
         _this.childColumnComponents = [];
-        _this.horizontal = horizontal;
-        _this.valueColumn = valueColumn;
-        _this.eColumnDropList = _.loadTemplate('<div class="ag-column-drop-list"></div>');
+        _this.addElementClasses(_this.getGui());
+        _this.eColumnDropList = document.createElement('div');
+        _this.addElementClasses(_this.eColumnDropList, 'list');
         return _this;
     }
     BaseDropZonePanel.prototype.isHorizontal = function () {
@@ -44,7 +46,6 @@ var BaseDropZonePanel = /** @class */ (function (_super) {
     };
     BaseDropZonePanel.prototype.init = function (params) {
         this.params = params;
-        this.logger = this.beans.loggerFactory.create('AbstractColumnDropPanel');
         this.beans.eventService.addEventListener(Events.EVENT_COLUMN_EVERYTHING_CHANGED, this.refreshGui.bind(this));
         this.addDestroyableEventListener(this.beans.gridOptionsWrapper, 'functionsReadOnly', this.refreshGui.bind(this));
         this.setupDropTarget();
@@ -52,6 +53,12 @@ var BaseDropZonePanel = /** @class */ (function (_super) {
         // if columnController first, then below will work
         // if columnController second, then below will put blank in, and then above event gets first when columnController is set up
         this.refreshGui();
+    };
+    BaseDropZonePanel.prototype.addElementClasses = function (el, suffix) {
+        suffix = suffix ? "-" + suffix : '';
+        _.addCssClass(el, "ag-column-drop" + suffix);
+        var direction = this.horizontal ? 'horizontal' : 'vertical';
+        _.addCssClass(el, "ag-column-drop-" + direction + suffix);
     };
     BaseDropZonePanel.prototype.setupDropTarget = function () {
         this.dropTarget = {
@@ -261,7 +268,7 @@ var BaseDropZonePanel = /** @class */ (function (_super) {
         });
     };
     BaseDropZonePanel.prototype.createColumnComponent = function (column, ghost) {
-        var columnComponent = new DropZoneColumnComp(column, this.dropTarget, ghost, this.valueColumn);
+        var columnComponent = new DropZoneColumnComp(column, this.dropTarget, ghost, this.valueColumn, this.horizontal);
         columnComponent.addEventListener(DropZoneColumnComp.EVENT_COLUMN_REMOVE, this.removeColumns.bind(this, [column]));
         this.beans.context.wireBean(columnComponent);
         this.guiDestroyFunctions.push(function () { return columnComponent.destroy(); });
@@ -271,20 +278,19 @@ var BaseDropZonePanel = /** @class */ (function (_super) {
         return columnComponent;
     };
     BaseDropZonePanel.prototype.addIconAndTitleToGui = function () {
-        var iconFaded = this.horizontal && this.isExistingColumnsEmpty();
         var eGroupIcon = this.params.icon;
-        var eContainer = document.createElement('div');
-        _.addCssClass(eGroupIcon, 'ag-column-drop-icon');
-        _.addOrRemoveCssClass(eGroupIcon, 'ag-faded', iconFaded);
-        eContainer.appendChild(eGroupIcon);
+        var eTitleBar = document.createElement('div');
+        this.addElementClasses(eTitleBar, 'title-bar');
+        this.addElementClasses(eGroupIcon, 'icon');
+        _.addOrRemoveCssClass(this.getGui(), 'ag-column-drop-empty', this.isExistingColumnsEmpty());
+        eTitleBar.appendChild(eGroupIcon);
         if (!this.horizontal) {
             var eTitle = document.createElement('span');
+            this.addElementClasses(eTitle, 'title');
             eTitle.innerHTML = this.params.title;
-            _.addCssClass(eTitle, 'ag-column-drop-title');
-            _.addOrRemoveCssClass(eTitle, 'ag-faded', iconFaded);
-            eContainer.appendChild(eTitle);
+            eTitleBar.appendChild(eTitle);
         }
-        this.getGui().appendChild(eContainer);
+        this.getGui().appendChild(eTitleBar);
     };
     BaseDropZonePanel.prototype.isExistingColumnsEmpty = function () {
         return this.getExistingColumns().length === 0;
@@ -295,15 +301,17 @@ var BaseDropZonePanel = /** @class */ (function (_super) {
         }
         var eMessage = document.createElement('span');
         eMessage.innerHTML = this.params.emptyMessage;
-        _.addCssClass(eMessage, 'ag-column-drop-empty-message');
-        this.getGui().appendChild(eMessage);
+        this.addElementClasses(eMessage, 'empty-message');
+        this.eColumnDropList.appendChild(eMessage);
     };
     BaseDropZonePanel.prototype.addArrow = function (eParent) {
         // only add the arrows if the layout is horizontal
         if (this.horizontal) {
             // for RTL it's a left arrow, otherwise it's a right arrow
             var enableRtl = this.beans.gridOptionsWrapper.isEnableRtl();
-            eParent.appendChild(_.createIconNoSpan(enableRtl ? 'smallLeft' : 'smallRight', this.beans.gridOptionsWrapper));
+            var icon = _.createIconNoSpan(enableRtl ? 'smallLeft' : 'smallRight', this.beans.gridOptionsWrapper);
+            this.addElementClasses(icon, 'cell-separator');
+            eParent.appendChild(icon);
         }
     };
     BaseDropZonePanel.STATE_NOT_DRAGGING = 'notDragging';

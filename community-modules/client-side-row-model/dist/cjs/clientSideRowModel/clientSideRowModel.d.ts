@@ -28,12 +28,15 @@ export declare class ClientSideRowModel implements IClientSideRowModel {
     private rowsToDisplay;
     private nodeManager;
     private rowDataTransactionBatch;
+    private lastHighlightedRow;
     init(): void;
     start(): void;
     ensureRowHeightsValid(startPixel: number, endPixel: number, startLimitIndex: number, endLimitIndex: number): boolean;
     private setRowTops;
     private resetRowTops;
-    ensureRowAtPixel(rowNode: RowNode, pixel: number): boolean;
+    ensureRowsAtPixel(rowNodes: RowNode[], pixel: number, increment?: number): boolean;
+    highlightRowAtPixel(rowNode: RowNode | null, pixel?: number): void;
+    getLastHighlightedRowNode(): RowNode | null;
     isLastRowFound(): boolean;
     getRowCount(): number;
     getTopLevelRowCount(): number;

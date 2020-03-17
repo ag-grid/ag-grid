@@ -30,7 +30,11 @@ var LegendPanel = /** @class */ (function (_super) {
         return _this;
     }
     LegendPanel.prototype.init = function () {
-        this.setTemplate(LegendPanel.TEMPLATE);
+        var groupParams = {
+            cssIdentifier: 'charts-format-top-level',
+            direction: 'vertical'
+        };
+        this.setTemplate(LegendPanel.TEMPLATE, { legendGroup: groupParams });
         this.initLegendGroup();
         this.initLegendPosition();
         this.initLegendPadding();
@@ -51,7 +55,7 @@ var LegendPanel = /** @class */ (function (_super) {
     };
     LegendPanel.prototype.initLegendPosition = function () {
         var _this = this;
-        var positions = ["top", "right", "bottom", "left"];
+        var positions = [core_1.LegendPosition.Top, core_1.LegendPosition.Right, core_1.LegendPosition.Bottom, core_1.LegendPosition.Left];
         this.legendPositionSelect
             .setLabel(this.chartTranslator.translate("position"))
             .setLabelWidth("flex")
@@ -66,11 +70,11 @@ var LegendPanel = /** @class */ (function (_super) {
     LegendPanel.prototype.initLegendPadding = function () {
         var _this = this;
         this.legendPaddingSlider
-            .setLabel(this.chartTranslator.translate("padding"))
-            .setValue(this.chartController.getChartProxy().getChartOption("legend.padding"))
+            .setLabel(this.chartTranslator.translate("spacing"))
+            .setValue(this.chartController.getChartProxy().getChartOption("legend.spacing"))
             .setTextFieldWidth(45)
             .setMaxValue(200)
-            .onValueChange(function (newValue) { return _this.chartController.getChartProxy().setChartOption("legend.padding", newValue); });
+            .onValueChange(function (newValue) { return _this.chartController.getChartProxy().setChartOption("legend.spacing", newValue); });
     };
     LegendPanel.prototype.initLegendItems = function () {
         var _this = this;
@@ -83,9 +87,9 @@ var LegendPanel = /** @class */ (function (_super) {
         };
         initSlider("item.marker.size", "markerSize", this.markerSizeSlider, 40);
         initSlider("item.marker.strokeWidth", "markerStroke", this.markerStrokeSlider, 10);
-        initSlider("item.marker.padding", "markerPadding", this.markerPaddingSlider, 20);
-        initSlider("item.paddingX", "itemPaddingX", this.itemPaddingXSlider, 50);
-        initSlider("item.paddingY", "itemPaddingY", this.itemPaddingYSlider, 50);
+        initSlider("item.marker.padding", "itemSpacing", this.markerPaddingSlider, 20);
+        initSlider("item.paddingX", "layoutHorizontalSpacing", this.itemPaddingXSlider, 50);
+        initSlider("item.paddingY", "layoutVerticalSpacing", this.itemPaddingYSlider, 50);
     };
     LegendPanel.prototype.initLabelPanel = function () {
         var _this = this;

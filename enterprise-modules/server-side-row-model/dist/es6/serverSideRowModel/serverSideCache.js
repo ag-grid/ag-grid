@@ -42,8 +42,8 @@ var ServerSideCache = /** @class */ (function (_super) {
         _super.prototype.init.call(this);
     };
     ServerSideCache.prototype.getRowBounds = function (index) {
+        // this.logger.log(`getRowBounds(${index})`);
         var _this = this;
-        this.logger.log("getRowBounds(" + index + ")");
         // we return null if row not found
         // note - cast to "any" due to https://github.com/Microsoft/TypeScript/issues/11498
         // should be RowBounds
@@ -82,15 +82,15 @@ var ServerSideCache = /** @class */ (function (_super) {
             };
         }
         // NOTE: what about purged blocks
-        this.logger.log("getRowBounds(" + index + "), result = " + result);
+        // this.logger.log(`getRowBounds(${index}), result = ${result}`);
         return result;
     };
     ServerSideCache.prototype.destroyBlock = function (block) {
         _super.prototype.destroyBlock.call(this, block);
     };
     ServerSideCache.prototype.getRowIndexAtPixel = function (pixel) {
+        // this.logger.log(`getRowIndexAtPixel(${pixel})`);
         var _this = this;
-        this.logger.log("getRowIndexAtPixel(" + pixel + ")");
         // we return null if row not found
         // note - cast to "any" due to https://github.com/Microsoft/TypeScript/issues/11498
         // should be number
@@ -131,7 +131,7 @@ var ServerSideCache = /** @class */ (function (_super) {
             result = lastAllowedIndex;
         }
         //NOTE: purged
-        this.logger.log("getRowIndexAtPixel(" + pixel + ") result = " + result);
+        // this.logger.log(`getRowIndexAtPixel(${pixel}) result = ${result}`);
         return result;
     };
     ServerSideCache.prototype.clearRowTops = function () {
@@ -278,12 +278,23 @@ var ServerSideCache = /** @class */ (function (_super) {
                 //   last row of first block is 99 (100 * 1) -1;
                 //   last row of second block is 199 (100 * 2) -1;
                 var lastRowTopLevelIndex = (blockSize * (blockBefore_1.getBlockNumber() + 1)) - 1;
-                // this is the last loaded rownode in the cache that is before the row we are interested in.
+                // get the last top level node in the block before the wanted block. this will be the last
+                // loaded displayed top level node.
+                var lastRowNode = blockBefore_1.getRowUsingLocalIndex(lastRowTopLevelIndex, true);
+                // we want the index of the last displayed node, not just the top level node, so if the last top level node
+                // is open, we get the index of the last displayed child node.
+                var lastDisplayedNodeIndexInBlockBefore = void 0;
+                if (lastRowNode.expanded && lastRowNode.childrenCache) {
+                    var serverSideCache = lastRowNode.childrenCache;
+                    lastDisplayedNodeIndexInBlockBefore = serverSideCache.getDisplayIndexEnd() - 1;
+                }
+                else {
+                    lastDisplayedNodeIndexInBlockBefore = lastRowNode.rowIndex;
+                }
                 // we are guaranteed no rows are open. so the difference between the topTopIndex will be the
                 // same as the difference between the displayed index
                 var indexDiff = topLevelIndex - lastRowTopLevelIndex;
-                var lastRowNode = blockBefore_1.getRowUsingLocalIndex(lastRowTopLevelIndex, true);
-                return lastRowNode.rowIndex + indexDiff;
+                return lastDisplayedNodeIndexInBlockBefore + indexDiff;
             }
             else {
                 return topLevelIndex;
@@ -343,9 +354,8 @@ var ServerSideCache = /** @class */ (function (_super) {
         var shouldPurgeCache;
         if (grouping) {
             var groupColVo = this.cacheParams.rowGroupCols[level];
-            var groupField = groupColVo.field;
-            var rowGroupBlock = rowGroupColIds.indexOf(groupField) > -1;
-            var sortingByGroup = changedColumnsInSort.indexOf(groupField) > -1;
+            var rowGroupBlock = rowGroupColIds.indexOf(groupColVo.id) > -1;
+            var sortingByGroup = changedColumnsInSort.indexOf(groupColVo.id) > -1;
             shouldPurgeCache = rowGroupBlock && sortingByGroup;
         }
         else {

@@ -1,11 +1,11 @@
-// Type definitions for @ag-grid-community/core v22.1.1
+// Type definitions for @ag-grid-community/core v23.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { GridPanel } from "./gridPanel";
 export declare class NavigationService {
     private mouseEventService;
     private paginationProxy;
-    private focusedCellController;
+    private focusController;
     private animationFrameService;
     private rangeController;
     private columnController;

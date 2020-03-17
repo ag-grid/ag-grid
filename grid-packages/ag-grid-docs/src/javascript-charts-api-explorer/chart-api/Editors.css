@@ -1,0 +1,87 @@
+.string-editor__input, .number-editor__input, .colour-editor__input {
+    border: 1px solid #0084e7;
+    border-radius: 5px;
+    padding: 4px 8px;
+    font-size: 0.8rem;
+}
+
+.string-editor__input {
+    margin-top: 0.5em;
+    width: 100%;
+}
+
+.number-editor {
+    display: flex;
+    margin-top: 0.5em;
+    width: 100%;
+}
+
+.number-editor__slider {
+    flex-grow: 1;
+    vertical-align: middle;
+}
+
+.number-editor__input {
+    width: 15%;
+    margin-left: 1em;
+    max-height: 2em;
+}
+
+.preset-editor {
+    display: flex;
+    margin: 5px 0;
+}
+
+.preset-editor__option {
+    flex-grow: 1;
+    border: 1px solid #0084e7;
+    border-right: 0;
+    padding: 8px 4px;
+    text-align: center;
+    cursor: pointer;
+    background-color: white;
+}
+
+.preset-editor__option:first-child {
+    border-radius: 5px 0 0 5px;
+}
+
+.preset-editor__option:last-child {
+    border: 1px solid #0084e7;
+    border-radius: 0 5px 5px 0;
+}
+
+.preset-editor__option--selected {
+    background-color: #0084e7;
+    color: white;
+    box-shadow: inset 0 0 5px #00407f;
+}
+
+.colour-editor {
+    margin-top: 0.5em;
+    display: flex;
+    justify-content: space-between;
+}
+
+.colour-editor__input-wrapper {
+    position: relative;
+    width: 35%;
+}
+
+.colour-editor__input {
+    width: 100%;
+}
+
+.colour-editor__sample {
+    position: absolute;
+    width: 15px;
+    height: 15px;
+    border: solid 1px black;
+    top: 5px;
+    right: 5px;
+}
+
+.colour-editor__slider {
+    flex-grow: 1;
+    margin: 5px 0 0 15px;
+}

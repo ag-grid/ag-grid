@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v22.1.1
+ * @version v23.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -30,7 +30,7 @@ import { StandardMenuFactory } from "./headerRendering/standardMenu";
 import { DragAndDropService } from "./dragAndDrop/dragAndDropService";
 import { DragService } from "./dragAndDrop/dragService";
 import { SortController } from "./sortController";
-import { FocusedCellController } from "./focusedCellController";
+import { FocusController } from "./focusController";
 import { MouseEventService } from "./gridPanel/mouseEventService";
 import { CellNavigationService } from "./cellNavigationService";
 import { Events } from "./events";
@@ -214,7 +214,7 @@ var Grid = /** @class */ (function () {
             SelectionController, FilterManager, ColumnController, PaginationProxy, RowRenderer, ExpressionService,
             ColumnFactory, TemplateService, AlignedGridsService,
             NavigationService, ValueCache, ValueService, LoggerFactory, ColumnUtils, AutoWidthCalculator,
-            StandardMenuFactory, DragAndDropService, ColumnApi, FocusedCellController, MouseEventService, Environment,
+            StandardMenuFactory, DragAndDropService, ColumnApi, FocusController, MouseEventService, Environment,
             CellNavigationService, ValueFormatterService, StylingService, ScrollVisibleService, SortController,
             ColumnHoverService, ColumnAnimationService, SelectableService, AutoGroupColService,
             ChangeDetectionService, AnimationFrameService, TooltipManager, DetailRowCompCache, UndoRedoService

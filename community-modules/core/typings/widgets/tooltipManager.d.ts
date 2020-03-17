@@ -12,7 +12,7 @@ export declare class TooltipManager {
     private gridOptionsWrapper;
     private readonly DEFAULT_HIDE_TOOLTIP_TIMEOUT;
     private readonly MOUSEOUT_HIDE_TOOLTIP_TIMEOUT;
-    private readonly MOUSEOVER_SHOW_TOOLTIP_TIMEOUT;
+    private MOUSEOVER_SHOW_TOOLTIP_TIMEOUT;
     private readonly HIDE_SHOW_ONLY;
     private showTimeoutId;
     private hideTimeoutId;
@@ -20,6 +20,7 @@ export declare class TooltipManager {
     private lastHoveredComponent;
     private lastMouseEvent;
     private registeredComponents;
+    private init;
     registerTooltip(targetCmp: TooltipTarget): void;
     unregisterTooltip(targetCmp: TooltipTarget): void;
     private processMouseOver;

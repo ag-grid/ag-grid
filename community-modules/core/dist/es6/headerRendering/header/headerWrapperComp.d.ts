@@ -1,4 +1,4 @@
-// Type definitions for @ag-grid-community/core v22.1.1
+// Type definitions for @ag-grid-community/core v23.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { Component } from "../../widgets/component";
@@ -21,6 +21,7 @@ export declare class HeaderWrapperComp extends Component {
     private beans;
     private eResize;
     private cbSelectAll;
+    private headerComp;
     private readonly column;
     private readonly dragSourceDropTarget;
     private readonly pinned;
@@ -32,6 +33,8 @@ export declare class HeaderWrapperComp extends Component {
     init(): void;
     private addColumnHoverListener;
     private onColumnHover;
+    private addMouseListeners;
+    private onMouseOverOut;
     private setupSortableClass;
     private onFilterChanged;
     private appendHeaderComp;

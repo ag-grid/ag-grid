@@ -57,9 +57,11 @@ export class RichSelectCellEditor extends PopupComponent implements ICellEditor 
         this.selectedValue = params.value;
         this.originalSelectedValue = params.value;
         this.focusAfterAttached = params.cellStartedEdit;
-        this.eValue.appendChild(_.createIconNoSpan('smallDown', this.gridOptionsWrapper));
+        const icon = _.createIconNoSpan('smallDown', this.gridOptionsWrapper);
+        _.addCssClass(icon, 'ag-rich-select-value-icon');
+        this.eValue.appendChild(icon);
 
-        this.virtualList = new VirtualList();
+        this.virtualList = new VirtualList('rich-select');
         this.getContext().wireBean(this.virtualList);
 
         this.virtualList.setComponentCreator(this.createRowComponent.bind(this));
@@ -118,9 +120,8 @@ export class RichSelectCellEditor extends PopupComponent implements ICellEditor 
     }
 
     private onNavigationKeyPressed(event: any, key: number): void {
-        // if we don't stop propagation, then the grids navigation kicks in
-        event.stopPropagation();
-
+        // if we don't preventDefault the page body and/or grid scroll will move.
+        event.preventDefault();
         const oldIndex = this.params.values.indexOf(this.selectedValue);
         const newIndex = key === Constants.KEY_UP ? oldIndex - 1 : oldIndex + 1;
 

@@ -17,6 +17,7 @@ export declare class TextCellEditor extends PopupComponent implements ICellEdito
     init(params: ITextCellEditorParams): void;
     afterGuiAttached(): void;
     focusIn(): void;
+    focusOut(): void;
     getValue(): any;
     private getStartValue;
     isPopup(): boolean;

@@ -1,0 +1,31 @@
+{
+  "extends": ["plugin:compat/recommended"],
+  "env": {
+    "browser": true,
+    "es6": false
+  },
+  "parserOptions": {
+    "ecmaVersion": 5
+  },
+  "plugins": [
+    "ie11"
+  ],
+  "rules": {
+    "ie11/no-collection-args": [
+      "error"
+    ],
+    "ie11/no-for-in-const": [
+      "error"
+    ],
+    "ie11/no-weak-collections": [
+      "error"
+    ]
+  },
+  "settings": {
+    "polyfills": [
+      "Reflect",
+      "Object.assign",
+      "Math.sign" // we do a check for it..so allow this
+    ]
+  }
+}

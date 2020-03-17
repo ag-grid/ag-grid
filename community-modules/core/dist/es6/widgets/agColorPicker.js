@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v22.1.1
+ * @version v23.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -36,20 +36,13 @@ var AgColorPicker = /** @class */ (function (_super) {
         return _this;
     }
     AgColorPicker.prototype.postConstruct = function () {
-        var _this = this;
         _super.prototype.postConstruct.call(this);
-        _.addCssClass(this.getGui(), this.className);
-        this.addDestroyableEventListener(this.eDisplayField, 'click', function () { return _this.showPicker(); });
         if (this.value) {
             this.setValue(this.value);
         }
     };
     AgColorPicker.prototype.showPicker = function () {
         var _this = this;
-        if (this.displayedPicker) {
-            this.displayedPicker = false;
-            return;
-        }
         var eGuiRect = this.getGui().getBoundingClientRect();
         var colorDialog = new AgDialog({
             closable: false,
@@ -77,7 +70,6 @@ var AgColorPicker = /** @class */ (function (_super) {
         colorPanel.setValue(this.getValue());
         colorDialog.addDestroyFunc(function () {
             var wasDestroying = _this.isDestroyingPicker;
-            _this.displayedPicker = false;
             // here we check if the picker was already being
             // destroyed to avoid a stackoverflow
             if (!wasDestroying) {
@@ -89,7 +81,11 @@ var AgColorPicker = /** @class */ (function (_super) {
             else {
                 _this.isDestroyingPicker = false;
             }
+            if (_this.isAlive()) {
+                _this.getFocusableElement().focus();
+            }
         });
+        return colorDialog;
     };
     AgColorPicker.prototype.setValue = function (color) {
         if (this.value === color) {

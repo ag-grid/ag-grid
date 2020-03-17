@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v22.1.1
+ * @version v23.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -204,20 +204,20 @@ var RowRenderer = /** @class */ (function (_super) {
     };
     RowRenderer.prototype.getAllCellsForColumn = function (column) {
         var eCells = [];
-        _.iterateObject(this.rowCompsByIndex, callback);
-        _.iterateObject(this.floatingBottomRowComps, callback);
-        _.iterateObject(this.floatingTopRowComps, callback);
         function callback(key, rowComp) {
             var eCell = rowComp.getCellForCol(column);
             if (eCell) {
                 eCells.push(eCell);
             }
         }
+        _.iterateObject(this.rowCompsByIndex, callback);
+        _.iterateObject(this.floatingBottomRowComps, callback);
+        _.iterateObject(this.floatingTopRowComps, callback);
         return eCells;
     };
     RowRenderer.prototype.refreshFloatingRowComps = function () {
         this.refreshFloatingRows(this.floatingTopRowComps, this.pinnedRowModel.getPinnedTopRowData(), this.rowContainers.floatingTopPinnedLeft, this.rowContainers.floatingTopPinnedRight, this.rowContainers.floatingTop, this.rowContainers.floatingTopFullWidth);
-        this.refreshFloatingRows(this.floatingBottomRowComps, this.pinnedRowModel.getPinnedBottomRowData(), this.rowContainers.floatingBottomPinnedLeft, this.rowContainers.floatingBottomPinnedRight, this.rowContainers.floatingBottom, this.rowContainers.floatingBottomFullWith);
+        this.refreshFloatingRows(this.floatingBottomRowComps, this.pinnedRowModel.getPinnedBottomRowData(), this.rowContainers.floatingBottomPinnedLeft, this.rowContainers.floatingBottomPinnedRight, this.rowContainers.floatingBottom, this.rowContainers.floatingBottomFullWidth);
     };
     RowRenderer.prototype.refreshFloatingRows = function (rowComps, rowNodes, pinnedLeftContainerComp, pinnedRightContainerComp, bodyContainerComp, fullWidthContainerComp) {
         var _this = this;
@@ -284,7 +284,7 @@ var RowRenderer = /** @class */ (function (_super) {
         });
     };
     RowRenderer.prototype.getCellToRestoreFocusToAfterRefresh = function (params) {
-        var focusedCell = params.suppressKeepFocus ? null : this.focusedCellController.getFocusCellToUseAfterRefresh();
+        var focusedCell = params.suppressKeepFocus ? null : this.focusController.getFocusCellToUseAfterRefresh();
         if (_.missing(focusedCell)) {
             return null;
         }
@@ -297,10 +297,7 @@ var RowRenderer = /** @class */ (function (_super) {
         var activeElement = document.activeElement;
         var domData = this.gridOptionsWrapper.getDomData(activeElement, CellComp.DOM_DATA_KEY_CELL_COMP);
         var elementIsNotACellDev = _.missing(domData);
-        if (elementIsNotACellDev) {
-            return null;
-        }
-        return focusedCell;
+        return elementIsNotACellDev ? null : focusedCell;
     };
     // gets called after changes to the model.
     RowRenderer.prototype.redrawAfterModelUpdate = function (params) {
@@ -371,7 +368,7 @@ var RowRenderer = /** @class */ (function (_super) {
     // edited cell).
     RowRenderer.prototype.restoreFocusedCell = function (cellPosition) {
         if (cellPosition) {
-            this.focusedCellController.setFocusedCell(cellPosition.rowIndex, cellPosition.column, cellPosition.rowPinned, true);
+            this.focusController.setFocusedCell(cellPosition.rowIndex, cellPosition.column, cellPosition.rowPinned, true);
         }
     };
     RowRenderer.prototype.stopEditing = function (cancel) {
@@ -517,8 +514,8 @@ var RowRenderer = /** @class */ (function (_super) {
     };
     RowRenderer.prototype.binRowComps = function (recycleRows) {
         var _this = this;
-        var indexesToRemove;
         var rowsToRecycle = {};
+        var indexesToRemove;
         if (recycleRows) {
             indexesToRemove = [];
             _.iterateObject(this.rowCompsByIndex, function (index, rowComp) {
@@ -842,7 +839,7 @@ var RowRenderer = /** @class */ (function (_super) {
         var REMOVE_ROW = false;
         var KEEP_ROW = true;
         var rowNode = rowComp.getRowNode();
-        var rowHasFocus = this.focusedCellController.isRowNodeFocused(rowNode);
+        var rowHasFocus = this.focusController.isRowNodeFocused(rowNode);
         var rowIsEditing = rowComp.isEditing();
         var rowIsDetail = rowNode.detail;
         var mightWantToKeepRow = rowHasFocus || rowIsEditing || rowIsDetail;
@@ -870,9 +867,7 @@ var RowRenderer = /** @class */ (function (_super) {
     };
     RowRenderer.prototype.getRenderedNodes = function () {
         var renderedRows = this.rowCompsByIndex;
-        return Object.keys(renderedRows).map(function (key) {
-            return renderedRows[key].getRowNode();
-        });
+        return Object.keys(renderedRows).map(function (key) { return renderedRows[key].getRowNode(); });
     };
     // we use index for rows, but column object for columns, as the next column (by index) might not
     // be visible (header grouping) so it's not reliable, so using the column object instead.
@@ -954,6 +949,10 @@ var RowRenderer = /** @class */ (function (_super) {
         // the spanning.
         this.ensureCellVisible(nextCell); // ensureCellVisible first, to make sure nextCell is rendered
         var cellComp = this.getComponentForCell(nextCell);
+        // not guaranteed to have a cellComp when using the SSRM as blocks are loading.
+        if (!cellComp) {
+            return;
+        }
         nextCell = cellComp.getCellPosition();
         // we call this again, as nextCell can be different to it's previous value due to Column Spanning
         // (ie if cursor moving from right to left, and cell is spanning columns, then nextCell was the
@@ -961,7 +960,7 @@ var RowRenderer = /** @class */ (function (_super) {
         // ensureCellVisible again, then we could only be showing the last portion (last column) of the
         // merged cells.
         this.ensureCellVisible(nextCell);
-        this.focusedCellController.setFocusedCell(nextCell.rowIndex, nextCell.column, nextCell.rowPinned, true);
+        this.focusController.setFocusedCell(nextCell.rowIndex, nextCell.column, nextCell.rowPinned, true);
         if (this.rangeController) {
             this.rangeController.setRangeToCell(nextCell);
         }
@@ -1038,7 +1037,7 @@ var RowRenderer = /** @class */ (function (_super) {
         }
     };
     RowRenderer.prototype.tabToNextCell = function (backwards) {
-        var focusedCell = this.focusedCellController.getFocusedCell();
+        var focusedCell = this.focusController.getFocusedCell();
         // if no focus, then cannot navigate
         if (_.missing(focusedCell)) {
             return false;
@@ -1247,8 +1246,8 @@ var RowRenderer = /** @class */ (function (_super) {
         Autowired("loggerFactory")
     ], RowRenderer.prototype, "loggerFactory", void 0);
     __decorate([
-        Autowired("focusedCellController")
-    ], RowRenderer.prototype, "focusedCellController", void 0);
+        Autowired("focusController")
+    ], RowRenderer.prototype, "focusController", void 0);
     __decorate([
         Autowired("cellNavigationService")
     ], RowRenderer.prototype, "cellNavigationService", void 0);

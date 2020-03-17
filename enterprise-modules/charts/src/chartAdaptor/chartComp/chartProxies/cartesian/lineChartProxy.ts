@@ -1,13 +1,13 @@
-import { _, LineSeriesOptions, CartesianChartOptions } from "@ag-grid-community/core";
-import { ChartBuilder } from "../../../../charts/chartBuilder";
-import { ChartProxyParams, UpdateChartParams } from "../chartProxy";
-import { LineSeries } from "../../../../charts/chart/series/cartesian/lineSeries";
-import { CartesianChartProxy } from "./cartesianChartProxy";
-import { LineSeriesOptions as InternalLineSeriesOptions } from "../../../../charts/chartOptions";
-import { CartesianChart } from "../../../../charts/chart/cartesianChart";
-import { TimeAxis } from "../../../../charts/chart/axis/timeAxis";
-import { CategoryAxis } from "../../../../charts/chart/axis/categoryAxis";
-import { isDate } from '../../typeChecker';
+import {CartesianChartOptions, LineSeriesOptions} from "@ag-grid-community/core";
+import {
+    CartesianChart,
+    ChartBuilder,
+    LineSeries,
+    LineSeriesOptions as InternalLineSeriesOptions
+} from "ag-charts-community";
+import {ChartProxyParams, UpdateChartParams} from "../chartProxy";
+import {CartesianChartProxy} from "./cartesianChartProxy";
+import {isDate} from '../../typeChecker';
 
 export class LineChartProxy extends CartesianChartProxy<LineSeriesOptions> {
     public constructor(params: ChartProxyParams) {
@@ -17,19 +17,24 @@ export class LineChartProxy extends CartesianChartProxy<LineSeriesOptions> {
         this.recreateChart();
     }
 
-    protected createChart(options: CartesianChartOptions<LineSeriesOptions>): CartesianChart {
+    protected createChart(options?: CartesianChartOptions<LineSeriesOptions>): CartesianChart {
         const { grouping, parentElement } = this.chartProxyParams;
 
-        return ChartBuilder[grouping ? "createGroupedLineChart" : "createLineChart"](parentElement, options);
+        return ChartBuilder[grouping ? "createGroupedLineChart" : "createLineChart"](parentElement, options || this.chartOptions);
     }
 
     public update(params: UpdateChartParams): void {
+        this.chartProxyParams.grouping = params.grouping;
+
         if (params.fields.length === 0) {
             this.chart.removeAllSeries();
             return;
         }
 
-        this.updateAxes(params.data[0], params.category.id);
+        const testDatum = params.data[0];
+        const testValue = testDatum && testDatum[params.category.id];
+
+        this.updateAxes(isDate(testValue) ? 'time' : 'category');
 
         const { chart } = this;
         const fieldIds = params.fields.map(f => f.colId);
@@ -62,7 +67,8 @@ export class LineChartProxy extends CartesianChartProxy<LineSeriesOptions> {
                 lineSeries.xName = params.category.name;
                 lineSeries.yKey = f.colId;
                 lineSeries.yName = f.displayName;
-                lineSeries.fill = fill;
+                lineSeries.marker.fill = fill;
+                lineSeries.marker.stroke = stroke;
                 lineSeries.stroke = fill; // this is deliberate, so that the line colours match the fills of other series
             } else {
                 const { seriesDefaults } = this.chartOptions;
@@ -102,32 +108,6 @@ export class LineChartProxy extends CartesianChartProxy<LineSeriesOptions> {
         this.updateLabelRotation(params.category.id);
     }
 
-    private updateAxes(testDatum: any, categoryKey: string): void {
-        const { chartOptions } = this;
-
-        if (chartOptions.xAxis.type) { return; }
-
-        const xAxis = this.chart.axes.filter(a => a.position === 'bottom')[0];
-
-        if (!xAxis) { return; }
-
-        const categoryIsDate = isDate(testDatum && testDatum[categoryKey]);
-
-        if (categoryIsDate && !(xAxis instanceof TimeAxis)) {
-            const options: CartesianChartOptions<LineSeriesOptions> = {
-                ...this.chartOptions,
-                xAxis: {
-                    ...this.chartOptions.xAxis,
-                    type: 'time',
-                }
-            };
-
-            this.recreateChart(options);
-        } else if (!categoryIsDate && !(xAxis instanceof CategoryAxis)) {
-            this.recreateChart();
-        }
-    }
-
     protected getDefaultOptions(): CartesianChartOptions<LineSeriesOptions> {
         const options = this.getDefaultCartesianChartOptions() as CartesianChartOptions<LineSeriesOptions>;
 
@@ -141,7 +121,7 @@ export class LineChartProxy extends CartesianChartProxy<LineSeriesOptions> {
             },
             marker: {
                 enabled: true,
-                type: 'circle',
+                shape: 'circle',
                 size: 6,
                 strokeWidth: 1,
             },

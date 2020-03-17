@@ -1,6 +1,6 @@
 {
   "name": "ag-grid-community",
-  "version": "22.1.1",
+  "version": "23.0.0",
   "description": "Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components",
   "main": "./dist/ag-grid-community.cjs.js",
   "typings": "./main.d.ts",
@@ -16,11 +16,11 @@
     "initIntelliJ": "cp .idea/workspace.xml.default .idea/workspace.xml",
     "init": "npm run initLatest && npm run updateAndRebuild",
     "updateSubModules": "sh ./scripts/updateSubModules.sh",
-    "clean": "npx lerna clean --yes",
+    "clean": "npx lerna run clean && npx lerna clean --yes",
     "bootstrap": "npx lerna bootstrap --no-ci --ignore ag-grid-charts-example",
     "build": "npx lerna run build --ignore ag-grid-polymer-example --ignore ag-grid-charts-example",
     "package": "npx lerna run package --parallel --ignore ag-grid-polymer-example --ignore ag-grid-charts-example",
-    "test": "npx lerna run test",
+    "test": "npx lerna run test --stream",
     "cleanCoreDependencies": "npx lerna clean --yes --scope ag-grid-angular --scope ag-grid-react --scope ag-grid-vue --scope ag-grid-docs",
     "bootstrapCoreDependencies": "npx lerna bootstrap --scope ag-grid-angular --scope ag-grid-react --scope ag-grid-vue --scope ag-grid-docs",
     "buildCoreDependencies": "npx lerna run build --scope ag-grid-angular --scope ag-grid-react --scope ag-grid-vue --scope ag-grid-docs",
@@ -33,6 +33,7 @@
     "buildCommunityModules": "node -e 'require(\"./scripts/modules/lernaModules.js\").buildCommunityModules()'",
     "buildEnterpriseModules": "node -e 'require(\"./scripts/modules/lernaModules.js\").buildEnterpriseModules()'",
     "buildModules": "node -e 'require(\"./scripts/modules/lernaModules.js\").buildModules()'",
+    "buildChartsModules": "node -e 'require(\"./scripts/modules/lernaModules.js\").buildChartsModules()'",
     "testCommunityModules": "node -e 'require(\"./scripts/modules/lernaModules.js\").testCommunityModules()'",
     "testEnterpriseModules": "node -e 'require(\"./scripts/modules/lernaModules.js\").testEnterpriseModules()'",
     "testModules": "node -e 'require(\"./scripts/modules/lernaModules.js\").testModules()'",
@@ -43,18 +44,21 @@
     "buildAngular": "npx lerna run build --scope @ag-grid-community/core --scope ag-grid-angular",
     "buildVue": "npx lerna run build --scope @ag-grid-community/core --scope ag-grid-vue",
     "buildReact": "npx lerna run build --scope @ag-grid-community/core --scope ag-grid-react",
-    "docs": "cd packages/ag-grid-docs && npx gulp serve",
-    "docs-source-mod-only": "cd packages/ag-grid-docs && npx gulp serve-source-mod-only",
-    "docs-beta": "cd packages/ag-grid-docs && npx gulp serve-beta",
-    "docs-running-check": "cd packages/ag-grid-docs && npx gulp serve-check",
-    "updateAndRebuild": "npm run bootstrap && npm run build",
+    "docs-legacy": "cd grid-packages/ag-grid-docs && npx gulp serve-legacy",
+    "docs-source-mod-only": "cd grid-packages/ag-grid-docs && npx gulp serve-source-mod-only",
+    "docs": "cd grid-packages/ag-grid-docs && npm start",
+    "docs-running-check": "cd grid-packages/ag-grid-docs && npx gulp serve-check",
+    "updateAndRebuild": "npm i && npm run bootstrap && npm run build",
     "cleanAndRebuild": "npm run clean && npm run updateAndRebuild"
   },
   "devDependencies": {
     "archiver": "^3.0.0",
     "chokidar": "^3.2.2",
+    "command-line-args": "^5.1.1",
     "commander": "^3.0.2",
     "execa": "^3.2.0",
+    "fs-extra": "^8.1.0",
+    "glob": "^7.1.6",
     "inquirer": "^7.0.0",
     "lerna": "^3.18.3",
     "lighthouse": "^5.4.0",
@@ -65,7 +69,5 @@
     "typescript": "^3.7.2",
     "walk": "^2.3.14"
   },
-  "dependencies": {
-    "fs-extra": "^8.1.0"
-  }
+  "dependencies": {}
 }

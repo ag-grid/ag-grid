@@ -1,4 +1,4 @@
-// Type definitions for @ag-grid-community/core v22.1.1
+// Type definitions for @ag-grid-community/core v23.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { RowNode } from "./entities/rowNode";
@@ -11,6 +11,7 @@ import { FilterRequestSource } from "./filter/filterManager";
 import { ChartOptions, ChartType } from "./interfaces/iChartOptions";
 import { IFilterComp } from "./interfaces/iFilter";
 import { CellRange, CellRangeParams } from "./interfaces/iRangeController";
+import { ChartModel } from "./interfaces/IChartService";
 export { Events } from './eventKeys';
 export interface ModelUpdatedEvent extends AgGridEvent {
     /** If true, the grid will try and animate the rows to the new positions */
@@ -59,6 +60,8 @@ export interface PinnedRowDataChangedEvent extends AgGridEvent {
 export interface SelectionChangedEvent extends AgGridEvent {
 }
 export interface FilterChangedEvent extends AgGridEvent {
+    afterDataChange?: boolean;
+    afterFloatingFilter?: boolean;
 }
 export interface FilterModifiedEvent extends AgGridEvent {
     filterInstance: IFilterComp;
@@ -83,6 +86,7 @@ export interface ComponentStateChangedEvent extends AgGridEvent {
 }
 export interface DragEvent extends AgGridEvent {
     type: string;
+    target: HTMLElement;
 }
 export interface DragStartedEvent extends DragEvent {
 }
@@ -133,14 +137,23 @@ export interface RangeSelectionChangedEvent extends AgGridEvent {
     finished: boolean;
     started: boolean;
 }
+export interface ChartCreated extends AgGridEvent {
+    chartId: string;
+    chartModel: ChartModel;
+}
 export interface ChartRangeSelectionChanged extends AgGridEvent {
     id: string;
+    chartId: string;
     cellRange: CellRangeParams;
 }
-export interface ChartOptionsChanged extends AgEvent {
+export interface ChartOptionsChanged extends AgGridEvent {
+    chartId: string;
     chartType: ChartType;
     chartPalette: string;
     chartOptions: ChartOptions<any>;
+}
+export interface ChartDestroyed extends AgGridEvent {
+    chartId: string;
 }
 export interface ColumnGroupOpenedEvent extends AgGridEvent {
     columnGroup: OriginalColumnGroup;

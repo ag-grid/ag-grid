@@ -15,30 +15,28 @@ var __extends = (this && this.__extends) || (function () {
 Object.defineProperty(exports, "__esModule", { value: true });
 var core_1 = require("@ag-grid-community/core");
 var miniChartWithAxes_1 = require("./miniChartWithAxes");
-var linearScale_1 = require("../../../../../charts/scale/linearScale");
-var clipRect_1 = require("../../../../../charts/scene/clipRect");
-var arc_1 = require("../../../../../charts/scene/shape/arc");
+var ag_charts_community_1 = require("ag-charts-community");
 var MiniBubble = /** @class */ (function (_super) {
     __extends(MiniBubble, _super);
-    function MiniBubble(parent, fills, strokes) {
-        var _this = _super.call(this, parent, "bubbleTooltip") || this;
+    function MiniBubble(container, fills, strokes) {
+        var _this = _super.call(this, container, "bubbleTooltip") || this;
         var size = _this.size;
         var padding = _this.padding;
         // [x, y, radius] triples
         var data = [
             [[0.1, 0.3, 5], [0.5, 0.4, 7], [0.2, 0.8, 7]], [[0.8, 0.7, 5], [0.7, 0.3, 9]]
         ];
-        var xScale = linearScale_1.default();
+        var xScale = ag_charts_community_1.linearScale();
         xScale.domain = [0, 1];
         xScale.range = [padding * 2, size - padding];
-        var yScale = linearScale_1.default();
+        var yScale = ag_charts_community_1.linearScale();
         yScale.domain = [0, 1];
         yScale.range = [size - padding, padding];
         var points = [];
         data.forEach(function (series) {
             series.forEach(function (_a) {
                 var x = _a[0], y = _a[1], radius = _a[2];
-                var arc = new arc_1.Arc();
+                var arc = new ag_charts_community_1.Arc();
                 arc.strokeWidth = 1;
                 arc.centerX = xScale.convert(x);
                 arc.centerY = yScale.convert(y);
@@ -49,7 +47,7 @@ var MiniBubble = /** @class */ (function (_super) {
         });
         _this.points = points;
         _this.updateColors(fills, strokes);
-        var clipRect = new clipRect_1.ClipRect();
+        var clipRect = new ag_charts_community_1.ClipRect();
         clipRect.x = padding;
         clipRect.y = padding;
         clipRect.width = size - padding * 2;

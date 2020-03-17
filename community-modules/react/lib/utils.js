@@ -1,4 +1,4 @@
-// @ag-grid-community/react v22.1.1
+// @ag-grid-community/react v23.0.0
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 // effectively Object.assign - here for IE compatibility
@@ -8,3 +8,5 @@ exports.assignProperties = function (to, from) {
         to[key] = from[key];
     });
 };
+
+//# sourceMappingURL=utils.js.map

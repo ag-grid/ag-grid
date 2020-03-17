@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v22.1.1
+ * @version v23.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -34,7 +34,6 @@ var AgDialog = /** @class */ (function (_super) {
         _this.RESIZE_TEMPLATE = "\n        <div class=\"ag-resizer-wrapper\">\n            <div ref=\"eTopLeftResizer\" class=\"ag-resizer ag-resizer-topLeft\"></div>\n            <div ref=\"eTopResizer\" class=\"ag-resizer ag-resizer-top\"></div>\n            <div ref=\"eTopRightResizer\" class=\"ag-resizer ag-resizer-topRight\"></div>\n            <div ref=\"eRightResizer\" class=\"ag-resizer ag-resizer-right\"></div>\n            <div ref=\"eBottomRightResizer\" class=\"ag-resizer ag-resizer-bottomRight\"></div>\n            <div ref=\"eBottomResizer\" class=\"ag-resizer ag-resizer-bottom\"></div>\n            <div ref=\"eBottomLeftResizer\" class=\"ag-resizer ag-resizer-bottomLeft\"></div>\n            <div ref=\"eLeftResizer\" class=\"ag-resizer ag-resizer-left\"></div>\n        </div>\n    ";
         _this.MAXIMIZE_BTN_TEMPLATE = "<div class=\"ag-dialog-button\"></span>";
         _this.resizable = {};
-        _this.isResizable = false;
         _this.movable = false;
         _this.isMoving = false;
         _this.isMaximizable = false;
@@ -237,7 +236,6 @@ var AgDialog = /** @class */ (function (_super) {
     };
     AgDialog.prototype.setResizable = function (resizable) {
         var _this = this;
-        var isResizable = false;
         if (typeof resizable === 'boolean') {
             resizable = {
                 topLeft: resizable,
@@ -265,7 +263,6 @@ var AgDialog = /** @class */ (function (_super) {
                 if (val) {
                     _this.dragService.addDragSource(params);
                     el.style.pointerEvents = 'all';
-                    isResizable = true;
                 }
                 else {
                     _this.dragService.removeDragSource(params);
@@ -274,25 +271,25 @@ var AgDialog = /** @class */ (function (_super) {
                 _this.resizerMap[s].dragSource = val ? params : undefined;
             }
         });
-        this.isResizable = isResizable;
     };
     AgDialog.prototype.setMovable = function (movable) {
-        if (movable !== this.movable) {
-            this.movable = movable;
-            var params = this.moveElementDragListener || {
-                eElement: this.moveElement,
-                onDragStart: this.onMoveStart.bind(this),
-                onDragging: this.onMove.bind(this),
-                onDragStop: this.onMoveEnd.bind(this)
-            };
-            if (movable) {
-                this.dragService.addDragSource(params);
-                this.moveElementDragListener = params;
-            }
-            else {
-                this.dragService.removeDragSource(params);
-                this.moveElementDragListener = undefined;
-            }
+        if (movable === this.movable) {
+            return;
+        }
+        this.movable = movable;
+        var params = this.moveElementDragListener || {
+            eElement: this.moveElement,
+            onDragStart: this.onMoveStart.bind(this),
+            onDragging: this.onMove.bind(this),
+            onDragStop: this.onMoveEnd.bind(this)
+        };
+        if (movable) {
+            this.dragService.addDragSource(params);
+            this.moveElementDragListener = params;
+        }
+        else {
+            this.dragService.removeDragSource(params);
+            this.moveElementDragListener = undefined;
         }
     };
     AgDialog.prototype.setMaximizable = function (maximizable) {
@@ -313,7 +310,9 @@ var AgDialog = /** @class */ (function (_super) {
         this.getContext().wireBean(maximizeButtonComp);
         var eGui = maximizeButtonComp.getGui();
         eGui.appendChild(this.maximizeIcon = _.createIconNoSpan('maximize', this.gridOptionsWrapper));
+        _.addCssClass(this.maximizeIcon, 'ag-panel-title-bar-button-icon');
         eGui.appendChild(this.minimizeIcon = _.createIconNoSpan('minimize', this.gridOptionsWrapper));
+        _.addCssClass(this.minimizeIcon, 'ag-panel-title-bar-button-icon');
         _.addCssClass(this.minimizeIcon, 'ag-hidden');
         maximizeButtonComp.addDestroyableEventListener(eGui, 'click', this.toggleMaximize.bind(this));
         this.addTitleBarButton(maximizeButtonComp, 0);

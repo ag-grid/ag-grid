@@ -15,8 +15,8 @@ import { ChartType } from "@ag-grid-community/core";
 import { MiniStackedColumn } from "./miniStackedColumn";
 var MiniNormalizedColumn = /** @class */ (function (_super) {
     __extends(MiniNormalizedColumn, _super);
-    function MiniNormalizedColumn(parent, fills, strokes) {
-        return _super.call(this, parent, fills, strokes, MiniNormalizedColumn.data, [0, 10], "normalizedColumnTooltip") || this;
+    function MiniNormalizedColumn(container, fills, strokes) {
+        return _super.call(this, container, fills, strokes, MiniNormalizedColumn.data, [0, 10], "normalizedColumnTooltip") || this;
     }
     MiniNormalizedColumn.chartType = ChartType.NormalizedColumn;
     MiniNormalizedColumn.data = [

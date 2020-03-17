@@ -197,6 +197,7 @@ export class HeaderGroupWrapperComp extends Component {
         const dragSource: DragSource = {
             type: DragSourceType.HeaderCell,
             eElement: eHeaderGroup,
+            defaultIconName: DragAndDropService.ICON_HIDE,
             dragItemName: displayName,
             // we add in the original group leaf columns, so we move both visible and non-visible items
             getDragItem: this.getDragItemForGroup.bind(this),

@@ -8,6 +8,10 @@ import { BeanStub } from "../context/beanStub";
 import { Column } from "../entities/column";
 import { _ } from "../utils";
 
+export interface IRowDragItem extends DragItem {
+    defaultTextValue: string;
+}
+
 export class RowDragComp extends Component {
     private readonly beans: Beans;
     private readonly rowNode: RowNode;
@@ -15,7 +19,7 @@ export class RowDragComp extends Component {
     private readonly cellValue: string;
 
     constructor(rowNode: RowNode, column: Column, cellValue: string, beans: Beans) {
-        super(`<div class="ag-row-drag"></div>`);
+        super(`<div class="ag-drag-handle ag-row-drag" role="presentation"></div>`);
         this.rowNode = rowNode;
         this.column = column;
         this.cellValue = cellValue;
@@ -37,6 +41,15 @@ export class RowDragComp extends Component {
         this.addFeature(strategy, this.beans.context);
     }
 
+    private getSelectedCount(): number {
+        const multiRowEnabled = this.beans.gridOptionsWrapper.isEnableMultiRowDragging();
+        if (!multiRowEnabled) { return 1; }
+
+        const selection = this.beans.selectionController.getSelectedNodes();
+
+        return selection.indexOf(this.rowNode) !== -1 ? selection.length : 1;
+    }
+
     // returns true if all compatibility items work out
     private checkCompatibility(): void {
         const managed = this.beans.gridOptionsWrapper.isRowDragManaged();
@@ -51,14 +64,26 @@ export class RowDragComp extends Component {
     }
 
     private addDragSource(): void {
-        const dragItem: DragItem = {
-            rowNode: this.rowNode
+        const dragItem: IRowDragItem = {
+            rowNode: this.rowNode,
+            columns: [this.column],
+            defaultTextValue: this.cellValue
         };
+
+        const rowDragText = this.column.getColDef().rowDragText;
 
         const dragSource: DragSource = {
             type: DragSourceType.RowDrag,
             eElement: this.getGui(),
-            dragItemName: this.cellValue,
+            dragItemName: () => {
+                if (rowDragText) {
+                    return rowDragText(dragItem);
+                }
+
+                const count = this.getSelectedCount();
+
+                return count === 1 ? this.cellValue : `${count} rows`;
+            },
             getDragItem: () => dragItem,
             dragStartPixels: 0
         };

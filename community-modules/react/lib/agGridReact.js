@@ -1,4 +1,4 @@
-// @ag-grid-community/react v22.1.1
+// @ag-grid-community/react v23.0.0
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -88,10 +88,7 @@ var AgGridReact = /** @class */ (function (_super) {
             resolve(null);
             return;
         }
-        if (reactComponent.isStatelessComponent() && reactComponent.statelessComponentRendered()) {
-            resolve(null);
-        }
-        else if (!reactComponent.isStatelessComponent() && reactComponent.getFrameworkComponentInstance()) {
+        if (reactComponent.rendered()) {
             resolve(null);
         }
         else {
@@ -218,6 +215,9 @@ var AgGridReact = /** @class */ (function (_super) {
         }
         this.destroyed = true;
     };
+    AgGridReact.prototype.isDisableStaticMarkup = function () {
+        return !!this.props.disableStaticMarkup;
+    };
     AgGridReact.MAX_COMPONENT_CREATION_TIME = 1000; // a second should be more than enough to instantiate a component
     return AgGridReact;
 }(react_1.Component));
@@ -244,8 +244,10 @@ var ReactFrameworkComponentWrapper = /** @class */ (function (_super) {
         _this.agGridReact = agGridReact;
         return _this;
     }
-    ReactFrameworkComponentWrapper.prototype.createWrapper = function (UserReactComponent) {
-        return new reactComponent_1.ReactComponent(UserReactComponent, this.agGridReact);
+    ReactFrameworkComponentWrapper.prototype.createWrapper = function (UserReactComponent, componentType) {
+        return new reactComponent_1.ReactComponent(UserReactComponent, this.agGridReact, componentType);
     };
     return ReactFrameworkComponentWrapper;
 }(core_1.BaseComponentWrapper));
+
+//# sourceMappingURL=agGridReact.js.map

@@ -20,8 +20,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 import { _, AgAngleSelect, AgSlider, Autowired, Component, PostConstruct, RefSelector, } from "@ag-grid-community/core";
 import { AxisTicksPanel } from "./axisTicksPanel";
 import { FontPanel } from "../fontPanel";
-import { find } from "../../../../../charts/util/array";
-import { ChartAxisPosition } from "../../../../../charts/chart/chartAxis";
+import { ChartAxisPosition, find } from "ag-charts-community";
 var AxisPanel = /** @class */ (function (_super) {
     __extends(AxisPanel, _super);
     function AxisPanel(chartController) {
@@ -31,29 +30,55 @@ var AxisPanel = /** @class */ (function (_super) {
         return _this;
     }
     AxisPanel.prototype.init = function () {
-        this.setTemplate(AxisPanel.TEMPLATE);
+        var groupParams = {
+            cssIdentifier: 'charts-format-top-level',
+            direction: 'vertical'
+        };
+        this.setTemplate(AxisPanel.TEMPLATE, { axisGroup: groupParams });
         this.initAxis();
         this.initAxisTicks();
         this.initAxisLabels();
     };
     AxisPanel.prototype.initAxis = function () {
         var _this = this;
+        var chartTranslator = this.chartTranslator;
         this.axisGroup
-            .setTitle(this.chartTranslator.translate("axis"))
+            .setTitle(chartTranslator.translate("axis"))
             .toggleGroupExpand(false)
             .hideEnabledCheckbox(true);
         this.axisColorInput
-            .setLabel(this.chartTranslator.translate("color"))
+            .setLabel(chartTranslator.translate("color"))
             .setLabelWidth("flex")
             .setInputWidth(45)
             .setValue(this.getChartProxy().getAxisProperty("line.color"))
             .onValueChange(function (newColor) { return _this.getChartProxy().setAxisProperty("line.color", newColor); });
         this.axisLineWidthSlider
-            .setLabel(this.chartTranslator.translate("thickness"))
+            .setLabel(chartTranslator.translate("thickness"))
             .setMaxValue(10)
             .setTextFieldWidth(45)
             .setValue(this.getChartProxy().getAxisProperty("line.width"))
             .onValueChange(function (newValue) { return _this.getChartProxy().setAxisProperty("line.width", newValue); });
+        if (_.includes(['line', 'scatter', 'bubble'], this.chartController.getChartType()) && !this.chartController.isGrouping()) {
+            var options_1 = [
+                { value: '', text: chartTranslator.translate('automatic') }
+            ];
+            ['category', 'time', 'number'].forEach(function (type) {
+                options_1.push({ value: type, text: chartTranslator.translate(type) });
+            });
+            this.xAxisTypeSelect
+                .setLabel(chartTranslator.translate('xType'))
+                .setLabelWidth('flex')
+                .addOptions(options_1)
+                .setValue(this.getChartProxy().getChartOption('xAxis.type') || '')
+                .onValueChange(function (newValue) {
+                var chartProxy = _this.getChartProxy();
+                chartProxy.setChartOption('xAxis.type', newValue.length && newValue);
+                _this.chartController.updateForDataChange();
+            });
+        }
+        else {
+            this.xAxisTypeSelect.setDisplayed(false);
+        }
     };
     AxisPanel.prototype.initAxisTicks = function () {
         var axisTicksComp = this.wireBean(new AxisTicksPanel(this.chartController));
@@ -144,16 +169,19 @@ var AxisPanel = /** @class */ (function (_super) {
         this.destroyActivePanels();
         _super.prototype.destroy.call(this);
     };
-    AxisPanel.TEMPLATE = "<div>\n            <ag-group-component ref=\"axisGroup\">\n                <ag-color-picker ref=\"axisColorInput\"></ag-color-picker>\n                <ag-slider ref=\"axisLineWidthSlider\"></ag-slider>\n            </ag-group-component>\n        </div>";
+    AxisPanel.TEMPLATE = "<div>\n            <ag-group-component ref=\"axisGroup\">\n                <ag-color-picker ref=\"axisColorInput\"></ag-color-picker>\n                <ag-slider ref=\"axisLineWidthSlider\"></ag-slider>\n                <ag-select ref=\"xAxisTypeSelect\"></ag-select>\n            </ag-group-component>\n        </div>";
     __decorate([
         RefSelector('axisGroup')
     ], AxisPanel.prototype, "axisGroup", void 0);
     __decorate([
+        RefSelector('axisColorInput')
+    ], AxisPanel.prototype, "axisColorInput", void 0);
+    __decorate([
         RefSelector('axisLineWidthSlider')
     ], AxisPanel.prototype, "axisLineWidthSlider", void 0);
     __decorate([
-        RefSelector('axisColorInput')
-    ], AxisPanel.prototype, "axisColorInput", void 0);
+        RefSelector('xAxisTypeSelect')
+    ], AxisPanel.prototype, "xAxisTypeSelect", void 0);
     __decorate([
         Autowired('chartTranslator')
     ], AxisPanel.prototype, "chartTranslator", void 0);

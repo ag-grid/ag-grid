@@ -1,0 +1,130 @@
+@import "../../ag-theme-base/sass/ag-theme-base";
+@import "./ag-theme-balham-default-params";
+
+@mixin ag-theme-balham($params: ()) {
+    
+    $params: ag-process-theme-variables($params, $ag-theme-balham-default-params);
+    @include ag-theme-base($params);
+
+    .ag-filter-toolpanel-header,
+    .ag-filter-toolpanel-search,
+    .ag-status-bar,
+    .ag-header-row {
+        font-weight: 600;
+        color: ag-param(header-foreground-color);
+    }
+
+    %ag-text-input {
+        @include ag-theme-rtl((
+            padding-left: ag-param(grid-size),
+        ));
+    }
+
+    .ag-column-drop-vertical-empty-message, .ag-status-bar {
+        font-weight: 600;
+        color: ag-param(disabled-foreground-color);
+    }
+    .ag-dnd-ghost {
+        font-weight: 600;
+    }
+
+    .ag-tab {
+        border: 1px solid transparent;
+        padding: ag-param(grid-size) ag-param(grid-size) * 2;
+        margin: ag-param(grid-size);
+        margin-bottom: -1px; // shift down 1px to make tab background blend with area below
+    }
+
+    .ag-tab-selected {
+        background-color: ag-param(background-color);
+        border-color: ag-param(border-color);
+        border-bottom-color: transparent;
+    }
+
+    .ag-tabs-header {
+        border-bottom: 1px solid ag-param(border-color);
+    }
+
+    .ag-column-drop-cell {
+        height: ag-param(grid-size) * 6;
+    }
+
+    .ag-column-drop-vertical-title {
+        color: ag-param(foreground-color);
+    }
+
+    .ag-column-drop-vertical-cell {
+        margin-left: ag-param(grid-size) * 2;
+        margin-right: ag-param(grid-size) * 2;
+    }
+
+    .ag-column-drop-vertical-cell-text {
+        margin-left: ag-param(grid-size) * 2;
+    }
+    
+    .ag-column-drop-vertical-icon {
+        color: ag-param(secondary-foreground-color);
+    }
+    
+    .ag-column-drop-vertical-empty-message {
+        @include ag-theme-rtl((
+            padding-left: ag-param(icon-size) + ag-param(grid-size) * 2,
+            padding-right: ag-param(grid-size)
+        ));
+    }
+
+    .ag-column-drop-horizontal {
+        height: ag-param(header-height);
+    }
+
+    .ag-column-drop-empty {
+        color: ag-param(disabled-foreground-color);
+    }
+
+    .ag-column-drop-horizontal-cell-text {
+        margin-left: ag-param(grid-size) * 2;
+    }
+
+    .ag-column-drop-vertical {
+        padding-top: ag-param(grid-size) * 2;
+    }
+
+    .ag-menu-header {
+        background-color: ag-param(header-background-color);
+    }
+
+    .ag-overlay-loading-center {
+        background-color: ag-param(background-color);
+        border: 1px solid ag-param(border-color);
+        color: ag-param(foreground-color);
+        padding: ag-param(grid-size) * 4;
+    }
+
+    .ag-tooltip {
+        border: none;
+        background-color: #cbd0d3;
+    }
+
+    .ag-panel-title-bar-button-icon {
+        font-size: ag-param(icon-size) + ag-param(grid-size);
+    }
+    
+    .ag-chart-data-section,
+    .ag-chart-format-section {
+        padding-bottom: ag-param(grid-size) * 0.5;
+    }
+    
+    .ag-group-toolbar {
+        @if ag-param(subheader-background-color) {
+            background-color: rgba(ag-param(subheader-background-color), 0.5);
+        }
+    }
+
+    .ag-chart-tab {
+        padding-top: ag-param(grid-size) / 2;
+    }
+
+    .ag-charts-format-sub-level-group-item {
+        margin-bottom: ag-param(grid-size) * 1.5;
+    }
+}

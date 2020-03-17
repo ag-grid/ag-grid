@@ -72,6 +72,7 @@ class SideBarButtonComp extends Component {
     @Autowired("gridOptionsWrapper") private gridOptionsWrapper: GridOptionsWrapper;
 
     @RefSelector('eToggleButton') private eToggleButton: HTMLButtonElement;
+    @RefSelector('eIconWrapper') private eIconWrapper: HTMLElement;
 
     private readonly toolPanelDef: ToolPanelDef;
 
@@ -88,11 +89,7 @@ class SideBarButtonComp extends Component {
     private postConstruct(): void {
         const template = this.createTemplate();
         this.setTemplate(template);
-
-        const toggleButton = this.eToggleButton;
-        const iconDiv = toggleButton.querySelector('div') as HTMLElement;
-
-        iconDiv.insertAdjacentElement('afterbegin', _.createIconNoSpan(this.toolPanelDef.iconKey, this.gridOptionsWrapper));
+        this.eIconWrapper.insertAdjacentElement('afterbegin', _.createIconNoSpan(this.toolPanelDef.iconKey, this.gridOptionsWrapper));
         this.addDestroyableEventListener(this.eToggleButton, 'click', this.onButtonPressed.bind(this));
     }
 
@@ -102,9 +99,9 @@ class SideBarButtonComp extends Component {
         const label = translate(def.labelKey, def.labelDefault);
         const res =
             `<div class="ag-side-button">
-                <button type="button" ref="eToggleButton">
-                    <div></div>
-                    <span>${label}</span>
+                <button type="button" ref="eToggleButton" class="ag-side-button-button">
+                    <div ref="eIconWrapper" class="ag-side-button-icon-wrapper"></div>
+                    <span class="ag-side-button-label">${label}</span>
                 </button>
             </div>`;
         return res;

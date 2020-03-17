@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v22.1.1
+ * @version v23.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -22,8 +22,14 @@ import { _ } from "../utils";
 var AgAbstractField = /** @class */ (function (_super) {
     __extends(AgAbstractField, _super);
     function AgAbstractField() {
-        return _super !== null && _super.apply(this, arguments) || this;
+        var _this = _super !== null && _super.apply(this, arguments) || this;
+        _this.disabled = false;
+        return _this;
     }
+    AgAbstractField.prototype.postConstruct = function () {
+        _super.prototype.postConstruct.call(this);
+        _.addCssClass(this.getGui(), this.className);
+    };
     AgAbstractField.prototype.onValueChange = function (callbackFn) {
         var _this = this;
         this.addDestroyableEventListener(this, AgAbstractField.EVENT_CHANGED, function () {
@@ -50,6 +56,19 @@ var AgAbstractField = /** @class */ (function (_super) {
             this.dispatchEvent({ type: AgAbstractField.EVENT_CHANGED });
         }
         return this;
+    };
+    AgAbstractField.prototype.setDisabled = function (disabled) {
+        disabled = !!disabled;
+        var eGui = this.getGui();
+        if (disabled) {
+            eGui.setAttribute('disabled', 'true');
+        }
+        _.addOrRemoveCssClass(eGui, 'ag-disabled', disabled);
+        this.disabled = disabled;
+        return this;
+    };
+    AgAbstractField.prototype.isDisabled = function () {
+        return !!this.disabled;
     };
     AgAbstractField.EVENT_CHANGED = 'valueChange';
     return AgAbstractField;

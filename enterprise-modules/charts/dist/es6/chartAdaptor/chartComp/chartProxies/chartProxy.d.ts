@@ -1,19 +1,20 @@
-import { ChartOptions, ChartType, EventService, ProcessChartOptionsParams, SeriesOptions, PaddingOptions, DropShadowOptions, FontOptions, CaptionOptions } from "@ag-grid-community/core";
-import { Chart } from "../../../charts/chart/chart";
-import { ChartPalette, ChartPaletteName } from "../../../charts/chart/palettes";
+import { CaptionOptions, ChartOptions, ChartType, DropShadowOptions, EventService, FontOptions, PaddingOptions, ProcessChartOptionsParams, SeriesOptions, GridApi, ColumnApi } from "@ag-grid-community/core";
+import { Chart, ChartPalette, ChartPaletteName } from "ag-charts-community";
 export interface ChartProxyParams {
+    chartId: string;
     chartType: ChartType;
     width?: number;
     height?: number;
     parentElement: HTMLElement;
-    eventService: EventService;
-    categorySelected: boolean;
     grouping: boolean;
     document: Document;
     processChartOptions: (params: ProcessChartOptionsParams) => ChartOptions<SeriesOptions>;
     getChartPaletteName: () => ChartPaletteName;
     allowPaletteOverride: boolean;
     isDarkTheme: () => boolean;
+    eventService: EventService;
+    gridApi: GridApi;
+    columnApi: ColumnApi;
 }
 export interface FieldDefinition {
     colId: string;
@@ -21,6 +22,7 @@ export interface FieldDefinition {
 }
 export interface UpdateChartParams {
     data: any[];
+    grouping: boolean;
     category: {
         id: string;
         name: string;
@@ -28,16 +30,22 @@ export interface UpdateChartParams {
     fields: FieldDefinition[];
 }
 export declare abstract class ChartProxy<TChart extends Chart, TOptions extends ChartOptions<any>> {
+    protected readonly chartProxyParams: ChartProxyParams;
+    protected readonly chartId: string;
+    protected readonly chartType: ChartType;
+    protected readonly eventService: EventService;
+    private readonly gridApi;
+    private readonly columnApi;
     protected chart: TChart;
-    protected chartProxyParams: ChartProxyParams;
     protected customPalette: ChartPalette;
-    protected chartType: ChartType;
     protected chartOptions: TOptions;
     protected constructor(chartProxyParams: ChartProxyParams);
-    protected abstract createChart(options: TOptions): TChart;
+    protected abstract createChart(options?: TOptions): TChart;
     recreateChart(options?: TOptions): void;
     abstract update(params: UpdateChartParams): void;
-    getChart: () => TChart;
+    getChart(): TChart;
+    downloadChart(): void;
+    getChartImageDataURL(type?: string): string;
     private isDarkTheme;
     protected getFontColor: () => string;
     protected getAxisGridColor: () => string;
@@ -52,12 +60,12 @@ export declare abstract class ChartProxy<TChart extends Chart, TOptions extends 
     getSeriesOption<T = string>(expression: string): T;
     setSeriesOption(expression: string, value: any): void;
     setTitleOption(property: keyof CaptionOptions, value: any): void;
-    getChartPaddingOption: (property: import("@ag-grid-community/core").LegendPosition) => string;
+    getChartPaddingOption: (property: "left" | "right" | "top" | "bottom") => string;
     setChartPaddingOption(property: keyof PaddingOptions, value: number): void;
     getShadowEnabled: () => boolean;
     getShadowProperty(property: keyof DropShadowOptions): any;
     setShadowProperty(property: keyof DropShadowOptions, value: any): void;
-    protected raiseChartOptionsChangedEvent(): void;
+    raiseChartOptionsChangedEvent(): void;
     protected getDefaultFontOptions(): FontOptions;
     protected getDefaultDropShadowOptions(): DropShadowOptions;
     protected getPredefinedPalette(): ChartPalette;

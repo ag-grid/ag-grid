@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v22.1.1
+ * @version v23.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -11,13 +11,22 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
+var __spreadArrays = (this && this.__spreadArrays) || function () {
+    for (var s = 0, i = 0, il = arguments.length; i < il; i++) s += arguments[i].length;
+    for (var r = Array(s), k = 0, i = 0; i < il; i++)
+        for (var a = arguments[i], j = 0, jl = a.length; j < jl; j++, k++)
+            r[k] = a[j];
+    return r;
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 var dragAndDropService_1 = require("../dragAndDrop/dragAndDropService");
 var context_1 = require("../context/context");
 var eventKeys_1 = require("../eventKeys");
-var constants_1 = require("../constants");
+var general_1 = require("../utils/general");
 var RowDragFeature = /** @class */ (function () {
     function RowDragFeature(eContainer, gridPanel) {
+        this.isMultiRowDrag = false;
+        this.movingNodes = null;
         this.eContainer = eContainer;
         this.gridPanel = gridPanel;
     }
@@ -35,12 +44,24 @@ var RowDragFeature = /** @class */ (function () {
     RowDragFeature.prototype.getIconName = function () {
         return dragAndDropService_1.DragAndDropService.ICON_MOVE;
     };
+    RowDragFeature.prototype.getRowNodes = function (dragginEvent) {
+        var enableMultiRowDragging = this.gridOptionsWrapper.isEnableMultiRowDragging();
+        var selectedNodes = this.selectionController.getSelectedNodes();
+        var currentNode = dragginEvent.dragItem.rowNode;
+        if (enableMultiRowDragging && selectedNodes.indexOf(currentNode) !== -1) {
+            this.isMultiRowDrag = true;
+            return __spreadArrays(selectedNodes);
+        }
+        return [currentNode];
+    };
     RowDragFeature.prototype.onDragEnter = function (draggingEvent) {
         // when entering, we fire the enter event, then in onEnterOrDragging,
         // we also fire the move event. so we get both events when entering.
         this.dispatchEvent(eventKeys_1.Events.EVENT_ROW_DRAG_ENTER, draggingEvent);
         this.dragAndDropService.setGhostIcon(dragAndDropService_1.DragAndDropService.ICON_MOVE);
-        draggingEvent.dragItem.rowNode.setDragging(true);
+        this.getRowNodes(draggingEvent).forEach(function (rowNode, idx) {
+            rowNode.setDragging(true);
+        });
         this.onEnterOrDragging(draggingEvent);
     };
     RowDragFeature.prototype.onDragging = function (draggingEvent) {
@@ -50,7 +71,7 @@ var RowDragFeature = /** @class */ (function () {
         // this event is fired for enter and move
         this.dispatchEvent(eventKeys_1.Events.EVENT_ROW_DRAG_MOVE, draggingEvent);
         this.lastDraggingEvent = draggingEvent;
-        var pixel = this.normaliseForScroll(draggingEvent.y);
+        var pixel = this.mouseEventService.getNormalisedPosition(draggingEvent).y;
         var managedDrag = this.gridOptionsWrapper.isRowDragManaged();
         if (managedDrag) {
             this.doManagedDrag(draggingEvent, pixel);
@@ -58,23 +79,46 @@ var RowDragFeature = /** @class */ (function () {
         this.checkCenterForScrolling(pixel);
     };
     RowDragFeature.prototype.doManagedDrag = function (draggingEvent, pixel) {
-        var rowNode = draggingEvent.dragItem.rowNode;
-        var rowWasMoved = this.clientSideRowModel.ensureRowAtPixel(rowNode, pixel);
+        var _this = this;
+        var rowNodes = this.movingNodes = [draggingEvent.dragItem.rowNode];
+        if (this.isMultiRowDrag) {
+            rowNodes = this.movingNodes = __spreadArrays(this.selectionController.getSelectedNodes()).sort(function (a, b) { return _this.getRowIndexNumber(a) - _this.getRowIndexNumber(b); });
+        }
+        if (this.gridOptionsWrapper.isSuppressMoveWhenRowDragging()) {
+            this.clientSideRowModel.highlightRowAtPixel(rowNodes[0], pixel);
+        }
+        else {
+            this.moveRows(rowNodes, pixel);
+        }
+    };
+    RowDragFeature.prototype.getRowIndexNumber = function (rowNode) {
+        return parseInt(general_1._.last(rowNode.getRowIndexString().split('-')), 10);
+    };
+    RowDragFeature.prototype.moveRowAndClearHighlight = function (draggingEvent) {
+        var lastHighlightedRowNode = this.clientSideRowModel.getLastHighlightedRowNode();
+        var isBelow = lastHighlightedRowNode && lastHighlightedRowNode.highlighted === 'below';
+        var pixel = this.mouseEventService.getNormalisedPosition(draggingEvent).y;
+        var rowNodes = this.movingNodes;
+        var increment = isBelow ? 1 : 0;
+        rowNodes.forEach(function (rowNode) {
+            if (rowNode.rowTop < pixel) {
+                increment -= 1;
+            }
+        });
+        this.moveRows(rowNodes, pixel, increment);
+        this.clearRowHighlight();
+    };
+    RowDragFeature.prototype.clearRowHighlight = function () {
+        this.clientSideRowModel.highlightRowAtPixel(null);
+    };
+    RowDragFeature.prototype.moveRows = function (rowNodes, pixel, increment) {
+        if (increment === void 0) { increment = 0; }
+        var rowWasMoved = this.clientSideRowModel.ensureRowsAtPixel(rowNodes, pixel, increment);
         if (rowWasMoved) {
-            this.focusedCellController.clearFocusedCell();
+            this.focusController.clearFocusedCell();
             if (this.rangeController) {
                 this.rangeController.removeAllCellRanges();
             }
-        }
-    };
-    RowDragFeature.prototype.normaliseForScroll = function (pixel) {
-        var gridPanelHasScrolls = this.gridOptionsWrapper.getDomLayout() === constants_1.Constants.DOM_LAYOUT_NORMAL;
-        if (gridPanelHasScrolls) {
-            var pixelRange = this.gridPanel.getVScrollPosition();
-            return pixel + pixelRange.top;
-        }
-        else {
-            return pixel;
         }
     };
     RowDragFeature.prototype.checkCenterForScrolling = function (pixel) {
@@ -128,7 +172,7 @@ var RowDragFeature = /** @class */ (function () {
     //     public createEvent<T extends RowDragEvent>(type: string, clazz: {new(): T; }, draggingEvent: DraggingEvent) {
     // but it didn't work - i think it's because it only works with classes, and not interfaces, (the events are interfaces)
     RowDragFeature.prototype.dispatchEvent = function (type, draggingEvent) {
-        var yNormalised = this.normaliseForScroll(draggingEvent.y);
+        var yNormalised = this.mouseEventService.getNormalisedPosition(draggingEvent).y;
         var overIndex = -1;
         var overNode = null;
         var mouseIsPastLastRow = yNormalised > this.rowModel.getCurrentPageHeight();
@@ -164,14 +208,23 @@ var RowDragFeature = /** @class */ (function () {
     RowDragFeature.prototype.onDragLeave = function (draggingEvent) {
         this.dispatchEvent(eventKeys_1.Events.EVENT_ROW_DRAG_LEAVE, draggingEvent);
         this.stopDragging(draggingEvent);
+        this.clearRowHighlight();
     };
     RowDragFeature.prototype.onDragStop = function (draggingEvent) {
         this.dispatchEvent(eventKeys_1.Events.EVENT_ROW_DRAG_END, draggingEvent);
         this.stopDragging(draggingEvent);
+        if (this.gridOptionsWrapper.isRowDragManaged() &&
+            this.gridOptionsWrapper.isSuppressMoveWhenRowDragging()) {
+            this.moveRowAndClearHighlight(draggingEvent);
+        }
+        this.isMultiRowDrag = false;
+        this.movingNodes = null;
     };
     RowDragFeature.prototype.stopDragging = function (draggingEvent) {
         this.ensureIntervalCleared();
-        draggingEvent.dragItem.rowNode.setDragging(false);
+        this.getRowNodes(draggingEvent).forEach(function (rowNode, idx) {
+            rowNode.setDragging(false);
+        });
     };
     __decorate([
         context_1.Autowired('dragAndDropService')
@@ -180,14 +233,20 @@ var RowDragFeature = /** @class */ (function () {
         context_1.Autowired('rowModel')
     ], RowDragFeature.prototype, "rowModel", void 0);
     __decorate([
-        context_1.Autowired('focusedCellController')
-    ], RowDragFeature.prototype, "focusedCellController", void 0);
+        context_1.Autowired('focusController')
+    ], RowDragFeature.prototype, "focusController", void 0);
     __decorate([
         context_1.Autowired('gridOptionsWrapper')
     ], RowDragFeature.prototype, "gridOptionsWrapper", void 0);
     __decorate([
+        context_1.Autowired('selectionController')
+    ], RowDragFeature.prototype, "selectionController", void 0);
+    __decorate([
         context_1.Optional('rangeController')
     ], RowDragFeature.prototype, "rangeController", void 0);
+    __decorate([
+        context_1.Autowired('mouseEventService')
+    ], RowDragFeature.prototype, "mouseEventService", void 0);
     __decorate([
         context_1.Autowired('eventService')
     ], RowDragFeature.prototype, "eventService", void 0);

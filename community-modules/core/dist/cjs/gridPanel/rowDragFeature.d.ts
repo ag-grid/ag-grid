@@ -1,14 +1,17 @@
-// Type definitions for @ag-grid-community/core v22.1.1
+// Type definitions for @ag-grid-community/core v23.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { DraggingEvent, DragSourceType, DropTarget } from "../dragAndDrop/dragAndDropService";
 import { GridPanel } from "./gridPanel";
+import { RowNode } from "../entities/rowNode";
 export declare class RowDragFeature implements DropTarget {
     private dragAndDropService;
     private rowModel;
-    private focusedCellController;
+    private focusController;
     private gridOptionsWrapper;
+    private selectionController;
     private rangeController;
+    private mouseEventService;
     private eventService;
     private gridPanel;
     private clientSideRowModel;
@@ -18,16 +21,22 @@ export declare class RowDragFeature implements DropTarget {
     private movingIntervalId;
     private intervalCount;
     private lastDraggingEvent;
+    private isMultiRowDrag;
+    private movingNodes;
     constructor(eContainer: HTMLElement, gridPanel: GridPanel);
     private postConstruct;
     getContainer(): HTMLElement;
     isInterestedIn(type: DragSourceType): boolean;
     getIconName(): string;
+    getRowNodes(dragginEvent: DraggingEvent): RowNode[];
     onDragEnter(draggingEvent: DraggingEvent): void;
     onDragging(draggingEvent: DraggingEvent): void;
     private onEnterOrDragging;
     private doManagedDrag;
-    private normaliseForScroll;
+    private getRowIndexNumber;
+    private moveRowAndClearHighlight;
+    private clearRowHighlight;
+    private moveRows;
     private checkCenterForScrolling;
     private ensureIntervalStarted;
     private ensureIntervalCleared;

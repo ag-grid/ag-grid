@@ -7,6 +7,7 @@ import {
     ISimpleFilterParams,
     ISimpleFilterModel
 } from "../simpleFilter";
+import { AgInputTextField } from "../../../widgets/agInputTextField";
 
 export interface TextFilterModel extends ISimpleFilterModel {
     filter?: string;
@@ -30,9 +31,14 @@ export class TextFilter extends SimpleFilter<TextFilterModel> {
 
     private static readonly FILTER_TYPE = 'text';
 
-    public static DEFAULT_FILTER_OPTIONS = [SimpleFilter.CONTAINS, SimpleFilter.NOT_CONTAINS,
-        SimpleFilter.EQUALS, SimpleFilter.NOT_EQUAL,
-        SimpleFilter.STARTS_WITH, SimpleFilter.ENDS_WITH];
+    public static DEFAULT_FILTER_OPTIONS = [
+        SimpleFilter.CONTAINS,
+        SimpleFilter.NOT_CONTAINS,
+        SimpleFilter.EQUALS,
+        SimpleFilter.NOT_EQUAL,
+        SimpleFilter.STARTS_WITH,
+        SimpleFilter.ENDS_WITH
+    ];
 
     static DEFAULT_FORMATTER: TextFormatter = (from: string) => {
         return from;
@@ -65,17 +71,8 @@ export class TextFilter extends SimpleFilter<TextFilterModel> {
         }
     }
 
-    @RefSelector('eValue1')
-    private eValue1: HTMLInputElement;
-
-    @RefSelector('eValue2')
-    private eValue2: HTMLInputElement;
-
-    @RefSelector('eInputWrapper1')
-    private eInputWrapper1: HTMLElement;
-
-    @RefSelector('eInputWrapper2')
-    private eInputWrapper2: HTMLElement;
+    @RefSelector('eValue1') private eValue1: AgInputTextField;
+    @RefSelector('eValue2') private eValue2: AgInputTextField;
 
     private comparator: TextComparator;
     private formatter: TextFormatter;
@@ -86,19 +83,22 @@ export class TextFilter extends SimpleFilter<TextFilterModel> {
         return 500;
     }
 
-    private getValue(element: HTMLInputElement): string {
-        let val = element.value;
+    private getValue(inputField: AgInputTextField): string {
+        let val = inputField.getValue();
+
         val = _.makeNull(val);
+
         if (val && val.trim() === '') {
             val = null;
         }
+
         return val;
     }
 
     private addValueChangedListeners(): void {
         const listener = () => this.onUiChanged();
-        this.addDestroyableEventListener(this.eValue1, 'input', listener);
-        this.addDestroyableEventListener(this.eValue2, 'input', listener);
+        this.eValue1.onValueChange(listener);
+        this.eValue2.onValueChange(listener);
     }
 
     protected setParams(params: ITextFilterParams): void {
@@ -106,34 +106,32 @@ export class TextFilter extends SimpleFilter<TextFilterModel> {
 
         this.textFilterParams = params;
         this.comparator = this.textFilterParams.textCustomComparator ? this.textFilterParams.textCustomComparator : TextFilter.DEFAULT_COMPARATOR;
-        this.formatter =
-            this.textFilterParams.textFormatter ? this.textFilterParams.textFormatter :
-                this.textFilterParams.caseSensitive == true ? TextFilter.DEFAULT_FORMATTER :
-                    TextFilter.DEFAULT_LOWERCASE_FORMATTER;
+        this.formatter = this.textFilterParams.textFormatter
+                            ? this.textFilterParams.textFormatter
+                            : (this.textFilterParams.caseSensitive == true
+                                ? TextFilter.DEFAULT_FORMATTER
+                                : TextFilter.DEFAULT_LOWERCASE_FORMATTER);
 
         this.addValueChangedListeners();
     }
 
     protected setConditionIntoUi(model: TextFilterModel, position: ConditionPosition): void {
         const positionOne = position === ConditionPosition.One;
-
         const eValue = positionOne ? this.eValue1 : this.eValue2;
 
-        eValue.value = model ? model.filter : null;
+        eValue.setValue(model ? model.filter : null);
     }
 
     protected createCondition(position: ConditionPosition): TextFilterModel {
-
         const positionOne = position === ConditionPosition.One;
-
         const type = positionOne ? this.getCondition1Type() : this.getCondition2Type();
         const eValue = positionOne ? this.eValue1 : this.eValue2;
         const value = this.getValue(eValue);
-
         const model: TextFilterModel =  {
             filterType: TextFilter.FILTER_TYPE,
             type: type
         };
+
         if (!this.doesFilterHaveHiddenInput(type)) {
             model.filter = value;
         }
@@ -148,16 +146,27 @@ export class TextFilter extends SimpleFilter<TextFilterModel> {
         return aSimple.filter === bSimple.filter && aSimple.type === bSimple.type;
     }
 
-    protected resetUiToDefaults(): void {
-        super.resetUiToDefaults();
+    protected resetUiToDefaults(silent?: boolean): void {
+        super.resetUiToDefaults(silent);
 
-        this.eValue1.value = null;
-        this.eValue2.value = null;
+        const fields = [this.eValue1, this.eValue2];
+
+        fields.forEach(field => field.setValue(null, silent));
+        this.resetPlaceholder();
+    }
+
+    private resetPlaceholder(): void {
+        const translate = this.translate.bind(this);
+        const placeholder = translate('filterOoo', 'Filter...');
+
+        const fields = [this.eValue1, this.eValue2];
+
+        fields.forEach(field => field.setInputPlaceholder(placeholder));
     }
 
     protected setValueFromFloatingFilter(value: string): void {
-        this.eValue1.value = value;
-        this.eValue2.value = null;
+        this.eValue1.setValue(value);
+        this.eValue2.setValue(null);
     }
 
     public getDefaultFilterOptions(): string[] {
@@ -165,39 +174,37 @@ export class TextFilter extends SimpleFilter<TextFilterModel> {
     }
 
     protected createValueTemplate(position: ConditionPosition): string {
-
         const pos = position === ConditionPosition.One ? '1' : '2';
-        const translate = this.gridOptionsWrapper.getLocaleTextFunc();
 
         return `<div class="ag-filter-body" ref="eCondition${pos}Body" role="presentation">
-            <div class="ag-input-wrapper" ref="eInputWrapper${pos}" role="presentation">
-                <input class="ag-filter-filter" ref="eValue${pos}" type="text" placeholder="${translate('filterOoo', 'Filter...')}"/>
-            </div>
-        </div>`;
+                    <ag-input-text-field class="ag-filter-filter" ref="eValue${pos}"></ag-input-text-field>
+            </div>`;
     }
 
     protected updateUiVisibility(): void {
         super.updateUiVisibility();
 
         const showValue1 = this.showValueFrom(this.getCondition1Type());
-        _.setDisplayed(this.eInputWrapper1, showValue1);
+        _.setDisplayed(this.eValue1.getGui(), showValue1);
+
         const showValue2 = this.showValueFrom(this.getCondition2Type());
-        _.setDisplayed(this.eInputWrapper2, showValue2);
+        _.setDisplayed(this.eValue2.getGui(), showValue2);
     }
 
     public afterGuiAttached() {
-        this.eValue1.focus();
+        this.resetPlaceholder();
+        this.eValue1.getInputElement().focus();
     }
 
     protected isConditionUiComplete(position: ConditionPosition): boolean {
         const positionOne = position === ConditionPosition.One;
-
         const option = positionOne ? this.getCondition1Type() : this.getCondition2Type();
         const eFilterValue = positionOne ? this.eValue1 : this.eValue2;
 
         if (option === SimpleFilter.EMPTY) { return false; }
 
         const value = this.getValue(eFilterValue);
+
         if (this.doesFilterHaveHiddenInput(option)) {
             return true;
         }
@@ -206,13 +213,12 @@ export class TextFilter extends SimpleFilter<TextFilterModel> {
     }
 
     public individualConditionPasses(params: IDoesFilterPassParams, filterModel: TextFilterModel): boolean {
-
         const filterText:string =  filterModel.filter;
         const filterOption:string = filterModel.type;
         const cellValue = this.textFilterParams.valueGetter(params.node);
         const cellValueFormatted = this.formatter(cellValue);
-
         const customFilterOption = this.optionsFactory.getCustomOption(filterOption);
+
         if (customFilterOption) {
             // only execute the custom filter if a value exists or a value isn't required, i.e. input is hidden
             if (filterText != null || customFilterOption.hideFilterInput) {
@@ -225,6 +231,7 @@ export class TextFilter extends SimpleFilter<TextFilterModel> {
         }
 
         const filterTextFormatted: string = this.formatter(filterText);
+
         return this.comparator(filterOption, cellValueFormatted, filterTextFormatted);
     }
 

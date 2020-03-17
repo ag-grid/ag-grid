@@ -31,7 +31,11 @@ var BarSeriesPanel = /** @class */ (function (_super) {
         return _this;
     }
     BarSeriesPanel.prototype.init = function () {
-        this.setTemplate(BarSeriesPanel.TEMPLATE);
+        var groupParams = {
+            cssIdentifier: 'charts-format-top-level',
+            direction: 'vertical'
+        };
+        this.setTemplate(BarSeriesPanel.TEMPLATE, { seriesGroup: groupParams });
         this.seriesGroup
             .setTitle(this.chartTranslator.translate("series"))
             .toggleGroupExpand(false)
@@ -48,7 +52,7 @@ var BarSeriesPanel = /** @class */ (function (_super) {
             .setLabel(this.chartTranslator.translate("tooltips"))
             .setLabelAlignment("left")
             .setLabelWidth("flex")
-            .setInputWidth(40)
+            .setInputWidth(45)
             .setValue(this.getChartProxy().getSeriesOption("tooltip.enabled") || false)
             .onValueChange(function (newValue) { return _this.getChartProxy().setSeriesOption("tooltip.enabled", newValue); });
     };

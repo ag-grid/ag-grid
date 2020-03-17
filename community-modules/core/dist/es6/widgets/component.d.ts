@@ -1,10 +1,10 @@
-// Type definitions for @ag-grid-community/core v22.1.1
+// Type definitions for @ag-grid-community/core v23.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
-import { Context } from "../context/context";
-import { BeanStub } from "../context/beanStub";
-import { IComponent } from "../interfaces/iComponent";
 import { AgEvent } from "../events";
+import { BeanStub } from "../context/beanStub";
+import { Context } from "../context/context";
+import { IComponent } from "../interfaces/iComponent";
 export interface VisibleChangedEvent extends AgEvent {
     visible: boolean;
 }
@@ -23,14 +23,15 @@ export declare class Component extends BeanStub {
     private copyAttributesFromNode;
     private swapComponentForNode;
     private swapInComponentForQuerySelectors;
-    setTemplate(template: string): void;
-    setTemplateFromElement(element: HTMLElement): void;
+    setTemplate(template: string, paramsMap?: any): void;
+    setTemplateFromElement(element: HTMLElement, paramsMap?: any): void;
     private createChildComponentsPreConstruct;
     protected wireQuerySelectors(): void;
     private addAnnotatedEventListeners;
     private getAgComponentMetaData;
     private removeAnnotatedEventListeners;
     getGui(): HTMLElement;
+    getFocusableElement(): HTMLElement;
     setParentComponent(component: Component): void;
     getParentComponent(): Component | undefined;
     protected setGui(eGui: HTMLElement): void;

@@ -50,14 +50,13 @@ export class FillHandle extends AbstractSelectionHandle {
 
     protected onDrag(e: MouseEvent) {
         if (!this.initialXY) {
-           const { left, top } = this.getGui().getBoundingClientRect() as DOMRect;
-           
-           this.initialXY = { x: left, y: top };
+           this.initialXY = this.mouseEventService.getNormalisedPosition(e);
         }
 
         const { x, y } = this.initialXY;
-        const diffX = Math.abs(x - e.clientX);
-        const diffY = Math.abs(y - e.clientY);
+        const { x: newX, y: newY } = this.mouseEventService.getNormalisedPosition(e);
+        const diffX = Math.abs(x - newX);
+        const diffY = Math.abs(y - newY);
         const direction: Direction = diffX > diffY ? 'x' : 'y';
 
         if (direction !== this.dragAxis) {
@@ -294,7 +293,10 @@ export class FillHandle extends AbstractSelectionHandle {
             }
         }
 
-        const allNumbers = !values.some(val => isNaN(parseFloat(val)));
+        const allNumbers = !values.some(val => {
+            const asFloat = parseFloat(val);
+            return isNaN(asFloat) || asFloat.toString() !== val.toString();
+        });
 
         // values should be copied in order if the alt key is pressed
         // or if the values contain strings and numbers
@@ -304,7 +306,7 @@ export class FillHandle extends AbstractSelectionHandle {
         if (event.altKey || !allNumbers) {
             if (allNumbers && initialValues.length === 1) {
                 const multiplier = (this.isUp || this.isLeft) ? -1 : 1;
-                return _.last(values) + 1 * multiplier;
+                return parseFloat(_.last(values)) + 1 * multiplier;
             }
             return values[idx % values.length];
         }

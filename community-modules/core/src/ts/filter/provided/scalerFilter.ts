@@ -107,11 +107,8 @@ export abstract class ScalerFilter<M extends ISimpleFilterModel, T> extends Simp
     }
 
     protected individualConditionPasses(params: IDoesFilterPassParams, filterModel: ISimpleFilterModel) {
-
         const cellValue: any = this.scalarFilterParams.valueGetter(params.node);
-
         const range = this.mapRangeFromModel(filterModel);
-
         const filterValue = range.from;
         const filterValueTo = range.to;
         const filterType = filterModel.type;
@@ -160,9 +157,9 @@ export abstract class ScalerFilter<M extends ISimpleFilterModel, T> extends Simp
         if (filterType === ScalerFilter.IN_RANGE) {
             if (!this.scalarFilterParams.inRangeInclusive) {
                 return compareResult > 0 && compareToResult < 0;
-            } else {
-                return compareResult >= 0 && compareToResult <= 0;
             }
+
+            return compareResult >= 0 && compareToResult <= 0;
         }
 
         throw new Error('Unexpected type of filter: ' + filterType);

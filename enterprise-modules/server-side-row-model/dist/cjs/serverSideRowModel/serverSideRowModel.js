@@ -432,10 +432,10 @@ var ServerSideRowModel = /** @class */ (function (_super) {
         this.executeOnCache(route, function (cache) { return cache.purgeCache(); });
     };
     ServerSideRowModel.prototype.getNodesInRangeForSelection = function (firstInRange, lastInRange) {
-        if (core_1._.exists(firstInRange) && firstInRange.parent !== lastInRange.parent) {
+        if (core_1._.exists(lastInRange) && firstInRange.parent !== lastInRange.parent) {
             return [];
         }
-        return lastInRange.parent.childrenCache.getRowNodesInRange(firstInRange, lastInRange);
+        return firstInRange.parent.childrenCache.getRowNodesInRange(lastInRange, firstInRange);
     };
     ServerSideRowModel.prototype.getRowNode = function (id) {
         var result = null;
@@ -482,7 +482,7 @@ var ServerSideRowModel = /** @class */ (function (_super) {
         if (autoGroupIndex > -1) {
             var individualGroupCols = rowGroupCols.map(function (group) {
                 return {
-                    colId: group.field,
+                    colId: group.id,
                     sort: sortModel[autoGroupIndex].sort
                 };
             });

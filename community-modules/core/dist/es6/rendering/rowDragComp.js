@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v22.1.1
+ * @version v23.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -33,7 +33,7 @@ import { _ } from "../utils";
 var RowDragComp = /** @class */ (function (_super) {
     __extends(RowDragComp, _super);
     function RowDragComp(rowNode, column, cellValue, beans) {
-        var _this = _super.call(this, "<div class=\"ag-row-drag\"></div>") || this;
+        var _this = _super.call(this, "<div class=\"ag-drag-handle ag-row-drag\" role=\"presentation\"></div>") || this;
         _this.rowNode = rowNode;
         _this.column = column;
         _this.cellValue = cellValue;
@@ -50,6 +50,14 @@ var RowDragComp = /** @class */ (function (_super) {
             new NonManagedVisibilityStrategy(this, this.beans, this.rowNode, this.column);
         this.addFeature(strategy, this.beans.context);
     };
+    RowDragComp.prototype.getSelectedCount = function () {
+        var multiRowEnabled = this.beans.gridOptionsWrapper.isEnableMultiRowDragging();
+        if (!multiRowEnabled) {
+            return 1;
+        }
+        var selection = this.beans.selectionController.getSelectedNodes();
+        return selection.indexOf(this.rowNode) !== -1 ? selection.length : 1;
+    };
     // returns true if all compatibility items work out
     RowDragComp.prototype.checkCompatibility = function () {
         var managed = this.beans.gridOptionsWrapper.isRowDragManaged();
@@ -63,12 +71,21 @@ var RowDragComp = /** @class */ (function (_super) {
     RowDragComp.prototype.addDragSource = function () {
         var _this = this;
         var dragItem = {
-            rowNode: this.rowNode
+            rowNode: this.rowNode,
+            columns: [this.column],
+            defaultTextValue: this.cellValue
         };
+        var rowDragText = this.column.getColDef().rowDragText;
         var dragSource = {
             type: DragSourceType.RowDrag,
             eElement: this.getGui(),
-            dragItemName: this.cellValue,
+            dragItemName: function () {
+                if (rowDragText) {
+                    return rowDragText(dragItem);
+                }
+                var count = _this.getSelectedCount();
+                return count === 1 ? _this.cellValue : count + " rows";
+            },
             getDragItem: function () { return dragItem; },
             dragStartPixels: 0
         };

@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v22.1.1
+ * @version v23.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -370,6 +370,12 @@ var GridApi = /** @class */ (function () {
     GridApi.prototype.getRowNode = function (id) {
         return this.rowModel.getRowNode(id);
     };
+    GridApi.prototype.getSizesForCurrentTheme = function () {
+        return {
+            rowHeight: this.gridOptionsWrapper.getRowHeightAsNumber(),
+            headerHeight: this.gridOptionsWrapper.getHeaderHeight()
+        };
+    };
     GridApi.prototype.expandAll = function () {
         if (utils_1._.missing(this.clientSideRowModel)) {
             console.warn('ag-Grid: cannot call expandAll unless using normal row model');
@@ -574,13 +580,13 @@ var GridApi = /** @class */ (function () {
         return this.filterManager.getFilterModel();
     };
     GridApi.prototype.getFocusedCell = function () {
-        return this.focusedCellController.getFocusedCell();
+        return this.focusController.getFocusedCell();
     };
     GridApi.prototype.clearFocusedCell = function () {
-        return this.focusedCellController.clearFocusedCell();
+        return this.focusController.clearFocusedCell();
     };
     GridApi.prototype.setFocusedCell = function (rowIndex, colKey, floating) {
-        this.focusedCellController.setFocusedCell(rowIndex, colKey, floating, true);
+        this.focusController.setFocusedCell(rowIndex, colKey, floating, true);
     };
     GridApi.prototype.setSuppressRowDrag = function (value) {
         this.gridOptionsWrapper.setProperty(gridOptionsWrapper_1.GridOptionsWrapper.PROP_SUPPRESS_ROW_DRAG, value);
@@ -1098,8 +1104,8 @@ var GridApi = /** @class */ (function () {
         context_1.Autowired('paginationProxy')
     ], GridApi.prototype, "paginationProxy", void 0);
     __decorate([
-        context_1.Autowired('focusedCellController')
-    ], GridApi.prototype, "focusedCellController", void 0);
+        context_1.Autowired('focusController')
+    ], GridApi.prototype, "focusController", void 0);
     __decorate([
         context_1.Optional('rangeController')
     ], GridApi.prototype, "rangeController", void 0);

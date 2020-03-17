@@ -1,18 +1,19 @@
-import { _, ChartType, Component, PostConstruct } from "@ag-grid-community/core";
-import { ChartController } from "../../chartController";
-import { LegendPanel } from "./legend/legendPanel";
-import { BarSeriesPanel } from "./series/barSeriesPanel";
-import { AxisPanel } from "./axis/axisPanel";
-import { LineSeriesPanel } from "./series/lineSeriesPanel";
-import { PieSeriesPanel } from "./series/pieSeriesPanel";
-import { ChartPanel } from "./chart/chartPanel";
-import { AreaSeriesPanel } from "./series/areaSeriesPanel";
-import { ScatterSeriesPanel } from "./series/scatterSeriesPanel";
+import {_, ChartType, Component, PostConstruct} from "@ag-grid-community/core";
+import {ChartController} from "../../chartController";
+import {LegendPanel} from "./legend/legendPanel";
+import {BarSeriesPanel} from "./series/barSeriesPanel";
+import {AxisPanel} from "./axis/axisPanel";
+import {LineSeriesPanel} from "./series/lineSeriesPanel";
+import {PieSeriesPanel} from "./series/pieSeriesPanel";
+import {ChartPanel} from "./chart/chartPanel";
+import {AreaSeriesPanel} from "./series/areaSeriesPanel";
+import {ScatterSeriesPanel} from "./series/scatterSeriesPanel";
 
 export class ChartFormattingPanel extends Component {
     public static TEMPLATE = `<div class="ag-chart-format-wrapper"></div>`;
 
     private chartType: ChartType;
+    private isGrouping: boolean;
     private panels: Component[] = [];
     private readonly chartController: ChartController;
 
@@ -30,9 +31,10 @@ export class ChartFormattingPanel extends Component {
 
     private createPanels() {
         const chartType = this.chartController.getChartType();
+        const isGrouping = this.chartController.isGrouping();
 
-        if (chartType === this.chartType) {
-            // same chart type, so keep existing panels
+        if (chartType === this.chartType && isGrouping === this.isGrouping) {
+            // existing panels can be re-used
             return;
         }
 
@@ -75,11 +77,13 @@ export class ChartFormattingPanel extends Component {
         }
 
         this.chartType = chartType;
+        this.isGrouping = isGrouping;
     }
 
     private addComponent(component: Component): void {
         this.wireBean(component);
         this.panels.push(component);
+         _.addCssClass(component.getGui(), 'ag-chart-format-section');
         this.getGui().appendChild(component.getGui());
     }
 

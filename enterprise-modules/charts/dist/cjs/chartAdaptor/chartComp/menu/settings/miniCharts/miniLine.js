@@ -15,19 +15,17 @@ var __extends = (this && this.__extends) || (function () {
 Object.defineProperty(exports, "__esModule", { value: true });
 var core_1 = require("@ag-grid-community/core");
 var miniChartWithAxes_1 = require("./miniChartWithAxes");
-var path_1 = require("../../../../../charts/scene/shape/path");
-var linearScale_1 = require("../../../../../charts/scale/linearScale");
-var clipRect_1 = require("../../../../../charts/scene/clipRect");
+var ag_charts_community_1 = require("ag-charts-community");
 var MiniLine = /** @class */ (function (_super) {
     __extends(MiniLine, _super);
-    function MiniLine(parent, fills, strokes) {
-        var _this = _super.call(this, parent, "lineTooltip") || this;
+    function MiniLine(container, fills, strokes) {
+        var _this = _super.call(this, container, "lineTooltip") || this;
         var size = _this.size;
         var padding = _this.padding;
-        var xScale = linearScale_1.default();
+        var xScale = ag_charts_community_1.linearScale();
         xScale.domain = [0, 4];
         xScale.range = [padding, size - padding];
-        var yScale = linearScale_1.default();
+        var yScale = ag_charts_community_1.linearScale();
         yScale.domain = [0, 10];
         yScale.range = [size - padding, padding];
         var data = [
@@ -36,7 +34,7 @@ var MiniLine = /** @class */ (function (_super) {
             [1, 3, 4, 8, 7]
         ];
         _this.lines = data.map(function (series) {
-            var line = new path_1.Path();
+            var line = new ag_charts_community_1.Path();
             line.strokeWidth = 3;
             line.lineCap = "round";
             line.fill = undefined;
@@ -46,7 +44,7 @@ var MiniLine = /** @class */ (function (_super) {
             return line;
         });
         _this.updateColors(fills, strokes);
-        var clipRect = new clipRect_1.ClipRect();
+        var clipRect = new ag_charts_community_1.ClipRect();
         clipRect.x = clipRect.y = padding;
         clipRect.width = clipRect.height = size - padding * 2;
         clipRect.append(_this.lines);

@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v22.1.1
+ * @version v23.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -120,9 +120,7 @@ var ScalerFilter = /** @class */ (function (_super) {
             if (!this.scalarFilterParams.inRangeInclusive) {
                 return compareResult > 0 && compareToResult < 0;
             }
-            else {
-                return compareResult >= 0 && compareToResult <= 0;
-            }
+            return compareResult >= 0 && compareToResult <= 0;
         }
         throw new Error('Unexpected type of filter: ' + filterType);
     };

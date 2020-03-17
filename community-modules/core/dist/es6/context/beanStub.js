@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v22.1.1
+ * @version v23.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -83,6 +83,7 @@ var BeanStub = /** @class */ (function () {
         var destroyFunc = function () {
             object.removeEventListener(event, listener);
             _this.destroyFunctions = _this.destroyFunctions.filter(function (fn) { return fn !== destroyFunc; });
+            return null;
         };
         this.destroyFunctions.push(destroyFunc);
         return destroyFunc;

@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v22.1.1
+ * @version v23.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -35,12 +35,7 @@ var DateCompWrapper = /** @class */ (function () {
         }
     };
     DateCompWrapper.prototype.getDate = function () {
-        if (this.dateComp) {
-            return this.dateComp.getDate();
-        }
-        else {
-            return this.tempValue;
-        }
+        return this.dateComp ? this.dateComp.getDate() : this.tempValue;
     };
     DateCompWrapper.prototype.setDate = function (value) {
         if (this.dateComp) {
@@ -48,6 +43,11 @@ var DateCompWrapper = /** @class */ (function () {
         }
         else {
             this.tempValue = value;
+        }
+    };
+    DateCompWrapper.prototype.setInputPlaceholder = function (placeholder) {
+        if (this.dateComp && this.dateComp.setInputPlaceholder) {
+            this.dateComp.setInputPlaceholder(placeholder);
         }
     };
     return DateCompWrapper;

@@ -32,14 +32,22 @@ var ToolPanelFilterGroupComp = /** @class */ (function (_super) {
         return _this;
     }
     ToolPanelFilterGroupComp.prototype.preConstruct = function () {
-        this.setTemplate(ToolPanelFilterGroupComp.TEMPLATE);
+        var groupParams = {
+            cssIdentifier: 'filter-toolpanel',
+            direction: 'vertical'
+        };
+        this.setTemplate(ToolPanelFilterGroupComp.TEMPLATE, { filterGroupComp: groupParams });
     };
     ToolPanelFilterGroupComp.prototype.init = function () {
         var _this = this;
         this.setGroupTitle();
         this.filterGroupComp.setAlignItems('stretch');
-        core_1._.addCssClass(this.filterGroupComp.getGui(), "ag-level-" + this.depth);
-        this.childFilterComps.forEach(function (filterComp) { return _this.filterGroupComp.addItem(filterComp); });
+        core_1._.addCssClass(this.filterGroupComp.getGui(), "ag-filter-toolpanel-group-level-" + this.depth);
+        this.filterGroupComp.addCssClassToTitleBar("ag-filter-toolpanel-group-level-" + this.depth + "-header");
+        this.childFilterComps.forEach(function (filterComp) {
+            _this.filterGroupComp.addItem(filterComp);
+            filterComp.addCssClassToTitleBar("ag-filter-toolpanel-group-level-" + (_this.depth + 1) + "-header");
+        });
         if (!this.isColumnGroup()) {
             this.addTopLevelColumnGroupExpandListener();
         }
@@ -52,6 +60,9 @@ var ToolPanelFilterGroupComp = /** @class */ (function (_super) {
             });
         }
         this.addFilterChangedListeners();
+    };
+    ToolPanelFilterGroupComp.prototype.addCssClassToTitleBar = function (cssClass) {
+        this.filterGroupComp.addCssClassToTitleBar(cssClass);
     };
     ToolPanelFilterGroupComp.prototype.refreshFilters = function () {
         this.childFilterComps.forEach(function (filterComp) {
@@ -158,22 +169,13 @@ var ToolPanelFilterGroupComp = /** @class */ (function (_super) {
         this.destroyFilters();
         _super.prototype.destroy.call(this);
     };
-    ToolPanelFilterGroupComp.TEMPLATE = "<div>\n            <ag-group-component ref=\"filterGroupComp\"></ag-group-component>\n         </div>";
+    ToolPanelFilterGroupComp.TEMPLATE = "<div class=\"ag-filter-toolpanel-group-wrapper\">\n            <ag-group-component ref=\"filterGroupComp\"></ag-group-component>\n         </div>";
     __decorate([
         core_1.RefSelector('filterGroupComp')
     ], ToolPanelFilterGroupComp.prototype, "filterGroupComp", void 0);
     __decorate([
-        core_1.Autowired('gridApi')
-    ], ToolPanelFilterGroupComp.prototype, "gridApi", void 0);
-    __decorate([
-        core_1.Autowired('filterManager')
-    ], ToolPanelFilterGroupComp.prototype, "filterManager", void 0);
-    __decorate([
         core_1.Autowired('eventService')
     ], ToolPanelFilterGroupComp.prototype, "eventService", void 0);
-    __decorate([
-        core_1.Autowired('gridOptionsWrapper')
-    ], ToolPanelFilterGroupComp.prototype, "gridOptionsWrapper", void 0);
     __decorate([
         core_1.Autowired('columnController')
     ], ToolPanelFilterGroupComp.prototype, "columnController", void 0);

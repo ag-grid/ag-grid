@@ -1,9 +1,7 @@
-import { _, ChartType } from "@ag-grid-community/core";
-import { MiniChartWithAxes } from "./miniChartWithAxes";
-import { ICoordinate } from "./miniArea";
-import { Path } from "../../../../../charts/scene/shape/path";
-import linearScale from "../../../../../charts/scale/linearScale";
-import { BandScale } from "../../../../../charts/scale/bandScale";
+import {ChartType} from "@ag-grid-community/core";
+import {MiniChartWithAxes} from "./miniChartWithAxes";
+import {ICoordinate} from "./miniArea";
+import { linearScale, BandScale, Path} from "ag-charts-community";
 
 export class MiniStackedArea extends MiniChartWithAxes {
     static chartType = ChartType.StackedArea;
@@ -15,8 +13,8 @@ export class MiniStackedArea extends MiniChartWithAxes {
 
     private readonly areas: Path[];
 
-    constructor(parent: HTMLElement, fills: string[], strokes: string[], data: number[][] = MiniStackedArea.data, tooltipName = "stackedAreaTooltip") {
-        super(parent, tooltipName);
+    constructor(container: HTMLElement, fills: string[], strokes: string[], data: number[][] = MiniStackedArea.data, tooltipName = "stackedAreaTooltip") {
+        super(container, tooltipName);
 
         const size = this.size;
         const padding = this.padding;

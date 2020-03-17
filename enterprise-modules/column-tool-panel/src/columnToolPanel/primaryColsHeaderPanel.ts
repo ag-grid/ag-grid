@@ -10,12 +10,12 @@ import {
     PreConstruct,
     RefSelector,
     ToolPanelColumnCompParams,
-    Constants
+    Constants,
+    AgCheckbox,
+    AgInputTextField
 } from "@ag-grid-community/core";
 
-
 export enum EXPAND_STATE { EXPANDED, COLLAPSED, INDETERMINATE }
-export enum SELECTED_STATE { CHECKED, UNCHECKED, INDETERMINATE }
 
 export class PrimaryColsHeaderPanel extends Component {
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
@@ -23,22 +23,15 @@ export class PrimaryColsHeaderPanel extends Component {
     @Autowired('eventService') private eventService: EventService;
 
     @RefSelector('eExpand') private eExpand: HTMLElement;
-    @RefSelector('eSelect') private eSelect: HTMLElement;
-    @RefSelector('eFilterWrapper') private eFilterWrapper: HTMLElement;
-    @RefSelector('eFilterTextField') private eFilterTextField: HTMLInputElement;
-
-    private eSelectChecked: HTMLElement;
-    private eSelectUnchecked: HTMLElement;
-    private eSelectIndeterminate: HTMLElement;
+    @RefSelector('eSelect') private eSelect: AgCheckbox;
+    @RefSelector('eFilterTextField') private eFilterTextField: AgInputTextField;
 
     private eExpandChecked: HTMLElement;
     private eExpandUnchecked: HTMLElement;
     private eExpandIndeterminate: HTMLElement;
 
-    private eSelectCheckbox: HTMLInputElement;
-
     private expandState: EXPAND_STATE;
-    private selectState: SELECTED_STATE;
+    private selectState: boolean | undefined;
 
     private onFilterTextChangedDebounced: () => void;
 
@@ -46,18 +39,11 @@ export class PrimaryColsHeaderPanel extends Component {
 
     @PreConstruct
     private preConstruct(): void {
-        const translate = this.gridOptionsWrapper.getLocaleTextFunc();
-
         this.setTemplate(
-            `<div class="ag-primary-cols-header-panel" role="presentation">
-                <div ref="eExpand"></div>
-                <div ref="eSelect"></div>
-                <div class="ag-input-wrapper ag-primary-cols-filter-wrapper" ref="eFilterWrapper" role="presentation">
-                    <input class="ag-primary-cols-filter" ref="eFilterTextField" type="text" placeholder="${translate(
-                    "SearchOoo",
-                    "Search..."
-                    )}">
-                </div>
+            `<div class="ag-column-select-header" role="presentation">
+                <div ref="eExpand" class="ag-column-select-header-icon"></div>
+                <ag-checkbox ref="eSelect" class="ag-column-select-header-checkbox"></ag-checkbox>
+                <ag-input-text-field class="ag-column-select-header-filter-wrapper" ref="eFilterTextField"></ag-input-text-field>
             </div>`
         );
     }
@@ -65,32 +51,22 @@ export class PrimaryColsHeaderPanel extends Component {
     @PostConstruct
     public postConstruct(): void {
         this.createExpandIcons();
-        if (this.gridOptionsWrapper.useNativeCheckboxes()) {
-            this.eSelectCheckbox = document.createElement("input");
-            this.eSelectCheckbox.type = "checkbox";
-            this.eSelectCheckbox.className = "ag-checkbox";
-            this.eSelect.appendChild(this.eSelectCheckbox);
-        } else {
-            this.createCheckIcons();
-        }
 
         this.addDestroyableEventListener(
             this.eExpand,
             "click",
             this.onExpandClicked.bind(this)
         );
-        this.addDestroyableEventListener(
-            this.eSelect,
-            "click",
+
+        this.addDestroyableEventListener(this.eSelect.getInputElement(),
+            'click',
             this.onSelectClicked.bind(this)
         );
+
+        this.eFilterTextField.onValueChange(() => this.onFilterTextChanged());
+        
         this.addDestroyableEventListener(
-            this.eFilterTextField,
-            "input",
-            this.onFilterTextChanged.bind(this)
-        );
-        this.addDestroyableEventListener(
-            this.eFilterTextField,
+            this.eFilterTextField.getInputElement(),
             "keypress",
             this.onMiniFilterKeyPress.bind(this)
         );
@@ -129,49 +105,30 @@ export class PrimaryColsHeaderPanel extends Component {
             this.eExpandIndeterminate = _.createIconNoSpan(
             "columnSelectIndeterminate",
             this.gridOptionsWrapper
-        )
-    )
-        );
+            )
+        ));
+        this.setExpandState(EXPAND_STATE.EXPANDED);
     }
-
-    private createCheckIcons() {
-        this.eSelect.appendChild((
-            this.eSelectChecked = _.createIconNoSpan(
-                "checkboxChecked",
-                this.gridOptionsWrapper
-            )
-        ));
-        this.eSelect.appendChild((
-            this.eSelectUnchecked = _.createIconNoSpan(
-                "checkboxUnchecked",
-                this.gridOptionsWrapper
-            )
-        ));
-        this.eSelect.appendChild((
-            this.eSelectIndeterminate = _.createIconNoSpan(
-                "checkboxIndeterminate",
-                this.gridOptionsWrapper
-            )
-        ));
-    }
-
+ 
     // we only show expand / collapse if we are showing columns
     private showOrHideOptions(): void {
         const showFilter = !this.params.suppressColumnFilter;
         const showSelect = !this.params.suppressColumnSelectAll;
         const showExpand = !this.params.suppressColumnExpandAll;
-
         const groupsPresent = this.columnController.isPrimaryColumnGroupsPresent();
+        const translate = this.gridOptionsWrapper.getLocaleTextFunc();
 
-        _.setDisplayed(this.eFilterWrapper, showFilter);
-        _.setDisplayed(this.eSelect, showSelect);
+        this.eFilterTextField.setInputPlaceholder(translate('searchOoo', 'Search...'));
+
+        _.setDisplayed(this.eFilterTextField.getGui(), showFilter);
+        _.setDisplayed(this.eSelect.getGui(), showSelect);
         _.setDisplayed(this.eExpand, showExpand && groupsPresent);
     }
 
     private onFilterTextChanged(): void {
         if (!this.onFilterTextChangedDebounced) {
             this.onFilterTextChangedDebounced = _.debounce(() => {
-                const filterText = this.eFilterTextField.value;
+                const filterText = this.eFilterTextField.getValue();
                 this.dispatchEvent({ type: "filterChanged", filterText: filterText });
             }, 300);
         }
@@ -181,12 +138,12 @@ export class PrimaryColsHeaderPanel extends Component {
 
     private onMiniFilterKeyPress(e: KeyboardEvent): void {
         if (_.isKeyPressed(e, Constants.KEY_ENTER)) {
-            this.dispatchEvent({ type: "selectAll" });
+            this.onSelectClicked();
         }
     }
 
     private onSelectClicked(): void {
-        const eventType = this.selectState === SELECTED_STATE.CHECKED ? "unselectAll" : "selectAll";
+        const eventType = this.selectState === true ? "unselectAll" : "selectAll";
         this.dispatchEvent({ type: eventType });
     }
 
@@ -212,25 +169,8 @@ export class PrimaryColsHeaderPanel extends Component {
         );
     }
 
-    public setSelectionState(state: SELECTED_STATE): void {
+    public setSelectionState(state?: boolean): void {
         this.selectState = state;
-
-        if (this.gridOptionsWrapper.useNativeCheckboxes()) {
-            this.eSelectCheckbox.checked = this.selectState === SELECTED_STATE.CHECKED;
-            this.eSelectCheckbox.indeterminate = this.selectState === SELECTED_STATE.INDETERMINATE;
-        } else {
-            _.setDisplayed(
-                this.eSelectChecked,
-                this.selectState === SELECTED_STATE.CHECKED
-            );
-            _.setDisplayed(
-                this.eSelectUnchecked,
-                this.selectState === SELECTED_STATE.UNCHECKED
-            );
-            _.setDisplayed(
-                this.eSelectIndeterminate,
-                this.selectState === SELECTED_STATE.INDETERMINATE
-            );
-        }
+        this.eSelect.setValue(this.selectState);
     }
 }

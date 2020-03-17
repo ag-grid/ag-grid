@@ -1,4 +1,4 @@
-// Type definitions for @ag-grid-community/core v22.1.1
+// Type definitions for @ag-grid-community/core v23.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { GridOptionsWrapper } from '../gridOptionsWrapper';
@@ -10,36 +10,26 @@ export interface ChangeEvent extends AgEvent {
 }
 export declare class AgCheckbox extends AgAbstractInputField<HTMLInputElement, boolean> {
     protected className: string;
-    protected nativeInputClassName: string;
     protected displayTag: string;
     protected inputType: string;
     protected labelAlignment: LabelAlignment;
-    protected iconMap: {
-        selected: string;
-        unselected: string;
-        indeterminate?: string;
-    };
     protected gridOptionsWrapper: GridOptionsWrapper;
     private selected;
     private readOnly;
     private passive;
-    protected eIconEl: HTMLElement;
     constructor();
-    protected postConstruct(): void;
     protected addInputListeners(): void;
     getNextValue(): boolean;
     setPassive(passive: boolean): void;
     isReadOnly(): boolean;
     setReadOnly(readOnly: boolean): void;
+    setDisabled(disabled: boolean): this;
     toggle(): void;
     getValue(): boolean;
     setValue(value: boolean | undefined, silent?: boolean): this;
     protected isSelected(): boolean;
-    protected setSelected(selected?: boolean, silent?: boolean): void;
-    protected getIconName(): string;
-    protected updateIcons(): void;
+    private setSelected;
     private dispatchChange;
-    private addIconsPlaceholder;
-    private onClick;
     private onCheckboxClick;
+    private refreshSelectedClass;
 }

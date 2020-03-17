@@ -16,6 +16,9 @@ export declare class PaginationComp extends Component {
     private lbCurrent;
     private lbTotal;
     private serverSideRowModel;
+    private previousAndFirstButtonsDisabled;
+    private nextButtonDisabled;
+    private lastButtonDisabled;
     constructor();
     private postConstruct;
     private onPaginationChanged;

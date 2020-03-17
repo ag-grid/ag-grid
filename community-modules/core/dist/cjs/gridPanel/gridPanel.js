@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v22.1.1
+ * @version v23.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -48,7 +48,7 @@ var GridPanel = /** @class */ (function (_super) {
         var _this = _super.call(this, GRID_PANEL_NORMAL_TEMPLATE) || this;
         _this.scrollLeft = -1;
         _this.scrollTop = -1;
-        _this.resetLastHorizontalScrollElementDebounce = utils_1._.debounce(_this.resetLastHorizontalScrollElement.bind(_this), 500);
+        _this.resetLastHorizontalScrollElementDebounced = utils_1._.debounce(_this.resetLastHorizontalScrollElement.bind(_this), 500);
         return _this;
     }
     GridPanel.prototype.getVScrollPosition = function () {
@@ -123,6 +123,7 @@ var GridPanel = /** @class */ (function (_super) {
         this.columnAnimationService.registerGridComp(this);
         this.autoWidthCalculator.registerGridComp(this);
         this.paginationAutoPageSizeService.registerGridComp(this);
+        this.mouseEventService.registerGridComp(this);
         this.beans.registerGridComp(this);
         this.rowRenderer.registerGridComp(this);
         if (this.rangeController) {
@@ -131,6 +132,16 @@ var GridPanel = /** @class */ (function (_super) {
         [this.eCenterViewport, this.eBodyViewport].forEach(function (viewport) {
             var unsubscribeFromResize = _this.resizeObserverService.observeResize(viewport, _this.onCenterViewportResized.bind(_this));
             _this.addDestroyFunc(function () { return unsubscribeFromResize(); });
+        });
+        [this.eTop, this.eBodyViewport, this.eBottom].forEach(function (element) {
+            _this.addDestroyableEventListener(element, 'focusin', function () {
+                utils_1._.addCssClass(element, 'ag-has-focus');
+            });
+            _this.addDestroyableEventListener(element, 'focusout', function (e) {
+                if (!element.contains(e.relatedTarget)) {
+                    utils_1._.removeCssClass(element, 'ag-has-focus');
+                }
+            });
         });
     };
     GridPanel.prototype.onDomLayoutChanged = function () {
@@ -390,6 +401,7 @@ var GridPanel = /** @class */ (function (_super) {
         var rowComp = this.getRowForEvent(mouseEvent);
         var cellComp = this.mouseEventService.getRenderedCellForEvent(mouseEvent);
         if (eventName === "contextmenu") {
+            this.preventDefaultOnContextMenu(mouseEvent);
             this.handleContextMenuMouseEvent(mouseEvent, null, rowComp, cellComp);
         }
         else {
@@ -400,7 +412,6 @@ var GridPanel = /** @class */ (function (_super) {
                 rowComp.onMouseEvent(eventName, mouseEvent);
             }
         }
-        this.preventDefaultOnContextMenu(mouseEvent);
     };
     GridPanel.prototype.mockContextMenuForIPad = function () {
         var _this = this;
@@ -496,18 +507,11 @@ var GridPanel = /** @class */ (function (_super) {
         if (!this.clipboardService || this.gridOptionsWrapper.isEnableCellTextSelection()) {
             return;
         }
-        var focusedCell = this.focusedCellController.getFocusedCell();
         this.clipboardService.copyToClipboard();
         event.preventDefault();
-        // the copy operation results in loosing focus on the cell,
-        // because of the trickery the copy logic uses with a temporary
-        // widget. so we set it back again.
-        if (focusedCell) {
-            this.focusedCellController.setFocusedCell(focusedCell.rowIndex, focusedCell.column, focusedCell.rowPinned, true);
-        }
     };
     GridPanel.prototype.onCtrlAndV = function () {
-        if (moduleRegistry_1.ModuleRegistry.isRegistered(moduleNames_1.ModuleNames.ClipboardModule)) {
+        if (moduleRegistry_1.ModuleRegistry.isRegistered(moduleNames_1.ModuleNames.ClipboardModule) && !this.gridOptionsWrapper.isSuppressClipboardPaste()) {
             this.clipboardService.pasteFromClipboard();
         }
     };
@@ -523,7 +527,6 @@ var GridPanel = /** @class */ (function (_super) {
     // eg if grid needs to scroll up, it scrolls until row is on top,
     //    if grid needs to scroll down, it scrolls until row is on bottom,
     //    if row is already in view, grid does not scroll
-    // fixme - how does this work in the new way
     GridPanel.prototype.ensureIndexVisible = function (index, position) {
         // if for print or auto height, everything is always visible
         if (this.printLayout) {
@@ -806,7 +809,7 @@ var GridPanel = /** @class */ (function (_super) {
             floatingBottom: new rowContainerComponent_1.RowContainerComponent({ eContainer: this.eBottomContainer }),
             floatingBottomPinnedLeft: new rowContainerComponent_1.RowContainerComponent({ eContainer: this.eLeftBottom }),
             floatingBottomPinnedRight: new rowContainerComponent_1.RowContainerComponent({ eContainer: this.eRightBottom }),
-            floatingBottomFullWith: new rowContainerComponent_1.RowContainerComponent({
+            floatingBottomFullWidth: new rowContainerComponent_1.RowContainerComponent({
                 eContainer: this.eBottomFullWidthContainer,
                 hideWhenNoChildren: true
             }),
@@ -1066,7 +1069,7 @@ var GridPanel = /** @class */ (function (_super) {
             return;
         }
         this.doHorizontalScroll(scrollLeft);
-        this.resetLastHorizontalScrollElementDebounce();
+        this.resetLastHorizontalScrollElementDebounced();
     };
     GridPanel.prototype.resetLastHorizontalScrollElement = function () {
         this.lastHorizontalScrollElement = null;
@@ -1193,8 +1196,8 @@ var GridPanel = /** @class */ (function (_super) {
         context_1.Autowired('mouseEventService')
     ], GridPanel.prototype, "mouseEventService", void 0);
     __decorate([
-        context_1.Autowired('focusedCellController')
-    ], GridPanel.prototype, "focusedCellController", void 0);
+        context_1.Autowired('focusController')
+    ], GridPanel.prototype, "focusController", void 0);
     __decorate([
         context_1.Autowired('$scope')
     ], GridPanel.prototype, "$scope", void 0);

@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v22.1.1
+ * @version v23.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -207,10 +207,10 @@ var agDialog_1 = require("./widgets/agDialog");
 exports.AgDialog = agDialog_1.AgDialog;
 var agPanel_1 = require("./widgets/agPanel");
 exports.AgPanel = agPanel_1.AgPanel;
-var messageBox_1 = require("./widgets/messageBox");
-exports.MessageBox = messageBox_1.MessageBox;
 var component_1 = require("./widgets/component");
 exports.Component = component_1.Component;
+var managedTabComponent_1 = require("./widgets/managedTabComponent");
+exports.ManagedTabComponent = managedTabComponent_1.ManagedTabComponent;
 var popupComponent_1 = require("./widgets/popupComponent");
 exports.PopupComponent = popupComponent_1.PopupComponent;
 var popupService_1 = require("./widgets/popupService");
@@ -237,8 +237,8 @@ var gridApi_1 = require("./gridApi");
 exports.GridApi = gridApi_1.GridApi;
 var eventKeys_1 = require("./eventKeys");
 exports.Events = eventKeys_1.Events;
-var focusedCellController_1 = require("./focusedCellController");
-exports.FocusedCellController = focusedCellController_1.FocusedCellController;
+var focusController_1 = require("./focusController");
+exports.FocusController = focusController_1.FocusController;
 var functions_1 = require("./functions");
 exports.defaultGroupComparator = functions_1.defaultGroupComparator;
 var gridOptionsWrapper_1 = require("./gridOptionsWrapper");
@@ -257,12 +257,7 @@ var sortController_1 = require("./sortController");
 exports.SortController = sortController_1.SortController;
 var templateService_1 = require("./templateService");
 exports.TemplateService = templateService_1.TemplateService;
-var utils_1 = require("./utils");
-exports.Color = utils_1.Color;
-exports.Utils = utils_1.Utils;
-exports.NumberSequence = utils_1.NumberSequence;
-exports._ = utils_1._;
-exports.Promise = utils_1.Promise;
+__export(require("./utils"));
 var valueService_1 = require("./valueService/valueService");
 exports.ValueService = valueService_1.ValueService;
 var valueCache_1 = require("./valueService/valueCache");
@@ -275,6 +270,7 @@ var cellPosition_1 = require("./entities/cellPosition");
 exports.CellPositionUtils = cellPosition_1.CellPositionUtils;
 var rowPosition_1 = require("./entities/rowPosition");
 exports.RowPositionUtils = rowPosition_1.RowPositionUtils;
+__export(require("./propertyKeys"));
 var columnApi_1 = require("./columnController/columnApi");
 exports.ColumnApi = columnApi_1.ColumnApi;
 var frameworkComponentWrapper_1 = require("./components/framework/frameworkComponentWrapper");

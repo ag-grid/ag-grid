@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v22.1.1
+ * @version v23.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -108,8 +108,8 @@ export { AgColorPicker } from "./widgets/agColorPicker";
 export { AgGroupComponent } from "./widgets/agGroupComponent";
 export { AgDialog } from "./widgets/agDialog";
 export { AgPanel } from "./widgets/agPanel";
-export { MessageBox } from "./widgets/messageBox";
 export { Component } from "./widgets/component";
+export { ManagedTabComponent } from "./widgets/managedTabComponent";
 export { PopupComponent } from "./widgets/popupComponent";
 export { PopupService } from "./widgets/popupService";
 export { TouchListener } from "./widgets/touchListener";
@@ -124,7 +124,7 @@ export { Constants } from "./constants";
 export { Grid } from "./grid";
 export { GridApi } from "./gridApi";
 export { Events } from "./eventKeys";
-export { FocusedCellController } from "./focusedCellController";
+export { FocusController } from "./focusController";
 export { defaultGroupComparator } from "./functions";
 export { GridOptionsWrapper } from "./gridOptionsWrapper";
 export { EventService } from "./eventService";
@@ -134,13 +134,14 @@ export { Logger } from "./logger";
 export { SelectionController } from "./selectionController";
 export { SortController } from "./sortController";
 export { TemplateService } from "./templateService";
-export { Color, Utils, NumberSequence, _, Promise } from "./utils";
+export * from "./utils";
 export { ValueService } from "./valueService/valueService";
 export { ValueCache } from "./valueService/valueCache";
 export { ExpressionService } from "./valueService/expressionService";
 export { LoggerFactory } from "./logger";
 export { CellPositionUtils } from "./entities/cellPosition";
 export { RowPositionUtils } from "./entities/rowPosition";
+export * from "./propertyKeys";
 export { ColumnApi } from "./columnController/columnApi";
 export { BaseComponentWrapper } from "./components/framework/frameworkComponentWrapper";
 export { Environment } from "./environment";

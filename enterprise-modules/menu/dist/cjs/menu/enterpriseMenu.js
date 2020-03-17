@@ -149,6 +149,7 @@ var EnterpriseMenu = /** @class */ (function (_super) {
             onActiveItemClicked: this.onHidePopup.bind(this),
             onItemClicked: this.onTabItemClicked.bind(this)
         });
+        this.getContext().wireBean(this.tabbedLayout);
         this.eventService.addEventListener(core_1.Events.EVENT_DISPLAYED_COLUMNS_CHANGED, this.onDisplayedColumnsChanged.bind(this));
     };
     EnterpriseMenu.prototype.getTabsToCreate = function () {
@@ -165,9 +166,7 @@ var EnterpriseMenu = /** @class */ (function (_super) {
         if (menuTabName === EnterpriseMenu.TAB_COLUMNS) {
             return core_1.ModuleRegistry.isRegistered(core_1.ModuleNames.ColumnToolPanelModule);
         }
-        else {
-            return true;
-        }
+        return true;
     };
     EnterpriseMenu.prototype.isValidMenuTabItem = function (menuTabName) {
         var isValid = true;
@@ -220,12 +219,15 @@ var EnterpriseMenu = /** @class */ (function (_super) {
                 break;
         }
         if (key) {
-            var ev = {
-                type: EnterpriseMenu.EVENT_TAB_SELECTED,
-                key: key
-            };
-            this.dispatchEvent(ev);
+            this.activateTab(key);
         }
+    };
+    EnterpriseMenu.prototype.activateTab = function (tab) {
+        var ev = {
+            type: EnterpriseMenu.EVENT_TAB_SELECTED,
+            key: tab
+        };
+        this.dispatchEvent(ev);
     };
     EnterpriseMenu.prototype.destroy = function () {
         if (this.columnSelectPanel) {
@@ -372,6 +374,7 @@ var EnterpriseMenu = /** @class */ (function (_super) {
             suppressSyncLayoutWithGrid: false,
             api: this.gridApi
         });
+        core_1._.addCssClass(this.columnSelectPanel.getGui(), 'ag-menu-column-select');
         eWrapperDiv.appendChild(this.columnSelectPanel.getGui());
         this.tabItemColumns = {
             title: core_1._.createIconNoSpan('columns', this.gridOptionsWrapper, this.column),

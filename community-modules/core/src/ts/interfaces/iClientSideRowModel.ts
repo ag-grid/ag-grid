@@ -21,5 +21,7 @@ export interface IClientSideRowModel extends IRowModel {
     doAggregate(changedPath?: ChangedPath): void;
     getTopLevelNodes(): RowNode[] | null;
     forEachPivotNode(callback: Function): void;
-    ensureRowAtPixel(rowNode: RowNode, pixel: number): boolean;
+    ensureRowsAtPixel(rowNode: RowNode[], pixel: number, increment: number): boolean;
+    highlightRowAtPixel(rowNode: RowNode | null, pixel?: number): void;
+    getLastHighlightedRowNode(): RowNode | null;
 }

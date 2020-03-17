@@ -15,9 +15,9 @@ import { ChartType } from "@ag-grid-community/core";
 import { MiniStackedArea } from "./miniStackedArea";
 var MiniNormalizedArea = /** @class */ (function (_super) {
     __extends(MiniNormalizedArea, _super);
-    function MiniNormalizedArea(parent, fills, strokes, data) {
+    function MiniNormalizedArea(container, fills, strokes, data) {
         if (data === void 0) { data = MiniNormalizedArea.data; }
-        return _super.call(this, parent, fills, strokes, data, "normalizedAreaTooltip") || this;
+        return _super.call(this, container, fills, strokes, data, "normalizedAreaTooltip") || this;
     }
     MiniNormalizedArea.chartType = ChartType.NormalizedArea;
     MiniNormalizedArea.data = MiniStackedArea.data.map(function (stack) {

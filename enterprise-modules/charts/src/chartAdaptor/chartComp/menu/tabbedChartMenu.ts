@@ -61,6 +61,7 @@ export class TabbedChartMenu extends Component {
             items: this.tabs,
             cssClass: 'ag-chart-tabbed-menu'
         });
+        this.getContext().wireBean(this.tabbedLayout);
     }
 
     private createTab(
@@ -69,6 +70,7 @@ export class TabbedChartMenu extends Component {
         ChildClass: new (controller: ChartController) => Component
     ): { comp: Component, tab: TabbedItem } {
         const eWrapperDiv = document.createElement('div');
+        _.addCssClass(eWrapperDiv, 'ag-chart-tab');
         _.addCssClass(eWrapperDiv, `ag-chart-${title}`);
 
         const comp = new ChildClass(this.chartController);

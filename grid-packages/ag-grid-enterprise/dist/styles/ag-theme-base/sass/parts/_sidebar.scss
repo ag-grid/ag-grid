@@ -1,0 +1,107 @@
+
+@mixin ag-theme-base-part-sidebar {
+ 
+    .ag-side-bar {
+        position: relative;
+    }
+
+    .ag-tool-panel-wrapper {
+        background-color: ag-param(control-panel-background-color);
+    }
+
+    .ag-side-buttons {
+        padding-top: ag-param(grid-size) * 4;
+        width: ag-param(icon-size) + 4;
+        position: relative;
+        color: ag-param(foreground-color);
+        overflow: hidden;
+    }
+
+    .ag-side-button-button {
+        background: transparent;
+        padding: ag-param(grid-size) * 2 0 ag-param(grid-size) * 2 0;
+        @if ag-param(borders-side-button) {
+            width: calc(100% + 1px);
+        } @else {
+            width: 100%;
+        }
+        margin: 0;
+        min-height: ag-param(grid-size) * 18;
+        background-position-y: center;
+        background-position-x: center;
+        background-repeat: no-repeat;
+
+        border: none;
+        @include ag-border(side-button, (top, bottom), $color: transparent);
+
+        &:focus {
+            box-shadow: none;
+        }
+    }
+
+    .ag-selected .ag-side-button-button {
+        @if ag-param(borders-side-button) {
+            background-color: ag-param(control-panel-background-color);
+            border-top-color: ag-param(border-color);
+            border-bottom-color: ag-param(border-color);
+        }
+    }
+
+    .ag-side-button-icon-wrapper {
+        margin-bottom: 3px;
+    }
+
+    // sidebar visually on left
+    .ag-ltr .ag-side-bar-left,
+    .ag-rtl .ag-side-bar-right {
+        @include ag-border(primary, right);
+        .ag-tool-panel-wrapper {
+            @include ag-border(primary, left);
+        }
+
+        .ag-side-button-button {
+            border-right: ag-param(selected-tab-underline-width) solid transparent;
+            @if ag-param(selected-tab-underline-transition-speed) {
+                transition: border-right ag-param(selected-tab-underline-transition-speed);
+            }
+            
+            @if ag-param(borders-side-button) {
+                // this enlarges the tab button to cover the tool panel border
+                margin-right: -1px;
+                padding-right: 1px;
+            }
+        }
+
+        .ag-selected .ag-side-button-button {
+            border-right-color: ag-param(selected-tab-underline-color);
+        }
+    }
+
+    // sidebar visually on right
+    .ag-rtl .ag-side-bar-left,
+    .ag-ltr .ag-side-bar-right {
+        @include ag-border(primary, left);
+        
+        .ag-tool-panel-wrapper {
+            @include ag-border(primary, right);
+        }
+
+        .ag-side-button-button {
+            border-left: ag-param(selected-tab-underline-width) solid transparent;
+            @if ag-param(selected-tab-underline-transition-speed) {
+                transition: border-left ag-param(selected-tab-underline-transition-speed);
+            }
+            
+            @if ag-param(borders-side-button) {
+                // this enlarges the tab button to cover the tool panel border
+                margin-left: -1px;
+                padding-left: 1px;
+            }
+        }
+
+        .ag-selected .ag-side-button-button {
+            border-left-color: ag-param(selected-tab-underline-color);
+        }
+    }
+    
+}

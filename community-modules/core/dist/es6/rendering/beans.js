@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v22.1.1
+ * @version v23.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -68,8 +68,8 @@ var Beans = /** @class */ (function () {
         Optional('rangeController')
     ], Beans.prototype, "rangeController", void 0);
     __decorate([
-        Autowired('focusedCellController')
-    ], Beans.prototype, "focusedCellController", void 0);
+        Autowired('focusController')
+    ], Beans.prototype, "focusController", void 0);
     __decorate([
         Optional('contextMenuFactory')
     ], Beans.prototype, "contextMenuFactory", void 0);
@@ -121,6 +121,9 @@ var Beans = /** @class */ (function () {
     __decorate([
         Autowired('rowPositionUtils')
     ], Beans.prototype, "rowPositionUtils", void 0);
+    __decorate([
+        Autowired('selectionController')
+    ], Beans.prototype, "selectionController", void 0);
     __decorate([
         PostConstruct
     ], Beans.prototype, "postConstruct", null);

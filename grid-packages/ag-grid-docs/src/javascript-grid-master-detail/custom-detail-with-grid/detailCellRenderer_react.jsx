@@ -1,0 +1,78 @@
+import React, {Component} from 'react';
+import { AgGridReact } from "@ag-grid-community/react";
+import {AllModules} from "@ag-grid-enterprise/all-modules";
+import '@ag-grid-community/all-modules/dist/styles/ag-grid.css';
+import '@ag-grid-community/all-modules/dist/styles/ag-theme-alpine.css';
+
+export default class DetailCellRenderer extends Component {
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      name: props.data.name,
+      account: props.data.account,
+      colDefs: [
+        {field: 'callId'},
+        {field: 'direction'},
+        {field: 'number'},
+        {field: 'duration', valueFormatter: "x.toLocaleString() + 's'"},
+        {field: 'switchCode'}
+      ],
+      defaultColDef: {
+        flex: 1,
+        minWidth: 150
+      },
+      rowData: props.data.callRecords
+    };
+
+    this.state.rowIndex = props.rowIndex;
+    this.state.masterGridApi = props.api;
+  }
+
+  render() {
+    return (
+      <div className="full-width-panel">
+        <div className="full-width-details">
+          <div className="full-width-detail"><b>Name: </b>{this.state.name}</div>
+          <div className="full-width-detail"><b>Account: </b>{this.state.account}</div>
+        </div>
+        <AgGridReact
+          id="detailGrid"
+          class="full-width-grid ag-theme-alpine"
+          columnDefs={this.state.colDefs}
+          defaultColDef={this.state.defaultColDef}
+          rowData={this.state.rowData}
+          modules={AllModules}
+          debug={true}
+          onGridReady={this.onGridReady}
+        />
+      </div>
+    );
+  }
+
+  onGridReady = params => {
+    let detailGridId = this.createDetailGridId();
+
+    let gridInfo = {
+      id: detailGridId,
+      api: params.api,
+      columnApi: params.columnApi
+    };
+
+    console.log("adding detail grid info with id: ", detailGridId);
+    this.state.masterGridApi.addDetailGridInfo(detailGridId, gridInfo);
+  };
+
+  componentWillUnmount = () => {
+    let detailGridId = this.createDetailGridId();
+
+    // ag-Grid is automatically destroyed
+
+    console.log("removing detail grid info with id: ", detailGridId);
+    this.state.masterGridApi.removeDetailGridInfo(detailGridId);
+  };
+
+  createDetailGridId = () => {
+    return "detail_" + this.state.rowIndex;
+  }
+}

@@ -104,9 +104,10 @@ return /******/ (function(modules) { // webpackBootstrap
 /* harmony import */ var _constants__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("f2fb");
 /* harmony import */ var _widgets_popupComponent__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("86a4");
 /* harmony import */ var _utils__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("e3d3");
+/* harmony import */ var _widgets_componentAnnotations__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("f737");
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v22.1.1
+ * @version v23.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -123,15 +124,20 @@ var __extends = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
+var __decorate = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+
 
 
 
 var TextCellEditor = /** @class */ (function (_super) {
     __extends(TextCellEditor, _super);
     function TextCellEditor() {
-        var _this = _super.call(this, TextCellEditor.TEMPLATE) || this;
-        _this.eInput = _this.getGui().querySelector('input');
-        return _this;
+        return _super.call(this, TextCellEditor.TEMPLATE) || this;
     }
     TextCellEditor.prototype.init = function (params) {
         this.params = params;
@@ -160,9 +166,9 @@ var TextCellEditor = /** @class */ (function (_super) {
             startValue = this.getStartValue(params);
         }
         if (_utils__WEBPACK_IMPORTED_MODULE_2__[/* _ */ "d"].exists(startValue)) {
-            eInput.value = startValue;
+            eInput.setValue(startValue, true);
         }
-        this.addDestroyableEventListener(eInput, 'keydown', function (event) {
+        this.addDestroyableEventListener(eInput.getGui(), 'keydown', function (event) {
             var pageUp = event.keyCode === _constants__WEBPACK_IMPORTED_MODULE_0__[/* Constants */ "a"].KEY_PAGE_UP;
             var pageDown = event.keyCode === _constants__WEBPACK_IMPORTED_MODULE_0__[/* Constants */ "a"].KEY_PAGE_DOWN;
             if (pageUp || pageDown) {
@@ -176,34 +182,43 @@ var TextCellEditor = /** @class */ (function (_super) {
         }
         var eInput = this.eInput;
         // Added for AG-3238. We can't remove this explicit focus() because Chrome requires an input
-        // to be focussed before setSelectionRange will work. But it triggers a bug in Safari where
-        // explicitly focussing then blurring an empty field will cause the parent container to scroll.
+        // to be focused before setSelectionRange will work. But it triggers a bug in Safari where
+        // explicitly focusing then blurring an empty field will cause the parent container to scroll.
         if (!_utils__WEBPACK_IMPORTED_MODULE_2__[/* _ */ "d"].isBrowserSafari()) {
-            eInput.focus();
+            eInput.getFocusableElement().focus();
         }
+        var inputEl = eInput.getInputElement();
         if (this.highlightAllOnFocus) {
-            eInput.select();
+            inputEl.select();
         }
         else {
             // when we started editing, we want the caret at the end, not the start.
             // this comes into play in two scenarios: a) when user hits F2 and b)
             // when user hits a printable character, then on IE (and only IE) the caret
             // was placed after the first character, thus 'apply' would end up as 'pplea'
-            var length_1 = eInput.value ? eInput.value.length : 0;
-            if (length_1 > 0) {
-                eInput.setSelectionRange(length_1, length_1);
+            var value = eInput.getValue();
+            if (value && value.length) {
+                inputEl.setSelectionRange(length, length);
             }
         }
     };
     // gets called when tabbing trough cells and in full row edit mode
     TextCellEditor.prototype.focusIn = function () {
         var eInput = this.eInput;
-        eInput.focus();
-        eInput.select();
+        var focusEl = eInput.getFocusableElement();
+        var inputEl = eInput.getInputElement();
+        focusEl.focus();
+        inputEl.select();
+    };
+    TextCellEditor.prototype.focusOut = function () {
+        var inputEl = this.eInput.getInputElement();
+        if (_utils__WEBPACK_IMPORTED_MODULE_2__[/* _ */ "d"].isBrowserIE()) {
+            inputEl.setSelectionRange(0, 0);
+        }
     };
     TextCellEditor.prototype.getValue = function () {
         var eInput = this.eInput;
-        return this.params.parseValue(eInput.value);
+        return this.params.parseValue(eInput.getValue());
     };
     TextCellEditor.prototype.getStartValue = function (params) {
         var formatValue = params.useFormatter || params.column.getColDef().refData;
@@ -212,7 +227,10 @@ var TextCellEditor = /** @class */ (function (_super) {
     TextCellEditor.prototype.isPopup = function () {
         return false;
     };
-    TextCellEditor.TEMPLATE = '<div class="ag-input-wrapper" role="presentation"><input class="ag-cell-edit-input" type="text"/></div>';
+    TextCellEditor.TEMPLATE = '<div class="ag-cell-edit-wrapper"><ag-input-text-field class="ag-cell-editor" ref="eInput"></ag-input-text-field></div>';
+    __decorate([
+        Object(_widgets_componentAnnotations__WEBPACK_IMPORTED_MODULE_3__[/* RefSelector */ "a"])('eInput')
+    ], TextCellEditor.prototype, "eInput", void 0);
     return TextCellEditor;
 }(_widgets_popupComponent__WEBPACK_IMPORTED_MODULE_1__[/* PopupComponent */ "a"]));
 
@@ -230,7 +248,7 @@ var TextCellEditor = /** @class */ (function (_super) {
 /* harmony import */ var _context_context__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("d196");
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v22.1.1
+ * @version v23.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -283,9 +301,7 @@ var AnimateShowChangeCellRenderer = /** @class */ (function (_super) {
             // because negative, use ABS to remove sign
             this.eDelta.innerHTML = ARROW_DOWN + valueToUse;
         }
-        // class makes it green (in ag-fresh)
         _utils__WEBPACK_IMPORTED_MODULE_1__[/* _ */ "d"].addOrRemoveCssClass(this.eDelta, 'ag-value-change-delta-up', deltaUp);
-        // class makes it red (in ag-fresh)
         _utils__WEBPACK_IMPORTED_MODULE_1__[/* _ */ "d"].addOrRemoveCssClass(this.eDelta, 'ag-value-change-delta-down', !deltaUp);
     };
     AnimateShowChangeCellRenderer.prototype.setTimerToRemoveDelta = function () {
@@ -356,10 +372,13 @@ var AnimateShowChangeCellRenderer = /** @class */ (function (_super) {
 
 "use strict";
 
+// EXPORTS
+__webpack_require__.d(__webpack_exports__, "a", function() { return /* binding */ agColorPicker_AgColorPicker; });
+
 // EXTERNAL MODULE: ../core/dist/es6/widgets/component.js
 var component = __webpack_require__("6045");
 
-// EXTERNAL MODULE: ../core/dist/es6/utils/index.js + 4 modules
+// EXTERNAL MODULE: ../core/dist/es6/utils/index.js + 5 modules
 var utils = __webpack_require__("e3d3");
 
 // EXTERNAL MODULE: ../core/dist/es6/widgets/componentAnnotations.js
@@ -371,7 +390,7 @@ var context = __webpack_require__("d196");
 // CONCATENATED MODULE: ../core/dist/es6/widgets/agColorPanel.js
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v22.1.1
+ * @version v23.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -594,7 +613,7 @@ var agColorPanel_AgColorPanel = /** @class */ (function (_super) {
     };
     AgColorPanel.maxRecentColors = 8;
     AgColorPanel.recentColors = [];
-    AgColorPanel.TEMPLATE = "<div class=\"ag-color-panel\">\n            <div ref=\"spectrumColor\" class=\"ag-spectrum-color\">\n                <div class=\"ag-spectrum-sat ag-fill\">\n                    <div ref=\"spectrumVal\" class=\"ag-spectrum-val ag-fill\">\n                        <div ref=\"spectrumDragger\" class=\"ag-spectrum-dragger\"></div>\n                    </div>\n                </div>\n            </div>\n            <div class=\"ag-spectrum-tools\">\n                <div ref=\"spectrumHue\" class=\"ag-spectrum-hue ag-hue-alpha\">\n                    <div class=\"ag-spectrum-hue-background\"></div>\n                    <div ref=\"spectrumHueSlider\" class=\"ag-spectrum-slider\"></div>\n                </div>\n                <div ref=\"spectrumAlpha\" class=\"ag-spectrum-alpha ag-hue-alpha\">\n                    <div class=\"ag-spectrum-alpha-background\"></div>\n                    <div ref=\"spectrumAlphaSlider\" class=\"ag-spectrum-slider\"></div>\n                </div>\n                <div ref=\"recentColors\" class=\"ag-recent-colors\"></div>\n            </div>\n        </div>";
+    AgColorPanel.TEMPLATE = "<div class=\"ag-color-panel\">\n            <div ref=\"spectrumColor\" class=\"ag-spectrum-color\">\n                <div class=\"ag-spectrum-sat ag-spectrum-fill\">\n                    <div ref=\"spectrumVal\" class=\"ag-spectrum-val ag-spectrum-fill\">\n                        <div ref=\"spectrumDragger\" class=\"ag-spectrum-dragger\"></div>\n                    </div>\n                </div>\n            </div>\n            <div class=\"ag-spectrum-tools\">\n                <div ref=\"spectrumHue\" class=\"ag-spectrum-hue ag-spectrum-tool\">\n                    <div class=\"ag-spectrum-hue-background\"></div>\n                    <div ref=\"spectrumHueSlider\" class=\"ag-spectrum-slider\"></div>\n                </div>\n                <div ref=\"spectrumAlpha\" class=\"ag-spectrum-alpha ag-spectrum-tool\">\n                    <div class=\"ag-spectrum-alpha-background\"></div>\n                    <div ref=\"spectrumAlphaSlider\" class=\"ag-spectrum-slider\"></div>\n                </div>\n                <div ref=\"recentColors\" class=\"ag-recent-colors\"></div>\n            </div>\n        </div>";
     __decorate([
         Object(componentAnnotations["a" /* RefSelector */])('spectrumColor')
     ], AgColorPanel.prototype, "spectrumColor", void 0);
@@ -629,86 +648,16 @@ var agColorPanel_AgColorPanel = /** @class */ (function (_super) {
 // EXTERNAL MODULE: ../core/dist/es6/widgets/agDialog.js
 var agDialog = __webpack_require__("948a");
 
+// EXTERNAL MODULE: ../core/dist/es6/widgets/agPickerField.js
+var agPickerField = __webpack_require__("c238");
+
 // EXTERNAL MODULE: ../core/dist/es6/widgets/agAbstractField.js
 var agAbstractField = __webpack_require__("a06f");
 
-// CONCATENATED MODULE: ../core/dist/es6/widgets/agPickerField.js
-/**
- * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v22.1.1
- * @link http://www.ag-grid.com/
- * @license MIT
- */
-var agPickerField_extends = (undefined && undefined.__extends) || (function () {
-    var extendStatics = function (d, b) {
-        extendStatics = Object.setPrototypeOf ||
-            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
-        return extendStatics(d, b);
-    };
-    return function (d, b) {
-        extendStatics(d, b);
-        function __() { this.constructor = d; }
-        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-})();
-var agPickerField_decorate = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
-    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
-    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
-    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
-    return c > 3 && r && Object.defineProperty(target, key, r), r;
-};
-
-
-
-
-var agPickerField_AgPickerField = /** @class */ (function (_super) {
-    agPickerField_extends(AgPickerField, _super);
-    function AgPickerField() {
-        var _this = _super !== null && _super.apply(this, arguments) || this;
-        _this.TEMPLATE = "<div class=\"ag-picker-field\">\n            <label ref=\"eLabel\"></label>\n            <div ref=\"eWrapper\" class=\"ag-wrapper\">\n                <%displayField% ref=\"eDisplayField\"></%displayField%>\n                <button ref=\"eButton\" class=\"ag-picker-button\"> </button>\n            </div>\n        </div>";
-        _this.displayedPicker = false;
-        _this.isDestroyingPicker = false;
-        return _this;
-    }
-    AgPickerField.prototype.postConstruct = function () {
-        var _this = this;
-        _super.prototype.postConstruct.call(this);
-        this.addDestroyableEventListener(this.eButton, 'click', function () {
-            _this.showPicker();
-        });
-        if (this.pickerIcon) {
-            this.eButton.appendChild(utils["d" /* _ */].createIconNoSpan(this.pickerIcon, this.gridOptionsWrapper, null));
-        }
-    };
-    AgPickerField.prototype.setInputWidth = function (width) {
-        utils["d" /* _ */].setElementWidth(this.eWrapper, width);
-        return this;
-    };
-    agPickerField_decorate([
-        Object(context["a" /* Autowired */])('gridOptionsWrapper')
-    ], AgPickerField.prototype, "gridOptionsWrapper", void 0);
-    agPickerField_decorate([
-        Object(componentAnnotations["a" /* RefSelector */])('eLabel')
-    ], AgPickerField.prototype, "eLabel", void 0);
-    agPickerField_decorate([
-        Object(componentAnnotations["a" /* RefSelector */])('eWrapper')
-    ], AgPickerField.prototype, "eWrapper", void 0);
-    agPickerField_decorate([
-        Object(componentAnnotations["a" /* RefSelector */])('eDisplayField')
-    ], AgPickerField.prototype, "eDisplayField", void 0);
-    agPickerField_decorate([
-        Object(componentAnnotations["a" /* RefSelector */])('eButton')
-    ], AgPickerField.prototype, "eButton", void 0);
-    return AgPickerField;
-}(agAbstractField["a" /* AgAbstractField */]));
-
-
 // CONCATENATED MODULE: ../core/dist/es6/widgets/agColorPicker.js
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return agColorPicker_AgColorPicker; });
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v22.1.1
+ * @version v23.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -744,20 +693,13 @@ var agColorPicker_AgColorPicker = /** @class */ (function (_super) {
         return _this;
     }
     AgColorPicker.prototype.postConstruct = function () {
-        var _this = this;
         _super.prototype.postConstruct.call(this);
-        utils["d" /* _ */].addCssClass(this.getGui(), this.className);
-        this.addDestroyableEventListener(this.eDisplayField, 'click', function () { return _this.showPicker(); });
         if (this.value) {
             this.setValue(this.value);
         }
     };
     AgColorPicker.prototype.showPicker = function () {
         var _this = this;
-        if (this.displayedPicker) {
-            this.displayedPicker = false;
-            return;
-        }
         var eGuiRect = this.getGui().getBoundingClientRect();
         var colorDialog = new agDialog["a" /* AgDialog */]({
             closable: false,
@@ -785,7 +727,6 @@ var agColorPicker_AgColorPicker = /** @class */ (function (_super) {
         colorPanel.setValue(this.getValue());
         colorDialog.addDestroyFunc(function () {
             var wasDestroying = _this.isDestroyingPicker;
-            _this.displayedPicker = false;
             // here we check if the picker was already being
             // destroyed to avoid a stackoverflow
             if (!wasDestroying) {
@@ -797,7 +738,11 @@ var agColorPicker_AgColorPicker = /** @class */ (function (_super) {
             else {
                 _this.isDestroyingPicker = false;
             }
+            if (_this.isAlive()) {
+                _this.getFocusableElement().focus();
+            }
         });
+        return colorDialog;
     };
     AgColorPicker.prototype.setValue = function (color) {
         if (this.value === color) {
@@ -812,7 +757,7 @@ var agColorPicker_AgColorPicker = /** @class */ (function (_super) {
         return this.value;
     };
     return AgColorPicker;
-}(agPickerField_AgPickerField));
+}(agPickerField["a" /* AgPickerField */]));
 
 
 
@@ -826,7 +771,7 @@ var agColorPicker_AgColorPicker = /** @class */ (function (_super) {
 /* harmony import */ var _utils__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("e3d3");
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v22.1.1
+ * @version v23.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -859,11 +804,32 @@ function defaultGroupComparator(valueA, valueB, nodeA, nodeB, accentedCompare) {
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return AgSelect; });
-/* harmony import */ var _agAbstractInputField__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("6068");
+
+// EXPORTS
+__webpack_require__.d(__webpack_exports__, "a", function() { return /* binding */ agSelect_AgSelect; });
+
+// EXTERNAL MODULE: ../core/dist/es6/widgets/agAbstractField.js
+var agAbstractField = __webpack_require__("a06f");
+
+// EXTERNAL MODULE: ../core/dist/es6/widgets/agPickerField.js
+var agPickerField = __webpack_require__("c238");
+
+// EXTERNAL MODULE: ../core/dist/es6/widgets/component.js
+var component = __webpack_require__("6045");
+
+// EXTERNAL MODULE: ../core/dist/es6/context/context.js
+var context = __webpack_require__("d196");
+
+// EXTERNAL MODULE: ../core/dist/es6/constants.js
+var constants = __webpack_require__("f2fb");
+
+// EXTERNAL MODULE: ../core/dist/es6/utils/index.js + 5 modules
+var utils = __webpack_require__("e3d3");
+
+// CONCATENATED MODULE: ../core/dist/es6/widgets/agList.js
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v22.1.1
+ * @version v23.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -880,36 +846,295 @@ var __extends = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
+var __decorate = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
 
-var AgSelect = /** @class */ (function (_super) {
-    __extends(AgSelect, _super);
-    function AgSelect() {
+
+
+
+
+var agList_AgList = /** @class */ (function (_super) {
+    __extends(AgList, _super);
+    function AgList(cssIdentifier) {
+        if (cssIdentifier === void 0) { cssIdentifier = 'default'; }
+        var _this = _super.call(this, AgList.getTemplate(cssIdentifier)) || this;
+        _this.cssIdentifier = cssIdentifier;
+        _this.options = [];
+        _this.itemEls = [];
+        return _this;
+    }
+    AgList.prototype.init = function () {
+        this.addDestroyableEventListener(this.getGui(), 'keydown', this.handleKeyDown.bind(this));
+    };
+    AgList.getTemplate = function (cssIdentifier) {
+        return "<div class=\"ag-list ag-" + cssIdentifier + "-list\"></div>";
+    };
+    AgList.prototype.handleKeyDown = function (e) {
+        var key = e.keyCode;
+        switch (key) {
+            case constants["a" /* Constants */].KEY_ENTER:
+                if (!this.highlightedEl) {
+                    this.setValue(this.getValue());
+                }
+                else {
+                    var pos = this.itemEls.indexOf(this.highlightedEl);
+                    this.setValueByIndex(pos);
+                }
+                break;
+            case constants["a" /* Constants */].KEY_DOWN:
+            case constants["a" /* Constants */].KEY_UP:
+                var isDown = key === constants["a" /* Constants */].KEY_DOWN;
+                var itemToHighlight = void 0;
+                e.preventDefault();
+                if (!this.highlightedEl) {
+                    itemToHighlight = this.itemEls[isDown ? 0 : this.itemEls.length - 1];
+                }
+                else {
+                    var currentIdx = this.itemEls.indexOf(this.highlightedEl);
+                    var nextPos = currentIdx + (isDown ? 1 : -1);
+                    nextPos = Math.min(Math.max(nextPos, 0), this.itemEls.length - 1);
+                    itemToHighlight = this.itemEls[nextPos];
+                }
+                this.highlightItem(itemToHighlight);
+                break;
+        }
+    };
+    AgList.prototype.addOptions = function (listOptions) {
+        var _this = this;
+        listOptions.forEach(function (listOption) { return _this.addOption(listOption); });
+        return this;
+    };
+    AgList.prototype.addOption = function (listOption) {
+        var value = listOption.value, text = listOption.text;
+        var sanitisedText = utils["d" /* _ */].escape(text === undefined ? value : text);
+        this.options.push({ value: value, text: sanitisedText });
+        this.renderOption(sanitisedText);
+        return this;
+    };
+    AgList.prototype.renderOption = function (innerText) {
+        var _this = this;
+        var itemEl = document.createElement('div');
+        var itemContentEl = document.createElement('span');
+        utils["d" /* _ */].addCssClass(itemEl, 'ag-list-item');
+        utils["d" /* _ */].addCssClass(itemEl, "ag-" + this.cssIdentifier + "-list-item");
+        itemEl.tabIndex = -1;
+        itemContentEl.innerHTML = innerText;
+        this.itemEls.push(itemEl);
+        this.addDestroyableEventListener(itemEl, 'mouseover', function (e) { return _this.highlightItem(itemEl); });
+        this.addDestroyableEventListener(itemEl, 'mouseleave', function () { return _this.clearHighlighted(); });
+        this.addDestroyableEventListener(itemEl, 'click', function () {
+            var idx = _this.itemEls.indexOf(itemEl);
+            _this.setValueByIndex(idx);
+        });
+        itemEl.appendChild(itemContentEl);
+        this.getGui().appendChild(itemEl);
+    };
+    AgList.prototype.setValue = function (value, silent) {
+        if (this.value === value) {
+            this.fireItemSelected();
+            return this;
+        }
+        if (value == null) {
+            this.reset();
+            return this;
+        }
+        var idx = utils["d" /* _ */].findIndex(this.options, function (option) { return option.value === value; });
+        if (idx !== -1) {
+            var option = this.options[idx];
+            this.value = option.value;
+            this.displayValue = option.text != null ? option.text : option.value;
+            this.highlightItem(this.itemEls[idx]);
+            if (!silent) {
+                this.fireChangeEvent();
+            }
+        }
+        return this;
+    };
+    AgList.prototype.setValueByIndex = function (idx) {
+        return this.setValue(this.options[idx].value);
+    };
+    AgList.prototype.getValue = function () {
+        return this.value;
+    };
+    AgList.prototype.getDisplayValue = function () {
+        return this.displayValue;
+    };
+    AgList.prototype.refreshHighlighted = function () {
+        var _this = this;
+        this.clearHighlighted();
+        var idx = utils["d" /* _ */].findIndex(this.options, function (option) { return option.value === _this.value; });
+        if (idx !== -1) {
+            this.highlightItem(this.itemEls[idx]);
+        }
+    };
+    AgList.prototype.reset = function () {
+        this.value = null;
+        this.displayValue = null;
+        this.clearHighlighted();
+        this.fireChangeEvent();
+    };
+    AgList.prototype.highlightItem = function (el) {
+        if (!el.offsetParent) {
+            return;
+        }
+        utils["d" /* _ */].radioCssClass(el, 'ag-active-item');
+        this.highlightedEl = el;
+        this.highlightedEl.focus();
+    };
+    AgList.prototype.clearHighlighted = function () {
+        if (!this.highlightedEl || !this.highlightedEl.offsetParent) {
+            return;
+        }
+        utils["d" /* _ */].removeCssClass(this.highlightedEl, 'ag-active-item');
+        this.highlightedEl = null;
+    };
+    AgList.prototype.fireChangeEvent = function () {
+        this.dispatchEvent({ type: agAbstractField["a" /* AgAbstractField */].EVENT_CHANGED });
+        this.fireItemSelected();
+    };
+    AgList.prototype.fireItemSelected = function () {
+        this.dispatchEvent({ type: AgList.EVENT_ITEM_SELECTED });
+    };
+    AgList.EVENT_ITEM_SELECTED = 'selectedItem';
+    __decorate([
+        context["e" /* PostConstruct */]
+    ], AgList.prototype, "init", null);
+    return AgList;
+}(component["a" /* Component */]));
+
+
+// CONCATENATED MODULE: ../core/dist/es6/widgets/agSelect.js
+/**
+ * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
+ * @version v23.0.0
+ * @link http://www.ag-grid.com/
+ * @license MIT
+ */
+var agSelect_extends = (undefined && undefined.__extends) || (function () {
+    var extendStatics = function (d, b) {
+        extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+        return extendStatics(d, b);
+    };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
+var agSelect_decorate = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+
+
+
+
+
+var agSelect_AgSelect = /** @class */ (function (_super) {
+    agSelect_extends(AgSelect, _super);
+    function AgSelect(config) {
         var _this = _super.call(this) || this;
+        _this.displayTag = 'div';
         _this.className = 'ag-select';
-        _this.displayTag = 'select';
-        _this.inputType = '';
+        _this.pickerIcon = 'smallDown';
         _this.setTemplate(_this.TEMPLATE.replace(/%displayField%/g, _this.displayTag));
         return _this;
     }
+    AgSelect.prototype.init = function () {
+        var _this = this;
+        this.listComponent = new agList_AgList('select');
+        this.getContext().wireBean(this.listComponent);
+        this.listComponent.setParentComponent(this);
+        this.eWrapper.tabIndex = 0;
+        this.listComponent.addDestroyableEventListener(this.listComponent, agList_AgList.EVENT_ITEM_SELECTED, function () { if (_this.hideList) {
+            _this.hideList();
+        } });
+        this.listComponent.addDestroyableEventListener(this.listComponent, agAbstractField["a" /* AgAbstractField */].EVENT_CHANGED, function () {
+            _this.setValue(_this.listComponent.getValue(), false, true);
+            if (_this.hideList) {
+                _this.hideList();
+            }
+        });
+    };
+    AgSelect.prototype.showPicker = function () {
+        var _this = this;
+        var listGui = this.listComponent.getGui();
+        var mouseWheelFunc = this.addDestroyableEventListener(document.body, 'wheel', function (e) {
+            if (!listGui.contains(e.target) && _this.hideList) {
+                _this.hideList();
+            }
+        });
+        var focusOutFunc = this.addDestroyableEventListener(listGui, 'focusout', function (e) {
+            if (!listGui.contains(e.relatedTarget) && _this.hideList) {
+                _this.hideList();
+            }
+        });
+        this.hideList = this.popupService.addPopup(true, listGui, true, function () {
+            _this.hideList = null;
+            focusOutFunc();
+            mouseWheelFunc();
+            if (_this.isAlive()) {
+                _this.getFocusableElement().focus();
+            }
+        });
+        utils["d" /* _ */].setElementWidth(listGui, utils["d" /* _ */].getAbsoluteWidth(this.eWrapper));
+        listGui.style.maxHeight = utils["d" /* _ */].getInnerHeight(this.popupService.getPopupParent()) + 'px';
+        listGui.style.position = 'absolute';
+        this.popupService.positionPopupUnderComponent({
+            type: 'ag-list',
+            eventSource: this.eWrapper,
+            ePopup: listGui,
+            keepWithinBounds: true
+        });
+        this.listComponent.refreshHighlighted();
+        return this.listComponent;
+    };
     AgSelect.prototype.addOptions = function (options) {
         var _this = this;
         options.forEach(function (option) { return _this.addOption(option); });
         return this;
     };
     AgSelect.prototype.addOption = function (option) {
-        var optionEl = document.createElement('option');
-        optionEl.value = option.value;
-        optionEl.text = option.text || option.value;
-        this.eInput.appendChild(optionEl);
+        this.listComponent.addOption(option);
         return this;
     };
-    AgSelect.prototype.setValue = function (value, silent) {
-        var ret = _super.prototype.setValue.call(this, value, silent);
-        this.eInput.value = value;
-        return ret;
+    AgSelect.prototype.setValue = function (value, silent, fromPicker) {
+        if (this.value === value) {
+            return;
+        }
+        if (!fromPicker) {
+            this.listComponent.setValue(value, true);
+        }
+        var newValue = this.listComponent.getValue();
+        if (newValue === this.getValue()) {
+            return;
+        }
+        this.eDisplayField.innerHTML = this.listComponent.getDisplayValue();
+        return _super.prototype.setValue.call(this, value, silent);
     };
+    AgSelect.prototype.destroy = function () {
+        _super.prototype.destroy.call(this);
+        if (this.hideList) {
+            this.hideList();
+        }
+        this.listComponent.destroy();
+    };
+    agSelect_decorate([
+        Object(context["a" /* Autowired */])('popupService')
+    ], AgSelect.prototype, "popupService", void 0);
+    agSelect_decorate([
+        context["e" /* PostConstruct */]
+    ], AgSelect.prototype, "init", null);
     return AgSelect;
-}(_agAbstractInputField__WEBPACK_IMPORTED_MODULE_0__[/* AgAbstractInputField */ "a"]));
+}(agPickerField["a" /* AgPickerField */]));
 
 
 
@@ -924,7 +1149,7 @@ var AgSelect = /** @class */ (function (_super) {
 
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v22.1.1
+ * @version v23.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -940,7 +1165,7 @@ var AgSelect = /** @class */ (function (_super) {
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return OptionsFactory; });
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v22.1.1
+ * @version v23.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -1030,7 +1255,7 @@ var OptionsFactory = /** @class */ (function () {
 /* harmony import */ var _utils__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__("e3d3");
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v22.1.1
+ * @version v23.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -1234,20 +1459,20 @@ var RowRenderer = /** @class */ (function (_super) {
     };
     RowRenderer.prototype.getAllCellsForColumn = function (column) {
         var eCells = [];
-        _utils__WEBPACK_IMPORTED_MODULE_8__[/* _ */ "d"].iterateObject(this.rowCompsByIndex, callback);
-        _utils__WEBPACK_IMPORTED_MODULE_8__[/* _ */ "d"].iterateObject(this.floatingBottomRowComps, callback);
-        _utils__WEBPACK_IMPORTED_MODULE_8__[/* _ */ "d"].iterateObject(this.floatingTopRowComps, callback);
         function callback(key, rowComp) {
             var eCell = rowComp.getCellForCol(column);
             if (eCell) {
                 eCells.push(eCell);
             }
         }
+        _utils__WEBPACK_IMPORTED_MODULE_8__[/* _ */ "d"].iterateObject(this.rowCompsByIndex, callback);
+        _utils__WEBPACK_IMPORTED_MODULE_8__[/* _ */ "d"].iterateObject(this.floatingBottomRowComps, callback);
+        _utils__WEBPACK_IMPORTED_MODULE_8__[/* _ */ "d"].iterateObject(this.floatingTopRowComps, callback);
         return eCells;
     };
     RowRenderer.prototype.refreshFloatingRowComps = function () {
         this.refreshFloatingRows(this.floatingTopRowComps, this.pinnedRowModel.getPinnedTopRowData(), this.rowContainers.floatingTopPinnedLeft, this.rowContainers.floatingTopPinnedRight, this.rowContainers.floatingTop, this.rowContainers.floatingTopFullWidth);
-        this.refreshFloatingRows(this.floatingBottomRowComps, this.pinnedRowModel.getPinnedBottomRowData(), this.rowContainers.floatingBottomPinnedLeft, this.rowContainers.floatingBottomPinnedRight, this.rowContainers.floatingBottom, this.rowContainers.floatingBottomFullWith);
+        this.refreshFloatingRows(this.floatingBottomRowComps, this.pinnedRowModel.getPinnedBottomRowData(), this.rowContainers.floatingBottomPinnedLeft, this.rowContainers.floatingBottomPinnedRight, this.rowContainers.floatingBottom, this.rowContainers.floatingBottomFullWidth);
     };
     RowRenderer.prototype.refreshFloatingRows = function (rowComps, rowNodes, pinnedLeftContainerComp, pinnedRightContainerComp, bodyContainerComp, fullWidthContainerComp) {
         var _this = this;
@@ -1314,7 +1539,7 @@ var RowRenderer = /** @class */ (function (_super) {
         });
     };
     RowRenderer.prototype.getCellToRestoreFocusToAfterRefresh = function (params) {
-        var focusedCell = params.suppressKeepFocus ? null : this.focusedCellController.getFocusCellToUseAfterRefresh();
+        var focusedCell = params.suppressKeepFocus ? null : this.focusController.getFocusCellToUseAfterRefresh();
         if (_utils__WEBPACK_IMPORTED_MODULE_8__[/* _ */ "d"].missing(focusedCell)) {
             return null;
         }
@@ -1327,10 +1552,7 @@ var RowRenderer = /** @class */ (function (_super) {
         var activeElement = document.activeElement;
         var domData = this.gridOptionsWrapper.getDomData(activeElement, _cellComp__WEBPACK_IMPORTED_MODULE_5__[/* CellComp */ "a"].DOM_DATA_KEY_CELL_COMP);
         var elementIsNotACellDev = _utils__WEBPACK_IMPORTED_MODULE_8__[/* _ */ "d"].missing(domData);
-        if (elementIsNotACellDev) {
-            return null;
-        }
-        return focusedCell;
+        return elementIsNotACellDev ? null : focusedCell;
     };
     // gets called after changes to the model.
     RowRenderer.prototype.redrawAfterModelUpdate = function (params) {
@@ -1401,7 +1623,7 @@ var RowRenderer = /** @class */ (function (_super) {
     // edited cell).
     RowRenderer.prototype.restoreFocusedCell = function (cellPosition) {
         if (cellPosition) {
-            this.focusedCellController.setFocusedCell(cellPosition.rowIndex, cellPosition.column, cellPosition.rowPinned, true);
+            this.focusController.setFocusedCell(cellPosition.rowIndex, cellPosition.column, cellPosition.rowPinned, true);
         }
     };
     RowRenderer.prototype.stopEditing = function (cancel) {
@@ -1547,8 +1769,8 @@ var RowRenderer = /** @class */ (function (_super) {
     };
     RowRenderer.prototype.binRowComps = function (recycleRows) {
         var _this = this;
-        var indexesToRemove;
         var rowsToRecycle = {};
+        var indexesToRemove;
         if (recycleRows) {
             indexesToRemove = [];
             _utils__WEBPACK_IMPORTED_MODULE_8__[/* _ */ "d"].iterateObject(this.rowCompsByIndex, function (index, rowComp) {
@@ -1872,7 +2094,7 @@ var RowRenderer = /** @class */ (function (_super) {
         var REMOVE_ROW = false;
         var KEEP_ROW = true;
         var rowNode = rowComp.getRowNode();
-        var rowHasFocus = this.focusedCellController.isRowNodeFocused(rowNode);
+        var rowHasFocus = this.focusController.isRowNodeFocused(rowNode);
         var rowIsEditing = rowComp.isEditing();
         var rowIsDetail = rowNode.detail;
         var mightWantToKeepRow = rowHasFocus || rowIsEditing || rowIsDetail;
@@ -1900,9 +2122,7 @@ var RowRenderer = /** @class */ (function (_super) {
     };
     RowRenderer.prototype.getRenderedNodes = function () {
         var renderedRows = this.rowCompsByIndex;
-        return Object.keys(renderedRows).map(function (key) {
-            return renderedRows[key].getRowNode();
-        });
+        return Object.keys(renderedRows).map(function (key) { return renderedRows[key].getRowNode(); });
     };
     // we use index for rows, but column object for columns, as the next column (by index) might not
     // be visible (header grouping) so it's not reliable, so using the column object instead.
@@ -1984,6 +2204,10 @@ var RowRenderer = /** @class */ (function (_super) {
         // the spanning.
         this.ensureCellVisible(nextCell); // ensureCellVisible first, to make sure nextCell is rendered
         var cellComp = this.getComponentForCell(nextCell);
+        // not guaranteed to have a cellComp when using the SSRM as blocks are loading.
+        if (!cellComp) {
+            return;
+        }
         nextCell = cellComp.getCellPosition();
         // we call this again, as nextCell can be different to it's previous value due to Column Spanning
         // (ie if cursor moving from right to left, and cell is spanning columns, then nextCell was the
@@ -1991,7 +2215,7 @@ var RowRenderer = /** @class */ (function (_super) {
         // ensureCellVisible again, then we could only be showing the last portion (last column) of the
         // merged cells.
         this.ensureCellVisible(nextCell);
-        this.focusedCellController.setFocusedCell(nextCell.rowIndex, nextCell.column, nextCell.rowPinned, true);
+        this.focusController.setFocusedCell(nextCell.rowIndex, nextCell.column, nextCell.rowPinned, true);
         if (this.rangeController) {
             this.rangeController.setRangeToCell(nextCell);
         }
@@ -2068,7 +2292,7 @@ var RowRenderer = /** @class */ (function (_super) {
         }
     };
     RowRenderer.prototype.tabToNextCell = function (backwards) {
-        var focusedCell = this.focusedCellController.getFocusedCell();
+        var focusedCell = this.focusController.getFocusedCell();
         // if no focus, then cannot navigate
         if (_utils__WEBPACK_IMPORTED_MODULE_8__[/* _ */ "d"].missing(focusedCell)) {
             return false;
@@ -2277,8 +2501,8 @@ var RowRenderer = /** @class */ (function (_super) {
         Object(_context_context__WEBPACK_IMPORTED_MODULE_6__[/* Autowired */ "a"])("loggerFactory")
     ], RowRenderer.prototype, "loggerFactory", void 0);
     __decorate([
-        Object(_context_context__WEBPACK_IMPORTED_MODULE_6__[/* Autowired */ "a"])("focusedCellController")
-    ], RowRenderer.prototype, "focusedCellController", void 0);
+        Object(_context_context__WEBPACK_IMPORTED_MODULE_6__[/* Autowired */ "a"])("focusController")
+    ], RowRenderer.prototype, "focusController", void 0);
     __decorate([
         Object(_context_context__WEBPACK_IMPORTED_MODULE_6__[/* Autowired */ "a"])("cellNavigationService")
     ], RowRenderer.prototype, "cellNavigationService", void 0);
@@ -2323,7 +2547,7 @@ var RowRenderer = /** @class */ (function (_super) {
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return DateCompWrapper; });
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v22.1.1
+ * @version v23.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -2358,12 +2582,7 @@ var DateCompWrapper = /** @class */ (function () {
         }
     };
     DateCompWrapper.prototype.getDate = function () {
-        if (this.dateComp) {
-            return this.dateComp.getDate();
-        }
-        else {
-            return this.tempValue;
-        }
+        return this.dateComp ? this.dateComp.getDate() : this.tempValue;
     };
     DateCompWrapper.prototype.setDate = function (value) {
         if (this.dateComp) {
@@ -2371,6 +2590,11 @@ var DateCompWrapper = /** @class */ (function () {
         }
         else {
             this.tempValue = value;
+        }
+    };
+    DateCompWrapper.prototype.setInputPlaceholder = function (placeholder) {
+        if (this.dateComp && this.dateComp.setInputPlaceholder) {
+            this.dateComp.setInputPlaceholder(placeholder);
         }
     };
     return DateCompWrapper;
@@ -2388,7 +2612,7 @@ var DateCompWrapper = /** @class */ (function () {
 /* harmony import */ var _context_context__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("d196");
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v22.1.1
+ * @version v23.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -2402,17 +2626,23 @@ var __decorate = (undefined && undefined.__decorate) || function (decorators, ta
 var ValueFormatterService = /** @class */ (function () {
     function ValueFormatterService() {
     }
-    ValueFormatterService.prototype.formatValue = function (column, rowNode, $scope, value) {
+    ValueFormatterService.prototype.formatValue = function (column, rowNode, $scope, value, suppliedFormatter) {
+        var result = null;
         var formatter;
         var colDef = column.getColDef();
-        // if floating, give preference to the floating formatter
-        if (rowNode && rowNode.rowPinned) {
-            formatter = colDef.pinnedRowValueFormatter ? colDef.pinnedRowValueFormatter : colDef.valueFormatter;
+        if (suppliedFormatter) {
+            // favour supplied, e.g. set filter items can have their own value formatters
+            formatter = suppliedFormatter;
         }
         else {
-            formatter = colDef.valueFormatter;
+            // if floating, give preference to the floating formatter
+            if (rowNode && rowNode.rowPinned) {
+                formatter = colDef.pinnedRowValueFormatter ? colDef.pinnedRowValueFormatter : colDef.valueFormatter;
+            }
+            else {
+                formatter = colDef.valueFormatter;
+            }
         }
-        var result = null;
         if (formatter) {
             var params = {
                 value: value,
@@ -2469,7 +2699,7 @@ var ValueFormatterService = /** @class */ (function () {
 /* harmony import */ var _utils__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("e3d3");
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v22.1.1
+ * @version v23.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -2495,6 +2725,7 @@ var RowNode = /** @class */ (function () {
         this.__objectId = RowNode.OBJECT_ID_SEQUENCE++;
         /** True when nodes with the same id are being removed and added as part of the same batch transaction */
         this.alreadyRendered = false;
+        this.highlighted = null;
         this.selected = false;
     }
     RowNode.prototype.setData = function (data) {
@@ -2550,9 +2781,7 @@ var RowNode = /** @class */ (function () {
         else if (this.rowPinned === _constants__WEBPACK_IMPORTED_MODULE_3__[/* Constants */ "a"].PINNED_BOTTOM) {
             return 'b-' + this.rowIndex;
         }
-        else {
-            return this.rowIndex.toString();
-        }
+        return this.rowIndex.toString();
     };
     RowNode.prototype.createDaemonNode = function () {
         var oldNode = new RowNode();
@@ -2663,6 +2892,15 @@ var RowNode = /** @class */ (function () {
             this.eventService.dispatchEvent(this.createLocalRowEvent(RowNode.EVENT_DRAGGING_CHANGED));
         }
     };
+    RowNode.prototype.setHighlighted = function (highlighted) {
+        if (highlighted === this.highlighted) {
+            return;
+        }
+        this.highlighted = highlighted;
+        if (this.eventService) {
+            this.eventService.dispatchEvent(this.createLocalRowEvent(RowNode.EVENT_HIGHLIGHT_CHANGED));
+        }
+    };
     RowNode.prototype.setAllChildrenCount = function (allChildrenCount) {
         if (this.allChildrenCount === allChildrenCount) {
             return;
@@ -2710,7 +2948,7 @@ var RowNode = /** @class */ (function () {
         }
     };
     RowNode.prototype.createGlobalRowEvent = function (type) {
-        var event = {
+        return {
             type: type,
             node: this,
             data: this.data,
@@ -2720,7 +2958,6 @@ var RowNode = /** @class */ (function () {
             api: this.gridOptionsWrapper.getApi(),
             columnApi: this.gridOptionsWrapper.getColumnApi()
         };
-        return event;
     };
     RowNode.prototype.dispatchLocalEvent = function (event) {
         if (this.eventService) {
@@ -2734,29 +2971,37 @@ var RowNode = /** @class */ (function () {
     // event, and also flashes the cell when the change occurs.
     RowNode.prototype.setDataValue = function (colKey, newValue) {
         var column = this.columnController.getPrimaryColumn(colKey);
+        var oldValue = this.valueService.getValue(column, this);
         this.valueService.setValue(this, column, newValue);
-        this.dispatchCellChangedEvent(column, newValue);
+        this.dispatchCellChangedEvent(column, newValue, oldValue);
     };
     RowNode.prototype.setGroupValue = function (colKey, newValue) {
         var column = this.columnController.getGridColumn(colKey);
         if (_utils__WEBPACK_IMPORTED_MODULE_4__[/* _ */ "d"].missing(this.groupData)) {
             this.groupData = {};
         }
-        this.groupData[column.getColId()] = newValue;
-        this.dispatchCellChangedEvent(column, newValue);
+        var columnId = column.getColId();
+        var oldValue = this.groupData[columnId];
+        if (oldValue === newValue) {
+            return;
+        }
+        this.groupData[columnId] = newValue;
+        this.dispatchCellChangedEvent(column, newValue, oldValue);
     };
     // sets the data for an aggregation
     RowNode.prototype.setAggData = function (newAggData) {
         var _this = this;
         // find out all keys that could potentially change
         var colIds = _utils__WEBPACK_IMPORTED_MODULE_4__[/* _ */ "d"].getAllKeysInObjects([this.aggData, newAggData]);
+        var oldAggData = this.aggData;
         this.aggData = newAggData;
         // if no event service, nobody has registered for events, so no need fire event
         if (this.eventService) {
             colIds.forEach(function (colId) {
                 var column = _this.columnController.getGridColumn(colId);
                 var value = _this.aggData ? _this.aggData[colId] : undefined;
-                _this.dispatchCellChangedEvent(column, value);
+                var oldValue = oldAggData ? oldAggData[colId] : undefined;
+                _this.dispatchCellChangedEvent(column, value, oldValue);
             });
         }
     };
@@ -2769,12 +3014,13 @@ var RowNode = /** @class */ (function () {
     RowNode.prototype.isEmptyRowGroupNode = function () {
         return this.group && _utils__WEBPACK_IMPORTED_MODULE_4__[/* _ */ "d"].missingOrEmpty(this.childrenAfterGroup);
     };
-    RowNode.prototype.dispatchCellChangedEvent = function (column, newValue) {
+    RowNode.prototype.dispatchCellChangedEvent = function (column, newValue, oldValue) {
         var cellChangedEvent = {
             type: RowNode.EVENT_CELL_CHANGED,
             node: this,
             column: column,
-            newValue: newValue
+            newValue: newValue,
+            oldValue: oldValue
         };
         this.dispatchLocalEvent(cellChangedEvent);
     };
@@ -2929,10 +3175,10 @@ var RowNode = /** @class */ (function () {
     // not to be mixed up with 'cell range selection' where you drag the mouse, this is row range selection, by
     // holding down 'shift'.
     RowNode.prototype.doRowRangeSelection = function () {
-        var updatedCount = 0;
         var groupsSelectChildren = this.gridOptionsWrapper.isGroupSelectsChildren();
         var lastSelectedNode = this.selectionController.getLastSelectedNode();
         var nodesToSelect = this.rowModel.getNodesInRangeForSelection(this, lastSelectedNode);
+        var updatedCount = 0;
         nodesToSelect.forEach(function (rowNode) {
             if (rowNode.group && groupsSelectChildren) {
                 return;
@@ -2975,10 +3221,10 @@ var RowNode = /** @class */ (function () {
     };
     RowNode.prototype.selectChildNodes = function (newValue, groupSelectsFiltered) {
         var children = groupSelectsFiltered ? this.childrenAfterFilter : this.childrenAfterGroup;
-        var updatedCount = 0;
         if (_utils__WEBPACK_IMPORTED_MODULE_4__[/* _ */ "d"].missing(children)) {
             return;
         }
+        var updatedCount = 0;
         for (var i = 0; i < children.length; i++) {
             updatedCount += children[i].setSelectedParams({
                 newValue: newValue,
@@ -3006,11 +3252,11 @@ var RowNode = /** @class */ (function () {
     };
     RowNode.prototype.getFirstChildOfFirstChild = function (rowGroupColumn) {
         var currentRowNode = this;
-        // if we are hiding groups, then if we are the first child, of the first child,
-        // all the way up to the column we are interested in, then we show the group cell.
         var isCandidate = true;
         var foundFirstChildPath = false;
         var nodeToSwapIn;
+        // if we are hiding groups, then if we are the first child, of the first child,
+        // all the way up to the column we are interested in, then we show the group cell.
         while (isCandidate && !foundFirstChildPath) {
             var parentRowNode = currentRowNode.parent;
             var firstChild = _utils__WEBPACK_IMPORTED_MODULE_4__[/* _ */ "d"].exists(parentRowNode) && currentRowNode.firstChild;
@@ -3047,6 +3293,7 @@ var RowNode = /** @class */ (function () {
     RowNode.EVENT_EXPANDED_CHANGED = 'expandedChanged';
     RowNode.EVENT_SELECTABLE_CHANGED = 'selectableChanged';
     RowNode.EVENT_UI_LEVEL_CHANGED = 'uiLevelChanged';
+    RowNode.EVENT_HIGHLIGHT_CHANGED = 'rowHighlightChanged';
     RowNode.EVENT_DRAGGING_CHANGED = 'draggingChanged';
     __decorate([
         Object(_context_context__WEBPACK_IMPORTED_MODULE_2__[/* Autowired */ "a"])('eventService')
@@ -3094,7 +3341,7 @@ var RowNode = /** @class */ (function () {
 /* harmony import */ var _utils__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("e3d3");
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v22.1.1
+ * @version v23.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -3118,23 +3365,9 @@ var AgToggleButton = /** @class */ (function (_super) {
     function AgToggleButton() {
         var _this = _super !== null && _super.apply(this, arguments) || this;
         _this.className = 'ag-toggle-button';
-        _this.nativeInputClassName = 'ag-native-toggle-button';
         _this.inputType = 'checkbox';
         return _this;
     }
-    AgToggleButton.prototype.postConstruct = function () {
-        _super.prototype.postConstruct.call(this);
-        if (!this.gridOptionsWrapper.useNativeCheckboxes()) {
-            _utils__WEBPACK_IMPORTED_MODULE_1__[/* _ */ "d"].addCssClass(this.eIconEl, 'ag-icon');
-        }
-    };
-    AgToggleButton.prototype.updateIcons = function () {
-        if (!this.gridOptionsWrapper.useNativeCheckboxes()) {
-            var value = this.getValue();
-            _utils__WEBPACK_IMPORTED_MODULE_1__[/* _ */ "d"].addOrRemoveCssClass(this.eIconEl, 'ag-icon-toggle-on', value);
-            _utils__WEBPACK_IMPORTED_MODULE_1__[/* _ */ "d"].addOrRemoveCssClass(this.eIconEl, 'ag-icon-toggle-off', !value);
-        }
-    };
     AgToggleButton.prototype.setValue = function (value, silent) {
         _super.prototype.setValue.call(this, value, silent);
         _utils__WEBPACK_IMPORTED_MODULE_1__[/* _ */ "d"].addOrRemoveCssClass(this.getGui(), 'ag-selected', this.getValue());
@@ -3154,7 +3387,7 @@ var AgToggleButton = /** @class */ (function (_super) {
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return ModuleNames; });
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v22.1.1
+ * @version v23.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -3211,7 +3444,7 @@ var ModuleNames;
 /* harmony import */ var _utils__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("e3d3");
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v22.1.1
+ * @version v23.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -3279,7 +3512,7 @@ var CssClassApplier = /** @class */ (function () {
 /* harmony import */ var _utils__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("e3d3");
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v22.1.1
+ * @version v23.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -3307,22 +3540,24 @@ var __decorate = (undefined && undefined.__decorate) || function (decorators, ta
 
 var VirtualList = /** @class */ (function (_super) {
     __extends(VirtualList, _super);
-    function VirtualList() {
-        var _this = _super.call(this, undefined) || this;
+    function VirtualList(cssIdentifier) {
+        if (cssIdentifier === void 0) { cssIdentifier = 'default'; }
+        var _this = _super.call(this, VirtualList.getTemplate(cssIdentifier)) || this;
+        _this.cssIdentifier = cssIdentifier;
         _this.rowsInBodyContainer = {};
         _this.rowHeight = 20;
         return _this;
     }
     VirtualList.prototype.init = function () {
-        this.setTemplate(VirtualList.TEMPLATE);
         this.eListContainer = this.queryForHtmlElement(".ag-virtual-list-container");
         this.addScrollListener();
-        var item = document.createElement('div');
-        _utils__WEBPACK_IMPORTED_MODULE_2__[/* _ */ "d"].addCssClass(item, 'ag-virtual-list-item');
         this.rowHeight = this.getItemHeight();
     };
+    VirtualList.getTemplate = function (cssIdentifier) {
+        return "<div class=\"ag-virtual-list-viewport ag-" + cssIdentifier + "-virtual-list-viewport\">\n            <div class=\"ag-virtual-list-container ag-" + cssIdentifier + "-virtual-list-container\"></div>\n        </div>";
+    };
     VirtualList.prototype.getItemHeight = function () {
-        return this.gridOptionsWrapper.getVirtualItemHeight();
+        return this.gridOptionsWrapper.getListItemHeight();
     };
     VirtualList.prototype.ensureIndexVisible = function (index) {
         var lastRow = this.model.getRowCount();
@@ -3333,19 +3568,20 @@ var VirtualList = /** @class */ (function (_super) {
         // let nodeAtIndex = this.rowModel.getRow(index);
         var rowTopPixel = index * this.rowHeight;
         var rowBottomPixel = rowTopPixel + this.rowHeight;
-        var viewportTopPixel = this.getGui().scrollTop;
-        var viewportHeight = this.getGui().offsetHeight;
+        var eGui = this.getGui();
+        var viewportTopPixel = eGui.scrollTop;
+        var viewportHeight = eGui.offsetHeight;
         var viewportBottomPixel = viewportTopPixel + viewportHeight;
         var viewportScrolledPastRow = viewportTopPixel > rowTopPixel;
         var viewportScrolledBeforeRow = viewportBottomPixel < rowBottomPixel;
         if (viewportScrolledPastRow) {
             // if row is before, scroll up with row at top
-            this.getGui().scrollTop = rowTopPixel;
+            eGui.scrollTop = rowTopPixel;
         }
         else if (viewportScrolledBeforeRow) {
             // if row is below, scroll down with row at bottom
             var newScrollPosition = rowBottomPixel - viewportHeight;
-            this.getGui().scrollTop = newScrollPosition;
+            eGui.scrollTop = newScrollPosition;
         }
     };
     VirtualList.prototype.setComponentCreator = function (componentCreator) {
@@ -3414,6 +3650,7 @@ var VirtualList = /** @class */ (function (_super) {
     VirtualList.prototype.insertRow = function (value, rowIndex) {
         var eDiv = document.createElement('div');
         _utils__WEBPACK_IMPORTED_MODULE_2__[/* _ */ "d"].addCssClass(eDiv, 'ag-virtual-list-item');
+        _utils__WEBPACK_IMPORTED_MODULE_2__[/* _ */ "d"].addCssClass(eDiv, "ag-" + this.cssIdentifier + "-virtual-list-item");
         eDiv.style.top = (this.rowHeight * rowIndex) + "px";
         var rowComponent = this.componentCreator(value);
         eDiv.appendChild(rowComponent.getGui());
@@ -3432,7 +3669,6 @@ var VirtualList = /** @class */ (function (_super) {
     VirtualList.prototype.setModel = function (model) {
         this.model = model;
     };
-    VirtualList.TEMPLATE = "<div class=\"ag-virtual-list-viewport\">\n            <div class=\"ag-virtual-list-container\"></div>\n        </div>";
     __decorate([
         Object(_context_context__WEBPACK_IMPORTED_MODULE_1__[/* Autowired */ "a"])('environment')
     ], VirtualList.prototype, "environment", void 0);
@@ -3454,12 +3690,13 @@ var VirtualList = /** @class */ (function (_super) {
 
 "use strict";
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return LargeTextCellEditor; });
-/* harmony import */ var _widgets_popupComponent__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("86a4");
-/* harmony import */ var _constants__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("f2fb");
-/* harmony import */ var _utils__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("e3d3");
+/* harmony import */ var _constants__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("f2fb");
+/* harmony import */ var _widgets_popupComponent__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("86a4");
+/* harmony import */ var _widgets_componentAnnotations__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("f737");
+/* harmony import */ var _utils__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("e3d3");
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v22.1.1
+ * @version v23.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -3476,6 +3713,13 @@ var __extends = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
+var __decorate = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+
 
 
 
@@ -3487,41 +3731,39 @@ var LargeTextCellEditor = /** @class */ (function (_super) {
     LargeTextCellEditor.prototype.init = function (params) {
         this.params = params;
         this.focusAfterAttached = params.cellStartedEdit;
-        this.textarea = document.createElement("textarea");
-        this.textarea.maxLength = params.maxLength ? params.maxLength : "200";
-        this.textarea.cols = params.cols ? params.cols : "60";
-        this.textarea.rows = params.rows ? params.rows : "10";
-        if (_utils__WEBPACK_IMPORTED_MODULE_2__[/* _ */ "d"].exists(params.value)) {
-            this.textarea.value = params.value.toString();
+        this.eTextArea
+            .setMaxLength(params.maxLength || 200)
+            .setCols(params.cols || 60)
+            .setRows(params.rows || 10);
+        if (_utils__WEBPACK_IMPORTED_MODULE_3__[/* _ */ "d"].exists(params.value)) {
+            this.eTextArea.setValue(params.value.toString(), true);
         }
-        this.getGui().querySelector('.ag-large-textarea').appendChild(this.textarea);
         this.addGuiEventListener('keydown', this.onKeyDown.bind(this));
     };
     LargeTextCellEditor.prototype.onKeyDown = function (event) {
         var key = event.which || event.keyCode;
-        if (key == _constants__WEBPACK_IMPORTED_MODULE_1__[/* Constants */ "a"].KEY_LEFT ||
-            key == _constants__WEBPACK_IMPORTED_MODULE_1__[/* Constants */ "a"].KEY_UP ||
-            key == _constants__WEBPACK_IMPORTED_MODULE_1__[/* Constants */ "a"].KEY_RIGHT ||
-            key == _constants__WEBPACK_IMPORTED_MODULE_1__[/* Constants */ "a"].KEY_DOWN ||
-            (event.shiftKey && key == _constants__WEBPACK_IMPORTED_MODULE_1__[/* Constants */ "a"].KEY_ENTER)) { // shift+enter allows for newlines
+        if (key == _constants__WEBPACK_IMPORTED_MODULE_0__[/* Constants */ "a"].KEY_LEFT ||
+            key == _constants__WEBPACK_IMPORTED_MODULE_0__[/* Constants */ "a"].KEY_UP ||
+            key == _constants__WEBPACK_IMPORTED_MODULE_0__[/* Constants */ "a"].KEY_RIGHT ||
+            key == _constants__WEBPACK_IMPORTED_MODULE_0__[/* Constants */ "a"].KEY_DOWN ||
+            (event.shiftKey && key == _constants__WEBPACK_IMPORTED_MODULE_0__[/* Constants */ "a"].KEY_ENTER)) { // shift+enter allows for newlines
             event.stopPropagation();
         }
     };
     LargeTextCellEditor.prototype.afterGuiAttached = function () {
         if (this.focusAfterAttached) {
-            this.textarea.focus();
+            this.eTextArea.getFocusableElement().focus();
         }
     };
     LargeTextCellEditor.prototype.getValue = function () {
-        return this.params.parseValue(this.textarea.value);
+        return this.params.parseValue(this.eTextArea.getValue());
     };
-    LargeTextCellEditor.TEMPLATE = 
-    // tab index is needed so we can focus, which is needed for keyboard events
-    '<div class="ag-large-text" tabindex="0">' +
-        '<div class="ag-large-textarea"></div>' +
-        '</div>';
+    LargeTextCellEditor.TEMPLATE = "<div class=\"ag-large-text\" tabindex=\"0\">\n            <ag-input-text-area ref=\"eTextArea\" class=\"ag-large-text-input\"></ag-input-text-area>\n        </div>";
+    __decorate([
+        Object(_widgets_componentAnnotations__WEBPACK_IMPORTED_MODULE_2__[/* RefSelector */ "a"])("eTextArea")
+    ], LargeTextCellEditor.prototype, "eTextArea", void 0);
     return LargeTextCellEditor;
-}(_widgets_popupComponent__WEBPACK_IMPORTED_MODULE_0__[/* PopupComponent */ "a"]));
+}(_widgets_popupComponent__WEBPACK_IMPORTED_MODULE_1__[/* PopupComponent */ "a"]));
 
 
 
@@ -3538,7 +3780,7 @@ var LargeTextCellEditor = /** @class */ (function (_super) {
 /* harmony import */ var _constants__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("f2fb");
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v22.1.1
+ * @version v23.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -3748,6 +3990,10 @@ var MoveColumnController = /** @class */ (function () {
         }
     };
     MoveColumnController.prototype.calculateValidMoves = function (movingCols, draggingRight, mouseX) {
+        var isMoveBlocked = this.gridOptionsWrapper.isSuppressMovableColumns() || movingCols.some(function (col) { return col.getColDef().suppressMovable; });
+        if (isMoveBlocked) {
+            return [];
+        }
         // this is the list of cols on the screen, so it's these we use when comparing the x mouse position
         var allDisplayedCols = this.columnController.getDisplayedColumns(this.pinned);
         // but this list is the list of all cols, when we move a col it's the index within this list that gets used,
@@ -4015,8 +4261,8 @@ var MoveColumnController = /** @class */ (function () {
 /* harmony import */ var _widgets_agGroupComponent__WEBPACK_IMPORTED_MODULE_79__ = __webpack_require__("cd98");
 /* harmony import */ var _widgets_agDialog__WEBPACK_IMPORTED_MODULE_80__ = __webpack_require__("948a");
 /* harmony import */ var _widgets_agPanel__WEBPACK_IMPORTED_MODULE_81__ = __webpack_require__("e77c");
-/* harmony import */ var _widgets_messageBox__WEBPACK_IMPORTED_MODULE_82__ = __webpack_require__("524c");
-/* harmony import */ var _widgets_component__WEBPACK_IMPORTED_MODULE_83__ = __webpack_require__("6045");
+/* harmony import */ var _widgets_component__WEBPACK_IMPORTED_MODULE_82__ = __webpack_require__("6045");
+/* harmony import */ var _widgets_managedTabComponent__WEBPACK_IMPORTED_MODULE_83__ = __webpack_require__("527e");
 /* harmony import */ var _widgets_popupComponent__WEBPACK_IMPORTED_MODULE_84__ = __webpack_require__("86a4");
 /* harmony import */ var _widgets_popupService__WEBPACK_IMPORTED_MODULE_85__ = __webpack_require__("86de");
 /* harmony import */ var _widgets_touchListener__WEBPACK_IMPORTED_MODULE_86__ = __webpack_require__("86d8");
@@ -4031,7 +4277,7 @@ var MoveColumnController = /** @class */ (function () {
 
 /* harmony import */ var _gridApi__WEBPACK_IMPORTED_MODULE_94__ = __webpack_require__("9ecd");
 /* harmony import */ var _eventKeys__WEBPACK_IMPORTED_MODULE_95__ = __webpack_require__("9bc1");
-/* harmony import */ var _focusedCellController__WEBPACK_IMPORTED_MODULE_96__ = __webpack_require__("95b0");
+/* harmony import */ var _focusController__WEBPACK_IMPORTED_MODULE_96__ = __webpack_require__("959f");
 /* harmony import */ var _functions__WEBPACK_IMPORTED_MODULE_97__ = __webpack_require__("0a11");
 /* harmony import */ var _gridOptionsWrapper__WEBPACK_IMPORTED_MODULE_98__ = __webpack_require__("5c0c");
 /* harmony import */ var _eventService__WEBPACK_IMPORTED_MODULE_99__ = __webpack_require__("37e9");
@@ -4047,19 +4293,20 @@ var MoveColumnController = /** @class */ (function () {
 /* harmony import */ var _valueService_expressionService__WEBPACK_IMPORTED_MODULE_109__ = __webpack_require__("b9a6");
 /* harmony import */ var _entities_cellPosition__WEBPACK_IMPORTED_MODULE_110__ = __webpack_require__("d00f");
 /* harmony import */ var _entities_rowPosition__WEBPACK_IMPORTED_MODULE_111__ = __webpack_require__("f9d9");
-/* harmony import */ var _columnController_columnApi__WEBPACK_IMPORTED_MODULE_112__ = __webpack_require__("f7ee");
-/* harmony import */ var _components_framework_frameworkComponentWrapper__WEBPACK_IMPORTED_MODULE_113__ = __webpack_require__("6ccc");
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "a", function() { return _components_framework_frameworkComponentWrapper__WEBPACK_IMPORTED_MODULE_113__["a"]; });
+/* harmony import */ var _propertyKeys__WEBPACK_IMPORTED_MODULE_112__ = __webpack_require__("9250");
+/* harmony import */ var _columnController_columnApi__WEBPACK_IMPORTED_MODULE_113__ = __webpack_require__("f7ee");
+/* harmony import */ var _components_framework_frameworkComponentWrapper__WEBPACK_IMPORTED_MODULE_114__ = __webpack_require__("6ccc");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "a", function() { return _components_framework_frameworkComponentWrapper__WEBPACK_IMPORTED_MODULE_114__["a"]; });
 
-/* harmony import */ var _environment__WEBPACK_IMPORTED_MODULE_114__ = __webpack_require__("54bf");
-/* harmony import */ var _widgets_tooltipManager__WEBPACK_IMPORTED_MODULE_115__ = __webpack_require__("9318");
-/* harmony import */ var _interfaces_iChartOptions__WEBPACK_IMPORTED_MODULE_116__ = __webpack_require__("709e");
-/* harmony import */ var _modules_moduleNames__WEBPACK_IMPORTED_MODULE_117__ = __webpack_require__("203c");
-/* harmony import */ var _modules_moduleRegistry__WEBPACK_IMPORTED_MODULE_118__ = __webpack_require__("7749");
-/* harmony import */ var _events__WEBPACK_IMPORTED_MODULE_119__ = __webpack_require__("1284");
+/* harmony import */ var _environment__WEBPACK_IMPORTED_MODULE_115__ = __webpack_require__("54bf");
+/* harmony import */ var _widgets_tooltipManager__WEBPACK_IMPORTED_MODULE_116__ = __webpack_require__("9318");
+/* harmony import */ var _interfaces_iChartOptions__WEBPACK_IMPORTED_MODULE_117__ = __webpack_require__("709e");
+/* harmony import */ var _modules_moduleNames__WEBPACK_IMPORTED_MODULE_118__ = __webpack_require__("203c");
+/* harmony import */ var _modules_moduleRegistry__WEBPACK_IMPORTED_MODULE_119__ = __webpack_require__("7749");
+/* harmony import */ var _events__WEBPACK_IMPORTED_MODULE_120__ = __webpack_require__("1284");
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v22.1.1
+ * @version v23.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -4204,6 +4451,7 @@ globalObj.MouseEvent = typeof MouseEvent === 'undefined' ? {} : MouseEvent;
 
 
 
+
 // charts
 
 
@@ -4227,7 +4475,7 @@ globalObj.MouseEvent = typeof MouseEvent === 'undefined' ? {} : MouseEvent;
 /* harmony import */ var _constants__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("f2fb");
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v22.1.1
+ * @version v23.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -4296,7 +4544,7 @@ var BodyDropTarget = /** @class */ (function () {
     BodyDropTarget.prototype.getDropType = function (draggingEvent) {
         if (this.columnController.isPivotMode()) {
             // in pivot mode, then if moving a column (ie didn't come from toolpanel) then it's
-            // a standard column move, however if it came from teh toolpanel, then we are introducing
+            // a standard column move, however if it came from the toolpanel, then we are introducing
             // dimensions or values to the grid
             if (draggingEvent.dragSource.type === _dragAndDrop_dragAndDropService__WEBPACK_IMPORTED_MODULE_0__[/* DragSourceType */ "b"].ToolPanel) {
                 return DropType.Pivot;
@@ -4359,7 +4607,7 @@ var BodyDropTarget = /** @class */ (function () {
 /* harmony import */ var _context_context__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("d196");
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v22.1.1
+ * @version v23.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -4466,7 +4714,7 @@ var BodyDropPivotTarget = /** @class */ (function () {
 /* harmony import */ var _constants__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__("f2fb");
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v22.1.1
+ * @version v23.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -4636,7 +4884,7 @@ var HeaderContainer = /** @class */ (function () {
 /* harmony import */ var _utils__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("e3d3");
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v22.1.1
+ * @version v23.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -4714,7 +4962,7 @@ var SelectableService = /** @class */ (function () {
 /* harmony import */ var _utils__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("e3d3");
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v22.1.1
+ * @version v23.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -4797,7 +5045,7 @@ var ResizeObserverService = /** @class */ (function () {
 /* harmony import */ var _context_context__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("d196");
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v22.1.1
+ * @version v23.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -4967,7 +5215,7 @@ var EventService = /** @class */ (function () {
 /* harmony import */ var _simpleFilter__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("937d");
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v22.1.1
+ * @version v23.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -5001,8 +5249,8 @@ var TextFilter = /** @class */ (function (_super) {
     TextFilter.prototype.getDefaultDebounceMs = function () {
         return 500;
     };
-    TextFilter.prototype.getValue = function (element) {
-        var val = element.value;
+    TextFilter.prototype.getValue = function (inputField) {
+        var val = inputField.getValue();
         val = _utils__WEBPACK_IMPORTED_MODULE_1__[/* _ */ "d"].makeNull(val);
         if (val && val.trim() === '') {
             val = null;
@@ -5012,23 +5260,24 @@ var TextFilter = /** @class */ (function (_super) {
     TextFilter.prototype.addValueChangedListeners = function () {
         var _this = this;
         var listener = function () { return _this.onUiChanged(); };
-        this.addDestroyableEventListener(this.eValue1, 'input', listener);
-        this.addDestroyableEventListener(this.eValue2, 'input', listener);
+        this.eValue1.onValueChange(listener);
+        this.eValue2.onValueChange(listener);
     };
     TextFilter.prototype.setParams = function (params) {
         _super.prototype.setParams.call(this, params);
         this.textFilterParams = params;
         this.comparator = this.textFilterParams.textCustomComparator ? this.textFilterParams.textCustomComparator : TextFilter.DEFAULT_COMPARATOR;
-        this.formatter =
-            this.textFilterParams.textFormatter ? this.textFilterParams.textFormatter :
-                this.textFilterParams.caseSensitive == true ? TextFilter.DEFAULT_FORMATTER :
-                    TextFilter.DEFAULT_LOWERCASE_FORMATTER;
+        this.formatter = this.textFilterParams.textFormatter
+            ? this.textFilterParams.textFormatter
+            : (this.textFilterParams.caseSensitive == true
+                ? TextFilter.DEFAULT_FORMATTER
+                : TextFilter.DEFAULT_LOWERCASE_FORMATTER);
         this.addValueChangedListeners();
     };
     TextFilter.prototype.setConditionIntoUi = function (model, position) {
         var positionOne = position === _simpleFilter__WEBPACK_IMPORTED_MODULE_2__[/* ConditionPosition */ "a"].One;
         var eValue = positionOne ? this.eValue1 : this.eValue2;
-        eValue.value = model ? model.filter : null;
+        eValue.setValue(model ? model.filter : null);
     };
     TextFilter.prototype.createCondition = function (position) {
         var positionOne = position === _simpleFilter__WEBPACK_IMPORTED_MODULE_2__[/* ConditionPosition */ "a"].One;
@@ -5050,32 +5299,39 @@ var TextFilter = /** @class */ (function (_super) {
     TextFilter.prototype.areSimpleModelsEqual = function (aSimple, bSimple) {
         return aSimple.filter === bSimple.filter && aSimple.type === bSimple.type;
     };
-    TextFilter.prototype.resetUiToDefaults = function () {
-        _super.prototype.resetUiToDefaults.call(this);
-        this.eValue1.value = null;
-        this.eValue2.value = null;
+    TextFilter.prototype.resetUiToDefaults = function (silent) {
+        _super.prototype.resetUiToDefaults.call(this, silent);
+        var fields = [this.eValue1, this.eValue2];
+        fields.forEach(function (field) { return field.setValue(null, silent); });
+        this.resetPlaceholder();
+    };
+    TextFilter.prototype.resetPlaceholder = function () {
+        var translate = this.translate.bind(this);
+        var placeholder = translate('filterOoo', 'Filter...');
+        var fields = [this.eValue1, this.eValue2];
+        fields.forEach(function (field) { return field.setInputPlaceholder(placeholder); });
     };
     TextFilter.prototype.setValueFromFloatingFilter = function (value) {
-        this.eValue1.value = value;
-        this.eValue2.value = null;
+        this.eValue1.setValue(value);
+        this.eValue2.setValue(null);
     };
     TextFilter.prototype.getDefaultFilterOptions = function () {
         return TextFilter.DEFAULT_FILTER_OPTIONS;
     };
     TextFilter.prototype.createValueTemplate = function (position) {
         var pos = position === _simpleFilter__WEBPACK_IMPORTED_MODULE_2__[/* ConditionPosition */ "a"].One ? '1' : '2';
-        var translate = this.gridOptionsWrapper.getLocaleTextFunc();
-        return "<div class=\"ag-filter-body\" ref=\"eCondition" + pos + "Body\" role=\"presentation\">\n            <div class=\"ag-input-wrapper\" ref=\"eInputWrapper" + pos + "\" role=\"presentation\">\n                <input class=\"ag-filter-filter\" ref=\"eValue" + pos + "\" type=\"text\" placeholder=\"" + translate('filterOoo', 'Filter...') + "\"/>\n            </div>\n        </div>";
+        return "<div class=\"ag-filter-body\" ref=\"eCondition" + pos + "Body\" role=\"presentation\">\n                    <ag-input-text-field class=\"ag-filter-filter\" ref=\"eValue" + pos + "\"></ag-input-text-field>\n            </div>";
     };
     TextFilter.prototype.updateUiVisibility = function () {
         _super.prototype.updateUiVisibility.call(this);
         var showValue1 = this.showValueFrom(this.getCondition1Type());
-        _utils__WEBPACK_IMPORTED_MODULE_1__[/* _ */ "d"].setDisplayed(this.eInputWrapper1, showValue1);
+        _utils__WEBPACK_IMPORTED_MODULE_1__[/* _ */ "d"].setDisplayed(this.eValue1.getGui(), showValue1);
         var showValue2 = this.showValueFrom(this.getCondition2Type());
-        _utils__WEBPACK_IMPORTED_MODULE_1__[/* _ */ "d"].setDisplayed(this.eInputWrapper2, showValue2);
+        _utils__WEBPACK_IMPORTED_MODULE_1__[/* _ */ "d"].setDisplayed(this.eValue2.getGui(), showValue2);
     };
     TextFilter.prototype.afterGuiAttached = function () {
-        this.eValue1.focus();
+        this.resetPlaceholder();
+        this.eValue1.getInputElement().focus();
     };
     TextFilter.prototype.isConditionUiComplete = function (position) {
         var positionOne = position === _simpleFilter__WEBPACK_IMPORTED_MODULE_2__[/* ConditionPosition */ "a"].One;
@@ -5109,9 +5365,14 @@ var TextFilter = /** @class */ (function (_super) {
         return this.comparator(filterOption, cellValueFormatted, filterTextFormatted);
     };
     TextFilter.FILTER_TYPE = 'text';
-    TextFilter.DEFAULT_FILTER_OPTIONS = [_simpleFilter__WEBPACK_IMPORTED_MODULE_2__[/* SimpleFilter */ "b"].CONTAINS, _simpleFilter__WEBPACK_IMPORTED_MODULE_2__[/* SimpleFilter */ "b"].NOT_CONTAINS,
-        _simpleFilter__WEBPACK_IMPORTED_MODULE_2__[/* SimpleFilter */ "b"].EQUALS, _simpleFilter__WEBPACK_IMPORTED_MODULE_2__[/* SimpleFilter */ "b"].NOT_EQUAL,
-        _simpleFilter__WEBPACK_IMPORTED_MODULE_2__[/* SimpleFilter */ "b"].STARTS_WITH, _simpleFilter__WEBPACK_IMPORTED_MODULE_2__[/* SimpleFilter */ "b"].ENDS_WITH];
+    TextFilter.DEFAULT_FILTER_OPTIONS = [
+        _simpleFilter__WEBPACK_IMPORTED_MODULE_2__[/* SimpleFilter */ "b"].CONTAINS,
+        _simpleFilter__WEBPACK_IMPORTED_MODULE_2__[/* SimpleFilter */ "b"].NOT_CONTAINS,
+        _simpleFilter__WEBPACK_IMPORTED_MODULE_2__[/* SimpleFilter */ "b"].EQUALS,
+        _simpleFilter__WEBPACK_IMPORTED_MODULE_2__[/* SimpleFilter */ "b"].NOT_EQUAL,
+        _simpleFilter__WEBPACK_IMPORTED_MODULE_2__[/* SimpleFilter */ "b"].STARTS_WITH,
+        _simpleFilter__WEBPACK_IMPORTED_MODULE_2__[/* SimpleFilter */ "b"].ENDS_WITH
+    ];
     TextFilter.DEFAULT_FORMATTER = function (from) {
         return from;
     };
@@ -5148,12 +5409,6 @@ var TextFilter = /** @class */ (function (_super) {
     __decorate([
         Object(_widgets_componentAnnotations__WEBPACK_IMPORTED_MODULE_0__[/* RefSelector */ "a"])('eValue2')
     ], TextFilter.prototype, "eValue2", void 0);
-    __decorate([
-        Object(_widgets_componentAnnotations__WEBPACK_IMPORTED_MODULE_0__[/* RefSelector */ "a"])('eInputWrapper1')
-    ], TextFilter.prototype, "eInputWrapper1", void 0);
-    __decorate([
-        Object(_widgets_componentAnnotations__WEBPACK_IMPORTED_MODULE_0__[/* RefSelector */ "a"])('eInputWrapper2')
-    ], TextFilter.prototype, "eInputWrapper2", void 0);
     return TextFilter;
 }(_simpleFilter__WEBPACK_IMPORTED_MODULE_2__[/* SimpleFilter */ "b"]));
 
@@ -5169,7 +5424,7 @@ var TextFilter = /** @class */ (function (_super) {
 /* harmony import */ var _utils__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("e3d3");
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v22.1.1
+ * @version v23.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -5201,7 +5456,7 @@ function simpleHttpRequest(params) {
 /* harmony import */ var _utils__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("e3d3");
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v22.1.1
+ * @version v23.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -5474,7 +5729,7 @@ var ValueService = /** @class */ (function () {
 /* harmony import */ var _utils__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("e3d3");
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v22.1.1
+ * @version v23.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -5537,7 +5792,7 @@ var ColumnKeyCreator = /** @class */ (function () {
 /* harmony import */ var _eventService__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("37e9");
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v22.1.1
+ * @version v23.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -5714,7 +5969,7 @@ var OriginalColumnGroup = /** @class */ (function () {
 /* harmony import */ var _utils__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("e3d3");
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v22.1.1
+ * @version v23.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -5999,93 +6254,6 @@ var ColumnGroup = /** @class */ (function () {
 
 /***/ }),
 
-/***/ "524c":
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-/* unused harmony export MessageBox */
-/* harmony import */ var _agDialog__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("948a");
-/* harmony import */ var _context_context__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("d196");
-/* harmony import */ var _component__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("6045");
-/* harmony import */ var _componentAnnotations__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("f737");
-/**
- * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v22.1.1
- * @link http://www.ag-grid.com/
- * @license MIT
- */
-var __extends = (undefined && undefined.__extends) || (function () {
-    var extendStatics = function (d, b) {
-        extendStatics = Object.setPrototypeOf ||
-            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
-        return extendStatics(d, b);
-    };
-    return function (d, b) {
-        extendStatics(d, b);
-        function __() { this.constructor = d; }
-        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-})();
-var __decorate = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
-    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
-    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
-    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
-    return c > 3 && r && Object.defineProperty(target, key, r), r;
-};
-
-
-
-
-var MessageBox = /** @class */ (function (_super) {
-    __extends(MessageBox, _super);
-    function MessageBox(config) {
-        var _this = _super.call(this, config) || this;
-        _this.message = config.message;
-        return _this;
-    }
-    MessageBox.prototype.postConstruct = function () {
-        var _this = this;
-        var messageBodyComp = new MessageBody();
-        this.wireDependentBean(messageBodyComp);
-        messageBodyComp.setMessage(this.message);
-        this.setBodyComponent(messageBodyComp);
-        _super.prototype.postConstruct.call(this);
-        this.addDestroyableEventListener(messageBodyComp, 'onBtOk', function () { return _this.close(); });
-    };
-    return MessageBox;
-}(_agDialog__WEBPACK_IMPORTED_MODULE_0__[/* AgDialog */ "a"]));
-
-var MessageBody = /** @class */ (function (_super) {
-    __extends(MessageBody, _super);
-    function MessageBody() {
-        return _super.call(this, MessageBody.TEMPLATE) || this;
-    }
-    MessageBody.prototype.setMessage = function (message) {
-        this.eCenter.innerText = message;
-    };
-    MessageBody.prototype.postConstruct = function () {
-        this.addDestroyableEventListener(this.eOk, 'click', this.onBtOk.bind(this));
-    };
-    MessageBody.prototype.onBtOk = function () {
-        this.dispatchEvent({ type: 'onBtOk' });
-    };
-    MessageBody.TEMPLATE = "<div class=\"ag-message-box\">\n            <div ref=\"eCenter\" class=\"ag-message-box-content\"></div>\n            <div ref=\"eButtons\" class=\"ag-message-box-button-bar\">\n                <button ref=\"eOk\">OK</button>\n            </div>\n        </div>";
-    __decorate([
-        Object(_componentAnnotations__WEBPACK_IMPORTED_MODULE_3__[/* RefSelector */ "a"])('eCenter')
-    ], MessageBody.prototype, "eCenter", void 0);
-    __decorate([
-        Object(_componentAnnotations__WEBPACK_IMPORTED_MODULE_3__[/* RefSelector */ "a"])('eOk')
-    ], MessageBody.prototype, "eOk", void 0);
-    __decorate([
-        _context_context__WEBPACK_IMPORTED_MODULE_1__[/* PostConstruct */ "e"]
-    ], MessageBody.prototype, "postConstruct", null);
-    return MessageBody;
-}(_component__WEBPACK_IMPORTED_MODULE_2__[/* Component */ "a"]));
-
-
-/***/ }),
-
 /***/ "5263":
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
@@ -6097,7 +6265,7 @@ var MessageBody = /** @class */ (function (_super) {
 /* harmony import */ var _utils__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("e3d3");
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v22.1.1
+ * @version v23.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -6217,17 +6385,17 @@ var SetLeftFeature = /** @class */ (function (_super) {
 
 /***/ }),
 
-/***/ "54a0":
+/***/ "527e":
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return AgSlider; });
-/* harmony import */ var _componentAnnotations__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("f737");
-/* harmony import */ var _agAbstractLabel__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("df87");
-/* harmony import */ var _agAbstractField__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("a06f");
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return ManagedTabComponent; });
+/* harmony import */ var _context_context__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("d196");
+/* harmony import */ var _component__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("6045");
+/* harmony import */ var _constants__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("f2fb");
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v22.1.1
+ * @version v23.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -6253,6 +6421,79 @@ var __decorate = (undefined && undefined.__decorate) || function (decorators, ta
 
 
 
+var ManagedTabComponent = /** @class */ (function (_super) {
+    __extends(ManagedTabComponent, _super);
+    function ManagedTabComponent() {
+        return _super !== null && _super.apply(this, arguments) || this;
+    }
+    ManagedTabComponent.prototype.onTabKeyDown = function (e) {
+        e.preventDefault();
+    };
+    ManagedTabComponent.prototype.attachListenersToGui = function () {
+        var _this = this;
+        var eGui = this.getGui();
+        if (!eGui) {
+            return;
+        }
+        if (this.tabListener) {
+            this.tabListener = this.tabListener();
+        }
+        this.tabListener = this.addDestroyableEventListener(eGui, 'keydown', function (e) {
+            if (e.keyCode === _constants__WEBPACK_IMPORTED_MODULE_2__[/* Constants */ "a"].KEY_TAB) {
+                _this.onTabKeyDown(e);
+            }
+        });
+    };
+    __decorate([
+        _context_context__WEBPACK_IMPORTED_MODULE_0__[/* PostConstruct */ "e"]
+    ], ManagedTabComponent.prototype, "attachListenersToGui", null);
+    return ManagedTabComponent;
+}(_component__WEBPACK_IMPORTED_MODULE_1__[/* Component */ "a"]));
+
+
+
+/***/ }),
+
+/***/ "54a0":
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return AgSlider; });
+/* harmony import */ var _componentAnnotations__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("f737");
+/* harmony import */ var _agAbstractLabel__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("df87");
+/* harmony import */ var _agAbstractField__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("a06f");
+/* harmony import */ var _utils__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("e3d3");
+/* harmony import */ var _context_context__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("d196");
+/**
+ * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
+ * @version v23.0.0
+ * @link http://www.ag-grid.com/
+ * @license MIT
+ */
+var __extends = (undefined && undefined.__extends) || (function () {
+    var extendStatics = function (d, b) {
+        extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+        return extendStatics(d, b);
+    };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
+var __decorate = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+
+
+
+
+
 var AgSlider = /** @class */ (function (_super) {
     __extends(AgSlider, _super);
     function AgSlider() {
@@ -6260,6 +6501,9 @@ var AgSlider = /** @class */ (function (_super) {
         _this.labelAlignment = 'top';
         return _this;
     }
+    AgSlider.prototype.init = function () {
+        _utils__WEBPACK_IMPORTED_MODULE_3__[/* _ */ "d"].addCssClass(this.eSlider.getGui(), 'ag-slider-field');
+    };
     AgSlider.prototype.onValueChange = function (callbackFn) {
         var _this = this;
         var eventChanged = _agAbstractField__WEBPACK_IMPORTED_MODULE_2__[/* AgAbstractField */ "a"].EVENT_CHANGED;
@@ -6310,7 +6554,7 @@ var AgSlider = /** @class */ (function (_super) {
         this.eText.setStep(step);
         return this;
     };
-    AgSlider.TEMPLATE = "<div class=\"ag-slider\">\n            <label ref=\"eLabel\"></label>\n            <div class=\"ag-wrapper\">\n                <ag-input-range ref=\"eSlider\"></ag-input-range>\n                <ag-input-number-field ref=\"eText\"></ag-input-number-field>\n            </div>\n        </div>";
+    AgSlider.TEMPLATE = "<div class=\"ag-slider\">\n            <label ref=\"eLabel\"></label>\n            <div class=\"ag-wrapper ag-slider-wrapper\">\n                <ag-input-range ref=\"eSlider\"></ag-input-range>\n                <ag-input-number-field ref=\"eText\"></ag-input-number-field>\n            </div>\n        </div>";
     __decorate([
         Object(_componentAnnotations__WEBPACK_IMPORTED_MODULE_0__[/* RefSelector */ "a"])('eLabel')
     ], AgSlider.prototype, "eLabel", void 0);
@@ -6320,6 +6564,9 @@ var AgSlider = /** @class */ (function (_super) {
     __decorate([
         Object(_componentAnnotations__WEBPACK_IMPORTED_MODULE_0__[/* RefSelector */ "a"])('eText')
     ], AgSlider.prototype, "eText", void 0);
+    __decorate([
+        _context_context__WEBPACK_IMPORTED_MODULE_4__[/* PostConstruct */ "e"]
+    ], AgSlider.prototype, "init", null);
     return AgSlider;
 }(_agAbstractLabel__WEBPACK_IMPORTED_MODULE_1__[/* AgAbstractLabel */ "a"]));
 
@@ -6336,7 +6583,7 @@ var AgSlider = /** @class */ (function (_super) {
 /* harmony import */ var _utils__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("e3d3");
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v22.1.1
+ * @version v23.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -6349,31 +6596,36 @@ var __decorate = (undefined && undefined.__decorate) || function (decorators, ta
 
 
 var MAT_GRID_SIZE = 8;
-var FRESH_GRID_SIZE = 4;
+var BASE_GRID_SIZE = 4;
 var BALHAM_GRID_SIZE = 4;
 var ALPINE_GRID_SIZE = 6;
 var HARD_CODED_SIZES = {
-    'ag-theme-material': {
-        headerHeight: MAT_GRID_SIZE * 7,
-        virtualItemHeight: MAT_GRID_SIZE * 5,
-        rowHeight: MAT_GRID_SIZE * 6,
-        chartMenuPanelWidth: 220
-    },
-    'ag-theme-classic': {
+    // this item is required for custom themes
+    'ag-theme-custom': {
         headerHeight: 25,
-        virtualItemHeight: FRESH_GRID_SIZE * 5,
+        headerCellMinWidth: 24,
+        listItemHeight: BASE_GRID_SIZE * 5,
         rowHeight: 25,
         chartMenuPanelWidth: 220
     },
+    'ag-theme-material': {
+        headerHeight: MAT_GRID_SIZE * 7,
+        headerCellMinWidth: 48,
+        listItemHeight: MAT_GRID_SIZE * 5,
+        rowHeight: MAT_GRID_SIZE * 6,
+        chartMenuPanelWidth: 240
+    },
     'ag-theme-balham': {
         headerHeight: BALHAM_GRID_SIZE * 8,
-        virtualItemHeight: BALHAM_GRID_SIZE * 7,
+        headerCellMinWidth: 24,
+        listItemHeight: BALHAM_GRID_SIZE * 7,
         rowHeight: BALHAM_GRID_SIZE * 7,
         chartMenuPanelWidth: 220
     },
     'ag-theme-alpine': {
         headerHeight: ALPINE_GRID_SIZE * 8,
-        virtualItemHeight: ALPINE_GRID_SIZE * 5,
+        headerCellMinWidth: 36,
+        listItemHeight: ALPINE_GRID_SIZE * 5,
         rowHeight: ALPINE_GRID_SIZE * 7,
         chartMenuPanelWidth: 240
     }
@@ -6386,10 +6638,12 @@ var HARD_CODED_SIZES = {
  *     <div class="ag-virtual-list-container">
  *         <div class="ag-virtual-list-item"></div>
  *     </div>
+ * </div>
  */
 var SASS_PROPERTY_BUILDER = {
     headerHeight: ['ag-header-row'],
-    virtualItemHeight: ['ag-virtual-list-container', 'ag-virtual-list-item'],
+    headerCellMinWidth: ['ag-header-cell'],
+    listItemHeight: ['ag-virtual-list-item'],
     rowHeight: ['ag-row'],
     chartMenuPanelWidth: ['ag-chart-docked-container']
 };
@@ -6398,7 +6652,7 @@ var Environment = /** @class */ (function () {
     function Environment() {
     }
     Environment.prototype.getSassVariable = function (theme, key) {
-        var useTheme = 'ag-theme-' + (theme.match('material') ? 'material' : theme.match('balham') ? 'balham' : theme.match('alpine') ? 'alpine' : 'classic');
+        var useTheme = 'ag-theme-' + (theme.match('material') ? 'material' : theme.match('balham') ? 'balham' : theme.match('alpine') ? 'alpine' : 'custom');
         var defaultValue = HARD_CODED_SIZES[useTheme][key];
         var calculatedValue = 0;
         if (!CALCULATED_SIZES[theme]) {
@@ -6410,18 +6664,21 @@ var Environment = /** @class */ (function () {
         if (SASS_PROPERTY_BUILDER[key]) {
             var classList = SASS_PROPERTY_BUILDER[key];
             var div = document.createElement('div');
+            div.style.position = 'absolute';
             var el = classList.reduce(function (el, currentClass, idx) {
                 if (idx === 0) {
                     _utils__WEBPACK_IMPORTED_MODULE_1__[/* _ */ "d"].addCssClass(el, theme);
                 }
                 var div = document.createElement('div');
+                div.style.position = 'static';
                 _utils__WEBPACK_IMPORTED_MODULE_1__[/* _ */ "d"].addCssClass(div, currentClass);
                 el.appendChild(div);
                 return div;
             }, div);
             if (document.body) {
                 document.body.appendChild(div);
-                calculatedValue = parseInt(window.getComputedStyle(el).height, 10);
+                var sizeName = key.toLowerCase().indexOf('height') !== -1 ? 'height' : 'width';
+                calculatedValue = parseInt(window.getComputedStyle(el)[sizeName], 10);
                 document.body.removeChild(div);
             }
         }
@@ -6432,15 +6689,12 @@ var Environment = /** @class */ (function () {
         var theme = this.getTheme().theme;
         return !!theme && theme.indexOf('dark') >= 0;
     };
-    Environment.prototype.useNativeCheckboxes = function () {
-        var theme = this.getTheme().theme;
-        return !!theme && theme.indexOf('alpine') >= 0;
-    };
     Environment.prototype.chartMenuPanelWidth = function () {
-        return HARD_CODED_SIZES[this.getTheme().themeFamily].chartMenuPanelWidth;
+        var theme = this.getTheme().themeFamily;
+        return this.getSassVariable(theme, 'chartMenuPanelWidth');
     };
     Environment.prototype.getTheme = function () {
-        var reg = /\bag-(fresh|dark|blue|material|bootstrap|(?:theme-([\w\-]*)))\b/;
+        var reg = /\bag-(material|(?:theme-([\w\-]*)))\b/;
         var el = this.eGridDiv;
         var themeMatch;
         while (el) {
@@ -6481,6 +6735,10 @@ var Environment = /** @class */ (function () {
 
 "use strict";
 
+// EXPORTS
+__webpack_require__.d(__webpack_exports__, "b", function() { return /* binding */ HeaderRowType; });
+__webpack_require__.d(__webpack_exports__, "a", function() { return /* binding */ headerRowComp_HeaderRowComp; });
+
 // EXTERNAL MODULE: ../core/dist/es6/widgets/component.js
 var component = __webpack_require__("6045");
 
@@ -6514,7 +6772,7 @@ var features_setLeftFeature = __webpack_require__("5263");
 // EXTERNAL MODULE: ../core/dist/es6/headerRendering/hoverFeature.js
 var hoverFeature = __webpack_require__("cc17");
 
-// EXTERNAL MODULE: ../core/dist/es6/utils/index.js + 4 modules
+// EXTERNAL MODULE: ../core/dist/es6/utils/index.js + 5 modules
 var utils = __webpack_require__("e3d3");
 
 // EXTERNAL MODULE: ../core/dist/es6/constants.js
@@ -6523,7 +6781,7 @@ var constants = __webpack_require__("f2fb");
 // CONCATENATED MODULE: ../core/dist/es6/headerRendering/headerGroup/headerGroupWrapperComp.js
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v22.1.1
+ * @version v23.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -6679,6 +6937,7 @@ var headerGroupWrapperComp_HeaderGroupWrapperComp = /** @class */ (function (_su
         var dragSource = {
             type: dragAndDropService["b" /* DragSourceType */].HeaderCell,
             eElement: eHeaderGroup,
+            defaultIconName: dragAndDropService["a" /* DragAndDropService */].ICON_HIDE,
             dragItemName: displayName,
             // we add in the original group leaf columns, so we move both visible and non-visible items
             getDragItem: this.getDragItemForGroup.bind(this),
@@ -6893,7 +7152,7 @@ var componentAnnotations = __webpack_require__("f737");
 // CONCATENATED MODULE: ../core/dist/es6/filter/floating/provided/readOnlyFloatingFilter.js
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v22.1.1
+ * @version v23.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -6924,16 +7183,16 @@ var readOnlyFloatingFilter_decorate = (undefined && undefined.__decorate) || fun
 var readOnlyFloatingFilter_ReadOnlyFloatingFilter = /** @class */ (function (_super) {
     readOnlyFloatingFilter_extends(ReadOnlyFloatingFilter, _super);
     function ReadOnlyFloatingFilter() {
-        return _super.call(this, "<div class=\"ag-input-wrapper\" role=\"presentation\"><input ref=\"eFloatingFilterText\" class=\"ag-floating-filter-input\"></div>") || this;
+        return _super.call(this, "<div class=\"ag-floating-filter-input\" role=\"presentation\"><ag-input-text-field ref=\"eFloatingFilterText\"></ag-input-text-field></div>") || this;
     }
     ReadOnlyFloatingFilter.prototype.init = function (params) {
         this.params = params;
-        this.eFloatingFilterText.disabled = true;
+        this.eFloatingFilterText.setDisabled(true);
     };
     ReadOnlyFloatingFilter.prototype.onParentModelChanged = function (parentModel) {
         var _this = this;
         if (!parentModel) {
-            this.eFloatingFilterText.value = '';
+            this.eFloatingFilterText.setValue('');
             return;
         }
         this.params.parentFilterInstance(function (filterInstance) {
@@ -6941,7 +7200,7 @@ var readOnlyFloatingFilter_ReadOnlyFloatingFilter = /** @class */ (function (_su
             // in floatingFilterWrapper
             if (filterInstance.getModelAsString) {
                 var modelAsString = filterInstance.getModelAsString(parentModel);
-                _this.eFloatingFilterText.value = modelAsString;
+                _this.eFloatingFilterText.setValue(modelAsString);
             }
         });
     };
@@ -6961,7 +7220,7 @@ var moduleRegistry = __webpack_require__("7749");
 // CONCATENATED MODULE: ../core/dist/es6/filter/floating/floatingFilterWrapper.js
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v22.1.1
+ * @version v23.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -7068,7 +7327,7 @@ var floatingFilterWrapper_FloatingFilterWrapper = /** @class */ (function (_supe
         this.onColumnWidthChanged();
     };
     FloatingFilterWrapper.prototype.onColumnWidthChanged = function () {
-        this.getGui().style.width = this.column.getActualWidth() + 'px';
+        this.getGui().style.width = this.column.getActualWidth() + "px";
     };
     FloatingFilterWrapper.prototype.setupWithFloatingFilter = function (floatingFilterComp) {
         var disposeFunc = function () {
@@ -7102,6 +7361,11 @@ var floatingFilterWrapper_FloatingFilterWrapper = /** @class */ (function (_supe
         if (typeof colDef.filter === 'string') {
             // will be undefined if not in the map
             defaultFloatingFilterType = FloatingFilterWrapper.filterToFloatingFilterNames[colDef.filter];
+        }
+        else if (colDef.filterFramework) {
+            // If filterFramework, then grid is NOT using one of the provided filters, hence no default.
+            // Note: We could combine this with another part of the 'if' statement, however explicitly
+            // having this section makes the code easier to read.
         }
         else if (colDef.filter === true) {
             var setFilterModuleLoaded = moduleRegistry["a" /* ModuleRegistry */].isRegistered(moduleNames["a" /* ModuleNames */].SetFilterModule);
@@ -7174,7 +7438,7 @@ var floatingFilterWrapper_FloatingFilterWrapper = /** @class */ (function (_supe
         text: 'agTextColumnFloatingFilter',
         agTextColumnFilter: 'agTextColumnFloatingFilter'
     };
-    FloatingFilterWrapper.TEMPLATE = "<div class=\"ag-header-cell\" role=\"presentation\">\n            <div ref=\"eFloatingFilterBody\" role=\"columnheader\"></div>\n            <div class=\"ag-floating-filter-button\" ref=\"eButtonWrapper\" role=\"presentation\">\n                <button type=\"button\" ref=\"eButtonShowMainFilter\"></button>\n            </div>\n        </div>";
+    FloatingFilterWrapper.TEMPLATE = "<div class=\"ag-header-cell\" role=\"presentation\">\n            <div ref=\"eFloatingFilterBody\" role=\"columnheader\"></div>\n            <div class=\"ag-floating-filter-button\" ref=\"eButtonWrapper\" role=\"presentation\">\n                <button type=\"button\" class=\"ag-floating-filter-button-button\" ref=\"eButtonShowMainFilter\"></button>\n            </div>\n        </div>";
     floatingFilterWrapper_decorate([
         Object(context["a" /* Autowired */])('columnHoverService')
     ], FloatingFilterWrapper.prototype, "columnHoverService", void 0);
@@ -7219,11 +7483,9 @@ var floatingFilterWrapper_FloatingFilterWrapper = /** @class */ (function (_supe
 
 
 // CONCATENATED MODULE: ../core/dist/es6/headerRendering/headerRowComp.js
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "b", function() { return HeaderRowType; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return headerRowComp_HeaderRowComp; });
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v22.1.1
+ * @version v23.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -7270,6 +7532,13 @@ var headerRowComp_HeaderRowComp = /** @class */ (function (_super) {
         _this.type = type;
         _this.pinned = pinned;
         _this.dropTarget = dropTarget;
+        var niceClassName = HeaderRowType[type].toLowerCase().replace(/_/g, "-");
+        _this.addCssClass("ag-header-row-" + niceClassName);
+        if (utils["d" /* _ */].isBrowserSafari()) {
+            // fix for a Safari rendering bug that caused the header to flicker above chart panels
+            // as you move the mouse over the header
+            _this.getGui().style.transform = 'translateZ(0)';
+        }
         return _this;
     }
     HeaderRowComp.prototype.forEachHeaderElement = function (callback) {
@@ -7492,7 +7761,7 @@ var headerRowComp_HeaderRowComp = /** @class */ (function (_super) {
 /* harmony import */ var _textCellEditor__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("032f");
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v22.1.1
+ * @version v23.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -7532,9 +7801,10 @@ var PopupTextCellEditor = /** @class */ (function (_super) {
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return MouseEventService; });
 /* harmony import */ var _context_context__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("d196");
 /* harmony import */ var _utils__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("e3d3");
+/* harmony import */ var _constants__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("f2fb");
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v22.1.1
+ * @version v23.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -7547,6 +7817,7 @@ var __decorate = (undefined && undefined.__decorate) || function (decorators, ta
 
 
 
+
 var MouseEventService = /** @class */ (function () {
     function MouseEventService() {
         this.gridInstanceId = MouseEventService_1.gridInstanceSequence.next();
@@ -7554,6 +7825,9 @@ var MouseEventService = /** @class */ (function () {
     MouseEventService_1 = MouseEventService;
     MouseEventService.prototype.init = function () {
         this.stampDomElementWithGridInstance();
+    };
+    MouseEventService.prototype.registerGridComp = function (gridPanel) {
+        this.gridPanel = gridPanel;
     };
     // we put the instance id onto the main DOM element. this is used for events, when grids are inside grids,
     // so the grid can work out if the even came from this grid or a grid inside this one. see the ctrl+v logic
@@ -7582,6 +7856,16 @@ var MouseEventService = /** @class */ (function () {
     MouseEventService.prototype.getCellPositionForEvent = function (event) {
         var cellComp = this.getRenderedCellForEvent(event);
         return cellComp ? cellComp.getCellPosition() : null;
+    };
+    MouseEventService.prototype.getNormalisedPosition = function (event) {
+        var gridPanelHasScrolls = this.gridOptionsWrapper.getDomLayout() === _constants__WEBPACK_IMPORTED_MODULE_2__[/* Constants */ "a"].DOM_LAYOUT_NORMAL;
+        var x = event.x, y = event.y;
+        if (gridPanelHasScrolls) {
+            var vRange = this.gridPanel.getVScrollPosition();
+            var hRange = this.gridPanel.getHScrollPosition();
+            return { x: x + hRange.left, y: y + vRange.top };
+        }
+        return { x: x, y: y };
     };
     var MouseEventService_1;
     MouseEventService.gridInstanceSequence = new _utils__WEBPACK_IMPORTED_MODULE_1__[/* NumberSequence */ "b"]();
@@ -7623,7 +7907,7 @@ var MouseEventService = /** @class */ (function () {
 /* harmony import */ var _modules_moduleRegistry__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__("7749");
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v22.1.1
+ * @version v23.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -7697,6 +7981,7 @@ var GridOptionsWrapper = /** @class */ (function () {
         this.gridOptions.columnApi = null;
     };
     GridOptionsWrapper.prototype.init = function () {
+        var _this = this;
         if (!(this.gridOptions.suppressPropertyNamesCheck === true)) {
             this.checkGridOptionsProperties();
             this.checkColumnDefProperties();
@@ -7719,12 +8004,34 @@ var GridOptionsWrapper = /** @class */ (function () {
         if (this.isGroupRemoveSingleChildren() && this.isGroupHideOpenParents()) {
             console.warn("ag-Grid: groupRemoveSingleChildren and groupHideOpenParents do not work with each other, you need to pick one. And don't ask us how to us these together on our support forum either you will get the same answer!");
         }
+        if (this.isRowModelServerSide()) {
+            var msg = function (prop) { return "ag-Grid: '" + prop + "' is not supported on the Server-side Row Model"; };
+            if (_utils__WEBPACK_IMPORTED_MODULE_0__[/* _ */ "d"].exists(this.gridOptions.groupDefaultExpanded)) {
+                console.warn(msg('groupDefaultExpanded'));
+            }
+            if (_utils__WEBPACK_IMPORTED_MODULE_0__[/* _ */ "d"].exists(this.gridOptions.groupDefaultExpanded)) {
+                console.warn(msg('groupIncludeFooter'));
+            }
+            if (_utils__WEBPACK_IMPORTED_MODULE_0__[/* _ */ "d"].exists(this.gridOptions.groupDefaultExpanded)) {
+                console.warn(msg('groupIncludeTotalFooter'));
+            }
+        }
         if (this.isEnableRangeSelection()) {
             _modules_moduleRegistry__WEBPACK_IMPORTED_MODULE_10__[/* ModuleRegistry */ "a"].assertRegistered(_modules_moduleNames__WEBPACK_IMPORTED_MODULE_9__[/* ModuleNames */ "a"].RangeSelectionModule, 'enableRangeSelection');
         }
         if (!this.isEnableRangeSelection() && (this.isEnableRangeHandle() || this.isEnableFillHandle())) {
             console.warn("ag-Grid: 'enableRangeHandle' and 'enableFillHandle' will not work unless 'enableRangeSelection' is set to true");
         }
+        var warnOfDeprecaredIcon = function (name) {
+            if (_this.gridOptions.icons && _this.gridOptions.icons[name]) {
+                console.warn("gridOptions.icons." + name + " is no longer supported. For information on how to style checkboxes and radio buttons, see https://www.ag-grid.com/javascript-grid-icons/");
+            }
+        };
+        warnOfDeprecaredIcon('radioButtonOff');
+        warnOfDeprecaredIcon('radioButtonOn');
+        warnOfDeprecaredIcon('checkboxChecked');
+        warnOfDeprecaredIcon('checkboxUnchecked');
+        warnOfDeprecaredIcon('checkboxIndeterminate');
         this.addEventListener(GridOptionsWrapper_1.PROP_DOM_LAYOUT, this.updateLayoutClasses.bind(this));
     };
     GridOptionsWrapper.prototype.checkColumnDefProperties = function () {
@@ -7908,6 +8215,12 @@ var GridOptionsWrapper = /** @class */ (function () {
     };
     GridOptionsWrapper.prototype.isSuppressRowDrag = function () {
         return isTrue(this.gridOptions.suppressRowDrag);
+    };
+    GridOptionsWrapper.prototype.isSuppressMoveWhenRowDragging = function () {
+        return isTrue(this.gridOptions.suppressMoveWhenRowDragging);
+    };
+    GridOptionsWrapper.prototype.isEnableMultiRowDragging = function () {
+        return isTrue(this.gridOptions.enableMultiRowDragging);
     };
     // returns either 'print', 'autoHeight' or 'normal' (normal is the default)
     GridOptionsWrapper.prototype.getDomLayout = function () {
@@ -8487,13 +8800,13 @@ var GridOptionsWrapper = /** @class */ (function () {
         if (typeof this.gridOptions.headerHeight === 'number') {
             return this.gridOptions.headerHeight;
         }
-        return this.specialForNewMaterial(25, 'headerHeight');
+        return this.getFromTheme(25, 'headerHeight');
     };
     GridOptionsWrapper.prototype.getFloatingFiltersHeight = function () {
         if (typeof this.gridOptions.floatingFiltersHeight === 'number') {
             return this.gridOptions.floatingFiltersHeight;
         }
-        return this.specialForNewMaterial(25, 'headerHeight');
+        return this.getFromTheme(25, 'headerHeight');
     };
     GridOptionsWrapper.prototype.getGroupHeaderHeight = function () {
         if (typeof this.gridOptions.groupHeaderHeight === 'number') {
@@ -8525,6 +8838,16 @@ var GridOptionsWrapper = /** @class */ (function () {
         }
         return false;
     };
+    GridOptionsWrapper.prototype.getTooltipShowDelay = function () {
+        var tooltipShowDelay = this.gridOptions.tooltipShowDelay;
+        if (_utils__WEBPACK_IMPORTED_MODULE_0__[/* _ */ "d"].exists(tooltipShowDelay)) {
+            if (tooltipShowDelay < 0) {
+                console.warn('ag-grid: tooltipShowDelay should not be lower than 0');
+            }
+            return Math.max(200, tooltipShowDelay);
+        }
+        return null;
+    };
     GridOptionsWrapper.prototype.getDocument = function () {
         // if user is providing document, we use the users one,
         // otherwise we use the document on the global namespace.
@@ -8538,10 +8861,11 @@ var GridOptionsWrapper = /** @class */ (function () {
         return document;
     };
     GridOptionsWrapper.prototype.getMinColWidth = function () {
-        if (this.gridOptions.minColWidth && this.gridOptions.minColWidth > GridOptionsWrapper_1.MIN_COL_WIDTH) {
+        if (this.gridOptions.minColWidth > GridOptionsWrapper_1.MIN_COL_WIDTH) {
             return this.gridOptions.minColWidth;
         }
-        return GridOptionsWrapper_1.MIN_COL_WIDTH;
+        var measuredMin = this.getFromTheme(null, 'headerCellMinWidth');
+        return Math.max(measuredMin, GridOptionsWrapper_1.MIN_COL_WIDTH);
     };
     GridOptionsWrapper.prototype.getMaxColWidth = function () {
         if (this.gridOptions.maxColWidth && this.gridOptions.maxColWidth > GridOptionsWrapper_1.MIN_COL_WIDTH) {
@@ -8865,9 +9189,12 @@ var GridOptionsWrapper = /** @class */ (function () {
                 api: this.gridOptions.api,
                 context: this.gridOptions.context
             };
-            return { height: this.gridOptions.getRowHeight(params), estimated: false };
+            var height = this.gridOptions.getRowHeight(params);
+            if (height != null) {
+                return { height: height, estimated: false };
+            }
         }
-        else if (rowNode.detail && this.isMasterDetail()) {
+        if (rowNode.detail && this.isMasterDetail()) {
             if (this.isNumeric(this.gridOptions.detailRowHeight)) {
                 return { height: this.gridOptions.detailRowHeight, estimated: false };
             }
@@ -8890,11 +9217,8 @@ var GridOptionsWrapper = /** @class */ (function () {
     GridOptionsWrapper.prototype.isDynamicRowHeight = function () {
         return typeof this.gridOptions.getRowHeight === 'function';
     };
-    GridOptionsWrapper.prototype.getVirtualItemHeight = function () {
-        return this.specialForNewMaterial(20, 'virtualItemHeight');
-    };
-    GridOptionsWrapper.prototype.useNativeCheckboxes = function () {
-        return this.environment.useNativeCheckboxes();
+    GridOptionsWrapper.prototype.getListItemHeight = function () {
+        return this.getFromTheme(20, 'listItemHeight');
     };
     GridOptionsWrapper.prototype.chartMenuPanelWidth = function () {
         return this.environment.chartMenuPanelWidth();
@@ -8904,7 +9228,7 @@ var GridOptionsWrapper = /** @class */ (function () {
     };
     // Material data table has strict guidelines about whitespace, and these values are different than the ones
     // ag-grid uses by default. We override the default ones for the sake of making it better out of the box
-    GridOptionsWrapper.prototype.specialForNewMaterial = function (defaultValue, sassVariableName) {
+    GridOptionsWrapper.prototype.getFromTheme = function (defaultValue, sassVariableName) {
         var theme = this.environment.getTheme().theme;
         if (theme && theme.indexOf('ag-theme') === 0) {
             return this.environment.getSassVariable(theme, sassVariableName);
@@ -8912,7 +9236,7 @@ var GridOptionsWrapper = /** @class */ (function () {
         return defaultValue;
     };
     GridOptionsWrapper.prototype.getDefaultRowHeight = function () {
-        return this.specialForNewMaterial(DEFAULT_ROW_HEIGHT, 'rowHeight');
+        return this.getFromTheme(DEFAULT_ROW_HEIGHT, 'rowHeight');
     };
     var GridOptionsWrapper_1;
     GridOptionsWrapper.MIN_COL_WIDTH = 10;
@@ -8975,13 +9299,13 @@ var GridOptionsWrapper = /** @class */ (function () {
 
 "use strict";
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return SelectCellEditor; });
-/* harmony import */ var _widgets_popupComponent__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("86a4");
-/* harmony import */ var _constants__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("f2fb");
-/* harmony import */ var _context_context__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("d196");
+/* harmony import */ var _context_context__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("d196");
+/* harmony import */ var _widgets_popupComponent__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("86a4");
+/* harmony import */ var _widgets_componentAnnotations__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("f737");
 /* harmony import */ var _utils__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("e3d3");
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v22.1.1
+ * @version v23.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -9011,9 +9335,7 @@ var __decorate = (undefined && undefined.__decorate) || function (decorators, ta
 var SelectCellEditor = /** @class */ (function (_super) {
     __extends(SelectCellEditor, _super);
     function SelectCellEditor() {
-        var _this = _super.call(this, '<div class="ag-cell-edit-input"><select class="ag-cell-edit-input"/></div>') || this;
-        _this.eSelect = _this.getGui().querySelector('select');
-        return _this;
+        return _super.call(this, '<div class="ag-cell-edit-wrapper"><ag-select class="ag-cell-editor" ref="eSelect"></ag-select></div>') || this;
     }
     SelectCellEditor.prototype.init = function (params) {
         var _this = this;
@@ -9023,53 +9345,44 @@ var SelectCellEditor = /** @class */ (function (_super) {
             return;
         }
         params.values.forEach(function (value) {
-            var option = document.createElement('option');
-            option.value = value;
+            var option = { value: value };
             var valueFormatted = _this.valueFormatterService.formatValue(params.column, null, null, value);
             var valueFormattedExits = valueFormatted !== null && valueFormatted !== undefined;
             option.text = valueFormattedExits ? valueFormatted : value;
-            if (params.value === value) {
-                option.selected = true;
-            }
-            _this.eSelect.appendChild(option);
+            _this.eSelect.addOption(option);
         });
+        this.eSelect.setValue(params.value, true);
         // we don't want to add this if full row editing, otherwise selecting will stop the
         // full row editing.
         if (!this.gridOptionsWrapper.isFullRowEdit()) {
-            this.addDestroyableEventListener(this.eSelect, 'change', function () { return params.stopEditing(); });
+            this.eSelect.onValueChange(function () { return params.stopEditing(); });
         }
-        this.addDestroyableEventListener(this.eSelect, 'keydown', function (event) {
-            var isNavigationKey = event.keyCode === _constants__WEBPACK_IMPORTED_MODULE_1__[/* Constants */ "a"].KEY_UP || event.keyCode === _constants__WEBPACK_IMPORTED_MODULE_1__[/* Constants */ "a"].KEY_DOWN;
-            if (isNavigationKey) {
-                event.stopPropagation();
-            }
-        });
-        this.addDestroyableEventListener(this.eSelect, 'mousedown', function (event) {
-            event.stopPropagation();
-        });
     };
     SelectCellEditor.prototype.afterGuiAttached = function () {
         if (this.focusAfterAttached) {
-            this.eSelect.focus();
+            this.eSelect.getFocusableElement().focus();
         }
     };
     SelectCellEditor.prototype.focusIn = function () {
-        this.eSelect.focus();
+        this.eSelect.getFocusableElement().focus();
     };
     SelectCellEditor.prototype.getValue = function () {
-        return this.eSelect.value;
+        return this.eSelect.getValue();
     };
     SelectCellEditor.prototype.isPopup = function () {
         return false;
     };
     __decorate([
-        Object(_context_context__WEBPACK_IMPORTED_MODULE_2__[/* Autowired */ "a"])('gridOptionsWrapper')
+        Object(_context_context__WEBPACK_IMPORTED_MODULE_0__[/* Autowired */ "a"])('gridOptionsWrapper')
     ], SelectCellEditor.prototype, "gridOptionsWrapper", void 0);
     __decorate([
-        Object(_context_context__WEBPACK_IMPORTED_MODULE_2__[/* Autowired */ "a"])('valueFormatterService')
+        Object(_context_context__WEBPACK_IMPORTED_MODULE_0__[/* Autowired */ "a"])('valueFormatterService')
     ], SelectCellEditor.prototype, "valueFormatterService", void 0);
+    __decorate([
+        Object(_widgets_componentAnnotations__WEBPACK_IMPORTED_MODULE_2__[/* RefSelector */ "a"])('eSelect')
+    ], SelectCellEditor.prototype, "eSelect", void 0);
     return SelectCellEditor;
-}(_widgets_popupComponent__WEBPACK_IMPORTED_MODULE_0__[/* PopupComponent */ "a"]));
+}(_widgets_popupComponent__WEBPACK_IMPORTED_MODULE_1__[/* PopupComponent */ "a"]));
 
 
 
@@ -9083,7 +9396,7 @@ var SelectCellEditor = /** @class */ (function (_super) {
 /* harmony import */ var _grid__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("d35e");
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v22.1.1
+ * @version v23.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -9129,12 +9442,12 @@ function AngularDirectiveController($element, $scope, $compile, $attrs) {
 
 "use strict";
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return Component; });
-/* harmony import */ var _context_context__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("d196");
-/* harmony import */ var _context_beanStub__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("ab2d");
+/* harmony import */ var _context_beanStub__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("ab2d");
+/* harmony import */ var _context_context__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("d196");
 /* harmony import */ var _utils__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("e3d3");
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v22.1.1
+ * @version v23.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -9184,17 +9497,20 @@ var Component = /** @class */ (function (_super) {
         return this.compId;
     };
     // for registered components only, eg creates AgCheckbox instance from ag-checkbox HTML tag
-    Component.prototype.createChildComponentsFromTags = function (parentNode) {
+    Component.prototype.createChildComponentsFromTags = function (parentNode, paramsMap) {
         var _this = this;
         // we MUST take a copy of the list first, as the 'swapComponentForNode' adds comments into the DOM
         // which messes up the traversal order of the children.
         var childNodeList = _utils__WEBPACK_IMPORTED_MODULE_2__[/* _ */ "d"].copyNodeList(parentNode.childNodes);
         childNodeList.forEach(function (childNode) {
+            if (!(childNode instanceof HTMLElement)) {
+                return;
+            }
             var childComp = _this.getContext().createComponentFromElement(childNode, function (childComp) {
                 // copy over all attributes, including css classes, so any attributes user put on the tag
                 // wll be carried across
                 _this.copyAttributesFromNode(childNode, childComp.getGui());
-            });
+            }, paramsMap);
             if (childComp) {
                 if (childComp.addItems && childNode.children.length) {
                     _this.createChildComponentsFromTags(childNode);
@@ -9223,8 +9539,8 @@ var Component = /** @class */ (function (_super) {
         this.swapInComponentForQuerySelectors(newComponent, childNode);
     };
     Component.prototype.swapInComponentForQuerySelectors = function (newComponent, childNode) {
-        var thisProto = Object.getPrototypeOf(this);
         var thisNoType = this;
+        var thisProto = Object.getPrototypeOf(this);
         while (thisProto != null) {
             var metaData = thisProto.__agComponentMetaData;
             var currentProtoName = (thisProto.constructor).name;
@@ -9238,11 +9554,11 @@ var Component = /** @class */ (function (_super) {
             thisProto = Object.getPrototypeOf(thisProto);
         }
     };
-    Component.prototype.setTemplate = function (template) {
+    Component.prototype.setTemplate = function (template, paramsMap) {
         var eGui = _utils__WEBPACK_IMPORTED_MODULE_2__[/* _ */ "d"].loadTemplate(template);
-        this.setTemplateFromElement(eGui);
+        this.setTemplateFromElement(eGui, paramsMap);
     };
-    Component.prototype.setTemplateFromElement = function (element) {
+    Component.prototype.setTemplateFromElement = function (element, paramsMap) {
         this.eGui = element;
         this.eGui.__agComponent = this;
         this.addAnnotatedEventListeners();
@@ -9250,7 +9566,7 @@ var Component = /** @class */ (function (_super) {
         // context will not be available when user sets template in constructor
         var contextIsAvailable = !!this.getContext();
         if (contextIsAvailable) {
-            this.createChildComponentsFromTags(this.getGui());
+            this.createChildComponentsFromTags(this.getGui(), paramsMap);
         }
     };
     Component.prototype.createChildComponentsPreConstruct = function () {
@@ -9350,6 +9666,9 @@ var Component = /** @class */ (function (_super) {
     Component.prototype.getGui = function () {
         return this.eGui;
     };
+    Component.prototype.getFocusableElement = function () {
+        return this.getGui();
+    };
     Component.prototype.setParentComponent = function (component) {
         this.parentComponent = component;
     };
@@ -9433,10 +9752,10 @@ var Component = /** @class */ (function (_super) {
     };
     Component.EVENT_DISPLAYED_CHANGED = 'displayedChanged';
     __decorate([
-        _context_context__WEBPACK_IMPORTED_MODULE_0__[/* PreConstruct */ "f"]
+        _context_context__WEBPACK_IMPORTED_MODULE_1__[/* PreConstruct */ "f"]
     ], Component.prototype, "createChildComponentsPreConstruct", null);
     return Component;
-}(_context_beanStub__WEBPACK_IMPORTED_MODULE_1__[/* BeanStub */ "a"]));
+}(_context_beanStub__WEBPACK_IMPORTED_MODULE_0__[/* BeanStub */ "a"]));
 
 
 
@@ -9452,7 +9771,7 @@ var Component = /** @class */ (function (_super) {
 /* harmony import */ var _utils__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("e3d3");
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v22.1.1
+ * @version v23.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -9483,13 +9802,19 @@ var AgAbstractInputField = /** @class */ (function (_super) {
     function AgAbstractInputField() {
         var _this = _super !== null && _super.apply(this, arguments) || this;
         _this.config = {};
-        _this.TEMPLATE = "<div class=\"ag-input-field\" role=\"presentation\">\n            <label ref=\"eLabel\"></label>\n            <div ref=\"eWrapper\" class=\"ag-wrapper ag-input-wrapper\" role=\"presentation\">\n                <%displayField% ref=\"eInput\"></%displayField%>\n            </div>\n        </div>";
+        _this.TEMPLATE = "<div role=\"presentation\">\n            <label ref=\"eLabel\" class=\"ag-input-field-label\"></label>\n            <div ref=\"eWrapper\" class=\"ag-wrapper ag-input-wrapper\" role=\"presentation\">\n                <%displayField% ref=\"eInput\" class=\"ag-input-field-input\"></%displayField%>\n            </div>\n        </div>";
         return _this;
     }
     AgAbstractInputField.prototype.postConstruct = function () {
         _super.prototype.postConstruct.call(this);
         this.setInputType();
-        _utils__WEBPACK_IMPORTED_MODULE_2__[/* _ */ "d"].addCssClass(this.getGui(), this.className);
+        _utils__WEBPACK_IMPORTED_MODULE_2__[/* _ */ "d"].addCssClass(this.eLabel, this.className + "-label");
+        _utils__WEBPACK_IMPORTED_MODULE_2__[/* _ */ "d"].addCssClass(this.eWrapper, this.className + "-input-wrapper");
+        _utils__WEBPACK_IMPORTED_MODULE_2__[/* _ */ "d"].addCssClass(this.eInput, this.className + "-input");
+        _utils__WEBPACK_IMPORTED_MODULE_2__[/* _ */ "d"].addCssClass(this.getGui(), 'ag-input-field');
+        var inputId = this.eInput.id ? this.eInput.id : "ag-input-id-" + this.getCompId();
+        this.eLabel.htmlFor = inputId;
+        this.eInput.id = inputId;
         var _a = this.config, width = _a.width, value = _a.value;
         if (width != null) {
             this.setWidth(width);
@@ -9522,6 +9847,33 @@ var AgAbstractInputField = /** @class */ (function (_super) {
         this.getInputElement().setAttribute('name', name);
         return this;
     };
+    AgAbstractInputField.prototype.getFocusableElement = function () {
+        return this.eInput;
+    };
+    AgAbstractInputField.prototype.setMaxLength = function (length) {
+        var eInput = this.eInput;
+        eInput.maxLength = length;
+        return this;
+    };
+    AgAbstractInputField.prototype.setInputPlaceholder = function (placeholder) {
+        var eInput = this.eInput;
+        if (placeholder) {
+            eInput.setAttribute('placeholder', placeholder);
+        }
+        else {
+            eInput.removeAttribute('placeholder');
+        }
+        return this;
+    };
+    AgAbstractInputField.prototype.setDisabled = function (disabled) {
+        if (disabled) {
+            this.eInput.setAttribute('disabled', 'true');
+        }
+        else {
+            this.eInput.removeAttribute('disabled');
+        }
+        return _super.prototype.setDisabled.call(this, disabled);
+    };
     __decorate([
         Object(_componentAnnotations__WEBPACK_IMPORTED_MODULE_0__[/* RefSelector */ "a"])('eLabel')
     ], AgAbstractInputField.prototype, "eLabel", void 0);
@@ -9547,7 +9899,7 @@ var AgAbstractInputField = /** @class */ (function (_super) {
 /* harmony import */ var _utils__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("e3d3");
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v22.1.1
+ * @version v23.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -9657,13 +10009,13 @@ var StandardMenuFactory = /** @class */ (function () {
 /* harmony import */ var _entities_rowNode__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("19f7");
 /* harmony import */ var _events__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("1284");
 /* harmony import */ var _widgets_component__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("6045");
-/* harmony import */ var _utils__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("e3d3");
-/* harmony import */ var _constants__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__("f2fb");
-/* harmony import */ var _modules_moduleNames__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__("203c");
-/* harmony import */ var _modules_moduleRegistry__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__("7749");
+/* harmony import */ var _constants__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("f2fb");
+/* harmony import */ var _modules_moduleNames__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__("203c");
+/* harmony import */ var _modules_moduleRegistry__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__("7749");
+/* harmony import */ var _utils__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__("e3d3");
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v22.1.1
+ * @version v23.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -9739,7 +10091,7 @@ var RowComp = /** @class */ (function (_super) {
     }
     RowComp.prototype.init = function () {
         var _this = this;
-        this.rowFocused = this.beans.focusedCellController.isRowFocused(this.rowNode.rowIndex, this.rowNode.rowPinned);
+        this.rowFocused = this.beans.focusController.isRowFocused(this.rowNode.rowIndex, this.rowNode.rowPinned);
         this.scope = this.createChildScopeOrNull(this.rowNode.data);
         this.setupRowContainers();
         this.addListeners();
@@ -9750,7 +10102,7 @@ var RowComp = /** @class */ (function (_super) {
         }
         if (this.fadeRowIn) {
             this.createSecondPassFuncs.push(function () {
-                _this.eAllRowContainers.forEach(function (eRow) { return _utils__WEBPACK_IMPORTED_MODULE_4__[/* _ */ "d"].removeCssClass(eRow, 'ag-opacity-zero'); });
+                _this.eAllRowContainers.forEach(function (eRow) { return _utils__WEBPACK_IMPORTED_MODULE_7__[/* _ */ "d"].removeCssClass(eRow, 'ag-opacity-zero'); });
             });
         }
     };
@@ -9759,10 +10111,10 @@ var RowComp = /** @class */ (function (_super) {
         var templateParts = [];
         var rowHeight = this.rowNode.rowHeight;
         var rowClasses = this.getInitialRowClasses(extraCssClass).join(' ');
-        var rowIdSanitised = _utils__WEBPACK_IMPORTED_MODULE_4__[/* _ */ "d"].escape(this.rowNode.id);
+        var rowIdSanitised = _utils__WEBPACK_IMPORTED_MODULE_7__[/* _ */ "d"].escape(this.rowNode.id);
         var userRowStyles = this.preProcessStylesFromGridOptions();
         var businessKey = this.getRowBusinessKey();
-        var businessKeySanitised = _utils__WEBPACK_IMPORTED_MODULE_4__[/* _ */ "d"].escape(businessKey);
+        var businessKeySanitised = _utils__WEBPACK_IMPORTED_MODULE_7__[/* _ */ "d"].escape(businessKey);
         var rowTopStyle = this.getInitialRowTopStyle();
         var rowIdx = this.rowNode.getRowIndexString();
         var headerRowCount = this.beans.gridPanel.headerRootComp.getHeaderRowCount();
@@ -9910,12 +10262,10 @@ var RowComp = /** @class */ (function (_super) {
     RowComp.prototype.setupNormalRowContainers = function () {
         var _this = this;
         var centerCols;
-        var leftCols;
-        var rightCols;
+        var leftCols = [];
+        var rightCols = [];
         if (this.printLayout) {
             centerCols = this.beans.columnController.getAllDisplayedColumns();
-            leftCols = [];
-            rightCols = [];
         }
         else {
             centerCols = this.beans.columnController.getAllDisplayedCenterVirtualColumnsForRow(this.rowNode);
@@ -9936,18 +10286,19 @@ var RowComp = /** @class */ (function (_super) {
                 _this.fullWidthRowComponentBody = cellRenderer;
             });
             // printLayout doesn't put components into the pinned sections
-            if (!this.printLayout) {
-                this.createFullWidthRowContainer(this.pinnedLeftContainerComp, _constants__WEBPACK_IMPORTED_MODULE_5__[/* Constants */ "a"].PINNED_LEFT, 'ag-cell-last-left-pinned', type, name, function (eRow) {
-                    _this.eFullWidthRowLeft = eRow;
-                }, function (cellRenderer) {
-                    _this.fullWidthRowComponentLeft = cellRenderer;
-                });
-                this.createFullWidthRowContainer(this.pinnedRightContainerComp, _constants__WEBPACK_IMPORTED_MODULE_5__[/* Constants */ "a"].PINNED_RIGHT, 'ag-cell-first-right-pinned', type, name, function (eRow) {
-                    _this.eFullWidthRowRight = eRow;
-                }, function (cellRenderer) {
-                    _this.fullWidthRowComponentRight = cellRenderer;
-                });
+            if (this.printLayout) {
+                return;
             }
+            this.createFullWidthRowContainer(this.pinnedLeftContainerComp, _constants__WEBPACK_IMPORTED_MODULE_4__[/* Constants */ "a"].PINNED_LEFT, 'ag-cell-last-left-pinned', type, name, function (eRow) {
+                _this.eFullWidthRowLeft = eRow;
+            }, function (cellRenderer) {
+                _this.fullWidthRowComponentLeft = cellRenderer;
+            });
+            this.createFullWidthRowContainer(this.pinnedRightContainerComp, _constants__WEBPACK_IMPORTED_MODULE_4__[/* Constants */ "a"].PINNED_RIGHT, 'ag-cell-first-right-pinned', type, name, function (eRow) {
+                _this.eFullWidthRowRight = eRow;
+            }, function (cellRenderer) {
+                _this.fullWidthRowComponentRight = cellRenderer;
+            });
         }
         else {
             // otherwise we add to the fullWidth container as normal
@@ -9961,7 +10312,7 @@ var RowComp = /** @class */ (function (_super) {
     };
     RowComp.prototype.setAnimateFlags = function (animateIn) {
         if (animateIn) {
-            var oldRowTopExists = _utils__WEBPACK_IMPORTED_MODULE_4__[/* _ */ "d"].exists(this.rowNode.oldRowTop);
+            var oldRowTopExists = _utils__WEBPACK_IMPORTED_MODULE_7__[/* _ */ "d"].exists(this.rowNode.oldRowTop);
             // if the row had a previous position, we slide it in (animate row top)
             this.slideRowIn = oldRowTopExists;
             // if the row had no previous position, we fade it in (animate
@@ -9986,11 +10337,10 @@ var RowComp = /** @class */ (function (_super) {
         // returns 'true' if refresh succeeded
         var tryRefresh = function (eRow, eCellComp, pinned) {
             if (!eRow || !eCellComp) {
-                // no refresh needed
                 return true;
-            }
+            } // no refresh needed
+            // no refresh method present, so can't refresh, hard refresh needed
             if (!eCellComp.refresh) {
-                // no refresh method present, so can't refresh, hard refresh needed
                 return false;
             }
             var params = _this.createFullWidthParams(eRow, pinned);
@@ -9999,8 +10349,8 @@ var RowComp = /** @class */ (function (_super) {
         };
         var normalSuccess = tryRefresh(this.eFullWidthRow, this.fullWidthRowComponent, null);
         var bodySuccess = tryRefresh(this.eFullWidthRowBody, this.fullWidthRowComponentBody, null);
-        var leftSuccess = tryRefresh(this.eFullWidthRowLeft, this.fullWidthRowComponentLeft, _constants__WEBPACK_IMPORTED_MODULE_5__[/* Constants */ "a"].PINNED_LEFT);
-        var rightSuccess = tryRefresh(this.eFullWidthRowRight, this.fullWidthRowComponentRight, _constants__WEBPACK_IMPORTED_MODULE_5__[/* Constants */ "a"].PINNED_RIGHT);
+        var leftSuccess = tryRefresh(this.eFullWidthRowLeft, this.fullWidthRowComponentLeft, _constants__WEBPACK_IMPORTED_MODULE_4__[/* Constants */ "a"].PINNED_LEFT);
+        var rightSuccess = tryRefresh(this.eFullWidthRowRight, this.fullWidthRowComponentRight, _constants__WEBPACK_IMPORTED_MODULE_4__[/* Constants */ "a"].PINNED_RIGHT);
         var allFullWidthRowsRefreshed = normalSuccess && bodySuccess && leftSuccess && rightSuccess;
         return allFullWidthRowsRefreshed;
     };
@@ -10012,6 +10362,7 @@ var RowComp = /** @class */ (function (_super) {
         this.addDestroyableEventListener(this.rowNode, _entities_rowNode__WEBPACK_IMPORTED_MODULE_1__[/* RowNode */ "a"].EVENT_EXPANDED_CHANGED, this.onExpandedChanged.bind(this));
         this.addDestroyableEventListener(this.rowNode, _entities_rowNode__WEBPACK_IMPORTED_MODULE_1__[/* RowNode */ "a"].EVENT_DATA_CHANGED, this.onRowNodeDataChanged.bind(this));
         this.addDestroyableEventListener(this.rowNode, _entities_rowNode__WEBPACK_IMPORTED_MODULE_1__[/* RowNode */ "a"].EVENT_CELL_CHANGED, this.onRowNodeCellChanged.bind(this));
+        this.addDestroyableEventListener(this.rowNode, _entities_rowNode__WEBPACK_IMPORTED_MODULE_1__[/* RowNode */ "a"].EVENT_HIGHLIGHT_CHANGED, this.onRowNodeHighlightChanged.bind(this));
         this.addDestroyableEventListener(this.rowNode, _entities_rowNode__WEBPACK_IMPORTED_MODULE_1__[/* RowNode */ "a"].EVENT_DRAGGING_CHANGED, this.onRowNodeDraggingChanged.bind(this));
         var eventService = this.beans.eventService;
         this.addDestroyableEventListener(eventService, _events__WEBPACK_IMPORTED_MODULE_2__[/* Events */ "a"].EVENT_HEIGHT_SCALE_CHANGED, this.onTopChanged.bind(this));
@@ -10058,7 +10409,7 @@ var RowComp = /** @class */ (function (_super) {
         // as data has changed, then the style and class needs to be recomputed
         this.postProcessCss();
     };
-    RowComp.prototype.onRowNodeCellChanged = function (event) {
+    RowComp.prototype.onRowNodeCellChanged = function () {
         // as data has changed, then the style and class needs to be recomputed
         this.postProcessCss();
     };
@@ -10068,17 +10419,27 @@ var RowComp = /** @class */ (function (_super) {
         this.postProcessRowClassRules();
         this.postProcessRowDragging();
     };
+    RowComp.prototype.onRowNodeHighlightChanged = function () {
+        var highlighted = this.rowNode.highlighted;
+        this.eAllRowContainers.forEach(function (row) {
+            _utils__WEBPACK_IMPORTED_MODULE_7__[/* _ */ "d"].removeCssClass(row, 'ag-row-highlight-above');
+            _utils__WEBPACK_IMPORTED_MODULE_7__[/* _ */ "d"].removeCssClass(row, 'ag-row-highlight-below');
+            if (highlighted) {
+                _utils__WEBPACK_IMPORTED_MODULE_7__[/* _ */ "d"].addCssClass(row, 'ag-row-highlight-' + highlighted);
+            }
+        });
+    };
     RowComp.prototype.onRowNodeDraggingChanged = function () {
         this.postProcessRowDragging();
     };
     RowComp.prototype.postProcessRowDragging = function () {
         var dragging = this.rowNode.dragging;
-        this.eAllRowContainers.forEach(function (row) { return _utils__WEBPACK_IMPORTED_MODULE_4__[/* _ */ "d"].addOrRemoveCssClass(row, 'ag-row-dragging', dragging); });
+        this.eAllRowContainers.forEach(function (row) { return _utils__WEBPACK_IMPORTED_MODULE_7__[/* _ */ "d"].addOrRemoveCssClass(row, 'ag-row-dragging', dragging); });
     };
     RowComp.prototype.onExpandedChanged = function () {
         var rowNode = this.rowNode;
-        this.eAllRowContainers.forEach(function (row) { return _utils__WEBPACK_IMPORTED_MODULE_4__[/* _ */ "d"].addOrRemoveCssClass(row, 'ag-row-group-expanded', rowNode.expanded); });
-        this.eAllRowContainers.forEach(function (row) { return _utils__WEBPACK_IMPORTED_MODULE_4__[/* _ */ "d"].addOrRemoveCssClass(row, 'ag-row-group-contracted', !rowNode.expanded); });
+        this.eAllRowContainers.forEach(function (row) { return _utils__WEBPACK_IMPORTED_MODULE_7__[/* _ */ "d"].addOrRemoveCssClass(row, 'ag-row-group-expanded', rowNode.expanded); });
+        this.eAllRowContainers.forEach(function (row) { return _utils__WEBPACK_IMPORTED_MODULE_7__[/* _ */ "d"].addOrRemoveCssClass(row, 'ag-row-group-contracted', !rowNode.expanded); });
     };
     RowComp.prototype.onDisplayedColumnsChanged = function () {
         if (this.fullWidthRow) {
@@ -10096,18 +10457,18 @@ var RowComp = /** @class */ (function (_super) {
             this.fullWidthRowComponent = null;
         }
         if (this.fullWidthRowComponentLeft) {
-            this.beans.detailRowCompCache.addOrDestroy(this.rowNode, _constants__WEBPACK_IMPORTED_MODULE_5__[/* Constants */ "a"].PINNED_LEFT, this.fullWidthRowComponentLeft);
+            this.beans.detailRowCompCache.addOrDestroy(this.rowNode, _constants__WEBPACK_IMPORTED_MODULE_4__[/* Constants */ "a"].PINNED_LEFT, this.fullWidthRowComponentLeft);
             this.fullWidthRowComponentLeft = null;
         }
         if (this.fullWidthRowComponentRight) {
-            this.beans.detailRowCompCache.addOrDestroy(this.rowNode, _constants__WEBPACK_IMPORTED_MODULE_5__[/* Constants */ "a"].PINNED_RIGHT, this.fullWidthRowComponentRight);
+            this.beans.detailRowCompCache.addOrDestroy(this.rowNode, _constants__WEBPACK_IMPORTED_MODULE_4__[/* Constants */ "a"].PINNED_RIGHT, this.fullWidthRowComponentRight);
             this.fullWidthRowComponent = null;
         }
     };
     RowComp.prototype.getContainerForCell = function (pinnedType) {
         switch (pinnedType) {
-            case _constants__WEBPACK_IMPORTED_MODULE_5__[/* Constants */ "a"].PINNED_LEFT: return this.ePinnedLeftRow;
-            case _constants__WEBPACK_IMPORTED_MODULE_5__[/* Constants */ "a"].PINNED_RIGHT: return this.ePinnedRightRow;
+            case _constants__WEBPACK_IMPORTED_MODULE_4__[/* Constants */ "a"].PINNED_LEFT: return this.ePinnedLeftRow;
+            case _constants__WEBPACK_IMPORTED_MODULE_4__[/* Constants */ "a"].PINNED_RIGHT: return this.ePinnedRightRow;
             default: return this.eBodyRow;
         }
     };
@@ -10163,9 +10524,9 @@ var RowComp = /** @class */ (function (_super) {
         this.insertCellsIntoContainer(this.ePinnedRightRow, rightCols);
         this.elementOrderChanged = false;
         var colIdsToRemove = Object.keys(this.cellComps);
-        centerCols.forEach(function (col) { return _utils__WEBPACK_IMPORTED_MODULE_4__[/* _ */ "d"].removeFromArray(colIdsToRemove, col.getId()); });
-        leftCols.forEach(function (col) { return _utils__WEBPACK_IMPORTED_MODULE_4__[/* _ */ "d"].removeFromArray(colIdsToRemove, col.getId()); });
-        rightCols.forEach(function (col) { return _utils__WEBPACK_IMPORTED_MODULE_4__[/* _ */ "d"].removeFromArray(colIdsToRemove, col.getId()); });
+        centerCols.forEach(function (col) { return _utils__WEBPACK_IMPORTED_MODULE_7__[/* _ */ "d"].removeFromArray(colIdsToRemove, col.getId()); });
+        leftCols.forEach(function (col) { return _utils__WEBPACK_IMPORTED_MODULE_7__[/* _ */ "d"].removeFromArray(colIdsToRemove, col.getId()); });
+        rightCols.forEach(function (col) { return _utils__WEBPACK_IMPORTED_MODULE_7__[/* _ */ "d"].removeFromArray(colIdsToRemove, col.getId()); });
         // we never remove editing cells, as this would cause the cells to loose their values while editing
         // as the grid is scrolling horizontally.
         var eligibleToBeRemoved = colIdsToRemove.filter(this.isCellEligibleToBeRemoved.bind(this));
@@ -10180,7 +10541,7 @@ var RowComp = /** @class */ (function (_super) {
         colIds.forEach(function (key) {
             var cellComp = _this.cellComps[key];
             // could be old reference, ie removed cell
-            if (_utils__WEBPACK_IMPORTED_MODULE_4__[/* _ */ "d"].missing(cellComp)) {
+            if (_utils__WEBPACK_IMPORTED_MODULE_7__[/* _ */ "d"].missing(cellComp)) {
                 return;
             }
             cellComp.detach();
@@ -10193,16 +10554,13 @@ var RowComp = /** @class */ (function (_super) {
         var REMOVE_CELL = true;
         var KEEP_CELL = false;
         var renderedCell = this.cellComps[indexStr];
-        if (!renderedCell) {
-            return REMOVE_CELL;
-        }
-        // always remove the cell if it's in the wrong pinned location
-        if (this.isCellInWrongRow(renderedCell)) {
+        // always remove the cell if it's not rendered or if it's in the wrong pinned location
+        if (!renderedCell || this.isCellInWrongRow(renderedCell)) {
             return REMOVE_CELL;
         }
         // we want to try and keep editing and focused cells
         var editing = renderedCell.isEditing();
-        var focused = this.beans.focusedCellController.isCellFocused(renderedCell.getCellPosition());
+        var focused = this.beans.focusController.isCellFocused(renderedCell.getCellPosition());
         var mightWantToKeepCell = editing || focused;
         if (mightWantToKeepCell) {
             var column = renderedCell.getColumn();
@@ -10236,8 +10594,7 @@ var RowComp = /** @class */ (function (_super) {
     RowComp.prototype.isCellInWrongRow = function (cellComp) {
         var column = cellComp.getColumn();
         var rowWeWant = this.getContainerForCell(column.getPinned());
-        // if in wrong container, remove it
-        var oldRow = cellComp.getParentRow();
+        var oldRow = cellComp.getParentRow(); // if in wrong container, remove it
         return oldRow !== rowWeWant;
     };
     RowComp.prototype.insertCellsIntoContainer = function (eRow, cols) {
@@ -10258,12 +10615,12 @@ var RowComp = /** @class */ (function (_super) {
             }
         });
         if (cellTemplates.length > 0) {
-            _utils__WEBPACK_IMPORTED_MODULE_4__[/* _ */ "d"].appendHtml(eRow, cellTemplates.join(''));
+            _utils__WEBPACK_IMPORTED_MODULE_7__[/* _ */ "d"].appendHtml(eRow, cellTemplates.join(''));
             this.callAfterRowAttachedOnCells(newCellComps, eRow);
         }
         if (this.elementOrderChanged && this.beans.gridOptionsWrapper.isEnsureDomOrder()) {
             var correctChildOrder = cols.map(function (col) { return _this.getCellForCol(col); });
-            _utils__WEBPACK_IMPORTED_MODULE_4__[/* _ */ "d"].setDomChildOrder(eRow, correctChildOrder);
+            _utils__WEBPACK_IMPORTED_MODULE_7__[/* _ */ "d"].setDomChildOrder(eRow, correctChildOrder);
         }
     };
     RowComp.prototype.addDomData = function (eRowContainer) {
@@ -10317,14 +10674,14 @@ var RowComp = /** @class */ (function (_super) {
         return event;
     };
     RowComp.prototype.onRowDblClick = function (mouseEvent) {
-        if (_utils__WEBPACK_IMPORTED_MODULE_4__[/* _ */ "d"].isStopPropagationForAgGrid(mouseEvent)) {
+        if (_utils__WEBPACK_IMPORTED_MODULE_7__[/* _ */ "d"].isStopPropagationForAgGrid(mouseEvent)) {
             return;
         }
         var agEvent = this.createRowEventWithSource(_events__WEBPACK_IMPORTED_MODULE_2__[/* Events */ "a"].EVENT_ROW_DOUBLE_CLICKED, mouseEvent);
         this.beans.eventService.dispatchEvent(agEvent);
     };
     RowComp.prototype.onRowClick = function (mouseEvent) {
-        var stop = _utils__WEBPACK_IMPORTED_MODULE_4__[/* _ */ "d"].isStopPropagationForAgGrid(mouseEvent);
+        var stop = _utils__WEBPACK_IMPORTED_MODULE_7__[/* _ */ "d"].isStopPropagationForAgGrid(mouseEvent);
         if (stop) {
             return;
         }
@@ -10381,10 +10738,8 @@ var RowComp = /** @class */ (function (_super) {
                     eRow.appendChild(gui);
                     cellRendererCallback(cellRenderer);
                 }
-                else {
-                    if (cellRenderer.destroy) {
-                        cellRenderer.destroy();
-                    }
+                else if (cellRenderer.destroy) {
+                    cellRenderer.destroy();
                 }
             };
             // if doing master detail, it's possible we have a cached row comp from last time detail was displayed
@@ -10395,7 +10750,7 @@ var RowComp = /** @class */ (function (_super) {
             else {
                 var res = _this.beans.userComponentFactory.newFullWidthCellRenderer(params, cellRendererType, cellRendererName);
                 if (!res) {
-                    var masterDetailModuleLoaded = _modules_moduleRegistry__WEBPACK_IMPORTED_MODULE_7__[/* ModuleRegistry */ "a"].isRegistered(_modules_moduleNames__WEBPACK_IMPORTED_MODULE_6__[/* ModuleNames */ "a"].MasterDetailModule);
+                    var masterDetailModuleLoaded = _modules_moduleRegistry__WEBPACK_IMPORTED_MODULE_6__[/* ModuleRegistry */ "a"].isRegistered(_modules_moduleNames__WEBPACK_IMPORTED_MODULE_5__[/* ModuleNames */ "a"].MasterDetailModule);
                     if (cellRendererName === 'agDetailCellRenderer' && !masterDetailModuleLoaded) {
                         console.warn("ag-Grid: cell renderer agDetailCellRenderer (for master detail) not found. Did you forget to include the master detail module?");
                     }
@@ -10441,7 +10796,7 @@ var RowComp = /** @class */ (function (_super) {
         var classes = [];
         var isTreeData = this.beans.gridOptionsWrapper.isTreeData();
         var rowNode = this.rowNode;
-        if (_utils__WEBPACK_IMPORTED_MODULE_4__[/* _ */ "d"].exists(extraCssClass)) {
+        if (_utils__WEBPACK_IMPORTED_MODULE_7__[/* _ */ "d"].exists(extraCssClass)) {
             classes.push(extraCssClass);
         }
         classes.push('ag-row');
@@ -10450,6 +10805,9 @@ var RowComp = /** @class */ (function (_super) {
             classes.push('ag-opacity-zero');
         }
         classes.push(this.rowIsEven ? 'ag-row-even' : 'ag-row-odd');
+        if (rowNode.isRowPinned()) {
+            classes.push('ag-row-pinned');
+        }
         if (rowNode.isSelected()) {
             classes.push('ag-row-selected');
         }
@@ -10466,7 +10824,7 @@ var RowComp = /** @class */ (function (_super) {
             classes.push('ag-row-level-' + (rowNode.parent ? (rowNode.parent.level + 1) : '0'));
         }
         if (rowNode.stub) {
-            classes.push('ag-row-stub');
+            classes.push('ag-row-loading');
         }
         if (this.fullWidthRow) {
             classes.push('ag-full-width-row');
@@ -10482,8 +10840,8 @@ var RowComp = /** @class */ (function (_super) {
         if (rowNode.dragging) {
             classes.push('ag-row-dragging');
         }
-        _utils__WEBPACK_IMPORTED_MODULE_4__[/* _ */ "d"].pushAll(classes, this.processClassesFromGridOptions());
-        _utils__WEBPACK_IMPORTED_MODULE_4__[/* _ */ "d"].pushAll(classes, this.preProcessRowClassRules());
+        _utils__WEBPACK_IMPORTED_MODULE_7__[/* _ */ "d"].pushAll(classes, this.processClassesFromGridOptions());
+        _utils__WEBPACK_IMPORTED_MODULE_7__[/* _ */ "d"].pushAll(classes, this.preProcessRowClassRules());
         // we use absolute position unless we are doing print layout
         classes.push(this.printLayout ? 'ag-row-position-relative' : 'ag-row-position-absolute');
         this.firstRowOnPage = this.isFirstRowOnPage();
@@ -10507,11 +10865,11 @@ var RowComp = /** @class */ (function (_super) {
         var newLast = this.isLastRowOnPage();
         if (this.firstRowOnPage !== newFirst) {
             this.firstRowOnPage = newFirst;
-            this.eAllRowContainers.forEach(function (row) { return _utils__WEBPACK_IMPORTED_MODULE_4__[/* _ */ "d"].addOrRemoveCssClass(row, 'ag-row-first', newFirst); });
+            this.eAllRowContainers.forEach(function (row) { return _utils__WEBPACK_IMPORTED_MODULE_7__[/* _ */ "d"].addOrRemoveCssClass(row, 'ag-row-first', newFirst); });
         }
         if (this.lastRowOnPage !== newLast) {
             this.lastRowOnPage = newLast;
-            this.eAllRowContainers.forEach(function (row) { return _utils__WEBPACK_IMPORTED_MODULE_4__[/* _ */ "d"].addOrRemoveCssClass(row, 'ag-row-last', newLast); });
+            this.eAllRowContainers.forEach(function (row) { return _utils__WEBPACK_IMPORTED_MODULE_7__[/* _ */ "d"].addOrRemoveCssClass(row, 'ag-row-last', newLast); });
         }
     };
     RowComp.prototype.preProcessRowClassRules = function () {
@@ -10553,7 +10911,7 @@ var RowComp = /** @class */ (function (_super) {
     };
     RowComp.prototype.setEditingRow = function (value) {
         this.editingRow = value;
-        this.eAllRowContainers.forEach(function (row) { return _utils__WEBPACK_IMPORTED_MODULE_4__[/* _ */ "d"].addOrRemoveCssClass(row, 'ag-row-editing', value); });
+        this.eAllRowContainers.forEach(function (row) { return _utils__WEBPACK_IMPORTED_MODULE_7__[/* _ */ "d"].addOrRemoveCssClass(row, 'ag-row-editing', value); });
         var event = value ?
             this.createRowEvent(_events__WEBPACK_IMPORTED_MODULE_2__[/* Events */ "a"].EVENT_ROW_EDITING_STARTED)
             : this.createRowEvent(_events__WEBPACK_IMPORTED_MODULE_2__[/* Events */ "a"].EVENT_ROW_EDITING_STOPPED);
@@ -10579,7 +10937,7 @@ var RowComp = /** @class */ (function (_super) {
         this.setEditingRow(true);
     };
     RowComp.prototype.forEachCellComp = function (callback) {
-        _utils__WEBPACK_IMPORTED_MODULE_4__[/* _ */ "d"].iterateObject(this.cellComps, function (key, cellComp) {
+        _utils__WEBPACK_IMPORTED_MODULE_7__[/* _ */ "d"].iterateObject(this.cellComps, function (key, cellComp) {
             if (!cellComp) {
                 return;
             }
@@ -10593,15 +10951,15 @@ var RowComp = /** @class */ (function (_super) {
             return;
         }
         cssClasses.forEach(function (classStr) {
-            _this.eAllRowContainers.forEach(function (row) { return _utils__WEBPACK_IMPORTED_MODULE_4__[/* _ */ "d"].addCssClass(row, classStr); });
+            _this.eAllRowContainers.forEach(function (row) { return _utils__WEBPACK_IMPORTED_MODULE_7__[/* _ */ "d"].addCssClass(row, classStr); });
         });
     };
     RowComp.prototype.postProcessRowClassRules = function () {
         var _this = this;
         this.processRowClassRules(function (className) {
-            _this.eAllRowContainers.forEach(function (row) { return _utils__WEBPACK_IMPORTED_MODULE_4__[/* _ */ "d"].addCssClass(row, className); });
+            _this.eAllRowContainers.forEach(function (row) { return _utils__WEBPACK_IMPORTED_MODULE_7__[/* _ */ "d"].addCssClass(row, className); });
         }, function (className) {
-            _this.eAllRowContainers.forEach(function (row) { return _utils__WEBPACK_IMPORTED_MODULE_4__[/* _ */ "d"].removeCssClass(row, className); });
+            _this.eAllRowContainers.forEach(function (row) { return _utils__WEBPACK_IMPORTED_MODULE_7__[/* _ */ "d"].removeCssClass(row, className); });
         });
     };
     RowComp.prototype.processClassesFromGridOptions = function () {
@@ -10640,11 +10998,11 @@ var RowComp = /** @class */ (function (_super) {
     };
     RowComp.prototype.preProcessStylesFromGridOptions = function () {
         var rowStyles = this.processStylesFromGridOptions();
-        return _utils__WEBPACK_IMPORTED_MODULE_4__[/* _ */ "d"].cssStyleObjectToMarkup(rowStyles);
+        return _utils__WEBPACK_IMPORTED_MODULE_7__[/* _ */ "d"].cssStyleObjectToMarkup(rowStyles);
     };
     RowComp.prototype.postProcessStylesFromGridOptions = function () {
         var rowStyles = this.processStylesFromGridOptions();
-        this.eAllRowContainers.forEach(function (row) { return _utils__WEBPACK_IMPORTED_MODULE_4__[/* _ */ "d"].addStylesToElement(row, rowStyles); });
+        this.eAllRowContainers.forEach(function (row) { return _utils__WEBPACK_IMPORTED_MODULE_7__[/* _ */ "d"].addStylesToElement(row, rowStyles); });
     };
     RowComp.prototype.processStylesFromGridOptions = function () {
         // part 1 - rowStyle
@@ -10666,7 +11024,7 @@ var RowComp = /** @class */ (function (_super) {
             };
             rowStyleFuncResult = rowStyleFunc(params);
         }
-        return _utils__WEBPACK_IMPORTED_MODULE_4__[/* _ */ "d"].assign({}, rowStyle, rowStyleFuncResult);
+        return _utils__WEBPACK_IMPORTED_MODULE_7__[/* _ */ "d"].assign({}, rowStyle, rowStyleFuncResult);
     };
     RowComp.prototype.createCells = function (cols) {
         var _this = this;
@@ -10687,7 +11045,7 @@ var RowComp = /** @class */ (function (_super) {
     };
     RowComp.prototype.onRowSelected = function () {
         var selected = this.rowNode.isSelected();
-        this.eAllRowContainers.forEach(function (row) { return _utils__WEBPACK_IMPORTED_MODULE_4__[/* _ */ "d"].addOrRemoveCssClass(row, 'ag-row-selected', selected); });
+        this.eAllRowContainers.forEach(function (row) { return _utils__WEBPACK_IMPORTED_MODULE_7__[/* _ */ "d"].addOrRemoveCssClass(row, 'ag-row-selected', selected); });
     };
     // called:
     // + after row created for first time
@@ -10711,7 +11069,7 @@ var RowComp = /** @class */ (function (_super) {
             rowContainerComp.removeRowElement(eRow);
         });
         this.removeFirstPassFuncs.push(function () {
-            if (_utils__WEBPACK_IMPORTED_MODULE_4__[/* _ */ "d"].exists(_this.rowNode.rowTop)) {
+            if (_utils__WEBPACK_IMPORTED_MODULE_7__[/* _ */ "d"].exists(_this.rowNode.rowTop)) {
                 // the row top is updated anyway, however we set it here again
                 // to something more reasonable for the animation - ie if the
                 // row top is 10000px away, the row will flash out, so this
@@ -10720,7 +11078,7 @@ var RowComp = /** @class */ (function (_super) {
                 _this.setRowTop(rowTop);
             }
             else {
-                _utils__WEBPACK_IMPORTED_MODULE_4__[/* _ */ "d"].addCssClass(eRow, 'ag-opacity-zero');
+                _utils__WEBPACK_IMPORTED_MODULE_7__[/* _ */ "d"].addCssClass(eRow, 'ag-opacity-zero');
             }
         });
         this.eAllRowContainers.push(eRow);
@@ -10755,11 +11113,11 @@ var RowComp = /** @class */ (function (_super) {
             // toggles this property mid way, we remove the hover form the last row, but we stop
             // adding hovers from that point onwards.
             if (!_this.beans.gridOptionsWrapper.isSuppressRowHoverHighlight()) {
-                _utils__WEBPACK_IMPORTED_MODULE_4__[/* _ */ "d"].addCssClass(eRow, 'ag-row-hover');
+                _utils__WEBPACK_IMPORTED_MODULE_7__[/* _ */ "d"].addCssClass(eRow, 'ag-row-hover');
             }
         });
         this.addDestroyableEventListener(this.rowNode, _entities_rowNode__WEBPACK_IMPORTED_MODULE_1__[/* RowNode */ "a"].EVENT_MOUSE_LEAVE, function () {
-            _utils__WEBPACK_IMPORTED_MODULE_4__[/* _ */ "d"].removeCssClass(eRow, 'ag-row-hover');
+            _utils__WEBPACK_IMPORTED_MODULE_7__[/* _ */ "d"].removeCssClass(eRow, 'ag-row-hover');
         });
     };
     // for animation, we don't want to animate entry or exit to a very far away pixel,
@@ -10779,7 +11137,7 @@ var RowComp = /** @class */ (function (_super) {
         // check for exists first - if the user is resetting the row height, then
         // it will be null (or undefined) momentarily until the next time the flatten
         // stage is called where the row will then update again with a new height
-        if (_utils__WEBPACK_IMPORTED_MODULE_4__[/* _ */ "d"].exists(this.rowNode.rowHeight)) {
+        if (_utils__WEBPACK_IMPORTED_MODULE_7__[/* _ */ "d"].exists(this.rowNode.rowHeight)) {
             var heightPx_1 = this.rowNode.rowHeight + "px";
             this.eAllRowContainers.forEach(function (row) { return row.style.height = heightPx_1; });
         }
@@ -10831,10 +11189,10 @@ var RowComp = /** @class */ (function (_super) {
         return result;
     };
     RowComp.prototype.onCellFocusChanged = function () {
-        var rowFocused = this.beans.focusedCellController.isRowFocused(this.rowNode.rowIndex, this.rowNode.rowPinned);
+        var rowFocused = this.beans.focusController.isRowFocused(this.rowNode.rowIndex, this.rowNode.rowPinned);
         if (rowFocused !== this.rowFocused) {
-            this.eAllRowContainers.forEach(function (row) { return _utils__WEBPACK_IMPORTED_MODULE_4__[/* _ */ "d"].addOrRemoveCssClass(row, 'ag-row-focus', rowFocused); });
-            this.eAllRowContainers.forEach(function (row) { return _utils__WEBPACK_IMPORTED_MODULE_4__[/* _ */ "d"].addOrRemoveCssClass(row, 'ag-row-no-focus', !rowFocused); });
+            this.eAllRowContainers.forEach(function (row) { return _utils__WEBPACK_IMPORTED_MODULE_7__[/* _ */ "d"].addOrRemoveCssClass(row, 'ag-row-focus', rowFocused); });
+            this.eAllRowContainers.forEach(function (row) { return _utils__WEBPACK_IMPORTED_MODULE_7__[/* _ */ "d"].addOrRemoveCssClass(row, 'ag-row-no-focus', !rowFocused); });
             this.rowFocused = rowFocused;
         }
         // if we are editing, then moving the focus out of a row will stop editing
@@ -10873,7 +11231,7 @@ var RowComp = /** @class */ (function (_super) {
         }
         // need to make sure rowTop is not null, as this can happen if the node was once
         // visible (ie parent group was expanded) but is now not visible
-        if (_utils__WEBPACK_IMPORTED_MODULE_4__[/* _ */ "d"].exists(pixels)) {
+        if (_utils__WEBPACK_IMPORTED_MODULE_7__[/* _ */ "d"].exists(pixels)) {
             var afterPaginationPixels = this.applyPaginationOffset(pixels);
             var afterScalingPixels = this.beans.maxDivHeightScaler.getRealPixelPosition(afterPaginationPixels);
             var topPx_1 = afterScalingPixels + "px";
@@ -10924,8 +11282,8 @@ var RowComp = /** @class */ (function (_super) {
             if (!rowIsEvenChanged) {
                 return;
             }
-            _utils__WEBPACK_IMPORTED_MODULE_4__[/* _ */ "d"].addOrRemoveCssClass(eRow, 'ag-row-even', rowIsEven);
-            _utils__WEBPACK_IMPORTED_MODULE_4__[/* _ */ "d"].addOrRemoveCssClass(eRow, 'ag-row-odd', !rowIsEven);
+            _utils__WEBPACK_IMPORTED_MODULE_7__[/* _ */ "d"].addOrRemoveCssClass(eRow, 'ag-row-even', rowIsEven);
+            _utils__WEBPACK_IMPORTED_MODULE_7__[/* _ */ "d"].addOrRemoveCssClass(eRow, 'ag-row-odd', !rowIsEven);
         });
     };
     RowComp.prototype.ensureDomOrder = function () {
@@ -10994,7 +11352,7 @@ var RowComp = /** @class */ (function (_super) {
 /* harmony import */ var _utils__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("e3d3");
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v22.1.1
+ * @version v23.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -11305,17 +11663,17 @@ var PaginationProxy = /** @class */ (function (_super) {
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return BaseComponentWrapper; });
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v22.1.1
+ * @version v23.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
 var BaseComponentWrapper = /** @class */ (function () {
     function BaseComponentWrapper() {
     }
-    BaseComponentWrapper.prototype.wrap = function (OriginalConstructor, mandatoryMethodList, optionalMethodList, componentName) {
+    BaseComponentWrapper.prototype.wrap = function (OriginalConstructor, mandatoryMethodList, optionalMethodList, componentType, componentName) {
         var _this = this;
         if (optionalMethodList === void 0) { optionalMethodList = []; }
-        var wrapper = this.createWrapper(OriginalConstructor, componentName);
+        var wrapper = this.createWrapper(OriginalConstructor, componentType, componentName);
         mandatoryMethodList.forEach((function (methodName) {
             _this.createMethod(wrapper, methodName, true);
         }));
@@ -11353,7 +11711,7 @@ var BaseComponentWrapper = /** @class */ (function () {
 /* harmony import */ var _context_context__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("d196");
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v22.1.1
+ * @version v23.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -11446,7 +11804,7 @@ var TemplateService = /** @class */ (function () {
 /* harmony import */ var _utils__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("e3d3");
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v22.1.1
+ * @version v23.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -11636,7 +11994,7 @@ function checkForDeprecated(changes) {
 /* harmony import */ var _context_context__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("d196");
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v22.1.1
+ * @version v23.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -11677,7 +12035,7 @@ var HorizontalResizeService = /** @class */ (function () {
         this.oldMsUserSelect = this.eGridDiv.style.msUserSelect;
         this.oldWebkitUserSelect = this.eGridDiv.style.webkitUserSelect;
         // change the body cursor, so when drag moves out of the drag bar, the cursor is still 'resize' (or 'move'
-        this.eGridDiv.style.cursor = 'col-resize';
+        this.eGridDiv.style.cursor = 'ew-resize';
         // we don't want text selection outside the grid (otherwise it looks weird as text highlights when we move)
         this.eGridDiv.style.msUserSelect = 'none';
         this.eGridDiv.style.webkitUserSelect = 'none';
@@ -11720,9 +12078,10 @@ var HorizontalResizeService = /** @class */ (function () {
 
 "use strict";
 /* unused harmony export ChartType */
+/* unused harmony export LegendPosition */
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v22.1.1
+ * @version v23.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -11743,6 +12102,13 @@ var ChartType;
     ChartType["StackedArea"] = "stackedArea";
     ChartType["NormalizedArea"] = "normalizedArea";
 })(ChartType || (ChartType = {}));
+var LegendPosition;
+(function (LegendPosition) {
+    LegendPosition["Top"] = "top";
+    LegendPosition["Right"] = "right";
+    LegendPosition["Bottom"] = "bottom";
+    LegendPosition["Left"] = "left";
+})(LegendPosition || (LegendPosition = {}));
 
 
 /***/ }),
@@ -11759,7 +12125,7 @@ var ChartType;
 /* harmony import */ var _utils__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("e3d3");
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v22.1.1
+ * @version v23.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -11925,7 +12291,7 @@ var PinnedRowModel = /** @class */ (function () {
 /* harmony import */ var _context_beanStub__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("ab2d");
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v22.1.1
+ * @version v23.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -12144,7 +12510,7 @@ var RowNodeBlock = /** @class */ (function (_super) {
 /* harmony import */ var _utils__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("e3d3");
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v22.1.1
+ * @version v23.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -12155,6 +12521,7 @@ var ModuleRegistry = /** @class */ (function () {
     ModuleRegistry.register = function (module) {
         ModuleRegistry.modulesMap[module.moduleName] = module;
     };
+    // noinspection JSUnusedGlobalSymbols
     ModuleRegistry.registerModules = function (modules) {
         if (!modules) {
             return;
@@ -12166,8 +12533,7 @@ var ModuleRegistry = /** @class */ (function () {
             return true;
         }
         var warningKey = reason + moduleName;
-        var warningMessage = "ag-Grid: unable to use " + reason + " as module " + moduleName + " is not present. "
-            + ("You need to load the module with: import \"" + moduleName + "\"");
+        var warningMessage = "ag-Grid: unable to use " + reason + " as module " + moduleName + " is not present. Please see: https://www.ag-grid.com/javascript-grid-modules/";
         _utils__WEBPACK_IMPORTED_MODULE_0__[/* _ */ "d"].doOnce(function () {
             console.warn(warningMessage);
         }, warningKey);
@@ -12201,7 +12567,7 @@ var ModuleRegistry = /** @class */ (function () {
 /* harmony import */ var _modules_moduleRegistry__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__("7749");
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v22.1.1
+ * @version v23.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -12839,7 +13205,7 @@ var Column = /** @class */ (function () {
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return SideBarDefParser; });
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v22.1.1
+ * @version v23.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -12942,7 +13308,7 @@ var SideBarDefParser = /** @class */ (function () {
 /* harmony import */ var _utils__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("e3d3");
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v22.1.1
+ * @version v23.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -13229,7 +13595,7 @@ var CellNavigationService = /** @class */ (function () {
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return ChangedPath; });
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v22.1.1
+ * @version v23.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -13404,7 +13770,7 @@ var ChangedPath = /** @class */ (function () {
 /* harmony import */ var _utils__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("e3d3");
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v22.1.1
+ * @version v23.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -13421,10 +13787,6 @@ var __decorate = (undefined && undefined.__decorate) || function (decorators, ta
  * second is moving the columns and column groups around (ie the 'drag' part of Drag and Drop. */
 var DragService = /** @class */ (function () {
     function DragService() {
-        this.onMouseUpListener = this.onMouseUp.bind(this);
-        this.onMouseMoveListener = this.onMouseMove.bind(this);
-        this.onTouchEndListener = this.onTouchUp.bind(this);
-        this.onTouchMoveListener = this.onTouchMove.bind(this);
         this.dragEndFunctions = [];
         this.dragSources = [];
     }
@@ -13487,40 +13849,38 @@ var DragService = /** @class */ (function () {
         var touch = touchEvent.touches[0];
         this.touchLastTime = touch;
         this.touchStart = touch;
-        touchEvent.preventDefault();
-        // we temporally add these listeners, for the duration of the drag, they
-        // are removed in touch end handling.
-        params.eElement.addEventListener('touchmove', this.onTouchMoveListener, { passive: true });
-        params.eElement.addEventListener('touchend', this.onTouchEndListener, { passive: true });
-        params.eElement.addEventListener('touchcancel', this.onTouchEndListener, { passive: true });
-        this.dragEndFunctions.push(function () {
-            params.eElement.removeEventListener('touchmove', _this.onTouchMoveListener, { passive: true });
-            params.eElement.removeEventListener('touchend', _this.onTouchEndListener, { passive: true });
-            params.eElement.removeEventListener('touchcancel', _this.onTouchEndListener, { passive: true });
-        });
+        if (touchEvent.cancelable) {
+            touchEvent.preventDefault();
+        }
+        var touchMoveEvent = function (e) { return _this.onTouchMove(e, params.eElement); };
+        var touchEndEvent = function (e) { return _this.onTouchUp(e, params.eElement); };
+        var target = params.eElement;
+        var events = [
+            { target: target, type: 'touchmove', listener: touchMoveEvent, options: { passive: true } },
+            { target: target, type: 'touchend', listener: touchEndEvent, options: { passive: true } },
+            { target: target, type: 'touchcancel', listener: touchEndEvent, options: { passive: true } }
+        ];
+        // temporally add these listeners, for the duration of the drag
+        this.addTemporaryEvents(events);
         // see if we want to start dragging straight away
         if (params.dragStartPixels === 0) {
-            this.onCommonMove(touch, this.touchStart);
+            this.onCommonMove(touch, this.touchStart, params.eElement);
         }
     };
     // gets called whenever mouse down on any drag source
     DragService.prototype.onMouseDown = function (params, mouseEvent) {
         var _this = this;
-        // we ignore when shift key is pressed. this is for the range selection, as when
-        // user shift-clicks a cell, this should not be interpreted as the start of a drag.
-        // if (mouseEvent.shiftKey) { return; }
-        if (params.skipMouseEvent) {
-            if (params.skipMouseEvent(mouseEvent)) {
-                return;
-            }
+        var e = mouseEvent;
+        if (params.skipMouseEvent && params.skipMouseEvent(mouseEvent)) {
+            return;
         }
         // if there are two elements with parent / child relationship, and both are draggable,
         // when we drag the child, we should NOT drag the parent. an example of this is row moving
         // and range selection - row moving should get preference when use drags the rowDrag component.
-        if (mouseEvent._alreadyProcessedByDragService) {
+        if (e._alreadyProcessedByDragService) {
             return;
         }
-        mouseEvent._alreadyProcessedByDragService = true;
+        e._alreadyProcessedByDragService = true;
         // only interested in left button clicks
         if (mouseEvent.button !== 0) {
             return;
@@ -13530,18 +13890,33 @@ var DragService = /** @class */ (function () {
         this.mouseStartEvent = mouseEvent;
         var eDocument = this.gridOptionsWrapper.getDocument();
         this.setNoSelectToBody(true);
-        // we temporally add these listeners, for the duration of the drag, they
-        // are removed in mouseup handling.
-        eDocument.addEventListener('mousemove', this.onMouseMoveListener);
-        eDocument.addEventListener('mouseup', this.onMouseUpListener);
-        this.dragEndFunctions.push(function () {
-            eDocument.removeEventListener('mousemove', _this.onMouseMoveListener);
-            eDocument.removeEventListener('mouseup', _this.onMouseUpListener);
-        });
+        var mouseMoveEvent = function (e, el) { return _this.onMouseMove(e, params.eElement); };
+        var mouseUpEvent = function (e, el) { return _this.onMouseUp(e, params.eElement); };
+        var contextEvent = function (e) { return e.preventDefault(); };
+        var target = eDocument;
+        var events = [
+            { target: target, type: 'mousemove', listener: mouseMoveEvent },
+            { target: target, type: 'mouseup', listener: mouseUpEvent },
+            { target: target, type: 'contextmenu', listener: contextEvent }
+        ];
+        // temporally add these listeners, for the duration of the drag
+        this.addTemporaryEvents(events);
         //see if we want to start dragging straight away
         if (params.dragStartPixels === 0) {
-            this.onMouseMove(mouseEvent);
+            this.onMouseMove(mouseEvent, params.eElement);
         }
+    };
+    DragService.prototype.addTemporaryEvents = function (events) {
+        events.forEach(function (currentEvent) {
+            var target = currentEvent.target, type = currentEvent.type, listener = currentEvent.listener, options = currentEvent.options;
+            target.addEventListener(type, listener, options);
+        });
+        this.dragEndFunctions.push(function () {
+            events.forEach(function (currentEvent) {
+                var target = currentEvent.target, type = currentEvent.type, listener = currentEvent.listener, options = currentEvent.options;
+                target.removeEventListener(type, listener, options);
+            });
+        });
     };
     // returns true if the event is close to the original event by X pixels either vertically or horizontally.
     // we only start dragging after X pixels so this allows us to know if we should start dragging yet.
@@ -13559,7 +13934,7 @@ var DragService = /** @class */ (function () {
         }
         return null;
     };
-    DragService.prototype.onCommonMove = function (currentEvent, startEvent) {
+    DragService.prototype.onCommonMove = function (currentEvent, startEvent, el) {
         if (!this.dragging) {
             // if mouse hasn't travelled from the start position enough, do nothing
             if (!this.dragging && this.isEventNearStartEvent(currentEvent, startEvent)) {
@@ -13569,14 +13944,15 @@ var DragService = /** @class */ (function () {
             var event_1 = {
                 type: _events__WEBPACK_IMPORTED_MODULE_1__[/* Events */ "a"].EVENT_DRAG_STARTED,
                 api: this.gridApi,
-                columnApi: this.columnApi
+                columnApi: this.columnApi,
+                target: el
             };
             this.eventService.dispatchEvent(event_1);
             this.currentDragParams.onDragStart(startEvent);
         }
         this.currentDragParams.onDragging(currentEvent);
     };
-    DragService.prototype.onTouchMove = function (touchEvent) {
+    DragService.prototype.onTouchMove = function (touchEvent, el) {
         var touch = this.getFirstActiveTouch(touchEvent.touches);
         if (!touch) {
             return;
@@ -13586,14 +13962,14 @@ var DragService = /** @class */ (function () {
         // like do 'back button' (chrome does this) or scroll the page (eg drag column could  be confused
         // with scroll page in the app)
         // touchEvent.preventDefault();
-        this.onCommonMove(touch, this.touchStart);
+        this.onCommonMove(touch, this.touchStart, el);
     };
     // only gets called after a mouse down - as this is only added after mouseDown
     // and is removed when mouseUp happens
-    DragService.prototype.onMouseMove = function (mouseEvent) {
-        this.onCommonMove(mouseEvent, this.mouseStartEvent);
+    DragService.prototype.onMouseMove = function (mouseEvent, el) {
+        this.onCommonMove(mouseEvent, this.mouseStartEvent, el);
     };
-    DragService.prototype.onTouchUp = function (touchEvent) {
+    DragService.prototype.onTouchUp = function (touchEvent, el) {
         var touch = this.getFirstActiveTouch(touchEvent.changedTouches);
         // i haven't worked this out yet, but there is no matching touch
         // when we get the touch up event. to get around this, we swap in
@@ -13607,24 +13983,25 @@ var DragService = /** @class */ (function () {
         // we check this before onUpCommon as onUpCommon resets the dragging
         // let tap = !this.dragging;
         // let tapTarget = this.currentDragParams.eElement;
-        this.onUpCommon(touch);
+        this.onUpCommon(touch, el);
         // if tap, tell user
         // console.log(`${Math.random()} tap = ${tap}`);
         // if (tap) {
         //     tapTarget.click();
         // }
     };
-    DragService.prototype.onMouseUp = function (mouseEvent) {
-        this.onUpCommon(mouseEvent);
+    DragService.prototype.onMouseUp = function (mouseEvent, el) {
+        this.onUpCommon(mouseEvent, el);
     };
-    DragService.prototype.onUpCommon = function (eventOrTouch) {
+    DragService.prototype.onUpCommon = function (eventOrTouch, el) {
         if (this.dragging) {
             this.dragging = false;
             this.currentDragParams.onDragStop(eventOrTouch);
             var event_2 = {
                 type: _events__WEBPACK_IMPORTED_MODULE_1__[/* Events */ "a"].EVENT_DRAG_STOPPED,
                 api: this.gridApi,
-                columnApi: this.columnApi
+                columnApi: this.columnApi,
+                target: el
             };
             this.eventService.dispatchEvent(event_2);
         }
@@ -13677,7 +14054,7 @@ var DragService = /** @class */ (function () {
 /* harmony import */ var _utils__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("e3d3");
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v22.1.1
+ * @version v23.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -13708,41 +14085,17 @@ var AgCheckbox = /** @class */ (function (_super) {
     function AgCheckbox() {
         var _this = _super.call(this) || this;
         _this.className = 'ag-checkbox';
-        _this.nativeInputClassName = 'ag-native-checkbox';
         _this.displayTag = 'input';
         _this.inputType = 'checkbox';
         _this.labelAlignment = 'right';
-        _this.iconMap = {
-            selected: 'checkboxChecked',
-            unselected: 'checkboxUnchecked',
-            indeterminate: 'checkboxIndeterminate'
-        };
         _this.selected = false;
         _this.readOnly = false;
         _this.passive = false;
         _this.setTemplate(_this.TEMPLATE.replace(/%displayField%/g, _this.displayTag));
         return _this;
     }
-    AgCheckbox.prototype.postConstruct = function () {
-        _super.prototype.postConstruct.call(this);
-        if (!this.gridOptionsWrapper.useNativeCheckboxes()) {
-            _utils__WEBPACK_IMPORTED_MODULE_2__[/* _ */ "d"].addCssClass(this.eInput, 'ag-hidden');
-            this.addIconsPlaceholder();
-            this.updateIcons();
-        }
-        else {
-            _utils__WEBPACK_IMPORTED_MODULE_2__[/* _ */ "d"].addCssClass(this.eInput, this.nativeInputClassName);
-        }
-    };
     AgCheckbox.prototype.addInputListeners = function () {
-        var _this = this;
-        if (this.gridOptionsWrapper.useNativeCheckboxes()) {
-            this.addDestroyableEventListener(this.eInput, 'click', this.onCheckboxClick.bind(this));
-        }
-        else {
-            this.addDestroyableEventListener(this.getGui(), 'click', function (e) { return _this.onClick(e); });
-            this.addDestroyableEventListener(this.eInput, 'change', function (e) { return _this.setValue(e.target.checked, true); });
-        }
+        this.addDestroyableEventListener(this.eInput, 'click', this.onCheckboxClick.bind(this));
     };
     AgCheckbox.prototype.getNextValue = function () {
         return this.selected === undefined ? true : !this.selected;
@@ -13754,9 +14107,13 @@ var AgCheckbox = /** @class */ (function (_super) {
         return this.readOnly;
     };
     AgCheckbox.prototype.setReadOnly = function (readOnly) {
-        this.eInput.readOnly = readOnly;
+        _utils__WEBPACK_IMPORTED_MODULE_2__[/* _ */ "d"].addOrRemoveCssClass(this.eWrapper, 'ag-disabled', readOnly);
+        this.eInput.disabled = readOnly;
         this.readOnly = readOnly;
-        this.updateIcons();
+    };
+    AgCheckbox.prototype.setDisabled = function (disabled) {
+        _utils__WEBPACK_IMPORTED_MODULE_2__[/* _ */ "d"].addOrRemoveCssClass(this.eWrapper, 'ag-disabled', disabled);
+        return _super.prototype.setDisabled.call(this, disabled);
     };
     AgCheckbox.prototype.toggle = function () {
         var nextValue = this.getNextValue();
@@ -13771,6 +14128,10 @@ var AgCheckbox = /** @class */ (function (_super) {
         return this.isSelected();
     };
     AgCheckbox.prototype.setValue = function (value, silent) {
+        this.refreshSelectedClass(value);
+        if (value === this.getValue()) {
+            return this;
+        }
         this.setSelected(value, silent);
         return this;
     };
@@ -13778,49 +14139,27 @@ var AgCheckbox = /** @class */ (function (_super) {
         return this.selected;
     };
     AgCheckbox.prototype.setSelected = function (selected, silent) {
-        if (this.selected === selected) {
+        if (this.isSelected() === selected) {
             return;
         }
         this.selected = typeof selected === 'boolean' ? selected : undefined;
         this.eInput.checked = this.selected;
         this.eInput.indeterminate = this.selected === undefined;
-        this.updateIcons();
         if (!silent) {
             this.dispatchChange(this.selected);
         }
     };
-    AgCheckbox.prototype.getIconName = function () {
-        var value = this.getValue();
-        var prop = value === undefined ? 'indeterminate' : value ? 'selected' : 'unselected';
-        var readOnlyStr = this.isReadOnly() ? 'ReadOnly' : '';
-        return "" + this.iconMap[prop] + readOnlyStr;
-    };
-    AgCheckbox.prototype.updateIcons = function () {
-        if (!this.gridOptionsWrapper.useNativeCheckboxes()) {
-            _utils__WEBPACK_IMPORTED_MODULE_2__[/* _ */ "d"].clearElement(this.eIconEl);
-            this.eIconEl.appendChild(_utils__WEBPACK_IMPORTED_MODULE_2__[/* _ */ "d"].createIconNoSpan(this.getIconName(), this.gridOptionsWrapper, null));
-        }
-    };
-    AgCheckbox.prototype.dispatchChange = function (selected) {
-        this.dispatchEvent({ type: AgCheckbox.EVENT_CHANGED, selected: selected });
-    };
-    AgCheckbox.prototype.addIconsPlaceholder = function () {
-        var iconDiv = document.createElement('div');
-        this.eWrapper.appendChild(iconDiv);
-        this.eIconEl = iconDiv;
-    };
-    AgCheckbox.prototype.onClick = function (event) {
-        // if we don't set the path, then won't work in Edge, as once the <span> is removed from the dom,
-        // it's not possible to calculate the path by following the parent's chain. in other browser (eg
-        // chrome) there is event.path for this purpose, but missing in Edge.
-        _utils__WEBPACK_IMPORTED_MODULE_2__[/* _ */ "d"].addAgGridEventPath(event);
-        if (!this.readOnly) {
-            this.toggle();
-        }
+    AgCheckbox.prototype.dispatchChange = function (selected, event) {
+        this.dispatchEvent({ type: AgCheckbox.EVENT_CHANGED, selected: selected, event: event });
     };
     AgCheckbox.prototype.onCheckboxClick = function (e) {
         this.selected = e.target.checked;
-        this.dispatchChange(this.selected);
+        this.refreshSelectedClass(this.selected);
+        this.dispatchChange(this.selected, e);
+    };
+    AgCheckbox.prototype.refreshSelectedClass = function (value) {
+        _utils__WEBPACK_IMPORTED_MODULE_2__[/* _ */ "d"].addOrRemoveCssClass(this.eWrapper, 'ag-checked', value === true);
+        _utils__WEBPACK_IMPORTED_MODULE_2__[/* _ */ "d"].addOrRemoveCssClass(this.eWrapper, 'ag-indeterminate', value == null);
     };
     __decorate([
         Object(_context_context__WEBPACK_IMPORTED_MODULE_0__[/* Autowired */ "a"])('gridOptionsWrapper')
@@ -13839,7 +14178,7 @@ var AgCheckbox = /** @class */ (function (_super) {
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return VanillaFrameworkOverrides; });
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v22.1.1
+ * @version v23.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -13870,7 +14209,7 @@ var VanillaFrameworkOverrides = /** @class */ (function () {
 /* harmony import */ var _agCheckbox__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("7cc4");
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v22.1.1
+ * @version v23.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -13893,22 +14232,20 @@ var AgRadioButton = /** @class */ (function (_super) {
     function AgRadioButton() {
         var _this = _super !== null && _super.apply(this, arguments) || this;
         _this.className = 'ag-radio-button';
-        _this.nativeInputClassName = 'ag-native-radio-button';
         _this.inputType = 'radio';
-        _this.iconMap = {
-            selected: 'radioButtonOn',
-            unselected: 'radioButtonOff'
-        };
         return _this;
     }
+    AgRadioButton.prototype.isSelected = function () {
+        return this.eInput.checked;
+    };
     AgRadioButton.prototype.toggle = function () {
         var nextValue = this.getNextValue();
         this.setValue(nextValue);
     };
-    AgRadioButton.prototype.getIconName = function () {
-        var prop = this.getValue() ? 'selected' : 'unselected';
-        var readOnlyStr = this.isReadOnly() ? 'ReadOnly' : '';
-        return "" + this.iconMap[prop] + readOnlyStr;
+    AgRadioButton.prototype.setName = function (name) {
+        var input = this.getInputElement();
+        input.name = name;
+        return this;
     };
     return AgRadioButton;
 }(_agCheckbox__WEBPACK_IMPORTED_MODULE_0__[/* AgCheckbox */ "a"]));
@@ -13929,7 +14266,7 @@ var AgRadioButton = /** @class */ (function (_super) {
 /* harmony import */ var _utils__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("e3d3");
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v22.1.1
+ * @version v23.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -14007,7 +14344,7 @@ var CellRendererFactory = /** @class */ (function () {
 /* harmony import */ var _utils__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("e3d3");
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v22.1.1
+ * @version v23.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -14062,7 +14399,7 @@ var PopupComponent = /** @class */ (function (_super) {
 /* harmony import */ var _utils__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("e3d3");
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v22.1.1
+ * @version v23.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -14207,7 +14544,7 @@ var TouchListener = /** @class */ (function () {
 /* harmony import */ var _utils__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("e3d3");
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v22.1.1
+ * @version v23.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -14225,11 +14562,21 @@ var PopupService = /** @class */ (function () {
     function PopupService() {
         this.popupList = [];
     }
+    PopupService.prototype.init = function () {
+        var _this = this;
+        this.eventService.addEventListener(_events__WEBPACK_IMPORTED_MODULE_2__[/* Events */ "a"].EVENT_KEYBOARD_FOCUS, function () {
+            _this.popupList.forEach(function (popup) {
+                _utils__WEBPACK_IMPORTED_MODULE_3__[/* _ */ "d"].addCssClass(popup.element, 'ag-keyboard-focus');
+            });
+        });
+        this.eventService.addEventListener(_events__WEBPACK_IMPORTED_MODULE_2__[/* Events */ "a"].EVENT_MOUSE_FOCUS, function () {
+            _this.popupList.forEach(function (popup) {
+                _utils__WEBPACK_IMPORTED_MODULE_3__[/* _ */ "d"].removeCssClass(popup.element, 'ag-keyboard-focus');
+            });
+        });
+    };
     PopupService.prototype.registerGridCore = function (gridCore) {
         this.gridCore = gridCore;
-    };
-    PopupService.prototype.getDocument = function () {
-        return this.gridOptionsWrapper.getDocument();
     };
     PopupService.prototype.getPopupParent = function () {
         var ePopupParent = this.gridOptionsWrapper.getPopupParent();
@@ -14240,17 +14587,8 @@ var PopupService = /** @class */ (function () {
     };
     PopupService.prototype.positionPopupForMenu = function (params) {
         var sourceRect = params.eventSource.getBoundingClientRect();
-        var eDocument = this.getDocument();
-        var popupParent = this.getPopupParent();
-        var parentRect;
-        if (popupParent === eDocument.body) {
-            parentRect = eDocument.documentElement.getBoundingClientRect();
-        }
-        else {
-            parentRect = popupParent.getBoundingClientRect();
-        }
-        var y = sourceRect.top - parentRect.top;
-        y = this.keepYWithinBounds(params, y);
+        var parentRect = this.getParentRect();
+        var y = this.keepYWithinBounds(params, sourceRect.top - parentRect.top);
         var minWidth = (params.ePopup.clientWidth > 0) ? params.ePopup.clientWidth : 200;
         params.ePopup.style.minWidth = minWidth + "px";
         var widthOfParent = parentRect.right - parentRect.left;
@@ -14302,27 +14640,16 @@ var PopupService = /** @class */ (function () {
         this.callPostProcessPopup(params.ePopup, null, params.mouseEvent, params.type, params.column, params.rowNode);
     };
     PopupService.prototype.calculatePointerAlign = function (e) {
-        var eDocument = this.getDocument();
-        var popupParent = this.getPopupParent();
-        var parentRect = popupParent.getBoundingClientRect();
-        var documentRect = eDocument.documentElement.getBoundingClientRect();
+        var parentRect = this.getParentRect();
         return {
-            x: e.clientX - (popupParent === eDocument.body ? documentRect.left : parentRect.left),
-            y: e.clientY - (popupParent === eDocument.body ? documentRect.top : parentRect.top)
+            x: e.clientX - parentRect.left,
+            y: e.clientY - parentRect.top
         };
     };
     PopupService.prototype.positionPopupUnderComponent = function (params) {
         var sourceRect = params.eventSource.getBoundingClientRect();
-        var eDocument = this.getDocument();
-        var popupParent = this.getPopupParent();
         var alignSide = params.alignSide || 'left';
-        var parentRect;
-        if (popupParent === eDocument.body) {
-            parentRect = eDocument.documentElement.getBoundingClientRect();
-        }
-        else {
-            parentRect = popupParent.getBoundingClientRect();
-        }
+        var parentRect = this.getParentRect();
         var x = sourceRect.left - parentRect.left;
         if (alignSide === 'right') {
             x -= (params.ePopup.offsetWidth - sourceRect.width);
@@ -14341,15 +14668,7 @@ var PopupService = /** @class */ (function () {
     };
     PopupService.prototype.positionPopupOverComponent = function (params) {
         var sourceRect = params.eventSource.getBoundingClientRect();
-        var eDocument = this.getDocument();
-        var popupParent = this.getPopupParent();
-        var parentRect;
-        if (popupParent === eDocument.body) {
-            parentRect = eDocument.documentElement.getBoundingClientRect();
-        }
-        else {
-            parentRect = popupParent.getBoundingClientRect();
-        }
+        var parentRect = this.getParentRect();
         this.positionPopup({
             ePopup: params.ePopup,
             minWidth: params.minWidth,
@@ -14391,6 +14710,25 @@ var PopupService = /** @class */ (function () {
         }
         params.ePopup.style.left = x + "px";
         params.ePopup.style.top = y + "px";
+    };
+    PopupService.prototype.getParentRect = function () {
+        // subtract the popup parent borders, because popupParent.getBoundingClientRect
+        // returns the rect outside the borders, but the 0,0 coordinate for absolute
+        // positioning is inside the border, leading the popup to be off by the width
+        // of the border
+        var popupParent = this.getPopupParent();
+        var eDocument = this.gridOptionsWrapper.getDocument();
+        if (popupParent === eDocument.body) {
+            popupParent = eDocument.documentElement;
+        }
+        var style = getComputedStyle(popupParent);
+        var bounds = popupParent.getBoundingClientRect();
+        return {
+            top: bounds.top + parseFloat(style.borderTopWidth) || 0,
+            left: bounds.left + parseFloat(style.borderLeftWidth) || 0,
+            right: bounds.right + parseFloat(style.borderRightWidth) || 0,
+            bottom: bounds.bottom + parseFloat(style.borderBottomWidth) || 0,
+        };
     };
     PopupService.prototype.keepYWithinBounds = function (params, y) {
         var eDocument = this.gridOptionsWrapper.getDocument();
@@ -14475,6 +14813,7 @@ var PopupService = /** @class */ (function () {
         }
         _utils__WEBPACK_IMPORTED_MODULE_3__[/* _ */ "d"].addCssClass(eWrapper, 'ag-popup');
         _utils__WEBPACK_IMPORTED_MODULE_3__[/* _ */ "d"].addCssClass(eChild, this.gridOptionsWrapper.isEnableRtl() ? 'ag-rtl' : 'ag-ltr');
+        _utils__WEBPACK_IMPORTED_MODULE_3__[/* _ */ "d"].addCssClass(eChild, 'ag-popup-child');
         eWrapper.appendChild(eChild);
         ePopupParent.appendChild(eWrapper);
         if (alwaysOnTop) {
@@ -14652,6 +14991,9 @@ var PopupService = /** @class */ (function () {
     __decorate([
         Object(_context_context__WEBPACK_IMPORTED_MODULE_1__[/* Autowired */ "a"])('eventService')
     ], PopupService.prototype, "eventService", void 0);
+    __decorate([
+        _context_context__WEBPACK_IMPORTED_MODULE_1__[/* PostConstruct */ "e"]
+    ], PopupService.prototype, "init", null);
     PopupService = __decorate([
         Object(_context_context__WEBPACK_IMPORTED_MODULE_1__[/* Bean */ "b"])('popupService')
     ], PopupService);
@@ -14669,7 +15011,7 @@ var PopupService = /** @class */ (function () {
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return CellRangeType; });
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v22.1.1
+ * @version v23.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -14697,7 +15039,7 @@ var CellRangeType;
 /* harmony import */ var _utils__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__("e3d3");
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v22.1.1
+ * @version v23.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -14871,6 +15213,9 @@ module.exports = __WEBPACK_EXTERNAL_MODULE__8bbf__;
 
 "use strict";
 
+// EXPORTS
+__webpack_require__.d(__webpack_exports__, "a", function() { return /* binding */ cellComp_CellComp; });
+
 // EXTERNAL MODULE: ../core/dist/es6/constants.js
 var constants = __webpack_require__("f2fb");
 
@@ -14901,13 +15246,13 @@ var eventKeys = __webpack_require__("9bc1");
 // EXTERNAL MODULE: ../core/dist/es6/context/beanStub.js
 var beanStub = __webpack_require__("ab2d");
 
-// EXTERNAL MODULE: ../core/dist/es6/utils/index.js + 4 modules
+// EXTERNAL MODULE: ../core/dist/es6/utils/index.js + 5 modules
 var utils = __webpack_require__("e3d3");
 
 // CONCATENATED MODULE: ../core/dist/es6/rendering/rowDragComp.js
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v22.1.1
+ * @version v23.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -14940,7 +15285,7 @@ var __decorate = (undefined && undefined.__decorate) || function (decorators, ta
 var rowDragComp_RowDragComp = /** @class */ (function (_super) {
     __extends(RowDragComp, _super);
     function RowDragComp(rowNode, column, cellValue, beans) {
-        var _this = _super.call(this, "<div class=\"ag-row-drag\"></div>") || this;
+        var _this = _super.call(this, "<div class=\"ag-drag-handle ag-row-drag\" role=\"presentation\"></div>") || this;
         _this.rowNode = rowNode;
         _this.column = column;
         _this.cellValue = cellValue;
@@ -14957,6 +15302,14 @@ var rowDragComp_RowDragComp = /** @class */ (function (_super) {
             new rowDragComp_NonManagedVisibilityStrategy(this, this.beans, this.rowNode, this.column);
         this.addFeature(strategy, this.beans.context);
     };
+    RowDragComp.prototype.getSelectedCount = function () {
+        var multiRowEnabled = this.beans.gridOptionsWrapper.isEnableMultiRowDragging();
+        if (!multiRowEnabled) {
+            return 1;
+        }
+        var selection = this.beans.selectionController.getSelectedNodes();
+        return selection.indexOf(this.rowNode) !== -1 ? selection.length : 1;
+    };
     // returns true if all compatibility items work out
     RowDragComp.prototype.checkCompatibility = function () {
         var managed = this.beans.gridOptionsWrapper.isRowDragManaged();
@@ -14970,12 +15323,21 @@ var rowDragComp_RowDragComp = /** @class */ (function (_super) {
     RowDragComp.prototype.addDragSource = function () {
         var _this = this;
         var dragItem = {
-            rowNode: this.rowNode
+            rowNode: this.rowNode,
+            columns: [this.column],
+            defaultTextValue: this.cellValue
         };
+        var rowDragText = this.column.getColDef().rowDragText;
         var dragSource = {
             type: dragAndDropService["b" /* DragSourceType */].RowDrag,
             eElement: this.getGui(),
-            dragItemName: this.cellValue,
+            dragItemName: function () {
+                if (rowDragText) {
+                    return rowDragText(dragItem);
+                }
+                var count = _this.getSelectedCount();
+                return count === 1 ? _this.cellValue : count + " rows";
+            },
             getDragItem: function () { return dragItem; },
             dragStartPixels: 0
         };
@@ -15113,7 +15475,7 @@ var cellEditors_popupEditorWrapper = __webpack_require__("97e3");
 // CONCATENATED MODULE: ../core/dist/es6/rendering/dndSourceComp.js
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v22.1.1
+ * @version v23.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -15142,7 +15504,7 @@ var dndSourceComp_decorate = (undefined && undefined.__decorate) || function (de
 var dndSourceComp_DndSourceComp = /** @class */ (function (_super) {
     dndSourceComp_extends(DndSourceComp, _super);
     function DndSourceComp(rowNode, column, cellValue, beans, eCell) {
-        var _this = _super.call(this, "<div class=\"ag-row-drag\" draggable=\"true\"></div>") || this;
+        var _this = _super.call(this, "<div class=\"ag-drag-handle ag-row-drag\" draggable=\"true\"></div>") || this;
         _this.rowNode = rowNode;
         _this.column = column;
         _this.cellValue = cellValue;
@@ -15201,10 +15563,9 @@ var dndSourceComp_DndSourceComp = /** @class */ (function (_super) {
 
 
 // CONCATENATED MODULE: ../core/dist/es6/rendering/cellComp.js
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return cellComp_CellComp; });
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v22.1.1
+ * @version v23.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -15266,7 +15627,7 @@ var cellComp_CellComp = /** @class */ (function (_super) {
         _this.printLayout = printLayout;
         _this.createGridCellVo();
         _this.rangeSelectionEnabled = _this.beans.rangeController && beans.gridOptionsWrapper.isEnableRangeSelection();
-        _this.cellFocused = _this.beans.focusedCellController.isCellFocused(_this.cellPosition);
+        _this.cellFocused = _this.beans.focusController.isCellFocused(_this.cellPosition);
         _this.firstRightPinned = _this.column.isFirstRightPinned();
         _this.lastLeftPinned = _this.column.isLastLeftPinned();
         if (_this.rangeSelectionEnabled && _this.beans.rangeController) {
@@ -15439,7 +15800,7 @@ var cellComp_CellComp = /** @class */ (function (_super) {
         // if we are putting the cell into a dummy container, to work out it's height,
         // then we don't put the height css in, as we want cell to fit height in that case.
         if (!this.autoHeightCell) {
-            cssClasses.push('ag-cell-with-height');
+            cssClasses.push('ag-cell-auto-height');
         }
         var doingFocusCss = !this.beans.gridOptionsWrapper.isSuppressCellSelection();
         if (doingFocusCss && this.cellFocused) {
@@ -15899,8 +16260,7 @@ var cellComp_CellComp = /** @class */ (function (_super) {
         if (utils["d" /* _ */].missing(this.cellRendererGui)) {
             return;
         }
-        // if async components, then it's possible the user started editing since
-        // this call was made
+        // if async components, then it's possible the user started editing since this call was made
         if (!this.editingCell) {
             this.eParentOfValue.appendChild(this.cellRendererGui);
         }
@@ -16184,7 +16544,7 @@ var cellComp_CellComp = /** @class */ (function (_super) {
             // we only focus cell again if this cell is still focused. it is possible
             // it is not focused if the user cancelled the edit by clicking on another
             // cell outside of this one
-            if (this.beans.focusedCellController.isCellFocused(this.cellPosition)) {
+            if (this.beans.focusController.isCellFocused(this.cellPosition)) {
                 this.focusCell(true);
             }
         }
@@ -16259,7 +16619,7 @@ var cellComp_CellComp = /** @class */ (function (_super) {
     };
     CellComp.prototype.focusCell = function (forceBrowserFocus) {
         if (forceBrowserFocus === void 0) { forceBrowserFocus = false; }
-        this.beans.focusedCellController.setFocusedCell(this.cellPosition.rowIndex, this.column, this.rowNode.rowPinned, forceBrowserFocus);
+        this.beans.focusController.setFocusedCell(this.cellPosition.rowIndex, this.column, this.rowNode.rowPinned, forceBrowserFocus);
     };
     CellComp.prototype.setFocusInOnEditor = function () {
         if (this.editingCell) {
@@ -16397,34 +16757,29 @@ var cellComp_CellComp = /** @class */ (function (_super) {
         }
     };
     CellComp.prototype.onSpaceKeyPressed = function (event) {
-        if (!this.editingCell && this.beans.gridOptionsWrapper.isRowSelection()) {
-            var selected = this.rowNode.isSelected();
-            this.rowNode.setSelected(!selected);
+        var gridOptionsWrapper = this.beans.gridOptionsWrapper;
+        if (!this.editingCell && gridOptionsWrapper.isRowSelection()) {
+            var newSelection = !this.rowNode.isSelected();
+            if (newSelection || gridOptionsWrapper.isRowDeselection()) {
+                this.rowNode.setSelected(newSelection);
+            }
         }
         // prevent default as space key, by default, moves browser scroll down
         event.preventDefault();
     };
     CellComp.prototype.onMouseDown = function (mouseEvent) {
-        // we only need to pass true to focusCell in when the browser is IE
-        // and we are trying to focus a cell (has ag-cell class), otherwise
-        // we pass false, as we don't want the cell to focus also get the browser
-        // focus. if we did, then the cellRenderer could have a text field in it,
-        // for example, and as the user clicks on the text field, the text field,
-        // the focus doesn't get to the text field, instead to goes to the div
-        // behind, making it impossible to select the text field.
-        var forceBrowserFocus = false;
-        var button = mouseEvent.button, ctrlKey = mouseEvent.ctrlKey, metaKey = mouseEvent.metaKey, shiftKey = mouseEvent.shiftKey, target = mouseEvent.target;
+        var ctrlKey = mouseEvent.ctrlKey, metaKey = mouseEvent.metaKey, shiftKey = mouseEvent.shiftKey;
+        var target = mouseEvent.target;
         var _a = this.beans, eventService = _a.eventService, rangeController = _a.rangeController;
-        if (rangeController) {
-            var cellInRange = rangeController.isCellInAnyRange(this.getCellPosition());
-            if (cellInRange && button === 2) {
-                return;
-            }
-        }
-        if ((utils["d" /* _ */].isBrowserIE() || utils["d" /* _ */].isBrowserEdge()) && this.getGui().contains(target)) {
-            forceBrowserFocus = true;
+        // do not change the range for right-clicks inside an existing range
+        if (this.isRightClickInExistingRange(mouseEvent)) {
+            return;
         }
         if (!shiftKey || (rangeController && !rangeController.getCellRanges().length)) {
+            // We only need to pass true to focusCell when the browser is IE/Edge and we are trying
+            // to focus the cell itself (element with ag-cell). This should never be true if the
+            // mousedown was triggered due to a click on a cell editor for example.
+            var forceBrowserFocus = (utils["d" /* _ */].isBrowserIE() || utils["d" /* _ */].isBrowserEdge()) && target.classList.contains('ag-cell');
             this.focusCell(forceBrowserFocus);
         }
         else {
@@ -16433,14 +16788,10 @@ var cellComp_CellComp = /** @class */ (function (_super) {
         }
         // if we are clicking on a checkbox, we need to make sure the cell wrapping that checkbox
         // is focused but we don't want to change the range selection, so return here.
-        if (utils["d" /* _ */].isElementChildOfClass(target, 'ag-selection-checkbox', 3)) {
+        if (this.containsCheckbox(target)) {
             return;
         }
-        // if it's a right click, then if the cell is already in range,
-        // don't change the range, however if the cell is not in a range,
-        // we set a new range
-        var leftMouseButtonClick = utils["d" /* _ */].isLeftClick(mouseEvent);
-        if (leftMouseButtonClick && rangeController) {
+        if (rangeController) {
             var thisCell = this.cellPosition;
             if (shiftKey) {
                 rangeController.extendLatestRangeToCell(thisCell);
@@ -16450,8 +16801,20 @@ var cellComp_CellComp = /** @class */ (function (_super) {
                 rangeController.setRangeToCell(thisCell, ctrlKeyPressed);
             }
         }
-        var cellMouseDownEvent = this.createEvent(mouseEvent, events["a" /* Events */].EVENT_CELL_MOUSE_DOWN);
-        eventService.dispatchEvent(cellMouseDownEvent);
+        eventService.dispatchEvent(this.createEvent(mouseEvent, events["a" /* Events */].EVENT_CELL_MOUSE_DOWN));
+    };
+    CellComp.prototype.isRightClickInExistingRange = function (mouseEvent) {
+        var rangeController = this.beans.rangeController;
+        if (rangeController) {
+            var cellInRange = rangeController.isCellInAnyRange(this.getCellPosition());
+            if (cellInRange && mouseEvent.button === 2) {
+                return true;
+            }
+        }
+        return false;
+    };
+    CellComp.prototype.containsCheckbox = function (target) {
+        return utils["d" /* _ */].isElementChildOfClass(target, 'ag-selection-checkbox', 3);
     };
     // returns true if on iPad and this is second 'click' event in 200ms
     CellComp.prototype.isDoubleClickOnIPad = function () {
@@ -16470,15 +16833,16 @@ var cellComp_CellComp = /** @class */ (function (_super) {
             mouseEvent.preventDefault(); // if we don't do this, then iPad zooms in
             return;
         }
+        var _a = this.beans, eventService = _a.eventService, gridOptionsWrapper = _a.gridOptionsWrapper;
         var cellClickedEvent = this.createEvent(mouseEvent, events["a" /* Events */].EVENT_CELL_CLICKED);
-        this.beans.eventService.dispatchEvent(cellClickedEvent);
+        eventService.dispatchEvent(cellClickedEvent);
         var colDef = this.getComponentHolder();
         if (colDef.onCellClicked) {
             // to make callback async, do in a timeout
             window.setTimeout(function () { return colDef.onCellClicked(cellClickedEvent); }, 0);
         }
-        var editOnSingleClick = (this.beans.gridOptionsWrapper.isSingleClickEdit() || colDef.singleClickEdit)
-            && !this.beans.gridOptionsWrapper.isSuppressClickEdit();
+        var editOnSingleClick = (gridOptionsWrapper.isSingleClickEdit() || colDef.singleClickEdit)
+            && !gridOptionsWrapper.isSuppressClickEdit();
         if (editOnSingleClick) {
             this.startRowOrCellEdit();
         }
@@ -16556,16 +16920,16 @@ var cellComp_CellComp = /** @class */ (function (_super) {
         var bottom = false;
         var left = false;
         var thisCol = this.cellPosition.column;
-        var rangeController = this.beans.rangeController;
+        var _a = this.beans, rangeController = _a.rangeController, columnController = _a.columnController;
         var leftCol;
         var rightCol;
         if (isRtl) {
-            leftCol = this.beans.columnController.getDisplayedColAfter(thisCol);
-            rightCol = this.beans.columnController.getDisplayedColBefore(thisCol);
+            leftCol = columnController.getDisplayedColAfter(thisCol);
+            rightCol = columnController.getDisplayedColBefore(thisCol);
         }
         else {
-            leftCol = this.beans.columnController.getDisplayedColBefore(thisCol);
-            rightCol = this.beans.columnController.getDisplayedColAfter(thisCol);
+            leftCol = columnController.getDisplayedColBefore(thisCol);
+            rightCol = columnController.getDisplayedColAfter(thisCol);
         }
         var ranges = rangeController.getCellRanges().filter(function (range) { return rangeController.isCellInSpecificRange(_this.cellPosition, range); });
         // this means we are the first column in the grid
@@ -16695,7 +17059,7 @@ var cellComp_CellComp = /** @class */ (function (_super) {
         return fillHandleIsAvailable &&
             cellRange.endRow != null &&
             rangeController.isContiguousRange(cellRange) &&
-            rangeController.isLastCellOfRange(cellRange, cellPosition);
+            rangeController.isBottomRightCell(cellRange, cellPosition);
     };
     CellComp.prototype.addSelectionHandle = function () {
         var _a = this.beans, gridOptionsWrapper = _a.gridOptionsWrapper, context = _a.context, rangeController = _a.rangeController;
@@ -16827,7 +17191,7 @@ var cellComp_CellComp = /** @class */ (function (_super) {
         return this.rangeCount === 1 && rangeController && !rangeController.isMoreThanOneCell();
     };
     CellComp.prototype.onCellFocused = function (event) {
-        var cellFocused = this.beans.focusedCellController.isCellFocused(this.cellPosition);
+        var cellFocused = this.beans.focusController.isCellFocused(this.cellPosition);
         // see if we need to change the classes on this cell
         if (cellFocused !== this.cellFocused) {
             // if we are not doing cell selection, then the focus class does not change
@@ -16839,11 +17203,12 @@ var cellComp_CellComp = /** @class */ (function (_super) {
         }
         // see if we need to force browser focus - this can happen if focus is programmatically set
         if (cellFocused && event && event.forceBrowserFocus) {
-            this.getGui().focus();
+            var focusEl = this.getFocusableElement();
+            focusEl.focus();
             // Fix for AG-3465 "IE11 - After editing cell's content, selection doesn't go one cell below on enter"
             // IE can fail to focus the cell after the first call to focus(), and needs a second call
             if (!document.activeElement || document.activeElement === document.body) {
-                this.getGui().focus();
+                focusEl.focus();
             }
         }
         // if another cell was focused, and we are editing, then stop editing
@@ -16875,6 +17240,7 @@ var cellComp_CellComp = /** @class */ (function (_super) {
         }
         var newValueExists = false;
         var newValue;
+        var oldValue = this.getValue();
         if (!cancel) {
             // also have another option here to cancel after editing, so for example user could have a popup editor and
             // it is closed by user clicking outside the editor. then the editor will close automatically (with false
@@ -16924,7 +17290,7 @@ var cellComp_CellComp = /** @class */ (function (_super) {
             }
         }
         this.setInlineEditingClass();
-        if (newValueExists) {
+        if (newValueExists && newValue !== oldValue) {
             // we suppressRefreshCell because the call to rowNode.setDataValue() results in change detection
             // getting triggered, which results in all cells getting refreshed. we do not want this refresh
             // to happen on this call as we want to call it explicitly below. otherwise refresh gets called twice.
@@ -16958,7 +17324,7 @@ var cellComp_CellComp = /** @class */ (function (_super) {
 /* harmony import */ var _agInputTextField__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("af1d");
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v22.1.1
+ * @version v23.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -17082,7 +17448,7 @@ var AgInputNumberField = /** @class */ (function (_super) {
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return PropertyKeys; });
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v22.1.1
+ * @version v23.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -17120,7 +17486,7 @@ var PropertyKeys = /** @class */ (function () {
         'rowHeight', 'detailRowHeight', 'rowBuffer', 'colWidth', 'headerHeight', 'groupHeaderHeight',
         'floatingFiltersHeight', 'pivotHeaderHeight', 'pivotGroupHeaderHeight', 'groupDefaultExpanded',
         'minColWidth', 'maxColWidth', 'viewportRowModelPageSize', 'viewportRowModelBufferSize',
-        'autoSizePadding', 'maxBlocksInCache', 'maxConcurrentDatasourceRequests',
+        'autoSizePadding', 'maxBlocksInCache', 'maxConcurrentDatasourceRequests', 'tooltipShowDelay',
         'cacheOverflowSize', 'paginationPageSize', 'cacheBlockSize', 'infiniteInitialRowCount',
         'scrollbarWidth', 'paginationStartPage', 'infiniteBlockSize', 'batchUpdateWaitMillis',
         'blockLoadDebounceMillis', 'keepDetailRowsCount', 'undoRedoCellEditingLimit'
@@ -17142,12 +17508,12 @@ var PropertyKeys = /** @class */ (function () {
         'suppressPreventDefaultOnMouseWheel', 'suppressUseColIdForGroups', 'suppressCopyRowsToClipboard', 'copyHeadersToClipboard', 'pivotMode',
         'suppressAggFuncInHeader', 'suppressColumnVirtualisation', 'suppressAggAtRootLevel', 'suppressFocusAfterRefresh', 'functionsPassive',
         'functionsReadOnly', 'animateRows', 'groupSelectsFiltered', 'groupRemoveSingleChildren', 'groupRemoveLowestSingleChildren', 'enableRtl',
-        'suppressClickEdit', 'rowDragManaged', 'suppressRowDrag', 'enableGroupEdit', 'embedFullWidthRows', 'deprecatedEmbedFullWidthRows',
-        'suppressTabbing', 'suppressPaginationPanel', 'floatingFilter', 'groupHideOpenParents', 'groupMultiAutoColumn', 'pagination',
-        'stopEditingWhenGridLosesFocus', 'paginationAutoPageSize', 'suppressScrollOnNewData', 'purgeClosedRowNodes', 'cacheQuickFilter',
-        'deltaRowDataMode', 'ensureDomOrder', 'accentedSort', 'pivotTotals', 'suppressChangeDetection', 'valueCache', 'valueCacheNeverExpires',
-        'aggregateOnlyChangedColumns', 'suppressAnimationFrame', 'suppressExcelExport', 'suppressCsvExport', 'treeData', 'masterDetail',
-        'suppressMultiRangeSelection', 'enterMovesDownAfterEdit', 'enterMovesDown', 'suppressPropertyNamesCheck', 'rowMultiSelectWithClick',
+        'suppressClickEdit', 'rowDragManaged', 'suppressRowDrag', 'suppressMoveWhenRowDragging', 'enableMultiRowDragging', 'enableGroupEdit',
+        'embedFullWidthRows', 'deprecatedEmbedFullWidthRows', 'suppressTabbing', 'suppressPaginationPanel', 'floatingFilter', 'groupHideOpenParents',
+        'groupMultiAutoColumn', 'pagination', 'stopEditingWhenGridLosesFocus', 'paginationAutoPageSize', 'suppressScrollOnNewData', 'purgeClosedRowNodes',
+        'cacheQuickFilter', 'deltaRowDataMode', 'ensureDomOrder', 'accentedSort', 'pivotTotals', 'suppressChangeDetection', 'valueCache',
+        'valueCacheNeverExpires', 'aggregateOnlyChangedColumns', 'suppressAnimationFrame', 'suppressExcelExport', 'suppressCsvExport', 'treeData',
+        'masterDetail', 'suppressMultiRangeSelection', 'enterMovesDownAfterEdit', 'enterMovesDown', 'suppressPropertyNamesCheck', 'rowMultiSelectWithClick',
         'contractColumnSelection', 'suppressEnterpriseResetOnNewColumns', 'enableOldSetFilterModel', 'suppressRowHoverHighlight',
         'gridAutoHeight', 'suppressRowTransform', 'suppressClipboardPaste', 'serverSideSortingAlwaysResets', 'reactNext',
         'suppressSetColumnStateEvents', 'enableCharts', 'deltaColumnMode', 'suppressMaintainUnsortedOrder', 'enableCellTextSelection',
@@ -17194,7 +17560,7 @@ var PropertyKeys = /** @class */ (function () {
 /* harmony import */ var _utils__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("e3d3");
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v22.1.1
+ * @version v23.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -17210,13 +17576,16 @@ var TooltipManager = /** @class */ (function () {
     function TooltipManager() {
         this.DEFAULT_HIDE_TOOLTIP_TIMEOUT = 10000;
         this.MOUSEOUT_HIDE_TOOLTIP_TIMEOUT = 1000;
-        this.MOUSEOVER_SHOW_TOOLTIP_TIMEOUT = 2000;
         this.HIDE_SHOW_ONLY = true;
         this.showTimeoutId = 0;
         this.hideTimeoutId = 0;
         // map of compId to [tooltip component, close function]
         this.registeredComponents = {};
     }
+    TooltipManager.prototype.init = function () {
+        var customDelay = this.gridOptionsWrapper.getTooltipShowDelay();
+        this.MOUSEOVER_SHOW_TOOLTIP_TIMEOUT = customDelay || 2000;
+    };
     TooltipManager.prototype.registerTooltip = function (targetCmp) {
         var _this = this;
         var el = targetCmp.getGui();
@@ -17401,6 +17770,9 @@ var TooltipManager = /** @class */ (function () {
     __decorate([
         Object(_context_context__WEBPACK_IMPORTED_MODULE_0__[/* Autowired */ "a"])('gridOptionsWrapper')
     ], TooltipManager.prototype, "gridOptionsWrapper", void 0);
+    __decorate([
+        _context_context__WEBPACK_IMPORTED_MODULE_0__[/* PostConstruct */ "e"]
+    ], TooltipManager.prototype, "init", null);
     TooltipManager = __decorate([
         Object(_context_context__WEBPACK_IMPORTED_MODULE_0__[/* Bean */ "b"])('tooltipManager')
     ], TooltipManager);
@@ -17421,7 +17793,7 @@ var TooltipManager = /** @class */ (function () {
 /* harmony import */ var _context_context__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("d196");
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v22.1.1
+ * @version v23.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -17541,7 +17913,7 @@ var AnimateSlideCellRenderer = /** @class */ (function (_super) {
 /* harmony import */ var _utils__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("e3d3");
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v22.1.1
+ * @version v23.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -17584,6 +17956,8 @@ var DEFAULT_TRANSLATIONS = {
     lessThanOrEqual: 'Less than or equals',
     greaterThanOrEqual: 'Greater than or equals',
     filterOoo: 'Filter...',
+    rangeStart: 'From',
+    rangeEnd: 'To',
     contains: 'Contains',
     notContains: 'Not contains',
     startsWith: 'Starts with',
@@ -17618,36 +17992,34 @@ var SimpleFilter = /** @class */ (function (_super) {
         this.onUiChanged(true);
     };
     SimpleFilter.prototype.setTypeFromFloatingFilter = function (type) {
-        this.eType1.value = type;
-        this.eType2.value = null;
-        this.eJoinOperatorAnd.checked = true;
+        this.eType1.setValue(type);
+        this.eType2.setValue(null);
+        this.eJoinOperatorAnd.setValue(true);
     };
     SimpleFilter.prototype.getModelFromUi = function () {
         if (!this.isConditionUiComplete(ConditionPosition.One)) {
             return null;
         }
         if (this.isAllowTwoConditions() && this.isConditionUiComplete(ConditionPosition.Two)) {
-            var res = {
+            var res_1 = {
                 filterType: this.getFilterType(),
                 operator: this.getJoinOperator(),
                 condition1: this.createCondition(ConditionPosition.One),
                 condition2: this.createCondition(ConditionPosition.Two)
             };
-            return res;
+            return res_1;
         }
-        else {
-            var res = this.createCondition(ConditionPosition.One);
-            return res;
-        }
+        var res = this.createCondition(ConditionPosition.One);
+        return res;
     };
     SimpleFilter.prototype.getCondition1Type = function () {
-        return this.eType1.value;
+        return this.eType1.getValue();
     };
     SimpleFilter.prototype.getCondition2Type = function () {
-        return this.eType2.value;
+        return this.eType2.getValue();
     };
     SimpleFilter.prototype.getJoinOperator = function () {
-        return this.eJoinOperatorOr.checked ? 'OR' : 'AND';
+        return this.eJoinOperatorOr.getValue() === true ? 'OR' : 'AND';
     };
     SimpleFilter.prototype.areModelsEqual = function (a, b) {
         // both are missing
@@ -17686,19 +18058,19 @@ var SimpleFilter = /** @class */ (function (_super) {
         if (isCombined) {
             var combinedModel = model;
             var orChecked = combinedModel.operator === 'OR';
-            this.eJoinOperatorAnd.checked = !orChecked;
-            this.eJoinOperatorOr.checked = orChecked;
-            this.eType1.value = combinedModel.condition1.type;
-            this.eType2.value = combinedModel.condition2.type;
+            this.eJoinOperatorAnd.setValue(!orChecked);
+            this.eJoinOperatorOr.setValue(orChecked);
+            this.eType1.setValue(combinedModel.condition1.type);
+            this.eType2.setValue(combinedModel.condition2.type);
             this.setConditionIntoUi(combinedModel.condition1, ConditionPosition.One);
             this.setConditionIntoUi(combinedModel.condition2, ConditionPosition.Two);
         }
         else {
             var simpleModel = model;
-            this.eJoinOperatorAnd.checked = true;
-            this.eJoinOperatorOr.checked = false;
-            this.eType1.value = simpleModel.type;
-            this.eType2.value = this.optionsFactory.getDefaultOption();
+            this.eJoinOperatorAnd.setValue(true);
+            this.eJoinOperatorOr.setValue(false);
+            this.eType1.setValue(simpleModel.type);
+            this.eType2.setValue(this.optionsFactory.getDefaultOption());
             this.setConditionIntoUi(simpleModel, ConditionPosition.One);
             this.setConditionIntoUi(null, ConditionPosition.Two);
         }
@@ -17713,15 +18085,11 @@ var SimpleFilter = /** @class */ (function (_super) {
             if (combinedModel.operator === 'AND') {
                 return firstResult && secondResult;
             }
-            else {
-                return firstResult || secondResult;
-            }
+            return firstResult || secondResult;
         }
-        else {
-            var simpleModel = model;
-            var result = this.individualConditionPasses(params, simpleModel);
-            return result;
-        }
+        var simpleModel = model;
+        var result = this.individualConditionPasses(params, simpleModel);
+        return result;
     };
     SimpleFilter.prototype.setParams = function (params) {
         _super.prototype.setParams.call(this, params);
@@ -17739,44 +18107,54 @@ var SimpleFilter = /** @class */ (function (_super) {
             var createOption = function () {
                 var key = (typeof option === 'string') ? option : option.displayKey;
                 var localName = _this.translate(key);
-                var eOption = document.createElement("option");
-                eOption.text = localName;
-                eOption.value = key;
-                return eOption;
+                return {
+                    value: key,
+                    text: localName
+                };
             };
-            _this.eType1.add(createOption());
-            _this.eType2.add(createOption());
+            _this.eType1.addOption(createOption());
+            _this.eType2.addOption(createOption());
         });
         var readOnly = filterOptions.length <= 1;
-        this.eType1.disabled = readOnly;
-        this.eType2.disabled = readOnly;
+        this.eType1.setDisabled(readOnly);
+        this.eType2.setDisabled(readOnly);
     };
     SimpleFilter.prototype.isAllowTwoConditions = function () {
         return this.allowTwoConditions;
     };
     SimpleFilter.prototype.createBodyTemplate = function () {
-        var optionsTemplate1 = "<select class=\"ag-filter-select\" ref=\"eOptions1\"></select>";
+        var optionsTemplate1 = "<ag-select class=\"ag-filter-select\" ref=\"eOptions1\"></ag-select>";
         var valueTemplate1 = this.createValueTemplate(ConditionPosition.One);
-        var optionsTemplate2 = "<select class=\"ag-filter-select\" ref=\"eOptions2\"></select>";
+        var optionsTemplate2 = "<ag-select class=\"ag-filter-select\" ref=\"eOptions2\"></ag-select>";
         var valueTemplate2 = this.createValueTemplate(ConditionPosition.Two);
-        var uniqueGroupId = 'ag-simple-filter-and-or-' + this.getCompId();
-        var translate = this.gridOptionsWrapper.getLocaleTextFunc();
-        var andOrTemplate = "<div class=\"ag-filter-condition\" ref=\"eJoinOperatorPanel\">\n                    <label>\n                        <input ref=\"eJoinOperatorAnd\" type=\"radio\" class=\"and\" name=\"" + uniqueGroupId + "\" value=\"AND\")} checked=\"checked\" />\n                        " + translate('andCondition', 'AND') + "\n                    </label>\n                    <label>\n                        <input ref=\"eJoinOperatorOr\" type=\"radio\" class=\"or\" name=\"" + uniqueGroupId + "\" value=\"OR\" />\n                        " + translate('orCondition', 'OR') + "\n                    </label>\n                </div>";
+        var andOrTemplate = "<div class=\"ag-filter-condition\" ref=\"eJoinOperatorPanel\">\n                <ag-radio-button ref=\"eJoinOperatorAnd\" class=\"ag-filter-condition-operator ag-filter-condition-operator-and\"></ag-radio-button>\n                <ag-radio-button ref=\"eJoinOperatorOr\" class=\"ag-filter-condition-operator ag-filter-condition-operator-or\"></ag-radio-button>\n            </div>";
         var template = optionsTemplate1 + "\n                " + valueTemplate1 + "\n                " + andOrTemplate + "\n                " + optionsTemplate2 + "\n                " + valueTemplate2;
         return template;
+    };
+    SimpleFilter.prototype.getCssIdentifier = function () {
+        return 'simple-filter';
     };
     SimpleFilter.prototype.updateUiVisibility = function () {
         var firstConditionComplete = this.isConditionUiComplete(ConditionPosition.One);
         var showSecondFilter = this.allowTwoConditions && firstConditionComplete;
         _utils__WEBPACK_IMPORTED_MODULE_3__[/* _ */ "d"].setDisplayed(this.eCondition2Body, showSecondFilter);
-        _utils__WEBPACK_IMPORTED_MODULE_3__[/* _ */ "d"].setDisplayed(this.eType2, showSecondFilter);
+        _utils__WEBPACK_IMPORTED_MODULE_3__[/* _ */ "d"].setDisplayed(this.eType2.getGui(), showSecondFilter);
         _utils__WEBPACK_IMPORTED_MODULE_3__[/* _ */ "d"].setDisplayed(this.eJoinOperatorPanel, showSecondFilter);
     };
-    SimpleFilter.prototype.resetUiToDefaults = function () {
-        this.eJoinOperatorAnd.checked = true;
+    SimpleFilter.prototype.resetUiToDefaults = function (silent) {
+        var uniqueGroupId = 'ag-simple-filter-and-or-' + this.getCompId();
+        var translate = this.gridOptionsWrapper.getLocaleTextFunc();
         var defaultOption = this.optionsFactory.getDefaultOption();
-        this.eType1.value = defaultOption;
-        this.eType2.value = defaultOption;
+        this.eType1.setValue(defaultOption, silent);
+        this.eType2.setValue(defaultOption, silent);
+        this.eJoinOperatorAnd
+            .setValue(true, silent)
+            .setName(uniqueGroupId)
+            .setLabel(translate('andCondition', 'AND'));
+        this.eJoinOperatorOr
+            .setValue(false, silent)
+            .setName(uniqueGroupId)
+            .setLabel(translate('orCondition', 'OR'));
     };
     SimpleFilter.prototype.translate = function (toTranslate) {
         var translate = this.gridOptionsWrapper.getLocaleTextFunc();
@@ -17789,10 +18167,10 @@ var SimpleFilter = /** @class */ (function (_super) {
     SimpleFilter.prototype.addChangedListeners = function () {
         var _this = this;
         var listener = function () { return _this.onUiChanged(); };
-        this.addDestroyableEventListener(this.eType1, "change", listener);
-        this.addDestroyableEventListener(this.eType2, "change", listener);
-        this.addDestroyableEventListener(this.eJoinOperatorOr, "change", listener);
-        this.addDestroyableEventListener(this.eJoinOperatorAnd, "change", listener);
+        this.eType1.onValueChange(listener);
+        this.eType2.onValueChange(listener);
+        this.eJoinOperatorOr.onValueChange(listener);
+        this.eJoinOperatorAnd.onValueChange(listener);
     };
     SimpleFilter.prototype.doesFilterHaveHiddenInput = function (filterType) {
         var customFilterOption = this.optionsFactory.getCustomOption(filterType);
@@ -17846,7 +18224,7 @@ var SimpleFilter = /** @class */ (function (_super) {
 /* harmony import */ var _utils__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("e3d3");
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v22.1.1
+ * @version v23.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -17880,7 +18258,6 @@ var AgDialog = /** @class */ (function (_super) {
         _this.RESIZE_TEMPLATE = "\n        <div class=\"ag-resizer-wrapper\">\n            <div ref=\"eTopLeftResizer\" class=\"ag-resizer ag-resizer-topLeft\"></div>\n            <div ref=\"eTopResizer\" class=\"ag-resizer ag-resizer-top\"></div>\n            <div ref=\"eTopRightResizer\" class=\"ag-resizer ag-resizer-topRight\"></div>\n            <div ref=\"eRightResizer\" class=\"ag-resizer ag-resizer-right\"></div>\n            <div ref=\"eBottomRightResizer\" class=\"ag-resizer ag-resizer-bottomRight\"></div>\n            <div ref=\"eBottomResizer\" class=\"ag-resizer ag-resizer-bottom\"></div>\n            <div ref=\"eBottomLeftResizer\" class=\"ag-resizer ag-resizer-bottomLeft\"></div>\n            <div ref=\"eLeftResizer\" class=\"ag-resizer ag-resizer-left\"></div>\n        </div>\n    ";
         _this.MAXIMIZE_BTN_TEMPLATE = "<div class=\"ag-dialog-button\"></span>";
         _this.resizable = {};
-        _this.isResizable = false;
         _this.movable = false;
         _this.isMoving = false;
         _this.isMaximizable = false;
@@ -18083,7 +18460,6 @@ var AgDialog = /** @class */ (function (_super) {
     };
     AgDialog.prototype.setResizable = function (resizable) {
         var _this = this;
-        var isResizable = false;
         if (typeof resizable === 'boolean') {
             resizable = {
                 topLeft: resizable,
@@ -18111,7 +18487,6 @@ var AgDialog = /** @class */ (function (_super) {
                 if (val) {
                     _this.dragService.addDragSource(params);
                     el.style.pointerEvents = 'all';
-                    isResizable = true;
                 }
                 else {
                     _this.dragService.removeDragSource(params);
@@ -18120,25 +18495,25 @@ var AgDialog = /** @class */ (function (_super) {
                 _this.resizerMap[s].dragSource = val ? params : undefined;
             }
         });
-        this.isResizable = isResizable;
     };
     AgDialog.prototype.setMovable = function (movable) {
-        if (movable !== this.movable) {
-            this.movable = movable;
-            var params = this.moveElementDragListener || {
-                eElement: this.moveElement,
-                onDragStart: this.onMoveStart.bind(this),
-                onDragging: this.onMove.bind(this),
-                onDragStop: this.onMoveEnd.bind(this)
-            };
-            if (movable) {
-                this.dragService.addDragSource(params);
-                this.moveElementDragListener = params;
-            }
-            else {
-                this.dragService.removeDragSource(params);
-                this.moveElementDragListener = undefined;
-            }
+        if (movable === this.movable) {
+            return;
+        }
+        this.movable = movable;
+        var params = this.moveElementDragListener || {
+            eElement: this.moveElement,
+            onDragStart: this.onMoveStart.bind(this),
+            onDragging: this.onMove.bind(this),
+            onDragStop: this.onMoveEnd.bind(this)
+        };
+        if (movable) {
+            this.dragService.addDragSource(params);
+            this.moveElementDragListener = params;
+        }
+        else {
+            this.dragService.removeDragSource(params);
+            this.moveElementDragListener = undefined;
         }
     };
     AgDialog.prototype.setMaximizable = function (maximizable) {
@@ -18159,7 +18534,9 @@ var AgDialog = /** @class */ (function (_super) {
         this.getContext().wireBean(maximizeButtonComp);
         var eGui = maximizeButtonComp.getGui();
         eGui.appendChild(this.maximizeIcon = _utils__WEBPACK_IMPORTED_MODULE_3__[/* _ */ "d"].createIconNoSpan('maximize', this.gridOptionsWrapper));
+        _utils__WEBPACK_IMPORTED_MODULE_3__[/* _ */ "d"].addCssClass(this.maximizeIcon, 'ag-panel-title-bar-button-icon');
         eGui.appendChild(this.minimizeIcon = _utils__WEBPACK_IMPORTED_MODULE_3__[/* _ */ "d"].createIconNoSpan('minimize', this.gridOptionsWrapper));
+        _utils__WEBPACK_IMPORTED_MODULE_3__[/* _ */ "d"].addCssClass(this.minimizeIcon, 'ag-panel-title-bar-button-icon');
         _utils__WEBPACK_IMPORTED_MODULE_3__[/* _ */ "d"].addCssClass(this.minimizeIcon, 'ag-hidden');
         maximizeButtonComp.addDestroyableEventListener(eGui, 'click', this.toggleMaximize.bind(this));
         this.addTitleBarButton(maximizeButtonComp, 0);
@@ -18179,18 +18556,18 @@ var AgDialog = /** @class */ (function (_super) {
 
 /***/ }),
 
-/***/ "95b0":
+/***/ "959f":
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return FocusedCellController; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return FocusController; });
 /* harmony import */ var _context_context__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("d196");
 /* harmony import */ var _events__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("1284");
 /* harmony import */ var _rendering_cellComp__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("8e4e");
 /* harmony import */ var _utils__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("e3d3");
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v22.1.1
+ * @version v23.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -18204,25 +18581,39 @@ var __decorate = (undefined && undefined.__decorate) || function (decorators, ta
 
 
 
-var FocusedCellController = /** @class */ (function () {
-    function FocusedCellController() {
+var FocusController = /** @class */ (function () {
+    function FocusController() {
+        this.keyboardFocusActive = false;
     }
-    FocusedCellController.prototype.init = function () {
+    FocusController.prototype.init = function () {
+        var _this = this;
+        var eDocument = this.gridOptionsWrapper.getDocument();
         this.eventService.addEventListener(_events__WEBPACK_IMPORTED_MODULE_1__[/* Events */ "a"].EVENT_COLUMN_PIVOT_MODE_CHANGED, this.clearFocusedCell.bind(this));
         this.eventService.addEventListener(_events__WEBPACK_IMPORTED_MODULE_1__[/* Events */ "a"].EVENT_COLUMN_EVERYTHING_CHANGED, this.clearFocusedCell.bind(this));
         this.eventService.addEventListener(_events__WEBPACK_IMPORTED_MODULE_1__[/* Events */ "a"].EVENT_COLUMN_GROUP_OPENED, this.clearFocusedCell.bind(this));
         this.eventService.addEventListener(_events__WEBPACK_IMPORTED_MODULE_1__[/* Events */ "a"].EVENT_COLUMN_ROW_GROUP_CHANGED, this.clearFocusedCell.bind(this));
+        eDocument.addEventListener('keydown', function () {
+            _this.keyboardFocusActive = true;
+            _this.eventService.dispatchEvent({ type: _events__WEBPACK_IMPORTED_MODULE_1__[/* Events */ "a"].EVENT_KEYBOARD_FOCUS });
+        });
+        eDocument.addEventListener('mousedown', function () {
+            _this.keyboardFocusActive = false;
+            _this.eventService.dispatchEvent({ type: _events__WEBPACK_IMPORTED_MODULE_1__[/* Events */ "a"].EVENT_MOUSE_FOCUS });
+        });
         // we used to remove focus when moving column, am not sure why. so taking this out and see who complains.
         // we can delete these three lines of code soon.
         // this.eventService.addEventListener(Events.EVENT_COLUMN_MOVED, this.clearFocusedCell.bind(this));
         // this.eventService.addEventListener(Events.EVENT_COLUMN_PINNED, this.clearFocusedCell.bind(this));
         // this.eventService.addEventListener(Events.EVENT_COLUMN_VISIBLE, this.clearFocusedCell.bind(this));
     };
-    FocusedCellController.prototype.clearFocusedCell = function () {
+    FocusController.prototype.isKeyboardFocus = function () {
+        return this.keyboardFocusActive;
+    };
+    FocusController.prototype.clearFocusedCell = function () {
         this.focusedCellPosition = null;
         this.onCellFocused(false);
     };
-    FocusedCellController.prototype.getFocusedCell = function () {
+    FocusController.prototype.getFocusedCell = function () {
         return this.focusedCellPosition;
     };
     // we check if the browser is focusing something, and if it is, and
@@ -18232,7 +18623,7 @@ var FocusedCellController = /** @class */ (function () {
     // first focus a cell, then second click outside the grid, as then the
     // grid cell will still be focused as far as the grid is concerned,
     // however the browser focus will have moved somewhere else.
-    FocusedCellController.prototype.getFocusCellToUseAfterRefresh = function () {
+    FocusController.prototype.getFocusCellToUseAfterRefresh = function () {
         if (this.gridOptionsWrapper.isSuppressFocusAfterRefresh()) {
             return null;
         }
@@ -18247,7 +18638,7 @@ var FocusedCellController = /** @class */ (function () {
         }
         return this.focusedCellPosition;
     };
-    FocusedCellController.prototype.getGridCellForDomElement = function (eBrowserCell) {
+    FocusController.prototype.getGridCellForDomElement = function (eBrowserCell) {
         var ePointer = eBrowserCell;
         while (ePointer) {
             var cellComp = this.gridOptionsWrapper.getDomData(ePointer, _rendering_cellComp__WEBPACK_IMPORTED_MODULE_2__[/* CellComp */ "a"].DOM_DATA_KEY_CELL_COMP);
@@ -18258,32 +18649,46 @@ var FocusedCellController = /** @class */ (function () {
         }
         return null;
     };
-    FocusedCellController.prototype.setFocusedCell = function (rowIndex, colKey, floating, forceBrowserFocus) {
+    FocusController.prototype.setFocusedCell = function (rowIndex, colKey, floating, forceBrowserFocus) {
         if (forceBrowserFocus === void 0) { forceBrowserFocus = false; }
         var column = _utils__WEBPACK_IMPORTED_MODULE_3__[/* _ */ "d"].makeNull(this.columnController.getGridColumn(colKey));
         this.focusedCellPosition = { rowIndex: rowIndex, rowPinned: _utils__WEBPACK_IMPORTED_MODULE_3__[/* _ */ "d"].makeNull(floating), column: column };
         this.onCellFocused(forceBrowserFocus);
     };
-    FocusedCellController.prototype.isCellFocused = function (cellPosition) {
+    FocusController.prototype.isCellFocused = function (cellPosition) {
         if (_utils__WEBPACK_IMPORTED_MODULE_3__[/* _ */ "d"].missing(this.focusedCellPosition)) {
             return false;
         }
         return this.focusedCellPosition.column === cellPosition.column && this.isRowFocused(cellPosition.rowIndex, cellPosition.rowPinned);
     };
-    FocusedCellController.prototype.isRowNodeFocused = function (rowNode) {
+    FocusController.prototype.isRowNodeFocused = function (rowNode) {
         return this.isRowFocused(rowNode.rowIndex, rowNode.rowPinned);
     };
-    FocusedCellController.prototype.isAnyCellFocused = function () {
+    FocusController.prototype.isAnyCellFocused = function () {
         return !!this.focusedCellPosition;
     };
-    FocusedCellController.prototype.isRowFocused = function (rowIndex, floating) {
+    FocusController.prototype.isRowFocused = function (rowIndex, floating) {
         if (_utils__WEBPACK_IMPORTED_MODULE_3__[/* _ */ "d"].missing(this.focusedCellPosition)) {
             return false;
         }
         var floatingOrNull = _utils__WEBPACK_IMPORTED_MODULE_3__[/* _ */ "d"].makeNull(floating);
         return this.focusedCellPosition.rowIndex === rowIndex && this.focusedCellPosition.rowPinned === floatingOrNull;
     };
-    FocusedCellController.prototype.onCellFocused = function (forceBrowserFocus) {
+    FocusController.prototype.findFocusableElements = function (rootNode, exclude) {
+        var focusableString = '[tabindex], input, select, button, textarea';
+        var excludeString = '.ag-hidden, .ag-hidden *, .ag-disabled, .ag-disabled *';
+        if (exclude) {
+            excludeString += ', ' + exclude;
+        }
+        var nodes = Array.from(rootNode.querySelectorAll(focusableString));
+        var excludeNodes = Array.from(rootNode.querySelectorAll(excludeString));
+        if (!excludeNodes.length) {
+            return nodes;
+        }
+        var diff = function (a, b) { return a.filter(function (element) { return b.indexOf(element) === -1; }); };
+        return diff(nodes, excludeNodes);
+    };
+    FocusController.prototype.onCellFocused = function (forceBrowserFocus) {
         var event = {
             type: _events__WEBPACK_IMPORTED_MODULE_1__[/* Events */ "a"].EVENT_CELL_FOCUSED,
             forceBrowserFocus: forceBrowserFocus,
@@ -18303,26 +18708,26 @@ var FocusedCellController = /** @class */ (function () {
     };
     __decorate([
         Object(_context_context__WEBPACK_IMPORTED_MODULE_0__[/* Autowired */ "a"])('eventService')
-    ], FocusedCellController.prototype, "eventService", void 0);
+    ], FocusController.prototype, "eventService", void 0);
     __decorate([
         Object(_context_context__WEBPACK_IMPORTED_MODULE_0__[/* Autowired */ "a"])('gridOptionsWrapper')
-    ], FocusedCellController.prototype, "gridOptionsWrapper", void 0);
+    ], FocusController.prototype, "gridOptionsWrapper", void 0);
     __decorate([
         Object(_context_context__WEBPACK_IMPORTED_MODULE_0__[/* Autowired */ "a"])('columnController')
-    ], FocusedCellController.prototype, "columnController", void 0);
+    ], FocusController.prototype, "columnController", void 0);
     __decorate([
         Object(_context_context__WEBPACK_IMPORTED_MODULE_0__[/* Autowired */ "a"])('columnApi')
-    ], FocusedCellController.prototype, "columnApi", void 0);
+    ], FocusController.prototype, "columnApi", void 0);
     __decorate([
         Object(_context_context__WEBPACK_IMPORTED_MODULE_0__[/* Autowired */ "a"])('gridApi')
-    ], FocusedCellController.prototype, "gridApi", void 0);
+    ], FocusController.prototype, "gridApi", void 0);
     __decorate([
         _context_context__WEBPACK_IMPORTED_MODULE_0__[/* PostConstruct */ "e"]
-    ], FocusedCellController.prototype, "init", null);
-    FocusedCellController = __decorate([
-        Object(_context_context__WEBPACK_IMPORTED_MODULE_0__[/* Bean */ "b"])('focusedCellController')
-    ], FocusedCellController);
-    return FocusedCellController;
+    ], FocusController.prototype, "init", null);
+    FocusController = __decorate([
+        Object(_context_context__WEBPACK_IMPORTED_MODULE_0__[/* Bean */ "b"])('focusController')
+    ], FocusController);
+    return FocusController;
 }());
 
 
@@ -18341,7 +18746,7 @@ var FocusedCellController = /** @class */ (function () {
 /* harmony import */ var _utils__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("e3d3");
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v22.1.1
+ * @version v23.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -18350,9 +18755,6 @@ var __decorate = (undefined && undefined.__decorate) || function (decorators, ta
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
-};
-var __param = (undefined && undefined.__param) || function (paramIndex, decorator) {
-    return function (target, key) { decorator(target, key, paramIndex); }
 };
 
 
@@ -18381,8 +18783,7 @@ var DragAndDropService = /** @class */ (function () {
     DragAndDropService_1 = DragAndDropService;
     DragAndDropService.prototype.init = function () {
         this.ePinnedIcon = _utils__WEBPACK_IMPORTED_MODULE_1__[/* _ */ "d"].createIcon('columnMovePin', this.gridOptionsWrapper, null);
-        this.ePlusIcon = _utils__WEBPACK_IMPORTED_MODULE_1__[/* _ */ "d"].createIcon('columnMoveAdd', this.gridOptionsWrapper, null);
-        this.eHiddenIcon = _utils__WEBPACK_IMPORTED_MODULE_1__[/* _ */ "d"].createIcon('columnMoveHide', this.gridOptionsWrapper, null);
+        this.eHideIcon = _utils__WEBPACK_IMPORTED_MODULE_1__[/* _ */ "d"].createIcon('columnMoveHide', this.gridOptionsWrapper, null);
         this.eMoveIcon = _utils__WEBPACK_IMPORTED_MODULE_1__[/* _ */ "d"].createIcon('columnMoveMove', this.gridOptionsWrapper, null);
         this.eLeftIcon = _utils__WEBPACK_IMPORTED_MODULE_1__[/* _ */ "d"].createIcon('columnMoveLeft', this.gridOptionsWrapper, null);
         this.eRightIcon = _utils__WEBPACK_IMPORTED_MODULE_1__[/* _ */ "d"].createIcon('columnMoveRight', this.gridOptionsWrapper, null);
@@ -18390,9 +18791,6 @@ var DragAndDropService = /** @class */ (function () {
         this.eAggregateIcon = _utils__WEBPACK_IMPORTED_MODULE_1__[/* _ */ "d"].createIcon('columnMoveValue', this.gridOptionsWrapper, null);
         this.ePivotIcon = _utils__WEBPACK_IMPORTED_MODULE_1__[/* _ */ "d"].createIcon('columnMovePivot', this.gridOptionsWrapper, null);
         this.eDropNotAllowedIcon = _utils__WEBPACK_IMPORTED_MODULE_1__[/* _ */ "d"].createIcon('dropNotAllowed', this.gridOptionsWrapper, null);
-    };
-    DragAndDropService.prototype.setBeans = function (loggerFactory) {
-        this.logger = loggerFactory.create('OldToolPanelDragAndDropService');
     };
     DragAndDropService.prototype.addDragSource = function (dragSource, allowTouch) {
         if (allowTouch === void 0) { allowTouch = false; }
@@ -18516,45 +18914,32 @@ var DragAndDropService = /** @class */ (function () {
         this.dropTargets.push(dropTarget);
     };
     DragAndDropService.prototype.getHorizontalDirection = function (event) {
-        if (this.eventLastTime.clientX > event.clientX) {
-            return HorizontalDirection.Left;
-        }
-        else if (this.eventLastTime.clientX < event.clientX) {
-            return HorizontalDirection.Right;
-        }
-        else {
+        var clientX = this.eventLastTime.clientX;
+        var eClientX = event.clientX;
+        if (clientX === eClientX) {
             return null;
         }
+        return clientX > eClientX ? HorizontalDirection.Left : HorizontalDirection.Right;
     };
     DragAndDropService.prototype.getVerticalDirection = function (event) {
-        if (this.eventLastTime.clientY > event.clientY) {
-            return VerticalDirection.Up;
-        }
-        else if (this.eventLastTime.clientY < event.clientY) {
-            return VerticalDirection.Down;
-        }
-        else {
+        var clientY = this.eventLastTime.clientY;
+        var eClientY = event.clientY;
+        if (clientY === eClientY) {
             return null;
         }
+        return clientY > eClientY ? VerticalDirection.Up : VerticalDirection.Down;
     };
     DragAndDropService.prototype.createDropTargetEvent = function (dropTarget, event, hDirection, vDirection, fromNudge) {
         // localise x and y to the target component
         var rect = dropTarget.getContainer().getBoundingClientRect();
+        var _a = this, dragItem = _a.dragItem, dragSource = _a.dragSource;
         var x = event.clientX - rect.left;
         var y = event.clientY - rect.top;
-        return {
-            event: event,
-            x: x,
-            y: y,
-            vDirection: vDirection,
-            hDirection: hDirection,
-            dragSource: this.dragSource,
-            fromNudge: fromNudge,
-            dragItem: this.dragItem
-        };
+        return { event: event, x: x, y: y, vDirection: vDirection, hDirection: hDirection, dragSource: dragSource, fromNudge: fromNudge, dragItem: dragItem };
     };
     DragAndDropService.prototype.positionGhost = function (event) {
-        var ghostRect = this.eGhost.getBoundingClientRect();
+        var ghost = this.eWrapper.querySelector('.ag-dnd-ghost');
+        var ghostRect = ghost.getBoundingClientRect();
         var ghostHeight = ghostRect.height;
         // for some reason, without the '-2', it still overlapped by 1 or 2 pixels, which
         // then brought in scrollbars to the browser. no idea why, but putting in -2 here
@@ -18564,62 +18949,66 @@ var DragAndDropService = /** @class */ (function () {
         // put ghost vertically in middle of cursor
         var top = event.pageY - (ghostHeight / 2);
         // horizontally, place cursor just right of icon
-        var left = event.pageX - 30;
+        var left = event.pageX - 10;
         var usrDocument = this.gridOptionsWrapper.getDocument();
         var windowScrollY = window.pageYOffset || usrDocument.documentElement.scrollTop;
         var windowScrollX = window.pageXOffset || usrDocument.documentElement.scrollLeft;
         // check ghost is not positioned outside of the browser
-        if (browserWidth > 0 && ((left + this.eGhost.clientWidth) > (browserWidth + windowScrollX))) {
-            left = browserWidth + windowScrollX - this.eGhost.clientWidth;
+        if (browserWidth > 0 && ((left + ghost.clientWidth) > (browserWidth + windowScrollX))) {
+            left = browserWidth + windowScrollX - ghost.clientWidth;
         }
         if (left < 0) {
             left = 0;
         }
-        if (browserHeight > 0 && ((top + this.eGhost.clientHeight) > (browserHeight + windowScrollY))) {
-            top = browserHeight + windowScrollY - this.eGhost.clientHeight;
+        if (browserHeight > 0 && ((top + ghost.clientHeight) > (browserHeight + windowScrollY))) {
+            top = browserHeight + windowScrollY - ghost.clientHeight;
         }
         if (top < 0) {
             top = 0;
         }
-        this.eGhost.style.left = left + 'px';
-        this.eGhost.style.top = top + 'px';
+        ghost.style.left = left + 'px';
+        ghost.style.top = top + 'px';
     };
     DragAndDropService.prototype.removeGhost = function () {
-        if (this.eGhost && this.eGhostParent) {
-            this.eGhostParent.removeChild(this.eGhost);
+        if (this.eWrapper && this.eGhostParent) {
+            this.eGhostParent.removeChild(this.eWrapper);
         }
-        this.eGhost = null;
+        this.eWrapper = null;
     };
     DragAndDropService.prototype.createGhost = function () {
-        this.eGhost = _utils__WEBPACK_IMPORTED_MODULE_1__[/* _ */ "d"].loadTemplate(DragAndDropService_1.GHOST_TEMPLATE);
+        this.eWrapper = _utils__WEBPACK_IMPORTED_MODULE_1__[/* _ */ "d"].loadTemplate(DragAndDropService_1.GHOST_TEMPLATE);
         var theme = this.environment.getTheme().theme;
         if (theme) {
-            _utils__WEBPACK_IMPORTED_MODULE_1__[/* _ */ "d"].addCssClass(this.eGhost, theme);
+            _utils__WEBPACK_IMPORTED_MODULE_1__[/* _ */ "d"].addCssClass(this.eWrapper, theme);
         }
-        this.eGhostIcon = this.eGhost.querySelector('.ag-dnd-ghost-icon');
+        this.eGhostIcon = this.eWrapper.querySelector('.ag-dnd-ghost-icon');
         this.setGhostIcon(null);
-        var eText = this.eGhost.querySelector('.ag-dnd-ghost-label');
-        eText.innerHTML = _utils__WEBPACK_IMPORTED_MODULE_1__[/* _ */ "d"].escape(this.dragSource.dragItemName);
-        this.eGhost.style.height = '25px';
-        this.eGhost.style.top = '20px';
-        this.eGhost.style.left = '20px';
+        var eText = this.eWrapper.querySelector('.ag-dnd-ghost-label');
+        var dragItemName = this.dragSource.dragItemName;
+        if (_utils__WEBPACK_IMPORTED_MODULE_1__[/* _ */ "d"].isFunction(dragItemName)) {
+            dragItemName = dragItemName();
+        }
+        eText.innerHTML = _utils__WEBPACK_IMPORTED_MODULE_1__[/* _ */ "d"].escape(dragItemName);
+        this.eWrapper.style.height = '25px';
+        this.eWrapper.style.top = '20px';
+        this.eWrapper.style.left = '20px';
         var usrDocument = this.gridOptionsWrapper.getDocument();
         this.eGhostParent = usrDocument.querySelector('body');
         if (!this.eGhostParent) {
             console.warn('ag-Grid: could not find document body, it is needed for dragging columns');
         }
         else {
-            this.eGhostParent.appendChild(this.eGhost);
+            this.eGhostParent.appendChild(this.eWrapper);
         }
     };
     DragAndDropService.prototype.setGhostIcon = function (iconName, shake) {
         if (shake === void 0) { shake = false; }
         _utils__WEBPACK_IMPORTED_MODULE_1__[/* _ */ "d"].clearElement(this.eGhostIcon);
         var eIcon;
+        if (!iconName) {
+            iconName = this.dragSource.defaultIconName || DragAndDropService_1.ICON_NOT_ALLOWED;
+        }
         switch (iconName) {
-            case DragAndDropService_1.ICON_ADD:
-                eIcon = this.ePlusIcon;
-                break;
             case DragAndDropService_1.ICON_PINNED:
                 eIcon = this.ePinnedIcon;
                 break;
@@ -18644,16 +19033,20 @@ var DragAndDropService = /** @class */ (function () {
             case DragAndDropService_1.ICON_NOT_ALLOWED:
                 eIcon = this.eDropNotAllowedIcon;
                 break;
-            default:
-                eIcon = this.eHiddenIcon;
+            case DragAndDropService_1.ICON_HIDE:
+                eIcon = this.eHideIcon;
                 break;
         }
-        this.eGhostIcon.appendChild(eIcon);
         _utils__WEBPACK_IMPORTED_MODULE_1__[/* _ */ "d"].addOrRemoveCssClass(this.eGhostIcon, 'ag-shake-left-to-right', shake);
+        if (eIcon === this.eHideIcon && this.gridOptionsWrapper.isSuppressDragLeaveHidesColumns()) {
+            return;
+        }
+        if (eIcon) {
+            this.eGhostIcon.appendChild(eIcon);
+        }
     };
     var DragAndDropService_1;
     DragAndDropService.ICON_PINNED = 'pinned';
-    DragAndDropService.ICON_ADD = 'add';
     DragAndDropService.ICON_MOVE = 'move';
     DragAndDropService.ICON_LEFT = 'left';
     DragAndDropService.ICON_RIGHT = 'right';
@@ -18661,11 +19054,11 @@ var DragAndDropService = /** @class */ (function () {
     DragAndDropService.ICON_AGGREGATE = 'aggregate';
     DragAndDropService.ICON_PIVOT = 'pivot';
     DragAndDropService.ICON_NOT_ALLOWED = 'notAllowed';
-    DragAndDropService.GHOST_TEMPLATE = '<div class="ag-dnd-ghost">' +
+    DragAndDropService.ICON_HIDE = 'hide';
+    DragAndDropService.GHOST_TEMPLATE = '<div ref="eWrapper" class="ag-dnd-wrapper ag-unselectable"><div class="ag-dnd-ghost">' +
         '  <span class="ag-dnd-ghost-icon ag-shake-left-to-right"></span>' +
-        '  <div class="ag-dnd-ghost-label">' +
-        '  </div>' +
-        '</div>';
+        '  <div class="ag-dnd-ghost-label"></div>' +
+        '</div></div>';
     __decorate([
         Object(_context_context__WEBPACK_IMPORTED_MODULE_0__[/* Autowired */ "a"])('gridOptionsWrapper')
     ], DragAndDropService.prototype, "gridOptionsWrapper", void 0);
@@ -18678,9 +19071,6 @@ var DragAndDropService = /** @class */ (function () {
     __decorate([
         _context_context__WEBPACK_IMPORTED_MODULE_0__[/* PostConstruct */ "e"]
     ], DragAndDropService.prototype, "init", null);
-    __decorate([
-        __param(0, Object(_context_context__WEBPACK_IMPORTED_MODULE_0__[/* Qualifier */ "h"])('loggerFactory'))
-    ], DragAndDropService.prototype, "setBeans", null);
     __decorate([
         _context_context__WEBPACK_IMPORTED_MODULE_0__[/* PreDestroy */ "g"]
     ], DragAndDropService.prototype, "destroy", null);
@@ -18704,7 +19094,7 @@ var DragAndDropService = /** @class */ (function () {
 /* harmony import */ var _utils__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("e3d3");
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v22.1.1
+ * @version v23.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -18813,7 +19203,7 @@ var PopupEditorWrapper = /** @class */ (function (_super) {
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return ColDefUtil; });
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v22.1.1
+ * @version v23.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -18949,6 +19339,7 @@ var ColDefUtil = /** @class */ (function () {
         'onCellClicked',
         'onCellDoubleClicked',
         'onCellContextMenu',
+        'rowDragText',
         'tooltip',
         'tooltipValueGetter',
         'tooltipComponent',
@@ -18980,7 +19371,7 @@ var ColDefUtil = /** @class */ (function () {
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return Events; });
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v22.1.1
+ * @version v23.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -19027,10 +19418,14 @@ var Events = /** @class */ (function () {
     Events.EVENT_PINNED_ROW_DATA_CHANGED = 'pinnedRowDataChanged';
     /** Range selection has changed */
     Events.EVENT_RANGE_SELECTION_CHANGED = 'rangeSelectionChanged';
+    /** Chart was created */
+    Events.EVENT_CHART_CREATED = 'chartCreated';
     /** Chart Range selection has changed */
     Events.EVENT_CHART_RANGE_SELECTION_CHANGED = 'chartRangeSelectionChanged';
     /** Chart Options have changed */
     Events.EVENT_CHART_OPTIONS_CHANGED = 'chartOptionsChanged';
+    /** Chart was destroyed */
+    Events.EVENT_CHART_DESTROYED = 'chartDestroyed';
     /** For when the tool panel is shown / hidden */
     Events.EVENT_TOOL_PANEL_VISIBLE_CHANGED = 'toolPanelVisibleChanged';
     /** Model was updated - grid updates the drawn rows when this happens */
@@ -19110,6 +19505,8 @@ var Events = /** @class */ (function () {
     Events.EVENT_COLUMN_PIVOT_CHANGE_REQUEST = 'columnPivotChangeRequest';
     Events.EVENT_COLUMN_VALUE_CHANGE_REQUEST = 'columnValueChangeRequest';
     Events.EVENT_COLUMN_AGG_FUNC_CHANGE_REQUEST = 'columnAggFuncChangeRequest';
+    Events.EVENT_KEYBOARD_FOCUS = 'keyboardFocus';
+    Events.EVENT_MOUSE_FOCUS = 'mouseFocus';
     return Events;
 }());
 
@@ -19130,7 +19527,7 @@ var Events = /** @class */ (function () {
 /* harmony import */ var _scalerFilter__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__("c872");
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v22.1.1
+ * @version v23.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -19173,14 +19570,16 @@ var DateFilter = /** @class */ (function (_super) {
         // NOTE: The conversion of string to date also removes the timezone - ie when user picks
         //       a date form the UI, it will have timezone info in it. This is lost when creating
         //       the model. Then when we recreate the date again here, it's without timezone.
+        var from = _utils__WEBPACK_IMPORTED_MODULE_2__[/* _ */ "d"].getDateFromString(filterModel.dateFrom);
+        var to = _utils__WEBPACK_IMPORTED_MODULE_2__[/* _ */ "d"].getDateFromString(filterModel.dateTo);
         return {
-            from: _utils__WEBPACK_IMPORTED_MODULE_2__[/* _ */ "d"].parseYyyyMmDdToDate(filterModel.dateFrom, "-"),
-            to: _utils__WEBPACK_IMPORTED_MODULE_2__[/* _ */ "d"].parseYyyyMmDdToDate(filterModel.dateTo, "-")
+            from: from,
+            to: to
         };
     };
     DateFilter.prototype.setValueFromFloatingFilter = function (value) {
         if (value != null) {
-            var dateFrom = _utils__WEBPACK_IMPORTED_MODULE_2__[/* _ */ "d"].parseYyyyMmDdToDate(value, "-");
+            var dateFrom = _utils__WEBPACK_IMPORTED_MODULE_2__[/* _ */ "d"].getDateFromString(value);
             this.dateCompFrom1.setDate(dateFrom);
         }
         else {
@@ -19194,15 +19593,15 @@ var DateFilter = /** @class */ (function (_super) {
         var positionOne = position === _simpleFilter__WEBPACK_IMPORTED_MODULE_4__[/* ConditionPosition */ "a"].One;
         var dateFromString = model ? model.dateFrom : null;
         var dateToString = model ? model.dateTo : null;
-        var dateFrom = _utils__WEBPACK_IMPORTED_MODULE_2__[/* _ */ "d"].parseYyyyMmDdToDate(dateFromString, "-");
-        var dateTo = _utils__WEBPACK_IMPORTED_MODULE_2__[/* _ */ "d"].parseYyyyMmDdToDate(dateToString, "-");
+        var dateFrom = _utils__WEBPACK_IMPORTED_MODULE_2__[/* _ */ "d"].getDateFromString(dateFromString);
+        var dateTo = _utils__WEBPACK_IMPORTED_MODULE_2__[/* _ */ "d"].getDateFromString(dateToString);
         var compFrom = positionOne ? this.dateCompFrom1 : this.dateCompFrom2;
         var compTo = positionOne ? this.dateCompTo1 : this.dateCompTo2;
         compFrom.setDate(dateFrom);
         compTo.setDate(dateTo);
     };
-    DateFilter.prototype.resetUiToDefaults = function () {
-        _super.prototype.resetUiToDefaults.call(this);
+    DateFilter.prototype.resetUiToDefaults = function (silent) {
+        _super.prototype.resetUiToDefaults.call(this, silent);
         this.dateCompTo1.setDate(null);
         this.dateCompTo2.setDate(null);
         this.dateCompFrom1.setDate(null);
@@ -19251,7 +19650,7 @@ var DateFilter = /** @class */ (function (_super) {
     DateFilter.prototype.createValueTemplate = function (position) {
         var positionOne = position === _simpleFilter__WEBPACK_IMPORTED_MODULE_4__[/* ConditionPosition */ "a"].One;
         var pos = positionOne ? '1' : '2';
-        return "<div class=\"ag-filter-body\" ref=\"eCondition" + pos + "Body\">\n                    <div class=\"ag-filter-date-from\" ref=\"ePanelFrom" + pos + "\">\n                    </div>\n                    <div class=\"ag-filter-date-to\" ref=\"ePanelTo" + pos + "\"\">\n                    </div>\n                </div>";
+        return "<div class=\"ag-filter-body\" ref=\"eCondition" + pos + "Body\">\n                    <div class=\"ag-filter-from ag-filter-date-from\" ref=\"ePanelFrom" + pos + "\">\n                    </div>\n                    <div class=\"ag-filter-to ag-filter-date-to\" ref=\"ePanelTo" + pos + "\"\">\n                    </div>\n                </div>";
     };
     DateFilter.prototype.isConditionUiComplete = function (position) {
         var positionOne = position === _simpleFilter__WEBPACK_IMPORTED_MODULE_4__[/* ConditionPosition */ "a"].One;
@@ -19269,9 +19668,7 @@ var DateFilter = /** @class */ (function (_super) {
         if (option === _simpleFilter__WEBPACK_IMPORTED_MODULE_4__[/* SimpleFilter */ "b"].IN_RANGE) {
             return valueFrom != null && valueTo != null;
         }
-        else {
-            return valueFrom != null;
-        }
+        return valueFrom != null;
     };
     DateFilter.prototype.areSimpleModelsEqual = function (aSimple, bSimple) {
         return aSimple.dateFrom === bSimple.dateFrom
@@ -19285,17 +19682,29 @@ var DateFilter = /** @class */ (function (_super) {
     DateFilter.prototype.createCondition = function (position) {
         var positionOne = position === _simpleFilter__WEBPACK_IMPORTED_MODULE_4__[/* ConditionPosition */ "a"].One;
         var type = positionOne ? this.getCondition1Type() : this.getCondition2Type();
-        var dateCompTo = positionOne ? this.dateCompTo1 : this.dateCompTo2;
         var dateCompFrom = positionOne ? this.dateCompFrom1 : this.dateCompFrom2;
+        var dateCompTo = positionOne ? this.dateCompTo1 : this.dateCompTo2;
+        var dateFrom = dateCompFrom.getDate();
+        var dateTo = dateCompTo.getDate();
         return {
-            dateTo: _utils__WEBPACK_IMPORTED_MODULE_2__[/* _ */ "d"].serializeDateToYyyyMmDd(dateCompTo.getDate(), "-"),
-            dateFrom: _utils__WEBPACK_IMPORTED_MODULE_2__[/* _ */ "d"].serializeDateToYyyyMmDd(dateCompFrom.getDate(), "-"),
+            dateFrom: _utils__WEBPACK_IMPORTED_MODULE_2__[/* _ */ "d"].serializeDateToYyyyMmDd(dateFrom, "-") + " " + _utils__WEBPACK_IMPORTED_MODULE_2__[/* _ */ "d"].getTimeFromDate(dateFrom),
+            dateTo: _utils__WEBPACK_IMPORTED_MODULE_2__[/* _ */ "d"].serializeDateToYyyyMmDd(dateTo, "-") + " " + _utils__WEBPACK_IMPORTED_MODULE_2__[/* _ */ "d"].getTimeFromDate(dateTo),
             type: type,
             filterType: DateFilter.FILTER_TYPE
         };
     };
+    DateFilter.prototype.resetPlaceholder = function () {
+        var translate = this.translate.bind(this);
+        var isRange1 = this.getCondition1Type() === _scalerFilter__WEBPACK_IMPORTED_MODULE_5__[/* ScalerFilter */ "a"].IN_RANGE;
+        var isRange2 = this.getCondition2Type() === _scalerFilter__WEBPACK_IMPORTED_MODULE_5__[/* ScalerFilter */ "a"].IN_RANGE;
+        this.dateCompFrom1.setInputPlaceholder(translate(isRange1 ? 'rangeStart' : 'filterOoo'));
+        this.dateCompTo1.setInputPlaceholder(translate(isRange1 ? 'rangeEnd' : 'filterOoo'));
+        this.dateCompFrom2.setInputPlaceholder(translate(isRange2 ? 'rangeStart' : 'filterOoo'));
+        this.dateCompTo2.setInputPlaceholder(translate(isRange2 ? 'rangeEnd' : 'filterOoo'));
+    };
     DateFilter.prototype.updateUiVisibility = function () {
         _super.prototype.updateUiVisibility.call(this);
+        this.resetPlaceholder();
         var showFrom1 = this.showValueFrom(this.getCondition1Type());
         _utils__WEBPACK_IMPORTED_MODULE_2__[/* _ */ "d"].setDisplayed(this.ePanelFrom1, showFrom1);
         var showTo1 = this.showValueTo(this.getCondition1Type());
@@ -19306,8 +19715,13 @@ var DateFilter = /** @class */ (function (_super) {
         _utils__WEBPACK_IMPORTED_MODULE_2__[/* _ */ "d"].setDisplayed(this.ePanelTo2, showTo2);
     };
     DateFilter.FILTER_TYPE = 'date';
-    DateFilter.DEFAULT_FILTER_OPTIONS = [_scalerFilter__WEBPACK_IMPORTED_MODULE_5__[/* ScalerFilter */ "a"].EQUALS, _scalerFilter__WEBPACK_IMPORTED_MODULE_5__[/* ScalerFilter */ "a"].GREATER_THAN,
-        _scalerFilter__WEBPACK_IMPORTED_MODULE_5__[/* ScalerFilter */ "a"].LESS_THAN, _scalerFilter__WEBPACK_IMPORTED_MODULE_5__[/* ScalerFilter */ "a"].NOT_EQUAL, _scalerFilter__WEBPACK_IMPORTED_MODULE_5__[/* ScalerFilter */ "a"].IN_RANGE];
+    DateFilter.DEFAULT_FILTER_OPTIONS = [
+        _scalerFilter__WEBPACK_IMPORTED_MODULE_5__[/* ScalerFilter */ "a"].EQUALS,
+        _scalerFilter__WEBPACK_IMPORTED_MODULE_5__[/* ScalerFilter */ "a"].GREATER_THAN,
+        _scalerFilter__WEBPACK_IMPORTED_MODULE_5__[/* ScalerFilter */ "a"].LESS_THAN,
+        _scalerFilter__WEBPACK_IMPORTED_MODULE_5__[/* ScalerFilter */ "a"].NOT_EQUAL,
+        _scalerFilter__WEBPACK_IMPORTED_MODULE_5__[/* ScalerFilter */ "a"].IN_RANGE
+    ];
     __decorate([
         Object(_widgets_componentAnnotations__WEBPACK_IMPORTED_MODULE_0__[/* RefSelector */ "a"])('ePanelFrom1')
     ], DateFilter.prototype, "ePanelFrom1", void 0);
@@ -19343,7 +19757,7 @@ var DateFilter = /** @class */ (function (_super) {
 /* harmony import */ var _modules_moduleRegistry__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__("7749");
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v22.1.1
+ * @version v23.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -19711,6 +20125,12 @@ var GridApi = /** @class */ (function () {
     GridApi.prototype.getRowNode = function (id) {
         return this.rowModel.getRowNode(id);
     };
+    GridApi.prototype.getSizesForCurrentTheme = function () {
+        return {
+            rowHeight: this.gridOptionsWrapper.getRowHeightAsNumber(),
+            headerHeight: this.gridOptionsWrapper.getHeaderHeight()
+        };
+    };
     GridApi.prototype.expandAll = function () {
         if (_utils__WEBPACK_IMPORTED_MODULE_4__[/* _ */ "d"].missing(this.clientSideRowModel)) {
             console.warn('ag-Grid: cannot call expandAll unless using normal row model');
@@ -19915,13 +20335,13 @@ var GridApi = /** @class */ (function () {
         return this.filterManager.getFilterModel();
     };
     GridApi.prototype.getFocusedCell = function () {
-        return this.focusedCellController.getFocusedCell();
+        return this.focusController.getFocusedCell();
     };
     GridApi.prototype.clearFocusedCell = function () {
-        return this.focusedCellController.clearFocusedCell();
+        return this.focusController.clearFocusedCell();
     };
     GridApi.prototype.setFocusedCell = function (rowIndex, colKey, floating) {
-        this.focusedCellController.setFocusedCell(rowIndex, colKey, floating, true);
+        this.focusController.setFocusedCell(rowIndex, colKey, floating, true);
     };
     GridApi.prototype.setSuppressRowDrag = function (value) {
         this.gridOptionsWrapper.setProperty(_gridOptionsWrapper__WEBPACK_IMPORTED_MODULE_0__[/* GridOptionsWrapper */ "a"].PROP_SUPPRESS_ROW_DRAG, value);
@@ -20439,8 +20859,8 @@ var GridApi = /** @class */ (function () {
         Object(_context_context__WEBPACK_IMPORTED_MODULE_2__[/* Autowired */ "a"])('paginationProxy')
     ], GridApi.prototype, "paginationProxy", void 0);
     __decorate([
-        Object(_context_context__WEBPACK_IMPORTED_MODULE_2__[/* Autowired */ "a"])('focusedCellController')
-    ], GridApi.prototype, "focusedCellController", void 0);
+        Object(_context_context__WEBPACK_IMPORTED_MODULE_2__[/* Autowired */ "a"])('focusController')
+    ], GridApi.prototype, "focusController", void 0);
     __decorate([
         Object(_context_context__WEBPACK_IMPORTED_MODULE_2__[/* Optional */ "d"])('rangeController')
     ], GridApi.prototype, "rangeController", void 0);
@@ -20496,7 +20916,7 @@ var GridApi = /** @class */ (function () {
 /* harmony import */ var _utils__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("e3d3");
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v22.1.1
+ * @version v23.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -20518,8 +20938,14 @@ var __extends = (undefined && undefined.__extends) || (function () {
 var AgAbstractField = /** @class */ (function (_super) {
     __extends(AgAbstractField, _super);
     function AgAbstractField() {
-        return _super !== null && _super.apply(this, arguments) || this;
+        var _this = _super !== null && _super.apply(this, arguments) || this;
+        _this.disabled = false;
+        return _this;
     }
+    AgAbstractField.prototype.postConstruct = function () {
+        _super.prototype.postConstruct.call(this);
+        _utils__WEBPACK_IMPORTED_MODULE_1__[/* _ */ "d"].addCssClass(this.getGui(), this.className);
+    };
     AgAbstractField.prototype.onValueChange = function (callbackFn) {
         var _this = this;
         this.addDestroyableEventListener(this, AgAbstractField.EVENT_CHANGED, function () {
@@ -20547,6 +20973,19 @@ var AgAbstractField = /** @class */ (function (_super) {
         }
         return this;
     };
+    AgAbstractField.prototype.setDisabled = function (disabled) {
+        disabled = !!disabled;
+        var eGui = this.getGui();
+        if (disabled) {
+            eGui.setAttribute('disabled', 'true');
+        }
+        _utils__WEBPACK_IMPORTED_MODULE_1__[/* _ */ "d"].addOrRemoveCssClass(eGui, 'ag-disabled', disabled);
+        this.disabled = disabled;
+        return this;
+    };
+    AgAbstractField.prototype.isDisabled = function () {
+        return !!this.disabled;
+    };
     AgAbstractField.EVENT_CHANGED = 'valueChange';
     return AgAbstractField;
 }(_agAbstractLabel__WEBPACK_IMPORTED_MODULE_0__[/* AgAbstractLabel */ "a"]));
@@ -20564,7 +21003,7 @@ var AgAbstractField = /** @class */ (function (_super) {
 /* harmony import */ var _utils__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("e3d3");
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v22.1.1
+ * @version v23.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -20658,7 +21097,7 @@ var AgInputRange = /** @class */ (function (_super) {
 /* harmony import */ var _context_context__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("d196");
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v22.1.1
+ * @version v23.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -20891,7 +21330,7 @@ var AlignedGridsService = /** @class */ (function () {
 /* harmony import */ var _modules_moduleRegistry__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__("7749");
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v22.1.1
+ * @version v23.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -20957,21 +21396,15 @@ var GridCore = /** @class */ (function (_super) {
         this.addRtlSupport();
         this.logger.log('ready');
         this.gridOptionsWrapper.addLayoutElement(this.eRootWrapperBody);
-        var gridPanelEl = this.gridPanel.getGui();
-        this.addDestroyableEventListener(gridPanelEl, 'focusin', function () {
-            _utils__WEBPACK_IMPORTED_MODULE_5__[/* _ */ "d"].addCssClass(gridPanelEl, 'ag-has-focus');
-        });
-        this.addDestroyableEventListener(gridPanelEl, 'focusout', function (e) {
-            if (!gridPanelEl.contains(e.relatedTarget)) {
-                _utils__WEBPACK_IMPORTED_MODULE_5__[/* _ */ "d"].removeCssClass(gridPanelEl, 'ag-has-focus');
-            }
-        });
         var unsubscribeFromResize = this.resizeObserverService.observeResize(this.eGridDiv, this.onGridSizeChanged.bind(this));
         this.addDestroyFunc(function () { return unsubscribeFromResize(); });
-        var theme = this.environment.getTheme().theme;
-        if (/^ag-theme-(fresh|dark|blue|bootstrap)$/.test(theme)) {
-            console.warn("ag-Grid: \"" + theme + "\" theme is deprecated and will be removed in the next major release (v23)");
-        }
+        var eGui = this.getGui();
+        this.addDestroyableEventListener(this.eventService, _events__WEBPACK_IMPORTED_MODULE_3__[/* Events */ "a"].EVENT_KEYBOARD_FOCUS, function () {
+            _utils__WEBPACK_IMPORTED_MODULE_5__[/* _ */ "d"].addCssClass(eGui, 'ag-keyboard-focus');
+        });
+        this.addDestroyableEventListener(this.eventService, _events__WEBPACK_IMPORTED_MODULE_3__[/* Events */ "a"].EVENT_MOUSE_FOCUS, function () {
+            _utils__WEBPACK_IMPORTED_MODULE_5__[/* _ */ "d"].removeCssClass(eGui, 'ag-keyboard-focus');
+        });
     };
     GridCore.prototype.createTemplate = function () {
         var sideBarModuleLoaded = _modules_moduleRegistry__WEBPACK_IMPORTED_MODULE_7__[/* ModuleRegistry */ "a"].isRegistered(_modules_moduleNames__WEBPACK_IMPORTED_MODULE_6__[/* ModuleNames */ "a"].SideBarModule);
@@ -20982,7 +21415,7 @@ var GridCore = /** @class */ (function (_super) {
         var sideBar = sideBarModuleLoaded ? '<ag-side-bar ref="sideBar"></ag-side-bar>' : '';
         var statusBar = statusBarModuleLoaded ? '<ag-status-bar ref="statusBar"></ag-status-bar>' : '';
         var watermark = enterpriseCoreLoaded ? '<ag-watermark></ag-watermark>' : '';
-        var template = "<div class=\"ag-root-wrapper\">\n                " + dropZones + "\n                <div class=\"ag-root-wrapper-body\" ref=\"rootWrapperBody\">\n                    <ag-grid-comp ref=\"gridPanel\"></ag-grid-comp>                    \n                    " + sideBar + "\n                </div>\n                " + statusBar + "\n                <ag-pagination></ag-pagination>\n                " + watermark + "\n            </div>";
+        var template = "<div class=\"ag-root-wrapper\">\n                " + dropZones + "\n                <div class=\"ag-root-wrapper-body\" ref=\"rootWrapperBody\">\n                    <ag-grid-comp ref=\"gridPanel\"></ag-grid-comp>\n                    " + sideBar + "\n                </div>\n                " + statusBar + "\n                <ag-pagination></ag-pagination>\n                " + watermark + "\n            </div>";
         return template;
     };
     GridCore.prototype.onGridSizeChanged = function () {
@@ -21143,8 +21576,8 @@ var GridCore = /** @class */ (function (_super) {
         Object(_context_context__WEBPACK_IMPORTED_MODULE_0__[/* Autowired */ "a"])('popupService')
     ], GridCore.prototype, "popupService", void 0);
     __decorate([
-        Object(_context_context__WEBPACK_IMPORTED_MODULE_0__[/* Autowired */ "a"])('focusedCellController')
-    ], GridCore.prototype, "focusedCellController", void 0);
+        Object(_context_context__WEBPACK_IMPORTED_MODULE_0__[/* Autowired */ "a"])('focusController')
+    ], GridCore.prototype, "focusController", void 0);
     __decorate([
         Object(_context_context__WEBPACK_IMPORTED_MODULE_0__[/* Autowired */ "a"])('loggerFactory')
     ], GridCore.prototype, "loggerFactory", void 0);
@@ -21188,7 +21621,7 @@ var GridCore = /** @class */ (function (_super) {
 /* harmony import */ var _grid__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("d35e");
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v22.1.1
+ * @version v23.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -21315,7 +21748,7 @@ function toCamelCase(myString) {
 /* harmony import */ var _utils_changedPath__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("7b67");
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v22.1.1
+ * @version v23.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -21669,7 +22102,7 @@ var SelectionController = /** @class */ (function () {
 /* harmony import */ var _utils__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("e3d3");
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v22.1.1
+ * @version v23.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -21752,6 +22185,7 @@ var BeanStub = /** @class */ (function () {
         var destroyFunc = function () {
             object.removeEventListener(event, listener);
             _this.destroyFunctions = _this.destroyFunctions.filter(function (fn) { return fn !== destroyFunc; });
+            return null;
         };
         this.destroyFunctions.push(destroyFunc);
         return destroyFunc;
@@ -21797,6 +22231,10 @@ var BeanStub = /** @class */ (function () {
 
 "use strict";
 
+// EXPORTS
+__webpack_require__.d(__webpack_exports__, "a", function() { return /* binding */ RegisteredComponentSource; });
+__webpack_require__.d(__webpack_exports__, "b", function() { return /* binding */ userComponentRegistry_UserComponentRegistry; });
+
 // EXTERNAL MODULE: ../core/dist/es6/rendering/cellEditors/textCellEditor.js
 var textCellEditor = __webpack_require__("032f");
 
@@ -21821,13 +22259,13 @@ var componentAnnotations = __webpack_require__("f737");
 // EXTERNAL MODULE: ../core/dist/es6/events.js
 var events = __webpack_require__("1284");
 
-// EXTERNAL MODULE: ../core/dist/es6/utils/index.js + 4 modules
+// EXTERNAL MODULE: ../core/dist/es6/utils/index.js + 5 modules
 var utils = __webpack_require__("e3d3");
 
 // CONCATENATED MODULE: ../core/dist/es6/headerRendering/header/headerComp.js
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v22.1.1
+ * @version v23.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -21951,16 +22389,15 @@ var headerComp_HeaderComp = /** @class */ (function (_super) {
         this.addDestroyableEventListener(this.eMenu, 'click', function () { return _this.showMenu(_this.eMenu); });
         if (!suppressMenuHide) {
             this.eMenu.style.opacity = '0';
-            this.addGuiEventListener('mouseover', function () {
-                _this.eMenu.style.opacity = '1';
-            });
-            this.addGuiEventListener('mouseout', function () {
-                _this.eMenu.style.opacity = '0';
-            });
         }
         var style = this.eMenu.style;
         style.transition = 'opacity 0.2s, border 0.2s';
         style['-webkit-transition'] = 'opacity 0.2s, border 0.2s';
+    };
+    HeaderComp.prototype.setMouseOverParent = function (overParent) {
+        if (!this.gridOptionsWrapper.isSuppressMenuHide()) {
+            this.eMenu.style.opacity = overParent ? '1' : '0';
+        }
     };
     HeaderComp.prototype.showMenu = function (eventSource) {
         this.menuFactory.showMenuAfterButtonClick(this.params.column, eventSource);
@@ -22055,11 +22492,11 @@ var headerComp_HeaderComp = /** @class */ (function (_super) {
         '  <span ref="eMenu" class="ag-header-icon ag-header-cell-menu-button" aria-hidden="true"></span>' +
         '  <div ref="eLabel" class="ag-header-cell-label" role="presentation" unselectable="on">' +
         '    <span ref="eText" class="ag-header-cell-text" role="columnheader" unselectable="on"></span>' +
-        '    <span ref="eFilter" class="ag-header-icon ag-filter-icon" aria-hidden="true"></span>' +
-        '    <span ref="eSortOrder" class="ag-header-icon ag-sort-order" aria-hidden="true"></span>' +
-        '    <span ref="eSortAsc" class="ag-header-icon ag-sort-ascending-icon" aria-hidden="true"></span>' +
-        '    <span ref="eSortDesc" class="ag-header-icon ag-sort-descending-icon" aria-hidden="true"></span>' +
-        '    <span ref="eSortNone" class="ag-header-icon ag-sort-none-icon" aria-hidden="true"></span>' +
+        '    <span ref="eFilter" class="ag-header-icon ag-header-label-icon ag-filter-icon" aria-hidden="true"></span>' +
+        '    <span ref="eSortOrder" class="ag-header-icon ag-header-label-icon ag-sort-order" aria-hidden="true"></span>' +
+        '    <span ref="eSortAsc" class="ag-header-icon ag-header-label-icon ag-sort-ascending-icon" aria-hidden="true"></span>' +
+        '    <span ref="eSortDesc" class="ag-header-icon ag-header-label-icon ag-sort-descending-icon" aria-hidden="true"></span>' +
+        '    <span ref="eSortNone" class="ag-header-icon ag-header-label-icon ag-sort-none-icon" aria-hidden="true"></span>' +
         '  </div>' +
         '</div>';
     __decorate([
@@ -22108,7 +22545,7 @@ var entities_originalColumnGroup = __webpack_require__("4d8a");
 // CONCATENATED MODULE: ../core/dist/es6/headerRendering/headerGroup/headerGroupComp.js
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v22.1.1
+ * @version v23.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -22246,7 +22683,7 @@ var animateSlideCellRenderer = __webpack_require__("9344");
 // CONCATENATED MODULE: ../core/dist/es6/rendering/cellRenderers/loadingCellRenderer.js
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v22.1.1
+ * @version v23.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -22287,7 +22724,7 @@ var loadingCellRenderer_LoadingCellRenderer = /** @class */ (function (_super) {
     LoadingCellRenderer.prototype.refresh = function (params) {
         return false;
     };
-    LoadingCellRenderer.TEMPLATE = "<div class=\"ag-stub-cell\">\n            <span class=\"ag-loading-icon\" ref=\"eLoadingIcon\"></span>\n            <span class=\"ag-loading-text\" ref=\"eLoadingText\"></span>\n        </div>";
+    LoadingCellRenderer.TEMPLATE = "<div class=\"ag-loading\">\n            <span class=\"ag-loading-icon\" ref=\"eLoadingIcon\"></span>\n            <span class=\"ag-loading-text\" ref=\"eLoadingText\"></span>\n        </div>";
     loadingCellRenderer_decorate([
         Object(context["a" /* Autowired */])('gridOptionsWrapper')
     ], LoadingCellRenderer.prototype, "gridOptionsWrapper", void 0);
@@ -22319,7 +22756,7 @@ var numberFilter = __webpack_require__("e8d5");
 // CONCATENATED MODULE: ../core/dist/es6/rendering/overlays/loadingOverlayComponent.js
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v22.1.1
+ * @version v23.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -22367,7 +22804,7 @@ var loadingOverlayComponent_LoadingOverlayComponent = /** @class */ (function (_
 // CONCATENATED MODULE: ../core/dist/es6/rendering/overlays/noRowsOverlayComponent.js
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v22.1.1
+ * @version v23.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -22418,7 +22855,7 @@ var popupComponent = __webpack_require__("86a4");
 // CONCATENATED MODULE: ../core/dist/es6/rendering/tooltipComponent.js
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v22.1.1
+ * @version v23.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -22453,7 +22890,7 @@ var TooltipComponent = /** @class */ (function (_super) {
 // CONCATENATED MODULE: ../core/dist/es6/filter/provided/date/defaultDateComponent.js
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v22.1.1
+ * @version v23.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -22470,32 +22907,56 @@ var defaultDateComponent_extends = (undefined && undefined.__extends) || (functi
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
+var defaultDateComponent_decorate = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+
+
 
 
 var defaultDateComponent_DefaultDateComponent = /** @class */ (function (_super) {
     defaultDateComponent_extends(DefaultDateComponent, _super);
     function DefaultDateComponent() {
-        return _super.call(this, "<div class=\"ag-input-wrapper\" role=\"presentation\"><input class=\"ag-filter-filter\" type=\"text\" placeholder=\"yyyy-mm-dd\"></div>") || this;
+        return _super.call(this, "<div class=\"ag-filter-filter\"><ag-input-text-field class=\"ag-date-filter\" ref=\"eDateInput\"></ag-input-text-field></div>") || this;
     }
     DefaultDateComponent.prototype.init = function (params) {
-        this.eDateInput = this.getGui().querySelector('input');
+        var _this = this;
+        var translate = this.gridOptionsWrapper.getLocaleTextFunc();
+        this.eDateInput.setInputPlaceholder(translate('dateFormatOoo', 'yyyy-mm-dd'));
         if (utils["d" /* _ */].isBrowserChrome() || (params.filterParams && params.filterParams.browserDatePicker)) {
             if (utils["d" /* _ */].isBrowserIE()) {
                 console.warn('ag-grid: browserDatePicker is specified to true, but it is not supported in IE 11, reverting to plain text date picker');
             }
             else {
-                this.eDateInput.type = 'date';
+                this.eDateInput.getInputElement().type = 'date';
             }
         }
         this.listener = params.onDateChanged;
-        this.addGuiEventListener('input', this.listener);
+        this.addDestroyableEventListener(this.eDateInput.getInputElement(), 'input', function (e) {
+            if (e.target !== document.activeElement) {
+                return;
+            }
+            _this.listener();
+        });
     };
     DefaultDateComponent.prototype.getDate = function () {
-        return utils["d" /* _ */].parseYyyyMmDdToDate(this.eDateInput.value, "-");
+        return utils["d" /* _ */].getDateFromString(this.eDateInput.getValue());
     };
     DefaultDateComponent.prototype.setDate = function (date) {
-        this.eDateInput.value = utils["d" /* _ */].serializeDateToYyyyMmDd(date, "-");
+        this.eDateInput.setValue(utils["d" /* _ */].serializeDateToYyyyMmDd(date, "-"));
     };
+    DefaultDateComponent.prototype.setInputPlaceholder = function (placeholder) {
+        this.eDateInput.setInputPlaceholder(placeholder);
+    };
+    defaultDateComponent_decorate([
+        Object(context["a" /* Autowired */])('gridOptionsWrapper')
+    ], DefaultDateComponent.prototype, "gridOptionsWrapper", void 0);
+    defaultDateComponent_decorate([
+        Object(componentAnnotations["a" /* RefSelector */])('eDateInput')
+    ], DefaultDateComponent.prototype, "eDateInput", void 0);
     return DefaultDateComponent;
 }(component["a" /* Component */]));
 
@@ -22512,7 +22973,7 @@ var optionsFactory = __webpack_require__("1526");
 // CONCATENATED MODULE: ../core/dist/es6/filter/floating/provided/simpleFloatingFilter.js
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v22.1.1
+ * @version v23.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -22630,7 +23091,7 @@ var providedFilter = __webpack_require__("b5e7");
 // CONCATENATED MODULE: ../core/dist/es6/filter/provided/date/dateFloatingFilter.js
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v22.1.1
+ * @version v23.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -22664,7 +23125,7 @@ var dateFloatingFilter_decorate = (undefined && undefined.__decorate) || functio
 var dateFloatingFilter_DateFloatingFilter = /** @class */ (function (_super) {
     dateFloatingFilter_extends(DateFloatingFilter, _super);
     function DateFloatingFilter() {
-        return _super.call(this, "<div class=\"ag-input-wrapper\" role=\"presentation\">\n                <input ref=\"eReadOnlyText\" disabled=\"true\" class=\"ag-floating-filter-input\">\n                <div ref=\"eDateWrapper\" style=\"display: flex; flex: 1 1 auto; overflow: hidden;\"></div>\n            </div>") || this;
+        return _super.call(this, "<div class=\"ag-floating-filter-input\" role=\"presentation\">\n                <ag-input-text-field ref=\"eReadOnlyText\"></ag-input-text-field>\n                <div ref=\"eDateWrapper\" style=\"display: flex; overflow: hidden;\"></div>\n            </div>") || this;
     }
     DateFloatingFilter.prototype.getDefaultFilterOptions = function () {
         return dateFilter["a" /* DateFilter */].DEFAULT_FILTER_OPTIONS;
@@ -22674,24 +23135,21 @@ var dateFloatingFilter_DateFloatingFilter = /** @class */ (function (_super) {
         if (isRange) {
             return condition.dateFrom + "-" + condition.dateTo;
         }
-        else {
-            // cater for when the type doesn't need a value
-            if (condition.dateFrom != null) {
-                return "" + condition.dateFrom;
-            }
-            else {
-                return "" + condition.type;
-            }
+        // cater for when the type doesn't need a value
+        if (condition.dateFrom != null) {
+            return "" + condition.dateFrom;
         }
+        return "" + condition.type;
     };
     DateFloatingFilter.prototype.init = function (params) {
         _super.prototype.init.call(this, params);
         this.params = params;
         this.createDateComponent();
+        this.eReadOnlyText.setDisabled(true);
     };
     DateFloatingFilter.prototype.setEditable = function (editable) {
         utils["d" /* _ */].setDisplayed(this.eDateWrapper, editable);
-        utils["d" /* _ */].setDisplayed(this.eReadOnlyText, !editable);
+        utils["d" /* _ */].setDisplayed(this.eReadOnlyText.getGui(), !editable);
     };
     DateFloatingFilter.prototype.onParentModelChanged = function (model, event) {
         // we don't want to update the floating filter if the floating filter caused the change.
@@ -22706,22 +23164,22 @@ var dateFloatingFilter_DateFloatingFilter = /** @class */ (function (_super) {
         if (allowEditing) {
             if (model) {
                 var dateModel = model;
-                this.dateComp.setDate(utils["d" /* _ */].parseYyyyMmDdToDate(dateModel.dateFrom, '-'));
+                this.dateComp.setDate(utils["d" /* _ */].getDateFromString(dateModel.dateFrom));
             }
             else {
                 this.dateComp.setDate(null);
             }
-            this.eReadOnlyText.value = '';
+            this.eReadOnlyText.setValue('');
         }
         else {
-            this.eReadOnlyText.value = this.getTextFromModel(model);
+            this.eReadOnlyText.setValue(this.getTextFromModel(model));
             this.dateComp.setDate(null);
         }
     };
     DateFloatingFilter.prototype.onDateChanged = function () {
         var _this = this;
         var filterValueDate = this.dateComp.getDate();
-        var filterValueText = utils["d" /* _ */].serializeDateToYyyyMmDd(filterValueDate, "-");
+        var filterValueText = utils["d" /* _ */].serializeDateToYyyyMmDd(filterValueDate, "-") + " " + utils["d" /* _ */].getTimeFromDate(filterValueDate);
         this.params.parentFilterInstance(function (filterInstance) {
             if (filterInstance) {
                 var simpleFilter = filterInstance;
@@ -22764,7 +23222,7 @@ var constants = __webpack_require__("f2fb");
 // CONCATENATED MODULE: ../core/dist/es6/filter/floating/provided/textInputFloatingFilter.js
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v22.1.1
+ * @version v23.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -22799,7 +23257,7 @@ var textInputFloatingFilter_TextInputFloatingFilter = /** @class */ (function (_
         return _super !== null && _super.apply(this, arguments) || this;
     }
     TextInputFloatingFilter.prototype.postConstruct = function () {
-        this.setTemplate("<div class=\"ag-input-wrapper\" role=\"presentation\">\n                <input ref=\"eFloatingFilterText\" class=\"ag-floating-filter-input\">\n            </div>");
+        this.setTemplate("<div class=\"ag-floating-filter-input\" role=\"presentation\">\n                <ag-input-text-field ref=\"eFloatingFilterInput\"></ag-input-text-field>\n            </div>");
     };
     TextInputFloatingFilter.prototype.getDefaultDebounceMs = function () {
         return 500;
@@ -22813,7 +23271,7 @@ var textInputFloatingFilter_TextInputFloatingFilter = /** @class */ (function (_
         }
         this.setLastTypeFromModel(model);
         var modelString = this.getTextFromModel(model);
-        this.eFloatingFilterText.value = modelString;
+        this.eFloatingFilterInput.setValue(modelString);
         var editable = this.canWeEditAfterModelFromParentFilter(model);
         this.setEditable(editable);
     };
@@ -22823,17 +23281,18 @@ var textInputFloatingFilter_TextInputFloatingFilter = /** @class */ (function (_
         this.applyActive = providedFilter["a" /* ProvidedFilter */].isUseApplyButton(this.params.filterParams);
         var debounceMs = providedFilter["a" /* ProvidedFilter */].getDebounceMs(this.params.filterParams, this.getDefaultDebounceMs());
         var toDebounce = utils["d" /* _ */].debounce(this.syncUpWithParentFilter.bind(this), debounceMs);
-        this.addDestroyableEventListener(this.eFloatingFilterText, 'input', toDebounce);
-        this.addDestroyableEventListener(this.eFloatingFilterText, 'keypress', toDebounce);
-        this.addDestroyableEventListener(this.eFloatingFilterText, 'keydown', toDebounce);
+        var filterGui = this.eFloatingFilterInput.getGui();
+        this.addDestroyableEventListener(filterGui, 'input', toDebounce);
+        this.addDestroyableEventListener(filterGui, 'keypress', toDebounce);
+        this.addDestroyableEventListener(filterGui, 'keydown', toDebounce);
         var columnDef = params.column.getDefinition();
         if (columnDef.filterParams && columnDef.filterParams.filterOptions && columnDef.filterParams.filterOptions.length === 1 && columnDef.filterParams.filterOptions[0] === 'inRange') {
-            this.eFloatingFilterText.disabled = true;
+            this.eFloatingFilterInput.setDisabled(true);
         }
     };
     TextInputFloatingFilter.prototype.syncUpWithParentFilter = function (e) {
         var _this = this;
-        var value = this.eFloatingFilterText.value;
+        var value = this.eFloatingFilterInput.getValue();
         var enterKeyPressed = utils["d" /* _ */].isKeyPressed(e, constants["a" /* Constants */].KEY_ENTER);
         if (this.applyActive && !enterKeyPressed) {
             return;
@@ -22846,11 +23305,11 @@ var textInputFloatingFilter_TextInputFloatingFilter = /** @class */ (function (_
         });
     };
     TextInputFloatingFilter.prototype.setEditable = function (editable) {
-        this.eFloatingFilterText.disabled = !editable;
+        this.eFloatingFilterInput.setDisabled(!editable);
     };
     textInputFloatingFilter_decorate([
-        Object(componentAnnotations["a" /* RefSelector */])('eFloatingFilterText')
-    ], TextInputFloatingFilter.prototype, "eFloatingFilterText", void 0);
+        Object(componentAnnotations["a" /* RefSelector */])('eFloatingFilterInput')
+    ], TextInputFloatingFilter.prototype, "eFloatingFilterInput", void 0);
     textInputFloatingFilter_decorate([
         context["e" /* PostConstruct */]
     ], TextInputFloatingFilter.prototype, "postConstruct", null);
@@ -22861,7 +23320,7 @@ var textInputFloatingFilter_TextInputFloatingFilter = /** @class */ (function (_
 // CONCATENATED MODULE: ../core/dist/es6/filter/provided/number/numberFloatingFilter.js
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v22.1.1
+ * @version v23.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -22894,15 +23353,11 @@ var numberFloatingFilter_NumberFloatingFilter = /** @class */ (function (_super)
         if (isRange) {
             return condition.filter + "-" + condition.filterTo;
         }
-        else {
-            // cater for when the type doesn't need a value
-            if (condition.filter != null) {
-                return "" + condition.filter;
-            }
-            else {
-                return "" + condition.type;
-            }
+        // cater for when the type doesn't need a value
+        if (condition.filter != null) {
+            return "" + condition.filter;
         }
+        return "" + condition.type;
     };
     return NumberFloatingFilter;
 }(textInputFloatingFilter_TextInputFloatingFilter));
@@ -22911,7 +23366,7 @@ var numberFloatingFilter_NumberFloatingFilter = /** @class */ (function (_super)
 // CONCATENATED MODULE: ../core/dist/es6/filter/provided/text/textFloatingFilter.js
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v22.1.1
+ * @version v23.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -22953,11 +23408,9 @@ var textFloatingFilter_TextFloatingFilter = /** @class */ (function (_super) {
 
 
 // CONCATENATED MODULE: ../core/dist/es6/components/framework/userComponentRegistry.js
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return RegisteredComponentSource; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "b", function() { return userComponentRegistry_UserComponentRegistry; });
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v22.1.1
+ * @version v23.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -23199,7 +23652,7 @@ var userComponentRegistry_UserComponentRegistry = /** @class */ (function () {
 /* harmony import */ var _agAbstractInputField__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("6068");
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v22.1.1
+ * @version v23.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -23252,7 +23705,7 @@ var AgInputTextField = /** @class */ (function (_super) {
 /* harmony import */ var _agAbstractInputField__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("6068");
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v22.1.1
+ * @version v23.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -23288,6 +23741,14 @@ var AgInputTextArea = /** @class */ (function (_super) {
         this.eInput.value = value;
         return ret;
     };
+    AgInputTextArea.prototype.setCols = function (cols) {
+        this.eInput.cols = cols;
+        return this;
+    };
+    AgInputTextArea.prototype.setRows = function (rows) {
+        this.eInput.rows = rows;
+        return this;
+    };
     return AgInputTextArea;
 }(_agAbstractInputField__WEBPACK_IMPORTED_MODULE_0__[/* AgAbstractInputField */ "a"]));
 
@@ -23302,9 +23763,10 @@ var AgInputTextArea = /** @class */ (function (_super) {
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return AutoWidthCalculator; });
 /* harmony import */ var _context_context__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("d196");
 /* harmony import */ var _headerRendering_header_headerWrapperComp__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("eb10");
+/* harmony import */ var _utils__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("e3d3");
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v22.1.1
+ * @version v23.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -23314,6 +23776,7 @@ var __decorate = (undefined && undefined.__decorate) || function (decorators, ta
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
+
 
 
 var AutoWidthCalculator = /** @class */ (function () {
@@ -23391,6 +23854,11 @@ var AutoWidthCalculator = /** @class */ (function () {
         // on the same line, standard flow layout, by putting them into divs, they are laid
         // out one per line
         var eCloneParent = document.createElement('div');
+        if (_utils__WEBPACK_IMPORTED_MODULE_2__[/* _ */ "d"].containsClass(eCellClone, 'ag-header-cell')) {
+            _utils__WEBPACK_IMPORTED_MODULE_2__[/* _ */ "d"].addCssClass(eCloneParent, 'ag-header');
+            _utils__WEBPACK_IMPORTED_MODULE_2__[/* _ */ "d"].addCssClass(eCloneParent, 'ag-header-row');
+            eCloneParent.style.position = 'static';
+        }
         // table-row, so that each cell is on a row. i also tried display='block', but this
         // didn't work in IE
         eCloneParent.style.display = 'table-row';
@@ -23426,7 +23894,7 @@ var AutoWidthCalculator = /** @class */ (function () {
 /* harmony import */ var _constants__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("f2fb");
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v22.1.1
+ * @version v23.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -23619,38 +24087,113 @@ var SortController = /** @class */ (function () {
 "use strict";
 /* unused harmony export TabbedLayout */
 /* harmony import */ var _utils__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("e3d3");
+/* harmony import */ var _widgets_componentAnnotations__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("f737");
+/* harmony import */ var _context_context__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("d196");
+/* harmony import */ var _constants__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("f2fb");
+/* harmony import */ var _widgets_managedTabComponent__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("527e");
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v22.1.1
+ * @version v23.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
+var __extends = (undefined && undefined.__extends) || (function () {
+    var extendStatics = function (d, b) {
+        extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+        return extendStatics(d, b);
+    };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
+var __decorate = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
 
-var TabbedLayout = /** @class */ (function () {
+
+
+
+
+var TabbedLayout = /** @class */ (function (_super) {
+    __extends(TabbedLayout, _super);
     function TabbedLayout(params) {
-        var _this = this;
-        this.items = [];
-        this.params = params;
-        this.eGui = document.createElement('div');
-        this.eGui.innerHTML = TabbedLayout.TEMPLATE;
-        this.eHeader = this.eGui.querySelector('[ref="tabHeader"]');
-        this.eBody = this.eGui.querySelector('[ref="tabBody"]');
-        _utils__WEBPACK_IMPORTED_MODULE_0__[/* _ */ "d"].addCssClass(this.eGui, params.cssClass);
+        var _this = _super.call(this, TabbedLayout.getTemplate(params.cssClass)) || this;
+        _this.items = [];
+        _this.params = params;
         if (params.items) {
             params.items.forEach(function (item) { return _this.addItem(item); });
         }
+        return _this;
     }
+    TabbedLayout.prototype.init = function () {
+        this.addDestroyableEventListener(this.getGui(), 'keydown', this.handleKeyDown.bind(this));
+    };
+    TabbedLayout.prototype.handleKeyDown = function (e) {
+        switch (e.keyCode) {
+            case _constants__WEBPACK_IMPORTED_MODULE_3__[/* Constants */ "a"].KEY_RIGHT:
+            case _constants__WEBPACK_IMPORTED_MODULE_3__[/* Constants */ "a"].KEY_LEFT:
+                e.preventDefault();
+                if (!this.eHeader.contains(document.activeElement)) {
+                    return;
+                }
+                var currentPosition = this.items.indexOf(this.activeItem);
+                var nextPosition = e.keyCode === _constants__WEBPACK_IMPORTED_MODULE_3__[/* Constants */ "a"].KEY_RIGHT ? Math.min(currentPosition + 1, this.items.length - 1) : Math.max(currentPosition - 1, 0);
+                if (currentPosition === nextPosition) {
+                    return;
+                }
+                var nextItem = this.items[nextPosition];
+                this.showItemWrapper(nextItem);
+                nextItem.eHeaderButton.focus();
+                break;
+            case _constants__WEBPACK_IMPORTED_MODULE_3__[/* Constants */ "a"].KEY_UP:
+            case _constants__WEBPACK_IMPORTED_MODULE_3__[/* Constants */ "a"].KEY_DOWN:
+                e.stopPropagation();
+                break;
+        }
+    };
+    TabbedLayout.prototype.onTabKeyDown = function (e) {
+        _super.prototype.onTabKeyDown.call(this, e);
+        var focusableItems = this.focusController.findFocusableElements(this.eBody, '.ag-set-filter-list *, .ag-menu-list *');
+        var activeElement = document.activeElement;
+        if (this.eHeader.contains(activeElement)) {
+            if (focusableItems.length) {
+                focusableItems[e.shiftKey ? focusableItems.length - 1 : 0].focus();
+            }
+        }
+        else {
+            var focusedPosition = focusableItems.indexOf(activeElement);
+            var nextPosition = e.shiftKey ? focusedPosition - 1 : focusedPosition + 1;
+            if (nextPosition < 0 || nextPosition >= focusableItems.length) {
+                this.activeItem.eHeaderButton.focus();
+                return;
+            }
+            var nextItem = focusableItems[nextPosition];
+            if (nextItem) {
+                nextItem.focus();
+            }
+        }
+    };
+    TabbedLayout.getTemplate = function (cssClass) {
+        return "<div class=\"ag-tabs " + cssClass + "\">\n            <div ref=\"eHeader\" class=\"ag-tabs-header " + (cssClass ? cssClass + "-header" : '') + "\"></div>\n            <div ref=\"eBody\" class=\"ag-tabs-body " + (cssClass ? cssClass + "-body" : '') + "\"></div>\n        </div>";
+    };
     TabbedLayout.prototype.setAfterAttachedParams = function (params) {
         this.afterAttachedParams = params;
     };
     TabbedLayout.prototype.getMinDimensions = function () {
-        var eDummyContainer = this.eGui.cloneNode(true);
-        var eDummyBody = eDummyContainer.querySelector('[ref="tabBody"]');
+        var eDummyContainer = this.getGui().cloneNode(true);
+        var eDummyBody = eDummyContainer.querySelector('[ref="eBody"]');
         // position fixed, so it isn't restricted to the boundaries of the parent
         eDummyContainer.style.position = 'fixed';
         // we put the dummy into the body container, so it will inherit all the
         // css styles that the real cells are inheriting
-        this.eGui.appendChild(eDummyContainer);
+        this.getGui().appendChild(eDummyContainer);
         var minWidth = 0;
         var minHeight = 0;
         this.items.forEach(function (itemWrapper) {
@@ -23667,12 +24210,7 @@ var TabbedLayout = /** @class */ (function () {
                 minHeight = eDummyContainer.offsetHeight;
             }
         });
-        // finally check the parent tabs are no wider, as if they
-        // are, then these are the min width and not the child tabs
-        // if (minWidth<this.eGui.offsetWidth) {
-        //     minWidth = this.eGui.offsetWidth;
-        // }
-        this.eGui.removeChild(eDummyContainer);
+        this.getGui().removeChild(eDummyContainer);
         return { height: minHeight, width: minWidth };
     };
     TabbedLayout.prototype.showFirstItem = function () {
@@ -23682,6 +24220,7 @@ var TabbedLayout = /** @class */ (function () {
     };
     TabbedLayout.prototype.addItem = function (item) {
         var eHeaderButton = document.createElement('span');
+        eHeaderButton.tabIndex = -1;
         eHeaderButton.appendChild(item.title);
         _utils__WEBPACK_IMPORTED_MODULE_0__[/* _ */ "d"].addCssClass(eHeaderButton, 'ag-tab');
         this.eHeader.appendChild(eHeaderButton);
@@ -23712,6 +24251,7 @@ var TabbedLayout = /** @class */ (function () {
         _utils__WEBPACK_IMPORTED_MODULE_0__[/* _ */ "d"].clearElement(this.eBody);
         wrapper.tabbedItem.bodyPromise.then(function (body) {
             _this.eBody.appendChild(body);
+            body.focus();
         });
         if (this.activeItem) {
             _utils__WEBPACK_IMPORTED_MODULE_0__[/* _ */ "d"].removeCssClass(this.activeItem.eHeaderButton, 'ag-tab-selected');
@@ -23722,15 +24262,20 @@ var TabbedLayout = /** @class */ (function () {
             wrapper.tabbedItem.afterAttachedCallback(this.afterAttachedParams);
         }
     };
-    TabbedLayout.prototype.getGui = function () {
-        return this.eGui;
-    };
-    TabbedLayout.TEMPLATE = '<div>' +
-        '<div ref="tabHeader" class="ag-tab-header"></div>' +
-        '<div ref="tabBody" class="ag-tab-body"></div>' +
-        '</div>';
+    __decorate([
+        Object(_context_context__WEBPACK_IMPORTED_MODULE_2__[/* Autowired */ "a"])('focusController')
+    ], TabbedLayout.prototype, "focusController", void 0);
+    __decorate([
+        Object(_widgets_componentAnnotations__WEBPACK_IMPORTED_MODULE_1__[/* RefSelector */ "a"])('eHeader')
+    ], TabbedLayout.prototype, "eHeader", void 0);
+    __decorate([
+        Object(_widgets_componentAnnotations__WEBPACK_IMPORTED_MODULE_1__[/* RefSelector */ "a"])('eBody')
+    ], TabbedLayout.prototype, "eBody", void 0);
+    __decorate([
+        _context_context__WEBPACK_IMPORTED_MODULE_2__[/* PostConstruct */ "e"]
+    ], TabbedLayout.prototype, "init", null);
     return TabbedLayout;
-}());
+}(_widgets_managedTabComponent__WEBPACK_IMPORTED_MODULE_4__[/* ManagedTabComponent */ "a"]));
 
 
 
@@ -23740,6 +24285,9 @@ var TabbedLayout = /** @class */ (function () {
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
+
+// EXPORTS
+__webpack_require__.d(__webpack_exports__, "a", function() { return /* binding */ columnFactory_ColumnFactory; });
 
 // EXTERNAL MODULE: ../core/dist/es6/columnController/columnKeyCreator.js
 var columnController_columnKeyCreator = __webpack_require__("4adf");
@@ -23756,7 +24304,7 @@ var context = __webpack_require__("d196");
 // CONCATENATED MODULE: ../core/dist/es6/entities/defaultColumnTypes.js
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v22.1.1
+ * @version v23.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -23767,14 +24315,13 @@ var DefaultColumnTypes = {
     }
 };
 
-// EXTERNAL MODULE: ../core/dist/es6/utils/index.js + 4 modules
+// EXTERNAL MODULE: ../core/dist/es6/utils/index.js + 5 modules
 var utils = __webpack_require__("e3d3");
 
 // CONCATENATED MODULE: ../core/dist/es6/columnController/columnFactory.js
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return columnFactory_ColumnFactory; });
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v22.1.1
+ * @version v23.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -24107,7 +24654,7 @@ var columnFactory_ColumnFactory = /** @class */ (function () {
 /* harmony import */ var _constants__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("f2fb");
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v22.1.1
+ * @version v23.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -24160,7 +24707,7 @@ var ProvidedFilter = /** @class */ (function (_super) {
     };
     ProvidedFilter.prototype.init = function (params) {
         this.setParams(params);
-        this.resetUiToDefaults();
+        this.resetUiToDefaults(true);
         this.updateUiVisibility();
         this.setupOnBtApplyDebounce();
     };
@@ -24175,7 +24722,7 @@ var ProvidedFilter = /** @class */ (function (_super) {
             this.newRowsActionKeep = false;
         }
         else {
-            // the default for SSRM and IRM is 'keep', for CSRM and VRM teh default is 'clear'
+            // the default for SSRM and IRM is 'keep', for CSRM and VRM the default is 'clear'
             var rowModelType = this.rowModel.getType();
             var modelsForKeep = [_constants__WEBPACK_IMPORTED_MODULE_4__[/* Constants */ "a"].ROW_MODEL_TYPE_SERVER_SIDE, _constants__WEBPACK_IMPORTED_MODULE_4__[/* Constants */ "a"].ROW_MODEL_TYPE_INFINITE];
             this.newRowsActionKeep = modelsForKeep.indexOf(rowModelType) >= 0;
@@ -24183,7 +24730,7 @@ var ProvidedFilter = /** @class */ (function (_super) {
         _utils__WEBPACK_IMPORTED_MODULE_3__[/* _ */ "d"].setDisplayed(this.eApplyButton, this.applyActive);
         // we do not bind onBtApply here because onBtApply() has a parameter, and it is not the event. if we
         // just applied, the event would get passed as the second parameter, which we do not want.
-        this.addDestroyableEventListener(this.eApplyButton, "click", function () { return _this.onBtApply(); });
+        this.addDestroyableEventListener(this.eApplyButton, "click", function () { return _this.onBtApply(true); });
         var clearActive = params.clearButton === true;
         _utils__WEBPACK_IMPORTED_MODULE_3__[/* _ */ "d"].setDisplayed(this.eClearButton, clearActive);
         this.addDestroyableEventListener(this.eClearButton, "click", function () { return _this.onBtClear(); });
@@ -24235,13 +24782,14 @@ var ProvidedFilter = /** @class */ (function (_super) {
         var newModelDifferent = !this.areModelsEqual(this.appliedModel, oldAppliedModel);
         return newModelDifferent;
     };
-    ProvidedFilter.prototype.onBtApply = function (afterFloatingFilter) {
+    ProvidedFilter.prototype.onBtApply = function (afterFloatingFilter, afterDataChange) {
         if (afterFloatingFilter === void 0) { afterFloatingFilter = false; }
+        if (afterDataChange === void 0) { afterDataChange = false; }
         var newModelDifferent = this.applyModel();
         if (newModelDifferent) {
             // the floating filter uses 'afterFloatingFilter' info, so it doesn't refresh after filter changed if change
             // came from floating filter
-            this.providedFilterParams.filterChangedCallback({ afterFloatingFilter: afterFloatingFilter });
+            this.providedFilterParams.filterChangedCallback({ afterFloatingFilter: afterFloatingFilter, afterDataChange: afterDataChange });
         }
     };
     ProvidedFilter.prototype.onNewRowsLoaded = function () {
@@ -24260,7 +24808,7 @@ var ProvidedFilter = /** @class */ (function (_super) {
         this.providedFilterParams.filterModifiedCallback();
         // applyNow=true for floating filter changes, we always act on these immediately
         if (afterFloatingFilter) {
-            this.onBtApply(true);
+            this.onBtApply(afterFloatingFilter);
             // otherwise if no apply button, we apply (but debounce for time delay)
         }
         else if (!this.applyActive) {
@@ -24270,7 +24818,7 @@ var ProvidedFilter = /** @class */ (function (_super) {
     ProvidedFilter.prototype.createTemplate = function () {
         var body = this.createBodyTemplate();
         var translate = this.gridOptionsWrapper.getLocaleTextFunc();
-        return "<div>\n                    <div class='ag-filter-body-wrapper' ref=\"eFilterBodyWrapper\">" + body + "</div>\n                    <div class=\"ag-filter-apply-panel\" ref=\"eButtonsPanel\">\n                        <button type=\"button\" ref=\"eClearButton\">" + translate('clearFilter', 'Clear Filter') + "</button>\n                        <button type=\"button\" ref=\"eResetButton\">" + translate('resetFilter', 'Reset Filter') + "</button>\n                        <button type=\"button\" ref=\"eApplyButton\">" + translate('applyFilter', 'Apply Filter') + "</button>\n                    </div>\n                </div>";
+        return "<div>\n                    <div class='ag-filter-body-wrapper ag-" + this.getCssIdentifier() + "-body-wrapper' ref=\"eFilterBodyWrapper\">" + body + "</div>\n                    <div class=\"ag-filter-apply-panel\" ref=\"eButtonsPanel\">\n                        <button type=\"button\" ref=\"eClearButton\" class=\"ag-standard-button ag-filter-apply-panel-button\">" + translate('clearFilter', 'Clear Filter') + "</button>\n                        <button type=\"button\" ref=\"eResetButton\" class=\"ag-standard-button ag-filter-apply-panel-button\">" + translate('resetFilter', 'Reset Filter') + "</button>\n                        <button type=\"button\" ref=\"eApplyButton\" class=\"ag-standard-button ag-filter-apply-panel-button\">" + translate('applyFilter', 'Apply Filter') + "</button>\n                    </div>\n                </div>";
     };
     // static, as used by floating filter also
     ProvidedFilter.getDebounceMs = function (params, debounceDefault) {
@@ -24329,6 +24877,9 @@ var ProvidedFilter = /** @class */ (function (_super) {
 
 "use strict";
 
+// EXPORTS
+__webpack_require__.d(__webpack_exports__, "a", function() { return /* binding */ gridPanel_GridPanel; });
+
 // EXTERNAL MODULE: ../core/dist/es6/gridOptionsWrapper.js
 var gridOptionsWrapper = __webpack_require__("5c0c");
 
@@ -24341,13 +24892,13 @@ var events = __webpack_require__("1284");
 // EXTERNAL MODULE: ../core/dist/es6/constants.js
 var constants = __webpack_require__("f2fb");
 
-// EXTERNAL MODULE: ../core/dist/es6/utils/index.js + 4 modules
+// EXTERNAL MODULE: ../core/dist/es6/utils/index.js + 5 modules
 var utils = __webpack_require__("e3d3");
 
 // CONCATENATED MODULE: ../core/dist/es6/rendering/rowContainerComponent.js
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v22.1.1
+ * @version v23.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -24497,10 +25048,13 @@ var dragAndDropService = __webpack_require__("961a");
 // EXTERNAL MODULE: ../core/dist/es6/eventKeys.js
 var eventKeys = __webpack_require__("9bc1");
 
+// EXTERNAL MODULE: ../core/dist/es6/utils/general.js
+var general = __webpack_require__("cf91");
+
 // CONCATENATED MODULE: ../core/dist/es6/gridPanel/rowDragFeature.js
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v22.1.1
+ * @version v23.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -24510,12 +25064,21 @@ var rowDragFeature_decorate = (undefined && undefined.__decorate) || function (d
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
+var __spreadArrays = (undefined && undefined.__spreadArrays) || function () {
+    for (var s = 0, i = 0, il = arguments.length; i < il; i++) s += arguments[i].length;
+    for (var r = Array(s), k = 0, i = 0; i < il; i++)
+        for (var a = arguments[i], j = 0, jl = a.length; j < jl; j++, k++)
+            r[k] = a[j];
+    return r;
+};
 
 
 
 
 var rowDragFeature_RowDragFeature = /** @class */ (function () {
     function RowDragFeature(eContainer, gridPanel) {
+        this.isMultiRowDrag = false;
+        this.movingNodes = null;
         this.eContainer = eContainer;
         this.gridPanel = gridPanel;
     }
@@ -24533,12 +25096,24 @@ var rowDragFeature_RowDragFeature = /** @class */ (function () {
     RowDragFeature.prototype.getIconName = function () {
         return dragAndDropService["a" /* DragAndDropService */].ICON_MOVE;
     };
+    RowDragFeature.prototype.getRowNodes = function (dragginEvent) {
+        var enableMultiRowDragging = this.gridOptionsWrapper.isEnableMultiRowDragging();
+        var selectedNodes = this.selectionController.getSelectedNodes();
+        var currentNode = dragginEvent.dragItem.rowNode;
+        if (enableMultiRowDragging && selectedNodes.indexOf(currentNode) !== -1) {
+            this.isMultiRowDrag = true;
+            return __spreadArrays(selectedNodes);
+        }
+        return [currentNode];
+    };
     RowDragFeature.prototype.onDragEnter = function (draggingEvent) {
         // when entering, we fire the enter event, then in onEnterOrDragging,
         // we also fire the move event. so we get both events when entering.
         this.dispatchEvent(eventKeys["a" /* Events */].EVENT_ROW_DRAG_ENTER, draggingEvent);
         this.dragAndDropService.setGhostIcon(dragAndDropService["a" /* DragAndDropService */].ICON_MOVE);
-        draggingEvent.dragItem.rowNode.setDragging(true);
+        this.getRowNodes(draggingEvent).forEach(function (rowNode, idx) {
+            rowNode.setDragging(true);
+        });
         this.onEnterOrDragging(draggingEvent);
     };
     RowDragFeature.prototype.onDragging = function (draggingEvent) {
@@ -24548,7 +25123,7 @@ var rowDragFeature_RowDragFeature = /** @class */ (function () {
         // this event is fired for enter and move
         this.dispatchEvent(eventKeys["a" /* Events */].EVENT_ROW_DRAG_MOVE, draggingEvent);
         this.lastDraggingEvent = draggingEvent;
-        var pixel = this.normaliseForScroll(draggingEvent.y);
+        var pixel = this.mouseEventService.getNormalisedPosition(draggingEvent).y;
         var managedDrag = this.gridOptionsWrapper.isRowDragManaged();
         if (managedDrag) {
             this.doManagedDrag(draggingEvent, pixel);
@@ -24556,23 +25131,46 @@ var rowDragFeature_RowDragFeature = /** @class */ (function () {
         this.checkCenterForScrolling(pixel);
     };
     RowDragFeature.prototype.doManagedDrag = function (draggingEvent, pixel) {
-        var rowNode = draggingEvent.dragItem.rowNode;
-        var rowWasMoved = this.clientSideRowModel.ensureRowAtPixel(rowNode, pixel);
+        var _this = this;
+        var rowNodes = this.movingNodes = [draggingEvent.dragItem.rowNode];
+        if (this.isMultiRowDrag) {
+            rowNodes = this.movingNodes = __spreadArrays(this.selectionController.getSelectedNodes()).sort(function (a, b) { return _this.getRowIndexNumber(a) - _this.getRowIndexNumber(b); });
+        }
+        if (this.gridOptionsWrapper.isSuppressMoveWhenRowDragging()) {
+            this.clientSideRowModel.highlightRowAtPixel(rowNodes[0], pixel);
+        }
+        else {
+            this.moveRows(rowNodes, pixel);
+        }
+    };
+    RowDragFeature.prototype.getRowIndexNumber = function (rowNode) {
+        return parseInt(general["a" /* _ */].last(rowNode.getRowIndexString().split('-')), 10);
+    };
+    RowDragFeature.prototype.moveRowAndClearHighlight = function (draggingEvent) {
+        var lastHighlightedRowNode = this.clientSideRowModel.getLastHighlightedRowNode();
+        var isBelow = lastHighlightedRowNode && lastHighlightedRowNode.highlighted === 'below';
+        var pixel = this.mouseEventService.getNormalisedPosition(draggingEvent).y;
+        var rowNodes = this.movingNodes;
+        var increment = isBelow ? 1 : 0;
+        rowNodes.forEach(function (rowNode) {
+            if (rowNode.rowTop < pixel) {
+                increment -= 1;
+            }
+        });
+        this.moveRows(rowNodes, pixel, increment);
+        this.clearRowHighlight();
+    };
+    RowDragFeature.prototype.clearRowHighlight = function () {
+        this.clientSideRowModel.highlightRowAtPixel(null);
+    };
+    RowDragFeature.prototype.moveRows = function (rowNodes, pixel, increment) {
+        if (increment === void 0) { increment = 0; }
+        var rowWasMoved = this.clientSideRowModel.ensureRowsAtPixel(rowNodes, pixel, increment);
         if (rowWasMoved) {
-            this.focusedCellController.clearFocusedCell();
+            this.focusController.clearFocusedCell();
             if (this.rangeController) {
                 this.rangeController.removeAllCellRanges();
             }
-        }
-    };
-    RowDragFeature.prototype.normaliseForScroll = function (pixel) {
-        var gridPanelHasScrolls = this.gridOptionsWrapper.getDomLayout() === constants["a" /* Constants */].DOM_LAYOUT_NORMAL;
-        if (gridPanelHasScrolls) {
-            var pixelRange = this.gridPanel.getVScrollPosition();
-            return pixel + pixelRange.top;
-        }
-        else {
-            return pixel;
         }
     };
     RowDragFeature.prototype.checkCenterForScrolling = function (pixel) {
@@ -24626,7 +25224,7 @@ var rowDragFeature_RowDragFeature = /** @class */ (function () {
     //     public createEvent<T extends RowDragEvent>(type: string, clazz: {new(): T; }, draggingEvent: DraggingEvent) {
     // but it didn't work - i think it's because it only works with classes, and not interfaces, (the events are interfaces)
     RowDragFeature.prototype.dispatchEvent = function (type, draggingEvent) {
-        var yNormalised = this.normaliseForScroll(draggingEvent.y);
+        var yNormalised = this.mouseEventService.getNormalisedPosition(draggingEvent).y;
         var overIndex = -1;
         var overNode = null;
         var mouseIsPastLastRow = yNormalised > this.rowModel.getCurrentPageHeight();
@@ -24662,14 +25260,23 @@ var rowDragFeature_RowDragFeature = /** @class */ (function () {
     RowDragFeature.prototype.onDragLeave = function (draggingEvent) {
         this.dispatchEvent(eventKeys["a" /* Events */].EVENT_ROW_DRAG_LEAVE, draggingEvent);
         this.stopDragging(draggingEvent);
+        this.clearRowHighlight();
     };
     RowDragFeature.prototype.onDragStop = function (draggingEvent) {
         this.dispatchEvent(eventKeys["a" /* Events */].EVENT_ROW_DRAG_END, draggingEvent);
         this.stopDragging(draggingEvent);
+        if (this.gridOptionsWrapper.isRowDragManaged() &&
+            this.gridOptionsWrapper.isSuppressMoveWhenRowDragging()) {
+            this.moveRowAndClearHighlight(draggingEvent);
+        }
+        this.isMultiRowDrag = false;
+        this.movingNodes = null;
     };
     RowDragFeature.prototype.stopDragging = function (draggingEvent) {
         this.ensureIntervalCleared();
-        draggingEvent.dragItem.rowNode.setDragging(false);
+        this.getRowNodes(draggingEvent).forEach(function (rowNode, idx) {
+            rowNode.setDragging(false);
+        });
     };
     rowDragFeature_decorate([
         Object(context["a" /* Autowired */])('dragAndDropService')
@@ -24678,14 +25285,20 @@ var rowDragFeature_RowDragFeature = /** @class */ (function () {
         Object(context["a" /* Autowired */])('rowModel')
     ], RowDragFeature.prototype, "rowModel", void 0);
     rowDragFeature_decorate([
-        Object(context["a" /* Autowired */])('focusedCellController')
-    ], RowDragFeature.prototype, "focusedCellController", void 0);
+        Object(context["a" /* Autowired */])('focusController')
+    ], RowDragFeature.prototype, "focusController", void 0);
     rowDragFeature_decorate([
         Object(context["a" /* Autowired */])('gridOptionsWrapper')
     ], RowDragFeature.prototype, "gridOptionsWrapper", void 0);
     rowDragFeature_decorate([
+        Object(context["a" /* Autowired */])('selectionController')
+    ], RowDragFeature.prototype, "selectionController", void 0);
+    rowDragFeature_decorate([
         Object(context["d" /* Optional */])('rangeController')
     ], RowDragFeature.prototype, "rangeController", void 0);
+    rowDragFeature_decorate([
+        Object(context["a" /* Autowired */])('mouseEventService')
+    ], RowDragFeature.prototype, "mouseEventService", void 0);
     rowDragFeature_decorate([
         Object(context["a" /* Autowired */])('eventService')
     ], RowDragFeature.prototype, "eventService", void 0);
@@ -24709,10 +25322,9 @@ var moduleRegistry = __webpack_require__("7749");
 var moduleNames = __webpack_require__("203c");
 
 // CONCATENATED MODULE: ../core/dist/es6/gridPanel/gridPanel.js
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return gridPanel_GridPanel; });
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v22.1.1
+ * @version v23.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -24758,7 +25370,7 @@ var gridPanel_GridPanel = /** @class */ (function (_super) {
         var _this = _super.call(this, GRID_PANEL_NORMAL_TEMPLATE) || this;
         _this.scrollLeft = -1;
         _this.scrollTop = -1;
-        _this.resetLastHorizontalScrollElementDebounce = utils["d" /* _ */].debounce(_this.resetLastHorizontalScrollElement.bind(_this), 500);
+        _this.resetLastHorizontalScrollElementDebounced = utils["d" /* _ */].debounce(_this.resetLastHorizontalScrollElement.bind(_this), 500);
         return _this;
     }
     GridPanel.prototype.getVScrollPosition = function () {
@@ -24833,6 +25445,7 @@ var gridPanel_GridPanel = /** @class */ (function (_super) {
         this.columnAnimationService.registerGridComp(this);
         this.autoWidthCalculator.registerGridComp(this);
         this.paginationAutoPageSizeService.registerGridComp(this);
+        this.mouseEventService.registerGridComp(this);
         this.beans.registerGridComp(this);
         this.rowRenderer.registerGridComp(this);
         if (this.rangeController) {
@@ -24841,6 +25454,16 @@ var gridPanel_GridPanel = /** @class */ (function (_super) {
         [this.eCenterViewport, this.eBodyViewport].forEach(function (viewport) {
             var unsubscribeFromResize = _this.resizeObserverService.observeResize(viewport, _this.onCenterViewportResized.bind(_this));
             _this.addDestroyFunc(function () { return unsubscribeFromResize(); });
+        });
+        [this.eTop, this.eBodyViewport, this.eBottom].forEach(function (element) {
+            _this.addDestroyableEventListener(element, 'focusin', function () {
+                utils["d" /* _ */].addCssClass(element, 'ag-has-focus');
+            });
+            _this.addDestroyableEventListener(element, 'focusout', function (e) {
+                if (!element.contains(e.relatedTarget)) {
+                    utils["d" /* _ */].removeCssClass(element, 'ag-has-focus');
+                }
+            });
         });
     };
     GridPanel.prototype.onDomLayoutChanged = function () {
@@ -25100,6 +25723,7 @@ var gridPanel_GridPanel = /** @class */ (function (_super) {
         var rowComp = this.getRowForEvent(mouseEvent);
         var cellComp = this.mouseEventService.getRenderedCellForEvent(mouseEvent);
         if (eventName === "contextmenu") {
+            this.preventDefaultOnContextMenu(mouseEvent);
             this.handleContextMenuMouseEvent(mouseEvent, null, rowComp, cellComp);
         }
         else {
@@ -25110,7 +25734,6 @@ var gridPanel_GridPanel = /** @class */ (function (_super) {
                 rowComp.onMouseEvent(eventName, mouseEvent);
             }
         }
-        this.preventDefaultOnContextMenu(mouseEvent);
     };
     GridPanel.prototype.mockContextMenuForIPad = function () {
         var _this = this;
@@ -25206,18 +25829,11 @@ var gridPanel_GridPanel = /** @class */ (function (_super) {
         if (!this.clipboardService || this.gridOptionsWrapper.isEnableCellTextSelection()) {
             return;
         }
-        var focusedCell = this.focusedCellController.getFocusedCell();
         this.clipboardService.copyToClipboard();
         event.preventDefault();
-        // the copy operation results in loosing focus on the cell,
-        // because of the trickery the copy logic uses with a temporary
-        // widget. so we set it back again.
-        if (focusedCell) {
-            this.focusedCellController.setFocusedCell(focusedCell.rowIndex, focusedCell.column, focusedCell.rowPinned, true);
-        }
     };
     GridPanel.prototype.onCtrlAndV = function () {
-        if (moduleRegistry["a" /* ModuleRegistry */].isRegistered(moduleNames["a" /* ModuleNames */].ClipboardModule)) {
+        if (moduleRegistry["a" /* ModuleRegistry */].isRegistered(moduleNames["a" /* ModuleNames */].ClipboardModule) && !this.gridOptionsWrapper.isSuppressClipboardPaste()) {
             this.clipboardService.pasteFromClipboard();
         }
     };
@@ -25233,7 +25849,6 @@ var gridPanel_GridPanel = /** @class */ (function (_super) {
     // eg if grid needs to scroll up, it scrolls until row is on top,
     //    if grid needs to scroll down, it scrolls until row is on bottom,
     //    if row is already in view, grid does not scroll
-    // fixme - how does this work in the new way
     GridPanel.prototype.ensureIndexVisible = function (index, position) {
         // if for print or auto height, everything is always visible
         if (this.printLayout) {
@@ -25516,7 +26131,7 @@ var gridPanel_GridPanel = /** @class */ (function (_super) {
             floatingBottom: new rowContainerComponent_RowContainerComponent({ eContainer: this.eBottomContainer }),
             floatingBottomPinnedLeft: new rowContainerComponent_RowContainerComponent({ eContainer: this.eLeftBottom }),
             floatingBottomPinnedRight: new rowContainerComponent_RowContainerComponent({ eContainer: this.eRightBottom }),
-            floatingBottomFullWith: new rowContainerComponent_RowContainerComponent({
+            floatingBottomFullWidth: new rowContainerComponent_RowContainerComponent({
                 eContainer: this.eBottomFullWidthContainer,
                 hideWhenNoChildren: true
             }),
@@ -25776,7 +26391,7 @@ var gridPanel_GridPanel = /** @class */ (function (_super) {
             return;
         }
         this.doHorizontalScroll(scrollLeft);
-        this.resetLastHorizontalScrollElementDebounce();
+        this.resetLastHorizontalScrollElementDebounced();
     };
     GridPanel.prototype.resetLastHorizontalScrollElement = function () {
         this.lastHorizontalScrollElement = null;
@@ -25903,8 +26518,8 @@ var gridPanel_GridPanel = /** @class */ (function (_super) {
         Object(context["a" /* Autowired */])('mouseEventService')
     ], GridPanel.prototype, "mouseEventService", void 0);
     gridPanel_decorate([
-        Object(context["a" /* Autowired */])('focusedCellController')
-    ], GridPanel.prototype, "focusedCellController", void 0);
+        Object(context["a" /* Autowired */])('focusController')
+    ], GridPanel.prototype, "focusController", void 0);
     gridPanel_decorate([
         Object(context["a" /* Autowired */])('$scope')
     ], GridPanel.prototype, "$scope", void 0);
@@ -26031,7 +26646,7 @@ var gridPanel_GridPanel = /** @class */ (function (_super) {
 /* harmony import */ var _context_context__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("d196");
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v22.1.1
+ * @version v23.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -26137,7 +26752,7 @@ var ExpressionService = /** @class */ (function () {
 /* harmony import */ var _utils__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("e3d3");
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v22.1.1
+ * @version v23.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -26333,7 +26948,7 @@ var AgAngleSelect = /** @class */ (function (_super) {
         _super.prototype.destroy.call(this);
         this.dragService.removeDragSource(this.dragListener);
     };
-    AgAngleSelect.TEMPLATE = "<div class=\"ag-angle-select\">\n            <label ref=\"eLabel\"></label>\n            <div class=\"ag-wrapper\">\n                <div ref=\"eAngleSelectField\" class=\"ag-angle-select-field\">\n                    <div ref=\"eParentCircle\" class=\"ag-parent-circle\">\n                        <div ref=\"eChildCircle\" class=\"ag-child-circle\"></div>\n                    </div>\n                </div>\n                <ag-input-number-field ref=\"eAngleValue\"></ag-input-number-field>\n            </div>\n        </div>";
+    AgAngleSelect.TEMPLATE = "<div class=\"ag-angle-select\">\n            <label ref=\"eLabel\"></label>\n            <div class=\"ag-wrapper ag-angle-select-wrapper\">\n                <div ref=\"eAngleSelectField\" class=\"ag-angle-select-field\">\n                    <div ref=\"eParentCircle\" class=\"ag-angle-select-parent-circle\">\n                        <div ref=\"eChildCircle\" class=\"ag-angle-select-child-circle\"></div>\n                    </div>\n                </div>\n                <ag-input-number-field ref=\"eAngleValue\"></ag-input-number-field>\n            </div>\n        </div>";
     __decorate([
         Object(_componentAnnotations__WEBPACK_IMPORTED_MODULE_1__[/* RefSelector */ "a"])('eLabel')
     ], AgAngleSelect.prototype, "eLabel", void 0);
@@ -26356,6 +26971,125 @@ var AgAngleSelect = /** @class */ (function (_super) {
 
 /***/ }),
 
+/***/ "c238":
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return AgPickerField; });
+/* harmony import */ var _agAbstractField__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("a06f");
+/* harmony import */ var _context_context__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("d196");
+/* harmony import */ var _constants__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("f2fb");
+/* harmony import */ var _componentAnnotations__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("f737");
+/* harmony import */ var _utils__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("e3d3");
+/**
+ * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
+ * @version v23.0.0
+ * @link http://www.ag-grid.com/
+ * @license MIT
+ */
+var __extends = (undefined && undefined.__extends) || (function () {
+    var extendStatics = function (d, b) {
+        extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+        return extendStatics(d, b);
+    };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
+var __decorate = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+
+
+
+
+
+var AgPickerField = /** @class */ (function (_super) {
+    __extends(AgPickerField, _super);
+    function AgPickerField() {
+        var _this = _super !== null && _super.apply(this, arguments) || this;
+        _this.TEMPLATE = "<div class=\"ag-picker-field\" role=\"presentation\">\n            <label ref=\"eLabel\"></label>\n            <div ref=\"eWrapper\" class=\"ag-wrapper ag-picker-field-wrapper\" tabIndex=\"-1\">\n                <%displayField% ref=\"eDisplayField\" class=\"ag-picker-field-display\"></%displayField%>\n                <div ref=\"eIcon\" class=\"ag-picker-field-icon\"></div>\n            </div>\n        </div>";
+        _this.isDestroyingPicker = false;
+        _this.skipClick = false;
+        return _this;
+    }
+    AgPickerField.prototype.postConstruct = function () {
+        var _this = this;
+        _super.prototype.postConstruct.call(this);
+        var clickHandler = function () {
+            if (_this.skipClick) {
+                _this.skipClick = false;
+                return;
+            }
+            if (_this.isDisabled()) {
+                return;
+            }
+            _this.pickerComponent = _this.showPicker();
+        };
+        var eGui = this.getGui();
+        this.addDestroyableEventListener(eGui, 'mousedown', function (e) {
+            if (!_this.skipClick &&
+                _this.pickerComponent &&
+                _this.pickerComponent.isAlive() &&
+                _utils__WEBPACK_IMPORTED_MODULE_4__[/* _ */ "d"].isVisible(_this.pickerComponent.getGui()) &&
+                eGui.contains(e.target)) {
+                _this.skipClick = true;
+            }
+        });
+        this.addDestroyableEventListener(eGui, 'keydown', function (e) {
+            switch (e.keyCode) {
+                case _constants__WEBPACK_IMPORTED_MODULE_2__[/* Constants */ "a"].KEY_UP:
+                case _constants__WEBPACK_IMPORTED_MODULE_2__[/* Constants */ "a"].KEY_DOWN:
+                case _constants__WEBPACK_IMPORTED_MODULE_2__[/* Constants */ "a"].KEY_ENTER:
+                case _constants__WEBPACK_IMPORTED_MODULE_2__[/* Constants */ "a"].KEY_SPACE:
+                    clickHandler();
+                case _constants__WEBPACK_IMPORTED_MODULE_2__[/* Constants */ "a"].KEY_ESCAPE:
+                    e.preventDefault();
+                    break;
+            }
+        });
+        this.addDestroyableEventListener(this.eWrapper, 'click', clickHandler);
+        this.addDestroyableEventListener(this.eLabel, 'click', clickHandler);
+        if (this.pickerIcon) {
+            this.eIcon.appendChild(_utils__WEBPACK_IMPORTED_MODULE_4__[/* _ */ "d"].createIconNoSpan(this.pickerIcon, this.gridOptionsWrapper, null));
+        }
+    };
+    AgPickerField.prototype.setInputWidth = function (width) {
+        _utils__WEBPACK_IMPORTED_MODULE_4__[/* _ */ "d"].setElementWidth(this.eWrapper, width);
+        return this;
+    };
+    AgPickerField.prototype.getFocusableElement = function () {
+        return this.eWrapper;
+    };
+    __decorate([
+        Object(_context_context__WEBPACK_IMPORTED_MODULE_1__[/* Autowired */ "a"])('gridOptionsWrapper')
+    ], AgPickerField.prototype, "gridOptionsWrapper", void 0);
+    __decorate([
+        Object(_componentAnnotations__WEBPACK_IMPORTED_MODULE_3__[/* RefSelector */ "a"])('eLabel')
+    ], AgPickerField.prototype, "eLabel", void 0);
+    __decorate([
+        Object(_componentAnnotations__WEBPACK_IMPORTED_MODULE_3__[/* RefSelector */ "a"])('eWrapper')
+    ], AgPickerField.prototype, "eWrapper", void 0);
+    __decorate([
+        Object(_componentAnnotations__WEBPACK_IMPORTED_MODULE_3__[/* RefSelector */ "a"])('eDisplayField')
+    ], AgPickerField.prototype, "eDisplayField", void 0);
+    __decorate([
+        Object(_componentAnnotations__WEBPACK_IMPORTED_MODULE_3__[/* RefSelector */ "a"])('eIcon')
+    ], AgPickerField.prototype, "eIcon", void 0);
+    return AgPickerField;
+}(_agAbstractField__WEBPACK_IMPORTED_MODULE_0__[/* AgAbstractField */ "a"]));
+
+
+
+/***/ }),
+
 /***/ "c872":
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
@@ -26364,7 +27098,7 @@ var AgAngleSelect = /** @class */ (function (_super) {
 /* harmony import */ var _simpleFilter__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("937d");
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v22.1.1
+ * @version v23.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -26484,9 +27218,7 @@ var ScalerFilter = /** @class */ (function (_super) {
             if (!this.scalarFilterParams.inRangeInclusive) {
                 return compareResult > 0 && compareToResult < 0;
             }
-            else {
-                return compareResult >= 0 && compareToResult <= 0;
-            }
+            return compareResult >= 0 && compareToResult <= 0;
         }
         throw new Error('Unexpected type of filter: ' + filterType);
     };
@@ -26539,7 +27271,7 @@ module.exports = g;
 /* harmony import */ var _utils__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("e3d3");
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v22.1.1
+ * @version v23.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -26821,7 +27553,7 @@ var RowNodeCache = /** @class */ (function (_super) {
 /* harmony import */ var _context_context__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("d196");
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v22.1.1
+ * @version v23.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -26888,7 +27620,7 @@ var HoverFeature = /** @class */ (function (_super) {
 /* harmony import */ var _context_context__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("d196");
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v22.1.1
+ * @version v23.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -26958,7 +27690,7 @@ var ValueCache = /** @class */ (function () {
 /* harmony import */ var _utils__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("e3d3");
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v22.1.1
+ * @version v23.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -26985,17 +27717,18 @@ var __decorate = (undefined && undefined.__decorate) || function (decorators, ta
 
 
 
+var defaultItemAlign = 'center';
+var defaultDirection = 'vertical';
 var AgGroupComponent = /** @class */ (function (_super) {
     __extends(AgGroupComponent, _super);
     function AgGroupComponent(params) {
-        var _this = _super.call(this, AgGroupComponent.TEMPLATE) || this;
+        if (params === void 0) { params = {}; }
+        var _this = _super.call(this, AgGroupComponent.getTemplate(params)) || this;
         _this.suppressEnabledCheckbox = true;
         _this.suppressOpenCloseIcons = false;
-        if (!params) {
-            params = {};
-        }
         var title = params.title, enabled = params.enabled, items = params.items, suppressEnabledCheckbox = params.suppressEnabledCheckbox, suppressOpenCloseIcons = params.suppressOpenCloseIcons;
         _this.title = title;
+        _this.cssIdentifier = params.cssIdentifier || 'default';
         _this.enabled = enabled != null ? enabled : true;
         _this.items = items || [];
         _this.alignItems = params.alignItems || 'center';
@@ -27007,6 +27740,11 @@ var AgGroupComponent = /** @class */ (function (_super) {
         }
         return _this;
     }
+    AgGroupComponent.getTemplate = function (params) {
+        var cssIdentifier = params.cssIdentifier || 'default';
+        var direction = params.direction || 'vertical';
+        return "<div class=\"ag-group ag-" + cssIdentifier + "-group\">\n            <div class=\"ag-group-title-bar ag-" + cssIdentifier + "-group-title-bar ag-unselectable\" ref=\"eTitleBar\">\n                <span class=\"ag-group-title-bar-icon ag-" + cssIdentifier + "-group-title-bar-icon\" ref=\"eGroupOpenedIcon\"></span>\n                <span class=\"ag-group-title-bar-icon ag-" + cssIdentifier + "-group-title-bar-icon\" ref=\"eGroupClosedIcon\"></span>\n                <span ref=\"eTitle\" class=\"ag-group-title ag-" + cssIdentifier + "-group-title\"></span>\n            </div>\n            <div ref=\"eToolbar\" class=\"ag-group-toolbar ag-" + cssIdentifier + "-group-toolbar\">\n                <ag-checkbox ref=\"cbGroupEnabled\"></ag-checkbox>\n            </div>\n            <div ref=\"eContainer\" class=\"ag-group-container ag-group-container-" + direction + " ag-" + cssIdentifier + "-group-container\"></div>\n        </div>";
+    };
     AgGroupComponent.prototype.postConstruct = function () {
         if (this.items.length) {
             var initialItems = this.items;
@@ -27025,18 +27763,19 @@ var AgGroupComponent = /** @class */ (function (_super) {
         this.hideEnabledCheckbox(this.suppressEnabledCheckbox);
         this.hideOpenCloseIcons(this.suppressOpenCloseIcons);
         this.setupExpandContract();
+        this.refreshChildDisplay();
     };
     AgGroupComponent.prototype.setupExpandContract = function () {
         var _this = this;
         this.eGroupClosedIcon.appendChild(_utils__WEBPACK_IMPORTED_MODULE_3__[/* _ */ "d"].createIcon('columnSelectClosed', this.gridOptionsWrapper, null));
         this.eGroupOpenedIcon.appendChild(_utils__WEBPACK_IMPORTED_MODULE_3__[/* _ */ "d"].createIcon('columnSelectOpen', this.gridOptionsWrapper, null));
-        this.setOpenClosedIcons();
-        this.addDestroyableEventListener(this.groupTitle, 'click', function () { return _this.toggleGroupExpand(); });
+        this.addDestroyableEventListener(this.eTitleBar, 'click', function () { return _this.toggleGroupExpand(); });
     };
-    AgGroupComponent.prototype.setOpenClosedIcons = function () {
-        var folderOpen = this.expanded;
-        _utils__WEBPACK_IMPORTED_MODULE_3__[/* _ */ "d"].setDisplayed(this.eGroupClosedIcon, !folderOpen);
-        _utils__WEBPACK_IMPORTED_MODULE_3__[/* _ */ "d"].setDisplayed(this.eGroupOpenedIcon, folderOpen);
+    AgGroupComponent.prototype.refreshChildDisplay = function () {
+        var showIcon = !this.suppressOpenCloseIcons;
+        _utils__WEBPACK_IMPORTED_MODULE_3__[/* _ */ "d"].setDisplayed(this.eGroupClosedIcon, showIcon && !this.expanded);
+        _utils__WEBPACK_IMPORTED_MODULE_3__[/* _ */ "d"].setDisplayed(this.eGroupOpenedIcon, showIcon && this.expanded);
+        _utils__WEBPACK_IMPORTED_MODULE_3__[/* _ */ "d"].setDisplayed(this.eToolbar, this.expanded && !this.suppressEnabledCheckbox);
     };
     AgGroupComponent.prototype.isExpanded = function () {
         return this.expanded;
@@ -27044,20 +27783,18 @@ var AgGroupComponent = /** @class */ (function (_super) {
     AgGroupComponent.prototype.setAlignItems = function (alignment) {
         var eGui = this.getGui();
         if (this.alignItems !== alignment) {
-            _utils__WEBPACK_IMPORTED_MODULE_3__[/* _ */ "d"].removeCssClass(eGui, "ag-alignment-" + this.alignItems);
+            _utils__WEBPACK_IMPORTED_MODULE_3__[/* _ */ "d"].removeCssClass(eGui, "ag-group-item-alignment-" + this.alignItems);
         }
         this.alignItems = alignment;
-        var newCls = "ag-alignment-" + this.alignItems;
-        if (alignment !== 'center' && !_utils__WEBPACK_IMPORTED_MODULE_3__[/* _ */ "d"].containsClass(eGui, newCls)) {
-            _utils__WEBPACK_IMPORTED_MODULE_3__[/* _ */ "d"].addCssClass(eGui, newCls);
-        }
+        var newCls = "ag-group-item-alignment-" + this.alignItems;
+        _utils__WEBPACK_IMPORTED_MODULE_3__[/* _ */ "d"].addCssClass(eGui, newCls);
         return this;
     };
     AgGroupComponent.prototype.toggleGroupExpand = function (expanded) {
-        var eGui = this.getGui();
         if (this.suppressOpenCloseIcons) {
             this.expanded = true;
-            _utils__WEBPACK_IMPORTED_MODULE_3__[/* _ */ "d"].removeCssClass(eGui, 'ag-collapsed');
+            this.refreshChildDisplay();
+            _utils__WEBPACK_IMPORTED_MODULE_3__[/* _ */ "d"].setDisplayed(this.eContainer, true);
             return this;
         }
         expanded = expanded != null ? expanded : !this.expanded;
@@ -27065,8 +27802,8 @@ var AgGroupComponent = /** @class */ (function (_super) {
             return this;
         }
         this.expanded = expanded;
-        this.setOpenClosedIcons();
-        _utils__WEBPACK_IMPORTED_MODULE_3__[/* _ */ "d"].addOrRemoveCssClass(eGui, 'ag-collapsed', !expanded);
+        this.refreshChildDisplay();
+        _utils__WEBPACK_IMPORTED_MODULE_3__[/* _ */ "d"].setDisplayed(this.eContainer, expanded);
         if (this.expanded) {
             var event_1 = {
                 type: 'expanded',
@@ -27086,9 +27823,10 @@ var AgGroupComponent = /** @class */ (function (_super) {
         items.forEach(function (item) { return _this.addItem(item); });
     };
     AgGroupComponent.prototype.addItem = function (item) {
-        var container = this.groupContainer;
+        var container = this.eContainer;
         var el = item instanceof _component__WEBPACK_IMPORTED_MODULE_0__[/* Component */ "a"] ? item.getGui() : item;
         _utils__WEBPACK_IMPORTED_MODULE_3__[/* _ */ "d"].addCssClass(el, 'ag-group-item');
+        _utils__WEBPACK_IMPORTED_MODULE_3__[/* _ */ "d"].addCssClass(el, "ag-" + this.cssIdentifier + "-group-item");
         container.appendChild(el);
         this.items.push(el);
     };
@@ -27097,12 +27835,15 @@ var AgGroupComponent = /** @class */ (function (_super) {
         _utils__WEBPACK_IMPORTED_MODULE_3__[/* _ */ "d"].addOrRemoveCssClass(itemToHide, 'ag-hidden', hide);
     };
     AgGroupComponent.prototype.setTitle = function (title) {
-        this.lbGroupTitle.innerText = title;
+        this.eTitle.innerText = title;
         return this;
+    };
+    AgGroupComponent.prototype.addCssClassToTitleBar = function (cssClass) {
+        _utils__WEBPACK_IMPORTED_MODULE_3__[/* _ */ "d"].addCssClass(this.eTitleBar, cssClass);
     };
     AgGroupComponent.prototype.setEnabled = function (enabled, skipToggle) {
         this.enabled = enabled;
-        _utils__WEBPACK_IMPORTED_MODULE_3__[/* _ */ "d"].addOrRemoveCssClass(this.getGui(), 'ag-disabled', !enabled);
+        this.refreshDisabledStyles();
         this.toggleGroupExpand(enabled);
         if (!skipToggle) {
             this.cbGroupEnabled.setValue(enabled);
@@ -27121,24 +27862,29 @@ var AgGroupComponent = /** @class */ (function (_super) {
         return this;
     };
     AgGroupComponent.prototype.hideEnabledCheckbox = function (hide) {
-        _utils__WEBPACK_IMPORTED_MODULE_3__[/* _ */ "d"].addOrRemoveCssClass(this.eToolbar, 'ag-hidden', hide);
+        this.suppressEnabledCheckbox = hide;
+        this.refreshChildDisplay();
+        this.refreshDisabledStyles();
         return this;
     };
     AgGroupComponent.prototype.hideOpenCloseIcons = function (hide) {
         this.suppressOpenCloseIcons = hide;
-        _utils__WEBPACK_IMPORTED_MODULE_3__[/* _ */ "d"].addOrRemoveCssClass(this.getGui(), 'ag-collapsible', !hide);
         if (hide) {
             this.toggleGroupExpand(true);
         }
         return this;
     };
-    AgGroupComponent.TEMPLATE = "<div class=\"ag-group-component\">\n            <div class=\"ag-group-component-title-bar\" ref=\"groupTitle\">\n                 <span class=\"ag-column-group-icons\">\n                    <span class=\"ag-column-group-opened-icon\" ref=\"eGroupOpenedIcon\"></span>\n                    <span class=\"ag-column-group-closed-icon\" ref=\"eGroupClosedIcon\"></span>\n                </span>\n                <span ref=\"lbGroupTitle\" class=\"ag-group-component-title\"></span>\n            </div>\n            <div ref=\"eToolbar\" class=\"ag-group-component-toolbar\">\n                <ag-checkbox ref=\"cbGroupEnabled\"></ag-checkbox>\n            </div>\n            <div ref=\"eContainer\" class=\"ag-group-component-container\"></div>\n        </div>";
+    AgGroupComponent.prototype.refreshDisabledStyles = function () {
+        _utils__WEBPACK_IMPORTED_MODULE_3__[/* _ */ "d"].addOrRemoveCssClass(this.getGui(), 'ag-disabled', !this.enabled);
+        _utils__WEBPACK_IMPORTED_MODULE_3__[/* _ */ "d"].addOrRemoveCssClass(this.eTitleBar, 'ag-disabled-group-title-bar', this.suppressEnabledCheckbox && !this.enabled);
+        _utils__WEBPACK_IMPORTED_MODULE_3__[/* _ */ "d"].addOrRemoveCssClass(this.eContainer, 'ag-disabled-group-container', !this.enabled);
+    };
     __decorate([
         Object(_context_context__WEBPACK_IMPORTED_MODULE_2__[/* Autowired */ "a"])('gridOptionsWrapper')
     ], AgGroupComponent.prototype, "gridOptionsWrapper", void 0);
     __decorate([
-        Object(_componentAnnotations__WEBPACK_IMPORTED_MODULE_1__[/* RefSelector */ "a"])('groupTitle')
-    ], AgGroupComponent.prototype, "groupTitle", void 0);
+        Object(_componentAnnotations__WEBPACK_IMPORTED_MODULE_1__[/* RefSelector */ "a"])('eTitleBar')
+    ], AgGroupComponent.prototype, "eTitleBar", void 0);
     __decorate([
         Object(_componentAnnotations__WEBPACK_IMPORTED_MODULE_1__[/* RefSelector */ "a"])('eGroupOpenedIcon')
     ], AgGroupComponent.prototype, "eGroupOpenedIcon", void 0);
@@ -27152,11 +27898,11 @@ var AgGroupComponent = /** @class */ (function (_super) {
         Object(_componentAnnotations__WEBPACK_IMPORTED_MODULE_1__[/* RefSelector */ "a"])('cbGroupEnabled')
     ], AgGroupComponent.prototype, "cbGroupEnabled", void 0);
     __decorate([
-        Object(_componentAnnotations__WEBPACK_IMPORTED_MODULE_1__[/* RefSelector */ "a"])("lbGroupTitle")
-    ], AgGroupComponent.prototype, "lbGroupTitle", void 0);
+        Object(_componentAnnotations__WEBPACK_IMPORTED_MODULE_1__[/* RefSelector */ "a"])('eTitle')
+    ], AgGroupComponent.prototype, "eTitle", void 0);
     __decorate([
-        Object(_componentAnnotations__WEBPACK_IMPORTED_MODULE_1__[/* RefSelector */ "a"])("eContainer")
-    ], AgGroupComponent.prototype, "groupContainer", void 0);
+        Object(_componentAnnotations__WEBPACK_IMPORTED_MODULE_1__[/* RefSelector */ "a"])('eContainer')
+    ], AgGroupComponent.prototype, "eContainer", void 0);
     __decorate([
         _context_context__WEBPACK_IMPORTED_MODULE_2__[/* PostConstruct */ "e"]
     ], AgGroupComponent.prototype, "postConstruct", null);
@@ -27177,7 +27923,7 @@ var AgGroupComponent = /** @class */ (function (_super) {
 /* harmony import */ var _utils__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("e3d3");
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v22.1.1
+ * @version v23.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -27289,6 +28035,2257 @@ var RowNodeBlockLoader = /** @class */ (function () {
 
 /***/ }),
 
+/***/ "cf91":
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* unused harmony export Utils */
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return _; });
+/* harmony import */ var _constants__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("f2fb");
+/**
+ * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
+ * @version v23.0.0
+ * @link http://www.ag-grid.com/
+ * @license MIT
+ */
+
+var FUNCTION_STRIP_COMMENTS = /((\/\/.*$)|(\/\*[\s\S]*?\*\/))/mg;
+var FUNCTION_ARGUMENT_NAMES = /([^\s,]+)/g;
+var AG_GRID_STOP_PROPAGATION = '__ag_Grid_Stop_Propagation';
+/**
+ * HTML Escapes.
+ */
+var HTML_ESCAPES = {
+    '&': '&amp;',
+    '<': '&lt;',
+    '>': '&gt;',
+    '"': '&quot;',
+    "'": '&#39;'
+};
+var reUnescapedHtml = /[&<>"']/g;
+var Utils = /** @class */ (function () {
+    function Utils() {
+    }
+    /**
+     * If the key was passed before, then doesn't execute the func
+     * @param {Function} func
+     * @param {string} key
+     */
+    Utils.doOnce = function (func, key) {
+        if (this.doOnceFlags[key]) {
+            return;
+        }
+        func();
+        this.doOnceFlags[key] = true;
+    };
+    Utils.getMaxSafeInteger = function () {
+        // eslint-disable-next-line
+        if (!Number.MAX_SAFE_INTEGER) {
+            return 9007199254740991;
+        }
+        // eslint-disable-next-line
+        return Number.MAX_SAFE_INTEGER;
+    };
+    /**
+     * Checks if event was issued by a left click
+     * from https://stackoverflow.com/questions/3944122/detect-left-mouse-button-press
+     * @param {MouseEvent} mouseEvent
+     * @returns {boolean}
+     */
+    Utils.isLeftClick = function (mouseEvent) {
+        if ("buttons" in mouseEvent) {
+            return mouseEvent.buttons == 1;
+        }
+        var button = mouseEvent.which || mouseEvent.button;
+        return button == 1;
+    };
+    /**
+     * `True` if the event is close to the original event by X pixels either vertically or horizontally.
+     * we only start dragging after X pixels so this allows us to know if we should start dragging yet.
+     * @param {MouseEvent | TouchEvent} e1
+     * @param {MouseEvent | TouchEvent} e2
+     * @param {number} pixelCount
+     * @returns {boolean}
+     */
+    Utils.areEventsNear = function (e1, e2, pixelCount) {
+        // by default, we wait 4 pixels before starting the drag
+        if (pixelCount === 0) {
+            return false;
+        }
+        var diffX = Math.abs(e1.clientX - e2.clientX);
+        var diffY = Math.abs(e1.clientY - e2.clientY);
+        return Math.max(diffX, diffY) <= pixelCount;
+    };
+    Utils.jsonEquals = function (val1, val2) {
+        var val1Json = val1 ? JSON.stringify(val1) : null;
+        var val2Json = val2 ? JSON.stringify(val2) : null;
+        return val1Json === val2Json;
+    };
+    Utils.shallowCompare = function (arr1, arr2) {
+        // if both are missing, then they are the same
+        if (this.missing(arr1) && this.missing(arr2)) {
+            return true;
+        }
+        // if one is present, but other is missing, then they are different
+        if (this.missing(arr1) || this.missing(arr2)) {
+            return false;
+        }
+        if (arr1.length !== arr2.length) {
+            return false;
+        }
+        for (var i = 0; i < arr1.length; i++) {
+            if (arr1[i] !== arr2[i]) {
+                return false;
+            }
+        }
+        return true;
+    };
+    Utils.getNameOfClass = function (theClass) {
+        var funcNameRegex = /function (.{1,})\(/;
+        var funcAsString = theClass.toString();
+        var results = funcNameRegex.exec(funcAsString);
+        return results && results.length > 1 ? results[1] : "";
+    };
+    Utils.areEqual = function (a, b) {
+        return a.length === b.length && a.every(function (value, index) { return b[index] === value; });
+    };
+    Utils.keys = function (map) {
+        var keys = [];
+        map.forEach(function (_, key) { return keys.push(key); });
+        return keys;
+    };
+    Utils.getValueUsingField = function (data, field, fieldContainsDots) {
+        if (!field || !data) {
+            return;
+        }
+        // if no '.', then it's not a deep value
+        if (!fieldContainsDots) {
+            return data[field];
+        }
+        // otherwise it is a deep value, so need to dig for it
+        var fields = field.split('.');
+        var currentObject = data;
+        for (var i = 0; i < fields.length; i++) {
+            currentObject = currentObject[fields[i]];
+            if (this.missing(currentObject)) {
+                return null;
+            }
+        }
+        return currentObject;
+    };
+    Utils.getElementSize = function (el) {
+        var _a = window.getComputedStyle(el), height = _a.height, width = _a.width, paddingTop = _a.paddingTop, paddingRight = _a.paddingRight, paddingBottom = _a.paddingBottom, paddingLeft = _a.paddingLeft, marginTop = _a.marginTop, marginRight = _a.marginRight, marginBottom = _a.marginBottom, marginLeft = _a.marginLeft, boxSizing = _a.boxSizing;
+        return {
+            height: parseFloat(height),
+            width: parseFloat(width),
+            paddingTop: parseFloat(paddingTop),
+            paddingRight: parseFloat(paddingRight),
+            paddingBottom: parseFloat(paddingBottom),
+            paddingLeft: parseFloat(paddingLeft),
+            marginTop: parseFloat(marginTop),
+            marginRight: parseFloat(marginRight),
+            marginBottom: parseFloat(marginBottom),
+            marginLeft: parseFloat(marginLeft),
+            boxSizing: boxSizing
+        };
+    };
+    Utils.getInnerHeight = function (el) {
+        var size = this.getElementSize(el);
+        if (size.boxSizing === 'border-box') {
+            return size.height - size.paddingTop - size.paddingBottom;
+        }
+        return size.height;
+    };
+    Utils.getInnerWidth = function (el) {
+        var size = this.getElementSize(el);
+        if (size.boxSizing === 'border-box') {
+            return size.width - size.paddingLeft - size.paddingRight;
+        }
+        return size.width;
+    };
+    Utils.getAbsoluteHeight = function (el) {
+        var size = this.getElementSize(el);
+        var marginRight = size.marginBottom + size.marginTop;
+        return Math.ceil(el.offsetHeight + marginRight);
+    };
+    Utils.getAbsoluteWidth = function (el) {
+        var size = this.getElementSize(el);
+        var marginWidth = size.marginLeft + size.marginRight;
+        return Math.ceil(el.offsetWidth + marginWidth);
+    };
+    Utils.getScrollLeft = function (element, rtl) {
+        var scrollLeft = element.scrollLeft;
+        if (rtl) {
+            // Absolute value - for FF that reports RTL scrolls in negative numbers
+            scrollLeft = Math.abs(scrollLeft);
+            // Get Chrome to return the same value as well
+            if (this.isBrowserChrome()) {
+                scrollLeft = element.scrollWidth - element.clientWidth - scrollLeft;
+            }
+        }
+        return scrollLeft;
+    };
+    Utils.cleanNumber = function (value) {
+        if (typeof value === 'string') {
+            value = parseInt(value, 10);
+        }
+        if (typeof value === 'number') {
+            value = Math.floor(value);
+        }
+        else {
+            value = null;
+        }
+        return value;
+    };
+    Utils.compose = function () {
+        var fns = [];
+        for (var _i = 0; _i < arguments.length; _i++) {
+            fns[_i] = arguments[_i];
+        }
+        return function (arg) { return fns.reduce(function (composed, f) { return f(composed); }, arg); };
+    };
+    Utils.decToHex = function (number, bytes) {
+        var hex = '';
+        for (var i = 0; i < bytes; i++) {
+            hex += String.fromCharCode(number & 0xff);
+            number >>>= 8;
+        }
+        return hex;
+    };
+    /**
+     * It encodes any string in UTF-8 format
+     * taken from https://github.com/mathiasbynens/utf8.js
+     * @param {string} s
+     * @returns {string}
+     */
+    Utils.utf8_encode = function (s) {
+        var stringFromCharCode = String.fromCharCode;
+        function ucs2decode(string) {
+            var output = [];
+            var counter = 0;
+            var length = string.length;
+            var value;
+            var extra;
+            while (counter < length) {
+                value = string.charCodeAt(counter++);
+                if (value >= 0xD800 && value <= 0xDBFF && counter < length) {
+                    // high surrogate, and there is a next character
+                    extra = string.charCodeAt(counter++);
+                    if ((extra & 0xFC00) == 0xDC00) { // low surrogate
+                        output.push(((value & 0x3FF) << 10) + (extra & 0x3FF) + 0x10000);
+                    }
+                    else {
+                        // unmatched surrogate; only append this code unit, in case the next
+                        // code unit is the high surrogate of a surrogate pair
+                        output.push(value);
+                        counter--;
+                    }
+                }
+                else {
+                    output.push(value);
+                }
+            }
+            return output;
+        }
+        function checkScalarValue(codePoint) {
+            if (codePoint >= 0xD800 && codePoint <= 0xDFFF) {
+                throw Error('Lone surrogate U+' + codePoint.toString(16).toUpperCase() +
+                    ' is not a scalar value');
+            }
+        }
+        function createByte(codePoint, shift) {
+            return stringFromCharCode(((codePoint >> shift) & 0x3F) | 0x80);
+        }
+        function encodeCodePoint(codePoint) {
+            if ((codePoint & 0xFFFFFF80) == 0) { // 1-byte sequence
+                return stringFromCharCode(codePoint);
+            }
+            var symbol = '';
+            if ((codePoint & 0xFFFFF800) == 0) { // 2-byte sequence
+                symbol = stringFromCharCode(((codePoint >> 6) & 0x1F) | 0xC0);
+            }
+            else if ((codePoint & 0xFFFF0000) == 0) { // 3-byte sequence
+                checkScalarValue(codePoint);
+                symbol = stringFromCharCode(((codePoint >> 12) & 0x0F) | 0xE0);
+                symbol += createByte(codePoint, 6);
+            }
+            else if ((codePoint & 0xFFE00000) == 0) { // 4-byte sequence
+                symbol = stringFromCharCode(((codePoint >> 18) & 0x07) | 0xF0);
+                symbol += createByte(codePoint, 12);
+                symbol += createByte(codePoint, 6);
+            }
+            symbol += stringFromCharCode((codePoint & 0x3F) | 0x80);
+            return symbol;
+        }
+        var codePoints = ucs2decode(s);
+        var length = codePoints.length;
+        var index = -1;
+        var codePoint;
+        var byteString = '';
+        while (++index < length) {
+            codePoint = codePoints[index];
+            byteString += encodeCodePoint(codePoint);
+        }
+        return byteString;
+    };
+    Utils.setScrollLeft = function (element, value, rtl) {
+        if (rtl) {
+            // Chrome and Safari when doing RTL have the END position of the scroll as zero, not the start
+            if (this.isBrowserSafari() || this.isBrowserChrome()) {
+                value = element.scrollWidth - element.clientWidth - value;
+            }
+            // Firefox uses negative numbers when doing RTL scrolling
+            if (this.isBrowserFirefox()) {
+                value *= -1;
+            }
+        }
+        element.scrollLeft = value;
+    };
+    Utils.iterateNamedNodeMap = function (map, callback) {
+        if (!map) {
+            return;
+        }
+        for (var i = 0; i < map.length; i++) {
+            var attr = map[i];
+            callback(attr.name, attr.value);
+        }
+    };
+    Utils.iterateObject = function (object, callback) {
+        if (!object || this.missing(object)) {
+            return;
+        }
+        if (Array.isArray(object)) {
+            object.forEach(function (value, index) { return callback("" + index, value); });
+        }
+        else {
+            Object.keys(object).forEach(function (key) { return callback(key, object[key]); });
+        }
+    };
+    Utils.cloneObject = function (object) {
+        var copy = {};
+        var keys = Object.keys(object);
+        for (var i = 0; i < keys.length; i++) {
+            var key = keys[i];
+            var value = object[key];
+            copy[key] = value;
+        }
+        return copy;
+    };
+    Utils.deepCloneObject = function (object) {
+        return JSON.parse(JSON.stringify(object));
+    };
+    /**
+     * Will copy the specified properties from `source` into the equivalent properties on `target`, ignoring properties with
+     * a value of `undefined`.
+     */
+    Utils.copyPropertiesIfPresent = function (source, target) {
+        var _this = this;
+        var properties = [];
+        for (var _i = 2; _i < arguments.length; _i++) {
+            properties[_i - 2] = arguments[_i];
+        }
+        properties.forEach(function (p) { return _this.copyPropertyIfPresent(source, target, p); });
+    };
+    /**
+     * Will copy the specified property from `source` into the equivalent property on `target`, unless the property has a
+     * value of `undefined`. If a transformation is provided, it will be applied to the value before being set on `target`.
+     */
+    Utils.copyPropertyIfPresent = function (source, target, property, transform) {
+        var value = this.getProperty(source, property);
+        if (value !== undefined) {
+            this.setProperty(target, property, transform ? transform(value) : value);
+        }
+    };
+    Utils.getAllKeysInObjects = function (objects) {
+        var allValues = {};
+        objects.forEach(function (obj) {
+            if (obj) {
+                Object.keys(obj).forEach(function (key) { return allValues[key] = null; });
+            }
+        });
+        return Object.keys(allValues);
+    };
+    Utils.mergeDeep = function (dest, source, copyUndefined) {
+        if (copyUndefined === void 0) { copyUndefined = true; }
+        if (!this.exists(source)) {
+            return;
+        }
+        this.iterateObject(source, function (key, newValue) {
+            var oldValue = dest[key];
+            if (oldValue === newValue) {
+                return;
+            }
+            if (typeof oldValue === 'object' && typeof newValue === 'object' && !Array.isArray(oldValue)) {
+                Utils.mergeDeep(oldValue, newValue);
+            }
+            else if (copyUndefined || newValue !== undefined) {
+                dest[key] = newValue;
+            }
+        });
+    };
+    Utils.assign = function (object) {
+        var _this = this;
+        var sources = [];
+        for (var _i = 1; _i < arguments.length; _i++) {
+            sources[_i - 1] = arguments[_i];
+        }
+        sources.forEach(function (source) {
+            if (_this.exists(source)) {
+                _this.iterateObject(source, function (key, value) {
+                    object[key] = value;
+                });
+            }
+        });
+        return object;
+    };
+    Utils.flatten = function (arrayOfArrays) {
+        return [].concat.apply([], arrayOfArrays);
+    };
+    Utils.parseYyyyMmDdToDate = function (yyyyMmDd, separator) {
+        try {
+            if (!yyyyMmDd) {
+                return null;
+            }
+            if (yyyyMmDd.indexOf(separator) === -1) {
+                return null;
+            }
+            var fields = yyyyMmDd.split(separator);
+            if (fields.length != 3) {
+                return null;
+            }
+            return new Date(Number(fields[0]), Number(fields[1]) - 1, Number(fields[2]));
+        }
+        catch (e) {
+            return null;
+        }
+    };
+    Utils.serializeDateToYyyyMmDd = function (date, separator) {
+        if (!date) {
+            return null;
+        }
+        return date.getFullYear() + separator + this.padStart(date.getMonth() + 1, 2) + separator + this.padStart(date.getDate(), 2);
+    };
+    Utils.getTimeFromDate = function (date) {
+        if (!date) {
+            return null;
+        }
+        return this.padStart(date.getHours(), 2) + ":" + this.padStart(date.getMinutes(), 2) + ":" + this.padStart(date.getSeconds(), 2);
+    };
+    Utils.normalizeTime = function (time) {
+        if (!time) {
+            return '00:00:00';
+        }
+        var hoursStr = '00';
+        var minutesStr = '00';
+        var secondsStr = '00';
+        var _a = time.split(':').map(Number), hours = _a[0], minutes = _a[1], seconds = _a[2];
+        if (hours >= 0 && hours <= 24) {
+            hoursStr = _.padStart(hours, 2);
+        }
+        if (minutes >= 0 && minutes <= 59) {
+            minutesStr = _.padStart(minutes, 2);
+        }
+        if (seconds >= 0 && seconds <= 59) {
+            secondsStr = _.padStart(seconds, 2);
+        }
+        return hoursStr + ":" + minutesStr + ":" + secondsStr;
+    };
+    Utils.getDateFromString = function (fullDate) {
+        if (!fullDate) {
+            return null;
+        }
+        var _a = fullDate.split(' '), dateStr = _a[0], timeStr = _a[1];
+        var date = _.parseYyyyMmDdToDate(dateStr, '-');
+        if (!date) {
+            return null;
+        }
+        if (!timeStr || timeStr === '00:00:00') {
+            return date;
+        }
+        var _b = _.normalizeTime(timeStr).split(':').map(Number), hours = _b[0], minutes = _b[1], seconds = _b[2];
+        date.setHours(hours);
+        date.setMinutes(minutes);
+        date.setSeconds(seconds);
+        return date;
+    };
+    Utils.padStart = function (num, totalStringSize) {
+        var asString = "" + num;
+        while (asString.length < totalStringSize) {
+            asString = "0" + asString;
+        }
+        return asString;
+    };
+    Utils.pushAll = function (target, source) {
+        if (this.missing(source) || this.missing(target)) {
+            return;
+        }
+        source.forEach(function (func) { return target.push(func); });
+    };
+    Utils.createArrayOfNumbers = function (first, last) {
+        var result = [];
+        for (var i = first; i <= last; i++) {
+            result.push(i);
+        }
+        return result;
+    };
+    Utils.getFunctionParameters = function (func) {
+        var fnStr = func.toString().replace(FUNCTION_STRIP_COMMENTS, '');
+        var result = fnStr.slice(fnStr.indexOf('(') + 1, fnStr.indexOf(')')).match(FUNCTION_ARGUMENT_NAMES);
+        if (result === null) {
+            return [];
+        }
+        return result;
+    };
+    Utils.find = function (collection, predicate, value) {
+        if (collection === null || collection === undefined) {
+            return null;
+        }
+        if (!Array.isArray(collection)) {
+            var objToArray = this.values(collection);
+            return this.find(objToArray, predicate, value);
+        }
+        var collectionAsArray = collection;
+        var firstMatchingItem = null;
+        for (var i = 0; i < collectionAsArray.length; i++) {
+            var item = collectionAsArray[i];
+            if (typeof predicate === 'string') {
+                if (item[predicate] === value) {
+                    firstMatchingItem = item;
+                    break;
+                }
+            }
+            else {
+                var callback = predicate;
+                if (callback(item)) {
+                    firstMatchingItem = item;
+                    break;
+                }
+            }
+        }
+        return firstMatchingItem;
+    };
+    Utils.toStrings = function (array) {
+        return array.map(function (item) {
+            if (item === undefined || item === null || !item.toString) {
+                return null;
+            }
+            return item.toString();
+        });
+    };
+    Utils.findIndex = function (collection, predicate) {
+        for (var i = 0; i < collection.length; i++) {
+            if (predicate(collection[i], i, collection)) {
+                return i;
+            }
+        }
+        return -1;
+    };
+    /**
+     * Returns true if it is a DOM node
+     * taken from: http://stackoverflow.com/questions/384286/javascript-isdom-how-do-you-check-if-a-javascript-object-is-a-dom-object
+     * @param {any} o
+     * @return {boolean}
+     */
+    Utils.isNode = function (o) {
+        return (typeof Node === "function"
+            ? o instanceof Node
+            : o && typeof o === "object" && typeof o.nodeType === "number" && typeof o.nodeName === "string");
+    };
+    //
+    /**
+     * Returns true if it is a DOM element
+     * taken from: http://stackoverflow.com/questions/384286/javascript-isdom-how-do-you-check-if-a-javascript-object-is-a-dom-object
+     * @param {any} o
+     * @returns {boolean}
+     */
+    Utils.isElement = function (o) {
+        return (typeof HTMLElement === "function"
+            ? o instanceof HTMLElement //DOM2
+            : o && typeof o === "object" && o !== null && o.nodeType === 1 && typeof o.nodeName === "string");
+    };
+    Utils.isNodeOrElement = function (o) {
+        return this.isNode(o) || this.isElement(o);
+    };
+    /**
+     * Makes a copy of a node list into a list
+     * @param {NodeList} nodeList
+     * @returns {Node[]}
+     */
+    Utils.copyNodeList = function (nodeList) {
+        var childCount = nodeList ? nodeList.length : 0;
+        var res = [];
+        for (var i = 0; i < childCount; i++) {
+            res.push(nodeList[i]);
+        }
+        return res;
+    };
+    Utils.isEventFromPrintableCharacter = function (event) {
+        var pressedChar = String.fromCharCode(event.charCode);
+        // newline is an exception, as it counts as a printable character, but we don't
+        // want to start editing when it is pressed. without this check, if user is in chrome
+        // and editing a cell, and they press ctrl+enter, the cell stops editing, and then
+        // starts editing again with a blank value (two 'key down' events are fired). to
+        // test this, remove the line below, edit a cell in chrome and hit ctrl+enter while editing.
+        // https://ag-grid.atlassian.net/browse/AG-605
+        if (this.isKeyPressed(event, _constants__WEBPACK_IMPORTED_MODULE_0__[/* Constants */ "a"].KEY_NEW_LINE)) {
+            return false;
+        }
+        // no allowed printable chars have alt or ctrl key combinations
+        if (event.altKey || event.ctrlKey) {
+            return false;
+        }
+        if (_.exists(event.key)) {
+            // modern browser will implement key, so we return if key is length 1, eg if it is 'a' for the
+            // a key, or '2' for the '2' key. non-printable characters have names, eg 'Enter' or 'Backspace'.
+            var printableCharacter = event.key.length === 1;
+            // IE11 & Edge treat the numpad del key differently - with numlock on we get "Del" for key,
+            // so this addition checks if its IE11/Edge and handles that specific case the same was as all other browsers
+            var numpadDelWithNumlockOnForEdgeOrIe = Utils.isNumpadDelWithNumlockOnForEdgeOrIe(event);
+            return printableCharacter || numpadDelWithNumlockOnForEdgeOrIe;
+        }
+        // otherwise, for older browsers, we test against a list of characters, which doesn't include
+        // accents for non-English, but don't care much, as most users are on modern browsers
+        return Utils.PRINTABLE_CHARACTERS.indexOf(pressedChar) >= 0;
+    };
+    /**
+     * Allows user to tell the grid to skip specific keyboard events
+     * @param {GridOptionsWrapper} gridOptionsWrapper
+     * @param {KeyboardEvent} keyboardEvent
+     * @param {RowNode} rowNode
+     * @param {Column} column
+     * @param {boolean} editing
+     * @returns {boolean}
+     */
+    Utils.isUserSuppressingKeyboardEvent = function (gridOptionsWrapper, keyboardEvent, rowNode, column, editing) {
+        var gridOptionsFunc = gridOptionsWrapper.getSuppressKeyboardEventFunc();
+        var colDefFunc = column.getColDef().suppressKeyboardEvent;
+        // if no callbacks provided by user, then do nothing
+        if (!gridOptionsFunc && !colDefFunc) {
+            return false;
+        }
+        var params = {
+            event: keyboardEvent,
+            editing: editing,
+            column: column,
+            api: gridOptionsWrapper.getApi(),
+            node: rowNode,
+            data: rowNode.data,
+            colDef: column.getColDef(),
+            context: gridOptionsWrapper.getContext(),
+            columnApi: gridOptionsWrapper.getColumnApi()
+        };
+        // colDef get first preference on suppressing events
+        if (colDefFunc) {
+            var colDefFuncResult = colDefFunc(params);
+            // if colDef func suppressed, then return now, no need to call gridOption func
+            if (colDefFuncResult) {
+                return true;
+            }
+        }
+        if (gridOptionsFunc) {
+            // if gridOption func, return the result
+            return gridOptionsFunc(params);
+        }
+        // otherwise return false, don't suppress, as colDef didn't suppress and no func on gridOptions
+        return false;
+    };
+    Utils.getCellCompForEvent = function (gridOptionsWrapper, event) {
+        var sourceElement = this.getTarget(event);
+        while (sourceElement) {
+            var renderedCell = gridOptionsWrapper.getDomData(sourceElement, 'cellComp');
+            if (renderedCell) {
+                return renderedCell;
+            }
+            sourceElement = sourceElement.parentElement;
+        }
+        return null;
+    };
+    /**
+     * Adds all type of change listeners to an element, intended to be a text field
+     * @param {HTMLElement} element
+     * @param {EventListener} listener
+     */
+    Utils.addChangeListener = function (element, listener) {
+        element.addEventListener("changed", listener);
+        element.addEventListener("paste", listener);
+        element.addEventListener("input", listener);
+        // IE doesn't fire changed for special keys (eg delete, backspace), so need to
+        // listen for this further ones
+        element.addEventListener("keydown", listener);
+        element.addEventListener("keyup", listener);
+    };
+    /**
+     * If value is undefined, null or blank, returns null, otherwise returns the value
+     * @param {T} value
+     * @returns {T | null}
+     */
+    Utils.makeNull = function (value) {
+        var valueNoType = value;
+        if (value === null || value === undefined || valueNoType === "") {
+            return null;
+        }
+        return value;
+    };
+    Utils.missing = function (value) {
+        return !this.exists(value);
+    };
+    Utils.missingOrEmpty = function (value) {
+        return !value || this.missing(value) || value.length === 0;
+    };
+    Utils.missingOrEmptyObject = function (value) {
+        return this.missing(value) || Object.keys(value).length === 0;
+    };
+    Utils.exists = function (value, allowEmptyString) {
+        if (allowEmptyString === void 0) { allowEmptyString = false; }
+        return value != null && (value !== '' || allowEmptyString);
+    };
+    Utils.firstExistingValue = function () {
+        var values = [];
+        for (var _i = 0; _i < arguments.length; _i++) {
+            values[_i] = arguments[_i];
+        }
+        for (var i = 0; i < values.length; i++) {
+            var value = values[i];
+            if (_.exists(value)) {
+                return value;
+            }
+        }
+        return null;
+    };
+    Utils.anyExists = function (values) {
+        if (values) {
+            for (var i = 0; i < values.length; i++) {
+                if (this.exists(values[i])) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    };
+    Utils.existsAndNotEmpty = function (value) {
+        return value != null && this.exists(value) && value.length > 0;
+    };
+    Utils.clearElement = function (el) {
+        while (el && el.firstChild) {
+            el.removeChild(el.firstChild);
+        }
+    };
+    Utils.removeElement = function (parent, cssSelector) {
+        this.removeFromParent(parent.querySelector(cssSelector));
+    };
+    Utils.removeFromParent = function (node) {
+        if (node && node.parentNode) {
+            node.parentNode.removeChild(node);
+        }
+    };
+    Utils.isVisible = function (element) {
+        return (element.offsetParent !== null);
+    };
+    Utils.callIfPresent = function (func) {
+        if (func) {
+            func();
+        }
+    };
+    /**
+     * Loads the template and returns it as an element. makes up for no simple way in
+     * the dom api to load html directly, eg we cannot do this: document.createElement(template)
+     * @param {string} template
+     * @returns {HTMLElement}
+     */
+    Utils.loadTemplate = function (template) {
+        var tempDiv = document.createElement("div");
+        tempDiv.innerHTML = template;
+        return tempDiv.firstChild;
+    };
+    Utils.appendHtml = function (eContainer, htmlTemplate) {
+        if (eContainer.lastChild) {
+            // https://developer.mozilla.org/en-US/docs/Web/API/Element/insertAdjacentHTML
+            // we put the items at the start, so new items appear underneath old items,
+            // so when expanding/collapsing groups, the new rows don't go on top of the
+            // rows below that are moving our of the way
+            eContainer.insertAdjacentHTML('afterbegin', htmlTemplate);
+        }
+        else {
+            eContainer.innerHTML = htmlTemplate;
+        }
+    };
+    Utils.addOrRemoveCssClass = function (element, className, addOrRemove) {
+        if (addOrRemove) {
+            this.addCssClass(element, className);
+        }
+        else {
+            this.removeCssClass(element, className);
+        }
+    };
+    /**
+     * This method adds a class to an element and remove that class from all siblings.
+     * Useful for toggling state.
+     * @param {HTMLElement} element The element to receive the class
+     * @param {string} elementClass The class to be assigned to the element
+     * @param {boolean} otherElementClass The class to be assigned to siblings of the element, but not the element itself
+     */
+    Utils.radioCssClass = function (element, elementClass, otherElementClass) {
+        var parent = element.parentElement;
+        var sibling = parent.firstChild;
+        while (sibling) {
+            if (elementClass) {
+                _.addOrRemoveCssClass(sibling, elementClass, sibling === element);
+            }
+            if (otherElementClass) {
+                _.addOrRemoveCssClass(sibling, otherElementClass, sibling !== element);
+            }
+            sibling = sibling.nextSibling;
+        }
+    };
+    Utils.addCssClass = function (element, className) {
+        var _this = this;
+        if (!className || className.length === 0) {
+            return;
+        }
+        if (className.indexOf(' ') >= 0) {
+            className.split(' ').forEach(function (value) { return _this.addCssClass(element, value); });
+            return;
+        }
+        if (element.classList) {
+            element.classList.add(className);
+        }
+        else if (element.className && element.className.length > 0) {
+            var cssClasses = element.className.split(' ');
+            if (cssClasses.indexOf(className) < 0) {
+                cssClasses.push(className);
+                element.setAttribute('class', cssClasses.join(' '));
+            }
+        }
+        else {
+            // do not use element.classList = className here, it will cause
+            // a read-only assignment error on some browsers (IE/Edge).
+            element.setAttribute('class', className);
+        }
+        return element;
+    };
+    Utils.removeCssClass = function (element, className) {
+        if (element.classList) {
+            element.classList.remove(className);
+        }
+        else if (element.className && element.className.length > 0) {
+            var newClassName = element.className.split(' ').filter(function (c) { return c !== className; }).join(' ');
+            element.setAttribute('class', newClassName);
+        }
+    };
+    Utils.containsClass = function (element, className) {
+        if (element.classList) {
+            // for modern browsers
+            return element.classList.contains(className);
+        }
+        if (element.className) {
+            // for older browsers, check against the string of class names
+            // if only one class, can check for exact match
+            var onlyClass = element.className === className;
+            // if many classes, check for class name, we have to pad with ' ' to stop other
+            // class names that are a substring of this class
+            var contains = element.className.indexOf(' ' + className + ' ') >= 0;
+            // the padding above then breaks when it's the first or last class names
+            var startsWithClass = element.className.indexOf(className + ' ') === 0;
+            var endsWithClass = element.className.lastIndexOf(' ' + className) === (element.className.length - className.length - 1);
+            return onlyClass || contains || startsWithClass || endsWithClass;
+        }
+        // if item is not a node
+        return false;
+    };
+    Utils.getElementAttribute = function (element, attributeName) {
+        if (element.attributes && element.attributes[attributeName]) {
+            var attribute = element.attributes[attributeName];
+            return attribute.value;
+        }
+        return null;
+    };
+    Utils.offsetHeight = function (element) {
+        return element && element.clientHeight ? element.clientHeight : 0;
+    };
+    Utils.offsetWidth = function (element) {
+        return element && element.clientWidth ? element.clientWidth : 0;
+    };
+    Utils.sortNumerically = function (array) {
+        return array.sort(function (a, b) { return a - b; });
+    };
+    Utils.removeRepeatsFromArray = function (array, object) {
+        if (!array) {
+            return;
+        }
+        for (var index = array.length - 2; index >= 0; index--) {
+            var thisOneMatches = array[index] === object;
+            var nextOneMatches = array[index + 1] === object;
+            if (thisOneMatches && nextOneMatches) {
+                array.splice(index + 1, 1);
+            }
+        }
+    };
+    Utils.removeFromArray = function (array, object) {
+        var index = array.indexOf(object);
+        if (index >= 0) {
+            array.splice(index, 1);
+        }
+    };
+    Utils.removeAllFromArray = function (array, toRemove) {
+        var _this = this;
+        toRemove.forEach(function (item) { return _this.removeFromArray(array, item); });
+    };
+    Utils.insertIntoArray = function (array, object, toIndex) {
+        array.splice(toIndex, 0, object);
+    };
+    Utils.insertArrayIntoArray = function (dest, src, toIndex) {
+        if (this.missing(dest) || this.missing(src)) {
+            return;
+        }
+        // put items in backwards, otherwise inserted items end up in reverse order
+        for (var i = src.length - 1; i >= 0; i--) {
+            var item = src[i];
+            this.insertIntoArray(dest, item, toIndex);
+        }
+    };
+    Utils.moveInArray = function (array, objectsToMove, toIndex) {
+        var _this = this;
+        // first take out it items from the array
+        objectsToMove.forEach(function (obj) {
+            _this.removeFromArray(array, obj);
+        });
+        // now add the objects, in same order as provided to us, that means we start at the end
+        // as the objects will be pushed to the right as they are inserted
+        objectsToMove.slice().reverse().forEach(function (obj) {
+            _this.insertIntoArray(array, obj, toIndex);
+        });
+    };
+    Utils.defaultComparator = function (valueA, valueB, accentedCompare) {
+        if (accentedCompare === void 0) { accentedCompare = false; }
+        var valueAMissing = valueA === null || valueA === undefined;
+        var valueBMissing = valueB === null || valueB === undefined;
+        function doQuickCompare(a, b) {
+            return (a > b ? 1 : (a < b ? -1 : 0));
+        }
+        // this is for aggregations sum and avg, where the result can be a number that is wrapped.
+        // if we didn't do this, then the toString() value would be used, which would result in
+        // the strings getting used instead of the numbers.
+        if (valueA && valueA.toNumber) {
+            valueA = valueA.toNumber();
+        }
+        if (valueB && valueB.toNumber) {
+            valueB = valueB.toNumber();
+        }
+        if (valueAMissing && valueBMissing) {
+            return 0;
+        }
+        if (valueAMissing) {
+            return -1;
+        }
+        if (valueBMissing) {
+            return 1;
+        }
+        if (typeof valueA === "string") {
+            if (!accentedCompare) {
+                return doQuickCompare(valueA, valueB);
+            }
+            try {
+                // using local compare also allows chinese comparisons
+                return valueA.localeCompare(valueB);
+            }
+            catch (e) {
+                // if something wrong with localeCompare, eg not supported
+                // by browser, then just continue with the quick one
+                return doQuickCompare(valueA, valueB);
+            }
+        }
+        if (valueA < valueB) {
+            return -1;
+        }
+        else if (valueA > valueB) {
+            return 1;
+        }
+        return 0;
+    };
+    Utils.last = function (arr) {
+        if (!arr || !arr.length) {
+            return undefined;
+        }
+        return arr[arr.length - 1];
+    };
+    Utils.compareArrays = function (array1, array2) {
+        if (this.missing(array1) && this.missing(array2)) {
+            return true;
+        }
+        if ((this.missing(array1) || this.missing(array2)) ||
+            (!array1 || !array2)) {
+            return false;
+        }
+        if (array1.length !== array2.length) {
+            return false;
+        }
+        for (var i = 0; i < array1.length; i++) {
+            if (array1[i] !== array2[i]) {
+                return false;
+            }
+        }
+        return true;
+    };
+    Utils.ensureDomOrder = function (eContainer, eChild, eChildBefore) {
+        // if already in right order, do nothing
+        if (eChildBefore && eChildBefore.nextSibling === eChild) {
+            return;
+        }
+        if (eChildBefore) {
+            if (eChildBefore.nextSibling) {
+                // insert between the eRowBefore and the row after it
+                eContainer.insertBefore(eChild, eChildBefore.nextSibling);
+            }
+            else {
+                // if nextSibling is missing, means other row is at end, so just append new row at the end
+                eContainer.appendChild(eChild);
+            }
+        }
+        else {
+            // otherwise put at start
+            if (eContainer.firstChild && eContainer.firstChild !== eChild) {
+                // insert it at the first location
+                eContainer.insertAdjacentElement('afterbegin', eChild);
+            }
+        }
+    };
+    Utils.setDomChildOrder = function (eContainer, orderedChildren) {
+        for (var i = 0; i < orderedChildren.length; i++) {
+            var correctCellAtIndex = orderedChildren[i];
+            var actualCellAtIndex = eContainer.children[i];
+            if (actualCellAtIndex !== correctCellAtIndex) {
+                eContainer.insertBefore(correctCellAtIndex, actualCellAtIndex);
+            }
+        }
+    };
+    Utils.insertTemplateWithDomOrder = function (eContainer, htmlTemplate, eChildBefore) {
+        var res;
+        if (eChildBefore) {
+            // if previous element exists, just slot in after the previous element
+            eChildBefore.insertAdjacentHTML('afterend', htmlTemplate);
+            res = eChildBefore.nextSibling;
+        }
+        else {
+            if (eContainer.firstChild) {
+                // insert it at the first location
+                eContainer.insertAdjacentHTML('afterbegin', htmlTemplate);
+            }
+            else {
+                // otherwise eContainer is empty, so just append it
+                eContainer.innerHTML = htmlTemplate;
+            }
+            res = eContainer.firstChild;
+        }
+        return res;
+    };
+    Utils.every = function (items, callback) {
+        if (!items || items.length === 0) {
+            return true;
+        }
+        for (var i = 0; i < items.length; i++) {
+            if (!callback(items[i])) {
+                return false;
+            }
+        }
+        return true;
+    };
+    Utils.toStringOrNull = function (value) {
+        if (this.exists(value) && value.toString) {
+            return value.toString();
+        }
+        return null;
+    };
+    Utils.formatSize = function (size) {
+        if (typeof size === "number") {
+            return size + "px";
+        }
+        return size;
+    };
+    Utils.formatNumberTwoDecimalPlacesAndCommas = function (value) {
+        if (typeof value !== 'number') {
+            return '';
+        }
+        // took this from: http://blog.tompawlak.org/number-currency-formatting-javascript
+        return (Math.round(value * 100) / 100).toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,");
+    };
+    Utils.findLineByLeastSquares = function (values) {
+        var len = values.length;
+        if (len <= 1) {
+            return values;
+        }
+        var sum_x = 0;
+        var sum_y = 0;
+        var sum_xy = 0;
+        var sum_xx = 0;
+        var y = 0;
+        for (var x = 0; x < len; x++) {
+            y = values[x];
+            sum_x += x;
+            sum_y += y;
+            sum_xx += x * x;
+            sum_xy += x * y;
+        }
+        var m = (len * sum_xy - sum_x * sum_y) / (len * sum_xx - sum_x * sum_x);
+        var b = (sum_y / len) - (m * sum_x) / len;
+        var result = [];
+        for (var x = 0; x <= len; x++) {
+            result.push(x * m + b);
+        }
+        return result;
+    };
+    /**
+     * the native method number.toLocaleString(undefined, {minimumFractionDigits: 0})
+     * puts in decimal places in IE, so we use this method instead
+     * from: http://blog.tompawlak.org/number-currency-formatting-javascript
+     * @param {number} value
+     * @returns {string}
+     */
+    Utils.formatNumberCommas = function (value) {
+        if (typeof value !== 'number') {
+            return '';
+        }
+        return value.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,");
+    };
+    Utils.prependDC = function (parent, documentFragment) {
+        if (this.exists(parent.firstChild)) {
+            parent.insertBefore(documentFragment, parent.firstChild);
+        }
+        else {
+            parent.appendChild(documentFragment);
+        }
+    };
+    /**
+     * If icon provided, use this (either a string, or a function callback).
+     * if not, then use the default icon from the theme
+     * @param {string} iconName
+     * @param {GridOptionsWrapper} gridOptionsWrapper
+     * @param {Column | null} [column]
+     * @returns {HTMLElement}
+     */
+    Utils.createIcon = function (iconName, gridOptionsWrapper, column) {
+        var iconContents = this.createIconNoSpan(iconName, gridOptionsWrapper, column);
+        if (iconContents.className.indexOf('ag-icon') > -1) {
+            return iconContents;
+        }
+        var eResult = document.createElement('span');
+        eResult.appendChild(iconContents);
+        return eResult;
+    };
+    Utils.createIconNoSpan = function (iconName, gridOptionsWrapper, column, forceCreate) {
+        var userProvidedIcon = null;
+        // check col for icon first
+        var icons = column && column.getColDef().icons;
+        if (icons) {
+            userProvidedIcon = icons[iconName];
+        }
+        // if not in col, try grid options
+        if (gridOptionsWrapper && !userProvidedIcon) {
+            var optionsIcons = gridOptionsWrapper.getIcons();
+            if (optionsIcons) {
+                userProvidedIcon = optionsIcons[iconName];
+            }
+        }
+        // now if user provided, use it
+        if (userProvidedIcon) {
+            var rendererResult = void 0;
+            if (typeof userProvidedIcon === 'function') {
+                rendererResult = userProvidedIcon();
+            }
+            else if (typeof userProvidedIcon === 'string') {
+                rendererResult = userProvidedIcon;
+            }
+            else {
+                throw new Error('icon from grid options needs to be a string or a function');
+            }
+            if (typeof rendererResult === 'string') {
+                return this.loadTemplate(rendererResult);
+            }
+            else if (this.isNodeOrElement(rendererResult)) {
+                return rendererResult;
+            }
+            else {
+                console.warn('ag-Grid: iconRenderer should return back a string or a dom object');
+            }
+        }
+        else {
+            var span = document.createElement('span');
+            var cssClass = this.iconNameClassMap[iconName];
+            if (!cssClass) {
+                if (!forceCreate) {
+                    console.warn("ag-Grid: Did not find icon " + iconName);
+                    cssClass = '';
+                }
+                else {
+                    cssClass = iconName;
+                }
+            }
+            span.setAttribute('class', "ag-icon ag-icon-" + cssClass);
+            span.setAttribute("unselectable", "on");
+            return span;
+        }
+    };
+    Utils.addStylesToElement = function (eElement, styles) {
+        var _this = this;
+        if (!styles) {
+            return;
+        }
+        Object.keys(styles).forEach(function (key) {
+            var keyCamelCase = _this.hyphenToCamelCase(key);
+            if (keyCamelCase) {
+                eElement.style[keyCamelCase] = styles[key];
+            }
+        });
+    };
+    Utils.isHorizontalScrollShowing = function (element) {
+        return element.clientWidth < element.scrollWidth;
+    };
+    Utils.isVerticalScrollShowing = function (element) {
+        return element.clientHeight < element.scrollHeight;
+    };
+    Utils.getMaxDivHeight = function () {
+        if (!document.body) {
+            return -1;
+        }
+        var res = 1000000;
+        // FF reports the height back but still renders blank after ~6M px
+        var testUpTo = navigator.userAgent.toLowerCase().match(/firefox/) ? 6000000 : 1000000000;
+        var div = this.loadTemplate("<div/>");
+        document.body.appendChild(div);
+        while (true) {
+            var test_1 = res * 2;
+            div.style.height = test_1 + 'px';
+            if (test_1 > testUpTo || div.clientHeight !== test_1) {
+                break;
+            }
+            else {
+                res = test_1;
+            }
+        }
+        document.body.removeChild(div);
+        return res;
+    };
+    Utils.getScrollbarWidth = function () {
+        var body = document.body;
+        var div = document.createElement("div");
+        div.style.width = div.style.height = "100px";
+        div.style.opacity = "0";
+        div.style.overflow = "scroll";
+        div.style.msOverflowStyle = "scrollbar"; // needed for WinJS apps
+        div.style.position = "absolute";
+        body.appendChild(div);
+        var width = div.offsetWidth - div.clientWidth;
+        // remove divs
+        if (div.parentNode) {
+            div.parentNode.removeChild(div);
+        }
+        return width;
+    };
+    Utils.hasOverflowScrolling = function () {
+        var prefixes = ['webkit', 'moz', 'o', 'ms'];
+        var div = document.createElement('div');
+        var body = document.getElementsByTagName('body')[0];
+        var found = false;
+        var p;
+        body.appendChild(div);
+        div.setAttribute('style', prefixes.map(function (prefix) { return "-" + prefix + "-overflow-scrolling: touch"; }).concat('overflow-scrolling: touch').join(';'));
+        var computedStyle = window.getComputedStyle(div);
+        if (computedStyle.overflowScrolling === 'touch') {
+            found = true;
+        }
+        if (!found) {
+            for (var _i = 0, prefixes_1 = prefixes; _i < prefixes_1.length; _i++) {
+                p = prefixes_1[_i];
+                if (computedStyle[p + "OverflowScrolling"] === 'touch') {
+                    found = true;
+                    break;
+                }
+            }
+        }
+        if (div.parentNode) {
+            div.parentNode.removeChild(div);
+        }
+        return found;
+    };
+    Utils.isKeyPressed = function (event, keyToCheck) {
+        var pressedKey = event.which || event.keyCode;
+        return pressedKey === keyToCheck;
+    };
+    Utils.isCharacterKey = function (event) {
+        // from: https://stackoverflow.com/questions/4179708/how-to-detect-if-the-pressed-key-will-produce-a-character-inside-an-input-text
+        var which = event.which;
+        if (typeof which === 'number' && which) {
+            return !event.ctrlKey && !event.metaKey && !event.altKey && event.which !== 8 && event.which !== 16;
+        }
+        return which === undefined;
+    };
+    Utils.setDisplayed = function (element, displayed) {
+        this.addOrRemoveCssClass(element, 'ag-hidden', !displayed);
+    };
+    Utils.setVisible = function (element, visible) {
+        this.addOrRemoveCssClass(element, 'ag-invisible', !visible);
+    };
+    Utils.setElementWidth = function (element, width) {
+        if (width === 'flex') {
+            element.style.width = null;
+            element.style.minWidth = null;
+            element.style.maxWidth = null;
+            element.style.flex = '1 1 auto';
+        }
+        else {
+            this.setFixedWidth(element, width);
+        }
+    };
+    Utils.setFixedWidth = function (element, width) {
+        width = this.formatSize(width);
+        element.style.width = width;
+        element.style.maxWidth = width;
+        element.style.minWidth = width;
+    };
+    Utils.setElementHeight = function (element, height) {
+        if (height === 'flex') {
+            element.style.height = null;
+            element.style.minHeight = null;
+            element.style.maxHeight = null;
+            element.style.flex = '1 1 auto';
+        }
+        else {
+            this.setFixedHeight(element, height);
+        }
+    };
+    Utils.setFixedHeight = function (element, height) {
+        height = this.formatSize(height);
+        element.style.height = height;
+        element.style.maxHeight = height;
+        element.style.minHeight = height;
+    };
+    Utils.isBrowserIE = function () {
+        if (this.isIE === undefined) {
+            this.isIE = /*@cc_on!@*/  false || !!document.documentMode; // At least IE6
+        }
+        return this.isIE;
+    };
+    Utils.isBrowserEdge = function () {
+        if (this.isEdge === undefined) {
+            this.isEdge = !this.isBrowserIE() && !!window.StyleMedia;
+        }
+        return this.isEdge;
+    };
+    Utils.isBrowserSafari = function () {
+        if (this.isSafari === undefined) {
+            var anyWindow = window;
+            // taken from https://github.com/ag-grid/ag-grid/issues/550
+            this.isSafari = Object.prototype.toString.call(anyWindow.HTMLElement).indexOf('Constructor') > 0
+                || (function (p) {
+                    return p ? p.toString() === "[object SafariRemoteNotification]" : false;
+                })(!anyWindow.safari || anyWindow.safari.pushNotification);
+        }
+        return this.isSafari;
+    };
+    Utils.isBrowserChrome = function () {
+        if (this.isChrome === undefined) {
+            var win = window;
+            this.isChrome = (!!win.chrome && (!!win.chrome.webstore || !!win.chrome.runtime)) ||
+                (/Chrome/.test(navigator.userAgent) && /Google Inc/.test(navigator.vendor));
+        }
+        return this.isChrome;
+    };
+    Utils.isBrowserFirefox = function () {
+        if (this.isFirefox === undefined) {
+            var win = window;
+            this.isFirefox = typeof win.InstallTrigger !== 'undefined';
+        }
+        return this.isFirefox;
+    };
+    Utils.isIOSUserAgent = function () {
+        if (this.isIOS === undefined) {
+            // taken from https://stackoverflow.com/a/58064481/1388233
+            this.isIOS = (/iPad|iPhone|iPod/.test(navigator.platform) ||
+                // eslint-disable-next-line
+                (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1)) &&
+                !window.MSStream;
+        }
+        return this.isIOS;
+    };
+    /**
+     * srcElement is only available in IE. In all other browsers it is target
+     * http://stackoverflow.com/questions/5301643/how-can-i-make-event-srcelement-work-in-firefox-and-what-does-it-mean
+     * @param {Event} event
+     * @returns {Element}
+     */
+    Utils.getTarget = function (event) {
+        var eventNoType = event;
+        return eventNoType.target || eventNoType.srcElement;
+    };
+    Utils.isElementChildOfClass = function (element, cls, maxNest) {
+        var counter = 0;
+        while (element) {
+            if (this.containsClass(element, cls)) {
+                return true;
+            }
+            element = element.parentElement;
+            if (maxNest && ++counter > maxNest) {
+                break;
+            }
+        }
+        return false;
+    };
+    Utils.isElementInEventPath = function (element, event) {
+        if (!event || !element) {
+            return false;
+        }
+        var path = _.getEventPath(event);
+        return path.indexOf(element) >= 0;
+    };
+    Utils.isFunction = function (val) {
+        return !!(val && val.constructor && val.call && val.apply);
+    };
+    Utils.createEventPath = function (event) {
+        var res = [];
+        var pointer = _.getTarget(event);
+        while (pointer) {
+            res.push(pointer);
+            pointer = pointer.parentElement;
+        }
+        return res;
+    };
+    /**
+     * firefox doesn't have event.path set, or any alternative to it, so we hack
+     * it in. this is needed as it's to late to work out the path when the item is
+     * removed from the dom. used by MouseEventService, where it works out if a click
+     * was from the current grid, or a detail grid (master / detail).
+     * @param {Event} event
+     */
+    Utils.addAgGridEventPath = function (event) {
+        event.__agGridEventPath = this.getEventPath(event);
+    };
+    /**
+     * Gets the path for an Event.
+     * https://stackoverflow.com/questions/39245488/event-path-undefined-with-firefox-and-vue-js
+     * https://developer.mozilla.org/en-US/docs/Web/API/Event
+     * @param {Event} event
+     * @returns {EventTarget[]}
+     */
+    Utils.getEventPath = function (event) {
+        var eventNoType = event;
+        if (eventNoType.deepPath) {
+            // IE supports deep path
+            return eventNoType.deepPath();
+        }
+        if (eventNoType.path) {
+            // Chrome supports path
+            return eventNoType.path;
+        }
+        if (eventNoType.composedPath) {
+            // Firefox supports composePath
+            return eventNoType.composedPath();
+        }
+        if (eventNoType.__agGridEventPath) {
+            // Firefox supports composePath
+            return eventNoType.__agGridEventPath;
+        }
+        // and finally, if none of the above worked,
+        // we create the path ourselves
+        return this.createEventPath(event);
+    };
+    Utils.forEachSnapshotFirst = function (list, callback) {
+        if (!list) {
+            return;
+        }
+        var arrayCopy = list.slice(0);
+        arrayCopy.forEach(callback);
+    };
+    /**
+     * Gets the document body width
+     * from: http://stackoverflow.com/questions/1038727/how-to-get-browser-width-using-javascript-code
+     * @returns {number}
+     */
+    Utils.getBodyWidth = function () {
+        if (document.body) {
+            return document.body.clientWidth;
+        }
+        if (window.innerHeight) {
+            return window.innerWidth;
+        }
+        if (document.documentElement && document.documentElement.clientWidth) {
+            return document.documentElement.clientWidth;
+        }
+        return -1;
+    };
+    /**
+     * Gets the body height
+     * from: http://stackoverflow.com/questions/1038727/how-to-get-browser-width-using-javascript-code
+     * @returns {number}
+     */
+    Utils.getBodyHeight = function () {
+        if (document.body) {
+            return document.body.clientHeight;
+        }
+        if (window.innerHeight) {
+            return window.innerHeight;
+        }
+        if (document.documentElement && document.documentElement.clientHeight) {
+            return document.documentElement.clientHeight;
+        }
+        return -1;
+    };
+    Utils.setCheckboxState = function (eCheckbox, state) {
+        if (typeof state === 'boolean') {
+            eCheckbox.checked = state;
+            eCheckbox.indeterminate = false;
+        }
+        else {
+            // isNodeSelected returns back undefined if it's a group and the children
+            // are a mix of selected and unselected
+            eCheckbox.indeterminate = true;
+        }
+    };
+    Utils.traverseNodesWithKey = function (nodes, callback) {
+        var keyParts = [];
+        recursiveSearchNodes(nodes);
+        function recursiveSearchNodes(currentNodes) {
+            currentNodes.forEach(function (node) {
+                // also checking for children for tree data
+                if (node.group || node.hasChildren()) {
+                    keyParts.push(node.key);
+                    var key = keyParts.join('|');
+                    callback(node, key);
+                    recursiveSearchNodes(node.childrenAfterGroup);
+                    keyParts.pop();
+                }
+            });
+        }
+    };
+    /**
+     * Converts a camelCase string into hyphenated string
+     * from https://gist.github.com/youssman/745578062609e8acac9f
+     * @param {string} str
+     * @return {string}
+     */
+    Utils.camelCaseToHyphen = function (str) {
+        if (str === null || str === undefined) {
+            return null;
+        }
+        return str.replace(/([A-Z])/g, function (g) { return '-' + g[0].toLowerCase(); });
+    };
+    /**
+     * Converts a hyphenated string into camelCase string
+     * from https://stackoverflow.com/questions/6660977/convert-hyphens-to-camel-case-camelcase
+     * @param {string} str
+     * @return {string}
+     */
+    Utils.hyphenToCamelCase = function (str) {
+        if (str === null || str === undefined) {
+            return null;
+        }
+        return str.replace(/-([a-z])/g, function (g) { return g[1].toUpperCase(); });
+    };
+    Utils.capitalise = function (str) {
+        return str[0].toUpperCase() + str.substr(1).toLowerCase();
+    };
+    /**
+     * Converts a CSS object into string
+     * @param {Object} stylesToUse an object eg: {color: 'black', top: '25px'}
+     * @return {string} A string like "color: black; top: 25px;" for html
+     */
+    Utils.cssStyleObjectToMarkup = function (stylesToUse) {
+        var _this = this;
+        if (!stylesToUse) {
+            return '';
+        }
+        var resParts = [];
+        this.iterateObject(stylesToUse, function (styleKey, styleValue) {
+            var styleKeyDashed = _this.camelCaseToHyphen(styleKey);
+            resParts.push(styleKeyDashed + ": " + styleValue + ";");
+        });
+        return resParts.join(' ');
+    };
+    /**
+     * Check if a value is numeric
+     * from http://stackoverflow.com/questions/9716468/is-there-any-function-like-isnumeric-in-javascript-to-validate-numbers
+     * @param {any} value
+     * @return {boolean}
+     */
+    Utils.isNumeric = function (value) {
+        if (value === '') {
+            return false;
+        }
+        return !isNaN(parseFloat(value)) && isFinite(value);
+    };
+    Utils.escape = function (toEscape) {
+        if (toEscape === null || toEscape === undefined || !toEscape.replace) {
+            return toEscape;
+        }
+        return toEscape.replace(reUnescapedHtml, function (chr) { return HTML_ESCAPES[chr]; });
+    };
+    /**
+     * Mouse wheel (and 2-finger trackpad) support on the web sucks.  It is
+     * complicated, thus this doc is long and (hopefully) detailed enough to answer
+     * your questions.
+     *
+     * If you need to react to the mouse wheel in a predictable way, this code is
+     * like your bestest friend. * hugs *
+     *
+     * As of today, there are 4 DOM event types you can listen to:
+     *
+     *   'wheel'                -- Chrome(31+), FF(17+), IE(9+)
+     *   'mousewheel'           -- Chrome, IE(6+), Opera, Safari
+     *   'MozMousePixelScroll'  -- FF(3.5 only!) (2010-2013) -- don't bother!
+     *   'DOMMouseScroll'       -- FF(0.9.7+) since 2003
+     *
+     * So what to do?  The is the best:
+     *
+     *   normalizeWheel.getEventType();
+     *
+     * In your event callback, use this code to get sane interpretation of the
+     * deltas.  This code will return an object with properties:
+     *
+     *   spinX   -- normalized spin speed (use for zoom) - x plane
+     *   spinY   -- " - y plane
+     *   pixelX  -- normalized distance (to pixels) - x plane
+     *   pixelY  -- " - y plane
+     *
+     * Wheel values are provided by the browser assuming you are using the wheel to
+     * scroll a web page by a number of lines or pixels (or pages).  Values can vary
+     * significantly on different platforms and browsers, forgetting that you can
+     * scroll at different speeds.  Some devices (like trackpads) emit more events
+     * at smaller increments with fine granularity, and some emit massive jumps with
+     * linear speed or acceleration.
+     *
+     * This code does its best to normalize the deltas for you:
+     *
+     *   - spin is trying to normalize how far the wheel was spun (or trackpad
+     *     dragged).  This is super useful for zoom support where you want to
+     *     throw away the chunky scroll steps on the PC and make those equal to
+     *     the slow and smooth tiny steps on the Mac. Key data: This code tries to
+     *     resolve a single slow step on a wheel to 1.
+     *
+     *   - pixel is normalizing the desired scroll delta in pixel units.  You'll
+     *     get the crazy differences between browsers, but at least it'll be in
+     *     pixels!
+     *
+     *   - positive value indicates scrolling DOWN/RIGHT, negative UP/LEFT.  This
+     *     should translate to positive value zooming IN, negative zooming OUT.
+     *     This matches the newer 'wheel' event.
+     *
+     * Why are there spinX, spinY (or pixels)?
+     *
+     *   - spinX is a 2-finger side drag on the trackpad, and a shift + wheel turn
+     *     with a mouse.  It results in side-scrolling in the browser by default.
+     *
+     *   - spinY is what you expect -- it's the classic axis of a mouse wheel.
+     *
+     *   - I dropped spinZ/pixelZ.  It is supported by the DOM 3 'wheel' event and
+     *     probably is by browsers in conjunction with fancy 3D controllers .. but
+     *     you know.
+     *
+     * Implementation info:
+     *
+     * Examples of 'wheel' event if you scroll slowly (down) by one step with an
+     * average mouse:
+     *
+     *   OS X + Chrome  (mouse)     -    4   pixel delta  (wheelDelta -120)
+     *   OS X + Safari  (mouse)     -  N/A   pixel delta  (wheelDelta  -12)
+     *   OS X + Firefox (mouse)     -    0.1 line  delta  (wheelDelta  N/A)
+     *   Win8 + Chrome  (mouse)     -  100   pixel delta  (wheelDelta -120)
+     *   Win8 + Firefox (mouse)     -    3   line  delta  (wheelDelta -120)
+     *
+     * On the trackpad:
+     *
+     *   OS X + Chrome  (trackpad)  -    2   pixel delta  (wheelDelta   -6)
+     *   OS X + Firefox (trackpad)  -    1   pixel delta  (wheelDelta  N/A)
+     *
+     * On other/older browsers.. it's more complicated as there can be multiple and
+     * also missing delta values.
+     *
+     * The 'wheel' event is more standard:
+     *
+     * http://www.w3.org/TR/DOM-Level-3-Events/#events-wheelevents
+     *
+     * The basics is that it includes a unit, deltaMode (pixels, lines, pages), and
+     * deltaX, deltaY and deltaZ.  Some browsers provide other values to maintain
+     * backward compatibility with older events.  Those other values help us
+     * better normalize spin speed.  Example of what the browsers provide:
+     *
+     *                          | event.wheelDelta | event.detail
+     *        ------------------+------------------+--------------
+     *          Safari v5/OS X  |       -120       |       0
+     *          Safari v5/Win7  |       -120       |       0
+     *         Chrome v17/OS X  |       -120       |       0
+     *         Chrome v17/Win7  |       -120       |       0
+     *                IE9/Win7  |       -120       |   undefined
+     *         Firefox v4/OS X  |     undefined    |       1
+     *         Firefox v4/Win7  |     undefined    |       3
+     *
+     * from: https://github.com/facebook/fixed-data-table/blob/master/src/vendor_upstream/dom/normalizeWheel.js
+     * @param {any} event
+     * @return {any}
+     */
+    Utils.normalizeWheel = function (event) {
+        var PIXEL_STEP = 10;
+        var LINE_HEIGHT = 40;
+        var PAGE_HEIGHT = 800;
+        // spinX, spinY
+        var sX = 0;
+        var sY = 0;
+        // pixelX, pixelY
+        var pX = 0;
+        var pY = 0;
+        // Legacy
+        if ('detail' in event) {
+            sY = event.detail;
+        }
+        if ('wheelDelta' in event) {
+            sY = -event.wheelDelta / 120;
+        }
+        if ('wheelDeltaY' in event) {
+            sY = -event.wheelDeltaY / 120;
+        }
+        if ('wheelDeltaX' in event) {
+            sX = -event.wheelDeltaX / 120;
+        }
+        // side scrolling on FF with DOMMouseScroll
+        if ('axis' in event && event.axis === event.HORIZONTAL_AXIS) {
+            sX = sY;
+            sY = 0;
+        }
+        pX = sX * PIXEL_STEP;
+        pY = sY * PIXEL_STEP;
+        if ('deltaY' in event) {
+            pY = event.deltaY;
+        }
+        if ('deltaX' in event) {
+            pX = event.deltaX;
+        }
+        if ((pX || pY) && event.deltaMode) {
+            if (event.deltaMode == 1) { // delta in LINE units
+                pX *= LINE_HEIGHT;
+                pY *= LINE_HEIGHT;
+            }
+            else { // delta in PAGE units
+                pX *= PAGE_HEIGHT;
+                pY *= PAGE_HEIGHT;
+            }
+        }
+        // Fall-back if spin cannot be determined
+        if (pX && !sX) {
+            sX = (pX < 1) ? -1 : 1;
+        }
+        if (pY && !sY) {
+            sY = (pY < 1) ? -1 : 1;
+        }
+        return {
+            spinX: sX,
+            spinY: sY,
+            pixelX: pX,
+            pixelY: pY
+        };
+    };
+    /**
+     * from https://stackoverflow.com/questions/24004791/can-someone-explain-the-debounce-function-in-javascript
+     * @param {Function} func The function to be debounced
+     * @param {number} wait The time in ms to debounce
+     * @param {boolean} immediate If it should run immediately or wait for the initial debounce delay
+     * @return {Function} The debounced function
+     */
+    Utils.debounce = function (func, wait, immediate) {
+        if (immediate === void 0) { immediate = false; }
+        // 'private' variable for instance
+        // The returned function will be able to reference this due to closure.
+        // Each call to the returned function will share this common timer.
+        var timeout;
+        // Calling debounce returns a new anonymous function
+        return function () {
+            var args = [];
+            for (var _i = 0; _i < arguments.length; _i++) {
+                args[_i] = arguments[_i];
+            }
+            // reference the context and args for the setTimeout function
+            var context = this;
+            // Should the function be called now? If immediate is true
+            //   and not already in a timeout then the answer is: Yes
+            var callNow = immediate && !timeout;
+            // This is the basic debounce behaviour where you can call this
+            //   function several times, but it will only execute once
+            //   [before or after imposing a delay].
+            //   Each time the returned function is called, the timer starts over.
+            window.clearTimeout(timeout);
+            // Set the new timeout
+            timeout = window.setTimeout(function () {
+                // Inside the timeout function, clear the timeout variable
+                // which will let the next execution run when in 'immediate' mode
+                timeout = null;
+                // Check if the function already ran with the immediate flag
+                if (!immediate) {
+                    // Call the original function with apply
+                    // apply lets you define the 'this' object as well as the arguments
+                    //    (both captured before setTimeout)
+                    func.apply(context, args);
+                }
+            }, wait);
+            // Immediate mode and no wait timer? Execute the function..
+            if (callNow) {
+                func.apply(context, args);
+            }
+        };
+    };
+    /**
+     * a user once raised an issue - they said that when you opened a popup (eg context menu)
+     * and then clicked on a selection checkbox, the popup wasn't closed. this is because the
+     * popup listens for clicks on the body, however ag-grid WAS stopping propagation on the
+     * checkbox clicks (so the rows didn't pick them up as row selection selection clicks).
+     * to get around this, we have a pattern to stop propagation for the purposes of ag-Grid,
+     * but we still let the event pass back to the body.
+     * @param {Event} event
+     */
+    Utils.stopPropagationForAgGrid = function (event) {
+        event[AG_GRID_STOP_PROPAGATION] = true;
+    };
+    Utils.isStopPropagationForAgGrid = function (event) {
+        return event[AG_GRID_STOP_PROPAGATION] === true;
+    };
+    Utils.executeInAWhile = function (funcs) {
+        this.executeAfter(funcs, 400);
+    };
+    Utils.executeNextVMTurn = function (funcs) {
+        this.executeAfter(funcs, 0);
+    };
+    Utils.executeAfter = function (funcs, millis) {
+        if (funcs.length > 0) {
+            window.setTimeout(function () {
+                funcs.forEach(function (func) { return func(); });
+            }, millis);
+        }
+    };
+    Utils.referenceCompare = function (left, right) {
+        if (left == null && right == null) {
+            return true;
+        }
+        if (left == null && right) {
+            return false;
+        }
+        if (left && right == null) {
+            return false;
+        }
+        return left === right;
+    };
+    Utils.get = function (source, expression, defaultValue) {
+        if (source == null) {
+            return defaultValue;
+        }
+        var keys = expression.split(".");
+        var objectToRead = source;
+        while (keys.length > 1) {
+            objectToRead = objectToRead[keys.shift()];
+            if (objectToRead == null) {
+                return defaultValue;
+            }
+        }
+        var value = objectToRead[keys[0]];
+        return value != null ? value : defaultValue;
+    };
+    Utils.set = function (target, expression, value) {
+        if (target == null) {
+            return;
+        }
+        var keys = expression.split(".");
+        var objectToUpdate = target;
+        while (keys.length > 1) {
+            objectToUpdate = objectToUpdate[keys.shift()];
+            if (objectToUpdate == null) {
+                return;
+            }
+        }
+        objectToUpdate[keys[0]] = value;
+    };
+    Utils.addSafePassiveEventListener = function (frameworkOverrides, eElement, event, listener) {
+        var isPassive = this.includes(Utils.PASSIVE_EVENTS, event);
+        var isOutsideAngular = this.includes(Utils.OUTSIDE_ANGULAR_EVENTS, event);
+        var options = isPassive ? { passive: true } : undefined;
+        if (isOutsideAngular) {
+            frameworkOverrides.addEventListenerOutsideAngular(eElement, event, listener, options);
+        }
+        else {
+            eElement.addEventListener(event, listener, options);
+        }
+    };
+    /**
+     * Converts a camelCase string into regular text
+     * from: https://stackoverflow.com/questions/15369566/putting-space-in-camel-case-string-using-regular-expression
+     * @param {string} camelCase
+     * @return {string}
+     */
+    Utils.camelCaseToHumanText = function (camelCase) {
+        if (!camelCase || camelCase == null) {
+            return null;
+        }
+        var rex = /([A-Z])([A-Z])([a-z])|([a-z])([A-Z])/g;
+        var words = camelCase.replace(rex, '$1$4 $2$3$5').replace('.', ' ').split(' ');
+        return words.map(function (word) { return word.substring(0, 1).toUpperCase() + ((word.length > 1) ? word.substring(1, word.length) : ''); }).join(' ');
+    };
+    /**
+     * Displays a message to the browser. this is useful in iPad, where you can't easily see the console.
+     * so the javascript code can use this to give feedback. this is NOT intended to be called in production.
+     * it is intended the ag-Grid developer calls this to troubleshoot, but then takes out the calls before
+     * checking in.
+     * @param {string} msg
+     */
+    Utils.message = function (msg) {
+        var eMessage = document.createElement('div');
+        var eBox = document.querySelector('#__ag__message');
+        eMessage.innerHTML = msg;
+        if (!eBox) {
+            var template = "<div id=\"__ag__message\" style=\"display: inline-block; position: absolute; top: 0px; left: 0px; color: white; background-color: black; z-index: 20; padding: 2px; border: 1px solid darkred; height: 200px; overflow-y: auto;\"></div>";
+            eBox = this.loadTemplate(template);
+            if (document.body) {
+                document.body.appendChild(eBox);
+            }
+        }
+        eBox.insertBefore(eMessage, eBox.children[0]);
+    };
+    /**
+     * Gets called by: a) ClientSideNodeManager and b) GroupStage to do sorting.
+     * when in ClientSideNodeManager we always have indexes (as this sorts the items the
+     * user provided) but when in GroupStage, the nodes can contain filler nodes that
+     * don't have order id's
+     * @param {RowNode[]} rowNodes
+     * @param {Object} rowNodeOrder
+     */
+    Utils.sortRowNodesByOrder = function (rowNodes, rowNodeOrder) {
+        if (!rowNodes) {
+            return;
+        }
+        var comparator = function (nodeA, nodeB) {
+            var positionA = rowNodeOrder[nodeA.id];
+            var positionB = rowNodeOrder[nodeB.id];
+            var aHasIndex = positionA !== undefined;
+            var bHasIndex = positionB !== undefined;
+            var bothNodesAreUserNodes = aHasIndex && bHasIndex;
+            var bothNodesAreFillerNodes = !aHasIndex && !bHasIndex;
+            if (bothNodesAreUserNodes) {
+                // when comparing two nodes the user has provided, they always
+                // have indexes
+                return positionA - positionB;
+            }
+            if (bothNodesAreFillerNodes) {
+                // when comparing two filler nodes, we have no index to compare them
+                // against, however we want this sorting to be deterministic, so that
+                // the rows don't jump around as the user does delta updates. so we
+                // want the same sort result. so we use the __objectId - which doesn't make sense
+                // from a sorting point of view, but does give consistent behaviour between
+                // calls. otherwise groups jump around as delta updates are done.
+                // note: previously here we used nodeId, however this gave a strange order
+                // as string ordering of numbers is wrong, so using id based on creation order
+                // as least gives better looking order.
+                return nodeA.__objectId - nodeB.__objectId;
+            }
+            if (aHasIndex) {
+                return 1;
+            }
+            return -1;
+        };
+        // check if the list first needs sorting
+        var rowNodeA;
+        var rowNodeB;
+        var atLeastOneOutOfOrder = false;
+        for (var i = 0; i < rowNodes.length - 1; i++) {
+            rowNodeA = rowNodes[i];
+            rowNodeB = rowNodes[i + 1];
+            if (comparator(rowNodeA, rowNodeB) > 0) {
+                atLeastOneOutOfOrder = true;
+                break;
+            }
+        }
+        if (atLeastOneOutOfOrder) {
+            rowNodes.sort(comparator);
+        }
+    };
+    Utils.fuzzyCheckStrings = function (inputValues, validValues, allSuggestions) {
+        var _this = this;
+        var fuzzyMatches = {};
+        var invalidInputs = inputValues.filter(function (inputValue) {
+            return !validValues.some(function (validValue) { return validValue === inputValue; });
+        });
+        if (invalidInputs.length > 0) {
+            invalidInputs.forEach(function (invalidInput) {
+                return fuzzyMatches[invalidInput] = _this.fuzzySuggestions(invalidInput, allSuggestions);
+            });
+        }
+        return fuzzyMatches;
+    };
+    /**
+     *
+     * @param {String} inputValue The value to be compared against a list of strings
+     * @param allSuggestions The list of strings to be compared against
+     * @param hideIrrelevant By default, fuzzy suggestions will just sort the allSuggestions list, set this to true
+     *        to filter out the irrelevant values
+     * @param weighted Set this to true, to make letters matched in the order they were typed have priority in the results.
+     */
+    Utils.fuzzySuggestions = function (inputValue, allSuggestions, hideIrrelevant, weighted) {
+        var search = weighted ? _.string_weighted_distances : _.string_distances;
+        var thisSuggestions = allSuggestions.map(function (text) { return ({
+            value: text,
+            relevance: search(inputValue.toLowerCase(), text.toLocaleLowerCase())
+        }); });
+        thisSuggestions.sort(function (a, b) { return b.relevance - a.relevance; });
+        if (hideIrrelevant) {
+            thisSuggestions = thisSuggestions.filter(function (suggestion) { return suggestion.relevance !== 0; });
+        }
+        return thisSuggestions.map(function (suggestion) { return suggestion.value; });
+    };
+    /**
+     * Algorithm to do fuzzy search
+     * from https://stackoverflow.com/questions/23305000/javascript-fuzzy-search-that-makes-sense
+     * @param {string} from
+     * @return {[]}
+     */
+    Utils.get_bigrams = function (from) {
+        var s = from.toLowerCase();
+        var v = new Array(s.length - 1);
+        var i;
+        var j;
+        var ref;
+        for (i = j = 0, ref = v.length; j <= ref; i = j += 1) {
+            v[i] = s.slice(i, i + 2);
+        }
+        return v;
+    };
+    Utils.string_distances = function (str1, str2) {
+        if (str1.length === 0 && str2.length === 0) {
+            return 0;
+        }
+        var pairs1 = _.get_bigrams(str1);
+        var pairs2 = _.get_bigrams(str2);
+        var union = pairs1.length + pairs2.length;
+        var hit_count = 0;
+        var j;
+        var len;
+        for (j = 0, len = pairs1.length; j < len; j++) {
+            var x = pairs1[j];
+            var k = void 0;
+            var len1 = void 0;
+            for (k = 0, len1 = pairs2.length; k < len1; k++) {
+                var y = pairs2[k];
+                if (x === y) {
+                    hit_count++;
+                }
+            }
+        }
+        return hit_count > 0 ? (2 * hit_count) / union : 0;
+    };
+    Utils.string_weighted_distances = function (str1, str2) {
+        var a = str1.replace(/\s/g, '');
+        var b = str2.replace(/\s/g, '');
+        var weight = 0;
+        var lastIndex = 0;
+        for (var i = 0; i < a.length; i++) {
+            var idx = b.indexOf(a[i]);
+            if (idx === -1) {
+                continue;
+            }
+            lastIndex = idx;
+            weight += ((b.length - lastIndex) * 100) / b.length;
+            weight *= weight;
+        }
+        return weight;
+    };
+    Utils.isNumpadDelWithNumlockOnForEdgeOrIe = function (event) {
+        if (Utils.isBrowserEdge() || Utils.isBrowserIE()) {
+            return event.key === Utils.NUMPAD_DEL_NUMLOCK_ON_KEY &&
+                event.charCode === Utils.NUMPAD_DEL_NUMLOCK_ON_CHARCODE;
+        }
+        return false;
+    };
+    /**
+     * cell renderers are used in a few places. they bind to dom slightly differently to other cell renderes as they
+     * can return back strings (instead of html elemnt) in the getGui() method. common code placed here to handle that.
+     * @param {Promise<ICellRendererComp>} cellRendererPromise
+     * @param {HTMLElement} eTarget
+     */
+    Utils.bindCellRendererToHtmlElement = function (cellRendererPromise, eTarget) {
+        cellRendererPromise.then(function (cellRenderer) {
+            var gui = cellRenderer.getGui();
+            if (gui != null) {
+                if (typeof gui == 'object') {
+                    eTarget.appendChild(gui);
+                }
+                else {
+                    eTarget.innerHTML = gui;
+                }
+            }
+        });
+    };
+    Utils.convertToSet = function (list) {
+        var set = new Set();
+        list.forEach(function (x) { return set.add(x); });
+        return set;
+    };
+    Utils.deepFreeze = function (object) {
+        var _this = this;
+        Object.freeze(object);
+        _.values(object).filter(function (v) { return v != null; }).forEach(function (v) {
+            if (typeof v === 'object' || typeof v === 'function') {
+                _this.deepFreeze(v);
+            }
+        });
+        return object;
+    };
+    Utils.PASSIVE_EVENTS = ['touchstart', 'touchend', 'touchmove', 'touchcancel'];
+    Utils.OUTSIDE_ANGULAR_EVENTS = ['mouseover', 'mouseout', 'mouseenter', 'mouseleave'];
+    Utils.PRINTABLE_CHARACTERS = 'qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM1234567890!"£$%^&*()_+-=[];\'#,./\\|<>?:@~{}';
+    Utils.NUMPAD_DEL_NUMLOCK_ON_KEY = 'Del';
+    Utils.NUMPAD_DEL_NUMLOCK_ON_CHARCODE = 46;
+    Utils.doOnceFlags = {};
+    Utils.supports = {};
+    Utils.isEventSupported = (function () {
+        var tags = {
+            select: 'input',
+            change: 'input',
+            submit: 'form',
+            reset: 'form',
+            error: 'img',
+            load: 'img',
+            abort: 'img'
+        };
+        var isEventSupported = function (eventName) {
+            if (typeof Utils.supports[eventName] === 'boolean') {
+                return Utils.supports[eventName];
+            }
+            var el = document.createElement(tags[eventName] || 'div');
+            eventName = 'on' + eventName;
+            var isSupported = (eventName in el);
+            if (!isSupported) {
+                el.setAttribute(eventName, 'return;');
+                isSupported = typeof el[eventName] == 'function';
+            }
+            el = null;
+            return Utils.supports[eventName] = isSupported;
+        };
+        return isEventSupported;
+    })();
+    Utils.values = function (object) { return Object.keys(object).map(function (key) { return object[key]; }); };
+    Utils.includes = function (array, value) { return array.indexOf(value) > -1; };
+    Utils.getProperty = function (object, key) { return object[key]; };
+    Utils.setProperty = function (object, key, value) { return object[key] = value; };
+    //
+    // IMPORTANT NOTE!
+    //
+    // If you change the list below, copy/paste the new content into the docs page javascript-grid-icons
+    //
+    Utils.iconNameClassMap = {
+        // header column group shown when expanded (click to contract)
+        columnGroupOpened: 'expanded',
+        // header column group shown when contracted (click to expand)
+        columnGroupClosed: 'contracted',
+        // tool panel column group contracted (click to expand)
+        columnSelectClosed: 'tree-closed',
+        // tool panel column group expanded (click to contract)
+        columnSelectOpen: 'tree-open',
+        // column tool panel header expand/collapse all button, shown when some children are expanded and
+        //     others are collapsed
+        columnSelectIndeterminate: 'tree-indeterminate',
+        // shown on ghost icon while dragging column to the side of the grid to pin
+        columnMovePin: 'pin',
+        // shown on ghost icon while dragging over part of the page that is not a drop zone
+        columnMoveHide: 'eye-slash',
+        // shown on ghost icon while dragging columns to reorder
+        columnMoveMove: 'arrows',
+        // animating icon shown when dragging a column to the right of the grid causes horizontal scrolling
+        columnMoveLeft: 'left',
+        // animating icon shown when dragging a column to the left of the grid causes horizontal scrolling
+        columnMoveRight: 'right',
+        // shown on ghost icon while dragging over Row Groups drop zone
+        columnMoveGroup: 'group',
+        // shown on ghost icon while dragging over Values drop zone
+        columnMoveValue: 'aggregation',
+        // shown on ghost icon while dragging over pivot drop zone
+        columnMovePivot: 'pivot',
+        // shown on ghost icon while dragging over drop zone that doesn't support it, e.g.
+        //     string column over aggregation drop zone
+        dropNotAllowed: 'not-allowed',
+        // shown on row group when contracted (click to expand)
+        groupContracted: 'tree-closed',
+        // shown on row group when expanded (click to contract)
+        groupExpanded: 'tree-open',
+        // context menu chart item
+        chart: 'chart',
+        // chart window title bar
+        close: 'cross',
+        // X (remove) on column 'pill' after adding it to a drop zone list
+        cancel: 'cancel',
+        // indicates the currently active pin state in the "Pin column" sub-menu of the column menu
+        check: 'tick',
+        // "go to first" button in pagination controls
+        first: 'first',
+        // "go to previous" button in pagination controls
+        previous: 'previous',
+        // "go to next" button in pagination controls
+        next: 'next',
+        // "go to last" button in pagination controls
+        last: 'last',
+        // shown on top right of chart when chart is linked to range data (click to unlink)
+        linked: 'linked',
+        // shown on top right of chart when chart is not linked to range data (click to link)
+        unlinked: 'unlinked',
+        // "Choose colour" button on chart settings tab
+        colorPicker: 'color-picker',
+        // rotating spinner shown by the loading cell renderer
+        groupLoading: 'loading',
+        // button to launch enterprise column menu
+        menu: 'menu',
+        // filter tool panel tab
+        filter: 'filter',
+        // column tool panel tab
+        columns: 'columns',
+        // button in chart regular size window title bar (click to maximise)
+        maximize: 'maximize',
+        // button in chart maximised window title bar (click to make regular size)
+        minimize: 'minimize',
+        // "Pin column" item in column header menu
+        menuPin: 'pin',
+        // "Value aggregation" column menu item (shown on numeric columns when grouping is active)"
+        menuValue: 'aggregation',
+        // "Group by {column-name}" item in column header menu
+        menuAddRowGroup: 'group',
+        // "Un-Group by {column-name}" item in column header menu
+        menuRemoveRowGroup: 'group',
+        // context menu copy item
+        clipboardCopy: 'copy',
+        // context menu paste item
+        clipboardPaste: 'paste',
+        // identifies the pivot drop zone
+        pivotPanel: 'pivot',
+        // "Row groups" drop zone in column tool panel
+        rowGroupPanel: 'group',
+        // columns tool panel Values drop zone
+        valuePanel: 'aggregation',
+        // drag handle used to pick up draggable columns
+        columnDrag: 'grip',
+        // drag handle used to pick up draggable rows
+        rowDrag: 'grip',
+        // context menu export item
+        save: 'save',
+        // icon on dropdown editors
+        smallDown: 'small-down',
+        // version of small-right used in RTL mode
+        smallLeft: 'small-left',
+        // separater between column 'pills' when you add multiple columns to the header drop zone
+        smallRight: 'small-right',
+        smallUp: 'small-up',
+        // show on column header when column is sorted ascending
+        sortAscending: 'asc',
+        // show on column header when column is sorted descending
+        sortDescending: 'desc',
+        // show on column header when column has no sort, only when enabled with gridOptions.unSortIcon=true
+        sortUnSort: 'none'
+    };
+    return Utils;
+}());
+
+var _ = Utils;
+
+
+/***/ }),
+
 /***/ "d00f":
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
@@ -27297,7 +30294,7 @@ var RowNodeBlockLoader = /** @class */ (function () {
 /* harmony import */ var _context_context__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("d196");
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v22.1.1
+ * @version v23.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -27349,7 +30346,7 @@ var CellPositionUtils = /** @class */ (function () {
 /* harmony import */ var _utils__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("e3d3");
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v22.1.1
+ * @version v23.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -27391,13 +30388,15 @@ var Context = /** @class */ (function () {
         // finally store
         this.componentsMappedByName[classUpperCase] = componentMeta.componentClass;
     };
-    Context.prototype.createComponentFromElement = function (element, afterPreCreateCallback) {
+    Context.prototype.createComponentFromElement = function (element, afterPreCreateCallback, paramsMap) {
         var key = element.nodeName;
-        return this.createComponent(key, afterPreCreateCallback);
+        var componentParams = paramsMap ? paramsMap[element.getAttribute('ref')] : undefined;
+        return this.createComponent(key, afterPreCreateCallback, element, componentParams);
     };
-    Context.prototype.createComponent = function (key, afterPreCreateCallback) {
+    Context.prototype.createComponent = function (key, afterPreCreateCallback, element, componentParams) {
         if (this.componentsMappedByName && this.componentsMappedByName[key]) {
-            var newComponent = new this.componentsMappedByName[key]();
+            var cls = this.componentsMappedByName[key];
+            var newComponent = new this.componentsMappedByName[key](componentParams);
             this.wireBean(newComponent, afterPreCreateCallback);
             return newComponent;
         }
@@ -27673,6 +30672,9 @@ function getOrCreateProps(target) {
 
 "use strict";
 
+// EXPORTS
+__webpack_require__.d(__webpack_exports__, "a", function() { return /* binding */ grid_Grid; });
+
 // EXTERNAL MODULE: ../core/dist/es6/gridOptionsWrapper.js
 var es6_gridOptionsWrapper = __webpack_require__("5c0c");
 
@@ -27751,8 +30753,8 @@ var dragService = __webpack_require__("7c38");
 // EXTERNAL MODULE: ../core/dist/es6/sortController.js
 var sortController = __webpack_require__("b4b2");
 
-// EXTERNAL MODULE: ../core/dist/es6/focusedCellController.js
-var focusedCellController = __webpack_require__("95b0");
+// EXTERNAL MODULE: ../core/dist/es6/focusController.js
+var focusController = __webpack_require__("959f");
 
 // EXTERNAL MODULE: ../core/dist/es6/gridPanel/mouseEventService.js
 var mouseEventService = __webpack_require__("5bdf");
@@ -27790,7 +30792,7 @@ var beanStub = __webpack_require__("ab2d");
 // CONCATENATED MODULE: ../core/dist/es6/rendering/columnHoverService.js
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v22.1.1
+ * @version v23.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -27861,7 +30863,7 @@ var columnHoverService_ColumnHoverService = /** @class */ (function (_super) {
 // CONCATENATED MODULE: ../core/dist/es6/rendering/columnAnimationService.js
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v22.1.1
+ * @version v23.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -27965,13 +30967,13 @@ var entities_column = __webpack_require__("77ff");
 // EXTERNAL MODULE: ../core/dist/es6/constants.js
 var constants = __webpack_require__("f2fb");
 
-// EXTERNAL MODULE: ../core/dist/es6/utils/index.js + 4 modules
+// EXTERNAL MODULE: ../core/dist/es6/utils/index.js + 5 modules
 var utils = __webpack_require__("e3d3");
 
 // CONCATENATED MODULE: ../core/dist/es6/columnController/autoGroupColService.js
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v22.1.1
+ * @version v23.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -28105,7 +31107,7 @@ var paginationProxy = __webpack_require__("6a6f");
 // CONCATENATED MODULE: ../core/dist/es6/pagination/paginationAutoPageSizeService.js
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v22.1.1
+ * @version v23.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -28187,7 +31189,7 @@ var utils_changedPath = __webpack_require__("7b67");
 // CONCATENATED MODULE: ../core/dist/es6/valueService/changeDetectionService.js
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v22.1.1
+ * @version v23.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -28277,7 +31279,7 @@ var changeDetectionService_ChangeDetectionService = /** @class */ (function (_su
 // EXTERNAL MODULE: ../core/dist/es6/alignedGridsService.js
 var alignedGridsService = __webpack_require__("a20f");
 
-// EXTERNAL MODULE: ../core/dist/es6/components/framework/userComponentFactory.js
+// EXTERNAL MODULE: ../core/dist/es6/components/framework/userComponentFactory.js + 1 modules
 var userComponentFactory = __webpack_require__("f9cc");
 
 // EXTERNAL MODULE: ../core/dist/es6/components/framework/userComponentRegistry.js + 12 modules
@@ -28286,7 +31288,7 @@ var userComponentRegistry = __webpack_require__("ad57");
 // CONCATENATED MODULE: ../core/dist/es6/components/framework/agComponentUtils.js
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v22.1.1
+ * @version v23.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -28364,7 +31366,7 @@ var agComponentUtils_AgComponentUtils = /** @class */ (function () {
 // CONCATENATED MODULE: ../core/dist/es6/components/framework/componentMetadataProvider.js
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v22.1.1
+ * @version v23.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -28382,7 +31384,7 @@ var componentMetadataProvider_ComponentMetadataProvider = /** @class */ (functio
         this.componentMetaData = {
             dateComponent: {
                 mandatoryMethodList: ['getDate', 'setDate'],
-                optionalMethodList: ['afterGuiAttached']
+                optionalMethodList: ['afterGuiAttached', 'setInputPlaceholder']
             },
             detailCellRenderer: {
                 mandatoryMethodList: [],
@@ -28491,7 +31493,7 @@ var componentMetadataProvider_ComponentMetadataProvider = /** @class */ (functio
 // CONCATENATED MODULE: ../core/dist/es6/rendering/beans.js
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v22.1.1
+ * @version v23.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -28559,8 +31561,8 @@ var beans_Beans = /** @class */ (function () {
         Object(context["d" /* Optional */])('rangeController')
     ], Beans.prototype, "rangeController", void 0);
     beans_decorate([
-        Object(context["a" /* Autowired */])('focusedCellController')
-    ], Beans.prototype, "focusedCellController", void 0);
+        Object(context["a" /* Autowired */])('focusController')
+    ], Beans.prototype, "focusController", void 0);
     beans_decorate([
         Object(context["d" /* Optional */])('contextMenuFactory')
     ], Beans.prototype, "contextMenuFactory", void 0);
@@ -28613,6 +31615,9 @@ var beans_Beans = /** @class */ (function () {
         Object(context["a" /* Autowired */])('rowPositionUtils')
     ], Beans.prototype, "rowPositionUtils", void 0);
     beans_decorate([
+        Object(context["a" /* Autowired */])('selectionController')
+    ], Beans.prototype, "selectionController", void 0);
+    beans_decorate([
         context["e" /* PostConstruct */]
     ], Beans.prototype, "postConstruct", null);
     Beans = beans_decorate([
@@ -28631,7 +31636,7 @@ var eventKeys = __webpack_require__("9bc1");
 // CONCATENATED MODULE: ../core/dist/es6/misc/animationFrameService.js
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v22.1.1
+ * @version v23.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -28806,7 +31811,7 @@ var animationFrameService_AnimationFrameService = /** @class */ (function () {
 // CONCATENATED MODULE: ../core/dist/es6/gridPanel/navigationService.js
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v22.1.1
+ * @version v23.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -28966,7 +31971,7 @@ var navigationService_NavigationService = /** @class */ (function () {
         this.animationFrameService.flushAllFrames();
         // if we don't do this, the range will be left on the last cell, which will leave the last focused cell
         // highlighted.
-        this.focusedCellController.setFocusedCell(focusIndex, focusColumn, null, true);
+        this.focusController.setFocusedCell(focusIndex, focusColumn, null, true);
         if (this.rangeController) {
             var cellPosition = { rowIndex: focusIndex, rowPinned: null, column: focusColumn };
             this.rangeController.setRangeToCell(cellPosition);
@@ -29001,8 +32006,8 @@ var navigationService_NavigationService = /** @class */ (function () {
         Object(context["a" /* Autowired */])('paginationProxy')
     ], NavigationService.prototype, "paginationProxy", void 0);
     navigationService_decorate([
-        Object(context["a" /* Autowired */])('focusedCellController')
-    ], NavigationService.prototype, "focusedCellController", void 0);
+        Object(context["a" /* Autowired */])('focusController')
+    ], NavigationService.prototype, "focusController", void 0);
     navigationService_decorate([
         Object(context["a" /* Autowired */])('animationFrameService')
     ], NavigationService.prototype, "animationFrameService", void 0);
@@ -29028,7 +32033,7 @@ var navigationService_NavigationService = /** @class */ (function () {
 // CONCATENATED MODULE: ../core/dist/es6/rendering/maxDivHeightScaler.js
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v22.1.1
+ * @version v23.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -29171,7 +32176,7 @@ var rendering_cellComp = __webpack_require__("8e4e");
 // CONCATENATED MODULE: ../core/dist/es6/rendering/autoHeightCalculator.js
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v22.1.1
+ * @version v23.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -29260,7 +32265,7 @@ var componentAnnotations = __webpack_require__("f737");
 // CONCATENATED MODULE: ../core/dist/es6/pagination/paginationComp.js
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v22.1.1
+ * @version v23.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -29292,7 +32297,11 @@ var paginationComp_decorate = (undefined && undefined.__decorate) || function (d
 var paginationComp_PaginationComp = /** @class */ (function (_super) {
     paginationComp_extends(PaginationComp, _super);
     function PaginationComp() {
-        return _super.call(this) || this;
+        var _this = _super.call(this) || this;
+        _this.previousAndFirstButtonsDisabled = false;
+        _this.nextButtonDisabled = false;
+        _this.lastButtonDisabled = false;
+        return _this;
     }
     PaginationComp.prototype.postConstruct = function () {
         var isRtl = this.gridOptionsWrapper.isEnableRtl();
@@ -29347,33 +32356,41 @@ var paginationComp_PaginationComp = /** @class */ (function (_super) {
         var strPrevious = localeTextFunc('previous', 'Previous');
         var strNext = localeTextFunc('next', 'Next');
         var strLast = localeTextFunc('last', 'Last');
-        return "<div class=\"ag-paging-panel ag-unselectable\">\n                <span ref=\"eSummaryPanel\" class=\"ag-paging-row-summary-panel\">\n                    <span ref=\"lbFirstRowOnPage\"></span> " + strTo + " <span ref=\"lbLastRowOnPage\"></span> " + strOf + " <span ref=\"lbRecordCount\"></span>\n                </span>\n                <span class=\"ag-paging-page-summary-panel\">\n                    <div ref=\"btFirst\" class=\"ag-paging-button\">\n                        <button type=\"button\">" + strFirst + "</button>\n                    </div>\n                    <div ref=\"btPrevious\" class=\"ag-paging-button\">\n                        <button type=\"button\">" + strPrevious + "</button>\n                    </div>\n                    " + strPage + " <span ref=\"lbCurrent\"></span> " + strOf + " <span ref=\"lbTotal\"></span>\n                    <div ref=\"btNext\" class=\"ag-paging-button\">\n                        <button type=\"button\">" + strNext + "</button>\n                    </div>\n                    <div ref=\"btLast\" class=\"ag-paging-button\">\n                        <button type=\"button\">" + strLast + "</button>\n                    </div>\n                </span>\n            </div>";
+        return "<div class=\"ag-paging-panel ag-unselectable\">\n                <span ref=\"eSummaryPanel\" class=\"ag-paging-row-summary-panel\">\n                    <span ref=\"lbFirstRowOnPage\" class=\"ag-paging-row-summary-panel-number\"></span>\n                    " + strTo + "\n                    <span ref=\"lbLastRowOnPage\" class=\"ag-paging-row-summary-panel-number\"></span>\n                    " + strOf + "\n                    <span ref=\"lbRecordCount\" class=\"ag-paging-row-summary-panel-number\"></span>\n                </span>\n                <span class=\"ag-paging-page-summary-panel\">\n                    <div ref=\"btFirst\" class=\"ag-paging-button-wrapper\">\n                        <button type=\"button\" class=\"ag-paging-button\">" + strFirst + "</button>\n                    </div>\n                    <div ref=\"btPrevious\" class=\"ag-paging-button-wrapper\">\n                        <button type=\"button\" class=\"ag-paging-button\">" + strPrevious + "</button>\n                    </div>\n                    <span class=\"ag-paging-description\">\n                        " + strPage + "\n                        <span ref=\"lbCurrent\" class=\"ag-paging-number\"></span>\n                        " + strOf + "\n                        <span ref=\"lbTotal\" class=\"ag-paging-number\"></span>\n                    </span>\n                    <span ref=\"lbTotal\" class=\"ag-paging-number\"></span>\n                    <div ref=\"btNext\" class=\"ag-paging-button-wrapper\">\n                        <button type=\"button\" class=\"ag-paging-button\">" + strNext + "</button>\n                    </div>\n                    <div ref=\"btLast\" class=\"ag-paging-button-wrapper\">\n                        <button type=\"button\" class=\"ag-paging-button\">" + strLast + "</button>\n                    </div>\n                </span>\n            </div>";
     };
     PaginationComp.prototype.onBtNext = function () {
-        this.paginationProxy.goToNextPage();
+        if (!this.nextButtonDisabled) {
+            this.paginationProxy.goToNextPage();
+        }
     };
     PaginationComp.prototype.onBtPrevious = function () {
-        this.paginationProxy.goToPreviousPage();
+        if (!this.previousAndFirstButtonsDisabled) {
+            this.paginationProxy.goToPreviousPage();
+        }
     };
     PaginationComp.prototype.onBtFirst = function () {
-        this.paginationProxy.goToFirstPage();
+        if (!this.previousAndFirstButtonsDisabled) {
+            this.paginationProxy.goToFirstPage();
+        }
     };
     PaginationComp.prototype.onBtLast = function () {
-        this.paginationProxy.goToLastPage();
+        if (!this.lastButtonDisabled) {
+            this.paginationProxy.goToLastPage();
+        }
     };
     PaginationComp.prototype.enableOrDisableButtons = function () {
         var currentPage = this.paginationProxy.getCurrentPage();
         var maxRowFound = this.paginationProxy.isLastPageFound();
         var totalPages = this.paginationProxy.getTotalPages();
-        var disablePreviousAndFirst = currentPage === 0;
-        utils["d" /* _ */].addOrRemoveCssClass(this.btPrevious, 'ag-disabled', disablePreviousAndFirst);
-        utils["d" /* _ */].addOrRemoveCssClass(this.btFirst, 'ag-disabled', disablePreviousAndFirst);
+        this.previousAndFirstButtonsDisabled = currentPage === 0;
+        utils["d" /* _ */].addOrRemoveCssClass(this.btPrevious, 'ag-disabled', this.previousAndFirstButtonsDisabled);
+        utils["d" /* _ */].addOrRemoveCssClass(this.btFirst, 'ag-disabled', this.previousAndFirstButtonsDisabled);
         var zeroPagesToDisplay = this.isZeroPagesToDisplay();
         var onLastPage = maxRowFound && currentPage === (totalPages - 1);
-        var disableNext = onLastPage || zeroPagesToDisplay;
-        utils["d" /* _ */].addOrRemoveCssClass(this.btNext, 'ag-disabled', disableNext);
-        var disableLast = !maxRowFound || zeroPagesToDisplay || currentPage === (totalPages - 1);
-        utils["d" /* _ */].addOrRemoveCssClass(this.btLast, 'ag-disabled', disableLast);
+        this.nextButtonDisabled = onLastPage || zeroPagesToDisplay;
+        utils["d" /* _ */].addOrRemoveCssClass(this.btNext, 'ag-disabled', this.nextButtonDisabled);
+        this.lastButtonDisabled = !maxRowFound || zeroPagesToDisplay || currentPage === (totalPages - 1);
+        utils["d" /* _ */].addOrRemoveCssClass(this.btLast, 'ag-disabled', this.lastButtonDisabled);
     };
     PaginationComp.prototype.updateRowLabels = function () {
         var currentPage = this.paginationProxy.getCurrentPage();
@@ -29483,7 +32500,7 @@ var tooltipManager = __webpack_require__("9318");
 // CONCATENATED MODULE: ../core/dist/es6/rendering/overlays/overlayWrapperComponent.js
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v22.1.1
+ * @version v23.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -29535,20 +32552,20 @@ var overlayWrapperComponent_OverlayWrapperComponent = /** @class */ (function (_
         var workItem = this.userComponentFactory.newLoadingOverlayComponent({
             api: this.gridOptionsWrapper.getApi()
         });
-        this.showOverlay(workItem);
+        this.showOverlay(workItem, LoadingType.Loading);
     };
     OverlayWrapperComponent.prototype.showNoRowsOverlay = function () {
         var workItem = this.userComponentFactory.newNoRowsOverlayComponent({
             api: this.gridOptionsWrapper.getApi()
         });
-        this.showOverlay(workItem);
+        this.showOverlay(workItem, LoadingType.NoRows);
     };
-    OverlayWrapperComponent.prototype.showOverlay = function (workItem) {
+    OverlayWrapperComponent.prototype.showOverlay = function (workItem, type) {
         var _this = this;
         if (this.inProgress) {
             return;
         }
-        this.setWrapperTypeClass(LoadingType.NoRows);
+        this.setWrapperTypeClass(type);
         this.destroyActiveOverlay();
         this.inProgress = true;
         workItem.then(function (comp) {
@@ -29621,7 +32638,7 @@ var agInputTextArea = __webpack_require__("b1cb");
 // EXTERNAL MODULE: ../core/dist/es6/widgets/agSlider.js
 var agSlider = __webpack_require__("54a0");
 
-// EXTERNAL MODULE: ../core/dist/es6/widgets/agColorPicker.js + 2 modules
+// EXTERNAL MODULE: ../core/dist/es6/widgets/agColorPicker.js + 1 modules
 var agColorPicker = __webpack_require__("0628");
 
 // EXTERNAL MODULE: ../core/dist/es6/widgets/agInputNumberField.js
@@ -29630,7 +32647,7 @@ var agInputNumberField = __webpack_require__("920a");
 // EXTERNAL MODULE: ../core/dist/es6/widgets/agInputRange.js
 var agInputRange = __webpack_require__("a0c9");
 
-// EXTERNAL MODULE: ../core/dist/es6/widgets/agSelect.js
+// EXTERNAL MODULE: ../core/dist/es6/widgets/agSelect.js + 1 modules
 var agSelect = __webpack_require__("0d72");
 
 // EXTERNAL MODULE: ../core/dist/es6/widgets/agAngleSelect.js
@@ -29642,7 +32659,7 @@ var agToggleButton = __webpack_require__("1f29");
 // CONCATENATED MODULE: ../core/dist/es6/rendering/detailRowCompCache.js
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v22.1.1
+ * @version v23.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -29810,7 +32827,7 @@ var moduleNames = __webpack_require__("203c");
 // CONCATENATED MODULE: ../core/dist/es6/undoRedo/undoRedoStack.js
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v22.1.1
+ * @version v23.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -29875,7 +32892,7 @@ var UndoRedoStack = /** @class */ (function () {
 // CONCATENATED MODULE: ../core/dist/es6/undoRedo/undoRedoService.js
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v22.1.1
+ * @version v23.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -30032,7 +33049,7 @@ var undoRedoService_UndoRedoService = /** @class */ (function () {
         if (moduleRegistry["a" /* ModuleRegistry */].isRegistered(moduleNames["a" /* ModuleNames */].RangeSelectionModule)) {
             this.gridApi.clearRangeSelection();
         }
-        this.focusedCellController.setFocusedCell(rowIndex, columnId, rowPinned, true);
+        this.focusController.setFocusedCell(rowIndex, columnId, rowPinned, true);
     };
     UndoRedoService.prototype.addRowEditingListeners = function () {
         var _this = this;
@@ -30100,8 +33117,8 @@ var undoRedoService_UndoRedoService = /** @class */ (function () {
         Object(context["a" /* Autowired */])('gridOptionsWrapper')
     ], UndoRedoService.prototype, "gridOptionsWrapper", void 0);
     undoRedoService_decorate([
-        Object(context["a" /* Autowired */])('focusedCellController')
-    ], UndoRedoService.prototype, "focusedCellController", void 0);
+        Object(context["a" /* Autowired */])('focusController')
+    ], UndoRedoService.prototype, "focusController", void 0);
     undoRedoService_decorate([
         Object(context["a" /* Autowired */])('eventService')
     ], UndoRedoService.prototype, "eventService", void 0);
@@ -30125,10 +33142,9 @@ var undoRedoService_UndoRedoService = /** @class */ (function () {
 
 
 // CONCATENATED MODULE: ../core/dist/es6/grid.js
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return grid_Grid; });
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v22.1.1
+ * @version v23.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -30342,7 +33358,7 @@ var grid_Grid = /** @class */ (function () {
             selectionController["a" /* SelectionController */], filterManager["a" /* FilterManager */], columnController_columnController["a" /* ColumnController */], paginationProxy["a" /* PaginationProxy */], rowRenderer["a" /* RowRenderer */], expressionService["a" /* ExpressionService */],
             columnFactory["a" /* ColumnFactory */], templateService["a" /* TemplateService */], alignedGridsService["a" /* AlignedGridsService */],
             navigationService_NavigationService, valueCache["a" /* ValueCache */], valueService["a" /* ValueService */], logger["b" /* LoggerFactory */], columnUtils["a" /* ColumnUtils */], autoWidthCalculator["a" /* AutoWidthCalculator */],
-            standardMenu["a" /* StandardMenuFactory */], dragAndDropService["a" /* DragAndDropService */], columnApi["a" /* ColumnApi */], focusedCellController["a" /* FocusedCellController */], mouseEventService["a" /* MouseEventService */], environment["a" /* Environment */],
+            standardMenu["a" /* StandardMenuFactory */], dragAndDropService["a" /* DragAndDropService */], columnApi["a" /* ColumnApi */], focusController["a" /* FocusController */], mouseEventService["a" /* MouseEventService */], environment["a" /* Environment */],
             cellNavigationService["a" /* CellNavigationService */], valueFormatterService["a" /* ValueFormatterService */], stylingService["a" /* StylingService */], scrollVisibleService["a" /* ScrollVisibleService */], sortController["a" /* SortController */],
             columnHoverService_ColumnHoverService, columnAnimationService_ColumnAnimationService, selectableService["a" /* SelectableService */], autoGroupColService_AutoGroupColService,
             changeDetectionService_ChangeDetectionService, animationFrameService_AnimationFrameService, tooltipManager["a" /* TooltipManager */], detailRowCompCache_DetailRowCompCache, undoRedoService_UndoRedoService
@@ -30452,7 +33468,7 @@ var grid_Grid = /** @class */ (function () {
 /* harmony import */ var _utils__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("e3d3");
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v22.1.1
+ * @version v23.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -30630,7 +33646,7 @@ var DisplayedGroupCreator = /** @class */ (function () {
 /* harmony import */ var _events__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("1284");
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v22.1.1
+ * @version v23.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -30703,7 +33719,7 @@ var ScrollVisibleService = /** @class */ (function () {
 /* harmony import */ var _utils__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("e3d3");
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v22.1.1
+ * @version v23.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -30846,7 +33862,7 @@ var ColumnUtils = /** @class */ (function () {
 /* harmony import */ var _context_context__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("d196");
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v22.1.1
+ * @version v23.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -30913,7 +33929,7 @@ var Logger = /** @class */ (function () {
 /* harmony import */ var _utils__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("e3d3");
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v22.1.1
+ * @version v23.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -30951,6 +33967,7 @@ var AgAbstractLabel = /** @class */ (function (_super) {
     }
     AgAbstractLabel.prototype.postConstruct = function () {
         _utils__WEBPACK_IMPORTED_MODULE_2__[/* _ */ "d"].addCssClass(this.getGui(), 'ag-labeled');
+        _utils__WEBPACK_IMPORTED_MODULE_2__[/* _ */ "d"].addCssClass(this.eLabel, 'ag-label');
         var _a = this.config, labelSeparator = _a.labelSeparator, label = _a.label, labelWidth = _a.labelWidth, labelAlignment = _a.labelAlignment;
         if (labelSeparator != null) {
             this.setLabelSeparator(labelSeparator);
@@ -31018,7 +34035,7 @@ var AgAbstractLabel = /** @class */ (function (_super) {
 /* harmony import */ var _selectCellEditor__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("5c1e");
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v22.1.1
+ * @version v23.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -31066,7 +34083,7 @@ var PopupSelectCellEditor = /** @class */ (function (_super) {
 /* harmony import */ var _utils__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__("e3d3");
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v22.1.1
+ * @version v23.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -31110,8 +34127,19 @@ var GroupCellRenderer = /** @class */ (function (_super) {
         var embeddedRowMismatch = this.isEmbeddedRowMismatch();
         // This allows for empty strings to appear as groups since
         // it will only return for null or undefined.
-        var cellIsEmpty = params.value == null;
-        this.cellIsBlank = embeddedRowMismatch || cellIsEmpty;
+        var nullValue = params.value == null;
+        var skipCell = false;
+        // if the groupCellRenderer is inside of a footer and groupHideOpenParents is true
+        // we should only display the groupCellRenderer if the current column is the rowGroupedColumn
+        if (this.gridOptionsWrapper.isGroupIncludeFooter() && this.gridOptionsWrapper.isGroupHideOpenParents()) {
+            var node = params.node;
+            if (node.footer) {
+                var showRowGroup = params.colDef && params.colDef.showRowGroup;
+                var rowGroupColumnId = node.rowGroupColumn && node.rowGroupColumn.getColId();
+                skipCell = showRowGroup !== rowGroupColumnId;
+            }
+        }
+        this.cellIsBlank = embeddedRowMismatch || nullValue || skipCell;
         if (this.cellIsBlank) {
             return;
         }
@@ -31131,30 +34159,22 @@ var GroupCellRenderer = /** @class */ (function (_super) {
     // in the body, or if pinning in the pinned section, or if pinning and RTL,
     // in the right section. otherwise we would have the cell repeated in each section.
     GroupCellRenderer.prototype.isEmbeddedRowMismatch = function () {
-        if (this.params.fullWidth && this.gridOptionsWrapper.isEmbedFullWidthRows()) {
-            var pinnedLeftCell = this.params.pinned === _constants__WEBPACK_IMPORTED_MODULE_0__[/* Constants */ "a"].PINNED_LEFT;
-            var pinnedRightCell = this.params.pinned === _constants__WEBPACK_IMPORTED_MODULE_0__[/* Constants */ "a"].PINNED_RIGHT;
-            var bodyCell = !pinnedLeftCell && !pinnedRightCell;
-            if (this.gridOptionsWrapper.isEnableRtl()) {
-                if (this.columnController.isPinningLeft()) {
-                    return !pinnedRightCell;
-                }
-                else {
-                    return !bodyCell;
-                }
-            }
-            else {
-                if (this.columnController.isPinningLeft()) {
-                    return !pinnedLeftCell;
-                }
-                else {
-                    return !bodyCell;
-                }
-            }
-        }
-        else {
+        if (!this.params.fullWidth || !this.gridOptionsWrapper.isEmbedFullWidthRows()) {
             return false;
         }
+        var pinnedLeftCell = this.params.pinned === _constants__WEBPACK_IMPORTED_MODULE_0__[/* Constants */ "a"].PINNED_LEFT;
+        var pinnedRightCell = this.params.pinned === _constants__WEBPACK_IMPORTED_MODULE_0__[/* Constants */ "a"].PINNED_RIGHT;
+        var bodyCell = !pinnedLeftCell && !pinnedRightCell;
+        if (this.gridOptionsWrapper.isEnableRtl()) {
+            if (this.columnController.isPinningLeft()) {
+                return !pinnedRightCell;
+            }
+            return !bodyCell;
+        }
+        if (this.columnController.isPinningLeft()) {
+            return !pinnedLeftCell;
+        }
+        return !bodyCell;
     };
     GroupCellRenderer.prototype.setIndent = function () {
         if (this.gridOptionsWrapper.isGroupHideOpenParents()) {
@@ -31177,14 +34197,9 @@ var GroupCellRenderer = /** @class */ (function (_super) {
     GroupCellRenderer.prototype.setPaddingDeprecatedWay = function (paddingCount, padding) {
         _utils__WEBPACK_IMPORTED_MODULE_7__[/* _ */ "d"].doOnce(function () { return console.warn('ag-Grid: since v14.2, configuring padding for groupCellRenderer should be done with Sass variables and themes. Please see the ag-Grid documentation page for Themes, in particular the property $row-group-indent-size.'); }, 'groupCellRenderer->doDeprecatedWay');
         var paddingPx = paddingCount * padding;
-        if (this.gridOptionsWrapper.isEnableRtl()) {
-            // if doing rtl, padding is on the right
-            this.getGui().style.paddingRight = paddingPx + 'px';
-        }
-        else {
-            // otherwise it is on the left
-            this.getGui().style.paddingLeft = paddingPx + 'px';
-        }
+        var eGui = this.getGui();
+        var paddingSide = this.gridOptionsWrapper.isEnableRtl() ? 'paddingRight' : 'paddingLeft';
+        eGui.style[paddingSide] = paddingPx + "px";
     };
     GroupCellRenderer.prototype.setupIndent = function () {
         // only do this if an indent - as this overwrites the padding that
@@ -31216,8 +34231,8 @@ var GroupCellRenderer = /** @class */ (function (_super) {
         }
     };
     GroupCellRenderer.prototype.createFooterCell = function () {
-        var footerValue;
         var footerValueGetter = this.params.footerValueGetter;
+        var footerValue;
         if (footerValueGetter) {
             // params is same as we were given, except we set the value as the item to display
             var paramsClone = _utils__WEBPACK_IMPORTED_MODULE_7__[/* _ */ "d"].cloneObject(this.params);
@@ -31248,12 +34263,9 @@ var GroupCellRenderer = /** @class */ (function (_super) {
             this.valueFormatterService.formatValue(columnToUse, params.node, params.scope, groupName) : null;
         params.valueFormatted = valueFormatted;
         var rendererPromise;
-        if (params.fullWidth == true) {
-            rendererPromise = this.useFullWidth(params);
-        }
-        else {
-            rendererPromise = this.useInnerRenderer(this.params.colDef.cellRendererParams, columnToUse.getColDef(), params);
-        }
+        rendererPromise = params.fullWidth
+            ? this.useFullWidth(params)
+            : this.useInnerRenderer(this.params.colDef.cellRendererParams, columnToUse.getColDef(), params);
         // retain a reference to the created renderer - we'll use this later for cleanup (in destroy)
         if (rendererPromise) {
             rendererPromise.then(function (value) {
@@ -31263,6 +34275,7 @@ var GroupCellRenderer = /** @class */ (function (_super) {
     };
     GroupCellRenderer.prototype.useInnerRenderer = function (groupCellRendererParams, groupedColumnDef, // the column this group row is for, eg 'Country'
     params) {
+        var _this = this;
         // when grouping, the normal case is we use the cell renderer of the grouped column. eg if grouping by country
         // and then rating, we will use the country cell renderer for each country group row and likewise the rating
         // cell renderer for each rating group row.
@@ -31275,7 +34288,6 @@ var GroupCellRenderer = /** @class */ (function (_super) {
         // 1) thisColDef.cellRendererParams.innerRenderer of the column showing the groups (eg auto group column)
         // 2) groupedColDef.cellRenderer of the grouped column
         // 3) groupedColDef.cellRendererParams.innerRenderer
-        var _this = this;
         var cellRendererPromise = null;
         // we check if cell renderer provided for the group cell renderer, eg colDef.cellRendererParams.innerRenderer
         var groupInnerRendererClass = this.userComponentFactory
@@ -31289,12 +34301,14 @@ var GroupCellRenderer = /** @class */ (function (_super) {
             // otherwise see if we can use the cellRenderer of the column we are grouping by
             var groupColumnRendererClass = this.userComponentFactory
                 .lookupComponentClassDef(groupedColumnDef, "cellRenderer");
-            if (groupColumnRendererClass && groupColumnRendererClass.source != _components_framework_userComponentFactory__WEBPACK_IMPORTED_MODULE_6__[/* ComponentSource */ "a"].DEFAULT) {
+            if (groupColumnRendererClass &&
+                groupColumnRendererClass.source != _components_framework_userComponentFactory__WEBPACK_IMPORTED_MODULE_6__[/* ComponentSource */ "a"].DEFAULT) {
                 // Only if the original column is using a specific renderer, it it is a using a DEFAULT one ignore it
                 cellRendererPromise = this.userComponentFactory.newCellRenderer(groupedColumnDef, params);
             }
-            else if (groupColumnRendererClass && groupColumnRendererClass.source == _components_framework_userComponentFactory__WEBPACK_IMPORTED_MODULE_6__[/* ComponentSource */ "a"].DEFAULT
-                && (_utils__WEBPACK_IMPORTED_MODULE_7__[/* _ */ "d"].get(groupedColumnDef, 'cellRendererParams.innerRenderer', null))) {
+            else if (groupColumnRendererClass &&
+                groupColumnRendererClass.source == _components_framework_userComponentFactory__WEBPACK_IMPORTED_MODULE_6__[/* ComponentSource */ "a"].DEFAULT &&
+                (_utils__WEBPACK_IMPORTED_MODULE_7__[/* _ */ "d"].get(groupedColumnDef, 'cellRendererParams.innerRenderer', null))) {
                 // EDGE CASE - THIS COMES FROM A COLUMN WHICH HAS BEEN GROUPED DYNAMICALLY, THAT HAS AS RENDERER 'group'
                 // AND HAS A INNER CELL RENDERER
                 cellRendererPromise = this.userComponentFactory.newInnerCellRenderer(groupedColumnDef.cellRendererParams, params);
@@ -31352,19 +34366,17 @@ var GroupCellRenderer = /** @class */ (function (_super) {
         if (typeof paramsCheckbox === 'function') {
             return paramsCheckbox(this.params);
         }
-        else {
-            return paramsCheckbox === true;
-        }
+        return paramsCheckbox === true;
     };
     GroupCellRenderer.prototype.addCheckboxIfNeeded = function () {
         var rowNode = this.displayedGroup;
-        var checkboxNeeded = this.isUserWantsSelected()
+        var checkboxNeeded = this.isUserWantsSelected() &&
             // footers cannot be selected
-            && !rowNode.footer
+            !rowNode.footer &&
             // pinned rows cannot be selected
-            && !rowNode.rowPinned
+            !rowNode.rowPinned &&
             // details cannot be selected
-            && !rowNode.detail;
+            !rowNode.detail;
         if (checkboxNeeded) {
             var cbSelectionComponent_1 = new _checkboxSelectionComponent__WEBPACK_IMPORTED_MODULE_4__[/* CheckboxSelectionComponent */ "a"]();
             this.getContext().wireBean(cbSelectionComponent_1);
@@ -31403,17 +34415,15 @@ var GroupCellRenderer = /** @class */ (function (_super) {
     };
     GroupCellRenderer.prototype.onKeyDown = function (event) {
         var enterKeyPressed = _utils__WEBPACK_IMPORTED_MODULE_7__[/* _ */ "d"].isKeyPressed(event, _constants__WEBPACK_IMPORTED_MODULE_0__[/* Constants */ "a"].KEY_ENTER);
-        if (enterKeyPressed) {
-            if (this.params.suppressEnterExpand) {
-                return;
-            }
-            var cellEditable = this.params.column && this.params.column.isCellEditable(this.params.node);
-            if (cellEditable) {
-                return;
-            }
-            event.preventDefault();
-            this.onExpandOrContract();
+        if (!enterKeyPressed || this.params.suppressEnterExpand) {
+            return;
         }
+        var cellEditable = this.params.column && this.params.column.isCellEditable(this.params.node);
+        if (cellEditable) {
+            return;
+        }
+        event.preventDefault();
+        this.onExpandOrContract();
     };
     GroupCellRenderer.prototype.setupDragOpenParents = function () {
         var column = this.params.column;
@@ -31535,17 +34545,11 @@ var GroupCellRenderer = /** @class */ (function (_super) {
         Object(_context_context__WEBPACK_IMPORTED_MODULE_1__[/* Autowired */ "a"])('expressionService')
     ], GroupCellRenderer.prototype, "expressionService", void 0);
     __decorate([
-        Object(_context_context__WEBPACK_IMPORTED_MODULE_1__[/* Autowired */ "a"])('eventService')
-    ], GroupCellRenderer.prototype, "eventService", void 0);
-    __decorate([
         Object(_context_context__WEBPACK_IMPORTED_MODULE_1__[/* Autowired */ "a"])('valueFormatterService')
     ], GroupCellRenderer.prototype, "valueFormatterService", void 0);
     __decorate([
         Object(_context_context__WEBPACK_IMPORTED_MODULE_1__[/* Autowired */ "a"])('columnController')
     ], GroupCellRenderer.prototype, "columnController", void 0);
-    __decorate([
-        Object(_context_context__WEBPACK_IMPORTED_MODULE_1__[/* Autowired */ "a"])('mouseEventService')
-    ], GroupCellRenderer.prototype, "mouseEventService", void 0);
     __decorate([
         Object(_context_context__WEBPACK_IMPORTED_MODULE_1__[/* Autowired */ "a"])('userComponentFactory')
     ], GroupCellRenderer.prototype, "userComponentFactory", void 0);
@@ -31578,7 +34582,7 @@ var GroupCellRenderer = /** @class */ (function (_super) {
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return GroupInstanceIdCreator; });
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v22.1.1
+ * @version v23.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -31622,10 +34626,18 @@ var GroupInstanceIdCreator = /** @class */ (function () {
 
 "use strict";
 
+// EXPORTS
+__webpack_require__.d(__webpack_exports__, "a", function() { return /* reexport */ Color; });
+__webpack_require__.d(__webpack_exports__, "d", function() { return /* reexport */ general["a" /* _ */]; });
+__webpack_require__.d(__webpack_exports__, "b", function() { return /* reexport */ NumberSequence; });
+__webpack_require__.d(__webpack_exports__, "c", function() { return /* reexport */ Promise; });
+
+// UNUSED EXPORTS: CsvUtils, Utils, PromiseStatus, Timer
+
 // CONCATENATED MODULE: ../core/dist/es6/utils/color.js
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v22.1.1
+ * @version v23.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -32039,2243 +35051,106 @@ var Color = /** @class */ (function () {
 }());
 
 
-// EXTERNAL MODULE: ../core/dist/es6/constants.js
-var constants = __webpack_require__("f2fb");
-
-// CONCATENATED MODULE: ../core/dist/es6/utils/general.js
+// CONCATENATED MODULE: ../core/dist/es6/utils/csv.js
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v22.1.1
+ * @version v23.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
-
-var FUNCTION_STRIP_COMMENTS = /((\/\/.*$)|(\/\*[\s\S]*?\*\/))/mg;
-var FUNCTION_ARGUMENT_NAMES = /([^\s,]+)/g;
-var AG_GRID_STOP_PROPAGATION = '__ag_Grid_Stop_Propagation';
-/**
- * HTML Escapes.
- */
-var HTML_ESCAPES = {
-    '&': '&amp;',
-    '<': '&lt;',
-    '>': '&gt;',
-    '"': '&quot;',
-    "'": '&#39;'
-};
-var reUnescapedHtml = /[&<>"']/g;
-var general_Utils = /** @class */ (function () {
-    function Utils() {
+var CsvUtils = /** @class */ (function () {
+    function CsvUtils() {
     }
-    /**
-     * If the key was passed before, then doesn't execute the func
-     * @param {Function} func
-     * @param {string} key
-     */
-    Utils.doOnce = function (func, key) {
-        if (this.doOnceFlags[key]) {
-            return;
-        }
-        func();
-        this.doOnceFlags[key] = true;
-    };
-    Utils.getMaxSafeInteger = function () {
-        // eslint-disable-next-line
-        if (!Number.MAX_SAFE_INTEGER) {
-            return 9007199254740991;
-        }
-        // eslint-disable-next-line
-        return Number.MAX_SAFE_INTEGER;
-    };
-    /**
-     * Checks if event was issued by a left click
-     * from https://stackoverflow.com/questions/3944122/detect-left-mouse-button-press
-     * @param {MouseEvent} mouseEvent
-     * @returns {boolean}
-     */
-    Utils.isLeftClick = function (mouseEvent) {
-        if ("buttons" in mouseEvent) {
-            return mouseEvent.buttons == 1;
-        }
-        var button = mouseEvent.which || mouseEvent.button;
-        return button == 1;
-    };
-    /**
-     * `True` if the event is close to the original event by X pixels either vertically or horizontally.
-     * we only start dragging after X pixels so this allows us to know if we should start dragging yet.
-     * @param {MouseEvent | TouchEvent} e1
-     * @param {MouseEvent | TouchEvent} e2
-     * @param {number} pixelCount
-     * @returns {boolean}
-     */
-    Utils.areEventsNear = function (e1, e2, pixelCount) {
-        // by default, we wait 4 pixels before starting the drag
-        if (pixelCount === 0) {
-            return false;
-        }
-        var diffX = Math.abs(e1.clientX - e2.clientX);
-        var diffY = Math.abs(e1.clientY - e2.clientY);
-        return Math.max(diffX, diffY) <= pixelCount;
-    };
-    Utils.jsonEquals = function (val1, val2) {
-        var val1Json = val1 ? JSON.stringify(val1) : null;
-        var val2Json = val2 ? JSON.stringify(val2) : null;
-        return val1Json === val2Json;
-    };
-    Utils.shallowCompare = function (arr1, arr2) {
-        // if both are missing, then they are the same
-        if (this.missing(arr1) && this.missing(arr2)) {
-            return true;
-        }
-        // if one is present, but other is missing, then they are different
-        if (this.missing(arr1) || this.missing(arr2)) {
-            return false;
-        }
-        if (arr1.length !== arr2.length) {
-            return false;
-        }
-        for (var i = 0; i < arr1.length; i++) {
-            if (arr1[i] !== arr2[i]) {
-                return false;
-            }
-        }
-        return true;
-    };
-    Utils.getNameOfClass = function (theClass) {
-        var funcNameRegex = /function (.{1,})\(/;
-        var funcAsString = theClass.toString();
-        var results = funcNameRegex.exec(funcAsString);
-        return results && results.length > 1 ? results[1] : "";
-    };
-    Utils.getValueUsingField = function (data, field, fieldContainsDots) {
-        if (!field || !data) {
-            return;
-        }
-        // if no '.', then it's not a deep value
-        if (!fieldContainsDots) {
-            return data[field];
-        }
-        else {
-            // otherwise it is a deep value, so need to dig for it
-            var fields = field.split('.');
-            var currentObject = data;
-            for (var i = 0; i < fields.length; i++) {
-                currentObject = currentObject[fields[i]];
-                if (this.missing(currentObject)) {
-                    return null;
+    // Based on https://stackoverflow.com/a/14991797
+    // This will parse a delimited string into an array of arrays.
+    CsvUtils.stringToArray = function (strData, delimiter) {
+        if (delimiter === void 0) { delimiter = ','; }
+        var data = [];
+        var isNewline = function (char) { return char === '\r' || char === '\n'; };
+        var insideQuotedField = false;
+        var _loop_1 = function (row, column, position) {
+            var previousChar = strData[position - 1];
+            var currentChar = strData[position];
+            var nextChar = strData[position + 1];
+            var ensureDataExists = function () {
+                if (!data[row]) {
+                    // create row if it doesn't exist
+                    data[row] = [];
                 }
-            }
-            return currentObject;
-        }
-    };
-    Utils.getElementSize = function (el) {
-        var _a = window.getComputedStyle(el), height = _a.height, width = _a.width, paddingTop = _a.paddingTop, paddingRight = _a.paddingRight, paddingBottom = _a.paddingBottom, paddingLeft = _a.paddingLeft, marginTop = _a.marginTop, marginRight = _a.marginRight, marginBottom = _a.marginBottom, marginLeft = _a.marginLeft, boxSizing = _a.boxSizing;
-        return {
-            height: parseFloat(height),
-            width: parseFloat(width),
-            paddingTop: parseFloat(paddingTop),
-            paddingRight: parseFloat(paddingRight),
-            paddingBottom: parseFloat(paddingBottom),
-            paddingLeft: parseFloat(paddingLeft),
-            marginTop: parseFloat(marginTop),
-            marginRight: parseFloat(marginRight),
-            marginBottom: parseFloat(marginBottom),
-            marginLeft: parseFloat(marginLeft),
-            boxSizing: boxSizing
-        };
-    };
-    Utils.getInnerHeight = function (el) {
-        var size = this.getElementSize(el);
-        if (size.boxSizing === 'border-box') {
-            return size.height - size.paddingTop - size.paddingBottom;
-        }
-        return size.height;
-    };
-    Utils.getInnerWidth = function (el) {
-        var size = this.getElementSize(el);
-        if (size.boxSizing === 'border-box') {
-            return size.width - size.paddingLeft - size.paddingRight;
-        }
-        return size.width;
-    };
-    Utils.getAbsoluteHeight = function (el) {
-        var size = this.getElementSize(el);
-        var marginRight = size.marginBottom + size.marginTop;
-        return Math.ceil(el.offsetHeight + marginRight);
-    };
-    Utils.getAbsoluteWidth = function (el) {
-        var size = this.getElementSize(el);
-        var marginWidth = size.marginLeft + size.marginRight;
-        return Math.ceil(el.offsetWidth + marginWidth);
-    };
-    Utils.getScrollLeft = function (element, rtl) {
-        var scrollLeft = element.scrollLeft;
-        if (rtl) {
-            // Absolute value - for FF that reports RTL scrolls in negative numbers
-            scrollLeft = Math.abs(scrollLeft);
-            // Get Chrome to return the same value as well
-            if (this.isBrowserChrome()) {
-                scrollLeft = element.scrollWidth - element.clientWidth - scrollLeft;
-            }
-        }
-        return scrollLeft;
-    };
-    Utils.cleanNumber = function (value) {
-        if (typeof value === 'string') {
-            value = parseInt(value, 10);
-        }
-        if (typeof value === 'number') {
-            value = Math.floor(value);
-        }
-        else {
-            value = null;
-        }
-        return value;
-    };
-    Utils.setScrollLeft = function (element, value, rtl) {
-        if (rtl) {
-            // Chrome and Safari when doing RTL have the END position of the scroll as zero, not the start
-            if (this.isBrowserSafari() || this.isBrowserChrome()) {
-                value = element.scrollWidth - element.clientWidth - value;
-            }
-            // Firefox uses negative numbers when doing RTL scrolling
-            if (this.isBrowserFirefox()) {
-                value *= -1;
-            }
-        }
-        element.scrollLeft = value;
-    };
-    Utils.iterateNamedNodeMap = function (map, callback) {
-        if (!map) {
-            return;
-        }
-        for (var i = 0; i < map.length; i++) {
-            var attr = map[i];
-            callback(attr.name, attr.value);
-        }
-    };
-    Utils.iterateObject = function (object, callback) {
-        if (!object || this.missing(object)) {
-            return;
-        }
-        if (Array.isArray(object)) {
-            object.forEach(function (value, index) { return callback("" + index, value); });
-        }
-        else {
-            Object.keys(object).forEach(function (key) { return callback(key, object[key]); });
-        }
-    };
-    Utils.cloneObject = function (object) {
-        var copy = {};
-        var keys = Object.keys(object);
-        for (var i = 0; i < keys.length; i++) {
-            var key = keys[i];
-            var value = object[key];
-            copy[key] = value;
-        }
-        return copy;
-    };
-    /**
-     * Will copy the specified properties from `source` into the equivalent properties on `target`, ignoring properties with
-     * a value of `undefined`.
-     */
-    Utils.copyPropertiesIfPresent = function (source, target) {
-        var _this = this;
-        var properties = [];
-        for (var _i = 2; _i < arguments.length; _i++) {
-            properties[_i - 2] = arguments[_i];
-        }
-        properties.forEach(function (p) { return _this.copyPropertyIfPresent(source, target, p); });
-    };
-    /**
-     * Will copy the specified property from `source` into the equivalent property on `target`, unless the property has a
-     * value of `undefined`. If a transformation is provided, it will be applied to the value before being set on `target`.
-     */
-    Utils.copyPropertyIfPresent = function (source, target, property, transform) {
-        var value = this.getProperty(source, property);
-        if (value !== undefined) {
-            this.setProperty(target, property, transform ? transform(value) : value);
-        }
-    };
-    Utils.getAllKeysInObjects = function (objects) {
-        var allValues = {};
-        objects.forEach(function (obj) {
-            if (obj) {
-                Object.keys(obj).forEach(function (key) { return allValues[key] = null; });
-            }
-        });
-        return Object.keys(allValues);
-    };
-    Utils.mergeDeep = function (dest, source, copyUndefined) {
-        if (copyUndefined === void 0) { copyUndefined = true; }
-        if (!this.exists(source)) {
-            return;
-        }
-        this.iterateObject(source, function (key, newValue) {
-            var oldValue = dest[key];
-            if (oldValue === newValue) {
-                return;
-            }
-            if (typeof oldValue === 'object' && typeof newValue === 'object' && !Array.isArray(oldValue)) {
-                Utils.mergeDeep(oldValue, newValue);
-            }
-            else if (copyUndefined || newValue !== undefined) {
-                dest[key] = newValue;
-            }
-        });
-    };
-    Utils.assign = function (object) {
-        var _this = this;
-        var sources = [];
-        for (var _i = 1; _i < arguments.length; _i++) {
-            sources[_i - 1] = arguments[_i];
-        }
-        sources.forEach(function (source) {
-            if (_this.exists(source)) {
-                _this.iterateObject(source, function (key, value) {
-                    object[key] = value;
-                });
-            }
-        });
-        return object;
-    };
-    Utils.flatten = function (arrayOfArrays) {
-        return [].concat.apply([], arrayOfArrays);
-    };
-    Utils.parseYyyyMmDdToDate = function (yyyyMmDd, separator) {
-        try {
-            if (!yyyyMmDd) {
-                return null;
-            }
-            if (yyyyMmDd.indexOf(separator) === -1) {
-                return null;
-            }
-            var fields = yyyyMmDd.split(separator);
-            if (fields.length != 3) {
-                return null;
-            }
-            return new Date(Number(fields[0]), Number(fields[1]) - 1, Number(fields[2]));
-        }
-        catch (e) {
-            return null;
-        }
-    };
-    Utils.serializeDateToYyyyMmDd = function (date, separator) {
-        if (!date) {
-            return null;
-        }
-        return date.getFullYear() + separator + this.padStart(date.getMonth() + 1, 2) + separator + this.padStart(date.getDate(), 2);
-    };
-    Utils.padStart = function (num, totalStringSize) {
-        var asString = num + "";
-        while (asString.length < totalStringSize) {
-            asString = "0" + asString;
-        }
-        return asString;
-    };
-    Utils.pushAll = function (target, source) {
-        if (this.missing(source) || this.missing(target)) {
-            return;
-        }
-        source.forEach(function (func) { return target.push(func); });
-    };
-    Utils.createArrayOfNumbers = function (first, last) {
-        var result = [];
-        for (var i = first; i <= last; i++) {
-            result.push(i);
-        }
-        return result;
-    };
-    Utils.getFunctionParameters = function (func) {
-        var fnStr = func.toString().replace(FUNCTION_STRIP_COMMENTS, '');
-        var result = fnStr.slice(fnStr.indexOf('(') + 1, fnStr.indexOf(')')).match(FUNCTION_ARGUMENT_NAMES);
-        if (result === null) {
-            return [];
-        }
-        else {
-            return result;
-        }
-    };
-    Utils.find = function (collection, predicate, value) {
-        if (collection === null || collection === undefined) {
-            return null;
-        }
-        if (!Array.isArray(collection)) {
-            var objToArray = this.values(collection);
-            return this.find(objToArray, predicate, value);
-        }
-        var collectionAsArray = collection;
-        var firstMatchingItem = null;
-        for (var i = 0; i < collectionAsArray.length; i++) {
-            var item = collectionAsArray[i];
-            if (typeof predicate === 'string') {
-                if (item[predicate] === value) {
-                    firstMatchingItem = item;
-                    break;
+                if (!data[row][column]) {
+                    // create column if it doesn't exist
+                    data[row][column] = '';
                 }
-            }
-            else {
-                var callback = predicate;
-                if (callback(item)) {
-                    firstMatchingItem = item;
-                    break;
-                }
-            }
-        }
-        return firstMatchingItem;
-    };
-    Utils.toStrings = function (array) {
-        return array.map(function (item) {
-            if (item === undefined || item === null || !item.toString) {
-                return null;
-            }
-            else {
-                return item.toString();
-            }
-        });
-    };
-    Utils.findIndex = function (collection, predicate) {
-        for (var i = 0; i < collection.length; i++) {
-            if (predicate(collection[i], i, collection)) {
-                return i;
-            }
-        }
-        return -1;
-    };
-    /**
-     * Returns true if it is a DOM node
-     * taken from: http://stackoverflow.com/questions/384286/javascript-isdom-how-do-you-check-if-a-javascript-object-is-a-dom-object
-     * @param {any} o
-     * @return {boolean}
-     */
-    Utils.isNode = function (o) {
-        return (typeof Node === "function" ? o instanceof Node :
-            o && typeof o === "object" && typeof o.nodeType === "number" && typeof o.nodeName === "string");
-    };
-    //
-    /**
-     * Returns true if it is a DOM element
-     * taken from: http://stackoverflow.com/questions/384286/javascript-isdom-how-do-you-check-if-a-javascript-object-is-a-dom-object
-     * @param {any} o
-     * @returns {boolean}
-     */
-    Utils.isElement = function (o) {
-        return (typeof HTMLElement === "function" ? o instanceof HTMLElement : //DOM2
-            o && typeof o === "object" && o !== null && o.nodeType === 1 && typeof o.nodeName === "string");
-    };
-    Utils.isNodeOrElement = function (o) {
-        return this.isNode(o) || this.isElement(o);
-    };
-    /**
-     * Makes a copy of a node list into a list
-     * @param {NodeList} nodeList
-     * @returns {Node[]}
-     */
-    Utils.copyNodeList = function (nodeList) {
-        var childCount = nodeList ? nodeList.length : 0;
-        var res = [];
-        for (var i = 0; i < childCount; i++) {
-            res.push(nodeList[i]);
-        }
-        return res;
-    };
-    Utils.isEventFromPrintableCharacter = function (event) {
-        var pressedChar = String.fromCharCode(event.charCode);
-        // newline is an exception, as it counts as a printable character, but we don't
-        // want to start editing when it is pressed. without this check, if user is in chrome
-        // and editing a cell, and they press ctrl+enter, the cell stops editing, and then
-        // starts editing again with a blank value (two 'key down' events are fired). to
-        // test this, remove the line below, edit a cell in chrome and hit ctrl+enter while editing.
-        // https://ag-grid.atlassian.net/browse/AG-605
-        if (this.isKeyPressed(event, constants["a" /* Constants */].KEY_NEW_LINE)) {
-            return false;
-        }
-        // no allowed printable chars have alt or ctrl key combinations
-        if (event.altKey || event.ctrlKey) {
-            return false;
-        }
-        if (_.exists(event.key)) {
-            // modern browser will implement key, so we return if key is length 1, eg if it is 'a' for the
-            // a key, or '2' for the '2' key. non-printable characters have names, eg 'Enter' or 'Backspace'.
-            var printableCharacter = event.key.length === 1;
-            // IE11 & Edge treat the numpad del key differently - with numlock on we get "Del" for key,
-            // so this addition checks if its IE11/Edge and handles that specific case the same was as all other browsers
-            var numpadDelWithNumlockOnForEdgeOrIe = Utils.isNumpadDelWithNumlockOnForEdgeOrIe(event);
-            return printableCharacter || numpadDelWithNumlockOnForEdgeOrIe;
-        }
-        else {
-            // otherwise, for older browsers, we test against a list of characters, which doesn't include
-            // accents for non-English, but don't care much, as most users are on modern browsers
-            return Utils.PRINTABLE_CHARACTERS.indexOf(pressedChar) >= 0;
-        }
-    };
-    /**
-     * Allows user to tell the grid to skip specific keyboard events
-     * @param {GridOptionsWrapper} gridOptionsWrapper
-     * @param {KeyboardEvent} keyboardEvent
-     * @param {RowNode} rowNode
-     * @param {Column} column
-     * @param {boolean} editing
-     * @returns {boolean}
-     */
-    Utils.isUserSuppressingKeyboardEvent = function (gridOptionsWrapper, keyboardEvent, rowNode, column, editing) {
-        var gridOptionsFunc = gridOptionsWrapper.getSuppressKeyboardEventFunc();
-        var colDefFunc = column.getColDef().suppressKeyboardEvent;
-        // if no callbacks provided by user, then do nothing
-        if (!gridOptionsFunc && !colDefFunc) {
-            return false;
-        }
-        var params = {
-            event: keyboardEvent,
-            editing: editing,
-            column: column,
-            api: gridOptionsWrapper.getApi(),
-            node: rowNode,
-            data: rowNode.data,
-            colDef: column.getColDef(),
-            context: gridOptionsWrapper.getContext(),
-            columnApi: gridOptionsWrapper.getColumnApi()
-        };
-        // colDef get first preference on suppressing events
-        if (colDefFunc) {
-            var colDefFuncResult = colDefFunc(params);
-            // if colDef func suppressed, then return now, no need to call gridOption func
-            if (colDefFuncResult) {
-                return true;
-            }
-        }
-        if (gridOptionsFunc) {
-            // if gridOption func, return the result
-            return gridOptionsFunc(params);
-        }
-        else {
-            // otherwise return false, don't suppress, as colDef didn't suppress and no func on gridOptions
-            return false;
-        }
-    };
-    Utils.getCellCompForEvent = function (gridOptionsWrapper, event) {
-        var sourceElement = this.getTarget(event);
-        while (sourceElement) {
-            var renderedCell = gridOptionsWrapper.getDomData(sourceElement, 'cellComp');
-            if (renderedCell) {
-                return renderedCell;
-            }
-            sourceElement = sourceElement.parentElement;
-        }
-        return null;
-    };
-    /**
-     * Adds all type of change listeners to an element, intended to be a text field
-     * @param {HTMLElement} element
-     * @param {EventListener} listener
-     */
-    Utils.addChangeListener = function (element, listener) {
-        element.addEventListener("changed", listener);
-        element.addEventListener("paste", listener);
-        element.addEventListener("input", listener);
-        // IE doesn't fire changed for special keys (eg delete, backspace), so need to
-        // listen for this further ones
-        element.addEventListener("keydown", listener);
-        element.addEventListener("keyup", listener);
-    };
-    /**
-     * If value is undefined, null or blank, returns null, otherwise returns the value
-     * @param {T} value
-     * @returns {T | null}
-     */
-    Utils.makeNull = function (value) {
-        var valueNoType = value;
-        if (value === null || value === undefined || valueNoType === "") {
-            return null;
-        }
-        return value;
-    };
-    Utils.missing = function (value) {
-        return !this.exists(value);
-    };
-    Utils.missingOrEmpty = function (value) {
-        return !value || this.missing(value) || value.length === 0;
-    };
-    Utils.missingOrEmptyObject = function (value) {
-        return this.missing(value) || Object.keys(value).length === 0;
-    };
-    Utils.exists = function (value, allowEmptyString) {
-        if (allowEmptyString === void 0) { allowEmptyString = false; }
-        return value != null && (value !== '' || allowEmptyString);
-    };
-    Utils.firstExistingValue = function () {
-        var values = [];
-        for (var _i = 0; _i < arguments.length; _i++) {
-            values[_i] = arguments[_i];
-        }
-        for (var i = 0; i < values.length; i++) {
-            var value = values[i];
-            if (_.exists(value)) {
-                return value;
-            }
-        }
-        return null;
-    };
-    Utils.anyExists = function (values) {
-        if (values) {
-            for (var i = 0; i < values.length; i++) {
-                if (this.exists(values[i])) {
-                    return true;
-                }
-            }
-        }
-        return false;
-    };
-    Utils.existsAndNotEmpty = function (value) {
-        return value != null && this.exists(value) && value.length > 0;
-    };
-    Utils.clearElement = function (el) {
-        while (el && el.firstChild) {
-            el.removeChild(el.firstChild);
-        }
-    };
-    Utils.removeElement = function (parent, cssSelector) {
-        this.removeFromParent(parent.querySelector(cssSelector));
-    };
-    Utils.removeFromParent = function (node) {
-        if (node && node.parentNode) {
-            node.parentNode.removeChild(node);
-        }
-    };
-    Utils.isVisible = function (element) {
-        return (element.offsetParent !== null);
-    };
-    Utils.callIfPresent = function (func) {
-        if (func) {
-            func();
-        }
-    };
-    /**
-     * Loads the template and returns it as an element. makes up for no simple way in
-     * the dom api to load html directly, eg we cannot do this: document.createElement(template)
-     * @param {string} template
-     * @returns {HTMLElement}
-     */
-    Utils.loadTemplate = function (template) {
-        var tempDiv = document.createElement("div");
-        tempDiv.innerHTML = template;
-        return tempDiv.firstChild;
-    };
-    Utils.appendHtml = function (eContainer, htmlTemplate) {
-        if (eContainer.lastChild) {
-            // https://developer.mozilla.org/en-US/docs/Web/API/Element/insertAdjacentHTML
-            // we put the items at the start, so new items appear underneath old items,
-            // so when expanding/collapsing groups, the new rows don't go on top of the
-            // rows below that are moving our of the way
-            eContainer.insertAdjacentHTML('afterbegin', htmlTemplate);
-        }
-        else {
-            eContainer.innerHTML = htmlTemplate;
-        }
-    };
-    Utils.addOrRemoveCssClass = function (element, className, addOrRemove) {
-        if (addOrRemove) {
-            this.addCssClass(element, className);
-        }
-        else {
-            this.removeCssClass(element, className);
-        }
-    };
-    /**
-     * This method adds a class to an element and remove that class from all siblings.
-     * Useful for toggling state.
-     * @param {HTMLElement} element The element to receive the class
-     * @param {string} className The class to be assigned to the element
-     * @param {boolean} [inverted] This inverts the effect, adding the class to all siblings and
-     *        removing from the relevant element (useful when adding a class to hide non-selected elements).
-     */
-    Utils.radioCssClass = function (element, className, inverted) {
-        var parent = element.parentElement;
-        var sibling = parent.firstChild;
-        while (sibling) {
-            _.addOrRemoveCssClass(sibling, className, inverted ? (sibling !== element) : (sibling === element));
-            sibling = sibling.nextSibling;
-        }
-    };
-    Utils.addCssClass = function (element, className) {
-        var _this = this;
-        if (!className || className.length === 0) {
-            return;
-        }
-        if (className.indexOf(' ') >= 0) {
-            className.split(' ').forEach(function (value) { return _this.addCssClass(element, value); });
-            return;
-        }
-        if (element.classList) {
-            element.classList.add(className);
-        }
-        else if (element.className && element.className.length > 0) {
-            var cssClasses = element.className.split(' ');
-            if (cssClasses.indexOf(className) < 0) {
-                cssClasses.push(className);
-                element.setAttribute('class', cssClasses.join(' '));
-            }
-        }
-        else {
-            // do not use element.classList = className here, it will cause
-            // a read-only assignment error on some browsers (IE/Edge).
-            element.setAttribute('class', className);
-        }
-    };
-    Utils.removeCssClass = function (element, className) {
-        if (element.classList) {
-            element.classList.remove(className);
-        }
-        else if (element.className && element.className.length > 0) {
-            var newClassName = element.className.split(' ').filter(function (c) { return c !== className; }).join(' ');
-            element.setAttribute('class', newClassName);
-        }
-    };
-    Utils.containsClass = function (element, className) {
-        if (element.classList) {
-            // for modern browsers
-            return element.classList.contains(className);
-        }
-        else if (element.className) {
-            // for older browsers, check against the string of class names
-            // if only one class, can check for exact match
-            var onlyClass = element.className === className;
-            // if many classes, check for class name, we have to pad with ' ' to stop other
-            // class names that are a substring of this class
-            var contains = element.className.indexOf(' ' + className + ' ') >= 0;
-            // the padding above then breaks when it's the first or last class names
-            var startsWithClass = element.className.indexOf(className + ' ') === 0;
-            var endsWithClass = element.className.lastIndexOf(' ' + className) === (element.className.length - className.length - 1);
-            return onlyClass || contains || startsWithClass || endsWithClass;
-        }
-        else {
-            // if item is not a node
-            return false;
-        }
-    };
-    Utils.getElementAttribute = function (element, attributeName) {
-        if (element.attributes && element.attributes[attributeName]) {
-            var attribute = element.attributes[attributeName];
-            return attribute.value;
-        }
-        else {
-            return null;
-        }
-    };
-    Utils.offsetHeight = function (element) {
-        return element && element.clientHeight ? element.clientHeight : 0;
-    };
-    Utils.offsetWidth = function (element) {
-        return element && element.clientWidth ? element.clientWidth : 0;
-    };
-    Utils.sortNumerically = function (array) {
-        return array.sort(function (a, b) { return a - b; });
-    };
-    Utils.removeRepeatsFromArray = function (array, object) {
-        if (!array) {
-            return;
-        }
-        for (var index = array.length - 2; index >= 0; index--) {
-            var thisOneMatches = array[index] === object;
-            var nextOneMatches = array[index + 1] === object;
-            if (thisOneMatches && nextOneMatches) {
-                array.splice(index + 1, 1);
-            }
-        }
-    };
-    Utils.removeFromArray = function (array, object) {
-        var index = array.indexOf(object);
-        if (index >= 0) {
-            array.splice(index, 1);
-        }
-    };
-    Utils.removeAllFromArray = function (array, toRemove) {
-        var _this = this;
-        toRemove.forEach(function (item) { return _this.removeFromArray(array, item); });
-    };
-    Utils.insertIntoArray = function (array, object, toIndex) {
-        array.splice(toIndex, 0, object);
-    };
-    Utils.insertArrayIntoArray = function (dest, src, toIndex) {
-        if (this.missing(dest) || this.missing(src)) {
-            return;
-        }
-        // put items in backwards, otherwise inserted items end up in reverse order
-        for (var i = src.length - 1; i >= 0; i--) {
-            var item = src[i];
-            this.insertIntoArray(dest, item, toIndex);
-        }
-    };
-    Utils.moveInArray = function (array, objectsToMove, toIndex) {
-        var _this = this;
-        // first take out it items from the array
-        objectsToMove.forEach(function (obj) {
-            _this.removeFromArray(array, obj);
-        });
-        // now add the objects, in same order as provided to us, that means we start at the end
-        // as the objects will be pushed to the right as they are inserted
-        objectsToMove.slice().reverse().forEach(function (obj) {
-            _this.insertIntoArray(array, obj, toIndex);
-        });
-    };
-    Utils.defaultComparator = function (valueA, valueB, accentedCompare) {
-        if (accentedCompare === void 0) { accentedCompare = false; }
-        var valueAMissing = valueA === null || valueA === undefined;
-        var valueBMissing = valueB === null || valueB === undefined;
-        // this is for aggregations sum and avg, where the result can be a number that is wrapped.
-        // if we didn't do this, then the toString() value would be used, which would result in
-        // the strings getting used instead of the numbers.
-        if (valueA && valueA.toNumber) {
-            valueA = valueA.toNumber();
-        }
-        if (valueB && valueB.toNumber) {
-            valueB = valueB.toNumber();
-        }
-        if (valueAMissing && valueBMissing) {
-            return 0;
-        }
-        if (valueAMissing) {
-            return -1;
-        }
-        if (valueBMissing) {
-            return 1;
-        }
-        if (typeof valueA === "string") {
-            if (!accentedCompare) {
-                return doQuickCompare(valueA, valueB);
-            }
-            else {
-                try {
-                    // using local compare also allows chinese comparisons
-                    return valueA.localeCompare(valueB);
-                }
-                catch (e) {
-                    // if something wrong with localeCompare, eg not supported
-                    // by browser, then just continue with the quick one
-                    return doQuickCompare(valueA, valueB);
-                }
-            }
-        }
-        if (valueA < valueB) {
-            return -1;
-        }
-        else if (valueA > valueB) {
-            return 1;
-        }
-        else {
-            return 0;
-        }
-        function doQuickCompare(a, b) {
-            return (a > b ? 1 : (a < b ? -1 : 0));
-        }
-    };
-    Utils.last = function (arr) {
-        if (!arr || !arr.length) {
-            return undefined;
-        }
-        return arr[arr.length - 1];
-    };
-    Utils.compareArrays = function (array1, array2) {
-        if (this.missing(array1) && this.missing(array2)) {
-            return true;
-        }
-        if ((this.missing(array1) || this.missing(array2)) ||
-            (!array1 || !array2)) {
-            return false;
-        }
-        if (array1.length !== array2.length) {
-            return false;
-        }
-        for (var i = 0; i < array1.length; i++) {
-            if (array1[i] !== array2[i]) {
-                return false;
-            }
-        }
-        return true;
-    };
-    Utils.ensureDomOrder = function (eContainer, eChild, eChildBefore) {
-        // if already in right order, do nothing
-        if (eChildBefore && eChildBefore.nextSibling === eChild) {
-            return;
-        }
-        if (eChildBefore) {
-            if (eChildBefore.nextSibling) {
-                // insert between the eRowBefore and the row after it
-                eContainer.insertBefore(eChild, eChildBefore.nextSibling);
-            }
-            else {
-                // if nextSibling is missing, means other row is at end, so just append new row at the end
-                eContainer.appendChild(eChild);
-            }
-        }
-        else {
-            // otherwise put at start
-            if (eContainer.firstChild && eContainer.firstChild !== eChild) {
-                // insert it at the first location
-                eContainer.insertAdjacentElement('afterbegin', eChild);
-            }
-        }
-    };
-    Utils.setDomChildOrder = function (eContainer, orderedChildren) {
-        for (var i = 0; i < orderedChildren.length; i++) {
-            var correctCellAtIndex = orderedChildren[i];
-            var actualCellAtIndex = eContainer.children[i];
-            if (actualCellAtIndex !== correctCellAtIndex) {
-                eContainer.insertBefore(correctCellAtIndex, actualCellAtIndex);
-            }
-        }
-    };
-    Utils.insertTemplateWithDomOrder = function (eContainer, htmlTemplate, eChildBefore) {
-        var res;
-        if (eChildBefore) {
-            // if previous element exists, just slot in after the previous element
-            eChildBefore.insertAdjacentHTML('afterend', htmlTemplate);
-            res = eChildBefore.nextSibling;
-        }
-        else {
-            if (eContainer.firstChild) {
-                // insert it at the first location
-                eContainer.insertAdjacentHTML('afterbegin', htmlTemplate);
-            }
-            else {
-                // otherwise eContainer is empty, so just append it
-                eContainer.innerHTML = htmlTemplate;
-            }
-            res = eContainer.firstChild;
-        }
-        return res;
-    };
-    Utils.every = function (items, callback) {
-        if (!items || items.length === 0) {
-            return true;
-        }
-        for (var i = 0; i < items.length; i++) {
-            if (!callback(items[i])) {
-                return false;
-            }
-        }
-        return true;
-    };
-    Utils.toStringOrNull = function (value) {
-        if (this.exists(value) && value.toString) {
-            return value.toString();
-        }
-        else {
-            return null;
-        }
-    };
-    Utils.formatSize = function (size) {
-        if (typeof size === "number") {
-            return size + "px";
-        }
-        else {
-            return size;
-        }
-    };
-    Utils.formatNumberTwoDecimalPlacesAndCommas = function (value) {
-        if (typeof value !== 'number') {
-            return '';
-        }
-        // took this from: http://blog.tompawlak.org/number-currency-formatting-javascript
-        return (Math.round(value * 100) / 100).toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,");
-    };
-    Utils.findLineByLeastSquares = function (values) {
-        var len = values.length;
-        if (len <= 1) {
-            return values;
-        }
-        var sum_x = 0;
-        var sum_y = 0;
-        var sum_xy = 0;
-        var sum_xx = 0;
-        var y = 0;
-        for (var x = 0; x < len; x++) {
-            y = values[x];
-            sum_x += x;
-            sum_y += y;
-            sum_xx += x * x;
-            sum_xy += x * y;
-        }
-        var m = (len * sum_xy - sum_x * sum_y) / (len * sum_xx - sum_x * sum_x);
-        var b = (sum_y / len) - (m * sum_x) / len;
-        var result = [];
-        for (var x = 0; x <= len; x++) {
-            result.push(x * m + b);
-        }
-        return result;
-    };
-    /**
-     * the native method number.toLocaleString(undefined, {minimumFractionDigits: 0})
-     * puts in decimal places in IE, so we use this method instead
-     * from: http://blog.tompawlak.org/number-currency-formatting-javascript
-     * @param {number} value
-     * @returns {string}
-     */
-    Utils.formatNumberCommas = function (value) {
-        if (typeof value !== 'number') {
-            return '';
-        }
-        return value.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,");
-    };
-    Utils.prependDC = function (parent, documentFragment) {
-        if (this.exists(parent.firstChild)) {
-            parent.insertBefore(documentFragment, parent.firstChild);
-        }
-        else {
-            parent.appendChild(documentFragment);
-        }
-    };
-    /**
-     * If icon provided, use this (either a string, or a function callback).
-     * if not, then use the default icon from the theme
-     * @param {string} iconName
-     * @param {GridOptionsWrapper} gridOptionsWrapper
-     * @param {Column | null} [column]
-     * @returns {HTMLElement}
-     */
-    Utils.createIcon = function (iconName, gridOptionsWrapper, column) {
-        var iconContents = this.createIconNoSpan(iconName, gridOptionsWrapper, column);
-        if (iconContents.className.indexOf('ag-icon') > -1) {
-            return iconContents;
-        }
-        else {
-            var eResult = document.createElement('span');
-            eResult.appendChild(iconContents);
-            return eResult;
-        }
-    };
-    Utils.createIconNoSpan = function (iconName, gridOptionsWrapper, column, forceCreate) {
-        var userProvidedIcon = null;
-        // check col for icon first
-        var icons = column && column.getColDef().icons;
-        if (icons) {
-            userProvidedIcon = icons[iconName];
-        }
-        // if not in col, try grid options
-        if (gridOptionsWrapper && !userProvidedIcon) {
-            var optionsIcons = gridOptionsWrapper.getIcons();
-            if (optionsIcons) {
-                userProvidedIcon = optionsIcons[iconName];
-            }
-        }
-        // now if user provided, use it
-        if (userProvidedIcon) {
-            var rendererResult = void 0;
-            if (typeof userProvidedIcon === 'function') {
-                rendererResult = userProvidedIcon();
-            }
-            else if (typeof userProvidedIcon === 'string') {
-                rendererResult = userProvidedIcon;
-            }
-            else {
-                throw new Error('icon from grid options needs to be a string or a function');
-            }
-            if (typeof rendererResult === 'string') {
-                return this.loadTemplate(rendererResult);
-            }
-            else if (this.isNodeOrElement(rendererResult)) {
-                return rendererResult;
-            }
-            else {
-                console.warn('ag-Grid: iconRenderer should return back a string or a dom object');
-            }
-        }
-        else {
-            var span = document.createElement('span');
-            var cssClass = this.iconNameClassMap[iconName];
-            if (!cssClass) {
-                if (!forceCreate) {
-                    console.warn("ag-Grid: Did not find icon " + iconName);
-                    cssClass = '';
-                }
-                else {
-                    cssClass = iconName;
-                }
-            }
-            span.setAttribute("class", "ag-icon ag-icon-" + cssClass);
-            span.setAttribute("unselectable", "on");
-            return span;
-        }
-    };
-    Utils.addStylesToElement = function (eElement, styles) {
-        var _this = this;
-        if (!styles) {
-            return;
-        }
-        Object.keys(styles).forEach(function (key) {
-            var keyCamelCase = _this.hyphenToCamelCase(key);
-            if (keyCamelCase) {
-                eElement.style[keyCamelCase] = styles[key];
-            }
-        });
-    };
-    Utils.isHorizontalScrollShowing = function (element) {
-        return element.clientWidth < element.scrollWidth;
-    };
-    Utils.isVerticalScrollShowing = function (element) {
-        return element.clientHeight < element.scrollHeight;
-    };
-    Utils.getMaxDivHeight = function () {
-        if (!document.body) {
-            return -1;
-        }
-        var res = 1000000;
-        // FF reports the height back but still renders blank after ~6M px
-        var testUpTo = navigator.userAgent.toLowerCase().match(/firefox/) ? 6000000 : 1000000000;
-        var div = this.loadTemplate("<div/>");
-        document.body.appendChild(div);
-        while (true) {
-            var test = res * 2;
-            div.style.height = test + 'px';
-            if (test > testUpTo || div.clientHeight !== test) {
-                break;
-            }
-            else {
-                res = test;
-            }
-        }
-        document.body.removeChild(div);
-        return res;
-    };
-    Utils.getScrollbarWidth = function () {
-        var body = document.body;
-        var div = document.createElement("div");
-        div.style.width = div.style.height = "100px";
-        div.style.opacity = "0";
-        div.style.overflow = "scroll";
-        div.style.msOverflowStyle = "scrollbar"; // needed for WinJS apps
-        div.style.position = "absolute";
-        body.appendChild(div);
-        var width = div.offsetWidth - div.clientWidth;
-        // remove divs
-        if (div.parentNode) {
-            div.parentNode.removeChild(div);
-        }
-        return width;
-    };
-    Utils.hasOverflowScrolling = function () {
-        var prefixes = ['webkit', 'moz', 'o', 'ms'];
-        var div = document.createElement('div');
-        var body = document.getElementsByTagName('body')[0];
-        var found = false;
-        var p;
-        body.appendChild(div);
-        div.setAttribute('style', prefixes.map(function (prefix) { return "-" + prefix + "-overflow-scrolling: touch"; }).concat('overflow-scrolling: touch').join(';'));
-        var computedStyle = window.getComputedStyle(div);
-        if (computedStyle.overflowScrolling === 'touch') {
-            found = true;
-        }
-        if (!found) {
-            for (var _i = 0, prefixes_1 = prefixes; _i < prefixes_1.length; _i++) {
-                p = prefixes_1[_i];
-                if (computedStyle[p + "OverflowScrolling"] === 'touch') {
-                    found = true;
-                    break;
-                }
-            }
-        }
-        if (div.parentNode) {
-            div.parentNode.removeChild(div);
-        }
-        return found;
-    };
-    Utils.isKeyPressed = function (event, keyToCheck) {
-        var pressedKey = event.which || event.keyCode;
-        return pressedKey === keyToCheck;
-    };
-    Utils.isCharacterKey = function (event) {
-        // from: https://stackoverflow.com/questions/4179708/how-to-detect-if-the-pressed-key-will-produce-a-character-inside-an-input-text
-        var which = event.which;
-        if (typeof which === 'number' && which) {
-            return !event.ctrlKey && !event.metaKey && !event.altKey && event.which !== 8 && event.which !== 16;
-        }
-        return which === undefined;
-    };
-    Utils.setDisplayed = function (element, displayed) {
-        this.addOrRemoveCssClass(element, 'ag-hidden', !displayed);
-    };
-    Utils.setVisible = function (element, visible) {
-        this.addOrRemoveCssClass(element, 'ag-invisible', !visible);
-    };
-    Utils.setElementWidth = function (element, width) {
-        if (width === 'flex') {
-            element.style.width = null;
-            element.style.minWidth = null;
-            element.style.maxWidth = null;
-            element.style.flex = '1 1 auto';
-        }
-        else {
-            this.setFixedWidth(element, width);
-        }
-    };
-    Utils.setFixedWidth = function (element, width) {
-        width = this.formatSize(width);
-        element.style.width = width;
-        element.style.maxWidth = width;
-        element.style.minWidth = width;
-    };
-    Utils.setElementHeight = function (element, height) {
-        if (height === 'flex') {
-            element.style.height = null;
-            element.style.minHeight = null;
-            element.style.maxHeight = null;
-            element.style.flex = '1 1 auto';
-        }
-        else {
-            this.setFixedHeight(element, height);
-        }
-    };
-    Utils.setFixedHeight = function (element, height) {
-        height = this.formatSize(height);
-        element.style.height = height;
-        element.style.maxHeight = height;
-        element.style.minHeight = height;
-    };
-    Utils.isBrowserIE = function () {
-        if (this.isIE === undefined) {
-            this.isIE = /*@cc_on!@*/  false || !!document.documentMode; // At least IE6
-        }
-        return this.isIE;
-    };
-    Utils.isBrowserEdge = function () {
-        if (this.isEdge === undefined) {
-            this.isEdge = !this.isBrowserIE() && !!window.StyleMedia;
-        }
-        return this.isEdge;
-    };
-    Utils.isBrowserSafari = function () {
-        if (this.isSafari === undefined) {
-            var anyWindow = window;
-            // taken from https://github.com/ag-grid/ag-grid/issues/550
-            this.isSafari = Object.prototype.toString.call(anyWindow.HTMLElement).indexOf('Constructor') > 0
-                || (function (p) {
-                    return p ? p.toString() === "[object SafariRemoteNotification]" : false;
-                })(!anyWindow.safari || anyWindow.safari.pushNotification);
-        }
-        return this.isSafari;
-    };
-    Utils.isBrowserChrome = function () {
-        if (this.isChrome === undefined) {
-            var win = window;
-            this.isChrome = (!!win.chrome && (!!win.chrome.webstore || !!win.chrome.runtime)) ||
-                (/Chrome/.test(navigator.userAgent) && /Google Inc/.test(navigator.vendor));
-        }
-        return this.isChrome;
-    };
-    Utils.isBrowserFirefox = function () {
-        if (this.isFirefox === undefined) {
-            var win = window;
-            this.isFirefox = typeof win.InstallTrigger !== 'undefined';
-        }
-        return this.isFirefox;
-    };
-    Utils.isIOSUserAgent = function () {
-        if (this.isIOS === undefined) {
-            // taken from https://stackoverflow.com/a/58064481/1388233
-            this.isIOS = (/iPad|iPhone|iPod/.test(navigator.platform) ||
-                // eslint-disable-next-line
-                (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1)) &&
-                !window.MSStream;
-        }
-        return this.isIOS;
-    };
-    /**
-     * srcElement is only available in IE. In all other browsers it is target
-     * http://stackoverflow.com/questions/5301643/how-can-i-make-event-srcelement-work-in-firefox-and-what-does-it-mean
-     * @param {Event} event
-     * @returns {Element}
-     */
-    Utils.getTarget = function (event) {
-        var eventNoType = event;
-        return eventNoType.target || eventNoType.srcElement;
-    };
-    Utils.isElementChildOfClass = function (element, cls, maxNest) {
-        var counter = 0;
-        while (element) {
-            if (this.containsClass(element, cls)) {
-                return true;
-            }
-            element = element.parentElement;
-            if (maxNest && ++counter > maxNest) {
-                break;
-            }
-        }
-        return false;
-    };
-    Utils.isElementInEventPath = function (element, event) {
-        if (!event || !element) {
-            return false;
-        }
-        var path = _.getEventPath(event);
-        return path.indexOf(element) >= 0;
-    };
-    Utils.isFunction = function (val) {
-        return !!(val && val.constructor && val.call && val.apply);
-    };
-    Utils.createEventPath = function (event) {
-        var res = [];
-        var pointer = _.getTarget(event);
-        while (pointer) {
-            res.push(pointer);
-            pointer = pointer.parentElement;
-        }
-        return res;
-    };
-    /**
-     * firefox doesn't have event.path set, or any alternative to it, so we hack
-     * it in. this is needed as it's to late to work out the path when the item is
-     * removed from the dom. used by MouseEventService, where it works out if a click
-     * was from the current grid, or a detail grid (master / detail).
-     * @param {Event} event
-     */
-    Utils.addAgGridEventPath = function (event) {
-        event.__agGridEventPath = this.getEventPath(event);
-    };
-    /**
-     * Gets the path for an Event.
-     * https://stackoverflow.com/questions/39245488/event-path-undefined-with-firefox-and-vue-js
-     * https://developer.mozilla.org/en-US/docs/Web/API/Event
-     * @param {Event} event
-     * @returns {EventTarget[]}
-     */
-    Utils.getEventPath = function (event) {
-        var eventNoType = event;
-        if (eventNoType.deepPath) {
-            // IE supports deep path
-            return eventNoType.deepPath();
-        }
-        else if (eventNoType.path) {
-            // Chrome supports path
-            return eventNoType.path;
-        }
-        else if (eventNoType.composedPath) {
-            // Firefox supports composePath
-            return eventNoType.composedPath();
-        }
-        else if (eventNoType.__agGridEventPath) {
-            // Firefox supports composePath
-            return eventNoType.__agGridEventPath;
-        }
-        else {
-            // and finally, if none of the above worked,
-            // we create the path ourselves
-            return this.createEventPath(event);
-        }
-    };
-    Utils.forEachSnapshotFirst = function (list, callback) {
-        if (list) {
-            var arrayCopy = list.slice(0);
-            arrayCopy.forEach(callback);
-        }
-    };
-    /**
-     * Gets the document body width
-     * from: http://stackoverflow.com/questions/1038727/how-to-get-browser-width-using-javascript-code
-     * @returns {number}
-     */
-    Utils.getBodyWidth = function () {
-        if (document.body) {
-            return document.body.clientWidth;
-        }
-        if (window.innerHeight) {
-            return window.innerWidth;
-        }
-        if (document.documentElement && document.documentElement.clientWidth) {
-            return document.documentElement.clientWidth;
-        }
-        return -1;
-    };
-    /**
-     * Gets the body height
-     * from: http://stackoverflow.com/questions/1038727/how-to-get-browser-width-using-javascript-code
-     * @returns {number}
-     */
-    Utils.getBodyHeight = function () {
-        if (document.body) {
-            return document.body.clientHeight;
-        }
-        if (window.innerHeight) {
-            return window.innerHeight;
-        }
-        if (document.documentElement && document.documentElement.clientHeight) {
-            return document.documentElement.clientHeight;
-        }
-        return -1;
-    };
-    Utils.setCheckboxState = function (eCheckbox, state) {
-        if (typeof state === 'boolean') {
-            eCheckbox.checked = state;
-            eCheckbox.indeterminate = false;
-        }
-        else {
-            // isNodeSelected returns back undefined if it's a group and the children
-            // are a mix of selected and unselected
-            eCheckbox.indeterminate = true;
-        }
-    };
-    Utils.traverseNodesWithKey = function (nodes, callback) {
-        var keyParts = [];
-        recursiveSearchNodes(nodes);
-        function recursiveSearchNodes(currentNodes) {
-            currentNodes.forEach(function (node) {
-                // also checking for children for tree data
-                if (node.group || node.hasChildren()) {
-                    keyParts.push(node.key);
-                    var key = keyParts.join('|');
-                    callback(node, key);
-                    recursiveSearchNodes(node.childrenAfterGroup);
-                    keyParts.pop();
-                }
-            });
-        }
-    };
-    /**
-     * Converts a camelCase string into hyphenated string
-     * from https://gist.github.com/youssman/745578062609e8acac9f
-     * @param {string} str
-     * @return {string}
-     */
-    Utils.camelCaseToHyphen = function (str) {
-        if (str === null || str === undefined) {
-            return null;
-        }
-        return str.replace(/([A-Z])/g, function (g) { return '-' + g[0].toLowerCase(); });
-    };
-    /**
-     * Converts a hyphenated string into camelCase string
-     * from https://stackoverflow.com/questions/6660977/convert-hyphens-to-camel-case-camelcase
-     * @param {string} str
-     * @return {string}
-     */
-    Utils.hyphenToCamelCase = function (str) {
-        if (str === null || str === undefined) {
-            return null;
-        }
-        return str.replace(/-([a-z])/g, function (g) { return g[1].toUpperCase(); });
-    };
-    Utils.capitalise = function (str) {
-        return str[0].toUpperCase() + str.substr(1).toLowerCase();
-    };
-    /**
-     * Converts a CSS object into string
-     * @param {Object} stylesToUse an object eg: {color: 'black', top: '25px'}
-     * @return {string} A string like "color: black; top: 25px;" for html
-     */
-    Utils.cssStyleObjectToMarkup = function (stylesToUse) {
-        var _this = this;
-        if (!stylesToUse) {
-            return '';
-        }
-        var resParts = [];
-        this.iterateObject(stylesToUse, function (styleKey, styleValue) {
-            var styleKeyDashed = _this.camelCaseToHyphen(styleKey);
-            resParts.push(styleKeyDashed + ": " + styleValue + ";");
-        });
-        return resParts.join(' ');
-    };
-    /**
-     * Check if a value is numeric
-     * from http://stackoverflow.com/questions/9716468/is-there-any-function-like-isnumeric-in-javascript-to-validate-numbers
-     * @param {any} value
-     * @return {boolean}
-     */
-    Utils.isNumeric = function (value) {
-        if (value === '') {
-            return false;
-        }
-        return !isNaN(parseFloat(value)) && isFinite(value);
-    };
-    Utils.escape = function (toEscape) {
-        if (toEscape === null || toEscape === undefined || !toEscape.replace) {
-            return toEscape;
-        }
-        return toEscape.replace(reUnescapedHtml, function (chr) { return HTML_ESCAPES[chr]; });
-    };
-    /**
-     * Mouse wheel (and 2-finger trackpad) support on the web sucks.  It is
-     * complicated, thus this doc is long and (hopefully) detailed enough to answer
-     * your questions.
-     *
-     * If you need to react to the mouse wheel in a predictable way, this code is
-     * like your bestest friend. * hugs *
-     *
-     * As of today, there are 4 DOM event types you can listen to:
-     *
-     *   'wheel'                -- Chrome(31+), FF(17+), IE(9+)
-     *   'mousewheel'           -- Chrome, IE(6+), Opera, Safari
-     *   'MozMousePixelScroll'  -- FF(3.5 only!) (2010-2013) -- don't bother!
-     *   'DOMMouseScroll'       -- FF(0.9.7+) since 2003
-     *
-     * So what to do?  The is the best:
-     *
-     *   normalizeWheel.getEventType();
-     *
-     * In your event callback, use this code to get sane interpretation of the
-     * deltas.  This code will return an object with properties:
-     *
-     *   spinX   -- normalized spin speed (use for zoom) - x plane
-     *   spinY   -- " - y plane
-     *   pixelX  -- normalized distance (to pixels) - x plane
-     *   pixelY  -- " - y plane
-     *
-     * Wheel values are provided by the browser assuming you are using the wheel to
-     * scroll a web page by a number of lines or pixels (or pages).  Values can vary
-     * significantly on different platforms and browsers, forgetting that you can
-     * scroll at different speeds.  Some devices (like trackpads) emit more events
-     * at smaller increments with fine granularity, and some emit massive jumps with
-     * linear speed or acceleration.
-     *
-     * This code does its best to normalize the deltas for you:
-     *
-     *   - spin is trying to normalize how far the wheel was spun (or trackpad
-     *     dragged).  This is super useful for zoom support where you want to
-     *     throw away the chunky scroll steps on the PC and make those equal to
-     *     the slow and smooth tiny steps on the Mac. Key data: This code tries to
-     *     resolve a single slow step on a wheel to 1.
-     *
-     *   - pixel is normalizing the desired scroll delta in pixel units.  You'll
-     *     get the crazy differences between browsers, but at least it'll be in
-     *     pixels!
-     *
-     *   - positive value indicates scrolling DOWN/RIGHT, negative UP/LEFT.  This
-     *     should translate to positive value zooming IN, negative zooming OUT.
-     *     This matches the newer 'wheel' event.
-     *
-     * Why are there spinX, spinY (or pixels)?
-     *
-     *   - spinX is a 2-finger side drag on the trackpad, and a shift + wheel turn
-     *     with a mouse.  It results in side-scrolling in the browser by default.
-     *
-     *   - spinY is what you expect -- it's the classic axis of a mouse wheel.
-     *
-     *   - I dropped spinZ/pixelZ.  It is supported by the DOM 3 'wheel' event and
-     *     probably is by browsers in conjunction with fancy 3D controllers .. but
-     *     you know.
-     *
-     * Implementation info:
-     *
-     * Examples of 'wheel' event if you scroll slowly (down) by one step with an
-     * average mouse:
-     *
-     *   OS X + Chrome  (mouse)     -    4   pixel delta  (wheelDelta -120)
-     *   OS X + Safari  (mouse)     -  N/A   pixel delta  (wheelDelta  -12)
-     *   OS X + Firefox (mouse)     -    0.1 line  delta  (wheelDelta  N/A)
-     *   Win8 + Chrome  (mouse)     -  100   pixel delta  (wheelDelta -120)
-     *   Win8 + Firefox (mouse)     -    3   line  delta  (wheelDelta -120)
-     *
-     * On the trackpad:
-     *
-     *   OS X + Chrome  (trackpad)  -    2   pixel delta  (wheelDelta   -6)
-     *   OS X + Firefox (trackpad)  -    1   pixel delta  (wheelDelta  N/A)
-     *
-     * On other/older browsers.. it's more complicated as there can be multiple and
-     * also missing delta values.
-     *
-     * The 'wheel' event is more standard:
-     *
-     * http://www.w3.org/TR/DOM-Level-3-Events/#events-wheelevents
-     *
-     * The basics is that it includes a unit, deltaMode (pixels, lines, pages), and
-     * deltaX, deltaY and deltaZ.  Some browsers provide other values to maintain
-     * backward compatibility with older events.  Those other values help us
-     * better normalize spin speed.  Example of what the browsers provide:
-     *
-     *                          | event.wheelDelta | event.detail
-     *        ------------------+------------------+--------------
-     *          Safari v5/OS X  |       -120       |       0
-     *          Safari v5/Win7  |       -120       |       0
-     *         Chrome v17/OS X  |       -120       |       0
-     *         Chrome v17/Win7  |       -120       |       0
-     *                IE9/Win7  |       -120       |   undefined
-     *         Firefox v4/OS X  |     undefined    |       1
-     *         Firefox v4/Win7  |     undefined    |       3
-     *
-     * from: https://github.com/facebook/fixed-data-table/blob/master/src/vendor_upstream/dom/normalizeWheel.js
-     * @param {any} event
-     * @return {any}
-     */
-    Utils.normalizeWheel = function (event) {
-        var PIXEL_STEP = 10;
-        var LINE_HEIGHT = 40;
-        var PAGE_HEIGHT = 800;
-        // spinX, spinY
-        var sX = 0;
-        var sY = 0;
-        // pixelX, pixelY
-        var pX = 0;
-        var pY = 0;
-        // Legacy
-        if ('detail' in event) {
-            sY = event.detail;
-        }
-        if ('wheelDelta' in event) {
-            sY = -event.wheelDelta / 120;
-        }
-        if ('wheelDeltaY' in event) {
-            sY = -event.wheelDeltaY / 120;
-        }
-        if ('wheelDeltaX' in event) {
-            sX = -event.wheelDeltaX / 120;
-        }
-        // side scrolling on FF with DOMMouseScroll
-        if ('axis' in event && event.axis === event.HORIZONTAL_AXIS) {
-            sX = sY;
-            sY = 0;
-        }
-        pX = sX * PIXEL_STEP;
-        pY = sY * PIXEL_STEP;
-        if ('deltaY' in event) {
-            pY = event.deltaY;
-        }
-        if ('deltaX' in event) {
-            pX = event.deltaX;
-        }
-        if ((pX || pY) && event.deltaMode) {
-            if (event.deltaMode == 1) { // delta in LINE units
-                pX *= LINE_HEIGHT;
-                pY *= LINE_HEIGHT;
-            }
-            else { // delta in PAGE units
-                pX *= PAGE_HEIGHT;
-                pY *= PAGE_HEIGHT;
-            }
-        }
-        // Fall-back if spin cannot be determined
-        if (pX && !sX) {
-            sX = (pX < 1) ? -1 : 1;
-        }
-        if (pY && !sY) {
-            sY = (pY < 1) ? -1 : 1;
-        }
-        return {
-            spinX: sX,
-            spinY: sY,
-            pixelX: pX,
-            pixelY: pY
-        };
-    };
-    /**
-     * from https://stackoverflow.com/questions/24004791/can-someone-explain-the-debounce-function-in-javascript
-     * @param {Function} func The function to be debounced
-     * @param {number} wait The time in ms to debounce
-     * @param {boolean} immediate If it should run immediately or wait for the initial debounce delay
-     * @return {Function} The debounced function
-     */
-    Utils.debounce = function (func, wait, immediate) {
-        if (immediate === void 0) { immediate = false; }
-        // 'private' variable for instance
-        // The returned function will be able to reference this due to closure.
-        // Each call to the returned function will share this common timer.
-        var timeout;
-        // Calling debounce returns a new anonymous function
-        return function () {
-            var args = [];
-            for (var _i = 0; _i < arguments.length; _i++) {
-                args[_i] = arguments[_i];
-            }
-            // reference the context and args for the setTimeout function
-            var context = this;
-            // Should the function be called now? If immediate is true
-            //   and not already in a timeout then the answer is: Yes
-            var callNow = immediate && !timeout;
-            // This is the basic debounce behaviour where you can call this
-            //   function several times, but it will only execute once
-            //   [before or after imposing a delay].
-            //   Each time the returned function is called, the timer starts over.
-            window.clearTimeout(timeout);
-            // Set the new timeout
-            timeout = window.setTimeout(function () {
-                // Inside the timeout function, clear the timeout variable
-                // which will let the next execution run when in 'immediate' mode
-                timeout = null;
-                // Check if the function already ran with the immediate flag
-                if (!immediate) {
-                    // Call the original function with apply
-                    // apply lets you define the 'this' object as well as the arguments
-                    //    (both captured before setTimeout)
-                    func.apply(context, args);
-                }
-            }, wait);
-            // Immediate mode and no wait timer? Execute the function..
-            if (callNow) {
-                func.apply(context, args);
-            }
-        };
-    };
-    /**
-     * a user once raised an issue - they said that when you opened a popup (eg context menu)
-     * and then clicked on a selection checkbox, the popup wasn't closed. this is because the
-     * popup listens for clicks on the body, however ag-grid WAS stopping propagation on the
-     * checkbox clicks (so the rows didn't pick them up as row selection selection clicks).
-     * to get around this, we have a pattern to stop propagation for the purposes of ag-Grid,
-     * but we still let the event pass back to teh body.
-     * @param {Event} event
-     */
-    Utils.stopPropagationForAgGrid = function (event) {
-        event[AG_GRID_STOP_PROPAGATION] = true;
-    };
-    Utils.isStopPropagationForAgGrid = function (event) {
-        return event[AG_GRID_STOP_PROPAGATION] === true;
-    };
-    Utils.executeInAWhile = function (funcs) {
-        this.executeAfter(funcs, 400);
-    };
-    Utils.executeNextVMTurn = function (funcs) {
-        this.executeAfter(funcs, 0);
-    };
-    Utils.executeAfter = function (funcs, millis) {
-        if (funcs.length > 0) {
-            window.setTimeout(function () {
-                funcs.forEach(function (func) { return func(); });
-            }, millis);
-        }
-    };
-    Utils.referenceCompare = function (left, right) {
-        if (left == null && right == null) {
-            return true;
-        }
-        if (left == null && right) {
-            return false;
-        }
-        if (left && right == null) {
-            return false;
-        }
-        return left === right;
-    };
-    Utils.get = function (source, expression, defaultValue) {
-        if (source == null) {
-            return defaultValue;
-        }
-        var keys = expression.split(".");
-        var objectToRead = source;
-        while (keys.length > 1) {
-            objectToRead = objectToRead[keys.shift()];
-            if (objectToRead == null) {
-                return defaultValue;
-            }
-        }
-        var value = objectToRead[keys[0]];
-        return value != null ? value : defaultValue;
-    };
-    Utils.set = function (target, expression, value) {
-        if (target == null) {
-            return;
-        }
-        var keys = expression.split(".");
-        var objectToUpdate = target;
-        while (keys.length > 1) {
-            objectToUpdate = objectToUpdate[keys.shift()];
-            if (objectToUpdate == null) {
-                return;
-            }
-        }
-        objectToUpdate[keys[0]] = value;
-    };
-    Utils.addSafePassiveEventListener = function (frameworkOverrides, eElement, event, listener) {
-        var isPassive = this.includes(Utils.PASSIVE_EVENTS, event);
-        var isOutsideAngular = this.includes(Utils.OUTSIDE_ANGULAR_EVENTS, event);
-        var options = isPassive ? { passive: true } : undefined;
-        if (isOutsideAngular) {
-            frameworkOverrides.addEventListenerOutsideAngular(eElement, event, listener, options);
-        }
-        else {
-            eElement.addEventListener(event, listener, options);
-        }
-    };
-    /**
-     * Converts a camelCase string into regular text
-     * from: https://stackoverflow.com/questions/15369566/putting-space-in-camel-case-string-using-regular-expression
-     * @param {string} camelCase
-     * @return {string}
-     */
-    Utils.camelCaseToHumanText = function (camelCase) {
-        if (!camelCase || camelCase == null) {
-            return null;
-        }
-        var rex = /([A-Z])([A-Z])([a-z])|([a-z])([A-Z])/g;
-        var words = camelCase.replace(rex, '$1$4 $2$3$5').replace('.', ' ').split(' ');
-        return words.map(function (word) { return word.substring(0, 1).toUpperCase() + ((word.length > 1) ? word.substring(1, word.length) : ''); }).join(' ');
-    };
-    /**
-     * Displays a message to the browser. this is useful in iPad, where you can't easily see the console.
-     * so the javascript code can use this to give feedback. this is NOT intended to be called in production.
-     * it is intended the ag-Grid developer calls this to troubleshoot, but then takes out the calls before
-     * checking in.
-     * @param {string} msg
-     */
-    Utils.message = function (msg) {
-        var eMessage = document.createElement('div');
-        eMessage.innerHTML = msg;
-        var eBox = document.querySelector('#__ag__message');
-        if (!eBox) {
-            var template = "<div id=\"__ag__message\" style=\"display: inline-block; position: absolute; top: 0px; left: 0px; color: white; background-color: black; z-index: 20; padding: 2px; border: 1px solid darkred; height: 200px; overflow-y: auto;\"></div>";
-            eBox = this.loadTemplate(template);
-            if (document.body) {
-                document.body.appendChild(eBox);
-            }
-        }
-        eBox.insertBefore(eMessage, eBox.children[0]);
-    };
-    /**
-     * Gets called by: a) ClientSideNodeManager and b) GroupStage to do sorting.
-     * when in ClientSideNodeManager we always have indexes (as this sorts the items the
-     * user provided) but when in GroupStage, the nodes can contain filler nodes that
-     * don't have order id's
-     * @param {RowNode[]} rowNodes
-     * @param {Object} rowNodeOrder
-     */
-    Utils.sortRowNodesByOrder = function (rowNodes, rowNodeOrder) {
-        if (!rowNodes) {
-            return;
-        }
-        var comparator = function (nodeA, nodeB) {
-            var positionA = rowNodeOrder[nodeA.id];
-            var positionB = rowNodeOrder[nodeB.id];
-            var aHasIndex = positionA !== undefined;
-            var bHasIndex = positionB !== undefined;
-            var bothNodesAreUserNodes = aHasIndex && bHasIndex;
-            var bothNodesAreFillerNodes = !aHasIndex && !bHasIndex;
-            if (bothNodesAreUserNodes) {
-                // when comparing two nodes the user has provided, they always
-                // have indexes
-                return positionA - positionB;
-            }
-            else if (bothNodesAreFillerNodes) {
-                // when comparing two filler nodes, we have no index to compare them
-                // against, however we want this sorting to be deterministic, so that
-                // the rows don't jump around as the user does delta updates. so we
-                // want the same sort result. so we use the __objectId - which doesn't make sense
-                // from a sorting point of view, but does give consistent behaviour between
-                // calls. otherwise groups jump around as delta updates are done.
-                // note: previously here we used nodeId, however this gave a strange order
-                // as string ordering of numbers is wrong, so using id based on creation order
-                // as least gives better looking order.
-                return nodeA.__objectId - nodeB.__objectId;
-            }
-            else if (aHasIndex) {
-                return 1;
-            }
-            return -1;
-        };
-        // check if the list first needs sorting
-        var rowNodeA;
-        var rowNodeB;
-        var atLeastOneOutOfOrder = false;
-        for (var i = 0; i < rowNodes.length - 1; i++) {
-            rowNodeA = rowNodes[i];
-            rowNodeB = rowNodes[i + 1];
-            if (comparator(rowNodeA, rowNodeB) > 0) {
-                atLeastOneOutOfOrder = true;
-                break;
-            }
-        }
-        if (atLeastOneOutOfOrder) {
-            rowNodes.sort(comparator);
-        }
-    };
-    Utils.fuzzyCheckStrings = function (inputValues, validValues, allSuggestions) {
-        var _this = this;
-        var fuzzyMatches = {};
-        var invalidInputs = inputValues.filter(function (inputValue) {
-            return !validValues.some(function (validValue) { return validValue === inputValue; });
-        });
-        if (invalidInputs.length > 0) {
-            invalidInputs.forEach(function (invalidInput) {
-                return fuzzyMatches[invalidInput] = _this.fuzzySuggestions(invalidInput, allSuggestions);
-            });
-        }
-        return fuzzyMatches;
-    };
-    /**
-     *
-     * @param {String} inputValue The value to be compared against a list of strings
-     * @param allSuggestions The list of strings to be compared against
-     * @param hideIrrelevant By default, fuzzy suggestions will just sort the allSuggestions list, set this to true
-     *        to filter out the irrelevant values
-     * @param weighted Set this to true, to make letters matched in the order they were typed have priority in the results.
-     */
-    Utils.fuzzySuggestions = function (inputValue, allSuggestions, hideIrrelevant, weighted) {
-        var search = weighted ? _.string_weighted_distances : _.string_distances;
-        var thisSuggestions = allSuggestions.map(function (text) { return ({
-            value: text,
-            relevance: search(inputValue.toLowerCase(), text.toLocaleLowerCase())
-        }); });
-        thisSuggestions.sort(function (a, b) { return b.relevance - a.relevance; });
-        if (hideIrrelevant) {
-            thisSuggestions = thisSuggestions.filter(function (suggestion) { return suggestion.relevance !== 0; });
-        }
-        return thisSuggestions.map(function (suggestion) { return suggestion.value; });
-    };
-    /**
-     * Algorithm to do fuzzy search
-     * from https://stackoverflow.com/questions/23305000/javascript-fuzzy-search-that-makes-sense
-     * @param {string} from
-     * @return {[]}
-     */
-    Utils.get_bigrams = function (from) {
-        var s = from.toLowerCase();
-        var v = new Array(s.length - 1);
-        var i;
-        var j;
-        var ref;
-        for (i = j = 0, ref = v.length; j <= ref; i = j += 1) {
-            v[i] = s.slice(i, i + 2);
-        }
-        return v;
-    };
-    Utils.string_distances = function (str1, str2) {
-        if (str1.length === 0 && str2.length === 0) {
-            return 0;
-        }
-        var pairs1 = _.get_bigrams(str1);
-        var pairs2 = _.get_bigrams(str2);
-        var union = pairs1.length + pairs2.length;
-        var hit_count = 0;
-        var j;
-        var len;
-        for (j = 0, len = pairs1.length; j < len; j++) {
-            var x = pairs1[j];
-            var k = void 0;
-            var len1 = void 0;
-            for (k = 0, len1 = pairs2.length; k < len1; k++) {
-                var y = pairs2[k];
-                if (x === y) {
-                    hit_count++;
-                }
-            }
-        }
-        return hit_count > 0 ? (2 * hit_count) / union : 0;
-    };
-    Utils.string_weighted_distances = function (str1, str2) {
-        var a = str1.replace(/\s/g, '');
-        var b = str2.replace(/\s/g, '');
-        var weight = 0;
-        var lastIndex = 0;
-        for (var i = 0; i < a.length; i++) {
-            var idx = b.indexOf(a[i]);
-            if (idx === -1) {
-                continue;
-            }
-            lastIndex = idx;
-            weight += ((b.length - lastIndex) * 100) / b.length;
-            weight *= weight;
-        }
-        return weight;
-    };
-    Utils.isNumpadDelWithNumlockOnForEdgeOrIe = function (event) {
-        if (Utils.isBrowserEdge() || Utils.isBrowserIE()) {
-            return event.key === Utils.NUMPAD_DEL_NUMLOCK_ON_KEY &&
-                event.charCode === Utils.NUMPAD_DEL_NUMLOCK_ON_CHARCODE;
-        }
-        return false;
-    };
-    /**
-     * cell renderers are used in a few places. they bind to dom slightly differently to other cell renderes as they
-     * can return back strings (instead of html elemnt) in the getGui() method. common code placed here to handle that.
-     * @param {Promise<ICellRendererComp>} cellRendererPromise
-     * @param {HTMLElement} eTarget
-     */
-    Utils.bindCellRendererToHtmlElement = function (cellRendererPromise, eTarget) {
-        cellRendererPromise.then(function (cellRenderer) {
-            var gui = cellRenderer.getGui();
-            if (gui != null) {
-                if (typeof gui == 'object') {
-                    eTarget.appendChild(gui);
-                }
-                else {
-                    eTarget.innerHTML = gui;
-                }
-            }
-        });
-    };
-    Utils.convertToSet = function (list) {
-        var set = new Set();
-        list.forEach(function (x) { return set.add(x); });
-        return set;
-    };
-    Utils.deepFreeze = function (object) {
-        var _this = this;
-        Object.freeze(object);
-        _.values(object).filter(function (v) { return v != null; }).forEach(function (v) {
-            if (typeof v === 'object' || typeof v === 'function') {
-                _this.deepFreeze(v);
-            }
-        });
-        return object;
-    };
-    Utils.PASSIVE_EVENTS = ['touchstart', 'touchend', 'touchmove', 'touchcancel'];
-    Utils.OUTSIDE_ANGULAR_EVENTS = ['mouseover', 'mouseout', 'mouseenter', 'mouseleave'];
-    Utils.PRINTABLE_CHARACTERS = 'qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM1234567890!"£$%^&*()_+-=[];\'#,./\\|<>?:@~{}';
-    Utils.NUMPAD_DEL_NUMLOCK_ON_KEY = 'Del';
-    Utils.NUMPAD_DEL_NUMLOCK_ON_CHARCODE = 46;
-    Utils.doOnceFlags = {};
-    Utils.supports = {};
-    Utils.isEventSupported = (function () {
-        var tags = {
-            select: 'input',
-            change: 'input',
-            submit: 'form',
-            reset: 'form',
-            error: 'img',
-            load: 'img',
-            abort: 'img'
-        };
-        var isEventSupported = function (eventName) {
-            if (typeof Utils.supports[eventName] === 'boolean') {
-                return Utils.supports[eventName];
-            }
-            var el = document.createElement(tags[eventName] || 'div');
-            eventName = 'on' + eventName;
-            var isSupported = (eventName in el);
-            if (!isSupported) {
-                el.setAttribute(eventName, 'return;');
-                isSupported = typeof el[eventName] == 'function';
-            }
-            el = null;
-            return Utils.supports[eventName] = isSupported;
-        };
-        return isEventSupported;
-    })();
-    Utils.areEqual = function (a, b) {
-        return a.length === b.length && a.every(function (value, index) { return b[index] === value; });
-    };
-    Utils.keys = function (map) {
-        var keys = [];
-        map.forEach(function (_, key) { return keys.push(key); });
-        return keys;
-    };
-    Utils.values = function (object) { return Object.keys(object).map(function (key) { return object[key]; }); };
-    Utils.includes = function (array, value) { return array.indexOf(value) > -1; };
-    Utils.compose = function () {
-        var fns = [];
-        for (var _i = 0; _i < arguments.length; _i++) {
-            fns[_i] = arguments[_i];
-        }
-        return function (arg) { return fns.reduce(function (composed, f) { return f(composed); }, arg); };
-    };
-    Utils.decToHex = function (number, bytes) {
-        var hex = '';
-        for (var i = 0; i < bytes; i++) {
-            hex += String.fromCharCode(number & 0xff);
-            number >>>= 8;
-        }
-        return hex;
-    };
-    /**
-     * It encodes any string in UTF-8 format
-     * taken from https://github.com/mathiasbynens/utf8.js
-     * @param {string} s
-     * @returns {string}
-     */
-    Utils.utf8_encode = function (s) {
-        var stringFromCharCode = String.fromCharCode;
-        function ucs2decode(string) {
-            var output = [];
-            var counter = 0;
-            var length = string.length;
-            var value;
-            var extra;
-            while (counter < length) {
-                value = string.charCodeAt(counter++);
-                if (value >= 0xD800 && value <= 0xDBFF && counter < length) {
-                    // high surrogate, and there is a next character
-                    extra = string.charCodeAt(counter++);
-                    if ((extra & 0xFC00) == 0xDC00) { // low surrogate
-                        output.push(((value & 0x3FF) << 10) + (extra & 0x3FF) + 0x10000);
+            };
+            ensureDataExists();
+            if (currentChar === '"') {
+                if (insideQuotedField) {
+                    if (nextChar === '"') {
+                        // unescape double quote
+                        data[row][column] += '"';
+                        position++;
                     }
                     else {
-                        // unmatched surrogate; only append this code unit, in case the next
-                        // code unit is the high surrogate of a surrogate pair
-                        output.push(value);
-                        counter--;
+                        // exit quoted field
+                        insideQuotedField = false;
                     }
+                    return out_row_1 = row, out_column_1 = column, out_position_1 = position, "continue";
                 }
-                else {
-                    output.push(value);
+                else if (previousChar === undefined || previousChar === delimiter || isNewline(previousChar)) {
+                    // enter quoted field
+                    insideQuotedField = true;
+                    return out_row_1 = row, out_column_1 = column, out_position_1 = position, "continue";
                 }
             }
-            return output;
-        }
-        function checkScalarValue(codePoint) {
-            if (codePoint >= 0xD800 && codePoint <= 0xDFFF) {
-                throw Error('Lone surrogate U+' + codePoint.toString(16).toUpperCase() +
-                    ' is not a scalar value');
+            if (!insideQuotedField) {
+                if (currentChar === delimiter) {
+                    // move to next column
+                    column++;
+                    ensureDataExists();
+                    return out_row_1 = row, out_column_1 = column, out_position_1 = position, "continue";
+                }
+                else if (isNewline(currentChar)) {
+                    // move to next row
+                    column = 0;
+                    row++;
+                    ensureDataExists();
+                    if (currentChar === '\r' && nextChar === '\n') {
+                        // skip over second newline character if it exists
+                        position++;
+                    }
+                    return out_row_1 = row, out_column_1 = column, out_position_1 = position, "continue";
+                }
             }
+            // add current character to current column
+            data[row][column] += currentChar;
+            out_row_1 = row;
+            out_column_1 = column;
+            out_position_1 = position;
+        };
+        var out_row_1, out_column_1, out_position_1;
+        // iterate over each character, keep track of current row and column (of the returned array)
+        for (var row = 0, column = 0, position = 0; position < strData.length; position++) {
+            _loop_1(row, column, position);
+            row = out_row_1;
+            column = out_column_1;
+            position = out_position_1;
         }
-        function createByte(codePoint, shift) {
-            return stringFromCharCode(((codePoint >> shift) & 0x3F) | 0x80);
-        }
-        function encodeCodePoint(codePoint) {
-            if ((codePoint & 0xFFFFFF80) == 0) { // 1-byte sequence
-                return stringFromCharCode(codePoint);
-            }
-            var symbol = '';
-            if ((codePoint & 0xFFFFF800) == 0) { // 2-byte sequence
-                symbol = stringFromCharCode(((codePoint >> 6) & 0x1F) | 0xC0);
-            }
-            else if ((codePoint & 0xFFFF0000) == 0) { // 3-byte sequence
-                checkScalarValue(codePoint);
-                symbol = stringFromCharCode(((codePoint >> 12) & 0x0F) | 0xE0);
-                symbol += createByte(codePoint, 6);
-            }
-            else if ((codePoint & 0xFFE00000) == 0) { // 4-byte sequence
-                symbol = stringFromCharCode(((codePoint >> 18) & 0x07) | 0xF0);
-                symbol += createByte(codePoint, 12);
-                symbol += createByte(codePoint, 6);
-            }
-            symbol += stringFromCharCode((codePoint & 0x3F) | 0x80);
-            return symbol;
-        }
-        var codePoints = ucs2decode(s);
-        var length = codePoints.length;
-        var index = -1;
-        var codePoint;
-        var byteString = '';
-        while (++index < length) {
-            codePoint = codePoints[index];
-            byteString += encodeCodePoint(codePoint);
-        }
-        return byteString;
+        return data;
     };
-    Utils.deepCloneObject = function (object) { return JSON.parse(JSON.stringify(object)); };
-    Utils.getProperty = function (object, key) { return object[key]; };
-    Utils.setProperty = function (object, key, value) { return object[key] = value; };
-    //
-    // IMPORTANT NOTE!
-    //
-    // The comments below provide one example of how each icon is used, so that you can find
-    // an instance of it in the UI and see what it looks like in the UI. Many icons are used
-    // in multiple places.
-    //
-    Utils.iconNameClassMap = {
-        // header column group shown when expanded (click to contract)
-        columnGroupOpened: 'expanded',
-        // header column group shown when contracted (click to expand)
-        columnGroupClosed: 'contracted',
-        // tool panel column group contracted (click to expand)
-        columnSelectClosed: 'tree-closed',
-        // tool panel column group expanded (click to contract)
-        columnSelectOpen: 'tree-open',
-        // column tool panel header expand/collapse all button, shown when some children are expanded and
-        //     others are collapsed
-        columnSelectIndeterminate: 'tree-indeterminate',
-        // shown on ghost icon while dragging column to the side of the grid to pin
-        columnMovePin: 'pin',
-        // ??? doesn't seem to be used?
-        columnMoveAdd: 'plus',
-        // shown on ghost icon while dragging over part of the page that is not a drop zone
-        columnMoveHide: 'eye-slash',
-        // shown on ghost icon while dragging columns to reorder
-        columnMoveMove: 'arrows',
-        // animating icon shown when dragging a column to the right of the grid causes horizontal scrolling
-        columnMoveLeft: 'left',
-        // animating icon shown when dragging a column to the left of the grid causes horizontal scrolling
-        columnMoveRight: 'right',
-        // shown on ghost icon while dragging over Row Groups drop zone
-        columnMoveGroup: 'group',
-        // shown on ghost icon while dragging over Values drop zone
-        columnMoveValue: 'aggregation',
-        // shown on ghost icon while dragging over pivot drop zone
-        columnMovePivot: 'pivot',
-        // shown on ghost icon while dragging over drop zone that doesn't support it, e.g.
-        //     string column over aggregation drop zone
-        dropNotAllowed: 'not-allowed',
-        // shown on row group when contracted (click to expand)
-        groupContracted: 'contracted',
-        // shown on row group when expanded (click to contract)
-        groupExpanded: 'expanded',
-        // context menu chart item
-        chart: 'chart',
-        // chart window title bar
-        close: 'cross',
-        // X (remove) on column 'pill' after adding it to a drop zone list
-        cancel: 'cancel',
-        // indicates the currently active pin state in the "Pin column" sub-menu of the column menu
-        check: 'tick',
-        // the following checkbox-* items are for checkboxes on themes that don't use a
-        //     native <input type="radio">
-        checkboxChecked: 'checkbox-checked',
-        checkboxUnchecked: 'checkbox-unchecked',
-        checkboxIndeterminate: 'checkbox-indeterminate',
-        checkboxCheckedReadOnly: 'checkbox-checked-readonly',
-        checkboxUncheckedReadOnly: 'checkbox-unchecked-readonly',
-        checkboxIndeterminateReadOnly: 'checkbox-indeterminate-readonly',
-        // "go to first" button in pagination controls
-        first: 'first',
-        // "go to previous" button in pagination controls
-        previous: 'previous',
-        // "go to next" button in pagination controls
-        next: 'next',
-        // "go to last" button in pagination controls
-        last: 'last',
-        // shown on top right of chart when chart is linked to range data (click to unlink)
-        linked: 'linked',
-        // shown on top right of chart when chart is not linked to range data (click to link)
-        unlinked: 'unlinked',
-        // "Choose colour" button on chart settings tab
-        colorPicker: 'color-picker',
-        // the following radio-button-* items are for radio buttons on themes that don't use a
-        //     native <input type="radio">
-        radioButtonOn: 'radio-button-on',
-        radioButtonOff: 'radio-button-off',
-        // rotating spinner shown by the loading cell renderer
-        groupLoading: 'loading',
-        // ??? doesn't seem to be used?
-        data: 'data',
-        // button to launch enterprise column menu
-        menu: 'menu',
-        // filter tool panel tab
-        filter: 'filter',
-        // column tool panel tab
-        columns: 'columns',
-        // button in chart regular size window title bar (click to maximise)
-        maximize: 'maximize',
-        // button in chart maximised window title bar (click to make regular size)
-        minimize: 'minimize',
-        // "Pin column" item in column header menu
-        menuPin: 'pin',
-        // "Value aggregation" column menu item (shown on numeric columns when grouping is active)"
-        menuValue: 'aggregation',
-        // "Group by {column-name}" item in column header menu
-        menuAddRowGroup: 'group',
-        // "Un-Group by {column-name}" item in column header menu
-        menuRemoveRowGroup: 'group',
-        // context menu copy item
-        clipboardCopy: 'copy',
-        // ??? doesn't seem toi be used?
-        clipboardCut: 'cut',
-        // context menu paste item
-        clipboardPaste: 'paste',
-        // identifies the pivot drop zone
-        pivotPanel: 'pivot',
-        // "Row groups" drop zone in column tool panel
-        rowGroupPanel: 'group',
-        // columns tool panel Values drop zone
-        valuePanel: 'aggregation',
-        // drag handle used to pick up draggable columns
-        columnDrag: 'grip',
-        // drag handle used to pick up draggable rows
-        rowDrag: 'grip',
-        // context menu export item
-        save: 'save',
-        // version of small-right used in RTL mode
-        smallLeft: 'small-left',
-        // separater between column 'pills' when you add multiple columns to the header drop zone
-        smallRight: 'small-right',
-        // ??? doesn't seem to be used?
-        smallUp: 'small-up',
-        // ??? doesn't seem to be used?
-        smallDown: 'small-down',
-        // show on column header when column is sorted ascending
-        sortAscending: 'asc',
-        // show on column header when column is sorted descending
-        sortDescending: 'desc',
-        // show on column header when column has no sort, only when enabled with gridOptions.unSortIcon=true
-        sortUnSort: 'none'
-    };
-    return Utils;
+    return CsvUtils;
 }());
 
+
+// EXTERNAL MODULE: ../core/dist/es6/utils/general.js
+var general = __webpack_require__("cf91");
+
+// CONCATENATED MODULE: ../core/dist/es6/utils/numberSequence.js
+/**
+ * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
+ * @version v23.0.0
+ * @link http://www.ag-grid.com/
+ * @license MIT
+ */
 var NumberSequence = /** @class */ (function () {
     function NumberSequence(initValue, step) {
         if (initValue === void 0) { initValue = 0; }
@@ -34297,12 +35172,11 @@ var NumberSequence = /** @class */ (function () {
     return NumberSequence;
 }());
 
-var _ = general_Utils;
 
 // CONCATENATED MODULE: ../core/dist/es6/utils/promise.js
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v22.1.1
+ * @version v23.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -34396,7 +35270,7 @@ var Promise = /** @class */ (function () {
 // CONCATENATED MODULE: ../core/dist/es6/utils/timer.js
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v22.1.1
+ * @version v23.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -34417,19 +35291,14 @@ var Timer = /** @class */ (function () {
 
 
 // CONCATENATED MODULE: ../core/dist/es6/utils/index.js
-/* concated harmony reexport Color */__webpack_require__.d(__webpack_exports__, "a", function() { return Color; });
-/* unused concated harmony import Utils */
-/* concated harmony reexport NumberSequence */__webpack_require__.d(__webpack_exports__, "b", function() { return NumberSequence; });
-/* concated harmony reexport _ */__webpack_require__.d(__webpack_exports__, "d", function() { return _; });
-/* unused concated harmony import PromiseStatus */
-/* concated harmony reexport Promise */__webpack_require__.d(__webpack_exports__, "c", function() { return Promise; });
-/* unused concated harmony import Timer */
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v22.1.1
+ * @version v23.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
+
+
 
 
 
@@ -34446,7 +35315,7 @@ var Timer = /** @class */ (function () {
 /* harmony import */ var _context_context__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("d196");
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v22.1.1
+ * @version v23.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -34531,7 +35400,7 @@ var StylingService = /** @class */ (function () {
 /* harmony import */ var _utils__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("e3d3");
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v22.1.1
+ * @version v23.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -34561,7 +35430,7 @@ var __decorate = (undefined && undefined.__decorate) || function (decorators, ta
 var AgPanel = /** @class */ (function (_super) {
     __extends(AgPanel, _super);
     function AgPanel(config) {
-        var _this = _super.call(this, AgPanel.TEMPLATE) || this;
+        var _this = _super.call(this, AgPanel.getTemplate(config)) || this;
         _this.closable = true;
         _this.positioned = false;
         _this.dragStartPosition = {
@@ -34579,6 +35448,10 @@ var AgPanel = /** @class */ (function (_super) {
         _this.config = config;
         return _this;
     }
+    AgPanel.getTemplate = function (config) {
+        var cssIdentifier = (config && config.cssIdentifier) || 'default';
+        return "<div class=\"ag-panel ag-" + cssIdentifier + "-panel\" tabindex=\"-1\">\n            <div ref=\"eTitleBar\" class=\"ag-panel-title-bar ag-" + cssIdentifier + "-panel-title-bar ag-unselectable\">\n                <span ref=\"eTitle\" class=\"ag-panel-title-bar-title ag-" + cssIdentifier + "-panel-title-bar-title\"></span>\n                <div ref=\"eTitleBarButtons\" class=\"ag-panel-title-bar-buttons ag-" + cssIdentifier + "-panel-title-bar-buttons\"></div>\n            </div>\n            <div ref=\"eContentWrapper\" class=\"ag-panel-content-wrapper ag-" + cssIdentifier + "-panel-content-wrapper\"></div>\n        </div>";
+    };
     AgPanel.prototype.postConstruct = function () {
         var _this = this;
         var _a = this.config, component = _a.component, closable = _a.closable, hideTitleBar = _a.hideTitleBar, title = _a.title, minWidth = _a.minWidth, width = _a.width, minHeight = _a.minHeight, height = _a.height, centered = _a.centered, x = _a.x, y = _a.y;
@@ -34807,7 +35680,7 @@ var AgPanel = /** @class */ (function (_super) {
             var closeButtonComp = this.closeButtonComp = new _component__WEBPACK_IMPORTED_MODULE_2__[/* Component */ "a"](AgPanel.CLOSE_BTN_TEMPLATE);
             this.getContext().wireBean(closeButtonComp);
             var eGui = closeButtonComp.getGui();
-            eGui.appendChild(_utils__WEBPACK_IMPORTED_MODULE_3__[/* _ */ "d"].createIconNoSpan('close', this.gridOptionsWrapper));
+            eGui.appendChild(_utils__WEBPACK_IMPORTED_MODULE_3__[/* _ */ "d"].addCssClass(_utils__WEBPACK_IMPORTED_MODULE_3__[/* _ */ "d"].createIconNoSpan('close', this.gridOptionsWrapper), 'ag-panel-title-bar-button-icon'));
             this.addTitleBarButton(closeButtonComp);
             closeButtonComp.addDestroyableEventListener(eGui, 'click', this.onBtClose.bind(this));
         }
@@ -34831,7 +35704,7 @@ var AgPanel = /** @class */ (function (_super) {
         }
         position = Math.max(0, Math.min(position, len));
         var eGui = button.getGui();
-        _utils__WEBPACK_IMPORTED_MODULE_3__[/* _ */ "d"].addCssClass(eGui, 'ag-button');
+        _utils__WEBPACK_IMPORTED_MODULE_3__[/* _ */ "d"].addCssClass(eGui, 'ag-panel-title-bar-button');
         if (position === 0) {
             eTitleBarButtons.insertAdjacentElement('afterbegin', eGui);
         }
@@ -34867,7 +35740,6 @@ var AgPanel = /** @class */ (function (_super) {
             this.close();
         }
     };
-    AgPanel.TEMPLATE = "<div class=\"ag-panel\" tabindex=\"-1\">\n            <div ref=\"eTitleBar\" class=\"ag-title-bar ag-unselectable\">\n                <span ref=\"eTitle\" class=\"ag-title-bar-title\"></span>\n                <div ref=\"eTitleBarButtons\" class=\"ag-title-bar-buttons\"></div>\n            </div>\n            <div ref=\"eContentWrapper\" class=\"ag-panel-content-wrapper\"></div>\n        </div>";
     AgPanel.CLOSE_BTN_TEMPLATE = "<div class=\"ag-button\"></div>";
     __decorate([
         Object(_context_context__WEBPACK_IMPORTED_MODULE_1__[/* Autowired */ "a"])('popupService')
@@ -34908,7 +35780,7 @@ var AgPanel = /** @class */ (function (_super) {
 /* harmony import */ var _scalerFilter__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("c872");
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v22.1.1
+ * @version v23.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -34949,25 +35821,24 @@ var NumberFilter = /** @class */ (function (_super) {
     NumberFilter.prototype.getDefaultDebounceMs = function () {
         return 500;
     };
-    NumberFilter.prototype.resetUiToDefaults = function () {
-        _super.prototype.resetUiToDefaults.call(this);
-        this.eValueFrom1.value = null;
-        this.eValueFrom2.value = null;
-        this.eValueTo1.value = null;
-        this.eValueTo2.value = null;
+    NumberFilter.prototype.resetUiToDefaults = function (silent) {
+        _super.prototype.resetUiToDefaults.call(this, silent);
+        var fields = [this.eValueFrom1, this.eValueFrom2, this.eValueTo1, this.eValueTo2];
+        fields.forEach(function (field) { return field.setValue(null, silent); });
+        this.resetPlaceholder();
     };
     NumberFilter.prototype.setConditionIntoUi = function (model, position) {
         var positionOne = position === _simpleFilter__WEBPACK_IMPORTED_MODULE_2__[/* ConditionPosition */ "a"].One;
         var eValueFrom = positionOne ? this.eValueFrom1 : this.eValueFrom2;
         var eValueTo = positionOne ? this.eValueTo1 : this.eValueTo2;
-        eValueFrom.value = model ? ('' + model.filter) : null;
-        eValueTo.value = model ? ('' + model.filterTo) : null;
+        eValueFrom.setValue(model ? ('' + model.filter) : null);
+        eValueTo.setValue(model ? ('' + model.filterTo) : null);
     };
     NumberFilter.prototype.setValueFromFloatingFilter = function (value) {
-        this.eValueFrom1.value = value;
-        this.eValueFrom2.value = null;
-        this.eValueTo1.value = null;
-        this.eValueTo2.value = null;
+        this.eValueFrom1.setValue(value);
+        this.eValueFrom2.setValue(null);
+        this.eValueTo1.setValue(null);
+        this.eValueTo2.setValue(null);
     };
     NumberFilter.prototype.comparator = function () {
         return function (left, right) {
@@ -34977,9 +35848,7 @@ var NumberFilter = /** @class */ (function (_super) {
             if (left < right) {
                 return 1;
             }
-            if (left > right) {
-                return -1;
-            }
+            return -1;
         };
     };
     NumberFilter.prototype.setParams = function (params) {
@@ -34989,13 +35858,23 @@ var NumberFilter = /** @class */ (function (_super) {
     NumberFilter.prototype.addValueChangedListeners = function () {
         var _this = this;
         var listener = function () { return _this.onUiChanged(); };
-        this.addDestroyableEventListener(this.eValueFrom1, 'input', listener);
-        this.addDestroyableEventListener(this.eValueFrom2, 'input', listener);
-        this.addDestroyableEventListener(this.eValueTo1, 'input', listener);
-        this.addDestroyableEventListener(this.eValueTo2, 'input', listener);
+        this.eValueFrom1.onValueChange(listener);
+        this.eValueFrom2.onValueChange(listener);
+        this.eValueTo1.onValueChange(listener);
+        this.eValueTo2.onValueChange(listener);
+    };
+    NumberFilter.prototype.resetPlaceholder = function () {
+        var translate = this.translate.bind(this);
+        var isRange1 = this.getCondition1Type() === _scalerFilter__WEBPACK_IMPORTED_MODULE_3__[/* ScalerFilter */ "a"].IN_RANGE;
+        var isRange2 = this.getCondition2Type() === _scalerFilter__WEBPACK_IMPORTED_MODULE_3__[/* ScalerFilter */ "a"].IN_RANGE;
+        this.eValueFrom1.setInputPlaceholder(translate(isRange1 ? 'rangeStart' : 'filterOoo'));
+        this.eValueTo1.setInputPlaceholder(translate(isRange1 ? 'rangeEnd' : 'filterOoo'));
+        this.eValueFrom2.setInputPlaceholder(translate(isRange2 ? 'rangeStart' : 'filterOoo'));
+        this.eValueTo2.setInputPlaceholder(translate(isRange2 ? 'rangeEnd' : 'filterOoo'));
     };
     NumberFilter.prototype.afterGuiAttached = function () {
-        this.eValueFrom1.focus();
+        this.resetPlaceholder();
+        this.eValueFrom1.getInputElement().focus();
     };
     NumberFilter.prototype.getDefaultFilterOptions = function () {
         return NumberFilter.DEFAULT_FILTER_OPTIONS;
@@ -35003,16 +35882,15 @@ var NumberFilter = /** @class */ (function (_super) {
     NumberFilter.prototype.createValueTemplate = function (position) {
         var positionOne = position === _simpleFilter__WEBPACK_IMPORTED_MODULE_2__[/* ConditionPosition */ "a"].One;
         var pos = positionOne ? '1' : '2';
-        var translate = this.translate.bind(this);
-        return "<div class=\"ag-filter-body\" ref=\"eCondition" + pos + "Body\" role=\"presentation\">\n            <div class=\"ag-input-wrapper\" role=\"presentation\">\n                <input class=\"ag-filter-filter\" ref=\"eValueFrom" + pos + "\" type=\"text\" placeholder=\"" + translate('filterOoo') + "\"/>\n            </div>\n             <div class=\"ag-input-wrapper ag-filter-number-to\" ref=\"ePanel" + pos + "\" role=\"presentation\">\n                <input class=\"ag-filter-filter\" ref=\"eValueTo" + pos + "\" type=\"text\" placeholder=\"" + translate('filterOoo') + "\"/>\n            </div>\n        </div>";
+        return "<div class=\"ag-filter-body\" ref=\"eCondition" + pos + "Body\" role=\"presentation\">\n                    <ag-input-number-field class=\"ag-filter-from ag-filter-filter\" ref=\"eValueFrom" + pos + "\"></ag-input-number-field>\n                    <ag-input-number-field class=\"ag-filter-to ag-filter-filter\" ref=\"eValueTo" + pos + "\"></ag-input-number-field>\n                </div>";
     };
     NumberFilter.prototype.isConditionUiComplete = function (position) {
         var positionOne = position === _simpleFilter__WEBPACK_IMPORTED_MODULE_2__[/* ConditionPosition */ "a"].One;
         var option = positionOne ? this.getCondition1Type() : this.getCondition2Type();
         var eValue = positionOne ? this.eValueFrom1 : this.eValueFrom2;
         var eValueTo = positionOne ? this.eValueTo1 : this.eValueTo2;
-        var value = this.stringToFloat(eValue.value);
-        var valueTo = this.stringToFloat(eValueTo.value);
+        var value = this.stringToFloat(eValue.getValue());
+        var valueTo = this.stringToFloat(eValueTo.getValue());
         if (option === _simpleFilter__WEBPACK_IMPORTED_MODULE_2__[/* SimpleFilter */ "b"].EMPTY) {
             return false;
         }
@@ -35022,9 +35900,7 @@ var NumberFilter = /** @class */ (function (_super) {
         if (option === _simpleFilter__WEBPACK_IMPORTED_MODULE_2__[/* SimpleFilter */ "b"].IN_RANGE) {
             return value != null && valueTo != null;
         }
-        else {
-            return value != null;
-        }
+        return value != null;
     };
     NumberFilter.prototype.areSimpleModelsEqual = function (aSimple, bSimple) {
         return aSimple.filter === bSimple.filter
@@ -35036,6 +35912,9 @@ var NumberFilter = /** @class */ (function (_super) {
         return NumberFilter.FILTER_TYPE;
     };
     NumberFilter.prototype.stringToFloat = function (value) {
+        if (typeof value === "number") {
+            return value;
+        }
         var filterText = _utils__WEBPACK_IMPORTED_MODULE_1__[/* _ */ "d"].makeNull(value);
         if (filterText && filterText.trim() === '') {
             filterText = null;
@@ -35053,9 +35932,9 @@ var NumberFilter = /** @class */ (function (_super) {
         var positionOne = position === _simpleFilter__WEBPACK_IMPORTED_MODULE_2__[/* ConditionPosition */ "a"].One;
         var type = positionOne ? this.getCondition1Type() : this.getCondition2Type();
         var eValue = positionOne ? this.eValueFrom1 : this.eValueFrom2;
-        var value = this.stringToFloat(eValue.value);
+        var value = this.stringToFloat(eValue.getValue());
         var eValueTo = positionOne ? this.eValueTo1 : this.eValueTo2;
-        var valueTo = this.stringToFloat(eValueTo.value);
+        var valueTo = this.stringToFloat(eValueTo.getValue());
         var model = {
             filterType: NumberFilter.FILTER_TYPE,
             type: type
@@ -35068,20 +35947,26 @@ var NumberFilter = /** @class */ (function (_super) {
     };
     NumberFilter.prototype.updateUiVisibility = function () {
         _super.prototype.updateUiVisibility.call(this);
+        this.resetPlaceholder();
         var showFrom1 = this.showValueFrom(this.getCondition1Type());
-        _utils__WEBPACK_IMPORTED_MODULE_1__[/* _ */ "d"].setDisplayed(this.eValueFrom1, showFrom1);
+        _utils__WEBPACK_IMPORTED_MODULE_1__[/* _ */ "d"].setDisplayed(this.eValueFrom1.getGui(), showFrom1);
         var showTo1 = this.showValueTo(this.getCondition1Type());
-        _utils__WEBPACK_IMPORTED_MODULE_1__[/* _ */ "d"].setDisplayed(this.eValueTo1, showTo1);
+        _utils__WEBPACK_IMPORTED_MODULE_1__[/* _ */ "d"].setDisplayed(this.eValueTo1.getGui(), showTo1);
         var showFrom2 = this.showValueFrom(this.getCondition2Type());
-        _utils__WEBPACK_IMPORTED_MODULE_1__[/* _ */ "d"].setDisplayed(this.eValueFrom2, showFrom2);
+        _utils__WEBPACK_IMPORTED_MODULE_1__[/* _ */ "d"].setDisplayed(this.eValueFrom2.getGui(), showFrom2);
         var showTo2 = this.showValueTo(this.getCondition2Type());
-        _utils__WEBPACK_IMPORTED_MODULE_1__[/* _ */ "d"].setDisplayed(this.eValueTo2, showTo2);
+        _utils__WEBPACK_IMPORTED_MODULE_1__[/* _ */ "d"].setDisplayed(this.eValueTo2.getGui(), showTo2);
     };
     NumberFilter.FILTER_TYPE = 'number';
-    NumberFilter.DEFAULT_FILTER_OPTIONS = [_scalerFilter__WEBPACK_IMPORTED_MODULE_3__[/* ScalerFilter */ "a"].EQUALS, _scalerFilter__WEBPACK_IMPORTED_MODULE_3__[/* ScalerFilter */ "a"].NOT_EQUAL,
-        _scalerFilter__WEBPACK_IMPORTED_MODULE_3__[/* ScalerFilter */ "a"].LESS_THAN, _scalerFilter__WEBPACK_IMPORTED_MODULE_3__[/* ScalerFilter */ "a"].LESS_THAN_OR_EQUAL,
-        _scalerFilter__WEBPACK_IMPORTED_MODULE_3__[/* ScalerFilter */ "a"].GREATER_THAN, _scalerFilter__WEBPACK_IMPORTED_MODULE_3__[/* ScalerFilter */ "a"].GREATER_THAN_OR_EQUAL,
-        _scalerFilter__WEBPACK_IMPORTED_MODULE_3__[/* ScalerFilter */ "a"].IN_RANGE];
+    NumberFilter.DEFAULT_FILTER_OPTIONS = [
+        _scalerFilter__WEBPACK_IMPORTED_MODULE_3__[/* ScalerFilter */ "a"].EQUALS,
+        _scalerFilter__WEBPACK_IMPORTED_MODULE_3__[/* ScalerFilter */ "a"].NOT_EQUAL,
+        _scalerFilter__WEBPACK_IMPORTED_MODULE_3__[/* ScalerFilter */ "a"].LESS_THAN,
+        _scalerFilter__WEBPACK_IMPORTED_MODULE_3__[/* ScalerFilter */ "a"].LESS_THAN_OR_EQUAL,
+        _scalerFilter__WEBPACK_IMPORTED_MODULE_3__[/* ScalerFilter */ "a"].GREATER_THAN,
+        _scalerFilter__WEBPACK_IMPORTED_MODULE_3__[/* ScalerFilter */ "a"].GREATER_THAN_OR_EQUAL,
+        _scalerFilter__WEBPACK_IMPORTED_MODULE_3__[/* ScalerFilter */ "a"].IN_RANGE
+    ];
     __decorate([
         Object(_widgets_componentAnnotations__WEBPACK_IMPORTED_MODULE_0__[/* RefSelector */ "a"])('eValueFrom1')
     ], NumberFilter.prototype, "eValueFrom1", void 0);
@@ -35105,6 +35990,9 @@ var NumberFilter = /** @class */ (function (_super) {
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
+
+// EXPORTS
+__webpack_require__.d(__webpack_exports__, "a", function() { return /* binding */ headerWrapperComp_HeaderWrapperComp; });
 
 // EXTERNAL MODULE: ../core/dist/es6/widgets/component.js
 var component = __webpack_require__("6045");
@@ -35142,7 +36030,7 @@ var constants = __webpack_require__("f2fb");
 // CONCATENATED MODULE: ../core/dist/es6/headerRendering/header/selectAllFeature.js
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v22.1.1
+ * @version v23.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -35212,22 +36100,20 @@ var selectAllFeature_SelectAllFeature = /** @class */ (function (_super) {
         this.updateStateOfCheckbox();
     };
     SelectAllFeature.prototype.getNextCheckboxState = function (selectionCount) {
+        // if no rows, always have it unselected
         if (selectionCount.selected === 0 && selectionCount.notSelected === 0) {
-            // if no rows, always have it unselected
             return false;
         }
-        else if (selectionCount.selected > 0 && selectionCount.notSelected > 0) {
-            // if mix of selected and unselected, this is the tri-state
+        // if mix of selected and unselected, this is the tri-state
+        if (selectionCount.selected > 0 && selectionCount.notSelected > 0) {
             return null;
         }
-        else if (selectionCount.selected > 0) {
-            // only selected
+        // only selected
+        if (selectionCount.selected > 0) {
             return true;
         }
-        else {
-            // nothing selected
-            return false;
-        }
+        // nothing selected
+        return false;
     };
     SelectAllFeature.prototype.updateStateOfCheckbox = function () {
         if (this.processingEventFromCheckbox) {
@@ -35317,9 +36203,7 @@ var selectAllFeature_SelectAllFeature = /** @class */ (function (_super) {
             // otherwise the row model is compatible, so return true
             return true;
         }
-        else {
-            return false;
-        }
+        return false;
     };
     __decorate([
         Object(context["a" /* Autowired */])('gridApi')
@@ -35352,14 +36236,13 @@ var hoverFeature = __webpack_require__("cc17");
 // EXTERNAL MODULE: ../core/dist/es6/widgets/touchListener.js
 var widgets_touchListener = __webpack_require__("86d8");
 
-// EXTERNAL MODULE: ../core/dist/es6/utils/index.js + 4 modules
+// EXTERNAL MODULE: ../core/dist/es6/utils/index.js + 5 modules
 var utils = __webpack_require__("e3d3");
 
 // CONCATENATED MODULE: ../core/dist/es6/headerRendering/header/headerWrapperComp.js
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return headerWrapperComp_HeaderWrapperComp; });
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v22.1.1
+ * @version v23.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -35423,6 +36306,7 @@ var headerWrapperComp_HeaderWrapperComp = /** @class */ (function (_super) {
         this.setupMenuClass();
         this.setupSortableClass(enableSorting);
         this.addColumnHoverListener();
+        this.addMouseListeners();
         this.addFeature(new hoverFeature["a" /* HoverFeature */]([this.column], this.getGui()));
         this.addDestroyableEventListener(this.column, column["a" /* Column */].EVENT_FILTER_ACTIVE_CHANGED, this.onFilterChanged.bind(this));
         this.onFilterChanged();
@@ -35440,6 +36324,16 @@ var headerWrapperComp_HeaderWrapperComp = /** @class */ (function (_super) {
     HeaderWrapperComp.prototype.onColumnHover = function () {
         var isHovered = this.columnHoverService.isHovered(this.column);
         utils["d" /* _ */].addOrRemoveCssClass(this.getGui(), 'ag-column-hover', isHovered);
+    };
+    HeaderWrapperComp.prototype.addMouseListeners = function () {
+        var listener = this.onMouseOverOut.bind(this);
+        this.addGuiEventListener("mouseenter", listener);
+        this.addGuiEventListener("mouseleave", listener);
+    };
+    HeaderWrapperComp.prototype.onMouseOverOut = function (e) {
+        if (this.headerComp && this.headerComp.setMouseOverParent) {
+            this.headerComp.setMouseOverParent(e.type === "mouseenter");
+        }
     };
     HeaderWrapperComp.prototype.setupSortableClass = function (enableSorting) {
         if (enableSorting) {
@@ -35477,6 +36371,7 @@ var headerWrapperComp_HeaderWrapperComp = /** @class */ (function (_super) {
     HeaderWrapperComp.prototype.afterHeaderCompCreated = function (displayName, headerComp) {
         this.appendChild(headerComp);
         this.setupMove(headerComp.getGui(), displayName);
+        this.headerComp = headerComp;
     };
     HeaderWrapperComp.prototype.onColumnMovingChanged = function () {
         // this function adds or removes the moving css, based on if the col is moving.
@@ -35491,21 +36386,25 @@ var headerWrapperComp_HeaderWrapperComp = /** @class */ (function (_super) {
     };
     HeaderWrapperComp.prototype.setupMove = function (eHeaderCellLabel, displayName) {
         var _this = this;
+        var colDef = this.column.getColDef();
         var suppressMove = this.gridOptionsWrapper.isSuppressMovableColumns()
             || this.getComponentHolder().suppressMovable
-            || this.column.getColDef().lockPosition;
-        if (suppressMove) {
+            || colDef.lockPosition;
+        if (suppressMove &&
+            !colDef.enableRowGroup &&
+            !colDef.enablePivot) {
             return;
         }
         if (eHeaderCellLabel) {
             var dragSource_1 = {
                 type: dragAndDropService["b" /* DragSourceType */].HeaderCell,
                 eElement: eHeaderCellLabel,
+                defaultIconName: dragAndDropService["a" /* DragAndDropService */].ICON_HIDE,
                 getDragItem: function () { return _this.createDragItem(); },
                 dragItemName: displayName,
                 dragSourceDropTarget: this.dragSourceDropTarget,
-                onDragStarted: function () { return _this.column.setMoving(true, "uiColumnMoved"); },
-                onDragStopped: function () { return _this.column.setMoving(false, "uiColumnMoved"); }
+                onDragStarted: function () { return !suppressMove && _this.column.setMoving(true, "uiColumnMoved"); },
+                onDragStopped: function () { return !suppressMove && _this.column.setMoving(false, "uiColumnMoved"); }
             };
             this.dragAndDropService.addDragSource(dragSource_1, true);
             this.addDestroyFunc(function () { return _this.dragAndDropService.removeDragSource(dragSource_1); });
@@ -35688,7 +36587,7 @@ var headerWrapperComp_HeaderWrapperComp = /** @class */ (function (_super) {
 /* harmony import */ var _modules_moduleRegistry__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("7749");
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v22.1.1
+ * @version v23.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -36273,14 +37172,16 @@ var FilterManager = /** @class */ (function () {
 
 "use strict";
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return CheckboxSelectionComponent; });
-/* harmony import */ var _widgets_component__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("6045");
-/* harmony import */ var _entities_rowNode__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("19f7");
-/* harmony import */ var _context_context__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("d196");
+/* harmony import */ var _widgets_agCheckbox__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("7cc4");
+/* harmony import */ var _context_context__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("d196");
+/* harmony import */ var _widgets_component__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("6045");
 /* harmony import */ var _events__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("1284");
-/* harmony import */ var _utils__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("e3d3");
+/* harmony import */ var _widgets_componentAnnotations__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("f737");
+/* harmony import */ var _entities_rowNode__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__("19f7");
+/* harmony import */ var _utils__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__("e3d3");
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v22.1.1
+ * @version v23.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -36308,27 +37209,13 @@ var __decorate = (undefined && undefined.__decorate) || function (decorators, ta
 
 
 
+
+
 var CheckboxSelectionComponent = /** @class */ (function (_super) {
     __extends(CheckboxSelectionComponent, _super);
     function CheckboxSelectionComponent() {
-        return _super.call(this, "<span class=\"ag-selection-checkbox\"/>") || this;
+        return _super.call(this, "<div class=\"ag-selection-checkbox\"><ag-checkbox role=\"presentation\" ref=\"eCheckbox\"></ag-checkbox></div>") || this;
     }
-    CheckboxSelectionComponent.prototype.createAndAddIcons = function () {
-        var element = this.getGui();
-        if (this.gridOptionsWrapper.useNativeCheckboxes()) {
-            this.checkbox = document.createElement('input');
-            this.checkbox.type = 'checkbox';
-            element.appendChild(this.checkbox);
-        }
-        else {
-            this.eCheckedIcon = _utils__WEBPACK_IMPORTED_MODULE_4__[/* _ */ "d"].createIconNoSpan('checkboxChecked', this.gridOptionsWrapper, this.column);
-            this.eUncheckedIcon = _utils__WEBPACK_IMPORTED_MODULE_4__[/* _ */ "d"].createIconNoSpan('checkboxUnchecked', this.gridOptionsWrapper, this.column);
-            this.eIndeterminateIcon = _utils__WEBPACK_IMPORTED_MODULE_4__[/* _ */ "d"].createIconNoSpan('checkboxIndeterminate', this.gridOptionsWrapper, this.column);
-            element.appendChild(this.eCheckedIcon);
-            element.appendChild(this.eUncheckedIcon);
-            element.appendChild(this.eIndeterminateIcon);
-        }
-    };
     CheckboxSelectionComponent.prototype.onDataChanged = function () {
         // when rows are loaded for the second time, this can impact the selection, as a row
         // could be loaded as already selected (if user scrolls down, and then up again).
@@ -36339,15 +37226,7 @@ var CheckboxSelectionComponent = /** @class */ (function (_super) {
     };
     CheckboxSelectionComponent.prototype.onSelectionChanged = function () {
         var state = this.rowNode.isSelected();
-        if (this.gridOptionsWrapper.useNativeCheckboxes()) {
-            this.checkbox.checked = state === true;
-            this.checkbox.indeterminate = typeof state !== 'boolean';
-        }
-        else {
-            _utils__WEBPACK_IMPORTED_MODULE_4__[/* _ */ "d"].setDisplayed(this.eCheckedIcon, state === true);
-            _utils__WEBPACK_IMPORTED_MODULE_4__[/* _ */ "d"].setDisplayed(this.eUncheckedIcon, state === false);
-            _utils__WEBPACK_IMPORTED_MODULE_4__[/* _ */ "d"].setDisplayed(this.eIndeterminateIcon, typeof state !== 'boolean');
-        }
+        this.eCheckbox.setValue(state, true);
     };
     CheckboxSelectionComponent.prototype.onCheckedClicked = function () {
         var groupSelectsFiltered = this.gridOptionsWrapper.isGroupSelectsFiltered();
@@ -36359,41 +37238,27 @@ var CheckboxSelectionComponent = /** @class */ (function (_super) {
         var updatedCount = this.rowNode.setSelectedParams({ newValue: true, rangeSelect: event.shiftKey, groupSelectsFiltered: groupSelectsFiltered });
         return updatedCount;
     };
-    CheckboxSelectionComponent.prototype.onIndeterminateClicked = function (event) {
-        var result = this.onUncheckedClicked(event);
-        if (result === 0) {
-            this.onCheckedClicked();
-        }
-    };
-    CheckboxSelectionComponent.prototype.onCheckboxClicked = function (event) {
-        if (this.checkbox.checked) {
-            this.onUncheckedClicked(event);
-        }
-        else {
-            this.onCheckedClicked();
-        }
-    };
     CheckboxSelectionComponent.prototype.init = function (params) {
+        var _this = this;
         this.rowNode = params.rowNode;
         this.column = params.column;
-        this.createAndAddIcons();
         this.onSelectionChanged();
         // we don't want the row clicked event to fire when selecting the checkbox, otherwise the row
         // would possibly get selected twice
-        this.addGuiEventListener('click', function (event) { return _utils__WEBPACK_IMPORTED_MODULE_4__[/* _ */ "d"].stopPropagationForAgGrid(event); });
+        this.addGuiEventListener('click', function (event) { return _utils__WEBPACK_IMPORTED_MODULE_6__[/* _ */ "d"].stopPropagationForAgGrid(event); });
         // likewise we don't want double click on this icon to open a group
-        this.addGuiEventListener('dblclick', function (event) { return _utils__WEBPACK_IMPORTED_MODULE_4__[/* _ */ "d"].stopPropagationForAgGrid(event); });
-        if (this.gridOptionsWrapper.useNativeCheckboxes()) {
-            this.addDestroyableEventListener(this.checkbox, 'click', this.onCheckboxClicked.bind(this));
-        }
-        else {
-            this.addDestroyableEventListener(this.eCheckedIcon, 'click', this.onCheckedClicked.bind(this));
-            this.addDestroyableEventListener(this.eUncheckedIcon, 'click', this.onUncheckedClicked.bind(this));
-            this.addDestroyableEventListener(this.eIndeterminateIcon, 'click', this.onIndeterminateClicked.bind(this));
-        }
-        this.addDestroyableEventListener(this.rowNode, _entities_rowNode__WEBPACK_IMPORTED_MODULE_1__[/* RowNode */ "a"].EVENT_ROW_SELECTED, this.onSelectionChanged.bind(this));
-        this.addDestroyableEventListener(this.rowNode, _entities_rowNode__WEBPACK_IMPORTED_MODULE_1__[/* RowNode */ "a"].EVENT_DATA_CHANGED, this.onDataChanged.bind(this));
-        this.addDestroyableEventListener(this.rowNode, _entities_rowNode__WEBPACK_IMPORTED_MODULE_1__[/* RowNode */ "a"].EVENT_SELECTABLE_CHANGED, this.onSelectableChanged.bind(this));
+        this.addGuiEventListener('dblclick', function (event) { return _utils__WEBPACK_IMPORTED_MODULE_6__[/* _ */ "d"].stopPropagationForAgGrid(event); });
+        this.addDestroyableEventListener(this.eCheckbox, _widgets_agCheckbox__WEBPACK_IMPORTED_MODULE_0__[/* AgCheckbox */ "a"].EVENT_CHANGED, function (params) {
+            if (params.selected) {
+                _this.onUncheckedClicked(params.event || {});
+            }
+            else {
+                _this.onCheckedClicked();
+            }
+        });
+        this.addDestroyableEventListener(this.rowNode, _entities_rowNode__WEBPACK_IMPORTED_MODULE_5__[/* RowNode */ "a"].EVENT_ROW_SELECTED, this.onSelectionChanged.bind(this));
+        this.addDestroyableEventListener(this.rowNode, _entities_rowNode__WEBPACK_IMPORTED_MODULE_5__[/* RowNode */ "a"].EVENT_DATA_CHANGED, this.onDataChanged.bind(this));
+        this.addDestroyableEventListener(this.rowNode, _entities_rowNode__WEBPACK_IMPORTED_MODULE_5__[/* RowNode */ "a"].EVENT_SELECTABLE_CHANGED, this.onSelectableChanged.bind(this));
         this.isRowSelectableFunc = this.gridOptionsWrapper.getIsRowSelectableFunc();
         var checkboxVisibleIsDynamic = this.isRowSelectableFunc || this.checkboxCallbackExists();
         if (checkboxVisibleIsDynamic) {
@@ -36419,19 +37284,16 @@ var CheckboxSelectionComponent = /** @class */ (function (_super) {
         return colDef && typeof colDef.checkboxSelection === 'function';
     };
     __decorate([
-        Object(_context_context__WEBPACK_IMPORTED_MODULE_2__[/* Autowired */ "a"])('gridOptionsWrapper')
+        Object(_context_context__WEBPACK_IMPORTED_MODULE_1__[/* Autowired */ "a"])('gridOptionsWrapper')
     ], CheckboxSelectionComponent.prototype, "gridOptionsWrapper", void 0);
     __decorate([
-        Object(_context_context__WEBPACK_IMPORTED_MODULE_2__[/* Autowired */ "a"])('eventService')
+        Object(_context_context__WEBPACK_IMPORTED_MODULE_1__[/* Autowired */ "a"])('eventService')
     ], CheckboxSelectionComponent.prototype, "eventService", void 0);
     __decorate([
-        Object(_context_context__WEBPACK_IMPORTED_MODULE_2__[/* Autowired */ "a"])('gridApi')
-    ], CheckboxSelectionComponent.prototype, "gridApi", void 0);
-    __decorate([
-        Object(_context_context__WEBPACK_IMPORTED_MODULE_2__[/* Autowired */ "a"])('columnApi')
-    ], CheckboxSelectionComponent.prototype, "columnApi", void 0);
+        Object(_widgets_componentAnnotations__WEBPACK_IMPORTED_MODULE_4__[/* RefSelector */ "a"])('eCheckbox')
+    ], CheckboxSelectionComponent.prototype, "eCheckbox", void 0);
     return CheckboxSelectionComponent;
-}(_widgets_component__WEBPACK_IMPORTED_MODULE_0__[/* Component */ "a"]));
+}(_widgets_component__WEBPACK_IMPORTED_MODULE_2__[/* Component */ "a"]));
 
 
 
@@ -36444,7 +37306,7 @@ var CheckboxSelectionComponent = /** @class */ (function (_super) {
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return Constants; });
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v22.1.1
+ * @version v23.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -36527,7 +37389,7 @@ var Constants = /** @class */ (function () {
 /* harmony import */ var _utils__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__("e3d3");
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v22.1.1
+ * @version v23.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -38712,6 +39574,7 @@ var ColumnController = /** @class */ (function () {
         this.updateOpenClosedVisibilityInColumnGroups();
         this.updateDisplayedColumnsFromTrees(source);
         this.updateVirtualSets();
+        this.refreshFlexedColumns(undefined, undefined, true);
         this.updateBodyWidths();
         // this event is picked up by the gui, headerRenderer and rowRenderer, to recalculate what columns to display
         var event = {
@@ -38884,7 +39747,7 @@ var ColumnController = /** @class */ (function () {
     ColumnController.prototype.filterOutColumnsWithinViewport = function () {
         return this.displayedCenterColumns.filter(this.isColumnInViewport.bind(this));
     };
-    ColumnController.prototype.refreshFlexedColumns = function (updatedFlexViewportWidth, source) {
+    ColumnController.prototype.refreshFlexedColumns = function (updatedFlexViewportWidth, source, silent) {
         if (source === void 0) { source = 'flex'; }
         if (!this.flexActive) {
             return;
@@ -38931,8 +39794,10 @@ var ColumnController = /** @class */ (function () {
             remainingSpace -= flexingColumnSizes[i];
         });
         this.setLeftValues(source);
-        this.updateBodyWidths();
-        this.fireResizedEventForColumns(flexingColumns, source);
+        if (!silent) {
+            this.updateBodyWidths();
+            this.fireResizedEventForColumns(flexingColumns, source);
+        }
     };
     // called from api
     ColumnController.prototype.sizeColumnsToFit = function (gridWidth, source, silent) {
@@ -39215,7 +40080,7 @@ var ColumnController = /** @class */ (function () {
 /* unused harmony export Method */
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v22.1.1
+ * @version v23.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -39296,7 +40161,7 @@ function getOrCreateProps(target, instanceName) {
 /* harmony import */ var _context_context__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("d196");
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v22.1.1
+ * @version v23.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -39465,14 +40330,92 @@ var ColumnApi = /** @class */ (function () {
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return ComponentSource; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "b", function() { return UserComponentFactory; });
-/* harmony import */ var _context_context__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("d196");
-/* harmony import */ var _userComponentRegistry__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("ad57");
-/* harmony import */ var _utils__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("e3d3");
+
+// EXPORTS
+__webpack_require__.d(__webpack_exports__, "a", function() { return /* binding */ ComponentSource; });
+__webpack_require__.d(__webpack_exports__, "b", function() { return /* binding */ userComponentFactory_UserComponentFactory; });
+
+// EXTERNAL MODULE: ../core/dist/es6/context/context.js
+var context = __webpack_require__("d196");
+
+// EXTERNAL MODULE: ../core/dist/es6/components/framework/userComponentRegistry.js + 12 modules
+var userComponentRegistry = __webpack_require__("ad57");
+
+// EXTERNAL MODULE: ../core/dist/es6/utils/index.js + 5 modules
+var utils = __webpack_require__("e3d3");
+
+// CONCATENATED MODULE: ../core/dist/es6/components/framework/componentTypes.js
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v22.1.1
+ * @version v23.0.0
+ * @link http://www.ag-grid.com/
+ * @license MIT
+ */
+var DateComponent = {
+    propertyName: 'dateComponent',
+    isCellRenderer: function () { return false; }
+};
+var HeaderComponent = {
+    propertyName: 'headerComponent',
+    isCellRenderer: function () { return false; },
+};
+var HeaderGroupComponent = {
+    propertyName: 'headerGroupComponent',
+    isCellRenderer: function () { return false; },
+};
+var GroupRowInnerRendererComponent = {
+    propertyName: 'groupRowInnerRenderer',
+    isCellRenderer: function () { return true; },
+};
+var CellRendererComponent = {
+    propertyName: 'cellRenderer',
+    isCellRenderer: function () { return true; },
+};
+var PinnedRowCellRendererComponent = {
+    propertyName: 'pinnedRowCellRenderer',
+    isCellRenderer: function () { return true; },
+};
+var CellEditorComponent = {
+    propertyName: 'cellEditor',
+    isCellRenderer: function () { return false; },
+};
+var InnerRendererComponent = {
+    propertyName: 'innerRenderer',
+    isCellRenderer: function () { return true; },
+};
+var LoadingOverlayComponent = {
+    propertyName: 'loadingOverlayComponent',
+    isCellRenderer: function () { return false; },
+};
+var NoRowsOverlayComponent = {
+    propertyName: 'noRowsOverlayComponent',
+    isCellRenderer: function () { return false; },
+};
+var TooltipComponent = {
+    propertyName: 'tooltipComponent',
+    isCellRenderer: function () { return false; },
+};
+var FilterComponent = {
+    propertyName: 'filter',
+    isCellRenderer: function () { return false; },
+};
+var FloatingFilterComponent = {
+    propertyName: 'floatingFilterComponent',
+    isCellRenderer: function () { return false; },
+};
+var ToolPanelComponent = {
+    propertyName: 'toolPanel',
+    isCellRenderer: function () { return false; },
+};
+var StatusPanelComponent = {
+    propertyName: 'statusPanel',
+    isCellRenderer: function () { return false; },
+};
+
+// CONCATENATED MODULE: ../core/dist/es6/components/framework/userComponentFactory.js
+/**
+ * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
+ * @version v23.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -39485,65 +40428,69 @@ var __decorate = (undefined && undefined.__decorate) || function (decorators, ta
 
 
 
+
 var ComponentSource;
 (function (ComponentSource) {
     ComponentSource[ComponentSource["DEFAULT"] = 0] = "DEFAULT";
     ComponentSource[ComponentSource["REGISTERED_BY_NAME"] = 1] = "REGISTERED_BY_NAME";
     ComponentSource[ComponentSource["HARDCODED"] = 2] = "HARDCODED";
 })(ComponentSource || (ComponentSource = {}));
-var UserComponentFactory = /** @class */ (function () {
+var userComponentFactory_UserComponentFactory = /** @class */ (function () {
     function UserComponentFactory() {
     }
     UserComponentFactory.prototype.newDateComponent = function (params) {
-        return this.createAndInitUserComponent(this.gridOptions, params, "dateComponent", "agDateInput");
+        return this.createAndInitUserComponent(this.gridOptions, params, DateComponent, "agDateInput");
     };
     UserComponentFactory.prototype.newHeaderComponent = function (params) {
-        return this.createAndInitUserComponent(params.column.getColDef(), params, "headerComponent", "agColumnHeader");
+        return this.createAndInitUserComponent(params.column.getColDef(), params, HeaderComponent, "agColumnHeader");
     };
     UserComponentFactory.prototype.newHeaderGroupComponent = function (params) {
-        return this.createAndInitUserComponent(params.columnGroup.getColGroupDef(), params, "headerGroupComponent", "agColumnGroupHeader");
+        return this.createAndInitUserComponent(params.columnGroup.getColGroupDef(), params, HeaderGroupComponent, "agColumnGroupHeader");
     };
     UserComponentFactory.prototype.newFullWidthGroupRowInnerCellRenderer = function (params) {
-        return this.createAndInitUserComponent(this.gridOptions, params, "groupRowInnerRenderer", null, true);
+        return this.createAndInitUserComponent(this.gridOptions, params, GroupRowInnerRendererComponent, null, true);
     };
     // this one is unusual, as it can be LoadingCellRenderer, DetailCellRenderer, FullWidthCellRenderer or GroupRowRenderer.
     // so we have to pass the type in.
     UserComponentFactory.prototype.newFullWidthCellRenderer = function (params, cellRendererType, cellRendererName) {
-        return this.createAndInitUserComponent(null, params, cellRendererType, cellRendererName);
+        return this.createAndInitUserComponent(null, params, {
+            propertyName: cellRendererType,
+            isCellRenderer: function () { return true; }
+        }, cellRendererName);
     };
     UserComponentFactory.prototype.newCellRenderer = function (target, params) {
-        return this.createAndInitUserComponent(target, params, "cellRenderer", null, true);
+        return this.createAndInitUserComponent(target, params, CellRendererComponent, null, true);
     };
     UserComponentFactory.prototype.newPinnedRowCellRenderer = function (target, params) {
-        return this.createAndInitUserComponent(target, params, "pinnedRowCellRenderer", null, true);
+        return this.createAndInitUserComponent(target, params, PinnedRowCellRendererComponent, null, true);
     };
     UserComponentFactory.prototype.newCellEditor = function (colDef, params) {
-        return this.createAndInitUserComponent(colDef, params, 'cellEditor', 'agCellEditor');
+        return this.createAndInitUserComponent(colDef, params, CellEditorComponent, 'agCellEditor');
     };
     UserComponentFactory.prototype.newInnerCellRenderer = function (target, params) {
-        return this.createAndInitUserComponent(target, params, "innerRenderer", null);
+        return this.createAndInitUserComponent(target, params, InnerRendererComponent, null);
     };
     UserComponentFactory.prototype.newLoadingOverlayComponent = function (params) {
-        return this.createAndInitUserComponent(this.gridOptions, params, "loadingOverlayComponent", "agLoadingOverlay");
+        return this.createAndInitUserComponent(this.gridOptions, params, LoadingOverlayComponent, "agLoadingOverlay");
     };
     UserComponentFactory.prototype.newNoRowsOverlayComponent = function (params) {
-        return this.createAndInitUserComponent(this.gridOptions, params, "noRowsOverlayComponent", "agNoRowsOverlay");
+        return this.createAndInitUserComponent(this.gridOptions, params, NoRowsOverlayComponent, "agNoRowsOverlay");
     };
     UserComponentFactory.prototype.newTooltipComponent = function (params) {
         var colDef = params.colDef;
-        return this.createAndInitUserComponent(colDef, params, "tooltipComponent", 'agTooltipComponent');
+        return this.createAndInitUserComponent(colDef, params, TooltipComponent, 'agTooltipComponent');
     };
     UserComponentFactory.prototype.newFilterComponent = function (colDef, params, defaultFilter, modifyParamsCallback) {
-        return this.createAndInitUserComponent(colDef, params, 'filter', defaultFilter, false, modifyParamsCallback);
+        return this.createAndInitUserComponent(colDef, params, FilterComponent, defaultFilter, false, modifyParamsCallback);
     };
     UserComponentFactory.prototype.newFloatingFilterComponent = function (colDef, params, defaultFloatingFilter) {
-        return this.createAndInitUserComponent(colDef, params, "floatingFilterComponent", defaultFloatingFilter, true);
+        return this.createAndInitUserComponent(colDef, params, FloatingFilterComponent, defaultFloatingFilter, true);
     };
     UserComponentFactory.prototype.newToolPanelComponent = function (toolPanelDef, params) {
-        return this.createAndInitUserComponent(toolPanelDef, params, 'toolPanel');
+        return this.createAndInitUserComponent(toolPanelDef, params, ToolPanelComponent);
     };
     UserComponentFactory.prototype.newStatusPanelComponent = function (def, params) {
-        return this.createAndInitUserComponent(def, params, 'statusPanel');
+        return this.createAndInitUserComponent(def, params, StatusPanelComponent);
     };
     /**
      * This method creates a component given everything needed to guess what sort of component needs to be instantiated
@@ -39561,7 +40508,7 @@ var UserComponentFactory = /** @class */ (function () {
      *  @param modifyParamsCallback: A chance to customise the params passed to the init method. It receives what the current
      *  params are and the component that init is about to get called for
      */
-    UserComponentFactory.prototype.createAndInitUserComponent = function (definitionObject, paramsFromGrid, propertyName, defaultComponentName, 
+    UserComponentFactory.prototype.createAndInitUserComponent = function (definitionObject, paramsFromGrid, componentType, defaultComponentName, 
     // optional items are: FloatingFilter, CellComp (for cellRenderer)
     optional, 
     // used by FilterManager only
@@ -39571,13 +40518,13 @@ var UserComponentFactory = /** @class */ (function () {
             definitionObject = this.gridOptions;
         }
         // Create the component instance
-        var componentAndParams = this.createComponentInstance(definitionObject, propertyName, paramsFromGrid, defaultComponentName, optional);
+        var componentAndParams = this.createComponentInstance(definitionObject, componentType, paramsFromGrid, defaultComponentName, optional);
         if (!componentAndParams) {
             return null;
         }
         var componentInstance = componentAndParams.componentInstance;
         // Wire the component and call the init method with the correct params
-        var params = this.createFinalParams(definitionObject, propertyName, paramsFromGrid, componentAndParams.paramsFromSelector);
+        var params = this.createFinalParams(definitionObject, componentType.propertyName, paramsFromGrid, componentAndParams.paramsFromSelector);
         this.addReactHacks(params);
         // give caller chance to set any params that depend on the componentInstance (need here as the
         // componentInstance was not available when createUserComponent was called)
@@ -39590,7 +40537,7 @@ var UserComponentFactory = /** @class */ (function () {
             //     }, 1000);
             // });
             // return p;
-            return _utils__WEBPACK_IMPORTED_MODULE_2__[/* Promise */ "c"].resolve(componentInstance);
+            return utils["c" /* Promise */].resolve(componentInstance);
         }
         else {
             var asPromise = deferredInit;
@@ -39602,7 +40549,7 @@ var UserComponentFactory = /** @class */ (function () {
         // AG-1715 raised to do a wider ranging refactor to improve this
         var agGridReact = this.context.getBean('agGridReact');
         if (agGridReact) {
-            params.agGridReact = _utils__WEBPACK_IMPORTED_MODULE_2__[/* _ */ "d"].cloneObject(agGridReact);
+            params.agGridReact = utils["d" /* _ */].cloneObject(agGridReact);
         }
         // AG-1716 - directly related to AG-1574 and AG-1715
         var frameworkComponentWrapper = this.context.getBean('frameworkComponentWrapper');
@@ -39773,12 +40720,12 @@ var UserComponentFactory = /** @class */ (function () {
             return {
                 component: registeredComponent.component,
                 componentFromFramework: false,
-                source: (registeredComponent.source == _userComponentRegistry__WEBPACK_IMPORTED_MODULE_1__[/* RegisteredComponentSource */ "a"].REGISTERED) ? ComponentSource.REGISTERED_BY_NAME : ComponentSource.DEFAULT,
+                source: (registeredComponent.source == userComponentRegistry["a" /* RegisteredComponentSource */].REGISTERED) ? ComponentSource.REGISTERED_BY_NAME : ComponentSource.DEFAULT,
                 paramsFromSelector: null
             };
         }
         // This is a function
-        return this.agComponentUtils.adaptFunction(propertyName, registeredComponent.component, registeredComponent.componentFromFramework, (registeredComponent.source == _userComponentRegistry__WEBPACK_IMPORTED_MODULE_1__[/* RegisteredComponentSource */ "a"].REGISTERED) ? ComponentSource.REGISTERED_BY_NAME : ComponentSource.DEFAULT);
+        return this.agComponentUtils.adaptFunction(propertyName, registeredComponent.component, registeredComponent.componentFromFramework, (registeredComponent.source == userComponentRegistry["a" /* RegisteredComponentSource */].REGISTERED) ? ComponentSource.REGISTERED_BY_NAME : ComponentSource.DEFAULT);
     };
     /**
      * Useful to check what would be the resultant params for a given object
@@ -39793,20 +40740,21 @@ var UserComponentFactory = /** @class */ (function () {
     UserComponentFactory.prototype.createFinalParams = function (definitionObject, propertyName, paramsFromGrid, paramsFromSelector) {
         if (paramsFromSelector === void 0) { paramsFromSelector = null; }
         var res = {};
-        _utils__WEBPACK_IMPORTED_MODULE_2__[/* _ */ "d"].mergeDeep(res, paramsFromGrid);
+        utils["d" /* _ */].mergeDeep(res, paramsFromGrid);
         var userParams = definitionObject ? definitionObject[propertyName + "Params"] : null;
         if (userParams != null) {
             if (typeof userParams === 'function') {
-                _utils__WEBPACK_IMPORTED_MODULE_2__[/* _ */ "d"].mergeDeep(res, userParams(paramsFromGrid));
+                utils["d" /* _ */].mergeDeep(res, userParams(paramsFromGrid));
             }
             else if (typeof userParams === 'object') {
-                _utils__WEBPACK_IMPORTED_MODULE_2__[/* _ */ "d"].mergeDeep(res, userParams);
+                utils["d" /* _ */].mergeDeep(res, userParams);
             }
         }
-        _utils__WEBPACK_IMPORTED_MODULE_2__[/* _ */ "d"].mergeDeep(res, paramsFromSelector);
+        utils["d" /* _ */].mergeDeep(res, paramsFromSelector);
         return res;
     };
-    UserComponentFactory.prototype.createComponentInstance = function (holder, propertyName, paramsForSelector, defaultComponentName, optional) {
+    UserComponentFactory.prototype.createComponentInstance = function (holder, componentType, paramsForSelector, defaultComponentName, optional) {
+        var propertyName = componentType.propertyName;
         var componentToUse = this.lookupComponentClassDef(holder, propertyName, paramsForSelector, defaultComponentName);
         var missing = !componentToUse || !componentToUse.component;
         if (missing) {
@@ -39824,7 +40772,7 @@ var UserComponentFactory = /** @class */ (function () {
             // Using framework component
             var FrameworkComponentRaw = componentToUse.component;
             var thisComponentConfig = this.componentMetadataProvider.retrieve(propertyName);
-            componentInstance = this.frameworkComponentWrapper.wrap(FrameworkComponentRaw, thisComponentConfig.mandatoryMethodList, thisComponentConfig.optionalMethodList, defaultComponentName);
+            componentInstance = this.frameworkComponentWrapper.wrap(FrameworkComponentRaw, thisComponentConfig.mandatoryMethodList, thisComponentConfig.optionalMethodList, componentType, defaultComponentName);
         }
         else {
             // Using plain JavaScript component
@@ -39842,28 +40790,28 @@ var UserComponentFactory = /** @class */ (function () {
         }
     };
     __decorate([
-        Object(_context_context__WEBPACK_IMPORTED_MODULE_0__[/* Autowired */ "a"])("gridOptions")
+        Object(context["a" /* Autowired */])("gridOptions")
     ], UserComponentFactory.prototype, "gridOptions", void 0);
     __decorate([
-        Object(_context_context__WEBPACK_IMPORTED_MODULE_0__[/* Autowired */ "a"])("gridOptionsWrapper")
+        Object(context["a" /* Autowired */])("gridOptionsWrapper")
     ], UserComponentFactory.prototype, "gridOptionsWrapper", void 0);
     __decorate([
-        Object(_context_context__WEBPACK_IMPORTED_MODULE_0__[/* Autowired */ "a"])("context")
+        Object(context["a" /* Autowired */])("context")
     ], UserComponentFactory.prototype, "context", void 0);
     __decorate([
-        Object(_context_context__WEBPACK_IMPORTED_MODULE_0__[/* Autowired */ "a"])("agComponentUtils")
+        Object(context["a" /* Autowired */])("agComponentUtils")
     ], UserComponentFactory.prototype, "agComponentUtils", void 0);
     __decorate([
-        Object(_context_context__WEBPACK_IMPORTED_MODULE_0__[/* Autowired */ "a"])("componentMetadataProvider")
+        Object(context["a" /* Autowired */])("componentMetadataProvider")
     ], UserComponentFactory.prototype, "componentMetadataProvider", void 0);
     __decorate([
-        Object(_context_context__WEBPACK_IMPORTED_MODULE_0__[/* Autowired */ "a"])("userComponentRegistry")
+        Object(context["a" /* Autowired */])("userComponentRegistry")
     ], UserComponentFactory.prototype, "userComponentRegistry", void 0);
     __decorate([
-        Object(_context_context__WEBPACK_IMPORTED_MODULE_0__[/* Optional */ "d"])("frameworkComponentWrapper")
+        Object(context["d" /* Optional */])("frameworkComponentWrapper")
     ], UserComponentFactory.prototype, "frameworkComponentWrapper", void 0);
     UserComponentFactory = __decorate([
-        Object(_context_context__WEBPACK_IMPORTED_MODULE_0__[/* Bean */ "b"])('userComponentFactory')
+        Object(context["b" /* Bean */])('userComponentFactory')
     ], UserComponentFactory);
     return UserComponentFactory;
 }());
@@ -39882,7 +40830,7 @@ var UserComponentFactory = /** @class */ (function () {
 /* harmony import */ var _utils__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("e3d3");
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v22.1.1
+ * @version v23.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -39964,7 +40912,11 @@ var RowPositionUtils = /** @class */ (function () {
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
+// ESM COMPAT FLAG
 __webpack_require__.r(__webpack_exports__);
+
+// EXPORTS
+__webpack_require__.d(__webpack_exports__, "AgGridVue", function() { return /* reexport */ AgGridVue_AgGridVue; });
 
 // CONCATENATED MODULE: ./node_modules/@vue/cli-service/lib/commands/build/setPublicPath.js
 // This file is imported into lib/wc client bundles.
@@ -40052,10 +41004,11 @@ function __metadata(metadataKey, metadataValue) {
 }
 
 function __awaiter(thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
         function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
         function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : new P(function (resolve) { resolve(result.value); }).then(fulfilled, rejected); }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 }
@@ -40093,14 +41046,15 @@ function __exportStar(m, exports) {
 }
 
 function __values(o) {
-    var m = typeof Symbol === "function" && o[Symbol.iterator], i = 0;
+    var s = typeof Symbol === "function" && Symbol.iterator, m = s && o[s], i = 0;
     if (m) return m.call(o);
-    return {
+    if (o && typeof o.length === "number") return {
         next: function () {
             if (o && i >= o.length) o = void 0;
             return { value: o && o[i++], done: !o };
         }
     };
+    throw new TypeError(s ? "Object is not iterable." : "Symbol.iterator is not defined.");
 }
 
 function __read(o, n) {
@@ -40181,276 +41135,345 @@ function __importDefault(mod) {
     return (mod && mod.__esModule) ? mod : { default: mod };
 }
 
+function __classPrivateFieldGet(receiver, privateMap) {
+    if (!privateMap.has(receiver)) {
+        throw new TypeError("attempted to get private field on non-instance");
+    }
+    return privateMap.get(receiver);
+}
+
+function __classPrivateFieldSet(receiver, privateMap, value) {
+    if (!privateMap.has(receiver)) {
+        throw new TypeError("attempted to set private field on non-instance");
+    }
+    privateMap.set(receiver, value);
+    return value;
+}
+
 // EXTERNAL MODULE: external {"commonjs":"vue","commonjs2":"vue","root":"Vue"}
 var external_commonjs_vue_commonjs2_vue_root_Vue_ = __webpack_require__("8bbf");
 var external_commonjs_vue_commonjs2_vue_root_Vue_default = /*#__PURE__*/__webpack_require__.n(external_commonjs_vue_commonjs2_vue_root_Vue_);
 
 // CONCATENATED MODULE: ./node_modules/vue-class-component/dist/vue-class-component.esm.js
 /**
-  * vue-class-component v7.1.0
+  * vue-class-component v7.2.3
   * (c) 2015-present Evan You
   * @license MIT
   */
 
 
+function _typeof(obj) {
+  if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") {
+    _typeof = function (obj) {
+      return typeof obj;
+    };
+  } else {
+    _typeof = function (obj) {
+      return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj;
+    };
+  }
+
+  return _typeof(obj);
+}
+
+function _defineProperty(obj, key, value) {
+  if (key in obj) {
+    Object.defineProperty(obj, key, {
+      value: value,
+      enumerable: true,
+      configurable: true,
+      writable: true
+    });
+  } else {
+    obj[key] = value;
+  }
+
+  return obj;
+}
+
+function _toConsumableArray(arr) {
+  return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _nonIterableSpread();
+}
+
+function _arrayWithoutHoles(arr) {
+  if (Array.isArray(arr)) {
+    for (var i = 0, arr2 = new Array(arr.length); i < arr.length; i++) arr2[i] = arr[i];
+
+    return arr2;
+  }
+}
+
+function _iterableToArray(iter) {
+  if (Symbol.iterator in Object(iter) || Object.prototype.toString.call(iter) === "[object Arguments]") return Array.from(iter);
+}
+
+function _nonIterableSpread() {
+  throw new TypeError("Invalid attempt to spread non-iterable instance");
+}
+
 // The rational behind the verbose Reflect-feature check below is the fact that there are polyfills
 // which add an implementation for Reflect.defineMetadata but not for Reflect.getOwnMetadataKeys.
 // Without this check consumers will encounter hard to track down runtime errors.
-var reflectionIsSupported = typeof Reflect !== 'undefined' && Reflect.defineMetadata && Reflect.getOwnMetadataKeys;
-function copyReflectionMetadata(to, from) {
-    forwardMetadata(to, from);
-    Object.getOwnPropertyNames(from.prototype).forEach(function (key) {
-        forwardMetadata(to.prototype, from.prototype, key);
-    });
-    Object.getOwnPropertyNames(from).forEach(function (key) {
-        forwardMetadata(to, from, key);
-    });
+function reflectionIsSupported() {
+  return typeof Reflect !== 'undefined' && Reflect.defineMetadata && Reflect.getOwnMetadataKeys;
 }
-function forwardMetadata(to, from, propertyKey) {
-    var metaKeys = propertyKey
-        ? Reflect.getOwnMetadataKeys(from, propertyKey)
-        : Reflect.getOwnMetadataKeys(from);
-    metaKeys.forEach(function (metaKey) {
-        var metadata = propertyKey
-            ? Reflect.getOwnMetadata(metaKey, from, propertyKey)
-            : Reflect.getOwnMetadata(metaKey, from);
-        if (propertyKey) {
-            Reflect.defineMetadata(metaKey, metadata, to, propertyKey);
-        }
-        else {
-            Reflect.defineMetadata(metaKey, metadata, to);
-        }
-    });
+function copyReflectionMetadata(to, from) {
+  forwardMetadata(to, from);
+  Object.getOwnPropertyNames(from.prototype).forEach(function (key) {
+    forwardMetadata(to.prototype, from.prototype, key);
+  });
+  Object.getOwnPropertyNames(from).forEach(function (key) {
+    forwardMetadata(to, from, key);
+  });
 }
 
-var fakeArray = { __proto__: [] };
+function forwardMetadata(to, from, propertyKey) {
+  var metaKeys = propertyKey ? Reflect.getOwnMetadataKeys(from, propertyKey) : Reflect.getOwnMetadataKeys(from);
+  metaKeys.forEach(function (metaKey) {
+    var metadata = propertyKey ? Reflect.getOwnMetadata(metaKey, from, propertyKey) : Reflect.getOwnMetadata(metaKey, from);
+
+    if (propertyKey) {
+      Reflect.defineMetadata(metaKey, metadata, to, propertyKey);
+    } else {
+      Reflect.defineMetadata(metaKey, metadata, to);
+    }
+  });
+}
+
+var fakeArray = {
+  __proto__: []
+};
 var hasProto = fakeArray instanceof Array;
 function createDecorator(factory) {
-    return function (target, key, index) {
-        var Ctor = typeof target === 'function'
-            ? target
-            : target.constructor;
-        if (!Ctor.__decorators__) {
-            Ctor.__decorators__ = [];
-        }
-        if (typeof index !== 'number') {
-            index = undefined;
-        }
-        Ctor.__decorators__.push(function (options) { return factory(options, key, index); });
-    };
+  return function (target, key, index) {
+    var Ctor = typeof target === 'function' ? target : target.constructor;
+
+    if (!Ctor.__decorators__) {
+      Ctor.__decorators__ = [];
+    }
+
+    if (typeof index !== 'number') {
+      index = undefined;
+    }
+
+    Ctor.__decorators__.push(function (options) {
+      return factory(options, key, index);
+    });
+  };
 }
 function mixins() {
-    var Ctors = [];
-    for (var _i = 0; _i < arguments.length; _i++) {
-        Ctors[_i] = arguments[_i];
-    }
-    return external_commonjs_vue_commonjs2_vue_root_Vue_default.a.extend({ mixins: Ctors });
+  for (var _len = arguments.length, Ctors = new Array(_len), _key = 0; _key < _len; _key++) {
+    Ctors[_key] = arguments[_key];
+  }
+
+  return external_commonjs_vue_commonjs2_vue_root_Vue_default.a.extend({
+    mixins: Ctors
+  });
 }
 function isPrimitive(value) {
-    var type = typeof value;
-    return value == null || (type !== 'object' && type !== 'function');
+  var type = _typeof(value);
+
+  return value == null || type !== 'object' && type !== 'function';
 }
 function warn(message) {
-    if (typeof console !== 'undefined') {
-        console.warn('[vue-class-component] ' + message);
-    }
+  if (typeof console !== 'undefined') {
+    console.warn('[vue-class-component] ' + message);
+  }
 }
 
 function collectDataFromConstructor(vm, Component) {
-    // override _init to prevent to init as Vue instance
-    var originalInit = Component.prototype._init;
-    Component.prototype._init = function () {
-        var _this = this;
-        // proxy to actual vm
-        var keys = Object.getOwnPropertyNames(vm);
-        // 2.2.0 compat (props are no longer exposed as self properties)
-        if (vm.$options.props) {
-            for (var key in vm.$options.props) {
-                if (!vm.hasOwnProperty(key)) {
-                    keys.push(key);
-                }
-            }
+  // override _init to prevent to init as Vue instance
+  var originalInit = Component.prototype._init;
+
+  Component.prototype._init = function () {
+    var _this = this;
+
+    // proxy to actual vm
+    var keys = Object.getOwnPropertyNames(vm); // 2.2.0 compat (props are no longer exposed as self properties)
+
+    if (vm.$options.props) {
+      for (var key in vm.$options.props) {
+        if (!vm.hasOwnProperty(key)) {
+          keys.push(key);
         }
-        keys.forEach(function (key) {
-            if (key.charAt(0) !== '_') {
-                Object.defineProperty(_this, key, {
-                    get: function () { return vm[key]; },
-                    set: function (value) { vm[key] = value; },
-                    configurable: true
-                });
-            }
+      }
+    }
+
+    keys.forEach(function (key) {
+      if (key.charAt(0) !== '_') {
+        Object.defineProperty(_this, key, {
+          get: function get() {
+            return vm[key];
+          },
+          set: function set(value) {
+            vm[key] = value;
+          },
+          configurable: true
         });
-    };
-    // should be acquired class property values
-    var data = new Component();
-    // restore original _init to avoid memory leak (#209)
-    Component.prototype._init = originalInit;
-    // create plain data object
-    var plainData = {};
-    Object.keys(data).forEach(function (key) {
-        if (data[key] !== undefined) {
-            plainData[key] = data[key];
-        }
+      }
     });
-    if (false) {}
-    return plainData;
+  }; // should be acquired class property values
+
+
+  var data = new Component(); // restore original _init to avoid memory leak (#209)
+
+  Component.prototype._init = originalInit; // create plain data object
+
+  var plainData = {};
+  Object.keys(data).forEach(function (key) {
+    if (data[key] !== undefined) {
+      plainData[key] = data[key];
+    }
+  });
+
+  if (false) {}
+
+  return plainData;
 }
 
-var $internalHooks = [
-    'data',
-    'beforeCreate',
-    'created',
-    'beforeMount',
-    'mounted',
-    'beforeDestroy',
-    'destroyed',
-    'beforeUpdate',
-    'updated',
-    'activated',
-    'deactivated',
-    'render',
-    'errorCaptured',
-    'serverPrefetch' // 2.6
+var $internalHooks = ['data', 'beforeCreate', 'created', 'beforeMount', 'mounted', 'beforeDestroy', 'destroyed', 'beforeUpdate', 'updated', 'activated', 'deactivated', 'render', 'errorCaptured', 'serverPrefetch' // 2.6
 ];
-function componentFactory(Component, options) {
-    if (options === void 0) { options = {}; }
-    options.name = options.name || Component._componentTag || Component.name;
-    // prototype props.
-    var proto = Component.prototype;
-    Object.getOwnPropertyNames(proto).forEach(function (key) {
-        if (key === 'constructor') {
-            return;
-        }
-        // hooks
-        if ($internalHooks.indexOf(key) > -1) {
-            options[key] = proto[key];
-            return;
-        }
-        var descriptor = Object.getOwnPropertyDescriptor(proto, key);
-        if (descriptor.value !== void 0) {
-            // methods
-            if (typeof descriptor.value === 'function') {
-                (options.methods || (options.methods = {}))[key] = descriptor.value;
-            }
-            else {
-                // typescript decorated data
-                (options.mixins || (options.mixins = [])).push({
-                    data: function () {
-                        var _a;
-                        return _a = {}, _a[key] = descriptor.value, _a;
-                    }
-                });
-            }
-        }
-        else if (descriptor.get || descriptor.set) {
-            // computed properties
-            (options.computed || (options.computed = {}))[key] = {
-                get: descriptor.get,
-                set: descriptor.set
-            };
-        }
-    });
-    (options.mixins || (options.mixins = [])).push({
-        data: function () {
-            return collectDataFromConstructor(this, Component);
-        }
-    });
-    // decorate options
-    var decorators = Component.__decorators__;
-    if (decorators) {
-        decorators.forEach(function (fn) { return fn(options); });
-        delete Component.__decorators__;
+function componentFactory(Component) {
+  var options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+  options.name = options.name || Component._componentTag || Component.name; // prototype props.
+
+  var proto = Component.prototype;
+  Object.getOwnPropertyNames(proto).forEach(function (key) {
+    if (key === 'constructor') {
+      return;
+    } // hooks
+
+
+    if ($internalHooks.indexOf(key) > -1) {
+      options[key] = proto[key];
+      return;
     }
-    // find super
-    var superProto = Object.getPrototypeOf(Component.prototype);
-    var Super = superProto instanceof external_commonjs_vue_commonjs2_vue_root_Vue_default.a
-        ? superProto.constructor
-        : external_commonjs_vue_commonjs2_vue_root_Vue_default.a;
-    var Extended = Super.extend(options);
-    forwardStaticMembers(Extended, Component, Super);
-    if (reflectionIsSupported) {
-        copyReflectionMetadata(Extended, Component);
+
+    var descriptor = Object.getOwnPropertyDescriptor(proto, key);
+
+    if (descriptor.value !== void 0) {
+      // methods
+      if (typeof descriptor.value === 'function') {
+        (options.methods || (options.methods = {}))[key] = descriptor.value;
+      } else {
+        // typescript decorated data
+        (options.mixins || (options.mixins = [])).push({
+          data: function data() {
+            return _defineProperty({}, key, descriptor.value);
+          }
+        });
+      }
+    } else if (descriptor.get || descriptor.set) {
+      // computed properties
+      (options.computed || (options.computed = {}))[key] = {
+        get: descriptor.get,
+        set: descriptor.set
+      };
     }
-    return Extended;
+  });
+  (options.mixins || (options.mixins = [])).push({
+    data: function data() {
+      return collectDataFromConstructor(this, Component);
+    }
+  }); // decorate options
+
+  var decorators = Component.__decorators__;
+
+  if (decorators) {
+    decorators.forEach(function (fn) {
+      return fn(options);
+    });
+    delete Component.__decorators__;
+  } // find super
+
+
+  var superProto = Object.getPrototypeOf(Component.prototype);
+  var Super = superProto instanceof external_commonjs_vue_commonjs2_vue_root_Vue_default.a ? superProto.constructor : external_commonjs_vue_commonjs2_vue_root_Vue_default.a;
+  var Extended = Super.extend(options);
+  forwardStaticMembers(Extended, Component, Super);
+
+  if (reflectionIsSupported()) {
+    copyReflectionMetadata(Extended, Component);
+  }
+
+  return Extended;
 }
-var reservedPropertyNames = [
-    // Unique id
-    'cid',
-    // Super Vue constructor
-    'super',
-    // Component options that will be used by the component
-    'options',
-    'superOptions',
-    'extendOptions',
-    'sealedOptions',
-    // Private assets
-    'component',
-    'directive',
-    'filter'
-];
+var reservedPropertyNames = [// Unique id
+'cid', // Super Vue constructor
+'super', // Component options that will be used by the component
+'options', 'superOptions', 'extendOptions', 'sealedOptions', // Private assets
+'component', 'directive', 'filter'];
 var shouldIgnore = {
-    prototype: true,
-    arguments: true,
-    callee: true,
-    caller: true
+  prototype: true,
+  arguments: true,
+  callee: true,
+  caller: true
 };
+
 function forwardStaticMembers(Extended, Original, Super) {
-    // We have to use getOwnPropertyNames since Babel registers methods as non-enumerable
-    Object.getOwnPropertyNames(Original).forEach(function (key) {
-        // Skip the properties that should not be overwritten
-        if (shouldIgnore[key]) {
-            return;
-        }
-        // Some browsers does not allow reconfigure built-in properties
-        var extendedDescriptor = Object.getOwnPropertyDescriptor(Extended, key);
-        if (extendedDescriptor && !extendedDescriptor.configurable) {
-            return;
-        }
-        var descriptor = Object.getOwnPropertyDescriptor(Original, key);
-        // If the user agent does not support `__proto__` or its family (IE <= 10),
-        // the sub class properties may be inherited properties from the super class in TypeScript.
-        // We need to exclude such properties to prevent to overwrite
-        // the component options object which stored on the extended constructor (See #192).
-        // If the value is a referenced value (object or function),
-        // we can check equality of them and exclude it if they have the same reference.
-        // If it is a primitive value, it will be forwarded for safety.
-        if (!hasProto) {
-            // Only `cid` is explicitly exluded from property forwarding
-            // because we cannot detect whether it is a inherited property or not
-            // on the no `__proto__` environment even though the property is reserved.
-            if (key === 'cid') {
-                return;
-            }
-            var superDescriptor = Object.getOwnPropertyDescriptor(Super, key);
-            if (!isPrimitive(descriptor.value) &&
-                superDescriptor &&
-                superDescriptor.value === descriptor.value) {
-                return;
-            }
-        }
-        // Warn if the users manually declare reserved properties
-        if (false) {}
-        Object.defineProperty(Extended, key, descriptor);
-    });
+  // We have to use getOwnPropertyNames since Babel registers methods as non-enumerable
+  Object.getOwnPropertyNames(Original).forEach(function (key) {
+    // Skip the properties that should not be overwritten
+    if (shouldIgnore[key]) {
+      return;
+    } // Some browsers does not allow reconfigure built-in properties
+
+
+    var extendedDescriptor = Object.getOwnPropertyDescriptor(Extended, key);
+
+    if (extendedDescriptor && !extendedDescriptor.configurable) {
+      return;
+    }
+
+    var descriptor = Object.getOwnPropertyDescriptor(Original, key); // If the user agent does not support `__proto__` or its family (IE <= 10),
+    // the sub class properties may be inherited properties from the super class in TypeScript.
+    // We need to exclude such properties to prevent to overwrite
+    // the component options object which stored on the extended constructor (See #192).
+    // If the value is a referenced value (object or function),
+    // we can check equality of them and exclude it if they have the same reference.
+    // If it is a primitive value, it will be forwarded for safety.
+
+    if (!hasProto) {
+      // Only `cid` is explicitly exluded from property forwarding
+      // because we cannot detect whether it is a inherited property or not
+      // on the no `__proto__` environment even though the property is reserved.
+      if (key === 'cid') {
+        return;
+      }
+
+      var superDescriptor = Object.getOwnPropertyDescriptor(Super, key);
+
+      if (!isPrimitive(descriptor.value) && superDescriptor && superDescriptor.value === descriptor.value) {
+        return;
+      }
+    } // Warn if the users manually declare reserved properties
+
+
+    if (false) {}
+
+    Object.defineProperty(Extended, key, descriptor);
+  });
 }
 
 function vue_class_component_esm_Component(options) {
-    if (typeof options === 'function') {
-        return componentFactory(options);
-    }
-    return function (Component) {
-        return componentFactory(Component, options);
-    };
+  if (typeof options === 'function') {
+    return componentFactory(options);
+  }
+
+  return function (Component) {
+    return componentFactory(Component, options);
+  };
 }
+
 vue_class_component_esm_Component.registerHooks = function registerHooks(keys) {
-    $internalHooks.push.apply($internalHooks, keys);
+  $internalHooks.push.apply($internalHooks, _toConsumableArray(keys));
 };
 
 /* harmony default export */ var vue_class_component_esm = (vue_class_component_esm_Component);
 
 
 // CONCATENATED MODULE: ./node_modules/vue-property-decorator/lib/vue-property-decorator.js
-/** vue-property-decorator verson 8.2.2 MIT LICENSE copyright 2019 kaorun343 */
+/** vue-property-decorator verson 8.4.0 MIT LICENSE copyright 2019 kaorun343 */
 /// <reference types='reflect-metadata'/>
 
 
@@ -40496,6 +41519,37 @@ function InjectReactive(options) {
         }
     });
 }
+function produceProvide(original) {
+    var provide = function () {
+        var _this = this;
+        var rv = typeof original === 'function' ? original.call(this) : original;
+        rv = Object.create(rv || null);
+        // set reactive services (propagates previous services if necessary)
+        rv[reactiveInjectKey] = this[reactiveInjectKey] || {};
+        for (var i in provide.managed) {
+            rv[provide.managed[i]] = this[i];
+        }
+        var _loop_1 = function (i) {
+            rv[provide.managedReactive[i]] = this_1[i]; // Duplicates the behavior of `@Provide`
+            Object.defineProperty(rv[reactiveInjectKey], provide.managedReactive[i], {
+                enumerable: true,
+                get: function () { return _this[i]; },
+            });
+        };
+        var this_1 = this;
+        for (var i in provide.managedReactive) {
+            _loop_1(i);
+        }
+        return rv;
+    };
+    provide.managed = {};
+    provide.managedReactive = {};
+    return provide;
+}
+function needToProduceProvide(original) {
+    return (typeof original !== 'function' ||
+        (!original.managed && !original.managedReactive));
+}
 /**
  * decorator of a provide
  * @param key key
@@ -40504,16 +41558,8 @@ function InjectReactive(options) {
 function Provide(key) {
     return createDecorator(function (componentOptions, k) {
         var provide = componentOptions.provide;
-        if (typeof provide !== 'function' || !provide.managed) {
-            var original_1 = componentOptions.provide;
-            provide = componentOptions.provide = function () {
-                var rv = Object.create((typeof original_1 === 'function' ? original_1.call(this) : original_1) ||
-                    null);
-                for (var i in provide.managed)
-                    rv[provide.managed[i]] = this[i];
-                return rv;
-            };
-            provide.managed = {};
+        if (needToProduceProvide(provide)) {
+            provide = componentOptions.provide = produceProvide(provide);
         }
         provide.managed[k] = key || k;
     });
@@ -40529,32 +41575,13 @@ function ProvideReactive(key) {
         // inject parent reactive services (if any)
         if (!Array.isArray(componentOptions.inject)) {
             componentOptions.inject = componentOptions.inject || {};
-            componentOptions.inject[reactiveInjectKey] = { from: reactiveInjectKey, default: {} };
-        }
-        if (typeof provide !== 'function' || !provide.managedReactive) {
-            var original_2 = componentOptions.provide;
-            provide = componentOptions.provide = function () {
-                var _this = this;
-                var rv = typeof original_2 === 'function'
-                    ? original_2.call(this)
-                    : original_2;
-                rv = Object.create(rv || null);
-                // set reactive services (propagates previous services if necessary)
-                rv[reactiveInjectKey] = this[reactiveInjectKey] || {};
-                var _loop_1 = function (i) {
-                    rv[provide.managedReactive[i]] = this_1[i]; // Duplicates the behavior of `@Provide`
-                    Object.defineProperty(rv[reactiveInjectKey], provide.managedReactive[i], {
-                        enumerable: true,
-                        get: function () { return _this[i]; },
-                    });
-                };
-                var this_1 = this;
-                for (var i in provide.managedReactive) {
-                    _loop_1(i);
-                }
-                return rv;
+            componentOptions.inject[reactiveInjectKey] = {
+                from: reactiveInjectKey,
+                default: {},
             };
-            provide.managedReactive = {};
+        }
+        if (needToProduceProvide(provide)) {
+            provide = componentOptions.provide = produceProvide(provide);
         }
         provide.managedReactive[k] = key || k;
     });
@@ -40716,7 +41743,7 @@ var VueComponentFactory_VueComponentFactory = /** @class */ (function () {
     }
     VueComponentFactory.getComponentType = function (parent, component) {
         if (typeof component === 'string') {
-            var componentInstance = parent.$parent.$options.components[component];
+            var componentInstance = this.searchForComponentInstance(parent, component);
             if (!componentInstance) {
                 console.error("Could not find component with name of " + component + ". Is it in Vue.components?");
                 return null;
@@ -40743,6 +41770,24 @@ var VueComponentFactory_VueComponentFactory = /** @class */ (function () {
         var component = new componentType(details);
         component.$mount();
         return component;
+    };
+    VueComponentFactory.searchForComponentInstance = function (parent, component, maxDepth) {
+        if (maxDepth === void 0) { maxDepth = 10; }
+        var componentInstance = null;
+        var currentParent = parent.$parent;
+        var depth = 0;
+        while (!componentInstance &&
+            currentParent &&
+            currentParent.$options &&
+            (++depth < maxDepth)) {
+            componentInstance = currentParent.$options.components[component];
+            currentParent = currentParent.$parent;
+        }
+        if (!componentInstance) {
+            console.error("Could not find component with name of " + component + ". Is it in Vue.components?");
+            return null;
+        }
+        return componentInstance;
     };
     return VueComponentFactory;
 }());
@@ -41108,7 +42153,6 @@ var AgGridVue_AgGridVue = /** @class */ (function (_super) {
 
 
 // CONCATENATED MODULE: ./node_modules/@vue/cli-service/lib/commands/build/entry-lib-no-default.js
-/* concated harmony reexport AgGridVue */__webpack_require__.d(__webpack_exports__, "AgGridVue", function() { return AgGridVue_AgGridVue; });
 
 
 

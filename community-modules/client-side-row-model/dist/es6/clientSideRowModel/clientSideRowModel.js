@@ -113,14 +113,20 @@ var ClientSideRowModel = /** @class */ (function () {
         }
     };
     // returns false if row was moved, otherwise true
-    ClientSideRowModel.prototype.ensureRowAtPixel = function (rowNode, pixel) {
+    ClientSideRowModel.prototype.ensureRowsAtPixel = function (rowNodes, pixel, increment) {
+        var _this = this;
+        if (increment === void 0) { increment = 0; }
         var indexAtPixelNow = this.getRowIndexAtPixel(pixel);
         var rowNodeAtPixelNow = this.getRow(indexAtPixelNow);
-        if (rowNodeAtPixelNow === rowNode) {
+        if (rowNodeAtPixelNow === rowNodes[0]) {
             return false;
         }
-        _.removeFromArray(this.rootNode.allLeafChildren, rowNode);
-        _.insertIntoArray(this.rootNode.allLeafChildren, rowNode, indexAtPixelNow);
+        rowNodes.forEach(function (rowNode) {
+            _.removeFromArray(_this.rootNode.allLeafChildren, rowNode);
+        });
+        rowNodes.forEach(function (rowNode, idx) {
+            _.insertIntoArray(_this.rootNode.allLeafChildren, rowNode, indexAtPixelNow + increment + idx);
+        });
         this.refreshModel({
             step: Constants.STEP_EVERYTHING,
             keepRenderedRows: true,
@@ -129,6 +135,28 @@ var ClientSideRowModel = /** @class */ (function () {
         });
         return true;
     };
+    ClientSideRowModel.prototype.highlightRowAtPixel = function (rowNode, pixel) {
+        var indexAtPixelNow = pixel != null ? this.getRowIndexAtPixel(pixel) : null;
+        var rowNodeAtPixelNow = indexAtPixelNow != null ? this.getRow(indexAtPixelNow) : null;
+        if (rowNodeAtPixelNow === rowNode || !rowNode || pixel == null) {
+            if (this.lastHighlightedRow) {
+                this.lastHighlightedRow.setHighlighted(null);
+                this.lastHighlightedRow = null;
+            }
+            return;
+        }
+        var rowTop = rowNodeAtPixelNow.rowTop, rowHeight = rowNodeAtPixelNow.rowHeight;
+        var highlight = pixel - rowTop < rowHeight / 2 ? 'above' : 'below';
+        if (this.lastHighlightedRow && this.lastHighlightedRow !== rowNodeAtPixelNow) {
+            this.lastHighlightedRow.setHighlighted(null);
+            this.lastHighlightedRow = null;
+        }
+        rowNodeAtPixelNow.setHighlighted(highlight);
+        this.lastHighlightedRow = rowNodeAtPixelNow;
+    };
+    ClientSideRowModel.prototype.getLastHighlightedRowNode = function () {
+        return this.lastHighlightedRow;
+    };
     ClientSideRowModel.prototype.isLastRowFound = function () {
         return true;
     };
@@ -136,34 +164,28 @@ var ClientSideRowModel = /** @class */ (function () {
         if (this.rowsToDisplay) {
             return this.rowsToDisplay.length;
         }
-        else {
-            return 0;
-        }
+        return 0;
     };
     ClientSideRowModel.prototype.getTopLevelRowCount = function () {
         var showingRootNode = this.rowsToDisplay && this.rowsToDisplay[0] === this.rootNode;
         if (showingRootNode) {
             return 1;
         }
-        else {
-            return this.rootNode.childrenAfterFilter ? this.rootNode.childrenAfterFilter.length : 0;
-        }
+        return this.rootNode.childrenAfterFilter ? this.rootNode.childrenAfterFilter.length : 0;
     };
     ClientSideRowModel.prototype.getTopLevelRowDisplayedIndex = function (topLevelIndex) {
         var showingRootNode = this.rowsToDisplay && this.rowsToDisplay[0] === this.rootNode;
         if (showingRootNode) {
             return topLevelIndex;
         }
-        else {
-            var rowNode = this.rootNode.childrenAfterSort[topLevelIndex];
-            if (this.gridOptionsWrapper.isGroupHideOpenParents()) {
-                // if hideOpenParents, and this row open, then this row is now displayed at this index, first child is
-                while (rowNode.expanded && rowNode.childrenAfterSort && rowNode.childrenAfterSort.length > 0) {
-                    rowNode = rowNode.childrenAfterSort[0];
-                }
+        var rowNode = this.rootNode.childrenAfterSort[topLevelIndex];
+        if (this.gridOptionsWrapper.isGroupHideOpenParents()) {
+            // if hideOpenParents, and this row open, then this row is now displayed at this index, first child is
+            while (rowNode.expanded && rowNode.childrenAfterSort && rowNode.childrenAfterSort.length > 0) {
+                rowNode = rowNode.childrenAfterSort[0];
             }
-            return rowNode.rowIndex;
         }
+        return rowNode.rowIndex;
     };
     ClientSideRowModel.prototype.getRowBounds = function (index) {
         if (_.missing(this.rowsToDisplay)) {
@@ -176,15 +198,16 @@ var ClientSideRowModel = /** @class */ (function () {
                 rowHeight: rowNode.rowHeight
             };
         }
-        else {
-            return null;
-        }
+        return null;
     };
     ClientSideRowModel.prototype.onRowGroupOpened = function () {
         var animate = this.gridOptionsWrapper.isAnimateRows();
         this.refreshModel({ step: Constants.STEP_MAP, keepRenderedRows: true, animate: animate });
     };
-    ClientSideRowModel.prototype.onFilterChanged = function () {
+    ClientSideRowModel.prototype.onFilterChanged = function (event) {
+        if (event.afterDataChange) {
+            return;
+        }
         var animate = this.gridOptionsWrapper.isAnimateRows();
         this.refreshModel({ step: Constants.STEP_FILTER, keepRenderedRows: true, animate: animate });
     };
@@ -386,9 +409,7 @@ var ClientSideRowModel = /** @class */ (function () {
             var lastPixel = lastRow.rowTop + lastRow.rowHeight;
             return lastPixel;
         }
-        else {
-            return 0;
-        }
+        return 0;
     };
     ClientSideRowModel.prototype.forEachLeafNode = function (callback) {
         if (this.rootNode.allLeafChildren) {
@@ -413,32 +434,33 @@ var ClientSideRowModel = /** @class */ (function () {
     // recursion type - need this to know what child nodes to recurse, eg if looking at all nodes, or filtered notes etc
     // index - works similar to the index in forEach in javascript's array function
     ClientSideRowModel.prototype.recursivelyWalkNodesAndCallback = function (nodes, callback, recursionType, index) {
-        if (nodes) {
-            for (var i = 0; i < nodes.length; i++) {
-                var node = nodes[i];
-                callback(node, index++);
-                // go to the next level if it is a group
-                if (node.hasChildren()) {
-                    // depending on the recursion type, we pick a difference set of children
-                    var nodeChildren = null;
-                    switch (recursionType) {
-                        case RecursionType.Normal:
-                            nodeChildren = node.childrenAfterGroup;
-                            break;
-                        case RecursionType.AfterFilter:
-                            nodeChildren = node.childrenAfterFilter;
-                            break;
-                        case RecursionType.AfterFilterAndSort:
-                            nodeChildren = node.childrenAfterSort;
-                            break;
-                        case RecursionType.PivotNodes:
-                            // for pivot, we don't go below leafGroup levels
-                            nodeChildren = !node.leafGroup ? node.childrenAfterSort : null;
-                            break;
-                    }
-                    if (nodeChildren) {
-                        index = this.recursivelyWalkNodesAndCallback(nodeChildren, callback, recursionType, index);
-                    }
+        if (!nodes) {
+            return index;
+        }
+        for (var i = 0; i < nodes.length; i++) {
+            var node = nodes[i];
+            callback(node, index++);
+            // go to the next level if it is a group
+            if (node.hasChildren()) {
+                // depending on the recursion type, we pick a difference set of children
+                var nodeChildren = null;
+                switch (recursionType) {
+                    case RecursionType.Normal:
+                        nodeChildren = node.childrenAfterGroup;
+                        break;
+                    case RecursionType.AfterFilter:
+                        nodeChildren = node.childrenAfterFilter;
+                        break;
+                    case RecursionType.AfterFilterAndSort:
+                        nodeChildren = node.childrenAfterSort;
+                        break;
+                    case RecursionType.PivotNodes:
+                        // for pivot, we don't go below leafGroup levels
+                        nodeChildren = !node.leafGroup ? node.childrenAfterSort : null;
+                        break;
+                }
+                if (nodeChildren) {
+                    index = this.recursivelyWalkNodesAndCallback(nodeChildren, callback, recursionType, index);
                 }
             }
         }

@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v22.1.1
+ * @version v23.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -26,7 +26,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 import { Component } from "../../widgets/component";
 import { Autowired, PostConstruct } from "../../context/context";
 import { Column } from "../../entities/column";
-import { DragSourceType } from "../../dragAndDrop/dragAndDropService";
+import { DragAndDropService, DragSourceType } from "../../dragAndDrop/dragAndDropService";
 import { CssClassApplier } from "../cssClassApplier";
 import { SetLeftFeature } from "../../rendering/features/setLeftFeature";
 import { RefSelector } from "../../widgets/componentAnnotations";
@@ -64,6 +64,7 @@ var HeaderWrapperComp = /** @class */ (function (_super) {
         this.setupMenuClass();
         this.setupSortableClass(enableSorting);
         this.addColumnHoverListener();
+        this.addMouseListeners();
         this.addFeature(new HoverFeature([this.column], this.getGui()));
         this.addDestroyableEventListener(this.column, Column.EVENT_FILTER_ACTIVE_CHANGED, this.onFilterChanged.bind(this));
         this.onFilterChanged();
@@ -81,6 +82,16 @@ var HeaderWrapperComp = /** @class */ (function (_super) {
     HeaderWrapperComp.prototype.onColumnHover = function () {
         var isHovered = this.columnHoverService.isHovered(this.column);
         _.addOrRemoveCssClass(this.getGui(), 'ag-column-hover', isHovered);
+    };
+    HeaderWrapperComp.prototype.addMouseListeners = function () {
+        var listener = this.onMouseOverOut.bind(this);
+        this.addGuiEventListener("mouseenter", listener);
+        this.addGuiEventListener("mouseleave", listener);
+    };
+    HeaderWrapperComp.prototype.onMouseOverOut = function (e) {
+        if (this.headerComp && this.headerComp.setMouseOverParent) {
+            this.headerComp.setMouseOverParent(e.type === "mouseenter");
+        }
     };
     HeaderWrapperComp.prototype.setupSortableClass = function (enableSorting) {
         if (enableSorting) {
@@ -118,6 +129,7 @@ var HeaderWrapperComp = /** @class */ (function (_super) {
     HeaderWrapperComp.prototype.afterHeaderCompCreated = function (displayName, headerComp) {
         this.appendChild(headerComp);
         this.setupMove(headerComp.getGui(), displayName);
+        this.headerComp = headerComp;
     };
     HeaderWrapperComp.prototype.onColumnMovingChanged = function () {
         // this function adds or removes the moving css, based on if the col is moving.
@@ -132,21 +144,25 @@ var HeaderWrapperComp = /** @class */ (function (_super) {
     };
     HeaderWrapperComp.prototype.setupMove = function (eHeaderCellLabel, displayName) {
         var _this = this;
+        var colDef = this.column.getColDef();
         var suppressMove = this.gridOptionsWrapper.isSuppressMovableColumns()
             || this.getComponentHolder().suppressMovable
-            || this.column.getColDef().lockPosition;
-        if (suppressMove) {
+            || colDef.lockPosition;
+        if (suppressMove &&
+            !colDef.enableRowGroup &&
+            !colDef.enablePivot) {
             return;
         }
         if (eHeaderCellLabel) {
             var dragSource_1 = {
                 type: DragSourceType.HeaderCell,
                 eElement: eHeaderCellLabel,
+                defaultIconName: DragAndDropService.ICON_HIDE,
                 getDragItem: function () { return _this.createDragItem(); },
                 dragItemName: displayName,
                 dragSourceDropTarget: this.dragSourceDropTarget,
-                onDragStarted: function () { return _this.column.setMoving(true, "uiColumnMoved"); },
-                onDragStopped: function () { return _this.column.setMoving(false, "uiColumnMoved"); }
+                onDragStarted: function () { return !suppressMove && _this.column.setMoving(true, "uiColumnMoved"); },
+                onDragStopped: function () { return !suppressMove && _this.column.setMoving(false, "uiColumnMoved"); }
             };
             this.dragAndDropService.addDragSource(dragSource_1, true);
             this.addDestroyFunc(function () { return _this.dragAndDropService.removeDragSource(dragSource_1); });

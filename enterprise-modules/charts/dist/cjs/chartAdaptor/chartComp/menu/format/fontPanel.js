@@ -29,7 +29,12 @@ var FontPanel = /** @class */ (function (_super) {
         return _this;
     }
     FontPanel.prototype.init = function () {
-        this.setTemplate(FontPanel.TEMPLATE);
+        var groupParams = {
+            cssIdentifier: 'charts-format-sub-level',
+            direction: 'vertical',
+            suppressOpenCloseIcons: true
+        };
+        this.setTemplate(FontPanel.TEMPLATE, { fontGroup: groupParams });
         this.initGroup();
         this.initFontFamilySelect();
         this.initFontWeightStyleSelect();
@@ -78,7 +83,7 @@ var FontPanel = /** @class */ (function (_super) {
             'Palatino, serif',
             'Times New Roman, serif',
             'Times, serif',
-            'Verdana, sans-serif',
+            'Verdana, sans-serif'
         ];
         var family = this.params.initialFont.family;
         var initialValue = families[0];
@@ -98,6 +103,7 @@ var FontPanel = /** @class */ (function (_super) {
         }
         var options = families.sort().map(function (value) { return ({ value: value, text: value }); });
         this.familySelect.addOptions(options)
+            .setInputWidth('flex')
             .setValue("" + initialValue)
             .onValueChange(function (newValue) { return _this.params.setFont({ family: newValue }); });
     };
@@ -110,6 +116,7 @@ var FontPanel = /** @class */ (function (_super) {
         }
         var options = sizes.sort(function (a, b) { return a - b; }).map(function (value) { return ({ value: "" + value, text: "" + value }); });
         this.sizeSelect.addOptions(options)
+            .setInputWidth('flex')
             .setValue("" + size)
             .onValueChange(function (newValue) { return _this.params.setFont({ size: parseInt(newValue, 10) }); });
         this.sizeSelect.setLabel(this.chartTranslator.translate('size'));
@@ -133,6 +140,7 @@ var FontPanel = /** @class */ (function (_super) {
             text: _this.chartTranslator.translate(ws.name),
         }); });
         this.weightStyleSelect.addOptions(options)
+            .setInputWidth('flex')
             .setValue(selectedOption.name)
             .onValueChange(function (newValue) {
             var selectedWeightStyle = core_1._.find(weightStyles, function (x) { return x.name === newValue; });
@@ -157,7 +165,7 @@ var FontPanel = /** @class */ (function (_super) {
         this.destroyActiveComps();
         _super.prototype.destroy.call(this);
     };
-    FontPanel.TEMPLATE = "<div>\n            <ag-group-component ref=\"fontGroup\">\n                <ag-select ref=\"familySelect\"></ag-select>\n                <ag-select ref=\"weightStyleSelect\"></ag-select>\n                <div class=\"ag-group-subgroup\">\n                    <ag-select ref=\"sizeSelect\"></ag-select>\n                    <ag-color-picker ref=\"colorPicker\"></ag-color-picker>\n                </div>\n            </ag-group-component>\n        </div>";
+    FontPanel.TEMPLATE = "<div class=\"ag-font-panel\">\n            <ag-group-component ref=\"fontGroup\">\n                <ag-select ref=\"familySelect\"></ag-select>\n                <ag-select ref=\"weightStyleSelect\"></ag-select>\n                <div class=\"ag-charts-font-size-color\">\n                    <ag-select ref=\"sizeSelect\"></ag-select>\n                    <ag-color-picker ref=\"colorPicker\"></ag-color-picker>\n                </div>\n            </ag-group-component>\n        </div>";
     __decorate([
         core_1.RefSelector('fontGroup')
     ], FontPanel.prototype, "fontGroup", void 0);

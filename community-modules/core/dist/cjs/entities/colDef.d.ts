@@ -1,4 +1,4 @@
-// Type definitions for @ag-grid-community/core v22.1.1
+// Type definitions for @ag-grid-community/core v23.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { RowNode } from "./rowNode";
@@ -13,6 +13,7 @@ import { IFloatingFilterComp } from "../filter/floating/floatingFilter";
 import { CellClickedEvent, CellContextMenuEvent, CellDoubleClickedEvent } from "../events";
 import { ITooltipComp, ITooltipParams } from "../rendering/tooltipComponent";
 import { ComponentSelectorResult } from "../components/framework/userComponentFactory";
+import { IRowDragItem } from "../rendering/rowDragComp";
 /****************************************************************
  * Don't forget to update ComponentUtil if changing this class. PLEASE!*
  ****************************************************************/
@@ -78,7 +79,7 @@ export interface ColDef extends AbstractColDef {
     /** If sorting more than one column by default, the milliseconds when this column was sorted, so we know what order to sort the columns in. */
     sortedAt?: number;
     /** The sort order, provide an array with any of the following in any order ['asc','desc',null] */
-    sortingOrder?: string[] | null;
+    sortingOrder?: (string | null)[];
     /** The field of the row to get the cells data from */
     field?: string;
     /**
@@ -143,11 +144,11 @@ export interface ColDef extends AbstractColDef {
     pinnedRowCellRendererFramework?: any;
     pinnedRowCellRendererParams?: any;
     /** A function to format a value, should return a string. Not used for CSV export or copy to clipboard, only for UI cell rendering. */
-    valueFormatter?: (params: ValueFormatterParams) => string | string;
+    valueFormatter?: ((params: ValueFormatterParams) => string) | string;
     /** A function to format a pinned row value, should return a string. Not used for CSV export or copy to clipboard, only for UI cell rendering. */
-    pinnedRowValueFormatter?: (params: ValueFormatterParams) => string | string;
+    pinnedRowValueFormatter?: ((params: ValueFormatterParams) => string) | string;
     /** Gets called after editing, converts the value in the cell. */
-    valueParser?: (params: ValueParserParams) => any | string;
+    valueParser?: ((params: ValueParserParams) => any) | string;
     /** Name of function to use for aggregation. One of [sum,min,max,first,last] or a function. */
     aggFunc?: string | IAggFunc;
     /** Agg funcs allowed on this column. If missing, all installed agg funcs are allowed.
@@ -175,6 +176,8 @@ export interface ColDef extends AbstractColDef {
     headerCheckboxSelectionFilteredOnly?: boolean;
     /** For grid row dragging, set to true to enable row dragging within the grid */
     rowDrag?: boolean | ((params: any) => boolean);
+    /** To configure the text to be displayed in the floating div while dragging a row when rowDrag is true */
+    rowDragText?: ((params: IRowDragItem) => string);
     /** For native drag and drop, set to true to enable drag source */
     dndSource?: boolean | ((params: any) => boolean);
     /** For native drag and drop, set to true to allow custom onRowDrag processing */
@@ -225,7 +228,7 @@ export interface ColDef extends AbstractColDef {
     editable?: boolean | IsColumnFunc;
     colSpan?: (params: ColSpanParams) => number;
     rowSpan?: (params: RowSpanParams) => number;
-    /** Set to true if this col should not be allowed take new values from teh clipboard . */
+    /** Set to true if this col should not be allowed take new values from the clipboard . */
     suppressPaste?: boolean | IsColumnFunc;
     /** Set to tru if this col should not be navigable with the tab key. Can also be a function to have different rows editable. */
     suppressNavigable?: boolean | IsColumnFunc;

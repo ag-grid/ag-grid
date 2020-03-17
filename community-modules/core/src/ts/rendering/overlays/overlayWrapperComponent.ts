@@ -48,21 +48,21 @@ export class OverlayWrapperComponent extends Component {
         const workItem: Promise<ILoadingOverlayComp> = this.userComponentFactory.newLoadingOverlayComponent({
             api: this.gridOptionsWrapper.getApi()
         });
-        this.showOverlay<ILoadingOverlayComp>(workItem);
+        this.showOverlay<ILoadingOverlayComp>(workItem, LoadingType.Loading);
     }
 
     public showNoRowsOverlay(): void {
         const workItem: Promise<INoRowsOverlayComp> = this.userComponentFactory.newNoRowsOverlayComponent({
             api: this.gridOptionsWrapper.getApi()
         });
-        this.showOverlay<INoRowsOverlayComp>(workItem);
+        this.showOverlay<INoRowsOverlayComp>(workItem, LoadingType.NoRows);
     }
 
-    private showOverlay<T>(workItem: Promise<T>) {
+    private showOverlay<T>(workItem: Promise<T>, type: LoadingType) {
         if (this.inProgress) {
             return;
         }
-        this.setWrapperTypeClass(LoadingType.NoRows);
+        this.setWrapperTypeClass(type);
         this.destroyActiveOverlay();
 
         this.inProgress = true;

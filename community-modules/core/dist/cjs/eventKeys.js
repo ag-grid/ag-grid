@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v22.1.1
+ * @version v23.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -49,10 +49,14 @@ var Events = /** @class */ (function () {
     Events.EVENT_PINNED_ROW_DATA_CHANGED = 'pinnedRowDataChanged';
     /** Range selection has changed */
     Events.EVENT_RANGE_SELECTION_CHANGED = 'rangeSelectionChanged';
+    /** Chart was created */
+    Events.EVENT_CHART_CREATED = 'chartCreated';
     /** Chart Range selection has changed */
     Events.EVENT_CHART_RANGE_SELECTION_CHANGED = 'chartRangeSelectionChanged';
     /** Chart Options have changed */
     Events.EVENT_CHART_OPTIONS_CHANGED = 'chartOptionsChanged';
+    /** Chart was destroyed */
+    Events.EVENT_CHART_DESTROYED = 'chartDestroyed';
     /** For when the tool panel is shown / hidden */
     Events.EVENT_TOOL_PANEL_VISIBLE_CHANGED = 'toolPanelVisibleChanged';
     /** Model was updated - grid updates the drawn rows when this happens */
@@ -132,6 +136,8 @@ var Events = /** @class */ (function () {
     Events.EVENT_COLUMN_PIVOT_CHANGE_REQUEST = 'columnPivotChangeRequest';
     Events.EVENT_COLUMN_VALUE_CHANGE_REQUEST = 'columnValueChangeRequest';
     Events.EVENT_COLUMN_AGG_FUNC_CHANGE_REQUEST = 'columnAggFuncChangeRequest';
+    Events.EVENT_KEYBOARD_FOCUS = 'keyboardFocus';
+    Events.EVENT_MOUSE_FOCUS = 'mouseFocus';
     return Events;
 }());
 exports.Events = Events;

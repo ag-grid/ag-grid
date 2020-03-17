@@ -5,18 +5,19 @@ import {
     AgToggleButton,
     Autowired,
     Component,
+    FontStyle,
+    FontWeight,
     PostConstruct,
     RefSelector,
-    FontStyle,
-    FontWeight
+    AgGroupComponentParams
 } from "@ag-grid-community/core";
-import { ChartController } from "../../../chartController";
-import { ShadowPanel } from "./shadowPanel";
-import { Font, FontPanel, FontPanelParams } from "../fontPanel";
-import { CalloutPanel } from "./calloutPanel";
-import { ChartTranslator } from "../../../chartTranslator";
-import { PieChartProxy } from "../../../chartProxies/polar/pieChartProxy";
-import { DoughnutChartProxy } from "../../../chartProxies/polar/doughnutChartProxy";
+import {ChartController} from "../../../chartController";
+import {ShadowPanel} from "./shadowPanel";
+import {Font, FontPanel, FontPanelParams} from "../fontPanel";
+import {CalloutPanel} from "./calloutPanel";
+import {ChartTranslator} from "../../../chartTranslator";
+import {PieChartProxy} from "../../../chartProxies/polar/pieChartProxy";
+import {DoughnutChartProxy} from "../../../chartProxies/polar/doughnutChartProxy";
 
 export class PieSeriesPanel extends Component {
 
@@ -48,7 +49,11 @@ export class PieSeriesPanel extends Component {
 
     @PostConstruct
     private init() {
-        this.setTemplate(PieSeriesPanel.TEMPLATE);
+        const groupParams: AgGroupComponentParams = {
+            cssIdentifier: 'charts-format-top-level',
+            direction: 'vertical'
+        };
+        this.setTemplate(PieSeriesPanel.TEMPLATE, {seriesGroup: groupParams});
 
         this.initGroup();
         this.initSeriesTooltips();
@@ -70,7 +75,7 @@ export class PieSeriesPanel extends Component {
             .setLabel(this.chartTranslator.translate("tooltips"))
             .setLabelAlignment("left")
             .setLabelWidth("flex")
-            .setInputWidth(40)
+            .setInputWidth(45)
             .setValue(this.getChartProxy().getSeriesOption("tooltip.enabled") || false)
             .onValueChange(newValue => this.getChartProxy().setSeriesOption("tooltip.enabled", newValue));
     }
@@ -115,11 +120,21 @@ export class PieSeriesPanel extends Component {
         const setFont = (font: Font) => {
             const chartProxy = this.getChartProxy();
 
-            if (font.family) { chartProxy.setSeriesOption("label.fontFamily", font.family); }
-            if (font.weight) { chartProxy.setSeriesOption("label.fontWeight", font.weight); }
-            if (font.style) { chartProxy.setSeriesOption("label.fontStyle", font.style); }
-            if (font.size) { chartProxy.setSeriesOption("label.fontSize", font.size); }
-            if (font.color) { chartProxy.setSeriesOption("label.color", font.color); }
+            if (font.family) {
+                chartProxy.setSeriesOption("label.fontFamily", font.family);
+            }
+            if (font.weight) {
+                chartProxy.setSeriesOption("label.fontWeight", font.weight);
+            }
+            if (font.style) {
+                chartProxy.setSeriesOption("label.fontStyle", font.style);
+            }
+            if (font.size) {
+                chartProxy.setSeriesOption("label.fontSize", font.size);
+            }
+            if (font.color) {
+                chartProxy.setSeriesOption("label.color", font.color);
+            }
         };
 
         const params: FontPanelParams = {

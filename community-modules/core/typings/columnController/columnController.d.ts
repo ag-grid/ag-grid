@@ -253,7 +253,7 @@ export declare class ColumnController {
     private updateDisplayedVirtualGroups;
     private updateVirtualSets;
     private filterOutColumnsWithinViewport;
-    refreshFlexedColumns(updatedFlexViewportWidth?: number, source?: ColumnEventType): void;
+    refreshFlexedColumns(updatedFlexViewportWidth?: number, source?: ColumnEventType, silent?: boolean): void;
     sizeColumnsToFit(gridWidth: any, source?: ColumnEventType, silent?: boolean): void;
     private fireResizedEventForColumns;
     private buildDisplayedTrees;

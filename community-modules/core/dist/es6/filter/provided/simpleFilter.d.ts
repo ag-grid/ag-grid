@@ -1,4 +1,4 @@
-// Type definitions for @ag-grid-community/core v22.1.1
+// Type definitions for @ag-grid-community/core v23.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { IDoesFilterPassParams, IFilterOptionDef, ProvidedFilterModel } from "../../interfaces/iFilter";
@@ -70,8 +70,9 @@ export declare abstract class SimpleFilter<M extends ISimpleFilterModel> extends
     private putOptionsIntoDropdown;
     isAllowTwoConditions(): boolean;
     protected createBodyTemplate(): string;
+    protected getCssIdentifier(): string;
     protected updateUiVisibility(): void;
-    protected resetUiToDefaults(): void;
+    protected resetUiToDefaults(silent?: boolean): void;
     translate(toTranslate: string): string;
     addChangedListeners(): void;
     protected doesFilterHaveHiddenInput(filterType: string): boolean;

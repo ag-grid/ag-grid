@@ -97,7 +97,7 @@ export class BodyDropTarget implements DropTarget {
 
         if (this.columnController.isPivotMode()) {
             // in pivot mode, then if moving a column (ie didn't come from toolpanel) then it's
-            // a standard column move, however if it came from teh toolpanel, then we are introducing
+            // a standard column move, however if it came from the toolpanel, then we are introducing
             // dimensions or values to the grid
             if (draggingEvent.dragSource.type === DragSourceType.ToolPanel) {
                 return DropType.Pivot;

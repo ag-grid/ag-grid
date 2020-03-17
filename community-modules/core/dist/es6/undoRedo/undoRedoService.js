@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v22.1.1
+ * @version v23.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -157,7 +157,7 @@ var UndoRedoService = /** @class */ (function () {
         if (ModuleRegistry.isRegistered(ModuleNames.RangeSelectionModule)) {
             this.gridApi.clearRangeSelection();
         }
-        this.focusedCellController.setFocusedCell(rowIndex, columnId, rowPinned, true);
+        this.focusController.setFocusedCell(rowIndex, columnId, rowPinned, true);
     };
     UndoRedoService.prototype.addRowEditingListeners = function () {
         var _this = this;
@@ -225,8 +225,8 @@ var UndoRedoService = /** @class */ (function () {
         Autowired('gridOptionsWrapper')
     ], UndoRedoService.prototype, "gridOptionsWrapper", void 0);
     __decorate([
-        Autowired('focusedCellController')
-    ], UndoRedoService.prototype, "focusedCellController", void 0);
+        Autowired('focusController')
+    ], UndoRedoService.prototype, "focusController", void 0);
     __decorate([
         Autowired('eventService')
     ], UndoRedoService.prototype, "eventService", void 0);

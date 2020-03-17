@@ -142,6 +142,8 @@ export declare class CellComp extends Component {
     onKeyPress(event: KeyboardEvent): void;
     private onSpaceKeyPressed;
     private onMouseDown;
+    private isRightClickInExistingRange;
+    private containsCheckbox;
     private isDoubleClickOnIPad;
     private onCellClicked;
     private createGridCellVo;

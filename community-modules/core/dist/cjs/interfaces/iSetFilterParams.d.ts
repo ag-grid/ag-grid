@@ -1,8 +1,8 @@
-// Type definitions for @ag-grid-community/core v22.1.1
+// Type definitions for @ag-grid-community/core v23.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { ICellRendererComp, ICellRendererFunc } from "../rendering/cellRenderers/iCellRenderer";
-import { ColDef } from "../entities/colDef";
+import { ColDef, ValueFormatterParams } from "../entities/colDef";
 import { IProvidedFilterParams } from "../filter/provided/providedFilter";
 export interface SetFilterValuesFuncParams {
     success: (values: string[]) => void;
@@ -24,6 +24,7 @@ export interface ISetFilterParams extends IProvidedFilterParams {
     comparator?: (a: any, b: any) => number;
     miniFilterSearchByRefDataKey?: boolean;
     textFormatter?: (from: string) => string;
+    valueFormatter?: (params: ValueFormatterParams) => string;
     /** @deprecated */
     selectAllOnMiniFilter: boolean;
     /** @deprecated */

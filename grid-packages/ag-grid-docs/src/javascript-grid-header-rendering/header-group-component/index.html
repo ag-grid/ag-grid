@@ -1,0 +1,96 @@
+
+
+    <style>
+
+        .customExpandButton{
+            float:right;
+            margin-top: 2px;
+            margin-left: 3px;
+        }
+
+        .expanded {
+            animation-name: toExpanded;
+            animation-duration: 1s;
+            -ms-transform: rotate(180deg); /* IE 9 */
+            -webkit-transform: rotate(180deg); /* Chrome, Safari, Opera */
+            transform: rotate(180deg);
+        }
+
+        .collapsed {
+            color: cornflowerblue;
+            animation-name: toCollapsed;
+            animation-duration: 1s;
+            -ms-transform: rotate(0deg); /* IE 9 */
+            -webkit-transform: rotate(0deg); /* Chrome, Safari, Opera */
+            transform: rotate(0deg);
+        }
+
+        .customHeaderMenuButton,
+        .customHeaderLabel,
+        .customHeaderLabel,
+        .customSortDownLabel,
+        .customSortUpLabel,
+        .customSortRemoveLabel
+        {
+            margin-top: 2px;
+            margin-left: 4px;
+            float: left;
+        }
+
+        .customSortDownLabel{
+            margin-left: 10px;
+        }
+
+        .customSortUpLabel{
+            margin-left: 1px;
+        }
+
+        .customSortRemoveLabel{
+            float: left;
+            font-size: 11px;
+        }
+
+        .active {
+            color: cornflowerblue;
+        }
+
+
+
+        @keyframes  toExpanded{
+            from {
+                color: cornflowerblue;
+                -ms-transform: rotate(0deg); /* IE 9 */
+                -webkit-transform: rotate(0deg); /* Chrome, Safari, Opera */
+                transform: rotate(0deg);
+            }
+            to {
+                color: black;
+                -ms-transform: rotate(180deg); /* IE 9 */
+                -webkit-transform: rotate(180deg); /* Chrome, Safari, Opera */
+                transform: rotate(180deg);
+            }
+        }
+
+        @keyframes toCollapsed{
+            from {
+                color: black;
+                -ms-transform: rotate(180deg); /* IE 9 */
+                -webkit-transform: rotate(180deg); /* Chrome, Safari, Opera */
+                transform: rotate(180deg);
+            }
+            to {
+                color: cornflowerblue;
+                -ms-transform: rotate(0deg); /* IE 9 */
+                -webkit-transform: rotate(0deg); /* Chrome, Safari, Opera */
+                transform: rotate(0deg);
+            }
+        }
+
+    </style>
+
+
+
+
+<div id="myGrid" style="height: 100%;" class="ag-theme-alpine"></div>
+
+

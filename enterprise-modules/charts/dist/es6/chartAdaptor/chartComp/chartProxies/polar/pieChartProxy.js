@@ -22,7 +22,7 @@ var __assign = (this && this.__assign) || function () {
     };
     return __assign.apply(this, arguments);
 };
-import { ChartBuilder } from "../../../../charts/chartBuilder";
+import { ChartBuilder } from "ag-charts-community";
 import { PolarChartProxy } from "./polarChartProxy";
 var PieChartProxy = /** @class */ (function (_super) {
     __extends(PieChartProxy, _super);
@@ -33,7 +33,7 @@ var PieChartProxy = /** @class */ (function (_super) {
         return _this;
     }
     PieChartProxy.prototype.createChart = function (options) {
-        return ChartBuilder.createPieChart(this.chartProxyParams.parentElement, options);
+        return ChartBuilder.createPieChart(this.chartProxyParams.parentElement, options || this.chartOptions);
     };
     PieChartProxy.prototype.update = function (params) {
         var chart = this.chart;
@@ -62,7 +62,7 @@ var PieChartProxy = /** @class */ (function (_super) {
         pieSeries.fills = fills;
         pieSeries.strokes = strokes;
         if (calloutColors) {
-            pieSeries.calloutColors = calloutColors;
+            pieSeries.callout.colors = calloutColors;
         }
         chart.addSeries(pieSeries);
     };

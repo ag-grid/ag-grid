@@ -119,6 +119,7 @@ var FiltersToolPanelListPanel = /** @class */ (function (_super) {
             }
             var filterGroupComp = new toolPanelFilterGroupComp_1.ToolPanelFilterGroupComp(column, [filterComp], _this.onGroupExpanded.bind(_this), depth);
             _this.getContext().wireBean(filterGroupComp);
+            filterGroupComp.addCssClassToTitleBar('ag-filter-toolpanel-header');
             filterGroupComp.collapse();
             return filterGroupComp;
         }));
@@ -135,6 +136,7 @@ var FiltersToolPanelListPanel = /** @class */ (function (_super) {
             return childFilterComps;
         var filterGroupComp = new toolPanelFilterGroupComp_1.ToolPanelFilterGroupComp(columnGroup, childFilterComps, this.onGroupExpanded.bind(this), depth);
         this.getContext().wireBean(filterGroupComp);
+        filterGroupComp.addCssClassToTitleBar('ag-filter-toolpanel-header');
         return [filterGroupComp];
     };
     FiltersToolPanelListPanel.prototype.filtersExistInChildren = function (tree) {
@@ -259,8 +261,8 @@ var FiltersToolPanelListPanel = /** @class */ (function (_super) {
         this.dispatchEvent({ type: 'groupExpanded', state: state });
     };
     FiltersToolPanelListPanel.prototype.performFilterSearch = function (searchText) {
-        this.searchFilterText = searchText;
-        this.searchFilters(searchText);
+        this.searchFilterText = core_1._.exists(searchText) ? searchText.toLowerCase() : null;
+        this.searchFilters(this.searchFilterText);
     };
     FiltersToolPanelListPanel.prototype.searchFilters = function (searchFilter) {
         var passesFilter = function (groupName) {

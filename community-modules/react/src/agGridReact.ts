@@ -5,6 +5,7 @@ import {
     BaseComponentWrapper,
     ColumnApi,
     ComponentUtil,
+    ComponentType,
     FrameworkComponentWrapper,
     Grid,
     GridApi,
@@ -21,6 +22,7 @@ export interface AgGridReactProps extends GridOptions {
     modules?: Module[];
     rowDataChangeDetectionStrategy?: ChangeDetectionStrategyType;
     componentWrappingElement?: string;
+    disableStaticMarkup?: boolean;
 }
 
 export class AgGridReact extends Component<AgGridReactProps, {}> {
@@ -97,9 +99,7 @@ export class AgGridReact extends Component<AgGridReactProps, {}> {
             return;
         }
 
-        if (reactComponent.isStatelessComponent() && reactComponent.statelessComponentRendered()) {
-            resolve(null);
-        } else if (!reactComponent.isStatelessComponent() && reactComponent.getFrameworkComponentInstance()) {
+        if (reactComponent.rendered()) {
             resolve(null);
         } else {
             if (runningTime >= AgGridReact.MAX_COMPONENT_CREATION_TIME) {
@@ -242,6 +242,10 @@ export class AgGridReact extends Component<AgGridReactProps, {}> {
         }
         this.destroyed = true;
     }
+
+    public isDisableStaticMarkup(): boolean {
+        return !!this.props.disableStaticMarkup;
+    }
 }
 
 AgGridReact.propTypes = {
@@ -271,7 +275,7 @@ class ReactFrameworkComponentWrapper extends BaseComponentWrapper<WrapableInterf
         this.agGridReact = agGridReact;
     }
 
-    createWrapper(UserReactComponent: { new(): any }): WrapableInterface {
-        return new ReactComponent(UserReactComponent, this.agGridReact);
+    createWrapper(UserReactComponent: { new(): any }, componentType: ComponentType): WrapableInterface {
+        return new ReactComponent(UserReactComponent, this.agGridReact, componentType);
     }
 }

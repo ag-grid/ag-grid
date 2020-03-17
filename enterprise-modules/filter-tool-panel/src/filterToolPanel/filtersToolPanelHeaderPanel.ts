@@ -8,7 +8,8 @@ import {
     GridOptionsWrapper,
     PostConstruct,
     PreConstruct,
-    RefSelector
+    RefSelector,
+    AgInputTextField
 } from "@ag-grid-community/core";
 import {ToolPanelFiltersCompParams} from "./filtersToolPanel";
 
@@ -21,8 +22,7 @@ export class FiltersToolPanelHeaderPanel extends Component {
     @Autowired('eventService') private eventService: EventService;
 
     @RefSelector('eExpand') private eExpand: HTMLElement;
-    @RefSelector('eFilterWrapper') private eFilterWrapper: HTMLElement;
-    @RefSelector('eFilterTextField') private eSearchTextField: HTMLInputElement;
+    @RefSelector('eFilterTextField') private eSearchTextField: AgInputTextField;
 
     private eExpandChecked: HTMLElement;
     private eExpandUnchecked: HTMLElement;
@@ -36,24 +36,20 @@ export class FiltersToolPanelHeaderPanel extends Component {
 
     @PreConstruct
     private preConstruct(): void {
-        const translate = this.gridOptionsWrapper.getLocaleTextFunc();
-
         this.setTemplate(
-        `<div class="ag-filter-toolpanel-header ag-filter-header" role="presentation">
-            <div ref="eExpand"></div>
-            <div class="ag-input-wrapper ag-filters-tool-panel-filter-wrapper" ref="eFilterWrapper" role="presentation">
-                <input ref="eFilterTextField" type="text" placeholder="${translate('searchOoo', 'Search...')}">        
-            </div>
+        `<div class="ag-filter-toolpanel-search" role="presentation">
+            <div ref="eExpand" class="ag-filter-toolpanel-expand"></div>
+            <ag-input-text-field ref="eFilterTextField" class="ag-filter-toolpanel-search-input"></ag-input-text-field>
         </div>`);
     }
 
     @PostConstruct
     public postConstruct(): void {
+        this.eSearchTextField.onValueChange(this.onSearchTextChanged.bind(this));
+
         this.createExpandIcons();
         this.setExpandState(EXPAND_STATE.EXPANDED);
-
         this.addDestroyableEventListener(this.eExpand, 'click', this.onExpandClicked.bind(this));
-        this.addDestroyableEventListener(this.eSearchTextField, 'input', this.onSearchTextChanged.bind(this));
         this.addDestroyableEventListener(this.eventService, Events.EVENT_NEW_COLUMNS_LOADED, this.showOrHideOptions.bind(this));
     }
 
@@ -75,18 +71,21 @@ export class FiltersToolPanelHeaderPanel extends Component {
     private showOrHideOptions(): void {
         const showFilterSearch = !this.params.suppressFilterSearch;
         const showExpand = !this.params.suppressExpandAll;
+        const translate = this.gridOptionsWrapper.getLocaleTextFunc();
+
+        this.eSearchTextField.setInputPlaceholder(translate('searchOoo', 'Search...'));
 
         const isFilterGroupPresent = (col: Column) => col.getOriginalParent() && col.isFilterAllowed();
         const filterGroupsPresent = this.columnController.getAllGridColumns().some(isFilterGroupPresent);
 
-        _.setDisplayed(this.eFilterWrapper, showFilterSearch);
+        _.setDisplayed(this.eSearchTextField.getGui(), showFilterSearch);
         _.setDisplayed(this.eExpand, showExpand && filterGroupsPresent);
     }
 
     private onSearchTextChanged(): void {
         if (!this.onSearchTextChangedDebounced) {
             this.onSearchTextChangedDebounced = _.debounce(() => {
-                this.dispatchEvent({type: 'searchChanged', searchText: this.eSearchTextField.value});
+                this.dispatchEvent({type: 'searchChanged', searchText: this.eSearchTextField.getValue()});
             }, 300);
         }
 

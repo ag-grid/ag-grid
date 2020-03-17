@@ -4,10 +4,7 @@ export declare type ToolPanelFilterItem = ToolPanelFilterGroupComp | ToolPanelFi
 export declare class ToolPanelFilterGroupComp extends Component {
     private static TEMPLATE;
     private filterGroupComp;
-    private gridApi;
-    private filterManager;
     private eventService;
-    private gridOptionsWrapper;
     private columnController;
     private readonly depth;
     private readonly columnGroup;
@@ -17,6 +14,7 @@ export declare class ToolPanelFilterGroupComp extends Component {
     constructor(columnGroup: OriginalColumnGroupChild, childFilterComps: ToolPanelFilterItem[], expandedCallback: () => void, depth: number);
     private preConstruct;
     init(): void;
+    addCssClassToTitleBar(cssClass: string): void;
     refreshFilters(): void;
     isColumnGroup(): boolean;
     isExpanded(): boolean;

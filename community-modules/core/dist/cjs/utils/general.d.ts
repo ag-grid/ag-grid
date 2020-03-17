@@ -1,4 +1,4 @@
-// Type definitions for @ag-grid-community/core v22.1.1
+// Type definitions for @ag-grid-community/core v23.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { GridOptionsWrapper } from "../gridOptionsWrapper";
@@ -54,8 +54,8 @@ export declare class Utils {
     static jsonEquals(val1: any, val2: any): boolean;
     static shallowCompare(arr1: any[], arr2: any[]): boolean;
     static getNameOfClass(theClass: any): string;
-    static areEqual: <T>(a: T[], b: T[]) => boolean;
-    static keys: <T>(map: Map<T, any>) => T[];
+    static areEqual<T>(a: T[], b: T[]): boolean;
+    static keys<T>(map: Map<T, any>): T[];
     static values: <T>(object: {
         [key: string]: T;
     }) => T[];
@@ -80,22 +80,22 @@ export declare class Utils {
     static getAbsoluteWidth(el: HTMLElement): number;
     static getScrollLeft(element: HTMLElement, rtl: boolean): number;
     static cleanNumber(value: any): number;
-    static compose: (...fns: Function[]) => (arg: any) => any;
-    static decToHex: (number: number, bytes: number) => string;
+    static compose(...fns: Function[]): (arg: any) => any;
+    static decToHex(number: number, bytes: number): string;
     /**
      * It encodes any string in UTF-8 format
      * taken from https://github.com/mathiasbynens/utf8.js
      * @param {string} s
      * @returns {string}
      */
-    static utf8_encode: (s: string) => string;
+    static utf8_encode(s: string): string;
     static setScrollLeft(element: HTMLElement, value: number, rtl: boolean): void;
     static iterateNamedNodeMap(map: NamedNodeMap, callback: (key: string, value: string) => void): void;
     static iterateObject<T>(object: {
         [p: string]: T;
     } | T[] | undefined, callback: (key: string, value: T) => void): void;
     static cloneObject<T>(object: T): T;
-    static deepCloneObject: <T>(object: T) => T;
+    static deepCloneObject<T>(object: T): T;
     static getProperty: <T, K extends keyof T>(object: T, key: K) => any;
     static setProperty: <T, K extends keyof T>(object: T, key: K, value: any) => void;
     /**
@@ -114,6 +114,9 @@ export declare class Utils {
     static flatten(arrayOfArrays: any[]): any;
     static parseYyyyMmDdToDate(yyyyMmDd: string, separator: string): Date | null;
     static serializeDateToYyyyMmDd(date: Date, separator: string): string | null;
+    static getTimeFromDate(date: Date): string | null;
+    static normalizeTime(time: string): string;
+    static getDateFromString(fullDate: string): Date | null;
     static padStart(num: number, totalStringSize: number): string;
     static pushAll(target: any[], source: any[]): void;
     static createArrayOfNumbers(first: number, last: number): number[];
@@ -193,12 +196,11 @@ export declare class Utils {
      * This method adds a class to an element and remove that class from all siblings.
      * Useful for toggling state.
      * @param {HTMLElement} element The element to receive the class
-     * @param {string} className The class to be assigned to the element
-     * @param {boolean} [inverted] This inverts the effect, adding the class to all siblings and
-     *        removing from the relevant element (useful when adding a class to hide non-selected elements).
+     * @param {string} elementClass The class to be assigned to the element
+     * @param {boolean} otherElementClass The class to be assigned to siblings of the element, but not the element itself
      */
-    static radioCssClass(element: HTMLElement, className: string, inverted?: boolean): void;
-    static addCssClass(element: HTMLElement, className: string): void;
+    static radioCssClass(element: HTMLElement, elementClass: string | null, otherElementClass?: string | null): void;
+    static addCssClass(element: HTMLElement, className: string): HTMLElement;
     static removeCssClass(element: HTMLElement, className: string): void;
     static containsClass(element: any, className: string): boolean;
     static getElementAttribute(element: any, attributeName: string): string | null;
@@ -453,7 +455,7 @@ export declare class Utils {
      * popup listens for clicks on the body, however ag-grid WAS stopping propagation on the
      * checkbox clicks (so the rows didn't pick them up as row selection selection clicks).
      * to get around this, we have a pattern to stop propagation for the purposes of ag-Grid,
-     * but we still let the event pass back to teh body.
+     * but we still let the event pass back to the body.
      * @param {Event} event
      */
     static stopPropagationForAgGrid(event: Event): void;
@@ -522,13 +524,5 @@ export declare class Utils {
     static bindCellRendererToHtmlElement(cellRendererPromise: Promise<ICellRendererComp>, eTarget: HTMLElement): void;
     static convertToSet<T>(list: T[]): Set<T>;
     static deepFreeze(object: any): any;
-}
-export declare class NumberSequence {
-    private nextValue;
-    private step;
-    constructor(initValue?: number, step?: number);
-    next(): number;
-    peek(): number;
-    skip(count: number): void;
 }
 export declare const _: typeof Utils;

@@ -22,7 +22,7 @@ var __assign = (this && this.__assign) || function () {
     };
     return __assign.apply(this, arguments);
 };
-import { ChartBuilder } from "../../../../charts/chartBuilder";
+import { ChartBuilder } from "ag-charts-community";
 import { _ } from "@ag-grid-community/core";
 import { PolarChartProxy } from "./polarChartProxy";
 var DoughnutChartProxy = /** @class */ (function (_super) {
@@ -34,7 +34,7 @@ var DoughnutChartProxy = /** @class */ (function (_super) {
         return _this;
     }
     DoughnutChartProxy.prototype.createChart = function (options) {
-        return ChartBuilder.createDoughnutChart(this.chartProxyParams.parentElement, options);
+        return ChartBuilder.createDoughnutChart(this.chartProxyParams.parentElement, options || this.chartOptions);
     };
     DoughnutChartProxy.prototype.update = function (params) {
         if (params.fields.length === 0) {
@@ -76,7 +76,7 @@ var DoughnutChartProxy = /** @class */ (function (_super) {
                 pieSeries.toggleSeriesItem = function (itemId, enabled) {
                     if (doughnutChart) {
                         doughnutChart.series.forEach(function (series) {
-                            series.dataEnabled[itemId] = enabled;
+                            series.seriesItemEnabled[itemId] = enabled;
                         });
                     }
                     pieSeries.scheduleData();
@@ -87,7 +87,7 @@ var DoughnutChartProxy = /** @class */ (function (_super) {
             pieSeries.innerRadiusOffset = offset;
             offset -= 20;
             if (calloutColors) {
-                pieSeries.calloutColors = calloutColors;
+                pieSeries.callout.colors = calloutColors;
             }
             if (!existingSeries) {
                 seriesMap[f.colId] = pieSeries;

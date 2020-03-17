@@ -37,6 +37,7 @@ var GridHeaderDropZones = /** @class */ (function (_super) {
         var _this = this;
         var topPanelGui = document.createElement('div');
         var dropPanelVisibleListener = this.onDropPanelVisible.bind(this);
+        core_1._.addCssClass(topPanelGui, 'ag-column-drop-wrapper');
         this.rowGroupComp = new rowGroupDropZonePanel_1.RowGroupDropZonePanel(true);
         this.getContext().wireBean(this.rowGroupComp);
         this.addDestroyFunc(function () { return _this.rowGroupComp.destroy(); });
@@ -56,8 +57,8 @@ var GridHeaderDropZones = /** @class */ (function (_super) {
     };
     GridHeaderDropZones.prototype.onDropPanelVisible = function () {
         var bothDisplayed = this.rowGroupComp.isDisplayed() && this.pivotComp.isDisplayed();
-        this.rowGroupComp.addOrRemoveCssClass('ag-width-half', bothDisplayed);
-        this.pivotComp.addOrRemoveCssClass('ag-width-half', bothDisplayed);
+        this.rowGroupComp.addOrRemoveCssClass('ag-column-drop-horizontal-half-width', bothDisplayed);
+        this.pivotComp.addOrRemoveCssClass('ag-column-drop-horizontal-half-width', bothDisplayed);
     };
     GridHeaderDropZones.prototype.onRowGroupChanged = function () {
         if (!this.rowGroupComp) {

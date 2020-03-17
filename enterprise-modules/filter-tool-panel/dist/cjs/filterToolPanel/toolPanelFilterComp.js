@@ -54,6 +54,9 @@ var ToolPanelFilterComp = /** @class */ (function (_super) {
     ToolPanelFilterComp.prototype.getColumnFilterName = function () {
         return this.columnController.getDisplayNameForColumn(this.column, 'header', false);
     };
+    ToolPanelFilterComp.prototype.addCssClassToTitleBar = function (cssClass) {
+        core_1._.addCssClass(this.eFilterToolPanelHeader, cssClass);
+    };
     ToolPanelFilterComp.prototype.addInIcon = function (iconName, eParent, column) {
         if (eParent == null) {
             return;
@@ -76,7 +79,7 @@ var ToolPanelFilterComp = /** @class */ (function (_super) {
         if (this.expanded)
             return;
         this.expanded = true;
-        var container = core_1._.loadTemplate("<div class=\"ag-filter-air\" />");
+        var container = core_1._.loadTemplate("<div class=\"ag-filter-toolpanel-instance-filter\" />");
         var filterPromise = this.filterManager.getOrCreateFilterWrapper(this.column, 'TOOLBAR').filterPromise;
         if (filterPromise) {
             filterPromise.then(function (filter) {
@@ -123,7 +126,7 @@ var ToolPanelFilterComp = /** @class */ (function (_super) {
         }
         this.collapse();
     };
-    ToolPanelFilterComp.TEMPLATE = "<div class=\"ag-filter-toolpanel-instance\" >\n            <div class=\"ag-filter-toolpanel-header ag-header-cell-label\" ref=\"eFilterToolPanelHeader\">\n                <div ref=\"eExpand\"></div>\n                <span ref=\"eFilterName\" class=\"ag-header-cell-text\"></span>\n                <span ref=\"eFilterIcon\" class=\"ag-header-icon ag-filter-icon\" aria-hidden=\"true\"></span>\n            </div>\n            <div class=\"ag-filter-toolpanel-body ag-filter\" ref=\"agFilterToolPanelBody\"/></div>";
+    ToolPanelFilterComp.TEMPLATE = "<div class=\"ag-filter-toolpanel-instance\">\n            <div class=\"ag-filter-toolpanel-header ag-filter-toolpanel-instance-header\" ref=\"eFilterToolPanelHeader\">\n                <div ref=\"eExpand\" class=\"ag-filter-toolpanel-expand\"></div>\n                <span ref=\"eFilterName\" class=\"ag-header-cell-text\"></span>\n                <span ref=\"eFilterIcon\" class=\"ag-header-icon ag-filter-icon ag-filter-toolpanel-instance-header-icon\" aria-hidden=\"true\"></span>\n            </div>\n            <div class=\"ag-filter-toolpanel-instance-body ag-filter\" ref=\"agFilterToolPanelBody\"/></div>";
     __decorate([
         core_1.RefSelector('eFilterToolPanelHeader')
     ], ToolPanelFilterComp.prototype, "eFilterToolPanelHeader", void 0);

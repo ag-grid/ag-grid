@@ -126,7 +126,7 @@ var CsvSerializingSession = /** @class */ (function (_super) {
         return '"' + valueEscaped + '"';
     };
     CsvSerializingSession.prototype.parse = function () {
-        return this.result + LINE_SEPARATOR;
+        return this.result;
     };
     CsvSerializingSession.prototype.beginNewLine = function () {
         if (!this.isFirstLine) {

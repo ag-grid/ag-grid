@@ -1,4 +1,4 @@
-// Type definitions for @ag-grid-community/core v22.1.1
+// Type definitions for @ag-grid-community/core v23.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { IRowModel } from "./iRowModel";
@@ -25,5 +25,7 @@ export interface IClientSideRowModel extends IRowModel {
     doAggregate(changedPath?: ChangedPath): void;
     getTopLevelNodes(): RowNode[] | null;
     forEachPivotNode(callback: Function): void;
-    ensureRowAtPixel(rowNode: RowNode, pixel: number): boolean;
+    ensureRowsAtPixel(rowNode: RowNode[], pixel: number, increment: number): boolean;
+    highlightRowAtPixel(rowNode: RowNode | null, pixel?: number): void;
+    getLastHighlightedRowNode(): RowNode | null;
 }

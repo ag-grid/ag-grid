@@ -33,6 +33,10 @@ export class PaginationComp extends Component {
 
     private serverSideRowModel: IServerSideRowModel;
 
+    private previousAndFirstButtonsDisabled = false;
+    private nextButtonDisabled = false;
+    private lastButtonDisabled = false;
+
     constructor() {
         super();
     }
@@ -106,40 +110,58 @@ export class PaginationComp extends Component {
 
         return `<div class="ag-paging-panel ag-unselectable">
                 <span ref="eSummaryPanel" class="ag-paging-row-summary-panel">
-                    <span ref="lbFirstRowOnPage"></span> ${strTo} <span ref="lbLastRowOnPage"></span> ${strOf} <span ref="lbRecordCount"></span>
+                    <span ref="lbFirstRowOnPage" class="ag-paging-row-summary-panel-number"></span>
+                    ${strTo}
+                    <span ref="lbLastRowOnPage" class="ag-paging-row-summary-panel-number"></span>
+                    ${strOf}
+                    <span ref="lbRecordCount" class="ag-paging-row-summary-panel-number"></span>
                 </span>
                 <span class="ag-paging-page-summary-panel">
-                    <div ref="btFirst" class="ag-paging-button">
-                        <button type="button">${strFirst}</button>
+                    <div ref="btFirst" class="ag-paging-button-wrapper">
+                        <button type="button" class="ag-paging-button">${strFirst}</button>
                     </div>
-                    <div ref="btPrevious" class="ag-paging-button">
-                        <button type="button">${strPrevious}</button>
+                    <div ref="btPrevious" class="ag-paging-button-wrapper">
+                        <button type="button" class="ag-paging-button">${strPrevious}</button>
                     </div>
-                    ${strPage} <span ref="lbCurrent"></span> ${strOf} <span ref="lbTotal"></span>
-                    <div ref="btNext" class="ag-paging-button">
-                        <button type="button">${strNext}</button>
+                    <span class="ag-paging-description">
+                        ${strPage}
+                        <span ref="lbCurrent" class="ag-paging-number"></span>
+                        ${strOf}
+                        <span ref="lbTotal" class="ag-paging-number"></span>
+                    </span>
+                    <span ref="lbTotal" class="ag-paging-number"></span>
+                    <div ref="btNext" class="ag-paging-button-wrapper">
+                        <button type="button" class="ag-paging-button">${strNext}</button>
                     </div>
-                    <div ref="btLast" class="ag-paging-button">
-                        <button type="button">${strLast}</button>
+                    <div ref="btLast" class="ag-paging-button-wrapper">
+                        <button type="button" class="ag-paging-button">${strLast}</button>
                     </div>
                 </span>
             </div>`;
     }
 
     private onBtNext() {
-        this.paginationProxy.goToNextPage();
+        if (!this.nextButtonDisabled) {
+            this.paginationProxy.goToNextPage();
+        }
     }
 
     private onBtPrevious() {
-        this.paginationProxy.goToPreviousPage();
+        if (!this.previousAndFirstButtonsDisabled) {
+            this.paginationProxy.goToPreviousPage();
+        }
     }
 
     private onBtFirst() {
-        this.paginationProxy.goToFirstPage();
+        if (!this.previousAndFirstButtonsDisabled) {
+            this.paginationProxy.goToFirstPage();
+        }
     }
 
     private onBtLast() {
-        this.paginationProxy.goToLastPage();
+        if (!this.lastButtonDisabled) {
+            this.paginationProxy.goToLastPage();
+        }
     }
 
     private enableOrDisableButtons() {
@@ -147,18 +169,18 @@ export class PaginationComp extends Component {
         const maxRowFound = this.paginationProxy.isLastPageFound();
         const totalPages = this.paginationProxy.getTotalPages();
 
-        const disablePreviousAndFirst = currentPage === 0;
-        _.addOrRemoveCssClass(this.btPrevious, 'ag-disabled', disablePreviousAndFirst);
-        _.addOrRemoveCssClass(this.btFirst, 'ag-disabled', disablePreviousAndFirst);
+        this.previousAndFirstButtonsDisabled = currentPage === 0;
+        _.addOrRemoveCssClass(this.btPrevious, 'ag-disabled', this.previousAndFirstButtonsDisabled);
+        _.addOrRemoveCssClass(this.btFirst, 'ag-disabled', this.previousAndFirstButtonsDisabled);
 
         const zeroPagesToDisplay = this.isZeroPagesToDisplay();
         const onLastPage = maxRowFound && currentPage === (totalPages - 1);
 
-        const disableNext = onLastPage || zeroPagesToDisplay;
-        _.addOrRemoveCssClass(this.btNext, 'ag-disabled', disableNext);
+        this.nextButtonDisabled = onLastPage || zeroPagesToDisplay;
+        _.addOrRemoveCssClass(this.btNext, 'ag-disabled', this.nextButtonDisabled);
 
-        const disableLast = !maxRowFound || zeroPagesToDisplay || currentPage === (totalPages - 1);
-        _.addOrRemoveCssClass(this.btLast, 'ag-disabled', disableLast);
+        this.lastButtonDisabled = !maxRowFound || zeroPagesToDisplay || currentPage === (totalPages - 1);
+        _.addOrRemoveCssClass(this.btLast, 'ag-disabled', this.lastButtonDisabled);
     }
 
     private updateRowLabels() {

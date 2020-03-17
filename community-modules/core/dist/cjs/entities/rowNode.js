@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v22.1.1
+ * @version v23.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -28,6 +28,7 @@ var RowNode = /** @class */ (function () {
         this.__objectId = RowNode.OBJECT_ID_SEQUENCE++;
         /** True when nodes with the same id are being removed and added as part of the same batch transaction */
         this.alreadyRendered = false;
+        this.highlighted = null;
         this.selected = false;
     }
     RowNode.prototype.setData = function (data) {
@@ -83,9 +84,7 @@ var RowNode = /** @class */ (function () {
         else if (this.rowPinned === constants_1.Constants.PINNED_BOTTOM) {
             return 'b-' + this.rowIndex;
         }
-        else {
-            return this.rowIndex.toString();
-        }
+        return this.rowIndex.toString();
     };
     RowNode.prototype.createDaemonNode = function () {
         var oldNode = new RowNode();
@@ -196,6 +195,15 @@ var RowNode = /** @class */ (function () {
             this.eventService.dispatchEvent(this.createLocalRowEvent(RowNode.EVENT_DRAGGING_CHANGED));
         }
     };
+    RowNode.prototype.setHighlighted = function (highlighted) {
+        if (highlighted === this.highlighted) {
+            return;
+        }
+        this.highlighted = highlighted;
+        if (this.eventService) {
+            this.eventService.dispatchEvent(this.createLocalRowEvent(RowNode.EVENT_HIGHLIGHT_CHANGED));
+        }
+    };
     RowNode.prototype.setAllChildrenCount = function (allChildrenCount) {
         if (this.allChildrenCount === allChildrenCount) {
             return;
@@ -243,7 +251,7 @@ var RowNode = /** @class */ (function () {
         }
     };
     RowNode.prototype.createGlobalRowEvent = function (type) {
-        var event = {
+        return {
             type: type,
             node: this,
             data: this.data,
@@ -253,7 +261,6 @@ var RowNode = /** @class */ (function () {
             api: this.gridOptionsWrapper.getApi(),
             columnApi: this.gridOptionsWrapper.getColumnApi()
         };
-        return event;
     };
     RowNode.prototype.dispatchLocalEvent = function (event) {
         if (this.eventService) {
@@ -267,29 +274,37 @@ var RowNode = /** @class */ (function () {
     // event, and also flashes the cell when the change occurs.
     RowNode.prototype.setDataValue = function (colKey, newValue) {
         var column = this.columnController.getPrimaryColumn(colKey);
+        var oldValue = this.valueService.getValue(column, this);
         this.valueService.setValue(this, column, newValue);
-        this.dispatchCellChangedEvent(column, newValue);
+        this.dispatchCellChangedEvent(column, newValue, oldValue);
     };
     RowNode.prototype.setGroupValue = function (colKey, newValue) {
         var column = this.columnController.getGridColumn(colKey);
         if (utils_1._.missing(this.groupData)) {
             this.groupData = {};
         }
-        this.groupData[column.getColId()] = newValue;
-        this.dispatchCellChangedEvent(column, newValue);
+        var columnId = column.getColId();
+        var oldValue = this.groupData[columnId];
+        if (oldValue === newValue) {
+            return;
+        }
+        this.groupData[columnId] = newValue;
+        this.dispatchCellChangedEvent(column, newValue, oldValue);
     };
     // sets the data for an aggregation
     RowNode.prototype.setAggData = function (newAggData) {
         var _this = this;
         // find out all keys that could potentially change
         var colIds = utils_1._.getAllKeysInObjects([this.aggData, newAggData]);
+        var oldAggData = this.aggData;
         this.aggData = newAggData;
         // if no event service, nobody has registered for events, so no need fire event
         if (this.eventService) {
             colIds.forEach(function (colId) {
                 var column = _this.columnController.getGridColumn(colId);
                 var value = _this.aggData ? _this.aggData[colId] : undefined;
-                _this.dispatchCellChangedEvent(column, value);
+                var oldValue = oldAggData ? oldAggData[colId] : undefined;
+                _this.dispatchCellChangedEvent(column, value, oldValue);
             });
         }
     };
@@ -302,12 +317,13 @@ var RowNode = /** @class */ (function () {
     RowNode.prototype.isEmptyRowGroupNode = function () {
         return this.group && utils_1._.missingOrEmpty(this.childrenAfterGroup);
     };
-    RowNode.prototype.dispatchCellChangedEvent = function (column, newValue) {
+    RowNode.prototype.dispatchCellChangedEvent = function (column, newValue, oldValue) {
         var cellChangedEvent = {
             type: RowNode.EVENT_CELL_CHANGED,
             node: this,
             column: column,
-            newValue: newValue
+            newValue: newValue,
+            oldValue: oldValue
         };
         this.dispatchLocalEvent(cellChangedEvent);
     };
@@ -462,10 +478,10 @@ var RowNode = /** @class */ (function () {
     // not to be mixed up with 'cell range selection' where you drag the mouse, this is row range selection, by
     // holding down 'shift'.
     RowNode.prototype.doRowRangeSelection = function () {
-        var updatedCount = 0;
         var groupsSelectChildren = this.gridOptionsWrapper.isGroupSelectsChildren();
         var lastSelectedNode = this.selectionController.getLastSelectedNode();
         var nodesToSelect = this.rowModel.getNodesInRangeForSelection(this, lastSelectedNode);
+        var updatedCount = 0;
         nodesToSelect.forEach(function (rowNode) {
             if (rowNode.group && groupsSelectChildren) {
                 return;
@@ -508,10 +524,10 @@ var RowNode = /** @class */ (function () {
     };
     RowNode.prototype.selectChildNodes = function (newValue, groupSelectsFiltered) {
         var children = groupSelectsFiltered ? this.childrenAfterFilter : this.childrenAfterGroup;
-        var updatedCount = 0;
         if (utils_1._.missing(children)) {
             return;
         }
+        var updatedCount = 0;
         for (var i = 0; i < children.length; i++) {
             updatedCount += children[i].setSelectedParams({
                 newValue: newValue,
@@ -539,11 +555,11 @@ var RowNode = /** @class */ (function () {
     };
     RowNode.prototype.getFirstChildOfFirstChild = function (rowGroupColumn) {
         var currentRowNode = this;
-        // if we are hiding groups, then if we are the first child, of the first child,
-        // all the way up to the column we are interested in, then we show the group cell.
         var isCandidate = true;
         var foundFirstChildPath = false;
         var nodeToSwapIn;
+        // if we are hiding groups, then if we are the first child, of the first child,
+        // all the way up to the column we are interested in, then we show the group cell.
         while (isCandidate && !foundFirstChildPath) {
             var parentRowNode = currentRowNode.parent;
             var firstChild = utils_1._.exists(parentRowNode) && currentRowNode.firstChild;
@@ -580,6 +596,7 @@ var RowNode = /** @class */ (function () {
     RowNode.EVENT_EXPANDED_CHANGED = 'expandedChanged';
     RowNode.EVENT_SELECTABLE_CHANGED = 'selectableChanged';
     RowNode.EVENT_UI_LEVEL_CHANGED = 'uiLevelChanged';
+    RowNode.EVENT_HIGHLIGHT_CHANGED = 'rowHighlightChanged';
     RowNode.EVENT_DRAGGING_CHANGED = 'draggingChanged';
     __decorate([
         context_1.Autowired('eventService')

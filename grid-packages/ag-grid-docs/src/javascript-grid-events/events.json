@@ -1,0 +1,231 @@
+{
+    "selection": {
+        "meta": {
+            "displayName": "Selection"
+        },
+        "cellClicked": {
+            "description": "Cell is clicked."
+        },
+        "cellDoubleClicked": {
+            "description": "Cell is double clicked."
+        },
+        "cellFocused": {
+            "description": "Cell is focused."
+        },
+        "cellMouseOver": {
+            "description": "Mouse entered cell."
+        },
+        "cellMouseOut": {
+            "description": "Mouse left cell."
+        },
+        "cellMouseDown": {
+            "description": "Mouse down on cell."
+        },
+        "rowClicked": {
+            "description": "Row is clicked."
+        },
+        "rowDoubleClicked": {
+            "description": "Row is double clicked."
+        },
+        "rowSelected": {
+            "description": "Row is selected or deselected."
+        },
+        "selectionChanged": {
+            "description": "Row selection is changed. Use the grid API to get the new row selected."
+        },
+        "cellContextMenu": {
+            "description": "Cell is right clicked."
+        },
+        "rangeSelectionChanged": {
+            "description": "A change to range selection has occurred."
+        }
+    },
+    "editing": {
+        "meta": {
+            "displayName": "Editing"
+        },
+        "cellValueChanged": {
+            "description": "Value has changed after editing."
+        },
+        "rowValueChanged": {
+            "description": "A cell's value within a row has changed. This event corresponds to <a href='../javascript-grid-cell-editing/#fullRowEdit'>Full Row Editing</a> only."
+        },
+        "cellEditingStarted": {
+            "description": "Editing a cell has started."
+        },
+        "cellEditingStopped": {
+            "description": "Editing a cell has stopped."
+        },
+        "rowEditingStarted": {
+            "description": "Editing a row has started (when row editing is enabled). When row editing, this event will be fired once and <code>cellEditingStarted</code> will be fired for each individual cell. This event corresponds to <a href='../javascript-grid-cell-editing/#start-stop-editing-events'>Full Row Editing</a> only."
+        },
+        "rowEditingStopped": {
+            "description": "Editing a row has stopped (when row editing is enabled). When row editing, this event will be fired once and <code>cellEditingStopped</code> will be fired for each individual cell. This event corresponds to <a href='../javascript-grid-cell-editing/#start-stop-editing-events'>Full Row Editing</a> only."
+        },
+        "pasteStart": {
+            "description": "Paste operation has started.",
+            "more": {
+                "name": "Clipboard Events",
+                "url": "../javascript-grid-clipboard/#events"
+            }
+        },
+        "pasteEnd": {
+            "description": "Paste operation has ended.",
+            "more": {
+                "name": "Clipboard Events",
+                "url": "../javascript-grid-clipboard/#events"
+            }
+        }
+    },
+    "sortFilter": {
+        "meta": {
+            "displayName": "Sort and Filter"
+        },
+        "sortChanged": {
+            "description": "Sort has changed. The grid also listens for this and updates the model."
+        },
+        "filterChanged": {
+            "description": "Filter has been modified and applied."
+        },
+        "filterModified": {
+            "description": "Filter was modified but not applied. Used when filters have 'Apply' buttons."
+        }
+    },
+    "rowDragDrop": {
+        "meta": {
+            "displayName": "Row Drag and Drop"
+        },
+        "rowDragEnter": {
+            "description": "A drag has started, or dragging was already started and the mouse has re-entered the grid having previously left the grid."
+        },
+        "rowDragMove": {
+            "description": "The mouse has moved while dragging."
+        },
+        "rowDragLeave": {
+            "description": "The mouse has left the grid while dragging."
+        },
+        "rowDragEnd": {
+            "description": "The drag has finished over the grid."
+        }
+    },
+    "columns": {
+        "meta": {
+            "displayName": "Columns"
+        },
+        "columnVisible": {
+            "description": "A column, or group of columns, was hidden / shown."
+        },
+        "columnPinned": {
+            "description": "A column, or group of columns, was pinned / unpinned."
+        },
+        "columnResized": {
+            "description": "A column was resized."
+        },
+        "columnMoved": {
+            "description": "A column was moved. To find out when the column move is finished you can use the <code>dragStopped</code> event below."
+        },
+        "columnRowGroupChanged": {
+            "description": "A row group column was added or removed."
+        },
+        "columnValueChanged": {
+            "description": "A value column was added or removed."
+        },
+        "columnPivotModeChanged": {
+            "description": "The pivot mode flag was changed."
+        },
+        "columnPivotChanged": {
+            "description": "A pivot column was added, removed or order changed."
+        },
+        "columnGroupOpened": {
+            "description": "A column group was opened / closed."
+        },
+        "newColumnsLoaded": {
+            "description": "User set new columns."
+        },
+        "gridColumnsChanged": {
+            "description": "The list of grid columns changed."
+        },
+        "displayedColumnsChanged": {
+            "description": "The list of displayed columns changed. This can result from columns open / close, column move, pivot, group, etc."
+        },
+        "virtualColumnsChanged": {
+            "description": "The list of rendered columns changed (only columns in the visible scrolled viewport are rendered by default)."
+        },
+        "columnEverythingChanged": {
+            "description": "Shotgun - gets called when either a) new columns are set or b) <code>columnApi.setState()</code> is used, so everything has changed."
+        }
+    },
+    "miscellaneous": {
+        "meta": {
+            "displayName": "Miscellaneous"
+        },
+        "gridReady": {
+            "description": "The grid has initialised. The name <code>'ready'</code> was influenced by the author's time programming the Commodore 64. Use this event if, for example, you need to use the grid's API to fix the columns to size."
+        },
+        "gridSizeChanged": {
+            "description": "The size of the grid <code>div</code> has changed. In other words, the grid was resized."
+        },
+        "modelUpdated": {
+            "description": "Displayed rows have changed. Triggered after sort, filter or tree expand / collapse events."
+        },
+        "firstDataRendered": {
+            "description": "Fired the first time data is rendered into the grid."
+        },
+        "rowGroupOpened": {
+            "description": "A row group was opened or closed."
+        },
+        "expandOrCollapseAll": {
+            "description": "Fired when calling either of the API methods <code>expandAll()</code> or <code>collapseAll()</code>."
+        },
+        "paginationChanged": {
+            "description": "<p>Triggered every time the paging state changes. Some of the most common scenarios for this event to be triggered are:</p><ul class='content'><li>The page size changes</li><li>The current shown page is changed</li><li>New data is loaded onto the grid</li></ul>"
+        },
+        "pinnedRowDataChanged": {
+            "description": "The client has set new pinned row data into the grid."
+        },
+        "virtualRowRemoved": {
+            "description": "A row was removed from the DOM, for any reason. Use to clean up resources (if any) used by the row."
+        },
+        "viewportChanged": {
+            "description": "Which rows are rendered in the DOM has changed."
+        },
+        "bodyScroll": {
+            "description": "The body was scrolled horizontally or vertically."
+        },
+        "dragStarted": {
+            "description": "When dragging starts. This could be any action that uses the grid's Drag and Drop service, e.g. Column Moving, Column Resizing, Range Selection, Fill Handle, etc."
+        },
+        " dragStopped": {
+            "description": "When dragging stops. This could be any action that uses the grid's Drag and Drop service, e.g. Column Moving, Column Resizing, Range Selection, Fill Handle, etc."
+        },
+        "rowDataChanged": {
+            "description": "The client has set new data into the grid using <code>api.setRowData()</code> or by changing the <code>rowData</code> bound property."
+        },
+        "rowDataUpdated": {
+            "description": "The client has updated data for the grid using <code>api.updateRowData(transaction)</code> or by changing the <code>rowData</code> bound property with <code>deltaRowDataMode=true</code>."
+        },
+        "toolPanelVisibleChanged": {
+            "description": "The tool panel was hidden or shown. Use <code>api.isToolPanelShowing()</code> to get status."
+        },
+        "componentStateChanged": {
+            "description": "Only used by React, Angular, Web Components, Polymer and VueJS ag-Grid components (not used if doing plain JavaScript or Angular 1.x). If the grid receives changes due to bound properties, this event fires after the grid has finished processing the change."
+        },
+        "animationQueueEmpty": {
+            "description": "The grid draws rows and cells using animation frames. This event gets fired when the animation frame queue is empty. Normally used in conjunction with <code>api.isAnimationFrameQueueEmpty()</code> so user can check if animation frame is pending, and if so then can be notified when no animation frames are pending. Useful if your application needs to know when drawing of the grid is no longer pending, e.g. for sending to a printer."
+        },
+        "cellKeyDown": {
+            "description": "DOM event <code>keyDown</code> happened on a cell.",
+            "more": {
+                "name": "Keyboard Events",
+                "url": "../javascript-grid-keyboard-navigation/#keyboard-events"
+            }
+        },
+        "cellKeyPress": {
+            "description": "DOM event keyPress happened on a cell.",
+            "more": {
+                "name": "Keyboard Events",
+                "url": "../javascript-grid-keyboard-navigation/#keyboard-events"
+            }
+        }
+    }
+}

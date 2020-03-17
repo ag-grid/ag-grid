@@ -1,6 +1,4 @@
 // to satisfy server side compilation
-import { CreateRangeChartParams } from "./gridApi";
-
 declare let global: any;
 const globalObj = typeof global === 'undefined' ? {} : global;
 globalObj.HTMLElement = typeof HTMLElement === 'undefined' ? {} : HTMLElement;
@@ -24,6 +22,7 @@ export { ComponentUtil } from "./components/componentUtil";
 export { ColDefUtil } from "./components/colDefUtil";
 export { UserComponentRegistry } from "./components/framework/userComponentRegistry";
 export { UserComponentFactory } from "./components/framework/userComponentFactory";
+export { ComponentType } from "./components/framework/componentTypes";
 export { initialiseAgGridWithAngular1 } from "./components/agGridNg1";
 export { initialiseAgGridWithWebComponents } from "./components/agGridWebComponent";
 
@@ -207,11 +206,11 @@ export { AgSelect } from "./widgets/agSelect";
 export { AgSlider } from "./widgets/agSlider";
 export { AgAngleSelect } from "./widgets/agAngleSelect";
 export { AgColorPicker } from "./widgets/agColorPicker";
-export { AgGroupComponent } from "./widgets/agGroupComponent";
+export { AgGroupComponent, AgGroupComponentParams } from "./widgets/agGroupComponent";
 export { AgDialog } from "./widgets/agDialog";
 export { AgPanel } from "./widgets/agPanel";
-export { MessageBox } from "./widgets/messageBox";
 export { Component, VisibleChangedEvent } from "./widgets/component";
+export { ManagedTabComponent } from "./widgets/managedTabComponent";
 export { PopupComponent } from "./widgets/popupComponent";
 export { PopupService } from "./widgets/popupService";
 export { TouchListener, TapEvent, LongTapEvent } from "./widgets/touchListener";
@@ -222,7 +221,7 @@ export {
     CellRange, CellRangeParams, CellRangeType, RangeSelection, AddRangeSelectionParams
 } from "./interfaces/iRangeController";
 export { IRangeController, ISelectionHandle } from "./interfaces/iRangeController";
-export { IChartService, ChartModel } from "./interfaces/IChartService";
+export { IChartService, ChartModel, GetChartImageDataUrlParams } from "./interfaces/IChartService";
 
 // exporter
 export {
@@ -240,7 +239,7 @@ export { Constants } from "./constants";
 export { Grid, GridParams } from "./grid";
 export { GridApi, RedrawRowsParams, RefreshCellsParams, StartEditingCellParams, DetailGridInfo, CreateRangeChartParams, CreatePivotChartParams } from "./gridApi";
 export { Events } from "./eventKeys";
-export { FocusedCellController } from "./focusedCellController";
+export { FocusController } from "./focusController";
 export { defaultGroupComparator } from "./functions";
 export { GridOptionsWrapper } from "./gridOptionsWrapper";
 export { EventService } from "./eventService";
@@ -250,7 +249,7 @@ export { Logger } from "./logger";
 export { SelectionController } from "./selectionController";
 export { SortController } from "./sortController";
 export { TemplateService } from "./templateService";
-export { Color, Utils, NumberSequence, _, Promise, ExternalPromise } from "./utils";
+export * from "./utils";
 export { ValueService } from "./valueService/valueService";
 export { ValueCache } from "./valueService/valueCache";
 export { ExpressionService } from "./valueService/expressionService";
@@ -299,6 +298,7 @@ export {
     ProcessChartOptionsParams
 } from "./entities/gridOptions";
 
+export * from "./propertyKeys";
 export { OriginalColumnGroupChild } from "./entities/originalColumnGroupChild";
 export { ColumnGroupChild } from "./entities/columnGroupChild";
 export { IViewportDatasource, IViewportDatasourceParams } from "./interfaces/iViewportDatasource";
@@ -315,7 +315,7 @@ export { IEventEmitter } from "./interfaces/iEventEmitter";
 export { IHeaderParams } from "./headerRendering/header/headerComp";
 export { GetQuickFilterTextParams } from "./entities/colDef";
 export { IHeaderGroupParams, IHeaderGroup } from "./headerRendering/headerGroup/headerGroupComp";
-export { IsColumnFunc } from "./entities/colDef";
+export { IsColumnFunc, IsColumnFuncParams } from "./entities/colDef";
 export { ColumnApi } from "./columnController/columnApi";
 export { IHeader } from "./headerRendering/header/headerComp";
 export { ICellRendererParams } from "./rendering/cellRenderers/iCellRenderer";

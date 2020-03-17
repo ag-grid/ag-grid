@@ -71,6 +71,7 @@ var PrimaryColsListPanel = /** @class */ (function (_super) {
         var pivotModeActive = this.columnController.isPivotMode();
         var shouldSyncColumnLayoutWithGrid = !this.params.suppressSyncLayoutWithGrid && !pivotModeActive;
         shouldSyncColumnLayoutWithGrid ? this.syncColumnLayout() : this.buildTreeFromProvidedColumnDefs();
+        this.setFilterText(this.filterText);
     };
     PrimaryColsListPanel.prototype.syncColumnLayout = function () {
         this.colDefService.syncLayoutWithGrid(this.setColumnLayout.bind(this));
@@ -226,16 +227,14 @@ var PrimaryColsListPanel = /** @class */ (function (_super) {
             });
         }
         else {
+            // we don't want to change visibility on lock visible columns
+            var primaryCols = this.columnApi.getPrimaryColumns();
+            var colsToChange = primaryCols.filter(function (col) { return !col.getColDef().lockVisible; });
             // however if pivot mode is off, then it's all about column visibility so we can do a bulk
             // operation directly with the column controller. we could column.onSelectAllChanged(checked)
             // as above, however this would work on each column independently and take longer.
             if (!core_1._.exists(this.filterText)) {
-                var primaryCols = this.columnApi.getPrimaryColumns();
-                // we don't want to change visibility on lock visible / hidden columns
-                var colsToChange = primaryCols.filter(function (col) {
-                    return !col.getColDef().lockVisible && !col.getColDef().hide;
-                });
-                this.columnApi.setColumnsVisible(colsToChange, this.selectAllChecked);
+                this.columnController.setColumnsVisible(colsToChange, this.selectAllChecked, 'columnMenu');
                 return;
             }
             // obtain list of columns currently filtered
@@ -245,10 +244,11 @@ var PrimaryColsListPanel = /** @class */ (function (_super) {
                     filteredCols_1.push(key);
             });
             if (filteredCols_1.length > 0) {
+                var filteredColsToChange = colsToChange.filter(function (col) { return core_1._.includes(filteredCols_1, col.getColId()); });
                 // update visibility of columns currently filtered
-                this.columnApi.setColumnsVisible(filteredCols_1, this.selectAllChecked);
+                this.columnController.setColumnsVisible(filteredColsToChange, this.selectAllChecked, 'columnMenu');
                 // update select all header with new state
-                var selectionState = this.selectAllChecked ? primaryColsHeaderPanel_1.SELECTED_STATE.CHECKED : primaryColsHeaderPanel_1.SELECTED_STATE.UNCHECKED;
+                var selectionState = this.selectAllChecked ? true : false;
                 this.dispatchEvent({ type: 'selectionChanged', state: selectionState });
             }
         }
@@ -295,14 +295,12 @@ var PrimaryColsListPanel = /** @class */ (function (_super) {
             }
         });
         if (checkedCount > 0 && uncheckedCount > 0) {
-            return primaryColsHeaderPanel_1.SELECTED_STATE.INDETERMINATE;
+            return undefined;
         }
         else if (checkedCount === 0 || uncheckedCount > 0) {
-            return primaryColsHeaderPanel_1.SELECTED_STATE.UNCHECKED;
+            return false;
         }
-        else {
-            return primaryColsHeaderPanel_1.SELECTED_STATE.CHECKED;
-        }
+        return true;
     };
     PrimaryColsListPanel.prototype.setFilterText = function (filterText) {
         this.filterText = core_1._.exists(filterText) ? filterText.toLowerCase() : null;
@@ -359,7 +357,8 @@ var PrimaryColsListPanel = /** @class */ (function (_super) {
             var compId = _this.getColumnCompId(child);
             var comp = _this.columnComps[compId];
             if (comp) {
-                var passesFilter = _this.filterResults ? _this.filterResults[compId] : true;
+                var filterResultExists = _this.filterResults && core_1._.exists(_this.filterResults[compId]);
+                var passesFilter = filterResultExists ? _this.filterResults[compId] : true;
                 comp.setDisplayed(parentGroupsOpen && passesFilter);
             }
             if (child instanceof core_1.OriginalColumnGroup) {
@@ -400,10 +399,7 @@ var PrimaryColsListPanel = /** @class */ (function (_super) {
         _super.prototype.destroy.call(this);
         this.destroyColumnComps();
     };
-    PrimaryColsListPanel.TEMPLATE = "<div class=\"ag-primary-cols-list-panel\"></div>";
-    __decorate([
-        core_1.Autowired('gridOptionsWrapper')
-    ], PrimaryColsListPanel.prototype, "gridOptionsWrapper", void 0);
+    PrimaryColsListPanel.TEMPLATE = "<div class=\"ag-column-select-list\"></div>";
     __decorate([
         core_1.Autowired('columnController')
     ], PrimaryColsListPanel.prototype, "columnController", void 0);

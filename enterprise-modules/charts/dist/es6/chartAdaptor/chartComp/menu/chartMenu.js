@@ -21,8 +21,11 @@ import { _, AgPanel, Autowired, Component, PostConstruct, Promise } from "@ag-gr
 import { TabbedChartMenu } from "./tabbedChartMenu";
 var ChartMenu = /** @class */ (function (_super) {
     __extends(ChartMenu, _super);
-    function ChartMenu(chartController) {
+    function ChartMenu(eChartContainer, eMenuPanelContainer, chartController) {
         var _this = _super.call(this, ChartMenu.TEMPLATE) || this;
+        _this.eChartContainer = eChartContainer;
+        _this.eMenuPanelContainer = eMenuPanelContainer;
+        _this.chartController = chartController;
         _this.buttons = {
             chartSettings: ['menu', function () { return _this.showMenu("chartSettings"); }],
             chartData: ['menu', function () { return _this.showMenu("chartData"); }],
@@ -31,11 +34,15 @@ var ChartMenu = /** @class */ (function (_super) {
             chartDownload: ['save', function () { return _this.saveChart(); }]
         };
         _this.tabs = [];
-        _this.chartController = chartController;
+        _this.menuVisible = false;
         return _this;
     }
     ChartMenu.prototype.postConstruct = function () {
         this.createButtons();
+        this.refreshMenuClasses();
+    };
+    ChartMenu.prototype.isVisible = function () {
+        return this.menuVisible;
     };
     ChartMenu.prototype.getToolbarOptions = function () {
         var _this = this;
@@ -82,46 +89,48 @@ var ChartMenu = /** @class */ (function (_super) {
     ChartMenu.prototype.createButtons = function () {
         var _this = this;
         var chartToolbarOptions = this.getToolbarOptions();
+        var gui = this.getGui();
         chartToolbarOptions.forEach(function (button) {
             var buttonConfig = _this.buttons[button];
             var iconName = buttonConfig[0], callback = buttonConfig[1];
             var buttonEl = _.createIconNoSpan(iconName, _this.gridOptionsWrapper, undefined, true);
+            _.addCssClass(buttonEl, 'ag-chart-menu-icon');
             _this.addDestroyableEventListener(buttonEl, 'click', callback);
-            _this.getGui().appendChild(buttonEl);
+            gui.appendChild(buttonEl);
         });
     };
     ChartMenu.prototype.saveChart = function () {
         var event = { type: ChartMenu.EVENT_DOWNLOAD_CHART };
         this.dispatchEvent(event);
     };
-    ChartMenu.prototype.createMenu = function (defaultTab) {
+    ChartMenu.prototype.createMenuPanel = function (defaultTab) {
         var _this = this;
-        var chartComp = this.getParentComponent();
-        var dockedContainer = chartComp.getDockedContainer();
-        var context = this.getContext();
-        var menuPanel = this.menuPanel = new AgPanel({
-            minWidth: this.gridOptionsWrapper.chartMenuPanelWidth(),
-            width: this.gridOptionsWrapper.chartMenuPanelWidth(),
+        var width = this.gridOptionsWrapper.chartMenuPanelWidth();
+        var menuPanel = this.menuPanel = this.wireBean(new AgPanel({
+            minWidth: width,
+            width: width,
             height: '100%',
             closable: true,
-            hideTitleBar: true
-        });
-        context.wireBean(this.menuPanel);
+            hideTitleBar: true,
+            cssIdentifier: 'chart-menu'
+        }));
         menuPanel.setParentComponent(this);
-        dockedContainer.appendChild(menuPanel.getGui());
-        this.tabbedMenu = new TabbedChartMenu({
+        this.eMenuPanelContainer.appendChild(menuPanel.getGui());
+        this.tabbedMenu = this.wireBean(new TabbedChartMenu({
             controller: this.chartController,
-            type: chartComp.getCurrentChartType(),
+            type: this.chartController.getChartType(),
             panels: this.tabs
-        });
-        context.wireBean(this.tabbedMenu);
-        this.addDestroyableEventListener(this.menuPanel, Component.EVENT_DESTROYED, function () { return _this.tabbedMenu.destroy(); });
+        }));
+        this.addDestroyableEventListener(menuPanel, Component.EVENT_DESTROYED, function () { return _this.tabbedMenu.destroy(); });
         return new Promise(function (res) {
             window.setTimeout(function () {
                 menuPanel.setBodyComponent(_this.tabbedMenu);
                 _this.tabbedMenu.showTab(defaultTab);
-                _this.addDestroyableEventListener(chartComp.getChartComponentsWrapper(), 'click', function () {
-                    if (_.containsClass(chartComp.getGui(), 'ag-has-menu')) {
+                _this.addDestroyableEventListener(_this.eChartContainer, 'click', function (event) {
+                    if (_this.getGui().contains(event.target)) {
+                        return;
+                    }
+                    if (_this.menuVisible) {
                         _this.hideMenu();
                     }
                 });
@@ -129,30 +138,40 @@ var ChartMenu = /** @class */ (function (_super) {
             }, 100);
         });
     };
-    ChartMenu.prototype.slideDockedContainer = function () {
-        var _this = this;
-        var chartComp = this.getParentComponent();
-        chartComp.slideDockedOut(this.menuPanel.getWidth());
-        window.setTimeout(function () {
-            _.addCssClass(_this.getParentComponent().getGui(), 'ag-has-menu');
-        }, 500);
+    ChartMenu.prototype.showContainer = function () {
+        if (!this.menuPanel) {
+            return;
+        }
+        this.menuVisible = true;
+        this.showParent(this.menuPanel.getWidth());
+        this.refreshMenuClasses();
     };
     ChartMenu.prototype.showMenu = function (tabName) {
-        var _this = this;
         var tab = this.tabs.indexOf(tabName);
         if (!this.menuPanel) {
-            this.createMenu(tab).then(function () {
-                _this.slideDockedContainer();
-            });
+            this.createMenuPanel(tab).then(this.showContainer.bind(this));
         }
         else {
-            this.slideDockedContainer();
+            this.showContainer();
         }
     };
     ChartMenu.prototype.hideMenu = function () {
-        var chartComp = this.getParentComponent();
-        chartComp.slideDockedIn();
-        _.removeCssClass(this.getParentComponent().getGui(), 'ag-has-menu');
+        var _this = this;
+        this.hideParent();
+        window.setTimeout(function () {
+            _this.menuVisible = false;
+            _this.refreshMenuClasses();
+        }, 500);
+    };
+    ChartMenu.prototype.refreshMenuClasses = function () {
+        _.addOrRemoveCssClass(this.eChartContainer, 'ag-chart-menu-visible', this.menuVisible);
+        _.addOrRemoveCssClass(this.eChartContainer, 'ag-chart-menu-hidden', !this.menuVisible);
+    };
+    ChartMenu.prototype.showParent = function (width) {
+        this.eMenuPanelContainer.style.minWidth = width + "px";
+    };
+    ChartMenu.prototype.hideParent = function () {
+        this.eMenuPanelContainer.style.minWidth = '0';
     };
     ChartMenu.prototype.destroy = function () {
         _super.prototype.destroy.call(this);

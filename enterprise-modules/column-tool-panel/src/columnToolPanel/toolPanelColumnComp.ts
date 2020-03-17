@@ -25,9 +25,9 @@ import { BaseColumnItem } from "./primaryColsPanel";
 export class ToolPanelColumnComp extends Component implements BaseColumnItem {
 
     private static TEMPLATE =
-        `<div class="ag-column-tool-panel-column">
+        `<div class="ag-column-select-column">
             <ag-checkbox ref="cbSelect" class="ag-column-select-checkbox"></ag-checkbox>
-            <span class="ag-column-tool-panel-column-label" ref="eLabel"></span>
+            <span class="ag-column-select-column-label" ref="eLabel"></span>
         </div>`;
 
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
@@ -63,7 +63,8 @@ export class ToolPanelColumnComp extends Component implements BaseColumnItem {
 
         this.setTemplate(ToolPanelColumnComp.TEMPLATE);
         this.eDragHandle = _.createIconNoSpan('columnDrag', this.gridOptionsWrapper);
-        _.addCssClass(this.eDragHandle, 'ag-column-drag');
+        _.addCssClass(this.eDragHandle, 'ag-drag-handle');
+        _.addCssClass(this.eDragHandle, 'ag-column-select-column-drag-handle');
         this.cbSelect.getGui().insertAdjacentElement('afterend', this.eDragHandle);
 
         this.displayName = this.columnController.getDisplayNameForColumn(this.column, 'toolPanel');
@@ -73,9 +74,9 @@ export class ToolPanelColumnComp extends Component implements BaseColumnItem {
         // if grouping, we add an extra level of indent, to cater for expand/contract icons we need to indent for
         const indent = this.columnDept;
         if (this.groupsExist) {
-            this.addCssClass('ag-toolpanel-add-group-indent');
+            this.addCssClass('ag-column-select-add-group-indent');
         }
-        this.addCssClass(`ag-toolpanel-indent-${indent}`);
+        this.addCssClass(`ag-column-select-indent-${indent}`);
 
         this.setupDragging();
 
@@ -297,6 +298,7 @@ export class ToolPanelColumnComp extends Component implements BaseColumnItem {
         }
 
         this.cbSelect.setReadOnly(checkboxReadOnly);
+        _.addOrRemoveCssClass(this.getGui(), 'ag-column-select-column-readonly', checkboxReadOnly);
 
         const checkboxPassive = isPivotMode && this.gridOptionsWrapper.isFunctionsPassive();
         this.cbSelect.setPassive(checkboxPassive);

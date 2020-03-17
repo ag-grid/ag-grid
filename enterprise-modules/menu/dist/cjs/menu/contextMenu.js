@@ -25,8 +25,6 @@ var menuList_1 = require("./menuList");
 var ContextMenuFactory = /** @class */ (function () {
     function ContextMenuFactory() {
     }
-    ContextMenuFactory.prototype.init = function () {
-    };
     ContextMenuFactory.prototype.hideActiveMenu = function () {
         if (!this.activeMenu) {
             return;
@@ -40,10 +38,6 @@ var ContextMenuFactory = /** @class */ (function () {
                 // only makes sense if column exists, could have originated from a row
                 defaultMenuOptions.push('copy', 'copyWithHeaders', 'paste', 'separator');
             }
-        }
-        else {
-            // if user clicks outside of a cell (eg below the rows, or not rows present)
-            // nothing to show, perhaps tool panels???
         }
         if (this.gridOptionsWrapper.isEnableCharts() &&
             core_1.ModuleRegistry.isRegistered(core_1.ModuleNames.RangeSelectionModule) &&
@@ -121,17 +115,11 @@ var ContextMenuFactory = /** @class */ (function () {
         core_1.Autowired('gridOptionsWrapper')
     ], ContextMenuFactory.prototype, "gridOptionsWrapper", void 0);
     __decorate([
-        core_1.Autowired('rowModel')
-    ], ContextMenuFactory.prototype, "rowModel", void 0);
-    __decorate([
         core_1.Optional('rangeController')
     ], ContextMenuFactory.prototype, "rangeController", void 0);
     __decorate([
         core_1.Autowired('columnController')
     ], ContextMenuFactory.prototype, "columnController", void 0);
-    __decorate([
-        core_1.PostConstruct
-    ], ContextMenuFactory.prototype, "init", null);
     ContextMenuFactory = __decorate([
         core_1.Bean('contextMenuFactory')
     ], ContextMenuFactory);
@@ -142,6 +130,8 @@ var ContextMenu = /** @class */ (function (_super) {
     __extends(ContextMenu, _super);
     function ContextMenu(menuItems) {
         var _this = _super.call(this, '<div class="ag-menu"></div>') || this;
+        _this.menuList = null;
+        _this.focusedCell = null;
         _this.menuItems = menuItems;
         return _this;
     }
@@ -151,14 +141,27 @@ var ContextMenu = /** @class */ (function (_super) {
         var menuItemsMapped = this.menuItemMapper.mapWithStockItems(this.menuItems, null);
         menuList.addMenuItems(menuItemsMapped);
         this.appendChild(menuList);
+        this.menuList = menuList;
         menuList.addEventListener(menuItemComponent_1.MenuItemComponent.EVENT_ITEM_SELECTED, this.destroy.bind(this));
     };
     ContextMenu.prototype.afterGuiAttached = function (params) {
         if (params.hidePopup) {
             this.addDestroyFunc(params.hidePopup);
         }
+        this.focusedCell = this.focusController.getFocusedCell();
+        if (this.menuList) {
+            this.menuList.getGui().focus();
+        }
         // if the body scrolls, we want to hide the menu, as the menu will not appear in the right location anymore
         this.addDestroyableEventListener(this.eventService, 'bodyScroll', this.destroy.bind(this));
+    };
+    ContextMenu.prototype.destroy = function () {
+        var currentFocusedCell = this.focusController.getFocusedCell();
+        if (currentFocusedCell && this.focusedCell && this.cellPositionUtils.equals(currentFocusedCell, this.focusedCell)) {
+            var _a = this.focusedCell, rowIndex = _a.rowIndex, rowPinned = _a.rowPinned, column = _a.column;
+            this.focusController.setFocusedCell(rowIndex, column, rowPinned, true);
+        }
+        _super.prototype.destroy.call(this);
     };
     __decorate([
         core_1.Autowired('eventService')
@@ -166,6 +169,12 @@ var ContextMenu = /** @class */ (function (_super) {
     __decorate([
         core_1.Autowired('menuItemMapper')
     ], ContextMenu.prototype, "menuItemMapper", void 0);
+    __decorate([
+        core_1.Autowired('focusController')
+    ], ContextMenu.prototype, "focusController", void 0);
+    __decorate([
+        core_1.Autowired('cellPositionUtils')
+    ], ContextMenu.prototype, "cellPositionUtils", void 0);
     __decorate([
         core_1.PostConstruct
     ], ContextMenu.prototype, "addMenuItems", null);

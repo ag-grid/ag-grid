@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v22.1.1
+ * @version v23.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -212,6 +212,10 @@ var MoveColumnController = /** @class */ (function () {
         }
     };
     MoveColumnController.prototype.calculateValidMoves = function (movingCols, draggingRight, mouseX) {
+        var isMoveBlocked = this.gridOptionsWrapper.isSuppressMovableColumns() || movingCols.some(function (col) { return col.getColDef().suppressMovable; });
+        if (isMoveBlocked) {
+            return [];
+        }
         // this is the list of cols on the screen, so it's these we use when comparing the x mouse position
         var allDisplayedCols = this.columnController.getDisplayedColumns(this.pinned);
         // but this list is the list of all cols, when we move a col it's the index within this list that gets used,

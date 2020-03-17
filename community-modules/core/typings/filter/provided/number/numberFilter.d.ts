@@ -18,12 +18,13 @@ export declare class NumberFilter extends ScalerFilter<NumberFilterModel, number
         to: number;
     };
     protected getDefaultDebounceMs(): number;
-    protected resetUiToDefaults(): void;
+    protected resetUiToDefaults(silent?: boolean): void;
     protected setConditionIntoUi(model: NumberFilterModel, position: ConditionPosition): void;
     protected setValueFromFloatingFilter(value: string): void;
     protected comparator(): Comparator<number>;
     protected setParams(params: INumberFilterParams): void;
     private addValueChangedListeners;
+    private resetPlaceholder;
     afterGuiAttached(): void;
     protected getDefaultFilterOptions(): string[];
     protected createValueTemplate(position: ConditionPosition): string;

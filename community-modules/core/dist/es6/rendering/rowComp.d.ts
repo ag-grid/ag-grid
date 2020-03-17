@@ -1,12 +1,12 @@
-// Type definitions for @ag-grid-community/core v22.1.1
+// Type definitions for @ag-grid-community/core v23.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
+import { Beans } from "./beans";
 import { CellComp } from "./cellComp";
 import { RowNode } from "../entities/rowNode";
 import { Column } from "../entities/column";
 import { RowContainerComponent } from "./rowContainerComponent";
 import { Component } from "../widgets/component";
-import { Beans } from "./beans";
 import { IFrameworkOverrides } from "../interfaces/iFrameworkOverrides";
 export declare class RowComp extends Component {
     static DOM_DATA_KEY_RENDERED_ROW: string;
@@ -85,6 +85,7 @@ export declare class RowComp extends Component {
     private onRowNodeDataChanged;
     private onRowNodeCellChanged;
     private postProcessCss;
+    private onRowNodeHighlightChanged;
     private onRowNodeDraggingChanged;
     private postProcessRowDragging;
     private onExpandedChanged;

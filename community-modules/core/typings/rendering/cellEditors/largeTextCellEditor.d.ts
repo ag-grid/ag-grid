@@ -1,5 +1,5 @@
-import { PopupComponent } from "../../widgets/popupComponent";
 import { ICellEditorComp, ICellEditorParams } from "../../interfaces/iCellEditor";
+import { PopupComponent } from "../../widgets/popupComponent";
 export interface ILargeTextEditorParams extends ICellEditorParams {
     maxLength: number;
     rows: number;
@@ -8,7 +8,7 @@ export interface ILargeTextEditorParams extends ICellEditorParams {
 export declare class LargeTextCellEditor extends PopupComponent implements ICellEditorComp {
     private static TEMPLATE;
     private params;
-    private textarea;
+    private eTextArea;
     private focusAfterAttached;
     constructor();
     init(params: ILargeTextEditorParams): void;

@@ -1,40 +1,46 @@
 import { Bean, Autowired } from './context/context';
 import { _ } from './utils';
 
-const MAT_GRID_SIZE = 8;
+export type SASS_PROPERTIES = 'headerHeight' | 'headerCellMinWidth' | 'listItemHeight' | 'rowHeight' | 'chartMenuPanelWidth';
 
-export type SASS_PROPERTIES = 'headerHeight' | 'virtualItemHeight' | 'rowHeight' | 'chartMenuPanelWidth';
 interface HardCodedSize {
     [key: string]: {
         [key in SASS_PROPERTIES]?: number;
     };
 }
-const FRESH_GRID_SIZE = 4;
+
+const MAT_GRID_SIZE = 8;
+const BASE_GRID_SIZE = 4;
 const BALHAM_GRID_SIZE = 4;
 const ALPINE_GRID_SIZE = 6;
 
 const HARD_CODED_SIZES: HardCodedSize = {
-    'ag-theme-material': {
-        headerHeight: MAT_GRID_SIZE * 7,
-        virtualItemHeight: MAT_GRID_SIZE * 5,
-        rowHeight: MAT_GRID_SIZE * 6,
-        chartMenuPanelWidth: 220
-    },
-    'ag-theme-classic': {
+    // this item is required for custom themes
+    'ag-theme-custom': {
         headerHeight: 25,
-        virtualItemHeight: FRESH_GRID_SIZE * 5,
+        headerCellMinWidth: 24,
+        listItemHeight: BASE_GRID_SIZE * 5,
         rowHeight: 25,
         chartMenuPanelWidth: 220
     },
+    'ag-theme-material': {
+        headerHeight: MAT_GRID_SIZE * 7,
+        headerCellMinWidth: 48,
+        listItemHeight: MAT_GRID_SIZE * 5,
+        rowHeight: MAT_GRID_SIZE * 6,
+        chartMenuPanelWidth: 240
+    },
     'ag-theme-balham': {
         headerHeight: BALHAM_GRID_SIZE * 8,
-        virtualItemHeight: BALHAM_GRID_SIZE * 7,
+        headerCellMinWidth: 24,
+        listItemHeight: BALHAM_GRID_SIZE * 7,
         rowHeight: BALHAM_GRID_SIZE * 7,
         chartMenuPanelWidth: 220
     },
     'ag-theme-alpine': {
         headerHeight: ALPINE_GRID_SIZE * 8,
-        virtualItemHeight: ALPINE_GRID_SIZE * 5,
+        headerCellMinWidth: 36,
+        listItemHeight: ALPINE_GRID_SIZE * 5,
         rowHeight: ALPINE_GRID_SIZE * 7,
         chartMenuPanelWidth: 240
     }
@@ -48,10 +54,12 @@ const HARD_CODED_SIZES: HardCodedSize = {
  *     <div class="ag-virtual-list-container">
  *         <div class="ag-virtual-list-item"></div>
  *     </div>
+ * </div>
  */
 const SASS_PROPERTY_BUILDER: { [key in SASS_PROPERTIES]: string[] } = {
     headerHeight: ['ag-header-row'],
-    virtualItemHeight: ['ag-virtual-list-container', 'ag-virtual-list-item'],
+    headerCellMinWidth: ['ag-header-cell'],
+    listItemHeight: ['ag-virtual-list-item'],
     rowHeight: ['ag-row'],
     chartMenuPanelWidth: ['ag-chart-docked-container']
 };
@@ -63,7 +71,7 @@ export class Environment {
     @Autowired('eGridDiv') private eGridDiv: HTMLElement;
 
     public getSassVariable(theme: string, key: SASS_PROPERTIES): number {
-        const useTheme = 'ag-theme-' + (theme.match('material') ? 'material' : theme.match('balham') ? 'balham' : theme.match('alpine') ? 'alpine' : 'classic');
+        const useTheme = 'ag-theme-' + (theme.match('material') ? 'material' : theme.match('balham') ? 'balham' : theme.match('alpine') ? 'alpine' : 'custom');
         const defaultValue = HARD_CODED_SIZES[useTheme][key];
         let calculatedValue = 0;
 
@@ -78,12 +86,14 @@ export class Environment {
         if (SASS_PROPERTY_BUILDER[key]) {
             const classList = SASS_PROPERTY_BUILDER[key];
             const div = document.createElement('div');
+            div.style.position = 'absolute';
             const el: HTMLDivElement = classList.reduce((el: HTMLDivElement, currentClass: string, idx: number) => {
                 if (idx === 0) {
                     _.addCssClass(el, theme);
                 }
 
                 const div = document.createElement('div');
+                div.style.position = 'static';
                 _.addCssClass(div, currentClass);
                 el.appendChild(div);
 
@@ -92,7 +102,8 @@ export class Environment {
 
             if (document.body) {
                 document.body.appendChild(div);
-                calculatedValue = parseInt(window.getComputedStyle(el).height, 10);
+                const sizeName = key.toLowerCase().indexOf('height') !== -1 ? 'height' : 'width';
+                calculatedValue = parseInt(window.getComputedStyle(el)[sizeName], 10);
                 document.body.removeChild(div);
             }
         }
@@ -107,17 +118,13 @@ export class Environment {
         return !!theme && theme.indexOf('dark') >= 0;
     }
 
-    public useNativeCheckboxes() {
-        const { theme } = this.getTheme();
-        return !!theme && theme.indexOf('alpine') >= 0;
-    }
-
     public chartMenuPanelWidth() {
-        return HARD_CODED_SIZES[this.getTheme().themeFamily].chartMenuPanelWidth;
+        const theme = this.getTheme().themeFamily;
+        return this.getSassVariable(theme, 'chartMenuPanelWidth');
     }
 
     public getTheme(): { theme?: string, el?: HTMLElement, themeFamily?: string } {
-        const reg = /\bag-(fresh|dark|blue|material|bootstrap|(?:theme-([\w\-]*)))\b/;
+        const reg = /\bag-(material|(?:theme-([\w\-]*)))\b/;
         let el: HTMLElement = this.eGridDiv;
         let themeMatch: RegExpMatchArray;
 

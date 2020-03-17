@@ -26,7 +26,12 @@ var PaddingPanel = /** @class */ (function (_super) {
         return _this;
     }
     PaddingPanel.prototype.init = function () {
-        this.setTemplate(PaddingPanel.TEMPLATE);
+        var groupParams = {
+            cssIdentifier: 'charts-format-sub-level',
+            direction: 'vertical',
+            suppressOpenCloseIcons: true
+        };
+        this.setTemplate(PaddingPanel.TEMPLATE, { chartPaddingGroup: groupParams });
         this.initGroup();
         this.initChartPaddingItems();
     };

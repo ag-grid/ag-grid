@@ -49,7 +49,8 @@ export declare class RangeController implements IRangeController {
     private onBodyScroll;
     isCellInAnyRange(cell: CellPosition): boolean;
     isCellInSpecificRange(cell: CellPosition, range: CellRange): boolean;
-    isLastCellOfRange(cellRange: CellRange, cell: CellPosition): boolean;
+    private isLastCellOfRange;
+    isBottomRightCell(cellRange: CellRange, cell: CellPosition): boolean;
     getCellRangeCount(cell: CellPosition): number;
     private isRowInRange;
     getDraggingRange(): CellRange | undefined;

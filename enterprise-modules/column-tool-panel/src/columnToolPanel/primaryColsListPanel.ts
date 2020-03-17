@@ -9,7 +9,6 @@ import {
     Component,
     Events,
     EventService,
-    GridOptionsWrapper,
     OriginalColumnGroup,
     OriginalColumnGroupChild,
     ToolPanelColumnCompParams
@@ -18,16 +17,15 @@ import {ToolPanelColumnGroupComp} from "./toolPanelColumnGroupComp";
 import {ToolPanelColumnComp} from "./toolPanelColumnComp";
 import {BaseColumnItem} from "./primaryColsPanel";
 import {ToolPanelColDefService} from "@ag-grid-enterprise/side-bar";
-import {EXPAND_STATE, SELECTED_STATE} from "./primaryColsHeaderPanel";
+import {EXPAND_STATE} from "./primaryColsHeaderPanel";
 
 export type ColumnItem = BaseColumnItem & Component;
 export type ColumnFilterResults = { [id: string]: boolean };
 
 export class PrimaryColsListPanel extends Component {
 
-    public static TEMPLATE = `<div class="ag-primary-cols-list-panel"></div>`;
+    public static TEMPLATE = `<div class="ag-column-select-list"></div>`;
 
-    @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('columnController') private columnController: ColumnController;
     @Autowired('toolPanelColDefService') private colDefService: ToolPanelColDefService;
     @Autowired('eventService') private eventService: EventService;
@@ -73,6 +71,7 @@ export class PrimaryColsListPanel extends Component {
         });
 
         this.expandGroupsByDefault = !this.params.contractColumnSelection;
+
         if (this.columnController.isReady()) {
             this.onColumnsChanged();
         }
@@ -82,6 +81,8 @@ export class PrimaryColsListPanel extends Component {
         const pivotModeActive = this.columnController.isPivotMode();
         const shouldSyncColumnLayoutWithGrid = !this.params.suppressSyncLayoutWithGrid && !pivotModeActive;
         shouldSyncColumnLayoutWithGrid ? this.syncColumnLayout() : this.buildTreeFromProvidedColumnDefs();
+
+        this.setFilterText(this.filterText);
     }
 
     public syncColumnLayout(): void {
@@ -263,16 +264,15 @@ export class PrimaryColsListPanel extends Component {
                 column.onSelectAllChanged(this.selectAllChecked);
             });
         } else {
+            // we don't want to change visibility on lock visible columns
+            const primaryCols = this.columnApi.getPrimaryColumns();
+            const colsToChange = primaryCols.filter(col => !col.getColDef().lockVisible);
+
             // however if pivot mode is off, then it's all about column visibility so we can do a bulk
             // operation directly with the column controller. we could column.onSelectAllChanged(checked)
             // as above, however this would work on each column independently and take longer.
             if (!_.exists(this.filterText)) {
-                const primaryCols = this.columnApi.getPrimaryColumns();
-                // we don't want to change visibility on lock visible / hidden columns
-                const colsToChange = primaryCols.filter(col => {
-                    return !col.getColDef().lockVisible && !col.getColDef().hide;
-                });
-                this.columnApi.setColumnsVisible(colsToChange, this.selectAllChecked);
+                this.columnController.setColumnsVisible(colsToChange, this.selectAllChecked, 'columnMenu');
                 return;
             }
 
@@ -283,17 +283,19 @@ export class PrimaryColsListPanel extends Component {
             });
 
             if (filteredCols.length > 0) {
+                const filteredColsToChange = colsToChange.filter(col => _.includes(filteredCols, col.getColId()));
+
                 // update visibility of columns currently filtered
-                this.columnApi.setColumnsVisible(filteredCols, this.selectAllChecked);
+                this.columnController.setColumnsVisible(filteredColsToChange, this.selectAllChecked, 'columnMenu');
 
                 // update select all header with new state
-                const selectionState = this.selectAllChecked ? SELECTED_STATE.CHECKED : SELECTED_STATE.UNCHECKED;
+                const selectionState = this.selectAllChecked ? true : false;
                 this.dispatchEvent({type: 'selectionChanged', state: selectionState});
             }
         }
     }
 
-    private getSelectionState(): SELECTED_STATE {
+    private getSelectionState(): boolean | undefined {
         const allPrimaryColumns = this.columnController.getAllPrimaryColumns();
         let columns: Column[] = [];
         if (allPrimaryColumns !== null) {
@@ -338,12 +340,12 @@ export class PrimaryColsListPanel extends Component {
         });
 
         if (checkedCount > 0 && uncheckedCount > 0) {
-            return SELECTED_STATE.INDETERMINATE;
+            return undefined;
         } else if (checkedCount === 0 || uncheckedCount > 0) {
-            return SELECTED_STATE.UNCHECKED;
-        } else {
-            return SELECTED_STATE.CHECKED;
+            return false
         }
+
+        return true;
     }
 
     public setFilterText(filterText: string) {
@@ -407,7 +409,8 @@ export class PrimaryColsListPanel extends Component {
             const compId = this.getColumnCompId(child);
             let comp: ColumnItem = this.columnComps[compId];
             if (comp) {
-                const passesFilter = this.filterResults ? this.filterResults[compId] : true;
+                const filterResultExists = this.filterResults && _.exists(this.filterResults[compId]);
+                const passesFilter = filterResultExists ? this.filterResults[compId] : true;
                 comp.setDisplayed(parentGroupsOpen && passesFilter);
             }
 

@@ -86,7 +86,7 @@ export declare class GridApi {
     private rowModel;
     private sortController;
     private paginationProxy;
-    private focusedCellController;
+    private focusController;
     private rangeController;
     private clipboardService;
     private aggFuncService;
@@ -181,6 +181,10 @@ export declare class GridApi {
     refreshClientSideRowModel(step?: string): any;
     isAnimationFrameQueueEmpty(): boolean;
     getRowNode(id: string): RowNode;
+    getSizesForCurrentTheme(): {
+        rowHeight: number;
+        headerHeight: number;
+    };
     expandAll(): void;
     collapseAll(): void;
     getToolPanelInstance(id: string): IToolPanel;

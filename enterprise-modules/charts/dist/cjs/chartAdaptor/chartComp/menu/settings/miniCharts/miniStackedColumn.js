@@ -15,24 +15,22 @@ var __extends = (this && this.__extends) || (function () {
 Object.defineProperty(exports, "__esModule", { value: true });
 var core_1 = require("@ag-grid-community/core");
 var miniChartWithAxes_1 = require("./miniChartWithAxes");
-var rect_1 = require("../../../../../charts/scene/shape/rect");
-var bandScale_1 = require("../../../../../charts/scale/bandScale");
-var linearScale_1 = require("../../../../../charts/scale/linearScale");
+var ag_charts_community_1 = require("ag-charts-community");
 var MiniStackedColumn = /** @class */ (function (_super) {
     __extends(MiniStackedColumn, _super);
-    function MiniStackedColumn(parent, fills, strokes, data, yScaleDomain, tooltipName) {
+    function MiniStackedColumn(container, fills, strokes, data, yScaleDomain, tooltipName) {
         if (data === void 0) { data = MiniStackedColumn.data; }
         if (yScaleDomain === void 0) { yScaleDomain = [0, 16]; }
         if (tooltipName === void 0) { tooltipName = "stackedColumnTooltip"; }
-        var _this = _super.call(this, parent, tooltipName) || this;
+        var _this = _super.call(this, container, tooltipName) || this;
         var padding = _this.padding;
         var size = _this.size;
-        var xScale = new bandScale_1.BandScale();
+        var xScale = new ag_charts_community_1.BandScale();
         xScale.domain = [0, 1, 2];
         xScale.range = [padding, size - padding];
         xScale.paddingInner = 0.3;
         xScale.paddingOuter = 0.3;
-        var yScale = linearScale_1.default();
+        var yScale = ag_charts_community_1.linearScale();
         yScale.domain = yScaleDomain;
         yScale.range = [size - padding, padding];
         var bottom = yScale.convert(0);
@@ -40,7 +38,7 @@ var MiniStackedColumn = /** @class */ (function (_super) {
         _this.bars = data.map(function (series) {
             return series.map(function (datum, i) {
                 var top = yScale.convert(datum);
-                var rect = new rect_1.Rect();
+                var rect = new ag_charts_community_1.Rect();
                 rect.x = xScale.convert(i);
                 rect.y = top;
                 rect.width = width;

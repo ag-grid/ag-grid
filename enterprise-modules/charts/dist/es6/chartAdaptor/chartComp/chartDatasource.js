@@ -19,7 +19,6 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 };
 import { _, Autowired, BeanStub, ModuleNames, ModuleRegistry, Optional } from "@ag-grid-community/core";
 import { ChartDataModel } from "./chartDataModel";
-import { find } from "../../charts/util/array";
 var ChartDatasource = /** @class */ (function (_super) {
     __extends(ChartDatasource, _super);
     function ChartDatasource() {
@@ -56,14 +55,7 @@ var ChartDatasource = /** @class */ (function (_super) {
                         var valueString = valueObject && valueObject.toString ? String(valueObject.toString()) : '';
                         // traverse parents to extract group label path
                         var labels = _this.getGroupLabels(rowNode, valueString);
-                        if (params.multiCategories) {
-                            // add group labels to group column for multi category charts
-                            data[colId] = { labels: labels, toString: function () { return find(this.labels, function (v) { return !!v; }) || ''; } };
-                        }
-                        else {
-                            // concat group keys from the top group key down (used when grouping Pie charts)
-                            data[colId] = labels.slice().reverse().join(' - ');
-                        }
+                        data[colId] = { labels: labels, toString: function () { return this.labels.filter(function (l) { return !!l; }).reverse().join(' - '); } };
                         // keep track of group node indexes so they can be padded when other groups are expanded
                         if (rowNode.group) {
                             groupNodeIndexes[labels.toString()] = i;

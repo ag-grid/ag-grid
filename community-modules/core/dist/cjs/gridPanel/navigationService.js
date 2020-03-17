@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v22.1.1
+ * @version v23.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -162,7 +162,7 @@ var NavigationService = /** @class */ (function () {
         this.animationFrameService.flushAllFrames();
         // if we don't do this, the range will be left on the last cell, which will leave the last focused cell
         // highlighted.
-        this.focusedCellController.setFocusedCell(focusIndex, focusColumn, null, true);
+        this.focusController.setFocusedCell(focusIndex, focusColumn, null, true);
         if (this.rangeController) {
             var cellPosition = { rowIndex: focusIndex, rowPinned: null, column: focusColumn };
             this.rangeController.setRangeToCell(cellPosition);
@@ -197,8 +197,8 @@ var NavigationService = /** @class */ (function () {
         context_1.Autowired('paginationProxy')
     ], NavigationService.prototype, "paginationProxy", void 0);
     __decorate([
-        context_1.Autowired('focusedCellController')
-    ], NavigationService.prototype, "focusedCellController", void 0);
+        context_1.Autowired('focusController')
+    ], NavigationService.prototype, "focusController", void 0);
     __decorate([
         context_1.Autowired('animationFrameService')
     ], NavigationService.prototype, "animationFrameService", void 0);

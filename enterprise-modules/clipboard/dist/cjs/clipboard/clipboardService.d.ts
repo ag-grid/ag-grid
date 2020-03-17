@@ -6,7 +6,7 @@ export declare class ClipboardService implements IClipboardService {
     private rangeController;
     private rowModel;
     private valueService;
-    private focusedCellController;
+    private focusController;
     private rowRenderer;
     private columnController;
     private eventService;
@@ -25,22 +25,22 @@ export declare class ClipboardService implements IClipboardService {
     private doPasteOperation;
     private pasteIntoActiveRange;
     private pasteStartingFromFocusedCell;
+    private hasOnlyOneValueToPaste;
     copyRangeDown(): void;
     private fireRowChanged;
     private pasteMultipleValues;
     private pasteSingleValue;
     private updateCellValue;
-    copyToClipboard(includeHeaders: boolean): void;
+    copyToClipboard(includeHeaders?: boolean): void;
     private iterateActiveRanges;
     private iterateActiveRange;
     copySelectedRangeToClipboard(includeHeaders?: boolean): void;
     private copyFocusedCellToClipboard;
     private dispatchFlashCells;
-    private userProcessCell;
-    private userProcessHeader;
+    private processCell;
+    private processHeader;
     copySelectedRowsToClipboard(includeHeaders?: boolean, columnKeys?: (string | Column)[]): void;
     private copyDataToClipboard;
     private executeOnTempElement;
-    private dataToArray;
-    private rangeSize;
+    private getRangeSize;
 }

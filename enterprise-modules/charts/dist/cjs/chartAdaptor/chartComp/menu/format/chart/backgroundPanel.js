@@ -28,7 +28,12 @@ var BackgroundPanel = /** @class */ (function (_super) {
         return _this;
     }
     BackgroundPanel.prototype.init = function () {
-        this.setTemplate(BackgroundPanel.TEMPLATE);
+        var groupParams = {
+            cssIdentifier: 'charts-format-sub-level',
+            direction: 'vertical',
+            suppressOpenCloseIcons: true
+        };
+        this.setTemplate(BackgroundPanel.TEMPLATE, { chartBackgroundGroup: groupParams });
         this.initGroup();
         this.initColorPicker();
     };

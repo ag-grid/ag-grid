@@ -24,7 +24,7 @@ var __assign = (this && this.__assign) || function () {
     return __assign.apply(this, arguments);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var chartBuilder_1 = require("../../../../charts/chartBuilder");
+var ag_charts_community_1 = require("ag-charts-community");
 var polarChartProxy_1 = require("./polarChartProxy");
 var PieChartProxy = /** @class */ (function (_super) {
     __extends(PieChartProxy, _super);
@@ -35,7 +35,7 @@ var PieChartProxy = /** @class */ (function (_super) {
         return _this;
     }
     PieChartProxy.prototype.createChart = function (options) {
-        return chartBuilder_1.ChartBuilder.createPieChart(this.chartProxyParams.parentElement, options);
+        return ag_charts_community_1.ChartBuilder.createPieChart(this.chartProxyParams.parentElement, options || this.chartOptions);
     };
     PieChartProxy.prototype.update = function (params) {
         var chart = this.chart;
@@ -55,7 +55,7 @@ var PieChartProxy = /** @class */ (function (_super) {
             var seriesOptions = __assign(__assign({}, seriesDefaults), { type: "pie", field: {
                     angleKey: pieSeriesField.colId,
                 }, title: __assign(__assign({}, seriesDefaults.title), { text: seriesDefaults.title.text || params.fields[0].displayName }) });
-            pieSeries = chartBuilder_1.ChartBuilder.createSeries(seriesOptions);
+            pieSeries = ag_charts_community_1.ChartBuilder.createSeries(seriesOptions);
         }
         pieSeries.angleName = pieSeriesField.displayName;
         pieSeries.labelKey = params.category.id;
@@ -64,7 +64,7 @@ var PieChartProxy = /** @class */ (function (_super) {
         pieSeries.fills = fills;
         pieSeries.strokes = strokes;
         if (calloutColors) {
-            pieSeries.calloutColors = calloutColors;
+            pieSeries.callout.colors = calloutColors;
         }
         chart.addSeries(pieSeries);
     };

@@ -1,4 +1,4 @@
-// Type definitions for @ag-grid-community/core v22.1.1
+// Type definitions for @ag-grid-community/core v23.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { Component } from "../../widgets/component";
@@ -22,6 +22,7 @@ export interface IHeaderParams {
 export interface IHeader {
 }
 export interface IHeaderComp extends IHeader, IComponent<IHeaderParams> {
+    setMouseOverParent?(overParent: boolean): void;
 }
 export declare class HeaderComp extends Component implements IHeaderComp {
     private static TEMPLATE;
@@ -45,6 +46,7 @@ export declare class HeaderComp extends Component implements IHeaderComp {
     private addInIcon;
     private setupTap;
     private setupMenu;
+    setMouseOverParent(overParent: boolean): void;
     showMenu(eventSource: HTMLElement): void;
     private removeSortIcons;
     setupSort(): void;

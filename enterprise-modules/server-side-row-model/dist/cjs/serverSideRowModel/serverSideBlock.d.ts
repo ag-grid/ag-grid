@@ -5,6 +5,8 @@ export declare class ServerSideBlock extends RowNodeBlock {
     private columnController;
     private valueService;
     private gridOptionsWrapper;
+    private columnApi;
+    private gridApi;
     private logger;
     private displayIndexStart;
     private displayIndexEnd;

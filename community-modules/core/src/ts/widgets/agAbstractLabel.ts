@@ -22,6 +22,7 @@ export abstract class AgAbstractLabel extends Component {
     @PostConstruct
     protected postConstruct() {
         _.addCssClass(this.getGui(), 'ag-labeled');
+        _.addCssClass(this.eLabel, 'ag-label');
 
         const { labelSeparator, label, labelWidth, labelAlignment } = this.config;
 

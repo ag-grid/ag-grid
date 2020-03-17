@@ -1,10 +1,10 @@
-// Type definitions for @ag-grid-community/core v22.1.1
+// Type definitions for @ag-grid-community/core v23.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { RowContainerComponent } from "../rendering/rowContainerComponent";
 import { Component } from "../widgets/component";
 import { HeaderRootComp } from "../headerRendering/headerRootComp";
-export declare type RowContainerComponentNames = 'fullWidth' | 'body' | 'pinnedLeft' | 'pinnedRight' | 'floatingTop' | 'floatingTopPinnedLeft' | 'floatingTopPinnedRight' | 'floatingTopFullWidth' | 'floatingBottom' | 'floatingBottomPinnedLeft' | 'floatingBottomPinnedRight' | 'floatingBottomFullWith';
+export declare type RowContainerComponentNames = 'fullWidth' | 'body' | 'pinnedLeft' | 'pinnedRight' | 'floatingTop' | 'floatingTopPinnedLeft' | 'floatingTopPinnedRight' | 'floatingTopFullWidth' | 'floatingBottom' | 'floatingBottomPinnedLeft' | 'floatingBottomPinnedRight' | 'floatingBottomFullWidth';
 export declare type RowContainerComponents = {
     [K in RowContainerComponentNames]: RowContainerComponent;
 };
@@ -27,7 +27,7 @@ export declare class GridPanel extends Component {
     private gridApi;
     private dragService;
     private mouseEventService;
-    private focusedCellController;
+    private focusController;
     private $scope;
     private scrollVisibleService;
     private valueService;
@@ -69,7 +69,7 @@ export declare class GridPanel extends Component {
     private scrollLeft;
     private scrollTop;
     private lastHorizontalScrollElement;
-    private readonly resetLastHorizontalScrollElementDebounce;
+    private readonly resetLastHorizontalScrollElementDebounced;
     private bodyHeight;
     private enableRtl;
     private scrollWidth;

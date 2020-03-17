@@ -1,10 +1,7 @@
-import { ChartBuilder } from "../../../../charts/chartBuilder";
-import { PieSeriesOptions, PolarChartOptions } from "@ag-grid-community/core";
-import { ChartProxyParams, UpdateChartParams } from "../chartProxy";
-import { PieSeries } from "../../../../charts/chart/series/polar/pieSeries";
-import { PolarChartProxy } from "./polarChartProxy";
-import { PieSeriesOptions as PieSeriesInternalOptions } from "../../../../charts/chartOptions";
-import { PolarChart } from "../../../../charts/chart/polarChart";
+import {ChartBuilder, PieSeries, PieSeriesOptions as PieSeriesInternalOptions, PolarChart} from "ag-charts-community";
+import {PieSeriesOptions, PolarChartOptions} from "@ag-grid-community/core";
+import {ChartProxyParams, UpdateChartParams} from "../chartProxy";
+import {PolarChartProxy} from "./polarChartProxy";
 
 export class PieChartProxy extends PolarChartProxy {
     public constructor(params: ChartProxyParams) {
@@ -14,8 +11,8 @@ export class PieChartProxy extends PolarChartProxy {
         this.recreateChart();
     }
 
-    protected createChart(options: PolarChartOptions<PieSeriesOptions>): PolarChart {
-        return ChartBuilder.createPieChart(this.chartProxyParams.parentElement, options);
+    protected createChart(options?: PolarChartOptions<PieSeriesOptions>): PolarChart {
+        return ChartBuilder.createPieChart(this.chartProxyParams.parentElement, options || this.chartOptions);
     }
 
     public update(params: UpdateChartParams): void {
@@ -61,7 +58,7 @@ export class PieChartProxy extends PolarChartProxy {
         pieSeries.strokes = strokes;
 
         if (calloutColors) {
-            pieSeries.calloutColors = calloutColors;
+            pieSeries.callout.colors = calloutColors;
         }
 
         chart.addSeries(pieSeries);

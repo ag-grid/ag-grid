@@ -1,4 +1,4 @@
-// Type definitions for @ag-grid-community/core v22.1.1
+// Type definitions for @ag-grid-community/core v23.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { ColumnGroup } from "../entities/columnGroup";
@@ -256,7 +256,7 @@ export declare class ColumnController {
     private updateDisplayedVirtualGroups;
     private updateVirtualSets;
     private filterOutColumnsWithinViewport;
-    refreshFlexedColumns(updatedFlexViewportWidth?: number, source?: ColumnEventType): void;
+    refreshFlexedColumns(updatedFlexViewportWidth?: number, source?: ColumnEventType, silent?: boolean): void;
     sizeColumnsToFit(gridWidth: any, source?: ColumnEventType, silent?: boolean): void;
     private fireResizedEventForColumns;
     private buildDisplayedTrees;

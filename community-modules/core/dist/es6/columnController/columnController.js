@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v22.1.1
+ * @version v23.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -2185,6 +2185,7 @@ var ColumnController = /** @class */ (function () {
         this.updateOpenClosedVisibilityInColumnGroups();
         this.updateDisplayedColumnsFromTrees(source);
         this.updateVirtualSets();
+        this.refreshFlexedColumns(undefined, undefined, true);
         this.updateBodyWidths();
         // this event is picked up by the gui, headerRenderer and rowRenderer, to recalculate what columns to display
         var event = {
@@ -2357,7 +2358,7 @@ var ColumnController = /** @class */ (function () {
     ColumnController.prototype.filterOutColumnsWithinViewport = function () {
         return this.displayedCenterColumns.filter(this.isColumnInViewport.bind(this));
     };
-    ColumnController.prototype.refreshFlexedColumns = function (updatedFlexViewportWidth, source) {
+    ColumnController.prototype.refreshFlexedColumns = function (updatedFlexViewportWidth, source, silent) {
         if (source === void 0) { source = 'flex'; }
         if (!this.flexActive) {
             return;
@@ -2404,8 +2405,10 @@ var ColumnController = /** @class */ (function () {
             remainingSpace -= flexingColumnSizes[i];
         });
         this.setLeftValues(source);
-        this.updateBodyWidths();
-        this.fireResizedEventForColumns(flexingColumns, source);
+        if (!silent) {
+            this.updateBodyWidths();
+            this.fireResizedEventForColumns(flexingColumns, source);
+        }
     };
     // called from api
     ColumnController.prototype.sizeColumnsToFit = function (gridWidth, source, silent) {

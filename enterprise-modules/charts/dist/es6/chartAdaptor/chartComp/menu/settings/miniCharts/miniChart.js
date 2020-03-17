@@ -17,21 +17,19 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
-import { Autowired, Component, PostConstruct } from "@ag-grid-community/core";
-import { Group } from "../../../../../charts/scene/group";
-import { Scene } from "../../../../../charts/scene/scene";
+import { Autowired, Component, PostConstruct, _ } from "@ag-grid-community/core";
+import { Group, Scene } from "ag-charts-community";
 var MiniChart = /** @class */ (function (_super) {
     __extends(MiniChart, _super);
-    function MiniChart(parent, tooltipName) {
+    function MiniChart(container, tooltipName) {
         var _this = _super.call(this) || this;
         _this.size = 58;
         _this.padding = 5;
         _this.root = new Group();
-        var scene = new Scene();
-        scene.width = _this.size;
-        scene.height = _this.size;
+        var scene = new Scene(window.document, _this.size, _this.size);
+        _.addCssClass(scene.canvas.element, 'ag-chart-mini-thumbnail-canvas');
         scene.root = _this.root;
-        scene.parent = parent;
+        scene.container = container;
         _this.scene = scene;
         _this.tooltipName = tooltipName;
         return _this;

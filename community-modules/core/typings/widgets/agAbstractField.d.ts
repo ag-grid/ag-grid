@@ -5,9 +5,13 @@ export declare abstract class AgAbstractField<T> extends AgAbstractLabel {
     protected abstract displayTag: string;
     protected abstract className: string;
     protected value: T;
+    protected disabled: boolean;
+    protected postConstruct(): void;
     onValueChange(callbackFn: (newValue: T) => void): this;
     getWidth(): number;
     setWidth(width: number): this;
     getValue(): T;
     setValue(value: T, silent?: boolean): this;
+    setDisabled(disabled: boolean): this;
+    isDisabled(): boolean;
 }

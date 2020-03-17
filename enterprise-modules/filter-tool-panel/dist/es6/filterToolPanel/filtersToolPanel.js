@@ -90,7 +90,7 @@ var FiltersToolPanel = /** @class */ (function (_super) {
     FiltersToolPanel.prototype.destroy = function () {
         _super.prototype.destroy.call(this);
     };
-    FiltersToolPanel.TEMPLATE = "<div class=\"ag-filter-panel\">\n            <ag-filters-tool-panel-header ref=\"filtersToolPanelHeaderPanel\"></ag-filters-tool-panel-header>\n            <ag-filters-tool-panel-list ref=\"filtersToolPanelListPanel\"></ag-filters-tool-panel-list> \n         </div>";
+    FiltersToolPanel.TEMPLATE = "<div class=\"ag-filter-toolpanel\">\n            <ag-filters-tool-panel-header ref=\"filtersToolPanelHeaderPanel\"></ag-filters-tool-panel-header>\n            <ag-filters-tool-panel-list ref=\"filtersToolPanelListPanel\"></ag-filters-tool-panel-list> \n         </div>";
     __decorate([
         RefSelector('filtersToolPanelHeaderPanel')
     ], FiltersToolPanel.prototype, "filtersToolPanelHeaderPanel", void 0);

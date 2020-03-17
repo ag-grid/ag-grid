@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v22.1.1
+ * @version v23.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -26,23 +26,9 @@ var AgToggleButton = /** @class */ (function (_super) {
     function AgToggleButton() {
         var _this = _super !== null && _super.apply(this, arguments) || this;
         _this.className = 'ag-toggle-button';
-        _this.nativeInputClassName = 'ag-native-toggle-button';
         _this.inputType = 'checkbox';
         return _this;
     }
-    AgToggleButton.prototype.postConstruct = function () {
-        _super.prototype.postConstruct.call(this);
-        if (!this.gridOptionsWrapper.useNativeCheckboxes()) {
-            utils_1._.addCssClass(this.eIconEl, 'ag-icon');
-        }
-    };
-    AgToggleButton.prototype.updateIcons = function () {
-        if (!this.gridOptionsWrapper.useNativeCheckboxes()) {
-            var value = this.getValue();
-            utils_1._.addOrRemoveCssClass(this.eIconEl, 'ag-icon-toggle-on', value);
-            utils_1._.addOrRemoveCssClass(this.eIconEl, 'ag-icon-toggle-off', !value);
-        }
-    };
     AgToggleButton.prototype.setValue = function (value, silent) {
         _super.prototype.setValue.call(this, value, silent);
         utils_1._.addOrRemoveCssClass(this.getGui(), 'ag-selected', this.getValue());

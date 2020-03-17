@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v22.1.1
+ * @version v23.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -46,8 +46,19 @@ var GroupCellRenderer = /** @class */ (function (_super) {
         var embeddedRowMismatch = this.isEmbeddedRowMismatch();
         // This allows for empty strings to appear as groups since
         // it will only return for null or undefined.
-        var cellIsEmpty = params.value == null;
-        this.cellIsBlank = embeddedRowMismatch || cellIsEmpty;
+        var nullValue = params.value == null;
+        var skipCell = false;
+        // if the groupCellRenderer is inside of a footer and groupHideOpenParents is true
+        // we should only display the groupCellRenderer if the current column is the rowGroupedColumn
+        if (this.gridOptionsWrapper.isGroupIncludeFooter() && this.gridOptionsWrapper.isGroupHideOpenParents()) {
+            var node = params.node;
+            if (node.footer) {
+                var showRowGroup = params.colDef && params.colDef.showRowGroup;
+                var rowGroupColumnId = node.rowGroupColumn && node.rowGroupColumn.getColId();
+                skipCell = showRowGroup !== rowGroupColumnId;
+            }
+        }
+        this.cellIsBlank = embeddedRowMismatch || nullValue || skipCell;
         if (this.cellIsBlank) {
             return;
         }
@@ -67,30 +78,22 @@ var GroupCellRenderer = /** @class */ (function (_super) {
     // in the body, or if pinning in the pinned section, or if pinning and RTL,
     // in the right section. otherwise we would have the cell repeated in each section.
     GroupCellRenderer.prototype.isEmbeddedRowMismatch = function () {
-        if (this.params.fullWidth && this.gridOptionsWrapper.isEmbedFullWidthRows()) {
-            var pinnedLeftCell = this.params.pinned === constants_1.Constants.PINNED_LEFT;
-            var pinnedRightCell = this.params.pinned === constants_1.Constants.PINNED_RIGHT;
-            var bodyCell = !pinnedLeftCell && !pinnedRightCell;
-            if (this.gridOptionsWrapper.isEnableRtl()) {
-                if (this.columnController.isPinningLeft()) {
-                    return !pinnedRightCell;
-                }
-                else {
-                    return !bodyCell;
-                }
-            }
-            else {
-                if (this.columnController.isPinningLeft()) {
-                    return !pinnedLeftCell;
-                }
-                else {
-                    return !bodyCell;
-                }
-            }
-        }
-        else {
+        if (!this.params.fullWidth || !this.gridOptionsWrapper.isEmbedFullWidthRows()) {
             return false;
         }
+        var pinnedLeftCell = this.params.pinned === constants_1.Constants.PINNED_LEFT;
+        var pinnedRightCell = this.params.pinned === constants_1.Constants.PINNED_RIGHT;
+        var bodyCell = !pinnedLeftCell && !pinnedRightCell;
+        if (this.gridOptionsWrapper.isEnableRtl()) {
+            if (this.columnController.isPinningLeft()) {
+                return !pinnedRightCell;
+            }
+            return !bodyCell;
+        }
+        if (this.columnController.isPinningLeft()) {
+            return !pinnedLeftCell;
+        }
+        return !bodyCell;
     };
     GroupCellRenderer.prototype.setIndent = function () {
         if (this.gridOptionsWrapper.isGroupHideOpenParents()) {
@@ -113,14 +116,9 @@ var GroupCellRenderer = /** @class */ (function (_super) {
     GroupCellRenderer.prototype.setPaddingDeprecatedWay = function (paddingCount, padding) {
         utils_1._.doOnce(function () { return console.warn('ag-Grid: since v14.2, configuring padding for groupCellRenderer should be done with Sass variables and themes. Please see the ag-Grid documentation page for Themes, in particular the property $row-group-indent-size.'); }, 'groupCellRenderer->doDeprecatedWay');
         var paddingPx = paddingCount * padding;
-        if (this.gridOptionsWrapper.isEnableRtl()) {
-            // if doing rtl, padding is on the right
-            this.getGui().style.paddingRight = paddingPx + 'px';
-        }
-        else {
-            // otherwise it is on the left
-            this.getGui().style.paddingLeft = paddingPx + 'px';
-        }
+        var eGui = this.getGui();
+        var paddingSide = this.gridOptionsWrapper.isEnableRtl() ? 'paddingRight' : 'paddingLeft';
+        eGui.style[paddingSide] = paddingPx + "px";
     };
     GroupCellRenderer.prototype.setupIndent = function () {
         // only do this if an indent - as this overwrites the padding that
@@ -152,8 +150,8 @@ var GroupCellRenderer = /** @class */ (function (_super) {
         }
     };
     GroupCellRenderer.prototype.createFooterCell = function () {
-        var footerValue;
         var footerValueGetter = this.params.footerValueGetter;
+        var footerValue;
         if (footerValueGetter) {
             // params is same as we were given, except we set the value as the item to display
             var paramsClone = utils_1._.cloneObject(this.params);
@@ -184,12 +182,9 @@ var GroupCellRenderer = /** @class */ (function (_super) {
             this.valueFormatterService.formatValue(columnToUse, params.node, params.scope, groupName) : null;
         params.valueFormatted = valueFormatted;
         var rendererPromise;
-        if (params.fullWidth == true) {
-            rendererPromise = this.useFullWidth(params);
-        }
-        else {
-            rendererPromise = this.useInnerRenderer(this.params.colDef.cellRendererParams, columnToUse.getColDef(), params);
-        }
+        rendererPromise = params.fullWidth
+            ? this.useFullWidth(params)
+            : this.useInnerRenderer(this.params.colDef.cellRendererParams, columnToUse.getColDef(), params);
         // retain a reference to the created renderer - we'll use this later for cleanup (in destroy)
         if (rendererPromise) {
             rendererPromise.then(function (value) {
@@ -199,6 +194,7 @@ var GroupCellRenderer = /** @class */ (function (_super) {
     };
     GroupCellRenderer.prototype.useInnerRenderer = function (groupCellRendererParams, groupedColumnDef, // the column this group row is for, eg 'Country'
     params) {
+        var _this = this;
         // when grouping, the normal case is we use the cell renderer of the grouped column. eg if grouping by country
         // and then rating, we will use the country cell renderer for each country group row and likewise the rating
         // cell renderer for each rating group row.
@@ -211,7 +207,6 @@ var GroupCellRenderer = /** @class */ (function (_super) {
         // 1) thisColDef.cellRendererParams.innerRenderer of the column showing the groups (eg auto group column)
         // 2) groupedColDef.cellRenderer of the grouped column
         // 3) groupedColDef.cellRendererParams.innerRenderer
-        var _this = this;
         var cellRendererPromise = null;
         // we check if cell renderer provided for the group cell renderer, eg colDef.cellRendererParams.innerRenderer
         var groupInnerRendererClass = this.userComponentFactory
@@ -225,12 +220,14 @@ var GroupCellRenderer = /** @class */ (function (_super) {
             // otherwise see if we can use the cellRenderer of the column we are grouping by
             var groupColumnRendererClass = this.userComponentFactory
                 .lookupComponentClassDef(groupedColumnDef, "cellRenderer");
-            if (groupColumnRendererClass && groupColumnRendererClass.source != userComponentFactory_1.ComponentSource.DEFAULT) {
+            if (groupColumnRendererClass &&
+                groupColumnRendererClass.source != userComponentFactory_1.ComponentSource.DEFAULT) {
                 // Only if the original column is using a specific renderer, it it is a using a DEFAULT one ignore it
                 cellRendererPromise = this.userComponentFactory.newCellRenderer(groupedColumnDef, params);
             }
-            else if (groupColumnRendererClass && groupColumnRendererClass.source == userComponentFactory_1.ComponentSource.DEFAULT
-                && (utils_1._.get(groupedColumnDef, 'cellRendererParams.innerRenderer', null))) {
+            else if (groupColumnRendererClass &&
+                groupColumnRendererClass.source == userComponentFactory_1.ComponentSource.DEFAULT &&
+                (utils_1._.get(groupedColumnDef, 'cellRendererParams.innerRenderer', null))) {
                 // EDGE CASE - THIS COMES FROM A COLUMN WHICH HAS BEEN GROUPED DYNAMICALLY, THAT HAS AS RENDERER 'group'
                 // AND HAS A INNER CELL RENDERER
                 cellRendererPromise = this.userComponentFactory.newInnerCellRenderer(groupedColumnDef.cellRendererParams, params);
@@ -288,19 +285,17 @@ var GroupCellRenderer = /** @class */ (function (_super) {
         if (typeof paramsCheckbox === 'function') {
             return paramsCheckbox(this.params);
         }
-        else {
-            return paramsCheckbox === true;
-        }
+        return paramsCheckbox === true;
     };
     GroupCellRenderer.prototype.addCheckboxIfNeeded = function () {
         var rowNode = this.displayedGroup;
-        var checkboxNeeded = this.isUserWantsSelected()
+        var checkboxNeeded = this.isUserWantsSelected() &&
             // footers cannot be selected
-            && !rowNode.footer
+            !rowNode.footer &&
             // pinned rows cannot be selected
-            && !rowNode.rowPinned
+            !rowNode.rowPinned &&
             // details cannot be selected
-            && !rowNode.detail;
+            !rowNode.detail;
         if (checkboxNeeded) {
             var cbSelectionComponent_1 = new checkboxSelectionComponent_1.CheckboxSelectionComponent();
             this.getContext().wireBean(cbSelectionComponent_1);
@@ -339,17 +334,15 @@ var GroupCellRenderer = /** @class */ (function (_super) {
     };
     GroupCellRenderer.prototype.onKeyDown = function (event) {
         var enterKeyPressed = utils_1._.isKeyPressed(event, constants_1.Constants.KEY_ENTER);
-        if (enterKeyPressed) {
-            if (this.params.suppressEnterExpand) {
-                return;
-            }
-            var cellEditable = this.params.column && this.params.column.isCellEditable(this.params.node);
-            if (cellEditable) {
-                return;
-            }
-            event.preventDefault();
-            this.onExpandOrContract();
+        if (!enterKeyPressed || this.params.suppressEnterExpand) {
+            return;
         }
+        var cellEditable = this.params.column && this.params.column.isCellEditable(this.params.node);
+        if (cellEditable) {
+            return;
+        }
+        event.preventDefault();
+        this.onExpandOrContract();
     };
     GroupCellRenderer.prototype.setupDragOpenParents = function () {
         var column = this.params.column;
@@ -471,17 +464,11 @@ var GroupCellRenderer = /** @class */ (function (_super) {
         context_1.Autowired('expressionService')
     ], GroupCellRenderer.prototype, "expressionService", void 0);
     __decorate([
-        context_1.Autowired('eventService')
-    ], GroupCellRenderer.prototype, "eventService", void 0);
-    __decorate([
         context_1.Autowired('valueFormatterService')
     ], GroupCellRenderer.prototype, "valueFormatterService", void 0);
     __decorate([
         context_1.Autowired('columnController')
     ], GroupCellRenderer.prototype, "columnController", void 0);
-    __decorate([
-        context_1.Autowired('mouseEventService')
-    ], GroupCellRenderer.prototype, "mouseEventService", void 0);
     __decorate([
         context_1.Autowired('userComponentFactory')
     ], GroupCellRenderer.prototype, "userComponentFactory", void 0);

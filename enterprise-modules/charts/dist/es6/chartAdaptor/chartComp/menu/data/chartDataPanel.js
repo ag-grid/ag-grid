@@ -24,7 +24,7 @@ var __spreadArrays = (this && this.__spreadArrays) || function () {
             r[k] = a[j];
     return r;
 };
-import { _, AgAbstractField, AgCheckbox, AgGroupComponent, AgRadioButton, Autowired, Component, PostConstruct, ChartType, DragSourceType, VerticalDirection, AgToggleButton } from "@ag-grid-community/core";
+import { _, AgAbstractField, AgCheckbox, AgGroupComponent, AgRadioButton, AgToggleButton, Autowired, ChartType, Component, DragAndDropService, DragSourceType, PostConstruct, VerticalDirection } from "@ag-grid-community/core";
 import { ChartController } from "../../chartController";
 var ChartDataPanel = /** @class */ (function (_super) {
     __extends(ChartDataPanel, _super);
@@ -69,6 +69,7 @@ var ChartDataPanel = /** @class */ (function (_super) {
     };
     ChartDataPanel.prototype.addComponent = function (parent, component) {
         var eDiv = document.createElement('div');
+        eDiv.className = 'ag-chart-data-section';
         eDiv.appendChild(component.getGui());
         parent.appendChild(eDiv);
     };
@@ -85,7 +86,8 @@ var ChartDataPanel = /** @class */ (function (_super) {
             title: this.getCategoryGroupTitle(),
             enabled: true,
             suppressEnabledCheckbox: true,
-            suppressOpenCloseIcons: false
+            suppressOpenCloseIcons: false,
+            cssIdentifier: 'charts-data'
         }));
         var inputName = "chartDimension" + this.getCompId();
         columns.forEach(function (col) {
@@ -105,7 +107,8 @@ var ChartDataPanel = /** @class */ (function (_super) {
             title: this.getSeriesGroupTitle(),
             enabled: true,
             suppressEnabledCheckbox: true,
-            suppressOpenCloseIcons: false
+            suppressOpenCloseIcons: false,
+            cssIdentifier: 'charts-data'
         }));
         if (this.chartController.isActiveXYChart()) {
             var pairedModeToggle = this.seriesGroupComp.wireDependentBean(new AgToggleButton());
@@ -114,7 +117,7 @@ var ChartDataPanel = /** @class */ (function (_super) {
                 .setLabel(this.chartTranslator.translate('paired'))
                 .setLabelAlignment('left')
                 .setLabelWidth('flex')
-                .setInputWidth(40)
+                .setInputWidth(45)
                 .setValue(chartProxy_1.getSeriesOption('paired') || false)
                 .onValueChange(function (newValue) {
                 chartProxy_1.setSeriesOption('paired', newValue);
@@ -145,12 +148,14 @@ var ChartDataPanel = /** @class */ (function (_super) {
     ChartDataPanel.prototype.addDragHandle = function (comp, col) {
         var _this = this;
         var eDragHandle = _.createIconNoSpan('columnDrag', this.gridOptionsWrapper);
-        _.addCssClass(eDragHandle, 'ag-column-drag');
+        _.addCssClass(eDragHandle, 'ag-drag-handle');
+        _.addCssClass(eDragHandle, 'ag-chart-data-column-drag-handle');
         comp.getGui().insertAdjacentElement('beforeend', eDragHandle);
         var dragSource = {
             type: DragSourceType.ChartPanel,
             eElement: eDragHandle,
             dragItemName: col.displayName,
+            defaultIconName: DragAndDropService.ICON_MOVE,
             getDragItem: function () { return ({ columns: [col.column] }); },
             onDragStopped: function () { _this.insertIndex = undefined; }
         };

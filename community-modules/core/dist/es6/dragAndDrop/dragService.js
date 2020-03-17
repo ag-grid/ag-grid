@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v22.1.1
+ * @version v23.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -17,10 +17,6 @@ import { _ } from "../utils";
  * second is moving the columns and column groups around (ie the 'drag' part of Drag and Drop. */
 var DragService = /** @class */ (function () {
     function DragService() {
-        this.onMouseUpListener = this.onMouseUp.bind(this);
-        this.onMouseMoveListener = this.onMouseMove.bind(this);
-        this.onTouchEndListener = this.onTouchUp.bind(this);
-        this.onTouchMoveListener = this.onTouchMove.bind(this);
         this.dragEndFunctions = [];
         this.dragSources = [];
     }
@@ -83,40 +79,38 @@ var DragService = /** @class */ (function () {
         var touch = touchEvent.touches[0];
         this.touchLastTime = touch;
         this.touchStart = touch;
-        touchEvent.preventDefault();
-        // we temporally add these listeners, for the duration of the drag, they
-        // are removed in touch end handling.
-        params.eElement.addEventListener('touchmove', this.onTouchMoveListener, { passive: true });
-        params.eElement.addEventListener('touchend', this.onTouchEndListener, { passive: true });
-        params.eElement.addEventListener('touchcancel', this.onTouchEndListener, { passive: true });
-        this.dragEndFunctions.push(function () {
-            params.eElement.removeEventListener('touchmove', _this.onTouchMoveListener, { passive: true });
-            params.eElement.removeEventListener('touchend', _this.onTouchEndListener, { passive: true });
-            params.eElement.removeEventListener('touchcancel', _this.onTouchEndListener, { passive: true });
-        });
+        if (touchEvent.cancelable) {
+            touchEvent.preventDefault();
+        }
+        var touchMoveEvent = function (e) { return _this.onTouchMove(e, params.eElement); };
+        var touchEndEvent = function (e) { return _this.onTouchUp(e, params.eElement); };
+        var target = params.eElement;
+        var events = [
+            { target: target, type: 'touchmove', listener: touchMoveEvent, options: { passive: true } },
+            { target: target, type: 'touchend', listener: touchEndEvent, options: { passive: true } },
+            { target: target, type: 'touchcancel', listener: touchEndEvent, options: { passive: true } }
+        ];
+        // temporally add these listeners, for the duration of the drag
+        this.addTemporaryEvents(events);
         // see if we want to start dragging straight away
         if (params.dragStartPixels === 0) {
-            this.onCommonMove(touch, this.touchStart);
+            this.onCommonMove(touch, this.touchStart, params.eElement);
         }
     };
     // gets called whenever mouse down on any drag source
     DragService.prototype.onMouseDown = function (params, mouseEvent) {
         var _this = this;
-        // we ignore when shift key is pressed. this is for the range selection, as when
-        // user shift-clicks a cell, this should not be interpreted as the start of a drag.
-        // if (mouseEvent.shiftKey) { return; }
-        if (params.skipMouseEvent) {
-            if (params.skipMouseEvent(mouseEvent)) {
-                return;
-            }
+        var e = mouseEvent;
+        if (params.skipMouseEvent && params.skipMouseEvent(mouseEvent)) {
+            return;
         }
         // if there are two elements with parent / child relationship, and both are draggable,
         // when we drag the child, we should NOT drag the parent. an example of this is row moving
         // and range selection - row moving should get preference when use drags the rowDrag component.
-        if (mouseEvent._alreadyProcessedByDragService) {
+        if (e._alreadyProcessedByDragService) {
             return;
         }
-        mouseEvent._alreadyProcessedByDragService = true;
+        e._alreadyProcessedByDragService = true;
         // only interested in left button clicks
         if (mouseEvent.button !== 0) {
             return;
@@ -126,18 +120,33 @@ var DragService = /** @class */ (function () {
         this.mouseStartEvent = mouseEvent;
         var eDocument = this.gridOptionsWrapper.getDocument();
         this.setNoSelectToBody(true);
-        // we temporally add these listeners, for the duration of the drag, they
-        // are removed in mouseup handling.
-        eDocument.addEventListener('mousemove', this.onMouseMoveListener);
-        eDocument.addEventListener('mouseup', this.onMouseUpListener);
-        this.dragEndFunctions.push(function () {
-            eDocument.removeEventListener('mousemove', _this.onMouseMoveListener);
-            eDocument.removeEventListener('mouseup', _this.onMouseUpListener);
-        });
+        var mouseMoveEvent = function (e, el) { return _this.onMouseMove(e, params.eElement); };
+        var mouseUpEvent = function (e, el) { return _this.onMouseUp(e, params.eElement); };
+        var contextEvent = function (e) { return e.preventDefault(); };
+        var target = eDocument;
+        var events = [
+            { target: target, type: 'mousemove', listener: mouseMoveEvent },
+            { target: target, type: 'mouseup', listener: mouseUpEvent },
+            { target: target, type: 'contextmenu', listener: contextEvent }
+        ];
+        // temporally add these listeners, for the duration of the drag
+        this.addTemporaryEvents(events);
         //see if we want to start dragging straight away
         if (params.dragStartPixels === 0) {
-            this.onMouseMove(mouseEvent);
+            this.onMouseMove(mouseEvent, params.eElement);
         }
+    };
+    DragService.prototype.addTemporaryEvents = function (events) {
+        events.forEach(function (currentEvent) {
+            var target = currentEvent.target, type = currentEvent.type, listener = currentEvent.listener, options = currentEvent.options;
+            target.addEventListener(type, listener, options);
+        });
+        this.dragEndFunctions.push(function () {
+            events.forEach(function (currentEvent) {
+                var target = currentEvent.target, type = currentEvent.type, listener = currentEvent.listener, options = currentEvent.options;
+                target.removeEventListener(type, listener, options);
+            });
+        });
     };
     // returns true if the event is close to the original event by X pixels either vertically or horizontally.
     // we only start dragging after X pixels so this allows us to know if we should start dragging yet.
@@ -155,7 +164,7 @@ var DragService = /** @class */ (function () {
         }
         return null;
     };
-    DragService.prototype.onCommonMove = function (currentEvent, startEvent) {
+    DragService.prototype.onCommonMove = function (currentEvent, startEvent, el) {
         if (!this.dragging) {
             // if mouse hasn't travelled from the start position enough, do nothing
             if (!this.dragging && this.isEventNearStartEvent(currentEvent, startEvent)) {
@@ -165,14 +174,15 @@ var DragService = /** @class */ (function () {
             var event_1 = {
                 type: Events.EVENT_DRAG_STARTED,
                 api: this.gridApi,
-                columnApi: this.columnApi
+                columnApi: this.columnApi,
+                target: el
             };
             this.eventService.dispatchEvent(event_1);
             this.currentDragParams.onDragStart(startEvent);
         }
         this.currentDragParams.onDragging(currentEvent);
     };
-    DragService.prototype.onTouchMove = function (touchEvent) {
+    DragService.prototype.onTouchMove = function (touchEvent, el) {
         var touch = this.getFirstActiveTouch(touchEvent.touches);
         if (!touch) {
             return;
@@ -182,14 +192,14 @@ var DragService = /** @class */ (function () {
         // like do 'back button' (chrome does this) or scroll the page (eg drag column could  be confused
         // with scroll page in the app)
         // touchEvent.preventDefault();
-        this.onCommonMove(touch, this.touchStart);
+        this.onCommonMove(touch, this.touchStart, el);
     };
     // only gets called after a mouse down - as this is only added after mouseDown
     // and is removed when mouseUp happens
-    DragService.prototype.onMouseMove = function (mouseEvent) {
-        this.onCommonMove(mouseEvent, this.mouseStartEvent);
+    DragService.prototype.onMouseMove = function (mouseEvent, el) {
+        this.onCommonMove(mouseEvent, this.mouseStartEvent, el);
     };
-    DragService.prototype.onTouchUp = function (touchEvent) {
+    DragService.prototype.onTouchUp = function (touchEvent, el) {
         var touch = this.getFirstActiveTouch(touchEvent.changedTouches);
         // i haven't worked this out yet, but there is no matching touch
         // when we get the touch up event. to get around this, we swap in
@@ -203,24 +213,25 @@ var DragService = /** @class */ (function () {
         // we check this before onUpCommon as onUpCommon resets the dragging
         // let tap = !this.dragging;
         // let tapTarget = this.currentDragParams.eElement;
-        this.onUpCommon(touch);
+        this.onUpCommon(touch, el);
         // if tap, tell user
         // console.log(`${Math.random()} tap = ${tap}`);
         // if (tap) {
         //     tapTarget.click();
         // }
     };
-    DragService.prototype.onMouseUp = function (mouseEvent) {
-        this.onUpCommon(mouseEvent);
+    DragService.prototype.onMouseUp = function (mouseEvent, el) {
+        this.onUpCommon(mouseEvent, el);
     };
-    DragService.prototype.onUpCommon = function (eventOrTouch) {
+    DragService.prototype.onUpCommon = function (eventOrTouch, el) {
         if (this.dragging) {
             this.dragging = false;
             this.currentDragParams.onDragStop(eventOrTouch);
             var event_2 = {
                 type: Events.EVENT_DRAG_STOPPED,
                 api: this.gridApi,
-                columnApi: this.columnApi
+                columnApi: this.columnApi,
+                target: el
             };
             this.eventService.dispatchEvent(event_2);
         }

@@ -28,7 +28,9 @@ export interface DragSource {
     /** If eElement is dragged, then the dragItem is the object that gets passed around. */
     getDragItem: () => DragItem;
     /** This name appears in the ghost icon when dragging */
-    dragItemName: string | null;
+    dragItemName: string | (() => string) | null;
+    /** Icon to show when not over a drop zone */
+    defaultIconName?: string;
     /** The drop target associated with this dragSource. When dragging starts, this target does not get an
      * onDragEnter event. */
     dragSourceDropTarget?: DropTarget;
@@ -83,7 +85,6 @@ export class DragAndDropService {
     @Autowired('environment') private environment: Environment;
 
     public static ICON_PINNED = 'pinned';
-    public static ICON_ADD = 'add';
     public static ICON_MOVE = 'move';
     public static ICON_LEFT = 'left';
     public static ICON_RIGHT = 'right';
@@ -91,15 +92,13 @@ export class DragAndDropService {
     public static ICON_AGGREGATE = 'aggregate';
     public static ICON_PIVOT = 'pivot';
     public static ICON_NOT_ALLOWED = 'notAllowed';
+    public static ICON_HIDE = 'hide';
 
     public static GHOST_TEMPLATE =
-        '<div class="ag-dnd-ghost">' +
+        '<div ref="eWrapper" class="ag-dnd-wrapper ag-unselectable"><div class="ag-dnd-ghost">' +
         '  <span class="ag-dnd-ghost-icon ag-shake-left-to-right"></span>' +
-        '  <div class="ag-dnd-ghost-label">' +
-        '  </div>' +
-        '</div>';
-
-    private logger: Logger;
+        '  <div class="ag-dnd-ghost-label"></div>' +
+        '</div></div>';
 
     private dragSourceAndParamsList: { params: DragListenerParams, dragSource: DragSource }[] = [];
 
@@ -108,7 +107,7 @@ export class DragAndDropService {
     private dragSource: DragSource;
     private dragging: boolean;
 
-    private eGhost: HTMLElement;
+    private eWrapper: HTMLElement;
     private eGhostParent: HTMLElement;
     private eGhostIcon: HTMLElement;
 
@@ -116,8 +115,7 @@ export class DragAndDropService {
     private lastDropTarget: DropTarget;
 
     private ePinnedIcon: HTMLElement;
-    private ePlusIcon: HTMLElement;
-    private eHiddenIcon: HTMLElement;
+    private eHideIcon: HTMLElement;
     private eMoveIcon: HTMLElement;
     private eLeftIcon: HTMLElement;
     private eRightIcon: HTMLElement;
@@ -129,8 +127,7 @@ export class DragAndDropService {
     @PostConstruct
     private init(): void {
         this.ePinnedIcon = _.createIcon('columnMovePin', this.gridOptionsWrapper, null);
-        this.ePlusIcon = _.createIcon('columnMoveAdd', this.gridOptionsWrapper, null);
-        this.eHiddenIcon = _.createIcon('columnMoveHide', this.gridOptionsWrapper, null);
+        this.eHideIcon = _.createIcon('columnMoveHide', this.gridOptionsWrapper, null);
         this.eMoveIcon = _.createIcon('columnMoveMove', this.gridOptionsWrapper, null);
         this.eLeftIcon = _.createIcon('columnMoveLeft', this.gridOptionsWrapper, null);
         this.eRightIcon = _.createIcon('columnMoveRight', this.gridOptionsWrapper, null);
@@ -138,10 +135,6 @@ export class DragAndDropService {
         this.eAggregateIcon = _.createIcon('columnMoveValue', this.gridOptionsWrapper, null);
         this.ePivotIcon = _.createIcon('columnMovePivot', this.gridOptionsWrapper, null);
         this.eDropNotAllowedIcon = _.createIcon('dropNotAllowed', this.gridOptionsWrapper, null);
-    }
-
-    private setBeans(@Qualifier('loggerFactory') loggerFactory: LoggerFactory) {
-        this.logger = loggerFactory.create('OldToolPanelDragAndDropService');
     }
 
     public addDragSource(dragSource: DragSource, allowTouch = false): void {
@@ -277,9 +270,7 @@ export class DragAndDropService {
                 const rect = eContainer.getBoundingClientRect();
 
                 // if element is not visible, then width and height are zero
-                if (rect.width === 0 || rect.height === 0) {
-                    return;
-                }
+                if (rect.width === 0 || rect.height === 0) { return; }
 
                 const horizontalFit = mouseEvent.clientX >= rect.left && mouseEvent.clientX <= rect.right;
                 const verticalFit = mouseEvent.clientY >= rect.top && mouseEvent.clientY <= rect.bottom;
@@ -297,45 +288,36 @@ export class DragAndDropService {
     }
 
     public getHorizontalDirection(event: MouseEvent): HorizontalDirection {
-        if (this.eventLastTime.clientX > event.clientX) {
-            return HorizontalDirection.Left;
-        } else if (this.eventLastTime.clientX < event.clientX) {
-            return HorizontalDirection.Right;
-        } else {
-            return null;
-        }
+        const clientX = this.eventLastTime.clientX;
+        const eClientX = event.clientX;
+
+        if (clientX === eClientX) { return null; }
+
+        return clientX > eClientX ? HorizontalDirection.Left : HorizontalDirection.Right;
     }
 
     public getVerticalDirection(event: MouseEvent): VerticalDirection {
-        if (this.eventLastTime.clientY > event.clientY) {
-            return VerticalDirection.Up;
-        } else if (this.eventLastTime.clientY < event.clientY) {
-            return VerticalDirection.Down;
-        } else {
-            return null;
-        }
+        const clientY = this.eventLastTime.clientY;
+        const eClientY = event.clientY;
+
+        if (clientY === eClientY) { return null; }
+
+        return clientY > eClientY ? VerticalDirection.Up : VerticalDirection.Down;
     }
 
     public createDropTargetEvent(dropTarget: DropTarget, event: MouseEvent, hDirection: HorizontalDirection, vDirection: VerticalDirection, fromNudge: boolean): DraggingEvent {
         // localise x and y to the target component
         const rect = dropTarget.getContainer().getBoundingClientRect();
+        const { dragItem, dragSource } = this;
         const x = event.clientX - rect.left;
         const y = event.clientY - rect.top;
 
-        return {
-            event,
-            x,
-            y,
-            vDirection,
-            hDirection,
-            dragSource: this.dragSource,
-            fromNudge,
-            dragItem: this.dragItem
-        };
+        return { event, x, y, vDirection, hDirection, dragSource, fromNudge, dragItem };
     }
 
     private positionGhost(event: MouseEvent): void {
-        const ghostRect = this.eGhost.getBoundingClientRect();
+        const ghost = this.eWrapper.querySelector('.ag-dnd-ghost') as HTMLDivElement;
+        const ghostRect = ghost.getBoundingClientRect();
         const ghostHeight = ghostRect.height;
 
         // for some reason, without the '-2', it still overlapped by 1 or 2 pixels, which
@@ -347,59 +329,65 @@ export class DragAndDropService {
         // put ghost vertically in middle of cursor
         let top = event.pageY - (ghostHeight / 2);
         // horizontally, place cursor just right of icon
-        let left = event.pageX - 30;
+        let left = event.pageX - 10;
 
         const usrDocument = this.gridOptionsWrapper.getDocument();
         const windowScrollY = window.pageYOffset || usrDocument.documentElement.scrollTop;
         const windowScrollX = window.pageXOffset || usrDocument.documentElement.scrollLeft;
 
         // check ghost is not positioned outside of the browser
-        if (browserWidth > 0 && ((left + this.eGhost.clientWidth) > (browserWidth + windowScrollX))) {
-            left = browserWidth + windowScrollX - this.eGhost.clientWidth;
+        if (browserWidth > 0 && ((left + ghost.clientWidth) > (browserWidth + windowScrollX))) {
+            left = browserWidth + windowScrollX - ghost.clientWidth;
         }
 
         if (left < 0) {
             left = 0;
         }
 
-        if (browserHeight > 0 && ((top + this.eGhost.clientHeight) > (browserHeight + windowScrollY))) {
-            top = browserHeight + windowScrollY - this.eGhost.clientHeight;
+        if (browserHeight > 0 && ((top + ghost.clientHeight) > (browserHeight + windowScrollY))) {
+            top = browserHeight + windowScrollY - ghost.clientHeight;
         }
 
         if (top < 0) {
             top = 0;
         }
 
-        this.eGhost.style.left = left + 'px';
-        this.eGhost.style.top = top + 'px';
+        ghost.style.left = left + 'px';
+        ghost.style.top = top + 'px';
     }
 
     private removeGhost(): void {
-        if (this.eGhost && this.eGhostParent) {
-            this.eGhostParent.removeChild(this.eGhost);
+        if (this.eWrapper && this.eGhostParent) {
+            this.eGhostParent.removeChild(this.eWrapper);
         }
 
-        this.eGhost = null;
+        this.eWrapper = null;
     }
 
     private createGhost(): void {
-        this.eGhost = _.loadTemplate(DragAndDropService.GHOST_TEMPLATE);
+        this.eWrapper = _.loadTemplate(DragAndDropService.GHOST_TEMPLATE);
         const { theme } = this.environment.getTheme();
 
         if (theme) {
-            _.addCssClass(this.eGhost, theme);
+            _.addCssClass(this.eWrapper, theme);
         }
 
-        this.eGhostIcon = this.eGhost.querySelector('.ag-dnd-ghost-icon') as HTMLElement;
+        this.eGhostIcon = this.eWrapper.querySelector('.ag-dnd-ghost-icon') as HTMLElement;
 
         this.setGhostIcon(null);
 
-        const eText = this.eGhost.querySelector('.ag-dnd-ghost-label') as HTMLElement;
-        eText.innerHTML = _.escape(this.dragSource.dragItemName);
+        const eText = this.eWrapper.querySelector('.ag-dnd-ghost-label') as HTMLElement;
+        let dragItemName = this.dragSource.dragItemName;
 
-        this.eGhost.style.height = '25px';
-        this.eGhost.style.top = '20px';
-        this.eGhost.style.left = '20px';
+        if (_.isFunction(dragItemName)) {
+            dragItemName = (dragItemName as () => string)();
+        }
+
+        eText.innerHTML = _.escape(dragItemName as string);
+
+        this.eWrapper.style.height = '25px';
+        this.eWrapper.style.top = '20px';
+        this.eWrapper.style.left = '20px';
 
         const usrDocument = this.gridOptionsWrapper.getDocument();
         this.eGhostParent = usrDocument.querySelector('body') as HTMLElement;
@@ -407,7 +395,7 @@ export class DragAndDropService {
         if (!this.eGhostParent) {
             console.warn('ag-Grid: could not find document body, it is needed for dragging columns');
         } else {
-            this.eGhostParent.appendChild(this.eGhost);
+            this.eGhostParent.appendChild(this.eWrapper);
         }
     }
 
@@ -416,21 +404,30 @@ export class DragAndDropService {
 
         let eIcon: HTMLElement;
 
-        switch (iconName) {
-            case DragAndDropService.ICON_ADD: eIcon = this.ePlusIcon; break;
-            case DragAndDropService.ICON_PINNED: eIcon = this.ePinnedIcon; break;
-            case DragAndDropService.ICON_MOVE: eIcon = this.eMoveIcon; break;
-            case DragAndDropService.ICON_LEFT: eIcon = this.eLeftIcon; break;
-            case DragAndDropService.ICON_RIGHT: eIcon = this.eRightIcon; break;
-            case DragAndDropService.ICON_GROUP: eIcon = this.eGroupIcon; break;
-            case DragAndDropService.ICON_AGGREGATE: eIcon = this.eAggregateIcon; break;
-            case DragAndDropService.ICON_PIVOT: eIcon = this.ePivotIcon; break;
-            case DragAndDropService.ICON_NOT_ALLOWED: eIcon = this.eDropNotAllowedIcon; break;
-            default: eIcon = this.eHiddenIcon; break;
+        if (!iconName) {
+            iconName = this.dragSource.defaultIconName || DragAndDropService.ICON_NOT_ALLOWED;
         }
 
-        this.eGhostIcon.appendChild(eIcon);
+        switch (iconName) {
+            case DragAndDropService.ICON_PINNED:      eIcon = this.ePinnedIcon; break;
+            case DragAndDropService.ICON_MOVE:        eIcon = this.eMoveIcon; break;
+            case DragAndDropService.ICON_LEFT:        eIcon = this.eLeftIcon; break;
+            case DragAndDropService.ICON_RIGHT:       eIcon = this.eRightIcon; break;
+            case DragAndDropService.ICON_GROUP:       eIcon = this.eGroupIcon; break;
+            case DragAndDropService.ICON_AGGREGATE:   eIcon = this.eAggregateIcon; break;
+            case DragAndDropService.ICON_PIVOT:       eIcon = this.ePivotIcon; break;
+            case DragAndDropService.ICON_NOT_ALLOWED: eIcon = this.eDropNotAllowedIcon; break;
+            case DragAndDropService.ICON_HIDE:        eIcon = this.eHideIcon; break;
+        }
 
         _.addOrRemoveCssClass(this.eGhostIcon, 'ag-shake-left-to-right', shake);
+
+        if (eIcon === this.eHideIcon && this.gridOptionsWrapper.isSuppressDragLeaveHidesColumns()) {
+            return;
+        }
+
+        if (eIcon) {
+            this.eGhostIcon.appendChild(eIcon);
+        }
     }
 }

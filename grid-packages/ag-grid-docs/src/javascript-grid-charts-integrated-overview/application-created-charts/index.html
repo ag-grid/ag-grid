@@ -1,0 +1,15 @@
+<div id="myApp" class="wrapper">
+    <div style="padding-bottom: 4px">
+        <span>
+            <button onclick="onStopMessages()">&#9632; Stop</button>
+            <button onclick="onStartLoad()">&#9658; Start</button>
+        </span>
+        <span style="margin-left: 30px;">
+            <button onclick="createChart('stackedColumn')">Stacked Column Chart</button>
+            <button onclick="createChart('groupedColumn')">Grouped Column Chart</button>
+            <button onclick="createChart('line')">Line Chart</button>
+        </span>
+    </div>
+    <div id="myGrid" class="ag-theme-alpine-dark my-grid"></div>
+    <div id="myChart" class="ag-theme-alpine-dark my-chart"></div>
+</div>

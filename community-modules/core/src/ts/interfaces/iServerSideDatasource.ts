@@ -3,11 +3,13 @@
 // over the wire
 import { RowNode } from "../entities/rowNode";
 import { ColumnVO } from "./iColumnVO";
+import {ColumnApi} from "../columnController/columnApi";
+import {GridApi} from "../gridApi";
 
 export interface IServerSideGetRowsRequest {
-    // columns that are currently row grouped
+    // first row requested
     startRow: number;
-    // columns that are currently row grouped
+    // last row requested
     endRow: number;
     // columns that are currently row grouped
     rowGroupCols: ColumnVO[];
@@ -26,7 +28,6 @@ export interface IServerSideGetRowsRequest {
 }
 
 export interface IServerSideGetRowsParams {
-
     // details for the request,
     request: IServerSideGetRowsRequest;
 
@@ -39,6 +40,12 @@ export interface IServerSideGetRowsParams {
 
     // fail callback, tell the grid the call failed so it can adjust it's state
     failCallback(): void;
+
+    // grid API
+    api: GridApi;
+
+    // column API
+    columnApi: ColumnApi;
 }
 
 // datasource for Server Side Row Model

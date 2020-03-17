@@ -1,14 +1,9 @@
-import { ChartType, _, ScatterSeriesOptions, CartesianChartOptions } from "@ag-grid-community/core";
-import { ChartBuilder } from "../../../../charts/chartBuilder";
-import { ChartProxyParams, UpdateChartParams, FieldDefinition } from "../chartProxy";
-import { ScatterSeries } from "../../../../charts/chart/series/cartesian/scatterSeries";
-import { ChartDataModel } from "../../chartDataModel";
-import { CartesianChartProxy } from "./cartesianChartProxy";
-import { SeriesOptions } from "../../../../charts/chartOptions";
-import { CartesianChart } from "../../../../charts/chart/cartesianChart";
-import { TimeAxis } from "../../../../charts/chart/axis/timeAxis";
-import { NumberAxis } from "../../../../charts/chart/axis/numberAxis";
-import { isDate } from "../../typeChecker";
+import {_, CartesianChartOptions, ChartType, ScatterSeriesOptions} from "@ag-grid-community/core";
+import {CartesianChart, ChartBuilder, ScatterSeries, SeriesOptions} from "ag-charts-community";
+import {ChartProxyParams, FieldDefinition, UpdateChartParams} from "../chartProxy";
+import {ChartDataModel} from "../../chartDataModel";
+import {CartesianChartProxy} from "./cartesianChartProxy";
+import {isDate} from "../../typeChecker";
 
 interface SeriesDefinition {
     xField: FieldDefinition;
@@ -24,8 +19,8 @@ export class ScatterChartProxy extends CartesianChartProxy<ScatterSeriesOptions>
         this.recreateChart();
     }
 
-    protected createChart(options: CartesianChartOptions<ScatterSeriesOptions>): CartesianChart {
-        return ChartBuilder.createScatterChart(this.chartProxyParams.parentElement, options);
+    protected createChart(options?: CartesianChartOptions<ScatterSeriesOptions>): CartesianChart {
+        return ChartBuilder.createScatterChart(this.chartProxyParams.parentElement, options || this.chartOptions);
     }
 
     public update(params: UpdateChartParams): void {
@@ -37,8 +32,10 @@ export class ScatterChartProxy extends CartesianChartProxy<ScatterSeriesOptions>
         const { fields } = params;
         const { seriesDefaults } = this.chartOptions;
         const seriesDefinitions = this.getSeriesDefinitions(fields, seriesDefaults.paired);
+        const testDatum = params.data[0];
+        const xValuesAreDates = seriesDefinitions.map(d => d.xField.colId).map(xKey => testDatum && testDatum[xKey]).every(test => isDate(test));
 
-        this.updateAxes(params.data[0], seriesDefinitions.map(d => d.xField.colId));
+        this.updateAxes(xValuesAreDates ? 'time' : 'number');
 
         const { chart } = this;
         const { fills, strokes } = this.getPalette();
@@ -46,7 +43,7 @@ export class ScatterChartProxy extends CartesianChartProxy<ScatterSeriesOptions>
         const labelFieldDefinition = params.category.id === ChartDataModel.DEFAULT_CATEGORY ? undefined : params.category;
 
         const existingSeriesById = (chart.series as ScatterSeries[]).reduceRight((map, series, i) => {
-            const matchingIndex = _.findIndex(seriesDefinitions, s =>
+            const matchingIndex = _.findIndex(seriesDefinitions, (s: any) =>
                 s.xField.colId === series.xKey &&
                 s.yField.colId === series.yKey &&
                 ((!s.sizeField && !series.sizeKey) || (s.sizeField && s.sizeField.colId === series.sizeKey)));
@@ -103,32 +100,6 @@ export class ScatterChartProxy extends CartesianChartProxy<ScatterSeriesOptions>
         });
     }
 
-    private updateAxes(testDatum: any, xKeys: string[]): void {
-        const { chartOptions } = this;
-
-        if (chartOptions.xAxis.type) { return; }
-
-        const xAxis = this.chart.axes.filter(a => a.position === 'bottom')[0];
-
-        if (!xAxis) { return; }
-
-        const xValuesAreDates = xKeys.map(xKey => testDatum && testDatum[xKey]).every(test => isDate(test));
-
-        if (xValuesAreDates && !(xAxis instanceof TimeAxis)) {
-            const options: CartesianChartOptions<ScatterSeriesOptions> = {
-                ...this.chartOptions,
-                xAxis: {
-                    ...this.chartOptions.xAxis,
-                    type: 'time',
-                }
-            };
-
-            this.recreateChart(options);
-        } else if (!xValuesAreDates && !(xAxis instanceof NumberAxis)) {
-            this.recreateChart();
-        }
-    }
-
     public getTooltipsEnabled(): boolean {
         return this.chartOptions.seriesDefaults.tooltip != null && !!this.chartOptions.seriesDefaults.tooltip.enabled;
     }
@@ -150,7 +121,7 @@ export class ScatterChartProxy extends CartesianChartProxy<ScatterSeriesOptions>
                 width: 3,
             },
             marker: {
-                type: 'circle',
+                shape: 'circle',
                 enabled: true,
                 size: isBubble ? 30 : 6,
                 minSize: isBubble ? 6 : undefined,

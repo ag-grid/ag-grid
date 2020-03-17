@@ -26,7 +26,12 @@ var AxisTicksPanel = /** @class */ (function (_super) {
         return _this;
     }
     AxisTicksPanel.prototype.init = function () {
-        this.setTemplate(AxisTicksPanel.TEMPLATE);
+        var groupParams = {
+            cssIdentifier: 'charts-format-sub-level',
+            direction: 'vertical',
+            suppressOpenCloseIcons: true
+        };
+        this.setTemplate(AxisTicksPanel.TEMPLATE, { axisTicksGroup: groupParams });
         this.initAxisTicks();
     };
     AxisTicksPanel.prototype.initAxisTicks = function () {

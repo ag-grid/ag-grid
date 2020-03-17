@@ -537,10 +537,10 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
     }
 
     public getNodesInRangeForSelection(firstInRange: RowNode, lastInRange: RowNode): RowNode[] {
-        if (_.exists(firstInRange) && firstInRange.parent !== lastInRange.parent) {
+        if (_.exists(lastInRange) && firstInRange.parent !== lastInRange.parent) {
             return [];
         }
-        return lastInRange.parent!.childrenCache!.getRowNodesInRange(firstInRange, lastInRange);
+        return firstInRange.parent!.childrenCache!.getRowNodesInRange(lastInRange, firstInRange);
     }
 
     public getRowNode(id: string): RowNode | null {
@@ -595,7 +595,7 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
             const individualGroupCols =
                 rowGroupCols.map(group => {
                     return {
-                        colId: group.field,
+                        colId: group.id,
                         sort: sortModel[autoGroupIndex].sort
                     };
                 });

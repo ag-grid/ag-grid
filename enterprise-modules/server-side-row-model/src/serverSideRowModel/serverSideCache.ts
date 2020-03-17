@@ -57,7 +57,7 @@ export class ServerSideCache extends RowNodeCache<ServerSideBlock, ServerSideCac
     }
 
     public getRowBounds(index: number): RowBounds {
-        this.logger.log(`getRowBounds(${index})`);
+        // this.logger.log(`getRowBounds(${index})`);
 
         // we return null if row not found
 
@@ -104,7 +104,7 @@ export class ServerSideCache extends RowNodeCache<ServerSideBlock, ServerSideCac
 
         // NOTE: what about purged blocks
 
-        this.logger.log(`getRowBounds(${index}), result = ${result}`);
+        // this.logger.log(`getRowBounds(${index}), result = ${result}`);
 
         return result;
     }
@@ -114,7 +114,7 @@ export class ServerSideCache extends RowNodeCache<ServerSideBlock, ServerSideCac
     }
 
     public getRowIndexAtPixel(pixel: number): number {
-        this.logger.log(`getRowIndexAtPixel(${pixel})`);
+        // this.logger.log(`getRowIndexAtPixel(${pixel})`);
 
         // we return null if row not found
         // note - cast to "any" due to https://github.com/Microsoft/TypeScript/issues/11498
@@ -163,7 +163,7 @@ export class ServerSideCache extends RowNodeCache<ServerSideBlock, ServerSideCac
 
         //NOTE: purged
 
-        this.logger.log(`getRowIndexAtPixel(${pixel}) result = ${result}`);
+        // this.logger.log(`getRowIndexAtPixel(${pixel}) result = ${result}`);
 
         return result;
     }
@@ -340,13 +340,25 @@ export class ServerSideCache extends RowNodeCache<ServerSideBlock, ServerSideCac
                 //   last row of second block is 199 (100 * 2) -1;
                 const lastRowTopLevelIndex = (blockSize * (blockBefore.getBlockNumber() + 1)) - 1;
 
-                // this is the last loaded rownode in the cache that is before the row we are interested in.
+                // get the last top level node in the block before the wanted block. this will be the last
+                // loaded displayed top level node.
+                const lastRowNode = blockBefore!.getRowUsingLocalIndex(lastRowTopLevelIndex, true);
+
+                // we want the index of the last displayed node, not just the top level node, so if the last top level node
+                // is open, we get the index of the last displayed child node.
+                let lastDisplayedNodeIndexInBlockBefore: number;
+                if (lastRowNode.expanded && lastRowNode.childrenCache) {
+                    const serverSideCache = lastRowNode.childrenCache as ServerSideCache;
+                    lastDisplayedNodeIndexInBlockBefore = serverSideCache.getDisplayIndexEnd() - 1;
+                } else {
+                    lastDisplayedNodeIndexInBlockBefore = lastRowNode.rowIndex;
+                }
+
                 // we are guaranteed no rows are open. so the difference between the topTopIndex will be the
                 // same as the difference between the displayed index
                 const indexDiff = topLevelIndex - lastRowTopLevelIndex;
 
-                const lastRowNode = blockBefore!.getRowUsingLocalIndex(lastRowTopLevelIndex, true);
-                return lastRowNode.rowIndex + indexDiff;
+                return lastDisplayedNodeIndexInBlockBefore + indexDiff;
 
             } else {
                 return topLevelIndex;
@@ -419,10 +431,8 @@ export class ServerSideCache extends RowNodeCache<ServerSideBlock, ServerSideCac
         let shouldPurgeCache: boolean;
         if (grouping) {
             const groupColVo = this.cacheParams.rowGroupCols[level];
-            const groupField = groupColVo.field;
-
-            const rowGroupBlock = rowGroupColIds.indexOf(groupField) > -1;
-            const sortingByGroup = changedColumnsInSort.indexOf(groupField) > -1;
+            const rowGroupBlock = rowGroupColIds.indexOf(groupColVo.id) > -1;
+            const sortingByGroup = changedColumnsInSort.indexOf(groupColVo.id) > -1;
 
             shouldPurgeCache = rowGroupBlock && sortingByGroup;
         } else {

@@ -11,11 +11,11 @@ export interface PanelOptions {
     minHeight?: number;
     height?: number | string;
     centered?: boolean;
+    cssIdentifier?: string;
     x?: number;
     y?: number;
 }
 export declare class AgPanel extends Component {
-    private static TEMPLATE;
     protected static CLOSE_BTN_TEMPLATE: string;
     protected popupService: PopupService;
     protected gridOptionsWrapper: GridOptionsWrapper;
@@ -44,6 +44,7 @@ export declare class AgPanel extends Component {
     protected eTitleBarButtons: HTMLElement;
     protected eTitle: HTMLElement;
     constructor(config?: PanelOptions);
+    private static getTemplate;
     protected postConstruct(): void;
     protected renderComponent(): void;
     protected updateDragStartPosition(x: number, y: number): void;

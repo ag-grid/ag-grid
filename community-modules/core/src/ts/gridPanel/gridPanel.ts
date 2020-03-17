@@ -10,7 +10,7 @@ import {IRangeController} from "../interfaces/iRangeController";
 import {Constants} from "../constants";
 import {MouseEventService} from "./mouseEventService";
 import {IClipboardService} from "../interfaces/iClipboardService";
-import {FocusedCellController} from "../focusedCellController";
+import {FocusController} from "../focusController";
 import {IContextMenuFactory} from "../interfaces/iContextMenuFactory";
 import {ScrollVisibleService, SetScrollsVisibleParams} from "./scrollVisibleService";
 import {Column} from "../entities/column";
@@ -98,7 +98,7 @@ export type RowContainerComponentNames =
     'floatingBottom' |
     'floatingBottomPinnedLeft' |
     'floatingBottomPinnedRight' |
-    'floatingBottomFullWith';
+    'floatingBottomFullWidth';
 
 export type RowContainerComponents = { [K in RowContainerComponentNames]: RowContainerComponent };
 
@@ -122,7 +122,7 @@ export class GridPanel extends Component {
     @Autowired('gridApi') private gridApi: GridApi;
     @Autowired('dragService') private dragService: DragService;
     @Autowired('mouseEventService') private mouseEventService: MouseEventService;
-    @Autowired('focusedCellController') private focusedCellController: FocusedCellController;
+    @Autowired('focusController') private focusController: FocusController;
     @Autowired('$scope') private $scope: any;
     @Autowired('scrollVisibleService') private scrollVisibleService: ScrollVisibleService;
     @Autowired('valueService') private valueService: ValueService;
@@ -175,7 +175,8 @@ export class GridPanel extends Component {
     private scrollTop = -1;
 
     private lastHorizontalScrollElement: HTMLElement | undefined | null;
-    private readonly resetLastHorizontalScrollElementDebounce: () => void;
+
+    private readonly resetLastHorizontalScrollElementDebounced: () => void;
 
     private bodyHeight: number;
 
@@ -191,7 +192,7 @@ export class GridPanel extends Component {
 
     constructor() {
         super(GRID_PANEL_NORMAL_TEMPLATE);
-        this.resetLastHorizontalScrollElementDebounce = _.debounce(this.resetLastHorizontalScrollElement.bind(this), 500);
+        this.resetLastHorizontalScrollElementDebounced = _.debounce(this.resetLastHorizontalScrollElement.bind(this), 500);
     }
 
     public getVScrollPosition(): { top: number, bottom: number } {
@@ -281,6 +282,7 @@ export class GridPanel extends Component {
         this.columnAnimationService.registerGridComp(this);
         this.autoWidthCalculator.registerGridComp(this);
         this.paginationAutoPageSizeService.registerGridComp(this);
+        this.mouseEventService.registerGridComp(this);
         this.beans.registerGridComp(this);
         this.rowRenderer.registerGridComp(this);
 
@@ -292,6 +294,18 @@ export class GridPanel extends Component {
             const unsubscribeFromResize = this.resizeObserverService.observeResize(
                 viewport, this.onCenterViewportResized.bind(this));
             this.addDestroyFunc(() => unsubscribeFromResize());
+        });
+
+        [this.eTop, this.eBodyViewport, this.eBottom].forEach(element => {
+            this.addDestroyableEventListener(element, 'focusin', () => {
+                _.addCssClass(element, 'ag-has-focus');
+            });
+
+            this.addDestroyableEventListener(element, 'focusout', (e: FocusEvent) => {
+                if (!element.contains(e.relatedTarget as HTMLElement)) {
+                    _.removeCssClass(element, 'ag-has-focus');
+                }
+            });
         });
     }
 
@@ -588,6 +602,7 @@ export class GridPanel extends Component {
         const cellComp = this.mouseEventService.getRenderedCellForEvent(mouseEvent);
 
         if (eventName === "contextmenu") {
+            this.preventDefaultOnContextMenu(mouseEvent);
             this.handleContextMenuMouseEvent(mouseEvent, null, rowComp, cellComp);
         } else {
             if (cellComp) {
@@ -597,8 +612,6 @@ export class GridPanel extends Component {
                 rowComp.onMouseEvent(eventName, mouseEvent);
             }
         }
-
-        this.preventDefaultOnContextMenu(mouseEvent);
     }
 
     private mockContextMenuForIPad(): void {
@@ -708,21 +721,12 @@ export class GridPanel extends Component {
 
         if (!this.clipboardService || this.gridOptionsWrapper.isEnableCellTextSelection()) { return; }
 
-        const focusedCell = this.focusedCellController.getFocusedCell();
-
         this.clipboardService.copyToClipboard();
         event.preventDefault();
-
-        // the copy operation results in loosing focus on the cell,
-        // because of the trickery the copy logic uses with a temporary
-        // widget. so we set it back again.
-        if (focusedCell) {
-            this.focusedCellController.setFocusedCell(focusedCell.rowIndex, focusedCell.column, focusedCell.rowPinned, true);
-        }
     }
 
     private onCtrlAndV(): void {
-        if (ModuleRegistry.isRegistered(ModuleNames.ClipboardModule)) {
+        if (ModuleRegistry.isRegistered(ModuleNames.ClipboardModule) && !this.gridOptionsWrapper.isSuppressClipboardPaste()) {
             this.clipboardService.pasteFromClipboard();
         }
     }
@@ -740,7 +744,6 @@ export class GridPanel extends Component {
     // eg if grid needs to scroll up, it scrolls until row is on top,
     //    if grid needs to scroll down, it scrolls until row is on bottom,
     //    if row is already in view, grid does not scroll
-    // fixme - how does this work in the new way
     public ensureIndexVisible(index: any, position?: string) {
         // if for print or auto height, everything is always visible
         if (this.printLayout) { return; }
@@ -1072,7 +1075,7 @@ export class GridPanel extends Component {
             floatingBottom: new RowContainerComponent({eContainer: this.eBottomContainer}),
             floatingBottomPinnedLeft: new RowContainerComponent({eContainer: this.eLeftBottom}),
             floatingBottomPinnedRight: new RowContainerComponent({eContainer: this.eRightBottom}),
-            floatingBottomFullWith: new RowContainerComponent({
+            floatingBottomFullWidth: new RowContainerComponent({
                 eContainer: this.eBottomFullWidthContainer,
                 hideWhenNoChildren: true
             }),
@@ -1386,7 +1389,7 @@ export class GridPanel extends Component {
         if (scrollWentPastBounds) { return; }
 
         this.doHorizontalScroll(scrollLeft);
-        this.resetLastHorizontalScrollElementDebounce();
+        this.resetLastHorizontalScrollElementDebounced();
     }
 
     private resetLastHorizontalScrollElement() {

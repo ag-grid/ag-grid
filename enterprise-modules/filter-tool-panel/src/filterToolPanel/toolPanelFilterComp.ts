@@ -17,13 +17,13 @@ import {
 
 export class ToolPanelFilterComp extends Component {
     private static TEMPLATE =
-        `<div class="ag-filter-toolpanel-instance" >
-            <div class="ag-filter-toolpanel-header ag-header-cell-label" ref="eFilterToolPanelHeader">
-                <div ref="eExpand"></div>
+        `<div class="ag-filter-toolpanel-instance">
+            <div class="ag-filter-toolpanel-header ag-filter-toolpanel-instance-header" ref="eFilterToolPanelHeader">
+                <div ref="eExpand" class="ag-filter-toolpanel-expand"></div>
                 <span ref="eFilterName" class="ag-header-cell-text"></span>
-                <span ref="eFilterIcon" class="ag-header-icon ag-filter-icon" aria-hidden="true"></span>
+                <span ref="eFilterIcon" class="ag-header-icon ag-filter-icon ag-filter-toolpanel-instance-header-icon" aria-hidden="true"></span>
             </div>
-            <div class="ag-filter-toolpanel-body ag-filter" ref="agFilterToolPanelBody"/></div>`;
+            <div class="ag-filter-toolpanel-instance-body ag-filter" ref="agFilterToolPanelBody"/></div>`;
 
     @RefSelector('eFilterToolPanelHeader') private eFilterToolPanelHeader: HTMLElement;
     @RefSelector('eFilterName') private eFilterName: HTMLElement;
@@ -82,6 +82,10 @@ export class ToolPanelFilterComp extends Component {
         return this.columnController.getDisplayNameForColumn(this.column, 'header', false) as string;
     }
 
+    public addCssClassToTitleBar(cssClass: string) {
+        _.addCssClass(this.eFilterToolPanelHeader, cssClass);
+    }
+
     private addInIcon(iconName: string, eParent: HTMLElement, column: Column): void {
         if (eParent == null) { return; }
 
@@ -106,7 +110,7 @@ export class ToolPanelFilterComp extends Component {
         if (this.expanded) return;
 
         this.expanded = true;
-        const container: HTMLElement = _.loadTemplate(`<div class="ag-filter-air" />`);
+        const container: HTMLElement = _.loadTemplate(`<div class="ag-filter-toolpanel-instance-filter" />`);
 
         const filterPromise = this.filterManager.getOrCreateFilterWrapper(this.column, 'TOOLBAR').filterPromise;
         if (filterPromise) {

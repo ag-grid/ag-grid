@@ -158,6 +158,19 @@ export class GridOptionsWrapper {
             );
         }
 
+        if (this.isRowModelServerSide()) {
+            const msg = (prop: string) => `ag-Grid: '${prop}' is not supported on the Server-side Row Model`;
+            if (_.exists(this.gridOptions.groupDefaultExpanded)) {
+                console.warn(msg('groupDefaultExpanded'));
+            }
+            if (_.exists(this.gridOptions.groupDefaultExpanded)) {
+                console.warn(msg('groupIncludeFooter'));
+            }
+            if (_.exists(this.gridOptions.groupDefaultExpanded)) {
+                console.warn(msg('groupIncludeTotalFooter'));
+            }
+        }
+
         if (this.isEnableRangeSelection()) {
             ModuleRegistry.assertRegistered(ModuleNames.RangeSelectionModule, 'enableRangeSelection');
         }
@@ -165,6 +178,17 @@ export class GridOptionsWrapper {
         if (!this.isEnableRangeSelection() && (this.isEnableRangeHandle() || this.isEnableFillHandle())) {
             console.warn("ag-Grid: 'enableRangeHandle' and 'enableFillHandle' will not work unless 'enableRangeSelection' is set to true");
         }
+
+        const warnOfDeprecaredIcon = (name: string) => {
+            if (this.gridOptions.icons && this.gridOptions.icons[name]) {
+                console.warn(`gridOptions.icons.${name} is no longer supported. For information on how to style checkboxes and radio buttons, see https://www.ag-grid.com/javascript-grid-icons/`);
+            }
+        };
+        warnOfDeprecaredIcon('radioButtonOff');
+        warnOfDeprecaredIcon('radioButtonOn');
+        warnOfDeprecaredIcon('checkboxChecked');
+        warnOfDeprecaredIcon('checkboxUnchecked');
+        warnOfDeprecaredIcon('checkboxIndeterminate');
 
         this.addEventListener(GridOptionsWrapper.PROP_DOM_LAYOUT, this.updateLayoutClasses.bind(this));
     }
@@ -433,6 +457,14 @@ export class GridOptionsWrapper {
 
     public isSuppressRowDrag() {
         return isTrue(this.gridOptions.suppressRowDrag);
+    }
+
+    public isSuppressMoveWhenRowDragging() {
+        return isTrue(this.gridOptions.suppressMoveWhenRowDragging);
+    }
+
+    public isEnableMultiRowDragging() {
+        return isTrue(this.gridOptions.enableMultiRowDragging);
     }
 
     // returns either 'print', 'autoHeight' or 'normal' (normal is the default)
@@ -896,7 +928,7 @@ export class GridOptionsWrapper {
         return this.gridOptions.aggFuncs;
     }
 
-    public getSortingOrder(): string[] | undefined {
+    public getSortingOrder(): (string | null)[] | undefined {
         return this.gridOptions.sortingOrder;
     }
 
@@ -1191,7 +1223,7 @@ export class GridOptionsWrapper {
             return this.gridOptions.headerHeight;
         }
 
-        return this.specialForNewMaterial(25, 'headerHeight');
+        return this.getFromTheme(25, 'headerHeight');
     }
 
     public getFloatingFiltersHeight(): number {
@@ -1199,7 +1231,7 @@ export class GridOptionsWrapper {
             return this.gridOptions.floatingFiltersHeight;
         }
 
-        return this.specialForNewMaterial(25, 'headerHeight');
+        return this.getFromTheme(25, 'headerHeight');
     }
 
     public getGroupHeaderHeight(): number {
@@ -1242,6 +1274,19 @@ export class GridOptionsWrapper {
         return false;
     }
 
+    public getTooltipShowDelay(): number {
+        const tooltipShowDelay: number | undefined = this.gridOptions.tooltipShowDelay;
+        if (_.exists(tooltipShowDelay)) {
+            if (tooltipShowDelay < 0) {
+                console.warn('ag-grid: tooltipShowDelay should not be lower than 0');
+            }
+
+            return Math.max(200, tooltipShowDelay);
+        }
+
+        return null;
+    }
+
     public getDocument(): Document {
         // if user is providing document, we use the users one,
         // otherwise we use the document on the global namespace.
@@ -1257,11 +1302,11 @@ export class GridOptionsWrapper {
     }
 
     public getMinColWidth() {
-        if (this.gridOptions.minColWidth && this.gridOptions.minColWidth > GridOptionsWrapper.MIN_COL_WIDTH) {
+        if (this.gridOptions.minColWidth > GridOptionsWrapper.MIN_COL_WIDTH) {
             return this.gridOptions.minColWidth;
         }
-
-        return GridOptionsWrapper.MIN_COL_WIDTH;
+        const measuredMin = this.getFromTheme(null, 'headerCellMinWidth');
+        return Math.max(measuredMin, GridOptionsWrapper.MIN_COL_WIDTH);
     }
 
     public getMaxColWidth() {
@@ -1638,8 +1683,13 @@ export class GridOptionsWrapper {
                 api: this.gridOptions.api,
                 context: this.gridOptions.context
             };
-            return { height: this.gridOptions.getRowHeight(params), estimated: false };
-        } else if (rowNode.detail && this.isMasterDetail()) {
+            const height = this.gridOptions.getRowHeight(params);
+            if (height != null) {
+                return { height, estimated: false };
+            }
+        }
+
+        if (rowNode.detail && this.isMasterDetail()) {
             if (this.isNumeric(this.gridOptions.detailRowHeight)) {
                 return { height: this.gridOptions.detailRowHeight, estimated: false };
             }
@@ -1669,12 +1719,9 @@ export class GridOptionsWrapper {
         return typeof this.gridOptions.getRowHeight === 'function';
     }
 
-    public getVirtualItemHeight() {
-        return this.specialForNewMaterial(20, 'virtualItemHeight');
-    }
+    public getListItemHeight() {
+        return this.getFromTheme(20, 'listItemHeight');
 
-    public useNativeCheckboxes() {
-        return this.environment.useNativeCheckboxes();
     }
 
     public chartMenuPanelWidth() {
@@ -1687,16 +1734,15 @@ export class GridOptionsWrapper {
 
     // Material data table has strict guidelines about whitespace, and these values are different than the ones
     // ag-grid uses by default. We override the default ones for the sake of making it better out of the box
-    private specialForNewMaterial(defaultValue: number, sassVariableName: SASS_PROPERTIES): number {
+    private getFromTheme(defaultValue: number, sassVariableName: SASS_PROPERTIES): number {
         const { theme } = this.environment.getTheme();
         if (theme && theme.indexOf('ag-theme') === 0) {
             return this.environment.getSassVariable(theme, sassVariableName);
         }
-
         return defaultValue;
     }
 
     private getDefaultRowHeight(): number {
-        return this.specialForNewMaterial(DEFAULT_ROW_HEIGHT, 'rowHeight');
+        return this.getFromTheme(DEFAULT_ROW_HEIGHT, 'rowHeight');
     }
 }

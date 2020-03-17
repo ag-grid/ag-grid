@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v22.1.1
+ * @version v23.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -31,7 +31,7 @@ var utils_1 = require("../utils");
 var DndSourceComp = /** @class */ (function (_super) {
     __extends(DndSourceComp, _super);
     function DndSourceComp(rowNode, column, cellValue, beans, eCell) {
-        var _this = _super.call(this, "<div class=\"ag-row-drag\" draggable=\"true\"></div>") || this;
+        var _this = _super.call(this, "<div class=\"ag-drag-handle ag-row-drag\" draggable=\"true\"></div>") || this;
         _this.rowNode = rowNode;
         _this.column = column;
         _this.cellValue = cellValue;

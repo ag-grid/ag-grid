@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v22.1.1
+ * @version v23.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -55,7 +55,7 @@ var ProvidedFilter = /** @class */ (function (_super) {
     };
     ProvidedFilter.prototype.init = function (params) {
         this.setParams(params);
-        this.resetUiToDefaults();
+        this.resetUiToDefaults(true);
         this.updateUiVisibility();
         this.setupOnBtApplyDebounce();
     };
@@ -70,7 +70,7 @@ var ProvidedFilter = /** @class */ (function (_super) {
             this.newRowsActionKeep = false;
         }
         else {
-            // the default for SSRM and IRM is 'keep', for CSRM and VRM teh default is 'clear'
+            // the default for SSRM and IRM is 'keep', for CSRM and VRM the default is 'clear'
             var rowModelType = this.rowModel.getType();
             var modelsForKeep = [constants_1.Constants.ROW_MODEL_TYPE_SERVER_SIDE, constants_1.Constants.ROW_MODEL_TYPE_INFINITE];
             this.newRowsActionKeep = modelsForKeep.indexOf(rowModelType) >= 0;
@@ -78,7 +78,7 @@ var ProvidedFilter = /** @class */ (function (_super) {
         utils_1._.setDisplayed(this.eApplyButton, this.applyActive);
         // we do not bind onBtApply here because onBtApply() has a parameter, and it is not the event. if we
         // just applied, the event would get passed as the second parameter, which we do not want.
-        this.addDestroyableEventListener(this.eApplyButton, "click", function () { return _this.onBtApply(); });
+        this.addDestroyableEventListener(this.eApplyButton, "click", function () { return _this.onBtApply(true); });
         var clearActive = params.clearButton === true;
         utils_1._.setDisplayed(this.eClearButton, clearActive);
         this.addDestroyableEventListener(this.eClearButton, "click", function () { return _this.onBtClear(); });
@@ -130,13 +130,14 @@ var ProvidedFilter = /** @class */ (function (_super) {
         var newModelDifferent = !this.areModelsEqual(this.appliedModel, oldAppliedModel);
         return newModelDifferent;
     };
-    ProvidedFilter.prototype.onBtApply = function (afterFloatingFilter) {
+    ProvidedFilter.prototype.onBtApply = function (afterFloatingFilter, afterDataChange) {
         if (afterFloatingFilter === void 0) { afterFloatingFilter = false; }
+        if (afterDataChange === void 0) { afterDataChange = false; }
         var newModelDifferent = this.applyModel();
         if (newModelDifferent) {
             // the floating filter uses 'afterFloatingFilter' info, so it doesn't refresh after filter changed if change
             // came from floating filter
-            this.providedFilterParams.filterChangedCallback({ afterFloatingFilter: afterFloatingFilter });
+            this.providedFilterParams.filterChangedCallback({ afterFloatingFilter: afterFloatingFilter, afterDataChange: afterDataChange });
         }
     };
     ProvidedFilter.prototype.onNewRowsLoaded = function () {
@@ -155,7 +156,7 @@ var ProvidedFilter = /** @class */ (function (_super) {
         this.providedFilterParams.filterModifiedCallback();
         // applyNow=true for floating filter changes, we always act on these immediately
         if (afterFloatingFilter) {
-            this.onBtApply(true);
+            this.onBtApply(afterFloatingFilter);
             // otherwise if no apply button, we apply (but debounce for time delay)
         }
         else if (!this.applyActive) {
@@ -165,7 +166,7 @@ var ProvidedFilter = /** @class */ (function (_super) {
     ProvidedFilter.prototype.createTemplate = function () {
         var body = this.createBodyTemplate();
         var translate = this.gridOptionsWrapper.getLocaleTextFunc();
-        return "<div>\n                    <div class='ag-filter-body-wrapper' ref=\"eFilterBodyWrapper\">" + body + "</div>\n                    <div class=\"ag-filter-apply-panel\" ref=\"eButtonsPanel\">\n                        <button type=\"button\" ref=\"eClearButton\">" + translate('clearFilter', 'Clear Filter') + "</button>\n                        <button type=\"button\" ref=\"eResetButton\">" + translate('resetFilter', 'Reset Filter') + "</button>\n                        <button type=\"button\" ref=\"eApplyButton\">" + translate('applyFilter', 'Apply Filter') + "</button>\n                    </div>\n                </div>";
+        return "<div>\n                    <div class='ag-filter-body-wrapper ag-" + this.getCssIdentifier() + "-body-wrapper' ref=\"eFilterBodyWrapper\">" + body + "</div>\n                    <div class=\"ag-filter-apply-panel\" ref=\"eButtonsPanel\">\n                        <button type=\"button\" ref=\"eClearButton\" class=\"ag-standard-button ag-filter-apply-panel-button\">" + translate('clearFilter', 'Clear Filter') + "</button>\n                        <button type=\"button\" ref=\"eResetButton\" class=\"ag-standard-button ag-filter-apply-panel-button\">" + translate('resetFilter', 'Reset Filter') + "</button>\n                        <button type=\"button\" ref=\"eApplyButton\" class=\"ag-standard-button ag-filter-apply-panel-button\">" + translate('applyFilter', 'Apply Filter') + "</button>\n                    </div>\n                </div>";
     };
     // static, as used by floating filter also
     ProvidedFilter.getDebounceMs = function (params, debounceDefault) {

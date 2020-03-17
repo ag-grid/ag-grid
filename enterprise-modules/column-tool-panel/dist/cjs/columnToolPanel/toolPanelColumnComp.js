@@ -34,7 +34,8 @@ var ToolPanelColumnComp = /** @class */ (function (_super) {
     ToolPanelColumnComp.prototype.init = function () {
         this.setTemplate(ToolPanelColumnComp.TEMPLATE);
         this.eDragHandle = core_1._.createIconNoSpan('columnDrag', this.gridOptionsWrapper);
-        core_1._.addCssClass(this.eDragHandle, 'ag-column-drag');
+        core_1._.addCssClass(this.eDragHandle, 'ag-drag-handle');
+        core_1._.addCssClass(this.eDragHandle, 'ag-column-select-column-drag-handle');
         this.cbSelect.getGui().insertAdjacentElement('afterend', this.eDragHandle);
         this.displayName = this.columnController.getDisplayNameForColumn(this.column, 'toolPanel');
         var displayNameSanitised = core_1._.escape(this.displayName);
@@ -42,9 +43,9 @@ var ToolPanelColumnComp = /** @class */ (function (_super) {
         // if grouping, we add an extra level of indent, to cater for expand/contract icons we need to indent for
         var indent = this.columnDept;
         if (this.groupsExist) {
-            this.addCssClass('ag-toolpanel-add-group-indent');
+            this.addCssClass('ag-column-select-add-group-indent');
         }
-        this.addCssClass("ag-toolpanel-indent-" + indent);
+        this.addCssClass("ag-column-select-indent-" + indent);
         this.setupDragging();
         this.addDestroyableEventListener(this.eventService, core_1.Events.EVENT_COLUMN_PIVOT_MODE_CHANGED, this.onColumnStateChanged.bind(this));
         this.addDestroyableEventListener(this.column, core_1.Column.EVENT_VALUE_CHANGED, this.onColumnStateChanged.bind(this));
@@ -253,6 +254,7 @@ var ToolPanelColumnComp = /** @class */ (function (_super) {
             checkboxReadOnly = !!this.column.getColDef().lockVisible;
         }
         this.cbSelect.setReadOnly(checkboxReadOnly);
+        core_1._.addOrRemoveCssClass(this.getGui(), 'ag-column-select-column-readonly', checkboxReadOnly);
         var checkboxPassive = isPivotMode && this.gridOptionsWrapper.isFunctionsPassive();
         this.cbSelect.setPassive(checkboxPassive);
         this.processingColumnStateChange = false;
@@ -279,7 +281,7 @@ var ToolPanelColumnComp = /** @class */ (function (_super) {
     ToolPanelColumnComp.prototype.setExpanded = function (value) {
         console.warn('ag-grid: can not expand a column item that does not represent a column group header');
     };
-    ToolPanelColumnComp.TEMPLATE = "<div class=\"ag-column-tool-panel-column\">\n            <ag-checkbox ref=\"cbSelect\" class=\"ag-column-select-checkbox\"></ag-checkbox>\n            <span class=\"ag-column-tool-panel-column-label\" ref=\"eLabel\"></span>\n        </div>";
+    ToolPanelColumnComp.TEMPLATE = "<div class=\"ag-column-select-column\">\n            <ag-checkbox ref=\"cbSelect\" class=\"ag-column-select-checkbox\"></ag-checkbox>\n            <span class=\"ag-column-select-column-label\" ref=\"eLabel\"></span>\n        </div>";
     __decorate([
         core_1.Autowired('gridOptionsWrapper')
     ], ToolPanelColumnComp.prototype, "gridOptionsWrapper", void 0);

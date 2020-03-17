@@ -18,6 +18,7 @@ export declare class HeaderWrapperComp extends Component {
     private beans;
     private eResize;
     private cbSelectAll;
+    private headerComp;
     private readonly column;
     private readonly dragSourceDropTarget;
     private readonly pinned;
@@ -29,6 +30,8 @@ export declare class HeaderWrapperComp extends Component {
     init(): void;
     private addColumnHoverListener;
     private onColumnHover;
+    private addMouseListeners;
+    private onMouseOverOut;
     private setupSortableClass;
     private onFilterChanged;
     private appendHeaderComp;

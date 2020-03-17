@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v22.1.1
+ * @version v23.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -74,6 +74,7 @@ var GridOptionsWrapper = /** @class */ (function () {
         this.gridOptions.columnApi = null;
     };
     GridOptionsWrapper.prototype.init = function () {
+        var _this = this;
         if (!(this.gridOptions.suppressPropertyNamesCheck === true)) {
             this.checkGridOptionsProperties();
             this.checkColumnDefProperties();
@@ -96,12 +97,34 @@ var GridOptionsWrapper = /** @class */ (function () {
         if (this.isGroupRemoveSingleChildren() && this.isGroupHideOpenParents()) {
             console.warn("ag-Grid: groupRemoveSingleChildren and groupHideOpenParents do not work with each other, you need to pick one. And don't ask us how to us these together on our support forum either you will get the same answer!");
         }
+        if (this.isRowModelServerSide()) {
+            var msg = function (prop) { return "ag-Grid: '" + prop + "' is not supported on the Server-side Row Model"; };
+            if (_.exists(this.gridOptions.groupDefaultExpanded)) {
+                console.warn(msg('groupDefaultExpanded'));
+            }
+            if (_.exists(this.gridOptions.groupDefaultExpanded)) {
+                console.warn(msg('groupIncludeFooter'));
+            }
+            if (_.exists(this.gridOptions.groupDefaultExpanded)) {
+                console.warn(msg('groupIncludeTotalFooter'));
+            }
+        }
         if (this.isEnableRangeSelection()) {
             ModuleRegistry.assertRegistered(ModuleNames.RangeSelectionModule, 'enableRangeSelection');
         }
         if (!this.isEnableRangeSelection() && (this.isEnableRangeHandle() || this.isEnableFillHandle())) {
             console.warn("ag-Grid: 'enableRangeHandle' and 'enableFillHandle' will not work unless 'enableRangeSelection' is set to true");
         }
+        var warnOfDeprecaredIcon = function (name) {
+            if (_this.gridOptions.icons && _this.gridOptions.icons[name]) {
+                console.warn("gridOptions.icons." + name + " is no longer supported. For information on how to style checkboxes and radio buttons, see https://www.ag-grid.com/javascript-grid-icons/");
+            }
+        };
+        warnOfDeprecaredIcon('radioButtonOff');
+        warnOfDeprecaredIcon('radioButtonOn');
+        warnOfDeprecaredIcon('checkboxChecked');
+        warnOfDeprecaredIcon('checkboxUnchecked');
+        warnOfDeprecaredIcon('checkboxIndeterminate');
         this.addEventListener(GridOptionsWrapper_1.PROP_DOM_LAYOUT, this.updateLayoutClasses.bind(this));
     };
     GridOptionsWrapper.prototype.checkColumnDefProperties = function () {
@@ -285,6 +308,12 @@ var GridOptionsWrapper = /** @class */ (function () {
     };
     GridOptionsWrapper.prototype.isSuppressRowDrag = function () {
         return isTrue(this.gridOptions.suppressRowDrag);
+    };
+    GridOptionsWrapper.prototype.isSuppressMoveWhenRowDragging = function () {
+        return isTrue(this.gridOptions.suppressMoveWhenRowDragging);
+    };
+    GridOptionsWrapper.prototype.isEnableMultiRowDragging = function () {
+        return isTrue(this.gridOptions.enableMultiRowDragging);
     };
     // returns either 'print', 'autoHeight' or 'normal' (normal is the default)
     GridOptionsWrapper.prototype.getDomLayout = function () {
@@ -864,13 +893,13 @@ var GridOptionsWrapper = /** @class */ (function () {
         if (typeof this.gridOptions.headerHeight === 'number') {
             return this.gridOptions.headerHeight;
         }
-        return this.specialForNewMaterial(25, 'headerHeight');
+        return this.getFromTheme(25, 'headerHeight');
     };
     GridOptionsWrapper.prototype.getFloatingFiltersHeight = function () {
         if (typeof this.gridOptions.floatingFiltersHeight === 'number') {
             return this.gridOptions.floatingFiltersHeight;
         }
-        return this.specialForNewMaterial(25, 'headerHeight');
+        return this.getFromTheme(25, 'headerHeight');
     };
     GridOptionsWrapper.prototype.getGroupHeaderHeight = function () {
         if (typeof this.gridOptions.groupHeaderHeight === 'number') {
@@ -902,6 +931,16 @@ var GridOptionsWrapper = /** @class */ (function () {
         }
         return false;
     };
+    GridOptionsWrapper.prototype.getTooltipShowDelay = function () {
+        var tooltipShowDelay = this.gridOptions.tooltipShowDelay;
+        if (_.exists(tooltipShowDelay)) {
+            if (tooltipShowDelay < 0) {
+                console.warn('ag-grid: tooltipShowDelay should not be lower than 0');
+            }
+            return Math.max(200, tooltipShowDelay);
+        }
+        return null;
+    };
     GridOptionsWrapper.prototype.getDocument = function () {
         // if user is providing document, we use the users one,
         // otherwise we use the document on the global namespace.
@@ -915,10 +954,11 @@ var GridOptionsWrapper = /** @class */ (function () {
         return document;
     };
     GridOptionsWrapper.prototype.getMinColWidth = function () {
-        if (this.gridOptions.minColWidth && this.gridOptions.minColWidth > GridOptionsWrapper_1.MIN_COL_WIDTH) {
+        if (this.gridOptions.minColWidth > GridOptionsWrapper_1.MIN_COL_WIDTH) {
             return this.gridOptions.minColWidth;
         }
-        return GridOptionsWrapper_1.MIN_COL_WIDTH;
+        var measuredMin = this.getFromTheme(null, 'headerCellMinWidth');
+        return Math.max(measuredMin, GridOptionsWrapper_1.MIN_COL_WIDTH);
     };
     GridOptionsWrapper.prototype.getMaxColWidth = function () {
         if (this.gridOptions.maxColWidth && this.gridOptions.maxColWidth > GridOptionsWrapper_1.MIN_COL_WIDTH) {
@@ -1242,9 +1282,12 @@ var GridOptionsWrapper = /** @class */ (function () {
                 api: this.gridOptions.api,
                 context: this.gridOptions.context
             };
-            return { height: this.gridOptions.getRowHeight(params), estimated: false };
+            var height = this.gridOptions.getRowHeight(params);
+            if (height != null) {
+                return { height: height, estimated: false };
+            }
         }
-        else if (rowNode.detail && this.isMasterDetail()) {
+        if (rowNode.detail && this.isMasterDetail()) {
             if (this.isNumeric(this.gridOptions.detailRowHeight)) {
                 return { height: this.gridOptions.detailRowHeight, estimated: false };
             }
@@ -1267,11 +1310,8 @@ var GridOptionsWrapper = /** @class */ (function () {
     GridOptionsWrapper.prototype.isDynamicRowHeight = function () {
         return typeof this.gridOptions.getRowHeight === 'function';
     };
-    GridOptionsWrapper.prototype.getVirtualItemHeight = function () {
-        return this.specialForNewMaterial(20, 'virtualItemHeight');
-    };
-    GridOptionsWrapper.prototype.useNativeCheckboxes = function () {
-        return this.environment.useNativeCheckboxes();
+    GridOptionsWrapper.prototype.getListItemHeight = function () {
+        return this.getFromTheme(20, 'listItemHeight');
     };
     GridOptionsWrapper.prototype.chartMenuPanelWidth = function () {
         return this.environment.chartMenuPanelWidth();
@@ -1281,7 +1321,7 @@ var GridOptionsWrapper = /** @class */ (function () {
     };
     // Material data table has strict guidelines about whitespace, and these values are different than the ones
     // ag-grid uses by default. We override the default ones for the sake of making it better out of the box
-    GridOptionsWrapper.prototype.specialForNewMaterial = function (defaultValue, sassVariableName) {
+    GridOptionsWrapper.prototype.getFromTheme = function (defaultValue, sassVariableName) {
         var theme = this.environment.getTheme().theme;
         if (theme && theme.indexOf('ag-theme') === 0) {
             return this.environment.getSassVariable(theme, sassVariableName);
@@ -1289,7 +1329,7 @@ var GridOptionsWrapper = /** @class */ (function () {
         return defaultValue;
     };
     GridOptionsWrapper.prototype.getDefaultRowHeight = function () {
-        return this.specialForNewMaterial(DEFAULT_ROW_HEIGHT, 'rowHeight');
+        return this.getFromTheme(DEFAULT_ROW_HEIGHT, 'rowHeight');
     };
     var GridOptionsWrapper_1;
     GridOptionsWrapper.MIN_COL_WIDTH = 10;

@@ -47,9 +47,11 @@ var TabbedChartMenu = /** @class */ (function (_super) {
             items: this.tabs,
             cssClass: 'ag-chart-tabbed-menu'
         });
+        this.getContext().wireBean(this.tabbedLayout);
     };
     TabbedChartMenu.prototype.createTab = function (name, title, ChildClass) {
         var eWrapperDiv = document.createElement('div');
+        core_1._.addCssClass(eWrapperDiv, 'ag-chart-tab');
         core_1._.addCssClass(eWrapperDiv, "ag-chart-" + title);
         var comp = new ChildClass(this.chartController);
         this.getContext().wireBean(comp);

@@ -10,7 +10,7 @@ import { ValueService } from "../valueService/valueService";
 import { EventService } from "../eventService";
 import { ColumnAnimationService } from "./columnAnimationService";
 import { IRangeController } from "../interfaces/iRangeController";
-import { FocusedCellController } from "../focusedCellController";
+import { FocusController } from "../focusController";
 import { IContextMenuFactory } from "../interfaces/iContextMenuFactory";
 import { CellRendererFactory } from "./cellRendererFactory";
 import { PopupService } from "../widgets/popupService";
@@ -30,6 +30,7 @@ import { IFrameworkOverrides } from "../interfaces/iFrameworkOverrides";
 import { DetailRowCompCache } from "./detailRowCompCache";
 import { CellPositionUtils } from "../entities/cellPosition";
 import { RowPositionUtils } from "../entities/rowPosition";
+import { SelectionController } from "../selectionController";
 /** Using the IoC has a slight performance consideration, which is no problem most of the
  * time, unless we are trashing objects - which is the case when scrolling and rowComp
  * and cellComp. So for performance reasons, RowComp and CellComp do not get autowired
@@ -50,7 +51,7 @@ export declare class Beans {
     columnController: ColumnController;
     columnAnimationService: ColumnAnimationService;
     rangeController: IRangeController;
-    focusedCellController: FocusedCellController;
+    focusController: FocusController;
     contextMenuFactory: IContextMenuFactory;
     cellRendererFactory: CellRendererFactory;
     popupService: PopupService;
@@ -68,6 +69,7 @@ export declare class Beans {
     detailRowCompCache: DetailRowCompCache;
     cellPositionUtils: CellPositionUtils;
     rowPositionUtils: RowPositionUtils;
+    selectionController: SelectionController;
     doingMasterDetail: boolean;
     gridPanel: GridPanel;
     registerGridComp(gridPanel: GridPanel): void;

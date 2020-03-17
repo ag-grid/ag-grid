@@ -32,14 +32,13 @@ var FiltersToolPanelHeaderPanel = /** @class */ (function (_super) {
         return _super !== null && _super.apply(this, arguments) || this;
     }
     FiltersToolPanelHeaderPanel.prototype.preConstruct = function () {
-        var translate = this.gridOptionsWrapper.getLocaleTextFunc();
-        this.setTemplate("<div class=\"ag-filter-toolpanel-header ag-filter-header\" role=\"presentation\">\n            <div ref=\"eExpand\"></div>\n            <div class=\"ag-input-wrapper ag-filters-tool-panel-filter-wrapper\" ref=\"eFilterWrapper\" role=\"presentation\">\n                <input ref=\"eFilterTextField\" type=\"text\" placeholder=\"" + translate('searchOoo', 'Search...') + "\">        \n            </div>\n        </div>");
+        this.setTemplate("<div class=\"ag-filter-toolpanel-search\" role=\"presentation\">\n            <div ref=\"eExpand\" class=\"ag-filter-toolpanel-expand\"></div>\n            <ag-input-text-field ref=\"eFilterTextField\" class=\"ag-filter-toolpanel-search-input\"></ag-input-text-field>\n        </div>");
     };
     FiltersToolPanelHeaderPanel.prototype.postConstruct = function () {
+        this.eSearchTextField.onValueChange(this.onSearchTextChanged.bind(this));
         this.createExpandIcons();
         this.setExpandState(EXPAND_STATE.EXPANDED);
         this.addDestroyableEventListener(this.eExpand, 'click', this.onExpandClicked.bind(this));
-        this.addDestroyableEventListener(this.eSearchTextField, 'input', this.onSearchTextChanged.bind(this));
         this.addDestroyableEventListener(this.eventService, core_1.Events.EVENT_NEW_COLUMNS_LOADED, this.showOrHideOptions.bind(this));
     };
     FiltersToolPanelHeaderPanel.prototype.init = function (params) {
@@ -57,16 +56,18 @@ var FiltersToolPanelHeaderPanel = /** @class */ (function (_super) {
     FiltersToolPanelHeaderPanel.prototype.showOrHideOptions = function () {
         var showFilterSearch = !this.params.suppressFilterSearch;
         var showExpand = !this.params.suppressExpandAll;
+        var translate = this.gridOptionsWrapper.getLocaleTextFunc();
+        this.eSearchTextField.setInputPlaceholder(translate('searchOoo', 'Search...'));
         var isFilterGroupPresent = function (col) { return col.getOriginalParent() && col.isFilterAllowed(); };
         var filterGroupsPresent = this.columnController.getAllGridColumns().some(isFilterGroupPresent);
-        core_1._.setDisplayed(this.eFilterWrapper, showFilterSearch);
+        core_1._.setDisplayed(this.eSearchTextField.getGui(), showFilterSearch);
         core_1._.setDisplayed(this.eExpand, showExpand && filterGroupsPresent);
     };
     FiltersToolPanelHeaderPanel.prototype.onSearchTextChanged = function () {
         var _this = this;
         if (!this.onSearchTextChangedDebounced) {
             this.onSearchTextChangedDebounced = core_1._.debounce(function () {
-                _this.dispatchEvent({ type: 'searchChanged', searchText: _this.eSearchTextField.value });
+                _this.dispatchEvent({ type: 'searchChanged', searchText: _this.eSearchTextField.getValue() });
             }, 300);
         }
         this.onSearchTextChangedDebounced();
@@ -93,9 +94,6 @@ var FiltersToolPanelHeaderPanel = /** @class */ (function (_super) {
     __decorate([
         core_1.RefSelector('eExpand')
     ], FiltersToolPanelHeaderPanel.prototype, "eExpand", void 0);
-    __decorate([
-        core_1.RefSelector('eFilterWrapper')
-    ], FiltersToolPanelHeaderPanel.prototype, "eFilterWrapper", void 0);
     __decorate([
         core_1.RefSelector('eFilterTextField')
     ], FiltersToolPanelHeaderPanel.prototype, "eSearchTextField", void 0);

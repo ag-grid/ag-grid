@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v22.1.1
+ * @version v23.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -13,6 +13,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 import { Bean, PostConstruct } from "../context/context";
 import { Autowired } from "../context/context";
 import { NumberSequence, _ } from '../utils';
+import { Constants } from "../constants";
 var MouseEventService = /** @class */ (function () {
     function MouseEventService() {
         this.gridInstanceId = MouseEventService_1.gridInstanceSequence.next();
@@ -20,6 +21,9 @@ var MouseEventService = /** @class */ (function () {
     MouseEventService_1 = MouseEventService;
     MouseEventService.prototype.init = function () {
         this.stampDomElementWithGridInstance();
+    };
+    MouseEventService.prototype.registerGridComp = function (gridPanel) {
+        this.gridPanel = gridPanel;
     };
     // we put the instance id onto the main DOM element. this is used for events, when grids are inside grids,
     // so the grid can work out if the even came from this grid or a grid inside this one. see the ctrl+v logic
@@ -48,6 +52,16 @@ var MouseEventService = /** @class */ (function () {
     MouseEventService.prototype.getCellPositionForEvent = function (event) {
         var cellComp = this.getRenderedCellForEvent(event);
         return cellComp ? cellComp.getCellPosition() : null;
+    };
+    MouseEventService.prototype.getNormalisedPosition = function (event) {
+        var gridPanelHasScrolls = this.gridOptionsWrapper.getDomLayout() === Constants.DOM_LAYOUT_NORMAL;
+        var x = event.x, y = event.y;
+        if (gridPanelHasScrolls) {
+            var vRange = this.gridPanel.getVScrollPosition();
+            var hRange = this.gridPanel.getHScrollPosition();
+            return { x: x + hRange.left, y: y + vRange.top };
+        }
+        return { x: x, y: y };
     };
     var MouseEventService_1;
     MouseEventService.gridInstanceSequence = new NumberSequence();

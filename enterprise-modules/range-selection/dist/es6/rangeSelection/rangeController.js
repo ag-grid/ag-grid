@@ -128,8 +128,7 @@ var RangeController = /** @class */ (function () {
         if (cellRange) {
             // we need it at the end of the list, as the dragStart picks the last created
             // range as the start point for the drag
-            var atEndOfList = _.last(this.cellRanges) === cellRange;
-            if (!atEndOfList) {
+            if (_.last(this.cellRanges) !== cellRange) {
                 _.removeFromArray(this.cellRanges, cellRange);
                 this.cellRanges.push(cellRange);
             }
@@ -145,7 +144,7 @@ var RangeController = /** @class */ (function () {
         }
         this.newestRangeStartCell = cell;
         this.onDragStop();
-        this.dispatchChangedEvent(false, true, cellRange.id);
+        this.dispatchChangedEvent(true, true, cellRange.id);
     };
     RangeController.prototype.extendLatestRangeToCell = function (cellPosition) {
         if (this.isEmpty() || !this.newestRangeStartCell) {
@@ -155,15 +154,16 @@ var RangeController = /** @class */ (function () {
         this.updateRangeEnd(cellRange, cellPosition);
     };
     RangeController.prototype.updateRangeEnd = function (cellRange, cellPosition, silent) {
+        if (silent === void 0) { silent = false; }
         var endColumn = cellPosition.column;
         var colsToAdd = this.calculateColumnsBetween(cellRange.startColumn, endColumn);
-        if (!colsToAdd) {
+        if (!colsToAdd || this.isLastCellOfRange(cellRange, cellPosition)) {
             return;
         }
         cellRange.columns = colsToAdd;
         cellRange.endRow = { rowIndex: cellPosition.rowIndex, rowPinned: cellPosition.rowPinned };
         if (!silent) {
-            this.dispatchChangedEvent(false, true, cellRange.id);
+            this.dispatchChangedEvent(true, true, cellRange.id);
         }
     };
     RangeController.prototype.refreshRangeStart = function (cellRange) {
@@ -342,13 +342,23 @@ var RangeController = /** @class */ (function () {
         return columnInRange && rowInRange;
     };
     RangeController.prototype.isLastCellOfRange = function (cellRange, cell) {
+        var startRow = cellRange.startRow, endRow = cellRange.endRow;
+        var lastRow = this.rowPositionUtils.before(startRow, endRow) ? endRow : startRow;
+        var isLastRow = cell.rowIndex === lastRow.rowIndex && cell.rowPinned === lastRow.rowPinned;
+        var rangeFirstIndexColumn = cellRange.columns[0];
+        var rangeLastIndexColumn = _.last(cellRange.columns);
+        var lastRangeColumn = cellRange.startColumn === rangeFirstIndexColumn ? rangeLastIndexColumn : rangeFirstIndexColumn;
+        var isLastColumn = cell.column === lastRangeColumn;
+        return isLastColumn && isLastRow;
+    };
+    RangeController.prototype.isBottomRightCell = function (cellRange, cell) {
         var allColumns = this.columnController.getAllDisplayedColumns();
         var allPositions = cellRange.columns.map(function (c) { return allColumns.indexOf(c); }).sort(function (a, b) { return a - b; });
         var startRow = cellRange.startRow, endRow = cellRange.endRow;
         var lastRow = this.rowPositionUtils.before(startRow, endRow) ? endRow : startRow;
-        var isLastColumn = allColumns.indexOf(cell.column) === _.last(allPositions);
+        var isRightColumn = allColumns.indexOf(cell.column) === _.last(allPositions);
         var isLastRow = cell.rowIndex === lastRow.rowIndex && cell.rowPinned === lastRow.rowPinned;
-        return isLastColumn && isLastRow;
+        return isRightColumn && isLastRow;
     };
     // returns the number of ranges this cell is in
     RangeController.prototype.getCellRangeCount = function (cell) {

@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v22.1.1
+ * @version v23.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -41,25 +41,24 @@ var NumberFilter = /** @class */ (function (_super) {
     NumberFilter.prototype.getDefaultDebounceMs = function () {
         return 500;
     };
-    NumberFilter.prototype.resetUiToDefaults = function () {
-        _super.prototype.resetUiToDefaults.call(this);
-        this.eValueFrom1.value = null;
-        this.eValueFrom2.value = null;
-        this.eValueTo1.value = null;
-        this.eValueTo2.value = null;
+    NumberFilter.prototype.resetUiToDefaults = function (silent) {
+        _super.prototype.resetUiToDefaults.call(this, silent);
+        var fields = [this.eValueFrom1, this.eValueFrom2, this.eValueTo1, this.eValueTo2];
+        fields.forEach(function (field) { return field.setValue(null, silent); });
+        this.resetPlaceholder();
     };
     NumberFilter.prototype.setConditionIntoUi = function (model, position) {
         var positionOne = position === ConditionPosition.One;
         var eValueFrom = positionOne ? this.eValueFrom1 : this.eValueFrom2;
         var eValueTo = positionOne ? this.eValueTo1 : this.eValueTo2;
-        eValueFrom.value = model ? ('' + model.filter) : null;
-        eValueTo.value = model ? ('' + model.filterTo) : null;
+        eValueFrom.setValue(model ? ('' + model.filter) : null);
+        eValueTo.setValue(model ? ('' + model.filterTo) : null);
     };
     NumberFilter.prototype.setValueFromFloatingFilter = function (value) {
-        this.eValueFrom1.value = value;
-        this.eValueFrom2.value = null;
-        this.eValueTo1.value = null;
-        this.eValueTo2.value = null;
+        this.eValueFrom1.setValue(value);
+        this.eValueFrom2.setValue(null);
+        this.eValueTo1.setValue(null);
+        this.eValueTo2.setValue(null);
     };
     NumberFilter.prototype.comparator = function () {
         return function (left, right) {
@@ -69,9 +68,7 @@ var NumberFilter = /** @class */ (function (_super) {
             if (left < right) {
                 return 1;
             }
-            if (left > right) {
-                return -1;
-            }
+            return -1;
         };
     };
     NumberFilter.prototype.setParams = function (params) {
@@ -81,13 +78,23 @@ var NumberFilter = /** @class */ (function (_super) {
     NumberFilter.prototype.addValueChangedListeners = function () {
         var _this = this;
         var listener = function () { return _this.onUiChanged(); };
-        this.addDestroyableEventListener(this.eValueFrom1, 'input', listener);
-        this.addDestroyableEventListener(this.eValueFrom2, 'input', listener);
-        this.addDestroyableEventListener(this.eValueTo1, 'input', listener);
-        this.addDestroyableEventListener(this.eValueTo2, 'input', listener);
+        this.eValueFrom1.onValueChange(listener);
+        this.eValueFrom2.onValueChange(listener);
+        this.eValueTo1.onValueChange(listener);
+        this.eValueTo2.onValueChange(listener);
+    };
+    NumberFilter.prototype.resetPlaceholder = function () {
+        var translate = this.translate.bind(this);
+        var isRange1 = this.getCondition1Type() === ScalerFilter.IN_RANGE;
+        var isRange2 = this.getCondition2Type() === ScalerFilter.IN_RANGE;
+        this.eValueFrom1.setInputPlaceholder(translate(isRange1 ? 'rangeStart' : 'filterOoo'));
+        this.eValueTo1.setInputPlaceholder(translate(isRange1 ? 'rangeEnd' : 'filterOoo'));
+        this.eValueFrom2.setInputPlaceholder(translate(isRange2 ? 'rangeStart' : 'filterOoo'));
+        this.eValueTo2.setInputPlaceholder(translate(isRange2 ? 'rangeEnd' : 'filterOoo'));
     };
     NumberFilter.prototype.afterGuiAttached = function () {
-        this.eValueFrom1.focus();
+        this.resetPlaceholder();
+        this.eValueFrom1.getInputElement().focus();
     };
     NumberFilter.prototype.getDefaultFilterOptions = function () {
         return NumberFilter.DEFAULT_FILTER_OPTIONS;
@@ -95,16 +102,15 @@ var NumberFilter = /** @class */ (function (_super) {
     NumberFilter.prototype.createValueTemplate = function (position) {
         var positionOne = position === ConditionPosition.One;
         var pos = positionOne ? '1' : '2';
-        var translate = this.translate.bind(this);
-        return "<div class=\"ag-filter-body\" ref=\"eCondition" + pos + "Body\" role=\"presentation\">\n            <div class=\"ag-input-wrapper\" role=\"presentation\">\n                <input class=\"ag-filter-filter\" ref=\"eValueFrom" + pos + "\" type=\"text\" placeholder=\"" + translate('filterOoo') + "\"/>\n            </div>\n             <div class=\"ag-input-wrapper ag-filter-number-to\" ref=\"ePanel" + pos + "\" role=\"presentation\">\n                <input class=\"ag-filter-filter\" ref=\"eValueTo" + pos + "\" type=\"text\" placeholder=\"" + translate('filterOoo') + "\"/>\n            </div>\n        </div>";
+        return "<div class=\"ag-filter-body\" ref=\"eCondition" + pos + "Body\" role=\"presentation\">\n                    <ag-input-number-field class=\"ag-filter-from ag-filter-filter\" ref=\"eValueFrom" + pos + "\"></ag-input-number-field>\n                    <ag-input-number-field class=\"ag-filter-to ag-filter-filter\" ref=\"eValueTo" + pos + "\"></ag-input-number-field>\n                </div>";
     };
     NumberFilter.prototype.isConditionUiComplete = function (position) {
         var positionOne = position === ConditionPosition.One;
         var option = positionOne ? this.getCondition1Type() : this.getCondition2Type();
         var eValue = positionOne ? this.eValueFrom1 : this.eValueFrom2;
         var eValueTo = positionOne ? this.eValueTo1 : this.eValueTo2;
-        var value = this.stringToFloat(eValue.value);
-        var valueTo = this.stringToFloat(eValueTo.value);
+        var value = this.stringToFloat(eValue.getValue());
+        var valueTo = this.stringToFloat(eValueTo.getValue());
         if (option === SimpleFilter.EMPTY) {
             return false;
         }
@@ -114,9 +120,7 @@ var NumberFilter = /** @class */ (function (_super) {
         if (option === SimpleFilter.IN_RANGE) {
             return value != null && valueTo != null;
         }
-        else {
-            return value != null;
-        }
+        return value != null;
     };
     NumberFilter.prototype.areSimpleModelsEqual = function (aSimple, bSimple) {
         return aSimple.filter === bSimple.filter
@@ -128,6 +132,9 @@ var NumberFilter = /** @class */ (function (_super) {
         return NumberFilter.FILTER_TYPE;
     };
     NumberFilter.prototype.stringToFloat = function (value) {
+        if (typeof value === "number") {
+            return value;
+        }
         var filterText = _.makeNull(value);
         if (filterText && filterText.trim() === '') {
             filterText = null;
@@ -145,9 +152,9 @@ var NumberFilter = /** @class */ (function (_super) {
         var positionOne = position === ConditionPosition.One;
         var type = positionOne ? this.getCondition1Type() : this.getCondition2Type();
         var eValue = positionOne ? this.eValueFrom1 : this.eValueFrom2;
-        var value = this.stringToFloat(eValue.value);
+        var value = this.stringToFloat(eValue.getValue());
         var eValueTo = positionOne ? this.eValueTo1 : this.eValueTo2;
-        var valueTo = this.stringToFloat(eValueTo.value);
+        var valueTo = this.stringToFloat(eValueTo.getValue());
         var model = {
             filterType: NumberFilter.FILTER_TYPE,
             type: type
@@ -160,20 +167,26 @@ var NumberFilter = /** @class */ (function (_super) {
     };
     NumberFilter.prototype.updateUiVisibility = function () {
         _super.prototype.updateUiVisibility.call(this);
+        this.resetPlaceholder();
         var showFrom1 = this.showValueFrom(this.getCondition1Type());
-        _.setDisplayed(this.eValueFrom1, showFrom1);
+        _.setDisplayed(this.eValueFrom1.getGui(), showFrom1);
         var showTo1 = this.showValueTo(this.getCondition1Type());
-        _.setDisplayed(this.eValueTo1, showTo1);
+        _.setDisplayed(this.eValueTo1.getGui(), showTo1);
         var showFrom2 = this.showValueFrom(this.getCondition2Type());
-        _.setDisplayed(this.eValueFrom2, showFrom2);
+        _.setDisplayed(this.eValueFrom2.getGui(), showFrom2);
         var showTo2 = this.showValueTo(this.getCondition2Type());
-        _.setDisplayed(this.eValueTo2, showTo2);
+        _.setDisplayed(this.eValueTo2.getGui(), showTo2);
     };
     NumberFilter.FILTER_TYPE = 'number';
-    NumberFilter.DEFAULT_FILTER_OPTIONS = [ScalerFilter.EQUALS, ScalerFilter.NOT_EQUAL,
-        ScalerFilter.LESS_THAN, ScalerFilter.LESS_THAN_OR_EQUAL,
-        ScalerFilter.GREATER_THAN, ScalerFilter.GREATER_THAN_OR_EQUAL,
-        ScalerFilter.IN_RANGE];
+    NumberFilter.DEFAULT_FILTER_OPTIONS = [
+        ScalerFilter.EQUALS,
+        ScalerFilter.NOT_EQUAL,
+        ScalerFilter.LESS_THAN,
+        ScalerFilter.LESS_THAN_OR_EQUAL,
+        ScalerFilter.GREATER_THAN,
+        ScalerFilter.GREATER_THAN_OR_EQUAL,
+        ScalerFilter.IN_RANGE
+    ];
     __decorate([
         RefSelector('eValueFrom1')
     ], NumberFilter.prototype, "eValueFrom1", void 0);

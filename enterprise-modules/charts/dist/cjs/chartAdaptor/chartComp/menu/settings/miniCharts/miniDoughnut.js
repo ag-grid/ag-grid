@@ -15,27 +15,26 @@ var __extends = (this && this.__extends) || (function () {
 Object.defineProperty(exports, "__esModule", { value: true });
 var core_1 = require("@ag-grid-community/core");
 var miniChart_1 = require("./miniChart");
-var sector_1 = require("../../../../../charts/scene/shape/sector");
-var angle_1 = require("../../../../../charts/util/angle");
+var ag_charts_community_1 = require("ag-charts-community");
 var MiniDoughnut = /** @class */ (function (_super) {
     __extends(MiniDoughnut, _super);
-    function MiniDoughnut(parent, fills, strokes, centerRadiusScaler, tooltipName) {
+    function MiniDoughnut(container, fills, strokes, centerRadiusScaler, tooltipName) {
         if (centerRadiusScaler === void 0) { centerRadiusScaler = 0.6; }
         if (tooltipName === void 0) { tooltipName = "doughnutTooltip"; }
-        var _this = _super.call(this, parent, tooltipName) || this;
+        var _this = _super.call(this, container, tooltipName) || this;
         var radius = (_this.size - _this.padding * 2) / 2;
         var center = radius + _this.padding;
         var angles = [
-            [angle_1.toRadians(-90), angle_1.toRadians(30)],
-            [angle_1.toRadians(30), angle_1.toRadians(120)],
-            [angle_1.toRadians(120), angle_1.toRadians(180)],
-            [angle_1.toRadians(180), angle_1.toRadians(210)],
-            [angle_1.toRadians(210), angle_1.toRadians(240)],
-            [angle_1.toRadians(240), angle_1.toRadians(270)]
+            [ag_charts_community_1.toRadians(-90), ag_charts_community_1.toRadians(30)],
+            [ag_charts_community_1.toRadians(30), ag_charts_community_1.toRadians(120)],
+            [ag_charts_community_1.toRadians(120), ag_charts_community_1.toRadians(180)],
+            [ag_charts_community_1.toRadians(180), ag_charts_community_1.toRadians(210)],
+            [ag_charts_community_1.toRadians(210), ag_charts_community_1.toRadians(240)],
+            [ag_charts_community_1.toRadians(240), ag_charts_community_1.toRadians(270)]
         ];
         _this.sectors = angles.map(function (_a) {
             var startAngle = _a[0], endAngle = _a[1];
-            var sector = new sector_1.Sector();
+            var sector = new ag_charts_community_1.Sector();
             sector.centerX = center;
             sector.centerY = center;
             sector.innerRadius = radius * centerRadiusScaler;

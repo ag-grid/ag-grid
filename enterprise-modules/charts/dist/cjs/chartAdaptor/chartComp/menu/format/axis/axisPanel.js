@@ -22,8 +22,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var core_1 = require("@ag-grid-community/core");
 var axisTicksPanel_1 = require("./axisTicksPanel");
 var fontPanel_1 = require("../fontPanel");
-var array_1 = require("../../../../../charts/util/array");
-var chartAxis_1 = require("../../../../../charts/chart/chartAxis");
+var ag_charts_community_1 = require("ag-charts-community");
 var AxisPanel = /** @class */ (function (_super) {
     __extends(AxisPanel, _super);
     function AxisPanel(chartController) {
@@ -33,29 +32,55 @@ var AxisPanel = /** @class */ (function (_super) {
         return _this;
     }
     AxisPanel.prototype.init = function () {
-        this.setTemplate(AxisPanel.TEMPLATE);
+        var groupParams = {
+            cssIdentifier: 'charts-format-top-level',
+            direction: 'vertical'
+        };
+        this.setTemplate(AxisPanel.TEMPLATE, { axisGroup: groupParams });
         this.initAxis();
         this.initAxisTicks();
         this.initAxisLabels();
     };
     AxisPanel.prototype.initAxis = function () {
         var _this = this;
+        var chartTranslator = this.chartTranslator;
         this.axisGroup
-            .setTitle(this.chartTranslator.translate("axis"))
+            .setTitle(chartTranslator.translate("axis"))
             .toggleGroupExpand(false)
             .hideEnabledCheckbox(true);
         this.axisColorInput
-            .setLabel(this.chartTranslator.translate("color"))
+            .setLabel(chartTranslator.translate("color"))
             .setLabelWidth("flex")
             .setInputWidth(45)
             .setValue(this.getChartProxy().getAxisProperty("line.color"))
             .onValueChange(function (newColor) { return _this.getChartProxy().setAxisProperty("line.color", newColor); });
         this.axisLineWidthSlider
-            .setLabel(this.chartTranslator.translate("thickness"))
+            .setLabel(chartTranslator.translate("thickness"))
             .setMaxValue(10)
             .setTextFieldWidth(45)
             .setValue(this.getChartProxy().getAxisProperty("line.width"))
             .onValueChange(function (newValue) { return _this.getChartProxy().setAxisProperty("line.width", newValue); });
+        if (core_1._.includes(['line', 'scatter', 'bubble'], this.chartController.getChartType()) && !this.chartController.isGrouping()) {
+            var options_1 = [
+                { value: '', text: chartTranslator.translate('automatic') }
+            ];
+            ['category', 'time', 'number'].forEach(function (type) {
+                options_1.push({ value: type, text: chartTranslator.translate(type) });
+            });
+            this.xAxisTypeSelect
+                .setLabel(chartTranslator.translate('xType'))
+                .setLabelWidth('flex')
+                .addOptions(options_1)
+                .setValue(this.getChartProxy().getChartOption('xAxis.type') || '')
+                .onValueChange(function (newValue) {
+                var chartProxy = _this.getChartProxy();
+                chartProxy.setChartOption('xAxis.type', newValue.length && newValue);
+                _this.chartController.updateForDataChange();
+            });
+        }
+        else {
+            this.xAxisTypeSelect.setDisplayed(false);
+        }
     };
     AxisPanel.prototype.initAxisTicks = function () {
         var axisTicksComp = this.wireBean(new axisTicksPanel_1.AxisTicksPanel(this.chartController));
@@ -115,7 +140,7 @@ var AxisPanel = /** @class */ (function (_super) {
         var degreesSymbol = String.fromCharCode(176);
         var createLabelUpdateFunc = function (axisPosition) { return function (newValue) {
             var chart = _this.getChartProxy().getChart();
-            var axis = array_1.find(chart.axes, function (axis) { return axis.position === axisPosition; });
+            var axis = ag_charts_community_1.find(chart.axes, function (axis) { return axis.position === axisPosition; });
             if (axis) {
                 axis.label.rotation = newValue;
                 chart.performLayout();
@@ -123,8 +148,8 @@ var AxisPanel = /** @class */ (function (_super) {
         }; };
         var xRotationLabel = this.chartTranslator.translate("xRotation") + " " + degreesSymbol;
         var yRotationLabel = this.chartTranslator.translate("yRotation") + " " + degreesSymbol;
-        createAngleComp(xRotationLabel, this.getChartProxy().getChartOption("xAxis.label.rotation"), createLabelUpdateFunc(chartAxis_1.ChartAxisPosition.Bottom));
-        createAngleComp(yRotationLabel, this.getChartProxy().getChartOption("yAxis.label.rotation"), createLabelUpdateFunc(chartAxis_1.ChartAxisPosition.Left));
+        createAngleComp(xRotationLabel, this.getChartProxy().getChartOption("xAxis.label.rotation"), createLabelUpdateFunc(ag_charts_community_1.ChartAxisPosition.Bottom));
+        createAngleComp(yRotationLabel, this.getChartProxy().getChartOption("yAxis.label.rotation"), createLabelUpdateFunc(ag_charts_community_1.ChartAxisPosition.Left));
         var labelPaddingSlider = this.wireBean(new core_1.AgSlider());
         labelPaddingSlider.setLabel(this.chartTranslator.translate("padding"))
             .setValue(this.getChartProxy().getAxisProperty("label.padding"))
@@ -146,16 +171,19 @@ var AxisPanel = /** @class */ (function (_super) {
         this.destroyActivePanels();
         _super.prototype.destroy.call(this);
     };
-    AxisPanel.TEMPLATE = "<div>\n            <ag-group-component ref=\"axisGroup\">\n                <ag-color-picker ref=\"axisColorInput\"></ag-color-picker>\n                <ag-slider ref=\"axisLineWidthSlider\"></ag-slider>\n            </ag-group-component>\n        </div>";
+    AxisPanel.TEMPLATE = "<div>\n            <ag-group-component ref=\"axisGroup\">\n                <ag-color-picker ref=\"axisColorInput\"></ag-color-picker>\n                <ag-slider ref=\"axisLineWidthSlider\"></ag-slider>\n                <ag-select ref=\"xAxisTypeSelect\"></ag-select>\n            </ag-group-component>\n        </div>";
     __decorate([
         core_1.RefSelector('axisGroup')
     ], AxisPanel.prototype, "axisGroup", void 0);
     __decorate([
+        core_1.RefSelector('axisColorInput')
+    ], AxisPanel.prototype, "axisColorInput", void 0);
+    __decorate([
         core_1.RefSelector('axisLineWidthSlider')
     ], AxisPanel.prototype, "axisLineWidthSlider", void 0);
     __decorate([
-        core_1.RefSelector('axisColorInput')
-    ], AxisPanel.prototype, "axisColorInput", void 0);
+        core_1.RefSelector('xAxisTypeSelect')
+    ], AxisPanel.prototype, "xAxisTypeSelect", void 0);
     __decorate([
         core_1.Autowired('chartTranslator')
     ], AxisPanel.prototype, "chartTranslator", void 0);

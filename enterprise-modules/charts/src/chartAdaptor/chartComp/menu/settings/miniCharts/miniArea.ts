@@ -1,8 +1,6 @@
-import { _, ChartType } from "@ag-grid-community/core";
-import { MiniChartWithAxes } from "./miniChartWithAxes";
-import { Path } from "../../../../../charts/scene/shape/path";
-import linearScale from "../../../../../charts/scale/linearScale";
-import { BandScale } from "../../../../../charts/scale/bandScale";
+import {ChartType} from "@ag-grid-community/core";
+import {MiniChartWithAxes} from "./miniChartWithAxes";
+import {linearScale, BandScale, Path} from "ag-charts-community";
 
 export interface ICoordinate {
     x: number;
@@ -19,8 +17,8 @@ export class MiniArea extends MiniChartWithAxes {
         [5, 3, 1]
     ];
 
-    constructor(parent: HTMLElement, fills: string[], strokes: string[], data: number[][] = MiniArea.data) {
-        super(parent, "groupedAreaTooltip");
+    constructor(container: HTMLElement, fills: string[], strokes: string[], data: number[][] = MiniArea.data) {
+        super(container, "groupedAreaTooltip");
 
         const size = this.size;
         const padding = this.padding;

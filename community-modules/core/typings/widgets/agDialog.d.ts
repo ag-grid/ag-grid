@@ -21,7 +21,6 @@ export declare class AgDialog extends AgPanel {
     private moveElement;
     private moveElementDragListener;
     private resizable;
-    private isResizable;
     private movable;
     private isMoving;
     private isMaximizable;

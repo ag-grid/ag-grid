@@ -17,8 +17,8 @@ var core_1 = require("@ag-grid-community/core");
 var miniDoughnut_1 = require("./miniDoughnut");
 var MiniPie = /** @class */ (function (_super) {
     __extends(MiniPie, _super);
-    function MiniPie(parent, fills, strokes) {
-        return _super.call(this, parent, fills, strokes, 0, "pieTooltip") || this;
+    function MiniPie(container, fills, strokes) {
+        return _super.call(this, container, fills, strokes, 0, "pieTooltip") || this;
     }
     MiniPie.chartType = core_1.ChartType.Pie;
     return MiniPie;

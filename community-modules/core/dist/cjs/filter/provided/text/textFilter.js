@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v22.1.1
+ * @version v23.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -36,8 +36,8 @@ var TextFilter = /** @class */ (function (_super) {
     TextFilter.prototype.getDefaultDebounceMs = function () {
         return 500;
     };
-    TextFilter.prototype.getValue = function (element) {
-        var val = element.value;
+    TextFilter.prototype.getValue = function (inputField) {
+        var val = inputField.getValue();
         val = utils_1._.makeNull(val);
         if (val && val.trim() === '') {
             val = null;
@@ -47,23 +47,24 @@ var TextFilter = /** @class */ (function (_super) {
     TextFilter.prototype.addValueChangedListeners = function () {
         var _this = this;
         var listener = function () { return _this.onUiChanged(); };
-        this.addDestroyableEventListener(this.eValue1, 'input', listener);
-        this.addDestroyableEventListener(this.eValue2, 'input', listener);
+        this.eValue1.onValueChange(listener);
+        this.eValue2.onValueChange(listener);
     };
     TextFilter.prototype.setParams = function (params) {
         _super.prototype.setParams.call(this, params);
         this.textFilterParams = params;
         this.comparator = this.textFilterParams.textCustomComparator ? this.textFilterParams.textCustomComparator : TextFilter.DEFAULT_COMPARATOR;
-        this.formatter =
-            this.textFilterParams.textFormatter ? this.textFilterParams.textFormatter :
-                this.textFilterParams.caseSensitive == true ? TextFilter.DEFAULT_FORMATTER :
-                    TextFilter.DEFAULT_LOWERCASE_FORMATTER;
+        this.formatter = this.textFilterParams.textFormatter
+            ? this.textFilterParams.textFormatter
+            : (this.textFilterParams.caseSensitive == true
+                ? TextFilter.DEFAULT_FORMATTER
+                : TextFilter.DEFAULT_LOWERCASE_FORMATTER);
         this.addValueChangedListeners();
     };
     TextFilter.prototype.setConditionIntoUi = function (model, position) {
         var positionOne = position === simpleFilter_1.ConditionPosition.One;
         var eValue = positionOne ? this.eValue1 : this.eValue2;
-        eValue.value = model ? model.filter : null;
+        eValue.setValue(model ? model.filter : null);
     };
     TextFilter.prototype.createCondition = function (position) {
         var positionOne = position === simpleFilter_1.ConditionPosition.One;
@@ -85,32 +86,39 @@ var TextFilter = /** @class */ (function (_super) {
     TextFilter.prototype.areSimpleModelsEqual = function (aSimple, bSimple) {
         return aSimple.filter === bSimple.filter && aSimple.type === bSimple.type;
     };
-    TextFilter.prototype.resetUiToDefaults = function () {
-        _super.prototype.resetUiToDefaults.call(this);
-        this.eValue1.value = null;
-        this.eValue2.value = null;
+    TextFilter.prototype.resetUiToDefaults = function (silent) {
+        _super.prototype.resetUiToDefaults.call(this, silent);
+        var fields = [this.eValue1, this.eValue2];
+        fields.forEach(function (field) { return field.setValue(null, silent); });
+        this.resetPlaceholder();
+    };
+    TextFilter.prototype.resetPlaceholder = function () {
+        var translate = this.translate.bind(this);
+        var placeholder = translate('filterOoo', 'Filter...');
+        var fields = [this.eValue1, this.eValue2];
+        fields.forEach(function (field) { return field.setInputPlaceholder(placeholder); });
     };
     TextFilter.prototype.setValueFromFloatingFilter = function (value) {
-        this.eValue1.value = value;
-        this.eValue2.value = null;
+        this.eValue1.setValue(value);
+        this.eValue2.setValue(null);
     };
     TextFilter.prototype.getDefaultFilterOptions = function () {
         return TextFilter.DEFAULT_FILTER_OPTIONS;
     };
     TextFilter.prototype.createValueTemplate = function (position) {
         var pos = position === simpleFilter_1.ConditionPosition.One ? '1' : '2';
-        var translate = this.gridOptionsWrapper.getLocaleTextFunc();
-        return "<div class=\"ag-filter-body\" ref=\"eCondition" + pos + "Body\" role=\"presentation\">\n            <div class=\"ag-input-wrapper\" ref=\"eInputWrapper" + pos + "\" role=\"presentation\">\n                <input class=\"ag-filter-filter\" ref=\"eValue" + pos + "\" type=\"text\" placeholder=\"" + translate('filterOoo', 'Filter...') + "\"/>\n            </div>\n        </div>";
+        return "<div class=\"ag-filter-body\" ref=\"eCondition" + pos + "Body\" role=\"presentation\">\n                    <ag-input-text-field class=\"ag-filter-filter\" ref=\"eValue" + pos + "\"></ag-input-text-field>\n            </div>";
     };
     TextFilter.prototype.updateUiVisibility = function () {
         _super.prototype.updateUiVisibility.call(this);
         var showValue1 = this.showValueFrom(this.getCondition1Type());
-        utils_1._.setDisplayed(this.eInputWrapper1, showValue1);
+        utils_1._.setDisplayed(this.eValue1.getGui(), showValue1);
         var showValue2 = this.showValueFrom(this.getCondition2Type());
-        utils_1._.setDisplayed(this.eInputWrapper2, showValue2);
+        utils_1._.setDisplayed(this.eValue2.getGui(), showValue2);
     };
     TextFilter.prototype.afterGuiAttached = function () {
-        this.eValue1.focus();
+        this.resetPlaceholder();
+        this.eValue1.getInputElement().focus();
     };
     TextFilter.prototype.isConditionUiComplete = function (position) {
         var positionOne = position === simpleFilter_1.ConditionPosition.One;
@@ -144,9 +152,14 @@ var TextFilter = /** @class */ (function (_super) {
         return this.comparator(filterOption, cellValueFormatted, filterTextFormatted);
     };
     TextFilter.FILTER_TYPE = 'text';
-    TextFilter.DEFAULT_FILTER_OPTIONS = [simpleFilter_1.SimpleFilter.CONTAINS, simpleFilter_1.SimpleFilter.NOT_CONTAINS,
-        simpleFilter_1.SimpleFilter.EQUALS, simpleFilter_1.SimpleFilter.NOT_EQUAL,
-        simpleFilter_1.SimpleFilter.STARTS_WITH, simpleFilter_1.SimpleFilter.ENDS_WITH];
+    TextFilter.DEFAULT_FILTER_OPTIONS = [
+        simpleFilter_1.SimpleFilter.CONTAINS,
+        simpleFilter_1.SimpleFilter.NOT_CONTAINS,
+        simpleFilter_1.SimpleFilter.EQUALS,
+        simpleFilter_1.SimpleFilter.NOT_EQUAL,
+        simpleFilter_1.SimpleFilter.STARTS_WITH,
+        simpleFilter_1.SimpleFilter.ENDS_WITH
+    ];
     TextFilter.DEFAULT_FORMATTER = function (from) {
         return from;
     };
@@ -183,12 +196,6 @@ var TextFilter = /** @class */ (function (_super) {
     __decorate([
         componentAnnotations_1.RefSelector('eValue2')
     ], TextFilter.prototype, "eValue2", void 0);
-    __decorate([
-        componentAnnotations_1.RefSelector('eInputWrapper1')
-    ], TextFilter.prototype, "eInputWrapper1", void 0);
-    __decorate([
-        componentAnnotations_1.RefSelector('eInputWrapper2')
-    ], TextFilter.prototype, "eInputWrapper2", void 0);
     return TextFilter;
 }(simpleFilter_1.SimpleFilter));
 exports.TextFilter = TextFilter;

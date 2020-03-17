@@ -5,6 +5,7 @@ export interface IDate {
     getDate(): Date;
     /** Sets the date represented by this component */
     setDate(date: Date): void;
+    setInputPlaceholder?(placeholder: string): void;
 }
 export interface IDateParams {
     /** Method for component to tell ag-Grid that the date has changed. */

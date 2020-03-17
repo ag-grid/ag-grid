@@ -1,5 +1,5 @@
-import { _, ChartType } from "@ag-grid-community/core";
-import { MiniStackedBar } from "./miniStackedBar";
+import {ChartType} from "@ag-grid-community/core";
+import {MiniStackedBar} from "./miniStackedBar";
 
 export class MiniNormalizedBar extends MiniStackedBar {
     static chartType = ChartType.NormalizedBar;
@@ -9,7 +9,7 @@ export class MiniNormalizedBar extends MiniStackedBar {
         [2, 4, 6]
     ];
 
-    constructor(parent: HTMLElement, fills: string[], strokes: string[]) {
-        super(parent, fills, strokes, MiniNormalizedBar.data, [0, 10], "normalizedBarTooltip");
+    constructor(container: HTMLElement, fills: string[], strokes: string[]) {
+        super(container, fills, strokes, MiniNormalizedBar.data, [0, 10], "normalizedBarTooltip");
     }
 }

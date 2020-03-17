@@ -22,7 +22,7 @@ import { BaseDropZonePanel } from "./baseDropZonePanel";
 var RowGroupDropZonePanel = /** @class */ (function (_super) {
     __extends(RowGroupDropZonePanel, _super);
     function RowGroupDropZonePanel(horizontal) {
-        return _super.call(this, horizontal, false, 'row-group') || this;
+        return _super.call(this, horizontal, false) || this;
     }
     RowGroupDropZonePanel.prototype.passBeansUp = function () {
         _super.prototype.setBeans.call(this, {

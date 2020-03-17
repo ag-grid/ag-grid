@@ -1,0 +1,22 @@
+<style>
+    .ag-row-level-0 {
+        font-weight: bold;
+        color: burlywood;
+    }
+    .total-col {
+        font-weight: bold;
+        color: burlywood;
+    }
+    .number-cell {
+        text-align: right;
+    }
+</style>
+
+<div style="height: 100%; box-sizing: border-box; padding-top: 20px;">
+    <div id="myGrid" style="height: 100%;" class="ag-theme-alpine-dark"></div>
+</div>
+<div style="position: absolute; top: 10px; left: 15px;">
+    <button onclick="onExpireValueCache()">Expire Value Cache</button>
+    <button onclick="onRefreshCells()">Refresh Cells</button>
+    <button onclick="onUpdateOneValue()">Update One Value</button>
+</div>

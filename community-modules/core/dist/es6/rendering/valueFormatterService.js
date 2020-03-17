@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v22.1.1
+ * @version v23.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -14,17 +14,23 @@ import { Bean, Autowired } from "../context/context";
 var ValueFormatterService = /** @class */ (function () {
     function ValueFormatterService() {
     }
-    ValueFormatterService.prototype.formatValue = function (column, rowNode, $scope, value) {
+    ValueFormatterService.prototype.formatValue = function (column, rowNode, $scope, value, suppliedFormatter) {
+        var result = null;
         var formatter;
         var colDef = column.getColDef();
-        // if floating, give preference to the floating formatter
-        if (rowNode && rowNode.rowPinned) {
-            formatter = colDef.pinnedRowValueFormatter ? colDef.pinnedRowValueFormatter : colDef.valueFormatter;
+        if (suppliedFormatter) {
+            // favour supplied, e.g. set filter items can have their own value formatters
+            formatter = suppliedFormatter;
         }
         else {
-            formatter = colDef.valueFormatter;
+            // if floating, give preference to the floating formatter
+            if (rowNode && rowNode.rowPinned) {
+                formatter = colDef.pinnedRowValueFormatter ? colDef.pinnedRowValueFormatter : colDef.valueFormatter;
+            }
+            else {
+                formatter = colDef.valueFormatter;
+            }
         }
-        var result = null;
         if (formatter) {
             var params = {
                 value: value,

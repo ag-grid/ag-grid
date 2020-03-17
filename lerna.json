@@ -2,7 +2,10 @@
   "packages": [
     "community-modules/*",
     "enterprise-modules/*",
-    "packages/*"
+    "charts-packages/*",
+    "grid-packages/*",
+    "examples-charts/*",
+    "examples-grid/*"
   ],
   "command": {
     "bootstrap": {
@@ -11,5 +14,5 @@
       ]
     }
   },
-  "version": "22.1.1"
+  "version": "23.0.0"
 }

@@ -223,16 +223,24 @@ var LicenseManager = /** @class */ (function () {
     };
     LicenseManager.prototype.outputIncompatibleVersion = function (formattedExpiryDate, formattedReleaseDate) {
         console.error('****************************************************************************************************************************');
-        console.error('********************************************* ag-Grid Enterprise License ***************************************************');
-        console.error('*************************** License not compatible with installed version of ag-Grid Enterprise. ***************************');
-        console.error("* Your license for ag-Grid Enterprise expired on " + formattedExpiryDate + " but the version installed was released on " + formattedReleaseDate + ". *");
-        console.error('* Please contact info@ag-grid.com to renew your subscription to new versions.                                              *');
+        console.error('****************************************************************************************************************************');
+        console.error('*                                             ag-Grid Enterprise License                                                   *');
+        console.error('*                           License not compatible with installed version of ag-Grid Enterprise.                           *');
+        console.error('*                                                                                                                          *');
+        console.error("* Your ag-Grid License entitles you to all versions of ag-Grid that we release within the time covered by your license     *");
+        console.error("* - typically we provide one year licenses which entitles you to all releases / updates of ag-Grid within that year.       *");
+        console.error("* Your license has an end (expiry) date which stops the license key working with versions of ag-Grid released after the    *");
+        console.error("* license end date. The license key that you have expires on " + formattedExpiryDate + ", however the version of ag-Grid you    *");
+        console.error("* are trying to use was released on " + formattedReleaseDate + ".                                                               *");
+        console.error('*                                                                                                                          *');
+        console.error('* Please contact info@ag-grid.com to renew your subscription to new versions and get a new license key to work with this   *');
+        console.error('* version of ag-Grid.                                                                                                      *');
         console.error('****************************************************************************************************************************');
         console.error('****************************************************************************************************************************');
-        this.watermarkMessage = "Incompatible License Version";
+        this.watermarkMessage = "License Expired";
     };
     var LicenseManager_1;
-    LicenseManager.RELEASE_INFORMATION = 'MTU3NjA1OTQ4NDg4MA==';
+    LicenseManager.RELEASE_INFORMATION = 'MTU4MzkxMzQ2NzUyNQ==';
     __decorate([
         Autowired('md5')
     ], LicenseManager.prototype, "md5", void 0);

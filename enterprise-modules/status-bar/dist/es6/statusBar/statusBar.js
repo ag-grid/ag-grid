@@ -35,6 +35,9 @@ var StatusBar = /** @class */ (function (_super) {
                 .filter(function (componentConfig) { return (!componentConfig.align || componentConfig.align === 'right'); });
             this.createAndRenderComponents(rightStatusPanelComponents, this.eStatusBarRight);
         }
+        else {
+            this.setDisplayed(false);
+        }
     };
     StatusBar.prototype.createAndRenderComponents = function (statusBarComponents, ePanelComponent) {
         var _this = this;

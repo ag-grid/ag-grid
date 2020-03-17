@@ -17,7 +17,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
-import { _, Autowired, Component, PostConstruct, RefSelector, } from "@ag-grid-community/core";
+import { _, Autowired, Component, LegendPosition, PostConstruct, RefSelector, } from "@ag-grid-community/core";
 import { FontPanel } from "../fontPanel";
 var LegendPanel = /** @class */ (function (_super) {
     __extends(LegendPanel, _super);
@@ -28,7 +28,11 @@ var LegendPanel = /** @class */ (function (_super) {
         return _this;
     }
     LegendPanel.prototype.init = function () {
-        this.setTemplate(LegendPanel.TEMPLATE);
+        var groupParams = {
+            cssIdentifier: 'charts-format-top-level',
+            direction: 'vertical'
+        };
+        this.setTemplate(LegendPanel.TEMPLATE, { legendGroup: groupParams });
         this.initLegendGroup();
         this.initLegendPosition();
         this.initLegendPadding();
@@ -49,7 +53,7 @@ var LegendPanel = /** @class */ (function (_super) {
     };
     LegendPanel.prototype.initLegendPosition = function () {
         var _this = this;
-        var positions = ["top", "right", "bottom", "left"];
+        var positions = [LegendPosition.Top, LegendPosition.Right, LegendPosition.Bottom, LegendPosition.Left];
         this.legendPositionSelect
             .setLabel(this.chartTranslator.translate("position"))
             .setLabelWidth("flex")
@@ -64,11 +68,11 @@ var LegendPanel = /** @class */ (function (_super) {
     LegendPanel.prototype.initLegendPadding = function () {
         var _this = this;
         this.legendPaddingSlider
-            .setLabel(this.chartTranslator.translate("padding"))
-            .setValue(this.chartController.getChartProxy().getChartOption("legend.padding"))
+            .setLabel(this.chartTranslator.translate("spacing"))
+            .setValue(this.chartController.getChartProxy().getChartOption("legend.spacing"))
             .setTextFieldWidth(45)
             .setMaxValue(200)
-            .onValueChange(function (newValue) { return _this.chartController.getChartProxy().setChartOption("legend.padding", newValue); });
+            .onValueChange(function (newValue) { return _this.chartController.getChartProxy().setChartOption("legend.spacing", newValue); });
     };
     LegendPanel.prototype.initLegendItems = function () {
         var _this = this;
@@ -81,9 +85,9 @@ var LegendPanel = /** @class */ (function (_super) {
         };
         initSlider("item.marker.size", "markerSize", this.markerSizeSlider, 40);
         initSlider("item.marker.strokeWidth", "markerStroke", this.markerStrokeSlider, 10);
-        initSlider("item.marker.padding", "markerPadding", this.markerPaddingSlider, 20);
-        initSlider("item.paddingX", "itemPaddingX", this.itemPaddingXSlider, 50);
-        initSlider("item.paddingY", "itemPaddingY", this.itemPaddingYSlider, 50);
+        initSlider("item.marker.padding", "itemSpacing", this.markerPaddingSlider, 20);
+        initSlider("item.paddingX", "layoutHorizontalSpacing", this.itemPaddingXSlider, 50);
+        initSlider("item.paddingY", "layoutVerticalSpacing", this.itemPaddingYSlider, 50);
     };
     LegendPanel.prototype.initLabelPanel = function () {
         var _this = this;

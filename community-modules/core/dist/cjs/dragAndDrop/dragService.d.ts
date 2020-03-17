@@ -1,4 +1,4 @@
-// Type definitions for @ag-grid-community/core v22.1.1
+// Type definitions for @ag-grid-community/core v23.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 /** Adds drag listening onto an element. In ag-Grid this is used twice, first is resizing columns,
@@ -14,10 +14,6 @@ export declare class DragService {
     private mouseStartEvent;
     private touchLastTime;
     private touchStart;
-    private onMouseUpListener;
-    private onMouseMoveListener;
-    private onTouchEndListener;
-    private onTouchMoveListener;
     private logger;
     private dragEndFunctions;
     private dragSources;
@@ -29,14 +25,15 @@ export declare class DragService {
     addDragSource(params: DragListenerParams, includeTouch?: boolean): void;
     private onTouchStart;
     private onMouseDown;
+    private addTemporaryEvents;
     private isEventNearStartEvent;
     private getFirstActiveTouch;
     private onCommonMove;
     private onTouchMove;
     private onMouseMove;
-    onTouchUp(touchEvent: TouchEvent): void;
-    onMouseUp(mouseEvent: MouseEvent): void;
-    onUpCommon(eventOrTouch: MouseEvent | Touch): void;
+    onTouchUp(touchEvent: TouchEvent, el: HTMLElement): void;
+    onMouseUp(mouseEvent: MouseEvent, el: HTMLElement): void;
+    onUpCommon(eventOrTouch: MouseEvent | Touch, el: HTMLElement): void;
 }
 export interface DragListenerParams {
     /** After how many pixels of dragging should the drag operation start. Default is 4px. */

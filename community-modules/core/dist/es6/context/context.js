@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v22.1.1
+ * @version v23.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -42,13 +42,15 @@ var Context = /** @class */ (function () {
         // finally store
         this.componentsMappedByName[classUpperCase] = componentMeta.componentClass;
     };
-    Context.prototype.createComponentFromElement = function (element, afterPreCreateCallback) {
+    Context.prototype.createComponentFromElement = function (element, afterPreCreateCallback, paramsMap) {
         var key = element.nodeName;
-        return this.createComponent(key, afterPreCreateCallback);
+        var componentParams = paramsMap ? paramsMap[element.getAttribute('ref')] : undefined;
+        return this.createComponent(key, afterPreCreateCallback, element, componentParams);
     };
-    Context.prototype.createComponent = function (key, afterPreCreateCallback) {
+    Context.prototype.createComponent = function (key, afterPreCreateCallback, element, componentParams) {
         if (this.componentsMappedByName && this.componentsMappedByName[key]) {
-            var newComponent = new this.componentsMappedByName[key]();
+            var cls = this.componentsMappedByName[key];
+            var newComponent = new this.componentsMappedByName[key](componentParams);
             this.wireBean(newComponent, afterPreCreateCallback);
             return newComponent;
         }

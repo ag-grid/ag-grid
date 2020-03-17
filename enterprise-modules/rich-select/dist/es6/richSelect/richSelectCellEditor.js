@@ -32,8 +32,10 @@ var RichSelectCellEditor = /** @class */ (function (_super) {
         this.selectedValue = params.value;
         this.originalSelectedValue = params.value;
         this.focusAfterAttached = params.cellStartedEdit;
-        this.eValue.appendChild(_.createIconNoSpan('smallDown', this.gridOptionsWrapper));
-        this.virtualList = new VirtualList();
+        var icon = _.createIconNoSpan('smallDown', this.gridOptionsWrapper);
+        _.addCssClass(icon, 'ag-rich-select-value-icon');
+        this.eValue.appendChild(icon);
+        this.virtualList = new VirtualList('rich-select');
         this.getContext().wireBean(this.virtualList);
         this.virtualList.setComponentCreator(this.createRowComponent.bind(this));
         this.eList.appendChild(this.virtualList.getGui());
@@ -78,8 +80,8 @@ var RichSelectCellEditor = /** @class */ (function (_super) {
         this.params.stopEditing();
     };
     RichSelectCellEditor.prototype.onNavigationKeyPressed = function (event, key) {
-        // if we don't stop propagation, then the grids navigation kicks in
-        event.stopPropagation();
+        // if we don't preventDefault the page body and/or grid scroll will move.
+        event.preventDefault();
         var oldIndex = this.params.values.indexOf(this.selectedValue);
         var newIndex = key === Constants.KEY_UP ? oldIndex - 1 : oldIndex + 1;
         if (newIndex >= 0 && newIndex < this.params.values.length) {

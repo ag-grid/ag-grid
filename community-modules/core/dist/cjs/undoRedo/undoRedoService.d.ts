@@ -1,9 +1,9 @@
-// Type definitions for @ag-grid-community/core v22.1.1
+// Type definitions for @ag-grid-community/core v23.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 export declare class UndoRedoService {
     private gridOptionsWrapper;
-    private focusedCellController;
+    private focusController;
     private eventService;
     private gridApi;
     private rowModel;

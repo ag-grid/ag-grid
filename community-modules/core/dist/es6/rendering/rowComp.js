@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v22.1.1
+ * @version v23.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -32,10 +32,10 @@ import { CellComp } from "./cellComp";
 import { RowNode } from "../entities/rowNode";
 import { Events } from "../events";
 import { Component } from "../widgets/component";
-import { _ } from "../utils";
 import { Constants } from "../constants";
 import { ModuleNames } from "../modules/moduleNames";
 import { ModuleRegistry } from "../modules/moduleRegistry";
+import { _ } from "../utils";
 var RowComp = /** @class */ (function (_super) {
     __extends(RowComp, _super);
     function RowComp(parentScope, bodyContainerComp, pinnedLeftContainerComp, pinnedRightContainerComp, fullWidthContainerComp, rowNode, beans, animateIn, useAnimationFrameForCreate, printLayout, embedFullWidth) {
@@ -76,7 +76,7 @@ var RowComp = /** @class */ (function (_super) {
     }
     RowComp.prototype.init = function () {
         var _this = this;
-        this.rowFocused = this.beans.focusedCellController.isRowFocused(this.rowNode.rowIndex, this.rowNode.rowPinned);
+        this.rowFocused = this.beans.focusController.isRowFocused(this.rowNode.rowIndex, this.rowNode.rowPinned);
         this.scope = this.createChildScopeOrNull(this.rowNode.data);
         this.setupRowContainers();
         this.addListeners();
@@ -247,12 +247,10 @@ var RowComp = /** @class */ (function (_super) {
     RowComp.prototype.setupNormalRowContainers = function () {
         var _this = this;
         var centerCols;
-        var leftCols;
-        var rightCols;
+        var leftCols = [];
+        var rightCols = [];
         if (this.printLayout) {
             centerCols = this.beans.columnController.getAllDisplayedColumns();
-            leftCols = [];
-            rightCols = [];
         }
         else {
             centerCols = this.beans.columnController.getAllDisplayedCenterVirtualColumnsForRow(this.rowNode);
@@ -273,18 +271,19 @@ var RowComp = /** @class */ (function (_super) {
                 _this.fullWidthRowComponentBody = cellRenderer;
             });
             // printLayout doesn't put components into the pinned sections
-            if (!this.printLayout) {
-                this.createFullWidthRowContainer(this.pinnedLeftContainerComp, Constants.PINNED_LEFT, 'ag-cell-last-left-pinned', type, name, function (eRow) {
-                    _this.eFullWidthRowLeft = eRow;
-                }, function (cellRenderer) {
-                    _this.fullWidthRowComponentLeft = cellRenderer;
-                });
-                this.createFullWidthRowContainer(this.pinnedRightContainerComp, Constants.PINNED_RIGHT, 'ag-cell-first-right-pinned', type, name, function (eRow) {
-                    _this.eFullWidthRowRight = eRow;
-                }, function (cellRenderer) {
-                    _this.fullWidthRowComponentRight = cellRenderer;
-                });
+            if (this.printLayout) {
+                return;
             }
+            this.createFullWidthRowContainer(this.pinnedLeftContainerComp, Constants.PINNED_LEFT, 'ag-cell-last-left-pinned', type, name, function (eRow) {
+                _this.eFullWidthRowLeft = eRow;
+            }, function (cellRenderer) {
+                _this.fullWidthRowComponentLeft = cellRenderer;
+            });
+            this.createFullWidthRowContainer(this.pinnedRightContainerComp, Constants.PINNED_RIGHT, 'ag-cell-first-right-pinned', type, name, function (eRow) {
+                _this.eFullWidthRowRight = eRow;
+            }, function (cellRenderer) {
+                _this.fullWidthRowComponentRight = cellRenderer;
+            });
         }
         else {
             // otherwise we add to the fullWidth container as normal
@@ -323,11 +322,10 @@ var RowComp = /** @class */ (function (_super) {
         // returns 'true' if refresh succeeded
         var tryRefresh = function (eRow, eCellComp, pinned) {
             if (!eRow || !eCellComp) {
-                // no refresh needed
                 return true;
-            }
+            } // no refresh needed
+            // no refresh method present, so can't refresh, hard refresh needed
             if (!eCellComp.refresh) {
-                // no refresh method present, so can't refresh, hard refresh needed
                 return false;
             }
             var params = _this.createFullWidthParams(eRow, pinned);
@@ -349,6 +347,7 @@ var RowComp = /** @class */ (function (_super) {
         this.addDestroyableEventListener(this.rowNode, RowNode.EVENT_EXPANDED_CHANGED, this.onExpandedChanged.bind(this));
         this.addDestroyableEventListener(this.rowNode, RowNode.EVENT_DATA_CHANGED, this.onRowNodeDataChanged.bind(this));
         this.addDestroyableEventListener(this.rowNode, RowNode.EVENT_CELL_CHANGED, this.onRowNodeCellChanged.bind(this));
+        this.addDestroyableEventListener(this.rowNode, RowNode.EVENT_HIGHLIGHT_CHANGED, this.onRowNodeHighlightChanged.bind(this));
         this.addDestroyableEventListener(this.rowNode, RowNode.EVENT_DRAGGING_CHANGED, this.onRowNodeDraggingChanged.bind(this));
         var eventService = this.beans.eventService;
         this.addDestroyableEventListener(eventService, Events.EVENT_HEIGHT_SCALE_CHANGED, this.onTopChanged.bind(this));
@@ -395,7 +394,7 @@ var RowComp = /** @class */ (function (_super) {
         // as data has changed, then the style and class needs to be recomputed
         this.postProcessCss();
     };
-    RowComp.prototype.onRowNodeCellChanged = function (event) {
+    RowComp.prototype.onRowNodeCellChanged = function () {
         // as data has changed, then the style and class needs to be recomputed
         this.postProcessCss();
     };
@@ -404,6 +403,16 @@ var RowComp = /** @class */ (function (_super) {
         this.postProcessClassesFromGridOptions();
         this.postProcessRowClassRules();
         this.postProcessRowDragging();
+    };
+    RowComp.prototype.onRowNodeHighlightChanged = function () {
+        var highlighted = this.rowNode.highlighted;
+        this.eAllRowContainers.forEach(function (row) {
+            _.removeCssClass(row, 'ag-row-highlight-above');
+            _.removeCssClass(row, 'ag-row-highlight-below');
+            if (highlighted) {
+                _.addCssClass(row, 'ag-row-highlight-' + highlighted);
+            }
+        });
     };
     RowComp.prototype.onRowNodeDraggingChanged = function () {
         this.postProcessRowDragging();
@@ -530,16 +539,13 @@ var RowComp = /** @class */ (function (_super) {
         var REMOVE_CELL = true;
         var KEEP_CELL = false;
         var renderedCell = this.cellComps[indexStr];
-        if (!renderedCell) {
-            return REMOVE_CELL;
-        }
-        // always remove the cell if it's in the wrong pinned location
-        if (this.isCellInWrongRow(renderedCell)) {
+        // always remove the cell if it's not rendered or if it's in the wrong pinned location
+        if (!renderedCell || this.isCellInWrongRow(renderedCell)) {
             return REMOVE_CELL;
         }
         // we want to try and keep editing and focused cells
         var editing = renderedCell.isEditing();
-        var focused = this.beans.focusedCellController.isCellFocused(renderedCell.getCellPosition());
+        var focused = this.beans.focusController.isCellFocused(renderedCell.getCellPosition());
         var mightWantToKeepCell = editing || focused;
         if (mightWantToKeepCell) {
             var column = renderedCell.getColumn();
@@ -573,8 +579,7 @@ var RowComp = /** @class */ (function (_super) {
     RowComp.prototype.isCellInWrongRow = function (cellComp) {
         var column = cellComp.getColumn();
         var rowWeWant = this.getContainerForCell(column.getPinned());
-        // if in wrong container, remove it
-        var oldRow = cellComp.getParentRow();
+        var oldRow = cellComp.getParentRow(); // if in wrong container, remove it
         return oldRow !== rowWeWant;
     };
     RowComp.prototype.insertCellsIntoContainer = function (eRow, cols) {
@@ -718,10 +723,8 @@ var RowComp = /** @class */ (function (_super) {
                     eRow.appendChild(gui);
                     cellRendererCallback(cellRenderer);
                 }
-                else {
-                    if (cellRenderer.destroy) {
-                        cellRenderer.destroy();
-                    }
+                else if (cellRenderer.destroy) {
+                    cellRenderer.destroy();
                 }
             };
             // if doing master detail, it's possible we have a cached row comp from last time detail was displayed
@@ -787,6 +790,9 @@ var RowComp = /** @class */ (function (_super) {
             classes.push('ag-opacity-zero');
         }
         classes.push(this.rowIsEven ? 'ag-row-even' : 'ag-row-odd');
+        if (rowNode.isRowPinned()) {
+            classes.push('ag-row-pinned');
+        }
         if (rowNode.isSelected()) {
             classes.push('ag-row-selected');
         }
@@ -803,7 +809,7 @@ var RowComp = /** @class */ (function (_super) {
             classes.push('ag-row-level-' + (rowNode.parent ? (rowNode.parent.level + 1) : '0'));
         }
         if (rowNode.stub) {
-            classes.push('ag-row-stub');
+            classes.push('ag-row-loading');
         }
         if (this.fullWidthRow) {
             classes.push('ag-full-width-row');
@@ -1168,7 +1174,7 @@ var RowComp = /** @class */ (function (_super) {
         return result;
     };
     RowComp.prototype.onCellFocusChanged = function () {
-        var rowFocused = this.beans.focusedCellController.isRowFocused(this.rowNode.rowIndex, this.rowNode.rowPinned);
+        var rowFocused = this.beans.focusController.isRowFocused(this.rowNode.rowIndex, this.rowNode.rowPinned);
         if (rowFocused !== this.rowFocused) {
             this.eAllRowContainers.forEach(function (row) { return _.addOrRemoveCssClass(row, 'ag-row-focus', rowFocused); });
             this.eAllRowContainers.forEach(function (row) { return _.addOrRemoveCssClass(row, 'ag-row-no-focus', !rowFocused); });

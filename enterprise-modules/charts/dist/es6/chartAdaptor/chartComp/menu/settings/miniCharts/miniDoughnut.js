@@ -13,14 +13,13 @@ var __extends = (this && this.__extends) || (function () {
 })();
 import { ChartType } from "@ag-grid-community/core";
 import { MiniChart } from "./miniChart";
-import { Sector } from "../../../../../charts/scene/shape/sector";
-import { toRadians } from "../../../../../charts/util/angle";
+import { Sector, toRadians } from "ag-charts-community";
 var MiniDoughnut = /** @class */ (function (_super) {
     __extends(MiniDoughnut, _super);
-    function MiniDoughnut(parent, fills, strokes, centerRadiusScaler, tooltipName) {
+    function MiniDoughnut(container, fills, strokes, centerRadiusScaler, tooltipName) {
         if (centerRadiusScaler === void 0) { centerRadiusScaler = 0.6; }
         if (tooltipName === void 0) { tooltipName = "doughnutTooltip"; }
-        var _this = _super.call(this, parent, tooltipName) || this;
+        var _this = _super.call(this, container, tooltipName) || this;
         var radius = (_this.size - _this.padding * 2) / 2;
         var center = radius + _this.padding;
         var angles = [

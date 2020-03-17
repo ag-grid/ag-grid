@@ -30,8 +30,6 @@ ssh -i ~/.ssh/ag_ssh ceolter@ag-grid.com "mkdir public_html_tmp"
 ssh -i ~/.ssh/ag_ssh ceolter@ag-grid.com "mv ./$FILENAME public_html_tmp/"
 ssh -i ~/.ssh/ag_ssh ceolter@ag-grid.com "cd public_html_tmp/ && unzip $FILENAME"
 
-read -p "release bundle unzipped to public_html_tmp"
-
 # copy non versionsed files & diretories over
 NON_VERSIONED_ENTRIES=(support ecommerce services robots.txt .htaccess .ftpquota )
 for entry in "${NON_VERSIONED_ENTRIES[@]}"; do

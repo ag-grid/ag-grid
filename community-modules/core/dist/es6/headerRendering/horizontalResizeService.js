@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v22.1.1
+ * @version v23.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -41,7 +41,7 @@ var HorizontalResizeService = /** @class */ (function () {
         this.oldMsUserSelect = this.eGridDiv.style.msUserSelect;
         this.oldWebkitUserSelect = this.eGridDiv.style.webkitUserSelect;
         // change the body cursor, so when drag moves out of the drag bar, the cursor is still 'resize' (or 'move'
-        this.eGridDiv.style.cursor = 'col-resize';
+        this.eGridDiv.style.cursor = 'ew-resize';
         // we don't want text selection outside the grid (otherwise it looks weird as text highlights when we move)
         this.eGridDiv.style.msUserSelect = 'none';
         this.eGridDiv.style.webkitUserSelect = 'none';

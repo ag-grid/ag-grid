@@ -36,20 +36,6 @@ var ChartDataModel = /** @class */ (function (_super) {
         _this.valueColState = [];
         _this.detached = false;
         _this.columnNames = {};
-        _this.isPivotActive = function () { return _this.columnController.isPivotActive(); };
-        _this.isPivotMode = function () { return _this.columnController.isPivotMode(); };
-        _this.isPivotChart = function () { return _this.pivotChart; };
-        _this.getChartId = function () { return _this.chartId; };
-        _this.getValueColState = function () { return _this.valueColState.map(_this.displayNameMapper.bind(_this)); };
-        _this.getDimensionColState = function () { return _this.dimensionColState; };
-        _this.getCellRanges = function () { return [_this.dimensionCellRange, _this.valueCellRange].filter(function (r) { return r; }); };
-        _this.getChartType = function () { return _this.chartType; };
-        _this.isSuppressChartRanges = function () { return _this.suppressChartRanges; };
-        _this.isDetached = function () { return _this.detached; };
-        _this.getSelectedValueColState = function () { return _this.getValueColState().filter(function (cs) { return cs.selected; }); };
-        _this.getSelectedValueCols = function () { return _this.valueColState.filter(function (cs) { return cs.selected; }).map(function (cs) { return cs.column; }); };
-        _this.getSelectedDimension = function () { return _this.dimensionColState.filter(function (cs) { return cs.selected; })[0]; };
-        _this.getColDisplayName = function (col) { return _this.columnController.getDisplayNameForColumn(col, 'chart'); };
         _this.pivotChart = params.pivotChart;
         _this.chartType = params.chartType;
         _this.aggFunc = params.aggFunc;
@@ -83,12 +69,7 @@ var ChartDataModel = /** @class */ (function (_super) {
         return this.chartData;
     };
     ChartDataModel.prototype.setChartType = function (chartType) {
-        var isCurrentMultiCategory = this.isMultiCategoryChart();
         this.chartType = chartType;
-        // switching between single and multi-category charts requires data to be reformatted
-        if (isCurrentMultiCategory !== this.isMultiCategoryChart()) {
-            this.updateData();
-        }
     };
     ChartDataModel.prototype.isGrouping = function () {
         var usingTreeData = this.gridOptionsWrapper.isTreeData();
@@ -102,9 +83,72 @@ var ChartDataModel = /** @class */ (function (_super) {
             .some(function (id) { return id === colId; });
         return groupActive && groupDimensionSelected;
     };
+    ChartDataModel.prototype.isPivotActive = function () {
+        return this.columnController.isPivotActive();
+    };
+    ChartDataModel.prototype.isPivotMode = function () {
+        return this.columnController.isPivotMode();
+    };
+    ChartDataModel.prototype.isPivotChart = function () {
+        return this.pivotChart;
+    };
+    ;
+    ChartDataModel.prototype.getChartId = function () {
+        return this.chartId;
+    };
+    ;
+    ChartDataModel.prototype.getValueColState = function () {
+        return this.valueColState.map(this.displayNameMapper.bind(this));
+    };
+    ;
+    ChartDataModel.prototype.getDimensionColState = function () {
+        return this.dimensionColState;
+    };
+    ;
+    ChartDataModel.prototype.getCellRanges = function () {
+        return [this.dimensionCellRange, this.valueCellRange].filter(function (r) { return r; });
+    };
+    ;
+    ChartDataModel.prototype.getCellRangeParams = function () {
+        var cellRanges = this.getCellRanges();
+        var firstCellRange = cellRanges[0];
+        var startRow = firstCellRange && firstCellRange.startRow;
+        var endRow = firstCellRange && firstCellRange.endRow;
+        return {
+            rowStartIndex: startRow && startRow.rowIndex,
+            rowStartPinned: startRow && startRow.rowPinned,
+            rowEndIndex: endRow && endRow.rowIndex,
+            rowEndPinned: endRow && endRow.rowPinned,
+            columns: cellRanges.reduce(function (columns, value) { return columns.concat(value.columns.map(function (c) { return c.getId(); })); }, [])
+        };
+    };
+    ChartDataModel.prototype.getChartType = function () {
+        return this.chartType;
+    };
+    ;
+    ChartDataModel.prototype.isSuppressChartRanges = function () {
+        return this.suppressChartRanges;
+    };
+    ;
+    ChartDataModel.prototype.isDetached = function () {
+        return this.detached;
+    };
+    ;
     ChartDataModel.prototype.toggleDetached = function () {
         this.detached = !this.detached;
     };
+    ChartDataModel.prototype.getSelectedValueColState = function () {
+        return this.getValueColState().filter(function (cs) { return cs.selected; });
+    };
+    ;
+    ChartDataModel.prototype.getSelectedValueCols = function () {
+        return this.valueColState.filter(function (cs) { return cs.selected; }).map(function (cs) { return cs.column; });
+    };
+    ;
+    ChartDataModel.prototype.getSelectedDimension = function () {
+        return this.dimensionColState.filter(function (cs) { return cs.selected; })[0];
+    };
+    ;
     ChartDataModel.prototype.createCellRange = function (type) {
         var columns = [];
         for (var _i = 1; _i < arguments.length; _i++) {
@@ -132,6 +176,9 @@ var ChartDataModel = /** @class */ (function (_super) {
             columns.push.apply(columns, this.valueCellRange.columns);
         }
         return core_1._.convertToSet(columns);
+    };
+    ChartDataModel.prototype.getColDisplayName = function (col) {
+        return this.columnController.getDisplayNameForColumn(col, 'chart');
     };
     ChartDataModel.prototype.getRowIndexes = function () {
         var startRow = 0, endRow = 0;
@@ -215,9 +262,6 @@ var ChartDataModel = /** @class */ (function (_super) {
         col.displayName = columnNames ? columnNames.join(' - ') : this.getColDisplayName(col.column);
         return col;
     };
-    ChartDataModel.prototype.isMultiCategoryChart = function () {
-        return !core_1._.includes([core_1.ChartType.Pie, core_1.ChartType.Doughnut, core_1.ChartType.Scatter, core_1.ChartType.Bubble], this.chartType);
-    };
     ChartDataModel.prototype.generateId = function () {
         return 'id-' + Math.random().toString(36).substr(2, 16);
     };
@@ -232,7 +276,6 @@ var ChartDataModel = /** @class */ (function (_super) {
             dimensionCols: [this.getSelectedDimension()],
             grouping: this.grouping,
             pivoting: this.isPivotActive(),
-            multiCategories: this.isMultiCategoryChart(),
             valueCols: this.getSelectedValueCols(),
             startRow: startRow,
             endRow: endRow
@@ -265,7 +308,7 @@ var ChartDataModel = /** @class */ (function (_super) {
         });
         var defaultCategory = {
             colId: ChartDataModel.DEFAULT_CATEGORY,
-            displayName: '(None)',
+            displayName: this.chartTranslator.translate('defaultCategory'),
             selected: !hasSelectedDimension,
             order: 0
         };
@@ -388,6 +431,9 @@ var ChartDataModel = /** @class */ (function (_super) {
     __decorate([
         core_1.Autowired('rowRenderer')
     ], ChartDataModel.prototype, "rowRenderer", void 0);
+    __decorate([
+        core_1.Autowired('chartTranslator')
+    ], ChartDataModel.prototype, "chartTranslator", void 0);
     __decorate([
         core_1.PostConstruct
     ], ChartDataModel.prototype, "init", null);

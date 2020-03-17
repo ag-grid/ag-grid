@@ -5,11 +5,12 @@ import {
     Autowired,
     Component,
     PostConstruct,
-    RefSelector
+    RefSelector,
+    AgGroupComponentParams
 } from "@ag-grid-community/core";
-import { ChartController } from "../../../chartController";
-import { ChartTranslator } from "../../../chartTranslator";
-import { CartesianChartProxy } from "../../../chartProxies/cartesian/cartesianChartProxy";
+import {ChartController} from "../../../chartController";
+import {ChartTranslator} from "../../../chartTranslator";
+import {CartesianChartProxy} from "../../../chartProxies/cartesian/cartesianChartProxy";
 
 export class AxisTicksPanel extends Component {
 
@@ -38,7 +39,12 @@ export class AxisTicksPanel extends Component {
 
     @PostConstruct
     private init() {
-        this.setTemplate(AxisTicksPanel.TEMPLATE);
+        const groupParams: AgGroupComponentParams = {
+            cssIdentifier: 'charts-format-sub-level',
+            direction: 'vertical',
+            suppressOpenCloseIcons: true
+        };
+        this.setTemplate(AxisTicksPanel.TEMPLATE, {axisTicksGroup: groupParams});
         this.initAxisTicks();
     }
 

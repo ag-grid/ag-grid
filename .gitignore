@@ -4,6 +4,7 @@
 .idea/codeStyles/Project.xml
 .idea/encodings.xml
 /.idea/atlassian-ide-plugin.xml
+.vscode
 
 .lernaBuildChain.cache.json
 
@@ -14,4 +15,8 @@ node_modules
 
 package-lock.json
 docs_are_running
+
+*.nosync
+
+**/cypress/videos
 

@@ -2,7 +2,7 @@ import { GridPanel } from "./gridPanel";
 export declare class NavigationService {
     private mouseEventService;
     private paginationProxy;
-    private focusedCellController;
+    private focusController;
     private animationFrameService;
     private rangeController;
     private columnController;

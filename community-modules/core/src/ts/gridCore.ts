@@ -10,7 +10,7 @@ import {Logger, LoggerFactory} from "./logger";
 import {PopupService} from "./widgets/popupService";
 import {Autowired, Optional, PostConstruct} from "./context/context";
 import {IRowModel} from "./interfaces/iRowModel";
-import {FocusedCellController} from "./focusedCellController";
+import {FocusController} from "./focusController";
 import {Component} from "./widgets/component";
 import {IClipboardService} from "./interfaces/iClipboardService";
 import {GridApi} from "./gridApi";
@@ -41,7 +41,7 @@ export class GridCore extends Component {
     @Autowired('$scope') private $scope: any;
     @Autowired('quickFilterOnScope') private quickFilterOnScope: string;
     @Autowired('popupService') private popupService: PopupService;
-    @Autowired('focusedCellController') private focusedCellController: FocusedCellController;
+    @Autowired('focusController') private focusController: FocusController;
     @Autowired('loggerFactory') loggerFactory: LoggerFactory;
 
     @Autowired('columnApi') private columnApi: ColumnApi;
@@ -98,26 +98,20 @@ export class GridCore extends Component {
         this.logger.log('ready');
 
         this.gridOptionsWrapper.addLayoutElement(this.eRootWrapperBody);
-        const gridPanelEl = this.gridPanel.getGui();
-
-        this.addDestroyableEventListener(gridPanelEl, 'focusin', () => {
-            _.addCssClass(gridPanelEl, 'ag-has-focus');
-        });
-
-        this.addDestroyableEventListener(gridPanelEl, 'focusout', (e: FocusEvent) => {
-            if (!gridPanelEl.contains(e.relatedTarget as HTMLElement)) {
-                _.removeCssClass(gridPanelEl, 'ag-has-focus');
-            }
-        });
 
         const unsubscribeFromResize = this.resizeObserverService.observeResize(
             this.eGridDiv, this.onGridSizeChanged.bind(this));
         this.addDestroyFunc(() => unsubscribeFromResize());
 
-        const { theme } = this.environment.getTheme();
-        if (/^ag-theme-(fresh|dark|blue|bootstrap)$/.test(theme)) {
-            console.warn(`ag-Grid: "${theme}" theme is deprecated and will be removed in the next major release (v23)`);
-        }
+        const eGui = this.getGui();
+
+        this.addDestroyableEventListener(this.eventService, Events.EVENT_KEYBOARD_FOCUS, () => {
+            _.addCssClass(eGui, 'ag-keyboard-focus');
+        });
+
+        this.addDestroyableEventListener(this.eventService, Events.EVENT_MOUSE_FOCUS, () => {
+            _.removeCssClass(eGui, 'ag-keyboard-focus');
+        });
     }
 
     private createTemplate(): string {
@@ -136,7 +130,7 @@ export class GridCore extends Component {
             `<div class="ag-root-wrapper">
                 ${dropZones}
                 <div class="ag-root-wrapper-body" ref="rootWrapperBody">
-                    <ag-grid-comp ref="gridPanel"></ag-grid-comp>                    
+                    <ag-grid-comp ref="gridPanel"></ag-grid-comp>
                     ${sideBar}
                 </div>
                 ${statusBar}

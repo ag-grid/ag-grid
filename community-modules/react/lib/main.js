@@ -1,4 +1,4 @@
-// @ag-grid-community/react v22.1.1
+// @ag-grid-community/react v23.0.0
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 var agGridReact_1 = require("./agGridReact");
@@ -18,3 +18,5 @@ exports.AgGridColumn = agGridColumn_1.AgGridColumn;
 // export {INoRowsOverlayReactComp }  from './interfaces';
 // export {IStatusPanelReactComp }  from './interfaces';
 // export {IToolPanelReactComp }  from './interfaces';
+
+//# sourceMappingURL=main.js.map

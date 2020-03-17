@@ -68,7 +68,9 @@ var MiniChartsContainer = /** @class */ (function (_super) {
                 title: _this.chartTranslator.translate(group),
                 suppressEnabledCheckbox: true,
                 enabled: true,
-                suppressOpenCloseIcons: true
+                suppressOpenCloseIcons: true,
+                cssIdentifier: 'charts-settings',
+                direction: 'horizontal'
             }));
             chartGroup.forEach(function (MiniClass) {
                 var miniWrapper = document.createElement('div');

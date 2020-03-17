@@ -3,7 +3,7 @@ import {
     VerticalDirection
 } from "../dragAndDrop/dragAndDropService";
 import { Autowired, Optional, PostConstruct } from "../context/context";
-import { FocusedCellController } from "../focusedCellController";
+import { FocusController } from "../focusController";
 import { IRangeController } from "../interfaces/iRangeController";
 import { GridPanel } from "./gridPanel";
 import { GridOptionsWrapper } from "../gridOptionsWrapper";
@@ -11,32 +11,34 @@ import { EventService } from "../eventService";
 import { RowDragEvent } from "../events";
 import { Events } from "../eventKeys";
 import { IRowModel } from "../interfaces/iRowModel";
-import { Constants } from "../constants";
 import { IClientSideRowModel } from "../interfaces/iClientSideRowModel";
+import { RowNode } from "../entities/rowNode";
+import { SelectionController } from "../selectionController";
+import { MouseEventService } from "./mouseEventService";
+import { _ } from "../utils/general";
 
 export class RowDragFeature implements DropTarget {
 
     @Autowired('dragAndDropService') private dragAndDropService: DragAndDropService;
     // this feature is only created when row model is ClientSide, so we can type it as ClientSide
     @Autowired('rowModel') private rowModel: IRowModel;
-    @Autowired('focusedCellController') private focusedCellController: FocusedCellController;
+    @Autowired('focusController') private focusController: FocusController;
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
+    @Autowired('selectionController') private selectionController: SelectionController;
     @Optional('rangeController') private rangeController: IRangeController;
+    @Autowired('mouseEventService') private mouseEventService: MouseEventService;
     @Autowired('eventService') private eventService: EventService;
 
     private gridPanel: GridPanel;
-
     private clientSideRowModel: IClientSideRowModel;
-
     private eContainer: HTMLElement;
-
     private needToMoveUp: boolean;
     private needToMoveDown: boolean;
-
     private movingIntervalId: number;
     private intervalCount: number;
-
     private lastDraggingEvent: DraggingEvent;
+    private isMultiRowDrag: boolean = false;
+    private movingNodes: RowNode[] = null;
 
     constructor(eContainer: HTMLElement, gridPanel: GridPanel) {
         this.eContainer = eContainer;
@@ -62,12 +64,29 @@ export class RowDragFeature implements DropTarget {
         return DragAndDropService.ICON_MOVE;
     }
 
+    public getRowNodes(dragginEvent: DraggingEvent): RowNode[] {
+        const enableMultiRowDragging = this.gridOptionsWrapper.isEnableMultiRowDragging();
+        const selectedNodes = this.selectionController.getSelectedNodes();
+        const currentNode = dragginEvent.dragItem.rowNode;
+
+        if (enableMultiRowDragging && selectedNodes.indexOf(currentNode) !== -1) {
+            this.isMultiRowDrag = true;
+            return [...selectedNodes];
+        }
+
+        return [currentNode];
+    }
+
     public onDragEnter(draggingEvent: DraggingEvent): void {
         // when entering, we fire the enter event, then in onEnterOrDragging,
         // we also fire the move event. so we get both events when entering.
         this.dispatchEvent(Events.EVENT_ROW_DRAG_ENTER, draggingEvent);
         this.dragAndDropService.setGhostIcon(DragAndDropService.ICON_MOVE);
-        draggingEvent.dragItem.rowNode.setDragging(true);
+
+        this.getRowNodes(draggingEvent).forEach((rowNode, idx) => {
+            rowNode.setDragging(true);
+        });
+
         this.onEnterOrDragging(draggingEvent);
     }
 
@@ -80,7 +99,7 @@ export class RowDragFeature implements DropTarget {
         this.dispatchEvent(Events.EVENT_ROW_DRAG_MOVE, draggingEvent);
 
         this.lastDraggingEvent = draggingEvent;
-        const pixel = this.normaliseForScroll(draggingEvent.y);
+        const pixel = this.mouseEventService.getNormalisedPosition(draggingEvent).y;
 
         const managedDrag = this.gridOptionsWrapper.isRowDragManaged();
         if (managedDrag) {
@@ -91,24 +110,54 @@ export class RowDragFeature implements DropTarget {
     }
 
     private doManagedDrag(draggingEvent: DraggingEvent, pixel: number): void {
-        const rowNode = draggingEvent.dragItem.rowNode;
-        const rowWasMoved = this.clientSideRowModel.ensureRowAtPixel(rowNode, pixel);
+        let rowNodes = this.movingNodes = [draggingEvent.dragItem.rowNode];
 
-        if (rowWasMoved) {
-            this.focusedCellController.clearFocusedCell();
-            if (this.rangeController) {
-                this.rangeController.removeAllCellRanges();
-            }
+        if (this.isMultiRowDrag) {
+            rowNodes = this.movingNodes = [...this.selectionController.getSelectedNodes()].sort(
+                (a, b) => this.getRowIndexNumber(a) - this.getRowIndexNumber(b)
+            );
+        }
+
+        if (this.gridOptionsWrapper.isSuppressMoveWhenRowDragging()) {
+            this.clientSideRowModel.highlightRowAtPixel(rowNodes[0], pixel);
+        } else {
+            this.moveRows(rowNodes, pixel);
         }
     }
 
-    private normaliseForScroll(pixel: number): number {
-        const gridPanelHasScrolls = this.gridOptionsWrapper.getDomLayout() === Constants.DOM_LAYOUT_NORMAL;
-        if (gridPanelHasScrolls) {
-            const pixelRange = this.gridPanel.getVScrollPosition();
-            return pixel + pixelRange.top;
-        } else {
-            return pixel;
+    private getRowIndexNumber(rowNode: RowNode): number {
+        return parseInt(_.last(rowNode.getRowIndexString().split('-')), 10);
+    }
+
+    private moveRowAndClearHighlight(draggingEvent: DraggingEvent): void {
+        const lastHighlightedRowNode = this.clientSideRowModel.getLastHighlightedRowNode();
+        const isBelow = lastHighlightedRowNode && lastHighlightedRowNode.highlighted === 'below';
+        const pixel = this.mouseEventService.getNormalisedPosition(draggingEvent).y;
+        const rowNodes = this.movingNodes;
+        let increment = isBelow ? 1 : 0;
+
+        rowNodes.forEach(rowNode => {
+            if (rowNode.rowTop < pixel) {
+                increment -= 1;
+            }
+        });
+
+        this.moveRows(rowNodes, pixel, increment);
+        this.clearRowHighlight();
+    }
+
+    private clearRowHighlight(): void {
+        this.clientSideRowModel.highlightRowAtPixel(null);
+    }
+
+    private moveRows(rowNodes: RowNode[], pixel: number, increment: number = 0): void {
+        const rowWasMoved = this.clientSideRowModel.ensureRowsAtPixel(rowNodes, pixel, increment);
+
+        if (rowWasMoved) {
+            this.focusController.clearFocusedCell();
+            if (this.rangeController) {
+                this.rangeController.removeAllCellRanges();
+            }
         }
     }
 
@@ -172,8 +221,7 @@ export class RowDragFeature implements DropTarget {
     //     public createEvent<T extends RowDragEvent>(type: string, clazz: {new(): T; }, draggingEvent: DraggingEvent) {
     // but it didn't work - i think it's because it only works with classes, and not interfaces, (the events are interfaces)
     public dispatchEvent(type: string, draggingEvent: DraggingEvent): void {
-
-        const yNormalised = this.normaliseForScroll(draggingEvent.y);
+        const yNormalised = this.mouseEventService.getNormalisedPosition(draggingEvent).y;
 
         let overIndex = -1;
         let overNode = null;
@@ -215,15 +263,28 @@ export class RowDragFeature implements DropTarget {
     public onDragLeave(draggingEvent: DraggingEvent): void {
         this.dispatchEvent(Events.EVENT_ROW_DRAG_LEAVE, draggingEvent);
         this.stopDragging(draggingEvent);
+        this.clearRowHighlight();
     }
 
     public onDragStop(draggingEvent: DraggingEvent): void {
         this.dispatchEvent(Events.EVENT_ROW_DRAG_END, draggingEvent);
         this.stopDragging(draggingEvent);
+
+        if (
+            this.gridOptionsWrapper.isRowDragManaged() &&
+            this.gridOptionsWrapper.isSuppressMoveWhenRowDragging()
+        ) {
+            this.moveRowAndClearHighlight(draggingEvent);
+        }
+
+        this.isMultiRowDrag = false;
+        this.movingNodes = null;
     }
 
     private stopDragging(draggingEvent: DraggingEvent): void {
         this.ensureIntervalCleared();
-        draggingEvent.dragItem.rowNode.setDragging(false);
+        this.getRowNodes(draggingEvent).forEach((rowNode, idx) => {
+            rowNode.setDragging(false);
+        });
     }
 }

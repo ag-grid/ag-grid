@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v22.1.1
+ * @version v23.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -47,6 +47,13 @@ var HeaderRowComp = /** @class */ (function (_super) {
         _this.type = type;
         _this.pinned = pinned;
         _this.dropTarget = dropTarget;
+        var niceClassName = HeaderRowType[type].toLowerCase().replace(/_/g, "-");
+        _this.addCssClass("ag-header-row-" + niceClassName);
+        if (_.isBrowserSafari()) {
+            // fix for a Safari rendering bug that caused the header to flicker above chart panels
+            // as you move the mouse over the header
+            _this.getGui().style.transform = 'translateZ(0)';
+        }
         return _this;
     }
     HeaderRowComp.prototype.forEachHeaderElement = function (callback) {

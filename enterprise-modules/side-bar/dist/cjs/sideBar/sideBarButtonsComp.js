@@ -80,16 +80,14 @@ var SideBarButtonComp = /** @class */ (function (_super) {
     SideBarButtonComp.prototype.postConstruct = function () {
         var template = this.createTemplate();
         this.setTemplate(template);
-        var toggleButton = this.eToggleButton;
-        var iconDiv = toggleButton.querySelector('div');
-        iconDiv.insertAdjacentElement('afterbegin', core_1._.createIconNoSpan(this.toolPanelDef.iconKey, this.gridOptionsWrapper));
+        this.eIconWrapper.insertAdjacentElement('afterbegin', core_1._.createIconNoSpan(this.toolPanelDef.iconKey, this.gridOptionsWrapper));
         this.addDestroyableEventListener(this.eToggleButton, 'click', this.onButtonPressed.bind(this));
     };
     SideBarButtonComp.prototype.createTemplate = function () {
         var translate = this.gridOptionsWrapper.getLocaleTextFunc();
         var def = this.toolPanelDef;
         var label = translate(def.labelKey, def.labelDefault);
-        var res = "<div class=\"ag-side-button\">\n                <button type=\"button\" ref=\"eToggleButton\">\n                    <div></div>\n                    <span>" + label + "</span>\n                </button>\n            </div>";
+        var res = "<div class=\"ag-side-button\">\n                <button type=\"button\" ref=\"eToggleButton\" class=\"ag-side-button-button\">\n                    <div ref=\"eIconWrapper\" class=\"ag-side-button-icon-wrapper\"></div>\n                    <span class=\"ag-side-button-label\">" + label + "</span>\n                </button>\n            </div>";
         return res;
     };
     SideBarButtonComp.prototype.onButtonPressed = function () {
@@ -105,6 +103,9 @@ var SideBarButtonComp = /** @class */ (function (_super) {
     __decorate([
         core_1.RefSelector('eToggleButton')
     ], SideBarButtonComp.prototype, "eToggleButton", void 0);
+    __decorate([
+        core_1.RefSelector('eIconWrapper')
+    ], SideBarButtonComp.prototype, "eIconWrapper", void 0);
     __decorate([
         core_1.PostConstruct
     ], SideBarButtonComp.prototype, "postConstruct", null);

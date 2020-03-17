@@ -9,13 +9,15 @@ import {
     ColumnController,
     GridOptionsWrapper,
     IAggFunc,
+    IRangeController,
     PostConstruct,
     RowNode,
     RowRenderer,
-    IRangeController,
-    ValueService
+    ValueService,
+    CellRangeParams
 } from "@ag-grid-community/core";
 import { ChartDatasource, ChartDatasourceParams } from "./chartDatasource";
+import { ChartTranslator } from './chartTranslator';
 
 export interface ColState {
     column?: Column;
@@ -42,6 +44,7 @@ export class ChartDataModel extends BeanStub {
     @Autowired('valueService') private valueService: ValueService;
     @Autowired('rangeController') rangeController: IRangeController;
     @Autowired('rowRenderer') private rowRenderer: RowRenderer;
+    @Autowired('chartTranslator') private chartTranslator: ChartTranslator;
 
     private referenceCellRange: CellRange;
     private dimensionCellRange?: CellRange;
@@ -61,7 +64,7 @@ export class ChartDataModel extends BeanStub {
     private readonly chartId: string;
     private detached: boolean = false;
     private grouping: boolean;
-    private columnNames: { [p: string]: string[] } = {};
+    private columnNames: { [p: string]: string[]; } = {};
 
     public constructor(params: ChartModelParams) {
         super();
@@ -109,15 +112,8 @@ export class ChartDataModel extends BeanStub {
         return this.chartData;
     }
 
-    public setChartType(chartType: ChartType) {
-        const isCurrentMultiCategory = this.isMultiCategoryChart();
-
+    public setChartType(chartType: ChartType): void {
         this.chartType = chartType;
-
-        // switching between single and multi-category charts requires data to be reformatted
-        if (isCurrentMultiCategory !== this.isMultiCategoryChart()) {
-            this.updateData();
-        }
     }
 
     public isGrouping(): boolean {
@@ -135,35 +131,76 @@ export class ChartDataModel extends BeanStub {
         return groupActive && groupDimensionSelected;
     }
 
-    public isPivotActive = (): boolean => this.columnController.isPivotActive();
+    public isPivotActive(): boolean {
+        return this.columnController.isPivotActive();
+    }
 
-    public isPivotMode = (): boolean => this.columnController.isPivotMode();
+    public isPivotMode(): boolean {
+        return this.columnController.isPivotMode();
+    }
 
-    public isPivotChart = (): boolean => this.pivotChart;
+    public isPivotChart(): boolean {
+        return this.pivotChart;
+    };
 
-    public getChartId = (): string => this.chartId;
+    public getChartId(): string {
+        return this.chartId;
+    };
 
-    public getValueColState = (): ColState[] => this.valueColState.map(this.displayNameMapper.bind(this));
+    public getValueColState(): ColState[] {
+        return this.valueColState.map(this.displayNameMapper.bind(this));
+    };
 
-    public getDimensionColState = (): ColState[] => this.dimensionColState;
+    public getDimensionColState(): ColState[] {
+        return this.dimensionColState;
+    };
 
-    public getCellRanges = (): CellRange[] => [this.dimensionCellRange, this.valueCellRange].filter(r => r);
+    public getCellRanges(): CellRange[] {
+        return [this.dimensionCellRange, this.valueCellRange].filter(r => r);
+    };
 
-    public getChartType = (): ChartType => this.chartType;
+    public getCellRangeParams(): CellRangeParams {
+        const cellRanges = this.getCellRanges();
+        const firstCellRange = cellRanges[0];
+        const startRow = firstCellRange && firstCellRange.startRow;
+        const endRow = firstCellRange && firstCellRange.endRow;
 
-    public isSuppressChartRanges = (): boolean => this.suppressChartRanges;
+        return {
+            rowStartIndex: startRow && startRow.rowIndex,
+            rowStartPinned: startRow && startRow.rowPinned,
+            rowEndIndex: endRow && endRow.rowIndex,
+            rowEndPinned: endRow && endRow.rowPinned,
+            columns: cellRanges.reduce((columns, value) => columns.concat(value.columns.map(c => c.getId())), [])
+        };
+    }
 
-    public isDetached = (): boolean => this.detached;
+    public getChartType(): ChartType {
+        return this.chartType;
+    };
+
+    public isSuppressChartRanges(): boolean {
+        return this.suppressChartRanges;
+    };
+
+    public isDetached(): boolean {
+        return this.detached;
+    };
 
     public toggleDetached(): void {
         this.detached = !this.detached;
     }
 
-    public getSelectedValueColState = (): { colId: string, displayName: string }[] => this.getValueColState().filter(cs => cs.selected);
+    public getSelectedValueColState(): { colId: string; displayName: string; }[] {
+        return this.getValueColState().filter(cs => cs.selected);
+    };
 
-    public getSelectedValueCols = (): Column[] => this.valueColState.filter(cs => cs.selected).map(cs => cs.column!);
+    public getSelectedValueCols(): Column[] {
+        return this.valueColState.filter(cs => cs.selected).map(cs => cs.column!);
+    };
 
-    public getSelectedDimension = (): ColState => this.dimensionColState.filter(cs => cs.selected)[0];
+    public getSelectedDimension(): ColState {
+        return this.dimensionColState.filter(cs => cs.selected)[0];
+    };
 
     private createCellRange(type: CellRangeType, ...columns: Column[]): CellRange {
         return {
@@ -194,9 +231,11 @@ export class ChartDataModel extends BeanStub {
         return _.convertToSet(columns);
     }
 
-    private getColDisplayName = (col: Column): string => this.columnController.getDisplayNameForColumn(col, 'chart')!;
+    private getColDisplayName(col: Column): string {
+        return this.columnController.getDisplayNameForColumn(col, 'chart');
+    }
 
-    private getRowIndexes(): { startRow: number, endRow: number } {
+    private getRowIndexes(): { startRow: number; endRow: number; } {
         let startRow = 0, endRow = 0;
         const { rangeController } = this;
         const { valueCellRange: range } = this;
@@ -209,7 +248,7 @@ export class ChartDataModel extends BeanStub {
         return { startRow, endRow };
     }
 
-    private getAllChartColumns(): { dimensionCols: Set<Column>, valueCols: Set<Column> } {
+    private getAllChartColumns(): { dimensionCols: Set<Column>; valueCols: Set<Column>; } {
         const displayedCols = this.columnController.getAllDisplayedColumns();
         const dimensionCols = new Set<Column>();
         const valueCols = new Set<Column>();
@@ -252,7 +291,7 @@ export class ChartDataModel extends BeanStub {
         return { dimensionCols, valueCols };
     }
 
-    private isNumberCol(col: Column) {
+    private isNumberCol(col: Column): boolean {
         if (col.getColId() === 'ag-Grid-AutoColumn') {
             return false;
         }
@@ -276,7 +315,7 @@ export class ChartDataModel extends BeanStub {
         return typeof cellValue === 'number';
     }
 
-    private extractLeafData(row: RowNode, col: Column) {
+    private extractLeafData(row: RowNode, col: Column): any {
         if (!row.allLeafChildren) { return null; }
 
         for (let i = 0; i < row.allLeafChildren.length; i++) {
@@ -291,16 +330,12 @@ export class ChartDataModel extends BeanStub {
         return null;
     }
 
-    private displayNameMapper(col: ColState) {
+    private displayNameMapper(col: ColState): ColState {
         const columnNames = this.columnNames[col.colId];
 
         col.displayName = columnNames ? columnNames.join(' - ') : this.getColDisplayName(col.column);
 
         return col;
-    }
-
-    private isMultiCategoryChart(): boolean {
-        return !_.includes([ChartType.Pie, ChartType.Doughnut, ChartType.Scatter, ChartType.Bubble], this.chartType);
     }
 
     private generateId(): string {
@@ -321,7 +356,6 @@ export class ChartDataModel extends BeanStub {
             dimensionCols: [this.getSelectedDimension()],
             grouping: this.grouping,
             pivoting: this.isPivotActive(),
-            multiCategories: this.isMultiCategoryChart(),
             valueCols: this.getSelectedValueCols(),
             startRow,
             endRow
@@ -362,7 +396,7 @@ export class ChartDataModel extends BeanStub {
 
         const defaultCategory = {
             colId: ChartDataModel.DEFAULT_CATEGORY,
-            displayName: '(None)',
+            displayName: this.chartTranslator.translate('defaultCategory'),
             selected: !hasSelectedDimension, // if no dimensions in range select the default
             order: 0
         };
@@ -387,7 +421,7 @@ export class ChartDataModel extends BeanStub {
         });
     }
 
-    private updateColumnState(updatedCol: ColState) {
+    private updateColumnState(updatedCol: ColState): void {
         const idsMatch = (cs: ColState) => cs.colId === updatedCol.colId;
         const { dimensionColState, valueColState } = this;
 
@@ -489,7 +523,7 @@ export class ChartDataModel extends BeanStub {
         }
     }
 
-    public destroy() {
+    public destroy(): void {
         super.destroy();
 
         if (this.datasource) {

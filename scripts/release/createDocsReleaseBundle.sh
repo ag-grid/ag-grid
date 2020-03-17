@@ -12,7 +12,9 @@ ZIP_PREFIX=`date +%Y%m%d`
 RAW_VERSION=$1
 VERSION=""${RAW_VERSION//./}""
 
-cd packages/ag-grid-docs
+echo "Building Docs Release"
+cd grid-packages/ag-grid-docs
+rm -rf dist
 npx gulp release
 cd dist
 

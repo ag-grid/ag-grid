@@ -4,12 +4,13 @@ import { AgAbstractLabel, LabelAlignment } from "./agAbstractLabel";
 import { AgInputNumberField } from "./agInputNumberField";
 import { AgAbstractField } from "./agAbstractField";
 import { _ } from "../utils";
+import { PostConstruct } from "../context/context";
 
 export class AgSlider extends AgAbstractLabel {
     private static TEMPLATE =
         `<div class="ag-slider">
             <label ref="eLabel"></label>
-            <div class="ag-wrapper">
+            <div class="ag-wrapper ag-slider-wrapper">
                 <ag-input-range ref="eSlider"></ag-input-range>
                 <ag-input-number-field ref="eText"></ag-input-number-field>
             </div>
@@ -23,6 +24,11 @@ export class AgSlider extends AgAbstractLabel {
 
     constructor() {
         super(AgSlider.TEMPLATE);
+    }
+
+    @PostConstruct
+    private init() {
+        _.addCssClass(this.eSlider.getGui(), 'ag-slider-field');
     }
 
     public onValueChange(callbackFn: (newValue: number) => void) {

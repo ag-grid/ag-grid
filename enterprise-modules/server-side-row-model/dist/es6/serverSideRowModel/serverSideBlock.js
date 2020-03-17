@@ -378,7 +378,9 @@ var ServerSideBlock = /** @class */ (function (_super) {
             successCallback: this.pageLoaded.bind(this, this.getVersion()),
             failCallback: this.pageLoadFailed.bind(this),
             request: request,
-            parentNode: this.parentRowNode
+            parentNode: this.parentRowNode,
+            api: this.gridApi,
+            columnApi: this.columnApi
         };
         return params;
     };
@@ -419,6 +421,12 @@ var ServerSideBlock = /** @class */ (function (_super) {
     __decorate([
         Autowired('gridOptionsWrapper')
     ], ServerSideBlock.prototype, "gridOptionsWrapper", void 0);
+    __decorate([
+        Autowired('columnApi')
+    ], ServerSideBlock.prototype, "columnApi", void 0);
+    __decorate([
+        Autowired('gridApi')
+    ], ServerSideBlock.prototype, "gridApi", void 0);
     __decorate([
         PostConstruct
     ], ServerSideBlock.prototype, "init", null);

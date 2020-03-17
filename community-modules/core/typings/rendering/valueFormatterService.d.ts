@@ -3,5 +3,5 @@ import { RowNode } from "../entities/rowNode";
 export declare class ValueFormatterService {
     private gridOptionsWrapper;
     private expressionService;
-    formatValue(column: Column, rowNode: RowNode | null, $scope: any, value: any): string;
+    formatValue(column: Column, rowNode: RowNode | null, $scope: any, value: any, suppliedFormatter?: (value: any) => string): string;
 }

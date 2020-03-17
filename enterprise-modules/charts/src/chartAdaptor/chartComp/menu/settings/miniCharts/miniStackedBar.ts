@@ -1,8 +1,6 @@
-import { _, ChartType } from "@ag-grid-community/core";
-import { MiniChartWithAxes } from "./miniChartWithAxes";
-import { Rect } from "../../../../../charts/scene/shape/rect";
-import linearScale from "../../../../../charts/scale/linearScale";
-import { BandScale } from "../../../../../charts/scale/bandScale";
+import {ChartType} from "@ag-grid-community/core";
+import {MiniChartWithAxes} from "./miniChartWithAxes";
+import {linearScale, BandScale, Rect} from "ag-charts-community";
 
 export class MiniStackedBar extends MiniChartWithAxes {
     static chartType = ChartType.StackedBar;
@@ -15,13 +13,13 @@ export class MiniStackedBar extends MiniChartWithAxes {
     private readonly bars: Rect[][];
 
     constructor(
-        parent: HTMLElement,
+        container: HTMLElement,
         fills: string[],
         strokes: string[],
         data = MiniStackedBar.data,
         xScaleDomain = [0, 16],
         tooltipName = "stackedBarTooltip") {
-        super(parent, tooltipName);
+        super(container, tooltipName);
 
         const size = this.size;
         const padding = this.padding;

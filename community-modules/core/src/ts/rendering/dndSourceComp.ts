@@ -15,7 +15,7 @@ export class DndSourceComp extends Component {
     private readonly eCell: HTMLElement;
 
     constructor(rowNode: RowNode, column: Column, cellValue: string, beans: Beans, eCell: HTMLElement) {
-        super(`<div class="ag-row-drag" draggable="true"></div>`);
+        super(`<div class="ag-drag-handle ag-row-drag" draggable="true"></div>`);
         this.rowNode = rowNode;
         this.column = column;
         this.cellValue = cellValue;

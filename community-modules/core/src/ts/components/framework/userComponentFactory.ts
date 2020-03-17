@@ -1,9 +1,9 @@
-import { Autowired, Bean, Context, Optional } from "../../context/context";
-import { GridOptions } from "../../entities/gridOptions";
-import { GridOptionsWrapper } from "../../gridOptionsWrapper";
-import { FrameworkComponentWrapper } from "./frameworkComponentWrapper";
-import { IComponent } from "../../interfaces/iComponent";
-import { ColDef, ColGroupDef } from "../../entities/colDef";
+import {Autowired, Bean, Context, Optional} from "../../context/context";
+import {GridOptions} from "../../entities/gridOptions";
+import {GridOptionsWrapper} from "../../gridOptionsWrapper";
+import {FrameworkComponentWrapper} from "./frameworkComponentWrapper";
+import {IComponent} from "../../interfaces/iComponent";
+import {ColDef, ColGroupDef} from "../../entities/colDef";
 import {
     AgGridComponentFunctionInput,
     AgGridRegisteredComponentInput,
@@ -11,25 +11,43 @@ import {
     RegisteredComponentSource,
     UserComponentRegistry
 } from "./userComponentRegistry";
-import { AgComponentUtils } from "./agComponentUtils";
-import { ComponentMetadata, ComponentMetadataProvider } from "./componentMetadataProvider";
-import { ISetFilterParams } from "../../interfaces/iSetFilterParams";
-import { IRichCellEditorParams } from "../../interfaces/iRichCellEditorParams";
-import { ToolPanelDef } from "../../entities/sideBar";
-import { _, Promise } from "../../utils";
-import { IDateComp, IDateParams } from "../../rendering/dateComponent";
-import { IHeaderComp, IHeaderParams } from "../../headerRendering/header/headerComp";
-import { IHeaderGroupComp, IHeaderGroupParams } from "../../headerRendering/headerGroup/headerGroupComp";
-import { ICellRendererComp, ICellRendererParams } from "../../rendering/cellRenderers/iCellRenderer";
-import { GroupCellRendererParams } from "../../rendering/cellRenderers/groupCellRenderer";
-import { ILoadingOverlayComp } from "../../rendering/overlays/loadingOverlayComponent";
-import { INoRowsOverlayComp } from "../../rendering/overlays/noRowsOverlayComponent";
-import { ITooltipComp, ITooltipParams } from "../../rendering/tooltipComponent";
-import { IFilterComp, IFilterParams } from "../../interfaces/iFilter";
-import { IFloatingFilterComp } from "../../filter/floating/floatingFilter";
-import { ICellEditorComp } from "../../interfaces/iCellEditor";
-import { IToolPanelComp } from "../../interfaces/iToolPanel";
-import { StatusPanelDef } from "../../interfaces/iStatusPanel";
+import {AgComponentUtils} from "./agComponentUtils";
+import {ComponentMetadata, ComponentMetadataProvider} from "./componentMetadataProvider";
+import {ISetFilterParams} from "../../interfaces/iSetFilterParams";
+import {IRichCellEditorParams} from "../../interfaces/iRichCellEditorParams";
+import {ToolPanelDef} from "../../entities/sideBar";
+import {_, Promise} from "../../utils";
+import {IDateComp, IDateParams} from "../../rendering/dateComponent";
+import {IHeaderComp, IHeaderParams} from "../../headerRendering/header/headerComp";
+import {IHeaderGroupComp, IHeaderGroupParams} from "../../headerRendering/headerGroup/headerGroupComp";
+import {ICellRendererComp, ICellRendererParams} from "../../rendering/cellRenderers/iCellRenderer";
+import {GroupCellRendererParams} from "../../rendering/cellRenderers/groupCellRenderer";
+import {ILoadingOverlayComp} from "../../rendering/overlays/loadingOverlayComponent";
+import {INoRowsOverlayComp} from "../../rendering/overlays/noRowsOverlayComponent";
+import {ITooltipComp, ITooltipParams} from "../../rendering/tooltipComponent";
+import {IFilterComp, IFilterParams} from "../../interfaces/iFilter";
+import {IFloatingFilterComp} from "../../filter/floating/floatingFilter";
+import {ICellEditorComp} from "../../interfaces/iCellEditor";
+import {IToolPanelComp} from "../../interfaces/iToolPanel";
+import {StatusPanelDef} from "../../interfaces/iStatusPanel";
+import {
+    CellEditorComponent,
+    CellRendererComponent,
+    ComponentType,
+    DateComponent,
+    FilterComponent,
+    FloatingFilterComponent,
+    GroupRowInnerRendererComponent,
+    HeaderComponent,
+    HeaderGroupComponent,
+    InnerRendererComponent,
+    LoadingOverlayComponent,
+    NoRowsOverlayComponent,
+    PinnedRowCellRendererComponent,
+    StatusPanelComponent,
+    ToolPanelComponent,
+    TooltipComponent
+} from "./componentTypes";
 
 export type DefinitionObject =
     GridOptions
@@ -62,7 +80,10 @@ export interface ComponentClassDef<A extends IComponent<any> & B, B> {
     paramsFromSelector: any; // Params the selector function provided, if any
 }
 
-export interface ModifyParamsCallback { (params: any, component: IComponent<any>): void; }
+export interface ModifyParamsCallback {
+    (params: any, component: IComponent<any>): void;
+}
+
 
 @Bean('userComponentFactory')
 export class UserComponentFactory {
@@ -89,83 +110,85 @@ export class UserComponentFactory {
     private frameworkComponentWrapper: FrameworkComponentWrapper;
 
     public newDateComponent(params: IDateParams): Promise<IDateComp> {
-        return this.createAndInitUserComponent<IDateComp>(
-            this.gridOptions, params, "dateComponent", "agDateInput");
+        return this.createAndInitUserComponent<IDateComp>(this.gridOptions, params, DateComponent, "agDateInput");
     }
 
-    public newHeaderComponent(params:IHeaderParams): Promise<IHeaderComp> {
+    public newHeaderComponent(params: IHeaderParams): Promise<IHeaderComp> {
         return this.createAndInitUserComponent<IHeaderComp>(
-            params.column.getColDef(), params, "headerComponent", "agColumnHeader");
+            params.column.getColDef(), params, HeaderComponent, "agColumnHeader");
     }
 
-    public newHeaderGroupComponent(params:IHeaderGroupParams): Promise<IHeaderGroupComp> {
+    public newHeaderGroupComponent(params: IHeaderGroupParams): Promise<IHeaderGroupComp> {
         return this.createAndInitUserComponent(
-            params.columnGroup.getColGroupDef(), params, "headerGroupComponent", "agColumnGroupHeader");
+            params.columnGroup.getColGroupDef(), params, HeaderGroupComponent, "agColumnGroupHeader");
     }
 
-    public newFullWidthGroupRowInnerCellRenderer(params:ICellRendererParams):Promise<ICellRendererComp> {
+    public newFullWidthGroupRowInnerCellRenderer(params: ICellRendererParams): Promise<ICellRendererComp> {
         return this.createAndInitUserComponent<ICellRendererComp>(
-            this.gridOptions, params, "groupRowInnerRenderer", null, true);
+            this.gridOptions, params, GroupRowInnerRendererComponent, null, true);
     }
 
     // this one is unusual, as it can be LoadingCellRenderer, DetailCellRenderer, FullWidthCellRenderer or GroupRowRenderer.
     // so we have to pass the type in.
-    public newFullWidthCellRenderer(params: any, cellRendererType: string, cellRendererName: string):Promise<ICellRendererComp> {
-        return this.createAndInitUserComponent<ICellRendererComp>(null, params, cellRendererType, cellRendererName);
+    public newFullWidthCellRenderer(params: any, cellRendererType: string, cellRendererName: string): Promise<ICellRendererComp> {
+        return this.createAndInitUserComponent<ICellRendererComp>(null, params, {
+            propertyName: cellRendererType,
+            isCellRenderer: () => true
+        }, cellRendererName);
     }
 
-    public newCellRenderer(target: ColDef | ISetFilterParams | IRichCellEditorParams, params:ICellRendererParams):Promise<ICellRendererComp> {
+    public newCellRenderer(target: ColDef | ISetFilterParams | IRichCellEditorParams, params: ICellRendererParams): Promise<ICellRendererComp> {
         return this.createAndInitUserComponent<ICellRendererComp>(
-            target, params, "cellRenderer", null, true);
+            target, params, CellRendererComponent, null, true);
     }
 
-    public newPinnedRowCellRenderer(target: ColDef | ISetFilterParams | IRichCellEditorParams, params:ICellRendererParams):Promise<ICellRendererComp> {
+    public newPinnedRowCellRenderer(target: ColDef | ISetFilterParams | IRichCellEditorParams, params: ICellRendererParams): Promise<ICellRendererComp> {
         return this.createAndInitUserComponent<ICellRendererComp>(
-            target, params, "pinnedRowCellRenderer", null, true);
+            target, params, PinnedRowCellRendererComponent, null, true);
     }
 
     public newCellEditor(colDef: ColDef, params: any): Promise<ICellEditorComp> {
-        return this.createAndInitUserComponent (colDef, params, 'cellEditor', 'agCellEditor');
+        return this.createAndInitUserComponent(colDef, params, CellEditorComponent, 'agCellEditor');
     }
 
-    public newInnerCellRenderer(target: GroupCellRendererParams, params:ICellRendererParams):Promise<ICellRendererComp> {
+    public newInnerCellRenderer(target: GroupCellRendererParams, params: ICellRendererParams): Promise<ICellRendererComp> {
         return this.createAndInitUserComponent<ICellRendererComp>(
-            target, params, "innerRenderer", null);
+            target, params, InnerRendererComponent, null);
     }
 
     public newLoadingOverlayComponent(params: any): Promise<ILoadingOverlayComp> {
         return this.createAndInitUserComponent<ILoadingOverlayComp>(
-            this.gridOptions, params, "loadingOverlayComponent", "agLoadingOverlay");
+            this.gridOptions, params, LoadingOverlayComponent, "agLoadingOverlay");
     }
 
     public newNoRowsOverlayComponent(params: any): Promise<INoRowsOverlayComp> {
         return this.createAndInitUserComponent<INoRowsOverlayComp>(
-            this.gridOptions, params, "noRowsOverlayComponent", "agNoRowsOverlay");
+            this.gridOptions, params, NoRowsOverlayComponent, "agNoRowsOverlay");
     }
 
     public newTooltipComponent(params: ITooltipParams): Promise<ITooltipComp> {
         const colDef = params.colDef;
         return this.createAndInitUserComponent<ITooltipComp>(
-            colDef, params, "tooltipComponent", 'agTooltipComponent');
+            colDef, params, TooltipComponent, 'agTooltipComponent');
     }
 
     public newFilterComponent(colDef: ColDef, params: IFilterParams, defaultFilter: string,
                               modifyParamsCallback: ModifyParamsCallback): Promise<IFilterComp> {
         return this.createAndInitUserComponent<IFilterComp>(
-            colDef, params, 'filter', defaultFilter, false, modifyParamsCallback);
+            colDef, params, FilterComponent, defaultFilter, false, modifyParamsCallback);
     }
 
     public newFloatingFilterComponent(colDef: ColDef, params: any, defaultFloatingFilter: string): Promise<IFloatingFilterComp> {
         return this.createAndInitUserComponent<IFloatingFilterComp>(
-            colDef, params, "floatingFilterComponent", defaultFloatingFilter, true);
+            colDef, params, FloatingFilterComponent, defaultFloatingFilter, true);
     }
 
     public newToolPanelComponent(toolPanelDef: ToolPanelDef, params: any): Promise<IToolPanelComp> {
-        return this.createAndInitUserComponent(toolPanelDef, params, 'toolPanel');
+        return this.createAndInitUserComponent(toolPanelDef, params, ToolPanelComponent);
     }
 
     public newStatusPanelComponent(def: StatusPanelDef, params: any): Promise<IToolPanelComp> {
-        return this.createAndInitUserComponent(def, params, 'statusPanel');
+        return this.createAndInitUserComponent(def, params, StatusPanelComponent);
     }
 
     /**
@@ -185,29 +208,29 @@ export class UserComponentFactory {
      *  params are and the component that init is about to get called for
      */
     private createAndInitUserComponent<A extends IComponent<any>>(definitionObject: DefinitionObject,
-                                                          paramsFromGrid: any,
-                                                          propertyName: string,
-                                                          defaultComponentName?: string,
-
-                                                          // optional items are: FloatingFilter, CellComp (for cellRenderer)
-                                                          optional = false,
-
-                                                          // used by FilterManager only
-                                                          modifyParamsCallback?: ModifyParamsCallback
-                                                    ): Promise<A> {
+                                                                  paramsFromGrid: any,
+                                                                  componentType: ComponentType,
+                                                                  defaultComponentName?: string,
+                                                                  // optional items are: FloatingFilter, CellComp (for cellRenderer)
+                                                                  optional = false,
+                                                                  // used by FilterManager only
+                                                                  modifyParamsCallback?: ModifyParamsCallback
+    ): Promise<A> {
 
         if (!definitionObject) {
             definitionObject = this.gridOptions;
         }
 
         // Create the component instance
-        const componentAndParams: {componentInstance: A, paramsFromSelector: any}
-            = this.createComponentInstance(definitionObject, propertyName, paramsFromGrid, defaultComponentName, optional);
-        if (!componentAndParams) { return null; }
+        const componentAndParams: { componentInstance: A, paramsFromSelector: any }
+            = this.createComponentInstance(definitionObject, componentType, paramsFromGrid, defaultComponentName, optional);
+        if (!componentAndParams) {
+            return null;
+        }
         const componentInstance = componentAndParams.componentInstance;
 
         // Wire the component and call the init method with the correct params
-        const params = this.createFinalParams(definitionObject, propertyName, paramsFromGrid,
+        const params = this.createFinalParams(definitionObject, componentType.propertyName, paramsFromGrid,
             componentAndParams.paramsFromSelector);
 
         this.addReactHacks(params);
@@ -395,11 +418,15 @@ export class UserComponentFactory {
             componentNameToUse = defaultComponentName;
         }
 
-        if (!componentNameToUse) { return null; }
+        if (!componentNameToUse) {
+            return null;
+        }
 
         const registeredCompClassDef = this.lookupFromRegisteredComponents(propertyName, componentNameToUse) as ComponentClassDef<A, B>;
 
-        if (!registeredCompClassDef) { return null; }
+        if (!registeredCompClassDef) {
+            return null;
+        }
 
         return {
             componentFromFramework: registeredCompClassDef.componentFromFramework,
@@ -410,11 +437,13 @@ export class UserComponentFactory {
     }
 
     private lookupFromRegisteredComponents<A extends IComponent<any> & B, B>(propertyName: string,
-                                                            componentNameOpt?: string): ComponentClassDef<A, B> {
+                                                                             componentNameOpt?: string): ComponentClassDef<A, B> {
         const componentName: string = componentNameOpt != null ? componentNameOpt : propertyName;
 
         const registeredComponent: RegisteredComponent<A, B> = this.userComponentRegistry.retrieve(componentName);
-        if (registeredComponent == null) { return null; }
+        if (registeredComponent == null) {
+            return null;
+        }
 
         //If it is a FW it has to be registered as a component
         if (registeredComponent.componentFromFramework) {
@@ -456,9 +485,9 @@ export class UserComponentFactory {
      * @returns {any} It merges the user agGridParams with the actual params specified by the user.
      */
     public createFinalParams(definitionObject: DefinitionObject,
-                       propertyName: string,
-                       paramsFromGrid: any,
-                       paramsFromSelector: any = null): any {
+                             propertyName: string,
+                             paramsFromGrid: any,
+                             paramsFromSelector: any = null): any {
 
         const res: any = {};
         _.mergeDeep(res, paramsFromGrid);
@@ -479,11 +508,12 @@ export class UserComponentFactory {
     }
 
     private createComponentInstance<A extends IComponent<any> & B, B>(holder: DefinitionObject,
-        propertyName: string,
-        paramsForSelector: any,
-        defaultComponentName: string,
-        optional: boolean
-    ): {componentInstance: A, paramsFromSelector: any} {
+                                                                      componentType: ComponentType,
+                                                                      paramsForSelector: any,
+                                                                      defaultComponentName: string,
+                                                                      optional: boolean
+    ): { componentInstance: A, paramsFromSelector: any } {
+        const propertyName = componentType.propertyName;
         const componentToUse: ComponentClassDef<A, B> =
             this.lookupComponentClassDef(holder, propertyName, paramsForSelector, defaultComponentName) as ComponentClassDef<A, B>;
 
@@ -493,7 +523,9 @@ export class UserComponentFactory {
             // i don't know why the default name was originally printed out (that doesn't help the user)
             const overrideName = holder ? (holder as any)[propertyName] : defaultComponentName;
             const nameToReport = overrideName ? overrideName : defaultComponentName;
-            if (!optional) { console.error(`Could not find component ${nameToReport}, did you forget to configure this component?`); }
+            if (!optional) {
+                console.error(`Could not find component ${nameToReport}, did you forget to configure this component?`);
+            }
             return null;
         }
 
@@ -506,6 +538,7 @@ export class UserComponentFactory {
             componentInstance = this.frameworkComponentWrapper.wrap(FrameworkComponentRaw,
                 thisComponentConfig.mandatoryMethodList,
                 thisComponentConfig.optionalMethodList,
+                componentType,
                 defaultComponentName) as A;
         } else {
             // Using plain JavaScript component

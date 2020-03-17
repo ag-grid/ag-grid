@@ -33,8 +33,8 @@ var ChartSettingsPanel = /** @class */ (function (_super) {
     }
     ChartSettingsPanel.prototype.postConstruct = function () {
         this.resetPalettes();
-        this.ePrevBtn.insertAdjacentElement('afterbegin', core_1._.createIconNoSpan('smallLeft', this.gridOptionsWrapper));
-        this.eNextBtn.insertAdjacentElement('afterbegin', core_1._.createIconNoSpan('smallRight', this.gridOptionsWrapper));
+        this.ePrevBtn.insertAdjacentElement('afterbegin', core_1._.createIconNoSpan('previous', this.gridOptionsWrapper));
+        this.eNextBtn.insertAdjacentElement('afterbegin', core_1._.createIconNoSpan('next', this.gridOptionsWrapper));
         this.addDestroyableEventListener(this.ePrevBtn, 'click', this.prev.bind(this));
         this.addDestroyableEventListener(this.eNextBtn, 'click', this.next.bind(this));
         this.addDestroyableEventListener(this.chartController, chartController_1.ChartController.EVENT_CHART_UPDATED, this.resetPalettes.bind(this));
@@ -73,14 +73,13 @@ var ChartSettingsPanel = /** @class */ (function (_super) {
             }
         });
         core_1._.addOrRemoveCssClass(this.eNavBar, 'ag-hidden', this.palettes.size <= 1);
+        var paletteIndex = this.paletteNames.indexOf(this.activePalette);
+        core_1._.radioCssClass(this.cardItems[paletteIndex], 'ag-selected', 'ag-not-selected');
     };
     ChartSettingsPanel.prototype.addCardLink = function (paletteName) {
         var _this = this;
         var link = document.createElement('div');
-        core_1._.addCssClass(link, 'ag-nav-card-item');
-        if (paletteName === this.activePalette) {
-            core_1._.addCssClass(link, 'ag-selected');
-        }
+        core_1._.addCssClass(link, 'ag-chart-settings-card-item');
         this.addDestroyableEventListener(link, 'click', function () {
             var _a = _this, activePalette = _a.activePalette, isAnimating = _a.isAnimating, paletteNames = _a.paletteNames;
             if (paletteName === activePalette || isAnimating) {
@@ -120,7 +119,7 @@ var ChartSettingsPanel = /** @class */ (function (_super) {
     ChartSettingsPanel.prototype.setActivePalette = function (paletteName, animationDirection) {
         var _this = this;
         var paletteIndex = this.paletteNames.indexOf(paletteName);
-        core_1._.radioCssClass(this.cardItems[paletteIndex], 'ag-selected');
+        core_1._.radioCssClass(this.cardItems[paletteIndex], 'ag-selected', 'ag-not-selected');
         var currentPalette = this.miniCharts[this.paletteNames.indexOf(this.activePalette)];
         var currentGui = currentPalette.getGui();
         var futurePalette = this.miniCharts[paletteIndex];
@@ -157,7 +156,7 @@ var ChartSettingsPanel = /** @class */ (function (_super) {
         this.destroyMiniCharts();
         _super.prototype.destroy.call(this);
     };
-    ChartSettingsPanel.TEMPLATE = "<div class=\"ag-chart-settings-wrapper\">\n            <div ref=\"eMiniChartsContainer\" class=\"ag-chart-settings-mini-charts-container\"></div>\n            <div ref=\"eNavBar\" class=\"ag-chart-settings-nav-bar\">\n                <div ref=\"ePrevBtn\" class=\"ag-chart-settings-prev-btn\">\n                    <button type=\"button\"></button>\n                </div>\n                <div ref=\"eCardSelector\" class=\"ag-nav-card-selector\"></div>\n                <div ref=\"eNextBtn\" class=\"ag-chart-settings-next-btn\">\n                    <button type=\"button\"></button>\n                </div>\n            </div>\n        </div>";
+    ChartSettingsPanel.TEMPLATE = "<div class=\"ag-chart-settings-wrapper\">\n            <div ref=\"eMiniChartsContainer\" class=\"ag-chart-settings-mini-charts-container\"></div>\n            <div ref=\"eNavBar\" class=\"ag-chart-settings-nav-bar\">\n                <div ref=\"ePrevBtn\" class=\"ag-chart-settings-prev\">\n                    <button type=\"button\" class=\"ag-chart-settings-prev-button\"></button>\n                </div>\n                <div ref=\"eCardSelector\" class=\"ag-chart-settings-card-selector\"></div>\n                <div ref=\"eNextBtn\" class=\"ag-chart-settings-next\">\n                    <button type=\"button\" class=\"ag-chart-settings-next-button\"></button>\n                </div>\n            </div>\n        </div>";
     __decorate([
         core_1.Autowired('gridOptionsWrapper')
     ], ChartSettingsPanel.prototype, "gridOptionsWrapper", void 0);

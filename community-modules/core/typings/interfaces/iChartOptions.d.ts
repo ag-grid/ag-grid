@@ -23,8 +23,8 @@ export interface SeriesOptions {
 export interface ChartOptions<T extends SeriesOptions> {
     document?: Document;
     seriesDefaults: T;
-    width: number;
-    height: number;
+    width?: number;
+    height?: number;
     padding: PaddingOptions;
     background: BackgroundOptions;
     title: CaptionOptions;
@@ -58,10 +58,15 @@ export interface CaptionOptions extends FontOptions {
 export interface LegendOptions {
     enabled: boolean;
     position: LegendPosition;
-    padding: number;
+    spacing: number;
     item: LegendItemOptions;
 }
-export declare type LegendPosition = 'top' | 'right' | 'bottom' | 'left';
+export declare enum LegendPosition {
+    Top = "top",
+    Right = "right",
+    Bottom = "bottom",
+    Left = "left"
+}
 export interface LegendItemOptions {
     label: LegendLabelOptions;
     marker: LegendMarkerOptions;
@@ -70,9 +75,9 @@ export interface LegendItemOptions {
 }
 export interface LegendLabelOptions extends FontOptions {
 }
-export declare type MarkerType = 'circle' | 'cross' | 'diamond' | 'plus' | 'square' | 'triangle';
+export declare type MarkerShape = 'circle' | 'cross' | 'diamond' | 'plus' | 'square' | 'triangle';
 export interface LegendMarkerOptions {
-    type: MarkerType;
+    shape: MarkerShape;
     size: number;
     padding: number;
     strokeWidth: number;
@@ -167,7 +172,7 @@ export interface LineSeriesOptions extends SeriesOptions {
 }
 export interface MarkerOptions {
     enabled: boolean;
-    type: MarkerType;
+    shape: MarkerShape;
     size: number;
     strokeWidth: number;
 }

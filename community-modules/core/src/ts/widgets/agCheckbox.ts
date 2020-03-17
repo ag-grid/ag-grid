@@ -11,46 +11,23 @@ export interface ChangeEvent extends AgEvent {
 
 export class AgCheckbox extends AgAbstractInputField<HTMLInputElement, boolean> {
     protected className = 'ag-checkbox';
-    protected nativeInputClassName = 'ag-native-checkbox';
     protected displayTag = 'input';
     protected inputType = 'checkbox';
     protected labelAlignment: LabelAlignment = 'right';
-    protected iconMap: { selected: string; unselected: string; indeterminate?: string } = {
-        selected: 'checkboxChecked',
-        unselected: 'checkboxUnchecked',
-        indeterminate: 'checkboxIndeterminate'
-    };
 
     @Autowired('gridOptionsWrapper') protected gridOptionsWrapper: GridOptionsWrapper;
 
     private selected: boolean | undefined = false;
     private readOnly = false;
     private passive = false;
-    protected eIconEl: HTMLElement;
 
     constructor() {
         super();
         this.setTemplate(this.TEMPLATE.replace(/%displayField%/g, this.displayTag));
     }
 
-    protected postConstruct(): void {
-        super.postConstruct();
-        if (!this.gridOptionsWrapper.useNativeCheckboxes()) {
-            _.addCssClass(this.eInput, 'ag-hidden');
-            this.addIconsPlaceholder();
-            this.updateIcons();
-        } else {
-            _.addCssClass(this.eInput, this.nativeInputClassName);
-        }
-    }
-
     protected addInputListeners() {
-        if (this.gridOptionsWrapper.useNativeCheckboxes()) {
-            this.addDestroyableEventListener(this.eInput, 'click', this.onCheckboxClick.bind(this));
-        } else {
-            this.addDestroyableEventListener(this.getGui(), 'click', e => this.onClick(e));
-            this.addDestroyableEventListener(this.eInput, 'change', e => this.setValue(e.target.checked, true));
-        }
+        this.addDestroyableEventListener(this.eInput, 'click', this.onCheckboxClick.bind(this));
     }
 
     public getNextValue(): boolean {
@@ -66,9 +43,15 @@ export class AgCheckbox extends AgAbstractInputField<HTMLInputElement, boolean> 
     }
 
     public setReadOnly(readOnly: boolean): void {
-        this.eInput.readOnly = readOnly;
+        _.addOrRemoveCssClass(this.eWrapper, 'ag-disabled', readOnly);
+        this.eInput.disabled = readOnly;
         this.readOnly = readOnly;
-        this.updateIcons();
+    }
+
+    public setDisabled(disabled: boolean): this {
+        _.addOrRemoveCssClass(this.eWrapper, 'ag-disabled', disabled);
+
+        return super.setDisabled(disabled);
     }
 
     public toggle(): void {
@@ -86,7 +69,11 @@ export class AgCheckbox extends AgAbstractInputField<HTMLInputElement, boolean> 
     }
 
     public setValue(value: boolean | undefined, silent?: boolean): this {
+        this.refreshSelectedClass(value);
+        if (value === this.getValue()) { return this; }
+
         this.setSelected(value, silent);
+
         return this;
     }
 
@@ -94,58 +81,32 @@ export class AgCheckbox extends AgAbstractInputField<HTMLInputElement, boolean> 
         return this.selected;
     }
 
-    protected setSelected(selected?: boolean, silent?: boolean): void {
-        if (this.selected === selected) {
+    private setSelected(selected?: boolean, silent?: boolean): void {
+        if (this.isSelected() === selected) {
             return;
         }
 
         this.selected = typeof selected === 'boolean' ? selected : undefined;
         (this.eInput as HTMLInputElement).checked = this.selected;
         (this.eInput as HTMLInputElement).indeterminate = this.selected === undefined;
-        this.updateIcons();
 
         if (!silent) {
             this.dispatchChange(this.selected);
         }
     }
 
-    protected getIconName(): string {
-        const value = this.getValue();
-        const prop = value === undefined ? 'indeterminate' : value ? 'selected' : 'unselected';
-        const readOnlyStr = this.isReadOnly() ? 'ReadOnly' : '';
-        return `${this.iconMap[prop]}${readOnlyStr}`;
-    }
-
-    protected updateIcons(): void {
-        if (!this.gridOptionsWrapper.useNativeCheckboxes()) {
-            _.clearElement(this.eIconEl);
-            this.eIconEl.appendChild(_.createIconNoSpan(this.getIconName(), this.gridOptionsWrapper, null));
-        }
-    }
-
-    private dispatchChange(selected: boolean | undefined) {
-        this.dispatchEvent({ type: AgCheckbox.EVENT_CHANGED, selected });
-    }
-
-    private addIconsPlaceholder(): void {
-        const iconDiv = document.createElement('div');
-        this.eWrapper.appendChild(iconDiv);
-        this.eIconEl = iconDiv;
-    }
-
-    private onClick(event: MouseEvent): void {
-        // if we don't set the path, then won't work in Edge, as once the <span> is removed from the dom,
-        // it's not possible to calculate the path by following the parent's chain. in other browser (eg
-        // chrome) there is event.path for this purpose, but missing in Edge.
-        _.addAgGridEventPath(event);
-
-        if (!this.readOnly) {
-            this.toggle();
-        }
+    private dispatchChange(selected: boolean | undefined, event?: MouseEvent) {
+        this.dispatchEvent({ type: AgCheckbox.EVENT_CHANGED, selected, event });
     }
 
     private onCheckboxClick(e: MouseEvent) {
         this.selected = (e.target as HTMLInputElement).checked;
-        this.dispatchChange(this.selected);
+        this.refreshSelectedClass(this.selected);
+        this.dispatchChange(this.selected, e);
+    }
+
+    private refreshSelectedClass(value?: boolean | null) {
+        _.addOrRemoveCssClass(this.eWrapper, 'ag-checked', value === true);
+        _.addOrRemoveCssClass(this.eWrapper, 'ag-indeterminate', value == null);
     }
 }

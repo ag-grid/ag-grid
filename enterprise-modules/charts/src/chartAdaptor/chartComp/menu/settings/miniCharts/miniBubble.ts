@@ -1,16 +1,13 @@
-import { _, ChartType } from "@ag-grid-community/core";
-import { MiniChartWithAxes } from "./miniChartWithAxes";
-import linearScale from "../../../../../charts/scale/linearScale";
-import { ClipRect } from "../../../../../charts/scene/clipRect";
-import { Arc } from "../../../../../charts/scene/shape/arc";
-import { Shape } from "../../../../../charts/scene/shape/shape";
+import {ChartType} from "@ag-grid-community/core";
+import {MiniChartWithAxes} from "./miniChartWithAxes";
+import { linearScale, Arc, ClipRect, Shape} from "ag-charts-community";
 
 export class MiniBubble extends MiniChartWithAxes {
     static chartType = ChartType.Bubble;
     private readonly points: Shape[];
 
-    constructor(parent: HTMLElement, fills: string[], strokes: string[]) {
-        super(parent, "bubbleTooltip");
+    constructor(container: HTMLElement, fills: string[], strokes: string[]) {
+        super(container, "bubbleTooltip");
 
         const size = this.size;
         const padding = this.padding;

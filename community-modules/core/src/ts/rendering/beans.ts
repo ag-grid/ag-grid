@@ -10,7 +10,7 @@ import { ValueService } from "../valueService/valueService";
 import { EventService } from "../eventService";
 import { ColumnAnimationService } from "./columnAnimationService";
 import { IRangeController } from "../interfaces/iRangeController";
-import { FocusedCellController } from "../focusedCellController";
+import { FocusController } from "../focusController";
 import { IContextMenuFactory } from "../interfaces/iContextMenuFactory";
 import { CellRendererFactory } from "./cellRendererFactory";
 import { PopupService } from "../widgets/popupService";
@@ -28,8 +28,9 @@ import { MaxDivHeightScaler } from "./maxDivHeightScaler";
 import { TooltipManager } from "../widgets/tooltipManager";
 import { IFrameworkOverrides } from "../interfaces/iFrameworkOverrides";
 import { DetailRowCompCache } from "./detailRowCompCache";
-import {CellPositionUtils} from "../entities/cellPosition";
-import {RowPositionUtils} from "../entities/rowPosition";
+import { CellPositionUtils } from "../entities/cellPosition";
+import { RowPositionUtils } from "../entities/rowPosition";
+import { SelectionController } from "../selectionController";
 
 /** Using the IoC has a slight performance consideration, which is no problem most of the
  * time, unless we are trashing objects - which is the case when scrolling and rowComp
@@ -53,7 +54,7 @@ export class Beans {
     @Autowired('columnController') public columnController: ColumnController;
     @Autowired('columnAnimationService') public columnAnimationService: ColumnAnimationService;
     @Optional('rangeController') public rangeController: IRangeController;
-    @Autowired('focusedCellController') public focusedCellController: FocusedCellController;
+    @Autowired('focusController') public focusController: FocusController;
     @Optional('contextMenuFactory') public contextMenuFactory: IContextMenuFactory;
     @Autowired('cellRendererFactory') public cellRendererFactory: CellRendererFactory;
     @Autowired('popupService') public popupService: PopupService;
@@ -71,6 +72,7 @@ export class Beans {
     @Autowired('detailRowCompCache') public detailRowCompCache: DetailRowCompCache;
     @Autowired('cellPositionUtils') public cellPositionUtils: CellPositionUtils;
     @Autowired('rowPositionUtils') public rowPositionUtils: RowPositionUtils;
+    @Autowired('selectionController') public selectionController: SelectionController;
 
     public doingMasterDetail: boolean;
 

@@ -11,20 +11,29 @@ export class ValueFormatterService {
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('expressionService') private expressionService: ExpressionService;
 
-    public formatValue(column: Column,
-                       rowNode: RowNode | null,
-                       $scope: any,
-                       value: any): string {
-
-        let formatter: (value: any) => string;
-        const colDef = column.getColDef();
-        // if floating, give preference to the floating formatter
-        if (rowNode && rowNode.rowPinned) {
-            formatter = colDef.pinnedRowValueFormatter ? colDef.pinnedRowValueFormatter : colDef.valueFormatter;
-        } else {
-            formatter = colDef.valueFormatter;
-        }
+    public formatValue(
+        column: Column,
+        rowNode: RowNode | null,
+        $scope: any,
+        value: any,
+        suppliedFormatter?: (value: any) => string
+    ): string {
         let result: string = null;
+        let formatter: ((value: any) => string) | string;
+        const colDef = column.getColDef();
+
+        if (suppliedFormatter) {
+            // favour supplied, e.g. set filter items can have their own value formatters
+            formatter = suppliedFormatter;
+        } else {
+            // if floating, give preference to the floating formatter
+            if (rowNode && rowNode.rowPinned) {
+                formatter = colDef.pinnedRowValueFormatter ? colDef.pinnedRowValueFormatter : colDef.valueFormatter;
+            } else {
+                formatter = colDef.valueFormatter;
+            }
+        }
+
         if (formatter) {
             const params: ValueFormatterParams = {
                 value: value,

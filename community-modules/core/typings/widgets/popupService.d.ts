@@ -7,8 +7,8 @@ export declare class PopupService {
     private eventService;
     private gridCore;
     private popupList;
+    private init;
     registerGridCore(gridCore: GridCore): void;
-    private getDocument;
     getPopupParent(): HTMLElement;
     positionPopupForMenu(params: {
         eventSource: HTMLElement;
@@ -59,6 +59,7 @@ export declare class PopupService {
         y: number;
         keepWithinBounds?: boolean;
     }): void;
+    private getParentRect;
     private keepYWithinBounds;
     private keepXWithinBounds;
     addAsModalPopup(eChild: any, closeOnEsc: boolean, closedCallback?: () => void, click?: MouseEvent | Touch | null): (event?: any) => void;

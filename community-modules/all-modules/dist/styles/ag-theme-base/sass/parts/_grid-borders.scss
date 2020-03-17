@@ -1,0 +1,116 @@
+
+@mixin ag-theme-base-part-grid-borders {
+
+    .ag-cell {
+        @include ag-theme-rtl(( border-right: ag-param(cell-horizontal-border) ));
+        @include ag-theme-rtl(( border-right-width: 1px ));
+    }
+
+    .ag-cell.ag-cell-first-right-pinned:not(.ag-cell-range-left):not(.ag-cell-range-single-cell) {
+        @include ag-border(critical, left);
+    }
+    
+    .ag-cell.ag-cell-last-left-pinned:not(.ag-cell-range-right):not(.ag-cell-range-single-cell) {
+        @include ag-border(critical, right);
+    }
+    
+    .ag-row-selected {
+        background-color: ag-param(selected-row-background-color);
+    }
+
+    // we do not want to color the range color when the cell is also focused
+    .ag-cell-range-selected:not(.ag-cell-focus) {
+        background-color: ag-param(range-selection-background-color);
+        &.ag-cell-range-chart {
+            background-color: ag-param(range-selection-chart-background-color);
+        }
+
+        &.ag-cell-range-chart.ag-cell-range-chart-category {
+            background-color: ag-param(range-selection-chart-category-background-color);
+        }
+    }
+
+    .ag-cell-range-selected-1:not(.ag-cell-focus) {
+        @include ag-color-self-overlay(ag-param(range-selection-background-color), 1);
+    }
+
+    .ag-cell-range-selected-2:not(.ag-cell-focus) {
+        @include ag-color-self-overlay(ag-param(range-selection-background-color), 2);
+    }
+
+    .ag-cell-range-selected-3:not(.ag-cell-focus) {
+        @include ag-color-self-overlay(ag-param(range-selection-background-color), 3);
+    }
+
+    .ag-cell-range-selected-4:not(.ag-cell-focus) {
+        @include ag-color-self-overlay(ag-param(range-selection-background-color), 4);
+    }
+
+    .ag-cell.ag-cell-range-selected:not(.ag-cell-range-single-cell) {
+        &.ag-cell-range-top {
+            border-top-color: ag-param(range-selection-border-color);
+        }
+        &.ag-cell-range-right {
+            border-right-color: ag-param(range-selection-border-color);
+        }
+        &.ag-cell-range-bottom {
+            border-bottom-color: ag-param(range-selection-border-color);
+        }
+        &.ag-cell-range-left {
+            border-left-color: ag-param(range-selection-border-color);
+        }
+    }
+
+    // ltr/rtl needed so that this overrides the rtl/ltr styles of pinned column borders
+    .ag-ltr, .ag-rtl {
+        .ag-has-focus .ag-cell-focus:not(.ag-cell-range-selected),
+        .ag-has-focus .ag-cell-focus.ag-cell-range-single-cell,
+        .ag-cell-range-single-cell.ag-cell-range-handle {
+            border: 1px solid ag-param(range-selection-border-color);
+            outline: initial;
+        }
+    }
+
+    .ag-cell.ag-selection-fill-top,
+    .ag-cell.ag-selection-fill-top.ag-cell-range-selected {
+        border-top: 1px dashed ag-param(range-selection-border-color);
+    }
+
+    .ag-cell.ag-selection-fill-right,
+    .ag-cell.ag-selection-fill-right.ag-cell-range-selected {
+        @include ag-theme-rtl((border-right: 1px dashed ag-param(range-selection-border-color)));
+    }
+
+    .ag-cell.ag-selection-fill-bottom,
+    .ag-cell.ag-selection-fill-bottom.ag-cell-range-selected {
+        border-bottom: 1px dashed ag-param(range-selection-border-color);
+    }
+
+    .ag-cell.ag-selection-fill-left,
+    .ag-cell.ag-selection-fill-left.ag-cell-range-selected {
+        @include ag-theme-rtl((border-left: 1px dashed ag-param(range-selection-border-color)));
+    }
+
+    %ag-selection-handle {
+        position: absolute;
+        width: 6px;
+        height: 6px;
+        bottom: -1px;
+        @include ag-theme-rtl((right: -1px));
+        background-color: ag-param(range-selection-border-color);
+    }
+
+    .ag-fill-handle {
+        @extend %ag-selection-handle;
+        cursor: cell;
+    }
+
+    .ag-range-handle {
+        @extend %ag-selection-handle;
+        cursor: nwse-resize;
+    }
+
+    .ag-cell-inline-editing {
+        border-color: ag-param(input-focus-border-color) !important;
+    }
+}

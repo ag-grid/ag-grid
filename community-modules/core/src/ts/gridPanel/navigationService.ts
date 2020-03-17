@@ -4,7 +4,7 @@ import { Constants } from "../constants";
 import { MouseEventService } from "./mouseEventService";
 import { PaginationProxy } from "../pagination/paginationProxy";
 import { Column } from "../entities/column";
-import { FocusedCellController } from "../focusedCellController";
+import { FocusController } from "../focusController";
 import { GridPanel } from "./gridPanel";
 import { AnimationFrameService } from "../misc/animationFrameService";
 import { IRangeController } from "../interfaces/iRangeController";
@@ -17,7 +17,7 @@ export class NavigationService {
 
     @Autowired('mouseEventService') private mouseEventService: MouseEventService;
     @Autowired('paginationProxy') private paginationProxy: PaginationProxy;
-    @Autowired('focusedCellController') private focusedCellController: FocusedCellController;
+    @Autowired('focusController') private focusController: FocusController;
     @Autowired('animationFrameService') private animationFrameService: AnimationFrameService;
     @Optional('rangeController') private rangeController: IRangeController;
     @Autowired('columnController') private columnController: ColumnController;
@@ -194,7 +194,7 @@ export class NavigationService {
 
         // if we don't do this, the range will be left on the last cell, which will leave the last focused cell
         // highlighted.
-        this.focusedCellController.setFocusedCell(focusIndex, focusColumn, null, true);
+        this.focusController.setFocusedCell(focusIndex, focusColumn, null, true);
         if (this.rangeController) {
             const cellPosition: CellPosition = {rowIndex: focusIndex, rowPinned: null, column: focusColumn};
             this.rangeController.setRangeToCell(cellPosition);

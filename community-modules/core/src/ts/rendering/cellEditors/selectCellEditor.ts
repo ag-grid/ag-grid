@@ -1,9 +1,11 @@
-import { PopupComponent } from "../../widgets/popupComponent";
-import { ICellEditorComp, ICellEditorParams } from "../../interfaces/iCellEditor";
-import { Constants } from "../../constants";
+import { AgSelect } from "../../widgets/agSelect";
 import { Autowired } from "../../context/context";
+import { ICellEditorComp, ICellEditorParams } from "../../interfaces/iCellEditor";
 import { GridOptionsWrapper } from "../../gridOptionsWrapper";
 import { ValueFormatterService } from "../valueFormatterService";
+import { PopupComponent } from "../../widgets/popupComponent";
+import { RefSelector } from "../../widgets/componentAnnotations";
+import { ListOption } from "../../widgets/agList";
 import { _ } from '../../utils';
 
 export interface ISelectCellEditorParams extends ICellEditorParams {
@@ -13,14 +15,13 @@ export interface ISelectCellEditorParams extends ICellEditorParams {
 export class SelectCellEditor extends PopupComponent implements ICellEditorComp {
 
     private focusAfterAttached: boolean;
-    private eSelect: HTMLSelectElement;
 
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('valueFormatterService') private valueFormatterService: ValueFormatterService;
+    @RefSelector('eSelect') private eSelect: AgSelect;
 
     constructor() {
-        super('<div class="ag-cell-edit-input"><select class="ag-cell-edit-input"/></div>');
-        this.eSelect = this.getGui().querySelector('select') as HTMLSelectElement;
+        super('<div class="ag-cell-edit-wrapper"><ag-select class="ag-cell-editor" ref="eSelect"></ag-select></div>');
     }
 
     public init(params: ISelectCellEditorParams) {
@@ -32,49 +33,35 @@ export class SelectCellEditor extends PopupComponent implements ICellEditorComp 
         }
 
         params.values.forEach((value: any) => {
-            const option = document.createElement('option');
-            option.value = value;
-
+            const option: ListOption = { value };
             const valueFormatted = this.valueFormatterService.formatValue(params.column, null, null, value);
             const valueFormattedExits = valueFormatted !== null && valueFormatted !== undefined;
             option.text = valueFormattedExits ? valueFormatted : value;
 
-            if (params.value === value) {
-                option.selected = true;
-            }
-            this.eSelect.appendChild(option);
+            this.eSelect.addOption(option);
         });
+
+        this.eSelect.setValue(params.value, true);
 
         // we don't want to add this if full row editing, otherwise selecting will stop the
         // full row editing.
         if (!this.gridOptionsWrapper.isFullRowEdit()) {
-            this.addDestroyableEventListener(this.eSelect, 'change', () => params.stopEditing());
+            this.eSelect.onValueChange(() => params.stopEditing());
         }
-
-        this.addDestroyableEventListener(this.eSelect, 'keydown', (event: KeyboardEvent) => {
-            const isNavigationKey = event.keyCode === Constants.KEY_UP || event.keyCode === Constants.KEY_DOWN;
-            if (isNavigationKey) {
-                event.stopPropagation();
-            }
-        });
-
-        this.addDestroyableEventListener(this.eSelect, 'mousedown', (event: KeyboardEvent) => {
-            event.stopPropagation();
-        });
     }
 
     public afterGuiAttached() {
         if (this.focusAfterAttached) {
-            this.eSelect.focus();
+            this.eSelect.getFocusableElement().focus();
         }
     }
 
     public focusIn(): void {
-        this.eSelect.focus();
+        this.eSelect.getFocusableElement().focus();
     }
 
     public getValue(): any {
-        return this.eSelect.value;
+        return this.eSelect.getValue();
     }
 
     public isPopup() {

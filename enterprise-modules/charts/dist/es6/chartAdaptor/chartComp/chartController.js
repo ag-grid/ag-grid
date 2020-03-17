@@ -17,17 +17,15 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
-import { Autowired, BeanStub, ChartType, Events, PostConstruct, _, } from "@ag-grid-community/core";
+import { _, Autowired, BeanStub, ChartType, Events, PostConstruct, } from "@ag-grid-community/core";
 import { ChartDataModel } from "./chartDataModel";
-import { palettes } from "../../charts/chart/palettes";
+import { palettes } from "ag-charts-community";
 var ChartController = /** @class */ (function (_super) {
     __extends(ChartController, _super);
     function ChartController(model, paletteName) {
         if (paletteName === void 0) { paletteName = 'borneo'; }
         var _this = _super.call(this) || this;
         _this.model = model;
-        _this.getChartType = function () { return _this.model.getChartType(); };
-        _this.isPivotChart = function () { return _this.model.isPivotChart(); };
         _this.chartPaletteName = paletteName;
         return _this;
     }
@@ -69,13 +67,26 @@ var ChartController = /** @class */ (function (_super) {
         this.raiseChartRangeSelectionChangedEvent();
     };
     ChartController.prototype.getChartModel = function () {
+        var _this = this;
         return {
             chartId: this.model.getChartId(),
             chartType: this.model.getChartType(),
             chartPalette: this.getPaletteName(),
             chartOptions: this.chartProxy.getChartOptions(),
-            cellRange: this.getCurrentCellRangeParams()
+            cellRange: this.model.getCellRangeParams(),
+            getChartImageDataURL: function (params) {
+                return _this.chartProxy.getChartImageDataURL(params.type);
+            }
         };
+    };
+    ChartController.prototype.getChartType = function () {
+        return this.model.getChartType();
+    };
+    ChartController.prototype.isPivotChart = function () {
+        return this.model.isPivotChart();
+    };
+    ChartController.prototype.isGrouping = function () {
+        return this.model.isGrouping();
     };
     ChartController.prototype.getPaletteName = function () {
         return this.chartPaletteName;
@@ -103,14 +114,16 @@ var ChartController = /** @class */ (function (_super) {
         return { dimensionCols: this.model.getDimensionColState(), valueCols: this.model.getValueColState() };
     };
     ChartController.prototype.isDefaultCategorySelected = function () {
-        var selectedDimension = this.model.getSelectedDimension().colId;
-        return selectedDimension && selectedDimension === ChartDataModel.DEFAULT_CATEGORY;
+        return this.model.getSelectedDimension().colId === ChartDataModel.DEFAULT_CATEGORY;
     };
-    ChartController.prototype.setChartRange = function () {
+    ChartController.prototype.setChartRange = function (silent) {
+        if (silent === void 0) { silent = false; }
         if (this.rangeController && !this.model.isSuppressChartRanges() && !this.model.isDetached()) {
             this.rangeController.setCellRanges(this.model.getCellRanges());
         }
-        this.raiseChartUpdatedEvent();
+        if (!silent) {
+            this.raiseChartUpdatedEvent();
+        }
     };
     ChartController.prototype.detachChartRange = function () {
         // when chart is detached it won't listen to changes from the grid
@@ -135,17 +148,6 @@ var ChartController = /** @class */ (function (_super) {
     ChartController.prototype.isActiveXYChart = function () {
         return _.includes([ChartType.Scatter, ChartType.Bubble], this.getChartType());
     };
-    ChartController.prototype.getCurrentCellRangeParams = function () {
-        var cellRanges = this.model.getCellRanges();
-        var firstCellRange = cellRanges[0];
-        return {
-            rowStartIndex: firstCellRange.startRow && firstCellRange.startRow.rowIndex,
-            rowStartPinned: firstCellRange.startRow && firstCellRange.startRow.rowPinned,
-            rowEndIndex: firstCellRange.endRow && firstCellRange.endRow.rowIndex,
-            rowEndPinned: firstCellRange.endRow && firstCellRange.endRow.rowPinned,
-            columns: cellRanges.reduce(function (columns, value) { return columns.concat(value.columns.map(function (c) { return c.getId(); })); }, [])
-        };
-    };
     ChartController.prototype.raiseChartUpdatedEvent = function () {
         var event = Object.freeze({
             type: ChartController.EVENT_CHART_UPDATED
@@ -153,19 +155,14 @@ var ChartController = /** @class */ (function (_super) {
         this.dispatchEvent(event);
     };
     ChartController.prototype.raiseChartOptionsChangedEvent = function () {
-        var event = Object.freeze({
-            type: Events.EVENT_CHART_OPTIONS_CHANGED,
-            chartType: this.getChartType(),
-            chartPalette: this.chartPaletteName,
-            chartOptions: this.getChartProxy().getChartOptions(),
-        });
-        this.eventService.dispatchEvent(event);
+        this.chartProxy.raiseChartOptionsChangedEvent();
     };
     ChartController.prototype.raiseChartRangeSelectionChangedEvent = function () {
         var event = Object.freeze({
             type: Events.EVENT_CHART_RANGE_SELECTION_CHANGED,
             id: this.model.getChartId(),
-            cellRange: this.getCurrentCellRangeParams(),
+            chartId: this.model.getChartId(),
+            cellRange: this.model.getCellRangeParams(),
             api: this.gridApi,
             columnApi: this.columnApi,
         });

@@ -1,10 +1,7 @@
-import { ChartBuilder } from "../../../../charts/chartBuilder";
-import { _, PolarChartOptions, PieSeriesOptions } from "@ag-grid-community/core";
-import { ChartProxyParams, UpdateChartParams } from "../chartProxy";
-import { PieSeries } from "../../../../charts/chart/series/polar/pieSeries";
-import { PolarChartProxy } from "./polarChartProxy";
-import { PieSeriesOptions as PieSeriesInternalOptions } from "../../../../charts/chartOptions";
-import { PolarChart } from "../../../../charts/chart/polarChart";
+import {ChartBuilder, PieSeries, PieSeriesOptions as PieSeriesInternalOptions, PolarChart} from "ag-charts-community";
+import {_, PieSeriesOptions, PolarChartOptions} from "@ag-grid-community/core";
+import {ChartProxyParams, UpdateChartParams} from "../chartProxy";
+import {PolarChartProxy} from "./polarChartProxy";
 
 export class DoughnutChartProxy extends PolarChartProxy {
     public constructor(params: ChartProxyParams) {
@@ -14,8 +11,8 @@ export class DoughnutChartProxy extends PolarChartProxy {
         this.recreateChart();
     }
 
-    protected createChart(options: PolarChartOptions<PieSeriesOptions>): PolarChart {
-        return ChartBuilder.createDoughnutChart(this.chartProxyParams.parentElement, options);
+    protected createChart(options?: PolarChartOptions<PieSeriesOptions>): PolarChart {
+        return ChartBuilder.createDoughnutChart(this.chartProxyParams.parentElement, options || this.chartOptions);
     }
 
     public update(params: UpdateChartParams): void {
@@ -76,7 +73,7 @@ export class DoughnutChartProxy extends PolarChartProxy {
                 pieSeries.toggleSeriesItem = (itemId: any, enabled: boolean) => {
                     if (doughnutChart) {
                         doughnutChart.series.forEach(series => {
-                            (series as PieSeries).dataEnabled[itemId] = enabled;
+                            (series as PieSeries).seriesItemEnabled[itemId] = enabled;
                         });
                     }
 
@@ -90,7 +87,7 @@ export class DoughnutChartProxy extends PolarChartProxy {
             offset -= 20;
 
             if (calloutColors) {
-                pieSeries.calloutColors = calloutColors;
+                pieSeries.callout.colors = calloutColors;
             }
 
             if (!existingSeries) {

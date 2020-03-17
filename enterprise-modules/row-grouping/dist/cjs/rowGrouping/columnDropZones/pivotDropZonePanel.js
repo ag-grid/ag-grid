@@ -24,7 +24,7 @@ var baseDropZonePanel_1 = require("./baseDropZonePanel");
 var PivotDropZonePanel = /** @class */ (function (_super) {
     __extends(PivotDropZonePanel, _super);
     function PivotDropZonePanel(horizontal) {
-        return _super.call(this, horizontal, false, 'pivot') || this;
+        return _super.call(this, horizontal, false) || this;
     }
     PivotDropZonePanel.prototype.passBeansUp = function () {
         _super.prototype.setBeans.call(this, {

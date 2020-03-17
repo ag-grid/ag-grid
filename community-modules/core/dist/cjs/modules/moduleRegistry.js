@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v22.1.1
+ * @version v23.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -13,6 +13,7 @@ var ModuleRegistry = /** @class */ (function () {
     ModuleRegistry.register = function (module) {
         ModuleRegistry.modulesMap[module.moduleName] = module;
     };
+    // noinspection JSUnusedGlobalSymbols
     ModuleRegistry.registerModules = function (modules) {
         if (!modules) {
             return;
@@ -24,8 +25,7 @@ var ModuleRegistry = /** @class */ (function () {
             return true;
         }
         var warningKey = reason + moduleName;
-        var warningMessage = "ag-Grid: unable to use " + reason + " as module " + moduleName + " is not present. "
-            + ("You need to load the module with: import \"" + moduleName + "\"");
+        var warningMessage = "ag-Grid: unable to use " + reason + " as module " + moduleName + " is not present. Please see: https://www.ag-grid.com/javascript-grid-modules/";
         utils_1._.doOnce(function () {
             console.warn(warningMessage);
         }, warningKey);

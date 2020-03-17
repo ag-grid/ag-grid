@@ -1,7 +1,16 @@
-import { AgGroupComponent, AgSlider, Autowired, Component, PostConstruct, RefSelector, ChartType } from "@ag-grid-community/core";
-import { ChartTranslator } from "../../../chartTranslator";
-import { ScatterChartProxy } from "../../../chartProxies/cartesian/scatterChartProxy";
-import { ChartController } from "../../../chartController";
+import {
+    AgGroupComponent,
+    AgSlider,
+    Autowired,
+    ChartType,
+    Component,
+    PostConstruct,
+    RefSelector,
+    AgGroupComponentParams
+} from "@ag-grid-community/core";
+import {ChartTranslator} from "../../../chartTranslator";
+import {ScatterChartProxy} from "../../../chartProxies/cartesian/scatterChartProxy";
+import {ChartController} from "../../../chartController";
 
 export class MarkersPanel extends Component {
 
@@ -30,7 +39,11 @@ export class MarkersPanel extends Component {
 
     @PostConstruct
     private init() {
-        this.setTemplate(MarkersPanel.TEMPLATE);
+        const groupParams: AgGroupComponentParams = {
+            cssIdentifier: 'charts-format-sub-level',
+            direction: 'vertical'
+        };
+        this.setTemplate(MarkersPanel.TEMPLATE, {seriesMarkersGroup: groupParams});
         this.initMarkers();
     }
 

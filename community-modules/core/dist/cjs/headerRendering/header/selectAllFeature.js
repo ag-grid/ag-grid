@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v22.1.1
+ * @version v23.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -72,22 +72,20 @@ var SelectAllFeature = /** @class */ (function (_super) {
         this.updateStateOfCheckbox();
     };
     SelectAllFeature.prototype.getNextCheckboxState = function (selectionCount) {
+        // if no rows, always have it unselected
         if (selectionCount.selected === 0 && selectionCount.notSelected === 0) {
-            // if no rows, always have it unselected
             return false;
         }
-        else if (selectionCount.selected > 0 && selectionCount.notSelected > 0) {
-            // if mix of selected and unselected, this is the tri-state
+        // if mix of selected and unselected, this is the tri-state
+        if (selectionCount.selected > 0 && selectionCount.notSelected > 0) {
             return null;
         }
-        else if (selectionCount.selected > 0) {
-            // only selected
+        // only selected
+        if (selectionCount.selected > 0) {
             return true;
         }
-        else {
-            // nothing selected
-            return false;
-        }
+        // nothing selected
+        return false;
     };
     SelectAllFeature.prototype.updateStateOfCheckbox = function () {
         if (this.processingEventFromCheckbox) {
@@ -177,9 +175,7 @@ var SelectAllFeature = /** @class */ (function (_super) {
             // otherwise the row model is compatible, so return true
             return true;
         }
-        else {
-            return false;
-        }
+        return false;
     };
     __decorate([
         context_1.Autowired('gridApi')

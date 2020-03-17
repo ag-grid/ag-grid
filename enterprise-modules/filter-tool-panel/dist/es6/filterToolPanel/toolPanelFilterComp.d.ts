@@ -22,6 +22,7 @@ export declare class ToolPanelFilterComp extends Component {
     setColumn(column: Column): void;
     getColumn(): Column;
     getColumnFilterName(): string;
+    addCssClassToTitleBar(cssClass: string): void;
     private addInIcon;
     isFilterActive(): boolean;
     private onFilterChanged;

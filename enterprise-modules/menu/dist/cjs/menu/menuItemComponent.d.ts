@@ -9,7 +9,7 @@ export interface MenuItemSelectedEvent extends AgEvent {
     subMenu?: (MenuItemDef | string)[];
     cssClasses?: string[];
     tooltip?: string;
-    mouseEvent: MouseEvent;
+    event: MouseEvent | KeyboardEvent;
 }
 export declare class MenuItemComponent extends Component {
     private gridOptionsWrapper;

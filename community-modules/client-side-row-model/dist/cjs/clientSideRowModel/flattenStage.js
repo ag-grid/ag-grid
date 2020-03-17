@@ -50,14 +50,23 @@ var FlattenStage = /** @class */ (function () {
             var isParent = rowNode.hasChildren();
             var isGroupSuppressedNode = groupSuppressRow && isParent;
             var isSkippedLeafNode = skipLeafNodes && !isParent;
-            var isRemovedSingleChildrenGroup = groupRemoveSingleChildren && isParent && rowNode.childrenAfterGroup.length === 1;
-            var isRemovedLowestSingleChildrenGroup = groupRemoveLowestSingleChildren && isParent && rowNode.leafGroup && rowNode.childrenAfterGroup.length === 1;
+            var isRemovedSingleChildrenGroup = groupRemoveSingleChildren &&
+                isParent &&
+                rowNode.childrenAfterGroup.length === 1;
+            var isRemovedLowestSingleChildrenGroup = groupRemoveLowestSingleChildren &&
+                isParent &&
+                rowNode.leafGroup &&
+                rowNode.childrenAfterGroup.length === 1;
             // hide open parents means when group is open, we don't show it. we also need to make sure the
             // group is expandable in the first place (as leaf groups are not expandable if pivot mode is on).
             // the UI will never allow expanding leaf  groups, however the user might via the API (or menu option 'expand all')
             var neverAllowToExpand = skipLeafNodes && rowNode.leafGroup;
             var isHiddenOpenParent = hideOpenParents && rowNode.expanded && (!neverAllowToExpand);
-            var thisRowShouldBeRendered = !isSkippedLeafNode && !isGroupSuppressedNode && !isHiddenOpenParent && !isRemovedSingleChildrenGroup && !isRemovedLowestSingleChildrenGroup;
+            var thisRowShouldBeRendered = !isSkippedLeafNode &&
+                !isGroupSuppressedNode &&
+                !isHiddenOpenParent &&
+                !isRemovedSingleChildrenGroup &&
+                !isRemovedLowestSingleChildrenGroup;
             if (thisRowShouldBeRendered) {
                 this.addRowNodeToRowsToDisplay(rowNode, result, nextRowTop, uiLevel);
             }
@@ -88,8 +97,8 @@ var FlattenStage = /** @class */ (function () {
     };
     // duplicated method, it's also in floatingRowModel
     FlattenStage.prototype.addRowNodeToRowsToDisplay = function (rowNode, result, nextRowTop, uiLevel) {
-        result.push(rowNode);
         var isGroupMultiAutoColumn = this.gridOptionsWrapper.isGroupMultiAutoColumn();
+        result.push(rowNode);
         rowNode.setUiLevel(isGroupMultiAutoColumn ? 0 : uiLevel);
     };
     FlattenStage.prototype.ensureFooterNodeExists = function (groupNode) {
@@ -119,23 +128,21 @@ var FlattenStage = /** @class */ (function () {
         if (core_1._.exists(masterNode.detailNode)) {
             return masterNode.detailNode;
         }
-        else {
-            var detailNode = new core_1.RowNode();
-            this.context.wireBean(detailNode);
-            detailNode.detail = true;
-            detailNode.selectable = false;
-            // flower was renamed to 'detail', but keeping for backwards compatibility
-            detailNode.flower = detailNode.detail;
-            detailNode.parent = masterNode;
-            if (core_1._.exists(masterNode.id)) {
-                detailNode.id = 'detail_' + masterNode.id;
-            }
-            detailNode.data = masterNode.data;
-            detailNode.level = masterNode.level + 1;
-            masterNode.detailNode = detailNode;
-            masterNode.childFlower = masterNode.detailNode; // for backwards compatibility
-            return detailNode;
+        var detailNode = new core_1.RowNode();
+        this.context.wireBean(detailNode);
+        detailNode.detail = true;
+        detailNode.selectable = false;
+        // flower was renamed to 'detail', but keeping for backwards compatibility
+        detailNode.flower = detailNode.detail;
+        detailNode.parent = masterNode;
+        if (core_1._.exists(masterNode.id)) {
+            detailNode.id = 'detail_' + masterNode.id;
         }
+        detailNode.data = masterNode.data;
+        detailNode.level = masterNode.level + 1;
+        masterNode.detailNode = detailNode;
+        masterNode.childFlower = masterNode.detailNode; // for backwards compatibility
+        return detailNode;
     };
     __decorate([
         core_1.Autowired('gridOptionsWrapper')

@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v22.1.1
+ * @version v23.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -37,6 +37,14 @@ var AgInputTextArea = /** @class */ (function (_super) {
         var ret = _super.prototype.setValue.call(this, value, silent);
         this.eInput.value = value;
         return ret;
+    };
+    AgInputTextArea.prototype.setCols = function (cols) {
+        this.eInput.cols = cols;
+        return this;
+    };
+    AgInputTextArea.prototype.setRows = function (rows) {
+        this.eInput.rows = rows;
+        return this;
     };
     return AgInputTextArea;
 }(agAbstractInputField_1.AgAbstractInputField));

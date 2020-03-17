@@ -23,13 +23,13 @@ import { ColumnFilterResults } from "./primaryColsListPanel";
 export class ToolPanelColumnGroupComp extends Component implements BaseColumnItem {
 
     private static TEMPLATE =
-        `<div class="ag-column-tool-panel-column-group">
+        `<div class="ag-column-select-column-group">
             <span class="ag-column-group-icons" ref="eColumnGroupIcons" >
                 <span class="ag-column-group-closed-icon" ref="eGroupClosedIcon"></span>
                 <span class="ag-column-group-opened-icon" ref="eGroupOpenedIcon"></span>
             </span>
             <ag-checkbox ref="cbSelect" class="ag-column-select-checkbox"></ag-checkbox>
-            <span class="ag-column-tool-panel-column-label" ref="eLabel"></span>
+            <span class="ag-column-select-column-label" ref="eLabel"></span>
         </div>`;
 
     @Autowired('eventService') private eventService: EventService;
@@ -72,7 +72,8 @@ export class ToolPanelColumnGroupComp extends Component implements BaseColumnIte
         this.setTemplate(ToolPanelColumnGroupComp.TEMPLATE);
 
         this.eDragHandle = _.createIconNoSpan('columnDrag', this.gridOptionsWrapper);
-        _.addCssClass(this.eDragHandle, 'ag-column-drag');
+        _.addCssClass(this.eDragHandle, 'ag-drag-handle');
+        _.addCssClass(this.eDragHandle, 'ag-column-select-column-group-drag-handle');
         this.cbSelect.getGui().insertAdjacentElement('afterend', this.eDragHandle);
 
         this.displayName = this.columnController.getDisplayNameForOriginalColumnGroup(null, this.columnGroup, 'toolPanel');
@@ -84,7 +85,7 @@ export class ToolPanelColumnGroupComp extends Component implements BaseColumnIte
         this.eLabel.innerHTML = this.displayName ? this.displayName : '';
         this.setupExpandContract();
 
-        this.addCssClass('ag-toolpanel-indent-' + this.columnDept);
+        this.addCssClass('ag-column-select-indent-' + this.columnDept);
 
         this.addDestroyableEventListener(this.eventService, Events.EVENT_COLUMN_PIVOT_MODE_CHANGED, this.onColumnStateChanged.bind(this));
 
@@ -255,6 +256,7 @@ export class ToolPanelColumnGroupComp extends Component implements BaseColumnIte
         this.processingColumnStateChange = true;
         this.cbSelect.setValue(selectedValue);
         this.cbSelect.setReadOnly(readOnlyValue);
+        _.addOrRemoveCssClass(this.getGui(), 'ag-column-select-column-group-readonly', readOnlyValue);
         this.processingColumnStateChange = false;
     }
 

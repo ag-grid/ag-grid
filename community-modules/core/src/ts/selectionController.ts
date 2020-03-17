@@ -208,7 +208,6 @@ export class SelectionController {
     // Designed for use with 'children' as the group selection type,
     // where groups don't actually appear in the selection normally.
     public getBestCostNodeSelection() {
-
         if (this.rowModel.getType() !== Constants.ROW_MODEL_TYPE_CLIENT_SIDE) {
             console.warn('getBestCostNodeSelection is only available when using normal row model');
             return;
@@ -261,7 +260,6 @@ export class SelectionController {
     }
 
     public deselectAllRowNodes(justFiltered = false) {
-
         const callback = (rowNode: RowNode) => rowNode.selectThisNode(false);
         const rowModelClientSide = this.rowModel.getType() === Constants.ROW_MODEL_TYPE_CLIENT_SIDE;
 

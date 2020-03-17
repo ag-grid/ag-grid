@@ -1,0 +1,114 @@
+.options {
+    line-height: 1.6em;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+    color: #495057;
+    font-size: 0.9em;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.options__content {
+    overflow-y: auto;
+    border-right: 1px solid rgba(0, 0, 0, 0.125);
+    height: 100%;
+}
+
+.options__no-content {
+    padding: 2em;
+    font-size: 1.2em;
+    text-align: center;
+    border-right: 1px solid rgba(0, 0, 0, 0.125);
+}
+
+.option--hidden {
+    display: none;
+}
+
+.option__content {
+    margin-top: 10px;
+    border: 2px solid #0084e7;
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.option__content--hidden {
+    display: none;
+}
+
+.option__expander {
+    float: right;
+    transition: transform 0.3s ease-out;
+}
+
+.option__expander--expanded {
+    transform: rotate(90deg);
+}
+
+.option {
+    padding: 10px;
+    background-color: #ffffff;
+}
+
+.option--expandable {
+    cursor: pointer;
+}
+
+.option--alternate {
+    background-color: #f1f7ff;
+}
+
+.option__name {
+    font-size: 1.1em;
+    font-weight: bold;
+    margin-right: 10px;
+}
+
+.option__required {
+    float: right;
+    font-weight: bold;
+    color: red;
+}
+
+.option__type {
+    color: #0084e7;
+    user-select: none;
+}
+
+.option__default {
+    float: right;
+    user-select: none;
+}
+
+.option code {
+    color: #0084e7;
+    font-size: 14px;
+    line-height: 1rem;
+}
+
+.search {
+    color: white;
+    width: 100%;
+    padding: 10px;
+    display: flex;
+    justify-content: space-between;
+    background-color: #0084e7;
+    border-top-right-radius: 10px;
+}
+
+.search__title h2 {
+    margin: 0;
+}
+
+.search__input {
+    border: none;
+    border-radius: 5px;
+    padding: 4px 8px;
+    font-size: 0.8rem;
+    margin-left: 5px;
+}

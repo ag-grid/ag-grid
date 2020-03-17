@@ -1,4 +1,4 @@
-// @ag-grid-community/react v22.1.1
+// @ag-grid-community/react v23.0.0
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -20,13 +20,16 @@ var core_1 = require("@ag-grid-community/core");
 var baseReactComponent_1 = require("./baseReactComponent");
 var utils_1 = require("./utils");
 var keyGenerator_1 = require("./keyGenerator");
+var server_1 = require("react-dom/server");
 var ReactComponent = /** @class */ (function (_super) {
     __extends(ReactComponent, _super);
-    function ReactComponent(reactComponent, parentComponent) {
+    function ReactComponent(reactComponent, parentComponent, componentType) {
         var _this = _super.call(this) || this;
         _this.portal = null;
         _this.componentWrappingElement = 'div';
+        _this.staticMarkup = null;
         _this.reactComponent = reactComponent;
+        _this.componentType = componentType;
         _this.parentComponent = parentComponent;
         _this.statelessComponent = ReactComponent.isStateless(_this.reactComponent);
         return _this;
@@ -42,8 +45,9 @@ var ReactComponent = /** @class */ (function (_super) {
     };
     ReactComponent.prototype.init = function (params) {
         var _this = this;
+        this.eParentElement = this.createParentElement(params);
+        this.renderStaticMarkup(params);
         return new core_1.Promise(function (resolve) {
-            _this.eParentElement = _this.createParentElement(params);
             _this.createReactComponent(params, resolve);
         });
     };
@@ -60,13 +64,24 @@ var ReactComponent = /** @class */ (function (_super) {
             params.ref = function (element) {
                 _this.componentInstance = element;
                 _this.addParentContainerStyleAndClasses();
+                // regular components (ie not functional)
+                _this.removeStaticMarkup();
             };
         }
         var reactComponent = React.createElement(this.reactComponent, params);
         var portal = ReactDOM.createPortal(reactComponent, this.eParentElement, keyGenerator_1.default() // fixed deltaRowModeRefreshCompRenderer
         );
         this.portal = portal;
-        this.parentComponent.mountReactPortal(portal, this, resolve);
+        this.parentComponent.mountReactPortal(portal, this, function (value) {
+            resolve(value);
+            // functional/stateless components have a slightly different lifecycle (no refs) so we'll clean them up
+            // here
+            if (_this.statelessComponent) {
+                setTimeout(function () {
+                    _this.removeStaticMarkup();
+                });
+            }
+        });
     };
     ReactComponent.prototype.addParentContainerStyleAndClasses = function () {
         var _this = this;
@@ -100,7 +115,58 @@ var ReactComponent = /** @class */ (function (_super) {
         return (typeof Component === 'function' && !(Component.prototype && Component.prototype.isReactComponent))
             || (typeof Component === 'object' && Component.$$typeof === ReactComponent.REACT_MEMO_TYPE);
     };
+    ReactComponent.prototype.isNullRender = function () {
+        return this.staticMarkup === "";
+    };
+    /*
+     * Attempt to render the component as static markup if possible
+     * What this does is eliminate any visible flicker for the user in the scenario where a component is destroyed and
+     * recreated with exactly the same data (ie with force refresh)
+     * Note: Some use cases will throw an error (ie when using Context) so if an error occurs just ignore it any move on
+     */
+    ReactComponent.prototype.renderStaticMarkup = function (params) {
+        if (this.parentComponent.isDisableStaticMarkup() || !this.componentType.isCellRenderer()) {
+            return;
+        }
+        var reactComponent = React.createElement(this.reactComponent, params);
+        try {
+            var staticMarkup = server_1.renderToStaticMarkup(reactComponent);
+            // if the render method returns null the result will be an empty string
+            if (staticMarkup === "") {
+                this.staticMarkup = staticMarkup;
+            }
+            else {
+                if (staticMarkup) {
+                    // we wrap the content as if there is "trailing" text etc it's not easy to safely remove
+                    // the same is true for memoized renderers, renderers that that return simple strings or NaN etc
+                    this.staticMarkup = document.createElement('span');
+                    this.staticMarkup.innerHTML = staticMarkup;
+                    this.eParentElement.appendChild(this.staticMarkup);
+                }
+            }
+        }
+        catch (e) {
+            // we tried - this can happen with certain (rare) edge cases
+        }
+    };
+    ReactComponent.prototype.removeStaticMarkup = function () {
+        if (this.parentComponent.isDisableStaticMarkup() || !this.componentType.isCellRenderer()) {
+            return;
+        }
+        if (this.staticMarkup && this.staticMarkup.remove) {
+            this.staticMarkup.remove();
+            this.staticMarkup = null;
+        }
+    };
+    ReactComponent.prototype.rendered = function () {
+        return this.isNullRender() ||
+            this.staticMarkup ||
+            (this.isStatelessComponent() && this.statelessComponentRendered()) ||
+            (!this.isStatelessComponent() && this.getFrameworkComponentInstance());
+    };
     ReactComponent.REACT_MEMO_TYPE = ReactComponent.hasSymbol() ? Symbol.for('react.memo') : 0xead3;
     return ReactComponent;
 }(baseReactComponent_1.BaseReactComponent));
 exports.ReactComponent = ReactComponent;
+
+//# sourceMappingURL=reactComponent.js.map

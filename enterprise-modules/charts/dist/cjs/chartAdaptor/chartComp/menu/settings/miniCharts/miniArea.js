@@ -15,22 +15,20 @@ var __extends = (this && this.__extends) || (function () {
 Object.defineProperty(exports, "__esModule", { value: true });
 var core_1 = require("@ag-grid-community/core");
 var miniChartWithAxes_1 = require("./miniChartWithAxes");
-var path_1 = require("../../../../../charts/scene/shape/path");
-var linearScale_1 = require("../../../../../charts/scale/linearScale");
-var bandScale_1 = require("../../../../../charts/scale/bandScale");
+var ag_charts_community_1 = require("ag-charts-community");
 var MiniArea = /** @class */ (function (_super) {
     __extends(MiniArea, _super);
-    function MiniArea(parent, fills, strokes, data) {
+    function MiniArea(container, fills, strokes, data) {
         if (data === void 0) { data = MiniArea.data; }
-        var _this = _super.call(this, parent, "groupedAreaTooltip") || this;
+        var _this = _super.call(this, container, "groupedAreaTooltip") || this;
         var size = _this.size;
         var padding = _this.padding;
-        var xScale = new bandScale_1.BandScale();
+        var xScale = new ag_charts_community_1.BandScale();
         xScale.domain = [0, 1, 2];
         xScale.paddingInner = 1;
         xScale.paddingOuter = 0;
         xScale.range = [padding + 0.5, size - padding - 0.5];
-        var yScale = linearScale_1.default();
+        var yScale = ag_charts_community_1.linearScale();
         yScale.domain = [0, 6];
         yScale.range = [size - padding + 0.5, padding];
         var xCount = data.length;
@@ -53,7 +51,7 @@ var MiniArea = /** @class */ (function (_super) {
             });
         });
         _this.areas = pathData.reverse().map(function (points) {
-            var area = new path_1.Path();
+            var area = new ag_charts_community_1.Path();
             area.strokeWidth = 1;
             area.fillOpacity = 0.7;
             var path = area.path;

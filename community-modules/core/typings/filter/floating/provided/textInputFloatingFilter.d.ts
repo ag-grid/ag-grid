@@ -3,7 +3,7 @@ import { ProvidedFilterModel } from "../../../interfaces/iFilter";
 import { SimpleFloatingFilter } from "./simpleFloatingFilter";
 import { FilterChangedEvent } from "../../../events";
 export declare abstract class TextInputFloatingFilter extends SimpleFloatingFilter {
-    private eFloatingFilterText;
+    private eFloatingFilterInput;
     protected params: IFloatingFilterParams;
     private applyActive;
     private postConstruct;

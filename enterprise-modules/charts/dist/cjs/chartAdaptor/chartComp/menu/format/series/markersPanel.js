@@ -29,7 +29,11 @@ var MarkersPanel = /** @class */ (function (_super) {
         return _this;
     }
     MarkersPanel.prototype.init = function () {
-        this.setTemplate(MarkersPanel.TEMPLATE);
+        var groupParams = {
+            cssIdentifier: 'charts-format-sub-level',
+            direction: 'vertical'
+        };
+        this.setTemplate(MarkersPanel.TEMPLATE, { seriesMarkersGroup: groupParams });
         this.initMarkers();
     };
     MarkersPanel.prototype.initMarkers = function () {

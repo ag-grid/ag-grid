@@ -15,29 +15,27 @@ var __extends = (this && this.__extends) || (function () {
 Object.defineProperty(exports, "__esModule", { value: true });
 var core_1 = require("@ag-grid-community/core");
 var miniChartWithAxes_1 = require("./miniChartWithAxes");
-var rect_1 = require("../../../../../charts/scene/shape/rect");
-var bandScale_1 = require("../../../../../charts/scale/bandScale");
-var linearScale_1 = require("../../../../../charts/scale/linearScale");
+var ag_charts_community_1 = require("ag-charts-community");
 var MiniColumn = /** @class */ (function (_super) {
     __extends(MiniColumn, _super);
-    function MiniColumn(parent, fills, strokes) {
-        var _this = _super.call(this, parent, "groupedColumnTooltip") || this;
+    function MiniColumn(container, fills, strokes) {
+        var _this = _super.call(this, container, "groupedColumnTooltip") || this;
         var padding = _this.padding;
         var size = _this.size;
         var data = [2, 3, 4];
-        var xScale = new bandScale_1.BandScale();
+        var xScale = new ag_charts_community_1.BandScale();
         xScale.domain = [0, 1, 2];
         xScale.range = [padding, size - padding];
         xScale.paddingInner = 0.3;
         xScale.paddingOuter = 0.3;
-        var yScale = linearScale_1.default();
+        var yScale = ag_charts_community_1.linearScale();
         yScale.domain = [0, 4];
         yScale.range = [size - padding, padding];
         var bottom = yScale.convert(0);
         var width = xScale.bandwidth;
         _this.bars = data.map(function (datum, i) {
             var top = yScale.convert(datum);
-            var rect = new rect_1.Rect();
+            var rect = new ag_charts_community_1.Rect();
             rect.x = xScale.convert(i);
             rect.y = top;
             rect.width = width;

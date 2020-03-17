@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v22.1.1
+ * @version v23.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -18,7 +18,7 @@ var ComponentMetadataProvider = /** @class */ (function () {
         this.componentMetaData = {
             dateComponent: {
                 mandatoryMethodList: ['getDate', 'setDate'],
-                optionalMethodList: ['afterGuiAttached']
+                optionalMethodList: ['afterGuiAttached', 'setInputPlaceholder']
             },
             detailCellRenderer: {
                 mandatoryMethodList: [],

@@ -1,38 +1,52 @@
+import { Autowired } from "../../../context/context";
+import { AgInputTextField } from "../../../widgets/agInputTextField";
 import { Component } from "../../../widgets/component";
+import { GridOptionsWrapper } from "../../../gridOptionsWrapper";
 import { IDateComp, IDateParams } from "../../../rendering/dateComponent";
+import { RefSelector } from "../../../widgets/componentAnnotations";
 import { _ } from "../../../utils";
 
 export class DefaultDateComponent extends Component implements IDateComp {
 
-    private eDateInput: HTMLInputElement;
+    @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
+    @RefSelector('eDateInput') private eDateInput: AgInputTextField;
+
     private listener: () => void;
 
     constructor() {
-        super(`<div class="ag-input-wrapper" role="presentation"><input class="ag-filter-filter" type="text" placeholder="yyyy-mm-dd"></div>`);
+        super(`<div class="ag-filter-filter"><ag-input-text-field class="ag-date-filter" ref="eDateInput"></ag-input-text-field></div>`);
     }
 
     public init(params: IDateParams): void {
-        this.eDateInput = this.getGui().querySelector('input') as HTMLInputElement;
+        const translate = this.gridOptionsWrapper.getLocaleTextFunc();
+        this.eDateInput.setInputPlaceholder(translate('dateFormatOoo', 'yyyy-mm-dd'));
 
         if (_.isBrowserChrome() || (params.filterParams && params.filterParams.browserDatePicker)) {
             if (_.isBrowserIE()) {
                 console.warn('ag-grid: browserDatePicker is specified to true, but it is not supported in IE 11, reverting to plain text date picker');
             } else {
-                this.eDateInput.type = 'date';
+                (this.eDateInput.getInputElement() as HTMLInputElement).type = 'date';
             }
         }
 
         this.listener = params.onDateChanged;
 
-        this.addGuiEventListener('input', this.listener);
+        this.addDestroyableEventListener(this.eDateInput.getInputElement(), 'input', (e) => {
+            if (e.target !== document.activeElement) { return; }
+            this.listener();
+        });
     }
 
     public getDate(): Date {
-        return _.parseYyyyMmDdToDate(this.eDateInput.value, "-");
+        return _.getDateFromString(this.eDateInput.getValue());
     }
 
     public setDate(date: Date): void {
-        this.eDateInput.value = _.serializeDateToYyyyMmDd(date, "-");
+        this.eDateInput.setValue(_.serializeDateToYyyyMmDd(date, "-"));
+    }
+
+    public setInputPlaceholder(placeholder: string): void {
+        this.eDateInput.setInputPlaceholder(placeholder);
     }
 
 }

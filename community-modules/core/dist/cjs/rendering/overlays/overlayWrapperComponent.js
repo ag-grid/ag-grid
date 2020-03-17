@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v22.1.1
+ * @version v23.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -54,20 +54,20 @@ var OverlayWrapperComponent = /** @class */ (function (_super) {
         var workItem = this.userComponentFactory.newLoadingOverlayComponent({
             api: this.gridOptionsWrapper.getApi()
         });
-        this.showOverlay(workItem);
+        this.showOverlay(workItem, LoadingType.Loading);
     };
     OverlayWrapperComponent.prototype.showNoRowsOverlay = function () {
         var workItem = this.userComponentFactory.newNoRowsOverlayComponent({
             api: this.gridOptionsWrapper.getApi()
         });
-        this.showOverlay(workItem);
+        this.showOverlay(workItem, LoadingType.NoRows);
     };
-    OverlayWrapperComponent.prototype.showOverlay = function (workItem) {
+    OverlayWrapperComponent.prototype.showOverlay = function (workItem, type) {
         var _this = this;
         if (this.inProgress) {
             return;
         }
-        this.setWrapperTypeClass(LoadingType.NoRows);
+        this.setWrapperTypeClass(type);
         this.destroyActiveOverlay();
         this.inProgress = true;
         workItem.then(function (comp) {

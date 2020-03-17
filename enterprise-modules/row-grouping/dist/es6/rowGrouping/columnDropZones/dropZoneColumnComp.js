@@ -17,22 +17,27 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
-import { DragSourceType, Component, Autowired, Events, TouchListener, PostConstruct, RefSelector, _, Optional, VirtualList } from "@ag-grid-community/core";
+import { DragSourceType, Component, Autowired, Events, TouchListener, DragAndDropService, PostConstruct, RefSelector, _, Optional, VirtualList } from "@ag-grid-community/core";
 var DropZoneColumnComp = /** @class */ (function (_super) {
     __extends(DropZoneColumnComp, _super);
-    function DropZoneColumnComp(column, dragSourceDropTarget, ghost, valueColumn) {
+    function DropZoneColumnComp(column, dragSourceDropTarget, ghost, valueColumn, horizontal) {
         var _this = _super.call(this) || this;
-        _this.popupShowing = false;
-        _this.valueColumn = valueColumn;
         _this.column = column;
         _this.dragSourceDropTarget = dragSourceDropTarget;
         _this.ghost = ghost;
+        _this.valueColumn = valueColumn;
+        _this.horizontal = horizontal;
+        _this.popupShowing = false;
         return _this;
     }
     DropZoneColumnComp.prototype.init = function () {
         this.setTemplate(DropZoneColumnComp.TEMPLATE);
+        this.addElementClasses(this.getGui());
+        this.addElementClasses(this.eDragHandle, 'drag-handle');
+        this.addElementClasses(this.eText, 'text');
+        this.addElementClasses(this.eButton, 'button');
         this.eDragHandle.appendChild(_.createIconNoSpan('columnDrag', this.gridOptionsWrapper));
-        this.btRemove.appendChild(_.createIconNoSpan('cancel', this.gridOptionsWrapper));
+        this.eButton.appendChild(_.createIconNoSpan('cancel', this.gridOptionsWrapper));
         this.displayName = this.columnController.getDisplayNameForColumn(this.column, 'columnDrop');
         this.setupComponents();
         if (!this.ghost && !this.gridOptionsWrapper.isFunctionsReadOnly()) {
@@ -44,6 +49,7 @@ var DropZoneColumnComp = /** @class */ (function (_super) {
         var dragSource = {
             type: DragSourceType.ToolPanel,
             eElement: this.eDragHandle,
+            defaultIconName: DragAndDropService.ICON_HIDE,
             getDragItem: function () { return _this.createDragItem(); },
             dragItemName: this.displayName,
             dragSourceDropTarget: this.dragSourceDropTarget
@@ -71,13 +77,13 @@ var DropZoneColumnComp = /** @class */ (function (_super) {
     };
     DropZoneColumnComp.prototype.setupRemove = function () {
         var _this = this;
-        _.setDisplayed(this.btRemove, !this.gridOptionsWrapper.isFunctionsReadOnly());
-        this.addDestroyableEventListener(this.btRemove, 'click', function (mouseEvent) {
+        _.setDisplayed(this.eButton, !this.gridOptionsWrapper.isFunctionsReadOnly());
+        this.addDestroyableEventListener(this.eButton, 'click', function (mouseEvent) {
             var agEvent = { type: DropZoneColumnComp.EVENT_COLUMN_REMOVE };
             _this.dispatchEvent(agEvent);
             mouseEvent.stopPropagation();
         });
-        var touchListener = new TouchListener(this.btRemove);
+        var touchListener = new TouchListener(this.eButton);
         this.addDestroyableEventListener(touchListener, TouchListener.EVENT_TAP, function (event) {
             var agEvent = { type: DropZoneColumnComp.EVENT_COLUMN_REMOVE };
             _this.dispatchEvent(agEvent);
@@ -106,7 +112,7 @@ var DropZoneColumnComp = /** @class */ (function (_super) {
             return;
         }
         this.popupShowing = true;
-        var virtualList = new VirtualList();
+        var virtualList = new VirtualList('select-agg-func');
         var rows = this.aggFuncService.getFuncNames(this.column);
         virtualList.setModel({
             getRow: function (index) { return rows[index]; },
@@ -158,8 +164,14 @@ var DropZoneColumnComp = /** @class */ (function (_super) {
         var comp = new AggItemComp(itemSelected, aggFuncStringTranslated);
         return comp;
     };
+    DropZoneColumnComp.prototype.addElementClasses = function (el, suffix) {
+        suffix = suffix ? "-" + suffix : '';
+        _.addCssClass(el, "ag-column-drop-cell" + suffix);
+        var direction = this.horizontal ? 'horizontal' : 'vertical';
+        _.addCssClass(el, "ag-column-drop-" + direction + "-cell" + suffix);
+    };
     DropZoneColumnComp.EVENT_COLUMN_REMOVE = 'columnRemove';
-    DropZoneColumnComp.TEMPLATE = "<span class=\"ag-column-drop-cell\">\n          <span ref=\"eDragHandle\" class=\"ag-column-drag\"></span>\n          <span ref=\"eText\" class=\"ag-column-drop-cell-text\"></span>\n          <span ref=\"btRemove\" class=\"ag-column-drop-cell-button\"></span>\n        </span>";
+    DropZoneColumnComp.TEMPLATE = "<span>\n          <span ref=\"eDragHandle\" class=\"ag-drag-handle ag-column-drop-cell-drag-handle\"></span>\n          <span ref=\"eText\" class=\"ag-column-drop-cell-text\"></span>\n          <span ref=\"eButton\" class=\"ag-column-drop-cell-button\"></span>\n        </span>";
     __decorate([
         Autowired('dragAndDropService')
     ], DropZoneColumnComp.prototype, "dragAndDropService", void 0);
@@ -191,8 +203,8 @@ var DropZoneColumnComp = /** @class */ (function (_super) {
         RefSelector('eDragHandle')
     ], DropZoneColumnComp.prototype, "eDragHandle", void 0);
     __decorate([
-        RefSelector('btRemove')
-    ], DropZoneColumnComp.prototype, "btRemove", void 0);
+        RefSelector('eButton')
+    ], DropZoneColumnComp.prototype, "eButton", void 0);
     __decorate([
         PostConstruct
     ], DropZoneColumnComp.prototype, "init", null);

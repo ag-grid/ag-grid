@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v22.1.1
+ * @version v23.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -66,21 +66,15 @@ var GridCore = /** @class */ (function (_super) {
         this.addRtlSupport();
         this.logger.log('ready');
         this.gridOptionsWrapper.addLayoutElement(this.eRootWrapperBody);
-        var gridPanelEl = this.gridPanel.getGui();
-        this.addDestroyableEventListener(gridPanelEl, 'focusin', function () {
-            _.addCssClass(gridPanelEl, 'ag-has-focus');
-        });
-        this.addDestroyableEventListener(gridPanelEl, 'focusout', function (e) {
-            if (!gridPanelEl.contains(e.relatedTarget)) {
-                _.removeCssClass(gridPanelEl, 'ag-has-focus');
-            }
-        });
         var unsubscribeFromResize = this.resizeObserverService.observeResize(this.eGridDiv, this.onGridSizeChanged.bind(this));
         this.addDestroyFunc(function () { return unsubscribeFromResize(); });
-        var theme = this.environment.getTheme().theme;
-        if (/^ag-theme-(fresh|dark|blue|bootstrap)$/.test(theme)) {
-            console.warn("ag-Grid: \"" + theme + "\" theme is deprecated and will be removed in the next major release (v23)");
-        }
+        var eGui = this.getGui();
+        this.addDestroyableEventListener(this.eventService, Events.EVENT_KEYBOARD_FOCUS, function () {
+            _.addCssClass(eGui, 'ag-keyboard-focus');
+        });
+        this.addDestroyableEventListener(this.eventService, Events.EVENT_MOUSE_FOCUS, function () {
+            _.removeCssClass(eGui, 'ag-keyboard-focus');
+        });
     };
     GridCore.prototype.createTemplate = function () {
         var sideBarModuleLoaded = ModuleRegistry.isRegistered(ModuleNames.SideBarModule);
@@ -91,7 +85,7 @@ var GridCore = /** @class */ (function (_super) {
         var sideBar = sideBarModuleLoaded ? '<ag-side-bar ref="sideBar"></ag-side-bar>' : '';
         var statusBar = statusBarModuleLoaded ? '<ag-status-bar ref="statusBar"></ag-status-bar>' : '';
         var watermark = enterpriseCoreLoaded ? '<ag-watermark></ag-watermark>' : '';
-        var template = "<div class=\"ag-root-wrapper\">\n                " + dropZones + "\n                <div class=\"ag-root-wrapper-body\" ref=\"rootWrapperBody\">\n                    <ag-grid-comp ref=\"gridPanel\"></ag-grid-comp>                    \n                    " + sideBar + "\n                </div>\n                " + statusBar + "\n                <ag-pagination></ag-pagination>\n                " + watermark + "\n            </div>";
+        var template = "<div class=\"ag-root-wrapper\">\n                " + dropZones + "\n                <div class=\"ag-root-wrapper-body\" ref=\"rootWrapperBody\">\n                    <ag-grid-comp ref=\"gridPanel\"></ag-grid-comp>\n                    " + sideBar + "\n                </div>\n                " + statusBar + "\n                <ag-pagination></ag-pagination>\n                " + watermark + "\n            </div>";
         return template;
     };
     GridCore.prototype.onGridSizeChanged = function () {
@@ -252,8 +246,8 @@ var GridCore = /** @class */ (function (_super) {
         Autowired('popupService')
     ], GridCore.prototype, "popupService", void 0);
     __decorate([
-        Autowired('focusedCellController')
-    ], GridCore.prototype, "focusedCellController", void 0);
+        Autowired('focusController')
+    ], GridCore.prototype, "focusController", void 0);
     __decorate([
         Autowired('loggerFactory')
     ], GridCore.prototype, "loggerFactory", void 0);

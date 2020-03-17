@@ -5,12 +5,13 @@ import {
     AgSelect,
     Autowired,
     Component,
+    FontStyle,
+    FontWeight,
     PostConstruct,
     RefSelector,
-    FontWeight,
-    FontStyle
+    AgGroupComponentParams
 } from "@ag-grid-community/core";
-import { ChartTranslator } from "../../chartTranslator";
+import {ChartTranslator} from "../../chartTranslator";
 
 export type Font = {
     family?: string;
@@ -32,11 +33,11 @@ export interface FontPanelParams {
 export class FontPanel extends Component {
 
     public static TEMPLATE =
-        `<div>
+        `<div class="ag-font-panel">
             <ag-group-component ref="fontGroup">
                 <ag-select ref="familySelect"></ag-select>
                 <ag-select ref="weightStyleSelect"></ag-select>
-                <div class="ag-group-subgroup">
+                <div class="ag-charts-font-size-color">
                     <ag-select ref="sizeSelect"></ag-select>
                     <ag-color-picker ref="colorPicker"></ag-color-picker>
                 </div>
@@ -61,7 +62,12 @@ export class FontPanel extends Component {
 
     @PostConstruct
     private init() {
-        this.setTemplate(FontPanel.TEMPLATE);
+        const groupParams: AgGroupComponentParams = {
+            cssIdentifier: 'charts-format-sub-level',
+            direction: 'vertical',
+            suppressOpenCloseIcons: true
+        };
+        this.setTemplate(FontPanel.TEMPLATE, {fontGroup: groupParams});
 
         this.initGroup();
         this.initFontFamilySelect();
@@ -113,7 +119,7 @@ export class FontPanel extends Component {
             'Palatino, serif',
             'Times New Roman, serif',
             'Times, serif',
-            'Verdana, sans-serif',
+            'Verdana, sans-serif'
         ];
 
         const { family } = this.params.initialFont;
@@ -139,6 +145,7 @@ export class FontPanel extends Component {
         const options = families.sort().map(value => ({ value, text: value }));
 
         this.familySelect.addOptions(options)
+            .setInputWidth('flex')
             .setValue(`${initialValue}`)
             .onValueChange(newValue => this.params.setFont({ family: newValue }));
     }
@@ -154,6 +161,7 @@ export class FontPanel extends Component {
         const options = sizes.sort((a, b) => a - b).map(value => ({ value: `${value}`, text: `${value}` }));
 
         this.sizeSelect.addOptions(options)
+            .setInputWidth('flex')
             .setValue(`${size}`)
             .onValueChange(newValue => this.params.setFont({ size: parseInt(newValue, 10) }));
 
@@ -183,6 +191,7 @@ export class FontPanel extends Component {
         }));
 
         this.weightStyleSelect.addOptions(options)
+            .setInputWidth('flex')
             .setValue(selectedOption.name)
             .onValueChange(newValue => {
                 const selectedWeightStyle = _.find(weightStyles, x => x.name === newValue);

@@ -17,7 +17,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
-import { Autowired, Component, PostConstruct, RefSelector, ChartType } from "@ag-grid-community/core";
+import { Autowired, ChartType, Component, PostConstruct, RefSelector } from "@ag-grid-community/core";
 import { ScatterChartProxy } from "../../../chartProxies/cartesian/scatterChartProxy";
 var MarkersPanel = /** @class */ (function (_super) {
     __extends(MarkersPanel, _super);
@@ -27,7 +27,11 @@ var MarkersPanel = /** @class */ (function (_super) {
         return _this;
     }
     MarkersPanel.prototype.init = function () {
-        this.setTemplate(MarkersPanel.TEMPLATE);
+        var groupParams = {
+            cssIdentifier: 'charts-format-sub-level',
+            direction: 'vertical'
+        };
+        this.setTemplate(MarkersPanel.TEMPLATE, { seriesMarkersGroup: groupParams });
         this.initMarkers();
     };
     MarkersPanel.prototype.initMarkers = function () {

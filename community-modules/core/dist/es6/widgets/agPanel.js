@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v22.1.1
+ * @version v23.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -30,7 +30,7 @@ import { _ } from "../utils";
 var AgPanel = /** @class */ (function (_super) {
     __extends(AgPanel, _super);
     function AgPanel(config) {
-        var _this = _super.call(this, AgPanel.TEMPLATE) || this;
+        var _this = _super.call(this, AgPanel.getTemplate(config)) || this;
         _this.closable = true;
         _this.positioned = false;
         _this.dragStartPosition = {
@@ -48,6 +48,10 @@ var AgPanel = /** @class */ (function (_super) {
         _this.config = config;
         return _this;
     }
+    AgPanel.getTemplate = function (config) {
+        var cssIdentifier = (config && config.cssIdentifier) || 'default';
+        return "<div class=\"ag-panel ag-" + cssIdentifier + "-panel\" tabindex=\"-1\">\n            <div ref=\"eTitleBar\" class=\"ag-panel-title-bar ag-" + cssIdentifier + "-panel-title-bar ag-unselectable\">\n                <span ref=\"eTitle\" class=\"ag-panel-title-bar-title ag-" + cssIdentifier + "-panel-title-bar-title\"></span>\n                <div ref=\"eTitleBarButtons\" class=\"ag-panel-title-bar-buttons ag-" + cssIdentifier + "-panel-title-bar-buttons\"></div>\n            </div>\n            <div ref=\"eContentWrapper\" class=\"ag-panel-content-wrapper ag-" + cssIdentifier + "-panel-content-wrapper\"></div>\n        </div>";
+    };
     AgPanel.prototype.postConstruct = function () {
         var _this = this;
         var _a = this.config, component = _a.component, closable = _a.closable, hideTitleBar = _a.hideTitleBar, title = _a.title, minWidth = _a.minWidth, width = _a.width, minHeight = _a.minHeight, height = _a.height, centered = _a.centered, x = _a.x, y = _a.y;
@@ -276,7 +280,7 @@ var AgPanel = /** @class */ (function (_super) {
             var closeButtonComp = this.closeButtonComp = new Component(AgPanel.CLOSE_BTN_TEMPLATE);
             this.getContext().wireBean(closeButtonComp);
             var eGui = closeButtonComp.getGui();
-            eGui.appendChild(_.createIconNoSpan('close', this.gridOptionsWrapper));
+            eGui.appendChild(_.addCssClass(_.createIconNoSpan('close', this.gridOptionsWrapper), 'ag-panel-title-bar-button-icon'));
             this.addTitleBarButton(closeButtonComp);
             closeButtonComp.addDestroyableEventListener(eGui, 'click', this.onBtClose.bind(this));
         }
@@ -300,7 +304,7 @@ var AgPanel = /** @class */ (function (_super) {
         }
         position = Math.max(0, Math.min(position, len));
         var eGui = button.getGui();
-        _.addCssClass(eGui, 'ag-button');
+        _.addCssClass(eGui, 'ag-panel-title-bar-button');
         if (position === 0) {
             eTitleBarButtons.insertAdjacentElement('afterbegin', eGui);
         }
@@ -336,7 +340,6 @@ var AgPanel = /** @class */ (function (_super) {
             this.close();
         }
     };
-    AgPanel.TEMPLATE = "<div class=\"ag-panel\" tabindex=\"-1\">\n            <div ref=\"eTitleBar\" class=\"ag-title-bar ag-unselectable\">\n                <span ref=\"eTitle\" class=\"ag-title-bar-title\"></span>\n                <div ref=\"eTitleBarButtons\" class=\"ag-title-bar-buttons\"></div>\n            </div>\n            <div ref=\"eContentWrapper\" class=\"ag-panel-content-wrapper\"></div>\n        </div>";
     AgPanel.CLOSE_BTN_TEMPLATE = "<div class=\"ag-button\"></div>";
     __decorate([
         Autowired('popupService')

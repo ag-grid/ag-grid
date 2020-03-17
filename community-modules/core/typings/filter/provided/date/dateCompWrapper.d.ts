@@ -10,4 +10,5 @@ export declare class DateCompWrapper {
     destroy(): void;
     getDate(): Date;
     setDate(value: Date): void;
+    setInputPlaceholder(placeholder: string): void;
 }

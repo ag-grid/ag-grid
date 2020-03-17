@@ -1,4 +1,4 @@
-// Type definitions for @ag-grid-community/core v22.1.1
+// Type definitions for @ag-grid-community/core v23.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { Component } from "./component";
@@ -8,7 +8,7 @@ export interface VirtualListModel {
     getRow(index: number): any;
 }
 export declare class VirtualList extends Component {
-    private static TEMPLATE;
+    private cssIdentifier;
     private model;
     private eListContainer;
     private rowsInBodyContainer;
@@ -16,8 +16,9 @@ export declare class VirtualList extends Component {
     private rowHeight;
     private environment;
     gridOptionsWrapper: GridOptionsWrapper;
-    constructor();
+    constructor(cssIdentifier?: string);
     private init;
+    private static getTemplate;
     private getItemHeight;
     ensureIndexVisible(index: number): void;
     setComponentCreator(componentCreator: (value: any) => Component): void;

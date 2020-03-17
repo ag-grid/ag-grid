@@ -2,6 +2,11 @@ import { PopupService, Component, ColumnController, EventService, DragAndDropSer
 export interface ColumnRemoveEvent extends AgEvent {
 }
 export declare class DropZoneColumnComp extends Component {
+    private column;
+    private dragSourceDropTarget;
+    private ghost;
+    private valueColumn;
+    private horizontal;
     static EVENT_COLUMN_REMOVE: string;
     private static TEMPLATE;
     dragAndDropService: DragAndDropService;
@@ -14,14 +19,10 @@ export declare class DropZoneColumnComp extends Component {
     private gridApi;
     private eText;
     private eDragHandle;
-    private btRemove;
-    private column;
-    private dragSourceDropTarget;
-    private ghost;
+    private eButton;
     private displayName;
-    private valueColumn;
     private popupShowing;
-    constructor(column: Column, dragSourceDropTarget: DropTarget, ghost: boolean, valueColumn: boolean);
+    constructor(column: Column, dragSourceDropTarget: DropTarget, ghost: boolean, valueColumn: boolean, horizontal: boolean);
     init(): void;
     private addDragSource;
     private createDragItem;
@@ -30,4 +31,5 @@ export declare class DropZoneColumnComp extends Component {
     private setTextValue;
     private onShowAggFuncSelection;
     private createAggSelect;
+    private addElementClasses;
 }

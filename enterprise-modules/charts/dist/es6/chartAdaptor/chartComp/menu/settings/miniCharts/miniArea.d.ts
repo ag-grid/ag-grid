@@ -8,6 +8,6 @@ export declare class MiniArea extends MiniChartWithAxes {
     static chartType: ChartType;
     private readonly areas;
     static readonly data: number[][];
-    constructor(parent: HTMLElement, fills: string[], strokes: string[], data?: number[][]);
+    constructor(container: HTMLElement, fills: string[], strokes: string[], data?: number[][]);
     updateColors(fills: string[], strokes: string[]): void;
 }

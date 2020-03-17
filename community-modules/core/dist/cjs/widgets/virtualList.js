@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v22.1.1
+ * @version v23.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -30,22 +30,24 @@ var context_1 = require("../context/context");
 var utils_1 = require("../utils");
 var VirtualList = /** @class */ (function (_super) {
     __extends(VirtualList, _super);
-    function VirtualList() {
-        var _this = _super.call(this, undefined) || this;
+    function VirtualList(cssIdentifier) {
+        if (cssIdentifier === void 0) { cssIdentifier = 'default'; }
+        var _this = _super.call(this, VirtualList.getTemplate(cssIdentifier)) || this;
+        _this.cssIdentifier = cssIdentifier;
         _this.rowsInBodyContainer = {};
         _this.rowHeight = 20;
         return _this;
     }
     VirtualList.prototype.init = function () {
-        this.setTemplate(VirtualList.TEMPLATE);
         this.eListContainer = this.queryForHtmlElement(".ag-virtual-list-container");
         this.addScrollListener();
-        var item = document.createElement('div');
-        utils_1._.addCssClass(item, 'ag-virtual-list-item');
         this.rowHeight = this.getItemHeight();
     };
+    VirtualList.getTemplate = function (cssIdentifier) {
+        return "<div class=\"ag-virtual-list-viewport ag-" + cssIdentifier + "-virtual-list-viewport\">\n            <div class=\"ag-virtual-list-container ag-" + cssIdentifier + "-virtual-list-container\"></div>\n        </div>";
+    };
     VirtualList.prototype.getItemHeight = function () {
-        return this.gridOptionsWrapper.getVirtualItemHeight();
+        return this.gridOptionsWrapper.getListItemHeight();
     };
     VirtualList.prototype.ensureIndexVisible = function (index) {
         var lastRow = this.model.getRowCount();
@@ -56,19 +58,20 @@ var VirtualList = /** @class */ (function (_super) {
         // let nodeAtIndex = this.rowModel.getRow(index);
         var rowTopPixel = index * this.rowHeight;
         var rowBottomPixel = rowTopPixel + this.rowHeight;
-        var viewportTopPixel = this.getGui().scrollTop;
-        var viewportHeight = this.getGui().offsetHeight;
+        var eGui = this.getGui();
+        var viewportTopPixel = eGui.scrollTop;
+        var viewportHeight = eGui.offsetHeight;
         var viewportBottomPixel = viewportTopPixel + viewportHeight;
         var viewportScrolledPastRow = viewportTopPixel > rowTopPixel;
         var viewportScrolledBeforeRow = viewportBottomPixel < rowBottomPixel;
         if (viewportScrolledPastRow) {
             // if row is before, scroll up with row at top
-            this.getGui().scrollTop = rowTopPixel;
+            eGui.scrollTop = rowTopPixel;
         }
         else if (viewportScrolledBeforeRow) {
             // if row is below, scroll down with row at bottom
             var newScrollPosition = rowBottomPixel - viewportHeight;
-            this.getGui().scrollTop = newScrollPosition;
+            eGui.scrollTop = newScrollPosition;
         }
     };
     VirtualList.prototype.setComponentCreator = function (componentCreator) {
@@ -137,6 +140,7 @@ var VirtualList = /** @class */ (function (_super) {
     VirtualList.prototype.insertRow = function (value, rowIndex) {
         var eDiv = document.createElement('div');
         utils_1._.addCssClass(eDiv, 'ag-virtual-list-item');
+        utils_1._.addCssClass(eDiv, "ag-" + this.cssIdentifier + "-virtual-list-item");
         eDiv.style.top = (this.rowHeight * rowIndex) + "px";
         var rowComponent = this.componentCreator(value);
         eDiv.appendChild(rowComponent.getGui());
@@ -155,7 +159,6 @@ var VirtualList = /** @class */ (function (_super) {
     VirtualList.prototype.setModel = function (model) {
         this.model = model;
     };
-    VirtualList.TEMPLATE = "<div class=\"ag-virtual-list-viewport\">\n            <div class=\"ag-virtual-list-container\"></div>\n        </div>";
     __decorate([
         context_1.Autowired('environment')
     ], VirtualList.prototype, "environment", void 0);

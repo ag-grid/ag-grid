@@ -23,25 +23,19 @@ var __assign = (this && this.__assign) || function () {
     return __assign.apply(this, arguments);
 };
 import { ChartType } from "@ag-grid-community/core";
-import { ChartBuilder } from "../../../../charts/chartBuilder";
-import { CategoryAxis } from "../../../../charts/chart/axis/categoryAxis";
+import { CategoryAxis, ChartAxisPosition, ChartBuilder } from "ag-charts-community";
 import { CartesianChartProxy } from "./cartesianChartProxy";
-import { ChartAxisPosition } from "../../../../charts/chart/chartAxis";
 var AreaChartProxy = /** @class */ (function (_super) {
     __extends(AreaChartProxy, _super);
     function AreaChartProxy(params) {
         var _this = _super.call(this, params) || this;
         _this.initChartOptions();
         _this.recreateChart();
-        var areaSeries = ChartBuilder.createSeries(_this.getSeriesDefaults());
-        if (areaSeries) {
-            _this.chart.addSeries(areaSeries);
-        }
         return _this;
     }
     AreaChartProxy.prototype.createChart = function (options) {
         var _a = this.chartProxyParams, grouping = _a.grouping, parentElement = _a.parentElement;
-        var chart = ChartBuilder[grouping ? "createGroupedAreaChart" : "createAreaChart"](parentElement, options);
+        var chart = ChartBuilder[grouping ? "createGroupedAreaChart" : "createAreaChart"](parentElement, options || this.chartOptions);
         chart.axes
             .filter(function (axis) { return axis.position === ChartAxisPosition.Bottom && axis instanceof CategoryAxis; })
             .forEach(function (axis) {
@@ -51,6 +45,8 @@ var AreaChartProxy = /** @class */ (function (_super) {
         return chart;
     };
     AreaChartProxy.prototype.update = function (params) {
+        this.chartProxyParams.grouping = params.grouping;
+        this.updateAxes();
         if (this.chartType === ChartType.Area) {
             // area charts have multiple series
             this.updateAreaChart(params);
@@ -58,6 +54,15 @@ var AreaChartProxy = /** @class */ (function (_super) {
         else {
             // stacked and normalized has a single series
             var areaSeries = this.chart.series[0];
+            if (!areaSeries) {
+                areaSeries = ChartBuilder.createSeries(this.getSeriesDefaults());
+                if (areaSeries) {
+                    this.chart.addSeries(areaSeries);
+                }
+                else {
+                    return;
+                }
+            }
             var _a = this.getPalette(), fills = _a.fills, strokes = _a.strokes;
             areaSeries.data = this.transformData(params.data, params.category.id);
             areaSeries.xKey = params.category.id;
@@ -121,7 +126,7 @@ var AreaChartProxy = /** @class */ (function (_super) {
         var options = this.getDefaultCartesianChartOptions();
         options.xAxis.label.rotation = 335;
         options.seriesDefaults = __assign(__assign({}, options.seriesDefaults), { fill: __assign(__assign({}, options.seriesDefaults.fill), { opacity: this.chartType === ChartType.Area ? 0.7 : 1 }), stroke: __assign(__assign({}, options.seriesDefaults.stroke), { width: 3 }), marker: {
-                type: 'circle',
+                shape: 'circle',
                 enabled: true,
                 size: 6,
                 strokeWidth: 1,

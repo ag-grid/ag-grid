@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v22.1.1
+ * @version v23.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -26,6 +26,8 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 import { RefSelector } from "./componentAnnotations";
 import { AgAbstractLabel } from "./agAbstractLabel";
 import { AgAbstractField } from "./agAbstractField";
+import { _ } from "../utils";
+import { PostConstruct } from "../context/context";
 var AgSlider = /** @class */ (function (_super) {
     __extends(AgSlider, _super);
     function AgSlider() {
@@ -33,6 +35,9 @@ var AgSlider = /** @class */ (function (_super) {
         _this.labelAlignment = 'top';
         return _this;
     }
+    AgSlider.prototype.init = function () {
+        _.addCssClass(this.eSlider.getGui(), 'ag-slider-field');
+    };
     AgSlider.prototype.onValueChange = function (callbackFn) {
         var _this = this;
         var eventChanged = AgAbstractField.EVENT_CHANGED;
@@ -83,7 +88,7 @@ var AgSlider = /** @class */ (function (_super) {
         this.eText.setStep(step);
         return this;
     };
-    AgSlider.TEMPLATE = "<div class=\"ag-slider\">\n            <label ref=\"eLabel\"></label>\n            <div class=\"ag-wrapper\">\n                <ag-input-range ref=\"eSlider\"></ag-input-range>\n                <ag-input-number-field ref=\"eText\"></ag-input-number-field>\n            </div>\n        </div>";
+    AgSlider.TEMPLATE = "<div class=\"ag-slider\">\n            <label ref=\"eLabel\"></label>\n            <div class=\"ag-wrapper ag-slider-wrapper\">\n                <ag-input-range ref=\"eSlider\"></ag-input-range>\n                <ag-input-number-field ref=\"eText\"></ag-input-number-field>\n            </div>\n        </div>";
     __decorate([
         RefSelector('eLabel')
     ], AgSlider.prototype, "eLabel", void 0);
@@ -93,6 +98,9 @@ var AgSlider = /** @class */ (function (_super) {
     __decorate([
         RefSelector('eText')
     ], AgSlider.prototype, "eText", void 0);
+    __decorate([
+        PostConstruct
+    ], AgSlider.prototype, "init", null);
     return AgSlider;
 }(AgAbstractLabel));
 export { AgSlider };

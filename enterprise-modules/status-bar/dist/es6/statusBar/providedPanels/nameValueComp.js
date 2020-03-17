@@ -32,7 +32,7 @@ var NameValueComp = /** @class */ (function (_super) {
     NameValueComp.prototype.setValue = function (value) {
         this.eValue.innerHTML = value;
     };
-    NameValueComp.TEMPLATE = "<div class=\"ag-name-value\">  \n            <span ref=\"eLabel\"></span>:&nbsp;\n            <span ref=\"eValue\" class=\"ag-name-value-value\"></span>\n        </div>";
+    NameValueComp.TEMPLATE = "<div class=\"ag-status-name-value\">  \n            <span ref=\"eLabel\"></span>:&nbsp;\n            <span ref=\"eValue\" class=\"ag-status-name-value-value\"></span>\n        </div>";
     __decorate([
         Autowired('gridOptionsWrapper')
     ], NameValueComp.prototype, "gridOptionsWrapper", void 0);

@@ -9,29 +9,40 @@ var __assign = (this && this.__assign) || function () {
     };
     return __assign.apply(this, arguments);
 };
-import { _, Events, } from "@ag-grid-community/core";
-import { palettes } from "../../../charts/chart/palettes";
-import { DropShadow } from "../../../charts/scene/dropShadow";
-import { Padding } from "../../../charts/util/padding";
-import { CategoryAxis } from "../../../charts/chart/axis/categoryAxis";
+import { _, Events, LegendPosition, } from "@ag-grid-community/core";
+import { CategoryAxis, DropShadow, Padding, palettes } from "ag-charts-community";
 var ChartProxy = /** @class */ (function () {
     function ChartProxy(chartProxyParams) {
         var _this = this;
-        this.getChart = function () { return _this.chart; };
+        this.chartProxyParams = chartProxyParams;
         this.isDarkTheme = function () { return _this.chartProxyParams.isDarkTheme(); };
         this.getFontColor = function () { return _this.isDarkTheme() ? 'rgb(221, 221, 221)' : 'rgb(87, 87, 87)'; };
         this.getAxisGridColor = function () { return _this.isDarkTheme() ? 'rgb(100, 100, 100)' : 'rgb(219, 219, 219)'; };
         this.getBackgroundColor = function () { return _this.isDarkTheme() ? '#2d3436' : 'white'; };
         this.getChartPaddingOption = function (property) { return _this.chartOptions.padding ? "" + _this.chartOptions.padding[property] : ''; };
         this.getShadowEnabled = function () { return !!_this.getShadowProperty('enabled'); };
-        this.chartProxyParams = chartProxyParams;
+        this.chartId = chartProxyParams.chartId;
         this.chartType = chartProxyParams.chartType;
+        this.eventService = chartProxyParams.eventService;
+        this.gridApi = chartProxyParams.gridApi;
+        this.columnApi = chartProxyParams.columnApi;
     }
     ChartProxy.prototype.recreateChart = function (options) {
         if (this.chart) {
             this.destroyChart();
         }
-        this.chart = this.createChart(options || this.chartOptions);
+        this.chart = this.createChart(options);
+    };
+    ChartProxy.prototype.getChart = function () {
+        return this.chart;
+    };
+    ChartProxy.prototype.downloadChart = function () {
+        var chart = this.chart;
+        var fileName = chart.title ? chart.title.text : 'chart';
+        chart.scene.download(fileName);
+    };
+    ChartProxy.prototype.getChartImageDataURL = function (type) {
+        return this.chart.scene.getDataURL(type);
     };
     ChartProxy.prototype.initChartOptions = function () {
         var processChartOptions = this.chartProxyParams.processChartOptions;
@@ -79,18 +90,22 @@ var ChartProxy = /** @class */ (function () {
         return _.get(this.chartOptions, expression, undefined);
     };
     ChartProxy.prototype.setChartOption = function (expression, value) {
+        if (_.get(this.chartOptions, expression, undefined) === value) {
+            // option is already set to the specified value
+            return;
+        }
         _.set(this.chartOptions, expression, value);
         var mappings = {
-            'legend.item.marker.strokeWidth': 'legend.markerStrokeWidth',
+            'legend.item.marker.strokeWidth': 'legend.strokeWidth',
             'legend.item.marker.size': 'legend.markerSize',
-            'legend.item.marker.padding': 'legend.markerPadding',
-            'legend.item.label.fontFamily': 'legend.labelFontFamily',
-            'legend.item.label.fontStyle': 'legend.labelFontStyle',
-            'legend.item.label.fontWeight': 'legend.labelFontWeight',
-            'legend.item.label.fontSize': 'legend.labelFontSize',
-            'legend.item.label.color': 'legend.labelColor',
-            'legend.item.paddingX': 'legend.itemPaddingX',
-            'legend.item.paddingY': 'legend.itemPaddingY',
+            'legend.item.marker.padding': 'legend.itemSpacing',
+            'legend.item.label.fontFamily': 'legend.fontFamily',
+            'legend.item.label.fontStyle': 'legend.fontStyle',
+            'legend.item.label.fontWeight': 'legend.fontWeight',
+            'legend.item.label.fontSize': 'legend.fontSize',
+            'legend.item.label.color': 'legend.color',
+            'legend.item.paddingX': 'legend.layoutHorizontalSpacing',
+            'legend.item.paddingY': 'legend.layoutVerticalSpacing',
         };
         _.set(this.chart, mappings[expression] || expression, value);
         this.raiseChartOptionsChangedEvent();
@@ -99,21 +114,27 @@ var ChartProxy = /** @class */ (function () {
         return _.get(this.chartOptions.seriesDefaults, expression, undefined);
     };
     ChartProxy.prototype.setSeriesOption = function (expression, value) {
+        if (_.get(this.chartOptions.seriesDefaults, expression, undefined) === value) {
+            // option is already set to the specified value
+            return;
+        }
         _.set(this.chartOptions.seriesDefaults, expression, value);
         var mappings = {
             'stroke.width': 'strokeWidth',
             'stroke.opacity': 'strokeOpacity',
             'fill.opacity': 'fillOpacity',
             'tooltip.enabled': 'tooltipEnabled',
-            'callout.colors': 'calloutColors',
-            'callout.strokeWidth': 'calloutStrokeWidth',
-            'callout.length': 'calloutLength',
+            'callout.colors': 'calloutColors'
         };
         var series = this.chart.series;
         series.forEach(function (s) { return _.set(s, mappings[expression] || expression, value); });
         this.raiseChartOptionsChangedEvent();
     };
     ChartProxy.prototype.setTitleOption = function (property, value) {
+        if (_.get(this.chartOptions.title, property, undefined) === value) {
+            // option is already set to the specified value
+            return;
+        }
         this.chartOptions.title[property] = value;
         if (!this.chart.title) {
             this.chart.title = {};
@@ -126,6 +147,10 @@ var ChartProxy = /** @class */ (function () {
     };
     ChartProxy.prototype.setChartPaddingOption = function (property, value) {
         var padding = this.chartOptions.padding;
+        if (_.get(padding, property, undefined) === value) {
+            // option is already set to the specified value
+            return;
+        }
         if (!padding) {
             padding = this.chartOptions.padding = { top: 0, right: 0, bottom: 0, left: 0 };
             this.chart.padding = new Padding(0);
@@ -141,6 +166,10 @@ var ChartProxy = /** @class */ (function () {
     };
     ChartProxy.prototype.setShadowProperty = function (property, value) {
         var seriesDefaults = this.chartOptions.seriesDefaults;
+        if (_.get(seriesDefaults.shadow, property, undefined) === value) {
+            // option is already set to the specified value
+            return;
+        }
         if (!seriesDefaults.shadow) {
             seriesDefaults.shadow = {
                 enabled: false,
@@ -169,11 +198,14 @@ var ChartProxy = /** @class */ (function () {
     ChartProxy.prototype.raiseChartOptionsChangedEvent = function () {
         var event = Object.freeze({
             type: Events.EVENT_CHART_OPTIONS_CHANGED,
+            chartId: this.chartId,
             chartType: this.chartType,
             chartPalette: this.chartProxyParams.getChartPaletteName(),
             chartOptions: this.chartOptions,
+            api: this.gridApi,
+            columnApi: this.columnApi,
         });
-        this.chartProxyParams.eventService.dispatchEvent(event);
+        this.eventService.dispatchEvent(event);
     };
     ChartProxy.prototype.getDefaultFontOptions = function () {
         return {
@@ -207,8 +239,6 @@ var ChartProxy = /** @class */ (function () {
                 fill: this.getBackgroundColor(),
                 visible: true,
             },
-            width: 800,
-            height: 400,
             padding: {
                 top: 20,
                 right: 20,
@@ -219,12 +249,12 @@ var ChartProxy = /** @class */ (function () {
             subtitle: __assign(__assign({}, fontOptions), { enabled: false }),
             legend: {
                 enabled: true,
-                position: 'right',
-                padding: 20,
+                position: LegendPosition.Right,
+                spacing: 20,
                 item: {
                     label: __assign({}, fontOptions),
                     marker: {
-                        type: 'square',
+                        shape: 'square',
                         size: 15,
                         padding: 8,
                         strokeWidth: 1,
@@ -266,17 +296,9 @@ var ChartProxy = /** @class */ (function () {
         this.destroyChart();
     };
     ChartProxy.prototype.destroyChart = function () {
-        var parentElement = this.chartProxyParams.parentElement;
-        var canvas = parentElement.querySelector('canvas');
-        if (canvas) {
-            parentElement.removeChild(canvas);
-        }
-        // store current width and height so any charts created in the future maintain the size
         if (this.chart) {
-            this.chartOptions.width = this.chart.width;
-            this.chartOptions.height = this.chart.height;
             this.chart.destroy();
-            this.chart = null;
+            this.chart = undefined;
         }
     };
     return ChartProxy;

@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v22.1.1
+ * @version v23.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -33,16 +33,16 @@ var componentAnnotations_1 = require("../../../widgets/componentAnnotations");
 var ReadOnlyFloatingFilter = /** @class */ (function (_super) {
     __extends(ReadOnlyFloatingFilter, _super);
     function ReadOnlyFloatingFilter() {
-        return _super.call(this, "<div class=\"ag-input-wrapper\" role=\"presentation\"><input ref=\"eFloatingFilterText\" class=\"ag-floating-filter-input\"></div>") || this;
+        return _super.call(this, "<div class=\"ag-floating-filter-input\" role=\"presentation\"><ag-input-text-field ref=\"eFloatingFilterText\"></ag-input-text-field></div>") || this;
     }
     ReadOnlyFloatingFilter.prototype.init = function (params) {
         this.params = params;
-        this.eFloatingFilterText.disabled = true;
+        this.eFloatingFilterText.setDisabled(true);
     };
     ReadOnlyFloatingFilter.prototype.onParentModelChanged = function (parentModel) {
         var _this = this;
         if (!parentModel) {
-            this.eFloatingFilterText.value = '';
+            this.eFloatingFilterText.setValue('');
             return;
         }
         this.params.parentFilterInstance(function (filterInstance) {
@@ -50,7 +50,7 @@ var ReadOnlyFloatingFilter = /** @class */ (function (_super) {
             // in floatingFilterWrapper
             if (filterInstance.getModelAsString) {
                 var modelAsString = filterInstance.getModelAsString(parentModel);
-                _this.eFloatingFilterText.value = modelAsString;
+                _this.eFloatingFilterText.setValue(modelAsString);
             }
         });
     };

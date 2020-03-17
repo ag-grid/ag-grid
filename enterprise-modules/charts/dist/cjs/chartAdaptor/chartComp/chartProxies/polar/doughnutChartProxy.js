@@ -24,7 +24,7 @@ var __assign = (this && this.__assign) || function () {
     return __assign.apply(this, arguments);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var chartBuilder_1 = require("../../../../charts/chartBuilder");
+var ag_charts_community_1 = require("ag-charts-community");
 var core_1 = require("@ag-grid-community/core");
 var polarChartProxy_1 = require("./polarChartProxy");
 var DoughnutChartProxy = /** @class */ (function (_super) {
@@ -36,7 +36,7 @@ var DoughnutChartProxy = /** @class */ (function (_super) {
         return _this;
     }
     DoughnutChartProxy.prototype.createChart = function (options) {
-        return chartBuilder_1.ChartBuilder.createDoughnutChart(this.chartProxyParams.parentElement, options);
+        return ag_charts_community_1.ChartBuilder.createDoughnutChart(this.chartProxyParams.parentElement, options || this.chartOptions);
     };
     DoughnutChartProxy.prototype.update = function (params) {
         if (params.fields.length === 0) {
@@ -62,7 +62,7 @@ var DoughnutChartProxy = /** @class */ (function (_super) {
                     angleKey: f.colId,
                 }, showInLegend: index === 0, title: __assign(__assign({}, seriesDefaults.title), { text: seriesDefaults.title.text || f.displayName }) });
             var calloutColors = seriesOptions.callout && seriesOptions.callout.colors;
-            var pieSeries = existingSeries || chartBuilder_1.ChartBuilder.createSeries(seriesOptions);
+            var pieSeries = existingSeries || ag_charts_community_1.ChartBuilder.createSeries(seriesOptions);
             pieSeries.angleName = f.displayName;
             pieSeries.labelKey = params.category.id;
             pieSeries.labelName = params.category.name;
@@ -78,7 +78,7 @@ var DoughnutChartProxy = /** @class */ (function (_super) {
                 pieSeries.toggleSeriesItem = function (itemId, enabled) {
                     if (doughnutChart) {
                         doughnutChart.series.forEach(function (series) {
-                            series.dataEnabled[itemId] = enabled;
+                            series.seriesItemEnabled[itemId] = enabled;
                         });
                     }
                     pieSeries.scheduleData();
@@ -89,7 +89,7 @@ var DoughnutChartProxy = /** @class */ (function (_super) {
             pieSeries.innerRadiusOffset = offset;
             offset -= 20;
             if (calloutColors) {
-                pieSeries.calloutColors = calloutColors;
+                pieSeries.callout.colors = calloutColors;
             }
             if (!existingSeries) {
                 seriesMap[f.colId] = pieSeries;

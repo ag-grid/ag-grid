@@ -42,7 +42,7 @@ export class FloatingFilterWrapper extends Component {
         `<div class="ag-header-cell" role="presentation">
             <div ref="eFloatingFilterBody" role="columnheader"></div>
             <div class="ag-floating-filter-button" ref="eButtonWrapper" role="presentation">
-                <button type="button" ref="eButtonShowMainFilter"></button>
+                <button type="button" class="ag-floating-filter-button-button" ref="eButtonShowMainFilter"></button>
             </div>
         </div>`;
 
@@ -145,11 +145,10 @@ export class FloatingFilterWrapper extends Component {
     }
 
     private onColumnWidthChanged(): void {
-        this.getGui().style.width = this.column.getActualWidth() + 'px';
+        this.getGui().style.width = `${this.column.getActualWidth()}px`;
     }
 
     private setupWithFloatingFilter(floatingFilterComp: IFloatingFilterComp): void {
-
         const disposeFunc = () => {
             if (floatingFilterComp.destroy) {
                 floatingFilterComp.destroy();
@@ -192,6 +191,10 @@ export class FloatingFilterWrapper extends Component {
         if (typeof colDef.filter === 'string') {
             // will be undefined if not in the map
             defaultFloatingFilterType = FloatingFilterWrapper.filterToFloatingFilterNames[colDef.filter];
+        } else if (colDef.filterFramework) {
+            // If filterFramework, then grid is NOT using one of the provided filters, hence no default.
+            // Note: We could combine this with another part of the 'if' statement, however explicitly
+            // having this section makes the code easier to read.
         } else if (colDef.filter === true) {
             const setFilterModuleLoaded = ModuleRegistry.isRegistered(ModuleNames.SetFilterModule);
             defaultFloatingFilterType = setFilterModuleLoaded ? 'agSetColumnFloatingFilter' : 'agTextColumnFloatingFilter';

@@ -79,7 +79,7 @@ var PrimaryColsPanel = /** @class */ (function (_super) {
     PrimaryColsPanel.prototype.onSelectionChange = function (event) {
         this.primaryColsHeaderPanel.setSelectionState(event.state);
     };
-    PrimaryColsPanel.TEMPLATE = "<div class=\"ag-column-select-panel\">\n            <ag-primary-cols-header ref=\"primaryColsHeaderPanel\"></ag-primary-cols-header>\n            <ag-primary-cols-list ref=\"primaryColsListPanel\"></ag-primary-cols-list>\n        </div>";
+    PrimaryColsPanel.TEMPLATE = "<div class=\"ag-column-select\">\n            <ag-primary-cols-header ref=\"primaryColsHeaderPanel\"></ag-primary-cols-header>\n            <ag-primary-cols-list ref=\"primaryColsListPanel\"></ag-primary-cols-list>\n        </div>";
     __decorate([
         core_1.RefSelector('primaryColsHeaderPanel')
     ], PrimaryColsPanel.prototype, "primaryColsHeaderPanel", void 0);

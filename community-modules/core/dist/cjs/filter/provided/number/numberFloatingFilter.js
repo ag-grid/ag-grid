@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v22.1.1
+ * @version v23.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -35,15 +35,11 @@ var NumberFloatingFilter = /** @class */ (function (_super) {
         if (isRange) {
             return condition.filter + "-" + condition.filterTo;
         }
-        else {
-            // cater for when the type doesn't need a value
-            if (condition.filter != null) {
-                return "" + condition.filter;
-            }
-            else {
-                return "" + condition.type;
-            }
+        // cater for when the type doesn't need a value
+        if (condition.filter != null) {
+            return "" + condition.filter;
         }
+        return "" + condition.type;
     };
     return NumberFloatingFilter;
 }(textInputFloatingFilter_1.TextInputFloatingFilter));

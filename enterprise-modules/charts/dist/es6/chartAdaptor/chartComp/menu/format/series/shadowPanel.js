@@ -26,7 +26,12 @@ var ShadowPanel = /** @class */ (function (_super) {
         return _this;
     }
     ShadowPanel.prototype.init = function () {
-        this.setTemplate(ShadowPanel.TEMPLATE);
+        var groupParams = {
+            cssIdentifier: 'charts-format-sub-level',
+            direction: 'vertical',
+            suppressOpenCloseIcons: true
+        };
+        this.setTemplate(ShadowPanel.TEMPLATE, { shadowGroup: groupParams });
         this.shadowBlurSlider.setTextFieldWidth(45);
         this.shadowXOffsetSlider.setTextFieldWidth(45);
         this.shadowYOffsetSlider.setTextFieldWidth(45);

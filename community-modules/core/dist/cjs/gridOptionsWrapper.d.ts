@@ -1,4 +1,4 @@
-// Type definitions for @ag-grid-community/core v22.1.1
+// Type definitions for @ag-grid-community/core v23.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { RowNode } from './entities/rowNode';
@@ -96,6 +96,8 @@ export declare class GridOptionsWrapper {
     isSuppressScrollOnNewData(): boolean;
     isRowDragManaged(): boolean;
     isSuppressRowDrag(): boolean;
+    isSuppressMoveWhenRowDragging(): boolean;
+    isEnableMultiRowDragging(): boolean;
     getDomLayout(): string;
     isSuppressHorizontalScroll(): boolean;
     isSuppressMaxRenderedRowRestriction(): boolean;
@@ -209,7 +211,7 @@ export declare class GridOptionsWrapper {
     getAggFuncs(): {
         [key: string]: IAggFunc;
     } | undefined;
-    getSortingOrder(): string[] | undefined;
+    getSortingOrder(): (string | null)[] | undefined;
     getAlignedGrids(): GridOptions[] | undefined;
     isMasterDetail(): boolean;
     isKeepDetailRows(): boolean;
@@ -277,6 +279,7 @@ export declare class GridOptionsWrapper {
     getPivotGroupHeaderHeight(): number;
     isExternalFilterPresent(): boolean;
     doesExternalFilterPass(node: RowNode): boolean;
+    getTooltipShowDelay(): number;
     getDocument(): Document;
     getMinColWidth(): number;
     getMaxColWidth(): number;
@@ -295,10 +298,9 @@ export declare class GridOptionsWrapper {
         estimated: boolean;
     };
     isDynamicRowHeight(): boolean;
-    getVirtualItemHeight(): number;
-    useNativeCheckboxes(): boolean;
+    getListItemHeight(): number;
     chartMenuPanelWidth(): number;
     private isNumeric;
-    private specialForNewMaterial;
+    private getFromTheme;
     private getDefaultRowHeight;
 }

@@ -47,7 +47,8 @@ export class AutoHeightCalculator {
                 rowNode,
                 null,
                 true,
-                false);
+                false
+            );
             cellComp.setParentRow(this.eDummyContainer);
             cellComps.push(cellComp);
         });

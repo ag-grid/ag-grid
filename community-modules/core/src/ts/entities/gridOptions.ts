@@ -76,7 +76,9 @@ import {
     ViewportChangedEvent,
     VirtualColumnsChangedEvent,
     VirtualRowRemovedEvent,
-    ToolPanelVisibleChangedEvent
+    ToolPanelVisibleChangedEvent,
+    ChartCreated,
+    ChartDestroyed
 } from "../events";
 import { IComponent } from "../interfaces/iComponent";
 import { AgGridRegisteredComponentInput } from "../components/framework/userComponentRegistry";
@@ -95,6 +97,8 @@ export interface GridOptions {
     suppressBrowserResizeObserver?: boolean;
     rowDragManaged?: boolean;
     suppressRowDrag?: boolean;
+    suppressMoveWhenRowDragging?: boolean;
+    enableMultiRowDragging?: boolean;
     ensureDomOrder?: boolean;
     deltaRowDataMode?: boolean;
     deltaColumnMode?: boolean;
@@ -122,7 +126,7 @@ export interface GridOptions {
     suppressCellSelection?: boolean;
     suppressClearOnFillReduction?: boolean;
     suppressMaintainUnsortedOrder?: boolean;
-    sortingOrder?: string[];
+    sortingOrder?: (string | null)[];
     suppressMultiSort?: boolean;
     multiSortKey?: string;
     accentedSort?: boolean;
@@ -132,6 +136,7 @@ export interface GridOptions {
     suppressTabbing?: boolean;
     unSortIcon?: boolean;
     rowBuffer?: number;
+    tooltipShowDelay?: number;
     enableRtl?: boolean;
     /** @deprecated in v20, use colDef.resizable instead */
     enableColResize?: boolean;
@@ -209,7 +214,7 @@ export interface GridOptions {
     allowShowChangeAfterFilter?: boolean;
     quickFilterText?: string;
     cacheQuickFilter?: boolean;
-    aggFuncs?: { [key: string]: IAggFunc };
+    aggFuncs?: { [key: string]: IAggFunc; };
     suppressColumnVirtualisation?: boolean;
     functionsReadOnly?: boolean;
     functionsPassive?: boolean;
@@ -266,7 +271,7 @@ export interface GridOptions {
     serverSideSortingAlwaysResets?: boolean;
 
     statusBar?: {
-        statusPanels: StatusPanelDef[]
+        statusPanels: StatusPanelDef[];
     };
 
     // just set once
@@ -322,7 +327,7 @@ export interface GridOptions {
     keepDetailRows?: boolean;
     keepDetailRowsCount?: number;
     isRowMaster?: IsRowMaster;
-    detailCellRenderer?: { new(): ICellRendererComp } | ICellRendererFunc | string;
+    detailCellRenderer?: { new(): ICellRendererComp; } | ICellRendererFunc | string;
     detailCellRendererFramework?: any;
     detailCellRendererParams?: any;
 
@@ -334,7 +339,7 @@ export interface GridOptions {
     showToolPanel?: boolean;
     sideBar?: SideBarDef | string | boolean;
     columnDefs?: (ColDef | ColGroupDef)[];
-    columnTypes?: { [key: string]: ColDef };
+    columnTypes?: { [key: string]: ColDef; };
     datasource?: IDatasource;
     viewportDatasource?: IViewportDatasource;
     serverSideDatasource?: IServerSideDatasource;
@@ -353,14 +358,14 @@ export interface GridOptions {
     // callbacks
     paginationNumberFormatter?: (params: PaginationNumberFormatterParams) => string;
     postProcessPopup?: (params: PostProcessPopupParams) => void;
-    frameworkComponents?: { [p: string]: { new(): any } } | any;
-    components?: { [p: string]: AgGridRegisteredComponentInput<IComponent<any>> };
-    dateComponent?: string | { new(): IDateComp };
+    frameworkComponents?: { [p: string]: { new(): any; }; } | any;
+    components?: { [p: string]: AgGridRegisteredComponentInput<IComponent<any>>; };
+    dateComponent?: string | { new(): IDateComp; };
     dateComponentFramework?: any;
-    groupRowRenderer?: { new(): ICellRendererComp } | ICellRendererFunc | string;
+    groupRowRenderer?: { new(): ICellRendererComp; } | ICellRendererFunc | string;
     groupRowRendererFramework?: any;
     groupRowRendererParams?: any;
-    groupRowInnerRenderer?: { new(): ICellRendererComp } | ICellRendererFunc | string;
+    groupRowInnerRenderer?: { new(): ICellRendererComp; } | ICellRendererFunc | string;
     groupRowInnerRendererFramework?: any;
     createChartContainer?: (params: ChartRef) => void;
     fillOperation?: (params: FillOperationParams) => any;
@@ -371,7 +376,7 @@ export interface GridOptions {
 
     getRowStyle?: Function;
     getRowClass?: (params: any) => (string | string[]);
-    rowClassRules?: { [cssClassName: string]: (((params: any) => boolean) | string) };
+    rowClassRules?: { [cssClassName: string]: (((params: any) => boolean) | string); };
     getRowHeight?: Function;
     sendToClipboard?: (params: any) => void;
     processDataFromClipboard?: (params: ProcessDataFromClipboardParams) => string[][] | null;
@@ -380,17 +385,19 @@ export interface GridOptions {
     getDocument?: () => Document;
     defaultGroupSortComparator?: (nodeA: RowNode, nodeB: RowNode) => number;
 
-    loadingCellRenderer?: { new(): ICellRenderer } | string;
+    loadingCellRenderer?: { new(): ICellRenderer; } | string;
     loadingCellRendererFramework?: any;
     loadingCellRendererParams?: any;
 
-    loadingOverlayComponent?: { new(): ILoadingOverlayComp } | string;
+    loadingOverlayComponent?: { new(): ILoadingOverlayComp; } | string;
     loadingOverlayComponentFramework?: any;
+    loadingOverlayComponentParams?: any;
 
-    noRowsOverlayComponent?: { new(): INoRowsOverlayComp } | string;
+    noRowsOverlayComponent?: { new(): INoRowsOverlayComp; } | string;
     noRowsOverlayComponentFramework?: any;
+    noRowsOverlayComponentParams?: any;
 
-    fullWidthCellRenderer?: { new(): ICellRendererComp } | ICellRendererFunc | string;
+    fullWidthCellRenderer?: { new(): ICellRendererComp; } | ICellRendererFunc | string;
     fullWidthCellRendererFramework?: any;
     fullWidthCellRendererParams?: any;
 
@@ -477,8 +484,6 @@ export interface GridOptions {
     onPinnedRowDataChanged?(event: PinnedRowDataChangedEvent): void;
 
     onRangeSelectionChanged?(event: RangeSelectionChangedEvent): void;
-
-    onChartRangeSelectionChanged?(event: ChartRangeSelectionChanged): void;
 
     onColumnRowGroupChangeRequest?(event: ColumnRowGroupChangeRequestEvent): void;
 
@@ -568,7 +573,13 @@ export interface GridOptions {
 
     onExpandOrCollapseAll?(event: ExpandCollapseAllEvent): void;
 
+    onChartCreated?(event: ChartCreated): void;
+
+    onChartRangeSelectionChanged?(event: ChartRangeSelectionChanged): void;
+
     onChartOptionsChanged?(event: ChartOptionsChanged): void;
+
+    onChartDestroyed?(event: ChartDestroyed): void;
 
     /** @deprecated */
     onGridSizeChanged?(event: any): void;

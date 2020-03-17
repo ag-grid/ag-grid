@@ -4,6 +4,9 @@ import { CellPosition } from "../entities/cellPosition";
 import { GridOptionsWrapper } from "../gridOptionsWrapper";
 import { CellComp } from "../rendering/cellComp";
 import { NumberSequence, _ } from '../utils';
+import { GridPanel } from "./gridPanel";
+import { Constants } from "../constants";
+import { DraggingEvent } from "../dragAndDrop/dragAndDropService";
 
 @Bean('mouseEventService')
 export class MouseEventService {
@@ -13,12 +16,17 @@ export class MouseEventService {
 
     private static gridInstanceSequence = new NumberSequence();
     private static GRID_DOM_KEY = '__ag_grid_instance';
+    private gridPanel: GridPanel;
 
     private gridInstanceId = MouseEventService.gridInstanceSequence.next();
 
     @PostConstruct
     private init(): void {
         this.stampDomElementWithGridInstance();
+    }
+
+    public registerGridComp(gridPanel: GridPanel): void {
+        this.gridPanel = gridPanel;
     }
 
     // we put the instance id onto the main DOM element. this is used for events, when grids are inside grids,
@@ -54,6 +62,20 @@ export class MouseEventService {
     public getCellPositionForEvent(event: MouseEvent | KeyboardEvent): CellPosition {
         const cellComp = this.getRenderedCellForEvent(event);
         return cellComp ? cellComp.getCellPosition() : null;
+    }
+
+    getNormalisedPosition(event: MouseEvent | DraggingEvent): { x: number, y: number } {
+        const gridPanelHasScrolls = this.gridOptionsWrapper.getDomLayout() === Constants.DOM_LAYOUT_NORMAL;
+        const { x, y } = event;
+
+        if (gridPanelHasScrolls) {
+            const vRange = this.gridPanel.getVScrollPosition();
+            const hRange = this.gridPanel.getHScrollPosition();
+
+            return {x: x + hRange.left, y: y + vRange.top };
+        }
+
+        return { x, y };
     }
 
 }

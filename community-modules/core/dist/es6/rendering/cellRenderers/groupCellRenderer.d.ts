@@ -1,4 +1,4 @@
-// Type definitions for @ag-grid-community/core v22.1.1
+// Type definitions for @ag-grid-community/core v23.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { Component } from "../../widgets/component";
@@ -20,10 +20,8 @@ export declare class GroupCellRenderer extends Component implements ICellRendere
     private static TEMPLATE;
     private gridOptionsWrapper;
     private expressionService;
-    private eventService;
     private valueFormatterService;
     private columnController;
-    private mouseEventService;
     private userComponentFactory;
     private eExpanded;
     private eContracted;

@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v22.1.1
+ * @version v23.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -158,6 +158,7 @@ var HeaderGroupWrapperComp = /** @class */ (function (_super) {
         var dragSource = {
             type: dragAndDropService_1.DragSourceType.HeaderCell,
             eElement: eHeaderGroup,
+            defaultIconName: dragAndDropService_1.DragAndDropService.ICON_HIDE,
             dragItemName: displayName,
             // we add in the original group leaf columns, so we move both visible and non-visible items
             getDragItem: this.getDragItemForGroup.bind(this),

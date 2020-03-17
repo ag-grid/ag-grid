@@ -83,7 +83,7 @@ export class BeanStub implements IEventEmitter {
         object: Window | HTMLElement | IEventEmitter | GridOptionsWrapper,
         event: string,
         listener: (event?: any) => void
-    ): (() => void) | undefined {
+    ): (() => null) | undefined {
         if (this.destroyed) {
             return;
         }
@@ -94,10 +94,12 @@ export class BeanStub implements IEventEmitter {
             (object as any).addEventListener(event, listener);
         }
 
-        const destroyFunc = () => {
+        const destroyFunc: () => null = () => {
             (object as any).removeEventListener(event, listener);
 
             this.destroyFunctions = this.destroyFunctions.filter(fn => fn !== destroyFunc);
+
+            return null;
         };
 
         this.destroyFunctions.push(destroyFunc);

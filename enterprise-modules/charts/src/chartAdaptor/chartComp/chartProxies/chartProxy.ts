@@ -1,40 +1,49 @@
 import {
     _,
+    CaptionOptions,
     ChartOptions,
     ChartOptionsChanged,
     ChartType,
+    DropShadowOptions,
     Events,
     EventService,
+    FontOptions,
+    LegendPosition,
+    PaddingOptions,
     ProcessChartOptionsParams,
     SeriesOptions,
-    PaddingOptions,
-    DropShadowOptions,
-    FontOptions,
-    CaptionOptions,
+    GridApi,
+    ColumnApi,
 } from "@ag-grid-community/core";
-import { Chart } from "../../../charts/chart/chart";
-import { ChartPalette, ChartPaletteName, palettes } from "../../../charts/chart/palettes";
-import { ColumnSeries as BarSeries } from "../../../charts/chart/series/cartesian/columnSeries";
-import { DropShadow } from "../../../charts/scene/dropShadow";
-import { AreaSeries } from "../../../charts/chart/series/cartesian/areaSeries";
-import { PieSeries } from "../../../charts/chart/series/polar/pieSeries";
-import { Padding } from "../../../charts/util/padding";
-import { Caption } from "../../../charts/caption";
-import { CategoryAxis } from "../../../charts/chart/axis/categoryAxis";
+import {
+    AreaSeries,
+    Caption,
+    CategoryAxis,
+    Chart,
+    ChartPalette,
+    ChartPaletteName,
+    ColumnSeries,
+    DropShadow,
+    Padding,
+    palettes,
+    PieSeries
+} from "ag-charts-community";
 
 export interface ChartProxyParams {
+    chartId: string;
     chartType: ChartType;
     width?: number;
     height?: number;
     parentElement: HTMLElement;
-    eventService: EventService;
-    categorySelected: boolean;
     grouping: boolean;
     document: Document;
     processChartOptions: (params: ProcessChartOptionsParams) => ChartOptions<SeriesOptions>;
     getChartPaletteName: () => ChartPaletteName;
     allowPaletteOverride: boolean;
     isDarkTheme: () => boolean;
+    eventService: EventService;
+    gridApi: GridApi;
+    columnApi: ColumnApi;
 }
 
 export interface FieldDefinition {
@@ -44,39 +53,58 @@ export interface FieldDefinition {
 
 export interface UpdateChartParams {
     data: any[];
+    grouping: boolean;
     category: {
         id: string;
         name: string;
     };
-
     fields: FieldDefinition[];
 }
 
 export abstract class ChartProxy<TChart extends Chart, TOptions extends ChartOptions<any>> {
+    protected readonly chartId: string;
+    protected readonly chartType: ChartType;
+    protected readonly eventService: EventService;
+    private readonly gridApi: GridApi;
+    private readonly columnApi: ColumnApi;
+
     protected chart: TChart;
-    protected chartProxyParams: ChartProxyParams;
     protected customPalette: ChartPalette;
-    protected chartType: ChartType;
     protected chartOptions: TOptions;
 
-    protected constructor(chartProxyParams: ChartProxyParams) {
-        this.chartProxyParams = chartProxyParams;
+    protected constructor(protected readonly chartProxyParams: ChartProxyParams) {
+        this.chartId = chartProxyParams.chartId;
         this.chartType = chartProxyParams.chartType;
+        this.eventService = chartProxyParams.eventService;
+        this.gridApi = chartProxyParams.gridApi;
+        this.columnApi = chartProxyParams.columnApi;
     }
 
-    protected abstract createChart(options: TOptions): TChart;
+    protected abstract createChart(options?: TOptions): TChart;
 
     public recreateChart(options?: TOptions): void {
         if (this.chart) {
             this.destroyChart();
         }
 
-        this.chart = this.createChart(options || this.chartOptions);
+        this.chart = this.createChart(options);
     }
 
     public abstract update(params: UpdateChartParams): void;
 
-    public getChart = (): TChart => this.chart;
+    public getChart(): TChart {
+        return this.chart;
+    }
+
+    public downloadChart(): void {
+        const { chart } = this;
+        const fileName = chart.title ? chart.title.text : 'chart';
+        chart.scene.download(fileName);
+    }
+
+    public getChartImageDataURL(type?: string) {
+        return this.chart.scene.getDataURL(type);
+    }
 
     private isDarkTheme = () => this.chartProxyParams.isDarkTheme();
     protected getFontColor = (): string => this.isDarkTheme() ? 'rgb(221, 221, 221)' : 'rgb(87, 87, 87)';
@@ -141,19 +169,24 @@ export abstract class ChartProxy<TChart extends Chart, TOptions extends ChartOpt
     }
 
     public setChartOption(expression: string, value: any): void {
+        if (_.get(this.chartOptions, expression, undefined) === value) {
+            // option is already set to the specified value
+            return;
+        }
+
         _.set(this.chartOptions, expression, value);
 
         const mappings: any = {
-            'legend.item.marker.strokeWidth': 'legend.markerStrokeWidth',
+            'legend.item.marker.strokeWidth': 'legend.strokeWidth',
             'legend.item.marker.size': 'legend.markerSize',
-            'legend.item.marker.padding': 'legend.markerPadding',
-            'legend.item.label.fontFamily': 'legend.labelFontFamily',
-            'legend.item.label.fontStyle': 'legend.labelFontStyle',
-            'legend.item.label.fontWeight': 'legend.labelFontWeight',
-            'legend.item.label.fontSize': 'legend.labelFontSize',
-            'legend.item.label.color': 'legend.labelColor',
-            'legend.item.paddingX': 'legend.itemPaddingX',
-            'legend.item.paddingY': 'legend.itemPaddingY',
+            'legend.item.marker.padding': 'legend.itemSpacing',
+            'legend.item.label.fontFamily': 'legend.fontFamily',
+            'legend.item.label.fontStyle': 'legend.fontStyle',
+            'legend.item.label.fontWeight': 'legend.fontWeight',
+            'legend.item.label.fontSize': 'legend.fontSize',
+            'legend.item.label.color': 'legend.color',
+            'legend.item.paddingX': 'legend.layoutHorizontalSpacing',
+            'legend.item.paddingY': 'legend.layoutVerticalSpacing',
         };
 
         _.set(this.chart, mappings[expression] || expression, value);
@@ -166,16 +199,19 @@ export abstract class ChartProxy<TChart extends Chart, TOptions extends ChartOpt
     }
 
     public setSeriesOption(expression: string, value: any): void {
+        if (_.get(this.chartOptions.seriesDefaults, expression, undefined) === value) {
+            // option is already set to the specified value
+            return;
+        }
+
         _.set(this.chartOptions.seriesDefaults, expression, value);
 
-        const mappings: { [key: string]: string } = {
+        const mappings: { [key: string]: string; } = {
             'stroke.width': 'strokeWidth',
             'stroke.opacity': 'strokeOpacity',
             'fill.opacity': 'fillOpacity',
             'tooltip.enabled': 'tooltipEnabled',
-            'callout.colors': 'calloutColors',
-            'callout.strokeWidth': 'calloutStrokeWidth',
-            'callout.length': 'calloutLength',
+            'callout.colors': 'calloutColors'
         };
 
         const series = this.chart.series;
@@ -185,6 +221,11 @@ export abstract class ChartProxy<TChart extends Chart, TOptions extends ChartOpt
     }
 
     public setTitleOption(property: keyof CaptionOptions, value: any) {
+        if (_.get(this.chartOptions.title, property, undefined) === value) {
+            // option is already set to the specified value
+            return;
+        }
+
         (this.chartOptions.title as any)[property] = value;
 
         if (!this.chart.title) {
@@ -204,6 +245,11 @@ export abstract class ChartProxy<TChart extends Chart, TOptions extends ChartOpt
 
     public setChartPaddingOption(property: keyof PaddingOptions, value: number): void {
         let { padding } = this.chartOptions;
+
+        if (_.get(padding, property, undefined) === value) {
+            // option is already set to the specified value
+            return;
+        }
 
         if (!padding) {
             padding = this.chartOptions.padding = { top: 0, right: 0, bottom: 0, left: 0 };
@@ -229,6 +275,11 @@ export abstract class ChartProxy<TChart extends Chart, TOptions extends ChartOpt
     public setShadowProperty(property: keyof DropShadowOptions, value: any): void {
         const { seriesDefaults } = this.chartOptions;
 
+        if (_.get(seriesDefaults.shadow, property, undefined) === value) {
+            // option is already set to the specified value
+            return;
+        }
+
         if (!seriesDefaults.shadow) {
             seriesDefaults.shadow = {
                 enabled: false,
@@ -241,7 +292,7 @@ export abstract class ChartProxy<TChart extends Chart, TOptions extends ChartOpt
 
         seriesDefaults.shadow[property] = value;
 
-        const series = this.getChart().series as (BarSeries | AreaSeries | PieSeries)[];
+        const series = this.getChart().series as (ColumnSeries | AreaSeries | PieSeries)[];
 
         series.forEach(s => {
             if (!s.shadow) {
@@ -260,15 +311,18 @@ export abstract class ChartProxy<TChart extends Chart, TOptions extends ChartOpt
         this.raiseChartOptionsChangedEvent();
     }
 
-    protected raiseChartOptionsChangedEvent(): void {
+    public raiseChartOptionsChangedEvent(): void {
         const event: ChartOptionsChanged = Object.freeze({
             type: Events.EVENT_CHART_OPTIONS_CHANGED,
+            chartId: this.chartId,
             chartType: this.chartType,
             chartPalette: this.chartProxyParams.getChartPaletteName(),
             chartOptions: this.chartOptions,
+            api: this.gridApi,
+            columnApi: this.columnApi,
         });
 
-        this.chartProxyParams.eventService.dispatchEvent(event);
+        this.eventService.dispatchEvent(event);
     }
 
     protected getDefaultFontOptions(): FontOptions {
@@ -308,8 +362,6 @@ export abstract class ChartProxy<TChart extends Chart, TOptions extends ChartOpt
                 fill: this.getBackgroundColor(),
                 visible: true,
             },
-            width: 800,
-            height: 400,
             padding: {
                 top: 20,
                 right: 20,
@@ -328,14 +380,14 @@ export abstract class ChartProxy<TChart extends Chart, TOptions extends ChartOpt
             },
             legend: {
                 enabled: true,
-                position: 'right',
-                padding: 20,
+                position: LegendPosition.Right,
+                spacing: 20,
                 item: {
                     label: {
                         ...fontOptions,
                     },
                     marker: {
-                        type: 'square',
+                        shape: 'square',
                         size: 15,
                         padding: 8,
                         strokeWidth: 1,
@@ -383,20 +435,9 @@ export abstract class ChartProxy<TChart extends Chart, TOptions extends ChartOpt
     }
 
     protected destroyChart(): void {
-        const { parentElement } = this.chartProxyParams;
-        const canvas = parentElement.querySelector('canvas');
-
-        if (canvas) {
-            parentElement.removeChild(canvas);
-        }
-
-        // store current width and height so any charts created in the future maintain the size
         if (this.chart) {
-            this.chartOptions.width = this.chart.width;
-            this.chartOptions.height = this.chart.height;
-
             this.chart.destroy();
-            this.chart = null;
+            this.chart = undefined;
         }
     }
 }

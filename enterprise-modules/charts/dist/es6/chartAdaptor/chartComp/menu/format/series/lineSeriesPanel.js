@@ -28,7 +28,11 @@ var LineSeriesPanel = /** @class */ (function (_super) {
         return _this;
     }
     LineSeriesPanel.prototype.init = function () {
-        this.setTemplate(LineSeriesPanel.TEMPLATE);
+        var groupParams = {
+            cssIdentifier: 'charts-format-top-level',
+            direction: 'vertical'
+        };
+        this.setTemplate(LineSeriesPanel.TEMPLATE, { seriesGroup: groupParams });
         this.initSeriesGroup();
         this.initSeriesTooltips();
         this.initSeriesLineWidth();
@@ -46,7 +50,7 @@ var LineSeriesPanel = /** @class */ (function (_super) {
             .setLabel(this.chartTranslator.translate("tooltips"))
             .setLabelAlignment("left")
             .setLabelWidth("flex")
-            .setInputWidth(40)
+            .setInputWidth(45)
             .setValue(this.getChartProxy().getSeriesOption("tooltip.enabled") || false)
             .onValueChange(function (newValue) { return _this.getChartProxy().setSeriesOption("tooltip.enabled", newValue); });
     };

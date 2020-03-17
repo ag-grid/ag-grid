@@ -85,6 +85,7 @@ export class ColumnToolPanel extends Component implements IColumnToolPanel, IToo
 
         this.primaryColsPanel = this.getContext().createComponent('AG-PRIMARY-COLS') as PrimaryColsPanel;
         this.primaryColsPanel.init(true, this.params);
+        _.addCssClass(this.primaryColsPanel.getGui(), 'ag-column-panel-column-select');
         this.addComponent(this.primaryColsPanel);
 
         if (this.isRowGroupingModuleLoaded()) {

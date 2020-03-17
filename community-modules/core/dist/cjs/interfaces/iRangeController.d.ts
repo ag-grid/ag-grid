@@ -1,4 +1,4 @@
-// Type definitions for @ag-grid-community/core v22.1.1
+// Type definitions for @ag-grid-community/core v23.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { Column } from "../entities/column";
@@ -12,7 +12,7 @@ export interface IRangeController {
     getCellRangeCount(cell: CellPosition): number;
     isCellInAnyRange(cell: CellPosition): boolean;
     isCellInSpecificRange(cell: CellPosition, range: CellRange): boolean;
-    isLastCellOfRange(cellRange: CellRange, cell: CellPosition): boolean;
+    isBottomRightCell(cellRange: CellRange, cell: CellPosition): boolean;
     isContiguousRange(cellRange: CellRange): boolean;
     isMoreThanOneCell(): boolean;
     onDragStart(mouseEvent: MouseEvent): void;
@@ -24,6 +24,7 @@ export interface IRangeController {
     addCellRange(params: CellRangeParams): void;
     extendLatestRangeInDirection(key: number): CellPosition | undefined;
     extendLatestRangeToCell(cell: CellPosition): void;
+    updateRangeEnd(cellRange: CellRange, cellPosition: CellPosition, silent?: boolean): void;
     registerGridComp(gridPanel: GridPanel): void;
     getRangeStartRow(cellRange: CellRange): RowPosition;
     getRangeEndRow(cellRange: CellRange): RowPosition;

@@ -29,18 +29,19 @@ export class DateFilter extends ScalerFilter<DateFilterModel, Date> {
 
     private static readonly FILTER_TYPE = 'date';
 
-    public static DEFAULT_FILTER_OPTIONS = [ScalerFilter.EQUALS, ScalerFilter.GREATER_THAN,
-    ScalerFilter.LESS_THAN, ScalerFilter.NOT_EQUAL, ScalerFilter.IN_RANGE];
+    public static DEFAULT_FILTER_OPTIONS = [
+        ScalerFilter.EQUALS,
+        ScalerFilter.GREATER_THAN,
+        ScalerFilter.LESS_THAN,
+        ScalerFilter.NOT_EQUAL,
+        ScalerFilter.IN_RANGE
+    ];
 
-    @RefSelector('ePanelFrom1')
-    private ePanelFrom1: HTMLElement;
-    @RefSelector('ePanelFrom2')
-    private ePanelFrom2: HTMLElement;
+    @RefSelector('ePanelFrom1') private ePanelFrom1: HTMLElement;
+    @RefSelector('ePanelFrom2') private ePanelFrom2: HTMLElement;
 
-    @RefSelector('ePanelTo1')
-    private ePanelTo1: HTMLElement;
-    @RefSelector('ePanelTo2')
-    private ePanelTo2: HTMLElement;
+    @RefSelector('ePanelTo1') private ePanelTo1: HTMLElement;
+    @RefSelector('ePanelTo2') private ePanelTo2: HTMLElement;
 
     private dateCompFrom1: DateCompWrapper;
     private dateCompFrom2: DateCompWrapper;
@@ -61,15 +62,18 @@ export class DateFilter extends ScalerFilter<DateFilterModel, Date> {
         // NOTE: The conversion of string to date also removes the timezone - ie when user picks
         //       a date form the UI, it will have timezone info in it. This is lost when creating
         //       the model. Then when we recreate the date again here, it's without timezone.
+        const from = _.getDateFromString(filterModel.dateFrom);
+        const to = _.getDateFromString(filterModel.dateTo);
+
         return {
-            from: _.parseYyyyMmDdToDate(filterModel.dateFrom, "-"),
-            to: _.parseYyyyMmDdToDate(filterModel.dateTo, "-")
+            from,
+            to
         };
     }
 
     protected setValueFromFloatingFilter(value: string): void {
         if (value != null) {
-            const dateFrom = _.parseYyyyMmDdToDate(value, "-");
+            const dateFrom = _.getDateFromString(value);
             this.dateCompFrom1.setDate(dateFrom);
         } else {
             this.dateCompFrom1.setDate(null);
@@ -86,8 +90,8 @@ export class DateFilter extends ScalerFilter<DateFilterModel, Date> {
         const dateFromString = model ? model.dateFrom : null;
         const dateToString = model ? model.dateTo : null;
 
-        const dateFrom = _.parseYyyyMmDdToDate(dateFromString, "-");
-        const dateTo = _.parseYyyyMmDdToDate(dateToString, "-");
+        const dateFrom = _.getDateFromString(dateFromString);
+        const dateTo = _.getDateFromString(dateToString);
 
         const compFrom = positionOne ? this.dateCompFrom1 : this.dateCompFrom2;
         const compTo = positionOne ? this.dateCompTo1 : this.dateCompTo2;
@@ -96,8 +100,8 @@ export class DateFilter extends ScalerFilter<DateFilterModel, Date> {
         compTo.setDate(dateTo);
     }
 
-    protected resetUiToDefaults(): void {
-        super.resetUiToDefaults();
+    protected resetUiToDefaults(silent?: boolean): void {
+        super.resetUiToDefaults(silent);
 
         this.dateCompTo1.setDate(null);
         this.dateCompTo2.setDate(null);
@@ -112,8 +116,10 @@ export class DateFilter extends ScalerFilter<DateFilterModel, Date> {
     private defaultComparator(filterDate: Date, cellValue: any): number {
         //The default comparator assumes that the cellValue is a date
         const cellAsDate = cellValue as Date;
+
         if (cellAsDate < filterDate) { return -1; }
         if (cellAsDate > filterDate) { return 1; }
+
         return cellValue != null ? 0 : -1;
     }
 
@@ -150,26 +156,22 @@ export class DateFilter extends ScalerFilter<DateFilterModel, Date> {
     }
 
     protected createValueTemplate(position: ConditionPosition): string {
-
         const positionOne = position === ConditionPosition.One;
-
         const pos = positionOne ? '1' : '2';
 
         return `<div class="ag-filter-body" ref="eCondition${pos}Body">
-                    <div class="ag-filter-date-from" ref="ePanelFrom${pos}">
+                    <div class="ag-filter-from ag-filter-date-from" ref="ePanelFrom${pos}">
                     </div>
-                    <div class="ag-filter-date-to" ref="ePanelTo${pos}"">
+                    <div class="ag-filter-to ag-filter-date-to" ref="ePanelTo${pos}"">
                     </div>
                 </div>`;
     }
 
     protected isConditionUiComplete(position: ConditionPosition): boolean {
         const positionOne = position === ConditionPosition.One;
-
         const option = positionOne ? this.getCondition1Type() : this.getCondition2Type();
         const compFrom = positionOne ? this.dateCompFrom1 : this.dateCompFrom2;
         const compTo = positionOne ? this.dateCompTo1 : this.dateCompTo2;
-
         const valueFrom = compFrom.getDate();
         const valueTo = compTo.getDate();
 
@@ -181,9 +183,9 @@ export class DateFilter extends ScalerFilter<DateFilterModel, Date> {
 
         if (option === SimpleFilter.IN_RANGE) {
             return valueFrom != null && valueTo != null;
-        } else {
-            return valueFrom != null;
         }
+
+        return valueFrom != null;
     }
 
     protected areSimpleModelsEqual(aSimple: DateFilterModel, bSimple: DateFilterModel): boolean {
@@ -198,25 +200,39 @@ export class DateFilter extends ScalerFilter<DateFilterModel, Date> {
     }
 
     protected createCondition(position: ConditionPosition): DateFilterModel {
-
         const positionOne = position === ConditionPosition.One;
-
         const type = positionOne ? this.getCondition1Type() : this.getCondition2Type();
 
-        const dateCompTo = positionOne ? this.dateCompTo1 : this.dateCompTo2;
         const dateCompFrom = positionOne ? this.dateCompFrom1 : this.dateCompFrom2;
+        const dateCompTo = positionOne ? this.dateCompTo1 : this.dateCompTo2;
+
+        const dateFrom = dateCompFrom.getDate();
+        const dateTo = dateCompTo.getDate();
 
         return {
-            dateTo: _.serializeDateToYyyyMmDd(dateCompTo.getDate(), "-"),
-            dateFrom: _.serializeDateToYyyyMmDd(dateCompFrom.getDate(), "-"),
+            dateFrom: `${_.serializeDateToYyyyMmDd(dateFrom, "-")} ${_.getTimeFromDate(dateFrom)}`,
+            dateTo: `${_.serializeDateToYyyyMmDd(dateTo, "-")} ${_.getTimeFromDate(dateTo)}`,
             type: type,
             filterType: DateFilter.FILTER_TYPE
         };
     }
 
-    protected updateUiVisibility(): void {
+    private resetPlaceholder(): void {
+        const translate = this.translate.bind(this);
+        const isRange1 = this.getCondition1Type() === ScalerFilter.IN_RANGE;
+        const isRange2 = this.getCondition2Type() === ScalerFilter.IN_RANGE;
 
+        this.dateCompFrom1.setInputPlaceholder(translate(isRange1 ? 'rangeStart' : 'filterOoo'));
+        this.dateCompTo1.setInputPlaceholder(translate(isRange1 ? 'rangeEnd' : 'filterOoo'));
+
+        this.dateCompFrom2.setInputPlaceholder(translate(isRange2 ? 'rangeStart' : 'filterOoo'));
+        this.dateCompTo2.setInputPlaceholder(translate(isRange2 ? 'rangeEnd' : 'filterOoo'));
+    }
+
+    protected updateUiVisibility(): void {
         super.updateUiVisibility();
+
+        this.resetPlaceholder();
 
         const showFrom1 = this.showValueFrom(this.getCondition1Type());
         _.setDisplayed(this.ePanelFrom1, showFrom1);

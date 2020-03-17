@@ -20,20 +20,18 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var core_1 = require("@ag-grid-community/core");
-var group_1 = require("../../../../../charts/scene/group");
-var scene_1 = require("../../../../../charts/scene/scene");
+var ag_charts_community_1 = require("ag-charts-community");
 var MiniChart = /** @class */ (function (_super) {
     __extends(MiniChart, _super);
-    function MiniChart(parent, tooltipName) {
+    function MiniChart(container, tooltipName) {
         var _this = _super.call(this) || this;
         _this.size = 58;
         _this.padding = 5;
-        _this.root = new group_1.Group();
-        var scene = new scene_1.Scene();
-        scene.width = _this.size;
-        scene.height = _this.size;
+        _this.root = new ag_charts_community_1.Group();
+        var scene = new ag_charts_community_1.Scene(window.document, _this.size, _this.size);
+        core_1._.addCssClass(scene.canvas.element, 'ag-chart-mini-thumbnail-canvas');
         scene.root = _this.root;
-        scene.parent = parent;
+        scene.container = container;
         _this.scene = scene;
         _this.tooltipName = tooltipName;
         return _this;

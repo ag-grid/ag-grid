@@ -15,13 +15,9 @@ VERSION=""${RAW_VERSION//./}""
 FILENAME=release_"$TIMESTAMP"_v"$VERSION".zip
 
 ./scripts/release/createDocsReleaseBundle.sh $RAW_VERSION
+./scripts/release/uploadReleaseZip.sh $FILENAME
 
-BACKUP_DIR=/home/ceolter/release_bak_"$TIMESTAMP"
-echo "$FILENAME"
-echo "$BACKUP_DIR"
+./scripts/release/archiveCurrentRelease.sh
+./scripts/release/prepareAgGridForRelease.sh $FILENAME
+./scripts/release/switchRelease.sh $TIMESTAMP
 
-release_20191216_v2211.zip
-/home/ceolter/release_bak_20191216
-
-#./scripts/release/prepareAgGridForRelease.sh $BACKUP_DIR
-#./scripts/release/uploadAndUnzipRelease.sh $FILENAME

@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v22.1.1
+ * @version v23.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -25,22 +25,20 @@ var AgRadioButton = /** @class */ (function (_super) {
     function AgRadioButton() {
         var _this = _super !== null && _super.apply(this, arguments) || this;
         _this.className = 'ag-radio-button';
-        _this.nativeInputClassName = 'ag-native-radio-button';
         _this.inputType = 'radio';
-        _this.iconMap = {
-            selected: 'radioButtonOn',
-            unselected: 'radioButtonOff'
-        };
         return _this;
     }
+    AgRadioButton.prototype.isSelected = function () {
+        return this.eInput.checked;
+    };
     AgRadioButton.prototype.toggle = function () {
         var nextValue = this.getNextValue();
         this.setValue(nextValue);
     };
-    AgRadioButton.prototype.getIconName = function () {
-        var prop = this.getValue() ? 'selected' : 'unselected';
-        var readOnlyStr = this.isReadOnly() ? 'ReadOnly' : '';
-        return "" + this.iconMap[prop] + readOnlyStr;
+    AgRadioButton.prototype.setName = function (name) {
+        var input = this.getInputElement();
+        input.name = name;
+        return this;
     };
     return AgRadioButton;
 }(agCheckbox_1.AgCheckbox));

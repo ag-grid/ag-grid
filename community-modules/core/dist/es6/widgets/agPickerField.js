@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v22.1.1
+ * @version v23.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -23,32 +23,67 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
-import { RefSelector } from "./componentAnnotations";
-import { Autowired } from "../context/context";
 import { AgAbstractField } from "./agAbstractField";
+import { Autowired } from "../context/context";
+import { Constants } from "../constants";
+import { RefSelector } from "./componentAnnotations";
 import { _ } from "../utils";
 var AgPickerField = /** @class */ (function (_super) {
     __extends(AgPickerField, _super);
     function AgPickerField() {
         var _this = _super !== null && _super.apply(this, arguments) || this;
-        _this.TEMPLATE = "<div class=\"ag-picker-field\">\n            <label ref=\"eLabel\"></label>\n            <div ref=\"eWrapper\" class=\"ag-wrapper\">\n                <%displayField% ref=\"eDisplayField\"></%displayField%>\n                <button ref=\"eButton\" class=\"ag-picker-button\"> </button>\n            </div>\n        </div>";
-        _this.displayedPicker = false;
+        _this.TEMPLATE = "<div class=\"ag-picker-field\" role=\"presentation\">\n            <label ref=\"eLabel\"></label>\n            <div ref=\"eWrapper\" class=\"ag-wrapper ag-picker-field-wrapper\" tabIndex=\"-1\">\n                <%displayField% ref=\"eDisplayField\" class=\"ag-picker-field-display\"></%displayField%>\n                <div ref=\"eIcon\" class=\"ag-picker-field-icon\"></div>\n            </div>\n        </div>";
         _this.isDestroyingPicker = false;
+        _this.skipClick = false;
         return _this;
     }
     AgPickerField.prototype.postConstruct = function () {
         var _this = this;
         _super.prototype.postConstruct.call(this);
-        this.addDestroyableEventListener(this.eButton, 'click', function () {
-            _this.showPicker();
+        var clickHandler = function () {
+            if (_this.skipClick) {
+                _this.skipClick = false;
+                return;
+            }
+            if (_this.isDisabled()) {
+                return;
+            }
+            _this.pickerComponent = _this.showPicker();
+        };
+        var eGui = this.getGui();
+        this.addDestroyableEventListener(eGui, 'mousedown', function (e) {
+            if (!_this.skipClick &&
+                _this.pickerComponent &&
+                _this.pickerComponent.isAlive() &&
+                _.isVisible(_this.pickerComponent.getGui()) &&
+                eGui.contains(e.target)) {
+                _this.skipClick = true;
+            }
         });
+        this.addDestroyableEventListener(eGui, 'keydown', function (e) {
+            switch (e.keyCode) {
+                case Constants.KEY_UP:
+                case Constants.KEY_DOWN:
+                case Constants.KEY_ENTER:
+                case Constants.KEY_SPACE:
+                    clickHandler();
+                case Constants.KEY_ESCAPE:
+                    e.preventDefault();
+                    break;
+            }
+        });
+        this.addDestroyableEventListener(this.eWrapper, 'click', clickHandler);
+        this.addDestroyableEventListener(this.eLabel, 'click', clickHandler);
         if (this.pickerIcon) {
-            this.eButton.appendChild(_.createIconNoSpan(this.pickerIcon, this.gridOptionsWrapper, null));
+            this.eIcon.appendChild(_.createIconNoSpan(this.pickerIcon, this.gridOptionsWrapper, null));
         }
     };
     AgPickerField.prototype.setInputWidth = function (width) {
         _.setElementWidth(this.eWrapper, width);
         return this;
+    };
+    AgPickerField.prototype.getFocusableElement = function () {
+        return this.eWrapper;
     };
     __decorate([
         Autowired('gridOptionsWrapper')
@@ -63,8 +98,8 @@ var AgPickerField = /** @class */ (function (_super) {
         RefSelector('eDisplayField')
     ], AgPickerField.prototype, "eDisplayField", void 0);
     __decorate([
-        RefSelector('eButton')
-    ], AgPickerField.prototype, "eButton", void 0);
+        RefSelector('eIcon')
+    ], AgPickerField.prototype, "eIcon", void 0);
     return AgPickerField;
 }(AgAbstractField));
 export { AgPickerField };

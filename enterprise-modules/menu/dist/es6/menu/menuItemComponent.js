@@ -17,7 +17,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
-import { Autowired, Component, PostConstruct, _, RefSelector } from "@ag-grid-community/core";
+import { Autowired, Component, Constants, PostConstruct, RefSelector, _ } from "@ag-grid-community/core";
 var MenuItemComponent = /** @class */ (function (_super) {
     __extends(MenuItemComponent, _super);
     function MenuItemComponent(params) {
@@ -78,6 +78,11 @@ var MenuItemComponent = /** @class */ (function (_super) {
         }
         else {
             this.addGuiEventListener('click', this.onOptionSelected.bind(this));
+            this.addGuiEventListener('keydown', function (e) {
+                if (e.keyCode === Constants.KEY_ENTER || e.keyCode === Constants.KEY_SPACE) {
+                    _this.onOptionSelected(e);
+                }
+            });
         }
         if (this.params.cssClasses) {
             this.params.cssClasses.forEach(function (it) { return _.addCssClass(_this.getGui(), it); });
@@ -89,8 +94,8 @@ var MenuItemComponent = /** @class */ (function (_super) {
     MenuItemComponent.prototype.getComponentHolder = function () {
         return undefined;
     };
-    MenuItemComponent.prototype.onOptionSelected = function (mouseEvent) {
-        var event = {
+    MenuItemComponent.prototype.onOptionSelected = function (event) {
+        var e = {
             type: MenuItemComponent.EVENT_ITEM_SELECTED,
             action: this.params.action,
             checked: this.params.checked,
@@ -101,9 +106,9 @@ var MenuItemComponent = /** @class */ (function (_super) {
             shortcut: this.params.shortcut,
             subMenu: this.params.subMenu,
             tooltip: this.params.tooltip,
-            mouseEvent: mouseEvent
+            event: event
         };
-        this.dispatchEvent(event);
+        this.dispatchEvent(e);
         if (this.params.action) {
             this.params.action();
         }
@@ -113,7 +118,7 @@ var MenuItemComponent = /** @class */ (function (_super) {
         _super.prototype.destroy.call(this);
     };
     // private instance = Math.random();
-    MenuItemComponent.TEMPLATE = "<div class=\"ag-menu-option\">\n            <span ref=\"eIcon\" class=\"ag-menu-option-icon\"></span>\n            <span ref=\"eName\" class=\"ag-menu-option-text\"></span>\n            <span ref=\"eShortcut\" class=\"ag-menu-option-shortcut\"></span>\n            <span ref=\"ePopupPointer\" class=\"ag-menu-option-popup-pointer\"></span>\n        </div>";
+    MenuItemComponent.TEMPLATE = "<div class=\"ag-menu-option\" tabindex=\"-1\">\n            <span ref=\"eIcon\" class=\"ag-menu-option-icon ag-menu-option-part\"></span>\n            <span ref=\"eName\" class=\"ag-menu-option-text ag-menu-option-part\"></span>\n            <span ref=\"eShortcut\" class=\"ag-menu-option-shortcut ag-menu-option-part\"></span>\n            <span ref=\"ePopupPointer\" class=\"ag-menu-option-popup-pointer ag-menu-option-part\"></span>\n        </div>";
     MenuItemComponent.EVENT_ITEM_SELECTED = 'itemSelected';
     __decorate([
         Autowired('gridOptionsWrapper')

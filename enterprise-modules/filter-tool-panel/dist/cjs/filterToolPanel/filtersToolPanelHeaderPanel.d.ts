@@ -10,7 +10,6 @@ export declare class FiltersToolPanelHeaderPanel extends Component {
     private columnController;
     private eventService;
     private eExpand;
-    private eFilterWrapper;
     private eSearchTextField;
     private eExpandChecked;
     private eExpandUnchecked;

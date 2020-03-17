@@ -5,13 +5,13 @@ import { Component } from "./component";
 import { _ } from "../utils";
 
 export type ResizableSides = 'topLeft' |
-                      'top' |
-                      'topRight' |
-                      'right' |
-                      'bottomRight' |
-                      'bottom' |
-                      'bottomLeft' |
-                      'left';
+    'top' |
+    'topRight' |
+    'right' |
+    'bottomRight' |
+    'bottom' |
+    'bottomLeft' |
+    'left';
 
 export type ResizableStructure = {
     [key in ResizableSides]?: boolean;
@@ -56,7 +56,6 @@ export class AgDialog extends AgPanel {
     private moveElement: HTMLElement;
     private moveElementDragListener: DragListenerParams;
     private resizable: ResizableStructure = {};
-    private isResizable: boolean = false;
     private movable = false;
     private isMoving = false;
     private isMaximizable: boolean = false;
@@ -263,7 +262,7 @@ export class AgDialog extends AgPanel {
 
     private toggleMaximize() {
         if (this.isMaximized) {
-            const {x, y, width, height } = this.lastPosition;
+            const { x, y, width, height } = this.lastPosition;
 
             this.setWidth(width);
             this.setHeight(height);
@@ -303,6 +302,7 @@ export class AgDialog extends AgPanel {
         super.destroy();
         this.setResizable(false);
         this.setMovable(false);
+
         if (this.maximizeButtonComp) {
             this.maximizeButtonComp.destroy();
             this.maximizeButtonComp = undefined;
@@ -312,7 +312,6 @@ export class AgDialog extends AgPanel {
     }
 
     public setResizable(resizable: boolean | ResizableStructure) {
-        let isResizable = false;
         if (typeof resizable === 'boolean') {
             resizable = {
                 topLeft: resizable,
@@ -343,7 +342,6 @@ export class AgDialog extends AgPanel {
                 if (val) {
                     this.dragService.addDragSource(params);
                     el.style.pointerEvents = 'all';
-                    isResizable = true;
                 } else {
                     this.dragService.removeDragSource(params);
                     el.style.pointerEvents = 'none';
@@ -351,33 +349,30 @@ export class AgDialog extends AgPanel {
                 this.resizerMap[s].dragSource = val ? params : undefined;
             }
         });
-
-        this.isResizable = isResizable;
     }
 
     public setMovable(movable: boolean) {
-        if (movable !== this.movable) {
-            this.movable = movable;
+        if (movable === this.movable) { return; }
 
-            const params: DragListenerParams = this.moveElementDragListener || {
-                eElement: this.moveElement,
-                onDragStart: this.onMoveStart.bind(this),
-                onDragging: this.onMove.bind(this),
-                onDragStop: this.onMoveEnd.bind(this)
-            };
+        this.movable = movable;
 
-            if (movable) {
-                this.dragService.addDragSource(params);
-                this.moveElementDragListener = params;
-            } else {
-                this.dragService.removeDragSource(params);
-                this.moveElementDragListener = undefined;
-            }
+        const params: DragListenerParams = this.moveElementDragListener || {
+            eElement: this.moveElement,
+            onDragStart: this.onMoveStart.bind(this),
+            onDragging: this.onMove.bind(this),
+            onDragStop: this.onMoveEnd.bind(this)
+        };
+
+        if (movable) {
+            this.dragService.addDragSource(params);
+            this.moveElementDragListener = params;
+        } else {
+            this.dragService.removeDragSource(params);
+            this.moveElementDragListener = undefined;
         }
     }
 
     public setMaximizable(maximizable: boolean) {
-
         if (maximizable === false) {
             this.clearMaximizebleListeners();
 
@@ -396,7 +391,10 @@ export class AgDialog extends AgPanel {
 
         const eGui = maximizeButtonComp.getGui();
         eGui.appendChild(this.maximizeIcon = _.createIconNoSpan('maximize', this.gridOptionsWrapper));
+        _.addCssClass(this.maximizeIcon, 'ag-panel-title-bar-button-icon');
         eGui.appendChild(this.minimizeIcon = _.createIconNoSpan('minimize', this.gridOptionsWrapper));
+        _.addCssClass(this.minimizeIcon, 'ag-panel-title-bar-button-icon');
+
         _.addCssClass(this.minimizeIcon, 'ag-hidden');
 
         maximizeButtonComp.addDestroyableEventListener(eGui, 'click', this.toggleMaximize.bind(this));

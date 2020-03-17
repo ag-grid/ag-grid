@@ -1,7 +1,15 @@
-import { _, Autowired, Component, GridOptionsWrapper, PostConstruct, RefSelector, PreDestroy } from "@ag-grid-community/core";
+import {
+    _,
+    Autowired,
+    Component,
+    GridOptionsWrapper,
+    PostConstruct,
+    PreDestroy,
+    RefSelector
+} from "@ag-grid-community/core";
 import { MiniChartsContainer } from "./miniChartsContainer";
-import { ChartController } from "../../chartController";
-import { ChartPaletteName, ChartPalette } from "../../../../charts/chart/palettes";
+import {ChartPalette, ChartPaletteName} from "ag-charts-community";
+import {ChartController} from "../../chartController";
 
 type AnimationDirection = 'left' | 'right';
 
@@ -11,12 +19,12 @@ export class ChartSettingsPanel extends Component {
         `<div class="ag-chart-settings-wrapper">
             <div ref="eMiniChartsContainer" class="ag-chart-settings-mini-charts-container"></div>
             <div ref="eNavBar" class="ag-chart-settings-nav-bar">
-                <div ref="ePrevBtn" class="ag-chart-settings-prev-btn">
-                    <button type="button"></button>
+                <div ref="ePrevBtn" class="ag-chart-settings-prev">
+                    <button type="button" class="ag-chart-settings-prev-button"></button>
                 </div>
-                <div ref="eCardSelector" class="ag-nav-card-selector"></div>
-                <div ref="eNextBtn" class="ag-chart-settings-next-btn">
-                    <button type="button"></button>
+                <div ref="eCardSelector" class="ag-chart-settings-card-selector"></div>
+                <div ref="eNextBtn" class="ag-chart-settings-next">
+                    <button type="button" class="ag-chart-settings-next-button"></button>
                 </div>
             </div>
         </div>`;
@@ -50,8 +58,8 @@ export class ChartSettingsPanel extends Component {
     private postConstruct() {
         this.resetPalettes();
 
-        this.ePrevBtn.insertAdjacentElement('afterbegin', _.createIconNoSpan('smallLeft', this.gridOptionsWrapper));
-        this.eNextBtn.insertAdjacentElement('afterbegin', _.createIconNoSpan('smallRight', this.gridOptionsWrapper));
+        this.ePrevBtn.insertAdjacentElement('afterbegin', _.createIconNoSpan('previous', this.gridOptionsWrapper));
+        this.eNextBtn.insertAdjacentElement('afterbegin', _.createIconNoSpan('next', this.gridOptionsWrapper));
 
         this.addDestroyableEventListener(this.ePrevBtn, 'click', this.prev.bind(this));
         this.addDestroyableEventListener(this.eNextBtn, 'click', this.next.bind(this));
@@ -102,15 +110,14 @@ export class ChartSettingsPanel extends Component {
         });
 
         _.addOrRemoveCssClass(this.eNavBar, 'ag-hidden', this.palettes.size <= 1);
+
+        const paletteIndex = this.paletteNames.indexOf(this.activePalette);
+        _.radioCssClass(this.cardItems[paletteIndex], 'ag-selected', 'ag-not-selected');
     }
 
     private addCardLink(paletteName: ChartPaletteName): void {
         const link = document.createElement('div');
-        _.addCssClass(link, 'ag-nav-card-item');
-
-        if (paletteName === this.activePalette) {
-            _.addCssClass(link, 'ag-selected');
-        }
+        _.addCssClass(link, 'ag-chart-settings-card-item');
 
         this.addDestroyableEventListener(link, 'click', () => {
             const { activePalette, isAnimating, paletteNames } = this;
@@ -165,7 +172,7 @@ export class ChartSettingsPanel extends Component {
     private setActivePalette(paletteName: ChartPaletteName, animationDirection: AnimationDirection) {
         const paletteIndex = this.paletteNames.indexOf(paletteName);
 
-        _.radioCssClass(this.cardItems[paletteIndex], 'ag-selected');
+        _.radioCssClass(this.cardItems[paletteIndex], 'ag-selected', 'ag-not-selected');
 
         const currentPalette = this.miniCharts[this.paletteNames.indexOf(this.activePalette)];
         const currentGui = currentPalette.getGui();

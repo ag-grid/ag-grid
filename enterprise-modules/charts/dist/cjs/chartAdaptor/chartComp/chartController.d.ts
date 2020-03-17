@@ -1,6 +1,6 @@
-import { AgEvent, BeanStub, ChartType, IRangeController, ChartModel } from "@ag-grid-community/core";
+import { AgEvent, BeanStub, ChartModel, ChartType, IRangeController } from "@ag-grid-community/core";
 import { ChartDataModel, ColState } from "./chartDataModel";
-import { ChartPalette, ChartPaletteName } from "../../charts/chart/palettes";
+import { ChartPalette, ChartPaletteName } from "ag-charts-community";
 import { ChartProxy } from "./chartProxies/chartProxy";
 export interface ChartModelUpdatedEvent extends AgEvent {
 }
@@ -20,8 +20,9 @@ export declare class ChartController extends BeanStub {
     updateForRangeChange(): void;
     updateForPanelChange(updatedCol: ColState): void;
     getChartModel(): ChartModel;
-    getChartType: () => ChartType;
-    isPivotChart: () => boolean;
+    getChartType(): ChartType;
+    isPivotChart(): boolean;
+    isGrouping(): boolean;
     getPaletteName(): ChartPaletteName;
     getPalettes(): Map<ChartPaletteName | undefined, ChartPalette>;
     setChartType(chartType: ChartType): void;
@@ -31,12 +32,11 @@ export declare class ChartController extends BeanStub {
         valueCols: ColState[];
     };
     isDefaultCategorySelected(): boolean;
-    setChartRange(): void;
+    setChartRange(silent?: boolean): void;
     detachChartRange(): void;
     setChartProxy(chartProxy: ChartProxy<any, any>): void;
     getChartProxy(): ChartProxy<any, any>;
     isActiveXYChart(): boolean;
-    private getCurrentCellRangeParams;
     private raiseChartUpdatedEvent;
     private raiseChartOptionsChangedEvent;
     private raiseChartRangeSelectionChangedEvent;

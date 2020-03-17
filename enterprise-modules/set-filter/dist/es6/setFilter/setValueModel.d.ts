@@ -1,16 +1,18 @@
-import { ColDef, Column, IRowModel, ValueFormatterService } from "@ag-grid-community/core";
+import { ColDef, Column, IRowModel, ValueFormatterService, IEventEmitter } from "@ag-grid-community/core";
 export declare enum SetFilterModelValuesType {
     PROVIDED_LIST = 0,
     PROVIDED_CB = 1,
     NOT_PROVIDED = 2
 }
-export declare class SetValueModel {
+export declare class SetValueModel implements IEventEmitter {
+    static EVENT_AVAILABLE_VALUES_CHANGES: string;
     private colDef;
     private filterParams;
     private clientSideRowModel;
     private valueGetter;
     private allUniqueValues;
     private availableUniqueValues;
+    private availableUniqueValuesMap;
     private displayedValues;
     private miniFilter;
     private selectedValuesCount;
@@ -26,7 +28,10 @@ export declare class SetValueModel {
     private filterValuesPromise;
     private valueFormatterService;
     private column;
+    private localEventService;
     constructor(colDef: ColDef, rowModel: IRowModel, valueGetter: any, doesRowPassOtherFilters: any, suppressSorting: boolean, modelUpdatedFunc: (values: string[] | null, selected?: string[] | null) => void, isLoadingFunc: (loading: boolean) => void, valueFormatterService: ValueFormatterService, column: Column);
+    addEventListener(eventType: string, listener: Function, async?: boolean): void;
+    removeEventListener(eventType: string, listener: Function, async?: boolean): void;
     refreshAfterNewRowsLoaded(keepSelection: any, everythingSelected: boolean): void;
     refreshValues(valuesToUse: string[], keepSelection: any, isSelectAll: boolean): void;
     private refreshSelection;
@@ -38,6 +43,7 @@ export declare class SetValueModel {
     getValuesType(): SetFilterModelValuesType;
     private setValues;
     private extractSyncValuesToUse;
+    isValueAvailable(value: string): boolean;
     private createAvailableUniqueValues;
     private sortValues;
     private getUniqueValues;

@@ -55,6 +55,7 @@ export declare class EnterpriseMenu extends BeanStub {
     showTabBasedOnPreviousSelection(): void;
     showTab(toShow: string): void;
     private onTabItemClicked;
+    private activateTab;
     destroy(): void;
     private getMenuItems;
     private getDefaultMenuOptions;

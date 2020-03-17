@@ -45,6 +45,8 @@ var AbstractSelectionHandle = /** @class */ (function (_super) {
                 _this.onDragEnd(e);
                 _this.clearValues();
                 _this.rangeController.autoScrollService.ensureCleared();
+                // TODO: this causes a bug where if there are multiple grids in the same page, all of them will
+                // be affected by a drag on any. Move it to the root element.
                 _.removeCssClass(document.body, "ag-dragging-" + _this.type + "-handle");
                 if (_this.shouldDestroyOnEndDragging) {
                     _this.destroy();

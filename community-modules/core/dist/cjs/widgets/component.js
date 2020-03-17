@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v22.1.1
+ * @version v23.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -25,8 +25,8 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var context_1 = require("../context/context");
 var beanStub_1 = require("../context/beanStub");
+var context_1 = require("../context/context");
 var utils_1 = require("../utils");
 var compIdSequence = new utils_1.NumberSequence();
 var Component = /** @class */ (function (_super) {
@@ -52,17 +52,20 @@ var Component = /** @class */ (function (_super) {
         return this.compId;
     };
     // for registered components only, eg creates AgCheckbox instance from ag-checkbox HTML tag
-    Component.prototype.createChildComponentsFromTags = function (parentNode) {
+    Component.prototype.createChildComponentsFromTags = function (parentNode, paramsMap) {
         var _this = this;
         // we MUST take a copy of the list first, as the 'swapComponentForNode' adds comments into the DOM
         // which messes up the traversal order of the children.
         var childNodeList = utils_1._.copyNodeList(parentNode.childNodes);
         childNodeList.forEach(function (childNode) {
+            if (!(childNode instanceof HTMLElement)) {
+                return;
+            }
             var childComp = _this.getContext().createComponentFromElement(childNode, function (childComp) {
                 // copy over all attributes, including css classes, so any attributes user put on the tag
                 // wll be carried across
                 _this.copyAttributesFromNode(childNode, childComp.getGui());
-            });
+            }, paramsMap);
             if (childComp) {
                 if (childComp.addItems && childNode.children.length) {
                     _this.createChildComponentsFromTags(childNode);
@@ -91,8 +94,8 @@ var Component = /** @class */ (function (_super) {
         this.swapInComponentForQuerySelectors(newComponent, childNode);
     };
     Component.prototype.swapInComponentForQuerySelectors = function (newComponent, childNode) {
-        var thisProto = Object.getPrototypeOf(this);
         var thisNoType = this;
+        var thisProto = Object.getPrototypeOf(this);
         while (thisProto != null) {
             var metaData = thisProto.__agComponentMetaData;
             var currentProtoName = (thisProto.constructor).name;
@@ -106,11 +109,11 @@ var Component = /** @class */ (function (_super) {
             thisProto = Object.getPrototypeOf(thisProto);
         }
     };
-    Component.prototype.setTemplate = function (template) {
+    Component.prototype.setTemplate = function (template, paramsMap) {
         var eGui = utils_1._.loadTemplate(template);
-        this.setTemplateFromElement(eGui);
+        this.setTemplateFromElement(eGui, paramsMap);
     };
-    Component.prototype.setTemplateFromElement = function (element) {
+    Component.prototype.setTemplateFromElement = function (element, paramsMap) {
         this.eGui = element;
         this.eGui.__agComponent = this;
         this.addAnnotatedEventListeners();
@@ -118,7 +121,7 @@ var Component = /** @class */ (function (_super) {
         // context will not be available when user sets template in constructor
         var contextIsAvailable = !!this.getContext();
         if (contextIsAvailable) {
-            this.createChildComponentsFromTags(this.getGui());
+            this.createChildComponentsFromTags(this.getGui(), paramsMap);
         }
     };
     Component.prototype.createChildComponentsPreConstruct = function () {
@@ -217,6 +220,9 @@ var Component = /** @class */ (function (_super) {
     };
     Component.prototype.getGui = function () {
         return this.eGui;
+    };
+    Component.prototype.getFocusableElement = function () {
+        return this.getGui();
     };
     Component.prototype.setParentComponent = function (component) {
         this.parentComponent = component;

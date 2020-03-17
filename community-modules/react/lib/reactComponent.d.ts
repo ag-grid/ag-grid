@@ -1,5 +1,5 @@
-// @ag-grid-community/react v22.1.1
-import { Promise } from '@ag-grid-community/core';
+// @ag-grid-community/react v23.0.0
+import { ComponentType, Promise } from '@ag-grid-community/core';
 import { AgGridReact } from "./agGridReact";
 import { BaseReactComponent } from "./baseReactComponent";
 export declare class ReactComponent extends BaseReactComponent {
@@ -7,11 +7,13 @@ export declare class ReactComponent extends BaseReactComponent {
     private eParentElement;
     private componentInstance;
     private reactComponent;
+    private componentType;
     private parentComponent;
     private portal;
     private componentWrappingElement;
     private statelessComponent;
-    constructor(reactComponent: any, parentComponent: AgGridReact);
+    private staticMarkup;
+    constructor(reactComponent: any, parentComponent: AgGridReact, componentType: ComponentType);
     getFrameworkComponentInstance(): any;
     isStatelessComponent(): boolean;
     getReactComponentName(): string;
@@ -24,4 +26,8 @@ export declare class ReactComponent extends BaseReactComponent {
     statelessComponentRendered(): boolean;
     private static hasSymbol;
     private static isStateless;
+    isNullRender(): boolean;
+    private renderStaticMarkup;
+    private removeStaticMarkup;
+    rendered(): any;
 }

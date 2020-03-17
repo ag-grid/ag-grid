@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v22.1.1
+ * @version v23.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -23,5 +23,12 @@ var ChartType;
     ChartType["StackedArea"] = "stackedArea";
     ChartType["NormalizedArea"] = "normalizedArea";
 })(ChartType = exports.ChartType || (exports.ChartType = {}));
+var LegendPosition;
+(function (LegendPosition) {
+    LegendPosition["Top"] = "top";
+    LegendPosition["Right"] = "right";
+    LegendPosition["Bottom"] = "bottom";
+    LegendPosition["Left"] = "left";
+})(LegendPosition = exports.LegendPosition || (exports.LegendPosition = {}));
 
 //# sourceMappingURL=iChartOptions.js.map

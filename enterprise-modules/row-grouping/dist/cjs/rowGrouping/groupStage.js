@@ -61,14 +61,15 @@ var GroupStage = /** @class */ (function () {
     };
     GroupStage.prototype.handleTransaction = function (details) {
         var tran = details.transaction;
+        // remove nodes first in case a node is removed and re-added in the same transaction
+        if (tran.remove) {
+            this.removeNodes(tran.remove, details);
+        }
         if (tran.add) {
             this.insertNodes(tran.add, details, false);
         }
         if (tran.update) {
             this.moveNodesInWrongPath(tran.update, details);
-        }
-        if (tran.remove) {
-            this.removeNodes(tran.remove, details);
         }
         if (details.rowNodeOrder) {
             this.sortChildren(details);

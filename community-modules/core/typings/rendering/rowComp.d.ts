@@ -1,9 +1,9 @@
+import { Beans } from "./beans";
 import { CellComp } from "./cellComp";
 import { RowNode } from "../entities/rowNode";
 import { Column } from "../entities/column";
 import { RowContainerComponent } from "./rowContainerComponent";
 import { Component } from "../widgets/component";
-import { Beans } from "./beans";
 import { IFrameworkOverrides } from "../interfaces/iFrameworkOverrides";
 export declare class RowComp extends Component {
     static DOM_DATA_KEY_RENDERED_ROW: string;
@@ -82,6 +82,7 @@ export declare class RowComp extends Component {
     private onRowNodeDataChanged;
     private onRowNodeCellChanged;
     private postProcessCss;
+    private onRowNodeHighlightChanged;
     private onRowNodeDraggingChanged;
     private postProcessRowDragging;
     private onExpandedChanged;

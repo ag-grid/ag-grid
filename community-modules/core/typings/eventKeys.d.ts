@@ -39,10 +39,14 @@ export declare class Events {
     static EVENT_PINNED_ROW_DATA_CHANGED: string;
     /** Range selection has changed */
     static EVENT_RANGE_SELECTION_CHANGED: string;
+    /** Chart was created */
+    static EVENT_CHART_CREATED: string;
     /** Chart Range selection has changed */
     static EVENT_CHART_RANGE_SELECTION_CHANGED: string;
     /** Chart Options have changed */
     static EVENT_CHART_OPTIONS_CHANGED: string;
+    /** Chart was destroyed */
+    static EVENT_CHART_DESTROYED: string;
     /** For when the tool panel is shown / hidden */
     static EVENT_TOOL_PANEL_VISIBLE_CHANGED: string;
     /** Model was updated - grid updates the drawn rows when this happens */
@@ -117,4 +121,6 @@ export declare class Events {
     static EVENT_COLUMN_PIVOT_CHANGE_REQUEST: string;
     static EVENT_COLUMN_VALUE_CHANGE_REQUEST: string;
     static EVENT_COLUMN_AGG_FUNC_CHANGE_REQUEST: string;
+    static EVENT_KEYBOARD_FOCUS: string;
+    static EVENT_MOUSE_FOCUS: string;
 }

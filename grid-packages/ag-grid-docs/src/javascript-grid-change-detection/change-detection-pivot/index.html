@@ -1,0 +1,20 @@
+<div class="test-container">
+    <div class="test-header">
+        <div>
+            <label>
+                <input type="checkbox" id="pivot-mode" onclick="pivotMode()" />
+                Group &amp; Pivot
+            </label>
+        </div>
+    
+        <div style="margin-top: 6px;">
+            <button onclick="updateOneRecord()">Set One Value</button>
+            <button onclick="updateUsingTransaction()">Update Points</button>
+            <button onclick="addNewGroupUsingTransaction()">Add New Group</button>
+            <button onclick="addNewCourse()">Add Physics Row</button>
+            <button onclick="removePhysics()">Remove All Physics</button>
+            <button onclick="moveCourse()">Move Course</button>
+        </div>
+    </div>
+    <div id="myGrid" style="height: calc(100% - 60px);" class="ag-theme-alpine-dark"></div>
+</div>

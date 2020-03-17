@@ -21,11 +21,11 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 Object.defineProperty(exports, "__esModule", { value: true });
 var core_1 = require("@ag-grid-community/core");
 var miniChart_1 = require("./miniChart");
-var line_1 = require("../../../../../charts/scene/shape/line");
+var ag_charts_community_1 = require("ag-charts-community");
 var MiniChartWithAxes = /** @class */ (function (_super) {
     __extends(MiniChartWithAxes, _super);
-    function MiniChartWithAxes(parent, tooltipName) {
-        var _this = _super.call(this, parent, tooltipName) || this;
+    function MiniChartWithAxes(container, tooltipName) {
+        var _this = _super.call(this, container, tooltipName) || this;
         _this.stroke = 'gray';
         _this.axisOvershoot = 3;
         return _this;
@@ -33,13 +33,13 @@ var MiniChartWithAxes = /** @class */ (function (_super) {
     MiniChartWithAxes.prototype.addAxes = function () {
         var size = this.size;
         var padding = this.padding;
-        var leftAxis = new line_1.Line();
+        var leftAxis = new ag_charts_community_1.Line();
         leftAxis.x1 = padding;
         leftAxis.y1 = padding;
         leftAxis.x2 = padding;
         leftAxis.y2 = size - padding + this.axisOvershoot;
         leftAxis.stroke = this.stroke;
-        var bottomAxis = new line_1.Line();
+        var bottomAxis = new ag_charts_community_1.Line();
         bottomAxis.x1 = padding - this.axisOvershoot + 1;
         bottomAxis.y1 = size - padding;
         bottomAxis.x2 = size - padding + 1;

@@ -1,16 +1,20 @@
-// Type definitions for @ag-grid-community/core v22.1.1
+// Type definitions for @ag-grid-community/core v23.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { ChartType, ChartOptions } from "./iChartOptions";
 import { ChartRef } from "../entities/gridOptions";
 import { CreateRangeChartParams, CreatePivotChartParams } from "../gridApi";
 import { CellRangeParams } from "./iRangeController";
+export interface GetChartImageDataUrlParams {
+    type?: string;
+}
 export interface ChartModel {
     chartId: string;
     cellRange: CellRangeParams;
     chartType: ChartType;
     chartPalette: string;
     chartOptions: ChartOptions<any>;
+    getChartImageDataURL: (params: GetChartImageDataUrlParams) => string;
 }
 export interface IChartService {
     getChartModels(): ChartModel[];

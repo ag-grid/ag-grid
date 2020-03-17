@@ -13,13 +13,11 @@ var __extends = (this && this.__extends) || (function () {
 })();
 import { ChartType } from "@ag-grid-community/core";
 import { MiniChartWithAxes } from "./miniChartWithAxes";
-import linearScale from "../../../../../charts/scale/linearScale";
-import { ClipRect } from "../../../../../charts/scene/clipRect";
-import { Arc } from "../../../../../charts/scene/shape/arc";
+import { linearScale, Arc, ClipRect } from "ag-charts-community";
 var MiniBubble = /** @class */ (function (_super) {
     __extends(MiniBubble, _super);
-    function MiniBubble(parent, fills, strokes) {
-        var _this = _super.call(this, parent, "bubbleTooltip") || this;
+    function MiniBubble(container, fills, strokes) {
+        var _this = _super.call(this, container, "bubbleTooltip") || this;
         var size = _this.size;
         var padding = _this.padding;
         // [x, y, radius] triples

@@ -32,7 +32,11 @@ var ChartPanel = /** @class */ (function (_super) {
         return _this;
     }
     ChartPanel.prototype.init = function () {
-        this.setTemplate(ChartPanel.TEMPLATE);
+        var groupParams = {
+            cssIdentifier: 'charts-format-top-level',
+            direction: 'vertical'
+        };
+        this.setTemplate(ChartPanel.TEMPLATE, { chartGroup: groupParams });
         this.initGroup();
         this.initTitles();
         this.initPaddingPanel();

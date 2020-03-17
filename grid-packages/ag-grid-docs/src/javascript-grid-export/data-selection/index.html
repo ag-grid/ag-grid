@@ -1,0 +1,79 @@
+<style>
+    .columns {
+        display: flex;
+        flex-direction: row;
+        margin-right: 20px;
+    }
+
+    label {
+        box-sizing: border-box;
+        display: block;
+        padding: 2px;
+    }
+
+    button {
+        display: inline-block;
+        margin: 5px;
+        font-weight: bold;
+    }
+
+    .page-wrapper {
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .grid-wrapper {
+        flex-grow: 1;
+    }
+    .example-error {
+        box-sizing: border-box;
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 30px;
+        background-color: #dc3a3a;
+        color: white;
+        transition: top 0.2s;
+        white-space: nowrap;
+        overflow: hidden;
+        padding: 5px;
+    }
+
+    .example-error.inactive {
+        top: -30px;
+    }
+</style>
+<div class="example-error inactive">
+    <span class="message"></span>
+</div>
+<div class="page-wrapper">
+    <div class="columns">
+        <div class="column">
+            <label><input type="checkbox" id="allColumns" /> allColumns = true</label>
+            <label><input type="checkbox" id="columnKeys" /> columnKeys = ['country', 'bronze']</label>
+            <label><input type="checkbox" id="columnGroups" checked /> columnGroups = true</label>
+            <label><input type="checkbox" id="onlySelected" /> onlySelected = true</label>
+            <label><input type="checkbox" id="onlySelectedAllPages" /> onlySelectedAllPages = true</label>
+            <label><input type="checkbox" id="shouldRowBeSkipped" /> shouldRowBeSkipped = only20YearOlds</label>
+        </div>
+        <div class="column" style="margin-left: 20px;">
+            <label><input type="checkbox" id="skipFooters" /> skipFooters = true</label>
+            <label><input type="checkbox" id="skipGroups" /> skipGroups = true</label>
+            <label><input type="checkbox" id="skipHeader" /> skipHeader = true</label>
+            <label><input type="checkbox" id="skipPinnedTop" /> skipPinnedTop = true</label>
+            <label><input type="checkbox" id="skipPinnedBottom" /> skipPinnedBottom = true</label>
+        </div>
+    </div>
+
+    <div style="margin: 10px 0">
+        <button onclick="onBtnExportDataAsCsv()">api.exportDataAsCsv(params)</button>
+        <button onclick="onBtnExportDataAsExcel()">api.exportDataAsExcel(params)</button>
+    </div>
+
+    <div class="grid-wrapper">
+        <div id="myGrid" style="height: 100%;" class="ag-theme-alpine"></div>
+    </div>
+
+</div>

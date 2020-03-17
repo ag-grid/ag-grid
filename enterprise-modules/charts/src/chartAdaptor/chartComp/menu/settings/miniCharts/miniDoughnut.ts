@@ -1,15 +1,14 @@
-import { _, ChartType } from "@ag-grid-community/core";
-import { MiniChart } from "./miniChart";
-import { Sector } from "../../../../../charts/scene/shape/sector";
-import { toRadians } from "../../../../../charts/util/angle";
+import {ChartType} from "@ag-grid-community/core";
+import {MiniChart} from "./miniChart";
+import {Sector, toRadians} from "ag-charts-community";
 
 export class MiniDoughnut extends MiniChart {
     static chartType = ChartType.Doughnut;
 
     private readonly sectors: Sector[];
 
-    constructor(parent: HTMLElement, fills: string[], strokes: string[], centerRadiusScaler = 0.6, tooltipName = "doughnutTooltip") {
-        super(parent, tooltipName);
+    constructor(container: HTMLElement, fills: string[], strokes: string[], centerRadiusScaler = 0.6, tooltipName = "doughnutTooltip") {
+        super(container, tooltipName);
 
         const radius = (this.size - this.padding * 2) / 2;
         const center = radius + this.padding;

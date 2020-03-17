@@ -11,6 +11,7 @@ export class ModuleRegistry {
         ModuleRegistry.modulesMap[module.moduleName] = module;
     }
 
+    // noinspection JSUnusedGlobalSymbols
     public static registerModules(modules: Module[]): void {
         if(!modules) {
             return;
@@ -24,8 +25,7 @@ export class ModuleRegistry {
         }
 
         const warningKey = reason + moduleName;
-        const warningMessage = `ag-Grid: unable to use ${reason} as module ${moduleName} is not present. `
-            + `You need to load the module with: import "${moduleName}"`;
+        const warningMessage = `ag-Grid: unable to use ${reason} as module ${moduleName} is not present. Please see: https://www.ag-grid.com/javascript-grid-modules/`;
 
         _.doOnce(() => {
             console.warn(warningMessage);

@@ -43,8 +43,9 @@ var ChartFormattingPanel = /** @class */ (function (_super) {
     };
     ChartFormattingPanel.prototype.createPanels = function () {
         var chartType = this.chartController.getChartType();
-        if (chartType === this.chartType) {
-            // same chart type, so keep existing panels
+        var isGrouping = this.chartController.isGrouping();
+        if (chartType === this.chartType && isGrouping === this.isGrouping) {
+            // existing panels can be re-used
             return;
         }
         this.destroyPanels();
@@ -83,10 +84,12 @@ var ChartFormattingPanel = /** @class */ (function (_super) {
                 console.warn("ag-Grid: ChartFormattingPanel - unexpected chart type index: " + chartType + " supplied");
         }
         this.chartType = chartType;
+        this.isGrouping = isGrouping;
     };
     ChartFormattingPanel.prototype.addComponent = function (component) {
         this.wireBean(component);
         this.panels.push(component);
+        core_1._.addCssClass(component.getGui(), 'ag-chart-format-section');
         this.getGui().appendChild(component.getGui());
     };
     ChartFormattingPanel.prototype.destroyPanels = function () {

@@ -11,41 +11,35 @@ export interface VirtualListModel {
 
 export class VirtualList extends Component {
 
-    private static TEMPLATE =
-        `<div class="ag-virtual-list-viewport">
-            <div class="ag-virtual-list-container"></div>
-        </div>`;
-
     private model: VirtualListModel;
-
     private eListContainer: HTMLElement;
     private rowsInBodyContainer: any = {};
-
     private componentCreator: (value: any) => Component;
-
     private rowHeight = 20;
 
     @Autowired('environment') private environment: Environment;
     @Autowired('gridOptionsWrapper') gridOptionsWrapper: GridOptionsWrapper;
 
-    constructor() {
-        super(undefined);
+    constructor(private cssIdentifier = 'default') {
+        super(VirtualList.getTemplate(cssIdentifier));
     }
 
     @PostConstruct
     private init(): void {
-        this.setTemplate(VirtualList.TEMPLATE);
-
         this.eListContainer = this.queryForHtmlElement(".ag-virtual-list-container");
 
         this.addScrollListener();
-        const item = document.createElement('div');
-        _.addCssClass(item, 'ag-virtual-list-item');
         this.rowHeight = this.getItemHeight();
     }
 
+    private static getTemplate(cssIdentifier: string) {
+        return `<div class="ag-virtual-list-viewport ag-${cssIdentifier}-virtual-list-viewport">
+            <div class="ag-virtual-list-container ag-${cssIdentifier}-virtual-list-container"></div>
+        </div>`;
+    }
+
     private getItemHeight(): number {
-        return this.gridOptionsWrapper.getVirtualItemHeight();
+        return this.gridOptionsWrapper.getListItemHeight();
     }
 
     public ensureIndexVisible(index: number): void {
@@ -58,9 +52,10 @@ export class VirtualList extends Component {
         // let nodeAtIndex = this.rowModel.getRow(index);
         const rowTopPixel = index * this.rowHeight;
         const rowBottomPixel = rowTopPixel + this.rowHeight;
+        const eGui = this.getGui();
 
-        const viewportTopPixel = this.getGui().scrollTop;
-        const viewportHeight = this.getGui().offsetHeight;
+        const viewportTopPixel = eGui.scrollTop;
+        const viewportHeight = eGui.offsetHeight;
         const viewportBottomPixel = viewportTopPixel + viewportHeight;
 
         const viewportScrolledPastRow = viewportTopPixel > rowTopPixel;
@@ -68,11 +63,11 @@ export class VirtualList extends Component {
 
         if (viewportScrolledPastRow) {
             // if row is before, scroll up with row at top
-            this.getGui().scrollTop = rowTopPixel;
+            eGui.scrollTop = rowTopPixel;
         } else if (viewportScrolledBeforeRow) {
             // if row is below, scroll down with row at bottom
             const newScrollPosition = rowBottomPixel - viewportHeight;
-            this.getGui().scrollTop = newScrollPosition;
+            eGui.scrollTop = newScrollPosition;
         }
     }
 
@@ -116,7 +111,6 @@ export class VirtualList extends Component {
     }
 
     private ensureRowsRendered(start: any, finish: any) {
-
         // at the end, this array will contain the items we need to remove
         const rowsToRemove = Object.keys(this.rowsInBodyContainer);
 
@@ -154,6 +148,7 @@ export class VirtualList extends Component {
 
         const eDiv = document.createElement('div');
         _.addCssClass(eDiv, 'ag-virtual-list-item');
+        _.addCssClass(eDiv, `ag-${this.cssIdentifier}-virtual-list-item`);
         eDiv.style.top = (this.rowHeight * rowIndex) + "px";
 
         const rowComponent = this.componentCreator(value);

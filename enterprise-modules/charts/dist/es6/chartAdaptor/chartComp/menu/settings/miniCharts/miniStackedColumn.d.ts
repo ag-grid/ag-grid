@@ -4,6 +4,6 @@ export declare class MiniStackedColumn extends MiniChartWithAxes {
     static chartType: ChartType;
     static data: number[][];
     private readonly bars;
-    constructor(parent: HTMLElement, fills: string[], strokes: string[], data?: number[][], yScaleDomain?: number[], tooltipName?: string);
+    constructor(container: HTMLElement, fills: string[], strokes: string[], data?: number[][], yScaleDomain?: number[], tooltipName?: string);
     updateColors(fills: string[], strokes: string[]): void;
 }

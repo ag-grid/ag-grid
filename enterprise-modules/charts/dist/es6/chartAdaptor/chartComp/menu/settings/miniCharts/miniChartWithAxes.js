@@ -19,11 +19,11 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 };
 import { PostConstruct } from "@ag-grid-community/core";
 import { MiniChart } from "./miniChart";
-import { Line } from "../../../../../charts/scene/shape/line";
+import { Line } from "ag-charts-community";
 var MiniChartWithAxes = /** @class */ (function (_super) {
     __extends(MiniChartWithAxes, _super);
-    function MiniChartWithAxes(parent, tooltipName) {
-        var _this = _super.call(this, parent, tooltipName) || this;
+    function MiniChartWithAxes(container, tooltipName) {
+        var _this = _super.call(this, container, tooltipName) || this;
         _this.stroke = 'gray';
         _this.axisOvershoot = 3;
         return _this;

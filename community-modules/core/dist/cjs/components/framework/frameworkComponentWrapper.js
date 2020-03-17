@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v22.1.1
+ * @version v23.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -9,10 +9,10 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var BaseComponentWrapper = /** @class */ (function () {
     function BaseComponentWrapper() {
     }
-    BaseComponentWrapper.prototype.wrap = function (OriginalConstructor, mandatoryMethodList, optionalMethodList, componentName) {
+    BaseComponentWrapper.prototype.wrap = function (OriginalConstructor, mandatoryMethodList, optionalMethodList, componentType, componentName) {
         var _this = this;
         if (optionalMethodList === void 0) { optionalMethodList = []; }
-        var wrapper = this.createWrapper(OriginalConstructor, componentName);
+        var wrapper = this.createWrapper(OriginalConstructor, componentType, componentName);
         mandatoryMethodList.forEach((function (methodName) {
             _this.createMethod(wrapper, methodName, true);
         }));

@@ -1,18 +1,23 @@
-// Type definitions for @ag-grid-community/core v22.1.1
+// Type definitions for @ag-grid-community/core v23.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
-import { AgAbstractInputField } from "./agAbstractInputField";
-interface SelectOption {
-    value: string;
-    text?: string;
-}
-export declare class AgSelect extends AgAbstractInputField<HTMLSelectElement, string> {
-    protected className: string;
+import { AgPickerField } from "./agPickerField";
+import { IAgLabel } from "./agAbstractLabel";
+import { ListOption, AgList } from "./agList";
+declare type AgSelectConfig = ListOption & IAgLabel;
+export declare class AgSelect extends AgPickerField<HTMLSelectElement, string> {
     protected displayTag: string;
-    protected inputType: string;
-    constructor();
-    addOptions(options: SelectOption[]): this;
-    addOption(option: SelectOption): this;
-    setValue(value: string, silent?: boolean): this;
+    protected className: string;
+    protected pickerIcon: string;
+    protected listComponent: AgList;
+    private hideList;
+    private popupService;
+    constructor(config?: AgSelectConfig);
+    init(): void;
+    protected showPicker(): AgList;
+    addOptions(options: ListOption[]): this;
+    addOption(option: ListOption): this;
+    setValue(value: string, silent?: boolean, fromPicker?: boolean): this;
+    destroy(): void;
 }
 export {};

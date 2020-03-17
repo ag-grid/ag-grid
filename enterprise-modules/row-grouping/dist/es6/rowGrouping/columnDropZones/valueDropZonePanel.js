@@ -22,7 +22,7 @@ import { BaseDropZonePanel } from "./baseDropZonePanel";
 var ValuesDropZonePanel = /** @class */ (function (_super) {
     __extends(ValuesDropZonePanel, _super);
     function ValuesDropZonePanel(horizontal) {
-        return _super.call(this, horizontal, true, 'values') || this;
+        return _super.call(this, horizontal, true) || this;
     }
     ValuesDropZonePanel.prototype.passBeansUp = function () {
         _super.prototype.setBeans.call(this, {

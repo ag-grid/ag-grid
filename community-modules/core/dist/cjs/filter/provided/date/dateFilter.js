@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v22.1.1
+ * @version v23.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -45,14 +45,16 @@ var DateFilter = /** @class */ (function (_super) {
         // NOTE: The conversion of string to date also removes the timezone - ie when user picks
         //       a date form the UI, it will have timezone info in it. This is lost when creating
         //       the model. Then when we recreate the date again here, it's without timezone.
+        var from = utils_1._.getDateFromString(filterModel.dateFrom);
+        var to = utils_1._.getDateFromString(filterModel.dateTo);
         return {
-            from: utils_1._.parseYyyyMmDdToDate(filterModel.dateFrom, "-"),
-            to: utils_1._.parseYyyyMmDdToDate(filterModel.dateTo, "-")
+            from: from,
+            to: to
         };
     };
     DateFilter.prototype.setValueFromFloatingFilter = function (value) {
         if (value != null) {
-            var dateFrom = utils_1._.parseYyyyMmDdToDate(value, "-");
+            var dateFrom = utils_1._.getDateFromString(value);
             this.dateCompFrom1.setDate(dateFrom);
         }
         else {
@@ -66,15 +68,15 @@ var DateFilter = /** @class */ (function (_super) {
         var positionOne = position === simpleFilter_1.ConditionPosition.One;
         var dateFromString = model ? model.dateFrom : null;
         var dateToString = model ? model.dateTo : null;
-        var dateFrom = utils_1._.parseYyyyMmDdToDate(dateFromString, "-");
-        var dateTo = utils_1._.parseYyyyMmDdToDate(dateToString, "-");
+        var dateFrom = utils_1._.getDateFromString(dateFromString);
+        var dateTo = utils_1._.getDateFromString(dateToString);
         var compFrom = positionOne ? this.dateCompFrom1 : this.dateCompFrom2;
         var compTo = positionOne ? this.dateCompTo1 : this.dateCompTo2;
         compFrom.setDate(dateFrom);
         compTo.setDate(dateTo);
     };
-    DateFilter.prototype.resetUiToDefaults = function () {
-        _super.prototype.resetUiToDefaults.call(this);
+    DateFilter.prototype.resetUiToDefaults = function (silent) {
+        _super.prototype.resetUiToDefaults.call(this, silent);
         this.dateCompTo1.setDate(null);
         this.dateCompTo2.setDate(null);
         this.dateCompFrom1.setDate(null);
@@ -123,7 +125,7 @@ var DateFilter = /** @class */ (function (_super) {
     DateFilter.prototype.createValueTemplate = function (position) {
         var positionOne = position === simpleFilter_1.ConditionPosition.One;
         var pos = positionOne ? '1' : '2';
-        return "<div class=\"ag-filter-body\" ref=\"eCondition" + pos + "Body\">\n                    <div class=\"ag-filter-date-from\" ref=\"ePanelFrom" + pos + "\">\n                    </div>\n                    <div class=\"ag-filter-date-to\" ref=\"ePanelTo" + pos + "\"\">\n                    </div>\n                </div>";
+        return "<div class=\"ag-filter-body\" ref=\"eCondition" + pos + "Body\">\n                    <div class=\"ag-filter-from ag-filter-date-from\" ref=\"ePanelFrom" + pos + "\">\n                    </div>\n                    <div class=\"ag-filter-to ag-filter-date-to\" ref=\"ePanelTo" + pos + "\"\">\n                    </div>\n                </div>";
     };
     DateFilter.prototype.isConditionUiComplete = function (position) {
         var positionOne = position === simpleFilter_1.ConditionPosition.One;
@@ -141,9 +143,7 @@ var DateFilter = /** @class */ (function (_super) {
         if (option === simpleFilter_1.SimpleFilter.IN_RANGE) {
             return valueFrom != null && valueTo != null;
         }
-        else {
-            return valueFrom != null;
-        }
+        return valueFrom != null;
     };
     DateFilter.prototype.areSimpleModelsEqual = function (aSimple, bSimple) {
         return aSimple.dateFrom === bSimple.dateFrom
@@ -157,17 +157,29 @@ var DateFilter = /** @class */ (function (_super) {
     DateFilter.prototype.createCondition = function (position) {
         var positionOne = position === simpleFilter_1.ConditionPosition.One;
         var type = positionOne ? this.getCondition1Type() : this.getCondition2Type();
-        var dateCompTo = positionOne ? this.dateCompTo1 : this.dateCompTo2;
         var dateCompFrom = positionOne ? this.dateCompFrom1 : this.dateCompFrom2;
+        var dateCompTo = positionOne ? this.dateCompTo1 : this.dateCompTo2;
+        var dateFrom = dateCompFrom.getDate();
+        var dateTo = dateCompTo.getDate();
         return {
-            dateTo: utils_1._.serializeDateToYyyyMmDd(dateCompTo.getDate(), "-"),
-            dateFrom: utils_1._.serializeDateToYyyyMmDd(dateCompFrom.getDate(), "-"),
+            dateFrom: utils_1._.serializeDateToYyyyMmDd(dateFrom, "-") + " " + utils_1._.getTimeFromDate(dateFrom),
+            dateTo: utils_1._.serializeDateToYyyyMmDd(dateTo, "-") + " " + utils_1._.getTimeFromDate(dateTo),
             type: type,
             filterType: DateFilter.FILTER_TYPE
         };
     };
+    DateFilter.prototype.resetPlaceholder = function () {
+        var translate = this.translate.bind(this);
+        var isRange1 = this.getCondition1Type() === scalerFilter_1.ScalerFilter.IN_RANGE;
+        var isRange2 = this.getCondition2Type() === scalerFilter_1.ScalerFilter.IN_RANGE;
+        this.dateCompFrom1.setInputPlaceholder(translate(isRange1 ? 'rangeStart' : 'filterOoo'));
+        this.dateCompTo1.setInputPlaceholder(translate(isRange1 ? 'rangeEnd' : 'filterOoo'));
+        this.dateCompFrom2.setInputPlaceholder(translate(isRange2 ? 'rangeStart' : 'filterOoo'));
+        this.dateCompTo2.setInputPlaceholder(translate(isRange2 ? 'rangeEnd' : 'filterOoo'));
+    };
     DateFilter.prototype.updateUiVisibility = function () {
         _super.prototype.updateUiVisibility.call(this);
+        this.resetPlaceholder();
         var showFrom1 = this.showValueFrom(this.getCondition1Type());
         utils_1._.setDisplayed(this.ePanelFrom1, showFrom1);
         var showTo1 = this.showValueTo(this.getCondition1Type());
@@ -178,8 +190,13 @@ var DateFilter = /** @class */ (function (_super) {
         utils_1._.setDisplayed(this.ePanelTo2, showTo2);
     };
     DateFilter.FILTER_TYPE = 'date';
-    DateFilter.DEFAULT_FILTER_OPTIONS = [scalerFilter_1.ScalerFilter.EQUALS, scalerFilter_1.ScalerFilter.GREATER_THAN,
-        scalerFilter_1.ScalerFilter.LESS_THAN, scalerFilter_1.ScalerFilter.NOT_EQUAL, scalerFilter_1.ScalerFilter.IN_RANGE];
+    DateFilter.DEFAULT_FILTER_OPTIONS = [
+        scalerFilter_1.ScalerFilter.EQUALS,
+        scalerFilter_1.ScalerFilter.GREATER_THAN,
+        scalerFilter_1.ScalerFilter.LESS_THAN,
+        scalerFilter_1.ScalerFilter.NOT_EQUAL,
+        scalerFilter_1.ScalerFilter.IN_RANGE
+    ];
     __decorate([
         componentAnnotations_1.RefSelector('ePanelFrom1')
     ], DateFilter.prototype, "ePanelFrom1", void 0);

@@ -13,13 +13,11 @@ var __extends = (this && this.__extends) || (function () {
 })();
 import { ChartType } from "@ag-grid-community/core";
 import { MiniChartWithAxes } from "./miniChartWithAxes";
-import { Rect } from "../../../../../charts/scene/shape/rect";
-import { BandScale } from "../../../../../charts/scale/bandScale";
-import linearScale from "../../../../../charts/scale/linearScale";
+import { linearScale, BandScale, Rect } from "ag-charts-community";
 var MiniColumn = /** @class */ (function (_super) {
     __extends(MiniColumn, _super);
-    function MiniColumn(parent, fills, strokes) {
-        var _this = _super.call(this, parent, "groupedColumnTooltip") || this;
+    function MiniColumn(container, fills, strokes) {
+        var _this = _super.call(this, container, "groupedColumnTooltip") || this;
         var padding = _this.padding;
         var size = _this.size;
         var data = [2, 3, 4];

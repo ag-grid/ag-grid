@@ -44,10 +44,8 @@ export class SelectAllFeature extends BeanStub {
         this.showOrHideSelectAll();
 
         this.addDestroyableEventListener(this.eventService, Events.EVENT_DISPLAYED_COLUMNS_CHANGED, this.showOrHideSelectAll.bind(this));
-
         this.addDestroyableEventListener(this.eventService, Events.EVENT_SELECTION_CHANGED, this.onSelectionChanged.bind(this));
         this.addDestroyableEventListener(this.eventService, Events.EVENT_MODEL_UPDATED, this.onModelChanged.bind(this));
-
         this.addDestroyableEventListener(this.cbSelectAll, AgCheckbox.EVENT_CHANGED, this.onCbSelectAll.bind(this));
     }
 
@@ -75,19 +73,23 @@ export class SelectAllFeature extends BeanStub {
     }
 
     private getNextCheckboxState(selectionCount: SelectionCount): boolean {
+        // if no rows, always have it unselected
         if (selectionCount.selected === 0 && selectionCount.notSelected === 0) {
-            // if no rows, always have it unselected
-            return false;
-        } else if (selectionCount.selected > 0 && selectionCount.notSelected > 0) {
-            // if mix of selected and unselected, this is the tri-state
-            return null;
-        } else if (selectionCount.selected > 0) {
-            // only selected
-            return true;
-        } else {
-            // nothing selected
             return false;
         }
+
+        // if mix of selected and unselected, this is the tri-state
+        if (selectionCount.selected > 0 && selectionCount.notSelected > 0) {
+            return null;
+        }
+
+        // only selected
+        if (selectionCount.selected > 0) {
+            return true;
+        }
+
+        // nothing selected
+        return false;
     }
 
     private updateStateOfCheckbox(): void {
@@ -97,7 +99,6 @@ export class SelectAllFeature extends BeanStub {
         this.processingEventFromCheckbox = true;
 
         const selectionCount = this.getSelectionCount();
-
         const allSelected = this.getNextCheckboxState(selectionCount);
 
         this.cbSelectAll.setValue(allSelected);
@@ -137,6 +138,7 @@ export class SelectAllFeature extends BeanStub {
     private checkRightRowModelType(): void {
         const rowModelType = this.rowModel.getType();
         const rowModelMatches = rowModelType === Constants.ROW_MODEL_TYPE_CLIENT_SIDE;
+
         if (!rowModelMatches) {
             console.warn(`ag-Grid: selectAllCheckbox is only available if using normal row model, you are using ${rowModelType}`);
         }
@@ -147,6 +149,7 @@ export class SelectAllFeature extends BeanStub {
         if (!this.cbSelectAllVisible) { return; }
 
         const value = this.cbSelectAll.getValue();
+
         if (value) {
             this.selectionController.selectAllRowNodes(this.filteredOnly);
         } else {
@@ -182,9 +185,9 @@ export class SelectAllFeature extends BeanStub {
             }
             // otherwise the row model is compatible, so return true
             return true;
-        } else {
-            return false;
         }
+
+        return false;
     }
 
 }

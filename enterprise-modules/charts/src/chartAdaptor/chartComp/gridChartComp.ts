@@ -3,6 +3,7 @@ import {
     AgDialog,
     Autowired,
     CellRange,
+    ChartModel,
     ChartOptions,
     ChartType,
     Component,
@@ -14,7 +15,12 @@ import {
     ProcessChartOptionsParams,
     RefSelector,
     ResizeObserverService,
-    ChartModel
+    GridApi,
+    ColumnApi,
+    ChartCreated,
+    ChartDestroyed,
+    Events,
+    PopupService
 } from "@ag-grid-community/core";
 import { ChartMenu } from "./menu/chartMenu";
 import { ChartController } from "./chartController";
@@ -26,7 +32,7 @@ import { LineChartProxy } from "./chartProxies/cartesian/lineChartProxy";
 import { PieChartProxy } from "./chartProxies/polar/pieChartProxy";
 import { DoughnutChartProxy } from "./chartProxies/polar/doughnutChartProxy";
 import { ScatterChartProxy } from "./chartProxies/cartesian/scatterChartProxy";
-import { ChartPaletteName } from "../../charts/chart/palettes";
+import { ChartPaletteName } from "ag-charts-community";
 import { ChartTranslator } from "./chartTranslator";
 
 export interface GridChartParams {
@@ -43,17 +49,17 @@ export interface GridChartParams {
 export class GridChartComp extends Component {
     private static TEMPLATE =
         `<div class="ag-chart" tabindex="-1">
-            <div ref="eChartComponentsWrapper" tabindex="-1" class="ag-chart-components-wrapper">
+            <div ref="eChartContainer" tabindex="-1" class="ag-chart-components-wrapper">
                 <div ref="eChart" class="ag-chart-canvas-wrapper">
-                    <div ref="eEmpty" class="ag-chart-empty-text ag-unselectable"></div>
                 </div>
+                <div ref="eEmpty" class="ag-chart-empty-text ag-unselectable"></div>
             </div>
-            <div ref="eDockedContainer" class="ag-chart-docked-container"></div>
+            <div ref="eMenuContainer" class="ag-chart-docked-container"></div>
         </div>`;
 
     @RefSelector('eChart') private eChart: HTMLElement;
-    @RefSelector('eChartComponentsWrapper') private eChartComponentsWrapper: HTMLElement;
-    @RefSelector('eDockedContainer') private eDockedContainer: HTMLElement;
+    @RefSelector('eChartContainer') private eChartContainer: HTMLElement;
+    @RefSelector('eMenuContainer') private eMenuContainer: HTMLElement;
     @RefSelector('eEmpty') private eEmpty: HTMLElement;
 
     @Autowired('resizeObserverService') private resizeObserverService: ResizeObserverService;
@@ -61,6 +67,9 @@ export class GridChartComp extends Component {
     @Autowired('environment') private environment: Environment;
     @Autowired('chartTranslator') private chartTranslator: ChartTranslator;
     @Autowired('eventService') private eventService: EventService;
+    @Autowired('gridApi') private gridApi: GridApi;
+    @Autowired('columnApi') private columnApi: ColumnApi;
+    @Autowired('popupService') private popupService: PopupService;
 
     private chartMenu: ChartMenu;
     private chartDialog: AgDialog;
@@ -70,13 +79,9 @@ export class GridChartComp extends Component {
 
     private chartProxy: ChartProxy<any, any>;
     private chartType: ChartType;
-    private chartGroupingActive: boolean;
 
-    private readonly params: GridChartParams;
-
-    constructor(params: GridChartParams) {
+    constructor(private readonly params: GridChartParams) {
         super(GridChartComp.TEMPLATE);
-        this.params = params;
     }
 
     @PostConstruct
@@ -89,9 +94,13 @@ export class GridChartComp extends Component {
             suppressChartRanges: this.params.suppressChartRanges,
         };
 
+        const isRtl = this.gridOptionsWrapper.isEnableRtl();
+        _.addCssClass(this.getGui(), isRtl ? 'ag-rtl' : 'ag-ltr');
+
         this.model = this.wireBean(new ChartDataModel(modelParams));
         this.chartController = this.wireBean(new ChartController(this.model, this.params.chartPaletteName));
 
+        // create chart before dialog to ensure dialog is correct size
         this.createChart();
 
         if (this.params.insideDialog) {
@@ -106,9 +115,10 @@ export class GridChartComp extends Component {
         this.addDestroyableEventListener(this.chartMenu, ChartMenu.EVENT_DOWNLOAD_CHART, this.downloadChart.bind(this));
 
         this.refresh();
+        this.raiseChartCreatedEvent();
     }
 
-    private createChart() {
+    private createChart(): void {
         let width, height;
 
         // if chart already exists, destroy it and remove it from DOM
@@ -124,14 +134,12 @@ export class GridChartComp extends Component {
             this.chartProxy.destroy();
         }
 
-        const processChartOptionsFunc = this.params.processChartOptions ?
-            this.params.processChartOptions : this.gridOptionsWrapper.getProcessChartOptionsFunc();
-
-        const categorySelected = this.model.getSelectedDimension().colId !== ChartDataModel.DEFAULT_CATEGORY;
+        const processChartOptionsFunc = this.params.processChartOptions || this.gridOptionsWrapper.getProcessChartOptionsFunc();
         const chartType = this.model.getChartType();
         const isGrouping = this.model.isGrouping();
 
         const chartProxyParams: ChartProxyParams = {
+            chartId: this.model.getChartId(),
             chartType,
             processChartOptions: processChartOptionsFunc,
             getChartPaletteName: this.getChartPaletteName.bind(this),
@@ -140,21 +148,23 @@ export class GridChartComp extends Component {
             parentElement: this.eChart,
             width,
             height,
-            eventService: this.eventService,
-            categorySelected,
             grouping: isGrouping,
-            document: this.gridOptionsWrapper.getDocument()
+            document: this.gridOptionsWrapper.getDocument(),
+            eventService: this.eventService,
+            gridApi: this.gridApi,
+            columnApi: this.columnApi,
         };
 
         // set local state used to detect when chart type changes
         this.chartType = chartType;
-        this.chartGroupingActive = isGrouping;
         this.chartProxy = this.createChartProxy(chartProxyParams);
-
+        _.addCssClass(this.eChart.querySelector('canvas'), 'ag-charts-canvas');
         this.chartController.setChartProxy(this.chartProxy);
     }
 
-    private getChartPaletteName = (): ChartPaletteName => this.chartController.getPaletteName();
+    private getChartPaletteName(): ChartPaletteName {
+        return this.chartController.getPaletteName();
+    }
 
     private createChartProxy(chartProxyParams: ChartProxyParams): ChartProxy<any, any> {
         switch (chartProxyParams.chartType) {
@@ -181,14 +191,18 @@ export class GridChartComp extends Component {
         }
     }
 
-    private addDialog() {
+    private addDialog(): void {
         const title = this.chartTranslator.translate(this.params.pivotChart ? 'pivotChartTitle' : 'rangeChartTitle');
+
+        const { width, height } = this.getBestDialogSize();
 
         this.chartDialog = new AgDialog({
             resizable: true,
             movable: true,
             maximizable: true,
-            title: title,
+            title,
+            width,
+            height,
             component: this,
             centered: true,
             closable: true
@@ -199,12 +213,32 @@ export class GridChartComp extends Component {
         this.chartDialog.addEventListener(AgDialog.EVENT_DESTROYED, () => this.destroy());
     }
 
-    private addMenu() {
-        this.chartMenu = new ChartMenu(this.chartController);
-        this.chartMenu.setParentComponent(this);
-        this.getContext().wireBean(this.chartMenu);
+    private getBestDialogSize(): { width: number, height: number } {
+        const popupParent = this.popupService.getPopupParent();
+        const maxWidth = _.getAbsoluteWidth(popupParent) * 0.75;
+        const maxHeight = _.getAbsoluteHeight(popupParent) * 0.75;
+        const ratio = 0.553;
 
-        this.eChartComponentsWrapper.appendChild(this.chartMenu.getGui());
+        const chart = this.chartProxy.getChart() as any;
+        let width = this.params.insideDialog ? 850 : chart.width;
+        let height = this.params.insideDialog ? 470 : chart.height;
+
+        if (width > maxWidth || height > maxHeight) {
+            width = Math.min(width, maxWidth);
+            height = Math.round(width * ratio);
+
+            if (height > maxHeight) {
+                height = maxHeight;
+                width = Math.min(width, Math.round(height / ratio));
+            }
+        }
+
+        return { width, height };
+    }
+
+    private addMenu(): void {
+        this.chartMenu = this.wireBean(new ChartMenu(this.eChartContainer, this.eMenuContainer, this.chartController));
+        this.eChartContainer.appendChild(this.chartMenu.getGui());
     }
 
     private refresh(): void {
@@ -216,31 +250,18 @@ export class GridChartComp extends Component {
     }
 
     private shouldRecreateChart(): boolean {
-        const chartTypeChanged = this.chartType !== this.model.getChartType();
-        const groupingChanged = this.chartGroupingActive !== this.model.isGrouping();
-
-        return chartTypeChanged || groupingChanged;
+        return this.chartType !== this.model.getChartType();
     }
 
-    public getChartComponentsWrapper = (): HTMLElement => this.eChartComponentsWrapper;
-
-    public getDockedContainer = (): HTMLElement => this.eDockedContainer;
-
-    public slideDockedOut(width: number) {
-        this.eDockedContainer.style.minWidth = `${width}px`;
+    public getCurrentChartType(): ChartType {
+        return this.chartType;
     }
-
-    public slideDockedIn() {
-        this.eDockedContainer.style.minWidth = '0';
-    }
-
-    public getCurrentChartType = (): ChartType => this.chartType;
 
     public getChartModel(): ChartModel {
         return this.chartController.getChartModel();
     }
 
-    public updateChart() {
+    public updateChart(): void {
         const { model, chartProxy } = this;
 
         const selectedCols = model.getSelectedValueColState();
@@ -255,6 +276,7 @@ export class GridChartComp extends Component {
         const selectedDimension = model.getSelectedDimension();
         const chartUpdateParams: UpdateChartParams = {
             data,
+            grouping: model.isGrouping(),
             category: {
                 id: selectedDimension.colId,
                 name: selectedDimension.displayName
@@ -265,8 +287,8 @@ export class GridChartComp extends Component {
         chartProxy.update(chartUpdateParams);
     }
 
-    private handleEmptyChart(data: any[], fields: any[]) {
-        const parent = this.chartProxy.getChart().parent;
+    private handleEmptyChart(data: any[], fields: any[]): boolean {
+        const container = this.chartProxy.getChart().container;
         const pivotModeDisabled = this.model.isPivotChart() && !this.model.isPivotMode();
         let minFieldsRequired = 1;
 
@@ -276,8 +298,10 @@ export class GridChartComp extends Component {
 
         const isEmptyChart = fields.length < minFieldsRequired || data.length === 0;
 
-        if (parent) {
-            _.addOrRemoveCssClass(parent, 'ag-chart-empty', pivotModeDisabled || isEmptyChart);
+        if (container) {
+            const isEmpty = pivotModeDisabled || isEmptyChart;
+            _.setVisible(this.eChart, !isEmpty);
+            _.setVisible(this.eEmpty, isEmpty);
         }
 
         if (pivotModeDisabled) {
@@ -293,21 +317,30 @@ export class GridChartComp extends Component {
         return false;
     }
 
-    private downloadChart() {
-        const chart = this.chartProxy.getChart();
-        const fileName = chart.title ? chart.title.text : 'chart';
-        chart.scene.download(fileName);
+    private downloadChart(): void {
+        this.chartProxy.downloadChart();
     }
 
-    public refreshCanvasSize() {
-        const eChartWrapper = this.eChart;
+    public refreshCanvasSize(): void {
+        if (!this.params.insideDialog) {
+            return;
+        }
 
-        const chart = this.chartProxy.getChart();
-        chart.height = _.getInnerHeight(eChartWrapper);
-        chart.width = _.getInnerWidth(eChartWrapper);
+        const { chartProxy, eChart } = this;
+
+        if (this.chartMenu.isVisible()) {
+            // we don't want the menu showing to affect the chart options
+            const chart = this.chartProxy.getChart();
+
+            chart.height = _.getInnerHeight(eChart);
+            chart.width = _.getInnerWidth(eChart);
+        } else {
+            chartProxy.setChartOption('width', _.getInnerWidth(eChart));
+            chartProxy.setChartOption('height', _.getInnerHeight(eChart));
+        }
     }
 
-    private addResizeListener() {
+    private addResizeListener(): void {
         const eGui = this.getGui();
 
         const resizeFunc = () => {
@@ -322,12 +355,36 @@ export class GridChartComp extends Component {
         const observeResizeFunc = this.resizeObserverService.observeResize(this.eChart, resizeFunc, 5);
     }
 
-    private setActiveChartCellRange(focusEvent: FocusEvent) {
+    private setActiveChartCellRange(focusEvent: FocusEvent): void {
         if (this.getGui().contains(focusEvent.relatedTarget as HTMLElement)) {
             return;
         }
 
-        this.chartController.setChartRange();
+        this.chartController.setChartRange(true);
+    }
+
+    private raiseChartCreatedEvent(): void {
+        const chartModel = this.chartController.getChartModel();
+        const event: ChartCreated = Object.freeze({
+            type: Events.EVENT_CHART_CREATED,
+            chartId: chartModel.chartId,
+            chartModel,
+            api: this.gridApi,
+            columnApi: this.columnApi,
+        });
+
+        this.eventService.dispatchEvent(event);
+    }
+
+    private raiseChartDestroyedEvent(): void {
+        const event: ChartDestroyed = Object.freeze({
+            type: Events.EVENT_CHART_DESTROYED,
+            chartId: this.model.getChartId(),
+            api: this.gridApi,
+            columnApi: this.columnApi,
+        });
+
+        this.eventService.dispatchEvent(event);
     }
 
     public destroy(): void {
@@ -345,7 +402,7 @@ export class GridChartComp extends Component {
             this.chartMenu.destroy();
         }
 
-        // don't want to invoke destroy() on the Dialog / MessageBox (prevents destroy loop)
+        // don't want to invoke destroy() on the Dialog (prevents destroy loop)
         if (this.chartDialog && this.chartDialog.isAlive()) {
             this.chartDialog.destroy();
         }
@@ -356,5 +413,7 @@ export class GridChartComp extends Component {
         _.clearElement(eGui);
         // remove from parent, so if user provided container, we detach from the provided dom element
         _.removeFromParent(eGui);
+
+        this.raiseChartDestroyedEvent();
     }
 }

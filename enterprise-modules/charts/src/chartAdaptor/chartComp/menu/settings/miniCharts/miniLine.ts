@@ -1,15 +1,13 @@
-import { _, ChartType } from "@ag-grid-community/core";
-import { MiniChartWithAxes } from "./miniChartWithAxes";
-import { Path } from "../../../../../charts/scene/shape/path";
-import linearScale from "../../../../../charts/scale/linearScale";
-import { ClipRect } from "../../../../../charts/scene/clipRect";
+import {ChartType} from "@ag-grid-community/core";
+import {MiniChartWithAxes} from "./miniChartWithAxes";
+import { linearScale, ClipRect, Path} from "ag-charts-community";
 
 export class MiniLine extends MiniChartWithAxes {
     static chartType = ChartType.Line;
     private readonly lines: Path[];
 
-    constructor(parent: HTMLElement, fills: string[], strokes: string[]) {
-        super(parent, "lineTooltip");
+    constructor(container: HTMLElement, fills: string[], strokes: string[]) {
+        super(container, "lineTooltip");
 
         const size = this.size;
         const padding = this.padding;

@@ -1,5 +1,3 @@
-.ag-body {
-    .ag-pinned-left-cols-viewport, .ag-body-viewport, .ag-pinned-right-cols-viewport {
-        -webkit-overflow-scrolling: touch;
-    }
+.ag-body .ag-body-viewport {
+    -webkit-overflow-scrolling: touch;
 }

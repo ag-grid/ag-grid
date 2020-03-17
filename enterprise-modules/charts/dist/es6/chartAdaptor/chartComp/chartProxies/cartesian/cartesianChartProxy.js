@@ -24,9 +24,8 @@ var __assign = (this && this.__assign) || function () {
 };
 import { ChartProxy } from "../chartProxy";
 import { _ } from "@ag-grid-community/core";
+import { ChartAxisPosition, ChartBuilder, find, GroupedCategoryAxis } from "ag-charts-community";
 import { ChartDataModel } from "../../chartDataModel";
-import { ChartAxisPosition } from "../../../../charts/chart/chartAxis";
-import { find } from "../../../../charts/util/array";
 var CartesianChartProxy = /** @class */ (function (_super) {
     __extends(CartesianChartProxy, _super);
     function CartesianChartProxy(params) {
@@ -86,6 +85,38 @@ var CartesianChartProxy = /** @class */ (function (_super) {
         options.xAxis = this.getDefaultAxisOptions();
         options.yAxis = this.getDefaultAxisOptions();
         return options;
+    };
+    CartesianChartProxy.prototype.updateAxes = function (baseAxisType, isHorizontalChart) {
+        if (baseAxisType === void 0) { baseAxisType = 'category'; }
+        if (isHorizontalChart === void 0) { isHorizontalChart = false; }
+        var baseAxis = isHorizontalChart ? this.getYAxis() : this.getXAxis();
+        if (!baseAxis) {
+            return;
+        }
+        if (this.chartProxyParams.grouping) {
+            if (!(baseAxis instanceof GroupedCategoryAxis)) {
+                this.recreateChart();
+            }
+            return;
+        }
+        var axisClass = ChartBuilder.toAxisClass(baseAxisType);
+        if (baseAxis instanceof axisClass) {
+            return;
+        }
+        var options = this.chartOptions;
+        if (isHorizontalChart && !options.yAxis.type) {
+            options = __assign(__assign({}, options), { yAxis: __assign(__assign({}, options.yAxis), { type: baseAxisType }) });
+        }
+        else if (!isHorizontalChart && !options.xAxis.type) {
+            options = __assign(__assign({}, options), { xAxis: __assign(__assign({}, options.xAxis), { type: baseAxisType }) });
+        }
+        this.recreateChart(options);
+    };
+    CartesianChartProxy.prototype.getXAxis = function () {
+        return find(this.chart.axes, function (a) { return a.position === ChartAxisPosition.Bottom; });
+    };
+    CartesianChartProxy.prototype.getYAxis = function () {
+        return find(this.chart.axes, function (a) { return a.position === ChartAxisPosition.Left; });
     };
     return CartesianChartProxy;
 }(ChartProxy));

@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v22.1.1
+ * @version v23.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -11,18 +11,28 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 import { Constants } from "../constants";
-import { Autowired, Bean } from "../context/context";
+import { Autowired, Bean, PostConstruct } from "../context/context";
 import { Events } from '../events';
 import { _ } from "../utils";
 var PopupService = /** @class */ (function () {
     function PopupService() {
         this.popupList = [];
     }
+    PopupService.prototype.init = function () {
+        var _this = this;
+        this.eventService.addEventListener(Events.EVENT_KEYBOARD_FOCUS, function () {
+            _this.popupList.forEach(function (popup) {
+                _.addCssClass(popup.element, 'ag-keyboard-focus');
+            });
+        });
+        this.eventService.addEventListener(Events.EVENT_MOUSE_FOCUS, function () {
+            _this.popupList.forEach(function (popup) {
+                _.removeCssClass(popup.element, 'ag-keyboard-focus');
+            });
+        });
+    };
     PopupService.prototype.registerGridCore = function (gridCore) {
         this.gridCore = gridCore;
-    };
-    PopupService.prototype.getDocument = function () {
-        return this.gridOptionsWrapper.getDocument();
     };
     PopupService.prototype.getPopupParent = function () {
         var ePopupParent = this.gridOptionsWrapper.getPopupParent();
@@ -33,17 +43,8 @@ var PopupService = /** @class */ (function () {
     };
     PopupService.prototype.positionPopupForMenu = function (params) {
         var sourceRect = params.eventSource.getBoundingClientRect();
-        var eDocument = this.getDocument();
-        var popupParent = this.getPopupParent();
-        var parentRect;
-        if (popupParent === eDocument.body) {
-            parentRect = eDocument.documentElement.getBoundingClientRect();
-        }
-        else {
-            parentRect = popupParent.getBoundingClientRect();
-        }
-        var y = sourceRect.top - parentRect.top;
-        y = this.keepYWithinBounds(params, y);
+        var parentRect = this.getParentRect();
+        var y = this.keepYWithinBounds(params, sourceRect.top - parentRect.top);
         var minWidth = (params.ePopup.clientWidth > 0) ? params.ePopup.clientWidth : 200;
         params.ePopup.style.minWidth = minWidth + "px";
         var widthOfParent = parentRect.right - parentRect.left;
@@ -95,27 +96,16 @@ var PopupService = /** @class */ (function () {
         this.callPostProcessPopup(params.ePopup, null, params.mouseEvent, params.type, params.column, params.rowNode);
     };
     PopupService.prototype.calculatePointerAlign = function (e) {
-        var eDocument = this.getDocument();
-        var popupParent = this.getPopupParent();
-        var parentRect = popupParent.getBoundingClientRect();
-        var documentRect = eDocument.documentElement.getBoundingClientRect();
+        var parentRect = this.getParentRect();
         return {
-            x: e.clientX - (popupParent === eDocument.body ? documentRect.left : parentRect.left),
-            y: e.clientY - (popupParent === eDocument.body ? documentRect.top : parentRect.top)
+            x: e.clientX - parentRect.left,
+            y: e.clientY - parentRect.top
         };
     };
     PopupService.prototype.positionPopupUnderComponent = function (params) {
         var sourceRect = params.eventSource.getBoundingClientRect();
-        var eDocument = this.getDocument();
-        var popupParent = this.getPopupParent();
         var alignSide = params.alignSide || 'left';
-        var parentRect;
-        if (popupParent === eDocument.body) {
-            parentRect = eDocument.documentElement.getBoundingClientRect();
-        }
-        else {
-            parentRect = popupParent.getBoundingClientRect();
-        }
+        var parentRect = this.getParentRect();
         var x = sourceRect.left - parentRect.left;
         if (alignSide === 'right') {
             x -= (params.ePopup.offsetWidth - sourceRect.width);
@@ -134,15 +124,7 @@ var PopupService = /** @class */ (function () {
     };
     PopupService.prototype.positionPopupOverComponent = function (params) {
         var sourceRect = params.eventSource.getBoundingClientRect();
-        var eDocument = this.getDocument();
-        var popupParent = this.getPopupParent();
-        var parentRect;
-        if (popupParent === eDocument.body) {
-            parentRect = eDocument.documentElement.getBoundingClientRect();
-        }
-        else {
-            parentRect = popupParent.getBoundingClientRect();
-        }
+        var parentRect = this.getParentRect();
         this.positionPopup({
             ePopup: params.ePopup,
             minWidth: params.minWidth,
@@ -184,6 +166,25 @@ var PopupService = /** @class */ (function () {
         }
         params.ePopup.style.left = x + "px";
         params.ePopup.style.top = y + "px";
+    };
+    PopupService.prototype.getParentRect = function () {
+        // subtract the popup parent borders, because popupParent.getBoundingClientRect
+        // returns the rect outside the borders, but the 0,0 coordinate for absolute
+        // positioning is inside the border, leading the popup to be off by the width
+        // of the border
+        var popupParent = this.getPopupParent();
+        var eDocument = this.gridOptionsWrapper.getDocument();
+        if (popupParent === eDocument.body) {
+            popupParent = eDocument.documentElement;
+        }
+        var style = getComputedStyle(popupParent);
+        var bounds = popupParent.getBoundingClientRect();
+        return {
+            top: bounds.top + parseFloat(style.borderTopWidth) || 0,
+            left: bounds.left + parseFloat(style.borderLeftWidth) || 0,
+            right: bounds.right + parseFloat(style.borderRightWidth) || 0,
+            bottom: bounds.bottom + parseFloat(style.borderBottomWidth) || 0,
+        };
     };
     PopupService.prototype.keepYWithinBounds = function (params, y) {
         var eDocument = this.gridOptionsWrapper.getDocument();
@@ -268,6 +269,7 @@ var PopupService = /** @class */ (function () {
         }
         _.addCssClass(eWrapper, 'ag-popup');
         _.addCssClass(eChild, this.gridOptionsWrapper.isEnableRtl() ? 'ag-rtl' : 'ag-ltr');
+        _.addCssClass(eChild, 'ag-popup-child');
         eWrapper.appendChild(eChild);
         ePopupParent.appendChild(eWrapper);
         if (alwaysOnTop) {
@@ -445,6 +447,9 @@ var PopupService = /** @class */ (function () {
     __decorate([
         Autowired('eventService')
     ], PopupService.prototype, "eventService", void 0);
+    __decorate([
+        PostConstruct
+    ], PopupService.prototype, "init", null);
     PopupService = __decorate([
         Bean('popupService')
     ], PopupService);

@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v22.1.1
+ * @version v23.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -33,13 +33,19 @@ var AgAbstractInputField = /** @class */ (function (_super) {
     function AgAbstractInputField() {
         var _this = _super !== null && _super.apply(this, arguments) || this;
         _this.config = {};
-        _this.TEMPLATE = "<div class=\"ag-input-field\" role=\"presentation\">\n            <label ref=\"eLabel\"></label>\n            <div ref=\"eWrapper\" class=\"ag-wrapper ag-input-wrapper\" role=\"presentation\">\n                <%displayField% ref=\"eInput\"></%displayField%>\n            </div>\n        </div>";
+        _this.TEMPLATE = "<div role=\"presentation\">\n            <label ref=\"eLabel\" class=\"ag-input-field-label\"></label>\n            <div ref=\"eWrapper\" class=\"ag-wrapper ag-input-wrapper\" role=\"presentation\">\n                <%displayField% ref=\"eInput\" class=\"ag-input-field-input\"></%displayField%>\n            </div>\n        </div>";
         return _this;
     }
     AgAbstractInputField.prototype.postConstruct = function () {
         _super.prototype.postConstruct.call(this);
         this.setInputType();
-        utils_1._.addCssClass(this.getGui(), this.className);
+        utils_1._.addCssClass(this.eLabel, this.className + "-label");
+        utils_1._.addCssClass(this.eWrapper, this.className + "-input-wrapper");
+        utils_1._.addCssClass(this.eInput, this.className + "-input");
+        utils_1._.addCssClass(this.getGui(), 'ag-input-field');
+        var inputId = this.eInput.id ? this.eInput.id : "ag-input-id-" + this.getCompId();
+        this.eLabel.htmlFor = inputId;
+        this.eInput.id = inputId;
         var _a = this.config, width = _a.width, value = _a.value;
         if (width != null) {
             this.setWidth(width);
@@ -71,6 +77,33 @@ var AgAbstractInputField = /** @class */ (function (_super) {
     AgAbstractInputField.prototype.setInputName = function (name) {
         this.getInputElement().setAttribute('name', name);
         return this;
+    };
+    AgAbstractInputField.prototype.getFocusableElement = function () {
+        return this.eInput;
+    };
+    AgAbstractInputField.prototype.setMaxLength = function (length) {
+        var eInput = this.eInput;
+        eInput.maxLength = length;
+        return this;
+    };
+    AgAbstractInputField.prototype.setInputPlaceholder = function (placeholder) {
+        var eInput = this.eInput;
+        if (placeholder) {
+            eInput.setAttribute('placeholder', placeholder);
+        }
+        else {
+            eInput.removeAttribute('placeholder');
+        }
+        return this;
+    };
+    AgAbstractInputField.prototype.setDisabled = function (disabled) {
+        if (disabled) {
+            this.eInput.setAttribute('disabled', 'true');
+        }
+        else {
+            this.eInput.removeAttribute('disabled');
+        }
+        return _super.prototype.setDisabled.call(this, disabled);
     };
     __decorate([
         componentAnnotations_1.RefSelector('eLabel')

@@ -1,5 +1,5 @@
-import { CellRange, ChartOptions, ChartType, Component, IAggFunc, ProcessChartOptionsParams, ChartModel } from "@ag-grid-community/core";
-import { ChartPaletteName } from "../../charts/chart/palettes";
+import { CellRange, ChartModel, ChartOptions, ChartType, Component, IAggFunc, ProcessChartOptionsParams } from "@ag-grid-community/core";
+import { ChartPaletteName } from "ag-charts-community";
 export interface GridChartParams {
     pivotChart: boolean;
     cellRange: CellRange;
@@ -11,38 +11,37 @@ export interface GridChartParams {
     processChartOptions?: (params: ProcessChartOptionsParams) => ChartOptions<any>;
 }
 export declare class GridChartComp extends Component {
+    private readonly params;
     private static TEMPLATE;
     private eChart;
-    private eChartComponentsWrapper;
-    private eDockedContainer;
+    private eChartContainer;
+    private eMenuContainer;
     private eEmpty;
     private resizeObserverService;
     private gridOptionsWrapper;
     private environment;
     private chartTranslator;
     private eventService;
+    private gridApi;
+    private columnApi;
+    private popupService;
     private chartMenu;
     private chartDialog;
     private model;
     private chartController;
     private chartProxy;
     private chartType;
-    private chartGroupingActive;
-    private readonly params;
     constructor(params: GridChartParams);
     init(): void;
     private createChart;
     private getChartPaletteName;
     private createChartProxy;
     private addDialog;
+    private getBestDialogSize;
     private addMenu;
     private refresh;
     private shouldRecreateChart;
-    getChartComponentsWrapper: () => HTMLElement;
-    getDockedContainer: () => HTMLElement;
-    slideDockedOut(width: number): void;
-    slideDockedIn(): void;
-    getCurrentChartType: () => ChartType;
+    getCurrentChartType(): ChartType;
     getChartModel(): ChartModel;
     updateChart(): void;
     private handleEmptyChart;
@@ -50,5 +49,7 @@ export declare class GridChartComp extends Component {
     refreshCanvasSize(): void;
     private addResizeListener;
     private setActiveChartCellRange;
+    private raiseChartCreatedEvent;
+    private raiseChartDestroyedEvent;
     destroy(): void;
 }

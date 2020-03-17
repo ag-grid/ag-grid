@@ -1,0 +1,67 @@
+{
+  "name": "ag-charts-community",
+  "version": "1.0.0",
+  "description": "Advanced Charting / Charts supporting Javascript / React / Angular",
+  "main": "./dist/cjs/main.js",
+  "module": "./dist/es6/main.js",
+  "types": "./dist/cjs/main.d.ts",
+  "scripts": {
+    "test": "npm run validate-es5 && jest",
+    "build-cjs": "tsc -p tsconfig.json",
+    "build-es6": "tsc -p tsconfig.es6.json",
+    "package": "node ../../module-build/rollup/build.js --bundlePrefix ag-charts-community --umdModuleName agCharts",
+    "build": "npm run build-cjs && npm run build-es6",
+    "validate-es5": "eslint dist/cjs"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ag-grid/ag-grid.git"
+  },
+  "keywords": [
+    "chart",
+    "charts",
+    "data",
+    "angular",
+    "angular-component",
+    "react",
+    "react-component",
+    "angularjs",
+    "reactjs"
+  ],
+  "author": "Sean Landsman <sean@thelandsmans.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/ag-grid/ag-grid/issues"
+  },
+  "browserslist": [
+    "> 1%",
+    "last 2 versions",
+    "not ie <= 10",
+    "not ie_mob <= 11",
+    "not blackberry > 0",
+    "not op_mini all",
+    "not operamobile >= 0"
+  ],
+  "homepage": "http://www.ag-grid.com/",
+  "dependencies": {},
+  "jest": {
+    "setupFiles": [
+      "jest-canvas-mock"
+    ]
+  },
+  "devDependencies": {
+    "@types/jest": "^25.1.2",
+    "canvas": "2.6.1",
+    "eslint": "^6.8.0",
+    "eslint-plugin-compat": "^3.5.1",
+    "eslint-plugin-ie11": "^1.0.0",
+    "jest": "^25.1.0",
+    "jest-canvas-mock": "2.2.0",
+    "raf": "3.4.1",
+    "ts-jest": "^25.2.1",
+    "typescript": "3.7.4"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}

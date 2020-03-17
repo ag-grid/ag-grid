@@ -25,11 +25,9 @@ var __assign = (this && this.__assign) || function () {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var core_1 = require("@ag-grid-community/core");
-var chartBuilder_1 = require("../../../../charts/chartBuilder");
+var ag_charts_community_1 = require("ag-charts-community");
 var chartDataModel_1 = require("../../chartDataModel");
 var cartesianChartProxy_1 = require("./cartesianChartProxy");
-var timeAxis_1 = require("../../../../charts/chart/axis/timeAxis");
-var numberAxis_1 = require("../../../../charts/chart/axis/numberAxis");
 var typeChecker_1 = require("../../typeChecker");
 var ScatterChartProxy = /** @class */ (function (_super) {
     __extends(ScatterChartProxy, _super);
@@ -41,7 +39,7 @@ var ScatterChartProxy = /** @class */ (function (_super) {
         return _this;
     }
     ScatterChartProxy.prototype.createChart = function (options) {
-        return chartBuilder_1.ChartBuilder.createScatterChart(this.chartProxyParams.parentElement, options);
+        return ag_charts_community_1.ChartBuilder.createScatterChart(this.chartProxyParams.parentElement, options || this.chartOptions);
     };
     ScatterChartProxy.prototype.update = function (params) {
         if (params.fields.length < 2) {
@@ -51,7 +49,9 @@ var ScatterChartProxy = /** @class */ (function (_super) {
         var fields = params.fields;
         var seriesDefaults = this.chartOptions.seriesDefaults;
         var seriesDefinitions = this.getSeriesDefinitions(fields, seriesDefaults.paired);
-        this.updateAxes(params.data[0], seriesDefinitions.map(function (d) { return d.xField.colId; }));
+        var testDatum = params.data[0];
+        var xValuesAreDates = seriesDefinitions.map(function (d) { return d.xField.colId; }).map(function (xKey) { return testDatum && testDatum[xKey]; }).every(function (test) { return typeChecker_1.isDate(test); });
+        this.updateAxes(xValuesAreDates ? 'time' : 'number');
         var chart = this.chart;
         var _a = this.getPalette(), fills = _a.fills, strokes = _a.strokes;
         var seriesOptions = __assign({ type: "scatter" }, seriesDefaults);
@@ -73,7 +73,7 @@ var ScatterChartProxy = /** @class */ (function (_super) {
         var previousSeries = undefined;
         seriesDefinitions.forEach(function (seriesDefinition, index) {
             var existingSeries = existingSeriesById.get(seriesDefinition.yField.colId);
-            var series = existingSeries || chartBuilder_1.ChartBuilder.createSeries(seriesOptions);
+            var series = existingSeries || ag_charts_community_1.ChartBuilder.createSeries(seriesOptions);
             if (!series) {
                 return;
             }
@@ -106,24 +106,6 @@ var ScatterChartProxy = /** @class */ (function (_super) {
             previousSeries = series;
         });
     };
-    ScatterChartProxy.prototype.updateAxes = function (testDatum, xKeys) {
-        var chartOptions = this.chartOptions;
-        if (chartOptions.xAxis.type) {
-            return;
-        }
-        var xAxis = this.chart.axes.filter(function (a) { return a.position === 'bottom'; })[0];
-        if (!xAxis) {
-            return;
-        }
-        var xValuesAreDates = xKeys.map(function (xKey) { return testDatum && testDatum[xKey]; }).every(function (test) { return typeChecker_1.isDate(test); });
-        if (xValuesAreDates && !(xAxis instanceof timeAxis_1.TimeAxis)) {
-            var options = __assign(__assign({}, this.chartOptions), { xAxis: __assign(__assign({}, this.chartOptions.xAxis), { type: 'time' }) });
-            this.recreateChart(options);
-        }
-        else if (!xValuesAreDates && !(xAxis instanceof numberAxis_1.NumberAxis)) {
-            this.recreateChart();
-        }
-    };
     ScatterChartProxy.prototype.getTooltipsEnabled = function () {
         return this.chartOptions.seriesDefaults.tooltip != null && !!this.chartOptions.seriesDefaults.tooltip.enabled;
     };
@@ -131,7 +113,7 @@ var ScatterChartProxy = /** @class */ (function (_super) {
         var isBubble = this.chartType === core_1.ChartType.Bubble;
         var options = this.getDefaultCartesianChartOptions();
         options.seriesDefaults = __assign(__assign({}, options.seriesDefaults), { fill: __assign(__assign({}, options.seriesDefaults.fill), { opacity: isBubble ? 0.7 : 1 }), stroke: __assign(__assign({}, options.seriesDefaults.stroke), { width: 3 }), marker: {
-                type: 'circle',
+                shape: 'circle',
                 enabled: true,
                 size: isBubble ? 30 : 6,
                 minSize: isBubble ? 6 : undefined,

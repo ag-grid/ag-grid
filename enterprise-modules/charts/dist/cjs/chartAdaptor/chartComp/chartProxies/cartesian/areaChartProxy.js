@@ -25,27 +25,21 @@ var __assign = (this && this.__assign) || function () {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var core_1 = require("@ag-grid-community/core");
-var chartBuilder_1 = require("../../../../charts/chartBuilder");
-var categoryAxis_1 = require("../../../../charts/chart/axis/categoryAxis");
+var ag_charts_community_1 = require("ag-charts-community");
 var cartesianChartProxy_1 = require("./cartesianChartProxy");
-var chartAxis_1 = require("../../../../charts/chart/chartAxis");
 var AreaChartProxy = /** @class */ (function (_super) {
     __extends(AreaChartProxy, _super);
     function AreaChartProxy(params) {
         var _this = _super.call(this, params) || this;
         _this.initChartOptions();
         _this.recreateChart();
-        var areaSeries = chartBuilder_1.ChartBuilder.createSeries(_this.getSeriesDefaults());
-        if (areaSeries) {
-            _this.chart.addSeries(areaSeries);
-        }
         return _this;
     }
     AreaChartProxy.prototype.createChart = function (options) {
         var _a = this.chartProxyParams, grouping = _a.grouping, parentElement = _a.parentElement;
-        var chart = chartBuilder_1.ChartBuilder[grouping ? "createGroupedAreaChart" : "createAreaChart"](parentElement, options);
+        var chart = ag_charts_community_1.ChartBuilder[grouping ? "createGroupedAreaChart" : "createAreaChart"](parentElement, options || this.chartOptions);
         chart.axes
-            .filter(function (axis) { return axis.position === chartAxis_1.ChartAxisPosition.Bottom && axis instanceof categoryAxis_1.CategoryAxis; })
+            .filter(function (axis) { return axis.position === ag_charts_community_1.ChartAxisPosition.Bottom && axis instanceof ag_charts_community_1.CategoryAxis; })
             .forEach(function (axis) {
             axis.scale.paddingInner = 1;
             axis.scale.paddingOuter = 0;
@@ -53,6 +47,8 @@ var AreaChartProxy = /** @class */ (function (_super) {
         return chart;
     };
     AreaChartProxy.prototype.update = function (params) {
+        this.chartProxyParams.grouping = params.grouping;
+        this.updateAxes();
         if (this.chartType === core_1.ChartType.Area) {
             // area charts have multiple series
             this.updateAreaChart(params);
@@ -60,6 +56,15 @@ var AreaChartProxy = /** @class */ (function (_super) {
         else {
             // stacked and normalized has a single series
             var areaSeries = this.chart.series[0];
+            if (!areaSeries) {
+                areaSeries = ag_charts_community_1.ChartBuilder.createSeries(this.getSeriesDefaults());
+                if (areaSeries) {
+                    this.chart.addSeries(areaSeries);
+                }
+                else {
+                    return;
+                }
+            }
             var _a = this.getPalette(), fills = _a.fills, strokes = _a.strokes;
             areaSeries.data = this.transformData(params.data, params.category.id);
             areaSeries.xKey = params.category.id;
@@ -113,7 +118,7 @@ var AreaChartProxy = /** @class */ (function (_super) {
                         yKeys: [f.colId],
                         yNames: [f.displayName],
                     }, fill: __assign(__assign({}, seriesDefaults.fill), { colors: [fill] }), stroke: __assign(__assign({}, seriesDefaults.stroke), { colors: [stroke] }) });
-                areaSeries = chartBuilder_1.ChartBuilder.createSeries(options);
+                areaSeries = ag_charts_community_1.ChartBuilder.createSeries(options);
                 chart.addSeriesAfter(areaSeries, previousSeries);
             }
             previousSeries = areaSeries;
@@ -123,7 +128,7 @@ var AreaChartProxy = /** @class */ (function (_super) {
         var options = this.getDefaultCartesianChartOptions();
         options.xAxis.label.rotation = 335;
         options.seriesDefaults = __assign(__assign({}, options.seriesDefaults), { fill: __assign(__assign({}, options.seriesDefaults.fill), { opacity: this.chartType === core_1.ChartType.Area ? 0.7 : 1 }), stroke: __assign(__assign({}, options.seriesDefaults.stroke), { width: 3 }), marker: {
-                type: 'circle',
+                shape: 'circle',
                 enabled: true,
                 size: 6,
                 strokeWidth: 1,

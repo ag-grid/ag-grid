@@ -6,12 +6,13 @@ import {
     Autowired,
     Component,
     PostConstruct,
-    RefSelector
+    RefSelector,
+    AgGroupComponentParams
 } from "@ag-grid-community/core";
-import { ChartController } from "../../../chartController";
-import { MarkersPanel } from "./markersPanel";
-import { ChartTranslator } from "../../../chartTranslator";
-import { LineChartProxy } from "../../../chartProxies/cartesian/lineChartProxy";
+import {ChartController} from "../../../chartController";
+import {MarkersPanel} from "./markersPanel";
+import {ChartTranslator} from "../../../chartTranslator";
+import {LineChartProxy} from "../../../chartProxies/cartesian/lineChartProxy";
 
 export class LineSeriesPanel extends Component {
 
@@ -40,7 +41,11 @@ export class LineSeriesPanel extends Component {
 
     @PostConstruct
     private init() {
-        this.setTemplate(LineSeriesPanel.TEMPLATE);
+        const groupParams: AgGroupComponentParams = {
+            cssIdentifier: 'charts-format-top-level',
+            direction: 'vertical'
+        };
+        this.setTemplate(LineSeriesPanel.TEMPLATE, {seriesGroup: groupParams});
 
         this.initSeriesGroup();
         this.initSeriesTooltips();
@@ -60,7 +65,7 @@ export class LineSeriesPanel extends Component {
             .setLabel(this.chartTranslator.translate("tooltips"))
             .setLabelAlignment("left")
             .setLabelWidth("flex")
-            .setInputWidth(40)
+            .setInputWidth(45)
             .setValue(this.getChartProxy().getSeriesOption("tooltip.enabled") || false)
             .onValueChange(newValue => this.getChartProxy().setSeriesOption("tooltip.enabled", newValue));
     }

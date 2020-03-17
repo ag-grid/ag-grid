@@ -8,13 +8,9 @@ export declare class SetFilterListItem extends Component {
     private userComponentFactory;
     private static TEMPLATE;
     private eCheckbox;
-    private eNativeCheckbox;
-    private eClickableArea;
     private selected;
     private value;
     private column;
-    private eCheckedIcon;
-    private eUncheckedIcon;
     constructor(value: any, column: Column);
     private useCellRenderer;
     private init;
@@ -22,4 +18,5 @@ export declare class SetFilterListItem extends Component {
     setSelected(selected: boolean): void;
     private updateCheckboxIcon;
     render(): void;
+    private getFilterValueFormatter;
 }

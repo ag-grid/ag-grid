@@ -13,7 +13,7 @@ import { CellPosition } from "./cellPosition";
 import { IDateComp } from "../rendering/dateComponent";
 import { IServerSideDatasource } from "../interfaces/iServerSideDatasource";
 import { CsvExportParams, ProcessCellForExportParams, ProcessHeaderForExportParams } from "../interfaces/exportParams";
-import { BodyScrollEvent, CellClickedEvent, CellContextMenuEvent, CellDoubleClickedEvent, CellEditingStartedEvent, CellEditingStoppedEvent, CellFocusedEvent, CellKeyDownEvent, CellKeyPressEvent, CellMouseDownEvent, CellMouseOutEvent, CellMouseOverEvent, CellValueChangedEvent, ChartOptionsChanged, ColumnAggFuncChangeRequestEvent, ColumnEverythingChangedEvent, ColumnGroupOpenedEvent, ColumnMovedEvent, ColumnPinnedEvent, ColumnPivotChangedEvent, ColumnPivotChangeRequestEvent, ColumnPivotModeChangedEvent, ColumnResizedEvent, ColumnRowGroupChangedEvent, ColumnRowGroupChangeRequestEvent, ColumnValueChangedEvent, ColumnValueChangeRequestEvent, ColumnVisibleEvent, DisplayedColumnsChangedEvent, DragStartedEvent, DragStoppedEvent, ExpandCollapseAllEvent, FilterChangedEvent, FilterModifiedEvent, FirstDataRenderedEvent, GridColumnsChangedEvent, GridReadyEvent, ModelUpdatedEvent, NewColumnsLoadedEvent, PaginationChangedEvent, PasteStartEvent, PasteEndEvent, FillStartEvent, FillEndEvent, PinnedRowDataChangedEvent, RangeSelectionChangedEvent, ChartRangeSelectionChanged, RowClickedEvent, RowDataChangedEvent, RowDataUpdatedEvent, RowDoubleClickedEvent, RowDragEvent, RowEditingStartedEvent, RowEditingStoppedEvent, RowGroupOpenedEvent, RowSelectedEvent, RowValueChangedEvent, SelectionChangedEvent, SortChangedEvent, ViewportChangedEvent, VirtualColumnsChangedEvent, VirtualRowRemovedEvent, ToolPanelVisibleChangedEvent } from "../events";
+import { BodyScrollEvent, CellClickedEvent, CellContextMenuEvent, CellDoubleClickedEvent, CellEditingStartedEvent, CellEditingStoppedEvent, CellFocusedEvent, CellKeyDownEvent, CellKeyPressEvent, CellMouseDownEvent, CellMouseOutEvent, CellMouseOverEvent, CellValueChangedEvent, ChartOptionsChanged, ColumnAggFuncChangeRequestEvent, ColumnEverythingChangedEvent, ColumnGroupOpenedEvent, ColumnMovedEvent, ColumnPinnedEvent, ColumnPivotChangedEvent, ColumnPivotChangeRequestEvent, ColumnPivotModeChangedEvent, ColumnResizedEvent, ColumnRowGroupChangedEvent, ColumnRowGroupChangeRequestEvent, ColumnValueChangedEvent, ColumnValueChangeRequestEvent, ColumnVisibleEvent, DisplayedColumnsChangedEvent, DragStartedEvent, DragStoppedEvent, ExpandCollapseAllEvent, FilterChangedEvent, FilterModifiedEvent, FirstDataRenderedEvent, GridColumnsChangedEvent, GridReadyEvent, ModelUpdatedEvent, NewColumnsLoadedEvent, PaginationChangedEvent, PasteStartEvent, PasteEndEvent, FillStartEvent, FillEndEvent, PinnedRowDataChangedEvent, RangeSelectionChangedEvent, ChartRangeSelectionChanged, RowClickedEvent, RowDataChangedEvent, RowDataUpdatedEvent, RowDoubleClickedEvent, RowDragEvent, RowEditingStartedEvent, RowEditingStoppedEvent, RowGroupOpenedEvent, RowSelectedEvent, RowValueChangedEvent, SelectionChangedEvent, SortChangedEvent, ViewportChangedEvent, VirtualColumnsChangedEvent, VirtualRowRemovedEvent, ToolPanelVisibleChangedEvent, ChartCreated, ChartDestroyed } from "../events";
 import { IComponent } from "../interfaces/iComponent";
 import { AgGridRegisteredComponentInput } from "../components/framework/userComponentRegistry";
 import { ILoadingOverlayComp } from "../rendering/overlays/loadingOverlayComponent";
@@ -28,6 +28,8 @@ export interface GridOptions {
     suppressBrowserResizeObserver?: boolean;
     rowDragManaged?: boolean;
     suppressRowDrag?: boolean;
+    suppressMoveWhenRowDragging?: boolean;
+    enableMultiRowDragging?: boolean;
     ensureDomOrder?: boolean;
     deltaRowDataMode?: boolean;
     deltaColumnMode?: boolean;
@@ -55,7 +57,7 @@ export interface GridOptions {
     suppressCellSelection?: boolean;
     suppressClearOnFillReduction?: boolean;
     suppressMaintainUnsortedOrder?: boolean;
-    sortingOrder?: string[];
+    sortingOrder?: (string | null)[];
     suppressMultiSort?: boolean;
     multiSortKey?: string;
     accentedSort?: boolean;
@@ -65,6 +67,7 @@ export interface GridOptions {
     suppressTabbing?: boolean;
     unSortIcon?: boolean;
     rowBuffer?: number;
+    tooltipShowDelay?: number;
     enableRtl?: boolean;
     /** @deprecated in v20, use colDef.resizable instead */
     enableColResize?: boolean;
@@ -308,10 +311,12 @@ export interface GridOptions {
         new (): ILoadingOverlayComp;
     } | string;
     loadingOverlayComponentFramework?: any;
+    loadingOverlayComponentParams?: any;
     noRowsOverlayComponent?: {
         new (): INoRowsOverlayComp;
     } | string;
     noRowsOverlayComponentFramework?: any;
+    noRowsOverlayComponentParams?: any;
     fullWidthCellRenderer?: {
         new (): ICellRendererComp;
     } | ICellRendererFunc | string;
@@ -364,7 +369,6 @@ export interface GridOptions {
     onRowDataUpdated?(event: RowDataUpdatedEvent): void;
     onPinnedRowDataChanged?(event: PinnedRowDataChangedEvent): void;
     onRangeSelectionChanged?(event: RangeSelectionChangedEvent): void;
-    onChartRangeSelectionChanged?(event: ChartRangeSelectionChanged): void;
     onColumnRowGroupChangeRequest?(event: ColumnRowGroupChangeRequestEvent): void;
     onColumnPivotChangeRequest?(event: ColumnPivotChangeRequestEvent): void;
     onColumnValueChangeRequest?(event: ColumnValueChangeRequestEvent): void;
@@ -409,7 +413,10 @@ export interface GridOptions {
     onBodyScroll?(event: BodyScrollEvent): void;
     onFirstDataRendered?(event: FirstDataRenderedEvent): void;
     onExpandOrCollapseAll?(event: ExpandCollapseAllEvent): void;
+    onChartCreated?(event: ChartCreated): void;
+    onChartRangeSelectionChanged?(event: ChartRangeSelectionChanged): void;
     onChartOptionsChanged?(event: ChartOptionsChanged): void;
+    onChartDestroyed?(event: ChartDestroyed): void;
     /** @deprecated */
     onGridSizeChanged?(event: any): void;
     api?: GridApi | null;

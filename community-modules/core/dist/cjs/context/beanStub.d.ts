@@ -1,4 +1,4 @@
-// Type definitions for @ag-grid-community/core v22.1.1
+// Type definitions for @ag-grid-community/core v23.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { IEventEmitter } from "../interfaces/iEventEmitter";
@@ -21,7 +21,7 @@ export declare class BeanStub implements IEventEmitter {
     removeEventListener(eventType: string, listener: Function): void;
     dispatchEventAsync(event: AgEvent): void;
     dispatchEvent<T extends AgEvent>(event: T): void;
-    addDestroyableEventListener(object: Window | HTMLElement | IEventEmitter | GridOptionsWrapper, event: string, listener: (event?: any) => void): (() => void) | undefined;
+    addDestroyableEventListener(object: Window | HTMLElement | IEventEmitter | GridOptionsWrapper, event: string, listener: (event?: any) => void): (() => null) | undefined;
     isAlive: () => boolean;
     addDestroyFunc(func: () => void): void;
     wireDependentBean<T extends BeanStub>(bean: T, context?: Context): T;

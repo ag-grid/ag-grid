@@ -1,4 +1,4 @@
-import { Component, FontWeight, FontStyle } from "@ag-grid-community/core";
+import { Component, FontStyle, FontWeight } from "@ag-grid-community/core";
 export declare type Font = {
     family?: string;
     style?: FontStyle;

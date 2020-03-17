@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v22.1.1
+ * @version v23.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -102,6 +102,14 @@ var Utils = /** @class */ (function () {
         var results = funcNameRegex.exec(funcAsString);
         return results && results.length > 1 ? results[1] : "";
     };
+    Utils.areEqual = function (a, b) {
+        return a.length === b.length && a.every(function (value, index) { return b[index] === value; });
+    };
+    Utils.keys = function (map) {
+        var keys = [];
+        map.forEach(function (_, key) { return keys.push(key); });
+        return keys;
+    };
     Utils.getValueUsingField = function (data, field, fieldContainsDots) {
         if (!field || !data) {
             return;
@@ -110,18 +118,16 @@ var Utils = /** @class */ (function () {
         if (!fieldContainsDots) {
             return data[field];
         }
-        else {
-            // otherwise it is a deep value, so need to dig for it
-            var fields = field.split('.');
-            var currentObject = data;
-            for (var i = 0; i < fields.length; i++) {
-                currentObject = currentObject[fields[i]];
-                if (this.missing(currentObject)) {
-                    return null;
-                }
+        // otherwise it is a deep value, so need to dig for it
+        var fields = field.split('.');
+        var currentObject = data;
+        for (var i = 0; i < fields.length; i++) {
+            currentObject = currentObject[fields[i]];
+            if (this.missing(currentObject)) {
+                return null;
             }
-            return currentObject;
         }
+        return currentObject;
     };
     Utils.getElementSize = function (el) {
         var _a = window.getComputedStyle(el), height = _a.height, width = _a.width, paddingTop = _a.paddingTop, paddingRight = _a.paddingRight, paddingBottom = _a.paddingBottom, paddingLeft = _a.paddingLeft, marginTop = _a.marginTop, marginRight = _a.marginRight, marginBottom = _a.marginBottom, marginLeft = _a.marginLeft, boxSizing = _a.boxSizing;
@@ -187,6 +193,97 @@ var Utils = /** @class */ (function () {
         }
         return value;
     };
+    Utils.compose = function () {
+        var fns = [];
+        for (var _i = 0; _i < arguments.length; _i++) {
+            fns[_i] = arguments[_i];
+        }
+        return function (arg) { return fns.reduce(function (composed, f) { return f(composed); }, arg); };
+    };
+    Utils.decToHex = function (number, bytes) {
+        var hex = '';
+        for (var i = 0; i < bytes; i++) {
+            hex += String.fromCharCode(number & 0xff);
+            number >>>= 8;
+        }
+        return hex;
+    };
+    /**
+     * It encodes any string in UTF-8 format
+     * taken from https://github.com/mathiasbynens/utf8.js
+     * @param {string} s
+     * @returns {string}
+     */
+    Utils.utf8_encode = function (s) {
+        var stringFromCharCode = String.fromCharCode;
+        function ucs2decode(string) {
+            var output = [];
+            var counter = 0;
+            var length = string.length;
+            var value;
+            var extra;
+            while (counter < length) {
+                value = string.charCodeAt(counter++);
+                if (value >= 0xD800 && value <= 0xDBFF && counter < length) {
+                    // high surrogate, and there is a next character
+                    extra = string.charCodeAt(counter++);
+                    if ((extra & 0xFC00) == 0xDC00) { // low surrogate
+                        output.push(((value & 0x3FF) << 10) + (extra & 0x3FF) + 0x10000);
+                    }
+                    else {
+                        // unmatched surrogate; only append this code unit, in case the next
+                        // code unit is the high surrogate of a surrogate pair
+                        output.push(value);
+                        counter--;
+                    }
+                }
+                else {
+                    output.push(value);
+                }
+            }
+            return output;
+        }
+        function checkScalarValue(codePoint) {
+            if (codePoint >= 0xD800 && codePoint <= 0xDFFF) {
+                throw Error('Lone surrogate U+' + codePoint.toString(16).toUpperCase() +
+                    ' is not a scalar value');
+            }
+        }
+        function createByte(codePoint, shift) {
+            return stringFromCharCode(((codePoint >> shift) & 0x3F) | 0x80);
+        }
+        function encodeCodePoint(codePoint) {
+            if ((codePoint & 0xFFFFFF80) == 0) { // 1-byte sequence
+                return stringFromCharCode(codePoint);
+            }
+            var symbol = '';
+            if ((codePoint & 0xFFFFF800) == 0) { // 2-byte sequence
+                symbol = stringFromCharCode(((codePoint >> 6) & 0x1F) | 0xC0);
+            }
+            else if ((codePoint & 0xFFFF0000) == 0) { // 3-byte sequence
+                checkScalarValue(codePoint);
+                symbol = stringFromCharCode(((codePoint >> 12) & 0x0F) | 0xE0);
+                symbol += createByte(codePoint, 6);
+            }
+            else if ((codePoint & 0xFFE00000) == 0) { // 4-byte sequence
+                symbol = stringFromCharCode(((codePoint >> 18) & 0x07) | 0xF0);
+                symbol += createByte(codePoint, 12);
+                symbol += createByte(codePoint, 6);
+            }
+            symbol += stringFromCharCode((codePoint & 0x3F) | 0x80);
+            return symbol;
+        }
+        var codePoints = ucs2decode(s);
+        var length = codePoints.length;
+        var index = -1;
+        var codePoint;
+        var byteString = '';
+        while (++index < length) {
+            codePoint = codePoints[index];
+            byteString += encodeCodePoint(codePoint);
+        }
+        return byteString;
+    };
     Utils.setScrollLeft = function (element, value, rtl) {
         if (rtl) {
             // Chrome and Safari when doing RTL have the END position of the scroll as zero, not the start
@@ -229,6 +326,9 @@ var Utils = /** @class */ (function () {
             copy[key] = value;
         }
         return copy;
+    };
+    Utils.deepCloneObject = function (object) {
+        return JSON.parse(JSON.stringify(object));
     };
     /**
      * Will copy the specified properties from `source` into the equivalent properties on `target`, ignoring properties with
@@ -321,8 +421,51 @@ var Utils = /** @class */ (function () {
         }
         return date.getFullYear() + separator + this.padStart(date.getMonth() + 1, 2) + separator + this.padStart(date.getDate(), 2);
     };
+    Utils.getTimeFromDate = function (date) {
+        if (!date) {
+            return null;
+        }
+        return this.padStart(date.getHours(), 2) + ":" + this.padStart(date.getMinutes(), 2) + ":" + this.padStart(date.getSeconds(), 2);
+    };
+    Utils.normalizeTime = function (time) {
+        if (!time) {
+            return '00:00:00';
+        }
+        var hoursStr = '00';
+        var minutesStr = '00';
+        var secondsStr = '00';
+        var _a = time.split(':').map(Number), hours = _a[0], minutes = _a[1], seconds = _a[2];
+        if (hours >= 0 && hours <= 24) {
+            hoursStr = _.padStart(hours, 2);
+        }
+        if (minutes >= 0 && minutes <= 59) {
+            minutesStr = _.padStart(minutes, 2);
+        }
+        if (seconds >= 0 && seconds <= 59) {
+            secondsStr = _.padStart(seconds, 2);
+        }
+        return hoursStr + ":" + minutesStr + ":" + secondsStr;
+    };
+    Utils.getDateFromString = function (fullDate) {
+        if (!fullDate) {
+            return null;
+        }
+        var _a = fullDate.split(' '), dateStr = _a[0], timeStr = _a[1];
+        var date = _.parseYyyyMmDdToDate(dateStr, '-');
+        if (!date) {
+            return null;
+        }
+        if (!timeStr || timeStr === '00:00:00') {
+            return date;
+        }
+        var _b = _.normalizeTime(timeStr).split(':').map(Number), hours = _b[0], minutes = _b[1], seconds = _b[2];
+        date.setHours(hours);
+        date.setMinutes(minutes);
+        date.setSeconds(seconds);
+        return date;
+    };
     Utils.padStart = function (num, totalStringSize) {
-        var asString = num + "";
+        var asString = "" + num;
         while (asString.length < totalStringSize) {
             asString = "0" + asString;
         }
@@ -347,9 +490,7 @@ var Utils = /** @class */ (function () {
         if (result === null) {
             return [];
         }
-        else {
-            return result;
-        }
+        return result;
     };
     Utils.find = function (collection, predicate, value) {
         if (collection === null || collection === undefined) {
@@ -384,9 +525,7 @@ var Utils = /** @class */ (function () {
             if (item === undefined || item === null || !item.toString) {
                 return null;
             }
-            else {
-                return item.toString();
-            }
+            return item.toString();
         });
     };
     Utils.findIndex = function (collection, predicate) {
@@ -404,8 +543,9 @@ var Utils = /** @class */ (function () {
      * @return {boolean}
      */
     Utils.isNode = function (o) {
-        return (typeof Node === "function" ? o instanceof Node :
-            o && typeof o === "object" && typeof o.nodeType === "number" && typeof o.nodeName === "string");
+        return (typeof Node === "function"
+            ? o instanceof Node
+            : o && typeof o === "object" && typeof o.nodeType === "number" && typeof o.nodeName === "string");
     };
     //
     /**
@@ -415,8 +555,9 @@ var Utils = /** @class */ (function () {
      * @returns {boolean}
      */
     Utils.isElement = function (o) {
-        return (typeof HTMLElement === "function" ? o instanceof HTMLElement : //DOM2
-            o && typeof o === "object" && o !== null && o.nodeType === 1 && typeof o.nodeName === "string");
+        return (typeof HTMLElement === "function"
+            ? o instanceof HTMLElement //DOM2
+            : o && typeof o === "object" && o !== null && o.nodeType === 1 && typeof o.nodeName === "string");
     };
     Utils.isNodeOrElement = function (o) {
         return this.isNode(o) || this.isElement(o);
@@ -458,11 +599,9 @@ var Utils = /** @class */ (function () {
             var numpadDelWithNumlockOnForEdgeOrIe = Utils.isNumpadDelWithNumlockOnForEdgeOrIe(event);
             return printableCharacter || numpadDelWithNumlockOnForEdgeOrIe;
         }
-        else {
-            // otherwise, for older browsers, we test against a list of characters, which doesn't include
-            // accents for non-English, but don't care much, as most users are on modern browsers
-            return Utils.PRINTABLE_CHARACTERS.indexOf(pressedChar) >= 0;
-        }
+        // otherwise, for older browsers, we test against a list of characters, which doesn't include
+        // accents for non-English, but don't care much, as most users are on modern browsers
+        return Utils.PRINTABLE_CHARACTERS.indexOf(pressedChar) >= 0;
     };
     /**
      * Allows user to tell the grid to skip specific keyboard events
@@ -503,10 +642,8 @@ var Utils = /** @class */ (function () {
             // if gridOption func, return the result
             return gridOptionsFunc(params);
         }
-        else {
-            // otherwise return false, don't suppress, as colDef didn't suppress and no func on gridOptions
-            return false;
-        }
+        // otherwise return false, don't suppress, as colDef didn't suppress and no func on gridOptions
+        return false;
     };
     Utils.getCellCompForEvent = function (gridOptionsWrapper, event) {
         var sourceElement = this.getTarget(event);
@@ -640,15 +777,19 @@ var Utils = /** @class */ (function () {
      * This method adds a class to an element and remove that class from all siblings.
      * Useful for toggling state.
      * @param {HTMLElement} element The element to receive the class
-     * @param {string} className The class to be assigned to the element
-     * @param {boolean} [inverted] This inverts the effect, adding the class to all siblings and
-     *        removing from the relevant element (useful when adding a class to hide non-selected elements).
+     * @param {string} elementClass The class to be assigned to the element
+     * @param {boolean} otherElementClass The class to be assigned to siblings of the element, but not the element itself
      */
-    Utils.radioCssClass = function (element, className, inverted) {
+    Utils.radioCssClass = function (element, elementClass, otherElementClass) {
         var parent = element.parentElement;
         var sibling = parent.firstChild;
         while (sibling) {
-            _.addOrRemoveCssClass(sibling, className, inverted ? (sibling !== element) : (sibling === element));
+            if (elementClass) {
+                _.addOrRemoveCssClass(sibling, elementClass, sibling === element);
+            }
+            if (otherElementClass) {
+                _.addOrRemoveCssClass(sibling, otherElementClass, sibling !== element);
+            }
             sibling = sibling.nextSibling;
         }
     };
@@ -676,6 +817,7 @@ var Utils = /** @class */ (function () {
             // a read-only assignment error on some browsers (IE/Edge).
             element.setAttribute('class', className);
         }
+        return element;
     };
     Utils.removeCssClass = function (element, className) {
         if (element.classList) {
@@ -691,7 +833,7 @@ var Utils = /** @class */ (function () {
             // for modern browsers
             return element.classList.contains(className);
         }
-        else if (element.className) {
+        if (element.className) {
             // for older browsers, check against the string of class names
             // if only one class, can check for exact match
             var onlyClass = element.className === className;
@@ -703,19 +845,15 @@ var Utils = /** @class */ (function () {
             var endsWithClass = element.className.lastIndexOf(' ' + className) === (element.className.length - className.length - 1);
             return onlyClass || contains || startsWithClass || endsWithClass;
         }
-        else {
-            // if item is not a node
-            return false;
-        }
+        // if item is not a node
+        return false;
     };
     Utils.getElementAttribute = function (element, attributeName) {
         if (element.attributes && element.attributes[attributeName]) {
             var attribute = element.attributes[attributeName];
             return attribute.value;
         }
-        else {
-            return null;
-        }
+        return null;
     };
     Utils.offsetHeight = function (element) {
         return element && element.clientHeight ? element.clientHeight : 0;
@@ -777,6 +915,9 @@ var Utils = /** @class */ (function () {
         if (accentedCompare === void 0) { accentedCompare = false; }
         var valueAMissing = valueA === null || valueA === undefined;
         var valueBMissing = valueB === null || valueB === undefined;
+        function doQuickCompare(a, b) {
+            return (a > b ? 1 : (a < b ? -1 : 0));
+        }
         // this is for aggregations sum and avg, where the result can be a number that is wrapped.
         // if we didn't do this, then the toString() value would be used, which would result in
         // the strings getting used instead of the numbers.
@@ -799,16 +940,14 @@ var Utils = /** @class */ (function () {
             if (!accentedCompare) {
                 return doQuickCompare(valueA, valueB);
             }
-            else {
-                try {
-                    // using local compare also allows chinese comparisons
-                    return valueA.localeCompare(valueB);
-                }
-                catch (e) {
-                    // if something wrong with localeCompare, eg not supported
-                    // by browser, then just continue with the quick one
-                    return doQuickCompare(valueA, valueB);
-                }
+            try {
+                // using local compare also allows chinese comparisons
+                return valueA.localeCompare(valueB);
+            }
+            catch (e) {
+                // if something wrong with localeCompare, eg not supported
+                // by browser, then just continue with the quick one
+                return doQuickCompare(valueA, valueB);
             }
         }
         if (valueA < valueB) {
@@ -817,12 +956,7 @@ var Utils = /** @class */ (function () {
         else if (valueA > valueB) {
             return 1;
         }
-        else {
-            return 0;
-        }
-        function doQuickCompare(a, b) {
-            return (a > b ? 1 : (a < b ? -1 : 0));
-        }
+        return 0;
     };
     Utils.last = function (arr) {
         if (!arr || !arr.length) {
@@ -915,17 +1049,13 @@ var Utils = /** @class */ (function () {
         if (this.exists(value) && value.toString) {
             return value.toString();
         }
-        else {
-            return null;
-        }
+        return null;
     };
     Utils.formatSize = function (size) {
         if (typeof size === "number") {
             return size + "px";
         }
-        else {
-            return size;
-        }
+        return size;
     };
     Utils.formatNumberTwoDecimalPlacesAndCommas = function (value) {
         if (typeof value !== 'number') {
@@ -993,11 +1123,9 @@ var Utils = /** @class */ (function () {
         if (iconContents.className.indexOf('ag-icon') > -1) {
             return iconContents;
         }
-        else {
-            var eResult = document.createElement('span');
-            eResult.appendChild(iconContents);
-            return eResult;
-        }
+        var eResult = document.createElement('span');
+        eResult.appendChild(iconContents);
+        return eResult;
     };
     Utils.createIconNoSpan = function (iconName, gridOptionsWrapper, column, forceCreate) {
         var userProvidedIcon = null;
@@ -1047,7 +1175,7 @@ var Utils = /** @class */ (function () {
                     cssClass = iconName;
                 }
             }
-            span.setAttribute("class", "ag-icon ag-icon-" + cssClass);
+            span.setAttribute('class', "ag-icon ag-icon-" + cssClass);
             span.setAttribute("unselectable", "on");
             return span;
         }
@@ -1080,13 +1208,13 @@ var Utils = /** @class */ (function () {
         var div = this.loadTemplate("<div/>");
         document.body.appendChild(div);
         while (true) {
-            var test = res * 2;
-            div.style.height = test + 'px';
-            if (test > testUpTo || div.clientHeight !== test) {
+            var test_1 = res * 2;
+            div.style.height = test_1 + 'px';
+            if (test_1 > testUpTo || div.clientHeight !== test_1) {
                 break;
             }
             else {
-                res = test;
+                res = test_1;
             }
         }
         document.body.removeChild(div);
@@ -1299,29 +1427,28 @@ var Utils = /** @class */ (function () {
             // IE supports deep path
             return eventNoType.deepPath();
         }
-        else if (eventNoType.path) {
+        if (eventNoType.path) {
             // Chrome supports path
             return eventNoType.path;
         }
-        else if (eventNoType.composedPath) {
+        if (eventNoType.composedPath) {
             // Firefox supports composePath
             return eventNoType.composedPath();
         }
-        else if (eventNoType.__agGridEventPath) {
+        if (eventNoType.__agGridEventPath) {
             // Firefox supports composePath
             return eventNoType.__agGridEventPath;
         }
-        else {
-            // and finally, if none of the above worked,
-            // we create the path ourselves
-            return this.createEventPath(event);
-        }
+        // and finally, if none of the above worked,
+        // we create the path ourselves
+        return this.createEventPath(event);
     };
     Utils.forEachSnapshotFirst = function (list, callback) {
-        if (list) {
-            var arrayCopy = list.slice(0);
-            arrayCopy.forEach(callback);
+        if (!list) {
+            return;
         }
+        var arrayCopy = list.slice(0);
+        arrayCopy.forEach(callback);
     };
     /**
      * Gets the document body width
@@ -1663,7 +1790,7 @@ var Utils = /** @class */ (function () {
      * popup listens for clicks on the body, however ag-grid WAS stopping propagation on the
      * checkbox clicks (so the rows didn't pick them up as row selection selection clicks).
      * to get around this, we have a pattern to stop propagation for the purposes of ag-Grid,
-     * but we still let the event pass back to teh body.
+     * but we still let the event pass back to the body.
      * @param {Event} event
      */
     Utils.stopPropagationForAgGrid = function (event) {
@@ -1760,8 +1887,8 @@ var Utils = /** @class */ (function () {
      */
     Utils.message = function (msg) {
         var eMessage = document.createElement('div');
-        eMessage.innerHTML = msg;
         var eBox = document.querySelector('#__ag__message');
+        eMessage.innerHTML = msg;
         if (!eBox) {
             var template = "<div id=\"__ag__message\" style=\"display: inline-block; position: absolute; top: 0px; left: 0px; color: white; background-color: black; z-index: 20; padding: 2px; border: 1px solid darkred; height: 200px; overflow-y: auto;\"></div>";
             eBox = this.loadTemplate(template);
@@ -1795,7 +1922,7 @@ var Utils = /** @class */ (function () {
                 // have indexes
                 return positionA - positionB;
             }
-            else if (bothNodesAreFillerNodes) {
+            if (bothNodesAreFillerNodes) {
                 // when comparing two filler nodes, we have no index to compare them
                 // against, however we want this sorting to be deterministic, so that
                 // the rows don't jump around as the user does delta updates. so we
@@ -1807,7 +1934,7 @@ var Utils = /** @class */ (function () {
                 // as least gives better looking order.
                 return nodeA.__objectId - nodeB.__objectId;
             }
-            else if (aHasIndex) {
+            if (aHasIndex) {
                 return 1;
             }
             return -1;
@@ -1991,116 +2118,14 @@ var Utils = /** @class */ (function () {
         };
         return isEventSupported;
     })();
-    Utils.areEqual = function (a, b) {
-        return a.length === b.length && a.every(function (value, index) { return b[index] === value; });
-    };
-    Utils.keys = function (map) {
-        var keys = [];
-        map.forEach(function (_, key) { return keys.push(key); });
-        return keys;
-    };
     Utils.values = function (object) { return Object.keys(object).map(function (key) { return object[key]; }); };
     Utils.includes = function (array, value) { return array.indexOf(value) > -1; };
-    Utils.compose = function () {
-        var fns = [];
-        for (var _i = 0; _i < arguments.length; _i++) {
-            fns[_i] = arguments[_i];
-        }
-        return function (arg) { return fns.reduce(function (composed, f) { return f(composed); }, arg); };
-    };
-    Utils.decToHex = function (number, bytes) {
-        var hex = '';
-        for (var i = 0; i < bytes; i++) {
-            hex += String.fromCharCode(number & 0xff);
-            number >>>= 8;
-        }
-        return hex;
-    };
-    /**
-     * It encodes any string in UTF-8 format
-     * taken from https://github.com/mathiasbynens/utf8.js
-     * @param {string} s
-     * @returns {string}
-     */
-    Utils.utf8_encode = function (s) {
-        var stringFromCharCode = String.fromCharCode;
-        function ucs2decode(string) {
-            var output = [];
-            var counter = 0;
-            var length = string.length;
-            var value;
-            var extra;
-            while (counter < length) {
-                value = string.charCodeAt(counter++);
-                if (value >= 0xD800 && value <= 0xDBFF && counter < length) {
-                    // high surrogate, and there is a next character
-                    extra = string.charCodeAt(counter++);
-                    if ((extra & 0xFC00) == 0xDC00) { // low surrogate
-                        output.push(((value & 0x3FF) << 10) + (extra & 0x3FF) + 0x10000);
-                    }
-                    else {
-                        // unmatched surrogate; only append this code unit, in case the next
-                        // code unit is the high surrogate of a surrogate pair
-                        output.push(value);
-                        counter--;
-                    }
-                }
-                else {
-                    output.push(value);
-                }
-            }
-            return output;
-        }
-        function checkScalarValue(codePoint) {
-            if (codePoint >= 0xD800 && codePoint <= 0xDFFF) {
-                throw Error('Lone surrogate U+' + codePoint.toString(16).toUpperCase() +
-                    ' is not a scalar value');
-            }
-        }
-        function createByte(codePoint, shift) {
-            return stringFromCharCode(((codePoint >> shift) & 0x3F) | 0x80);
-        }
-        function encodeCodePoint(codePoint) {
-            if ((codePoint & 0xFFFFFF80) == 0) { // 1-byte sequence
-                return stringFromCharCode(codePoint);
-            }
-            var symbol = '';
-            if ((codePoint & 0xFFFFF800) == 0) { // 2-byte sequence
-                symbol = stringFromCharCode(((codePoint >> 6) & 0x1F) | 0xC0);
-            }
-            else if ((codePoint & 0xFFFF0000) == 0) { // 3-byte sequence
-                checkScalarValue(codePoint);
-                symbol = stringFromCharCode(((codePoint >> 12) & 0x0F) | 0xE0);
-                symbol += createByte(codePoint, 6);
-            }
-            else if ((codePoint & 0xFFE00000) == 0) { // 4-byte sequence
-                symbol = stringFromCharCode(((codePoint >> 18) & 0x07) | 0xF0);
-                symbol += createByte(codePoint, 12);
-                symbol += createByte(codePoint, 6);
-            }
-            symbol += stringFromCharCode((codePoint & 0x3F) | 0x80);
-            return symbol;
-        }
-        var codePoints = ucs2decode(s);
-        var length = codePoints.length;
-        var index = -1;
-        var codePoint;
-        var byteString = '';
-        while (++index < length) {
-            codePoint = codePoints[index];
-            byteString += encodeCodePoint(codePoint);
-        }
-        return byteString;
-    };
-    Utils.deepCloneObject = function (object) { return JSON.parse(JSON.stringify(object)); };
     Utils.getProperty = function (object, key) { return object[key]; };
     Utils.setProperty = function (object, key, value) { return object[key] = value; };
     //
     // IMPORTANT NOTE!
     //
-    // The comments below provide one example of how each icon is used, so that you can find
-    // an instance of it in the UI and see what it looks like in the UI. Many icons are used
-    // in multiple places.
+    // If you change the list below, copy/paste the new content into the docs page javascript-grid-icons
     //
     Utils.iconNameClassMap = {
         // header column group shown when expanded (click to contract)
@@ -2116,8 +2141,6 @@ var Utils = /** @class */ (function () {
         columnSelectIndeterminate: 'tree-indeterminate',
         // shown on ghost icon while dragging column to the side of the grid to pin
         columnMovePin: 'pin',
-        // ??? doesn't seem to be used?
-        columnMoveAdd: 'plus',
         // shown on ghost icon while dragging over part of the page that is not a drop zone
         columnMoveHide: 'eye-slash',
         // shown on ghost icon while dragging columns to reorder
@@ -2136,9 +2159,9 @@ var Utils = /** @class */ (function () {
         //     string column over aggregation drop zone
         dropNotAllowed: 'not-allowed',
         // shown on row group when contracted (click to expand)
-        groupContracted: 'contracted',
+        groupContracted: 'tree-closed',
         // shown on row group when expanded (click to contract)
-        groupExpanded: 'expanded',
+        groupExpanded: 'tree-open',
         // context menu chart item
         chart: 'chart',
         // chart window title bar
@@ -2147,14 +2170,6 @@ var Utils = /** @class */ (function () {
         cancel: 'cancel',
         // indicates the currently active pin state in the "Pin column" sub-menu of the column menu
         check: 'tick',
-        // the following checkbox-* items are for checkboxes on themes that don't use a
-        //     native <input type="radio">
-        checkboxChecked: 'checkbox-checked',
-        checkboxUnchecked: 'checkbox-unchecked',
-        checkboxIndeterminate: 'checkbox-indeterminate',
-        checkboxCheckedReadOnly: 'checkbox-checked-readonly',
-        checkboxUncheckedReadOnly: 'checkbox-unchecked-readonly',
-        checkboxIndeterminateReadOnly: 'checkbox-indeterminate-readonly',
         // "go to first" button in pagination controls
         first: 'first',
         // "go to previous" button in pagination controls
@@ -2169,14 +2184,8 @@ var Utils = /** @class */ (function () {
         unlinked: 'unlinked',
         // "Choose colour" button on chart settings tab
         colorPicker: 'color-picker',
-        // the following radio-button-* items are for radio buttons on themes that don't use a
-        //     native <input type="radio">
-        radioButtonOn: 'radio-button-on',
-        radioButtonOff: 'radio-button-off',
         // rotating spinner shown by the loading cell renderer
         groupLoading: 'loading',
-        // ??? doesn't seem to be used?
-        data: 'data',
         // button to launch enterprise column menu
         menu: 'menu',
         // filter tool panel tab
@@ -2197,8 +2206,6 @@ var Utils = /** @class */ (function () {
         menuRemoveRowGroup: 'group',
         // context menu copy item
         clipboardCopy: 'copy',
-        // ??? doesn't seem toi be used?
-        clipboardCut: 'cut',
         // context menu paste item
         clipboardPaste: 'paste',
         // identifies the pivot drop zone
@@ -2213,14 +2220,13 @@ var Utils = /** @class */ (function () {
         rowDrag: 'grip',
         // context menu export item
         save: 'save',
+        // icon on dropdown editors
+        smallDown: 'small-down',
         // version of small-right used in RTL mode
         smallLeft: 'small-left',
         // separater between column 'pills' when you add multiple columns to the header drop zone
         smallRight: 'small-right',
-        // ??? doesn't seem to be used?
         smallUp: 'small-up',
-        // ??? doesn't seem to be used?
-        smallDown: 'small-down',
         // show on column header when column is sorted ascending
         sortAscending: 'asc',
         // show on column header when column is sorted descending
@@ -2231,25 +2237,4 @@ var Utils = /** @class */ (function () {
     return Utils;
 }());
 export { Utils };
-var NumberSequence = /** @class */ (function () {
-    function NumberSequence(initValue, step) {
-        if (initValue === void 0) { initValue = 0; }
-        if (step === void 0) { step = 1; }
-        this.nextValue = initValue;
-        this.step = step;
-    }
-    NumberSequence.prototype.next = function () {
-        var valToReturn = this.nextValue;
-        this.nextValue += this.step;
-        return valToReturn;
-    };
-    NumberSequence.prototype.peek = function () {
-        return this.nextValue;
-    };
-    NumberSequence.prototype.skip = function (count) {
-        this.nextValue += count;
-    };
-    return NumberSequence;
-}());
-export { NumberSequence };
 export var _ = Utils;

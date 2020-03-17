@@ -6,11 +6,10 @@ export interface IInputField extends IAgLabel {
 }
 export declare type FieldElement = HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement;
 export declare abstract class AgAbstractInputField<T extends FieldElement, K> extends AgAbstractField<K> {
-    protected abstract className: string;
     protected abstract inputType: string;
     protected config: IInputField;
     protected TEMPLATE: string;
-    protected eLabel: HTMLElement;
+    protected eLabel: HTMLLabelElement;
     protected eWrapper: HTMLElement;
     protected eInput: T;
     protected postConstruct(): void;
@@ -19,4 +18,8 @@ export declare abstract class AgAbstractInputField<T extends FieldElement, K> ex
     getInputElement(): FieldElement;
     setInputWidth(width: number | 'flex'): this;
     setInputName(name: string): this;
+    getFocusableElement(): HTMLElement;
+    setMaxLength(length: number): this;
+    setInputPlaceholder(placeholder: string): this;
+    setDisabled(disabled: boolean): this;
 }

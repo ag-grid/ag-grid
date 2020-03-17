@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v22.1.1
+ * @version v23.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -34,7 +34,7 @@ import { ProvidedFilter } from "../providedFilter";
 var DateFloatingFilter = /** @class */ (function (_super) {
     __extends(DateFloatingFilter, _super);
     function DateFloatingFilter() {
-        return _super.call(this, "<div class=\"ag-input-wrapper\" role=\"presentation\">\n                <input ref=\"eReadOnlyText\" disabled=\"true\" class=\"ag-floating-filter-input\">\n                <div ref=\"eDateWrapper\" style=\"display: flex; flex: 1 1 auto; overflow: hidden;\"></div>\n            </div>") || this;
+        return _super.call(this, "<div class=\"ag-floating-filter-input\" role=\"presentation\">\n                <ag-input-text-field ref=\"eReadOnlyText\"></ag-input-text-field>\n                <div ref=\"eDateWrapper\" style=\"display: flex; overflow: hidden;\"></div>\n            </div>") || this;
     }
     DateFloatingFilter.prototype.getDefaultFilterOptions = function () {
         return DateFilter.DEFAULT_FILTER_OPTIONS;
@@ -44,24 +44,21 @@ var DateFloatingFilter = /** @class */ (function (_super) {
         if (isRange) {
             return condition.dateFrom + "-" + condition.dateTo;
         }
-        else {
-            // cater for when the type doesn't need a value
-            if (condition.dateFrom != null) {
-                return "" + condition.dateFrom;
-            }
-            else {
-                return "" + condition.type;
-            }
+        // cater for when the type doesn't need a value
+        if (condition.dateFrom != null) {
+            return "" + condition.dateFrom;
         }
+        return "" + condition.type;
     };
     DateFloatingFilter.prototype.init = function (params) {
         _super.prototype.init.call(this, params);
         this.params = params;
         this.createDateComponent();
+        this.eReadOnlyText.setDisabled(true);
     };
     DateFloatingFilter.prototype.setEditable = function (editable) {
         _.setDisplayed(this.eDateWrapper, editable);
-        _.setDisplayed(this.eReadOnlyText, !editable);
+        _.setDisplayed(this.eReadOnlyText.getGui(), !editable);
     };
     DateFloatingFilter.prototype.onParentModelChanged = function (model, event) {
         // we don't want to update the floating filter if the floating filter caused the change.
@@ -76,22 +73,22 @@ var DateFloatingFilter = /** @class */ (function (_super) {
         if (allowEditing) {
             if (model) {
                 var dateModel = model;
-                this.dateComp.setDate(_.parseYyyyMmDdToDate(dateModel.dateFrom, '-'));
+                this.dateComp.setDate(_.getDateFromString(dateModel.dateFrom));
             }
             else {
                 this.dateComp.setDate(null);
             }
-            this.eReadOnlyText.value = '';
+            this.eReadOnlyText.setValue('');
         }
         else {
-            this.eReadOnlyText.value = this.getTextFromModel(model);
+            this.eReadOnlyText.setValue(this.getTextFromModel(model));
             this.dateComp.setDate(null);
         }
     };
     DateFloatingFilter.prototype.onDateChanged = function () {
         var _this = this;
         var filterValueDate = this.dateComp.getDate();
-        var filterValueText = _.serializeDateToYyyyMmDd(filterValueDate, "-");
+        var filterValueText = _.serializeDateToYyyyMmDd(filterValueDate, "-") + " " + _.getTimeFromDate(filterValueDate);
         this.params.parentFilterInstance(function (filterInstance) {
             if (filterInstance) {
                 var simpleFilter = filterInstance;

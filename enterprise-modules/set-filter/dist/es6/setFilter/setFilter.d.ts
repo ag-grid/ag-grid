@@ -1,8 +1,8 @@
 import { IDoesFilterPassParams, ISetFilterParams, ProvidedFilter } from "@ag-grid-community/core";
+import { SetValueModel } from "./setValueModel";
 import { SetFilterModel } from "./setFilterModel";
 export declare class SetFilter extends ProvidedFilter {
     private valueModel;
-    private eSelectAllCheckbox;
     private eSelectAll;
     private eSelectAllContainer;
     private eMiniFilter;
@@ -12,19 +12,18 @@ export declare class SetFilter extends ProvidedFilter {
     private selectAllState;
     private setFilterParams;
     private virtualList;
-    private eCheckedIcon;
-    private eUncheckedIcon;
-    private eIndeterminateCheckedIcon;
     private appliedModelValuesMapped;
     protected updateUiVisibility(): void;
     protected createBodyTemplate(): string;
+    protected getCssIdentifier(): string;
     protected resetUiToDefaults(): void;
     protected setModelIntoUi(model: SetFilterModel): void;
     getModelFromUi(): SetFilterModel | null;
+    getValueModel(): SetValueModel;
     protected areModelsEqual(a: SetFilterModel, b: SetFilterModel): boolean;
     setParams(params: ISetFilterParams): void;
     private checkSetFilterDeprecatedParams;
-    private resetFilterValuesAndReapplyModel;
+    private syncValuesAfterDataChange;
     private setupSyncValuesAfterDataChange;
     private updateCheckboxIcon;
     setLoading(loading: boolean): void;

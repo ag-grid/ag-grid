@@ -26,7 +26,7 @@ Besides the standard set of features you'd expect from any grid:
 
 Here are some of the features that make ag-Grid stand out:
 
-* Grouping / Aggregation*
+* Grouping / Aggregation *
 * Custom Filtering
 * In-place Cell Editing
 * Records Lazy Loading *
@@ -97,7 +97,7 @@ Usage Overview
     let eGridDiv = document.querySelector('#myGrid');
     new Grid(eGridDiv, this.gridOptions);
 
-For more information on how to integrate the grid into your project see [TypeScript - Building with Webpack 2](https://www.ag-grid.com/ag-grid-typescript-webpack-2?utm_source=ag-grid-readme&utm_medium=repository&utm_campaign=github).
+For more information on how to integrate the grid into your project see [TypeScript - Building with Webpack 2](https://www.ag-grid.com/ag-grid-building-typescript?utm_source=ag-grid-readme&utm_medium=repository&utm_campaign=github).
 
 Issue Reporting
 ----------

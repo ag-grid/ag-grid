@@ -5,16 +5,17 @@ import {
     AgToggleButton,
     Autowired,
     Component,
-    PostConstruct,
-    RefSelector,
     FontStyle,
     FontWeight,
+    PostConstruct,
+    RefSelector,
+    AgGroupComponentParams,
 } from "@ag-grid-community/core";
-import { ChartController } from "../../../chartController";
-import { ShadowPanel } from "./shadowPanel";
-import { Font, FontPanel, FontPanelParams } from "../fontPanel";
-import { ChartTranslator } from "../../../chartTranslator";
-import { BarChartProxy } from "../../../chartProxies/cartesian/barChartProxy";
+import {ChartController} from "../../../chartController";
+import {ShadowPanel} from "./shadowPanel";
+import {Font, FontPanel, FontPanelParams} from "../fontPanel";
+import {ChartTranslator} from "../../../chartTranslator";
+import {BarChartProxy} from "../../../chartProxies/cartesian/barChartProxy";
 
 export class BarSeriesPanel extends Component {
 
@@ -46,7 +47,11 @@ export class BarSeriesPanel extends Component {
 
     @PostConstruct
     private init() {
-        this.setTemplate(BarSeriesPanel.TEMPLATE);
+        const groupParams: AgGroupComponentParams = {
+            cssIdentifier: 'charts-format-top-level',
+            direction: 'vertical'
+        };
+        this.setTemplate(BarSeriesPanel.TEMPLATE, {seriesGroup: groupParams});
 
         this.seriesGroup
             .setTitle(this.chartTranslator.translate("series"))
@@ -65,7 +70,7 @@ export class BarSeriesPanel extends Component {
             .setLabel(this.chartTranslator.translate("tooltips"))
             .setLabelAlignment("left")
             .setLabelWidth("flex")
-            .setInputWidth(40)
+            .setInputWidth(45)
             .setValue(this.getChartProxy().getSeriesOption("tooltip.enabled") || false)
             .onValueChange(newValue => this.getChartProxy().setSeriesOption("tooltip.enabled", newValue));
     }
@@ -110,11 +115,21 @@ export class BarSeriesPanel extends Component {
         const setFont = (font: Font) => {
             const chartProxy = this.getChartProxy();
 
-            if (font.family) { chartProxy.setSeriesOption("label.fontFamily", font.family); }
-            if (font.weight) { chartProxy.setSeriesOption("label.fontWeight", font.weight); }
-            if (font.style) { chartProxy.setSeriesOption("label.fontStyle", font.style); }
-            if (font.size) { chartProxy.setSeriesOption("label.fontSize", font.size); }
-            if (font.color) { chartProxy.setSeriesOption("label.color", font.color); }
+            if (font.family) {
+                chartProxy.setSeriesOption("label.fontFamily", font.family);
+            }
+            if (font.weight) {
+                chartProxy.setSeriesOption("label.fontWeight", font.weight);
+            }
+            if (font.style) {
+                chartProxy.setSeriesOption("label.fontStyle", font.style);
+            }
+            if (font.size) {
+                chartProxy.setSeriesOption("label.fontSize", font.size);
+            }
+            if (font.color) {
+                chartProxy.setSeriesOption("label.color", font.color);
+            }
         };
 
         const params: FontPanelParams = {

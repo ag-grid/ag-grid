@@ -30,7 +30,8 @@ export declare abstract class ProvidedFilter extends Component implements IFilte
     abstract doesFilterPass(params: IDoesFilterPassParams): boolean;
     protected abstract updateUiVisibility(): void;
     protected abstract createBodyTemplate(): string;
-    protected abstract resetUiToDefaults(): void;
+    protected abstract getCssIdentifier(): string;
+    protected abstract resetUiToDefaults(siltent?: boolean): void;
     protected abstract setModelIntoUi(model: ProvidedFilterModel): void;
     protected abstract areModelsEqual(a: ProvidedFilterModel, b: ProvidedFilterModel): boolean;
     abstract getModelFromUi(): ProvidedFilterModel | null;
@@ -49,7 +50,7 @@ export declare abstract class ProvidedFilter extends Component implements IFilte
     private onBtClear;
     private onBtReset;
     applyModel(): boolean;
-    private onBtApply;
+    protected onBtApply(afterFloatingFilter?: boolean, afterDataChange?: boolean): void;
     onNewRowsLoaded(): void;
     protected isNewRowsActionKeep(): boolean;
     protected onUiChanged(afterFloatingFilter?: boolean): void;

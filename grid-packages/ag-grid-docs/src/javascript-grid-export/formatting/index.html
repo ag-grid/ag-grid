@@ -1,0 +1,73 @@
+<style>
+    .columns {
+        display: flex;
+        flex-direction: row;
+        margin-right: 20px;
+    }
+
+    label,
+    .row {
+        box-sizing: border-box;
+        display: block;
+        padding: 2px;
+    }
+
+    .row label {
+        display: inline;
+        padding: 0;
+    }
+
+    button {
+        display: inline-block;
+        margin: 5px;
+        font-weight: bold;
+    }
+
+    .page-wrapper {
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .grid-wrapper {
+        flex-grow: 1;
+    }
+</style>
+
+<div class="page-wrapper">
+
+    <div class="columns">
+        <div class="column">
+            <div class="row">
+                <label><input type="checkbox" id="customHeader" /> customHeader = <em>makeCustomContent()</em></label>
+            </div>
+            <div class="row">
+                <label><input type="checkbox" id="customFooter" /> customFooter = <em>makeCustomContent()</em></label>
+            </div>
+            <div class="row">
+                <label><input type="checkbox" id="fileName" /> fileName = </label>
+                <input type="text" id="fileNameValue" value="custom-name" />
+            </div>
+            <label><input type="checkbox" id="processCellCallback" /> processCellCallback =
+                <em>myCellCallback</em></label>
+        </div>
+        <div class="column" style="margin-left: 20px;">
+            <label><input type="checkbox" id="processGroupHeaderCallback" /> processGroupHeaderCallback =
+                <em>myGroupHeaderCallback</em></label>
+            <label><input type="checkbox" id="processHeaderCallback" /> processHeaderCallback =
+                <em>myHeaderCallback</em></label>
+            <label><input type="checkbox" id="processRowGroupCallback" /> processRowGroupCallback =
+                <em>myRowGroupCallback</em></label>
+        </div>
+    </div>
+
+    <div style="margin: 10px 0">
+        <button onclick="onBtnExportDataAsCsv()">api.exportDataAsCsv(params)</button>
+        <button onclick="onBtnExportDataAsExcel()">api.exportDataAsExcel(params)</button>
+    </div>
+
+    <div class="grid-wrapper">
+        <div id="myGrid" style="height: 100%;" class="ag-theme-alpine"></div>
+    </div>
+
+</div>

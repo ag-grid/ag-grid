@@ -80,6 +80,11 @@ var MenuItemComponent = /** @class */ (function (_super) {
         }
         else {
             this.addGuiEventListener('click', this.onOptionSelected.bind(this));
+            this.addGuiEventListener('keydown', function (e) {
+                if (e.keyCode === core_1.Constants.KEY_ENTER || e.keyCode === core_1.Constants.KEY_SPACE) {
+                    _this.onOptionSelected(e);
+                }
+            });
         }
         if (this.params.cssClasses) {
             this.params.cssClasses.forEach(function (it) { return core_1._.addCssClass(_this.getGui(), it); });
@@ -91,8 +96,8 @@ var MenuItemComponent = /** @class */ (function (_super) {
     MenuItemComponent.prototype.getComponentHolder = function () {
         return undefined;
     };
-    MenuItemComponent.prototype.onOptionSelected = function (mouseEvent) {
-        var event = {
+    MenuItemComponent.prototype.onOptionSelected = function (event) {
+        var e = {
             type: MenuItemComponent.EVENT_ITEM_SELECTED,
             action: this.params.action,
             checked: this.params.checked,
@@ -103,9 +108,9 @@ var MenuItemComponent = /** @class */ (function (_super) {
             shortcut: this.params.shortcut,
             subMenu: this.params.subMenu,
             tooltip: this.params.tooltip,
-            mouseEvent: mouseEvent
+            event: event
         };
-        this.dispatchEvent(event);
+        this.dispatchEvent(e);
         if (this.params.action) {
             this.params.action();
         }
@@ -115,7 +120,7 @@ var MenuItemComponent = /** @class */ (function (_super) {
         _super.prototype.destroy.call(this);
     };
     // private instance = Math.random();
-    MenuItemComponent.TEMPLATE = "<div class=\"ag-menu-option\">\n            <span ref=\"eIcon\" class=\"ag-menu-option-icon\"></span>\n            <span ref=\"eName\" class=\"ag-menu-option-text\"></span>\n            <span ref=\"eShortcut\" class=\"ag-menu-option-shortcut\"></span>\n            <span ref=\"ePopupPointer\" class=\"ag-menu-option-popup-pointer\"></span>\n        </div>";
+    MenuItemComponent.TEMPLATE = "<div class=\"ag-menu-option\" tabindex=\"-1\">\n            <span ref=\"eIcon\" class=\"ag-menu-option-icon ag-menu-option-part\"></span>\n            <span ref=\"eName\" class=\"ag-menu-option-text ag-menu-option-part\"></span>\n            <span ref=\"eShortcut\" class=\"ag-menu-option-shortcut ag-menu-option-part\"></span>\n            <span ref=\"ePopupPointer\" class=\"ag-menu-option-popup-pointer ag-menu-option-part\"></span>\n        </div>";
     MenuItemComponent.EVENT_ITEM_SELECTED = 'itemSelected';
     __decorate([
         core_1.Autowired('gridOptionsWrapper')

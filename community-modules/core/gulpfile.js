@@ -1,5 +1,5 @@
 const gulp = require('gulp');
-const {series, parallel} = gulp;
+const { series, parallel } = gulp;
 const sourcemaps = require('gulp-sourcemaps');
 const clean = require('gulp-clean');
 const rename = require("gulp-rename");
@@ -31,42 +31,42 @@ const dtsHeaderTemplate =
 // Start of Typescript related tasks
 const cleanDist = () => {
     return gulp
-        .src('dist', {read: false, allowEmpty: true})
+        .src('dist', { read: false, allowEmpty: true })
         .pipe(clean());
 };
 
 const tscSrcTask = () => {
-    const tsProject = gulpTypescript.createProject('tsconfig.json', {typescript: typescript});
+    const tsProject = gulpTypescript.createProject('tsconfig.json', { typescript: typescript });
 
     const tsResult = gulp
-        .src('src/ts/**/*.ts')
+        .src(['src/ts/**/*.ts', '!src/ts/**/*.test.ts'])
         .pipe(sourcemaps.init())
         .pipe(tsProject());
 
     return merge([
         tsResult.dts
-            .pipe(header(dtsHeaderTemplate, {pkg: pkg}))
+            .pipe(header(dtsHeaderTemplate, { pkg: pkg }))
             .pipe(gulp.dest('dist/cjs')),
         tsResult.js
-            .pipe(header(headerTemplate, {pkg: pkg}))
+            .pipe(header(headerTemplate, { pkg: pkg }))
             .pipe(sourcemaps.write('.'))
             .pipe(gulp.dest('dist/cjs'))
     ]);
 };
 
 const tscSrcEs6Task = () => {
-    const tsProject = gulpTypescript.createProject('./tsconfig.es6.json', {typescript: typescript});
+    const tsProject = gulpTypescript.createProject('./tsconfig.es6.json', { typescript: typescript });
 
     const tsResult = gulp
-        .src('src/ts/**/*.ts')
+        .src(['src/ts/**/*.ts', '!src/ts/**/*.test.ts'])
         .pipe(tsProject());
 
     return merge([
         tsResult.dts
-            .pipe(header(dtsHeaderTemplate, {pkg: pkg}))
+            .pipe(header(dtsHeaderTemplate, { pkg: pkg }))
             .pipe(gulp.dest('dist/es6')),
         tsResult.js
-            .pipe(header(headerTemplate, {pkg: pkg}))
+            .pipe(header(headerTemplate, { pkg: pkg }))
             .pipe(gulp.dest('dist/es6'))
     ]);
 };
@@ -74,12 +74,10 @@ const tscSrcEs6Task = () => {
 
 // Start of scss/css related tasks
 const scssTask = () => {
-    var f = filter(["**/*.css", '*Font*.css'], {restore: true});
+    var f = filter(["**/*.css", '*Font*.css'], { restore: true });
 
     return gulp.src([
         'src/styles/**/*.scss',
-        '!src/styles/*alpine*/**', // spl alpine exclusion
-        '!src/styles/**/*Alpine**',
         '!src/styles/**/_*.scss',
         '!**/node_modules/**'])
         .pipe(named())
@@ -94,7 +92,12 @@ const scssTask = () => {
                             {
                                 loader: "css-loader"
                             },
-                            "sass-loader",
+                            {
+                                loader: 'sass-loader',
+                                options: {
+                                    prependData: '$ag-compatibility-mode: false;\n$ag-suppress-all-theme-deprecation-warnings: true;',
+                                },
+                            },
                             {
                                 loader: 'postcss-loader',
                                 options: {

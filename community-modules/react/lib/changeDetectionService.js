@@ -1,4 +1,4 @@
-// @ag-grid-community/react v22.1.1
+// @ag-grid-community/react v23.0.0
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 var ChangeDetectionStrategyType;
@@ -145,3 +145,5 @@ var DeepValueStrategy = /** @class */ (function () {
     };
     return DeepValueStrategy;
 }());
+
+//# sourceMappingURL=changeDetectionService.js.map

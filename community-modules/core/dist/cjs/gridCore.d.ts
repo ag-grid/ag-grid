@@ -1,4 +1,4 @@
-// Type definitions for @ag-grid-community/core v22.1.1
+// Type definitions for @ag-grid-community/core v23.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { LoggerFactory } from "./logger";
@@ -18,7 +18,7 @@ export declare class GridCore extends Component {
     private $scope;
     private quickFilterOnScope;
     private popupService;
-    private focusedCellController;
+    private focusController;
     loggerFactory: LoggerFactory;
     private columnApi;
     private gridApi;

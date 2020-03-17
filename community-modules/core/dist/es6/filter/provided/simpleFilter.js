@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v22.1.1
+ * @version v23.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -43,6 +43,8 @@ var DEFAULT_TRANSLATIONS = {
     lessThanOrEqual: 'Less than or equals',
     greaterThanOrEqual: 'Greater than or equals',
     filterOoo: 'Filter...',
+    rangeStart: 'From',
+    rangeEnd: 'To',
     contains: 'Contains',
     notContains: 'Not contains',
     startsWith: 'Starts with',
@@ -77,36 +79,34 @@ var SimpleFilter = /** @class */ (function (_super) {
         this.onUiChanged(true);
     };
     SimpleFilter.prototype.setTypeFromFloatingFilter = function (type) {
-        this.eType1.value = type;
-        this.eType2.value = null;
-        this.eJoinOperatorAnd.checked = true;
+        this.eType1.setValue(type);
+        this.eType2.setValue(null);
+        this.eJoinOperatorAnd.setValue(true);
     };
     SimpleFilter.prototype.getModelFromUi = function () {
         if (!this.isConditionUiComplete(ConditionPosition.One)) {
             return null;
         }
         if (this.isAllowTwoConditions() && this.isConditionUiComplete(ConditionPosition.Two)) {
-            var res = {
+            var res_1 = {
                 filterType: this.getFilterType(),
                 operator: this.getJoinOperator(),
                 condition1: this.createCondition(ConditionPosition.One),
                 condition2: this.createCondition(ConditionPosition.Two)
             };
-            return res;
+            return res_1;
         }
-        else {
-            var res = this.createCondition(ConditionPosition.One);
-            return res;
-        }
+        var res = this.createCondition(ConditionPosition.One);
+        return res;
     };
     SimpleFilter.prototype.getCondition1Type = function () {
-        return this.eType1.value;
+        return this.eType1.getValue();
     };
     SimpleFilter.prototype.getCondition2Type = function () {
-        return this.eType2.value;
+        return this.eType2.getValue();
     };
     SimpleFilter.prototype.getJoinOperator = function () {
-        return this.eJoinOperatorOr.checked ? 'OR' : 'AND';
+        return this.eJoinOperatorOr.getValue() === true ? 'OR' : 'AND';
     };
     SimpleFilter.prototype.areModelsEqual = function (a, b) {
         // both are missing
@@ -145,19 +145,19 @@ var SimpleFilter = /** @class */ (function (_super) {
         if (isCombined) {
             var combinedModel = model;
             var orChecked = combinedModel.operator === 'OR';
-            this.eJoinOperatorAnd.checked = !orChecked;
-            this.eJoinOperatorOr.checked = orChecked;
-            this.eType1.value = combinedModel.condition1.type;
-            this.eType2.value = combinedModel.condition2.type;
+            this.eJoinOperatorAnd.setValue(!orChecked);
+            this.eJoinOperatorOr.setValue(orChecked);
+            this.eType1.setValue(combinedModel.condition1.type);
+            this.eType2.setValue(combinedModel.condition2.type);
             this.setConditionIntoUi(combinedModel.condition1, ConditionPosition.One);
             this.setConditionIntoUi(combinedModel.condition2, ConditionPosition.Two);
         }
         else {
             var simpleModel = model;
-            this.eJoinOperatorAnd.checked = true;
-            this.eJoinOperatorOr.checked = false;
-            this.eType1.value = simpleModel.type;
-            this.eType2.value = this.optionsFactory.getDefaultOption();
+            this.eJoinOperatorAnd.setValue(true);
+            this.eJoinOperatorOr.setValue(false);
+            this.eType1.setValue(simpleModel.type);
+            this.eType2.setValue(this.optionsFactory.getDefaultOption());
             this.setConditionIntoUi(simpleModel, ConditionPosition.One);
             this.setConditionIntoUi(null, ConditionPosition.Two);
         }
@@ -172,15 +172,11 @@ var SimpleFilter = /** @class */ (function (_super) {
             if (combinedModel.operator === 'AND') {
                 return firstResult && secondResult;
             }
-            else {
-                return firstResult || secondResult;
-            }
+            return firstResult || secondResult;
         }
-        else {
-            var simpleModel = model;
-            var result = this.individualConditionPasses(params, simpleModel);
-            return result;
-        }
+        var simpleModel = model;
+        var result = this.individualConditionPasses(params, simpleModel);
+        return result;
     };
     SimpleFilter.prototype.setParams = function (params) {
         _super.prototype.setParams.call(this, params);
@@ -198,44 +194,54 @@ var SimpleFilter = /** @class */ (function (_super) {
             var createOption = function () {
                 var key = (typeof option === 'string') ? option : option.displayKey;
                 var localName = _this.translate(key);
-                var eOption = document.createElement("option");
-                eOption.text = localName;
-                eOption.value = key;
-                return eOption;
+                return {
+                    value: key,
+                    text: localName
+                };
             };
-            _this.eType1.add(createOption());
-            _this.eType2.add(createOption());
+            _this.eType1.addOption(createOption());
+            _this.eType2.addOption(createOption());
         });
         var readOnly = filterOptions.length <= 1;
-        this.eType1.disabled = readOnly;
-        this.eType2.disabled = readOnly;
+        this.eType1.setDisabled(readOnly);
+        this.eType2.setDisabled(readOnly);
     };
     SimpleFilter.prototype.isAllowTwoConditions = function () {
         return this.allowTwoConditions;
     };
     SimpleFilter.prototype.createBodyTemplate = function () {
-        var optionsTemplate1 = "<select class=\"ag-filter-select\" ref=\"eOptions1\"></select>";
+        var optionsTemplate1 = "<ag-select class=\"ag-filter-select\" ref=\"eOptions1\"></ag-select>";
         var valueTemplate1 = this.createValueTemplate(ConditionPosition.One);
-        var optionsTemplate2 = "<select class=\"ag-filter-select\" ref=\"eOptions2\"></select>";
+        var optionsTemplate2 = "<ag-select class=\"ag-filter-select\" ref=\"eOptions2\"></ag-select>";
         var valueTemplate2 = this.createValueTemplate(ConditionPosition.Two);
-        var uniqueGroupId = 'ag-simple-filter-and-or-' + this.getCompId();
-        var translate = this.gridOptionsWrapper.getLocaleTextFunc();
-        var andOrTemplate = "<div class=\"ag-filter-condition\" ref=\"eJoinOperatorPanel\">\n                    <label>\n                        <input ref=\"eJoinOperatorAnd\" type=\"radio\" class=\"and\" name=\"" + uniqueGroupId + "\" value=\"AND\")} checked=\"checked\" />\n                        " + translate('andCondition', 'AND') + "\n                    </label>\n                    <label>\n                        <input ref=\"eJoinOperatorOr\" type=\"radio\" class=\"or\" name=\"" + uniqueGroupId + "\" value=\"OR\" />\n                        " + translate('orCondition', 'OR') + "\n                    </label>\n                </div>";
+        var andOrTemplate = "<div class=\"ag-filter-condition\" ref=\"eJoinOperatorPanel\">\n                <ag-radio-button ref=\"eJoinOperatorAnd\" class=\"ag-filter-condition-operator ag-filter-condition-operator-and\"></ag-radio-button>\n                <ag-radio-button ref=\"eJoinOperatorOr\" class=\"ag-filter-condition-operator ag-filter-condition-operator-or\"></ag-radio-button>\n            </div>";
         var template = optionsTemplate1 + "\n                " + valueTemplate1 + "\n                " + andOrTemplate + "\n                " + optionsTemplate2 + "\n                " + valueTemplate2;
         return template;
+    };
+    SimpleFilter.prototype.getCssIdentifier = function () {
+        return 'simple-filter';
     };
     SimpleFilter.prototype.updateUiVisibility = function () {
         var firstConditionComplete = this.isConditionUiComplete(ConditionPosition.One);
         var showSecondFilter = this.allowTwoConditions && firstConditionComplete;
         _.setDisplayed(this.eCondition2Body, showSecondFilter);
-        _.setDisplayed(this.eType2, showSecondFilter);
+        _.setDisplayed(this.eType2.getGui(), showSecondFilter);
         _.setDisplayed(this.eJoinOperatorPanel, showSecondFilter);
     };
-    SimpleFilter.prototype.resetUiToDefaults = function () {
-        this.eJoinOperatorAnd.checked = true;
+    SimpleFilter.prototype.resetUiToDefaults = function (silent) {
+        var uniqueGroupId = 'ag-simple-filter-and-or-' + this.getCompId();
+        var translate = this.gridOptionsWrapper.getLocaleTextFunc();
         var defaultOption = this.optionsFactory.getDefaultOption();
-        this.eType1.value = defaultOption;
-        this.eType2.value = defaultOption;
+        this.eType1.setValue(defaultOption, silent);
+        this.eType2.setValue(defaultOption, silent);
+        this.eJoinOperatorAnd
+            .setValue(true, silent)
+            .setName(uniqueGroupId)
+            .setLabel(translate('andCondition', 'AND'));
+        this.eJoinOperatorOr
+            .setValue(false, silent)
+            .setName(uniqueGroupId)
+            .setLabel(translate('orCondition', 'OR'));
     };
     SimpleFilter.prototype.translate = function (toTranslate) {
         var translate = this.gridOptionsWrapper.getLocaleTextFunc();
@@ -248,10 +254,10 @@ var SimpleFilter = /** @class */ (function (_super) {
     SimpleFilter.prototype.addChangedListeners = function () {
         var _this = this;
         var listener = function () { return _this.onUiChanged(); };
-        this.addDestroyableEventListener(this.eType1, "change", listener);
-        this.addDestroyableEventListener(this.eType2, "change", listener);
-        this.addDestroyableEventListener(this.eJoinOperatorOr, "change", listener);
-        this.addDestroyableEventListener(this.eJoinOperatorAnd, "change", listener);
+        this.eType1.onValueChange(listener);
+        this.eType2.onValueChange(listener);
+        this.eJoinOperatorOr.onValueChange(listener);
+        this.eJoinOperatorAnd.onValueChange(listener);
     };
     SimpleFilter.prototype.doesFilterHaveHiddenInput = function (filterType) {
         var customFilterOption = this.optionsFactory.getCustomOption(filterType);

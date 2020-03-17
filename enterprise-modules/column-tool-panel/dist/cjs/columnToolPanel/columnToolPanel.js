@@ -59,6 +59,7 @@ var ColumnToolPanel = /** @class */ (function (_super) {
         }
         this.primaryColsPanel = this.getContext().createComponent('AG-PRIMARY-COLS');
         this.primaryColsPanel.init(true, this.params);
+        core_1._.addCssClass(this.primaryColsPanel.getGui(), 'ag-column-panel-column-select');
         this.addComponent(this.primaryColsPanel);
         if (this.isRowGroupingModuleLoaded()) {
             if (!this.params.suppressRowGroups) {

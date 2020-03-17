@@ -25,7 +25,7 @@ var __assign = (this && this.__assign) || function () {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var core_1 = require("@ag-grid-community/core");
-var chartBuilder_1 = require("../../../../charts/chartBuilder");
+var ag_charts_community_1 = require("ag-charts-community");
 var cartesianChartProxy_1 = require("./cartesianChartProxy");
 var BarChartProxy = /** @class */ (function (_super) {
     __extends(BarChartProxy, _super);
@@ -33,11 +33,6 @@ var BarChartProxy = /** @class */ (function (_super) {
         var _this = _super.call(this, params) || this;
         _this.initChartOptions();
         _this.recreateChart();
-        var barSeries = chartBuilder_1.ChartBuilder.createSeries(_this.getSeriesDefaults());
-        if (barSeries) {
-            barSeries.flipXY = !_this.isColumnChart();
-            _this.chart.addSeries(barSeries);
-        }
         return _this;
     }
     BarChartProxy.prototype.createChart = function (options) {
@@ -49,9 +44,17 @@ var BarChartProxy = /** @class */ (function (_super) {
         else {
             builderFunction = grouping ? 'createGroupedBarChart' : 'createBarChart';
         }
-        return chartBuilder_1.ChartBuilder[builderFunction](parentElement, options);
+        var chart = ag_charts_community_1.ChartBuilder[builderFunction](parentElement, options || this.chartOptions);
+        var barSeries = ag_charts_community_1.ChartBuilder.createSeries(this.getSeriesDefaults());
+        if (barSeries) {
+            barSeries.flipXY = !this.isColumnChart();
+            chart.addSeries(barSeries);
+        }
+        return chart;
     };
     BarChartProxy.prototype.update = function (params) {
+        this.chartProxyParams.grouping = params.grouping;
+        this.updateAxes('category', !this.isColumnChart());
         var chart = this.chart;
         var barSeries = chart.series[0];
         var _a = this.getPalette(), fills = _a.fills, strokes = _a.strokes;

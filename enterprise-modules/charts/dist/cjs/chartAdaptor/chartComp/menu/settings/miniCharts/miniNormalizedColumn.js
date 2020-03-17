@@ -17,8 +17,8 @@ var core_1 = require("@ag-grid-community/core");
 var miniStackedColumn_1 = require("./miniStackedColumn");
 var MiniNormalizedColumn = /** @class */ (function (_super) {
     __extends(MiniNormalizedColumn, _super);
-    function MiniNormalizedColumn(parent, fills, strokes) {
-        return _super.call(this, parent, fills, strokes, MiniNormalizedColumn.data, [0, 10], "normalizedColumnTooltip") || this;
+    function MiniNormalizedColumn(container, fills, strokes) {
+        return _super.call(this, container, fills, strokes, MiniNormalizedColumn.data, [0, 10], "normalizedColumnTooltip") || this;
     }
     MiniNormalizedColumn.chartType = core_1.ChartType.NormalizedColumn;
     MiniNormalizedColumn.data = [

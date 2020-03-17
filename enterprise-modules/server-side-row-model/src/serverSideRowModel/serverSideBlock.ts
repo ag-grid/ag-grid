@@ -15,6 +15,8 @@ import {
     RowNode,
     RowRenderer,
     ValueService,
+    ColumnApi,
+    GridApi,
     _,
     RowNodeBlock
 } from "@ag-grid-community/core";
@@ -27,6 +29,8 @@ export class ServerSideBlock extends RowNodeBlock {
     @Autowired('columnController') private columnController: ColumnController;
     @Autowired('valueService') private valueService: ValueService;
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
+    @Autowired('columnApi') private columnApi: ColumnApi;
+    @Autowired('gridApi') private gridApi: GridApi;
 
     private logger: Logger;
 
@@ -471,7 +475,9 @@ export class ServerSideBlock extends RowNodeBlock {
             successCallback: this.pageLoaded.bind(this, this.getVersion()),
             failCallback: this.pageLoadFailed.bind(this),
             request: request,
-            parentNode: this.parentRowNode
+            parentNode: this.parentRowNode,
+            api: this.gridApi,
+            columnApi: this.columnApi
         } as IServerSideGetRowsParams;
 
         return params;

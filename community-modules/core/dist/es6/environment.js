@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v22.1.1
+ * @version v23.0.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -13,31 +13,36 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 import { Bean, Autowired } from './context/context';
 import { _ } from './utils';
 var MAT_GRID_SIZE = 8;
-var FRESH_GRID_SIZE = 4;
+var BASE_GRID_SIZE = 4;
 var BALHAM_GRID_SIZE = 4;
 var ALPINE_GRID_SIZE = 6;
 var HARD_CODED_SIZES = {
-    'ag-theme-material': {
-        headerHeight: MAT_GRID_SIZE * 7,
-        virtualItemHeight: MAT_GRID_SIZE * 5,
-        rowHeight: MAT_GRID_SIZE * 6,
-        chartMenuPanelWidth: 220
-    },
-    'ag-theme-classic': {
+    // this item is required for custom themes
+    'ag-theme-custom': {
         headerHeight: 25,
-        virtualItemHeight: FRESH_GRID_SIZE * 5,
+        headerCellMinWidth: 24,
+        listItemHeight: BASE_GRID_SIZE * 5,
         rowHeight: 25,
         chartMenuPanelWidth: 220
     },
+    'ag-theme-material': {
+        headerHeight: MAT_GRID_SIZE * 7,
+        headerCellMinWidth: 48,
+        listItemHeight: MAT_GRID_SIZE * 5,
+        rowHeight: MAT_GRID_SIZE * 6,
+        chartMenuPanelWidth: 240
+    },
     'ag-theme-balham': {
         headerHeight: BALHAM_GRID_SIZE * 8,
-        virtualItemHeight: BALHAM_GRID_SIZE * 7,
+        headerCellMinWidth: 24,
+        listItemHeight: BALHAM_GRID_SIZE * 7,
         rowHeight: BALHAM_GRID_SIZE * 7,
         chartMenuPanelWidth: 220
     },
     'ag-theme-alpine': {
         headerHeight: ALPINE_GRID_SIZE * 8,
-        virtualItemHeight: ALPINE_GRID_SIZE * 5,
+        headerCellMinWidth: 36,
+        listItemHeight: ALPINE_GRID_SIZE * 5,
         rowHeight: ALPINE_GRID_SIZE * 7,
         chartMenuPanelWidth: 240
     }
@@ -50,10 +55,12 @@ var HARD_CODED_SIZES = {
  *     <div class="ag-virtual-list-container">
  *         <div class="ag-virtual-list-item"></div>
  *     </div>
+ * </div>
  */
 var SASS_PROPERTY_BUILDER = {
     headerHeight: ['ag-header-row'],
-    virtualItemHeight: ['ag-virtual-list-container', 'ag-virtual-list-item'],
+    headerCellMinWidth: ['ag-header-cell'],
+    listItemHeight: ['ag-virtual-list-item'],
     rowHeight: ['ag-row'],
     chartMenuPanelWidth: ['ag-chart-docked-container']
 };
@@ -62,7 +69,7 @@ var Environment = /** @class */ (function () {
     function Environment() {
     }
     Environment.prototype.getSassVariable = function (theme, key) {
-        var useTheme = 'ag-theme-' + (theme.match('material') ? 'material' : theme.match('balham') ? 'balham' : theme.match('alpine') ? 'alpine' : 'classic');
+        var useTheme = 'ag-theme-' + (theme.match('material') ? 'material' : theme.match('balham') ? 'balham' : theme.match('alpine') ? 'alpine' : 'custom');
         var defaultValue = HARD_CODED_SIZES[useTheme][key];
         var calculatedValue = 0;
         if (!CALCULATED_SIZES[theme]) {
@@ -74,18 +81,21 @@ var Environment = /** @class */ (function () {
         if (SASS_PROPERTY_BUILDER[key]) {
             var classList = SASS_PROPERTY_BUILDER[key];
             var div = document.createElement('div');
+            div.style.position = 'absolute';
             var el = classList.reduce(function (el, currentClass, idx) {
                 if (idx === 0) {
                     _.addCssClass(el, theme);
                 }
                 var div = document.createElement('div');
+                div.style.position = 'static';
                 _.addCssClass(div, currentClass);
                 el.appendChild(div);
                 return div;
             }, div);
             if (document.body) {
                 document.body.appendChild(div);
-                calculatedValue = parseInt(window.getComputedStyle(el).height, 10);
+                var sizeName = key.toLowerCase().indexOf('height') !== -1 ? 'height' : 'width';
+                calculatedValue = parseInt(window.getComputedStyle(el)[sizeName], 10);
                 document.body.removeChild(div);
             }
         }
@@ -96,15 +106,12 @@ var Environment = /** @class */ (function () {
         var theme = this.getTheme().theme;
         return !!theme && theme.indexOf('dark') >= 0;
     };
-    Environment.prototype.useNativeCheckboxes = function () {
-        var theme = this.getTheme().theme;
-        return !!theme && theme.indexOf('alpine') >= 0;
-    };
     Environment.prototype.chartMenuPanelWidth = function () {
-        return HARD_CODED_SIZES[this.getTheme().themeFamily].chartMenuPanelWidth;
+        var theme = this.getTheme().themeFamily;
+        return this.getSassVariable(theme, 'chartMenuPanelWidth');
     };
     Environment.prototype.getTheme = function () {
-        var reg = /\bag-(fresh|dark|blue|material|bootstrap|(?:theme-([\w\-]*)))\b/;
+        var reg = /\bag-(material|(?:theme-([\w\-]*)))\b/;
         var el = this.eGridDiv;
         var themeMatch;
         while (el) {

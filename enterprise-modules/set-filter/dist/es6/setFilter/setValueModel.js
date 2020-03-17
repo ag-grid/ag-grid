@@ -1,4 +1,4 @@
-import { Constants, Promise, TextFilter, _ } from "@ag-grid-community/core";
+import { Constants, Promise, TextFilter, _, EventService } from "@ag-grid-community/core";
 // we cannot have 'null' as a key in a JavaScript map,
 // it needs to be a string. so we use this string for
 // storing null values.
@@ -11,6 +11,7 @@ export var SetFilterModelValuesType;
 })(SetFilterModelValuesType || (SetFilterModelValuesType = {}));
 var SetValueModel = /** @class */ (function () {
     function SetValueModel(colDef, rowModel, valueGetter, doesRowPassOtherFilters, suppressSorting, modelUpdatedFunc, isLoadingFunc, valueFormatterService, column) {
+        this.localEventService = new EventService();
         this.suppressSorting = suppressSorting;
         this.colDef = colDef;
         this.valueGetter = valueGetter;
@@ -41,10 +42,16 @@ var SetValueModel = /** @class */ (function () {
         // we use a map rather than an array for the selected values as the lookup
         // for a map is much faster than the lookup for an array, especially when
         // the length of the array is thousands of records long
-        this.selectedValuesMap = {};
+        this.selectNothing();
         this.selectAllUsingMiniFilter();
         this.formatter = this.filterParams.textFormatter ? this.filterParams.textFormatter : TextFilter.DEFAULT_FORMATTER;
     }
+    SetValueModel.prototype.addEventListener = function (eventType, listener, async) {
+        this.localEventService.addEventListener(eventType, listener, async);
+    };
+    SetValueModel.prototype.removeEventListener = function (eventType, listener, async) {
+        this.localEventService.removeEventListener(eventType, listener, async);
+    };
     // if keepSelection not set will always select all filters
     // if keepSelection set will keep current state of selected filters
     //    unless selectAll chosen in which case will select all
@@ -62,7 +69,7 @@ var SetValueModel = /** @class */ (function () {
     SetValueModel.prototype.refreshSelection = function (keepSelection, isSelectAll) {
         this.createAvailableUniqueValues();
         var oldModel = Object.keys(this.selectedValuesMap);
-        this.selectedValuesMap = {};
+        this.selectNothing();
         this.processMiniFilter();
         if (keepSelection) {
             this.setModel(oldModel, isSelectAll);
@@ -136,15 +143,25 @@ var SetValueModel = /** @class */ (function () {
         }
         return valuesToUse;
     };
+    SetValueModel.prototype.isValueAvailable = function (value) {
+        return this.availableUniqueValuesMap[value];
+    };
     SetValueModel.prototype.createAvailableUniqueValues = function () {
+        var _this = this;
         var dontCheckAvailableValues = !this.showingAvailableOnly || this.valuesType == SetFilterModelValuesType.PROVIDED_LIST || this.valuesType == SetFilterModelValuesType.PROVIDED_CB;
         if (dontCheckAvailableValues) {
             this.availableUniqueValues = this.allUniqueValues;
-            return;
         }
-        var uniqueValuesAsAnyObjects = this.getUniqueValues(true);
-        this.availableUniqueValues = _.toStrings(uniqueValuesAsAnyObjects);
-        this.sortValues(this.availableUniqueValues);
+        else {
+            var uniqueValuesAsAnyObjects = this.getUniqueValues(true);
+            this.availableUniqueValues = _.toStrings(uniqueValuesAsAnyObjects);
+            this.sortValues(this.availableUniqueValues);
+        }
+        this.availableUniqueValuesMap = {};
+        if (this.availableUniqueValues) {
+            this.availableUniqueValues.forEach(function (value) { return _this.availableUniqueValuesMap[value] = true; });
+        }
+        this.localEventService.dispatchEvent({ type: SetValueModel.EVENT_AVAILABLE_VALUES_CHANGES });
     };
     SetValueModel.prototype.sortValues = function (values) {
         if (this.filterParams && this.filterParams.comparator) {
@@ -394,6 +411,7 @@ var SetValueModel = /** @class */ (function () {
         // http://plnkr.co/edit/eFka7ynvPj68tL3VJFWf?p=preview
         this.filterValuesPromise.firstOneOnly(callback);
     };
+    SetValueModel.EVENT_AVAILABLE_VALUES_CHANGES = 'availableValuesChanged';
     return SetValueModel;
 }());
 export { SetValueModel };

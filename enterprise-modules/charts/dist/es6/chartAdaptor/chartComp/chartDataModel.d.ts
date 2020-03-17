@@ -1,4 +1,4 @@
-import { BeanStub, CellRange, ChartType, Column, IAggFunc, IRangeController } from "@ag-grid-community/core";
+import { BeanStub, CellRange, ChartType, Column, IAggFunc, IRangeController, CellRangeParams } from "@ag-grid-community/core";
 export interface ColState {
     column?: Column;
     colId: string;
@@ -20,6 +20,7 @@ export declare class ChartDataModel extends BeanStub {
     private valueService;
     rangeController: IRangeController;
     private rowRenderer;
+    private chartTranslator;
     private referenceCellRange;
     private dimensionCellRange?;
     private valueCellRange?;
@@ -41,23 +42,24 @@ export declare class ChartDataModel extends BeanStub {
     getData(): any[];
     setChartType(chartType: ChartType): void;
     isGrouping(): boolean;
-    isPivotActive: () => boolean;
-    isPivotMode: () => boolean;
-    isPivotChart: () => boolean;
-    getChartId: () => string;
-    getValueColState: () => ColState[];
-    getDimensionColState: () => ColState[];
-    getCellRanges: () => CellRange[];
-    getChartType: () => ChartType;
-    isSuppressChartRanges: () => boolean;
-    isDetached: () => boolean;
+    isPivotActive(): boolean;
+    isPivotMode(): boolean;
+    isPivotChart(): boolean;
+    getChartId(): string;
+    getValueColState(): ColState[];
+    getDimensionColState(): ColState[];
+    getCellRanges(): CellRange[];
+    getCellRangeParams(): CellRangeParams;
+    getChartType(): ChartType;
+    isSuppressChartRanges(): boolean;
+    isDetached(): boolean;
     toggleDetached(): void;
-    getSelectedValueColState: () => {
+    getSelectedValueColState(): {
         colId: string;
         displayName: string;
     }[];
-    getSelectedValueCols: () => Column[];
-    getSelectedDimension: () => ColState;
+    getSelectedValueCols(): Column[];
+    getSelectedDimension(): ColState;
     private createCellRange;
     private getAllColumnsFromRanges;
     private getColDisplayName;
@@ -66,7 +68,6 @@ export declare class ChartDataModel extends BeanStub {
     private isNumberCol;
     private extractLeafData;
     private displayNameMapper;
-    private isMultiCategoryChart;
     private generateId;
     updateData(): void;
     private resetColumnState;

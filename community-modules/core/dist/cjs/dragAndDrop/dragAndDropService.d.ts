@@ -1,4 +1,4 @@
-// Type definitions for @ag-grid-community/core v22.1.1
+// Type definitions for @ag-grid-community/core v23.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { Column } from "../entities/column";
@@ -27,7 +27,9 @@ export interface DragSource {
     /** If eElement is dragged, then the dragItem is the object that gets passed around. */
     getDragItem: () => DragItem;
     /** This name appears in the ghost icon when dragging */
-    dragItemName: string | null;
+    dragItemName: string | (() => string) | null;
+    /** Icon to show when not over a drop zone */
+    defaultIconName?: string;
     /** The drop target associated with this dragSource. When dragging starts, this target does not get an
      * onDragEnter event. */
     dragSourceDropTarget?: DropTarget;
@@ -79,7 +81,6 @@ export declare class DragAndDropService {
     private dragService;
     private environment;
     static ICON_PINNED: string;
-    static ICON_ADD: string;
     static ICON_MOVE: string;
     static ICON_LEFT: string;
     static ICON_RIGHT: string;
@@ -87,21 +88,20 @@ export declare class DragAndDropService {
     static ICON_AGGREGATE: string;
     static ICON_PIVOT: string;
     static ICON_NOT_ALLOWED: string;
+    static ICON_HIDE: string;
     static GHOST_TEMPLATE: string;
-    private logger;
     private dragSourceAndParamsList;
     private dragItem;
     private eventLastTime;
     private dragSource;
     private dragging;
-    private eGhost;
+    private eWrapper;
     private eGhostParent;
     private eGhostIcon;
     private dropTargets;
     private lastDropTarget;
     private ePinnedIcon;
-    private ePlusIcon;
-    private eHiddenIcon;
+    private eHideIcon;
     private eMoveIcon;
     private eLeftIcon;
     private eRightIcon;
@@ -110,7 +110,6 @@ export declare class DragAndDropService {
     private ePivotIcon;
     private eDropNotAllowedIcon;
     private init;
-    private setBeans;
     addDragSource(dragSource: DragSource, allowTouch?: boolean): void;
     removeDragSource(dragSource: DragSource): void;
     private destroy;

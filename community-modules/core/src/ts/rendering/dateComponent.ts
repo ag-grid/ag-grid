@@ -6,6 +6,9 @@ export interface IDate {
 
     /** Sets the date represented by this component */
     setDate(date: Date): void;
+
+    /* [optional method] sets the current input placeholder */
+    setInputPlaceholder?(placeholder: string): void;
 }
 
 export interface IDateParams {

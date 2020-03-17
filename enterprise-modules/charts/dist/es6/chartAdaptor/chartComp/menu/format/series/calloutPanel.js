@@ -26,7 +26,11 @@ var CalloutPanel = /** @class */ (function (_super) {
         return _this;
     }
     CalloutPanel.prototype.init = function () {
-        this.setTemplate(CalloutPanel.TEMPLATE);
+        var groupParams = {
+            cssIdentifier: 'charts-format-sub-level',
+            direction: 'vertical'
+        };
+        this.setTemplate(CalloutPanel.TEMPLATE, { calloutGroup: groupParams });
         this.initCalloutOptions();
     };
     CalloutPanel.prototype.initCalloutOptions = function () {

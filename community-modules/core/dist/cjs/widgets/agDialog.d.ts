@@ -1,4 +1,4 @@
-// Type definitions for @ag-grid-community/core v22.1.1
+// Type definitions for @ag-grid-community/core v23.0.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { PanelOptions, AgPanel } from "./agPanel";
@@ -24,7 +24,6 @@ export declare class AgDialog extends AgPanel {
     private moveElement;
     private moveElementDragListener;
     private resizable;
-    private isResizable;
     private movable;
     private isMoving;
     private isMaximizable;

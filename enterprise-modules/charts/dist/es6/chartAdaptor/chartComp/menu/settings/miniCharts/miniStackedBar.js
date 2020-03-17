@@ -13,16 +13,14 @@ var __extends = (this && this.__extends) || (function () {
 })();
 import { ChartType } from "@ag-grid-community/core";
 import { MiniChartWithAxes } from "./miniChartWithAxes";
-import { Rect } from "../../../../../charts/scene/shape/rect";
-import linearScale from "../../../../../charts/scale/linearScale";
-import { BandScale } from "../../../../../charts/scale/bandScale";
+import { linearScale, BandScale, Rect } from "ag-charts-community";
 var MiniStackedBar = /** @class */ (function (_super) {
     __extends(MiniStackedBar, _super);
-    function MiniStackedBar(parent, fills, strokes, data, xScaleDomain, tooltipName) {
+    function MiniStackedBar(container, fills, strokes, data, xScaleDomain, tooltipName) {
         if (data === void 0) { data = MiniStackedBar.data; }
         if (xScaleDomain === void 0) { xScaleDomain = [0, 16]; }
         if (tooltipName === void 0) { tooltipName = "stackedBarTooltip"; }
-        var _this = _super.call(this, parent, tooltipName) || this;
+        var _this = _super.call(this, container, tooltipName) || this;
         var size = _this.size;
         var padding = _this.padding;
         var yScale = new BandScale();

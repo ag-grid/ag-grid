@@ -51,12 +51,12 @@ var FillHandle = /** @class */ (function (_super) {
     }
     FillHandle.prototype.onDrag = function (e) {
         if (!this.initialXY) {
-            var _a = this.getGui().getBoundingClientRect(), left = _a.left, top_1 = _a.top;
-            this.initialXY = { x: left, y: top_1 };
+            this.initialXY = this.mouseEventService.getNormalisedPosition(e);
         }
-        var _b = this.initialXY, x = _b.x, y = _b.y;
-        var diffX = Math.abs(x - e.clientX);
-        var diffY = Math.abs(y - e.clientY);
+        var _a = this.initialXY, x = _a.x, y = _a.y;
+        var _b = this.mouseEventService.getNormalisedPosition(e), newX = _b.x, newY = _b.y;
+        var diffX = Math.abs(x - newX);
+        var diffY = Math.abs(y - newY);
         var direction = diffX > diffY ? 'x' : 'y';
         if (direction !== this.dragAxis) {
             this.dragAxis = direction;
@@ -269,7 +269,10 @@ var FillHandle = /** @class */ (function (_super) {
                 return userResult;
             }
         }
-        var allNumbers = !values.some(function (val) { return isNaN(parseFloat(val)); });
+        var allNumbers = !values.some(function (val) {
+            var asFloat = parseFloat(val);
+            return isNaN(asFloat) || asFloat.toString() !== val.toString();
+        });
         // values should be copied in order if the alt key is pressed
         // or if the values contain strings and numbers
         // However, if we only have one initial value selected, and that
@@ -278,7 +281,7 @@ var FillHandle = /** @class */ (function (_super) {
         if (event.altKey || !allNumbers) {
             if (allNumbers && initialValues.length === 1) {
                 var multiplier = (this.isUp || this.isLeft) ? -1 : 1;
-                return _.last(values) + 1 * multiplier;
+                return parseFloat(_.last(values)) + 1 * multiplier;
             }
             return values[idx % values.length];
         }

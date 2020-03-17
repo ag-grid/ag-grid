@@ -15,8 +15,8 @@ import { ChartType } from "@ag-grid-community/core";
 import { MiniStackedBar } from "./miniStackedBar";
 var MiniNormalizedBar = /** @class */ (function (_super) {
     __extends(MiniNormalizedBar, _super);
-    function MiniNormalizedBar(parent, fills, strokes) {
-        return _super.call(this, parent, fills, strokes, MiniNormalizedBar.data, [0, 10], "normalizedBarTooltip") || this;
+    function MiniNormalizedBar(container, fills, strokes) {
+        return _super.call(this, container, fills, strokes, MiniNormalizedBar.data, [0, 10], "normalizedBarTooltip") || this;
     }
     MiniNormalizedBar.chartType = ChartType.NormalizedBar;
     MiniNormalizedBar.data = [

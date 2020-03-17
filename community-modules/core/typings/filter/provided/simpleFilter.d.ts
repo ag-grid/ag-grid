@@ -67,8 +67,9 @@ export declare abstract class SimpleFilter<M extends ISimpleFilterModel> extends
     private putOptionsIntoDropdown;
     isAllowTwoConditions(): boolean;
     protected createBodyTemplate(): string;
+    protected getCssIdentifier(): string;
     protected updateUiVisibility(): void;
-    protected resetUiToDefaults(): void;
+    protected resetUiToDefaults(silent?: boolean): void;
     translate(toTranslate: string): string;
     addChangedListeners(): void;
     protected doesFilterHaveHiddenInput(filterType: string): boolean;

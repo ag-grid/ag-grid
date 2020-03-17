@@ -18,7 +18,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 import { _, AgGroupComponent, Autowired, Component, PostConstruct } from "@ag-grid-community/core";
-import { MiniColumn, MiniStackedColumn, MiniNormalizedColumn, MiniBar, MiniStackedBar, MiniNormalizedBar, MiniPie, MiniDoughnut, MiniLine, MiniScatter, MiniBubble, MiniArea, MiniStackedArea, MiniNormalizedArea, } from "./miniCharts";
+import { MiniArea, MiniBar, MiniBubble, MiniColumn, MiniDoughnut, MiniLine, MiniNormalizedArea, MiniNormalizedBar, MiniNormalizedColumn, MiniPie, MiniScatter, MiniStackedArea, MiniStackedBar, MiniStackedColumn, } from "./miniCharts";
 var MiniChartsContainer = /** @class */ (function (_super) {
     __extends(MiniChartsContainer, _super);
     function MiniChartsContainer(chartController, fills, strokes) {
@@ -66,7 +66,9 @@ var MiniChartsContainer = /** @class */ (function (_super) {
                 title: _this.chartTranslator.translate(group),
                 suppressEnabledCheckbox: true,
                 enabled: true,
-                suppressOpenCloseIcons: true
+                suppressOpenCloseIcons: true,
+                cssIdentifier: 'charts-settings',
+                direction: 'horizontal'
             }));
             chartGroup.forEach(function (MiniClass) {
                 var miniWrapper = document.createElement('div');

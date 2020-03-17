@@ -8,7 +8,6 @@ export interface ChartDatasourceParams {
     startRow: number;
     endRow: number;
     aggFunc?: string | IAggFunc;
-    multiCategories: boolean;
 }
 interface IData {
     data: any[];

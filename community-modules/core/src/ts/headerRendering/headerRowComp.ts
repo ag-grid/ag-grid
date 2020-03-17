@@ -43,6 +43,15 @@ export class HeaderRowComp extends Component {
         this.type = type;
         this.pinned = pinned;
         this.dropTarget = dropTarget;
+
+        const niceClassName = HeaderRowType[type].toLowerCase().replace(/_/g, "-");
+        this.addCssClass(`ag-header-row-${niceClassName}`);
+
+        if (_.isBrowserSafari()) {
+            // fix for a Safari rendering bug that caused the header to flicker above chart panels
+            // as you move the mouse over the header
+            this.getGui().style.transform = 'translateZ(0)';
+        }
     }
 
     public forEachHeaderElement(callback: (comp: IComponent<any>) => void): void {
