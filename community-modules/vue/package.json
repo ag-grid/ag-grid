@@ -42,7 +42,7 @@
     "vue-template-compiler": "^2.6.10"
   },
   "peerDependencies": {
-    "@ag-grid-community/all-modules": "~22.1.1",
+    "@ag-grid-community/core": "~22.1.1",
     "vue": ">= 2.2 <= 2.5.17 || >= 2.5.20",
     "vue-property-decorator": "^7.2.0 || ^8.0.0"
   },
