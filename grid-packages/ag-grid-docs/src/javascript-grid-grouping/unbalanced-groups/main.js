@@ -50,7 +50,7 @@ var gridOptions = {
             enablePivot: true,
         }
     },
-    components: {
+    components:{
         cityCellRenderer: cityCellRenderer,
         countryCellRenderer: countryCellRenderer,
         stateCellRenderer: stateCellRenderer

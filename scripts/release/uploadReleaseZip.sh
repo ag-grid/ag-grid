@@ -20,11 +20,11 @@ FILENAME=$1
 
 checkFileExists $FILENAME
 checkFileExists ~/.ssh/ag_ssh
-checkFileExists ~/aggrid/.creds
+checkFileExists ~/Documents/aggrid/aggrid/.creds
 
 # upload file - note that this will be uploaded to the archive dir as this is where this ftps home account is
 # we'll move this file up one in the next step
-curl --netrc-file ~/aggrid/.creds --ftp-create-dirs -T $FILENAME ftp://ag-grid.com/
+curl --netrc-file ~/Documents/aggrid/aggrid/.creds --ftp-create-dirs -T $FILENAME ftp://ag-grid.com/
 
 # move file from the archives dir to the root
 ssh -i ~/.ssh/ag_ssh ceolter@ag-grid.com "mv public_html/archive/$FILENAME ./"

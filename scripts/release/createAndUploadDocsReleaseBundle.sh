@@ -17,7 +17,7 @@ FILENAME=release_"$TIMESTAMP"_v"$VERSION".zip
 ./scripts/release/createDocsReleaseBundle.sh $RAW_VERSION
 ./scripts/release/uploadReleaseZip.sh $FILENAME
 
-./script/release/archiveCurrentRelease.sh
-./script/release/prepareAgGridForRelease.sh $FILENAME
-./script/release/switchRelease.sh $TIMESTAMP
+./scripts/release/archiveCurrentRelease.sh
+./scripts/release/prepareAgGridForRelease.sh $FILENAME
+./scripts/release/switchRelease.sh $TIMESTAMP
 
