@@ -1,5 +1,5 @@
 /**
- * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components * @version v23.0.0
+ * ag-grid-community - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components * @version v23.0.1
  * @link http://www.ag-grid.com/
 ' * @license MIT
  */
@@ -40157,11 +40157,12 @@ var GridSerializer = /** @class */ (function () {
     ], GridSerializer);
     return GridSerializer;
 }());
+var RowType;
 (function (RowType) {
     RowType[RowType["HEADER_GROUPING"] = 0] = "HEADER_GROUPING";
     RowType[RowType["HEADER"] = 1] = "HEADER";
     RowType[RowType["BODY"] = 2] = "BODY";
-})(exports.RowType || (exports.RowType = {}));
+})(RowType || (RowType = {}));
 
 var __extends$1i = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -40741,8 +40742,6 @@ exports.AnimateSlideCellRenderer = AnimateSlideCellRenderer;
 exports.AutoWidthCalculator = AutoWidthCalculator;
 exports.Autowired = Autowired;
 exports.BaseComponentWrapper = BaseComponentWrapper;
-exports.BaseCreator = BaseCreator;
-exports.BaseGridSerializingSession = BaseGridSerializingSession;
 exports.Bean = Bean;
 exports.BeanStub = BeanStub;
 exports.BodyDropPivotTarget = BodyDropPivotTarget;
@@ -40767,12 +40766,9 @@ exports.ComponentUtil = ComponentUtil;
 exports.Constants = Constants;
 exports.Context = Context;
 exports.CssClassApplier = CssClassApplier;
-exports.CsvCreator = CsvCreator;
-exports.CsvExportModule = CsvExportModule;
 exports.CsvUtils = CsvUtils;
 exports.DateFilter = DateFilter;
 exports.DisplayedGroupCreator = DisplayedGroupCreator;
-exports.Downloader = Downloader;
 exports.DragAndDropService = DragAndDropService;
 exports.DragService = DragService;
 exports.Environment = Environment;
@@ -40786,7 +40782,6 @@ exports.GridApi = GridApi;
 exports.GridCore = GridCore;
 exports.GridOptionsWrapper = GridOptionsWrapper;
 exports.GridPanel = GridPanel;
-exports.GridSerializer = GridSerializer;
 exports.GroupCellRenderer = GroupCellRenderer;
 exports.GroupInstanceIdCreator = GroupInstanceIdCreator;
 exports.HeaderContainer = HeaderContainer;
@@ -40854,8 +40849,6 @@ exports.ValueFormatterService = ValueFormatterService;
 exports.ValueService = ValueService;
 exports.VanillaFrameworkOverrides = VanillaFrameworkOverrides;
 exports.VirtualList = VirtualList;
-exports.XmlFactory = XmlFactory;
-exports.ZipContainer = ZipContainer;
 exports._ = _;
 exports.defaultGroupComparator = defaultGroupComparator;
 exports.initialiseAgGridWithAngular1 = initialiseAgGridWithAngular1;

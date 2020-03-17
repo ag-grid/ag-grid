@@ -1,5 +1,5 @@
 /**
- * ag-grid-enterprise - ag-Grid Enterprise Features * @version v23.0.0
+ * ag-grid-enterprise - ag-Grid Enterprise Features * @version v23.0.1
  * @link http://www.ag-grid.com/
 ' * @license Commercial
  */
