@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="16px" height="16px" viewBox="0 0 16 16" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 48.2 (47327) - http://www.bohemiancoding.com/sketch -->
+    <title>lab</title>
+    <desc>Created with Sketch.</desc>
+    <defs></defs>
+    <g id="Icons" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="lab">
+            <path d="M4,10 C8,9.5 10.6666667,9.5 12,10 C13.3333333,10.5 13.3333333,11.5 12,13 L4,13 L4,10 Z" id="Rectangle-3" fill="#7ED321"></path>
+            <path d="M3.5,3 L12.5,3 L12.5,5.58578644 C12.5,5.85100293 12.3946432,6.10535684 12.2071068,6.29289322 L9.29289322,9.20710678 C9.10535684,9.39464316 9,9.64899707 9,9.91421356 L9,12.5040211 L9.5,13.5 L6.5,13.5 L7,12.5 L7,9.91421356 C7,9.64899707 6.89464316,9.39464316 6.70710678,9.20710678 L3.79289322,6.29289322 C3.60535684,6.10535684 3.5,5.85100293 3.5,5.58578644 L3.5,3 Z" id="Path-19" stroke="#000000" transform="translate(8.000000, 8.250000) scale(1, -1) translate(-8.000000, -8.250000) "></path>
+            <path d="M7.5,11.5 L6.5,11.5" id="Line" stroke="#417505" stroke-linecap="square"></path>
+            <path d="M10.5,11.5 L9.5,11.5" id="Line-Copy" stroke="#417505" stroke-linecap="square"></path>
+        </g>
+    </g>
+</svg>
