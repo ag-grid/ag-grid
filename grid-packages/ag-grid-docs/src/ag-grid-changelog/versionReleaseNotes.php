@@ -1,5 +1,5 @@
 <div class="note" style="display: none" fixVersionNote id="fix_version_23_0_0">
-    <p>Release 23.0.0 (16th Mar 2019)</p>
+    <p>Release 23.0.0 (17th Mar 2020)</p>
 
     <p>Feature Highlights:</p>
 
