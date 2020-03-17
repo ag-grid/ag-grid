@@ -1,0 +1,20 @@
+{
+  "name": "@ag-grid-community/angular",
+  "version": "23.0.0",
+  "peerDependencies": {
+    "@ag-grid-community/core": "~23.0.0",
+    "@angular/common": "^9.0.0",
+    "@angular/core": "^9.0.0",
+    "tslib": "^1.10.0"
+  },
+  "main": "bundles/ag-grid-community-angular.umd.js",
+  "module": "fesm5/ag-grid-community-angular.js",
+  "es2015": "fesm2015/ag-grid-community-angular.js",
+  "esm5": "esm5/ag-grid-community-angular.js",
+  "esm2015": "esm2015/ag-grid-community-angular.js",
+  "fesm5": "fesm5/ag-grid-community-angular.js",
+  "fesm2015": "fesm2015/ag-grid-community-angular.js",
+  "typings": "ag-grid-community-angular.d.ts",
+  "metadata": "ag-grid-community-angular.metadata.json",
+  "sideEffects": false
+}
