@@ -25,7 +25,7 @@ include '../documentation-main/documentation_header.php';
 
     <ul>
         <li>
-            Enter <a href="../javascript-grid-pivoting/#pivot-mode-1">Pivot Mode</a> and select a combination of group,
+            Enter <a href="../javascript-grid-pivoting/#pivot-mode">Pivot Mode</a> and select a combination of group,
             pivot and value columns.
         </li>
         <li>

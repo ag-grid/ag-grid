@@ -6,7 +6,7 @@ $pageGroup = "row_models";
 include '../documentation-main/documentation_header.php';
 ?>
 
-<h1 class="heading-enterprise"> Server-side Row Grouping </h1>
+<h1 class="heading-enterprise">Server-side Row Grouping</h1>
 
 <p class="lead">
     This section covers Server-side Row Grouping.
@@ -101,7 +101,7 @@ gridOptions: {
 <h2>Group Caches</h2>
 
 <p>
-    The <a href="../javascript-grid-server-side-model-configuration/#server-side-cache/">Server-side Cache</a> has already
+    The <a href="../javascript-grid-server-side-model-configuration/#server-side-cache">Server-side Cache</a> has already
     been covered, however it is important to note that when rows are grouped each group node contains a cache. This is
     illustrated in the following diagram:</p>
 
@@ -203,7 +203,7 @@ gridOptions: {
 
 <p>
     This can be achieved by expanding row nodes as blocks are loaded in the
-    <a href="../javascript-grid-server-side-model/#server-side-datasource/">Server-side Datasource</a>. The following
+    <a href="../javascript-grid-server-side-model-datasource/">Server-side Datasource</a>. The following
     snippet outlines a possible approach:
 </p>
 

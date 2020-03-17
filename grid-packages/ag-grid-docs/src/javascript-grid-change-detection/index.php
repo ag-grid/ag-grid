@@ -194,8 +194,8 @@ colDef = {
         </li>
         <li>
             All cells are configured to use one of the grids
-            <a href="../javascript-grid-cell-rendering/#animate-renderer">animation
-                cell renderer</a> instead of flashing cells.
+            <a href="../javascript-grid-provided-renderer-change/">animation cell renderer</a>
+            instead of flashing cells.
         </li>
     </ul>
 

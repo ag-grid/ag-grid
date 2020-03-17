@@ -321,7 +321,7 @@ onGridReady(params) {
 
 <p>
     For details on how to access the detail grid api see:
-    <a href="../javascript-grid-master-detail/#accessing-detail-grid-api/">Accessing Detail Grid API</a>.
+    <a href="../javascript-grid-master-detail/#accessing-detail-grid-api">Accessing Detail Grid API</a>.
 </p>
 
 <p>
@@ -746,7 +746,7 @@ var masterGridOptions = {
 </p>
 
 <p>
-    When using Master / Detail and <a href="../javascript-grid-width-and-height/#autoHeight">auto-height</a>,
+    When using Master / Detail and <a href="../javascript-grid-width-and-height/#auto-height">auto-height</a>,
     then all detail grids need to use auto-height.
 </p>
 

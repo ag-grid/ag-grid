@@ -33,10 +33,9 @@ include './intro.php';
     <li><a href="#enable-sorting-and-filtering">Enable Sorting and Filtering</li></a>
     <li><a href="#fetch-remote-data">Fetch Remote Data</li></a>
     <li><a href="#enable-selection">Enable Selection</li></a>
-    <li><a href="#grouping(enterprise)">Grouping(Enterprise)</li></a>
+    <li><a href="#grouping">Grouping (Enterprise)</li></a>
     <li><a href="#customise-the-theme-look">Customise the Theme Look</li></a>
     <li><a href="#summary">Summary</li></a>
-    <li><a href="#next-steps">Next Steps</li></a>
 </ol>
 </div>
 </div>
@@ -423,7 +422,7 @@ export class AppComponent implements OnInit {
 <p>Well, we cheated a bit. Calling <code>alert</code> is not exactly a call to our backend.
 Hopefully you will forgive us this shortcut for the sake of keeping the article short and simple. Of course, you can substitute that bit with a real-world application logic after you are done with the tutorial.</p>
 
-<h2 id="grouping(enterprise)">Grouping</h2>
+<h2 id="grouping">Grouping</h2>
 
 <div class="note">
     Grouping is a feature exclusive to ag-Grid Enterprise. You are free to trial ag-Grid Enterprise to see what you

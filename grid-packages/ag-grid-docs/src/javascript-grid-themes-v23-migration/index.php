@@ -100,7 +100,7 @@ $ag-group-component-border-color: green;
     <li><code>$ag-customize-buttons</code>, <code>$ag-button-color</code>, <code>$ag-button-text-transform</code>, <code>$ag-button-background-color</code>: Use a CSS rule like <code>.ag-standard-button { ... }</code> instead.</li>
     <li>All <code>$ag-dialog-*</code> variables: <code>$ag-dialog-background-color</code>, <code>$ag-dialog-border-color</code>, <code>$ag-dialog-border-size</code>, <code>$ag-dialog-border-style</code>, <code>$ag-dialog-title-background-color</code>, <code>$ag-dialog-title-font-family</code>, <code>$ag-dialog-title-font-size</code>, <code>$ag-dialog-title-font-weight</code>, <code>$ag-dialog-title-foreground-color</code>, <code>$ag-dialog-title-height</code>, <code>$ag-dialog-title-icon-size</code>, <code>$ag-dialog-title-padding</code></li>
     <li><code>$ag-editor-background-color</code></li>
-    <li><code>$ag-filter-tool-panel-top-level-row-height</code> and <code>$ag-filter-tool-panel-sub-level-row-height</code>: se 
+    <li><code>$ag-filter-tool-panel-top-level-row-height</code> and <code>$ag-filter-tool-panel-sub-level-row-height</code>: se
 <code>.ag-filter-toolpanel-header</code> to style all headers, <code>.ag-filter-toolpanel-instance-header</code> for leaf level headers, and <code>.ag-filter-toolpanel-group-level-{X}-header</code> for a specific level of header, e.g. <code>.ag-filter-toolpanel-group-level-0-header</code> for the top level.</li>
     <li><code>$ag-font-weight</code>, <code>$ag-secondary-font-family</code>, <code>$ag-secondary-font-size</code>, <code>$ag-secondary-font-weight</code></li>
     <li><code>$ag-foreground-opacity</code></li>
@@ -210,7 +210,7 @@ $ag-header-foreground-color: red;
 <ul>
     <li>is a reliable mechanism and is safe to use long-term (although you may wish to update your themes anyway, to get the benefits of the new configuration system like better validation)</li>
     <li>does not support <a href="#variables-removed-with-no-equivalent-parameter">variables removed with no equivalent parameter</a> - if you were using one of these variables, you will need to write new CSS selectors to achieve the same effect. Generally, the reason why we have removed some variables is that it is simple to write CSS to achieve the same effect.</li>
-    <li>does not modify your CSS selectors. If you are using any of the <a href="#renamed-CSS-classes">renamed CSS classes</a> you will need to update your CSS selectors.</li>
+    <li>does not modify your CSS selectors. If you are using any of the <a href="#renamed-css-classes">renamed CSS classes</a> you will need to update your CSS selectors.</li>
 </ul>
 </li>
     <li>legacy mode: attempts to make themes written for v22 and earlier work in v23. This mode:

@@ -148,7 +148,7 @@ gridOptions: {
 
     <?= grid_example('Default Resizing', 'default-resizing', 'generated') ?>
 
-    <h2>Column Flex</h1>
+    <h2>Column Flex</h2>
 
     <p>
         It's often required that one or more columns fill the entire available space in

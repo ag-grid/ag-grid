@@ -138,7 +138,7 @@ include '../documentation-main/documentation_header.php';
     <tr>
         <td class="parameter-key">defaultOption</td>
         <td>
-            The default <a href="filterOptions">Filter Options</a> to be selected.
+            The default <a href="#filterOptions">Filter Options</a> to be selected.
         </td>
         <td class="supported-filters">Text, Number, Date</td>
     </tr>

@@ -262,7 +262,7 @@ SNIPPET
 
 <?= grid_example('Row Group Index', 'row-group-index', 'generated', ['enterprise' => true, 'exampleHeight' => 515]) ?>
 
-<h2 id="replacingChildren">Hide Open Parents</h2>
+<h2>Hide Open Parents</h2>
 
 <?= videoLink("https://www.youtube.com/watch?v=gzqjP_kF4NI&t=348s", "05:48") ?>
 
@@ -283,7 +283,7 @@ SNIPPET
     group in the group column only (so you can click on the icon to close the group).
 </p>
 
-<h2>Example Hide Open Parents</h2>
+<h3>Example: Hide Open Parents</h3>
 
 <p>
     The example below demonstrates hiding open parents using auto group columns.

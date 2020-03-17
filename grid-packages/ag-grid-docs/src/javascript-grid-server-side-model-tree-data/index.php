@@ -67,7 +67,7 @@ include '../documentation-main/documentation_header.php';
 <h2 id="supplying-tree-data">Supplying Tree Data</h2>
 
 <p>
-    Tree Data is supplied via the <a href="../javascript-grid-server-side-model/#server-side-datasource">Server-side Datasource</a>
+    Tree Data is supplied via the <a href="../javascript-grid-server-side-model-datasource/">Server-side Datasource</a>
     just like flat data, however there are two additional gridOptions callbacks; <code>isServerSideGroup(dataItem)</code> and <code>getServerSideGroupKey(dataItem)</code>.
 </p>
 
@@ -123,7 +123,7 @@ var gridOptions = {
 
 <p>
     Tree Data can be automatically purged by setting the
-    <a href="../javascript-grid-server-side-model-infinite/#cache-configuration">Cache Configuration</a> appropriately.
+    <a href="../javascript-grid-infinite-scrolling/#more-control-via-properties-and-api">Cache Configuration</a> appropriately.
     However sometimes it may be necessary to perform a manual purge.
 </p>
 

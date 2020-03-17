@@ -72,7 +72,7 @@ include '../documentation-main/documentation_header.php';
         To hide the chart ranges simply enable <code>suppressChartRanges=true</code> on the <code>ChartRangeParams</code>.
     </p>
     <p>
-        For more details refer to <a href="../javascript-grid-charts-integrated-chart-range-api/#charting-api">Chart Range API</a>.
+        For more details refer to <a href="../javascript-grid-charts-integrated-chart-range-api/#range-charts">Range Chart API</a>.
     </p>
 
     <h2>Category and Series Ranges</h2>

@@ -53,7 +53,7 @@ include '../documentation-main/documentation_header.php';
 </p>
 
 <p>If <code>align</code> is not specified the components will default to being aligned to the right.</p>
-<p><code>key</code> is useful for accessing status bar component instances - see <a href="#accessing-status-bar-comp-instances">below</a>
+<p><code>key</code> is useful for accessing status bar component instances - <a href="../javascript-grid-status-bar-component#accessing-status-bar-comp-instances">see here</a>
 for more information.</p>
 
 <p>

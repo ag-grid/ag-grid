@@ -388,8 +388,8 @@
             ],
             "description": "When to show the 'row group panel' (where you drag rows to group) at the top.",
             "more": {
-                "name": "Tool Panel Example",
-                "url": "../javascript-grid-tool-panel/#toolPanelExample"
+                "name": "Column Tool Panel Example",
+                "url": "../javascript-grid-tool-panel-columns/#column-tool-panel-example"
             }
         }
     },
