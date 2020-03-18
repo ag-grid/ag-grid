@@ -27,7 +27,9 @@ function createRowData() {
 }
 
 function onClicked() {
-    this.gridApi.getFilterInstance("name").getFrameworkComponentInstance().componentMethod("Hello World!");
+    this.gridApi.getFilterInstance("name", function (instance) {
+        instance.getFrameworkComponentInstance().componentMethod("Hello World!");
+    });
 }
 
 var gridOptions = {

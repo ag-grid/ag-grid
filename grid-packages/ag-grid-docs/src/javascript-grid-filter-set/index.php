@@ -375,7 +375,8 @@ filterParams: {
 
 
 <snippet>
-// get filter instance
+// get filter instance (Note - React users must use the async version
+// of this method by passing a callback parameter)
 var countryFilterComponent = gridOptions.api.getFilterInstance('country');
 
 // get filter model

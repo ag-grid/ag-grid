@@ -57,7 +57,9 @@ class NameFilter extends React.Component {
     the React Component Instance</h3>
 
 <p>
-    ag-Grid allows you to get a reference to the filter instances via the <code>api.getFilterInstance(colKey)</code>
+    ag-Grid allows you to get a reference to the filter instances via the <code>api.getFilterInstance(colKey, callback)</code>
+    - React components are created asynchronously, so it is necessary to use the callback rather than relying on the
+    return value of this method.
     method. If your component is a React component, then this will give you a reference to the ag-Grid's
     Component which wraps your React Component. Just like Russian Dolls. To get to the wrapped React instance
     of your component, use the <code>getFrameworkComponentInstance()</code> method as follows:
@@ -78,14 +80,14 @@ class NameFilter extends React.Component {
 // then in your app, if you want to execute myMethod()...
 laterOnInYourApplicationSomewhere() {
 
-    // get reference to the ag-Grid Filter component
-    var agGridFilter = api.getFilterInstance('name'); // assume filter on name column
+    // get reference to the ag-Grid Filter component on name column
+    api.getFilterInstance('name', agGridFilter => {
+        // get React instance from the ag-Grid instance
+        var reactFilterInstance = agGridFilter.getFrameworkComponentInstance();
 
-    // get React instance from the ag-Grid instance
-    var reactFilterInstance = agGridFilter.getFrameworkComponentInstance();
-
-    // now we're sucking diesel!!!
-    reactFilterInstance.myMethod();
+        // now we're sucking diesel!!!
+        reactFilterInstance.myMethod();
+    });
 }</snippet>
 
 <h3 id="example-filtering-using-react-components"> Example:

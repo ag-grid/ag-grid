@@ -345,7 +345,8 @@ include '../documentation-main/documentation_header.php';
 </p>
 
 <snippet>
-// get filter instance
+// get filter instance (Note - React users must use the async version
+// of this method by passing a callback parameter)
 var filterInstance = gridOptions.api.getFilterInstance('athlete');
 
 // get filter model
@@ -356,8 +357,9 @@ filterInstance.setModel({
     type:'endsWith',
     filter:'thing'
 });
-// tell the grid to refresh rows based on the filter. the filter does not
-// do this automatically in case multiple filters are going to get set.
+// tell the grid to refresh rows based on the filter. The filter does
+// not do this automatically, allowing you to batch multiple filter
+// updates for performance
 gridOptions.api.onFilterChanged()</snippet>
 
 <p>
