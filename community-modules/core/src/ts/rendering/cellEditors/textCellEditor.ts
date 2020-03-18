@@ -27,7 +27,6 @@ export class TextCellEditor extends PopupComponent implements ICellEditorComp {
     }
 
     public init(params: ITextCellEditorParams): void {
-
         this.params = params;
 
         const eInput = this.eInput;
@@ -82,6 +81,7 @@ export class TextCellEditor extends PopupComponent implements ICellEditorComp {
         }
 
         const inputEl = eInput.getInputElement() as HTMLInputElement;
+
         if (this.highlightAllOnFocus) {
             inputEl.select();
         } else {
@@ -90,9 +90,10 @@ export class TextCellEditor extends PopupComponent implements ICellEditorComp {
             // when user hits a printable character, then on IE (and only IE) the caret
             // was placed after the first character, thus 'apply' would end up as 'pplea'
             const value = eInput.getValue();
+            const len = (_.exists(value) && value.length) || 0;
 
-            if (value && value.length) {
-                inputEl.setSelectionRange(length, length);
+            if (len) {
+                inputEl.setSelectionRange(len, len);
             }
         }
     }
