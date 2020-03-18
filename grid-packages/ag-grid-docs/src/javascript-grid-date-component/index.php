@@ -74,7 +74,7 @@ interface IDateParams {
     The example below shows how to register a custom date component that contains an extra floating calendar picker rendered
     from the filter field. The problem with this approach is that we have no control over how third party components and therefore
     no way to implement a preventDefault when the user clicks on the Calendar Picker (for more info see:
-    <a href="/javascript-grid-floating-filter-component/#custom-filters-containing-a-floating-element">Custom Filters Containing a Floating Element</a>).
+    <a href="../javascript-grid-floating-filter-component/#custom-floating-filter-example">Custom Floating Filter Example</a>).
     Our way of fixing this problem is to add the <code>ag-custom-component-popup</code> class to the floating calendar.
 </p>
 

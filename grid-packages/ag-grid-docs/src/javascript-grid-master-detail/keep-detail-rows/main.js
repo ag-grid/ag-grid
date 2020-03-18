@@ -6,7 +6,7 @@ var gridOptions = {
         { field: 'calls' },
         { field: 'minutes', valueFormatter: "x.toLocaleString() + 'm'" }
     ],
-    defaultColGroupDef: {
+    defaultColDef: {
         flex: 1
     },
     masterDetail: true,

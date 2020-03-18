@@ -53,7 +53,7 @@ include '../documentation-main/documentation_header.php';
         selects the buttons.
     </p>
 
-    <?= grid_example('Width & Height', 'width-and-height', 'multi', ['exampleHeight' => 600]) ?>
+    <?= grid_example('Width & Height', 'width-and-height', 'multi') ?>
 
     <h2 id="auto-height">Grid Auto Height</h2>
 

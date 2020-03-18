@@ -124,7 +124,7 @@
             "description": "Callback to be used to customise the chart toolbar items.",
             "more": {
                 "name": "Configuring Toolbar Items",
-                "url": "../javascript-grid-charts-chart-toolbar/#configuring-toolbar-items"
+                "url": "../javascript-grid-charts-integrated-chart-toolbar/#configuring-toolbar-items-and-menu-panels"
             }
         },
         "paginationNumberFormatter(params)": {

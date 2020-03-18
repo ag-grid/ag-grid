@@ -321,7 +321,7 @@ onGridReady(params) {
 
 <p>
     For details on how to access the detail grid api see:
-    <a href="../javascript-grid-master-detail/#accessing-detail-grid-api/">Accessing Detail Grid API</a>.
+    <a href="../javascript-grid-master-detail/#accessing-detail-grid-api">Accessing Detail Grid API</a>.
 </p>
 
 <p>
@@ -364,7 +364,7 @@ onGridReady(params) {
     </ul>
 </p>
 
-<?= grid_example('Dynamic Params', 'dynamic-params', 'generated', ['enterprise' => true, 'exampleHeight' => 600]) ?>
+<?= grid_example('Dynamic Params', 'dynamic-params', 'generated', ['enterprise' => true]) ?>
 
 
 <h2>Dynamically Specify Master Nodes</h2>
@@ -516,7 +516,7 @@ masterGridOptions.getRowHeight = function (params) {
     The following example demonstrates dynamic detail row heights:
 </p>
 
-<?= grid_example('Dynamic Detail Row Height', 'dynamic-detail-row-height', 'generated', ['enterprise' => true, 'exampleHeight' => 600]) ?>
+<?= grid_example('Dynamic Detail Row Height', 'dynamic-detail-row-height', 'generated', ['enterprise' => true]) ?>
 
 <h2>Filtering and Sorting</h2>
 
@@ -746,7 +746,7 @@ var masterGridOptions = {
 </p>
 
 <p>
-    When using Master / Detail and <a href="../javascript-grid-width-and-height/#autoHeight">auto-height</a>,
+    When using Master / Detail and <a href="../javascript-grid-width-and-height/#auto-height">auto-height</a>,
     then all detail grids need to use auto-height.
 </p>
 

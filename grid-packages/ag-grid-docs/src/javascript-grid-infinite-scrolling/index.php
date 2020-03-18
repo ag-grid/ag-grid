@@ -9,9 +9,9 @@ include '../documentation-main/documentation_header.php';
 <h1>Infinite Row Model</h1>
 
 <note>
-    If you are an enterprise user you should consider using the <a href="../javascript-grid-server-side-model/">Server-side row model</a>
-    instead of the infinite row model. It offers the same functionality with many more features.<br><br>
-    The differences between row models can be found in our <a href="../javascript-grid-row-models/">row models summary page</a>
+    If you are an enterprise user you should consider using the <a href="../javascript-grid-server-side-model/">server-side row model</a>
+    instead of the infinite row model. It offers the same functionality with many more features.<br /><br />
+    The differences between row models can be found in our <a href="../javascript-grid-row-models/">row models summary page</a>.
 </note>
 
 <p>
@@ -245,7 +245,7 @@ SNIPPET
     Notice that the grid will load more data when you bring the scroll all the way to the bottom.
 </p>
 
-<?= grid_example('Simple Example', 'simple', 'generated', ['exampleHeight' => 600]) ?>
+<?= grid_example('Simple Example', 'simple', 'generated') ?>
 
 <h3>Selection</h3>
 
@@ -304,7 +304,7 @@ SNIPPET
     filtering, ag-Grid-Enterprise is not required for infinite scrolling.
 </note>
 
-<?= grid_example('Server-side Sorting And Filtering', 'server-side', 'generated', ['enterprise' => true, 'exampleHeight' => 600]) ?>
+<?= grid_example('Server-side Sorting And Filtering', 'server-side', 'generated', ['enterprise' => true]) ?>
 
 <note>
     When performing multiple row selections using shift-click, it is possible that not all rows are available in
@@ -329,7 +329,7 @@ SNIPPET
         return data.country === 'United States';
     }</snippet>
 <p>
-    <?= grid_example('Specify Selectable Rows', 'specify-selectable-rows', 'generated', ['exampleHeight' => 600]) ?>
+    <?= grid_example('Specify Selectable Rows', 'specify-selectable-rows', 'generated') ?>
 
 <p>
     Note that in the above example we have also included an optional checkbox to help highlight which rows
@@ -343,7 +343,7 @@ SNIPPET
     and creates a datasource Class. The example also just creates (makes up) data on the fly.
 </p>
 
-<?= grid_example('Made Up Data', 'made-up-data', 'generated', ['exampleHeight' => 600]) ?>
+<?= grid_example('Made Up Data', 'made-up-data', 'generated') ?>
 
 <h3>Loading Spinner</h3>
 
@@ -445,12 +445,12 @@ cell renderers.</p>
     get called after the data is set as well as when the row is created (when the data may not yet be available).
 </p>
 
-<?= grid_example('Insert And Remove Example', 'insert-remove', 'generated', ['exampleHeight' => 600]) ?>
+<?= grid_example('Insert And Remove Example', 'insert-remove', 'generated') ?>
 
 <h2 id="changing-columns">Changing Columns</h2>
 
 <p>
-    <a href="../javascript-grid-column-definitions/#column-changes/">Changing columns</a>
+    <a href="../javascript-grid-column-definitions/#column-changes">Changing columns</a>
     is possible using infinite scroll and it does not require the data getting fetched again
     from the server. If the change of columns impacts the sort or filter (ie a column with a sort
     of filter applied is removed), then the grid will fetch data again similar to how data is
@@ -474,7 +474,7 @@ cell renderers.</p>
     </ul>
 </p>
 
-<?= grid_example('Changing Columns', 'changing-columns', 'generated', ['exampleHeight' => 600]) ?>
+<?= grid_example('Changing Columns', 'changing-columns', 'generated') ?>
 
 <h2 id="pagination">Pagination</h2>
 

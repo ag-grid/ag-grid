@@ -198,7 +198,7 @@ include '../documentation-main/documentation_header.php';
             <td><span class="red-x">&#10005;</span></td>
         </tr>
         <tr class="item-row">
-            <td><a href="../javascript-grid-filtering/#floatingFilter">Floating Filters</td>
+            <td><a href="../javascript-grid-floating-filters/">Floating Filters</td>
             <td><span class="green-tick">&#10004;</span></td>
             <td><span class="green-tick">&#10004;</span></td>
             <td><span class="green-tick">&#10004;</span></td>
@@ -247,7 +247,7 @@ include '../documentation-main/documentation_header.php';
             <td><span class="green-tick">&#10004;</span></td>
         </tr>
         <tr class="item-row">
-            <td><a href="../javascript-grid-selection/#headerCheckboxSelection">Header Checkbox Selection</a></td>
+            <td><a href="../javascript-grid-selection/#header-checkbox-selection">Header Checkbox Selection</a></td>
             <td><span class="green-tick">&#10004;</span></td>
             <td><span class="red-x">&#10005;</span></td>
             <td><span class="red-x">&#10005;</span></td>
@@ -352,13 +352,6 @@ include '../documentation-main/documentation_header.php';
             <td><span class="green-tick">&#10004;</span></td>
         </tr>
         <tr class="item-row">
-            <td><a href="../javascript-grid-full-width-rows/#flowerNodes">Flower Nodes</a></td>
-            <td><span class="green-tick">&#10004;</span></td>
-            <td><span class="red-x">&#10005;</span></td>
-            <td><span class="red-x">&#10005;</span></td>
-            <td><span class="red-x">&#10005;</span></td>
-        </tr>
-        <tr class="item-row">
             <td><a href="../javascript-grid-export/">CSV Export</a></td>
             <td><span class="green-tick">&#10004;</span></td>
             <td><span class="green-tick">&#10004; (Data on screen)</span></td>
@@ -387,7 +380,7 @@ include '../documentation-main/documentation_header.php';
             <td><span class="green-tick">&#10005;</span></td>
         </tr>
         <tr class="item-row">
-            <td><a href="../javascript-grid-clipboard/#batch-transactions">Update via Batch</a></td>
+            <td><a href="../javascript-grid-data-update/#batch-transactions">Update via Batch</a></td>
             <td><span class="green-tick">&#10004;</span></td>
             <td><span class="green-tick">&#10005;</span></td>
             <td><span class="green-tick">&#10005;</span></td>

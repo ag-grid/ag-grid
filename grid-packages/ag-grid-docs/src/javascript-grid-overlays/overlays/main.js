@@ -1,26 +1,24 @@
-var columnDefs = [
-    {headerName: "Athlete", field: "athlete", width: 150},
-    {headerName: "Age", field: "age", width: 90},
-    {headerName: "Country", field: "country", width: 120},
-    {headerName: "Year", field: "year", width: 90},
-    {headerName: "Date", field: "date", width: 110},
-    {headerName: "Sport", field: "sport", width: 110},
-    {headerName: "Gold", field: "gold", width: 100},
-    {headerName: "Silver", field: "silver", width: 100},
-    {headerName: "Bronze", field: "bronze", width: 100},
-    {headerName: "Total", field: "total", width: 100}
-];
-
 var gridOptions = {
+    columnDefs: [
+        { field: 'athlete', minWidth: 200 },
+        { field: 'age' },
+        { field: 'country', minWidth: 200 },
+        { field: 'year' },
+        { field: 'date', minWidth: 180 },
+        { field: 'sport', minWidth: 200 },
+        { field: 'gold' },
+        { field: 'silver' },
+        { field: 'bronze' },
+        { field: 'total' }
+    ],
     defaultColDef: {
+        flex: 1,
+        minWidth: 100,
+        filter: true,
         sortable: true,
         resizable: true,
-        filter: true
     },
 
-    // set rowData to null or undefined to show loading panel by default
-    rowData: null,
-    columnDefs: columnDefs,
     // custom loading template. the class ag-overlay-loading-center is part of the grid,
     // it gives a white background and rounded border
     overlayLoadingTemplate: '<span class="ag-overlay-loading-center">Please wait while your rows are loading</span>',

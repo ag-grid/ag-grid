@@ -3,13 +3,13 @@ var columnDefs = [
         groupId: 'athleteGroupId',
         headerName: 'Athlete',
         children: [
-            { headerName: 'Name', field: "athlete", width: 150, filter: 'agTextColumnFilter'},
+            { headerName: 'Name', field: "athlete", minWidth: 200, filter: 'agTextColumnFilter'},
             {
                 groupId: 'competitionGroupId',
                 headerName: 'Competition',
                 children: [
-                    { field: "year", width: 90 },
-                    { field: "date", width: 110 },
+                    { field: "year" },
+                    { field: "date", minWidth: 180 },
                 ]
             },
         ]
@@ -18,26 +18,29 @@ var columnDefs = [
         groupId: 'medalsGroupId',
         headerName: 'Medals',
         children: [
-            { field: "gold", width: 100 },
-            { field: "silver", width: 100 },
-            { field: "bronze", width: 100 },
-            { field: "total", width: 100 }
+            { field: "gold" },
+            { field: "silver" },
+            { field: "bronze" },
+            { field: "total" }
         ]
     }
 ];
 
 var gridOptions = {
+    columnDefs: columnDefs,
     defaultColDef: {
+        flex: 1,
+        minWidth: 100,
         // allow every column to be aggregated
         enableValue: true,
         // allow every column to be grouped
         enableRowGroup: true,
         // allow every column to be pivoted
         enablePivot: true,
+        filter: true,
         sortable: true,
-        filter: true
+        resizable: true,
     },
-    columnDefs: columnDefs,
     sideBar: 'columns',
     onGridReady: function(params) {
         params.api.getToolPanelInstance('columns').collapseColumnGroups();

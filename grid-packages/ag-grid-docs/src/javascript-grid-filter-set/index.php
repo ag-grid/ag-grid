@@ -122,7 +122,7 @@ include '../documentation-main/documentation_header.php';
         <td>
             If specified, formats the text before applying the mini filter compare logic, useful for
             instance if substituting accentuated characters or if you want to do case sensitive mini filtering. This
-            matches the <a href="../javascript-grid-filter-text/index.php#textFormatter">text formatter used for text filters</a>.
+            matches the <a href="../javascript-grid-filter-text/#text-formatter">text formatter used for text filters</a>.
         </td>
     </tr>
 </table>
@@ -375,7 +375,8 @@ filterParams: {
 
 
 <snippet>
-// get filter instance
+// get filter instance (Note - React users must use the async version
+// of this method by passing a callback parameter)
 var countryFilterComponent = gridOptions.api.getFilterInstance('country');
 
 // get filter model

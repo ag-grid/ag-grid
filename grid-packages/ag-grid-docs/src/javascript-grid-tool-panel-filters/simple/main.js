@@ -1,20 +1,21 @@
-var columnDefs = [
-    { field: "athlete", width: 150, filter: 'agTextColumnFilter'},
-    { field: "age", width: 90},
-    { field: "country", width: 120},
-    { field: "year", width: 90 },
-    { field: "date", width: 110 },
-    { field: "gold", width: 100, filter: false },
-    { field: "silver", width: 100, filter: false },
-    { field: "bronze", width: 100, filter: false },
-    { field: "total", width: 100, filter: false }
-];
-
 var gridOptions = {
+    columnDefs: [
+        { field: "athlete", minWidth: 200, filter: 'agTextColumnFilter'},
+        { field: "age" },
+        { field: "country", minWidth: 200 },
+        { field: "year" },
+        { field: "date", minWidth: 180 },
+        { field: "gold", filter: false },
+        { field: "silver", filter: false },
+        { field: "bronze", filter: false },
+        { field: "total", filter: false }
+    ],
     defaultColDef: {
-        filter: true
+        flex: 1,
+        minWidth: 100,
+        filter: true,
+        resizable: true
     },
-    columnDefs: columnDefs,
     sideBar: 'filters'
 };
 

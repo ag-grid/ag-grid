@@ -731,14 +731,23 @@ export class GridApi {
     }
 
     public getFilterApiForColDef(colDef: any): any {
-        console.warn('ag-grid API method getFilterApiForColDef deprecated, use getFilterApi instead');
+        console.warn('ag-grid API method getFilterApiForColDef deprecated, use getFilterInstance instead');
         return this.getFilterInstance(colDef);
     }
 
-    public getFilterInstance(key: string | Column): IFilterComp {
+    public getFilterInstance(key: string | Column, callback?: (filter: IFilterComp) => void): IFilterComp {
         const column = this.columnController.getPrimaryColumn(key);
         if (column) {
-            return this.filterManager.getFilterComponent(column, 'NO_UI').resolveNow<IFilterComp>(null, filterComp => filterComp);
+            const filterPromise = this.filterManager.getFilterComponent(column, 'NO_UI');
+            const currentValue = filterPromise.resolveNow<IFilterComp>(null, filterComp => filterComp);
+            if (callback) {
+                if (currentValue) {
+                    setTimeout(callback, 0, currentValue);
+                } else {
+                    filterPromise.then(callback);
+                }
+            }
+            return currentValue;
         }
     }
 

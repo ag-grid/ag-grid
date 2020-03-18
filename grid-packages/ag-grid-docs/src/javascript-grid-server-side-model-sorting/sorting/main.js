@@ -1,12 +1,12 @@
 var gridOptions = {
     columnDefs: [
-        {field: 'athlete'},
-        {field: 'country'},
-        {field: 'year'},
-        {field: 'sport'},
-        {field: 'gold'},
-        {field: 'silver'},
-        {field: 'bronze'}
+        { field: 'athlete', minWidth: 220 },
+        { field: 'country', minWidth: 200 },
+        { field: 'year' },
+        { field: 'sport', minWidth: 200 },
+        { field: 'gold' },
+        { field: 'silver' },
+        { field: 'bronze' },
     ],
 
     defaultColDef: {
@@ -14,7 +14,7 @@ var gridOptions = {
         sortable: true,
 
         flex: 1,
-        minWidth: 150,
+        minWidth: 100,
         resizable: true
     },
 

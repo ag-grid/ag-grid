@@ -29,7 +29,7 @@ fi
 checkFileExists $ARCHIVE
 #checkFileExists ~/aggrid/aggrid.txt
 checkFileExists ~/.ssh/ag_ssh
-checkFileExists ~/aggrid/.creds
+checkFileExists ~/Documents/aggrid/aggrid/.creds
 
 # $3 is optional skipWarning argument
 if [ "$3" != "skipWarning" ]; then
@@ -51,7 +51,7 @@ fi
 ssh -i ~/.ssh/ag_ssh ceolter@ag-grid.com "cd public_html/archive/ && rm -r $VERSION"
 
 # upload file
-curl --netrc-file ~/aggrid/.creds --ftp-create-dirs -T $ARCHIVE ftp://ag-grid.com/$VERSION/
+curl --netrc-file ~/Documents/aggrid/aggrid/.creds --ftp-create-dirs -T $ARCHIVE ftp://ag-grid.com/$VERSION/
 
 #unzip archive
 ssh -i ~/.ssh/ag_ssh ceolter@ag-grid.com "cd public_html/archive/$VERSION && unzip $ARCHIVE"

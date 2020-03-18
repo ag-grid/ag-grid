@@ -28,6 +28,4 @@ $featuresRoot = '.';
 include './gridFeatures.php';
 ?>
 
-
-
 <?php include '../documentation-main/documentation_footer.php';?>

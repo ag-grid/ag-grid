@@ -1,22 +1,75 @@
 var columnDefs = [
-    {headerName: "Athlete", field: "athlete", width: 150, enableRowGroup: true, enablePivot: true},
-    {headerName: "Age", field: "age", width: 90, enableValue: true},
-    {headerName: "Country", field: "country", width: 120, enableRowGroup: true, enablePivot: true, rowGroupIndex: 1},
-    {headerName: "Year", field: "year", width: 90, enableRowGroup: true, enablePivot: true, pivotIndex: 1},
-    {headerName: "Date", field: "date", width: 110, enableRowGroup: true, enablePivot: true},
-    {headerName: "Sport", field: "sport", width: 110, enableRowGroup: true, enablePivot: true, rowGroupIndex: 2},
-    {headerName: "Gold", field: "gold", width: 100, hide: true, enableValue: true},
-    {headerName: "Silver", field: "silver", width: 100, hide: true, enableValue: true, aggFunc: 'sum'},
-    {headerName: "Bronze", field: "bronze", width: 100, hide: true, enableValue: true, aggFunc: 'sum'},
-    {headerName: "Total", field: "totalAgg", valueGetter: "node.group ? data.totalAgg : data.gold + data.silver + data.bronze", width: 100}
+    {
+        field: "athlete",
+        minWidth: 200,
+        enableRowGroup: true,
+        enablePivot: true
+    },
+    {
+        field: "age",
+        enableValue: true
+    },
+    {
+        field: "country",
+        minWidth: 200,
+        enableRowGroup: true,
+        enablePivot: true,
+        rowGroupIndex: 1
+    },
+    {
+        field: "year",
+        enableRowGroup: true,
+        enablePivot: true,
+        pivotIndex: 1
+    },
+    {
+        field: "date",
+        minWidth: 180,
+        enableRowGroup: true,
+        enablePivot: true
+    },
+    {
+        field: "sport",
+        minWidth: 200,
+        enableRowGroup: true,
+        enablePivot: true,
+        rowGroupIndex: 2
+    },
+    {
+        field: "gold",
+        hide: true,
+        enableValue: true
+    },
+    {
+        field: "silver",
+        hide: true,
+        enableValue: true,
+        aggFunc: 'sum'
+    },
+    {
+        field: "bronze",
+        hide: true,
+        enableValue: true,
+        aggFunc: 'sum'
+    },
+    {
+        headerName: "Total",
+        field: "totalAgg",
+        valueGetter: "node.group ? data.totalAgg : data.gold + data.silver + data.bronze",
+    }
 ];
 
 var gridOptions = {
-    defaultColDef: {
-        sortable: true
-    },
     columnDefs: columnDefs,
-    rowData: null,
+    defaultColDef: {
+        flex: 1,
+        minWidth: 150,
+        sortable: true,
+        resizable: true,
+    },
+    autoGroupColumnDef: {
+        minWidth: 250,
+    },
     pivotMode: true,
     sideBar: 'columns',
     rowGroupPanelShow: 'always',

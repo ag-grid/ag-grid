@@ -17,21 +17,31 @@ include '../documentation-main/documentation_header.php';
 
     <h2 id="filterComponentInstance">Accessing Filter Component Instances</h2>
 
-    <p>
-        It is possible to access the filter components directly if you want to interact with the specific
-        filter. This also works for your own custom filters, where you can
-        get a reference to the underlying filtering instance (ie what was created after ag-Grid called 'new'
-        on your filter). You get a reference to the filter instance by calling <code>api.getFilterInstance(colKey)</code>.
-    </p>
+<p>
+    It is possible to access the filter components directly if you want to interact with the specific
+    filter. This also works for your own custom filters, where you can
+    get a reference to the underlying filtering instance (ie what was created after ag-Grid called 'new'
+    on your filter). You get a reference to the filter instance by calling <code>api.getFilterInstance(colKey)</code>.
+</p>
 
 <snippet>
 // Get a reference to the name filter instance
 var filterInstance = gridApi.getFilterInstance('name');</snippet>
 
-    <p>
-        All of the methods of the filter are present. If using a custom filter then any other methods you have
-        added will also be present, allowing bespoke behaviour to be added to your filter.
-    </p>
+<p>
+    All of the methods of the filter are present. If using a custom filter then any other methods you have
+    added will also be present, allowing bespoke behaviour to be added to your filter.
+</p>
+
+<p>
+    For filters that are created asynchronously including React 16+ components, <code>getFilterInstance</code> will return null if the filter has not already been created. If your app uses asynchronous components, use the optional <code>callback</code> function which will be invoked with the filter instance when it is available.
+</p>
+
+<snippet>
+// Get a reference to an asynchronously created filter instance
+gridApi.getFilterInstance('name', filterInstance => {
+    ... use filterInstance here
+});</snippet>
 
     <h3>Re-running Grid Filtering</h3>
 

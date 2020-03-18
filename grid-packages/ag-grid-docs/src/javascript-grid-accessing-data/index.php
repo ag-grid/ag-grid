@@ -166,6 +166,6 @@ SNIPPET
         one page.</li>
 </ul>
 
-<?= grid_example('Get Displayed Row', 'get-displayed-row', 'generated', ['exampleHeight' => 600]) ?>
+<?= grid_example('Get Displayed Row', 'get-displayed-row', 'generated') ?>
 
 <?php include '../documentation-main/documentation_footer.php';?>

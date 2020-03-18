@@ -2,7 +2,7 @@ var rowData = [
     { athlete: 'Niall', country: 'Ireland', city: 'Dublin', year: '2016', gold: 10, silver: 10, bronze: 10 },
     { athlete: 'John', country: 'Ireland', city: 'Dublin', year: '2016', gold: 5, silver: 5, bronze: 5 },
     { athlete: 'Rob', country: 'Ireland', city: 'Dublin', year: '2016', gold: 2, silver: 2, bronze: 2 },
-    { athlete: 'Bas', country: 'Pakestan', city: 'Ardabil', year: '2016', gold: 2, silver: 2, bronze: 2 },
+    { athlete: 'Bas', country: 'Pakistan', city: 'Ardabil', year: '2016', gold: 2, silver: 2, bronze: 2 },
     { athlete: 'Dimple', country: 'India', city: 'Delhi', year: '2016', gold: 2, silver: 2, bronze: 2 },
     { athlete: 'Jack', country: 'South Africa', city: 'Cape Town', year: '2016', gold: 2, silver: 2, bronze: 2 },
     { athlete: 'Tiger', country: 'South Africa', city: 'Johannesburg', year: '2016', gold: 2, silver: 2, bronze: 2 },

@@ -9,6 +9,7 @@ import { Environment } from "../environment";
 import { EventService } from "../eventService";
 import { Events } from '../events';
 import { _ } from "../utils";
+import { ResizeObserverService } from "../misc/resizeObserverService";
 
 interface AgPopup {
     element: HTMLElement;
@@ -30,6 +31,7 @@ export class PopupService {
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('environment') private environment: Environment;
     @Autowired('eventService') private eventService: EventService;
+    @Autowired('resizeObserverService') private resizeObserverService: ResizeObserverService;
 
     private gridCore: GridCore;
     private popupList: AgPopup[] = [];
@@ -340,7 +342,7 @@ export class PopupService {
 
     public addPopup(
         modal: boolean,
-        eChild: any,
+        eChild: HTMLElement,
         closeOnEsc: boolean,
         closedCallback?: () => void,
         click?: MouseEvent | Touch | null,
@@ -392,6 +394,15 @@ export class PopupService {
             this.bringPopupToFront(eWrapper);
         }
 
+        // if the popup resizes, make sure that it's not sticking off the right hand side of the screen
+        const disconnectResizeObserver = this.resizeObserverService.observeResize(eChild, () => {
+            const childRect = eChild.getBoundingClientRect();
+            const parentRect = this.getParentRect();
+            if (childRect.right >= parentRect.right) {
+                eChild.style.left = (parentRect.right - parentRect.left - childRect.width) + 'px';
+            }
+        });
+
         let popupHidden = false;
 
         const hidePopupOnKeyboardEvent = (event: KeyboardEvent) => {
@@ -410,6 +421,7 @@ export class PopupService {
         };
 
         const hidePopup = (mouseEvent?: MouseEvent | null, touchEvent?: TouchEvent) => {
+            disconnectResizeObserver();
             if (
                 // we don't hide popup if the event was on the child, or any
                 // children of this child

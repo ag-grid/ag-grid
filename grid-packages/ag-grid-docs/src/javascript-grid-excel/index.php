@@ -55,8 +55,8 @@ include '../documentation-main/documentation_header.php';
 
 <p>
     The main reason to export to Excel instead of CSV is so that the look and feel remain as consistent as possible with your ag-Grid application. In order to
-    simplify the configuration the Excel Export reuses the <a href="../javascript-grid-cell-styles/#cellClassRules">cellClassRules</a>
-    and the <a href="../javascript-grid-cell-styles/#cellClass">cellClass</a> from the column definition.
+    simplify the configuration the Excel Export reuses the <a href="../javascript-grid-cell-styles/#cell-class-rules">cellClassRules</a>
+    and the <a href="../javascript-grid-cell-styles/#cell-class">cellClass</a> from the column definition.
     Whatever resultant class is applicable to the cell then is expected to be provided as an Excel Style to the
     ExcelStyles property in the <a href="../javascript-grid-properties/">gridOptions</a>.
 </p>
@@ -66,7 +66,7 @@ include '../documentation-main/documentation_header.php';
 </p>
 
 <ul class="content">
-    <li><code>id</code> (mandatory): The id of the style, this has to be a unique string and has to match the name of the style from the <a href="../javascript-grid-cell-styles/#cellClassRules">cellClassRules</a></li>
+    <li><code>id</code> (mandatory): The id of the style, this has to be a unique string and has to match the name of the style from the <a href="../javascript-grid-cell-styles/#cell-class-rules">cellClassRules</a></li>
     <li><code>alignment</code> (optional): Vertical and horizontal alignment:
         <ul class="content">
             <li>horizontal: String one of Automatic, Left, Center, Right, Fill, Justify, CenterAcrossSelection, Distributed, and JustifyDistributed</li>
@@ -212,8 +212,8 @@ SNIPPET
 <h2>Resolving Excel Styles</h2>
 
 <p>
-    All the defined classes from <a href="../javascript-grid-cell-styles/#cellClass">cellClass</a> and all the classes resulting from evaluating
-    the <a href="../javascript-grid-cell-styles/#cellClassRules">cellClassRules</a>
+    All the defined classes from <a href="../javascript-grid-cell-styles/#cell-class">cellClass</a> and all the classes resulting from evaluating
+    the <a href="../javascript-grid-cell-styles/#cell-class-rules">cellClassRules</a>
     are applied to each cell when exporting to Excel.
     Normally these styles map to CSS classes when the grid is doing normal rendering. In Excel Export, the styles are mapped against the Excel styles
     that you have provided. If more than one Excel style is found, the results are merged (similar to how CSS classes
@@ -246,7 +246,7 @@ SNIPPET
     </li>
 </ul>
 
-<?= grid_example('Excel Export', 'excel-export-with-styles', 'generated', ['enterprise' => true]) ?>
+<?= grid_example('Excel Export', 'excel-export-with-styles', 'generated', ['enterprise' => true, 'exampleHeight' => 815]) ?>
 
 <h2>Example: Styling Row Groups</h2>
 
@@ -254,7 +254,7 @@ SNIPPET
     If you prefer to use indentation to indicate hierarchy like the Grid user interface does, you can achieve this by combining
     <code>colDef.cellClass</code> and <code>processRowGroupCallback</code>:</p>
 
-<?= grid_example('Styling Row Groups', 'styling-row-groups', 'generated', ['enterprise' => true, 'exampleHeight' => 300]) ?>
+<?= grid_example('Styling Row Groups', 'styling-row-groups', 'generated', ['enterprise' => true]) ?>
 
 <h2>Dealing With Errors In Excel</h2>
 

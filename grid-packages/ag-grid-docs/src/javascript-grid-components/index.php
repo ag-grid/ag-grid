@@ -189,8 +189,7 @@ SNIPPET
 <ul class="content">
     <li>
         <b>AngularJS 1</b>: This framework does not follow the same pattern as other frameworks. See
-        <a href="../angular-grid/#angular-compiling">AngularJS</a> on how you can turn on AngularJS
-        1
+        <a href="../best-angularjs-grid/#angular-compiling">AngularJS</a> on how you can turn on AngularJS 1
         compiling to use AngularJS bindings inside ag-Grid.
     </li>
 </ul>
