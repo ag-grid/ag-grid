@@ -9,7 +9,7 @@ include '../documentation-main/documentation_header.php';
 <h1>Vue Charts | Get Started with ag-Charts and Vue</h1>
 
 <p class="lead" id="vue-charts-description">
-    ag-Charts is an exciting new addition to the ag-Charts family, offering both integrated as well
+    ag-Charts is an exciting new addition to the ag-Grid family, offering both integrated as well
     as standalone fully functional charting capabilities.
 </p>
 

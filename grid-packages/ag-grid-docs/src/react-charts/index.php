@@ -9,7 +9,7 @@ include '../documentation-main/documentation_header.php';
 <h1>React Charts | Get Started with ag-Charts and React</h1>
 
 <p class="lead" id="react-charts">
-    ag-Charts is an exciting new addition to the ag-Charts family, offering both integrated as well as standalone
+    ag-Charts is an exciting new addition to the ag-Grid family, offering both integrated as well as standalone
     fully functional
     charting capabilities.
 </p>

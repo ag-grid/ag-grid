@@ -2,31 +2,6 @@ import {AfterViewInit, Component, ElementRef, Input, ViewEncapsulation} from "@a
 
 import {AgChart, Chart} from 'ag-charts-community';
 
-export interface AgLegendProps {
-    enabled?: boolean;
-    padding?: number;
-    itemPaddingX?: number;
-    itemPaddingY?: number;
-    markerSize?: number;
-    markerStrokeWidth?: number;
-    labelColor?: string;
-    labelFontFamily?: string;
-}
-
-export interface Series {
-    type?: string;
-    xKey: string;
-    yKey: string;
-}
-
-export interface AgChartOptions {
-    width?: number;
-    height?: number;
-    data?: any[];
-    series: Series[];
-    legend?: AgLegendProps;
-}
-
 // noinspection AngularIncorrectTemplateDefinition
 @Component({
     selector: 'ag-charts-angular',
@@ -42,7 +17,7 @@ export class AgChartsAngular implements AfterViewInit {
     private _chart!: Chart;
 
     @Input()
-    public options!: AgChartOptions;
+    public options!: any;
 
     constructor(elementDef: ElementRef) {
         this._nativeElement = elementDef.nativeElement;
