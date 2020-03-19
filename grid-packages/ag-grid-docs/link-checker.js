@@ -83,7 +83,7 @@ async function verifyFile(file) {
     const [statusCode, contents] = await getUrlContents(createUrl(file));
 
     if (statusCode !== 200) {
-        console.log(`\u2753 Ignoring ${file} (${statusCode})`);
+        //console.log(`\u2753 Ignoring ${file} (${statusCode})`);
     }
 
     let matches;
@@ -115,7 +115,7 @@ async function verifyFile(file) {
     if (invalidUrls.length) {
         console.log(`\u274C Found errors in ${file}. Invalid URLs found linking to:\n-> ${invalidUrls.join('\n-> ')}`);
     } else {
-        console.log(`\u2714 Verified ${validUrls.length} links in ${file} (ignored ${ignoredUrls.length})`);
+        //console.log(`\u2714 Verified ${validUrls.length} links in ${file} (ignored ${ignoredUrls.length})`);
     }
 }
 

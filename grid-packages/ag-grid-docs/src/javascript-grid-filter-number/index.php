@@ -4,8 +4,8 @@ $pageDescription = "Core feature of ag-Grid supporting Angular, React, Javascrip
 $pageKeywords = "ag-Grid Number Filter";
 $pageGroup = "feature";
 include '../documentation-main/documentation_header.php';
+define('skipInPageNav', true);
 ?>
-
 
 <h1>Number Filter</h1>
 
@@ -13,11 +13,10 @@ include '../documentation-main/documentation_header.php';
     Number filters allow you to filter number data.
 </p>
 
-
 <p>
     Unlike <a href="../javascript-grid-filter-text/">Text</a> and <a href="../javascript-grid-filter-date/">Date</a>
-    filters, the Number filter does not have any features beyond those shared with the other simple filters and
-    already explained in <a href="../javascript-grid-filter-provided/">Provided Filters</a> and
+    filters, the Number filter does not have any features beyond those shared with the other simple filters, which
+    are explained in <a href="../javascript-grid-filter-provided/">Provided Filters</a> and
     <a href="../javascript-grid-filter-provided-simple/">Provided Simple Filters</a>.
 </p>
 

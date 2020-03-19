@@ -1,0 +1,16 @@
+{
+    "providedFilters": {
+        "agNumberColumnFilter": {
+            "description": "A Number Filter for number comparisons."
+        },
+        "agTextColumnFilter": {
+            "description": "A Text Filter for string comparisons."
+        },
+        "agDateColumnFilter": {
+            "description": "A Date Filter for date comparisons."
+        },
+        "agSetColumnFilter": {
+            "description": "A Set Filter, influenced by how filters work in Microsoft Excel. This is an ag-Grid-Enterprise feature."
+        }
+    }
+}
