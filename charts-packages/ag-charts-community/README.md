@@ -1,7 +1,4 @@
 
-
-![alt text](./github-banner.png "Logo Title Text 1")
-
 [![npm](https://img.shields.io/npm/dm/ag-charts-community.svg)](https://www.npmjs.com/package/ag-charts-community)
 [![npm](https://img.shields.io/npm/dt/ag-charts-community.svg)](https://www.npmjs.com/package/ag-charts-community)
 
