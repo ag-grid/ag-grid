@@ -16,7 +16,7 @@ include '../documentation-main/documentation_header.php';
     <li>If you are using the &quot;Balham&quot; or &quot;Material&quot; themes:</li>
     <ul>
         <li>Test your theme to ensure that all the customisations you have made still look correct.</li>
-        <li>If everything still looks correct you do not need to make any changes.</li>
+        <li>If everything still looks correct then you do not need to change your theme code. However you will see a deprecation warning in the compile logs telling you that the path that you are using to import the theme file has changed, and you should update your import paths to remove this warning (change the @import from <code>.../sass/ag-theme-$name.scss</code> to <code>.../sass/legacy/ag-theme-$name-v22-compat.scss</code>).</li>
         <li>If anything does not work as expected, read this migration guide to establish what you need to change.</li>
     </ul>
     <li>If you have a large custom theme that extends any of our provided themes, but contains many CSS rules that extensively change the appearance so that it looks very different from the base theme, then consider updating your theme to extend ag-theme-base. This will provide the most stable long term base for your theme. See <a href="https://github.com/ag-grid/ag-grid-customise-theme/tree/master/src/vanilla-extending-base">this demo</a> for an example of a custom theme extending the base theme.</li>
@@ -193,17 +193,26 @@ $ag-group-component-border-color: green;
 
 <h2 id="backwards-compatibility-mode">Backwards compatibility mode</h2>
 
-<p>We have implemented a backwards compatibility mode that will enable some apps to continue working with minimal changes. If you are extending a provided theme importing the main theme file, e.g. <code>ag-theme-balham.scss</code>, you will automatically be opted in to &quot;variables&quot; backwards compatibility mode.</p>
+<p>We have implemented a backwards compatibility mode that will enable some apps to continue working with minimal changes. If you are extending a provided theme importing the main theme file, e.g. <code>ag-theme-balham.scss</code>, you will automatically be opted in to &quot;variables&quot; backwards compatibility mode. You have three options:</p>
+
+<ul>
+    <li>Stay in "variables" compatibility mode. Although you are opted into this mode automatically, you will see a deprecation warning in the compile logs telling you that the path that you are using to import the theme file has changed, and you should update your import paths to remove this warning (change the @import from <code>.../sass/ag-theme-$name.scss</code> to <code>.../sass/legacy/ag-theme-$name-v22-compat.scss</code>)</li>
+    <li>Enter "legacy" compatibility mode if this is right for your app (see below).</li>
+    <li>Switch to the new mechanism for configuring themes. Change your theme import from <code>.../sass/ag-theme-$name.scss</code> to <code>.../sass/ag-theme-$name-mixin.scss</code> and call the theme mixin. See <a href="/javascript-grid-provided-themes/">themes documentation</a> sample code. You will need to convert all the <code>$ag-*</code> global variables you have defined to theme parameters.</li>
+</ul>
+
+<p>To enable "legacy" mode, define the <code>$ag-compatibility-mode</code> variable:</p>
 
 <snippet language="scss">
-$ag-compatibility-mode: "variables"; // or "legacy"
+$ag-compatibility-mode: "legacy"; // or "variables"
 // Set any legacy global variables before including the file. These will be
 // picked up and used to generate theme parameters.
 $ag-header-foreground-color: red;
+// import the theme's v22-compat.scss file to disable deprecation warnings
 @import "~ag-grid-community/src/styles/ag-theme-balham/sass/legacy/ag-theme-balham-v22-compat.scss";
 </snippet>
 
-<p>There are two supported values, <code>&quot;variables&quot;</code> and <code>&quot;legacy&quot;</code>.</p>
+<p>Here is what each mode does:</p>
 
 <ul>
     <li>variables mode: reads the global variables that were supported in v22 and converts them to the parameter maps used in v23, <em>only if there is an equivalent parameter for a variable</em> (most variables are supported). This mode:
