@@ -79,7 +79,7 @@ SNIPPET
 
 <?= createSnippet(<<<SNIPPET
 <template>
-    <ag-charts-vue :options="options"></ag-charts-vue>
+    <ag-charts-vue :options="options" style="position: absolute; top: 0; right: 0; bottom: 0; left: 0;"></ag-charts-vue>
 </template>
 SNIPPET
 , 'html') ?>

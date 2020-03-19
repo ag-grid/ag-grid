@@ -149,7 +149,7 @@ SNIPPET
 
 <?= createSnippet(<<<SNIPPET
 <ag-charts-angular
-    style="height: 100%"
+    style="position: absolute; top: 0; right: 0; bottom: 0; left: 0;"
     [options]="options">
 </ag-charts-angular>
 SNIPPET

@@ -17,7 +17,10 @@ import Vue from 'vue';
 import { AgChartsVue } from 'ag-charts-vue';
 
 export const App = {
-    template: `<ag-charts-vue :options="options"></ag-charts-vue>`,
+    template: `<ag-charts-vue
+    :options="options"
+    style="position: absolute; top: 0; right: 0; bottom: 0; left: 0;">
+    </ag-charts-vue>`,
     components: {
         'ag-charts-vue': AgChartsVue,
     },
