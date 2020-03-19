@@ -1,6 +1,7 @@
-import { Logger, LoggerFactory } from "../logger";
-import { Qualifier, PostConstruct, Bean, Autowired, PreDestroy } from "../context/context";
+import { PostConstruct, Bean, Autowired, PreDestroy } from "../context/context";
 import { Column } from "../entities/column";
+import { ColumnApi } from "../columnController/columnApi";
+import { GridApi } from "../gridApi";
 import { GridOptionsWrapper } from "../gridOptionsWrapper";
 import { DragService, DragListenerParams } from "./dragService";
 import { Environment } from "../environment";
@@ -75,6 +76,8 @@ export interface DraggingEvent {
     dragSource: DragSource;
     dragItem: DragItem;
     fromNudge: boolean;
+    api: GridApi;
+    columnApi: ColumnApi;
 }
 
 @Bean('dragAndDropService')
@@ -83,6 +86,8 @@ export class DragAndDropService {
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('dragService') private dragService: DragService;
     @Autowired('environment') private environment: Environment;
+    @Autowired('columnApi') private columnApi: ColumnApi;
+    @Autowired('gridApi') private gridApi: GridApi;
 
     public static ICON_PINNED = 'pinned';
     public static ICON_MOVE = 'move';
@@ -308,11 +313,11 @@ export class DragAndDropService {
     public createDropTargetEvent(dropTarget: DropTarget, event: MouseEvent, hDirection: HorizontalDirection, vDirection: VerticalDirection, fromNudge: boolean): DraggingEvent {
         // localise x and y to the target component
         const rect = dropTarget.getContainer().getBoundingClientRect();
-        const { dragItem, dragSource } = this;
+        const { gridApi: api, columnApi, dragItem, dragSource } = this;
         const x = event.clientX - rect.left;
         const y = event.clientY - rect.top;
 
-        return { event, x, y, vDirection, hDirection, dragSource, fromNudge, dragItem };
+        return { event, x, y, vDirection, hDirection, dragSource, fromNudge, dragItem, api, columnApi };
     }
 
     private positionGhost(event: MouseEvent): void {
