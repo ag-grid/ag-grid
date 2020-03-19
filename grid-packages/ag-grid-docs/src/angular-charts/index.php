@@ -9,7 +9,7 @@ include '../documentation-main/documentation_header.php';
 <h1>Angular Charts | Get Started with ag-Charts and Angular</h1>
 
 <p class="lead" id="angular-charts">
-    ag-Charts is an exciting new addition to the ag-Charts family, offering both integrated as well as standalone fully functional
+    ag-Charts is an exciting new addition to the ag-Grid family, offering both integrated as well as standalone fully functional
     charting capabilities.
 </p>
 
@@ -91,14 +91,13 @@ SNIPPET
 
 <?= createSnippet(<<<SNIPPET
 import { Component } from '@angular/core';
-import { AgChartOptions } from 'ag-charts-angular';
 
 @Component({
     selector: 'my-app',
     templateUrl: './app.component.html'
 })
 export class AppComponent {
-    private options: AgChartOptions;
+    private options: any;
 
     data = [
         {
