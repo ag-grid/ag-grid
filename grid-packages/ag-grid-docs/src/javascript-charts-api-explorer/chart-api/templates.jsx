@@ -76,14 +76,13 @@ render(<ChartExample />, document.querySelector("#root"));`
             return {
                 ...boilerplateFiles,
                 'app/app.component.ts': `import { Component } from '@angular/core';
-import { AgChartOptions } from 'ag-charts-angular';
 
 @Component({
     selector: 'my-app',
     templateUrl: './app.component.html'
 })
 export class AppComponent {
-    options: AgChartOptions;
+    options: any;
 
     constructor() {
         this.options = ${optionsJson};

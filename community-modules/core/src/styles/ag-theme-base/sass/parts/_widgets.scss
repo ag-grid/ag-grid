@@ -23,22 +23,28 @@
         @include ag-theme-rtl((margin-left: ag-param(grid-size)));
     }
 
-    input,
-    textarea,
-    select,
-    button {
+    input[class^='ag-'] {
+        margin: 0;
         background-color: ag-param(background-color);
-        color: inherit;
     }
 
-    input:not([type]),
-    input[type='text'],
-    input[type='number'],
-    input[type='tel'],
-    input[type='date'],
-    input[type='datetime-local'],
-    textarea {
+    textarea[class^='ag-'],
+    select[class^='ag-'] {
+        background-color: ag-param(background-color);
+    }
+
+    input[class^='ag-']:not([type]),
+    input[class^='ag-'][type='text'],
+    input[class^='ag-'][type='number'],
+    input[class^='ag-'][type='tel'],
+    input[class^='ag-'][type='date'],
+    input[class^='ag-'][type='datetime-local'],
+    textarea[class^='ag-'] {
         @extend %ag-text-input !optional;
+
+        font-size: inherit;
+        line-height: inherit;
+        color: inherit;
     
         @if ag-param(input-border-color) {
             border-width: 1px;
@@ -63,7 +69,7 @@
         }
     }
 
-    input[type='number'] {
+    input[class^='ag-'][type='number'] {
         -moz-appearance: textfield;
         &::-webkit-outer-spin-button,
         &::-webkit-inner-spin-button {
@@ -72,11 +78,11 @@
         }
     }
 
-    input[type='range'] {
+    input[class^='ag-'][type='range'] {
         padding: 0;
     }
 
-    input[type='button'], button {
+    input[class^='ag-'][type='button'], button {
         &:focus {
             box-shadow: ag-param(input-focus-box-shadow);
         }

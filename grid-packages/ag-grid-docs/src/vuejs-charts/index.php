@@ -9,7 +9,7 @@ include '../documentation-main/documentation_header.php';
 <h1>Vue Charts | Get Started with ag-Charts and Vue</h1>
 
 <p class="lead" id="vue-charts-description">
-    ag-Charts is an exciting new addition to the ag-Charts family, offering both integrated as well
+    ag-Charts is an exciting new addition to the ag-Grid family, offering both integrated as well
     as standalone fully functional charting capabilities.
 </p>
 
@@ -101,26 +101,21 @@ export default {
             options: null,
             data: [
                 {
-                    beverage: 'Coffee',
-                    Q1: 450,
-                    Q2: 560,
-                    Q3: 600,
-                    Q4: 700,
+                    quarter: 'Q1',
+                    spending: 450
                 },
                 {
-                    beverage: 'Tea',
-                    Q1: 270,
-                    Q2: 380,
-                    Q3: 450,
-                    Q4: 520,
+                    quarter: 'Q2',
+                    spending: 560
                 },
                 {
-                    beverage: 'Milk',
-                    Q1: 180,
-                    Q2: 170,
-                    Q3: 190,
-                    Q4: 200,
+                    quarter: 'Q3',
+                    spending: 600
                 },
+                {
+                    quarter: 'Q4',
+                    spending: 700
+                }
             ]
         };
     },

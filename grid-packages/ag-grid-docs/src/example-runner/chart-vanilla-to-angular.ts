@@ -12,7 +12,6 @@ function getImports(componentFileNames: string[]): string[] {
         "import { cloneDeep } from 'lodash';",
         "import { Component } from '@angular/core';",
         "import * as agCharts from 'ag-charts-community';",
-        "import { AgChartOptions } from 'ag-charts-angular';",
     ];
 
     if (componentFileNames) {
@@ -74,7 +73,7 @@ export function vanillaToAngular(bindings: any, componentFileNames: string[]): s
 })
 
 export class AppComponent {
-    private options: AgChartOptions;
+    private options: any;
     ${propertyVars.filter(p => p.name === 'options').join('\n')}
 
     constructor() {
