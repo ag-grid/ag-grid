@@ -16,7 +16,7 @@
 import Vue from 'vue';
 import { AgChartsVue } from 'ag-charts-vue';
 
-const ChartExample = {
+export const App = {
     template: `<ag-charts-vue :options="options"></ag-charts-vue>`,
     components: {
         'ag-charts-vue': AgChartsVue,
@@ -72,7 +72,7 @@ const ChartExample = {
     }
 };
 SNIPPET
-, 'ts') ?>
+) ?>
                 </div>
                 <div class="tab-pane" id="template" role="tabpanel" aria-labelledby="template-tab">
 <?= createSnippet(<<<SNIPPET

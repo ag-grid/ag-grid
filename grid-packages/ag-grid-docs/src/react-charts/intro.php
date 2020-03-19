@@ -79,7 +79,7 @@ SNIPPET
                 </div>
                 <div class="tab-pane" id="template" role="tabpanel" aria-labelledby="template-tab">
 
-<?= createSnippet('<div id="root"></div>', 'html') ?>
+<?= createSnippet('<div id="root" style="position: absolute; top: 0; right: 0; bottom: 0; left: 0;"></div>', 'html') ?>
                 </div>
             </div>
             <div class="text-right" style="margin-top: -1.5rem;">
