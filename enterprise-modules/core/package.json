@@ -1,6 +1,6 @@
 {
   "name": "@ag-grid-enterprise/core",
-  "version": "23.0.0",
+  "version": "23.0.2",
   "description": "Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components",
   "main": "./dist/cjs/main.js",
   "module": "./dist/es6/main.js",

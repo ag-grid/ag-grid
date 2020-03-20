@@ -1,0 +1,194 @@
+@import "./ag-grid-mixins";
+@import "./ag-theme-params";
+
+@mixin ag-inherit-text-styles() {
+    color: inherit;
+    font-family: inherit;
+    font-size: inherit;
+    font-weight: inherit;
+    line-height: inherit;
+}
+
+@mixin ag-border($border-type, $sides: null, $radius: null, $width: 1px, $color: null, $style: solid, $none: false) {
+    @if ag-should-draw-border($border-type) {
+        @if $color == null {
+            $color: if($border-type == secondary, ag-param(secondary-border-color), ag-param(border-color))
+        }
+
+        @if $sides {
+            @each $side in $sides {
+                border-#{$side}: if($none, none, $style $width $color);
+            }
+        }
+        @else {
+            border: if($none, none, $style $width $color);
+        }
+        @if $radius {
+            border-radius: $radius;
+        }
+    }
+}
+
+@mixin ag-vertical-widget-container {
+    padding: ag-param(widget-container-vertical-padding) ag-param(widget-container-horizontal-padding);
+    padding-bottom: ag-param(widget-container-vertical-padding) - ag-param(widget-vertical-spacing);
+
+    & > * {
+        margin-bottom: ag-param(widget-vertical-spacing);
+    }
+}
+
+@function ag-should-draw-border($type) {
+    $valid-types: (
+        critical: ag-param(borders-critical),
+        primary: ag-param(borders),
+        side-button: ag-param(borders-side-button),
+        secondary: ag-param(borders-secondary)
+    );
+    $draw-border: false;
+    @if not map-has-key($valid-types, $type) {
+        @error "Invalid border type '#{inspect($type)}'";
+    }
+    @return map-get($valid-types, $type);
+}
+
+@function ag-icon-char($name) {
+    $icon-map: ag-param-unchecked(icons-font-codes);
+    @if type-of($icon-map) != map {
+        @error "Expected icons-font-codes param to be a map, but got #{type-of($icon-map)} (#{inspect($icon-map)})";
+    }
+    @if not map-has-key($icon-map, $name) {
+        @error "No such icon: #{$name}";
+    }
+    @return map-get($icon-map, $name);
+}
+
+@mixin ag-card() {
+    @include ag-border(primary);
+    
+    background: ag-param(background-color);
+    border-radius: ag-param(card-radius);
+    box-shadow: ag-param(card-shadow);
+    padding: ag-param(grid-size);
+}
+
+
+@mixin ag-icon-element($icon, $code) {
+  .ag-icon-#{$icon} {
+      &:before {
+          content: $code;
+      }
+  }
+}
+
+@mixin ag-icons-font-face() {
+    @if ag-param(icons-data) {
+        @at-root {
+            @font-face {
+                font-family: '#{ag-param(icon-font-family)}';
+                src: ag-param(icons-data);
+                font-weight: normal;
+                font-style: normal;
+            }
+        }
+    }
+}
+
+@mixin ag-icon() {
+    font-family: '#{ag-param(icon-font-family)}';
+    font-size: ag-param(icon-size);
+    line-height: ag-param(icon-size);
+    font-style: normal;
+    font-weight: normal;
+    font-variant: normal;
+    text-transform: none;
+    
+    /* Better Font Rendering =========== */
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+@mixin ag-icons-webfont() {
+  .ag-icon {
+      @include ag-icon();
+  }
+
+  @include ag-icon-element('aggregation', ag-icon-char(aggregation));
+  @include ag-icon-element('arrows', ag-icon-char(arrows));
+  @include ag-icon-element('asc', ag-icon-char(asc));
+  @include ag-icon-element('cancel', ag-icon-char(cancel));
+  @include ag-icon-element('chart', ag-icon-char(chart));
+  @include ag-icon-element('color-picker', ag-icon-char(color-picker));
+  @include ag-icon-element('columns', ag-icon-char(columns));
+  @include ag-icon-element('contracted', ag-icon-char(contracted));
+  @include ag-icon-element('copy', ag-icon-char(copy));
+  @include ag-icon-element('cross', ag-icon-char(cross));
+  @include ag-icon-element('desc', ag-icon-char(desc));
+  @include ag-icon-element('expanded', ag-icon-char(expanded));
+  @include ag-icon-element('eye-slash', ag-icon-char(eye-slash));
+  @include ag-icon-element('eye', ag-icon-char(eye));
+  @include ag-icon-element('filter', ag-icon-char(filter));
+  @include ag-icon-element('first', ag-icon-char(first));
+  @include ag-icon-element('grip', ag-icon-char(grip));
+  @include ag-icon-element('group', ag-icon-char(group));
+  @include ag-icon-element('last', ag-icon-char(last));
+  @include ag-icon-element('left', ag-icon-char(left));
+  @include ag-icon-element('linked', ag-icon-char(linked));
+  @include ag-icon-element('loading', ag-icon-char(loading));
+  @include ag-icon-element('maximize', ag-icon-char(maximize));
+  @include ag-icon-element('menu', ag-icon-char(menu));
+  @include ag-icon-element('minimize', ag-icon-char(minimize));
+  @include ag-icon-element('next', ag-icon-char(next));
+  @include ag-icon-element('none', ag-icon-char(none));
+  @include ag-icon-element('not-allowed', ag-icon-char(not-allowed));
+  @include ag-icon-element('paste', ag-icon-char(paste));
+  @include ag-icon-element('pin', ag-icon-char(pin));
+  @include ag-icon-element('pivot', ag-icon-char(pivot));
+  @include ag-icon-element('previous', ag-icon-char(previous));
+  @include ag-icon-element('right', ag-icon-char(right));
+  @include ag-icon-element('save', ag-icon-char(save));
+  @include ag-icon-element('small-down', ag-icon-char(small-down));
+  @include ag-icon-element('small-left', ag-icon-char(small-left));
+  @include ag-icon-element('small-right', ag-icon-char(small-right));
+  @include ag-icon-element('small-up', ag-icon-char(small-up));
+  @include ag-icon-element('tick', ag-icon-char(tick));
+  @include ag-icon-element('tree-closed', ag-icon-char(tree-closed));
+  @include ag-icon-element('tree-indeterminate', ag-icon-char(tree-indeterminate));
+  @include ag-icon-element('tree-open', ag-icon-char(tree-open));
+  @include ag-icon-element('unlinked', ag-icon-char(unlinked));
+
+  .ag-icon-row-drag:before {
+      content: ag-icon-char(grip);
+  }
+
+  .ag-right-arrow:before {
+      content: ag-icon-char(left);
+  }
+
+  .ag-right-arrow:before {
+      content: ag-icon-char(right);
+  }
+
+}
+
+@mixin ag-color-self-overlay($color, $times) {
+    $solidity: 1 - opacity($color);
+    $output-solidity: 1;
+    @if $times > 0 {
+        @for $i from 1 through $times {
+            $output-solidity: $output-solidity * $solidity;
+        }
+    }
+
+    background-color: rgba($color, 1 - $output-solidity);
+}
+
+$-ag-included-themes: () !default;
+
+@mixin ag-include-theme-once-only() {
+    $name: nth(nth(&, 1), 1); // returns name of top-level selector, e.g. ".ag-theme-balham"
+    @if index($-ag-included-themes, $name) != null {
+        @error "Theme CSS for #{$name} has been generated twice. This can happen when you @import ag-theme-xyz.scss twice, or @import the legacy ag-theme-xyz.scss and then also @include the ag-theme-xyz() mixin. If you're using the mixin, just @import ag-theme-xyz-mixin.scss.";
+    }
+    $-ag-included-themes: append($-ag-included-themes, $name) !global;
+}

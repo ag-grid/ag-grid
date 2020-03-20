@@ -1,0 +1,59 @@
+/**
+ * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
+ * @version v23.0.2
+ * @link http://www.ag-grid.com/
+ * @license MIT
+ */
+"use strict";
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __param = (this && this.__param) || function (paramIndex, decorator) {
+    return function (target, key) { decorator(target, key, paramIndex); }
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+var context_1 = require("./context/context");
+var context_2 = require("./context/context");
+var LoggerFactory = /** @class */ (function () {
+    function LoggerFactory() {
+    }
+    LoggerFactory.prototype.setBeans = function (gridOptionsWrapper) {
+        this.logging = gridOptionsWrapper.isDebug();
+    };
+    LoggerFactory.prototype.create = function (name) {
+        return new Logger(name, this.isLogging.bind(this));
+    };
+    LoggerFactory.prototype.isLogging = function () {
+        return this.logging;
+    };
+    __decorate([
+        __param(0, context_2.Qualifier('gridOptionsWrapper'))
+    ], LoggerFactory.prototype, "setBeans", null);
+    LoggerFactory = __decorate([
+        context_1.Bean('loggerFactory')
+    ], LoggerFactory);
+    return LoggerFactory;
+}());
+exports.LoggerFactory = LoggerFactory;
+var Logger = /** @class */ (function () {
+    function Logger(name, isLoggingFunc) {
+        this.name = name;
+        this.isLoggingFunc = isLoggingFunc;
+    }
+    Logger.prototype.isLogging = function () {
+        return this.isLoggingFunc();
+    };
+    Logger.prototype.log = function (message) {
+        if (this.isLoggingFunc()) {
+            // tslint:disable-next-line
+            console.log('ag-Grid.' + this.name + ': ' + message);
+        }
+    };
+    return Logger;
+}());
+exports.Logger = Logger;
+
+//# sourceMappingURL=logger.js.map

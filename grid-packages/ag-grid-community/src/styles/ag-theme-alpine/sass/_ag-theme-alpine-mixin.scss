@@ -1,0 +1,234 @@
+@import "../../ag-theme-base/sass/ag-theme-base";
+@import "./ag-theme-alpine-default-params";
+
+@mixin ag-theme-alpine($params: ()) {
+    
+    $params: ag-process-theme-variables($params, $ag-theme-alpine-default-params);
+    @include ag-theme-base($params);
+
+    .ag-filter-toolpanel-header,
+    .ag-filter-toolpanel-search,
+    .ag-status-bar,
+    .ag-header-row,
+    .ag-panel-title-bar-title {
+        font-weight: 700;
+        color: ag-param(header-foreground-color);
+    }
+
+    .ag-row {
+        font-size: ag-param(font-size) + 1;
+    }
+
+    %ag-text-input {
+        min-height: ag-param(grid-size) * 4;
+        border-radius: ag-param(border-radius);
+
+        @include ag-theme-rtl((
+            padding-left: ag-param(grid-size),
+        ));
+    }
+
+    .ag-tab {
+        padding: ag-param(grid-size) * 1.5;
+        transition: color 0.4s;
+    }
+    .ag-tab-selected {
+        color: ag-param(alpine-active-color);
+    }
+
+    .ag-menu {
+        background-color: ag-param(control-panel-background-color);
+    }
+
+    .ag-menu-header {
+        background-color: ag-param(control-panel-background-color);
+        padding-top: 1px; // hack to align column menu tab header border with header row border
+    }
+    
+    .ag-tabs-header {
+        @include ag-border(primary, bottom);
+    }
+
+    .ag-set-filter-select-all {
+        // default size is ag-param(list-item-height), make it a little larger
+        height: ag-param(list-item-height) + ag-param(grid-size) * 2;
+    }
+
+    .ag-charts-settings-group-title-bar,
+    .ag-charts-data-group-title-bar,
+    .ag-charts-format-top-level-group-title-bar {
+        padding: ag-param(grid-size) ag-param(grid-size) * 2;
+        line-height: ag-param(icon-size) + ag-param(grid-size) - 2;
+    }
+
+    .ag-chart-mini-thumbnail {
+        background-color: ag-param(background-color);
+    }
+    
+    .ag-chart-settings-nav-bar {
+        @include ag-border(secondary, top);
+    }
+    
+    .ag-group-title-bar-icon {
+        @include ag-theme-rtl((margin-right: ag-param(grid-size)))
+    }
+
+    .ag-charts-format-top-level-group-toolbar {
+        margin-top: ag-param(grid-size);
+        @include ag-theme-rtl((padding-left: ag-param(icon-size) / 2 + ag-param(grid-size) * 2));
+    }
+
+    .ag-charts-format-sub-level-group {
+        border-left: dashed 1px ag-param(border-color);
+        padding-left: ag-param(grid-size);
+        margin-bottom: ag-param(grid-size) * 2;
+    }
+
+    .ag-charts-format-sub-level-group-title-bar {
+        padding-top: 0;
+        padding-bottom: 0;
+        background: none;
+        font-weight: 700;
+    }
+
+    .ag-charts-format-sub-level-group-container {
+        padding-bottom: 0;
+    }
+
+    .ag-charts-format-sub-level-group-item:last-child {
+        margin-bottom: 0;
+    }
+    
+    .ag-dnd-ghost {
+        font-size: ag-param(font-size) - 1;
+        font-weight: 700;
+    }
+
+    .ag-side-buttons {
+        width: ag-param(grid-size) * 5;
+    }
+
+    .ag-standard-button {
+        appearance: none;
+        -webkit-appearance: none;
+        border-radius: ag-param(border-radius);
+        border: 1px solid ag-param(alpine-active-color);
+        color: ag-param(alpine-active-color);
+        background: ag-param(background-color);
+        font-weight: 600;
+        padding: ag-param(grid-size) ag-param(grid-size) * 2;
+    
+        &:hover {
+            border-color: ag-param(alpine-active-color);
+            background-color: rgba(ag-param(alpine-active-color), 0.1);
+        }
+    
+        &:active {
+            border-color: ag-param(alpine-active-color);
+            background-color: ag-param(alpine-active-color);
+            color: ag-param(background-color);
+        }
+    }
+
+    .ag-menu-header {
+        min-width: 240px;
+    }
+
+    .ag-column-drop-vertical {
+        min-height: 75px;
+        max-height: 175px;
+    }
+
+    .ag-tool-panel-wrapper {
+        width: 250px;
+    }
+
+    .ag-column-drop-vertical-title-bar {
+        padding: ag-param(grid-size) * 2;
+        padding-bottom: 0px;
+    }
+
+    .ag-column-drop-vertical-empty-message {
+        display: flex;
+        align-items: center;
+        border: dashed 1px ag-param(border-color);
+        margin: ag-param(grid-size) * 2;
+        padding: ag-param(grid-size) * 2;
+    }
+
+    .ag-column-drop-empty-message {
+        color: rgba(ag-param(foreground-color), 0.75);
+    }
+
+    .ag-status-bar {
+        font-weight: normal;
+    }
+
+    .ag-status-name-value-value {
+        font-weight: 700;
+    }
+
+    .ag-paging-number, .ag-paging-row-summary-panel-number {
+        font-weight: 700;
+    }
+
+    .ag-column-drop-cell-button {
+        opacity: 0.5;
+
+        &:hover {
+            opacity: 0.75;
+        }
+    }
+
+    .ag-header-cell-menu-button,
+    .ag-side-button-button,
+    .ag-tab,
+    .ag-panel-title-bar-button,
+    .ag-header-expand-icon,
+    .ag-column-group-icons,
+    .ag-group-expanded .ag-icon,
+    .ag-group-contracted .ag-icon,
+    .ag-chart-settings-prev,
+    .ag-chart-settings-next,
+    .ag-group-title-bar-icon,
+    .ag-column-select-header-icon,
+    .ag-floating-filter-button-button,
+    .ag-filter-toolpanel-expand {
+        &:hover {
+            color: ag-param(alpine-active-color);
+        }
+    }
+
+    .ag-chart-settings-card-item.ag-not-selected:hover {
+        opacity: 0.35;
+    }
+
+    .ag-panel-title-bar-button {
+        @include ag-theme-rtl((
+            margin-left: ag-param(grid-size) * 2,
+            margin-right: ag-param(grid-size)
+        ));
+    }
+
+    .ag-filter-toolpanel-group-container {
+        padding-left: ag-param(grid-size);
+    }
+
+    .ag-filter-toolpanel-instance-filter {
+        border: none;
+        background-color: ag-param(control-panel-background-color);
+        border-left: dashed 1px ag-param(border-color);
+        margin-left: ag-param(grid-size) + ag-param(icon-size) / 2 - 1px;
+        padding-left: ag-param(icon-size) / 2;
+        margin-right: ag-param(grid-size) * 2;
+    }
+
+    .ag-set-filter-list {
+        padding-top: ag-param(grid-size) / 2;
+        padding-bottom: ag-param(grid-size) / 2;
+    }
+
+    .ag-overlay-no-rows-wrapper.ag-layout-auto-height {
+        padding-top: 60px;
+    }
+}

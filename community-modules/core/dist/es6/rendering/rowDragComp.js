@@ -1,0 +1,218 @@
+/**
+ * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
+ * @version v23.0.2
+ * @link http://www.ag-grid.com/
+ * @license MIT
+ */
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = function (d, b) {
+        extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+        return extendStatics(d, b);
+    };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+import { Component } from "../widgets/component";
+import { PostConstruct } from "../context/context";
+import { RowNode } from "../entities/rowNode";
+import { DragSourceType } from "../dragAndDrop/dragAndDropService";
+import { Events } from "../eventKeys";
+import { BeanStub } from "../context/beanStub";
+import { _ } from "../utils";
+var RowDragComp = /** @class */ (function (_super) {
+    __extends(RowDragComp, _super);
+    function RowDragComp(rowNode, column, cellValue, beans) {
+        var _this = _super.call(this, "<div class=\"ag-drag-handle ag-row-drag\" role=\"presentation\"></div>") || this;
+        _this.rowNode = rowNode;
+        _this.column = column;
+        _this.cellValue = cellValue;
+        _this.beans = beans;
+        return _this;
+    }
+    RowDragComp.prototype.postConstruct = function () {
+        var eGui = this.getGui();
+        eGui.appendChild(_.createIconNoSpan('rowDrag', this.beans.gridOptionsWrapper, null));
+        this.addDragSource();
+        this.checkCompatibility();
+        var strategy = this.beans.gridOptionsWrapper.isRowDragManaged() ?
+            new ManagedVisibilityStrategy(this, this.beans, this.rowNode, this.column) :
+            new NonManagedVisibilityStrategy(this, this.beans, this.rowNode, this.column);
+        this.addFeature(strategy, this.beans.context);
+    };
+    RowDragComp.prototype.getSelectedCount = function () {
+        var multiRowEnabled = this.beans.gridOptionsWrapper.isEnableMultiRowDragging();
+        if (!multiRowEnabled) {
+            return 1;
+        }
+        var selection = this.beans.selectionController.getSelectedNodes();
+        return selection.indexOf(this.rowNode) !== -1 ? selection.length : 1;
+    };
+    // returns true if all compatibility items work out
+    RowDragComp.prototype.checkCompatibility = function () {
+        var managed = this.beans.gridOptionsWrapper.isRowDragManaged();
+        var treeData = this.beans.gridOptionsWrapper.isTreeData();
+        if (treeData && managed) {
+            _.doOnce(function () {
+                return console.warn('ag-Grid: If using row drag with tree data, you cannot have rowDragManaged=true');
+            }, 'RowDragComp.managedAndTreeData');
+        }
+    };
+    RowDragComp.prototype.addDragSource = function () {
+        var _this = this;
+        var dragItem = {
+            rowNode: this.rowNode,
+            columns: [this.column],
+            defaultTextValue: this.cellValue
+        };
+        var rowDragText = this.column.getColDef().rowDragText;
+        var dragSource = {
+            type: DragSourceType.RowDrag,
+            eElement: this.getGui(),
+            dragItemName: function () {
+                if (rowDragText) {
+                    return rowDragText(dragItem);
+                }
+                var count = _this.getSelectedCount();
+                return count === 1 ? _this.cellValue : count + " rows";
+            },
+            getDragItem: function () { return dragItem; },
+            dragStartPixels: 0
+        };
+        this.beans.dragAndDropService.addDragSource(dragSource, true);
+        this.addDestroyFunc(function () { return _this.beans.dragAndDropService.removeDragSource(dragSource); });
+    };
+    __decorate([
+        PostConstruct
+    ], RowDragComp.prototype, "postConstruct", null);
+    return RowDragComp;
+}(Component));
+export { RowDragComp };
+var VisibilityStrategy = /** @class */ (function (_super) {
+    __extends(VisibilityStrategy, _super);
+    function VisibilityStrategy(parent, rowNode, column) {
+        var _this = _super.call(this) || this;
+        _this.parent = parent;
+        _this.column = column;
+        _this.rowNode = rowNode;
+        return _this;
+    }
+    VisibilityStrategy.prototype.setDisplayedOrVisible = function (neverDisplayed) {
+        if (neverDisplayed) {
+            this.parent.setDisplayed(false);
+        }
+        else {
+            var shown = this.column.isRowDrag(this.rowNode);
+            var isShownSometimes = _.isFunction(this.column.getColDef().rowDrag);
+            // if shown sometimes, them some rows can have drag handle while other don't,
+            // so we use setVisible to keep the handles horizontally aligned (as setVisible
+            // keeps the empty space, whereas setDisplayed looses the space)
+            if (isShownSometimes) {
+                this.parent.setDisplayed(true);
+                this.parent.setVisible(shown);
+            }
+            else {
+                this.parent.setDisplayed(shown);
+            }
+        }
+    };
+    return VisibilityStrategy;
+}(BeanStub));
+// when non managed, the visibility depends on suppressRowDrag property only
+var NonManagedVisibilityStrategy = /** @class */ (function (_super) {
+    __extends(NonManagedVisibilityStrategy, _super);
+    function NonManagedVisibilityStrategy(parent, beans, rowNode, column) {
+        var _this = _super.call(this, parent, rowNode, column) || this;
+        _this.beans = beans;
+        return _this;
+    }
+    NonManagedVisibilityStrategy.prototype.postConstruct = function () {
+        this.addDestroyableEventListener(this.beans.gridOptionsWrapper, 'suppressRowDrag', this.onSuppressRowDrag.bind(this));
+        // in case data changes, then we need to update visibility of drag item
+        this.addDestroyableEventListener(this.rowNode, RowNode.EVENT_DATA_CHANGED, this.workOutVisibility.bind(this));
+        this.addDestroyableEventListener(this.rowNode, RowNode.EVENT_CELL_CHANGED, this.workOutVisibility.bind(this));
+        this.workOutVisibility();
+    };
+    NonManagedVisibilityStrategy.prototype.onSuppressRowDrag = function () {
+        this.workOutVisibility();
+    };
+    NonManagedVisibilityStrategy.prototype.workOutVisibility = function () {
+        // only show the drag if both sort and filter are not present
+        var neverDisplayed = this.beans.gridOptionsWrapper.isSuppressRowDrag();
+        this.setDisplayedOrVisible(neverDisplayed);
+    };
+    __decorate([
+        PostConstruct
+    ], NonManagedVisibilityStrategy.prototype, "postConstruct", null);
+    return NonManagedVisibilityStrategy;
+}(VisibilityStrategy));
+// when managed, the visibility depends on sort, filter and row group, as well as suppressRowDrag property
+var ManagedVisibilityStrategy = /** @class */ (function (_super) {
+    __extends(ManagedVisibilityStrategy, _super);
+    function ManagedVisibilityStrategy(parent, beans, rowNode, column) {
+        var _this = _super.call(this, parent, rowNode, column) || this;
+        _this.beans = beans;
+        return _this;
+    }
+    ManagedVisibilityStrategy.prototype.postConstruct = function () {
+        // we do not show the component if sort, filter or grouping is active
+        this.addDestroyableEventListener(this.beans.eventService, Events.EVENT_SORT_CHANGED, this.onSortChanged.bind(this));
+        this.addDestroyableEventListener(this.beans.eventService, Events.EVENT_FILTER_CHANGED, this.onFilterChanged.bind(this));
+        this.addDestroyableEventListener(this.beans.eventService, Events.EVENT_COLUMN_ROW_GROUP_CHANGED, this.onRowGroupChanged.bind(this));
+        // in case data changes, then we need to update visibility of drag item
+        this.addDestroyableEventListener(this.rowNode, RowNode.EVENT_DATA_CHANGED, this.workOutVisibility.bind(this));
+        this.addDestroyableEventListener(this.rowNode, RowNode.EVENT_CELL_CHANGED, this.workOutVisibility.bind(this));
+        this.addDestroyableEventListener(this.beans.gridOptionsWrapper, 'suppressRowDrag', this.onSuppressRowDrag.bind(this));
+        this.updateSortActive();
+        this.updateFilterActive();
+        this.updateRowGroupActive();
+        this.workOutVisibility();
+    };
+    ManagedVisibilityStrategy.prototype.updateRowGroupActive = function () {
+        var rowGroups = this.beans.columnController.getRowGroupColumns();
+        this.rowGroupActive = !_.missingOrEmpty(rowGroups);
+    };
+    ManagedVisibilityStrategy.prototype.onRowGroupChanged = function () {
+        this.updateRowGroupActive();
+        this.workOutVisibility();
+    };
+    ManagedVisibilityStrategy.prototype.updateSortActive = function () {
+        var sortModel = this.beans.sortController.getSortModel();
+        this.sortActive = !_.missingOrEmpty(sortModel);
+    };
+    ManagedVisibilityStrategy.prototype.onSortChanged = function () {
+        this.updateSortActive();
+        this.workOutVisibility();
+    };
+    ManagedVisibilityStrategy.prototype.updateFilterActive = function () {
+        this.filterActive = this.beans.filterManager.isAnyFilterPresent();
+    };
+    ManagedVisibilityStrategy.prototype.onFilterChanged = function () {
+        this.updateFilterActive();
+        this.workOutVisibility();
+    };
+    ManagedVisibilityStrategy.prototype.onSuppressRowDrag = function () {
+        this.workOutVisibility();
+    };
+    ManagedVisibilityStrategy.prototype.workOutVisibility = function () {
+        // only show the drag if both sort and filter are not present
+        var sortOrFilterOrGroupActive = this.sortActive || this.filterActive || this.rowGroupActive;
+        var suppressRowDrag = this.beans.gridOptionsWrapper.isSuppressRowDrag();
+        var neverDisplayed = sortOrFilterOrGroupActive || suppressRowDrag;
+        this.setDisplayedOrVisible(neverDisplayed);
+    };
+    __decorate([
+        PostConstruct
+    ], ManagedVisibilityStrategy.prototype, "postConstruct", null);
+    return ManagedVisibilityStrategy;
+}(VisibilityStrategy));

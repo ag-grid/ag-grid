@@ -1,0 +1,47 @@
+/**
+ * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
+ * @version v23.0.2
+ * @link http://www.ag-grid.com/
+ * @license MIT
+ */
+"use strict";
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = function (d, b) {
+        extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+        return extendStatics(d, b);
+    };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
+Object.defineProperty(exports, "__esModule", { value: true });
+var agAbstractInputField_1 = require("./agAbstractInputField");
+var AgInputTextField = /** @class */ (function (_super) {
+    __extends(AgInputTextField, _super);
+    function AgInputTextField(config) {
+        var _this = _super.call(this) || this;
+        _this.className = 'ag-text-field';
+        _this.displayTag = 'input';
+        _this.inputType = 'text';
+        _this.setTemplate(_this.TEMPLATE.replace(/%displayField%/g, _this.displayTag));
+        if (config) {
+            _this.config = config;
+        }
+        return _this;
+    }
+    AgInputTextField.prototype.setValue = function (value, silent) {
+        var ret = _super.prototype.setValue.call(this, value, silent);
+        if (this.eInput.value !== value) {
+            this.eInput.value = value;
+        }
+        return ret;
+    };
+    return AgInputTextField;
+}(agAbstractInputField_1.AgAbstractInputField));
+exports.AgInputTextField = AgInputTextField;
+
+//# sourceMappingURL=agInputTextField.js.map

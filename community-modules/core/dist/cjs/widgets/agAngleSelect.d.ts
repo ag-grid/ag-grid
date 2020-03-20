@@ -1,0 +1,39 @@
+// Type definitions for @ag-grid-community/core v23.0.2
+// Project: http://www.ag-grid.com/
+// Definitions by: Niall Crosby <https://github.com/ag-grid/>
+import { AgAbstractLabel } from "./agAbstractLabel";
+import { DragService } from "../dragAndDrop/dragService";
+export declare class AgAngleSelect extends AgAbstractLabel {
+    private static TEMPLATE;
+    protected eLabel: HTMLElement;
+    private eParentCircle;
+    private eChildCircle;
+    private eAngleValue;
+    protected dragService: DragService;
+    private parentCircleRect;
+    private degrees;
+    private radius;
+    private offsetX;
+    private offsetY;
+    private dragListener;
+    constructor();
+    postConstruct(): void;
+    private updateNumberInput;
+    private positionChildCircle;
+    private calculatePolar;
+    private calculateCartesian;
+    private setOffsetX;
+    private setOffsetY;
+    private calculateAngleDrag;
+    private toDegrees;
+    private toRadians;
+    private normalizeNegativeValue;
+    private normalizeAngle180;
+    getRadius(): number;
+    setRadius(r: number): this;
+    onValueChange(callbackFn: (newValue: number) => void): this;
+    getValue(radians?: boolean): number;
+    setValue(degrees: number, radians?: boolean): this;
+    setWidth(width: number): this;
+    destroy(): void;
+}

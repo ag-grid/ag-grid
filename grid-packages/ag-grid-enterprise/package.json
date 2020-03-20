@@ -1,6 +1,6 @@
 {
   "name": "ag-grid-enterprise",
-  "version": "23.0.1",
+  "version": "23.0.2",
   "description": "ag-Grid Enterprise Features",
   "main": "./dist/ag-grid-enterprise.cjs.js",
   "types": "main.d.ts",
