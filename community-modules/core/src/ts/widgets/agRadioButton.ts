@@ -1,4 +1,6 @@
 import { AgCheckbox } from './agCheckbox';
+import { Events } from '../eventKeys';
+import { CheckboxChangedEvent } from '../events';
 
 export class AgRadioButton extends AgCheckbox {
     protected className = 'ag-radio-button';
@@ -13,10 +15,20 @@ export class AgRadioButton extends AgCheckbox {
         this.setValue(nextValue);
     }
 
-    public setName(name: string): this {
-        const input = this.getInputElement() as HTMLInputElement;
-        input.name = name;
+    protected addInputListeners() {
+        super.addInputListeners();
 
-        return this;
+        this.addDestroyableEventListener(this.eventService, Events.EVENT_CHECKBOX_CHANGED, this.onChange.bind(this));
+    }
+
+    private onChange(event: CheckboxChangedEvent) {
+        if (event.selected &&
+            event.name &&
+            this.eInput.name &&
+            this.eInput.name === event.name &&
+            event.id &&
+            this.eInput.id !== event.id) {
+            this.setValue(false, true);
+        }
     }
 }
