@@ -198,7 +198,7 @@ $ag-group-component-border-color: green;
 <ul>
     <li>Stay in "variables" compatibility mode. Although you are opted into this mode automatically, you will see a deprecation warning in the compile logs telling you that the path that you are using to import the theme file has changed, and you should update your import paths to remove this warning (change the @import from <code>.../sass/ag-theme-$name.scss</code> to <code>.../sass/legacy/ag-theme-$name-v22-compat.scss</code>)</li>
     <li>Enter "legacy" compatibility mode if this is right for your app (see below).</li>
-    <li>Switch to the new mechanism for configuring themes. Change your theme import from <code>.../sass/ag-theme-$name.scss</code> to <code>.../sass/ag-theme-$name-mixin.scss</code> and call the theme mixin. See <a href="/javascript-grid-provided-themes/">themes documentation</a> sample code. You will need to convert all the <code>$ag-*</code> global variables you have defined to theme parameters.</li>
+    <li>Switch to the new mechanism for configuring themes. Change your theme import from <code>.../sass/ag-theme-$name.scss</code> to <code>.../sass/ag-theme-$name-mixin.scss</code> and call the theme mixin. See <a href="../javascript-grid-themes-provided/">themes documentation</a> sample code. You will need to convert all the <code>$ag-*</code> global variables you have defined to theme parameters.</li>
 </ul>
 
 <p>To enable "legacy" mode, define the <code>$ag-compatibility-mode</code> variable:</p>

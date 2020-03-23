@@ -1,4 +1,4 @@
-<h2 id="ng2Filtering"> Angular Filtering </h2>
+<h2 id="ng2Filtering">Angular Filtering</h2>
 
 <p>
     It is possible to provide Angular filters for ag-Grid to use if you are are using the
@@ -16,16 +16,18 @@
 <p>The ag Framework expects to find the <code>agInit</code> (on the <code>AgFilterComponent</code> interface) method on
     the created component, and uses it to supply the 'filter params'.</p>
 
-<snippet>
-agInit(params:IFilterParams):void {
+<?= createSnippet(<<<SNIPPET
+agInit(params: IFilterParams): void {
     this.params = params;
     this.valueGetter = params.valueGetter;
-}</snippet>
+}
+SNIPPET
+, 'ts') ?>
 
 <h3 id="angular-methods-lifecycle">Angular Methods / Lifecycle</h3>
 
 <p>
-    All of the methods in the IFilter interface described above are applicable
+    All of the methods in the <code>IFilterComp</code> interface described above are applicable
     to the Angular Component with the following exceptions:
 </p>
 
@@ -33,37 +35,35 @@ agInit(params:IFilterParams):void {
     <li><code>init()</code> is not used. Instead implement the <code>agInit</code> method (on the
         <code>AgRendererComponent</code> interface).
     </li>
-    <li><code>destroy()</code> is not used. Instead implement the Angular<code>OnDestroy</code> interface
-        (<code>ngOnDestroy</code>) for
-        any cleanup you need to do.
+    <li><code>destroy()</code> is not used. Instead implement the Angular <code>OnDestroy</code> interface
+        (<code>ngOnDestroy</code>) for any cleanup you need to do.
     </li>
-    <li><code>getGui()</code> is not used. Angular will provide the Gui via the supplied template.</li>
+    <li><code>getGui()</code> is not used. Angular will provide the GUI via the supplied template.</li>
 </ul>
 
 <p>
-    After that, all the other methods (<code>onNewRowsLoaded(), getModel(), setModel()</code> etc) behave the
-    same so put them directly onto your Angular Component.
+    After that, all the other methods (<code>onNewRowsLoaded()</code>, <code>getModel()</code>, <code>setModel()</code> etc.) behave the
+    same, so put them directly onto your Angular Component.
 </p>
 
 <h3 id="accessing-the-angular-component-instance">Accessing the Angular Component Instance</h3>
 
 <p>
     ag-Grid allows you to get a reference to the filter instances via the <code>api.getFilterInstance(colKey)</code>
-    method. If your component is a Angular component, then this will give you a reference to the ag-Grid's
-    Component which wraps your Angular Component. Just like Russian Dolls. To get to the wrapped Angular instance
+    method. If your component is a Angular component, this will give you a reference to ag-Grid's
+    component which wraps your Angular component, just like Russian Dolls. To get to the wrapped Angular instance
     of your component, use the <code>getFrameworkComponentInstance()</code> method as follows:
 </p>
 
-    <snippet>
-// lets assume a Angular component as follows
+<?= createSnippet(<<<SNIPPET
+// let's assume an Angular component as follows
 @Component({
     selector: 'filter-cell',
     template: `
-        Filter: &lt;input style="height: 10px" #input (ngModelChange)="onChange($event)" [ngModel]="text"&gt;
+        Filter: <input style="height: 10px" #input (ngModelChange)="onChange($event)" [ngModel]="text">
     `
 })
 class PartialMatchFilterComponent implements AgFilterComponent {
-
     ... // standard filter methods hidden
 
     // put a custom method on the filter
@@ -72,24 +72,24 @@ class PartialMatchFilterComponent implements AgFilterComponent {
     }
 }
 
-// then in your app, if you want to execute myMethod()...
+// later in your app, if you want to execute myMethod()...
 laterOnInYourApplicationSomewhere() {
-
     // get reference to the ag-Grid Filter component
-    let agGridFilter = api.getFilterInstance('name'); // assume filter on name column
+    const agGridFilter = api.getFilterInstance('name'); // assume filter on name column
 
     // get Angular instance from the ag-Grid instance
-    let ng2FilterInstance = agGridFilter.getFrameworkComponentInstance();
+    const angularFilterInstance = agGridFilter.getFrameworkComponentInstance();
 
     // now we're sucking diesel!!!
-    ng2FilterInstance.myMethod();
-}</snippet>
+    angularFilterInstance.myMethod();
+}
+SNIPPET
+, 'ts') ?>
 
 <h3 id="example-filtering-using-angular-components">Example: Filtering using Angular Components</h3>
 
 <p>
-    Using Angular Components as a partial text Filter in the "Filter Component" column, illustrating filtering and
-    lifecycle events.
+    Using Angular Components as a partial text filter in the Name column, illustrating filtering and lifecycle events.
 </p>
-<?= grid_example('Angular Filter Component', 'filter-component', 'generated', ['enterprise' => false, 'exampleHeight' => 445, 'onlyShow' => 'angular', 'extras' => ['bootstrap']]) ?>
 
+<?= grid_example('Angular Filter Component', 'filter-component', 'generated', ['enterprise' => false, 'exampleHeight' => 445, 'onlyShow' => 'angular', 'extras' => ['bootstrap']]) ?>

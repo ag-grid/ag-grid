@@ -33,20 +33,20 @@ include '../documentation-main/documentation_header.php';
 var data = [
     {
         quarter: 'Q1',
-        spending: 450
+        spending: 450,
     },
     {
         quarter: 'Q2',
-        spending: 560
+        spending: 560,
     },
     {
         quarter: 'Q3',
-        spending: 600
+        spending: 600,
     },
     {
         quarter: 'Q4',
-        spending: 700
-    }
+        spending: 700,
+    },
 ];
 SNIPPET
 ) ?>
@@ -54,13 +54,13 @@ SNIPPET
 <p>To render it we can use this simple chart factory configuration:</p>
 
 <?= createSnippet(<<<SNIPPET
-AgChart.create({
+agCharts.AgChart.create({
     data: data,
     container: document.querySelector('#myChart'),
     series: [{
         xKey: 'quarter',
-        yKey: 'spending'
-    }]
+        yKey: 'spending',
+    }],
 });
 SNIPPET
 ) ?>
@@ -106,17 +106,17 @@ SNIPPET
 </p>
 
 <?= createSnippet(<<<SNIPPET
-AgChart.create({
+agCharts.AgChart.create({
     data: data,
     container: document.querySelector('#myChart'),
     series: [{
         xKey: 'quarter',
         yKey: 'spending',
-+       yName: 'Coffee Spending'
++       yName: 'Coffee Spending',
     }],
 +   legend: {
-+       position: 'bottom'
-+   }
++       position: 'bottom',
++   },
 });
 SNIPPET
 , 'diff') ?>
@@ -138,21 +138,21 @@ var data = [
         Q1: 450,
         Q2: 560,
         Q3: 600,
-        Q4: 700
+        Q4: 700,
     },
     {
         beverage: 'Tea',
         Q1: 270,
         Q2: 380,
         Q3: 450,
-        Q4: 520
+        Q4: 520,
     },
     {
         beverage: 'Milk',
         Q1: 180,
         Q2: 170,
         Q3: 190,
-        Q4: 200
+        Q4: 200,
     },
 ];
 SNIPPET
@@ -164,14 +164,14 @@ SNIPPET
 </p>
 
 <?= createSnippet(<<<SNIPPET
-AgChart.create({
+agCharts.AgChart.create({
     data: data,
     container: document.querySelector('#myChart'),
     series: [{
         type: 'column',
         xKey: 'beverage',
-        yKeys: ['Q1', 'Q2', 'Q3', 'Q4']
-    }]
+        yKeys: ['Q1', 'Q2', 'Q3', 'Q4'],
+    }],
 });
 SNIPPET
 ) ?>
@@ -195,15 +195,15 @@ SNIPPET
 </p>
 
 <?= createSnippet(<<<SNIPPET
-AgChart.create({
+agCharts.AgChart.create({
     data: data,
     container: document.querySelector('#myChart'),
     series: [{
         type: 'column',
         xKey: 'beverage',
         yKeys: ['Q1', 'Q2', 'Q3', 'Q4'],
-+       label: {}
-    }]
++       label: {},
+    }],
 });
 SNIPPET
 , 'diff') ?>
@@ -213,21 +213,21 @@ SNIPPET
 <p>If we then want to add a title and subtitle to the chart, we can simply add this to our chart config:</p>
 
 <?= createSnippet(<<<SNIPPET
-AgChart.create({
+agCharts.AgChart.create({
     data: data,
     container: document.querySelector('#myChart'),
 +   title: {
-+       text: 'Beverage Expenses'
++       text: 'Beverage Expenses',
 +   },
 +   subtitle: {
-+       text: 'per quarter'
++       text: 'per quarter',
 +   },
     series: [{
         type: 'column',
         xKey: 'beverage',
         yKeys: ['Q1', 'Q2', 'Q3', 'Q4'],
-        label: {}
-    }]
+        label: {},
+    }],
 });
 SNIPPET
 , 'diff') ?>

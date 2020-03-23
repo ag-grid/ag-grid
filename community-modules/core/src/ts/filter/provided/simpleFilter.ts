@@ -1,13 +1,13 @@
-import {IDoesFilterPassParams, IFilterOptionDef, ProvidedFilterModel} from "../../interfaces/iFilter";
-import {RefSelector} from "../../widgets/componentAnnotations";
-import {OptionsFactory} from "./optionsFactory";
-import {IProvidedFilterParams, ProvidedFilter} from "./providedFilter";
-import {_} from "../../utils";
+import { IDoesFilterPassParams, IFilterOptionDef, ProvidedFilterModel } from "../../interfaces/iFilter";
+import { RefSelector } from "../../widgets/componentAnnotations";
+import { OptionsFactory } from "./optionsFactory";
+import { IProvidedFilterParams, ProvidedFilter } from "./providedFilter";
+import { _ } from "../../utils";
 import { AgSelect } from "../../widgets/agSelect";
 import { AgRadioButton } from "../../widgets/agRadioButton";
 
 export interface ISimpleFilterParams extends IProvidedFilterParams {
-    filterOptions?: (IFilterOptionDef | string) [];
+    filterOptions?: (IFilterOptionDef | string)[];
     defaultOption?: string;
     suppressAndOrCondition?: boolean;
 }
@@ -22,9 +22,9 @@ export interface ICombinedSimpleModel<M extends ISimpleFilterModel> extends Prov
     condition2: M;
 }
 
-export enum ConditionPosition {One, Two}
+export enum ConditionPosition { One, Two }
 
-const DEFAULT_TRANSLATIONS: {[name: string]: string} = {
+const DEFAULT_TRANSLATIONS: { [name: string]: string; } = {
     loadingOoo: 'Loading...',
     empty: 'Choose One',
     equals: 'Equals',
@@ -85,7 +85,7 @@ export abstract class SimpleFilter<M extends ISimpleFilterModel> extends Provide
     protected abstract createValueTemplate(position: ConditionPosition): string;
 
     // returns true in the row passes the said condition
-    protected abstract individualConditionPasses(params: IDoesFilterPassParams, type:ISimpleFilterModel): boolean;
+    protected abstract individualConditionPasses(params: IDoesFilterPassParams, type: ISimpleFilterModel): boolean;
 
     // returns true if the UI represents a working filter, eg all parts are filled out.
     // eg if text filter and textfield blank then returns false.
@@ -136,17 +136,15 @@ export abstract class SimpleFilter<M extends ISimpleFilterModel> extends Provide
         if (!this.isConditionUiComplete(ConditionPosition.One)) { return null; }
 
         if (this.isAllowTwoConditions() && this.isConditionUiComplete(ConditionPosition.Two)) {
-            const res: ICombinedSimpleModel<M> = {
+            return {
                 filterType: this.getFilterType(),
                 operator: this.getJoinOperator(),
                 condition1: this.createCondition(ConditionPosition.One),
                 condition2: this.createCondition(ConditionPosition.Two)
             };
-            return res;
         }
 
-        const res: M = this.createCondition(ConditionPosition.One);
-        return res;
+        return this.createCondition(ConditionPosition.One);
     }
 
     protected getCondition1Type(): string {
@@ -291,26 +289,15 @@ export abstract class SimpleFilter<M extends ISimpleFilterModel> extends Provide
     }
 
     protected createBodyTemplate(): string {
-        const optionsTemplate1 = `<ag-select class="ag-filter-select" ref="eOptions1"></ag-select>`;
-        const valueTemplate1 = this.createValueTemplate(ConditionPosition.One);
-
-        const optionsTemplate2 = `<ag-select class="ag-filter-select" ref="eOptions2"></ag-select>`;
-        const valueTemplate2 = this.createValueTemplate(ConditionPosition.Two);
-
-        const andOrTemplate =
-            `<div class="ag-filter-condition" ref="eJoinOperatorPanel">
-                <ag-radio-button ref="eJoinOperatorAnd" class="ag-filter-condition-operator ag-filter-condition-operator-and"></ag-radio-button>
-                <ag-radio-button ref="eJoinOperatorOr" class="ag-filter-condition-operator ag-filter-condition-operator-or"></ag-radio-button>
-            </div>`;
-
-        const template =
-               `${optionsTemplate1}
-                ${valueTemplate1}
-                ${andOrTemplate}
-                ${optionsTemplate2}
-                ${valueTemplate2}`;
-
-        return template;
+        return `
+            <ag-select class="ag-filter-select" ref="eOptions1"></ag-select>
+            ${this.createValueTemplate(ConditionPosition.One)}
+            <div class="ag-filter-condition" ref="eJoinOperatorPanel">
+               <ag-radio-button ref="eJoinOperatorAnd" class="ag-filter-condition-operator ag-filter-condition-operator-and"></ag-radio-button>
+               <ag-radio-button ref="eJoinOperatorOr" class="ag-filter-condition-operator ag-filter-condition-operator-or"></ag-radio-button>
+            </div>
+            <ag-select class="ag-filter-select" ref="eOptions2"></ag-select>
+            ${this.createValueTemplate(ConditionPosition.Two)}`;
     }
 
     protected getCssIdentifier() {

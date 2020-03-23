@@ -1,7 +1,4 @@
 
-
-![alt text](./github-banner.png "Logo Title Text 1")
-
 [![npm](https://img.shields.io/npm/dm/ag-charts-community.svg)](https://www.npmjs.com/package/ag-charts-community)
 [![npm](https://img.shields.io/npm/dt/ag-charts-community.svg)](https://www.npmjs.com/package/ag-charts-community)
 
@@ -15,13 +12,21 @@ Features
 
 Here are some of the features that make ag-Charts stand out:
 
-* Line Charts
-* Bar/Column Charts
-* Area Charts
-* Scatter/Bubble Charts
-* Pie/Doughnut Charts
+* modern, lightweight and performant
+* thin easy to use wrappers for all popular fraweworks: React, Angular, Vue
+* framework agnostic, easy to use from plain JavaScript or TypeScript
+* zero dependencies
+* support for all common chart types:
+    * Line Charts
+    * Bar/Column Charts
+    * Area Charts
+    * Scatter/Bubble Charts
+    * Pie/Doughnut Charts
+* reactive - property changes are automatically batched to take effect on next frame
+* simple clean API
+* interactive documentation
 
-Visit [our official docs](https://www.ag-grid.com/javascript-charts-overview/?utm_source=ag-charts-readme&utm_medium=repository&utm_campaign=github) for full documentation. 
+Visit [our official docs](https://www.ag-grid.com/javascript-charts-overview/?utm_source=ag-charts-readme&utm_medium=repository&utm_campaign=github) for full documentation.
 
 Looking for a framework specific solution?
 --------------
@@ -35,7 +40,7 @@ Usage Overview
 #### Install dependencies
 
     $ npm i --save ag-charts-community
-    
+
 ### Usage
 
 Please refer our [JavaScript Getting Started](https://www.ag-grid.com/javascript-charts/) Tutorial.

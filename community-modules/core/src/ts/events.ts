@@ -75,7 +75,7 @@ export interface SelectionChangedEvent extends AgGridEvent {
 
 export interface FilterChangedEvent extends AgGridEvent {
     afterDataChange?: boolean;
-    afterFloatingFilter?: boolean
+    afterFloatingFilter?: boolean;
 }
 
 export interface FilterModifiedEvent extends AgGridEvent {
@@ -118,6 +118,15 @@ export interface DragStartedEvent extends DragEvent {
 }
 
 export interface DragStoppedEvent extends DragEvent {
+}
+
+// For internal use only.
+// This event allows us to detect when other inputs in the same named group are changed, so for example we can ensure
+// that only one radio button in the same group is selected at any given time.
+export interface CheckboxChangedEvent extends AgEvent {
+    id: string;
+    name: string;
+    selected?: boolean;
 }
 
 export interface GridSizeChangedEvent extends AgGridEvent {
