@@ -153,12 +153,7 @@ export class ReactComponent extends BaseReactComponent {
 
         const reactComponent = React.createElement(this.reactComponent, params);
         try {
-            const originalUseLayoutEffect = React.useLayoutEffect;
-            // @ts-ignore
-            React.useLayoutEffect = React.useEffect;
             const staticMarkup = renderToStaticMarkup(reactComponent);
-            // @ts-ignore
-            React.useLayoutEffect = originalUseLayoutEffect;
 
             // if the render method returns null the result will be an empty string
             if (staticMarkup === "") {
