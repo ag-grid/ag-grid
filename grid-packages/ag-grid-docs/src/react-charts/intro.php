@@ -14,10 +14,9 @@
                 <div class="tab-pane show active" id="component" role="tabpanel" aria-labelledby="component-tab">
 <?= createSnippet(<<<SNIPPET
 import React, { Component } from 'react';
-import { render } from 'react-dom';
 import { AgChartsReact } from 'ag-charts-react';
 
-class ChartExample extends Component {
+export default class ChartExample extends Component {
     data = [
         {
             beverage: 'Coffee',
@@ -72,14 +71,12 @@ class ChartExample extends Component {
         return <AgChartsReact options={this.state.options} />;
     }
 }
-
-render(<ChartExample />, document.querySelector('#root'));
 SNIPPET
 , 'jsx') ?>
                 </div>
                 <div class="tab-pane" id="template" role="tabpanel" aria-labelledby="template-tab">
 
-<?= createSnippet('<div id="root" style="position: absolute; top: 0; right: 0; bottom: 0; left: 0;"></div>', 'html') ?>
+<?= createSnippet('<div id="root"></div>', 'html') ?>
                 </div>
             </div>
             <div class="text-right" style="margin-top: -1.5rem;">

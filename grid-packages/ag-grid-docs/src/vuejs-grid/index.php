@@ -89,7 +89,7 @@ The grid ships several different themes; pick one that matches your project desi
 
 <p>As this will be a simple example we can delete the <code>src/components</code> directory. Our example application will live in <code>src/App.vue</code>.</p>
 
-<p>Let's add the component definition to our template. Edit <code>app/App.vue</code> and replace the scaffold code:</p>
+<p>Let's add the component definition to our template. Edit <code>src/App.vue</code> and replace the scaffold code:</p>
 
 <snippet language="html">
 &lt;template&gt;
