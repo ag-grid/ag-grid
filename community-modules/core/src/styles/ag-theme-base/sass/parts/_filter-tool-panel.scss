@@ -10,7 +10,9 @@
 
     .ag-filter-toolpanel-group.ag-has-filter > .ag-group-title-bar .ag-group-title:after {
         @include ag-icon();
-        content: ag-icon-char(filter)
+        @include ag-theme-rtl(( padding-left: ag-param(grid-size) ));
+
+        content: ag-icon-char(filter);
     }
 
     .ag-filter-toolpanel-group-level-0-header {
