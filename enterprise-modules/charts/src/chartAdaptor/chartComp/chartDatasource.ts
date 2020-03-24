@@ -13,7 +13,7 @@ import {
     RowNode,
     ValueService
 } from "@ag-grid-community/core";
-import { ChartDataModel, ColState } from "./chartDataModel";
+import {ChartDataModel, ColState} from "./chartDataModel";
 
 export interface ChartDatasourceParams {
     dimensionCols: ColState[];
@@ -27,7 +27,7 @@ export interface ChartDatasourceParams {
 
 interface IData {
     data: any[];
-    columnNames: { [key: string]: string[]; };
+    columnNames: { [key: string]: string[] };
 }
 
 export class ChartDatasource extends BeanStub {
@@ -45,16 +45,16 @@ export class ChartDatasource extends BeanStub {
 
     private extractRowsFromGridRowModel(params: ChartDatasourceParams): IData {
         let extractedRowData = [];
-        const columnNames: { [key: string]: string[]; } = {};
+        const columnNames: { [key: string]: string[] } = {};
 
         // maps used to keep track of expanded groups that need to be removed
-        const groupNodeIndexes: { [key: string]: number; } = {};
-        const groupsToRemove: { [key: string]: number; } = {};
+        const groupNodeIndexes: { [key: string]: number } = {};
+        const groupsToRemove: { [key: string]: number } = {};
 
         // make sure enough rows in range to chart. if user filters and less rows, then end row will be
         // the last displayed row, not where the range ends.
         const modelLastRow = this.gridRowModel.getRowCount() - 1;
-        const rangeLastRow = params.endRow >= 0 ? Math.min(params.endRow, modelLastRow) : modelLastRow;
+        const rangeLastRow = params.endRow > 0 ? Math.min(params.endRow, modelLastRow) : modelLastRow;
         const numRows = rangeLastRow - params.startRow + 1;
 
         for (let i = 0; i < numRows; i++) {
