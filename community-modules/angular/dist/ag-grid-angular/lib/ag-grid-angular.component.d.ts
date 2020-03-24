@@ -356,6 +356,7 @@ export declare class AgGridAngular implements AfterViewInit {
     firstDataRendered: EventEmitter<any>;
     dragStarted: EventEmitter<any>;
     dragStopped: EventEmitter<any>;
+    checkboxChanged: EventEmitter<any>;
     rowEditingStarted: EventEmitter<any>;
     rowEditingStopped: EventEmitter<any>;
     cellEditingStarted: EventEmitter<any>;

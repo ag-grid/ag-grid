@@ -4946,6 +4946,7 @@ var Events = /** @class */ (function () {
     Events.EVENT_DRAG_STARTED = 'dragStarted';
     /** A column drag has stopped */
     Events.EVENT_DRAG_STOPPED = 'dragStopped';
+    Events.EVENT_CHECKBOX_CHANGED = 'checkboxChanged';
     Events.EVENT_ROW_EDITING_STARTED = 'rowEditingStarted';
     Events.EVENT_ROW_EDITING_STOPPED = 'rowEditingStopped';
     Events.EVENT_CELL_EDITING_STARTED = 'cellEditingStarted';
@@ -10897,16 +10898,14 @@ var SimpleFilter = /** @class */ (function (_super) {
             return null;
         }
         if (this.isAllowTwoConditions() && this.isConditionUiComplete(ConditionPosition.Two)) {
-            var res_1 = {
+            return {
                 filterType: this.getFilterType(),
                 operator: this.getJoinOperator(),
                 condition1: this.createCondition(ConditionPosition.One),
                 condition2: this.createCondition(ConditionPosition.Two)
             };
-            return res_1;
         }
-        var res = this.createCondition(ConditionPosition.One);
-        return res;
+        return this.createCondition(ConditionPosition.One);
     };
     SimpleFilter.prototype.getCondition1Type = function () {
         return this.eType1.getValue();
@@ -11019,13 +11018,7 @@ var SimpleFilter = /** @class */ (function (_super) {
         return this.allowTwoConditions;
     };
     SimpleFilter.prototype.createBodyTemplate = function () {
-        var optionsTemplate1 = "<ag-select class=\"ag-filter-select\" ref=\"eOptions1\"></ag-select>";
-        var valueTemplate1 = this.createValueTemplate(ConditionPosition.One);
-        var optionsTemplate2 = "<ag-select class=\"ag-filter-select\" ref=\"eOptions2\"></ag-select>";
-        var valueTemplate2 = this.createValueTemplate(ConditionPosition.Two);
-        var andOrTemplate = "<div class=\"ag-filter-condition\" ref=\"eJoinOperatorPanel\">\n                <ag-radio-button ref=\"eJoinOperatorAnd\" class=\"ag-filter-condition-operator ag-filter-condition-operator-and\"></ag-radio-button>\n                <ag-radio-button ref=\"eJoinOperatorOr\" class=\"ag-filter-condition-operator ag-filter-condition-operator-or\"></ag-radio-button>\n            </div>";
-        var template = optionsTemplate1 + "\n                " + valueTemplate1 + "\n                " + andOrTemplate + "\n                " + optionsTemplate2 + "\n                " + valueTemplate2;
-        return template;
+        return "\n            <ag-select class=\"ag-filter-select\" ref=\"eOptions1\"></ag-select>\n            " + this.createValueTemplate(ConditionPosition.One) + "\n            <div class=\"ag-filter-condition\" ref=\"eJoinOperatorPanel\">\n               <ag-radio-button ref=\"eJoinOperatorAnd\" class=\"ag-filter-condition-operator ag-filter-condition-operator-and\"></ag-radio-button>\n               <ag-radio-button ref=\"eJoinOperatorOr\" class=\"ag-filter-condition-operator ag-filter-condition-operator-or\"></ag-radio-button>\n            </div>\n            <ag-select class=\"ag-filter-select\" ref=\"eOptions2\"></ag-select>\n            " + this.createValueTemplate(ConditionPosition.Two);
     };
     SimpleFilter.prototype.getCssIdentifier = function () {
         return 'simple-filter';
@@ -12947,10 +12940,12 @@ var AgCheckbox = /** @class */ (function (_super) {
     };
     AgCheckbox.prototype.setValue = function (value, silent) {
         this.refreshSelectedClass(value);
-        if (value === this.getValue()) {
-            return this;
-        }
         this.setSelected(value, silent);
+        return this;
+    };
+    AgCheckbox.prototype.setName = function (name) {
+        var input = this.getInputElement();
+        input.name = name;
         return this;
     };
     AgCheckbox.prototype.isSelected = function () {
@@ -12969,6 +12964,14 @@ var AgCheckbox = /** @class */ (function (_super) {
     };
     AgCheckbox.prototype.dispatchChange = function (selected, event) {
         this.dispatchEvent({ type: AgCheckbox.EVENT_CHANGED, selected: selected, event: event });
+        var input = this.getInputElement();
+        var checkboxChangedEvent = {
+            type: Events.EVENT_CHECKBOX_CHANGED,
+            id: input.id,
+            name: input.name,
+            selected: selected
+        };
+        this.eventService.dispatchEvent(checkboxChangedEvent);
     };
     AgCheckbox.prototype.onCheckboxClick = function (e) {
         this.selected = e.target.checked;
@@ -12982,6 +12985,9 @@ var AgCheckbox = /** @class */ (function (_super) {
     __decorate$j([
         Autowired('gridOptionsWrapper')
     ], AgCheckbox.prototype, "gridOptionsWrapper", void 0);
+    __decorate$j([
+        Autowired('eventService')
+    ], AgCheckbox.prototype, "eventService", void 0);
     return AgCheckbox;
 }(AgAbstractInputField));
 
@@ -28084,14 +28090,6 @@ var PopupService = /** @class */ (function () {
         else {
             this.bringPopupToFront(eWrapper);
         }
-        // if the popup resizes, make sure that it's not sticking off the right hand side of the screen
-        var disconnectResizeObserver = this.resizeObserverService.observeResize(eChild, function () {
-            var childRect = eChild.getBoundingClientRect();
-            var parentRect = _this.getParentRect();
-            if (childRect.right >= parentRect.right) {
-                eChild.style.left = (parentRect.right - parentRect.left - childRect.width) + 'px';
-            }
-        });
         var popupHidden = false;
         var hidePopupOnKeyboardEvent = function (event) {
             var key = event.which || event.keyCode;
@@ -28106,7 +28104,6 @@ var PopupService = /** @class */ (function () {
             hidePopup(null, event);
         };
         var hidePopup = function (mouseEvent, touchEvent) {
-            disconnectResizeObserver();
             if (
             // we don't hide popup if the event was on the child, or any
             // children of this child
@@ -28262,9 +28259,6 @@ var PopupService = /** @class */ (function () {
     __decorate$$([
         Autowired('eventService')
     ], PopupService.prototype, "eventService", void 0);
-    __decorate$$([
-        Autowired('resizeObserverService')
-    ], PopupService.prototype, "resizeObserverService", void 0);
     __decorate$$([
         PostConstruct
     ], PopupService.prototype, "init", null);
@@ -30018,10 +30012,25 @@ var AgRadioButton = /** @class */ (function (_super) {
         var nextValue = this.getNextValue();
         this.setValue(nextValue);
     };
-    AgRadioButton.prototype.setName = function (name) {
-        var input = this.getInputElement();
-        input.name = name;
-        return this;
+    AgRadioButton.prototype.addInputListeners = function () {
+        _super.prototype.addInputListeners.call(this);
+        this.addDestroyableEventListener(this.eventService, Events.EVENT_CHECKBOX_CHANGED, this.onChange.bind(this));
+    };
+    /**
+     * This ensures that if another radio button in the same named group is selected, we deselect this radio button.
+     * By default the browser does this for you, but we are managing classes ourselves in order to ensure input
+     * elements are styled correctly in IE11, and the DOM 'changed' event is only fired when a button is selected,
+     * not deselected, so we need to use our own event.
+     */
+    AgRadioButton.prototype.onChange = function (event) {
+        if (event.selected &&
+            event.name &&
+            this.eInput.name &&
+            this.eInput.name === event.name &&
+            event.id &&
+            this.eInput.id !== event.id) {
+            this.setValue(false, true);
+        }
     };
     return AgRadioButton;
 }(AgCheckbox));
@@ -32563,7 +32572,7 @@ var ResizeObserverService = /** @class */ (function () {
         var frameworkFactory = this.frameworkOverrides;
         // this gets fired too often and might cause some relayout issues
         // so we add a debounce to the callback here to avoid the flashing effect.
-        var debouncedCallback = _.debounce(callback, debounceDelay, true);
+        var debouncedCallback = _.debounce(callback, debounceDelay);
         var useBrowserResizeObserver = function () {
             var resizeObserver = new window.ResizeObserver(debouncedCallback);
             resizeObserver.observe(element);
@@ -37026,7 +37035,7 @@ var VirtualList = /** @class */ (function (_super) {
         return _this;
     }
     VirtualList.prototype.init = function () {
-        this.eListContainer = this.queryForHtmlElement(".ag-virtual-list-container");
+        this.eListContainer = this.queryForHtmlElement('.ag-virtual-list-container');
         this.addScrollListener();
         this.rowHeight = this.getItemHeight();
     };
@@ -37128,7 +37137,8 @@ var VirtualList = /** @class */ (function (_super) {
         var eDiv = document.createElement('div');
         _.addCssClass(eDiv, 'ag-virtual-list-item');
         _.addCssClass(eDiv, "ag-" + this.cssIdentifier + "-virtual-list-item");
-        eDiv.style.top = (this.rowHeight * rowIndex) + "px";
+        eDiv.style.height = this.rowHeight + "px";
+        eDiv.style.top = this.rowHeight * rowIndex + "px";
         var rowComponent = this.componentCreator(value);
         eDiv.appendChild(rowComponent.getGui());
         this.eListContainer.appendChild(eDiv);

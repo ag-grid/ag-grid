@@ -28,6 +28,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var context_1 = require("../context/context");
 var agAbstractInputField_1 = require("./agAbstractInputField");
 var utils_1 = require("../utils");
+var events_1 = require("../events");
 var AgCheckbox = /** @class */ (function (_super) {
     __extends(AgCheckbox, _super);
     function AgCheckbox() {
@@ -77,10 +78,12 @@ var AgCheckbox = /** @class */ (function (_super) {
     };
     AgCheckbox.prototype.setValue = function (value, silent) {
         this.refreshSelectedClass(value);
-        if (value === this.getValue()) {
-            return this;
-        }
         this.setSelected(value, silent);
+        return this;
+    };
+    AgCheckbox.prototype.setName = function (name) {
+        var input = this.getInputElement();
+        input.name = name;
         return this;
     };
     AgCheckbox.prototype.isSelected = function () {
@@ -99,6 +102,14 @@ var AgCheckbox = /** @class */ (function (_super) {
     };
     AgCheckbox.prototype.dispatchChange = function (selected, event) {
         this.dispatchEvent({ type: AgCheckbox.EVENT_CHANGED, selected: selected, event: event });
+        var input = this.getInputElement();
+        var checkboxChangedEvent = {
+            type: events_1.Events.EVENT_CHECKBOX_CHANGED,
+            id: input.id,
+            name: input.name,
+            selected: selected
+        };
+        this.eventService.dispatchEvent(checkboxChangedEvent);
     };
     AgCheckbox.prototype.onCheckboxClick = function (e) {
         this.selected = e.target.checked;
@@ -112,6 +123,9 @@ var AgCheckbox = /** @class */ (function (_super) {
     __decorate([
         context_1.Autowired('gridOptionsWrapper')
     ], AgCheckbox.prototype, "gridOptionsWrapper", void 0);
+    __decorate([
+        context_1.Autowired('eventService')
+    ], AgCheckbox.prototype, "eventService", void 0);
     return AgCheckbox;
 }(agAbstractInputField_1.AgAbstractInputField));
 exports.AgCheckbox = AgCheckbox;

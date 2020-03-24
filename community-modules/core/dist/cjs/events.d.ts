@@ -92,6 +92,11 @@ export interface DragStartedEvent extends DragEvent {
 }
 export interface DragStoppedEvent extends DragEvent {
 }
+export interface CheckboxChangedEvent extends AgEvent {
+    id: string;
+    name: string;
+    selected?: boolean;
+}
 export interface GridSizeChangedEvent extends AgGridEvent {
     clientWidth: number;
     clientHeight: number;

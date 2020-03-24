@@ -8,7 +8,6 @@ export declare class PopupService {
     private gridOptionsWrapper;
     private environment;
     private eventService;
-    private resizeObserverService;
     private gridCore;
     private popupList;
     private init;
@@ -67,7 +66,7 @@ export declare class PopupService {
     private keepYWithinBounds;
     private keepXWithinBounds;
     addAsModalPopup(eChild: any, closeOnEsc: boolean, closedCallback?: () => void, click?: MouseEvent | Touch | null): (event?: any) => void;
-    addPopup(modal: boolean, eChild: HTMLElement, closeOnEsc: boolean, closedCallback?: () => void, click?: MouseEvent | Touch | null, alwaysOnTop?: boolean): (event?: any) => void;
+    addPopup(modal: boolean, eChild: any, closeOnEsc: boolean, closedCallback?: () => void, click?: MouseEvent | Touch | null, alwaysOnTop?: boolean): (event?: any) => void;
     private isEventFromCurrentPopup;
     private isEventSameChainAsOriginalEvent;
     private getWrapper;

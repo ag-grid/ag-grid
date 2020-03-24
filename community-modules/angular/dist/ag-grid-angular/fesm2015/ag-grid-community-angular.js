@@ -827,6 +827,7 @@ let AgGridAngular = class AgGridAngular {
         this.firstDataRendered = new EventEmitter();
         this.dragStarted = new EventEmitter();
         this.dragStopped = new EventEmitter();
+        this.checkboxChanged = new EventEmitter();
         this.rowEditingStarted = new EventEmitter();
         this.rowEditingStopped = new EventEmitter();
         this.cellEditingStarted = new EventEmitter();
@@ -1945,6 +1946,9 @@ __decorate([
 __decorate([
     Output()
 ], AgGridAngular.prototype, "dragStopped", void 0);
+__decorate([
+    Output()
+], AgGridAngular.prototype, "checkboxChanged", void 0);
 __decorate([
     Output()
 ], AgGridAngular.prototype, "rowEditingStarted", void 0);

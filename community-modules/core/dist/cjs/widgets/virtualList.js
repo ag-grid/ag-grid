@@ -39,7 +39,7 @@ var VirtualList = /** @class */ (function (_super) {
         return _this;
     }
     VirtualList.prototype.init = function () {
-        this.eListContainer = this.queryForHtmlElement(".ag-virtual-list-container");
+        this.eListContainer = this.queryForHtmlElement('.ag-virtual-list-container');
         this.addScrollListener();
         this.rowHeight = this.getItemHeight();
     };
@@ -141,7 +141,8 @@ var VirtualList = /** @class */ (function (_super) {
         var eDiv = document.createElement('div');
         utils_1._.addCssClass(eDiv, 'ag-virtual-list-item');
         utils_1._.addCssClass(eDiv, "ag-" + this.cssIdentifier + "-virtual-list-item");
-        eDiv.style.top = (this.rowHeight * rowIndex) + "px";
+        eDiv.style.height = this.rowHeight + "px";
+        eDiv.style.top = this.rowHeight * rowIndex + "px";
         var rowComponent = this.componentCreator(value);
         eDiv.appendChild(rowComponent.getGui());
         this.eListContainer.appendChild(eDiv);

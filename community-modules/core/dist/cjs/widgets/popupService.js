@@ -280,14 +280,6 @@ var PopupService = /** @class */ (function () {
         else {
             this.bringPopupToFront(eWrapper);
         }
-        // if the popup resizes, make sure that it's not sticking off the right hand side of the screen
-        var disconnectResizeObserver = this.resizeObserverService.observeResize(eChild, function () {
-            var childRect = eChild.getBoundingClientRect();
-            var parentRect = _this.getParentRect();
-            if (childRect.right >= parentRect.right) {
-                eChild.style.left = (parentRect.right - parentRect.left - childRect.width) + 'px';
-            }
-        });
         var popupHidden = false;
         var hidePopupOnKeyboardEvent = function (event) {
             var key = event.which || event.keyCode;
@@ -302,7 +294,6 @@ var PopupService = /** @class */ (function () {
             hidePopup(null, event);
         };
         var hidePopup = function (mouseEvent, touchEvent) {
-            disconnectResizeObserver();
             if (
             // we don't hide popup if the event was on the child, or any
             // children of this child
@@ -458,9 +449,6 @@ var PopupService = /** @class */ (function () {
     __decorate([
         context_1.Autowired('eventService')
     ], PopupService.prototype, "eventService", void 0);
-    __decorate([
-        context_1.Autowired('resizeObserverService')
-    ], PopupService.prototype, "resizeObserverService", void 0);
     __decorate([
         context_1.PostConstruct
     ], PopupService.prototype, "init", null);
