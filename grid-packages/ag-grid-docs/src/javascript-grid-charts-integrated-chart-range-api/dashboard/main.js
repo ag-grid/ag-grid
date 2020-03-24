@@ -34,11 +34,10 @@ function createRowData() {
 
 function numberValueParser(params) {
     var res = Number.parseInt(params.newValue);
-    if (isNaN(res)) {
-        return undefined;
-    } else {
-        return res;
-    }
+
+    if (isNaN(res)) { return undefined; }
+
+    return res;
 }
 
 var gridOptions = {
@@ -54,10 +53,9 @@ var gridOptions = {
     columnDefs: columnDefs,
     enableRangeSelection: true,
     enableCharts: true,
-    // needed for the menus in the carts, otherwise popups appear over grid
-    popupParent: document.body,
     onFirstDataRendered: onFirstDataRendered,
-    getChartToolbarItems: getChartToolbarItems
+    getChartToolbarItems: getChartToolbarItems,
+    popupParent: document.body
 };
 
 function getChartToolbarItems(params) {

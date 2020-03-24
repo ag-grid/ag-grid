@@ -15,7 +15,6 @@ var gridOptions = {
         filter: true,
         resizable: true
     },
-    popupParent: document.body,
     columnDefs: columnDefs,
     enableRangeSelection: true,
     enableCharts: true,
@@ -29,11 +28,12 @@ var gridOptions = {
         };
 
         return params.options;
-    }
+    },
+    popupParent: document.body
 };
 
 var chartPanelTemplate
-    = '<div class="chart-wrapper ag-theme-balham">' +
+    = '<div class="chart-wrapper ag-theme-alpine">' +
     '<div class="chart-wrapper-top">' +
     '<span class="chart-wrapper-title"></span>' +
     '<button class="chart-wrapper-close">Destroy Chart</button>' +

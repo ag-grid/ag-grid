@@ -154,6 +154,7 @@ export class ReactComponent extends BaseReactComponent {
         const reactComponent = React.createElement(this.reactComponent, params);
         try {
             const staticMarkup = renderToStaticMarkup(reactComponent);
+
             // if the render method returns null the result will be an empty string
             if (staticMarkup === "") {
                 this.staticMarkup = staticMarkup;

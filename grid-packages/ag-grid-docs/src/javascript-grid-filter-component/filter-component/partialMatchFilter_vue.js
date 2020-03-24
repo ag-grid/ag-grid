@@ -1,4 +1,4 @@
-import Vue from "vue";
+import Vue from 'vue';
 
 export default Vue.extend({
     template: `<input style="height: 20px" :ref="'input'" v-model="text">`,
@@ -6,27 +6,25 @@ export default Vue.extend({
         return {
             text: '',
             valueGetter: null
-        }
+        };
     },
     methods: {
         isFilterActive() {
-            return this.text !== null && this.text !== undefined && this.text !== '';
+            return this.text != null && this.text !== '';
         },
 
-        doesFilterPass(params){
+        doesFilterPass(params) {
             return !this.text || this.text.toLowerCase()
-                .split(" ")
-                .every((filterWord) => {
-                    return this.valueGetter(params.node).toString().toLowerCase().indexOf(filterWord) >= 0;
-                });
+                .split(' ')
+                .every(filterWord => this.valueGetter(params.node).toString().toLowerCase().indexOf(filterWord) >= 0);
         },
 
         getModel() {
-            return {value: this.text};
+            return { value: this.text };
         },
 
         setModel(model) {
-            if(model) {
+            if (model) {
                 this.text = model.value;
             }
         },
@@ -36,20 +34,19 @@ export default Vue.extend({
         },
 
         componentMethod(message) {
-            alert(`Alert from PartialMatchFilterComponent ${message}`);
+            alert(`Alert from PartialMatchFilterComponent: ${message}`);
         },
     },
     watch: {
-        'text': function(val, oldVal) {
+        'text': (val, oldVal) => {
             if (val !== oldVal) {
                 this.params.filterChangedCallback();
             }
         }
     },
-    created()
-    {
+    created() {
         this.valueGetter = this.params.valueGetter;
     }
-})
+});
 
 
