@@ -24,7 +24,6 @@ const ViewportRowModelModule = require("../../../../../enterprise-modules/viewpo
 const ClientSideRowModelModule = require("../../../../../community-modules/client-side-row-model/dist/cjs/clientSideRowModelModule").ClientSideRowModelModule;
 const CsvExportModule = require("../../../../../community-modules/csv-export/dist/cjs/csvExportModule").CsvExportModule;
 const InfiniteRowModelModule = require("../../../../../community-modules/infinite-row-model/dist/cjs/infiniteRowModelModule").InfiniteRowModelModule;
-        
 ModuleRegistry.register(GridChartsModule);
 ModuleRegistry.register(ClipboardModule);
 ModuleRegistry.register(ColumnsToolPanelModule);

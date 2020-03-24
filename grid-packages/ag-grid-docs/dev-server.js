@@ -255,9 +255,7 @@ function watchAndGenerateExamples(scope) {
     chokidar.watch([`./src/${scope || '*'}/**/*.{php,html,css,js}`], { ignored: ['**/_gen/**/*'] }).on('change', regenerateExamplesForFileChange);
 }
 
-function updateWebpackConfigWithBundles(gridCommunityModules, gridEnterpriseModules) {
-    console.log("updating webpack config with modules...");
-
+const updateLegacyWebpackSourceFiles = (gridCommunityModules, gridEnterpriseModules) => {
     const communityModulesEntries = gridCommunityModules
         .filter(module => module.moduleDirName !== 'core')
         .filter(module => module.moduleDirName !== 'all-modules')
@@ -307,6 +305,60 @@ const ${module.moduleName} = require("../../../${module.fullJsPath.replace('.ts'
         }
     });
     fs.writeFileSync(communityFilename, newCommunityLines.concat(communityModulesEntries).concat(communityRegisterModuleLines).join('\n'), 'UTF-8');
+};
+
+const updateWebpackSourceFiles = (gridCommunityModules, gridEnterpriseModules) => {
+    const communityModulesEntries = gridCommunityModules
+        .filter(module => module.moduleDirName !== 'core')
+        .filter(module => module.moduleDirName !== 'all-modules')
+        .map(module => `const ${module.moduleName} = require("../../../${module.fullJsPath.replace('.ts', '')}").${module.moduleName};`);
+
+    const communityRegisterModuleLines = gridCommunityModules
+        .filter(module => module.moduleDirName !== 'core')
+        .filter(module => module.moduleDirName !== 'all-modules')
+        .map(module => `ModuleRegistry.register(${module.moduleName});`);
+
+    const enterpriseModulesEntries = gridEnterpriseModules
+        .filter(module => module.moduleDirName !== 'core')
+        .filter(module => module.moduleDirName !== 'all-modules')
+        .map(module => `const ${module.moduleName} = require("../../../${module.fullJsPath.replace('.ts', '')}").${module.moduleName};`);
+
+    const enterpriseRegisterModuleLines = gridEnterpriseModules
+        .filter(module => module.moduleDirName !== 'core')
+        .filter(module => module.moduleDirName !== 'all-modules')
+        .map(module => `ModuleRegistry.register(${module.moduleName});`);
+
+    const enterpriseBundleFilename = './src/_assets/ts/enterprise-grid-all-modules-umd-beta.js';
+    const communityFilename = 'src/_assets/ts/community-grid-all-modules-umd-beta.js';
+
+    const existingEnterpriseBundleLines = fs.readFileSync(enterpriseBundleFilename, 'UTF-8').split('\n');
+    let modulesLineFound = false;
+    const newEnterpriseBundleLines = [];
+    existingEnterpriseBundleLines.forEach(line => {
+        if (!modulesLineFound) {
+            modulesLineFound = line.indexOf("/* MODULES - Don't delete this line */") !== -1;
+            newEnterpriseBundleLines.push(line);
+        }
+    });
+    const newEnterpriseBundleContent = newEnterpriseBundleLines.concat(enterpriseModulesEntries).concat(communityModulesEntries);
+    fs.writeFileSync(enterpriseBundleFilename, newEnterpriseBundleContent.concat(enterpriseRegisterModuleLines).concat(communityRegisterModuleLines).join('\n'), 'UTF-8');
+
+    const existingCommunityLines = fs.readFileSync(communityFilename).toString().split('\n');
+    modulesLineFound = false;
+    const newCommunityLines = [];
+    existingCommunityLines.forEach(line => {
+        if (!modulesLineFound) {
+            modulesLineFound = line.indexOf("/* MODULES - Don't delete this line */") !== -1;
+            newCommunityLines.push(line);
+        }
+    });
+    fs.writeFileSync(communityFilename, newCommunityLines.concat(communityModulesEntries).concat(communityRegisterModuleLines).join('\n'), 'UTF-8');
+};
+
+function updateWebpackConfigWithBundles(gridCommunityModules, gridEnterpriseModules) {
+    console.log("updating webpack config with modules...");
+    updateLegacyWebpackSourceFiles(gridCommunityModules, gridEnterpriseModules);
+    updateWebpackSourceFiles(gridCommunityModules, gridEnterpriseModules);
 }
 
 function updateUtilsSystemJsMappingsForFrameworks(gridCommunityModules, gridEnterpriseModules, chartCommunityModules) {
