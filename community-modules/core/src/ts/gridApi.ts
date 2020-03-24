@@ -35,7 +35,6 @@ import { AgEvent, ColumnEventType } from "./events";
 import { IContextMenuFactory } from "./interfaces/iContextMenuFactory";
 import { ICellRendererComp } from "./rendering/cellRenderers/iCellRenderer";
 import { ICellEditorComp } from "./interfaces/iCellEditor";
-import { DragAndDropService, DragSourceType, DraggingEvent } from "./dragAndDrop/dragAndDropService";
 import { HeaderRootComp } from "./headerRendering/headerRootComp";
 import { AnimationFrameService } from "./misc/animationFrameService";
 import { IServerSideRowModel } from "./interfaces/iServerSideRowModel";
@@ -129,7 +128,6 @@ export class GridApi {
     @Autowired('sortController') private sortController: SortController;
     @Autowired('paginationProxy') private paginationProxy: PaginationProxy;
     @Autowired('focusController') private focusController: FocusController;
-    @Autowired('dragAndDropService') private dragAndDropService: DragAndDropService;
     @Optional('rangeController') private rangeController: IRangeController;
     @Optional('clipboardService') private clipboardService: IClipboardService;
     @Optional('aggFuncService') private aggFuncService: IAggFuncService;
@@ -818,24 +816,6 @@ export class GridApi {
 
     public setSuppressRowDrag(value: boolean): void {
         this.gridOptionsWrapper.setProperty(GridOptionsWrapper.PROP_SUPPRESS_ROW_DRAG, value);
-    }
-
-    public addDropZone(el: HTMLElement, onDragging?:(params: DraggingEvent) => void, onDragStop?: (params: DraggingEvent) => void): void {
-        this.dragAndDropService.addDropTarget({
-            getContainer: () => el,
-            isInterestedIn: (type: DragSourceType) => type == 2,
-            getIconName:() => 'move',
-            onDragging: (params: DraggingEvent) => {
-                if (onDragging) {
-                    onDragging(params);
-                }
-            },
-            onDragStop: (params: DraggingEvent) => {
-                if (onDragStop) {
-                    onDragStop(params);
-                }
-            }
-        });
     }
 
     public setHeaderHeight(headerHeight: number) {
