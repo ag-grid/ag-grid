@@ -20,6 +20,7 @@ var gridOptions = {
     enableRangeSelection: true,
     enableCharts: true,
     createChartContainer: createChartContainer,
+    popupParent: document.body
 };
 
 var chartModel;
