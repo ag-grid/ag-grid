@@ -108,6 +108,10 @@ export class ClipboardService implements IClipboardService {
 
                 if (_.missingOrEmpty(parsedData)) { return; }
 
+                if (this.gridOptionsWrapper.isSuppressLastEmptyLineOnPaste()) {
+                    this.removeLastLineIfBlank(parsedData);
+                }
+
                 const pasteOperation = (cellsToFlash: any,
                     updatedRowNodes: RowNode[],
                     focusedCell: CellPosition,
@@ -321,6 +325,16 @@ export class ClipboardService implements IClipboardService {
         };
 
         this.doPasteOperation(pasteOperation);
+    }
+
+    private removeLastLineIfBlank(parsedData: string[][]): void {
+        // remove last row if empty, excel puts empty last row in
+        const lastLine = _.last(parsedData);
+        const lastLineIsBlank = lastLine && lastLine.length === 1 && lastLine[0] === '';
+
+        if (lastLineIsBlank) {
+            _.removeFromArray(parsedData, lastLine);
+        }
     }
 
     private fireRowChanged(rowNodes: RowNode[]): void {

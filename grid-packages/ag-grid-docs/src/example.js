@@ -295,6 +295,7 @@ var gridOptions = {
     // groupHideOpenParents: true,
     // suppressMenuFilterPanel: true,
     // clipboardDeliminator: ',',
+    // suppressLastEmptyLineOnPaste: true,
     // suppressMenuMainPanel: true,
     // suppressMenuColumnPanel: true,
     // forPrint: true,

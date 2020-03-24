@@ -727,6 +727,34 @@
             "description": "Set to <code>true</code> to not highlight rows by adding the <code>ag-row-hover</code> CSS class."
         }
     },
+    "clipboard": {
+        "meta": {
+            "displayName": "Clipboard"
+        },
+        "suppressCopyRowsToClipboard": {
+            "default": false,
+            "description": "Set to <code>true</code> to only have the range selection, and not row selection, copied to <a href='../javascript-grid-clipboard/'>clipboard</a>."
+        },
+        "copyHeadersToClipboard": {
+            "default": false,
+            "description": "Set to <code>true</code> to also include headers when copying to clipboard using <code>Ctrl + C</code> <a href='../javascript-grid-clipboard/'>clipboard</a>."
+        },
+        "clipboardDeliminator": {
+            "description": "Specify the deliminator to use when copying to <a href='../javascript-grid-clipboard/'>clipboard</a>."
+        },
+        "suppressFocusAfterRefresh": {
+            "default": false,
+            "description": "Set to <code>true</code> to not set focus back on the grid after a refresh. This can avoid issues where you want to keep the focus on another part of the browser."
+        },
+        "suppressLastEmptyLineOnPaste": {
+            "default": false,
+            "description": "Set to <code>true</code> to work around a bug with Excel (Windows) that adds an extra empty line at the end of ranges copied to the clipboard."
+        },
+        "enableCellTextSelection": {
+            "default": false,
+            "description": "Set to <code>true</code> to be able to select the text within cells.<br /><strong>Note:</strong> When this is set to <code>true</code>, the clipboard service is disabled."
+        }
+    },
     "localisation": {
         "meta": {
             "displayName": "Localisation"
@@ -787,7 +815,7 @@
         "frameworkComponents": {
             "description": "A map of component names to framework (React, Angular etc) components."
         }
-    },
+    },  
     "miscellaneous": {
         "meta": {
             "displayName": "Miscellaneous"
@@ -857,21 +885,6 @@
             "default": false,
             "description": "If <code>true</code>, when you drag a column out of the grid (e.g. to the group zone) the column is not hidden."
         },
-        "suppressCopyRowsToClipboard": {
-            "default": false,
-            "description": "Set to <code>true</code> to only have the range selection, and not row selection, copied to <a href='../javascript-grid-clipboard/'>clipboard</a>."
-        },
-        "copyHeadersToClipboard": {
-            "default": false,
-            "description": "Set to <code>true</code> to also include headers when copying to clipboard using <code>Ctrl + C</code> <a href='../javascript-grid-clipboard/'>clipboard</a>."
-        },
-        "clipboardDeliminator": {
-            "description": "Specify the deliminator to use when copying to <a href='../javascript-grid-clipboard/'>clipboard</a>."
-        },
-        "suppressFocusAfterRefresh": {
-            "default": false,
-            "description": "Set to <code>true</code> to not set focus back on the grid after a refresh. This can avoid issues where you want to keep the focus on another part of the browser."
-        },
         "layoutInterval": {
             "default": 500,
             "description": "The interval in milliseconds that the grid uses to periodically check its size and lay itself out again if the size has changed, such as when your browser changes size, or your application changes the size of the <code>div</code> element that the grid lives inside. To stop the periodic layout, set it to <code>-1</code>."
@@ -879,10 +892,6 @@
         "enableRtl": {
             "default": false,
             "description": "Set to <code>true</code> to operate grid in <a href='../javascript-grid-rtl/'>RTL (Right to Left)</a> mode."
-        },
-        "enableCellTextSelection": {
-            "default": false,
-            "description": "Set to <code>true</code> to be able to select the text within cells.<br /><strong>Note:</strong> When this is set to <code>true</code>, the clipboard service is disabled."
         },
         "debug": {
             "default": false,

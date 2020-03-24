@@ -853,6 +853,10 @@ export class GridOptionsWrapper {
         return isTrue(this.gridOptions.suppressClipboardPaste);
     }
 
+    public isSuppressLastEmptyLineOnPaste() {
+        return isTrue(this.gridOptions.suppressLastEmptyLineOnPaste);
+    }
+
     public isPagination() {
         return isTrue(this.gridOptions.pagination);
     }

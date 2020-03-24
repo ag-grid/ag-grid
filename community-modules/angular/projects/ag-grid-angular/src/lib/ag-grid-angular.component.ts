@@ -426,6 +426,7 @@ export class AgGridAngular implements AfterViewInit {
     @Input() public gridAutoHeight : any = undefined;
     @Input() public suppressRowTransform : any = undefined;
     @Input() public suppressClipboardPaste : any = undefined;
+    @Input() public suppressLastEmptyLineOnPaste : any = undefined;
     @Input() public serverSideSortingAlwaysResets : any = undefined;
     @Input() public reactNext : any = undefined;
     @Input() public suppressSetColumnStateEvents : any = undefined;
