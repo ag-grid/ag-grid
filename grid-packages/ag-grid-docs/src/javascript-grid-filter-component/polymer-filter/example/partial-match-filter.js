@@ -1,4 +1,4 @@
-import { html, PolymerElement } from '../node_modules/@polymer/polymer/polymer-element.js';
+import {html, PolymerElement} from "../node_modules/@polymer/polymer/polymer-element.js";
 
 export default class PartialMatchFilter extends PolymerElement {
     static get template() {
@@ -19,17 +19,19 @@ export default class PartialMatchFilter extends PolymerElement {
     }
 
     isFilterActive() {
-        return this.text != null && this.text !== '';
+        return this.text !== null && this.text !== undefined && this.text !== '';
     }
 
     doesFilterPass(params) {
         return this.text.toLowerCase()
-            .split(' ')
-            .every(filterWord => this.valueGetter(params.node).toString().toLowerCase().indexOf(filterWord) >= 0);
+            .split(" ")
+            .every((filterWord) => {
+                return this.valueGetter(params.node).toString().toLowerCase().indexOf(filterWord) >= 0;
+            });
     }
 
     getModel() {
-        return { value: this.text };
+        return {value: this.text};
     }
 
     setModel(model) {
@@ -41,12 +43,11 @@ export default class PartialMatchFilter extends PolymerElement {
     }
 
     componentMethod(message) {
-        alert(`Alert from PartialMatchFilterComponent: ${message}`);
+        alert(`Alert from PartialMatchFilterComponent ${message}`);
     }
 
     onChange(event) {
-        const newValue = event.target.value;
-
+        let newValue = event.target.value;
         if (this.text !== newValue) {
             this.text = newValue;
             this.params.filterChangedCallback();

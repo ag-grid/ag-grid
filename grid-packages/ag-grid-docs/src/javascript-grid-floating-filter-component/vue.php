@@ -1,4 +1,5 @@
-<h2>Vue Floating Filters</h2>
+<!-- vue from here -->
+<h2> Vue Floating Filters </h2>
 
 <p>
     It is possible to provide a Vue floating filter for ag-Grid to use if you are are using the
@@ -7,7 +8,7 @@
 </p>
 
 <p>
-    The below example shows how to create a custom floating filter re-using the out-of-the-box Number filter with Vue.
+    The below example show how to create a custom floating filter reusing the out of the box number filter with Vue.
 </p>
 
 <?= grid_example('Vue Floating Filter Component', 'floating-filter-component', 'generated', ['enterprise' => false, 'exampleHeight' => 370, 'onlyShow' => 'vue', 'extras' => ['bootstrap']]) ?>

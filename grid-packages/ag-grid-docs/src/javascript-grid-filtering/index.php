@@ -6,137 +6,134 @@ $pageGroup = "feature";
 include '../documentation-main/documentation_header.php';
 ?>
 
-<h1>Column Filter</h1>
+    <h1>Column Filter</h1>
 
-<p class="lead">
-    Column filters are filters that are applied to the data at the column level. Many column filters can
-    be active at once (e.g. filters set on different columns) and the grid will display rows that pass every
-    column's filter.
-</p>
+    <p class="lead">
+        Column filters are filters that are applied to the data at the column level. Many column filters can
+        be active (eg filters set on different columns) and the grid will display rows that pass each
+        column's filter.
+    </p>
 
-<p>
-    Column filters are accessed in the grid UI either through the
-    <a href="../javascript-grid-column-menu/">Column Menu</a> or the
-    <a href="../javascript-grid-tool-panel/">Tool Panel</a>.
-</p>
+    <p>
+        Column filters are access in the grid UI either in the
+        <a href="../javascript-grid-column-menu/">Column Menu</a> or the
+        <a href="../javascript-grid-tool-panel/">Tool Panel</a>.
+    </p>
 
-<div style="display: flex; text-align: center; margin-top: 20px; margin-bottom: 40px;">
-    <span style="flex: 1">
-        <b>Access via Column Menu</b><br/>
-        <img src="./openColumn.gif" style="border: 1px solid darkgray;"/>
-    </span>
-    <span style="flex: 1">
-        <b>Access via Tool Panel</b><br/>
-        <img src="./openToolPanel.gif" style="border: 1px solid darkgray;"/>
-    </span>
-</div>
+    <p style="display: flex; text-align: center; margin-top: 20px; margin-bottom: 40px;">
+        <span style="flex: 1">
+            <b>Access via Column Menu</b><br/>
+            <img src="./openColumn.gif" style="border: 1px solid darkgray;"/>
+        </span>
+        <span style="flex: 1">
+            <b>Access via Tool Panel</b><br/>
+            <img src="./openToolPanel.gif" style="border: 1px solid darkgray;"/>
+        </span>
+    </p>
 
-<p>
-    You can use the <a href="../javascript-grid-filter-provided/">Provided Filters</a> that come with the grid,
-    or you can build your own <a href="../javascript-grid-filter-component/">Filter Components</a> if you want
-    to customise the filter experience to your application.
-</p>
+    <p>
+        You can use the <a href="../javascript-grid-filter-provided/">Provided Filters</a> that come with the grid,
+        or you can build your own <a href="../javascript-grid-filter-component/">Filter Components</a> if you want
+        to customise the filter experience to your application.
+    </p>
 
-<h3>Example: Simple Filters</h3>
+    <h2>Example Simple Filters</h2>
 
-<p>
-    The example below demonstrates simple filters. The following can be noted:
-</p>
-
-<ul>
-    <li>
-        Column <b>Athlete</b> has a simple text filter.
-    </li>
-    <li>
-        Column <b>Age</b> has a simple number filter.
-    </li>
-    <li>
-        Column <b>Date</b> has a simple date filter.
-    </li>
-</ul>
-
-<?= grid_example('Provided Simple', 'provided-simple', 'generated', ['exampleHeight' => 560]) ?>
-
-<h2>Configuring Filters on Columns</h2>
-
-<p>
-    Set filtering on a column using the column definition property <code>filter</code>. The property can have
-    one of the following values:
+    <p>
+        The example below demonstrates simple filters. The following can be noted:
+    </p>
 
     <ul>
-        <li><code>boolean</code>: Set to <code>true</code> to enable the default filter. The default is
-        <a href="../javascript-grid-filter-text/">Text Filter</a> for ag-Grid Community and
-        <a href="../javascript-grid-filter-set/">Set Filter</a> for ag-Grid Enterprise.</li>
-        <li><code>string</code> / <code>Component</code>: Provide a specific filter to use instead of the default filter.</li>
+        <li>
+            Column <b>Athlete</b> has a simple text filter.
+        </li>
+        <li>
+            Column <b>Age</b> has a simple number filter.
+        </li>
+        <li>
+            Column <b>Date</b> has a simple date filter.
+        </li>
     </ul>
-</p>
 
-<p>
-    The code below shows some column definitions with filters set:
-</p>
+    <?= grid_example('Provided Simple', 'provided-simple', 'generated', ['exampleHeight' => 560]) ?>
 
-<?= createSnippet(<<<SNIPPET
+    <h2>Configuring Filters to Columns</h2>
+
+    <p>
+        Set filtering on a column using the column definition property <code>filter</code>. The property can have
+        one of the following values:
+        <ul>
+            <li>boolean: Set to 'true' to enable the default filter. the default is Text Filter for ag-Grid
+                Community and Set Filter for ag-Grid Enterprise</li>
+            <li>string / component: Provide a specific filter to use over the default filter.</li>
+        </ul>
+    </p>
+
+    <p>
+        Below shows some column definitions with filters set:
+    </p>
+
+<snippet>
 columnDefs: [
+
     // sets the text filter
-    { field: 'athlete', filter: 'agTextColumnFilter' },
+    {field: "athlete", filter: "agTextColumnFilter"},
 
     // sets the number filter
-    { field: 'age',     filter: 'agNumberColumnFilter' },
+    {field: "age",     filter: "agNumberColumnFilter"},
 
     // use the default filter
-    { field: 'gold',    filter: true },
+    {field: "gold",    filter: true},
 
     // use no filter (leaving unspecified means use no filter)
-    { field: 'sport' }
-]
-SNIPPET
-) ?>
+    {field: "sport"}
+]</snippet>
 
-<p>
-    If you want to enable filters on all columns, you should set a filter on the
-    <a href="../javascript-grid-column-definitions/#default-column-definitions">Default Column Definition</a>.
-    The following code snippet shows setting <code>filter=true</code> for all columns via the
-    <code>defaultColDef</code> and then setting <code>filter=false</code> for the Sport column, so all
-    columns have a filter except Sport.
-</p>
+    <p>
+        If you want to enable filters on all columns then set a filter on the
+        <a href="../javascript-grid-column-definitions/#default-column-definitions">Default Column Definition</a>.
+        The following code snippet shows setting <code>filter=true</code> for all columns via the
+        <code>defaultColDef</code> and then setting <code>filter=false</code> for the Sport column, so all
+        columns have a filter except Sport.
+    </p>
 
-<?= createSnippet(<<<SNIPPET
+<snippet>
 gridOptions = {
     ...
-    // anything specified in defaultColDef gets applied to all columns
+
+    // anything specified in defaultColDef gets applied on all columns
     defaultColDef: {
-        filter: true // set filtering on for all columns
+        filter: true // set filtering on for all cols
     },
 
-    // then set individual column definitions
+    // then define individual column definitions
     columnDefs: [
         // filter not specified, defaultColDef setting is used
-        { field: 'athlete' },
-        { field: 'age' },
+        {field: "athlete"},
+        {field: "age"},
 
         // filter specifically set to 'false'
-        { field: 'sport', filter: false } // use no filter
+        {field: "sport", filter: false} // use no filter
     ]
-}
-SNIPPET
-) ?>
+}</snippet>
 
-<h2>Filter Parameters</h2>
+    <h2>Filter Parameters</h2>
 
-<p>
-    Each filter can take additional filter parameters by setting <code>colDef.filterParams</code>.
-    The parameters each filter type accepts are specific to each filter; parameters for the provided
-    filters are explained in their relevant sections.
-</p>
+    <p>
+        Each filter can take additional filter parameters by setting <code>colDef.filterParams</code>.
+        What parameters each filter type takes is specific to each filter. The parameters for the provided
+        filters are explained in their relevant sections.
+    </p>
 
-<p>
-    The code below shows configuring the text filter on the Athlete column and providing extra filter parameters
-    (what <code>resetButton</code> and <code>applyButton</code> do are explained in
-    <a href="../javascript-grid-filter-provided/#apply-clear-and-reset-buttons">Apply, Clear and Reset Buttons</a>).
-</p>
+    <p>
+        Below shows configuring the text filter on an Athlete column and providing extra filter parameters
+        (what <code>resetButton</code> and <code>applyButton</code> do are explained in
+        <a href="../javascript-grid-filter-provided/#apply-clear-and-reset-buttons">Apply, Clear and Reset Buttons</a>).
+    </p>
 
-<?= createSnippet(<<<SNIPPET
+    <snippet>
 columnDefinition = {
+
     field: 'athlete'
 
     // set the column to use text filter
@@ -148,55 +145,78 @@ columnDefinition = {
         applyButton: true,
         debounceMs: 200
     }
-}
-SNIPPET
-) ?>
+}</snippet>
 
-<h2>Filter Events</h2>
+    <h2>Filter Events</h2>
 
-<p>
-    Filtering causes the following events to be emitted:
-</p>
+    <p>
+        Filtering results in the following events getting emitted:
+    </p>
 
-<ul>
-    <li><b>Filter Changed:</b> Filter has changed and been applied by the grid.</li>
-    <li><b>Filter Modified:</b> Filter UI has changed but not necessarily applied.
-        This is useful when using an apply button if you want to know if the filter
-        changed but was not applied.
-    </li>
-</ul>
+    <ul>
+        <li><b>Filter Changed:</b> Filter has changed and applied by the grid.</li>
+        <li><b>Filter Modified:</b> Filter UI has changed but not necessarily applied.
+            This is useful when using an apply button and you want to know if the filter
+            changed but not applied.
+        </li>
+    </ul>
 
-<h2>Filtering Animation</h2>
+    <h2>Filtering Animation</h2>
 
-<p>
-    To enable animation of the rows when filtering, set the grid property <code>animateRows=true</code>.
-</p>
+    <p>
+        To enable animation of the rows after filtering, set grid property <code>animateRows=true</code>.
+    </p>
 
-<h2>Relation to Quick Filter and External Filter</h2>
 
-<p>
-    Column filters work independently of <a href="../javascript-grid-filter-quick/">Quick Filter</a>
-    and <a href="../javascript-grid-filter-external/">External Filter</a>. If a quick filter and
-    / or external filter are applied along with a column filter, each filter type is considered
-    and the row will only show if it passes all three types.
-</p>
+    <h2>Relation to Quick Filter and External Filter</h2>
 
-<p>
-    Column filters are tied to a specific column. Quick filter and external filter
-    are not tied to any particular column. This section of the documentation talks about column filters only.
-    For quick filter and external filter, click the links above to learn more.
-</p>
+    <p>
+        Column filters work independent to <a href="../javascript-grid-filter-quick/">Quick Filter</a>
+        and <a href="../javascript-grid-filter-external/">External Filter</a>. If a quick filter and
+        / or external filter are applied along with a column filter, then each filter type is considered
+        and the row will only pass if it passes all three types.
+    </p>
 
-<h2>Provided Filters</h2>
+    <p>
+        Column filters are tied to a column. Quick filter and external filter
+        are not tied to a column. This section of the documentation talks about column filters only.
+        For quick filter and external filter, see the relevant sections of the documentation.
+    </p>
 
-<p>
-    There are four filters that are provided by the grid. These are as follows:
-</p>
 
-<?php createDocumentationFromFile('filtering.json', 'providedFilters') ?>
+    <h2>Provided Filters</h2>
 
-<p>
-    See the <a href="../javascript-grid-filter-provided/">Provided Filters</a> section for more details on using them.
-</p>
+    <p>
+        There are four provided filters that come with the grid. The provided filters are as follows:
+    </p>
+
+    <table class="table reference">
+        <tr>
+            <th>Filter</th>
+            <th>Description</th>
+        </tr>
+        <tr>
+            <th>agNumberColumnFilter</th>
+            <td>A Number Filter for number comparisons.</td>
+        </tr>
+        <tr>
+            <th>agTextColumnFilter</th>
+            <td>A Text Filter for string comparisons.</td>
+        </tr>
+        <tr>
+            <th>agDateColumnFilter</th>
+            <td>A Date Filter for date comparisons.</td>
+        </tr>
+        <tr>
+            <th>agSetColumnFilter</th>
+            <td>A Set Filter, influenced by how filters work in
+                Microsoft Excel. This is an ag-Grid-Enterprise
+                feature.</td>
+        </tr>
+    </table>
+
+    <p>
+        The section <a href="../javascript-grid-filter-provided/">Provided Filters</a> for details on using them.
+    </p>
 
 <?php include '../documentation-main/documentation_footer.php';?>

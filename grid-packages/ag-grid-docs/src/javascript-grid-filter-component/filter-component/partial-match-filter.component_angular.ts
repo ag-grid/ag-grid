@@ -1,6 +1,7 @@
-import { Component, ViewChild, ViewContainerRef } from '@angular/core';
-import { IAfterGuiAttachedParams, IDoesFilterPassParams, IFilterParams, RowNode } from '@ag-grid-community/all-modules';
-import { IFilterAngularComp } from '@ag-grid-community/angular';
+import {Component, ViewChild, ViewContainerRef} from "@angular/core";
+
+import {IAfterGuiAttachedParams, IDoesFilterPassParams, IFilterParams, RowNode} from "@ag-grid-community/all-modules";
+import {IFilterAngularComp} from "@ag-grid-community/angular";
 
 @Component({
     selector: 'filter-cell',
@@ -17,7 +18,7 @@ import { IFilterAngularComp } from '@ag-grid-community/angular';
                 width: 200px;
                 height: 50px
             }
-
+            
             input {
                 height: 20px
             }
@@ -29,7 +30,7 @@ export class PartialMatchFilter implements IFilterAngularComp {
     private valueGetter: (rowNode: RowNode) => any;
     public text: string = '';
 
-    @ViewChild('input', { read: ViewContainerRef }) public input;
+    @ViewChild('input', {read: ViewContainerRef}) public input;
 
     agInit(params: IFilterParams): void {
         this.params = params;
@@ -37,17 +38,19 @@ export class PartialMatchFilter implements IFilterAngularComp {
     }
 
     isFilterActive(): boolean {
-        return this.text != null && this.text !== '';
+        return this.text !== null && this.text !== undefined && this.text !== '';
     }
 
     doesFilterPass(params: IDoesFilterPassParams): boolean {
         return this.text.toLowerCase()
-            .split(' ')
-            .every(filterWord => this.valueGetter(params.node).toString().toLowerCase().indexOf(filterWord) >= 0);
+            .split(" ")
+            .every((filterWord) => {
+                return this.valueGetter(params.node).toString().toLowerCase().indexOf(filterWord) >= 0;
+            });
     }
 
     getModel(): any {
-        return { value: this.text };
+        return {value: this.text};
     }
 
     setModel(model: any): void {
@@ -55,12 +58,14 @@ export class PartialMatchFilter implements IFilterAngularComp {
     }
 
     ngAfterViewInit(params: IAfterGuiAttachedParams): void {
-        window.setTimeout(() => this.input.element.nativeElement.focus());
+        window.setTimeout(() => {
+            this.input.element.nativeElement.focus();
+        })
     }
 
     // noinspection JSMethodCanBeStatic
     componentMethod(message: string): void {
-        alert(`Alert from PartialMatchFilterComponent: ${message}`);
+        alert(`Alert from PartialMatchFilterComponent ${message}`);
     }
 
     onChange(newValue): void {
