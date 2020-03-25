@@ -1,0 +1,53 @@
+.outer {
+    display: flex;
+    height: 100%;
+}
+
+.inner-col {
+    width: 0;
+    flex-grow: 1;
+    height: 100%;
+}
+
+.factory-panel {
+    display: flex;
+    flex-direction: column;
+}
+
+.factory {
+    padding: 10px;
+    margin: 10px;
+    flex-grow: 1;
+}
+
+.factory-red {
+    background-color: #ffdddd;
+    border: 1px solid #ff8888;
+}
+
+.factory-green {
+    background-color: #ddffdd;
+    border: 1px solid #88ff88;
+}
+
+.factory-blue {
+    background-color: #ddddff;
+    border: 1px solid #8888ff;
+}
+
+.factory-bin {
+    background-color: lightgray;
+    border: 1px solid #888888;
+}
+
+.green-row {
+    background-color: #ddffdd !important;
+}
+
+.red-row {
+    background-color: #ffdddd !important;
+}
+
+.blue-row {
+    background-color: #ddddff !important;
+}
