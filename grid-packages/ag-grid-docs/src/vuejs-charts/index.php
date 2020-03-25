@@ -22,6 +22,11 @@ include '../documentation-main/documentation_header.php';
     project and produce your first charts.
 </p>
 
+<note>
+    The "Quick Look Code" above is different to the code that runs in Stackblitz - this is because Stackblitz doesn't support .vue files at this time.
+</note>
+
+
 <h2 id="add-ag-charts-to-your-project">Add ag-Charts to Your Project</h2>
 
 <p>
@@ -65,7 +70,7 @@ SNIPPET
     instance of the terminal):
 </p>
 
-<?= createSnippet('npm install --save ag-charts-community ag-charts-vue', 'sh') ?>
+<?= createSnippet('npm install --save ag-charts-community ag-charts-vue vue-property-decorator', 'sh') ?>
 
 <p>
     After a few seconds of waiting, you should be good to go. Let's get to the actual coding! As a first step,
@@ -74,12 +79,14 @@ SNIPPET
 </p>
 
 <p>
-    Let's add the component definition to our template. Edit <code>app/App.vue</code> and replace the scaffold code:
+    Let's add the component definition to our template. Edit <code>src/App.vue</code> and replace the scaffold code:
 </p>
 
 <?= createSnippet(<<<SNIPPET
 <template>
-    <ag-charts-vue :options="options" style="position: absolute; top: 0; right: 0; bottom: 0; left: 0;"></ag-charts-vue>
+  <div id="app">
+      <ag-charts-vue :options="options"></ag-charts-vue>
+  </div>
 </template>
 SNIPPET
 , 'html') ?>
@@ -88,47 +95,46 @@ SNIPPET
 
 <?= createSnippet(<<<SNIPPET
 <script>
-import Vue from 'vue';
-import { AgChartsVue } from 'ag-charts-vue';
+  import { AgChartsVue } from 'ag-charts-vue';
 
-export default {
+  export default {
     name: 'App',
     components: {
-        AgChartsVue,
+      AgChartsVue,
     },
     data() {
-        return {
-            options: null,
-            data: [
-                {
-                    quarter: 'Q1',
-                    spending: 450,
-                },
-                {
-                    quarter: 'Q2',
-                    spending: 560,
-                },
-                {
-                    quarter: 'Q3',
-                    spending: 600,
-                },
-                {
-                    quarter: 'Q4',
-                    spending: 700,
-                },
-            ]
-        };
+      return {
+        options: null,
+        data: [
+          {
+            quarter: 'Q1',
+            spending: 450,
+          },
+          {
+            quarter: 'Q2',
+            spending: 560,
+          },
+          {
+            quarter: 'Q3',
+            spending: 600,
+          },
+          {
+            quarter: 'Q4',
+            spending: 700,
+          },
+        ]
+      };
     },
     beforeMount() {
-        this.options = {
-            data: this.data,
-            series: [{
-                xKey: 'quarter',
-                yKey: 'spending',
-            }]
-        };
+      this.options = {
+        data: this.data,
+        series: [{
+          xKey: 'quarter',
+          yKey: 'spending',
+        }]
+      };
     }
-};
+  };
 </script>
 SNIPPET
 , 'html') ?>
