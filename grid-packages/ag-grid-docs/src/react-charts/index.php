@@ -73,10 +73,9 @@ SNIPPET
 
 <?= createSnippet(<<<SNIPPET
 import React, { Component } from 'react';
-import { render } from 'react-dom';
 import { AgChartsReact } from 'ag-charts-react';
 
-class ChartExample extends Component {
+export default class ChartExample extends Component {
     data = [
         {
             quarter: 'Q1',
@@ -114,8 +113,6 @@ class ChartExample extends Component {
         return <AgChartsReact options={this.state.options} />;
     }
 }
-
-render(<ChartExample />, document.querySelector('#root'));
 SNIPPET
 , 'jsx') ?>
 
