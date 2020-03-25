@@ -718,7 +718,7 @@ vue_class_component_esm_Component.registerHooks = function registerHooks(keys) {
 
 
 // CONCATENATED MODULE: ./node_modules/vue-property-decorator/lib/vue-property-decorator.js
-/** vue-property-decorator verson 8.4.0 MIT LICENSE copyright 2019 kaorun343 */
+/** vue-property-decorator verson 8.4.1 MIT LICENSE copyright 2019 kaorun343 */
 /// <reference types='reflect-metadata'/>
 
 
@@ -776,10 +776,12 @@ function produceProvide(original) {
         }
         var _loop_1 = function (i) {
             rv[provide.managedReactive[i]] = this_1[i]; // Duplicates the behavior of `@Provide`
-            Object.defineProperty(rv[reactiveInjectKey], provide.managedReactive[i], {
-                enumerable: true,
-                get: function () { return _this[i]; },
-            });
+            if (!rv[reactiveInjectKey].hasOwnProperty(provide.managedReactive[i])) {
+                Object.defineProperty(rv[reactiveInjectKey], provide.managedReactive[i], {
+                    enumerable: true,
+                    get: function () { return _this[i]; },
+                });
+            }
         };
         var this_1 = this;
         for (var i in provide.managedReactive) {
@@ -838,7 +840,10 @@ function applyMetadata(options, target, key) {
         if (!Array.isArray(options) &&
             typeof options !== 'function' &&
             typeof options.type === 'undefined') {
-            options.type = Reflect.getMetadata('design:type', target, key);
+            var type = Reflect.getMetadata('design:type', target, key);
+            if (type !== Object) {
+                options.type = type;
+            }
         }
     }
 }
@@ -932,8 +937,8 @@ var hyphenate = function (str) { return str.replace(hyphenateRE, '-$1').toLowerC
  * @return MethodDecorator
  */
 function Emit(event) {
-    return function (_target, key, descriptor) {
-        key = hyphenate(key);
+    return function (_target, propertyKey, descriptor) {
+        var key = hyphenate(propertyKey);
         var original = descriptor.value;
         descriptor.value = function emitter() {
             var _this = this;
@@ -942,9 +947,21 @@ function Emit(event) {
                 args[_i] = arguments[_i];
             }
             var emit = function (returnValue) {
-                if (returnValue !== undefined)
-                    args.unshift(returnValue);
-                _this.$emit.apply(_this, [event || key].concat(args));
+                var emitName = event || key;
+                if (returnValue === undefined) {
+                    if (args.length === 0) {
+                        _this.$emit(emitName);
+                    }
+                    else if (args.length === 1) {
+                        _this.$emit(emitName, args[0]);
+                    }
+                    else {
+                        _this.$emit(emitName, args);
+                    }
+                }
+                else {
+                    _this.$emit(emitName, returnValue);
+                }
             };
             var returnValue = original.apply(this, args);
             if (isPromise(returnValue)) {

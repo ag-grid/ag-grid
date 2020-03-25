@@ -1295,18 +1295,10 @@
     content: ""; }
   .ag-theme-balham-dark .ag-root-wrapper {
     background-color: #2d3436; }
-  .ag-theme-balham-dark *, .ag-theme-balham-dark *:focus, .ag-theme-balham-dark *:after, .ag-theme-balham-dark *:before {
+  .ag-theme-balham-dark [class^='ag-'], .ag-theme-balham-dark [class^='ag-']:focus, .ag-theme-balham-dark [class^='ag-']:after, .ag-theme-balham-dark [class^='ag-']:before {
     box-sizing: border-box;
     outline: none; }
-  .ag-theme-balham-dark input, .ag-theme-balham-dark button, .ag-theme-balham-dark select, .ag-theme-balham-dark optgroup, .ag-theme-balham-dark textarea {
-    color: inherit;
-    font-family: inherit;
-    font-size: inherit;
-    font-weight: inherit;
-    line-height: inherit; }
-  .ag-theme-balham-dark input {
-    margin: 0; }
-  .ag-theme-balham-dark ::-ms-clear {
+  .ag-theme-balham-dark [class^='ag-']::-ms-clear {
     display: none; }
   .ag-theme-balham-dark .ag-checkbox .ag-input-wrapper,
   .ag-theme-balham-dark .ag-radio-button .ag-input-wrapper {
@@ -1321,50 +1313,53 @@
     margin-left: 4px; }
   .ag-theme-balham-dark .ag-rtl .ag-label-align-right .ag-label {
     margin-right: 4px; }
-  .ag-theme-balham-dark input,
-  .ag-theme-balham-dark textarea,
-  .ag-theme-balham-dark select,
-  .ag-theme-balham-dark button {
-    background-color: #2d3436;
-    color: inherit; }
-  .ag-theme-balham-dark input:not([type]),
-  .ag-theme-balham-dark input[type='text'],
-  .ag-theme-balham-dark input[type='number'],
-  .ag-theme-balham-dark input[type='tel'],
-  .ag-theme-balham-dark input[type='date'],
-  .ag-theme-balham-dark input[type='datetime-local'],
-  .ag-theme-balham-dark textarea {
+  .ag-theme-balham-dark input[class^='ag-'] {
+    margin: 0;
+    background-color: #2d3436; }
+  .ag-theme-balham-dark textarea[class^='ag-'],
+  .ag-theme-balham-dark select[class^='ag-'] {
+    background-color: #2d3436; }
+  .ag-theme-balham-dark input[class^='ag-']:not([type]),
+  .ag-theme-balham-dark input[class^='ag-'][type='text'],
+  .ag-theme-balham-dark input[class^='ag-'][type='number'],
+  .ag-theme-balham-dark input[class^='ag-'][type='tel'],
+  .ag-theme-balham-dark input[class^='ag-'][type='date'],
+  .ag-theme-balham-dark input[class^='ag-'][type='datetime-local'],
+  .ag-theme-balham-dark textarea[class^='ag-'] {
+    font-size: inherit;
+    line-height: inherit;
+    color: inherit;
     border-width: 1px;
     border-style: solid;
     border-color: #f0f0f0; }
-    .ag-theme-balham-dark input:not([type]):disabled,
-    .ag-theme-balham-dark input[type='text']:disabled,
-    .ag-theme-balham-dark input[type='number']:disabled,
-    .ag-theme-balham-dark input[type='tel']:disabled,
-    .ag-theme-balham-dark input[type='date']:disabled,
-    .ag-theme-balham-dark input[type='datetime-local']:disabled,
-    .ag-theme-balham-dark textarea:disabled {
+    .ag-theme-balham-dark input[class^='ag-']:not([type]):disabled,
+    .ag-theme-balham-dark input[class^='ag-'][type='text']:disabled,
+    .ag-theme-balham-dark input[class^='ag-'][type='number']:disabled,
+    .ag-theme-balham-dark input[class^='ag-'][type='tel']:disabled,
+    .ag-theme-balham-dark input[class^='ag-'][type='date']:disabled,
+    .ag-theme-balham-dark input[class^='ag-'][type='datetime-local']:disabled,
+    .ag-theme-balham-dark textarea[class^='ag-']:disabled {
       color: rgba(245, 245, 245, 0.38);
       background-color: rgba(48, 46, 46, 0.3);
       border-color: rgba(240, 240, 240, 0.3); }
-    .ag-theme-balham-dark input:not([type]):focus,
-    .ag-theme-balham-dark input[type='text']:focus,
-    .ag-theme-balham-dark input[type='number']:focus,
-    .ag-theme-balham-dark input[type='tel']:focus,
-    .ag-theme-balham-dark input[type='date']:focus,
-    .ag-theme-balham-dark input[type='datetime-local']:focus,
-    .ag-theme-balham-dark textarea:focus {
+    .ag-theme-balham-dark input[class^='ag-']:not([type]):focus,
+    .ag-theme-balham-dark input[class^='ag-'][type='text']:focus,
+    .ag-theme-balham-dark input[class^='ag-'][type='number']:focus,
+    .ag-theme-balham-dark input[class^='ag-'][type='tel']:focus,
+    .ag-theme-balham-dark input[class^='ag-'][type='date']:focus,
+    .ag-theme-balham-dark input[class^='ag-'][type='datetime-local']:focus,
+    .ag-theme-balham-dark textarea[class^='ag-']:focus {
       outline: none;
       box-shadow: 0 0 4px 1.5px #719ECE;
       border-color: #719ECE; }
-  .ag-theme-balham-dark input[type='number'] {
+  .ag-theme-balham-dark input[class^='ag-'][type='number'] {
     -moz-appearance: textfield; }
-    .ag-theme-balham-dark input[type='number']::-webkit-outer-spin-button, .ag-theme-balham-dark input[type='number']::-webkit-inner-spin-button {
+    .ag-theme-balham-dark input[class^='ag-'][type='number']::-webkit-outer-spin-button, .ag-theme-balham-dark input[class^='ag-'][type='number']::-webkit-inner-spin-button {
       -webkit-appearance: none;
       margin: 0; }
-  .ag-theme-balham-dark input[type='range'] {
+  .ag-theme-balham-dark input[class^='ag-'][type='range'] {
     padding: 0; }
-  .ag-theme-balham-dark input[type='button']:focus, .ag-theme-balham-dark button:focus {
+  .ag-theme-balham-dark input[class^='ag-'][type='button']:focus, .ag-theme-balham-dark button:focus {
     box-shadow: 0 0 4px 1.5px #719ECE; }
   .ag-theme-balham-dark .ag-drag-handle {
     color: #F5F5F5; }
@@ -2048,8 +2043,6 @@
     margin-right: 8px; }
   .ag-theme-balham-dark .ag-set-filter-list {
     height: 168px; }
-  .ag-theme-balham-dark .ag-set-filter-item {
-    height: 28px; }
   .ag-theme-balham-dark .ag-set-filter-filter {
     margin-top: 6px;
     margin-left: 6px;
@@ -2091,6 +2084,11 @@
     color: #F5F5F5;
     overflow: hidden; }
   .ag-theme-balham-dark .ag-side-button-button {
+    color: inherit;
+    font-family: inherit;
+    font-size: inherit;
+    font-weight: inherit;
+    line-height: inherit;
     background: transparent;
     padding: 8px 0 8px 0;
     width: calc(100% + 1px);
@@ -2144,6 +2142,22 @@
     padding-left: 4px; }
   .ag-theme-balham-dark .ag-rtl .ag-filter-toolpanel-header, .ag-theme-balham-dark .ag-rtl .ag-filter-toolpanel-search {
     padding-right: 4px; }
+  .ag-theme-balham-dark .ag-filter-toolpanel-group.ag-has-filter > .ag-group-title-bar .ag-group-title:after {
+    font-family: "agGridBalham";
+    font-size: 16px;
+    line-height: 16px;
+    font-style: normal;
+    font-weight: normal;
+    font-variant: normal;
+    text-transform: none;
+    /* Better Font Rendering =========== */
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    content: ""; }
+    .ag-theme-balham-dark .ag-ltr .ag-filter-toolpanel-group.ag-has-filter > .ag-group-title-bar .ag-group-title:after {
+      padding-left: 4px; }
+    .ag-theme-balham-dark .ag-rtl .ag-filter-toolpanel-group.ag-has-filter > .ag-group-title-bar .ag-group-title:after {
+      padding-right: 4px; }
   .ag-theme-balham-dark .ag-filter-toolpanel-group-level-0-header {
     height: 32px; }
   .ag-theme-balham-dark .ag-filter-toolpanel-group-item {
@@ -2315,6 +2329,11 @@
   .ag-theme-balham-dark .ag-rtl .ag-floating-filter-button {
     margin-right: 12px; }
   .ag-theme-balham-dark .ag-floating-filter-button-button {
+    color: inherit;
+    font-family: inherit;
+    font-size: inherit;
+    font-weight: inherit;
+    line-height: inherit;
     appearance: none;
     background: transparent;
     border: none;
@@ -2740,21 +2759,21 @@
   .ag-theme-balham-dark .ag-header-row {
     font-weight: 600;
     color: rgba(245, 245, 245, 0.64); }
-  .ag-theme-balham-dark .ag-ltr input:not([type]),
-  .ag-theme-balham-dark .ag-ltr input[type='text'],
-  .ag-theme-balham-dark .ag-ltr input[type='number'],
-  .ag-theme-balham-dark .ag-ltr input[type='tel'],
-  .ag-theme-balham-dark .ag-ltr input[type='date'],
-  .ag-theme-balham-dark .ag-ltr input[type='datetime-local'],
-  .ag-theme-balham-dark .ag-ltr textarea {
+  .ag-theme-balham-dark .ag-ltr input[class^='ag-']:not([type]),
+  .ag-theme-balham-dark .ag-ltr input[class^='ag-'][type='text'],
+  .ag-theme-balham-dark .ag-ltr input[class^='ag-'][type='number'],
+  .ag-theme-balham-dark .ag-ltr input[class^='ag-'][type='tel'],
+  .ag-theme-balham-dark .ag-ltr input[class^='ag-'][type='date'],
+  .ag-theme-balham-dark .ag-ltr input[class^='ag-'][type='datetime-local'],
+  .ag-theme-balham-dark .ag-ltr textarea[class^='ag-'] {
     padding-left: 4px; }
-  .ag-theme-balham-dark .ag-rtl input:not([type]),
-  .ag-theme-balham-dark .ag-rtl input[type='text'],
-  .ag-theme-balham-dark .ag-rtl input[type='number'],
-  .ag-theme-balham-dark .ag-rtl input[type='tel'],
-  .ag-theme-balham-dark .ag-rtl input[type='date'],
-  .ag-theme-balham-dark .ag-rtl input[type='datetime-local'],
-  .ag-theme-balham-dark .ag-rtl textarea {
+  .ag-theme-balham-dark .ag-rtl input[class^='ag-']:not([type]),
+  .ag-theme-balham-dark .ag-rtl input[class^='ag-'][type='text'],
+  .ag-theme-balham-dark .ag-rtl input[class^='ag-'][type='number'],
+  .ag-theme-balham-dark .ag-rtl input[class^='ag-'][type='tel'],
+  .ag-theme-balham-dark .ag-rtl input[class^='ag-'][type='date'],
+  .ag-theme-balham-dark .ag-rtl input[class^='ag-'][type='datetime-local'],
+  .ag-theme-balham-dark .ag-rtl textarea[class^='ag-'] {
     padding-right: 4px; }
   .ag-theme-balham-dark .ag-column-drop-vertical-empty-message, .ag-theme-balham-dark .ag-status-bar {
     font-weight: 600;

@@ -9,9 +9,9 @@ include '../documentation-main/documentation_header.php';
 <h1>Infinite Row Model</h1>
 
 <note>
-    If you are an enterprise user you should consider using the <a href="../javascript-grid-server-side-model/">Server-side row model</a>
-    instead of the infinite row model. It offers the same functionality with many more features.<br><br>
-    The differences between row models can be found in our <a href="../javascript-grid-row-models/">row models summary page</a>
+    If you are an enterprise user you should consider using the <a href="../javascript-grid-server-side-model/">server-side row model</a>
+    instead of the infinite row model. It offers the same functionality with many more features.<br /><br />
+    The differences between row models can be found in our <a href="../javascript-grid-row-models/">row models summary page</a>.
 </note>
 
 <p>
@@ -450,7 +450,7 @@ cell renderers.</p>
 <h2 id="changing-columns">Changing Columns</h2>
 
 <p>
-    <a href="../javascript-grid-column-definitions/#column-changes/">Changing columns</a>
+    <a href="../javascript-grid-column-definitions/#column-changes">Changing columns</a>
     is possible using infinite scroll and it does not require the data getting fetched again
     from the server. If the change of columns impacts the sort or filter (ie a column with a sort
     of filter applied is removed), then the grid will fetch data again similar to how data is

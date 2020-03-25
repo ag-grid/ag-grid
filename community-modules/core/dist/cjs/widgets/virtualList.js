@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v23.0.0
+ * @version v23.0.2
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -39,7 +39,7 @@ var VirtualList = /** @class */ (function (_super) {
         return _this;
     }
     VirtualList.prototype.init = function () {
-        this.eListContainer = this.queryForHtmlElement(".ag-virtual-list-container");
+        this.eListContainer = this.queryForHtmlElement('.ag-virtual-list-container');
         this.addScrollListener();
         this.rowHeight = this.getItemHeight();
     };
@@ -141,7 +141,8 @@ var VirtualList = /** @class */ (function (_super) {
         var eDiv = document.createElement('div');
         utils_1._.addCssClass(eDiv, 'ag-virtual-list-item');
         utils_1._.addCssClass(eDiv, "ag-" + this.cssIdentifier + "-virtual-list-item");
-        eDiv.style.top = (this.rowHeight * rowIndex) + "px";
+        eDiv.style.height = this.rowHeight + "px";
+        eDiv.style.top = this.rowHeight * rowIndex + "px";
         var rowComponent = this.componentCreator(value);
         eDiv.appendChild(rowComponent.getGui());
         this.eListContainer.appendChild(eDiv);

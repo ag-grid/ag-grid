@@ -16,7 +16,7 @@ include '../documentation-main/documentation_header.php';
     <li>If you are using the &quot;Balham&quot; or &quot;Material&quot; themes:</li>
     <ul>
         <li>Test your theme to ensure that all the customisations you have made still look correct.</li>
-        <li>If everything still looks correct you do not need to make any changes.</li>
+        <li>If everything still looks correct then you do not need to change your theme code. However you will see a deprecation warning in the compile logs telling you that the path that you are using to import the theme file has changed, and you should update your import paths to remove this warning (change the @import from <code>.../sass/ag-theme-$name.scss</code> to <code>.../sass/legacy/ag-theme-$name-v22-compat.scss</code>).</li>
         <li>If anything does not work as expected, read this migration guide to establish what you need to change.</li>
     </ul>
     <li>If you have a large custom theme that extends any of our provided themes, but contains many CSS rules that extensively change the appearance so that it looks very different from the base theme, then consider updating your theme to extend ag-theme-base. This will provide the most stable long term base for your theme. See <a href="https://github.com/ag-grid/ag-grid-customise-theme/tree/master/src/vanilla-extending-base">this demo</a> for an example of a custom theme extending the base theme.</li>
@@ -31,7 +31,7 @@ include '../documentation-main/documentation_header.php';
 
 <p>We frequently received feedback from our customers that their custom themes required updating too often, and would often break on upgrading to a new minor release. The root cause was that our base theme used a lot of complex and nested selectors. These are more likely to require updating between releases as a result of minor changes in DOM structure. Because of CSS specificity rules, any theme extending the base theme had to use the same complex and nested selectors to override unwanted styles set in the base theme - and while we could test and update our own themes between releases, our users found that their custom themes needed regular updating to adjust to DOM changes.</p>
 
-<p>The changes described in this document all work together to fix this situation. We have rewritten the base theme so that most of its CSS selectors consist of a single class name. This has allowed us to rewrite our provided themes - Balahm, Material and Alpine - to simplify them in the same way. Any CSS selectors in your custom themes can be simplified too.</p>
+<p>The changes described in this document all work together to fix this situation. We have rewritten the base theme so that most of its CSS selectors consist of a single class name. This has allowed us to rewrite our provided themes - Balham, Material and Alpine - to simplify them in the same way. Any CSS selectors in your custom themes can be simplified too.</p>
 
 <p>While re-writing our themes we took the opportunity to make some other &quot;housekeeping&quot; type improvements like <a href="#variables-removed-with-no-equivalent-parameter">removing</a> unnecessary variables, <a href="#renamed-css-classes">renaming</a> inconsistent class names, and moving to a <a href="#themes-are-now-configured-using-parameters">new method</a> for configuring themes.</p>
 
@@ -100,7 +100,7 @@ $ag-group-component-border-color: green;
     <li><code>$ag-customize-buttons</code>, <code>$ag-button-color</code>, <code>$ag-button-text-transform</code>, <code>$ag-button-background-color</code>: Use a CSS rule like <code>.ag-standard-button { ... }</code> instead.</li>
     <li>All <code>$ag-dialog-*</code> variables: <code>$ag-dialog-background-color</code>, <code>$ag-dialog-border-color</code>, <code>$ag-dialog-border-size</code>, <code>$ag-dialog-border-style</code>, <code>$ag-dialog-title-background-color</code>, <code>$ag-dialog-title-font-family</code>, <code>$ag-dialog-title-font-size</code>, <code>$ag-dialog-title-font-weight</code>, <code>$ag-dialog-title-foreground-color</code>, <code>$ag-dialog-title-height</code>, <code>$ag-dialog-title-icon-size</code>, <code>$ag-dialog-title-padding</code></li>
     <li><code>$ag-editor-background-color</code></li>
-    <li><code>$ag-filter-tool-panel-top-level-row-height</code> and <code>$ag-filter-tool-panel-sub-level-row-height</code>: se 
+    <li><code>$ag-filter-tool-panel-top-level-row-height</code> and <code>$ag-filter-tool-panel-sub-level-row-height</code>: se
 <code>.ag-filter-toolpanel-header</code> to style all headers, <code>.ag-filter-toolpanel-instance-header</code> for leaf level headers, and <code>.ag-filter-toolpanel-group-level-{X}-header</code> for a specific level of header, e.g. <code>.ag-filter-toolpanel-group-level-0-header</code> for the top level.</li>
     <li><code>$ag-font-weight</code>, <code>$ag-secondary-font-family</code>, <code>$ag-secondary-font-size</code>, <code>$ag-secondary-font-weight</code></li>
     <li><code>$ag-foreground-opacity</code></li>
@@ -193,24 +193,33 @@ $ag-group-component-border-color: green;
 
 <h2 id="backwards-compatibility-mode">Backwards compatibility mode</h2>
 
-<p>We have implemented a backwards compatibility mode that will enable some apps to continue working with minimal changes. If you are extending a provided theme importing the main theme file, e.g. <code>ag-theme-balham.scss</code>, you will automatically be opted in to &quot;variables&quot; backwards compatibility mode.</p>
+<p>We have implemented a backwards compatibility mode that will enable some apps to continue working with minimal changes. If you are extending a provided theme importing the main theme file, e.g. <code>ag-theme-balham.scss</code>, you will automatically be opted in to &quot;variables&quot; backwards compatibility mode. You have three options:</p>
+
+<ul>
+    <li>Stay in "variables" compatibility mode. Although you are opted into this mode automatically, you will see a deprecation warning in the compile logs telling you that the path that you are using to import the theme file has changed, and you should update your import paths to remove this warning (change the @import from <code>.../sass/ag-theme-$name.scss</code> to <code>.../sass/legacy/ag-theme-$name-v22-compat.scss</code>)</li>
+    <li>Enter "legacy" compatibility mode if this is right for your app (see below).</li>
+    <li>Switch to the new mechanism for configuring themes. Change your theme import from <code>.../sass/ag-theme-$name.scss</code> to <code>.../sass/ag-theme-$name-mixin.scss</code> and call the theme mixin. See <a href="/javascript-grid-provided-themes/">themes documentation</a> sample code. You will need to convert all the <code>$ag-*</code> global variables you have defined to theme parameters.</li>
+</ul>
+
+<p>To enable "legacy" mode, define the <code>$ag-compatibility-mode</code> variable:</p>
 
 <snippet language="scss">
-$ag-compatibility-mode: "variables"; // or "legacy"
+$ag-compatibility-mode: "legacy"; // or "variables"
 // Set any legacy global variables before including the file. These will be
 // picked up and used to generate theme parameters.
 $ag-header-foreground-color: red;
+// import the theme's v22-compat.scss file to disable deprecation warnings
 @import "~ag-grid-community/src/styles/ag-theme-balham/sass/legacy/ag-theme-balham-v22-compat.scss";
 </snippet>
 
-<p>There are two supported values, <code>&quot;variables&quot;</code> and <code>&quot;legacy&quot;</code>.</p>
+<p>Here is what each mode does:</p>
 
 <ul>
     <li>variables mode: reads the global variables that were supported in v22 and converts them to the parameter maps used in v23, <em>only if there is an equivalent parameter for a variable</em> (most variables are supported). This mode:
 <ul>
     <li>is a reliable mechanism and is safe to use long-term (although you may wish to update your themes anyway, to get the benefits of the new configuration system like better validation)</li>
     <li>does not support <a href="#variables-removed-with-no-equivalent-parameter">variables removed with no equivalent parameter</a> - if you were using one of these variables, you will need to write new CSS selectors to achieve the same effect. Generally, the reason why we have removed some variables is that it is simple to write CSS to achieve the same effect.</li>
-    <li>does not modify your CSS selectors. If you are using any of the <a href="#renamed-CSS-classes">renamed CSS classes</a> you will need to update your CSS selectors.</li>
+    <li>does not modify your CSS selectors. If you are using any of the <a href="#renamed-css-classes">renamed CSS classes</a> you will need to update your CSS selectors.</li>
 </ul>
 </li>
     <li>legacy mode: attempts to make themes written for v22 and earlier work in v23. This mode:

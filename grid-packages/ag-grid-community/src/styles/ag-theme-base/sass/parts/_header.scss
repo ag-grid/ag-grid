@@ -139,6 +139,7 @@
     }
 
     .ag-floating-filter-button-button {
+        @include ag-inherit-text-styles();
         appearance: none;
         background: transparent;
         border: none;

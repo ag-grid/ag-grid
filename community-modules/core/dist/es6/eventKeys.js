@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v23.0.0
+ * @version v23.0.2
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -99,6 +99,7 @@ var Events = /** @class */ (function () {
     Events.EVENT_DRAG_STARTED = 'dragStarted';
     /** A column drag has stopped */
     Events.EVENT_DRAG_STOPPED = 'dragStopped';
+    Events.EVENT_CHECKBOX_CHANGED = 'checkboxChanged';
     Events.EVENT_ROW_EDITING_STARTED = 'rowEditingStarted';
     Events.EVENT_ROW_EDITING_STOPPED = 'rowEditingStopped';
     Events.EVENT_CELL_EDITING_STARTED = 'cellEditingStarted';

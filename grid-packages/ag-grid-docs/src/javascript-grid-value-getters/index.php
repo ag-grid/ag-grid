@@ -111,7 +111,7 @@ colDef.valueGetter = function(params) {
     </ul>
 
     <p>
-        See the <a href="../javascript-grid-tool-panel/#toolPanelExample">Tool Panel Example</a> for an example of
+        See the <a href="../javascript-grid-tool-panel-columns/#column-tool-panel-example">Column Tool Panel Example</a> for an example of
         <code>headerValueGetter</code> used in different locations, where you can change the header name depending on
         where the name appears.
     </p>

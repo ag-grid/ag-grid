@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v23.0.0
+ * @version v23.0.2
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -525,13 +525,23 @@ var GridApi = /** @class */ (function () {
         this.clientSideRowModel.forEachNodeAfterFilterAndSort(callback);
     };
     GridApi.prototype.getFilterApiForColDef = function (colDef) {
-        console.warn('ag-grid API method getFilterApiForColDef deprecated, use getFilterApi instead');
+        console.warn('ag-grid API method getFilterApiForColDef deprecated, use getFilterInstance instead');
         return this.getFilterInstance(colDef);
     };
-    GridApi.prototype.getFilterInstance = function (key) {
+    GridApi.prototype.getFilterInstance = function (key, callback) {
         var column = this.columnController.getPrimaryColumn(key);
         if (column) {
-            return this.filterManager.getFilterComponent(column, 'NO_UI').resolveNow(null, function (filterComp) { return filterComp; });
+            var filterPromise = this.filterManager.getFilterComponent(column, 'NO_UI');
+            var currentValue = filterPromise.resolveNow(null, function (filterComp) { return filterComp; });
+            if (callback) {
+                if (currentValue) {
+                    setTimeout(callback, 0, currentValue);
+                }
+                else {
+                    filterPromise.then(callback);
+                }
+            }
+            return currentValue;
         }
     };
     GridApi.prototype.getFilterApi = function (key) {

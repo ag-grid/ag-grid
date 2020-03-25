@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v23.0.0
+ * @version v23.0.2
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -92,8 +92,9 @@ var TextCellEditor = /** @class */ (function (_super) {
             // when user hits a printable character, then on IE (and only IE) the caret
             // was placed after the first character, thus 'apply' would end up as 'pplea'
             var value = eInput.getValue();
-            if (value && value.length) {
-                inputEl.setSelectionRange(length, length);
+            var len = (utils_1._.exists(value) && value.length) || 0;
+            if (len) {
+                inputEl.setSelectionRange(len, len);
             }
         }
     };

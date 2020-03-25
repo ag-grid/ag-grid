@@ -2,10 +2,19 @@
     .ag-filter-toolpanel-header {
         height: ag-param(grid-size) * 6;
     }
+
     .ag-filter-toolpanel-header,
     .ag-filter-toolpanel-search {
         @include ag-theme-rtl(( padding-left: ag-param(grid-size) ));
     }
+
+    .ag-filter-toolpanel-group.ag-has-filter > .ag-group-title-bar .ag-group-title:after {
+        @include ag-icon();
+        @include ag-theme-rtl(( padding-left: ag-param(grid-size) ));
+
+        content: ag-icon-char(filter);
+    }
+
     .ag-filter-toolpanel-group-level-0-header {
         height: ag-param(grid-size) * 8;
     }

@@ -4,6 +4,8 @@ import { AgEvent } from '../events';
 import { AgAbstractInputField } from './agAbstractInputField';
 import { LabelAlignment } from './agAbstractLabel';
 import { _ } from '../utils';
+import { EventService } from '../eventService';
+import { Events, CheckboxChangedEvent } from "../events";
 
 export interface ChangeEvent extends AgEvent {
     selected: boolean;
@@ -16,6 +18,7 @@ export class AgCheckbox extends AgAbstractInputField<HTMLInputElement, boolean> 
     protected labelAlignment: LabelAlignment = 'right';
 
     @Autowired('gridOptionsWrapper') protected gridOptionsWrapper: GridOptionsWrapper;
+    @Autowired('eventService') protected eventService: EventService;
 
     private selected: boolean | undefined = false;
     private readOnly = false;
@@ -70,9 +73,14 @@ export class AgCheckbox extends AgAbstractInputField<HTMLInputElement, boolean> 
 
     public setValue(value: boolean | undefined, silent?: boolean): this {
         this.refreshSelectedClass(value);
-        if (value === this.getValue()) { return this; }
-
         this.setSelected(value, silent);
+
+        return this;
+    }
+
+    public setName(name: string): this {
+        const input = this.getInputElement() as HTMLInputElement;
+        input.name = name;
 
         return this;
     }
@@ -95,8 +103,18 @@ export class AgCheckbox extends AgAbstractInputField<HTMLInputElement, boolean> 
         }
     }
 
-    private dispatchChange(selected: boolean | undefined, event?: MouseEvent) {
+    protected dispatchChange(selected?: boolean, event?: MouseEvent) {
         this.dispatchEvent({ type: AgCheckbox.EVENT_CHANGED, selected, event });
+
+        const input = this.getInputElement() as HTMLInputElement;
+        const checkboxChangedEvent: CheckboxChangedEvent = {
+            type: Events.EVENT_CHECKBOX_CHANGED,
+            id: input.id,
+            name: input.name,
+            selected
+        };
+
+        this.eventService.dispatchEvent(checkboxChangedEvent);
     }
 
     private onCheckboxClick(e: MouseEvent) {

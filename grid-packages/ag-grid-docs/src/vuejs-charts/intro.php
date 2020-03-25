@@ -4,85 +4,91 @@
         <div class="card-body">
             <ul class="nav nav-tabs">
                 <li class="nav-item">
-                    <a class="nav-link active" id="component-tab" data-toggle="tab" href="#component" role="tab" aria-controls="component" aria-selected="true">app.js</a>
+                    <a class="nav-link active" id="component-tab" data-toggle="tab" href="#component" role="tab" aria-controls="component" aria-selected="true">App.vue</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" id="template-tab" data-toggle="tab" href="#template" role="tab" aria-controls="template" aria-selected="false">index.js</a>
+                    <a class="nav-link" id="template-tab" data-toggle="tab" href="#template" role="tab" aria-controls="template" aria-selected="false">main.js</a>
                 </li>
             </ul>
             <div class="tab-content">
                 <div class="tab-pane show active" id="component" role="tabpanel" aria-labelledby="component-tab">
 <?= createSnippet(<<<SNIPPET
-import Vue from 'vue';
-import { AgChartsVue } from 'ag-charts-vue';
+<template>
+    <div id="app">
+        <ag-charts-vue :options="options"></ag-charts-vue>
+    </div>
+</template>
 
-const ChartExample = {
-    template: `<ag-charts-vue :options="options"></ag-charts-vue>`,
-    components: {
-        'ag-charts-vue': AgChartsVue,
-    },
-    data: function() {
-        return {
-            options: null,
-            data: [
-                {
-                    beverage: 'Coffee',
-                    Q1: 450,
-                    Q2: 560,
-                    Q3: 600,
-                    Q4: 700,
+<script>
+    import {AgChartsVue} from 'ag-charts-vue';
+
+    export default {
+        name: 'App',
+        components: {
+            AgChartsVue,
+        },
+        data() {
+            return {
+                options: null,
+                data: [
+                    {
+                        beverage: 'Coffee',
+                        Q1: 450,
+                        Q2: 560,
+                        Q3: 600,
+                        Q4: 700,
+                    },
+                    {
+                        beverage: 'Tea',
+                        Q1: 270,
+                        Q2: 380,
+                        Q3: 450,
+                        Q4: 520,
+                    },
+                    {
+                        beverage: 'Milk',
+                        Q1: 180,
+                        Q2: 170,
+                        Q3: 190,
+                        Q4: 200,
+                    },
+                ]
+            };
+        },
+        beforeMount() {
+            this.options = {
+                data: this.data,
+                title: {
+                    text: 'Beverage Expenses',
                 },
-                {
-                    beverage: 'Tea',
-                    Q1: 270,
-                    Q2: 380,
-                    Q3: 450,
-                    Q4: 520,
-                },
-                {
-                    beverage: 'Milk',
-                    Q1: 180,
-                    Q2: 170,
-                    Q3: 190,
-                    Q4: 200,
-                },
-            ]
-        };
-    },
-    beforeMount() {
-        this.options = {
-            data: this.data,
-            title: { text: 'Beverage Expenses' },
-            subtitle: { text: 'per quarter' },
-            padding: {
-                top: 40,
-                right: 40,
-                bottom: 40,
-                left: 40,
-            },
-            series: [
-                {
+                subtitle: {
+                    text: 'per quarter',
+                }, series: [{
                     type: 'column',
                     xKey: 'beverage',
                     yKeys: ['Q1', 'Q2', 'Q3', 'Q4'],
-                },
-            ],
-            legend: { spacing: 40 },
-        };
-    }
-};
+                    label: {},
+                }],
+            };
+        }
+    };
+</script>
+
+<style>
+</style>
 SNIPPET
-, 'ts') ?>
+) ?>
                 </div>
                 <div class="tab-pane" id="template" role="tabpanel" aria-labelledby="template-tab">
 <?= createSnippet(<<<SNIPPET
-import Vue from 'vue';
-import { App } from './app';
+import Vue from 'vue'
+import App from './App.vue'
+
+Vue.config.productionTip = false
 
 new Vue({
-  el: '#root',
-  render: h => h(App)
-});
+  render: h => h(App),
+}).$mount('#app')
 SNIPPET
 , 'ts') ?>
                 </div>

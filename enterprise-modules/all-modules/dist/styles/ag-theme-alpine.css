@@ -193,18 +193,10 @@
     content: ""; }
   .ag-theme-alpine .ag-root-wrapper {
     background-color: #fff; }
-  .ag-theme-alpine *, .ag-theme-alpine *:focus, .ag-theme-alpine *:after, .ag-theme-alpine *:before {
+  .ag-theme-alpine [class^='ag-'], .ag-theme-alpine [class^='ag-']:focus, .ag-theme-alpine [class^='ag-']:after, .ag-theme-alpine [class^='ag-']:before {
     box-sizing: border-box;
     outline: none; }
-  .ag-theme-alpine input, .ag-theme-alpine button, .ag-theme-alpine select, .ag-theme-alpine optgroup, .ag-theme-alpine textarea {
-    color: inherit;
-    font-family: inherit;
-    font-size: inherit;
-    font-weight: inherit;
-    line-height: inherit; }
-  .ag-theme-alpine input {
-    margin: 0; }
-  .ag-theme-alpine ::-ms-clear {
+  .ag-theme-alpine [class^='ag-']::-ms-clear {
     display: none; }
   .ag-theme-alpine .ag-checkbox .ag-input-wrapper,
   .ag-theme-alpine .ag-radio-button .ag-input-wrapper {
@@ -219,50 +211,53 @@
     margin-left: 6px; }
   .ag-theme-alpine .ag-rtl .ag-label-align-right .ag-label {
     margin-right: 6px; }
-  .ag-theme-alpine input,
-  .ag-theme-alpine textarea,
-  .ag-theme-alpine select,
-  .ag-theme-alpine button {
-    background-color: #fff;
-    color: inherit; }
-  .ag-theme-alpine input:not([type]),
-  .ag-theme-alpine input[type='text'],
-  .ag-theme-alpine input[type='number'],
-  .ag-theme-alpine input[type='tel'],
-  .ag-theme-alpine input[type='date'],
-  .ag-theme-alpine input[type='datetime-local'],
-  .ag-theme-alpine textarea {
+  .ag-theme-alpine input[class^='ag-'] {
+    margin: 0;
+    background-color: #fff; }
+  .ag-theme-alpine textarea[class^='ag-'],
+  .ag-theme-alpine select[class^='ag-'] {
+    background-color: #fff; }
+  .ag-theme-alpine input[class^='ag-']:not([type]),
+  .ag-theme-alpine input[class^='ag-'][type='text'],
+  .ag-theme-alpine input[class^='ag-'][type='number'],
+  .ag-theme-alpine input[class^='ag-'][type='tel'],
+  .ag-theme-alpine input[class^='ag-'][type='date'],
+  .ag-theme-alpine input[class^='ag-'][type='datetime-local'],
+  .ag-theme-alpine textarea[class^='ag-'] {
+    font-size: inherit;
+    line-height: inherit;
+    color: inherit;
     border-width: 1px;
     border-style: solid;
     border-color: #babfc7; }
-    .ag-theme-alpine input:not([type]):disabled,
-    .ag-theme-alpine input[type='text']:disabled,
-    .ag-theme-alpine input[type='number']:disabled,
-    .ag-theme-alpine input[type='tel']:disabled,
-    .ag-theme-alpine input[type='date']:disabled,
-    .ag-theme-alpine input[type='datetime-local']:disabled,
-    .ag-theme-alpine textarea:disabled {
+    .ag-theme-alpine input[class^='ag-']:not([type]):disabled,
+    .ag-theme-alpine input[class^='ag-'][type='text']:disabled,
+    .ag-theme-alpine input[class^='ag-'][type='number']:disabled,
+    .ag-theme-alpine input[class^='ag-'][type='tel']:disabled,
+    .ag-theme-alpine input[class^='ag-'][type='date']:disabled,
+    .ag-theme-alpine input[class^='ag-'][type='datetime-local']:disabled,
+    .ag-theme-alpine textarea[class^='ag-']:disabled {
       color: rgba(24, 29, 31, 0.5);
       background-color: #f1f2f4;
       border-color: rgba(186, 191, 199, 0.3); }
-    .ag-theme-alpine input:not([type]):focus,
-    .ag-theme-alpine input[type='text']:focus,
-    .ag-theme-alpine input[type='number']:focus,
-    .ag-theme-alpine input[type='tel']:focus,
-    .ag-theme-alpine input[type='date']:focus,
-    .ag-theme-alpine input[type='datetime-local']:focus,
-    .ag-theme-alpine textarea:focus {
+    .ag-theme-alpine input[class^='ag-']:not([type]):focus,
+    .ag-theme-alpine input[class^='ag-'][type='text']:focus,
+    .ag-theme-alpine input[class^='ag-'][type='number']:focus,
+    .ag-theme-alpine input[class^='ag-'][type='tel']:focus,
+    .ag-theme-alpine input[class^='ag-'][type='date']:focus,
+    .ag-theme-alpine input[class^='ag-'][type='datetime-local']:focus,
+    .ag-theme-alpine textarea[class^='ag-']:focus {
       outline: none;
       box-shadow: 0 0 2px 0.1rem rgba(33, 150, 243, 0.4);
       border-color: rgba(33, 150, 243, 0.4); }
-  .ag-theme-alpine input[type='number'] {
+  .ag-theme-alpine input[class^='ag-'][type='number'] {
     -moz-appearance: textfield; }
-    .ag-theme-alpine input[type='number']::-webkit-outer-spin-button, .ag-theme-alpine input[type='number']::-webkit-inner-spin-button {
+    .ag-theme-alpine input[class^='ag-'][type='number']::-webkit-outer-spin-button, .ag-theme-alpine input[class^='ag-'][type='number']::-webkit-inner-spin-button {
       -webkit-appearance: none;
       margin: 0; }
-  .ag-theme-alpine input[type='range'] {
+  .ag-theme-alpine input[class^='ag-'][type='range'] {
     padding: 0; }
-  .ag-theme-alpine input[type='button']:focus, .ag-theme-alpine button:focus {
+  .ag-theme-alpine input[class^='ag-'][type='button']:focus, .ag-theme-alpine button:focus {
     box-shadow: 0 0 2px 0.1rem rgba(33, 150, 243, 0.4); }
   .ag-theme-alpine .ag-drag-handle {
     color: #181d1f; }
@@ -948,8 +943,6 @@
     margin-right: 12px; }
   .ag-theme-alpine .ag-set-filter-list {
     height: 180px; }
-  .ag-theme-alpine .ag-set-filter-item {
-    height: 30px; }
   .ag-theme-alpine .ag-set-filter-filter {
     margin-top: 12px;
     margin-left: 12px;
@@ -991,6 +984,11 @@
     color: #181d1f;
     overflow: hidden; }
   .ag-theme-alpine .ag-side-button-button {
+    color: inherit;
+    font-family: inherit;
+    font-size: inherit;
+    font-weight: inherit;
+    line-height: inherit;
     background: transparent;
     padding: 12px 0 12px 0;
     width: 100%;
@@ -1036,6 +1034,22 @@
     padding-left: 6px; }
   .ag-theme-alpine .ag-rtl .ag-filter-toolpanel-header, .ag-theme-alpine .ag-rtl .ag-filter-toolpanel-search {
     padding-right: 6px; }
+  .ag-theme-alpine .ag-filter-toolpanel-group.ag-has-filter > .ag-group-title-bar .ag-group-title:after {
+    font-family: "agGridAlpine";
+    font-size: 16px;
+    line-height: 16px;
+    font-style: normal;
+    font-weight: normal;
+    font-variant: normal;
+    text-transform: none;
+    /* Better Font Rendering =========== */
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    content: ""; }
+    .ag-theme-alpine .ag-ltr .ag-filter-toolpanel-group.ag-has-filter > .ag-group-title-bar .ag-group-title:after {
+      padding-left: 6px; }
+    .ag-theme-alpine .ag-rtl .ag-filter-toolpanel-group.ag-has-filter > .ag-group-title-bar .ag-group-title:after {
+      padding-right: 6px; }
   .ag-theme-alpine .ag-filter-toolpanel-group-level-0-header {
     height: 48px; }
   .ag-theme-alpine .ag-filter-toolpanel-group-item {
@@ -1208,6 +1222,11 @@
   .ag-theme-alpine .ag-rtl .ag-floating-filter-button {
     margin-right: 18px; }
   .ag-theme-alpine .ag-floating-filter-button-button {
+    color: inherit;
+    font-family: inherit;
+    font-size: inherit;
+    font-weight: inherit;
+    line-height: inherit;
     appearance: none;
     background: transparent;
     border: none;
@@ -1636,30 +1655,30 @@
     color: #181d1f; }
   .ag-theme-alpine .ag-row {
     font-size: 14px; }
-  .ag-theme-alpine input:not([type]),
-  .ag-theme-alpine input[type='text'],
-  .ag-theme-alpine input[type='number'],
-  .ag-theme-alpine input[type='tel'],
-  .ag-theme-alpine input[type='date'],
-  .ag-theme-alpine input[type='datetime-local'],
-  .ag-theme-alpine textarea {
+  .ag-theme-alpine input[class^='ag-']:not([type]),
+  .ag-theme-alpine input[class^='ag-'][type='text'],
+  .ag-theme-alpine input[class^='ag-'][type='number'],
+  .ag-theme-alpine input[class^='ag-'][type='tel'],
+  .ag-theme-alpine input[class^='ag-'][type='date'],
+  .ag-theme-alpine input[class^='ag-'][type='datetime-local'],
+  .ag-theme-alpine textarea[class^='ag-'] {
     min-height: 24px;
     border-radius: 3px; }
-    .ag-theme-alpine .ag-ltr input:not([type]),
-    .ag-theme-alpine .ag-ltr input[type='text'],
-    .ag-theme-alpine .ag-ltr input[type='number'],
-    .ag-theme-alpine .ag-ltr input[type='tel'],
-    .ag-theme-alpine .ag-ltr input[type='date'],
-    .ag-theme-alpine .ag-ltr input[type='datetime-local'],
-    .ag-theme-alpine .ag-ltr textarea {
+    .ag-theme-alpine .ag-ltr input[class^='ag-']:not([type]),
+    .ag-theme-alpine .ag-ltr input[class^='ag-'][type='text'],
+    .ag-theme-alpine .ag-ltr input[class^='ag-'][type='number'],
+    .ag-theme-alpine .ag-ltr input[class^='ag-'][type='tel'],
+    .ag-theme-alpine .ag-ltr input[class^='ag-'][type='date'],
+    .ag-theme-alpine .ag-ltr input[class^='ag-'][type='datetime-local'],
+    .ag-theme-alpine .ag-ltr textarea[class^='ag-'] {
       padding-left: 6px; }
-    .ag-theme-alpine .ag-rtl input:not([type]),
-    .ag-theme-alpine .ag-rtl input[type='text'],
-    .ag-theme-alpine .ag-rtl input[type='number'],
-    .ag-theme-alpine .ag-rtl input[type='tel'],
-    .ag-theme-alpine .ag-rtl input[type='date'],
-    .ag-theme-alpine .ag-rtl input[type='datetime-local'],
-    .ag-theme-alpine .ag-rtl textarea {
+    .ag-theme-alpine .ag-rtl input[class^='ag-']:not([type]),
+    .ag-theme-alpine .ag-rtl input[class^='ag-'][type='text'],
+    .ag-theme-alpine .ag-rtl input[class^='ag-'][type='number'],
+    .ag-theme-alpine .ag-rtl input[class^='ag-'][type='tel'],
+    .ag-theme-alpine .ag-rtl input[class^='ag-'][type='date'],
+    .ag-theme-alpine .ag-rtl input[class^='ag-'][type='datetime-local'],
+    .ag-theme-alpine .ag-rtl textarea[class^='ag-'] {
       padding-right: 6px; }
   .ag-theme-alpine .ag-tab {
     padding: 9px;

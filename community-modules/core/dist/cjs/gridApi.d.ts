@@ -1,4 +1,4 @@
-// Type definitions for @ag-grid-community/core v23.0.0
+// Type definitions for @ag-grid-community/core v23.0.2
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { ColumnApi } from "./columnController/columnApi";
@@ -224,7 +224,7 @@ export declare class GridApi {
     forEachNodeAfterFilter(callback: (rowNode: RowNode, index: number) => void): void;
     forEachNodeAfterFilterAndSort(callback: (rowNode: RowNode, index: number) => void): void;
     getFilterApiForColDef(colDef: any): any;
-    getFilterInstance(key: string | Column): IFilterComp;
+    getFilterInstance(key: string | Column, callback?: (filter: IFilterComp) => void): IFilterComp;
     getFilterApi(key: string | Column): IFilterComp;
     destroyFilter(key: string | Column): void;
     getStatusPanel(key: string): IStatusPanelComp;

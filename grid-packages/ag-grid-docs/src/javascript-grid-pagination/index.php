@@ -29,7 +29,7 @@ include '../documentation-main/documentation_header.php';
 <p>To see the specifics of pagination on the
 other row models check the relevant documentation for <a href="../javascript-grid-infinite-scrolling/#pagination">Infinite Row Model</a>,
 <a href="../javascript-grid-viewport/#example-viewport-with-pagination">Viewport Row Model</a> and
-<a href="../javascript-grid-server-side-model/#pagination-with-server-side-row-model">Server-side Row Model</a>.</p>
+<a href="../javascript-grid-server-side-model-pagination/">Server-side Row Model</a>.</p>
 
 <h2 id="paginationFeatures">Features While Using Pagination</h2>
 
@@ -167,7 +167,7 @@ scroll to the top when the page changes.</p>
     If using either of the following features, the grid will be forced to use the second mode:
 </p>
 <ul>
-    <li><a href="../javascript-grid-grouping/#suppress-group-row">Group Suppress Row</a></li>
+    <li><a href="../javascript-grid-grouping/#hide-open-parents">Hide Open Parents</a></li>
     <li><a href="../javascript-grid-grouping/#removeSingleChildren">Group Remove Single Children</a></li>
 </ul>
 

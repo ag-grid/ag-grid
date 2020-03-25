@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v23.0.0
+ * @version v23.0.2
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -90,16 +90,14 @@ var SimpleFilter = /** @class */ (function (_super) {
             return null;
         }
         if (this.isAllowTwoConditions() && this.isConditionUiComplete(ConditionPosition.Two)) {
-            var res_1 = {
+            return {
                 filterType: this.getFilterType(),
                 operator: this.getJoinOperator(),
                 condition1: this.createCondition(ConditionPosition.One),
                 condition2: this.createCondition(ConditionPosition.Two)
             };
-            return res_1;
         }
-        var res = this.createCondition(ConditionPosition.One);
-        return res;
+        return this.createCondition(ConditionPosition.One);
     };
     SimpleFilter.prototype.getCondition1Type = function () {
         return this.eType1.getValue();
@@ -212,13 +210,7 @@ var SimpleFilter = /** @class */ (function (_super) {
         return this.allowTwoConditions;
     };
     SimpleFilter.prototype.createBodyTemplate = function () {
-        var optionsTemplate1 = "<ag-select class=\"ag-filter-select\" ref=\"eOptions1\"></ag-select>";
-        var valueTemplate1 = this.createValueTemplate(ConditionPosition.One);
-        var optionsTemplate2 = "<ag-select class=\"ag-filter-select\" ref=\"eOptions2\"></ag-select>";
-        var valueTemplate2 = this.createValueTemplate(ConditionPosition.Two);
-        var andOrTemplate = "<div class=\"ag-filter-condition\" ref=\"eJoinOperatorPanel\">\n                <ag-radio-button ref=\"eJoinOperatorAnd\" class=\"ag-filter-condition-operator ag-filter-condition-operator-and\"></ag-radio-button>\n                <ag-radio-button ref=\"eJoinOperatorOr\" class=\"ag-filter-condition-operator ag-filter-condition-operator-or\"></ag-radio-button>\n            </div>";
-        var template = optionsTemplate1 + "\n                " + valueTemplate1 + "\n                " + andOrTemplate + "\n                " + optionsTemplate2 + "\n                " + valueTemplate2;
-        return template;
+        return "\n            <ag-select class=\"ag-filter-select\" ref=\"eOptions1\"></ag-select>\n            " + this.createValueTemplate(ConditionPosition.One) + "\n            <div class=\"ag-filter-condition\" ref=\"eJoinOperatorPanel\">\n               <ag-radio-button ref=\"eJoinOperatorAnd\" class=\"ag-filter-condition-operator ag-filter-condition-operator-and\"></ag-radio-button>\n               <ag-radio-button ref=\"eJoinOperatorOr\" class=\"ag-filter-condition-operator ag-filter-condition-operator-or\"></ag-radio-button>\n            </div>\n            <ag-select class=\"ag-filter-select\" ref=\"eOptions2\"></ag-select>\n            " + this.createValueTemplate(ConditionPosition.Two);
     };
     SimpleFilter.prototype.getCssIdentifier = function () {
         return 'simple-filter';

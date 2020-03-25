@@ -204,18 +204,10 @@
     content: ""; }
   .ag-theme-alpine-dark .ag-root-wrapper {
     background-color: #181d1f; }
-  .ag-theme-alpine-dark *, .ag-theme-alpine-dark *:focus, .ag-theme-alpine-dark *:after, .ag-theme-alpine-dark *:before {
+  .ag-theme-alpine-dark [class^='ag-'], .ag-theme-alpine-dark [class^='ag-']:focus, .ag-theme-alpine-dark [class^='ag-']:after, .ag-theme-alpine-dark [class^='ag-']:before {
     box-sizing: border-box;
     outline: none; }
-  .ag-theme-alpine-dark input, .ag-theme-alpine-dark button, .ag-theme-alpine-dark select, .ag-theme-alpine-dark optgroup, .ag-theme-alpine-dark textarea {
-    color: inherit;
-    font-family: inherit;
-    font-size: inherit;
-    font-weight: inherit;
-    line-height: inherit; }
-  .ag-theme-alpine-dark input {
-    margin: 0; }
-  .ag-theme-alpine-dark ::-ms-clear {
+  .ag-theme-alpine-dark [class^='ag-']::-ms-clear {
     display: none; }
   .ag-theme-alpine-dark .ag-checkbox .ag-input-wrapper,
   .ag-theme-alpine-dark .ag-radio-button .ag-input-wrapper {
@@ -230,50 +222,53 @@
     margin-left: 6px; }
   .ag-theme-alpine-dark .ag-rtl .ag-label-align-right .ag-label {
     margin-right: 6px; }
-  .ag-theme-alpine-dark input,
-  .ag-theme-alpine-dark textarea,
-  .ag-theme-alpine-dark select,
-  .ag-theme-alpine-dark button {
-    background-color: #181d1f;
-    color: inherit; }
-  .ag-theme-alpine-dark input:not([type]),
-  .ag-theme-alpine-dark input[type='text'],
-  .ag-theme-alpine-dark input[type='number'],
-  .ag-theme-alpine-dark input[type='tel'],
-  .ag-theme-alpine-dark input[type='date'],
-  .ag-theme-alpine-dark input[type='datetime-local'],
-  .ag-theme-alpine-dark textarea {
+  .ag-theme-alpine-dark input[class^='ag-'] {
+    margin: 0;
+    background-color: #181d1f; }
+  .ag-theme-alpine-dark textarea[class^='ag-'],
+  .ag-theme-alpine-dark select[class^='ag-'] {
+    background-color: #181d1f; }
+  .ag-theme-alpine-dark input[class^='ag-']:not([type]),
+  .ag-theme-alpine-dark input[class^='ag-'][type='text'],
+  .ag-theme-alpine-dark input[class^='ag-'][type='number'],
+  .ag-theme-alpine-dark input[class^='ag-'][type='tel'],
+  .ag-theme-alpine-dark input[class^='ag-'][type='date'],
+  .ag-theme-alpine-dark input[class^='ag-'][type='datetime-local'],
+  .ag-theme-alpine-dark textarea[class^='ag-'] {
+    font-size: inherit;
+    line-height: inherit;
+    color: inherit;
     border-width: 1px;
     border-style: solid;
     border-color: #68686e; }
-    .ag-theme-alpine-dark input:not([type]):disabled,
-    .ag-theme-alpine-dark input[type='text']:disabled,
-    .ag-theme-alpine-dark input[type='number']:disabled,
-    .ag-theme-alpine-dark input[type='tel']:disabled,
-    .ag-theme-alpine-dark input[type='date']:disabled,
-    .ag-theme-alpine-dark input[type='datetime-local']:disabled,
-    .ag-theme-alpine-dark textarea:disabled {
+    .ag-theme-alpine-dark input[class^='ag-']:not([type]):disabled,
+    .ag-theme-alpine-dark input[class^='ag-'][type='text']:disabled,
+    .ag-theme-alpine-dark input[class^='ag-'][type='number']:disabled,
+    .ag-theme-alpine-dark input[class^='ag-'][type='tel']:disabled,
+    .ag-theme-alpine-dark input[class^='ag-'][type='date']:disabled,
+    .ag-theme-alpine-dark input[class^='ag-'][type='datetime-local']:disabled,
+    .ag-theme-alpine-dark textarea[class^='ag-']:disabled {
       color: rgba(255, 255, 255, 0.5);
       background-color: #282c2f;
       border-color: rgba(104, 104, 110, 0.3); }
-    .ag-theme-alpine-dark input:not([type]):focus,
-    .ag-theme-alpine-dark input[type='text']:focus,
-    .ag-theme-alpine-dark input[type='number']:focus,
-    .ag-theme-alpine-dark input[type='tel']:focus,
-    .ag-theme-alpine-dark input[type='date']:focus,
-    .ag-theme-alpine-dark input[type='datetime-local']:focus,
-    .ag-theme-alpine-dark textarea:focus {
+    .ag-theme-alpine-dark input[class^='ag-']:not([type]):focus,
+    .ag-theme-alpine-dark input[class^='ag-'][type='text']:focus,
+    .ag-theme-alpine-dark input[class^='ag-'][type='number']:focus,
+    .ag-theme-alpine-dark input[class^='ag-'][type='tel']:focus,
+    .ag-theme-alpine-dark input[class^='ag-'][type='date']:focus,
+    .ag-theme-alpine-dark input[class^='ag-'][type='datetime-local']:focus,
+    .ag-theme-alpine-dark textarea[class^='ag-']:focus {
       outline: none;
       box-shadow: 0 0 2px 0.5px rgba(255, 255, 255, 0.5), 0 0 4px 3px rgba(33, 150, 243, 0.6);
       border-color: rgba(33, 150, 243, 0.4); }
-  .ag-theme-alpine-dark input[type='number'] {
+  .ag-theme-alpine-dark input[class^='ag-'][type='number'] {
     -moz-appearance: textfield; }
-    .ag-theme-alpine-dark input[type='number']::-webkit-outer-spin-button, .ag-theme-alpine-dark input[type='number']::-webkit-inner-spin-button {
+    .ag-theme-alpine-dark input[class^='ag-'][type='number']::-webkit-outer-spin-button, .ag-theme-alpine-dark input[class^='ag-'][type='number']::-webkit-inner-spin-button {
       -webkit-appearance: none;
       margin: 0; }
-  .ag-theme-alpine-dark input[type='range'] {
+  .ag-theme-alpine-dark input[class^='ag-'][type='range'] {
     padding: 0; }
-  .ag-theme-alpine-dark input[type='button']:focus, .ag-theme-alpine-dark button:focus {
+  .ag-theme-alpine-dark input[class^='ag-'][type='button']:focus, .ag-theme-alpine-dark button:focus {
     box-shadow: 0 0 2px 0.5px rgba(255, 255, 255, 0.5), 0 0 4px 3px rgba(33, 150, 243, 0.6); }
   .ag-theme-alpine-dark .ag-drag-handle {
     color: #fff; }
@@ -959,8 +954,6 @@
     margin-right: 12px; }
   .ag-theme-alpine-dark .ag-set-filter-list {
     height: 180px; }
-  .ag-theme-alpine-dark .ag-set-filter-item {
-    height: 30px; }
   .ag-theme-alpine-dark .ag-set-filter-filter {
     margin-top: 12px;
     margin-left: 12px;
@@ -1002,6 +995,11 @@
     color: #fff;
     overflow: hidden; }
   .ag-theme-alpine-dark .ag-side-button-button {
+    color: inherit;
+    font-family: inherit;
+    font-size: inherit;
+    font-weight: inherit;
+    line-height: inherit;
     background: transparent;
     padding: 12px 0 12px 0;
     width: 100%;
@@ -1047,6 +1045,22 @@
     padding-left: 6px; }
   .ag-theme-alpine-dark .ag-rtl .ag-filter-toolpanel-header, .ag-theme-alpine-dark .ag-rtl .ag-filter-toolpanel-search {
     padding-right: 6px; }
+  .ag-theme-alpine-dark .ag-filter-toolpanel-group.ag-has-filter > .ag-group-title-bar .ag-group-title:after {
+    font-family: "agGridAlpine";
+    font-size: 16px;
+    line-height: 16px;
+    font-style: normal;
+    font-weight: normal;
+    font-variant: normal;
+    text-transform: none;
+    /* Better Font Rendering =========== */
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    content: ""; }
+    .ag-theme-alpine-dark .ag-ltr .ag-filter-toolpanel-group.ag-has-filter > .ag-group-title-bar .ag-group-title:after {
+      padding-left: 6px; }
+    .ag-theme-alpine-dark .ag-rtl .ag-filter-toolpanel-group.ag-has-filter > .ag-group-title-bar .ag-group-title:after {
+      padding-right: 6px; }
   .ag-theme-alpine-dark .ag-filter-toolpanel-group-level-0-header {
     height: 48px; }
   .ag-theme-alpine-dark .ag-filter-toolpanel-group-item {
@@ -1219,6 +1233,11 @@
   .ag-theme-alpine-dark .ag-rtl .ag-floating-filter-button {
     margin-right: 18px; }
   .ag-theme-alpine-dark .ag-floating-filter-button-button {
+    color: inherit;
+    font-family: inherit;
+    font-size: inherit;
+    font-weight: inherit;
+    line-height: inherit;
     appearance: none;
     background: transparent;
     border: none;
@@ -1647,30 +1666,30 @@
     color: #fff; }
   .ag-theme-alpine-dark .ag-row {
     font-size: 14px; }
-  .ag-theme-alpine-dark input:not([type]),
-  .ag-theme-alpine-dark input[type='text'],
-  .ag-theme-alpine-dark input[type='number'],
-  .ag-theme-alpine-dark input[type='tel'],
-  .ag-theme-alpine-dark input[type='date'],
-  .ag-theme-alpine-dark input[type='datetime-local'],
-  .ag-theme-alpine-dark textarea {
+  .ag-theme-alpine-dark input[class^='ag-']:not([type]),
+  .ag-theme-alpine-dark input[class^='ag-'][type='text'],
+  .ag-theme-alpine-dark input[class^='ag-'][type='number'],
+  .ag-theme-alpine-dark input[class^='ag-'][type='tel'],
+  .ag-theme-alpine-dark input[class^='ag-'][type='date'],
+  .ag-theme-alpine-dark input[class^='ag-'][type='datetime-local'],
+  .ag-theme-alpine-dark textarea[class^='ag-'] {
     min-height: 24px;
     border-radius: 3px; }
-    .ag-theme-alpine-dark .ag-ltr input:not([type]),
-    .ag-theme-alpine-dark .ag-ltr input[type='text'],
-    .ag-theme-alpine-dark .ag-ltr input[type='number'],
-    .ag-theme-alpine-dark .ag-ltr input[type='tel'],
-    .ag-theme-alpine-dark .ag-ltr input[type='date'],
-    .ag-theme-alpine-dark .ag-ltr input[type='datetime-local'],
-    .ag-theme-alpine-dark .ag-ltr textarea {
+    .ag-theme-alpine-dark .ag-ltr input[class^='ag-']:not([type]),
+    .ag-theme-alpine-dark .ag-ltr input[class^='ag-'][type='text'],
+    .ag-theme-alpine-dark .ag-ltr input[class^='ag-'][type='number'],
+    .ag-theme-alpine-dark .ag-ltr input[class^='ag-'][type='tel'],
+    .ag-theme-alpine-dark .ag-ltr input[class^='ag-'][type='date'],
+    .ag-theme-alpine-dark .ag-ltr input[class^='ag-'][type='datetime-local'],
+    .ag-theme-alpine-dark .ag-ltr textarea[class^='ag-'] {
       padding-left: 6px; }
-    .ag-theme-alpine-dark .ag-rtl input:not([type]),
-    .ag-theme-alpine-dark .ag-rtl input[type='text'],
-    .ag-theme-alpine-dark .ag-rtl input[type='number'],
-    .ag-theme-alpine-dark .ag-rtl input[type='tel'],
-    .ag-theme-alpine-dark .ag-rtl input[type='date'],
-    .ag-theme-alpine-dark .ag-rtl input[type='datetime-local'],
-    .ag-theme-alpine-dark .ag-rtl textarea {
+    .ag-theme-alpine-dark .ag-rtl input[class^='ag-']:not([type]),
+    .ag-theme-alpine-dark .ag-rtl input[class^='ag-'][type='text'],
+    .ag-theme-alpine-dark .ag-rtl input[class^='ag-'][type='number'],
+    .ag-theme-alpine-dark .ag-rtl input[class^='ag-'][type='tel'],
+    .ag-theme-alpine-dark .ag-rtl input[class^='ag-'][type='date'],
+    .ag-theme-alpine-dark .ag-rtl input[class^='ag-'][type='datetime-local'],
+    .ag-theme-alpine-dark .ag-rtl textarea[class^='ag-'] {
       padding-right: 6px; }
   .ag-theme-alpine-dark .ag-tab {
     padding: 9px;

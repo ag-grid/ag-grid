@@ -952,18 +952,10 @@
     content: ""; }
   .ag-theme-bootstrap .ag-root-wrapper {
     background-color: #FFF; }
-  .ag-theme-bootstrap *, .ag-theme-bootstrap *:focus, .ag-theme-bootstrap *:after, .ag-theme-bootstrap *:before {
+  .ag-theme-bootstrap [class^='ag-'], .ag-theme-bootstrap [class^='ag-']:focus, .ag-theme-bootstrap [class^='ag-']:after, .ag-theme-bootstrap [class^='ag-']:before {
     box-sizing: border-box;
     outline: none; }
-  .ag-theme-bootstrap input, .ag-theme-bootstrap button, .ag-theme-bootstrap select, .ag-theme-bootstrap optgroup, .ag-theme-bootstrap textarea {
-    color: inherit;
-    font-family: inherit;
-    font-size: inherit;
-    font-weight: inherit;
-    line-height: inherit; }
-  .ag-theme-bootstrap input {
-    margin: 0; }
-  .ag-theme-bootstrap ::-ms-clear {
+  .ag-theme-bootstrap [class^='ag-']::-ms-clear {
     display: none; }
   .ag-theme-bootstrap .ag-checkbox .ag-input-wrapper,
   .ag-theme-bootstrap .ag-radio-button .ag-input-wrapper {
@@ -978,46 +970,49 @@
     margin-left: 4px; }
   .ag-theme-bootstrap .ag-rtl .ag-label-align-right .ag-label {
     margin-right: 4px; }
-  .ag-theme-bootstrap input,
-  .ag-theme-bootstrap textarea,
-  .ag-theme-bootstrap select,
-  .ag-theme-bootstrap button {
-    background-color: #FFF;
-    color: inherit; }
-  .ag-theme-bootstrap input:not([type]),
-  .ag-theme-bootstrap input[type='text'],
-  .ag-theme-bootstrap input[type='number'],
-  .ag-theme-bootstrap input[type='tel'],
-  .ag-theme-bootstrap input[type='date'],
-  .ag-theme-bootstrap input[type='datetime-local'],
-  .ag-theme-bootstrap textarea {
+  .ag-theme-bootstrap input[class^='ag-'] {
+    margin: 0;
+    background-color: #FFF; }
+  .ag-theme-bootstrap textarea[class^='ag-'],
+  .ag-theme-bootstrap select[class^='ag-'] {
+    background-color: #FFF; }
+  .ag-theme-bootstrap input[class^='ag-']:not([type]),
+  .ag-theme-bootstrap input[class^='ag-'][type='text'],
+  .ag-theme-bootstrap input[class^='ag-'][type='number'],
+  .ag-theme-bootstrap input[class^='ag-'][type='tel'],
+  .ag-theme-bootstrap input[class^='ag-'][type='date'],
+  .ag-theme-bootstrap input[class^='ag-'][type='datetime-local'],
+  .ag-theme-bootstrap textarea[class^='ag-'] {
+    font-size: inherit;
+    line-height: inherit;
+    color: inherit;
     border-width: 1px;
     border-style: solid;
     border-color: #000; }
-    .ag-theme-bootstrap input:not([type]):disabled,
-    .ag-theme-bootstrap input[type='text']:disabled,
-    .ag-theme-bootstrap input[type='number']:disabled,
-    .ag-theme-bootstrap input[type='tel']:disabled,
-    .ag-theme-bootstrap input[type='date']:disabled,
-    .ag-theme-bootstrap input[type='datetime-local']:disabled,
-    .ag-theme-bootstrap textarea:disabled {
+    .ag-theme-bootstrap input[class^='ag-']:not([type]):disabled,
+    .ag-theme-bootstrap input[class^='ag-'][type='text']:disabled,
+    .ag-theme-bootstrap input[class^='ag-'][type='number']:disabled,
+    .ag-theme-bootstrap input[class^='ag-'][type='tel']:disabled,
+    .ag-theme-bootstrap input[class^='ag-'][type='date']:disabled,
+    .ag-theme-bootstrap input[class^='ag-'][type='datetime-local']:disabled,
+    .ag-theme-bootstrap textarea[class^='ag-']:disabled {
       color: rgba(0, 0, 0, 0.5);
       background-color: #ebebeb;
       border-color: rgba(0, 0, 0, 0.3); }
-    .ag-theme-bootstrap input:not([type]):focus,
-    .ag-theme-bootstrap input[type='text']:focus,
-    .ag-theme-bootstrap input[type='number']:focus,
-    .ag-theme-bootstrap input[type='tel']:focus,
-    .ag-theme-bootstrap input[type='date']:focus,
-    .ag-theme-bootstrap input[type='datetime-local']:focus,
-    .ag-theme-bootstrap textarea:focus {
+    .ag-theme-bootstrap input[class^='ag-']:not([type]):focus,
+    .ag-theme-bootstrap input[class^='ag-'][type='text']:focus,
+    .ag-theme-bootstrap input[class^='ag-'][type='number']:focus,
+    .ag-theme-bootstrap input[class^='ag-'][type='tel']:focus,
+    .ag-theme-bootstrap input[class^='ag-'][type='date']:focus,
+    .ag-theme-bootstrap input[class^='ag-'][type='datetime-local']:focus,
+    .ag-theme-bootstrap textarea[class^='ag-']:focus {
       outline: none; }
-  .ag-theme-bootstrap input[type='number'] {
+  .ag-theme-bootstrap input[class^='ag-'][type='number'] {
     -moz-appearance: textfield; }
-    .ag-theme-bootstrap input[type='number']::-webkit-outer-spin-button, .ag-theme-bootstrap input[type='number']::-webkit-inner-spin-button {
+    .ag-theme-bootstrap input[class^='ag-'][type='number']::-webkit-outer-spin-button, .ag-theme-bootstrap input[class^='ag-'][type='number']::-webkit-inner-spin-button {
       -webkit-appearance: none;
       margin: 0; }
-  .ag-theme-bootstrap input[type='range'] {
+  .ag-theme-bootstrap input[class^='ag-'][type='range'] {
     padding: 0; }
   .ag-theme-bootstrap .ag-drag-handle {
     color: #000; }
@@ -1660,8 +1655,6 @@
     margin-right: 8px; }
   .ag-theme-bootstrap .ag-set-filter-list {
     height: 120px; }
-  .ag-theme-bootstrap .ag-set-filter-item {
-    height: 20px; }
   .ag-theme-bootstrap .ag-set-filter-filter {
     margin-top: 6px;
     margin-left: 6px;
@@ -1700,6 +1693,11 @@
     color: #000;
     overflow: hidden; }
   .ag-theme-bootstrap .ag-side-button-button {
+    color: inherit;
+    font-family: inherit;
+    font-size: inherit;
+    font-weight: inherit;
+    line-height: inherit;
     background: transparent;
     padding: 8px 0 8px 0;
     width: 100%;
@@ -1731,6 +1729,22 @@
     padding-left: 4px; }
   .ag-theme-bootstrap .ag-rtl .ag-filter-toolpanel-header, .ag-theme-bootstrap .ag-rtl .ag-filter-toolpanel-search {
     padding-right: 4px; }
+  .ag-theme-bootstrap .ag-filter-toolpanel-group.ag-has-filter > .ag-group-title-bar .ag-group-title:after {
+    font-family: "agGridClassic";
+    font-size: 12px;
+    line-height: 12px;
+    font-style: normal;
+    font-weight: normal;
+    font-variant: normal;
+    text-transform: none;
+    /* Better Font Rendering =========== */
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    content: ""; }
+    .ag-theme-bootstrap .ag-ltr .ag-filter-toolpanel-group.ag-has-filter > .ag-group-title-bar .ag-group-title:after {
+      padding-left: 4px; }
+    .ag-theme-bootstrap .ag-rtl .ag-filter-toolpanel-group.ag-has-filter > .ag-group-title-bar .ag-group-title:after {
+      padding-right: 4px; }
   .ag-theme-bootstrap .ag-filter-toolpanel-group-level-0-header {
     height: 32px; }
   .ag-theme-bootstrap .ag-filter-toolpanel-group-item {
@@ -1868,6 +1882,11 @@
   .ag-theme-bootstrap .ag-rtl .ag-floating-filter-button {
     margin-right: 12px; }
   .ag-theme-bootstrap .ag-floating-filter-button-button {
+    color: inherit;
+    font-family: inherit;
+    font-size: inherit;
+    font-weight: inherit;
+    line-height: inherit;
     appearance: none;
     background: transparent;
     border: none;

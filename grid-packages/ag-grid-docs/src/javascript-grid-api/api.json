@@ -156,8 +156,8 @@
         "isAnyFilterPresent()": {
             "description": "Returns <code>true</code> if any filter is set. This includes quick filter, advanced filter or external filter."
         },
-        "getFilterInstance(col)": {
-            "description": "Returns the filter component instance for the column. Either provide the <code>colDef</code> (matches on object reference) or the column field attribute (matches on string comparison). Matching by field is normal. Matching by <code>colDef</code> is useful when field is missing or not unique."
+        "getFilterInstance(col, callback)": {
+            "description": "Returns the filter component instance for a column. <code>col</code> can be a string field name or a ColDef object (matches on object reference, useful if field names are not unique). For filters that are created asynchronously including React 16+ components, calling this method will return null if the filter has not already been created. If your app uses asynchronous components, use the optional <code>callback</code> function which will be invoked with the filter instance when it is available."
         },
         "getFilterModel()": {
             "description": "Gets the current state of all the advanced filters. Used for saving filter state."

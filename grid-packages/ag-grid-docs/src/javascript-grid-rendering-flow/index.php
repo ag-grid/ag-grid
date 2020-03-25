@@ -20,13 +20,13 @@ include '../documentation-main/documentation_header.php';
 
 <ul>
     <li>
-        <a href="../javascript-grid-value-getters/#value-getter">Value Getter</a>:
+        <a href="../javascript-grid-value-getters/">Value Getter</a>:
         Instead of specifying <code>colDef.field</code>, you can use <code>colDef.valueGetter</code>
         to provide a function for getting cell values. This is more flexible than providing field
         values for specific cells.
     </li>
     <li>
-        <a href="../javascript-grid-value-getters/">Value Formatters</a>:
+        <a href="../javascript-grid-value-formatters/">Value Formatters</a>:
         Use formatters to format values.
     </li>
     <li>

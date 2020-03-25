@@ -76,6 +76,7 @@
       <excludeFolder url="file://$MODULE_DIR$/grid-packages/seans-react-examples/node_modules.nosync" />
       <excludeFolder url="file://$MODULE_DIR$/ignore" />
       <excludeFolder url="file://$MODULE_DIR$/node_modules.nosync" />
+      <excludeFolder url="file://$MODULE_DIR$/packages" />
     </content>
     <content url="file://$MODULE_DIR$/grid-packages/ag-grid-docs/node_modules" />
     <orderEntry type="inheritedJdk" />

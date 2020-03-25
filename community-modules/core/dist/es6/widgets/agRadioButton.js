@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v23.0.0
+ * @version v23.0.2
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -18,6 +18,7 @@ var __extends = (this && this.__extends) || (function () {
     };
 })();
 import { AgCheckbox } from './agCheckbox';
+import { Events } from '../eventKeys';
 var AgRadioButton = /** @class */ (function (_super) {
     __extends(AgRadioButton, _super);
     function AgRadioButton() {
@@ -33,10 +34,25 @@ var AgRadioButton = /** @class */ (function (_super) {
         var nextValue = this.getNextValue();
         this.setValue(nextValue);
     };
-    AgRadioButton.prototype.setName = function (name) {
-        var input = this.getInputElement();
-        input.name = name;
-        return this;
+    AgRadioButton.prototype.addInputListeners = function () {
+        _super.prototype.addInputListeners.call(this);
+        this.addDestroyableEventListener(this.eventService, Events.EVENT_CHECKBOX_CHANGED, this.onChange.bind(this));
+    };
+    /**
+     * This ensures that if another radio button in the same named group is selected, we deselect this radio button.
+     * By default the browser does this for you, but we are managing classes ourselves in order to ensure input
+     * elements are styled correctly in IE11, and the DOM 'changed' event is only fired when a button is selected,
+     * not deselected, so we need to use our own event.
+     */
+    AgRadioButton.prototype.onChange = function (event) {
+        if (event.selected &&
+            event.name &&
+            this.eInput.name &&
+            this.eInput.name === event.name &&
+            event.id &&
+            this.eInput.id !== event.id) {
+            this.setValue(false, true);
+        }
     };
     return AgRadioButton;
 }(AgCheckbox));

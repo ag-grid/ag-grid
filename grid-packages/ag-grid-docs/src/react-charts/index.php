@@ -9,7 +9,7 @@ include '../documentation-main/documentation_header.php';
 <h1>React Charts | Get Started with ag-Charts and React</h1>
 
 <p class="lead" id="react-charts">
-    ag-Charts is an exciting new addition to the ag-Charts family, offering both integrated as well as standalone
+    ag-Charts is an exciting new addition to the ag-Grid family, offering both integrated as well as standalone
     fully functional
     charting capabilities.
 </p>
@@ -73,31 +73,25 @@ SNIPPET
 
 <?= createSnippet(<<<SNIPPET
 import React, { Component } from 'react';
-import { render } from 'react-dom';
 import { AgChartsReact } from 'ag-charts-react';
 
-class ChartExample extends Component {
+export default class ChartExample extends Component {
     data = [
         {
-            beverage: 'Coffee',
-            Q1: 450,
-            Q2: 560,
-            Q3: 600,
-            Q4: 700,
+            quarter: 'Q1',
+            spending: 450,
         },
         {
-            beverage: 'Tea',
-            Q1: 270,
-            Q2: 380,
-            Q3: 450,
-            Q4: 520,
+            quarter: 'Q2',
+            spending: 560,
         },
         {
-            beverage: 'Milk',
-            Q1: 180,
-            Q2: 170,
-            Q3: 190,
-            Q4: 200,
+            quarter: 'Q3',
+            spending: 600,
+        },
+        {
+            quarter: 'Q4',
+            spending: 700,
         },
     ];
 
@@ -106,11 +100,11 @@ class ChartExample extends Component {
 
         this.state = {
             options: {
-                data: data,
+                data: this.data,
                 series: [{
                     xKey: 'quarter',
-                    yKey: 'spending'
-                }]
+                    yKey: 'spending',
+                }],
             },
         };
     }
@@ -170,16 +164,16 @@ constructor(props) {
 
     this.state = {
         options: {
-            data: data,
+            data: this.data,
             series: [{
                 xKey: 'quarter',
-                yKey: 'spending'
-+               yName: 'Coffee Spending'
+                yKey: 'spending',
++               yName: 'Coffee Spending',
             }],
 +           legend: {
-+               position: 'bottom'
-+           }
-        };
++               position: 'bottom',
++           },
+        }
     }
 }
 SNIPPET
@@ -202,21 +196,21 @@ data = [
         Q1: 450,
         Q2: 560,
         Q3: 600,
-        Q4: 700
+        Q4: 700,
     },
     {
         beverage: 'Tea',
         Q1: 270,
         Q2: 380,
         Q3: 450,
-        Q4: 520
+        Q4: 520,
     },
     {
         beverage: 'Milk',
         Q1: 180,
         Q2: 170,
         Q3: 190,
-        Q4: 200
+        Q4: 200,
     },
 ];
 SNIPPET
@@ -233,16 +227,17 @@ constructor(props) {
 
     this.state = {
         options: {
-        data: this.data,
-        series: [{
-            type: 'column',
-            xKey: 'beverage',
-            yKeys: ['Q1', 'Q2', 'Q3', 'Q4']
-        }]
+            data: this.data,
+            series: [{
+                type: 'column',
+                xKey: 'beverage',
+                yKeys: ['Q1', 'Q2', 'Q3', 'Q4'],
+            }],
+        }
     }
 }
 SNIPPET
-, 'ts') ?>
+) ?>
 
 <p>
     Unlike <code>'line'</code> series charts, <code>'column'</code> series can have multiple <code>yKeys</code> which
@@ -266,13 +261,14 @@ constructor(props) {
 
     this.state = {
         options: {
-        data: this.data,
-        series: [{
-            type: 'column',
-            xKey: 'beverage',
-            yKeys: ['Q1', 'Q2', 'Q3', 'Q4']
-+           label: {}
-        }]
+            data: this.data,
+            series: [{
+                type: 'column',
+                xKey: 'beverage',
+                yKeys: ['Q1', 'Q2', 'Q3', 'Q4'],
++               label: {},
+            }],
+        }
     }
 }
 SNIPPET
@@ -290,19 +286,20 @@ constructor(props) {
 
     this.state = {
         options: {
-        data: this.data,
-+       title: {
-+           text: 'Beverage Expenses'
-+       },
-+       subtitle: {
-+           text: 'per quarter'
-+       },
-        series: [{
-            type: 'column',
-            xKey: 'beverage',
-            yKeys: ['Q1', 'Q2', 'Q3', 'Q4']
-            label: {}
-        }]
+            data: this.data,
++           title: {
++               text: 'Beverage Expenses',
++           },
++           subtitle: {
++               text: 'per quarter',
++           },
+            series: [{
+                type: 'column',
+                xKey: 'beverage',
+                yKeys: ['Q1', 'Q2', 'Q3', 'Q4'],
+                label: {},
+            }],
+        }
     }
 }
 SNIPPET

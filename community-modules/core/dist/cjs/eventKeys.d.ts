@@ -1,4 +1,4 @@
-// Type definitions for @ag-grid-community/core v23.0.0
+// Type definitions for @ag-grid-community/core v23.0.2
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 export declare class Events {
@@ -94,6 +94,7 @@ export declare class Events {
     static EVENT_DRAG_STARTED: string;
     /** A column drag has stopped */
     static EVENT_DRAG_STOPPED: string;
+    static EVENT_CHECKBOX_CHANGED: string;
     static EVENT_ROW_EDITING_STARTED: string;
     static EVENT_ROW_EDITING_STOPPED: string;
     static EVENT_CELL_EDITING_STARTED: string;

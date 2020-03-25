@@ -47,7 +47,7 @@ include '../documentation-main/documentation_header.php';
                 </p>
                 <p>
                     <span class="reccommendation">Recommendation:</span>
-                    This is the default grid theme, and a great choice for most applications.
+                    This is the recommended grid theme, and a great choice for most applications.
                 </p>
             </td>
         </tr>
@@ -62,7 +62,7 @@ include '../documentation-main/documentation_header.php';
                 </p>
                 <p>
                     <span class="reccommendation">Recommendation:</span>
-                    Balham was the default theme before Alpine was developed. It is still a great choice
+                    Balham was the recommended theme before Alpine was developed. It is still a great choice
                     for applications that need to fit more data onto each page.
                 </p>
             </td>

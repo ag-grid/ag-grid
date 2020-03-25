@@ -2,31 +2,8 @@ import {Component, createElement, createRef, RefObject} from "react";
 import * as PropTypes from "prop-types";
 import {AgChart, Chart} from "ag-charts-community";
 
-export interface AgLegendProps {
-    enabled?: boolean;
-    padding?: number;
-    itemPaddingX?: number;
-    itemPaddingY?: number;
-    markerSize?: number;
-    markerStrokeWidth?: number;
-    labelColor?: string;
-    labelFontFamily?: string;
-}
-
-export interface AgChartOptions {
-    width?: number;
-    height?: number;
-    data?: any[];
-    series: {
-        type?: string;
-        xKey: string;
-        yKey: string;
-    }[];
-    legend?: AgLegendProps;
-}
-
 export interface AgChartProps {
-    options: AgChartOptions;
+    options: any;
 }
 
 interface AgChartState {

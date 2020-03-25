@@ -7,56 +7,6 @@ import { AgChart } from 'ag-charts-community';
  * Generated from: lib/ag-charts-angular.component.ts
  * @suppress {checkTypes,constantProperty,extraRequire,missingOverride,missingReturn,unusedPrivateMembers,uselessCode} checked by tsc
  */
-/**
- * @record
- */
-function AgLegendProps() { }
-if (false) {
-    /** @type {?|undefined} */
-    AgLegendProps.prototype.enabled;
-    /** @type {?|undefined} */
-    AgLegendProps.prototype.padding;
-    /** @type {?|undefined} */
-    AgLegendProps.prototype.itemPaddingX;
-    /** @type {?|undefined} */
-    AgLegendProps.prototype.itemPaddingY;
-    /** @type {?|undefined} */
-    AgLegendProps.prototype.markerSize;
-    /** @type {?|undefined} */
-    AgLegendProps.prototype.markerStrokeWidth;
-    /** @type {?|undefined} */
-    AgLegendProps.prototype.labelColor;
-    /** @type {?|undefined} */
-    AgLegendProps.prototype.labelFontFamily;
-}
-/**
- * @record
- */
-function Series() { }
-if (false) {
-    /** @type {?|undefined} */
-    Series.prototype.type;
-    /** @type {?} */
-    Series.prototype.xKey;
-    /** @type {?} */
-    Series.prototype.yKey;
-}
-/**
- * @record
- */
-function AgChartOptions() { }
-if (false) {
-    /** @type {?|undefined} */
-    AgChartOptions.prototype.width;
-    /** @type {?|undefined} */
-    AgChartOptions.prototype.height;
-    /** @type {?|undefined} */
-    AgChartOptions.prototype.data;
-    /** @type {?} */
-    AgChartOptions.prototype.series;
-    /** @type {?|undefined} */
-    AgChartOptions.prototype.legend;
-}
 // noinspection AngularIncorrectTemplateDefinition
 var AgChartsAngular = /** @class */ (function () {
     function AgChartsAngular(elementDef) {

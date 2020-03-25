@@ -1,7 +1,7 @@
 <?php
 $pageTitle = "Pivot Tables: Enterprise Grade Feature of our Datagrid";
 $pageDescription = "Pivoting: Make columns out of values by Pivoting on the data, similar to Pivot Tables in Excel. Pivoting allows you to take a columns values and turn them into columns. Enterprise feature of ag-Grid supporting Angular, React, Javascript and many more.";
-$pageKeywords = "ag-Grid JavaScritp Grid Pivot";
+$pageKeywords = "ag-Grid JavaScript Grid Pivot";
 $pageGroup = "feature";
 include '../documentation-main/documentation_header.php';
 ?>
@@ -109,7 +109,7 @@ gridOptions.columnDefs = [
         columns are ignored.
     </p>
 
-    <h2 id="pivot-mode">Pivot Mode & Visible Columns</h2>
+    <h2>Pivot Mode & Visible Columns</h2>
 
     <p>
         When not in pivot mode, only columns that are visible are shown in the grid. To remove a column
@@ -387,7 +387,7 @@ console.log('found column with id ' + sausageKingdomColumn.getId());</snippet>
 
     <p>
         This is demonstrated in the section on
-        <a href="../javascript-grid-change-detection/#pivot-example">Pivoting with Change Detection</a>,
+        <a href="../javascript-grid-change-detection/#change-detection-and-pivot">Change Detection and Pivot</a>,
         so rather that repeat, check out the example there.
     </p>
 

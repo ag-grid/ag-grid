@@ -36,7 +36,9 @@ var gridOptions = {
     columnDefs: columnDefs,
     rowData: createRowData(),
     enableRangeSelection: true,
-    enableCharts: true
+    enableCharts: true,
+    popupParent: document.body
+
 };
 
 function onChart1() {

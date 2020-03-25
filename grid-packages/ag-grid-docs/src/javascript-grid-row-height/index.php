@@ -55,7 +55,7 @@ gridOptions.getRowHeight = function(params) {
     </p>
 
     <ul class="content">
-        <li><b>node:</b> The <a href="../javascript-grid-model/#rowNode">rowNode</a> in question.</li>
+        <li><b>node:</b> The <a href="../javascript-grid-row-node/">rowNode</a> in question.</li>
         <li><b>data:</b> The data for the row.</li>
         <li><b>api:</b> The <a href="../javascript-grid-api/">grid api</a>.</li>
         <li><b>context:</b> The <a href="../javascript-grid-context/">grid context</a>.</li>

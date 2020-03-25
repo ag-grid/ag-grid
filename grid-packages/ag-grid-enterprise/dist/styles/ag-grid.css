@@ -694,8 +694,7 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia {
   -ms-flex-align: center;
   align-items: center;
   width: 100%;
-  height: 100%;
-  overflow: hidden; }
+  height: 100%; }
   .ag-cell-wrapper.ag-row-group {
     -webkit-box-align: start;
     -ms-flex-align: start;
@@ -737,7 +736,8 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia {
   display: flex;
   -webkit-box-align: center;
   -ms-flex-align: center;
-  align-items: center; }
+  align-items: center;
+  height: 100%; }
 
 .ag-set-filter-item-value {
   display: -webkit-box;

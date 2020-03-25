@@ -429,7 +429,7 @@ colDef.rowDragText = function(params) {
             </li>
             <li>
                 The example uses
-                <a href="../javascript-grid-cell-styles/#cellClassRules">Cell Class Rules</a>
+                <a href="../javascript-grid-cell-styles/#cell-class-rules">Cell Class Rules</a>
                 to highlight the destination folder. The example adds the example provided CSS class
                 <code>hover-over</code> to all the cells of the destination folder.
             </li>

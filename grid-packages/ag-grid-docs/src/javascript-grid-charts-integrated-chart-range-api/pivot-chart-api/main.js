@@ -18,6 +18,7 @@ var gridOptions = {
     pivotMode: true,
     columnDefs: columnDefs,
     onFirstDataRendered: onFirstDataRendered,
+    popupParent: document.body
 };
 
 function onFirstDataRendered(event) {

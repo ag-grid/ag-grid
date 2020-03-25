@@ -23,7 +23,8 @@
         "grid-packages/ag-grid-react": true,
         "grid-packages/ag-grid-vue": true,
         "**/.git": true,
-        "**/.DS_Store": true
+        "**/.DS_Store": true,
+        "packages": true
     },
     "[scss]": {
         "editor.detectIndentation": false,

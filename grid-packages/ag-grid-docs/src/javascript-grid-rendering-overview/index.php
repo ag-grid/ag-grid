@@ -19,10 +19,10 @@ include '../documentation-main/documentation_header.php';
             covers:
             <ul>
                 <li>
-                    <a href="../javascript-grid-value-getters/#value-getter">Value Getters</a>
+                    <a href="../javascript-grid-value-getters/">Value Getters</a>
                 </li>
                 <li>
-                    <a href="../javascript-grid-value-getters/">Value Formatters</a>
+                    <a href="../javascript-grid-value-formatters/">Value Formatters</a>
                 </li>
                 <li>
                     <a href="../javascript-grid-cell-expressions/">Expressions</a>

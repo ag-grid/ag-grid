@@ -54,7 +54,7 @@ include '../documentation-main/documentation_header.php';
 </p>
 <p>
     The Client-side Row Model only renders the rows currently visible using
-    <a href="./javascript-grid-dom-virtualisation/">DOM Virtualization</a>, so the upper limit of rows is governed
+    <a href="../javascript-grid-dom-virtualisation/">DOM Virtualisation</a>, so the upper limit of rows is governed
     by the browsers memory footprint and data transfer time, rather than any restrictions inside the grid.
 </p>
 

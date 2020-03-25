@@ -1,4 +1,4 @@
-// Type definitions for @ag-grid-community/core v23.0.0
+// Type definitions for @ag-grid-community/core v23.0.2
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { RowNode } from "./entities/rowNode";
@@ -91,6 +91,11 @@ export interface DragEvent extends AgGridEvent {
 export interface DragStartedEvent extends DragEvent {
 }
 export interface DragStoppedEvent extends DragEvent {
+}
+export interface CheckboxChangedEvent extends AgEvent {
+    id: string;
+    name: string;
+    selected?: boolean;
 }
 export interface GridSizeChangedEvent extends AgGridEvent {
     clientWidth: number;

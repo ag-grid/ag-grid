@@ -1,28 +1,7 @@
-// ag-charts-react v1.0.0
+// ag-charts-react v1.0.1
 import { Component, RefObject } from "react";
-export interface AgLegendProps {
-    enabled?: boolean;
-    padding?: number;
-    itemPaddingX?: number;
-    itemPaddingY?: number;
-    markerSize?: number;
-    markerStrokeWidth?: number;
-    labelColor?: string;
-    labelFontFamily?: string;
-}
-export interface AgChartOptions {
-    width?: number;
-    height?: number;
-    data?: any[];
-    series: {
-        type?: string;
-        xKey: string;
-        yKey: string;
-    }[];
-    legend?: AgLegendProps;
-}
 export interface AgChartProps {
-    options: AgChartOptions;
+    options: any;
 }
 interface AgChartState {
 }

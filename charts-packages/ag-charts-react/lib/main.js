@@ -1,4 +1,4 @@
-// ag-charts-react v1.0.0
+// ag-charts-react v1.0.1
 "use strict";
 function __export(m) {
     for (var p in m) if (!exports.hasOwnProperty(p)) exports[p] = m[p];

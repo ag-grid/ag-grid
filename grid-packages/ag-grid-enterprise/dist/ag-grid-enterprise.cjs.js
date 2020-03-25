@@ -1,5 +1,5 @@
 /**
- * ag-grid-enterprise - ag-Grid Enterprise Features * @version v23.0.1
+ * ag-grid-enterprise - ag-Grid Enterprise Features * @version v23.0.2
  * @link http://www.ag-grid.com/
 ' * @license Commercial
  */
@@ -251,7 +251,7 @@ var LicenseManager = /** @class */ (function () {
         this.watermarkMessage = "License Expired";
     };
     var LicenseManager_1;
-    LicenseManager.RELEASE_INFORMATION = 'MTU4MzkxMzQ2NzUyNQ==';
+    LicenseManager.RELEASE_INFORMATION = 'MTU4NDY5MTE5OTAwMA==';
     __decorate([
         agGridCommunity.Autowired('md5')
     ], LicenseManager.prototype, "md5", void 0);

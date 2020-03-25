@@ -1064,6 +1064,7 @@
             this.firstDataRendered = new core.EventEmitter();
             this.dragStarted = new core.EventEmitter();
             this.dragStopped = new core.EventEmitter();
+            this.checkboxChanged = new core.EventEmitter();
             this.rowEditingStarted = new core.EventEmitter();
             this.rowEditingStopped = new core.EventEmitter();
             this.cellEditingStarted = new core.EventEmitter();
@@ -2182,6 +2183,9 @@
         __decorate([
             core.Output()
         ], AgGridAngular.prototype, "dragStopped", void 0);
+        __decorate([
+            core.Output()
+        ], AgGridAngular.prototype, "checkboxChanged", void 0);
         __decorate([
             core.Output()
         ], AgGridAngular.prototype, "rowEditingStarted", void 0);

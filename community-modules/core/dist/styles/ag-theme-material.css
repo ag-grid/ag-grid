@@ -951,18 +951,10 @@
     content: ""; }
   .ag-theme-material .ag-root-wrapper {
     background-color: #fff; }
-  .ag-theme-material *, .ag-theme-material *:focus, .ag-theme-material *:after, .ag-theme-material *:before {
+  .ag-theme-material [class^='ag-'], .ag-theme-material [class^='ag-']:focus, .ag-theme-material [class^='ag-']:after, .ag-theme-material [class^='ag-']:before {
     box-sizing: border-box;
     outline: none; }
-  .ag-theme-material input, .ag-theme-material button, .ag-theme-material select, .ag-theme-material optgroup, .ag-theme-material textarea {
-    color: inherit;
-    font-family: inherit;
-    font-size: inherit;
-    font-weight: inherit;
-    line-height: inherit; }
-  .ag-theme-material input {
-    margin: 0; }
-  .ag-theme-material ::-ms-clear {
+  .ag-theme-material [class^='ag-']::-ms-clear {
     display: none; }
   .ag-theme-material .ag-checkbox .ag-input-wrapper,
   .ag-theme-material .ag-radio-button .ag-input-wrapper {
@@ -977,38 +969,48 @@
     margin-left: 8px; }
   .ag-theme-material .ag-rtl .ag-label-align-right .ag-label {
     margin-right: 8px; }
-  .ag-theme-material input,
-  .ag-theme-material textarea,
-  .ag-theme-material select,
-  .ag-theme-material button {
-    background-color: #fff;
+  .ag-theme-material input[class^='ag-'] {
+    margin: 0;
+    background-color: #fff; }
+  .ag-theme-material textarea[class^='ag-'],
+  .ag-theme-material select[class^='ag-'] {
+    background-color: #fff; }
+  .ag-theme-material input[class^='ag-']:not([type]),
+  .ag-theme-material input[class^='ag-'][type='text'],
+  .ag-theme-material input[class^='ag-'][type='number'],
+  .ag-theme-material input[class^='ag-'][type='tel'],
+  .ag-theme-material input[class^='ag-'][type='date'],
+  .ag-theme-material input[class^='ag-'][type='datetime-local'],
+  .ag-theme-material textarea[class^='ag-'] {
+    font-size: inherit;
+    line-height: inherit;
     color: inherit; }
-  .ag-theme-material input:not([type]):disabled,
-  .ag-theme-material input[type='text']:disabled,
-  .ag-theme-material input[type='number']:disabled,
-  .ag-theme-material input[type='tel']:disabled,
-  .ag-theme-material input[type='date']:disabled,
-  .ag-theme-material input[type='datetime-local']:disabled,
-  .ag-theme-material textarea:disabled {
-    color: rgba(0, 0, 0, 0.38); }
-  .ag-theme-material input:not([type]):focus,
-  .ag-theme-material input[type='text']:focus,
-  .ag-theme-material input[type='number']:focus,
-  .ag-theme-material input[type='tel']:focus,
-  .ag-theme-material input[type='date']:focus,
-  .ag-theme-material input[type='datetime-local']:focus,
-  .ag-theme-material textarea:focus {
-    outline: none;
-    box-shadow: 0 0 0 5px rgba(32, 33, 36, 0.122);
-    border-color: #ff4081; }
-  .ag-theme-material input[type='number'] {
+    .ag-theme-material input[class^='ag-']:not([type]):disabled,
+    .ag-theme-material input[class^='ag-'][type='text']:disabled,
+    .ag-theme-material input[class^='ag-'][type='number']:disabled,
+    .ag-theme-material input[class^='ag-'][type='tel']:disabled,
+    .ag-theme-material input[class^='ag-'][type='date']:disabled,
+    .ag-theme-material input[class^='ag-'][type='datetime-local']:disabled,
+    .ag-theme-material textarea[class^='ag-']:disabled {
+      color: rgba(0, 0, 0, 0.38); }
+    .ag-theme-material input[class^='ag-']:not([type]):focus,
+    .ag-theme-material input[class^='ag-'][type='text']:focus,
+    .ag-theme-material input[class^='ag-'][type='number']:focus,
+    .ag-theme-material input[class^='ag-'][type='tel']:focus,
+    .ag-theme-material input[class^='ag-'][type='date']:focus,
+    .ag-theme-material input[class^='ag-'][type='datetime-local']:focus,
+    .ag-theme-material textarea[class^='ag-']:focus {
+      outline: none;
+      box-shadow: 0 0 0 5px rgba(32, 33, 36, 0.122);
+      border-color: #ff4081; }
+  .ag-theme-material input[class^='ag-'][type='number'] {
     -moz-appearance: textfield; }
-    .ag-theme-material input[type='number']::-webkit-outer-spin-button, .ag-theme-material input[type='number']::-webkit-inner-spin-button {
+    .ag-theme-material input[class^='ag-'][type='number']::-webkit-outer-spin-button, .ag-theme-material input[class^='ag-'][type='number']::-webkit-inner-spin-button {
       -webkit-appearance: none;
       margin: 0; }
-  .ag-theme-material input[type='range'] {
+  .ag-theme-material input[class^='ag-'][type='range'] {
     padding: 0; }
-  .ag-theme-material input[type='button']:focus, .ag-theme-material button:focus {
+  .ag-theme-material input[class^='ag-'][type='button']:focus, .ag-theme-material button:focus {
     box-shadow: 0 0 0 5px rgba(32, 33, 36, 0.122); }
   .ag-theme-material .ag-drag-handle {
     color: rgba(0, 0, 0, 0.54); }
@@ -1679,8 +1681,6 @@
     margin-right: 16px; }
   .ag-theme-material .ag-set-filter-list {
     height: 240px; }
-  .ag-theme-material .ag-set-filter-item {
-    height: 40px; }
   .ag-theme-material .ag-set-filter-filter {
     margin-top: 16px;
     margin-left: 12px;
@@ -1719,6 +1719,11 @@
     color: rgba(0, 0, 0, 0.87);
     overflow: hidden; }
   .ag-theme-material .ag-side-button-button {
+    color: inherit;
+    font-family: inherit;
+    font-size: inherit;
+    font-weight: inherit;
+    line-height: inherit;
     background: transparent;
     padding: 16px 0 16px 0;
     width: 100%;
@@ -1750,6 +1755,22 @@
     padding-left: 8px; }
   .ag-theme-material .ag-rtl .ag-filter-toolpanel-header, .ag-theme-material .ag-rtl .ag-filter-toolpanel-search {
     padding-right: 8px; }
+  .ag-theme-material .ag-filter-toolpanel-group.ag-has-filter > .ag-group-title-bar .ag-group-title:after {
+    font-family: "agGridMaterial";
+    font-size: 18px;
+    line-height: 18px;
+    font-style: normal;
+    font-weight: normal;
+    font-variant: normal;
+    text-transform: none;
+    /* Better Font Rendering =========== */
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    content: ""; }
+    .ag-theme-material .ag-ltr .ag-filter-toolpanel-group.ag-has-filter > .ag-group-title-bar .ag-group-title:after {
+      padding-left: 8px; }
+    .ag-theme-material .ag-rtl .ag-filter-toolpanel-group.ag-has-filter > .ag-group-title-bar .ag-group-title:after {
+      padding-right: 8px; }
   .ag-theme-material .ag-filter-toolpanel-group-level-0-header {
     height: 64px; }
   .ag-theme-material .ag-filter-toolpanel-group-item {
@@ -1905,6 +1926,11 @@
   .ag-theme-material .ag-rtl .ag-floating-filter-button {
     margin-right: 24px; }
   .ag-theme-material .ag-floating-filter-button-button {
+    color: inherit;
+    font-family: inherit;
+    font-size: inherit;
+    font-weight: inherit;
+    line-height: inherit;
     appearance: none;
     background: transparent;
     border: none;
@@ -2371,13 +2397,13 @@
     padding-bottom: 4px; }
   .ag-theme-material .ag-group-toolbar {
     background-color: rgba(238, 238, 238, 0.5); }
-  .ag-theme-material input:not([type]),
-  .ag-theme-material input[type='text'],
-  .ag-theme-material input[type='number'],
-  .ag-theme-material input[type='tel'],
-  .ag-theme-material input[type='date'],
-  .ag-theme-material input[type='datetime-local'],
-  .ag-theme-material textarea {
+  .ag-theme-material input[class^='ag-']:not([type]),
+  .ag-theme-material input[class^='ag-'][type='text'],
+  .ag-theme-material input[class^='ag-'][type='number'],
+  .ag-theme-material input[class^='ag-'][type='tel'],
+  .ag-theme-material input[class^='ag-'][type='date'],
+  .ag-theme-material input[class^='ag-'][type='datetime-local'],
+  .ag-theme-material textarea[class^='ag-'] {
     background: transparent;
     color: rgba(0, 0, 0, 0.87);
     font-family: inherit;
@@ -2386,31 +2412,31 @@
     padding-bottom: 8px;
     border-width: 0;
     border-bottom: 2px solid #e2e2e2; }
-    .ag-theme-material input:focus:not([type]),
-    .ag-theme-material input:focus[type='text'],
-    .ag-theme-material input:focus[type='number'],
-    .ag-theme-material input:focus[type='tel'],
-    .ag-theme-material input:focus[type='date'],
-    .ag-theme-material input:focus[type='datetime-local'],
-    .ag-theme-material textarea:focus {
+    .ag-theme-material input:focus[class^='ag-']:not([type]),
+    .ag-theme-material input:focus[class^='ag-'][type='text'],
+    .ag-theme-material input:focus[class^='ag-'][type='number'],
+    .ag-theme-material input:focus[class^='ag-'][type='tel'],
+    .ag-theme-material input:focus[class^='ag-'][type='date'],
+    .ag-theme-material input:focus[class^='ag-'][type='datetime-local'],
+    .ag-theme-material textarea:focus[class^='ag-'] {
       border-bottom: 2px solid #3f51b5;
       outline: none;
       box-shadow: none; }
-    .ag-theme-material input:not([type])::placeholder,
-    .ag-theme-material input[type='text']::placeholder,
-    .ag-theme-material input[type='number']::placeholder,
-    .ag-theme-material input[type='tel']::placeholder,
-    .ag-theme-material input[type='date']::placeholder,
-    .ag-theme-material input[type='datetime-local']::placeholder,
-    .ag-theme-material textarea::placeholder {
+    .ag-theme-material input:not([type])[class^='ag-']::placeholder,
+    .ag-theme-material input[type='text'][class^='ag-']::placeholder,
+    .ag-theme-material input[type='number'][class^='ag-']::placeholder,
+    .ag-theme-material input[type='tel'][class^='ag-']::placeholder,
+    .ag-theme-material input[type='date'][class^='ag-']::placeholder,
+    .ag-theme-material input[type='datetime-local'][class^='ag-']::placeholder,
+    .ag-theme-material textarea[class^='ag-']::placeholder {
       color: rgba(0, 0, 0, 0.38); }
-    .ag-theme-material input:disabled:not([type]),
-    .ag-theme-material input:disabled[type='text'],
-    .ag-theme-material input:disabled[type='number'],
-    .ag-theme-material input:disabled[type='tel'],
-    .ag-theme-material input:disabled[type='date'],
-    .ag-theme-material input:disabled[type='datetime-local'],
-    .ag-theme-material textarea:disabled {
+    .ag-theme-material input:disabled[class^='ag-']:not([type]),
+    .ag-theme-material input:disabled[class^='ag-'][type='text'],
+    .ag-theme-material input:disabled[class^='ag-'][type='number'],
+    .ag-theme-material input:disabled[class^='ag-'][type='tel'],
+    .ag-theme-material input:disabled[class^='ag-'][type='date'],
+    .ag-theme-material input:disabled[class^='ag-'][type='datetime-local'],
+    .ag-theme-material textarea:disabled[class^='ag-'] {
       border-bottom: 1px solid #e2e2e2; }
   .ag-theme-material .ag-standard-button {
     appearance: none;

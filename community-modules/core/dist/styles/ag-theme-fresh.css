@@ -952,18 +952,10 @@
     content: ""; }
   .ag-theme-fresh .ag-root-wrapper {
     background-color: #FFF; }
-  .ag-theme-fresh *, .ag-theme-fresh *:focus, .ag-theme-fresh *:after, .ag-theme-fresh *:before {
+  .ag-theme-fresh [class^='ag-'], .ag-theme-fresh [class^='ag-']:focus, .ag-theme-fresh [class^='ag-']:after, .ag-theme-fresh [class^='ag-']:before {
     box-sizing: border-box;
     outline: none; }
-  .ag-theme-fresh input, .ag-theme-fresh button, .ag-theme-fresh select, .ag-theme-fresh optgroup, .ag-theme-fresh textarea {
-    color: inherit;
-    font-family: inherit;
-    font-size: inherit;
-    font-weight: inherit;
-    line-height: inherit; }
-  .ag-theme-fresh input {
-    margin: 0; }
-  .ag-theme-fresh ::-ms-clear {
+  .ag-theme-fresh [class^='ag-']::-ms-clear {
     display: none; }
   .ag-theme-fresh .ag-checkbox .ag-input-wrapper,
   .ag-theme-fresh .ag-radio-button .ag-input-wrapper {
@@ -978,46 +970,49 @@
     margin-left: 4px; }
   .ag-theme-fresh .ag-rtl .ag-label-align-right .ag-label {
     margin-right: 4px; }
-  .ag-theme-fresh input,
-  .ag-theme-fresh textarea,
-  .ag-theme-fresh select,
-  .ag-theme-fresh button {
-    background-color: #FFF;
-    color: inherit; }
-  .ag-theme-fresh input:not([type]),
-  .ag-theme-fresh input[type='text'],
-  .ag-theme-fresh input[type='number'],
-  .ag-theme-fresh input[type='tel'],
-  .ag-theme-fresh input[type='date'],
-  .ag-theme-fresh input[type='datetime-local'],
-  .ag-theme-fresh textarea {
+  .ag-theme-fresh input[class^='ag-'] {
+    margin: 0;
+    background-color: #FFF; }
+  .ag-theme-fresh textarea[class^='ag-'],
+  .ag-theme-fresh select[class^='ag-'] {
+    background-color: #FFF; }
+  .ag-theme-fresh input[class^='ag-']:not([type]),
+  .ag-theme-fresh input[class^='ag-'][type='text'],
+  .ag-theme-fresh input[class^='ag-'][type='number'],
+  .ag-theme-fresh input[class^='ag-'][type='tel'],
+  .ag-theme-fresh input[class^='ag-'][type='date'],
+  .ag-theme-fresh input[class^='ag-'][type='datetime-local'],
+  .ag-theme-fresh textarea[class^='ag-'] {
+    font-size: inherit;
+    line-height: inherit;
+    color: inherit;
     border-width: 1px;
     border-style: solid;
     border-color: #000; }
-    .ag-theme-fresh input:not([type]):disabled,
-    .ag-theme-fresh input[type='text']:disabled,
-    .ag-theme-fresh input[type='number']:disabled,
-    .ag-theme-fresh input[type='tel']:disabled,
-    .ag-theme-fresh input[type='date']:disabled,
-    .ag-theme-fresh input[type='datetime-local']:disabled,
-    .ag-theme-fresh textarea:disabled {
+    .ag-theme-fresh input[class^='ag-']:not([type]):disabled,
+    .ag-theme-fresh input[class^='ag-'][type='text']:disabled,
+    .ag-theme-fresh input[class^='ag-'][type='number']:disabled,
+    .ag-theme-fresh input[class^='ag-'][type='tel']:disabled,
+    .ag-theme-fresh input[class^='ag-'][type='date']:disabled,
+    .ag-theme-fresh input[class^='ag-'][type='datetime-local']:disabled,
+    .ag-theme-fresh textarea[class^='ag-']:disabled {
       color: rgba(0, 0, 0, 0.5);
       background-color: #ebebeb;
       border-color: rgba(0, 0, 0, 0.3); }
-    .ag-theme-fresh input:not([type]):focus,
-    .ag-theme-fresh input[type='text']:focus,
-    .ag-theme-fresh input[type='number']:focus,
-    .ag-theme-fresh input[type='tel']:focus,
-    .ag-theme-fresh input[type='date']:focus,
-    .ag-theme-fresh input[type='datetime-local']:focus,
-    .ag-theme-fresh textarea:focus {
+    .ag-theme-fresh input[class^='ag-']:not([type]):focus,
+    .ag-theme-fresh input[class^='ag-'][type='text']:focus,
+    .ag-theme-fresh input[class^='ag-'][type='number']:focus,
+    .ag-theme-fresh input[class^='ag-'][type='tel']:focus,
+    .ag-theme-fresh input[class^='ag-'][type='date']:focus,
+    .ag-theme-fresh input[class^='ag-'][type='datetime-local']:focus,
+    .ag-theme-fresh textarea[class^='ag-']:focus {
       outline: none; }
-  .ag-theme-fresh input[type='number'] {
+  .ag-theme-fresh input[class^='ag-'][type='number'] {
     -moz-appearance: textfield; }
-    .ag-theme-fresh input[type='number']::-webkit-outer-spin-button, .ag-theme-fresh input[type='number']::-webkit-inner-spin-button {
+    .ag-theme-fresh input[class^='ag-'][type='number']::-webkit-outer-spin-button, .ag-theme-fresh input[class^='ag-'][type='number']::-webkit-inner-spin-button {
       -webkit-appearance: none;
       margin: 0; }
-  .ag-theme-fresh input[type='range'] {
+  .ag-theme-fresh input[class^='ag-'][type='range'] {
     padding: 0; }
   .ag-theme-fresh .ag-drag-handle {
     color: #000; }
@@ -1684,8 +1679,6 @@
     margin-right: 8px; }
   .ag-theme-fresh .ag-set-filter-list {
     height: 120px; }
-  .ag-theme-fresh .ag-set-filter-item {
-    height: 20px; }
   .ag-theme-fresh .ag-set-filter-filter {
     margin-top: 6px;
     margin-left: 6px;
@@ -1727,6 +1720,11 @@
     color: #000;
     overflow: hidden; }
   .ag-theme-fresh .ag-side-button-button {
+    color: inherit;
+    font-family: inherit;
+    font-size: inherit;
+    font-weight: inherit;
+    line-height: inherit;
     background: transparent;
     padding: 8px 0 8px 0;
     width: calc(100% + 1px);
@@ -1780,6 +1778,22 @@
     padding-left: 4px; }
   .ag-theme-fresh .ag-rtl .ag-filter-toolpanel-header, .ag-theme-fresh .ag-rtl .ag-filter-toolpanel-search {
     padding-right: 4px; }
+  .ag-theme-fresh .ag-filter-toolpanel-group.ag-has-filter > .ag-group-title-bar .ag-group-title:after {
+    font-family: "agGridClassic";
+    font-size: 12px;
+    line-height: 12px;
+    font-style: normal;
+    font-weight: normal;
+    font-variant: normal;
+    text-transform: none;
+    /* Better Font Rendering =========== */
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    content: ""; }
+    .ag-theme-fresh .ag-ltr .ag-filter-toolpanel-group.ag-has-filter > .ag-group-title-bar .ag-group-title:after {
+      padding-left: 4px; }
+    .ag-theme-fresh .ag-rtl .ag-filter-toolpanel-group.ag-has-filter > .ag-group-title-bar .ag-group-title:after {
+      padding-right: 4px; }
   .ag-theme-fresh .ag-filter-toolpanel-group-level-0-header {
     height: 32px; }
   .ag-theme-fresh .ag-filter-toolpanel-group-item {
@@ -1950,6 +1964,11 @@
   .ag-theme-fresh .ag-rtl .ag-floating-filter-button {
     margin-right: 12px; }
   .ag-theme-fresh .ag-floating-filter-button-button {
+    color: inherit;
+    font-family: inherit;
+    font-size: inherit;
+    font-weight: inherit;
+    line-height: inherit;
     appearance: none;
     background: transparent;
     border: none;

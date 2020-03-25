@@ -106,8 +106,14 @@ gtm_data_layer('community-enterprise');
                         <p>
                             ag-Grid Community is a free to use product distributed under the
                             <a href="./eula/AG-Grid-Community-License.html">MIT License</a>.
-                            We regularly contribute to the
-                            project and community support is available via Stack Overflow.
+                            It is free to use in your production environments.
+                        </p>
+                        <h3 style="margin-top: 26px;">ag-Charts Community</h3>
+                        <p>
+                            ag-Charts Community (a.k.a. <a href="./javascript-charts-overview/">Standalone Charts</a>)
+                            is a free to use product distributed under the
+                            <a href="./eula/AG-Grid-Community-License.html">MIT License</a>.
+                            It is free to use in your production environments.
                         </p>
                     </div>
                 </div>
@@ -117,12 +123,13 @@ gtm_data_layer('community-enterprise');
                     </div>
                     <div>
                     <h3>ag-Grid Enterprise</h3>
-
                         <p>
                             ag-Grid Enterprise is a commercial product distributed under our
                             <a href="./eula/AG-Grid-Enterprise-License-Latest.html">EULA</a> and supported by our
                             technical staff. It has advanced functionality like Row Grouping, Range Selection,
                             Master / Detail, Server Side Row Model and <a href="./javascript-grid-set-license/">more</a>.
+                            ag-Grid Enterprise also comes with <a href="./javascript-grid-charts-integrated-overview/">Integrated Charts</a>, allowing users to create charts
+                            using the grid's UI.
                         </p>
                         <p>
                             To evaluate ag-Grid Enterprise you don’t need our permission – all features are unlocked.

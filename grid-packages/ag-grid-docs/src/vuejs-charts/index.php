@@ -9,7 +9,7 @@ include '../documentation-main/documentation_header.php';
 <h1>Vue Charts | Get Started with ag-Charts and Vue</h1>
 
 <p class="lead" id="vue-charts-description">
-    ag-Charts is an exciting new addition to the ag-Charts family, offering both integrated as well
+    ag-Charts is an exciting new addition to the ag-Grid family, offering both integrated as well
     as standalone fully functional charting capabilities.
 </p>
 
@@ -21,6 +21,11 @@ include '../documentation-main/documentation_header.php';
     In this article we will walk you through the necessary steps to add ag-Charts to an existing Vue
     project and produce your first charts.
 </p>
+
+<note>
+    The "Quick Look Code" above is different to the code that runs in Stackblitz - this is because Stackblitz doesn't support .vue files at this time.
+</note>
+
 
 <h2 id="add-ag-charts-to-your-project">Add ag-Charts to Your Project</h2>
 
@@ -65,7 +70,7 @@ SNIPPET
     instance of the terminal):
 </p>
 
-<?= createSnippet('npm install --save ag-charts-community ag-charts-vue', 'sh') ?>
+<?= createSnippet('npm install --save ag-charts-community ag-charts-vue vue-property-decorator', 'sh') ?>
 
 <p>
     After a few seconds of waiting, you should be good to go. Let's get to the actual coding! As a first step,
@@ -74,12 +79,14 @@ SNIPPET
 </p>
 
 <p>
-    Let's add the component definition to our template. Edit <code>app/App.vue</code> and replace the scaffold code:
+    Let's add the component definition to our template. Edit <code>src/App.vue</code> and replace the scaffold code:
 </p>
 
 <?= createSnippet(<<<SNIPPET
 <template>
-    <ag-charts-vue :options="options"></ag-charts-vue>
+  <div id="app">
+      <ag-charts-vue :options="options"></ag-charts-vue>
+  </div>
 </template>
 SNIPPET
 , 'html') ?>
@@ -88,52 +95,46 @@ SNIPPET
 
 <?= createSnippet(<<<SNIPPET
 <script>
-import Vue from 'vue';
-import { AgChartsVue } from 'ag-charts-vue';
+  import { AgChartsVue } from 'ag-charts-vue';
 
-export default {
+  export default {
     name: 'App',
     components: {
-        AgChartsVue,
+      AgChartsVue,
     },
     data() {
-        return {
-            options: null,
-            data: [
-                {
-                    beverage: 'Coffee',
-                    Q1: 450,
-                    Q2: 560,
-                    Q3: 600,
-                    Q4: 700,
-                },
-                {
-                    beverage: 'Tea',
-                    Q1: 270,
-                    Q2: 380,
-                    Q3: 450,
-                    Q4: 520,
-                },
-                {
-                    beverage: 'Milk',
-                    Q1: 180,
-                    Q2: 170,
-                    Q3: 190,
-                    Q4: 200,
-                },
-            ]
-        };
+      return {
+        options: null,
+        data: [
+          {
+            quarter: 'Q1',
+            spending: 450,
+          },
+          {
+            quarter: 'Q2',
+            spending: 560,
+          },
+          {
+            quarter: 'Q3',
+            spending: 600,
+          },
+          {
+            quarter: 'Q4',
+            spending: 700,
+          },
+        ]
+      };
     },
     beforeMount() {
-        this.options = {
-            data: this.data,
-            series: [{
-                xKey: 'quarter',
-                yKey: 'spending'
-            }]
-        };
+      this.options = {
+        data: this.data,
+        series: [{
+          xKey: 'quarter',
+          yKey: 'spending',
+        }]
+      };
     }
-};
+  };
 </script>
 SNIPPET
 , 'html') ?>
@@ -183,12 +184,12 @@ beforeMount() {
         data: this.data,
         series: [{
             xKey: 'quarter',
-            yKey: 'spending'
-+           yName: 'Coffee Spending'
+            yKey: 'spending',
++           yName: 'Coffee Spending',
         }],
 +       legend: {
-+           position: 'bottom'
-+       }
++           position: 'bottom',
++       },
     };
 }
 SNIPPET
@@ -204,31 +205,31 @@ SNIPPET
 </p>
 
 <?= createSnippet(<<<SNIPPET
-data = [
+data: [
     {
         beverage: 'Coffee',
         Q1: 450,
         Q2: 560,
         Q3: 600,
-        Q4: 700
+        Q4: 700,
     },
     {
         beverage: 'Tea',
         Q1: 270,
         Q2: 380,
         Q3: 450,
-        Q4: 520
+        Q4: 520,
     },
     {
         beverage: 'Milk',
         Q1: 180,
         Q2: 170,
         Q3: 190,
-        Q4: 200
+        Q4: 200,
     },
-];
+]
 SNIPPET
-, 'ts') ?>
+) ?>
 
 <p>
     This time, let's choose another series type to plot the data: stacked columns.
@@ -242,12 +243,12 @@ beforeMount() {
         series: [{
             type: 'column',
             xKey: 'beverage',
-            yKeys: ['Q1', 'Q2', 'Q3', 'Q4']
-        }]
+            yKeys: ['Q1', 'Q2', 'Q3', 'Q4'],
+        }],
     };
 }
 SNIPPET
-, 'ts') ?>
+) ?>
 
 <p>
     Unlike <code>'line'</code> series charts, <code>'column'</code> series can have multiple <code>yKeys</code> which
@@ -271,9 +272,9 @@ beforeMount() {
         series: [{
             type: 'column',
             xKey: 'beverage',
-            yKeys: ['Q1', 'Q2', 'Q3', 'Q4']
-+           label: {}
-        }]
+            yKeys: ['Q1', 'Q2', 'Q3', 'Q4'],
++           label: {},
+        }],
     };
 }
 SNIPPET
@@ -290,17 +291,17 @@ beforeMount() {
     this.options = {
         data: this.data,
 +       title: {
-+           text: 'Beverage Expenses'
++           text: 'Beverage Expenses',
 +       },
 +       subtitle: {
-+           text: 'per quarter'
++           text: 'per quarter',
 +       },
         series: [{
             type: 'column',
             xKey: 'beverage',
-            yKeys: ['Q1', 'Q2', 'Q3', 'Q4']
-            label: {}
-        }]
+            yKeys: ['Q1', 'Q2', 'Q3', 'Q4'],
+            label: {},
+        }],
     };
 }
 SNIPPET

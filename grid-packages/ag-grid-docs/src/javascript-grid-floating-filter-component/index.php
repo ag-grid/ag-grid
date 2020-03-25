@@ -19,7 +19,7 @@ include '../documentation-main/documentation_header.php';
 
 <p>
     This page focuses on writing your own floating filters components. To see general information about floating filters
-    in ag-Grid see <a href="../javascript-grid-filtering/#floatingFilter">floating filters</a>.
+    in ag-Grid see <a href="../javascript-grid-floating-filters/">floating filters</a>.
 </p>
 
 <h2>Floating Filter LifeCycle</h2>
@@ -194,7 +194,7 @@ interface IFloatingFilterParams {
     <li>The columns with the floating filter are using the standard number filter as the base filter</li>
     <li>Since the parent filter is the number filter, the floating filter methods <code>onFloatingFilterChanged(parentModel)</code>,
         and <code>currentParentModel():parentModel</code> take and receive model objects
-        that correspond to <a href="../javascript-grid-filter-number/#model">the model for the number filter</a></li>
+        that correspond to <a href="../javascript-grid-filter-provided-simple/#simple-filter-models">the model for the number filter</a></li>
     <li>Since this floating filters are providing a subset of the functionality of their parent filter, which can
         filter for other conditions which are not 'greaterThan' the user is prevented to see the parent filter by adding
         <code>suppressFilterButton:true</code> in the <code>floatingFilterComponentParams</code> and <code>suppressMenu:true</code> in

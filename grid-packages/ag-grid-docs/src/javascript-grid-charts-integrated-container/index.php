@@ -48,6 +48,12 @@ interface ChartRef {
         and the interactions of the grid.
     </p>
 
+    <note>
+        When providing an element to display your chart, it is important to always set the <code>popupParent</code>
+        to be <code>document.body</code>. This will allow floating elements within the chart's menus to be positioned
+        correctly.
+    </note>
+
     <p>
         From the example, the following can be noted:
     </p>
