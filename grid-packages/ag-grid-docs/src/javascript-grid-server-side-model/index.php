@@ -21,7 +21,7 @@ include '../documentation-main/documentation_header.php';
 </p>
 
 <div class="animated-example">
-    <img data-gifffer="server-side-showcase.gif" data-gifffer-width="99%" />
+    <img data-gifffer="server-side-showcase.gif" data-gifffer-width="99%" style="width: 100%; height: 100%" />
 </div>
 
 <p>

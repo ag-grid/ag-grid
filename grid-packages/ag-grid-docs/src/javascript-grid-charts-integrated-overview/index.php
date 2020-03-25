@@ -126,7 +126,7 @@ SNIPPET
 </ul>
 
 <div class="animated-example">
-    <img data-gifffer="chart-showcase.gif" data-gifffer-width="99%" />
+    <img data-gifffer="chart-showcase.gif" data-gifffer-width="99%" style="width: 100%; height: 100%" />
 </div>
 
 <p>

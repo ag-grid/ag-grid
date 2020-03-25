@@ -50,7 +50,7 @@ include '../documentation-main/documentation_header.php';
     </p>
 
     <div class="animated-example">
-        <img data-gifffer="chart-settings.gif" data-gifffer-width="99%" />
+        <img data-gifffer="chart-settings.gif" data-gifffer-width="99%" style="width: 100%; height: 100%" />
     </div>
 
     <p>
@@ -71,7 +71,7 @@ include '../documentation-main/documentation_header.php';
     </p>
 
     <div class="animated-example">
-        <img data-gifffer="chart-data.gif" data-gifffer-width="99%" />
+        <img data-gifffer="chart-data.gif" data-gifffer-width="99%" style="width: 100%; height: 100%" />
     </div>
 
     <p>
@@ -97,7 +97,7 @@ include '../documentation-main/documentation_header.php';
     </p>
 
     <div class="animated-example">
-        <img data-gifffer="chart-format.gif" data-gifffer-width="99%" />
+        <img data-gifffer="chart-format.gif" data-gifffer-width="99%" style="width: 100%; height: 100%" />
     </div>
 
     <p>
@@ -119,7 +119,7 @@ include '../documentation-main/documentation_header.php';
     </p>
 
     <div class="animated-example">
-        <img data-gifffer="chart-unlinking.gif" data-gifffer-width="99%" />
+        <img data-gifffer="chart-unlinking.gif" data-gifffer-width="99%" style="width: 100%; height: 100%" />
     </div>
 
     <p>
