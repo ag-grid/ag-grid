@@ -963,18 +963,10 @@
     content: ""; }
   .ag-theme-balham .ag-root-wrapper {
     background-color: white; }
-  .ag-theme-balham *, .ag-theme-balham *:focus, .ag-theme-balham *:after, .ag-theme-balham *:before {
+  .ag-theme-balham [class^='ag-'], .ag-theme-balham [class^='ag-']:focus, .ag-theme-balham [class^='ag-']:after, .ag-theme-balham [class^='ag-']:before {
     box-sizing: border-box;
     outline: none; }
-  .ag-theme-balham input, .ag-theme-balham button, .ag-theme-balham select, .ag-theme-balham optgroup, .ag-theme-balham textarea {
-    color: inherit;
-    font-family: inherit;
-    font-size: inherit;
-    font-weight: inherit;
-    line-height: inherit; }
-  .ag-theme-balham input {
-    margin: 0; }
-  .ag-theme-balham ::-ms-clear {
+  .ag-theme-balham [class^='ag-']::-ms-clear {
     display: none; }
   .ag-theme-balham .ag-checkbox .ag-input-wrapper,
   .ag-theme-balham .ag-radio-button .ag-input-wrapper {
@@ -989,50 +981,53 @@
     margin-left: 4px; }
   .ag-theme-balham .ag-rtl .ag-label-align-right .ag-label {
     margin-right: 4px; }
-  .ag-theme-balham input,
-  .ag-theme-balham textarea,
-  .ag-theme-balham select,
-  .ag-theme-balham button {
-    background-color: white;
-    color: inherit; }
-  .ag-theme-balham input:not([type]),
-  .ag-theme-balham input[type='text'],
-  .ag-theme-balham input[type='number'],
-  .ag-theme-balham input[type='tel'],
-  .ag-theme-balham input[type='date'],
-  .ag-theme-balham input[type='datetime-local'],
-  .ag-theme-balham textarea {
+  .ag-theme-balham input[class^='ag-'] {
+    margin: 0;
+    background-color: white; }
+  .ag-theme-balham textarea[class^='ag-'],
+  .ag-theme-balham select[class^='ag-'] {
+    background-color: white; }
+  .ag-theme-balham input[class^='ag-']:not([type]),
+  .ag-theme-balham input[class^='ag-'][type='text'],
+  .ag-theme-balham input[class^='ag-'][type='number'],
+  .ag-theme-balham input[class^='ag-'][type='tel'],
+  .ag-theme-balham input[class^='ag-'][type='date'],
+  .ag-theme-balham input[class^='ag-'][type='datetime-local'],
+  .ag-theme-balham textarea[class^='ag-'] {
+    font-size: inherit;
+    line-height: inherit;
+    color: inherit;
     border-width: 1px;
     border-style: solid;
     border-color: #95a5a6; }
-    .ag-theme-balham input:not([type]):disabled,
-    .ag-theme-balham input[type='text']:disabled,
-    .ag-theme-balham input[type='number']:disabled,
-    .ag-theme-balham input[type='tel']:disabled,
-    .ag-theme-balham input[type='date']:disabled,
-    .ag-theme-balham input[type='datetime-local']:disabled,
-    .ag-theme-balham textarea:disabled {
+    .ag-theme-balham input[class^='ag-']:not([type]):disabled,
+    .ag-theme-balham input[class^='ag-'][type='text']:disabled,
+    .ag-theme-balham input[class^='ag-'][type='number']:disabled,
+    .ag-theme-balham input[class^='ag-'][type='tel']:disabled,
+    .ag-theme-balham input[class^='ag-'][type='date']:disabled,
+    .ag-theme-balham input[class^='ag-'][type='datetime-local']:disabled,
+    .ag-theme-balham textarea[class^='ag-']:disabled {
       color: rgba(0, 0, 0, 0.38);
       background-color: #ebebeb;
       border-color: rgba(149, 165, 166, 0.3); }
-    .ag-theme-balham input:not([type]):focus,
-    .ag-theme-balham input[type='text']:focus,
-    .ag-theme-balham input[type='number']:focus,
-    .ag-theme-balham input[type='tel']:focus,
-    .ag-theme-balham input[type='date']:focus,
-    .ag-theme-balham input[type='datetime-local']:focus,
-    .ag-theme-balham textarea:focus {
+    .ag-theme-balham input[class^='ag-']:not([type]):focus,
+    .ag-theme-balham input[class^='ag-'][type='text']:focus,
+    .ag-theme-balham input[class^='ag-'][type='number']:focus,
+    .ag-theme-balham input[class^='ag-'][type='tel']:focus,
+    .ag-theme-balham input[class^='ag-'][type='date']:focus,
+    .ag-theme-balham input[class^='ag-'][type='datetime-local']:focus,
+    .ag-theme-balham textarea[class^='ag-']:focus {
       outline: none;
       box-shadow: 0 0 2px 1px #719ECE;
       border-color: #719ECE; }
-  .ag-theme-balham input[type='number'] {
+  .ag-theme-balham input[class^='ag-'][type='number'] {
     -moz-appearance: textfield; }
-    .ag-theme-balham input[type='number']::-webkit-outer-spin-button, .ag-theme-balham input[type='number']::-webkit-inner-spin-button {
+    .ag-theme-balham input[class^='ag-'][type='number']::-webkit-outer-spin-button, .ag-theme-balham input[class^='ag-'][type='number']::-webkit-inner-spin-button {
       -webkit-appearance: none;
       margin: 0; }
-  .ag-theme-balham input[type='range'] {
+  .ag-theme-balham input[class^='ag-'][type='range'] {
     padding: 0; }
-  .ag-theme-balham input[type='button']:focus, .ag-theme-balham button:focus {
+  .ag-theme-balham input[class^='ag-'][type='button']:focus, .ag-theme-balham button:focus {
     box-shadow: 0 0 2px 1px #719ECE; }
   .ag-theme-balham .ag-drag-handle {
     color: rgba(0, 0, 0, 0.54); }
@@ -1716,8 +1711,6 @@
     margin-right: 8px; }
   .ag-theme-balham .ag-set-filter-list {
     height: 168px; }
-  .ag-theme-balham .ag-set-filter-item {
-    height: 28px; }
   .ag-theme-balham .ag-set-filter-filter {
     margin-top: 6px;
     margin-left: 6px;
@@ -1759,6 +1752,11 @@
     color: #000;
     overflow: hidden; }
   .ag-theme-balham .ag-side-button-button {
+    color: inherit;
+    font-family: inherit;
+    font-size: inherit;
+    font-weight: inherit;
+    line-height: inherit;
     background: transparent;
     padding: 8px 0 8px 0;
     width: calc(100% + 1px);
@@ -1812,6 +1810,22 @@
     padding-left: 4px; }
   .ag-theme-balham .ag-rtl .ag-filter-toolpanel-header, .ag-theme-balham .ag-rtl .ag-filter-toolpanel-search {
     padding-right: 4px; }
+  .ag-theme-balham .ag-filter-toolpanel-group.ag-has-filter > .ag-group-title-bar .ag-group-title:after {
+    font-family: "agGridBalham";
+    font-size: 16px;
+    line-height: 16px;
+    font-style: normal;
+    font-weight: normal;
+    font-variant: normal;
+    text-transform: none;
+    /* Better Font Rendering =========== */
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    content: ""; }
+    .ag-theme-balham .ag-ltr .ag-filter-toolpanel-group.ag-has-filter > .ag-group-title-bar .ag-group-title:after {
+      padding-left: 4px; }
+    .ag-theme-balham .ag-rtl .ag-filter-toolpanel-group.ag-has-filter > .ag-group-title-bar .ag-group-title:after {
+      padding-right: 4px; }
   .ag-theme-balham .ag-filter-toolpanel-group-level-0-header {
     height: 32px; }
   .ag-theme-balham .ag-filter-toolpanel-group-item {
@@ -1983,6 +1997,11 @@
   .ag-theme-balham .ag-rtl .ag-floating-filter-button {
     margin-right: 12px; }
   .ag-theme-balham .ag-floating-filter-button-button {
+    color: inherit;
+    font-family: inherit;
+    font-size: inherit;
+    font-weight: inherit;
+    line-height: inherit;
     appearance: none;
     background: transparent;
     border: none;
@@ -2408,21 +2427,21 @@
   .ag-theme-balham .ag-header-row {
     font-weight: 600;
     color: rgba(0, 0, 0, 0.54); }
-  .ag-theme-balham .ag-ltr input:not([type]),
-  .ag-theme-balham .ag-ltr input[type='text'],
-  .ag-theme-balham .ag-ltr input[type='number'],
-  .ag-theme-balham .ag-ltr input[type='tel'],
-  .ag-theme-balham .ag-ltr input[type='date'],
-  .ag-theme-balham .ag-ltr input[type='datetime-local'],
-  .ag-theme-balham .ag-ltr textarea {
+  .ag-theme-balham .ag-ltr input[class^='ag-']:not([type]),
+  .ag-theme-balham .ag-ltr input[class^='ag-'][type='text'],
+  .ag-theme-balham .ag-ltr input[class^='ag-'][type='number'],
+  .ag-theme-balham .ag-ltr input[class^='ag-'][type='tel'],
+  .ag-theme-balham .ag-ltr input[class^='ag-'][type='date'],
+  .ag-theme-balham .ag-ltr input[class^='ag-'][type='datetime-local'],
+  .ag-theme-balham .ag-ltr textarea[class^='ag-'] {
     padding-left: 4px; }
-  .ag-theme-balham .ag-rtl input:not([type]),
-  .ag-theme-balham .ag-rtl input[type='text'],
-  .ag-theme-balham .ag-rtl input[type='number'],
-  .ag-theme-balham .ag-rtl input[type='tel'],
-  .ag-theme-balham .ag-rtl input[type='date'],
-  .ag-theme-balham .ag-rtl input[type='datetime-local'],
-  .ag-theme-balham .ag-rtl textarea {
+  .ag-theme-balham .ag-rtl input[class^='ag-']:not([type]),
+  .ag-theme-balham .ag-rtl input[class^='ag-'][type='text'],
+  .ag-theme-balham .ag-rtl input[class^='ag-'][type='number'],
+  .ag-theme-balham .ag-rtl input[class^='ag-'][type='tel'],
+  .ag-theme-balham .ag-rtl input[class^='ag-'][type='date'],
+  .ag-theme-balham .ag-rtl input[class^='ag-'][type='datetime-local'],
+  .ag-theme-balham .ag-rtl textarea[class^='ag-'] {
     padding-right: 4px; }
   .ag-theme-balham .ag-column-drop-vertical-empty-message, .ag-theme-balham .ag-status-bar {
     font-weight: 600;

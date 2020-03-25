@@ -221,7 +221,7 @@ export declare class GridApi {
     forEachNodeAfterFilter(callback: (rowNode: RowNode, index: number) => void): void;
     forEachNodeAfterFilterAndSort(callback: (rowNode: RowNode, index: number) => void): void;
     getFilterApiForColDef(colDef: any): any;
-    getFilterInstance(key: string | Column): IFilterComp;
+    getFilterInstance(key: string | Column, callback?: (filter: IFilterComp) => void): IFilterComp;
     getFilterApi(key: string | Column): IFilterComp;
     destroyFilter(key: string | Column): void;
     getStatusPanel(key: string): IStatusPanelComp;
