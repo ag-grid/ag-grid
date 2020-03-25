@@ -1755,6 +1755,22 @@
     padding-left: 8px; }
   .ag-theme-material .ag-rtl .ag-filter-toolpanel-header, .ag-theme-material .ag-rtl .ag-filter-toolpanel-search {
     padding-right: 8px; }
+  .ag-theme-material .ag-filter-toolpanel-group.ag-has-filter > .ag-group-title-bar .ag-group-title:after {
+    font-family: "agGridMaterial";
+    font-size: 18px;
+    line-height: 18px;
+    font-style: normal;
+    font-weight: normal;
+    font-variant: normal;
+    text-transform: none;
+    /* Better Font Rendering =========== */
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    content: ""; }
+    .ag-theme-material .ag-ltr .ag-filter-toolpanel-group.ag-has-filter > .ag-group-title-bar .ag-group-title:after {
+      padding-left: 8px; }
+    .ag-theme-material .ag-rtl .ag-filter-toolpanel-group.ag-has-filter > .ag-group-title-bar .ag-group-title:after {
+      padding-right: 8px; }
   .ag-theme-material .ag-filter-toolpanel-group-level-0-header {
     height: 64px; }
   .ag-theme-material .ag-filter-toolpanel-group-item {

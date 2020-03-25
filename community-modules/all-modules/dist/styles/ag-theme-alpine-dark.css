@@ -1045,6 +1045,22 @@
     padding-left: 6px; }
   .ag-theme-alpine-dark .ag-rtl .ag-filter-toolpanel-header, .ag-theme-alpine-dark .ag-rtl .ag-filter-toolpanel-search {
     padding-right: 6px; }
+  .ag-theme-alpine-dark .ag-filter-toolpanel-group.ag-has-filter > .ag-group-title-bar .ag-group-title:after {
+    font-family: "agGridAlpine";
+    font-size: 16px;
+    line-height: 16px;
+    font-style: normal;
+    font-weight: normal;
+    font-variant: normal;
+    text-transform: none;
+    /* Better Font Rendering =========== */
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    content: ""; }
+    .ag-theme-alpine-dark .ag-ltr .ag-filter-toolpanel-group.ag-has-filter > .ag-group-title-bar .ag-group-title:after {
+      padding-left: 6px; }
+    .ag-theme-alpine-dark .ag-rtl .ag-filter-toolpanel-group.ag-has-filter > .ag-group-title-bar .ag-group-title:after {
+      padding-right: 6px; }
   .ag-theme-alpine-dark .ag-filter-toolpanel-group-level-0-header {
     height: 48px; }
   .ag-theme-alpine-dark .ag-filter-toolpanel-group-item {
