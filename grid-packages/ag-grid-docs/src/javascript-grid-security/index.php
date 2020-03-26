@@ -113,7 +113,7 @@ let colDef = {
     </p>
 
     <p>
-        Below are the results of running SonarQube against version 22.0.0 of <code>ag-grid-community</code>
+        Below are the results of running SonarQube against version 23.0.2 of <code>ag-grid-community</code>
         and <code>ag-grid-enterprise</code>.
     </p>
 
