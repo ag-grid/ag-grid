@@ -117,7 +117,6 @@
     .ag-dnd-ghost {
         @include ag-card();
         overflow: hidden;
-        padding: 3px;
         text-overflow: ellipsis;
         z-index: 10;
         @include ag-border(secondary);

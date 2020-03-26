@@ -1,5 +1,5 @@
 const { JSDOM } = require('jsdom');
-const { window, document } = new JSDOM('<html></html>');
+const { window, document } = new JSDOM('<!DOCTYPE html><html lang="en"></html>');
 
 window.Date = Date;
 global.window = window;

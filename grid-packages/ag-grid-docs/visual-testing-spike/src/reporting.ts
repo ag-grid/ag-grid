@@ -50,7 +50,7 @@ const init = () => {
 };
 
 const pageTemplate = (content: string) => /*html*/ `<!doctype html>
-<html>
+<html lang="en">
 	<head>
 		<meta charset="utf-8"/>
         <title>Visual Regression Results</title>
