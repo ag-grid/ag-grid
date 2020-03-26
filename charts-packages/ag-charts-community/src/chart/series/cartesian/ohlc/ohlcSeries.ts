@@ -292,6 +292,7 @@ export class OHLCSeries extends CartesianSeries {
             const yClose = yScale.convert(close) + yOffset;
 
             return {
+                series: this,
                 seriesDatum: data[i],
                 date: xScale.convert(dateDatum) + xOffset,
                 open: yOpen,

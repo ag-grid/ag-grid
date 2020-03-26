@@ -13,7 +13,6 @@ import {
 import { Label } from "../../label";
 import { PointerEvents } from "../../../scene/node";
 import { LegendDatum } from "../../legend";
-import { Shape } from "../../../scene/shape/shape";
 import { CartesianSeries } from "./cartesianSeries";
 import { ChartAxisDirection, flipChartAxisDirection } from "../../chartAxis";
 import { Chart } from "../../chart";
@@ -243,21 +242,7 @@ export class ColumnSeries extends CartesianSeries {
         fill: 'yellow'
     };
 
-    private highlightedNode?: Rect;
-
-    highlightNode(node: Shape) {
-        if (!(node instanceof Rect)) {
-            return;
-        }
-
-        this.highlightedNode = node;
-        this.scheduleLayout();
-    }
-
-    dehighlightNode() {
-        this.highlightedNode = undefined;
-        this.scheduleLayout();
-    }
+    protected highlightedDatum?: SelectionDatum;
 
     processData(): boolean {
         const { xKey, yKeys, seriesItemEnabled } = this;
@@ -427,6 +412,7 @@ export class ColumnSeries extends CartesianSeries {
                 }
 
                 selectionData.push({
+                    series: this,
                     seriesDatum,
                     yValue,
                     yKey,
@@ -463,7 +449,7 @@ export class ColumnSeries extends CartesianSeries {
     }
 
     private updateRectSelection(selectionData: SelectionDatum[]): void {
-        const { fillOpacity, strokeOpacity, shadow, highlightedNode, highlightStyle: { fill, stroke } } = this;
+        const { fillOpacity, strokeOpacity, shadow, highlightedDatum, highlightStyle: { fill, stroke } } = this;
         const updateRects = this.rectSelection.setData(selectionData);
 
         updateRects.exit.remove();
@@ -476,12 +462,16 @@ export class ColumnSeries extends CartesianSeries {
         const rectSelection = updateRects.merge(enterRects);
 
         rectSelection.each((rect, datum) => {
+            const highlighted = highlightedDatum &&
+                highlightedDatum.seriesDatum === datum.seriesDatum &&
+                highlightedDatum.series === datum.series &&
+                highlightedDatum.yKey === datum.yKey;
             rect.x = datum.x;
             rect.y = datum.y;
             rect.width = datum.width;
             rect.height = datum.height;
-            rect.fill = rect === highlightedNode && fill !== undefined ? fill : datum.fill;
-            rect.stroke = rect === highlightedNode && stroke !== undefined ? stroke : datum.stroke;
+            rect.fill = highlighted && fill !== undefined ? fill : datum.fill;
+            rect.stroke = highlighted && stroke !== undefined ? stroke : datum.stroke;
             rect.fillOpacity = fillOpacity;
             rect.strokeOpacity = strokeOpacity;
             rect.strokeWidth = datum.strokeWidth;

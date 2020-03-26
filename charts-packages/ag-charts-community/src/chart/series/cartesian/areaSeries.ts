@@ -4,7 +4,6 @@ import { DropShadow } from "../../../scene/dropShadow";
 import { SeriesNodeDatum, CartesianTooltipRendererParams as AreaTooltipRendererParams } from "../series";
 import { PointerEvents } from "../../../scene/node";
 import { LegendDatum } from "../../legend";
-import { Shape } from "../../../scene/shape/shape";
 import { Path } from "../../../scene/shape/path";
 import palette from "../../palettes";
 import { Marker } from "../../marker/marker";
@@ -23,8 +22,10 @@ interface AreaSelectionDatum {
 }
 
 interface MarkerSelectionDatum extends SeriesNodeDatum {
-    x: number;
-    y: number;
+    point: {
+        x: number;
+        y: number;
+    };
     fill?: string;
     stroke?: string;
     yKey: string;
@@ -47,6 +48,7 @@ export class AreaSeries extends CartesianSeries {
     private areaSelection: Selection<Path, Group, AreaSelectionDatum, any> = Selection.select(this.areaGroup).selectAll<Path>();
     private strokeSelection: Selection<Path, Group, AreaSelectionDatum, any> = Selection.select(this.strokeGroup).selectAll<Path>();
     private markerSelection: Selection<Marker, Group, any, any> = Selection.select(this.markerGroup).selectAll<Marker>();
+    private markerSelectionData: MarkerSelectionDatum[] = [];
 
     /**
      * The assumption is that the values will be reset (to `true`)
@@ -145,21 +147,7 @@ export class AreaSeries extends CartesianSeries {
             fill: 'yellow'
         };
 
-    private highlightedNode?: Marker;
-
-    highlightNode(node: Shape) {
-        if (!(node instanceof Marker)) {
-            return;
-        }
-
-        this.highlightedNode = node;
-        this.scheduleLayout();
-    }
-
-    dehighlightNode() {
-        this.highlightedNode = undefined;
-        this.scheduleLayout();
-    }
+    protected highlightedDatum?: MarkerSelectionDatum;
 
     processData(): boolean {
         const { xKey, yKeys, seriesItemEnabled } = this;
@@ -302,11 +290,11 @@ export class AreaSeries extends CartesianSeries {
 
                 if (marker) {
                     markerSelectionData.push({
+                        series: this,
                         seriesDatum,
                         yValue,
                         yKey,
-                        x,
-                        y,
+                        point: { x, y },
                         fill: fills[j % fills.length],
                         stroke: strokes[j % strokes.length]
                     });
@@ -415,6 +403,8 @@ export class AreaSeries extends CartesianSeries {
     private updateMarkerSelection(markerSelectionData: MarkerSelectionDatum[]): void {
         const { marker, xKey } = this;
 
+        this.markerSelectionData = markerSelectionData;
+
         if (!marker.shape) {
             return;
         }
@@ -423,7 +413,7 @@ export class AreaSeries extends CartesianSeries {
         const markerFormatter = marker.formatter;
         const markerStrokeWidth = marker.strokeWidth !== undefined ? marker.strokeWidth : this.strokeWidth;
         const markerSize = marker.size;
-        const { seriesItemEnabled, highlightedNode } = this;
+        const { seriesItemEnabled, highlightedDatum } = this;
         const { fill: highlightFill, stroke: highlightStroke } = this.highlightStyle;
         const updateMarkers = this.markerSelection.setData(markerSelectionData);
 
@@ -433,9 +423,12 @@ export class AreaSeries extends CartesianSeries {
         const markerSelection = updateMarkers.merge(enterMarkers);
 
         markerSelection.each((node, datum) => {
-            const isHighlightedNode = node === highlightedNode;
-            const markerFill = isHighlightedNode && highlightFill !== undefined ? highlightFill : marker.fill || datum.fill;
-            const markerStroke = isHighlightedNode && highlightStroke !== undefined ? highlightStroke : marker.stroke || datum.stroke;
+            const highlighted = highlightedDatum &&
+                highlightedDatum.seriesDatum === datum.seriesDatum &&
+                highlightedDatum.series === datum.series &&
+                highlightedDatum.yKey === datum.yKey;
+            const markerFill = highlighted && highlightFill !== undefined ? highlightFill : marker.fill || datum.fill;
+            const markerStroke = highlighted && highlightStroke !== undefined ? highlightStroke : marker.stroke || datum.stroke;
             let markerFormat: CartesianSeriesMarkerFormat | undefined = undefined;
 
             if (markerFormatter) {
@@ -447,7 +440,7 @@ export class AreaSeries extends CartesianSeries {
                     stroke: markerStroke,
                     strokeWidth: markerStrokeWidth,
                     size: markerSize,
-                    highlighted: isHighlightedNode
+                    highlighted
                 });
             }
 
@@ -460,12 +453,16 @@ export class AreaSeries extends CartesianSeries {
                 ? markerFormat.size
                 : markerSize;
 
-            node.translationX = datum.x;
-            node.translationY = datum.y;
+            node.translationX = datum.point.x;
+            node.translationY = datum.point.y;
             node.visible = marker.enabled && node.size > 0 && !!seriesItemEnabled.get(datum.yKey);
         });
 
         this.markerSelection = markerSelection;
+    }
+
+    getNodeDatums(): MarkerSelectionDatum[] {
+        return this.markerSelectionData;
     }
 
     getTooltipHtml(nodeDatum: MarkerSelectionDatum): string {

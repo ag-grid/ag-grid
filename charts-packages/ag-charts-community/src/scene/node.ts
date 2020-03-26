@@ -240,13 +240,6 @@ export abstract class Node { // Don't confuse with `window.Node`.
     matrix = new Matrix();
     protected inverseMatrix = new Matrix();
 
-    /**
-     * Calculates the combined inverse transformation for this node,
-     * and uses it to convert the given transformed point
-     * to the untransformed one.
-     * @param x
-     * @param y
-     */
     transformPoint(x: number, y: number) {
         const matrix = Matrix.flyweight(this.matrix);
 
@@ -257,6 +250,18 @@ export abstract class Node { // Don't confuse with `window.Node`.
         }
 
         return matrix.invertSelf().transformPoint(x, y);
+    }
+
+    inverseTransformPoint(x: number, y: number) {
+        const matrix = Matrix.flyweight(this.matrix);
+
+        let parent = this.parent;
+        while (parent) {
+            matrix.preMultiplySelf(parent.matrix);
+            parent = parent.parent;
+        }
+
+        return matrix.transformPoint(x, y);
     }
 
     // TODO: should this be `true` by default as well?

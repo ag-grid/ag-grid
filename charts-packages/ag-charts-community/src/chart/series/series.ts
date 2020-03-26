@@ -1,6 +1,5 @@
 import { Group } from "../../scene/group";
 import { LegendDatum } from "../legend";
-import { Shape } from "../../scene/shape/shape";
 import { Observable, reactive } from "../../util/observable";
 import { ChartAxis, ChartAxisDirection } from "../chartAxis";
 import { Chart } from "../chart";
@@ -9,10 +8,21 @@ import { createId } from "../../util/id";
 /**
  * `D` - raw series datum, an element in the {@link Series.data} array.
  * `SeriesNodeDatum` - processed series datum used in node selections,
- *                     contains information used to render pie sectors, bars, line markers, etc.
+ *                     contains information used to render pie sectors, bars,
+ *                     markers, etc.
  */
 export interface SeriesNodeDatum {
+    // For example, in `sectorNode.datum.seriesDatum`:
+    // `sectorNode` - represents a pie slice
+    // `datum` - contains metadata derived from the immutable series datum and used
+    //           to set the properties of the node, such as start/end angles
+    // `seriesDatum` - an element from the `series.data` array
+    series: Series;
     seriesDatum: any;
+    point?: { // in local (series) coordinates
+        x: number;
+        y: number;
+    }
 }
 
 export interface TooltipRendererParams {
@@ -99,7 +109,12 @@ export abstract class Series extends Observable {
     abstract processData(): boolean;
     abstract update(): void;
 
-    abstract getTooltipHtml(nodeDatum: SeriesNodeDatum): string;
+    abstract getTooltipHtml(seriesDatum: any): string;
+
+    getNodeDatums(): SeriesNodeDatum[] {
+        // Returns node datums associated with the rendered portion of the series' data.
+        return [];
+    }
 
     /**
      * @private
@@ -115,8 +130,17 @@ export abstract class Series extends Observable {
         this.visible = enabled;
     }
 
-    abstract highlightNode(node: Shape): void;
-    abstract dehighlightNode(): void;
+    protected highlightedDatum?: SeriesNodeDatum;
+
+    highlightDatum(datum: SeriesNodeDatum): void {
+        this.highlightedDatum = datum;
+        this.scheduleLayout();
+    }
+
+    dehighlightDatum(): void {
+        this.highlightedDatum = undefined;
+        this.scheduleLayout();
+    }
 
     readonly scheduleLayout = () => {
         this.fireEvent({ type: 'layoutChange' });

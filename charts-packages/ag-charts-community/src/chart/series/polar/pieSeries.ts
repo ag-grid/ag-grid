@@ -278,8 +278,9 @@ export class PieSeries extends PolarSeries {
             }
 
             groupSelectionData.push({
-                index: datumIndex,
+                series: this,
                 seriesDatum: data[datumIndex],
+                index: datumIndex,
                 radius,
                 startAngle,
                 endAngle,

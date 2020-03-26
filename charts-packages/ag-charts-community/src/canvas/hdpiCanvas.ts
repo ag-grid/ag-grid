@@ -19,6 +19,9 @@ export class HdpiCanvas {
         this.context = this.element.getContext('2d')!;
         this.updatePixelRatio(0, false);
         this.resize(this._width = width, this._height = height);
+        // getBoundingClientRect call is expensive, so we only query
+        // the rect when the page was scrolled or zoomed and cache the result.
+        window.addEventListener('scroll', this.updateClientRects);
     }
 
     private _container: HTMLElement | undefined = undefined;
@@ -31,6 +34,7 @@ export class HdpiCanvas {
             }
 
             this._container = value;
+            this.updateClientRects();
         }
     }
     get container(): HTMLElement | undefined {
@@ -46,9 +50,27 @@ export class HdpiCanvas {
     }
 
     destroy() {
+        window.removeEventListener('scroll', this.updateClientRects);
         this.element.remove();
         (this as any)._canvas = undefined;
         Object.freeze(this);
+    }
+
+    private updateClientRects = () => {
+        if (this.container) {
+            this._clientRect = this.element.getBoundingClientRect();
+            this._bodyRect = this.document.body.getBoundingClientRect()
+        }
+    }
+
+    private _bodyRect: DOMRect;
+    get bodyRect(): DOMRect {
+        return this._bodyRect || (this._bodyRect = this.document.body.getBoundingClientRect());
+    }
+
+    private _clientRect: DOMRect;
+    get clientRect(): DOMRect {
+        return this._clientRect || (this._clientRect = this.element.getBoundingClientRect());
     }
 
     toImage(): HTMLImageElement {

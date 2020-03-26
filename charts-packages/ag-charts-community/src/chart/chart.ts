@@ -51,7 +51,54 @@ const defaultTooltipCss = `
     border-bottom-left-radius: 5px;
     border-bottom-right-radius: 5px;
 }
+
+.ag-chart-tooltip::before {
+    content: "";
+
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+
+    border: 6px solid #989898;
+
+    border-left-color: transparent;
+    border-right-color: transparent;
+    border-top-color: #989898;
+    border-bottom-color: transparent;
+
+    width: 0;
+    height: 0;
+
+    margin: 0 auto;
+}
+
+.ag-chart-tooltip::after {
+    content: "";
+
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+
+    border: 5px solid black;
+
+    border-left-color: transparent;
+    border-right-color: transparent;
+    border-top-color: rgb(244, 244, 244);
+    border-bottom-color: transparent;
+
+    width: 0;
+    height: 0;
+
+    margin: 0 auto;
+}
 `;
+
+export interface TooltipMeta {
+    pageX: number;
+    pageY: number;
+}
 
 export abstract class Chart extends Observable {
     readonly id = createId(this);
@@ -652,6 +699,7 @@ export abstract class Chart extends Observable {
         chartElement.removeEventListener('click', this.onClick);
     }
 
+    // x/y are local canvas coordinates in CSS pixels, not actual pixels
     private pickSeriesNode(x: number, y: number): {
         series: Series,
         node: Node
@@ -672,28 +720,86 @@ export abstract class Chart extends Observable {
     }
 
     private lastPick?: {
-        series: Series,
-        node: Shape
+        datum: SeriesNodeDatum,
+        node?: Shape // we may not always have an associated node, for example
+                     // when line series are rendered without markers
     };
+
+    // Provided x/y are in local canvas coordinates.
+    private pickClosestSeriesNodeDatum(x: number, y: number): SeriesNodeDatum | undefined {
+        const allSeries = this.series;
+
+        type Point = { x: number, y: number};
+
+        function getDistance(p1: Point, p2: Point): number {
+            return Math.sqrt((p1.x - p2.x)**2 + (p1.y - p2.y)**2);
+        }
+
+        let minDistance = Infinity;
+        let closestDatum: SeriesNodeDatum;
+        let closestSeries: Series;
+
+        for (let i = allSeries.length - 1; i >= 0; i--) {
+            const series = allSeries[i];
+            const hitPoint = series.group.transformPoint(x, y);
+            const datums = series.getNodeDatums();
+            datums.forEach(datum => {
+                if (!datum.point) {
+                    return;
+                }
+                const distance = getDistance(hitPoint, datum.point);
+                if (distance < minDistance) {
+                    minDistance = distance;
+                    closestDatum = datum;
+                    closestSeries = series;
+                }
+            });
+        }
+
+        if (closestDatum) {
+            return closestDatum;
+        }
+    }
 
     private readonly onMouseMove = (event: MouseEvent) => {
         const pick = this.pickSeriesNode(event.offsetX, event.offsetY);
+        const { lastPick } = this;
 
         if (pick) {
             const { node } = pick;
 
             if (node instanceof Shape) {
-                if (!this.lastPick || // cursor moved from empty space to a node
-                    this.lastPick.node !== node) { // cursor moved from one node to another
-                    this.onSeriesNodePick(event, pick.series, node);
+                if (!lastPick // cursor moved from empty space to a node
+                    || lastPick.node !== node) { // cursor moved from one node to another
+                    this.onSeriesDatumPick(event, node.datum, node);
                 } else if (pick.series.tooltipEnabled) { // cursor moved within the same node
                     this.showTooltip(event);
                 }
             }
-        } else if (this.lastPick) { // cursor moved from a node to empty space
-            this.lastPick.series.dehighlightNode();
-            this.hideTooltip();
-            this.lastPick = undefined;
+        } else {
+            if (this.tooltipTracking) { // tracking tooltip
+                const closestDatum = this.pickClosestSeriesNodeDatum(event.offsetX, event.offsetY);
+                if (closestDatum && closestDatum.point) {
+                    const { x, y } = closestDatum.point;
+                    const { canvas } = this.scene;
+                    const point = closestDatum.series.group.inverseTransformPoint(x, y);
+                    const canvasRect = canvas.element.getBoundingClientRect();
+                    this.onSeriesDatumPick({
+                        pageX: Math.round(canvasRect.x + point.x),
+                        pageY: Math.round(canvasRect.y + point.y)
+                    }, closestDatum);
+                    // this.onSeriesDatumPick(event, closestDatum);
+                    // this.showTooltip(event);
+                }
+                // else if (pick.series.tooltipEnabled) { // cursor moved within the same node
+                //     this.showTooltip(event);
+                // }
+            } else if (lastPick) { // cursor moved from a node to empty space
+                // this.lastPick.series.dehighlightNode();
+                lastPick.datum.series.dehighlightDatum();
+                this.hideTooltip();
+                this.lastPick = undefined;
+            }
         }
     }
 
@@ -714,22 +820,24 @@ export abstract class Chart extends Observable {
         }
     }
 
-    private onSeriesNodePick(event: MouseEvent, series: Series, node: Shape) {
+    private onSeriesDatumPick(meta: TooltipMeta, datum: SeriesNodeDatum, node?: Shape) {
         if (this.lastPick) {
-            this.lastPick.series.dehighlightNode();
+            // this.lastPick.series.dehighlightNode();
+            this.lastPick.datum.series.dehighlightDatum();
         }
 
         this.lastPick = {
-            series,
+            datum,
             node
         };
 
-        series.highlightNode(node);
+        // series.highlightNode(node);
+        datum.series.highlightDatum(datum);
 
-        const html = series.tooltipEnabled && series.getTooltipHtml(node.datum as SeriesNodeDatum);
+        const html = datum.series.tooltipEnabled && datum.series.getTooltipHtml(datum);
 
         if (html) {
-            this.showTooltip(event, html);
+            this.showTooltip(meta, html);
         }
     }
 
@@ -744,12 +852,15 @@ export abstract class Chart extends Observable {
         return this._tooltipClass;
     }
 
+    tooltipTracking = true;
+
     private toggleTooltip(visible?: boolean) {
         const classList = [Chart.defaultTooltipClass, this.tooltipClass];
         if (visible) {
             classList.push(`${Chart.defaultTooltipClass}-visible`);
         } else if (this.lastPick) {
-            this.lastPick.series.dehighlightNode();
+            // this.lastPick.series.dehighlightNode();
+            this.lastPick.datum.series.dehighlightDatum();
             this.lastPick = undefined;
         }
         this.tooltipElement.setAttribute('class', classList.join(' '));
@@ -759,7 +870,7 @@ export abstract class Chart extends Observable {
      * Shows tooltip at the given event's coordinates.
      * If the `html` parameter is missing, moves the existing tooltip to the new position.
      */
-    private showTooltip(event: MouseEvent, html?: string) {
+    private showTooltip(meta: TooltipMeta, html?: string) {
         const el = this.tooltipElement;
         const offset = this.tooltipOffset;
         const parent = el.parentElement;
@@ -775,15 +886,20 @@ export abstract class Chart extends Observable {
         }
 
         const tooltipRect = el.getBoundingClientRect();
-        const top = event.pageY + offset[1];
-        let left = event.pageX + offset[0];
 
-        if (tooltipRect &&
-            parent &&
-            parent.parentElement &&
-            (left - pageXOffset + tooltipRect.width > parent.parentElement.offsetWidth)) {
-            left -= tooltipRect.width + offset[0] * 2;
-        }
+        // const top = meta.pageY + offset[1];
+        // let left = meta.pageX + offset[0];
+
+        let left = meta.pageX - el.clientWidth / 2;
+        const top = meta.pageY - el.clientHeight - 8;
+
+        // if (parent && parent.parentElement) {
+        //     // Check if we need to flip the tooltip to the other side of the mouse cursor.
+        //     const flipTooltip = left - window.pageXOffset + tooltipRect.width > parent.parentElement.offsetWidth;
+        //     if (flipTooltip) {
+        //         left -= tooltipRect.width + offset[0] * 2;
+        //     }
+        // }
 
         el.style.left = `${left}px`;
         el.style.top = `${top}px`;

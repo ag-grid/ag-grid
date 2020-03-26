@@ -1,12 +1,10 @@
 import { Selection } from "../../../scene/selection";
 import { Group } from "../../../scene/group";
 import { SeriesNodeDatum, CartesianTooltipRendererParams } from "../series";
-import { numericExtent, finiteExtent } from "../../../util/array";
+import { finiteExtent } from "../../../util/array";
 import { toFixed } from "../../../util/number";
 import { LegendDatum } from "../../legend";
-import { Shape } from "../../../scene/shape/shape";
 import { LinearScale } from "../../../scale/linearScale";
-import { Marker } from "../../marker/marker";
 import { reactive } from "../../../util/observable";
 import { CartesianSeries, CartesianSeriesMarker, CartesianSeriesMarkerFormat } from "./cartesianSeries";
 import { ChartAxisDirection } from "../../chartAxis";
@@ -16,8 +14,10 @@ import { Chart } from "../../chart";
 import ContinuousScale from "../../../scale/continuousScale";
 
 interface GroupSelectionDatum extends SeriesNodeDatum {
-    x: number;
-    y: number;
+    point: {
+        x: number;
+        y: number;
+    };
     size: number;
 }
 
@@ -39,11 +39,10 @@ export class ScatterSeries extends CartesianSeries {
     private xData: any[] = [];
     private yData: any[] = [];
     private sizeData: number[] = [];
+    private groupSelectionData: GroupSelectionDatum[] = [];
     private sizeScale = new LinearScale();
 
     private groupSelection: Selection<Group, Group, GroupSelectionDatum, any> = Selection.select(this.group).selectAll<Group>();
-
-    private highlightedNode?: Marker;
 
     readonly marker = new CartesianSeriesMarker();
 
@@ -185,20 +184,6 @@ export class ScatterSeries extends CartesianSeries {
         }
     }
 
-    highlightNode(node: Shape) {
-        if (!(node instanceof Marker)) {
-            return;
-        }
-
-        this.highlightedNode = node;
-        this.scheduleLayout();
-    }
-
-    dehighlightNode() {
-        this.highlightedNode = undefined;
-        this.scheduleLayout();
-    }
-
     update(): void {
         const { visible, chart, xAxis, yAxis } = this;
 
@@ -227,7 +212,7 @@ export class ScatterSeries extends CartesianSeries {
             strokeWidth,
             fillOpacity,
             strokeOpacity,
-            highlightedNode
+            highlightedDatum
         } = this;
 
         const MarkerShape = getMarker(marker.shape);
@@ -236,9 +221,12 @@ export class ScatterSeries extends CartesianSeries {
         this.sizeScale.range = [marker.minSize, marker.size];
 
         const groupSelectionData: GroupSelectionDatum[] = xData.map((xDatum, i) => ({
+            series: this,
             seriesDatum: data[i],
-            x: xScale.convert(xDatum) + xOffset,
-            y: yScale.convert(yData[i]) + yOffset,
+            point: {
+                x: xScale.convert(xDatum) + xOffset,
+                y: yScale.convert(yData[i]) + yOffset
+            },
             size: sizeData.length ? sizeScale.convert(sizeData[i]) : marker.size
         }));
 
@@ -254,9 +242,11 @@ export class ScatterSeries extends CartesianSeries {
 
         groupSelection.selectByClass(MarkerShape)
             .each((node, datum) => {
-                const isHighlightedNode = node === highlightedNode;
-                const markerFill = isHighlightedNode && highlightFill !== undefined ? highlightFill : marker.fill || fill;
-                const markerStroke = isHighlightedNode && highlightStroke !== undefined ? highlightStroke : marker.stroke || stroke;
+                const highlighted = highlightedDatum &&
+                    highlightedDatum.series === datum.series &&
+                    highlightedDatum.seriesDatum === datum.seriesDatum;
+                const markerFill = highlighted && highlightFill !== undefined ? highlightFill : marker.fill || fill;
+                const markerStroke = highlighted && highlightStroke !== undefined ? highlightStroke : marker.stroke || stroke;
                 let markerFormat: CartesianSeriesMarkerFormat | undefined = undefined;
 
                 if (markerFormatter) {
@@ -268,7 +258,7 @@ export class ScatterSeries extends CartesianSeries {
                         stroke: markerStroke,
                         strokeWidth: markerStrokeWidth,
                         size: datum.size,
-                        highlighted: isHighlightedNode
+                        highlighted
                     });
                 }
 
@@ -282,12 +272,17 @@ export class ScatterSeries extends CartesianSeries {
                     : datum.size;
                 node.fillOpacity = fillOpacity;
                 node.strokeOpacity = strokeOpacity;
-                node.translationX = datum.x;
-                node.translationY = datum.y;
+                node.translationX = datum.point.x;
+                node.translationY = datum.point.y;
                 node.visible = marker.enabled && node.size > 0;
             });
 
+        this.groupSelectionData = groupSelectionData;
         this.groupSelection = groupSelection;
+    }
+
+    getNodeDatums(): GroupSelectionDatum[] {
+        return this.groupSelectionData;
     }
 
     getTooltipHtml(nodeDatum: GroupSelectionDatum): string {
