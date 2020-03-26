@@ -777,7 +777,8 @@ export abstract class Chart extends Observable {
                 }
             }
         } else {
-            if (this.tooltipTracking) { // tracking tooltip
+            let hideTooltip = false;
+            if (this.tooltipTracking) {
                 const closestDatum = this.pickClosestSeriesNodeDatum(event.offsetX, event.offsetY);
                 if (closestDatum && closestDatum.point) {
                     const { x, y } = closestDatum.point;
@@ -790,12 +791,14 @@ export abstract class Chart extends Observable {
                     }, closestDatum);
                     // this.onSeriesDatumPick(event, closestDatum);
                     // this.showTooltip(event);
+                } else {
+                    hideTooltip = true;
                 }
                 // else if (pick.series.tooltipEnabled) { // cursor moved within the same node
                 //     this.showTooltip(event);
                 // }
-            } else if (lastPick) { // cursor moved from a node to empty space
-                // this.lastPick.series.dehighlightNode();
+            }
+            if (hideTooltip && lastPick) { // cursor moved from a non-marker node to empty space
                 lastPick.datum.series.dehighlightDatum();
                 this.hideTooltip();
                 this.lastPick = undefined;
@@ -822,7 +825,6 @@ export abstract class Chart extends Observable {
 
     private onSeriesDatumPick(meta: TooltipMeta, datum: SeriesNodeDatum, node?: Shape) {
         if (this.lastPick) {
-            // this.lastPick.series.dehighlightNode();
             this.lastPick.datum.series.dehighlightDatum();
         }
 
@@ -859,7 +861,6 @@ export abstract class Chart extends Observable {
         if (visible) {
             classList.push(`${Chart.defaultTooltipClass}-visible`);
         } else if (this.lastPick) {
-            // this.lastPick.series.dehighlightNode();
             this.lastPick.datum.series.dehighlightDatum();
             this.lastPick = undefined;
         }
