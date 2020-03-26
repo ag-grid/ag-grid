@@ -59,7 +59,7 @@
     "jest-canvas-mock": "2.2.0",
     "raf": "3.4.1",
     "ts-jest": "^25.2.1",
-    "typescript": "3.7.4"
+    "typescript": "~3.6.5"
   },
   "publishConfig": {
     "access": "public"

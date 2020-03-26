@@ -115,7 +115,7 @@
     "terser-webpack-plugin": "^2.0.1",
     "ts-jest": "^25.2.1",
     "tslint": "^5.19.0",
-    "typescript": "^3.6.3",
+    "typescript": "~3.6.5",
     "webpack": "^4.39.0",
     "webpack-stream": "5.0.0"
   },
