@@ -360,13 +360,13 @@
         "url": "javascript-grid-change-detection/"
     },
     {
-        "title": "Internationalisation",
+        "title": "Localisation",
         "enterprise": false,
-        "description": "Support multiple languages with <span class=\"feature-highlight\">Internationalisation</span>.",
+        "description": "Support different languages with <span class=\"feature-highlight\">Localisation</span>.",
         "src": "javascript-grid-features/images/internationalisation.gif",
         "snippet": "gridOptions = {\n    localeText: {\n        lessThanOrEqual: 'menor o igual',\n        greaterThanOrEqual: 'mayor o igual',\n        ...\n    }\n}",
         "level": 0,
-        "url": "javascript-grid-internationalisation/"
+        "url": "javascript-grid-localisation/"
     },
     {
         "title": "Performance",

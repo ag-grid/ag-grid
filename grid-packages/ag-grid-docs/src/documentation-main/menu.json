@@ -1412,8 +1412,8 @@
             "showInCollapsed": true
           },
           {
-            "title": "Internationalisation",
-            "url": "javascript-grid-internationalisation/",
+            "title": "Localisation",
+            "url": "javascript-grid-localisation/",
             "showInCollapsed": true
           }
         ]

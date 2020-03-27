@@ -46,7 +46,10 @@
     },
     {
         "group": "Configuration",
-        "items": ["Column Definitions", "Grid Size"]
+        "items": [
+            "Column Definitions",
+            "Grid Size"
+        ]
     },
     {
         "group": "Styling & Appearance",
@@ -58,7 +61,7 @@
             "Column Spanning",
             "Custom Icons",
             "Full Width Rows",
-            "Internationalisation",
+            "Localisation",
             "Overlays",
             "Row Height",
             "Row Pinning",
@@ -82,6 +85,8 @@
     },
     {
         "group": "Performance",
-        "items": ["Performance"]
+        "items": [
+            "Performance"
+        ]
     }
 ]

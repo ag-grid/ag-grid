@@ -36,8 +36,8 @@ include '../documentation-main/documentation_header.php';
             RTL text support inside the grid.
         </li>
         <li>
-            <a href="../javascript-grid-internationalisation/">Internationalisation</a>:
-            How to internationalise the grid for multiple languages.
+            <a href="../javascript-grid-localisation/">localisation</a>:
+            How to localise the grid for different languages.
         </li>
     </ul>
 

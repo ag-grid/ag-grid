@@ -762,8 +762,8 @@
         "localeText<br />localeTextFunc": {
             "description": "You can change the text in the paging panels and the default filters by providing a <code>localeText</code> or a <code>localeTextFunc</code>.",
             "more": {
-                "name": "Internationalisation",
-                "url": "../javascript-grid-internationalisation/"
+                "name": "Localisation",
+                "url": "../javascript-grid-localisation/"
             }
         }
     },
@@ -815,7 +815,7 @@
         "frameworkComponents": {
             "description": "A map of component names to framework (React, Angular etc) components."
         }
-    },  
+    },
     "miscellaneous": {
         "meta": {
             "displayName": "Miscellaneous"

@@ -114,7 +114,7 @@ SNIPPET
     <li>While the data is obtained (during the simulated 5s delay shown above), the <code>setFilter</code> will show a loading message</li>
     <li>
         The loading message can be configured: check our
-        <a href="../javascript-grid-internationalisation/">internationalisation docs</a>. The key for this string is
+        <a href="../javascript-grid-localisation/">localisation docs</a>. The key for this string is
         <code>loadingOoo</code>.</li>
     <li>The callback is only invoked the first time the filter is opened. The next time the filter is opened
     the values are not loaded again.</li>

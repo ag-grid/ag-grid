@@ -24,10 +24,10 @@
             "description": "The unique ID for this panel. Used in the API and elsewhere to refer to the panel."
         },
         "labelKey": {
-            "description": "The key used for <a href='../javascript-grid-internationalisation/'>internationalisation</a> for displaying the label. The label is displayed in the tab button."
+            "description": "The key used for <a href='../javascript-grid-localisation/'>localisation</a> for displaying the label. The label is displayed in the tab button."
         },
         "labelDefault": {
-            "description": "The default label if <code>labelKey</code> is missing or does not map to valid text through internationalisation."
+            "description": "The default label if <code>labelKey</code> is missing or does not map to valid text through localisation."
         },
         "iconKey": {
             "description": "The <a href='../javascript-grid-icons/'>key of the icon</a> to be used as a graphical aid beside the label in the side bar."
