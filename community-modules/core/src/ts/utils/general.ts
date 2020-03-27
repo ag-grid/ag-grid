@@ -529,15 +529,13 @@ export class Utils {
         return [].concat.apply([], arrayOfArrays);
     }
 
-    static parseYyyyMmDdToDate(yyyyMmDd: string, separator: string): Date | null {
+    static parseYyyyMmDdToDate(yyyyMmDd: string, separator = '-'): Date | null {
         try {
-            if (!yyyyMmDd) { return null; }
+            if (!yyyyMmDd || yyyyMmDd.indexOf(separator) < 0) { return null; }
 
-            if (yyyyMmDd.indexOf(separator) === -1) { return null; }
+            const fields = yyyyMmDd.split(separator);
 
-            const fields: string[] = yyyyMmDd.split(separator);
-
-            if (fields.length != 3) { return null;  }
+            if (fields.length !== 3) { return null; }
 
             return new Date(Number(fields[0]), Number(fields[1]) - 1, Number(fields[2]));
         } catch (e) {
@@ -545,7 +543,7 @@ export class Utils {
         }
     }
 
-    static serializeDateToYyyyMmDd(date: Date, separator: string): string | null {
+    static serializeDateToYyyyMmDd(date: Date, separator = '-'): string | null {
         if (!date) { return null; }
 
         return date.getFullYear() + separator + this.padStart(date.getMonth() + 1, 2) + separator + this.padStart(date.getDate(), 2);
@@ -564,7 +562,7 @@ export class Utils {
         let minutesStr = '00';
         let secondsStr = '00';
 
-        const [ hours, minutes, seconds ] = time.split(':').map(Number);
+        const [hours, minutes, seconds] = time.split(':').map(Number);
 
         if (hours >= 0 && hours <= 24) {
             hoursStr = _.padStart(hours, 2);
@@ -586,7 +584,7 @@ export class Utils {
             return null;
         }
 
-        const [ dateStr, timeStr ] = fullDate.split(' ');
+        const [dateStr, timeStr] = fullDate.split(' ');
         const date = _.parseYyyyMmDdToDate(dateStr, '-');
 
         if (!date) {
@@ -597,7 +595,7 @@ export class Utils {
             return date;
         }
 
-        const [ hours, minutes, seconds ] = _.normalizeTime(timeStr).split(':').map(Number);
+        const [hours, minutes, seconds] = _.normalizeTime(timeStr).split(':').map(Number);
 
         date.setHours(hours);
         date.setMinutes(minutes);
@@ -1943,7 +1941,7 @@ export class Utils {
      */
     static camelCaseToHyphen(str: string): string | null {
         if (str === null || str === undefined) { return null; }
-    
+
         return str.replace(/([A-Z])/g, (g) => '-' + g[0].toLowerCase());
     }
 
@@ -2334,7 +2332,7 @@ export class Utils {
      * @return {string}
      */
     static camelCaseToHumanText(camelCase: string | undefined): string | null {
-        if (!camelCase || camelCase == null) { return null;}
+        if (!camelCase || camelCase == null) { return null; }
 
         const rex = /([A-Z])([A-Z])([a-z])|([a-z])([A-Z])/g;
         const words: string[] = camelCase.replace(rex, '$1$4 $2$3$5').replace('.', ' ').split(' ');

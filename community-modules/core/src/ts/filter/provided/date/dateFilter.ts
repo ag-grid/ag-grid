@@ -53,7 +53,7 @@ export class DateFilter extends ScalerFilter<DateFilterModel, Date> {
 
     private dateFilterParams: IDateFilterParams;
 
-    protected mapRangeFromModel(filterModel: DateFilterModel): { from: Date, to: Date } {
+    protected mapRangeFromModel(filterModel: DateFilterModel): { from: Date; to: Date; } {
         // unlike the other filters, we do two things here:
         // 1) allow for different attribute names (same as done for other filters) (eg the 'from' and 'to'
         //    are in different locations in Date and Number filter models)
@@ -210,23 +210,22 @@ export class DateFilter extends ScalerFilter<DateFilterModel, Date> {
         const dateTo = dateCompTo.getDate();
 
         return {
-            dateFrom: `${_.serializeDateToYyyyMmDd(dateFrom, "-")} ${_.getTimeFromDate(dateFrom)}`,
-            dateTo: `${_.serializeDateToYyyyMmDd(dateTo, "-")} ${_.getTimeFromDate(dateTo)}`,
+            dateFrom: `${_.serializeDateToYyyyMmDd(dateFrom)} ${_.getTimeFromDate(dateFrom)}`,
+            dateTo: `${_.serializeDateToYyyyMmDd(dateTo)} ${_.getTimeFromDate(dateTo)}`,
             type: type,
             filterType: DateFilter.FILTER_TYPE
         };
     }
 
     private resetPlaceholder(): void {
-        const translate = this.translate.bind(this);
-        const isRange1 = this.getCondition1Type() === ScalerFilter.IN_RANGE;
-        const isRange2 = this.getCondition2Type() === ScalerFilter.IN_RANGE;
+        const translate = this.gridOptionsWrapper.getLocaleTextFunc();
+        const placeholder = translate('dateFormatOoo', 'yyyy-mm-dd');
 
-        this.dateCompFrom1.setInputPlaceholder(translate(isRange1 ? 'rangeStart' : 'filterOoo'));
-        this.dateCompTo1.setInputPlaceholder(translate(isRange1 ? 'rangeEnd' : 'filterOoo'));
+        this.dateCompFrom1.setInputPlaceholder(placeholder);
+        this.dateCompTo1.setInputPlaceholder(placeholder);
 
-        this.dateCompFrom2.setInputPlaceholder(translate(isRange2 ? 'rangeStart' : 'filterOoo'));
-        this.dateCompTo2.setInputPlaceholder(translate(isRange2 ? 'rangeEnd' : 'filterOoo'));
+        this.dateCompFrom2.setInputPlaceholder(placeholder);
+        this.dateCompTo2.setInputPlaceholder(placeholder);
     }
 
     protected updateUiVisibility(): void {
@@ -245,6 +244,5 @@ export class DateFilter extends ScalerFilter<DateFilterModel, Date> {
 
         const showTo2 = this.showValueTo(this.getCondition2Type());
         _.setDisplayed(this.ePanelTo2, showTo2);
-
     }
 }
