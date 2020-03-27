@@ -6,7 +6,6 @@ export const DateTimeCellEditorModule: Module = {
     moduleName: ModuleNames.DateTimeCellEditorModule,
     beans: [],
     userComponents: [
-        { componentName: 'agDateTime', componentClass: DateTimeCellEditor },
         { componentName: 'agDateTimeCellEditor', componentClass: DateTimeCellEditor },
     ],
     dependantModules: [EnterpriseCoreModule],

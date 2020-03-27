@@ -2,17 +2,17 @@ export interface IDateTimeListModel {
     getPage(base: Date, number: number): Page;
 }
 
-interface Page {
+export interface Page {
     title: string;
     columns: Column[];
     entries: Entry[];
 }
 
-interface Column {
+export interface Column {
     label: string;
 }
 
-interface Entry {
+export interface Entry {
     label: string;
     value: Date;
     // true if this entry has been inserted as padding to make the grid structure

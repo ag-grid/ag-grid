@@ -2,8 +2,7 @@
   "extends": "../../module-build/tsconfig.json",
   "compilerOptions": {
     "outDir": "dist/cjs",
-    "rootDir": ".",
-    // "strict": true
+    "rootDir": "src"
   },
   "include": [
     "src/**/*"
