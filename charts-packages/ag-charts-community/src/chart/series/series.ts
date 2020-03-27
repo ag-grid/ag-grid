@@ -6,17 +6,15 @@ import { Chart } from "../chart";
 import { createId } from "../../util/id";
 
 /**
- * `D` - raw series datum, an element in the {@link Series.data} array.
- * `SeriesNodeDatum` - processed series datum used in node selections,
- *                     contains information used to render pie sectors, bars,
- *                     markers, etc.
+ * Processed series datum used in node selections,
+ * contains information used to render pie sectors, bars, markers, etc.
  */
 export interface SeriesNodeDatum {
     // For example, in `sectorNode.datum.seriesDatum`:
     // `sectorNode` - represents a pie slice
     // `datum` - contains metadata derived from the immutable series datum and used
     //           to set the properties of the node, such as start/end angles
-    // `seriesDatum` - an element from the `series.data` array
+    // `seriesDatum` - raw series datum, an element from the `series.data` array
     series: Series;
     seriesDatum: any;
     point?: { // in local (series) coordinates
