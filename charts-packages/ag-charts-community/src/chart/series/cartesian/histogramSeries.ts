@@ -246,21 +246,7 @@ export class HistogramSeries extends CartesianSeries {
         fill: 'yellow'
     };
 
-    private highlightedNode?: Rect;
-
-    highlightNode(node: Shape) {
-        if (!(node instanceof Rect)) {
-            return;
-        }
-
-        this.highlightedNode = node;
-        this.scheduleLayout();
-    }
-
-    dehighlightNode() {
-        this.highlightedNode = undefined;
-        this.scheduleLayout();
-    }
+    protected highlightedDatum?: HistogramSelectionDatum;
 
     /*  during processData phase, used to unify different ways of the user specifying
         the bins */
@@ -427,6 +413,7 @@ export class HistogramSeries extends CartesianSeries {
             };
 
             selectionData.push({
+                series: this,
                 seriesDatum: bin,  // required by SeriesNodeDatum, but might not make sense here
                                       // where each selection is an aggregation of multiple data.
                 x: xMinPx,
@@ -448,8 +435,8 @@ export class HistogramSeries extends CartesianSeries {
             fillOpacity,
             strokeOpacity,
             shadow,
-            highlightedNode,
-            highlightStyle: { fill, stroke }
+            highlightStyle: { fill, stroke },
+            highlightedDatum
         } = this;
         const updateRects = this.rectSelection.setData(selectionData);
 
@@ -463,12 +450,16 @@ export class HistogramSeries extends CartesianSeries {
         const rectSelection = updateRects.merge(enterRects);
 
         rectSelection.each((rect, datum) => {
+            const highlighted = highlightedDatum &&
+                highlightedDatum.seriesDatum === datum.seriesDatum &&
+                highlightedDatum.series === datum.series;
+
             rect.x = datum.x;
             rect.y = datum.y;
             rect.width = datum.width;
             rect.height = datum.height;
-            rect.fill = rect === highlightedNode && fill !== undefined ? fill : datum.fill;
-            rect.stroke = rect === highlightedNode && stroke !== undefined ? stroke : datum.stroke;
+            rect.fill = highlighted && fill !== undefined ? fill : datum.fill;
+            rect.stroke = highlighted && stroke !== undefined ? stroke : datum.stroke;
             rect.fillOpacity = fillOpacity;
             rect.strokeOpacity = strokeOpacity;
             rect.strokeWidth = datum.strokeWidth;
