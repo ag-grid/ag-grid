@@ -243,29 +243,9 @@ export class OHLCSeries extends CartesianSeries {
             fill: 'yellow'
         };
 
-    private highlightedNode?: OHLC;
-
-    highlightNode(node: Shape) {
-        if (!(node instanceof OHLC)) {
-            return;
-        }
-
-        this.highlightedNode = node;
-        this.scheduleLayout();
-    }
-
-    dehighlightNode() {
-        this.highlightedNode = undefined;
-        this.scheduleLayout();
-    }
+    protected highlightedDatum?: GroupSelectionDatum;
 
     update(): void {
-        const visible = this.group.visible = this.visible;
-
-        // if (!chart || !visible || chart.dataPending || chart.layoutPending || !(chart.xAxis && chart.yAxis)) {
-        //     return;
-        // }
-
         const { xAxis, yAxis } = this;
         const xScale = xAxis.scale;
         const yScale = yAxis.scale;
@@ -280,7 +260,7 @@ export class OHLCSeries extends CartesianSeries {
             lowData,
             closeData,
             marker,
-            highlightedNode
+            highlightedDatum
         } = this;
 
         const Marker = marker.type;
@@ -317,14 +297,17 @@ export class OHLCSeries extends CartesianSeries {
 
         groupSelection.selectByClass(Marker)
             .each((node, datum) => {
+                const highlighted = highlightedDatum &&
+                    highlightedDatum.series === datum.series &&
+                    highlightedDatum.seriesDatum === datum.seriesDatum;
                 node.date = datum.date;
                 node.open = datum.open;
                 node.high = datum.high;
                 node.low = datum.low;
                 node.close = datum.close;
                 node.width = datum.width;
-                node.fill = node === highlightedNode && highlightFill !== undefined ? highlightFill : datum.fill;
-                node.stroke = node === highlightedNode && highlightStroke !== undefined ? highlightStroke : datum.stroke;
+                node.fill = highlighted && highlightFill !== undefined ? highlightFill : datum.fill;
+                node.stroke = highlighted && highlightStroke !== undefined ? highlightStroke : datum.stroke;
                 node.fillOpacity = marker.fillOpacity;
                 node.strokeOpacity = marker.strokeOpacity;
                 node.strokeWidth = datum.strokeWidth;
