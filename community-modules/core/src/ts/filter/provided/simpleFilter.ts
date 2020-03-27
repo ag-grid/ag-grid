@@ -76,7 +76,6 @@ export abstract class SimpleFilter<M extends ISimpleFilterModel> extends Provide
     @RefSelector('eJoinOperatorPanel') private eJoinOperatorPanel: HTMLElement;
 
     private allowTwoConditions: boolean;
-    private simpleFilterParams: ISimpleFilterParams;
 
     protected optionsFactory: OptionsFactory;
     protected abstract getDefaultFilterOptions(): string[];
@@ -121,14 +120,14 @@ export abstract class SimpleFilter<M extends ISimpleFilterModel> extends Provide
 
     // floating filter calls this when user applies filter from floating filter
     public onFloatingFilterChanged(type: string, value: any): void {
-        this.setValueFromFloatingFilter(value);
         this.setTypeFromFloatingFilter(type);
+        this.setValueFromFloatingFilter(value);
         this.onUiChanged(true);
     }
 
     protected setTypeFromFloatingFilter(type: string): void {
         this.eType1.setValue(type);
-        this.eType2.setValue(null);
+        this.eType2.setValue(this.optionsFactory.getDefaultOption());
         this.eJoinOperatorAnd.setValue(true);
     }
 
@@ -193,7 +192,6 @@ export abstract class SimpleFilter<M extends ISimpleFilterModel> extends Provide
     }
 
     protected setModelIntoUi(model: ISimpleFilterModel | ICombinedSimpleModel<M>): void {
-
         const isCombined = (model as any).operator;
 
         if (isCombined) {
@@ -208,7 +206,6 @@ export abstract class SimpleFilter<M extends ISimpleFilterModel> extends Provide
 
             this.setConditionIntoUi(combinedModel.condition1, ConditionPosition.One);
             this.setConditionIntoUi(combinedModel.condition2, ConditionPosition.Two);
-
         } else {
             const simpleModel = model as ISimpleFilterModel;
 
@@ -221,7 +218,6 @@ export abstract class SimpleFilter<M extends ISimpleFilterModel> extends Provide
             this.setConditionIntoUi(simpleModel as M, ConditionPosition.One);
             this.setConditionIntoUi(null, ConditionPosition.Two);
         }
-
     }
 
     public doesFilterPass(params: IDoesFilterPassParams): boolean {
@@ -249,8 +245,6 @@ export abstract class SimpleFilter<M extends ISimpleFilterModel> extends Provide
 
     protected setParams(params: ISimpleFilterParams): void {
         super.setParams(params);
-
-        this.simpleFilterParams = params;
 
         this.optionsFactory = new OptionsFactory();
         this.optionsFactory.init(params, this.getDefaultFilterOptions());
@@ -354,5 +348,4 @@ export abstract class SimpleFilter<M extends ISimpleFilterModel> extends Provide
         const customFilterOption = this.optionsFactory.getCustomOption(filterType);
         return customFilterOption && customFilterOption.hideFilterInput;
     }
-
 }
