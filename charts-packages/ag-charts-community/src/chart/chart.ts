@@ -741,6 +741,9 @@ export abstract class Chart extends Observable {
 
         for (let i = allSeries.length - 1; i >= 0; i--) {
             const series = allSeries[i];
+            if (!series.visible) {
+                continue;
+            }
             const hitPoint = series.group.transformPoint(x, y);
             const datums = series.getNodeDatums();
             datums.forEach(datum => {
