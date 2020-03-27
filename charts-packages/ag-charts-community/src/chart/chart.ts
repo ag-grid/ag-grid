@@ -819,6 +819,9 @@ export abstract class Chart extends Observable {
 
             if (series) {
                 series.toggleSeriesItem(itemId, !enabled);
+                if (enabled) {
+                    this.hideTooltip();
+                }
             }
         }
     }
