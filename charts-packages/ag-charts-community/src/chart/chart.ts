@@ -765,16 +765,13 @@ export abstract class Chart extends Observable {
         const pick = this.pickSeriesNode(event.offsetX, event.offsetY);
         const { lastPick } = this;
 
-        if (pick) {
+        if (pick && pick.node instanceof Shape && !pick.node.datum.point) {
             const { node } = pick;
-
-            if (node instanceof Shape) {
-                if (!lastPick // cursor moved from empty space to a node
-                    || lastPick.node !== node) { // cursor moved from one node to another
-                    this.onSeriesDatumPick(event, node.datum, node);
-                } else if (pick.series.tooltipEnabled) { // cursor moved within the same node
-                    this.showTooltip(event);
-                }
+            if (!lastPick // cursor moved from empty space to a node
+                || lastPick.node !== node) { // cursor moved from one node to another
+                this.onSeriesDatumPick(event, node.datum, node);
+            } else if (pick.series.tooltipEnabled) { // cursor moved within the same node
+                this.showTooltip(event);
             }
         } else {
             let hideTooltip = false;
@@ -833,7 +830,6 @@ export abstract class Chart extends Observable {
             node
         };
 
-        // series.highlightNode(node);
         datum.series.highlightDatum(datum);
 
         const html = datum.series.tooltipEnabled && datum.series.getTooltipHtml(datum);
