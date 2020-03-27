@@ -2,10 +2,9 @@ import { Grid, Autowired, GridOptions } from '@ag-grid-community/core';
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
 
 import { Component, PostConstruct, _ } from '@ag-grid-community/core';
-import { DateTimeList } from './dateTimeList/dateTimeList';
+import { DateTimeList } from '../src/dateTimeList/dateTimeList';
 
 import './dev.scss';
-
 
 export class DevHarness extends Component {
     private static TEMPLATE = `<div class="ag-dev-harness"></div>`;

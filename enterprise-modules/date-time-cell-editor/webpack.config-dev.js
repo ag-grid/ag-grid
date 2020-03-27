@@ -1,3 +1,4 @@
+const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 
 module.exports = {
@@ -6,7 +7,7 @@ module.exports = {
     // output: {
     //     libraryTarget: 'commonjs'
     // },
-    entry: './src/dev.ts',
+    entry: './dev/dev.ts',
 
     resolve: {
         extensions: ['.ts', '.js', '.scss'],
