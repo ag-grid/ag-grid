@@ -86,6 +86,10 @@ export function numericExtent<T>(values: T[]): [number, number] | undefined {
     }
 }
 
+/**
+ * finds the min and max using a process appropriate for stacked values. Ie,
+ * summing up the positive and negative numbers, and returning the totals of each
+ */
 export function findMinMax(values: number[]): { min: number, max: number } {
     let min = 0;
     let max = 0;

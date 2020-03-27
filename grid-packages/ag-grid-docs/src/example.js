@@ -413,7 +413,7 @@ var gridOptions = {
         var type = params.type;
         var options = params.options;
 
-        if (params.type === 'pie' || params.type === 'doughnut') {
+        if (type === 'pie' || type === 'doughnut') {
             options.seriesDefaults.tooltip.renderer = function(params) {
                 var titleStyle = params.color ? ' style="color: white; background-color:' + params.color + '"' : '';
                 var title = params.title ? '<div class="ag-chart-tooltip-title"' + titleStyle + '>' + params.title + '</div>' : '';
@@ -440,14 +440,14 @@ var gridOptions = {
                 return value < 0 ? '-' + standardised : standardised;
             }
 
-            options[isBar ? 'xAxis' : 'yAxis'].label.formatter = function(params) {
+            var standardNumberFormatter = function(params) {
                 return standardiseNumber(params.value);
             };
 
+            options[isBar ? 'xAxis' : 'yAxis'].label.formatter = standardNumberFormatter;
+
             if (type === 'scatter' || type === 'bubble') {
-                options.xAxis.label.formatter = function(params) {
-                    return standardiseNumber(params.value);
-                };
+                options.xAxis.label.formatter = standardNumberFormatter;
 
                 options.seriesDefaults.tooltip.renderer = function(params) {
                     var formatCurrency = function(value) {
@@ -465,6 +465,24 @@ var gridOptions = {
                     }
                     return title + '<div class="ag-chart-tooltip-content">' + label + xValue + '<br>' + yValue + size + '</div>';
                 };
+            }  else if (type === 'histogram' ) {
+                options.seriesDefaults.tooltip.renderer = function(params) {
+
+                    var titleStyle = params.color ? ' style="color: white; background-color:' + params.color + '"' : '';
+                    var title = params.title ? '<div class="ag-chart-tooltip-title"' + titleStyle + '>' + params.title + '</div>' : '';
+
+                    if( params.yKey ) {
+                        // with a y key, the value is the total of the yKey value for the population of the bin:
+                        var value = formatThousands(Math.round(params.datum.total));
+                        return title + '<div class="ag-chart-tooltip-content">' + '$' + value + '</div>';
+                    } else {
+                        // without a y key, the value is a count of the population of the bin:
+                        var value = params.datum.frequency;
+                        return title + '<div class="ag-chart-tooltip-content">' + value + '</div>';
+                    }
+                };
+
+                options.xAxis.label.formatter = standardNumberFormatter;
             } else {
                 options.seriesDefaults.tooltip.renderer = function(params) {
                     var titleStyle = params.color ? ' style="color: white; background-color:' + params.color + '"' : '';
@@ -475,9 +493,7 @@ var gridOptions = {
             }
 
             if (options.seriesDefaults.label) {
-                options.seriesDefaults.label.formatter = function(params) {
-                    return standardiseNumber(params.value);
-                };
+                options.seriesDefaults.label.formatter = standardNumberFormatter;
             }
         }
 
