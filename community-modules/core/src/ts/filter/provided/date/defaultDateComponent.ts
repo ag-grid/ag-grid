@@ -1,14 +1,10 @@
-import { Autowired } from "../../../context/context";
 import { AgInputTextField } from "../../../widgets/agInputTextField";
 import { Component } from "../../../widgets/component";
-import { GridOptionsWrapper } from "../../../gridOptionsWrapper";
 import { IDateComp, IDateParams } from "../../../rendering/dateComponent";
 import { RefSelector } from "../../../widgets/componentAnnotations";
 import { _ } from "../../../utils";
 
 export class DefaultDateComponent extends Component implements IDateComp {
-
-    @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @RefSelector('eDateInput') private eDateInput: AgInputTextField;
 
     private listener: () => void;
@@ -18,10 +14,7 @@ export class DefaultDateComponent extends Component implements IDateComp {
     }
 
     public init(params: IDateParams): void {
-        const translate = this.gridOptionsWrapper.getLocaleTextFunc();
-        this.eDateInput.setInputPlaceholder(translate('dateFormatOoo', 'yyyy-mm-dd'));
-
-        if (_.isBrowserChrome() || (params.filterParams && params.filterParams.browserDatePicker)) {
+        if (this.shouldUseBrowserDatePicker(params)) {
             if (_.isBrowserIE()) {
                 console.warn('ag-grid: browserDatePicker is specified to true, but it is not supported in IE 11, reverting to plain text date picker');
             } else {
@@ -31,8 +24,9 @@ export class DefaultDateComponent extends Component implements IDateComp {
 
         this.listener = params.onDateChanged;
 
-        this.addDestroyableEventListener(this.eDateInput.getInputElement(), 'input', (e) => {
+        this.addDestroyableEventListener(this.eDateInput.getInputElement(), 'input', e => {
             if (e.target !== document.activeElement) { return; }
+
             this.listener();
         });
     }
@@ -42,11 +36,18 @@ export class DefaultDateComponent extends Component implements IDateComp {
     }
 
     public setDate(date: Date): void {
-        this.eDateInput.setValue(_.serializeDateToYyyyMmDd(date, "-"));
+        this.eDateInput.setValue(_.serializeDateToYyyyMmDd(date));
     }
 
     public setInputPlaceholder(placeholder: string): void {
         this.eDateInput.setInputPlaceholder(placeholder);
     }
 
+    private shouldUseBrowserDatePicker(params: IDateParams): boolean {
+        if (params.filterParams && params.filterParams.browserDatePicker != null) {
+            return params.filterParams.browserDatePicker;
+        } else {
+            return _.isBrowserChrome() || _.isBrowserFirefox();
+        }
+    }
 }

@@ -19,7 +19,7 @@ include '../documentation-main/documentation_header.php';
 <h2>Date Selection Component</h2>
 
 <p>
-    By default the grid will use the browser-provided date picker for Chrome (as we think it's nice), but for all
+    By default the grid will use the browser-provided date picker for Chrome and Firefox (as we think it's nice), but for all
     other browsers it will provide a simple text field. To override this and provide a custom date picker,
     see <a href="../javascript-grid-date-component/">Date Component</a>.
 </p>

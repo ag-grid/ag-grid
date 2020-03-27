@@ -90,7 +90,7 @@ export class DateFloatingFilter extends SimpleFloatingFilter {
 
     private onDateChanged(): void {
         const filterValueDate: Date = this.dateComp.getDate();
-        const filterValueText: string = `${_.serializeDateToYyyyMmDd(filterValueDate, "-")} ${_.getTimeFromDate(filterValueDate)}`;
+        const filterValueText: string = `${_.serializeDateToYyyyMmDd(filterValueDate)} ${_.getTimeFromDate(filterValueDate)}`;
 
         this.params.parentFilterInstance(filterInstance => {
             if (filterInstance) {

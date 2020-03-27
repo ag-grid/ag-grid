@@ -210,9 +210,10 @@ include '../documentation-main/documentation_header.php';
         <td class="reference__name"><code>browserDatePicker</code></td>
         <td>
             This is only used if a date component is not provided. By default the
-            grid will use the browser date picker in Chrome and a plain text box for all other browsers
-            (this is because Chrome is the only browser providing a decent out-of-the-box date picker).
-            If this property is <code>true</code>, the browser date picker will be used regardless of the browser type.
+            grid will use the browser date picker in Chrome and Firefox and a plain text box for all other browsers
+            (this is because Chrome and Firefox are the only current browsers providing a decent out-of-the-box date picker).
+            If this property is set to <code>true</code>, the browser date picker will be used regardless of the browser
+            type. If set to <code>false</code>, a plain text box will be used for all browsers.
         </td>
         <td class="supported-filters">Date</td>
     </tr>

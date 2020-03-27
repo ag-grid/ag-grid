@@ -14,8 +14,8 @@ include '../documentation-main/documentation_header.php';
 </p>
 
 <p>
-    By default the grid will use the browser provided date picker for Chrome (as we think it's nice), but for all other
-    browsers it will just provide a simple text field. You can provide your chosen date picker to ag-Grid. This is done by providing a custom
+    By default the grid will use the browser provided date picker for Chrome and Firefox (as we think it's nice), but for all other
+    browsers it will just provide a simple text field. You can use your own date picker to ag-Grid by providing a custom
     Date Component via the grid property <code>dateComponent</code> as follows:
 </p>
 
