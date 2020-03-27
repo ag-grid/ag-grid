@@ -784,7 +784,7 @@ export abstract class Chart extends Observable {
                     const { x, y } = closestDatum.point;
                     const { canvas } = this.scene;
                     const point = closestDatum.series.group.inverseTransformPoint(x, y);
-                    const canvasRect = canvas.element.getBoundingClientRect();
+                    const canvasRect = canvas.element.getBoundingClientRect() as DOMRect;
                     this.onSeriesDatumPick({
                         pageX: Math.round(canvasRect.x + point.x),
                         pageY: Math.round(canvasRect.y + point.y)
@@ -886,7 +886,7 @@ export abstract class Chart extends Observable {
             this.toggleTooltip(true);
         }
 
-        const tooltipRect = el.getBoundingClientRect();
+        const tooltipRect = el.getBoundingClientRect() as DOMRect;
 
         // const top = meta.pageY + offset[1];
         // let left = meta.pageX + offset[0];

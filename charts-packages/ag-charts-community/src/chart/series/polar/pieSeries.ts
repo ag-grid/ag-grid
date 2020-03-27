@@ -186,21 +186,7 @@ export class PieSeries extends PolarSeries {
             fill: 'yellow'
         };
 
-    private highlightedNode?: Sector;
-
-    highlightNode(node: Shape) {
-        if (!(node instanceof Sector)) {
-            return;
-        }
-
-        this.highlightedNode = node;
-        this.scheduleLayout();
-    }
-
-    dehighlightNode() {
-        this.highlightedNode = undefined;
-        this.scheduleLayout();
-    }
+    protected highlightedDatum?: GroupSelectionDatum;
 
     getDomain(direction: ChartAxisDirection): any[] {
         if (direction === ChartAxisDirection.X) {
@@ -353,7 +339,7 @@ export class PieSeries extends PolarSeries {
         let minOuterRadius = Infinity;
         const outerRadii: number[] = [];
         const centerOffsets: number[] = [];
-        const { highlightedNode, highlightStyle: { fill, stroke, centerOffset }, shadow, strokeWidth } = this;
+        const { highlightedDatum, highlightStyle: { fill, stroke, centerOffset }, shadow, strokeWidth } = this;
 
         groupSelection.selectByTag<Sector>(PieSeriesNodeTag.Sector).each((sector, datum, index) => {
             const radius = radiusScale.convert(datum.radius);
@@ -368,11 +354,14 @@ export class PieSeries extends PolarSeries {
             sector.startAngle = datum.startAngle;
             sector.endAngle = datum.endAngle;
 
-            sector.fill = sector === highlightedNode && fill !== undefined ? fill : fills[index % fills.length];
-            sector.stroke = sector === highlightedNode && stroke !== undefined ? stroke : strokes[index % strokes.length];
+            const highlighted = highlightedDatum &&
+                highlightedDatum.series === datum.series &&
+                highlightedDatum.seriesDatum === datum.seriesDatum;
+            sector.fill = highlighted && fill !== undefined ? fill : fills[index % fills.length];
+            sector.stroke = highlighted && stroke !== undefined ? stroke : strokes[index % strokes.length];
             sector.fillOpacity = fillOpacity;
             sector.strokeOpacity = strokeOpacity;
-            sector.centerOffset = sector === highlightedNode && centerOffset !== undefined ? centerOffset : 0;
+            sector.centerOffset = highlighted && centerOffset !== undefined ? centerOffset : 0;
             sector.fillShadow = shadow;
             sector.strokeWidth = strokeWidth;
             sector.lineJoin = 'round';
