@@ -528,7 +528,7 @@ SNIPPET
 <p>
     The <code>displayKey</code> should contain a unique key value that doesn't clash with the built-in filter keys.
     A default <code>displayName</code> should also be provided but can be replaced by a locale-specific value using a
-    <a href="../javascript-grid-internationalisation/#using-localetextfunc">localeTextFunc</a>.
+    <a href="../javascript-grid-localisation/#using-localetextfunc">localeTextFunc</a>.
 </p>
 
 <p>
@@ -587,7 +587,7 @@ SNIPPET
     <li>The 'Date' column includes a custom <code>equalsWithNulls</code> filter. Note that a custom <code>comparator</code>
         is still required for the built-in date filter options, i.e. <code>equals</code>.</li>
     <li>The 'Country' column includes a custom <code>notEqualNoNulls</code> filter which also removes null values.</li>
-    <li>The 'Country' columns also demonstrates how internationalisation can be achieved via the
+    <li>The 'Country' columns also demonstrates how localisation can be achieved via the
         <code>gridOptions.localeTextFunc()</code> callback function, where the default value is replaced for the filter
         option <code>'notEqualNoNulls'</code>.
     </li>

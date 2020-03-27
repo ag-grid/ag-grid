@@ -141,7 +141,7 @@ interface IFilterParams {
     // Only if using AngularJS (ie Angular v1), if angularCompileFilters
     // is set to true, then a new child scope is created for each column
     // filter and provided here.
-    $scope: any;
+    \$scope: any;
 }
 SNIPPET
 , 'ts') ?>
