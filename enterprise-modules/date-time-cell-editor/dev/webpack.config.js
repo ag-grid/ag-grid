@@ -1,4 +1,3 @@
-const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 
 module.exports = {
@@ -27,7 +26,10 @@ module.exports = {
             {
                 test: /\.ts$/,
                 exclude: [/node_modules/],
-                use: 'awesome-typescript-loader',
+                loader: 'awesome-typescript-loader',
+                options: {
+                    configFileName: "./dev/tsconfig.json"
+                }
             },
             {
                 test: /\.scss$/i,

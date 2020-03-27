@@ -122,5 +122,13 @@ colDef.cellEditorParams = {
     </ul>
 </p>
 
+<h3><code>agDateTimeCellEditor</code></h3>
+
+<p>
+    Available in ag-Grid Enterprise only. A highly configurable editor for date and time values.
+</p>
+
+<?= grid_example('agDateTimeCellEditor', 'date-time-cell-editor', 'generated', ['enterprise' => true]) ?>
+
 <?php include '../documentation-main/documentation_footer.php';?>
 

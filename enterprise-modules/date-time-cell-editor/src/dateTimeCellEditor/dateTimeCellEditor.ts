@@ -22,6 +22,7 @@ export class DateTimeCellEditor extends PopupComponent implements ICellEditor {
 
     constructor() {
         super(DateTimeCellEditor.TEMPLATE);
+        debugger;
     }
 
     public init(params: ICellEditorParams): void {
