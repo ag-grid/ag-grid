@@ -3,6 +3,7 @@ import { ColumnTooltipRendererParams as BarTooltipRendererParams } from "./chart
 import { LineTooltipRendererParams } from "./chart/series/cartesian/lineSeries";
 import { AreaTooltipRendererParams } from "./chart/series/cartesian/areaSeries";
 import { ScatterTooltipRendererParams } from "./chart/series/cartesian/scatterSeries";
+import { HistogramTooltipRendererParams } from "./chart/series/cartesian/histogramSeries"
 import { PieTooltipRendererParams } from "./chart/series/polar/pieSeries";
 import { LegendPosition } from "./chart/legend";
 import { FontStyle, FontWeight } from "./scene/shape/text";
@@ -22,7 +23,7 @@ export {
 };
 
 export type MarkerShape = 'circle' | 'cross' | 'diamond' | 'plus' | 'square' | 'triangle';
-export type CartesianSeriesType = 'line' | 'scatter' | 'bar' | 'area';
+export type CartesianSeriesType = 'line' | 'scatter' | 'bar' | 'area' | 'histogram';
 export type PolarSeriesType = 'pie';
 export type SeriesType = CartesianSeriesType | PolarSeriesType;
 
@@ -196,6 +197,14 @@ export interface BarSeriesFieldOptions {
 
     yKeys: string[];
     yNames?: string[];
+}
+
+export interface HistogramSeriesOptions extends SeriesOptions {
+    field?: LineSeriesFieldOptions;
+    fill?: SingleFillOptions;
+    stroke?: SingleStrokeOptions;
+    highlightStyle?: HighlightOptions;
+    tooltip?: TooltipOptions<HistogramTooltipRendererParams>;
 }
 
 export interface BarSeriesLabelOptions extends SeriesLabelOptions {
