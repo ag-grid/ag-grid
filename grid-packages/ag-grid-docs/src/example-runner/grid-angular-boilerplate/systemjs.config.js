@@ -191,6 +191,10 @@ defaultExtension: 'js'
 main: './dist/cjs/main.js',
 defaultExtension: 'js'
 },
+           '@ag-grid-enterprise/date-time-cell-editor': {
+main: './dist/cjs/main.js',
+defaultExtension: 'js'
+},
            '@ag-grid-enterprise/excel-export': {
 main: './dist/cjs/main.js',
 defaultExtension: 'js'

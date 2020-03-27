@@ -81,7 +81,8 @@
     "@ag-grid-enterprise/set-filter": "~23.0.0",
     "@ag-grid-enterprise/side-bar": "~23.0.0",
     "@ag-grid-enterprise/status-bar": "~23.0.0",
-    "@ag-grid-enterprise/viewport-row-model": "~23.0.0"
+    "@ag-grid-enterprise/viewport-row-model": "~23.0.0",
+    "@ag-grid-enterprise/date-time-cell-editor": "~23.0.0"
   },
   "devDependencies": {
     "@ag-grid-community/core": "~23.0.0",

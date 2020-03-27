@@ -14,6 +14,7 @@
 @import "./parts/footer";
 @import "./parts/column-drop";
 @import "./parts/charts";
+@import "./parts/date-time";
 
 $ag-compatibility-mode: "variables" !default;
 
@@ -45,6 +46,7 @@ $ag-compatibility-mode: "variables" !default;
     @include ag-theme-base-part-footer();
     @include ag-theme-base-part-column-drop();
     @include ag-theme-base-part-charts();
+    @include ag-theme-base-part-date-time();
 
     @if not ag-param(suppress-native-widget-styling) {
         @include ag-native-inputs();

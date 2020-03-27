@@ -84,6 +84,7 @@ import {IComponent} from "./interfaces/iComponent";
 import {ModuleRegistry} from "./modules/moduleRegistry";
 import {ModuleNames} from "./modules/moduleNames";
 import {UndoRedoService} from "./undoRedo/undoRedoService";
+import { Component } from "./widgets/component";
 
 export interface GridParams {
     // used by Web Components
@@ -101,6 +102,9 @@ export interface GridParams {
     providedBeanInstances?: { [key: string]: any };
 
     modules?: Module[];
+
+    // Alternative UI root class. Default is GridCore.
+    rootComponent?: { new(): Component };
 }
 
 export class Grid {
@@ -149,7 +153,8 @@ export class Grid {
 
         this.registerModuleUserComponents(registeredModules);
 
-        const gridCore = new GridCore();
+        const gridCoreClass = (params && params.rootComponent) || GridCore;
+        const gridCore = new gridCoreClass();
         this.context.wireBean(gridCore);
 
         this.setColumnsAndData();

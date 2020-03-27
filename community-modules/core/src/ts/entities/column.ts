@@ -250,6 +250,13 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild, IEven
             }
         }
 
+        if (!ModuleRegistry.isRegistered(ModuleNames.DateTimeCellEditorModule)) {
+            if (this.colDef.cellEditor === 'agRichSelect' || this.colDef.cellEditor === 'agDateTimeCellEditor') {
+                warnOnce(`ag-Grid: ${this.colDef.cellEditor} can only be used with `
+                    + `module ${ModuleNames.DateTimeCellEditorModule}`, 'ColumnDateTimeMissing');
+            }
+        }
+
         if (this.gridOptionsWrapper.isTreeData()) {
             const itemsNotAllowedWithTreeData =
                 ['rowGroup', 'rowGroupIndex', 'pivot', 'pivotIndex'];

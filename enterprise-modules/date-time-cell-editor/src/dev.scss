@@ -1,0 +1,6 @@
+@import "~@ag-grid-community/core/src/styles/ag-grid.scss";
+@import "~@ag-grid-community/core/src/styles/ag-theme-alpine/sass/ag-theme-alpine-mixin.scss";
+
+.ag-theme-alpine {
+    @include ag-theme-alpine();
+}

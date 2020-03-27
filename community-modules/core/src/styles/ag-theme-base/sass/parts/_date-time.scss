@@ -1,0 +1,19 @@
+@mixin ag-theme-base-part-date-time {
+
+    .ag-date-time-list-page-entry-is-padding {
+        color: rgba(ag-param(foreground-color), 0.5);
+    }
+
+    .ag-date-time-list-page-title {
+        flex-grow: 1;
+        text-align: center;
+    }
+
+    .ag-date-time-list-page-column-label {
+        text-align: center;
+    }
+
+    .ag-date-time-list-page-entry {
+        text-align: center;
+    }
+}
