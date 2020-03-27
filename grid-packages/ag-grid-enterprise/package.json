@@ -6,6 +6,7 @@
   "types": "main.d.ts",
   "scripts": {
     "build": "gulp && npm run rollup",
+    "package": "gulp copy-umd-files",
     "rollup": "node build.js"
   },
   "repository": {
