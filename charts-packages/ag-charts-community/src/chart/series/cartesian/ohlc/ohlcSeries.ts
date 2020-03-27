@@ -4,7 +4,6 @@ import { SeriesNodeDatum, TooltipRendererParams } from "../../series";
 import { numericExtent } from "../../../../util/array";
 import { toFixed } from "../../../../util/number";
 import { LegendDatum } from "../../../legend";
-import { Shape } from "../../../../scene/shape/shape";
 import { OHLC } from "./marker/ohlc";
 import { Candlestick } from "./marker/candlestick";
 import { locale } from "../../../../util/time/format/defaultLocale";
