@@ -42,7 +42,24 @@ colDef = {
     }
 }</snippet>
 
-<p>Params contains {value, node, data, column, colDef, context}.</p>
+<p>The interface for <code>getQuickFilterText</code> is as follows:</p>
+
+<snippet>
+// function for valueFormatter
+function getQuickFilterText(params: GetQuickFilterTextParams) =&gt; any;
+
+// interface for params
+interface GetQuickFilterTextParams {
+    value: any, // the unformatted value for this cell
+    data: any, // the data you provided for this row
+    node: RowNode, // the row node for this row
+    colDef: ColDef, // the column def for this column
+    column: Column, // the column for this column
+    api: GridApi, // the grid API
+    columnApi: ColumnApi, // the grid Column API
+    context: any  // the context
+}
+</snippet>
 
 <note>
     You only need to override the quick filter value if you have a problem. If you don't have a quick filter

@@ -379,6 +379,8 @@ export class FilterManager {
                 data: rowNode.data,
                 column: column,
                 colDef: colDef,
+                api: this.gridOptionsWrapper.getApi(),
+                columnApi: this.gridOptionsWrapper.getColumnApi(),
                 context: this.gridOptionsWrapper.getContext()
             };
             valueAfterCallback = column.getColDef().getQuickFilterText(params);

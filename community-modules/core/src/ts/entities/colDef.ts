@@ -378,15 +378,6 @@ export interface IsColumnFuncParams {
     columnApi: ColumnApi | null | undefined;
 }
 
-export interface GetQuickFilterTextParams {
-    value: any;
-    node: RowNode;
-    data: any;
-    column: Column;
-    colDef: ColDef;
-    context: any;
-}
-
 export interface BaseColDefParams {
     node: RowNode;
     data: any;
@@ -399,6 +390,9 @@ export interface BaseColDefParams {
 
 export interface BaseWithValueColDefParams extends BaseColDefParams {
     value: any;
+}
+
+export interface GetQuickFilterTextParams extends BaseWithValueColDefParams {
 }
 
 export interface ValueGetterParams extends BaseColDefParams {
