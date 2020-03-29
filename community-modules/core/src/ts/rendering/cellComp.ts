@@ -1496,7 +1496,7 @@ export class CellComp extends Component {
 
         // if we are clicking on a checkbox, we need to make sure the cell wrapping that checkbox
         // is focused but we don't want to change the range selection, so return here.
-        if (this.containsCheckbox(target)) {
+        if (this.containsWidget(target)) {
             return;
         }
 
@@ -1528,8 +1528,9 @@ export class CellComp extends Component {
         return false;
     }
 
-    private containsCheckbox(target: HTMLElement): boolean {
-        return _.isElementChildOfClass(target, 'ag-selection-checkbox', 3);
+    private containsWidget(target: HTMLElement): boolean {
+        return _.isElementChildOfClass(target, 'ag-selection-checkbox', 3) ||
+            _.isElementChildOfClass(target, 'ag-icon', 3);
     }
 
     // returns true if on iPad and this is second 'click' event in 200ms
