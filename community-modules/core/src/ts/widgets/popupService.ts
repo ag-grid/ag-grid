@@ -280,7 +280,6 @@ export class PopupService {
         const parentRect = popupParent.getBoundingClientRect();
         const documentRect = eDocument.documentElement!.getBoundingClientRect();
         const isBody = popupParent === eDocument.body;
-        const defaultPadding = 3;
 
         let minHeight = Math.min(200, parentRect.height);
         let diff = 0;
@@ -296,7 +295,7 @@ export class PopupService {
         if (isBody) {
             heightOfParent -= Math.abs(documentRect.top - parentRect.top);
         }
-        const maxY = heightOfParent - minHeight - diff - defaultPadding;
+        const maxY = heightOfParent - minHeight - diff;
 
         return Math.min(Math.max(y, 0), Math.abs(maxY));
     }
@@ -308,7 +307,6 @@ export class PopupService {
         const parentRect = popupParent.getBoundingClientRect();
         const documentRect = eDocument.documentElement!.getBoundingClientRect();
         const isBody = popupParent === eDocument.body;
-        const defaultPadding = 3;
         const ePopup = params.ePopup;
 
         let minWidth = Math.min(200, parentRect.width);
@@ -328,7 +326,7 @@ export class PopupService {
             widthOfParent -= Math.abs(documentRect.left - parentRect.left);
         }
 
-        const maxX = widthOfParent - minWidth - diff - defaultPadding;
+        const maxX = widthOfParent - minWidth - diff;
 
         return Math.min(Math.max(x, 0), Math.abs(maxX));
     }
