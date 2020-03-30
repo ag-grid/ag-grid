@@ -70,7 +70,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // do http request to get our sample data - not using any framework to keep the example self contained.
     // you will probably use a framework like JQuery, Angular or something else to do your HTTP calls.
-    agGrid.simpleHttpRequest({url: 'https://rawgit.com/ag-grid/ag-grid/master/packages/ag-grid-docs/src/stocks.json'}).then(function (data) {
+    agGrid.simpleHttpRequest({url: 'https://rawgit.com/ag-grid/ag-grid/master/grid-packages/ag-grid-docs/src/stocks.json'}).then(function (data) {
         // set up a mock server - real code will not do this, it will contact your
         // real server to get what it needs
         var mockServer = createMockServer();

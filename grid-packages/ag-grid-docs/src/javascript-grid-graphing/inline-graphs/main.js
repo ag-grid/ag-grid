@@ -239,7 +239,7 @@ document.addEventListener('DOMContentLoaded', function () {
     // do http request to get our sample data - not using any framework to keep the example self contained.
     // you will probably use a framework like JQuery, Angular or something else to do your HTTP calls.
     var httpRequest = new XMLHttpRequest();
-    httpRequest.open('GET', 'https://rawgit.com/ag-grid/ag-grid/master/packages/ag-grid-docs/src/javascript-grid-graphing/inline-graphs/stocks/summaryExpanded.json');
+    httpRequest.open('GET', 'https://rawgit.com/ag-grid/ag-grid/master/grid-packages/ag-grid-docs/src/javascript-grid-graphing/inline-graphs/stocks/summaryExpanded.json');
     httpRequest.send();
     httpRequest.onreadystatechange = function () {
         if (httpRequest.readyState === 4 && httpRequest.status === 200) {
@@ -252,7 +252,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
 function renderLineGraph(symbol) {
     var httpRequest = new XMLHttpRequest();
-    httpRequest.open('GET', 'https://rawgit.com/ag-grid/ag-grid/master/packages/ag-grid-docs/src/javascript-grid-graphing/inline-graphs/stocks/' + symbol + '-close-trend.json');
+    httpRequest.open('GET', 'https://rawgit.com/ag-grid/ag-grid/master/grid-packages/ag-grid-docs/src/javascript-grid-graphing/inline-graphs/stocks/' + symbol + '-close-trend.json');
     httpRequest.send();
     httpRequest.onreadystatechange = function () {
         if (httpRequest.readyState === 4 && httpRequest.status === 200) {
