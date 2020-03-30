@@ -96,7 +96,7 @@ var rowSelection = 'checkbox';
 
 var groupColumn = {
     headerName: "Group",
-    width: 200,
+    width: 250,
     field: 'name',
     headerCheckboxSelection: true,
     headerCheckboxSelectionFilteredOnly: true,
@@ -829,7 +829,7 @@ var desktopDefaultCols = [
     {
         headerName: "Total Winnings", field: "totalWinnings", filter: 'agNumberColumnFilter',
         type: 'numericColumn',
-        editable: true, valueParser: numberParser, width: 170,
+        editable: true, valueParser: numberParser, width: 200,
         // aggFunc: 'sum',
         enableValue: true,
         cellClassRules: {
@@ -927,7 +927,7 @@ var monthGroup = {
 months.forEach(function(month) {
     monthGroup.children.push({
         headerName: month, field: month.toLocaleLowerCase(),
-        width: 110, filter: 'agNumberColumnFilter', editable: true, type: 'numericColumn',
+        width: 150, filter: 'agNumberColumnFilter', editable: true, type: 'numericColumn',
         enableValue: true,
         // aggFunc: 'sum',
         //hide: true,
