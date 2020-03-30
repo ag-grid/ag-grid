@@ -56,7 +56,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 </div>
             </div>
             <div class="text-right" style="margin-top: -1.5rem;">
-                <a class="btn btn-dark" href="https://plnkr.co/edit/EOHS8OVjpj9cCNX3POdn?p=preview" target="_blank">
+                <a class="btn btn-dark" href="https://plnkr.co/edit/nmWxAxWONarW5gj2?p=preview?p=preview" target="_blank">
                     Open in <img src="../images/plunker_logo.png" alt="Open in Plunker" style="height: 34px; width: 34px;"/> Plunker
                 </a>
             </div>
