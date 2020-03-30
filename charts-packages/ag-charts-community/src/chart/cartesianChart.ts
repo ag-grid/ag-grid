@@ -5,6 +5,7 @@ import { CategoryAxis } from "./axis/categoryAxis";
 import { GroupedCategoryAxis } from "./axis/groupedCategoryAxis";
 import { ChartAxisPosition } from "./chartAxis";
 import { Series } from "./series/series";
+import { BBox } from "../scene/bbox";
 // import { ClipRect } from "../scene/clipRect";
 
 export class CartesianChart extends Chart {
@@ -37,12 +38,7 @@ export class CartesianChart extends Chart {
 
         const { width, height, axes, legend } = this;
 
-        const shrinkRect = {
-            x: 0,
-            y: 0,
-            width,
-            height
-        };
+        const shrinkRect = new BBox(0, 0, width, height);
 
         this.positionCaptions();
         this.positionLegend();
@@ -145,6 +141,7 @@ export class CartesianChart extends Chart {
             // axis.tick.count = Math.abs(axis.range[1] - axis.range[0]) > 200 ? 10 : 5;
         });
 
+        this.seriesRect = shrinkRect;
         this.series.forEach(series => {
             series.group.translationX = Math.floor(shrinkRect.x);
             series.group.translationY = Math.floor(shrinkRect.y);

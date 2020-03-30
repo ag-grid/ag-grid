@@ -699,6 +699,9 @@ export abstract class Chart extends Observable {
         chartElement.removeEventListener('click', this.onClick);
     }
 
+    // Should be available after first layout.
+    protected seriesRect?: BBox;
+
     // x/y are local canvas coordinates in CSS pixels, not actual pixels
     private pickSeriesNode(x: number, y: number): {
         series: Series,
@@ -725,8 +728,12 @@ export abstract class Chart extends Observable {
                      // when line series are rendered without markers
     };
 
-    // Provided x/y are in local canvas coordinates.
+    // Provided x/y are in canvas coordinates.
     private pickClosestSeriesNodeDatum(x: number, y: number): SeriesNodeDatum | undefined {
+        if (!this.seriesRect || !this.seriesRect.containsPoint(x, y)) {
+            return undefined;
+        }
+
         const allSeries = this.series;
 
         type Point = { x: number, y: number};
@@ -737,7 +744,6 @@ export abstract class Chart extends Observable {
 
         let minDistance = Infinity;
         let closestDatum: SeriesNodeDatum;
-        let closestSeries: Series;
 
         for (let i = allSeries.length - 1; i >= 0; i--) {
             const series = allSeries[i];
@@ -754,7 +760,6 @@ export abstract class Chart extends Observable {
                 if (distance < minDistance) {
                     minDistance = distance;
                     closestDatum = datum;
-                    closestSeries = series;
                 }
             });
         }
@@ -786,11 +791,9 @@ export abstract class Chart extends Observable {
                     const point = closestDatum.series.group.inverseTransformPoint(x, y);
                     const canvasRect = canvas.element.getBoundingClientRect() as DOMRect;
                     this.onSeriesDatumPick({
-                        pageX: Math.round(canvasRect.x + point.x),
-                        pageY: Math.round(canvasRect.y + point.y)
+                        pageX: Math.round(canvasRect.x + window.scrollX + point.x),
+                        pageY: Math.round(canvasRect.y + window.scrollY + point.y)
                     }, closestDatum);
-                    // this.onSeriesDatumPick(event, closestDatum);
-                    // this.showTooltip(event);
                 } else {
                     hideTooltip = true;
                 }
@@ -888,21 +891,8 @@ export abstract class Chart extends Observable {
             this.toggleTooltip(true);
         }
 
-        const tooltipRect = el.getBoundingClientRect() as DOMRect;
-
-        // const top = meta.pageY + offset[1];
-        // let left = meta.pageX + offset[0];
-
         let left = meta.pageX - el.clientWidth / 2;
         const top = meta.pageY - el.clientHeight - 8;
-
-        // if (parent && parent.parentElement) {
-        //     // Check if we need to flip the tooltip to the other side of the mouse cursor.
-        //     const flipTooltip = left - window.pageXOffset + tooltipRect.width > parent.parentElement.offsetWidth;
-        //     if (flipTooltip) {
-        //         left -= tooltipRect.width + offset[0] * 2;
-        //     }
-        // }
 
         el.style.left = `${left}px`;
         el.style.top = `${top}px`;

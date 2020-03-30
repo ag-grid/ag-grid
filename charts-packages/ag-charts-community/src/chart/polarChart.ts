@@ -3,6 +3,7 @@ import { Node } from "../scene/node";
 import { PolarSeries } from "./series/polar/polarSeries";
 import { reactive } from "../util/observable";
 import { Padding } from "../util/padding";
+import { BBox } from "../scene/bbox";
 
 export class PolarChart extends Chart {
     static className = 'PolarChart';
@@ -21,12 +22,7 @@ export class PolarChart extends Chart {
     }
 
     performLayout(): void {
-        const shrinkRect = {
-            x: 0,
-            y: 0,
-            width: this.width,
-            height: this.height
-        };
+        const shrinkRect = new BBox(0, 0, this.width, this.height);
 
         this.positionCaptions();
         this.positionLegend();
@@ -66,6 +62,7 @@ export class PolarChart extends Chart {
         shrinkRect.y += padding.top;
         shrinkRect.width -= padding.left + padding.right;
         shrinkRect.height -= padding.top + padding.bottom;
+        this.seriesRect = shrinkRect;
 
         const centerX = shrinkRect.x + shrinkRect.width / 2;
         const centerY = shrinkRect.y + shrinkRect.height / 2;
