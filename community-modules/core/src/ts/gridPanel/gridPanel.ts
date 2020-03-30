@@ -732,10 +732,10 @@ export class GridPanel extends Component {
     }
 
     private onCtrlAndD(event: KeyboardEvent): void {
-        if (ModuleRegistry.isRegistered(ModuleNames.ClipboardModule)) {
+        if (ModuleRegistry.isRegistered(ModuleNames.ClipboardModule) && !this.gridOptionsWrapper.isSuppressClipboardPaste()) {
             this.clipboardService.copyRangeDown();
-            event.preventDefault();
         }
+        event.preventDefault();
     }
 
     // Valid values for position are bottom, middle and top
