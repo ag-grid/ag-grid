@@ -1,10 +1,10 @@
-import {Component} from "../../../widgets/component";
-import {IFloatingFilterComp, IFloatingFilterParams} from "../floatingFilter";
-import {ProvidedFilterModel} from "../../../interfaces/iFilter";
-import {ICombinedSimpleModel, ISimpleFilterModel, SimpleFilter} from "../../provided/simpleFilter";
-import {OptionsFactory} from "../../provided/optionsFactory";
-import {IScalarFilterParams} from "../../provided/scalerFilter";
-import {FilterChangedEvent} from "../../../events";
+import { Component } from "../../../widgets/component";
+import { IFloatingFilterComp, IFloatingFilterParams } from "../floatingFilter";
+import { ProvidedFilterModel } from "../../../interfaces/iFilter";
+import { ICombinedSimpleModel, ISimpleFilterModel, SimpleFilter } from "../../provided/simpleFilter";
+import { OptionsFactory } from "../../provided/optionsFactory";
+import { IScalarFilterParams } from "../../provided/scalarFilter";
+import { FilterChangedEvent } from "../../../events";
 
 export abstract class SimpleFloatingFilter extends Component implements IFloatingFilterComp {
 

@@ -5,12 +5,10 @@ import { UserComponentFactory } from "../../../components/framework/userComponen
 import { _ } from "../../../utils";
 import { DateCompWrapper } from "./dateCompWrapper";
 import { ConditionPosition, ISimpleFilterModel, SimpleFilter } from "../simpleFilter";
-import { Comparator, IScalarFilterParams, ScalerFilter } from "../scalerFilter";
+import { Comparator, IScalarFilterParams, ScalarFilter } from "../scalarFilter";
 
-// the date filter model is a bit different, it takes strings, although the
-// filter actually works with dates. this is because a Date object won't convert
-// easily to JSON. so when the model is used for doing the filtering, it's converted
-// to Date objects.
+// The date filter model takes strings, although the filter actually works with dates. This is because a Date object
+// won't convert easily to JSON. When the model is used for doing the filtering, it's converted to a Date object.
 export interface DateFilterModel extends ISimpleFilterModel {
     dateFrom: string;
     dateTo: string;
@@ -25,16 +23,15 @@ export interface IDateComparatorFunc {
     (filterLocalDateAtMidnight: Date, cellValue: any): number;
 }
 
-export class DateFilter extends ScalerFilter<DateFilterModel, Date> {
-
+export class DateFilter extends ScalarFilter<DateFilterModel, Date> {
     private static readonly FILTER_TYPE = 'date';
 
     public static DEFAULT_FILTER_OPTIONS = [
-        ScalerFilter.EQUALS,
-        ScalerFilter.GREATER_THAN,
-        ScalerFilter.LESS_THAN,
-        ScalerFilter.NOT_EQUAL,
-        ScalerFilter.IN_RANGE
+        ScalarFilter.EQUALS,
+        ScalarFilter.GREATER_THAN,
+        ScalarFilter.LESS_THAN,
+        ScalarFilter.NOT_EQUAL,
+        ScalarFilter.IN_RANGE
     ];
 
     @RefSelector('ePanelFrom1') private ePanelFrom1: HTMLElement;

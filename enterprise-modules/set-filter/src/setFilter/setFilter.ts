@@ -17,9 +17,9 @@ import {
     _
 } from "@ag-grid-community/core";
 
-import {SetFilterModelValuesType, SetValueModel} from "./setValueModel";
-import {SetFilterListItem} from "./setFilterListItem";
-import {SetFilterModel} from "./setFilterModel";
+import { SetFilterModelValuesType, SetValueModel } from "./setValueModel";
+import { SetFilterListItem } from "./setFilterListItem";
+import { SetFilterModel } from "./setFilterModel";
 
 export class SetFilter extends ProvidedFilter {
 
@@ -29,7 +29,7 @@ export class SetFilter extends ProvidedFilter {
     @RefSelector('eSelectAllContainer') private eSelectAllContainer: HTMLElement;
     @RefSelector('eMiniFilter') private eMiniFilter: AgInputTextField;
     @RefSelector('eFilterLoading') private eFilterLoading: HTMLInputElement;
-    
+
     @Autowired('valueFormatterService') private valueFormatterService: ValueFormatterService;
     @Autowired('eventService') private eventService: EventService;
 
@@ -39,24 +39,25 @@ export class SetFilter extends ProvidedFilter {
 
     // to make the filtering super fast, we store the values in a map.
     // otherwise we would be searching a list of values for each row when checking doesFilterPass
-    private appliedModelValuesMapped: { [value: string]: any } | undefined;
+    private appliedModelValuesMapped: { [value: string]: any; } | undefined;
 
     // unlike the simple filter's, nothing in the set filter UI shows/hides.
     // maybe this method belongs in abstractSimpleFilter???
-    protected updateUiVisibility(): void {}
+    protected updateUiVisibility(): void { }
 
     protected createBodyTemplate(): string {
         const translate = this.gridOptionsWrapper.getLocaleTextFunc();
-        return `<div ref="eFilterLoading" class="ag-filter-loading ag-hidden">${translate('loadingOoo', 'Loading...')}</div>
-                <div>
-                    <div class="ag-filter-header-container" role="presentation">
-                        <ag-input-text-field class="ag-mini-filter" ref="eMiniFilter"></ag-input-text-field>
-                        <label ref="eSelectAllContainer" class="ag-set-filter-item ag-set-filter-select-all">
-                            <ag-checkbox ref="eSelectAll" class="ag-set-filter-item-checkbox"></ag-checkbox><span class="ag-set-filter-item-value">(${translate('selectAll', 'Select All')})</span>
-                        </label>
-                    </div>
-                    <div ref="eSetFilterList" class="ag-set-filter-list" role="presentation"></div>
-                </div>`;
+        return /* html */`
+            <div ref="eFilterLoading" class="ag-filter-loading ag-hidden">${translate('loadingOoo', 'Loading...')}</div>
+            <div>
+                <div class="ag-filter-header-container" role="presentation">
+                    <ag-input-text-field class="ag-mini-filter" ref="eMiniFilter"></ag-input-text-field>
+                    <label ref="eSelectAllContainer" class="ag-set-filter-item ag-set-filter-select-all">
+                        <ag-checkbox ref="eSelectAll" class="ag-set-filter-item-checkbox"></ag-checkbox><span class="ag-set-filter-item-value">(${translate('selectAll', 'Select All')})</span>
+                    </label>
+                </div>
+                <div ref="eSetFilterList" class="ag-set-filter-list" role="presentation"></div>
+            </div>`;
     }
 
     protected getCssIdentifier() {
@@ -78,7 +79,7 @@ export class SetFilter extends ProvidedFilter {
             const message = 'ag-Grid: The Set Filter Model is no longer an array and models as arrays are ' +
                 'deprecated. Please check the docs on what the set filter model looks like. Future versions of ' +
                 'ag-Grid will have the array version of the model removed.';
-            _.doOnce( ()=> console.warn(message), 'setFilter.modelAsArray');
+            _.doOnce(() => console.warn(message), 'setFilter.modelAsArray');
         }
 
         // also supporting old filter model for backwards compatibility
@@ -98,7 +99,7 @@ export class SetFilter extends ProvidedFilter {
             return (values as any) as SetFilterModel;
         }
 
-        return { values,  filterType: 'set' };
+        return { values, filterType: 'set' };
     }
 
     public getValueModel(): SetValueModel {
@@ -118,8 +119,8 @@ export class SetFilter extends ProvidedFilter {
         if (a.values.length != b.values.length) { return false; }
 
         // now check each one value by value
-        for (let i = 0; i<a.values.length; i++) {
-            if (a.values[i]!==b.values[i]) { return false; }
+        for (let i = 0; i < a.values.length; i++) {
+            if (a.values[i] !== b.values[i]) { return false; }
         }
 
         // got this far means value lists are identical
@@ -134,10 +135,10 @@ export class SetFilter extends ProvidedFilter {
         this.initialiseFilterBodyUi();
 
         const syncValuesAfterDataChange = !params.suppressSyncValuesAfterDataChange &&
-                                    // sync values only with CSRM
-                                    this.rowModel.getType() === Constants.ROW_MODEL_TYPE_CLIENT_SIDE &&
-                                    // sync only needed if user not providing values
-                                    !params.values;
+            // sync values only with CSRM
+            this.rowModel.getType() === Constants.ROW_MODEL_TYPE_CLIENT_SIDE &&
+            // sync only needed if user not providing values
+            !params.values;
 
         if (syncValuesAfterDataChange) {
             this.setupSyncValuesAfterDataChange();
@@ -149,12 +150,12 @@ export class SetFilter extends ProvidedFilter {
             const message = 'ag-Grid: since version 22.x, the Set Filter param syncValuesLikeExcel is no longer' +
                 ' used as this is the default behaviour. To turn this default behaviour off, use the' +
                 ' param suppressSyncValuesAfterDataChange';
-            _.doOnce(()=> console.warn(message), 'syncValuesLikeExcel deprecated');
+            _.doOnce(() => console.warn(message), 'syncValuesLikeExcel deprecated');
         }
         if (params.selectAllOnMiniFilter) {
             const message = 'ag-Grid: since version 22.x, the Set Filter param selectAllOnMiniFilter is no longer' +
                 ' used as this is the default behaviour.';
-            _.doOnce(()=> console.warn(message), 'selectAllOnMiniFilter deprecated');
+            _.doOnce(() => console.warn(message), 'selectAllOnMiniFilter deprecated');
         }
     }
 
@@ -202,8 +203,8 @@ export class SetFilter extends ProvidedFilter {
             eSetFilterList.appendChild(this.virtualList.getGui());
         }
 
-        if (_.exists(this.setFilterParams.cellHeight)) {	
-            this.virtualList.setRowHeight(this.setFilterParams.cellHeight);	
+        if (_.exists(this.setFilterParams.cellHeight)) {
+            this.virtualList.setRowHeight(this.setFilterParams.cellHeight);
         }
 
         this.virtualList.setComponentCreator(this.createSetListItem.bind(this));
@@ -284,7 +285,7 @@ export class SetFilter extends ProvidedFilter {
 
         if (appliedModel) {
             this.appliedModelValuesMapped = {};
-            appliedModel.values.forEach( value => this.appliedModelValuesMapped![value] = true );
+            appliedModel.values.forEach(value => this.appliedModelValuesMapped![value] = true);
         } else {
             this.appliedModelValuesMapped = undefined;
         }
@@ -300,7 +301,7 @@ export class SetFilter extends ProvidedFilter {
         let value = this.setFilterParams.valueGetter(params.node);
 
         if (this.setFilterParams.colDef.keyCreator) {
-            value = this.setFilterParams.colDef.keyCreator({value: value});
+            value = this.setFilterParams.colDef.keyCreator({ value: value });
         }
 
         value = _.makeNull(value);
@@ -348,7 +349,7 @@ export class SetFilter extends ProvidedFilter {
      * @param notify If we should let know the model that the values of the filter have changed
      * @param toSelect The subset of options to subselect
      */
-    public setFilterValues(options: string[], selectAll: boolean = false, notify: boolean = true, toSelect ?: string[]): void {
+    public setFilterValues(options: string[], selectAll: boolean = false, notify: boolean = true, toSelect?: string[]): void {
         this.valueModel.onFilterValuesReady(() => {
             const keepSelection = this.setFilterParams && this.setFilterParams.newRowsAction === 'keep';
             this.valueModel.setValuesType(SetFilterModelValuesType.PROVIDED_LIST);
@@ -360,7 +361,7 @@ export class SetFilter extends ProvidedFilter {
             actualToSelect.forEach(option => this.valueModel.selectValue(option));
             this.virtualList.refresh();
 
-            if (notify) { 
+            if (notify) {
                 this.onUiChanged();
             }
         });

@@ -1,13 +1,13 @@
 import { IFilterOptionDef, IFilterParams } from "../../interfaces/iFilter";
-import { IScalarFilterParams } from "./scalerFilter";
+import { IScalarFilterParams } from "./scalarFilter";
 import { ISimpleFilterParams } from "./simpleFilter";
 
 /* Common logic for options, used by both filters and floating filters. */
 export class OptionsFactory {
 
-    protected customFilterOptions: {[name: string]: IFilterOptionDef} = {};
+    protected customFilterOptions: { [name: string]: IFilterOptionDef; } = {};
 
-    protected filterOptions: (IFilterOptionDef | string) [];
+    protected filterOptions: (IFilterOptionDef | string)[];
 
     protected defaultOption: string;
 
@@ -17,7 +17,7 @@ export class OptionsFactory {
         this.selectDefaultItem(params);
     }
 
-    public getFilterOptions(): (IFilterOptionDef | string) [] {
+    public getFilterOptions(): (IFilterOptionDef | string)[] {
         return this.filterOptions;
     }
 

@@ -90,7 +90,7 @@ export { FilterManager, FilterWrapper, FilterRequestSource } from "./filter/filt
 
 export { ProvidedFilter, IProvidedFilterParams } from "./filter/provided/providedFilter";
 export { SimpleFilter, ISimpleFilterParams, ISimpleFilterModel } from "./filter/provided/simpleFilter";
-export { ScalerFilter, IScalarFilterParams } from "./filter/provided/scalerFilter";
+export { ScalarFilter, IScalarFilterParams } from "./filter/provided/scalarFilter";
 
 export { NumberFilter, INumberFilterParams, NumberFilterModel } from "./filter/provided/number/numberFilter";
 export { TextFilter, ITextFilterParams, TextFilterModel } from "./filter/provided/text/textFilter";
