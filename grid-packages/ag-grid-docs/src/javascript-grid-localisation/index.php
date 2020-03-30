@@ -144,7 +144,7 @@ localeText = {
     max: 'laMax',
     none: 'laNone',
     count: 'laCount',
-    average: 'laAverage',
+    avg: 'laAverage',
     filteredRows: 'laFiltered'
     selectedRows: 'laSelected'
     totalRows: 'laTotal Rows'
