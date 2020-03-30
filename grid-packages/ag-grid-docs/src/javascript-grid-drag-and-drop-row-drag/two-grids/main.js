@@ -1,22 +1,23 @@
 var rowIdSequence = 100;
 
 var leftColumnDefs = [
-    {field: "id", dndSource: true},
-    {field: "color"},
-    {field: "value1"},
-    {field: "value2"}
+    { field: "id", rowDrag: true },
+    { field: "color" },
+    { field: "value1" },
+    { field: "value2" }
 ];
 
 var rightColumnDefs = [
-    {field: "id", dndSource: true},
-    {field: "color"},
-    {field: "value1"},
-    {field: "value2"}
+    { field: "id", rowDrag: true },
+    { field: "color" },
+    { field: "value1" },
+    { field: "value2" }
 ];
 
 var leftGridOptions = {
     defaultColDef: {
-        width: 80,
+        flex: 1,
+        minWidth: 100,
         sortable: true,
         filter: true,
         resizable: true
@@ -35,7 +36,8 @@ var leftGridOptions = {
 
 var rightGridOptions = {
     defaultColDef: {
-        width: 80,
+        flex: 1,
+        minWidth: 100,
         sortable: true,
         filter: true,
         resizable: true
@@ -67,41 +69,7 @@ function createDataItem(color) {
     };
 }
 
-function binDragOver(event) {
-    var dragSupported = event.dataTransfer.types.length;
-
-    if (dragSupported) {
-        event.dataTransfer.dropEffect = 'move';
-        event.preventDefault();
-    }
-}
-
-function binDrop(event) {
-    event.preventDefault();
-    var userAgent = window.navigator.userAgent;
-    var isIE = userAgent.indexOf('Trident/') >= 0;
-    var jsonData = event.dataTransfer.getData(isIE ? 'text' : 'application/json');
-    var data = JSON.parse(jsonData);
-
-    // if data missing or data has no id, do nothing
-    if (!data || data.id == null) { return; }
-
-    var transaction = {
-        remove: [data]
-    };
-
-    var rowIsInLeftGrid = !!leftGridOptions.api.getRowNode(data.id);
-    if (rowIsInLeftGrid) {
-        leftGridOptions.api.updateRowData(transaction);
-    }
-
-    var rowIsInRightGrid = !!rightGridOptions.api.getRowNode(data.id);
-    if (rowIsInRightGrid) {
-        rightGridOptions.api.updateRowData(transaction);
-    }
-}
-
-function dragStart(event, color) {
+function createItemDragStart(event, color) {
     var newItem = createDataItem(color);
     var jsonData = JSON.stringify(newItem);
     var userAgent = window.navigator.userAgent;
@@ -110,17 +78,16 @@ function dragStart(event, color) {
     event.dataTransfer.setData(isIE ? 'text' : 'application/json', jsonData);
 }
 
-function gridDragOver(event) {
+function gridDragNewItemOver(event) {
     var dragSupported = event.dataTransfer.types.length;
 
     if (dragSupported) {
         event.dataTransfer.dropEffect = "copy";
         event.preventDefault();
     }
-
 }
 
-function gridDrop(event, grid) {
+function onGridDropNewItem(event, grid) {
     event.preventDefault();
 
     var userAgent = window.navigator.userAgent;
@@ -147,6 +114,29 @@ function gridDrop(event, grid) {
     gridApi.updateRowData(transaction);
 }
 
+function binDrop(data) {
+    // if data missing or data has no id, do nothing
+    if (!data || data.id == null) { return; }
+
+    var transaction = {
+        remove: [data]
+    };
+
+    var rowIsInLeftGrid = !!leftGridOptions.api.getRowNode(data.id);
+
+    if (rowIsInLeftGrid) {
+        leftGridOptions.api.updateRowData(transaction);
+    }
+
+    var rowIsInRightGrid = !!rightGridOptions.api.getRowNode(data.id);
+    if (rowIsInRightGrid) {
+        rightGridOptions.api.updateRowData(transaction);
+    }
+}
+
+
+
+
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function() {
     var leftGridDiv = document.querySelector('#eLeftGrid');
@@ -154,4 +144,22 @@ document.addEventListener('DOMContentLoaded', function() {
 
     var rightGridDiv = document.querySelector('#eRightGrid');
     new agGrid.Grid(rightGridDiv, rightGridOptions);
+
+    var eBin = document.querySelector('#eBin');
+    var binDropZone = {
+        el: eBin,
+        onDragEnter: function() {
+            eBin.style.color = 'blue';
+        },
+        onDragLeave: function() {
+            eBin.style.color = 'black';
+        },
+        onDragStop: function(params) {
+            binDrop(params.dragItem.rowNode.data);
+            eBin.style.color = 'black';
+        }
+    };
+
+    leftGridOptions.api.addDropZone(binDropZone);
+    rightGridOptions.api.addDropZone(binDropZone);
 });

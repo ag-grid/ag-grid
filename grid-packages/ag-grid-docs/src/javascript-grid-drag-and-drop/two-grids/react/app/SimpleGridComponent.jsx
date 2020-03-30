@@ -3,7 +3,7 @@ import {AgGridReact} from '@ag-grid-community/react';
 import {ClientSideRowModelModule} from '@ag-grid-community/all-modules';
 
 import '@ag-grid-community/all-modules/dist/styles/ag-grid.css';
-import '@ag-grid-community/all-modules/dist/styles/ag-theme-balham.css';
+import '@ag-grid-community/all-modules/dist/styles/ag-theme-alpine.css';
 
 export default class extends Component {
     constructor(props) {
@@ -171,7 +171,7 @@ export default class extends Component {
     render() {
         return (
             <div className="outer">
-                <div style={{height: "100%"}} className="inner-col ag-theme-balham" onDragOver={this.gridDragOver}
+                <div style={{height: "100%"}} className="inner-col ag-theme-alpine" onDragOver={this.gridDragOver}
                      onDrop={this.gridDrop.bind(this, 'left')}>
                     <AgGridReact gridOptions={this.state.leftGridOptions} onGridReady={this.onGridReady} modules={[ClientSideRowModelModule]}/>
                 </div>
@@ -179,25 +179,25 @@ export default class extends Component {
                 <div className="inner-col factory-panel">
                 <span id="eBin" onDragOver={this.binDragOver} onDrop={this.binDrop.bind(this)}
                       className="factory factory-bin">
-                    <i className="fas fa-trash"><span className="filename"> Trash - </span></i>
+                    <i className="far fa-trash-alt"><span className="filename"> Trash - </span></i>
                     Drop target to destroy row
                 </span>
                     <span draggable="true" onDragStart={this.dragStart.bind(this, 'Red')} className="factory factory-red">
-                    <i className="fas fa-plus-square"><span className="filename"> Create - </span></i>
+                    <i className="far fa-plus-square"><span className="filename"> Create - </span></i>
                     Drag source for new red item
                 </span>
                     <span draggable="true" onDragStart={this.dragStart.bind(this, 'Green')}
                           className="factory factory-green">
-                    <i className="fas fa-plus-square"><span className="filename"> Create - </span></i>
+                    <i className="far fa-plus-square"><span className="filename"> Create - </span></i>
                     Drag source for new green item
                 </span>
                     <span draggable="true" onDragStart={this.dragStart.bind(this, 'Blue')} className="factory factory-blue">
-                    <i className="fas fa-plus-square"><span className="filename"> Create - </span></i>
+                    <i className="far fa-plus-square"><span className="filename"> Create - </span></i>
                     Drag source for new blue item
                 </span>
                 </div>
 
-                <div style={{height: "100%"}} className="inner-col ag-theme-balham" onDragOver={this.gridDragOver}
+                <div style={{height: "100%"}} className="inner-col ag-theme-alpine" onDragOver={this.gridDragOver}
                      onDrop={this.gridDrop.bind(this, 'right')}>
                     <AgGridReact gridOptions={this.state.rightGridOptions} modules={[ClientSideRowModelModule]}/>
                 </div>

@@ -820,14 +820,32 @@ export class GridApi {
         this.gridOptionsWrapper.setProperty(GridOptionsWrapper.PROP_SUPPRESS_ROW_DRAG, value);
     }
 
-    public addDropZone(el: HTMLElement, onDragging?:(params: DraggingEvent) => void, onDragStop?: (params: DraggingEvent) => void): void {
+    public addDropZone(params: {
+        el: HTMLElement,
+        onDragEnter?: (params: DraggingEvent) => void,
+        onDragLeave?: (params: DraggingEvent) => void,
+        onDragging?: (params: DraggingEvent) => void,
+        onDragStop?: (params: DraggingEvent) => void
+    }): void {
+        const { el, onDragEnter, onDragging, onDragLeave, onDragStop } = params;
+
         this.dragAndDropService.addDropTarget({
             getContainer: () => el,
             isInterestedIn: (type: DragSourceType) => type == 2,
             getIconName:() => 'move',
+            onDragEnter: (params: DraggingEvent) => {
+                if (onDragEnter) {
+                    onDragEnter(params);
+                }
+            },
             onDragging: (params: DraggingEvent) => {
                 if (onDragging) {
                     onDragging(params);
+                }
+            },
+            onDragLeave: (params: DraggingEvent) => {
+                if (onDragLeave)  {
+                    onDragLeave(params);
                 }
             },
             onDragStop: (params: DraggingEvent) => {

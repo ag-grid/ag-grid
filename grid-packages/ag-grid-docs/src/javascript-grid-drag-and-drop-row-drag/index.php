@@ -76,6 +76,6 @@ include '../documentation-main/documentation_header.php';
         </li>
     </ul>
 
-    <?= grid_example('Two Grids', 'two-grids', 'generated') ?>
+    <?= grid_example('Two Grids', 'two-grids', 'generated', ['extras' => ['fontawesome']]) ?>
 
 <?php include '../documentation-main/documentation_footer.php'; ?>

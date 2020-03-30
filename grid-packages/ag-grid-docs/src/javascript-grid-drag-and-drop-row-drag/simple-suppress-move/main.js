@@ -61,12 +61,11 @@ document.addEventListener('DOMContentLoaded', function() {
 
     new agGrid.Grid(gridDiv, gridOptions);
 
-    gridOptions.api.addDropZone(
-        tileContainer,
-        null,
-        function(params) {
+    gridOptions.api.addDropZone({
+        el: tileContainer,
+        onDragStop: function(params) {
             var tile = createTile(params.dragItem.rowNode.data);
             tileContainer.appendChild(tile);
         }
-    )
+    });
 });

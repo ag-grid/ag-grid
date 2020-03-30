@@ -17,27 +17,27 @@
 .factory {
     padding: 10px;
     margin: 10px;
-    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    flex: 1 1 auto;
+    align-items: center;
+    justify-content: center;
+}
+
+.factory:not(.factory-bin) i {
+    cursor: grab;
 }
 
 .factory-red {
-    background-color: #ffdddd;
-    border: 1px solid #ff8888;
+    color: indianred;
 }
 
 .factory-green {
-    background-color: #ddffdd;
-    border: 1px solid #88ff88;
+    color: darkseagreen;
 }
 
 .factory-blue {
-    background-color: #ddddff;
-    border: 1px solid #8888ff;
-}
-
-.factory-bin {
-    background-color: lightgray;
-    border: 1px solid #888888;
+    color: cornflowerblue;
 }
 
 .green-row {

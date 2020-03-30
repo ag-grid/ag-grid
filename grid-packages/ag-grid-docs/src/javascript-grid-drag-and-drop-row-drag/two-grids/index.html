@@ -1,0 +1,22 @@
+<div class="outer ag-theme-alpine">
+    <div id="eLeftGrid" style="height: 100%;" class="inner-col" ondragover="gridDragNewItemOver(event)" ondrop="onGridDropNewItem(event,'left')"></div>
+
+    <div class="inner-col factory-panel">
+        <span id="eBin" class="factory factory-bin">
+            <i class="far fa-trash-alt fa-3x"></i>
+        </span>
+        <span draggable="true" ondragstart="createItemDragStart(event,'Red')" class="factory factory-red">
+            <i class="far fa-plus-square fa-3x"></i>
+            <div>Drag source for new red item</div>
+        </span>
+        <span draggable="true" ondragstart="createItemDragStart(event,'Green')" class="factory factory-green">
+            <i class="far fa-plus-square fa-3x"></i>
+            <div>Drag source for new green item</div>
+        </span>
+        <span draggable="true" ondragstart="createItemDragStart(event,'Blue')" class="factory factory-blue">
+            <i class="far fa-plus-square fa-3x"></i>
+            <div>Drag source for new blue item</div>
+        </span>
+    </div>
+    <div id="eRightGrid" style="height: 100%;" class="inner-col" ondragover="gridDragNewItemOver(event)" ondrop="onGridDropNewItem(event,'right')"></div>
+</div>
