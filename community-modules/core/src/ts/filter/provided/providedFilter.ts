@@ -179,7 +179,7 @@ export abstract class ProvidedFilter extends Component implements IFilterComp {
         if (newModelDifferent) {
             // the floating filter uses 'afterFloatingFilter' info, so it doesn't refresh after filter changed if change
             // came from floating filter
-            this.providedFilterParams.filterChangedCallback({afterFloatingFilter: afterFloatingFilter, afterDataChange: afterDataChange});
+            this.providedFilterParams.filterChangedCallback({ afterFloatingFilter: afterFloatingFilter, afterDataChange: afterDataChange });
         }
     }
 
@@ -202,7 +202,7 @@ export abstract class ProvidedFilter extends Component implements IFilterComp {
         // applyNow=true for floating filter changes, we always act on these immediately
         if (afterFloatingFilter) {
             this.onBtApply(afterFloatingFilter);
-        // otherwise if no apply button, we apply (but debounce for time delay)
+            // otherwise if no apply button, we apply (but debounce for time delay)
         } else if (!this.applyActive) {
             this.onBtApplyDebounce();
         }
@@ -225,12 +225,15 @@ export abstract class ProvidedFilter extends Component implements IFilterComp {
     // static, as used by floating filter also
     public static getDebounceMs(params: IProvidedFilterParams, debounceDefault: number): number {
         const applyActive = ProvidedFilter.isUseApplyButton(params);
+
         if (applyActive) {
             if (params.debounceMs != null) {
                 console.warn('ag-Grid: debounceMs is ignored when applyButton = true');
             }
+
             return 0;
         }
+
         return params.debounceMs != null ? params.debounceMs : debounceDefault;
     }
 

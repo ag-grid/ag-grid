@@ -10,7 +10,11 @@ export class DefaultDateComponent extends Component implements IDateComp {
     private listener: () => void;
 
     constructor() {
-        super(`<div class="ag-filter-filter"><ag-input-text-field class="ag-date-filter" ref="eDateInput"></ag-input-text-field></div>`);
+        super(/* html */`
+            <div class="ag-filter-filter">
+                <ag-input-text-field class="ag-date-filter" ref="eDateInput"></ag-input-text-field>
+            </div>`
+        );
     }
 
     public init(params: IDateParams): void {
@@ -32,11 +36,11 @@ export class DefaultDateComponent extends Component implements IDateComp {
     }
 
     public getDate(): Date {
-        return _.getDateFromString(this.eDateInput.getValue());
+        return _.parseDateTimeFromString(this.eDateInput.getValue());
     }
 
     public setDate(date: Date): void {
-        this.eDateInput.setValue(_.serializeDateToYyyyMmDd(date));
+        this.eDateInput.setValue(_.serialiseDate(date));
     }
 
     public setInputPlaceholder(placeholder: string): void {

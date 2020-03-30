@@ -1,45 +1,81 @@
 import { _ } from './general';
 
-describe('serializeDateToYyyyMmDd', () => {
-    it('returns null if no date supplied', () => {
-        expect(_.serializeDateToYyyyMmDd(null)).toBeNull();
+describe('serialiseDate', () => {
+    it('returns null if no date is supplied', () => {
+        expect(_.serialiseDate(null)).toBeNull();
     });
 
     it('serialises dates using hyphen by default', () => {
         const date = new Date(2020, 2, 7);
-        const result = _.serializeDateToYyyyMmDd(date);
+        const result = _.serialiseDate(date);
 
         expect(result).toBe('2020-03-07');
     });
 
-    it('can use a different delimiter', () => {
+    it('can serialise with a different separator', () => {
         const date = new Date(2020, 2, 27);
-        const result = _.serializeDateToYyyyMmDd(date, '/');
+        const result = _.serialiseDate(date, '/');
 
         expect(result).toBe('2020/03/27');
     });
 });
 
-describe('parseYyyyMmDdToDate', () => {
-    it('can parse date using default hyphen separator', () => {
+describe('serialiseTime', () => {
+    it('returns null if no time is supplied', () => {
+        expect(_.serialiseTime(null)).toBeNull();
+    });
+
+    it('returns colon separated time string', () => {
+        const time = new Date(0, 0, 0, 14, 22, 19);
+
+        expect(_.serialiseTime(time)).toBe('14:22:19');
+    });
+
+    it('pads all time parts to two digits', () => {
+        const time = new Date(0, 0, 0, 4, 2, 9);
+
+        expect(_.serialiseTime(time)).toBe('04:02:09');
+    });
+});
+
+describe('parseDateTimeFromString', () => {
+    it('can parse date', () => {
         const value = '2020-03-27';
-        const result = _.parseYyyyMmDdToDate(value);
+        const result = _.parseDateTimeFromString(value);
 
         expect(result).toStrictEqual(new Date(2020, 2, 27));
     });
 
-    it('can parse date using provided separator', () => {
-        const value = '2020/03/07';
-        const result = _.parseYyyyMmDdToDate(value, '/');
+    it.each(
+        [
+            null,
+            '2017',
+            '2017-',
+            '2017-03',
+            '2017-03-',
+            '2017-00-04',
+            '2017-13-05',
+            '2017-02-30'
+        ])
+        ('returns null if invalid value supplied: %s', value => {
+            expect(_.parseDateTimeFromString(value)).toBeNull();
+        });
 
-        expect(result).toStrictEqual(new Date(2020, 2, 7));
+    it('can parse date with time', () => {
+        const value = '2020-03-30 14:19:34';
+        const result = _.parseDateTimeFromString(value);
+
+        expect(result).toStrictEqual(new Date(2020, 2, 30, 14, 19, 34));
     });
 
-    it('returns null if no value supplied', () => {
-        expect(_.parseYyyyMmDdToDate(null)).toBeNull();
-    });
+    it.each(
+        [
+            '25:61:61',
+            '-1:-1:-1',
+        ])
+        ('ignores invalid time parts: %s', value => {
+            const result = _.parseDateTimeFromString('2020-03-30 ' + value);
 
-    it('returns null if invalid value supplied', () => {
-        expect(_.parseYyyyMmDdToDate('2017-03')).toBeNull();
-    });
+            expect(result).toStrictEqual(new Date(2020, 2, 30));
+        });
 });

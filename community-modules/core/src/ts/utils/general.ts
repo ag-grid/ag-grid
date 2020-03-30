@@ -529,65 +529,48 @@ export class Utils {
         return [].concat.apply([], arrayOfArrays);
     }
 
-    static parseYyyyMmDdToDate(yyyyMmDd: string, separator = '-'): Date | null {
-        try {
-            if (!yyyyMmDd || yyyyMmDd.indexOf(separator) < 0) { return null; }
-
-            const fields = yyyyMmDd.split(separator);
-
-            if (fields.length !== 3) { return null; }
-
-            return new Date(Number(fields[0]), Number(fields[1]) - 1, Number(fields[2]));
-        } catch (e) {
-            return null;
-        }
-    }
-
-    static serializeDateToYyyyMmDd(date: Date, separator = '-'): string | null {
+    /**
+     * Serialises a date to a string of format `yyyy-MM-dd`.
+     * An alternative separator can be provided to be used instead of hyphens.
+     */
+    static serialiseDate(date: Date, separator = '-'): string | null {
         if (!date) { return null; }
 
-        return date.getFullYear() + separator + this.padStart(date.getMonth() + 1, 2) + separator + this.padStart(date.getDate(), 2);
+        return [date.getFullYear(), date.getMonth() + 1, date.getDate()].map(part => this.padStart(part, 2)).join(separator);
     }
 
-    static getTimeFromDate(date: Date): string | null {
+    /**
+     * Serialises a time to a string of format `HH:mm:ss`.
+     */
+    static serialiseTime(date: Date): string | null {
         if (!date) { return null; }
 
-        return `${this.padStart(date.getHours(), 2)}:${this.padStart(date.getMinutes(), 2)}:${this.padStart(date.getSeconds(), 2)}`;
+        return [date.getHours(), date.getMinutes(), date.getSeconds()].map(part => this.padStart(part, 2)).join(':');
     }
 
-    static normalizeTime(time: string): string {
-        if (!time) { return '00:00:00'; }
-
-        let hoursStr = '00';
-        let minutesStr = '00';
-        let secondsStr = '00';
-
-        const [hours, minutes, seconds] = time.split(':').map(Number);
-
-        if (hours >= 0 && hours <= 24) {
-            hoursStr = _.padStart(hours, 2);
-        }
-
-        if (minutes >= 0 && minutes <= 59) {
-            minutesStr = _.padStart(minutes, 2);
-        }
-
-        if (seconds >= 0 && seconds <= 59) {
-            secondsStr = _.padStart(seconds, 2);
-        }
-
-        return `${hoursStr}:${minutesStr}:${secondsStr}`;
-    }
-
-    static getDateFromString(fullDate: string): Date | null {
-        if (!fullDate) {
+    /**
+     * Parses a date and time from a string in the format `yyyy-MM-dd HH:mm:ss`
+     */
+    static parseDateTimeFromString(value: string): Date | null {
+        if (!value) {
             return null;
         }
 
-        const [dateStr, timeStr] = fullDate.split(' ');
-        const date = _.parseYyyyMmDdToDate(dateStr, '-');
+        const [dateStr, timeStr] = value.split(' ');
 
-        if (!date) {
+        if (!dateStr) { return null; }
+
+        const fields = dateStr.split('-').map(f => parseInt(f, 10));
+
+        if (fields.filter(f => !isNaN(f)).length !== 3) { return null; }
+
+        const [year, month, day] = fields;
+        const date = new Date(year, month - 1, day);
+
+        if (date.getFullYear() !== year ||
+            date.getMonth() !== month - 1 ||
+            date.getDate() !== day) {
+            // date was not parsed as expected so must have been invalid
             return null;
         }
 
@@ -595,17 +578,25 @@ export class Utils {
             return date;
         }
 
-        const [hours, minutes, seconds] = _.normalizeTime(timeStr).split(':').map(Number);
+        const [hours, minutes, seconds] = timeStr.split(':').map(part => parseInt(part, 10));
 
-        date.setHours(hours);
-        date.setMinutes(minutes);
-        date.setSeconds(seconds);
+        if (hours >= 0 && hours < 24) {
+            date.setHours(hours);
+        }
+
+        if (minutes >= 0 && minutes < 60) {
+            date.setMinutes(minutes);
+        }
+
+        if (seconds >= 0 && seconds < 60) {
+            date.setSeconds(seconds);
+        }
 
         return date;
     }
 
     static padStart(num: number, totalStringSize: number): string {
-        let asString: string = `${num}`;
+        let asString = `${num}`;
 
         while (asString.length < totalStringSize) {
             asString = `0${asString}`;
@@ -936,9 +927,10 @@ export class Utils {
      * @returns {HTMLElement}
      */
     static loadTemplate(template: string): HTMLElement {
-        const tempDiv = document.createElement("div");
+        const tempDiv = document.createElement('div');
 
-        tempDiv.innerHTML = template;
+        tempDiv.innerHTML = (template || '').trim();
+
         return tempDiv.firstChild as HTMLElement;
     }
 

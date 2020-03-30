@@ -1,7 +1,6 @@
 import { AgEvent } from "../events";
 import { BeanStub } from "../context/beanStub";
-import { Context, PreConstruct, PostConstruct } from "../context/context";
-import { Constants } from "../constants";
+import { Context, PreConstruct } from "../context/context";
 import { IComponent } from "../interfaces/iComponent";
 import { _, NumberSequence } from "../utils";
 
@@ -189,7 +188,7 @@ export class Component extends BeanStub {
         listenerMethods.forEach((eventListener: any) => {
             const listener = (this as any)[eventListener.methodName].bind(this);
             this.eGui.addEventListener(eventListener.eventName, listener);
-            this.annotatedEventListeners.push({eventName: eventListener.eventName, listener: listener});
+            this.annotatedEventListeners.push({ eventName: eventListener.eventName, listener: listener });
         });
     }
 
@@ -338,6 +337,6 @@ export class Component extends BeanStub {
     }
 
     public getRefElement(refName: string): HTMLElement {
-        return this.queryForHtmlElement('[ref="' + refName + '"]');
+        return this.queryForHtmlElement(`[ref="${refName}"]`);
     }
 }

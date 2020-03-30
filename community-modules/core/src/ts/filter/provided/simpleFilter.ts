@@ -283,7 +283,7 @@ export abstract class SimpleFilter<M extends ISimpleFilterModel> extends Provide
     }
 
     protected createBodyTemplate(): string {
-        return `
+        return /* html */`
             <ag-select class="ag-filter-select" ref="eOptions1"></ag-select>
             ${this.createValueTemplate(ConditionPosition.One)}
             <div class="ag-filter-condition" ref="eJoinOperatorPanel">

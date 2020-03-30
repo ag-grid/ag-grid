@@ -7,7 +7,6 @@ import { UserComponentFactory } from "../../../components/framework/userComponen
 /** Provides sync access to async component. Date component can be lazy created - this class encapsulates
  * this by keeping value locally until DateComp has loaded, then passing DateComp the value. */
 export class DateCompWrapper {
-
     private dateComp: IDateComp;
     private tempValue: Date;
     private alive = true;
@@ -19,6 +18,7 @@ export class DateCompWrapper {
                 if (dateComp.destroy) {
                     dateComp.destroy();
                 }
+
                 return;
             }
 
@@ -37,6 +37,7 @@ export class DateCompWrapper {
 
     public destroy(): void {
         this.alive = false;
+
         if (this.dateComp && this.dateComp.destroy) {
             this.dateComp.destroy();
         }
@@ -54,7 +55,7 @@ export class DateCompWrapper {
         }
     }
 
-    public setInputPlaceholder(placeholder: string) {
+    public setInputPlaceholder(placeholder: string): void {
         if (this.dateComp && this.dateComp.setInputPlaceholder) {
             this.dateComp.setInputPlaceholder(placeholder);
         }
