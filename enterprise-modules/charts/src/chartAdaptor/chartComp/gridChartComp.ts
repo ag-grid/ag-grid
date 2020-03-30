@@ -32,6 +32,7 @@ import { LineChartProxy } from "./chartProxies/cartesian/lineChartProxy";
 import { PieChartProxy } from "./chartProxies/polar/pieChartProxy";
 import { DoughnutChartProxy } from "./chartProxies/polar/doughnutChartProxy";
 import { ScatterChartProxy } from "./chartProxies/cartesian/scatterChartProxy";
+import { HistogramChartProxy } from "./chartProxies/cartesian/histogramChartProxy";
 import { ChartPaletteName } from "ag-charts-community";
 import { ChartTranslator } from "./chartTranslator";
 
@@ -188,6 +189,8 @@ export class GridChartComp extends Component {
             case ChartType.Scatter:
             case ChartType.Bubble:
                 return new ScatterChartProxy(chartProxyParams);
+            case ChartType.Histogram:
+                return new HistogramChartProxy(chartProxyParams);
         }
     }
 

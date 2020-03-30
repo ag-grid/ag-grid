@@ -12,6 +12,7 @@ export * from "./chart/series/cartesian/areaSeries";
 export * from "./chart/series/cartesian/columnSeries";
 export * from "./chart/series/cartesian/lineSeries";
 export * from "./chart/series/cartesian/scatterSeries";
+export * from "./chart/series/cartesian/histogramSeries";
 export * from "./chart/series/polar/pieSeries";
 export * from "./chartBuilder";
 export * from "./chartOptions";

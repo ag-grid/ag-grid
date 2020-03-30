@@ -8,6 +8,7 @@ import {PieSeriesPanel} from "./series/pieSeriesPanel";
 import {ChartPanel} from "./chart/chartPanel";
 import {AreaSeriesPanel} from "./series/areaSeriesPanel";
 import {ScatterSeriesPanel} from "./series/scatterSeriesPanel";
+import {HistogramSeriesPanel} from "./series/histogramSeriesPanel";
 
 export class ChartFormattingPanel extends Component {
     public static TEMPLATE = `<div class="ag-chart-format-wrapper"></div>`;
@@ -72,6 +73,9 @@ export class ChartFormattingPanel extends Component {
                 this.addComponent(new AxisPanel(this.chartController));
                 this.addComponent(new AreaSeriesPanel(this.chartController));
                 break;
+            case ChartType.Histogram:
+                this.addComponent(new AxisPanel(this.chartController));
+                this.addComponent(new HistogramSeriesPanel(this.chartController));
             default:
                 console.warn(`ag-Grid: ChartFormattingPanel - unexpected chart type index: ${chartType} supplied`);
         }
@@ -83,7 +87,7 @@ export class ChartFormattingPanel extends Component {
     private addComponent(component: Component): void {
         this.wireBean(component);
         this.panels.push(component);
-         _.addCssClass(component.getGui(), 'ag-chart-format-section');
+        _.addCssClass(component.getGui(), 'ag-chart-format-section');
         this.getGui().appendChild(component.getGui());
     }
 
