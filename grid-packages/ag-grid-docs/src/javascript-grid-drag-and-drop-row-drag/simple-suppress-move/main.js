@@ -22,7 +22,8 @@ var gridOptions = {
     rowData: createRowData(),
     rowDragManaged: true,
     columnDefs: columnDefs,
-    animateRows: true
+    animateRows: true,
+    suppressMoveWhenRowDragging: true
 };
 
 function createRowData() {

@@ -40,6 +40,14 @@ include '../documentation-main/documentation_header.php';
 
     <?= grid_example('Simple', 'simple', 'generated') ?>
 
+    <h2>With suppressMoveWhenDragging</h2>
+
+    <p>
+        To prevent the rows from moving while you are dragging to another container, enable <code>suppressMoveWhenRowDragging</code>.
+    </p>
+
+    <?= grid_example('Simple with suppressMoveWhenRowDragging', 'simple-suppress-move', 'generated') ?>
+
     <h2>Dragging Between Grids</h2>
 
     <p>
