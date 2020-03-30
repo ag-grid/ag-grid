@@ -791,8 +791,8 @@ export abstract class Chart extends Observable {
                     const point = closestDatum.series.group.inverseTransformPoint(x, y);
                     const canvasRect = canvas.element.getBoundingClientRect() as DOMRect;
                     this.onSeriesDatumPick({
-                        pageX: Math.round(canvasRect.x + window.scrollX + point.x),
-                        pageY: Math.round(canvasRect.y + window.scrollY + point.y)
+                        pageX: Math.round(canvasRect.x + window.pageXOffset + point.x),
+                        pageY: Math.round(canvasRect.y + window.pageYOffset + point.y)
                     }, closestDatum);
                 } else {
                     hideTooltip = true;
