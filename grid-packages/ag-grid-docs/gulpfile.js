@@ -211,11 +211,13 @@ const serveDist = (done) => {
 
 // if local we serve from /dist, but once this is run entries will point to corresponding cdn entries instead
 const replaceAgReferencesWithCdnLinks = () => {
-    const version = require('../ag-grid-community/package.json').version;
+    const gridVersion = require('../../community-modules/core/package.json').version;
+    const chartsVersion = require('../../charts-packages/ag-charts-community/package.json').version;
 
     return gulp
         .src('./dist/config.php')
-        .pipe(replace('$$LOCAL$$', version))
+        .pipe(replace('$$GRID_VERSION$$', gridVersion))
+        .pipe(replace('$$CHARTS_VERSION$$', chartsVersion))
         .pipe(gulp.dest('./dist'));
 };
 

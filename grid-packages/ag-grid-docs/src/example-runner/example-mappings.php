@@ -1,7 +1,7 @@
 <?php
 include dirname(__FILE__) . '/../config.php';
 
-define('USE_LOCAL', AG_GRID_VERSION == '$$LOCAL$$');
+define('USE_LOCAL', AG_GRID_VERSION == '$$GRID_VERSION$$');
 $archiveMatch = '/archive\/\d+.\d+.\d+/';
 $host = isset($_SERVER['HTTP_X_PROXY_HTTP_HOST']) ? $_SERVER['HTTP_X_PROXY_HTTP_HOST'] : $_SERVER['HTTP_HOST'];
 
