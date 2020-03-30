@@ -1,0 +1,91 @@
+import {_, BarSeriesOptions, CartesianChartOptions, ChartType} from "@ag-grid-community/core";
+import {
+    BarSeriesOptions as InternalBarSeriesOptions,
+    CartesianChart,
+    ChartBuilder,
+    HistogramSeries
+} from "ag-charts-community";
+import {ChartProxyParams, UpdateChartParams} from "../chartProxy";
+import {CartesianChartProxy} from "./cartesianChartProxy";
+
+export class HistogramChartProxy extends CartesianChartProxy<BarSeriesOptions> {
+    public constructor(params: ChartProxyParams) {
+        super(params);
+
+        this.initChartOptions();
+        this.recreateChart();
+    }
+
+    protected createChart(options?: CartesianChartOptions<BarSeriesOptions>): CartesianChart {
+        const { parentElement } = this.chartProxyParams;
+
+        const chart = ChartBuilder.createHistogramChart(parentElement, options || this.chartOptions);
+        const barSeries = ChartBuilder.createSeries(this.getSeriesDefaults());
+
+        if (barSeries) {
+            chart.addSeries(barSeries);
+        }
+
+        return chart;
+    }
+
+    public update(params: UpdateChartParams): void {
+
+        const [xField, yField] = params.fields;
+
+        const chart = this.chart;
+        const series = chart.series[0] as HistogramSeries;
+
+        series.data = params.data;
+        series.xKey = xField.colId;
+        series.xName = xField.displayName;
+
+        if( yField ) {
+            series.yKey = yField.colId;
+            series.yName = yField.displayName;
+        } else {
+            // a y key is optional for a histogram. Without a y-key the y-axis
+            // will display the x-bin bin population size
+            series.yKey = undefined;
+            series.yName = undefined;
+        }
+
+        // for now, only constant width is supported via integrated charts
+        series.constantWidth = true;
+
+        const { fills, strokes } = this.getPalette();
+        series.fill = fills[0];
+        series.stroke = strokes[0];
+    }
+
+    protected getDefaultOptions(): CartesianChartOptions<BarSeriesOptions> {
+
+        const fontOptions = this.getDefaultFontOptions();
+        const options = this.getDefaultCartesianChartOptions() as CartesianChartOptions<BarSeriesOptions>;
+
+        options.xAxis.label.rotation = 0;
+        options.yAxis.label.rotation = 0;
+
+        options.seriesDefaults = {
+            ...options.seriesDefaults,
+            tooltip: {
+                enabled: true,
+            },
+            label: {
+                ...fontOptions,
+                enabled: false,
+            },
+            shadow: this.getDefaultDropShadowOptions(),
+        };
+
+        return options;
+    }
+
+    private getSeriesDefaults(): InternalBarSeriesOptions {
+
+        return {
+            ...this.chartOptions.seriesDefaults,
+            type: 'histogram',
+        };
+    }
+}

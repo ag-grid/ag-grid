@@ -8,6 +8,7 @@ import {
     ScatterSeriesOptions,
     AreaSeriesOptions,
     PieSeriesOptions,
+    HistogramSeriesOptions,
     LegendOptions,
     CaptionOptions,
     FontWeight,
@@ -25,6 +26,7 @@ import { LineSeries } from "./chart/series/cartesian/lineSeries";
 import { ScatterSeries } from "./chart/series/cartesian/scatterSeries";
 import { ColumnSeries as BarSeries } from "./chart/series/cartesian/columnSeries";
 import { AreaSeries } from "./chart/series/cartesian/areaSeries";
+import { HistogramSeries } from "./chart/series/cartesian/histogramSeries";
 import { PieSeries } from "./chart/series/polar/pieSeries";
 import { Chart } from "./chart/chart";
 import { Series, HighlightStyle } from "./chart/series/series";
@@ -216,6 +218,28 @@ export class ChartBuilder {
         return chart;
     }
 
+    static createHistogramChart(container: HTMLElement, options: CartesianChartOptions<AreaSeriesOptions>): CartesianChart {
+
+        console.log('creating histogram chart with options:', options);
+
+        const chart = this.createCartesianChart(
+            container,
+            ChartBuilder.createNumberAxis(options.xAxis),
+            ChartBuilder.createNumberAxis(options.yAxis),
+            options.document
+        );
+
+        ChartBuilder.initChart(chart, options);
+
+        /*
+        if (options.series) {
+            chart.series = options.series.map(s => ChartBuilder.initHistogramSeries(new HistogramSeries(), s));
+        }
+        */
+
+        return chart;
+    }
+
     private static createPolarChart(container: HTMLElement): PolarChart {
         const chart = new PolarChart();
         chart.container = container;
@@ -250,6 +274,8 @@ export class ChartBuilder {
                 return ChartBuilder.initAreaSeries(new AreaSeries(), options);
             case 'pie':
                 return ChartBuilder.initPieSeries(new PieSeries(), options);
+            case 'histogram':
+                return ChartBuilder.initHistogramSeries(new HistogramSeries(), options);
             default:
                 return null;
         }
@@ -525,6 +551,40 @@ export class ChartBuilder {
         }
 
         this.setTransformedValueIfExists(series, 'shadow', s => ChartBuilder.createDropShadow(s), options.shadow);
+
+        return series;
+    }
+
+    static initHistogramSeries(series: HistogramSeries, options: HistogramSeriesOptions): HistogramSeries {
+        ChartBuilder.initSeries(series, options);
+
+        const { field, fill, stroke, highlightStyle, tooltip } = options;
+
+        if (field) {
+            this.setValueIfExists(series, 'xKey', field.xKey);
+            this.setValueIfExists(series, 'yKey', field.yKey);
+            this.setValueIfExists(series, 'yName', field.yName);
+        }
+
+        if (fill) {
+            this.setValueIfExists(series, 'fill', fill.color);
+            this.setValueIfExists(series, 'fillOpacity', fill.opacity);
+        }
+
+        if (stroke) {
+            this.setValueIfExists(series, 'stroke', stroke.color);
+            this.setValueIfExists(series, 'strokeOpacity', stroke.opacity);
+            this.setValueIfExists(series, 'strokeWidth', stroke.width);
+        }
+
+        if (highlightStyle) {
+            this.initHighlightStyle(series.highlightStyle, highlightStyle);
+        }
+
+        if (tooltip) {
+            this.setValueIfExists(series, 'tooltipEnabled', tooltip.enabled);
+            this.setValueIfExists(series, 'tooltipRenderer', tooltip.renderer);
+        }
 
         return series;
     }
