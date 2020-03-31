@@ -36,6 +36,7 @@ var gridOptions = {
         animateRows: true,
         onGridReady: function(params) {
             addBinZone(params);
+            addGridDropZone(params, 'Right');
         }
     },
     Right: {
@@ -54,10 +55,12 @@ var gridOptions = {
         getRowNodeId: function(data) {return data.id },
         rowData: [],
         rowDragManaged: true,
+        suppressMoveWhenRowDragging: true,
         columnDefs: rightColumnDefs,
         animateRows: true,
         onGridReady: function(params) {
             addBinZone(params);
+            addGridDropZone(params, 'Left');
         }
     }
 };
@@ -72,16 +75,16 @@ function createDataItem(color) {
     return {
         id: rowIdSequence++,
         color: color,
-        value1: Math.floor(Math.random()*100),
-        value2: Math.floor(Math.random()*100)
+        value1: Math.floor(Math.random() * 100),
+        value2: Math.floor(Math.random() * 100)
     };
 }
 
 function createItemDragStart(event, color) {
-    var newItem = createDataItem(color);
-    var jsonData = JSON.stringify(newItem);
-    var userAgent = window.navigator.userAgent;
-    var isIE = userAgent.indexOf('Trident/') >= 0;
+    var newItem = createDataItem(color),
+        jsonData = JSON.stringify(newItem),
+        userAgent = window.navigator.userAgent,
+        isIE = userAgent.indexOf('Trident/') >= 0;
 
     event.dataTransfer.setData(isIE ? 'text' : 'application/json', jsonData);
 }
@@ -95,31 +98,36 @@ function gridDragNewItemOver(event) {
     }
 }
 
-function onGridDropNewItem(event, grid) {
+function onGridDropNewItem(event, side) {
     event.preventDefault();
 
-    var userAgent = window.navigator.userAgent;
-    var isIE = userAgent.indexOf('Trident/') >= 0;
+    var userAgent = window.navigator.userAgent,
+        isIE = userAgent.indexOf('Trident/') >= 0,
+        jsonData = event.dataTransfer.getData(isIE ? 'text' : 'application/json')
+        data = JSON.parse(jsonData);
 
-    var jsonData = event.dataTransfer.getData(isIE ? 'text' : 'application/json');
-    var data = JSON.parse(jsonData);
+    addRecordToGrid(side, data);
+}
 
+function addRecordToGrid(side, data) {
     // if data missing or data has no it, do nothing
     if (!data || data.id == null) { return; }
 
-    var gridApi = grid == 'left' ? gridOptions.Left.api : gridOptions.Right.api;
+    var api = side == 'left' ? gridOptions.Left.api : gridOptions.Right.api,
+        // do nothing if row is already in the grid, otherwise we would have duplicates
+        rowAlreadyInGrid = !!api.getRowNode(data.id),
+        transaction;
 
-    // do nothing if row is already in the grid, otherwise we would have duplicates
-    var rowAlreadyInGrid = !!gridApi.getRowNode(data.id);
     if (rowAlreadyInGrid) {
         console.log('not adding row to avoid duplicates in the grid');
         return;
     }
 
-    var transaction = {
+    transaction = {
         add: [data]
     };
-    gridApi.updateRowData(transaction);
+
+    api.updateRowData(transaction);
 }
 
 function binDrop(data) {
@@ -138,29 +146,39 @@ function binDrop(data) {
     });
 }
 
+function addBinZone(params) {
+    var eBin = document.querySelector('#eBin'),
+        binDropZone = {
+            el: eBin,
+            onDragEnter: function() {
+                eBin.style.color = 'blue';
+            },
+            onDragLeave: function() {
+                eBin.style.color = 'black';
+            },
+            onDragStop: function(params) {
+                binDrop(params.dragItem.rowNode.data);
+                eBin.style.color = 'black';
+            }
+        };
+
+    params.api.addDropZone(binDropZone);
+}
+
+function addGridDropZone(params, side) {
+    var grid = document.querySelector('#e' + side + 'Grid');
+
+    params.api.addDropZone({
+        el: grid,
+        onDragStop: function(params) {
+            addRecordToGrid(side.toLowerCase(), params.dragItem.rowNode.data);
+        }
+    })
+}
+
 function loadGrid(side) {
     var grid = document.querySelector('#e' + side + 'Grid');
     new agGrid.Grid(grid, gridOptions[side]);
-}
-
-function addBinZone(params) {
-    var eBin = document.querySelector('#eBin');
-
-    var binDropZone = {
-        el: eBin,
-        onDragEnter: function() {
-            eBin.style.color = 'blue';
-        },
-        onDragLeave: function() {
-            eBin.style.color = 'black';
-        },
-        onDragStop: function(params) {
-            binDrop(params.dragItem.rowNode.data);
-            eBin.style.color = 'black';
-        }
-    };
-
-    params.api.addDropZone(binDropZone);
 }
 
 // setup the grid after the page has finished loading
