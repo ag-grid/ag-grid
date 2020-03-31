@@ -9,10 +9,10 @@ var columnDefs = [
         cellEditor: 'agDateTimeCellEditor',
         cellEditorParams: {
             valueToDate: function(value) {
-                const parts = value.split("/");
-                const date = parts[0];
-                const month = parts[1];
-                const year = parts[2];
+                let parts = value.split("/");
+                let date = parts[0];
+                let month = parts[1];
+                let year = parts[2];
                 return new Date(parseFloat(year), parseFloat(month) - 1, parseFloat(date));
             },
             dateToValue: function(date) {
