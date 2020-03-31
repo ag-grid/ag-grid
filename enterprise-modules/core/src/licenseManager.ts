@@ -36,10 +36,16 @@ export class LicenseManager {
     }
 
     private static extractLicenseComponents(licenseKey: string) {
-        const hashStart = licenseKey.length - 32;
-        const md5 = licenseKey.substring(hashStart);
-        const license = licenseKey.substring(0, hashStart);
-        const [version, isTrial] = LicenseManager.extractBracketedInformation(licenseKey);
+        // when users copy the license key from a PDF extra zero width characters are sometimes copied too
+        // carriage returns and line feeds are problematic too
+        // all of which causes license key validation to fail - strip these out
+        let cleanedLicenseKey = licenseKey.replace(/[\u200B-\u200D\uFEFF]/g, '');
+        cleanedLicenseKey = cleanedLicenseKey.replace(/\r?\n|\r/g, '');
+
+        const hashStart = cleanedLicenseKey.length - 32;
+        const md5 = cleanedLicenseKey.substring(hashStart);
+        const license = cleanedLicenseKey.substring(0, hashStart);
+        const [version, isTrial] = LicenseManager.extractBracketedInformation(cleanedLicenseKey);
         return {md5, license, version, isTrial};
     }
 
