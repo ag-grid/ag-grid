@@ -6,6 +6,7 @@ export class ModuleRegistry {
 
     // having in a map a) removes duplicates and b) allows fast lookup
     private static modulesMap: { [name: string]: Module } = {};
+    private static packageBased = false;
 
     public static register(module: Module): void {
         ModuleRegistry.modulesMap[module.moduleName] = module;
@@ -13,7 +14,7 @@ export class ModuleRegistry {
 
     // noinspection JSUnusedGlobalSymbols
     public static registerModules(modules: Module[]): void {
-        if(!modules) {
+        if (!modules) {
             return;
         }
         modules.forEach(ModuleRegistry.register);
@@ -40,5 +41,13 @@ export class ModuleRegistry {
 
     public static getRegisteredModules(): Module[] {
         return _.values(ModuleRegistry.modulesMap);
+    }
+
+    public static isPackageBased() : boolean {
+        return ModuleRegistry.packageBased;
+    }
+
+    public static setPackageBased(packageBased: boolean): void {
+        ModuleRegistry.packageBased = packageBased;
     }
 }

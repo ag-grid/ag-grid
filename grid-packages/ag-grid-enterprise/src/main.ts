@@ -31,6 +31,7 @@ ModuleRegistry.register(SideBarModule as any);
 ModuleRegistry.register(StatusBarModule as any);
 ModuleRegistry.register(ViewportRowModelModule as any);
 ModuleRegistry.register(ClipboardModule as any);
+ModuleRegistry.setPackageBased(true);
 
 export {VirtualList} from "ag-grid-community";
 export {LicenseManager} from "@ag-grid-enterprise/core";

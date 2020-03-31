@@ -6,5 +6,6 @@ import { ModuleRegistry } from "@ag-grid-community/core";
 ModuleRegistry.register(ClientSideRowModelModule);
 ModuleRegistry.register(InfiniteRowModelModule);
 ModuleRegistry.register(CsvExportModule);
+ModuleRegistry.setPackageBased(true);
 
 export * from "@ag-grid-community/core";
