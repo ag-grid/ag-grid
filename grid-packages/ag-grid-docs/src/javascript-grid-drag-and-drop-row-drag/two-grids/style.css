@@ -22,10 +22,18 @@
     flex: 1 1 auto;
     align-items: center;
     justify-content: center;
+    cursor: default;
+    user-select: none;
+    -ms-user-select: none;
+    -moz-user-select: none;
+    -webkit-user-modify: none;
 }
 
 .factory:not(.factory-bin) i {
+    cursor: move; /* fallback for IE */
     cursor: grab;
+    cursor: -moz-grab;
+    cursor: -webkit-grab;
 }
 
 .factory-red {
