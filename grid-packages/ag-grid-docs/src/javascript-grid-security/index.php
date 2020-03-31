@@ -99,22 +99,25 @@ let colDef = {
         </snippet>
     </p>
 
-    <h1>OWASP Benchmark</h1>
+    <h1>Security Vulnerability Testing</h1>
 
     <p>
-        It is normal for applications to be expected to pass Application Security Testing.
-        If your application uses ag-Grid, then ag-Grid must also pass these standards.
-    </p>
-    <p>
-        To assist with this every production release of ag-Grid is tested against the
-        <a href="https://www.owasp.org/index.php/Benchmark">OWASP Benchmark</a>
-        using the <a href="https://www.sonarqube.org/">SonarQube</a> utility. The project modules
-        <code>ag-grid-community</code> and <code>ag-grid-enterprise</code> pass with 0 vulnerabilities.
+        Applications may be required to pass an Application Security Test prior to being put into production. If your
+        application is using ag-Grid, you will want to make sure that ag-Grid has also been tested for security
+        vulnerabilities.
     </p>
 
     <p>
-        Below are the results of running SonarQube against version 23.0.2 of <code>ag-grid-community</code>
-        and <code>ag-grid-enterprise</code>.
+        ag-Grid is tested for a wide variety of security vulnerabilities using the
+        <a href="https://www.sonarqube.org/">SonarQube</a> automatic security testing tool. SonarQube performs testing
+        using a number of security rules, covering well-established security vulnerability standards such as CWE, SANS Top 25
+        and OWASP Top 10. For more details please refer to the section on
+        <a href="https://docs.sonarqube.org/latest/user-guide/security-rules/#header-2">Security-related Rules</a>.
+    </p>
+
+    <p>
+        The SonarQube security test results for the latest release of <code>ag-grid-community</code> and
+        <code>ag-grid-enterprise</code> are shown below:
     </p>
 
     <h3>SonarQube Results on ag-grid-community</h3>
