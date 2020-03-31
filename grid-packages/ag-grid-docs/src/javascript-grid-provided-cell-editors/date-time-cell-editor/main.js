@@ -4,7 +4,25 @@ var columnDefs = [
     { headerName: 'Age', field: 'age', width: 90 },
     { headerName: 'Country', field: 'country', width: 150 },
     { headerName: 'Year', field: 'year', width: 90 },
-    { headerName: 'Date', field: 'date', width: 110, editable: true, cellEditor: 'agDateTimeCellEditor' },
+    { headerName: 'Date', field: 'date', width: 110,
+        editable: true,
+        cellEditor: 'agDateTimeCellEditor',
+        cellEditorParams: {
+            valueToDate: function(value) {
+                const parts = value.split("/");
+                const date = parts[0];
+                const month = parts[1];
+                const year = parts[2];
+                return new Date(parseFloat(year), parseFloat(month) - 1, parseFloat(date));
+            },
+            dateToValue: function(date) {
+                function pad(number) {
+                    return number < 10 ? "0" + number : "" + number;
+                }
+                return pad(date.getDate()) + '/' + pad(date.getMonth() + 1) + '/' + date.getFullYear();
+            }
+        }
+    },
     { headerName: 'Sport', field: 'sport', width: 150 },
     { headerName: 'Gold', field: 'gold', width: 100 },
     { headerName: 'Silver', field: 'silver', width: 100 },
@@ -19,6 +37,9 @@ var gridOptions = {
     columnDefs: columnDefs,
     debug: true,
     rowData: null,
+    onGridReady: function() {
+        gridOptions.api.sizeColumnsToFit()
+    }
 };
 
 // setup the grid after the page has finished loading

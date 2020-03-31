@@ -21,17 +21,20 @@ export interface Entry {
 }
 
 export interface IDateTimeListModelOptions {
-    // Given a point in time that falls within a period, return a value relative to first
-    // vaue in the period. Offset can a positive or negative integer and may fall outside
-    // the period itself (e.g. when showing a monthly calendar, some days from the previous
-    // month may be included if the month does not start on the first day of the week).
+    // Given a point in time that falls within a period, return the first value in the period.
+    // `offset` can be a positive or negative integer and is used to request a period after
+    // or before the period containing `date`, for example if showing a monthly calendar,
+    // if `date` is 5th July then the return value should be 1st July if `offset` is 0, 1st August
+    // if `offset` is 1, or 1st June if `offset` is -1.
     firstValueInPeriod(date: Date, offset: number): Date;
 
-    // given the first value in a period and an offset, return a value. Offset can
-    // be negative or longer than the period length if the period is padded
+    // given the first value in a period and an offset, return a value.  Offset can a positive
+    // or negative integer and may fall outside the period itself (e.g. when showing a monthly
+    // calendar, some days from the previous month may be included if the month does not start
+    // on the first day of the week).
     valueInPeriod(first: Date, offset: number): Date;
 
-    // return the number of values in a period, not including padding before and after
+    // return the number of values in a period, not including padding before and after.
     periodLength(first: Date): number;
 
     // return the label to show on a single entry within a period
@@ -86,8 +89,9 @@ export class DateTimeListModel implements IDateTimeListModel {
         const paddingAtStart = modulo(options.columnForValue(firstValue), columnCount); // adds padding at start
         const periodLength = options.periodLength(firstValue);
         const lastValue = options.valueInPeriod(firstValue, periodLength - 1);
-        const paddingAtEnd = modulo(columnCount - options.columnForValue(lastValue) - 2, columnCount);
-        const lastOffset = periodLength + paddingAtEnd;
+        const itemsInLastColumn = modulo(options.columnForValue(lastValue), columnCount) + 1
+        const paddingAtEnd = columnCount - itemsInLastColumn;
+        const lastOffset = periodLength - 1 + paddingAtEnd;
         for (let i = -paddingAtStart; i <= lastOffset; i++) {
             const value = options.valueInPeriod(firstValue, i);
             entries.push({
