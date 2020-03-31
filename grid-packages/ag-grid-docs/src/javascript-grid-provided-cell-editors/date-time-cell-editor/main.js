@@ -22,12 +22,7 @@ var columnDefs = [
                 return pad(date.getDate()) + '/' + pad(date.getMonth() + 1) + '/' + date.getFullYear();
             }
         }
-    },
-    { headerName: 'Sport', field: 'sport', width: 150 },
-    { headerName: 'Gold', field: 'gold', width: 100 },
-    { headerName: 'Silver', field: 'silver', width: 100 },
-    { headerName: 'Bronze', field: 'bronze', width: 100 },
-    { headerName: 'Total', field: 'total', width: 100 },
+    }
 ];
 
 var gridOptions = {
