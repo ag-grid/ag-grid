@@ -130,11 +130,6 @@ export abstract class ChartProxy<TChart extends Chart, TOptions extends ChartOpt
         } else {
             this.chartOptions = this.getDefaultOptions();
         }
-
-        // we want to preserve the existing width/height if an existing chart is being changed to a different type,
-        // so this allows the chart defaults to be overridden
-        this.chartOptions.width = this.chartProxyParams.width || this.chartOptions.width;
-        this.chartOptions.height = this.chartProxyParams.height || this.chartOptions.height;
     }
 
     private overridePalette(chartOptions: TOptions): void {
