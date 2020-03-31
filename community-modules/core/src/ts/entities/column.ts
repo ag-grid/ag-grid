@@ -240,7 +240,7 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild, IEven
                     if(ModuleRegistry.isPackageBased()) {
                         warnOnce(`ag-Grid: ${item} is only valid in ag-grid-enterprise, your column definition should not have ${item}`, 'ColumnRowGroupingMissing'+item);
                     } else {
-                        warnOnce(`ag-Grid: ${item} is only valid with Enterprise Module ${ModuleNames.RowGroupingModule} - your column definition should not have ${item}`, 'ColumnRowGroupingMissing'+item);
+                        warnOnce(`ag-Grid: ${item} is only valid with ag-Grid Enterprise Module ${ModuleNames.RowGroupingModule} - your column definition should not have ${item}`, 'ColumnRowGroupingMissing'+item);
                     }
                 }
             });
@@ -251,7 +251,7 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild, IEven
                 if(ModuleRegistry.isPackageBased()) {
                     warnOnce(`ag-Grid: ${this.colDef.cellEditor} can only be used with ag-grid-enterprise`, 'ColumnRichSelectMissing');
                 } else {
-                    warnOnce(`ag-Grid: ${this.colDef.cellEditor} can only be used with Enterprise Module ${ModuleNames.RichSelectModule}`, 'ColumnRichSelectMissing');
+                    warnOnce(`ag-Grid: ${this.colDef.cellEditor} can only be used with ag-Grid Enterprise Module ${ModuleNames.RichSelectModule}`, 'ColumnRichSelectMissing');
                 }
             }
         }
@@ -261,7 +261,7 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild, IEven
                 if(ModuleRegistry.isPackageBased()) {
                     warnOnce(`ag-Grid: ${this.colDef.cellEditor} can only be used with ag-grid-enterprise`, 'ColumnDateTimeMissing');
                 } else {
-                    warnOnce(`ag-Grid: ${this.colDef.cellEditor} can only be used with Enterprise Module ${ModuleNames.DateTimeCellEditorModule}`, 'ColumnDateTimeMissing');
+                    warnOnce(`ag-Grid: ${this.colDef.cellEditor} can only be used with ag-Grid Enterprise Module ${ModuleNames.DateTimeCellEditorModule}`, 'ColumnDateTimeMissing');
                 }
             }
         }

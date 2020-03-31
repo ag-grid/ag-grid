@@ -359,25 +359,17 @@ export class Grid {
             return rowModelClass;
         } else {
             if (rowModelType === Constants.ROW_MODEL_TYPE_INFINITE) {
-                console.error(`ag-Grid: Row Model "Infinite" not found. Please ensure the `
-                    + `InfiniteRowModelModule is loaded using: import '@ag-grid-community/infinite-row-model';`);
+                console.error(`ag-Grid: Row Model "Infinite" not found. Please ensure the ${ModuleNames.InfiniteRowModelModule} is registered.';`);
             }
             console.error('ag-Grid: could not find matching row model for rowModelType ' + rowModelType);
             if (rowModelType === Constants.ROW_MODEL_TYPE_VIEWPORT) {
-                console.error(`ag-Grid: Row Model "Viewport" not found. For this row model to work you must ` +
-                    `a) be using ag-Grid Enterprise and ` +
-                    `b) ensure ViewportRowModelModule is ` +
-                    `loaded using: import '@ag-grid-enterprise/viewport-row-model;`);
+                console.error(`ag-Grid: Row Model "Viewport" not found. Please ensure the ag-Grid Enterprise Module ${ModuleNames.ViewportRowModelModule} is registered.';`);
             }
             if (rowModelType === Constants.ROW_MODEL_TYPE_SERVER_SIDE) {
-                console.error(`ag-Grid: Row Model "Server Side" not found. For this row model to work you must ` +
-                    `a) be using ag-Grid Enterprise and ` +
-                    `b) ensure ServerSideRowModelModule is ` +
-                    `loaded using: import '@ag-grid-enterprise/server-server-side-row-model';`);
+                console.error(`ag-Grid: Row Model "Server Side" not found. Please ensure the ag-Grid Enterprise Module ${ModuleNames.ServerSideRowModelModule} is registered.';`);
             }
             if (rowModelType === Constants.ROW_MODEL_TYPE_CLIENT_SIDE) {
-                console.error(`ag-Grid: Row Model "Client Side" not found. Please ensure the `
-                    + `ClientSideRowModelModule is loaded using: import '@ag-grid-community/client-side-row-model';`);
+                console.error(`ag-Grid: Row Model "Client Side" not found. Please ensure the ${ModuleNames.ClientSideRowModelModule} is registered.';`);
             }
             return undefined;
         }
