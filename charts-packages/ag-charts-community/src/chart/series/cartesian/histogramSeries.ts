@@ -12,7 +12,6 @@ import {
 import { Label } from "../../label";
 import { PointerEvents } from "../../../scene/node";
 import { LegendDatum } from "../../legend";
-import { Shape } from "../../../scene/shape/shape";
 import { CartesianSeries } from "./cartesianSeries";
 import { ChartAxisDirection } from "../../chartAxis";
 import { Chart } from "../../chart";
@@ -60,7 +59,7 @@ export class HistogramBin {
     frequency: number = 0;
     domain: number[];
 
-    constructor ([domainMin, domainMax]: number[]) {
+    constructor ([domainMin, domainMax]: [number, number]) {
         this.domain = [domainMin, domainMax];
     };
 
@@ -80,7 +79,7 @@ export class HistogramBin {
     };
 
     getY( constantWidth: boolean ) {
-        return constantWidth? this.total: this.relativeHeight;
+        return constantWidth? this.total : this.relativeHeight;
     }
 };
 
@@ -249,8 +248,8 @@ export class HistogramSeries extends CartesianSeries {
     protected highlightedDatum?: HistogramSelectionDatum;
 
     /*  during processData phase, used to unify different ways of the user specifying
-        the bins */
-    get derivedBins(): [number, number][] {
+        the bins. Returns bins in format [[min1, max1], [min2, max2] ... ] */
+    private deriveBins(): [number, number][] {
         const { binDomains, binCount } = this;
 
         if( binDomains && binCount ) {
@@ -277,7 +276,9 @@ export class HistogramSeries extends CartesianSeries {
     }
 
     private distributeToBins(data: any[]): HistogramBin[] {
-        const { xKey, yKey, derivedBins } = this;
+
+        const { xKey, yKey } = this;
+        const derivedBins = this.deriveBins();
 
         // creating a sorted copy allows bining in O(n) rather than O(n²)
         // but at the expense of more temporary memory
@@ -364,7 +365,7 @@ export class HistogramSeries extends CartesianSeries {
 
     private generateSelectionData(): HistogramSelectionDatum[] {
 
-        if( !this.seriesItemEnabled ) {
+        if (!this.seriesItemEnabled) {
             return [];
         }
 
@@ -376,10 +377,10 @@ export class HistogramSeries extends CartesianSeries {
 
         const selectionData: HistogramSelectionDatum[] = [];
 
-        const defaultLabelFormatter = (b:HistogramBin) => String(b.total);
+        const defaultLabelFormatter = (b: HistogramBin) => String(b.total);
         const {
             label: {
-                formatter : labelFormatter = defaultLabelFormatter,
+                formatter: labelFormatter = defaultLabelFormatter,
                 fontStyle: labelFontStyle,
                 fontWeight: labelFontWeight,
                 fontSize: labelFontSize,
@@ -415,7 +416,7 @@ export class HistogramSeries extends CartesianSeries {
             selectionData.push({
                 series: this,
                 seriesDatum: bin,  // required by SeriesNodeDatum, but might not make sense here
-                                      // where each selection is an aggregation of multiple data.
+                                   // since each selection is an aggregation of multiple data.
                 x: xMinPx,
                 y: yMaxPx,
                 width: w,

@@ -200,11 +200,14 @@ export interface BarSeriesFieldOptions {
 }
 
 export interface HistogramSeriesOptions extends SeriesOptions {
+    binCount?: number;
     field?: LineSeriesFieldOptions;
     fill?: SingleFillOptions;
     stroke?: SingleStrokeOptions;
     highlightStyle?: HighlightOptions;
     tooltip?: TooltipOptions<HistogramTooltipRendererParams>;
+    label?: BarSeriesLabelOptions;
+    shadow?: DropShadowOptions;
 }
 
 export interface BarSeriesLabelOptions extends SeriesLabelOptions {

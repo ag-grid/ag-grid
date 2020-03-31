@@ -1,6 +1,6 @@
-import {_, BarSeriesOptions, CartesianChartOptions, ChartType} from "@ag-grid-community/core";
+import {_, HistogramSeriesOptions, CartesianChartOptions} from "@ag-grid-community/core";
 import {
-    BarSeriesOptions as InternalBarSeriesOptions,
+    HistogramSeriesOptions as InternalHistogramSeriesOptions,
     CartesianChart,
     ChartBuilder,
     HistogramSeries
@@ -8,7 +8,7 @@ import {
 import {ChartProxyParams, UpdateChartParams} from "../chartProxy";
 import {CartesianChartProxy} from "./cartesianChartProxy";
 
-export class HistogramChartProxy extends CartesianChartProxy<BarSeriesOptions> {
+export class HistogramChartProxy extends CartesianChartProxy<HistogramSeriesOptions> {
     public constructor(params: ChartProxyParams) {
         super(params);
 
@@ -16,7 +16,7 @@ export class HistogramChartProxy extends CartesianChartProxy<BarSeriesOptions> {
         this.recreateChart();
     }
 
-    protected createChart(options?: CartesianChartOptions<BarSeriesOptions>): CartesianChart {
+    protected createChart(options?: CartesianChartOptions<HistogramSeriesOptions>): CartesianChart {
         const { parentElement } = this.chartProxyParams;
 
         const chart = ChartBuilder.createHistogramChart(parentElement, options || this.chartOptions);
@@ -58,10 +58,10 @@ export class HistogramChartProxy extends CartesianChartProxy<BarSeriesOptions> {
         series.stroke = strokes[0];
     }
 
-    protected getDefaultOptions(): CartesianChartOptions<BarSeriesOptions> {
+    protected getDefaultOptions(): CartesianChartOptions<HistogramSeriesOptions> {
 
         const fontOptions = this.getDefaultFontOptions();
-        const options = this.getDefaultCartesianChartOptions() as CartesianChartOptions<BarSeriesOptions>;
+        const options = this.getDefaultCartesianChartOptions() as CartesianChartOptions<HistogramSeriesOptions>;
 
         options.xAxis.label.rotation = 0;
         options.yAxis.label.rotation = 0;
@@ -76,16 +76,17 @@ export class HistogramChartProxy extends CartesianChartProxy<BarSeriesOptions> {
                 enabled: false,
             },
             shadow: this.getDefaultDropShadowOptions(),
+            binCount: 10
         };
 
         return options;
     }
 
-    private getSeriesDefaults(): InternalBarSeriesOptions {
+    private getSeriesDefaults(): InternalHistogramSeriesOptions {
 
         return {
             ...this.chartOptions.seriesDefaults,
-            type: 'histogram',
+            type: 'histogram'
         };
     }
 }

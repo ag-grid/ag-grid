@@ -78,7 +78,7 @@ export class ChartTranslator {
         scatterGroup: 'X Y (Scatter)',
         areaGroup: 'Area',
         histogramGroup: 'Histogram',
-        histogramBinsCount: 'Bins count',
+        histogramBinsCount: 'Bin count',
         groupedColumnTooltip: 'Grouped',
         stackedColumnTooltip: 'Stacked',
         normalizedColumnTooltip: '100% Stacked',
