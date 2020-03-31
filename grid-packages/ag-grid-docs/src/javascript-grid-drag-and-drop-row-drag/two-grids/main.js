@@ -14,44 +14,52 @@ var rightColumnDefs = [
     { field: "value2" }
 ];
 
-var leftGridOptions = {
-    defaultColDef: {
-        flex: 1,
-        minWidth: 100,
-        sortable: true,
-        filter: true,
-        resizable: true
+var gridOptions = {
+    Left: {
+        defaultColDef: {
+            flex: 1,
+            minWidth: 100,
+            sortable: true,
+            filter: true,
+            resizable: true
+        },
+        rowClassRules: {
+            "red-row": 'data.color == "Red"',
+            "green-row": 'data.color == "Green"',
+            "blue-row": 'data.color == "Blue"',
+        },
+        getRowNodeId: function(data) { return data.id },
+        rowData: createLeftRowData(),
+        rowDragManaged: true,
+        suppressMoveWhenRowDragging: true,
+        columnDefs: leftColumnDefs,
+        animateRows: true,
+        onGridReady: function(params) {
+            addBinZone(params);
+        }
     },
-    rowClassRules: {
-        "red-row": 'data.color == "Red"',
-        "green-row": 'data.color == "Green"',
-        "blue-row": 'data.color == "Blue"',
-    },
-    getRowNodeId: function(data){return data.id},
-    rowData: createLeftRowData(),
-    rowDragManaged: true,
-    columnDefs: leftColumnDefs,
-    animateRows: true
-};
-
-var rightGridOptions = {
-    defaultColDef: {
-        flex: 1,
-        minWidth: 100,
-        sortable: true,
-        filter: true,
-        resizable: true
-    },
-    rowClassRules: {
-        "red-row": 'data.color == "Red"',
-        "green-row": 'data.color == "Green"',
-        "blue-row": 'data.color == "Blue"',
-    },
-    getRowNodeId: function(data){return data.id},
-    rowData: [],
-    rowDragManaged: true,
-    columnDefs: rightColumnDefs,
-    animateRows: true
+    Right: {
+        defaultColDef: {
+            flex: 1,
+            minWidth: 100,
+            sortable: true,
+            filter: true,
+            resizable: true
+        },
+        rowClassRules: {
+            "red-row": 'data.color == "Red"',
+            "green-row": 'data.color == "Green"',
+            "blue-row": 'data.color == "Blue"',
+        },
+        getRowNodeId: function(data) {return data.id },
+        rowData: [],
+        rowDragManaged: true,
+        columnDefs: rightColumnDefs,
+        animateRows: true,
+        onGridReady: function(params) {
+            addBinZone(params);
+        }
+    }
 };
 
 function createLeftRowData() {
@@ -99,7 +107,7 @@ function onGridDropNewItem(event, grid) {
     // if data missing or data has no it, do nothing
     if (!data || data.id == null) { return; }
 
-    var gridApi = grid == 'left' ? leftGridOptions.api : rightGridOptions.api;
+    var gridApi = grid == 'left' ? gridOptions.Left.api : gridOptions.Right.api;
 
     // do nothing if row is already in the grid, otherwise we would have duplicates
     var rowAlreadyInGrid = !!gridApi.getRowNode(data.id);
@@ -122,30 +130,22 @@ function binDrop(data) {
         remove: [data]
     };
 
-    var rowIsInLeftGrid = !!leftGridOptions.api.getRowNode(data.id);
-
-    if (rowIsInLeftGrid) {
-        leftGridOptions.api.updateRowData(transaction);
-    }
-
-    var rowIsInRightGrid = !!rightGridOptions.api.getRowNode(data.id);
-    if (rowIsInRightGrid) {
-        rightGridOptions.api.updateRowData(transaction);
-    }
+    [gridOptions.Left, gridOptions.Right].forEach(function(option) {
+        rowsInGrid = !!option.api.getRowNode(data.id);
+        if (rowsInGrid) {
+            option.api.updateRowData(transaction);
+        }
+    });
 }
 
+function loadGrid(side) {
+    var grid = document.querySelector('#e' + side + 'Grid');
+    new agGrid.Grid(grid, gridOptions[side]);
+}
 
-
-
-// setup the grid after the page has finished loading
-document.addEventListener('DOMContentLoaded', function() {
-    var leftGridDiv = document.querySelector('#eLeftGrid');
-    new agGrid.Grid(leftGridDiv, leftGridOptions);
-
-    var rightGridDiv = document.querySelector('#eRightGrid');
-    new agGrid.Grid(rightGridDiv, rightGridOptions);
-
+function addBinZone(params) {
     var eBin = document.querySelector('#eBin');
+
     var binDropZone = {
         el: eBin,
         onDragEnter: function() {
@@ -160,6 +160,11 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     };
 
-    leftGridOptions.api.addDropZone(binDropZone);
-    rightGridOptions.api.addDropZone(binDropZone);
+    params.api.addDropZone(binDropZone);
+}
+
+// setup the grid after the page has finished loading
+document.addEventListener('DOMContentLoaded', function() {
+    loadGrid('Left');
+    loadGrid('Right');
 });

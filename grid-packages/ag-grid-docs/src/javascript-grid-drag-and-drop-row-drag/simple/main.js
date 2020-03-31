@@ -22,7 +22,10 @@ var gridOptions = {
     rowData: createRowData(),
     rowDragManaged: true,
     columnDefs: columnDefs,
-    animateRows: true
+    animateRows: true,
+    onGridReady: function(params) {
+        addDropZones(params);
+    }
 };
 
 function createRowData() {
@@ -50,21 +53,23 @@ function createTile(data) {
         '<div class="value">' + data.value2 + '</div>';
 
     return el;
-
 }
 
-// setup the grid after the page has finished loading
-document.addEventListener('DOMContentLoaded', function() {
-    var gridDiv = document.querySelector('#myGrid');
+function addDropZones(params) {
     var tileContainer = document.querySelector('.tile-container');
 
-    new agGrid.Grid(gridDiv, gridOptions);
-
-    gridOptions.api.addDropZone({
+    params.api.addDropZone({
         el: tileContainer,
         onDragStop: function(params) {
             var tile = createTile(params.dragItem.rowNode.data);
             tileContainer.appendChild(tile);
         }
-    })
+    });
+}
+
+// setup the grid after the page has finished loading
+document.addEventListener('DOMContentLoaded', function() {
+    var gridDiv = document.querySelector('#myGrid');
+
+    new agGrid.Grid(gridDiv, gridOptions);
 });
