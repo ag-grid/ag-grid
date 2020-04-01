@@ -193,6 +193,10 @@ export interface BarSeriesOptions extends SeriesOptions {
     tooltip: TooltipOptions<BarTooltipRendererParams>;
 }
 
+export interface HistogramSeriesOptions extends BarSeriesOptions {
+    binCount?: number;
+}
+
 export interface BarSeriesLabelOptions extends SeriesLabelOptions {
     formatter?: (params: { value: number }) => string;
 }

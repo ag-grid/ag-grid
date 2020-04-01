@@ -19,6 +19,7 @@ var SetFilterModule = require('../../enterprise-modules/set-filter');
 var SideBarModule = require('../../enterprise-modules/side-bar');
 var StatusBarModule = require('../../enterprise-modules/status-bar');
 var ViewportRowModelModule = require('../../enterprise-modules/viewport-row-model');
+var DateTimeCellEditorModule = require('../../enterprise-modules/date-time-cell-editor');
 require('./dist/es6/main');
 
 // add in exports for ag-Grid-Enterprise
@@ -51,6 +52,7 @@ agGrid.ModuleRegistry.register(SetFilterModule.SetFilterModule);
 agGrid.ModuleRegistry.register(SideBarModule.SideBarModule);
 agGrid.ModuleRegistry.register(StatusBarModule.StatusBarModule);
 agGrid.ModuleRegistry.register(ViewportRowModelModule.ViewportRowModelModule);
+agGrid.ModuleRegistry.register(DateTimeCellEditorModule.DateTimeCellEditorModule);
 require('./dist/styles/ag-grid.css');
 require('./dist/styles/ag-theme-alpine-dark.css');
 require('./dist/styles/ag-theme-alpine.css');

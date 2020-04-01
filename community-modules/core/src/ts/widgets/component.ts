@@ -263,12 +263,15 @@ export class Component extends BeanStub {
         return this.eGui.querySelector(cssSelector) as HTMLInputElement;
     }
 
-    public appendChild(newChild: Node | IComponent<any>): void {
+    public appendChild(newChild: Node | IComponent<any>, container?: HTMLElement): void {
+        if (!container) {
+            container = this.eGui;
+        }
         if (_.isNodeOrElement(newChild)) {
-            this.eGui.appendChild(newChild as Node);
+            container.appendChild(newChild as Node);
         } else {
             const childComponent = newChild as IComponent<any>;
-            this.eGui.appendChild(childComponent.getGui());
+            container.appendChild(childComponent.getGui());
             this.childComponents.push(childComponent);
         }
     }

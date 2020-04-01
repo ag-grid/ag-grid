@@ -222,6 +222,13 @@ export class GridChartComp extends Component {
         const maxHeight = _.getAbsoluteHeight(popupParent) * 0.75;
         const ratio = 0.553;
 
+        {
+            const { width, height } = this.chartProxy.getChartOptions();
+            if (width && height) {
+                return { width, height };
+            }
+        }
+
         const chart = this.chartProxy.getChart() as any;
         let width = this.params.insideDialog ? 850 : chart.width;
         let height = this.params.insideDialog ? 470 : chart.height;

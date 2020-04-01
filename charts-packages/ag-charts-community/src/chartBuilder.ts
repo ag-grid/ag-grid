@@ -220,8 +220,6 @@ export class ChartBuilder {
 
     static createHistogramChart(container: HTMLElement, options: CartesianChartOptions<AreaSeriesOptions>): CartesianChart {
 
-        console.log('creating histogram chart with options:', options);
-
         const chart = this.createCartesianChart(
             container,
             ChartBuilder.createNumberAxis(options.xAxis),
@@ -230,12 +228,6 @@ export class ChartBuilder {
         );
 
         ChartBuilder.initChart(chart, options);
-
-        /*
-        if (options.series) {
-            chart.series = options.series.map(s => ChartBuilder.initHistogramSeries(new HistogramSeries(), s));
-        }
-        */
 
         return chart;
     }
@@ -558,7 +550,9 @@ export class ChartBuilder {
     static initHistogramSeries(series: HistogramSeries, options: HistogramSeriesOptions): HistogramSeries {
         ChartBuilder.initSeries(series, options);
 
-        const { field, fill, stroke, highlightStyle, tooltip } = options;
+        const { field, fill, stroke, highlightStyle, tooltip, binCount } = options;
+
+        this.setValueIfExists(series, 'binCount', binCount);
 
         if (field) {
             this.setValueIfExists(series, 'xKey', field.xKey);

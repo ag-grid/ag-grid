@@ -76,6 +76,7 @@ export class ChartFormattingPanel extends Component {
             case ChartType.Histogram:
                 this.addComponent(new AxisPanel(this.chartController));
                 this.addComponent(new HistogramSeriesPanel(this.chartController));
+                break;
             default:
                 console.warn(`ag-Grid: ChartFormattingPanel - unexpected chart type index: ${chartType} supplied`);
         }

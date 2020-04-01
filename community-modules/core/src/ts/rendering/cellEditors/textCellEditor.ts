@@ -19,8 +19,9 @@ export class TextCellEditor extends PopupComponent implements ICellEditorComp {
 
     private highlightAllOnFocus: boolean;
     private focusAfterAttached: boolean;
-    private params: ICellEditorParams;
-    @RefSelector('eInput') private eInput: AgInputTextField;
+    
+    protected params: ICellEditorParams;
+    @RefSelector('eInput') protected eInput: AgInputTextField;
 
     constructor() {
         super(TextCellEditor.TEMPLATE);

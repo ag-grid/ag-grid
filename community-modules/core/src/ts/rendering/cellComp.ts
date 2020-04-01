@@ -1202,14 +1202,21 @@ export class CellComp extends Component {
             }
         );
 
-        this.beans.popupService.positionPopupOverComponent({
+        const params = {
             column: this.column,
             rowNode: this.rowNode,
             type: 'popupCellEditor',
             eventSource: this.getGui(),
             ePopup: ePopupGui,
             keepWithinBounds: true
-        });
+        };
+
+        const position = this.cellEditor && this.cellEditor.getPopupPosition ? this.cellEditor.getPopupPosition() : 'over';
+        if (position === 'under') {
+            this.beans.popupService.positionPopupOverComponent(params);
+        } else {
+            this.beans.popupService.positionPopupUnderComponent(params);
+        }
 
         this.angular1Compile();
     }
