@@ -264,12 +264,9 @@ export abstract class Node { // Don't confuse with `window.Node`.
         return matrix.transformPoint(x, y);
     }
 
-    // TODO: should this be `true` by default as well?
     private _dirtyTransform = false;
     set dirtyTransform(value: boolean) {
         this._dirtyTransform = value;
-        // TODO: replace this with simply `this.dirty = true`,
-        //       see `set dirty` method.
         if (value) {
             this.dirty = true;
         }
