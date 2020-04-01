@@ -49,11 +49,6 @@
         @include ag-border(primary, bottom);
     }
 
-    .ag-set-filter-select-all {
-        // default size is ag-param(list-item-height), make it a little larger
-        height: ag-param(list-item-height) + ag-param(grid-size) * 2;
-    }
-
     .ag-charts-settings-group-title-bar,
     .ag-charts-data-group-title-bar,
     .ag-charts-format-top-level-group-title-bar {

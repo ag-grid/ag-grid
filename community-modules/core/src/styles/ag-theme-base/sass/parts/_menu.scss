@@ -108,6 +108,10 @@
         @include ag-theme-rtl((margin-left: ag-param(grid-size) * 2));
     }
 
+    .ag-set-filter-select-all {
+        padding: ag-param(widget-container-vertical-padding) 0;
+    }
+
     .ag-set-filter-list {
         height: ag-param(list-item-height) * 6;
     }
