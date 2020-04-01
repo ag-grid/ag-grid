@@ -4,7 +4,7 @@ import * as ReactDOM from 'react-dom';
 import {ComponentType, Promise, Utils} from '@ag-grid-community/core';
 import {AgGridReact} from "./agGridReact";
 import {BaseReactComponent} from "./baseReactComponent";
-import {assign, assignProperties} from "./utils";
+import {assignProperties} from "./utils";
 import generateNewKey from "./keyGenerator";
 import {renderToStaticMarkup} from "react-dom/server";
 
@@ -88,7 +88,7 @@ export class ReactComponent extends BaseReactComponent {
 
             // functional/stateless components have a slightly different lifecycle (no refs) so we'll clean them up
             // here
-            if(this.statelessComponent) {
+            if (this.statelessComponent) {
                 setTimeout(() => {
                     this.removeStaticMarkup();
                 })
@@ -151,12 +151,16 @@ export class ReactComponent extends BaseReactComponent {
             return;
         }
 
+        const originalConsoleError = console.error;
         const reactComponent = React.createElement(this.reactComponent, params);
         try {
-            const originalUseLayoutEffect = React.useLayoutEffect;
-            assign(React, "useLayoutEffect", React.useEffect);
+            // if a user is using anything that users useLayoutEffect (like material ui) then
+            // Warning: useLayoutEffect does nothing on the server will be throw and we can't do anything to stop it
+            // this is just a warning and has no effect on anything so just suppress it for this single operation
+            const originalConsoleError = console.error;
+            console.error = () => {};
             const staticMarkup = renderToStaticMarkup(reactComponent);
-            assign(React, "useLayoutEffect", originalUseLayoutEffect);
+            console.error = originalConsoleError;
 
             // if the render method returns null the result will be an empty string
             if (staticMarkup === "") {
@@ -172,6 +176,8 @@ export class ReactComponent extends BaseReactComponent {
             }
         } catch (e) {
             // we tried - this can happen with certain (rare) edge cases
+        } finally {
+            console.error = originalConsoleError;
         }
     }
 
