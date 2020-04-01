@@ -59,7 +59,7 @@ function addDropZones(params) {
     var tileContainer = document.querySelector('.tile-container');
 
     params.api.addDropZone({
-        el: tileContainer,
+        target: tileContainer,
         onDragStop: function(params) {
             var tile = createTile(params.dragItem.rowNode.data);
             tileContainer.appendChild(tile);

@@ -93,14 +93,14 @@
     .ag-row-highlight-above::after, .ag-row-highlight-below::after {
         content: '';
         position: absolute;
-        width: 100%;
+        width: calc(100% - 1px);
         height: 1px;
         background-color: ag-param(range-selection-border-color);
         left: 1px;
     }
 
     .ag-row-highlight-above::after {
-        top: -2px;
+        top: -1px;
     }
 
     .ag-row-highlight-above.ag-row-first::after {

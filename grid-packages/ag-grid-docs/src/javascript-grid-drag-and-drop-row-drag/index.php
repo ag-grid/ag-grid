@@ -48,7 +48,7 @@ include '../documentation-main/documentation_header.php';
 
     <?= grid_example('Simple with suppressMoveWhenRowDragging', 'simple-suppress-move', 'generated') ?>
 
-    <h2>Dragging Between Grids</h2>
+    <h2>Dragging between grids</h2>
 
     <p>
         It is possible to drag rows between two instances of ag-Grid. The drag is done exactly like the simple
@@ -77,5 +77,12 @@ include '../documentation-main/documentation_header.php';
     </ul>
 
     <?= grid_example('Two Grids', 'two-grids', 'vanilla', ['extras' => ['fontawesome']]) ?>
+
+    <h2>Dragging between grids and dropping at an index</h2>
+    <p>
+        It is possible to drag records between grids and let the grid handle where the new records will fall.
+    </p>
+
+    <?= grid_example('Two Grids with Drop Position', 'two-grids-with-drop-position', 'vanilla', ['extras' => ['fontawesome']]) ?>
 
 <?php include '../documentation-main/documentation_footer.php'; ?>

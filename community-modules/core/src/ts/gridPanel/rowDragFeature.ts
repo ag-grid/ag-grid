@@ -81,11 +81,14 @@ export class RowDragFeature implements DropTarget {
         // when entering, we fire the enter event, then in onEnterOrDragging,
         // we also fire the move event. so we get both events when entering.
         this.dispatchEvent(Events.EVENT_ROW_DRAG_ENTER, draggingEvent);
-        this.dragAndDropService.setGhostIcon(DragAndDropService.ICON_MOVE);
 
-        this.getRowNodes(draggingEvent).forEach((rowNode, idx) => {
-            rowNode.setDragging(true);
-        });
+        if (this.isFromThisGrid(draggingEvent)) {
+            this.dragAndDropService.setGhostIcon(DragAndDropService.ICON_MOVE);
+
+            this.getRowNodes(draggingEvent).forEach((rowNode, idx) => {
+                rowNode.setDragging(true);
+            });
+        }
 
         this.onEnterOrDragging(draggingEvent);
     }
@@ -94,14 +97,23 @@ export class RowDragFeature implements DropTarget {
         this.onEnterOrDragging(draggingEvent);
     }
 
+    private isFromThisGrid(draggingEvent: DraggingEvent) {
+        return this.gridPanel.getGui().contains(draggingEvent.dragSource.eElement);
+    }
+
+    private isTargetOutsideThisGrid(dragginEvent: DraggingEvent): boolean {
+        return !this.gridPanel.getGui().contains(dragginEvent.event.target as HTMLElement);
+    }
+
     private onEnterOrDragging(draggingEvent: DraggingEvent): void {
         // this event is fired for enter and move
         this.dispatchEvent(Events.EVENT_ROW_DRAG_MOVE, draggingEvent);
 
         this.lastDraggingEvent = draggingEvent;
-        const pixel = this.mouseEventService.getNormalisedPosition(draggingEvent).y;
 
+        const pixel = this.mouseEventService.getNormalisedPosition(draggingEvent).y;
         const managedDrag = this.gridOptionsWrapper.isRowDragManaged();
+
         if (managedDrag) {
             this.doManagedDrag(draggingEvent, pixel);
         }
@@ -118,7 +130,7 @@ export class RowDragFeature implements DropTarget {
             );
         }
 
-        if (this.gridOptionsWrapper.isSuppressMoveWhenRowDragging()) {
+        if (this.gridOptionsWrapper.isSuppressMoveWhenRowDragging() && !this.isTargetOutsideThisGrid(draggingEvent)) {
             this.clientSideRowModel.highlightRowAtPixel(rowNodes[0], pixel);
         } else {
             this.moveRows(rowNodes, pixel);
@@ -136,13 +148,26 @@ export class RowDragFeature implements DropTarget {
         const rowNodes = this.movingNodes;
         let increment = isBelow ? 1 : 0;
 
-        rowNodes.forEach(rowNode => {
-            if (rowNode.rowTop < pixel) {
-                increment -= 1;
-            }
-        });
+        if (this.isFromThisGrid(draggingEvent)) {
+            rowNodes.forEach(rowNode => {
+                if (rowNode.rowTop < pixel) {
+                    increment -= 1;
+                }
+            });
+            this.moveRows(rowNodes, pixel, increment);
+        } else {
+            let addIndex = this.clientSideRowModel.getRowIndexAtPixel(pixel) + 1;
 
-        this.moveRows(rowNodes, pixel, increment);
+            if (this.clientSideRowModel.getHighlightPosition(pixel) === 'above') {
+                addIndex--;
+            }
+
+            this.clientSideRowModel.updateRowData({
+                add: rowNodes.map(node => node.data).filter(data => !this.clientSideRowModel.getRowNode(data.id)),
+                addIndex
+            });
+        }
+
         this.clearRowHighlight();
     }
 
@@ -162,7 +187,6 @@ export class RowDragFeature implements DropTarget {
     }
 
     private checkCenterForScrolling(pixel: number): void {
-
         // scroll if the mouse is within 50px of the grid edge
         const pixelRange = this.gridPanel.getVScrollPosition();
 
@@ -199,13 +223,16 @@ export class RowDragFeature implements DropTarget {
         // the amounts we move get bigger at each interval, so the speed accelerates, starting a bit slow
         // and getting faster. this is to give smoother user experience. we max at 100px to limit the speed.
         let pixelsToMove: number;
+
         this.intervalCount++;
         pixelsToMove = 10 + (this.intervalCount * 5);
+
         if (pixelsToMove > 100) {
             pixelsToMove = 100;
         }
 
         let pixelsMoved: number;
+
         if (this.needToMoveDown) {
             pixelsMoved = this.gridPanel.scrollVertically(pixelsToMove);
         } else if (this.needToMoveUp) {
@@ -222,10 +249,10 @@ export class RowDragFeature implements DropTarget {
     // but it didn't work - i think it's because it only works with classes, and not interfaces, (the events are interfaces)
     public dispatchEvent(type: string, draggingEvent: DraggingEvent): void {
         const yNormalised = this.mouseEventService.getNormalisedPosition(draggingEvent).y;
+        const mouseIsPastLastRow = yNormalised > this.rowModel.getCurrentPageHeight();
 
         let overIndex = -1;
         let overNode = null;
-        const mouseIsPastLastRow = yNormalised > this.rowModel.getCurrentPageHeight();
 
         if (!mouseIsPastLastRow) {
             overIndex = this.rowModel.getRowIndexAtPixel(yNormalised);
@@ -233,6 +260,7 @@ export class RowDragFeature implements DropTarget {
         }
 
         let vDirectionString: string;
+
         switch (draggingEvent.vDirection) {
             case VerticalDirection.Down:
                 vDirectionString = 'down';
@@ -272,7 +300,8 @@ export class RowDragFeature implements DropTarget {
 
         if (
             this.gridOptionsWrapper.isRowDragManaged() &&
-            this.gridOptionsWrapper.isSuppressMoveWhenRowDragging()
+            this.gridOptionsWrapper.isSuppressMoveWhenRowDragging() &&
+            !this.isTargetOutsideThisGrid(draggingEvent)
         ) {
             this.moveRowAndClearHighlight(draggingEvent);
         }
@@ -283,8 +312,11 @@ export class RowDragFeature implements DropTarget {
 
     private stopDragging(draggingEvent: DraggingEvent): void {
         this.ensureIntervalCleared();
-        this.getRowNodes(draggingEvent).forEach((rowNode, idx) => {
-            rowNode.setDragging(false);
-        });
+
+        if (this.isFromThisGrid(draggingEvent)) {
+            this.getRowNodes(draggingEvent).forEach((rowNode, idx) => {
+                rowNode.setDragging(false);
+            });
+        }
     }
 }

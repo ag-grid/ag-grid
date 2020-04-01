@@ -1,0 +1,61 @@
+.outer {
+    display: flex;
+    height: 100%;
+}
+
+.inner-col {
+    width: 0;
+    flex-grow: 1;
+    height: 100%;
+}
+
+.factory-panel {
+    display: flex;
+    flex-direction: column;
+}
+
+.factory {
+    padding: 10px;
+    margin: 10px;
+    display: flex;
+    flex-direction: column;
+    flex: 1 1 auto;
+    align-items: center;
+    justify-content: center;
+    cursor: default;
+    user-select: none;
+    -ms-user-select: none;
+    -moz-user-select: none;
+    -webkit-user-modify: none;
+}
+
+.factory:not(.factory-bin) i {
+    cursor: move; /* fallback for IE */
+    cursor: grab;
+    cursor: -moz-grab;
+    cursor: -webkit-grab;
+}
+
+.factory-red {
+    color: indianred;
+}
+
+.factory-green {
+    color: darkseagreen;
+}
+
+.factory-blue {
+    color: cornflowerblue;
+}
+
+.green-row {
+    background-color: #ddffdd !important;
+}
+
+.red-row {
+    background-color: #ffdddd !important;
+}
+
+.blue-row {
+    background-color: #ddddff !important;
+}

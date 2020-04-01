@@ -230,7 +230,7 @@ export class ClientSideRowModel implements IClientSideRowModel {
         const indexAtPixelNow = pixel != null ? this.getRowIndexAtPixel(pixel) : null;
         const rowNodeAtPixelNow = indexAtPixelNow != null ? this.getRow(indexAtPixelNow) : null;
 
-        if (rowNodeAtPixelNow === rowNode || !rowNode || pixel == null) {
+        if (!rowNodeAtPixelNow || !rowNode || rowNodeAtPixelNow === rowNode || pixel == null) {
             if (this.lastHighlightedRow) {
                 this.lastHighlightedRow.setHighlighted(null);
                 this.lastHighlightedRow = null;
@@ -238,8 +238,7 @@ export class ClientSideRowModel implements IClientSideRowModel {
             return;
         }
 
-        const { rowTop, rowHeight } = rowNodeAtPixelNow;
-        const highlight = pixel - rowTop < rowHeight / 2 ? 'above' : 'below';
+        const highlight = this.getHighlightPosition(pixel, rowNodeAtPixelNow);
 
         if (this.lastHighlightedRow && this.lastHighlightedRow !== rowNodeAtPixelNow) {
             this.lastHighlightedRow.setHighlighted(null);
@@ -248,6 +247,19 @@ export class ClientSideRowModel implements IClientSideRowModel {
 
         rowNodeAtPixelNow.setHighlighted(highlight);
         this.lastHighlightedRow = rowNodeAtPixelNow;
+    }
+
+    public getHighlightPosition(pixel: number, rowNode?: RowNode): 'above' | 'below' {
+        if (!rowNode) {
+            const index = this.getRowIndexAtPixel(pixel);
+            rowNode = this.getRow(index || 0);
+
+            if (!rowNode) { return 'below'; }
+        }
+
+        const { rowTop, rowHeight } = rowNode;
+
+        return pixel - rowTop < rowHeight / 2 ? 'above' : 'below';
     }
 
     public getLastHighlightedRowNode(): RowNode | null {
@@ -533,13 +545,14 @@ export class ClientSideRowModel implements IClientSideRowModel {
         }
 
         while (true) {
-
             const midPointer = Math.floor((bottomPointer + topPointer) / 2);
             const currentRowNode = this.rowsToDisplay[midPointer];
 
             if (this.isRowInPixel(currentRowNode, pixelToMatch)) {
                 return midPointer;
-            } else if (currentRowNode.rowTop < pixelToMatch) {
+            }
+            
+            if (currentRowNode.rowTop < pixelToMatch) {
                 bottomPointer = midPointer + 1;
             } else if (currentRowNode.rowTop > pixelToMatch) {
                 topPointer = midPointer - 1;
@@ -672,12 +685,13 @@ export class ClientSideRowModel implements IClientSideRowModel {
         });
     }
 
-    private doRowGrouping(groupState: any,
-                          rowNodeTransactions: (RowNodeTransaction | null)[] | undefined,
-                          rowNodeOrder: { [id: string]: number } | undefined,
-                          changedPath: ChangedPath,
-                          afterColumnsChanged: boolean) {
-
+    private doRowGrouping(
+        groupState: any,
+        rowNodeTransactions: (RowNodeTransaction | null)[] | undefined,
+        rowNodeOrder: { [id: string]: number } | undefined,
+        changedPath: ChangedPath,
+        afterColumnsChanged: boolean
+    ) {
         // grouping is enterprise only, so if service missing, skip the step
         const doingLegacyTreeData = _.exists(this.gridOptionsWrapper.getNodeChildDetailsFunc());
         if (doingLegacyTreeData) { return; }

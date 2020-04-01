@@ -45,7 +45,7 @@ import { SideBarDef } from "./entities/sideBar";
 import { IChartService, ChartModel } from "./interfaces/IChartService";
 import { ModuleNames } from "./modules/moduleNames";
 import { _ } from "./utils";
-import { ChartRef, ProcessChartOptionsParams } from "./entities/gridOptions";
+import { ChartRef, ProcessChartOptionsParams, GridOptions } from "./entities/gridOptions";
 import { ChartOptions, ChartType } from "./interfaces/iChartOptions";
 import { IToolPanel } from "./interfaces/iToolPanel";
 import { RowNodeTransaction } from "./interfaces/rowNodeTransaction";
@@ -821,17 +821,41 @@ export class GridApi {
     }
 
     public addDropZone(params: {
-        el: HTMLElement,
+        target: HTMLElement | GridOptions,
+        dropAtIndex?: boolean;
         onDragEnter?: (params: DraggingEvent) => void,
         onDragLeave?: (params: DraggingEvent) => void,
         onDragging?: (params: DraggingEvent) => void,
         onDragStop?: (params: DraggingEvent) => void
     }): void {
-        const { el, onDragEnter, onDragging, onDragLeave, onDragStop } = params;
+        const { target, dropAtIndex, onDragEnter, onDragging, onDragLeave, onDragStop } = params;
+
+        if (!target) {
+            _.doOnce(() => console.warn('ag-Grid: addDropZone - A target needs to be provided'), 'add-drop-zone-empty-target');
+            return;
+        }
+
+        if (dropAtIndex) {
+            const tg = target as GridOptions;
+            if (!tg.api && !tg.columnApi) {
+                _.doOnce(() => console.warn('ag-Grid: addDropZone - When used with `dropAtIndex`, the target must be the GridOptions object.'), 'add-drop-zone-wrong-target');
+                return;
+            }
+
+            const rowDragFeature = tg.api.gridPanel.getRowDragFeature();
+
+            if (!rowDragFeature) {
+                _.doOnce(() => console.warn('ag-Grid: addDropZone - Target grid `rowDragFeature` has not been initialized.'), 'add-drop-zone-no-row-drag-feature');
+                return;
+            }
+
+            this.dragAndDropService.addDropTarget(tg.api.gridPanel.getRowDragFeature());
+            return;
+        }
 
         this.dragAndDropService.addDropTarget({
-            getContainer: () => el,
-            isInterestedIn: (type: DragSourceType) => type == 2,
+            getContainer: () => target as HTMLElement,
+            isInterestedIn: (type: DragSourceType) => type === DragSourceType.RowDrag,
             getIconName:() => 'move',
             onDragEnter: (params: DraggingEvent) => {
                 if (onDragEnter) {

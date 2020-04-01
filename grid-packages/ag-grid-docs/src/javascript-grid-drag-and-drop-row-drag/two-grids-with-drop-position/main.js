@@ -29,7 +29,7 @@ var gridOptions = {
             "blue-row": 'data.color == "Blue"',
         },
         getRowNodeId: function(data) { return data.id },
-        rowData: createLeftRowData(),
+        rowData: createRowBlock(2),
         rowDragManaged: true,
         suppressMoveWhenRowDragging: true,
         columnDefs: leftColumnDefs,
@@ -52,8 +52,8 @@ var gridOptions = {
             "green-row": 'data.color == "Green"',
             "blue-row": 'data.color == "Blue"',
         },
-        getRowNodeId: function(data) {return data.id },
-        rowData: [],
+        getRowNodeId: function(data) { return data.id },
+        rowData: createRowBlock(2),
         rowDragManaged: true,
         suppressMoveWhenRowDragging: true,
         columnDefs: rightColumnDefs,
@@ -65,10 +65,18 @@ var gridOptions = {
     }
 };
 
-function createLeftRowData() {
-    return ['Red', 'Green', 'Blue'].map(function(color) {
-        return createDataItem(color);
-    });
+function createRowBlock(blocks) {
+    blocks = blocks || 1;
+    
+    var output = [];
+
+    for (var i = 0; i < blocks; i++) {
+        output = output.concat(['Red', 'Green', 'Blue'].map(function(color) {
+            return createDataItem(color);
+        }));
+    }
+
+    return output;
 }
 
 function createDataItem(color) {
@@ -167,13 +175,9 @@ function addBinZone(params) {
 }
 
 function addGridDropZone(params, side) {
-    var grid = document.querySelector('#e' + side + 'Grid');
-
     params.api.addDropZone({
-        target: grid,
-        onDragStop: function(params) {
-            addRecordToGrid(side.toLowerCase(), params.dragItem.rowNode.data);
-        }
+        target: gridOptions[side],
+        dropAtIndex: true
     });
 }
 

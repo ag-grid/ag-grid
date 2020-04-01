@@ -190,6 +190,8 @@ export class GridPanel extends Component {
 
     private printLayout: boolean;
 
+    private rowDragFeature: RowDragFeature;
+
     constructor() {
         super(GRID_PANEL_NORMAL_TEMPLATE);
         this.resetLastHorizontalScrollElementDebounced = _.debounce(this.resetLastHorizontalScrollElement.bind(this), 500);
@@ -346,6 +348,11 @@ export class GridPanel extends Component {
 
         this.getContext().wireBean(rowDragFeature);
         this.dragAndDropService.addDropTarget(rowDragFeature);
+        this.rowDragFeature = rowDragFeature;
+    }
+
+    public getRowDragFeature(): RowDragFeature {
+        return this.rowDragFeature;
     }
 
     private addStopEditingWhenGridLosesFocus(): void {

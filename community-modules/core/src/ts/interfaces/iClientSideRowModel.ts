@@ -23,5 +23,6 @@ export interface IClientSideRowModel extends IRowModel {
     forEachPivotNode(callback: Function): void;
     ensureRowsAtPixel(rowNode: RowNode[], pixel: number, increment: number): boolean;
     highlightRowAtPixel(rowNode: RowNode | null, pixel?: number): void;
+    getHighlightPosition(pixel: number, rowNode?: RowNode): 'above' | 'below';
     getLastHighlightedRowNode(): RowNode | null;
 }

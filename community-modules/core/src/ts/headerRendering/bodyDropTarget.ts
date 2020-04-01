@@ -1,7 +1,6 @@
 import { DragAndDropService, DraggingEvent, DragSourceType, DropTarget } from "../dragAndDrop/dragAndDropService";
 import { Autowired, Context, PostConstruct } from "../context/context";
 import { MoveColumnController } from "./moveColumnController";
-import { Column } from "../entities/column";
 import { GridPanel } from "../gridPanel/gridPanel";
 import { BodyDropPivotTarget } from "./bodyDropPivotTarget";
 import { ColumnController } from "../columnController/columnController";
@@ -26,19 +25,13 @@ export class BodyDropTarget implements DropTarget {
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
 
     private gridPanel: GridPanel;
-
     private pinned: string;
-
     // public because it's part of the DropTarget interface
     private eContainer: HTMLElement;
-
     // public because it's part of the DropTarget interface
     private eSecondaryContainers: HTMLElement[];
-
     private dropListeners: {[type: number]: DropListener} = {};
-
     private currentDropListener: DropListener;
-
     private moveColumnController: MoveColumnController;
 
     constructor(pinned: string, eContainer: HTMLElement) {
@@ -59,8 +52,8 @@ export class BodyDropTarget implements DropTarget {
     }
 
     public isInterestedIn(type: DragSourceType): boolean {
-        return type === DragSourceType.HeaderCell
-            || (type === DragSourceType.ToolPanel && this.gridOptionsWrapper.isAllowDragFromColumnsToolPanel());
+        return type === DragSourceType.HeaderCell ||
+            (type === DragSourceType.ToolPanel && this.gridOptionsWrapper.isAllowDragFromColumnsToolPanel());
     }
 
     public getSecondaryContainers(): HTMLElement[] {
@@ -101,13 +94,13 @@ export class BodyDropTarget implements DropTarget {
             // dimensions or values to the grid
             if (draggingEvent.dragSource.type === DragSourceType.ToolPanel) {
                 return DropType.Pivot;
-            } else {
-                return DropType.ColumnMove;
             }
-        } else {
-            // it's a column, and not pivot mode, so always moving
+
             return DropType.ColumnMove;
         }
+
+        // it's a column, and not pivot mode, so always moving
+        return DropType.ColumnMove;
     }
 
     public onDragEnter(draggingEvent: DraggingEvent): void {
@@ -117,8 +110,8 @@ export class BodyDropTarget implements DropTarget {
 
         // if (this.columnController.isPivotMode()) {
         const dropType: DropType = this.getDropType(draggingEvent);
-        this.currentDropListener = this.dropListeners[dropType];
 
+        this.currentDropListener = this.dropListeners[dropType];
         this.currentDropListener.onDragEnter(draggingEvent);
     }
 
