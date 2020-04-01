@@ -4,7 +4,7 @@ import * as ReactDOM from 'react-dom';
 import {ComponentType, Promise, Utils} from 'ag-grid-community';
 import {AgGridReact} from "./agGridReact";
 import {BaseReactComponent} from "./baseReactComponent";
-import {assignProperties} from "./utils";
+import {assign, assignProperties} from "./utils";
 import generateNewKey from "./keyGenerator";
 import {renderToStaticMarkup} from "react-dom/server";
 
@@ -153,7 +153,10 @@ export class ReactComponent extends BaseReactComponent {
 
         const reactComponent = React.createElement(this.reactComponent, params);
         try {
+            const originalUseLayoutEffect = React.useLayoutEffect;
+            assign(React, "useLayoutEffect", React.useEffect);
             const staticMarkup = renderToStaticMarkup(reactComponent);
+            assign(React, "useLayoutEffect", originalUseLayoutEffect);
 
             // if the render method returns null the result will be an empty string
             if (staticMarkup === "") {
