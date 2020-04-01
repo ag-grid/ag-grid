@@ -39,7 +39,7 @@
     .ag-menu-option-shortcut {
         padding-left: ag-param(grid-size) * 2;
     }
-    
+
 
     .ag-menu-separator {
         height: ag-param(grid-size) * 2;
@@ -65,7 +65,7 @@
         width: 100%;
         display: flex;
     }
-    
+
     .ag-tab {
         border-bottom: ag-param(selected-tab-underline-width) solid transparent;
         display: flex;
@@ -77,7 +77,7 @@
         @if ag-param(full-width-tabs) {
             flex: 1 1 auto;
         }
-        
+
         @if ag-param(selected-tab-underline-transition-speed) {
             transition: border-bottom ag-param(selected-tab-underline-transition-speed);
         }
@@ -117,7 +117,7 @@
         margin-left: ag-param(widget-container-horizontal-padding);
         margin-right: ag-param(widget-container-horizontal-padding);
     }
-    
+
     .ag-filter-to {
         margin-top: ag-param(widget-vertical-spacing);
     }
@@ -126,7 +126,11 @@
         margin: ag-param(widget-container-vertical-padding) ag-param(widget-container-horizontal-padding) 0;
     }
 
-    .ag-set-filter-item-checkbox, .ag-set-filter-item-value {
+    .ag-set-filter-item {
+        margin: 0px ag-param(widget-container-horizontal-padding);
+    }
+
+    .ag-set-filter-item-value {
         @include ag-theme-rtl((margin-left: ag-param(widget-container-horizontal-padding)));
     }
 
@@ -141,7 +145,7 @@
 
         @include ag-border(secondary, top);
     }
-    
+
     .ag-filter-apply-panel-button {
         line-height: 1.5;
         @include ag-theme-rtl((margin-left: ag-param(grid-size) * 2));
