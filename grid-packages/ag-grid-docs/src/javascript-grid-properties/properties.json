@@ -847,6 +847,7 @@
             "description": "Set to <code>true</code> to use the browser's default tooltip instead of using ag-Grid's Tooltip Component."
         },
         "tooltipShowDelay": {
+            "default": 2000,
             "description": "The delay in milliseconds that it takes for tooltips to show up once an element is hovered.<br /> <strong>Note:</strong> This property does not work if <code>enableBrowserTooltips</code> is <code>true</code>."
         },
         "enableCellExpressions": {
