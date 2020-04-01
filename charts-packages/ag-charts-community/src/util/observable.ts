@@ -18,20 +18,25 @@ export type PropertyChangeEventListener<S, V> = (event: PropertyChangeEvent<S, V
 export class Observable {
     static readonly privateKeyPrefix = '_';
 
-    private propertyListeners = new Map(); // property name => property change listeners
-    private eventListeners = new Map();    // event type => event listeners
+    // Note that these maps can't be specified generically, so they are kept untyped.
+    // Some methods in this class only need generics in their signatures, the generics inside the methods
+    // are just for clarity. The generics in signatures allow for static type checking of user provided
+    // listeners and for type inference, so that the users wouldn't have to specify the type of parameters
+    // of their inline declared lambdas.
+    private allPropertyListeners = new Map(); // property name => property change listeners
+    private allEventListeners = new Map();    // event type => event listeners
 
     addPropertyListener<K extends string & keyof this>(name: K, listener: PropertyChangeEventListener<this, this[K]>) {
-        const propertyListeners = this.propertyListeners as Map<K, Set<PropertyChangeEventListener<this, this[K]>>>;
-        let listeners = propertyListeners.get(name);
+        const allPropertyListeners = this.allPropertyListeners as Map<K, Set<PropertyChangeEventListener<this, this[K]>>>;
+        let propertyListeners = allPropertyListeners.get(name);
 
-        if (!listeners) {
-            listeners = new Set<PropertyChangeEventListener<this, this[K]>>();
-            propertyListeners.set(name, listeners);
+        if (!propertyListeners) {
+            propertyListeners = new Set<PropertyChangeEventListener<this, this[K]>>();
+            allPropertyListeners.set(name, propertyListeners);
         }
 
-        if (!listeners.has(listener)) {
-            listeners.add(listener);
+        if (!propertyListeners.has(listener)) {
+            propertyListeners.add(listener);
             return listener;
         } else {
             console.warn('Listener ', listener, ' already added to ', this);
@@ -39,24 +44,24 @@ export class Observable {
     }
 
     removePropertyListener<K extends string & keyof this>(name: K, listener: PropertyChangeEventListener<this, this[K]>) {
-        const propertyListeners = this.propertyListeners as Map<K, Set<PropertyChangeEventListener<this, this[K]>>>;
-        let listeners = propertyListeners.get(name);
+        const allPropertyListeners = this.allPropertyListeners as Map<K, Set<PropertyChangeEventListener<this, this[K]>>>;
+        let propertyListeners = allPropertyListeners.get(name);
 
-        if (listeners) {
+        if (propertyListeners) {
             if (listener) {
-                listeners.delete(listener);
+                propertyListeners.delete(listener);
             } else {
-                listeners.clear();
+                propertyListeners.clear();
             }
         }
     }
 
     protected notifyPropertyListeners<K extends string & keyof this>(name: K, oldValue: this[K], value: this[K]) {
-        const nameListeners = this.propertyListeners as Map<K, Set<PropertyChangeEventListener<this, this[K]>>>;
-        const listeners = nameListeners.get(name);
+        const allPropertyListeners = this.allPropertyListeners as Map<K, Set<PropertyChangeEventListener<this, this[K]>>>;
+        const propertyListeners = allPropertyListeners.get(name);
 
-        if (listeners) {
-            listeners.forEach(listener => {
+        if (propertyListeners) {
+            propertyListeners.forEach(listener => {
                 listener({
                     type: name,
                     source: this,
@@ -68,16 +73,16 @@ export class Observable {
     }
 
     addEventListener(type: string, listener: TypedEventListener) {
-        const eventListeners = this.eventListeners as Map<string, Set<TypedEventListener>>;
-        let listeners = eventListeners.get(type);
+        const allEventListeners = this.allEventListeners as Map<string, Set<TypedEventListener>>;
+        let eventListeners = allEventListeners.get(type);
 
-        if (!listeners) {
-            listeners = new Set<TypedEventListener>();
-            eventListeners.set(type, listeners);
+        if (!eventListeners) {
+            eventListeners = new Set<TypedEventListener>();
+            allEventListeners.set(type, eventListeners);
         }
 
-        if (!listeners.has(listener)) {
-            listeners.add(listener);
+        if (!eventListeners.has(listener)) {
+            eventListeners.add(listener);
             return listener;
         } else {
             console.warn('Category listener ', listener, ' already added to ', this);
@@ -85,23 +90,23 @@ export class Observable {
     }
 
     removeEventListener(type: string, listener: TypedEventListener) {
-        const eventListeners = this.eventListeners as Map<string, Set<TypedEventListener>>;
-        let listeners = eventListeners.get(type);
+        const allEventListeners = this.allEventListeners as Map<string, Set<TypedEventListener>>;
+        let eventListeners = allEventListeners.get(type);
 
-        if (listeners) {
+        if (eventListeners) {
             if (listener) {
-                listeners.delete(listener);
+                eventListeners.delete(listener);
             } else {
-                listeners.clear();
+                eventListeners.clear();
             }
         }
     }
 
     protected notifyEventListeners(types: string[]) {
-        const eventListeners = this.eventListeners as Map<string, Set<TypedEventListener>>;
+        const allEventListeners = this.allEventListeners as Map<string, Set<TypedEventListener>>;
 
         types.forEach(type => {
-            const listeners = eventListeners.get(type);
+            const listeners = allEventListeners.get(type);
             if (listeners) {
                 listeners.forEach(listener => listener({type}));
             }
@@ -109,10 +114,10 @@ export class Observable {
     }
 
     fireEvent<E extends TypedEvent>(event: E) {
-        const listeners = (this.eventListeners as Map<string, Set<TypedEventListener>>).get(event.type);
+        const eventListeners = (this.allEventListeners as Map<string, Set<TypedEventListener>>).get(event.type);
 
-        if (listeners) {
-            listeners.forEach(listener => listener(event));
+        if (eventListeners) {
+            eventListeners.forEach(listener => listener(event));
         }
     }
 }
