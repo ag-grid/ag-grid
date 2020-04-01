@@ -161,7 +161,7 @@ SNIPPET
     no real field assigned to it, the <code>tooltipValueGetter</code> function must be used.
 </p>
 
-<?= grid_example('RowGroup Tooltip', 'rowgroups-tooltip', 'generated', ['enterprise' => true]) ?>
+<?= grid_example('Row Group Tooltip', 'rowgroups-tooltip', 'generated', ['enterprise' => true]) ?>
 
 <h2>Example: Using Browser Tooltips</h2>
 

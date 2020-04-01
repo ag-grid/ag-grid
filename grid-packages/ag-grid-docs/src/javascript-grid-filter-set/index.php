@@ -64,7 +64,7 @@ include '../documentation-main/documentation_header.php';
 </p>
 
 <p>
-    The Sport colum also has the property <code>suppressMiniFilter</code> set to <code>true</code>, hiding the text input box for the
+    The Sport column also has the property <code>suppressMiniFilter</code> set to <code>true</code>, hiding the text input box for the
     set filter in this column (compare this set filter with Athlete where <code>suppressMiniFilter = false</code>, the default).
 </p>
 
@@ -136,7 +136,7 @@ SNIPPET
 </p>
 
 <p>
-    It also shows the Athlete column using a text formatter so that <code>'o'</code> will match <code>'Bj&oslash;rk'</code> in the mini filter. You
+    It also shows the Athlete column using a text formatter so that <code>'o'</code> will match <code>'Bj&oslash;rn'</code> in the mini filter. You
     can check this by searching for <code>'bjo'</code> in the mini-filter box.
 </p>
 

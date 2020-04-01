@@ -6,18 +6,15 @@ import {
     Column,
     Component,
     GridOptionsWrapper,
-    ICellRendererComp,
     ISetFilterParams,
     PostConstruct,
-    Promise,
     UserComponentFactory,
     ValueFormatterService,
     RefSelector,
-    _
-} from "@ag-grid-community/core";
+    _,
+} from '@ag-grid-community/core';
 
-
-export interface SelectedEvent extends AgEvent {}
+export interface SelectedEvent extends AgEvent { }
 
 export class SetFilterListItem extends Component {
     public static EVENT_SELECTED = 'selected';
@@ -26,8 +23,8 @@ export class SetFilterListItem extends Component {
     @Autowired('valueFormatterService') private valueFormatterService: ValueFormatterService;
     @Autowired('userComponentFactory') private userComponentFactory: UserComponentFactory;
 
-    private static TEMPLATE = 
-        `<label class="ag-set-filter-item">
+    private static TEMPLATE = /* html */`
+        <label class="ag-set-filter-item">
             <ag-checkbox ref="eCheckbox" class="ag-set-filter-item-checkbox"></ag-checkbox>
             <span class="ag-set-filter-item-value"></span>
         </label>`;
@@ -44,30 +41,17 @@ export class SetFilterListItem extends Component {
         this.column = column;
     }
 
-    private useCellRenderer(target: ColDef, eTarget: HTMLElement, params: any): Promise<ICellRendererComp> {
-        const cellRendererPromise: Promise<ICellRendererComp> = this.userComponentFactory.newCellRenderer(target.filterParams as ISetFilterParams, params);
-        if (cellRendererPromise != null) {
-            _.bindCellRendererToHtmlElement(cellRendererPromise, eTarget);
-        } else {
-            if (params.valueFormatted == null && params.value == null) {
-                const localeTextFunc = this.gridOptionsWrapper.getLocaleTextFunc();
-                eTarget.innerText = '(' + localeTextFunc('blanks', 'Blanks') + ')';
-            } else {
-                eTarget.innerText = params.valueFormatted != null ? params.valueFormatted : params.value;
-            }
-        }
-        return cellRendererPromise;
-    }
-
     @PostConstruct
     private init(): void {
         this.render();
 
-        this.eCheckbox.onValueChange((value) => {
+        this.eCheckbox.onValueChange(value => {
             this.selected = value;
+
             const event: SelectedEvent = {
                 type: SetFilterListItem.EVENT_SELECTED
             };
+
             return this.dispatchEvent(event);
         });
     }
@@ -89,26 +73,43 @@ export class SetFilterListItem extends Component {
         const valueElement = this.queryForHtmlElement('.ag-set-filter-item-value');
         const colDef = this.column.getColDef();
         const filterValueFormatter = this.getFilterValueFormatter(colDef);
-        const valueFormatted = this.valueFormatterService.formatValue(this.column, null, null, this.value, filterValueFormatter);
+        const valueFormatted = this.valueFormatterService.formatValue(
+            this.column, null, null, this.value, filterValueFormatter);
 
-        const params = {
+        const params: any = {
             value: this.value,
             valueFormatted: valueFormatted,
             api: this.gridOptionsWrapper.getApi()
         };
 
-        const componentPromise: Promise<ICellRendererComp> = this.useCellRenderer(colDef, valueElement, params);
-
-        if (!componentPromise) { return; }
-
-        componentPromise.then(component => {
-            if (component && component.destroy) {
-                this.addDestroyFunc(component.destroy.bind(component));
-            }
-        });
+        this.renderCell(colDef, valueElement, params);
     }
 
     private getFilterValueFormatter(colDef: ColDef) {
         return colDef.filterParams ? (<ISetFilterParams>colDef.filterParams).valueFormatter : undefined;
+    }
+
+    private renderCell(target: ColDef, eTarget: HTMLElement, params: any): void {
+        const filterParams = target.filterParams as ISetFilterParams;
+        const cellRendererPromise = this.userComponentFactory.newCellRenderer(filterParams, params);
+
+        if (cellRendererPromise == null) {
+            if (params.valueFormatted == null && params.value == null) {
+                const localeTextFunc = this.gridOptionsWrapper.getLocaleTextFunc();
+                eTarget.innerText = `(${localeTextFunc('blanks', 'Blanks')})`;
+            } else {
+                eTarget.innerText = params.valueFormatted != null ? params.valueFormatted : params.value;
+            }
+
+            return;
+        }
+
+        _.bindCellRendererToHtmlElement(cellRendererPromise, eTarget);
+
+        cellRendererPromise.then(component => {
+            if (component && component.destroy) {
+                this.addDestroyFunc(component.destroy.bind(component));
+            }
+        });
     }
 }

@@ -1,8 +1,7 @@
-import {Component} from "./component";
-import {Autowired, PostConstruct} from "../context/context";
-import {Environment} from "../environment";
-import {GridOptionsWrapper} from "../gridOptionsWrapper";
-import {_} from "../utils";
+import { Component } from "./component";
+import { Autowired, PostConstruct } from "../context/context";
+import { GridOptionsWrapper } from "../gridOptionsWrapper";
+import { _ } from "../utils";
 
 export interface VirtualListModel {
     getRowCount(): number;
@@ -10,14 +9,12 @@ export interface VirtualListModel {
 }
 
 export class VirtualList extends Component {
-
     private model: VirtualListModel;
     private eListContainer: HTMLElement;
     private rowsInBodyContainer: any = {};
     private componentCreator: (value: any) => Component;
     private rowHeight = 20;
 
-    @Autowired('environment') private environment: Environment;
     @Autowired('gridOptionsWrapper') gridOptionsWrapper: GridOptionsWrapper;
 
     constructor(private cssIdentifier = 'default') {
@@ -33,9 +30,10 @@ export class VirtualList extends Component {
     }
 
     private static getTemplate(cssIdentifier: string) {
-        return `<div class="ag-virtual-list-viewport ag-${cssIdentifier}-virtual-list-viewport">
-            <div class="ag-virtual-list-container ag-${cssIdentifier}-virtual-list-container"></div>
-        </div>`;
+        return /* html */`
+            <div class="ag-virtual-list-viewport ag-${cssIdentifier}-virtual-list-viewport">
+                <div class="ag-virtual-list-container ag-${cssIdentifier}-virtual-list-container"></div>
+            </div>`;
     }
 
     private getItemHeight(): number {
@@ -44,12 +42,12 @@ export class VirtualList extends Component {
 
     public ensureIndexVisible(index: number): void {
         const lastRow = this.model.getRowCount();
+
         if (typeof index !== 'number' || index < 0 || index >= lastRow) {
             console.warn('invalid row index for ensureIndexVisible: ' + index);
             return;
         }
 
-        // let nodeAtIndex = this.rowModel.getRow(index);
         const rowTopPixel = index * this.rowHeight;
         const rowBottomPixel = rowTopPixel + this.rowHeight;
         const eGui = this.getGui();
@@ -90,7 +88,9 @@ export class VirtualList extends Component {
 
     public refresh(): void {
         if (_.missing(this.model)) { return; }
-        this.eListContainer.style.height = (this.model.getRowCount() * this.rowHeight) + "px";
+
+        this.eListContainer.style.height = `${this.model.getRowCount() * this.rowHeight}px`;
+
         this.clearVirtualRows();
         this.drawVirtualRows();
     }
@@ -121,6 +121,7 @@ export class VirtualList extends Component {
                 rowsToRemove.splice(rowsToRemove.indexOf(rowIndex.toString()), 1);
                 continue;
             }
+
             // check this row actually exists (in case overflow buffer window exceeds real data)
             if (this.model.getRowCount() > rowIndex) {
                 const value = this.model.getRow(rowIndex);
@@ -133,13 +134,15 @@ export class VirtualList extends Component {
     }
 
     // takes array of row id's
-    private removeVirtualRows(rowsToRemove: any) {
-        rowsToRemove.forEach((index: number) => {
+    private removeVirtualRows(rowsToRemove: string[]) {
+        rowsToRemove.forEach(index => {
             const component = this.rowsInBodyContainer[index];
             this.eListContainer.removeChild(component.eDiv);
+
             if (component.rowComponent.destroy) {
                 component.rowComponent.destroy();
             }
+
             delete this.rowsInBodyContainer[index];
         });
     }
@@ -163,9 +166,7 @@ export class VirtualList extends Component {
     }
 
     private addScrollListener() {
-        this.addGuiEventListener('scroll', () => {
-            this.drawVirtualRows();
-        });
+        this.addGuiEventListener('scroll', () => this.drawVirtualRows());
     }
 
     public setModel(model: VirtualListModel): void {

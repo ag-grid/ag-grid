@@ -662,13 +662,7 @@ export class Utils {
     }
 
     static toStrings<T>(array: T[]): (string | null)[] {
-        return array.map(item => {
-            if (item === undefined || item === null || !item.toString) {
-                return null;
-            }
-
-            return item.toString();
-        });
+        return array.map(item => item == null || !item.toString() ? null : item.toString());
     }
 
     static findIndex<T>(collection: T[], predicate: (item: T, idx: number, collection: T[]) => boolean): number {
@@ -845,21 +839,15 @@ export class Utils {
      * @param {T} value
      * @returns {T | null}
      */
-    static makeNull<T>(value: T): T | null {
-        const valueNoType = value as any;
-
-        if (value === null || value === undefined || valueNoType === "") {
-            return null;
-        }
-
-        return value;
+    static makeNull<T>(value?: T): T | null {
+        return value == null || value as any === '' ? null : value;
     }
 
     static missing(value: any): boolean {
         return !this.exists(value);
     }
 
-    static missingOrEmpty(value: any[] | string | undefined): boolean {
+    static missingOrEmpty(value?: any[] | string): boolean {
         return !value || this.missing(value) || value.length === 0;
     }
 
@@ -867,13 +855,14 @@ export class Utils {
         return this.missing(value) || Object.keys(value).length === 0;
     }
 
-    static exists(value: any, allowEmptyString: boolean = false): boolean {
+    static exists(value: any, allowEmptyString = false): boolean {
         return value != null && (value !== '' || allowEmptyString);
     }
 
     static firstExistingValue<A>(...values: A[]): A | null {
         for (let i = 0; i < values.length; i++) {
-            const value: A = values[i];
+            const value = values[i];
+
             if (_.exists(value)) {
                 return value;
             }
@@ -1111,12 +1100,8 @@ export class Utils {
     }
 
     static defaultComparator(valueA: any, valueB: any, accentedCompare: boolean = false): number {
-        const valueAMissing = valueA === null || valueA === undefined;
-        const valueBMissing = valueB === null || valueB === undefined;
-
-        function doQuickCompare(a: string, b: string): number {
-            return (a > b ? 1 : (a < b ? -1 : 0));
-        }
+        const valueAMissing = valueA == null;
+        const valueBMissing = valueB == null;
 
         // this is for aggregations sum and avg, where the result can be a number that is wrapped.
         // if we didn't do this, then the toString() value would be used, which would result in
@@ -1141,7 +1126,11 @@ export class Utils {
             return 1;
         }
 
-        if (typeof valueA === "string") {
+        function doQuickCompare<T>(a: T, b: T): number {
+            return (a > b ? 1 : (a < b ? -1 : 0));
+        }
+
+        if (typeof valueA === 'string') {
             if (!accentedCompare) {
                 return doQuickCompare(valueA, valueB);
             }
@@ -1156,13 +1145,7 @@ export class Utils {
             }
         }
 
-        if (valueA < valueB) {
-            return -1;
-        } else if (valueA > valueB) {
-            return 1;
-        }
-
-        return 0;
+        return doQuickCompare(valueA, valueB);
     }
 
     static last<T>(arr: T[]): T | undefined {
@@ -1171,13 +1154,12 @@ export class Utils {
         return arr[arr.length - 1];
     }
 
-    static compareArrays(array1: any[] | undefined, array2: any[]): boolean {
+    static compareArrays(array1?: any[], array2?: any[]): boolean {
         if (this.missing(array1) && this.missing(array2)) {
             return true;
         }
 
-        if ((this.missing(array1) || this.missing(array2)) ||
-            (!array1 || !array2)) {
+        if (this.missing(array1) || this.missing(array2)) {
             return false;
         }
 
