@@ -10,7 +10,7 @@ import { BBox } from "../scene/bbox";
 import { find } from "../util/array";
 import { SizeMonitor } from "../util/sizeMonitor";
 import { Caption } from "../caption";
-import { Observable, reactive, PropertyChangeEventListener } from "../util/observable";
+import { Observable, reactive, PropertyChangeEvent, PropertyChangeEventListener } from "../util/observable";
 import { ChartAxis, ChartAxisDirection } from "./chartAxis";
 import { CartesianSeries } from "./series/cartesian/cartesianSeries";
 import { createId } from "../util/id";
@@ -221,8 +221,8 @@ export abstract class Chart extends Observable {
         this.autoSize = true;
 
         const { legend } = this;
-        legend.addEventListener('layoutChange', this.onLayoutChange);
-        legend.addPropertyListener('position', this.onLegendPositionChange);
+        legend.addEventListener('layoutChange', this.onLayoutChange, this);
+        legend.addPropertyListener('position', this.onLegendPositionChange, this);
 
         this.tooltipElement = document.createElement('div');
         this.tooltipClass = '';
@@ -238,21 +238,8 @@ export abstract class Chart extends Observable {
 
         this.setupListeners(scene.canvas.element);
 
-        const captionListener = (event => {
-            const { source: chart, value: caption, oldValue: oldCaption } = event;
-
-            if (oldCaption) {
-                oldCaption.removeEventListener('change', chart.onLayoutChange);
-                chart.scene.root!.removeChild(oldCaption.node);
-            }
-            if (caption) {
-                caption.addEventListener('change', chart.onLayoutChange);
-                chart.scene.root!.appendChild(caption.node);
-            }
-        }) as PropertyChangeEventListener<Chart, Caption | undefined>;
-
-        this.addPropertyListener('title', captionListener);
-        this.addPropertyListener('subtitle', captionListener);
+        this.addPropertyListener('title', this.onCaptionChange, this);
+        this.addPropertyListener('subtitle', this.onCaptionChange, this);
         this.addEventListener('layoutChange', () => this.layoutPending = true);
     }
 
@@ -264,18 +251,34 @@ export abstract class Chart extends Observable {
         SizeMonitor.unobserve(this.element);
         this.container = undefined;
 
-        this.legend.removeEventListener('layoutChange', this.onLayoutChange);
+        const { legend } = this;
+        legend.removeEventListener('layoutChange', this.onLayoutChange, this);
+        legend.removePropertyListener('position', this.onLegendPositionChange, this);
+
         this.cleanupListeners(this.scene.canvas.element);
         this.scene.container = undefined;
     }
 
-    private readonly onLayoutChange = () => {
+    private onLayoutChange() {
         this.layoutPending = true;
     }
 
-    private readonly onLegendPositionChange = () => {
+    private onLegendPositionChange() {
         this.legendAutoPadding.clear();
         this.layoutPending = true;
+    }
+
+    private onCaptionChange(event: PropertyChangeEvent<this, Caption | undefined>) {
+        const { value, oldValue } = event;
+
+        if (oldValue) {
+            oldValue.removeEventListener('change', this.onLayoutChange, this);
+            this.scene.root!.removeChild(oldValue.node);
+        }
+        if (value) {
+            value.addEventListener('change', this.onLayoutChange, this);
+            this.scene.root!.appendChild(value.node);
+        }
     }
 
     protected _element: HTMLElement;
@@ -307,11 +310,11 @@ export abstract class Chart extends Observable {
         return this._series;
     }
 
-    private readonly scheduleLayout = () => {
+    private scheduleLayout() {
         this.layoutPending = true;
     }
 
-    private readonly scheduleData = () => {
+    private scheduleData() {
         this.dataPending = true;
     }
 
@@ -344,16 +347,16 @@ export abstract class Chart extends Observable {
         if (!series.data) {
             series.data = this.data;
         }
-        series.addEventListener('layoutChange', this.scheduleLayout);
-        series.addEventListener('dataChange', this.scheduleData);
-        series.addEventListener('legendChange', this.updateLegend);
+        series.addEventListener('layoutChange', this.scheduleLayout, this);
+        series.addEventListener('dataChange', this.scheduleData, this);
+        series.addEventListener('legendChange', this.updateLegend, this);
     }
 
     protected freeSeries(series: Series) {
         series.chart = undefined;
-        series.removeEventListener('layoutChange', this.scheduleLayout);
-        series.removeEventListener('dataChange', this.scheduleData);
-        series.removeEventListener('legendChange', this.updateLegend);
+        series.removeEventListener('layoutChange', this.scheduleLayout, this);
+        series.removeEventListener('dataChange', this.scheduleData, this);
+        series.removeEventListener('legendChange', this.updateLegend, this);
     }
 
     addSeriesAfter(series: Series, after?: Series): boolean {
@@ -576,7 +579,7 @@ export abstract class Chart extends Observable {
         this.layoutPending = true;
     }
 
-    readonly updateLegend = () => {
+    private updateLegend() {
         const legendData: LegendDatum[] = [];
 
         this.series.filter(s => s.showInLegend).forEach(series => series.listSeriesItems(legendData));

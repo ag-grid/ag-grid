@@ -4,7 +4,7 @@ import { MarkerLabel } from "./markerLabel";
 import { BBox } from "../scene/bbox";
 import { FontStyle, FontWeight } from "../scene/shape/text";
 import { Marker } from "./marker/marker";
-import { reactive, Observable } from "../util/observable";
+import { reactive, Observable, PropertyChangeEvent } from "../util/observable";
 import { getMarker } from "./marker/util";
 import { createId } from "../util/id";
 
@@ -91,15 +91,8 @@ export class Legend extends Observable {
     constructor() {
         super();
 
-        this.addPropertyListener('data', event => {
-            const { source: legend, value: data } = event;
-            legend.group.visible = legend.enabled && data.length > 0;
-        });
-
-        this.addPropertyListener('enabled', event => {
-            const { source: legend, value } = event;
-            legend.group.visible = value && legend.data.length > 0;
-        });
+        this.addPropertyListener('data', this.onDataChange, this);
+        this.addPropertyListener('enabled', this.onEnabledChange, this);
 
         this.addPropertyListener('position', event => {
             const { source: legend, value: position } = event;
@@ -120,12 +113,20 @@ export class Legend extends Observable {
             this.itemSelection.exit.remove();
         });
 
-        this.addEventListener('change', () => this.update());
+        this.addEventListener('change', this.update, this);
     }
 
     private _size: [number, number] = [0, 0];
     get size(): Readonly<[number, number]> {
         return this._size;
+    }
+
+    onDataChange(event: PropertyChangeEvent<this, LegendDatum[]>) {
+        this.group.visible = event.value.length > 0 && this.enabled;
+    }
+
+    onEnabledChange(event: PropertyChangeEvent<this, Boolean>) {
+        this.group.visible = event.value && this.data.length > 0;
     }
 
     /**

@@ -21,9 +21,9 @@ export class Observable {
     // Some methods in this class only need generics in their signatures, the generics inside the methods
     // are just for clarity. The generics in signatures allow for static type checking of user provided
     // listeners and for type inference, so that the users wouldn't have to specify the type of parameters
-    // of their inline declared lambdas.
-    private allPropertyListeners = new Map(); // property name => property change listeners => scopes
-    private allEventListeners = new Map();    // event type => event listeners => scopes
+    // of their inline lambdas.
+    private allPropertyListeners = new Map(); // property name => property change listener => scopes
+    private allEventListeners = new Map();    // event type => event listener => scopes
 
     addPropertyListener<K extends string & keyof this>(name: K, listener: PropertyChangeEventListener<this, this[K]>, scope: Object = this) {
         const allPropertyListeners = this.allPropertyListeners as Map<K, Map<PropertyChangeEventListener<this, this[K]>, Set<Object>>>;

@@ -158,16 +158,14 @@ export class CartesianChart extends Chart {
         this.axes.forEach(axis => axis.update());
     }
 
-    private _updateAxes = this.updateAxes.bind(this);
-
     protected initSeries(series: Series) {
         super.initSeries(series);
-        series.addEventListener('dataProcessed', this._updateAxes);
+        series.addEventListener('dataProcessed', this.updateAxes, this);
     }
 
     protected freeSeries(series: Series) {
         super.freeSeries(series);
-        series.removeEventListener('dataProcessed', this._updateAxes);
+        series.removeEventListener('dataProcessed', this.updateAxes, this);
     }
 
     updateAxes() {
