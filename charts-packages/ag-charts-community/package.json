@@ -47,7 +47,8 @@
   "jest": {
     "setupFiles": [
       "jest-canvas-mock"
-    ]
+    ],
+    "testEnvironment": "node"
   },
   "devDependencies": {
     "@types/jest": "^25.1.2",
