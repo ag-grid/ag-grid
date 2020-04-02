@@ -24,6 +24,7 @@ export class DevHarness extends Component {
         });
         this.getContext().wireBean(component);
         this.getGui().appendChild(component.getGui());
+        component.focus();
     }
 }
 
@@ -35,6 +36,7 @@ document.addEventListener('DOMContentLoaded', function() {
     eDemoDiv.id = 'component-demo';
     eDemoDiv.className = 'ag-theme-alpine';
     document.body.parentElement.style.height = '100%';
+    document.body.parentElement.style.width = '200px';
     document.body.style.height = '100%';
     eDemoDiv.style.height = '100%';
     new Grid(eDemoDiv, gridOptions, {

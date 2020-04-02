@@ -1,11 +1,12 @@
 export interface IDateTimeListModel {
     getPage(base: Date, number: number): Page;
+    roundToValue(date: Date): Date;
 }
 
 export interface Page {
     title: string;
     columns: Column[];
-    entries: Entry[];
+    entries: Entry[][];
 }
 
 export interface Column {
@@ -21,21 +22,29 @@ export interface Entry {
 }
 
 export interface IDateTimeListModelOptions {
-    // Given a point in time that falls within a period, return the first value in the period.
-    // `offset` can be a positive or negative integer and is used to request a period after
-    // or before the period containing `date`, for example if showing a monthly calendar,
-    // if `date` is 5th July then the return value should be 1st July if `offset` is 0, 1st August
-    // if `offset` is 1, or 1st June if `offset` is -1.
-    firstValueInPeriod(date: Date, offset: number): Date;
+    // Given a point in time that falls within a period, return the first value
+    // in the period. `offset` can be a positive or negative integer and is used
+    // to request a period after or before the period containing `date`, for
+    // example if showing a monthly calendar, if `date` is 5th July then the
+    // return value should be 1st July if `offset` is 0, 1st August if `offset`
+    // is 1, or 1st June if `offset` is -1.
+    startOfPeriod(date: Date, offset: number): Date;
 
-    // given the first value in a period and an offset, return a value.  Offset can a positive
-    // or negative integer and may fall outside the period itself (e.g. when showing a monthly
-    // calendar, some days from the previous month may be included if the month does not start
-    // on the first day of the week).
-    valueInPeriod(first: Date, offset: number): Date;
+    // Given a point in time, return the value that contains it. Since values
+    // are represented using their start time, this means rounding down to the
+    // nearest value
+    roundToValue(date: Date): Date;
 
-    // return the number of values in a period, not including padding before and after.
-    periodLength(first: Date): number;
+    // given the start value in a period and an offset, return a value.  Offset
+    // can a positive or negative integer and may fall outside the period itself
+    // (e.g. when showing a monthly calendar, some days from the previous month
+    // may be included if the month does not start on the first day of the
+    // week).
+    valueInPeriod(start: Date, offset: number): Date;
+
+    // return the number of values in a period, not including padding before and
+    // after.
+    periodLength(start: Date): number;
 
     // return the label to show on a single entry within a period
     entryLabel(value: Date): string;
@@ -43,8 +52,9 @@ export interface IDateTimeListModelOptions {
     // Given the first value in a period, return the number of columns required to render the period
     columnCount(first: Date): number;
 
-    // Return the column that a value should be in, where 0 is the first column. If numbers outside
-    // the range 0 - `columnCount` are returned they will be wrapped into that range
+    // Return the column that a value should be in, where 0 is the first column.
+    // If numbers outside the range 0 - `columnCount` are returned they will be
+    // wrapped into that range
     columnForValue(value: Date): number;
 
     // return the label to show on a single entry within a period
@@ -52,8 +62,11 @@ export interface IDateTimeListModelOptions {
 }
 
 const monthlyCalendarOptions: IDateTimeListModelOptions = {
-    firstValueInPeriod(date, offset) {
+    startOfPeriod(date, offset) {
         return new Date(date.getFullYear(), date.getMonth() + offset, 1);
+    },
+    roundToValue(date) {
+        return new Date(date.getFullYear(), date.getMonth(), date.getDate());
     },
     valueInPeriod(first, offset) {
         return new Date(first.getFullYear(), first.getMonth(), first.getDate() + offset);
@@ -83,7 +96,7 @@ export class DateTimeListModel implements IDateTimeListModel {
         const { options } = this;
 
         const entries: Entry[] = [];
-        const firstValue = options.firstValueInPeriod(date, offset);
+        const firstValue = options.startOfPeriod(date, offset);
         const columnCount = options.columnCount(firstValue);
         // TODO call columnForValue for every value and stack them into arbitrary columns
         const paddingAtStart = modulo(options.columnForValue(firstValue), columnCount); // adds padding at start
@@ -109,12 +122,27 @@ export class DateTimeListModel implements IDateTimeListModel {
 
         const titleFormat = new Intl.DateTimeFormat('default', { month: 'long', year: 'numeric' });
         return {
-            entries,
+            entries: splitArray(entries, columns.length),
             columns,
             title: titleFormat.format(firstValue),
         };
+    }
+
+    public roundToValue(date: Date) {
+        return this.options.roundToValue(date);
     }
 }
 
 // modulo function that, unline the JS % operator, is safe for negative numbers
 const modulo = (value: number, modulo: number) => ((value % modulo) + modulo) % modulo;
+
+
+const splitArray = <T>(array: T[], chunkSize: number): T[][] => {
+    const chunks: T[][] = [];
+    array.forEach((value, i) => {
+        const chunkIndex = Math.floor(i / chunkSize);
+        chunks[chunkIndex] = chunks[chunkIndex] || [];
+        chunks[chunkIndex].push(value);
+    });
+    return chunks;
+};

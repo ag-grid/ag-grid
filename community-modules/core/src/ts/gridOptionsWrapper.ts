@@ -1144,9 +1144,6 @@ export class GridOptionsWrapper {
         return zeroOrGreater(this.gridOptions.viewportRowModelBufferSize, DEFAULT_VIEWPORT_ROW_MODEL_BUFFER_SIZE);
     }
 
-    // public getCellRenderers(): {[key: string]: {new(): ICellRenderer} | ICellRendererFunc} { return this.gridOptions.cellRenderers; }
-    // public getCellEditors(): {[key: string]: {new(): ICellEditor}} { return this.gridOptions.cellEditors; }
-
     public isServerSideSortingAlwaysResets() {
         return isTrue(this.gridOptions.serverSideSortingAlwaysResets);
     }

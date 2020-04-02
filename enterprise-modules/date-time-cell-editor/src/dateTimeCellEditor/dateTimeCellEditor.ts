@@ -78,10 +78,3 @@ export class DateTimeCellEditor extends PopupComponent implements ICellEditor {
         return this.selectedDate || this.originalValue;
     }
 }
-
-type Foo = new () => Object;
-
-export const f: ComponentMeta = {
-    componentClass: DateTimeCellEditor,
-    componentName: 'foo'
-};

@@ -122,6 +122,8 @@ colDef.cellEditorParams = {
     </ul>
 </p>
 
+<?php /*
+
 <h3><code>agDateTimeCellEditor</code></h3>
 
 <p>
@@ -129,6 +131,8 @@ colDef.cellEditorParams = {
 </p>
 
 <?= grid_example('agDateTimeCellEditor', 'date-time-cell-editor', 'generated', ['enterprise' => true]) ?>
+
+*/ ?>
 
 <?php include '../documentation-main/documentation_footer.php';?>
 
