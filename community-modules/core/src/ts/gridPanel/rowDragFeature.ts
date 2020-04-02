@@ -130,8 +130,10 @@ export class RowDragFeature implements DropTarget {
             );
         }
 
-        if (this.gridOptionsWrapper.isSuppressMoveWhenRowDragging() && !this.isTargetOutsideThisGrid(draggingEvent)) {
-            this.clientSideRowModel.highlightRowAtPixel(rowNodes[0], pixel);
+        if (this.gridOptionsWrapper.isSuppressMoveWhenRowDragging()) {
+            if (!this.isTargetOutsideThisGrid(draggingEvent)) {
+                this.clientSideRowModel.highlightRowAtPixel(rowNodes[0], pixel);
+            }
         } else {
             this.moveRows(rowNodes, pixel);
         }
