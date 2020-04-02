@@ -10,10 +10,9 @@ import { ITooltipParams } from "../rendering/tooltipComponent";
 import { ColDef } from "../entities/colDef";
 import { _ } from "../utils";
 
-interface TooltipTarget extends Component {
+export interface TooltipTarget extends Component {
     getTooltipText(): string;
     getComponentHolder(): ColDef | undefined;
-
 }
 
 interface RegisteredComponent {
@@ -44,7 +43,7 @@ export class TooltipManager {
     private lastMouseEvent: MouseEvent | undefined;
 
     // map of compId to [tooltip component, close function]
-    private registeredComponents: { [key: string]: RegisteredComponent } = {};
+    private registeredComponents: { [key: string]: RegisteredComponent; } = {};
 
     @PostConstruct
     private init(): void {
@@ -61,12 +60,13 @@ export class TooltipManager {
             tooltipComp: undefined,
             destroyFunc: undefined,
             eventDestroyFuncs: [
-                targetCmp.addDestroyableEventListener(el, 'mouseover', (e) => this.processMouseOver(e, targetCmp)),
-                targetCmp.addDestroyableEventListener(el, 'mousemove', (e) => this.processMouseMove(e)),
+                targetCmp.addDestroyableEventListener(el, 'mouseover', e => this.processMouseOver(e, targetCmp)),
+                targetCmp.addDestroyableEventListener(el, 'mousemove', e => this.processMouseMove(e)),
                 targetCmp.addDestroyableEventListener(el, 'mousedown', this.hideTooltip.bind(this)),
                 targetCmp.addDestroyableEventListener(el, 'mouseout', this.processMouseOut.bind(this))
             ]
         };
+
         targetCmp.addDestroyFunc(() => this.unregisterTooltip(targetCmp));
     }
 
@@ -153,6 +153,7 @@ export class TooltipManager {
         const targetCmp = this.lastHoveredComponent;
         const cellComp = targetCmp as CellComp;
         const registeredComponent = this.registeredComponents[targetCmp.getCompId()];
+
         this.hideTooltip();
 
         const params: ITooltipParams = {

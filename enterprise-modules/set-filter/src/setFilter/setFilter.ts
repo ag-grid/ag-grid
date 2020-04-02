@@ -246,7 +246,7 @@ export class SetFilter extends ProvidedFilter {
     }
 
     private createSetListItem(value: any): Component {
-        const listItem = new SetFilterListItem(value, this.setFilterParams.column);
+        const listItem = new SetFilterListItem(value, this.setFilterParams);
 
         this.getContext().wireBean(listItem);
 

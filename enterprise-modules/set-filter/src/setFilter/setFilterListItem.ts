@@ -3,7 +3,6 @@ import {
     AgEvent,
     Autowired,
     ColDef,
-    Column,
     Component,
     GridOptionsWrapper,
     ISetFilterParams,
@@ -12,33 +11,35 @@ import {
     ValueFormatterService,
     RefSelector,
     _,
+    TooltipManager,
+    TooltipTarget,
 } from '@ag-grid-community/core';
 
 export interface SelectedEvent extends AgEvent { }
 
-export class SetFilterListItem extends Component {
+export class SetFilterListItem extends Component implements TooltipTarget {
     public static EVENT_SELECTED = 'selected';
 
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('valueFormatterService') private valueFormatterService: ValueFormatterService;
     @Autowired('userComponentFactory') private userComponentFactory: UserComponentFactory;
+    @Autowired('tooltipManager') private tooltipManager: TooltipManager;
+
+    @RefSelector('eFilterItemValue') private eFilterItemValue: HTMLElement;
 
     private static TEMPLATE = /* html */`
         <label class="ag-set-filter-item">
             <ag-checkbox ref="eCheckbox" class="ag-set-filter-item-checkbox"></ag-checkbox>
-            <span class="ag-set-filter-item-value"></span>
+            <span ref="eFilterItemValue" class="ag-set-filter-item-value"></span>
         </label>`;
 
     @RefSelector('eCheckbox') private eCheckbox: AgCheckbox;
 
     private selected: boolean = true;
-    private value: any;
-    private column: Column;
+    private tooltipText: string;
 
-    constructor(value: any, column: Column) {
+    constructor(private readonly value: any, private readonly params: ISetFilterParams) {
         super(SetFilterListItem.TEMPLATE);
-        this.value = value;
-        this.column = column;
     }
 
     @PostConstruct
@@ -70,19 +71,31 @@ export class SetFilterListItem extends Component {
     }
 
     public render(): void {
-        const valueElement = this.queryForHtmlElement('.ag-set-filter-item-value');
-        const colDef = this.column.getColDef();
+        const { value, params: { column } } = this;
+        const colDef = column.getColDef();
         const filterValueFormatter = this.getFilterValueFormatter(colDef);
-        const valueFormatted = this.valueFormatterService.formatValue(
-            this.column, null, null, this.value, filterValueFormatter);
+        const valueFormatted = this.valueFormatterService.formatValue(column, null, null, value, filterValueFormatter);
+        const valueToRender = valueFormatted == null ? value : valueFormatted;
+
+        if (this.params.showTooltips) {
+            this.tooltipText = _.escape(valueToRender);
+
+            if (_.exists(this.tooltipText)) {
+                if (this.gridOptionsWrapper.isEnableBrowserTooltips()) {
+                    this.eFilterItemValue.title = this.tooltipText;
+                } else {
+                    this.tooltipManager.registerTooltip(this);
+                    this.addDestroyFunc(() => this.tooltipManager.unregisterTooltip(this));
+                }
+            }
+        }
 
         const params: any = {
-            value: this.value,
-            valueFormatted: valueFormatted,
+            value: valueToRender,
             api: this.gridOptionsWrapper.getApi()
         };
 
-        this.renderCell(colDef, valueElement, params);
+        this.renderCell(colDef, this.eFilterItemValue, params);
     }
 
     private getFilterValueFormatter(colDef: ColDef) {
@@ -94,11 +107,11 @@ export class SetFilterListItem extends Component {
         const cellRendererPromise = this.userComponentFactory.newCellRenderer(filterParams, params);
 
         if (cellRendererPromise == null) {
-            if (params.valueFormatted == null && params.value == null) {
+            if (params.value == null) {
                 const localeTextFunc = this.gridOptionsWrapper.getLocaleTextFunc();
                 eTarget.innerText = `(${localeTextFunc('blanks', 'Blanks')})`;
             } else {
-                eTarget.innerText = params.valueFormatted != null ? params.valueFormatted : params.value;
+                eTarget.innerText = params.value;
             }
 
             return;
@@ -111,5 +124,13 @@ export class SetFilterListItem extends Component {
                 this.addDestroyFunc(component.destroy.bind(component));
             }
         });
+    }
+
+    public getComponentHolder(): ColDef {
+        return this.params.column.getColDef();
+    }
+
+    public getTooltipText(): string {
+        return this.tooltipText;
     }
 }

@@ -27,8 +27,9 @@ import { PopupEditorWrapper } from "./cellEditors/popupEditorWrapper";
 import { _, Promise } from "../utils";
 import { IFrameworkOverrides } from "../interfaces/iFrameworkOverrides";
 import { DndSourceComp } from "./dndSourceComp";
+import { TooltipTarget } from '../widgets/tooltipManager';
 
-export class CellComp extends Component {
+export class CellComp extends Component implements TooltipTarget {
 
     public static DOM_DATA_KEY_CELL_COMP = 'cellComp';
 
@@ -147,7 +148,6 @@ export class CellComp extends Component {
         const valueToRender = this.getInitialValueToRender();
         const valueSanitised = _.get(this.column, 'colDef.template', null) ? valueToRender : _.escape(valueToRender);
         this.tooltip = this.getToolTip();
-        const tooltipSanitised = _.escape(this.tooltip);
         const colIdSanitised = _.escape(col.getId());
 
         let wrapperStartTemplate: string = '';
@@ -178,8 +178,12 @@ export class CellComp extends Component {
         templateParts.push(` col-id="${colIdSanitised}"`);
         templateParts.push(` class="${_.escape(cssClasses.join(' '))}"`);
 
-        if (this.beans.gridOptionsWrapper.isEnableBrowserTooltips() && _.exists(tooltipSanitised)) {
-            templateParts.push(`title="${tooltipSanitised}"`);
+        if (this.beans.gridOptionsWrapper.isEnableBrowserTooltips()) {
+            const sanitisedTooltip = this.getTooltipText();
+
+            if (_.exists(sanitisedTooltip)) {
+                templateParts.push(`title="${sanitisedTooltip}"`);
+            }
         }
 
         templateParts.push(` style="width: ${Number(width)}px; left: ${Number(left)}px; ${_.escape(stylesFromColDef)} ${_.escape(stylesForRowSpanning)}" >`);
@@ -681,7 +685,7 @@ export class CellComp extends Component {
 
         if (this.beans.gridOptionsWrapper.isEnableBrowserTooltips()) {
             if (hasNewTooltip) {
-                this.eParentOfValue.setAttribute('title', this.tooltip);
+                this.eParentOfValue.title = this.tooltip;
             } else {
                 this.eParentOfValue.removeAttribute('title');
             }
@@ -733,7 +737,7 @@ export class CellComp extends Component {
         return null;
     }
 
-    public getTooltipText(escape: boolean = true) {
+    public getTooltipText(escape = true) {
         return escape ? _.escape(this.tooltip) : this.tooltip;
     }
 
@@ -1467,7 +1471,7 @@ export class CellComp extends Component {
     }
 
     private onSpaceKeyPressed(event: KeyboardEvent): void {
-        const { gridOptionsWrapper }  = this.beans;
+        const { gridOptionsWrapper } = this.beans;
         if (!this.editingCell && gridOptionsWrapper.isRowSelection()) {
             const newSelection = !this.rowNode.isSelected();
             if (newSelection || gridOptionsWrapper.isRowDeselection()) {

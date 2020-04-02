@@ -1960,15 +1960,11 @@ export class Utils {
      * @return {boolean}
      */
     static isNumeric(value: any): boolean {
-        if (value === '') { return false; }
-
-        return !isNaN(parseFloat(value)) && isFinite(value);
+        return value !== '' && !isNaN(parseFloat(value)) && isFinite(value);
     }
 
     static escape(toEscape: string | null): string | null {
-        if (toEscape === null || toEscape === undefined || !toEscape.replace) { return toEscape; }
-
-        return toEscape.replace(reUnescapedHtml, chr => HTML_ESCAPES[chr]);
+        return toEscape == null || !toEscape.replace ? toEscape : toEscape.replace(reUnescapedHtml, chr => HTML_ESCAPES[chr]);
     }
 
     /**

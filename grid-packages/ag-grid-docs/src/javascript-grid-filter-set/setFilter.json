@@ -41,6 +41,10 @@
         },
         "textFormatter": {
             "description": "If specified, this formats the text before applying the mini filter compare logic, useful for instance if substituting accented characters or if you want to perform case-sensitive mini filtering. This matches the <a href='../javascript-grid-filter-text/#text-formatter'>text formatter used for text filters</a>."
+        },
+        "showTooltips": {
+            "default": false,
+            "description": "If <code>true</code>, hovering over a value in the set filter will show a tooltip containing the full, untruncated value."
         }
     },
     "api": {

@@ -146,8 +146,8 @@ export class GridOptionsWrapper {
             if (this.isRowModelServerSide()) {
                 console.warn(
                     'ag-Grid: group selects children is NOT support for Server Side Row Model. ' +
-                        'This is because the rows are lazy loaded, so selecting a group is not possible as' +
-                        'the grid has no way of knowing what the children are.'
+                    'This is because the rows are lazy loaded, so selecting a group is not possible as' +
+                    'the grid has no way of knowing what the children are.'
                 );
             }
         }
@@ -236,7 +236,7 @@ export class GridOptionsWrapper {
         containerName: string,
         docsUrl: string
     ) {
-        const invalidProperties: { [p: string]: string[] } = _.fuzzyCheckStrings(
+        const invalidProperties: { [p: string]: string[]; } = _.fuzzyCheckStrings(
             userProperties,
             validPropertiesAndExceptions,
             validProperties
@@ -785,7 +785,7 @@ export class GridOptionsWrapper {
         return this.gridOptions.columnDefs;
     }
 
-    public getColumnTypes(): { [key: string]: ColDef } | undefined {
+    public getColumnTypes(): { [key: string]: ColDef; } | undefined {
         return this.gridOptions.columnTypes;
     }
 
@@ -928,7 +928,7 @@ export class GridOptionsWrapper {
         return this.gridOptions.icons;
     }
 
-    public getAggFuncs(): { [key: string]: IAggFunc } | undefined {
+    public getAggFuncs(): { [key: string]: IAggFunc; } | undefined {
         return this.gridOptions.aggFuncs;
     }
 
@@ -1276,7 +1276,8 @@ export class GridOptionsWrapper {
     }
 
     public getTooltipShowDelay(): number {
-        const tooltipShowDelay: number | undefined = this.gridOptions.tooltipShowDelay;
+        const { tooltipShowDelay } = this.gridOptions;
+
         if (_.exists(tooltipShowDelay)) {
             if (tooltipShowDelay < 0) {
                 console.warn('ag-grid: tooltipShowDelay should not be lower than 0');
@@ -1488,7 +1489,7 @@ export class GridOptionsWrapper {
             options.sideBar = options.sideBar || false;
         }
 
-        const oldToolPanelProperties: { [p: string]: string } = {
+        const oldToolPanelProperties: { [p: string]: string; } = {
             toolPanelSuppressRowGroups: 'suppressRowGroups',
             toolPanelSuppressValues: 'suppressValues',
             toolPanelSuppressPivots: 'suppressPivots',
@@ -1614,7 +1615,7 @@ export class GridOptionsWrapper {
             if (_.missing(this.getDataPathFunc())) {
                 console.warn(
                     'ag-Grid: property usingTreeData=true with rowModel=clientSide, but you did not ' +
-                        'provide getDataPath function, please provide getDataPath function if using tree data.'
+                    'provide getDataPath function, please provide getDataPath function if using tree data.'
                 );
             }
         }
@@ -1622,13 +1623,13 @@ export class GridOptionsWrapper {
             if (_.missing(this.getIsServerSideGroupFunc())) {
                 console.warn(
                     'ag-Grid: property usingTreeData=true with rowModel=serverSide, but you did not ' +
-                        'provide isServerSideGroup function, please provide isServerSideGroup function if using tree data.'
+                    'provide isServerSideGroup function, please provide isServerSideGroup function if using tree data.'
                 );
             }
             if (_.missing(this.getServerSideGroupKeyFunc())) {
                 console.warn(
                     'ag-Grid: property usingTreeData=true with rowModel=serverSide, but you did not ' +
-                        'provide getServerSideGroupKey function, please provide getServerSideGroupKey function if using tree data.'
+                    'provide getServerSideGroupKey function, please provide getServerSideGroupKey function if using tree data.'
                 );
             }
         }
@@ -1669,7 +1670,7 @@ export class GridOptionsWrapper {
         return this.getDefaultRowHeight();
     }
 
-    public getRowHeightForNode(rowNode: RowNode, allowEstimate = false): { height: number; estimated: boolean } {
+    public getRowHeightForNode(rowNode: RowNode, allowEstimate = false): { height: number; estimated: boolean; } {
         // check the function first, in case use set both function and
         // number, when using virtual pagination then function can be
         // used for pinned rows and the number for the body rows.
