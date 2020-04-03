@@ -85,7 +85,6 @@ export class SetFilterListItem extends Component implements TooltipTarget {
                     this.eFilterItemValue.title = this.tooltipText;
                 } else {
                     this.tooltipManager.registerTooltip(this);
-                    this.addDestroyFunc(() => this.tooltipManager.unregisterTooltip(this));
                 }
             }
         }

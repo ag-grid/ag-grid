@@ -40,7 +40,9 @@ var gridOptions = {
             tooltipField: 'c',
             headerName: 'Column 3',
             filter: 'agSetColumnFilter',
+            tooltipComponent: 'customTooltip',
             filterParams: {
+                showTooltips: true,
             }
         },
     ],
@@ -50,7 +52,11 @@ var gridOptions = {
         editable: true,
         resizable: true,
     },
-    rowData: data
+    rowData: data,
+    tooltipShowDelay: 500,
+    components: {
+        customTooltip: CustomTooltip,
+    },
 };
 
 // setup the grid after the page has finished loading

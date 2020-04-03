@@ -171,16 +171,20 @@ export class TooltipManager {
 
     private createTooltipComponent(params: ITooltipParams, cmp: RegisteredComponent, e: MouseEvent): void {
         const mouseEvent = this.lastMouseEvent;
+
         if (!mouseEvent) {
             return;
         }
+
         this.userComponentFactory.newTooltipComponent(params).then(tooltipComp => {
             // if the component was unregistered while creating
             // the tooltip (async) we should return undefined here.
             if (!cmp) {
                 return;
             }
+
             cmp.tooltipComp = tooltipComp;
+
             const eGui = tooltipComp.getGui();
 
             if (!_.containsClass(eGui, 'ag-tooltip')) {
@@ -188,8 +192,10 @@ export class TooltipManager {
             }
 
             const closeFnc = this.popupService.addPopup(false, eGui, false);
+
             cmp.destroyFunc = () => {
                 closeFnc();
+
                 if (tooltipComp.destroy) {
                     tooltipComp.destroy();
                 }
@@ -211,6 +217,7 @@ export class TooltipManager {
         const activeComponent = this.activeComponent;
 
         this.clearTimers();
+
         if (!activeComponent) { return; }
 
         const id = activeComponent.getCompId();
@@ -219,9 +226,11 @@ export class TooltipManager {
         this.activeComponent = undefined;
 
         if (!registeredComponent) { return; }
+
         if (registeredComponent.destroyFunc) {
             registeredComponent.destroyFunc();
         }
+
         this.clearRegisteredComponent(registeredComponent);
     }
 

@@ -1,6 +1,6 @@
-import { ICellRendererComp, ICellRendererFunc } from "../rendering/cellRenderers/iCellRenderer";
-import { ColDef, ValueFormatterParams } from "../entities/colDef";
-import { IProvidedFilterParams } from "../filter/provided/providedFilter";
+import { ICellRendererComp, ICellRendererFunc } from '../rendering/cellRenderers/iCellRenderer';
+import { ColDef, ValueFormatterParams } from '../entities/colDef';
+import { IProvidedFilterParams } from '../filter/provided/providedFilter';
 
 export interface SetFilterValuesFuncParams {
     success: (values: string[]) => void;

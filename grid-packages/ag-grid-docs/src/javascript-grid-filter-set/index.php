@@ -148,7 +148,7 @@ SNIPPET
     Sometimes the values being shown in the set filter may overflow the width of the popup. In this case they will be
     truncated automatically. If you want users to be able to see the full values, you can enable tooltips in the set
     filter by setting <code>showTooltips = true</code>. By default they will use the grid's tooltip component, and
-    show the value that was truncated. If you wish, you can provide a custom tooltip component as with other areas in
+    show the value that was truncated. If you wish, you can use a custom tooltip component as with other areas in
     the grid; see the <a href="../javascript-grid-tooltip-component/">tooltip component</a> section for more information.
 </p>
 
@@ -160,9 +160,9 @@ SNIPPET
 
 <ul>
     <li>All columns show how long values are truncated automatically.</li>
-    <li>In the first column, tooltips are disabled, so hovering over the truncated values has no effect.</li>
-    <li>In the second column, tooltips are enabled using the default grid tooltip component.</li>
-    <li>In the third column, a custom tooltip component has been provided.</li>
+    <li>In the first column, tooltips in the set filter are disabled, so hovering over the truncated values has no effect.</li>
+    <li>In the second column, tooltips in the set filter are enabled using the default grid tooltip component.</li>
+    <li>In the third column, tooltips in the set filter are enabled using a custom tooltip component.</li>
 </ul>
 
 <?= grid_example('Displaying Long Values', 'displaying-long-values', 'generated', ['enterprise' => true]) ?>
