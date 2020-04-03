@@ -15,7 +15,7 @@ import { IClientSideRowModel } from "../interfaces/iClientSideRowModel";
 import { RowNode } from "../entities/rowNode";
 import { SelectionController } from "../selectionController";
 import { MouseEventService } from "./mouseEventService";
-import { _ } from "../utils/general";
+import { _ } from "../utils";
 
 export class RowDragFeature implements DropTarget {
 

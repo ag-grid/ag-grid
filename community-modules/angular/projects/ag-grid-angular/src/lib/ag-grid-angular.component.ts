@@ -24,12 +24,12 @@ import {
     GridParams,
     Module,
     Promise,
-    Utils as _
+    _
 } from "@ag-grid-community/core";
 
-import {AngularFrameworkOverrides} from "./angularFrameworkOverrides";
-import {AngularFrameworkComponentWrapper} from "./angularFrameworkComponentWrapper";
-import {AgGridColumn} from "./ag-grid-column.component";
+import { AngularFrameworkOverrides } from "./angularFrameworkOverrides";
+import { AngularFrameworkComponentWrapper } from "./angularFrameworkComponentWrapper";
+import { AgGridColumn } from "./ag-grid-column.component";
 
 @Component({
     selector: 'ag-grid-angular',
@@ -52,8 +52,8 @@ export class AgGridAngular implements AfterViewInit {
 
     // in order to ensure firing of gridReady is deterministic
     private _fullyReady: Promise<boolean> = new Promise<boolean>(resolve => {
-            resolve(true);
-        }
+        resolve(true);
+    }
     );
 
     // making these public, so they are accessible to people using the ng2 component references
@@ -63,10 +63,10 @@ export class AgGridAngular implements AfterViewInit {
     @ContentChildren(AgGridColumn) public columns: QueryList<AgGridColumn>;
 
     constructor(elementDef: ElementRef,
-                private viewContainerRef: ViewContainerRef,
-                private angularFrameworkOverrides: AngularFrameworkOverrides,
-                private frameworkComponentWrapper: AngularFrameworkComponentWrapper,
-                private _componentFactoryResolver: ComponentFactoryResolver) {
+        private viewContainerRef: ViewContainerRef,
+        private angularFrameworkOverrides: AngularFrameworkOverrides,
+        private frameworkComponentWrapper: AngularFrameworkComponentWrapper,
+        private _componentFactoryResolver: ComponentFactoryResolver) {
         this._nativeElement = elementDef.nativeElement;
 
         this.frameworkComponentWrapper.setViewContainerRef(this.viewContainerRef);

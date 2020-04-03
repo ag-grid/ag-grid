@@ -1,12 +1,12 @@
 import * as React from 'react';
-import {ReactPortal} from 'react';
+import { ReactPortal } from 'react';
 import * as ReactDOM from 'react-dom';
-import {ComponentType, Promise, Utils} from '@ag-grid-community/core';
-import {AgGridReact} from "./agGridReact";
-import {BaseReactComponent} from "./baseReactComponent";
-import {assignProperties} from "./utils";
-import generateNewKey from "./keyGenerator";
-import {renderToStaticMarkup} from "react-dom/server";
+import { ComponentType, Promise, _ } from '@ag-grid-community/core';
+import { AgGridReact } from "./agGridReact";
+import { BaseReactComponent } from './baseReactComponent';
+import { assignProperties } from './utils';
+import generateNewKey from './keyGenerator';
+import { renderToStaticMarkup } from 'react-dom/server';
 
 export class ReactComponent extends BaseReactComponent {
     static REACT_MEMO_TYPE = ReactComponent.hasSymbol() ? Symbol.for('react.memo') : 0xead3;
@@ -22,9 +22,7 @@ export class ReactComponent extends BaseReactComponent {
     private statelessComponent: boolean;
     private staticMarkup: HTMLElement | null | string = null;
 
-    constructor(reactComponent: any,
-                parentComponent: AgGridReact,
-                componentType: ComponentType) {
+    constructor(reactComponent: any, parentComponent: AgGridReact, componentType: ComponentType) {
         super();
 
         this.reactComponent = reactComponent;
@@ -91,7 +89,7 @@ export class ReactComponent extends BaseReactComponent {
             if (this.statelessComponent) {
                 setTimeout(() => {
                     this.removeStaticMarkup();
-                })
+                });
             }
         });
     }
@@ -102,18 +100,18 @@ export class ReactComponent extends BaseReactComponent {
         }
 
         if (this.componentInstance.getReactContainerStyle && this.componentInstance.getReactContainerStyle()) {
-            assignProperties(this.eParentElement.style, this.componentInstance.getReactContainerStyle())
+            assignProperties(this.eParentElement.style, this.componentInstance.getReactContainerStyle());
         }
         if (this.componentInstance.getReactContainerClasses && this.componentInstance.getReactContainerClasses()) {
             const parentContainerClasses: string[] = this.componentInstance.getReactContainerClasses();
-            parentContainerClasses.forEach(className => Utils.addCssClass(this.eParentElement as HTMLElement, className));
+            parentContainerClasses.forEach(className => _.addCssClass(this.eParentElement as HTMLElement, className));
         }
     }
 
     private createParentElement(params: any) {
         const eParentElement = document.createElement(this.parentComponent.props.componentWrappingElement || 'div');
 
-        Utils.addCssClass(eParentElement as HTMLElement, 'ag-react-container');
+        _.addCssClass(eParentElement as HTMLElement, 'ag-react-container');
 
         // DEPRECATED - use componentInstance.getReactContainerStyle or componentInstance.getReactContainerClasses instead
         // so user can have access to the react container, to add css class or style
@@ -158,7 +156,7 @@ export class ReactComponent extends BaseReactComponent {
             // Warning: useLayoutEffect does nothing on the server will be throw and we can't do anything to stop it
             // this is just a warning and has no effect on anything so just suppress it for this single operation
             const originalConsoleError = console.error;
-            console.error = () => {};
+            console.error = () => { };
             const staticMarkup = renderToStaticMarkup(reactComponent);
             console.error = originalConsoleError;
 
