@@ -125,8 +125,8 @@ export class ScatterSeries extends CartesianSeries {
         super();
 
         const { marker } = this;
-        marker.addPropertyListener('shape', () => this.onMarkerShapeChange());
-        marker.addEventListener('change', () => this.update());
+        marker.addPropertyListener('shape', this.onMarkerShapeChange, this);
+        marker.addEventListener('change', this.update, this);
 
         this.addPropertyListener('xKey', () => this.xData = []);
         this.addPropertyListener('yKey', () => this.yData = []);

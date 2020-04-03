@@ -238,8 +238,8 @@ export abstract class Chart extends Observable {
 
         this.setupListeners(scene.canvas.element);
 
-        this.addPropertyListener('title', this.onCaptionChange, this);
-        this.addPropertyListener('subtitle', this.onCaptionChange, this);
+        this.addPropertyListener('title', this.onCaptionChange);
+        this.addPropertyListener('subtitle', this.onCaptionChange);
         this.addEventListener('layoutChange', () => this.layoutPending = true);
     }
 

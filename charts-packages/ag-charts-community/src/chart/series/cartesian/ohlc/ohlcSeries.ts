@@ -70,19 +70,21 @@ export class OHLCSeries extends CartesianSeries {
         super();
 
         this.marker.type = Candlestick;
-        this.marker.addEventListener('styleChange', () => this.update());
-        this.marker.addPropertyListener('type', () => this.onMarkerTypeChange());
+        this.marker.addEventListener('styleChange', this.update, this);
+        this.marker.addPropertyListener('type', this.onMarkerTypeChange, this);
 
-        this.addEventListener('dataChange', () => {
-            this.dirtyDateData = true;
-            this.dirtyOpenData = true;
-            this.dirtyHighData = true;
-            this.dirtyLowData = true;
-            this.dirtyCloseData = true;
-        });
+        this.addEventListener('dataChange', this.onDataChange);
     }
 
-    onMarkerTypeChange() {
+    protected onDataChange() {
+        this.dirtyDateData = true;
+        this.dirtyOpenData = true;
+        this.dirtyHighData = true;
+        this.dirtyLowData = true;
+        this.dirtyCloseData = true;
+    }
+
+    protected onMarkerTypeChange() {
         this.groupSelection = this.groupSelection.setData([]);
         this.groupSelection.exit.remove();
         this.update();

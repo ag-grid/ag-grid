@@ -91,29 +91,12 @@ export class Legend extends Observable {
     constructor() {
         super();
 
-        this.addPropertyListener('data', this.onDataChange, this);
-        this.addPropertyListener('enabled', this.onEnabledChange, this);
+        this.addPropertyListener('data', this.onDataChange);
+        this.addPropertyListener('enabled', this.onEnabledChange);
+        this.addPropertyListener('position', this.onPositionChange);
+        this.addPropertyListener('markerShape', this.onMarkerShapeChange);
 
-        this.addPropertyListener('position', event => {
-            const { source: legend, value: position } = event;
-            switch (position) {
-                case 'right':
-                case 'left':
-                    legend.orientation = LegendOrientation.Vertical;
-                    break;
-                case 'bottom':
-                case 'top':
-                    legend.orientation = LegendOrientation.Horizontal;
-                    break;
-            }
-        });
-
-        this.addPropertyListener('markerShape', event => {
-            this.itemSelection = this.itemSelection.setData([]);
-            this.itemSelection.exit.remove();
-        });
-
-        this.addEventListener('change', this.update, this);
+        this.addEventListener('change', this.update);
     }
 
     private _size: [number, number] = [0, 0];
@@ -121,12 +104,30 @@ export class Legend extends Observable {
         return this._size;
     }
 
-    onDataChange(event: PropertyChangeEvent<this, LegendDatum[]>) {
+    protected onDataChange(event: PropertyChangeEvent<this, LegendDatum[]>) {
         this.group.visible = event.value.length > 0 && this.enabled;
     }
 
-    onEnabledChange(event: PropertyChangeEvent<this, Boolean>) {
+    protected onEnabledChange(event: PropertyChangeEvent<this, Boolean>) {
         this.group.visible = event.value && this.data.length > 0;
+    }
+
+    protected onPositionChange(event: PropertyChangeEvent<this, LegendPosition>) {
+        switch (event.value) {
+            case 'right':
+            case 'left':
+                this.orientation = LegendOrientation.Vertical;
+                break;
+            case 'bottom':
+            case 'top':
+                this.orientation = LegendOrientation.Horizontal;
+                break;
+        }
+    }
+
+    protected onMarkerShapeChange() {
+        this.itemSelection = this.itemSelection.setData([]);
+        this.itemSelection.exit.remove();
     }
 
     /**

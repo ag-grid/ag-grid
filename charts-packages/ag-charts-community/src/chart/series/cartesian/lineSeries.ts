@@ -11,7 +11,7 @@ import { LegendDatum } from "../../legend";
 import { CartesianSeries, CartesianSeriesMarker, CartesianSeriesMarkerFormat } from "./cartesianSeries";
 import { ChartAxisDirection } from "../../chartAxis";
 import { getMarker } from "../../marker/util";
-import { reactive } from "../../../util/observable";
+import { reactive, PropertyChangeEvent } from "../../../util/observable";
 import { Chart } from "../../chart";
 
 interface GroupSelectionDatum extends SeriesNodeDatum {
@@ -59,20 +59,14 @@ export class LineSeries extends CartesianSeries {
         lineNode.pointerEvents = PointerEvents.None;
         this.group.append(lineNode);
 
-        const update = () => this.update();
-        this.addEventListener('update', update);
+        this.addEventListener('update', this.update);
 
         const { marker } = this;
         marker.fill = palette.fills[0];
         marker.stroke = palette.strokes[0];
-        marker.addPropertyListener('shape', () => this.onMarkerShapeChange());
-        marker.addPropertyListener('enabled', event => {
-            if (!event.value) {
-                this.groupSelection = this.groupSelection.setData([]);
-                this.groupSelection.exit.remove();
-            }
-        });
-        marker.addEventListener('change', update);
+        marker.addPropertyListener('shape', this.onMarkerShapeChange, this);
+        marker.addPropertyListener('enabled', this.onMarkerEnabledChange, this);
+        marker.addEventListener('change', this.update, this);
     }
 
     onMarkerShapeChange() {
@@ -81,6 +75,13 @@ export class LineSeries extends CartesianSeries {
         this.update();
 
         this.fireEvent({type: 'legendChange'});
+    }
+
+    protected onMarkerEnabledChange(event: PropertyChangeEvent<CartesianSeriesMarker, boolean>) {
+        if (!event.value) {
+            this.groupSelection = this.groupSelection.setData([]);
+            this.groupSelection.exit.remove();
+        }
     }
 
     protected _xKey: string = '';
