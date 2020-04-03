@@ -15,7 +15,7 @@ import { IClientSideRowModel } from "../interfaces/iClientSideRowModel";
 import { RowNode } from "../entities/rowNode";
 import { SelectionController } from "../selectionController";
 import { MouseEventService } from "./mouseEventService";
-import { _ } from "../utils";
+import { last } from '../utils/array';
 
 export class RowDragFeature implements DropTarget {
 
@@ -140,7 +140,7 @@ export class RowDragFeature implements DropTarget {
     }
 
     private getRowIndexNumber(rowNode: RowNode): number {
-        return parseInt(_.last(rowNode.getRowIndexString().split('-')), 10);
+        return parseInt(last(rowNode.getRowIndexString().split('-')), 10);
     }
 
     private moveRowAndClearHighlight(draggingEvent: DraggingEvent): void {
