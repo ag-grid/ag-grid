@@ -8,7 +8,8 @@
         "**/node_modules": true,
         "**/build": true,
         "**/dist": true
-      },
+    },
+    "cSpell.language": "en-GB",
     "cSpell.words": [
         "autowire",
         "autowired",
