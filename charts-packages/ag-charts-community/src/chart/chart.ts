@@ -236,7 +236,7 @@ export abstract class Chart extends Observable {
             Chart.tooltipDocuments.push(document);
         }
 
-        this.setupListeners(scene.canvas.element);
+        this.setupDomListeners(scene.canvas.element);
 
         this.addPropertyListener('title', this.onCaptionChange);
         this.addPropertyListener('subtitle', this.onCaptionChange);
@@ -251,11 +251,7 @@ export abstract class Chart extends Observable {
         SizeMonitor.unobserve(this.element);
         this.container = undefined;
 
-        const { legend } = this;
-        legend.removeEventListener('layoutChange', this.onLayoutChange, this);
-        legend.removePropertyListener('position', this.onLegendPositionChange, this);
-
-        this.cleanupListeners(this.scene.canvas.element);
+        this.cleanupDomListeners(this.scene.canvas.element);
         this.scene.container = undefined;
     }
 
@@ -690,13 +686,13 @@ export abstract class Chart extends Observable {
         legendGroup.translationY = Math.floor(translationY + legendGroup.translationY);
     }
 
-    private setupListeners(chartElement: HTMLCanvasElement) {
+    private setupDomListeners(chartElement: HTMLCanvasElement) {
         chartElement.addEventListener('mousemove', this.onMouseMove);
         chartElement.addEventListener('mouseout', this.onMouseOut);
         chartElement.addEventListener('click', this.onClick);
     }
 
-    private cleanupListeners(chartElement: HTMLCanvasElement) {
+    private cleanupDomListeners(chartElement: HTMLCanvasElement) {
         chartElement.removeEventListener('mousemove', this.onMouseMove);
         chartElement.removeEventListener('mouseout', this.onMouseMove);
         chartElement.removeEventListener('click', this.onClick);
@@ -774,9 +770,9 @@ export abstract class Chart extends Observable {
 
     private readonly onMouseMove = (event: MouseEvent) => {
         const pick = this.pickSeriesNode(event.offsetX, event.offsetY);
-        const { lastPick } = this;
+        const { lastPick, tooltipTracking } = this;
 
-        if (pick && pick.node instanceof Shape && !pick.node.datum.point) {
+        if (pick && pick.node instanceof Shape && (!pick.node.datum.point || !tooltipTracking)) {
             const { node } = pick;
             if (!lastPick // cursor moved from empty space to a node
                 || lastPick.node !== node) { // cursor moved from one node to another
@@ -786,7 +782,7 @@ export abstract class Chart extends Observable {
             }
         } else {
             let hideTooltip = false;
-            if (this.tooltipTracking) {
+            if (tooltipTracking) {
                 const closestDatum = this.pickClosestSeriesNodeDatum(event.offsetX, event.offsetY);
                 if (closestDatum && closestDatum.point) {
                     const { x, y } = closestDatum.point;
@@ -800,11 +796,8 @@ export abstract class Chart extends Observable {
                 } else {
                     hideTooltip = true;
                 }
-                // else if (pick.series.tooltipEnabled) { // cursor moved within the same node
-                //     this.showTooltip(event);
-                // }
             }
-            if (hideTooltip && lastPick) { // cursor moved from a non-marker node to empty space
+            if (lastPick && (hideTooltip || !tooltipTracking)) { // cursor moved from a non-marker node to empty space
                 lastPick.datum.series.dehighlightDatum();
                 this.hideTooltip();
                 this.lastPick = undefined;
@@ -817,6 +810,10 @@ export abstract class Chart extends Observable {
     }
 
     private readonly onClick = (event: MouseEvent) => {
+        this.onLegendClick(event);
+    }
+
+    private onLegendClick(event: MouseEvent) {
         const datum = this.legend.getDatumForPoint(event.offsetX, event.offsetY);
 
         if (datum) {
@@ -862,6 +859,10 @@ export abstract class Chart extends Observable {
         return this._tooltipClass;
     }
 
+    /**
+     * If `true`, the tooltip will be shown for the marker closest to the mouse cursor.
+     * Only has effect on series with markers.
+     */
     tooltipTracking = true;
 
     private toggleTooltip(visible?: boolean) {

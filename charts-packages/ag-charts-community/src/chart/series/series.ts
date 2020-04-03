@@ -136,8 +136,10 @@ export abstract class Series extends Observable {
     }
 
     dehighlightDatum(): void {
-        this.highlightedDatum = undefined;
-        this.scheduleLayout();
+        if (this.highlightedDatum) {
+            this.highlightedDatum = undefined;
+            this.scheduleLayout();
+        }
     }
 
     readonly scheduleLayout = () => {
