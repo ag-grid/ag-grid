@@ -23,6 +23,7 @@ import { Beans } from "../../rendering/beans";
 import { HoverFeature } from "../hoverFeature";
 import { _ } from "../../utils";
 import { Constants } from "../../constants";
+import {TooltipFeature} from "../../widgets/tooltipFeature";
 
 export class HeaderGroupWrapperComp extends Component {
 
@@ -119,7 +120,7 @@ export class HeaderGroupWrapperComp extends Component {
         if (this.gridOptionsWrapper.isEnableBrowserTooltips()) {
             this.getGui().setAttribute('title', tooltipText);
         } else {
-            this.beans.tooltipManager.registerTooltip(this);
+            this.addFeature(new TooltipFeature(this))
         }
     }
 

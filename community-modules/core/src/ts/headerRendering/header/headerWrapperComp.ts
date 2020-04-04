@@ -28,6 +28,7 @@ import { HoverFeature } from "../hoverFeature";
 import { TouchListener } from "../../widgets/touchListener";
 import { _ } from "../../utils";
 import { Constants } from "../../constants";
+import {TooltipFeature} from "../../widgets/tooltipFeature";
 
 export class HeaderWrapperComp extends Component {
 
@@ -297,7 +298,7 @@ export class HeaderWrapperComp extends Component {
         if (this.gridOptionsWrapper.isEnableBrowserTooltips()) {
             this.getGui().setAttribute('title', tooltipText);
         } else {
-            this.beans.tooltipManager.registerTooltip(this);
+            this.addFeature(new TooltipFeature(this));
         }
     }
 

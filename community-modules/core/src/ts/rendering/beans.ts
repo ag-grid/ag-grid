@@ -25,7 +25,6 @@ import { DragAndDropService } from "../dragAndDrop/dragAndDropService";
 import { SortController } from "../sortController";
 import { FilterManager } from "../filter/filterManager";
 import { MaxDivHeightScaler } from "./maxDivHeightScaler";
-import { TooltipManager } from "../widgets/tooltipManager";
 import { IFrameworkOverrides } from "../interfaces/iFrameworkOverrides";
 import { DetailRowCompCache } from "./detailRowCompCache";
 import { CellPositionUtils } from "../entities/cellPosition";
@@ -67,7 +66,6 @@ export class Beans {
     @Autowired('sortController') public sortController: SortController;
     @Autowired('filterManager') public filterManager: FilterManager;
     @Autowired('maxDivHeightScaler') public maxDivHeightScaler: MaxDivHeightScaler;
-    @Autowired('tooltipManager') public tooltipManager: TooltipManager;
     @Autowired('frameworkOverrides') public frameworkOverrides: IFrameworkOverrides;
     @Autowired('detailRowCompCache') public detailRowCompCache: DetailRowCompCache;
     @Autowired('cellPositionUtils') public cellPositionUtils: CellPositionUtils;

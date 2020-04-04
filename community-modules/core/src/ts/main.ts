@@ -326,7 +326,7 @@ export { FrameworkComponentWrapper } from "./components/framework/frameworkCompo
 export { IFrameworkOverrides } from "./interfaces/iFrameworkOverrides";
 export { Environment } from "./environment";
 export { ITooltipComp, ITooltipParams } from "./rendering/tooltipComponent";
-export { TooltipManager, TooltipTarget } from "./widgets/tooltipManager";
+export { TooltipFeature } from "./widgets/tooltipFeature";
 export { IAggregationStage } from "./interfaces/iAggregationStage";
 
 // charts

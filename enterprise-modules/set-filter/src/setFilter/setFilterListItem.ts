@@ -11,19 +11,17 @@ import {
     ValueFormatterService,
     RefSelector,
     _,
-    TooltipManager,
-    TooltipTarget,
+    TooltipFeature
 } from '@ag-grid-community/core';
 
 export interface SelectedEvent extends AgEvent { }
 
-export class SetFilterListItem extends Component implements TooltipTarget {
+export class SetFilterListItem extends Component {
     public static EVENT_SELECTED = 'selected';
 
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('valueFormatterService') private valueFormatterService: ValueFormatterService;
     @Autowired('userComponentFactory') private userComponentFactory: UserComponentFactory;
-    @Autowired('tooltipManager') private tooltipManager: TooltipManager;
 
     @RefSelector('eFilterItemValue') private eFilterItemValue: HTMLElement;
 
@@ -84,7 +82,7 @@ export class SetFilterListItem extends Component implements TooltipTarget {
                 if (this.gridOptionsWrapper.isEnableBrowserTooltips()) {
                     this.eFilterItemValue.title = this.tooltipText;
                 } else {
-                    this.tooltipManager.registerTooltip(this);
+                    this.addFeature(new TooltipFeature(this));
                 }
             }
         }

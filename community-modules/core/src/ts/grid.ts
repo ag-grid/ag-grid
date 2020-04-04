@@ -60,7 +60,6 @@ import {SelectableService} from "./rowNodes/selectableService";
 import {AutoHeightCalculator} from "./rendering/autoHeightCalculator";
 import {PaginationComp} from "./pagination/paginationComp";
 import {ResizeObserverService} from "./misc/resizeObserverService";
-import {TooltipManager} from "./widgets/tooltipManager";
 import {OverlayWrapperComponent} from "./rendering/overlays/overlayWrapperComponent";
 import {Module} from "./interfaces/iModule";
 import {AgGroupComponent} from "./widgets/agGroupComponent";
@@ -282,7 +281,7 @@ export class Grid {
             StandardMenuFactory, DragAndDropService, ColumnApi, FocusController, MouseEventService, Environment,
             CellNavigationService, ValueFormatterService, StylingService, ScrollVisibleService, SortController,
             ColumnHoverService, ColumnAnimationService, SelectableService, AutoGroupColService,
-            ChangeDetectionService, AnimationFrameService, TooltipManager, DetailRowCompCache, UndoRedoService
+            ChangeDetectionService, AnimationFrameService, DetailRowCompCache, UndoRedoService
         ];
 
         const moduleBeans = this.extractModuleEntity(registeredModules, (module) => module.beans ? module.beans : []);
