@@ -219,7 +219,7 @@ export class CellComp extends Component implements TooltipParentComp {
         this.refreshHandle();
 
         if (_.exists(this.tooltip) && !this.beans.gridOptionsWrapper.isEnableBrowserTooltips()) {
-            this.addFeature(new TooltipFeature(this))
+            this.addFeature(new TooltipFeature(this), this.beans.context);
         }
     }
 
