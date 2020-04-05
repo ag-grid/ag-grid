@@ -850,6 +850,10 @@
             "default": 2000,
             "description": "The delay in milliseconds that it takes for tooltips to show up once an element is hovered.<br /> <strong>Note:</strong> This property does not work if <code>enableBrowserTooltips</code> is <code>true</code>."
         },
+        "tooltipMouseTrack": {
+            "default": false,
+            "description": "Set to <code>true</code> to have tooltips follow the cursor once they are displayed."
+        },
         "enableCellExpressions": {
             "default": false,
             "description": "Set to <code>true</code> to allow <a href='../javascript-grid-cell-expressions/#cell-expressions'>cell expressions</a>."

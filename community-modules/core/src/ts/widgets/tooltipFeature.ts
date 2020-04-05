@@ -1,17 +1,17 @@
-import {BeanStub} from "../context/beanStub";
-import {Autowired, PostConstruct} from "../context/context";
-import {PopupService} from "./popupService";
-import {UserComponentFactory} from "../components/framework/userComponentFactory";
-import {ColumnApi} from "../columnController/columnApi";
-import {GridApi} from "../gridApi";
-import {GridOptionsWrapper} from "../gridOptionsWrapper";
-import {Component} from "./component";
-import {ColDef} from "../entities/colDef";
-import {Column} from "../entities/column";
-import {ColumnGroup} from "../entities/columnGroup";
-import {CellPosition} from "../entities/cellPosition";
-import {ITooltipParams} from "../rendering/tooltipComponent";
-import {_} from "../utils";
+import { Autowired, PostConstruct } from "../context/context";
+import { BeanStub } from "../context/beanStub";
+import { ColumnApi } from "../columnController/columnApi";
+import { Component } from "./component";
+import { ColDef } from "../entities/colDef";
+import { Column } from "../entities/column";
+import { ColumnGroup } from "../entities/columnGroup";
+import { CellPosition } from "../entities/cellPosition";
+import { GridApi } from "../gridApi";
+import { GridOptionsWrapper } from "../gridOptionsWrapper";
+import { ITooltipParams } from "../rendering/tooltipComponent";
+import { PopupService } from "./popupService";
+import { UserComponentFactory } from "../components/framework/userComponentFactory";
+import { _ } from "../utils";
 
 export interface TooltipParentComp extends Component {
     getTooltipText(): string;
@@ -20,7 +20,7 @@ export interface TooltipParentComp extends Component {
     getCellPosition?(): CellPosition;
 }
 
-enum TooltipStates {NOTHING, WAITING_TO_SHOW, SHOWING}
+enum TooltipStates { NOTHING, WAITING_TO_SHOW, SHOWING }
 
 export class TooltipFeature extends BeanStub {
 
@@ -56,6 +56,8 @@ export class TooltipFeature extends BeanStub {
     // disregard the second instance.
     private tooltipInstanceCount = 0;
 
+    private tooltipMouseTrack: boolean = false;
+
     constructor(parentComp: TooltipParentComp) {
         super();
         this.parentComp = parentComp;
@@ -64,8 +66,10 @@ export class TooltipFeature extends BeanStub {
     @PostConstruct
     private postConstruct(): void {
         this.tooltipShowDelay = this.gridOptionsWrapper.getTooltipShowDelay() || 2000;
+        this.tooltipMouseTrack = this.gridOptionsWrapper.isTooltipMouseTrack();
 
         const el = this.parentComp.getGui();
+
         this.addDestroyableEventListener(el, 'mouseenter', this.onMouseEnter.bind(this));
         this.addDestroyableEventListener(el, 'mouseleave', this.onMouseLeave.bind(this));
         this.addDestroyableEventListener(el, 'mousemove', this.onMouseMove.bind(this));
@@ -80,14 +84,11 @@ export class TooltipFeature extends BeanStub {
     }
 
     public onMouseEnter(e: MouseEvent): void {
-
         // if another tooltip was hidden very recently, we only wait 200ms to show, not the normal waiting time
         const delay = this.isLastTooltipHiddenRecently() ? 200 : this.tooltipShowDelay;
 
         this.showTooltipTimeoutId = window.setTimeout(this.showTooltip.bind(this), delay);
-
         this.lastMouseEvent = e;
-
         this.state = TooltipStates.WAITING_TO_SHOW;
     }
 
@@ -110,6 +111,10 @@ export class TooltipFeature extends BeanStub {
         // tooltip is displayed, so we need to track mousemove to be able to correctly
         // position the tooltip when showTooltip is called.
         this.lastMouseEvent = e;
+
+        if (this.tooltipMouseTrack && this.tooltipComp) {
+            this.positionTooltipUnderLastMouseEvent();
+        }
     }
 
     public onMouseDown(): void {
@@ -117,7 +122,6 @@ export class TooltipFeature extends BeanStub {
     }
 
     private hideTooltip(): void {
-
         // check if comp exists - due to async, although we asked for
         // one, the instance may not be back yet
         if (this.tooltipComp) {
@@ -137,7 +141,7 @@ export class TooltipFeature extends BeanStub {
         const tooltipPopupDestroyFunc = this.tooltipPopupDestroyFunc;
         const tooltipComp = this.tooltipComp;
 
-        window.setTimeout(()=> {
+        window.setTimeout(() => {
             tooltipPopupDestroyFunc();
             if (tooltipComp.destroy) {
                 tooltipComp.destroy();
@@ -152,18 +156,19 @@ export class TooltipFeature extends BeanStub {
         // return true if <1000ms since last time we hid a tooltip
         const now = new Date().getTime();
         const then = TooltipFeature.lastTooltipHideTime;
+
         return (now - then) < this.SHOW_QUICK_TOOLTIP_DIFF;
     }
 
     private showTooltip(): void {
         const tooltipText = this.parentComp.getTooltipText();
+
         if (!tooltipText) {
             this.setToDoNothing();
             return;
         }
 
         this.state = TooltipStates.SHOWING;
-
         this.tooltipInstanceCount++;
 
         const params: ITooltipParams = {
@@ -185,8 +190,8 @@ export class TooltipFeature extends BeanStub {
     }
 
     private newTooltipComponentCallback(tooltipInstanceCopy: number, tooltipComp: Component): void {
+        const compNoLongerNeeded = this.state !== TooltipStates.SHOWING || this.tooltipInstanceCount !== tooltipInstanceCopy;
 
-        const compNoLongerNeeded = this.state!==TooltipStates.SHOWING || this.tooltipInstanceCount !== tooltipInstanceCopy;
         if (compNoLongerNeeded) {
             if (tooltipComp.destroy) {
                 tooltipComp.destroy();
@@ -195,6 +200,7 @@ export class TooltipFeature extends BeanStub {
         }
 
         const eGui = tooltipComp.getGui();
+
         this.tooltipComp = tooltipComp;
 
         if (!_.containsClass(eGui, 'ag-tooltip')) {
@@ -202,15 +208,17 @@ export class TooltipFeature extends BeanStub {
         }
 
         this.tooltipPopupDestroyFunc = this.popupService.addPopup(false, eGui, false);
+        this.positionTooltipUnderLastMouseEvent();
+        this.hideTooltipTimeoutId = window.setTimeout(this.hideTooltip.bind(this), this.DEFAULT_HIDE_TOOLTIP_TIMEOUT);
+    }
 
+    private positionTooltipUnderLastMouseEvent(): void {
         this.popupService.positionPopupUnderMouseEvent({
             type: 'tooltip',
             mouseEvent: this.lastMouseEvent,
-            ePopup: eGui,
+            ePopup: this.tooltipComp.getGui(),
             nudgeY: 18
         });
-
-        this.hideTooltipTimeoutId = window.setTimeout(this.hideTooltip.bind(this), this.DEFAULT_HIDE_TOOLTIP_TIMEOUT);
     }
 
     private clearTimeouts(): void {
@@ -218,10 +226,10 @@ export class TooltipFeature extends BeanStub {
             window.clearTimeout(this.showTooltipTimeoutId);
             this.showTooltipTimeoutId = undefined;
         }
+
         if (this.hideTooltipTimeoutId) {
             window.clearTimeout(this.hideTooltipTimeoutId);
             this.hideTooltipTimeoutId = undefined;
         }
     }
-
 }

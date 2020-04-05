@@ -163,6 +163,15 @@ SNIPPET
 
 <?= grid_example('Row Group Tooltip', 'rowgroups-tooltip', 'generated', ['enterprise' => true]) ?>
 
+<h2>Mouse Tracking</h2>
+
+<p>
+    The example below enables mouse tracking to demonstrate a scenario where tooltips need to follow the cursor.
+    To enable this feature, set the <code>tooltipMouseTrack</code> to true in the gridOptions.
+</p>
+
+<?= grid_example('Tooltip Mouse Tracking', 'tooltip-mouse-tracking', 'generated', ['extras' => ['bootstrap']]) ?>
+
 <h2>Example: Using Browser Tooltips</h2>
 
 <p>

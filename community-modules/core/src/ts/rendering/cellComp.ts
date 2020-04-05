@@ -1461,7 +1461,7 @@ export class CellComp extends Component implements TooltipParentComp {
     }
 
     private onSpaceKeyPressed(event: KeyboardEvent): void {
-        const { gridOptionsWrapper }  = this.beans;
+        const { gridOptionsWrapper } = this.beans;
         if (!this.editingCell && gridOptionsWrapper.isRowSelection()) {
             const newSelection = !this.rowNode.isSelected();
             if (newSelection || gridOptionsWrapper.isRowDeselection()) {

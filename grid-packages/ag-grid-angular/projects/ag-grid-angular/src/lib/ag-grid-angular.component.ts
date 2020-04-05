@@ -437,6 +437,7 @@ export class AgGridAngular implements AfterViewInit {
     @Input() public suppressBrowserResizeObserver : any = undefined;
     @Input() public suppressMaxRenderedRowRestriction : any = undefined;
     @Input() public excludeChildrenWhenTreeDataFiltering : any = undefined;
+    @Input() public tooltipMouseTrack : any = undefined;
     @Input() public keepDetailRows : any = undefined;
     @Input() public paginateChildRows : any = undefined;
     @Input() public preventDefaultOnContextMenu : any = undefined;

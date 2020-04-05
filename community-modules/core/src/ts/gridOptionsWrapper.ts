@@ -1289,6 +1289,10 @@ export class GridOptionsWrapper {
         return null;
     }
 
+    public isTooltipMouseTrack() {
+        return isTrue(this.gridOptions.tooltipMouseTrack);
+    }
+
     public getDocument(): Document {
         // if user is providing document, we use the users one,
         // otherwise we use the document on the global namespace.
