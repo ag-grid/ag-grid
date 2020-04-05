@@ -350,6 +350,8 @@ export class ServerSideCache extends RowNodeCache<ServerSideBlock, ServerSideCac
                 if (lastRowNode.expanded && lastRowNode.childrenCache) {
                     const serverSideCache = lastRowNode.childrenCache as ServerSideCache;
                     lastDisplayedNodeIndexInBlockBefore = serverSideCache.getDisplayIndexEnd() - 1;
+                } else if (lastRowNode.expanded && lastRowNode.detailNode) {
+                    lastDisplayedNodeIndexInBlockBefore = lastRowNode.detailNode.rowIndex;
                 } else {
                     lastDisplayedNodeIndexInBlockBefore = lastRowNode.rowIndex;
                 }
