@@ -178,7 +178,6 @@ export class FocusController {
 
     @PreDestroy
     destroy(): void {
-        debugger
         this.eventService.removeEventListener(Events.EVENT_COLUMN_PIVOT_MODE_CHANGED, this.clearFocusedCellListener);
         this.eventService.removeEventListener(Events.EVENT_COLUMN_EVERYTHING_CHANGED, this.clearFocusedCellListener);
         this.eventService.removeEventListener(Events.EVENT_COLUMN_GROUP_OPENED, this.clearFocusedCellListener);
