@@ -1,14 +1,14 @@
 var columnDefs = [
-    {field: "athlete", minWidth: 150, tooltipField: 'athlete', tooltipComponentParams: { type: 'success' }},
-    {field: "age"},
-    {field: "country", minWidth: 130, tooltipField: "country"},
-    {field: "year"},
-    {field: "date"},
-    {field: "sport"},
-    {field: "gold"},
-    {field: "silver"},
-    {field: "bronze"},
-    {field: "total"}
+    { field: "athlete", minWidth: 150, tooltipField: 'athlete', tooltipComponentParams: { type: 'success' } },
+    { field: "age" },
+    { field: "country", minWidth: 130, tooltipField: "country" },
+    { field: "year" },
+    { field: "date" },
+    { field: "sport" },
+    { field: "gold" },
+    { field: "silver" },
+    { field: "bronze" },
+    { field: "total" }
 ];
 
 var gridOptions = {

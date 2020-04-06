@@ -112,7 +112,11 @@ export class TooltipFeature extends BeanStub {
         // position the tooltip when showTooltip is called.
         this.lastMouseEvent = e;
 
-        if (this.tooltipMouseTrack && this.tooltipComp) {
+        if (
+            this.tooltipMouseTrack &&
+            this.state === TooltipStates.SHOWING &&
+            this.tooltipComp
+        ) {
             this.positionTooltipUnderLastMouseEvent();
         }
     }
