@@ -25,24 +25,17 @@ document.addEventListener('DOMContentLoaded', function() {
             select.appendChild(option);
         }
     }
-    gridDiv = document.querySelector('#myGrid');
+    var gridDiv = document.querySelector('#myGrid');
 
     onThemeChanged(true);
 
     new agGrid.Grid(gridDiv, gridOptions);
     createData();
-
-    api = gridOptions.api;
-    columnApi = gridOptions.columnApi;
 });
 
 // for easy access in the dev console, we put api and columnApi into global variables
 var docEl = document.documentElement;
 var isSmall = docEl.clientHeight <= 415 || docEl.clientWidth < 768;
-
-var api, columnApi;
-
-var gridDiv;
 var colNames = ["Station", "Railway", "Street", "Address", "Toy", "Soft Box", "Make and Model", "Longest Day", "Shortest Night"];
 
 var countries = [
