@@ -9,7 +9,7 @@
     "build-cjs": "tsc -p tsconfig.json",
     "build-es6": "tsc -p tsconfig.es6.json",
     "build-css": "npx gulp copy-grid-core-styles",
-    "build": "npm run build-cjs && npm run build-es6 && npm run build-css",
+    "build": "npm run webpack-updater && npm run build-cjs && npm run build-es6 && npm run build-css",
     "watchWebpack": "webpack --watch",
     "webpack-updater": "node webpackUpdater.js",
     "rollup": "node ../../module-build/rollup/build.js --bundlePrefix ag-grid-community",
