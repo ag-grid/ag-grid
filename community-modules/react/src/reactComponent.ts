@@ -152,8 +152,8 @@ export class ReactComponent extends BaseReactComponent {
         const originalConsoleError = console.error;
         const reactComponent = React.createElement(this.reactComponent, params);
         try {
-            // if a user is using anything that users useLayoutEffect (like material ui) then
-            // Warning: useLayoutEffect does nothing on the server will be throw and we can't do anything to stop it
+            // if a user is using anything that uses useLayoutEffect (like material ui) then
+            // Warning: useLayoutEffect does nothing on the s   erver will be throw and we can't do anything to stop it
             // this is just a warning and has no effect on anything so just suppress it for this single operation
             const originalConsoleError = console.error;
             console.error = () => { };
@@ -184,8 +184,16 @@ export class ReactComponent extends BaseReactComponent {
             return;
         }
 
-        if (this.staticMarkup && (this.staticMarkup as HTMLElement).remove) {
-            (this.staticMarkup as HTMLElement).remove();
+        if (this.staticMarkup) {
+            if((this.staticMarkup as HTMLElement).remove) {
+                // everyone else in the world
+                (this.staticMarkup as HTMLElement).remove();
+                this.staticMarkup = null;
+            } else if(this.eParentElement.removeChild) {
+                // ie11...
+                this.eParentElement.removeChild(this.staticMarkup as any);
+                this.staticMarkup = null;
+            }
             this.staticMarkup = null;
         }
     }
