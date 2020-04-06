@@ -29,7 +29,8 @@ import {
     ValueCache,
     ValueService,
     IClientSideRowModel,
-    FilterChangedEvent
+    FilterChangedEvent,
+    PreDestroy
 } from "@ag-grid-community/core"
 import {ClientSideNodeManager} from "./clientSideNodeManager";
 
@@ -76,6 +77,8 @@ export class ClientSideRowModel implements IClientSideRowModel {
     private nodeManager: ClientSideNodeManager;
     private rowDataTransactionBatch: BatchTransactionItem[] | null;
     private lastHighlightedRow: RowNode | null;
+    private events: (() => void)[] = [];
+    private refreshMapFunc: any;
 
     @PostConstruct
     public init(): void {
@@ -84,23 +87,26 @@ export class ClientSideRowModel implements IClientSideRowModel {
         const refreshEverythingAfterColsChangedFunc
             = this.refreshModel.bind(this, {step: Constants.STEP_EVERYTHING, afterColumnsChanged: true});
 
-        this.eventService.addModalPriorityEventListener(Events.EVENT_COLUMN_EVERYTHING_CHANGED, refreshEverythingAfterColsChangedFunc);
-        this.eventService.addModalPriorityEventListener(Events.EVENT_COLUMN_ROW_GROUP_CHANGED, refreshEverythingFunc);
-        this.eventService.addModalPriorityEventListener(Events.EVENT_COLUMN_VALUE_CHANGED, this.onValueChanged.bind(this));
-        this.eventService.addModalPriorityEventListener(Events.EVENT_COLUMN_PIVOT_CHANGED, this.refreshModel.bind(this, {step: Constants.STEP_PIVOT}));
+        this.events = [
+            this.eventService.addModalPriorityEventListener(Events.EVENT_COLUMN_EVERYTHING_CHANGED, refreshEverythingAfterColsChangedFunc),
+            this.eventService.addModalPriorityEventListener(Events.EVENT_COLUMN_ROW_GROUP_CHANGED, refreshEverythingFunc),
+            this.eventService.addModalPriorityEventListener(Events.EVENT_COLUMN_VALUE_CHANGED, this.onValueChanged.bind(this)),
+            this.eventService.addModalPriorityEventListener(Events.EVENT_COLUMN_PIVOT_CHANGED, this.refreshModel.bind(this, {step: Constants.STEP_PIVOT})),
 
-        this.eventService.addModalPriorityEventListener(Events.EVENT_ROW_GROUP_OPENED, this.onRowGroupOpened.bind(this));
-        this.eventService.addModalPriorityEventListener(Events.EVENT_FILTER_CHANGED, this.onFilterChanged.bind(this));
-        this.eventService.addModalPriorityEventListener(Events.EVENT_SORT_CHANGED, this.onSortChanged.bind(this));
-        this.eventService.addModalPriorityEventListener(Events.EVENT_COLUMN_PIVOT_MODE_CHANGED, refreshEverythingFunc);
+            this.eventService.addModalPriorityEventListener(Events.EVENT_ROW_GROUP_OPENED, this.onRowGroupOpened.bind(this)),
+            this.eventService.addModalPriorityEventListener(Events.EVENT_FILTER_CHANGED, this.onFilterChanged.bind(this)),
+            this.eventService.addModalPriorityEventListener(Events.EVENT_SORT_CHANGED, this.onSortChanged.bind(this)),
+            this.eventService.addModalPriorityEventListener(Events.EVENT_COLUMN_PIVOT_MODE_CHANGED, refreshEverythingFunc)
+        ];
 
-        const refreshMapFunc = this.refreshModel.bind(this, {
+        this.refreshMapFunc = this.refreshModel.bind(this, {
             step: Constants.STEP_MAP,
             keepRenderedRows: true,
             animate: true
         });
-        this.gridOptionsWrapper.addEventListener(GridOptionsWrapper.PROP_GROUP_REMOVE_SINGLE_CHILDREN, refreshMapFunc);
-        this.gridOptionsWrapper.addEventListener(GridOptionsWrapper.PROP_GROUP_REMOVE_LOWEST_SINGLE_CHILDREN, refreshMapFunc);
+
+        this.gridOptionsWrapper.addEventListener(GridOptionsWrapper.PROP_GROUP_REMOVE_SINGLE_CHILDREN, this.refreshMapFunc);
+        this.gridOptionsWrapper.addEventListener(GridOptionsWrapper.PROP_GROUP_REMOVE_LOWEST_SINGLE_CHILDREN, this.refreshMapFunc);
 
         this.rootNode = new RowNode();
         this.nodeManager = new ClientSideNodeManager(this.rootNode, this.gridOptionsWrapper,
@@ -108,6 +114,17 @@ export class ClientSideRowModel implements IClientSideRowModel {
             this.selectionController);
 
         this.context.wireBean(this.rootNode);
+    }
+
+    @PreDestroy
+    public destroy(): void {
+        if (this.events.length) {
+            this.events.forEach(func => func());
+            this.events = [];
+        }
+
+        this.gridOptionsWrapper.removeEventListener(GridOptionsWrapper.PROP_GROUP_REMOVE_SINGLE_CHILDREN, this.refreshMapFunc);
+        this.gridOptionsWrapper.removeEventListener(GridOptionsWrapper.PROP_GROUP_REMOVE_LOWEST_SINGLE_CHILDREN, this.refreshMapFunc);
     }
 
     public start(): void {

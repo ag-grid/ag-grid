@@ -1,5 +1,5 @@
 import { Constants } from "../constants";
-import { Autowired, Bean, PostConstruct } from "../context/context";
+import { Autowired, Bean, PostConstruct, PreDestroy } from "../context/context";
 import { GridCore } from "../gridCore";
 import { GridOptionsWrapper } from "../gridOptionsWrapper";
 import { PostProcessPopupParams } from "../entities/gridOptions";
@@ -35,20 +35,31 @@ export class PopupService {
 
     private gridCore: GridCore;
     private popupList: AgPopup[] = [];
+    private events: (() => void)[] = [];
 
     @PostConstruct
     private init(): void {
-        this.eventService.addEventListener(Events.EVENT_KEYBOARD_FOCUS, () => {
-            this.popupList.forEach(popup => {
-                _.addCssClass(popup.element, 'ag-keyboard-focus');
-            });
-        });
+        this.events = [
+            this.eventService.addEventListener(Events.EVENT_KEYBOARD_FOCUS, () => {
+                this.popupList.forEach(popup => {
+                    _.addCssClass(popup.element, 'ag-keyboard-focus');
+                });
+            }),
 
-        this.eventService.addEventListener(Events.EVENT_MOUSE_FOCUS, () => {
-            this.popupList.forEach(popup => {
-                _.removeCssClass(popup.element, 'ag-keyboard-focus');
-            });
-        });
+            this.eventService.addEventListener(Events.EVENT_MOUSE_FOCUS, () => {
+                this.popupList.forEach(popup => {
+                    _.removeCssClass(popup.element, 'ag-keyboard-focus');
+                });
+            })
+        ];
+    }
+
+    @PreDestroy
+    public destroy(): void {
+        if (this.events.length) {
+            this.events.forEach(func => func());
+            this.events = [];
+        }
     }
 
     public registerGridCore(gridCore: GridCore): void {

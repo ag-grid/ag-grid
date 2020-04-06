@@ -24,8 +24,10 @@ export class SelectedRowsComp extends NameValueComp implements IStatusPanelComp 
         this.setDisplayed(selectedRowCount > 0);
 
         const eventListener = this.onRowSelectionChanged.bind(this);
-        this.eventService.addEventListener(Events.EVENT_MODEL_UPDATED, eventListener);
-        this.eventService.addEventListener(Events.EVENT_SELECTION_CHANGED, eventListener);
+        this.events = [
+            this.eventService.addEventListener(Events.EVENT_MODEL_UPDATED, eventListener),
+            this.eventService.addEventListener(Events.EVENT_SELECTION_CHANGED, eventListener)
+        ];
     }
 
     private isValidRowModel() {

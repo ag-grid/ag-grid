@@ -1,5 +1,5 @@
 import { GridOptionsWrapper } from "../gridOptionsWrapper";
-import { Autowired, Context, PostConstruct } from "../context/context";
+import { Autowired, Context, PostConstruct, PreDestroy } from "../context/context";
 import { DragAndDropService, DropTarget } from "../dragAndDrop/dragAndDropService";
 import { ColumnController } from "../columnController/columnController";
 import { GridPanel } from "../gridPanel/gridPanel";
@@ -34,6 +34,8 @@ export class HeaderContainer {
 
     private dropTarget: DropTarget;
 
+    private events: (() => void)[] = [];
+
     constructor(eContainer: HTMLElement, eViewport: HTMLElement, pinned: string) {
         this.eContainer = eContainer;
         this.pinned = pinned;
@@ -54,13 +56,14 @@ export class HeaderContainer {
 
         // if value changes, then if not pivoting, we at least need to change the label eg from sum() to avg(),
         // if pivoting, then the columns have changed
-        this.eventService.addEventListener(Events.EVENT_COLUMN_VALUE_CHANGED, this.onColumnValueChanged.bind(this));
-        this.eventService.addEventListener(Events.EVENT_COLUMN_ROW_GROUP_CHANGED, this.onColumnRowGroupChanged.bind(this));
-        this.eventService.addEventListener(Events.EVENT_GRID_COLUMNS_CHANGED, this.onGridColumnsChanged.bind(this));
-        this.eventService.addEventListener(Events.EVENT_SCROLL_VISIBILITY_CHANGED, this.onScrollVisibilityChanged.bind(this));
-
-        this.eventService.addEventListener(Events.EVENT_COLUMN_RESIZED, this.onColumnResized.bind(this));
-        this.eventService.addEventListener(Events.EVENT_DISPLAYED_COLUMNS_CHANGED, this.onDisplayedColumnsChanged.bind(this));
+        this.events = [
+            this.eventService.addEventListener(Events.EVENT_COLUMN_VALUE_CHANGED, this.onColumnValueChanged.bind(this)),
+            this.eventService.addEventListener(Events.EVENT_COLUMN_ROW_GROUP_CHANGED, this.onColumnRowGroupChanged.bind(this)),
+            this.eventService.addEventListener(Events.EVENT_GRID_COLUMNS_CHANGED, this.onGridColumnsChanged.bind(this)),
+            this.eventService.addEventListener(Events.EVENT_SCROLL_VISIBILITY_CHANGED, this.onScrollVisibilityChanged.bind(this)),
+            this.eventService.addEventListener(Events.EVENT_COLUMN_RESIZED, this.onColumnResized.bind(this)),
+            this.eventService.addEventListener(Events.EVENT_DISPLAYED_COLUMNS_CHANGED, this.onDisplayedColumnsChanged.bind(this))
+        ];
     }
 
     // if row group changes, that means we may need to add aggFuncs to the column headers,
@@ -108,8 +111,14 @@ export class HeaderContainer {
         }
     }
 
+    @PreDestroy
     public destroy(): void {
         this.removeHeaderRowComps();
+
+        if (this.events.length) {
+            this.events.forEach(func => func());
+            this.events = [];
+        }
     }
 
     public getRowComps(): HeaderRowComp[] {

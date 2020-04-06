@@ -55,14 +55,18 @@ export class FilterManager {
     private processingFilterChange = false;
     private allowShowChangeAfterFilter: boolean;
 
+    private events: (() => void)[] = [];
+
     public registerGridCore(gridCore: GridCore): void {
         this.gridCore = gridCore;
     }
 
     @PostConstruct
     public init(): void {
-        this.eventService.addEventListener(Events.EVENT_ROW_DATA_CHANGED, this.onNewRowsLoaded.bind(this));
-        this.eventService.addEventListener(Events.EVENT_NEW_COLUMNS_LOADED, this.onNewColumnsLoaded.bind(this));
+        this.events = [
+            this.eventService.addEventListener(Events.EVENT_ROW_DATA_CHANGED, this.onNewRowsLoaded.bind(this)),
+            this.eventService.addEventListener(Events.EVENT_NEW_COLUMNS_LOADED, this.onNewColumnsLoaded.bind(this))
+        ];
 
         this.quickFilter = this.parseQuickFilter(this.gridOptionsWrapper.getQuickFilterText());
         this.setQuickFilterParts();
@@ -622,6 +626,11 @@ export class FilterManager {
         _.iterateObject(this.allFilters, (key: string, filterWrapper: any) => {
             this.disposeFilterWrapper(filterWrapper, "filterDestroyed");
         });
+
+        if (this.events.length) {
+            this.events.forEach(func => func());
+            this.events = [];
+        }
     }
 
 }

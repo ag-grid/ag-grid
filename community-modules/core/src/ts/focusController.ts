@@ -22,30 +22,37 @@ export class FocusController {
 
     private focusedCellPosition: CellPosition;
     private keyboardFocusActive: boolean = false;
-    private clearFocusedCellListener: any;
-    private activateKeyboardModeListener: any;
-    private activateMouseModeListener: any;
+
+    private events: (() => void)[] = [];
 
     @PostConstruct
     private init(): void {
         const eDocument = this.gridOptionsWrapper.getDocument();
 
-        this.clearFocusedCellListener = this.clearFocusedCell.bind(this);
-        this.eventService.addEventListener(Events.EVENT_COLUMN_PIVOT_MODE_CHANGED, this.clearFocusedCellListener);
-        this.eventService.addEventListener(Events.EVENT_COLUMN_EVERYTHING_CHANGED, this.clearFocusedCellListener);
-        this.eventService.addEventListener(Events.EVENT_COLUMN_GROUP_OPENED, this.clearFocusedCellListener);
-        this.eventService.addEventListener(Events.EVENT_COLUMN_ROW_GROUP_CHANGED, this.clearFocusedCellListener);
+        const clearFocusedCellListener = this.clearFocusedCell.bind(this);
 
-        this.activateKeyboardModeListener = this.activateKeyboardMode.bind(this);
-        eDocument.addEventListener('keydown', this.activateKeyboardModeListener);
-        this.activateMouseModeListener = this.activateMouseMode.bind(this);
-        eDocument.addEventListener('mousedown', this.activateMouseModeListener);
+        this.events = [
+            this.eventService.addEventListener(Events.EVENT_COLUMN_PIVOT_MODE_CHANGED, clearFocusedCellListener),
+            this.eventService.addEventListener(Events.EVENT_COLUMN_EVERYTHING_CHANGED, clearFocusedCellListener),
+            this.eventService.addEventListener(Events.EVENT_COLUMN_GROUP_OPENED, clearFocusedCellListener),
+            this.eventService.addEventListener(Events.EVENT_COLUMN_ROW_GROUP_CHANGED, clearFocusedCellListener)
+        ];
 
-        // we used to remove focus when moving column, am not sure why. so taking this out and see who complains.
-        // we can delete these three lines of code soon.
-        // this.eventService.addEventListener(Events.EVENT_COLUMN_MOVED, this.clearFocusedCell.bind(this));
-        // this.eventService.addEventListener(Events.EVENT_COLUMN_PINNED, this.clearFocusedCell.bind(this));
-        // this.eventService.addEventListener(Events.EVENT_COLUMN_VISIBLE, this.clearFocusedCell.bind(this));
+        const activateKeyboardModeListener = this.activateKeyboardMode.bind(this);
+        eDocument.addEventListener('keydown', activateKeyboardModeListener);
+        this.events.push(() => eDocument.removeEventListener('keydown', activateKeyboardModeListener));
+
+        const activateMouseModeListener = this.activateMouseMode.bind(this);
+        eDocument.addEventListener('mousedown', activateMouseModeListener);
+        this.events.push(() => eDocument.removeEventListener('mousedown', activateMouseModeListener));
+    }
+
+    @PreDestroy
+    public destroy(): void {
+        if (this.events.length) {
+            this.events.forEach(func => func());
+            this.events = [];
+        }
     }
 
     public isKeyboardFocus(): boolean {
@@ -174,17 +181,5 @@ export class FocusController {
         }
 
         this.eventService.dispatchEvent(event);
-    }
-
-    @PreDestroy
-    destroy(): void {
-        this.eventService.removeEventListener(Events.EVENT_COLUMN_PIVOT_MODE_CHANGED, this.clearFocusedCellListener);
-        this.eventService.removeEventListener(Events.EVENT_COLUMN_EVERYTHING_CHANGED, this.clearFocusedCellListener);
-        this.eventService.removeEventListener(Events.EVENT_COLUMN_GROUP_OPENED, this.clearFocusedCellListener);
-        this.eventService.removeEventListener(Events.EVENT_COLUMN_ROW_GROUP_CHANGED, this.clearFocusedCellListener);
-
-        const eDocument = this.gridOptionsWrapper.getDocument();
-        eDocument.removeEventListener('keydown', this.activateKeyboardModeListener);
-        eDocument.removeEventListener('mousedown', this.activateMouseModeListener);
     }
 }

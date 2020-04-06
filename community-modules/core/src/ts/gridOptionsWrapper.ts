@@ -108,6 +108,7 @@ export class GridOptionsWrapper {
 
     // we store this locally, so we are not calling _.getScrollWidth() multiple times as it's an expensive operation
     private scrollWidth: number;
+    private updateLayoutClassesListener: any;
 
     private agWire(@Qualifier('gridApi') gridApi: GridApi, @Qualifier('columnApi') columnApi: ColumnApi): void {
         this.gridOptions.api = gridApi;
@@ -123,6 +124,7 @@ export class GridOptionsWrapper {
         // of the grid to be picked up by the garbage collector
         this.gridOptions.api = null;
         this.gridOptions.columnApi = null;
+        this.removeEventListener(GridOptionsWrapper.PROP_DOM_LAYOUT, this.updateLayoutClassesListener);
     }
 
     @PostConstruct
@@ -190,7 +192,9 @@ export class GridOptionsWrapper {
         warnOfDeprecaredIcon('checkboxUnchecked');
         warnOfDeprecaredIcon('checkboxIndeterminate');
 
-        this.addEventListener(GridOptionsWrapper.PROP_DOM_LAYOUT, this.updateLayoutClasses.bind(this));
+        this.updateLayoutClassesListener = this.updateLayoutClasses.bind(this);
+
+        this.addEventListener(GridOptionsWrapper.PROP_DOM_LAYOUT, this.updateLayoutClassesListener);
     }
 
     private checkColumnDefProperties() {

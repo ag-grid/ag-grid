@@ -30,8 +30,11 @@ export class GridHeaderDropZones extends Component {
     private postConstruct(): void {
         this.setGui(this.createNorthPanel());
 
-        this.eventService.addEventListener(Events.EVENT_COLUMN_ROW_GROUP_CHANGED, this.onRowGroupChanged.bind(this));
-        this.eventService.addEventListener(Events.EVENT_COLUMN_EVERYTHING_CHANGED, this.onRowGroupChanged.bind(this));
+        const events = [
+            this.eventService.addEventListener(Events.EVENT_COLUMN_ROW_GROUP_CHANGED, this.onRowGroupChanged.bind(this)),
+            this.eventService.addEventListener(Events.EVENT_COLUMN_EVERYTHING_CHANGED, this.onRowGroupChanged.bind(this))
+        ];
+        this.addDestroyFunc(() => events.forEach(func => func()));
 
         this.onRowGroupChanged();
     }

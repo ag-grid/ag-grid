@@ -30,7 +30,7 @@ document.addEventListener('DOMContentLoaded', function() {
     onThemeChanged(true);
 
     new agGrid.Grid(gridDiv, gridOptions);
-    createData();
+    // createData();
 
     api = gridOptions.api;
     columnApi = gridOptions.columnApi;
@@ -136,6 +136,23 @@ function toggleOptionsCollapsed() {
     optionsEl.classList.toggle('collapsed');
 }
 var gridOptions = {
+    defaultColDef: {
+        sortable: true,
+        filter: true,
+    },
+    columnDefs: [
+        { headerName: "Make", field: "make" },
+        { headerName: "Model", field: "model" },
+        { headerName: "Price", field: "price" }
+    ],
+    rowData: [
+        { make: "Toyota", model: "Celica", price: 35000 },
+        { make: "Ford", model: "Mondeo", price: 32000 },
+        { make: "Porsche", model: "Boxter", price: 72000 }
+    ]
+};
+
+var xxxgridOptions = {
     statusBar: {
         statusPanels: [
             { statusPanel: 'agTotalAndFilteredRowCountComponent', key: 'totalAndFilter', align: 'left' },

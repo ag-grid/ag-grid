@@ -211,7 +211,8 @@ export class EnterpriseMenu extends BeanStub {
         });
 
         this.getContext().wireBean(this.tabbedLayout);
-        this.eventService.addEventListener(Events.EVENT_DISPLAYED_COLUMNS_CHANGED, this.onDisplayedColumnsChanged.bind(this));
+        const displayedListener = this.eventService.addEventListener(Events.EVENT_DISPLAYED_COLUMNS_CHANGED, this.onDisplayedColumnsChanged.bind(this));
+        this.addDestroyFunc(() => displayedListener());
     }
 
     private getTabsToCreate() {

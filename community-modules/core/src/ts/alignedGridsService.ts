@@ -11,7 +11,7 @@ import {
 } from "./events";
 import { GridOptions } from "./entities/gridOptions";
 import { Column } from "./entities/column";
-import { Bean } from "./context/context";
+import { Bean, PreDestroy } from "./context/context";
 import { Qualifier } from "./context/context";
 import { Autowired } from "./context/context";
 import { PostConstruct } from "./context/context";
@@ -40,14 +40,26 @@ export class AlignedGridsService {
         this.gridPanel = gridPanel;
     }
 
+    private events: (() => void)[] = [];
+
     @PostConstruct
     public init(): void {
-        this.eventService.addEventListener(Events.EVENT_COLUMN_MOVED, this.fireColumnEvent.bind(this));
-        this.eventService.addEventListener(Events.EVENT_COLUMN_VISIBLE, this.fireColumnEvent.bind(this));
-        this.eventService.addEventListener(Events.EVENT_COLUMN_PINNED, this.fireColumnEvent.bind(this));
-        this.eventService.addEventListener(Events.EVENT_COLUMN_GROUP_OPENED, this.fireColumnEvent.bind(this));
-        this.eventService.addEventListener(Events.EVENT_COLUMN_RESIZED, this.fireColumnEvent.bind(this));
-        this.eventService.addEventListener(Events.EVENT_BODY_SCROLL, this.fireScrollEvent.bind(this));
+        this.events = [
+            this.eventService.addEventListener(Events.EVENT_COLUMN_MOVED, this.fireColumnEvent.bind(this)),
+            this.eventService.addEventListener(Events.EVENT_COLUMN_VISIBLE, this.fireColumnEvent.bind(this)),
+            this.eventService.addEventListener(Events.EVENT_COLUMN_PINNED, this.fireColumnEvent.bind(this)),
+            this.eventService.addEventListener(Events.EVENT_COLUMN_GROUP_OPENED, this.fireColumnEvent.bind(this)),
+            this.eventService.addEventListener(Events.EVENT_COLUMN_RESIZED, this.fireColumnEvent.bind(this)),
+            this.eventService.addEventListener(Events.EVENT_BODY_SCROLL, this.fireScrollEvent.bind(this))
+        ];
+    }
+
+    @PreDestroy
+    public destroy(): void {
+        if (this.events.length) {
+            this.events.forEach(func => func());
+        }
+        this.events = [];
     }
 
     // common logic across all the fire methods
