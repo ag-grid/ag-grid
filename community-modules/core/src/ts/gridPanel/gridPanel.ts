@@ -10,7 +10,6 @@ import {IRangeController} from "../interfaces/iRangeController";
 import {Constants} from "../constants";
 import {MouseEventService} from "./mouseEventService";
 import {IClipboardService} from "../interfaces/iClipboardService";
-import {FocusController} from "../focusController";
 import {IContextMenuFactory} from "../interfaces/iContextMenuFactory";
 import {ScrollVisibleService, SetScrollsVisibleParams} from "./scrollVisibleService";
 import {Column} from "../entities/column";
@@ -122,7 +121,6 @@ export class GridPanel extends Component {
     @Autowired('gridApi') private gridApi: GridApi;
     @Autowired('dragService') private dragService: DragService;
     @Autowired('mouseEventService') private mouseEventService: MouseEventService;
-    @Autowired('focusController') private focusController: FocusController;
     @Autowired('$scope') private $scope: any;
     @Autowired('scrollVisibleService') private scrollVisibleService: ScrollVisibleService;
     @Autowired('valueService') private valueService: ValueService;
