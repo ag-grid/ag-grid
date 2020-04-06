@@ -1,4 +1,4 @@
-import { exists, missing } from './generic';
+import { exists, missing, toStringOrNull } from './generic';
 
 export function firstExistingValue<A>(...values: A[]): A | null {
     for (let i = 0; i < values.length; i++) {
@@ -12,6 +12,7 @@ export function firstExistingValue<A>(...values: A[]): A | null {
     return null;
 }
 
+/** @deprecated */
 export function anyExists(values: any[]): boolean {
     if (values) {
         for (let i = 0; i < values.length; i++) {
@@ -24,7 +25,7 @@ export function anyExists(values: any[]): boolean {
     return false;
 }
 
-export function existsAndNotEmpty(value?: any[] | null): boolean {
+export function existsAndNotEmpty<T>(value?: T[]): boolean {
     return value != null && exists(value) && value.length > 0;
 }
 
@@ -35,47 +36,25 @@ export function last<T>(arr: T[]): T | undefined {
 }
 
 export function areEqual<T>(a: T[], b: T[]): boolean {
-    return a.length === b.length && a.every((value, index) => b[index] === value);
-}
-
-export function compareArrays(array1?: any[], array2?: any[]): boolean {
-    if (missing(array1) && missing(array2)) {
+    if (missing(a) && missing(b)) {
         return true;
     }
 
-    if (missing(array1) || missing(array2)) {
+    if (missing(a) || missing(b)) {
         return false;
     }
 
-    if (array1.length !== array2.length) {
-        return false;
-    }
-
-    for (let i = 0; i < array1.length; i++) {
-        if (array1[i] !== array2[i]) {
-            return false;
-        }
-    }
-
-    return true;
+    return a.length === b.length && a.every((value, index) => b[index] === value);
 }
 
+/** @deprecated */
+export function compareArrays(array1?: any[], array2?: any[]): boolean {
+    return areEqual(array1, array2);
+}
+
+/** @deprecated */
 export function shallowCompare(arr1: any[], arr2: any[]): boolean {
-    // if both are missing, then they are the same
-    if (missing(arr1) && missing(arr2)) { return true; }
-
-    // if one is present, but other is missing, then they are different
-    if (missing(arr1) || missing(arr2)) { return false; }
-
-    if (arr1.length !== arr2.length) { return false; }
-
-    for (let i = 0; i < arr1.length; i++) {
-        if (arr1[i] !== arr2[i]) {
-            return false;
-        }
-    }
-
-    return true;
+    return areEqual(arr1, arr2);
 }
 
 export function sortNumerically(array: number[]): number[] {
@@ -134,20 +113,22 @@ export function moveInArray<T>(array: T[], objectsToMove: T[], toIndex: number) 
     });
 }
 
-export const includes = <T>(array: T[], value: T): boolean => array.indexOf(value) > -1;
+export function includes<T>(array: T[], value: T): boolean {
+    return array.indexOf(value) > -1;
+}
 
 export function flatten(arrayOfArrays: any[]): any[] {
     return [].concat.apply([], arrayOfArrays);
 }
 
-export function pushAll(target: any[], source: any[]): void {
+export function pushAll<T>(target: T[], source: T[]): void {
     if (missing(source) || missing(target)) { return; }
 
     source.forEach(func => target.push(func));
 }
 
 export function toStrings<T>(array: T[]): (string | null)[] {
-    return array.map(item => item == null || !item.toString() ? null : item.toString());
+    return array.map(toStringOrNull);
 }
 
 export function findIndex<T>(collection: T[], predicate: (item: T, idx: number, collection: T[]) => boolean): number {
@@ -156,24 +137,17 @@ export function findIndex<T>(collection: T[], predicate: (item: T, idx: number, 
             return i;
         }
     }
+
     return -1;
 }
 
+/** @deprecated Should use Array.prototype.every instead */
 export function every<T>(items: T[], callback: (item: T) => boolean): boolean {
-    if (!items || items.length === 0) {
-        return true;
-    }
-
-    for (let i = 0; i < items.length; i++) {
-        if (!callback(items[i])) {
-            return false;
-        }
-    }
-
-    return true;
+    return !items || items.every(callback);
 }
 
-export function forEachSnapshotFirst(list: any[], callback: (item: any) => void): void {
+/** @deprecated */
+export function forEachSnapshotFirst<T>(list: T[], callback: (item: T) => void): void {
     if (!list) { return; }
 
     const arrayCopy = list.slice(0);

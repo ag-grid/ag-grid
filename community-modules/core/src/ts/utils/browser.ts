@@ -30,7 +30,7 @@ export function isBrowserSafari(): boolean {
     if (isSafari === undefined) {
         // taken from https://github.com/ag-grid/ag-grid/issues/550
         const anyWindow = window as any;
-        const hasNotification = (p: any) => p && p.toString() === "[object SafariRemoteNotification]";
+        const hasNotification = (p: any) => p && p.toString() === '[object SafariRemoteNotification]';
 
         isSafari = Object.prototype.toString.call(anyWindow.HTMLElement).indexOf('Constructor') > 0
             || hasNotification(anyWindow.safari && anyWindow.safari.pushNotification);
@@ -98,13 +98,13 @@ export function getMaxDivHeight(): number {
 
 export function getScrollbarWidth() {
     const body = document.body;
-    const div = document.createElement("div");
+    const div = document.createElement('div');
 
-    div.style.width = div.style.height = "100px";
-    div.style.opacity = "0";
-    div.style.overflow = "scroll";
-    div.style.msOverflowStyle = "scrollbar"; // needed for WinJS apps
-    div.style.position = "absolute";
+    div.style.width = div.style.height = '100px';
+    div.style.opacity = '0';
+    div.style.overflow = 'scroll';
+    div.style.msOverflowStyle = 'scrollbar'; // needed for WinJS apps
+    div.style.position = 'absolute';
 
     body.appendChild(div);
 
@@ -118,6 +118,7 @@ export function getScrollbarWidth() {
     return width;
 }
 
+/** @deprecated */
 export function hasOverflowScrolling(): boolean {
     const prefixes: string[] = ['webkit', 'moz', 'o', 'ms'];
     const div: HTMLElement = document.createElement('div');

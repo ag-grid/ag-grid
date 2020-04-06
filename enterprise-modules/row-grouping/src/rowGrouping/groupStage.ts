@@ -35,7 +35,7 @@ interface GroupingDetails {
     groupedCols: Column[];
     groupedColCount: number;
     transaction: RowNodeTransaction;
-    rowNodeOrder: { [id: string]: number };
+    rowNodeOrder: { [id: string]: number; };
 }
 
 @Bean('groupStage')
@@ -93,7 +93,7 @@ export class GroupStage implements IRowNodeStage {
     }
 
     private createGroupingDetails(params: StageExecuteParams): GroupingDetails {
-        const {rowNode, changedPath, rowNodeTransaction, rowNodeOrder} = params;
+        const { rowNode, changedPath, rowNodeTransaction, rowNodeOrder } = params;
 
         const groupedCols = this.usingTreeData ? null : this.columnController.getRowGroupColumns();
         const isGrouping = this.usingTreeData || (groupedCols && groupedCols.length > 0);
@@ -190,7 +190,6 @@ export class GroupStage implements IRowNodeStage {
     }
 
     private moveNodesInWrongPath(childNodes: RowNode[], details: GroupingDetails): void {
-
         childNodes.forEach(childNode => {
 
             // we add node, even if parent has not changed, as the data could have
@@ -203,7 +202,7 @@ export class GroupStage implements IRowNodeStage {
             const oldPath: string[] = this.getExistingPathForNode(childNode, details).map(infoToKeyMapper);
             const newPath: string[] = this.getGroupInfo(childNode, details).map(infoToKeyMapper);
 
-            const nodeInCorrectPath = _.compareArrays(oldPath, newPath);
+            const nodeInCorrectPath = _.areEqual(oldPath, newPath);
 
             if (!nodeInCorrectPath) {
                 this.moveNode(childNode, details);
@@ -308,7 +307,7 @@ export class GroupStage implements IRowNodeStage {
             const mapKey = this.getChildrenMappedKey(rowNode.key, rowNode.rowGroupColumn);
             const parentRowNode = rowNode.parent;
             const groupAlreadyRemoved = (parentRowNode && parentRowNode.childrenMapped) ?
-                        !parentRowNode.childrenMapped[mapKey] : true;
+                !parentRowNode.childrenMapped[mapKey] : true;
 
             if (groupAlreadyRemoved) {
                 // if not linked, then group was already removed
@@ -370,14 +369,9 @@ export class GroupStage implements IRowNodeStage {
     }
 
     private areGroupColsEqual(d1: GroupingDetails, d2: GroupingDetails): boolean {
+        if (d1 == null || d2 == null || d1.pivotMode !== d2.pivotMode) { return false; }
 
-        if (d1 == null || d2 == null) { return false; }
-
-        if (d1.pivotMode !== d2.pivotMode) { return false; }
-
-        if (!_.compareArrays(d1.groupedCols, d2.groupedCols)) { return false; }
-
-        return true;
+        return _.areEqual(d1.groupedCols, d2.groupedCols);
     }
 
     private shotgunResetEverything(details: GroupingDetails, afterColumnsChanged: boolean): void {
@@ -471,7 +465,7 @@ export class GroupStage implements IRowNodeStage {
     }
 
     private getOrCreateNextNode(parentGroup: RowNode, groupInfo: GroupInfo, level: number,
-                                details: GroupingDetails): RowNode {
+        details: GroupingDetails): RowNode {
 
         const mapKey = this.getChildrenMappedKey(groupInfo.key, groupInfo.rowGroupColumn);
         let nextNode = parentGroup.childrenMapped ? parentGroup.childrenMapped[mapKey] as RowNode : undefined;
@@ -571,7 +565,7 @@ export class GroupStage implements IRowNodeStage {
                 'groupStage.getGroupInfoFromCallback'
             );
         }
-        const groupInfoMapper = (key: string | null) => ({key, field: null, rowGroupColumn: null}) as GroupInfo;
+        const groupInfoMapper = (key: string | null) => ({ key, field: null, rowGroupColumn: null }) as GroupInfo;
         return keys ? keys.map(groupInfoMapper) : [];
     }
 
@@ -603,8 +597,8 @@ export class GroupStage implements IRowNodeStage {
 }
 
 interface RemoveDetails {
-    removeFromChildrenAfterGroup: {[id:string]: boolean};
-    removeFromAllLeafChildren: {[id:string]: boolean};
+    removeFromChildrenAfterGroup: { [id: string]: boolean; };
+    removeFromAllLeafChildren: { [id: string]: boolean; };
 }
 
 // doing _.removeFromArray() multiple times on a large list can be a bottleneck.
@@ -618,7 +612,7 @@ interface RemoveDetails {
 // it took about 20 seconds to delete. with the BathRemoved, the reduced to less than 1 second.
 class BatchRemover {
 
-    private allSets: {[parentId: string]: RemoveDetails} = {};
+    private allSets: { [parentId: string]: RemoveDetails; } = {};
     private allParents: RowNode[] = [];
 
     public removeFromChildrenAfterGroup(parent: RowNode, child: RowNode): void {
@@ -646,8 +640,8 @@ class BatchRemover {
         this.allParents.forEach(parent => {
             const nodeDetails = this.allSets[parent.id];
             parent.childrenAfterGroup = parent.childrenAfterGroup.filter(child => {
-                    const res = !nodeDetails.removeFromChildrenAfterGroup[child.id];
-                    return res;
+                const res = !nodeDetails.removeFromChildrenAfterGroup[child.id];
+                return res;
             });
             parent.allLeafChildren = parent.allLeafChildren.filter(child => !nodeDetails.removeFromAllLeafChildren[child.id]);
         });

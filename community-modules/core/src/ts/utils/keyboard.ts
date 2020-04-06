@@ -107,9 +107,7 @@ export function isUserSuppressingKeyboardEvent(
 }
 
 function isNumpadDelWithNumlockOnForEdgeOrIe(event: KeyboardEvent) {
-    if (isBrowserEdge() || isBrowserIE()) {
-        return event.key === NUMPAD_DEL_NUMLOCK_ON_KEY && event.charCode === NUMPAD_DEL_NUMLOCK_ON_CHARCODE;
-    }
-
-    return false;
+    return (isBrowserEdge() || isBrowserIE()) &&
+        event.key === NUMPAD_DEL_NUMLOCK_ON_KEY &&
+        event.charCode === NUMPAD_DEL_NUMLOCK_ON_CHARCODE;
 }

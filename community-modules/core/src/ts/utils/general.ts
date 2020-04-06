@@ -2,53 +2,15 @@ import { ICellRendererComp } from '../rendering/cellRenderers/iCellRenderer';
 import { Promise } from './promise';
 import { loadTemplate } from './dom';
 import { camelCaseToHyphen } from './string';
-import { iterateObject, values } from './object';
+import { iterateObject } from './object';
 
+/** @deprecated */
 export function getNameOfClass(theClass: any) {
     const funcNameRegex = /function (.{1,})\(/;
     const funcAsString = theClass.toString();
     const results = funcNameRegex.exec(funcAsString);
 
     return results && results.length > 1 ? results[1] : "";
-}
-
-export function keys<T>(map: Map<T, any>): T[] {
-    const keys: T[] = [];
-
-    map.forEach((_, key) => keys.push(key));
-
-    return keys;
-}
-
-export function find<T>(collection: T[] | { [id: string]: T; }, predicate: string | boolean | ((item: T) => boolean), value?: any): T | null {
-    if (collection === null || collection === undefined) { return null; }
-
-    if (!Array.isArray(collection)) {
-        const objToArray = values(collection);
-        return find(objToArray, predicate, value);
-    }
-
-    const collectionAsArray = collection as T[];
-
-    let firstMatchingItem: T | null = null;
-    for (let i = 0; i < collectionAsArray.length; i++) {
-        const item: T = collectionAsArray[i];
-
-        if (typeof predicate === 'string') {
-            if ((item as any)[predicate] === value) {
-                firstMatchingItem = item;
-                break;
-            }
-        } else {
-            const callback = predicate as (item: T) => boolean;
-            if (callback(item)) {
-                firstMatchingItem = item;
-                break;
-            }
-        }
-    }
-
-    return firstMatchingItem;
 }
 
 export function findLineByLeastSquares(values: number[]) {
@@ -144,12 +106,4 @@ export function bindCellRendererToHtmlElement(cellRendererPromise: Promise<ICell
             }
         }
     });
-}
-
-export function convertToSet<T>(list: T[]): Set<T> {
-    const set = new Set<T>();
-
-    list.forEach(x => set.add(x));
-
-    return set;
 }

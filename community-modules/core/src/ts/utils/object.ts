@@ -27,8 +27,13 @@ export function deepCloneObject<T>(object: T): T {
     return JSON.parse(JSON.stringify(object));
 }
 
-export const getProperty = <T, K extends keyof T>(object: T, key: K): any => object[key];
-export const setProperty = <T, K extends keyof T>(object: T, key: K, value: any): void => object[key] = value;
+export function getProperty<T, K extends keyof T>(object: T, key: K): any {
+    return object[key];
+}
+
+export function setProperty<T, K extends keyof T>(object: T, key: K, value: any): void {
+    object[key] = value;
+}
 
 /**
  * Will copy the specified properties from `source` into the equivalent properties on `target`, ignoring properties with
@@ -53,10 +58,8 @@ export function copyPropertyIfPresent<S, T extends S, K extends keyof S>(source:
 export function getAllKeysInObjects(objects: any[]): string[] {
     const allValues: any = {};
 
-    objects.forEach(obj => {
-        if (obj) {
-            Object.keys(obj).forEach(key => allValues[key] = null);
-        }
+    objects.filter(obj => obj != null).forEach(obj => {
+        Object.keys(obj).forEach(key => allValues[key] = null);
     });
 
     return Object.keys(allValues);
@@ -97,7 +100,7 @@ export function missingOrEmptyObject(value: any): boolean {
 export function get(source: any, expression: string, defaultValue: any): any {
     if (source == null) { return defaultValue; }
 
-    const keys = expression.split(".");
+    const keys = expression.split('.');
     let objectToRead = source;
 
     while (keys.length > 1) {
@@ -116,7 +119,7 @@ export function get(source: any, expression: string, defaultValue: any): any {
 export function set(target: any, expression: string, value: any) {
     if (target == null) { return; }
 
-    const keys = expression.split(".");
+    const keys = expression.split('.');
     let objectToUpdate = target;
 
     while (keys.length > 1) {
@@ -142,7 +145,9 @@ export function deepFreeze(object: any): any {
     return object;
 }
 
-export const values = <T>(object: { [key: string]: T; }): T[] => Object.keys(object).map(key => object[key]);
+export function values<T>(object: { [key: string]: T; }): T[] {
+    return Object.keys(object).map(key => object[key]);
+}
 
 export function getValueUsingField(data: any, field: string, fieldContainsDots: boolean): any {
     if (!field || !data) { return; }

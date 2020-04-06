@@ -14,6 +14,7 @@ export function doOnce(func: () => void, key: string) {
     doOnceFlags[key] = true;
 }
 
+/** @deprecated */
 export function getFunctionParameters(func: any) {
     const fnStr = func.toString().replace(FUNCTION_STRIP_COMMENTS, '');
 

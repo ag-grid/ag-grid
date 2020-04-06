@@ -39,12 +39,10 @@ export function cleanNumber(value: any): number {
     }
 
     if (typeof value === 'number') {
-        value = Math.floor(value);
+        return Math.floor(value);
     } else {
-        value = null;
+        return null;
     }
-
-    return value;
 }
 
 export function decToHex(number: number, bytes: number): string {
@@ -58,11 +56,10 @@ export function decToHex(number: number, bytes: number): string {
     return hex;
 }
 
-export function formatNumberTwoDecimalPlacesAndCommas(value: number | null): string {
+export function formatNumberTwoDecimalPlacesAndCommas(value: number): string {
     if (typeof value !== 'number') { return ''; }
 
-    // took this from: http://blog.tompawlak.org/number-currency-formatting-javascript
-    return (Math.round(value * 100) / 100).toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,");
+    return formatNumberCommas(Math.round(value * 100) / 100);
 }
 
 /**
@@ -76,4 +73,8 @@ export function formatNumberCommas(value: number): string {
     if (typeof value !== 'number') { return ''; }
 
     return value.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,");
+}
+
+export function sum(values: number[]) {
+    return values == null ? null : values.reduce((total, value) => total + value, 0);
 }

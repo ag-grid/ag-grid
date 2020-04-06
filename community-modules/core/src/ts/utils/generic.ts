@@ -1,3 +1,5 @@
+import { values } from './object';
+
 /**
  * If value is undefined, null or blank, returns null, otherwise returns the value
  * @param {T} value
@@ -7,43 +9,40 @@ export function makeNull<T>(value?: T): T | null {
     return value == null || value as any === '' ? null : value;
 }
 
-export function missing(value: any): boolean {
+export function exists<T>(value: T, allowEmptyString = false): boolean {
+    return value != null && (value as any !== '' || allowEmptyString);
+}
+
+export function missing<T>(value: T): boolean {
     return !exists(value);
 }
 
-export function missingOrEmpty(value?: any[] | string): boolean {
+export function missingOrEmpty<T>(value?: T[] | string): boolean {
     return !value || missing(value) || value.length === 0;
 }
 
-export function exists(value: any, allowEmptyString = false): boolean {
-    return value != null && (value !== '' || allowEmptyString);
-}
-
 export function toStringOrNull(value: any): string | null {
-    if (exists(value) && value.toString) {
-        return value.toString();
-    }
-
-    return null;
+    return exists(value) && value.toString ? value.toString() : null;
 }
 
-export function referenceCompare(left: any, right: any): boolean {
+/** @deprecated */
+export function referenceCompare<T>(left: T, right: T): boolean {
     if (left == null && right == null) {
         return true;
     }
 
-    if (left == null && right) {
+    if (left == null && right != null) {
         return false;
     }
 
-    if (left && right == null) {
+    if (left != null && right == null) {
         return false;
     }
 
     return left === right;
 }
 
-export function jsonEquals(val1: any, val2: any): boolean {
+export function jsonEquals<T1, T2>(val1: T1, val2: T2): boolean {
     const val1Json = val1 ? JSON.stringify(val1) : null;
     const val2Json = val2 ? JSON.stringify(val2) : null;
 
@@ -97,4 +96,35 @@ export function defaultComparator(valueA: any, valueB: any, accentedCompare: boo
     }
 
     return doQuickCompare(valueA, valueB);
+}
+
+export function find<T>(collection: T[] | { [id: string]: T; }, predicate: string | boolean | ((item: T) => boolean), value?: any): T | null {
+    if (collection === null || collection === undefined) { return null; }
+
+    if (!Array.isArray(collection)) {
+        const objToArray = values(collection);
+        return find(objToArray, predicate, value);
+    }
+
+    const collectionAsArray = collection as T[];
+
+    let firstMatchingItem: T | null = null;
+    for (let i = 0; i < collectionAsArray.length; i++) {
+        const item: T = collectionAsArray[i];
+
+        if (typeof predicate === 'string') {
+            if ((item as any)[predicate] === value) {
+                firstMatchingItem = item;
+                break;
+            }
+        } else {
+            const callback = predicate as (item: T) => boolean;
+            if (callback(item)) {
+                firstMatchingItem = item;
+                break;
+            }
+        }
+    }
+
+    return firstMatchingItem;
 }

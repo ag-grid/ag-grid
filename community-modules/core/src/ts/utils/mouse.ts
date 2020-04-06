@@ -1,4 +1,5 @@
 /**
+ * @deprecated
  * Mouse wheel (and 2-finger trackpad) support on the web sucks.  It is
  * complicated, thus this doc is long and (hopefully) detailed enough to answer
  * your questions.
@@ -175,6 +176,7 @@ export function normalizeWheel(event: any): any {
 }
 
 /**
+ * @deprecated
  * Checks if event was issued by a left click
  * from https://stackoverflow.com/questions/3944122/detect-left-mouse-button-press
  * @param {MouseEvent} mouseEvent

@@ -13,7 +13,6 @@ import {
     ColumnController,
     Constants,
     CsvExportParams,
-    CsvUtils,
     Events,
     EventService,
     FlashCellsEvent,
@@ -98,7 +97,7 @@ export class ClipboardService implements IClipboardService {
 
                 if (_.missingOrEmpty(data)) { return; }
 
-                let parsedData = CsvUtils.stringToArray(data, this.gridOptionsWrapper.getClipboardDeliminator());
+                let parsedData = _.stringToArray(data, this.gridOptionsWrapper.getClipboardDeliminator());
 
                 const userFunc = this.gridOptionsWrapper.getProcessDataFromClipboardFunc();
 
@@ -458,7 +457,7 @@ export class ClipboardService implements IClipboardService {
             this.focusController.setFocusedCell(
                 focusedCell.rowIndex,
                 focusedCell.column,
-                focusedCell.rowPinned, 
+                focusedCell.rowPinned,
                 true
             );
         }

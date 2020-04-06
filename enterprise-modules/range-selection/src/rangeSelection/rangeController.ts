@@ -92,7 +92,7 @@ export class RangeController implements IRangeController {
             // remove hidden cols from cell range
             cellRange.columns = cellRange.columns.filter(col => col.isVisible());
 
-            const colsInRangeChanged = !_.compareArrays(beforeCols, cellRange.columns);
+            const colsInRangeChanged = !_.areEqual(beforeCols, cellRange.columns);
 
             if (colsInRangeChanged) {
                 // notify users and other parts of grid (i.e. status panel) that range has changed

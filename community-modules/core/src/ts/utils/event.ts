@@ -75,18 +75,19 @@ export function getCellCompForEvent(gridOptionsWrapper: GridOptionsWrapper, even
 }
 
 /**
+ * @deprecated
  * Adds all type of change listeners to an element, intended to be a text field
  * @param {HTMLElement} element
  * @param {EventListener} listener
  */
 export function addChangeListener(element: HTMLElement, listener: EventListener) {
-    element.addEventListener("changed", listener);
-    element.addEventListener("paste", listener);
-    element.addEventListener("input", listener);
+    element.addEventListener('changed', listener);
+    element.addEventListener('paste', listener);
+    element.addEventListener('input', listener);
     // IE doesn't fire changed for special keys (eg delete, backspace), so need to
     // listen for this further ones
-    element.addEventListener("keydown", listener);
-    element.addEventListener("keyup", listener);
+    element.addEventListener('keydown', listener);
+    element.addEventListener('keyup', listener);
 }
 
 /**

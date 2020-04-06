@@ -307,7 +307,7 @@ export class CellComp extends Component implements TooltipParentComp {
     private onDisplayColumnsChanged(): void {
         const colsSpanning: Column[] = this.getColSpanningList();
 
-        if (!_.compareArrays(this.colsSpanning, colsSpanning)) {
+        if (!_.areEqual(this.colsSpanning, colsSpanning)) {
             this.colsSpanning = colsSpanning;
             this.onWidthChanged();
             this.onLeftChanged(); // left changes when doing RTL

@@ -225,6 +225,7 @@ export function clearElement(el: HTMLElement): void {
     while (el && el.firstChild) { el.removeChild(el.firstChild); }
 }
 
+/** @deprecated */
 export function removeElement(parent: HTMLElement, cssSelector: string) {
     removeFromParent(parent.querySelector(cssSelector));
 }
@@ -236,7 +237,7 @@ export function removeFromParent(node: Element | null) {
 }
 
 export function isVisible(element: HTMLElement) {
-    return (element.offsetParent !== null);
+    return element.offsetParent !== null;
 }
 
 /**
@@ -265,6 +266,7 @@ export function appendHtml(eContainer: HTMLElement, htmlTemplate: string) {
     }
 }
 
+/** @deprecated */
 export function getElementAttribute(element: any, attributeName: string): string | null {
     if (element.attributes && element.attributes[attributeName]) {
         const attribute = element.attributes[attributeName];
@@ -341,6 +343,7 @@ export function insertTemplateWithDomOrder(
     return res;
 }
 
+/** @deprecated */
 export function prependDC(parent: HTMLElement, documentFragment: DocumentFragment): void {
     if (exists(parent.firstChild)) {
         parent.insertBefore(documentFragment, parent.firstChild);
@@ -405,7 +408,7 @@ export function setFixedHeight(element: HTMLElement, height: string | number) {
 }
 
 export function formatSize(size: number | string) {
-    if (typeof size === "number") {
+    if (typeof size === 'number') {
         return `${size}px`;
     }
 
@@ -420,9 +423,9 @@ export function formatSize(size: number | string) {
  */
 export function isNode(o: any): boolean {
     return (
-        typeof Node === "function"
+        typeof Node === 'function'
             ? o instanceof Node
-            : o && typeof o === "object" && typeof o.nodeType === "number" && typeof o.nodeName === "string"
+            : o && typeof o === 'object' && typeof o.nodeType === 'number' && typeof o.nodeName === 'string'
     );
 }
 
@@ -435,9 +438,9 @@ export function isNode(o: any): boolean {
  */
 export function isElement(o: any): boolean {
     return (
-        typeof HTMLElement === "function"
+        typeof HTMLElement === 'function'
             ? o instanceof HTMLElement //DOM2
-            : o && typeof o === "object" && o !== null && o.nodeType === 1 && typeof o.nodeName === "string"
+            : o && typeof o === 'object' && o !== null && o.nodeType === 1 && typeof o.nodeName === 'string'
     );
 }
 
@@ -470,6 +473,7 @@ export function iterateNamedNodeMap(map: NamedNodeMap, callback: (key: string, v
     }
 }
 
+/** @deprecated */
 export function setCheckboxState(eCheckbox: HTMLInputElement, state: any) {
     if (typeof state === 'boolean') {
         eCheckbox.checked = state;
