@@ -22,18 +22,24 @@ export class FocusController {
 
     private focusedCellPosition: CellPosition;
     private keyboardFocusActive: boolean = false;
+    private clearFocusedCellListener: any;
+    private activateKeyboardModeListener: any;
+    private activateMouseModeListener: any;
 
     @PostConstruct
     private init(): void {
         const eDocument = this.gridOptionsWrapper.getDocument();
 
-        this.eventService.addEventListener(Events.EVENT_COLUMN_PIVOT_MODE_CHANGED, this.clearFocusedCell.bind(this));
-        this.eventService.addEventListener(Events.EVENT_COLUMN_EVERYTHING_CHANGED, this.clearFocusedCell.bind(this));
-        this.eventService.addEventListener(Events.EVENT_COLUMN_GROUP_OPENED, this.clearFocusedCell.bind(this));
-        this.eventService.addEventListener(Events.EVENT_COLUMN_ROW_GROUP_CHANGED, this.clearFocusedCell.bind(this));
+        this.clearFocusedCellListener = this.clearFocusedCell.bind(this);
+        this.eventService.addEventListener(Events.EVENT_COLUMN_PIVOT_MODE_CHANGED, this.clearFocusedCellListener);
+        this.eventService.addEventListener(Events.EVENT_COLUMN_EVERYTHING_CHANGED, this.clearFocusedCellListener);
+        this.eventService.addEventListener(Events.EVENT_COLUMN_GROUP_OPENED, this.clearFocusedCellListener);
+        this.eventService.addEventListener(Events.EVENT_COLUMN_ROW_GROUP_CHANGED, this.clearFocusedCellListener);
 
-        eDocument.addEventListener('keydown', this.activateKeyboardMode.bind(this));
-        eDocument.addEventListener('mousedown', this.activateMouseMode.bind(this));
+        this.activateKeyboardModeListener = this.activateKeyboardMode.bind(this);
+        eDocument.addEventListener('keydown', this.activateKeyboardModeListener);
+        this.activateMouseModeListener = this.activateMouseMode.bind(this);
+        eDocument.addEventListener('mousedown', this.activateMouseModeListener);
 
         // we used to remove focus when moving column, am not sure why. so taking this out and see who complains.
         // we can delete these three lines of code soon.
@@ -172,13 +178,14 @@ export class FocusController {
 
     @PreDestroy
     destroy(): void {
-        this.eventService.removeEventListener(Events.EVENT_COLUMN_PIVOT_MODE_CHANGED, this.clearFocusedCell.bind(this));
-        this.eventService.removeEventListener(Events.EVENT_COLUMN_EVERYTHING_CHANGED, this.clearFocusedCell.bind(this));
-        this.eventService.removeEventListener(Events.EVENT_COLUMN_GROUP_OPENED, this.clearFocusedCell.bind(this));
-        this.eventService.removeEventListener(Events.EVENT_COLUMN_ROW_GROUP_CHANGED, this.clearFocusedCell.bind(this));
+        debugger
+        this.eventService.removeEventListener(Events.EVENT_COLUMN_PIVOT_MODE_CHANGED, this.clearFocusedCellListener);
+        this.eventService.removeEventListener(Events.EVENT_COLUMN_EVERYTHING_CHANGED, this.clearFocusedCellListener);
+        this.eventService.removeEventListener(Events.EVENT_COLUMN_GROUP_OPENED, this.clearFocusedCellListener);
+        this.eventService.removeEventListener(Events.EVENT_COLUMN_ROW_GROUP_CHANGED, this.clearFocusedCellListener);
 
         const eDocument = this.gridOptionsWrapper.getDocument();
-        eDocument.removeEventListener('keydown', this.activateKeyboardMode.bind(this));
-        eDocument.removeEventListener('mousedown', this.activateMouseMode.bind(this));
+        eDocument.removeEventListener('keydown', this.activateKeyboardModeListener);
+        eDocument.removeEventListener('mousedown', this.activateMouseModeListener);
     }
 }
