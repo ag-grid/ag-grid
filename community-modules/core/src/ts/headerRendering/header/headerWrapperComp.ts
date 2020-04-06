@@ -298,7 +298,7 @@ export class HeaderWrapperComp extends Component {
         if (this.gridOptionsWrapper.isEnableBrowserTooltips()) {
             this.getGui().setAttribute('title', tooltipText);
         } else {
-            this.addFeature(new TooltipFeature(this));
+            this.addFeature(new TooltipFeature(this, 'header'));
         }
     }
 

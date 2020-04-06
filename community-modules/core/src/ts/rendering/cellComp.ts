@@ -219,7 +219,7 @@ export class CellComp extends Component implements TooltipParentComp {
         this.refreshHandle();
 
         if (_.exists(this.tooltip) && !this.beans.gridOptionsWrapper.isEnableBrowserTooltips()) {
-            this.addFeature(new TooltipFeature(this), this.beans.context);
+            this.addFeature(new TooltipFeature(this, 'cell'), this.beans.context);
         }
     }
 
@@ -719,8 +719,7 @@ export class CellComp extends Component implements TooltipParentComp {
                 valueFormatted: this.valueFormatted,
                 rowIndex: this.cellPosition.rowIndex,
                 node: this.rowNode,
-                data: this.rowNode.data,
-                $scope: this.scope,
+                data: this.rowNode.data
             });
         }
 

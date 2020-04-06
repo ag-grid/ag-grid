@@ -7,12 +7,12 @@ export interface ITooltipParams {
     colDef: any;
     column: any;
     context: any;
+    location?: string;
     value?: any;
     valueFormatted?: any;
     rowIndex?: number;
     node?: any;
     data?: any;
-    $scope?: any;
 }
 
 export interface ITooltipComp extends IComponent<ITooltipParams> { }

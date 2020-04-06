@@ -30,6 +30,7 @@ SNIPPET
 
 <?= createSnippet(<<<SNIPPET
 interface ITooltipParams {
+    location: string; // what part of the application is showing the tooltip, eg 'cell', 'header', 'menuItem' etc
     api: any; // the grid API
     columnApi: any; // the column API
     colDef: any; // the grid colDef
@@ -43,7 +44,6 @@ interface ITooltipParams {
     rowIndex?: number; // the index of the row containing the cell rendering the tooltip
     node?: any; // the row node
     data?: any; // the row node data
-    \$scope?: any; // the cell component scope
 }
 SNIPPET
 , 'ts') ?>

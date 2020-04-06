@@ -38,6 +38,8 @@ export class TooltipFeature extends BeanStub {
     @Autowired('gridApi') private gridApi: GridApi;
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
 
+    private readonly location: string;
+
     private tooltipShowDelay: number;
 
     private parentComp: TooltipParentComp;
@@ -58,9 +60,10 @@ export class TooltipFeature extends BeanStub {
 
     private tooltipMouseTrack: boolean = false;
 
-    constructor(parentComp: TooltipParentComp) {
+    constructor(parentComp: TooltipParentComp, location: string) {
         super();
         this.parentComp = parentComp;
+        this.location = location;
     }
 
     @PostConstruct
@@ -176,6 +179,7 @@ export class TooltipFeature extends BeanStub {
         this.tooltipInstanceCount++;
 
         const params: ITooltipParams = {
+            location: this.location,
             api: this.gridApi,
             columnApi: this.columnApi,
             colDef: this.parentComp.getComponentHolder(),
