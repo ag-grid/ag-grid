@@ -261,6 +261,13 @@ export abstract class RowNodeCache<T extends IRowNodeBlock, P extends RowNodeCac
     // gets called 1) row count changed 2) cache purged 3) items inserted
     protected onCacheUpdated(): void {
         if (this.isActive()) {
+
+            // if the virtualRowCount is shortened, then it's possible blocks exist that are no longer
+            // in the valid range. so we must remove these. this can happen if user explicitly sets
+            // the virtual row count, or the datasource returns a result and sets lastRow to something
+            // less than virtualRowCount (can happen if user scrolls down, server reduces dataset size).
+            this.destroyAllBlocksPastVirtualRowCount();
+
             // this results in both row models (infinite and server side) firing ModelUpdated,
             // however server side row model also updates the row indexes first
             const event: CacheUpdatedEvent = {
@@ -270,15 +277,22 @@ export abstract class RowNodeCache<T extends IRowNodeBlock, P extends RowNodeCac
         }
     }
 
+    private destroyAllBlocksPastVirtualRowCount(): void {
+        const blocksToDestroy: T[] = [];
+        this.forEachBlockInOrder( (block: T, id: number) => {
+            const startRow = id * this.cacheParams.blockSize;
+            if (startRow >= this.virtualRowCount) {
+                blocksToDestroy.push(block);
+            }
+        });
+        if (blocksToDestroy.length > 0) {
+            blocksToDestroy.forEach( block => this.destroyBlock(block) );
+        }
+    }
+
     public purgeCache(): void {
         this.forEachBlockInOrder(block => this.removeBlockFromCache(block));
-
-        if (this.virtualRowCount === 0) {
-            // re-initialise cache - this ensures a cache with no rows can reload when purged!
-            this.virtualRowCount = this.cacheParams.initialRowCount;
-            this.maxRowFound = false;
-        }
-
+        this.maxRowFound = false;
         this.onCacheUpdated();
     }
 

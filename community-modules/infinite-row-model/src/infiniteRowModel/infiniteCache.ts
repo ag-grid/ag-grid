@@ -36,9 +36,6 @@ export class InfiniteCache extends RowNodeCache<InfiniteBlock, InfiniteCachePara
     @PostConstruct
     protected init(): void {
         super.init();
-        // start load of data, as the virtualRowCount will remain at 0 otherwise,
-        // so we need this to kick things off, otherwise grid would never call getRow()
-        this.getRow(0);
     }
 
     private moveItemsDown(block: InfiniteBlock, moveFromIndex: number, moveCount: number): void {
