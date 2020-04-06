@@ -5,8 +5,8 @@ CustomTooltip.prototype.init = function(params) {
 
     eGui.classList.add('custom-tooltip');
 
-    if (params.rowIndex != null) {
-        eGui.innerHTML = '<strong>Row ' + params.rowIndex + ':</strong> ' + params.value;
+    if (params.location === 'setFilterValue') {
+        eGui.innerHTML = '<strong>Full value:</strong> ' + params.value;
     } else {
         eGui.innerHTML = params.value;
     }
