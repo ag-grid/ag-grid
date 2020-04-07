@@ -242,6 +242,8 @@ export interface ColDef extends AbstractColDef {
     template?: string;
     /** Cell template URL to load template from to use for cell. Useful for AngularJS cells. */
     templateUrl?: string;
+    /** The delay in ms to show up the tooltip (default: 2000) */
+    tooltipShowDelay?: number;
     /** one of the built in filter names: [set, number, text], or a filter function*/
     filter?: string | {
         new (): IFilterComp;
