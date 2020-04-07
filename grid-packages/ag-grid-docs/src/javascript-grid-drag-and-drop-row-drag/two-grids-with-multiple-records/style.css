@@ -1,0 +1,21 @@
+.outer {
+    height: 100%;
+    display: flex;
+}
+
+.panel {
+    flex: 1 1 50%;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.panel-body {
+    flex: 1 1 auto;
+    overflow: hidden;
+    padding: 0;
+}
+
+.panel-body > div {
+    height: 100%;
+}

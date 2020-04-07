@@ -85,4 +85,12 @@ include '../documentation-main/documentation_header.php';
 
     <?= grid_example('Two Grids with Drop Position', 'two-grids-with-drop-position', 'vanilla', ['extras' => ['fontawesome']]) ?>
 
+    <h2>Dragging multiple records between grids</h2>
+    
+    <p>
+        It is possible to drag multiple records at once from one grid to another and drop them at a specific index in the second grid.
+    </p>
+
+    <?= grid_example('Multipe Records with Drop Position', 'two-grids-with-multiple-records', 'vanilla', ['extras' => ['fontawesome', 'bootstrap']]) ?>
+
 <?php include '../documentation-main/documentation_footer.php'; ?>

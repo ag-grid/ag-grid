@@ -158,6 +158,8 @@ export class RowDragFeature implements DropTarget {
             });
             this.moveRows(rowNodes, pixel, increment);
         } else {
+            const getRowNodeId = this.gridOptionsWrapper.getRowNodeIdFunc();
+
             let addIndex = this.clientSideRowModel.getRowIndexAtPixel(pixel) + 1;
 
             if (this.clientSideRowModel.getHighlightPosition(pixel) === 'above') {
@@ -165,7 +167,11 @@ export class RowDragFeature implements DropTarget {
             }
 
             this.clientSideRowModel.updateRowData({
-                add: rowNodes.map(node => node.data).filter(data => !this.clientSideRowModel.getRowNode(data.id)),
+                add: rowNodes
+                    .map(node => node.data)
+                    .filter(data => !this.clientSideRowModel.getRowNode(
+                        getRowNodeId ? getRowNodeId(data) : data.id)
+                    ),
                 addIndex
             });
         }
@@ -316,7 +322,7 @@ export class RowDragFeature implements DropTarget {
         this.ensureIntervalCleared();
 
         if (this.isFromThisGrid(draggingEvent)) {
-            this.getRowNodes(draggingEvent).forEach((rowNode, idx) => {
+            this.getRowNodes(draggingEvent).forEach(rowNode => {
                 rowNode.setDragging(false);
             });
         }

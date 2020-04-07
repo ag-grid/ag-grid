@@ -214,7 +214,7 @@ export interface ColDef extends AbstractColDef {
     rowDrag?: boolean | ((params: any) => boolean);
 
     /** To configure the text to be displayed in the floating div while dragging a row when rowDrag is true */
-    rowDragText?: ((params: IRowDragItem) => string);
+    rowDragText?: ((params: IRowDragItem, dragItemCount: number) => string);
 
     /** For native drag and drop, set to true to enable drag source */
     dndSource?: boolean | ((params: any) => boolean);

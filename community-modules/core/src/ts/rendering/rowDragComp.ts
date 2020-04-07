@@ -67,7 +67,7 @@ export class RowDragComp extends Component {
         const dragItem: IRowDragItem = {
             rowNode: this.rowNode,
             columns: [this.column],
-            defaultTextValue: this.cellValue
+            defaultTextValue: this.cellValue,
         };
 
         const rowDragText = this.column.getColDef().rowDragText;
@@ -76,13 +76,12 @@ export class RowDragComp extends Component {
             type: DragSourceType.RowDrag,
             eElement: this.getGui(),
             dragItemName: () => {
+                const dragItemCount = this.getSelectedCount();
                 if (rowDragText) {
-                    return rowDragText(dragItem);
+                    return rowDragText(dragItem, dragItemCount);
                 }
 
-                const count = this.getSelectedCount();
-
-                return count === 1 ? this.cellValue : `${count} rows`;
+                return dragItemCount === 1 ? this.cellValue : `${dragItemCount} rows`;
             },
             getDragItem: () => dragItem,
             dragStartPixels: 0
