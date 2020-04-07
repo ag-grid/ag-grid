@@ -1,6 +1,7 @@
 var leftColumnDefs = [
     {   rowDrag: true,
         maxWidth: 50,
+        suppressMenu: true,
         rowDragText: function(params, dragItemCount) {
             if (dragItemCount > 1) {
                 return dragItemCount + ' athletes'
@@ -10,7 +11,9 @@ var leftColumnDefs = [
     },
     {
         maxWidth: 50,
-        checkboxSelection: true
+        checkboxSelection: true,
+        suppressMenu: true,
+        headerCheckboxSelection: true
     },
     { field: "athlete" },
     { field: "sport" }
@@ -19,6 +22,7 @@ var leftColumnDefs = [
 var rightColumnDefs = [
     {   rowDrag: true,
         maxWidth: 50,
+        suppressMenu: true,
         rowDragText: function(params, dragItemCount) {
             if (dragItemCount > 1) {
                 return dragItemCount + ' athletes'
@@ -27,7 +31,24 @@ var rightColumnDefs = [
         },
     },
     { field: "athlete" },
-    { field: "sport" }
+    { field: "sport" },
+    { 
+        suppressMenu: true,
+        maxWidth: 50,
+        cellRenderer: function(params) {
+            var button = document.createElement('i');
+
+            button.addEventListener('click', function() {
+                params.api.updateRowData({ remove: [params.node.data] });
+            });
+
+            button.classList.add('far');
+            button.classList.add('fa-trash-alt');
+            button.style.cursor = 'pointer';
+
+            return button;
+        }
+    }
 ];
 
 var gridOptions = {
