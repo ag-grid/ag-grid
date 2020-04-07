@@ -19,7 +19,7 @@
     }
 
     .ag-menu-option-active {
-        background-color: ag-param(row-hover-color);
+        @include ag-color-property(background-color, row-hover-color);
     }
 
     .ag-menu-option-disabled {
@@ -84,16 +84,17 @@
     }
 
     .ag-keyboard-focus .ag-tab:focus {
-        outline: 1px solid ag-param(input-focus-border-color);
+        outline: 1px solid;
+        @include ag-color-property(outline, input-focus-border-color);
         outline-offset: -4px;
     }
 
     .ag-tab-selected {
-        border-bottom-color: ag-param(selected-tab-underline-color);
+        @include ag-color-property(border-bottom-color, selected-tab-underline-color);
     }
 
     .ag-menu-header {
-        color: ag-param(secondary-foreground-color);
+        @include ag-color-property(color, secondary-foreground-color);
     }
 
     ////////////////////////////////////////

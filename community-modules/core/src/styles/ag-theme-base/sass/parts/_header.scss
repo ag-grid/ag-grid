@@ -2,12 +2,12 @@
 @mixin ag-theme-base-part-header {
     
     .ag-header {
-        background-color: ag-param(header-background-color);
+        @include ag-color-property(background-color, header-background-color);
         @include ag-border(critical, bottom);
     }
     
     .ag-header-row {
-        color: ag-param(header-foreground-color);
+        @include ag-color-property(color, header-foreground-color);
     }
 
     .ag-pinned-right-header {
@@ -36,12 +36,12 @@
         padding-right: ag-param(cell-horizontal-padding);
         
         &.ag-header-cell-moving {
-            background-color: ag-param(header-cell-moving-background-color);
+            @include ag-color-property(background-color, header-cell-moving-background-color);
         }
     }
 
     .ag-header-icon {
-        color: ag-param(secondary-foreground-color);
+        @include ag-color-property(color, secondary-foreground-color);
     }
 
     .ag-header-expand-icon {
@@ -63,10 +63,10 @@
     .ag-header-cell:not(.ag-column-resizing) + .ag-header-cell,
     .ag-header-group-cell:first-of-type,
     .ag-header-cell:first-of-type {
-        @if (ag-param(header-cell-hover-background-color) and ag-param(header-background-color) != ag-param(header-cell-hover-background-color)) {
+        @if (ag-params-are-different(header-cell-hover-background-color, header-background-color)) {
             &:hover,
             &.ag-column-resizing {
-                background-color: ag-param(header-cell-hover-background-color);
+                @include ag-color-property(background-color, header-cell-hover-background-color);
             }
         }
     }
@@ -81,7 +81,7 @@
             width: ag-param(header-column-separator-width);
             height: ag-param(header-column-separator-height);
             top: calc(50% - #{ag-param(header-column-separator-height) / 2});
-            background-color: ag-param(header-column-separator-color);
+            @include ag-color-property(background-color, header-column-separator-color);
 
             @include ag-theme-rtl(( right: 0 ));
         }
@@ -102,7 +102,7 @@
             width: ag-param(header-column-resize-handle-width);
             height: ag-param(header-column-resize-handle-height);
             top: calc(50% - #{ag-param(header-column-resize-handle-height) / 2});
-            background-color: ag-param(header-column-resize-handle-color);
+            @include ag-color-property(background-color, header-column-resize-handle-color);
         }
 
         .ag-pinned-right-header .ag-header-cell-resize::after {
@@ -120,7 +120,7 @@
         text-overflow: ellipsis;
         z-index: 10;
         @include ag-border(secondary);
-        color: ag-param(secondary-foreground-color);
+        @include ag-color-property(color, secondary-foreground-color);
         height: ag-param(header-height) !important;
         line-height: ag-param(header-height);
         margin: 0;
@@ -130,7 +130,7 @@
 
     .ag-dnd-ghost-icon {
         margin-right: ag-param(grid-size);
-        color: ag-param(foreground-color);
+        @include ag-color-property(color, foreground-color);
     }
     
     .ag-floating-filter-button {
@@ -148,7 +148,7 @@
     }
 
     .ag-filter-loading {
-        background-color: ag-param(control-panel-background-color);
+        @include ag-color-property(background-color, control-panel-background-color);
         height: 100%;
         padding: 5px;
         position: absolute;

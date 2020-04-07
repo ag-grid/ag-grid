@@ -1,7 +1,8 @@
 @mixin ag-theme-base-part-date-time {
 
     .ag-date-time-list-page-entry-is-padding {
-        color: rgba(ag-param(foreground-color), 0.5);
+        // TODO apply padding style (greyed out) in theme css, using
+        // mixin like for ag-native-inputs()
     }
 
     .ag-date-time-list-page-title {

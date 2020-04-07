@@ -33,11 +33,11 @@
     }
 
     .ag-value-change-delta-up {
-        color: ag-param(value-change-delta-up-color);
+        @include ag-color-property(color, value-change-delta-up-color);
     }
 
     .ag-value-change-delta-down {
-        color: ag-param(value-change-delta-down-color);
+        @include ag-color-property(color, value-change-delta-down-color);
     }
 
     .ag-value-change-value {
@@ -49,12 +49,12 @@
     }
 
     .ag-value-change-value-highlight {
-        background-color: ag-param(value-change-value-highlight-background-color);
+        @include ag-color-property(background-color, value-change-value-highlight-background-color);
         transition: background-color 0.1s;
     }
 
     .ag-cell-data-changed {
-        background-color: ag-param(value-change-value-highlight-background-color) !important;
+        @include ag-color-property(background-color, value-change-value-highlight-background-color, $important: true);
     }
 
     .ag-cell-data-changed-animation {
@@ -63,7 +63,7 @@
     }
 
     .ag-cell-highlight {
-        background-color: ag-param(range-selection-highlight-color) !important;
+        @include ag-color-property(background-color, range-selection-highlight-color, $important: true);
     }
 
     .ag-cell-highlight-animation {
@@ -72,14 +72,15 @@
 
     .ag-row {
         height: ag-param(row-height);
-        background-color: ag-param(background-color);
-        color: ag-param(data-color);
+        @include ag-color-property(background-color, background-color);
+        @include ag-color-property(color, data-color);
         
-        @if ag-param(row-border-color) and ag-param(borders-critical) {
+        @if ag-param-is-set(row-border-color) and ag-param(borders-critical) {
             // NOTE: we define border-width and border-color at .ag-row level and only set
             // border-style inside nested pseudoclass selectors, to allow derived themes
             // to override border-width on .ag-row
-            border: none 1px ag-param(row-border-color);
+            border-width: 1px;
+            @include ag-color-property(border-color, row-border-color);
 
             &:not(.ag-row-first) {
                 border-top-style: solid;
@@ -95,7 +96,7 @@
         position: absolute;
         width: calc(100% - 1px);
         height: 1px;
-        background-color: ag-param(range-selection-border-color);
+        @include ag-color-property(background-color, range-selection-border-color);
         left: 1px;
     }
 
@@ -111,10 +112,8 @@
         bottom: 0px;
     }
 
-    @if ag-param(odd-row-background-color) {
-        .ag-row-odd {
-            background-color: ag-param(odd-row-background-color);
-        }
+    .ag-row-odd {
+        @include ag-color-property(background-color, odd-row-background-color);
     }
 
     // NOTE: these don't need an RTL version because the "left spacer" is always the one visually on the left
@@ -126,7 +125,7 @@
     }
 
     .ag-row-hover {
-        background-color: ag-param(row-hover-color);
+        @include ag-color-property(background-color, row-hover-color);
     }
 
     .ag-numeric-cell {
@@ -166,12 +165,12 @@
         @include ag-card();
         padding: 0;
         height: ag-param(row-height);
-        background-color: ag-param(control-panel-background-color);
+        @include ag-color-property(background-color, control-panel-background-color);
     }
 
     .ag-popup-editor {
         @include ag-card();
-        background-color: ag-param(control-panel-background-color);
+        @include ag-color-property(background-color, control-panel-background-color);
         padding: 0;
     }
 
@@ -182,11 +181,11 @@
 
     .ag-details-row {
         padding: ag-param(grid-size) * 5;
-        background-color: ag-param(background-color);
+        @include ag-color-property(background-color, background-color);
     }
 
     .ag-overlay-loading-wrapper {
-        background-color: rgba(ag-param(background-color), 0.66);
+        @include ag-color-property(background-color, modal-overlay-background-color);
     }
 
     .ag-overlay-loading-center {

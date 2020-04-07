@@ -2,6 +2,7 @@
 @import "./ag-theme-alpine-default-params";
 
 @mixin ag-theme-alpine($params: ()) {
+    $ag-require-all-colors-to-use-mixin: true !global;
     
     $params: ag-process-theme-variables($params, $ag-theme-alpine-default-params);
     @include ag-theme-base($params);
@@ -12,7 +13,7 @@
     .ag-header-row,
     .ag-panel-title-bar-title {
         font-weight: 700;
-        color: ag-param(header-foreground-color);
+        @include ag-color-property(color, header-foreground-color);
     }
 
     .ag-row {
@@ -33,15 +34,15 @@
         transition: color 0.4s;
     }
     .ag-tab-selected {
-        color: ag-param(alpine-active-color);
+        @include ag-color-property(color, alpine-active-color);
     }
 
     .ag-menu {
-        background-color: ag-param(control-panel-background-color);
+        @include ag-color-property(background-color, control-panel-background-color);
     }
 
     .ag-menu-header {
-        background-color: ag-param(control-panel-background-color);
+        @include ag-color-property(background-color, control-panel-background-color);
         padding-top: 1px; // hack to align column menu tab header border with header row border
     }
     
@@ -57,7 +58,7 @@
     }
 
     .ag-chart-mini-thumbnail {
-        background-color: ag-param(background-color);
+        @include ag-color-property(background-color, background-color);
     }
     
     .ag-chart-settings-nav-bar {
@@ -74,7 +75,8 @@
     }
 
     .ag-charts-format-sub-level-group {
-        border-left: dashed 1px ag-param(border-color);
+        border-left: dashed 1px;
+        @include ag-color-property(border-left-color, border-color);
         padding-left: ag-param(grid-size);
         margin-bottom: ag-param(grid-size) * 2;
     }
@@ -107,21 +109,22 @@
         appearance: none;
         -webkit-appearance: none;
         border-radius: ag-param(border-radius);
-        border: 1px solid ag-param(alpine-active-color);
-        color: ag-param(alpine-active-color);
-        background: ag-param(background-color);
+        border: 1px solid;
+        @include ag-color-property(border-color, alpine-active-color);
+        @include ag-color-property(color, alpine-active-color);
+        @include ag-color-property(background-color, background-color);
         font-weight: 600;
         padding: ag-param(grid-size) ag-param(grid-size) * 2;
     
         &:hover {
-            border-color: ag-param(alpine-active-color);
-            background-color: rgba(ag-param(alpine-active-color), 0.1);
+            @include ag-color-property(border-color, alpine-active-color);
+            @include ag-color-property(background-color, row-hover-color);
         }
     
         &:active {
-            border-color: ag-param(alpine-active-color);
-            background-color: ag-param(alpine-active-color);
-            color: ag-param(background-color);
+            @include ag-color-property(border-color, alpine-active-color);
+            @include ag-color-property(background-color, alpine-active-color);
+            @include ag-color-property(color, background-color);
         }
     }
 
@@ -146,13 +149,15 @@
     .ag-column-drop-vertical-empty-message {
         display: flex;
         align-items: center;
-        border: dashed 1px ag-param(border-color);
+        border: dashed 1px;
+        @include ag-color-property(border-color, border-color);
         margin: ag-param(grid-size) * 2;
         padding: ag-param(grid-size) * 2;
     }
 
     .ag-column-drop-empty-message {
-        color: rgba(ag-param(foreground-color), 0.75);
+        @include ag-color-property(color, foreground-color);
+        opacity: 0.75;
     }
 
     .ag-status-bar {
@@ -188,9 +193,10 @@
     .ag-group-title-bar-icon,
     .ag-column-select-header-icon,
     .ag-floating-filter-button-button,
-    .ag-filter-toolpanel-expand {
+    .ag-filter-toolpanel-expand,
+    .ag-chart-menu-icon {
         &:hover {
-            color: ag-param(alpine-active-color);
+            @include ag-color-property(color, alpine-active-color);
         }
     }
 
@@ -211,8 +217,9 @@
 
     .ag-filter-toolpanel-instance-filter {
         border: none;
-        background-color: ag-param(control-panel-background-color);
-        border-left: dashed 1px ag-param(border-color);
+        @include ag-color-property(background-color, control-panel-background-color);
+        border-left: dashed 1px;
+        @include ag-color-property(border-left-color, border-color);
         margin-left: ag-param(grid-size) + ag-param(icon-size) / 2 - 1px;
         padding-left: ag-param(icon-size) / 2;
         margin-right: ag-param(grid-size) * 2;
@@ -228,6 +235,7 @@
     }
 
     .ag-date-time-list-page-entry-is-current {
-        background-color: ag-param(alpine-active-color);
+        @include ag-color-property(background-color, alpine-active-color);
     }
+    $ag-require-all-colors-to-use-mixin: false !global;
 }

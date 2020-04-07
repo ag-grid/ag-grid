@@ -6,14 +6,14 @@
     }
 
     .ag-tool-panel-wrapper {
-        background-color: ag-param(control-panel-background-color);
+        @include ag-color-property(background-color, control-panel-background-color);
     }
 
     .ag-side-buttons {
         padding-top: ag-param(grid-size) * 4;
         width: ag-param(icon-size) + 4;
         position: relative;
-        color: ag-param(foreground-color);
+        @include ag-color-property(color, foreground-color);
         overflow: hidden;
     }
 
@@ -33,7 +33,9 @@
         background-repeat: no-repeat;
 
         border: none;
-        @include ag-border(side-button, (top, bottom), $color: transparent);
+        @include ag-border(side-button, (top, bottom));
+        $border-top-color: transparent;
+        $border-bottom-color: transparent;
 
         &:focus {
             box-shadow: none;
@@ -42,9 +44,9 @@
 
     .ag-selected .ag-side-button-button {
         @if ag-param(borders-side-button) {
-            background-color: ag-param(control-panel-background-color);
-            border-top-color: ag-param(border-color);
-            border-bottom-color: ag-param(border-color);
+            @include ag-color-property(background-color, control-panel-background-color);
+            @include ag-color-property(border-top-color, border-color);
+            @include ag-color-property(border-bottom-color, border-color);
         }
     }
 
@@ -74,7 +76,7 @@
         }
 
         .ag-selected .ag-side-button-button {
-            border-right-color: ag-param(selected-tab-underline-color);
+            @include ag-color-property(border-right-color, selected-tab-underline-color);
         }
     }
 
@@ -101,7 +103,7 @@
         }
 
         .ag-selected .ag-side-button-button {
-            border-left-color: ag-param(selected-tab-underline-color);
+            @include ag-color-property(border-left-color, selected-tab-underline-color);
         }
     }
     

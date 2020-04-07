@@ -9,19 +9,29 @@
     line-height: inherit;
 }
 
-@mixin ag-border($border-type, $sides: null, $radius: null, $width: 1px, $color: null, $style: solid, $none: false) {
+@mixin ag-border($border-type, $sides: null, $radius: null, $width: 1px, $style: solid, $none: false) {
     @if ag-should-draw-border($border-type) {
-        @if $color == null {
-            $color: if($border-type == secondary, ag-param(secondary-border-color), ag-param(border-color))
-        }
+        $color-param: if($border-type == secondary, secondary-border-color, border-color);
 
         @if $sides {
             @each $side in $sides {
-                border-#{$side}: if($none, none, $style $width $color);
+                @if $none {
+                    border-#{$side}: none;
+                }
+                @else {
+                    border-#{$side}: $style $width;
+                    @include ag-color-property(border-#{$side}-color, $color-param);
+                }
             }
         }
         @else {
-            border: if($none, none, $style $width $color);
+            @if $none {
+                border: none;
+            }
+            @else {
+                border: $style $width;
+                @include ag-color-property(border-color, $color-param);
+            }
         }
         @if $radius {
             border-radius: $radius;
@@ -53,7 +63,7 @@
 }
 
 @function ag-icon-char($name) {
-    $icon-map: ag-param-unchecked(icons-font-codes);
+    $icon-map: -ag-param-unchecked(icons-font-codes);
     @if type-of($icon-map) != map {
         @error "Expected icons-font-codes param to be a map, but got #{type-of($icon-map)} (#{inspect($icon-map)})";
     }
@@ -66,7 +76,7 @@
 @mixin ag-card() {
     @include ag-border(primary);
     
-    background: ag-param(background-color);
+    @include ag-color-property(background, background-color);
     border-radius: ag-param(card-radius);
     box-shadow: ag-param(card-shadow);
     padding: ag-param(grid-size);
@@ -171,18 +181,6 @@
 
 }
 
-@mixin ag-color-self-overlay($color, $times) {
-    $solidity: 1 - opacity($color);
-    $output-solidity: 1;
-    @if $times > 0 {
-        @for $i from 1 through $times {
-            $output-solidity: $output-solidity * $solidity;
-        }
-    }
-
-    background-color: rgba($color, 1 - $output-solidity);
-}
-
 $-ag-included-themes: () !default;
 
 @mixin ag-include-theme-once-only() {
@@ -191,4 +189,55 @@ $-ag-included-themes: () !default;
         @error "Theme CSS for #{$name} has been generated twice. This can happen when you @import ag-theme-xyz.scss twice, or @import the legacy ag-theme-xyz.scss and then also @include the ag-theme-xyz() mixin. If you're using the mixin, just @import ag-theme-xyz-mixin.scss.";
     }
     $-ag-included-themes: append($-ag-included-themes, $name) !global;
+}
+
+
+
+/**
+    Like ag-unthemed-rtl, automatically generate rtl styles from provided ltr styles by flipping
+    "left" and "right" in property names and values. However this mixin is for use in themes. Because the
+    div with the theme class is outside the div with the .ag-rtl class, we need to keep the theme class
+    higher than the .ag-rtl.
+
+    For example:
+
+    .ag-theme-xyz {
+        .foo {
+            @include ag-theme-rtl((margin-left: 10px));
+        }
+    }
+
+    Will emit:
+
+    .ag-theme-xyz .ag-ltr .foo {
+      margin-left: 10px;
+    }
+    .ag-theme-xyz .ag-rtl .foo {
+      margin-right: 10px;
+    }
+
+    Note how the .ag-ltr class is inserted between the theme class and the rest of the selector
+*/
+@mixin ag-theme-rtl($rules, $color-param: null) {
+    @if length(nth(&, 1)) < 2 {
+        @error "ag-theme-rtl() can't be used at the top level of a SCSS file, only nested in a selector.";
+    }
+    @at-root {
+        #{ag-insert-class-after-theme(&, ".ag-ltr")} {
+            @each $property, $value in $rules {
+                #{$property}: $value;
+                @if $color-param {
+                    @include ag-color-property(#{$property}-color, $color-param);
+                }
+            }
+        }
+        #{ag-insert-class-after-theme(&, ".ag-rtl")} {
+            @each $property, $value in ag-get-rtl-rules($rules) {
+                #{$property}: $value;
+                @if $color-param {
+                    @include ag-color-property(#{$property}-color, $color-param);
+                }
+            }
+        }
+    }
 }
