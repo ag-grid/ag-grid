@@ -194,7 +194,6 @@ export class ReactComponent extends BaseReactComponent {
                 this.eParentElement.removeChild(this.staticMarkup as any);
                 this.staticMarkup = null;
             }
-            this.staticMarkup = null;
         }
     }
 

@@ -536,10 +536,6 @@ The grouping documentation section contains plenty of real-world runnable exampl
 
 <p>You can find a <a href="/javascript-grid-themes-provided/">full list of theme parameters here</a>.</p>
 
-<snippet language="diff">
-
-</snippet>
-
 <p>If everything is configured correctly, the second row of the grid will get slightly darker. Congratulations!
 You now know now bend the grid look to your will - there are a few dozens more Sass variables that let you control the font family and size, border color,
 header background color and even the amount of spacing in the cells and columns. The full <a href="https://www.ag-grid.com/javascript-grid-themes-provided/#customising-themes">theme parameter list</a> is available in the themes documentation section.</p>
