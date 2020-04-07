@@ -14,15 +14,7 @@ export function firstExistingValue<A>(...values: A[]): A | null {
 
 /** @deprecated */
 export function anyExists(values: any[]): boolean {
-    if (values) {
-        for (let i = 0; i < values.length; i++) {
-            if (exists(values[i])) {
-                return true;
-            }
-        }
-    }
-
-    return false;
+    return values && firstExistingValue(values) != null;
 }
 
 export function existsAndNotEmpty<T>(value?: T[]): boolean {
@@ -35,16 +27,15 @@ export function last<T>(arr: T[]): T | undefined {
     return arr[arr.length - 1];
 }
 
-export function areEqual<T>(a: T[], b: T[]): boolean {
+export function areEqual<T>(a: T[], b: T[], comparator?: (a: T, b: T) => boolean): boolean {
     if (missing(a) && missing(b)) {
         return true;
     }
 
-    if (missing(a) || missing(b)) {
-        return false;
-    }
-
-    return a.length === b.length && a.every((value, index) => b[index] === value);
+    return !missing(a) &&
+        !missing(b) &&
+        a.length === b.length &&
+        a.every((value, index) => comparator ? comparator(value, b[index]) : b[index] === value);
 }
 
 /** @deprecated */

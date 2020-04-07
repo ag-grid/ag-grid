@@ -2,14 +2,14 @@ function getPersonFilter() {
     function PersonFilter() {
     }
 
-    PersonFilter.prototype.init = function (params) {
+    PersonFilter.prototype.init = function(params) {
         this.valueGetter = params.valueGetter;
         this.filterText = null;
         this.setupGui(params);
     };
 
     // not called by ag-Grid, just for us to help setup
-    PersonFilter.prototype.setupGui = function (params) {
+    PersonFilter.prototype.setupGui = function(params) {
         this.gui = document.createElement('div');
         this.gui.innerHTML =
             '<div style="padding: 4px;">' +
@@ -19,13 +19,13 @@ function getPersonFilter() {
             '</div>';
 
         this.eFilterText = this.gui.querySelector('#filterText');
-        this.eFilterText.addEventListener("changed", listener);
-        this.eFilterText.addEventListener("paste", listener);
-        this.eFilterText.addEventListener("input", listener);
+        this.eFilterText.addEventListener('changed', listener);
+        this.eFilterText.addEventListener('paste', listener);
+        this.eFilterText.addEventListener('input', listener);
         // IE doesn't fire changed for special keys (eg delete, backspace), so need to
         // listen for this further ones
-        this.eFilterText.addEventListener("keydown", listener);
-        this.eFilterText.addEventListener("keyup", listener);
+        this.eFilterText.addEventListener('keydown', listener);
+        this.eFilterText.addEventListener('keyup', listener);
 
         var that = this;
 
@@ -35,70 +35,63 @@ function getPersonFilter() {
         }
     };
 
-    PersonFilter.prototype.getGui = function () {
+    PersonFilter.prototype.getGui = function() {
         return this.gui;
     };
 
-    PersonFilter.prototype.doesFilterPass = function (params) {
+    PersonFilter.prototype.doesFilterPass = function(params) {
         // make sure each word passes separately, ie search for firstname, lastname
-        var passed = true;
         var valueGetter = this.valueGetter;
-        this.filterText.toLowerCase().split(" ").forEach(function (filterWord) {
-            var value = valueGetter(params);
-            if (value.toString().toLowerCase().indexOf(filterWord) < 0) {
-                passed = false;
-            }
+
+        return this.filterText.toLowerCase().split(' ').every(function(filterWord) {
+            return valueGetter(params).toString().toLowerCase().indexOf(filterWord) >= 0;
         });
-
-        return passed;
     };
 
-    PersonFilter.prototype.isFilterActive = function () {
-        var isActive = this.filterText !== null && this.filterText !== undefined && this.filterText !== '';
-        return isActive;
+    PersonFilter.prototype.isFilterActive = function() {
+        return this.filterText != null && this.filterText !== '';;
     };
 
-    PersonFilter.prototype.getApi = function () {
+    PersonFilter.prototype.getApi = function() {
         var that = this;
         return {
-            getModel: function () {
-                var model = {value: that.filterText.value};
-                return model;
+            getModel: function() {
+                return { value: that.filterText.value };
             },
-            setModel: function (model) {
+            setModel: function(model) {
                 that.eFilterText.value = model.value;
             }
         };
     };
 
-    PersonFilter.prototype.getModelAsString = function (model) {
-        return model ? model : '';
+    PersonFilter.prototype.getModelAsString = function(model) {
+        return model || '';
     };
 
-    PersonFilter.prototype.getModel = function () {
+    PersonFilter.prototype.getModel = function() {
         return this.filterText;
     };
     // lazy, the example doesn't use setModel()
-    PersonFilter.prototype.setModel = function () {
+    PersonFilter.prototype.setModel = function() {
     };
 
     return PersonFilter;
 }
 
 var columnDefs = [
-    { field: "athlete", filter: getPersonFilter(), suppressMenu: true },
-    { field: "age", filter: 'agNumberColumnFilter', suppressMenu: true },
-    { field: "country", filter: 'agSetColumnFilter', suppressMenu: true },
-    { field: "year", maxWidth: 120, filter: 'agNumberColumnFilter', suppressMenu: true },
+    { field: 'athlete', filter: getPersonFilter(), suppressMenu: true },
+    { field: 'age', filter: 'agNumberColumnFilter', suppressMenu: true },
+    { field: 'country', filter: 'agSetColumnFilter', suppressMenu: true },
+    { field: 'year', maxWidth: 120, filter: 'agNumberColumnFilter', floatingFilter: false, },
     {
-        field: "date",
+        field: 'date',
         minWidth: 215,
         filter: 'agDateColumnFilter',
         filterParams: {
-            comparator: function (filterLocalDateAtMidnight, cellValue) {
+            comparator: function(filterLocalDateAtMidnight, cellValue) {
                 var dateAsString = cellValue;
                 if (dateAsString == null) return -1;
-                var dateParts = dateAsString.split("/");
+                var dateParts = dateAsString.split('/');
                 var cellDate = new Date(Number(dateParts[2]), Number(dateParts[1]) - 1, Number(dateParts[0]));
 
                 if (filterLocalDateAtMidnight.getTime() == cellDate.getTime()) {
@@ -117,9 +110,9 @@ var columnDefs = [
         },
         suppressMenu: true
     },
-    { field: "sport", suppressMenu: true, filter: 'agTextColumnFilter' },
+    { field: 'sport', suppressMenu: true, filter: 'agTextColumnFilter' },
     {
-        field: "gold",
+        field: 'gold',
         filter: 'agNumberColumnFilter',
         filterParams: {
             applyButton: true
@@ -127,20 +120,20 @@ var columnDefs = [
         suppressMenu: true
     },
     {
-        field: "silver",
+        field: 'silver',
         filter: 'agNumberColumnFilter',
         floatingFilterComponentParams: {
             suppressFilterButton: true
         }
     },
     {
-        field: "bronze",
+        field: 'bronze',
         filter: 'agNumberColumnFilter',
         floatingFilterComponentParams: {
             suppressFilterButton: true
         }
     },
-    { field: "total", filter: false }
+    { field: 'total', filter: false }
 ];
 
 var gridOptions = {
@@ -150,8 +143,8 @@ var gridOptions = {
         minWidth: 150,
         filter: true,
         sortable: true,
+        floatingFilter: true,
     },
-    floatingFilter: true,
 };
 
 function irelandAndUk() {
@@ -342,7 +335,7 @@ function clearDateFilter() {
 
 
 // setup the grid after the page has finished loading
-document.addEventListener('DOMContentLoaded', function () {
+document.addEventListener('DOMContentLoaded', function() {
     var gridDiv = document.querySelector('#myGrid');
     new agGrid.Grid(gridDiv, gridOptions);
 
@@ -351,7 +344,7 @@ document.addEventListener('DOMContentLoaded', function () {
     var httpRequest = new XMLHttpRequest();
     httpRequest.open('GET', 'https://raw.githubusercontent.com/ag-grid/ag-grid/master/grid-packages/ag-grid-docs/src/olympicWinners.json');
     httpRequest.send();
-    httpRequest.onreadystatechange = function () {
+    httpRequest.onreadystatechange = function() {
         if (httpRequest.readyState === 4 && httpRequest.status === 200) {
             var httpResult = JSON.parse(httpRequest.responseText);
             gridOptions.api.setRowData(httpResult);

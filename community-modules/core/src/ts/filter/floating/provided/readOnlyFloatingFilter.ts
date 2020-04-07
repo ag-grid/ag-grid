@@ -1,20 +1,21 @@
-import { IFloatingFilterComp, IFloatingFilterParams } from "../floatingFilter";
-import { Component } from "../../../widgets/component";
-import { RefSelector } from "../../../widgets/componentAnnotations";
-import { AgInputTextField } from "../../../widgets/agInputTextField";
+import { IFloatingFilterComp, IFloatingFilterParams } from '../floatingFilter';
+import { Component } from '../../../widgets/component';
+import { RefSelector } from '../../../widgets/componentAnnotations';
+import { AgInputTextField } from '../../../widgets/agInputTextField';
 
 // optional floating filter for user provided filters - instead of providing a floating filter,
 // they can provide a getModelAsString() method on the filter instead. this class just displays
 // the string returned from getModelAsString()
 export class ReadOnlyFloatingFilter extends Component implements IFloatingFilterComp {
-
-    @RefSelector('eFloatingFilterText')
-    private eFloatingFilterText: AgInputTextField;
+    @RefSelector('eFloatingFilterText') private eFloatingFilterText: AgInputTextField;
 
     private params: IFloatingFilterParams;
 
     constructor() {
-        super(`<div class="ag-floating-filter-input" role="presentation"><ag-input-text-field ref="eFloatingFilterText"></ag-input-text-field></div>`);
+        super(/* html */`
+            <div class="ag-floating-filter-input" role="presentation">
+                <ag-input-text-field ref="eFloatingFilterText"></ag-input-text-field>
+            </div>`);
     }
 
     public init(params: IFloatingFilterParams): void {

@@ -1,24 +1,20 @@
-import { GridOptionsWrapper } from "../gridOptionsWrapper";
-import { Autowired, Context, PostConstruct, PreDestroy } from "../context/context";
-import { DragAndDropService, DropTarget } from "../dragAndDrop/dragAndDropService";
-import { ColumnController } from "../columnController/columnController";
-import { GridPanel } from "../gridPanel/gridPanel";
-import { EventService } from "../eventService";
-import { Events } from "../events";
-import { HeaderRowComp, HeaderRowType } from "./headerRowComp";
-import { BodyDropTarget } from "./bodyDropTarget";
-import { Column } from "../entities/column";
-import { ScrollVisibleService } from "../gridPanel/scrollVisibleService";
-import { Component } from "../widgets/component";
-import { _ } from "../utils";
-import {Constants} from "../constants";
+import { GridOptionsWrapper } from '../gridOptionsWrapper';
+import { Autowired, Context, PostConstruct, PreDestroy } from '../context/context';
+import { DropTarget } from '../dragAndDrop/dragAndDropService';
+import { ColumnController } from '../columnController/columnController';
+import { GridPanel } from '../gridPanel/gridPanel';
+import { EventService } from '../eventService';
+import { Events } from '../events';
+import { HeaderRowComp, HeaderRowType } from './headerRowComp';
+import { BodyDropTarget } from './bodyDropTarget';
+import { ScrollVisibleService } from '../gridPanel/scrollVisibleService';
+import { Component } from '../widgets/component';
+import { Constants } from '../constants';
+import { setFixedWidth, clearElement } from '../utils/dom';
 
 export class HeaderContainer {
-
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('context') private context: Context;
-    @Autowired('$scope') private $scope: any;
-    @Autowired('dragAndDropService') private dragAndDropService: DragAndDropService;
     @Autowired('columnController') private columnController: ColumnController;
     @Autowired('eventService') private eventService: EventService;
     @Autowired('scrollVisibleService') private scrollVisibleService: ScrollVisibleService;
@@ -103,11 +99,12 @@ export class HeaderContainer {
             // in the body, then we add extra space to keep header aligned with the body,
             // as body width fits the cols and the scrollbar
             const addPaddingForScrollbar = this.scrollVisibleService.isVerticalScrollShowing() && ((isRtl && pinningLeft) || (!isRtl && pinningRight));
+
             if (addPaddingForScrollbar) {
                 width += this.scrollWidth;
             }
 
-            _.setFixedWidth(this.eContainer, width);
+            setFixedWidth(this.eContainer, width);
         }
     }
 
@@ -149,11 +146,10 @@ export class HeaderContainer {
     }
 
     private removeHeaderRowComps(): void {
-        this.headerRowComps.forEach(headerRowComp => {
-            headerRowComp.destroy();
-        });
+        this.headerRowComps.forEach(headerRowComp => headerRowComp.destroy());
         this.headerRowComps.length = 0;
-        _.clearElement(this.eContainer);
+
+        clearElement(this.eContainer);
     }
 
     private createHeaderRowComps(): void {
@@ -171,15 +167,12 @@ export class HeaderContainer {
             this.eContainer.appendChild(headerRowComp.getGui());
         }
 
-        const includeFloatingFilterRow = this.gridOptionsWrapper.isFloatingFilter() && !this.columnController.isPivotMode();
-
-        if (includeFloatingFilterRow) {
-            const headerRowComp = new HeaderRowComp(rowCount, HeaderRowType.FLOATING_FILTER, this.pinned,  this.dropTarget);
+        if (!this.columnController.isPivotMode() && this.columnController.hasFloatingFilters()) {
+            const headerRowComp = new HeaderRowComp(rowCount, HeaderRowType.FLOATING_FILTER, this.pinned, this.dropTarget);
             this.context.wireBean(headerRowComp);
             this.headerRowComps.push(headerRowComp);
             headerRowComp.getGui().setAttribute('aria-rowindex', this.headerRowComps.length.toString());
             this.eContainer.appendChild(headerRowComp.getGui());
         }
     }
-
 }

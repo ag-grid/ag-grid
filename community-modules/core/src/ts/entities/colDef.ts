@@ -43,7 +43,7 @@ export interface AbstractColDef {
     /** Tooltip for the column header */
     headerTooltip?: string;
 
-    tooltipComponent?: { new(): ITooltipComp } | string;
+    tooltipComponent?: { new(): ITooltipComp; } | string;
     tooltipComponentFramework?: any;
     tooltipComponentParams?: any;
 }
@@ -58,7 +58,7 @@ export interface ColGroupDef extends AbstractColDef {
     /** If true, group cannot be broken up by column moving, child columns will always appear side by side, however you can rearrange child columns within the group */
     marryChildren?: boolean;
     /** The custom header group component to be used for rendering the component header. If none specified the default ag-Grid is used**/
-    headerGroupComponent?: string | { new(): IHeaderGroupComp };
+    headerGroupComponent?: string | { new(): IHeaderGroupComp; };
     /** The custom header group component to be used for rendering the component header in the hosting framework (ie: React/Angular). If none specified the default ag-Grid is used**/
     headerGroupComponentFramework?: any;
     /** The custom header group component to be used for rendering the component header. If none specified the default ag-Grid is used**/
@@ -150,19 +150,19 @@ export interface ColDef extends AbstractColDef {
     cellStyle?: {} | ((params: any) => {});
 
     /** A function for rendering a cell. */
-    cellRenderer?: { new(): ICellRendererComp } | ICellRendererFunc | string;
+    cellRenderer?: { new(): ICellRendererComp; } | ICellRendererFunc | string;
     cellRendererFramework?: any;
     cellRendererParams?: any;
     cellRendererSelector?: (params: ICellRendererParams) => ComponentSelectorResult;
 
     /** Cell editor */
-    cellEditor?: { new(): ICellEditorComp } | string ;
+    cellEditor?: { new(): ICellEditorComp; } | string;
     cellEditorFramework?: any;
     cellEditorParams?: any;
     cellEditorSelector?: (params: ICellEditorParams) => ComponentSelectorResult;
 
     /** A function for rendering a pinned row cell. */
-    pinnedRowCellRenderer?: { new(): ICellRendererComp } | ICellRendererFunc | string;
+    pinnedRowCellRenderer?: { new(): ICellRendererComp; } | ICellRendererFunc | string;
     pinnedRowCellRendererFramework?: any;
     pinnedRowCellRendererParams?: any;
 
@@ -220,7 +220,7 @@ export interface ColDef extends AbstractColDef {
     dndSource?: boolean | ((params: any) => boolean);
 
     /** For native drag and drop, set to true to allow custom onRowDrag processing */
-    dndSourceOnRowDrag?: ((params: {rowNode: RowNode, dragEvent: DragEvent}) => void);
+    dndSourceOnRowDrag?: ((params: { rowNode: RowNode, dragEvent: DragEvent; }) => void);
 
     /** Set to true if no menu should be shown for this column header. */
     suppressMenu?: boolean;
@@ -312,7 +312,7 @@ export interface ColDef extends AbstractColDef {
     templateUrl?: string;
 
     /** one of the built in filter names: [set, number, text], or a filter function*/
-    filter?: string | { new(): IFilterComp } | boolean;
+    filter?: string | { new(): IFilterComp; } | boolean;
 
     filterFramework?: any;
 
@@ -320,7 +320,7 @@ export interface ColDef extends AbstractColDef {
     filterParams?: any;
 
     /** Rules for applying css classes */
-    cellClassRules?: { [cssClassName: string]: (Function | string) };
+    cellClassRules?: { [cssClassName: string]: (Function | string); };
 
     /** Callbacks for editing.See editing section for further details. */
     onCellValueChanged?: Function;
@@ -335,7 +335,7 @@ export interface ColDef extends AbstractColDef {
     onCellContextMenu?: (event: CellContextMenuEvent) => void;
 
     /** Icons for this column. Leave blank to use default. */
-    icons?: { [key: string]: string };
+    icons?: { [key: string]: string; };
 
     /** If true, grid will flash cell after cell is refreshed */
     enableCellChangeFlash?: boolean;
@@ -347,18 +347,21 @@ export interface ColDef extends AbstractColDef {
     pivotTotalColumnIds?: string[];
 
     /** The custom header component to be used for rendering the component header. If none specified the default ag-Grid is used**/
-    headerComponent?: string | { new(): any };
+    headerComponent?: string | { new(): any; };
     /** The custom header component to be used for rendering the component header in the hosting framework (ie: React/Angular). If none specified the default ag-Grid is used**/
     headerComponentFramework?: any;
     /** The custom header component parameters**/
     headerComponentParams?: any;
 
+    /** Whether to display a floating filter for this column. */
+    floatingFilter?: boolean;
+
     /** The custom header component to be used for rendering the floating filter. If none specified the default ag-Grid is used**/
-    floatingFilterComponent?: string | { new(): IFloatingFilterComp };
+    floatingFilterComponent?: string | { new(): IFloatingFilterComp; };
     floatingFilterComponentParams?: any;
     floatingFilterComponentFramework?: any;
 
-    refData?: { [key: string]: string };
+    refData?: { [key: string]: string; };
 
     /** Defines the column data type used when charting, i.e. 'category' | 'series' | 'excluded' | undefined **/
     chartDataType?: string;

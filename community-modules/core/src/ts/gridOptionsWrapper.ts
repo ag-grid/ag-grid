@@ -1583,9 +1583,11 @@ export class GridOptionsWrapper {
             console.warn(
                 `ag-Grid: since v20, grid options enableColResize is gone. Instead set resizable=true on the column definition for the columns resizing are allowed on. To migrate from gridOption.enableColResize=true, set gridOptions.defaultColDef.resizable=true`
             );
+
             if (!options.defaultColDef) {
                 options.defaultColDef = {};
             }
+
             if (!options.defaultColDef.resizable) {
                 options.defaultColDef.resizable = true;
             }
@@ -1611,6 +1613,20 @@ export class GridOptionsWrapper {
             console.warn(
                 'ag-Grid: since v22.x, enableOldSetFilterModel is deprecated. Please move to the new Set Filter Model as the old one may not be supported in v23 onwards.'
             );
+        }
+
+        if (options.floatingFilter) {
+            console.warn(
+                'ag-Grid: since v23.1, floatingFilter on the gridOptions is deprecated. Please use floatingFilter on the colDef instead.'
+            );
+
+            if (!options.defaultColDef) {
+                options.defaultColDef = {};
+            }
+
+            if (options.defaultColDef.floatingFilter == null) {
+                options.defaultColDef.floatingFilter = true;
+            }
         }
     }
 

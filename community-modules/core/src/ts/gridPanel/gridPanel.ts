@@ -1,52 +1,52 @@
-import {GridOptionsWrapper} from "../gridOptionsWrapper";
-import {ColumnController} from "../columnController/columnController";
-import {ColumnApi} from "../columnController/columnApi";
-import {RowRenderer} from "../rendering/rowRenderer";
-import {Autowired, Optional, PostConstruct} from "../context/context";
-import {EventService} from "../eventService";
-import {BodyHeightChangedEvent, BodyScrollEvent, CellKeyDownEvent, CellKeyPressEvent, Events} from "../events";
-import {DragListenerParams, DragService} from "../dragAndDrop/dragService";
-import {IRangeController} from "../interfaces/iRangeController";
-import {Constants} from "../constants";
-import {MouseEventService} from "./mouseEventService";
-import {IClipboardService} from "../interfaces/iClipboardService";
-import {IContextMenuFactory} from "../interfaces/iContextMenuFactory";
-import {ScrollVisibleService, SetScrollsVisibleParams} from "./scrollVisibleService";
-import {Column} from "../entities/column";
-import {RowContainerComponent} from "../rendering/rowContainerComponent";
-import {RowNode} from "../entities/rowNode";
-import {PaginationProxy} from "../pagination/paginationProxy";
-import {PaginationAutoPageSizeService} from "../pagination/paginationAutoPageSizeService";
-import {PopupEditorWrapper} from "../rendering/cellEditors/popupEditorWrapper";
-import {AlignedGridsService} from "../alignedGridsService";
-import {GridApi} from "../gridApi";
-import {AnimationFrameService} from "../misc/animationFrameService";
-import {RowComp} from "../rendering/rowComp";
-import {NavigationService} from "./navigationService";
-import {CellComp} from "../rendering/cellComp";
-import {ValueService} from "../valueService/valueService";
-import {LongTapEvent, TouchListener} from "../widgets/touchListener";
-import {DragAndDropService} from "../dragAndDrop/dragAndDropService";
-import {RowDragFeature} from "./rowDragFeature";
-import {MaxDivHeightScaler} from "../rendering/maxDivHeightScaler";
-import {OverlayWrapperComponent} from "../rendering/overlays/overlayWrapperComponent";
-import {Component} from "../widgets/component";
-import {AutoHeightCalculator} from "../rendering/autoHeightCalculator";
-import {ColumnAnimationService} from "../rendering/columnAnimationService";
-import {AutoWidthCalculator} from "../rendering/autoWidthCalculator";
-import {Beans} from "../rendering/beans";
-import {RefSelector} from "../widgets/componentAnnotations";
-import {HeaderRootComp} from "../headerRendering/headerRootComp";
-import {ResizeObserverService} from "../misc/resizeObserverService";
-import {_} from "../utils";
-import {PinnedRowModel} from "../pinnedRowModel/pinnedRowModel";
-import {ModuleRegistry} from "../modules/moduleRegistry";
-import {ModuleNames} from "../modules/moduleNames";
-import {UndoRedoService} from "../undoRedo/undoRedoService";
+import { GridOptionsWrapper } from '../gridOptionsWrapper';
+import { ColumnController } from '../columnController/columnController';
+import { ColumnApi } from '../columnController/columnApi';
+import { RowRenderer } from '../rendering/rowRenderer';
+import { Autowired, Optional, PostConstruct } from '../context/context';
+import { EventService } from '../eventService';
+import { BodyHeightChangedEvent, BodyScrollEvent, CellKeyDownEvent, CellKeyPressEvent, Events } from '../events';
+import { DragListenerParams, DragService } from '../dragAndDrop/dragService';
+import { IRangeController } from '../interfaces/iRangeController';
+import { Constants } from '../constants';
+import { MouseEventService } from './mouseEventService';
+import { IClipboardService } from '../interfaces/iClipboardService';
+import { IContextMenuFactory } from '../interfaces/iContextMenuFactory';
+import { ScrollVisibleService, SetScrollsVisibleParams } from './scrollVisibleService';
+import { Column } from '../entities/column';
+import { RowContainerComponent } from '../rendering/rowContainerComponent';
+import { RowNode } from '../entities/rowNode';
+import { PaginationProxy } from '../pagination/paginationProxy';
+import { PaginationAutoPageSizeService } from '../pagination/paginationAutoPageSizeService';
+import { PopupEditorWrapper } from '../rendering/cellEditors/popupEditorWrapper';
+import { AlignedGridsService } from '../alignedGridsService';
+import { GridApi } from '../gridApi';
+import { AnimationFrameService } from '../misc/animationFrameService';
+import { RowComp } from '../rendering/rowComp';
+import { NavigationService } from './navigationService';
+import { CellComp } from '../rendering/cellComp';
+import { ValueService } from '../valueService/valueService';
+import { LongTapEvent, TouchListener } from '../widgets/touchListener';
+import { DragAndDropService } from '../dragAndDrop/dragAndDropService';
+import { RowDragFeature } from './rowDragFeature';
+import { MaxDivHeightScaler } from '../rendering/maxDivHeightScaler';
+import { OverlayWrapperComponent } from '../rendering/overlays/overlayWrapperComponent';
+import { Component } from '../widgets/component';
+import { AutoHeightCalculator } from '../rendering/autoHeightCalculator';
+import { ColumnAnimationService } from '../rendering/columnAnimationService';
+import { AutoWidthCalculator } from '../rendering/autoWidthCalculator';
+import { Beans } from '../rendering/beans';
+import { RefSelector } from '../widgets/componentAnnotations';
+import { HeaderRootComp } from '../headerRendering/headerRootComp';
+import { ResizeObserverService } from '../misc/resizeObserverService';
+import { _ } from "../utils";
+import { PinnedRowModel } from '../pinnedRowModel/pinnedRowModel';
+import { ModuleRegistry } from '../modules/moduleRegistry';
+import { ModuleNames } from '../modules/moduleNames';
+import { UndoRedoService } from '../undoRedo/undoRedoService';
 
 // in the html below, it is important that there are no white space between some of the divs, as if there is white space,
 // it won't render correctly in safari, as safari renders white space as a gap
-const GRID_PANEL_NORMAL_TEMPLATE =
+const GRID_PANEL_NORMAL_TEMPLATE = /* html */
     `<div class="ag-root ag-unselectable" role="grid" unselectable="on">
         <ag-header-root ref="headerRoot" unselectable="on"></ag-header-root>
         <div class="ag-floating-top" ref="eTop" role="presentation" unselectable="on">
@@ -102,7 +102,6 @@ export type RowContainerComponentNames =
 export type RowContainerComponents = { [K in RowContainerComponentNames]: RowContainerComponent };
 
 export class GridPanel extends Component {
-
     @Autowired('alignedGridsService') private alignedGridsService: AlignedGridsService;
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('columnController') private columnController: ColumnController;
@@ -195,7 +194,7 @@ export class GridPanel extends Component {
         this.resetLastHorizontalScrollElementDebounced = _.debounce(this.resetLastHorizontalScrollElement.bind(this), 500);
     }
 
-    public getVScrollPosition(): { top: number, bottom: number } {
+    public getVScrollPosition(): { top: number, bottom: number; } {
         const result = {
             top: this.eBodyViewport.scrollTop,
             bottom: this.eBodyViewport.scrollTop + this.eBodyViewport.offsetHeight
@@ -203,7 +202,7 @@ export class GridPanel extends Component {
         return result;
     }
 
-    public getHScrollPosition(): { left: number, right: number } {
+    public getHScrollPosition(): { left: number, right: number; } {
         const result = {
             left: this.eCenterViewport.scrollLeft,
             right: this.eCenterViewport.scrollLeft + this.eCenterViewport.offsetWidth
@@ -686,11 +685,11 @@ export class GridPanel extends Component {
 
     private onCtrlAndA(event: KeyboardEvent): void {
 
-        const {columnController, pinnedRowModel, paginationProxy, rangeController} = this;
-        const {PINNED_BOTTOM, PINNED_TOP} = Constants;
+        const { columnController, pinnedRowModel, paginationProxy, rangeController } = this;
+        const { PINNED_BOTTOM, PINNED_TOP } = Constants;
 
         if (rangeController && paginationProxy.isRowsToRender()) {
-            const  [isEmptyPinnedTop, isEmptyPinnedBottom] = [
+            const [isEmptyPinnedTop, isEmptyPinnedBottom] = [
                 pinnedRowModel.isEmpty(PINNED_TOP),
                 pinnedRowModel.isEmpty(PINNED_BOTTOM)
             ];
@@ -977,7 +976,7 @@ export class GridPanel extends Component {
                 newScrollPosition = alignColToLeft ? colLeftPixel : (colRightPixel - viewportWidth);
             }
             this.setCenterViewportScrollLeft(newScrollPosition);
-        }  else {
+        } else {
             // otherwise, col is already in view, so do nothing
         }
 
@@ -1066,20 +1065,20 @@ export class GridPanel extends Component {
             fullWidth: new RowContainerComponent({
                 eContainer: this.eFullWidthContainer
             }),
-            pinnedLeft: new RowContainerComponent({eContainer: this.eLeftContainer}),
-            pinnedRight: new RowContainerComponent({eContainer: this.eRightContainer}),
+            pinnedLeft: new RowContainerComponent({ eContainer: this.eLeftContainer }),
+            pinnedRight: new RowContainerComponent({ eContainer: this.eRightContainer }),
 
-            floatingTop: new RowContainerComponent({eContainer: this.eTopContainer}),
-            floatingTopPinnedLeft: new RowContainerComponent({eContainer: this.eLeftTop}),
-            floatingTopPinnedRight: new RowContainerComponent({eContainer: this.eRightTop}),
+            floatingTop: new RowContainerComponent({ eContainer: this.eTopContainer }),
+            floatingTopPinnedLeft: new RowContainerComponent({ eContainer: this.eLeftTop }),
+            floatingTopPinnedRight: new RowContainerComponent({ eContainer: this.eRightTop }),
             floatingTopFullWidth: new RowContainerComponent({
                 eContainer: this.eTopFullWidthContainer,
                 hideWhenNoChildren: true
             }),
 
-            floatingBottom: new RowContainerComponent({eContainer: this.eBottomContainer}),
-            floatingBottomPinnedLeft: new RowContainerComponent({eContainer: this.eLeftBottom}),
-            floatingBottomPinnedRight: new RowContainerComponent({eContainer: this.eRightBottom}),
+            floatingBottom: new RowContainerComponent({ eContainer: this.eBottomContainer }),
+            floatingBottomPinnedLeft: new RowContainerComponent({ eContainer: this.eLeftBottom }),
+            floatingBottomPinnedRight: new RowContainerComponent({ eContainer: this.eRightBottom }),
             floatingBottomFullWidth: new RowContainerComponent({
                 eContainer: this.eBottomFullWidthContainer,
                 hideWhenNoChildren: true
@@ -1217,7 +1216,6 @@ export class GridPanel extends Component {
     }
 
     private setFakeHScrollSpacerWidths(): void {
-
         // we pad the right based on a) if cols are pinned to the right and
         // b) if v scroll is showing on the right (normal position of scroll)
         let rightSpacing = this.columnController.getPinnedRightContainerWidth();
@@ -1237,6 +1235,7 @@ export class GridPanel extends Component {
         if (scrollOnLeft) {
             leftSpacing += this.scrollWidth;
         }
+
         _.setFixedWidth(this.eHorizontalLeftSpacer, leftSpacing);
         _.addOrRemoveCssClass(this.eHorizontalLeftSpacer, 'ag-scroller-corner', leftSpacing <= this.scrollWidth);
     }
@@ -1264,17 +1263,19 @@ export class GridPanel extends Component {
         let groupHeight: number;
         let headerHeight: number;
 
-        if (!columnController.isPivotMode()) {
-            if (gridOptionsWrapper.isFloatingFilter()) {
-                headerRowCount++;
-            }
-            numberOfFloating = (gridOptionsWrapper.isFloatingFilter()) ? 1 : 0;
-            groupHeight = gridOptionsWrapper.getGroupHeaderHeight();
-            headerHeight = gridOptionsWrapper.getHeaderHeight();
-        } else {
-            numberOfFloating = 0;
+        if (columnController.isPivotMode()) {
             groupHeight = gridOptionsWrapper.getPivotGroupHeaderHeight();
             headerHeight = gridOptionsWrapper.getPivotHeaderHeight();
+        } else {
+            const hasFloatingFilters = columnController.hasFloatingFilters();
+
+            if (hasFloatingFilters) {
+                headerRowCount++;
+                numberOfFloating = 1;
+            }
+
+            groupHeight = gridOptionsWrapper.getGroupHeaderHeight();
+            headerHeight = gridOptionsWrapper.getHeaderHeight();
         }
 
         const numberOfNonGroups = 1 + numberOfFloating;
@@ -1380,7 +1381,7 @@ export class GridPanel extends Component {
     }
 
     private onBodyHorizontalScroll(eSource: HTMLElement): void {
-        const {scrollWidth, clientWidth} = this.eCenterViewport;
+        const { scrollWidth, clientWidth } = this.eCenterViewport;
         // in chrome, fractions can be in the scroll left, eg 250.342234 - which messes up our 'scrollWentPastBounds'
         // formula. so we floor it to allow the formula to work.
         const scrollLeft = Math.floor(_.getScrollLeft(eSource, this.enableRtl));
@@ -1456,7 +1457,7 @@ export class GridPanel extends Component {
         }
 
         const offset = this.enableRtl ? scrollLeft : -scrollLeft;
-        const {clientWidth, scrollWidth} = this.eCenterViewport;
+        const { clientWidth, scrollWidth } = this.eCenterViewport;
         const scrollWentPastBounds = Math.abs(offset) + clientWidth > scrollWidth;
 
         if (

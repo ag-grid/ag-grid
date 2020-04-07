@@ -1,16 +1,16 @@
-import { ColumnGroup } from "../entities/columnGroup";
-import { Column } from "../entities/column";
-import { AbstractColDef, ColDef, ColGroupDef, IAggFunc } from "../entities/colDef";
-import { ColumnGroupChild } from "../entities/columnGroupChild";
-import { GridOptionsWrapper } from "../gridOptionsWrapper";
-import { ExpressionService } from "../valueService/expressionService";
-import { ColumnFactory } from "./columnFactory";
-import { DisplayedGroupCreator } from "./displayedGroupCreator";
-import { AutoWidthCalculator } from "../rendering/autoWidthCalculator";
-import { OriginalColumnGroupChild } from "../entities/originalColumnGroupChild";
-import { EventService } from "../eventService";
-import { ColumnUtils } from "./columnUtils";
-import { Logger, LoggerFactory } from "../logger";
+import { ColumnGroup } from '../entities/columnGroup';
+import { Column } from '../entities/column';
+import { AbstractColDef, ColDef, ColGroupDef, IAggFunc } from '../entities/colDef';
+import { ColumnGroupChild } from '../entities/columnGroupChild';
+import { GridOptionsWrapper } from '../gridOptionsWrapper';
+import { ExpressionService } from '../valueService/expressionService';
+import { ColumnFactory } from './columnFactory';
+import { DisplayedGroupCreator } from './displayedGroupCreator';
+import { AutoWidthCalculator } from '../rendering/autoWidthCalculator';
+import { OriginalColumnGroupChild } from '../entities/originalColumnGroupChild';
+import { EventService } from '../eventService';
+import { ColumnUtils } from './columnUtils';
+import { Logger, LoggerFactory } from '../logger';
 import {
     ColumnEvent,
     ColumnEventType,
@@ -29,19 +29,20 @@ import {
     GridColumnsChangedEvent,
     NewColumnsLoadedEvent,
     VirtualColumnsChangedEvent
-} from "../events";
-import { OriginalColumnGroup } from "../entities/originalColumnGroup";
-import { GroupInstanceIdCreator } from "./groupInstanceIdCreator";
-import { Autowired, Bean, Context, Optional, PostConstruct, Qualifier } from "../context/context";
-import { IAggFuncService } from "../interfaces/iAggFuncService";
-import { ColumnAnimationService } from "../rendering/columnAnimationService";
-import { AutoGroupColService } from "./autoGroupColService";
-import { RowNode } from "../entities/rowNode";
-import { ValueCache } from "../valueService/valueCache";
-import { GridApi } from "../gridApi";
-import { ColumnApi } from "./columnApi";
-import { Constants } from "../constants";
-import { _ } from "../utils";
+} from '../events';
+import { OriginalColumnGroup } from '../entities/originalColumnGroup';
+import { GroupInstanceIdCreator } from './groupInstanceIdCreator';
+import { Autowired, Bean, Optional, PostConstruct, Qualifier } from '../context/context';
+import { IAggFuncService } from '../interfaces/iAggFuncService';
+import { ColumnAnimationService } from '../rendering/columnAnimationService';
+import { AutoGroupColService } from './autoGroupColService';
+import { RowNode } from '../entities/rowNode';
+import { ValueCache } from '../valueService/valueCache';
+import { GridApi } from '../gridApi';
+import { ColumnApi } from './columnApi';
+import { Constants } from '../constants';
+import { _ } from '../utils';
+import { areEqual } from '../utils/array';
 
 export interface ColumnResizeSet {
     columns: Column[];
@@ -55,13 +56,12 @@ export interface ColumnState {
     aggFunc?: string | IAggFunc | null;
     width?: number;
     pivotIndex?: number | null;
-    pinned?: boolean | string | "left" | "right";
+    pinned?: boolean | string | 'left' | 'right';
     rowGroupIndex?: number | null;
 }
 
 @Bean('columnController')
 export class ColumnController {
-
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('expressionService') private expressionService: ExpressionService;
     @Autowired('columnFactory') private columnFactory: ColumnFactory;
@@ -69,7 +69,6 @@ export class ColumnController {
     @Autowired('autoWidthCalculator') private autoWidthCalculator: AutoWidthCalculator;
     @Autowired('eventService') private eventService: EventService;
     @Autowired('columnUtils') private columnUtils: ColumnUtils;
-    @Autowired('context') private context: Context;
     @Autowired('columnAnimationService') private columnAnimationService: ColumnAnimationService;
     @Autowired('autoGroupColService') private autoGroupColService: AutoGroupColService;
     @Optional('aggFuncService') private aggFuncService: IAggFuncService;
@@ -172,9 +171,9 @@ export class ColumnController {
 
     @PostConstruct
     public init(): void {
-        const pivotMode = this.gridOptionsWrapper.isPivotMode();
-
         this.suppressColumnVirtualisation = this.gridOptionsWrapper.isSuppressColumnVirtualisation();
+
+        const pivotMode = this.gridOptionsWrapper.isPivotMode();
 
         if (this.isPivotSettingAllowed(pivotMode)) {
             this.pivotMode = pivotMode;
@@ -183,7 +182,7 @@ export class ColumnController {
         this.usingTreeData = this.gridOptionsWrapper.isTreeData();
     }
 
-    public setColumnDefs(columnDefs: (ColDef | ColGroupDef)[], source: ColumnEventType = "api") {
+    public setColumnDefs(columnDefs: (ColDef | ColGroupDef)[], source: ColumnEventType = 'api') {
         const colsPreviouslyExisted = !!this.columnDefs;
 
         this.columnDefs = columnDefs;
@@ -223,7 +222,7 @@ export class ColumnController {
             type: Events.EVENT_COLUMN_EVERYTHING_CHANGED,
             api: this.gridApi,
             columnApi: this.columnApi,
-            source: source
+            source
         };
 
         this.eventService.dispatchEvent(eventEverythingChanged);
@@ -236,7 +235,7 @@ export class ColumnController {
 
         this.eventService.dispatchEvent(newColumnsLoadedEvent);
 
-        this.flexActive = !!_.find(this.getDisplayedCenterColumns(), col => !!col.getFlex());
+        this.flexActive = this.getDisplayedCenterColumns().some(col => !!col.getFlex());
     }
 
     public isAutoRowHeightActive(): boolean {
@@ -260,14 +259,14 @@ export class ColumnController {
     // used by clipboard service, to know what columns to paste into
     public getDisplayedColumnsStartingAt(column: Column): Column[] {
         let currentColumn: Column | null = column;
-        const result: Column[] = [];
+        const columns: Column[] = [];
 
-        while (currentColumn && _.exists(currentColumn)) {
-            result.push(currentColumn);
+        while (currentColumn != null) {
+            columns.push(currentColumn);
             currentColumn = this.getDisplayedColAfter(currentColumn);
         }
 
-        return result;
+        return columns;
     }
 
     // checks what columns are currently displayed due to column virtualisation. fires an event
@@ -275,7 +274,7 @@ export class ColumnController {
     // + setColumnWidth(), setVirtualViewportPosition(), setColumnDefs(), sizeColumnsToFit()
     private checkDisplayedVirtualColumns(): void {
         // check displayCenterColumnTree exists first, as it won't exist when grid is initialising
-        if (!_.exists(this.displayedCenterColumns)) { return; }
+        if (this.displayedCenterColumns == null) { return; }
 
         const hashBefore = this.allDisplayedVirtualColumns.map(column => column.getId()).join('#');
 
@@ -289,6 +288,7 @@ export class ColumnController {
                 api: this.gridApi,
                 columnApi: this.columnApi
             };
+
             this.eventService.dispatchEvent(event);
         }
     }
@@ -314,19 +314,16 @@ export class ColumnController {
     }
 
     private isPivotSettingAllowed(pivot: boolean): boolean {
-        if (pivot) {
-            if (this.gridOptionsWrapper.isTreeData()) {
-                console.warn("ag-Grid: Pivot mode not available in conjunction Tree Data i.e. 'gridOptions.treeData: true'");
-                return false;
-            }
-            return true;
+        if (pivot && this.gridOptionsWrapper.isTreeData()) {
+            console.warn("ag-Grid: Pivot mode not available in conjunction Tree Data i.e. 'gridOptions.treeData: true'");
+            return false;
         }
+
         return true;
     }
 
-    public setPivotMode(pivotMode: boolean, source: ColumnEventType = "api"): void {
-        if (pivotMode === this.pivotMode) { return; }
-        if (!this.isPivotSettingAllowed(this.pivotMode)) { return; }
+    public setPivotMode(pivotMode: boolean, source: ColumnEventType = 'api'): void {
+        if (pivotMode === this.pivotMode || !this.isPivotSettingAllowed(this.pivotMode)) { return; }
 
         this.pivotMode = pivotMode;
 
@@ -335,8 +332,8 @@ export class ColumnController {
         // so need to updateGridColumn() to check it autoGroupCol needs to be added / removed
         this.autoGroupsNeedBuilding = true;
         this.updateGridColumns();
-
         this.updateDisplayedColumns(source);
+
         const event: ColumnPivotModeChangedEvent = {
             type: Events.EVENT_COLUMN_PIVOT_MODE_CHANGED,
             api: this.gridApi,
@@ -347,26 +344,23 @@ export class ColumnController {
     }
 
     public getSecondaryPivotColumn(pivotKeys: string[], valueColKey: Column | string): Column | null {
-        if (!this.secondaryColumnsPresent) { return null; }
+        if (!this.secondaryColumnsPresent || !this.secondaryColumns) { return null; }
 
         const valueColumnToFind = this.getPrimaryColumn(valueColKey);
 
         let foundColumn: Column | null = null;
 
-        if (this.secondaryColumns) {
-            this.secondaryColumns.forEach(column => {
+        this.secondaryColumns.forEach(column => {
+            const thisPivotKeys = column.getColDef().pivotKeys;
+            const pivotValueColumn = column.getColDef().pivotValueColumn;
 
-                const thisPivotKeys = column.getColDef().pivotKeys;
-                const pivotValueColumn = column.getColDef().pivotValueColumn;
+            const pivotKeyMatches = areEqual(thisPivotKeys, pivotKeys);
+            const pivotValueMatches = pivotValueColumn === valueColumnToFind;
 
-                const pivotKeyMatches = _.areEqual(thisPivotKeys, pivotKeys);
-                const pivotValueMatches = pivotValueColumn === valueColumnToFind;
-
-                if (pivotKeyMatches && pivotValueMatches) {
-                    foundColumn = column;
-                }
-            });
-        }
+            if (pivotKeyMatches && pivotValueMatches) {
+                foundColumn = column;
+            }
+        });
 
         return foundColumn;
     }
@@ -1754,7 +1748,7 @@ export class ColumnController {
 
         // raises generic ColumnEvents where all columns are returned rather than what has changed
         const raiseEventWithAllColumns = (eventType: string, idMapper: (cs: ColumnState) => string, columns: Column[]) => {
-            const unchanged = _.areEqual(columnStateBefore.map(idMapper).sort(), columnStateAfter.map(idMapper).sort());
+            const unchanged = areEqual(columnStateBefore.map(idMapper).sort(), columnStateAfter.map(idMapper).sort());
 
             if (unchanged) { return; }
 
@@ -3097,23 +3091,7 @@ export class ColumnController {
     }
 
     private autoColsEqual(colsA: Column[], colsB: Column[]): boolean {
-        const bothMissing = !colsA && !colsB;
-
-        if (bothMissing) { return true; }
-
-        const atLeastOneListMissing = !colsA || !colsB;
-
-        if (atLeastOneListMissing || colsA.length !== colsB.length) { return false; }
-
-        for (let i = 0; i < colsA.length; i++) {
-            const colA = colsA[i];
-            const colB = colsB[i];
-            if (colA.getColId() !== colB.getColId()) {
-                return false;
-            }
-        }
-
-        return true;
+        return areEqual(colsA, colsB, (a, b) => a.getColId() === b.getColId());
     }
 
     private getWidthOfColsInList(columnList: Column[]) {
@@ -3122,5 +3100,10 @@ export class ColumnController {
 
     public getGridBalancedTree(): OriginalColumnGroupChild[] {
         return this.gridBalancedTree;
+    }
+
+    public hasFloatingFilters() {
+        return this.gridOptionsWrapper.getDefaultColDef().floatingFilter ||
+            this.columnDefs && this.columnDefs.some((c: ColDef) => c.floatingFilter === true);
     }
 }

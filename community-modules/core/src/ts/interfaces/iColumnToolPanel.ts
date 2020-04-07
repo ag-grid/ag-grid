@@ -1,4 +1,4 @@
-import {ColDef, ColGroupDef} from "../entities/colDef";
+import { ColDef, ColGroupDef } from '../entities/colDef';
 
 export interface IColumnToolPanel {
     expandColumnGroups(groupIds?: string[]): void;
@@ -10,4 +10,3 @@ export interface IColumnToolPanel {
     setValuesSectionVisible(visible: boolean): void;
     setPivotSectionVisible(visible: boolean): void;
 }
-

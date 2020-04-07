@@ -259,7 +259,7 @@ export interface GridOptions {
 
     //This is an array of ExcelStyle, but because that class lives on the enterprise project is referenced as any from the client project
     excelStyles?: any[];
-    floatingFilter?: boolean;
+    /** @deprecated Use floatingFilter on the colDef instead */ floatingFilter?: boolean;
     suppressExcelExport?: boolean;
     suppressCsvExport?: boolean;
 

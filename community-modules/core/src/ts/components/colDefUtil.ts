@@ -103,7 +103,8 @@ export class ColDefUtil {
         'autoHeight',
         'sortable',
         'resizable',
-        'singleClickEdit'
+        'singleClickEdit',
+        'floatingFilter',
     ];
 
     public static FUNCTION_PROPERTIES = [
@@ -138,12 +139,14 @@ export class ColDefUtil {
         'cellRendererSelector',
         'cellEditorSelector'];
 
-    public static ALL_PROPERTIES = ColDefUtil.ARRAY_PROPERTIES
-        .concat(ColDefUtil.OBJECT_PROPERTIES)
-        .concat(ColDefUtil.STRING_PROPERTIES)
-        .concat(ColDefUtil.NUMBER_PROPERTIES)
-        .concat(ColDefUtil.FUNCTION_PROPERTIES)
-        .concat(ColDefUtil.BOOLEAN_PROPERTIES);
+    public static ALL_PROPERTIES = [
+        ...ColDefUtil.ARRAY_PROPERTIES,
+        ...ColDefUtil.OBJECT_PROPERTIES,
+        ...ColDefUtil.STRING_PROPERTIES,
+        ...ColDefUtil.NUMBER_PROPERTIES,
+        ...ColDefUtil.FUNCTION_PROPERTIES,
+        ...ColDefUtil.BOOLEAN_PROPERTIES
+    ];
 
     // used when doing property checks - this causes noise when using frameworks which can add their own fw specific
     // properties to colDefs, gridOptions etc

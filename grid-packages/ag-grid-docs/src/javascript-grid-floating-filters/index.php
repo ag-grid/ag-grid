@@ -14,17 +14,23 @@ include '../documentation-main/documentation_header.php';
 </p>
 
 <p>
-    Floating filters are activated by setting grid property <code>floatingFilter = true</code>:
+    Floating filters are activated by setting the property <code>floatingFilter = true</code> on the <code>colDef</code>:
 </p>
 
 <?= createSnippet(<<<SNIPPET
-gridOptions = {
-    // turn on floating filters
+colDef = {
+    // turn on floating filter
     floatingFilter: true
     ...
 }
 SNIPPET
 ) ?>
+
+<p>
+    To have floating filters on for all columns by default, you should set <code>floatingFilter</code> on the
+    <code>defaultColDef</code>. You can then disable floating filters on a per-column basis by setting
+    <code>floatingFilter = false</code> on an individual <code>colDef</code>.
+</p>
 
 <p>
     Floating filters depend on and co-ordinate with the main column filters. They do not have their own state,
@@ -47,20 +53,29 @@ SNIPPET
 <ul class="content">
     <li>Text filter: has out of the box read/write floating filter (Sport column)</li>
     <li>Set filter: has out of the box read-only floating filter (Country column)</li>
-    <li>Date and Number filter: have out of the box read/write floating filters for all filters except when switching
-        to in-range filtering, where the floating filter is read-only (Age and Date columns)</li>
-    <li>Columns with the <code>applyButton</code> require the user to press <code>Enter</code> on the floating filter for the filter to take
-        effect (Gold column)</li>
-    <li>Changes made directly to the main filter are reflected automatically in the floating filters
-        (change any main filter)</li>
-    <li>Columns with a custom filter have an automatic read-only floating filter if the custom filter implements the method
-        <code>getModelAsString()</code>. (Athlete column)</li>
+    <li>
+        Date and Number filter: have out of the box read/write floating filters for all filters except when switching
+        to in-range filtering, where the floating filter is read-only (Age and Date columns)
+    </li>
+    <li>
+        Columns with the <code>applyButton</code> require the user to press <code>Enter</code> on the floating filter
+        for the filter to take effect (Gold column)
+    </li>
+    <li>
+        Changes made directly to the main filter are reflected automatically in the floating filters
+        (change any main filter)
+    </li>
+    <li>
+        Columns with a custom filter have an automatic read-only floating filter if the custom filter implements the
+        method <code>getModelAsString()</code> (Athlete column)
+    </li>
     <li>The user can configure when to show/hide the button that shows the full filter (Silver and Bronze columns)</li>
-    <li>Columns with <code>filter = false</code> don't have floating filters (Total column)</li>
+    <li>The Year column has a filter, but has the floating filter disabled</li>
+    <li>The Total column has no filter and therefore no floating filter either</li>
     <li>
         Combining <code>suppressMenu = true</code> and <code>filter = false</code> lets you control where the user
         can access the full filter. In this example <code>suppressMenu = true</code> for all the columns except
-        Silver and Bronze
+        Year, Silver and Bronze
     </li>
 </ul>
 
@@ -70,7 +85,7 @@ SNIPPET
 
 <p>
     All the default filters provided by the grid provide their own implementation of a floating filter.
-    All you need to do to enable these floating filters is set the <code>floatingFilter = true</code> grid property.
+    All you need to do to enable these floating filters is set the <code>floatingFilter = true</code> column property.
     The features of the provided floating filters are as follows:
 </p>
 
@@ -127,15 +142,15 @@ SNIPPET
 
 <ul>
     <li>
-        <b>One Value and One Condition - Editable</b><br/>
+        <b>One Value and One Condition - Editable</b><br />
         <img class="floating-filter-image" src="./oneValueOneCondition.png" />
     </li>
     <li>
-        <b>One Value and Two Conditions - Read-Only</b><br/>
+        <b>One Value and Two Conditions - Read-Only</b><br />
         <img class="floating-filter-image" src="./oneValueTwoConditions.png" />
     </li>
     <li>
-        <b>Two Values and One Condition - Read-Only</b><br/>
+        <b>Two Values and One Condition - Read-Only</b><br />
         <img class="floating-filter-image" src="./twoValuesOneCondition.png" />
     </li>
 </ul>

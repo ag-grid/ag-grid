@@ -1,33 +1,31 @@
-import { Component } from "../widgets/component";
-import { Autowired, Context, PostConstruct } from "../context/context";
-import { GridOptionsWrapper } from "../gridOptionsWrapper";
-import { ColumnGroupChild } from "../entities/columnGroupChild";
-import { ColumnGroup } from "../entities/columnGroup";
-import { ColumnController } from "../columnController/columnController";
-import { Column } from "../entities/column";
-import { DropTarget } from "../dragAndDrop/dragAndDropService";
-import { EventService } from "../eventService";
-import { Events } from "../events";
-import { HeaderWrapperComp } from "./header/headerWrapperComp";
-import { HeaderGroupWrapperComp } from "./headerGroup/headerGroupWrapperComp";
-import { FilterManager } from "../filter/filterManager";
-import { IComponent } from "../interfaces/iComponent";
-import { GridApi } from "../gridApi";
-import { Constants } from "../constants";
-import { _ } from "../utils";
-import { FloatingFilterWrapper } from "../filter/floating/floatingFilterWrapper";
+import { Component } from '../widgets/component';
+import { Autowired, PostConstruct } from '../context/context';
+import { GridOptionsWrapper } from '../gridOptionsWrapper';
+import { ColumnGroupChild } from '../entities/columnGroupChild';
+import { ColumnGroup } from '../entities/columnGroup';
+import { ColumnController } from '../columnController/columnController';
+import { Column } from '../entities/column';
+import { DropTarget } from '../dragAndDrop/dragAndDropService';
+import { EventService } from '../eventService';
+import { Events } from '../events';
+import { HeaderWrapperComp } from './header/headerWrapperComp';
+import { HeaderGroupWrapperComp } from './headerGroup/headerGroupWrapperComp';
+import { IComponent } from '../interfaces/iComponent';
+import { Constants } from '../constants';
+import { FloatingFilterWrapper } from '../filter/floating/floatingFilterWrapper';
+import { isBrowserSafari } from '../utils/browser';
+import { missing } from '../utils/generic';
+import { removeFromArray } from '../utils/array';
+import { setDomChildOrder } from '../utils/dom';
 
 export enum HeaderRowType {
     COLUMN_GROUP, COLUMN, FLOATING_FILTER
 }
 
 export class HeaderRowComp extends Component {
-
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
-    @Autowired('gridApi') private gridApi: GridApi;
     @Autowired('columnController') private columnController: ColumnController;
     @Autowired('eventService') private eventService: EventService;
-    @Autowired('filterManager') private filterManager: FilterManager;
 
     private readonly dept: number;
     private readonly pinned: string;
@@ -35,19 +33,19 @@ export class HeaderRowComp extends Component {
     private readonly dropTarget: DropTarget;
     private readonly type: HeaderRowType;
 
-    private headerComps: { [key: string]: IComponent<any> } = {};
+    private headerComps: { [key: string]: IComponent<any>; } = {};
 
     constructor(dept: number, type: HeaderRowType, pinned: string, dropTarget: DropTarget) {
-        super(`<div class="ag-header-row" role="row"/>`);
+        super(/* html */`<div class="ag-header-row" role="row" />`);
         this.dept = dept;
         this.type = type;
         this.pinned = pinned;
         this.dropTarget = dropTarget;
 
-        const niceClassName = HeaderRowType[type].toLowerCase().replace(/_/g, "-");
+        const niceClassName = HeaderRowType[type].toLowerCase().replace(/_/g, '-');
         this.addCssClass(`ag-header-row-${niceClassName}`);
 
-        if (_.isBrowserSafari()) {
+        if (isBrowserSafari()) {
             // fix for a Safari rendering bug that caused the header to flicker above chart panels
             // as you move the mouse over the header
             this.getGui().style.transform = 'translateZ(0)';
@@ -82,26 +80,31 @@ export class HeaderRowComp extends Component {
         let numberOfFloating = 0;
         let groupHeight: number;
         let headerHeight: number;
-        if (!this.columnController.isPivotMode()) {
-            if (this.gridOptionsWrapper.isFloatingFilter()) {
-                headerRowCount++;
-            }
-            numberOfFloating = (this.gridOptionsWrapper.isFloatingFilter()) ? 1 : 0;
-            groupHeight = this.gridOptionsWrapper.getGroupHeaderHeight();
-            headerHeight = this.gridOptionsWrapper.getHeaderHeight();
-        } else {
-            numberOfFloating = 0;
+
+        if (this.columnController.isPivotMode()) {
             groupHeight = this.gridOptionsWrapper.getPivotGroupHeaderHeight();
             headerHeight = this.gridOptionsWrapper.getPivotHeaderHeight();
+        } else {
+            if (this.columnController.hasFloatingFilters()) {
+                headerRowCount++;
+                numberOfFloating = 1;
+            }
+
+            groupHeight = this.gridOptionsWrapper.getGroupHeaderHeight();
+            headerHeight = this.gridOptionsWrapper.getHeaderHeight();
         }
+
         const numberOfNonGroups = 1 + numberOfFloating;
         const numberOfGroups = headerRowCount - numberOfNonGroups;
 
         for (let i = 0; i < numberOfGroups; i++) { sizes.push(groupHeight); }
+
         sizes.push(headerHeight);
+
         for (let i = 0; i < numberOfFloating; i++) { sizes.push(this.gridOptionsWrapper.getFloatingFiltersHeight()); }
 
         let rowHeight = 0;
+
         for (let i = 0; i < this.dept; i++) { rowHeight += sizes[i]; }
 
         this.getGui().style.top = rowHeight + 'px';
@@ -143,7 +146,7 @@ export class HeaderRowComp extends Component {
         const printLayout = this.gridOptionsWrapper.getDomLayout() === Constants.DOM_LAYOUT_PRINT;
 
         if (printLayout) {
-            const centerRow = _.missing(this.pinned);
+            const centerRow = missing(this.pinned);
             if (centerRow) {
                 return this.columnController.getContainerWidth(Constants.PINNED_RIGHT)
                     + this.columnController.getContainerWidth(Constants.PINNED_LEFT)
@@ -176,7 +179,7 @@ export class HeaderRowComp extends Component {
 
         if (printLayout) {
             // for print layout, we add all columns into the center
-            const centerContainer = _.missing(this.pinned);
+            const centerContainer = missing(this.pinned);
             if (centerContainer) {
                 let result: ColumnGroupChild[] = [];
                 [Constants.PINNED_LEFT, null, Constants.PINNED_RIGHT].forEach(pinned => {
@@ -204,7 +207,6 @@ export class HeaderRowComp extends Component {
     }
 
     private onVirtualColumnsChanged(): void {
-
         const currentChildIds = Object.keys(this.headerComps);
         const correctChildIds: string[] = [];
         const itemsAtDepth = this.getItemsAtDepth();
@@ -226,7 +228,7 @@ export class HeaderRowComp extends Component {
             let headerComp: IComponent<any>;
             let eHeaderCompGui: HTMLElement;
             if (colAlreadyInDom) {
-                _.removeFromArray(currentChildIds, idOfChild);
+                removeFromArray(currentChildIds, idOfChild);
             } else {
                 headerComp = this.createHeaderComp(child);
                 this.headerComps[idOfChild] = headerComp;
@@ -243,7 +245,7 @@ export class HeaderRowComp extends Component {
         const ensureDomOrder = this.gridOptionsWrapper.isEnsureDomOrder();
         if (ensureDomOrder) {
             const correctChildOrder = correctChildIds.map(id => this.headerComps[id].getGui());
-            _.setDomChildOrder(this.getGui(), correctChildOrder);
+            setDomChildOrder(this.getGui(), correctChildOrder);
         }
     }
 
@@ -251,13 +253,13 @@ export class HeaderRowComp extends Component {
         let result: IComponent<any>;
 
         switch (this.type) {
-            case HeaderRowType.COLUMN :
+            case HeaderRowType.COLUMN:
                 result = new HeaderWrapperComp(columnGroupChild as Column, this.dropTarget, this.pinned);
                 break;
-            case HeaderRowType.COLUMN_GROUP :
+            case HeaderRowType.COLUMN_GROUP:
                 result = new HeaderGroupWrapperComp(columnGroupChild as ColumnGroup, this.dropTarget, this.pinned);
                 break;
-            case HeaderRowType.FLOATING_FILTER :
+            case HeaderRowType.FLOATING_FILTER:
                 result = new FloatingFilterWrapper(columnGroupChild as Column);
                 break;
         }
@@ -266,5 +268,4 @@ export class HeaderRowComp extends Component {
 
         return result;
     }
-
 }
