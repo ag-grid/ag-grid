@@ -1,4 +1,4 @@
-// @ag-grid-community/react v23.0.2
+// @ag-grid-community/react v23.0.3
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -153,9 +153,17 @@ var ReactComponent = /** @class */ (function (_super) {
         if (this.parentComponent.isDisableStaticMarkup() || !this.componentType.isCellRenderer()) {
             return;
         }
-        if (this.staticMarkup && this.staticMarkup.remove) {
-            this.staticMarkup.remove();
-            this.staticMarkup = null;
+        if (this.staticMarkup) {
+            if (this.staticMarkup.remove) {
+                // everyone else in the world
+                this.staticMarkup.remove();
+                this.staticMarkup = null;
+            }
+            else if (this.eParentElement.removeChild) {
+                // ie11...
+                this.eParentElement.removeChild(this.staticMarkup);
+                this.staticMarkup = null;
+            }
         }
     };
     ReactComponent.prototype.rendered = function () {

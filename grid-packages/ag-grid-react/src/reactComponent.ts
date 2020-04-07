@@ -1,8 +1,8 @@
 import * as React from 'react';
-import {ReactPortal} from 'react';
+import { ReactPortal } from 'react';
 import * as ReactDOM from 'react-dom';
 import {ComponentType, Promise, Utils} from 'ag-grid-community';
-import {AgGridReact} from "./agGridReact";
+import { AgGridReact } from "./agGridReact";
 import {BaseReactComponent} from "./baseReactComponent";
 import {assignProperties} from "./utils";
 import generateNewKey from "./keyGenerator";
@@ -22,9 +22,7 @@ export class ReactComponent extends BaseReactComponent {
     private statelessComponent: boolean;
     private staticMarkup: HTMLElement | null | string = null;
 
-    constructor(reactComponent: any,
-                parentComponent: AgGridReact,
-                componentType: ComponentType) {
+    constructor(reactComponent: any, parentComponent: AgGridReact, componentType: ComponentType) {
         super();
 
         this.reactComponent = reactComponent;
@@ -88,7 +86,7 @@ export class ReactComponent extends BaseReactComponent {
 
             // functional/stateless components have a slightly different lifecycle (no refs) so we'll clean them up
             // here
-            if(this.statelessComponent) {
+            if (this.statelessComponent) {
                 setTimeout(() => {
                     this.removeStaticMarkup();
                 })
@@ -177,9 +175,16 @@ export class ReactComponent extends BaseReactComponent {
             return;
         }
 
-        if (this.staticMarkup && (this.staticMarkup as HTMLElement).remove) {
-            (this.staticMarkup as HTMLElement).remove();
-            this.staticMarkup = null;
+        if (this.staticMarkup) {
+            if((this.staticMarkup as HTMLElement).remove) {
+                // everyone else in the world
+                (this.staticMarkup as HTMLElement).remove();
+                this.staticMarkup = null;
+            } else if(this.eParentElement.removeChild) {
+                // ie11...
+                this.eParentElement.removeChild(this.staticMarkup as any);
+                this.staticMarkup = null;
+            }
         }
     }
 
