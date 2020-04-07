@@ -9,8 +9,14 @@ import { RowNode } from "../entities/rowNode";
 import { _ } from "../utils";
 
 export interface DragItem {
-    /** When dragging a row, this contains the row node being dragged */
+    /**
+     * When dragging a row, this contains the row node being dragged
+     * When dragging multiple rows, this contains the row that started the drag.
+     */
     rowNode?: RowNode;
+
+    /** When dragging multiple rows, this contains all rows being dragged */
+    rowNodes?: RowNode[];
 
     /** When dragging columns, this contains the columns being dragged */
     columns?: Column[];
