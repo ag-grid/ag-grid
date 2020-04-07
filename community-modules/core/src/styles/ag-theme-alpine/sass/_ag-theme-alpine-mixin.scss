@@ -2,7 +2,7 @@
 @import "./ag-theme-alpine-default-params";
 
 @mixin ag-theme-alpine($params: ()) {
-    $ag-require-all-colors-to-use-mixin: true !global;
+    @include ag-allow-color-param-access-with-ag-param(false);
     
     $params: ag-process-theme-variables($params, $ag-theme-alpine-default-params);
     @include ag-theme-base($params);
@@ -237,5 +237,5 @@
     .ag-date-time-list-page-entry-is-current {
         @include ag-color-property(background-color, alpine-active-color);
     }
-    $ag-require-all-colors-to-use-mixin: false !global;
+    @include ag-allow-color-param-access-with-ag-param(true);
 }
