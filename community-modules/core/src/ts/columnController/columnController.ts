@@ -3103,7 +3103,9 @@ export class ColumnController {
     }
 
     public hasFloatingFilters() {
-        return this.gridOptionsWrapper.getDefaultColDef().floatingFilter ||
-            this.columnDefs && this.columnDefs.some((c: ColDef) => c.floatingFilter === true);
+        const defaultColDef = this.gridOptionsWrapper.getDefaultColDef();
+
+        return (defaultColDef && defaultColDef.floatingFilter) ||
+            (this.columnDefs && this.columnDefs.some((c: ColDef) => c.floatingFilter === true));
     }
 }
