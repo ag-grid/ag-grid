@@ -1,11 +1,11 @@
-var colDefAthlete = {headerName: 'Athlete', field: 'athlete'};
-var colDefSport = {headerName: 'Sport', field: 'sport'};
-var colDefAge = {headerName: 'Age', field: 'age'};
-var colDefYear = {headerName: 'Year', field: 'year'};
-var colDefDate = {headerName: 'Date', field: 'date', comparator: dateComparator};
-var colDefGold = {headerName: 'Gold', field: 'gold'};
-var colDefSilver = {headerName: 'Silver', field: 'silver'};
-var colDefBronze = {headerName: 'Bronze', field: 'bronze'};
+var colDefAthlete = { headerName: 'Athlete', field: 'athlete' };
+var colDefSport = { headerName: 'Sport', field: 'sport' };
+var colDefAge = { headerName: 'Age', field: 'age' };
+var colDefYear = { headerName: 'Year', field: 'year' };
+var colDefDate = { headerName: 'Date', field: 'date', comparator: dateComparator };
+var colDefGold = { headerName: 'Gold', field: 'gold' };
+var colDefSilver = { headerName: 'Silver', field: 'silver' };
+var colDefBronze = { headerName: 'Bronze', field: 'bronze' };
 
 var gridOptions = {
     defaultColDef: {
@@ -37,14 +37,14 @@ var gridOptions = {
     },
     statusBar: {
         statusPanels: [
-            {statusPanel: 'agTotalRowCountComponent', align: 'left', key: 'totalRowComponent'},
-            {statusPanel: 'agFilteredRowCountComponent', align: 'left'},
-            {statusPanel: 'agSelectedRowCountComponent', align: 'center'},
-            {statusPanel: 'agAggregationComponent', align: 'right'}
+            { statusPanel: 'agTotalRowCountComponent', align: 'left', key: 'totalRowComponent' },
+            { statusPanel: 'agFilteredRowCountComponent', align: 'left' },
+            { statusPanel: 'agSelectedRowCountComponent', align: 'center' },
+            { statusPanel: 'agAggregationComponent', align: 'right' }
         ]
     },
     enableRangeSelection: true,
-    onGridReady: function (params) {
+    onGridReady: function(params) {
         document.querySelector("#athlete").checked = true;
         document.querySelector("#sport").checked = true;
         document.querySelector("#age").checked = true;
@@ -132,11 +132,12 @@ function monthToComparableNumber(date) {
 }
 
 // setup the grid after the page has finished loading
-document.addEventListener('DOMContentLoaded', function () {
+document.addEventListener('DOMContentLoaded', function() {
     var gridDiv = document.querySelector('#myGrid');
     new agGrid.Grid(gridDiv, gridOptions);
 
-    agGrid.simpleHttpRequest({url: 'https://raw.githubusercontent.com/ag-grid/ag-grid/master/grid-packages/ag-grid-docs/src/olympicWinnersSmall.json'}).then(function (data) {
-        gridOptions.api.setRowData(data);
-    });
+    agGrid.simpleHttpRequest({ url: 'https://raw.githubusercontent.com/ag-grid/ag-grid/master/grid-packages/ag-grid-docs/src/olympicWinnersSmall.json' })
+        .then(function(data) {
+            gridOptions.api.setRowData(data);
+        });
 });

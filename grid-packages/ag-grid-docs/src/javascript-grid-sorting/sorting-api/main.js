@@ -20,41 +20,41 @@ var gridOptions = {
 
 function sortByAthleteAsc() {
     var sort = [
-        {colId: 'athlete', sort: 'asc'}
+        { colId: 'athlete', sort: 'asc' }
     ];
     gridOptions.api.setSortModel(sort);
 }
 
 function sortByAthleteDesc() {
     var sort = [
-        {colId: 'athlete', sort: 'desc'}
+        { colId: 'athlete', sort: 'desc' }
     ];
     gridOptions.api.setSortModel(sort);
 }
 
 function sortByCountryThenSport() {
     var sort = [
-        {colId: 'country', sort: 'asc'},
-        {colId: 'sport', sort: 'asc'}
+        { colId: 'country', sort: 'asc' },
+        { colId: 'sport', sort: 'asc' }
     ];
     gridOptions.api.setSortModel(sort);
 }
 
 function sortBySportThenCountry() {
     var sort = [
-        {colId: 'sport', sort: 'asc'},
-        {colId: 'country', sort: 'asc'}
+        { colId: 'sport', sort: 'asc' },
+        { colId: 'country', sort: 'asc' }
     ];
     gridOptions.api.setSortModel(sort);
 }
 
 function printSortStateToConsole() {
     var sortState = gridOptions.api.getSortModel();
-    if (sortState.length==0) {
+    if (sortState.length == 0) {
         console.log('No sort active');
     } else {
         console.log('State of sorting is:');
-        for (var i = 0; i<sortState.length; i++) {
+        for (var i = 0; i < sortState.length; i++) {
             var item = sortState[i];
             console.log(i + ' = {colId: ' + item.colId + ', sort: ' + item.sort + '}');
         }
@@ -82,16 +82,8 @@ document.addEventListener('DOMContentLoaded', function() {
     var gridDiv = document.querySelector('#myGrid');
     new agGrid.Grid(gridDiv, gridOptions);
 
-    // do http request to get our sample data - not using any framework to keep the example self contained.
-    // you will probably use a framework like JQuery, Angular or something else to do your HTTP calls.
-    var httpRequest = new XMLHttpRequest();
-    httpRequest.open('GET', 'https://raw.githubusercontent.com/ag-grid/ag-grid/master/grid-packages/ag-grid-docs/src/olympicWinnersSmall.json');
-    httpRequest.send();
-    httpRequest.onreadystatechange = function() {
-        if (httpRequest.readyState === 4 && httpRequest.status === 200) {
-            var httpResult = JSON.parse(httpRequest.responseText);
-            gridOptions.api.setRowData(httpResult);
-        }
-    };
+    agGrid.simpleHttpRequest({ url: 'https://raw.githubusercontent.com/ag-grid/ag-grid/master/grid-packages/ag-grid-docs/src/olympicWinnersSmall.json' })
+        .then(function(data) {
+            gridOptions.api.setRowData(data);
+        });
 });
-

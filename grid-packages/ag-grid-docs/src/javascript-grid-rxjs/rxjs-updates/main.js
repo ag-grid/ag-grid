@@ -5,24 +5,24 @@ const columnDefs = [
         field: 'bid',
         cellClass: 'cell-number',
         valueFormatter: numberFormatter,
-        cellRenderer:'agAnimateShowChangeCellRenderer'
+        cellRenderer: 'agAnimateShowChangeCellRenderer'
     },
     {
         field: 'mid',
         cellClass: 'cell-number',
         valueFormatter: numberFormatter,
-        cellRenderer:'agAnimateShowChangeCellRenderer'
+        cellRenderer: 'agAnimateShowChangeCellRenderer'
     },
     {
         field: 'ask',
         cellClass: 'cell-number',
         valueFormatter: numberFormatter,
-        cellRenderer:'agAnimateShowChangeCellRenderer'
+        cellRenderer: 'agAnimateShowChangeCellRenderer'
     },
     {
         field: 'volume',
         cellClass: 'cell-number',
-        cellRenderer:'agAnimateSlideCellRenderer'
+        cellRenderer: 'agAnimateSlideCellRenderer'
     }
 ];
 
@@ -58,13 +58,13 @@ const gridOptions = {
                 // now listen for updates
                 // we process the updates with a transaction - this ensures that only the changes
                 // rows will get re-rendered, improving performance
-                updates$.subscribe((updates) => params.api.updateRowData({update: updates}));
+                updates$.subscribe((updates) => params.api.updateRowData({ update: updates }));
             }
         );
     }
 };
 
-document.addEventListener('DOMContentLoaded', function () {
+document.addEventListener('DOMContentLoaded', function() {
     const gridDiv = document.querySelector('#myGrid');
     new agGrid.Grid(gridDiv, gridOptions);
 });
@@ -76,32 +76,26 @@ function createMockServer() {
         this.rowData = [];
     }
 
-// provides the initial (or current state) of the data
-    MockServer.prototype.initialLoad = function () {
+    // provides the initial (or current state) of the data
+    MockServer.prototype.initialLoad = function() {
         return Rx.Observable.fromPromise(new Promise((resolve, reject) => {
-            // do http request to get our sample data - not using any framework to keep the example self contained.
-            // you will probably use a framework like JQuery, Angular or something else to do your HTTP calls.
-            let httpRequest = new XMLHttpRequest();
-            httpRequest.open('GET', 'https://raw.githubusercontent.com/ag-grid/ag-grid/master/grid-packages/ag-grid-docs/src/stocks.json');
-            httpRequest.send();
-            httpRequest.onreadystatechange = () => {
-                if (httpRequest.readyState === 4 && httpRequest.status === 200) {
-                    let dataSet = JSON.parse(httpRequest.responseText);
+            const that = this;
 
+            agGrid.simpleHttpRequest({ url: 'https://raw.githubusercontent.com/ag-grid/ag-grid/master/grid-packages/ag-grid-docs/src/stocks.json' })
+                .then(function(dataSet) {
                     // for this demo's purpose, lets cut the data set down to something small
-                    let reducedDataSet = dataSet.slice(0, 200);
+                    const reducedDataSet = dataSet.slice(0, 200);
 
                     // the sample data has just name and code, we need to add in dummy figures
-                    this.rowData = this.backfillData(reducedDataSet);
-                    resolve(_.cloneDeep(this.rowData));
-                }
-            };
+                    that.rowData = that.backfillData(reducedDataSet);
+                    resolve(_.cloneDeep(that.rowData));
+                });
         }));
     };
 
-// provides randomised data updates to some of the rows
-// only returns the changed data rows
-    MockServer.prototype.byRowupdates = function () {
+    // provides randomised data updates to some of the rows
+    // only returns the changed data rows
+    MockServer.prototype.byRowupdates = function() {
         return Rx.Observable.create((observer) => {
             const interval = setInterval(() => {
                 let changes = [];
@@ -116,9 +110,9 @@ function createMockServer() {
         });
     };
 
-// provides randomised data updates to some of the rows
-// only all the row data (with some rows changed)
-    MockServer.prototype.allDataUpdates = function () {
+    // provides randomised data updates to some of the rows
+    // only all the row data (with some rows changed)
+    MockServer.prototype.allDataUpdates = function() {
         return Rx.Observable.create((observer) => {
             const interval = setInterval(() => {
                 let changes = [];
@@ -134,14 +128,14 @@ function createMockServer() {
 
             return () => clearInterval(interval);
         });
-    }
+    };
 
 
     /*
      * The rest of the code exists to create or modify mock data
      * it is not important to understand the rest of the example (i.e. the rxjs part of it)
      */
-    MockServer.prototype.backfillData = function (rowData) {
+    MockServer.prototype.backfillData = function(rowData) {
         // the sample data has just name and code, we need to add in dummy figures
         rowData.forEach((dataItem) => {
 
@@ -156,7 +150,7 @@ function createMockServer() {
         return rowData;
     };
 
-    MockServer.prototype.makeSomeVolumeChanges = function (changes) {
+    MockServer.prototype.makeSomeVolumeChanges = function(changes) {
         for (let i = 0; i < 10; i++) {
             // pick a data item at random
             const index = Math.floor(this.rowData.length * Math.random());
@@ -172,7 +166,7 @@ function createMockServer() {
         }
     };
 
-    MockServer.prototype.makeSomePriceChanges = function (changes) {
+    MockServer.prototype.makeSomePriceChanges = function(changes) {
         // randomly update data for some rows
         for (let i = 0; i < 10; i++) {
             const index = Math.floor(this.rowData.length * Math.random());
@@ -190,7 +184,7 @@ function createMockServer() {
         }
     };
 
-    MockServer.prototype.setBidAndAsk = function (dataItem) {
+    MockServer.prototype.setBidAndAsk = function(dataItem) {
         dataItem.bid = dataItem.mid * 0.98;
         dataItem.ask = dataItem.mid * 1.02;
     };

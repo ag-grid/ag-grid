@@ -2,13 +2,13 @@
  * ag-Grid Logic
  *************************************************************************************************************/
 var columnDefs = [
-    {headerName: 'Symbol', field: 'Symbol'},
-    {headerName: 'Date', field: 'Date'},
-    {headerName: 'Open', field: 'Open'},
-    {headerName: 'High', field: 'High'},
-    {headerName: 'Low', field: 'Low'},
-    {headerName: 'Close', field: 'Close'},
-    {headerName: 'Volume', field: 'Volume'}
+    { headerName: 'Symbol', field: 'Symbol' },
+    { headerName: 'Date', field: 'Date' },
+    { headerName: 'Open', field: 'Open' },
+    { headerName: 'High', field: 'High' },
+    { headerName: 'Low', field: 'Low' },
+    { headerName: 'Close', field: 'Close' },
+    { headerName: 'Volume', field: 'Volume' }
 ];
 
 var gridOptions = {
@@ -21,19 +21,19 @@ var gridOptions = {
     onFirstDataRendered: function(params) {
         params.api.sizeColumnsToFit();
     },
-    onSelectionChanged: function (params) {
+    onSelectionChanged: function(params) {
         "use strict";
         publishSelectedSymbols();
     },
     onModelUpdated: function() {
         "use strict";
         // automatically select these symbols at load time
-        var preselectedSymbols = ["aapl","adbe","intc","msft"];
+        var preselectedSymbols = ["aapl", "adbe", "intc", "msft"];
         gridOptions.api.forEachNode(function(node) {
             if (preselectedSymbols.indexOf(node.data.Symbol) !== -1) {
                 node.setSelected(true);
             }
-        })
+        });
     }
 };
 
@@ -83,36 +83,29 @@ function showDateFields(show) {
     dateFields.style.display = show ? 'inline-block' : "None";
 }
 
-var getSelectedSymbols = function () {
+var getSelectedSymbols = function() {
     return gridOptions.api.getSelectedRows().map(function(row) {
         return row.Symbol;
     });
 };
 
-var publishSelectedSymbols = function () {
+var publishSelectedSymbols = function() {
     var selectedSymbols = getSelectedSymbols();
     loadStockDetail(selectedMetric, selectedGraphType, selectedSymbols, selectedYear, selectedMonth);
 };
 
-(function () {
+(function() {
     'use strict';
 
     //event listeners.
-    document.addEventListener('DOMContentLoaded', function () {
+    document.addEventListener('DOMContentLoaded', function() {
         var gridDiv = document.querySelector('#myGrid');
         new agGrid.Grid(gridDiv, gridOptions);
 
-        // do http request to get our sample data - not using any framework to keep the example self contained.
-        // you will probably use a framework like JQuery, Angular or something else to do your HTTP calls.
-        var httpRequest = new XMLHttpRequest();
-        httpRequest.open('GET', '../javascript-grid-graphing/stocks-master-detail/stocks/summary.json');
-        httpRequest.send();
-        httpRequest.onreadystatechange = function () {
-            if (httpRequest.readyState === 4 && httpRequest.status === 200) {
-                var httpResult = JSON.parse(httpRequest.responseText);
-                gridOptions.api.setRowData(httpResult);
-            }
-        };
+        agGrid.simpleHttpRequest({ url: '../javascript-grid-graphing/stocks-master-detail/stocks/summary.json' })
+            .then(function(data) {
+                gridOptions.api.setRowData(data);
+            });
     });
 }());
 
@@ -120,10 +113,10 @@ var publishSelectedSymbols = function () {
  * Graphing / D3 Logic
  *************************************************************************************************************/
 function makeRequest(url) {
-    return new Promise(function (resolve, reject) {
+    return new Promise(function(resolve, reject) {
         var xhr = new XMLHttpRequest();
         xhr.open('GET', url);
-        xhr.onload = function () {
+        xhr.onload = function() {
             if (this.status >= 200 && this.status < 300) {
                 resolve(JSON.parse(xhr.response));
             } else {
@@ -133,7 +126,7 @@ function makeRequest(url) {
                 });
             }
         };
-        xhr.onerror = function () {
+        xhr.onerror = function() {
             reject({
                 status: this.status,
                 statusText: xhr.statusText
@@ -143,7 +136,7 @@ function makeRequest(url) {
     });
 }
 
-var requestStockDataLoad = function (stockSymbols) {
+var requestStockDataLoad = function(stockSymbols) {
     var promises = [];
     stockSymbols.forEach(function(stockSymbol) {
         "use strict";
@@ -152,7 +145,7 @@ var requestStockDataLoad = function (stockSymbols) {
     return promises;
 };
 
-var loadStockDetail = function (metric, graphType, stockSymbols) {
+var loadStockDetail = function(metric, graphType, stockSymbols) {
     Promise.all(requestStockDataLoad(stockSymbols))
         .then(function(values) {
             "use strict";
@@ -172,7 +165,7 @@ function renderMultiLineGraph(metric, values) {
     var svg = d3.select("#detail");
     svg.selectAll("*").remove();
 
-    var margin = {top: 20, right: 80, bottom: 30, left: 50},
+    var margin = { top: 20, right: 80, bottom: 30, left: 50 },
         width = svg.attr("width") - margin.left - margin.right,
         height = svg.attr("height") - margin.top - margin.bottom,
         g = svg.append("g").attr("transform", "translate(" + margin.left + "," + margin.top + ")");
@@ -185,18 +178,18 @@ function renderMultiLineGraph(metric, values) {
 
     var line = d3.line()
         .curve(d3.curveBasis)
-        .x(function (d) {
+        .x(function(d) {
             return x(d.Date);
         })
-        .y(function (d) {
+        .y(function(d) {
             return y(d[metric]);
         });
 
-    var stocks = values.map(function (value) {
+    var stocks = values.map(function(value) {
         var symbol = Object.keys(value)[0];
         return {
             id: symbol,
-            values: value[symbol].map(function (datum) {
+            values: value[symbol].map(function(datum) {
                 var result = {
                     Date: parseTime(datum.Date)
                 };
@@ -209,7 +202,7 @@ function renderMultiLineGraph(metric, values) {
     var data = values.map(function(value) {
         var symbol = Object.keys(value)[0];
 
-        return value[symbol].map(function (stockValue) {
+        return value[symbol].map(function(stockValue) {
             var result = {
                 Date: parseTime(stockValue.Date)
             };
@@ -220,24 +213,24 @@ function renderMultiLineGraph(metric, values) {
 
     data = _.merge.apply(_, data);
 
-    x.domain(d3.extent(data, function (d) {
+    x.domain(d3.extent(data, function(d) {
         return d.Date;
     }));
 
     y.domain([
-        d3.min(stocks, function (c) {
-            return d3.min(c.values, function (d) {
+        d3.min(stocks, function(c) {
+            return d3.min(c.values, function(d) {
                 return d[metric];
             });
         }),
-        d3.max(stocks, function (c) {
-            return d3.max(c.values, function (d) {
+        d3.max(stocks, function(c) {
+            return d3.max(c.values, function(d) {
                 return d[metric];
             });
         })
     ]);
 
-    z.domain(stocks.map(function (c) {
+    z.domain(stocks.map(function(c) {
         return c.id;
     }));
 
@@ -263,24 +256,24 @@ function renderMultiLineGraph(metric, values) {
 
     stock.append("path")
         .attr("class", "line")
-        .attr("d", function (d) {
+        .attr("d", function(d) {
             return line(d.values);
         })
-        .style("stroke", function (d) {
+        .style("stroke", function(d) {
             return z(d.id);
         });
 
     stock.append("text")
-        .datum(function (d) {
-            return {id: d.id, value: d.values[0]};
+        .datum(function(d) {
+            return { id: d.id, value: d.values[0] };
         })
-        .attr("transform", function (d) {
+        .attr("transform", function(d) {
             return "translate(" + x(d.value.Date) + "," + y(d.value[metric]) + ")";
         })
         .attr("x", 3)
         .attr("dy", "0.35em")
         .style("font", "10px sans-serif")
-        .text(function (d) {
+        .text(function(d) {
             return d.id;
         });
 }
@@ -290,11 +283,11 @@ function renderBarGraph(metric, selectedYear, selectedMonth, values) {
 
     var parseTime = d3.timeParse("%d-%b-%y");
 
-    var data = values.map(function (stock) {
+    var data = values.map(function(stock) {
         "use strict";
         var symbol = Object.keys(stock)[0];
         var stockValues = stock[symbol];
-        var filtered = stockValues.filter(function (datum) {
+        var filtered = stockValues.filter(function(datum) {
             var date = parseTime(datum.Date);
             return date.getFullYear() === selectedYear &&
                 date.getMonth() === selectedMonth;
@@ -312,7 +305,7 @@ function renderBarGraph(metric, selectedYear, selectedMonth, values) {
     });
 
     // set the dimensions and margins of the graph
-    var margin = {top: 20, right: 20, bottom: 60, left: 60},
+    var margin = { top: 20, right: 20, bottom: 60, left: 60 },
         width = 960 - margin.left - margin.right,
         height = 500 - margin.top - margin.bottom;
 
@@ -334,10 +327,10 @@ function renderBarGraph(metric, selectedYear, selectedMonth, values) {
             "translate(" + margin.left + "," + margin.top + ")");
 
     // Scale the range of the data in the domains
-    x.domain(data.map(function (d) {
+    x.domain(data.map(function(d) {
         return d.stock;
     }));
-    y.domain([0, d3.max(data, function (d) {
+    y.domain([0, d3.max(data, function(d) {
         return d[metric];
     })]);
 
@@ -346,14 +339,14 @@ function renderBarGraph(metric, selectedYear, selectedMonth, values) {
         .data(data)
         .enter().append("rect")
         .attr("class", "bar")
-        .attr("x", function (d) {
+        .attr("x", function(d) {
             return x(d.stock);
         })
         .attr("width", x.bandwidth())
-        .attr("y", function (d) {
+        .attr("y", function(d) {
             return y(d[metric]);
         })
-        .attr("height", function (d) {
+        .attr("height", function(d) {
             return height - y(d[metric]);
         });
 
@@ -365,7 +358,7 @@ function renderBarGraph(metric, selectedYear, selectedMonth, values) {
     // text label for the x axis
     svg.append("text")
         .attr("transform",
-            "translate(" + (width/2) + " ," +
+            "translate(" + (width / 2) + " ," +
             (height + margin.top + 20) + ")")
         .style("text-anchor", "middle")
         .text("Stock");

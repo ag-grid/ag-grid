@@ -35,7 +35,7 @@ function getDisplayedRowCount() {
 function printAllDisplayedRows() {
     var count = gridOptions.api.getDisplayedRowCount();
     console.log('## printAllDisplayedRows');
-    for (var i = 0; i<count; i++) {
+    for (var i = 0; i < count; i++) {
         var rowNode = gridOptions.api.getDisplayedRowAtIndex(i);
         console.log('row ' + i + ' is ' + rowNode.data.athlete);
     }
@@ -54,7 +54,7 @@ function printPageDisplayedRows() {
     }
 
     console.log('## printPageDisplayedRows');
-    for (var i = startPageIndex; i<=endPageIndex; i++) {
+    for (var i = startPageIndex; i <= endPageIndex; i++) {
         var rowNode = gridOptions.api.getDisplayedRowAtIndex(i);
         console.log('row ' + i + ' is ' + rowNode.data.athlete);
     }
@@ -70,7 +70,8 @@ document.addEventListener('DOMContentLoaded', function() {
     var gridDiv = document.querySelector('#myGrid');
     new agGrid.Grid(gridDiv, gridOptions);
 
-    agGrid.simpleHttpRequest({url: 'https://raw.githubusercontent.com/ag-grid/ag-grid/master/grid-packages/ag-grid-docs/src/olympicWinnersSmall.json'}).then(function(data) {
-        gridOptions.api.setRowData(data.slice(0, 100));
-    });
+    agGrid.simpleHttpRequest({ url: 'https://raw.githubusercontent.com/ag-grid/ag-grid/master/grid-packages/ag-grid-docs/src/olympicWinnersSmall.json' })
+        .then(function(data) {
+            gridOptions.api.setRowData(data.slice(0, 100));
+        });
 });

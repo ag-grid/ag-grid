@@ -1,17 +1,17 @@
 var columnDefs = [
-    {field: "athlete", minWidth: 150, filter: PersonFilter},
-    {field: "age", filter: 'agNumberColumnFilter'},
-    {field: "country", minWidth: 150},
-    {field: "year", filter: YearFilter},
+    { field: "athlete", minWidth: 150, filter: PersonFilter },
+    { field: "age", filter: 'agNumberColumnFilter' },
+    { field: "country", minWidth: 150 },
+    { field: "year", filter: YearFilter },
     {
         field: "date", minWidth: 130, filter: 'agDateColumnFilter', filterParams: {
-            comparator: function (filterLocalDateAtMidnight, cellValue) {
+            comparator: function(filterLocalDateAtMidnight, cellValue) {
                 var dateAsString = cellValue;
                 var dateParts = dateAsString.split("/");
                 var cellDate = new Date(Number(dateParts[2]), Number(dateParts[1]) - 1, Number(dateParts[0]));
 
                 if (filterLocalDateAtMidnight.getTime() == cellDate.getTime()) {
-                    return 0
+                    return 0;
                 }
 
                 if (cellDate < filterLocalDateAtMidnight) {
@@ -24,11 +24,11 @@ var columnDefs = [
             }
         }
     },
-    {field: "sport"},
-    {field: "gold", filter: 'agNumberColumnFilter'},
-    {field: "silver", filter: 'agNumberColumnFilter'},
-    {field: "bronze", filter: 'agNumberColumnFilter'},
-    {field: "total", filter: 'agNumberColumnFilter'}
+    { field: "sport" },
+    { field: "gold", filter: 'agNumberColumnFilter' },
+    { field: "silver", filter: 'agNumberColumnFilter' },
+    { field: "bronze", filter: 'agNumberColumnFilter' },
+    { field: "total", filter: 'agNumberColumnFilter' }
 ];
 
 var gridOptions = {
@@ -47,14 +47,14 @@ var gridOptions = {
 function PersonFilter() {
 }
 
-PersonFilter.prototype.init = function (params) {
+PersonFilter.prototype.init = function(params) {
     this.valueGetter = params.valueGetter;
     this.filterText = null;
     this.setupGui(params);
 };
 
 // not called by ag-Grid, just for us to help setup
-PersonFilter.prototype.setupGui = function (params) {
+PersonFilter.prototype.setupGui = function(params) {
     this.gui = document.createElement('div');
     this.gui.innerHTML =
         '<div style="padding: 4px; width: 200px;">' +
@@ -82,15 +82,15 @@ PersonFilter.prototype.setupGui = function (params) {
     }
 };
 
-PersonFilter.prototype.getGui = function () {
+PersonFilter.prototype.getGui = function() {
     return this.gui;
 };
 
-PersonFilter.prototype.doesFilterPass = function (params) {
+PersonFilter.prototype.doesFilterPass = function(params) {
     // make sure each word passes separately, ie search for firstname, lastname
     var passed = true;
     var valueGetter = this.valueGetter;
-    this.filterText.toLowerCase().split(" ").forEach(function (filterWord) {
+    this.filterText.toLowerCase().split(" ").forEach(function(filterWord) {
         var value = valueGetter(params);
         if (value.toString().toLowerCase().indexOf(filterWord) < 0) {
             passed = false;
@@ -100,23 +100,23 @@ PersonFilter.prototype.doesFilterPass = function (params) {
     return passed;
 };
 
-PersonFilter.prototype.isFilterActive = function () {
+PersonFilter.prototype.isFilterActive = function() {
     return this.filterText !== null && this.filterText !== undefined && this.filterText !== '';
 };
 
-PersonFilter.prototype.getModel = function () {
-    var model = {value: this.filterText.value};
+PersonFilter.prototype.getModel = function() {
+    var model = { value: this.filterText.value };
     return model;
 };
 
-PersonFilter.prototype.setModel = function (model) {
+PersonFilter.prototype.setModel = function(model) {
     this.eFilterText.value = model.value;
 };
 
 function YearFilter() {
 }
 
-YearFilter.prototype.init = function (params) {
+YearFilter.prototype.init = function(params) {
     this.eGui = document.createElement('div');
     this.eGui.innerHTML =
         '<div style="display: inline-block; width: 400px;">' +
@@ -139,54 +139,46 @@ YearFilter.prototype.init = function (params) {
     this.valueGetter = params.valueGetter;
 };
 
-YearFilter.prototype.onRbChanged = function () {
+YearFilter.prototype.onRbChanged = function() {
     this.filterActive = this.rbSince2010.checked;
     this.filterChangedCallback();
 };
 
-YearFilter.prototype.getGui = function () {
+YearFilter.prototype.getGui = function() {
     return this.eGui;
 };
 
-YearFilter.prototype.doesFilterPass = function (params) {
+YearFilter.prototype.doesFilterPass = function(params) {
     return params.data.year >= 2010;
 };
 
-YearFilter.prototype.isFilterActive = function () {
+YearFilter.prototype.isFilterActive = function() {
     return this.filterActive;
 };
 
-YearFilter.prototype.getModel = function () {
-    var model = {value: this.rbSince2010.checked};
+YearFilter.prototype.getModel = function() {
+    var model = { value: this.rbSince2010.checked };
     return model;
 };
 
-YearFilter.prototype.setModel = function (model) {
+YearFilter.prototype.setModel = function(model) {
     this.rbSince2010.checked = model.value;
 };
 
 // this example isn't using getModel() and setModel(),
 // so safe to just leave these empty. don't do this in your code!!!
-YearFilter.prototype.getModel = function () {
+YearFilter.prototype.getModel = function() {
 };
-YearFilter.prototype.setModel = function () {
+YearFilter.prototype.setModel = function() {
 };
 
 // setup the grid after the page has finished loading
-document.addEventListener('DOMContentLoaded', function () {
+document.addEventListener('DOMContentLoaded', function() {
     var gridDiv = document.querySelector('#myGrid');
     new agGrid.Grid(gridDiv, gridOptions);
 
-    // do http request to get our sample data - not using any framework to keep the example self contained.
-    // you will probably use a framework like JQuery, Angular or something else to do your HTTP calls.
-    var httpRequest = new XMLHttpRequest();
-    httpRequest.open('GET', 'https://raw.githubusercontent.com/ag-grid/ag-grid/master/grid-packages/ag-grid-docs/src/olympicWinnersSmall.json');
-    httpRequest.send();
-    httpRequest.onreadystatechange = function () {
-        if (httpRequest.readyState == 4 && httpRequest.status == 200) {
-            var httpResult = JSON.parse(httpRequest.responseText);
-            gridOptions.api.setRowData(httpResult);
-        }
-    };
+    agGrid.simpleHttpRequest({ url: 'https://raw.githubusercontent.com/ag-grid/ag-grid/master/grid-packages/ag-grid-docs/src/olympicWinnersSmall.json' })
+        .then(function(data) {
+            gridOptions.api.setRowData(data);
+        });
 });
-

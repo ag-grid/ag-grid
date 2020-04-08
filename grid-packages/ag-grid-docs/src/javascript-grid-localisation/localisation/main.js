@@ -1,16 +1,16 @@
 var columnDefs = [
     // this row just shows the row index, doesn't use any data from the row
-    {headerName: "#", cellRenderer: 'rowNodeIdRenderer'},
-    {field: "athlete"},
-    {field: "age", enablePivot: true},
-    {field: "country", enableRowGroup: true },
-    {field: "year", filter: 'agNumberColumnFilter'},
-    {field: "date"},
-    {field: "sport", filter: 'agTextColumnFilter'},
-    {field: "gold", enableValue: true},
-    {field: "silver", enableValue: true},
-    {field: "bronze", enableValue: true},
-    {field: "total", enableValue: true}
+    { headerName: "#", cellRenderer: 'rowNodeIdRenderer' },
+    { field: "athlete" },
+    { field: "age", enablePivot: true },
+    { field: "country", enableRowGroup: true },
+    { field: "year", filter: 'agNumberColumnFilter' },
+    { field: "date" },
+    { field: "sport", filter: 'agTextColumnFilter' },
+    { field: "gold", enableValue: true },
+    { field: "silver", enableValue: true },
+    { field: "bronze", enableValue: true },
+    { field: "total", enableValue: true }
 ];
 
 var gridOptions = {
@@ -24,7 +24,7 @@ var gridOptions = {
     },
     // note - we do not set 'virtualPaging' here, so the grid knows we are doing standard paging
     components: {
-        rowNodeIdRenderer: function (params) {
+        rowNodeIdRenderer: function(params) {
             return params.node.id + 1;
         }
     },
@@ -34,8 +34,8 @@ var gridOptions = {
     rowGroupPanelShow: 'always',
     statusBar: {
         statusPanels: [
-            {statusPanel: 'agTotalAndFilteredRowCountComponent', align: 'left'},
-            {statusPanel: 'agAggregationComponent'}
+            { statusPanel: 'agTotalAndFilteredRowCountComponent', align: 'left' },
+            { statusPanel: 'agAggregationComponent' }
         ]
     },
     paginationPageSize: 500,
@@ -271,12 +271,12 @@ var gridOptions = {
 function setDataSource(allOfTheData) {
     var dataSource = {
         //rowCount: ???, - not setting the row count, infinite paging will be used
-        getRows: function (params) {
+        getRows: function(params) {
             // this code should contact the server for rows. however for the purposes of the demo,
             // the data is generated locally, and a timer is used to give the expereince of
             // an asynchronous call
             console.log('asking for ' + params.startRow + ' to ' + params.endRow);
-            setTimeout(function () {
+            setTimeout(function() {
                 // take a chunk of the array, matching the start and finish times
                 var rowsThisPage = allOfTheData.slice(params.startRow, params.endRow);
                 var lastRow = -1;
@@ -292,19 +292,12 @@ function setDataSource(allOfTheData) {
 }
 
 // setup the grid after the page has finished loading
-document.addEventListener('DOMContentLoaded', function () {
+document.addEventListener('DOMContentLoaded', function() {
     var gridDiv = document.querySelector('#myGrid');
     new agGrid.Grid(gridDiv, gridOptions);
 
-    // do http request to get our sample data - not using any framework to keep the example self contained.
-    // you will probably use a framework like JQuery, Angular or something else to do your HTTP calls.
-    var httpRequest = new XMLHttpRequest();
-    httpRequest.open('GET', 'https://raw.githubusercontent.com/ag-grid/ag-grid/master/grid-packages/ag-grid-docs/src/olympicWinnersSmall.json');
-    httpRequest.send();
-    httpRequest.onreadystatechange = function () {
-        if (httpRequest.readyState === 4 && httpRequest.status === 200) {
-            var httpResult = JSON.parse(httpRequest.responseText);
-            gridOptions.api.setRowData(httpResult);
-        }
-    };
+    agGrid.simpleHttpRequest({ url: 'https://raw.githubusercontent.com/ag-grid/ag-grid/master/grid-packages/ag-grid-docs/src/olympicWinnersSmall.json' })
+        .then(function(data) {
+            gridOptions.api.setRowData(data);
+        });
 });

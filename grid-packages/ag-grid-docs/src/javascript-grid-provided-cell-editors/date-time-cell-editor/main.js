@@ -4,7 +4,8 @@ var columnDefs = [
     { headerName: 'Age', field: 'age', width: 90 },
     { headerName: 'Country', field: 'country', width: 150 },
     { headerName: 'Year', field: 'year', width: 90 },
-    { headerName: 'Date', field: 'date', width: 110,
+    {
+        headerName: 'Date', field: 'date', width: 110,
         editable: true,
         cellEditor: 'agDateTimeCellEditor',
         cellEditorParams: {
@@ -33,7 +34,7 @@ var gridOptions = {
     debug: true,
     rowData: null,
     onGridReady: function() {
-        gridOptions.api.sizeColumnsToFit()
+        gridOptions.api.sizeColumnsToFit();
     }
 };
 
@@ -42,18 +43,8 @@ document.addEventListener('DOMContentLoaded', function() {
     var gridDiv = document.querySelector('#myGrid');
     new agGrid.Grid(gridDiv, gridOptions);
 
-    // do http request to get our sample data - not using any framework to keep the example self contained.
-    // you will probably use a framework like JQuery, Angular or something else to do your HTTP calls.
-    var httpRequest = new XMLHttpRequest();
-    httpRequest.open(
-        'GET',
-        'https://raw.githubusercontent.com/ag-grid/ag-grid/master/grid-packages/ag-grid-docs/src/olympicWinnersSmall.json'
-    );
-    httpRequest.send();
-    httpRequest.onreadystatechange = function() {
-        if (httpRequest.readyState === 4 && httpRequest.status === 200) {
-            var httpResult = JSON.parse(httpRequest.responseText);
-            gridOptions.api.setRowData(httpResult);
-        }
-    };
+    agGrid.simpleHttpRequest({ url: 'https://raw.githubusercontent.com/ag-grid/ag-grid/master/grid-packages/ag-grid-docs/src/olympicWinnersSmall.json' })
+        .then(function(data) {
+            gridOptions.api.setRowData(data);
+        });
 });

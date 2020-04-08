@@ -1,7 +1,7 @@
 var gridOptions = {
     columnDefs: [
         { field: 'country', rowGroup: true, hide: true },
-        { field: 'sport', rowGroup: true, hide: true  },
+        { field: 'sport', rowGroup: true, hide: true },
         { field: 'athlete', minWidth: 200 },
         { field: 'age' },
         { field: 'year' },
@@ -23,7 +23,7 @@ var gridOptions = {
     },
     rememberGroupStateWhenNewData: true,
     onGridReady: function(params) {
-        params.api.setSortModel([{colId: 'ag-Grid-AutoColumn', sort: 'asc'}]);
+        params.api.setSortModel([{ colId: 'ag-Grid-AutoColumn', sort: 'asc' }]);
     }
 };
 
@@ -55,15 +55,16 @@ document.addEventListener('DOMContentLoaded', function() {
     var gridDiv = document.querySelector('#myGrid');
     new agGrid.Grid(gridDiv, gridOptions);
 
-    agGrid.simpleHttpRequest({url: 'https://raw.githubusercontent.com/ag-grid/ag-grid/master/grid-packages/ag-grid-docs/src/olympicWinnersSmall.json'}).then(function(data) {
-        allRowData = data;
-        var dataThisTime = [];
-        data.forEach(function(item, index) {
-            if (index % 2 === 0) {
-                dataThisTime.push(item);
-            }
-        });
+    agGrid.simpleHttpRequest({ url: 'https://raw.githubusercontent.com/ag-grid/ag-grid/master/grid-packages/ag-grid-docs/src/olympicWinnersSmall.json' })
+        .then(function(data) {
+            allRowData = data;
+            var dataThisTime = [];
+            data.forEach(function(item, index) {
+                if (index % 2 === 0) {
+                    dataThisTime.push(item);
+                }
+            });
 
-        gridOptions.api.setRowData(dataThisTime);
-    });
+            gridOptions.api.setRowData(dataThisTime);
+        });
 });

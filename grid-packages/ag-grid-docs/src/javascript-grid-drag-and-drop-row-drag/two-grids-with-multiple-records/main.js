@@ -1,10 +1,11 @@
 var leftColumnDefs = [
-    {   rowDrag: true,
+    {
+        rowDrag: true,
         maxWidth: 50,
         suppressMenu: true,
         rowDragText: function(params, dragItemCount) {
             if (dragItemCount > 1) {
-                return dragItemCount + ' athletes'
+                return dragItemCount + ' athletes';
             }
             return params.rowNode.data.athlete;
         },
@@ -20,19 +21,20 @@ var leftColumnDefs = [
 ];
 
 var rightColumnDefs = [
-    {   rowDrag: true,
+    {
+        rowDrag: true,
         maxWidth: 50,
         suppressMenu: true,
         rowDragText: function(params, dragItemCount) {
             if (dragItemCount > 1) {
-                return dragItemCount + ' athletes'
+                return dragItemCount + ' athletes';
             }
             return params.rowNode.data.athlete;
         },
     },
     { field: "athlete" },
     { field: "sport" },
-    { 
+    {
         suppressMenu: true,
         maxWidth: 50,
         cellRenderer: function(params) {
@@ -63,7 +65,7 @@ var gridOptions = {
         rowSelection: 'multiple',
         enableMultiRowDragging: true,
         suppressRowClickSelection: true,
-        getRowNodeId: function(data) { return data.athlete },
+        getRowNodeId: function(data) { return data.athlete; },
         rowDragManaged: true,
         suppressMoveWhenRowDragging: true,
         columnDefs: leftColumnDefs,
@@ -80,7 +82,7 @@ var gridOptions = {
             filter: true,
             resizable: true
         },
-        getRowNodeId: function(data) { return data.athlete },
+        getRowNodeId: function(data) { return data.athlete; },
         rowDragManaged: true,
         suppressMoveWhenRowDragging: true,
         columnDefs: rightColumnDefs,
@@ -105,17 +107,18 @@ function loadGrid(side, data) {
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function() {
-    agGrid.simpleHttpRequest({url: 'https://raw.githubusercontent.com/ag-grid/ag-grid/master/grid-packages/ag-grid-docs/src/olympicWinnersSmall.json'}).then(function(data) {
-        var athletes = [];
-        var i = 0;
+    agGrid.simpleHttpRequest({ url: 'https://raw.githubusercontent.com/ag-grid/ag-grid/master/grid-packages/ag-grid-docs/src/olympicWinnersSmall.json' })
+        .then(function(data) {
+            var athletes = [];
+            var i = 0;
 
-        while (athletes.length < 20 && i < data.length) {
-            var pos = i++;
-            if (athletes.some(function(rec) { return rec.athlete === data[pos].athlete })) { continue; }
-            athletes.push(data[pos]);
-        }
+            while (athletes.length < 20 && i < data.length) {
+                var pos = i++;
+                if (athletes.some(function(rec) { return rec.athlete === data[pos].athlete; })) { continue; }
+                athletes.push(data[pos]);
+            }
 
-        loadGrid('Left', athletes);
-        loadGrid('Right', []);
-    });
+            loadGrid('Left', athletes);
+            loadGrid('Right', []);
+        });
 });

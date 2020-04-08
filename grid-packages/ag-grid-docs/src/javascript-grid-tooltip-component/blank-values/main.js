@@ -1,11 +1,11 @@
 var columnDefs = [
-    {headerName: "Athlete Col 1", field: "athlete", width: 150, tooltipField: 'athlete'},
-    {headerName: "Athlete Col 2", field: "athlete", width: 150, tooltipComponent: 'customTooltip', tooltipValueGetter: function(params) {return { value: params.value}; } },
-    {field: "sport", width: 110},
-    {field: "gold", width: 100},
-    {field: "silver", width: 100},
-    {field: "bronze", width: 100},
-    {field: "total", width: 100}
+    { headerName: "Athlete Col 1", field: "athlete", width: 150, tooltipField: 'athlete' },
+    { headerName: "Athlete Col 2", field: "athlete", width: 150, tooltipComponent: 'customTooltip', tooltipValueGetter: function(params) { return { value: params.value }; } },
+    { field: "sport", width: 110 },
+    { field: "gold", width: 100 },
+    { field: "silver", width: 100 },
+    { field: "bronze", width: 100 },
+    { field: "total", width: 100 }
 ];
 
 var gridOptions = {
@@ -42,15 +42,8 @@ document.addEventListener('DOMContentLoaded', function() {
     var gridDiv = document.querySelector('#myGrid');
     new agGrid.Grid(gridDiv, gridOptions);
 
-    // do http request to get our sample data - not using any framework to keep the example self contained.
-    // you will probably use a framework like JQuery, Angular or something else to do your HTTP calls.
-    var httpRequest = new XMLHttpRequest();
-    httpRequest.open('GET', 'https://raw.githubusercontent.com/ag-grid/ag-grid/master/grid-packages/ag-grid-docs/src/olympicWinnersSmall.json');
-    httpRequest.send();
-    httpRequest.onreadystatechange = function() {
-        if (httpRequest.readyState === 4 && httpRequest.status === 200) {
-            var httpResult = JSON.parse(httpRequest.responseText);
-            gridOptions.api.setRowData(httpResult);
-        }
-    };
+    agGrid.simpleHttpRequest({ url: 'https://raw.githubusercontent.com/ag-grid/ag-grid/master/grid-packages/ag-grid-docs/src/olympicWinnersSmall.json' })
+        .then(function(data) {
+            gridOptions.api.setRowData(data);
+        });
 });

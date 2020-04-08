@@ -1,15 +1,15 @@
 var columnDefs = [
-    {headerName: "#", colId: "rowNum", valueGetter: "node.id"},
-    {field: "athlete", minWidth: 170},
-    {field: "age"},
-    {field: "country"},
-    {field: "year"},
-    {field: "date"},
-    {field: "sport"},
-    {field: "gold"},
-    {field: "silver"},
-    {field: "bronze"},
-    {field: "total"}
+    { headerName: "#", colId: "rowNum", valueGetter: "node.id" },
+    { field: "athlete", minWidth: 170 },
+    { field: "age" },
+    { field: "country" },
+    { field: "year" },
+    { field: "date" },
+    { field: "sport" },
+    { field: "gold" },
+    { field: "silver" },
+    { field: "bronze" },
+    { field: "total" }
 ];
 
 var gridOptions = {
@@ -29,7 +29,7 @@ var gridOptions = {
 var myInput = document.getElementById("my-input");
 
 // intercept key strokes within input element
-myInput.addEventListener("keydown", function (event) {
+myInput.addEventListener("keydown", function(event) {
     // code for tab key
     var tabKeyCode = 9;
 
@@ -53,11 +53,12 @@ myInput.addEventListener("keydown", function (event) {
 
 
 // setup the grid after the page has finished loading
-document.addEventListener('DOMContentLoaded', function () {
+document.addEventListener('DOMContentLoaded', function() {
     var gridDiv = document.querySelector('#myGrid');
     new agGrid.Grid(gridDiv, gridOptions);
 
-    agGrid.simpleHttpRequest({url: 'https://raw.githubusercontent.com/ag-grid/ag-grid/master/grid-packages/ag-grid-docs/src/olympicWinnersSmall.json'}).then(function (data) {
-        gridOptions.api.setRowData(data);
-    });
+    agGrid.simpleHttpRequest({ url: 'https://raw.githubusercontent.com/ag-grid/ag-grid/master/grid-packages/ag-grid-docs/src/olympicWinnersSmall.json' })
+        .then(function(data) {
+            gridOptions.api.setRowData(data);
+        });
 });

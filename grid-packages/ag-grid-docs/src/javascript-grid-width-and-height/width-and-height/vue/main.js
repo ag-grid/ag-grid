@@ -1,7 +1,7 @@
 import Vue from "vue";
-import {AgGridVue} from "@ag-grid-community/vue";
+import { AgGridVue } from "@ag-grid-community/vue";
 
-import {AllCommunityModules} from "@ag-grid-community/all-modules";
+import { AllCommunityModules } from "@ag-grid-community/all-modules";
 import "@ag-grid-community/all-modules/dist/styles/ag-grid.css";
 import "@ag-grid-community/all-modules/dist/styles/ag-theme-alpine.css";
 
@@ -25,7 +25,7 @@ const VueExample = {
     components: {
         "ag-grid-vue": AgGridVue
     },
-    data: function () {
+    data: function() {
         return {
             columnDefs: null,
             rowData: null,
@@ -55,21 +55,21 @@ const VueExample = {
             this.setWidthAndHeight('100%', '100%');
         },
         fillMedium() {
-          this.setWidthAndHeight('60%', '60%');
+            this.setWidthAndHeight('60%', '60%');
         },
         fillExact() {
-          this.setWidthAndHeight('400px', '400px');
+            this.setWidthAndHeight('400px', '400px');
         },
         setWidthAndHeight(width, height) {
-          this.width = width;
-          this.height = height;
+            this.width = width;
+            this.height = height;
         },
         onGridReady(params) {
             const httpRequest = new XMLHttpRequest();
 
             httpRequest.open(
                 "GET",
-                "https://raw.githubusercontent.com/ag-grid/ag-grid/master/grid-packages/ag-grid-docs/src/olympicWinnersSmall.json"
+                'https://raw.githubusercontent.com/ag-grid/ag-grid/master/grid-packages/ag-grid-docs/src/olympicWinnersSmall.json'
             );
             httpRequest.send();
             httpRequest.onreadystatechange = () => {

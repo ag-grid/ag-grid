@@ -2,15 +2,15 @@ var gridOptions = {
     // define grid columns
     columnDefs: [
         // using default ColDef
-        {headerName: 'Athlete', field: 'athlete'},
-        {headerName: 'Sport', field: 'sport'},
+        { headerName: 'Athlete', field: 'athlete' },
+        { headerName: 'Sport', field: 'sport' },
 
         // using number column type
-        {headerName: 'Age', field: 'age', type: 'numberColumn'},
-        {headerName: 'Year', field: 'year', type: 'numberColumn'},
+        { headerName: 'Age', field: 'age', type: 'numberColumn' },
+        { headerName: 'Year', field: 'year', type: 'numberColumn' },
 
         // using date and non-editable column types
-        {headerName: 'Date', field: 'date', width: 200 }
+        { headerName: 'Date', field: 'date', width: 200 }
     ],
 
     defaultColDef: {
@@ -23,7 +23,7 @@ var gridOptions = {
     },
 
     columnTypes: {
-        numberColumn: {width: 83}
+        numberColumn: { width: 83 }
     },
 
     rowData: null
@@ -34,7 +34,8 @@ document.addEventListener('DOMContentLoaded', function() {
     var gridDiv = document.querySelector('#myGrid');
     new agGrid.Grid(gridDiv, gridOptions);
 
-    agGrid.simpleHttpRequest({url: 'https://raw.githubusercontent.com/ag-grid/ag-grid/master/grid-packages/ag-grid-docs/src/olympicWinnersSmall.json'}).then(function(data) {
-        gridOptions.api.setRowData(data);
-    });
+    agGrid.simpleHttpRequest({ url: 'https://raw.githubusercontent.com/ag-grid/ag-grid/master/grid-packages/ag-grid-docs/src/olympicWinnersSmall.json' })
+        .then(function(data) {
+            gridOptions.api.setRowData(data);
+        });
 });

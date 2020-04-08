@@ -6,18 +6,18 @@ var columnDefs = [
     {
         field: "date",
         minWidth: 180,
-        menuTabs: ['filterMenuTab','generalMenuTab','columnsMenuTab'],
+        menuTabs: ['filterMenuTab', 'generalMenuTab', 'columnsMenuTab'],
     },
     {
         field: "sport",
         minWidth: 200,
-        menuTabs:['filterMenuTab','columnsMenuTab'],
+        menuTabs: ['filterMenuTab', 'columnsMenuTab'],
     },
     {
         field: "gold",
-        menuTabs: ['generalMenuTab','gibberishMenuTab'],
+        menuTabs: ['generalMenuTab', 'gibberishMenuTab'],
     },
-    { field: "silver", menuTabs:[] },
+    { field: "silver", menuTabs: [] },
     { field: "bronze" },
     { field: "total" }
 ];
@@ -41,7 +41,7 @@ var gridOptions = {
 
             var oldTopStr = ePopup.style.top;
             // remove 'px' from the string (ag-Grid uses px positioning)
-            oldTopStr = oldTopStr.substring(0,oldTopStr.indexOf('px'));
+            oldTopStr = oldTopStr.substring(0, oldTopStr.indexOf('px'));
             var oldTop = parseInt(oldTopStr);
             var newTop = oldTop + 25;
 
@@ -59,17 +59,17 @@ function getMainMenuItems(params) {
         case 'athlete':
             var athleteMenuItems = params.defaultItems.slice(0);
             athleteMenuItems.push({
-                name: 'ag-Grid Is Great', action: function() {console.log('ag-Grid is great was selected');}
+                name: 'ag-Grid Is Great', action: function() { console.log('ag-Grid is great was selected'); }
             });
             athleteMenuItems.push({
-                name: 'Casio Watch', action: function() {console.log('People who wear casio watches are cool');}
+                name: 'Casio Watch', action: function() { console.log('People who wear casio watches are cool'); }
             });
             athleteMenuItems.push({
                 name: 'Custom Sub Menu',
                 subMenu: [
-                    {name: 'Black', action: function() {console.log('Black was pressed');} },
-                    {name: 'White', action: function() {console.log('White was pressed');} },
-                    {name: 'Grey', action: function() {console.log('Grey was pressed');} }
+                    { name: 'Black', action: function() { console.log('Black was pressed'); } },
+                    { name: 'White', action: function() { console.log('White was pressed'); } },
+                    { name: 'Grey', action: function() { console.log('Grey was pressed'); } }
                 ]
             });
             return athleteMenuItems;
@@ -79,12 +79,12 @@ function getMainMenuItems(params) {
             return [
                 { // our own item with an icon
                     name: 'Joe Abercrombie',
-                    action: function() {console.log('He wrote a book');},
+                    action: function() { console.log('He wrote a book'); },
                     icon: '<img src="../images/lab.png" style="width: 14px;"/>'
                 },
                 { // our own icon with a check box
                     name: 'Larsson',
-                    action: function() {console.log('He also wrote a book');},
+                    action: function() { console.log('He also wrote a book'); },
                     checked: true
                 },
                 'resetColumns' // a built in item
@@ -93,9 +93,9 @@ function getMainMenuItems(params) {
         // return all the default items, but remove app seperators and the two sub menus
         case 'country':
             var countryMenuItems = [];
-            var itemsToExclude = ['separator','pinSubMenu','valueAggSubMenu'];
-            params.defaultItems.forEach( function(item) {
-                if (itemsToExclude.indexOf(item)<0) {
+            var itemsToExclude = ['separator', 'pinSubMenu', 'valueAggSubMenu'];
+            params.defaultItems.forEach(function(item) {
+                if (itemsToExclude.indexOf(item) < 0) {
                     countryMenuItems.push(item);
                 }
             });
@@ -112,15 +112,8 @@ document.addEventListener('DOMContentLoaded', function() {
     var gridDiv = document.querySelector('#myGrid');
     new agGrid.Grid(gridDiv, gridOptions);
 
-    // do http request to get our sample data - not using any framework to keep the example self contained.
-    // you will probably use a framework like JQuery, Angular or something else to do your HTTP calls.
-    var httpRequest = new XMLHttpRequest();
-    httpRequest.open('GET', 'https://raw.githubusercontent.com/ag-grid/ag-grid/master/grid-packages/ag-grid-docs/src/olympicWinners.json');
-    httpRequest.send();
-    httpRequest.onreadystatechange = function() {
-        if (httpRequest.readyState == 4 && httpRequest.status == 200) {
-            var httpResult = JSON.parse(httpRequest.responseText);
-            gridOptions.api.setRowData(httpResult);
-        }
-    };
+    agGrid.simpleHttpRequest({ url: 'https://raw.githubusercontent.com/ag-grid/ag-grid/master/grid-packages/ag-grid-docs/src/olympicWinners.json' })
+        .then(function(data) {
+            gridOptions.api.setRowData(data);
+        });
 });

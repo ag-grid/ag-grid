@@ -1,7 +1,7 @@
 import Vue from "vue";
-import {AgGridVue} from "@ag-grid-community/vue";
+import { AgGridVue } from "@ag-grid-community/vue";
 
-import {AllCommunityModules} from '@ag-grid-community/all-modules';
+import { AllCommunityModules } from '@ag-grid-community/all-modules';
 
 import "@ag-grid-community/all-modules/dist/styles/ag-grid.css";
 import "@ag-grid-community/all-modules/dist/styles/ag-theme-alpine.css";
@@ -29,7 +29,7 @@ const VueExample = {
     components: {
         "ag-grid-vue": AgGridVue
     },
-    data: function () {
+    data: function() {
         return {
             topGridOptions: null,
             bottomGridOptions: null,
@@ -41,7 +41,7 @@ const VueExample = {
             athleteVisible: true,
             ageVisible: true,
             countryVisible: true,
-            rowStyle: {fontWeight: 'bold'},
+            rowStyle: { fontWeight: 'bold' },
             modules: AllCommunityModules
         };
     },
@@ -82,17 +82,17 @@ const VueExample = {
                 flex: 1,
                 minWidth: 100
             }
-        }
+        };
         this.topGridOptions.alignedGrids.push(this.bottomGridOptions);
         this.bottomGridOptions.alignedGrids.push(this.topGridOptions);
 
         this.columnDefs = [
-            {field: 'athlete', width: 200, hide: !this.athleteVisible},
-            {field: 'age', width: 150, hide: !this.ageVisible},
-            {field: 'country', width: 150, hide: !this.countryVisible},
-            {field: 'year', width: 120},
-            {field: 'date', width: 150},
-            {field: 'sport', width: 150}
+            { field: 'athlete', width: 200, hide: !this.athleteVisible },
+            { field: 'age', width: 150, hide: !this.ageVisible },
+            { field: 'country', width: 150, hide: !this.countryVisible },
+            { field: 'year', width: 120 },
+            { field: 'date', width: 150 },
+            { field: 'sport', width: 150 }
         ];
     },
     mounted() {
@@ -108,7 +108,7 @@ const VueExample = {
 
             httpRequest.open(
                 "GET",
-                "https://raw.githubusercontent.com/ag-grid/ag-grid/master/grid-packages/ag-grid-docs/src/olympicWinnersSmall.json"
+                'https://raw.githubusercontent.com/ag-grid/ag-grid/master/grid-packages/ag-grid-docs/src/olympicWinnersSmall.json'
             );
             httpRequest.send();
             httpRequest.onreadystatechange = () => {

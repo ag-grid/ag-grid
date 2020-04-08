@@ -73,7 +73,7 @@ function destroyCountryFilter() {
 function endingStan() {
     var countryFilterComponent = gridOptions.api.getFilterInstance('country');
     countryFilterComponent.selectNothing();
-    for (var i = 0; i<countryFilterComponent.getUniqueValueCount(); i++) {
+    for (var i = 0; i < countryFilterComponent.getUniqueValueCount(); i++) {
         var value = countryFilterComponent.getUniqueValue(i);
         var valueEndsWithStan = value.indexOf('stan') === value.length - 4;
         if (valueEndsWithStan) {
@@ -88,7 +88,7 @@ function setCountryModel() {
     var countryFilterComponent = gridOptions.api.getFilterInstance('country');
     var model = {
         type: 'set',
-        values: ['Algeria','Argentina']
+        values: ['Algeria', 'Argentina']
     };
     countryFilterComponent.setModel(model);
     gridOptions.api.onFilterChanged();
@@ -125,7 +125,7 @@ function sportEndsWithG() {
 function sportsCombined() {
     var sportsFilterComponent = gridOptions.api.getFilterInstance('sport');
     sportsFilterComponent.setModel({
-        condition2:{
+        condition2: {
             type: 'endsWith',
             filter: 'g'
         },
@@ -161,13 +161,13 @@ function ageAbove30() {
 function ageBelow25OrAbove30() {
     var ageFilterComponent = gridOptions.api.getFilterInstance('age');
     ageFilterComponent.setModel({
-        condition1:{
+        condition1: {
             type: 'greaterThan',
             filter: 30,
             filterTo: null
         },
         operator: 'OR',
-        condition2:{
+        condition2: {
             type: 'lessThan',
             filter: 25,
             filterTo: null
@@ -192,7 +192,7 @@ function clearAgeFilter() {
     gridOptions.api.onFilterChanged();
 }
 
-function after2010(){
+function after2010() {
     var dateFilterComponent = gridOptions.api.getFilterInstance('date');
     dateFilterComponent.setModel({
         type: 'greaterThan',
@@ -202,7 +202,7 @@ function after2010(){
     gridOptions.api.onFilterChanged();
 }
 
-function before2012(){
+function before2012() {
     var dateFilterComponent = gridOptions.api.getFilterInstance('date');
     dateFilterComponent.setModel({
         type: 'lessThan',
@@ -212,15 +212,15 @@ function before2012(){
     gridOptions.api.onFilterChanged();
 }
 
-function dateCombined(){
+function dateCombined() {
     var dateFilterComponent = gridOptions.api.getFilterInstance('date');
     dateFilterComponent.setModel({
-        condition1:{
+        condition1: {
             type: 'lessThan',
             dateFrom: '2012-01-01',
             dateTo: null
         },
-        condition2:{
+        condition2: {
             type: 'greaterThan',
             dateFrom: '2010-01-01',
             dateTo: null
@@ -230,7 +230,7 @@ function dateCombined(){
     gridOptions.api.onFilterChanged();
 }
 
-function clearDateFilter(){
+function clearDateFilter() {
     var dateFilterComponent = gridOptions.api.getFilterInstance('date');
     dateFilterComponent.setModel(null);
     gridOptions.api.onFilterChanged();
@@ -241,15 +241,8 @@ document.addEventListener('DOMContentLoaded', function() {
     var gridDiv = document.querySelector('#myGrid');
     new agGrid.Grid(gridDiv, gridOptions);
 
-    // do http request to get our sample data - not using any framework to keep the example self contained.
-    // you will probably use a framework like JQuery, Angular or something else to do your HTTP calls.
-    var httpRequest = new XMLHttpRequest();
-    httpRequest.open('GET', 'https://raw.githubusercontent.com/ag-grid/ag-grid/master/grid-packages/ag-grid-docs/src/olympicWinners.json');
-    httpRequest.send();
-    httpRequest.onreadystatechange = function() {
-        if (httpRequest.readyState === 4 && httpRequest.status === 200) {
-            var httpResult = JSON.parse(httpRequest.responseText);
-            gridOptions.api.setRowData(httpResult);
-        }
-    };
+    agGrid.simpleHttpRequest({ url: 'https://raw.githubusercontent.com/ag-grid/ag-grid/master/grid-packages/ag-grid-docs/src/olympicWinners.json' })
+        .then(function(data) {
+            gridOptions.api.setRowData(data);
+        });
 });

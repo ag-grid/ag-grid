@@ -1,6 +1,6 @@
-import {Component, ViewChild} from '@angular/core';
-import {HttpClient} from '@angular/common/http';
-import {AllCommunityModules} from '@ag-grid-community/all-modules';
+import { Component, ViewChild } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { AllCommunityModules } from '@ag-grid-community/all-modules';
 
 import "@ag-grid-community/all-modules/dist/styles/ag-grid.css";
 import "@ag-grid-community/all-modules/dist/styles/ag-theme-alpine.css";
@@ -70,12 +70,12 @@ export class AppComponent {
 
     constructor(private http: HttpClient) {
         this.columnDefs = [
-            {field: 'athlete'},
-            {field: 'age'},
-            {field: 'country'},
-            {field: 'year'},
-            {field: 'date'},
-            {field: 'sport'},
+            { field: 'athlete' },
+            { field: 'age' },
+            { field: 'country' },
+            { field: 'year' },
+            { field: 'date' },
+            { field: 'sport' },
             {
                 headerName: 'Medals',
                 children: [
@@ -83,9 +83,9 @@ export class AppComponent {
                         columnGroupShow: 'closed', field: "total",
                         valueGetter: "data.gold + data.silver + data.bronze", width: 200
                     },
-                    { columnGroupShow: 'open', field: "gold", width: 100},
-                    { columnGroupShow: 'open', field: "silver", width: 100},
-                    { columnGroupShow: 'open', field: "bronze", width: 100}
+                    { columnGroupShow: 'open', field: "gold", width: 100 },
+                    { columnGroupShow: 'open', field: "silver", width: 100 },
+                    { columnGroupShow: 'open', field: "bronze", width: 100 }
                 ]
             }
         ];
@@ -95,9 +95,10 @@ export class AppComponent {
     }
 
     ngOnInit() {
-        this.http.get('https://raw.githubusercontent.com/ag-grid/ag-grid/master/grid-packages/ag-grid-docs/src/olympicWinnersSmall.json').subscribe(data => {
-            this.rowData = data;
-        });
+        this.http.get('https://raw.githubusercontent.com/ag-grid/ag-grid/master/grid-packages/ag-grid-docs/src/olympicWinnersSmall.json')
+            .subscribe(data => {
+                this.rowData = data;
+            });
     }
 
     onCbAthlete(value) {

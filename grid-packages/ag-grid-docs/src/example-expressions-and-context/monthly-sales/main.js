@@ -22,32 +22,46 @@ var columnDefs = [
     {
         headerName: 'Monthly Data',
         children: [
-            {headerName : 'Jan', field: 'jan', month: 0, cellRenderer: accountingCellRenderer,
+            {
+                headerName: 'Jan', field: 'jan', month: 0, cellRenderer: accountingCellRenderer,
                 cellClass: 'cell-figure', valueGetter: monthValueGetter,
-                cellClassRules: monthCellClassRules, aggFunc: 'sum'},
+                cellClassRules: monthCellClassRules, aggFunc: 'sum'
+            },
 
-            {headerName : 'Feb', field: 'feb', month: 1, cellRenderer: accountingCellRenderer,
+            {
+                headerName: 'Feb', field: 'feb', month: 1, cellRenderer: accountingCellRenderer,
                 cellClass: 'cell-figure', valueGetter: monthValueGetter,
-                cellClassRules: monthCellClassRules, aggFunc: 'sum'},
+                cellClassRules: monthCellClassRules, aggFunc: 'sum'
+            },
 
-            {headerName : 'Mar', field: 'mar', month: 2, cellRenderer: accountingCellRenderer,
+            {
+                headerName: 'Mar', field: 'mar', month: 2, cellRenderer: accountingCellRenderer,
                 cellClass: 'cell-figure', valueGetter: monthValueGetter,
-                cellClassRules: monthCellClassRules, aggFunc: 'sum'},
+                cellClassRules: monthCellClassRules, aggFunc: 'sum'
+            },
 
-            {headerName : 'Apr', field: 'apr', month: 3, cellRenderer: accountingCellRenderer,
+            {
+                headerName: 'Apr', field: 'apr', month: 3, cellRenderer: accountingCellRenderer,
                 cellClass: 'cell-figure', valueGetter: monthValueGetter,
-                cellClassRules: monthCellClassRules, aggFunc: 'sum'},
+                cellClassRules: monthCellClassRules, aggFunc: 'sum'
+            },
 
-            {headerName : 'May', field: 'may', month: 4, cellRenderer: accountingCellRenderer,
+            {
+                headerName: 'May', field: 'may', month: 4, cellRenderer: accountingCellRenderer,
                 cellClass: 'cell-figure', valueGetter: monthValueGetter,
-                cellClassRules: monthCellClassRules, aggFunc: 'sum'},
+                cellClassRules: monthCellClassRules, aggFunc: 'sum'
+            },
 
-            {headerName : 'Jun', field: 'jun', month: 5, cellRenderer: accountingCellRenderer,
+            {
+                headerName: 'Jun', field: 'jun', month: 5, cellRenderer: accountingCellRenderer,
                 cellClass: 'cell-figure', valueGetter: monthValueGetter,
-                cellClassRules: monthCellClassRules, aggFunc: 'sum'},
+                cellClassRules: monthCellClassRules, aggFunc: 'sum'
+            },
 
-            {headerName : 'YTD', cellClass: 'cell-figure', cellRenderer: accountingCellRenderer,
-                valueGetter: yearToDateValueGetter, cellStyle: {'font-weight': 'bold'}, aggFunc: 'sum'}
+            {
+                headerName: 'YTD', cellClass: 'cell-figure', cellRenderer: accountingCellRenderer,
+                valueGetter: yearToDateValueGetter, cellStyle: { 'font-weight': 'bold' }, aggFunc: 'sum'
+            }
         ]
     }
 ];
@@ -61,10 +75,10 @@ var gridOptions = {
         resizable: true
     },
     autoGroupColumnDef: {
-        headerName : "Location",
+        headerName: "Location",
         field: "city",
         minWidth: 260,
-        cellRenderer:'agGroupCellRenderer',
+        cellRenderer: 'agGroupCellRenderer',
         cellRendererParams: {
             checkbox: true
         }
@@ -75,7 +89,7 @@ var gridOptions = {
     enableRangeSelection: true,
     context: {
         month: 0,
-        months: ['jan','feb','mar','apr','may','jun','jul','aug','sep','oct','nov','dec']
+        months: ['jan', 'feb', 'mar', 'apr', 'may', 'jun', 'jul', 'aug', 'sep', 'oct', 'nov', 'dec']
     },
     onModelUpdated: modelUpdated,
 };
@@ -117,15 +131,8 @@ document.addEventListener('DOMContentLoaded', function() {
     var gridDiv = document.querySelector('#myGrid');
     new agGrid.Grid(gridDiv, gridOptions);
 
-    // do http request to get our sample data - not using any framework to keep the example self contained.
-    // you will probably use a framework like JQuery, Angular or something else to do your HTTP calls.
-    var httpRequest = new XMLHttpRequest();
-    httpRequest.open('GET', 'https://raw.githubusercontent.com/ag-grid/ag-grid/master/grid-packages/ag-grid-docs/src/sample-data/monthlySales.json');
-    httpRequest.send();
-    httpRequest.onreadystatechange = function() {
-        if (httpRequest.readyState === 4 && httpRequest.status === 200) {
-            var httpResult = JSON.parse(httpRequest.responseText);
-            gridOptions.api.setRowData(httpResult);
-        }
-    };
+    agGrid.simpleHttpRequest({ url: 'https://raw.githubusercontent.com/ag-grid/ag-grid/master/grid-packages/ag-grid-docs/src/sample-data/monthlySales.json' })
+        .then(function(data) {
+            gridOptions.api.setRowData(data);
+        });
 });

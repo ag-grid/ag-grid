@@ -16,12 +16,12 @@ var columnDefs = [
         maxWidth: 90,
         valueParser: numberParser,
         cellClassRules: {
-            'rag-green-outer': function(params) { return params.value === 2008},
-            'rag-amber-outer': function(params) { return params.value === 2004},
-            'rag-red-outer': function(params) { return params.value === 2000}
+            'rag-green-outer': function(params) { return params.value === 2008; },
+            'rag-amber-outer': function(params) { return params.value === 2004; },
+            'rag-red-outer': function(params) { return params.value === 2000; }
         },
         cellRenderer: function(params) {
-            return '<span class="rag-element">'+params.value+'</span>';
+            return '<span class="rag-element">' + params.value + '</span>';
         }
     },
     { field: "date", cellClass: 'rag-amber' },
@@ -48,8 +48,9 @@ var columnDefs = [
             var color = numberToColor(params.value);
             return {
                 backgroundColor: color
-            }
-        }},
+            };
+        }
+    },
     {
         field: "bronze",
         valueParser: numberParser,
@@ -59,15 +60,15 @@ var columnDefs = [
             return {
                 // dash here
                 'background-color': color
-            }
+            };
         }
     }
 ];
 
 function numberToColor(val) {
-    if (val===0) {
+    if (val === 0) {
         return '#ffaaaa';
-    } else if (val==1) {
+    } else if (val == 1) {
         return '#aaaaff';
     } else {
         return '#aaffaa';
@@ -99,15 +100,8 @@ document.addEventListener('DOMContentLoaded', function() {
     var gridDiv = document.querySelector('#myGrid');
     new agGrid.Grid(gridDiv, gridOptions);
 
-    // do http request to get our sample data - not using any framework to keep the example self contained.
-    // you will probably use a framework like JQuery, Angular or something else to do your HTTP calls.
-    var httpRequest = new XMLHttpRequest();
-    httpRequest.open('GET', 'https://raw.githubusercontent.com/ag-grid/ag-grid/master/grid-packages/ag-grid-docs/src/olympicWinnersSmall.json');
-    httpRequest.send();
-    httpRequest.onreadystatechange = function() {
-        if (httpRequest.readyState === 4 && httpRequest.status === 200) {
-            var httpResult = JSON.parse(httpRequest.responseText);
-            gridOptions.api.setRowData(httpResult);
-        }
-    };
+    agGrid.simpleHttpRequest({ url: 'https://raw.githubusercontent.com/ag-grid/ag-grid/master/grid-packages/ag-grid-docs/src/olympicWinnersSmall.json' })
+        .then(function(data) {
+            gridOptions.api.setRowData(data);
+        });
 });

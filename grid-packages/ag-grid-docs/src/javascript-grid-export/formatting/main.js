@@ -5,7 +5,7 @@ var columnDefs = [
             {
                 headerName: 'When and Where',
                 children: [
-                    { field: 'country', minWidth: 200, rowGroup: true},
+                    { field: 'country', minWidth: 200, rowGroup: true },
                     { field: 'year', rowGroup: true }
                 ]
             },
@@ -94,13 +94,13 @@ function getUIValue(checkboxSelector, onWindow) {
     return document.querySelector(checkboxSelector + 'Value').value;
 }
 
-function makeCustomContent () {
+function makeCustomContent() {
     return [
         [],
-        [{data: {type: 'String', value: 'Summary'}}],
-        [{data: {type: 'String', value: 'Sales'}, mergeAcross: 2}, {data: {type: 'Number', value: '3695.36'}}],
+        [{ data: { type: 'String', value: 'Summary' } }],
+        [{ data: { type: 'String', value: 'Sales' }, mergeAcross: 2 }, { data: { type: 'Number', value: '3695.36' } }],
         []
-    ]
+    ];
 }
 
 function myCellCallback(params) {
@@ -168,19 +168,12 @@ document.addEventListener('DOMContentLoaded', function() {
     var gridDiv = document.querySelector('#myGrid');
     new agGrid.Grid(gridDiv, gridOptions);
 
-    // do http request to get our sample data - not using any framework to keep the example self contained.
-    // you will probably use a framework like JQuery, Angular or something else to do your HTTP calls.
-    var httpRequest = new XMLHttpRequest();
-    httpRequest.open('GET', 'https://raw.githubusercontent.com/ag-grid/ag-grid/master/grid-packages/ag-grid-docs/src/olympicWinnersSmall.json');
-    httpRequest.send();
-    httpRequest.onreadystatechange = function() {
-        if (httpRequest.readyState === 4 && httpRequest.status === 200) {
-            var httpResult = JSON.parse(httpRequest.responseText);
-            gridOptions.api.setRowData(httpResult);
+    agGrid.simpleHttpRequest({ url: 'https://raw.githubusercontent.com/ag-grid/ag-grid/master/grid-packages/ag-grid-docs/src/olympicWinnersSmall.json' })
+        .then(function(data) {
+            gridOptions.api.setRowData(data);
             gridOptions.api.forEachNode(function(node) {
                 node.expanded = true;
             });
             gridOptions.api.onGroupExpandedOrCollapsed();
-        }
-    };
+        });
 });

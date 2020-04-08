@@ -1,8 +1,9 @@
 var columnDefs = [
-    {field: 'athlete',
+    {
+        field: 'athlete',
         rowSpan: function(params) {
             var athlete = params.data.athlete;
-            if (athlete=== 'Aleksey Nemov') {
+            if (athlete === 'Aleksey Nemov') {
                 // have all Russia age columns width 2
                 return 2;
             } else if (athlete === 'Ryan Lochte') {
@@ -18,15 +19,15 @@ var columnDefs = [
         },
         width: 200
     },
-    {field: 'age', width: 100},
-    {field: 'country'},
-    {field: 'year', width: 100},
-    {field: 'date'},
-    {field: 'sport'},
-    {field: 'gold'},
-    {field: 'silver'},
-    {field: 'bronze'},
-    {field: 'total'}
+    { field: 'age', width: 100 },
+    { field: 'country' },
+    { field: 'year', width: 100 },
+    { field: 'date' },
+    { field: 'sport' },
+    { field: 'gold' },
+    { field: 'silver' },
+    { field: 'bronze' },
+    { field: 'total' }
 ];
 
 var gridOptions = {
@@ -43,9 +44,8 @@ document.addEventListener('DOMContentLoaded', function() {
     var gridDiv = document.querySelector('#myGrid');
     new agGrid.Grid(gridDiv, gridOptions);
 
-    // do http request to get our sample data - not using any framework to keep the example self contained.
-    // you will probably use a framework like JQuery, Angular or something else to do your HTTP calls.
-    agGrid.simpleHttpRequest({url: 'https://raw.githubusercontent.com/ag-grid/ag-grid/master/grid-packages/ag-grid-docs/src/olympicWinnersSmall.json'}).then(function(data) {
-        gridOptions.api.setRowData(data);
-    });
+    agGrid.simpleHttpRequest({ url: 'https://raw.githubusercontent.com/ag-grid/ag-grid/master/grid-packages/ag-grid-docs/src/olympicWinnersSmall.json' })
+        .then(function(data) {
+            gridOptions.api.setRowData(data);
+        });
 });
