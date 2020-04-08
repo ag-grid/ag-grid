@@ -4,11 +4,12 @@
   "description": "Documentation for ag-Grid",
   "scripts": {
     "postinstall": "webdriver-manager update",
-    "build": "gulp generate-examples",
+    "build": "gulp generate-examples && npm run hash",
     "start": "gulp serve",
     "tsc": "tsc -p tests/config/tsconfig.json",
     "validate-es5": "eslint src/",
-    "test": "npm run validate-es5 && jest"
+    "test": "npm run validate-es5 && jest",
+    "hash": "../../scripts/hashDirectory.sh > .hash"
   },
   "repository": {
     "type": "git",

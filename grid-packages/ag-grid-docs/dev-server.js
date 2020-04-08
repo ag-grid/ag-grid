@@ -249,8 +249,15 @@ function regenerateExamplesForFileChange(file) {
     }
 }
 
-function watchAndGenerateExamples(scope) {
-    generateExamples(scope);
+function watchAndGenerateExamples(scope, moduleChangedCheck) {
+    if(!moduleChangedCheck || moduleChanged('.')) {
+        generateExamples(scope);
+
+        const npm = WINDOWS ? 'npm.cmd' : 'npm';
+        cp.spawnSync(npm, ['run', 'hash']);
+    } else {
+        console.log("Docs contents haven't changed - skipping example generation");
+    }
 
     chokidar.watch([`./src/${scope || '*'}/**/*.{php,html,css,js}`], { ignored: ['**/_gen/**/*'] }).on('change', regenerateExamplesForFileChange);
 }
@@ -712,7 +719,7 @@ module.exports = (buildSourceModuleOnly = false, legacy = false, alreadyRunningC
             serveFramework(app, 'ag-grid-react');
 
             // regenerate examples
-            watchAndGenerateExamples();
+            watchAndGenerateExamples(undefined, moduleChangedCheck);
 
             // PHP
             launchPhpCP(app);
