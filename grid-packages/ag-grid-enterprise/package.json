@@ -5,9 +5,10 @@
   "main": "./dist/ag-grid-enterprise.cjs.js",
   "types": "main.d.ts",
   "scripts": {
-    "build": "gulp && npm run rollup",
+    "build": "gulp && npm run rollup && npm run hash",
     "package": "gulp copy-umd-files",
-    "rollup": "node build.js"
+    "rollup": "node build.js",
+    "hash": "../../scripts/hashDirectory.sh > .hash"
   },
   "repository": {
     "type": "git",

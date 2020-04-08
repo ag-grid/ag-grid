@@ -4,8 +4,9 @@
   "description": "Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components",
   "main": "./dist/ag-grid-community.cjs.js",
   "scripts": {
-    "build": "gulp && npm run rollup",
-    "rollup": "node build.js"
+    "build": "gulp && npm run rollup && npm run hash",
+    "rollup": "node build.js",
+    "hash": "../../scripts/hashDirectory.sh > .hash"
   },
   "types": "./main.d.ts",
   "repository": {

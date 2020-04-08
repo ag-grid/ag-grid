@@ -20,6 +20,8 @@ docs_are_running
 
 **/cypress/videos
 
+.hash
+
 # latest only
 dist
 

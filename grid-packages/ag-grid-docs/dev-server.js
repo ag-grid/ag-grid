@@ -504,39 +504,59 @@ function buildCoreModules() {
     return 0;
 }
 
-function buildFrameworks(rootDirectory, frameworkDirectories, exitOnError) {
-    frameworkDirectories.forEach(frameworkDirectory => {
-        const frameworkRoot = WINDOWS ? `..\\..\\${rootDirectory}\\${frameworkDirectory}\\` : `../../${rootDirectory}/${frameworkDirectory}/`;
-        const npm = WINDOWS ? 'npm.cmd' : 'npm';
-        const result = cp.spawnSync(npm, ['run', 'build'], {
-            stdio: 'inherit',
-            cwd: frameworkRoot
+function moduleChanged(moduleRoot) {
+    let changed = true;
+    if (!WINDOWS) {
+        // windows support to follow
+        const checkResult = cp.spawnSync('../../scripts/hashChanged.sh', [path.resolve(moduleRoot)], {
+            stdio: 'pipe',
+            encoding: 'utf-8'
         });
 
-        if (result && result.status !== 0) {
-            console.log(`ERROR Building The ${frameworkDirectory} Module`);
-            console.error(result.error);
+        if (checkResult && checkResult.status !== 1) {
+            changed = checkResult.output[1].trim() === '1';
+        }
+    }
+    return changed;
+}
 
-            if(exitOnError) {
-                process.exit(result.status)
+function buildFrameworks(rootDirectory, frameworkDirectories, exitOnError, moduleChangedCheck) {
+    frameworkDirectories.forEach(frameworkDirectory => {
+        const frameworkRoot = WINDOWS ? `..\\..\\${rootDirectory}\\${frameworkDirectory}\\` : `../../${rootDirectory}/${frameworkDirectory}/`;
+
+        if(!moduleChangedCheck || moduleChanged(frameworkRoot)) {
+            console.log(`${frameworkRoot} has changed - rebuilding`);
+            const npm = WINDOWS ? 'npm.cmd' : 'npm';
+            const result = cp.spawnSync(npm, ['run', 'build'], {
+                stdio: 'inherit',
+                cwd: frameworkRoot
+            });
+
+            if (result && result.status !== 0) {
+                console.log(`ERROR Building The ${frameworkDirectory} Module`);
+                console.error(result.error);
+
+                if(exitOnError) {
+                    process.exit(result.status)
+                }
             }
         }
     });
 }
 
-function buildGridFrameworkModules(exitOnError) {
+function buildGridFrameworkModules(exitOnError, moduleChangedCheck) {
     console.log("Building Grid Framework Modules...");
-    return buildFrameworks('community-modules', ['react', 'angular', 'vue'], exitOnError);
+    return buildFrameworks('community-modules', ['react', 'angular', 'vue'], exitOnError, moduleChangedCheck);
 }
 
-function buildGridPackages(exitOnError) {
+function buildGridPackages(exitOnError, moduleChangedCheck) {
     console.log("Building Grid Packages...");
-    return buildFrameworks('grid-packages', ['ag-grid-community', 'ag-grid-enterprise', 'ag-grid-react', 'ag-grid-angular', 'ag-grid-vue'], exitOnError);
+    return buildFrameworks('grid-packages', ['ag-grid-community', 'ag-grid-enterprise', 'ag-grid-react', 'ag-grid-angular', 'ag-grid-vue'], exitOnError, moduleChangedCheck);
 }
 
-function buildChartsPackages(exitOnError) {
+function buildChartsPackages(exitOnError, moduleChangedCheck) {
     console.log("Building Chart Framework Packages...");
-    return buildFrameworks('charts-packages', ['ag-charts-react', 'ag-charts-angular', 'ag-charts-vue'], exitOnError);
+    return buildFrameworks('charts-packages', ['ag-charts-react', 'ag-charts-angular', 'ag-charts-vue'], exitOnError, moduleChangedCheck);
 }
 
 function buildCss() {
@@ -585,7 +605,7 @@ defaultExtension: 'js'
     });
 }
 
-module.exports = (buildSourceModuleOnly = false, legacy = false, alreadyRunningCheck = false, done) => {
+module.exports = (buildSourceModuleOnly = false, legacy = false, alreadyRunningCheck = false, moduleChangedCheck = true, done) => {
     tcpPortUsed.check(EXPRESS_PORT)
         .then(inUse => {
             if (inUse) {
@@ -629,9 +649,9 @@ module.exports = (buildSourceModuleOnly = false, legacy = false, alreadyRunningC
             // if we encounter a build failure on startup we exit
             // prevents the need to have to CTRL+C several times for certain types of error
             buildCoreModules(!legacy);
-            buildGridFrameworkModules(!legacy);
-            buildGridPackages(!legacy);
-            buildChartsPackages(!legacy);
+            buildGridFrameworkModules(!legacy, moduleChangedCheck);
+            buildGridPackages(!legacy, moduleChangedCheck);
+            buildChartsPackages(!legacy, moduleChangedCheck);
 
             buildCss();
 

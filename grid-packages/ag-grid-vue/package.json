@@ -23,9 +23,10 @@
   ],
   "scripts": {
     "bundle": "vue-cli-service build --target lib src/AgGridVue.ts",
-    "npm": "tsc  -p tsconfig-lib.json",
+    "npm": "tsc  -p tsconfig-lib.json && npm run hash",
     "build": "npx gulp copy-from-module-source && npm run npm && npm run bundle",
-    "lint": "vue-cli-service lint"
+    "lint": "vue-cli-service lint",
+    "hash": "../../scripts/hashDirectory.sh > .hash"
   },
   "devDependencies": {
     "@types/node": "12.12.22",

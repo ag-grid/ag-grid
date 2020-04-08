@@ -5,9 +5,10 @@
   "main": "main.js",
   "typings": "./main.d.ts",
   "scripts": {
-    "build": "gulp",
+    "build": "gulp && npm run hash",
     "umd": "rollup -c",
-    "test": "jest --passWithNoTests"
+    "test": "jest --passWithNoTests",
+    "hash": "../../scripts/hashDirectory.sh > .hash"
   },
   "repository": {
     "type": "git",

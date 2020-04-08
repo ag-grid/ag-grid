@@ -250,4 +250,5 @@ gulp.task('serve-dist', serveDist);
 gulp.task('serve-legacy', require('./dev-server').bind(null, false, true, false));
 gulp.task('serve-source-mod-only', require('./dev-server').bind(null, true, true, false));
 gulp.task('serve', require('./dev-server').bind(null, true, false, false));
+gulp.task('serve-speedy', require('./dev-server').bind(null, true, false, false, true));
 gulp.task('serve-check', require('./dev-server').bind(null, false, true, true));

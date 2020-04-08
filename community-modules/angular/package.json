@@ -4,12 +4,13 @@
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
-    "build": "npm run update-properties && ng build --prod && npm run verify-properties",
+    "build": "npm run update-properties && ng build --prod && npm run verify-properties && npm run hash",
     "build-cjs": "npm run build",
     "test": "ng test --watch false --browsers ChromeHeadless",
     "lint": "ng lint",
     "update-properties": "node -e 'require(\"./updateGridAndColumnProperties.js\").updatePropertiesBuilt()'",
-    "verify-properties": "node agGridPropertiesCheck.js"
+    "verify-properties": "node agGridPropertiesCheck.js",
+    "hash": "../../scripts/hashDirectory.sh > .hash"
   },
   "private": true,
   "main": "./dist/ag-grid-angular/bundles/ag-grid-community-angular.umd.js",

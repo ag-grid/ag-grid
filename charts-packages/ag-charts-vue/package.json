@@ -25,8 +25,9 @@
   "scripts": {
     "bundle": "vue-cli-service build --target lib src/AgChartsVue.ts",
     "npm": "tsc  -p tsconfig-lib.json",
-    "build": "npm run npm && npm run bundle",
-    "lint": "vue-cli-service lint"
+    "build": "npm run npm && npm run bundle && npm run hash",
+    "lint": "vue-cli-service lint",
+    "hash": "../../scripts/hashDirectory.sh > .hash"
   },
   "devDependencies": {
     "ag-charts-community": "~1.0.0",

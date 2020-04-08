@@ -9,7 +9,7 @@
     "lint": "tslint -p tsconfig.json src/ts/**/*.ts",
     "lint-fix": "tslint -p tsconfig.json -c tslint-fix.json --fix src/ts/**/*.ts",
     "precheck": "tsc -p tsconfig-precheck.json",
-    "build": "npm run precheck && gulp && tsc -p tsconfig.typings.json",
+    "build": "npm run precheck && gulp && tsc -p tsconfig.typings.json && npm run hash",
     "test": "jest",
     "validate-es5": "eslint dist/cjs",
     "package": "node ../../module-build/rollup/build.js",
@@ -17,7 +17,8 @@
     "build-es6": "npx gulp tsc-no-clean-es6",
     "build-cjs": "npx gulp tsc-no-clean-es5",
     "build-css": "npx gulp scss-no-clean",
-    "check-scss-vars": "ts-node scripts/check-scss-vars.ts"
+    "check-scss-vars": "ts-node scripts/check-scss-vars.ts",
+    "hash": "../../scripts/hashDirectory.sh > .hash"
   },
   "repository": {
     "type": "git",

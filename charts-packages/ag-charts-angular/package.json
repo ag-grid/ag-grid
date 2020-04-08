@@ -3,9 +3,10 @@
   "version": "1.0.1",
   "scripts": {
     "ng": "ng",
-    "build": "ng build",
+    "build": "ng build && npm run hash",
     "test": "ng test  --watch false --browsers ChromeHeadless",
-    "lint": "ng lint"
+    "lint": "ng lint",
+    "hash": "../../scripts/hashDirectory.sh > .hash"
   },
   "repository": {
     "type": "git",

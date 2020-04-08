@@ -9,7 +9,7 @@
     "build-cjs": "tsc -p tsconfig.json",
     "build-es6": "tsc -p tsconfig.es6.json",
     "build-css": "npx gulp copy-grid-core-styles",
-    "build": "npm run build-cjs && npm run build-es6 && npm run build-css",
+    "build": "npm run build-cjs && npm run build-es6 && npm run build-css && npm run hash",
     "watchWebpack": "webpack --watch",
     "webpack-updater": "node webpackUpdater.js",
     "rollup": "node ../../module-build/rollup/build.js --bundlePrefix ag-grid-community",
@@ -17,6 +17,7 @@
     "xtest:e2e": "start-server-and-test start-server http://localhost:8080 e2e",
     "start-server": "http-server .",
     "e2e": "protractor protractor.conf.js",
+    "hash": "../../scripts/hashDirectory.sh > .hash",
     "update-webdriver": "webdriver-manager update --gecko false",
     "webdriver-start": "npm run update-webdriver && webdriver-manager start --standalone --detach",
     "webdriver-kill": "kill $(ps -ef | grep webdriver | grep -v grep | awk '{ print $2 }')"
