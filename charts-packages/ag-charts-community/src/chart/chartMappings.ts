@@ -5,6 +5,7 @@ import { CategoryAxis } from "./axis/categoryAxis";
 import { LineSeries } from "./series/cartesian/lineSeries";
 import { ColumnSeries } from "./series/cartesian/columnSeries";
 import { BarSeries } from "./series/cartesian/barSeries";
+import { HistogramSeries } from "./series/cartesian/histogramSeries";
 import { ScatterSeries } from "./series/cartesian/scatterSeries";
 import { AreaSeries } from "./series/cartesian/areaSeries";
 import { PolarChart } from "./polarChart";
@@ -21,7 +22,7 @@ import palette from "./palettes";
     contains no code that uses the specs to actually create charts
 */
 
-const chartMappings = {
+const commonChartMappings = {
     background: {
         meta: {
             defaults: {
@@ -245,7 +246,7 @@ const mappings = {
                 }]
             },
         },
-        ...chartMappings,
+        ...commonChartMappings,
         axes: {
             [NumberAxis.type]: {
                 meta: {
@@ -370,6 +371,30 @@ const mappings = {
                 highlightStyle: {},
                 marker: {},
                 ...shadowMapping
+            },
+            [HistogramSeries.type]: {
+                meta: {
+                    constructor: HistogramSeries,
+                    defaults: {
+                        ...seriesDefaults,
+                        title: undefined,
+                        xKey: '',
+                        yKey: '',
+                        xName: '',
+                        yName: '',
+                        fill: palette.fills[0],
+                        stroke: palette.strokes[0],
+                        strokeWidth: 1,
+                        fillOpacity: 1,
+                        strokeOpacity: 1,
+                        aggregation: 'sum',
+                        tooltipRenderer: undefined,
+                        highlightStyle: {
+                            fill: 'yellow'
+                        },
+                    }
+                },
+                highlightStyle: {}
             }
         }
     },
@@ -382,7 +407,7 @@ const mappings = {
                 padding: new Padding(40),
             }
         },
-        ...chartMappings,
+        ...commonChartMappings,
         series: {
             [PieSeries.type]: {
                 meta: {
@@ -461,24 +486,25 @@ const mappings = {
             mappings[alias] = mappings[type];
         });
     }
-
-    // Special handling for scatter charts where both axes should default to type `number`.
-    mappings['scatter'] = {
-        ...mappings.cartesian,
-        meta: {
-            ...mappings.cartesian.meta,
-            defaults: { // These values will be used if properties in question are not in the config object.
-                ...chartDefaults,
-                axes: [{
-                    type: 'number',
-                    position: 'bottom'
-                }, {
-                    type: 'number',
-                    position: 'left'
-                }]
-            }
-        }
-    };
 }
+
+// Special handling for scatter and histogram charts, for which both axes should default to type `number`.
+mappings['scatter'] =
+mappings['histogram'] = {
+    ...mappings.cartesian,
+    meta: {
+        ...mappings.cartesian.meta,
+        defaults: { // These values will be used if properties in question are not in the config object.
+            ...chartDefaults,
+            axes: [{
+                type: 'number',
+                position: 'bottom'
+            }, {
+                type: 'number',
+                position: 'left'
+            }]
+        }
+    }
+};
 
 export default mappings;

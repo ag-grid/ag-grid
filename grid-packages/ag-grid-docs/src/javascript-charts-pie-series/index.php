@@ -202,7 +202,7 @@ SNIPPET
 <h2>Next Up</h2>
 
 <p>
-    Continue to the next section to learn about <a href="../javascript-charts-layout/">layout</a>.
+    Continue to the next section to learn about <a href="../javascript-charts-histogram-series/">histogram series</a>.
 </p>
 
 <?php include '../documentation-main/documentation_footer.php'; ?>

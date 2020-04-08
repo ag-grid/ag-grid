@@ -19,6 +19,16 @@ import { numericExtent } from "../../../util/array";
 import { toFixed } from "../../../util/number";
 import { reactive } from "../../../util/observable";
 import ticks, { tickStep } from "../../../util/ticks";
+import { HistogramSeriesOptions } from "../../../chartOptions";
+
+enum HistogramSeriesNodeTag {
+    Bin,
+    Label
+}
+
+class HistogramSeriesLabel extends Label {
+    @reactive('change') formatter?: (bin: HistogramBin) => string;
+}
 
 const defaultBinCount = 10;
 
@@ -44,18 +54,18 @@ interface HistogramSelectionDatum extends SeriesNodeDatum {
     }
 }
 
-enum HistogramSeriesNodeTag {
-    Bin,
-    Label
-}
+export type aggregations = 'count' | 'sum' | 'mean';
+type aggregationFunction = (bin: HistogramBin, yKey: string) => number;
 
-class HistogramSeriesLabel extends Label {
-    @reactive('change') formatter?: (bin: HistogramBin) => string;
-}
+const aggregationFunctions: {[key in aggregations]: aggregationFunction} = {
+    count: bin => bin.data.length,
+    sum: (bin, yKey) => bin.data.reduce((acc, datum) => acc + datum[yKey], 0),
+    mean: (bin, yKey) => aggregationFunctions.sum(bin, yKey) / aggregationFunctions.count(bin, yKey)
+};
 
 export class HistogramBin {
     data: any[] = [];
-    total: number = 0;
+    aggregatedValue: number = 0;
     frequency: number = 0;
     domain: number[];
 
@@ -65,7 +75,6 @@ export class HistogramBin {
 
     addDatum (datum : any, yKey: string) {
         this.data.push(datum);
-        this.total += yKey? datum[yKey] : 1;
         this.frequency ++;
     };
 
@@ -75,11 +84,22 @@ export class HistogramBin {
     }
 
     get relativeHeight() : number {
-        return this.total / this.domainWidth;
+        return this.aggregatedValue / this.domainWidth;
     };
 
-    getY( constantWidth: boolean ) {
-        return constantWidth? this.total : this.relativeHeight;
+    calculateAggregatedValue(aggregationName : aggregations, yKey: string) {
+        if( !yKey ){
+            // not having a yKey forces us into a frequency plot
+            aggregationName = 'count';
+        }
+
+        const aggregationFunction = aggregationFunctions[aggregationName];
+
+        this.aggregatedValue = aggregationFunction(this, yKey);
+    }
+
+    getY( areaPlot: boolean ) {
+        return areaPlot? this.relativeHeight : this.aggregatedValue;
     }
 };
 
@@ -98,7 +118,7 @@ export class HistogramSeries extends CartesianSeries {
     private rectSelection: Selection<Rect, Group, any, any> = Selection.select(this.rectGroup).selectAll<Rect>();
     private textSelection: Selection<Text, Group, any, any> = Selection.select(this.textGroup).selectAll<Text>();
 
-    private bins: HistogramBin[] = [];
+    private binnedData: HistogramBin[] = [];
     private xDomain: number[] = [];
     private yDomain: number[] = [];
 
@@ -159,24 +179,34 @@ export class HistogramSeries extends CartesianSeries {
         return this._xKey;
     }
 
-    private _constantWidth: boolean = true;
-    set constantWidth(c: boolean) {
-        this._constantWidth = c;
+    private _areaPlot: boolean = false;
+    set areaPlot(c: boolean) {
+        this._areaPlot = c;
 
         this.scheduleData();
     }
-    get constantWidth(): boolean {
-        return this._constantWidth;
+    get areaPlot(): boolean {
+        return this._areaPlot;
     }
 
-    private _binDomains: [number, number][];
-    set binDomains(bins: [number, number][]) {
-        this._binDomains = bins;
+    private _bins: [number, number][];
+    set bins(bins: [number, number][]) {
+        this._bins = bins;
 
         this.scheduleData();
     }
-    get binDomains(): [number, number][] {
-        return this._binDomains;
+    get bins(): [number, number][] {
+        return this._bins;
+    }
+
+    private _aggregation: aggregations;
+    set aggregation(aggregation: aggregations) {
+        this._aggregation = aggregation;
+
+        this.scheduleData();
+    }
+    get aggregation(): aggregations {
+        return this._aggregation;
     }
 
     private _binCount: number;
@@ -250,14 +280,15 @@ export class HistogramSeries extends CartesianSeries {
     /*  during processData phase, used to unify different ways of the user specifying
         the bins. Returns bins in format [[min1, max1], [min2, max2] ... ] */
     private deriveBins(): [number, number][] {
-        const { binDomains, binCount } = this;
+        const { bins, binCount } = this;
 
-        if( binDomains && binCount ) {
+        if( bins && binCount ) {
             console.warn('bin domain and bin count both specified - these are mutually exclusive properties');
         }
 
-        if( binDomains ) {
-            return binDomains;
+        if( bins ) {
+            // we have explicity set bins from user. Use those.
+            return bins;
         }
 
         const xData = this.data.map( datum => datum[this.xKey] );
@@ -275,7 +306,7 @@ export class HistogramSeries extends CartesianSeries {
         ];
     }
 
-    private distributeToBins(data: any[]): HistogramBin[] {
+    private placeDataInBins(data: any[]): HistogramBin[] {
 
         const { xKey, yKey } = this;
         const derivedBins = this.deriveBins();
@@ -304,6 +335,8 @@ export class HistogramSeries extends CartesianSeries {
             bins[currentBin].addDatum(datum, yKey)
         } );
 
+        bins.forEach( b => b.calculateAggregatedValue( this._aggregation, this.yKey ) );
+
         return bins;
     }
 
@@ -316,15 +349,15 @@ export class HistogramSeries extends CartesianSeries {
     processData(): boolean {
         const { xKey, data } = this;
 
-        this.bins = this.distributeToBins(xKey && data ? data : []);
+        this.binnedData = this.placeDataInBins(xKey && data ? data : []);
 
-        const yData = this.bins.map(b => b.getY(this.constantWidth));
+        const yData = this.binnedData.map(b => b.getY(this.areaPlot));
         const yMinMax = numericExtent(yData);
 
         this.yDomain = this.fixNumericExtent([0, yMinMax[1]], 'y');
 
-        const firstBin = this.bins[0];
-        const lastBin = this.bins[this.bins.length -1];
+        const firstBin = this.binnedData[0];
+        const lastBin = this.binnedData[this.binnedData.length -1];
         const xMin = firstBin.domain[0];
         const xMax = lastBin.domain[1];
         this.xDomain = [xMin, xMax];
@@ -377,7 +410,7 @@ export class HistogramSeries extends CartesianSeries {
 
         const selectionData: HistogramSelectionDatum[] = [];
 
-        const defaultLabelFormatter = (b: HistogramBin) => String(b.total);
+        const defaultLabelFormatter = (b: HistogramBin) => String(b.aggregatedValue);
         const {
             label: {
                 formatter: labelFormatter = defaultLabelFormatter,
@@ -389,21 +422,21 @@ export class HistogramSeries extends CartesianSeries {
             }
         } = this;
 
-        this.bins.forEach(bin => {
-            const {total, frequency, domain: [xDomainMin, xDomainMax], relativeHeight} = bin;
+        this.binnedData.forEach(binOfData => {
+            const {aggregatedValue: total, frequency, domain: [xDomainMin, xDomainMax], relativeHeight} = binOfData;
 
             const
                 xMinPx = xScale.convert(xDomainMin),
                 xMaxPx = xScale.convert(xDomainMax),
                 // note: assuming can't be negative:
-                y = this.constantWidth? (this.yKey? total : frequency): relativeHeight,
+                y = this.areaPlot? relativeHeight : (this.yKey? total : frequency),
                 yZeroPx = yScale.convert(0),
                 yMaxPx = yScale.convert(y),
                 w = xMaxPx - xMinPx,
                 h = Math.abs(yMaxPx - yZeroPx);
 
             const selectionDatumLabel = y !== 0 && {
-                text: labelFormatter( bin ),
+                text: labelFormatter( binOfData ),
                 fontStyle: labelFontStyle,
                 fontWeight: labelFontWeight,
                 fontSize: labelFontSize,
@@ -415,8 +448,8 @@ export class HistogramSeries extends CartesianSeries {
 
             selectionData.push({
                 series: this,
-                seriesDatum: bin,  // required by SeriesNodeDatum, but might not make sense here
-                                   // since each selection is an aggregation of multiple data.
+                seriesDatum: binOfData,  // required by SeriesNodeDatum, but might not make sense here
+                                         // since each selection is an aggregation of multiple data.
                 x: xMinPx,
                 y: yMaxPx,
                 width: w,
@@ -515,13 +548,13 @@ export class HistogramSeries extends CartesianSeries {
             return '';
         }
 
-        const { xName, yName, fill, tooltipRenderer } = this;
-        const { seriesDatum } = nodeDatum;
-        const {total, frequency, domain: [rangeMin, rangeMax]} = seriesDatum;
+        const { xName, yName, fill, tooltipRenderer, aggregation } = this;
+        const bin : HistogramBin = nodeDatum.seriesDatum;
+        const {aggregatedValue, frequency, domain: [rangeMin, rangeMax]} = bin;
 
         if (tooltipRenderer) {
             return tooltipRenderer({
-                datum: seriesDatum,
+                datum: bin,
                 xKey,
                 xName,
                 yKey,
@@ -532,12 +565,14 @@ export class HistogramSeries extends CartesianSeries {
             const titleStyle = `style="color: white; background-color: ${fill}"`;
             const titleString = `
                 <div class="${Chart.defaultTooltipClass}-title" ${titleStyle}>
-                    ${toFixed(rangeMin)} - ${toFixed(rangeMax)}
+                    ${xName || xKey} ${toFixed(rangeMin)} - ${toFixed(rangeMax)}
                 </div>`;
 
-            let contentHtml = `
-                <b>${yName || yKey} total</b>: ${total}<br>
-                <b>Frequency</b>: ${frequency}`;
+            let contentHtml = yKey?
+                `<b>${yName || yKey} (${aggregation})</b>: ${toFixed(aggregatedValue)}<br>` :
+                '';
+
+            contentHtml += `<b>Frequency</b>: ${frequency}`;
 
             return `
                 ${titleString}

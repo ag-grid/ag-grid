@@ -1315,6 +1315,10 @@
               {
                 "title": "Pie/Doughnut",
                 "url": "javascript-charts-pie-series/"
+              },
+              {
+                "title": "Histogram",
+                "url": "javascript-charts-histogram-series/"
               }
             ]
           },

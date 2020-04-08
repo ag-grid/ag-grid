@@ -51,7 +51,7 @@ export class HistogramChartProxy extends CartesianChartProxy<HistogramSeriesOpti
         }
 
         // for now, only constant width is supported via integrated charts
-        series.constantWidth = true;
+        series.areaPlot = false;
 
         const { fills, strokes } = this.getPalette();
         series.fill = fills[0];

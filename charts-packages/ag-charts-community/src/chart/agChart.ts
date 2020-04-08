@@ -142,7 +142,6 @@ function update(component: any, options: any, path?: string) {
         provideDefaultOptions(options, mapping);
 
         const meta = mapping.meta || {};
-        const defaults = meta && meta.constructor && meta.constructor.defaults;
         const constructorParams = meta && meta.constructorParams || [];
         const skipKeys = ['type'].concat(constructorParams);
 

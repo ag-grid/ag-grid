@@ -1724,5 +1724,133 @@
         "unit": "px"
       }
     }
+  },
+  "histogramSeriesConfig": {
+    "meta": {
+      "displayName": "Histogram Series Configuration",
+      "description": "Configuration for histogram series."
+    },
+    "xKey": {
+      "type": "string",
+      "isRequired": true,
+      "description": "The key to use to retrieve x-values from the data."
+    },
+    "xName": {
+      "type": "string",
+      "description": "A human-readable description of the x-values."
+    },
+    "yKey": {
+      "type": "string",
+      "description": "The key to use to retrieve y-values from the data. If no yKey is given, the count of the population of the bins is used instead."
+    },
+    "yName": {
+      "type": "string",
+      "description": "A human-readable description of the y-values"
+    },
+    "binCount":{
+      "type": "number",
+      "description": "The number of bins to try to split the x axis into. Clashes with the <code>bins</code> setting."
+    },
+    "bins": {
+      "type": "number[][]",
+      "description": "Set the bins explicitly. The bins deed not be of equal width, in which case you may wish to set <code>areaPlot</code> to true. Clashes with the <code>binCount</code> setting."
+    },
+    "aggregation": {
+      "type": "string",
+      "description": "Dictates how the bins are aggregated. If set to 'sum', the value shown for the bins will be the total of the yKey values. If set to 'mean', it will display the average yKey value of the bin",
+      "default": "sum",
+      "options": [
+        "sum",
+        "mean"
+      ]
+    },
+    "areaPlot": {
+      "type": "boolean",
+      "description": "For variable width bins, if true the histogram will represent the aggregated <code>yKey</code> values using the area of the bar. Otherwise, the height of the var represents the value as per a normal bar chart. This is useful for keeping an undistorted curve displayed when using variable-width bins",
+      "default": "false"
+    },
+    "data": {
+      "type": "object[]",
+      "isRequired": true,
+      "description": "The data to use when rendering the series. If this is not supplied, data must be set on the chart instead."
+    },
+    "visible": {
+      "default": true,
+      "description": "Whether or not to display the series."
+    },
+    "showInLegend": {
+      "default": true,
+      "description": "Whether or not to include the series in the legend."
+    },
+    "tooltipEnabled": {
+      "default": true,
+      "description": "Whether or not to show tooltips when the series are hovered over."
+    },
+    "tooltipRenderer": {
+      "type": {
+        "parameters": {
+          "datum": "any",
+          "title?": "string",
+          "color?": "string",
+          "xKey": "string",
+          "xName?": "string",
+          "yKey": "string",
+          "yName?": "string",
+          "sizeKey?": "string",
+          "sizeName?": "string",
+          "labelKey?": "string",
+          "labelName?": "string"
+        },
+        "returnType": "string"
+      },
+      "description": "Function used to create the content for tooltips."
+    },
+    "title": {
+      "type": "string",
+      "description": "The title to use for the series. Defaults to <code>yName</code> if it exists, or <code>yKey</code> if not."
+    },
+    "fill": {
+      "default": "#f3622d",
+      "description": "The colour of the fill for the bars."
+    },
+    "fillOpacity": {
+      "default": 1,
+      "description": "The opacity of the fill for the bars.",
+      "min": 0,
+      "max": 1,
+      "step": 0.05
+    },
+    "stroke": {
+      "default": "#aa4520",
+      "description": "The colour of the stroke for the bars."
+    },
+    "strokeOpacity": {
+      "default": 1,
+      "description": "The opacity of the stroke for the bars.",
+      "min": 0,
+      "max": 1,
+      "step": 0.05
+    },
+    "strokeWidth": {
+      "default": 1,
+      "description": "The width in pixels of the stroke for the bars.",
+      "min": 0,
+      "max": 20,
+      "unit": "px"
+    },
+    "highlightStyle": {
+      "meta": {
+        "requiresWholeObject": true,
+        "description": "Configuration for the highlighting used when the markers are hovered over."
+      },
+      "fill": {
+        "default": "yellow",
+        "description": "The fill colour of the markers when hovered over."
+      },
+      "stroke": {
+        "type": "string",
+        "description": "The colour of the stroke around the markers when hovered over."
+      }
+    }
   }
 }

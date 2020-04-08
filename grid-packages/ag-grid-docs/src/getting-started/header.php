@@ -49,7 +49,7 @@ meta_and_links($pageTitle, $pageKeywords, $pageDescription, false);
             <li><a class="<?=($article_id == "javascript-grid/" ? 'active' : '') ?>" href="../javascript-grid/">Vanilla JavaScript</a></li>
             <li><a class="<?=($article_id == "angular-grid/" ? 'active' : '') ?>" href="../angular-grid/">Angular</a></li>
             <li><a class="<?=($article_id == "react-grid/" ? 'active' : '') ?>" href="../react-grid/">React</a></li>
-            <li><a class="<?=($article_id == "vue-getting-started/" ? 'active' : '') ?>" href="../vuejs-grid/">Vue.js</a></li
+            <li><a class="<?=($article_id == "vue-getting-started/" ? 'active' : '') ?>" href="../vuejs-grid/">Vue.js</a></li>
             <li><hr></li>
             <li class="misc"><a class="<?=($article_id == "angular-grid/" ? 'active' : '') ?>" href="../angular-grid/">AngularJS 1.x</a></li>
             <li class="misc"><a class="<?=($article_id == "polymer-getting-started/" ? 'active' : '') ?>" href="../polymer-getting-started/">Polymer</a></li>

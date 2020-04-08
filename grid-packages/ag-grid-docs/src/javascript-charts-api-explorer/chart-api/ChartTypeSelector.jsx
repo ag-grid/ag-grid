@@ -9,6 +9,7 @@ export const ChartTypeSelector = ({ type, onChange }) => {
         scatter: 'Scatter / Bubble',
         area: 'Area',
         pie: 'Pie / Doughnut',
+        histogram: 'Histogram'
     };
 
     return <div className="chart-type-selector"><PresetEditor value={type} options={options} onChange={onChange} /></div>;
