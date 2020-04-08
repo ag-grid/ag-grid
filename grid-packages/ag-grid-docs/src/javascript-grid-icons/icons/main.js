@@ -1,9 +1,11 @@
 var columnDefs = [
     {
-        field: "athlete", rowGroup: true, hide: true
+        field: 'athlete', rowGroup: true, hide: true
     },
     {
-        field: "age", width: 90, enableValue: true,
+        field: 'age',
+        width: 90,
+        enableValue: true,
         icons: {
             // not very useful, but demonstrates you can just have strings
             sortAscending: 'U',
@@ -11,30 +13,32 @@ var columnDefs = [
         }
     },
     {
-        field: "country", width: 150, rowGroupIndex: 0,
+        field: 'country',
+        width: 150,
+        rowGroupIndex: 0,
         icons: {
             sortAscending: '<i class="fa fa-sort-alpha-up"/>',
             sortDescending: '<i class="fa fa-sort-alpha-down"/>'
         }
     },
-    { field: "year", width: 90, enableRowGroup: true },
-    { field: "date" },
+    { field: 'year', width: 90, enableRowGroup: true },
+    { field: 'date' },
     {
-        field: "sport",
+        field: 'sport',
         width: 110,
         icons: {
-            sortAscending: function () {
+            sortAscending: function() {
                 return 'ASC';
             },
-            sortDescending: function () {
+            sortDescending: function() {
                 return 'DESC';
             }
         }
     },
-    { field: "gold", width: 100},
-    { field: "silver", width: 100},
-    { field: "bronze", width: 100},
-    { field: "total", width: 100}
+    { field: 'gold', width: 100 },
+    { field: 'silver', width: 100 },
+    { field: 'bronze', width: 100 },
+    { field: 'total', width: 100 }
 ];
 
 var gridOptions = {
@@ -42,15 +46,15 @@ var gridOptions = {
         width: 150,
         sortable: true,
         resizable: true,
-        filter: true
+        filter: true,
+        floatingFilter: true,
     },
     columnDefs: columnDefs,
     rowData: null,
     showToolPanel: true,
-    floatingFilter: true,
     autoGroupColumnDef: {
-        headerName: "Athlete",
-        field: "athlete",
+        headerName: 'Athlete',
+        field: 'athlete',
         rowDrag: true,
         // use font awesome for first col, with numbers for sort
         icons: {
@@ -96,7 +100,7 @@ var gridOptions = {
 };
 
 // setup the grid after the page has finished loading
-document.addEventListener('DOMContentLoaded', function () {
+document.addEventListener('DOMContentLoaded', function() {
     var gridDiv = document.querySelector('#myGrid');
     new agGrid.Grid(gridDiv, gridOptions);
 
@@ -105,7 +109,7 @@ document.addEventListener('DOMContentLoaded', function () {
     var httpRequest = new XMLHttpRequest();
     httpRequest.open('GET', 'https://raw.githubusercontent.com/ag-grid/ag-grid/master/grid-packages/ag-grid-docs/src/olympicWinnersSmall.json');
     httpRequest.send();
-    httpRequest.onreadystatechange = function () {
+    httpRequest.onreadystatechange = function() {
         if (httpRequest.readyState === 4 && httpRequest.status === 200) {
             var httpResult = JSON.parse(httpRequest.responseText);
             gridOptions.api.setRowData(httpResult);

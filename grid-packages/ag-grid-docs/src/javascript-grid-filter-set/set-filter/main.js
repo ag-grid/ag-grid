@@ -15,7 +15,7 @@ function irishAthletes() {
 var gridOptions = {
     columnDefs: [
         {
-            field: "athlete",
+            field: 'athlete',
             filter: 'agSetColumnFilter',
             filterParams: {
                 cellHeight: 20,
@@ -24,34 +24,34 @@ var gridOptions = {
             }
         },
         {
-            field: "sport",
+            field: 'sport',
             filter: 'agSetColumnFilter',
             filterParams: {
                 suppressMiniFilter: true
             }
         },
         {
-            field: "country",
+            field: 'country',
             filter: 'agSetColumnFilter',
             cellRenderer: 'countryCellRenderer',
             keyCreator: countryKeyCreator,
         },
-        { field: "age", filter: 'agNumberColumnFilter' },
-        { field: "gold", filter: 'agNumberColumnFilter' },
-        { field: "silver", filter: 'agNumberColumnFilter' },
-        { field: "bronze", filter: 'agNumberColumnFilter' },
-        { field: "total", filter: 'agNumberColumnFilter' },
+        { field: 'age', filter: 'agNumberColumnFilter' },
+        { field: 'gold', filter: 'agNumberColumnFilter' },
+        { field: 'silver', filter: 'agNumberColumnFilter' },
+        { field: 'bronze', filter: 'agNumberColumnFilter' },
+        { field: 'total', filter: 'agNumberColumnFilter' },
     ],
     defaultColDef: {
         flex: 1,
         minWidth: 180,
         editable: true,
         resizable: true,
+        floatingFilter: true,
     },
     components: {
         countryCellRenderer: countryCellRenderer
     },
-    floatingFilter: true,
 };
 
 function countryCellRenderer(params) {
@@ -80,7 +80,7 @@ document.addEventListener('DOMContentLoaded', function() {
     var gridDiv = document.querySelector('#myGrid');
     new agGrid.Grid(gridDiv, gridOptions);
 
-    agGrid.simpleHttpRequest({url: 'https://raw.githubusercontent.com/ag-grid/ag-grid/master/grid-packages/ag-grid-docs/src/olympicWinnersSmall.json'}).then(function(data) {
+    agGrid.simpleHttpRequest({ url: 'https://raw.githubusercontent.com/ag-grid/ag-grid/master/grid-packages/ag-grid-docs/src/olympicWinnersSmall.json' }).then(function(data) {
         patchData(data);
         gridOptions.api.setRowData(data);
     });

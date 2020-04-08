@@ -18,8 +18,8 @@ var gridOptions = {
             flex: 1,
             filter: 'agSetColumnFilter',
             filterParams: {
-                values: function (params) {
-                    setTimeout( function() {
+                values: function(params) {
+                    setTimeout(function() {
                         params.success(['value 1', 'value 2']);
                     }, 5000);
                 }
@@ -28,9 +28,9 @@ var gridOptions = {
     ],
     defaultColDef: {
         filter: true,
+        floatingFilter: true,
         resizable: true,
     },
-    floatingFilter: true,
 };
 
 // setup the grid after the page has finished loading

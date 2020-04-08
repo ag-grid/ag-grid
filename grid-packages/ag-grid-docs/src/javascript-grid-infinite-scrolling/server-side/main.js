@@ -137,12 +137,12 @@ var columnDefs = [
     {
         field: 'country',
         filter: 'agSetColumnFilter',
-        filterParams: {values: countries()}
+        filterParams: { values: countries() }
     },
     {
         field: 'year',
         filter: 'agSetColumnFilter',
-        filterParams: {values: ['2000', '2004', '2008', '2012']}
+        filterParams: { values: ['2000', '2004', '2008', '2012'] }
     },
     { field: 'date' },
     { field: 'sport', suppressMenu: true },
@@ -158,9 +158,9 @@ var gridOptions = {
         flex: 1,
         minWidth: 150,
         sortable: true,
-        resizable: true
+        resizable: true,
+        floatingFilter: true,
     },
-    floatingFilter: true,
     rowSelection: 'multiple',
     rowDeselection: true,
     rowModelType: 'infinite',
@@ -272,7 +272,7 @@ document.addEventListener('DOMContentLoaded', function() {
     var gridDiv = document.querySelector('#myGrid');
     new agGrid.Grid(gridDiv, gridOptions);
 
-    agGrid.simpleHttpRequest({url: 'https://raw.githubusercontent.com/ag-grid/ag-grid/master/grid-packages/ag-grid-docs/src/olympicWinners.json'}).then(function(data) {
+    agGrid.simpleHttpRequest({ url: 'https://raw.githubusercontent.com/ag-grid/ag-grid/master/grid-packages/ag-grid-docs/src/olympicWinners.json' }).then(function(data) {
         // give each row an id
         data.forEach(function(data, index) {
             data.id = 'R' + (index + 1);

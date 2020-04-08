@@ -156,6 +156,7 @@ var gridOptions = {
         minWidth: 50,
         sortable: true,
         filter: true,
+        floatingFilter: !isSmall,
         resizable: true
     },
     enableCellChangeFlash: true,
@@ -176,7 +177,6 @@ var gridOptions = {
     // },
     // suppressAsyncEvents: true,
     // suppressAggAtRootLevel: true,
-    floatingFilter: !isSmall,
     debug: true,
     // editType: 'fullRow',
     // debug: true,
@@ -432,7 +432,7 @@ var gridOptions = {
                 if (absolute >= 1e12) standardised = '$' + +(absolute / 1e12).toFixed(1) + 'T';
 
                 return value < 0 ? '-' + standardised : standardised;
-            }
+            };
 
             var standardNumberFormatter = function(params) {
                 return standardiseNumber(params.value);
@@ -446,7 +446,7 @@ var gridOptions = {
                 options.seriesDefaults.tooltip.renderer = function(params) {
                     var formatCurrency = function(value) {
                         return '$' + formatThousands(value);
-                    }
+                    };
 
                     var titleStyle = params.color ? ' style="color: white; background-color:' + params.color + '"' : '';
                     var title = params.title ? '<div class="ag-chart-tooltip-title"' + titleStyle + '>' + params.title + '</div>' : '';
@@ -459,13 +459,13 @@ var gridOptions = {
                     }
                     return title + '<div class="ag-chart-tooltip-content">' + label + xValue + '<br>' + yValue + size + '</div>';
                 };
-            }  else if (type === 'histogram' ) {
+            } else if (type === 'histogram') {
                 options.seriesDefaults.tooltip.renderer = function(params) {
 
                     var titleStyle = params.color ? ' style="color: white; background-color:' + params.color + '"' : '';
                     var title = params.title ? '<div class="ag-chart-tooltip-title"' + titleStyle + '>' + params.title + '</div>' : '';
 
-                    if( params.yKey ) {
+                    if (params.yKey) {
                         // with a y key, the value is the total of the yKey value for the population of the bin:
                         var value = formatThousands(Math.round(params.datum.total));
                         return title + '<div class="ag-chart-tooltip-content">' + '$' + value + '</div>';
@@ -1115,10 +1115,10 @@ function rowSelected(event) {
 }
 
 function onThemeChanged(initial) {
-    var newTheme = document.querySelector('#grid-theme').value || 'ag-theme-none'
+    var newTheme = document.querySelector('#grid-theme').value || 'ag-theme-none';
     var themedElements = Array.prototype.slice.call(document.querySelectorAll('[class*="ag-theme-"]'));
 
-    themedElements.forEach(function (el) {
+    themedElements.forEach(function(el) {
         el.className = el.className.replace(/ag-theme-[\w-]+/g, newTheme);
     });
 
@@ -1403,11 +1403,11 @@ function currencyCssFunc(params) {
 }
 
 function ratingFilterRenderer(params) {
-    return ratingRendererGeneral(params.value, true)
+    return ratingRendererGeneral(params.value, true);
 }
 
 function ratingRenderer(params) {
-    return ratingRendererGeneral(params.value, false)
+    return ratingRendererGeneral(params.value, false);
 }
 
 function ratingRendererGeneral(value, forFilter) {
@@ -1425,8 +1425,8 @@ function ratingRendererGeneral(value, forFilter) {
 }
 
 var formatThousands = function(value) {
-    return value.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,')
-}
+    return value.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,');
+};
 
 function currencyRenderer(params) {
     if (params.value === null || params.value === undefined) {

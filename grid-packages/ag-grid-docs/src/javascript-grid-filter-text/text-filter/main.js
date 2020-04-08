@@ -1,21 +1,21 @@
 var columnDefs = [
     {
-        field: "athlete",
+        field: 'athlete',
         filter: 'agTextColumnFilter',
         filterParams: {
             filterOptions: ['contains', 'notContains'],
             textFormatter: function(r) {
                 if (r == null) return null;
-                r = r.replace(new RegExp("[àáâãäå]", 'g'), "a");
-                r = r.replace(new RegExp("æ", 'g'), "ae");
-                r = r.replace(new RegExp("ç", 'g'), "c");
-                r = r.replace(new RegExp("[èéêë]", 'g'), "e");
-                r = r.replace(new RegExp("[ìíîï]", 'g'), "i");
-                r = r.replace(new RegExp("ñ", 'g'), "n");
-                r = r.replace(new RegExp("[òóôõøö]", 'g'), "o");
-                r = r.replace(new RegExp("œ", 'g'), "oe");
-                r = r.replace(new RegExp("[ùúûü]", 'g'), "u");
-                r = r.replace(new RegExp("[ýÿ]", 'g'), "y");
+                r = r.replace(new RegExp('[àáâãäå]', 'g'), 'a');
+                r = r.replace(new RegExp('æ', 'g'), 'ae');
+                r = r.replace(new RegExp('ç', 'g'), 'c');
+                r = r.replace(new RegExp('[èéêë]', 'g'), 'e');
+                r = r.replace(new RegExp('[ìíîï]', 'g'), 'i');
+                r = r.replace(new RegExp('ñ', 'g'), 'n');
+                r = r.replace(new RegExp('[òóôõøö]', 'g'), 'o');
+                r = r.replace(new RegExp('œ', 'g'), 'oe');
+                r = r.replace(new RegExp('[ùúûü]', 'g'), 'u');
+                r = r.replace(new RegExp('[ýÿ]', 'g'), 'y');
                 return r;
             },
             debounceMs: 0,
@@ -24,7 +24,7 @@ var columnDefs = [
         }
     },
     {
-        field: "country",
+        field: 'country',
         filterParams: {
             filterOptions: ['contains'],
             textCustomComparator: function(_, value, filterText) {
@@ -52,14 +52,14 @@ var columnDefs = [
         }
     },
     {
-        field: "year",
+        field: 'year',
         filter: 'agNumberColumnFilter',
         filterParams: {
             filterOptions: ['inRange']
         }
     },
     {
-        field: "sport",
+        field: 'sport',
         filter: 'agTextColumnFilter',
         filterParams: {
             defaultOption: 'startsWith'
@@ -71,11 +71,11 @@ var gridOptions = {
     defaultColDef: {
         flex: 1,
         sortable: true,
-        filter: true
+        filter: true,
+        floatingFilter: true,
     },
     columnDefs: columnDefs,
     rowData: null,
-    floatingFilter: true
 };
 
 // setup the grid after the page has finished loading

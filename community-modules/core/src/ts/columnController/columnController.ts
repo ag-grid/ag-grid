@@ -3102,10 +3102,10 @@ export class ColumnController {
         return this.gridBalancedTree;
     }
 
-    public hasFloatingFilters() {
+    public hasFloatingFilters(): boolean {
         const defaultColDef = this.gridOptionsWrapper.getDefaultColDef();
 
-        return (defaultColDef && defaultColDef.floatingFilter) ||
-            (this.columnDefs && this.columnDefs.some((c: ColDef) => c.floatingFilter === true));
+        return (defaultColDef != null && defaultColDef.floatingFilter === true) ||
+            (this.columnDefs != null && this.columnDefs.some((c: ColDef) => c.floatingFilter === true));
     }
 }
