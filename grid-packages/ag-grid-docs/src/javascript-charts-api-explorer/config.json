@@ -1726,49 +1726,6 @@
     }
   },
   "histogramSeriesConfig": {
-    "meta": {
-      "displayName": "Histogram Series Configuration",
-      "description": "Configuration for histogram series."
-    },
-    "xKey": {
-      "type": "string",
-      "isRequired": true,
-      "description": "The key to use to retrieve x-values from the data."
-    },
-    "xName": {
-      "type": "string",
-      "description": "A human-readable description of the x-values."
-    },
-    "yKey": {
-      "type": "string",
-      "description": "The key to use to retrieve y-values from the data. If no yKey is given, the count of the population of the bins is used instead."
-    },
-    "yName": {
-      "type": "string",
-      "description": "A human-readable description of the y-values"
-    },
-    "binCount":{
-      "type": "number",
-      "description": "The number of bins to try to split the x axis into. Clashes with the <code>bins</code> setting."
-    },
-    "bins": {
-      "type": "number[][]",
-      "description": "Set the bins explicitly. The bins deed not be of equal width, in which case you may wish to set <code>areaPlot</code> to true. Clashes with the <code>binCount</code> setting."
-    },
-    "aggregation": {
-      "type": "string",
-      "description": "Dictates how the bins are aggregated. If set to 'sum', the value shown for the bins will be the total of the yKey values. If set to 'mean', it will display the average yKey value of the bin",
-      "default": "sum",
-      "options": [
-        "sum",
-        "mean"
-      ]
-    },
-    "areaPlot": {
-      "type": "boolean",
-      "description": "For variable width bins, if true the histogram will represent the aggregated <code>yKey</code> values using the area of the bar. Otherwise, the height of the var represents the value as per a normal bar chart. This is useful for keeping an undistorted curve displayed when using variable-width bins",
-      "default": "false"
-    },
     "data": {
       "type": "object[]",
       "isRequired": true,
@@ -1805,38 +1762,49 @@
       },
       "description": "Function used to create the content for tooltips."
     },
-    "title": {
+    "xKey": {
       "type": "string",
-      "description": "The title to use for the series. Defaults to <code>yName</code> if it exists, or <code>yKey</code> if not."
+      "isRequired": true,
+      "description": "The key to use to retrieve x-values from the data."
     },
-    "fill": {
-      "default": "#f3622d",
-      "description": "The colour of the fill for the bars."
+    "xName": {
+      "type": "string",
+      "description": "A human-readable description of the x-values."
     },
-    "fillOpacity": {
-      "default": 1,
-      "description": "The opacity of the fill for the bars.",
-      "min": 0,
-      "max": 1,
-      "step": 0.05
+    "yKey": {
+      "type": "string",
+      "isRequired": false,
+      "description": "The key to use to retrieve y-values from the data."
     },
-    "stroke": {
-      "default": "#aa4520",
-      "description": "The colour of the stroke for the bars."
+    "yName": {
+      "type": "string",
+      "description": "A human-readable description of the y-values."
     },
-    "strokeOpacity": {
-      "default": 1,
-      "description": "The opacity of the stroke for the bars.",
-      "min": 0,
-      "max": 1,
-      "step": 0.05
+    "meta": {
+      "displayName": "Histogram Series Configuration",
+      "description": "Configuration for histogram series."
     },
-    "strokeWidth": {
-      "default": 1,
-      "description": "The width in pixels of the stroke for the bars.",
-      "min": 0,
-      "max": 20,
-      "unit": "px"
+    "binCount": {
+      "type": "number",
+      "description": "The number of bins to try to split the x axis into. Clashes with the <code>bins</code> setting."
+    },
+    "bins": {
+      "type": "number[][]",
+      "description": "Set the bins explicitly. The bins need not be of equal width. Clashes with the <code>binCount</code> setting."
+    },
+    "aggregation": {
+      "type": "string",
+      "description": "Dictates how the bins are aggregated. If set to 'sum', the value shown for the bins will be the total of the yKey values. If set to 'mean', it will display the average yKey value of the bin",
+      "default": "sum",
+      "options": [
+        "sum",
+        "mean"
+      ]
+    },
+    "areaPlot": {
+      "type": "boolean",
+      "description": "For variable width bins, if true the histogram will represent the aggregated <code>yKey</code> values using the area of the bar. Otherwise, the height of the var represents the value as per a normal bar chart. This is useful for keeping an undistorted curve displayed when using variable-width bins",
+      "default": "false"
     },
     "highlightStyle": {
       "meta": {
@@ -1851,6 +1819,35 @@
         "type": "string",
         "description": "The colour of the stroke around the markers when hovered over."
       }
+    },
+    "fill": {
+      "default": "#f3622d",
+      "description": "The colour of the fill for the histogram bars."
+    },
+    "fillOpacity": {
+      "default": 1,
+      "description": "The opacity of the fill for the histogram bars.",
+      "min": 0,
+      "max": 1,
+      "step": 0.05
+    },
+    "stroke": {
+      "default": "#aa4520",
+      "description": "The colour of the stroke for the histogram bars."
+    },
+    "strokeOpacity": {
+      "default": 1,
+      "description": "The opacity of the stroke for the histogram bars.",
+      "min": 0,
+      "max": 1,
+      "step": 0.05
+    },
+    "strokeWidth": {
+      "default": 1,
+      "description": "The width in pixels of the stroke for the histogram bars.",
+      "min": 0,
+      "max": 20,
+      "unit": "px"
     }
   }
 }

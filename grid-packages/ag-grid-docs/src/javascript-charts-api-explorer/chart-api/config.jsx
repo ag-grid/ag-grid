@@ -468,7 +468,7 @@ const markerConfig = ({ enabledByDefault = true } = { enabledByDefault: true }) 
     }
 });
 
-const getCartesianKeyConfig = (hasMultipleYValues = false) => {
+const getCartesianKeyConfig = (hasMultipleYValues = false, mandatoryY = true) => {
     const config = {
         xKey: {
             type: 'string',
@@ -484,7 +484,7 @@ const getCartesianKeyConfig = (hasMultipleYValues = false) => {
     if (hasMultipleYValues) {
         config.yKeys = {
             type: 'string[]',
-            isRequired: true,
+            isRequired: mandatoryY,
             description: 'The keys to use to retrieve y-values from the data.',
         };
 
@@ -495,7 +495,7 @@ const getCartesianKeyConfig = (hasMultipleYValues = false) => {
     } else {
         config.yKey = {
             type: 'string',
-            isRequired: true,
+            isRequired: mandatoryY,
             description: 'The key to use to retrieve y-values from the data.',
         };
 
@@ -924,4 +924,53 @@ export const pieSeriesConfig = Object.freeze({
         },
     },
     ...shadowConfig,
+});
+
+export const histogramSeriesConfig = Object.freeze({
+    ...seriesConfig,
+    ...getCartesianKeyConfig(false, false),
+    meta: {
+        displayName: "Histogram Series Configuration",
+        description: "Configuration for histogram series."
+    },
+    binCount:{
+        type: "number",
+        description: "The number of bins to try to split the x axis into. Clashes with the <code>bins</code> setting."
+    },
+    bins: {
+        type: "number[][]",
+        description: "Set the bins explicitly. The bins need not be of equal width. Clashes with the <code>binCount</code> setting."
+    },
+    aggregation: {
+        "type": "string",
+        "description": "Dictates how the bins are aggregated. If set to 'sum', the value shown for the bins will be the total of the yKey values. If set to 'mean', it will display the average yKey value of the bin",
+        "default": "sum",
+        "options": ["sum", "mean"]
+    },
+    areaPlot: {
+        "type": "boolean",
+        "description": "For variable width bins, if true the histogram will represent the aggregated <code>yKey</code> values using the area of the bar. Otherwise, the height of the var represents the value as per a normal bar chart. This is useful for keeping an undistorted curve displayed when using variable-width bins",
+        "default": "false"
+    },
+    tooltipRenderer: {
+        type: {
+            parameters: {
+                "datum": "any",
+                "title?": "string",
+                "color?": "string",
+                "xKey": "string",
+                "xName?": "string",
+                "yKey": "string",
+                "yName?": "string",
+                "sizeKey?": "string",
+                "sizeName?": "string",
+                "labelKey?": "string",
+                "labelName?": "string"
+            },
+            returnType: "string"
+        },
+        description: "Function used to create the content for tooltips."
+    },
+    ...getHighlightConfig(),
+    ...getColourConfig('histogram bars', false, true)
 });
