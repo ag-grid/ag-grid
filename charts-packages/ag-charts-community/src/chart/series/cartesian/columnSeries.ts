@@ -11,7 +11,7 @@ import {
     CartesianTooltipRendererParams as ColumnTooltipRendererParams
 } from "../series";
 import { Label } from "../../label";
-import { PointerEvents } from "../../../scene/node";
+import { PointerEvents, Node } from "../../../scene/node";
 import { LegendDatum } from "../../legend";
 import { CartesianSeries } from "./cartesianSeries";
 import { ChartAxisDirection, flipChartAxisDirection } from "../../chartAxis";

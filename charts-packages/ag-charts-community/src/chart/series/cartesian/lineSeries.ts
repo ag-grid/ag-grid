@@ -198,13 +198,11 @@ export class LineSeries extends CartesianSeries {
                     linePath.lineTo(x, y);
                 }
 
-                if (marker) {
-                    groupSelectionData.push({
-                        series: this,
-                        seriesDatum: data[i],
-                        point: { x, y }
-                    });
-                }
+                groupSelectionData.push({
+                    series: this,
+                    seriesDatum: data[i],
+                    point: { x, y }
+                });
             }
         });
 
@@ -213,7 +211,7 @@ export class LineSeries extends CartesianSeries {
         lineNode.strokeOpacity = this.strokeOpacity;
 
         this.groupSelectionData = groupSelectionData;
-        this.updateGroupSelection(groupSelectionData);
+        this.updateGroupSelection(marker ? groupSelectionData : []);
     }
 
     getNodeDatums(): GroupSelectionDatum[] {

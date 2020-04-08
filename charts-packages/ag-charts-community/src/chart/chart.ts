@@ -112,7 +112,6 @@ export abstract class Chart extends Observable {
 
     private tooltipElement: HTMLDivElement;
     static readonly defaultTooltipClass = 'ag-chart-tooltip';
-    tooltipOffset: [number, number] = [20, 20];
 
     private _container: HTMLElement | undefined = undefined;
     set container(value: HTMLElement | undefined) {
@@ -769,39 +768,65 @@ export abstract class Chart extends Observable {
     }
 
     private readonly onMouseMove = (event: MouseEvent) => {
-        const pick = this.pickSeriesNode(event.offsetX, event.offsetY);
         const { lastPick, tooltipTracking } = this;
+        const pick = this.pickSeriesNode(event.offsetX, event.offsetY);
+        let nodeDatum: SeriesNodeDatum | undefined;
 
-        if (pick && pick.node instanceof Shape && (!pick.node.datum.point || !tooltipTracking)) {
+        if (pick && pick.node instanceof Shape) {
             const { node } = pick;
-            if (!lastPick // cursor moved from empty space to a node
-                || lastPick.node !== node) { // cursor moved from one node to another
-                this.onSeriesDatumPick(event, node.datum, node);
-            } else if (pick.series.tooltipEnabled) { // cursor moved within the same node
-                this.showTooltip(event);
-            }
-        } else {
-            let hideTooltip = false;
-            if (tooltipTracking) {
-                const closestDatum = this.pickClosestSeriesNodeDatum(event.offsetX, event.offsetY);
-                if (closestDatum && closestDatum.point) {
-                    const { x, y } = closestDatum.point;
-                    const { canvas } = this.scene;
-                    const point = closestDatum.series.group.inverseTransformPoint(x, y);
-                    const canvasRect = canvas.element.getBoundingClientRect() as DOMRect;
-                    this.onSeriesDatumPick({
-                        pageX: Math.round(canvasRect.x + window.pageXOffset + point.x),
-                        pageY: Math.round(canvasRect.y + window.pageYOffset + point.y)
-                    }, closestDatum);
-                } else {
-                    hideTooltip = true;
+            nodeDatum = node.datum as SeriesNodeDatum;
+            if (lastPick) {
+                // Different series can use the same datums, so simply comparing `seriesDatum`s is not enough.
+                const isSameSeries = lastPick.datum.series === nodeDatum.series;
+                const isSameDatums = lastPick.datum.seriesDatum === nodeDatum.seriesDatum;
+                // Mouse cursor moved over already highlighted closest marker.
+                if (isSameSeries && isSameDatums) {
+                    // Make sure the lastPick has node information, which it might not have
+                    // if we are in the tracking mode.
+                    lastPick.node = node;
                 }
             }
-            if (lastPick && (hideTooltip || !tooltipTracking)) { // cursor moved from a non-marker node to empty space
-                lastPick.datum.series.dehighlightDatum();
-                this.hideTooltip();
-                this.lastPick = undefined;
+            // Marker nodes will have the `point` info in their datums.
+            // Highlight if not a marker node or, if not in the tracking mode, highlight markers too.
+            if ((!node.datum.point || !tooltipTracking)) {
+                if (!lastPick // cursor moved from empty space to a node
+                    || lastPick.node !== node) { // cursor moved from one node to another
+                    this.onSeriesDatumPick(event, node.datum, node);
+                } else if (pick.series.tooltipEnabled) { // cursor moved within the same node
+                    this.showTooltip(event);
+                }
+                // A non-marker node (takes precedence over marker nodes) was highlighted.
+                // Or we are not in the tracking mode.
+                // Either way, we are done at this point.
+                return;
             }
+        }
+
+        let hideTooltip = false;
+        // In tracking mode a tooltip is shown for the closest rendered datum.
+        // This makes it easier to show tooltips when markers are small and/or plentiful
+        // and also gives the ability to show tooltips even when the series were configured
+        // to not render markers.
+        if (tooltipTracking) {
+            const closestDatum = this.pickClosestSeriesNodeDatum(event.offsetX, event.offsetY);
+            if (closestDatum && closestDatum.point) {
+                const { x, y } = closestDatum.point;
+                const { canvas } = this.scene;
+                const point = closestDatum.series.group.inverseTransformPoint(x, y);
+                const canvasRect = canvas.element.getBoundingClientRect() as DOMRect;
+                this.onSeriesDatumPick({
+                    pageX: Math.round(canvasRect.x + window.pageXOffset + point.x),
+                    pageY: Math.round(canvasRect.y + window.pageYOffset + point.y)
+                }, closestDatum, nodeDatum === closestDatum ? pick.node as Shape : undefined);
+            } else {
+                hideTooltip = true;
+            }
+        }
+        if (lastPick && (hideTooltip || !tooltipTracking)) {
+            // cursor moved from a non-marker node to empty space
+            lastPick.datum.series.dehighlightDatum();
+            this.hideTooltip();
+            this.lastPick = undefined;
         }
     }
 
@@ -810,7 +835,17 @@ export abstract class Chart extends Observable {
     }
 
     private readonly onClick = (event: MouseEvent) => {
+        this.onSeriesNodeClick();
         this.onLegendClick(event);
+    }
+
+    private onSeriesNodeClick() {
+        const { lastPick } = this;
+
+        if (lastPick && lastPick.node) {
+            const { datum } = this.lastPick;
+            this.fireEvent({ type: 'click', datum });
+        }
     }
 
     private onLegendClick(event: MouseEvent) {
@@ -882,8 +917,6 @@ export abstract class Chart extends Observable {
      */
     private showTooltip(meta: TooltipMeta, html?: string) {
         const el = this.tooltipElement;
-        const offset = this.tooltipOffset;
-        const parent = el.parentElement;
 
         if (html !== undefined) {
             el.innerHTML = html;

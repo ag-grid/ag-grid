@@ -4,6 +4,7 @@ import { Observable, reactive } from "../../util/observable";
 import { ChartAxis, ChartAxisDirection } from "../chartAxis";
 import { Chart } from "../chart";
 import { createId } from "../../util/id";
+import { Node } from "../../scene/node";
 
 /**
  * Processed series datum used in node selections,
