@@ -882,46 +882,51 @@ export class ColumnController {
         return column || this.getGridColumn(key);
     }
 
-    public setColumnWidth(
-        key: string | Column, // @key - the column who's size we want to change
-        newWidth: number, // @newWidth - width in pixels
+    public setColumnWidths(
+        columnWidths: {
+            key: string | Column, // @key - the column who's size we want to change
+            newWidth: number // @newWidth - width in pixels
+        }[],
         shiftKey: boolean, // @takeFromAdjacent - if user has 'shift' pressed, then pixels are taken from adjacent column
         finished: boolean, // @finished - ends up in the event, tells the user if more events are to come
         source: ColumnEventType = "api"
     ): void {
-
-        const col = this.getPrimaryOrGridColumn(key);
-
-        if (!col) { return; }
-
         const sets: ColumnResizeSet[] = [];
 
-        sets.push({
-            width: newWidth,
-            ratios: [1],
-            columns: [col]
-        });
+        columnWidths.forEach(columnWidth => {
+            const col = this.getPrimaryOrGridColumn(columnWidth.key);
 
-        // if user wants to do shift resize by default, then we invert the shift operation
-        const defaultIsShift = this.gridOptionsWrapper.getColResizeDefault() === 'shift';
-
-        if (defaultIsShift) {
-            shiftKey = !shiftKey;
-        }
-
-        if (shiftKey) {
-            const otherCol = this.getDisplayedColAfter(col);
-            if (!otherCol) { return; }
-
-            const widthDiff = col.getActualWidth() - newWidth;
-            const otherColWidth = otherCol.getActualWidth() + widthDiff;
+            if (!col) { return; }
 
             sets.push({
-                width: otherColWidth,
+                width: columnWidth.newWidth,
                 ratios: [1],
-                columns: [otherCol]
+                columns: [col]
             });
-        }
+
+            // if user wants to do shift resize by default, then we invert the shift operation
+            const defaultIsShift = this.gridOptionsWrapper.getColResizeDefault() === 'shift';
+
+            if (defaultIsShift) {
+                shiftKey = !shiftKey;
+            }
+
+            if (shiftKey) {
+                const otherCol = this.getDisplayedColAfter(col);
+                if (!otherCol) { return; }
+
+                const widthDiff = col.getActualWidth() - columnWidth.newWidth;
+                const otherColWidth = otherCol.getActualWidth() + widthDiff;
+
+                sets.push({
+                    width: otherColWidth,
+                    ratios: [1],
+                    columns: [otherCol]
+                });
+            }
+        });
+
+        if (sets.length === 0) { return; }
 
         this.resizeColumnSets(sets, finished, source);
 

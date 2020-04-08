@@ -24,6 +24,11 @@ function onSelectionChanged() {
     document.querySelector('#selectedRows').innerHTML = selectedRows.length === 1 ? selectedRows[0].athlete : '';
 }
 
+
+function destroyGrid() {
+    gridOptions = gridOptions.api.destroy();
+}
+
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function() {
     var gridDiv = document.querySelector('#myGrid');
