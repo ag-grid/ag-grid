@@ -1,4 +1,4 @@
-import { missing, exists } from './generic';
+import { missing, exists, values } from './generic';
 
 export function iterateObject<T>(object: { [p: string]: T; } | T[] | undefined, callback: (key: string, value: T) => void) {
     if (!object || missing(object)) { return; }
@@ -143,10 +143,6 @@ export function deepFreeze(object: any): any {
     });
 
     return object;
-}
-
-export function values<T>(object: { [key: string]: T; }): T[] {
-    return Object.keys(object).map(key => object[key]);
 }
 
 export function getValueUsingField(data: any, field: string, fieldContainsDots: boolean): any {

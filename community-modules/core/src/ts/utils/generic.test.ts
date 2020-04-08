@@ -1,4 +1,4 @@
-import { makeNull, exists } from './generic';
+import { makeNull, exists, values } from './generic';
 
 describe('makeNull', () => {
     it.each([4, 'string', new Date()])
@@ -36,4 +36,25 @@ describe('exists', () => {
         ('returns true if value is present: %s', value => {
             expect(exists(value)).toBe(true);
         });
+});
+
+describe('values', () => {
+    it('returns values from an object', () => {
+        const object = {
+            a: 1,
+            b: 2,
+            c: 3,
+        };
+
+        expect(values(object)).toStrictEqual([1, 2, 3]);
+    });
+
+    it('returns values from a set', () => {
+        const set = new Set<number>();
+        set.add(1);
+        set.add(2);
+        set.add(3);
+
+        expect(values(set)).toStrictEqual([1, 2, 3]);
+    });
 });

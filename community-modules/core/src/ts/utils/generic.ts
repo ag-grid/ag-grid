@@ -1,5 +1,3 @@
-import { values } from './object';
-
 /**
  * If value is undefined, null or blank, returns null, otherwise returns the value
  * @param {T} value
@@ -127,4 +125,16 @@ export function find<T>(collection: T[] | { [id: string]: T; }, predicate: strin
     }
 
     return firstMatchingItem;
+}
+
+export function values<T>(object: { [key: string]: T; } | Set<T>): T[] {
+    if (object instanceof Set) {
+        const values: T[] = [];
+
+        object.forEach(value => values.push(value));
+
+        return values;
+    }
+
+    return Object.keys(object).map(key => object[key]);
 }
