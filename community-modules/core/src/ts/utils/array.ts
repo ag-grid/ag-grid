@@ -1,4 +1,4 @@
-import { exists, missing, toStringOrNull } from './generic';
+import { exists, toStringOrNull } from './generic';
 
 export function firstExistingValue<A>(...values: A[]): A | null {
     for (let i = 0; i < values.length; i++) {
@@ -18,7 +18,7 @@ export function anyExists(values: any[]): boolean {
 }
 
 export function existsAndNotEmpty<T>(value?: T[]): boolean {
-    return value != null && exists(value) && value.length > 0;
+    return value != null && value.length > 0;
 }
 
 export function last<T>(arr: T[]): T | undefined {
@@ -28,14 +28,14 @@ export function last<T>(arr: T[]): T | undefined {
 }
 
 export function areEqual<T>(a: T[], b: T[], comparator?: (a: T, b: T) => boolean): boolean {
-    if (missing(a) && missing(b)) {
+    if (a == null && b == null) {
         return true;
     }
 
-    return !missing(a) &&
-        !missing(b) &&
+    return a != null &&
+        b != null &&
         a.length === b.length &&
-        a.every((value, index) => comparator ? comparator(value, b[index]) : b[index] === value);
+        every(a, (value, index) => comparator ? comparator(value, b[index]) : b[index] === value);
 }
 
 /** @deprecated */
@@ -74,7 +74,7 @@ export function removeFromArray<T>(array: T[], object: T) {
 }
 
 export function removeAllFromArray<T>(array: T[], toRemove: T[]) {
-    toRemove.forEach(item => removeFromArray(array, item));
+    forEach(toRemove, item => removeFromArray(array, item));
 }
 
 export function insertIntoArray<T>(array: T[], object: T, toIndex: number) {
@@ -82,9 +82,9 @@ export function insertIntoArray<T>(array: T[], object: T, toIndex: number) {
 }
 
 export function insertArrayIntoArray<T>(dest: T[], src: T[], toIndex: number) {
-    if (missing(dest) || missing(src)) { return; }
-    // put items in backwards, otherwise inserted items end up in reverse order
+    if (dest == null || src == null) { return; }
 
+    // put items in backwards, otherwise inserted items end up in reverse order
     for (let i = src.length - 1; i >= 0; i--) {
         const item = src[i];
         insertIntoArray(dest, item, toIndex);
@@ -92,16 +92,12 @@ export function insertArrayIntoArray<T>(dest: T[], src: T[], toIndex: number) {
 }
 
 export function moveInArray<T>(array: T[], objectsToMove: T[], toIndex: number) {
-    // first take out it items from the array
-    objectsToMove.forEach((obj) => {
-        removeFromArray(array, obj);
-    });
+    // first take out items from the array
+    removeAllFromArray(array, objectsToMove);
 
     // now add the objects, in same order as provided to us, that means we start at the end
     // as the objects will be pushed to the right as they are inserted
-    objectsToMove.slice().reverse().forEach((obj) => {
-        insertIntoArray(array, obj, toIndex);
-    });
+    forEach(objectsToMove.slice().reverse(), obj => insertIntoArray(array, obj, toIndex));
 }
 
 export function includes<T>(array: T[], value: T): boolean {
@@ -113,13 +109,13 @@ export function flatten(arrayOfArrays: any[]): any[] {
 }
 
 export function pushAll<T>(target: T[], source: T[]): void {
-    if (missing(source) || missing(target)) { return; }
+    if (source == null || target == null) { return; }
 
-    source.forEach(func => target.push(func));
+    forEach(source, value => target.push(value));
 }
 
 export function toStrings<T>(array: T[]): (string | null)[] {
-    return array.map(toStringOrNull);
+    return map(array, toStringOrNull);
 }
 
 export function findIndex<T>(collection: T[], predicate: (item: T, idx: number, collection: T[]) => boolean): number {
@@ -132,9 +128,95 @@ export function findIndex<T>(collection: T[], predicate: (item: T, idx: number, 
     return -1;
 }
 
-/** @deprecated Should use Array.prototype.every instead */
-export function every<T>(items: T[], callback: (item: T) => boolean): boolean {
-    return !items || items.every(callback);
+/**
+ * The implementation of Array.prototype.every in browsers is always slower than just using a simple for loop, so
+ * use this for improved performance.
+ * https://jsben.ch/AbMhT
+ */
+export function every<T>(list: T[], predicate: (value: T, index: number) => boolean): boolean {
+    if (list == null) {
+        return true;
+    }
+
+    for (let i = 0; i < list.length; i++) {
+        if (!predicate(list[i], i)) {
+            return false;
+        }
+    }
+
+    return true;
+}
+
+/**
+ * The implementation of Array.prototype.some in browsers is always slower than just using a simple for loop, so
+ * use this for improved performance.
+ * https://jsben.ch/AbMhT
+ */
+export function some<T>(list: T[], predicate: (value: T, index: number) => boolean): boolean {
+    if (list == null) {
+        return false;
+    }
+
+    for (let i = 0; i < list.length; i++) {
+        if (predicate(list[i], i)) {
+            return true;
+        }
+    }
+
+    return false;
+}
+
+/**
+ * The implementation of Array.prototype.forEach in browsers is often slower than just using a simple for loop, so
+ * use this for improved performance.
+ * https://jsben.ch/eEuue
+ */
+export function forEach<T>(list: T[], action: (value: T, index: number) => void) {
+    if (list == null) {
+        return;
+    }
+
+    for (let i = 0; i < list.length; i++) {
+        action(list[i], i);
+    }
+}
+
+/**
+ * The implementation of Array.prototype.map in browsers is always slower than just using a simple for loop, so
+ * use this for improved performance.
+ * https://jsben.ch/RrA5v
+ */
+export function map<T, V>(list: T[], process: (value: T, index: number) => V) {
+    if (list == null) {
+        return list;
+    }
+
+    const mapped: V[] = [];
+
+    forEach(list, (value, index) => mapped.push(process(value, index)));
+
+    return mapped;
+}
+
+/**
+ * The implementation of Array.prototype.filter in browsers is always slower than just using a simple for loop, so
+ * use this for improved performance.
+ * https://jsben.ch/cHwRE
+ */
+export function filter<T>(list: T[], predicate: (value: T, index: number) => boolean) {
+    if (list == null) {
+        return list;
+    }
+
+    const filtered: T[] = [];
+
+    forEach(list, (value, index) => {
+        if (predicate(value, index)) {
+            filtered.push(value);
+        }
+    });
+
+    return filtered;
 }
 
 /** @deprecated */

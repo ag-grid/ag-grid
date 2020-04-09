@@ -333,8 +333,7 @@ export class SetFilter extends ProvidedFilter {
 
     //noinspection JSUnusedGlobalSymbols
     /**
-     * Public method provided so the user can reset the values of the filter once that it has started
-     * @param options The options to use.
+     * Public method provided so the user can reset the values of the filter once that it has started.
      */
     public resetFilterValues(): void {
         this.valueModel.setValuesType(SetFilterModelValuesType.TAKEN_FROM_GRID_VALUES);
