@@ -18,7 +18,7 @@
     "build-cjs": "npx gulp tsc-no-clean-es5",
     "build-css": "npx gulp scss-no-clean",
     "check-scss-vars": "ts-node scripts/check-scss-vars.ts",
-    "hash": "../../scripts/hashDirectory.sh > .hash"
+    "hash": "sh ../../scripts/hashDirectory.sh > .hash"
   },
   "repository": {
     "type": "git",

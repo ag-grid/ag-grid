@@ -11,7 +11,7 @@ const webpackMiddleware = require('webpack-dev-middleware');
 const chokidar = require('chokidar');
 const tcpPortUsed = require('tcp-port-used');
 const generateExamples = require('./example-generator').generateExamples;
-const { updateBetweenStrings, getAllModules } = require("./utils");
+const {updateBetweenStrings, getAllModules} = require("./utils");
 const docsLock = require('./../../scripts/docsLock');
 
 const lnk = require('lnk').sync;
@@ -27,7 +27,7 @@ const WINDOWS = /^win/.test(os.platform());
 // }
 
 function reporter(middlewareOptions, options) {
-    const { log, state, stats } = options;
+    const {log, state, stats} = options;
 
     if (state) {
         const displayStats = middlewareOptions.stats !== false;
@@ -79,13 +79,13 @@ function addWebpackMiddleware(app, configFile, prefix, bundleDescriptor) {
 function launchPhpCP(app) {
     const php = cp.spawn('php', ['-S', `${HOST}:${PHP_PORT}`, '-t', 'src'], {
         stdio: ['ignore', 'ignore', 'ignore'],
-        env: { AG_DEV: 'true' }
+        env: {AG_DEV: 'true'}
     });
 
     app.use(
         '/',
         proxy(`${HOST}:${PHP_PORT}`, {
-            proxyReqOptDecorator: function(proxyReqOpts, srcReq) {
+            proxyReqOptDecorator: function (proxyReqOpts, srcReq) {
                 proxyReqOpts.headers['X-PROXY-HTTP-HOST'] = srcReq.headers.host;
                 return proxyReqOpts;
             }
@@ -150,7 +150,7 @@ function symlinkModules(gridCommunityModules, gridEnterpriseModules, chartCommun
         linkType = 'junction';
     }
 
-    lnk('../../community-modules/vue/', '_dev/@ag-grid-community', { force: true, type: linkType, rename: 'vue' });
+    lnk('../../community-modules/vue/', '_dev/@ag-grid-community', {force: true, type: linkType, rename: 'vue'});
     lnk('../../community-modules/angular/', '_dev/@ag-grid-community', {
         force: true,
         type: linkType,
@@ -250,7 +250,7 @@ function regenerateExamplesForFileChange(file) {
 }
 
 function watchAndGenerateExamples(scope, moduleChangedCheck) {
-    if(!moduleChangedCheck || moduleChanged('.')) {
+    if (!moduleChangedCheck || moduleChanged('.')) {
         generateExamples(scope);
 
         const npm = WINDOWS ? 'npm.cmd' : 'npm';
@@ -259,7 +259,7 @@ function watchAndGenerateExamples(scope, moduleChangedCheck) {
         console.log("Docs contents haven't changed - skipping example generation");
     }
 
-    chokidar.watch([`./src/${scope || '*'}/**/*.{php,html,css,js}`], { ignored: ['**/_gen/**/*'] }).on('change', regenerateExamplesForFileChange);
+    chokidar.watch([`./src/${scope || '*'}/**/*.{php,html,css,js}`], {ignored: ['**/_gen/**/*']}).on('change', regenerateExamplesForFileChange);
 }
 
 const updateLegacyWebpackSourceFiles = (gridCommunityModules, gridEnterpriseModules) => {
@@ -513,16 +513,14 @@ function buildCoreModules() {
 
 function moduleChanged(moduleRoot) {
     let changed = true;
-    if (!WINDOWS) {
-        // windows support to follow
-        const checkResult = cp.spawnSync('../../scripts/hashChanged.sh', [path.resolve(moduleRoot)], {
-            stdio: 'pipe',
-            encoding: 'utf-8'
-        });
+    // windows support to follow
+    const checkResult = cp.spawnSync('../../scripts/hashChanged.sh', [path.resolve(moduleRoot)], {
+        stdio: 'pipe',
+        encoding: 'utf-8'
+    });
 
-        if (checkResult && checkResult.status !== 1) {
-            changed = checkResult.output[1].trim() === '1';
-        }
+    if (checkResult && checkResult.status !== 1) {
+        changed = checkResult.output[1].trim() === '1';
     }
     return changed;
 }
@@ -531,7 +529,7 @@ function buildFrameworks(rootDirectory, frameworkDirectories, exitOnError, modul
     frameworkDirectories.forEach(frameworkDirectory => {
         const frameworkRoot = WINDOWS ? `..\\..\\${rootDirectory}\\${frameworkDirectory}\\` : `../../${rootDirectory}/${frameworkDirectory}/`;
 
-        if(!moduleChangedCheck || moduleChanged(frameworkRoot)) {
+        if (!moduleChangedCheck || moduleChanged(frameworkRoot)) {
             console.log(`${frameworkRoot} has changed - rebuilding`);
             const npm = WINDOWS ? 'npm.cmd' : 'npm';
             const result = cp.spawnSync(npm, ['run', 'build'], {
@@ -543,7 +541,7 @@ function buildFrameworks(rootDirectory, frameworkDirectories, exitOnError, modul
                 console.log(`ERROR Building The ${frameworkDirectory} Module`);
                 console.error(result.error);
 
-                if(exitOnError) {
+                if (exitOnError) {
                     process.exit(result.status)
                 }
             }
@@ -572,7 +570,7 @@ function buildCss() {
         `node .\\scripts\\modules\\lernaWatch.js --buildBeta`
         :
         `node ./scripts/modules/lernaWatch.js --buildBeta`
-        ;
+    ;
     require('child_process').execSync(lernaScript, {
         stdio: 'inherit',
         cwd: WINDOWS ? '..\\..\\' : '../../'
@@ -641,12 +639,12 @@ module.exports = (buildSourceModuleOnly = false, legacy = false, alreadyRunningC
                 process.exit(0);
             });
 
-            const { gridCommunityModules, gridEnterpriseModules, chartCommunityModules } = getAllModules();
+            const {gridCommunityModules, gridEnterpriseModules, chartCommunityModules} = getAllModules();
 
             const app = express();
 
             // necessary for plunkers
-            app.use(function(req, res, next) {
+            app.use(function (req, res, next) {
                 res.setHeader('Access-Control-Allow-Origin', '*');
                 return next();
             });
@@ -729,7 +727,7 @@ module.exports = (buildSourceModuleOnly = false, legacy = false, alreadyRunningC
                 launchTSCCheck(gridCommunityModules, gridEnterpriseModules);
             }
 
-            app.listen(EXPRESS_PORT, function() {
+            app.listen(EXPRESS_PORT, function () {
                 console.log(`ag-Grid dev server available on http://${HOST}:${EXPRESS_PORT}`);
             });
             done();

@@ -8,7 +8,7 @@
     "build": "gulp && npm run rollup && npm run hash",
     "package": "gulp copy-umd-files",
     "rollup": "node build.js",
-    "hash": "../../scripts/hashDirectory.sh > .hash"
+    "hash": "sh ../../scripts/hashDirectory.sh > .hash"
   },
   "repository": {
     "type": "git",

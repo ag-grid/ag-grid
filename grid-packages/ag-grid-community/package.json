@@ -6,7 +6,7 @@
   "scripts": {
     "build": "gulp && npm run rollup && npm run hash",
     "rollup": "node build.js",
-    "hash": "../../scripts/hashDirectory.sh > .hash"
+    "hash": "sh ../../scripts/hashDirectory.sh > .hash"
   },
   "types": "./main.d.ts",
   "repository": {

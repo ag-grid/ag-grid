@@ -12,7 +12,7 @@
     "test:debug": "node --inspect-brk node_modules/.bin/jest --runInBand",
     "cypress:open": "cypress open",
     "cypress": "cypress run --spec 'cypress/integration/**/*spec.js'",
-    "hash": "../../scripts/hashDirectory.sh > .hash"
+    "hash": "sh ../../scripts/hashDirectory.sh > .hash"
   },
   "repository": {
     "type": "git",

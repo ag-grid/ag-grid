@@ -1,11 +1,5 @@
 #!/usr/bin/env bash
 
-OS=$(uname -s)
-if [ "$OS" != "Darwin" ]
-then
-  echo 1;
-fi
-
 module_directory=$(pwd)
 if [ "$#" -eq 1 ]
 then
