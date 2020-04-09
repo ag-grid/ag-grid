@@ -43,6 +43,7 @@ import { ColumnApi } from './columnApi';
 import { Constants } from '../constants';
 import { _ } from '../utils';
 import { areEqual } from '../utils/array';
+import {AnimationFrameService} from "../misc/animationFrameService";
 
 export interface ColumnResizeSet {
     columns: Column[];
@@ -73,6 +74,7 @@ export class ColumnController {
     @Autowired('autoGroupColService') private autoGroupColService: AutoGroupColService;
     @Optional('aggFuncService') private aggFuncService: IAggFuncService;
     @Optional('valueCache') private valueCache: ValueCache;
+    @Optional('animationFrameService') private animationFrameService: AnimationFrameService;
 
     @Autowired('columnApi') private columnApi: ColumnApi;
     @Autowired('gridApi') private gridApi: GridApi;
@@ -395,6 +397,11 @@ export class ColumnController {
         // did not get autosized in the original run, leaving the visible grid with columns on
         // the LHS sized, but RHS no. so we keep looping through the visible columns until
         // no more cols are available (rendered) to be resized
+
+        // we autosize after animation frames finish in case any cell renderers need to complete first. this can
+        // happen eg if client code is calling api.autoSizeAllColumns() straight after grid is initialised, but grid
+        // hasn't fully drawn out all the cells yet (due to cell renderers in animation frames).
+        this.animationFrameService.flushAllFrames();
 
         // keep track of which cols we have resized in here
         const columnsAutosized: Column[] = [];
