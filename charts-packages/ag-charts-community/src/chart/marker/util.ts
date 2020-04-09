@@ -10,7 +10,7 @@ import { Marker } from "./marker";
 // This function is in its own file because putting it into SeriesMarker makes the Legend
 // suddenly aware of the series (it's an agnostic component), and putting it into Marker
 // introduces circular dependencies.
-export function getMarker(shape: string | (new () => Marker) = Square) {
+export function getMarker(shape: any = Square): new () => Marker {
     if (typeof shape === 'string') {
         switch (shape) {
             case 'circle':
@@ -30,5 +30,9 @@ export function getMarker(shape: string | (new () => Marker) = Square) {
         }
     }
 
-    return shape;
+    if (typeof shape === 'function' && Marker.isPrototypeOf(shape)) {
+        return shape;
+    }
+
+    return Square;
 }
