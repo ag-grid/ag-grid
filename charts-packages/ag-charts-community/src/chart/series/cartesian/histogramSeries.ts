@@ -69,11 +69,11 @@ export class HistogramBin {
     frequency: number = 0;
     domain: number[];
 
-    constructor ([domainMin, domainMax]: [number, number]) {
+    constructor([domainMin, domainMax]: [number, number]) {
         this.domain = [domainMin, domainMax];
     };
 
-    addDatum (datum : any, yKey: string) {
+    addDatum(datum : any) {
         this.data.push(datum);
         this.frequency ++;
     };
@@ -88,7 +88,7 @@ export class HistogramBin {
     };
 
     calculateAggregatedValue(aggregationName : aggregations, yKey: string) {
-        if( !yKey ){
+        if (!yKey){
             // not having a yKey forces us into a frequency plot
             aggregationName = 'count';
         }
@@ -98,8 +98,8 @@ export class HistogramBin {
         this.aggregatedValue = aggregationFunction(this, yKey);
     }
 
-    getY( areaPlot: boolean ) {
-        return areaPlot? this.relativeHeight : this.aggregatedValue;
+    getY(areaPlot: boolean) {
+        return areaPlot ? this.relativeHeight : this.aggregatedValue;
     }
 };
 
@@ -282,16 +282,16 @@ export class HistogramSeries extends CartesianSeries {
     private deriveBins(): [number, number][] {
         const { bins, binCount } = this;
 
-        if( bins && binCount ) {
+        if (bins && binCount) {
             console.warn('bin domain and bin count both specified - these are mutually exclusive properties');
         }
 
-        if( bins ) {
+        if (bins) {
             // we have explicity set bins from user. Use those.
             return bins;
         }
 
-        const xData = this.data.map( datum => datum[this.xKey] );
+        const xData = this.data.map(datum => datum[this.xKey]);
         const xMinMax = numericExtent(xData);
 
         const binStarts = ticks(xMinMax[0], xMinMax[1], this.binCount || defaultBinCount);
@@ -302,7 +302,7 @@ export class HistogramSeries extends CartesianSeries {
 
         return [
             [firstBinEnd - binSize, firstBinEnd],
-            ...binStarts.map( expandStartToBin )
+            ...binStarts.map(expandStartToBin)
         ];
     }
 
@@ -325,25 +325,25 @@ export class HistogramSeries extends CartesianSeries {
 
         let currentBin = 0;
         const bins : HistogramBin[] = [new HistogramBin(derivedBins[0])];
-        sortedData.forEach( datum => {
+        sortedData.forEach(datum => {
 
-            while( datum[ xKey ] > derivedBins[currentBin][1] ) {
-                currentBin++
+            while (datum[ xKey ] > derivedBins[currentBin][1]) {
+                currentBin++;
                 bins.push(new HistogramBin(derivedBins[currentBin]));
             }
 
-            bins[currentBin].addDatum(datum, yKey)
-        } );
+            bins[currentBin].addDatum(datum);
+        });
 
-        bins.forEach( b => b.calculateAggregatedValue( this._aggregation, this.yKey ) );
+        bins.forEach(b => b.calculateAggregatedValue(this._aggregation, this.yKey));
 
         return bins;
     }
 
     get xMax(): number {
-        return this.data && this.data.reduce( (acc, datum) => {
-            return Math.max( acc, datum[ this.xKey ] )
-        }, Number.NEGATIVE_INFINITY );
+        return this.data && this.data.reduce((acc, datum) => {
+            return Math.max(acc, datum[ this.xKey ]);
+        }, Number.NEGATIVE_INFINITY);
     }
 
     processData(): boolean {
@@ -357,7 +357,7 @@ export class HistogramSeries extends CartesianSeries {
         this.yDomain = this.fixNumericExtent([0, yMinMax[1]], 'y');
 
         const firstBin = this.binnedData[0];
-        const lastBin = this.binnedData[this.binnedData.length -1];
+        const lastBin = this.binnedData[this.binnedData.length - 1];
         const xMin = firstBin.domain[0];
         const xMax = lastBin.domain[1];
         this.xDomain = [xMin, xMax];
@@ -386,7 +386,7 @@ export class HistogramSeries extends CartesianSeries {
 
         this.group.visible = visible;
 
-        if (!xAxis || !yAxis || !visible || !chart || chart.layoutPending || chart.dataPending ) {
+        if (!xAxis || !yAxis || !visible || !chart || chart.layoutPending || chart.dataPending) {
             return;
         }
 
@@ -429,21 +429,21 @@ export class HistogramSeries extends CartesianSeries {
                 xMinPx = xScale.convert(xDomainMin),
                 xMaxPx = xScale.convert(xDomainMax),
                 // note: assuming can't be negative:
-                y = this.areaPlot? relativeHeight : (this.yKey? total : frequency),
+                y = this.areaPlot ? relativeHeight : (this.yKey ? total : frequency),
                 yZeroPx = yScale.convert(0),
                 yMaxPx = yScale.convert(y),
                 w = xMaxPx - xMinPx,
                 h = Math.abs(yMaxPx - yZeroPx);
 
             const selectionDatumLabel = y !== 0 && {
-                text: labelFormatter( binOfData ),
+                text: labelFormatter(binOfData),
                 fontStyle: labelFontStyle,
                 fontWeight: labelFontWeight,
                 fontSize: labelFontSize,
                 fontFamily: labelFontFamily,
                 fill: labelColor,
-                x: xMinPx + w/2,
-                y: yMaxPx + h/2
+                x: xMinPx + w / 2,
+                y: yMaxPx + h / 2
             };
 
             selectionData.push({
@@ -568,7 +568,7 @@ export class HistogramSeries extends CartesianSeries {
                     ${xName || xKey} ${toFixed(rangeMin)} - ${toFixed(rangeMax)}
                 </div>`;
 
-            let contentHtml = yKey?
+            let contentHtml = yKey ?
                 `<b>${yName || yKey} (${aggregation})</b>: ${toFixed(aggregatedValue)}<br>` :
                 '';
 
@@ -588,13 +588,13 @@ export class HistogramSeries extends CartesianSeries {
             fill, stroke, fillOpacity, strokeOpacity
         } = this;
 
-        if( data && data.length ) {
+        if (data && data.length) {
             legendData.push({
                 id,
                 itemId: yKey,
                 enabled: seriesItemEnabled,
                 label: {
-                    text: yName|| yKey || 'Frequency'
+                    text: yName || yKey || 'Frequency'
                 },
                 marker: {
                     fill,
@@ -607,7 +607,7 @@ export class HistogramSeries extends CartesianSeries {
     }
 
     toggleSeriesItem(itemId: string, enabled: boolean): void {
-        if( itemId === this.yKey ) {
+        if (itemId === this.yKey) {
             this.seriesItemEnabled = enabled;
         }
         this.scheduleData();
