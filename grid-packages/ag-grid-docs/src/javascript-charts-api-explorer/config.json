@@ -1747,16 +1747,11 @@
       "type": {
         "parameters": {
           "datum": "any",
-          "title?": "string",
-          "color?": "string",
           "xKey": "string",
           "xName?": "string",
           "yKey": "string",
           "yName?": "string",
-          "sizeKey?": "string",
-          "sizeName?": "string",
-          "labelKey?": "string",
-          "labelName?": "string"
+          "color?": "string"
         },
         "returnType": "string"
       },
