@@ -33,7 +33,7 @@ const defaultBinCount = 10;
 
 export { HistogramTooltipRendererParams };
 
-interface HistogramSelectionDatum extends SeriesNodeDatum {
+interface HistogramNodeDatum extends SeriesNodeDatum {
     x: number;
     y: number;
     width: number;
@@ -270,11 +270,13 @@ export class HistogramSeries extends CartesianSeries {
         return this._shadow;
     }
 
-    highlightStyle: HighlightStyle = {
-        fill: 'yellow'
-    };
+    highlightStyle: HighlightStyle = { fill: 'yellow' };
 
-    protected highlightedDatum?: HistogramSelectionDatum;
+    onHighlightChange() {
+        this.updateRectNodes();
+    }
+
+    protected highlightedDatum?: HistogramNodeDatum;
 
     /*  during processData phase, used to unify different ways of the user specifying
         the bins. Returns bins in format [[min1, max1], [min2, max2] ... ] */
@@ -389,13 +391,16 @@ export class HistogramSeries extends CartesianSeries {
             return;
         }
 
-        const selectionData = this.generateSelectionData();
+        const nodeData = this.generateNodeData();
 
-        this.updateRectSelection(selectionData);
-        this.updateTextSelection(selectionData);
+        this.updateRectSelection(nodeData);
+        this.updateRectNodes();
+
+        this.updateTextSelection(nodeData);
+        this.updateTextNodes();
     }
 
-    private generateSelectionData(): HistogramSelectionDatum[] {
+    private generateNodeData(): HistogramNodeDatum[] {
 
         if (!this.seriesItemEnabled) {
             return [];
@@ -407,7 +412,7 @@ export class HistogramSeries extends CartesianSeries {
             fill, stroke, strokeWidth
         } = this;
 
-        const selectionData: HistogramSelectionDatum[] = [];
+        const nodeData: HistogramNodeDatum[] = [];
 
         const defaultLabelFormatter = (b: HistogramBin) => String(b.aggregatedValue);
         const {
@@ -445,7 +450,7 @@ export class HistogramSeries extends CartesianSeries {
                 y: yMaxPx + h / 2
             };
 
-            selectionData.push({
+            nodeData.push({
                 series: this,
                 seriesDatum: binOfData,  // required by SeriesNodeDatum, but might not make sense here
                                          // since each selection is an aggregation of multiple data.
@@ -460,19 +465,11 @@ export class HistogramSeries extends CartesianSeries {
             });
         });
 
-        return selectionData;
+        return nodeData;
     }
 
-    private updateRectSelection(selectionData: HistogramSelectionDatum[]): void {
-        const {
-            fillOpacity,
-            strokeOpacity,
-            shadow,
-            highlightStyle: { fill, stroke },
-            highlightedDatum
-        } = this;
-        const updateRects = this.rectSelection.setData(selectionData);
-
+    private updateRectSelection(nodeData: HistogramNodeDatum[]): void {
+        const updateRects = this.rectSelection.setData(nodeData);
         updateRects.exit.remove();
 
         const enterRects = updateRects.enter.append(Rect).each(rect => {
@@ -480,13 +477,20 @@ export class HistogramSeries extends CartesianSeries {
             rect.crisp = true;
         });
 
-        const rectSelection = updateRects.merge(enterRects);
+        this.rectSelection = updateRects.merge(enterRects);
+    }
 
-        rectSelection.each((rect, datum) => {
-            const highlighted = highlightedDatum &&
-                highlightedDatum.seriesDatum === datum.seriesDatum &&
-                highlightedDatum.series === datum.series;
+    private updateRectNodes(): void {
+        const { highlightedDatum } = this.chart;
+        const {
+            fillOpacity,
+            strokeOpacity,
+            shadow,
+            highlightStyle: { fill, stroke }
+        } = this;
 
+        this.rectSelection.each((rect, datum) => {
+            const highlighted = datum === highlightedDatum;
             rect.x = datum.x;
             rect.y = datum.y;
             rect.width = datum.width;
@@ -499,15 +503,11 @@ export class HistogramSeries extends CartesianSeries {
             rect.fillShadow = shadow;
             rect.visible = datum.height > 0; // prevent stroke from rendering for zero height columns
         });
-
-        this.rectSelection = rectSelection;
     }
 
 
-    private updateTextSelection(selectionData: HistogramSelectionDatum[]): void {
-        const labelEnabled = this.label.enabled;
-        const updateTexts = this.textSelection.setData(selectionData);
-
+    private updateTextSelection(nodeData: HistogramNodeDatum[]): void {
+        const updateTexts = this.textSelection.setData(nodeData);
         updateTexts.exit.remove();
 
         const enterTexts = updateTexts.enter.append(Text).each(text => {
@@ -517,9 +517,13 @@ export class HistogramSeries extends CartesianSeries {
             text.textBaseline = 'middle';
         });
 
-        const textSelection = updateTexts.merge(enterTexts);
+        this.textSelection = updateTexts.merge(enterTexts);
+    }
 
-        textSelection.each((text, datum) => {
+    private updateTextNodes(): void {
+        const labelEnabled = this.label.enabled;
+
+        this.textSelection.each((text, datum) => {
             const label = datum.label;
 
             if (label && labelEnabled) {
@@ -536,11 +540,9 @@ export class HistogramSeries extends CartesianSeries {
                 text.visible = false;
             }
         });
-
-        this.textSelection = textSelection;
     }
 
-    getTooltipHtml(nodeDatum: HistogramSelectionDatum): string {
+    getTooltipHtml(nodeDatum: HistogramNodeDatum): string {
         const { xKey, yKey } = this;
 
         if (!xKey) {
