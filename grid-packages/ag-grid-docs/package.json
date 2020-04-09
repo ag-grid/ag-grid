@@ -9,7 +9,7 @@
     "tsc": "tsc -p tests/config/tsconfig.json",
     "validate-es5": "eslint src/",
     "test": "npm run validate-es5 && jest",
-    "hash": "../../scripts/hashDirectory.sh > .hash"
+    "hash": "sh ../../scripts/hashDirectory.sh > .hash"
   },
   "repository": {
     "type": "git",

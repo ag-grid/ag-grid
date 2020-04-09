@@ -10,7 +10,7 @@
     "lint": "ng lint",
     "update-properties": "node -e 'require(\"./updateGridAndColumnProperties.js\").updatePropertiesBuilt()'",
     "verify-properties": "node agGridPropertiesCheck.js",
-    "hash": "../../scripts/hashDirectory.sh > .hash"
+    "hash": "sh ../../scripts/hashDirectory.sh > .hash"
   },
   "private": true,
   "main": "./dist/ag-grid-angular/bundles/ag-grid-community-angular.umd.js",

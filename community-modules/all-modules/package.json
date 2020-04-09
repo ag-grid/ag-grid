@@ -14,13 +14,8 @@
     "webpack-updater": "node webpackUpdater.js",
     "rollup": "node ../../module-build/rollup/build.js --bundlePrefix ag-grid-community",
     "package": "npm run webpack-updater && npx gulp webpack-all-no-clean && npm run rollup",
-    "xtest:e2e": "start-server-and-test start-server http://localhost:8080 e2e",
-    "start-server": "http-server .",
-    "e2e": "protractor protractor.conf.js",
-    "hash": "../../scripts/hashDirectory.sh > .hash",
-    "update-webdriver": "webdriver-manager update --gecko false",
-    "webdriver-start": "npm run update-webdriver && webdriver-manager start --standalone --detach",
-    "webdriver-kill": "kill $(ps -ef | grep webdriver | grep -v grep | awk '{ print $2 }')"
+    "xtest:e2e": "",
+    "hash": "sh ../../scripts/hashDirectory.sh > .hash"
   },
   "repository": {
     "type": "git",
@@ -66,16 +61,14 @@
   "devDependencies": {
     "css-loader": "^3.2.0",
     "cssnano": "^4.1.0",
+    "cypress": "^4.3.0",
     "gulp": "^4.0.2",
     "gulp-clean": "^0.4.0",
     "gulp-header": "^2.0.0",
     "gulp-sourcemaps": "^2.6.5",
-    "http-server": "^0.11.1",
     "merge2": "^1.2.0",
     "postcss-loader": "^3.0.0",
-    "protractor": "^5.4.0",
     "rimraf": "^3.0.2",
-    "start-server-and-test": "^1.10.0",
     "style-loader": "^1.0.0",
     "terser-webpack-plugin": "^2.0.1",
     "typescript": "~3.6.5",

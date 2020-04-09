@@ -24,9 +24,9 @@
   "scripts": {
     "bundle": "vue-cli-service build --target lib src/AgGridVue.ts",
     "npm": "tsc  -p tsconfig-lib.json",
-    "build": "npm run npm && npm run bundle && npm run hash",
+    "build": "npm run npm && npm run bundle && rm ./dist/demo.html && npm run hash",
     "lint": "vue-cli-service lint",
-    "hash": "../../scripts/hashDirectory.sh > .hash"
+    "hash": "sh ../../scripts/hashDirectory.sh > .hash"
   },
   "devDependencies": {
     "@ag-grid-community/core": "~23.0.0",

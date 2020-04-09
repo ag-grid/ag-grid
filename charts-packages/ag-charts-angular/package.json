@@ -6,7 +6,7 @@
     "build": "ng build && npm run hash",
     "test": "ng test  --watch false --browsers ChromeHeadless",
     "lint": "ng lint",
-    "hash": "../../scripts/hashDirectory.sh > .hash"
+    "hash": "sh ../../scripts/hashDirectory.sh > .hash"
   },
   "repository": {
     "type": "git",
