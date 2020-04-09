@@ -36,9 +36,9 @@ export class SetFilter extends ProvidedFilter {
     private setFilterParams: ISetFilterParams;
     private virtualList: VirtualList;
 
-    // to make the filtering super fast, we store the values in a map.
+    // to make the filtering super fast, we store the values in a set.
     // otherwise we would be searching a list of values for each row when checking doesFilterPass
-    private appliedModelValuesMapped?: { [value: string]: boolean; };
+    private appliedModelValues = new Set<string>();
 
     // unlike the simple filters, nothing in the set filter UI shows/hides.
     // maybe this method belongs in abstractSimpleFilter???
@@ -109,21 +109,7 @@ export class SetFilter extends ProvidedFilter {
         // both are missing
         if (!a && !b) { return true; }
 
-        // one is missing, other present
-        if ((!a && b) || (a && !b)) { return false; }
-
-        // both present, so compare
-
-        // if different sizes, they are different
-        if (a.values.length != b.values.length) { return false; }
-
-        // now check each one value by value
-        for (let i = 0; i < a.values.length; i++) {
-            if (a.values[i] !== b.values[i]) { return false; }
-        }
-
-        // got this far means value lists are identical
-        return true;
+        return a && b && _.areEqual(a.values, b.values);
     }
 
     public setParams(params: ISetFilterParams): void {
@@ -151,6 +137,7 @@ export class SetFilter extends ProvidedFilter {
                 ' param suppressSyncValuesAfterDataChange';
             _.doOnce(() => console.warn(message), 'syncValuesLikeExcel deprecated');
         }
+
         if (params.selectAllOnMiniFilter) {
             const message = 'ag-Grid: since version 22.x, the Set Filter param selectAllOnMiniFilter is no longer' +
                 ' used as this is the default behaviour.';
@@ -160,10 +147,10 @@ export class SetFilter extends ProvidedFilter {
 
     // gets called with change to data values, thus need to update the values available for selection
     // in the set filter.
-    private syncValuesAfterDataChange(): void {
+    private syncValuesAfterDataChange(keepSelection = true): void {
         const everythingSelected = !this.getModel();
 
-        this.valueModel.refreshAfterNewRowsLoaded(true, everythingSelected);
+        this.valueModel.refreshAfterNewRowsLoaded(keepSelection, everythingSelected);
         this.refresh();
 
         this.onBtApply(false, true);
@@ -192,8 +179,7 @@ export class SetFilter extends ProvidedFilter {
     }
 
     private initialiseFilterBodyUi(): void {
-        this.virtualList = new VirtualList('filter');
-        this.getContext().wireBean(this.virtualList);
+        this.virtualList = this.wireBean(new VirtualList('filter'));
 
         const eSetFilterList = this.getRefElement('eSetFilterList');
 
@@ -246,10 +232,7 @@ export class SetFilter extends ProvidedFilter {
     }
 
     private createSetListItem(value: any): Component {
-        const listItem = new SetFilterListItem(value, this.setFilterParams);
-
-        this.getContext().wireBean(listItem);
-
+        const listItem = this.wireBean(new SetFilterListItem(value, this.setFilterParams));
         const selected = this.valueModel.isValueSelected(value);
 
         listItem.setSelected(selected);
@@ -277,26 +260,19 @@ export class SetFilter extends ProvidedFilter {
 
     public applyModel(): boolean {
         const result = super.applyModel();
+        this.appliedModelValues.clear();
 
         // keep the appliedModelValuesMapped in sync with the applied model
         const appliedModel = this.getModel() as SetFilterModel;
 
         if (appliedModel) {
-            this.appliedModelValuesMapped = appliedModel.values.reduce((object, value) => {
-                object[value] = true;
-                return object;
-            }, {} as { [key: string]: boolean; });
-        } else {
-            this.appliedModelValuesMapped = undefined;
+            appliedModel.values.forEach(value => this.appliedModelValues.add(value));
         }
 
         return result;
     }
 
     public doesFilterPass(params: IDoesFilterPassParams): boolean {
-        // should never happen, if filter model not set, then this method should never be called
-        if (!this.appliedModelValuesMapped) { return true; }
-
         let value = this.setFilterParams.valueGetter(params.node);
 
         if (this.setFilterParams.colDef.keyCreator) {
@@ -306,14 +282,10 @@ export class SetFilter extends ProvidedFilter {
         value = _.makeNull(value);
 
         if (Array.isArray(value)) {
-            for (let i = 0; i < value.length; i++) {
-                if (!!this.appliedModelValuesMapped[value[i]]) { return true; }
-            }
-
-            return false;
+            return value.some(v => this.appliedModelValues.has(_.makeNull(v)));
         }
 
-        return !!this.appliedModelValuesMapped[value];
+        return this.appliedModelValues.has(value);
     }
 
     public onNewRowsLoaded(): void {
@@ -328,12 +300,7 @@ export class SetFilter extends ProvidedFilter {
 
         if (keepSelection && valuesTypeProvided) { return; }
 
-        const everythingSelected = !this.getModel();
-
-        // default is reset
-        this.valueModel.refreshAfterNewRowsLoaded(keepSelection, everythingSelected);
-        this.refresh();
-        this.onBtApply(false, true);
+        this.syncValuesAfterDataChange(keepSelection);
     }
 
     //noinspection JSUnusedGlobalSymbols
@@ -348,8 +315,10 @@ export class SetFilter extends ProvidedFilter {
     public setFilterValues(options: string[], selectAll: boolean = false, notify: boolean = true, toSelect?: string[]): void {
         this.valueModel.onFilterValuesReady(() => {
             const keepSelection = this.setFilterParams && this.setFilterParams.newRowsAction === 'keep';
+
             this.valueModel.setValuesType(SetFilterModelValuesType.PROVIDED_LIST);
             this.valueModel.refreshValues(options, keepSelection, selectAll);
+
             this.updateSelectAll();
 
             (toSelect || options).forEach(value => this.valueModel.selectValue(value));
@@ -499,7 +468,7 @@ export class SetFilter extends ProvidedFilter {
 }
 
 class ModelWrapper implements VirtualListModel {
-    constructor(private model: SetValueModel) {
+    constructor(private readonly model: SetValueModel) {
     }
 
     public getRowCount(): number {
