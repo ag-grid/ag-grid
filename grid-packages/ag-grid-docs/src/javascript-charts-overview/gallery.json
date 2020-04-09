@@ -72,6 +72,11 @@
             "description": "<a href='./simple-area.php'>Area charts</a> can also be used with negative values, with the area between the line and the axis being filled."
         }
     },
+    "Histogram": {
+        "Simple Histogram": {
+            "description": "Histograms show your data grouped into bins, revealing underlying trends. In this example we also plot the same data as a scatter series to illustrate the aggregation."
+        }
+    },
     "Feature Highlights": {
         "Time Axis With Irregular Intervals": {
             "description": "A time axis represents a continuous length of time, and so can be easily used to visualise data with irregular time intervals."

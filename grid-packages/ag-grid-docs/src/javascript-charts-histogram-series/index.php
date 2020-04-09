@@ -47,7 +47,7 @@ SNIPPET
     Often a histogram is used to show the summing of one column or attribute for each of the bins.
     When a <code>yKey</code> is given the default behaviour is to plot a total of the <code>yKey</code> values.
     The kind of aggregation to use is controlled by the <code>series.aggregation</code>
-    property but since <code>'sum'</code> is the default you can usually leave this out:
+    property but since <code>'sum'</code> is the default you can leave this out:
 </p>
 
 <?= createSnippet(<<<SNIPPET

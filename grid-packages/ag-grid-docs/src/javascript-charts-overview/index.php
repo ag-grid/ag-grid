@@ -225,6 +225,19 @@ define('skipInPageNav', true);
     <div class="chart-gallery-item chart-gallery-item--empty"></div>
 </div>
 
+<h3 id="histogram" class="chart-gallery__title">Histogram</h3>
+
+<div class="chart-gallery">
+    <div class="chart-gallery-item">
+        <a href="./simple-histogram.php" class="chart-gallery-item__link">
+            <img class="chart-gallery-item__thumbnail" src="./thumbnails/simple-histogram.png" /><br />
+            <div class="chart-gallery-item__name">Simple Histogram</div>
+        </a>
+    </div>
+    <div class="chart-gallery-item chart-gallery-item--empty"></div>
+    <div class="chart-gallery-item chart-gallery-item--empty"></div>
+</div>
+
 <h3 id="feature-highlights" class="chart-gallery__title">Feature Highlights</h3>
 
 <div class="chart-gallery">

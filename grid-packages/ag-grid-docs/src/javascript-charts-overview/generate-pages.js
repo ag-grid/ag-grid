@@ -1,3 +1,5 @@
+#!/usr/bin/env node
+
 /*
     This script is used to generate the pages for the chart gallery. You can edit the configuration in gallery.json
     and then run node generate-pages.js to automatically create all the PHP pages. JavaScript examples will then be

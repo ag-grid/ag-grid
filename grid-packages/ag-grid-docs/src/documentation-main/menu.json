@@ -1215,6 +1215,18 @@
                 ]
               },
               {
+                "title": "Histogram",
+                "url": "javascript-charts-overview/#histogram",
+                "disableActive": true,
+                "hideChildren": true,
+                "items": [
+                  {
+                    "title": "Simple Histogram",
+                    "url": "javascript-charts-overview/simple-histogram.php"
+                  }
+                ]
+              },
+              {
                 "title": "Feature Highlights",
                 "url": "javascript-charts-overview/#feature-highlights",
                 "disableActive": true,
