@@ -293,6 +293,13 @@ export abstract class RowNodeCache<T extends IRowNodeBlock, P extends RowNodeCac
     public purgeCache(): void {
         this.forEachBlockInOrder(block => this.removeBlockFromCache(block));
         this.maxRowFound = false;
+        // if zero rows in the cache, we need to get the SSRM to start asking for rows again.
+        // otherwise if set to zero rows last time, and we don't update the row count, then after
+        // the purge there will still be zero rows, meaning the SRRM won't request any rows.
+        // to kick things off, at lest one row needs to be asked for.
+        if (this.virtualRowCount === 0) {
+            this.virtualRowCount = this.cacheParams.initialRowCount;
+        }
         this.onCacheUpdated();
     }
 
