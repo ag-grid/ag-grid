@@ -1,10 +1,10 @@
 var gridOptions = {
     columnDefs: [
-        {field: 'country', rowGroup: true, hide: true},
-        {field: 'accountId', hide: true},
-        {field: 'name'},
-        {field: 'calls'},
-        {field: 'totalDuration'}
+        { field: 'country', rowGroup: true, hide: true },
+        { field: 'accountId', hide: true },
+        { field: 'name' },
+        { field: 'calls' },
+        { field: 'totalDuration' }
     ],
     defaultColDef: {
         flex: 1
@@ -23,17 +23,17 @@ var gridOptions = {
     detailCellRendererParams: {
         detailGridOptions: {
             columnDefs: [
-                {field: 'callId'},
-                {field: 'direction'},
-                {field: 'duration', valueFormatter: "x.toLocaleString() + 's'"},
-                {field: 'switchCode'},
-                {field: 'number'},
+                { field: 'callId' },
+                { field: 'direction' },
+                { field: 'duration', valueFormatter: "x.toLocaleString() + 's'" },
+                { field: 'switchCode' },
+                { field: 'number' },
             ],
             defaultColDef: {
                 flex: 1
             }
         },
-        getDetailRowData: function (params) {
+        getDetailRowData: function(params) {
             // supply details records to detail cell renderer (i.e. detail grid)
             params.successCallback(params.data.callRecords);
         }
@@ -56,8 +56,8 @@ function ServerSideDatasource(server) {
 
             var response = server.getData(params.request);
 
-            // adding delay to simulate real sever call
-            setTimeout(function () {
+            // adding delay to simulate real server call
+            setTimeout(function() {
                 if (response.success) {
                     // call the success callback
                     params.successCallback(response.rows, response.lastRow);
@@ -71,11 +71,11 @@ function ServerSideDatasource(server) {
 }
 
 // setup the grid after the page has finished loading
-document.addEventListener('DOMContentLoaded', function () {
+document.addEventListener('DOMContentLoaded', function() {
     var gridDiv = document.querySelector('#myGrid');
     new agGrid.Grid(gridDiv, gridOptions);
 
-    agGrid.simpleHttpRequest({url: 'https://raw.githubusercontent.com/ag-grid/ag-grid/master/grid-packages/ag-grid-docs/src/callData.json'}).then(function (data) {
+    agGrid.simpleHttpRequest({ url: 'https://raw.githubusercontent.com/ag-grid/ag-grid/master/grid-packages/ag-grid-docs/src/callData.json' }).then(function(data) {
         // setup the fake server with entire dataset
         var fakeServer = new FakeServer(data);
 

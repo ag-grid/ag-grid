@@ -1,11 +1,11 @@
 var gridOptions = {
     columnDefs: [
         // group cell renderer needed for expand / collapse icons
-        {field: 'accountId', maxWidth: 200, cellRenderer: 'agGroupCellRenderer'},
-        {field: 'name'},
-        {field: 'country'},
-        {field: 'calls'},
-        {field: 'totalDuration'}
+        { field: 'accountId', maxWidth: 200, cellRenderer: 'agGroupCellRenderer' },
+        { field: 'name' },
+        { field: 'country' },
+        { field: 'calls' },
+        { field: 'totalDuration' }
     ],
     defaultColDef: {
         flex: 1
@@ -21,24 +21,24 @@ var gridOptions = {
     detailCellRendererParams: {
         detailGridOptions: {
             columnDefs: [
-                {field: 'callId'},
-                {field: 'direction'},
-                {field: 'duration', valueFormatter: "x.toLocaleString() + 's'"},
-                {field: 'switchCode'},
-                {field: 'number'},
+                { field: 'callId' },
+                { field: 'direction' },
+                { field: 'duration', valueFormatter: "x.toLocaleString() + 's'" },
+                { field: 'switchCode' },
+                { field: 'number' },
             ],
             domLayout: 'autoHeight',
             defaultColDef: {
                 flex: 1
             }
         },
-        getDetailRowData: function (params) {
+        getDetailRowData: function(params) {
             // supply details records to detail cell renderer (i.e. detail grid)
             params.successCallback(params.data.callRecords);
         }
     },
-    
-    getRowHeight: function (params) {
+
+    getRowHeight: function(params) {
         if (params.node && params.node.detail) {
             var offset = 60;
             var sizes = params.api.getSizesForCurrentTheme();
@@ -64,8 +64,8 @@ function ServerSideDatasource(server) {
 
             var response = server.getData(params.request);
 
-            // adding delay to simulate real sever call
-            setTimeout(function () {
+            // adding delay to simulate real server call
+            setTimeout(function() {
                 if (response.success) {
                     // call the success callback
                     params.successCallback(response.rows, response.lastRow);
@@ -83,7 +83,7 @@ document.addEventListener('DOMContentLoaded', function() {
     var gridDiv = document.querySelector('#myGrid');
     new agGrid.Grid(gridDiv, gridOptions);
 
-    agGrid.simpleHttpRequest({url: 'https://raw.githubusercontent.com/ag-grid/ag-grid/master/grid-packages/ag-grid-docs/src/callData.json'}).then(function(data) {
+    agGrid.simpleHttpRequest({ url: 'https://raw.githubusercontent.com/ag-grid/ag-grid/master/grid-packages/ag-grid-docs/src/callData.json' }).then(function(data) {
         // setup the fake server with entire dataset
         var fakeServer = new FakeServer(data);
 

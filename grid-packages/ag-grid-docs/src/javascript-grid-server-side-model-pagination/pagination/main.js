@@ -35,11 +35,11 @@ document.addEventListener('DOMContentLoaded', function() {
     var gridDiv = document.querySelector('#myGrid');
     new agGrid.Grid(gridDiv, gridOptions);
 
-    agGrid.simpleHttpRequest({url: 'https://raw.githubusercontent.com/ag-grid/ag-grid/master/grid-packages/ag-grid-docs/src/olympicWinners.json'}).then(function(data) {
+    agGrid.simpleHttpRequest({ url: 'https://raw.githubusercontent.com/ag-grid/ag-grid/master/grid-packages/ag-grid-docs/src/olympicWinners.json' }).then(function(data) {
         // add id to data
         var idSequence = 1;
-        data.forEach( function(item) {
-          item.id = idSequence++;
+        data.forEach(function(item) {
+            item.id = idSequence++;
         });
 
         // setup the fake server with entire dataset
@@ -60,8 +60,8 @@ function ServerSideDatasource(server) {
 
             var response = server.getData(params.request);
 
-            // adding delay to simulate real sever call
-            setTimeout(function () {
+            // adding delay to simulate real server call
+            setTimeout(function() {
                 if (response.success) {
                     // call the success callback
                     params.successCallback(response.rows, response.lastRow);

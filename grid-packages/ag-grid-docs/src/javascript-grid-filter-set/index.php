@@ -15,7 +15,7 @@ include '../documentation-main/documentation_header.php';
     to the set filter.
 </p>
 
-<? enterprise_feature("Set Filter"); ?>
+<? enterprise_feature('Set Filter'); ?>
 
 <h2>Set Filter Parameters</h2>
 
@@ -102,14 +102,14 @@ SNIPPET
 
 <ul class="content">
     <li><code>colDef.filterParams.values</code> specifies the values for the set filter in a callback and introduces a 5 second delay
-    <?= createSnippet(<<<SNIPPET
-    filterParams: {
-        values: function(params) {
-            setTimeout(function() { params.success(['value 1', 'value 2']); }, 5000);
-        }
+<?= createSnippet(<<<SNIPPET
+filterParams: {
+    values: function(params) {
+        setTimeout(function() { params.success(['value 1', 'value 2']); }, 5000);
     }
-    SNIPPET
-    ) ?>
+}
+SNIPPET
+) ?>
     </li>
     <li>While the data is obtained (during the simulated 5s delay shown above), the <code>setFilter</code> will show a loading message</li>
     <li>

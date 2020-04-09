@@ -8,7 +8,7 @@ var colDefAthlete = {
     },
     menuTabs: ['filterMenuTab']
 };
-var colDefAge = {field: "age" };
+var colDefAge = { field: "age" };
 var colDefSport = { field: "sport" };
 var colDefGold = { field: "gold", aggFunc: 'sum' };
 var colDefSilver = { field: "silver", aggFunc: 'sum' };
@@ -98,8 +98,8 @@ function ServerSideDatasource(server) {
 
             var response = server.getData(params.request);
 
-            // adding delay to simulate real sever call
-            setTimeout(function () {
+            // adding delay to simulate real server call
+            setTimeout(function() {
                 if (response.success) {
                     // call the success callback
                     params.successCallback(response.rows, response.lastRow);
@@ -115,11 +115,11 @@ function ServerSideDatasource(server) {
 var fakeServer;
 
 // setup the grid after the page has finished loading
-document.addEventListener('DOMContentLoaded', function () {
+document.addEventListener('DOMContentLoaded', function() {
     var gridDiv = document.querySelector('#myGrid');
     new agGrid.Grid(gridDiv, gridOptions);
 
-    agGrid.simpleHttpRequest({url: 'https://raw.githubusercontent.com/ag-grid/ag-grid/master/grid-packages/ag-grid-docs/src/olympicWinners.json'}).then(function (data) {
+    agGrid.simpleHttpRequest({ url: 'https://raw.githubusercontent.com/ag-grid/ag-grid/master/grid-packages/ag-grid-docs/src/olympicWinners.json' }).then(function(data) {
         // setup the fake server with entire dataset
         fakeServer = new FakeServer(data);
 
