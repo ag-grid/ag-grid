@@ -513,8 +513,7 @@ function buildCoreModules() {
 
 function moduleChanged(moduleRoot) {
     let changed = true;
-    // windows support to follow
-    const checkResult = cp.spawnSync('../../scripts/hashChanged.sh', [path.resolve(moduleRoot)], {
+    const checkResult = cp.spawnSync('sh', ['../../scripts/hashChanged.sh', path.resolve(moduleRoot)], {
         stdio: 'pipe',
         encoding: 'utf-8'
     });
@@ -734,15 +733,3 @@ module.exports = (buildSourceModuleOnly = false, legacy = false, alreadyRunningC
         });
 };
 
-// *** Don't remove these unused vars! ***
-//     node dev-server.js generate-examples [src directory]
-// eg: node dev-server.js generate-examples javascript-grid-accessing-data
-const [cmd, script, execFunc, exampleDir, watch] = process.argv;
-
-if (process.argv.length >= 3 && execFunc === 'generate-examples') {
-    if (watch && exampleDir) {
-        watchAndGenerateExamples(exampleDir);
-    } else {
-        generateExamples(exampleDir);
-    }
-}
