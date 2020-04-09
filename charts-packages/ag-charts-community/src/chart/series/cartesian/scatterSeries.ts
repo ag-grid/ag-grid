@@ -1,6 +1,6 @@
 import { Selection } from "../../../scene/selection";
 import { Group } from "../../../scene/group";
-import { SeriesNodeDatum, CartesianTooltipRendererParams } from "../series";
+import { SeriesNodeDatum, CartesianTooltipRendererParams, HighlightStyle } from "../series";
 import { finiteExtent } from "../../../util/array";
 import { toFixed } from "../../../util/number";
 import { LegendDatum } from "../../legend";
@@ -42,6 +42,7 @@ export class ScatterSeries extends CartesianSeries {
     private sizeScale = new LinearScale();
 
     private nodeSelection: Selection<Group, Group, ScatterNodeDatum, any> = Selection.select(this.group).selectAll<Group>();
+    private nodeData: ScatterNodeDatum[] = [];
 
     readonly marker = new CartesianSeriesMarker();
 
@@ -100,12 +101,11 @@ export class ScatterSeries extends CartesianSeries {
         return this._strokeOpacity;
     }
 
-    highlightStyle: {
-        fill?: string,
-        stroke?: string
-    } = {
-        fill: 'yellow'
-    };
+    highlightStyle: HighlightStyle = { fill: 'yellow' };
+
+    onHighlightChange() {
+        this.updateNodes();
+    }
 
     @reactive('layoutChange') title?: string;
     @reactive('dataChange') xKey: string = '';
@@ -177,6 +177,10 @@ export class ScatterSeries extends CartesianSeries {
         }
     }
 
+    getNodeData(): ScatterNodeDatum[] {
+        return this.nodeData;
+    }
+
     private generateNodeData(): ScatterNodeDatum[] {
         const xScale = this.xAxis.scale;
         const yScale = this.yAxis.scale;
@@ -207,7 +211,7 @@ export class ScatterSeries extends CartesianSeries {
             return;
         }
 
-        const nodeData = this.generateNodeData();
+        const nodeData = this.nodeData = this.generateNodeData();
 
         this.updateNodeSelection(nodeData);
         this.updateNodes();

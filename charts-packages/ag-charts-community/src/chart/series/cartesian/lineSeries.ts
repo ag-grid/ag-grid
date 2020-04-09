@@ -32,13 +32,13 @@ export class LineSeries extends CartesianSeries {
     private yDomain: any[] = [];
     private xData: any[] = [];
     private yData: any[] = [];
-    private nodeData: LineNodeDatum[] = [];
 
     private lineNode = new Path();
 
     // We use groups for this selection even though each group only contains a marker ATM
     // because in the future we might want to add label support as well.
     private nodeSelection: Selection<Group, Group, LineNodeDatum, any> = Selection.select(this.group).selectAll<Group>();
+    private nodeData: LineNodeDatum[] = [];
 
     readonly marker = new CartesianSeriesMarker();
 
