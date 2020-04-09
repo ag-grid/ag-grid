@@ -27,7 +27,7 @@ function normal(mean, sigma, minCutoff, maxCutoff) {
 }
 
 var histogramDataLength = 1000;
-var histogramData = Array(histogramDataLength).fill(0).map(function() {
+var histogramData = Array.apply(null, Array(histogramDataLength)).map(function() {
     var age = normal(24, 3, 16, 80);
 
     return {
