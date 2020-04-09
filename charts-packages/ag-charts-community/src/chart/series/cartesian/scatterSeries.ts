@@ -13,7 +13,7 @@ import { getMarker } from "../../marker/util";
 import { Chart } from "../../chart";
 import ContinuousScale from "../../../scale/continuousScale";
 
-interface GroupSelectionDatum extends SeriesNodeDatum {
+interface ScatterNodeDatum extends SeriesNodeDatum {
     point: {
         x: number;
         y: number;
@@ -39,10 +39,9 @@ export class ScatterSeries extends CartesianSeries {
     private xData: any[] = [];
     private yData: any[] = [];
     private sizeData: number[] = [];
-    private groupSelectionData: GroupSelectionDatum[] = [];
     private sizeScale = new LinearScale();
 
-    private groupSelection: Selection<Group, Group, GroupSelectionDatum, any> = Selection.select(this.group).selectAll<Group>();
+    private nodeSelection: Selection<Group, Group, ScatterNodeDatum, any> = Selection.select(this.group).selectAll<Group>();
 
     readonly marker = new CartesianSeriesMarker();
 
@@ -134,21 +133,15 @@ export class ScatterSeries extends CartesianSeries {
     }
 
     onMarkerShapeChange() {
-        this.groupSelection = this.groupSelection.setData([]);
-        this.groupSelection.exit.remove();
+        this.nodeSelection = this.nodeSelection.setData([]);
+        this.nodeSelection.exit.remove();
         this.update();
 
         this.fireEvent({type: 'legendChange'});
     }
 
     processData(): boolean {
-        const {
-            xKey,
-            yKey,
-            sizeKey,
-            xAxis,
-            yAxis
-        } = this;
+        const { xKey, yKey, sizeKey, xAxis, yAxis } = this;
 
         const data = xKey && yKey && this.data ? this.data : [];
 
@@ -184,43 +177,17 @@ export class ScatterSeries extends CartesianSeries {
         }
     }
 
-    update(): void {
-        const { visible, chart, xAxis, yAxis } = this;
-
-        this.group.visible = visible;
-
-        if (!xAxis || !yAxis || !visible || !chart || chart.layoutPending || chart.dataPending) {
-            return;
-        }
-
-        const xScale = xAxis.scale;
-        const yScale = yAxis.scale;
+    private generateNodeData(): ScatterNodeDatum[] {
+        const xScale = this.xAxis.scale;
+        const yScale = this.yAxis.scale;
         const xOffset = (xScale.bandwidth || 0) / 2;
         const yOffset = (yScale.bandwidth || 0) / 2;
 
-        const {
-            data,
-            xData,
-            yData,
-            sizeData,
-            xKey,
-            yKey,
-            sizeScale,
-            marker,
-            fill,
-            stroke,
-            strokeWidth,
-            fillOpacity,
-            strokeOpacity,
-            highlightedDatum
-        } = this;
+        const { data, xData, yData, sizeData, sizeScale, marker } = this;
 
-        const MarkerShape = getMarker(marker.shape);
-        const markerFormatter = marker.formatter;
+        sizeScale.range = [marker.minSize, marker.size];
 
-        this.sizeScale.range = [marker.minSize, marker.size];
-
-        const groupSelectionData: GroupSelectionDatum[] = xData.map((xDatum, i) => ({
+        return xData.map((xDatum, i) => ({
             series: this,
             seriesDatum: data[i],
             point: {
@@ -229,22 +196,46 @@ export class ScatterSeries extends CartesianSeries {
             },
             size: sizeData.length ? sizeScale.convert(sizeData[i]) : marker.size
         }));
+    }
 
-        const updateGroups = this.groupSelection.setData(groupSelectionData);
-        updateGroups.exit.remove();
+    update(): void {
+        const { visible, chart, xAxis, yAxis } = this;
 
-        const enterGroups = updateGroups.enter.append(Group);
-        enterGroups.append(MarkerShape);
+        this.group.visible = visible;
 
-        const groupSelection = updateGroups.merge(enterGroups);
+        if (!visible || !chart || chart.layoutPending || chart.dataPending || !xAxis || !yAxis) {
+            return;
+        }
+
+        const nodeData = this.generateNodeData();
+
+        this.updateNodeSelection(nodeData);
+        this.updateNodes();
+    }
+
+    private updateNodeSelection(nodeData: ScatterNodeDatum[]): void {
+        const MarkerShape = getMarker(this.marker.shape);
+
+        const updateSelection = this.nodeSelection.setData(nodeData);
+        updateSelection.exit.remove();
+
+        const enterSelection = updateSelection.enter.append(Group);
+        enterSelection.append(MarkerShape);
+
+        this.nodeSelection = updateSelection.merge(enterSelection);
+    }
+
+    private updateNodes(): void {
+        const { highlightedDatum } = this.chart;
+        const { marker, xKey, yKey, fill, stroke, strokeWidth, fillOpacity, strokeOpacity } = this;
         const { fill: highlightFill, stroke: highlightStroke } = this.highlightStyle;
         const markerStrokeWidth = marker.strokeWidth !== undefined ? marker.strokeWidth : strokeWidth;
+        const MarkerShape = getMarker(marker.shape);
+        const markerFormatter = marker.formatter;
 
-        groupSelection.selectByClass(MarkerShape)
+        this.nodeSelection.selectByClass(MarkerShape)
             .each((node, datum) => {
-                const highlighted = highlightedDatum &&
-                    highlightedDatum.series === datum.series &&
-                    highlightedDatum.seriesDatum === datum.seriesDatum;
+                const highlighted = datum === highlightedDatum;
                 const markerFill = highlighted && highlightFill !== undefined ? highlightFill : marker.fill || fill;
                 const markerStroke = highlighted && highlightStroke !== undefined ? highlightStroke : marker.stroke || stroke;
                 let markerFormat: CartesianSeriesMarkerFormat | undefined = undefined;
@@ -276,16 +267,9 @@ export class ScatterSeries extends CartesianSeries {
                 node.translationY = datum.point.y;
                 node.visible = marker.enabled && node.size > 0;
             });
-
-        this.groupSelectionData = groupSelectionData;
-        this.groupSelection = groupSelection;
     }
 
-    getNodeDatums(): GroupSelectionDatum[] {
-        return this.groupSelectionData;
-    }
-
-    getTooltipHtml(nodeDatum: GroupSelectionDatum): string {
+    getTooltipHtml(nodeDatum: ScatterNodeDatum): string {
         const { xKey, yKey } = this;
 
         if (!xKey || !yKey) {

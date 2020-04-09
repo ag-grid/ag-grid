@@ -19,7 +19,6 @@ import { numericExtent } from "../../../util/array";
 import { toFixed } from "../../../util/number";
 import { reactive } from "../../../util/observable";
 import ticks, { tickStep } from "../../../util/ticks";
-import { HistogramSeriesOptions } from "../../../chartOptions";
 
 enum HistogramSeriesNodeTag {
     Bin,

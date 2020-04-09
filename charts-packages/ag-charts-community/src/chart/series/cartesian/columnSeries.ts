@@ -21,7 +21,7 @@ import { toFixed } from "../../../util/number";
 import { equal } from "../../../util/equal";
 import { reactive } from "../../../util/observable";
 
-interface SelectionDatum extends SeriesNodeDatum {
+interface ColumnNodeDatum extends SeriesNodeDatum {
     yKey: string;
     yValue: number;
     x: number;
@@ -238,11 +238,11 @@ export class ColumnSeries extends CartesianSeries {
         return this._shadow;
     }
 
-    highlightStyle: HighlightStyle = {
-        fill: 'yellow'
-    };
+    highlightStyle: HighlightStyle = { fill: 'yellow' };
 
-    protected highlightedDatum?: SelectionDatum;
+    onHighlightChange() {
+        this.updateRectNodes();
+    }
 
     processData(): boolean {
         const { xKey, yKeys, seriesItemEnabled } = this;
@@ -340,22 +340,7 @@ export class ColumnSeries extends CartesianSeries {
         }
     }
 
-    update(): void {
-        const { visible, chart, xAxis, yAxis, xData, yData } = this;
-
-        this.group.visible = visible;
-
-        if (!xAxis || !yAxis || !visible || !chart || chart.layoutPending || chart.dataPending || !xData.length || !yData.length) {
-            return;
-        }
-
-        const selectionData = this.generateSelectionData();
-
-        this.updateRectSelection(selectionData);
-        this.updateTextSelection(selectionData);
-    }
-
-    private generateSelectionData(): SelectionDatum[] {
+    private generateNodeData(): ColumnNodeDatum[] {
         const { xAxis, yAxis, flipXY } = this;
         const xScale = (flipXY ? yAxis : xAxis).scale;
         const yScale = (flipXY ? xAxis : yAxis).scale;
@@ -384,7 +369,7 @@ export class ColumnSeries extends CartesianSeries {
         groupScale.range = [0, xScale.bandwidth!];
 
         const columnWidth = grouped ? groupScale.bandwidth! : xScale.bandwidth!;
-        const selectionData: SelectionDatum[] = [];
+        const nodeData: ColumnNodeDatum[] = [];
 
         xData.forEach((category, i) => {
             const yDatum = yData[i];
@@ -411,7 +396,7 @@ export class ColumnSeries extends CartesianSeries {
                     labelText = yValueIsNumber && isFinite(yValue) ? yValue.toFixed(2) : '';
                 }
 
-                selectionData.push({
+                nodeData.push({
                     series: this,
                     seriesDatum,
                     yValue,
@@ -445,27 +430,45 @@ export class ColumnSeries extends CartesianSeries {
             });
         });
 
-        return selectionData;
+        return nodeData;
     }
 
-    private updateRectSelection(selectionData: SelectionDatum[]): void {
-        const { fillOpacity, strokeOpacity, shadow, highlightedDatum, highlightStyle: { fill, stroke } } = this;
+    update(): void {
+        const { visible, chart, xAxis, yAxis, xData, yData } = this;
+
+        this.group.visible = visible;
+
+        if (!chart || chart.layoutPending || chart.dataPending ||
+            !xAxis || !yAxis || !visible || !xData.length || !yData.length) {
+            return;
+        }
+
+        const nodeData = this.generateNodeData();
+
+        this.updateRectSelection(nodeData);
+        this.updateRectNodes();
+
+        this.updateTextSelection(nodeData);
+        this.updateTextNodes();
+    }
+
+    private updateRectSelection(selectionData: ColumnNodeDatum[]): void {
         const updateRects = this.rectSelection.setData(selectionData);
-
         updateRects.exit.remove();
-
         const enterRects = updateRects.enter.append(Rect).each(rect => {
             rect.tag = ColumnSeriesNodeTag.Column;
             rect.crisp = true;
         });
+        this.rectSelection = updateRects.merge(enterRects);
+    }
 
-        const rectSelection = updateRects.merge(enterRects);
+    private updateRectNodes(): void {
+        const { fillOpacity, strokeOpacity, shadow, highlightStyle: { fill, stroke } } = this;
+        const { highlightedDatum } = this.chart;
 
-        rectSelection.each((rect, datum) => {
-            const highlighted = highlightedDatum &&
-                highlightedDatum.seriesDatum === datum.seriesDatum &&
-                highlightedDatum.series === datum.series &&
-                highlightedDatum.yKey === datum.yKey;
+        this.rectSelection.each((rect, datum) => {
+            const highlighted = datum === highlightedDatum;
+
             rect.x = datum.x;
             rect.y = datum.y;
             rect.width = datum.width;
@@ -478,12 +481,9 @@ export class ColumnSeries extends CartesianSeries {
             rect.fillShadow = shadow;
             rect.visible = datum.height > 0; // prevent stroke from rendering for zero height columns
         });
-
-        this.rectSelection = rectSelection;
     }
 
-    private updateTextSelection(selectionData: SelectionDatum[]): void {
-        const labelEnabled = this.label.enabled;
+    private updateTextSelection(selectionData: ColumnNodeDatum[]): void {
         const updateTexts = this.textSelection.setData(selectionData);
 
         updateTexts.exit.remove();
@@ -495,9 +495,13 @@ export class ColumnSeries extends CartesianSeries {
             text.textBaseline = 'middle';
         });
 
-        const textSelection = updateTexts.merge(enterTexts);
+        this.textSelection = updateTexts.merge(enterTexts);
+    }
 
-        textSelection.each((text, datum) => {
+    private updateTextNodes(): void {
+        const labelEnabled = this.label.enabled;
+
+        this.textSelection.each((text, datum) => {
             const label = datum.label;
 
             if (label && labelEnabled) {
@@ -514,11 +518,9 @@ export class ColumnSeries extends CartesianSeries {
                 text.visible = false;
             }
         });
-
-        this.textSelection = textSelection;
     }
 
-    getTooltipHtml(nodeDatum: SelectionDatum): string {
+    getTooltipHtml(nodeDatum: ColumnNodeDatum): string {
         const { xKey } = this;
         const { yKey } = nodeDatum;
 

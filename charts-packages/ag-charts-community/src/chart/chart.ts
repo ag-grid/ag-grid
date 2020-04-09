@@ -532,6 +532,7 @@ export abstract class Chart extends Observable {
         this.background.width = this.width;
         this.background.height = this.height;
 
+        console.log('chart.performLayout()');
         this.performLayout();
 
         if (!this.layoutPending) {
@@ -749,8 +750,7 @@ export abstract class Chart extends Observable {
                 continue;
             }
             const hitPoint = series.group.transformPoint(x, y);
-            const datums = series.getNodeDatums();
-            datums.forEach(datum => {
+            series.getNodeData().forEach(datum => {
                 if (!datum.point) {
                     return;
                 }
@@ -775,16 +775,16 @@ export abstract class Chart extends Observable {
         if (pick && pick.node instanceof Shape) {
             const { node } = pick;
             nodeDatum = node.datum as SeriesNodeDatum;
-            if (lastPick) {
+            if (lastPick && lastPick.datum === nodeDatum) {
                 // Different series can use the same datums, so simply comparing `seriesDatum`s is not enough.
-                const isSameSeries = lastPick.datum.series === nodeDatum.series;
-                const isSameDatums = lastPick.datum.seriesDatum === nodeDatum.seriesDatum;
+                // const isSameSeries = lastPick.datum.series === nodeDatum.series;
+                // const isSameDatums = lastPick.datum.seriesDatum === nodeDatum.seriesDatum;
                 // Mouse cursor moved over already highlighted closest marker.
-                if (isSameSeries && isSameDatums) {
+                // if (isSameSeries && isSameDatums) {
                     // Make sure the lastPick has node information, which it might not have
                     // if we are in the tracking mode.
                     lastPick.node = node;
-                }
+                // }
             }
             // Marker nodes will have the `point` info in their datums.
             // Highlight if not a marker node or, if not in the tracking mode, highlight markers too.
@@ -824,7 +824,8 @@ export abstract class Chart extends Observable {
         }
         if (lastPick && (hideTooltip || !tooltipTracking)) {
             // cursor moved from a non-marker node to empty space
-            lastPick.datum.series.dehighlightDatum();
+            // lastPick.datum.series.dehighlightDatum();
+            this.dehighlightDatum();
             this.hideTooltip();
             this.lastPick = undefined;
         }
@@ -866,7 +867,8 @@ export abstract class Chart extends Observable {
 
     private onSeriesDatumPick(meta: TooltipMeta, datum: SeriesNodeDatum, node?: Shape) {
         if (this.lastPick) {
-            this.lastPick.datum.series.dehighlightDatum();
+            // this.lastPick.datum.series.dehighlightDatum();
+            this.dehighlightDatum();
         }
 
         this.lastPick = {
@@ -874,12 +876,27 @@ export abstract class Chart extends Observable {
             node
         };
 
-        datum.series.highlightDatum(datum);
+        this.highlightDatum(datum);
+        // datum.series.highlightDatum(datum);
 
         const html = datum.series.tooltipEnabled && datum.series.getTooltipHtml(datum);
 
         if (html) {
             this.showTooltip(meta, html);
+        }
+    }
+
+    highlightedDatum?: SeriesNodeDatum;
+
+    highlightDatum(datum: SeriesNodeDatum): void {
+        this.highlightedDatum = datum;
+        this.series.forEach(s => s.onHighlightChange());
+    }
+
+    dehighlightDatum(): void {
+        if (this.highlightedDatum) {
+            this.highlightedDatum = undefined;
+            this.series.forEach(s => s.onHighlightChange());
         }
     }
 
@@ -905,7 +922,8 @@ export abstract class Chart extends Observable {
         if (visible) {
             classList.push(`${Chart.defaultTooltipClass}-visible`);
         } else if (this.lastPick) {
-            this.lastPick.datum.series.dehighlightDatum();
+            // this.lastPick.datum.series.dehighlightDatum();
+            this.dehighlightDatum();
             this.lastPick = undefined;
         }
         this.tooltipElement.setAttribute('class', classList.join(' '));

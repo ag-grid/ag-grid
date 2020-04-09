@@ -4,7 +4,6 @@ import { Observable, reactive } from "../../util/observable";
 import { ChartAxis, ChartAxisDirection } from "../chartAxis";
 import { Chart } from "../chart";
 import { createId } from "../../util/id";
-import { Node } from "../../scene/node";
 
 /**
  * Processed series datum used in node selections,
@@ -110,8 +109,8 @@ export abstract class Series extends Observable {
 
     abstract getTooltipHtml(seriesDatum: any): string;
 
-    getNodeDatums(): SeriesNodeDatum[] {
-        // Returns node datums associated with the rendered portion of the series' data.
+    // Returns node data associated with the rendered portion of the series' data.
+    getNodeData(): SeriesNodeDatum[] {
         return [];
     }
 
@@ -129,19 +128,9 @@ export abstract class Series extends Observable {
         this.visible = enabled;
     }
 
-    protected highlightedDatum?: SeriesNodeDatum;
-
-    highlightDatum(datum: SeriesNodeDatum): void {
-        this.highlightedDatum = datum;
-        this.scheduleLayout();
-    }
-
-    dehighlightDatum(): void {
-        if (this.highlightedDatum) {
-            this.highlightedDatum = undefined;
-            this.scheduleLayout();
-        }
-    }
+    // Each series is expected to have its own logic to efficiently update its nodes
+    // on hightlight changes.
+    onHighlightChange() {}
 
     readonly scheduleLayout = () => {
         this.fireEvent({ type: 'layoutChange' });
