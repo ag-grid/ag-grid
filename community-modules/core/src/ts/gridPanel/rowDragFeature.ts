@@ -64,6 +64,10 @@ export class RowDragFeature implements DropTarget {
     }
 
     private getRowNodes(dragginEvent: DraggingEvent): RowNode[] {
+        if (!this.isFromThisGrid(dragginEvent)) {
+            return dragginEvent.dragItem.rowNodes;
+        }
+
         const enableMultiRowDragging = this.gridOptionsWrapper.isEnableMultiRowDragging();
         const selectedNodes = this.selectionController.getSelectedNodes();
         const currentNode = dragginEvent.dragItem.rowNode;
@@ -83,11 +87,11 @@ export class RowDragFeature implements DropTarget {
 
         if (this.isFromThisGrid(draggingEvent)) {
             this.dragAndDropService.setGhostIcon(DragAndDropService.ICON_MOVE);
-
-            this.getRowNodes(draggingEvent).forEach((rowNode, idx) => {
-                rowNode.setDragging(true);
-            });
         }
+
+        this.getRowNodes(draggingEvent).forEach((rowNode, idx) => {
+            rowNode.setDragging(true);
+        });
 
         this.onEnterOrDragging(draggingEvent);
     }
@@ -308,6 +312,10 @@ export class RowDragFeature implements DropTarget {
         this.dispatchEvent(Events.EVENT_ROW_DRAG_LEAVE, draggingEvent);
         this.stopDragging(draggingEvent);
         this.clearRowHighlight();
+
+        if (this.isFromThisGrid(draggingEvent)) {
+            this.isMultiRowDrag = false;
+        }
     }
 
     public onDragStop(draggingEvent: DraggingEvent): void {
@@ -321,17 +329,13 @@ export class RowDragFeature implements DropTarget {
         ) {
             this.moveRowAndClearHighlight(draggingEvent);
         }
-
-        this.isMultiRowDrag = false;
     }
 
     private stopDragging(draggingEvent: DraggingEvent): void {
         this.ensureIntervalCleared();
 
-        if (this.isFromThisGrid(draggingEvent)) {
-            this.getRowNodes(draggingEvent).forEach(rowNode => {
-                rowNode.setDragging(false);
-            });
-        }
+        this.getRowNodes(draggingEvent).forEach(rowNode => {
+            rowNode.setDragging(false);
+        });
     }
 }
