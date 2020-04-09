@@ -73,22 +73,22 @@ export class HistogramBin {
         this.domain = [domainMin, domainMax];
     };
 
-    addDatum(datum : any) {
+    addDatum(datum: any) {
         this.data.push(datum);
         this.frequency ++;
     };
 
-    get domainWidth() : number {
+    get domainWidth(): number {
         const [domainMin, domainMax] = this.domain;
         return domainMax - domainMin;
     }
 
-    get relativeHeight() : number {
+    get relativeHeight(): number {
         return this.aggregatedValue / this.domainWidth;
     };
 
-    calculateAggregatedValue(aggregationName : aggregations, yKey: string) {
-        if (!yKey){
+    calculateAggregatedValue(aggregationName: aggregations, yKey: string) {
+        if (!yKey) {
             // not having a yKey forces us into a frequency plot
             aggregationName = 'count';
         }
@@ -298,7 +298,7 @@ export class HistogramSeries extends CartesianSeries {
         const binSize = tickStep(xMinMax[0], xMinMax[1], this.binCount || defaultBinCount);
         const firstBinEnd = binStarts[0];
 
-        const expandStartToBin : (n: number) => [number, number ] = n => [n, n + binSize];
+        const expandStartToBin: (n: number) => [number, number ] = n => [n, n + binSize];
 
         return [
             [firstBinEnd - binSize, firstBinEnd],
@@ -324,7 +324,7 @@ export class HistogramSeries extends CartesianSeries {
         });
 
         let currentBin = 0;
-        const bins : HistogramBin[] = [new HistogramBin(derivedBins[0])];
+        const bins: HistogramBin[] = [new HistogramBin(derivedBins[0])];
         sortedData.forEach(datum => {
 
             while (datum[ xKey ] > derivedBins[currentBin][1]) {
@@ -403,8 +403,8 @@ export class HistogramSeries extends CartesianSeries {
         }
 
         const {
-            xAxis : {scale : xScale},
-            yAxis : {scale : yScale},
+            xAxis: {scale: xScale},
+            yAxis: {scale: yScale},
             fill, stroke, strokeWidth
         } = this;
 
@@ -549,7 +549,7 @@ export class HistogramSeries extends CartesianSeries {
         }
 
         const { xName, yName, fill, tooltipRenderer, aggregation } = this;
-        const bin : HistogramBin = nodeDatum.seriesDatum;
+        const bin: HistogramBin = nodeDatum.seriesDatum;
         const {aggregatedValue, frequency, domain: [rangeMin, rangeMax]} = bin;
 
         if (tooltipRenderer) {
