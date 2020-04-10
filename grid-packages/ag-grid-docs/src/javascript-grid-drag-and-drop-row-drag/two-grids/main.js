@@ -163,13 +163,13 @@ function addBinZone(params) {
             }
         };
 
-    params.api.addDropZone(binDropZone);
+    params.api.addRowDropZone(binDropZone);
 }
 
 function addGridDropZone(params, side) {
     var grid = document.querySelector('#e' + side + 'Grid');
 
-    params.api.addDropZone({
+    params.api.addRowDropZone({
         target: grid,
         onDragStop: function(params) {
             addRecordToGrid(side.toLowerCase(), params.dragItem.rowNode.data);

@@ -58,6 +58,7 @@ import { IInfiniteRowModel } from "./interfaces/iInfiniteRowModel";
 import { ICsvCreator } from "./interfaces/iCsvCreator";
 import { ModuleRegistry } from "./modules/moduleRegistry";
 import { UndoRedoService } from "./undoRedo/undoRedoService";
+import { RowDragFeature } from "./gridPanel/rowDragFeature";
 
 export interface StartEditingCellParams {
     rowIndex: number;
@@ -775,9 +776,8 @@ export class GridApi {
         const column = this.columnController.getPrimaryColumn(key);
         if (column) {
             return column.getColDef();
-        } else {
-            return null;
         }
+        return null;
     }
 
     public onFilterChanged() {
@@ -820,7 +820,7 @@ export class GridApi {
         this.gridOptionsWrapper.setProperty(GridOptionsWrapper.PROP_SUPPRESS_ROW_DRAG, value);
     }
 
-    public addDropZone(params: {
+    public addRowDropZone(params: {
         target: HTMLElement | GridOptions,
         dropAtIndex?: boolean;
         onDragEnter?: (params: DraggingEvent) => void,
@@ -829,50 +829,60 @@ export class GridApi {
         onDragStop?: (params: DraggingEvent) => void
     }): void {
         const { target, dropAtIndex, onDragEnter, onDragging, onDragLeave, onDragStop } = params;
+        let rowDragFeature: RowDragFeature;
 
         if (!target) {
-            _.doOnce(() => console.warn('ag-Grid: addDropZone - A target needs to be provided'), 'add-drop-zone-empty-target');
+            _.doOnce(() => console.warn('ag-Grid: addRowDropZone - A target needs to be provided'), 'add-drop-zone-empty-target');
             return;
         }
 
         if (dropAtIndex) {
             const tg = target as GridOptions;
             if (!tg.api && !tg.columnApi) {
-                _.doOnce(() => console.warn('ag-Grid: addDropZone - When used with `dropAtIndex`, the target must be the GridOptions object.'), 'add-drop-zone-wrong-target');
+                _.doOnce(() => console.warn('ag-Grid: addRowDropZone - When used with `dropAtIndex`, the target must be the GridOptions object.'), 'add-drop-zone-wrong-target');
                 return;
             }
 
-            const rowDragFeature = tg.api.gridPanel.getRowDragFeature();
+            rowDragFeature = tg.api.gridPanel.getRowDragFeature();
 
             if (!rowDragFeature) {
-                _.doOnce(() => console.warn('ag-Grid: addDropZone - Target grid `rowDragFeature` has not been initialized.'), 'add-drop-zone-no-row-drag-feature');
+                _.doOnce(() => console.warn('ag-Grid: addRowDropZone - Target grid `rowDragFeature` has not been initialized.'), 'add-drop-zone-no-row-drag-feature');
                 return;
             }
-
-            this.dragAndDropService.addDropTarget(tg.api.gridPanel.getRowDragFeature());
-            return;
         }
 
         this.dragAndDropService.addDropTarget({
-            getContainer: () => target as HTMLElement,
+            getContainer: () => dropAtIndex ? rowDragFeature.getContainer() : target as HTMLElement,
             isInterestedIn: (type: DragSourceType) => type === DragSourceType.RowDrag,
-            getIconName:() => 'move',
+            getIconName:() => DragAndDropService.ICON_MOVE,
             onDragEnter: (params: DraggingEvent) => {
+                if (dropAtIndex) {
+                    rowDragFeature.onDragEnter(params);
+                }
                 if (onDragEnter) {
                     onDragEnter(params);
                 }
             },
             onDragging: (params: DraggingEvent) => {
+                if (dropAtIndex) {
+                    rowDragFeature.onDragging(params);
+                }
                 if (onDragging) {
                     onDragging(params);
                 }
             },
             onDragLeave: (params: DraggingEvent) => {
+                if (dropAtIndex) {
+                    rowDragFeature.onDragLeave(params);
+                }
                 if (onDragLeave)  {
                     onDragLeave(params);
                 }
             },
             onDragStop: (params: DraggingEvent) => {
+                if (dropAtIndex) {
+                    rowDragFeature.onDragStop(params);
+                }
                 if (onDragStop) {
                     onDragStop(params);
                 }

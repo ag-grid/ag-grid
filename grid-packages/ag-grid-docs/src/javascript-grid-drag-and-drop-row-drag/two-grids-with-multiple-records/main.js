@@ -71,7 +71,7 @@ var gridOptions = {
         columnDefs: leftColumnDefs,
         animateRows: true,
         onGridReady: function(params) {
-            addGridDropZone(params, 'Right');
+            addGridDropZone(params);
         }
     },
     Right: {
@@ -90,10 +90,25 @@ var gridOptions = {
     }
 };
 
-function addGridDropZone(params, side) {
-    params.api.addDropZone({
-        target: gridOptions[side],
-        dropAtIndex: true
+function addGridDropZone(params) {
+    params.api.addRowDropZone({
+        target: gridOptions.Right,
+        dropAtIndex: true,
+        onDragStop: function(params) {
+            var deselectCheck = document.querySelector('input#deselect').checked;
+            var moveCheck = document.querySelector('input#move').checked;
+            var nodes = params.dragItem.rowNodes;
+            
+            if (moveCheck) {
+                gridOptions.Left.api.updateRowData({
+                    remove: nodes.map(function(node) { return node.data; })
+                });
+            } else if (deselectCheck && nodes.length > 1) {
+                nodes.forEach(function(node) {
+                    node.setSelected(false);
+                });
+            }
+        }
     });
 }
 
@@ -101,12 +116,15 @@ function loadGrid(side, data) {
     var grid = document.querySelector('#e' + side + 'Grid');
     var options = gridOptions[side];
 
+    if (options.api) {
+        options.api.destroy();
+    }
+
     options.rowData = data;
     new agGrid.Grid(grid, options);
 }
 
-// setup the grid after the page has finished loading
-document.addEventListener('DOMContentLoaded', function() {
+function loadGrids() {
     agGrid.simpleHttpRequest({ url: 'https://raw.githubusercontent.com/ag-grid/ag-grid/master/grid-packages/ag-grid-docs/src/olympicWinnersSmall.json' })
         .then(function(data) {
             var athletes = [];
@@ -121,4 +139,13 @@ document.addEventListener('DOMContentLoaded', function() {
             loadGrid('Left', athletes);
             loadGrid('Right', []);
         });
+}
+
+// setup the grid after the page has finished loading
+document.addEventListener('DOMContentLoaded', function() {
+    var resetBtn = document.querySelector('button.reset');
+
+    resetBtn.addEventListener('click', loadGrids);
+
+    loadGrids();
 });

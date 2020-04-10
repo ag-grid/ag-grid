@@ -171,11 +171,11 @@ function addBinZone(params) {
             }
         };
 
-    params.api.addDropZone(binDropZone);
+    params.api.addRowDropZone(binDropZone);
 }
 
 function addGridDropZone(params, side) {
-    params.api.addDropZone({
+    params.api.addRowDropZone({
         target: gridOptions[side],
         dropAtIndex: true
     });
