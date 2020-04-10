@@ -4,6 +4,10 @@
     flex-direction: column;
 }
 
+.panel-body > input[type=radio]:not(:first-of-type) {
+    margin-left: 10px;
+}
+
 .grid-wrapper {
     display: flex;
     flex: 1 1 auto;

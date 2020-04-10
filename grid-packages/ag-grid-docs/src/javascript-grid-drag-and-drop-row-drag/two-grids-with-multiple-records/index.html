@@ -1,10 +1,12 @@
 <div class="top-container">
     <div class="panel panel-default">
         <div class="panel-body">
-            <input type="checkbox" id="deselect">
-            <label for="deselect">Deselect Records on Drop</label>
-            <input type="checkbox" id="move" checked>
+            <input type="radio" id="move" name="radio" checked>
             <label for="move">Move Rows</label>
+            <input type="radio" id="deselect" name="radio">
+            <label for="deselect">Deselect Records on Drop</label>
+            <input type="radio" id="none" name="radio">
+            <label for="none">None</label>
             <span class="input-group-button">
                 <button type="button" class="btn btn-default reset" style="margin-left: 5px;"><i class="fas fa-redo" style="margin-right: 5px;"></i>Reset</button>
             </span>

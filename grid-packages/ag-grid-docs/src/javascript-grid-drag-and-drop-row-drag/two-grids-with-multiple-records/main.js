@@ -103,7 +103,7 @@ function addGridDropZone(params) {
                 gridOptions.Left.api.updateRowData({
                     remove: nodes.map(function(node) { return node.data; })
                 });
-            } else if (deselectCheck && nodes.length > 1) {
+            } else if (deselectCheck) {
                 nodes.forEach(function(node) {
                     node.setSelected(false);
                 });
