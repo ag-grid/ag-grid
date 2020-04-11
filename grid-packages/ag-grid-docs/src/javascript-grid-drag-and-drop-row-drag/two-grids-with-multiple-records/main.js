@@ -53,46 +53,45 @@ var rightColumnDefs = [
     }
 ];
 
-var gridOptions = {
-    Left: {
-        defaultColDef: {
-            flex: 1,
-            minWidth: 100,
-            sortable: true,
-            filter: true,
-            resizable: true
-        },
-        rowSelection: 'multiple',
-        enableMultiRowDragging: true,
-        suppressRowClickSelection: true,
-        getRowNodeId: function(data) { return data.athlete; },
-        rowDragManaged: true,
-        suppressMoveWhenRowDragging: true,
-        columnDefs: leftColumnDefs,
-        animateRows: true,
-        onGridReady: function(params) {
-            addGridDropZone(params);
-        }
+var leftGridOptions = {
+    defaultColDef: {
+        flex: 1,
+        minWidth: 100,
+        sortable: true,
+        filter: true,
+        resizable: true
     },
-    Right: {
-        defaultColDef: {
-            flex: 1,
-            minWidth: 100,
-            sortable: true,
-            filter: true,
-            resizable: true
-        },
-        getRowNodeId: function(data) { return data.athlete; },
-        rowDragManaged: true,
-        suppressMoveWhenRowDragging: true,
-        columnDefs: rightColumnDefs,
-        animateRows: true
+    rowSelection: 'multiple',
+    enableMultiRowDragging: true,
+    suppressRowClickSelection: true,
+    getRowNodeId: function(data) { return data.athlete; },
+    rowDragManaged: true,
+    suppressMoveWhenRowDragging: true,
+    columnDefs: leftColumnDefs,
+    animateRows: true,
+    onGridReady: function(params) {
+        addGridDropZone(params);
     }
+};
+
+var rightGridOptions = {
+    defaultColDef: {
+        flex: 1,
+        minWidth: 100,
+        sortable: true,
+        filter: true,
+        resizable: true
+    },
+    getRowNodeId: function(data) { return data.athlete; },
+    rowDragManaged: true,
+    suppressMoveWhenRowDragging: true,
+    columnDefs: rightColumnDefs,
+    animateRows: true    
 };
 
 function addGridDropZone(params) {
     params.api.addRowDropZone({
-        target: gridOptions.Right,
+        target: rightGridOptions,
         dropAtIndex: true,
         onDragStop: function(params) {
             var deselectCheck = document.querySelector('input#deselect').checked;
@@ -100,10 +99,10 @@ function addGridDropZone(params) {
             var nodes = params.dragItem.rowNodes;
             
             if (moveCheck) {
-                gridOptions.Left.api.updateRowData({
+                leftGridOptions.api.updateRowData({
                     remove: nodes.map(function(node) { return node.data; })
                 });
-            } else if (deselectCheck) {
+            } else if (deselectCheck && nodes.length > 1) {
                 nodes.forEach(function(node) {
                     node.setSelected(false);
                 });
@@ -112,10 +111,9 @@ function addGridDropZone(params) {
     });
 }
 
-function loadGrid(side, data) {
+function loadGrid(options, side, data) {
     var grid = document.querySelector('#e' + side + 'Grid');
-    var options = gridOptions[side];
-
+    
     if (options.api) {
         options.api.destroy();
     }
@@ -136,8 +134,8 @@ function loadGrids() {
                 athletes.push(data[pos]);
             }
 
-            loadGrid('Left', athletes);
-            loadGrid('Right', []);
+            loadGrid(leftGridOptions, 'Left', athletes);
+            loadGrid(rightGridOptions, 'Right', []);
         });
 }
 
@@ -149,3 +147,4 @@ document.addEventListener('DOMContentLoaded', function() {
 
     loadGrids();
 });
+

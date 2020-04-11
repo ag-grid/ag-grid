@@ -100,7 +100,36 @@ colDef = {
             </li>
         </ul>
 
-        <p>These constraints are easily got around by using unmanaged row dragging explained below.  </p>
+        <p>These constraints are easily got around by using <a href="#unmanaged-dragging">unmanaged row dragging</a> section  
+    </p>
+
+    <h3>Suppress Move When Dragging</h3>
+
+    <p>
+        By default, managed row dragging moves the rows while you are draggging them. This effect might not be desired due to application design.
+        To prevent this default behaviour, set <code>suppressMoveWhenRowDragging</code> to true in the gridOptions.
+    </p>
+
+    <?= grid_example('Row Drag with SupressMoveWhenRowDragging', 'managed-suppress-move-when-dragging', 'generated') ?>
+
+    <h3>MultiRow Dragging</h3>
+
+    <p>
+        It is possible to drag multiple rows at the same time, when <code>enableMultiRowDragging</code> is set to true in the gridOptions and 
+        it is combined with rowSelection <code>multiple</code>
+    </p>
+
+    <p>
+        For this example note the following:
+    </p>
+
+    <ul>
+        <li>When you select multiple items and drag one of them, all items in the selection will be dragged.</li>
+        <li>When you drag an item that is not selected while other items are selected, only the unselected item will be dragged</li>
+    </ul>
+    
+
+    <?= grid_example('Row Drag with Multi Row Drag', 'managed-with-multi-row-drag', 'generated') ?>
 
     <h2>Suppress Row Drag</h2>
 
@@ -129,7 +158,7 @@ colDef = {
     </p>
 
 <snippet>// function for rowDragText
-function rowDragText(params: IRowDragItem) => string;
+function rowDragText(params: IRowDragItem, dragItemCount: number) => string;
 
 // interface for params
 interface IRowDragItem {
@@ -139,8 +168,8 @@ interface IRowDragItem {
 }
 
 // example
-colDef.rowDragText = function(params) {
-    return params.defaultTextValue + ' being dragged...'
+colDef.rowDragText = function(params, dragItemCount) {
+    return (dragItemCount > 1 ? (dragItemCount + ' items') : params.defaultTextValue) + ' being dragged...'
 }
 }</snippet>
 
@@ -164,22 +193,22 @@ colDef.rowDragText = function(params) {
         the property <code>rowDragManaged</code>. Unmanaged dragging differs from managed
         dragging in the following ways:
     </p>
-        <ul class="content">
-            <li>
-                The grid does not manage moving of the rows. The only thing the grid
-                responds with is firing drag events. It is up to the application to do
-                the moving of the rows (if that is what the application wants to do).
-            </li>
-            <li>
-                Dragging is allowed while sort is applied.
-            </li>
-            <li>
-                Dragging is allowed while filter is applied.
-            </li>
-            <li>
-                Dragging is allowed while row group or pivot is applied.
-            </li>
-        </ul>
+    <ul class="content">
+        <li>
+            The grid does not manage moving of the rows. The only thing the grid
+            responds with is firing drag events. It is up to the application to do
+            the moving of the rows (if that is what the application wants to do).
+        </li>
+        <li>
+            Dragging is allowed while sort is applied.
+        </li>
+        <li>
+            Dragging is allowed while filter is applied.
+        </li>
+        <li>
+            Dragging is allowed while row group or pivot is applied.
+        </li>
+    </ul>
 
     <note>
         It is not possible for the grid to provide a generic solution for row dragging that fits

@@ -75,6 +75,8 @@ export class RowDragFeature implements DropTarget {
         if (enableMultiRowDragging && selectedNodes.indexOf(currentNode) !== -1) {
             this.isMultiRowDrag = true;
             return [...selectedNodes];
+        } else {
+            this.isMultiRowDrag = false;
         }
 
         return [currentNode];

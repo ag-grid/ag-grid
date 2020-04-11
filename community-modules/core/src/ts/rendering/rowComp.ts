@@ -112,6 +112,7 @@ export class RowComp extends Component {
     private initialised = false;
 
     private elementOrderChanged = false;
+    private lastMouseDownOnDragger = false;
 
     private readonly printLayout: boolean;
     private readonly embedFullWidth: boolean;
@@ -781,6 +782,7 @@ export class RowComp extends Component {
         switch (eventName) {
             case 'dblclick': this.onRowDblClick(mouseEvent); break;
             case 'click': this.onRowClick(mouseEvent); break;
+            case 'mousedown': this.onRowMouseDown(mouseEvent); break;
         }
     }
 
@@ -818,8 +820,12 @@ export class RowComp extends Component {
         this.beans.eventService.dispatchEvent(agEvent);
     }
 
+    private onRowMouseDown(mouseEvent: MouseEvent) {
+        this.lastMouseDownOnDragger = _.isElementChildOfClass(mouseEvent.target as HTMLElement, 'ag-row-drag', 3);
+    }
+
     public onRowClick(mouseEvent: MouseEvent) {
-        const stop = _.isStopPropagationForAgGrid(mouseEvent);
+        const stop = _.isStopPropagationForAgGrid(mouseEvent) || this.lastMouseDownOnDragger;
 
         if (stop) { return; }
 
