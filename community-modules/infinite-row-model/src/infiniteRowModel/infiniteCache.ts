@@ -21,7 +21,6 @@ export interface InfiniteCacheParams extends RowNodeCacheParams {
 
 export class InfiniteCache extends RowNodeCache<InfiniteBlock, InfiniteCacheParams> {
 
-    @Autowired('eventService') private eventService: EventService;
     @Autowired('columnApi') private columnApi: ColumnApi;
     @Autowired('gridApi') private gridApi: GridApi;
 
@@ -31,11 +30,6 @@ export class InfiniteCache extends RowNodeCache<InfiniteBlock, InfiniteCachePara
 
     private setBeans(@Qualifier('loggerFactory') loggerFactory: LoggerFactory) {
         this.logger = loggerFactory.create('InfiniteCache');
-    }
-
-    @PostConstruct
-    protected init(): void {
-        super.init();
     }
 
     private moveItemsDown(block: InfiniteBlock, moveFromIndex: number, moveCount: number): void {

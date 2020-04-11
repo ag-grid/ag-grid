@@ -1505,8 +1505,13 @@ export class RowComp extends Component {
     }
 
     private onRowIndexChanged(): void {
-        this.onCellFocusChanged();
-        this.updateRowIndexes();
+        // we only bother updating if the rowIndex is present. if it is not present, it means this row
+        // is child of a group node, and the group node was closed, it's the only way to have no row index.
+        // when this happens, row is about to be de-rendered, so we don't care, rowComp is about to die!
+        if (this.rowNode.rowIndex!=null) {
+            this.onCellFocusChanged();
+            this.updateRowIndexes();
+        }
     }
 
     private updateRowIndexes(): void {

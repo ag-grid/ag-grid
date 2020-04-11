@@ -63,6 +63,10 @@ export abstract class RowNodeBlock extends BeanStub implements IRowNodeBlock {
     // belongs to
     public abstract getNodeIdPrefix(): string;
 
+    public abstract getDisplayIndexStart(): number;
+
+    public abstract getDisplayIndexEnd(): number;
+
     protected constructor(blockNumber: number, rowNodeCacheParams: RowNodeCacheParams) {
         super();
 
