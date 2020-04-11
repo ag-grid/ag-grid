@@ -663,12 +663,12 @@ export class RowRenderer extends BeanStub {
         }
     }
 
-    public destroy() {
-        super.destroy();
-
+    public destroy(): void {
         const rowIndexesToRemove = Object.keys(this.rowCompsByIndex);
 
         this.removeRowComps(rowIndexesToRemove);
+
+        super.destroy();
     }
 
     private binRowComps(recycleRows: boolean): { [key: string]: RowComp } {

@@ -552,12 +552,12 @@ export class GroupCellRenderer extends Component implements ICellRendererComp {
         this.addOrRemoveCssClass('ag-row-group-leaf-indent', addLeafIndentClass);
     }
 
-    public destroy() : void {
-        super.destroy();
-
+    public destroy(): void {
         if (this.innerCellRenderer && this.innerCellRenderer.destroy) {
             this.innerCellRenderer.destroy();
         }
+
+        super.destroy();
     }
 
     public refresh(): boolean {

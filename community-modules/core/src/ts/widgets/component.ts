@@ -310,7 +310,6 @@ export class Component extends BeanStub {
     }
 
     public destroy(): void {
-        super.destroy();
         this.childComponents.forEach(childComponent => {
             if (childComponent && childComponent.destroy) {
                 (childComponent as any).destroy();
@@ -319,6 +318,8 @@ export class Component extends BeanStub {
         this.childComponents.length = 0;
 
         this.removeAnnotatedEventListeners();
+
+        super.destroy();
     }
 
     public addGuiEventListener(event: string, listener: (event: any) => void): void {

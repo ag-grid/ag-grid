@@ -104,10 +104,22 @@ export interface CreatePivotChartParams {
     processChartOptions?: (params: ProcessChartOptionsParams) => ChartOptions<any>;
 }
 
-export interface DetailGridInfo {
+export interface GridInstance {
+    api?: GridApi;
+    columnApi?: ColumnApi;
+}
+
+export interface DetailGridInfo extends GridInstance {
     id: string;
-    api: GridApi | null | undefined;
-    columnApi: ColumnApi | null | undefined;
+}
+
+export interface RowDropZoneParams {
+    target: HTMLElement | GridInstance;
+    dropAtIndex?: boolean;
+    onDragEnter?: (params: DraggingEvent) => void;
+    onDragLeave?: (params: DraggingEvent) => void;
+    onDragging?: (params: DraggingEvent) => void;
+    onDragStop?: (params: DraggingEvent) => void;
 }
 
 @Bean('gridApi')
@@ -820,14 +832,7 @@ export class GridApi {
         this.gridOptionsWrapper.setProperty(GridOptionsWrapper.PROP_SUPPRESS_ROW_DRAG, value);
     }
 
-    public addRowDropZone(params: {
-        target: HTMLElement | GridOptions,
-        dropAtIndex?: boolean;
-        onDragEnter?: (params: DraggingEvent) => void,
-        onDragLeave?: (params: DraggingEvent) => void,
-        onDragging?: (params: DraggingEvent) => void,
-        onDragStop?: (params: DraggingEvent) => void
-    }): void {
+    public addRowDropZone(params: RowDropZoneParams): void {
         const { target, dropAtIndex, onDragEnter, onDragging, onDragLeave, onDragStop } = params;
         let rowDragFeature: RowDragFeature;
 

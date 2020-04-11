@@ -61,8 +61,8 @@ export abstract class RowNodeCache<T extends IRowNodeBlock, P extends RowNodeCac
     }
 
     public destroy(): void {
-        super.destroy();
         this.forEachBlockInOrder(block => this.destroyBlock(block));
+        super.destroy();
     }
 
     @PostConstruct

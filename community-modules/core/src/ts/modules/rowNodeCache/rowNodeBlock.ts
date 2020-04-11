@@ -235,7 +235,6 @@ export abstract class RowNodeBlock extends BeanStub implements IRowNodeBlock {
     }
 
     public destroy(): void {
-        super.destroy();
         this.rowNodes.forEach(rowNode => {
             if (rowNode.childrenCache) {
                 rowNode.childrenCache.destroy();
@@ -246,6 +245,8 @@ export abstract class RowNodeBlock extends BeanStub implements IRowNodeBlock {
             // rowNode should have a flag on whether it is visible???
             rowNode.clearRowTop();
         });
+
+        super.destroy();
     }
 
     protected pageLoaded(version: number, rows: any[], lastRow: number) {

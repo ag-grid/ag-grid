@@ -1380,8 +1380,6 @@ export class RowComp extends Component {
     }
 
     public destroy(animate = false): void {
-        super.destroy();
-
         this.active = false;
 
         // why do we have this method? shouldn't everything below be added as a destroy func beside
@@ -1405,6 +1403,7 @@ export class RowComp extends Component {
 
         this.dispatchEvent(event);
         this.beans.eventService.dispatchEvent(event);
+        super.destroy();
     }
 
     private destroyContainingCells(): void {

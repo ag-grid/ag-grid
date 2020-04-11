@@ -266,9 +266,7 @@ export class Context {
 
     public destroy(): void {
         // should only be able to destroy once
-        if (this.destroyed) {
-            return;
-        }
+        if (this.destroyed) { return; }
         this.logger.log(">> Shutting down ag-Application Context");
 
         const beanInstances = this.getBeanInstances();

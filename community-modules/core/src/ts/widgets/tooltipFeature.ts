@@ -80,10 +80,10 @@ export class TooltipFeature extends BeanStub {
     }
 
     public destroy(): void {
-        super.destroy();
         // if this component gets destroyed while tooltip is showing, need to make sure
         // we don't end with no mouseLeave event resulting in zombie tooltip
         this.setToDoNothing();
+        super.destroy();
     }
 
     public onMouseEnter(e: MouseEvent): void {

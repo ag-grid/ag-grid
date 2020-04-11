@@ -1610,8 +1610,6 @@ export class CellComp extends Component implements TooltipParentComp {
     // if the row is going (removing is an expensive operation, so only need to remove
     // the top part)
     public destroy(): void {
-        super.destroy();
-
         if (this.createCellRendererFunc) {
             this.beans.taskQueue.cancelTask(this.createCellRendererFunc);
         }
@@ -1626,6 +1624,8 @@ export class CellComp extends Component implements TooltipParentComp {
         if (this.selectionHandle) {
             this.selectionHandle.destroy();
         }
+
+        super.destroy();
     }
 
     public onLeftChanged(): void {

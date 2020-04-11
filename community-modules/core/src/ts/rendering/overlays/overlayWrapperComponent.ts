@@ -106,7 +106,7 @@ export class OverlayWrapperComponent extends Component {
     }
 
     public destroy(): void {
-        super.destroy();
         this.destroyActiveOverlay();
+        super.destroy();
     }
 }

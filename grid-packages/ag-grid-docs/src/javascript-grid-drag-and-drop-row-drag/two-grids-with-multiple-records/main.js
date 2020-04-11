@@ -86,7 +86,7 @@ var rightGridOptions = {
     rowDragManaged: true,
     suppressMoveWhenRowDragging: true,
     columnDefs: rightColumnDefs,
-    animateRows: true    
+    animateRows: true
 };
 
 function addGridDropZone(params) {
@@ -113,8 +113,8 @@ function addGridDropZone(params) {
 
 function loadGrid(options, side, data) {
     var grid = document.querySelector('#e' + side + 'Grid');
-    
-    if (options.api) {
+
+    if (options && options.api) {
         options.api.destroy();
     }
 

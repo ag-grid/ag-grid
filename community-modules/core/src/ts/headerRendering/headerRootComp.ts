@@ -97,8 +97,8 @@ export class HeaderRootComp extends Component {
     }
 
     public destroy(): void {
-        super.destroy();
         this.childContainers.forEach(container => container.destroy());
+        super.destroy();
     }
 
     public refreshHeader() {

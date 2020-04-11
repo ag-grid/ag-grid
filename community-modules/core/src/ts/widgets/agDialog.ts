@@ -299,7 +299,6 @@ export class AgDialog extends AgPanel {
     }
 
     public destroy(): void {
-        super.destroy();
         this.setResizable(false);
         this.setMovable(false);
 
@@ -309,6 +308,7 @@ export class AgDialog extends AgPanel {
         }
 
         this.clearMaximizebleListeners();
+        super.destroy();
     }
 
     public setResizable(resizable: boolean | ResizableStructure) {

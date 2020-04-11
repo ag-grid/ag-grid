@@ -14,54 +14,53 @@ var rightColumnDefs = [
     { field: "value2" }
 ];
 
-var gridOptions = {
-    Left: {
-        defaultColDef: {
-            flex: 1,
-            minWidth: 100,
-            sortable: true,
-            filter: true,
-            resizable: true
-        },
-        rowClassRules: {
-            "red-row": 'data.color == "Red"',
-            "green-row": 'data.color == "Green"',
-            "blue-row": 'data.color == "Blue"',
-        },
-        getRowNodeId: function(data) { return data.id },
-        rowData: createLeftRowData(),
-        rowDragManaged: true,
-        suppressMoveWhenRowDragging: true,
-        columnDefs: leftColumnDefs,
-        animateRows: true,
-        onGridReady: function(params) {
-            addBinZone(params);
-            addGridDropZone(params, 'Right');
-        }
+var leftGridOptions = {
+    defaultColDef: {
+        flex: 1,
+        minWidth: 100,
+        sortable: true,
+        filter: true,
+        resizable: true
     },
-    Right: {
-        defaultColDef: {
-            flex: 1,
-            minWidth: 100,
-            sortable: true,
-            filter: true,
-            resizable: true
-        },
-        rowClassRules: {
-            "red-row": 'data.color == "Red"',
-            "green-row": 'data.color == "Green"',
-            "blue-row": 'data.color == "Blue"',
-        },
-        getRowNodeId: function(data) {return data.id },
-        rowData: [],
-        rowDragManaged: true,
-        suppressMoveWhenRowDragging: true,
-        columnDefs: rightColumnDefs,
-        animateRows: true,
-        onGridReady: function(params) {
-            addBinZone(params);
-            addGridDropZone(params, 'Left');
-        }
+    rowClassRules: {
+        "red-row": 'data.color == "Red"',
+        "green-row": 'data.color == "Green"',
+        "blue-row": 'data.color == "Blue"',
+    },
+    getRowNodeId: function(data) { return data.id },
+    rowData: createLeftRowData(),
+    rowDragManaged: true,
+    suppressMoveWhenRowDragging: true,
+    columnDefs: leftColumnDefs,
+    animateRows: true,
+    onGridReady: function(params) {
+        addBinZone(params);
+        addGridDropZone(params, 'Right');
+    }
+};
+
+var rightGridOptions = {
+    defaultColDef: {
+        flex: 1,
+        minWidth: 100,
+        sortable: true,
+        filter: true,
+        resizable: true
+    },
+    rowClassRules: {
+        "red-row": 'data.color == "Red"',
+        "green-row": 'data.color == "Green"',
+        "blue-row": 'data.color == "Blue"',
+    },
+    getRowNodeId: function(data) {return data.id },
+    rowData: [],
+    rowDragManaged: true,
+    suppressMoveWhenRowDragging: true,
+    columnDefs: rightColumnDefs,
+    animateRows: true,
+    onGridReady: function(params) {
+        addBinZone(params);
+        addGridDropZone(params, 'Left');
     }
 };
 
@@ -113,7 +112,7 @@ function addRecordToGrid(side, data) {
     // if data missing or data has no it, do nothing
     if (!data || data.id == null) { return; }
 
-    var api = side == 'left' ? gridOptions.Left.api : gridOptions.Right.api,
+    var api = side == 'left' ? leftGridOptions.api : rightGridOptions.api,
         // do nothing if row is already in the grid, otherwise we would have duplicates
         rowAlreadyInGrid = !!api.getRowNode(data.id),
         transaction;
@@ -138,7 +137,7 @@ function binDrop(data) {
         remove: [data]
     };
 
-    [gridOptions.Left, gridOptions.Right].forEach(function(option) {
+    [leftGridOptions, rightGridOptions].forEach(function(option) {
         rowsInGrid = !!option.api.getRowNode(data.id);
 
         if (rowsInGrid) {
@@ -179,7 +178,7 @@ function addGridDropZone(params, side) {
 
 function loadGrid(side) {
     var grid = document.querySelector('#e' + side + 'Grid');
-    new agGrid.Grid(grid, gridOptions[side]);
+    new agGrid.Grid(grid, side === 'Left' ? leftGridOptions : rightGridOptions);
 }
 
 // setup the grid after the page has finished loading

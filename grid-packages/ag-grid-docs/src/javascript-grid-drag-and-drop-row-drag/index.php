@@ -21,9 +21,52 @@ include '../documentation-main/documentation_header.php';
     <h2>Add a row drop target</h2>
 
     <p>
-        To allow dragging from the grid onto an element, call the <code>addDropTarget</code> from the grid API.
+        To allow dragging from the grid onto an element, call the <code>addRowDropZone</code> from the grid API.
         This will result in making the passed element a valid target when moving rows around.
     </p>
+
+    <snippet>
+// function for valueGetter
+function addRowDropZone(params: RowDropZoneParams) =&gt; void;
+
+// interface for params
+interface RowDropZoneParams {
+    // The target element or GridInstance that will be considered a valid element to drop rows
+    // Note: GridInstance only works in combination with `dropAtIndex = true`.
+    target: HTMLElement | GridInstance;
+    // Set this option to true to allow managed row dragging to drop rows at an specific index
+    // Note: This option requires the target to be a GridInstance
+    dropAtIndex?: boolean;
+    // callback function that will be executed when the rowDrag enters the target
+    onDragEnter?: (params: DraggingEvent) => void;
+    // callback function that will be executed when the rowDrag leaves the target
+    onDragLeave?: (params: DraggingEvent) => void;
+    // callback function that will be executed when the rowDrag is dragged inside the target
+    // note: this gets called multiple times
+    onDragging?: (params: DraggingEvent) => void;
+    // callback function that will be executed when the rowDrag drops rows within the target
+    onDragStop?: (params: DraggingEvent) => void;
+}
+
+interface GridInstance {
+    api: GridApi;
+    columnApi: ColumnApi;
+}
+
+// example usage: 
+new agGrid.Grid(gridElement, gridOptions);
+new agGrid.Grid(gridElement2, gridOptions2);
+
+gridOptions.api.addRowDropZone({
+    // after calling new agGrid.Grid(element, gridOptions), the gridOptions object will 
+    // contain the `api` and `columnApi`, so it is considered a valid GridInstance.
+    target: gridOptions2, 
+    dropAtIndex: true,
+    onDragStop: function(params) {
+        alert(params.dragItem.rowNodes.length + ' item(s) dropped');
+    }
+});
+    </snippet>
 
     <p>
         In the example below, note the following:
@@ -51,9 +94,14 @@ include '../documentation-main/documentation_header.php';
     <h2>Dragging between grids</h2>
 
     <p>
-        It is possible to drag rows between two instances of ag-Grid. The drag is done exactly like the simple
+        It is possible to drag rows between instances of the Grid. The drag is done exactly like the simple
         case described above. The drop is done by the example.
     </p>
+
+    <note>
+        When using Drag & Drop between two grids, and <code>dropAtIndex=false</code>, the Drag Manager will understand that you want to handle
+        where to position the records yourself. So in this case set the target to be the grid HTMLElement, not the GridInstance.
+    </note>
 
     <p>
         In the example below, note the following:
@@ -79,9 +127,14 @@ include '../documentation-main/documentation_header.php';
     <?= grid_example('Two Grids', 'two-grids', 'vanilla', ['extras' => ['fontawesome']]) ?>
 
     <h2>Dragging between grids and dropping at an index</h2>
+
     <p>
         It is possible to drag records between grids and let the grid handle where the new records will fall.
     </p>
+
+    <note>
+        When using `dropAtIndex = true`, the target grid needs to be configured with `suppressMoveWhenRowDragging = true`.
+    </note>
 
     <?= grid_example('Two Grids with Drop Position', 'two-grids-with-drop-position', 'vanilla', ['extras' => ['fontawesome']]) ?>
 

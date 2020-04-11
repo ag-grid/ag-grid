@@ -228,8 +228,8 @@ export class AgAngleSelect extends AgAbstractLabel {
         return this;
     }
 
-    destroy() {
-        super.destroy();
+    public destroy(): void {
         this.dragService.removeDragSource(this.dragListener);
+        super.destroy();
     }
 }

@@ -106,8 +106,8 @@ colDef = {
     <h3>Suppress Move When Dragging</h3>
 
     <p>
-        By default, managed row dragging moves the rows while you are draggging them. This effect might not be desired due to application design.
-        To prevent this default behaviour, set <code>suppressMoveWhenRowDragging</code> to true in the gridOptions.
+        By default, the managed row dragging moves the rows while you are dragging them. This effect might not be desired due to your application
+        design. To prevent this default behaviour, set <code>suppressMoveWhenRowDragging</code> to true in the gridOptions.
     </p>
 
     <?= grid_example('Row Drag with SupressMoveWhenRowDragging', 'managed-suppress-move-when-dragging', 'generated') ?>
