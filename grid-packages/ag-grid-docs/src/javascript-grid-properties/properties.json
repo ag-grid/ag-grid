@@ -517,7 +517,7 @@
             "description": "How many rows for each block in the cache, i.e. how many rows returned from the server at a time."
         },
         "maxBlocksInCache": {
-            "description": "How many blocks to cache in the client. Default is no limit, so every requested block is kept. Use this if you have memory concerns, and block that were least recently viewed will be purged when the limit is hit. If used, make sure you have enough blocks in the cache to display one whole view of the table (i.e. what's within the scrollable area), otherwise it won't work and an infinite loop of requesting blocks will happen."
+            "description": "How many blocks to cache in the client. Default is no limit, so every requested block is kept. Use this if you have memory concerns, and block that were least recently viewed will be purged when the limit is hit. The grid will additionally make sure it has all the blocks needed to display what is currently visible - in case this property is set to low."
         },
         "cacheOverflowSize": {
             "default": 1,
