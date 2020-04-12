@@ -7,10 +7,10 @@ var gridOptions = {
     ],
     columnDefs: [
         {field: 'col1'},
-        {field: 'col2', filterParams: {suppressSyncValuesAfterDataChange: true}},
-        {field: 'col3', filterParams: {suppressSyncValuesAfterDataChange: true}},
-        {field: 'col4', filterParams: {suppressSyncValuesAfterDataChange: true}},
-        {field: 'col5', filterParams: {suppressSyncValuesAfterDataChange: true}}
+        {field: 'col2', filterParams: {suppressSyncValuesAfterDataChange: true, suppressRemoveEntries: true, newRowsAction: 'keep'}},
+        {field: 'col3', filterParams: {suppressSyncValuesAfterDataChange: true, suppressRemoveEntries: true, newRowsAction: 'keep'}},
+        {field: 'col4', filterParams: {suppressSyncValuesAfterDataChange: true, suppressRemoveEntries: true, newRowsAction: 'keep'}},
+        {field: 'col5', filterParams: {suppressSyncValuesAfterDataChange: true, suppressRemoveEntries: true, newRowsAction: 'keep'}}
     ],
     defaultColDef: {
         flex: 1,
@@ -22,15 +22,19 @@ var gridOptions = {
     sideBar: {
         toolPanels: ['filters']
     },
+    sideBar: ['filters'],
     onCellValueChanged: onCellValueChanged,
     onGridReady: function(params) {
         // initialise all the filters - as this example demonstrates
         // changing data AFTER the filter is initialised
-        params.api.getFilterInstance('col1');
-        params.api.getFilterInstance('col2');
-        params.api.getFilterInstance('col3');
-        params.api.getFilterInstance('col4');
-        params.api.getFilterInstance('col5');
+        // params.api.getFilterInstance('col1');
+        // params.api.getFilterInstance('col2');
+        // params.api.getFilterInstance('col3');
+        // params.api.getFilterInstance('col4');
+        // params.api.getFilterInstance('col5');
+
+        params.api.getToolPanelInstance('filters').expandFilters(['col3']);
+
     }
 };
 

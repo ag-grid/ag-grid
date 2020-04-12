@@ -291,7 +291,7 @@ export class SetFilter extends ProvidedFilter {
     public onNewRowsLoaded(): void {
         const valuesType = this.valueModel.getValuesType();
         const valuesTypeProvided =
-            valuesType === SetFilterModelValuesType.PROVIDED_CB ||
+            valuesType === SetFilterModelValuesType.PROVIDED_CALLBACK ||
             valuesType === SetFilterModelValuesType.PROVIDED_LIST;
 
         // if the user is providing values, and we are keeping the previous selection, then
@@ -337,7 +337,7 @@ export class SetFilter extends ProvidedFilter {
      * @param options The options to use.
      */
     public resetFilterValues(): void {
-        this.valueModel.setValuesType(SetFilterModelValuesType.NOT_PROVIDED);
+        this.valueModel.setValuesType(SetFilterModelValuesType.TAKEN_FROM_GRID_VALUES);
         this.onNewRowsLoaded();
     }
 

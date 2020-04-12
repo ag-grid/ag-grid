@@ -19,7 +19,7 @@ import {
 } from '@ag-grid-community/core';
 
 export enum SetFilterModelValuesType {
-    PROVIDED_LIST, PROVIDED_CB, NOT_PROVIDED
+    PROVIDED_LIST, PROVIDED_CALLBACK, TAKEN_FROM_GRID_VALUES
 }
 
 export class SetValueModel implements IEventEmitter {
@@ -84,12 +84,13 @@ export class SetValueModel implements IEventEmitter {
         if (this.filterParams != null && this.filterParams.values != null) {
             this.valuesType = Array.isArray(this.filterParams.values) ?
                 SetFilterModelValuesType.PROVIDED_LIST :
-                SetFilterModelValuesType.PROVIDED_CB;
+                SetFilterModelValuesType.PROVIDED_CALLBACK;
 
-            this.showingAvailableOnly = !this.filterParams.suppressRemoveEntries;
+            // removing available values only make sense when 'TAKEN_FROM_GRID_VALUES'
+            this.showingAvailableOnly = false;
         } else {
-            this.valuesType = SetFilterModelValuesType.NOT_PROVIDED;
-            this.showingAvailableOnly = true;
+            this.valuesType = SetFilterModelValuesType.TAKEN_FROM_GRID_VALUES;
+            this.showingAvailableOnly = !this.filterParams.suppressRemoveEntries;
         }
 
         this.updateAllValues();
@@ -181,7 +182,7 @@ export class SetValueModel implements IEventEmitter {
 
     private areValuesSync(): boolean {
         return this.valuesType === SetFilterModelValuesType.PROVIDED_LIST ||
-            this.valuesType === SetFilterModelValuesType.NOT_PROVIDED;
+            this.valuesType === SetFilterModelValuesType.TAKEN_FROM_GRID_VALUES;
     }
 
     public setValuesType(value: SetFilterModelValuesType) {
@@ -204,7 +205,7 @@ export class SetValueModel implements IEventEmitter {
                 // In this case the values are async but have already been resolved, so we can reuse them
                 return this.allValues;
             }
-        } else if (this.valuesType == SetFilterModelValuesType.PROVIDED_CB) {
+        } else if (this.valuesType == SetFilterModelValuesType.PROVIDED_CALLBACK) {
             throw Error(`ag-grid: Error extracting values to use. We should not extract the values synchronously when using a callback for the filterParams.values`);
         } else {
             return this.getUniqueValues(false);
@@ -218,7 +219,7 @@ export class SetValueModel implements IEventEmitter {
     private updateFilteredValues(): void {
         const shouldNotCheckAvailableValues = !this.showingAvailableOnly ||
             this.valuesType == SetFilterModelValuesType.PROVIDED_LIST ||
-            this.valuesType == SetFilterModelValuesType.PROVIDED_CB;
+            this.valuesType == SetFilterModelValuesType.PROVIDED_CALLBACK;
 
         const filteredValues = shouldNotCheckAvailableValues ?
             this.allValues :
