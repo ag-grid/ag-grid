@@ -280,8 +280,16 @@ interface RowNodeTransaction {
 </p>
 
 <note>
-    For adding and removing rows using a transaction, the grid will match rows based on
-    ID's if you are providing your own rowNode ID's. Otherwise it will use object references.
+    <p>
+        For adding and removing rows using a transaction, the grid will match rows based on
+        ID's if you are providing your own rowNode ID's. Otherwise it will use object references.
+    </p>
+
+    <p>
+        If using Id's, you must also observe the rules of primary keys which are: 1) ID's must be
+        unique and 2) ID's must not change. If the attribute you are intending to use is not unique
+        or can change, then you should not use that attribute as an ID.
+    </p>
 </note>
 
 <h3>Supported Row Models</h3>
@@ -391,9 +399,8 @@ interface RowNodeTransaction {
 
     <p>
         For the deltaRowDataMode to work, you must be providing ID's for the row nodes by
-        implementing the <code>getRowNodeId()</code> callback. You must also observe the rules
-        of primary keys which are 1) ID's must be unique and 2) ID's must not change. If the
-        attribute you are intending to use is not unique or can change, then you cannot use that attribute
+        implementing the <code>getRowNodeId()</code> callback. Remember ID's must be unique
+        and must not change.
     </p>
 
     <p>
