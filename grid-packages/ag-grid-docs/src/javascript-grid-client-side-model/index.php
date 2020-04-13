@@ -6,30 +6,33 @@ $pageGroup = "row_models";
 include '../documentation-main/documentation_header.php';
 ?>
 
-    <h1>Client-side Row Model</h1>
+    <h1>Client-side Data</h1>
 
-    <p>
-        The simplest row model to use is the Client-side Row Model. This row model takes
-        all of the data to be displayed and provides the following features inside the grid:
-</p>
-        <ul class="content">
-            <li>Filtering</li>
-            <li>Sorting</li>
-            <li>Grouping*</li>
-            <li>Aggregation*</li>
-            <li>Pivoting*</li>
-        </ul>
-
-    <note>* Grouping, Aggregation and Pivoting are available in ag-Grid Enterprise only.</note>
-
-    <p>
-        The Client-side Row Model is the default row model for ag-Grid and used in all the examples
-        (unless the example is explicitly demonstrating another row model). As such, the usage
-        of the in Client-side Row Model is not explained in detail here. Please refer to the main
-        parts of the grid documentation in how the features work with the Client-side Row Model.
+    <p class="lead">
+        By default the grid expects you to give it all the data up front. In other words, your application
+        loads the full set of data and into the client and then pass it in it's entirety to the grid.
+        This is in contrast to <a href="../javascript-grid-row-models/">Server-side Data</a> where the data
+        is mostly kept on the server-side and loaded into the grid in parts.
     </p>
 
-    <h2>How It Works</h2>
+    <h2>Row Models</h2>
+
+    <p>
+        The grid has different Row Models depending on whether you want to use Client-side or Server-side
+        data. There is only one Client-side row model and it's aptly name the "Client-side Row Model".
+        You don't need to configure the grid to use the Client-side Row Model as it's used by default.
+        Check <a href="../javascript-grid-row-models/">Server-side Data</a> for what other row models
+        can be set and how to use them.
+    </p>
+
+    <h2>Client-side Row-Model</h2>
+
+    <p>
+        Once the grid has all of the data, it can then do many operations on it for you such as filtering,
+        sorting and grouping.
+    </p>
+
+    <h2>Deep Dive (advanced section)</h2>
 
     <p>
         You do not need to know how the Client-side Row Model works, however it can be helpful
@@ -41,11 +44,7 @@ include '../documentation-main/documentation_header.php';
         It has a complex data structure, representing the data in different states. The states are as follows:
     </p>
 
-    <p>
-        The following is an example to help explain each of these steps.
-    </p>
-
-    <h3>State 1: Row Data</h3>
+    <h4>State 1: Row Data</h4>
 
     <p>
         The data as provided by the application. The grid never modifies this array. It just takes the rowData
@@ -59,7 +58,7 @@ include '../documentation-main/documentation_header.php';
 
     <p><b>API:</b> There is no API to get this data. However it was provided by the application so you should already have it.</p>
 
-    <h3>State 2: All Rows</h3>
+    <h4>State 2: All Rows</h4>
 
     <p>
         <code>allRows</code> is similar to <code>rowData</code> except a new array is created which contains row nodes, each row node
@@ -73,7 +72,7 @@ include '../documentation-main/documentation_header.php';
 
     <p><b>API:</b> There is no API to get this data. However there is no benefit over the rowsAfterGroup data.</p>
 
-    <h3>State 3: Rows After Group</h3>
+    <h4>State 3: Rows After Group</h4>
 
     <p>
         rowsAfterGroup takes the allRows, and if grouping, groups the data. If no grouping is done, then
@@ -87,7 +86,7 @@ include '../documentation-main/documentation_header.php';
 
     <p><b>API:</b> Use <code>api.forEachNode()</code> to access this structure.</p>
 
-    <h3>State 4: Rows After Filter</h3>
+    <h4>State 4: Rows After Filter</h4>
 
     <p>
         <code>rowsAfterFilter</code> goes through <code>rowsAfterGroup</code> and filters the data. The example shows filtering
@@ -101,7 +100,7 @@ include '../documentation-main/documentation_header.php';
 
     <p><b>API:</b> Use <code>api.forEachNodeAfterFilter()</code> to access this structure.</p>
 
-    <h3>State 5: Rows After Sort</h3>
+    <h4>State 5: Rows After Sort</h4>
 
     <p>
         <code>rowsAfterSort</code> goes through <code>rowsAfterFilter</code> and sorts the data. The example shows sorting on
@@ -115,7 +114,7 @@ include '../documentation-main/documentation_header.php';
 
     <p><b>API:</b> Use <code>api.forEachNodeAfterFilterAndSort()</code> to access this structure.</p>
 
-    <h3>State 6: Rows After Map</h3>
+    <h4>State 6: Rows After Map</h4>
 
     <p>
         <code>rowsAfterMap</code> maps the data to what should be drawn inside the grid, taking into account

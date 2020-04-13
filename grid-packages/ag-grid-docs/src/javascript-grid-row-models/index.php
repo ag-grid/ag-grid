@@ -17,17 +17,17 @@ include '../documentation-main/documentation_header.php';
     </style>
 
     <h1>
-        Server Side Data
+        Row Models
     </h1>
     <p class="lead">
-        Depending on your needs, the grid can be configured with different row models. The row models
-        differ in how the data is loaded. You can load all the data and hand it
-        over to the grid (Client-side Row Model) or you can keep most of the data on the server
-        and lazy-load based on what is currently visible to the user (Infinite,
-        Viewport and Server-side Row Models).
+        The grid can be configured with different strategies for loading row data into the grid.
+        The different strategies are encapsulated into Row Models. Changing what Row Model the grid
+        is using means changing the strategy the grid is using for loading rows.
     </p>
     <p>
-        The following is a summary of the different row models:
+        The grid comes with four row models called 1) Client-side 2) Server-side 3) Infinite and 4) Viewport Row Model.
+        The Client-side Row Model deals with client-side data. The Server-side, Infinite and Viewport
+        Row Models deal with server-side data. The following is a summary of each:
     </p>
 
     <ul>

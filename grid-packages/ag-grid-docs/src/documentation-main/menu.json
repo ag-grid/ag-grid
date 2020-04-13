@@ -397,131 +397,13 @@
         ]
       },
       {
-        "title": "Data",
+        "title": "Client-side Data",
         "icon": "icon-data",
         "items": [
           {
-            "title": "Client Side Data",
+            "title": "Overview",
             "url": "javascript-grid-client-side-model/",
             "showInCollapsed": true
-          },
-          {
-            "title": "Server Side Data",
-            "url": "javascript-grid-row-models/",
-            "showInCollapsed": true,
-            "items": [
-              {
-                "title": "Server Side Row Model",
-                "url": "javascript-grid-server-side-model/",
-                "showInCollapsed": true,
-                "enterprise": true,
-                "matrixExcludeChildren": true,
-                "items": [
-                  {
-                    "title": "Datasource",
-                    "url": "javascript-grid-server-side-model-datasource/",
-                    "enterprise": true
-                  },
-                  {
-                    "title": "Configuration",
-                    "url": "javascript-grid-server-side-model-configuration/",
-                    "enterprise": true
-                  },
-                  {
-                    "title": "Sorting",
-                    "url": "javascript-grid-server-side-model-sorting/",
-                    "enterprise": true
-                  },
-                  {
-                    "title": "Filtering",
-                    "url": "javascript-grid-server-side-model-filtering/",
-                    "enterprise": true
-                  },
-                  {
-                    "title": "Row Grouping",
-                    "url": "javascript-grid-server-side-model-grouping/",
-                    "enterprise": true
-                  },
-                  {
-                    "title": "Pivoting",
-                    "url": "javascript-grid-server-side-model-pivoting/",
-                    "enterprise": true
-                  },
-                  {
-                    "title": "Pagination",
-                    "url": "javascript-grid-server-side-model-pagination/",
-                    "enterprise": true
-                  },
-                  {
-                    "title": "Row Selection",
-                    "url": "javascript-grid-server-side-model-selection/",
-                    "enterprise": true
-                  },
-                  {
-                    "title": "Row Height",
-                    "url": "javascript-grid-server-side-model-row-height/",
-                    "enterprise": true
-                  },
-                  {
-                    "title": "Master Detail",
-                    "url": "javascript-grid-server-side-model-master-detail/",
-                    "enterprise": true
-                  },
-                  {
-                    "title": "Tree Data",
-                    "url": "javascript-grid-server-side-model-tree-data/",
-                    "enterprise": true
-                  },
-                  {
-                    "title": "Changing Columns",
-                    "url": "javascript-grid-server-side-model-changing-columns/",
-                    "enterprise": true
-                  },
-                  {
-                    "title": "CRUD",
-                    "url": "javascript-grid-server-side-model-crud/",
-                    "enterprise": true
-                  },
-                  {
-                    "title": "See Also",
-                    "url": "",
-                    "items": [
-                      {
-                        "title": "Using Node.js & MySQL",
-                        "url": "nodejs-server-side-operations/",
-                        "enterprise": true
-                      },
-                      {
-                        "title": "Using GraphQL & MySQL",
-                        "url": "graphql-server-side-operations/",
-                        "enterprise": true
-                      },
-                      {
-                        "title": "Using Java & Oracle",
-                        "url": "oracle-server-side-operations/",
-                        "enterprise": true
-                      },
-                      {
-                        "title": "Using Java & Apache Apache Spark",
-                        "url": "spark-server-side-operations/",
-                        "enterprise": true
-                      }
-                    ]
-                  }
-                ]
-              },
-              {
-                "title": "Infinite Row Model",
-                "url": "javascript-grid-infinite-scrolling/",
-                "showInCollapsed": true
-              },
-              {
-                "title": "Viewport Row Model",
-                "url": "javascript-grid-viewport/",
-                "enterprise": true,
-                "showInCollapsed": true
-              }
-            ]
           },
           {
             "title": "Accessing Data",
@@ -547,6 +429,128 @@
                 "url": "javascript-grid-rxjs/"
               }
             ]
+          }
+        ]
+      },
+      {
+        "title": "Server-side Data",
+        "icon": "icon-data",
+        "items": [
+          {
+            "title": "Row Models",
+            "url": "javascript-grid-row-models/",
+            "showInCollapsed": true
+          },
+          {
+            "title": "Server-side Row Model",
+            "url": "javascript-grid-server-side-model/",
+            "showInCollapsed": true,
+            "enterprise": true,
+            "matrixExcludeChildren": true,
+            "items": [
+              {
+                "title": "Datasource",
+                "url": "javascript-grid-server-side-model-datasource/",
+                "enterprise": true
+              },
+              {
+                "title": "Configuration",
+                "url": "javascript-grid-server-side-model-configuration/",
+                "enterprise": true
+              },
+              {
+                "title": "Sorting",
+                "url": "javascript-grid-server-side-model-sorting/",
+                "enterprise": true
+              },
+              {
+                "title": "Filtering",
+                "url": "javascript-grid-server-side-model-filtering/",
+                "enterprise": true
+              },
+              {
+                "title": "Row Grouping",
+                "url": "javascript-grid-server-side-model-grouping/",
+                "enterprise": true
+              },
+              {
+                "title": "Pivoting",
+                "url": "javascript-grid-server-side-model-pivoting/",
+                "enterprise": true
+              },
+              {
+                "title": "Pagination",
+                "url": "javascript-grid-server-side-model-pagination/",
+                "enterprise": true
+              },
+              {
+                "title": "Row Selection",
+                "url": "javascript-grid-server-side-model-selection/",
+                "enterprise": true
+              },
+              {
+                "title": "Row Height",
+                "url": "javascript-grid-server-side-model-row-height/",
+                "enterprise": true
+              },
+              {
+                "title": "Master Detail",
+                "url": "javascript-grid-server-side-model-master-detail/",
+                "enterprise": true
+              },
+              {
+                "title": "Tree Data",
+                "url": "javascript-grid-server-side-model-tree-data/",
+                "enterprise": true
+              },
+              {
+                "title": "Changing Columns",
+                "url": "javascript-grid-server-side-model-changing-columns/",
+                "enterprise": true
+              },
+              {
+                "title": "CRUD",
+                "url": "javascript-grid-server-side-model-crud/",
+                "enterprise": true
+              },
+              {
+                "title": "See Also",
+                "url": "",
+                "items": [
+                  {
+                    "title": "Using Node.js & MySQL",
+                    "url": "nodejs-server-side-operations/",
+                    "enterprise": true
+                  },
+                  {
+                    "title": "Using GraphQL & MySQL",
+                    "url": "graphql-server-side-operations/",
+                    "enterprise": true
+                  },
+                  {
+                    "title": "Using Java & Oracle",
+                    "url": "oracle-server-side-operations/",
+                    "enterprise": true
+                  },
+                  {
+                    "title": "Using Java & Apache Spark",
+                    "url": "spark-server-side-operations/",
+                    "enterprise": true
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "title": "Infinite Row Model",
+            "url": "javascript-grid-infinite-scrolling/",
+            "showInCollapsed": true
+          },
+          {
+            "title": "Viewport Row Model",
+            "url": "javascript-grid-viewport/",
+            "enterprise": true,
+            "showInCollapsed": true
           }
         ]
       },
