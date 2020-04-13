@@ -391,7 +391,9 @@ interface RowNodeTransaction {
 
     <p>
         For the deltaRowDataMode to work, you must be providing ID's for the row nodes by
-        implementing the <code>getRowNodeId()</code> callback.
+        implementing the <code>getRowNodeId()</code> callback. You must also observe the rules
+        of primary keys which are 1) ID's must be unique and 2) ID's must not change. If the
+        attribute you are intending to use is not unique or can change, then you cannot use that attribute
     </p>
 
     <p>
