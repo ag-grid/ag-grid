@@ -286,7 +286,7 @@ interface RowNodeTransaction {
     </p>
 
     <p>
-        If using Id's, you must also observe the rules of primary keys which are: 1) ID's must be
+        If using ID's, you must also observe the rules of primary keys which are: 1) ID's must be
         unique and 2) ID's must not change. If the attribute you are intending to use is not unique
         or can change, then you should not use that attribute as an ID.
     </p>
