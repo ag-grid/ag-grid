@@ -285,6 +285,20 @@
             "description": "If after getting the model, you expand or collapse a group, call this method to inform the grid. It will work out the final set of 'to be displayed' rows again (i.e. expand or collapse the group visually)."
         }
     },
+    "rowDrag": {
+        "meta": {
+            "displayName": "Row Drag"
+        },
+        "setSuppressRowDrag(value)": {
+            "description": "Sets the <code>suppressRowDrag</code> property."
+        },
+        "addRowDropZone(params)": {
+            "description": "Adds a DropZone outside of the Grid where rows can be dropped."
+        },
+        "removeRowDropZone(target)": {
+            "description": "Removes an external DropZone added by addRowDropZone"
+        }
+    },
     "rendering": {
         "meta": {
             "displayName": "Rendering"
@@ -504,9 +518,6 @@
         },
         "hidePopupMenu()": {
             "description": "Hides any showing <a href='../javascript-grid-context-menu'>context menu</a> or <a href='../javascript-grid-column-menu'>column menu</a>."
-        },
-        "setSuppressRowDrag(value)": {
-            "description": "Sets the <code>suppressRowDrag</code> property."
         },
         "setEnableCellTextSelection()": {
             "description": "Sets the <code>enableCellTextSelection</code> property."

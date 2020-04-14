@@ -902,6 +902,15 @@ export class GridApi {
     }
 
     public removeRowDropZone(target: HTMLElement | GridInstance): void {
+        const apiTarget = target as GridInstance;
+
+        if (apiTarget.api) {
+            const rowDragFeature = apiTarget.api.gridPanel.getRowDragFeature();
+            if (rowDragFeature) {
+                target = rowDragFeature.getContainer();
+            }
+        }
+
         const activeDropTarget = this.dragAndDropService.findExternalZoneWithTarget(target);
 
         if (activeDropTarget) {

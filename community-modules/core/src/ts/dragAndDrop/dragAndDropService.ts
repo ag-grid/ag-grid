@@ -308,7 +308,9 @@ export class DragAndDropService {
     }
 
     public findExternalZoneWithTarget(target: HTMLElement | GridInstance): DropTarget {
-        return _.find(this.dropTargets.filter(target => target.external), zone => zone.getContainer() === target);
+        const externalTargets = this.dropTargets.filter(target => target.external);
+
+        return _.find(externalTargets, zone => zone.getContainer() === target);
     }
 
     public getHorizontalDirection(event: MouseEvent): HorizontalDirection {
