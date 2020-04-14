@@ -137,7 +137,7 @@ export class ScatterSeries extends CartesianSeries {
         this.nodeSelection.exit.remove();
         this.update();
 
-        this.fireEvent({type: 'legendChange'});
+        this.fireEvent({ type: 'legendChange' });
     }
 
     processData(): boolean {

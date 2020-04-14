@@ -53,10 +53,10 @@ interface HistogramNodeDatum extends SeriesNodeDatum {
     }
 }
 
-export type aggregations = 'count' | 'sum' | 'mean';
-type aggregationFunction = (bin: HistogramBin, yKey: string) => number;
+type AggregationName = 'count' | 'sum' | 'mean';
+type AggregationFunction = (bin: HistogramBin, yKey: string) => number;
 
-const aggregationFunctions: {[key in aggregations]: aggregationFunction} = {
+const aggregationFunctions: { [key in AggregationName]: AggregationFunction } = {
     count: bin => bin.data.length,
     sum: (bin, yKey) => bin.data.reduce((acc, datum) => acc + datum[yKey], 0),
     mean: (bin, yKey) => aggregationFunctions.sum(bin, yKey) / aggregationFunctions.count(bin, yKey)
@@ -74,7 +74,7 @@ export class HistogramBin {
 
     addDatum(datum: any) {
         this.data.push(datum);
-        this.frequency ++;
+        this.frequency++;
     };
 
     get domainWidth(): number {
@@ -86,7 +86,7 @@ export class HistogramBin {
         return this.aggregatedValue / this.domainWidth;
     };
 
-    calculateAggregatedValue(aggregationName: aggregations, yKey: string) {
+    calculateAggregatedValue(aggregationName: AggregationName, yKey: string) {
         if (!yKey) {
             // not having a yKey forces us into a frequency plot
             aggregationName = 'count';
@@ -147,7 +147,7 @@ export class HistogramSeries extends CartesianSeries {
 
     getKeys(direction: ChartAxisDirection): string[] {
         const { directionKeys } = this;
-        const keys = directionKeys && directionKeys[ direction ];
+        const keys = directionKeys && directionKeys[direction];
         const values: string[] = [];
 
         if (keys) {
@@ -198,13 +198,13 @@ export class HistogramSeries extends CartesianSeries {
         return this._bins;
     }
 
-    private _aggregation: aggregations;
-    set aggregation(aggregation: aggregations) {
+    private _aggregation: AggregationName;
+    set aggregation(aggregation: AggregationName) {
         this._aggregation = aggregation;
 
         this.scheduleData();
     }
-    get aggregation(): aggregations {
+    get aggregation(): AggregationName {
         return this._aggregation;
     }
 
@@ -299,7 +299,7 @@ export class HistogramSeries extends CartesianSeries {
         const binSize = tickStep(xMinMax[0], xMinMax[1], this.binCount || defaultBinCount);
         const firstBinEnd = binStarts[0];
 
-        const expandStartToBin: (n: number) => [number, number ] = n => [n, n + binSize];
+        const expandStartToBin: (n: number) => [number, number] = n => [n, n + binSize];
 
         return [
             [firstBinEnd - binSize, firstBinEnd],
@@ -309,7 +309,7 @@ export class HistogramSeries extends CartesianSeries {
 
     private placeDataInBins(data: any[]): HistogramBin[] {
 
-        const { xKey, yKey } = this;
+        const { xKey } = this;
         const derivedBins = this.deriveBins();
 
         // creating a sorted copy allows bining in O(n) rather than O(n²)
@@ -328,7 +328,7 @@ export class HistogramSeries extends CartesianSeries {
         const bins: HistogramBin[] = [new HistogramBin(derivedBins[0])];
         sortedData.forEach(datum => {
 
-            while (datum[ xKey ] > derivedBins[currentBin][1]) {
+            while (datum[xKey] > derivedBins[currentBin][1]) {
                 currentBin++;
                 bins.push(new HistogramBin(derivedBins[currentBin]));
             }
@@ -343,7 +343,7 @@ export class HistogramSeries extends CartesianSeries {
 
     get xMax(): number {
         return this.data && this.data.reduce((acc, datum) => {
-            return Math.max(acc, datum[ this.xKey ]);
+            return Math.max(acc, datum[this.xKey]);
         }, Number.NEGATIVE_INFINITY);
     }
 
@@ -363,7 +363,7 @@ export class HistogramSeries extends CartesianSeries {
         const xMax = lastBin.domain[1];
         this.xDomain = [xMin, xMax];
 
-        this.fireEvent({type: 'dataProcessed'});
+        this.fireEvent({ type: 'dataProcessed' });
 
         return true;
     }
@@ -407,8 +407,8 @@ export class HistogramSeries extends CartesianSeries {
         }
 
         const {
-            xAxis: {scale: xScale},
-            yAxis: {scale: yScale},
+            xAxis: { scale: xScale },
+            yAxis: { scale: yScale },
             fill, stroke, strokeWidth
         } = this;
 
@@ -427,7 +427,7 @@ export class HistogramSeries extends CartesianSeries {
         } = this;
 
         this.binnedData.forEach(binOfData => {
-            const {aggregatedValue: total, frequency, domain: [xDomainMin, xDomainMax], relativeHeight} = binOfData;
+            const { aggregatedValue: total, frequency, domain: [xDomainMin, xDomainMax], relativeHeight } = binOfData;
 
             const
                 xMinPx = xScale.convert(xDomainMin),
@@ -551,7 +551,7 @@ export class HistogramSeries extends CartesianSeries {
 
         const { xName, yName, fill, tooltipRenderer, aggregation } = this;
         const bin: HistogramBin = nodeDatum.seriesDatum;
-        const {aggregatedValue, frequency, domain: [rangeMin, rangeMax]} = bin;
+        const { aggregatedValue, frequency, domain: [rangeMin, rangeMax] } = bin;
 
         if (tooltipRenderer) {
             return tooltipRenderer({

@@ -324,7 +324,7 @@ export class ColumnSeries extends CartesianSeries {
 
         this.yDomain = this.fixNumericExtent([yMin, yMax], 'y');
 
-        this.fireEvent({type: 'dataProcessed'});
+        this.fireEvent({ type: 'dataProcessed' });
 
         return true;
     }
