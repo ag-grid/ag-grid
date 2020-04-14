@@ -6,7 +6,8 @@ import {
     RefSelector,
     ValueFormatterService,
     IFloatingFilterParams,
-    AgInputTextField
+    AgInputTextField,
+    _
 } from '@ag-grid-community/core';
 
 import { SetFilterModel } from './setFilterModel';
@@ -77,10 +78,10 @@ export class SetFloatingFilterComp extends Component implements IFloatingFilter 
 
         this.params.parentFilterInstance((setFilter: SetFilter) => {
             const valueModel = setFilter.getValueModel();
-            const availableValues = values.filter(valueModel.isValueAvailable.bind(valueModel));
+            const availableValues = _.filter(values, valueModel.isValueAvailable.bind(valueModel));
 
             // format all the values, if a formatter is provided
-            const formattedValues = availableValues.map(value => {
+            const formattedValues = _.map(availableValues, value => {
                 const formattedValue = this.valueFormatterService.formatValue(this.params.column, null, null, value);
                 return formattedValue != null ? formattedValue : value;
             });

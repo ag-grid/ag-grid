@@ -265,7 +265,7 @@ export class SetValueModel implements IEventEmitter {
             value = _.makeNull(value);
 
             if (value != null && Array.isArray(value)) {
-                value.forEach(x => {
+                _.forEach(value, x => {
                     const formatted = _.toStringOrNull(_.makeNull(x));
                     values.add(formatted);
                 });
@@ -315,7 +315,9 @@ export class SetValueModel implements IEventEmitter {
             return valueToCheck != null && valueToCheck.toUpperCase().indexOf(miniFilterUpperCase) >= 0;
         };
 
-        _.values(this.filteredValues).filter(value => value != null).forEach(value => {
+        _.forEach(_.values(this.filteredValues), value => {
+            if (value == null) { return; }
+
             const displayedValue = this.formatter(value);
             const formattedValue = this.valueFormatterService.formatValue(this.column, null, null, displayedValue);
 
@@ -347,7 +349,7 @@ export class SetValueModel implements IEventEmitter {
 
     public selectNothingUsingMiniFilter(): void {
         if (this.miniFilter) {
-            this.displayedValues.forEach(it => this.unselectValue(it));
+            _.forEach(this.displayedValues, it => this.unselectValue(it));
         } else {
             this.selectNothing();
         }
@@ -384,7 +386,7 @@ export class SetValueModel implements IEventEmitter {
 
     public isEverythingSelected(): boolean {
         if (this.miniFilter) {
-            return this.displayedValues.filter(it => this.isValueSelected(it)).length === this.displayedValues.length;
+            return _.filter(this.displayedValues, it => this.isValueSelected(it)).length === this.displayedValues.length;
         } else {
             return this.allValues.length === this.selectedValues.size;
         }
@@ -392,7 +394,7 @@ export class SetValueModel implements IEventEmitter {
 
     public isNothingSelected(): boolean {
         if (this.miniFilter) {
-            return this.displayedValues.filter(it => this.isValueSelected(it)).length === 0;
+            return _.filter(this.displayedValues, it => this.isValueSelected(it)).length === 0;
         } else {
             return this.selectedValues.size === 0;
         }
@@ -423,7 +425,11 @@ export class SetValueModel implements IEventEmitter {
 
             const allValues = _.convertToSet(this.allValues);
 
-            model.filter(value => allValues.has(value)).forEach(value => this.selectValue(value));
+            _.forEach(model, value => {
+                if (!allValues.has(value)) { return; }
+
+                this.selectValue(value);
+            });
         } else {
             this.selectAllUsingMiniFilter();
         }
