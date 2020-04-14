@@ -427,19 +427,6 @@ gtm_data_layer('community-enterprise');
                             performance enhancements and other improvements into new releases; we don't patch, fix or in any way
                             alter older versions.
                         </p>
-                        <div class="example card">
-                            <div class="card-header">Example</div>
-                            <div class="card-body">
-                                <div class="card-text">
-                                    Company &lsquo;A&rsquo; is developing an application named &lsquo;MyApp&rsquo;. The app needs to render 10K rows of data
-                                    in a table and allow users to group, filter and sort. The dev team adds ag-Grid Enterprise to the project to satisfy that
-                                    requirement. 5 Front-End and 10 Back-End developers are working on &lsquo;MyApp&rsquo;.
-                                    Only 1 Front-End developer is tasked with configuring and modifying the data grid. The benefit to
-                                    the UI is project wide however and all developers contributing to it need to be licensed. Company
-                                    &lsquo;A&rsquo; purchases 5 licenses for ag-Grid Enterprise.
-                                </div>
-                            </div>
-                        </div>
                         <div>
                             <img src="./images/pricing/Version%201.svg">
                         </div>
