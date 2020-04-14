@@ -1,11 +1,11 @@
-import { Component } from "../../widgets/component";
-import { ProvidedFilterModel, IDoesFilterPassParams, IFilterComp, IFilterParams } from "../../interfaces/iFilter";
-import { RefSelector } from "../../widgets/componentAnnotations";
-import { Autowired, PostConstruct } from "../../context/context";
-import { GridOptionsWrapper } from "../../gridOptionsWrapper";
-import { _ } from "../../utils";
-import { IRowModel } from "../../interfaces/iRowModel";
-import { Constants } from "../../constants";
+import { Component } from '../../widgets/component';
+import { ProvidedFilterModel, IDoesFilterPassParams, IFilterComp, IFilterParams } from '../../interfaces/iFilter';
+import { RefSelector } from '../../widgets/componentAnnotations';
+import { Autowired, PostConstruct } from '../../context/context';
+import { GridOptionsWrapper } from '../../gridOptionsWrapper';
+import { _ } from '../../utils';
+import { IRowModel } from '../../interfaces/iRowModel';
+import { Constants } from '../../constants';
 
 export interface IProvidedFilterParams extends IFilterParams {
     clearButton?: boolean;
@@ -61,7 +61,7 @@ export abstract class ProvidedFilter extends Component implements IFilterComp {
     // inactive, this model will be in sync (following the debounce ms). if the UI is not a valid filter
     // (eg the value is missing so nothing to filter on, or for set filter all checkboxes are checked so filter
     // not active) then this appliedModel will be null/undefined.
-    private appliedModel: ProvidedFilterModel;
+    private appliedModel: ProvidedFilterModel | null = null;
 
     // a debounce of the onBtApply method
     private onBtApplyDebounce: () => void;
@@ -170,16 +170,16 @@ export abstract class ProvidedFilter extends Component implements IFilterComp {
 
         // models can be same if user pasted same content into text field, or maybe just changed the case
         // and it's a case insensitive filter
-        const newModelDifferent = !this.areModelsEqual(this.appliedModel, oldAppliedModel);
-        return newModelDifferent;
+        return !this.areModelsEqual(this.appliedModel, oldAppliedModel);
     }
 
     protected onBtApply(afterFloatingFilter = false, afterDataChange = false) {
         const newModelDifferent = this.applyModel();
+
         if (newModelDifferent) {
             // the floating filter uses 'afterFloatingFilter' info, so it doesn't refresh after filter changed if change
             // came from floating filter
-            this.providedFilterParams.filterChangedCallback({ afterFloatingFilter: afterFloatingFilter, afterDataChange: afterDataChange });
+            this.providedFilterParams.filterChangedCallback({ afterFloatingFilter, afterDataChange });
         }
     }
 
@@ -212,14 +212,15 @@ export abstract class ProvidedFilter extends Component implements IFilterComp {
         const body = this.createBodyTemplate();
         const translate = this.gridOptionsWrapper.getLocaleTextFunc();
 
-        return `<div>
-                    <div class='ag-filter-body-wrapper ag-${this.getCssIdentifier()}-body-wrapper' ref="eFilterBodyWrapper">${body}</div>
-                    <div class="ag-filter-apply-panel" ref="eButtonsPanel">
-                        <button type="button" ref="eClearButton" class="ag-standard-button ag-filter-apply-panel-button">${translate('clearFilter', 'Clear Filter')}</button>
-                        <button type="button" ref="eResetButton" class="ag-standard-button ag-filter-apply-panel-button">${translate('resetFilter', 'Reset Filter')}</button>
-                        <button type="button" ref="eApplyButton" class="ag-standard-button ag-filter-apply-panel-button">${translate('applyFilter', 'Apply Filter')}</button>
-                    </div>
-                </div>`;
+        return /* html */`
+            <div>
+                <div class='ag-filter-body-wrapper ag-${this.getCssIdentifier()}-body-wrapper' ref="eFilterBodyWrapper">${body}</div>
+                <div class="ag-filter-apply-panel" ref="eButtonsPanel">
+                    <button type="button" ref="eClearButton" class="ag-standard-button ag-filter-apply-panel-button">${translate('clearFilter', 'Clear Filter')}</button>
+                    <button type="button" ref="eResetButton" class="ag-standard-button ag-filter-apply-panel-button">${translate('resetFilter', 'Reset Filter')}</button>
+                    <button type="button" ref="eApplyButton" class="ag-standard-button ag-filter-apply-panel-button">${translate('applyFilter', 'Apply Filter')}</button>
+                </div>
+            </div>`;
     }
 
     // static, as used by floating filter also

@@ -185,26 +185,27 @@ export class FilterManager {
 
     private doesFilterPass(node: RowNode, filterToSkip?: any): boolean {
         const { data } = node;
-        const allFilters = _.values(this.allFilters);
+        let filterPasses = true;
 
-        return _.every(allFilters, filterWrapper => {
+        this.allFilters.forEach(filterWrapper => {
+            // if a filter has already failed, no need to run any more
+            if (!filterPasses) { return; }
+
             // if no filter, always pass
-            if (filterWrapper == null) {
-                return true;
-            }
+            if (filterWrapper == null) { return; }
 
             const filter = filterWrapper.filterPromise.resolveNow(undefined, filter => filter);
 
-            if (filter == null || filter === filterToSkip || !filter.isFilterActive()) {
-                return true;
-            }
+            if (filter == null || filter === filterToSkip || !filter.isFilterActive()) { return; }
 
             if (!filter.doesFilterPass) { // because users can do custom filters, give nice error message
                 throw new Error('Filter is missing method doesFilterPass');
             }
 
-            return filter.doesFilterPass({ node, data });
+            filterPasses = filter.doesFilterPass({ node, data });
         });
+
+        return filterPasses;
     }
 
     private parseQuickFilter(newFilter: string): string {

@@ -107,9 +107,9 @@ export class SetFilter extends ProvidedFilter {
 
     protected areModelsEqual(a: SetFilterModel, b: SetFilterModel): boolean {
         // both are missing
-        if (!a && !b) { return true; }
+        if (a == null && b == null) { return true; }
 
-        return a && b && _.areEqual(a.values, b.values);
+        return a != null && b != null && _.areEqual(a.values, b.values);
     }
 
     public setParams(params: ISetFilterParams): void {
