@@ -1,7 +1,7 @@
 import { PostConstruct, Bean, Autowired, PreDestroy } from "../context/context";
 import { Column } from "../entities/column";
 import { ColumnApi } from "../columnController/columnApi";
-import { GridApi } from "../gridApi";
+import { GridApi, GridInstance } from "../gridApi";
 import { GridOptionsWrapper } from "../gridOptionsWrapper";
 import { DragService, DragListenerParams } from "./dragService";
 import { Environment } from "../environment";
@@ -68,6 +68,7 @@ export interface DropTarget {
     onDragging?(params: DraggingEvent): void;
     /** Callback for when drag stops */
     onDragStop?(params: DraggingEvent): void;
+    external?: boolean;
 }
 
 export enum VerticalDirection { Up, Down }
@@ -84,6 +85,7 @@ export interface DraggingEvent {
     fromNudge: boolean;
     api: GridApi;
     columnApi: ColumnApi;
+    prevented?: boolean;
 }
 
 @Bean('dragAndDropService')
@@ -296,6 +298,18 @@ export class DragAndDropService {
 
     public addDropTarget(dropTarget: DropTarget) {
         this.dropTargets.push(dropTarget);
+    }
+
+    public removeDropTarget(dropTarget: DropTarget) {
+        this.dropTargets = this.dropTargets.filter(target => target.getContainer() !== dropTarget.getContainer());
+    }
+
+    public hasExternalDropZones(): boolean {
+        return this.dropTargets.some(zones => zones.external);
+    }
+
+    public findExternalZoneWithTarget(target: HTMLElement | GridInstance): DropTarget {
+        return _.find(this.dropTargets.filter(target => target.external), zone => zone.getContainer() === target);
     }
 
     public getHorizontalDirection(event: MouseEvent): HorizontalDirection {

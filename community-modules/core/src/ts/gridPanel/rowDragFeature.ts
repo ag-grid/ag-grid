@@ -2,7 +2,8 @@ import {
     DragAndDropService, DraggingEvent, DragSourceType, DropTarget,
     VerticalDirection
 } from "../dragAndDrop/dragAndDropService";
-import { Autowired, Optional, PostConstruct } from "../context/context";
+import { Autowired, Optional, PostConstruct, PreDestroy } from "../context/context";
+import { ColumnController } from "../columnController/columnController";
 import { FocusController } from "../focusController";
 import { IRangeController } from "../interfaces/iRangeController";
 import { GridPanel } from "./gridPanel";
@@ -16,13 +17,19 @@ import { RowNode } from "../entities/rowNode";
 import { SelectionController } from "../selectionController";
 import { MouseEventService } from "./mouseEventService";
 import { last } from '../utils/array';
+import { SortController } from "../sortController";
+import { FilterManager } from "../filter/filterManager";
+import { _ } from "../utils";
 
 export class RowDragFeature implements DropTarget {
 
     @Autowired('dragAndDropService') private dragAndDropService: DragAndDropService;
     // this feature is only created when row model is ClientSide, so we can type it as ClientSide
     @Autowired('rowModel') private rowModel: IRowModel;
+    @Autowired('columnController') private columnController: ColumnController;
     @Autowired('focusController') private focusController: FocusController;
+    @Autowired('sortController') private sortController: SortController;
+    @Autowired('filterManager') private filterManager: FilterManager;
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('selectionController') private selectionController: SelectionController;
     @Optional('rangeController') private rangeController: IRangeController;
@@ -38,6 +45,10 @@ export class RowDragFeature implements DropTarget {
     private intervalCount: number;
     private lastDraggingEvent: DraggingEvent;
     private isMultiRowDrag: boolean = false;
+    private events: (() => void)[] = [];
+    private isGridSorted: boolean = false;
+    private isGridFiltered: boolean = false;
+    private isRowGroupActive: boolean = false;
 
     constructor(eContainer: HTMLElement, gridPanel: GridPanel) {
         this.eContainer = eContainer;
@@ -49,6 +60,37 @@ export class RowDragFeature implements DropTarget {
         if (this.gridOptionsWrapper.isRowModelDefault()) {
             this.clientSideRowModel = this.rowModel as IClientSideRowModel;
         }
+
+        this.events.push(
+            this.eventService.addEventListener(Events.EVENT_SORT_CHANGED, this.onSortChanged.bind(this)),
+            this.eventService.addEventListener(Events.EVENT_FILTER_CHANGED, this.onFilterChanged.bind(this)),
+            this.eventService.addEventListener(Events.EVENT_COLUMN_ROW_GROUP_CHANGED, this.onRowGroupChanged.bind(this))
+        );
+
+        this.onSortChanged();
+        this.onFilterChanged();
+        this.onRowGroupChanged();
+    }
+
+    @PreDestroy
+    public destroy(): void {
+        if (this.events.length) {
+            this.events.forEach(func => func());
+        }
+    }
+
+    private onSortChanged(): void {
+        const sortModel = this.sortController.getSortModel();
+        this.isGridSorted = !_.missingOrEmpty(sortModel);
+    }
+
+    private onFilterChanged(): void {
+        this.isGridFiltered = this.filterManager.isAnyFilterPresent();
+    }
+
+    private onRowGroupChanged(): void {
+        const rowGroups = this.columnController.getRowGroupColumns();
+        this.isRowGroupActive = !_.missingOrEmpty(rowGroups);
     }
 
     public getContainer(): HTMLElement {
@@ -60,7 +102,17 @@ export class RowDragFeature implements DropTarget {
     }
 
     public getIconName(): string {
+        const managedDrag = this.gridOptionsWrapper.isRowDragManaged();
+
+        if (managedDrag && this.shouldPreventRowMove()) {
+            return DragAndDropService.ICON_NOT_ALLOWED;
+        }
+
         return DragAndDropService.ICON_MOVE;
+    }
+
+    public shouldPreventRowMove(): boolean {
+        return this.isGridSorted || this.isGridFiltered || this.isRowGroupActive;
     }
 
     private getRowNodes(dragginEvent: DraggingEvent): RowNode[] {
@@ -87,11 +139,7 @@ export class RowDragFeature implements DropTarget {
         // we also fire the move event. so we get both events when entering.
         this.dispatchEvent(Events.EVENT_ROW_DRAG_ENTER, draggingEvent);
 
-        if (this.isFromThisGrid(draggingEvent)) {
-            this.dragAndDropService.setGhostIcon(DragAndDropService.ICON_MOVE);
-        }
-
-        this.getRowNodes(draggingEvent).forEach((rowNode, idx) => {
+        this.getRowNodes(draggingEvent).forEach(rowNode => {
             rowNode.setDragging(true);
         });
 
@@ -141,6 +189,12 @@ export class RowDragFeature implements DropTarget {
             draggingEvent.dragItem.rowNodes = rowNodes;
         } else {
             rowNodes = draggingEvent.dragItem.rowNodes;
+        }
+
+        const managedDrag = this.gridOptionsWrapper.isRowDragManaged();
+
+        if (managedDrag && this.shouldPreventRowMove()) {
+            return;
         }
 
         if (this.gridOptionsWrapper.isSuppressMoveWhenRowDragging()) {
@@ -228,17 +282,18 @@ export class RowDragFeature implements DropTarget {
     }
 
     private ensureIntervalStarted(): void {
-        if (!this.movingIntervalId) {
-            this.intervalCount = 0;
-            this.movingIntervalId = window.setInterval(this.moveInterval.bind(this), 100);
-        }
+        if (this.movingIntervalId) { return; }
+
+        this.intervalCount = 0;
+        this.movingIntervalId = window.setInterval(this.moveInterval.bind(this), 100);
+
     }
 
     private ensureIntervalCleared(): void {
-        if (this.moveInterval) {
-            window.clearInterval(this.movingIntervalId);
-            this.movingIntervalId = null;
-        }
+        if (!this.moveInterval) { return; }
+
+        window.clearInterval(this.movingIntervalId);
+        this.movingIntervalId = null;
     }
 
     private moveInterval(): void {
