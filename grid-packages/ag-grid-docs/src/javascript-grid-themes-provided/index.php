@@ -6,181 +6,222 @@ $pageGroup = "feature";
 include '../documentation-main/documentation_header.php';
 ?>
 
-    <h1>Provided Themes</h1>
+<h1>Provided Themes</h1>
 
-    <p class="lead">
-        The grid comes with a few provided themes, and the quickest way to get a nice style onto a grid is to apply one of them.
-    </p>
+<p class="lead">
+    The grid comes with a few provided themes, and the quickest way to get a nice style onto a grid is to apply one of them.
+</p>
 
-    <p>
-        The themes can be used without any modification, or can be <a href="#customising-themes">customised</a>.
-    </p>
+<p>
+    The themes can be used without any modification, or can be <a href="#customising-themes">customised</a>.
+</p>
 
-    <h2>Themes Summary</h2>
+<h2>Themes Summary</h2>
 
-    <p>
-        The themes are as follows. Click the theme name to load the demo page with this theme.
-    </p>
+<p>
+    The themes are as follows. Click the theme name to load the demo page with this theme.
+</p>
 
-    <table class="properties">
-        <style>
-            .theme-name-cell {
-                white-space: nowrap;
-                font-weight: bold;
-            }
-            .reccommendation {
-                font-weight: bold;
-            }
-        </style>
-        <tr>
-            <th>Theme Name</th>
-            <th>Description</th>
-        </tr>
-        <tr>
-            <td class="theme-name-cell">
-                <a href="/example.php?theme=ag-theme-alpine" target="_blank">ag-theme-alpine</a><br/>
-                <a href="/example.php?theme=ag-theme-alpine-dark" target="_blank">ag-theme-alpine-dark</a>
-            </td>
-            <td>
-                <p>
-                    Modern looking themes with high contrast, and generous padding.
-                </p>
-                <p>
-                    <span class="reccommendation">Recommendation:</span>
-                    This is the recommended grid theme, and a great choice for most applications.
-                </p>
-            </td>
-        </tr>
-        <tr>
-            <td class="theme-name-cell">
-                <a href="/example.php?theme=ag-theme-balham" target="_blank">ag-theme-balham</a><br/>
-                <a href="/example.php?theme=ag-theme-balham-dark" target="_blank">ag-theme-balham-dark</a>
-            </td>
-            <td>
-                <p>
-                    Themes for professional data-heavy applications.
-                </p>
-                <p>
-                    <span class="reccommendation">Recommendation:</span>
-                    Balham was the recommended theme before Alpine was developed. It is still a great choice
-                    for applications that need to fit more data onto each page.
-                </p>
-            </td>
-        </tr>
-        <tr>
-            <td class="theme-name-cell">
-                <a href="/example.php?theme=ag-theme-material" target="_blank">ag-theme-material</a>
-            </td>
-            <td>
-                <p>
-                    A theme designed according to the Google Material Language Specs.
-                </p>
-                <p>
-                    <span class="reccommendation">Recommendation:</span>
-                    This theme looks great for simple applications with lots of white space, and is the obvious
-                    choice if the rest of your application follows the Google Material Design spec. However the
-                    Material spec doesn't cater for advanced grid features such as grouped columns and tool panels.
-                    If your application uses these features, consider using <code>ag-theme-alpine</code> instead.
-                </p>
-            </td>
-        </tr>
-    </table>
+<table class="properties">
+    <style>
+        .theme-name-cell {
+            white-space: nowrap;
+            font-weight: bold;
+        }
+        .reccommendation {
+            font-weight: bold;
+        }
+    </style>
+    <tr>
+        <th>Theme Name</th>
+        <th>Description</th>
+    </tr>
+    <tr>
+        <td class="theme-name-cell">
+            <a href="/example.php?theme=ag-theme-alpine" target="_blank">ag-theme-alpine</a><br/>
+            <a href="/example.php?theme=ag-theme-alpine-dark" target="_blank">ag-theme-alpine-dark</a>
+        </td>
+        <td>
+            <p>
+                Modern looking themes with high contrast, and generous padding.
+            </p>
+            <p>
+                <span class="reccommendation">Recommendation:</span>
+                This is the recommended grid theme, and a great choice for most applications.
+            </p>
+        </td>
+    </tr>
+    <tr>
+        <td class="theme-name-cell">
+            <a href="/example.php?theme=ag-theme-balham" target="_blank">ag-theme-balham</a><br/>
+            <a href="/example.php?theme=ag-theme-balham-dark" target="_blank">ag-theme-balham-dark</a>
+        </td>
+        <td>
+            <p>
+                Themes for professional data-heavy applications.
+            </p>
+            <p>
+                <span class="reccommendation">Recommendation:</span>
+                Balham was the recommended theme before Alpine was developed. It is still a great choice
+                for applications that need to fit more data onto each page.
+            </p>
+        </td>
+    </tr>
+    <tr>
+        <td class="theme-name-cell">
+            <a href="/example.php?theme=ag-theme-material" target="_blank">ag-theme-material</a>
+        </td>
+        <td>
+            <p>
+                A theme designed according to the Google Material Language Specs.
+            </p>
+            <p>
+                <span class="reccommendation">Recommendation:</span>
+                This theme looks great for simple applications with lots of white space, and is the obvious
+                choice if the rest of your application follows the Google Material Design spec. However the
+                Material spec doesn't cater for advanced grid features such as grouped columns and tool panels.
+                If your application uses these features, consider using <code>ag-theme-alpine</code> instead.
+            </p>
+        </td>
+    </tr>
+</table>
 
-    <p>
-        To use a theme add the theme class name to the <code>div</code> element that contains your grid. The following is an example of using the balham theme:
-    </p>
+<p>
+    To use a theme add the theme class name to the <code>div</code> element that contains your grid. The following is an example of using the balham theme:
+</p>
 
-    <snippet language="html">
-        &lt;div id="myGrid" class="ag-theme-balham"&gt;&lt;/div&gt;
-    </snippet>
+<snippet language="html">
+    &lt;div id="myGrid" class="ag-theme-balham"&gt;&lt;/div&gt;
+</snippet>
 
-    <p>You need to ensure that the CSS for your theme is loaded.</p>
+<p>You need to ensure that the CSS for your theme is loaded.</p>
 
+<ul>
+    <li>Some pre-built bundles, whether <a href="/javascript-grid-download/">downloaded from our website</a> or included in the <code>ag-grid-community</code> <a href="/javascript-grid-npm/">NPM package</a>, already embed the styles. If you are using one of these files you do not need to separately load CSS.</li>
+    <li>If you're not using a JS bundle with styles embedded, you need to include the theme's styles in the HTML page with a <code>&lt;link&gt;</code> tag. There are a few ways to do this:</li>
     <ul>
-        <li>Some pre-built bundles, whether <a href="/javascript-grid-download/">downloaded from our website</a> or included in the <code>ag-grid-community</code> <a href="/javascript-grid-npm/">NPM package</a>, already embed the styles. If you are using one of these files you do not need to separately load CSS.</li>
-        <li>If you're not using a JS bundle with styles embedded, you need to include the theme's styles in the HTML page with a <code>&lt;link&gt;</code> tag. There are a few ways to do this:</li>
-        <ul>
-            <li>If you are using a JavaScript bundler like webpack or Rollup and it is configured to load styles, you can <code>require()</code> the correct CSS file from node_modules. This is the recommended approach as webpack will take care of minifying your CSS in production.</li>
-            <li>You can copy (manually or as part of your app's build) a CSS file from node_modules and serve it with your app.</li>
-            <li>You can load the theme from a free CDN by adding this code to your page <code>&lt;link rel="stylesheet" href="https://unpkg.com/@ag-grid-community/all-modules@23.0.0/dist/styles/ag-theme-balham.css"&gt;</code>, making sure that the CSS version matches the JS version you're using. (Note: this is useful for testing but not recommended for production as your app will be unavailable if the unpkg servers are down)</li>
-        </ul>
+        <li>If you are using a JavaScript bundler like webpack or Rollup and it is configured to load styles, you can <code>require()</code> the correct CSS file from node_modules. This is the recommended approach as webpack will take care of minifying your CSS in production.</li>
+        <li>You can copy (manually or as part of your app's build) a CSS file from node_modules and serve it with your app.</li>
+        <li>You can load the theme from a free CDN by adding this code to your page <code>&lt;link rel="stylesheet" href="https://unpkg.com/@ag-grid-community/all-modules@23.0.0/dist/styles/ag-theme-balham.css"&gt;</code>, making sure that the CSS version matches the JS version you're using. (Note: this is useful for testing but not recommended for production as your app will be unavailable if the unpkg servers are down)</li>
     </ul>
+</ul>
 
-    <p>
-        Note that the Material theme requires the Roboto font, and this is not bundled in the material CSS. The easiest way to load Roboto is through Google's CDN:
-    </p>
+<p>
+    Note that the Material theme requires the Roboto font, and this is not bundled in the material CSS. The easiest way to load Roboto is through Google's CDN:
+</p>
 
-    <snippet language="html">
-        &lt;link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet"&gt;
-        &lt;div id="myGrid" class="ag-theme-material"&gt;&lt;/div&gt;
-    </snippet>
+<snippet language="html">
+    &lt;link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet"&gt;
+    &lt;div id="myGrid" class="ag-theme-material"&gt;&lt;/div&gt;
+</snippet>
 
-    <h1 id="customising-themes">Customising themes</h1>
+<h1 id="customising-themes">Customising themes</h1>
 
-    <p>
-        In order to customise a theme, you need to set up your project to compile Sass files. The recommended way to process your project's Scss
-        files is through webpack, since it provides various loaders that optimize and reduce the final size of the bundle. We provide a
-        <a href="https://github.com/ag-grid/ag-grid-customise-theme/tree/master/src/vanilla">general webpack example</a> appropriate Vanilla JS and React
-        projects, and an <a href="https://github.com/ag-grid/ag-grid-customise-theme/tree/master/src/angular">angular example</a> using Angular CLI.
-    </p>
+<h2>Structural styles</h2>
 
-    <p>
-        To customise a theme, include the theme mixin file and then call the mixin passing parameters to customise it. Then add CSS rules for advanced customisation:
-    </p>
+<p>the Grid ships with two kinds of stylesheet. The structural styles are contained in <code>ag-grid.css</code> (or <code>ag-grid.scss</code> if you're using Sass) and these contain the CSS rules that are essential to the functioning of the grid. Theme styles are contained in files like <code>ag-theme-{theme-name}.css</code> and define the grid look and feel. Your app needs both.</p>
 
-    <snippet language="scss">
+<p>If you are using a pre-built provided theme by linking to a <code>.css</code> file from the grid distribution, then you will also need to include <code>ag-grid.css</code>. The structural styles should be included first. If you are building your own theme using Sass, you can compile both structural and theme files into a single CSS file - the examples below show how.</p>
+
+<h2>Customising themes with pure CSS</h2>
+
+<p>Although the provided themes are written in Sass, you can customise them using pure CSS which has the advantage that you don't need to set up you project to build Sass files. There are two ways that you can use pure CSS to customise a theme: using CSS variables, and with regular CSS rules.</p>
+
+<h3>Using CSS variables</h3>
+
+<p>CSS variables (officially referred to as "CSS Custom Properties") are supported by most modern browsers but will not work in IE11. If you're using a provided theme then all the color parameters (any parameter whose name ends with <code>-color</code>) are available as CSS variables that can be set at runtime, with the prefix <code>--ag-</code>. For example in the full <a href="#base-theme-parameters">list of parameters</a> you will find one called <code>foreground-color</code>. Here's how to set it using a CSS variable:</p>
+
+<snippet language="css">
+body {
+    --ag-foreground-color: deeppink;
+}
+</snippet>
+
+<p>The CSS variable can be set on any parent element of the grid. The above code sets them on <code>body</code> so it will apply to every grid on the page.</p>
+
+<p>CSS variables implement "parameter cascading" - setting <code>--ag-foreground-color</code> will set the color of both the data and header foreground, unless a more specific value is set for <code>--ag-data-color</code> or <code>--ag-header-foreground-color</code>. However not all features of parameter cascading are supported. See the <a href="#parameter-cascading">parameter cascading docs</a> for more information.</p>
+
+<h3>Using CSS rules</h3>
+
+<p>You can write CSS rules that target class names in the Grid DOM, just as you would for any HTML/CSS application. For example if you are using the Alpine theme, this rule will remove the default bold styling from the column titles:</p>
+
+<snippet language="css">
+.ag-theme-alpine .ag-header-cell-label {
+font-weight: normal;
+}
+</snippet>
+
+<p>Note how we include the name of the theme in the rule: <code>.ag-theme-alpine .ag-header-cell-label { ... </code>. This is important - without the theme name, your styles will not override the theme's built-in styles due to CSS selector specificity rules.</p>
+
+<h2>Customising themes with Sass</h2>
+
+<p>
+    By setting up your project to compile Sass files, the full power of the theme parameter API becomes available. The recommended way to process your project's Scss
+    files is through webpack, since it provides various loaders that optimize and reduce the final size of the bundle. We provide a
+    <a href="https://github.com/ag-grid/ag-grid-customise-theme/tree/master/src/vanilla">general webpack example</a> appropriate Vanilla JS and React
+    projects, and an <a href="https://github.com/ag-grid/ag-grid-customise-theme/tree/master/src/angular">angular example</a> using Angular CLI.
+</p>
+
+<p>
+    To customise a theme, include the theme mixin file and then call the mixin passing parameters to customise it. Then add CSS rules for advanced customisation:
+</p>
+
+<snippet language="scss">
+// ag-grid.scss should be imported first. This will incorporate the structural styles
+// into the same CSS file as the theme, so you won't need to link them separately.
+@import "~ag-grid-community/src/styles/ag-grid.scss";
 @import "~ag-grid-community/src/styles/ag-theme-alpine/sass/ag-theme-alpine-mixin";
 
 .ag-theme-alpine {
-    @include ag-theme-alpine((
-        // use theme parameters where possible
-        alpine-active-color: deeppink
-    ));
+@include ag-theme-alpine((
+    // use theme parameters where possible
+    alpine-active-color: deeppink
+));
 
-    .ag-header {
-        // or write CSS selectors to make customisations beyond what the parameters support
-        text-shadow: deeppink;
-    }
+.ag-header {
+    // or write CSS selectors to make customisations beyond what the parameters support
+    text-shadow: deeppink;
 }
-    </snippet>
+}
+</snippet>
 
-    <h2>Important theme parameters</h2>
+<h2>Important theme parameters</h2>
 
-    <p>There is a full list of theme parameters below, but a few important ones are:</p>
+<p>There is a full list of theme parameters below, but a few important ones are:</p>
 
+<ul>
+    <li><code>grid-size</code> is the main control for affecting how tightly data and UI elements are packed together.
+        All padding and spacing in the grid is defined as a multiple of grid-size,
+        so increasing it will make most components larger by increasing their internal white
+        space while leaving the size of text and icons unchanged.</li>
+    <li><code>borders</code> controls whether borders are drawn around the grid. There are more <code>border-*</code> variables to provide fine-grained control over which borders are drawn and their color.</li>
+    <li><code>row-height</code> height in pixels of a grid row.</li>
+    <li><code>header-height</code> height in pixels of a header row.</li>
+    <li>The provided themes have theme-specific variables to set the color of many elements at once. These are shortcuts for setting several other variables.</li>
     <ul>
-        <li><code>grid-size</code> is the main control for affecting how tightly data and UI elements are packed together.
-            All padding and spacing in the grid is defined as a multiple of grid-size,
-            so increasing it will make most components larger by increasing their internal white
-            space while leaving the size of text and icons unchanged.</li>
-        <li><code>borders</code> controls whether borders are drawn around the grid. There are more <code>border-*</code> variables to provide fine-grained control over which borders are drawn and their color.</li>
-        <li><code>row-height</code> height in pixels of a grid row.</li>
-        <li><code>header-height</code> height in pixels of a header row.</li>
-        <li>The provided themes have theme-specific variables to set the color of many elements at once. These are shortcuts for setting several other variables.</li>
-        <ul>
-            <li><code>alpine-active-color</code> (Alpine only) sets the colour of checked checkboxes, range selections, row selections, selected tab underlines, and input focus outlines</li>
-            <li><code>balham-active-color</code> (Balham only) sets the colour of checked checkboxes, range selections, row selections, and input focus outlines</li>
-            <li><code>material-primary-color</code> and <code>material-accent-color</code> (Material only) set the colours used for the primary and accent colour roles specified in the <a href="https://material.io/design/color/">Material Design color system</a>. Currently primary color is used for buttons, range selections, selected tab underlines and input focus underlines, and accent color is used for checked checkboxes.</li>
-        </ul>
+        <li><code>alpine-active-color</code> (Alpine only) sets the colour of checked checkboxes, range selections, row selections, selected tab underlines, and input focus outlines</li>
+        <li><code>balham-active-color</code> (Balham only) sets the colour of checked checkboxes, range selections, row selections, and input focus outlines</li>
+        <li><code>material-primary-color</code> and <code>material-accent-color</code> (Material only) set the colours used for the primary and accent colour roles specified in the <a href="https://material.io/design/color/">Material Design color system</a>. Currently primary color is used for buttons, range selections, selected tab underlines and input focus underlines, and accent color is used for checked checkboxes.</li>
     </ul>
+</ul>
 
-    <h2>Customising row and header heights</h2>
-    
-    <p>
-        The grid uses <a href="/javascript-grid-dom-virtualisation/">DOM virtualisation</a> for rendering large amounts of data,
-        which means that it needs to know the size of various elements like columns and grid rows in order to calculate their
-        layout. The grid uses several strategies to work out the right size:
-    </p>
-    
-    <ol>
-        <li>Firstly, the grid will attempt to measure the size of an element. This works when styles have loaded, but will not work if the grid initialises before the theme loads. Our <a href="https://github.com/ag-grid/ag-grid-customise-theme/blob/master/src/vanilla/grid.js">theme customisation examples</a> demonstrate how to wait for CSS to load before initialising the grid (see the cssHasLoaded function).</li>
-            <li>If CSS has not loaded and one of the provided themes is in use, the grid contains hard-coded fallback values for these themes. For this reason we recommend that if you are extending a provided theme like ag-theme-alpine and have not changed the heights of elements, you do not change the theme name so that the grid knows what fallback sizes to apply.</li>
-            <li>If neither of the above methods will work for your app (you do not want to delay app initialisation until after CSS has loaded, and are not using a provided theme with heights unchanged) then you should inform the grid about your custom element heights using <a href="/javascript-grid-properties/">grid properties</a>. The minimal set of properties you need to set to ensure correct functioning are: <code>rowHeight</code>, <code>headerHeight</code> and <code>minColWidth</code>.</li>
-        </ol>
+<h2>Customising row and header heights</h2>
 
-        <h2 id="base-theme-parameters">Full list of theme parameters</h2>
-        
-        <p>Here is a list of parameters accepted by the base theme and all themes that extend it, including our provided themes Balham, Alpine and Material. The default values demonstrate the kind of value that is expected (a colour, pixel value, percentage value etc) but if you are using a provided theme then the theme will have changed most of the default values. Note that some values are defined relative to other values using the internal <code>ag-derived</code> helper, so <code>data-color: ag-derived(foreground-color)</code> means that if you don't explicitly set the <code>data-color</code> property it will default to the value of <code>foreground-color</code>.</p>
+<p>
+    The grid uses <a href="/javascript-grid-dom-virtualisation/">DOM virtualisation</a> for rendering large amounts of data,
+    which means that it needs to know the size of various elements like columns and grid rows in order to calculate their
+    layout. The grid uses several strategies to work out the right size:
+</p>
+
+<ol>
+    <li>Firstly, the grid will attempt to measure the size of an element. This works when styles have loaded, but will not work if the grid initialises before the theme loads. Our <a href="https://github.com/ag-grid/ag-grid-customise-theme/blob/master/src/vanilla/grid.js">theme customisation examples</a> demonstrate how to wait for CSS to load before initialising the grid (see the cssHasLoaded function).</li>
+    <li>If CSS has not loaded and one of the provided themes is in use, the grid contains hard-coded fallback values for these themes. For this reason we recommend that if you are extending a provided theme like ag-theme-alpine and have not changed the heights of elements, you do not change the theme name so that the grid knows what fallback sizes to apply.</li>
+    <li>If neither of the above methods will work for your app (you do not want to delay app initialisation until after CSS has loaded, and are not using a provided theme with heights unchanged) then you should inform the grid about your custom element heights using <a href="/javascript-grid-properties/">grid properties</a>. The minimal set of properties you need to set to ensure correct functioning are: <code>rowHeight</code>, <code>headerHeight</code> and <code>minColWidth</code>.</li>
+</ol>
+
+<h2 id="base-theme-parameters">Full list of theme parameters</h2>
+
+<p>Here is a list of parameters accepted by the base theme and all themes that extend it, including our provided themes Balham, Alpine and Material. The default values demonstrate the kind of value that is expected (a colour, pixel value, percentage value etc) but if you are using a provided theme then the theme will have changed most of the default values. Note that some values are defined relative to other values using the internal <code>ag-derived</code> helper, so <code>data-color: ag-derived(foreground-color)</code> means that if you don't explicitly set the <code>data-color</code> property it will default to the value of <code>foreground-color</code>. See the <a href="#ag-derived">ag-derived docs</a> for more information.</p>
 
 <snippet language="scss">
 // Colour of text and icons in primary UI elements like menus
@@ -255,6 +296,9 @@ value-change-delta-down-color: #e53935,
 // Colour for the "chip" that repersents a column that has been dragged onto a drop zone
 chip-background-color: null,
 
+// By default, color variables can be overridden at runtime by CSS variables, e.g. background-color can be overridden with the CSS var --ag-background-color. Pass true to disable this behaviour.
+suppress-css-var-overrides: false,
+
 //
 // BORDERS
 //
@@ -301,7 +345,7 @@ header-column-resize-handle: false,
 // INPUTS
 //
 
-// Suppress styling of native widgets: <input type=checkbox/radio/range>. If you want to style these yourself, set this to true. If you only want to disable styling for some kinds of input, you can set this to true and e.g. @include ag-native-inputs((checkbox: false)) which will emit styles for all kinds of input except checkboxes.
+// Suppress styling of native widgets: &lt;input type=checkbox/radio/range&gt;. If you want to style these yourself, set this to true. If you only want to disable styling for some kinds of input, you can set this to true and e.g. @include ag-native-inputs((checkbox: false)) which will emit styles for all kinds of input except checkboxes.
 suppress-native-widget-styling: false,
 
 input-disabled-background-color: null,
@@ -398,5 +442,41 @@ card-shadow: none,
 popup-shadow: 5px 5px 10px rgba(0, 0, 0, 0.3)
 </snippet>
 
+<h2>Disabling colours by setting them to <code>null</code></h2>
+
+// TODO
+
+<p>Any color parameter can be set to null. This will disable the parameter entirely, including CSS variable support. If you want to use CSS variables to control a parameter at runtime, you must set a non-null default value.</p>
+
+<p>Some values, like `input-focus-border-color`, default to null. These will not be controllable through CSS variables unless you give them a default value.</p>
+
+// TODO check that this is required - can we have CSS vars without defaults?
+
+<h2 id="parameter-cascading">Theme parameter cascading</h2>
+
+// TODO
+
+ - ag-derived
+ - ag-derived with modifications
+ - limitations when passing CSS variables as values
+ - limitations when using --ag-* CSS variables
+
+<h2>Sass mixins and functions</h2>
+
+<p>The following theme functions and mixins are available if you are include a theme mixin file like <code>ag-theme-alpine-mixin.scss</code>, or can be used in isolation by importing <code>styles/mixins/_ag-theme-params.scss</code> from the grid distribution.</p>
+
+<h3 id="ag-derived">@function ag-param</h3>
+
+// TODO
+
+<h3 id="ag-derived">@function ag-derived</h3>
+
+// TODO
+
+<h3 id="ag-derived">@mixin ag-register-params</h3>
+
+<note>As a user of a provided theme you do not need to call <code>ag-register-params</code> - instead you should pass your theme parameters to the theme mixin which will merge them with the theme's default values and register them for you. It is documented here because we use it in standalone code samples.</note>
+
+<p>This function takes a map of param names to values and registers them globally so that they can be used with <code>ag-param</code> and <code>ag-color-param</code>.</p>
 
 <?php include '../documentation-main/documentation_footer.php';?>

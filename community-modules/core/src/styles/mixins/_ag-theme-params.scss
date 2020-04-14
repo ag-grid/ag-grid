@@ -112,7 +112,7 @@
     $important: if($important, !important, null);
     @if $value != null {
         #{$property}: $value $important;
-        @if not ag-param-is-set(suppress-color-css-var-overrides) {
+        @if not ag-param-is-set(suppress-css-var-overrides) {
             #{$property}: -ag-param-as-css-var($param) $important;
         }
     }

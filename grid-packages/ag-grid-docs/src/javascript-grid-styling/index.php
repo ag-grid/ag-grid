@@ -12,7 +12,7 @@ include '../documentation-main/documentation_header.php';
     <p class="lead">
         The grid is styled using CSS. A set of CSS rules styling the grid is referred to as a theme.
         The grid comes bundled with <a href="../javascript-grid-themes-provided/">provided themes</a>
-        or you can create you own theme by applying CSS styles to the grid.
+        or you can create you own.
     </p>
 
     <p>
@@ -21,7 +21,7 @@ include '../documentation-main/documentation_header.php';
 
     <ol class="content">
         <li>
-            Use one of the <a href="../javascript-grid-themes-provided/">provided themes</a>. This is the simplest approach.
+            Use one of the <a href="../javascript-grid-themes-provided/">provided themes</a>. This is the simplest approach. You can make simple customisations using CSS variables and rules.
         </li>
         <li>
             Customise one of the provided themes using

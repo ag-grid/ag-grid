@@ -156,7 +156,7 @@ describe('ag-color-property', () => {
             @import "../../styles/mixins/ag-theme-params";
             @include ag-register-params((
                  a: red,
-                 suppress-color-css-var-overrides: false
+                 suppress-css-var-overrides: false
             ));
             .foo {
                 @include ag-color-property(color, a);
@@ -179,7 +179,7 @@ describe('ag-color-property', () => {
                  a: ag-derived(b),
                  b: ag-derived(c),
                  c: red,
-                 suppress-color-css-var-overrides: true
+                 suppress-css-var-overrides: true
             ));
             .foo {
                 @include ag-color-property(color, a);
@@ -201,7 +201,7 @@ describe('ag-color-property', () => {
                  a: ag-derived(b),
                  b: ag-derived(c),
                  c: red,
-                 suppress-color-css-var-overrides: false
+                 suppress-css-var-overrides: false
             ));
             .foo {
                 @include ag-color-property(color, a);
@@ -224,7 +224,7 @@ describe('ag-color-property', () => {
                  a: ag-derived(b),
                  b: ag-derived(c, $opacity: 0.5),
                  c: red,
-                 suppress-color-css-var-overrides: false
+                 suppress-css-var-overrides: false
             ));
             .foo {
                 @include ag-color-property(color, a);
@@ -245,7 +245,7 @@ describe('ag-color-property', () => {
             @import "../../styles/mixins/ag-theme-params";
             @include ag-register-params((
                  a: null,
-                 suppress-color-css-var-overrides: false
+                 suppress-css-var-overrides: false
             ));
             .foo {
                 @include ag-color-property(color, a);
@@ -262,7 +262,7 @@ describe('ag-color-property', () => {
             @include ag-register-params((
                  a: ag-derived(c),
                  c: null,
-                 suppress-color-css-var-overrides: false
+                 suppress-css-var-overrides: false
             ));
             .foo {
                 @include ag-color-property(color, a);
@@ -280,7 +280,7 @@ describe('ag-color-property', () => {
                  a: ag-derived(b),
                  b: ag-derived(c, $opacity: 0.5),
                  c: null,
-                 suppress-color-css-var-overrides: false
+                 suppress-css-var-overrides: false
             ));
             .foo {
                 @include ag-color-property(color, a);
@@ -296,7 +296,7 @@ describe('ag-color-property', () => {
             @import "../../styles/mixins/ag-theme-params";
             @include ag-register-params((
                  a: var(--foo),
-                 suppress-color-css-var-overrides: false
+                 suppress-css-var-overrides: false
             ));
             .foo {
                 @include ag-color-property(color, a);
@@ -318,7 +318,7 @@ describe('ag-color-property', () => {
             @include ag-register-params((
                  a: ag-derived(b),
                  b: var(--foo),
-                 suppress-color-css-var-overrides: false
+                 suppress-css-var-overrides: false
             ));
             .foo {
                 @include ag-color-property(color, a);
@@ -341,12 +341,13 @@ describe('ag-color-property', () => {
                  a: ag-derived(b),
                  b: ag-derived(c, $opacity: 0.5),
                  c: var(--foo),
-                 suppress-color-css-var-overrides: false
+                 suppress-css-var-overrides: false
             ));
             .foo {
                 @include ag-color-property(color, a);
             }
         `);
+        
         expect(rendered.css).toMatchInlineSnapshot(`""`);
         expect(rendered.message).toMatchInlineSnapshot(
             `"WARNING: Problem while calculating theme parameter \`b: ag-derived(c, $opacity: 0.5)\`. This rule attempts to modify the color of \`c\` using $opacity, but (c: var(--foo)) is a CSS variable and can't be modified at compile time. Either set \`c\` to a CSS color value (e.g. #ffffff) or provide a value for \`b\` that does not use $opacity"`
