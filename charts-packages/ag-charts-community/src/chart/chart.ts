@@ -52,7 +52,7 @@ const defaultTooltipCss = `
     border-bottom-right-radius: 5px;
 }
 
-.ag-chart-tooltip::before {
+.ag-chart-tooltip-arrow::before {
     content: "";
 
     position: absolute;
@@ -73,7 +73,7 @@ const defaultTooltipCss = `
     margin: 0 auto;
 }
 
-.ag-chart-tooltip::after {
+.ag-chart-tooltip-arrow::after {
     content: "";
 
     position: absolute;
@@ -532,7 +532,6 @@ export abstract class Chart extends Observable {
         this.background.width = this.width;
         this.background.height = this.height;
 
-        console.log('chart.performLayout()');
         this.performLayout();
 
         if (!this.layoutPending) {
@@ -918,14 +917,23 @@ export abstract class Chart extends Observable {
     tooltipTracking = true;
 
     private toggleTooltip(visible?: boolean) {
-        const classList = [Chart.defaultTooltipClass, this.tooltipClass];
-        if (visible) {
-            classList.push(`${Chart.defaultTooltipClass}-visible`);
-        } else if (this.lastPick) {
-            // this.lastPick.datum.series.dehighlightDatum();
+        if (!visible && this.lastPick) {
             this.dehighlightDatum();
             this.lastPick = undefined;
         }
+        this.updateTooltipClass(visible);
+    }
+
+    private updateTooltipClass(visible?: boolean, constrained?: boolean) {
+        const classList = [Chart.defaultTooltipClass, this.tooltipClass];
+
+        if (visible === true) {
+            classList.push(`${Chart.defaultTooltipClass}-visible`);
+        }
+        if (constrained !== true) {
+            classList.push(`${Chart.defaultTooltipClass}-arrow`);
+        }
+
         this.tooltipElement.setAttribute('class', classList.join(' '));
     }
 
@@ -935,6 +943,7 @@ export abstract class Chart extends Observable {
      */
     private showTooltip(meta: TooltipMeta, html?: string) {
         const el = this.tooltipElement;
+        const { container } = this;
 
         if (html !== undefined) {
             el.innerHTML = html;
@@ -948,6 +957,19 @@ export abstract class Chart extends Observable {
 
         let left = meta.pageX - el.clientWidth / 2;
         const top = meta.pageY - el.clientHeight - 8;
+
+        if (container) {
+            const tooltipRect = el.getBoundingClientRect() as DOMRect;
+            const minLeft = 0;
+            const maxLeft = window.innerWidth - tooltipRect.width;
+            if (left < minLeft) {
+                left = minLeft;
+                this.updateTooltipClass(true, true);
+            } else if (left > maxLeft) {
+                left = maxLeft;
+                this.updateTooltipClass(true, true);
+            }
+        }
 
         el.style.left = `${left}px`;
         el.style.top = `${top}px`;

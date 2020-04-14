@@ -396,6 +396,7 @@ export class Axis<S extends Scale<D, number>, D = any> {
         }
 
         const { tickFormatter } = this;
+        // `ticks instanceof NumericTicks` doesn't work here, so we feature detect.
         const fractionDigits = (ticks as any).fractionDigits >= 0 ? (ticks as any).fractionDigits : 0;
 
         const labelSelection = groupSelection.selectByClass(Text)
