@@ -85,7 +85,6 @@ export interface DraggingEvent {
     fromNudge: boolean;
     api: GridApi;
     columnApi: ColumnApi;
-    prevented?: boolean;
 }
 
 @Bean('dragAndDropService')
