@@ -39,9 +39,9 @@ community-modules/angular/main.d.ts
 community-modules/angular/main.metadata.json
 
 grid-packages/ag-grid-react/lib/**
-grid-packages/ag-grid-react/umd/ag-grid-react.min.js
+grid-packages/ag-grid-react/bundles/**
 community-modules/react/lib/**
-community-modules/react/umd/ag-grid-react.min.js
+community-modules/react/bundles/**
 
 grid-packages/ag-grid-community/main.d.ts
 grid-packages/ag-grid-community/main.js

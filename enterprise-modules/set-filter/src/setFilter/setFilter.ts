@@ -107,9 +107,9 @@ export class SetFilter extends ProvidedFilter {
 
     protected areModelsEqual(a: SetFilterModel, b: SetFilterModel): boolean {
         // both are missing
-        if (!a && !b) { return true; }
+        if (a == null && b == null) { return true; }
 
-        return a && b && _.areEqual(a.values, b.values);
+        return a != null && b != null && _.areEqual(a.values, b.values);
     }
 
     public setParams(params: ISetFilterParams): void {
@@ -266,7 +266,7 @@ export class SetFilter extends ProvidedFilter {
         const appliedModel = this.getModel() as SetFilterModel;
 
         if (appliedModel) {
-            appliedModel.values.forEach(value => this.appliedModelValues.add(value));
+            _.forEach(appliedModel.values, value => this.appliedModelValues.add(value));
         }
 
         return result;
@@ -282,7 +282,7 @@ export class SetFilter extends ProvidedFilter {
         value = _.makeNull(value);
 
         if (Array.isArray(value)) {
-            return value.some(v => this.appliedModelValues.has(_.makeNull(v)));
+            return _.some(value, v => this.appliedModelValues.has(_.makeNull(v)));
         }
 
         return this.appliedModelValues.has(value);
@@ -321,7 +321,7 @@ export class SetFilter extends ProvidedFilter {
 
             this.updateSelectAll();
 
-            (toSelect || options).forEach(value => this.valueModel.selectValue(value));
+            _.forEach(toSelect || options, value => this.valueModel.selectValue(value));
 
             this.refreshVirtualList();
 
@@ -333,8 +333,7 @@ export class SetFilter extends ProvidedFilter {
 
     //noinspection JSUnusedGlobalSymbols
     /**
-     * Public method provided so the user can reset the values of the filter once that it has started
-     * @param options The options to use.
+     * Public method provided so the user can reset the values of the filter once that it has started.
      */
     public resetFilterValues(): void {
         this.valueModel.setValuesType(SetFilterModelValuesType.TAKEN_FROM_GRID_VALUES);

@@ -6,7 +6,7 @@ import { DropShadow } from "../../../scene/dropShadow";
 import { LinearScale } from "../../../scale/linearScale";
 import palette from "../../palettes";
 import { Sector } from "../../../scene/shape/sector";
-import { PolarTooltipRendererParams, SeriesNodeDatum } from "./../series";
+import { PolarTooltipRendererParams, SeriesNodeDatum, HighlightStyle } from "./../series";
 import { Label } from "../../label";
 import { PointerEvents } from "../../../scene/node";
 import { normalizeAngle180, toRadians } from "../../../util/angle";
@@ -19,7 +19,7 @@ import { PolarSeries } from "./polarSeries";
 import { ChartAxisDirection } from "../../chartAxis";
 import { Chart } from "../../chart";
 
-interface GroupSelectionDatum extends SeriesNodeDatum {
+interface PieNodeDatum extends SeriesNodeDatum {
     index: number;
     radius: number; // in the [0, 1] range
     startAngle: number;
@@ -40,7 +40,11 @@ export interface PieTooltipRendererParams extends PolarTooltipRendererParams {
     labelName?: string;
 }
 
-enum PieSeriesNodeTag {
+interface PieHighlightStyle extends HighlightStyle {
+    centerOffset?: number;
+}
+
+enum PieNodeTag {
     Sector,
     Callout,
     Label
@@ -63,12 +67,12 @@ export class PieSeries extends PolarSeries {
     static type = 'pie';
 
     private radiusScale: LinearScale = new LinearScale();
-    private groupSelection: Selection<Group, Group, GroupSelectionDatum, any> = Selection.select(this.group).selectAll<Group>();
+    private groupSelection: Selection<Group, Group, PieNodeDatum, any> = Selection.select(this.group).selectAll<Group>();
 
     /**
      * The processed data that gets visualized.
      */
-    private groupSelectionData: GroupSelectionDatum[] = [];
+    private groupSelectionData: PieNodeDatum[] = [];
 
     private angleScale: LinearScale = (() => {
         const scale = new LinearScale();
@@ -177,15 +181,11 @@ export class PieSeries extends PolarSeries {
 
     @reactive('layoutChange') shadow?: DropShadow;
 
-    highlightStyle: {
-        fill?: string,
-        stroke?: string,
-        centerOffset?: number
-    } = {
-            fill: 'yellow'
-        };
+    highlightStyle: PieHighlightStyle = { fill: 'yellow' };
 
-    protected highlightedDatum?: GroupSelectionDatum;
+    onHighlightChange() {
+        this.updateNodes();
+    }
 
     getDomain(direction: ChartAxisDirection): any[] {
         if (direction === ChartAxisDirection.X) {
@@ -295,52 +295,54 @@ export class PieSeries extends PolarSeries {
             return;
         }
 
-        const {
-            fills,
-            strokes,
-            fillOpacity,
-            strokeOpacity,
-            callout,
-            outerRadiusOffset,
-            innerRadiusOffset,
-            radiusScale,
-            title,
-        } = this;
-
-        radiusScale.range = [0, this.radius];
+        this.radiusScale.range = [0, this.radius];
 
         this.group.translationX = this.centerX;
         this.group.translationY = this.centerY;
 
+
+        const { title } = this;
         if (title) {
-            title.node.translationY = -this.radius - outerRadiusOffset - 2;
+            title.node.translationY = -this.radius - this.outerRadiusOffset - 2;
             title.node.visible = title.enabled;
         }
 
+        this.updateGroupSelection();
+        this.updateNodes();
+    }
+
+    private updateGroupSelection() {
         const updateGroups = this.groupSelection.setData(this.groupSelectionData);
         updateGroups.exit.remove();
 
         const enterGroups = updateGroups.enter.append(Group);
-
-        enterGroups.append(Sector).each(node => node.tag = PieSeriesNodeTag.Sector);
+        enterGroups.append(Sector).each(node => node.tag = PieNodeTag.Sector);
         enterGroups.append(Line).each(node => {
-            node.tag = PieSeriesNodeTag.Callout;
+            node.tag = PieNodeTag.Callout;
             node.pointerEvents = PointerEvents.None;
         });
-
         enterGroups.append(Text).each(node => {
-            node.tag = PieSeriesNodeTag.Label;
+            node.tag = PieNodeTag.Label;
             node.pointerEvents = PointerEvents.None;
         });
 
-        const groupSelection = updateGroups.merge(enterGroups);
+        this.groupSelection = updateGroups.merge(enterGroups);
+    }
+
+    private updateNodes() {
+        const {
+            fills, strokes, fillOpacity, strokeOpacity, strokeWidth,
+            outerRadiusOffset, innerRadiusOffset,
+            radiusScale, callout, shadow,
+            highlightStyle: { fill, stroke, centerOffset }
+        } = this;
+        const { highlightedDatum } = this.chart;
 
         let minOuterRadius = Infinity;
         const outerRadii: number[] = [];
         const centerOffsets: number[] = [];
-        const { highlightedDatum, highlightStyle: { fill, stroke, centerOffset }, shadow, strokeWidth } = this;
 
-        groupSelection.selectByTag<Sector>(PieSeriesNodeTag.Sector).each((sector, datum, index) => {
+        this.groupSelection.selectByTag<Sector>(PieNodeTag.Sector).each((sector, datum, index) => {
             const radius = radiusScale.convert(datum.radius);
             const outerRadius = Math.max(0, radius + outerRadiusOffset);
 
@@ -353,9 +355,7 @@ export class PieSeries extends PolarSeries {
             sector.startAngle = datum.startAngle;
             sector.endAngle = datum.endAngle;
 
-            const highlighted = highlightedDatum &&
-                highlightedDatum.series === datum.series &&
-                highlightedDatum.seriesDatum === datum.seriesDatum;
+            const highlighted = datum === highlightedDatum;
             sector.fill = highlighted && fill !== undefined ? fill : fills[index % fills.length];
             sector.stroke = highlighted && stroke !== undefined ? stroke : strokes[index % strokes.length];
             sector.fillOpacity = fillOpacity;
@@ -371,7 +371,7 @@ export class PieSeries extends PolarSeries {
 
         const { colors: calloutColors, length: calloutLength, strokeWidth: calloutStrokeWidth } = callout;
 
-        groupSelection.selectByTag<Line>(PieSeriesNodeTag.Callout).each((line, datum, index) => {
+        this.groupSelection.selectByTag<Line>(PieNodeTag.Callout).each((line, datum, index) => {
             if (datum.label) {
                 const outerRadius = centerOffsets[index] + outerRadii[index];
 
@@ -389,7 +389,7 @@ export class PieSeries extends PolarSeries {
         {
             const { offset, fontStyle, fontWeight, fontSize, fontFamily, color } = this.label;
 
-            groupSelection.selectByTag<Text>(PieSeriesNodeTag.Label).each((text, datum, index) => {
+            this.groupSelection.selectByTag<Text>(PieNodeTag.Label).each((text, datum, index) => {
                 const label = datum.label;
 
                 if (label) {
@@ -411,11 +411,9 @@ export class PieSeries extends PolarSeries {
                 }
             });
         }
-
-        this.groupSelection = groupSelection;
     }
 
-    getTooltipHtml(nodeDatum: GroupSelectionDatum): string {
+    getTooltipHtml(nodeDatum: PieNodeDatum): string {
         const { angleKey } = this;
 
         if (!angleKey) {

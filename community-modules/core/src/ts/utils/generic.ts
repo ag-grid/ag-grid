@@ -8,7 +8,7 @@ export function makeNull<T>(value?: T): T | null {
 }
 
 export function exists<T>(value: T, allowEmptyString = false): boolean {
-    return value != null && (value as any !== '' || allowEmptyString);
+    return value != null && (allowEmptyString || value as any !== '');
 }
 
 export function missing<T>(value: T): boolean {
@@ -127,11 +127,11 @@ export function find<T>(collection: T[] | { [id: string]: T; }, predicate: strin
     return firstMatchingItem;
 }
 
-export function values<T>(object: { [key: string]: T; } | Set<T>): T[] {
-    if (object instanceof Set) {
+export function values<T>(object: { [key: string]: T; } | Set<T> | Map<any, T>): T[] {
+    if (object instanceof Set || object instanceof Map) {
         const values: T[] = [];
 
-        object.forEach(value => values.push(value));
+        object.forEach((value: T) => values.push(value));
 
         return values;
     }

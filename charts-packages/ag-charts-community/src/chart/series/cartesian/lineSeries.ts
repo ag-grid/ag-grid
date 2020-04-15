@@ -74,7 +74,7 @@ export class LineSeries extends CartesianSeries {
         this.nodeSelection.exit.remove();
         this.update();
 
-        this.fireEvent({type: 'legendChange'});
+        this.fireEvent({ type: 'legendChange' });
     }
 
     protected onMarkerEnabledChange(event: PropertyChangeEvent<CartesianSeriesMarker, boolean>) {

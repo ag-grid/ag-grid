@@ -93,10 +93,10 @@ $ag-theme-base-default-params: (
     // Colour for the "chip" that repersents a column that has been dragged onto a drop zone
     chip-background-color: null,
 
-    // Be default, color variables can be overridden at runtime by CSS variables, e.g.
+    // By default, color variables can be overridden at runtime by CSS variables, e.g.
     // background-color can be overridden with the CSS var --ag-background-color. Pass true
     // to disable this behaviour.
-    suppress-color-css-var-overrides: false,
+    suppress-css-var-overrides: false,
 
     //
     // BORDERS

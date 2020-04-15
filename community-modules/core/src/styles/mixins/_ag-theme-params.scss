@@ -112,8 +112,11 @@
     $important: if($important, !important, null);
     @if $value != null {
         #{$property}: $value $important;
-        @if not ag-param-is-set(suppress-color-css-var-overrides) {
-            #{$property}: -ag-param-as-css-var($param) $important;
+        @if not ag-param-is-set(suppress-css-var-overrides) {
+            $value-as-css-var: -ag-param-as-css-var($param);
+            @if $value != $value-as-css-var {
+                #{$property}: $value-as-css-var $important;
+            }
         }
     }
     $-ag-is-permitted-internal-color-access: false !global;

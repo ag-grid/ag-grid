@@ -841,6 +841,11 @@ export class GridApi {
             return;
         }
 
+        if (this.dragAndDropService.findExternalZoneWithTarget(target)) {
+            console.warn('ag-Grid: addRowDropZone - target already exists in the list of DropZones. Use `removeRowDropZone` before adding it again.');
+            return;
+        }
+
         if (dropAtIndex) {
             const tg = target as GridOptions;
             if (!tg.api && !tg.columnApi) {
@@ -860,6 +865,7 @@ export class GridApi {
             getContainer: () => dropAtIndex ? rowDragFeature.getContainer() : target as HTMLElement,
             isInterestedIn: (type: DragSourceType) => type === DragSourceType.RowDrag,
             getIconName:() => DragAndDropService.ICON_MOVE,
+            external: true,
             onDragEnter: (params: DraggingEvent) => {
                 if (dropAtIndex) {
                     rowDragFeature.onDragEnter(params);
@@ -893,6 +899,23 @@ export class GridApi {
                 }
             }
         });
+    }
+
+    public removeRowDropZone(target: HTMLElement | GridInstance): void {
+        const apiTarget = target as GridInstance;
+
+        if (apiTarget.api) {
+            const rowDragFeature = apiTarget.api.gridPanel.getRowDragFeature();
+            if (rowDragFeature) {
+                target = rowDragFeature.getContainer();
+            }
+        }
+
+        const activeDropTarget = this.dragAndDropService.findExternalZoneWithTarget(target);
+
+        if (activeDropTarget) {
+            this.dragAndDropService.removeDropTarget(activeDropTarget);
+        }
     }
 
     public setHeaderHeight(headerHeight: number) {
@@ -1009,9 +1032,8 @@ export class GridApi {
         }
         if (_.missing(column)) {
             return null;
-        } else {
-            return this.valueService.getValue(column, rowNode);
         }
+        return this.valueService.getValue(column, rowNode);
     }
 
     public addEventListener(eventType: string, listener: Function): void {

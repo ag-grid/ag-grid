@@ -4,7 +4,7 @@
     flex-direction: column;
 }
 
-.panel-body > input[type=radio]:not(:first-of-type) {
+.panel-body > input:not(:first-of-type) {
     margin-left: 10px;
 }
 

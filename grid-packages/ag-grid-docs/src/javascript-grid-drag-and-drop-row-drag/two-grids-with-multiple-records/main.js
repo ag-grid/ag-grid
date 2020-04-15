@@ -11,6 +11,7 @@ var leftColumnDefs = [
         },
     },
     {
+        colId: 'checkbox',
         maxWidth: 50,
         checkboxSelection: true,
         suppressMenu: true,
@@ -102,7 +103,7 @@ function addGridDropZone(params) {
                 leftGridOptions.api.updateRowData({
                     remove: nodes.map(function(node) { return node.data; })
                 });
-            } else if (deselectCheck && nodes.length > 1) {
+            } else if (deselectCheck) {
                 nodes.forEach(function(node) {
                     node.setSelected(false);
                 });
@@ -120,6 +121,17 @@ function loadGrid(options, side, data) {
 
     options.rowData = data;
     new agGrid.Grid(grid, options);
+}
+
+function resetInputs() {
+    var inputs = document.querySelectorAll('.example-toolbar input');
+    var checkbox = inputs[inputs.length  -1];
+
+    if (!checkbox.checked) {
+        checkbox.click();
+    }
+
+    inputs[0].checked = true;
 }
 
 function loadGrids() {
@@ -142,8 +154,17 @@ function loadGrids() {
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function() {
     var resetBtn = document.querySelector('button.reset');
+    var checkboxToggle = document.querySelector('#toggleCheck');
 
-    resetBtn.addEventListener('click', loadGrids);
+    resetBtn.addEventListener('click', function() {
+        resetInputs();
+        loadGrids();
+    });
+
+    checkboxToggle.addEventListener('change', function() {
+        leftGridOptions.columnApi.setColumnVisible('checkbox', checkboxToggle.checked);
+        leftGridOptions.suppressRowClickSelection = checkboxToggle.checked;
+    });
 
     loadGrids();
 });

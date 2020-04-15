@@ -169,9 +169,13 @@ interface IRowDragItem {
 
 // example
 colDef.rowDragText = function(params, dragItemCount) {
-    return (dragItemCount > 1 ? (dragItemCount + ' items') : params.defaultTextValue) + ' being dragged...'
+    return (
+        dragItemCount > 1
+            ? (dragItemCount + ' items') 
+            : params.defaultTextValue + ' is'
+        ) + ' being dragged...';
 }
-}</snippet>
+</snippet>
 
     <p>
         The example below shows dragging with custom text. The following can be noted:

@@ -193,31 +193,29 @@ $-ag-included-themes: () !default;
 
 
 
-/**
-    Like ag-unthemed-rtl, automatically generate rtl styles from provided ltr styles by flipping
-    "left" and "right" in property names and values. However this mixin is for use in themes. Because the
-    div with the theme class is outside the div with the .ag-rtl class, we need to keep the theme class
-    higher than the .ag-rtl.
-
-    For example:
-
-    .ag-theme-xyz {
-        .foo {
-            @include ag-theme-rtl((margin-left: 10px));
-        }
-    }
-
-    Will emit:
-
-    .ag-theme-xyz .ag-ltr .foo {
-      margin-left: 10px;
-    }
-    .ag-theme-xyz .ag-rtl .foo {
-      margin-right: 10px;
-    }
-
-    Note how the .ag-ltr class is inserted between the theme class and the rest of the selector
-*/
+// Like ag-unthemed-rtl, automatically generate rtl styles from provided ltr styles by flipping
+// "left" and "right" in property names and values. However this mixin is for use in themes. Because the
+// div with the theme class is outside the div with the .ag-rtl class, we need to keep the theme class
+// higher than the .ag-rtl.
+//
+// For example:
+//
+// .ag-theme-xyz {
+//     .foo {
+//         @include ag-theme-rtl((margin-left: 10px));
+//     }
+// }
+//
+// Will emit:
+//
+// .ag-theme-xyz .ag-ltr .foo {
+//   margin-left: 10px;
+// }
+// .ag-theme-xyz .ag-rtl .foo {
+//   margin-right: 10px;
+// }
+//
+// Note how the .ag-ltr class is inserted between the theme class and the rest of the selector
 @mixin ag-theme-rtl($rules, $color-param: null) {
     @if length(nth(&, 1)) < 2 {
         @error "ag-theme-rtl() can't be used at the top level of a SCSS file, only nested in a selector.";

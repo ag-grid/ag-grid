@@ -74,7 +74,10 @@
     },
     "Histogram": {
         "Simple Histogram": {
-            "description": "Histograms show your data grouped into bins, revealing underlying trends. In this example we also plot the same data as a scatter series to illustrate the aggregation."
+            "description": "Histograms show your data grouped into bins, revealing underlying trends. The simplest histogram plots the cardinality of the bin against the y-axis. Here we show the distribution of car engine sizes, using just the <code>engine-size</code> field from the available data. We also plot the same data as a scatter series to illustrate the aggregation."
+        },
+        "Mean aggregation Histogram": {
+            "description": "Histograms show your data grouped into bins, revealing underlying trends. Here we again bin the data by car engine size, but plot the average engine size in the y-axis. We also plot the same data as a scatter series to illustrate the aggregation."
         }
     },
     "Feature Highlights": {

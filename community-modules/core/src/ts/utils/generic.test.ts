@@ -57,4 +57,13 @@ describe('values', () => {
 
         expect(values(set)).toStrictEqual([1, 2, 3]);
     });
+
+    it('returns values from a map', () => {
+        const map = new Map<string, number>();
+        map.set('1', 1);
+        map.set('2', 2);
+        map.set('3', 3);
+
+        expect(values(map)).toStrictEqual([1, 2, 3]);
+    });
 });
