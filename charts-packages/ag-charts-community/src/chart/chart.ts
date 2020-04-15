@@ -10,7 +10,7 @@ import { BBox } from "../scene/bbox";
 import { find } from "../util/array";
 import { SizeMonitor } from "../util/sizeMonitor";
 import { Caption } from "../caption";
-import { Observable, reactive, PropertyChangeEvent, PropertyChangeEventListener } from "../util/observable";
+import { Observable, reactive, PropertyChangeEvent } from "../util/observable";
 import { ChartAxis, ChartAxisDirection } from "./chartAxis";
 import { CartesianSeries } from "./series/cartesian/cartesianSeries";
 import { createId } from "../util/id";
