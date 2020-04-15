@@ -42,8 +42,8 @@ tscTask = async () => {
     ]);
 };
 
-const cleanUmd = () => {
-    return gulp.src('umd/*')
+const cleanBundles = () => {
+    return gulp.src('bundles/*')
         .pipe(clean({read: false, force: true}));
 };
 
@@ -51,6 +51,7 @@ const umd = () => {
     return rollup({
         input: './src/main.ts',
         rollup: require('rollup'),
+        external: ['react', 'react-dom', 'react-dom/server', 'prop-types', 'ag-grid-community'],
         output: {
             name: 'AgGridReact',
             file: 'my-file.umd.js',
@@ -63,12 +64,30 @@ const umd = () => {
                 'ag-grid-community': 'agGrid'
             },
         },
-        plugins: [typescript(), commonjs(),
+        plugins: [typescript(), commonjs(), uglify()]
+    })
+        .pipe(source('ag-grid-react.min.js'))
+        .pipe(gulp.dest('./bundles'))
+};
+
+const amd = () => {
+    return rollup({
+        input: './src/main.ts',
+        rollup: require('rollup'),
+        external: ['react', 'react-dom', 'react-dom/server', 'prop-types', 'ag-grid-community'],
+        output: {
+            file: 'my-file.amd.js',
+            format: 'amd'
+        },
+        plugins: [
+            typescript(),
+            commonjs(),
             uglify()
         ]
     })
-        .pipe(source('ag-grid-react.min.js'))
-        .pipe(gulp.dest('./umd'))
+        .pipe(source('ag-grid-react.amd.min.js'))
+        .pipe(replace('ag-grid-community', 'agGrid')) // the alias plugin should do this for us, but the mix of ts, cjs and alias just didn't get on
+        .pipe(gulp.dest('./bundles'))
 };
 
 const watch = () => {
@@ -108,7 +127,7 @@ const copyFromModuleSource = () => {
         ], {cwd: '../../community-modules/react/src'})
         .pipe(replace('@ag-grid-community/core', 'ag-grid-community'))
         .pipe(replace('@ag-grid-enterprise', 'ag-grid-enterprise'))
-        .pipe(gulp.dest("./src"),{cwd: '.'});
+        .pipe(gulp.dest("./src"), {cwd: '.'});
 
     const copyMain = gulp.src(["../../community-modules/react/main.d.ts",
         "../../community-modules/react/main.js"])
@@ -118,10 +137,12 @@ const copyFromModuleSource = () => {
 };
 
 gulp.task('copy-from-module-source', copyFromModuleSource);
-gulp.task('clean-umd', cleanUmd);
-gulp.task('umd', umd);
+gulp.task('clean-bundles', cleanBundles);
+gulp.task('create-umd-bundle', umd);
+gulp.task('create-amd-bundle', amd);
+gulp.task('create-bundles', series('create-umd-bundle', 'create-amd-bundle'));
 gulp.task('link-umd-e2e', linkUmdForE2E);
 gulp.task('clean-lib', cleanLib);
 gulp.task('tsc', tscTask);
 gulp.task('watch', series('tsc', watch));
-gulp.task('default', series('clean-lib', 'copy-from-module-source', 'tsc', "clean-umd", "umd"));
+gulp.task('default', series('clean-lib', 'copy-from-module-source', 'tsc', "clean-bundles", "create-bundles"));

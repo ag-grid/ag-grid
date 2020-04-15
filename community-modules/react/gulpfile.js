@@ -15,6 +15,7 @@ const source = require('vinyl-source-stream');
 const clean = require('gulp-clean');
 const link = require('lnk').sync;
 const os = require('os');
+const replace = require('gulp-replace');
 
 const WINDOWS = /^win/.test(os.platform());
 
@@ -46,8 +47,8 @@ tscTask = async () => {
     ]);
 };
 
-const cleanUmd = () => {
-    return gulp.src('umd/*')
+const cleanBundles = () => {
+    return gulp.src('bundles/*')
         .pipe(clean({read: false, force: true}));
 };
 
@@ -55,6 +56,7 @@ const umd = () => {
     return rollup({
         input: './src/main.ts',
         rollup: require('rollup'),
+        external: ['react', 'react-dom', 'react-dom/server', 'prop-types', '@ag-grid-community/core'],
         output: {
             name: 'AgGridReact',
             file: 'my-file.umd.js',
@@ -67,12 +69,26 @@ const umd = () => {
                 '@ag-grid-community/core': 'agGrid'
             },
         },
-        plugins: [typescript(), commonjs(),
-            uglify()
-        ]
+        plugins: [typescript(), commonjs(), uglify()]
     })
         .pipe(source('ag-grid-react.min.js'))
-        .pipe(gulp.dest('./umd'))
+        .pipe(gulp.dest('./bundles'))
+};
+
+const amd = () => {
+    return rollup({
+        input: './src/main.ts',
+        rollup: require('rollup'),
+        external: ['react', 'react-dom', 'react-dom/server', 'prop-types', '@ag-grid-community/core'],
+        output: {
+            file: 'my-file.amd.js',
+            format: 'amd',
+        },
+        plugins: [typescript(), commonjs(), uglify()        ]
+    })
+        .pipe(source('ag-grid-react.amd.min.js'))
+        .pipe(replace('@ag-grid-community/core', 'agGrid')) // the alias plugin should do this for us, but the mix of ts, cjs and alias just didn't get on
+        .pipe(gulp.dest('./bundles'))
 };
 
 const watch = () => {
@@ -104,10 +120,12 @@ const linkUmdForE2E = (done) => {
     done();
 };
 
-gulp.task('clean-umd', cleanUmd);
-gulp.task('umd', umd);
+gulp.task('clean-bundles', cleanBundles);
+gulp.task('create-umd-bundle', umd);
+gulp.task('create-amd-bundle', amd);
+gulp.task('create-bundles', series('create-umd-bundle', 'create-amd-bundle'));
 gulp.task('link-umd-e2e', linkUmdForE2E);
 gulp.task('clean-lib', cleanLib);
 gulp.task('tsc', tscTask);
 gulp.task('watch', series('tsc', watch));
-gulp.task('default', series('clean-lib', 'tsc', "clean-umd", "umd"));
+gulp.task('default', series('clean-lib', 'tsc', "clean-bundles", "create-bundles"));
