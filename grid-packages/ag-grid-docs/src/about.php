@@ -276,6 +276,13 @@
                             <h3>Kathryn Knapman</h3>
                             <h4>Customer Experience Manager</h4>
                         </div>
+                        <div class="col-md-4">
+                            <div>
+                                <img src='images/team/hannah.png' alt="Hannah Conway-Laws, Customer Experience Manager"/>
+                            </div>
+                            <h3>Hannah Conway-Laws</h3>
+                            <h4>Customer Experience Manager</h4>
+                        </div>
                     </div>
                 </article>
             </section>
