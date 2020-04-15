@@ -217,7 +217,29 @@ describe('ag-color-property', () => {
         expect(rendered.isFatalError).toBe(false);
     });
 
-    it('stops the runtime variable cascade when an ag-derived value modifies a color', () => {
+    it('disables the runtime variable cascade when an ag-derived value modifies a color', () => {
+        const rendered = renderScss(`
+            @import "../../styles/mixins/ag-theme-params";
+            @include ag-register-params((
+                 a: ag-derived(b),
+                 b: ag-derived(c, $opacity: 0.5),
+                 c: red,
+                 suppress-css-var-overrides: false
+            ));
+            .foo {
+                @include ag-color-property(color, b);
+            }
+        `);
+        expect(rendered.css).toMatchInlineSnapshot(`
+".foo {
+  color: rgba(255, 0, 0, 0.5);
+}"
+`);
+        expect(rendered.message).toBe('');
+        expect(rendered.isFatalError).toBe(false);
+    });
+
+    it('stops the runtime variable cascade when an ag-derived value in the chain modifies a color', () => {
         const rendered = renderScss(`
             @import "../../styles/mixins/ag-theme-params";
             @include ag-register-params((
@@ -347,7 +369,7 @@ describe('ag-color-property', () => {
                 @include ag-color-property(color, a);
             }
         `);
-        
+
         expect(rendered.css).toMatchInlineSnapshot(`""`);
         expect(rendered.message).toMatchInlineSnapshot(
             `"WARNING: Problem while calculating theme parameter \`b: ag-derived(c, $opacity: 0.5)\`. This rule attempts to modify the color of \`c\` using $opacity, but (c: var(--foo)) is a CSS variable and can't be modified at compile time. Either set \`c\` to a CSS color value (e.g. #ffffff) or provide a value for \`b\` that does not use $opacity"`
