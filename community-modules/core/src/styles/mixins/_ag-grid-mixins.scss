@@ -1,22 +1,20 @@
-/**
-    Automatically generate rtl styles from provided ltr styles by flipping "left" and "right"
-    in property names and values.
-
-    For example:
-
-    .foo {
-        @include ag-unthemed-rtl((margin-left: 10px));
-    }
-
-    Will emit:
-
-    .ag-ltr .foo {
-      margin-left: 10px;
-    }
-    .ag-rtl .foo {
-      margin-right: 10px;
-    }
-*/
+// Automatically generate rtl styles from provided ltr styles by flipping "left" and "right"
+// in property names and values.
+//
+// For example:
+//
+// .foo {
+//     @include ag-unthemed-rtl((margin-left: 10px));
+// }
+//
+// Will emit:
+//
+// .ag-ltr .foo {
+//   margin-left: 10px;
+// }
+// .ag-rtl .foo {
+//   margin-right: 10px;
+// }
 @mixin ag-unthemed-rtl($rules) {
     @if length(nth(&, 1)) < 1 {
         @error "ag-unthemed-rtl() can't be used at the top level of a css file, only nested in a selector.";
