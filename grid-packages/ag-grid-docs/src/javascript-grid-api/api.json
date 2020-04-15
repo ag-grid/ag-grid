@@ -51,6 +51,11 @@
         },
         "forEachLeafNode(callback(node, index))": {
             "description": "Similar to <code>forEachNode</code>, except lists all the leaf nodes. This effectively goes through all the data that you provided to the grid before the grid performed any grouping. If using tree data, goes through all the nodes for the data you provided, including nodes that have children, but excluding groups the grid created where gaps were missing in the hierarchy."
+        }
+    },
+    "displayedRows": {
+        "meta": {
+            "displayName": "Displayed Rows"
         },
         "getDisplayedRowAtIndex(index)": {
             "description": "Returns the displayed <code>rowNode</code> at the given <code>index</code>."

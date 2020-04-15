@@ -662,7 +662,7 @@
         ]
       },
       {
-        "title": "Rendering Cells",
+        "title": "Rendering",
         "icon": "icon-render-cells",
         "items": [
           {
@@ -695,11 +695,6 @@
           {
             "title": "Cell Rendering",
             "url": "javascript-grid-cell-rendering/",
-            "showInCollapsed": true
-          },
-          {
-            "title": "Provided Renderers",
-            "url": "javascript-grid-provided-renderers/",
             "showInCollapsed": true,
             "items": [
               {
@@ -711,6 +706,11 @@
                 "url": "javascript-grid-provided-renderer-change/"
               }
             ]
+          },
+          {
+            "title": "Rendering API",
+            "url": "javascript-grid-rendering-api/",
+            "showInCollapsed": true
           },
           {
             "title": "View Refresh",
@@ -735,7 +735,7 @@
         ]
       },
       {
-        "title": "Editing Cells",
+        "title": "Editing",
         "icon": "icon-edit-cells",
         "items": [
           {
