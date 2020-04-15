@@ -155,6 +155,12 @@ SNIPPET
 
 <?= chart_example('Irregular intervals histogram', 'irregular-histogram', 'generated'); ?>
 
+<h2>API Reference</h2>
+
+<?php createDocumentationFromFile('../javascript-charts-api-explorer/config.json', 'histogramSeriesConfig') ?>
+
+<h2>Next Up</h2>
+
 <p>
     Continue to the next section to learn about <a href="../javascript-charts-layout/">layout</a>.
 </p>

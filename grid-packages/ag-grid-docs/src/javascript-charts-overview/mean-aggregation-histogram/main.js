@@ -2,7 +2,7 @@ var options = {
     container: document.querySelector('#myChart'),
     data: data,
     title: {
-        text: 'Engine size distribution (USA 1987)',
+        text: 'Vehicle fuel efficiency by engine size (USA 1987)',
         fontSize: 18,
     },
     subtitle: {
@@ -13,8 +13,22 @@ var options = {
             type: 'histogram',
             xKey: 'engine-size',
             xName: 'Engine Size',
+            yKey: 'highway-mpg',
+            yName: 'Highway MPG',
+            fill: '#41874b',
+            stroke: '#41874b',
             fillOpacity: 0.5,
             aggregation: 'mean'
+        },
+        {
+            type: 'scatter',
+            xKey: 'engine-size',
+            xName: 'Engine Size',
+            yKey: 'highway-mpg',
+            yName: 'Highway MPG',
+            fill: '#333',
+            stroke: '#333',
+            fillOpacity: 0.5
         }
     ],
     axes: [
@@ -29,7 +43,7 @@ var options = {
             position: 'left',
             type: 'number',
             title: {
-                text: 'Frequency'
+                text: 'Highway MPG'
             }
         }
     ],

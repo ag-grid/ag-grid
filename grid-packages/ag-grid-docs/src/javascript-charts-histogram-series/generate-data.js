@@ -1,3 +1,8 @@
+#!/usr/bin/env node
+
+// script to generate random example data.js for histogram series examples like:
+// ./generate-data.js > example/data.js
+
 // pulls numbers from a normal distribution
 function normal(mean, sigma, minCutoff, maxCutoff) {
     // The Marsaglia Polar method
@@ -37,31 +42,6 @@ var histogramData = Array.apply(null, Array(histogramDataLength)).map(function()
     };
 });
 
-var options = {
-    container: document.getElementById('myChart'),
-    title: {
-        text: 'Race demographics'
-    },
-    subtitle: {
-        text: 'Number of participants by age'
-    },
-    data: histogramData,
-    series: [{
-        type: 'histogram',
-        aggregation: 'mean',
-        xKey: 'age',
-        xName: 'Participant Age'
-    }],
-    axes: [
-        {
-            type: 'number',
-            position: 'bottom',
-        },
-        {
-            type: 'number',
-            position: 'left',
-        },
-    ]
-};
-
-agCharts.AgChart.create(options);
+process.stdout.write('var histogramData = ');
+process.stdout.write(JSON.stringify( histogramData, null, 4 ));
+process.stdout.write(';');

@@ -1227,6 +1227,10 @@
                   {
                     "title": "Simple Histogram",
                     "url": "javascript-charts-overview/simple-histogram.php"
+                  },
+                  {
+                    "title": "Mean aggregation Histogram",
+                    "url": "javascript-charts-overview/mean-aggregation-histogram.php"
                   }
                 ]
               },

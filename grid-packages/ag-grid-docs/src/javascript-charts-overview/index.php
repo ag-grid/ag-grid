@@ -234,7 +234,12 @@ define('skipInPageNav', true);
             <div class="chart-gallery-item__name">Simple Histogram</div>
         </a>
     </div>
-    <div class="chart-gallery-item chart-gallery-item--empty"></div>
+    <div class="chart-gallery-item">
+        <a href="./mean-aggregation-histogram.php" class="chart-gallery-item__link">
+            <img class="chart-gallery-item__thumbnail" src="./thumbnails/mean-aggregation-histogram.png" /><br />
+            <div class="chart-gallery-item__name">Mean aggregation Histogram</div>
+        </a>
+    </div>
     <div class="chart-gallery-item chart-gallery-item--empty"></div>
 </div>
 
