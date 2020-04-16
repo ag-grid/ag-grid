@@ -9,8 +9,10 @@ include '../documentation-main/documentation_header.php';
     <h1>Row Drag - Drag & Drop</h1>
 
     <p class="lead">
-        Row Drag - Drag & Drop is concerned with moving rows between applications, and within the grid.
-        When using row drag, data is moved or copied around using the grid events.
+        Row Drag - Drag & Drop is concerned with moving rows between grids or between a grid and a different component
+        within the same application. When using row drag for drag and drop, data is moved or copied around using the
+        grid events - this is in contrast to standard <a href="../javascript-grid-drag-and-drop/">Drag & Drop</a>
+        which uses browser events.
     </p>
 
     <p>
@@ -118,7 +120,7 @@ gridOptions.api.removeRowDropZone(gridOptions2);
     <h2>Dragging between grids</h2>
 
     <p>
-        It is possible to drag rows between instances of the Grid. The drag is done exactly like the simple
+        It is possible to drag rows between instances of the grid. The drag is done exactly like the simple
         case described above. The drop is done by the example.
     </p>
 
@@ -198,7 +200,7 @@ gridOptions.api.removeRowDropZone(gridOptions2);
             <a href="./javascript-grid-row-dragging/#multirow-dragging">MultiRow Dragging</a> section in the Row Dragging documentation.
         </li>
         <li>
-            This example allows you to toggle between regular multiRow selection and checkboSelection. For more info see the 
+            This example allows you to toggle between regular multiRow selection and checkboxSelection. For more info see the
             <a href="./javascript-grid-selection/">Row Selection</a> documentation.
         </li>
         <li>
