@@ -36,9 +36,10 @@ export class SetFilter extends ProvidedFilter {
     private setFilterParams: ISetFilterParams;
     private virtualList: VirtualList;
 
-    // to make the filtering super fast, we store the values in a set.
-    // otherwise we would be searching a list of values for each row when checking doesFilterPass
-    private appliedModelValues = new Set<string>();
+    // To make the filtering super fast, we store the values in an object, and check for the boolean value.
+    // Although Set would be a more natural choice of data structure, its performance across browsers is
+    // significantly worse than using an object: https://jsbench.me/hdk91jbw1h/
+    private appliedModelValues: { [key: string]: boolean; } | null = null;
 
     // unlike the simple filters, nothing in the set filter UI shows/hides.
     // maybe this method belongs in abstractSimpleFilter???
@@ -260,19 +261,24 @@ export class SetFilter extends ProvidedFilter {
 
     public applyModel(): boolean {
         const result = super.applyModel();
-        this.appliedModelValues.clear();
 
         // keep the appliedModelValuesMapped in sync with the applied model
         const appliedModel = this.getModel() as SetFilterModel;
 
         if (appliedModel) {
-            _.forEach(appliedModel.values, value => this.appliedModelValues.add(value));
+            this.appliedModelValues = {};
+
+            _.forEach(appliedModel.values, value => this.appliedModelValues[value] = true);
+        } else {
+            this.appliedModelValues = null;
         }
 
         return result;
     }
 
     public doesFilterPass(params: IDoesFilterPassParams): boolean {
+        if (this.appliedModelValues == null) { return true; }
+
         let value = this.setFilterParams.valueGetter(params.node);
 
         if (this.setFilterParams.colDef.keyCreator) {
@@ -282,10 +288,12 @@ export class SetFilter extends ProvidedFilter {
         value = _.makeNull(value);
 
         if (Array.isArray(value)) {
-            return _.some(value, v => this.appliedModelValues.has(_.makeNull(v)));
+            return _.some(value, v => this.appliedModelValues[_.makeNull(v)] === true);
         }
 
-        return this.appliedModelValues.has(value);
+        // Comparing against a value performs better than just checking for undefined
+        // https://jsbench.me/hdk91jbw1h/
+        return this.appliedModelValues[value] === true;
     }
 
     public onNewRowsLoaded(): void {

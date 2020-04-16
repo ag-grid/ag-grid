@@ -1,4 +1,4 @@
-import { areEqual, every, some, forEach, map, filter } from './array';
+import { areEqual, every, some, forEach, map, filter, reduce } from './array';
 
 describe('areEqual', () => {
     it.each([
@@ -112,7 +112,7 @@ describe('forEach', () => {
 });
 
 describe('map', () => {
-    it.each([undefined, null])('returns original list if list is %s', list => {
+    it.each([undefined, null])('returns null if list to map is %s', list => {
         expect(map(list, x => true)).toBe(null);
     });
 
@@ -122,11 +122,34 @@ describe('map', () => {
 });
 
 describe('filter', () => {
-    it.each([undefined, null])('returns original list if list is %s', list => {
-        expect(filter(list, x => true)).toBe(list);
+    it.each([undefined, null])('returns null if list to filter is %s', list => {
+        expect(filter(list, x => true)).toBe(null);
     });
 
     it('returns filtered list', () => {
         expect(filter([1, 2, 3, 4, 5, 6], v => v % 2 === 0)).toStrictEqual([2, 4, 6]);
+    });
+});
+
+describe('reduce', () => {
+    it.each([undefined, null])('returns null if list to reduce is %s', list => {
+        expect(reduce(list, x => true, {})).toBe(null);
+    });
+
+    it.each([undefined, null])('returns null if initial value is %s', initial => {
+        expect(reduce([], x => true, initial)).toBe(null);
+    });
+
+    it('returns reduced number', () => {
+        expect(reduce([1, 2, 3, 4, 5, 6], (acc, v) => acc + v, 0)).toBe(21);
+    });
+
+    it('returns reduced object', () => {
+        expect(reduce([1, 2, 3], (acc, v) => { acc[v.toString()] = v; return acc; }, {} as { [key: string]: number; }))
+            .toStrictEqual({
+                1: 1,
+                2: 2,
+                3: 3
+            });
     });
 });

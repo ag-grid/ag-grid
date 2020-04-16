@@ -150,7 +150,7 @@ export function every<T>(list: T[], predicate: (value: T, index: number) => bool
 /**
  * The implementation of Array.prototype.some in browsers is always slower than just using a simple for loop, so
  * use this for improved performance.
- * https://jsbench.me/5dk91e4tmt
+ * https://jsbench.me/5dk91e4tmt/
  */
 export function some<T>(list: T[], predicate: (value: T, index: number) => boolean): boolean {
     if (list == null) {
@@ -208,7 +208,7 @@ export function map<T, V>(list: T[], process: (value: T, index: number) => V): V
  */
 export function filter<T>(list: T[], predicate: (value: T, index: number) => boolean): T[] {
     if (list == null) {
-        return list;
+        return null;
     }
 
     const filtered: T[] = [];
@@ -220,6 +220,26 @@ export function filter<T>(list: T[], predicate: (value: T, index: number) => boo
     }
 
     return filtered;
+}
+
+/**
+ * The implementation of Array.prototype.reduce in browsers is generally the same as just using a simple for loop. However,
+ * Chrome does exhibit some difference, and this performs no worse in other browsers, so use this if you want improved
+ * performance.
+ * https://jsbench.me/7vk92n6u1f/
+ */
+export function reduce<T, V>(list: T[], step: (acc: V, value: T, index: number) => V, initial: V): V {
+    if (list == null || initial == null) {
+        return null;
+    }
+
+    let result = initial;
+
+    for (let i = 0; i < list.length; i++) {
+        result = step(result, list[i], i);
+    }
+
+    return result;
 }
 
 /** @deprecated */
