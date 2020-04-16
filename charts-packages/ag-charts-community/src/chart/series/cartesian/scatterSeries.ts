@@ -181,6 +181,17 @@ export class ScatterSeries extends CartesianSeries {
         return this.nodeData;
     }
 
+    fireNodeClickEvent(datum: ScatterNodeDatum): void {
+        this.fireEvent({
+            type: 'nodeClick',
+            series: this,
+            datum: datum.seriesDatum,
+            xKey: this.xKey,
+            yKey: this.yKey,
+            sizeKey: this.sizeKey
+        });
+    }
+
     private generateNodeData(): ScatterNodeDatum[] {
         const xScale = this.xAxis.scale;
         const yScale = this.yAxis.scale;

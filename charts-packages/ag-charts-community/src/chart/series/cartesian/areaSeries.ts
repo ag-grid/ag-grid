@@ -458,6 +458,16 @@ export class AreaSeries extends CartesianSeries {
         return this.markerSelectionData;
     }
 
+    fireNodeClickEvent(datum: MarkerSelectionDatum): void {
+        this.fireEvent({
+            type: 'nodeClick',
+            series: this,
+            datum: datum.seriesDatum,
+            xKey: this.xKey,
+            yKey: datum.yKey
+        });
+    }
+
     getTooltipHtml(nodeDatum: MarkerSelectionDatum): string {
         const { xKey } = this;
         const { yKey } = nodeDatum;

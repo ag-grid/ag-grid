@@ -274,6 +274,16 @@ export class LineSeries extends CartesianSeries {
         return this.nodeData;
     }
 
+    fireNodeClickEvent(datum: LineNodeDatum): void {
+        this.fireEvent({
+            type: 'nodeClick',
+            series: this,
+            datum: datum.seriesDatum,
+            xKey: this.xKey,
+            yKey: this.yKey
+        });
+    }
+
     getTooltipHtml(nodeDatum: LineNodeDatum): string {
         const { xKey, yKey } = this;
 

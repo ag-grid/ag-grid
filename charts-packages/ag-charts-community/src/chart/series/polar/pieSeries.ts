@@ -413,6 +413,16 @@ export class PieSeries extends PolarSeries {
         }
     }
 
+    fireNodeClickEvent(datum: PieNodeDatum): void {
+        this.fireEvent({
+            type: 'nodeClick',
+            series: this,
+            datum: datum.seriesDatum,
+            angleKey: this.angleKey,
+            radiusKey: this.radiusKey
+        });
+    }
+
     getTooltipHtml(nodeDatum: PieNodeDatum): string {
         const { angleKey } = this;
 

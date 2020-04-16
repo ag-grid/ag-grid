@@ -21,7 +21,7 @@ import { toFixed } from "../../../util/number";
 import { equal } from "../../../util/equal";
 import { reactive } from "../../../util/observable";
 
-interface ColumnNodeDatum extends SeriesNodeDatum {
+interface BarNodeDatum extends SeriesNodeDatum {
     yKey: string;
     yValue: number;
     x: number;
@@ -340,7 +340,17 @@ export class ColumnSeries extends CartesianSeries {
         }
     }
 
-    private generateNodeData(): ColumnNodeDatum[] {
+    fireNodeClickEvent(datum: BarNodeDatum): void {
+        this.fireEvent({
+            type: 'nodeClick',
+            series: this,
+            datum: datum.seriesDatum,
+            xKey: this.xKey,
+            yKey: datum.yKey
+        });
+    }
+
+    private generateNodeData(): BarNodeDatum[] {
         const { xAxis, yAxis, flipXY } = this;
         const xScale = (flipXY ? yAxis : xAxis).scale;
         const yScale = (flipXY ? xAxis : yAxis).scale;
@@ -369,7 +379,7 @@ export class ColumnSeries extends CartesianSeries {
         groupScale.range = [0, xScale.bandwidth!];
 
         const columnWidth = grouped ? groupScale.bandwidth! : xScale.bandwidth!;
-        const nodeData: ColumnNodeDatum[] = [];
+        const nodeData: BarNodeDatum[] = [];
 
         xData.forEach((category, i) => {
             const yDatum = yData[i];
@@ -452,7 +462,7 @@ export class ColumnSeries extends CartesianSeries {
         this.updateTextNodes();
     }
 
-    private updateRectSelection(selectionData: ColumnNodeDatum[]): void {
+    private updateRectSelection(selectionData: BarNodeDatum[]): void {
         const updateRects = this.rectSelection.setData(selectionData);
         updateRects.exit.remove();
         const enterRects = updateRects.enter.append(Rect).each(rect => {
@@ -483,7 +493,7 @@ export class ColumnSeries extends CartesianSeries {
         });
     }
 
-    private updateTextSelection(selectionData: ColumnNodeDatum[]): void {
+    private updateTextSelection(selectionData: BarNodeDatum[]): void {
         const updateTexts = this.textSelection.setData(selectionData);
 
         updateTexts.exit.remove();
@@ -520,7 +530,7 @@ export class ColumnSeries extends CartesianSeries {
         });
     }
 
-    getTooltipHtml(nodeDatum: ColumnNodeDatum): string {
+    getTooltipHtml(nodeDatum: BarNodeDatum): string {
         const { xKey } = this;
         const { yKey } = nodeDatum;
 

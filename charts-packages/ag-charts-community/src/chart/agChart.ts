@@ -83,7 +83,7 @@ function create(options: any, path?: string, component?: any) {
 
         const meta = mapping.meta || {};
         const constructorParams = meta.constructorParams || [];
-        const skipKeys = ['type'].concat(constructorParams);
+        const skipKeys = ['type', 'listeners'].concat(constructorParams);
         // TODO: Constructor params processing could be improved, but it's good enough for current params.
         const constructorParamValues = constructorParams
             .map((param: any) => options[param])
@@ -117,6 +117,19 @@ function create(options: any, path?: string, component?: any) {
                 }
             }
         }
+
+        const listeners = options.listeners;
+        if (component && component.addEventListener && listeners) {
+            for (const key in listeners) {
+                if (listeners.hasOwnProperty(key)) {
+                    const listener = listeners[key];
+                    if (typeof listener === 'function') {
+                        component.addEventListener(key, listener);
+                    }
+                }
+            }
+        }
+
         return component;
     }
 }

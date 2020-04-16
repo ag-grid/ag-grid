@@ -10,7 +10,7 @@ import { BBox } from "../scene/bbox";
 import { find } from "../util/array";
 import { SizeMonitor } from "../util/sizeMonitor";
 import { Caption } from "../caption";
-import { Observable, reactive, PropertyChangeEvent } from "../util/observable";
+import { Observable, reactive, PropertyChangeEvent, SourceEvent } from "../util/observable";
 import { ChartAxis, ChartAxisDirection } from "./chartAxis";
 import { CartesianSeries } from "./series/cartesian/cartesianSeries";
 import { createId } from "../util/id";
@@ -345,6 +345,7 @@ export abstract class Chart extends Observable {
         series.addEventListener('layoutChange', this.scheduleLayout, this);
         series.addEventListener('dataChange', this.scheduleData, this);
         series.addEventListener('legendChange', this.updateLegend, this);
+        series.addEventListener('nodeClick', this.onSeriesNodeClick, this);
     }
 
     protected freeSeries(series: Series) {
@@ -352,6 +353,7 @@ export abstract class Chart extends Observable {
         series.removeEventListener('layoutChange', this.scheduleLayout, this);
         series.removeEventListener('dataChange', this.scheduleData, this);
         series.removeEventListener('legendChange', this.updateLegend, this);
+        series.removeEventListener('nodeClick', this.onSeriesNodeClick, this);
     }
 
     addSeriesAfter(series: Series, after?: Series): boolean {
@@ -835,20 +837,24 @@ export abstract class Chart extends Observable {
     }
 
     private readonly onClick = (event: MouseEvent) => {
-        this.onSeriesNodeClick();
-        this.onLegendClick(event);
+        this.checkSeriesNodeClick();
+        this.checkLegendClick(event);
     }
 
-    private onSeriesNodeClick() {
+    private checkSeriesNodeClick() {
         const { lastPick } = this;
 
         if (lastPick && lastPick.node) {
             const { datum } = this.lastPick;
-            this.fireEvent({ type: 'click', datum });
+            datum.series.fireNodeClickEvent(datum);
         }
     }
 
-    private onLegendClick(event: MouseEvent) {
+    private onSeriesNodeClick(event: SourceEvent<Series>) {
+        this.fireEvent({ ...event, type: 'seriesNodeClick' });
+    }
+
+    private checkLegendClick(event: MouseEvent) {
         const datum = this.legend.getDatumForPoint(event.offsetX, event.offsetY);
 
         if (datum) {

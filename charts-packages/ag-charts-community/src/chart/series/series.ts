@@ -114,6 +114,8 @@ export abstract class Series extends Observable {
         return [];
     }
 
+    fireNodeClickEvent(datum: SeriesNodeDatum): void {}
+
     /**
      * @private
      * Populates the given {@param data} array with the items of this series
