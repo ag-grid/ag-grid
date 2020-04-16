@@ -113,7 +113,7 @@ describe('forEach', () => {
 
 describe('map', () => {
     it.each([undefined, null])('returns original list if list is %s', list => {
-        expect(map(list, x => true)).toBe(list);
+        expect(map(list, x => true)).toBe(null);
     });
 
     it('returns mapped list', () => {

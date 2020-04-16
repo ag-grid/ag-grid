@@ -131,7 +131,7 @@ export function findIndex<T>(collection: T[], predicate: (item: T, idx: number, 
 /**
  * The implementation of Array.prototype.every in browsers is always slower than just using a simple for loop, so
  * use this for improved performance.
- * https://jsben.ch/AbMhT
+ * https://jsbench.me/bek91dtit8/
  */
 export function every<T>(list: T[], predicate: (value: T, index: number) => boolean): boolean {
     if (list == null) {
@@ -150,7 +150,7 @@ export function every<T>(list: T[], predicate: (value: T, index: number) => bool
 /**
  * The implementation of Array.prototype.some in browsers is always slower than just using a simple for loop, so
  * use this for improved performance.
- * https://jsben.ch/AbMhT
+ * https://jsbench.me/5dk91e4tmt
  */
 export function some<T>(list: T[], predicate: (value: T, index: number) => boolean): boolean {
     if (list == null) {
@@ -169,9 +169,9 @@ export function some<T>(list: T[], predicate: (value: T, index: number) => boole
 /**
  * The implementation of Array.prototype.forEach in browsers is often slower than just using a simple for loop, so
  * use this for improved performance.
- * https://jsben.ch/eEuue
+ * https://jsbench.me/apk91elt8a/
  */
-export function forEach<T>(list: T[], action: (value: T, index: number) => void) {
+export function forEach<T>(list: T[], action: (value: T, index: number) => void): void {
     if (list == null) {
         return;
     }
@@ -182,18 +182,21 @@ export function forEach<T>(list: T[], action: (value: T, index: number) => void)
 }
 
 /**
- * The implementation of Array.prototype.map in browsers is always slower than just using a simple for loop, so
- * use this for improved performance.
- * https://jsben.ch/RrA5v
+ * The implementation of Array.prototype.map in browsers is generally the same as just using a simple for loop. However,
+ * Firefox does exhibit some difference, and this performs no worse in other browsers, so use this if you want improved
+ * performance.
+ * https://jsbench.me/njk91ez8pc/
  */
-export function map<T, V>(list: T[], process: (value: T, index: number) => V) {
+export function map<T, V>(list: T[], process: (value: T, index: number) => V): V[] {
     if (list == null) {
-        return list;
+        return null;
     }
 
     const mapped: V[] = [];
 
-    forEach(list, (value, index) => mapped.push(process(value, index)));
+    for (let i = 0; i < list.length; i++) {
+        mapped.push(process(list[i], i));
+    }
 
     return mapped;
 }
@@ -201,20 +204,20 @@ export function map<T, V>(list: T[], process: (value: T, index: number) => V) {
 /**
  * The implementation of Array.prototype.filter in browsers is always slower than just using a simple for loop, so
  * use this for improved performance.
- * https://jsben.ch/cHwRE
+ * https://jsbench.me/7bk91fk08c/
  */
-export function filter<T>(list: T[], predicate: (value: T, index: number) => boolean) {
+export function filter<T>(list: T[], predicate: (value: T, index: number) => boolean): T[] {
     if (list == null) {
         return list;
     }
 
     const filtered: T[] = [];
 
-    forEach(list, (value, index) => {
-        if (predicate(value, index)) {
-            filtered.push(value);
+    for (let i = 0; i < list.length; i++) {
+        if (predicate(list[i], i)) {
+            filtered.push(list[i]);
         }
-    });
+    }
 
     return filtered;
 }
