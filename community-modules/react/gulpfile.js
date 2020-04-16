@@ -106,7 +106,7 @@ const linkUmdForE2E = (done) => {
     }
 
     if(!fs.existsSync('./cypress/integration/ag-grid-react.min.js')) {
-        link('./umd/ag-grid-react.min.js', './cypress/integration/',{
+        link('./bundles/ag-grid-react.min.js', './cypress/integration/',{
             force: true,
             type: linkType
         })
