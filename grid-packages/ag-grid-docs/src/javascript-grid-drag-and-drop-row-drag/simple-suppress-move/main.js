@@ -57,15 +57,16 @@ function createTile(data) {
 }
 
 function addDropZones(params) {
-    var tileContainer = document.querySelector('.tile-container');
+    var tileContainer = document.querySelector('.tile-container'),
+        dropZone = {
+            getContainer: function() { return tileContainer },
+            onDragStop: function(params) {
+                var tile = createTile(params.dragItem.rowNode.data);
+                tileContainer.appendChild(tile);
+            }
+        };
 
-    params.api.addRowDropZone({
-        target: tileContainer,
-        onDragStop: function(params) {
-            var tile = createTile(params.dragItem.rowNode.data);
-            tileContainer.appendChild(tile);
-        }
-    });
+    params.api.addRowDropZone(dropZone);
 }
 
 // setup the grid after the page has finished loading

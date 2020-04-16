@@ -85,15 +85,12 @@ var rightGridOptions = {
     },
     getRowNodeId: function(data) { return data.athlete; },
     rowDragManaged: true,
-    suppressMoveWhenRowDragging: true,
     columnDefs: rightColumnDefs,
     animateRows: true
 };
 
 function addGridDropZone(params) {
-    params.api.addRowDropZone({
-        target: rightGridOptions,
-        dropAtIndex: true,
+    var dropZoneParams = rightGridOptions.api.getRowDropZoneParams({
         onDragStop: function(params) {
             var deselectCheck = document.querySelector('input#deselect').checked;
             var moveCheck = document.querySelector('input#move').checked;
@@ -110,6 +107,8 @@ function addGridDropZone(params) {
             }
         }
     });
+
+    params.api.addRowDropZone(dropZoneParams);
 }
 
 function loadGrid(options, side, data) {

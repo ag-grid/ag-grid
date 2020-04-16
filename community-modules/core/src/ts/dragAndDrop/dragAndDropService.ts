@@ -1,7 +1,7 @@
 import { PostConstruct, Bean, Autowired, PreDestroy } from "../context/context";
 import { Column } from "../entities/column";
 import { ColumnApi } from "../columnController/columnApi";
-import { GridApi, GridInstance } from "../gridApi";
+import { GridApi, RowDropZoneParams } from "../gridApi";
 import { GridOptionsWrapper } from "../gridOptionsWrapper";
 import { DragService, DragListenerParams } from "./dragService";
 import { Environment } from "../environment";
@@ -307,10 +307,10 @@ export class DragAndDropService {
         return this.dropTargets.some(zones => zones.external);
     }
 
-    public findExternalZoneWithTarget(target: HTMLElement | GridInstance): DropTarget {
+    public findExternalZone(params: RowDropZoneParams): DropTarget {
         const externalTargets = this.dropTargets.filter(target => target.external);
 
-        return _.find(externalTargets, zone => zone.getContainer() === target);
+        return _.find(externalTargets, zone => zone.getContainer() === params.getContainer());
     }
 
     public getHorizontalDirection(event: MouseEvent): HorizontalDirection {

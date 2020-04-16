@@ -176,8 +176,9 @@ export class RowDragFeature implements DropTarget {
 
     private doManagedDrag(draggingEvent: DraggingEvent, pixel: number): void {
         let rowNodes: RowNode[];
+        const isFromThisGrid = this.isFromThisGrid(draggingEvent);
 
-        if (this.isFromThisGrid(draggingEvent)) {
+        if (isFromThisGrid) {
             rowNodes = [draggingEvent.dragItem.rowNode];
 
             if (this.isMultiRowDrag) {
@@ -197,7 +198,7 @@ export class RowDragFeature implements DropTarget {
             return;
         }
 
-        if (this.gridOptionsWrapper.isSuppressMoveWhenRowDragging()) {
+        if (this.gridOptionsWrapper.isSuppressMoveWhenRowDragging() || !isFromThisGrid) {
             if (!this.isTargetOutsideThisGrid(draggingEvent)) {
                 this.clientSideRowModel.highlightRowAtPixel(rowNodes[0], pixel);
             }
@@ -381,7 +382,7 @@ export class RowDragFeature implements DropTarget {
 
         if (
             this.gridOptionsWrapper.isRowDragManaged() &&
-            this.gridOptionsWrapper.isSuppressMoveWhenRowDragging() &&
+            (this.gridOptionsWrapper.isSuppressMoveWhenRowDragging() || !this.isFromThisGrid(draggingEvent)) &&
             !this.isTargetOutsideThisGrid(draggingEvent)
         ) {
             this.moveRowAndClearHighlight(draggingEvent);

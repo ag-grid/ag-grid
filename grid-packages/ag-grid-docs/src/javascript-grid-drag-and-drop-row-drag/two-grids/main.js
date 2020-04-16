@@ -148,8 +148,8 @@ function binDrop(data) {
 
 function addBinZone(params) {
     var eBin = document.querySelector('#eBin'),
-        binDropZone = {
-            target: eBin,
+        dropZone = {
+            getContainer: function() { return eBin; },
             onDragEnter: function() {
                 eBin.style.color = 'blue';
             },
@@ -162,18 +162,19 @@ function addBinZone(params) {
             }
         };
 
-    params.api.addRowDropZone(binDropZone);
+    params.api.addRowDropZone(dropZone);
 }
 
 function addGridDropZone(params, side) {
-    var grid = document.querySelector('#e' + side + 'Grid');
-
-    params.api.addRowDropZone({
-        target: grid,
+    var grid = document.querySelector('#e' + side + 'Grid'),
+        dropZone = {
+        getContainer: function() { return grid; },
         onDragStop: function(params) {
             addRecordToGrid(side.toLowerCase(), params.dragItem.rowNode.data);
         }
-    });
+    };
+
+    params.api.addRowDropZone(dropZone);
 }
 
 function loadGrid(side) {
