@@ -31,6 +31,7 @@
       <excludeFolder url="file://$MODULE_DIR$/community-modules/infinite-row-model/dist" />
       <excludeFolder url="file://$MODULE_DIR$/community-modules/infinite-row-model/node_modules.nosync" />
       <excludeFolder url="file://$MODULE_DIR$/community-modules/polymer/node_modules.nosync" />
+      <excludeFolder url="file://$MODULE_DIR$/community-modules/react/bundles" />
       <excludeFolder url="file://$MODULE_DIR$/community-modules/react/lib" />
       <excludeFolder url="file://$MODULE_DIR$/community-modules/react/node_modules.nosync" />
       <excludeFolder url="file://$MODULE_DIR$/community-modules/react/umd" />
@@ -122,6 +123,7 @@
       <excludeFolder url="file://$MODULE_DIR$/grid-packages/ag-grid-react-example/dist" />
       <excludeFolder url="file://$MODULE_DIR$/grid-packages/ag-grid-react-example/node_modules.nosync" />
       <excludeFolder url="file://$MODULE_DIR$/grid-packages/ag-grid-react/.vscode" />
+      <excludeFolder url="file://$MODULE_DIR$/grid-packages/ag-grid-react/bundles" />
       <excludeFolder url="file://$MODULE_DIR$/grid-packages/ag-grid-react/lib" />
       <excludeFolder url="file://$MODULE_DIR$/grid-packages/ag-grid-react/node_modules.nosync" />
       <excludeFolder url="file://$MODULE_DIR$/grid-packages/ag-grid-react/umd" />
