@@ -88,6 +88,14 @@
         <a class="learn-more" href="https://reactadvanced.com" target="_blank"> React Advanced</a>
         <p class="card-subtitle mb-2 text-muted" style="margin-top: 1px">Oct 25</p>
 
+        <p/>
+
+        <h6 class="card-subtitle mb-2 text-muted">JavaScript</h6>
+
+        <img src="../images/flags/united-kingdom.png">
+        <a class="learn-more" href="https://halfstackconf.com/online/" target="_blank"> Half Stack Online</a>
+        <p class="card-subtitle mb-2 text-muted" style="margin-top: 1px">May 22</p>
+
     </div>
 </div>
     <!-- Begin Mailchimp Signup Form -->
