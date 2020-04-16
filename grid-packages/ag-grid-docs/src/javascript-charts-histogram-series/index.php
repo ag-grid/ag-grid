@@ -23,13 +23,11 @@ include '../documentation-main/documentation_header.php';
     specifies which attribute should be aggregated and plotted on the y-axis.
 </p>
 
-<h2>Frequency histogram</h2>
+<h2>Simple histogram</h2>
 
 <p>
     The simplest histogram series config requires only one property:
     an <code>xKey</code> to define the key to bin the data by.
-    With no <code>yKey</code> is given, the population size of each histogram bin is
-    plotted on the y axis:
 </p>
 <?= createSnippet(<<<SNIPPET
 series: [{
@@ -40,53 +38,6 @@ SNIPPET
 ) ?>
 
 <?= chart_example('Frequency Histogram', 'frequency-histogram', 'generated'); ?>
-
-<h2>Total values</h2>
-
-<p>
-    Often a histogram is used to show the summing of one column or attribute for each of the bins.
-    When a <code>yKey</code> is given the default behaviour is to plot a total of the <code>yKey</code> values.
-    The kind of aggregation to use is controlled by the <code>series.aggregation</code>
-    property but since <code>'sum'</code> is the default you can leave this out:
-</p>
-
-<?= createSnippet(<<<SNIPPET
-series: [{
-    type: 'histogram'
-    xKey: 'age',
-    yKey: 'winnings'
-}]
-SNIPPET
-) ?>
-
-<?= chart_example('Sum aggregation histogram', 'sum-histogram', 'generated'); ?>
-
-<h2>Mean bins</h2>
-
-<p>
-    Aggregating a bin by adding up the y-values is the most common use of a histogram but isn't
-    always the best way to show your data.
-
-    For data that is not evenly distributed in x, but is even in y, a sum plot histogram tends
-    to be dominated by the populations of the x-bins. In the above example you may notice that
-    the prize money distribution very closely follows the age distribution, so that while potentially
-    useful, the chart does not reveal any new trends in the data.
-
-    In many cases, plotting the mean of a bin on the y-axis better illustrates an underlying trend in the data:
-</p>
-
-<?= createSnippet(<<<SNIPPET
-series: [{
-    type: 'histogram'
-    xKey: 'age',
-    yKey: 'time',
-    yName: 'Average Time',
-    aggregation: 'total'
-}]
-SNIPPET
-) ?>
-
-<?= chart_example('Mean values histogram', 'mean-histogram', 'generated'); ?>
 
 <h2>Specified bin counts</h2>
 
@@ -108,7 +59,7 @@ SNIPPET
 series: [{
     type: 'histogram'
     xKey: 'age',
-    binCount: 100
+    binCount: 20
 }]
 SNIPPET
 ) ?>
@@ -154,6 +105,58 @@ SNIPPET
 </p>
 
 <?= chart_example('Irregular intervals histogram', 'irregular-histogram', 'generated'); ?>
+
+<h2>X/Y histogram for summing bins</h2>
+
+<p>
+    As seen above, when only an <code>xKey</code> is given, the population size of each histogram bin is
+    plotted on the y axis. However, an advanced variation exists that uses an
+    <code>xKey</code> and <code>yKey</code>.
+
+    To show the summing of one column or attribute for each of the bins.
+    When a <code>yKey</code> is given the default behaviour is to plot a total of the <code>yKey</code> values.
+    The kind of aggregation to use is controlled by the <code>series.aggregation</code> property.
+</p>
+
+<?= createSnippet(<<<SNIPPET
+series: [{
+    type: 'histogram'
+    xKey: 'age',
+    yKey: 'winnings',
+    aggregation: 'sum'
+}]
+SNIPPET
+) ?>
+
+<?= chart_example('Sum aggregation histogram', 'sum-histogram', 'generated'); ?>
+
+<h2>X/Y histogram with mean bins</h2>
+
+<p>
+    Showing frequencies or summing up the y-values isn't always the best way to show your data.
+
+    For data that is not evenly distributed in x, but is relatively uniform in y, a sum plot xy histogram
+    will tend to be dominated by the populations of the x-bins.
+
+    In the above example you may notice that
+    the prize money distribution very closely follows the age distribution, so that while potentially
+    useful, the chart does not reveal any new trends in the data.
+
+    In many cases, plotting the mean of a bin on the y-axis better illustrates an underlying trend in the data:
+</p>
+
+<?= createSnippet(<<<SNIPPET
+series: [{
+    type: 'histogram'
+    xKey: 'age',
+    yKey: 'time',
+    yName: 'Average Time',
+    aggregation: 'total'
+}]
+SNIPPET
+) ?>
+
+<?= chart_example('Mean values histogram', 'mean-histogram', 'generated'); ?>
 
 <h2>API Reference</h2>
 

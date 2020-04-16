@@ -4,7 +4,7 @@
 // ./generate-data.js > example/data.js
 
 // pulls numbers from a normal distribution
-function normal(mean, sigma, minCutoff, maxCutoff) {
+function normal(mean, sigma, minCutoff = 0, maxCutoff = Number.POSITIVE_INFINITY) {
     // The Marsaglia Polar method
     var s, u, v, norm;
 
@@ -31,14 +31,14 @@ function normal(mean, sigma, minCutoff, maxCutoff) {
     return result;
 }
 
-var histogramDataLength = 1000;
+var histogramDataLength = 200;
 var histogramData = Array.apply(null, Array(histogramDataLength)).map(function() {
     var age = normal(24, 3, 16, 80);
 
     return {
-        age: age,
-        time: 600 + 5 * age - normal(600, 60, 400, 8000),
-        winnings: normal(200, 50, 0, Number.POSITIVE_INFINITY)
+        age: Math.round( age ),
+        time: parseFloat( (600 + 5 * age - normal(600, 60, 400, 8000)).toFixed(1) ),
+        winnings: parseFloat( normal(200, 50).toFixed(2) )
     };
 });
 

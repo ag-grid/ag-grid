@@ -235,12 +235,18 @@ define('skipInPageNav', true);
         </a>
     </div>
     <div class="chart-gallery-item">
-        <a href="./mean-aggregation-histogram.php" class="chart-gallery-item__link">
-            <img class="chart-gallery-item__thumbnail" src="./thumbnails/mean-aggregation-histogram.png" /><br />
-            <div class="chart-gallery-item__name">Mean aggregation Histogram</div>
+        <a href="./histogram-with-specified-bins.php" class="chart-gallery-item__link">
+            <img class="chart-gallery-item__thumbnail" src="./thumbnails/histogram-with-specified-bins.png" /><br />
+            <div class="chart-gallery-item__name">Histogram with specified bins</div>
         </a>
     </div>
-    <div class="chart-gallery-item chart-gallery-item--empty"></div>
+    <div class="chart-gallery-item">
+        <a href="./xy-histogram-with-mean-aggregation.php" class="chart-gallery-item__link">
+            <img class="chart-gallery-item__thumbnail" src="./thumbnails/xy-histogram-with-mean-aggregation.png" /><br />
+            <div class="chart-gallery-item__name">XY Histogram with Mean Aggregation</div>
+        </a>
+    </div>
+    
 </div>
 
 <h3 id="feature-highlights" class="chart-gallery__title">Feature Highlights</h3>

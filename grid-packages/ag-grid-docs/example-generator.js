@@ -140,6 +140,11 @@ function createExampleGenerator(prefix, importType) {
         const getMatchingPaths = (pattern, options = {}) => glob.sync(createExamplePath(pattern), options);
 
         const document = getMatchingPaths('index.html')[0];
+
+        if( !document ) {
+            throw new Error('examples are required to have an index.html file');
+        }
+
         let scripts = getMatchingPaths('*.js');
         let mainScript = scripts[0];
 

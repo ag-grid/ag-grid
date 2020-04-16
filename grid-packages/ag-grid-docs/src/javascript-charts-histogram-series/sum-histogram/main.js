@@ -13,7 +13,8 @@ var options = {
         xKey: 'age',
         xName: 'Participant Age',
         yKey: 'winnings',
-        yName: 'Winnings'
+        yName: 'Winnings',
+        aggregation: 'sum'
     }],
     legend: {
         enabled: false

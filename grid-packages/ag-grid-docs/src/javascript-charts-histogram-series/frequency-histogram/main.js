@@ -7,7 +7,6 @@ var options = {
     data: histogramData,
     series: [{
         type: 'histogram',
-        aggregation: 'mean',
         xKey: 'age',
         xName: 'Participant Age'
     }],

@@ -2,7 +2,7 @@ var options = {
     container: document.querySelector('#myChart'),
     data: data,
     title: {
-        text: 'Engine size distribution (USA 1987)',
+        text: 'Vehicle weight distribution (USA 1987)',
         fontSize: 18,
     },
     subtitle: {
@@ -11,9 +11,13 @@ var options = {
     series: [
         {
             type: 'histogram',
-            xKey: 'engine-size',
-            xName: 'Engine Size',
-            fillOpacity: 0.5
+            xKey: 'curb-weight',
+            xName: 'Curb weight',
+            fillOpacity: 0.5,
+            fill: '#8888ff',
+            stroke: '#000',
+            bins:[[0, 2000], [2000, 3000], [3000, 4500]],
+            areaPlot: true
         }
     ],
     axes: [
@@ -21,14 +25,14 @@ var options = {
             position: 'bottom',
             type: 'number',
             title: {
-                text: 'Engine Size (Cubic inches)'
+                text: 'Curb weight (pounds)'
             },
         },
         {
             position: 'left',
             type: 'number',
-            title: {
-                text: 'Frequency'
+            label: {
+                formatter:function() { return "" }
             }
         }
     ],

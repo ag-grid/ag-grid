@@ -1229,8 +1229,12 @@
                     "url": "javascript-charts-overview/simple-histogram.php"
                   },
                   {
-                    "title": "Mean aggregation Histogram",
-                    "url": "javascript-charts-overview/mean-aggregation-histogram.php"
+                    "title": "Histogram with specified bins",
+                    "url": "javascript-charts-overview/histogram-with-specified-bins.php"
+                  },
+                  {
+                    "title": "XY Histogram with Mean Aggregation",
+                    "url": "javascript-charts-overview/xy-histogram-with-mean-aggregation.php"
                   }
                 ]
               },

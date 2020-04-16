@@ -10,10 +10,9 @@ var options = {
     data: histogramData,
     series: [{
         type: 'histogram',
-        aggregation: 'mean',
         xKey: 'age',
         xName: 'Participant Age',
-        binCount: 100
+        binCount: 20
     }],
     legend: {
         enabled: false
