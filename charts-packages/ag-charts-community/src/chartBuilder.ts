@@ -556,8 +556,6 @@ export class ChartBuilder {
 
         if (field) {
             this.setValueIfExists(series, 'xKey', field.xKey);
-            this.setValueIfExists(series, 'yKey', field.yKey);
-            this.setValueIfExists(series, 'yName', field.yName);
         }
 
         if (fill) {

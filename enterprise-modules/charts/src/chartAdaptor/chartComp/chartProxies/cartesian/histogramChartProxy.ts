@@ -31,7 +31,7 @@ export class HistogramChartProxy extends CartesianChartProxy<HistogramSeriesOpti
 
     public update(params: UpdateChartParams): void {
 
-        const [xField, yField] = params.fields;
+        const [xField] = params.fields;
 
         const chart = this.chart;
         const series = chart.series[0] as HistogramSeries;
@@ -39,16 +39,6 @@ export class HistogramChartProxy extends CartesianChartProxy<HistogramSeriesOpti
         series.data = params.data;
         series.xKey = xField.colId;
         series.xName = xField.displayName;
-
-        if( yField ) {
-            series.yKey = yField.colId;
-            series.yName = yField.displayName;
-        } else {
-            // a y key is optional for a histogram. Without a y-key the y-axis
-            // will display the x-bin bin population size
-            series.yKey = undefined;
-            series.yName = undefined;
-        }
 
         // for now, only constant width is supported via integrated charts
         series.areaPlot = false;
