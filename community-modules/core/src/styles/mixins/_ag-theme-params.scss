@@ -103,20 +103,16 @@
 //   background-color: var(--ag-header-background-color, red);
 //
 // The optional $important argument can be used to add a CSS !important directive
-//
-// NOTE: If $value is null, no CSS will be emitted. This means that for optional parameters
-// that default to null, you must set a value in order for it to be possible to override that
-// value at runtime.
 @mixin ag-color-property($property, $param, $important: false) {
     $value: ag-param($param, $caller: "permitted internal _ag-theme-params.scss access");
     $important: if($important, !important, null);
     @if $value != null {
         #{$property}: $value $important;
-        @if not ag-param-is-set(suppress-css-var-overrides) {
-            $value-as-css-var: -ag-param-as-css-var($param);
-            @if $value != $value-as-css-var {
-                #{$property}: $value-as-css-var $important;
-            }
+    }
+    @if not ag-param-is-set(suppress-css-var-overrides) {
+        $value-as-css-var: -ag-param-as-css-var($param);
+        @if $value != $value-as-css-var {
+            #{$property}: $value-as-css-var $important;
         }
     }
     $-ag-is-permitted-internal-color-access: false !global;
@@ -177,11 +173,12 @@ $-ag-params: null !default;
         }
         @else {
             $reference-name: map-get($value, "reference-name");
-            $value-as-var: -ag-param-as-css-var($reference-name);
-            @return var(--ag-#{$name}, #{$value-as-var});
+            $value: -ag-param-as-css-var($reference-name);
         }
     }
-    @else {
+    @if $value == null {
+        @return var(--ag-#{$name});
+    } @else {
         @return var(--ag-#{$name}, #{$value});
     }
 }

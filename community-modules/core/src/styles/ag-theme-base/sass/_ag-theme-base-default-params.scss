@@ -144,7 +144,7 @@ $ag-theme-base-default-params: (
     // INPUTS
     //
 
-    // Suppress styling of native widgets: <input type=checkbox/radio/range>. If you want to style these yourself, set this to true. If you only want to disable styling for some kinds of input, you can set this to true and e.g. @include ag-native-inputs((checkbox: false)) which will emit styles for all kinds of input except checkboxes.
+    // Suppress styling of checkbox/radio/range input elements. If you want to style these yourself, set this to true. If you only want to disable styling for some kinds of input, you can set this to true and e.g. @include ag-native-inputs((checkbox: false)) which will emit styles for all kinds of input except checkboxes.
     suppress-native-widget-styling: false,
     
     input-border-color: null,

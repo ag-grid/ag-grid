@@ -262,7 +262,7 @@ describe('ag-color-property', () => {
         expect(rendered.isFatalError).toBe(false);
     });
 
-    it('emits nothing when a value is null', () => {
+    it('emits a var with no default value when value is null', () => {
         const rendered = renderScss(`
             @import "../../styles/mixins/ag-theme-params";
             @include ag-register-params((
@@ -273,12 +273,16 @@ describe('ag-color-property', () => {
                 @include ag-color-property(color, a);
             }
         `);
-        expect(rendered.css).toMatchInlineSnapshot(`""`);
+        expect(rendered.css).toMatchInlineSnapshot(`
+".foo {
+  color: var(--ag-a);
+}"
+`);
         expect(rendered.message).toBe('');
         expect(rendered.isFatalError).toBe(false);
     });
 
-    it('emits nothing when a value resolves to null', () => {
+    it('emits a variable cascade with no default value when a value resolves to null', () => {
         const rendered = renderScss(`
             @import "../../styles/mixins/ag-theme-params";
             @include ag-register-params((
@@ -290,12 +294,16 @@ describe('ag-color-property', () => {
                 @include ag-color-property(color, a);
             }
         `);
-        expect(rendered.css).toMatchInlineSnapshot(`""`);
+        expect(rendered.css).toMatchInlineSnapshot(`
+".foo {
+  color: var(--ag-a, var(--ag-c));
+}"
+`);
         expect(rendered.message).toBe('');
         expect(rendered.isFatalError).toBe(false);
     });
 
-    it('emits nothing when a value resolves to null through an ag-derived that performs color modification', () => {
+    it('emits a var with no default value when a value resolves to null through an ag-derived that performs color modification', () => {
         const rendered = renderScss(`
             @import "../../styles/mixins/ag-theme-params";
             @include ag-register-params((
@@ -308,7 +316,11 @@ describe('ag-color-property', () => {
                 @include ag-color-property(color, a);
             }
         `);
-        expect(rendered.css).toMatchInlineSnapshot(`""`);
+        expect(rendered.css).toMatchInlineSnapshot(`
+".foo {
+  color: var(--ag-a);
+}"
+`);
         expect(rendered.message).toBe('');
         expect(rendered.isFatalError).toBe(false);
     });
@@ -370,7 +382,11 @@ describe('ag-color-property', () => {
             }
         `);
 
-        expect(rendered.css).toMatchInlineSnapshot(`""`);
+        expect(rendered.css).toMatchInlineSnapshot(`
+".foo {
+  color: var(--ag-a);
+}"
+`);
         expect(rendered.message).toMatchInlineSnapshot(
             `"WARNING: Problem while calculating theme parameter \`b: ag-derived(c, $opacity: 0.5)\`. This rule attempts to modify the color of \`c\` using $opacity, but (c: var(--foo)) is a CSS variable and can't be modified at compile time. Either set \`c\` to a CSS color value (e.g. #ffffff) or provide a value for \`b\` that does not use $opacity"`
         );

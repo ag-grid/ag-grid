@@ -203,9 +203,21 @@ include '../documentation-main/documentation_header.php';
 }
 </snippet>
 
+<p>If your app already defines a color scheme using CSS variables and you want to use those existing variable names rather than the <code>--ag-{parameter-name}</code> ones provided by the grid, you can do this by passing a css <code>var()</code> value to a theme parameter in Sass. For example, if your application defines a CSS variable <code>--appMainTextColor</code> and you want to set the <code>foreground-color</code> parameter at runtime using this variable, you can do so like this:</p>
+
+<snippet language="scss">
+.ag-theme-alpine {
+    @include ag-theme-alpine((
+        foreground-color: var(--appMainTextColor)
+    ));
+}
+</snippet>
+
+<p>This will cause the text in grid cells to be set at runtime to the value of the <code>--myDataColorVar</code> CSS variable if it is set, or else black.</p>
+
 <h2>Customising themes using CSS rules</h2>
 
-<p>Whether you're using Sass or CSS parameters, you will find that some design effects can't be achieved through parameters alone. For example, there is no parameter to set the <code>font-style: italic</code> on header cells. If you want your column headers to be italic, use regular CSS:</p>
+<p>Whether you're using Sass or CSS variables to set theme parameters, you will find that some design effects can't be achieved through parameters alone. For example, there is no parameter to set the <code>font-style: italic</code> on header cells. If you want your column headers to be italic, use regular CSS:</p>
 
 <snippet language="css">
 .ag-theme-alpine .ag-header-cell-label {
@@ -214,6 +226,9 @@ include '../documentation-main/documentation_header.php';
 </snippet>
 
 <p>Note how we include the name of the theme in the rule: <code>.ag-theme-alpine .ag-header-cell-label { ... } </code>. This is important - without the theme name, your styles will not override the theme's built-in styles due to CSS selector specificity rules.</p>
+
+
+<p>If you're using Sass, you can use reference theme parameters in your own Scss rules using the <a href="#ag-param">ag-param function</a> or <a href="#ag-color-property">ag-color-property mixin</a>.</p>
 
 <p>The best way to find the right class name to use in a CSS rule is using the browser's developer tools. You will notice that components often have multiple class names, some more general than others. For example, the <a href="/javascript-grid-tool-panel-columns/#column-tool-panel-example">row grouping panel</a> is a component onto which you can drag columns to group them. The internal name for this is the "column drop" component, and there are two kinds - a horizontal one at the top of the header and a vertical one in the columns tool panel. You can use the class name <code>ag-column-drop</code> to target either kind, or <code>ag-column-drop-vertical</code> / <code>ag-column-drop-horizontal</code> to target one only.</p>
 
@@ -362,7 +377,7 @@ header-column-resize-handle: false,
 // INPUTS
 //
 
-// Suppress styling of native widgets: <input type=checkbox/radio/range>. If you want to style these yourself, set this to true. If you only want to disable styling for some kinds of input, you can set this to true and e.g. @include ag-native-inputs((checkbox: false)) which will emit styles for all kinds of input except checkboxes.
+// Suppress styling of checkbox/radio/range input elements. If you want to style these yourself, set this to true. If you only want to disable styling for some kinds of input, you can set this to true and e.g. @include ag-native-inputs((checkbox: false)) which will emit styles for all kinds of input except checkboxes.
 suppress-native-widget-styling: false,
 
 input-border-color: null,
@@ -461,21 +476,8 @@ popup-shadow: 5px 5px 10px rgba(0, 0, 0, 0.3)
 </snippet>
 </p>
 
-<h2>Passing CSS custom property values to color parameters</h2>
 
-<p>Earlier on this page it was <a href="setting-parameters-css-variables">demonstrated</a> how to set a parameter using its named CSS variable. It is also possible to pass a variable value to a color parameter:</p>
-
-<snippet language="scss">
-.ag-theme-alpine {
-    @include ag-theme-alpine((
-        data-color: var(--myDataColorVar, black)
-    ));
-}
-</snippet>
-
-<p>This will cause the text in grid cells to be set at runtime to the value of the <code>--myDataColorVar</code> CSS variable if it is set, or else black.</p>
-
-<h2>Parameter cascading</h2>
+<h2 id="parameter-cascading">Parameter cascading</h2>
 
 <p>A parameter cascade is when one parameter defaults to another, which may itself default to a different parameter. In this way we can have very general purpose parameters like <code>foreground-color</code> which changes the color of all text in the grid, and more specific parameters like <code>data-color</code> which only change the color of text in grid cells. Consider the following parameters, all of which derive their value directly or indirectly from the foreground color:</p>
 
@@ -495,33 +497,119 @@ disabled-foreground-color: ag-derived(foreground-color, $opacity: 0.5),
 
 <p>If you are setting parameters using the built in CSS variables, defining <code>--ag-foreground-color: red</code> will not automatically set the disabled foreground color to semi-transparent red - if you want this effect, you must explicitly define <code>--ag-disabled-foreground-color: rgba(255,0,0,0.5)</code>.</p>
 
-<p>If you are passing CSS custom property values to color parameters, e.g. <code>foreground-color: var(--myForegroundColor, red)</code> then again it will not be possible to automatically calculate the disabled foreground color, and you will need to specify a value e.g. <code>disabled-foreground-color:  var(--myDisabledForegroundColor, rgba(255,0,0,0.5))</code>. In this case there will be a warning emitted by the Sass build process describing the issue.</p>
-
-<h2>Disabling colours by setting them to <code>null</code></h2>
-
-<p>Any color parameter can be set to null. This will disable the parameter entirely, including CSS variable support. If you want to use CSS variables to control a parameter at runtime, you must set a non-null default value.</p>
-
-<p>Some values, like `input-focus-border-color`, default to null. These will not be controllable through CSS variables unless you give them a default value.</p>
-
-// TODO check that this is required - can we have CSS vars without defaults?
+<p>If you are passing CSS custom property values to color parameters, e.g. <code>foreground-color: var(--myForegroundColor, red)</code> then again it will not be possible to automatically calculate the disabled foreground color, and you will need to specify a value e.g. <code>disabled-foreground-color: var(--myDisabledForegroundColor, rgba(255,0,0,0.5))</code>. In this case there will be a warning emitted by the Sass build process describing the issue.</p>
 
 <h2>Sass mixins and functions</h2>
 
 <p>The following theme functions and mixins are available if you are include a theme mixin file like <code>ag-theme-alpine-mixin.scss</code>, or can be used in isolation by importing <code>styles/mixins/_ag-theme-params.scss</code> from the grid distribution.</p>
 
-<h3 id="ag-derived">@function ag-param</h3>
+<h3 id="ag-param">@function ag-param</h3>
 
-// TODO
+<p>If you're using Sass, you can write CSS rules that reference the value of a theme parameter. For example, this rule would invert the foreground and background colours in the header:</p>
+
+<snippet language="scss">
+.ag-header-cell {
+    background-color: ag-param(foreground-color);
+    color: ag-param(background-color);
+}
+</snippet>
+
+<p>ag-param simply returns the correct value into the emitted CSS, it does not add any support for CSS variables. The above example emits the following CSS:</p>
+
+<snippet language="css">
+.ag-header-cell {
+    background-color: #000;
+    color: #FFF;
+}
+</snippet>
+
+<h3 id="ag-color-property">@mixin ag-color-property</h3>
+
+<p>The <code>ag-color-property</code> mixin takes 3 arguments: a CSS property name, a parameter name, and an optional boolean indicating whether the rule should be marked as <code>!important</code>. Like <code>ag-param</code> it can be used to reference the value of a parameter, but it additionally adds support for CSS variables.</p>
+
+<snippet language="css">
+.ag-header-cell {
+    @include ag-color-property(background-color, foreground-color);
+    @include ag-color-property(color, background-color);
+}
+</snippet>
+
+<p>Here is the CSS emitted by the above code:</p>
+
+<snippet language="css">
+.ag-header-cell {
+  background-color: #000;
+  background-color: var(--ag-foreground-color, #000);
+  color: #fff;
+  color: var(--ag-background-color, #fff);
+}
+</snippet>
+
+<p>Each rule is emitted twice, the first rule ensures that the default color is visible in older browsers that do not support CSS variables.</p>
 
 <h3 id="ag-derived">@function ag-derived</h3>
 
-// TODO
+<p>As the user of a theme you do not need to write code including the <code>ag-derived</code> function, but it's still useful to know about it so that you can understand your theme's default parameters. Our provided themes make extensive use of this function to implement <a href="#parameter-cascading">parameter cascading</a>.</p>
 
-- ag-derived
-- ag-derived with modifications
+<p>If you're writing a theme that is intended to be extended and used by other developers, you may use this function to implement your own parameter cascades.</p>
 
-<h3 id="ag-derived">@mixin ag-color-property</h3>
+<p>Parent themes define a Sass map of supported parameter names and their default values, which can optionally be overridden by child themes by passing params to the parent theme mixin:</p>
 
-// TODO
+<snippet language="scss">
+$my-theme-default-params: (
+    animal-color: red,
+    cat-color: ag-derived(animal-color)
+);
+</snippet>
+
+<p>The theme can then use the parameters in CSS rules:</p>
+
+<snippet language="scss">
+.cat {
+    // outputs the value passed to "cat-color", or "red" if
+    // no "cat-color" parameter was supplied
+    color: ag-param(cat-color);
+}
+</snippet>
+
+<p>Derived values can modify the color that they derive from. In this case, if the <code>cat-color</code> parameter is not overridden, it will default to a semitransparent version of animal-color:</p>
+
+<snippet language="scss">
+$my-theme-default-params: (
+    animal-color: #FFFFFF,
+    cat-color: ag-derived(animal-color, $opacity: 0.5)
+);
+</snippet>
+
+<p>Instead of passing a value as an argument to a modifier, it is also possible to pass a parameter name. In this case, if the <code>cat-color</code> parameter is not overridden, it will default to a semitransparent version of animal-color with the exact amount of opacity depending on the value of <code>cat-opacity</code>:</p>
+
+<snippet language="scss">
+$my-theme-default-params: (
+    animal-color: #FFFFFF,
+    cat-opacity: 0.5,
+    cat-color: ag-derived(animal-color, $opacity: cat-opacity)
+);
+</snippet>
+
+<p>The following modifiers are available:</p>
+
+<ul>
+    <li>Available for numeric parameters:</li>
+    <ul>
+        <li><code>$times: number</code> - equivalent to Sass <code>$value * $number</code></li>
+        <li><code>$divide: number</code> - equivalent to Sass <code>$value / $number</code></li>
+        <li><code>$plus: number</code> - equivalent to Sass <code>$value + $number</code></li>
+        <li><code>$minus: number</code> - equivalent to Sass <code>$value - $number</code></li>
+    </ul>
+    <li>Available for color parameters:</li>
+    <ul>
+        <li><code>$opacity: amount</code> - amount should be from 0 to 1, equivalent to Sass <code>rgba($value, $amount)</code></li>
+        <li><code>$mix: color amount</code> - mixes in an amount of another color, e.g. <code>$mix: red 10%</code> produce a color made from 90% the parameter value and 10% red.</li>
+        <li><code>$lighten: amount</code> - amount should be a percentage from 0% to 100%, equivalent to Sass <code>lighten($value, $amount)</code></li>
+        <li><code>$darken: amount</code> - amount should be a percentage from 0% to 100%, equivalent to Sass <code>darken($value, $amount)</code></li>
+        <li><code>$self-overlay: times</code> - takes a semi-transparent color and overlays it on top of itself multiple times. For example, if the value of the parameter is <code>rgba(0, 0, 0, 0.5)</code> then <code>$self-overlay: 2</code> will produce <code>rgba(0, 0, 0, 0.75)</code></li>
+    </ul>
+</ul>
+
 
 <?php include '../documentation-main/documentation_footer.php';?>
