@@ -11,21 +11,21 @@ include '../documentation-main/documentation_header.php';
 
     <p class="lead">
         The grid is styled using CSS. A set of CSS rules styling the grid is referred to as a theme.
-        The grid comes bundled with <a href="../javascript-grid-themes-provided/">provided themes</a>
+        The grid comes bundled with <a href="../javascript-grid-themes-provided/">Provided Themes</a>
         or you can create you own.
     </p>
 
     <p>
-        You have the following options when choosing a theme:
+        The grid can be themed using one of the following approaches:
     </p>
 
     <ol class="content">
         <li>
-            Use one of the <a href="../javascript-grid-themes-provided/">provided themes</a>. This is the simplest approach. You can make simple customisations using CSS variables and rules.
+            Use one of the <a href="../javascript-grid-themes-provided/">Provided Themes</a>. This is the simplest approach. You can make simple customisations using CSS variables and rules.
         </li>
         <li>
-            Customise one of the provided themes using
-            <a href="../javascript-grid-themes-provided/#customising-themes">theme parameters and CSS rules</a>.
+            <a href="../javascript-grid-themes-customising/">Customise Provided Themes</a> using
+            theme parameters and CSS rules.
             This requires configuring your project to build Sass files, and allows you to change elements of the look
             and feel like colours, padding, and borders.
         </li>

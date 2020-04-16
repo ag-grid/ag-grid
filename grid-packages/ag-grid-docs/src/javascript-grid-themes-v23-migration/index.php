@@ -12,7 +12,7 @@ include '../documentation-main/documentation_header.php';
 
 <h2 id="what-you-need-to-do">What you need to do</h2>
 
-<ul>
+<ul class="content">
     <li>If you are using the &quot;Balham&quot; or &quot;Material&quot; themes:</li>
     <ul>
         <li>Test your theme to ensure that all the customisations you have made still look correct.</li>
@@ -62,7 +62,7 @@ $ag-header-foreground-color: red;
 
 <p>These variables correspond to parameters with different names. Where possible, they will automatically be converted in backwards compatibility mode.</p>
 
-<ul>
+<ul class="content">
     <li><code>$ag-primary-color</code> and <code>$ag-accent-color</code>. If extending a provided theme, use the theme-specific parameters to control key colours.</li>
     <ul>
         <li>Balham provides <code>balham-active-color</code></li>
@@ -95,7 +95,7 @@ $ag-group-component-border-color: green;
 
 <p>Here is a full list of removed variables. Some have suggested replacements documented. For the other variables, use your browser's developer tools to find the appropriate class names for the element you need to target and adding new CSS rules.</p>
 
-<ul>
+<ul class="content">
     <li><code>$ag-customise-inputs</code>, <code>$ag-input-bottom-border</code>, <code>$ag-input-bottom-border-disabled</code>, <code>$ag-input-border-width</code>, <code>$ag-input-height</code>, <code>$ag-focused-textbox-border-bottom</code>. Use the new %ag-text-input placeholder selector to style text inputs instead.</li>
     <li><code>$ag-customize-buttons</code>, <code>$ag-button-color</code>, <code>$ag-button-text-transform</code>, <code>$ag-button-background-color</code>: Use a CSS rule like <code>.ag-standard-button { ... }</code> instead.</li>
     <li>All <code>$ag-dialog-*</code> variables: <code>$ag-dialog-background-color</code>, <code>$ag-dialog-border-color</code>, <code>$ag-dialog-border-size</code>, <code>$ag-dialog-border-style</code>, <code>$ag-dialog-title-background-color</code>, <code>$ag-dialog-title-font-family</code>, <code>$ag-dialog-title-font-size</code>, <code>$ag-dialog-title-font-weight</code>, <code>$ag-dialog-title-foreground-color</code>, <code>$ag-dialog-title-height</code>, <code>$ag-dialog-title-icon-size</code>, <code>$ag-dialog-title-padding</code></li>
@@ -126,7 +126,7 @@ $ag-group-component-border-color: green;
 
 <p>Note: some of the css class name changes made in v23 are not simple renames, and so aren't covered by the mixin. This is especially true within the Filters Tool Panel. After using the mixin, test your theme and add/edit css rules as necessary.</p>
 
-<ul>
+<ul class="content">
     <li>ag-alignment-end &gt; ag-group-item-alignment-end</li>
     <li>ag-alignment-start &gt; ag-group-item-alignment-start</li>
     <li>ag-alignment-stretch &gt; ag-group-item-alignment-stretch</li>
@@ -185,7 +185,7 @@ $ag-group-component-border-color: green;
 
 <p>v22 defined some placeholder selectors that could be extended by custom themes. In <code>$ag-compatibility-mode: &quot;legacy&quot;</code> these will be automatically aliased to the new names. If you want to achieve this aliasing without the rest of legacy compatibility mode, you can disable compatibility mode and add the line <code>@include ag-v22-to-v23-alias-deleted-placeholders();</code> to your custom theme.</p>
 
-<ul>
+<ul class="content">
     <li>%tab - use .ag-tab</li>
     <li>%selected-tab - use .ag-tab-selected</li>
     <li>%card - rounding and shadow of floating elements can be controlled by the card-radius or card-shadow parameters, or add CSS selectors to target specific elements.</li>
@@ -195,7 +195,7 @@ $ag-group-component-border-color: green;
 
 <p>We have implemented a backwards compatibility mode that will enable some apps to continue working with minimal changes. If you are extending a provided theme importing the main theme file, e.g. <code>ag-theme-balham.scss</code>, you will automatically be opted in to &quot;variables&quot; backwards compatibility mode. You have three options:</p>
 
-<ul>
+<ul class="content">
     <li>Stay in "variables" compatibility mode. Although you are opted into this mode automatically, you will see a deprecation warning in the compile logs telling you that the path that you are using to import the theme file has changed, and you should update your import paths to remove this warning (change the @import from <code>.../sass/ag-theme-$name.scss</code> to <code>.../sass/legacy/ag-theme-$name-v22-compat.scss</code>)</li>
     <li>Enter "legacy" compatibility mode if this is right for your app (see below).</li>
     <li>Switch to the new mechanism for configuring themes. Change your theme import from <code>.../sass/ag-theme-$name.scss</code> to <code>.../sass/ag-theme-$name-mixin.scss</code> and call the theme mixin. See <a href="../javascript-grid-themes-provided/">themes documentation</a> sample code. You will need to convert all the <code>$ag-*</code> global variables you have defined to theme parameters.</li>
@@ -214,7 +214,7 @@ $ag-header-foreground-color: red;
 
 <p>Here is what each mode does:</p>
 
-<ul>
+<ul class="content">
     <li>variables mode: reads the global variables that were supported in v22 and converts them to the parameter maps used in v23, <em>only if there is an equivalent parameter for a variable</em> (most variables are supported). This mode:
 <ul>
     <li>is a reliable mechanism and is safe to use long-term (although you may wish to update your themes anyway, to get the benefits of the new configuration system like better validation)</li>
