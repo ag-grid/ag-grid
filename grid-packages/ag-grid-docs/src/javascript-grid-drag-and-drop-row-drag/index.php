@@ -73,10 +73,10 @@ var container = document.querySelector('.row-drop-zone'),
         }
     };
 
-gridOptions.api.addRowDropZone(dropZoneParams);
+gridApi.addRowDropZone(dropZoneParams);
 
 // when the DropZone above is no longer needed
-gridOptions.api.removeRowDropZone(dropZoneParams);
+gridApi.removeRowDropZone(dropZoneParams);
 </snippet>
 
     <p>
@@ -140,15 +140,12 @@ gridOptions.api.removeRowDropZone(dropZoneParams);
 
 <snippet>
 // example usage: 
-new agGrid.Grid(gridElement, gridOptions);
-new agGrid.Grid(gridElement2, gridOptions2);
+var dropZoneParams = gridApi2.getRowDropZoneParams();
 
-var dropZoneParams = gridOptions2.api.getRowDropZoneParams();
-
-gridOptions.api.addRowDropZone(dropZoneParams);
+gridApi1.addRowDropZone(dropZoneParams);
 
 // when the DropZone above is no longer needed
-gridOptions.api.removeRowDropZone(dropZoneParams);
+gridApi1.removeRowDropZone(dropZoneParams);
 </snippet>
 
     <p>
@@ -184,19 +181,19 @@ gridOptions.api.removeRowDropZone(dropZoneParams);
         the standard events in the returned params. In order to do this, pass the as params to the <code>getRowDropZoneParams</code> method.
     </p>
 <snippet>
-    function getRowDropZoneParams(events: RowDropZoneEvents) =&gt; RowDropZoneParams;
+function getRowDropZoneParams(events: RowDropZoneEvents) =&gt; RowDropZoneParams;
 
-    interface RowDropZoneEvents = {
-        // callback function that will be executed when the rowDrag enters the target
-        onDragEnter?: (params: DraggingEvent) => void;
-        // callback function that will be executed when the rowDrag leaves the target
-        onDragLeave?: (params: DraggingEvent) => void;
-        // callback function that will be executed when the rowDrag is dragged inside the target
-        // note: this gets called multiple times
-        onDragging?: (params: DraggingEvent) => void;
-        // callback function that will be executed when the rowDrag drops rows within the target
-        onDragStop?: (params: DraggingEvent) => void;
-    }
+interface RowDropZoneEvents = {
+    // callback function that will be executed when the rowDrag enters the target
+    onDragEnter?: (params: DraggingEvent) => void;
+    // callback function that will be executed when the rowDrag leaves the target
+    onDragLeave?: (params: DraggingEvent) => void;
+    // callback function that will be executed when the rowDrag is dragged inside the target
+    // note: this gets called multiple times
+    onDragging?: (params: DraggingEvent) => void;
+    // callback function that will be executed when the rowDrag drops rows within the target
+    onDragStop?: (params: DraggingEvent) => void;
+}
 </snippet>
 
 <snippet>
