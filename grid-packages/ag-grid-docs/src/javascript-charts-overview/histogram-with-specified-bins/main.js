@@ -17,7 +17,15 @@ var options = {
             fill: '#8888ff',
             stroke: '#000',
             bins:[[0, 2000], [2000, 3000], [3000, 4500]],
-            areaPlot: true
+            areaPlot: true,
+            tooltipRenderer: function(params) {
+                var paramsMax = params.datum.domain[1];
+                var sizeName = paramsMax === 2000? 'small': paramsMax === 3000? 'medium' : 'large';
+
+                return '<div class="ag-chart-tooltip-content">' +
+                    '<b>' + params.datum.frequency + '</b> vehicles in the <b>' + sizeName + '</b> category by <b>' + params.xName.toLowerCase() + '</b>'
+                '</div>';
+            }
         }
     ],
     axes: [

@@ -13,7 +13,7 @@ define('skipInPageNav', true);
 <h1 class="heading">ag-Charts Gallery: Histogram With Specified Bins</h1>
 
 <p class="lead">
-    Rather than using the automatically generated fixed-width bins, it is possible to explicitly specify bins. In this case the bins need not be of equal widths. In the example below the data is split into light, medium, and heavy vehicles.
+    Rather than using the automatically generated fixed-width bins, it is possible to explicitly specify bins. In this case the bins need not be of equal widths. In the example below the data is split into light, medium, and heavy vehicles, and we also demonstrate custom tooltips to give names to these categories.
 </p>
 
 <?= chart_example('Histogram with specified bins', 'histogram-with-specified-bins', 'generated', ['exampleHeight' => '60vh']) ?>
