@@ -49,4 +49,42 @@ include '../documentation-main/documentation_header.php';
 
 <?= grid_example('Get Displayed Row', 'get-displayed-row', 'generated') ?>
 
+
+<h2>
+    Displayed Rows & Grouping
+</h2>
+
+<p>
+    When grouping, displayed rows are those rows that are currently visible with regards the the open / closed
+    state of the parent rows.
+</p>
+
+<p>
+    In the example below <code>getDisplayedRowCount()</code> will return back 7. This is composed of 5 top level
+    'Language' rows and two second level 'Country' rows. Each of the 7 displayed rows will have a row index from
+    0 to 6. All rows not displayed (as they are contained withing closed groups) are not displayed and do not have
+    a row index.
+</p>
+
+<img src="./rowGroups.png"/>
+
+<h2>
+    Displayed Rows & Loading
+</h2>
+
+<p>
+    If using <a href="../javascript-grid-server-side-model/">Server-side Row Model</a> or
+    <a href="../javascript-grid-infinite-scrolling/">Infinite Row Model</a>, the
+    <code>getDisplayedRowCount()</code> will include the
+    'loading rows'. This is because Displayed Rows are a concern of the grid's rendering engine and not the underlying
+    data. As far as the rendering engine is concerned, the 'loading row' is just another row to render.
+</p>
+
+<p>
+    For example, calling <code>getDisplayedRowCount()</code> below will return 5 as there are 4 normal rows
+    and 1 loading row.
+</p>
+
+<img src="./serverSideLoading.png"/>
+
 <?php include '../documentation-main/documentation_footer.php';?>
