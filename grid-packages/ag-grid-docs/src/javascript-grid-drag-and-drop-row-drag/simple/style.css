@@ -1,13 +1,28 @@
-.outer {
+.example-wrapper {
     display: flex;
     height: 100%;
+    flex-direction: column;
+}
+
+.drop-containers {
+    display: flex;
+    flex: 1 1 auto;
+    flex-direction: row;
+}
+
+.toolbar { 
+    height: 30px;
+}
+
+.grid-wrapper {
+    flex: 2 1 auto;
 }
 
 .drop-col {
     padding-left: 10px;
     box-sizing: border-box;
-    width: 0;
     flex: 1 1 auto;
+    width: 0;
     height: 100%;
     display: flex;
     flex-direction: column;
@@ -41,18 +56,6 @@
     margin: 5px;
     padding: 10px;
     border-radius: 5px;
-}
-
-.json-row {
-    border: 1px solid grey;
-    margin: 4px;
-}
-
-.grid-col {
-    width: 0;
-    flex: 2 1 auto;
-    position: relative;
-    height: 100%;
 }
 
 .green-row {

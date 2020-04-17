@@ -162,7 +162,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     checkboxToggle.addEventListener('change', function() {
         leftGridOptions.columnApi.setColumnVisible('checkbox', checkboxToggle.checked);
-        leftGridOptions.suppressRowClickSelection = checkboxToggle.checked;
+        leftGridOptions.api.setSuppressRowClickSelection(checkboxToggle.checked);
     });
 
     loadGrids();

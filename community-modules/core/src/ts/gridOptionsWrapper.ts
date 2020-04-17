@@ -86,7 +86,10 @@ export class GridOptionsWrapper {
 
     public static PROP_FLOATING_FILTERS_HEIGHT = 'floatingFiltersHeight';
 
+    public static PROP_SUPPRESS_ROW_CLICK_SELECTION = 'suppressRowClickSelection';
     public static PROP_SUPPRESS_ROW_DRAG = 'suppressRowDrag';
+    public static PROP_SUPPRESS_MOVE_WHEN_ROW_DRAG = 'suppressMoveWhenRowDragging';
+
     public static PROP_POPUP_PARENT = 'popupParent';
 
     public static PROP_DOM_LAYOUT = 'domLayout';

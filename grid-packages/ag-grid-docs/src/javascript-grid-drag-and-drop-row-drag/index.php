@@ -6,17 +6,17 @@ $pageGroup = "feature";
 include '../documentation-main/documentation_header.php';
 ?>
 
-    <h1>Row Drag - Drag & Drop</h1>
+    <h1>Row Dragging - External DropZone</h1>
 
     <p class="lead">
-        Row Drag - Drag & Drop is concerned with moving rows between grids or between a grid and a different component
-        within the same application. When using row drag for drag and drop, data is moved or copied around using the
+        Row Drag - External DropZone is concerned with moving rows between grids or between a grid and a different component
+        within the same application. When using row drag with an external DropZone, the data is moved or copied around using the
         grid events - this is in contrast to standard <a href="../javascript-grid-drag-and-drop/">Drag & Drop</a>
         which uses browser events.
     </p>
 
     <p>
-        The Row Drag - Drag and Drop leverages the grid internal Managed Row Dragging system combined with row selection
+        The Row Drag - External DropZone uses the grid's internal Managed Row Dragging system combined with row selection
         to create a seamless data drag and drop experience.
     </p>
 
@@ -90,29 +90,12 @@ gridOptions.api.removeRowDropZone(dropZoneParams);
         <li>
             You can move rows to the container on the right hand side.
         </li>
-    </ul>
-
-    <?= grid_example('Simple', 'simple', 'generated') ?>
-
-    <h2>With suppressMoveWhenDragging</h2>
-
-    <p>
-        To prevent the rows from moving while you are dragging to another container, enable <code>suppressMoveWhenRowDragging</code>.
-    </p>
-
-    <p>
-        In the example below, note the following:
-    </p>
-
-    <ul>
         <li>
-            This example works just as the example above, the only difference being the <code>suppressMoveWhenRowDragging</code>. For
-            more info, please check the <a href="./javascript-grid-row-dragging/#suppress-move-when-dragging">suppressMoveWhenRowDragging</a> section
-            of the Row Dragging docs.
+            Toggle the checkbox to enable or disable <a href="./javascript-grid-row-dragging/#suppress-move-when-dragging">suppressMoveWhenRowDragging</a>.
         </li>
     </ul>
 
-    <?= grid_example('Simple with suppressMoveWhenRowDragging', 'simple-suppress-move', 'generated') ?>
+    <?= grid_example('Simple', 'simple', 'generated') ?>
 
     <h2>Dragging between grids</h2>
 
@@ -138,7 +121,7 @@ gridOptions.api.removeRowDropZone(dropZoneParams);
             Rows can be removed from both grids by dragging the row to the 'Trash' drop zone.
         </li>
         <li>
-            New rows can be created by dragging out from red, green and blue 'Create' draggable areas.
+            New rows can be created by clicking on the red, green and blue buttons.
         </li>
     </ul>
 
@@ -152,7 +135,7 @@ gridOptions.api.removeRowDropZone(dropZoneParams);
 
     <note>
         When the requirement is to let the grid decide where the records should fall, the <code>rowDropZone</code> should
-        be create using the return from the target grid's <code>getRowDropZoneParams</code>.
+        be created using the <code>RowDropZoneParams</code> generated from the target grid's <code>getRowDropZoneParams</code> API method.
     </note>
 
 <snippet>
@@ -185,7 +168,7 @@ gridOptions.api.removeRowDropZone(dropZoneParams);
             Rows can be removed from both grids by dragging the row to the 'Trash' drop zone.
         </li>
         <li>
-            New rows can be created by dragging out from red, green and blue 'Create' draggable areas.
+            New rows can be created by clicking on the red, green and blue buttons.
         </li>
     </ul>
 
@@ -218,7 +201,6 @@ gridOptions.api.removeRowDropZone(dropZoneParams);
 
 <snippet>
 // example usage
-
 var dropZoneParams = gridOptions2.api.getRowDropZoneParams({
     onDragStop: function(event) {
         alert(event.dragItem.rowNodes.length + ' record(s) dropped');
@@ -227,8 +209,7 @@ var dropZoneParams = gridOptions2.api.getRowDropZoneParams({
 
 gridOptions.api.addRowDropZone(dropZoneParams);
 </snippet>
-
-
+    <p>
         In the example below, note the following:
     </p>
 

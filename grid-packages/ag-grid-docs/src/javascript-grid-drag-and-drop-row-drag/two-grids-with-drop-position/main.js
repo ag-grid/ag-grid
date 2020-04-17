@@ -87,35 +87,6 @@ function createDataItem(color) {
     };
 }
 
-function createItemDragStart(event, color) {
-    var newItem = createDataItem(color),
-        jsonData = JSON.stringify(newItem),
-        userAgent = window.navigator.userAgent,
-        isIE = userAgent.indexOf('Trident/') >= 0;
-
-    event.dataTransfer.setData(isIE ? 'text' : 'application/json', jsonData);
-}
-
-function gridDragNewItemOver(event) {
-    var dragSupported = event.dataTransfer.types.length;
-
-    if (dragSupported) {
-        event.dataTransfer.dropEffect = "copy";
-        event.preventDefault();
-    }
-}
-
-function onGridDropNewItem(event, side) {
-    event.preventDefault();
-
-    var userAgent = window.navigator.userAgent,
-        isIE = userAgent.indexOf('Trident/') >= 0,
-        jsonData = event.dataTransfer.getData(isIE ? 'text' : 'application/json')
-        data = JSON.parse(jsonData);
-
-    addRecordToGrid(side, data);
-}
-
 function addRecordToGrid(side, data) {
     // if data missing or data has no it, do nothing
     if (!data || data.id == null) { return; }
@@ -137,6 +108,15 @@ function addRecordToGrid(side, data) {
     api.updateRowData(transaction);
 }
 
+function onFactoryButtonClick(e) {
+    var button = e.currentTarget,
+        buttonColor = button.getAttribute('data-color'),
+        side = button.getAttribute('data-side'),
+        data = createDataItem(buttonColor);
+
+    addRecordToGrid(side, data);
+}
+
 function binDrop(data) {
     // if data missing or data has no id, do nothing
     if (!data || data.id == null) { return; }
@@ -155,7 +135,7 @@ function binDrop(data) {
 }
 
 function addBinZone(params) {
-    var eBin = document.querySelector('#eBin'),
+    var eBin = document.querySelector('.bin'),
         dropZone = {
             getContainer: function() { return eBin; },
             onDragEnter: function() {
@@ -187,6 +167,12 @@ function loadGrid(side) {
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function() {
+    var buttons = document.querySelectorAll('button.factory');
+
+    buttons.forEach(function(button) {
+        button.addEventListener('click', onFactoryButtonClick);
+    });
+
     loadGrid('Left');
     loadGrid('Right');
 });

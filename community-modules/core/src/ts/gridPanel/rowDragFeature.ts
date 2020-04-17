@@ -115,21 +115,21 @@ export class RowDragFeature implements DropTarget {
         return this.isGridSorted || this.isGridFiltered || this.isRowGroupActive;
     }
 
-    private getRowNodes(dragginEvent: DraggingEvent): RowNode[] {
-        if (!this.isFromThisGrid(dragginEvent)) {
-            return dragginEvent.dragItem.rowNodes;
+    private getRowNodes(draggingEvent: DraggingEvent): RowNode[] {
+        if (!this.isFromThisGrid(draggingEvent)) {
+            return draggingEvent.dragItem.rowNodes;
         }
 
         const enableMultiRowDragging = this.gridOptionsWrapper.isEnableMultiRowDragging();
         const selectedNodes = this.selectionController.getSelectedNodes();
-        const currentNode = dragginEvent.dragItem.rowNode;
+        const currentNode = draggingEvent.dragItem.rowNode;
 
         if (enableMultiRowDragging && selectedNodes.indexOf(currentNode) !== -1) {
             this.isMultiRowDrag = true;
             return [...selectedNodes];
-        } else {
-            this.isMultiRowDrag = false;
         }
+
+        this.isMultiRowDrag = false;
 
         return [currentNode];
     }

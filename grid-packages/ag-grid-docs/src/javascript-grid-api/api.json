@@ -122,6 +122,9 @@
         },
         "clearRangeSelection()": {
             "description": "Clears the selected range."
+        },
+        "setSuppressRowClickSelection(value)": {
+            "description": "Sets the <code>suppressRowClickSelection</code> property."
         }
     },
     "refresh": {
@@ -296,6 +299,9 @@
         },
         "setSuppressRowDrag(value)": {
             "description": "Sets the <code>suppressRowDrag</code> property."
+        },
+        "setSuppressMoveWhenRowDragging(value)": {
+            "description": "Sets the <code>suppressMoveWhenRowDragging</code> property."
         },
         "addRowDropZone(params)": {
             "description": "Adds a DropZone outside of the Grid where rows can be dropped."

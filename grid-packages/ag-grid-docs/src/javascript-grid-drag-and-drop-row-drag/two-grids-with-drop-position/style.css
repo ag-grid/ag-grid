@@ -1,27 +1,30 @@
-.outer {
+.example-wrapper {
     display: flex;
     height: 100%;
 }
 
 .inner-col {
-    width: 0;
-    flex-grow: 1;
     height: 100%;
-}
-
-.factory-panel {
-    display: flex;
-    flex-direction: column;
-}
-
-.factory {
-    padding: 10px;
-    margin: 10px;
     display: flex;
     flex-direction: column;
     flex: 1 1 auto;
+}
+
+.inner-col.vertical-toolbar {
+    display: flex;
+    flex: none;
+    width: 100px;
     align-items: center;
     justify-content: center;
+}
+
+.toolbar {
+    height: 30px;
+}
+
+.vertical-toolbar > span {
+    padding: 10px;
+    margin: 10px;
     cursor: default;
     user-select: none;
     -ms-user-select: none;
@@ -29,23 +32,29 @@
     -webkit-user-modify: none;
 }
 
-.factory:not(.factory-bin) i {
-    cursor: move; /* fallback for IE */
-    cursor: grab;
-    cursor: -moz-grab;
-    cursor: -webkit-grab;
+button.factory {
+    height: 25px;
+    border-radius: 5px;
+    border: none;
+    color: white;
+    outline: none;
+    cursor: pointer;
+}
+
+button i {
+    margin-right: 10px;
 }
 
 .factory-red {
-    color: indianred;
+    background-color: indianred;
 }
 
 .factory-green {
-    color: darkseagreen;
+    background-color: darkseagreen;
 }
 
 .factory-blue {
-    color: cornflowerblue;
+    background-color: cornflowerblue;
 }
 
 .green-row {

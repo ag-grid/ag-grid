@@ -160,6 +160,14 @@ export class ComponentUtil {
             api.setSuppressRowDrag(ComponentUtil.toBoolean(changes.suppressRowDrag.currentValue));
         }
 
+        if (changes.suppressMoveWhenRowDragging) {
+            api.setSuppressMoveWhenRowDragging(ComponentUtil.toBoolean(changes.suppressMoveWhenRowDragging.currentValue));
+        }
+
+        if (changes.suppressRowClickSelection) {
+            api.setSuppressRowClickSelection(ComponentUtil.toBoolean(changes.suppressRowClickSelection.currentValue));
+        }
+
         if (changes.gridAutoHeight) {
             api.setGridAutoHeight(ComponentUtil.toBoolean(changes.gridAutoHeight.currentValue));
         }

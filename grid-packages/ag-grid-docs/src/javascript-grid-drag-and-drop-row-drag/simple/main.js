@@ -25,8 +25,17 @@ var gridOptions = {
     animateRows: true,
     onGridReady: function(params) {
         addDropZones(params);
+        addCheckboxListener(params);
     }
 };
+
+function addCheckboxListener(params) {
+    var checkbox = document.querySelector('input[type=checkbox]');
+
+    checkbox.addEventListener('change', function() {
+        params.api.setSuppressMoveWhenRowDragging(checkbox.checked);
+    });
+}
 
 function createRowData() {
     var data = [];
