@@ -9,9 +9,8 @@ include '../documentation-main/documentation_header.php';
 <h1>Histogram Series</h1>
 
 <p class="lead">
-    Histograms show data summarised and grouped into regular or irregular bins. They
-    are a good choice for when the data is larger than could be plotted on a bar chart and
-    can be used to find underlying trends in continuous data.
+    Histograms show the frequency distribution of continuous data. They are a good choice for when the data is larger
+    than could be plotted on a bar chart and can be used to find underlying trends in continuous data.
 </p>
 
 <h2>Simple histogram</h2>
@@ -22,7 +21,7 @@ include '../documentation-main/documentation_header.php';
 </p>
 
 <p>
-    A simple histogram series configuration below:
+    The simplest configuration for a Histogram Series is shown below:
 </p>
 <?= createSnippet(<<<SNIPPET
 series: [{
@@ -31,10 +30,6 @@ series: [{
 }]
 SNIPPET
 ) ?>
-
-<p>
-    This series configuration is demonstrated in the following example:
-</p>
 
 <?= chart_example('Simple Histogram', 'simple', 'generated'); ?>
 
