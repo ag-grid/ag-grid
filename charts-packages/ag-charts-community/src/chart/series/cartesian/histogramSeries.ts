@@ -66,7 +66,7 @@ export class HistogramBin {
     data: any[] = [];
     aggregatedValue: number = 0;
     frequency: number = 0;
-    domain: number[];
+    domain: [number, number];
 
     constructor([domainMin, domainMax]: [number, number]) {
         this.domain = [domainMin, domainMax];
@@ -312,7 +312,7 @@ export class HistogramSeries extends CartesianSeries {
         const { xKey } = this;
         const derivedBins = this.deriveBins();
 
-        // creating a sorted copy allows bining in O(n) rather than O(n²)
+        // creating a sorted copy allows binning in O(n) rather than O(n²)
         // but at the expense of more temporary memory
         const sortedData = data.slice().sort((a, b) => {
             if (a[xKey] < b[xKey]) {

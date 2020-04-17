@@ -20,10 +20,10 @@ export class HistogramChartProxy extends CartesianChartProxy<HistogramSeriesOpti
         const { parentElement } = this.chartProxyParams;
 
         const chart = ChartBuilder.createHistogramChart(parentElement, options || this.chartOptions);
-        const barSeries = ChartBuilder.createSeries(this.getSeriesDefaults());
+        const histogramSeries = ChartBuilder.createSeries(this.getSeriesDefaults());
 
-        if (barSeries) {
-            chart.addSeries(barSeries);
+        if (histogramSeries) {
+            chart.addSeries(histogramSeries);
         }
 
         return chart;
