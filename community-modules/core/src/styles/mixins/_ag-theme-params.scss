@@ -169,7 +169,7 @@ $-ag-params: null !default;
     @if -is-ag-derived($value) {
         $has-modificatons: length($value) > 2;
         @if $has-modificatons {
-            @return ag-param($name, $caller: "permitted internal _ag-theme-params.scss access");
+            $value: ag-param($name, $caller: "permitted internal _ag-theme-params.scss access");
         }
         @else {
             $reference-name: map-get($value, "reference-name");

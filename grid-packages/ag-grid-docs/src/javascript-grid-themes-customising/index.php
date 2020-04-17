@@ -111,7 +111,9 @@ include '../documentation-main/documentation_header.php';
 }
 </snippet>
 
-<p>This will cause the text in grid cells to be set at runtime to the value of the <code>--myDataColorVar</code>.</p>
+<p>This will cause the text in grid cells to be set at runtime to the value of the <code>--myDataColorVar</code>. If both a custom variable (<code>--myDataColorVar</code>) and a built in variable (<code>--ag-foreground-color</code>) are set at runtime, the built in variable will take priority. If you don't want this to happen then you can disable built in variables for your theme by setting the parameter <code>suppress-css-var-overrides: false</code>.</p>
+
+<p>We have created an example that demonstrates both methods of CSS variable use in our <a href="https://github.com/ag-grid/ag-grid-customise-theme/tree/master/src/vanilla-css-variables">theme examples GitHub repo</a>.</p>
 
 <h2>Customising themes using CSS rules</h2>
 

@@ -227,12 +227,13 @@ describe('ag-color-property', () => {
                  suppress-css-var-overrides: false
             ));
             .foo {
-                @include ag-color-property(color, b);
+                @include ag-color-property(color, a);
             }
         `);
         expect(rendered.css).toMatchInlineSnapshot(`
 ".foo {
   color: rgba(255, 0, 0, 0.5);
+  color: var(--ag-a, var(--ag-b, rgba(255, 0, 0, 0.5)));
 }"
 `);
         expect(rendered.message).toBe('');
@@ -243,9 +244,8 @@ describe('ag-color-property', () => {
         const rendered = renderScss(`
             @import "../../styles/mixins/ag-theme-params";
             @include ag-register-params((
-                 a: ag-derived(b),
-                 b: ag-derived(c, $opacity: 0.5),
-                 c: red,
+                 a: ag-derived(b, $opacity: 0.5),
+                 b: red,
                  suppress-css-var-overrides: false
             ));
             .foo {
@@ -253,11 +253,11 @@ describe('ag-color-property', () => {
             }
         `);
         expect(rendered.css).toMatchInlineSnapshot(`
-            ".foo {
-              color: rgba(255, 0, 0, 0.5);
-              color: var(--ag-a, rgba(255, 0, 0, 0.5));
-            }"
-        `);
+".foo {
+  color: rgba(255, 0, 0, 0.5);
+  color: var(--ag-a, rgba(255, 0, 0, 0.5));
+}"
+`);
         expect(rendered.message).toBe('');
         expect(rendered.isFatalError).toBe(false);
     });
@@ -318,7 +318,7 @@ describe('ag-color-property', () => {
         `);
         expect(rendered.css).toMatchInlineSnapshot(`
 ".foo {
-  color: var(--ag-a);
+  color: var(--ag-a, var(--ag-b));
 }"
 `);
         expect(rendered.message).toBe('');
@@ -384,7 +384,7 @@ describe('ag-color-property', () => {
 
         expect(rendered.css).toMatchInlineSnapshot(`
 ".foo {
-  color: var(--ag-a);
+  color: var(--ag-a, var(--ag-b));
 }"
 `);
         expect(rendered.message).toMatchInlineSnapshot(
