@@ -86,6 +86,21 @@ include '../documentation-main/documentation_header.php';
 </table>
 
 
+<h2>Applying a Theme to an App</h2>
+
+<p>
+    To use a theme add the theme class name to the <code>div</code> element that contains your grid. The following is
+    an example of using the Alpine theme:
+</p>
+
+<snippet language="html">
+    &lt;div id="myGrid" class="ag-theme-alpine"&gt;&lt;/div&gt;
+</snippet>
+
+<p>
+    In order for the above code to work, the correct stylesheets must be loaded:
+</p>
+
 <h2>Loading Provided Themes</h2>
 
 <p>
@@ -111,7 +126,7 @@ include '../documentation-main/documentation_header.php';
     styles and all provided themes. If you are using one of these files you do not need to separately load CSS.
 </p>
 
-<h3>JavaScript Bundler's</h3>
+<h3>JavaScript Bundlers</h3>
 <p>
     If you are using a JavaScript bundler like webpack or Rollup and it is configured to load styles, you can
     <code>require()</code> the correct CSS file from node_modules. This is the recommended approach as webpack will take
@@ -136,29 +151,14 @@ include '../documentation-main/documentation_header.php';
 </snippet>
 
 <p>
-    If you do this, be sure to update the CSS version number in the URL to match the JS version you're using, and
-    change the theme name in the URL to the one you're using. This is useful for testing and prototyping but not
+    Change the theme name in the URL to the one that you're using, and ensure that the version number in the URL matches the JS version you're using.This is useful for testing and prototyping but not
     recommended for production as your app will be unavailable if the unpkg servers are down.
 </p>
 
-<h2>Applying a Theme to an App</h2>
+<h2>Loading the Roboto font for Material theme</h2>
 
 <p>
-    To use a theme add the theme class name to the <code>div</code> element that contains your grid. The following is
-    an example of using the Alpine theme:
-</p>
-
-<snippet language="html">
-    &lt;div id="myGrid" class="ag-theme-alpine"&gt;&lt;/div&gt;
-</snippet>
-
-<p>
-    In order for the above code to work, the correct stylesheets must be
-    <a href="/javascript-grid-themes-provided/#loading-provided-themes">loaded</a>.
-</p>
-
-<p>
-    Note that the Material theme requires the Roboto font, and this is not bundled in the material CSS. The easiest way
+    The Material theme requires the Roboto font, and this is not bundled in the material CSS. The easiest way
     to load Roboto is through Google's CDN:
 </p>
 

@@ -111,7 +111,7 @@ include '../documentation-main/documentation_header.php';
 }
 </snippet>
 
-<p>This will cause the text in grid cells to be set at runtime to the value of the <code>--myDataColorVar</code> CSS variable if it is set, or else black.</p>
+<p>This will cause the text in grid cells to be set at runtime to the value of the <code>--myDataColorVar</code>.</p>
 
 <h2>Customising themes using CSS rules</h2>
 
@@ -125,10 +125,42 @@ include '../documentation-main/documentation_header.php';
 
 <p>Note how we include the name of the theme in the rule: <code>.ag-theme-alpine .ag-header-cell-label { ... } </code>. This is important - without the theme name, your styles will not override the theme's built-in styles due to CSS selector specificity rules.</p>
 
+<h3>Referencing parameter values in CSS rules</h3>
 
-<p>If you're using Sass, you can use reference theme parameters in your own Scss rules using the <a href="#ag-param">ag-param function</a> or <a href="#ag-color-property">ag-color-property mixin</a>.</p>
+<p>If you're using Sass, you can use reference theme parameters in your own CSS rules using the <a href="#ag-param">ag-param function</a> or <a href="#ag-color-property">ag-color-property mixin</a>.</p>
 
 <p>The best way to find the right class name to use in a CSS rule is using the browser's developer tools. You will notice that components often have multiple class names, some more general than others. For example, the <a href="/javascript-grid-tool-panel-columns/#column-tool-panel-example">row grouping panel</a> is a component onto which you can drag columns to group them. The internal name for this is the "column drop" component, and there are two kinds - a horizontal one at the top of the header and a vertical one in the columns tool panel. You can use the class name <code>ag-column-drop</code> to target either kind, or <code>ag-column-drop-vertical</code> / <code>ag-column-drop-horizontal</code> to target one only.</p>
+
+<h3>Understanding CSS rule maintenance and breaking changes</h3>
+
+<p>
+    With each release of the grid we add features and improve existing ones, and as a result the DOM structure changes with every release - even minor and patch releases. Of course we test and update the CSS rules in our themes to make sure they still work, and this includes ensuring that customisations made via theme parameters does not break between releases. But if you have written your own CSS rules, you will need to test and update them.
+</p>
+
+<p>
+    The simpler your CSS rules are, the less likely they are to break between releases. Prefer selectors that target a single class name where possible.
+</p>
+
+<h3>Avoiding breaking the grid with CSS rules</h3>
+ 
+<p>
+    Browsers use the same mechanism - CSS - for controlling how elements work (e.g. scrolling and whether they respond to mouse events),
+    where elements appear, and how elements look. Our "structural stylesheet" (ag-grid.scss) sets CSS rules that control how the grid
+    works, and the code depends on those rules not being overridden. There is nothing that we can do to prevent themes overriding critical
+    rules, so as a theme author you need to be careful not to break the grid. Here's a guide:
+</p>
+
+<ul>
+    <li>Visual styles including margins, paddings, sizes, colours, fonts, borders etc are all fine to change
+        in a theme.
+    <li>Setting a component to <code>display: flex</code> and changing flex child layout properties like
+        <code>align-items</code>, <code>align-self</code> and <code>flex-direction</code> is probably OK
+        if you're trying to change how something looks on a small scale, e.g. to change the align of some
+        text or icons within a container; but if you're trying to change the layout of the grid on a larger scale e.g. turning a vertical scrolling list into a horizontal one, you are likely to break Grid features.
+    <li>The style properties <code>position</code>, <code>overflow</code> and <code>pointer-events</code>
+        are intrinsic to how the grid works. Changing these values will change how the grid operates, and may break
+        functionality now or in future minor releases.
+</ul>
 
 <h2 id="base-theme-parameters">Full list of theme parameters</h2>
 
@@ -470,7 +502,7 @@ $my-theme-default-params: (
 }
 </snippet>
 
-<p>Derived values can modify the color that they derive from. In this case, if the <code>cat-color</code> parameter is not overridden, it will default to a semitransparent version of animal-color:</p>
+<p>The <code>ag-derived</code> function supports modifiers - named arguments that can be used to modify the value of the parameter being derived from. In this case, if the <code>cat-color</code> parameter is not overridden, it will default to a semitransparent version of animal-color:</p>
 
 <snippet language="scss">
 $my-theme-default-params: (
@@ -479,7 +511,7 @@ $my-theme-default-params: (
 );
 </snippet>
 
-<p>Instead of passing a value as an argument to a modifier, it is also possible to pass a parameter name. In this case, if the <code>cat-color</code> parameter is not overridden, it will default to a semitransparent version of animal-color with the exact amount of opacity depending on the value of <code>cat-opacity</code>:</p>
+<p>Instead of passing a value to a modifier, it is also possible to pass a parameter name. In this case, the <code>cat-color</code> parameter defaults to a semitransparent version of animal-color with the exact amount of opacity depending on the value of <code>cat-opacity</code>:</p>
 
 <snippet language="scss">
 $my-theme-default-params: (
@@ -501,10 +533,10 @@ $my-theme-default-params: (
     </ul>
     <li>Available for color parameters:</li>
     <ul>
-        <li><code>$opacity: amount</code> - amount should be from 0 to 1, equivalent to Sass <code>rgba($value, $amount)</code></li>
-        <li><code>$mix: color amount</code> - mixes in an amount of another color, e.g. <code>$mix: red 10%</code> produce a color made from 90% the parameter value and 10% red.</li>
-        <li><code>$lighten: amount</code> - amount should be a percentage from 0% to 100%, equivalent to Sass <code>lighten($value, $amount)</code></li>
-        <li><code>$darken: amount</code> - amount should be a percentage from 0% to 100%, equivalent to Sass <code>darken($value, $amount)</code></li>
+        <li><code>$opacity: percentage</code> - amount should be from 0 to 1, equivalent to Sass <code>rgba($value, $amount)</code></li>
+        <li><code>$mix: color percentage</code> - mixes in an amount of another color, e.g. <code>$mix: red 10%</code> produce a color made from 90% the parameter value and 10% red.</li>
+        <li><code>$lighten: percentage</code> - amount should be a percentage from 0% to 100%, equivalent to Sass <code>lighten($value, $amount)</code></li>
+        <li><code>$darken: percentage</code> - amount should be a percentage from 0% to 100%, equivalent to Sass <code>darken($value, $amount)</code></li>
         <li><code>$self-overlay: times</code> - takes a semi-transparent color and overlays it on top of itself multiple times. For example, if the value of the parameter is <code>rgba(0, 0, 0, 0.5)</code> then <code>$self-overlay: 2</code> will produce <code>rgba(0, 0, 0, 0.75)</code></li>
     </ul>
 </ul>

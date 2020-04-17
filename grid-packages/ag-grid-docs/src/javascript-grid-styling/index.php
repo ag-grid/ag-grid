@@ -44,46 +44,10 @@ include '../documentation-main/documentation_header.php';
         <code>dist/styles/webfont</code> folder of the distribution. Link this font into your application and follow the instructions for configuring a <a href="/javascript-grid-icons/">custom icon font</a>.
     </p>
 
-    <h2>Understanding theme maintenance and breaking changes</h2>
-
-    <p>
-        With each release of the grid, we add features and improve existing ones, and as a result the DOM structure changes with every release - even minor and patch releases. Of course, we test and update the CSS rules in our themes to make sure they still work. But if you have written your own CSS rules, you will need to test and update them.
-    </p>
-
-    <p>
-        This is why it is more stable to use theme parameters than CSS rules to change the look and feel of the grid - if you
-        use theme parameters, the theme takes care of generating CSS from them, so you don't have to update anything between releases.
-    </p>
-
-    <p>
-        Sometimes you will have to write CSS however. In this case, bear in mind that the simpler your CSS rules are, the less likely they are to break between releases. Prefer selectors that target a single class name where possible.
-    </p>
-
     <h2>When not to use themes</h2>
 
     <p>
         Themes are intended to change the overall look and feel of a grid. If you want to style a particular column, or a particular header, consider using either cell and header renderers, or applying CSS classes or styles at the column definition level. Sometimes it is possible to achieve the same effect using <a href="/javascript-grid-component-types/">custom renderers</a> as it is with themes. If so, use whichever one makes more sense for you.
     </p>
-
-    <h2>Avoiding breaking the grid with custom themes</h2>
-
-    <p>
-        Browsers use the same mechanism - CSS - for controlling how elements work (e.g. scrolling and whether they respond to mouse events),
-        where elements appear, and how elements look. Our "structural stylesheet" (ag-grid.scss) sets CSS rules that control how the grid
-        works, and the code depends on those rules not being overridden. There is nothing that we can do to prevent themes overriding critical
-        rules, so as a theme author you need to be careful not to break the grid. Here's a guide:
-    </p>
-
-    <ul>
-        <li>Visual styles including margins, paddings, sizes, colours, fonts, borders etc are all fine to change
-            in a theme.
-        <li>Setting a component to <code>display: flex</code> and changing flex child layout properties like
-            <code>align-items</code>, <code>align-self</code> and <code>flex-direction</code> is probably OK
-            if you're trying to change how something looks on a small scale, e.g. to change the align of some
-            text or icons within a container; but if you're trying to change the layout of the grid on a larger scale e.g. turning a vertical scrolling list into a horizontal one, you are likely to break Grid features.
-        <li>The style properties <code>position</code>, <code>overflow</code> and <code>pointer-events</code>
-            are intrinsic to how the grid works. Changing these values will change how the grid operates, and may break
-            functionality now or in future minor releases.
-    </ul>
 
 <?php include '../documentation-main/documentation_footer.php';?>
