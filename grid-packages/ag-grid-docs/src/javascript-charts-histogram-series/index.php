@@ -14,20 +14,15 @@ include '../documentation-main/documentation_header.php';
     can be used to find underlying trends in continuous data.
 </p>
 
-<p>
-    The chart expects the (<code>chart.data</code> property) to be an array of objects, where each object
-    is a table row or a database record and each key is a column. To plot a histogram we need at least
-    one numeric attribute in the data to be specified using the the <code>xKey</code> property.
-    Data will be distributed into bins according to their <code>xKey</code> values.
-    Additionally, an optional <code>yKey</code> property is usually also given and
-    specifies which attribute should be aggregated and plotted on the y-axis.
-</p>
-
 <h2>Simple histogram</h2>
 
 <p>
-    The simplest histogram series config requires only one property:
-    an <code>xKey</code> to define the key to bin the data by.
+    Histograms require at least one numeric attribute in the data to be specified using the
+    <code>xKey</code> property. Data will be distributed into bins according to the <code>xKey</code> values.
+</p>
+
+<p>
+    A simple histogram series configuration below:
 </p>
 <?= createSnippet(<<<SNIPPET
 series: [{
@@ -37,9 +32,13 @@ series: [{
 SNIPPET
 ) ?>
 
-<?= chart_example('Frequency Histogram', 'frequency-histogram', 'generated'); ?>
+<p>
+    This series configuration is demonstrated in the following example:
+</p>
 
-<h2>Specified bin counts</h2>
+<?= chart_example('Simple Histogram', 'simple', 'generated'); ?>
+
+<h2>Bin Count</h2>
 
 <p>
     By default the histogram will split the x domain of the data into around ten
@@ -64,7 +63,7 @@ series: [{
 SNIPPET
 ) ?>
 
-<?= chart_example('More bins', 'more-bins-histogram', 'generated'); ?>
+<?= chart_example('Larger Bin Count', 'larger-bin-count', 'generated'); ?>
 
 <h2>Irregular intervals</h2>
 
@@ -104,18 +103,27 @@ SNIPPET
     <code>binCount</code>, but if both are present <code>bins</code> takes precedence.
 </p>
 
-<?= chart_example('Irregular intervals histogram', 'irregular-histogram', 'generated'); ?>
+<?= chart_example('Irregular Intervals', 'irregular-intervals', 'generated'); ?>
 
-<h2>X/Y histogram for summing bins</h2>
+<h2>XY Histogram</h2>
 
 <p>
-    As seen above, when only an <code>xKey</code> is given, the population size of each histogram bin is
-    plotted on the y axis. However, an advanced variation exists that uses an
-    <code>xKey</code> and <code>yKey</code>.
+    The histograms shown above all contain a single <code>xKey</code> with it's frequency plotted on the y axis.
+    However it is sometimes useful to visualise an <code>xKey</code> and <code>yKey</code> using a Histogram.
+</p>
 
-    To show the summing of one column or attribute for each of the bins.
-    When a <code>yKey</code> is given the default behaviour is to plot a total of the <code>yKey</code> values.
-    The kind of aggregation to use is controlled by the <code>series.aggregation</code> property.
+<p>
+    When using XY Histograms it is also useful to control how bins are aggregated using the <code>aggregation</code>
+    series property. The following sections contrast the <code>sum</code> and <code>mean</code> aggregation functions.
+</p>
+
+
+<h3>Summing Bins</h3>
+
+<p>
+    To show the summing of one column or attribute for each of the bins. When a <code>yKey</code> is given the default
+    behaviour is to plot a total of the <code>yKey</code> values. The kind of aggregation to use is controlled by the
+    <code>series.aggregation</code> property.
 </p>
 
 <?= createSnippet(<<<SNIPPET
@@ -128,9 +136,9 @@ series: [{
 SNIPPET
 ) ?>
 
-<?= chart_example('Sum aggregation histogram', 'sum-histogram', 'generated'); ?>
+<?= chart_example('XY Histogram with Sum Aggregation', 'sum-histogram', 'generated'); ?>
 
-<h2>X/Y histogram with mean bins</h2>
+<h3>Mean Bins</h3>
 
 <p>
     Showing frequencies or summing up the y-values isn't always the best way to show your data.
@@ -156,7 +164,7 @@ series: [{
 SNIPPET
 ) ?>
 
-<?= chart_example('Mean values histogram', 'mean-histogram', 'generated'); ?>
+<?= chart_example('XY Histogram with Mean Aggregation', 'mean-histogram', 'generated'); ?>
 
 <h2>API Reference</h2>
 

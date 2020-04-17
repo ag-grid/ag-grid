@@ -373,6 +373,10 @@
                 "url": "javascript-grid-themes-provided/"
               },
               {
+                "title": "Customising Themes",
+                "url": "javascript-grid-themes-customising/"
+              },
+              {
                 "title": "Migrating to v23",
                 "url": "javascript-grid-themes-v23-migration/"
               }

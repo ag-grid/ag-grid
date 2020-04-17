@@ -10,7 +10,7 @@ include '../documentation-main/documentation_header.php';
 define('skipInPageNav', true);
 ?>
 
-<h1 class="heading">ag-Charts Gallery: Histogram with specified bins</h1>
+<h1 class="heading">ag-Charts Gallery: Histogram With Specified Bins</h1>
 
 <p class="lead">
     Rather than using the automatically generated fixed-width bins, it is possible to explicitly specify bins. In this case the bins need not be of equal widths. In the example below the data is split into light, medium, and heavy vehicles.
@@ -20,7 +20,7 @@ define('skipInPageNav', true);
 
 <div class="chart-navigation">
     <a class="chart-navigation__left" href="./simple-histogram.php">❮&nbsp;&nbsp;Simple Histogram</a>
-    <a class="chart-navigation__right" href="./xy-histogram-with-mean-aggregation.php">XY Histogram with Mean Aggregation&nbsp;&nbsp;❯</a>
+    <a class="chart-navigation__right" href="./xy-histogram-with-mean-aggregation.php">XY Histogram With Mean Aggregation&nbsp;&nbsp;❯</a>
 </div>
 
 <?php include '../documentation-main/documentation_footer.php'; ?>
