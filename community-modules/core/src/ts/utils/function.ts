@@ -69,7 +69,6 @@ export function debounce(func: (...args: any[]) => void, wait: number, immediate
 
         // Set the new timeout
         timeout = window.setTimeout(function() {
-
             // Inside the timeout function, clear the timeout variable
             // which will let the next execution run when in 'immediate' mode
             timeout = null;

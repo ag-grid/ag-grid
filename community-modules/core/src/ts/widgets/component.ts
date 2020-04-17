@@ -32,6 +32,7 @@ export class Component extends BeanStub {
 
     constructor(template?: string) {
         super();
+
         if (template) {
             this.setTemplate(template);
         }
@@ -47,15 +48,17 @@ export class Component extends BeanStub {
         // which messes up the traversal order of the children.
         const childNodeList: Node[] = _.copyNodeList(parentNode.childNodes);
 
-        childNodeList.forEach((childNode: Node) => {
+        _.forEach(childNodeList, childNode => {
             if (!(childNode instanceof HTMLElement)) {
                 return;
             }
+
             const childComp = this.getContext().createComponentFromElement(childNode, (childComp) => {
                 // copy over all attributes, including css classes, so any attributes user put on the tag
                 // wll be carried across
                 this.copyAttributesFromNode(childNode, childComp.getGui());
             }, paramsMap);
+
             if (childComp) {
                 if ((childComp as any).addItems && childNode.children.length) {
                     this.createChildComponentsFromTags(childNode);
@@ -74,11 +77,7 @@ export class Component extends BeanStub {
     }
 
     private copyAttributesFromNode(source: Element, dest: Element): void {
-        _.iterateNamedNodeMap(source.attributes,
-            (name: string, value: string) => {
-                dest.setAttribute(name, value);
-            }
-        );
+        _.iterateNamedNodeMap(source.attributes, (name, value) => dest.setAttribute(name, value));
     }
 
     private swapComponentForNode(newComponent: Component, parentNode: Element, childNode: Node): void {
@@ -91,21 +90,26 @@ export class Component extends BeanStub {
 
     private swapInComponentForQuerySelectors(newComponent: Component, childNode: Node): void {
         const thisNoType = this as any;
-        let thisProto: any = Object.getPrototypeOf(this);
 
-        while (thisProto != null) {
-            const metaData = thisProto.__agComponentMetaData;
-            const currentProtoName = (thisProto.constructor).name;
+        this.iterateOverQuerySelectors((querySelector: any) => {
+            if (thisNoType[querySelector.attributeName] === childNode) {
+                thisNoType[querySelector.attributeName] = newComponent;
+            }
+        });
+    }
+
+    private iterateOverQuerySelectors(action: (querySelector: any) => void): void {
+        let thisPrototype: any = Object.getPrototypeOf(this);
+
+        while (thisPrototype != null) {
+            const metaData = thisPrototype.__agComponentMetaData;
+            const currentProtoName = (thisPrototype.constructor).name;
 
             if (metaData && metaData[currentProtoName] && metaData[currentProtoName].querySelectors) {
-                metaData[currentProtoName].querySelectors.forEach((querySelector: any) => {
-                    if (thisNoType[querySelector.attributeName] === childNode) {
-                        thisNoType[querySelector.attributeName] = newComponent;
-                    }
-                });
+                _.forEach(metaData[currentProtoName].querySelectors, (querySelector: any) => action(querySelector));
             }
 
-            thisProto = Object.getPrototypeOf(thisProto);
+            thisPrototype = Object.getPrototypeOf(thisPrototype);
         }
     }
 
@@ -121,8 +125,7 @@ export class Component extends BeanStub {
         this.wireQuerySelectors();
 
         // context will not be available when user sets template in constructor
-        const contextIsAvailable = !!this.getContext();
-        if (contextIsAvailable) {
+        if (!!this.getContext()) {
             this.createChildComponentsFromTags(this.getGui(), paramsMap);
         }
     }
@@ -131,8 +134,7 @@ export class Component extends BeanStub {
     private createChildComponentsPreConstruct(): void {
         // ui exists if user sets template in constructor. when this happens, we have to wait for the context
         // to be autoWired first before we can create child components.
-        const uiExists = !!this.getGui();
-        if (uiExists) {
+        if (!!this.getGui()) {
             this.createChildComponentsFromTags(this.getGui());
         }
     }
@@ -142,35 +144,22 @@ export class Component extends BeanStub {
             return;
         }
 
-        let thisProto: any = Object.getPrototypeOf(this);
+        const thisNoType = this as any;
 
-        while (thisProto != null) {
-            const metaData = thisProto.__agComponentMetaData;
-            const currentProtoName = (thisProto.constructor).name;
+        this.iterateOverQuerySelectors((querySelector: any) => {
+            const resultOfQuery = this.eGui.querySelector(querySelector.querySelector);
 
-            if (metaData && metaData[currentProtoName] && metaData[currentProtoName].querySelectors) {
-                const thisNoType = this as any;
-                metaData[currentProtoName].querySelectors.forEach((querySelector: any) => {
-                    const resultOfQuery = this.eGui.querySelector(querySelector.querySelector);
-                    if (resultOfQuery) {
-                        const backingComponent = (resultOfQuery as any).__agComponent;
-                        if (backingComponent) {
-                            thisNoType[querySelector.attributeName] = backingComponent;
-                        } else {
-                            thisNoType[querySelector.attributeName] = resultOfQuery;
-                        }
-                    } else {
-                        // put debug msg in here if query selector fails???
-                    }
-                });
+            if (resultOfQuery) {
+                thisNoType[querySelector.attributeName] = (resultOfQuery as any).__agComponent || resultOfQuery;
+            } else {
+                // put debug msg in here if query selector fails???
             }
-
-            thisProto = Object.getPrototypeOf(thisProto);
-        }
+        });
     }
 
     private addAnnotatedEventListeners(): void {
         this.removeAnnotatedEventListeners();
+
         if (!this.eGui) {
             return;
         }
@@ -185,10 +174,10 @@ export class Component extends BeanStub {
             this.annotatedEventListeners = [];
         }
 
-        listenerMethods.forEach((eventListener: any) => {
+        _.forEach(listenerMethods, (eventListener: any) => {
             const listener = (this as any)[eventListener.methodName].bind(this);
             this.eGui.addEventListener(eventListener.eventName, listener);
-            this.annotatedEventListeners.push({ eventName: eventListener.eventName, listener: listener });
+            this.annotatedEventListeners.push({ eventName: eventListener.eventName, listener });
         });
     }
 
@@ -207,6 +196,7 @@ export class Component extends BeanStub {
             if (currentProtoName === undefined) {
                 const funcNameRegex = /function\s([^(]{1,})\(/;
                 const results = funcNameRegex.exec(thisProto.constructor.toString());
+
                 if (results && results.length > 1) {
                     currentProtoName = results[1].trim();
                 }
@@ -227,9 +217,8 @@ export class Component extends BeanStub {
             return;
         }
 
-        this.annotatedEventListeners.forEach((eventListener: any) => {
-            this.eGui.removeEventListener(eventListener.eventName, eventListener.listener);
-        });
+        _.forEach(this.annotatedEventListeners, e => this.eGui.removeEventListener(e.eventName, e.listener));
+
         this.annotatedEventListeners = [];
     }
 
@@ -238,7 +227,7 @@ export class Component extends BeanStub {
     }
 
     public getFocusableElement(): HTMLElement {
-        return this.getGui();
+        return this.eGui;
     }
 
     public setParentComponent(component: Component) {
@@ -267,6 +256,7 @@ export class Component extends BeanStub {
         if (!container) {
             container = this.eGui;
         }
+
         if (_.isNodeOrElement(newChild)) {
             container.appendChild(newChild as Node);
         } else {
@@ -297,46 +287,48 @@ export class Component extends BeanStub {
             this.displayed = displayed;
 
             _.setDisplayed(this.eGui, displayed);
+
             const event: VisibleChangedEvent = {
                 type: Component.EVENT_DISPLAYED_CHANGED,
                 visible: this.displayed
             };
+
             this.dispatchEvent(event);
         }
     }
 
-    public addOrRemoveCssClass(className: string, addOrRemove: boolean): void {
-        _.addOrRemoveCssClass(this.eGui, className, addOrRemove);
-    }
-
     public destroy(): void {
-        this.childComponents.forEach(childComponent => {
+        _.forEach(this.childComponents, childComponent => {
             if (childComponent && childComponent.destroy) {
                 (childComponent as any).destroy();
             }
         });
-        this.childComponents.length = 0;
 
+        this.childComponents.length = 0;
         this.removeAnnotatedEventListeners();
 
         super.destroy();
     }
 
     public addGuiEventListener(event: string, listener: (event: any) => void): void {
-        this.getGui().addEventListener(event, listener);
-        this.addDestroyFunc(() => this.getGui().removeEventListener(event, listener));
+        this.eGui.addEventListener(event, listener);
+        this.addDestroyFunc(() => this.eGui.removeEventListener(event, listener));
     }
 
     public addCssClass(className: string): void {
-        _.addCssClass(this.getGui(), className);
+        _.addCssClass(this.eGui, className);
     }
 
     public removeCssClass(className: string): void {
-        _.removeCssClass(this.getGui(), className);
+        _.removeCssClass(this.eGui, className);
+    }
+
+    public addOrRemoveCssClass(className: string, addOrRemove: boolean): void {
+        _.addOrRemoveCssClass(this.eGui, className, addOrRemove);
     }
 
     public getAttribute(key: string): string | null {
-        const eGui = this.getGui();
+        const { eGui } = this;
         return eGui ? eGui.getAttribute(key) : null;
     }
 

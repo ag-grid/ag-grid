@@ -1,10 +1,10 @@
-import { IDoesFilterPassParams, IFilterOptionDef, ProvidedFilterModel } from "../../interfaces/iFilter";
-import { RefSelector } from "../../widgets/componentAnnotations";
-import { OptionsFactory } from "./optionsFactory";
-import { IProvidedFilterParams, ProvidedFilter } from "./providedFilter";
-import { _ } from "../../utils";
-import { AgSelect } from "../../widgets/agSelect";
-import { AgRadioButton } from "../../widgets/agRadioButton";
+import { IDoesFilterPassParams, IFilterOptionDef, ProvidedFilterModel } from '../../interfaces/iFilter';
+import { RefSelector } from '../../widgets/componentAnnotations';
+import { OptionsFactory } from './optionsFactory';
+import { IProvidedFilterParams, ProvidedFilter } from './providedFilter';
+import { _ } from '../../utils';
+import { AgSelect } from '../../widgets/agSelect';
+import { AgRadioButton } from '../../widgets/agRadioButton';
 
 export interface ISimpleFilterParams extends IProvidedFilterParams {
     filterOptions?: (IFilterOptionDef | string)[];

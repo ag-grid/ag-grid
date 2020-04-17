@@ -32,11 +32,7 @@ export abstract class ProvidedFilter extends Component implements IFilterComp {
 
     private applyActive: boolean;
 
-    @RefSelector('eButtonsPanel') private eButtonsPanel: HTMLElement;
     @RefSelector('eFilterBodyWrapper') protected eFilterBodyWrapper: HTMLElement;
-    @RefSelector('eClearButton') private eClearButton: HTMLElement;
-    @RefSelector('eResetButton') private eResetButton: HTMLElement;
-    @RefSelector('eApplyButton') private eApplyButton: HTMLElement;
 
     @Autowired('gridOptionsWrapper') protected gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('rowModel') protected rowModel: IRowModel;
@@ -48,7 +44,7 @@ export abstract class ProvidedFilter extends Component implements IFilterComp {
 
     protected abstract createBodyTemplate(): string;
     protected abstract getCssIdentifier(): string;
-    protected abstract resetUiToDefaults(siltent?: boolean): void;
+    protected abstract resetUiToDefaults(silent?: boolean): void;
 
     protected abstract setModelIntoUi(model: ProvidedFilterModel): void;
     protected abstract areModelsEqual(a: ProvidedFilterModel, b: ProvidedFilterModel): boolean;
@@ -81,7 +77,13 @@ export abstract class ProvidedFilter extends Component implements IFilterComp {
 
     @PostConstruct
     protected postConstruct(): void {
-        const templateString = this.createTemplate();
+        const templateString = /* html */`
+            <div>
+                <div class="ag-filter-body-wrapper ag-${this.getCssIdentifier()}-body-wrapper" ref="eFilterBodyWrapper">
+                    ${this.createBodyTemplate()}
+                </div>
+            </div>`;
+
         this.setTemplate(templateString);
     }
 
@@ -94,7 +96,6 @@ export abstract class ProvidedFilter extends Component implements IFilterComp {
 
     protected setParams(params: IProvidedFilterParams): void {
         this.providedFilterParams = params;
-        this.applyActive = ProvidedFilter.isUseApplyButton(params);
 
         if (params.newRowsAction === ProvidedFilter.NEW_ROWS_ACTION_KEEP) {
             this.newRowsActionKeep = true;
@@ -107,21 +108,46 @@ export abstract class ProvidedFilter extends Component implements IFilterComp {
             this.newRowsActionKeep = modelsForKeep.indexOf(rowModelType) >= 0;
         }
 
-        _.setDisplayed(this.eApplyButton, this.applyActive);
-        // we do not bind onBtApply here because onBtApply() has a parameter, and it is not the event. if we
-        // just applied, the event would get passed as the second parameter, which we do not want.
-        this.addDestroyableEventListener(this.eApplyButton, "click", () => this.onBtApply(true));
+        this.applyActive = ProvidedFilter.isUseApplyButton(params);
 
+        this.createButtonPanel(params);
+    }
+
+    private createButtonPanel(params: IProvidedFilterParams): void {
         const clearActive = params.clearButton === true;
-        _.setDisplayed(this.eClearButton, clearActive);
-        this.addDestroyableEventListener(this.eClearButton, "click", () => this.onBtClear());
-
         const resetActive = params.resetButton === true;
-        _.setDisplayed(this.eResetButton, resetActive);
-        this.addDestroyableEventListener(this.eResetButton, "click", () => this.onBtReset());
+        const anyButtonVisible = this.applyActive || clearActive || resetActive;
 
-        const anyButtonVisible: boolean = this.applyActive || clearActive || resetActive;
-        _.setDisplayed(this.eButtonsPanel, anyButtonVisible);
+        if (anyButtonVisible) {
+            const translate = this.gridOptionsWrapper.getLocaleTextFunc();
+            const eButtonsPanel = document.createElement('div');
+
+            _.addCssClass(eButtonsPanel, 'ag-filter-apply-panel');
+
+            const addButton = (text: string, clickListener: () => void): void => {
+                const button = _.loadTemplate(/* html */
+                    `<button type="button" class="ag-standard-button ag-filter-apply-panel-button">${text}</button>`);
+
+                eButtonsPanel.appendChild(button);
+                this.addDestroyableEventListener(button, 'click', clickListener);
+            };
+
+            if (clearActive) {
+                addButton(translate('clearFilter', 'Clear Filter'), () => this.onBtClear());
+            }
+
+            if (resetActive) {
+                addButton(translate('resetFilter', 'Reset Filter'), () => this.onBtReset());
+            }
+
+            if (this.applyActive) {
+                // we do not bind onBtApply here because onBtApply() has a parameter, and it is not the event. if we
+                // just applied, the event would get passed as the second parameter, which we do not want.
+                addButton(translate('applyFilter', 'Apply Filter'), () => this.onBtApply(true));
+            }
+
+            this.eFilterBodyWrapper.parentElement.appendChild(eButtonsPanel);
+        }
     }
 
     // subclasses can override this to provide alternative debounce defaults
@@ -144,6 +170,7 @@ export abstract class ProvidedFilter extends Component implements IFilterComp {
         } else {
             this.resetUiToDefaults();
         }
+
         this.updateUiVisibility();
 
         // we set the model from the gui, rather than the provided model,
@@ -206,21 +233,6 @@ export abstract class ProvidedFilter extends Component implements IFilterComp {
         } else if (!this.applyActive) {
             this.onBtApplyDebounce();
         }
-    }
-
-    private createTemplate(): string {
-        const body = this.createBodyTemplate();
-        const translate = this.gridOptionsWrapper.getLocaleTextFunc();
-
-        return /* html */`
-            <div>
-                <div class='ag-filter-body-wrapper ag-${this.getCssIdentifier()}-body-wrapper' ref="eFilterBodyWrapper">${body}</div>
-                <div class="ag-filter-apply-panel" ref="eButtonsPanel">
-                    <button type="button" ref="eClearButton" class="ag-standard-button ag-filter-apply-panel-button">${translate('clearFilter', 'Clear Filter')}</button>
-                    <button type="button" ref="eResetButton" class="ag-standard-button ag-filter-apply-panel-button">${translate('resetFilter', 'Reset Filter')}</button>
-                    <button type="button" ref="eApplyButton" class="ag-standard-button ag-filter-apply-panel-button">${translate('applyFilter', 'Apply Filter')}</button>
-                </div>
-            </div>`;
     }
 
     // static, as used by floating filter also
