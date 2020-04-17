@@ -336,11 +336,7 @@ export class SetValueModel implements IEventEmitter {
     }
 
     public selectAllUsingMiniFilter(): void {
-        this.selectOn(this.miniFilter ? this.displayedValues : this.allValues);
-    }
-
-    private selectOn(toSelectOn: string[]): void {
-        this.selectedValues = _.convertToSet(toSelectOn);
+        _.forEach(this.miniFilter ? this.displayedValues : this.allValues, value => this.selectValue(value));
     }
 
     public isFilterActive(): boolean {

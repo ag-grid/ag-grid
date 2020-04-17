@@ -117,7 +117,7 @@
             "description": "Callback to be used to with charts to override default chart options.",
             "more": {
                 "name": "Overriding Chart Options",
-                "url": "../javascript-grid-charts-customisation/#overriding-chart-options"
+                "url": "../javascript-grid-charts-integrated-customisation/#overriding-chart-options"
             }
         },
         "getChartToolbarItems(params)": {
