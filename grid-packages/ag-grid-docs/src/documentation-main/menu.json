@@ -1079,6 +1079,11 @@
                 "title": "Pie/Doughnut",
                 "url": "javascript-grid-charts-integrated-customisation-pie/",
                 "enterprise": true
+              },
+              {
+                "title": "Histogram",
+                "url": "javascript-grid-charts-integrated-customisation-histogram/",
+                "enterprise": true
               }
             ]
           },
