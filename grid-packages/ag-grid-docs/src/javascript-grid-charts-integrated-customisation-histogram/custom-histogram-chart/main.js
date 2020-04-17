@@ -58,9 +58,11 @@ function processChartOptions(params) {
     }
 
     var bronze = '#cd7f32' // bronze colour bars for bronze medals
-    options.seriesDefaults.fill.color = bronze;
+    var darkBronze = '#584f22' // bronze colour bars for bronze medals
+    options.seriesDefaults.fill.colors = [bronze];
     options.seriesDefaults.fill.opacity = 0.8;
 
+    options.seriesDefaults.stroke.colors = [darkBronze];
     options.seriesDefaults.stroke.opacity = 0.8;
     options.seriesDefaults.stroke.width = 4;
 
@@ -80,7 +82,7 @@ function processChartOptions(params) {
         return '<' + params.value + '>';
     };
 
-    options.seriesDefaults.highlightStyle.fill = 'red';
+    options.seriesDefaults.highlightStyle.fill = 'black';
     options.seriesDefaults.highlightStyle.stroke = 'yellow';
 
     options.seriesDefaults.tooltip.renderer = function(params) {
