@@ -20,10 +20,33 @@ include '../documentation-main/documentation_header.php';
         to create a seamless data drag and drop experience.
     </p>
 
+<snippet>
+function addRowDropZone(params: RowDropZoneParams) =&gt; void;
+
+function removeRowDropZone(params: RowDropZoneParams) =&gt; void;
+
+function getRowDropZoneParams() =&gt; RowDropZoneParams;
+
+// interface for params
+interface RowDropZoneParams {
+    // A callback method that returns the DropZone HTMLElement
+    getContainer: () => HTMLElement;
+    // callback function that will be executed when the rowDrag enters the target
+    onDragEnter?: (params: DraggingEvent) => void;
+    // callback function that will be executed when the rowDrag leaves the target
+    onDragLeave?: (params: DraggingEvent) => void;
+    // callback function that will be executed when the rowDrag is dragged inside the target
+    // note: this gets called multiple times
+    onDragging?: (params: DraggingEvent) => void;
+    // callback function that will be executed when the rowDrag drops rows within the target
+    onDragStop?: (params: DraggingEvent) => void;
+}
+</snippet>
+
     <note>
         If you read the <a href="./javascript-grid-row-dragging/#managed-dragging">Managed Dragging</a> section of the Row Dragging
         documentation you probably noticed that when you <code>sort</code>, <code>filter</code> and <code>rowGroup</code> the Grid, the
-        managed Row Dragging stops working. The only exception to this rule is when you register outside dropZones using <code>addRowDropZone</code>.
+        managed Row Dragging stops working. The only exception to this rule is when you register external dropZones using <code>addRowDropZone</code>.
         In this case, you will be able to Drag from one container to another, but will not be able to drag the rows within the grid.
     </note>
 
@@ -35,51 +58,25 @@ include '../documentation-main/documentation_header.php';
         use the <code>removeRowDropZone</code> method from the grid API.
     </p>
 
+
 <snippet>
-function addRowDropZone(params: RowDropZoneParams) =&gt; void;
-
-function removeRowDropZone(target: HTMLElement | GridInstance) =&gt; void;
-
-// interface for params
-interface RowDropZoneParams {
-    // The target element or GridInstance that will be considered a valid element to drop rows
-    // Note: GridInstance only works in combination with `dropAtIndex = true`.
-    target: HTMLElement | GridInstance;
-    // Set this option to true to allow managed row dragging to drop rows at an specific index
-    // Note: This option requires the target to be a GridInstance
-    dropAtIndex?: boolean;
-    // callback function that will be executed when the rowDrag enters the target
-    onDragEnter?: (params: DraggingEvent) => void;
-    // callback function that will be executed when the rowDrag leaves the target
-    onDragLeave?: (params: DraggingEvent) => void;
-    // callback function that will be executed when the rowDrag is dragged inside the target
-    // note: this gets called multiple times
-    onDragging?: (params: DraggingEvent) => void;
-    // callback function that will be executed when the rowDrag drops rows within the target
-    onDragStop?: (params: DraggingEvent) => void;
-}
-
-interface GridInstance {
-    api: GridApi;
-    columnApi: ColumnApi;
-}
-
 // example usage: 
 new agGrid.Grid(gridElement, gridOptions);
-new agGrid.Grid(gridElement2, gridOptions2);
 
-gridOptions.api.addRowDropZone({
-    // after calling new agGrid.Grid(element, gridOptions), the gridOptions object will 
-    // contain the `api` and `columnApi`, so it is considered a valid GridInstance.
-    target: gridOptions2, 
-    dropAtIndex: true,
-    onDragStop: function(params) {
-        alert(params.dragItem.rowNodes.length + ' item(s) dropped');
-    }
-});
+var container = document.querySelector('.row-drop-zone'),
+    dropZoneParams = {
+        getContainer: function() {
+            return container;
+        },
+        onDragStop: function(params) {
+            // do some custom action
+        }
+    };
+
+gridOptions.api.addRowDropZone(dropZoneParams);
 
 // when the DropZone above is no longer needed
-gridOptions.api.removeRowDropZone(gridOptions2);
+gridOptions.api.removeRowDropZone(dropZoneParams);
 </snippet>
 
     <p>
@@ -110,7 +107,7 @@ gridOptions.api.removeRowDropZone(gridOptions2);
     <ul>
         <li>
             This example works just as the example above, the only difference being the <code>suppressMoveWhenRowDragging</code>. For
-            more info, please check the <a href="./avascript-grid-row-dragging/#suppress-move-when-dragging">suppressMoveWhenRowDragging</a> section
+            more info, please check the <a href="./javascript-grid-row-dragging/#suppress-move-when-dragging">suppressMoveWhenRowDragging</a> section
             of the Row Dragging docs.
         </li>
     </ul>
@@ -121,13 +118,8 @@ gridOptions.api.removeRowDropZone(gridOptions2);
 
     <p>
         It is possible to drag rows between instances of the grid. The drag is done exactly like the simple
-        case described above. The drop is done by the example.
+        case described above, where adding the new records is handled by custom callback methods.
     </p>
-
-    <note>
-        When using Drag & Drop between two grids, and <code>dropAtIndex=false</code>, the Drag Manager will understand that you want to handle
-        where to position the records yourself. So in this case set the target to be the grid HTMLElement, not the GridInstance.
-    </note>
 
     <p>
         In the example below, note the following:
@@ -159,8 +151,22 @@ gridOptions.api.removeRowDropZone(gridOptions2);
     </p>
 
     <note>
-        When using `dropAtIndex = true`, the target grid needs to be configured with `suppressMoveWhenRowDragging = true`.
+        When the requirement is to let the grid decide where the records should fall, the <code>rowDropZone</code> should
+        be create using the return from the target grid's <code>getRowDropZoneParams</code>.
     </note>
+
+<snippet>
+// example usage: 
+new agGrid.Grid(gridElement, gridOptions);
+new agGrid.Grid(gridElement2, gridOptions2);
+
+var dropZoneParams = gridOptions2.api.getRowDropZoneParams();
+
+gridOptions.api.addRowDropZone(dropZoneParams);
+
+// when the DropZone above is no longer needed
+gridOptions.api.removeRowDropZone(dropZoneParams);
+</snippet>
 
     <p>
         In the example below, note the following:
@@ -181,6 +187,7 @@ gridOptions.api.removeRowDropZone(gridOptions2);
         <li>
             New rows can be created by dragging out from red, green and blue 'Create' draggable areas.
         </li>
+    </ul>
 
     <?= grid_example('Two Grids with Drop Position', 'two-grids-with-drop-position', 'vanilla', ['extras' => ['fontawesome']]) ?>
 
@@ -189,8 +196,39 @@ gridOptions.api.removeRowDropZone(gridOptions2);
     <p>
         It is possible to drag multiple records at once from one grid to another and drop them at a specific index in the second grid.
     </p>
-
     <p>
+        When you add a rowDropZone by calling <code>getRowDropZoneParams</code> from the grid API, you might want to add some callbacks to
+        the standard events in the returned params. In order to do this, pass the as params to the <code>getRowDropZoneParams</code> method.
+    </p>
+<snippet>
+    function getRowDropZoneParams(events: RowDropZoneEvents) =&gt; RowDropZoneParams;
+
+    interface RowDropZoneEvents = {
+        // callback function that will be executed when the rowDrag enters the target
+        onDragEnter?: (params: DraggingEvent) => void;
+        // callback function that will be executed when the rowDrag leaves the target
+        onDragLeave?: (params: DraggingEvent) => void;
+        // callback function that will be executed when the rowDrag is dragged inside the target
+        // note: this gets called multiple times
+        onDragging?: (params: DraggingEvent) => void;
+        // callback function that will be executed when the rowDrag drops rows within the target
+        onDragStop?: (params: DraggingEvent) => void;
+    }
+</snippet>
+
+<snippet>
+// example usage
+
+var dropZoneParams = gridOptions2.api.getRowDropZoneParams({
+    onDragStop: function(event) {
+        alert(event.dragItem.rowNodes.length + ' record(s) dropped');
+    }
+});
+
+gridOptions.api.addRowDropZone(dropZoneParams);
+</snippet>
+
+
         In the example below, note the following:
     </p>
 

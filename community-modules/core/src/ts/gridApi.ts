@@ -104,22 +104,20 @@ export interface CreatePivotChartParams {
     processChartOptions?: (params: ProcessChartOptionsParams) => ChartOptions<any>;
 }
 
-export interface GridInstance {
+export interface DetailGridInfo {
     api?: GridApi;
     columnApi?: ColumnApi;
-}
-
-export interface DetailGridInfo extends GridInstance {
     id: string;
 }
 
-export interface RowDropZoneParams {
-    target: HTMLElement | GridInstance;
-    dropAtIndex?: boolean;
+export interface RowDropZoneEvents {
     onDragEnter?: (params: DraggingEvent) => void;
     onDragLeave?: (params: DraggingEvent) => void;
     onDragging?: (params: DraggingEvent) => void;
     onDragStop?: (params: DraggingEvent) => void;
+}
+export interface RowDropZoneParams extends RowDropZoneEvents {
+    getContainer: () => HTMLElement;
 }
 
 @Bean('gridApi')
@@ -833,89 +831,56 @@ export class GridApi {
     }
 
     public addRowDropZone(params: RowDropZoneParams): void {
-        const { target, dropAtIndex, onDragEnter, onDragging, onDragLeave, onDragStop } = params;
-        let rowDragFeature: RowDragFeature;
-
-        if (!target) {
-            _.doOnce(() => console.warn('ag-Grid: addRowDropZone - A target needs to be provided'), 'add-drop-zone-empty-target');
+        if (!params.getContainer()) {
+            _.doOnce(() => console.warn('ag-Grid: addRowDropZone - A container target needs to be provided'), 'add-drop-zone-empty-target');
             return;
         }
 
-        if (this.dragAndDropService.findExternalZoneWithTarget(target)) {
+        if (this.dragAndDropService.findExternalZone(params)) {
             console.warn('ag-Grid: addRowDropZone - target already exists in the list of DropZones. Use `removeRowDropZone` before adding it again.');
             return;
         }
 
-        if (dropAtIndex) {
-            const tg = target as GridOptions;
-            if (!tg.api && !tg.columnApi) {
-                _.doOnce(() => console.warn('ag-Grid: addRowDropZone - When used with `dropAtIndex`, the target must be the GridOptions object.'), 'add-drop-zone-wrong-target');
-                return;
-            }
-
-            rowDragFeature = tg.api.gridPanel.getRowDragFeature();
-
-            if (!rowDragFeature) {
-                _.doOnce(() => console.warn('ag-Grid: addRowDropZone - Target grid `rowDragFeature` has not been initialized.'), 'add-drop-zone-no-row-drag-feature');
-                return;
-            }
-        }
+        if (!params.onDragEnter) { params.onDragEnter = () => {}; }
+        if (!params.onDragLeave) { params.onDragLeave = () => {}; }
+        if (!params.onDragging) { params.onDragging = () => {}; }
+        if (!params.onDragStop) { params.onDragStop = () => {}; }
 
         this.dragAndDropService.addDropTarget({
-            getContainer: () => dropAtIndex ? rowDragFeature.getContainer() : target as HTMLElement,
             isInterestedIn: (type: DragSourceType) => type === DragSourceType.RowDrag,
             getIconName:() => DragAndDropService.ICON_MOVE,
             external: true,
-            onDragEnter: (params: DraggingEvent) => {
-                if (dropAtIndex) {
-                    rowDragFeature.onDragEnter(params);
-                }
-                if (onDragEnter) {
-                    onDragEnter(params);
-                }
-            },
-            onDragging: (params: DraggingEvent) => {
-                if (dropAtIndex) {
-                    rowDragFeature.onDragging(params);
-                }
-                if (onDragging) {
-                    onDragging(params);
-                }
-            },
-            onDragLeave: (params: DraggingEvent) => {
-                if (dropAtIndex) {
-                    rowDragFeature.onDragLeave(params);
-                }
-                if (onDragLeave)  {
-                    onDragLeave(params);
-                }
-            },
-            onDragStop: (params: DraggingEvent) => {
-                if (dropAtIndex) {
-                    rowDragFeature.onDragStop(params);
-                }
-                if (onDragStop) {
-                    onDragStop(params);
-                }
-            }
+            ...params
         });
     }
 
-    public removeRowDropZone(target: HTMLElement | GridInstance): void {
-        const apiTarget = target as GridInstance;
-
-        if (apiTarget.api) {
-            const rowDragFeature = apiTarget.api.gridPanel.getRowDragFeature();
-            if (rowDragFeature) {
-                target = rowDragFeature.getContainer();
-            }
-        }
-
-        const activeDropTarget = this.dragAndDropService.findExternalZoneWithTarget(target);
+    public removeRowDropZone(params: RowDropZoneParams): void {
+        const activeDropTarget = this.dragAndDropService.findExternalZone(params);
 
         if (activeDropTarget) {
             this.dragAndDropService.removeDropTarget(activeDropTarget);
         }
+    }
+
+    public getRowDropZoneParams(events: RowDropZoneEvents): RowDropZoneParams {
+        const rowDragFeature = this.gridPanel.getRowDragFeature();
+        const getContainer = rowDragFeature.getContainer.bind(rowDragFeature);
+        const onDragEnter = rowDragFeature.onDragEnter.bind(rowDragFeature);
+        const onDragLeave = rowDragFeature.onDragLeave.bind(rowDragFeature);
+        const onDragging = rowDragFeature.onDragging.bind(rowDragFeature);
+        const onDragStop = rowDragFeature.onDragStop.bind(rowDragFeature);
+
+        if (!events) {
+            return { getContainer, onDragEnter, onDragLeave, onDragging, onDragStop };
+        }
+
+        return {
+            getContainer,
+            onDragEnter: events.onDragEnter ? ((e) => { onDragEnter(e); events.onDragEnter(e); }) : onDragEnter,
+            onDragLeave: events.onDragLeave ? ((e) => { onDragLeave(e); events.onDragLeave(e); }) : onDragLeave,
+            onDragging: events.onDragging ? ((e) => { onDragging(e); events.onDragging(e); }) : onDragging,
+            onDragStop: events.onDragStop ? ((e) => { onDragStop(e); events.onDragStop(e); }) : onDragStop
+        };
     }
 
     public setHeaderHeight(headerHeight: number) {

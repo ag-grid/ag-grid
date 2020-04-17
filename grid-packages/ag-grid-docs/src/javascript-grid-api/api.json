@@ -300,8 +300,11 @@
         "addRowDropZone(params)": {
             "description": "Adds a DropZone outside of the Grid where rows can be dropped."
         },
-        "removeRowDropZone(target)": {
-            "description": "Removes an external DropZone added by addRowDropZone"
+        "removeRowDropZone(params)": {
+            "description": "Removes an external DropZone added by addRowDropZone."
+        },
+        "getRowDropZoneParams()": {
+            "description": "Returns the RowDropZoneParams to be used by another grid's addRowDropZone method."
         }
     },
     "rendering": {

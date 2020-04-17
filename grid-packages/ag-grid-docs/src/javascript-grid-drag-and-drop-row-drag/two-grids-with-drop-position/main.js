@@ -156,8 +156,8 @@ function binDrop(data) {
 
 function addBinZone(params) {
     var eBin = document.querySelector('#eBin'),
-        binDropZone = {
-            target: eBin,
+        dropZone = {
+            getContainer: function() { return eBin; },
             onDragEnter: function() {
                 eBin.style.color = 'blue';
             },
@@ -170,14 +170,14 @@ function addBinZone(params) {
             }
         };
 
-    params.api.addRowDropZone(binDropZone);
+    params.api.addRowDropZone(dropZone);
 }
 
 function addGridDropZone(params, side) {
-    params.api.addRowDropZone({
-        target: side === 'Left' ? leftGridOptions : rightGridOptions,
-        dropAtIndex: true
-    });
+    var gridApi = (side === 'Left' ? leftGridOptions : rightGridOptions).api;
+    var dropZone = gridApi.getRowDropZoneParams();
+
+    params.api.addRowDropZone(dropZone);
 }
 
 function loadGrid(side) {
