@@ -1,12 +1,12 @@
 import * as React from 'react';
-import { ReactPortal } from 'react';
+import {ReactPortal} from 'react';
 import * as ReactDOM from 'react-dom';
-import { ComponentType, Promise, _ } from 'ag-grid-community';
-import { AgGridReact } from "./agGridReact";
-import { BaseReactComponent } from './baseReactComponent';
-import { assignProperties } from './utils';
+import {_, ComponentType, Promise} from 'ag-grid-community';
+import {AgGridReact} from "./agGridReact";
+import {BaseReactComponent} from './baseReactComponent';
+import {assignProperties} from './utils';
 import generateNewKey from './keyGenerator';
-import { renderToStaticMarkup } from 'react-dom/server';
+import {renderToStaticMarkup} from 'react-dom/server';
 
 export class ReactComponent extends BaseReactComponent {
     static REACT_MEMO_TYPE = ReactComponent.hasSymbol() ? Symbol.for('react.memo') : 0xead3;
@@ -21,6 +21,7 @@ export class ReactComponent extends BaseReactComponent {
     private componentWrappingElement: string = 'div';
     private statelessComponent: boolean;
     private staticMarkup: HTMLElement | null | string = null;
+    private staticRenderTime: number = 0;
 
     constructor(reactComponent: any, parentComponent: AgGridReact, componentType: ComponentType) {
         super();
@@ -84,12 +85,24 @@ export class ReactComponent extends BaseReactComponent {
         this.parentComponent.mountReactPortal(portal!, this, (value: any) => {
             resolve(value);
 
+
             // functional/stateless components have a slightly different lifecycle (no refs) so we'll clean them up
             // here
             if (this.statelessComponent) {
-                setTimeout(() => {
-                    this.removeStaticMarkup();
-                });
+                // if a user supplies a time consuming renderer then it's sometimes possible both the static and
+                // actual react component are visible at the same time
+                // we check here if the rendering is "slow" (anything greater than 2ms) we'll use a listener to remove the
+                // static markup, otherwise just the next tick
+                if(this.staticRenderTime >= 2) {
+                    console.log("XXXX slow renderer", this.staticRenderTime);
+                    this.eParentElement.addEventListener('DOMNodeInserted', () => {
+                        this.removeStaticMarkup();
+                    }, false);
+                } else {
+                    setTimeout(() => {
+                        this.removeStaticMarkup();
+                    });
+                }
             }
         });
     }
@@ -156,8 +169,13 @@ export class ReactComponent extends BaseReactComponent {
             // Warning: useLayoutEffect does nothing on the s   erver will be throw and we can't do anything to stop it
             // this is just a warning and has no effect on anything so just suppress it for this single operation
             const originalConsoleError = console.error;
-            console.error = () => { };
+            console.error = () => {
+            };
+
+            const start = Date.now();
             const staticMarkup = renderToStaticMarkup(reactComponent);
+            this.staticRenderTime = Date.now() - start;
+
             console.error = originalConsoleError;
 
             // if the render method returns null the result will be an empty string
@@ -185,11 +203,11 @@ export class ReactComponent extends BaseReactComponent {
         }
 
         if (this.staticMarkup) {
-            if((this.staticMarkup as HTMLElement).remove) {
+            if ((this.staticMarkup as HTMLElement).remove) {
                 // everyone else in the world
                 (this.staticMarkup as HTMLElement).remove();
                 this.staticMarkup = null;
-            } else if(this.eParentElement.removeChild) {
+            } else if (this.eParentElement.removeChild) {
                 // ie11...
                 this.eParentElement.removeChild(this.staticMarkup as any);
                 this.staticMarkup = null;
