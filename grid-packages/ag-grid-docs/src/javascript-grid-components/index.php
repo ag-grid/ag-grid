@@ -58,7 +58,7 @@ include '../documentation-main/documentation_header.php';
             For custom tool panel components.
         </li>
         <li>
-            <a href="../javascript-grid-status-bar-component/">Tooltip Component</a>:
+            <a href="../javascript-grid-tooltip-component/">Tooltip Component</a>:
             For custom cell tooltip components.
         </li>
     </ul>
