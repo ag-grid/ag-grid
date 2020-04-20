@@ -628,8 +628,9 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia  {
 .ag-cell-wrapper {
     display: flex;
     align-items: center;
-    width: 100%;
     height: 100%;
+    // adding width: 100% here breaks text-overflow: ellipsis
+    // width: 100%;
     &.ag-row-group {
         align-items: flex-start;
     }
