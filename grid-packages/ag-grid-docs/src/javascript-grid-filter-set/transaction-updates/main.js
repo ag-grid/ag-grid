@@ -10,9 +10,7 @@ var gridOptions = {
         }
     ],
     sideBar: ['filters'],
-    onGridReady: function(params) {
-        params.api.getToolPanelInstance('filters').expandFilters();
-    },
+    onFirstDataRendered: onFirstDataRendered
 };
 
 function getRowData() {
@@ -38,6 +36,10 @@ function addDRow() {
 
 function reset() {
     gridOptions.api.setRowData(getRowData());
+}
+
+function onFirstDataRendered(params) {
+    params.api.getToolPanelInstance('filters').expandFilters();
 }
 
 // setup the grid after the page has finished loading

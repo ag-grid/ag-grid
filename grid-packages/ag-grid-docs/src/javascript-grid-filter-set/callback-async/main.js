@@ -14,27 +14,22 @@ var gridOptions = {
         {
             headerName: 'Set filter column',
             field: 'value',
-            width: 200,
             flex: 1,
             filter: 'agSetColumnFilter',
+            floatingFilter: true,
             filterParams: {
-                values: function(params) {
-                    setTimeout(function() {
+                values: function (params) {
+                    setTimeout(function () {
                         params.success(['value 1', 'value 2']);
                     }, 3000);
                 }
-            }
+            },
         }
-    ],
-    defaultColDef: {
-        filter: true,
-        floatingFilter: true,
-        resizable: true,
-    },
+    ]
 };
 
 // setup the grid after the page has finished loading
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     var gridDiv = document.querySelector('#myGrid');
     new agGrid.Grid(gridDiv, gridOptions);
 

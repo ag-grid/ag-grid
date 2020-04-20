@@ -8,8 +8,6 @@ include '../documentation-main/documentation_header.php';
 
 <h1 class="heading-enterprise">Set Filter</h1>
 
-<p style="color: red; text-align: center; font-size: x-large">--- This page is a work in progress ---</p>
-
 <p class="lead">
     The Set Filter takes inspiration from Excel's AutoFilter and allows filtering on sets of data. It is built on top of
     the shared functionality that is common across all <a href="../javascript-grid-filter-provided/">Provided Filters</a>.
@@ -133,11 +131,10 @@ SNIPPET
 {      
     field: 'days',
     filter: 'agSetColumnFilter',
-      filterParams: {
-        // provide weekdays only!
+    filterParams: {
+        // provide all days, even if days are missing in data!
         values: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
-      }
-    }
+    }    
 }
 SNIPPET
     , 'ts') ?>
@@ -169,18 +166,46 @@ SNIPPET
 
 <h3>Asynchronous Values</h3>
 
-<p style="color: red; text-align: center; font-size: x-large">--- This section should be improved ---</p>
+<p>
+    It is also possible to supply values asynchronously to the set filter. This is done by providing a callback function
+    instead of a list of values as shown below:
+</p>
+
+<?= createSnippet(<<<SNIPPET
+// ColDef
+{      
+    field: 'col1',
+    filter: 'agSetColumnFilter',
+    filterParams: {
+        values: function(params) {
+            // async update simulated using setTimeout()   
+            setTimeout(function() {           
+                // fetch values from server
+                var values = getValuesFromServer(); 
+                           
+                // supply values to the set filter   
+                params.success(values);             
+            }, 3000);
+        }
+    }
+}
+SNIPPET
+) ?>
 
 <p>
-    In addition to being able to specify a hard-coded list of values for your set filter, you can provide a callback
-    to load the values asynchronously. The callback receives a parameter object. The interface for this parameter object
-    is as follows:
+    Note in the snippet above the values callback receives a parameter object which contains <code>params.success()</code>
+    which allows values obtained asynchronously to be supplied to the set filter.
+</p>
+
+<p>
+    The interface for this parameter object is as follows:
 </p>
 
 <?= createSnippet(<<<SNIPPET
 export interface SetFilterValuesFuncParams {
     // The function to call with the values to load into the filter once they are ready
     success: (values: string[]) => void;
+    
     // The column definition object from which the set filter is invoked
     colDef: ColDef;
 }
@@ -188,31 +213,21 @@ SNIPPET
     , 'ts') ?>
 
 <p>
-    <code>success</code> is callback function that you can call as soon as the values for the <code>setFilter</code> are ready.
-</p>
-
-<p>
-    This can be observed in the next example. Note that:
+    The following example demonstrates loading set filter values asynchronous. Note the following:
 </p>
 
 <ul class="content">
-    <li><code>colDef.filterParams.values</code> specifies the values for the set filter in a callback and introduces a 3 second delay
-<?= createSnippet(<<<SNIPPET
-filterParams: {
-    values: function(params) {
-        setTimeout(function() { params.success(['value 1', 'value 2']); }, 3000);
-    }
-}
-SNIPPET
-        ) ?>
-    </li>
-    <li>While the data is obtained (during the simulated 3s delay shown above), the <code>setFilter</code> will show a loading message</li>
     <li>
-        The loading message can be configured: check our
-        <a href="../javascript-grid-localisation/">localisation docs</a>. The key for this string is
-        <code>loadingOoo</code>.</li>
-    <li>The callback is only invoked the first time the filter is opened. The next time the filter is opened
-        the values are not loaded again.</li>
+        <code>filterParams.values</code> is assigned a callback function that loads the filter values after a 3 second
+        delay using the callback supplied in the params: <code>params.success(['value1', 'value2'])</code>.
+    </li>
+    <li>Opening the set filter shows a loading message before the values are set. See the
+        <a href="../javascript-grid-localisation/">Localisation</a> section for details on how to change this message.
+    </li>
+    <li>
+        The callback is only invoked the first time the filter is opened. The next time the filter is opened the values are
+        not loaded again.
+    </li>
 </ul>
 
 <?= grid_example('Callback/Async', 'callback-async', 'generated', ['enterprise' => true, 'exampleHeight' => 510]) ?>
@@ -303,7 +318,7 @@ SNIPPET
 </ul>
 
 <p>
-    Unlike <a href="../javascript-grid-cell-editing">Cell Editing</a>, transaction updates will execute filtering in the grid.
+    Unlike <a href="../javascript-grid-filter-set/#cell-editing">Cell Editing</a>, transaction updates will execute filtering in the grid.
 </p>
 
 <p>
@@ -338,19 +353,84 @@ SNIPPET
     </li>
 </ul>
 
+<?= grid_example('Transaction Updates', 'transaction-updates', 'generated', ['enterprise' => true, 'exampleHeight' => 480, 'modules' => ['clientside', 'setfilter']]) ?>
 
-<?= grid_example('Cell Edits & Transaction Updates', 'cell-edits-and-tx-updates', 'generated', ['enterprise' => true, 'exampleHeight' => 480, 'modules' => ['clientside', 'setfilter']]) ?>
-
-<h3>Set Row Data</h3>
-
-<p style="color: red; text-align: center; font-size: x-large">--- This section should be improved ---</p>
+<h3>Setting New Data</h3>
 
 <p>
-    By default, when <code>api.setRowData()</code> is called the selection state will be reset. If the selected filter
-    items need to be kept use <code>filterParams.newRowsAction = 'keep'</code>.
+    By default, when <code>api.setRowData()</code> is called, all set filter selections will be lost.
+</p>
+<p>
+    It is recommended that <code>newRowsAction='keep'</code> set on the filter params to keep existing filter selections
+    when new rows are added, as shown below:
 </p>
 
-<?= grid_example('Set Row Data', 'set-row-data', 'generated', ['enterprise' => true, 'exampleHeight' => 500, 'modules' => ['clientside', 'setfilter']]) ?>
+<?= createSnippet(<<<SNIPPET
+// ColDef
+{
+    field: 'col1',
+    filter: 'agSetColumnFilter',
+    filterParams: {        
+        newRowsAction: 'keep'
+    }
+}
+SNIPPET
+    , 'ts') ?>
+
+<note>
+    <code>newRowsAction</code> has now been deprecated and <code>newRowsAction='keep'</code> will become the default
+    behaviour from version 24.
+</note>
+
+<p>
+    However it is still possible to clear filter selections using: <code>api.setFilterModel([])</code>.
+</p>
+
+<p>
+    The following example demonstrates how <code>api.setRowData()</code> affects filter selections. Try the following:
+</p>
+
+<ul class="content">
+    <li>
+        Deselect value 'B' from the set filter list and click the <b>Set New Data</b> button which in turn calls
+        <code>api.setRowData(newData)</code> which add new data with extra rows to the grid.
+    </li>
+    <li>
+        Notice 'B' remains deselected after new data is supplied to the grid as the Set Filter has set
+        <code>newRowsAction='keep'</code> in the filter params.
+    </li>
+    <li>
+        Clicking <b>Reset</b> invokes <code>api.setRowData(origData)</code> to restore the original data but also clears
+        any selections using <code>api.setFilterModel([])</code>.
+    </li>
+</ul>
+
+<?= grid_example('Setting New Data', 'setting-new-data', 'generated', ['enterprise' => true, 'exampleHeight' => 500, 'modules' => ['clientside', 'setfilter']]) ?>
+
+<h2>Displaying Long Values</h2>
+
+<p>
+    Sometimes the values being shown in the set filter may overflow the width of the popup. In this case they will be
+    truncated automatically. If you want users to be able to see the full values, you can enable tooltips in the set
+    filter by setting <code>showTooltips = true</code>. By default they will use the grid's tooltip component, and
+    show the value that was truncated. If you wish, you can use a custom tooltip component as with other areas in
+    the grid; see the <a href="../javascript-grid-tooltip-component/">tooltip component</a> section for more information.
+</p>
+
+<p>
+    The following example demonstrates tooltips in the set filter. Note the following:
+</p>
+
+<ul>
+    <li>All columns show how long values are truncated automatically.</li>
+    <li>In the first column, tooltips in the set filter are disabled, so hovering over the truncated values has no effect.</li>
+    <li>In the second column, tooltips in the set filter are enabled using the default grid tooltip component.</li>
+    <li>In the third column, tooltips in the set filter are enabled using a custom tooltip component.</li>
+</ul>
+
+<?= grid_example('Displaying Long Values', 'displaying-long-values', 'generated', ['enterprise' => true]) ?>
+
+
 
 
 <h2>Filter List Formatting</h2>
@@ -366,7 +446,6 @@ SNIPPET
     allows for the value to be rendered differently in the filter. Note that the cell renderer for the set filter only
     receives the value as a parameter, as opposed to the cell renderer in the colDef that receives more information.
 </p>
-
 
 <?= createSnippet(<<<SNIPPET
 {
@@ -390,9 +469,6 @@ SNIPPET
 
 
 <?= grid_example('Filter List Cell Renderers', 'filter-list-cell-renderers', 'generated', ['enterprise' => true, 'exampleHeight' => 520, 'modules' => ['clientside', 'setfilter']]) ?>
-
-
-<p style="color: red; text-align: center; font-size: x-large">--- Ignore sections below ---</p>
 
 
 <h3>Complex Objects</h3>
@@ -424,246 +500,16 @@ SNIPPET
 <h2>Suppressing Mini Filter</h2>
 
 
-
-<h2>Displaying Long Values</h2>
-
-<p>
-    Sometimes the values being shown in the set filter may overflow the width of the popup. In this case they will be
-    truncated automatically. If you want users to be able to see the full values, you can enable tooltips in the set
-    filter by setting <code>showTooltips = true</code>. By default they will use the grid's tooltip component, and
-    show the value that was truncated. If you wish, you can use a custom tooltip component as with other areas in
-    the grid; see the <a href="../javascript-grid-tooltip-component/">tooltip component</a> section for more information.
-</p>
-
-
-<h3>Example: Displaying Long Values</h3>
+<h2>Set Filter - Search Field</h2>
 
 <p>
-    The following example demonstrates tooltips in the set filter. Note the following:
+    The text box in the set filter is to allow filtering of displayed filter items, but doesn't actually change the
+    applied filter.
 </p>
-
-<ul>
-    <li>All columns show how long values are truncated automatically.</li>
-    <li>In the first column, tooltips in the set filter are disabled, so hovering over the truncated values has no effect.</li>
-    <li>In the second column, tooltips in the set filter are enabled using the default grid tooltip component.</li>
-    <li>In the third column, tooltips in the set filter are enabled using a custom tooltip component.</li>
-</ul>
-
-<?= grid_example('Displaying Long Values', 'displaying-long-values', 'generated', ['enterprise' => true]) ?>
-
-<h2>Filter Value Updates</h2>
-
 <p>
-    The Set Filter will refresh its values when data is updated using any of following methods:
-
-    <ul class="content">
-        <li>
-            <a href="../javascript-grid-cell-editing">Editing the data</a> (e.g. through the grid UI)
-        </li>
-        <li>
-            Updating the data using <a href="../javascript-grid-data-update/#transactions">Transaction Updates</a>
-        </li>
-        <li>
-            Updating the data using <a href="../javascript-grid-data-update/#delta-row-data">Delta Row Mode</a>
-        </li>
-    </ul>
+    The expected flow when using the search box would be uncheck "Select All", type what you're after
+    in the search box and then finally select the filter entries you want to actually filter on.
 </p>
-
-<p>
-    The rules for selecting filter values mimic Excel as data changes depend on the following:
-</p>
-
-<ul class="content">
-    <li><b>No Active Filters</b>: all filter values are kept selected  adding and removing values will keep the list updated
-        with everything selected.</li>
-    <li>
-        <b>Active Filters</b>: new items (either new data into the grid, or edits to current data
-        with new values not previously seen) will be added to the filter but will not be selected.
-    </li>
-</ul>
-
-<p>
-    .
-</p>
-
-
-<p>
-
-</p>
-
-<p>
-    This will be somewhat strange when editing data as filtering does not re-execute when editing,
-    so the row will not be filtered out even if the value in the cell is not selected in the filter.
-</p>
-
-
-<h3>Example: Default Set Filter Value Behaviour</h3>
-
-<p>
-    The example has the columns configured as follows:
-</p>
-
-<ul class="content">
-    <li>Fred</li>
-</ul>
-
-<?= grid_example('Default Set Filter Value Behaviour', 'set-filter-values-default', 'generated', ['enterprise' => true]) ?>
-
-
-<p>
-    If you do not want the set filter to update its list of values when the data changes,
-    set <code>suppressSyncValuesAfterDataChange = true</code>. This will mean the filter
-    will be out of date (i.e. a new value created after edit will be missing from the filter)
-    and it is up to the application how it wishes for the filter to update. This is to handle
-    some users having different requirements to the default handling, some of which are
-    presented below.
-</p>
-
-<p>
-    The example below shows different approaches on handling data changes for set filters.
-    The first columns has no special handling, so values in the set filter stay in sync
-    automatically with the grid's rows. All other rows have <code>suppressSyncValuesAfterDataChange = true</code>
-    and demonstrate different application strategies for keeping the filter in sync.
-    To understand the example it's best to test one column at a time, and once finished with one column,
-    refresh the example and try another column to notice the difference.
-    From the example, the following can be noted:
-</p>
-
-
-
-
-
-
-<h2>Set Filter Values with Live Data</h2>
-
-<p>
-    The set filter will refresh its values after any of the following:
-
-    <ol>
-        <li>
-            <a href="../javascript-grid-cell-editing">Editing the data</a> (e.g. through the grid UI)
-        </li>
-        <li>
-            Updating the data using <a href="../javascript-grid-data-update/#transactions">Transaction Updates</a>
-        </li>
-        <li>
-            Updating the data using <a href="../javascript-grid-data-update/#delta-row-data">Delta Row Mode</a>
-        </li>
-    </ol>
-</p>
-
-<p>
-    The strategy for updating filter values after the data updates mimics how similar filters in spreadsheets work.
-    The rules for the update are as follows:
-</p>
-
-<ul class="content">
-    <li>
-        When no filter is active, everything in the filter is selected. Adding and removing values
-        will keep the list updated with everything selected.
-    </li>
-    <li>
-        When a filter is active, new items (either new data into the grid, or edits to current data
-        with new values not previously seen) will be added to the filter but will not be selected.
-    </li>
-</ul>
-
-<p>
-    This will be somewhat strange when editing data as filtering does not re-execute when editing,
-    so the row will not be filtered out even if the value in the cell is not selected in the filter.
-</p>
-
-<p>
-    If you do not want the set filter to update its list of values when the data changes,
-    set <code>suppressSyncValuesAfterDataChange = true</code>. This will mean the filter
-    will be out of date (i.e. a new value created after edit will be missing from the filter)
-    and it is up to the application how it wishes for the filter to update. This is to handle
-    some users having different requirements to the default handling, some of which are
-    presented below.
-</p>
-
-<p>
-    The example below shows different approaches on handling data changes for set filters.
-    The first columns has no special handling, so values in the set filter stay in sync
-    automatically with the grid's rows. All other rows have <code>suppressSyncValuesAfterDataChange = true</code>
-    and demonstrate different application strategies for keeping the filter in sync.
-    To understand the example it's best to test one column at a time, and once finished with one column,
-    refresh the example and try another column to notice the difference.
-    From the example, the following can be noted:
-</p>
-
-<ul class="content">
-    <li>
-        All columns have set filter with different responses to data changing.
-    </li>
-    <li>
-        All columns have their filters initialised when the grid is loaded
-        by calling <code>getFilterInstance()</code> when the <code>gridReady</code> event
-        is received. This means when you edit, the filter is already created and loaded with
-        values for the grid's row data.
-    </li>
-    <li>
-        Column 1 has no special handling of new values. Updates to column 1 will
-        be reflected in the filter keeping the filter automatically in sync.
-    </li>
-    <li>
-        Column 2 has <code>suppressSyncValuesAfterDataChange = true</code> and no special handling,
-        so updates to column 2 will have no effect on the filter. The filter list will become stale.
-    </li>
-    <li>
-        Column 3 has <code>suppressSyncValuesAfterDataChange = true</code> and after an update:
-        a) updates the filter.
-    </li>
-    <li>
-        Column 4 has <code>suppressSyncValuesAfterDataChange = true</code> and after an update:
-        a) updates the filter, and b) makes sure the new value is selected.
-    </li>
-    <li>
-        Column 5 has <code>suppressSyncValuesAfterDataChange = true</code> and after an update:
-        a) updates the filter, b) makes sure the new value is selected,
-        and c) refreshes the rows based on the new filter value. For example, if you first set the filter
-        on Column 5 to 'A' (notice that 'B' rows are removed), then change a value from 'A' to 'B', then
-        the other rows that were previously removed are added back in again.
-    </li>
-    <li>
-        Click 'Add C Row' to add a new row. Columns 2 and 3 will not have their filters updated.
-        Column 1 will have its filter updated by the grid.
-        Columns 4 and 5 will have their filters updated by the application.
-    </li>
-</ul>
-
-<?= grid_example('Refresh After Edit', 'refresh-after-edit', 'generated', ['enterprise' => true]) ?>
-
-<h2>Example: New Rows Action and Values</h2>
-
-<p>
-    Below demonstrates using the <a href="../javascript-grid-filter-provided/#providedFilterParams">New Rows Action</a> and Values.
-    The example is not meant to make business sense, it just demonstrates the filters with random unrelated data.
-    The example has the columns configured as follows:
-</p>
-
-<ul class="content">
-    <li>Fruit - Normal</li>
-    <li>Animal - Using <code>newRowsAction = 'keep'</code></li>
-    <li>Color - Using <code>values</code></li>
-    <li>Location - Using <code>values</code> and <code>newRowsAction = 'keep'</code></li>
-</ul>
-<p>
-    The 'Set New Data' button updates the grid with new data. It is suggested you set the filters and then
-    observe what happens when you hit 'Set New Data'.
-</p>
-
-<note>
-    Although the example works, it demonstrates a dangerous situation, which is mixing <code>newRowsAction = 'keep'</code> without
-    providing values. If you do not provide values, the grid will create the values for
-    you based on the data inside the grid (which is normally great). The problem is that when new values enter the
-    grid, if the set of values is different, this makes it impossible for the grid to keep the same filter
-    selection, so <code>newRowsAction = 'keep'</code> breaks down. In this situation, the grid
-    will keep the same selected values, but it will lose information about previously selected values that
-    no longer exist in the new set.
-</note>
-
-<?= grid_example('Set Filter New Rows', 'set-filter-new-rows', 'generated', ['enterprise' => true]) ?>
 
 <h2>Set Filter Model</h2>
 
@@ -742,18 +588,6 @@ SNIPPET
 </p>
 
 <?= grid_example('Set Filter API', 'set-filter-api', 'generated', ['enterprise' => true, 'exampleHeight' => 570]) ?>
-
-
-<h2>Set Filter - Search Field</h2>
-
-<p>
-    The text box in the set filter is to allow filtering of displayed filter items, but doesn't actually change the
-    applied filter.
-</p>
-<p>
-    The expected flow when using the search box would be uncheck "Select All", type what you're after
-    in the search box and then finally select the filter entries you want to actually filter on.
-</p>
 
 
 <h2>Set Filter Parameters</h2>

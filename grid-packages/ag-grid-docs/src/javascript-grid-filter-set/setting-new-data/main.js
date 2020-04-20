@@ -1,16 +1,19 @@
 var gridOptions = {
-    rowData: getRowData(),
     columnDefs: [
         {
             headerName: 'Set Filter Column',
             field: 'col1',
             filter: 'agSetColumnFilter',
+            filterParams: {
+                newRowsAction: 'keep'
+            },
             flex: 1,
-            editable: true,
+            editable: true
         }
     ],
-    sideBar: ['filters'],
-    onFirstDataRendered: onFirstDataRendered
+    sideBar: 'filters',
+    rowData: getRowData(),
+    onFirstDataRendered: onFirstDataRendered,
 };
 
 function getRowData() {
@@ -18,13 +21,24 @@ function getRowData() {
         { col1: 'A' },
         { col1: 'A' },
         { col1: 'B' },
-        { col1: 'B' },
-        { col1: 'C' },
         { col1: 'C' },
     ];
 }
 
+function setNewData() {
+    var newData = [
+        { col1: 'A' },
+        { col1: 'A' },
+        { col1: 'B' },
+        { col1: 'C' },
+        { col1: 'D' },
+        { col1: 'E' },
+    ];
+    gridOptions.api.setRowData(newData);
+}
+
 function reset() {
+    gridOptions.api.setFilterModel([]);
     gridOptions.api.setRowData(getRowData());
 }
 

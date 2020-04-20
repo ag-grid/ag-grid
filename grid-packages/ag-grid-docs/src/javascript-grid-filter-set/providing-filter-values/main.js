@@ -33,11 +33,9 @@ var gridOptions = {
         filter: true,
         resizable: true,
     },
-    rowData: getRowData(),
     sideBar: 'filters',
-    onGridReady: function(params) {
-        params.api.getToolPanelInstance('filters').expandFilters();
-    }
+    rowData: getRowData(),
+    onFirstDataRendered: onFirstDataRendered
 };
 
 function getRowData() {
@@ -60,6 +58,9 @@ function daysSortComparator(a, b) {
     return aIndex > bIndex ? 1 : -1;
 }
 
+function onFirstDataRendered(params) {
+    params.api.getToolPanelInstance('filters').expandFilters();
+}
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function() {
