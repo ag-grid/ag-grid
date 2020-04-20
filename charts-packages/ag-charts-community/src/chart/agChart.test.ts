@@ -2,7 +2,7 @@ import { AgChart } from "./agChart";
 import 'jest-canvas-mock';
 import { LegendPosition } from "./legend";
 import { AreaSeries } from "./series/cartesian/areaSeries";
-import { ColumnSeries } from "./series/cartesian/columnSeries";
+import { BarSeries } from "./series/cartesian/barSeries";
 import { LineSeries } from "./series/cartesian/lineSeries";
 import { NumberAxis } from "./axis/numberAxis";
 import { ChartAxis, ChartAxisPosition } from "./chartAxis";
@@ -243,7 +243,7 @@ describe('update', () => {
         expect(chart.series.length).toBe(2);
         expect(chart.series[0]).not.toBe(firstSeries);
         expect(chart.series[1]).not.toBe(secondSeries);
-        expect(chart.series[0] instanceof ColumnSeries).toBe(true);
+        expect(chart.series[0] instanceof BarSeries).toBe(true);
         expect(chart.series[1] instanceof LineSeries).toBe(true);
         expect(chart.series[0].yKeys).toEqual(['profit', 'foobar']);
         expect(chart.series[1].yKey).toBe('revenue');

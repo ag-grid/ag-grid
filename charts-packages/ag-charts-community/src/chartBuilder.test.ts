@@ -8,7 +8,7 @@ import { LineSeries } from "./chart/series/cartesian/lineSeries";
 import { ScatterSeries } from "./chart/series/cartesian/scatterSeries";
 import { AreaSeries } from "./chart/series/cartesian/areaSeries";
 import { PieSeries } from "./chart/series/polar/pieSeries";
-import { ColumnSeries } from "./chart/series/cartesian/columnSeries";
+import { BarSeries } from "./chart/series/cartesian/barSeries";
 import 'jest-canvas-mock';
 
 describe('createAxis', () => {
@@ -107,7 +107,7 @@ describe('createSeries', () => {
 
         const series = ChartBuilder.createSeries(options);
 
-        expect(series).toBeInstanceOf(ColumnSeries);
+        expect(series).toBeInstanceOf(BarSeries);
     });
 
     it('returns an area series when specified in options', () => {

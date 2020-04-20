@@ -14,11 +14,19 @@ import { Chart } from "../../chart";
 import { findLargestMinMax, findMinMax } from "../../../util/array";
 import { toFixed } from "../../../util/number";
 import { equal } from "../../../util/equal";
-import { reactive } from "../../../util/observable";
+import { reactive, TypedEvent } from "../../../util/observable";
 
 interface AreaSelectionDatum {
     yKey: string;
     points: { x: number, y: number }[];
+}
+
+export interface AreaSeriesNodeClickEvent extends TypedEvent {
+    type: 'nodeClick';
+    series: AreaSeries;
+    datum: any;
+    xKey: string;
+    yKey: string;
 }
 
 interface MarkerSelectionDatum extends SeriesNodeDatum {
@@ -459,7 +467,7 @@ export class AreaSeries extends CartesianSeries {
     }
 
     fireNodeClickEvent(datum: MarkerSelectionDatum): void {
-        this.fireEvent({
+        this.fireEvent<AreaSeriesNodeClickEvent>({
             type: 'nodeClick',
             series: this,
             datum: datum.seriesDatum,

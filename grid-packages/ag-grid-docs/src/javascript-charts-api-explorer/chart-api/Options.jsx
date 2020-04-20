@@ -21,7 +21,7 @@ const FunctionDefinition = ({ definition }) => {
     const { parameters, returnType } = definition;
     const returnTypeIsObject = typeof returnType === 'object';
 
-    const lines = [`function(params: ParamsType): ${returnTypeIsObject ? 'ReturnType' : returnType};`,
+    const lines = [`function (params: ParamsType): ${returnTypeIsObject ? 'ReturnType' : returnType};`,
         '',
         'interface ParamsType {',
     ...Object.keys(parameters).map(key => `  ${key}: ${parameters[key]};`),

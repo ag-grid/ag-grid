@@ -22,7 +22,7 @@ import {
     Chart,
     ChartPalette,
     ChartPaletteName,
-    ColumnSeries,
+    BarSeries,
     DropShadow,
     Padding,
     palettes,
@@ -287,7 +287,7 @@ export abstract class ChartProxy<TChart extends Chart, TOptions extends ChartOpt
 
         seriesDefaults.shadow[property] = value;
 
-        const series = this.getChart().series as (ColumnSeries | AreaSeries | PieSeries)[];
+        const series = this.getChart().series as (BarSeries | AreaSeries | PieSeries)[];
 
         series.forEach(s => {
             if (!s.shadow) {

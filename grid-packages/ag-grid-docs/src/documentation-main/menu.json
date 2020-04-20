@@ -1378,6 +1378,10 @@
               {
                 "title": "Axes",
                 "url": "javascript-charts-axis/"
+              },
+              {
+                "title": "Events",
+                "url": "javascript-charts-events/"
               }
             ]
           }

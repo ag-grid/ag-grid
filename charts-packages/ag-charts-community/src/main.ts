@@ -9,7 +9,7 @@ export * from "./chart/palettes";
 export * from "./chart/polarChart";
 export * from "./chart/marker/marker";
 export * from "./chart/series/cartesian/areaSeries";
-export * from "./chart/series/cartesian/columnSeries";
+export * from "./chart/series/cartesian/barSeries";
 export * from "./chart/series/cartesian/lineSeries";
 export * from "./chart/series/cartesian/scatterSeries";
 export * from "./chart/series/cartesian/histogramSeries";

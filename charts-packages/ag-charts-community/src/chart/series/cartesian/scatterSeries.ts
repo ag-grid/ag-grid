@@ -5,7 +5,7 @@ import { finiteExtent } from "../../../util/array";
 import { toFixed } from "../../../util/number";
 import { LegendDatum } from "../../legend";
 import { LinearScale } from "../../../scale/linearScale";
-import { reactive } from "../../../util/observable";
+import { reactive, TypedEvent } from "../../../util/observable";
 import { CartesianSeries, CartesianSeriesMarker, CartesianSeriesMarkerFormat } from "./cartesianSeries";
 import { ChartAxisDirection } from "../../chartAxis";
 import palette from "../../palettes";
@@ -19,6 +19,15 @@ interface ScatterNodeDatum extends SeriesNodeDatum {
         y: number;
     };
     size: number;
+}
+
+export interface ScatterSeriesNodeClickEvent extends TypedEvent {
+    type: 'nodeClick';
+    series: ScatterSeries;
+    datum: any;
+    xKey: string;
+    yKey: string;
+    sizeKey?: string;
 }
 
 export interface ScatterTooltipRendererParams extends CartesianTooltipRendererParams {
@@ -182,7 +191,7 @@ export class ScatterSeries extends CartesianSeries {
     }
 
     fireNodeClickEvent(datum: ScatterNodeDatum): void {
-        this.fireEvent({
+        this.fireEvent<ScatterSeriesNodeClickEvent>({
             type: 'nodeClick',
             series: this,
             datum: datum.seriesDatum,

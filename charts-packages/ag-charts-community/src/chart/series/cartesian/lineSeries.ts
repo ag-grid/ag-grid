@@ -11,7 +11,7 @@ import { LegendDatum } from "../../legend";
 import { CartesianSeries, CartesianSeriesMarker, CartesianSeriesMarkerFormat } from "./cartesianSeries";
 import { ChartAxisDirection } from "../../chartAxis";
 import { getMarker } from "../../marker/util";
-import { reactive, PropertyChangeEvent } from "../../../util/observable";
+import { reactive, PropertyChangeEvent, TypedEvent } from "../../../util/observable";
 import { Chart } from "../../chart";
 
 interface LineNodeDatum extends SeriesNodeDatum {
@@ -19,6 +19,14 @@ interface LineNodeDatum extends SeriesNodeDatum {
         x: number;
         y: number;
     }
+}
+
+export interface LineSeriesNodeClickEvent extends TypedEvent {
+    type: 'nodeClick';
+    series: LineSeries;
+    datum: any;
+    xKey: string;
+    yKey: string;
 }
 
 export { LineTooltipRendererParams };
@@ -275,7 +283,7 @@ export class LineSeries extends CartesianSeries {
     }
 
     fireNodeClickEvent(datum: LineNodeDatum): void {
-        this.fireEvent({
+        this.fireEvent<LineSeriesNodeClickEvent>({
             type: 'nodeClick',
             series: this,
             datum: datum.seriesDatum,

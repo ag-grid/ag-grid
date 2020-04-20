@@ -3,7 +3,7 @@ import {
     BarSeriesOptions as InternalBarSeriesOptions,
     CartesianChart,
     ChartBuilder,
-    ColumnSeries as BarSeries
+    BarSeries
 } from "ag-charts-community";
 import {ChartProxyParams, UpdateChartParams} from "../chartProxy";
 import {CartesianChartProxy} from "./cartesianChartProxy";

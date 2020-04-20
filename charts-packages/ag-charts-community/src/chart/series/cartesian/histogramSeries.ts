@@ -17,7 +17,7 @@ import { ChartAxisDirection } from "../../chartAxis";
 import { Chart } from "../../chart";
 import { numericExtent } from "../../../util/array";
 import { toFixed } from "../../../util/number";
-import { reactive } from "../../../util/observable";
+import { reactive, TypedEvent } from "../../../util/observable";
 import ticks, { tickStep } from "../../../util/ticks";
 
 enum HistogramSeriesNodeTag {
@@ -51,6 +51,13 @@ interface HistogramNodeDatum extends SeriesNodeDatum {
         fontFamily: string;
         fill: string;
     }
+}
+
+export interface HistogramSeriesNodeClickEvent extends TypedEvent {
+    type: 'nodeClick';
+    series: HistogramSeries;
+    datum: any;
+    xKey: string;
 }
 
 type AggregationName = 'count' | 'sum' | 'mean';
@@ -375,6 +382,15 @@ export class HistogramSeries extends CartesianSeries {
         } else {
             return this.yDomain;
         }
+    }
+
+    fireNodeClickEvent(datum: HistogramNodeDatum): void {
+        this.fireEvent<HistogramSeriesNodeClickEvent>({
+            type: 'nodeClick',
+            series: this,
+            datum: datum.seriesDatum,
+            xKey: this.xKey
+        });
     }
 
     update(): void {

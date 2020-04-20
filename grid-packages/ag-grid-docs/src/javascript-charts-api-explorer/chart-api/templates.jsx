@@ -49,7 +49,7 @@ export const getTemplates = (framework, boilerplate, options) => {
                 ...boilerplateFiles,
                 'main.js': `var options = ${optionsJson};
 
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     options.container = document.querySelector('#myChart');
 
     agCharts.AgChart.create(options);
@@ -118,7 +118,7 @@ const VueExample = {
     components: {
         "ag-charts-vue": AgChartsVue
     },
-    data: function() {
+    data: function () {
         return {
             options: {}
         };

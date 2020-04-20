@@ -1,5 +1,5 @@
 import { TooltipRendererParams } from "./chart/series/series";
-import { ColumnTooltipRendererParams as BarTooltipRendererParams } from "./chart/series/cartesian/columnSeries";
+import { BarTooltipRendererParams as BarTooltipRendererParams } from "./chart/series/cartesian/barSeries";
 import { LineTooltipRendererParams } from "./chart/series/cartesian/lineSeries";
 import { AreaTooltipRendererParams } from "./chart/series/cartesian/areaSeries";
 import { ScatterTooltipRendererParams } from "./chart/series/cartesian/scatterSeries";

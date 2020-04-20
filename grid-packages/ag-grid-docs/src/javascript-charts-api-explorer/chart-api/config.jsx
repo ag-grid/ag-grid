@@ -692,7 +692,25 @@ export const barSeriesConfig = Object.freeze({
             editor: ColourEditor,
         },
         ...getFontOptions('labels'),
-    }
+    },
+    listeners: {
+        meta: {
+            description: "A map of event names to event listeners."
+        },
+        nodeClick: {
+            type: {
+                parameters: {
+                    type: "'nodeClick'",
+                    series: 'BarSeries',
+                    datum: 'any',
+                    xKey: 'string',
+                    yKey: 'string',
+                },
+                returnType: 'any',
+            },
+            description: 'The listener to call when a bar/column node is clicked.'
+        }
+    },
 });
 
 export const lineSeriesConfig = Object.freeze({
@@ -710,6 +728,24 @@ export const lineSeriesConfig = Object.freeze({
     ...getColourConfig('lines', false, false),
     ...markerConfig(),
     ...getHighlightConfig(),
+    listeners: {
+        meta: {
+            description: "A map of event names to event listeners."
+        },
+        nodeClick: {
+            type: {
+                parameters: {
+                    type: "'nodeClick'",
+                    series: 'LineSeries',
+                    datum: 'any',
+                    xKey: 'string',
+                    yKey: 'string',
+                },
+                returnType: 'any',
+            },
+            description: 'The listener to call when a line series node (marker) is clicked.'
+        }
+    },
 });
 
 export const areaSeriesConfig = Object.freeze({
@@ -784,6 +820,25 @@ export const scatterSeriesConfig = Object.freeze({
     ...getColourConfig(),
     ...markerConfig(),
     ...getHighlightConfig(),
+    listeners: {
+        meta: {
+            description: "A map of event names to event listeners."
+        },
+        nodeClick: {
+            type: {
+                parameters: {
+                    type: "'nodeClick'",
+                    series: 'ScatterSeries',
+                    datum: 'any',
+                    xKey: 'string',
+                    yKey: 'string',
+                    'sizeKey?': 'string'
+                },
+                returnType: 'any'
+            },
+            description: 'The listener to call when a scatter series node (marker) is clicked.'
+        }
+    },
 });
 
 export const pieSeriesConfig = Object.freeze({
@@ -924,6 +979,24 @@ export const pieSeriesConfig = Object.freeze({
         },
     },
     ...shadowConfig,
+    listeners: {
+        meta: {
+            description: "A map of event names to event listeners."
+        },
+        nodeClick: {
+            type: {
+                parameters: {
+                    type: "'nodeClick'",
+                    series: 'PieSeries',
+                    datum: 'any',
+                    angleKey: 'string',
+                    "radiusKey?": 'string',
+                },
+                returnType: 'any',
+            },
+            description: 'The listener to call when a pie slice is clicked.'
+        }
+    },
 });
 
 export const histogramSeriesConfig = Object.freeze({
@@ -972,5 +1045,22 @@ export const histogramSeriesConfig = Object.freeze({
         description: "Function used to create the content for tooltips."
     },
     ...getHighlightConfig(),
-    ...getColourConfig('histogram bars', false, true)
+    ...getColourConfig('histogram bars', false, true),
+    listeners: {
+        meta: {
+            description: "A map of event names to event listeners."
+        },
+        nodeClick: {
+            type: {
+                parameters: {
+                    type: "'nodeClick'",
+                    series: 'HistogramSeries',
+                    datum: 'any',
+                    xKey: 'string',
+                },
+                returnType: 'any',
+            },
+            description: 'The listener to call when a histogram bar is clicked.'
+        }
+    },
 });

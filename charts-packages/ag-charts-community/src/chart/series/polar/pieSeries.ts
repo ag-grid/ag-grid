@@ -14,10 +14,18 @@ import { Color } from "../../../util/color";
 import { toFixed } from "../../../util/number";
 import { LegendDatum } from "../../legend";
 import { Caption } from "../../../caption";
-import { reactive, Observable } from "../../../util/observable";
+import { reactive, Observable, TypedEvent } from "../../../util/observable";
 import { PolarSeries } from "./polarSeries";
 import { ChartAxisDirection } from "../../chartAxis";
 import { Chart } from "../../chart";
+
+export interface PieSeriesNodeClickEvent extends TypedEvent {
+    type: 'nodeClick';
+    series: PieSeries;
+    datum: any;
+    angleKey: string;
+    radiusKey?: string;
+}
 
 interface PieNodeDatum extends SeriesNodeDatum {
     index: number;
@@ -414,7 +422,7 @@ export class PieSeries extends PolarSeries {
     }
 
     fireNodeClickEvent(datum: PieNodeDatum): void {
-        this.fireEvent({
+        this.fireEvent<PieSeriesNodeClickEvent>({
             type: 'nodeClick',
             series: this,
             datum: datum.seriesDatum,

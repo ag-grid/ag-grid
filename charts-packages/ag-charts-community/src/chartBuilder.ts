@@ -24,7 +24,7 @@ import { CartesianChart } from "./chart/cartesianChart";
 import { PolarChart } from "./chart/polarChart";
 import { LineSeries } from "./chart/series/cartesian/lineSeries";
 import { ScatterSeries } from "./chart/series/cartesian/scatterSeries";
-import { ColumnSeries as BarSeries } from "./chart/series/cartesian/columnSeries";
+import { BarSeries } from "./chart/series/cartesian/barSeries";
 import { AreaSeries } from "./chart/series/cartesian/areaSeries";
 import { HistogramSeries } from "./chart/series/cartesian/histogramSeries";
 import { PieSeries } from "./chart/series/polar/pieSeries";

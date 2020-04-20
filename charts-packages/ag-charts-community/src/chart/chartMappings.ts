@@ -3,7 +3,6 @@ import { CartesianChart } from "./cartesianChart";
 import { NumberAxis } from "./axis/numberAxis";
 import { CategoryAxis } from "./axis/categoryAxis";
 import { LineSeries } from "./series/cartesian/lineSeries";
-import { ColumnSeries } from "./series/cartesian/columnSeries";
 import { BarSeries } from "./series/cartesian/barSeries";
 import { HistogramSeries } from "./series/cartesian/histogramSeries";
 import { ScatterSeries } from "./series/cartesian/scatterSeries";
@@ -295,10 +294,11 @@ const mappings = {
                 highlightStyle: {},
                 marker: {}
             },
-            [ColumnSeries.type]: {
+            column: {
                 meta: {
-                    constructor: ColumnSeries,
+                    constructor: BarSeries,
                     defaults: {
+                        flipXY: false, // vertical bars
                         ...seriesDefaults,
                         ...columnSeriesDefaults
                     }
@@ -307,10 +307,11 @@ const mappings = {
                 ...labelMapping,
                 ...shadowMapping
             },
-            [BarSeries.type]: {
+            bar: {
                 meta: {
                     constructor: BarSeries,
                     defaults: {
+                        flipXY: true, // horizontal bars
                         ...seriesDefaults,
                         ...columnSeriesDefaults
                     }

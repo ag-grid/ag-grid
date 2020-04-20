@@ -787,6 +787,24 @@
         ],
         "description": "The font family to use for the labels."
       }
+    },
+    "listeners": {
+      "meta": {
+        "description": "A map of event names to event listeners."
+      },
+      "nodeClick": {
+        "type": {
+          "parameters": {
+            "type": "'nodeClick'",
+            "series": "BarSeries",
+            "datum": "any",
+            "xKey": "string",
+            "yKey": "string"
+          },
+          "returnType": "any"
+        },
+        "description": "The listener to call when a bar/column node is clicked."
+      }
     }
   },
   "lineSeriesConfig": {
@@ -950,6 +968,24 @@
       "stroke": {
         "type": "string",
         "description": "The colour of the stroke around the markers when hovered over."
+      }
+    },
+    "listeners": {
+      "meta": {
+        "description": "A map of event names to event listeners."
+      },
+      "nodeClick": {
+        "type": {
+          "parameters": {
+            "type": "'nodeClick'",
+            "series": "LineSeries",
+            "datum": "any",
+            "xKey": "string",
+            "yKey": "string"
+          },
+          "returnType": "any"
+        },
+        "description": "The listener to call when a line series node (marker) is clicked."
       }
     }
   },
@@ -1375,6 +1411,25 @@
         "type": "string",
         "description": "The colour of the stroke around the markers when hovered over."
       }
+    },
+    "listeners": {
+      "meta": {
+        "description": "A map of event names to event listeners."
+      },
+      "nodeClick": {
+        "type": {
+          "parameters": {
+            "type": "'nodeClick'",
+            "series": "ScatterSeries",
+            "datum": "any",
+            "xKey": "string",
+            "yKey": "string",
+            "sizeKey?": "string"
+          },
+          "returnType": "any"
+        },
+        "description": "The listener to call when a scatter series node (marker) is clicked."
+      }
     }
   },
   "pieSeriesConfig": {
@@ -1723,6 +1778,24 @@
         "max": 20,
         "unit": "px"
       }
+    },
+    "listeners": {
+      "meta": {
+        "description": "A map of event names to event listeners."
+      },
+      "nodeClick": {
+        "type": {
+          "parameters": {
+            "type": "'nodeClick'",
+            "series": "PieSeries",
+            "datum": "any",
+            "angleKey": "string",
+            "radiusKey?": "string"
+          },
+          "returnType": "any"
+        },
+        "description": "The listener to call when a pie slice is clicked."
+      }
     }
   },
   "histogramSeriesConfig": {
@@ -1747,11 +1820,16 @@
       "type": {
         "parameters": {
           "datum": "any",
+          "title?": "string",
+          "color?": "string",
           "xKey": "string",
           "xName?": "string",
           "yKey": "string",
           "yName?": "string",
-          "color?": "string"
+          "sizeKey?": "string",
+          "sizeName?": "string",
+          "labelKey?": "string",
+          "labelName?": "string"
         },
         "returnType": "string"
       },
@@ -1843,6 +1921,23 @@
       "min": 0,
       "max": 20,
       "unit": "px"
+    },
+    "listeners": {
+      "meta": {
+        "description": "A map of event names to event listeners."
+      },
+      "nodeClick": {
+        "type": {
+          "parameters": {
+            "type": "'nodeClick'",
+            "series": "HistogramSeries",
+            "datum": "any",
+            "xKey": "string"
+          },
+          "returnType": "any"
+        },
+        "description": "The listener to call when a histogram bar is clicked."
+      }
     }
   }
 }
