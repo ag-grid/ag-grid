@@ -358,6 +358,7 @@ export class PopupService {
         alwaysOnTop?: boolean
     ): (event?: any) => void {
         const eDocument = this.gridOptionsWrapper.getDocument();
+        const processedAt = new Date().getTime();
 
         if (!eDocument) {
             console.warn('ag-grid: could not find the document, document is empty');
@@ -430,13 +431,17 @@ export class PopupService {
         };
 
         const hidePopup = (mouseEvent?: MouseEvent | null, touchEvent?: TouchEvent) => {
+            const hiddenAt = new Date().getTime();
             disconnectResizeObserver();
             if (
                 // we don't hide popup if the event was on the child, or any
                 // children of this child
                 this.isEventFromCurrentPopup(mouseEvent, touchEvent, eChild) ||
                 // if the event to close is actually the open event, then ignore it
-                this.isEventSameChainAsOriginalEvent(click, mouseEvent, touchEvent) ||
+                (
+                    this.isEventSameChainAsOriginalEvent(click, mouseEvent, touchEvent) &&
+                    Math.abs(processedAt - hiddenAt) < 10
+                ) ||
                 // this method should only be called once. the client can have different
                 // paths, each one wanting to close, so this method may be called multiple times.
                 popupHidden
@@ -532,7 +537,7 @@ export class PopupService {
         }
         if (mouseEventOrTouch && originalClick) {
             // for x, allow 4px margin, to cover iPads, where touch (which opens menu) is followed
-            // by browser click (when you life finger up, touch is interrupted as click in browser)
+            // by browser click (when you finger up, touch is interrupted as click in browser)
             const screenX = mouseEvent ? mouseEvent.screenX : 0;
             const screenY = mouseEvent ? mouseEvent.screenY : 0;
 
