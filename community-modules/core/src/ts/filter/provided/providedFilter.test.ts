@@ -64,7 +64,10 @@
 //     }
 // }
 
-// describe('on filter applied', () => {
+describe('on filter applied', () => {
+    xit('dummy', () => {
+    });
+});
 //     it('calls filterChangedCallback when filter has changed', () => {
 //         const params = mock<IProvidedFilterParams>();
 //         const filter = new TestFilter(params);
