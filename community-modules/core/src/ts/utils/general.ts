@@ -46,7 +46,7 @@ export function findLineByLeastSquares(values: number[]) {
     const result = [];
 
     for (let x = 0; x <= len; x++) {
-        result.push((x * m + b).toFixed(maxDecimals));
+        result.push(parseFloat((x * m + b).toFixed(maxDecimals)));
     }
 
     return result;
