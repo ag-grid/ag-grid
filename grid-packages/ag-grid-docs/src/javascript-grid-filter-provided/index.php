@@ -95,6 +95,10 @@ include '../documentation-main/documentation_header.php';
 
 <ul class="content">
     <li>The Athlete and Age columns have filters with Apply and Reset buttons.</li>
+    <li>
+        The Age column has <code>closeOnApply</code> set to <code>true</code>, so the filter popup will be closed
+        immediately when the filter is applied or reset.
+    </li>
     <li>The Country column has a filter with Apply and Clear buttons.</li>
     <li><code>onFilterModified</code> gets called when the filter changes regardless of the Apply button.</li>
     <li><code>onFilterChanged</code> gets called only after a new filter is applied.</li>

@@ -25,7 +25,7 @@ export class EventService implements IEventEmitter {
     private static PRIORITY = '-P1';
 
     // using an object performs better than a Set for the number of different events we have
-    private firedEvents: { [key: string]: boolean } = {};
+    private firedEvents: { [key: string]: boolean; } = {};
 
     // because this class is used both inside the context and outside the context, we do not
     // use autowired attributes, as that would be confusing, as sometimes the attributes

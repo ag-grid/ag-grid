@@ -8,6 +8,7 @@ import {
 } from "../simpleFilter";
 import { ScalarFilter, Comparator, IScalarFilterParams } from "../scalarFilter";
 import { AgInputNumberField } from "../../../widgets/agInputNumberField";
+import { IAfterGuiAttachedParams } from '../../../interfaces/iAfterGuiAttachedParams';
 
 export interface NumberFilterModel extends ISimpleFilterModel {
     filter?: number;
@@ -109,7 +110,9 @@ export class NumberFilter extends ScalarFilter<NumberFilterModel, number> {
         this.eValueTo2.setInputPlaceholder(translate(isRange2 ? 'rangeEnd' : 'filterOoo'));
     }
 
-    public afterGuiAttached() {
+    public afterGuiAttached(params: IAfterGuiAttachedParams): void {
+        super.afterGuiAttached(params);
+
         this.resetPlaceholder();
         this.eValueFrom1.getInputElement().focus();
     }

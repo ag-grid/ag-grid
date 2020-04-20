@@ -45,15 +45,15 @@ export class TouchListener implements IEventEmitter {
         const moveListener = this.onTouchMove.bind(this);
         const endListener = this.onTouchEnd.bind(this);
 
-        this.eElement.addEventListener("touchstart", startListener, {passive: true} as any);
-        this.eElement.addEventListener("touchmove", moveListener, {passive: true} as any);
+        this.eElement.addEventListener("touchstart", startListener, { passive: true } as any);
+        this.eElement.addEventListener("touchmove", moveListener, { passive: true } as any);
         // we set passive=false, as we want to prevent default on this event
-        this.eElement.addEventListener("touchend", endListener, {passive: false} as any);
+        this.eElement.addEventListener("touchend", endListener, { passive: false } as any);
 
         this.destroyFuncs.push(() => {
-            this.eElement.removeEventListener("touchstart", startListener, {passive: true} as any);
-            this.eElement.removeEventListener("touchmove", moveListener, {passive: true} as any);
-            this.eElement.removeEventListener("touchend", endListener, {passive: false} as any);
+            this.eElement.removeEventListener("touchstart", startListener, { passive: true } as any);
+            this.eElement.removeEventListener("touchmove", moveListener, { passive: true } as any);
+            this.eElement.removeEventListener("touchend", endListener, { passive: false } as any);
         });
     }
 

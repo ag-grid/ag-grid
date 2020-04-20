@@ -52,7 +52,7 @@ export class Promise<T> {
         callback(this.onDone.bind(this), this.onReject.bind(this));
     }
 
-    public then(func: (result: any) => void) {
+    public then(func: (result: T) => void): void {
         if (this.status === PromiseStatus.IN_PROGRESS) {
             this.listOfWaiters.push(func);
         } else {
@@ -60,7 +60,7 @@ export class Promise<T> {
         }
     }
 
-    public firstOneOnly(func: (result: any) => void) {
+    public firstOneOnly(func: (result: T) => void): void {
         if (this.status === PromiseStatus.IN_PROGRESS) {
             if (this.listOfWaiters.length === 0) {
                 this.listOfWaiters.push(func);

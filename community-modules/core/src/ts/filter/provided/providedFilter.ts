@@ -6,11 +6,13 @@ import { GridOptionsWrapper } from '../../gridOptionsWrapper';
 import { _ } from '../../utils';
 import { IRowModel } from '../../interfaces/iRowModel';
 import { Constants } from '../../constants';
+import { IAfterGuiAttachedParams } from '../../interfaces/iAfterGuiAttachedParams';
 
 export interface IProvidedFilterParams extends IFilterParams {
     clearButton?: boolean;
     resetButton?: boolean;
     applyButton?: boolean;
+    closeOnApply?: boolean;
     newRowsAction?: string;
     debounceMs?: number;
 }
@@ -21,7 +23,6 @@ export interface IProvidedFilterParams extends IFilterParams {
  * extend this class.
  */
 export abstract class ProvidedFilter extends Component implements IFilterComp {
-
     private static NEW_ROWS_ACTION_KEEP = 'keep';
     private static NEW_ROWS_ACTION_CLEAR = 'clear';
 
@@ -30,7 +31,8 @@ export abstract class ProvidedFilter extends Component implements IFilterComp {
     // each level in the hierarchy will save params with the appropriate type for that level.
     private providedFilterParams: IProvidedFilterParams;
 
-    private applyActive: boolean;
+    private applyActive = false;
+    private hidePopup: () => void = null;
 
     @RefSelector('eFilterBodyWrapper') protected eFilterBodyWrapper: HTMLElement;
 
@@ -201,12 +203,15 @@ export abstract class ProvidedFilter extends Component implements IFilterComp {
     }
 
     protected onBtApply(afterFloatingFilter = false, afterDataChange = false) {
-        const newModelDifferent = this.applyModel();
-
-        if (newModelDifferent) {
+        if (this.applyModel()) {
             // the floating filter uses 'afterFloatingFilter' info, so it doesn't refresh after filter changed if change
             // came from floating filter
             this.providedFilterParams.filterChangedCallback({ afterFloatingFilter, afterDataChange });
+        }
+
+        if (this.providedFilterParams.closeOnApply && this.hidePopup) {
+            this.hidePopup();
+            this.hidePopup = null;
         }
     }
 
@@ -235,6 +240,10 @@ export abstract class ProvidedFilter extends Component implements IFilterComp {
         }
     }
 
+    public afterGuiAttached(params: IAfterGuiAttachedParams): void {
+        this.hidePopup = params.hidePopup;
+    }
+
     // static, as used by floating filter also
     public static getDebounceMs(params: IProvidedFilterParams, debounceDefault: number): number {
         const applyActive = ProvidedFilter.isUseApplyButton(params);
@@ -258,5 +267,11 @@ export abstract class ProvidedFilter extends Component implements IFilterComp {
         }
 
         return params.applyButton === true;
+    }
+
+    public destroy() {
+        this.hidePopup = null;
+
+        super.destroy();
     }
 }

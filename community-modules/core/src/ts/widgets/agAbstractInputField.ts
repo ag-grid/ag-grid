@@ -14,8 +14,8 @@ export abstract class AgAbstractInputField<T extends FieldElement, K> extends Ag
 
     protected config: IInputField = {};
 
-    protected TEMPLATE =
-        `<div role="presentation">
+    protected TEMPLATE = /* html */`
+        <div role="presentation">
             <label ref="eLabel" class="ag-input-field-label"></label>
             <div ref="eWrapper" class="ag-wrapper ag-input-wrapper" role="presentation">
                 <%displayField% ref="eInput" class="ag-input-field-input"></%displayField%>

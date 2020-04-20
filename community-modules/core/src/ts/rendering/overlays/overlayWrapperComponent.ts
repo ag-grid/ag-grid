@@ -1,20 +1,20 @@
-import {GridOptionsWrapper} from "../../gridOptionsWrapper";
-import {Autowired, PostConstruct} from "../../context/context";
-import {Component} from "../../widgets/component";
-import {UserComponentFactory} from "../../components/framework/userComponentFactory";
-import {RefSelector} from "../../widgets/componentAnnotations";
-import {ILoadingOverlayComp} from "./loadingOverlayComponent";
-import {_, Promise} from '../../utils';
-import {INoRowsOverlayComp} from "./noRowsOverlayComponent";
+import { GridOptionsWrapper } from '../../gridOptionsWrapper';
+import { Autowired, PostConstruct } from '../../context/context';
+import { Component } from '../../widgets/component';
+import { UserComponentFactory } from '../../components/framework/userComponentFactory';
+import { RefSelector } from '../../widgets/componentAnnotations';
+import { ILoadingOverlayComp } from './loadingOverlayComponent';
+import { _, Promise } from '../../utils';
+import { INoRowsOverlayComp } from './noRowsOverlayComponent';
 
-enum LoadingType {Loading, NoRows}
+enum LoadingType { Loading, NoRows }
 
 export class OverlayWrapperComponent extends Component {
 
     // wrapping in outer div, and wrapper, is needed to center the loading icon
     // The idea for centering came from here: http://www.vanseodesign.com/css/vertical-centering/
-    private static TEMPLATE =
-        `<div class="ag-overlay" aria-hidden="true">
+    private static TEMPLATE = /* html */`
+        <div class="ag-overlay" aria-hidden="true">
             <div class="ag-overlay-panel">
                 <div class="ag-overlay-wrapper" ref="eOverlayWrapper"></div>
             </div>
@@ -45,23 +45,26 @@ export class OverlayWrapperComponent extends Component {
     }
 
     public showLoadingOverlay(): void {
-        const workItem: Promise<ILoadingOverlayComp> = this.userComponentFactory.newLoadingOverlayComponent({
+        const workItem = this.userComponentFactory.newLoadingOverlayComponent({
             api: this.gridOptionsWrapper.getApi()
         });
-        this.showOverlay<ILoadingOverlayComp>(workItem, LoadingType.Loading);
+
+        this.showOverlay(workItem, LoadingType.Loading);
     }
 
     public showNoRowsOverlay(): void {
-        const workItem: Promise<INoRowsOverlayComp> = this.userComponentFactory.newNoRowsOverlayComponent({
+        const workItem = this.userComponentFactory.newNoRowsOverlayComponent({
             api: this.gridOptionsWrapper.getApi()
         });
-        this.showOverlay<INoRowsOverlayComp>(workItem, LoadingType.NoRows);
+
+        this.showOverlay(workItem, LoadingType.NoRows);
     }
 
-    private showOverlay<T>(workItem: Promise<T>, type: LoadingType) {
+    private showOverlay(workItem: Promise<ILoadingOverlayComp | INoRowsOverlayComp>, type: LoadingType): void {
         if (this.inProgress) {
             return;
         }
+
         this.setWrapperTypeClass(type);
         this.destroyActiveOverlay();
 

@@ -231,9 +231,7 @@ export class AgDialog extends AgPanel {
             columnApi: this.gridOptionsWrapper.getColumnApi()
         };
 
-        if (this.localEventService) {
-            this.localEventService.dispatchEvent(params);
-        }
+        this.dispatchEvent(params);
     }
 
     private onMoveStart(e: MouseEvent) {

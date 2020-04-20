@@ -14,7 +14,8 @@ import {
     ValueFormatterService,
     VirtualList,
     VirtualListModel,
-    _
+    _,
+    IAfterGuiAttachedParams
 } from '@ag-grid-community/core';
 
 import { SetFilterModelValuesType, SetValueModel } from './setValueModel';
@@ -245,7 +246,9 @@ export class SetFilter extends ProvidedFilter {
 
     // we need to have the GUI attached before we can draw the virtual rows, as the
     // virtual row logic needs info about the GUI state
-    public afterGuiAttached(params: any): void {
+    public afterGuiAttached(params: IAfterGuiAttachedParams): void {
+        super.afterGuiAttached(params);
+
         const { virtualList, eMiniFilter } = this;
         const translate = this.gridOptionsWrapper.getLocaleTextFunc();
 

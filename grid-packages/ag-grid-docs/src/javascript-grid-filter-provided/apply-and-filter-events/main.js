@@ -14,6 +14,7 @@ var columnDefs = [
         filterParams: {
             applyButton: true,
             resetButton: true,
+            closeOnApply: true,
         }
     },
     {

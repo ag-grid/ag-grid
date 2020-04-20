@@ -86,6 +86,7 @@
     "gulp-uglify": "^3.0.0",
     "image-webpack-loader": "^6.0.0",
     "jest": "^25.1.0",
+    "jest-mock-extended": "^1.0.8",
     "json-stable-stringify": "^1.0.0",
     "merge2": "^1.2.0",
     "mini-css-extract-plugin": "^0.8.0",
