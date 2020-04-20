@@ -21,7 +21,7 @@ var gridOptions = {
                 values: function(params) {
                     setTimeout(function() {
                         params.success(['value 1', 'value 2']);
-                    }, 5000);
+                    }, 3000);
                 }
             }
         }
