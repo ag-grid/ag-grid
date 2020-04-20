@@ -9,15 +9,14 @@ include '../documentation-main/documentation_header.php';
 <h1>Provided Themes</h1>
 
 <p class="lead">
-    The grid comes with several provided themes which act as a great starting point for any application specific
+    The grid comes with several provided themes which act as a great starting point for any application-specific
     customisations.
 </p>
 
 <h2>Themes Summary</h2>
 
 <p>
-    The table below provides a summary of the themes provided with the grid. To see the themes in action click on
-    the theme name.
+    The table below provides a summary of the themes provided with the grid. To see the themes in action, click on the theme name.
 </p>
 
 
@@ -37,49 +36,48 @@ include '../documentation-main/documentation_header.php';
     </tr>
     <tr>
         <td class="theme-name-cell">
-            <a href="/example.php?theme=ag-theme-alpine" target="_blank">ag-theme-alpine</a><br/>
-            <a href="/example.php?theme=ag-theme-alpine-dark" target="_blank">ag-theme-alpine-dark</a>
+            <a href="../example.php?theme=ag-theme-alpine" target="_blank">ag-theme-alpine</a><br/>
+            <a href="../example.php?theme=ag-theme-alpine-dark" target="_blank">ag-theme-alpine-dark</a>
         </td>
         <td>
             <p>
-                Modern looking themes with high contrast, and generous padding.
+            Modern looking themes with high contrast, and generous padding.
             </p>
             <p>
-                <span class="recommendation">Recommendation:</span>
-                This is the recommended grid theme, and a great choice for most applications.
+                <span class="recommendation">Recommendation:</span> This is the recommended grid theme and an
+                excellent choice for most applications.
             </p>
         </td>
     </tr>
     <tr>
         <td class="theme-name-cell">
-            <a href="/example.php?theme=ag-theme-balham" target="_blank">ag-theme-balham</a><br/>
-            <a href="/example.php?theme=ag-theme-balham-dark" target="_blank">ag-theme-balham-dark</a>
+            <a href="../example.php?theme=ag-theme-balham" target="_blank">ag-theme-balham</a><br/>
+            <a href="../example.php?theme=ag-theme-balham-dark" target="_blank">ag-theme-balham-dark</a>
         </td>
         <td>
             <p>
                 Themes for professional data-heavy applications.
             </p>
             <p>
-                <span class="recommendation">Recommendation:</span>
-                Balham was the recommended theme before Alpine was developed. It is still a great choice
-                for applications that need to fit more data onto each page.
+                <span class="recommendation">Recommendation:</span> Balham was the recommended theme before 
+                Alpine was developed. It is still an excellent choice for applications that need to fit more data onto each page.
             </p>
         </td>
     </tr>
     <tr>
         <td class="theme-name-cell">
-            <a href="/example.php?theme=ag-theme-material" target="_blank">ag-theme-material</a>
+            <a href="../example.php?theme=ag-theme-material" target="_blank">ag-theme-material</a>
         </td>
         <td>
             <p>
                 A theme designed according to the Google Material Language Specs.
             </p>
             <p>
-                <span class="recommendation">Recommendation:</span>
-                This theme looks great for simple applications with lots of white space, and is the obvious
-                choice if the rest of your application follows the Google Material Design spec. However the
-                Material spec doesn't cater for advanced grid features such as grouped columns and tool panels.
-                If your application uses these features, consider using <code>ag-theme-alpine</code> instead.
+                <span class="recommendation">Recommendation:</span> This theme looks great for simple applications with lots of 
+                white space, and is the obvious choice if the rest of your application follows the Google Material Design spec. 
+                However, the Material spec doesn't cater for advanced grid features such as grouped columns and tool panels. If 
+                your application uses these features, consider using <code>ag-theme-alpine</code> instead.
+
             </p>
         </td>
     </tr>
@@ -89,8 +87,8 @@ include '../documentation-main/documentation_header.php';
 <h2>Applying a Theme to an App</h2>
 
 <p>
-    To use a theme add the theme class name to the <code>div</code> element that contains your grid. The following is
-    an example of using the Alpine theme:
+    To use a theme, add the theme class name to the <code>div</code> element that contains your grid. The following is an 
+    example of using the Alpine theme:
 </p>
 
 <snippet language="html">
@@ -117,13 +115,13 @@ include '../documentation-main/documentation_header.php';
     (<code>ag-theme-{theme-name}.css</code>).
 </note>
 
-<p>There are various ways to load these stylesheets as described in the sections below:</p>
+<p>There are various ways to load these stylesheets, as described in the sections below:</p>
 
 <h3>Pre-built Bundles</h3>
 <p>
-    Some pre-built bundles, whether <a href="/javascript-grid-download/">downloaded from our website</a> or included in
-    the <code>ag-grid-community</code> <a href="/javascript-grid-npm/">NPM package</a>, already embed the structural
-    styles and all provided themes. If you are using one of these files you do not need to separately load CSS.
+    Some pre-built bundles, whether <a href="../javascript-grid-download/">downloaded from our website</a> or included in
+    the <code>ag-grid-community</code> <a href="../javascript-grid-npm/">NPM package</a>, already embed the structural
+    styles and all provided themes. If you are using one of these files, you do not need to load separately CSS.
 </p>
 
 <h3>JavaScript Bundlers</h3>
@@ -151,8 +149,9 @@ include '../documentation-main/documentation_header.php';
 </snippet>
 
 <p>
-    Change the theme name in the URL to the one that you're using, and ensure that the version number in the URL matches the JS version you're using.This is useful for testing and prototyping but not
-    recommended for production as your app will be unavailable if the unpkg servers are down.
+    Change the theme name in the URL to the one that you're using, and ensure that the version number in the URL matches 
+    the JS version you're using. This is useful for testing and prototyping but not recommended for production as your app 
+    will be unavailable if the unpkg servers are down.
 </p>
 
 <h2>Loading the Roboto font for Material theme</h2>
