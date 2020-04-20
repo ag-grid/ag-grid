@@ -136,5 +136,28 @@ include '../documentation-main/documentation_header.php';
     <p><b>API:</b> Use <code>api.getModel()</code> and then <code>model.getVirtualRowCount()</code> and <code>getVirtualRow()</code> to get the nodes.</p>
 
 
+    <h2>Refreshing the Client-side Model</h2>
+
+    <p id="refreshClientSideRowModel">
+        If you do want to refresh the Client-side Row Model
+        then call <code>api.refreshClientSideRowModel(startingStage)</code>
+        where <code>startingStage</code> can be one of the stages above, ie:
+    </p>
+
+    <ol>
+        <li>group</li>
+        <li>filter</li>
+        <li>pivot</li>
+        <li>aggregate</li>
+        <li>sort</li>
+        <li>map</li>
+    </ol>
+
+    <p>
+        Because each stage depends on the stage before, starting from a stage means that stage executes and then
+        all the following stages execute.
+        For example if you call <code>api.refreshClientSideRowModel('filter')</code> it will execute the stages
+        Filter, Pivot, Aggregate, Sort and Map.
+    </p>
 
 <?php include '../documentation-main/documentation_footer.php';?>

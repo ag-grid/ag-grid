@@ -23,12 +23,12 @@ function formatNumber(number) {
 
 var gridOptions = {
     columnDefs: [
-        {headerName: 'A', field: 'a'},
-        {headerName: 'B', field: 'b'},
-        {headerName: 'C', field: 'c'},
-        {headerName: 'D', field: 'd'},
-        {headerName: 'E', field: 'e'},
-        {headerName: 'F', field: 'f'}
+        {field: 'a'},
+        {field: 'b'},
+        {field: 'c'},
+        {field: 'd'},
+        {field: 'e'},
+        {field: 'f'}
     ],
     defaultColDef: {
         flex: 1,
