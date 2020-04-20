@@ -25,13 +25,11 @@ var columnDefs = [
         {headerName: 'Book', field: 'book', enableRowGroup: true, enablePivot: true, rowGroupIndex: 2, hide: true},
         {headerName: 'Trade', field: 'trade', width: 100},
 
-        // some string values, that do not get aggregated
-        {headerName: 'Deal Type', field: 'dealType', enableRowGroup: true, enablePivot: true},
-        {headerName: 'Bid', field: 'bidFlag', enableRowGroup: true, enablePivot: true, width: 100},
-
         // all the other columns (visible and not grouped)
         {headerName: 'Current', field: 'current', width: 200, aggFunc: 'sum', enableValue: true, cellClass: 'number', valueFormatter: numberCellFormatter, cellRenderer:'agAnimateShowChangeCellRenderer'},
         {headerName: 'Previous', field: 'previous', width: 200, aggFunc: 'sum', enableValue: true, cellClass: 'number', valueFormatter: numberCellFormatter, cellRenderer:'agAnimateShowChangeCellRenderer'},
+        {headerName: 'Deal Type', field: 'dealType', enableRowGroup: true, enablePivot: true},
+        {headerName: 'Bid', field: 'bidFlag', enableRowGroup: true, enablePivot: true, width: 100},
         {headerName: 'PL 1', field: 'pl1', width: 200, aggFunc: 'sum', enableValue: true, cellClass: 'number', valueFormatter: numberCellFormatter, cellRenderer:'agAnimateShowChangeCellRenderer'},
         {headerName: 'PL 2', field: 'pl2', width: 200, aggFunc: 'sum', enableValue: true, cellClass: 'number', valueFormatter: numberCellFormatter, cellRenderer:'agAnimateShowChangeCellRenderer'},
         {headerName: 'Gain-DX', field: 'gainDx', width: 200, aggFunc: 'sum', enableValue: true, cellClass: 'number', valueFormatter: numberCellFormatter, cellRenderer:'agAnimateShowChangeCellRenderer'},

@@ -417,7 +417,29 @@
           {
             "title": "Updating Data",
             "url": "javascript-grid-data-update/",
-            "showInCollapsed": true
+            "showInCollapsed": true,
+            "items": [
+              {
+                "title": "Single Row / Cell",
+                "url": "javascript-grid-data-update-single-row-cell/",
+                "showInCollapsed": true
+              },
+              {
+                "title": "Transactions",
+                "url": "javascript-grid-data-update-transactions/",
+                "showInCollapsed": true
+              },
+              {
+                "title": "High Frequency",
+                "url": "javascript-grid-data-update-high-frequency/",
+                "showInCollapsed": true
+              },
+              {
+                "title": "Immutable Stores",
+                "url": "javascript-grid-data-update-immutable-stores/",
+                "showInCollapsed": true
+              }
+            ]
           },
           {
             "title": "Context",
@@ -706,7 +728,7 @@
                 "url": "javascript-grid-provided-renderer-group/"
               },
               {
-                "title": "Show Change Cell Renderers",
+                "title": "Change Cell Renderers",
                 "url": "javascript-grid-provided-renderer-change/"
               }
             ]
@@ -719,6 +741,11 @@
           {
             "title": "View Refresh",
             "url": "javascript-grid-refresh/",
+            "showInCollapsed": true
+          },
+          {
+            "title": "Flashing Cells",
+            "url": "javascript-grid-flashing-cells/",
             "showInCollapsed": true
           },
           {
