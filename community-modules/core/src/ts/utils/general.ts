@@ -15,8 +15,15 @@ export function getNameOfClass(theClass: any) {
 
 export function findLineByLeastSquares(values: number[]) {
     const len = values.length;
+    let maxDecimals = 0;
 
     if (len <= 1) { return values; }
+
+    for (let i = 0; i < values.length; i++) {
+        const value = values[i];
+        if (Math.floor(value) === value) { continue; }
+        maxDecimals = Math.max(maxDecimals, value.toString().split('.')[1].length);
+    }
 
     let sum_x = 0;
     let sum_y = 0;
@@ -39,7 +46,7 @@ export function findLineByLeastSquares(values: number[]) {
     const result = [];
 
     for (let x = 0; x <= len; x++) {
-        result.push(x * m + b);
+        result.push((x * m + b).toFixed(maxDecimals));
     }
 
     return result;
