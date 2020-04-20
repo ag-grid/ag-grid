@@ -94,7 +94,6 @@ export class ReactComponent extends BaseReactComponent {
                 // we check here if the rendering is "slow" (anything greater than 2ms) we'll use a listener to remove the
                 // static markup, otherwise just the next tick
                 if(this.staticRenderTime >= 2) {
-                    console.log("XXXX slow renderer", this.staticRenderTime);
                     this.eParentElement.addEventListener('DOMNodeInserted', () => {
                         this.removeStaticMarkup();
                     }, false);
