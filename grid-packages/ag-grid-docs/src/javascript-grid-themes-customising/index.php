@@ -1,6 +1,6 @@
 <?php
 $pageTitle = "ag-Grid Provided Themes";
-$pageDescription = "ag-Grid is a feature-rich datagrid available in Free or Enterprise versions. It stores the data in Row Models. Each piece of row data provided to the datgrid is wrapped in a Row Node. This section describes the Row Node and how you can use it in your applications.";
+$pageDescription = "ag-Grid is a feature-rich datagrid available in Free or Enterprise versions. It stores the data in Row Models. Each piece of row data provided to the datagrid is wrapped in a Row Node. This section describes the Row Node and how you can use it in your applications.";
 $pageKeywords = "ag-Grid data row model";
 $pageGroup = "feature";
 include '../documentation-main/documentation_header.php';
@@ -45,7 +45,7 @@ include '../documentation-main/documentation_header.php';
         <code>header-height</code> height in pixels of a header row.
     </li>
     <li>
-        <code>foreground-color</code> and <code>background-color</code> set the text colour and background colour for the grid - there are may more colour 
+        <code>foreground-color</code> and <code>background-color</code> set the text colour and background colour for the grid - there are more colour 
         parameters available for more fine-grained control over the colour scheme.
     </li>
     <li>
@@ -61,8 +61,8 @@ include '../documentation-main/documentation_header.php';
         </li>
         <li>
             <code>material-primary-color</code> and <code>material-accent-color</code> (Material only) set the colours used for the primary and accent colour 
-            roles specified in the <a href="https://material.io/design/color/">Material Design color system</a>. Currently primary color is used for buttons, 
-            range selections, selected tab underlines and input focus underlines, and accent color is used for checked checkboxes.
+            roles specified in the <a href="https://material.io/design/color/">Material Design colour system</a>. Currently primary colour is used for buttons, 
+            range selections, selected tab underlines and input focus underlines, and accent colour is used for checked checkboxes.
         </li>
     </ul>
 </ul>
@@ -119,8 +119,8 @@ include '../documentation-main/documentation_header.php';
     </li>
     <li>
         If CSS has not loaded and one of the provided themes is in use, the grid contains hard-coded fallback values for these themes. For 
-        this reason we recommend that if you are extending a provided theme like ag-theme-alpine and have not changed the row and header heights, 
-        you keep the same theme name so that the grid knows what fallback sizes to apply.`
+        this reason we recommend that if you are extending a provided theme like <code>ag-theme-alpine</code> and have not changed the row and header heights, 
+        you keep the same theme name so that the grid knows what fallback sizes to apply.
     </li>
     <li>
         If neither of the above methods will work for your app (you do not want to delay app initialisation until after CSS has loaded, and are 
@@ -151,8 +151,8 @@ include '../documentation-main/documentation_header.php';
 </snippet>
 
 <p>
-    If your app already defines a color scheme using CSS variables and you want to use those existing variable names rather than the <code>--ag-{parameter-name}</code> 
-    ones provided by the grid, you can do this by passing a css <code>var()</code> value to a theme parameter in Sass. For example, if your application defines 
+    If your app already defines a colour scheme using CSS variables and you want to use those existing variable names rather than the <code>--ag-{parameter-name}</code> 
+    provided by the grid, you can do this by passing a css <code>var()</code> value to a theme parameter in Sass. For example, if your application defines 
     a CSS variable <code>--appMainTextColor</code> and you want to set the <code>foreground-color</code> parameter at runtime using this variable, you can do so like this:
 </p>
 
@@ -185,19 +185,19 @@ include '../documentation-main/documentation_header.php';
 
 <snippet language="css">
 .ag-theme-alpine .ag-header-cell-label {
-    font-weight: normal;
+    font-style: italic;
 }
 </snippet>
 
-<p>
-    Note how we include the name of the theme in the rule: <code>.ag-theme-alpine .ag-header-cell-label { ... } </code>. This is important - without 
-    the theme name, your styles will not override the theme's built-in styles due to CSS selector specificity rules.
-</p>
+<note>
+    It is important to include the name of the theme in the rule: <code>.ag-theme-alpine .ag-header-cell-label { ... } </code>.
+    Without the theme name, your styles will not override the theme's built-in styles due to CSS selector specificity rules.
+</note>
 
 <h3>Referencing parameter values in CSS rules</h3>
 
 <p>
-    If you're using Sass, you can use reference theme parameters in your own CSS rules using the <a href="#ag-param">ag-param function</a> 
+    If you're using Sass, you can reference theme parameters in your own CSS rules using the <a href="#ag-param">ag-param function</a> 
     or <a href="#ag-color-property">ag-color-property mixin</a>.
 </p>
 
@@ -508,9 +508,9 @@ popup-shadow: 5px 5px 10px rgba(0, 0, 0, 0.3)
 
 <p>
     A parameter cascade is when one parameter defaults to another, which may itself default to a different parameter. In this way 
-    we can have very general purpose parameters like <code>foreground-color</code> which changes the color of all text in the grid, 
-    and more specific parameters like <code>data-color</code> which only change the color of text in grid cells. Consider the following 
-    parameters, all of which derive their value directly or indirectly from the foreground color:
+    we can have very general purpose parameters like <code>foreground-color</code> which changes the colour of all text in the grid, 
+    and more specific parameters like <code>data-color</code> which only change the colour of text in grid cells. Consider the following 
+    parameters, all of which derive their value directly or indirectly from the foreground colour:
 </p>
 
 <snippet language="scss">
@@ -522,7 +522,7 @@ disabled-foreground-color: ag-derived(foreground-color, $opacity: 0.5),
 </snippet>
 
 <p>
-    Note how <code>disabled-foreground-color</code> alters the opacity of the default foreground color, so setting <code>foreground-color</code> 
+    Note how <code>disabled-foreground-color</code> alters the opacity of the default foreground colour, so setting <code>foreground-color</code> 
     to red (<code>#FF0000</code>) will automatically generate a semi-transparent red (<code>rgba(255,0,0,0.5)</code>).
 </p>
 
@@ -536,13 +536,13 @@ disabled-foreground-color: ag-derived(foreground-color, $opacity: 0.5),
 
 <p>
     If you are setting parameters using the built in CSS variables, defining <code>--ag-foreground-color: red</code> 
-    will not automatically set the disabled foreground color to semi-transparent red - if you want this effect, you must 
+    will not automatically set the disabled foreground colour to semi-transparent red - if you want this effect, you must 
     explicitly define <code>--ag-disabled-foreground-color: rgba(255,0,0,0.5)</code>.
 </p>
 
 <p>
-    If you are passing CSS custom property values to color parameters, e.g. <code>foreground-color: var(--myForegroundColor, red)</code> 
-    then again it will not be possible to automatically calculate the disabled foreground color, and you will need to specify a value e.g. 
+    If you are passing CSS custom property values to colour parameters, e.g. <code>foreground-color: var(--myForegroundColor, red)</code> 
+    then again it will not be possible to automatically calculate the disabled foreground colour, and you will need to specify a value e.g. 
     <code>disabled-foreground-color: var(--myDisabledForegroundColor, rgba(255,0,0,0.5))</code>. In this case there will be a warning emitted 
     by the Sass build process describing the issue.
 </p>
@@ -604,7 +604,7 @@ disabled-foreground-color: ag-derived(foreground-color, $opacity: 0.5),
 </snippet>
 
 <p>
-    Each rule is emitted twice, the first rule ensures that the default color is visible in older browsers that do not support CSS variables.
+    Each rule is emitted twice, the first rule ensures that the default colour is visible in older browsers that do not support CSS variables.
 </p>
 
 <h3 id="ag-derived">@function ag-derived</h3>
@@ -678,13 +678,13 @@ $my-theme-default-params: (
         <li><code>$plus: number</code> - equivalent to Sass <code>$value + $number</code></li>
         <li><code>$minus: number</code> - equivalent to Sass <code>$value - $number</code></li>
     </ul>
-    <li>Available for color parameters:</li>
+    <li>Available for colour parameters:</li>
     <ul>
         <li>
             <code>$opacity: percentage</code> - amount should be from 0 to 1, equivalent to Sass <code>rgba($value, $amount)</code>
         </li>
         <li>
-            <code>$mix: color percentage</code> - mixes in an amount of another color, e.g. <code>$mix: red 10%</code> produce a color 
+            <code>$mix: color percentage</code> - mixes in an amount of another colour, e.g. <code>$mix: red 10%</code> produce a colour 
             made from 90% the parameter value and 10% red.
         </li>
         <li>
@@ -694,7 +694,7 @@ $my-theme-default-params: (
             <code>$darken: percentage</code> - amount should be a percentage from 0% to 100%, equivalent to Sass <code>darken($value, $amount)</code>
         </li>
         <li>
-            <code>$self-overlay: times</code> - takes a semi-transparent color and overlays it on top of itself multiple times. For example, if the 
+            <code>$self-overlay: times</code> - takes a semi-transparent colour and overlays it on top of itself multiple times. For example, if the 
             value of the parameter is <code>rgba(0, 0, 0, 0.5)</code> then <code>$self-overlay: 2</code> will produce <code>rgba(0, 0, 0, 0.75)</code>
         </li>
     </ul>
