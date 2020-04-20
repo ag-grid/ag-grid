@@ -49,7 +49,7 @@ document.addEventListener('DOMContentLoaded', function() {
     &lt;script src="main.js"&gt;&lt;/script&gt;
 &lt;/head>
 &lt;body>
-    &lt;div id="myGrid" style="height: 200px; width:500px;" class="ag-theme-balham"&gt;&lt;/div&gt;
+    &lt;div id="myGrid" style="height: 200px; width:500px;" class="ag-theme-alpine"&gt;&lt;/div&gt;
 &lt;/body&gt;
 &lt;/html&gt;
 </snippet>

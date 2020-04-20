@@ -59,7 +59,7 @@ You can either use your favorite programming text editor, or you can execute the
   &lt;head&gt;
     &lt;script src=&quot;https://unpkg.com/ag-grid-community/dist/ag-grid-community.min.noStyle.js&quot;&gt;&lt;/script&gt;
     &lt;link rel=&quot;stylesheet&quot; href=&quot;https://unpkg.com/ag-grid-community/dist/styles/ag-grid.css&quot;&gt;
-    &lt;link rel=&quot;stylesheet&quot; href=&quot;https://unpkg.com/ag-grid-community/dist/styles/ag-theme-balham.css&quot;&gt;
+    &lt;link rel=&quot;stylesheet&quot; href=&quot;https://unpkg.com/ag-grid-community/dist/styles/ag-theme-alpine.css&quot;&gt;
   &lt;/head&gt;
   &lt;body&gt;
     &lt;h1&gt;Hello from ag-grid!&lt;/h1&gt;
@@ -67,7 +67,7 @@ You can either use your favorite programming text editor, or you can execute the
 &lt;/html&gt;
 </snippet>
 
-<p>The lines above import the <code>AgGrid</code> component, the grid "structure" stylesheet (<code>ag-grid.css</code>), and one of the available grid themes: (<code>ag-theme-balham.css</code>).
+<p>The lines above import the <code>AgGrid</code> component, the grid "structure" stylesheet (<code>ag-grid.css</code>), and one of the available grid themes: (<code>ag-theme-alpine.css</code>).
 The grid ships several different themes; pick one that matches your project design. </p>
 
 <p>Now, let's instantiate a grid!</p>
@@ -78,12 +78,12 @@ The grid ships several different themes; pick one that matches your project desi
 &lt;head&gt;
   &lt;script src=&quot;https://unpkg.com/ag-grid-community/dist/ag-grid-community.min.noStyle.js&quot;&gt;&lt;/script&gt;
   &lt;link rel=&quot;stylesheet&quot; href=&quot;https://unpkg.com/ag-grid-community/dist/styles/ag-grid.css&quot;&gt;
-  &lt;link rel=&quot;stylesheet&quot; href=&quot;https://unpkg.com/ag-grid-community/dist/styles/ag-theme-balham.css&quot;&gt;
+  &lt;link rel=&quot;stylesheet&quot; href=&quot;https://unpkg.com/ag-grid-community/dist/styles/ag-theme-alpine.css&quot;&gt;
 &lt;/head&gt;
 &lt;body&gt;
   &lt;h1&gt;Hello from ag-grid!&lt;/h1&gt;
 
-  &lt;div id=&quot;myGrid&quot; style=&quot;height: 600px;width:500px;&quot; class=&quot;ag-theme-balham&quot;&gt;&lt;/div&gt;
+  &lt;div id=&quot;myGrid&quot; style=&quot;height: 600px;width:500px;&quot; class=&quot;ag-theme-alpine&quot;&gt;&lt;/div&gt;
 
   &lt;script type=&quot;text/javascript&quot; charset=&quot;utf-8&quot;&gt;
     // specify the columns
@@ -122,7 +122,7 @@ each column entry specifies the header label and the data field to be displayed 
 
 <p>The actual data is defined in the <code>rowData</code> as an array of objects. Notice that the fields of the objects match the <code>field</code> values in the <code>columnDefs</code> configuration object.</p>
 
-<p>Finally, the <code>DIV</code> element is the DOM entry point of the grid. It sets the grid dimensions and specifies the grid's theme by setting the <code>class</code> to <code>ag-theme-balham</code>. As you may have already noticed, the CSS class matches the name of CSS file we imported earlier.</p>
+<p>Finally, the <code>DIV</code> element is the DOM entry point of the grid. It sets the grid dimensions and specifies the grid's theme by setting the <code>class</code> to <code>ag-theme-alpine</code>. As you may have already noticed, the CSS class matches the name of CSS file we imported earlier.</p>
 
 <img class="img-fluid" src="../getting-started/step1.png" alt="ag-Grid in its simplest form" />
 
@@ -171,12 +171,12 @@ Notice that the actual data fetching is performed outside of the grid component 
 &lt;head&gt;
   &lt;script src=&quot;https://unpkg.com/ag-grid-community/dist/ag-grid-community.min.noStyle.js&quot;&gt;&lt;/script&gt;
   &lt;link rel=&quot;stylesheet&quot; href=&quot;https://unpkg.com/ag-grid-community/dist/styles/ag-grid.css&quot;&gt;
-  &lt;link rel=&quot;stylesheet&quot; href=&quot;https://unpkg.com/ag-grid-community/dist/styles/ag-theme-balham.css&quot;&gt;
+  &lt;link rel=&quot;stylesheet&quot; href=&quot;https://unpkg.com/ag-grid-community/dist/styles/ag-theme-alpine.css&quot;&gt;
 &lt;/head&gt;
 &lt;body&gt;
   &lt;h1&gt;Hello from ag-grid!&lt;/h1&gt;
 
-  &lt;div id=&quot;myGrid&quot; style=&quot;height: 600px;width:500px;&quot; class=&quot;ag-theme-balham&quot;&gt;&lt;/div&gt;
+  &lt;div id=&quot;myGrid&quot; style=&quot;height: 600px;width:500px;&quot; class=&quot;ag-theme-alpine&quot;&gt;&lt;/div&gt;
 
   &lt;script type=&quot;text/javascript&quot; charset=&quot;utf-8&quot;&gt;
     // specify the columns
@@ -236,7 +236,7 @@ We will leave the flag toggle state and persistence to the backend team. On our 
 
 <snippet language="html">
   &lt;button onclick=&quot;getSelectedRows()&quot;&gt;Get Selected Rows&lt;/button&gt;
-  &lt;div id=&quot;myGrid&quot; style=&quot;height: 600px;width:500px;&quot; class=&quot;ag-theme-balham&quot;&gt;&lt;/div&gt;
+  &lt;div id=&quot;myGrid&quot; style=&quot;height: 600px;width:500px;&quot; class=&quot;ag-theme-alpine&quot;&gt;&lt;/div&gt;
 </snippet>
 
 <snippet language="js">
@@ -327,12 +327,12 @@ var gridOptions = {
 &lt;head&gt;
   &lt;script src=&quot;https://unpkg.com/ag-grid-enterprise/dist/ag-grid-enterprise.min.noStyle.js&quot;&gt;&lt;/script&gt;
   &lt;link rel=&quot;stylesheet&quot; href=&quot;https://unpkg.com/ag-grid-community/dist/styles/ag-grid.css&quot;&gt;
-  &lt;link rel=&quot;stylesheet&quot; href=&quot;https://unpkg.com/ag-grid-community/dist/styles/ag-theme-balham.css&quot;&gt;
+  &lt;link rel=&quot;stylesheet&quot; href=&quot;https://unpkg.com/ag-grid-community/dist/styles/ag-theme-alpine.css&quot;&gt;
 &lt;/head&gt;
 &lt;body&gt;
   &lt;h1&gt;Hello from ag-grid!&lt;/h1&gt;
   &lt;button onclick=&quot;getSelectedRows()&quot;&gt;Get Selected Rows&lt;/button&gt;
-  &lt;div id=&quot;myGrid&quot; style=&quot;height: 600px;width:500px;&quot; class=&quot;ag-theme-balham&quot;&gt;&lt;/div&gt;
+  &lt;div id=&quot;myGrid&quot; style=&quot;height: 600px;width:500px;&quot; class=&quot;ag-theme-alpine&quot;&gt;&lt;/div&gt;
 
   &lt;script type=&quot;text/javascript&quot; charset=&quot;utf-8&quot;&gt;
     // specify the columns

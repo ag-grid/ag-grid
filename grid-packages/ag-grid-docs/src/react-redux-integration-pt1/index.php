@@ -271,7 +271,7 @@ export default connect(
 
 render() {
     return (
-        &lt;div className="ag-theme-balham">
+        &lt;div className="ag-theme-alpine">
             &lt;AgGridReact
                 // provide column definitions
                 columnDefs={this.colDefs}

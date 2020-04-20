@@ -16,10 +16,10 @@ include '../documentation-main/documentation_header.php';
 
     <snippet>
 // set width using percentages
-&lt;div id="myGrid" class="ag-theme-balham" style="width: 100%; height: 100%;"&gt;&lt;/div&gt;
+&lt;div id="myGrid" class="ag-theme-alpine" style="width: 100%; height: 100%;"&gt;&lt;/div&gt;
 
 // OR set width using fixed pixels
-&lt;div id="myGrid" class="ag-theme-balham" style="width: 500px; height: 200px;"&gt;&lt;/div&gt;</snippet>
+&lt;div id="myGrid" class="ag-theme-alpine" style="width: 500px; height: 200px;"&gt;&lt;/div&gt;</snippet>
 
     <note>
 

@@ -55,7 +55,7 @@ for configuring and using Angular components in ag-Grid.</p>
 
     <snippet>
 // notice the grid has an id called agGrid, which can be used to call the API
-&lt;ag-grid-angular #agGrid style="width: 100%; height: 350px;" class="ag-theme-balham"
+&lt;ag-grid-angular #agGrid style="width: 100%; height: 350px;" class="ag-theme-alpine"
 
     // items bound to properties on the controller
     [gridOptions]="gridOptions"

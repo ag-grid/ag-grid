@@ -85,10 +85,10 @@ import { html, PolymerElement } from '@polymer/polymer/polymer-element.js';
 static get template() {
   return html`
 +    &lt;link rel="stylesheet" href="../../node_modules/ag-grid-community/dist/styles/ag-grid.css"&gt;
-+    &lt;link rel="stylesheet" href="../../node_modules/ag-grid-community/dist/styles/ag-theme-balham.css"&gt;
++    &lt;link rel="stylesheet" href="../../node_modules/ag-grid-community/dist/styles/ag-theme-alpine.css"&gt;
 
 +    &lt;ag-grid-polymer style="width: 100%; height: 350px;"
-+                     class="ag-theme-balham"
++                     class="ag-theme-alpine"
 +                     rowData="{{rowData}}"
 +                     columnDefs="{{columnDefs}}"
 +                     on-first-data-rendered="{{firstDataRendered}}"
@@ -98,7 +98,7 @@ static get template() {
 </snippet>
 
 <p>The lines above import the <code>AgGrid</code> component, the grid "structure" stylesheet (<code>ag-grid.css</code>),
-    and one of the available grid themes: (<code>ag-theme-balham.css</code>). The grid ships several different themes;
+    and one of the available grid themes: (<code>ag-theme-alpine.css</code>). The grid ships several different themes;
     pick one that matches your project design.</p>
 
 
@@ -151,10 +151,10 @@ class PolymerGettingStartedApp extends PolymerElement {
   static get template() {
     return html`
         &lt;link rel="stylesheet" href="../../node_modules/ag-grid-community/dist/styles/ag-grid.css"&gt;
-        &lt;link rel="stylesheet" href="../../node_modules/ag-grid-community/dist/styles/ag-theme-balham.css"&gt;
+        &lt;link rel="stylesheet" href="../../node_modules/ag-grid-community/dist/styles/ag-theme-alpine.css"&gt;
 
         &lt;ag-grid-polymer style="width: 100%; height: 350px;"
-                         class="ag-theme-balham"
+                         class="ag-theme-alpine"
                          rowData="{{rowData}}"
                          columnDefs="{{columnDefs}}"
                          on-first-data-rendered="{{firstDataRendered}}"

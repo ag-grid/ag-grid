@@ -82,14 +82,14 @@ new Grid(eGridDiv, gridOptions);
 &lt;html&gt;
 &lt;head&gt;
     &lt;link rel="stylesheet" href="./node_modules/@ag-grid-community/all-modules/dist/styles/ag-grid.css"&gt;
-    &lt;link rel="stylesheet" href="./node_modules/@ag-grid-community/all-modules/dist/styles/ag-theme-balham.css"&gt;
+    &lt;link rel="stylesheet" href="./node_modules/@ag-grid-community/all-modules/dist/styles/ag-theme-alpine.css"&gt;
 
     <!-- or, if using Enterprise features -->
     <!-- &lt;link rel="stylesheet" href="./node_modules/@ag-grid-enterprise/all-modules/dist/styles/ag-grid.css"&gt; -->
-    <!-- &lt;link rel="stylesheet" href="./node_modules/@ag-grid-enterprise/all-modules/dist/styles/ag-theme-balham.css"&gt; -->
+    <!-- &lt;link rel="stylesheet" href="./node_modules/@ag-grid-enterprise/all-modules/dist/styles/ag-theme-alpine.css"&gt; -->
 &lt;/head&gt;
 &lt;body&gt;
-&lt;div id="myGrid" style="height: 200px;width:500px;" class="ag-theme-balham"&gt;&lt;/div&gt;
+&lt;div id="myGrid" style="height: 200px;width:500px;" class="ag-theme-alpine"&gt;&lt;/div&gt;
 
 &lt;script src="./dist/ag-bundle.js"&gt;&lt;/script&gt;
 &lt;/body&gt;

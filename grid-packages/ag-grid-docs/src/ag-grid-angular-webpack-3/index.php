@@ -119,7 +119,7 @@ export class AppComponent {
 }</snippet>
 <snippet language="html">
 &lt;!-- app/app.component.html--&gt;  
-&lt;ag-grid-angular #agGrid style="width: 500px; height: 150px;" class="ag-theme-balham"
+&lt;ag-grid-angular #agGrid style="width: 500px; height: 150px;" class="ag-theme-alpine"
                  [gridOptions]="gridOptions"
                  [columnDefs]="columnDefs"
                  [rowData]="rowData"&gt;
@@ -159,11 +159,11 @@ import 'rxjs';
 
 // ag-grid
 import '@ag-grid-community/all-modules/dist/styles/ag-grid.css';
-import '@ag-grid-community/all-modules/dist/styles/ag-theme-balham.css';
+import '@ag-grid-community/all-modules/dist/styles/ag-theme-alpine.css';
 
 // or, if using Enterprise features
 // import '@ag-grid-enterprise/all-modules/dist/styles/ag-grid.css';
-// import '@ag-grid-enterprise/all-modules/dist/styles/ag-theme-balham.css';
+// import '@ag-grid-enterprise/all-modules/dist/styles/ag-theme-alpine.css';
 
 import '@ag-grid-community/angular'</snippet>
 

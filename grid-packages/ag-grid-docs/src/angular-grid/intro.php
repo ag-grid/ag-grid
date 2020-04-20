@@ -41,7 +41,7 @@ export class AppComponent  {
 <snippet>
 &lt;ag-grid-angular
     style="width: 500px; height: 150px;"
-    class="ag-theme-balham"
+    class="ag-theme-alpine"
     [rowData]="rowData"
     [columnDefs]="columnDefs">
 &lt;/ag-grid-angular>

@@ -53,7 +53,7 @@ include '../documentation-main/documentation_header.php';
 
 <snippet>
 &lt;ag-grid-vue style="width: 600px; height: 150px;"
-             class="ag-theme-balham"
+             class="ag-theme-alpine"
              v-model="rowData"
              ..other bindings/attributes
 
@@ -78,7 +78,7 @@ mounted() {
     <p>In the grid configuration above we made use of <code>v-model</code> - what this will allow us to get the row data when grid data changes:</p>
 <snippet>
 &lt;ag-grid-vue style="width: 600px; height: 150px;"
-             class="ag-theme-balham"
+             class="ag-theme-alpine"
              v-model="rowData"
              @data-model-changed="dataModelChanged"
              ..other bindings/attributes

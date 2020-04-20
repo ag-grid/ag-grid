@@ -55,7 +55,7 @@ import logo from './logo.svg';
 import './App.css';
 import { AgGridReact } from 'ag-grid-react';
 import 'ag-grid-community/dist/styles/ag-grid.css';
-import 'ag-grid-community/dist/styles/ag-theme-balham.css';
+import 'ag-grid-community/dist/styles/ag-theme-alpine.css';
 
 class App extends Component {
   constructor(props) {
@@ -81,7 +81,7 @@ class App extends Component {
   render() {
     return (
       &lt;div
-        className="ag-theme-balham"
+        className="ag-theme-alpine"
         style={{
         height: '500px',
         width: '600px' }}
@@ -105,10 +105,10 @@ export default App;
 
 <snippet language="jsx">import {AgGridReact} from 'ag-grid-react';
 import 'ag-grid-community/dist/styles/ag-grid.css';
-import 'ag-grid-community/dist/styles/ag-theme-balham.css';
+import 'ag-grid-community/dist/styles/ag-theme-alpine.css';
 </snippet>
 
-<p>The three lines above import the <code>AgGridReact</code> component, the grid "structure" stylesheet (<code>ag-grid.css</code>), and one of the available grid themes: (<code>ag-theme-balham.css</code>).
+<p>The three lines above import the <code>AgGridReact</code> component, the grid "structure" stylesheet (<code>ag-grid.css</code>), and one of the available grid themes: (<code>ag-theme-alpine.css</code>).
 </p>
 
 The grid ships <a href="https://www.ag-grid.com/javascript-grid-styling/">several different themes</a>; pick one that matches your project design. You can customise it further with Sass variables, a technique which we will cover further down the road.</p>
@@ -140,7 +140,7 @@ each column entry specifies the header label and the data field to be displayed 
 
 <snippet language="jsx">
 <div ng-non-bindable>
-&lt;div style={{ height: '150px', width: '600px' }} className="ag-theme-balham"&gt;
+&lt;div style={{ height: '150px', width: '600px' }} className="ag-theme-alpine"&gt;
     &lt;AgGridReact
         columnDefs={this.state.columnDefs}
         rowData={this.state.rowData}&gt;
@@ -149,7 +149,7 @@ each column entry specifies the header label and the data field to be displayed 
 </div>
 </snippet>
 
-<p>Finally, the JSX code above describes a wrapper <code>DIV</code> element which sets the grid dimensions and specifies the grid's theme by setting the <code>className</code> to <code>ag-theme-balham</code>. As you may have already noticed, the CSS class matches the name of CSS file we imported earlier.</p>
+<p>Finally, the JSX code above describes a wrapper <code>DIV</code> element which sets the grid dimensions and specifies the grid's theme by setting the <code>className</code> to <code>ag-theme-alpine</code>. As you may have already noticed, the CSS class matches the name of CSS file we imported earlier.</p>
 <p>Inside the container, we place an <code>AgGridReact</code> component with the configuration objects (<code>columnDefs</code> and <code>rowData</code>) from the component's constructor passed as properties.</p>
 <h2 id="enable-sorting-and-filtering">Enable Sorting And Filtering</h2>
 <p>So far, so good. But wouldn't it be nice to be able to sort the data to help us see which car is the least/most expensive? Well, enabling sorting in ag-Grid is actually quite simple - all you need to do is set the <code>sort</code> property to the column definitions.</p>
@@ -237,7 +237,7 @@ this.state = {
 
 <snippet language="diff" >
 <div ng-non-bindable>
-  &lt;div style={{ height: '150px', width: '600px' }} className="ag-theme-balham"&gt;
+  &lt;div style={{ height: '150px', width: '600px' }} className="ag-theme-alpine"&gt;
   +    &lt;button onClick={this.onButtonClick}&gt;Get selected rows&lt;/button&gt;
   +
    &lt;AgGridReact
@@ -296,7 +296,7 @@ Then, add the import to your file:
 <snippet language="diff">
 import { AgGridReact } from 'ag-grid-react';
 import 'ag-grid-community/dist/styles/ag-grid.css';
-import 'ag-grid-community/dist/styles/ag-theme-balham.css';
+import 'ag-grid-community/dist/styles/ag-theme-alpine.css';
 + import 'ag-grid-enterprise';
 </snippet>
 
@@ -362,7 +362,7 @@ rowData={this.state.rowData}
 <snippet language="diff">
 import { AgGridReact } from 'ag-grid-react';
 -import 'ag-grid-community/dist/styles/ag-grid.css';
--import 'ag-grid-community/dist/styles/ag-theme-balham.css';
+-import 'ag-grid-community/dist/styles/ag-theme-alpine.css';
 </snippet>
 
 <p>If everything is configured correctly, the second row of the grid will be blue. Congratulations!
