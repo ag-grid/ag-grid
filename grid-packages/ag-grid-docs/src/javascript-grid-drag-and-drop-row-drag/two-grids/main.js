@@ -128,17 +128,21 @@ function binDrop(data) {
 
 function addBinZone(params) {
     var eBin = document.querySelector('.bin'),
+        icon = eBin.querySelector('i');
         dropZone = {
             getContainer: function() { return eBin; },
             onDragEnter: function() {
                 eBin.style.color = 'blue';
+                icon.style.transform = 'scale(1.5)';
             },
             onDragLeave: function() {
                 eBin.style.color = 'black';
+                icon.style.transform = 'scale(1)';
             },
             onDragStop: function(params) {
                 binDrop(params.dragItem.rowNode.data);
                 eBin.style.color = 'black';
+                icon.style.transform = 'scale(1)';
             }
         };
 

@@ -47,6 +47,11 @@ button i {
     margin-right: 10px;
 }
 
+.bin i {
+    transform: scale(1);
+    transition: transform 500ms;
+}
+
 .factory-red {
     background-color: indianred;
 }
