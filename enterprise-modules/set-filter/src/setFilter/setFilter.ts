@@ -26,7 +26,6 @@ export class SetFilter extends ProvidedFilter {
     private valueModel: SetValueModel;
 
     @RefSelector('eSelectAll') private eSelectAll: AgCheckbox;
-    @RefSelector('eSelectAllContainer') private eSelectAllContainer: HTMLElement;
     @RefSelector('eMiniFilter') private eMiniFilter: AgInputTextField;
     @RefSelector('eFilterLoading') private eFilterLoading: HTMLInputElement;
 
@@ -48,6 +47,7 @@ export class SetFilter extends ProvidedFilter {
 
     protected createBodyTemplate(): string {
         const translate = this.gridOptionsWrapper.getLocaleTextFunc();
+
         return /* html */`
             <div ref="eFilterLoading" class="ag-filter-loading ag-hidden">${translate('loadingOoo', 'Loading...')}</div>
             <div>
@@ -119,16 +119,28 @@ export class SetFilter extends ProvidedFilter {
 
         this.checkSetFilterDeprecatedParams(params);
         this.setFilterParams = params;
+
+        this.valueModel = new SetValueModel(
+            params.colDef,
+            params.rowModel,
+            params.valueGetter,
+            params.doesRowPassOtherFilter,
+            params.suppressSorting,
+            (values, toSelect) => this.setFilterValues(values, !toSelect, !!toSelect, toSelect),
+            loading => this.setLoading(loading),
+            this.valueFormatterService,
+            params.column
+        );
+
         this.initialiseFilterBodyUi();
 
-        const syncValuesAfterDataChange = !params.suppressSyncValuesAfterDataChange &&
-            // sync values only with CSRM
+        const syncValuesAfterDataChange =
             this.rowModel.getType() === Constants.ROW_MODEL_TYPE_CLIENT_SIDE &&
-            // sync only needed if user not providing values
-            !params.values;
+            !params.values &&
+            !params.suppressSyncValuesAfterDataChange;
 
         if (syncValuesAfterDataChange) {
-            this.setupSyncValuesAfterDataChange();
+            this.addEventListenersForDataChanges();
         }
     }
 
@@ -147,29 +159,26 @@ export class SetFilter extends ProvidedFilter {
         }
     }
 
-    // gets called with change to data values, thus need to update the values available for selection
-    // in the set filter.
-    private syncValuesAfterDataChange(keepSelection = true): void {
-        const everythingSelected = !this.getModel();
+    private addEventListenersForDataChanges(): void {
+        this.addDestroyableEventListener(
+            this.eventService, Events.EVENT_ROW_DATA_UPDATED, () => this.syncValuesAfterDataChange());
 
-        this.valueModel.refreshAfterNewRowsLoaded(keepSelection, everythingSelected);
-        this.refresh();
+        this.addDestroyableEventListener(
+            this.eventService,
+            Events.EVENT_CELL_VALUE_CHANGED,
+            (event: CellValueChangedEvent) => {
+                // only interested in changes to do with this column
+                if (event.column !== this.setFilterParams.column) { return; }
 
-        this.onBtApply(false, true);
+                this.syncValuesAfterDataChange();
+            });
     }
 
-    // this keeps the filter up to date with changes in the row data
-    private setupSyncValuesAfterDataChange(): void {
-        // add listener for when data is changed via transaction update (includes delta row mode
-        // as this uses transaction updates)
-        this.addDestroyableEventListener(this.eventService, Events.EVENT_ROW_DATA_UPDATED, this.syncValuesAfterDataChange.bind(this));
-
-        this.addDestroyableEventListener(this.eventService, Events.EVENT_CELL_VALUE_CHANGED, (event: CellValueChangedEvent) => {
-            // only interested in changes to do with this column
-            if (event.column !== this.setFilterParams.column) { return; }
-
-            this.syncValuesAfterDataChange();
-        });
+    /** Called when the data in the grid changes, to prompt the set filter values to be updated. */
+    private syncValuesAfterDataChange(keepSelection = true): void {
+        this.valueModel.refreshAfterNewRowsLoaded(keepSelection, !this.getModel());
+        this.refresh();
+        this.onBtApply(false, true);
     }
 
     private updateCheckboxIcon(): void {
@@ -181,56 +190,28 @@ export class SetFilter extends ProvidedFilter {
     }
 
     private initialiseFilterBodyUi(): void {
-        this.virtualList = this.wireBean(new VirtualList('filter'));
+        this.initVirtualList();
+        this.initMiniFilter();
+        this.initSelectAll();
+        this.refresh();
+    }
 
+    private initVirtualList() {
+        const virtualList = this.virtualList = this.wireBean(new VirtualList('filter'));
         const eSetFilterList = this.getRefElement('eSetFilterList');
 
         if (eSetFilterList) {
-            eSetFilterList.appendChild(this.virtualList.getGui());
+            eSetFilterList.appendChild(virtualList.getGui());
         }
 
-        if (_.exists(this.setFilterParams.cellHeight)) {
-            this.virtualList.setRowHeight(this.setFilterParams.cellHeight);
+        const { cellHeight } = this.setFilterParams;
+
+        if (cellHeight != null) {
+            virtualList.setRowHeight(cellHeight);
         }
 
-        this.virtualList.setComponentCreator(this.createSetListItem.bind(this));
-
-        this.valueModel = new SetValueModel(
-            this.setFilterParams.colDef,
-            this.setFilterParams.rowModel,
-            this.setFilterParams.valueGetter,
-            this.setFilterParams.doesRowPassOtherFilter,
-            this.setFilterParams.suppressSorting,
-            (values, toSelect) => this.setFilterValues(values, !toSelect, !!toSelect, toSelect),
-            this.setLoading.bind(this),
-            this.valueFormatterService,
-            this.setFilterParams.column
-        );
-
-        this.virtualList.setModel(new ModelWrapper(this.valueModel));
-
-        _.setDisplayed(this.eMiniFilter.getGui(), !this.setFilterParams.suppressMiniFilter);
-
-        this.eMiniFilter.setValue(this.valueModel.getMiniFilter() as any);
-        this.eMiniFilter.onValueChange(() => this.onMiniFilterInput());
-        this.addDestroyableEventListener(this.eMiniFilter.getInputElement(), 'keypress', this.onMiniFilterKeyPress.bind(this));
-
-        this.updateCheckboxIcon();
-
-        if (this.setFilterParams.suppressSelectAll) {
-            _.setDisplayed(this.eSelectAllContainer, false);
-        } else {
-            this.addDestroyableEventListener(this.eSelectAllContainer, 'click', this.onSelectAll.bind(this));
-        }
-
-        this.addDestroyableEventListener(this.eSelectAll.getInputElement(), 'keydown', (e: KeyboardEvent) => {
-            if (e.keyCode === Constants.KEY_SPACE) {
-                e.preventDefault();
-                this.onSelectAll(e);
-            }
-        });
-
-        this.refresh();
+        virtualList.setComponentCreator(value => this.createSetListItem(value));
+        virtualList.setModel(new ModelWrapper(this.valueModel));
     }
 
     private createSetListItem(value: any): Component {
@@ -242,6 +223,36 @@ export class SetFilter extends ProvidedFilter {
             SetFilterListItem.EVENT_SELECTED, () => this.onItemSelected(value, listItem.isSelected()));
 
         return listItem;
+    }
+
+    private initMiniFilter() {
+        const { eMiniFilter } = this;
+
+        _.setDisplayed(eMiniFilter.getGui(), !this.setFilterParams.suppressMiniFilter);
+
+        eMiniFilter.setValue(this.valueModel.getMiniFilter());
+        eMiniFilter.onValueChange(() => this.onMiniFilterInput());
+
+        this.addDestroyableEventListener(eMiniFilter.getInputElement(), 'keypress', e => this.onMiniFilterKeyPress(e));
+    }
+
+    private initSelectAll() {
+        this.updateCheckboxIcon();
+
+        const eSelectAllContainer = this.getRefElement('eSelectAllContainer');
+
+        if (this.setFilterParams.suppressSelectAll) {
+            _.setDisplayed(eSelectAllContainer, false);
+        } else {
+            this.addDestroyableEventListener(eSelectAllContainer, 'click', e => this.onSelectAll(e));
+        }
+
+        this.addDestroyableEventListener(this.eSelectAll.getInputElement(), 'keydown', (e: KeyboardEvent) => {
+            if (e.keyCode === Constants.KEY_SPACE) {
+                e.preventDefault();
+                this.onSelectAll(e);
+            }
+        });
     }
 
     // we need to have the GUI attached before we can draw the virtual rows, as the
@@ -282,10 +293,12 @@ export class SetFilter extends ProvidedFilter {
     public doesFilterPass(params: IDoesFilterPassParams): boolean {
         if (this.appliedModelValues == null) { return true; }
 
-        let value = this.setFilterParams.valueGetter(params.node);
+        const { valueGetter, colDef: { keyCreator } } = this.setFilterParams;
 
-        if (this.setFilterParams.colDef.keyCreator) {
-            value = this.setFilterParams.colDef.keyCreator({ value });
+        let value = valueGetter(params.node);
+
+        if (keyCreator) {
+            value = keyCreator({ value });
         }
 
         value = _.makeNull(value);
@@ -370,20 +383,14 @@ export class SetFilter extends ProvidedFilter {
 
     private onMiniFilterKeyPress(e: KeyboardEvent): void {
         if (_.isKeyPressed(e, Constants.KEY_ENTER)) {
-            this.onEnterKeyOnMiniFilter();
+            this.valueModel.selectAllFromMiniFilter();
+            this.refresh();
+            this.onUiChanged(true);
         }
     }
 
-    private onEnterKeyOnMiniFilter(): void {
-        this.valueModel.selectAllFromMiniFilter();
-        this.refresh();
-        this.onUiChanged(true);
-    }
-
     private onMiniFilterInput() {
-        const miniFilterChanged = this.valueModel.setMiniFilter(this.eMiniFilter.getValue());
-
-        if (miniFilterChanged) {
+        if (this.valueModel.setMiniFilter(this.eMiniFilter.getValue())) {
             this.refreshVirtualList();
         }
 
@@ -422,9 +429,9 @@ export class SetFilter extends ProvidedFilter {
         this.onUiChanged();
     }
 
-    public setMiniFilter(newMiniFilter: any): void {
+    public setMiniFilter(newMiniFilter: string): void {
         this.valueModel.setMiniFilter(newMiniFilter);
-        this.eMiniFilter.setValue(this.valueModel.getMiniFilter() as any);
+        this.eMiniFilter.setValue(this.valueModel.getMiniFilter());
     }
 
     public getMiniFilter() {
@@ -441,12 +448,12 @@ export class SetFilter extends ProvidedFilter {
         this.refresh();
     }
 
-    public unselectValue(value: any) {
+    public unselectValue(value: string) {
         this.valueModel.unselectValue(value);
         this.refresh();
     }
 
-    public selectValue(value: any) {
+    public selectValue(value: string) {
         this.valueModel.selectValue(value);
         this.refresh();
     }
@@ -456,7 +463,7 @@ export class SetFilter extends ProvidedFilter {
         this.refreshVirtualList();
     }
 
-    public isValueSelected(value: any) {
+    public isValueSelected(value: string) {
         return this.valueModel.isValueSelected(value);
     }
 
@@ -485,7 +492,7 @@ class ModelWrapper implements VirtualListModel {
         return this.model.getDisplayedValueCount();
     }
 
-    public getRow(index: number): any {
+    public getRow(index: number): string {
         return this.model.getDisplayedValue(index);
     }
 }

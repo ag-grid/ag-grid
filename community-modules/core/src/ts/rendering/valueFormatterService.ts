@@ -1,25 +1,25 @@
-import { Bean, Autowired } from "../context/context";
-import { Column } from "../entities/column";
-import { RowNode } from "../entities/rowNode";
-import { GridOptionsWrapper } from "../gridOptionsWrapper";
-import { ExpressionService } from "../valueService/expressionService";
-import { ValueFormatterParams } from "../entities/colDef";
+import { Bean, Autowired } from '../context/context';
+import { Column } from '../entities/column';
+import { RowNode } from '../entities/rowNode';
+import { GridOptionsWrapper } from '../gridOptionsWrapper';
+import { ExpressionService } from '../valueService/expressionService';
+import { ValueFormatterParams } from '../entities/colDef';
 
 @Bean('valueFormatterService')
 export class ValueFormatterService {
-
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('expressionService') private expressionService: ExpressionService;
 
     public formatValue(
         column: Column,
-        rowNode: RowNode | null,
+        node: RowNode | null,
         $scope: any,
         value: any,
         suppliedFormatter?: (value: any) => string
     ): string {
         let result: string = null;
         let formatter: ((value: any) => string) | string;
+
         const colDef = column.getColDef();
 
         if (suppliedFormatter) {
@@ -27,20 +27,17 @@ export class ValueFormatterService {
             formatter = suppliedFormatter;
         } else {
             // if floating, give preference to the floating formatter
-            if (rowNode && rowNode.rowPinned) {
-                formatter = colDef.pinnedRowValueFormatter ? colDef.pinnedRowValueFormatter : colDef.valueFormatter;
-            } else {
-                formatter = colDef.valueFormatter;
-            }
+            formatter = node && node.rowPinned && colDef.pinnedRowValueFormatter ?
+                colDef.pinnedRowValueFormatter : colDef.valueFormatter;
         }
 
         if (formatter) {
             const params: ValueFormatterParams = {
-                value: value,
-                node: rowNode,
-                data: rowNode ? rowNode.data : null,
-                colDef: column.getColDef(),
-                column: column,
+                value,
+                node,
+                data: node ? node.data : null,
+                colDef,
+                column,
                 api: this.gridOptionsWrapper.getApi(),
                 columnApi: this.gridOptionsWrapper.getColumnApi(),
                 context: this.gridOptionsWrapper.getContext()
@@ -59,7 +56,7 @@ export class ValueFormatterService {
         }
 
         // if we don't do this, then arrays get displayed as 1,2,3, but we want 1, 2, 3 (ie with spaces)
-        if ((result === null || result === undefined) && Array.isArray(value)) {
+        if (result == null && Array.isArray(value)) {
             result = value.join(', ');
         }
 

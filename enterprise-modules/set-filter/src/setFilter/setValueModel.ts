@@ -25,69 +25,57 @@ export enum SetFilterModelValuesType {
 export class SetValueModel implements IEventEmitter {
     public static EVENT_AVAILABLE_VALUES_CHANGED = 'availableValuesChanged';
 
-    private colDef: ColDef;
     private filterParams: ISetFilterParams;
-
     private clientSideRowModel: IClientSideRowModel;
-    private valueGetter: any;
-    private allValues: string[]; // all values for the filter
-    private filteredValues: Set<string>; // values not filtered out by other rows
-    private displayedValues: string[]; // all values we are rendering on screen (i.e. after mini filter)
-    private miniFilter?: string;
+
+    /** All possible values for the filter */
+    private allValues: string[];
+
+    /** All values that are currently displayed, after the mini-filter has been applied */
+    private displayedValues: string[];
+
+    /** Remaining values when filters from other columns have been applied */
+    private filteredValues: Set<string>;
+
+    /** Values that have been selected for this filter */
     private selectedValues = new Set<string>();
-    private suppressSorting: boolean;
+
+    private miniFilter?: string;
     private formatter: TextFormatter;
 
     // to make code more readable, we work these out once, and
     // then refer to each time. both are derived from the filterParams
-    private showingAvailableOnly: boolean;
+    private showingAvailableOnly = false;
     private valuesType: SetFilterModelValuesType;
-
-    private doesRowPassOtherFilters: (node: RowNode) => boolean;
-    private modelUpdatedFunc: (values: string[], selected?: string[]) => void;
-    private isLoadingFunc: (loading: boolean) => void;
 
     private filterValuesExternalPromise: ExternalPromise<string[]>;
     private filterValuesPromise: Promise<string[]>;
 
-    private valueFormatterService: ValueFormatterService;
-    private column: Column;
-
     private localEventService = new EventService();
 
     constructor(
-        colDef: ColDef,
+        private readonly colDef: ColDef,
         rowModel: IRowModel,
-        valueGetter: any,
-        doesRowPassOtherFilters: (node: RowNode) => boolean,
-        suppressSorting: boolean,
-        modelUpdatedFunc: (values: string[], selected?: string[]) => void,
-        isLoadingFunc: (loading: boolean) => void,
-        valueFormatterService: ValueFormatterService,
-        column: Column
+        private readonly valueGetter: (node: RowNode) => any,
+        private readonly doesRowPassOtherFilters: (node: RowNode) => boolean,
+        private readonly suppressSorting: boolean,
+        private readonly modelUpdatedFunc: (values: string[], selected?: string[]) => void,
+        private readonly isLoadingFunc: (loading: boolean) => void,
+        private readonly valueFormatterService: ValueFormatterService,
+        private readonly column: Column
     ) {
-        this.suppressSorting = suppressSorting;
-        this.colDef = colDef;
-        this.valueGetter = valueGetter;
-        this.doesRowPassOtherFilters = doesRowPassOtherFilters;
-        this.modelUpdatedFunc = modelUpdatedFunc;
-        this.isLoadingFunc = isLoadingFunc;
-        this.valueFormatterService = valueFormatterService;
-        this.column = column;
-
         if (rowModel.getType() === Constants.ROW_MODEL_TYPE_CLIENT_SIDE) {
             this.clientSideRowModel = rowModel as IClientSideRowModel;
         }
 
         this.filterParams = this.colDef.filterParams || {};
 
-        if (this.filterParams != null && this.filterParams.values != null) {
-            this.valuesType = Array.isArray(this.filterParams.values) ?
+        const { values } = this.filterParams;
+
+        if (values != null) {
+            this.valuesType = Array.isArray(values) ?
                 SetFilterModelValuesType.PROVIDED_LIST :
                 SetFilterModelValuesType.PROVIDED_CALLBACK;
-
-            // removing available values only make sense when 'TAKEN_FROM_GRID_VALUES'
-            this.showingAvailableOnly = false;
         } else {
             this.valuesType = SetFilterModelValuesType.TAKEN_FROM_GRID_VALUES;
             this.showingAvailableOnly = !this.filterParams.suppressRemoveEntries;
@@ -132,7 +120,7 @@ export class SetValueModel implements IEventEmitter {
         this.refreshSelection(keepSelection, isSelectAll);
     }
 
-    private refreshSelection(keepSelection: any, isSelectAll: boolean): void {
+    private refreshSelection(keepSelection: boolean, isSelectAll: boolean): void {
         this.updateFilteredValues();
 
         const oldModel = _.values(this.selectedValues);
@@ -164,9 +152,10 @@ export class SetValueModel implements IEventEmitter {
             this.filterValuesPromise = this.filterValuesExternalPromise.promise;
             this.isLoadingFunc(true);
             this.setValues([]);
+
             const callback = this.filterParams.values as SetFilterValuesFunc;
             const params: SetFilterValuesFuncParams = {
-                success: this.onAsyncValuesLoaded.bind(this),
+                success: values => this.onAsyncValuesLoaded(values),
                 colDef: this.colDef
             };
 
@@ -198,7 +187,7 @@ export class SetValueModel implements IEventEmitter {
     }
 
     private extractSyncValuesToUse(): string[] {
-        if (this.valuesType == SetFilterModelValuesType.PROVIDED_LIST) {
+        if (this.valuesType === SetFilterModelValuesType.PROVIDED_LIST) {
             if (Array.isArray(this.filterParams.values)) {
                 return _.toStrings(this.filterParams.values);
             } else {
@@ -218,8 +207,8 @@ export class SetValueModel implements IEventEmitter {
 
     private updateFilteredValues(): void {
         const shouldNotCheckAvailableValues = !this.showingAvailableOnly ||
-            this.valuesType == SetFilterModelValuesType.PROVIDED_LIST ||
-            this.valuesType == SetFilterModelValuesType.PROVIDED_CALLBACK;
+            this.valuesType === SetFilterModelValuesType.PROVIDED_LIST ||
+            this.valuesType === SetFilterModelValuesType.PROVIDED_CALLBACK;
 
         const filteredValues = shouldNotCheckAvailableValues ?
             this.allValues :
@@ -298,7 +287,7 @@ export class SetValueModel implements IEventEmitter {
 
     private processMiniFilter(): void {
         // if no filter, just use the unique values
-        if (this.miniFilter === null) {
+        if (this.miniFilter == null) {
             this.displayedValues = _.values(this.filteredValues);
             return;
         }
@@ -315,7 +304,7 @@ export class SetValueModel implements IEventEmitter {
             return valueToCheck != null && valueToCheck.toUpperCase().indexOf(miniFilterUpperCase) >= 0;
         };
 
-        _.forEach(_.values(this.filteredValues), value => {
+        this.filteredValues.forEach(value => {
             if (value == null) { return; }
 
             const displayedValue = this.formatter(value);
@@ -397,11 +386,7 @@ export class SetValueModel implements IEventEmitter {
     }
 
     public getModel(): string[] | null {
-        if (!this.isFilterActive()) {
-            return null;
-        }
-
-        return _.values(this.selectedValues);
+        return this.isFilterActive() ? _.values(this.selectedValues) : null;
     }
 
     public setModel(model: string[] | null, isSelectAll = false): void {
@@ -416,15 +401,15 @@ export class SetValueModel implements IEventEmitter {
     }
 
     private setSyncModel(model: string[] | null, isSelectAll = false): void {
-        if (model && !isSelectAll) {
+        if (!isSelectAll && model) {
             this.selectNothingUsingMiniFilter();
 
             const allValues = _.convertToSet(this.allValues);
 
             _.forEach(model, value => {
-                if (!allValues.has(value)) { return; }
-
-                this.selectValue(value);
+                if (allValues.has(value)) {
+                    this.selectValue(value);
+                }
             });
         } else {
             this.selectAllUsingMiniFilter();
