@@ -8,6 +8,9 @@ include '../documentation-main/documentation_header.php';
 
 <h1>Angular Grid | Get Started with ag-Grid and Angular</h1>
 
+<note>Version 22.1.1 of <code>ag-grid-angular</code> / <code>@ag-grid-community/angular</code> is the last version that
+    supports Angular 5 and before.<br/><br/>Version 23 onwards of <code>ag-grid-angular</code> / <code>@ag-grid-community/angular</code> will support Angular 6+ only.</note>
+
 <p class="lead" id="angular-grid">
     ag-Grid is the industry standard for Angular Enterprise Applications. Developers using ag-Grid
     are building applications that would not be possible if ag-Grid did not exist.
