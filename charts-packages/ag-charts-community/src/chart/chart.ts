@@ -310,6 +310,9 @@ export abstract class Chart extends Observable {
     }
 
     private scheduleData() {
+        // To prevent the chart from thinking the cursor is over the same node
+        // after a change to data (the nodes are reused on data changes).
+        this.dehighlightDatum();
         this.dataPending = true;
     }
 
@@ -777,15 +780,7 @@ export abstract class Chart extends Observable {
             const { node } = pick;
             nodeDatum = node.datum as SeriesNodeDatum;
             if (lastPick && lastPick.datum === nodeDatum) {
-                // Different series can use the same datums, so simply comparing `seriesDatum`s is not enough.
-                // const isSameSeries = lastPick.datum.series === nodeDatum.series;
-                // const isSameDatums = lastPick.datum.seriesDatum === nodeDatum.seriesDatum;
-                // Mouse cursor moved over already highlighted closest marker.
-                // if (isSameSeries && isSameDatums) {
-                    // Make sure the lastPick has node information, which it might not have
-                    // if we are in the tracking mode.
-                    lastPick.node = node;
-                // }
+                lastPick.node = node;
             }
             // Marker nodes will have the `point` info in their datums.
             // Highlight if not a marker node or, if not in the tracking mode, highlight markers too.
