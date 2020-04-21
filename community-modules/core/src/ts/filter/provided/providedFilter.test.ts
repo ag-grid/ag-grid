@@ -4,6 +4,8 @@
 // import { Constants } from '../../constants';
 // import { IRowModel } from '../../interfaces/iRowModel';
 
+test.todo('Fix typing and restore tests');
+
 // class TestFilter extends ProvidedFilter {
 //     private uiModel: ProvidedFilterModel;
 //     private modelHasChanged = false;
@@ -64,10 +66,6 @@
 //     }
 // }
 
-describe('on filter applied', () => {
-    xit('dummy', () => {
-    });
-});
 //     it('calls filterChangedCallback when filter has changed', () => {
 //         const params = mock<IProvidedFilterParams>();
 //         const filter = new TestFilter(params);
