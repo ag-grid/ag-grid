@@ -8,6 +8,8 @@
     display: flex;
     flex: 1 1 auto;
     flex-direction: row;
+    position: relative;
+    overflow: hidden;
 }
 
 .toolbar { 
@@ -15,15 +17,14 @@
 }
 
 .grid-wrapper {
-    flex: 2 1 auto;
+    flex: 2 2 0px;
+    min-width: 0;
 }
 
 .drop-col {
     padding-left: 10px;
     box-sizing: border-box;
-    flex: 1 1 auto;
-    width: 0;
-    height: 100%;
+    flex: 1 1 0px;
     display: flex;
     flex-direction: column;
 }

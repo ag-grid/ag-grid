@@ -8,6 +8,7 @@
     display: flex;
     flex-direction: column;
     flex: 1 1 auto;
+    min-width: 0;
 }
 
 .inner-col.vertical-toolbar {
@@ -20,6 +21,7 @@
 
 .toolbar {
     height: 30px;
+    white-space: nowrap;
 }
 
 .vertical-toolbar > span {
