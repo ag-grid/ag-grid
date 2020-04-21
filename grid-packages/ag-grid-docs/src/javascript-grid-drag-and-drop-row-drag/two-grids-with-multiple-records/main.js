@@ -94,7 +94,7 @@ function addGridDropZone(params) {
         onDragStop: function(params) {
             var deselectCheck = document.querySelector('input#deselect').checked;
             var moveCheck = document.querySelector('input#move').checked;
-            var nodes = params.dragItem.rowNodes;
+            var nodes = params.nodes;
             
             if (moveCheck) {
                 leftGridOptions.api.updateRowData({

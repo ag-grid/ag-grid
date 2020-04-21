@@ -32,14 +32,14 @@ interface RowDropZoneParams {
     // A callback method that returns the DropZone HTMLElement
     getContainer: () => HTMLElement;
     // callback function that will be executed when the rowDrag enters the target
-    onDragEnter?: (params: DraggingEvent) => void;
+    onDragEnter?: (params: RowDragEnterEvent) => void;
     // callback function that will be executed when the rowDrag leaves the target
-    onDragLeave?: (params: DraggingEvent) => void;
+    onDragLeave?: (params: RowDragLeaveEvent) => void;
     // callback function that will be executed when the rowDrag is dragged inside the target
     // note: this gets called multiple times
-    onDragging?: (params: DraggingEvent) => void;
+    onDragging?: (params: RowDragMoveEvent) => void;
     // callback function that will be executed when the rowDrag drops rows within the target
-    onDragStop?: (params: DraggingEvent) => void;
+    onDragStop?: (params: RowDragEndEvent) => void;
 }
 </snippet>
 
@@ -185,14 +185,14 @@ function getRowDropZoneParams(events: RowDropZoneEvents) =&gt; RowDropZoneParams
 
 interface RowDropZoneEvents = {
     // callback function that will be executed when the rowDrag enters the target
-    onDragEnter?: (params: DraggingEvent) => void;
+    onDragEnter?: (params: RowDragEnterEvent) => void;
     // callback function that will be executed when the rowDrag leaves the target
-    onDragLeave?: (params: DraggingEvent) => void;
+    onDragLeave?: (params: RowDragLeaveEvent) => void;
     // callback function that will be executed when the rowDrag is dragged inside the target
     // note: this gets called multiple times
-    onDragging?: (params: DraggingEvent) => void;
+    onDragging?: (params: RowDragMoveEvent) => void;
     // callback function that will be executed when the rowDrag drops rows within the target
-    onDragStop?: (params: DraggingEvent) => void;
+    onDragStop?: (params: RowDragEndEvent) => void;
 }
 </snippet>
 

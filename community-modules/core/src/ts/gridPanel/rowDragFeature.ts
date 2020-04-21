@@ -9,7 +9,7 @@ import { IRangeController } from "../interfaces/iRangeController";
 import { GridPanel } from "./gridPanel";
 import { GridOptionsWrapper } from "../gridOptionsWrapper";
 import { EventService } from "../eventService";
-import { RowDragEvent } from "../events";
+import { RowDragEvent, RowDragEnterEvent, RowDragLeaveEvent, RowDragMoveEvent, RowDragEndEvent } from "../events";
 import { Events } from "../eventKeys";
 import { IRowModel } from "../interfaces/iRowModel";
 import { IClientSideRowModel } from "../interfaces/iClientSideRowModel";
@@ -20,6 +20,18 @@ import { last } from '../utils/array';
 import { SortController } from "../sortController";
 import { FilterManager } from "../filter/filterManager";
 import { _ } from "../utils";
+
+export interface RowDropZoneEvents {
+    onDragEnter?: (params: RowDragEnterEvent) => void;
+    onDragLeave?: (params: RowDragLeaveEvent) => void;
+    onDragging?: (params: RowDragMoveEvent) => void;
+    onDragStop?: (params: RowDragEndEvent) => void;
+}
+
+export interface RowDropZoneParams extends RowDropZoneEvents {
+    getContainer: () => HTMLElement;
+    fromGrid?: boolean;
+}
 
 export class RowDragFeature implements DropTarget {
 
@@ -326,10 +338,97 @@ export class RowDragFeature implements DropTarget {
         }
     }
 
-    // i tried using generics here with this:
-    //     public createEvent<T extends RowDragEvent>(type: string, clazz: {new(): T; }, draggingEvent: DraggingEvent) {
-    // but it didn't work - i think it's because it only works with classes, and not interfaces, (the events are interfaces)
-    public dispatchEvent(type: string, draggingEvent: DraggingEvent): void {
+    public addRowDropZone(params: RowDropZoneParams): void {
+        if (!params.getContainer()) {
+            _.doOnce(() => console.warn('ag-Grid: addRowDropZone - A container target needs to be provided'), 'add-drop-zone-empty-target');
+            return;
+        }
+
+        if (this.dragAndDropService.findExternalZone(params)) {
+            console.warn('ag-Grid: addRowDropZone - target already exists in the list of DropZones. Use `removeRowDropZone` before adding it again.');
+            return;
+        }
+
+        let processedParams: RowDropZoneParams = {
+            getContainer: params.getContainer
+        };
+
+        if (params.fromGrid) {
+            params.fromGrid = undefined;
+            processedParams = params;
+        } else {
+            if (params.onDragEnter) {
+                processedParams.onDragEnter = (e) => {
+                    params.onDragEnter(this.draggingToRowDragEvent(Events.EVENT_ROW_DRAG_ENTER, e as any));
+                };
+            }
+            if (params.onDragLeave) {
+                processedParams.onDragLeave = (e) => {
+                    params.onDragLeave(this.draggingToRowDragEvent(Events.EVENT_ROW_DRAG_LEAVE, e as any));
+                };
+            }
+            if (params.onDragging) {
+                processedParams.onDragging = (e) => {
+                    params.onDragging(this.draggingToRowDragEvent(Events.EVENT_ROW_DRAG_MOVE, e as any));
+                };
+            }
+            if (params.onDragStop) {
+                processedParams.onDragStop = (e) => {
+                    params.onDragStop(this.draggingToRowDragEvent(Events.EVENT_ROW_DRAG_END, e as any));
+                };
+            }
+        }
+
+        this.dragAndDropService.addDropTarget({
+            isInterestedIn: (type: DragSourceType) => type === DragSourceType.RowDrag,
+            getIconName:() => DragAndDropService.ICON_MOVE,
+            external: true,
+            ...processedParams as any
+        });
+    }
+
+    public getRowDropZone(events: RowDropZoneEvents): RowDropZoneParams {
+        const getContainer = this.getContainer.bind(this);
+        const onDragEnter = this.onDragEnter.bind(this);
+        const onDragLeave = this.onDragLeave.bind(this);
+        const onDragging = this.onDragging.bind(this);
+        const onDragStop = this.onDragStop.bind(this);
+
+        if (!events) {
+            return { getContainer, onDragEnter, onDragLeave, onDragging, onDragStop, fromGrid: true };
+        }
+
+        return {
+            getContainer,
+            onDragEnter: events.onDragEnter
+                ? ((e) => {
+                    onDragEnter(e);
+                    events.onDragEnter(this.draggingToRowDragEvent(Events.EVENT_ROW_DRAG_ENTER, e as any));
+                })
+                : onDragEnter,
+            onDragLeave: events.onDragLeave
+                ? ((e) => {
+                    onDragLeave(e);
+                    events.onDragLeave(this.draggingToRowDragEvent(Events.EVENT_ROW_DRAG_LEAVE, e as any));
+                })
+                : onDragLeave,
+            onDragging: events.onDragging
+                ? ((e) => {
+                    onDragging(e);
+                    events.onDragging(this.draggingToRowDragEvent(Events.EVENT_ROW_DRAG_MOVE, e as any));
+                })
+                : onDragging,
+            onDragStop: events.onDragStop
+                ? ((e) => {
+                    onDragStop(e);
+                    events.onDragStop(this.draggingToRowDragEvent(Events.EVENT_ROW_DRAG_END, e as any));
+                })
+                : onDragStop,
+            fromGrid: true
+        };
+    }
+
+    private draggingToRowDragEvent(type: string, draggingEvent: DraggingEvent): RowDragEvent {
         const yNormalised = this.mouseEventService.getNormalisedPosition(draggingEvent).y;
         const mouseIsPastLastRow = yNormalised > this.rowModel.getCurrentPageHeight();
 
@@ -361,11 +460,18 @@ export class RowDragFeature implements DropTarget {
             columnApi: this.gridOptionsWrapper.getColumnApi(),
             event: draggingEvent.event,
             node: draggingEvent.dragItem.rowNode,
+            nodes: draggingEvent.dragItem.rowNodes,
             overIndex: overIndex,
             overNode: overNode,
             y: yNormalised,
             vDirection: vDirectionString
         };
+
+        return event;
+    }
+
+    public dispatchEvent(type: string, draggingEvent: DraggingEvent): void {
+        const event = this.draggingToRowDragEvent(type, draggingEvent);
 
         this.eventService.dispatchEvent(event);
     }

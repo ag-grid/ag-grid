@@ -135,6 +135,7 @@ export interface GridSizeChangedEvent extends AgGridEvent {
 
 export interface RowDragEvent extends AgGridEvent {
     node: RowNode;
+    nodes: RowNode[];
     y: number;
     vDirection: string;
     event: MouseEvent;

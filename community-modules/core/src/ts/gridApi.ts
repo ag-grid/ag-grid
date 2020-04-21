@@ -35,7 +35,7 @@ import { AgEvent, ColumnEventType } from "./events";
 import { IContextMenuFactory } from "./interfaces/iContextMenuFactory";
 import { ICellRendererComp } from "./rendering/cellRenderers/iCellRenderer";
 import { ICellEditorComp } from "./interfaces/iCellEditor";
-import { DragAndDropService, DragSourceType, DraggingEvent } from "./dragAndDrop/dragAndDropService";
+import { DragAndDropService, DragSourceType } from "./dragAndDrop/dragAndDropService";
 import { HeaderRootComp } from "./headerRendering/headerRootComp";
 import { AnimationFrameService } from "./misc/animationFrameService";
 import { IServerSideRowModel } from "./interfaces/iServerSideRowModel";
@@ -45,7 +45,7 @@ import { SideBarDef } from "./entities/sideBar";
 import { IChartService, ChartModel } from "./interfaces/IChartService";
 import { ModuleNames } from "./modules/moduleNames";
 import { _ } from "./utils";
-import { ChartRef, ProcessChartOptionsParams, GridOptions } from "./entities/gridOptions";
+import { ChartRef, ProcessChartOptionsParams } from "./entities/gridOptions";
 import { ChartOptions, ChartType } from "./interfaces/iChartOptions";
 import { IToolPanel } from "./interfaces/iToolPanel";
 import { RowNodeTransaction } from "./interfaces/rowNodeTransaction";
@@ -58,7 +58,7 @@ import { IInfiniteRowModel } from "./interfaces/iInfiniteRowModel";
 import { ICsvCreator } from "./interfaces/iCsvCreator";
 import { ModuleRegistry } from "./modules/moduleRegistry";
 import { UndoRedoService } from "./undoRedo/undoRedoService";
-import { RowDragFeature } from "./gridPanel/rowDragFeature";
+import { RowDropZoneParams, RowDropZoneEvents } from "./gridPanel/rowDragFeature";
 
 export interface StartEditingCellParams {
     rowIndex: number;
@@ -108,16 +108,6 @@ export interface DetailGridInfo {
     api?: GridApi;
     columnApi?: ColumnApi;
     id: string;
-}
-
-export interface RowDropZoneEvents {
-    onDragEnter?: (params: DraggingEvent) => void;
-    onDragLeave?: (params: DraggingEvent) => void;
-    onDragging?: (params: DraggingEvent) => void;
-    onDragStop?: (params: DraggingEvent) => void;
-}
-export interface RowDropZoneParams extends RowDropZoneEvents {
-    getContainer: () => HTMLElement;
 }
 
 @Bean('gridApi')
@@ -839,27 +829,7 @@ export class GridApi {
     }
 
     public addRowDropZone(params: RowDropZoneParams): void {
-        if (!params.getContainer()) {
-            _.doOnce(() => console.warn('ag-Grid: addRowDropZone - A container target needs to be provided'), 'add-drop-zone-empty-target');
-            return;
-        }
-
-        if (this.dragAndDropService.findExternalZone(params)) {
-            console.warn('ag-Grid: addRowDropZone - target already exists in the list of DropZones. Use `removeRowDropZone` before adding it again.');
-            return;
-        }
-
-        if (!params.onDragEnter) { params.onDragEnter = () => {}; }
-        if (!params.onDragLeave) { params.onDragLeave = () => {}; }
-        if (!params.onDragging) { params.onDragging = () => {}; }
-        if (!params.onDragStop) { params.onDragStop = () => {}; }
-
-        this.dragAndDropService.addDropTarget({
-            isInterestedIn: (type: DragSourceType) => type === DragSourceType.RowDrag,
-            getIconName:() => DragAndDropService.ICON_MOVE,
-            external: true,
-            ...params
-        });
+        this.gridPanel.getRowDragFeature().addRowDropZone(params);
     }
 
     public removeRowDropZone(params: RowDropZoneParams): void {
@@ -871,24 +841,7 @@ export class GridApi {
     }
 
     public getRowDropZoneParams(events: RowDropZoneEvents): RowDropZoneParams {
-        const rowDragFeature = this.gridPanel.getRowDragFeature();
-        const getContainer = rowDragFeature.getContainer.bind(rowDragFeature);
-        const onDragEnter = rowDragFeature.onDragEnter.bind(rowDragFeature);
-        const onDragLeave = rowDragFeature.onDragLeave.bind(rowDragFeature);
-        const onDragging = rowDragFeature.onDragging.bind(rowDragFeature);
-        const onDragStop = rowDragFeature.onDragStop.bind(rowDragFeature);
-
-        if (!events) {
-            return { getContainer, onDragEnter, onDragLeave, onDragging, onDragStop };
-        }
-
-        return {
-            getContainer,
-            onDragEnter: events.onDragEnter ? ((e) => { onDragEnter(e); events.onDragEnter(e); }) : onDragEnter,
-            onDragLeave: events.onDragLeave ? ((e) => { onDragLeave(e); events.onDragLeave(e); }) : onDragLeave,
-            onDragging: events.onDragging ? ((e) => { onDragging(e); events.onDragging(e); }) : onDragging,
-            onDragStop: events.onDragStop ? ((e) => { onDragStop(e); events.onDragStop(e); }) : onDragStop
-        };
+        return this.gridPanel.getRowDragFeature().getRowDropZone(events);
     }
 
     public setHeaderHeight(headerHeight: number) {

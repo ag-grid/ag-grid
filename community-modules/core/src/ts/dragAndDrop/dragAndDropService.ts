@@ -1,10 +1,11 @@
 import { PostConstruct, Bean, Autowired, PreDestroy } from "../context/context";
 import { Column } from "../entities/column";
 import { ColumnApi } from "../columnController/columnApi";
-import { GridApi, RowDropZoneParams } from "../gridApi";
+import { GridApi } from "../gridApi";
 import { GridOptionsWrapper } from "../gridOptionsWrapper";
 import { DragService, DragListenerParams } from "./dragService";
 import { Environment } from "../environment";
+import { RowDropZoneParams } from "../gridPanel/rowDragFeature";
 import { RowNode } from "../entities/rowNode";
 import { _ } from "../utils";
 
@@ -231,7 +232,7 @@ export class DragAndDropService {
             this.leaveLastTargetIfExists(mouseEvent, hDirection, vDirection, fromNudge);
             this.enterDragTargetIfExists(dropTarget, mouseEvent, hDirection, vDirection, fromNudge);
             this.lastDropTarget = dropTarget;
-        } else if (dropTarget) {
+        } else if (dropTarget && dropTarget.onDragging) {
             const draggingEvent = this.createDropTargetEvent(dropTarget, mouseEvent, hDirection, vDirection, fromNudge);
             dropTarget.onDragging(draggingEvent);
         }

@@ -148,7 +148,7 @@ function addBinZone(params) {
                 icon.style.transform = 'scale(1)';
             },
             onDragStop: function(params) {
-                binDrop(params.dragItem.rowNode.data);
+                binDrop(params.node.data);
                 eBin.style.color = 'black';
                 icon.style.transform = 'scale(1)';
             }

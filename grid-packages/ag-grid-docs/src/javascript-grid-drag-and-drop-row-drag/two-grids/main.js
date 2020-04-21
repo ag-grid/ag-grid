@@ -140,7 +140,7 @@ function addBinZone(params) {
                 icon.style.transform = 'scale(1)';
             },
             onDragStop: function(params) {
-                binDrop(params.dragItem.rowNode.data);
+                binDrop(params.node.data);
                 eBin.style.color = 'black';
                 icon.style.transform = 'scale(1)';
             }
@@ -154,7 +154,7 @@ function addGridDropZone(params, side) {
         dropZone = {
             getContainer: function() { return grid; },
             onDragStop: function(params) {
-                addRecordToGrid(side.toLowerCase(), params.dragItem.rowNode.data);
+                addRecordToGrid(side.toLowerCase(), params.node.data);
             }
         };
 

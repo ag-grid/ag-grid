@@ -69,7 +69,7 @@ function addDropZones(params) {
         dropZone = {
             getContainer: function() { return tileContainer },
             onDragStop: function(params) {
-                var tile = createTile(params.dragItem.rowNode.data);
+                var tile = createTile(params.node.data);
                 tileContainer.appendChild(tile);
             }
         };
