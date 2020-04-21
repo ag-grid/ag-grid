@@ -1,126 +1,157 @@
-// import { mock } from 'jest-mock-extended';
-// import { ProvidedFilter, IProvidedFilterParams } from './providedFilter';
-// import { ProvidedFilterModel, IDoesFilterPassParams } from '../../interfaces/iFilter';
-// import { Constants } from '../../constants';
-// import { IRowModel } from '../../interfaces/iRowModel';
+// TODO: requires TypeScript 3.7 - reintroduce after upgrade
+//import { mock } from 'jest-mock-extended';
+import { ProvidedFilter, IProvidedFilterParams } from './providedFilter';
+import { ProvidedFilterModel, IDoesFilterPassParams } from '../../interfaces/iFilter';
+import { Constants } from '../../constants';
+import { IRowModel } from '../../interfaces/iRowModel';
 
-test.todo('Fix typing and restore tests');
+/* Taken from https://github.com/facebook/jest/issues/7832#issuecomment-462343138 */
+type GenericFunction = (...args: any[]) => any;
 
-// class TestFilter extends ProvidedFilter {
-//     private uiModel: ProvidedFilterModel;
-//     private modelHasChanged = false;
+type PickByTypeKeyFilter<T, C> = {
+    [K in keyof T]: T[K] extends C ? K : never
+};
 
-//     constructor(params: IProvidedFilterParams, rowModelType: string = Constants.ROW_MODEL_TYPE_CLIENT_SIDE) {
-//         super();
+type KeysByType<T, C> = PickByTypeKeyFilter<T, C>[keyof T];
 
-//         const rowModel = mock<IRowModel>();
+type ValuesByType<T, C> = {
+    [K in keyof T]: T[K] extends C ? T[K] : never
+};
 
-//         rowModel.getType.mockReturnValue(rowModelType);
+type PickByType<T, C> = Pick<ValuesByType<T, C>, KeysByType<T, C>>;
 
-//         this.rowModel = rowModel;
-//         this.setParams(params);
-//     }
+type MethodsOf<T> = KeysByType<Required<T>, GenericFunction>;
 
-//     public doesFilterPass(params: IDoesFilterPassParams): boolean {
-//         throw new Error('Method not implemented.');
-//     }
+type InterfaceOf<T> = PickByType<T, GenericFunction>;
 
-//     protected updateUiVisibility(): void {
-//         throw new Error('Method not implemented.');
-//     }
+type PartiallyMockedInterfaceOf<T> = {
+    [K in MethodsOf<T>]?: jest.Mock<InterfaceOf<T>[K]>
+};
 
-//     protected createBodyTemplate(): string {
-//         throw new Error('Method not implemented.');
-//     }
+export function mock<T>(...mockedMethods: MethodsOf<T>[]): jest.Mocked<T> {
+    const partiallyMocked: PartiallyMockedInterfaceOf<T> = {};
+    mockedMethods.forEach(mockedMethod => partiallyMocked[mockedMethod] = jest.fn());
 
-//     protected getCssIdentifier(): string {
-//         throw new Error('Method not implemented.');
-//     }
+    return partiallyMocked as jest.Mocked<T>;
+}
 
-//     protected resetUiToDefaults(silent?: boolean): void {
-//         throw new Error('Method not implemented.');
-//     }
+class TestFilter extends ProvidedFilter {
+    private uiModel: ProvidedFilterModel;
+    private modelHasChanged = false;
 
-//     protected setModelIntoUi(model: ProvidedFilterModel): void {
-//         throw new Error('Method not implemented.');
-//     }
+    constructor(params: IProvidedFilterParams, rowModelType: string = Constants.ROW_MODEL_TYPE_CLIENT_SIDE) {
+        super();
 
-//     protected areModelsEqual(a: ProvidedFilterModel, b: ProvidedFilterModel): boolean {
-//         return !this.modelHasChanged;
-//     }
+        const rowModel = mock<IRowModel>('getType');
 
-//     public getModelFromUi(): ProvidedFilterModel {
-//         return this.uiModel;
-//     }
+        rowModel.getType.mockReturnValue(rowModelType);
 
-//     public setUiModel(model: ProvidedFilterModel): void {
-//         this.uiModel = model;
-//     }
+        this.rowModel = rowModel;
+        this.setParams(params);
+    }
 
-//     public setModelHasChanged(hasChanged: boolean): void {
-//         this.modelHasChanged = hasChanged;
-//     }
+    public doesFilterPass(params: IDoesFilterPassParams): boolean {
+        throw new Error('Method not implemented.');
+    }
 
-//     public apply(): void {
-//         this.onBtApply();
-//     }
-// }
+    protected updateUiVisibility(): void {
+        throw new Error('Method not implemented.');
+    }
 
-//     it('calls filterChangedCallback when filter has changed', () => {
-//         const params = mock<IProvidedFilterParams>();
-//         const filter = new TestFilter(params);
+    protected createBodyTemplate(): string {
+        throw new Error('Method not implemented.');
+    }
 
-//         filter.setModelHasChanged(true);
-//         filter.apply();
+    protected getCssIdentifier(): string {
+        throw new Error('Method not implemented.');
+    }
 
-//         expect(params.filterChangedCallback).toHaveBeenCalledTimes(1);
-//     });
+    protected resetUiToDefaults(silent?: boolean): void {
+        throw new Error('Method not implemented.');
+    }
 
-//     it('does not call filterChangedCallback when filter has not changed', () => {
-//         const params = mock<IProvidedFilterParams>();
-//         const filter = new TestFilter(params);
+    protected setModelIntoUi(model: ProvidedFilterModel): void {
+        throw new Error('Method not implemented.');
+    }
 
-//         filter.apply();
+    protected areModelsEqual(a: ProvidedFilterModel, b: ProvidedFilterModel): boolean {
+        return !this.modelHasChanged;
+    }
 
-//         expect(params.filterChangedCallback).not.toHaveBeenCalled();
-//     });
+    public getModelFromUi(): ProvidedFilterModel {
+        return this.uiModel;
+    }
 
-//     it('closes popup if closeOnApply is true', () => {
-//         const hidePopup = jest.fn();
-//         const params = mock<IProvidedFilterParams>({ closeOnApply: true });
-//         const filter = new TestFilter(params);
+    public setUiModel(model: ProvidedFilterModel): void {
+        this.uiModel = model;
+    }
 
-//         filter.afterGuiAttached({ hidePopup });
-//         filter.setModelHasChanged(true);
-//         filter.apply();
+    public setModelHasChanged(hasChanged: boolean): void {
+        this.modelHasChanged = hasChanged;
+    }
 
-//         expect(hidePopup).toHaveBeenCalledTimes(1);
-//     });
+    public apply(): void {
+        this.onBtApply();
+    }
+}
 
-//     it('closes popup if closeOnApply is true even if model did not change', () => {
-//         const hidePopup = jest.fn();
-//         const params = mock<IProvidedFilterParams>({ closeOnApply: true });
-//         const filter = new TestFilter(params);
+it('calls filterChangedCallback when filter has changed', () => {
+    const params = mock<IProvidedFilterParams>('filterChangedCallback');
+    const filter = new TestFilter(params);
 
-//         filter.afterGuiAttached({ hidePopup });
-//         filter.apply();
+    filter.setModelHasChanged(true);
+    filter.apply();
 
-//         expect(hidePopup).toHaveBeenCalledTimes(1);
-//     });
+    expect(params.filterChangedCallback).toHaveBeenCalledTimes(1);
+});
 
-//     it.each([undefined, false])('does not close popup if closeOnApply is %s', value => {
-//         const hidePopup = jest.fn();
-//         const params = mock<IProvidedFilterParams>();
+it('does not call filterChangedCallback when filter has not changed', () => {
+    const params = mock<IProvidedFilterParams>('filterChangedCallback');
+    const filter = new TestFilter(params);
 
-//         // mocking library does not set property correctly for falsy values, so we have to do this instead
-//         Object.defineProperty(params, 'closeOnApply', { get: () => value, set: () => { } });
+    filter.apply();
 
-//         const filter = new TestFilter(params);
+    expect(params.filterChangedCallback).not.toHaveBeenCalled();
+});
 
-//         filter.afterGuiAttached({ hidePopup });
-//         filter.setModelHasChanged(true);
-//         filter.apply();
+it('closes popup if closeOnApply is true', () => {
+    const hidePopup = jest.fn();
+    const params = mock<IProvidedFilterParams>('filterChangedCallback');
+    params.closeOnApply = true;
+    const filter = new TestFilter(params);
 
-//         expect(hidePopup).not.toHaveBeenCalled();
-//     });
-// });
+    filter.afterGuiAttached({ hidePopup });
+    filter.setModelHasChanged(true);
+    filter.apply();
+
+    expect(hidePopup).toHaveBeenCalledTimes(1);
+});
+
+it('closes popup if closeOnApply is true even if model did not change', () => {
+    const hidePopup = jest.fn();
+    const params = mock<IProvidedFilterParams>('filterChangedCallback');
+    params.closeOnApply = true;
+
+    const filter = new TestFilter(params);
+
+    filter.afterGuiAttached({ hidePopup });
+    filter.apply();
+
+    expect(hidePopup).toHaveBeenCalledTimes(1);
+});
+
+it.each([undefined, false])('does not close popup if closeOnApply is %s', value => {
+    const hidePopup = jest.fn();
+    const params = mock<IProvidedFilterParams>('filterChangedCallback');
+
+    // mocking library does not set property correctly for falsy values, so we have to do this instead
+    Object.defineProperty(params, 'closeOnApply', { get: () => value, set: () => { } });
+
+    const filter = new TestFilter(params);
+
+    filter.afterGuiAttached({ hidePopup });
+    filter.setModelHasChanged(true);
+    filter.apply();
+
+    expect(hidePopup).not.toHaveBeenCalled();
+});
