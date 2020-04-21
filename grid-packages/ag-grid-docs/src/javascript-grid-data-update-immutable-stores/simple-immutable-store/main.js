@@ -1,6 +1,6 @@
 function getInitialData() {
     var data = [];
-    for (var i = 0; i < 10; i++) {
+    for (var i = 0; i < 5; i++) {
         data.push(createItem());
     }
 

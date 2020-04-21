@@ -38,7 +38,7 @@ include '../documentation-main/documentation_header.php';
     </ol>
 
 
-    <h2 id="bulk-updating">Setting Fresh Row Data</h2>
+    <h2 id="setting-fresh-row-data">Setting Fresh Row Data</h2>
 
     <p>
         The easiest way to update data inside the grid is to replace the data you gave it with a fresh
@@ -59,14 +59,26 @@ include '../documentation-main/documentation_header.php';
             If grouping, the open / closed state of the groups will be cleared.
         </li>
         <li>
-            The entire grid's UI will be refreshed from scratch.
+            The entire grid's UI will be refreshed from scratch. This has the following drawbacks:
+            <ul>
+                <li>
+                    All <a href="../angular-grid-cell-rendering/">Cell Renderers</a> will be destroyed and
+                    re-created with no option to have them refresh, loosing out on a chance to provide
+                    customer animation between value changes (eg fade or slide old value out).
+                </li>
+                <li>
+                    <a href="../javascript-grid-animation.">Row Animation</a> will not be applied. For example
+                    if the difference in data is one row is removed, all rows below will jump up one position
+                    rather than having a smooth transition.
+                </li>
+                <li>
+                    It is not possible to highlight data changes, eg flash cells.
+                </li>
+            </ul>
         </li>
         <li>
             All of the Client-side Row Model calculations will be redone from scratch i.e. sorting,
             filtering, grouping, aggregation and pivoting.
-        </li>
-        <li>
-            It is not possible to highlight data changes, eg flash cells.
         </li>
     </ul>
 

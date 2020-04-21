@@ -9,9 +9,26 @@ include '../documentation-main/documentation_header.php';
     <h1>Client-side Data - Immutable Stores</h1>
 
     <p class="lead">
-        If you turn on deltaRowDataMode (set the property <code>deltaRowDataMode=true</code>),
-        then when you call <code>api.setRowData(rowData)</code> the grid will work out which
-        items are to be added, removed and updated.
+        In some applications it's desirable to bind the grid's Row Data to an external store such that the
+        grid gives an up to date representation of the store. This means any data changes to the data store (sorting,
+        filtering, adding / removing / updating of rows) will be represented inside the grid.
+    </p>
+
+    <p>
+        By default when new data is set into the grid (either by updating the bound property
+        <code>rowData</code> or by calling the grid API method <code>setRowData()</code>),
+        the grid replaces the data in the grid with the new set of data.
+        As explained in <a href="../javascript-grid-data-update/#bulk-updating">Setting Fresh Row Data</a>
+        this can be undesirable as grid state (selected rows etc) is lost as well as any animation transitions
+        (eg rows sliding into position after a sort, or cells showing animations as values change).
+    </p>
+    <p>
+        In applications using
+        immutable stores (eg React and Redux) it would be preferable to treat changes to the bound
+        <code>rowData</code> as updates from an immutable store. The grid has a mode of operation where
+        it works out what rows are added, removed and updated when new row data is provided by inspecting
+        the new row data. This modes is called Delta Row Data Mode and is enabled by setting the property
+        <code>deltaRowDataMode=true</code>.
     </p>
 
     <p>
@@ -19,42 +36,30 @@ include '../documentation-main/documentation_header.php';
         updating records, you should replace the record with a new object.
     </p>
 
-    <note>
-        <p>
-            The deltaRowDataMode is designed to allow ag-Grid work with immutable
-            stores such as Redux. In an immutable store, a new list of rowData is created if any row within it
-            is added, removed or updated. If using React and Redux, consider setting <code>deltaRowDataMode=true</code>
-            and bind your Redux managed data to the rowData property.
-        </p>
-        <p>
-            You can also use this technique in a non-Redux or immutable store based application (which is the
-            case in the examples on this page). As long as you understand what is happening, if it fits your
-            applications needs, then use it.
-        </p>
-    </note>
-
     <p>
-        For the deltaRowDataMode to work, you must be providing ID's for the row nodes by
-        implementing the <code>getRowNodeId()</code> callback. Remember ID's must be unique
-        and must not change.
+        For the Delta Row Data Mode to work, you must be providing ID's for the row nodes as explained
+        in <a href="../javascript-grid-row-node/#application-assigned-ids">Application Assigned ID's</a>.
     </p>
 
     <p>
-        The grid works out the delta changes with the following rules:
+        The grid works out what changes need to be applied to the grid using the following rules:
     </p>
     <ul class="content">
         <li>
             <b>IF</b> the ID for the new item doesn't have a corresponding item already in the grid
-            <b>THEN</b> it's an 'add'.
+            <b>THEN</b> it's added as a new row to the grid.
         </li>
         <li>
             <b>IF</b> the ID for the new item does have a corresponding item in the grid
             <b>THEN</b> compare the object references. If the object references are different,
-            it's an update, otherwise it's nothing (excluded from the transaction).
+            the row is updated with the new data, otherwise it's assumed the data is the same as the already present data.
         </li>
         <li>
             <b>IF</b> there are items in the grid for which there are no corresponding items in the new data,
-            <b>THEN</b> it's a 'remove'.
+            <b>THEN</b> those rows are removed.
+        </li>
+        <li>
+            Lastly the rows in the grid are sorted to match the order in the newly provided list.
         </li>
     </ul>
 
@@ -68,7 +73,7 @@ include '../documentation-main/documentation_header.php';
     </p>
 
     <p>
-        If using React and Redux, simply map the store to the <code>rowData</code> property instead
+        If using bound properties with a framework, map the store to the <code>rowData</code> property instead
         of calling <code>api.setRowData()</code>.
     </p>
 
@@ -78,13 +83,17 @@ include '../documentation-main/documentation_header.php';
 
     <ul class="content">
         <li>
-            <b>Append Items</b>: Adds five items to the end (assuming when no sort applied <b>*</b>).
+            <b>Reverse</b>: Reverses the order of the items.
         </li>
         <li>
-            <b>Prepend Items</b>: Adds five items to the start (assuming when no sort applied <b>*</b>).
+            <b>Append Items</b>: Adds five items to the end.
         </li>
         <li>
-            <b>Reverse</b>: Reverses the order of the items (assuming when no sort applied <b>*</b>).
+            <b>Prepend Items</b>: Adds five items to the start.
+        </li>
+        <li>
+            Not that if a grid sort is applied, the grid sorting order gets preference to the order
+            of the data in the provided list.
         </li>
         <li>
             <b>Remove Selected</b>: Removes the selected items. Try selecting multiple rows (ctrl + click
@@ -101,51 +110,29 @@ include '../documentation-main/documentation_header.php';
             selected items to that group. Notice how the rows animate to the new position.</li>
     </ul>
 
-    <note>
-        <b>*</b>assuming no sort is applied - because if the grid is sorting, then the grid sort will override
-        any order in the provided data.
-    </note>
-
     <?= grid_example('Simple Immutable Store', 'simple-immutable-store', 'generated', ['enterprise' => true, 'exampleHeight' => 540]) ?>
 
 
-    <h3>Example: Immutable Store - Updates via Feed</h3>
+    <h3>Example: Immutable Store - Large Dataset</h3>
 
     <p>
-        Finally, lets go bananas with delta updates. Below is a simplistic trading hierarchy
-        with over 11,000 rows with aggregations turned on. It has the following features:
+        Below is a dataset with over 11,000 rows with Row Grouping and Aggregation over three columns.
+        As far as Client-side Row Data goes, this is a fairly complex grid. From the example, note
+        the following:
     </p>
 
     <ul class="content">
         <li>
-            <b>Update Using Transaction</b>: Updates a small bunch of rows by creating a transaction
-            with some rows to add, remove and update.
+            Property <code>deltaRowDataMode=true</code> to put the grid into Delta Row Data Mode.
         </li>
         <li>
-            <b>Update Using Delta updates</b>: Same impact as the above, except it uses the
-            delta updates with the grid. Thus it demonstrates both methods working
-            side by side.
+            Selecting the Update button updates a range of the data.
         </li>
         <li>
-            <b>Start Feed</b>: Starts a feed whereby a transaction of data is processed every
-            couple of seconds. This is intended to demonstrate a large grid with aggregations
-            taking delta updates over the feed. The grids aggregations are updated on the fly
-            to keep the summary values up to date.
+            Note that all grid state (row and range selections, filters, sorting e.t.c) remain after
+            updates are applied.
         </li>
     </ul>
-
-    <p>
-        This example is best viewed in a new tab. It demonstrates a combination of features
-        working together. In particular you should notice the grid is managing a very large set
-        of data, applying delta updates to the data and only updating the UI where the updates
-        have an impact (as opposed to recalculating everything from scratch when new values
-        come in an requiring a full grid refresh). This gives a fast smooth user experience.
-    </p>
-
-    <p>
-        You should also notice that all row selections, range selections, filters, sorting etc work
-        even though the grid data is constantly updating.
-    </p>
 
     <?= grid_example('Complex Immutable Store', 'complex-immutable-store', 'generated', ['enterprise' => true, 'exampleHeight' => 590]) ?>
 

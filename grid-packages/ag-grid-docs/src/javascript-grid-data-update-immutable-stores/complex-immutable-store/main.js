@@ -126,7 +126,6 @@ function createTradeId() {
     return nextTradeId
 }
 
-
 var gridOptions = {
     columnDefs: columnDefs,
     defaultColDef: {
@@ -135,48 +134,28 @@ var gridOptions = {
         resizable: true
     },
     autoGroupColumnDef: {
-        width: 250
+        width: 250,
+        cellRendererParams: {
+            checkbox: true
+        }
     },
+    rowSelection: 'multiple',
+    groupSelectsChildren: true,
     deltaRowDataMode: true,
     rowData: globalRowData,
-    statusBar: {
-        items: [
-            { component: 'agAggregationComponent' }
-        ]
-    },
     animateRows: true,
     enableRangeSelection: true,
-    rowGroupPanelShow: 'always',
-    pivotPanelShow: 'always',
     suppressAggFuncInHeader: true,
     getRowNodeId: function(data) {
         return data.trade;
     },
     onGridReady: function(params) {
-        // kick off the feed
-        timeoutTarget(params.api);
         createRowData();
         params.api.setRowData(globalRowData)
     }
 };
 
-function updateUsingTransaction(gridApi) {
-
-    var itemsToRemove = removeSomeItems();
-    var itemsToAdd = addSomeItems();
-    var itemsToUpdate = updateSomeItems();
-
-    gridApi.updateRowData({
-            add: itemsToAdd,
-            remove: itemsToRemove,
-            update: itemsToUpdate});
-}
-
-function updateUsingTransactionHandler() {
-    updateUsingTransaction(gridOptions.api);
-}
-
-function updateUsingTransactionImmutableStore() {
+function updateData() {
     removeSomeItems();
     addSomeItems();
     updateSomeItems();
@@ -250,29 +229,6 @@ function updateImmutableObject(original, newValues) {
     });
 
     return newObject;
-}
-
-// whether the feed is active or not. if true, then the
-// randomlyChangeData() method will be called.
-var feedActive = false;
-
-
-// this method gets executed periodically
-function timeoutTarget(gridApi) {
-    // if feed active, then call the randomlyChangeData
-    if (feedActive) {
-        updateUsingTransaction(gridApi);
-    }
-    // call this method again after between 1 and 4 seconds.
-    var millis = randomBetween(1000, 4000);
-    setTimeout(timeoutTarget, millis, gridApi);
-}
-
-function toggleFeed() {
-    feedActive = !feedActive;
-    // update the text in the button. #9724 and #9658 are the stop and play icons.
-    var buttonText = feedActive ? '&#9724; Stop Feed' : '&#9658; Start Feed';
-    document.querySelector('#toggleInterval').innerHTML = buttonText;
 }
 
 // after page is loaded, create the grid.
