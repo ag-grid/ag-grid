@@ -154,8 +154,12 @@ export class RowDragFeature implements DropTarget {
         return this.gridPanel.getGui().contains(draggingEvent.dragSource.eElement);
     }
 
-    private isTargetOutsideThisGrid(dragginEvent: DraggingEvent): boolean {
-        return !this.gridPanel.getGui().contains(dragginEvent.event.target as HTMLElement);
+    private isTargetOutsideThisGrid(draggingEvent: DraggingEvent): boolean {
+        const eDoc = this.gridOptionsWrapper.getDocument();
+        const gridGui = this.gridPanel.getGui();
+        const elementFromPoint = eDoc.elementFromPoint(draggingEvent.event.clientX, draggingEvent.event.clientY);
+
+        return !gridGui.contains(elementFromPoint);
     }
 
     private onEnterOrDragging(draggingEvent: DraggingEvent): void {
