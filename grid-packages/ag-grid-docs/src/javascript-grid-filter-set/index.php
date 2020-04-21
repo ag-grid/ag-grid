@@ -114,7 +114,7 @@ SNIPPET
         that sorts the ages by value; <code>1,2,3,...</code></li>
 </ul>
 
-<?= grid_example('Sorting Set Filter Values', 'sorting-set-filter-values', 'generated', ['enterprise' => true, 'exampleHeight' => 720, 'modules' => ['clientside', 'setfilter']]) ?>
+<?= grid_example('Sorting Set Filter Values', 'sorting-set-filter-values', 'generated', ['enterprise' => true, 'exampleHeight' => 720]) ?>
 
 <h2>Providing Filter Values</h2>
 
@@ -162,7 +162,7 @@ SNIPPET
     </li>
 </ul>
 
-<?= grid_example('Providing Filter Values', 'providing-filter-values', 'generated', ['enterprise' => true, 'exampleHeight' => 720, 'modules' => ['clientside', 'setfilter']]) ?>
+<?= grid_example('Providing Filter Values', 'providing-filter-values', 'generated', ['enterprise' => true, 'exampleHeight' => 720]) ?>
 
 <h3>Asynchronous Values</h3>
 
@@ -298,7 +298,7 @@ SNIPPET
 </ul>
 
 
-<?= grid_example('Cell Editing Updates', 'cell-editing-updates', 'generated', ['enterprise' => true, 'exampleHeight' => 480, 'modules' => ['clientside', 'setfilter']]) ?>
+<?= grid_example('Cell Editing Updates', 'cell-editing-updates', 'generated', ['enterprise' => true, 'exampleHeight' => 480]) ?>
 
 
 <h3>Transaction Updates</h3>
@@ -353,7 +353,7 @@ SNIPPET
     </li>
 </ul>
 
-<?= grid_example('Transaction Updates', 'transaction-updates', 'generated', ['enterprise' => true, 'exampleHeight' => 480, 'modules' => ['clientside', 'setfilter']]) ?>
+<?= grid_example('Transaction Updates', 'transaction-updates', 'generated', ['enterprise' => true, 'exampleHeight' => 480]) ?>
 
 <h3>Setting New Data</h3>
 
@@ -405,7 +405,7 @@ SNIPPET
     </li>
 </ul>
 
-<?= grid_example('Setting New Data', 'setting-new-data', 'generated', ['enterprise' => true, 'exampleHeight' => 500, 'modules' => ['clientside', 'setfilter']]) ?>
+<?= grid_example('Setting New Data', 'setting-new-data', 'generated', ['enterprise' => true, 'exampleHeight' => 500]) ?>
 
 <h2>Displaying Long Values</h2>
 
