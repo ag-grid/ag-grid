@@ -1,7 +1,7 @@
 <?php
-$pageTitle = "ag-Grid APIs";
+$pageTitle = "Fine Tuning ag-Grid & React";
 $pageDescription = "This page covers finer control of ag-Grid with react";
-$pageKeywords = "React Grid API";
+$pageKeywords = "React Grid Control";
 $pageGroup = "basics";
 include '../documentation-main/documentation_header.php';
 ?>
@@ -38,6 +38,28 @@ somePointLater() {
     of the grid. So you can also look up the backing object via React and access the
     <code>api</code> and <code>columnApi</code> that way.
 </p>
+
+    <h2 id="react-cell-rendering">Cell Component Rendering</h2>
+
+    <p>React renders components asynchronously and although this is fine in the majority of use cases it can be the case
+        that in certain circumstances a very slight flicker can be seen where an old component is destroyed but the new
+        one is not yet rendered by React.</p>
+
+    <p>In order to eliminate this behaviour the Grid will "pre-render" cell components and replace them with the real component
+    once they are ready.</p>
+
+    <p>What this means is that the <code>render</code> method on a given Cell Component will be invoked twice, once for the pre-render
+    and once for the actual component creation.</p>
+
+    <p>In the vast majority of cases this will result in overall improved performance but if you wish to disable this behaviour
+        you can do so by setting the <code>disableStaticMarkup</code> property on the <code>AgGridReact</code> component to <code>false</code>:</p>
+
+<snippet language="jsx">
+&lt;AgGridReact
+    disableStaticMarkup={false}
+</snippet>
+
+    <p>Note that this pre-render only applies to Cell Components - other types of Components are unaffected.</p>
 
     <h2 id="react-row-data-control">Row Data Control</h2>
     <p>By default the ag-Grid React component will check props passed in to deteremine if data has changed and will only re-render based on actual changes.</p>
