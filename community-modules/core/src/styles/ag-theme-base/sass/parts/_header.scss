@@ -50,10 +50,7 @@
     }
 
     .ag-header-row:not(:first-child) {
-        .ag-header-cell,
-        .ag-header-group-cell.ag-header-group-cell-with-group {
-            @include ag-border(critical, top);
-        }
+        @include ag-border(critical, top);
     }
 
     // This logic with :not(.ag-column-resizing) is to prevent a mouseover effect

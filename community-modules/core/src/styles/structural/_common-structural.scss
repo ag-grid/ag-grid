@@ -341,6 +341,7 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia  {
 .ag-header, .ag-pinned-left-header, .ag-pinned-right-header {
     display: inline-block;
     overflow: hidden;
+    position: relative;
 }
 
 .ag-header-cell-sortable {
@@ -409,16 +410,16 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia  {
 
     // unpinned headers get their rezise handle on the right in normal mode and left in RTL mode
     @include ag-unthemed-rtl((
-        right: -4px
+        right: -3px
     ));
 }
 
 .ag-pinned-left-header .ag-header-cell-resize {
-    right: -4px; // pinned left headers always have their resize on the right, even in RTL mode
+    right: -3px; // pinned left headers always have their resize on the right, even in RTL mode
 }
 
 .ag-pinned-right-header .ag-header-cell-resize {
-    left: -4px; // pinned right headers always have their resize on the left, even in RTL mode
+    left: -3px; // pinned right headers always have their resize on the left, even in RTL mode
 }
 
 .ag-header-select-all {

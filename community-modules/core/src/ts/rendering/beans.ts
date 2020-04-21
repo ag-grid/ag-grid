@@ -30,6 +30,7 @@ import { DetailRowCompCache } from "./detailRowCompCache";
 import { CellPositionUtils } from "../entities/cellPosition";
 import { RowPositionUtils } from "../entities/rowPosition";
 import { SelectionController } from "../selectionController";
+import { ScrollVisibleService } from "../gridPanel/scrollVisibleService";
 
 /** Using the IoC has a slight performance consideration, which is no problem most of the
  * time, unless we are trashing objects - which is the case when scrolling and rowComp
@@ -71,6 +72,7 @@ export class Beans {
     @Autowired('cellPositionUtils') public cellPositionUtils: CellPositionUtils;
     @Autowired('rowPositionUtils') public rowPositionUtils: RowPositionUtils;
     @Autowired('selectionController') public selectionController: SelectionController;
+    @Autowired('scrollVisibleService') public scrollVisibleService: ScrollVisibleService;
 
     public doingMasterDetail: boolean;
 
