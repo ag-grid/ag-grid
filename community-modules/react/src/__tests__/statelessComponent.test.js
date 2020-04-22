@@ -59,6 +59,7 @@ class GridWithStatelessFunction extends Component {
                 <AgGridReact
                     columnDefs={this.state.columnDefs}
                     onGridReady={this.onGridReady.bind(this)}
+                    disableStaticMarkup={true}
                     rowData={this.state.rowData}
                     modules={[ClientSideRowModelModule]} />
             </div>
