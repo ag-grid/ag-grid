@@ -694,6 +694,12 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild, IEven
         return this.flex || 0;
     }
 
+    // this method should only be used by the columnController to
+    // change flex when required by the setColumnState method.
+    public setFlex(flex: number) {
+        if (this.flex !== flex) { this.flex = flex; }
+    }
+
     public setMinimum(source: ColumnEventType = "api"): void {
         this.setActualWidth(this.minWidth, source);
     }

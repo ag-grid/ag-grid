@@ -41,9 +41,9 @@ import { ValueCache } from '../valueService/valueCache';
 import { GridApi } from '../gridApi';
 import { ColumnApi } from './columnApi';
 import { Constants } from '../constants';
-import { _ } from '../utils';
 import { areEqual } from '../utils/array';
-import {AnimationFrameService} from "../misc/animationFrameService";
+import { AnimationFrameService } from "../misc/animationFrameService";
+import { _ } from '../utils';
 
 export interface ColumnResizeSet {
     columns: Column[];
@@ -59,6 +59,7 @@ export interface ColumnState {
     pivotIndex?: number | null;
     pinned?: boolean | string | 'left' | 'right';
     rowGroupIndex?: number | null;
+    flex?: number;
 }
 
 @Bean('columnController')
@@ -1581,7 +1582,8 @@ export class ColumnController {
             width: column.getActualWidth(),
             pivotIndex: pivotIndex,
             pinned: column.getPinned(),
-            rowGroupIndex
+            rowGroupIndex,
+            flex: column.getFlex()
         };
     }
 
@@ -1703,6 +1705,10 @@ export class ColumnController {
                     _.removeFromArray(columnsWithNoState, column);
                 }
             });
+
+            if (this.flexActive) {
+                this.refreshFlexedColumns(undefined, undefined, true);
+            }
         }
 
         // anything left over, we got no data for, so add in the column as non-value, non-rowGroup and hidden
@@ -1934,6 +1940,13 @@ export class ColumnController {
         column.setPinned(stateItem.pinned);
         // if width provided and valid, use it, otherwise stick with the old width
         const minColWidth = this.gridOptionsWrapper.getMinColWidth();
+
+        if (stateItem.flex != null) {
+            column.setFlex(stateItem.flex);
+            if (!this.flexActive && stateItem.flex) {
+                this.flexActive = true;
+            }
+        }
 
         if (stateItem.width && minColWidth &&
             (stateItem.width >= minColWidth)) {
@@ -2903,6 +2916,12 @@ export class ColumnController {
         // minWidth or maxWidth rules.
         const knownWidthColumns = this.displayedCenterColumns.filter(col => !col.getFlex());
         const flexingColumns = this.displayedCenterColumns.filter(col => col.getFlex());
+
+        if (!flexingColumns.length) {
+            this.flexActive = false;
+            return;
+        }
+
         const flexingColumnSizes: number[] = [];
         let spaceForFlexingColumns: number;
 
