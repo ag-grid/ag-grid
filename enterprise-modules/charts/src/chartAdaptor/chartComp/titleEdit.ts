@@ -68,7 +68,7 @@ export class TitleEdit extends Component {
 
             const inTitle = title && title.node.isPointInNode(event.offsetX, event.offsetY);
 
-            canvas.style.cursor = inTitle? 'pointer' : '';
+            canvas.style.cursor = inTitle ? 'pointer' : '';
         });
 
         this.destroyableChartListeners = [
