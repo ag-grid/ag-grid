@@ -20,7 +20,7 @@
         }
     }
 
-    .ag-row-group-leaf-indent {
+    .ag-row-group-leaf-indent:not(.ag-row-group-indent-0) {
         @include ag-theme-rtl(( margin-left: ag-param(row-group-indent-size) ));
     }
 
