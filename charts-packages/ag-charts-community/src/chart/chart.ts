@@ -100,12 +100,6 @@ export interface TooltipMeta {
     pageY: number;
 }
 
-export interface TitleEditRequestEvent {
-    type: 'titleEditRequest'
-    centrePoint: {x: number, y: number},
-    boxSize: {width: number, height: number},
-}
-
 export abstract class Chart extends Observable {
     readonly id = createId(this);
 
@@ -700,14 +694,12 @@ export abstract class Chart extends Observable {
         chartElement.addEventListener('mousemove', this.onMouseMove);
         chartElement.addEventListener('mouseout', this.onMouseOut);
         chartElement.addEventListener('click', this.onClick);
-        chartElement.addEventListener('dblclick', this.onDoubleClick);
     }
 
     private cleanupDomListeners(chartElement: HTMLCanvasElement) {
         chartElement.removeEventListener('mousemove', this.onMouseMove);
         chartElement.removeEventListener('mouseout', this.onMouseMove);
         chartElement.removeEventListener('click', this.onClick);
-        chartElement.removeEventListener('dblclick', this.onDoubleClick);
     }
 
     // Should be available after first layout.
@@ -842,20 +834,6 @@ export abstract class Chart extends Observable {
     private readonly onClick = (event: MouseEvent) => {
         this.checkSeriesNodeClick();
         this.checkLegendClick(event);
-    }
-
-    private readonly onDoubleClick = ({offsetX, offsetY}: MouseEvent) => {
-        const isOnTitle = this.title && this.title.node.isPointInNode(offsetX, offsetY);
-
-        if (isOnTitle) {
-            const {x, y, width, height} = this.title.node.computeBBox();
-
-            const centrePoint = this.title.node.inverseTransformPoint(x + width/2, y);
-
-            const event: TitleEditRequestEvent = { centrePoint, boxSize: {width, height}, type: 'titleEditRequest' };
-
-            this.fireEvent(event);
-        }
     }
 
     private checkSeriesNodeClick() {

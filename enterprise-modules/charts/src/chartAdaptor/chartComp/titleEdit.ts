@@ -6,9 +6,11 @@ import {
 } from "@ag-grid-community/core";
 import { ChartMenu } from "./menu/chartMenu";
 
-import { TitleEditRequestEvent } from "ag-charts-community";
+import { Chart } from "ag-charts-community";
 import { ChartTranslator } from "./chartTranslator";
 import { ChartProxy } from "./chartProxies/chartProxy";
+
+type BBox = { x: number; y: number; width: number; height: number };
 
 export class TitleEdit extends Component {
     private static TEMPLATE =
@@ -38,21 +40,28 @@ export class TitleEdit extends Component {
     }
 
     /* should be called when the containing component changes to a new chart proxy */
-    public setChartProxy( chartProxy: ChartProxy<any, any> ) {
-        if( this.chartProxy ) {
+    public setChartProxy(chartProxy: ChartProxy<any, any>) {
+        if (this.chartProxy) {
             this.destroyChartTitleEditRequestListener();
             this.destroyChartTitleEditRequestListener = null;
         }
 
         this.chartProxy = chartProxy;
-        this.destroyChartTitleEditRequestListener = this.addDestroyableEventListener(this.chartProxy.getChart(), 'titleEditRequest', this.startEditing.bind(this));
+        const chart = this.chartProxy.getChart() as Chart;
+        this.destroyChartTitleEditRequestListener = this.addDestroyableEventListener(chart.scene.canvas.element, 'dblclick', event => {
+            const { title } = chart;
+
+            if (title && title.node.isPointInNode(event.offsetX, event.offsetY)) {
+                const bbox = title.node.computeBBox();
+                const xy = title.node.inverseTransformPoint(bbox.x, bbox.y);
+
+                this.startEditing({ ...bbox, ...xy });
+            }
+        });
     }
 
-    private startEditing({
-        centrePoint: {x, y},
-        boxSize: {width: oldTitleWidth}
-    }: TitleEditRequestEvent): void {
-        if( this.chartMenu.isVisible() ) {
+    private startEditing(titleBBox: BBox): void {
+        if (this.chartMenu.isVisible()) {
             // currently we ignore requests to edit the chart title while the chart menu is showing
             // because the click to edit the chart will also close the chart menu, making the position
             // of the title change.
@@ -61,16 +70,12 @@ export class TitleEdit extends Component {
 
         const minimumTargetInputWidth: number = 300;
         const maximumInputWidth: number = this.chartProxy.getChart().width;
-        const inputWidth = Math.max(Math.min(oldTitleWidth + 20, maximumInputWidth), minimumTargetInputWidth);
+        const inputWidth = Math.max(Math.min(titleBBox.width + 20, maximumInputWidth), minimumTargetInputWidth);
 
         const inputElement = this.getGui() as HTMLInputElement;
 
         _.addCssClass(inputElement, 'currently-editing');
         const inputStyle = inputElement.style;
-
-        inputStyle.left = Math.round(x - inputWidth/2) + 'px';
-        inputStyle.top = Math.round(y) + 'px';
-        inputStyle.width = Math.round(inputWidth) + 'px';
 
         // match style of input to title that we're editing
         inputStyle.fontFamily = this.chartProxy.getTitleOption('fontFamily');
@@ -83,6 +88,12 @@ export class TitleEdit extends Component {
         const oldTitle = this.chartProxy.getTitleOption('text');
         const inputValue = oldTitle === this.chartTranslator.translate('titlePlaceholder') ? '' : oldTitle;
         inputElement.value = inputValue;
+
+        const inputRect = inputElement.getBoundingClientRect();
+
+        inputStyle.left = Math.round(titleBBox.x + titleBBox.width / 2 - inputWidth / 2) + 'px';
+        inputStyle.top = Math.round(titleBBox.y + titleBBox.height / 2 - inputRect.height / 2) + 'px';
+        inputStyle.width = Math.round(inputWidth) + 'px';
 
         inputElement.focus();
     }
