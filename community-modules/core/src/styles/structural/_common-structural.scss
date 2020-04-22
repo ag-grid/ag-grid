@@ -317,10 +317,10 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia  {
 }
 
 .ag-force-vertical-scroll {
-    overflow-y: scroll;
+    overflow-y: scroll !important;
 
     &.ag-layout-print {
-        overflow-y: visible;
+        overflow-y: visible !important;
     }
 }
 
