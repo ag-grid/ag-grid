@@ -149,7 +149,7 @@ cellEditorParams: {
         </li>
     </ul>
 
-    <?= grid_example('Value Handlers', 'ref-data-value-handler', 'generated', ['enterprise' => true]) ?>
+    <?= grid_example('Value Handlers', 'ref-data-value-handler', 'generated', ['enterprise' => true, 'modules' => ['clientside', 'richselect', 'setfilter', 'menu', 'columnpanel']]) ?>
 
     <h2 id="example-reference-data-with-ref-data-prop">Example: 'refData' Property</h2>
 
@@ -180,6 +180,6 @@ cellEditorParams: {
         </li>
     </ul>
 
-    <?= grid_example('Ref Data Property', 'ref-data-property', 'generated', ['enterprise' => true]) ?>
+    <?= grid_example('Ref Data Property', 'ref-data-property', 'generated', ['enterprise' => true, 'modules' => ['clientside', 'richselect', 'setfilter', 'menu', 'columnpanel']]) ?>
 
 <?php include '../documentation-main/documentation_footer.php';?>

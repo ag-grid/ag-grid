@@ -47,7 +47,11 @@ function getModuleImports(bindings: any, componentFileNames: string[]): string[]
     ];
 
     if (modules) {
-        const {moduleImports, suppliedModules} = modulesProcessor(modules);
+        let exampleModules = modules;
+        if(modules === true) {
+            exampleModules = ['clientside'];
+        }
+        const { moduleImports, suppliedModules } = modulesProcessor(exampleModules);
 
         imports.push(...moduleImports);
         bindings.gridSuppliedModules = `[${suppliedModules.join(', ')}]`;

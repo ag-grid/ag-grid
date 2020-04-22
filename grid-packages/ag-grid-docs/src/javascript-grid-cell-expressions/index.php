@@ -56,7 +56,7 @@ colDef = {
         <code>valueGetter</code> is used, a string is provided instead of a function.
     </p>
 
-    <?= grid_example('Column Definition Expressions', 'column-definition-expressions', 'generated', ['exampleHeight' => 560]) ?>
+    <?= grid_example('Column Definition Expressions', 'column-definition-expressions', 'generated', ['exampleHeight' => 560, 'modules' => true]) ?>
 
     <h2>Variables to Expressions</h2>
 
