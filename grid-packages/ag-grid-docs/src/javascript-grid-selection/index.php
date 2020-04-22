@@ -71,7 +71,7 @@ include '../documentation-main/documentation_header.php';
         </ul>
     </p>
 
-    <?= grid_example('Single Row Selection', 'single-row-selection', 'generated') ?>
+    <?= grid_example('Single Row Selection', 'single-row-selection', 'generated', ['modules'=>true]) ?>
 
     <h3 id="multi-row-selection">Example: Multiple Row Selection</h3>
 
@@ -111,7 +111,7 @@ include '../documentation-main/documentation_header.php';
         </li>
     </p>
 
-    <?= grid_example('Multi Select With Click', 'multi-select-single-click', 'generated') ?>
+    <?= grid_example('Multi Select With Click', 'multi-select-single-click', 'generated', ['modules'=>true]) ?>
 
     <h2>Checkbox Selection</h2>
 
@@ -172,7 +172,7 @@ include '../documentation-main/documentation_header.php';
         Having a checkbox within a non-group row is best for grids that are not using grouping.
     </p>
 
-    <?= grid_example('Groups & Checkbox Selection', 'group-selection', 'generated', ['enterprise' => true]) ?>
+    <?= grid_example('Groups & Checkbox Selection', 'group-selection', 'generated', ['enterprise' => true, 'modules'=>['clientside', 'rowgrouping']]) ?>
 
     <h3>Example: Groups & Checkbox Selection With Unselectable Leaf Nodes</h3>
 
@@ -183,7 +183,7 @@ include '../documentation-main/documentation_header.php';
         <code>colDef.checkboxSelection</code> and <code>autoGroupColumnDef.cellRendererParams.checkbox</code>.
     </p>
 
-    <?= grid_example('Groups & Checkbox Selection With Unselectable Leaf Nodes', 'selection-checkbox', 'generated', ['enterprise' => true]) ?>
+    <?= grid_example('Groups & Checkbox Selection With Unselectable Leaf Nodes', 'selection-checkbox', 'generated', ['enterprise' => true, 'modules'=>['clientside', 'rowgrouping']]) ?>
 
     <h3>Example: Groups & Checkbox Selection With Only Filtered Children</h3>
 
@@ -204,7 +204,7 @@ include '../documentation-main/documentation_header.php';
         </ol>
     </p>
 
-    <?= grid_example('Groups & Checkbox Selection With Only Filtered Children', 'selection-checkbox-filtered', 'generated', ['enterprise' => true, 'exampleHeight' => 590]) ?>
+    <?= grid_example('Groups & Checkbox Selection With Only Filtered Children', 'selection-checkbox-filtered', 'generated', ['enterprise' => true, 'exampleHeight' => 590, 'modules'=>['clientside', 'rowgrouping', 'setfilter']]) ?>
 
     <h2>Header Checkbox Selection</h2>
 
@@ -267,7 +267,7 @@ colDef = {
             <li>The checkbox is always on the athlete column, even if the athlete column is moved.</li>
         </ul>
 
-    <?= grid_example('Just Filtered', 'header-checkbox', 'generated', ['exampleHeight' => 590]) ?>
+    <?= grid_example('Just Filtered', 'header-checkbox', 'generated', ['exampleHeight' => 590, 'modules'=>true]) ?>
 
     <h3>Example: Select Everything</h3>
 
@@ -280,7 +280,7 @@ colDef = {
         This can be observed by dragging the columns to reorder them.</li>
     </ul>
 
-    <?= grid_example('Select Everything', 'header-checkbox-entire-set', 'generated', ['exampleHeight' => 590]) ?>
+    <?= grid_example('Select Everything', 'header-checkbox-entire-set', 'generated', ['exampleHeight' => 590, 'modules'=>true]) ?>
 
     <h2 id="specify-selectable-rows">Specify Selectable Rows</h2>
 
@@ -310,7 +310,7 @@ colDef = {
         </li>
     </ul>
 
-    <?= grid_example('Selectable Rows with Header Checkbox', 'specify-selectable-rows', 'generated') ?>
+    <?= grid_example('Selectable Rows with Header Checkbox', 'specify-selectable-rows', 'generated', ['modules'=>['clientside', 'rowgrouping']]) ?>
 
     <h3>Example: Specifying Selectable Rows with Groups</h3>
 
@@ -331,7 +331,7 @@ colDef = {
         </li>
     </ul>
 
-    <?= grid_example('Specifying Selectable Rows with Groups', 'specify-selectable-rows-with-groups', 'generated', ['enterprise' => true, 'exampleHeight' => 590]) ?>
+    <?= grid_example('Specifying Selectable Rows with Groups', 'specify-selectable-rows-with-groups', 'generated', ['enterprise' => true, 'exampleHeight' => 590, 'modules'=>['clientside', 'rowgrouping', 'setfilter']]) ?>
 
     <h2>Selection Events</h2>
 
@@ -347,7 +347,7 @@ colDef = {
                 if you want them.</li>
         </ul>
 
-    <?= grid_example('Selection Events', 'selection-events', 'generated') ?>
+    <?= grid_example('Selection Events', 'selection-events', 'generated', ['modules' => true]) ?>
 
     <h2>Node Selection API</h2>
 
@@ -410,7 +410,7 @@ api.forEachNodeAfterFilter(function(node) {
         data for selection purposes.
     </p>
 
-    <?= grid_example('Using forEachNode', 'using-foreachnode', 'generated', ['exampleHeight' => 590]) ?>
+    <?= grid_example('Using forEachNode', 'using-foreachnode', 'generated', ['exampleHeight' => 590, 'modules' => true]) ?>
 
     <h3>Example: Selection with Keyboard Arrow Keys</h3>
 
