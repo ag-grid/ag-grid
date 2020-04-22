@@ -236,6 +236,10 @@ export abstract class ChartProxy<TChart extends Chart, TOptions extends ChartOpt
         this.raiseChartOptionsChangedEvent();
     }
 
+    public getTitleOption(property: keyof CaptionOptions) {
+        return (this.chartOptions.title as any)[property];
+    }
+
     public getChartPaddingOption = (property: keyof PaddingOptions): string => this.chartOptions.padding ? `${this.chartOptions.padding[property]}` : '';
 
     public setChartPaddingOption(property: keyof PaddingOptions, value: number): void {

@@ -33,6 +33,7 @@ export class ChartTranslator {
         spacing: 'Spacing',
         chart: 'Chart',
         title: 'Title',
+        titlePlaceholder: 'Chart title - double click to edit',
         background: 'Background',
         font: 'Font',
         top: 'Top',

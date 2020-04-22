@@ -33,7 +33,7 @@ import { PieChartProxy } from "./chartProxies/polar/pieChartProxy";
 import { DoughnutChartProxy } from "./chartProxies/polar/doughnutChartProxy";
 import { ScatterChartProxy } from "./chartProxies/cartesian/scatterChartProxy";
 import { HistogramChartProxy } from "./chartProxies/cartesian/histogramChartProxy";
-import { ChartPaletteName } from "ag-charts-community";
+import { ChartPaletteName, TitleEditRequestEvent } from "ag-charts-community";
 import { ChartTranslator } from "./chartTranslator";
 
 export interface GridChartParams {
@@ -55,6 +55,11 @@ export class GridChartComp extends Component {
                 </div>
                 <div ref="eEmpty" class="ag-chart-empty-text ag-unselectable"></div>
             </div>
+            <input ref="eTitleEditInput"
+                class="ag-chart-title-edit"
+                style="padding:0; border:none; border-radius: 0; min-height: 0; text-align: center;"
+            >
+            </input>
             <div ref="eMenuContainer" class="ag-chart-docked-container"></div>
         </div>`;
 
@@ -62,6 +67,7 @@ export class GridChartComp extends Component {
     @RefSelector('eChartContainer') private eChartContainer: HTMLElement;
     @RefSelector('eMenuContainer') private eMenuContainer: HTMLElement;
     @RefSelector('eEmpty') private eEmpty: HTMLElement;
+    @RefSelector('eTitleEditInput') private eTitleEditInput: HTMLInputElement;
 
     @Autowired('resizeObserverService') private resizeObserverService: ResizeObserverService;
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
@@ -80,6 +86,8 @@ export class GridChartComp extends Component {
 
     private chartProxy: ChartProxy<any, any>;
     private chartType: ChartType;
+
+    private destroyChartTitleEditRequestListener: (() => null);
 
     constructor(private readonly params: GridChartParams) {
         super(GridChartComp.TEMPLATE);
@@ -132,6 +140,8 @@ export class GridChartComp extends Component {
                 height = chart.height;
             }
 
+            this.destroyChartTitleEditRequestListener();
+            this.destroyChartTitleEditRequestListener = null;
             this.chartProxy.destroy();
         }
 
@@ -159,8 +169,65 @@ export class GridChartComp extends Component {
         // set local state used to detect when chart type changes
         this.chartType = chartType;
         this.chartProxy = this.createChartProxy(chartProxyParams);
+
+        this.destroyChartTitleEditRequestListener = this.addDestroyableEventListener(this.chartProxy.getChart(), 'titleEditRequest', this.startTitleEditing.bind(this));
+        this.initTitleEditing();
+
         _.addCssClass(this.eChart.querySelector('canvas'), 'ag-charts-canvas');
         this.chartController.setChartProxy(this.chartProxy);
+    }
+
+    private initTitleEditing(): void {
+
+        this.addDestroyableEventListener(this.eTitleEditInput, 'keypress', (e: KeyboardEvent) => {
+            if (e.key === 'Enter') {
+                this.endTitleEditing();
+            }
+        });
+        this.addDestroyableEventListener(this.eTitleEditInput, 'blur', this.endTitleEditing.bind(this));
+    }
+
+    private startTitleEditing({
+        centrePoint: {x, y},
+        boxSize: {width: oldTitleWidth}
+    }: TitleEditRequestEvent): void {
+        if( this.chartMenu.isVisible() ) {
+            // currently we ignore requests to edit the chart title while the chart menu is showing
+            // because the click to edit the chart will also close the chart menu, making the position
+            // of the title change.
+            return;
+        }
+
+        const minimumTargetInputWidth: number = 300;
+        const maximumInputWidth: number = this.chartProxy.getChart().width;
+        const inputWidth = Math.max(Math.min(oldTitleWidth + 20, maximumInputWidth), minimumTargetInputWidth);
+
+        _.addCssClass(this.eTitleEditInput, 'currently-editing');
+        const inputStyle = this.eTitleEditInput.style;
+
+        inputStyle.left = Math.round(x - inputWidth/2) + 'px';
+        inputStyle.top = Math.round(y) + 'px';
+        inputStyle.width = Math.round(inputWidth) + 'px';
+
+        // match style of input to title that we're editing
+        inputStyle.fontFamily = this.chartProxy.getTitleOption('fontFamily');
+        inputStyle.fontWeight = this.chartProxy.getTitleOption('fontWeight');
+        inputStyle.fontStyle = this.chartProxy.getTitleOption('fontStyle');
+        inputStyle.fontSize = this.chartProxy.getTitleOption('fontSize') + 'px';
+        inputStyle.color = this.chartProxy.getTitleOption('color');
+
+        // populate the input with the title, unless the title is the placeholder:
+        const oldTitle = this.chartProxy.getTitleOption('text');
+        const inputValue = oldTitle === this.chartTranslator.translate('titlePlaceholder') ? '' : oldTitle;
+        this.eTitleEditInput.value = inputValue;
+
+        this.eTitleEditInput.focus();
+    }
+
+    private endTitleEditing(): void {
+        this.chartProxy.setTitleOption('text', this.eTitleEditInput.value);
+
+        _.removeCssClass( this.eTitleEditInput, 'currently-editing' );
     }
 
     private getChartPaletteName(): ChartPaletteName {

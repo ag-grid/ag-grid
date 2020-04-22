@@ -13,6 +13,18 @@
     overflow: hidden;
 }
 
+
+.ag-chart-title-edit {
+    position: absolute;
+    display: none;
+    top: 0;
+    left: 0;
+    text-align: center;
+}
+.ag-chart-title-edit.currently-editing {
+    display: inline-block;
+}
+
 .ag-chart-canvas-wrapper {
     position: relative;
     flex: 1 1 auto;

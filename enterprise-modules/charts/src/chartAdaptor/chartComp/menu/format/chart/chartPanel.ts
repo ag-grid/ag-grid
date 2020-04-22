@@ -1,11 +1,8 @@
 import {
     _,
     AgGroupComponent,
-    AgInputTextArea,
     Autowired,
     Component,
-    FontStyle,
-    FontWeight,
     PostConstruct,
     RefSelector,
     AgGroupComponentParams
@@ -16,18 +13,17 @@ import { Font, FontPanel, FontPanelParams } from "../fontPanel";
 import { ChartTranslator } from "../../../chartTranslator";
 import { CaptionOptions } from "ag-charts-community";
 import { BackgroundPanel } from "./backgroundPanel";
+import TitlePanel from "./titlePanel";
 
 export class ChartPanel extends Component {
 
     public static TEMPLATE =
         `<div>
             <ag-group-component ref="chartGroup">
-                <ag-input-text-area ref="titleInput"></ag-input-text-area>
             </ag-group-component>
         <div>`;
 
     @RefSelector('chartGroup') private chartGroup: AgGroupComponent;
-    @RefSelector('titleInput') private titleInput: AgInputTextArea;
 
     @Autowired('chartTranslator') private chartTranslator: ChartTranslator;
 
@@ -56,62 +52,15 @@ export class ChartPanel extends Component {
     private initGroup(): void {
         this.chartGroup
             .setTitle(this.chartTranslator.translate('chart'))
-            .toggleGroupExpand(false)
+            .toggleGroupExpand(true)
             .hideEnabledCheckbox(true);
     }
 
     private initTitles(): void {
-        const chartProxy = this.chartController.getChartProxy();
-        const title = chartProxy.getChartOption<CaptionOptions>('title');
-        const text = title && title.text ? title.text : '';
+        const titlePanelComp = this.wireBean(new TitlePanel(this.chartController));
 
-        const setFont = (font: Font) => {
-            const chartProxy = this.chartController.getChartProxy();
-
-            if (font.family) { chartProxy.setTitleOption('fontFamily', font.family); }
-            if (font.weight) { chartProxy.setTitleOption('fontWeight', font.weight); }
-            if (font.style) { chartProxy.setTitleOption('fontStyle', font.style); }
-            if (font.size) { chartProxy.setTitleOption('fontSize', font.size); }
-            if (font.color) { chartProxy.setTitleOption('color', font.color); }
-        };
-
-        const initialFont = {
-            family: title ? chartProxy.getChartOption('title.fontFamily') : 'Verdana, sans-serif',
-            style: title ? chartProxy.getChartOption<FontStyle>('title.fontStyle') : undefined,
-            weight: title ? chartProxy.getChartOption<FontWeight>('title.fontWeight') : undefined,
-            size: title ? chartProxy.getChartOption<number>('title.fontSize') : 22,
-            color: title ? chartProxy.getChartOption('title.color') : 'black'
-        };
-
-        if (!title) {
-            setFont(initialFont);
-        }
-
-        this.titleInput
-            .setLabel(this.chartTranslator.translate('title'))
-            .setLabelAlignment('top')
-            .setLabelWidth('flex')
-            .setValue(text)
-            .onValueChange(value => {
-                this.chartController.getChartProxy().setTitleOption('text', value);
-
-                // only show font panel when title exists
-                fontPanelComp.setEnabled(_.exists(value));
-            });
-
-        const params: FontPanelParams = {
-            name: this.chartTranslator.translate('font'),
-            enabled: true,
-            suppressEnabledCheckbox: true,
-            initialFont,
-            setFont,
-        };
-
-        const fontPanelComp = this.wireBean(new FontPanel(params));
-        this.chartGroup.addItem(fontPanelComp);
-        this.activePanels.push(fontPanelComp);
-
-        fontPanelComp.setEnabled(_.exists(text));
+        this.chartGroup.addItem(titlePanelComp);
+        this.activePanels.push(titlePanelComp);
     }
 
     private initPaddingPanel(): void {
