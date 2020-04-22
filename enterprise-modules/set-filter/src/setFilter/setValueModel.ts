@@ -3,7 +3,6 @@ import {
     ColDef,
     Column,
     Constants,
-    ExternalPromise,
     IRowModel,
     ISetFilterParams,
     Promise,
@@ -25,8 +24,10 @@ export enum SetFilterModelValuesType {
 export class SetValueModel implements IEventEmitter {
     public static EVENT_AVAILABLE_VALUES_CHANGED = 'availableValuesChanged';
 
+    private localEventService = new EventService();
     private filterParams: ISetFilterParams;
     private clientSideRowModel: IClientSideRowModel;
+    private filterValuesPromise: Promise<string[]>;
 
     /** All possible values for the filter */
     private allValues: string[];
@@ -40,18 +41,13 @@ export class SetValueModel implements IEventEmitter {
     /** Values that have been selected for this filter */
     private selectedValues = new Set<string>();
 
-    private miniFilter?: string;
+    private miniFilter: string = null;
     private formatter: TextFormatter;
 
     // to make code more readable, we work these out once, and
     // then refer to each time. both are derived from the filterParams
     private showingAvailableOnly = false;
     private valuesType: SetFilterModelValuesType;
-
-    private filterValuesExternalPromise: ExternalPromise<string[]>;
-    private filterValuesPromise: Promise<string[]>;
-
-    private localEventService = new EventService();
 
     constructor(
         private readonly colDef: ColDef,
@@ -84,9 +80,8 @@ export class SetValueModel implements IEventEmitter {
         this.updateAllValues();
         this.updateFilteredValues();
 
-        // by default, no filter, so we display everything
+        // by default, no mini filter, so we display everything
         this.displayedValues = _.values(this.filteredValues);
-        this.miniFilter = null;
 
         // we use a map rather than an array for the selected values as the lookup
         // for a map is much faster than the lookup for an array, especially when
@@ -104,32 +99,37 @@ export class SetValueModel implements IEventEmitter {
         this.localEventService.removeEventListener(eventType, listener, async);
     }
 
-    // if keepSelection not set will always select all filters
-    // if keepSelection set will keep current state of selected filters
-    //    unless selectAll chosen in which case will select all
-    public refreshAfterNewRowsLoaded(keepSelection: boolean, everythingSelected: boolean): void {
+    /**
+     * Re-fetches the values used in the filter from the value source.
+     * If keepSelection is false or selectAll is true, the filter selection will be reset to everything selected,
+     * otherwise the current selection will be preserved.
+     */
+    public refreshAfterNewRowsLoaded(keepSelection: boolean, selectAll: boolean): void {
         this.updateAllValues();
-        this.refreshSelection(keepSelection, everythingSelected);
+        this.refreshSelection(keepSelection, selectAll);
     }
 
-    // if keepSelection not set will always select all filters
-    // if keepSelection set will keep current state of selected filters
-    //    unless selectAll chosen in which case will select all
-    public refreshValues(valuesToUse: string[], keepSelection: boolean, isSelectAll: boolean): void {
+    /**
+     * Overrides the current values being used for the set filter.
+     * If keepSelection is false or selectAll is true, the filter selection will be reset to everything selected,
+     * otherwise the current selection will be preserved.
+     */
+    public overrideValues(valuesToUse: string[], keepSelection: boolean, selectAll: boolean): void {
+        this.setValuesType(SetFilterModelValuesType.PROVIDED_LIST);
         this.setValues(valuesToUse);
-        this.refreshSelection(keepSelection, isSelectAll);
+        this.refreshSelection(keepSelection, selectAll);
     }
 
-    private refreshSelection(keepSelection: boolean, isSelectAll: boolean): void {
+    private refreshSelection(keepSelection: boolean, selectAll: boolean): void {
         this.updateFilteredValues();
 
-        const oldModel = _.values(this.selectedValues);
+        const currentModel = this.getModel();
 
         this.selectNothing();
         this.processMiniFilter();
 
         if (keepSelection) {
-            this.setModel(oldModel, isSelectAll);
+            this.setModel(currentModel, selectAll);
         } else {
             this.selectAllUsingMiniFilter();
         }
@@ -144,29 +144,27 @@ export class SetValueModel implements IEventEmitter {
 
     private updateAllValues(): void {
         if (this.areValuesSync()) {
-            const valuesToUse = this.extractSyncValuesToUse();
-            this.setValues(valuesToUse);
-            this.filterValuesPromise = Promise.resolve([]);
+            const values = this.extractSyncValuesToUse();
+            this.setValues(values);
+            this.filterValuesPromise = Promise.resolve(values);
         } else {
-            this.filterValuesExternalPromise = Promise.external<string[]>();
-            this.filterValuesPromise = this.filterValuesExternalPromise.promise;
             this.isLoadingFunc(true);
             this.setValues([]);
 
-            const callback = this.filterParams.values as SetFilterValuesFunc;
-            const params: SetFilterValuesFuncParams = {
-                success: values => this.onAsyncValuesLoaded(values),
-                colDef: this.colDef
-            };
+            this.filterValuesPromise = new Promise<string[]>(resolve => {
+                const callback = this.filterParams.values as SetFilterValuesFunc;
+                const params: SetFilterValuesFuncParams = {
+                    success: values => {
+                        this.isLoadingFunc(false);
+                        this.setValues(values);
+                        resolve(values);
+                    },
+                    colDef: this.colDef
+                };
 
-            window.setTimeout(() => callback(params), 0);
+                window.setTimeout(() => callback(params), 0);
+            });
         }
-    }
-
-    private onAsyncValuesLoaded(values: string[]): void {
-        this.modelUpdatedFunc(values);
-        this.isLoadingFunc(false);
-        this.filterValuesExternalPromise.resolve(values);
     }
 
     private areValuesSync(): boolean {
@@ -188,12 +186,9 @@ export class SetValueModel implements IEventEmitter {
 
     private extractSyncValuesToUse(): string[] {
         if (this.valuesType === SetFilterModelValuesType.PROVIDED_LIST) {
-            if (Array.isArray(this.filterParams.values)) {
-                return _.toStrings(this.filterParams.values);
-            } else {
-                // In this case the values are async but have already been resolved, so we can reuse them
-                return this.allValues;
-            }
+            const { values } = this.filterParams;
+
+            return Array.isArray(values) ? _.toStrings(values) : this.allValues;
         } else if (this.valuesType == SetFilterModelValuesType.PROVIDED_CALLBACK) {
             throw Error(`ag-grid: Error extracting values to use. We should not extract the values synchronously when using a callback for the filterParams.values`);
         } else {
@@ -220,13 +215,9 @@ export class SetValueModel implements IEventEmitter {
     }
 
     private sortValues(values: string[]): string[] {
-        let comparator = _.defaultComparator;
-
-        if (this.filterParams && this.filterParams.comparator) {
-            comparator = this.filterParams.comparator;
-        } else if (this.colDef.comparator) {
-            comparator = this.colDef.comparator as (a: any, b: any) => number;
-        }
+        const comparator = this.filterParams.comparator ||
+            this.colDef.comparator as (a: any, b: any) => number ||
+            _.defaultComparator;
 
         return values.sort(comparator);
     }
@@ -238,8 +229,9 @@ export class SetValueModel implements IEventEmitter {
         }
 
         const values = new Set<string>();
+        const { keyCreator } = this.colDef;
 
-        this.clientSideRowModel.forEachLeafNode((node: RowNode) => {
+        this.clientSideRowModel.forEachLeafNode(node => {
             // only pull values from rows that have data. this means we skip filler group nodes.
             if (!node.data || (filterOutUnavailableValues && !this.doesRowPassOtherFilters(node))) {
                 return;
@@ -247,8 +239,8 @@ export class SetValueModel implements IEventEmitter {
 
             let value = this.valueGetter(node);
 
-            if (this.colDef.keyCreator) {
-                value = this.colDef.keyCreator({ value });
+            if (keyCreator) {
+                value = keyCreator({ value });
             }
 
             value = _.makeNull(value);
@@ -393,7 +385,7 @@ export class SetValueModel implements IEventEmitter {
         if (this.areValuesSync()) {
             this.setSyncModel(model, isSelectAll);
         } else {
-            this.filterValuesExternalPromise.promise.then(values => {
+            this.filterValuesPromise.then(values => {
                 this.setSyncModel(model, isSelectAll);
                 this.modelUpdatedFunc(values, model);
             });
@@ -417,11 +409,6 @@ export class SetValueModel implements IEventEmitter {
     }
 
     public onFilterValuesReady(callback: () => void): void {
-        //This guarantees that if the user is racing to set values async into the set filter, only the first instance
-        //will be used
-        // ie Values are async and the user manually wants to override them before the retrieval of values is triggered
-        // (set filter values in the following example)
-        // http://plnkr.co/edit/eFka7ynvPj68tL3VJFWf?p=preview
-        this.filterValuesPromise.firstOneOnly(callback);
+        this.filterValuesPromise.then(callback);
     }
 }

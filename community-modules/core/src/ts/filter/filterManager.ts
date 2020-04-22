@@ -480,7 +480,6 @@ export class FilterManager {
         };
 
         filterWrapper.scope = this.gridOptionsWrapper.isAngularCompileFilters() ? this.$scope.$new() : null;
-
         filterWrapper.filterPromise = this.createFilterInstance(column, filterWrapper.scope);
 
         if (filterWrapper.filterPromise) {

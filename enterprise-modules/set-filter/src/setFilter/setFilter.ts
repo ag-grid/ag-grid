@@ -340,9 +340,7 @@ export class SetFilter extends ProvidedFilter {
         this.valueModel.onFilterValuesReady(() => {
             const keepSelection = this.setFilterParams && this.setFilterParams.newRowsAction === 'keep';
 
-            this.valueModel.setValuesType(SetFilterModelValuesType.PROVIDED_LIST);
-            this.valueModel.refreshValues(options, keepSelection, selectAll);
-
+            this.valueModel.overrideValues(options, keepSelection, selectAll);
             this.updateSelectAll();
 
             _.forEach(toSelect || options, value => this.valueModel.selectValue(value));
