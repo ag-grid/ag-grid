@@ -9,9 +9,7 @@ import {
 } from "@ag-grid-community/core";
 import { ChartController } from "../../../chartController";
 import { PaddingPanel } from "./paddingPanel";
-import { Font, FontPanel, FontPanelParams } from "../fontPanel";
 import { ChartTranslator } from "../../../chartTranslator";
-import { CaptionOptions } from "ag-charts-community";
 import { BackgroundPanel } from "./backgroundPanel";
 import TitlePanel from "./titlePanel";
 
@@ -21,7 +19,7 @@ export class ChartPanel extends Component {
         `<div>
             <ag-group-component ref="chartGroup">
             </ag-group-component>
-        <div>`;
+        </div>`;
 
     @RefSelector('chartGroup') private chartGroup: AgGroupComponent;
 

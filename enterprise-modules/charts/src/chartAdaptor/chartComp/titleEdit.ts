@@ -21,9 +21,9 @@ export class TitleEdit extends Component {
 
     @Autowired('chartTranslator') private chartTranslator: ChartTranslator;
 
-    private chartProxy: ChartProxy<any, any>;
+    private chartProxy: ChartProxy<Chart, any>;
 
-    private destroyChartTitleEditRequestListener: (() => null);
+    private destroyableChartListeners: (() => void)[];
 
     constructor(private readonly chartMenu: ChartMenu) {
         super(TitleEdit.TEMPLATE);
@@ -40,15 +40,19 @@ export class TitleEdit extends Component {
     }
 
     /* should be called when the containing component changes to a new chart proxy */
-    public setChartProxy(chartProxy: ChartProxy<any, any>) {
+    public setChartProxy(chartProxy: ChartProxy<Chart, any>) {
         if (this.chartProxy) {
-            this.destroyChartTitleEditRequestListener();
-            this.destroyChartTitleEditRequestListener = null;
+            for (let i = 0; i++; i < this.destroyableChartListeners.length) {
+                this.destroyableChartListeners[i]();
+            }
+            this.destroyableChartListeners = [];
         }
 
         this.chartProxy = chartProxy;
-        const chart = this.chartProxy.getChart() as Chart;
-        this.destroyChartTitleEditRequestListener = this.addDestroyableEventListener(chart.scene.canvas.element, 'dblclick', event => {
+        const chart = this.chartProxy.getChart();
+        const canvas = chart.scene.canvas.element;
+
+        const destroyDbleClickListener = this.addDestroyableEventListener(canvas, 'dblclick', event => {
             const { title } = chart;
 
             if (title && title.node.isPointInNode(event.offsetX, event.offsetY)) {
@@ -58,6 +62,19 @@ export class TitleEdit extends Component {
                 this.startEditing({ ...bbox, ...xy });
             }
         });
+
+        const destroyMouseMoveListener = this.addDestroyableEventListener(canvas, 'mousemove', event => {
+            const { title } = chart;
+
+            const inTitle = title && title.node.isPointInNode(event.offsetX, event.offsetY);
+
+            canvas.style.cursor = inTitle? 'pointer' : '';
+        });
+
+        this.destroyableChartListeners = [
+            destroyDbleClickListener,
+            destroyMouseMoveListener
+        ];
     }
 
     private startEditing(titleBBox: BBox): void {

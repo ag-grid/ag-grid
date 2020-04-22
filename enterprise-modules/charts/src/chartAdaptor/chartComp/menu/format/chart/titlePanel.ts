@@ -16,46 +16,25 @@ import { CaptionOptions } from "ag-charts-community";
 
 export default class TitlePanel extends Component {
 
-    public static TEMPLATE =
-        `<div>
-            <ag-group-component ref="titleGroup">
-            </ag-group-component>
-        <div>`;
+    public static TEMPLATE = `<div></div>`;
 
-    @RefSelector('titleGroup') private titleGroup: AgGroupComponent;
     @Autowired('chartTranslator') private chartTranslator: ChartTranslator;
 
     private activePanels: Component[] = [];
     private readonly chartController: ChartController;
 
+    // When the title is disabled, and then re-enabled, we want the same title to be
+    // present in the chart. It is kept here so it can later be restored.
+    private disabledTitle: string;
+
     constructor(chartController: ChartController) {
-        super();
+        super(TitlePanel.TEMPLATE);
         this.chartController = chartController;
     }
 
     @PostConstruct
     private init() {
-        const groupParams: AgGroupComponentParams = {
-            cssIdentifier: 'charts-format-top-level',
-            direction: 'vertical'
-        };
-        this.setTemplate(TitlePanel.TEMPLATE, { chartGroup: groupParams });
-
-        this.initGroup();
-        this.initTitles();
-    }
-
-    private initGroup(): void {
-        this.titleGroup
-            .setTitle(this.chartTranslator.translate('title'))
-            .toggleGroupExpand(true)
-            .hideOpenCloseIcons(true)
-            .hideEnabledCheckbox(false)
-            .setEnabled(this.hasTitle())
-            .onEnableChange(enabled => {
-                const newTitle = enabled? this.chartTranslator.translate('titlePlaceholder') : null;
-                this.chartController.getChartProxy().setTitleOption('text', newTitle);
-            });
+        this.initFontPanel();
     }
 
     private hasTitle(): boolean {
@@ -66,7 +45,7 @@ export default class TitlePanel extends Component {
         return _.exists(text);
     }
 
-    private initTitles(): void {
+    private initFontPanel(): void {
         const chartProxy = this.chartController.getChartProxy();
         const hasTitle = this.hasTitle;
 
@@ -92,16 +71,28 @@ export default class TitlePanel extends Component {
             setFont(initialFont);
         }
 
-        const params: FontPanelParams = {
-            name: this.chartTranslator.translate('font'),
-            enabled: true,
-            suppressEnabledCheckbox: true,
+        const fontPanelParams: FontPanelParams = {
+            name: this.chartTranslator.translate('title'),
+            enabled: this.hasTitle(),
+            suppressEnabledCheckbox: false,
             initialFont,
             setFont,
+            setEnabled: (enabled) => {
+                const chartProxy = this.chartController.getChartProxy();
+
+                if (enabled) {
+                    const newTitle = this.disabledTitle || this.chartTranslator.translate('titlePlaceholder');
+                    chartProxy.setTitleOption('text', newTitle);
+                    this.disabledTitle = null;
+                } else {
+                    this.disabledTitle = this.chartController.getChartProxy().getTitleOption('text');
+                    chartProxy.setTitleOption('text', null);
+                }
+            }
         };
 
-        const fontPanelComp = this.wireBean(new FontPanel(params));
-        this.titleGroup.addItem(fontPanelComp);
+        const fontPanelComp = this.wireBean(new FontPanel(fontPanelParams));
+        this.getGui().appendChild(fontPanelComp.getGui());
         this.activePanels.push(fontPanelComp);
     }
 
