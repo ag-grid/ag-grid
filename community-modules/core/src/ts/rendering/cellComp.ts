@@ -845,13 +845,8 @@ export class CellComp extends Component implements TooltipParentComp {
             this.createCellRendererFunc = null;
             // this can return null in the event that the user has switched from a renderer component to nothing, for example
             // when using a cellRendererSelect to return a component or null depending on row data etc
-            let componentPromise: Promise<ICellRendererComp>;
-
-            if (cellRendererTypeNormal) {
-                componentPromise = this.beans.userComponentFactory.newCellRenderer(this.getComponentHolder(), params);
-            } else {
-                componentPromise = this.beans.userComponentFactory.newPinnedRowCellRenderer(this.getComponentHolder(), params);
-            }
+            const componentPromise = this.beans.userComponentFactory.newCellRenderer(
+                this.getComponentHolder(), params, !cellRendererTypeNormal);
 
             if (componentPromise) {
                 componentPromise.then(callback);

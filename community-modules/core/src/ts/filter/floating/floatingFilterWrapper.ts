@@ -226,7 +226,7 @@ export class FloatingFilterWrapper extends Component {
             const getModelAsStringExists = filterComponent && filterComponent.prototype && filterComponent.prototype.getModelAsString;
 
             if (getModelAsStringExists) {
-                const compInstance = this.userComponentFactory.createUserComponentFromConcreteClass<any, IFloatingFilterComp>(
+                const compInstance = this.userComponentFactory.createUserComponentFromConcreteClass(
                     ReadOnlyFloatingFilter,
                     params
                 );

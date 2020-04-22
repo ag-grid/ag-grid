@@ -11,7 +11,8 @@ import {
     ValueFormatterService,
     RefSelector,
     _,
-    TooltipFeature
+    TooltipFeature,
+    ISetFilterCellRendererParams,
 } from '@ag-grid-community/core';
 
 export interface SelectedEvent extends AgEvent { }
@@ -87,8 +88,9 @@ export class SetFilterListItem extends Component {
             }
         }
 
-        const params: any = {
-            value: valueToRender,
+        const params: ISetFilterCellRendererParams = {
+            value,
+            valueFormatted,
             api: this.gridOptionsWrapper.getApi()
         };
 
@@ -101,14 +103,16 @@ export class SetFilterListItem extends Component {
 
     private renderCell(target: ColDef, eTarget: HTMLElement, params: any): void {
         const filterParams = target.filterParams as ISetFilterParams;
-        const cellRendererPromise = this.userComponentFactory.newCellRenderer(filterParams, params);
+        const cellRendererPromise = this.userComponentFactory.newSetFilterCellRenderer(filterParams, params);
 
         if (cellRendererPromise == null) {
-            if (params.value == null) {
+            const valueToRender = params.valueFormatted == null ? params.value : params.valueFormatted;
+
+            if (valueToRender == null) {
                 const localeTextFunc = this.gridOptionsWrapper.getLocaleTextFunc();
                 eTarget.innerText = `(${localeTextFunc('blanks', 'Blanks')})`;
             } else {
-                eTarget.innerText = params.value;
+                eTarget.innerText = valueToRender;
             }
 
             return;

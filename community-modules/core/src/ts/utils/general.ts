@@ -105,8 +105,9 @@ export function message(msg: string): void {
 export function bindCellRendererToHtmlElement(cellRendererPromise: Promise<ICellRendererComp>, eTarget: HTMLElement) {
     cellRendererPromise.then(cellRenderer => {
         const gui: HTMLElement | string = cellRenderer.getGui();
+
         if (gui != null) {
-            if (typeof gui == 'object') {
+            if (typeof gui === 'object') {
                 eTarget.appendChild(gui);
             } else {
                 eTarget.innerHTML = gui;

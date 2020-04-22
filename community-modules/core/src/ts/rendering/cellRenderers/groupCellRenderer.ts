@@ -19,6 +19,7 @@ import {
     UserComponentFactory
 } from "../../components/framework/userComponentFactory";
 import { _, Promise } from "../../utils";
+import { ICellEditorParams } from '../../interfaces/iCellEditor';
 
 export interface GroupCellRendererParams extends ICellRendererParams {
     pinned: string;
@@ -39,11 +40,11 @@ export class GroupCellRenderer extends Component implements ICellRendererComp {
 
     private static TEMPLATE =
         '<span class="ag-cell-wrapper">' +
-         '<span class="ag-group-expanded" ref="eExpanded"></span>' +
-         '<span class="ag-group-contracted" ref="eContracted"></span>' +
-         '<span class="ag-group-checkbox ag-invisible" ref="eCheckbox"></span>' +
-         '<span class="ag-group-value" ref="eValue"></span>' +
-         '<span class="ag-group-child-count" ref="eChildCount"></span>' +
+        '<span class="ag-group-expanded" ref="eExpanded"></span>' +
+        '<span class="ag-group-contracted" ref="eContracted"></span>' +
+        '<span class="ag-group-checkbox ag-invisible" ref="eCheckbox"></span>' +
+        '<span class="ag-group-value" ref="eValue"></span>' +
+        '<span class="ag-group-child-count" ref="eChildCount"></span>' +
         '</span>';
 
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
@@ -245,7 +246,7 @@ export class GroupCellRenderer extends Component implements ICellRendererComp {
 
         params.valueFormatted = valueFormatted;
 
-        let rendererPromise:Promise<ICellRendererComp>;
+        let rendererPromise: Promise<ICellRendererComp>;
 
         rendererPromise = params.fullWidth
             ? this.useFullWidth(params)
@@ -257,7 +258,7 @@ export class GroupCellRenderer extends Component implements ICellRendererComp {
 
         // retain a reference to the created renderer - we'll use this later for cleanup (in destroy)
         if (rendererPromise) {
-            rendererPromise.then((value:ICellRendererComp) => {
+            rendererPromise.then((value: ICellRendererComp) => {
                 this.innerCellRenderer = value;
             });
         }
@@ -266,7 +267,7 @@ export class GroupCellRenderer extends Component implements ICellRendererComp {
     private useInnerRenderer(
         groupCellRendererParams: GroupCellRendererParams,
         groupedColumnDef: ColDef, // the column this group row is for, eg 'Country'
-        params: any
+        params: ICellRendererParams
     ): Promise<ICellRendererComp> {
         // when grouping, the normal case is we use the cell renderer of the grouped column. eg if grouping by country
         // and then rating, we will use the country cell renderer for each country group row and likewise the rating
@@ -283,7 +284,7 @@ export class GroupCellRenderer extends Component implements ICellRendererComp {
         let cellRendererPromise: Promise<ICellRendererComp> = null;
 
         // we check if cell renderer provided for the group cell renderer, eg colDef.cellRendererParams.innerRenderer
-        const groupInnerRendererClass: ComponentClassDef<any, any> = this.userComponentFactory
+        const groupInnerRendererClass: ComponentClassDef<any, any, any> = this.userComponentFactory
             .lookupComponentClassDef(groupCellRendererParams, "innerRenderer");
 
         if (groupInnerRendererClass && groupInnerRendererClass.component != null
@@ -292,7 +293,7 @@ export class GroupCellRenderer extends Component implements ICellRendererComp {
             cellRendererPromise = this.userComponentFactory.newInnerCellRenderer(groupCellRendererParams, params);
         } else {
             // otherwise see if we can use the cellRenderer of the column we are grouping by
-            const groupColumnRendererClass: ComponentClassDef<any, any> = this.userComponentFactory
+            const groupColumnRendererClass: ComponentClassDef<any, any, any> = this.userComponentFactory
                 .lookupComponentClassDef(groupedColumnDef, "cellRenderer");
 
             if (
@@ -330,8 +331,8 @@ export class GroupCellRenderer extends Component implements ICellRendererComp {
         return cellRendererPromise;
     }
 
-    private useFullWidth(params: any): Promise<ICellRendererComp> {
-        const cellRendererPromise: Promise<ICellRendererComp> = this.userComponentFactory.newFullWidthGroupRowInnerCellRenderer (params);
+    private useFullWidth(params: ICellRendererParams): Promise<ICellRendererComp> {
+        const cellRendererPromise: Promise<ICellRendererComp> = this.userComponentFactory.newFullWidthGroupRowInnerCellRenderer(params);
 
         if (cellRendererPromise != null) {
             _.bindCellRendererToHtmlElement(cellRendererPromise, this.eValue);
@@ -376,18 +377,18 @@ export class GroupCellRenderer extends Component implements ICellRendererComp {
     private addCheckboxIfNeeded(): void {
         const rowNode = this.displayedGroup;
         const checkboxNeeded = this.isUserWantsSelected() &&
-                // footers cannot be selected
-                !rowNode.footer &&
-                // pinned rows cannot be selected
-                !rowNode.rowPinned &&
-                // details cannot be selected
-                !rowNode.detail;
+            // footers cannot be selected
+            !rowNode.footer &&
+            // pinned rows cannot be selected
+            !rowNode.rowPinned &&
+            // details cannot be selected
+            !rowNode.detail;
 
         if (checkboxNeeded) {
             const cbSelectionComponent = new CheckboxSelectionComponent();
             this.getContext().wireBean(cbSelectionComponent);
 
-            cbSelectionComponent.init({rowNode: rowNode, column: this.params.column});
+            cbSelectionComponent.init({ rowNode: rowNode, column: this.params.column });
             this.eCheckbox.appendChild(cbSelectionComponent.getGui());
             this.addDestroyFunc(() => cbSelectionComponent.destroy());
         }
@@ -524,7 +525,7 @@ export class GroupCellRenderer extends Component implements ICellRendererComp {
         const reducedLeafNode = this.columnController.isPivotMode() && rowNode.leafGroup;
 
         return this.draggedFromHideOpenParents ||
-                (rowNode.isExpandable() && !rowNode.footer && !reducedLeafNode);
+            (rowNode.isExpandable() && !rowNode.footer && !reducedLeafNode);
     }
 
     private showExpandAndContractIcons(): void {

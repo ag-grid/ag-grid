@@ -12,25 +12,26 @@ export class AgComponentUtils {
     @Autowired("componentMetadataProvider")
     private componentMetadataProvider: ComponentMetadataProvider;
 
-    public adaptFunction<A extends IComponent<any> & B, B>(
+    public adaptFunction<A extends IComponent<any> & B, B, TParams>(
         propertyName: string,
         hardcodedJsFunction: AgGridComponentFunctionInput,
         componentFromFramework: boolean,
         source: ComponentSource
-    ): ComponentClassDef<A, B> {
-        if (hardcodedJsFunction == null) { return {
-            component: null,
-            componentFromFramework: componentFromFramework,
-            source: source,
-            paramsFromSelector: null
-        };
+    ): ComponentClassDef<A, B, TParams> {
+        if (hardcodedJsFunction == null) {
+            return {
+                component: null,
+                componentFromFramework: componentFromFramework,
+                source: source,
+                paramsFromSelector: null
+            };
         }
 
         const metadata: ComponentMetadata = this.componentMetadataProvider.retrieve(propertyName);
         if (metadata && metadata.functionAdapter) {
             return {
                 componentFromFramework: componentFromFramework,
-                component: metadata.functionAdapter(hardcodedJsFunction) as { new(): A },
+                component: metadata.functionAdapter(hardcodedJsFunction) as { new(): A; },
                 source: source,
                 paramsFromSelector: null
             };
@@ -38,11 +39,11 @@ export class AgComponentUtils {
         return null;
     }
 
-    public adaptCellRendererFunction(callback: AgGridComponentFunctionInput): { new(): IComponent<any> } {
+    public adaptCellRendererFunction(callback: AgGridComponentFunctionInput): { new(): IComponent<ICellRendererParams>; } {
         class Adapter implements ICellRendererComp {
             private params: ICellRendererParams;
 
-            refresh(params: any): boolean {
+            refresh(params: ICellRendererParams): boolean {
                 return false;
             }
 

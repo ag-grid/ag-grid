@@ -133,7 +133,7 @@ export { SelectCellEditor } from "./rendering/cellEditors/selectCellEditor";
 export { TextCellEditor } from "./rendering/cellEditors/textCellEditor";
 
 // rendering / cellRenderers
-export { ICellRenderer, ICellRendererFunc, ICellRendererComp, ICellRendererParams } from "./rendering/cellRenderers/iCellRenderer";
+export { ICellRenderer, ICellRendererFunc, ICellRendererComp, ICellRendererParams, ISetFilterCellRendererParams } from "./rendering/cellRenderers/iCellRenderer";
 export { AnimateShowChangeCellRenderer } from "./rendering/cellRenderers/animateShowChangeCellRenderer";
 export { AnimateSlideCellRenderer } from "./rendering/cellRenderers/animateSlideCellRenderer";
 export { GroupCellRenderer } from "./rendering/cellRenderers/groupCellRenderer";
