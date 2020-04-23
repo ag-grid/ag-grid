@@ -204,7 +204,7 @@ include '../documentation-main/documentation_header.php';
         </ol>
     </p>
 
-    <?= grid_example('Groups & Checkbox Selection With Only Filtered Children', 'selection-checkbox-filtered', 'generated', ['enterprise' => true, 'exampleHeight' => 590, 'modules'=>['clientside', 'rowgrouping', 'setfilter']]) ?>
+    <?= grid_example('Groups & Checkbox Selection With Only Filtered Children', 'selection-checkbox-filtered', 'generated', ['enterprise' => true, 'exampleHeight' => 590, 'modules'=>['clientside', 'rowgrouping', 'setfilter', 'menu']]) ?>
 
     <h2>Header Checkbox Selection</h2>
 
@@ -331,7 +331,7 @@ colDef = {
         </li>
     </ul>
 
-    <?= grid_example('Specifying Selectable Rows with Groups', 'specify-selectable-rows-with-groups', 'generated', ['enterprise' => true, 'exampleHeight' => 590, 'modules'=>['clientside', 'rowgrouping', 'setfilter']]) ?>
+    <?= grid_example('Specifying Selectable Rows with Groups', 'specify-selectable-rows-with-groups', 'generated', ['enterprise' => true, 'exampleHeight' => 590, 'modules'=>['clientside', 'rowgrouping', 'setfilter', 'menu']]) ?>
 
     <h2>Selection Events</h2>
 

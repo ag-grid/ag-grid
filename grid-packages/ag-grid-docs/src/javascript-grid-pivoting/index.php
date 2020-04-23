@@ -217,7 +217,7 @@ console.log('found column with id ' + sausageKingdomColumn.getId());</snippet>
         tool panel.
     </p>
 
-    <?= grid_example('Filtering With Pivot', 'filter', 'generated', ['enterprise' => true, 'exampleHeight' => 610, 'modules' => ['clientside', 'rowgrouping', 'columnpanel', 'setfilter']]) ?>
+    <?= grid_example('Filtering With Pivot', 'filter', 'generated', ['enterprise' => true, 'exampleHeight' => 610, 'modules' => ['clientside', 'rowgrouping', 'columnpanel', 'setfilter', 'menu']]) ?>
 
     <h2>Sorting with Pivot</h2>
 

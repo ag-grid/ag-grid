@@ -69,7 +69,7 @@ function ServerSideDatasource(server) {
                     // to preserve group state we expand any previously expanded groups for this block
                     rowsWithIds.forEach(function(row) {
                         if (expandedGroupIds.indexOf(row.id) > -1) {
-                            gridOptions.api.getRowNode(row.id).setExpanded(true);
+                            params.api.getRowNode(row.id).setExpanded(true);
                         }
                     });
                 } else {

@@ -138,7 +138,7 @@ columnApi.setSecondaryColumns(pivotColDefs);
     </li>
 </ul>
 
-<?= grid_example('Simple Pivot', 'simple-pivot', 'generated', ['enterprise' => true, 'exampleHeight' => 605, 'extras' => ['alasql']]) ?>
+<?= grid_example('Simple Pivot', 'simple-pivot', 'generated', ['enterprise' => true, 'exampleHeight' => 605, 'extras' => ['alasql'], 'modules' => ['serverside', 'rowgrouping']]) ?>
 
 <h2>Example: Pivot Column Groups </h2>
 
@@ -174,7 +174,7 @@ columnApi.setSecondaryColumns(pivotColDefs);
     </li>
 </ul>
 
-<?= grid_example('Pivot Column Groups', 'pivot-column-groups', 'generated', ['enterprise' => true, 'exampleHeight' => 610, 'extras' => ['alasql']]) ?>
+<?= grid_example('Pivot Column Groups', 'pivot-column-groups', 'generated', ['enterprise' => true, 'exampleHeight' => 610, 'extras' => ['alasql'], 'modules' => ['serverside', 'rowgrouping']]) ?>
 
 <h2>Example: Slice and Dice</h2>
 <p>
@@ -221,7 +221,7 @@ columnApi.setSecondaryColumns(pivotColDefs);
     </li>
 </ul>
 
-<?= grid_example('Slice And Dice', 'slice-and-dice', 'generated', ['enterprise' => true, 'exampleHeight' => 605]) ?>
+<?= grid_example('Slice And Dice', 'slice-and-dice', 'generated', ['enterprise' => true, 'exampleHeight' => 605, 'modules' => ['serverside', 'rowgrouping']]) ?>
 
 <h2>Next Up</h2>
 

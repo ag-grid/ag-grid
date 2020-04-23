@@ -98,7 +98,7 @@ gridOptions: {
     </li>
 </ul>
 
-<?= grid_example('Pagination', 'pagination', 'generated', ['enterprise' => true, 'exampleHeight' => 551, 'extras' => ['alasql']]) ?>
+<?= grid_example('Pagination', 'pagination', 'generated', ['enterprise' => true, 'exampleHeight' => 551, 'extras' => ['alasql'], 'modules' => ['serverside']]) ?>
 
 <h2>Pagination with Groups</h2>
 
@@ -141,7 +141,7 @@ gridOptions: {
     </li>
 </ul>
 
-<?= grid_example('Pagination with Groups', 'pagination-with-groups', 'generated', ['enterprise' => true, 'exampleHeight' => 551, 'extras' => ['alasql']]) ?>
+<?= grid_example('Pagination with Groups', 'pagination-with-groups', 'generated', ['enterprise' => true, 'exampleHeight' => 551, 'extras' => ['alasql'], 'modules' => ['serverside', 'rowgrouping']]) ?>
 
 <h2>Pagination with Child Rows</h2>
 
@@ -180,7 +180,7 @@ gridOptions: {
     </li>
 </ul>
 
-<?= grid_example('Paginate Child Rows', 'paginate-child-rows', 'generated', ['enterprise' => true, 'exampleHeight' => 551, 'extras' => ['alasql']]) ?>
+<?= grid_example('Paginate Child Rows', 'paginate-child-rows', 'generated', ['enterprise' => true, 'exampleHeight' => 551, 'extras' => ['alasql'], 'modules' => ['serverside', 'rowgrouping']]) ?>
 
 <h2>Next Up</h2>
 

@@ -74,7 +74,7 @@ SNIPPET
         on the filter icon in the <a href="../javascript-grid-floating-filters/">Floating Filters</a>.</li>
 </ul>
 
-<?= grid_example('Enabling Set Filters', 'enabling-set-filters', 'generated', ['enterprise' => true, 'exampleHeight' => 565, 'modules' => ['clientside', 'setfilter']]) ?>
+<?= grid_example('Enabling Set Filters', 'enabling-set-filters', 'generated', ['enterprise' => true, 'exampleHeight' => 565, 'modules' => ['clientside', 'setfilter', 'menu']]) ?>
 
 <h2>Sorting Filter Values</h2>
 
@@ -468,7 +468,7 @@ SNIPPET
     , 'ts') ?>
 
 
-<?= grid_example('Filter List Cell Renderers', 'filter-list-cell-renderers', 'generated', ['enterprise' => true, 'exampleHeight' => 520, 'modules' => ['clientside', 'setfilter']]) ?>
+<?= grid_example('Filter List Cell Renderers', 'filter-list-cell-renderers', 'generated', ['enterprise' => true, 'exampleHeight' => 520, 'modules' => ['clientside', 'setfilter', 'menu']]) ?>
 
 
 <h3>Complex Objects</h3>
