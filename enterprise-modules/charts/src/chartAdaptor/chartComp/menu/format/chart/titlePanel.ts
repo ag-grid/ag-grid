@@ -1,13 +1,11 @@
 import {
     _,
-    AgGroupComponent,
     Autowired,
     Component,
+    EventService,
     FontStyle,
     FontWeight,
-    PostConstruct,
-    RefSelector,
-    AgGroupComponentParams
+    PostConstruct
 } from "@ag-grid-community/core";
 import { ChartController } from "../../../chartController";
 import { Font, FontPanel, FontPanelParams } from "../fontPanel";
@@ -19,6 +17,7 @@ export default class TitlePanel extends Component {
     public static TEMPLATE = `<div></div>`;
 
     @Autowired('chartTranslator') private chartTranslator: ChartTranslator;
+    @Autowired('eventService') private eventService: EventService;
 
     private activePanels: Component[] = [];
     private readonly chartController: ChartController;
@@ -94,6 +93,11 @@ export default class TitlePanel extends Component {
         const fontPanelComp = this.wireBean(new FontPanel(fontPanelParams));
         this.getGui().appendChild(fontPanelComp.getGui());
         this.activePanels.push(fontPanelComp);
+
+        // edits to the title can disable it, so keep the checkbox in sync:
+        this.addDestroyableEventListener(this.eventService, 'chartTitleEdit', () => {
+            fontPanelComp.setEnabled(this.hasTitle());
+        });
     }
 
     private destroyActivePanels(): void {

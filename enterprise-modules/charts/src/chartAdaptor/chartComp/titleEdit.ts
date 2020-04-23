@@ -2,7 +2,8 @@ import {
     _,
     Autowired,
     Component,
-    PostConstruct,
+    EventService,
+    PostConstruct
 } from "@ag-grid-community/core";
 import { ChartMenu } from "./menu/chartMenu";
 
@@ -20,6 +21,7 @@ export class TitleEdit extends Component {
         ></input>`;
 
     @Autowired('chartTranslator') private chartTranslator: ChartTranslator;
+    @Autowired('eventService') private eventService: EventService;
 
     private chartProxy: ChartProxy<Chart, any>;
 
@@ -119,6 +121,8 @@ export class TitleEdit extends Component {
         const value = (this.getGui() as HTMLInputElement).value;
 
         this.chartProxy.setTitleOption('text', value);
+
+        this.eventService.dispatchEvent({'type': 'chartTitleEdit'});
 
         _.removeCssClass(this.getGui(), 'currently-editing');
     }
