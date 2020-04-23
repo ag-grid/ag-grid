@@ -107,6 +107,6 @@ include '../documentation-main/documentation_header.php';
     what is in the UI (and not yet applied).</li>
 </ul>
 
-<?= grid_example('Apply Button and Filter Events', 'apply-and-filter-events', 'generated', ['enterprise' => true, 'exampleHeight' => 560]) ?>
+<?= grid_example('Apply Button and Filter Events', 'apply-and-filter-events', 'generated', ['enterprise' => true, 'exampleHeight' => 560, 'modules' => ['clientside', 'setfilter', 'menu', 'columnpanel']]) ?>
 
 <?php include '../documentation-main/documentation_footer.php';?>

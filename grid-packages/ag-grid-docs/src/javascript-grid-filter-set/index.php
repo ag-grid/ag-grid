@@ -74,7 +74,7 @@ SNIPPET
         on the filter icon in the <a href="../javascript-grid-floating-filters/">Floating Filters</a>.</li>
 </ul>
 
-<?= grid_example('Enabling Set Filters', 'enabling-set-filters', 'generated', ['enterprise' => true, 'exampleHeight' => 565, 'modules' => ['clientside', 'setfilter', 'menu']]) ?>
+<?= grid_example('Enabling Set Filters', 'enabling-set-filters', 'generated', ['enterprise' => true, 'exampleHeight' => 565, 'modules' => ['clientside', 'setfilter', 'menu', 'columnpanel']]) ?>
 
 <h2>Sorting Filter Values</h2>
 
@@ -114,7 +114,7 @@ SNIPPET
         that sorts the ages by value; <code>1,2,3,...</code></li>
 </ul>
 
-<?= grid_example('Sorting Set Filter Values', 'sorting-set-filter-values', 'generated', ['enterprise' => true, 'exampleHeight' => 720]) ?>
+<?= grid_example('Sorting Set Filter Values', 'sorting-set-filter-values', 'generated', ['enterprise' => true, 'exampleHeight' => 720, 'modules' => ['clientside', 'setfilter', 'menu', 'columnpanel', 'filterpanel']]) ?>
 
 <h2>Providing Filter Values</h2>
 
@@ -162,7 +162,7 @@ SNIPPET
     </li>
 </ul>
 
-<?= grid_example('Providing Filter Values', 'providing-filter-values', 'generated', ['enterprise' => true, 'exampleHeight' => 720]) ?>
+<?= grid_example('Providing Filter Values', 'providing-filter-values', 'generated', ['enterprise' => true, 'exampleHeight' => 720, 'modules' => ['clientside', 'setfilter', 'menu', 'columnpanel', 'filterpanel']]) ?>
 
 <h3>Asynchronous Values</h3>
 
@@ -230,7 +230,7 @@ SNIPPET
     </li>
 </ul>
 
-<?= grid_example('Callback/Async', 'callback-async', 'generated', ['enterprise' => true, 'exampleHeight' => 510]) ?>
+<?= grid_example('Callback/Async', 'callback-async', 'generated', ['enterprise' => true, 'exampleHeight' => 510, 'modules' => ['clientside', 'setfilter', 'menu', 'columnpanel']]) ?>
 
 <h2>Data Updates</h2>
 
@@ -298,7 +298,7 @@ SNIPPET
 </ul>
 
 
-<?= grid_example('Cell Editing Updates', 'cell-editing-updates', 'generated', ['enterprise' => true, 'exampleHeight' => 480]) ?>
+<?= grid_example('Cell Editing Updates', 'cell-editing-updates', 'generated', ['enterprise' => true, 'exampleHeight' => 480, 'modules' => ['clientside', 'setfilter', 'menu', 'columnpanel', 'filterpanel']]) ?>
 
 
 <h3>Transaction Updates</h3>
@@ -353,7 +353,7 @@ SNIPPET
     </li>
 </ul>
 
-<?= grid_example('Transaction Updates', 'transaction-updates', 'generated', ['enterprise' => true, 'exampleHeight' => 480]) ?>
+<?= grid_example('Transaction Updates', 'transaction-updates', 'generated', ['enterprise' => true, 'exampleHeight' => 480, 'modules' => ['clientside', 'setfilter', 'menu', 'columnpanel', 'filterpanel']]) ?>
 
 <h3>Setting New Data</h3>
 
@@ -405,7 +405,7 @@ SNIPPET
     </li>
 </ul>
 
-<?= grid_example('Setting New Data', 'setting-new-data', 'generated', ['enterprise' => true, 'exampleHeight' => 500]) ?>
+<?= grid_example('Setting New Data', 'setting-new-data', 'generated', ['enterprise' => true, 'exampleHeight' => 500, 'modules' => ['clientside', 'setfilter', 'menu', 'columnpanel', 'filterpanel']]) ?>
 
 <h2>Displaying Long Values</h2>
 
@@ -428,7 +428,7 @@ SNIPPET
     <li>In the third column, tooltips in the set filter are enabled using a custom tooltip component.</li>
 </ul>
 
-<?= grid_example('Displaying Long Values', 'displaying-long-values', 'generated', ['enterprise' => true]) ?>
+<?= grid_example('Displaying Long Values', 'displaying-long-values', 'generated', ['enterprise' => true, 'modules' => ['clientside', 'setfilter', 'menu', 'columnpanel']]) ?>
 
 
 
@@ -468,7 +468,7 @@ SNIPPET
     , 'ts') ?>
 
 
-<?= grid_example('Filter List Cell Renderers', 'filter-list-cell-renderers', 'generated', ['enterprise' => true, 'exampleHeight' => 520, 'modules' => ['clientside', 'setfilter', 'menu']]) ?>
+<?= grid_example('Filter List Cell Renderers', 'filter-list-cell-renderers', 'generated', ['enterprise' => true, 'exampleHeight' => 520, 'modules' => ['clientside', 'setfilter', 'menu', 'columnpanel']]) ?>
 
 
 <h3>Complex Objects</h3>

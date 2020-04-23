@@ -122,7 +122,7 @@ SNIPPET
     (Note: the example uses the Enterprise-only <a href="../javascript-grid-filter-set/">set filter</a>).
 </p>
 
-<?= grid_example('Filter API', 'filter-api', 'generated', ['enterprise' => true, 'exampleHeight' => 620]) ?>
+<?= grid_example('Filter API', 'filter-api', 'generated', ['enterprise' => true, 'exampleHeight' => 620, 'modules' => ['clientside', 'setfilter', 'menu', 'columnpanel']]) ?>
 
 <h2>Reset Individual Filters</h2>
 
@@ -194,6 +194,6 @@ SNIPPET
     (Note: the example uses the Enterprise-only <a href="../javascript-grid-filter-set/">set filter</a>).
 </p>
 
-<?= grid_example('Filter Model', 'filter-model', 'generated', ['enterprise' => true, 'exampleHeight' => 590]) ?>
+<?= grid_example('Filter Model', 'filter-model', 'generated', ['enterprise' => true, 'exampleHeight' => 590, 'modules' => ['clientside', 'menu', 'filterpanel', 'columnpanel']]) ?>
 
 <?php include '../documentation-main/documentation_footer.php';?>

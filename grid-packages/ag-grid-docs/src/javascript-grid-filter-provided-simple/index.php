@@ -58,7 +58,7 @@ include '../documentation-main/documentation_header.php';
     Remember Filtering works with all frameworks (e.g. Angular and React) as well as plain JavaScript.
 </p>
 
-<?= grid_example('Provided Simple', 'provided-simple', 'generated', ['exampleHeight' => 560]) ?>
+<?= grid_example('Provided Simple', 'provided-simple', 'generated', ['exampleHeight' => 560, 'modules' => true]) ?>
 
 <h2>Simple Filter Parts</h2>
 
@@ -597,7 +597,7 @@ SNIPPET
     </li>
 </ul>
 
-<?= grid_example('Custom Filter Options', 'custom-filter-options', 'generated') ?>
+<?= grid_example('Custom Filter Options', 'custom-filter-options', 'generated', ['modules' => true]) ?>
 
 <h2>Blank Cells (Date and Number Filters)</h2>
 
@@ -639,7 +639,7 @@ SNIPPET
     </li>
 </ul>
 
-<?= grid_example('Null Filtering', 'null-filtering', 'vanilla', ['exampleHeight' => 310]) ?>
+<?= grid_example('Null Filtering', 'null-filtering', 'vanilla', ['exampleHeight' => 310, 'modules' => true]) ?>
 
 <h2>Style Header on Filter</h2>
 

@@ -149,6 +149,6 @@ SNIPPET
     <li>The sports column has a different default option (<code>defaultOption = 'startsWith'</code>)</li>
 </ul>
 
-<?= grid_example('Text Filter', 'text-filter', 'generated', ['exampleHeight' => 555]) ?>
+<?= grid_example('Text Filter', 'text-filter', 'generated', ['exampleHeight' => 555, 'modules' => true]) ?>
 
 <?php include '../documentation-main/documentation_footer.php';?>
