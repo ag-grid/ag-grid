@@ -191,7 +191,12 @@ define('skipInPageNav', true);
             <div class="chart-gallery-item__name">Bubble With Negative Values</div>
         </a>
     </div>
-    
+    <div class="chart-gallery-item">
+        <a href="./category-bubble.php" class="chart-gallery-item__link">
+            <img class="chart-gallery-item__thumbnail" src="./thumbnails/category-bubble.png" /><br />
+            <div class="chart-gallery-item__name">Bubble Chart with Category Data</div>
+        </a>
+    </div>
 </div>
 
 <h3 id="area" class="chart-gallery__title">Area</h3>
@@ -246,7 +251,7 @@ define('skipInPageNav', true);
             <div class="chart-gallery-item__name">XY Histogram With Mean Aggregation</div>
         </a>
     </div>
-    
+
 </div>
 
 <h3 id="feature-highlights" class="chart-gallery__title">Feature Highlights</h3>

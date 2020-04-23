@@ -121,7 +121,7 @@ export class LineSeries extends CartesianSeries {
     @reactive('update') yName: string = '';
 
     processData(): boolean {
-        const { xAxis, xKey, yKey, xData, yData } = this;
+        const { xAxis, yAxis, xKey, yKey, xData, yData } = this;
         const data = xKey && yKey && this.data ? this.data : [];
 
         if (!xAxis) {
@@ -129,21 +129,13 @@ export class LineSeries extends CartesianSeries {
         }
 
         const isContinuousX = xAxis.scale instanceof ContinuousScale;
+        const isContinuousY = yAxis.scale instanceof ContinuousScale;
 
-        xData.length = 0;
-        yData.length = 0;
-
-        for (let i = 0, n = data.length; i < n; i++) {
-            const datum = data[i];
-            const x = datum[xKey];
-            const y = datum[yKey];
-
-            xData.push(x);
-            yData.push(y);
-        }
+        this.xData = data.map(d => d[xKey]);
+        this.yData = data.map(d => d[yKey]);
 
         this.xDomain = isContinuousX ? this.fixNumericExtent(numericExtent(xData), 'x') : xData;
-        this.yDomain = this.fixNumericExtent(numericExtent(yData), 'y');
+        this.yDomain = isContinuousY ? this.fixNumericExtent(numericExtent(yData), 'y') : yData;
 
         return true;
     }
@@ -182,6 +174,7 @@ export class LineSeries extends CartesianSeries {
         const xOffset = (xScale.bandwidth || 0) / 2;
         const yOffset = (yScale.bandwidth || 0) / 2;
         const isContinuousX = xScale instanceof ContinuousScale;
+        const isContinuousY = yScale instanceof ContinuousScale;
         const linePath = lineNode.path;
         const nodeData: LineNodeDatum[] = [];
 
@@ -189,8 +182,9 @@ export class LineSeries extends CartesianSeries {
         let moveTo = true;
         xData.forEach((xDatum, i) => {
             const yDatum = yData[i];
-            const isGap = yDatum == null || isNaN(yDatum) || !isFinite(yDatum)
-                || xDatum == null || (isContinuousX && (isNaN(xDatum) || !isFinite(xDatum)));
+            const isGap =
+                xDatum == null || (isContinuousX && (isNaN(xDatum) || !isFinite(xDatum))) ||
+                yDatum == null || (isContinuousY && (isNaN(yDatum) || !isFinite(yDatum)));
 
             if (isGap) {
                 moveTo = true;

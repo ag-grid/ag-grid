@@ -1231,6 +1231,10 @@
                   {
                     "title": "Bubble With Negative Values",
                     "url": "javascript-charts-overview/bubble-with-negative-values.php"
+                  },
+                  {
+                    "title": "Category Bubble",
+                    "url": "javascript-charts-overview/category-bubble.php"
                   }
                 ]
               },
