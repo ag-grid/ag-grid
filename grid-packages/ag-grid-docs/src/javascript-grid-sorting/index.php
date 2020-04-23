@@ -72,7 +72,7 @@ colDef.comparator = function (valueA, valueB, nodeA, nodeB, isInverted) {
             it sorts it as dates, not as strings.</li>
         </ul>
 
-    <?= grid_example('Custom Sorting', 'custom-sorting', 'generated') ?>
+    <?= grid_example('Custom Sorting', 'custom-sorting', 'generated', ['modules' => true]) ?>
 
     <h2 id="multi-column-sorting">Multi Column Sorting</h2>
 
@@ -93,7 +93,7 @@ colDef.comparator = function (valueA, valueB, nodeA, nodeB, isInverted) {
         </ul>
     </p>
 
-    <?= grid_example('Multi Column Sort', 'multi-column', 'generated') ?>
+    <?= grid_example('Multi Column Sort', 'multi-column', 'generated', ['modules' => true]) ?>
 
     <h2>Sorting Animation</h2>
 
@@ -132,7 +132,7 @@ colDef.comparator = function (valueA, valueB, nodeA, nodeB, isInverted) {
         <li><b>Column Year:</b> ascending only</li>
     </ul>
 
-    <?= grid_example('Sorting Order and Animation', 'sorting-order-and-animation', 'generated') ?>
+    <?= grid_example('Sorting Order and Animation', 'sorting-order-and-animation', 'generated', ['modules' => true]) ?>
 
     <h2>Sorting API</h2>
 
@@ -163,7 +163,7 @@ colDef.comparator = function (valueA, valueB, nodeA, nodeB, isInverted) {
         The example below shows the API in action.
     </p>
 
-    <?= grid_example('Sorting API', 'sorting-api', 'generated') ?>
+    <?= grid_example('Sorting API', 'sorting-api', 'generated', ['modules' => true]) ?>
 
     <h2>Sorting Groups</h2>
 
@@ -198,7 +198,7 @@ var groupColumn = {
         The following example is configured to use this feature.
     </p>
 
-    <?= grid_example('Accented Sort', 'accented-sort', 'generated') ?>
+    <?= grid_example('Accented Sort', 'accented-sort', 'generated', ['modules' => true]) ?>
 
     <h2 id="post-sort">Post Sort</h2>
 
@@ -234,6 +234,6 @@ gridOptions.postSort(rowNodes) {
         The following example uses this configuration to perform a post sort on the rows.
     </p>
 
-    <?= grid_example('Post Sort', 'post-sort', 'generated', ['enterprise' => true]) ?>
+    <?= grid_example('Post Sort', 'post-sort', 'generated', ['enterprise' => true, 'modules' => true]) ?>
 
 <?php include '../documentation-main/documentation_footer.php';?>

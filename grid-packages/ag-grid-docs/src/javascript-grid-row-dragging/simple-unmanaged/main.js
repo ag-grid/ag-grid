@@ -470,7 +470,7 @@ var immutableStore = [
 ];
 
 var gridOptions = {
-    columnDefs: columnDefs = [
+    columnDefs: [
         { field: "athlete", rowDrag: true },
         { field: "country" },
         { field: "year", width: 100 },

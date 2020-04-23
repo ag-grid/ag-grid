@@ -126,7 +126,7 @@
     "exported": "RichSelectModule"
   },
   {
-    "title": "Row Grouping & Pivoting",
+    "title": "Row Grouping, Pivoting & Tree Data",
     "shortname": "rowgrouping",
     "module": "@ag-grid-enterprise/row-grouping",
     "enterprise": true,

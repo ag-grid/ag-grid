@@ -66,7 +66,7 @@ gridOptions.getRowHeight = function(params) {
         It uses the <code>getRowHeight()</code> callback to achieve this.
     </p>
 
-    <?= grid_example('Row Height Simple', 'row-height-simple', 'generated') ?>
+    <?= grid_example('Row Height Simple', 'row-height-simple', 'generated', ['modules' => true]) ?>
 
     <h2>Row Height More Complex Example</h2>
 
@@ -78,7 +78,7 @@ gridOptions.getRowHeight = function(params) {
         the contents of the cell.
     </p>
 
-    <?= grid_example('Row Height Complex', 'row-height-complex', 'generated') ?>
+    <?= grid_example('Row Height Complex', 'row-height-complex', 'generated', ['modules' => true]) ?>
 
     <h2>Auto Row Height</h2>
 
@@ -118,7 +118,7 @@ gridOptions.getRowHeight = function(params) {
     </ul>
 
     <!-- this example uses a timeout to set data - the runner doesn't currently support this sort of thing -->
-    <?= grid_example('Auto Row Height', 'auto-row-height', 'generated') ?>
+    <?= grid_example('Auto Row Height', 'auto-row-height', 'generated', ['modules' => true]) ?>
 
     <h3>Lazy Height Calculation</h3>
 
@@ -197,7 +197,7 @@ gridOptions.getRowHeight = function(params) {
     height is an ag-Grid free feature, we just demonstrate it against groups and normal
     rows below.</p>
 
-    <?= grid_example('Changing Row Height', 'row-height-change', 'generated', ['enterprise' => true, 'exampleHeight' => 590]) ?>
+    <?= grid_example('Changing Row Height', 'row-height-change', 'generated', ['enterprise' => true, 'exampleHeight' => 590, 'modules' => ['clientside', 'rowgrouping']]) ?>
 
 
     <h2>Height for Pinned Rows</h2>

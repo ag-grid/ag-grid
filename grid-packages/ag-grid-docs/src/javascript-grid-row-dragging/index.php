@@ -72,7 +72,7 @@ colDef = {
         </li>
     </ul>
 
-    <?= grid_example('Row Drag Simple Managed', 'simple-managed', 'generated') ?>
+    <?= grid_example('Row Drag Simple Managed', 'simple-managed', 'generated', ['modules' => true]) ?>
 
     <p> The logic for managed dragging is simple and has the following constraints:</p>
         <ul class="content">
@@ -110,7 +110,7 @@ colDef = {
         design. To prevent this default behaviour, set <code>suppressMoveWhenRowDragging</code> to true in the gridOptions.
     </p>
 
-    <?= grid_example('Row Drag with SupressMoveWhenRowDragging', 'managed-suppress-move-when-dragging', 'generated') ?>
+    <?= grid_example('Row Drag with SupressMoveWhenRowDragging', 'managed-suppress-move-when-dragging', 'generated', ['modules' => true]) ?>
 
     <h3>MultiRow Dragging</h3>
 
@@ -129,7 +129,7 @@ colDef = {
     </ul>
     
 
-    <?= grid_example('Row Drag with Multi Row Drag', 'managed-with-multi-row-drag', 'generated') ?>
+    <?= grid_example('Row Drag with Multi Row Drag', 'managed-with-multi-row-drag', 'generated', ['modules' => true]) ?>
 
     <h2>Suppress Row Drag</h2>
 
@@ -147,7 +147,7 @@ colDef = {
             <li>Applying a sort or a filter to the grid will also suppress the drag icons.</li>
         </ul>
 
-    <?= grid_example('Suppress Row Drag', 'suppress-row-drag', 'generated') ?>
+    <?= grid_example('Suppress Row Drag', 'suppress-row-drag', 'generated', ['modules' => true]) ?>
 
     <h2>Custom Row Drag Text</h2>
 
@@ -188,7 +188,7 @@ colDef.rowDragText = function(params, dragItemCount) {
     </ul>
 
 
-    <?= grid_example('Row Drag With Custom Text', 'custom-drag-text', 'generated') ?>
+    <?= grid_example('Row Drag With Custom Text', 'custom-drag-text', 'generated', ['modules' => true]) ?>
 
     <h2>Unmanaged Dragging</h2>
 
@@ -310,7 +310,7 @@ colDef.rowDragText = function(params, dragItemCount) {
             </li>
         </ul>
 
-    <?= grid_example('Row Drag Events', 'dragging-events', 'generated') ?>
+    <?= grid_example('Row Drag Events', 'dragging-events', 'generated', ['modules' => true]) ?>
 
     <h2>Simple Unmanaged Example</h2>
 
@@ -340,7 +340,7 @@ colDef.rowDragText = function(params, dragItemCount) {
             </li>
         </ul>
 
-    <?= grid_example('Row Drag Simple Unmanaged', 'simple-unmanaged', 'generated') ?>
+    <?= grid_example('Row Drag Simple Unmanaged', 'simple-unmanaged', 'generated', ['modules' => true]) ?>
 
     <p>
         The simple example doesn't add anything that managed dragging gives (the first
@@ -396,7 +396,7 @@ colDef.rowDragText = function(params, dragItemCount) {
             </li>
         </ul>
 
-    <?= grid_example('Dragging with Row Groups', 'dragging-with-row-groups', 'generated', ['enterprise' => true, 'exampleHeight' => 650]) ?>
+    <?= grid_example('Dragging with Row Groups', 'dragging-with-row-groups', 'generated', ['enterprise' => true, 'exampleHeight' => 650, 'modules' => ['clientside', 'rowgrouping']]) ?>
 
     <h2>Row Dragging & Tree Data</h2>
 
@@ -434,7 +434,7 @@ colDef.rowDragText = function(params, dragItemCount) {
             </li>
         </ul>
 
-        <?= grid_example('Dragging with Tree Data', 'dragging-with-tree-data', 'generated', ['enterprise' => true, 'exampleHeight' => 545, 'extras' => ['fontawesome']]) ?>
+        <?= grid_example('Dragging with Tree Data', 'dragging-with-tree-data', 'generated', ['enterprise' => true, 'exampleHeight' => 545, 'extras' => ['fontawesome'], 'modules' => ['clientside', 'rowgrouping']]) ?>
 
 
     <h3>Example Highlighted Tree Data</h3>
@@ -473,7 +473,7 @@ colDef.rowDragText = function(params, dragItemCount) {
             </li>
         </ul>
 
-        <?= grid_example('Highlighting Drag with Tree Data', 'highlighting-drag-tree-data', 'generated', ['enterprise' => true, 'extras' => ['fontawesome']]) ?>
+        <?= grid_example('Highlighting Drag with Tree Data', 'highlighting-drag-tree-data', 'generated', ['enterprise' => true, 'extras' => ['fontawesome'], 'modules' => ['clientside', 'rowgrouping']]) ?>
 
     <h2>Dragging Multiple Rows</h2>
 
