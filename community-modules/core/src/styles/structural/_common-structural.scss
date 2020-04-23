@@ -551,7 +551,8 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia  {
 }
 
 .ag-filter-toolpanel {
-    flex: 1;
+    flex: 1 1 auto;
+    min-width: 0;
 }
 
 .ag-filter-toolpanel-header, .ag-filter-toolpanel-search {
@@ -1134,6 +1135,7 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia  {
 .ag-tool-panel-wrapper {
     display: flex;
     overflow-y: auto;
+    overflow-x: hidden;
     cursor: default;
     user-select: none;
     width: 200px;
@@ -1281,10 +1283,22 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia  {
     width: 100%;
 }
 
-.ag-group-title-bar,
-.ag-group-title {
+.ag-group-title-bar {
     display: flex;
     align-items: center;
+}
+
+.ag-group-title {
+    display: block;
+    flex: 1 1 auto;
+    min-width: 0;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
+.ag-group-title-bar
+.ag-group-title {
     cursor: default;
 }
 
