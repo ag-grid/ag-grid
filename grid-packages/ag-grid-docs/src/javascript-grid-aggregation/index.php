@@ -109,7 +109,7 @@ colDef = {
         </li>
     </ul>
 
-    <?= grid_example('Built-In Functions', 'built-in-functions', 'generated', ['enterprise' => true]) ?>
+    <?= grid_example('Built-In Functions', 'built-in-functions', 'generated', ['enterprise' => true, 'modules' => ['clientside', 'rowgrouping']]) ?>
 
     <note>
         Remember to mark value columns with <code>enableValue=true</code> when using the <a href="../javascript-grid-tool-panel/">Tool Panel</a>.
@@ -379,7 +379,7 @@ colDef = {
         sum and another by multiplying the result by Math.PI.
     </p>
 
-    <?= grid_example('Custom Full Row Aggregation', 'custom-full-row-aggregation', 'generated', ['enterprise' => true, 'exampleHeight' => 620]) ?>
+    <?= grid_example('Custom Full Row Aggregation', 'custom-full-row-aggregation', 'generated', ['enterprise' => true, 'exampleHeight' => 620, 'modules' => ['clientside', 'rowgrouping']]) ?>
 
     <h2>Empty Aggregation Calls</h2>
 
