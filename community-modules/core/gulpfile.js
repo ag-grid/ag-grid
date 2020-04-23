@@ -89,24 +89,21 @@ const scssTask = () => {
                         test: /\.scss$/,
                         use: [
                             MiniCssExtractPlugin.loader,
+                            "css-loader", 
                             {
-                                loader: "css-loader"
+                                loader: 'postcss-loader',
+                                options: {
+                                    syntax: 'postcss-scss',
+                                    plugins: [autoprefixer({
+                                        flexbox: true
+                                    })]
+                                }
                             },
                             {
                                 loader: 'sass-loader',
                                 options: {
                                     prependData: '$ag-compatibility-mode: false;\n$ag-suppress-all-theme-deprecation-warnings: true;',
                                 },
-                            },
-                            {
-                                loader: 'postcss-loader',
-                                options: {
-                                    syntax: 'postcss-scss',
-                                    plugins: [autoprefixer({
-                                        overrideBrowserslist: ["last 2 version"],
-                                        flexbox: true
-                                    })]
-                                }
                             }
                         ]
                     },
