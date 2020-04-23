@@ -1,4 +1,4 @@
-import { _, ExternalPromise, Promise } from '../utils';
+import { _, Promise } from '../utils';
 import { GridOptionsWrapper } from '../gridOptionsWrapper';
 import { ValueService } from '../valueService/valueService';
 import { ColumnController } from '../columnController/columnController';
@@ -476,7 +476,7 @@ export class FilterManager {
             filterPromise: null,
             scope: null as any,
             compiledElement: null,
-            guiPromise: Promise.external<HTMLElement>()
+            guiPromise: Promise.resolve(null)
         };
 
         filterWrapper.scope = this.gridOptionsWrapper.isAngularCompileFilters() ? this.$scope.$new() : null;
@@ -494,39 +494,41 @@ export class FilterManager {
 
         eFilterGui.className = 'ag-filter';
 
-        filterWrapper.filterPromise.then(filter => {
-            let guiFromFilter = filter.getGui();
+        filterWrapper.guiPromise = new Promise<HTMLElement>(resolve => {
+            filterWrapper.filterPromise.then(filter => {
+                let guiFromFilter = filter.getGui();
 
-            if (_.missing(guiFromFilter)) {
-                console.warn(`getGui method from filter returned ${guiFromFilter}, it should be a DOM element or an HTML template string.`);
-            }
+                if (_.missing(guiFromFilter)) {
+                    console.warn(`getGui method from filter returned ${guiFromFilter}, it should be a DOM element or an HTML template string.`);
+                }
 
-            // for backwards compatibility with Angular 1 - we
-            // used to allow providing back HTML from getGui().
-            // once we move away from supporting Angular 1
-            // directly, we can change this.
-            if (typeof guiFromFilter === 'string') {
-                guiFromFilter = _.loadTemplate(guiFromFilter as string);
-            }
+                // for backwards compatibility with Angular 1 - we
+                // used to allow providing back HTML from getGui().
+                // once we move away from supporting Angular 1
+                // directly, we can change this.
+                if (typeof guiFromFilter === 'string') {
+                    guiFromFilter = _.loadTemplate(guiFromFilter as string);
+                }
 
-            eFilterGui.appendChild(guiFromFilter);
+                eFilterGui.appendChild(guiFromFilter);
 
-            if (filterWrapper.scope) {
-                const compiledElement = this.$compile(eFilterGui)(filterWrapper.scope);
-                filterWrapper.compiledElement = compiledElement;
-                window.setTimeout(() => filterWrapper.scope.$apply(), 0);
-            }
+                if (filterWrapper.scope) {
+                    const compiledElement = this.$compile(eFilterGui)(filterWrapper.scope);
+                    filterWrapper.compiledElement = compiledElement;
+                    window.setTimeout(() => filterWrapper.scope.$apply(), 0);
+                }
 
-            filterWrapper.guiPromise.resolve(eFilterGui);
+                resolve(eFilterGui);
 
-            this.eventService.dispatchEvent({
-                type: Events.EVENT_FILTER_OPENED,
-                column: filterWrapper.column,
-                source,
-                eGui: eFilterGui,
-                api: this.gridApi,
-                columnApi: this.columnApi
-            } as FilterOpenedEvent);
+                this.eventService.dispatchEvent({
+                    type: Events.EVENT_FILTER_OPENED,
+                    column: filterWrapper.column,
+                    source,
+                    eGui: eFilterGui,
+                    api: this.gridApi,
+                    columnApi: this.columnApi
+                } as FilterOpenedEvent);
+            });
         });
     }
 
@@ -595,5 +597,5 @@ export interface FilterWrapper {
     column: Column;
     filterPromise: Promise<IFilterComp>;
     scope: any;
-    guiPromise: ExternalPromise<HTMLElement>;
+    guiPromise: Promise<HTMLElement>;
 }

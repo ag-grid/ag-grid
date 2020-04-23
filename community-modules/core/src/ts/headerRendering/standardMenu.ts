@@ -50,7 +50,7 @@ export class StandardMenuFactory implements IMenuFactory {
 
         _.addCssClass(eMenu, 'ag-menu');
 
-        filterWrapper.guiPromise.promise.then(gui => eMenu.appendChild(gui));
+        filterWrapper.guiPromise.then(gui => eMenu.appendChild(gui));
 
         let hidePopup: (() => void);
 

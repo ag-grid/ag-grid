@@ -6,11 +6,6 @@ export enum PromiseStatus {
     IN_PROGRESS, RESOLVED
 }
 
-export interface ExternalPromise<T> {
-    resolve: (value: T) => void;
-    promise: Promise<T>;
-}
-
 export class Promise<T> {
     private status: PromiseStatus = PromiseStatus.IN_PROGRESS;
     private resolution: T | null = null;
@@ -36,15 +31,6 @@ export class Promise<T> {
 
     static resolve<T>(value: T): Promise<T> {
         return new Promise<T>(resolve => resolve(value));
-    }
-
-    static external<T>(): ExternalPromise<T> {
-        let capture: (value: T) => void;
-
-        return {
-            promise: new Promise<T>(resolve => { capture = resolve; }),
-            resolve: value => capture(value)
-        };
     }
 
     constructor(callback: ResolveAndRejectCallback<T>) {
