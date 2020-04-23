@@ -53,7 +53,7 @@
     "testEnvironment": "node"
   },
   "devDependencies": {
-    "@types/jest": "^25.1.2",
+    "@types/jest": "^25.2.1",
     "canvas": "2.6.1",
     "eslint": "^6.8.0",
     "eslint-plugin-compat": "^3.5.1",

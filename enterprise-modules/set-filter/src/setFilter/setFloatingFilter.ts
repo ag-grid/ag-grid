@@ -78,7 +78,7 @@ export class SetFloatingFilterComp extends Component implements IFloatingFilter 
 
         this.params.parentFilterInstance((setFilter: SetFilter) => {
             const valueModel = setFilter.getValueModel();
-            const availableValues = _.filter(values, valueModel.isValueAvailable.bind(valueModel));
+            const availableValues = _.filter(values, v => valueModel.isValueAvailable(v));
 
             // format all the values, if a formatter is provided
             const formattedValues = _.map(availableValues, value => {

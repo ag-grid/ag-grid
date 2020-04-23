@@ -78,7 +78,7 @@
     "@babel/preset-react": "7.0.0",
     "@fortawesome/fontawesome-free": "5.6.3",
     "@types/jasmine": "^3.4.6",
-    "@types/jest": "^25.1.2",
+    "@types/jest": "^25.2.1",
     "ag-grid-community": "~23.0.0",
     "ag-grid-testing": "0.0.2",
     "anchor-js": "4.1.0",

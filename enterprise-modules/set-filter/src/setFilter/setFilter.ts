@@ -67,7 +67,6 @@ export class SetFilter extends ProvidedFilter {
 
     protected resetUiToDefaults(): void {
         this.setMiniFilter(null);
-        this.valueModel.setModel(null, true);
         this.selectEverything();
     }
 
@@ -126,13 +125,13 @@ export class SetFilter extends ProvidedFilter {
             params.valueGetter,
             params.doesRowPassOtherFilter,
             params.suppressSorting,
-            (values, toSelect) => this.setFilterValues(values, !toSelect, !!toSelect, toSelect),
             loading => this.setLoading(loading),
             this.valueFormatterService,
             params.column
         );
 
         this.initialiseFilterBodyUi();
+        this.valueModel.onFilterValuesReady(() => this.refresh());
 
         const syncValuesAfterDataChange =
             this.rowModel.getType() === Constants.ROW_MODEL_TYPE_CLIENT_SIDE &&
@@ -176,7 +175,7 @@ export class SetFilter extends ProvidedFilter {
 
     /** Called when the data in the grid changes, to prompt the set filter values to be updated. */
     private syncValuesAfterDataChange(keepSelection = true): void {
-        this.valueModel.refreshAfterNewRowsLoaded(keepSelection, !this.getModel());
+        this.valueModel.refetchValues(keepSelection);
         this.refresh();
         this.onBtApply(false, true);
     }
@@ -193,7 +192,6 @@ export class SetFilter extends ProvidedFilter {
         this.initVirtualList();
         this.initMiniFilter();
         this.initSelectAll();
-        this.refresh();
     }
 
     private initVirtualList() {
@@ -269,10 +267,6 @@ export class SetFilter extends ProvidedFilter {
         eMiniFilter.getFocusableElement().focus();
     }
 
-    public refreshVirtualList(): void {
-        this.virtualList.refresh();
-    }
-
     public applyModel(): boolean {
         const result = super.applyModel();
 
@@ -336,20 +330,11 @@ export class SetFilter extends ProvidedFilter {
      * @param notify If we should let know the model that the values of the filter have changed
      * @param toSelect The subset of options to subselect
      */
-    public setFilterValues(options: string[], selectAll: boolean = false, notify: boolean = true, toSelect?: string[]): void {
+    public setFilterValues(options: string[]): void {
+        this.valueModel.overrideValues(options, this.isNewRowsActionKeep());
         this.valueModel.onFilterValuesReady(() => {
-            const keepSelection = this.setFilterParams && this.setFilterParams.newRowsAction === 'keep';
-
-            this.valueModel.overrideValues(options, keepSelection, selectAll);
-            this.updateSelectAll();
-
-            _.forEach(toSelect || options, value => this.valueModel.selectValue(value));
-
-            this.refreshVirtualList();
-
-            if (notify) {
-                this.onUiChanged();
-            }
+            this.refresh();
+            this.onUiChanged();
         });
     }
 
@@ -381,7 +366,7 @@ export class SetFilter extends ProvidedFilter {
 
     private onMiniFilterKeyPress(e: KeyboardEvent): void {
         if (_.isKeyPressed(e, Constants.KEY_ENTER)) {
-            this.valueModel.selectAllFromMiniFilter();
+            this.valueModel.selectAll(true);
             this.refresh();
             this.onUiChanged(true);
         }
@@ -389,7 +374,7 @@ export class SetFilter extends ProvidedFilter {
 
     private onMiniFilterInput() {
         if (this.valueModel.setMiniFilter(this.eMiniFilter.getValue())) {
-            this.refreshVirtualList();
+            this.virtualList.refresh();
         }
 
         this.updateSelectAll();
@@ -402,14 +387,10 @@ export class SetFilter extends ProvidedFilter {
 
         this.selectAllState = !this.selectAllState;
 
-        this.doSelectAll();
-    }
-
-    private doSelectAll(): void {
-        if (!!this.selectAllState) {
-            this.valueModel.selectAllUsingMiniFilter();
+        if (this.selectAllState) {
+            this.valueModel.selectAll();
         } else {
-            this.valueModel.selectNothingUsingMiniFilter();
+            this.valueModel.selectNothing();
         }
 
         this.refresh();
@@ -420,7 +401,7 @@ export class SetFilter extends ProvidedFilter {
         if (selected) {
             this.valueModel.selectValue(value);
         } else {
-            this.valueModel.unselectValue(value);
+            this.valueModel.deselectValue(value);
         }
 
         this.updateSelectAll();
@@ -437,17 +418,17 @@ export class SetFilter extends ProvidedFilter {
     }
 
     public selectEverything() {
-        this.valueModel.selectAllUsingMiniFilter();
+        this.valueModel.selectAll();
         this.refresh();
     }
 
     public selectNothing() {
-        this.valueModel.selectNothingUsingMiniFilter();
+        this.valueModel.selectNothing();
         this.refresh();
     }
 
     public unselectValue(value: string) {
-        this.valueModel.unselectValue(value);
+        this.valueModel.deselectValue(value);
         this.refresh();
     }
 
@@ -457,8 +438,8 @@ export class SetFilter extends ProvidedFilter {
     }
 
     private refresh() {
+        this.virtualList.refresh();
         this.updateSelectAll();
-        this.refreshVirtualList();
     }
 
     public isValueSelected(value: string) {
@@ -479,6 +460,10 @@ export class SetFilter extends ProvidedFilter {
 
     public getUniqueValue(index: any) {
         return this.valueModel.getUniqueValue(index);
+    }
+
+    public refreshVirtualList(): void {
+        this.virtualList.refresh();
     }
 }
 
