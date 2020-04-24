@@ -208,6 +208,7 @@
     
     .ag-group-title-bar-icon {
         cursor: pointer;
+        flex: none;
         @include ag-color-property(color, secondary-foreground-color);
     }
     
