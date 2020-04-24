@@ -437,13 +437,13 @@
                 "title": "High Frequency",
                 "url": "javascript-grid-data-update-high-frequency/",
                 "showInCollapsed": true
-              },
-              {
-                "title": "Immutable Stores",
-                "url": "javascript-grid-data-update-immutable-stores/",
-                "showInCollapsed": true
               }
             ]
+          },
+          {
+            "title": "Immutable Stores",
+            "url": "javascript-grid-data-update-immutable-stores/",
+            "showInCollapsed": true
           },
           {
             "title": "Context",

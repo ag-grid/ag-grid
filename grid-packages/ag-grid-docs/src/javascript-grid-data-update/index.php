@@ -159,31 +159,6 @@ include '../documentation-main/documentation_header.php';
                 for more details.
             </p>
         </li>
-        <li>
-            <h3>Immutable Stores</h3>
-
-            <p>
-                Immutable Stores (a.k.a. Delta Row Data) is for attaching to immutable stores such as
-                Redux. In this method the <code>rowData</code> property is treated as an immutable store.
-                When a new set of Row Data is received, the grid compares it to the old row data to identify
-                what rows were added, removed and updated.
-            </p>
-
-            <p>
-                The Delta Row Data is an operational mode of the grid and is turned on using
-                the grid property <code>deltaRowDataMode=true</code>.
-            </p>
-
-            <p>
-                Use Delta Row Data if you want to
-                manage the data outside of the grid (eg in a <b>Redux</b> store) and then let the grid work out
-                what changes are needed to keep the grid's version of the data up to date.
-            </p>
-            <p>
-                See <a href="../javascript-grid-data-update-immutable-stores/">Immutable Stores</a>
-                for more details.
-            </p>
-        </li>
     </ul>
 
 <?php include '../documentation-main/documentation_footer.php';?>

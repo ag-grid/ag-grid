@@ -220,31 +220,38 @@ interface RowNodeTransaction {
 
     <?= grid_example('Updating with Transaction and Groups', 'updating-with-transaction-and-groups', 'generated', ['enterprise' => true]) ?>
 
-    <h2 id="big-data-small-transactions">Small Changes in Large Grouped Data</h2>
+    <h2 id="suppressAggAtRootLevel">Suppressing Top Level Aggregations</h2>
 
     <p>
-        When grouping, the grid will group, sort, filter and aggregate each individual
-        group. When there is a lot of data and a lot of groups then this results
-        in a lot of computation required for all the data operations.
+        When aggregations are present, the grid also aggregates
+        all the top level rows into one parent row. This total aggregation is not shown in the grid so a
+        speed increase can be produced by turning this top level aggregation of by setting
+        <code>suppressAggAtRootLevel=true</code>. It is the intention that a future release of the grid
+        will allow exposing the top level aggregation hence why this feature is left in.
+    </p>
+
+    <p>
+        The example in the next section has this property enabled to provide a performance boost.
+    </p>
+
+    <h2 id="big-data-small-transactions">Localised Changes in Grouped Data</h2>
+
+    <p>
+        When you apply a transaction to grouped data, the grid will only re-apply grouping, filtering
+        and sorting to the impacted data.
     </p>
     <p>
-        If using <a href="#transactions">transaction updates</a> then the grid does not execute all
-        the operations (sort, filter etc) on all the rows. Instead it only re-computes what was
-        impacted by a transaction.
+        For example suppose you have the grid with it's rows grouped into 10 groups and a sort is applied
+        on one column. If a transaction is applied to update one row, then the group that row sits within
+        will be re-sorted as well as the top level group (as aggregations could impact values at the top
+        level). All of the other 9 groups do not need to have their sorting re-applied.
     </p>
     <p>
-        For example, if items are grouped by city, and a value for each city is summed at the city
-        level, then if the value changes for one item, only the aggregation for the city it belongs
-        to needs be recomputed. All other groups where data did not change do not need to be recomputed.
-    </p>
-    <p>
-        Deciding what groups need to be operated on again is called Changed Path Selection. After
+        Deciding what groups need to be operated on within the grid is called Changed Path Selection. After
         the grid applies all adds, removes and updates from a transaction, it works out what groups
-        got impacted and only executes the required operations on those groups.
-    </p>
-    <p>
-        Under the hood <a href="#delta-row-data">delta row data</a> uses transactions in the grid,
-        so Changed Path Selection applies also when using delta row update.
+        got impacted and only executes the required operations on those groups. The groups that got impacted
+        include each group with data that got changed, as well as all parents off changed groups all the way
+        up to the top level.
     </p>
 
     <p>
@@ -253,20 +260,38 @@ interface RowNodeTransaction {
     </p>
 
     <ul>
-        <li>The 'Linux Distro' column is sorted with a custom comparator. The comparator records how many
-            times it is called.</li>
-        <li>The Value column is aggregated with a custom aggregator. The aggregator records
-            how many times it is called.</li>
-        <li>When the example first loads, all the data is set into the grid which results in 171 aggregation
+        <li>
+            The 'Linux Distro' column is sorted with a custom comparator. The comparator records how many
+            times it is called.
+        </li>
+        <li>
+            The Value column is aggregated with a custom aggregator. The aggregator records
+            how many times it is called.
+        </li>
+        <li>
+            When the example first loads, all the data is set into the grid which results in 171 aggregation
             operations (one for each group), 48,131 comparisons (for sorting all rows in each group) and 10,000 filter
             passes (one for each row). The number of milliseconds to complete the operation is also printed (this
-            value will depend on your hardware).</li>
-        <li>Select a row and click 'Update', 'Delete' OR 'Duplicate' (duplicate results in an add operation).
+            value will depend on your hardware).
+        </li>
+        <li>
+            Select a row and click 'Update', 'Delete' OR 'Duplicate' (duplicate results in an add operation).
             Note in the console that the number of aggregations, compares and filters is drastically less.
-            The total time to execute is also drastically less</li>
+            The total time to execute is also drastically less
+        </li>
+        <li>
+            The property <a href="#suppressAggAtRootLevel">suppressAggAtRootLevel=true</a> to prevent the grid from calculating
+            aggregations at the top level.
+        </li>
     </ul>
 
-<?= grid_example('Small Changes Big Data', 'small-changes-big-data', 'generated', ['enterprise' => true]) ?>
+    <?= grid_example('Small Changes Big Data', 'small-changes-big-data', 'generated', ['enterprise' => true]) ?>
 
+    <note>
+        Note that <a href="../javascript-grid-selection/#header-checkbox-selection">Header Checkbox Selection</a>
+        is not turned on for the example above. If it was it would slow the grid down marginally as it requires each
+        row to be checked (for selection state) between each update. If you need a blasting fast grid managing rapid
+        changes, then consider avoiding this feature.
+    </note>
 
 <?php include '../documentation-main/documentation_footer.php';?>

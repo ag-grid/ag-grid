@@ -197,7 +197,7 @@ function createRowData() {
     for (var i = 0; i < 10000; i++) {
         var name = 'Mr ' + randomLetter().toUpperCase() + ' ' + randomLetter().toUpperCase() + randomLetter() + randomLetter() + randomLetter() + randomLetter();
         var city = CITIES[i%CITIES.length];
-        var distro = LINUX_DISTROS[i%LINUX_DISTROS.length];
+        var distro = LINUX_DISTROS[i%LINUX_DISTROS.length] + ' v' + Math.floor((Math.random()*100 + 1))/10;
         var university = LAPTOPS[i%LAPTOPS.length];
         var value = Math.floor(Math.random() * 100) + 10; // between 10 and 110
         idCounter++;
