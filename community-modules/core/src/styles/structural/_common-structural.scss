@@ -389,7 +389,7 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia  {
     white-space: nowrap;
 }
 
-.ag-numeric-header .ag-header-cell-label {
+.ag-right-aligned-header .ag-header-cell-label {
     flex-direction: row-reverse;
 }
 
@@ -1201,7 +1201,7 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia  {
     height: 100%;
 }
 
-.ag-numeric-header .ag-cell-label-container {
+.ag-right-aligned-header .ag-cell-label-container {
     flex-direction: row;
 }
 

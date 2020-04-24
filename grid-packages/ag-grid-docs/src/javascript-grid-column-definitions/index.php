@@ -189,19 +189,25 @@ var gridOptions = {
 
 <h2>Provided Column Types</h2>
 
-<h3>Numeric Columns</h3>
+<h3>Right Aligned and Numeric Columns</h3>
 
 <p>
-The grid provides a handy shortcut for formatting numeric columns.
-Setting the column definition type to <code>numericColumn</code> aligns the column header and contents to the right,
+The grid provides a handy shortcut for aligning columns to the right.
+Setting the column definition type to <code>rightAligned</code> aligns the column header and contents to the right,
 which makes the scanning of the data easier for the user.
 </p>
+
+<note>
+    Because right alignment is used for numbers, we also provided an alias <code>numericColumn</code>
+    that can be used to align the header and cell text to the right.
+</note>
 
 <snippet>
 var gridOptions = {
     columnDefs: [
         { headerName: "Column A", field: "a" },
-        { headerName: "Column B", field: "b", type: "numericColumn" }
+        { headerName: "Column B", field: "b", type: "rightAligned" },
+        { headerName: "Column C", field: "c", type: "numericColumn" }
     ]
 }</snippet>
 

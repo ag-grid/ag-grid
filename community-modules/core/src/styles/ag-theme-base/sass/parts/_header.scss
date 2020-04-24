@@ -22,11 +22,11 @@
         height: ag-param(header-height);
     }
 
-    .ag-header-cell:not(.ag-numeric-header) .ag-header-label-icon {
+    .ag-header-cell:not(.ag-right-aligned-header) .ag-header-label-icon {
         @include ag-theme-rtl(( margin-left: ag-param(grid-size) ));
     }
 
-    .ag-header-cell.ag-numeric-header .ag-header-label-icon {
+    .ag-header-cell.ag-right-aligned-header .ag-header-label-icon {
         @include ag-theme-rtl(( margin-right: ag-param(grid-size) ));
     }
 
