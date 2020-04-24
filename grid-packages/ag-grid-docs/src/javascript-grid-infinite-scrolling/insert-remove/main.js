@@ -35,11 +35,6 @@ function createRowData(id) {
     };
 }
 
-function liveInsertItemsAt2(count) {
-    var newDataItems = insertItemsAt2(count);
-    gridOptions.api.updateRowData({addIndex: 2, add: newDataItems});
-}
-
 function insertItemsAt2AndRefresh(count) {
     insertItemsAt2(count);
 

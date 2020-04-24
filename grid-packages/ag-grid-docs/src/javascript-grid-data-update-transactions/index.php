@@ -63,9 +63,6 @@ interface RowDataTransaction {
     // rows to add
     add?: any[];
 
-    // index for rows to add
-    addIndex?: number;
-
     // rows to remove
     remove?: any[];
 
@@ -85,14 +82,6 @@ interface RowNodeTransaction {
     // Row Nodes updated
     update: RowNode[];
 }</snippet>
-
-    <note>
-        The index to add is put in for historical purposes and should not be used. If you want the
-        grid to display in a certain order, you should set
-        <a href="#delta-row-data">deltaRowDataMode=true</a> and then set
-        row data, which will maintain the row order while also working out the update, deletes and
-        adds for you.
-    </note>
 
     <h2>Identifying Rows for Update and Remove</h2>
 
@@ -165,14 +154,11 @@ interface RowNodeTransaction {
     </p>
 
     <ul class="content">
-        <li><b>Add Row</b>: Adds a row to the end of the list.</li>
         <li>
-            <b>Insert Row @ 2</b>: Inserts a row at position 2 in the list. This works in the grid
-            as it doesn't allow sorting, filtering or grouping (all of these would impact the order).
+            <b>Add Items</b>: Adds three items.
         </li>
         <li>
-            <b>Update First 5</b>: Updates the price on the first 5 items in the list (add some items
-            first so you have at least 5).
+            <b>Update Top 2</b>: Updates the price on the first 2 rows in the list.
         </li>
         <li>
             <b>Remove Selected</b>: Removes all the selected rows from the list.
@@ -182,12 +168,6 @@ interface RowNodeTransaction {
         </li>
         <li>
             <b>Clear Data</b>: Sets the data in the grid to an empty list.
-        </li>
-        <li>
-            <b>Add Items</b>: Adds three items.
-        </li>
-        <li>
-            <b>Add Items</b>: Adds three items at position 2.
         </li>
     </ul>
 

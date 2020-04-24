@@ -49,21 +49,9 @@ function clearData() {
     gridOptions.api.setRowData([]);
 }
 
-function onAddRow() {
-    var newItem = createNewRowData();
-    var res = gridOptions.api.updateRowData({add: [newItem]});
-    printResult(res);
-}
-
 function addItems() {
     var newItems = [createNewRowData(), createNewRowData(), createNewRowData()];
     var res = gridOptions.api.updateRowData({add: newItems});
-    printResult(res);
-}
-
-function addItemsAtIndex() {
-    var newItems = [createNewRowData(), createNewRowData(), createNewRowData()];
-    var res = gridOptions.api.updateRowData({add: newItems, addIndex: 2});
     printResult(res);
 }
 
@@ -72,19 +60,13 @@ function updateItems() {
     var itemsToUpdate = [];
     gridOptions.api.forEachNodeAfterFilterAndSort( function(rowNode, index) {
         // only do first 5
-        if (index>=5) { return; }
+        if (index>=2) { return; }
 
         var data = rowNode.data;
         data.price = Math.floor((Math.random()*20000) + 20000);
         itemsToUpdate.push(data);
     });
     var res = gridOptions.api.updateRowData({update: itemsToUpdate});
-    printResult(res);
-}
-
-function onInsertRowAt2() {
-    var newItem = createNewRowData();
-    var res = gridOptions.api.updateRowData({add: [newItem], addIndex: 2});
     printResult(res);
 }
 

@@ -1,17 +1,12 @@
-<div style="margin-bottom: 5px;">
-        <div>
-            <button onclick="onAddRow()">Add Row</button>
-            <button onclick="onInsertRowAt2()">Insert Row @ 2</button>
-            <button onclick="updateItems()">Update First 5</button>
-            <button onclick="onRemoveSelected()">Remove Selected</button>
-            <button onclick="getRowData()">Get Row Data</button>
-        </div>
-        <div style="margin-top: 5px;">
-            <button onclick="clearData()">Clear Data</button>
-            <button onclick="addItems()">Add Items</button>
-            <button onclick="addItemsAtIndex()">Add Items @ 2</button>
-        </div>
+<div style="height: 100%; display: flex; flex-direction: column;">
+    <div style="margin-bottom: 4px;">
+        <button onclick="addItems()">Add Items</button>
+        <button onclick="updateItems()">Update Top 2</button>
+        <button onclick="onRemoveSelected()">Remove Selected</button>
+        <button onclick="getRowData()">Get Row Data</button>
+        <button onclick="clearData()">Clear Data</button>
     </div>
-<div style="height: calc(100% - 60px);">
-    <div id="myGrid" style="height: 100%;" class="ag-theme-alpine"></div>
+    <div style="flex-grow: 1;">
+        <div id="myGrid" style="height: 100%;" class="ag-theme-alpine"></div>
+    </div>
 </div>

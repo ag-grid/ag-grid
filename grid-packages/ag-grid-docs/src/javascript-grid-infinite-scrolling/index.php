@@ -405,21 +405,18 @@ cell renderers.</p>
 
 <ul class="content">
     <li>
-        <b>Inject 1 Row @ 2 / Inject 5 Row @ 2</b>: Inserts either one or five rows at location index 2.
+        <b>Insert Rows</b>: Inserts 5 rows at row index 2 from the server, then gets grid to refresh.
     </li>
     <li>
-        <b>Insert 1 Row @ 2 and Refresh</b>: Inserts five rows at location index 2 and then gets grid to refresh.
+        <b>Delete Rows</b>: Deletes 10 rows at row index 3 from the server, then gets the grid to refresh.
     </li>
     <li>
-        <b>Delete 10 Rows @ 3</b>: Deletes rows from the server, then gets the grid to refresh.
-    </li>
-    <li>
-        <b>Set Row Count to 200</b>: Sets the row count to 200. This adjusts the vertical scroll to
+        <b>Set Row Count</b>: Sets the row count to 200. This adjusts the vertical scroll to
         show 200 rows. If the scroll is positioned at the end, this results in the grid automatically readjusting
         as it seeks ahead for the next block of data.
     </li>
     <li>
-        <b>Print Rows and Max Found</b>: Debugging method, prints rowCount and maxFound to the console.
+        <b>Print Info</b>: Prints rowCount and maxFound to the console.
     </li>
     <li>
         <b>Jump to 500</b>: Positions the grid so that row 500 is displayed.
