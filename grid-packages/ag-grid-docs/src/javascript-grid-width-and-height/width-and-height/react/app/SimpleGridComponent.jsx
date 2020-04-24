@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import {AgGridReact} from '@ag-grid-community/react';
 
-import {AllCommunityModules} from "@ag-grid-community/all-modules";
+import { ClientSideRowModelModule } from "@ag-grid-community/client-side-row-model";
 
 import "@ag-grid-community/all-modules/dist/styles/ag-grid.css";
 import "@ag-grid-community/all-modules/dist/styles/ag-theme-alpine.css";
@@ -17,7 +17,7 @@ export default class extends Component {
                 width: '100%',
                 height: '100%'
             },
-            modules: AllCommunityModules
+            modules: [ClientSideRowModelModule]
         };
     }
 

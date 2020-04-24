@@ -65,9 +65,10 @@
   },
   {
     "title": "Charts",
+    "shortname": "charts",
     "module": "@ag-grid-enterprise/charts",
     "enterprise": true,
-    "exported": "ChartsModule"
+    "exported": "GridChartsModule"
   },
   {
     "title": "Clipboard",

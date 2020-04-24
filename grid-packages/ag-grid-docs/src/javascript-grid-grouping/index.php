@@ -56,7 +56,7 @@ SNIPPET
     by adding <code>hide: true</code> to their <code>colDef</code> as illustrated in the Multi Auto Column example.</li>
 </ul>
 
-<?= grid_example('Auto Column Group', 'auto-column-group', 'generated', ['enterprise' => true, 'exampleHeight' => 515, 'modules'=>['clientside', 'rowgrouping']]) ?>
+<?= grid_example('Auto Column Group', 'auto-column-group', 'generated', ['enterprise' => true, 'exampleHeight' => 515, 'modules'=>['clientside', 'rowgrouping', 'menu', 'columnpanel', 'setfilter']]) ?>
 
 <h2 id="multi-auto-column-group">Multi Auto Column Group</h2>
 
@@ -169,7 +169,7 @@ SNIPPET
     </li>
 </ul>
 
-<?= grid_example('Adding Values To Leaf Nodes', 'adding-values-to-leaf-nodes', 'generated', ['enterprise' => true, 'exampleHeight' => 515, 'modules'=>['clientside', 'rowgrouping']]) ?>
+<?= grid_example('Adding Values To Leaf Nodes', 'adding-values-to-leaf-nodes', 'generated', ['enterprise' => true, 'exampleHeight' => 515, 'modules'=>['clientside', 'rowgrouping', 'menu', 'columnpanel', 'setfilter']]) ?>
 
 <p>
     Adding leaf nodes data can also be achieved even if you provide your own group columns, this is illustrated
@@ -191,7 +191,7 @@ SNIPPET
     </li>
 </ul>
 
-<?= grid_example('Adding Values To Leaf Nodes for Groups', 'adding-values-to-leaf-nodes-for-groups', 'generated', ['enterprise' => true, 'exampleHeight' => 515, 'modules'=>['clientside', 'rowgrouping']]) ?>
+<?= grid_example('Adding Values To Leaf Nodes for Groups', 'adding-values-to-leaf-nodes-for-groups', 'generated', ['enterprise' => true, 'exampleHeight' => 515, 'modules'=>['clientside', 'rowgrouping', 'menu', 'columnpanel', 'setfilter']]) ?>
 
 <h2>Group Cell Rendering</h2>
 
@@ -299,7 +299,7 @@ SNIPPET
     the grouped column - eg for Country, it will filter on Country.
 </p>
 
-<?= grid_example('Hide Open Parents', 'hide-open-parents', 'generated', ['enterprise' => true, 'exampleHeight' => 515, 'modules'=>['clientside', 'rowgrouping']]) ?>
+<?= grid_example('Hide Open Parents', 'hide-open-parents', 'generated', ['enterprise' => true, 'exampleHeight' => 515, 'modules'=>['clientside', 'rowgrouping', 'menu', 'columnpanel', 'setfilter']]) ?>
 
 <h2 id="keepingColumnsVisible">Keeping Columns Visible</h2>
 
@@ -715,7 +715,7 @@ SNIPPET
     as such the state is not maintained. A group like 'Australia' is in both sets and is maintained.
 </p>
 
-<?= grid_example('Keeping Group State', 'keeping-group-state', 'generated', ['enterprise' => true, 'exampleHeight' => 540, 'modules'=>['clientside', 'rowgrouping']]) ?>
+<?= grid_example('Keeping Group State', 'keeping-group-state', 'generated', ['enterprise' => true, 'exampleHeight' => 540, 'modules'=>['clientside', 'rowgrouping', 'menu', 'columnpanel', 'setfilter']]) ?>
 
 <h2 id="removeSingleChildren">Removing Single Children</h2>
 
@@ -759,7 +759,7 @@ SNIPPET
     </ul>
 </p>
 
-<?= grid_example('Removing Single Children', 'remove-single-children', 'vanilla', ['enterprise' => true, 'exampleHeight' => 540, 'modules'=>['clientside', 'rowgrouping']]) ?>
+<?= grid_example('Removing Single Children', 'remove-single-children', 'vanilla', ['enterprise' => true, 'exampleHeight' => 540, 'modules'=>['clientside', 'rowgrouping', 'menu', 'columnpanel', 'setfilter']]) ?>
 
 <note>
     Filtering does not impact what groups get removed. For example if you have a group with two
