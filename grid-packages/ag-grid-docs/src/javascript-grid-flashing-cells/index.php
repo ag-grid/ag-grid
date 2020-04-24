@@ -57,7 +57,7 @@ include '../documentation-main/documentation_header.php';
     <p>
         Each time the call value is changed, the grid adds the CSS class <code>ag-cell-data-changed</code>
         for 500ms, and then then CSS class <code>ag-cell-data-changed-animation</code> for 1,000ms.
-        The grid provide themes use this to apply a background color (for the first 500ms) and then a fade
+        The grid provided themes use this to apply a background color (for the first 500ms) and then a fade
         out transition (for the remaining 1,000ms).
     </p>
 
@@ -76,7 +76,7 @@ include '../documentation-main/documentation_header.php';
         when it's due to a filter change, as filtering would impact many (possibly all) cells at once, thus not
         usefully bringing the users attention to any particular cell. If you do not like this exception and would
         like to flash changes even when it's the result of a filter change, then set
-        <code>gridOptions.allowShowChangeAfterFilter=true</code>.
+        grid property <code>allowShowChangeAfterFilter=true</code>.
     </p>
 
     <h2>Flashing Cells vs Custom Cell Renderers</h2>
