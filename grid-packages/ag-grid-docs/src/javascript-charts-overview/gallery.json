@@ -56,6 +56,9 @@
         },
         "Bubble With Negative Values": {
             "description": "The axes of scatter and bubble charts can be extended to plot positive and negative values."
+        },
+        "Bubble With Categories": {
+            "description": "The axes of scatter and bubble charts can show categories in addition to values."
         }
     },
     "Area": {

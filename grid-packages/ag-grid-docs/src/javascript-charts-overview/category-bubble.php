@@ -16,7 +16,7 @@ define('skipInPageNav', true);
     Scatter series can be used with category data in a single direction or both X and Y directions. The example below uses category data for both directions, where the bottom axis shows the time slot and the left axis the day of the week.
 </p>
 
-<?= chart_example('Bubble Chart with Category Data', 'category-bubble', 'generated', ['exampleHeight' => '60vh']) ?>
+<?= chart_example('Bubble Chart with Category Data', 'bubble-with-categories', 'generated', ['exampleHeight' => '60vh']) ?>
 
 <div class="chart-navigation">
     <a class="chart-navigation__left" href="./simple-scatter.php">❮&nbsp;&nbsp;Simple Scatter</a>
