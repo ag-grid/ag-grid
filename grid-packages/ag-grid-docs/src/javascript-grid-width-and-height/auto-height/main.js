@@ -105,7 +105,8 @@ var gridOptions = {
     animateRows: true,
     onGridReady: function() {
         document.querySelector('#currentRowCount').innerHTML = 5;
-    }
+    },
+    popupParent: document.body
 };
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function() {
