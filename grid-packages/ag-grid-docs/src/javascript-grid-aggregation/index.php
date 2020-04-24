@@ -65,6 +65,12 @@ function myCustomAggFunc(values) {
     return sum;
 }</snippet>
 
+<note>
+Using a function directly will not work with column state, like
+<a href="./javascript-grid-column-definitions/#saving-and-restoring-column-state">Saving and Restoring Column State</a>.
+If you require state management with custom aggregation, use <code>addAggFunc</code> to register it.
+</note>
+
     <h2>Restricting Functions</h2>
 
     <p>
