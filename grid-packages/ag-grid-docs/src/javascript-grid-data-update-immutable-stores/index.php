@@ -113,7 +113,7 @@ include '../documentation-main/documentation_header.php';
     <?= grid_example('Simple Immutable Store', 'simple-immutable-store', 'generated', ['enterprise' => true, 'exampleHeight' => 540]) ?>
 
 
-    <h3>Example: Immutable Store - Large Dataset</h3>
+    <h2>Example: Immutable Store - Large Dataset</h2>
 
     <p>
         Below is a dataset with over 11,000 rows with Row Grouping and Aggregation over three columns.

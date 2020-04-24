@@ -218,6 +218,55 @@ interface RowNodeTransaction {
             are always added to the top as they are ordered 'latest first'</li>
     </ul>
 
-<?= grid_example('Updating with Transaction and Groups', 'updating-with-transaction-and-groups', 'generated', ['enterprise' => true]) ?>
+    <?= grid_example('Updating with Transaction and Groups', 'updating-with-transaction-and-groups', 'generated', ['enterprise' => true]) ?>
+
+    <h2 id="big-data-small-transactions">Small Changes in Large Grouped Data</h2>
+
+    <p>
+        When grouping, the grid will group, sort, filter and aggregate each individual
+        group. When there is a lot of data and a lot of groups then this results
+        in a lot of computation required for all the data operations.
+    </p>
+    <p>
+        If using <a href="#transactions">transaction updates</a> then the grid does not execute all
+        the operations (sort, filter etc) on all the rows. Instead it only re-computes what was
+        impacted by a transaction.
+    </p>
+    <p>
+        For example, if items are grouped by city, and a value for each city is summed at the city
+        level, then if the value changes for one item, only the aggregation for the city it belongs
+        to needs be recomputed. All other groups where data did not change do not need to be recomputed.
+    </p>
+    <p>
+        Deciding what groups need to be operated on again is called Changed Path Selection. After
+        the grid applies all adds, removes and updates from a transaction, it works out what groups
+        got impacted and only executes the required operations on those groups.
+    </p>
+    <p>
+        Under the hood <a href="#delta-row-data">delta row data</a> uses transactions in the grid,
+        so Changed Path Selection applies also when using delta row update.
+    </p>
+
+    <p>
+        The example below demonstrates Changed Path Selection. The example is best view with the dev
+        console open so log messages can be observed. Note the following:
+    </p>
+
+    <ul>
+        <li>The 'Linux Distro' column is sorted with a custom comparator. The comparator records how many
+            times it is called.</li>
+        <li>The Value column is aggregated with a custom aggregator. The aggregator records
+            how many times it is called.</li>
+        <li>When the example first loads, all the data is set into the grid which results in 171 aggregation
+            operations (one for each group), 48,131 comparisons (for sorting all rows in each group) and 10,000 filter
+            passes (one for each row). The number of milliseconds to complete the operation is also printed (this
+            value will depend on your hardware).</li>
+        <li>Select a row and click 'Update', 'Delete' OR 'Duplicate' (duplicate results in an add operation).
+            Note in the console that the number of aggregations, compares and filters is drastically less.
+            The total time to execute is also drastically less</li>
+    </ul>
+
+<?= grid_example('Small Changes Big Data', 'small-changes-big-data', 'generated', ['enterprise' => true]) ?>
+
 
 <?php include '../documentation-main/documentation_footer.php';?>
