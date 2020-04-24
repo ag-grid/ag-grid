@@ -192,8 +192,8 @@ define('skipInPageNav', true);
         </a>
     </div>
     <div class="chart-gallery-item">
-        <a href="./category-bubble.php" class="chart-gallery-item__link">
-            <img class="chart-gallery-item__thumbnail" src="./thumbnails/category-bubble.png" /><br />
+        <a href="./bubble-with-categories.php" class="chart-gallery-item__link">
+            <img class="chart-gallery-item__thumbnail" src="./thumbnails/bubble-with-categories.png" /><br />
             <div class="chart-gallery-item__name">Bubble Chart with Category Data</div>
         </a>
     </div>

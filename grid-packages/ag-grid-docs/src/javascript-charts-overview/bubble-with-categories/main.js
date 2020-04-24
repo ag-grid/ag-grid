@@ -5,6 +5,9 @@ var options = {
         text: 'Punch Card of Github',
         fontSize: 18,
     },
+    subtitle: {
+        text: 'time distribution of commits'
+    },
     series: [
         {
             type: 'scatter',
@@ -20,7 +23,6 @@ var options = {
                 minSize: 0,
             },
             fill: '#cc5b58',
-            stroke: 'rgba(0,0,0,0)',
             fillOpacity: 0.85,
         }
     ],
