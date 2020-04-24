@@ -138,7 +138,7 @@ MenuItemDef {
         <li>The second menu item ('Always Disabled') has a tooltip.</li>
     </ul>
 
-    <?= grid_example('Context Menu Example', 'context-menu', 'generated', ['enterprise' => true]) ?>
+    <?= grid_example('Context Menu Example', 'context-menu', 'generated', ['enterprise' => true, 'modules' => ['clientside', 'menu', 'excel', 'range', 'clipboard', 'charts']]) ?>
 
     <h2 id="popup-parent">Popup Parent</h2>
 
@@ -155,7 +155,7 @@ MenuItemDef {
         </ul>
     </p>
 
-    <?= grid_example('Small Grid Problem', 'popup-parent-problem', 'generated', ['enterprise' => true, 'exampleHeight' => 400 ]) ?>
+    <?= grid_example('Small Grid Problem', 'popup-parent-problem', 'generated', ['enterprise' => true, 'exampleHeight' => 400, 'modules' => ['clientside', 'menu', 'excel', 'clipboard'] ]) ?>
 
     <p>
         The solution is to set the <code>popupParent</code> element which can be set in the following ways:
@@ -179,7 +179,7 @@ MenuItemDef {
         to the document body.
     </p>
 
-    <?= grid_example('Small Grid Solution', 'popup-parent-solution', 'generated', ['enterprise' => true, 'exampleHeight' => 400]) ?>
+    <?= grid_example('Small Grid Solution', 'popup-parent-solution', 'generated', ['enterprise' => true, 'exampleHeight' => 400, 'modules' => ['clientside', 'menu', 'excel', 'clipboard']]) ?>
 
 
 

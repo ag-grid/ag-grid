@@ -1,7 +1,7 @@
 import Vue from "vue";
 import { AgGridVue } from "@ag-grid-community/vue";
 
-import { AllCommunityModules } from "@ag-grid-community/all-modules";
+import { ClientSideRowModelModule } from "@ag-grid-community/client-side-row-model";
 import "@ag-grid-community/all-modules/dist/styles/ag-grid.css";
 import "@ag-grid-community/all-modules/dist/styles/ag-theme-alpine.css";
 
@@ -29,7 +29,7 @@ const VueExample = {
         return {
             columnDefs: null,
             rowData: null,
-            modules: AllCommunityModules,
+            modules: [ClientSideRowModelModule],
             height: '100%',
             width: '100%'
         };

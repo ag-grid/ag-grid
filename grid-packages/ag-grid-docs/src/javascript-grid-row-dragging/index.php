@@ -396,7 +396,7 @@ colDef.rowDragText = function(params, dragItemCount) {
             </li>
         </ul>
 
-    <?= grid_example('Dragging with Row Groups', 'dragging-with-row-groups', 'generated', ['enterprise' => true, 'exampleHeight' => 650, 'modules' => ['clientside', 'rowgrouping']]) ?>
+    <?= grid_example('Dragging with Row Groups', 'dragging-with-row-groups', 'generated', ['enterprise' => true, 'exampleHeight' => 650, 'modules' => ['clientside', 'rowgrouping', 'setfilter', 'menu', 'columnpanel']]) ?>
 
     <h2>Row Dragging & Tree Data</h2>
 

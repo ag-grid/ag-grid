@@ -1,7 +1,7 @@
 import { Component, ViewChild } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 
-import { AllCommunityModules } from "@ag-grid-community/all-modules";
+import { ClientSideRowModelModule } from "@ag-grid-community/client-side-row-model";
 
 import "@ag-grid-community/all-modules/dist/styles/ag-grid.css";
 import "@ag-grid-community/all-modules/dist/styles/ag-theme-alpine.css";
@@ -37,7 +37,7 @@ export class AppComponent {
         height: '100%',
         boxSizing: 'border-box'
     };
-    modules = AllCommunityModules;
+    modules = [ClientSideRowModelModule];
 
     @ViewChild('agGrid') agGrid;
 

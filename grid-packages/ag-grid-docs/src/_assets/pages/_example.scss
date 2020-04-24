@@ -27,14 +27,17 @@
     filter: invert(100%);
 }
 
-body:not(.dark) .good-score {
-    background-color: rgba(185, 246, 202, 0.4);
-}
-body:not(.dark) .bad-score {
-    background-color: rgba(255, 128, 171, 0.4);
-}
-
 body:not(.dark) {
+    .good-score {
+        &:not(.ag-cell-range-selected), &.ag-cell-focus:not(.ag-cell-inline-editing) {
+            background-color: rgba(185, 246, 202, 0.4);
+        }
+    }
+    .bad-score {
+        &:not(.ag-cell-range-selected), &.ag-cell-focus:not(.ag-cell-inline-editing) {
+            background-color: rgba(255, 128, 171, 0.4);
+        }
+    }
     @include scrollbars(15px, #c2c2c2, #fafafa, #7d7d7d, #e8e8e8);
 }
 

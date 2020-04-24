@@ -35,6 +35,10 @@
         transition: background-color 0.5s;
     }
 
+    .ag-row-last .ag-cell-inline-editing {
+        bottom: 0;
+    }
+
     .ag-cell-inline-editing {
         padding: ag-param(grid-size);
         height: ag-param(row-height) + ag-param(grid-size) * 3;
