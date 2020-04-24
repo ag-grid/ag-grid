@@ -101,7 +101,7 @@ function onBtDuplicate() {
         newItems.push(newItem);
     });
 
-    let gridApi = gridOptions.api;
+    var gridApi = gridOptions.api;
     timeOperation('Duplicate', function() {
         gridApi.updateRowData({add: newItems});
     });
@@ -122,7 +122,7 @@ function onBtUpdate() {
         updatedItems.push(newItem);
     });
 
-    let gridApi = gridOptions.api;
+    var gridApi = gridOptions.api;
     timeOperation('Update', function() {
         gridApi.updateRowData({update: updatedItems});
     });
@@ -137,7 +137,7 @@ function onBtDelete() {
         return;
     }
 
-    let gridApi = gridOptions.api;
+    var gridApi = gridOptions.api;
     timeOperation('Delete', function() {
         gridApi.updateRowData({remove: selectedRows});
     });
