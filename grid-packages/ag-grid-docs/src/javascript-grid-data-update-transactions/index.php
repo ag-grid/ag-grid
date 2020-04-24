@@ -21,23 +21,16 @@ include '../documentation-main/documentation_header.php';
         <li>Updates sort, filter, group, aggregation and pivot after changes applied.</li>
     </ul>
 
-    <p>
-        The only disadvantage of transactions is if you are applying a stream of updates to the grid
-        (eg multiple updates a second). For streaming updates, you can get the grid to apply transactions
-        in batches which is detailed in the section
-        <a href="../javascript-grid-data-update-high-frequency/">High Frequency</a>.
-    </p>
-
     <h2>Transaction Update API</h2>
 
     <p>
         A transaction object contains the details of what rows should be added, removed and updated.
-        The grid API <code>updateRowData(transaction)</code> takes this transaction object
+        The grid API <code>applyTransaction(transaction)</code> takes this transaction object
         and applies it to the grid's data.
     </p>
 
     <p>
-        The result of the <code>updateRowData(transaction)</code> is also a transaction, however it is a list
+        The result of the <code>applyTransaction(transaction)</code> is also a transaction, however it is a list
         of <a href="../javascript-grid-row-node/">Row Nodes</a> that got added, removed or updated. Both types
         of transactions look similar, the difference is the data type they contain.
     </p>
@@ -55,7 +48,7 @@ include '../documentation-main/documentation_header.php';
 
 <snippet>
 // Grid API method for accepting a transaction
-function updateRowData(rowDataTransaction: RowDataTransaction): RowNodeTransaction;
+function applyTransaction(rowDataTransaction: RowDataTransaction): RowNodeTransaction;
 
 // params for above
 interface RowDataTransaction {
@@ -102,7 +95,7 @@ interface RowNodeTransaction {
 
             <p>
                 Each row inside the grid has a unique ID. As explained in
-                <a href="../javascript-grid-row-node/##row-node-ids">Row Node ID's</a> the ID can be generated
+                <a href="../javascript-grid-row-node/#row-node-ids">Row Node ID's</a> the ID can be generated
                 by the grid or it can be provided by the application. If the ID is provided by the application,
                 then the grid uses the ID to identify rows for updating and deleting.
             </p>
@@ -149,7 +142,7 @@ interface RowNodeTransaction {
     <h2 id="example-updating-with-transaction">Example: Updating with Transaction</h2>
 
     <p>
-        The example uses the <code>updateRowData</code> method in different ways and prints
+        The example applies transactions in different ways and prints
         the results of the call to the console. The following can be noted:
     </p>
 

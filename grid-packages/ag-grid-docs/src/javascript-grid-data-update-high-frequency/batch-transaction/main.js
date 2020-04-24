@@ -128,7 +128,7 @@ var gridOptions = {
     }
 };
 
-function updateUsingTransaction() {
+function onNormalUpdate() {
     var startMillis = new Date().getTime();
 
     setMessage('Running Transaction');
@@ -146,7 +146,7 @@ function updateUsingTransaction() {
             // then create new current value
             newItem.current = Math.floor(Math.random()*100000) + 100;
             // do normal update. update is done before method returns
-            api.updateRowData({update: [newItem]});
+            api.applyTransaction({update: [newItem]});
         }, 0);
     }
 
@@ -165,10 +165,10 @@ function updateUsingTransaction() {
     }
 }
 
-function updateUsingBatch() {
+function onAsyncUpdate() {
     var startMillis = new Date().getTime();
 
-    setMessage('Running Batch');
+    setMessage('Running Async');
 
     var updatedCount = 0;
     var api = gridOptions.api;
@@ -184,10 +184,10 @@ function updateUsingBatch() {
             // then create new current value
             newItem.current = Math.floor(Math.random()*100000) + 100;
 
-            // update using batch update method. passing the callback is
+            // update using async method. passing the callback is
             // optional, we are doing it here so we know when the update
             // was processed by the grid.
-            api.batchUpdateRowData({update: [newItem]}, resultCallback);
+            api.applyTransactionAsync({update: [newItem]}, resultCallback);
         }, 0);
     }
 
@@ -198,7 +198,7 @@ function updateUsingBatch() {
             setTimeout(function() {
                 var endMillis = new Date().getTime();
                 var duration = endMillis - startMillis;
-                setMessage('Batch took ' + duration.toLocaleString() + 'ms');
+                setMessage('Async took ' + duration.toLocaleString() + 'ms');
             }, 0);
         }
     }

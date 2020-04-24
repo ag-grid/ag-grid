@@ -823,7 +823,7 @@ export class ClientSideRowModel implements IClientSideRowModel {
     public batchUpdateRowData(rowDataTransaction: RowDataTransaction, callback?: (res: RowNodeTransaction) => void): void {
         if (!this.rowDataTransactionBatch) {
             this.rowDataTransactionBatch = [];
-            const waitMillis = this.gridOptionsWrapper.getBatchUpdateWaitMillis();
+            const waitMillis = this.gridOptionsWrapper.getAsyncTransactionWaitMillis();
             window.setTimeout(() => {
                 this.executeBatchUpdateRowData();
                 this.rowDataTransactionBatch = null;

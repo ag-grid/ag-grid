@@ -1160,15 +1160,15 @@ export class GridApi {
         }
     }
 
-    public updateRowData(rowDataTransaction: RowDataTransaction): RowNodeTransaction {
+    public applyTransaction(rowDataTransaction: RowDataTransaction): RowNodeTransaction {
         let res: RowNodeTransaction = null;
         if (this.clientSideRowModel) {
             if (rowDataTransaction && rowDataTransaction.addIndex!=null) {
-                console.warn('ag-Grid: transaction.addIndex is deprecated. If you want precision control of adding data, use immutableData instead');
+                console.warn('ag-Grid: as of v22.1, transaction.addIndex is deprecated. If you want precision control of adding data, use immutableData instead');
             }
             res = this.clientSideRowModel.updateRowData(rowDataTransaction);
         } else if (this.infiniteRowModel) {
-            console.warn('ag-Grid: transactions for Infinite Row Model are deprecated. If you want to make updates to data in Infinite Row Models, then refresh the data.');
+            console.warn('ag-Grid: as of v22.1, transactions for Infinite Row Model are deprecated. If you want to make updates to data in Infinite Row Models, then refresh the data.');
             this.infiniteRowModel.updateRowData(rowDataTransaction);
         } else {
             console.error('ag-Grid: updateRowData() only works with ClientSideRowModel and InfiniteRowModel.');
@@ -1185,12 +1185,22 @@ export class GridApi {
         return res;
     }
 
-    public batchUpdateRowData(rowDataTransaction: RowDataTransaction, callback?: (res: RowNodeTransaction) => void): void {
+    public updateRowData(rowDataTransaction: RowDataTransaction): RowNodeTransaction {
+        console.warn('ag-Grid: as of v22.1, grid API updateRowData(transaction) is now called applyTransaction(transaction). updateRowData is deprecated and will be removed in a future major release.');
+        return this.applyTransaction(rowDataTransaction);
+    }
+
+    public applyTransactionAsync(rowDataTransaction: RowDataTransaction, callback?: (res: RowNodeTransaction) => void): void {
         if (!this.clientSideRowModel) {
-            console.error('ag-Grid: api.batchUpdateRowData() only works with ClientSideRowModel.');
+            console.error('ag-Grid: api.applyTransactionAsync() only works with ClientSideRowModel.');
             return;
         }
         this.clientSideRowModel.batchUpdateRowData(rowDataTransaction, callback);
+    }
+
+    public batchUpdateRowData(rowDataTransaction: RowDataTransaction, callback?: (res: RowNodeTransaction) => void): void {
+        console.warn('ag-Grid: as of v22.1, grid API batchUpdateRowData(transaction, callback) is now called applyTransactionAsync(transaction, callback). batchUpdateRowData is deprecated and will be removed in a future major release.');
+        this.applyTransactionAsync(rowDataTransaction, callback);
     }
 
     public insertItemsAtIndex(index: number, items: any[], skipRefresh = false): void {

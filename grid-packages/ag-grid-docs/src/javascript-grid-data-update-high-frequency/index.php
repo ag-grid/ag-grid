@@ -13,38 +13,39 @@ include '../documentation-main/documentation_header.php';
         Every time you update data in the grid, the grid will rework all aggregations, sorts and filters
         as well as having the browser update it's DOM. If you are streaming multiple
         updates into the grid this can be a bottleneck. High Frequency Updates are achieved in
-        the grid using Batch Transactions. Batch Transactions allow for efficient high frequency grid updates.
+        the grid using Async Transactions. Async Transactions allow for efficient high frequency grid updates.
     </p>
 
     <p>
-        When you call <code>batchUpdateRowData()</code> the grid will execute the update, along with any
-        other updates you subsequently provide using <code>batchUpdateRowData()</code>, after 50ms.
+        When you call <code>applyTransactionAsync()</code> the grid will execute the update, along with any
+        other updates you subsequently provide using <code>applyTransactionAsync()</code>, after 50ms.
+        This allows the grid to execute all the transactions in one batch which is more efficient.
     </p>
 
     <?= grid_example('Batch Transaction', 'batch-transaction', 'generated', ['enterprise' => true, 'exampleHeight' => 590]) ?>
 
     <p>
-        To help understand the interface into <code>updateRowData()</code> and <code>batchUpdateRowData()</code>,
+        To help understand the interface into <code>applyTransaction()</code> and <code>applyTransactionAsync()</code>,
         here are both method signatures side by side. The first executes immediately. The second executes
         sometime later using a callback for providing a result.
     </p>
 
-    <snippet>
+<snippet>
 // normal updateRowData takes a RowDataTransaction and returns a RowNodeTransaction
-updateRowData(rowDataTransaction: RowDataTransaction): RowNodeTransaction
+applyTransaction(rowDataTransaction: RowDataTransaction): RowNodeTransaction
 
 // batch takes a RowDataTransaction and the result is provided some time later via a callback
-batchUpdateRowData(rowDataTransaction: RowDataTransaction, callback?: (res: RowNodeTransaction)=>void): void
-    </snippet>
+applyTransactionAsync(rowDataTransaction: RowDataTransaction, callback?: (res: RowNodeTransaction)=>void): void
+</snippet>
 
     <p>
-        The default wait between executing batches if 50ms. This can be changed using the grid
-        property <code>batchUpdateWaitMillis</code>.
+        The default wait between executing batches is 50ms. This can be changed using the grid
+        property <code>asyncTransactionWaitMillis</code>.
     </p>
 
     <p>
-        Use batch updates if you have streaming data going into the grid and want don't want the grid's
-        rendering and recalculating to be a bottleneck.
+        Use Async Transactions if you have a high volume of streaming data going into the grid and
+        want don't want the grid's rendering and recalculating to be a bottleneck.
     </p>
 
     <note>

@@ -876,8 +876,8 @@ export class GridOptionsWrapper {
         return this.gridOptions.processDataFromClipboard;
     }
 
-    public getBatchUpdateWaitMillis(): number | undefined {
-        return _.exists(this.gridOptions.batchUpdateWaitMillis) ? this.gridOptions.batchUpdateWaitMillis : Constants.BATCH_WAIT_MILLIS;
+    public getAsyncTransactionWaitMillis(): number | undefined {
+        return _.exists(this.gridOptions.asyncTransactionWaitMillis) ? this.gridOptions.asyncTransactionWaitMillis : Constants.BATCH_WAIT_MILLIS;
     }
 
     public isSuppressMovableColumns() {
@@ -1631,6 +1631,14 @@ export class GridOptionsWrapper {
                 options.defaultColDef.floatingFilter = true;
             }
         }
+
+        if (options.batchUpdateWaitMillis != null) {
+            console.warn(`ag-grid: since version 20.1.x, batchUpdateWaitMillis has been renamed to asyncTransactionWaitMillis`);
+            if (this.gridOptions.asyncTransactionWaitMillis == null) {
+                this.gridOptions = options.batchUpdateWaitMillis;
+            }
+        }
+
     }
 
     private checkForViolations() {

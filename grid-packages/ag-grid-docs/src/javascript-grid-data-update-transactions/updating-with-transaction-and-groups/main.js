@@ -99,7 +99,7 @@ function getRowData() {
 
 function onAddRow(category) {
     var rowDataItem = createNewRowData(category);
-    gridOptions.api.updateRowData({add: [rowDataItem]});
+    gridOptions.api.applyTransaction({add: [rowDataItem]});
 }
 
 function onMoveToGroup(category) {
@@ -107,12 +107,12 @@ function onMoveToGroup(category) {
     selectedRowData.forEach(function(dataItem) {
         dataItem.category = category;
     });
-    gridOptions.api.updateRowData({update: selectedRowData});
+    gridOptions.api.applyTransaction({update: selectedRowData});
 }
 
 function onRemoveSelected() {
     var selectedRowData = gridOptions.api.getSelectedRows();
-    gridOptions.api.updateRowData({remove: selectedRowData});
+    gridOptions.api.applyTransaction({remove: selectedRowData});
 }
 
 // wait for the document to be loaded, otherwise

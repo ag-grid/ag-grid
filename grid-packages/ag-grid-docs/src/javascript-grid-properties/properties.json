@@ -935,8 +935,8 @@
             "default": false,
             "description": "Prevents the user from exporting the grid to Excel."
         },
-        "batchUpdateWaitMillis": {
-            "description": "How many milliseconds to wait before executing a <a href='../javascript-grid-data-update/#batch-transactions'>batch of update transactions</a>."
+        "asyncTransactionWaitMillis": {
+            "description": "How many milliseconds to wait before executing a <a href='../javascript-grid-data-update-high-frequency/'>batch of async transactions</a>."
         },
         "suppressPropertyNamesCheck": {
             "default": false,

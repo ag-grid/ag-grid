@@ -17,11 +17,11 @@
         "setRowData(rows)": {
             "description": "Set rows."
         },
-        "updateRowData(transaction)": {
+        "applyTransaction(transaction)": {
             "description": "Update row data. Pass a transaction object with lists for <code>add</code>, <code>remove</code> and <code>update</code>."
         },
-        "setDatasource(datasource)": {
-            "description": "Set new datasource. The grid will reset all paging and load the first page. If you want to reset the paging but keep the datasource, call this method with the same datasource."
+        "applyTransactionAsync(transaction, callback)": {
+            "description": "Same as applyTransaction except executes asynchronous for efficiency."
         },
         "setPinnedTopRowData(rowData)<br />setPinnedBottomRowData()<br />getPinnedTopRowCount()<br />getPinnedBottomRowCount()<br />getPinnedTopRow(index)<br />getPinnedBottomRow(index)": {
             "description": "Methods for getting and setting the data and getting the Row Nodes of the pinned rows."
@@ -31,6 +31,15 @@
         },
         "refreshClientSideRowModel(params)": {
             "description": "Gets the Client-side Row Model to refresh, executing the grouping, filtering and sorting again."
+        },
+        "setDatasource(datasource)": {
+            "description": "Set new datasource for Infinite Row Model."
+        },
+        "setServerSideDatasource(datasource)": {
+            "description": "Set new datasource for Server-side Row Model."
+        },
+        "setViewportDatasource(datasource)": {
+            "description": "Set new datasource for Viewport Row Model."
         }
     },
     "rowNodes": {

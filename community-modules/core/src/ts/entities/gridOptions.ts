@@ -230,6 +230,7 @@ export interface GridOptions {
     valueCache?: boolean;
     valueCacheNeverExpires?: boolean;
     batchUpdateWaitMillis?: number;
+    asyncTransactionWaitMillis?: number;
     suppressRowTransform?: boolean;
     suppressSetColumnStateEvents?: boolean;
     allowDragFromColumnsToolPanel?: boolean;

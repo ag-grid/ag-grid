@@ -51,7 +51,7 @@ function clearData() {
 
 function addItems() {
     var newItems = [createNewRowData(), createNewRowData(), createNewRowData()];
-    var res = gridOptions.api.updateRowData({add: newItems});
+    var res = gridOptions.api.applyTransaction({add: newItems});
     printResult(res);
 }
 
@@ -66,13 +66,13 @@ function updateItems() {
         data.price = Math.floor((Math.random()*20000) + 20000);
         itemsToUpdate.push(data);
     });
-    var res = gridOptions.api.updateRowData({update: itemsToUpdate});
+    var res = gridOptions.api.applyTransaction({update: itemsToUpdate});
     printResult(res);
 }
 
 function onRemoveSelected() {
     var selectedData = gridOptions.api.getSelectedRows();
-    var res = gridOptions.api.updateRowData({remove: selectedData});
+    var res = gridOptions.api.applyTransaction({remove: selectedData});
     printResult(res);
 }
 
