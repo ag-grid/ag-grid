@@ -249,7 +249,7 @@ export class GridCore extends Component {
     }
 
     // Valid values for position are bottom, middle and top
-    public ensureNodeVisible(comparator: any, position: string = 'top') {
+    public ensureNodeVisible(comparator: any, position: string | null = null) {
         if (this.doingVirtualPaging) {
             throw new Error('Cannot use ensureNodeVisible when doing virtual paging, as we cannot check rows that are not in memory');
         }

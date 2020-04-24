@@ -748,7 +748,7 @@ export class GridPanel extends Component {
     // eg if grid needs to scroll up, it scrolls until row is on top,
     //    if grid needs to scroll down, it scrolls until row is on bottom,
     //    if row is already in view, grid does not scroll
-    public ensureIndexVisible(index: any, position?: string) {
+    public ensureIndexVisible(index: any, position?: string | null) {
         // if for print or auto height, everything is always visible
         if (this.printLayout) { return; }
 
