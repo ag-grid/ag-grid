@@ -24,9 +24,9 @@ console.log('Generating gallery using gallery.json');
 
 const galleryConfig = getJson(options.galleryJsonFile);
 
-// generateGalleryPages(galleryConfig);
-// generateIndexPage(galleryConfig);
-// updateMenu(galleryConfig);
+generateGalleryPages(galleryConfig);
+generateIndexPage(galleryConfig);
+updateMenu(galleryConfig);
 generateThumbnails(galleryConfig);
 
 console.log('Finished!');
@@ -232,8 +232,7 @@ function generateThumbnails(galleryConfig) {
         return;
     }
 
-    // const shouldGenerateAllScreenshots = hasArgument('force-thumbnails');
-    const shouldGenerateAllScreenshots = true;
+    const shouldGenerateAllScreenshots = hasArgument('force-thumbnails');
 
     console.log(`Generating ${shouldGenerateAllScreenshots ? 'all' : 'changed'} thumbnails...`);
 
