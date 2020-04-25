@@ -242,9 +242,7 @@ export class AgGridAngular implements AfterViewInit {
     @Input() public paginationStartPage : any = undefined;
     @Input() public infiniteBlockSize : any = undefined;
     @Input() public batchUpdateWaitMillis : any = undefined;
-  @Input() public asyncTransactionWaitMillis : any = undefined;
-  @Input() public immutableData : any = undefined;
-  @Input() public immutableColumns : any = undefined;
+    @Input() public asyncTransactionWaitMillis : any = undefined;
     @Input() public blockLoadDebounceMillis : any = undefined;
     @Input() public keepDetailRowsCount : any = undefined;
     @Input() public undoRedoCellEditingLimit : any = undefined;
@@ -446,6 +444,8 @@ export class AgGridAngular implements AfterViewInit {
     @Input() public preventDefaultOnContextMenu : any = undefined;
     @Input() public undoRedoCellEditing : any = undefined;
     @Input() public allowDragFromColumnsToolPanel : any = undefined;
+    @Input() public immutableData : any = undefined;
+    @Input() public immutableColumns : any = undefined;
 
     @Output() public columnEverythingChanged: EventEmitter<any> = new EventEmitter<any>();
     @Output() public newColumnsLoaded: EventEmitter<any> = new EventEmitter<any>();
