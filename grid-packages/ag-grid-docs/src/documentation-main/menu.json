@@ -441,8 +441,8 @@
             ]
           },
           {
-            "title": "Immutable Stores",
-            "url": "javascript-grid-data-immutable-stores/",
+            "title": "Immutable Data",
+            "url": "javascript-grid-immutable-data/",
             "showInCollapsed": true
           },
           {

@@ -220,7 +220,7 @@ colDef = {
 
     <p>
         To <b>manually</b> run aggregation change detection to re-compute the aggregated values,
-        then call <a href="../javascript-grid-data-update/index.php#refreshClientSideRowModel">
+        then call <a href="../javascript-grid-client-side-model/#refreshing-the-client-side-model">
             api.refreshClientSideRowModel('aggregate')</a>.
     </p>
 
@@ -251,7 +251,7 @@ colDef = {
     <p>
         For this reason, if you want to update the sorting, filtering or group grouping
         after an update, you should listen for the event <code>cellValueChanged</code> and call
-        <a href="../javascript-grid-data-update/#bulk-updating">api.updateRowData(transaction)</a>
+        <a href="../javascript-grid-client-side-model/#refreshing-the-client-side-model">api.updateRowData(transaction)</a>
         with the rows that were updated.
     </p>
 
@@ -303,8 +303,8 @@ colDef = {
     </p>
 
     <p>
-        If you are updating many rows at the same time using an <a href="../javascript-grid-data-update/">update
-        transaction</a>, the grid will do all updates first, then recompute all aggregations against the combined
+        If you are updating many rows at the same time using an <a href="../javascript-grid-data-update-transactions/">Update
+        Transaction</a>, the grid will do all updates first, then recompute all aggregations against the combined
         impacted paths only.
     </p>
 

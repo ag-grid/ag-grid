@@ -699,8 +699,8 @@ SNIPPET
 
 <p>
     <note>
-        If using <a href="../javascript-grid-data-update/#transactions">transactions</a> or
-        <a href="../javascript-grid-data-update/#delta-row-data">delta updates</a>, then
+        If using <a href="../javascript-grid-data-update-transactions/">Transactions</a> or
+        <a href="../javascript-grid-immutable-data/">Immutable Data</a>, then
         you do not need to be concerned with keeping group state. When using transactions or delta updates,
         the group state is not changed.
     </note>

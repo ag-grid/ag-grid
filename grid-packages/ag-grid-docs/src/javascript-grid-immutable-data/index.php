@@ -6,7 +6,7 @@ $pageGroup = "feature";
 include '../documentation-main/documentation_header.php';
 ?>
 
-    <h1>Client-side Data - Immutable Stores</h1>
+    <h1>Client-side Data - Immutable Data</h1>
 
     <p class="lead">
         In some applications it's desirable to bind the grid's <code>rowData</code> property to an immutable
@@ -16,14 +16,14 @@ include '../documentation-main/documentation_header.php';
     <p>
         Under normal operation when new data is set into the grid (e.g. the <code>rowData</code> bound property
         is updated with new data)
-        the grid assumes the new data is a brand new set of data. It is common for some applications to desire this
+        the grid assumes the new data is a brand new set of data. It is common for applications to desire this
         behaviour. However
-        as explained in <a href="../javascript-grid-data-update/#bulk-updating">Setting Fresh Row Data</a>
+        as explained in <a href="../javascript-grid-data-update/#setting-fresh-row-data">Setting Fresh Row Data</a>
         this can be undesirable as grid state (selected rows etc) is lost.
     </p>
     <p>
         For most applications, using grid <a href="../javascript-grid-data-update-transactions/">Transaction Updates</a>
-        are what you should do if you want to make changes ot the data set rather than replace the data set. However
+        are what you should do if you want to make changes to the data set rather than replace it. However
         this is not in line with how applications based on immutable stores desire to work.
     </p>
     <p>
@@ -32,14 +32,14 @@ include '../documentation-main/documentation_header.php';
         <code>rowData</code> as updates to the current dataset rather than a brand new dataset.
         The grid has a mode of operation where it does exactly this.
         It works out what rows are added, removed and updated when new row data is provided by inspecting
-        the new row data. This modes is called Delta Row Data Mode and is enabled by setting the property
-        <code>deltaRowDataMode=true</code>.
+        the new row data. This mode is called Immutable Data Mode and is enabled by setting the property
+        <code>immutableData=true</code>.
     </p>
 
     <h2>How It Works</h2>
 
     <p>
-        When in Delta Row Mode Mode, the grid assumes it is fed with data from an immutable store
+        When in Immutable Data Mode, the grid assumes it is fed with data from an immutable store
         where the following is true about the data:
     </p>
     <ul>
@@ -48,7 +48,7 @@ include '../documentation-main/documentation_header.php';
     </ul>
 
     <p>
-        For the Delta Row Data Mode to work, you must be providing ID's for the row nodes as explained
+        For the Immutable Data Mode to work, you must be providing ID's for the row nodes as explained
         in <a href="../javascript-grid-row-node/#application-assigned-ids">Application Assigned ID's</a>.
     </p>
 
@@ -77,10 +77,11 @@ include '../documentation-main/documentation_header.php';
     <h2>Example: Immutable Store</h2>
 
     <p>
-        The example below shows the immutable store in action. The example keeps a store of data
+        The example below shows an immutable store in action. The example keeps a store of data
         locally. Each time the user does an update, the local store is replaced with a new store
         with the next data, and then <code>api.setRowData(store)</code> is called. This results
-        in the grid making delta changes because we have set <code>deltaRowDataMode=true</code>.
+        in the grid updating the current data rather than replacing because we have set
+        <code>immutableData=true</code>.
     </p>
 
     <p>
@@ -134,7 +135,7 @@ include '../documentation-main/documentation_header.php';
 
     <ul class="content">
         <li>
-            Property <code>deltaRowDataMode=true</code> to put the grid into Delta Row Data Mode.
+            Property <code>immutableData=true</code> to put the grid into Immutable Data Mode.
         </li>
         <li>
             Selecting the Update button updates a range of the data.
@@ -150,20 +151,20 @@ include '../documentation-main/documentation_header.php';
     <h2>Comparison to Transaction Updates</h2>
 
     <p>
-        When in Delta Row Data mode and the grid receives new data, it creates a
+        When in Immutable Data Mode and the grid receives new data, it creates a
         <a href="../javascript-grid-data-update-transactions/">Transaction Update</a> underneath the hood.
-        In other words once the grid ahs worked out what rows have been added, updated and removed, it
+        In other words once the grid has worked out what rows have been added, updated and removed, it
         then creates a transaction with these details and applies it. This means all the operational
-        benefits to Transaction Updates equally apply to Delta Row Mode.
+        benefits to Transaction Updates equally apply to Immutable Data Mode.
     </p>
 
     <p>
-        There are however some difference with Delta Row Data Mode and Transaction Updates which are as follows:
+        There are however some difference with Immutable Data Mode and Transaction Updates which are as follows:
     </p>
 
     <ul>
         <li>
-            When doing delta updates, the grid stores the data
+            When in Immutable Data Mode, the grid stores the data
             in the same order as the data was provided. For example if you provide a new list with data added
             in the middle of the list, the grid will also put the data into the middle of the list rather than
             just appending to the end. This decides the order of data when there is no grid sort applied. If
@@ -171,10 +172,10 @@ include '../documentation-main/documentation_header.php';
             boost by setting <code>suppressMaintainUnsortedOrder=true</code>.
         </li>
         <li>
-            There is no equivalent of <a href="../javascript-grid-data-update-high-frequency/">Batch Transactions</a>
+            There is no equivalent of <a href="../javascript-grid-data-update-high-frequency/">Async Transactions</a>
             when it comes to Delta Row Data Mode. If you want a grid that manages high frequency data changes, it is
-            advised to turn Delta Row Data Mode off and use
-            <a href="../javascript-grid-data-update-high-frequency/">Batch Transactions</a> instead.
+            advised to not use Immutable Data Mode and use
+            <a href="../javascript-grid-data-update-high-frequency/">Async Transactions</a> instead.
         </li>
     </ul>
 

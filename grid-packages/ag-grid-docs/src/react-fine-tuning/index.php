@@ -106,7 +106,7 @@ somePointLater() {
     <table class="theme-table reference ng-scope">
         <tbody>
         <tr>
-            <th>DeltaRowDataMode</th>
+            <th>ImmutableData</th>
             <th>Default</th>
         </tr>
         <tr>

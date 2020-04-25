@@ -42,7 +42,7 @@ const gridOptions = {
         resizable: true
     },
     enableRangeSelection: true,
-    deltaRowDataMode: true,
+    immutableData: true,
     // implement this so that we can do selection
     getRowNodeId: data => data.code,
 
@@ -56,7 +56,7 @@ const gridOptions = {
             params.api.setRowData(rowData);
 
             // now listen for updates
-            // we're using deltaRowDataMode this time, so although we're setting the entire
+            // we're using immutableData this time, so although we're setting the entire
             // data set here, the grid will only re-render changed rows, improving performance
             updates$.subscribe(newRowData => params.api.setRowData(newRowData));
         });

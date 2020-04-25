@@ -59,7 +59,8 @@ export class PropertyKeys {
         'gridAutoHeight', 'suppressRowTransform', 'suppressClipboardPaste', 'suppressLastEmptyLineOnPaste', 'serverSideSortingAlwaysResets', 'reactNext',
         'suppressSetColumnStateEvents', 'enableCharts', 'deltaColumnMode', 'suppressMaintainUnsortedOrder', 'enableCellTextSelection',
         'suppressBrowserResizeObserver', 'suppressMaxRenderedRowRestriction', 'excludeChildrenWhenTreeDataFiltering', 'tooltipMouseTrack',
-        'keepDetailRows', 'paginateChildRows', 'preventDefaultOnContextMenu', 'undoRedoCellEditing', 'allowDragFromColumnsToolPanel'
+        'keepDetailRows', 'paginateChildRows', 'preventDefaultOnContextMenu', 'undoRedoCellEditing', 'allowDragFromColumnsToolPanel',
+        'immutableData', 'immutableColumns'
     ];
 
     /** You do not need to include event callbacks in this list, as they are generated automatically. */

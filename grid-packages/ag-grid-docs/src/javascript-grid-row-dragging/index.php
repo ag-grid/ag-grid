@@ -333,8 +333,8 @@ colDef.rowDragText = function(params, dragItemCount) {
             </li>
             <li>
                 To update the data the example uses an
-                <a href="../javascript-grid-data-update/#delta-row-data">Immutable Data Store</a>
-                and sets <code>deltaRowDataMode=true</code>. The application is free to use any
+                <a href="../javascript-grid-immutable-data/">Immutable Data Store</a>
+                and sets <code>immutableData=true</code>. The application is free to use any
                 update mechanism it wants - see <a href="../javascript-grid-data-update/">Updating Data</a>
                 for different options.
             </li>

@@ -141,7 +141,7 @@ var gridOptions = {
     },
     rowSelection: 'multiple',
     groupSelectsChildren: true,
-    deltaRowDataMode: true,
+    immutableData: true,
     rowData: globalRowData,
     animateRows: true,
     enableRangeSelection: true,

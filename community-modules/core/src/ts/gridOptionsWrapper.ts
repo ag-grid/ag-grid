@@ -661,8 +661,8 @@ export class GridOptionsWrapper {
         return this.gridOptions.columnApi;
     }
 
-    public isDeltaRowDataMode() {
-        return isTrue(this.gridOptions.deltaRowDataMode);
+    public isImmutableData() {
+        return isTrue(this.gridOptions.immutableData);
     }
 
     public isDeltaColumnMode() {
@@ -1633,9 +1633,16 @@ export class GridOptionsWrapper {
         }
 
         if (options.batchUpdateWaitMillis != null) {
-            console.warn(`ag-grid: since version 20.1.x, batchUpdateWaitMillis has been renamed to asyncTransactionWaitMillis`);
+            console.warn(`ag-grid: since version 20.1.x, batchUpdateWaitMillis is deprecated / renamed, use the identical property asyncTransactionWaitMillis instead`);
             if (this.gridOptions.asyncTransactionWaitMillis == null) {
-                this.gridOptions = options.batchUpdateWaitMillis;
+                this.gridOptions.asyncTransactionWaitMillis = options.batchUpdateWaitMillis;
+            }
+        }
+
+        if (options.deltaRowDataMode != null) {
+            console.warn(`ag-grid: since version 20.1.x, deltaRowDataMode is deprecated / renamed, use the identical property immutableData instead`);
+            if (this.gridOptions.immutableData == null) {
+                this.gridOptions.immutableData = options.deltaRowDataMode;
             }
         }
 

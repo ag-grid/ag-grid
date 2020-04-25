@@ -78,8 +78,8 @@ SNIPPET
 <h2>Transaction Updates</h2>
 
 <p>
-    Filter values are refreshed when data is updated using <a href="../javascript-grid-data-update/#transactions">Transaction Updates</a>
-    and <a href="../javascript-grid-data-update/#delta-row-data">Delta Row Mode</a>.
+    Filter values are refreshed when data is updated using <a href="../javascript-grid-data-update-transactions/">Transaction Updates</a>
+    and <a href="../javascript-grid-immutable-data/">Immutable Data</a>.
 </p>
 
 <p>

@@ -49,7 +49,7 @@ applyTransactionAsync(rowDataTransaction: RowDataTransaction, callback?: (res: R
     </p>
 
     <note>
-        You might ask, wouldn't using a virtual DOM like React remove the necessity of Batch Transactions?
+        You might ask, wouldn't using a virtual DOM like React remove the necessity of Async Transactions?
         The answer is no. A virtual DOM would only batch the DOM related updates, it would not help with
         the batching of aggregations, sorts and filters.
     </note>

@@ -268,7 +268,7 @@ export class GridApi {
 
     public setRowData(rowData: any[]) {
         if (this.gridOptionsWrapper.isRowModelDefault()) {
-            if (this.gridOptionsWrapper.isDeltaRowDataMode()) {
+            if (this.gridOptionsWrapper.isImmutableData()) {
                 const [transaction, orderIdMap] = this.immutableService.createTransactionForRowData(rowData);
                 this.clientSideRowModel.updateRowData(transaction, orderIdMap);
                 // need to force updating of full width rows - note this wouldn't be necessary the full width cell comp listened

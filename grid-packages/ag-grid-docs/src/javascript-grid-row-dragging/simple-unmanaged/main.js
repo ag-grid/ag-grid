@@ -486,7 +486,7 @@ var gridOptions = {
         filter: true
     },
     // this tells the grid we are doing updates when setting new data
-    deltaRowDataMode: true,
+    immutableData: true,
     animateRows: true,
     onRowDragMove: onRowDragMove,
     getRowNodeId: getRowNodeId,

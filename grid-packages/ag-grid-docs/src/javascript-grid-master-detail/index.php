@@ -625,7 +625,7 @@ var masterGridOptions = {
 <?= videoLink("https://www.youtube.com/watch?v=8OeJn75or2w&t=1118s", "18:38") ?>
 
 <p>
-    By default when updating data using <a href="../javascript-grid-data-update/#transactions">transactions</a> then
+    By default when updating data using <a href="../javascript-grid-data-update-transactions/">Transactions</a> then
     detail rows / grids get refreshed when there is new data for the master row they belong to. Other rows (where no
     data change accrued) do not get updated.
 </p>

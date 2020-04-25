@@ -45,7 +45,7 @@ class FileBrowser extends Component {
           autoGroupColumnDef={this.autoGroupColumnDef}
           onGridReady={params => params.api.sizeColumnsToFit()}
           getContextMenuItems={this.getContextMenuItems}
-          deltaRowDataMode={true}
+          immutableData={true}
           modules={this.modules}
           getRowNodeId={data => data.id}
           onRowDragEnd={this.onRowDragEnd}

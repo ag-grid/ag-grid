@@ -100,8 +100,12 @@ export interface GridOptions {
     suppressMoveWhenRowDragging?: boolean;
     enableMultiRowDragging?: boolean;
     ensureDomOrder?: boolean;
+    /** @deprecated */
     deltaRowDataMode?: boolean;
+    /** @deprecated */
     deltaColumnMode?: boolean;
+    immutableData?: boolean;
+    immutableColumns?: boolean;
     scrollbarWidth?: number;
     /** @deprecated */
     toolPanelSuppressRowGroups?: boolean;

@@ -154,7 +154,7 @@ var gridOptions = {
         sortable: true,
         resizable: true,
     },
-    deltaRowDataMode: true,
+    immutableData: true,
     statusBar: {
         items: [
             { component: 'agAggregationComponent' }

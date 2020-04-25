@@ -94,7 +94,7 @@ include '../documentation-main/documentation_header.php';
 
     <p>
         For fast changing data, consider using
-        <a href="/javascript-grid-data-update/#batch-transactions">Batch Update Transactions</a>
+        <a href="../javascript-grid-data-update-high-frequency/">Batch Update Transactions</a>
         which allows the grid to take very large amounts of updates without bringing the browser
         to a crawl. This is also demonstrated in the blog
         <a href="https://medium.com/ag-grid/how-to-test-for-the-best-html5-grid-for-streaming-updates-53545bb9256a">

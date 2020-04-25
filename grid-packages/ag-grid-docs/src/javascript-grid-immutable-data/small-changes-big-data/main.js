@@ -182,7 +182,7 @@ var gridOptions = {
         resizable: true
     },
     getRowNodeId: getRowNodeId,
-    deltaRowDataMode: true,
+    immutableData: true,
     rowSelection: 'multiple',
     groupSelectsChildren: true,
     animateRows: true,

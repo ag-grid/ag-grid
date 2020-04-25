@@ -284,7 +284,7 @@ include('../includes/mediaHeader.php');
         <p>
             Users of ag-Grid might wonder if there are any tricks used to get the grid to work
             this fast. There are no tricks. The only item to take note of is the use of
-            <a href="../javascript-grid-data-update/#batch-transactions">Batch Transactions</a>
+            <a href="../javascript-grid-data-update-high-frequency/">Async Transactions</a>
             with the grid API <code>batchUpdateRowData()</code>.
         </p>
 

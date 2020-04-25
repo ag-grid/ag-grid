@@ -56,7 +56,7 @@ updates$.subscribe((updates) =&gt; {
     <ul class="content">
         <li>A unique key per row - we do this by making use of the <code>getRowNodeId</code> callback</li>
         <li>A manner of letting ag-Grid know that we're supplying the full data again, but with altered data within - for this we make use of the <a
-                href="../javascript-grid-data-update">deltaRowDataMode</a> method</li>
+                href="../javascript-grid-immutable-data/">Immutable Data</a> method</li>
     </ul>
 
     <snippet>
@@ -65,7 +65,7 @@ const gridOptions = {
         // the code is unique, so perfect for the id
         return data.code;
     },
-    deltaRowDataMode:true
+            immutableData:true
     ...rest of the gridOptions</snippet>
 
     <p>With these configuration we can supply the updates to ag-Grid and the grid will only re-render the changes rows, resulting

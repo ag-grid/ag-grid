@@ -299,11 +299,11 @@ export default connect(
 
             <h3>The Secret Sauce</h3>
 
-            <p>By making use of the new <code>deltaRowDataMode</code> in <a href="https://www.ag-grid.com">ag-Grid</a>,
+            <p>By making use of the new <code>immutableData</code> in <a href="https://www.ag-grid.com">ag-Grid</a>,
                 we can ensure that we only re-render the data
                 that has actually changed.</p>
 
-            <p>To do this all we need to do is specify that we want to make use of <code>deltaRowDataMode</code>, and
+            <p>To do this all we need to do is specify that we want to make use of <code>immutableData</code>, and
                 provide a unique key to <a href="https://www.ag-grid.com">ag-Grid</a> so that it can determine what has
                 changed, if anything. We do this by providing
                 the <code>getRowNodeId</code> callback. In our case, each row can be uniquely identified by it's <code>symbol</code>:
@@ -315,7 +315,7 @@ export default connect(
                     columnDefs={this.state.columnDefs}
                     rowData={this.props.rowData}
 
-                    deltaRowDataMode
+                    immutableData
                     getRowNodeId={(data) =&gt; data.symbol}
 
                     // events

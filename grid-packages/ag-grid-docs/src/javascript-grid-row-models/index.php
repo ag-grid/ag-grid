@@ -373,14 +373,14 @@ include '../documentation-main/documentation_header.php';
             <td><span class="green-tick">&#10004;</span></td>
         </tr>
         <tr class="item-row">
-            <td><a href="../javascript-grid-data-update/#transactions">Update via Transaction</a></td>
+            <td><a href="../javascript-grid-data-update-transactions/">Update via Transaction</a></td>
             <td><span class="green-tick">&#10004;</span></td>
             <td><span class="green-tick">&#10004; (Add Only)</span></td>
             <td><span class="green-tick">&#10005;</span></td>
             <td><span class="green-tick">&#10005;</span></td>
         </tr>
         <tr class="item-row">
-            <td><a href="../javascript-grid-data-update/#batch-transactions">Update via Batch</a></td>
+            <td><a href="../javascript-grid-data-update-high-frequency/">Update via Async Transactions</a></td>
             <td><span class="green-tick">&#10004;</span></td>
             <td><span class="green-tick">&#10005;</span></td>
             <td><span class="green-tick">&#10005;</span></td>

@@ -133,7 +133,7 @@ include '../documentation-main/documentation_header.php';
             </p>
             <p>
                 If you are frequently updating rows (eg 5 or more updates a second) then consider moving
-                to High Frequency (achieved with Batch Transactions) instead.
+                to High Frequency (achieved with Async Transactions) instead.
             </p>
             <p>
                 See <a href="../javascript-grid-data-update-transactions/">Transaction Updates</a>
@@ -144,14 +144,14 @@ include '../documentation-main/documentation_header.php';
             <h3>High Frequency</h3>
 
             <p>
-                High Frequency (achieved with Batch Transactions) is a mechanism of applying many transactions
+                High Frequency (achieved with Async Transactions) is a mechanism of applying many transactions
                 over a small space of time and have the grid apply all the transactions in batches.
                 The high frequency / batch method is for when you need the fastest possible way to update many continuous
                 updates, such as providing a stream of updates to the grid. This is done using
                 the API <code>batchUpdateRowData(transaction)</code>.
             </p>
             <p>
-                Use Batch Transactions for doing add, remove or update operations that are frequent - e.g.
+                Use Async Transactions for doing add, remove or update operations that are frequent - e.g.
                 managing streaming updates into the grid of tens, hundreds or thousands of updates a second.
             </p>
             <p>

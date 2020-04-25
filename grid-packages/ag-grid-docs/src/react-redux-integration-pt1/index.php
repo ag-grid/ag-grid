@@ -283,9 +283,9 @@ render() {
                 groupDefaultExpanded={-1}
                 // provide context menu callback
                 getContextMenuItems={this.getContextMenuItems}
-                // enable delta updates
-                deltaRowDataMode={true}
-                // return id required for delta updates
+                // enable immutable data
+                immutableData={true}
+                // return id required for immutable data
                 getRowNodeId={data => data.id}>
             &lt;/AgGridReact>
         &lt;/div>
@@ -372,20 +372,20 @@ getContextMenuItems = (params) => {
         For more details see our documentation on <a href="../javascript-grid-context-menu/">Context Menu</a>.
     </p>
 
-    <h2 id="delta-updates">Delta Row Updates</h2>
+    <h2 id="immutable-data">Immutable Data</h2>
     <p>
         One consequence of using Redux is that when part of the state is updated in the store, the entire state is replaced
-        with a new version. Delta Row Updates is designed to work specifically with immutable stores such as Redux to ensure
-        only the rows that have been updated will be re-rendered inside the grid.
+        with a new version. The grid has a "Immutable Data" mode that is designed to work specifically with immutable
+        stores such as Redux to ensure only the rows that have been updated will be re-rendered inside the grid.
     </p>
     <p>
-        The File View enables this feature using: <code>deltaRowDataMode={true}</code>, along with a required row id
+        The File View enables this feature using: <code>immutableData={true}</code>, along with a required row id
         using: <code>getRowNodeId={data => data.id}</code>.
     </p>
 
     <p>
-        This feature can lead to noticeable performance improvements in applications which contain alot of row data.
-        For more details see our documentation on <a href="../javascript-grid-data-update/#delta-row-data">Delta Row Updates</a>.
+        This feature can lead to noticeable performance improvements in applications which contain a lot of row data.
+        For more details see our documentation on <a href="../javascript-grid-immutable-data/">Immutable Data</a>.
     </p>
 
     <h2>Demo - Redux File View</h2>
@@ -417,7 +417,7 @@ getContextMenuItems = (params) => {
 
     <ul>
         <li>Row Grouping</li>
-        <li>Delta Row Updates</li>
+        <li>Immutable Data</li>
         <li>Custom Context Menu</li>
     </ul>
 

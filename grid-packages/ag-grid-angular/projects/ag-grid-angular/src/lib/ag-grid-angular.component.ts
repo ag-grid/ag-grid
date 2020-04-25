@@ -242,7 +242,9 @@ export class AgGridAngular implements AfterViewInit {
     @Input() public paginationStartPage : any = undefined;
     @Input() public infiniteBlockSize : any = undefined;
     @Input() public batchUpdateWaitMillis : any = undefined;
-    @Input() public asyncTransactionWaitMillis : any = undefined;
+  @Input() public asyncTransactionWaitMillis : any = undefined;
+  @Input() public immutableData : any = undefined;
+  @Input() public immutableColumns : any = undefined;
     @Input() public blockLoadDebounceMillis : any = undefined;
     @Input() public keepDetailRowsCount : any = undefined;
     @Input() public undoRedoCellEditingLimit : any = undefined;

@@ -112,7 +112,7 @@
             "description": "Set to <code>true</code> to suppress sorting of un-sorted data to match original row data.",
             "more": {
                 "name": "Big Data Small Transactions",
-                "url": "../javascript-grid-data-update/#big-data-small-transactions"
+                "url": "../javascript-grid-immutable-data/"
             }
         },
         "excludeChildrenWhenTreeDataFiltering": {
@@ -205,7 +205,7 @@
             "description": "Set to <code>true</code> to have cells flash after data changes.",
             "more": {
                 "name": "Flashing Data Changes",
-                "url": "../javascript-grid-data-update/#flashing"
+                "url": "../javascript-grid-flashing-cells/"
             }
         },
         "allowShowChangeAfterFilter": {
@@ -213,7 +213,7 @@
             "description": "Set to <code>true</code> to have cells flash after data changes even when the change is due to filtering.",
             "more": {
                 "name": "Flashing Data Changes",
-                "url": "../javascript-grid-data-update/#flashing"
+                "url": "../javascript-grid-flashing-cells/"
             }
         },
         "stopEditingWhenGridLosesFocus": {
@@ -497,9 +497,8 @@
         "rowData": {
             "description": "(<a href='../javascript-grid-client-side-model/'>Client-side Row Model</a> only) Set the data to be displayed as rows in the grid."
         },
-        "deltaRowDataMode": {
-            "default": false,
-            "description": "(<a href='../javascript-grid-client-side-model/'>Client-side Row Model</a> only) Enables <a href='../javascript-grid-data-update/#delta-row-data'>delta row data mode</a>, for compatibility with immutable stores."
+        "immutableData": {
+            "description": "(<a href='../javascript-grid-client-side-model/'>Client-side Row Model</a> only) Enables <a href='../javascript-grid-immutable-data/'>Immutable Data</a> mode, for compatibility with immutable stores."
         },
         "pinnedTopRowData": {
             "description": "Data to be displayed as <a href='../javascript-grid-row-pinning/'>Pinned Top Rows</a> in the grid."
