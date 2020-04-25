@@ -92,8 +92,4 @@ SNIPPET
 <?= grid_example('Set Filter API', 'set-filter-api', 'generated', ['enterprise' => true, 'exampleHeight' => 570]) ?>
 
 
-<h2>Set Filter Parameters</h2>
-
-<?php createDocumentationFromFile('setFilter.json', 'filterParams') ?>
-
 <?php include '../documentation-main/documentation_footer.php';?>

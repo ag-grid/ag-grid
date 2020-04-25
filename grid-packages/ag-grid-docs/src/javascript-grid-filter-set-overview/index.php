@@ -86,10 +86,14 @@ SNIPPET
 
 <?= grid_example('Enabling Set Filters', 'enabling-set-filters', 'generated', ['enterprise' => true, 'exampleHeight' => 565, 'modules' => ['clientside', 'setfilter', 'menu', 'columnpanel']]) ?>
 
+<h2>Set Filter Parameters</h2>
+
+<?php createDocumentationFromFile('setFilter.json', 'filterParams') ?>
+
 <h2>Next Up</h2>
 
 <p>
-    To learn more about how set filter values are provided and formatted continue to: <a href="../javascript-grid-filter-set-filter-values/">Filter Values</a>.
+    To learn how set filter values are supplied and formatted continue to: <a href="../javascript-grid-filter-set-filter-values/">Filter List</a>.
 </p>
 
 
