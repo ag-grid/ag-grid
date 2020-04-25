@@ -630,36 +630,59 @@
           {
             "title": "Column Filters",
             "url": "javascript-grid-filtering/",
-            "showInCollapsed": true,
+            "showInCollapsed": false,
             "items": [
               {
                 "title": "Provided Column Filters",
-                "url": "javascript-grid-filter-provided/",
+                "url": "javascript-grid-filter-provided/"
+              },
+              {
+                "title": "Simple Column Filters",
+                "url": "javascript-grid-filter-provided-simple/",
                 "items": [
                   {
-                    "title": "Simple Column Filters",
-                    "url": "javascript-grid-filter-provided-simple/",
-                    "items": [
-                      {
-                        "title": "Text Filter",
-                        "url": "javascript-grid-filter-text/",
-                        "showInCollapsed": true
-                      },
-                      {
-                        "title": "Number Filter",
-                        "url": "javascript-grid-filter-number/",
-                        "showInCollapsed": true
-                      },
-                      {
-                        "title": "Date Filter",
-                        "url": "javascript-grid-filter-date/",
-                        "showInCollapsed": true
-                      }
-                    ]
+                    "title": "Text Filter",
+                    "url": "javascript-grid-filter-text/",
+                    "showInCollapsed": true
                   },
                   {
-                    "title": "Set Filter",
-                    "url": "javascript-grid-filter-set/",
+                    "title": "Number Filter",
+                    "url": "javascript-grid-filter-number/",
+                    "showInCollapsed": true
+                  },
+                  {
+                    "title": "Date Filter",
+                    "url": "javascript-grid-filter-date/",
+                    "showInCollapsed": true
+                  }
+                ]
+              },
+              {
+                "title": "Set Filter",
+                "url": "javascript-grid-filter-set/",
+                "enterprise": true,
+                "items": [
+                  {
+                    "title": "Filter List",
+                    "url": "javascript-grid-filter-set-filter-list/",
+                    "enterprise": true,
+                    "showInCollapsed": true
+                  },
+                  {
+                    "title": "Data Updates",
+                    "url": "javascript-grid-filter-set-data-updates/",
+                    "enterprise": true,
+                    "showInCollapsed": true
+                  },
+                  {
+                    "title": "Mini Filter",
+                    "url": "javascript-grid-filter-set-mini-filter/",
+                    "enterprise": true,
+                    "showInCollapsed": true
+                  },
+                  {
+                    "title": "API",
+                    "url": "javascript-grid-filter-set-api/",
                     "enterprise": true,
                     "showInCollapsed": true
                   }

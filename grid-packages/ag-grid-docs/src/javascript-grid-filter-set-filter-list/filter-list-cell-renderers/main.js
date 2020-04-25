@@ -49,10 +49,10 @@ var gridOptions = {
 };
 
 function countryCellRenderer(params) {
-    //get flags from here: http://www.freeflagicons.com/
     if (params.value === "" || params.value === undefined || params.value === null) {
         return '';
     } else {
+        // source https://flagpedia.net/
         var flag = '<img class="flag" border="0" width="15" height="10" src="https://flags.fmcdn.net/data/flags/mini/' + COUNTRY_CODES[params.value] + '.png">';
         return flag + ' ' + params.value;
     }

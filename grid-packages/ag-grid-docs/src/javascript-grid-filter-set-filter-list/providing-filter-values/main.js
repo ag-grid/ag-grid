@@ -15,7 +15,12 @@ var gridOptions = {
             field: 'days',
             filter: 'agSetColumnFilter',
             filterParams: {
-                comparator: daysSortComparator
+                comparator: function(a, b) {
+                    var aIndex = listOfDays.indexOf(a);
+                    var bIndex = listOfDays.indexOf(b);
+                    if (aIndex === bIndex) return 0;
+                    return aIndex > bIndex ? 1 : -1;
+                }
             }
         },
         {
@@ -24,7 +29,7 @@ var gridOptions = {
             filter: 'agSetColumnFilter',
             filterParams: {
                 values: listOfDays,
-                comparator: daysSortComparator
+                suppressSorting: true // use provided order
             }
         },
     ],
@@ -48,14 +53,6 @@ function getRowData() {
     }
 
     return rows;
-}
-
-
-function daysSortComparator(a, b) {
-    var aIndex = listOfDays.indexOf(a);
-    var bIndex = listOfDays.indexOf(b);
-    if (aIndex === bIndex) return 0;
-    return aIndex > bIndex ? 1 : -1;
 }
 
 function onFirstDataRendered(params) {
