@@ -14,7 +14,7 @@ include '../documentation-main/documentation_header.php';
 </p>
 
 
-<h2>Sorting</h2>
+<h2>Filter List Sorting</h2>
 
 <p>
     Values inside a set filter will be sorted by default, where the values are converted to a string value and sorted in
@@ -55,7 +55,7 @@ SNIPPET
 <?= grid_example('Sorting Set Filter Values', 'sorting-set-filter-values', 'generated', ['enterprise' => true, 'exampleHeight' => 720, 'modules' => ['clientside', 'setfilter', 'menu', 'columnpanel', 'filterpanel']]) ?>
 
 
-<h2>Supplying Values</h2>
+<h2>Supplying Filter Values</h2>
 
 <p>
     The Set Filter will obtain the filter values from the row data by default. However it is also possible to provide
