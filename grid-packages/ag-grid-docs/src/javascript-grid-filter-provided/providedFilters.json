@@ -13,7 +13,7 @@
             "description": "Set to <code>true</code> to immediately close the filter popup when a filter is applied."
         },
         "debounceMs": {
-            "description": "By default the <a href='../javascript-grid-filter-text'>Text</a> and <a href='../javascript-grid-filter-number'>Number</a> filters will debounce by 500ms. This is because these filters have text field inputs, so time is given to the user to type items in. The <a href='../javascript-grid-filter-set'>Set</a> and <a href='../javascript-grid-filter-date'>Date</a> will execute immediately (no debounce). To override these defaults, set <code>debounceMs</code> to the number of milliseconds to  debounce by."
+            "description": "By default the <a href='../javascript-grid-filter-text'>Text</a> and <a href='../javascript-grid-filter-number'>Number</a> filters will debounce by 500ms. This is because these filters have text field inputs, so time is given to the user to type items in. The <a href='../javascript-grid-filter-set-overview/'>Set</a> and <a href='../javascript-grid-filter-date'>Date</a> will execute immediately (no debounce). To override these defaults, set <code>debounceMs</code> to the number of milliseconds to  debounce by."
         },
         "newRowsAction": {
             "default": "clear",

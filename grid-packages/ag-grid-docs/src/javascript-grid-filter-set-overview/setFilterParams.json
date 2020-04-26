@@ -1,8 +1,5 @@
 {
     "filterParams": {
-        "applyButton<br />clearButton<br />resetButton<br />closeOnApply<br />debounceMs<br />newRowsAction": {
-            "description": "These properties are common to all provided column filters. <p>See: <a href='../javascript-grid-filter-provided/#providedFilterParams'>Provided Filter Params</a> for more details</p>"
-        },
         "cellHeight": {
             "description": "The height of the filter list cell in pixels."
         },
@@ -61,56 +58,6 @@
                 "name": "Supplying Filter Values",
                 "url": "../javascript-grid-filter-set-filter-list/#supplying-filter-values"
             }
-        }
-    },
-    "api": {
-        "setMiniFilter(newMiniFilter)": {
-            "description": "Sets the filter at the top of the filter (the 'quick search' in the popup)."
-        },
-        "getMiniFilter()": {
-            "description": "Gets the mini filter text."
-        },
-        "selectEverything()": {
-            "description": "Selects everything."
-        },
-        "selectNothing()": {
-            "description": "Clears the selection."
-        },
-        "isFilterActive()": {
-            "description": "Returns <code>true</code> if anything except 'everything selected'."
-        },
-        "unselectValue(value)": {
-            "description": "Unselects a value."
-        },
-        "selectValue(value)": {
-            "description": "Selects a value."
-        },
-        "isValueSelected(value)": {
-            "description": "Returns <code>true</code> if a value is selected."
-        },
-        "isEverythingSelected()": {
-            "description": "Returns <code>true</code> if everything selected (inverse of <code>isFilterActive()</code>)."
-        },
-        "isNothingSelected()": {
-            "description": "Returns <code>true</code> if nothing is selected."
-        },
-        "getUniqueValueCount()": {
-            "description": "Returns number of unique values. Useful for iterating with <code>getUniqueValue(index)</code>."
-        },
-        "getUniqueValue(index)": {
-            "description": "Returns the unique value at the given <code>index</code>."
-        },
-        "setFilterValues(arrayOfStringOptions)": {
-            "description": "Useful if you want to change the available options on the fly."
-        },
-        "resetFilterValues()": {
-            "description": "Useful if you want to rebuild the filter options based on the underlying data."
-        },
-        "setLoading(loading)": {
-            "description": "Useful if you want to show/hide the loading overlay in the set filter."
-        },
-        "applyModel()": {
-            "description": "Applies the model from the UI."
         }
     }
 }

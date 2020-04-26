@@ -9,8 +9,8 @@ include '../documentation-main/documentation_header.php';
 <h1 class="heading-enterprise">Set Filter - Filter List</h1>
 
 <p class="lead">
-    This section describes how filter list values can be managed through custom sorting and formatting. Directly
-    supplying filter values to the Set Filter is also discussed.
+    This section describes how filter list values can be managed through custom sorting and formatting. Supplying filter
+    values directly to the set filter is also discussed.
 </p>
 
 
@@ -22,7 +22,7 @@ include '../documentation-main/documentation_header.php';
 </p>
 
 <p>
-    When a different sort order is required, a comparator can be supplied to the <code>filterParams</code>, as shown below:
+    When a different sort order is required, a comparator can be supplied to the set filter as shown below:
 </p>
 
 <?= createSnippet(<<<SNIPPET
@@ -43,14 +43,14 @@ SNIPPET
     , 'ts') ?>
 
 <p>
-    The comparator for a set filter is only provided the values as the first two parameters, whereas the comparator for
-    the <code>colDef</code> is also provided the row data as additional parameters. This is because when sorting rows,
+    The comparator used by the set filter is only provided the values in the first two parameters, whereas the comparator
+    for the <code>colDef</code> is also provided the row data as additional parameters. This is because when sorting rows,
     row data exists. For example, take 100 rows split across the color values <code>[white, black]</code>.
     The <code>colDef</code> comparator will be sorting 100 rows, however the filter will be only sorting two values.
 </p>
 <p>
-    If you are providing a comparator that depends on the row data, and you are using set filter, be sure to provide the
-    set filter with an alternative comparator that doesn't depend on the row data.
+    If you are providing a comparator that depends on the row data, and you are using the set filter, be sure to provide
+    the set filter with an alternative comparator that doesn't depend on the row data.
 </p>
 
 <p>
@@ -58,18 +58,23 @@ SNIPPET
 </p>
 
 <ul class="content">
-    <li>The <b>Age (No Comparator)</b> set filter values are sorted using the default string order; <code>1,10,100,...</code></li>
-    <li>The <b>Age (With Comparator)</b> set filter has a custom comparator supplied in the <code>filterParams</code>
-        that sorts the ages by value; <code>1,2,3,...</code></li>
+    <li>
+        The <b>Age (No Comparator)</b> set filter values are sorted using the default string order;
+        <code>1,10,100,...</code>
+    </li>
+    <li>
+        The <b>Age (With Comparator)</b> set filter has a custom comparator supplied in the <code>filterParams</code>
+        that sorts the ages by value; <code>1,2,3,...</code>
+    </li>
 </ul>
 
-<?= grid_example('Sorting Filter Lists', 'sorting-set-filter-values', 'generated', ['enterprise' => true, 'exampleHeight' => 720, 'modules' => ['clientside', 'setfilter', 'menu', 'columnpanel', 'filterpanel']]) ?>
+<?= grid_example('Sorting Filter Lists', 'sorting-set-filter-values', 'generated', ['enterprise' => true, 'exampleHeight' => 720, 'modules' => ['clientside', 'setfilter', 'menu', 'filterpanel']]) ?>
 
 
 <h2>Formatting Values</h2>
 
 <p>
-    This section covers different ways to format the displayed filter list values in the Set Filter.
+    This section covers different ways to format the displayed filter list values in the set filter.
 </p>
 
 <note>
@@ -83,7 +88,7 @@ SNIPPET
 </p>
 
 <p>
-    The following snippet shows how to provide a value formatter to the Set Filter:
+    The following snippet shows how to provide a value formatter to the set filter:
 </p>
 
 <?= createSnippet(<<<SNIPPET
@@ -110,12 +115,12 @@ SNIPPET
 </p>
 
 <p>
-    The following example shows how set filter values are formatted using a Value Formatter. Note the following:
+    The following example shows how set filter values are formatted using a value formatter. Note the following:
 </p>
 
 <ul class="content">
     <li>
-        <b>No Value Formatter</b> does not a have value formatter supplied to the set filter. The column is supplied a
+        <b>No Value Formatter</b> does not have a value formatter supplied to the set filter. The column is supplied a
         value formatter through: <code>colDef.valueFormatter = countryValueFormatter</code>.
     </li>
     <li>
@@ -127,7 +132,8 @@ SNIPPET
     </li>
 </ul>
 
-<?= grid_example('Filter List Value Formatters', 'filter-list-value-formatter', 'generated', ['enterprise' => true, 'exampleHeight' => 745, 'modules' => ['clientside', 'setfilter', 'menu', 'columnpanel']]) ?>
+<?= grid_example('Filter List Value Formatters', 'filter-list-value-formatter', 'generated', ['enterprise' => true, 'exampleHeight' => 745, 'modules' => ['clientside', 'setfilter', 'menu', 'filterpanel']]) ?>
+
 
 <h3>Cell Renderer</h3>
 
@@ -137,12 +143,12 @@ SNIPPET
 </p>
 
 <p>
-    The same cell renderer can used to format the grid cells and filter values, or different renderers can be supplied.
-    Note that the cell renderer will be supplied additional info when used to format cells.
+    The same cell renderer can used to format the grid cells and filter values, or different renderers can be supplied
+    to each. Note that the cell renderer will be supplied additional info when used to format cells.
 </p>
 
 <p>
-    The following snippet shows how cell renderer's are configured:
+    The following snippet shows how the cell renderer's are configured:
 </p>
 
 <?= createSnippet(<<<SNIPPET
@@ -151,13 +157,11 @@ SNIPPET
     field: 'a',         
     cellRenderer: myCellRenderer //formats cell values    
     filter: 'agSetColumnFilter',
-    filterParams: {
-        // 'myCellRenderer' is not inherited from the column by default!
+    filterParams: {        
         cellRenderer: myCellRenderer //formats filter values        
     }
 }
 
-// custom cell renderer function
 function myCellRenderer(params)  {
     return '<span style="font-weight: bold">' + params.value + '</span>';        
 }
@@ -170,12 +174,12 @@ SNIPPET
 </note>
 
 <p>
-    The following example shows how set filter values are formatted using a Cell Renderer. Note the following:
+    The following example shows how set filter values are formatted using a cell renderer. Note the following:
 </p>
 
 <ul class="content">
     <li>
-        <b>No Cell Renderer</b> does not have a cell renderer supplied to the Set Filter. The column has a cell renderer
+        <b>No Cell Renderer</b> does not have a cell renderer supplied to the set filter. The column has a cell renderer
         supplied to the column using: <code>colDef.cellRenderer = countryCellRenderer</code>.
     </li>
     <li>
@@ -187,7 +191,7 @@ SNIPPET
     </li>
 </ul>
 
-<?= grid_example('Filter List Cell Renderers', 'filter-list-cell-renderer', 'generated', ['enterprise' => true, 'exampleHeight' => 745, 'modules' => ['clientside', 'setfilter', 'menu', 'columnpanel']]) ?>
+<?= grid_example('Filter List Cell Renderers', 'filter-list-cell-renderer', 'generated', ['enterprise' => true, 'exampleHeight' => 745, 'modules' => ['clientside', 'setfilter', 'menu', 'filterpanel']]) ?>
 
 <h2>Complex Objects</h2>
 
@@ -244,13 +248,13 @@ SNIPPET
     </li>
 </ul>
 
-<?= grid_example('Complex Objects', 'complex-objects', 'generated', ['enterprise' => true, 'exampleHeight' => 490, 'modules' => ['clientside', 'setfilter', 'menu', 'columnpanel']]) ?>
+<?= grid_example('Complex Objects', 'complex-objects', 'generated', ['enterprise' => true, 'exampleHeight' => 505, 'modules' => ['clientside', 'setfilter', 'menu', 'filterpanel']]) ?>
 
 
 <h2>Supplying Filter Values</h2>
 
 <p>
-    The Set Filter will obtain the filter values from the row data by default. However it is also possible to provide
+    The set filter will obtain the filter values from the row data by default. However it is also possible to provide
     values, either synchronously or asynchronously, to the filter list.
 </p>
 
@@ -288,11 +292,11 @@ SNIPPET
 <ul class="content">
     <li>
         The <b>Days (Values Not Provided)</b> set filter obtains values from the row data to populate the filter list and as
-        <code>'Saturday'</code> and <code>'Sunday'</code> are not present in the data they don't appear in the filter list.
+        <code>'Saturday'</code> and <code>'Sunday'</code> are not present in the data they do not appear in the filter list.
     </li>
     <li>
         As the <b>Days (Values Not Provided)</b> filter values come from the row data they are sorted using a
-        <a href="../javascript-grid-filter-set/#sorting-filter-values">Custom Sort Comparator</a> to ensure the days are
+        <a href="../javascript-grid-filter-set-filter-list#sorting-filter-lists">Custom Sort Comparator</a> to ensure the days are
         ordered according to the week day.
     </li>
     <li>
@@ -305,7 +309,7 @@ SNIPPET
     </li>
 </ul>
 
-<?= grid_example('Providing Filter Values', 'providing-filter-values', 'generated', ['enterprise' => true, 'exampleHeight' => 720, 'modules' => ['clientside', 'setfilter', 'menu', 'columnpanel', 'filterpanel']]) ?>
+<?= grid_example('Providing Filter Values', 'providing-filter-values', 'generated', ['enterprise' => true, 'exampleHeight' => 720, 'modules' => ['clientside', 'setfilter', 'menu', 'filterpanel']]) ?>
 
 <h3>Asynchronous Values</h3>
 
@@ -379,7 +383,7 @@ SNIPPET
 <h2>Filter Value Tooltips</h2>
 
 <p>
-    Set Filter values that are too long to be displayed are truncated by default with ellipses. To allow users to see
+    Set filter values that are too long to be displayed are truncated by default with ellipses. To allow users to see
     the full filter value, tooltips can be enabled as shown below:
 </p>
 
@@ -396,8 +400,8 @@ SNIPPET
     , 'ts') ?>
 
 <p>
-    The Default Tooltip Component will be used unless a
-    <a href="../javascript-grid-tooltip-component/">Custom Tooltip Components</a> is provided.
+    The default tooltip component will be used unless a
+    <a href="../javascript-grid-tooltip-component/">Custom Tooltip Component</a> is provided.
 </p>
 
 <p>

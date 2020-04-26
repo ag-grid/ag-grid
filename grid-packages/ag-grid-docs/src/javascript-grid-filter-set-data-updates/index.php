@@ -10,13 +10,13 @@ include '../documentation-main/documentation_header.php';
 
 <p class="lead">
     This section describes how updating data through Cell Editing, Transactions Updates and Setting New Data, affects
-    Set Filter values.
+    set filter values.
 </p>
 
 <h2>Cell Editing</h2>
 
 <p>
-    Filter values will be refreshed when data is updated through <a href="../javascript-grid-cell-editing">Cell Editing</a>.
+    Filter values will be refreshed when data is updated through <a href="../javascript-grid-cell-editing/">Cell Editing</a>.
 </p>
 
 <p>
@@ -29,7 +29,7 @@ include '../documentation-main/documentation_header.php';
 </ul>
 
 <p>
-    Cell Editing does not re-execute filtering by default, so the row will not be filtered out even though the value in
+    Cell editing does not re-execute filtering by default, so the row will not be filtered out even though the value in
     the cell is not selected in the filter. This default behaviour mimics how Excel works.
 </p>
 
@@ -49,14 +49,14 @@ SNIPPET
     , 'ts') ?>
 
 <p>
-    The following example demonstrates cell editing with the Set Filter. Try the following:
+    The following example demonstrates cell editing with the set filter. Try the following:
 </p>
 
 <p><b>Without selecting any filter values:</b></p>
 <ul class="content">
     <li>
-        Change (Cell Edit) a <code>'B'</code> cell value to <code>'X'</code> and note it gets added to the filter list and is
-        <b>selected</b>.
+        Change (Cell Edit) a <code>'B'</code> cell value to <code>'X'</code> and note it gets added to the filter list
+        and is <b>selected</b>.
     </li>
 </ul>
 
@@ -79,11 +79,13 @@ SNIPPET
 <h2>Transaction Updates</h2>
 
 <p>
-    Filter values are refreshed when data is updated using <a href="../javascript-grid-data-update-transactions/">Transaction Updates</a>.
+    Filter values are refreshed when data is updated using
+    <a href="../javascript-grid-data-update-transactions/">Transaction Updates</a>.
 </p>
 
 <note>
-    This section also applies to <a href="../javascript-grid-immutable-data/">Immutable Data</a> as it uses Transaction Updates under the hood.
+    This section also applies to <a href="../javascript-grid-immutable-data/">Immutable Data</a> as it uses Transaction
+    Updates under the hood.
 </note>
 
 <p>
@@ -96,7 +98,8 @@ SNIPPET
 </ul>
 
 <p>
-    Unlike <a href="../javascript-grid-filter-set/#cell-editing">Cell Editing</a>, transaction updates will execute filtering in the grid.
+    Unlike <a href="../javascript-grid-filter-set-data-updates#cell-editing">Cell Editing</a>, transaction updates will execute
+    filtering in the grid.
 </p>
 
 <p>
@@ -173,7 +176,7 @@ SNIPPET
         <code>api.setRowData(newData)</code> which add new data with extra rows to the grid.
     </li>
     <li>
-        Notice 'B' remains deselected after new data is supplied to the grid as the Set Filter has set
+        Notice 'B' remains deselected after new data is supplied to the grid as the set filter has set
         <code>newRowsAction='keep'</code> in the filter params.
     </li>
     <li>

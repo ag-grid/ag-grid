@@ -17,9 +17,8 @@ include '../documentation-main/documentation_header.php';
 </div>
 
 <p>
-    Searching in the Mini Filter narrows the values displayed in the filter list but won't perform any filtering in the
-    grid. Hitting the <b>Enter</b> key will select all displayed values in the filter list and perform filtering
-    in the grid.
+    Searching in the mini filter narrows the values displayed in the filter list but won't perform any filtering in the grid.
+    Hitting the <b>Enter</b> key will select all displayed values in the filter list and perform filtering in the grid.
 </p>
 
 <h2>Custom Mini Filter Searches</h2>
@@ -31,7 +30,7 @@ include '../documentation-main/documentation_header.php';
 
 <p>
     As with the <a href="../javascript-grid-filter-text/#text-formatter">Text Filter</a> it is possible to supply a
-    Text Formatter to the Set Filter which formats the text before applying the mini filter compare logic. The snippet
+    text formatter to the set filter which formats the text before applying the mini filter compare logic. The snippet
     below shows how this can be configured:
 </p>
 
@@ -67,7 +66,7 @@ SNIPPET
 
 <ul class="content">
     <li>
-        The <b>Athlete</b> Set Filter is supplied a Text Formatter via <code>filterParams.textFormatter</code> to
+        The <b>Athlete</b> Set filter is supplied a text formatter via <code>filterParams.textFormatter</code> to
         ignore accents.
     </li>
     <li>

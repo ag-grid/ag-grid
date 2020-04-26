@@ -9,8 +9,7 @@ include '../documentation-main/documentation_header.php';
 <h1 class="heading-enterprise">Set Filter - API</h1>
 
 <p class="lead">
-    The Set Filter takes inspiration from Excel's AutoFilter and allows filtering on sets of data. It is built on top of
-    the shared functionality that is common across all <a href="../javascript-grid-filter-provided/">Provided Filters</a>.
+    This section describes how the set filter can be controlled programmatically using API calls.
 </p>
 
 <h2>Set Filter Model</h2>
@@ -45,10 +44,11 @@ SNIPPET
 <h2>Set Filter API</h2>
 
 <p>
-    The set filter has the following API (in addition to the <a href="../javascript-grid-filter-provided/#providedFilterApi">API</a> common to all provided filters):
+    The set filter has the following API (in addition to the
+    <a href="../javascript-grid-filter-provided/#providedFilterApi">API</a> common to all provided filters):
 </p>
 
-<?php createDocumentationFromFile('setFilter.json', 'api') ?>
+<?php createDocumentationFromFile('setFilterApi.json', 'api') ?>
 
 <p>
     It is important to note that when updating the set filter through the API, it is up to the developer to call
@@ -61,8 +61,8 @@ SNIPPET
     of whether the Apply button is active or not).
 </p>
 <p>
-    If no call to <code>gridOptions.api.onFilterChanged()</code> is provided the grid will still show the data relevant to the filter
-    before it was updated through the API.
+    If no call to <code>gridOptions.api.onFilterChanged()</code> is provided the grid will still show the data relevant
+    to the filter before it was updated through the API.
 </p>
 
 <p>This code demonstrates a correct update:</p>
