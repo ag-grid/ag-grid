@@ -1,21 +1,21 @@
 var gridOptions = {
     columnDefs: [
         {
-            headerName: 'Shared Formatter',
+            headerName: 'No Value Formatter',
             field: 'country',
             valueFormatter: countryValueFormatter,
             filter: 'agSetColumnFilter',
             filterParams: {
-                // formatted using column formatter
+                // no value formatter!
             }
         },
         {
-            headerName: 'Separate Formatters',
+            headerName: 'With Value Formatter',
             field: 'country',
             valueFormatter: countryValueFormatter,
             filter: 'agSetColumnFilter',
             filterParams: {
-                valueFormatter: countryFilterValueFormatter,
+                valueFormatter: countryValueFormatter,
             },
         }
     ],
@@ -32,11 +32,6 @@ var gridOptions = {
 function countryValueFormatter(params) {
     var value = params.value;
     return value + ' (' + COUNTRY_CODES[value].toUpperCase() + ')';
-}
-
-function countryFilterValueFormatter(params) {
-    var value = params.value;
-    return '(' + COUNTRY_CODES[value].toUpperCase() + ') ' + value;
 }
 
 function printFilterModel() {

@@ -1,21 +1,21 @@
 var gridOptions = {
     columnDefs: [
         {
-            headerName: 'Cell Renderer',
+            headerName: 'No Cell Renderer',
             field: 'country',
             cellRenderer: countryCellRenderer,
             filter: 'agSetColumnFilter',
             filterParams: {
-                // set filter does not inherit column cell renderer
+                // no cell renderer!
             }
         },
         {
-            headerName: 'Separate Cell Renderers',
+            headerName: 'With Cell Renderers',
             field: 'country',
             cellRenderer: countryCellRenderer,
             filter: 'agSetColumnFilter',
             filterParams: {
-                cellRenderer: countryFilterCellRenderer,
+                cellRenderer: countryCellRenderer,
             },
         }
     ],
@@ -34,13 +34,6 @@ function countryCellRenderer(params) {
     var url = 'https://flags.fmcdn.net/data/flags/mini/' + COUNTRY_CODES[params.value] + '.png';
     var flagImage = '<img class="flag" border="0" width="15" height="10" src="' + url + '">';
     return flagImage + ' ' + params.value;
-}
-
-function countryFilterCellRenderer(params) {
-    if (!params.value) return '';
-    var url = 'https://flags.fmcdn.net/data/flags/mini/' + COUNTRY_CODES[params.value] + '.png';
-    var flagImage = '<img class="flag" border="0" width="15" height="10" src="' + url + '">';
-    return params.value + ' ' + flagImage;
 }
 
 function printFilterModel() {
