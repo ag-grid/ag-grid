@@ -9,12 +9,12 @@ include '../documentation-main/documentation_header.php';
 <h1 class="heading-enterprise">Set Filter - Filter List</h1>
 
 <p class="lead">
-    This section describes how filter values are provided by default along with methods for supplying values directly to
-    the Set Filter.
+    This section describes how filter list values can be managed through custom sorting and formatting. Directly
+    supplying filter values to the Set Filter is also discussed.
 </p>
 
 
-<h2>Filter List Sorting</h2>
+<h2>Sorting Filter Lists</h2>
 
 <p>
     Values inside a set filter will be sorted by default, where the values are converted to a string value and sorted in
@@ -52,7 +52,151 @@ SNIPPET
         that sorts the ages by value; <code>1,2,3,...</code></li>
 </ul>
 
-<?= grid_example('Sorting Set Filter Values', 'sorting-set-filter-values', 'generated', ['enterprise' => true, 'exampleHeight' => 720, 'modules' => ['clientside', 'setfilter', 'menu', 'columnpanel', 'filterpanel']]) ?>
+<?= grid_example('Sorting Filter Lists', 'sorting-set-filter-values', 'generated', ['enterprise' => true, 'exampleHeight' => 720, 'modules' => ['clientside', 'setfilter', 'menu', 'columnpanel', 'filterpanel']]) ?>
+
+
+<h2>Formatting Values</h2>
+
+<p>
+    This section covers different ways to format the displayed filter list values in the Set Filter. Formatting values
+    does not change the underlying value or filter model.
+</p>
+
+<h3>Value Formatter</h3>
+<p>
+    A <a href="../javascript-grid-value-formatters/">Value Formatter</a> is a good choice when the string value displayed in
+    the filter list needs to be modified, for example; adding country codes in parentheses after country name.
+</p>
+
+<p>
+    Typically the same formatter will be used in the grid cells can be provided to the Set Filter, however it is also
+    possible use separate formatters. If a value formatter is supplied to a column the Set Filter will inherit it
+    by default. Formatters are supplied to the Set Filter as shown below:
+</p>
+
+<?= createSnippet(<<<SNIPPET
+// ColDef
+{
+    field: 'a',         
+    valueFormatter: myColumnValueFormatter, //formats cell values
+    filter: 'agSetColumnFilter',
+    filterParams: {                
+        // 'myColumnValueFormatter' is inherited from column by default!          
+        valueFormatter: myFilterValueFormatter, //formats filter values            
+    }
+}
+
+function myColumnValueFormatter(params)  {
+    return '(' + params.value + ')';        
+}
+
+function myFilterValueFormatter(params)  {
+    return '[' + params.value + ']';        
+}
+
+SNIPPET
+    , 'ts') ?>
+
+
+<p>
+    The following example shows how set filter values are formatted using a Value Formatter. Note the following:
+</p>
+
+<ul class="content">
+    <li>
+        <b>Shared Formatter</b> uses the same Value Formatter to format the cells and the set filter values. It
+        is supplied to the set filter using: <code>colDef.valueFormatter = countryValueFormatter</code>.
+    </li>
+    <li>
+        <b>Separate Formatters</b> uses different Value Formatter's to format the cells and the set filter values. It
+        is supplied to the set filter using: <code>filterParams.valueFormatter = countryFilterValueFormatter</code>.
+    </li>
+    <li>
+        Click <b>Print Filter Model</b> and note the logged filter model (dev console) has not been modified.
+    </li>
+</ul>
+
+<?= grid_example('Filter List Value Formatters', 'filter-list-value-formatter', 'generated', ['enterprise' => true, 'exampleHeight' => 745, 'modules' => ['clientside', 'setfilter', 'menu', 'columnpanel']]) ?>
+
+<h3>Cell Renderer</h3>
+
+<p>
+    A <a href="../javascript-grid-cell-rendering/">Cell Renderer</a> is a good choice when the value displayed requires
+    markup. For instance if a country flag image is to be shown alongside country names.
+</p>
+
+<p>
+    The same Cell Renderer can used to format the grid cells and filter values, or different renderers can be supplied,
+    however the set filter will not inherit the cell renderer from the column by default. Note that the Cell Renderer
+    will be supplied additional info when used to format cells.
+</p>
+
+<p>
+    The following snippet shows how Cell Renderer's are configured:
+</p>
+
+<?= createSnippet(<<<SNIPPET
+// ColDef
+{
+    field: 'a',         
+    cellRenderer: myCellRenderer //formats cell values    
+    filter: 'agSetColumnFilter',
+    filterParams: {
+        // 'myCellRenderer' is not inherited from the column by default!
+        cellRenderer: myCellRenderer //formats filter values        
+    }
+}
+
+// custom cell renderer function
+function myCellRenderer(params)  {
+    return '<span style="font-weight: bold">' + params.value + '</span>';        
+}
+SNIPPET
+    , 'ts') ?>
+
+<note>
+    A <a href="../javascript-grid-cell-rendering-components/#cell-renderer-component">Cell Renderer Component</a>
+    can also be supplied to <code>filterParams.cellRenderer</code>.
+</note>
+
+<p>
+    The following example shows how set filter values are formatted using a Cell Renderer. Note the following:
+</p>
+
+<ul class="content">
+    <li>
+        <b>Cell Renderer</b> has a Cell Renderer supplied to the column using: <code>filterParams.cellRenderer = countryCellRenderer</code>.
+        Note that the set filter does not inherit this cell renderer.
+    </li>
+    <li>
+        <b>Shared Cell Renderers</b> uses the same Cell Renderer to format the cells and filter values, however
+        it must be supplied to the set filter using: <code>filterParams.cellRenderer = countryCellRenderer</code>.
+    </li>
+    <li>
+        Click <b>Print Filter Model</b> and note the logged filter model (dev console) has not been modified.
+    </li>
+</ul>
+
+<?= grid_example('Filter List Cell Renderers', 'filter-list-cell-renderer', 'generated', ['enterprise' => true, 'exampleHeight' => 745, 'modules' => ['clientside', 'setfilter', 'menu', 'columnpanel']]) ?>
+
+<h2>Complex Objects</h2>
+
+<div>*** Work in Progress! ***</div>
+
+<p>
+    If you are providing complex objects as values, then you need to provide a <code>colDef.keyCreator</code> function
+    to convert the objects to strings. This string is used to compare objects when filtering, and to render a label in
+    the filter UI, so it should return a human-readable value.
+</p>
+
+<p>
+    The example below demonstrates <code>keyCreator</code> with the country column by replacing the country name in the
+    data with a complex object of country name and code. If the <code>keyCreator</code> was not provided on the
+    <code>colDef</code>, the set filter would not work.
+</p>
+
+
+<?= grid_example('Complex Objects', 'complex-objects', 'generated', ['enterprise' => true, 'exampleHeight' => 520, 'modules' => ['clientside', 'setfilter', 'menu', 'columnpanel']]) ?>
 
 
 <h2>Supplying Filter Values</h2>
@@ -178,59 +322,6 @@ SNIPPET
 
 <?= grid_example('Callback/Async', 'callback-async', 'generated', ['enterprise' => true, 'exampleHeight' => 510, 'modules' => ['clientside', 'setfilter', 'menu', 'columnpanel']]) ?>
 
-<h2>Formatting Values</h2>
-
-<p>
-    This section covers the various ways to format filter list items.
-</p>
-
-<h3>Cell Renderer</h3>
-
-<p>
-    Similar to the cell renderer for the grid (you can use the same one in both locations). Setting it separately here
-    allows for the value to be rendered differently in the filter. Note that the cell renderer for the set filter only
-    receives the value as a parameter, as opposed to the cell renderer in the colDef that receives more information.
-</p>
-
-<?= createSnippet(<<<SNIPPET
-{
-    field: 'year',         
-    filter: 'agSetColumnFilter',
-    filterParams: {
-        cellRenderer: function (params) {
-            //get flags from here: http://www.freeflagicons.com/
-            if (params.value === "" || params.value === undefined || params.value === null) {
-                return '';
-            } else {
-                var flag = '<img class="flag" border="0" width="15" height="10" 
-                src="https://flags.fmcdn.net/data/flags/mini/' + COUNTRY_CODES[params.value] + '.png">';
-                return flag + ' ' + params.value;
-            }
-        }
-    }
-}
-SNIPPET
-    , 'ts') ?>
-
-
-<?= grid_example('Filter List Cell Renderers', 'filter-list-cell-renderers', 'generated', ['enterprise' => true, 'exampleHeight' => 520, 'modules' => ['clientside', 'setfilter', 'menu', 'columnpanel']]) ?>
-
-<h3>Value Formatter</h3>
-
-
-<h2>Complex Objects</h2>
-
-<p>
-    If you are providing complex objects as values, then you need to provide a <code>colDef.keyCreator</code> function
-    to convert the objects to strings. This string is used to compare objects when filtering, and to render a label in
-    the filter UI, so it should return a human-readable value.
-</p>
-
-<p>
-    The example below demonstrates <code>keyCreator</code> with the country column by replacing the country name in the
-    data with a complex object of country name and code. If the <code>keyCreator</code> was not provided on the
-    <code>colDef</code>, the set filter would not work.
-</p>
 
 <h2>Filter Value Tooltips</h2>
 

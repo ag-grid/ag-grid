@@ -9,7 +9,8 @@ include '../documentation-main/documentation_header.php';
 <h1 class="heading-enterprise">Set Filter - Data Updates</h1>
 
 <p class="lead">
-    This section describes how different types of Data Updates affect the Set Filter's filter values.
+    This section describes how updating data through Cell Editing, Transactions Updates and Setting New Data, affects
+    Set Filter values.
 </p>
 
 <h2>Cell Editing</h2>
@@ -78,9 +79,12 @@ SNIPPET
 <h2>Transaction Updates</h2>
 
 <p>
-    Filter values are refreshed when data is updated using <a href="../javascript-grid-data-update-transactions/">Transaction Updates</a>
-    and <a href="../javascript-grid-immutable-data/">Immutable Data</a>.
+    Filter values are refreshed when data is updated using <a href="../javascript-grid-data-update-transactions/">Transaction Updates</a>.
 </p>
+
+<note>
+    This section also applies to <a href="../javascript-grid-immutable-data/">Immutable Data</a> as it uses Transaction Updates under the hood.
+</note>
 
 <p>
     Here are the rules that determine how filter values are selected:
