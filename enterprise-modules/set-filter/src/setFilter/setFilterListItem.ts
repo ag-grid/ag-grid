@@ -4,6 +4,7 @@ import {
     Autowired,
     ColDef,
     Component,
+    Column,
     GridOptionsWrapper,
     ISetFilterParams,
     PostConstruct,
@@ -72,9 +73,9 @@ export class SetFilterListItem extends Component {
     public render(): void {
         const { value, params: { column } } = this;
         const colDef = column.getColDef();
-        const filterValueFormatter = this.getFilterValueFormatter(colDef);
-        const valueFormatted = this.valueFormatterService.formatValue(column, null, null, value, filterValueFormatter);
-        const valueToRender = valueFormatted == null ? value : valueFormatted;
+
+        let valueFormatted = this.getValueFormatted(colDef, column, value);
+        let valueToRender = valueFormatted != null ? valueFormatted : value;
 
         if (this.params.showTooltips) {
             this.tooltipText = _.escape(valueToRender);
@@ -97,8 +98,13 @@ export class SetFilterListItem extends Component {
         this.renderCell(colDef, this.eFilterItemValue, params);
     }
 
-    private getFilterValueFormatter(colDef: ColDef) {
-        return colDef.filterParams ? (<ISetFilterParams>colDef.filterParams).valueFormatter : undefined;
+    private getValueFormatted(colDef: ColDef, column: Column, value: any) {
+        const filterParams = (<ISetFilterParams>colDef.filterParams);
+        const filterValueFormatterExists = filterParams && filterParams.valueFormatter;
+        if (filterValueFormatterExists) {
+            return this.valueFormatterService.formatValue(column, null, null, value, filterParams.valueFormatter);
+        }
+        return null;
     }
 
     private renderCell(target: ColDef, eTarget: HTMLElement, params: any): void {
