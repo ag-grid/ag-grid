@@ -383,7 +383,7 @@ Examples of state include column visibility, width, row groups and values.
 
 <?= grid_example('Column Changes', 'column-changes', 'generated', ['enterprise' => true]) ?>
 
-<h2 id="delta-columns">Delta Columns</h2>
+<h2 id="immutable-columns">Immutable Columns</h2>
 
 <p>
     By default when new columns are loaded into the grid, the following properties are not used:
@@ -412,7 +412,7 @@ Examples of state include column visibility, width, row groups and values.
 
 <p>
     To change this behaviour and have column attributes above (order, width, row group etc) take effect
-    each time the application updates the grid columns, then set <code>gridOption.deltaColumnMode=true</code>.
+    each time the application updates the grid columns, then set the grid property <code>immutableColumns=true</code>.
     The responsibility is then on your application to make sure the provided column definitions are in sync
     with what is in the grid if you don't want undesired visible changes - eg if the user changes the width
     of a column, the application should listen to the grid event <code>columnWidthChanged</code> and update
@@ -421,10 +421,10 @@ Examples of state include column visibility, width, row groups and values.
 </p>
 
 <p>
-    The example below demonstrates Delta Column Mode. Note the following:
+    The example below demonstrates Immutable Column mode. Note the following:
     <ul>
         <li>
-            Grid property <code>deltaColumnMode</code> is set to true.
+            Grid property <code>immutableColumns</code> is set to true.
         </li>
         <li>
             Each button sets a different list of columns into the grid. Because each column
@@ -434,12 +434,11 @@ Examples of state include column visibility, width, row groups and values.
         </li>
         <li>
             Each button changes the column definitions in a way that would be otherwise ignored
-            if <code>deltaColumnMode</code> was not set. The changes are as follows:
+            if <code>immutableColumns</code> was not set. The changes are as follows:
             <ul>
                 <li>
-                    <b>Normal</b>: Columns are set as normal. This is the default. It will make
-                    the other button actions easier to understand if Normal is pressed before
-                    pushing the other buttons.
+                    <b>Normal</b>: Columns are set to the starting normal state. Use this to reset
+                    the example while observing what the other buttons do.
                 </li>
                 <li>
                     <b>Reverse Order</b>: Columns are provided in reverse order.

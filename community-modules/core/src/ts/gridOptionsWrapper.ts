@@ -665,8 +665,8 @@ export class GridOptionsWrapper {
         return isTrue(this.gridOptions.immutableData);
     }
 
-    public isDeltaColumnMode() {
-        return isTrue(this.gridOptions.deltaColumnMode);
+    public isImmutableColumns() {
+        return isTrue(this.gridOptions.immutableColumns);
     }
 
     public isEnsureDomOrder() {
@@ -1632,20 +1632,18 @@ export class GridOptionsWrapper {
             }
         }
 
-        if (options.batchUpdateWaitMillis != null) {
-            console.warn(`ag-grid: since version 20.1.x, batchUpdateWaitMillis is deprecated / renamed, use the identical property asyncTransactionWaitMillis instead`);
-            if (this.gridOptions.asyncTransactionWaitMillis == null) {
-                this.gridOptions.asyncTransactionWaitMillis = options.batchUpdateWaitMillis;
+        const checkRenamedProperty = (oldProp: string, newProp: string, version: string) => {
+            if (options[oldProp] != null) {
+                console.warn(`ag-grid: since version ${version}, ${oldProp} is deprecated / renamed, use the identical property ${newProp} instead`);
+                if (options[newProp] == null) {
+                    options[newProp] = options[oldProp];
+                }
             }
-        }
+        };
 
-        if (options.deltaRowDataMode != null) {
-            console.warn(`ag-grid: since version 20.1.x, deltaRowDataMode is deprecated / renamed, use the identical property immutableData instead`);
-            if (this.gridOptions.immutableData == null) {
-                this.gridOptions.immutableData = options.deltaRowDataMode;
-            }
-        }
-
+        checkRenamedProperty('batchUpdateWaitMillis', 'asyncTransactionWaitMillis', '20.1.x');
+        checkRenamedProperty('deltaRowDataMode', 'immutableData', '20.1.x');
+        checkRenamedProperty('deltaColumnMode', 'immutableColumns', '20.1.x');
     }
 
     private checkForViolations() {

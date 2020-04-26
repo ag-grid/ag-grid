@@ -217,7 +217,7 @@ export class ColumnController {
         this.updateDisplayedColumns(source);
         this.checkDisplayedVirtualColumns();
 
-        if (this.gridOptionsWrapper.isDeltaColumnMode() && colsPreviouslyExisted) {
+        if (this.gridOptionsWrapper.isImmutableColumns() && colsPreviouslyExisted) {
             this.resetColumnState(true, source);
         }
 

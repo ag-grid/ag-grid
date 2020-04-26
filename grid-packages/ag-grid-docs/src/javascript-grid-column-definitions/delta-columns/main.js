@@ -169,7 +169,7 @@ var gridOptions = {
         resizable: true,
         sortable: true
     },
-    deltaColumnMode: true,
+    immutableColumns: true,
     columnDefs: columnDefsNormal(),
     onColumnPinned: onColumnPinned,
     onColumnVisible: onColumnVisible,
