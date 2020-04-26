@@ -9,7 +9,7 @@ include '../documentation-main/documentation_header.php';
 <h1 class="heading-enterprise">Set Filter - Mini Filter</h1>
 
 <p class="lead">
-    This section describes the Mini Filter and shows how it can be configured to suit application requirements.
+    This section describes the behaviour of the Mini Filter and shows how it can be configured to suit application requirements.
 </p>
 
 <div class="animated-example">
@@ -18,7 +18,7 @@ include '../documentation-main/documentation_header.php';
 
 <p>
     Searching in the Mini Filter narrows the values displayed in the filter list but won't perform any filtering in the
-    grid. Hitting the <b>Enter</b> key will will select all displayed values in the filter list and perform filtering
+    grid. Hitting the <b>Enter</b> key will select all displayed values in the filter list and perform filtering
     in the grid.
 </p>
 
