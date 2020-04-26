@@ -43,6 +43,17 @@ SNIPPET
     , 'ts') ?>
 
 <p>
+    The comparator for a set filter is only provided the values as the first two parameters, whereas the comparator for
+    the <code>colDef</code> is also provided the row data as additional parameters. This is because when sorting rows,
+    row data exists. For example, take 100 rows split across the color values <code>[white, black]</code>.
+    The <code>colDef</code> comparator will be sorting 100 rows, however the filter will be only sorting two values.
+</p>
+<p>
+    If you are providing a comparator that depends on the row data, and you are using set filter, be sure to provide the
+    set filter with an alternative comparator that doesn't depend on the row data.
+</p>
+
+<p>
     The following example demonstrates sorting set filter values using a comparator. Note the following:
 </p>
 
@@ -220,11 +231,11 @@ SNIPPET
         <b>Country (Complex Object)</b> column is supplied a complex object through <code>colDef.field</code>.
     </li>
     <li>
-        A key creator is supplied to the column using <cod>colDef.keyCreator = countryKeyCreator</cod> which extracts
+        A key creator is supplied to the column using <code>colDef.keyCreator = countryKeyCreator</code> which extracts
         the <code>name</code> property for the set filter.
     </li>
     <li>
-        A value formatter is supplied to the column using <cod>colDef.valueFormatter = countryValueFormatter</cod>
+        A value formatter is supplied to the column using <code>colDef.valueFormatter = countryValueFormatter</code>
         which extracts the <code>name</code> property for the cell values.
     </li>
     <li>
@@ -264,6 +275,11 @@ SNIPPET
     Note that if there are missing values in the row data, the filter list will display all provided values. This could
     give users the impression that filtering is broken.
 </p>
+
+<note>
+    When providing filter values which are already sorted it is often useful to disable the default filter list sorting
+    using: <code>filterParams.suppressSorting=true</code>.
+</note>
 
 <p>
     The following example demonstrates providing filter values using <code>filterParams.values</code>. Note the following:
@@ -396,6 +412,13 @@ SNIPPET
 </ul>
 
 <?= grid_example('Filter Value Tooltips', 'filter-value-tooltips', 'generated', ['enterprise' => true, 'exampleHeight' => 500, 'modules' => ['clientside', 'setfilter', 'menu', 'columnpanel']]) ?>
+
+<h2>Next Up</h2>
+
+<p>
+    Continue to the next section: <a href="../javascript-grid-filter-set-data-updates">Data Updates</a>.
+</p>
+
 
 
 <?php include '../documentation-main/documentation_footer.php';?>

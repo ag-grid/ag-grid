@@ -93,7 +93,7 @@ SNIPPET
 <h2>Next Up</h2>
 
 <p>
-    To learn how set filter values are supplied and formatted continue to: <a href="../javascript-grid-filter-set-filter-values/">Filter List</a>.
+    Continue to the next section: <a href="../javascript-grid-filter-set-filter-list">Filter List</a>.
 </p>
 
 

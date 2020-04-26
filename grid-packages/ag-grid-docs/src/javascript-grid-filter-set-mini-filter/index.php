@@ -62,7 +62,7 @@ SNIPPET
     , 'ts') ?>
 
 <p>
-    The following example demonstrates searching . Note the following:
+    The following example demonstrates searching when there are accented characters. Note the following:
 </p>
 
 <ul class="content">
@@ -77,6 +77,29 @@ SNIPPET
 
 <?= grid_example('Mini Filter Text Formatter', 'mini-filter-text-formatter', 'generated', ['enterprise' => true, 'exampleHeight' => 565, 'modules' => ['clientside', 'setfilter', 'menu', 'columnpanel']]) ?>
 
+<h2>Mini Filter Options</h2>
 
+<p>
+    The following example demonstrates some mini filter options. Note the following:
+</p>
+
+<ul class="content">
+    <li>
+        The <b>Athlete</b> set filter does not have a mini filter as <code>filterParams.suppressMiniFilter=true</code>.
+    </li>
+    <li>
+        The <b>Country</b> set filter will automatically closed when the <b>Enter</b> key is pressed in the mini filter
+        as <code>filterParams.closeOnApply=true</code>.
+    </li>
+</ul>
+
+<?= grid_example('Mini Filter Options', 'mini-filter-options', 'generated', ['enterprise' => true, 'exampleHeight' => 565, 'modules' => ['clientside', 'setfilter', 'menu', 'columnpanel']]) ?>
+
+
+<h2>Next Up</h2>
+
+<p>
+    Continue to the next section: <a href="../javascript-grid-filter-set-api">Set Filter API</a>.
+</p>
 
 <?php include '../documentation-main/documentation_footer.php';?>

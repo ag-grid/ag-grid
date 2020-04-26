@@ -184,4 +184,11 @@ SNIPPET
 
 <?= grid_example('Setting New Data', 'setting-new-data', 'generated', ['enterprise' => true, 'exampleHeight' => 500, 'modules' => ['clientside', 'setfilter', 'menu', 'columnpanel', 'filterpanel']]) ?>
 
+<h2>Next Up</h2>
+
+<p>
+    Continue to the next section: <a href="../javascript-grid-filter-set-mini-filter/">Mini Filter</a>.
+</p>
+
+
 <?php include '../documentation-main/documentation_footer.php';?>
