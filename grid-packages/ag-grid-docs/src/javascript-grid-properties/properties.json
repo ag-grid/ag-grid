@@ -482,6 +482,10 @@
                 "name": "Pivot Row Totals",
                 "url": "../javascript-grid-pivoting/#pivotRowTotals"
             }
+        },
+        "pivotSuppressAutoColumn": {
+            "default": false,
+            "description": "If <code>true</code>, the grid will not swap in the grouping column when pivoting. Useful if pivoting using Server Side Row Model or Viewport Row Model and you want full control of all columns including the group column."
         }
     },
     "rowModels": {

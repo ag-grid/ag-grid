@@ -201,6 +201,7 @@ var gridOptions = {
     // groupDefaultExpanded: 9999, //one of [true, false], or an integer if greater than 1
     // headerHeight: 100, // set to an integer, default is 25, or 50 if grouping columns
     // groupSuppressAutoColumn: true,
+    // pivotSuppressAutoColumn: true,
     // groupSuppressBlankHeader: true,
     // suppressMovingCss: true,
     // suppressMovableColumns: true,

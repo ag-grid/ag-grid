@@ -293,6 +293,7 @@ export interface GridOptions {
     defaultColDef?: ColDef;
     defaultExportParams?: CsvExportParams;
 
+    pivotSuppressAutoColumn?: boolean;
     groupSuppressAutoColumn?: boolean;
     groupSelectsChildren?: boolean;
     groupSelectsFiltered?: boolean;

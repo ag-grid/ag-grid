@@ -450,6 +450,10 @@ export class GridOptionsWrapper {
         return isTrue(this.gridOptions.groupSuppressAutoColumn);
     }
 
+    public isPivotSuppressAutoColumn() {
+        return isTrue(this.gridOptions.pivotSuppressAutoColumn);
+    }
+
     public isSuppressDragLeaveHidesColumns() {
         return isTrue(this.gridOptions.suppressDragLeaveHidesColumns);
     }
