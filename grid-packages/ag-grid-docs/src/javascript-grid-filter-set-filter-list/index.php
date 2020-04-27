@@ -9,20 +9,20 @@ include '../documentation-main/documentation_header.php';
 <h1 class="heading-enterprise">Set Filter - Filter List</h1>
 
 <p class="lead">
-    This section describes how filter list values can be managed through custom sorting and formatting. Supplying filter
-    values directly to the set filter is also discussed.
+    This section describes how Filter List values can be managed through custom sorting and formatting. Supplying filter
+    values directly to the Set Filter is also discussed.
 </p>
 
 
 <h2>Sorting Filter Lists</h2>
 
 <p>
-    Values inside a set filter will be sorted by default, where the values are converted to a string value and sorted in
+    Values inside a Set Filter will be sorted by default, where the values are converted to a string value and sorted in
     ascending order according to their UTF-16 codes.
 </p>
 
 <p>
-    When a different sort order is required, a comparator can be supplied to the set filter as shown below:
+    When a different sort order is required, a Comparator can be supplied to the set filter as shown below:
 </p>
 
 <?= createSnippet(<<<SNIPPET
@@ -43,28 +43,28 @@ SNIPPET
     , 'ts') ?>
 
 <p>
-    The comparator used by the set filter is only provided the values in the first two parameters, whereas the comparator
-    for the <code>colDef</code> is also provided the row data as additional parameters. This is because when sorting rows,
+    The Comparator used by the Set Filter is only provided the values in the first two parameters, whereas the Comparator
+    for the Column Definition (<code>colDef</code>) is also provided the row data as additional parameters. This is because when sorting rows,
     row data exists. For example, take 100 rows split across the color values <code>[white, black]</code>.
-    The <code>colDef</code> comparator will be sorting 100 rows, however the filter will be only sorting two values.
+    The column will be sorting 100 rows, however the filter will be only sorting two values.
 </p>
 <p>
-    If you are providing a comparator that depends on the row data, and you are using the set filter, be sure to provide
-    the set filter with an alternative comparator that doesn't depend on the row data.
+    If you are providing a Comparator that depends on the row data and you are using the Set Filter, be sure to provide
+    the Set Filter with an alternative Comparator that doesn't depend on the row data.
 </p>
 
 <p>
-    The following example demonstrates sorting set filter values using a comparator. Note the following:
+    The following example demonstrates sorting Set Filter values using a comparator. Note the following:
 </p>
 
 <ul class="content">
     <li>
-        The <b>Age (No Comparator)</b> set filter values are sorted using the default string order;
-        <code>1,10,100,...</code>
+        The <b>Age (no Comparator)</b> filter values are sorted using the default string order:
+        <code>1, 10, 100...</code>
     </li>
     <li>
-        The <b>Age (With Comparator)</b> set filter has a custom comparator supplied in the <code>filterParams</code>
-        that sorts the ages by value; <code>1,2,3,...</code>
+        The <b>Age (with Comparator)</b> filter has a custom Comparator supplied in the <code>filterParams</code>
+        that sorts the ages by value: <code>1, 2, 3...</code>
     </li>
 </ul>
 
@@ -74,21 +74,21 @@ SNIPPET
 <h2>Formatting Values</h2>
 
 <p>
-    This section covers different ways to format the displayed filter list values in the set filter.
+    This section covers different ways to format the displayed Filter List values in the Set Filter.
 </p>
 
 <note>
-    Formatting filter list values will not change the underlying value or filter model.
+    Formatting Filter List values will not change the underlying value or Filter Model.
 </note>
 
 <h3>Value Formatter</h3>
 <p>
     A <a href="../javascript-grid-value-formatters/">Value Formatter</a> is a good choice when the string value
-    displayed in the filter list needs to be modified, for example; adding country codes in parentheses after country name.
+    displayed in the Filter List needs to be modified, for example adding country codes in parentheses after country name.
 </p>
 
 <p>
-    The following snippet shows how to provide a value formatter to the set filter:
+    The following snippet shows how to provide a Value Formatter to the Set Filter:
 </p>
 
 <?= createSnippet(<<<SNIPPET
@@ -110,30 +110,29 @@ SNIPPET
     , 'ts') ?>
 
 <p>
-    In the code above, the same value formatter is supplied to the column and filter, however separate value formatters
+    In the code above, the same value formatter is supplied to the Column and Filter, however separate Value Formatters
     can be used.
 </p>
 
 <p>
-    The following example shows how set filter values are formatted using a value formatter. Note the following:
+    The following example shows how Set Filter values are formatted using a Value Formatter. Note the following:
 </p>
 
 <ul class="content">
     <li>
-        <b>No Value Formatter</b> does not have a value formatter supplied to the set filter. The column is supplied a
-        value formatter through: <code>colDef.valueFormatter = countryValueFormatter</code>.
+        <b>No Value Formatter</b> does not have a Value Formatter supplied to the Set Filter. The column is supplied a
+        Value Formatter through: <code>colDef.valueFormatter = countryValueFormatter</code>.
     </li>
     <li>
-        <b>With Value Formatter</b> has the same value formatter supplied to the column and set filter. The set filter is
+        <b>With Value Formatter</b> has the same Value Formatter supplied to the Column and Set Filter. The Set Filter is
         supplied the value formatter through: <code>filterParams.valueFormatter = countryValueFormatter</code>.
     </li>
     <li>
-        Click <b>Print Filter Model</b> and note the logged filter model (dev console) has not been modified.
+        Click <b>Print Filter Model</b> with a filter applied and note the logged Filter Model (dev console) has not been modified.
     </li>
 </ul>
 
 <?= grid_example('Filter List Value Formatters', 'filter-list-value-formatter', 'generated', ['enterprise' => true, 'exampleHeight' => 745, 'modules' => ['clientside', 'setfilter', 'menu', 'filterpanel']]) ?>
-
 
 <h3>Cell Renderer</h3>
 
@@ -143,12 +142,13 @@ SNIPPET
 </p>
 
 <p>
-    The same cell renderer can used to format the grid cells and filter values, or different renderers can be supplied
-    to each. Note that the cell renderer will be supplied additional info when used to format cells.
+    The same Cell Renderer can used to format the grid cells and filter values, or different renderers can be supplied
+    to each. Note that the Cell Renderer will be supplied additional info when used to format cells inside the grid
+    (as grid cells have row details that are not present for values inside a Filter List).
 </p>
 
 <p>
-    The following snippet shows how the cell renderer's are configured:
+    The following snippet shows how the Cell Renderer's are configured:
 </p>
 
 <?= createSnippet(<<<SNIPPET
@@ -169,25 +169,25 @@ SNIPPET
     , 'ts') ?>
 
 <note>
-    A <a href="../javascript-grid-cell-rendering-components/#cell-renderer-component">Cell Renderer Component</a>
+    A custom <a href="../javascript-grid-cell-rendering-components/#cell-renderer-component">Cell Renderer Component</a>
     can also be supplied to <code>filterParams.cellRenderer</code>.
 </note>
 
 <p>
-    The following example shows how set filter values are formatted using a cell renderer. Note the following:
+    The following example shows how Set Filter values are rendered using a Cell Renderer. Note the following:
 </p>
 
 <ul class="content">
     <li>
-        <b>No Cell Renderer</b> does not have a cell renderer supplied to the set filter. The column has a cell renderer
-        supplied to the column using: <code>colDef.cellRenderer = countryCellRenderer</code>.
+        <b>No Cell Renderer</b> does not have a Cell Renderer supplied to the Set Filter. The Column has a Cell Renderer
+        supplied to the Column using: <code>colDef.cellRenderer = countryCellRenderer</code>.
     </li>
     <li>
-        <b>With Cell Renderer</b> uses the same cell renderer to format the cells and filter values. The set filter is
-        supplied the value formatter using: <code>filterParams.cellRenderer = countryCellRenderer</code>.
+        <b>With Cell Renderer</b> uses the same Cell Renderer to format the cells and filter values. The Set Filter is
+        supplied the Value Formatter using: <code>filterParams.cellRenderer = countryCellRenderer</code>.
     </li>
     <li>
-        Click <b>Print Filter Model</b> and note the logged filter model (dev console) has not been modified.
+        Click <b>Print Filter Model</b> with a filter applied and note the logged filter model (dev console) has not been modified.
     </li>
 </ul>
 
@@ -196,9 +196,9 @@ SNIPPET
 <h2>Complex Objects</h2>
 
 <p>
-    If you are providing complex objects as values, then you need to provide a <code>colDef.keyCreator</code> function
-    to convert the objects to strings when using the set filter. Note the string is used to compare objects when
-    filtering, and to render a label in the filter UI, so it should return a human-readable value.
+    If you are providing complex objects as values, then you need to provide a Key Creator function (<code>colDef.keyCreator</code>)
+    to convert the objects to strings when using the Set Filter. Note the string is used to compare objects when
+    filtering and to render a label in the filter UI.
 </p>
 
 <?= createSnippet(<<<SNIPPET
@@ -222,12 +222,17 @@ SNIPPET
     , 'ts') ?>
 
 <p>
-    The snippet above shows a <code>keyCreator</code> function that returns the country name from the complex object.
-    If the <code>keyCreator</code> was not provided on the <code>colDef</code>, the set filter would not work.
+    The snippet above shows a Key Creator function that returns the country name from the complex object.
+    If the Key Creator was not provided on the Column Definition, the Set Filter would not work.
 </p>
 
 <p>
-    The following example shows the <code>keyCreator</code> handling complex objects for the set filter. Note the following:
+    If the value returned by Key Creator is not human-readable then you should consider also providing
+    a Formatter for the Filter List label.
+</p>
+
+<p>
+    The following example shows the Key Creator handling complex objects for the Set Filter. Note the following:
 </p>
 
 <ul class="content">
@@ -235,15 +240,15 @@ SNIPPET
         <b>Country (Complex Object)</b> column is supplied a complex object through <code>colDef.field</code>.
     </li>
     <li>
-        A key creator is supplied to the column using <code>colDef.keyCreator = countryKeyCreator</code> which extracts
-        the <code>name</code> property for the set filter.
+        A Key Creator is supplied to the column using <code>colDef.keyCreator = countryKeyCreator</code> which extracts
+        the <code>name</code> property for the Set Filter.
     </li>
     <li>
         A value formatter is supplied to the column using <code>colDef.valueFormatter = countryValueFormatter</code>
         which extracts the <code>name</code> property for the cell values.
     </li>
     <li>
-        Click <b>Print Filter Model</b> and note the logged filter model (dev console) uses the <code>name</code>
+        Click <b>Print Filter Model</b> with a filter active and note the logged Filter Model (dev console) uses the <code>name</code>
         property from the complex object.
     </li>
 </ul>
@@ -254,8 +259,8 @@ SNIPPET
 <h2>Supplying Filter Values</h2>
 
 <p>
-    The set filter will obtain the filter values from the row data by default. However it is also possible to provide
-    values, either synchronously or asynchronously, to the filter list.
+    The Set Filter will obtain the filter values from the row data by default. However it is also possible to provide
+    values, either synchronously or asynchronously, for the Filter List.
 </p>
 
 <h3>Synchronous Values</h3>
@@ -379,6 +384,14 @@ SNIPPET
 
 <?= grid_example('Callback/Async', 'callback-async', 'generated', ['enterprise' => true, 'exampleHeight' => 510, 'modules' => ['clientside', 'setfilter', 'menu', 'columnpanel']]) ?>
 
+<h2>Missing Values</h2>
+
+<p>
+    If there are missing / empty values in the row data of the grid, or missing values in the list of
+    <a href="#supplying-filter-values">Supplied Values</a>, the filter list will display a blank row within it's Filter List.
+    This could give users the impression the filter is broken. If this not the desired behaviour,
+    provide a <a href="#value-formatter">Formatter</a> to present blank values in a different way.
+</p>
 
 <h2>Filter Value Tooltips</h2>
 
@@ -405,14 +418,14 @@ SNIPPET
 </p>
 
 <p>
-    The following example demonstrates tooltips in the set filter. Note the following:
+    The following example demonstrates tooltips in the Set Filter. Note the following:
 </p>
 
 <ul class="content">
-    <li>Set filter values are automatically truncated with ellipses when the values are too long.</li>
-    <li><b>Col A</b> does not have set filter tooltips enabled.</li>
-    <li><b>Col B</b> has set filter tooltips enabled via <code>filterParams.showTooltips=true</code>.</li>
-    <li><b>Col C</b> has set filter tooltips enabled and is supplied a Custom Tooltip Component.</li>
+    <li>Filter values are automatically truncated with ellipses when the values are too long.</li>
+    <li><b>Col A</b> does not have Set Filter Tooltips enabled.</li>
+    <li><b>Col B</b> has Set Filter Tooltips enabled via <code>filterParams.showTooltips=true</code>.</li>
+    <li><b>Col C</b> has Set Filter Tooltips enabled and is supplied a Custom Tooltip Component.</li>
 </ul>
 
 <?= grid_example('Filter Value Tooltips', 'filter-value-tooltips', 'generated', ['enterprise' => true, 'exampleHeight' => 500, 'modules' => ['clientside', 'setfilter', 'menu', 'columnpanel']]) ?>

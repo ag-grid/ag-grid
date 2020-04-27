@@ -28,29 +28,29 @@ include '../documentation-main/documentation_header.php';
 </p>
 
 <p>
-    <ul class="content">
-        <li>
-            <b><a href="../javascript-grid-filter-set-mini-filter/">Mini Filter</a></b>: used to narrow the filter list
-            and perform filtering in the grid using the <b>Enter</b> key.
-        </li>
-        <li>
-            <b>Select All</b>: used to perform grid filtering on all selected / deselected values shown in the filter list.
-        </li>
-        <li>
-            <b><a href="../javascript-grid-filter-set-filter-list/">Filter List</a></b>: a list of set filter values which
-            can be selected / deselected to perform grid filtering.
-        </li>
-        <li>
-            <b>Filter Buttons</b>: filter buttons can be optionally added to the bottom of the set filter.
-        </li>
-    </ul>
+<ul class="content">
+    <li>
+        <b><a href="../javascript-grid-filter-set-mini-filter/">Mini Filter</a></b>: used to narrow the values
+        available for selection inside the Filter List.
+    </li>
+    <li>
+        <b>Select All</b>: used to select / deselect all values shown in the Filter List.
+    </li>
+    <li>
+        <b><a href="../javascript-grid-filter-set-filter-list/">Filter List</a></b>: a list of Set Filter Values which
+        can be selected / deselected to set the filter.
+    </li>
+    <li>
+        <b>Filter Buttons</b>: Action buttons that can be optionally added to the bottom of the Set Filter.
+    </li>
+</ul>
 </p>
 
 
 <h2>Enabling Set Filters</h2>
 
 <p>
-    The set filter is the default filter used in the enterprise version of the grid, however it can also be explicitly
+    The Set Filter is the default filter used in the ag-Grid Enterprise, however it can also be explicitly
     configured as shown below:
 </p>
 
@@ -72,20 +72,21 @@ SNIPPET
     , 'ts') ?>
 
 <p>
-    The following example demonstrates how set filters can be enabled. Note the following:
+    The following example demonstrates how the Set Filter can be enabled. Note the following:
 </p>
 
 <ul class="content">
     <li>
-        The <b>Athlete</b> column has <code>filter=true</code> which defaults to the set filter as this example is using
-        the enterprise version of the grid.
+        The <b>Athlete</b> column has <code>filter=true</code> which defaults to the Set Filter as this example is using
+        ag-Grid Enterprise.
     </li>
     <li>
-        The <b>Country</b> column is explicitly configured to use the set filter using
+        The <b>Country</b> column is explicitly configured to use the Set Filter using
         <code>filter='agSetColumnFilter'</code>.
     </li>
     <li>
-        All other columns are configured to use the number filter using <code>filter='agNumberColumnFilter'</code>.
+        All other columns are configured to use the <a href="../javascript-grid-filter-number/">Number Filter</a>
+        using <code>filter='agNumberColumnFilter'</code>.
     </li>
     <li>
         Filters can be accessed from the <a href="../javascript-grid-column-menu/">Column Menu</a> or by clicking on the
