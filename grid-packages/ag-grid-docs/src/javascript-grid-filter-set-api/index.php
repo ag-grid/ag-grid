@@ -9,13 +9,13 @@ include '../documentation-main/documentation_header.php';
 <h1 class="heading-enterprise">Set Filter - API</h1>
 
 <p class="lead">
-    This section describes how the set filter can be controlled programmatically using API calls.
+    This section describes how the Set Filter can be controlled programmatically using API calls.
 </p>
 
 <h2>Set Filter Model</h2>
 
 <p>
-    Get and set the state of the set filter by getting and setting the model on the filter instance.
+    Get and set the state of the Set Filter by getting and setting the model on the filter instance.
 </p>
 
 <?= createSnippet(<<<SNIPPET
@@ -44,21 +44,21 @@ SNIPPET
 <h2>Set Filter API</h2>
 
 <p>
-    The set filter has the following API (in addition to the
+    The Set Filter has the following API (in addition to the
     <a href="../javascript-grid-filter-provided/#providedFilterApi">API</a> common to all provided filters):
 </p>
 
 <?php createDocumentationFromFile('setFilterApi.json', 'api') ?>
 
 <p>
-    It is important to note that when updating the set filter through the API, it is up to the developer to call
+    It is important to note that when updating the Set Filter through the API, it is up to the developer to call
     <code>filterInstance.applyModel()</code> to apply the changes that have been made to the model and then
     <code>gridOptions.api.onFilterChanged()</code> at the end of the interaction with the filter.
 </p>
 <p>
     If no call is made to <code>filterInstance.applyModel()</code> then the filter UI will show the changes, but
-    it won't be reflected in the filter model. This will appear as if the user never hit the Apply button (regardless
-    of whether the Apply button is active or not).
+    it won't be reflected in the filter model. This will appear as if the user never hit the Apply Button (regardless
+    of whether the Apply Button is active or not).
 </p>
 <p>
     If no call to <code>gridOptions.api.onFilterChanged()</code> is provided the grid will still show the data relevant
