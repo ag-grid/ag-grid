@@ -1081,12 +1081,14 @@
           {
             "title": "Chart Toolbar",
             "url": "javascript-grid-charts-integrated-chart-toolbar/",
-            "enterprise": true
+            "enterprise": true,
+            "showInCollapsed": true
           },
           {
             "title": "Chart API",
             "url": "javascript-grid-charts-integrated-chart-range-api/",
-            "enterprise": true
+            "enterprise": true,
+            "showInCollapsed": true
           },
           {
             "title": "Chart Events",
@@ -1102,6 +1104,7 @@
             "title": "Customisation",
             "url": "javascript-grid-charts-integrated-customisation/",
             "enterprise": true,
+            "showInCollapsed": true,
             "items": [
               {
                 "title": "General",
@@ -1350,7 +1353,6 @@
           {
             "title": "Getting Started",
             "isCategory": true,
-            "showInCollapsed": true,
             "items": [
               {
                 "title": "Vanilla JavaScript",
@@ -1373,7 +1375,6 @@
           {
             "title": "API",
             "isCategory": true,
-            "showInCollapsed": true,
             "items": [
               {
                 "title": "Reference",
