@@ -289,7 +289,7 @@ function applyToConstructor(constructor: Function, argArray: any[]) {
 
 export function PreConstruct(target: Object, methodName: string, descriptor: TypedPropertyDescriptor<any>): void {
     const props = getOrCreateProps(target.constructor);
-    if (!props.postConstructMethods) {
+    if (!props.preConstructMethods) {
         props.preConstructMethods = [];
     }
     props.preConstructMethods.push(methodName);
