@@ -1165,11 +1165,14 @@ export class GridApi {
         let res: RowNodeTransaction = null;
         if (this.clientSideRowModel) {
             if (rowDataTransaction && rowDataTransaction.addIndex!=null) {
-                console.warn('ag-Grid: as of v23.1, transaction.addIndex is deprecated. If you want precision control of adding data, use immutableData instead');
+                const message = 'ag-Grid: as of v23.1, transaction.addIndex is deprecated. If you want precision control of adding data, use immutableData instead';
+                _.doOnce(() => console.warn(message), 'transaction.addIndex deprecated');
             }
             res = this.clientSideRowModel.updateRowData(rowDataTransaction);
         } else if (this.infiniteRowModel) {
-            console.warn('ag-Grid: as of v23.1, transactions for Infinite Row Model are deprecated. If you want to make updates to data in Infinite Row Models, then refresh the data.');
+            const message = 'ag-Grid: as of v23.1, transactions for Infinite Row Model are deprecated. If you want to make updates to data in Infinite Row Models, then refresh the data.';
+            _.doOnce(() => console.warn(message), 'applyTransaction infiniteRowModel deprecated');
+
             this.infiniteRowModel.updateRowData(rowDataTransaction);
         } else {
             console.error('ag-Grid: updateRowData() only works with ClientSideRowModel and InfiniteRowModel.');
