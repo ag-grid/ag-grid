@@ -166,7 +166,7 @@ var gridOptions = {
             if (params.value !== undefined) {
                 return params.value;
             } else {
-                return '<img src="../images/loading.gif">';
+                return '<img src="https://raw.githubusercontent.com/ag-grid/ag-grid/master/grid-packages/ag-grid-docs/src/images/loading.gif">';
             }
         }
     },

@@ -5,8 +5,8 @@ var columnDefs = [
         valueGetter: 'node.id',
         cellRenderer: 'loadingRenderer'
     },
-    { field: 'make'},
-    { field: 'model'},
+    { field: 'make' },
+    { field: 'model' },
     {
         field: 'price',
         valueFormatter: function(params) {
@@ -142,12 +142,12 @@ var datasource = {
 };
 
 var gridOptions = {
-    components:{
+    components: {
         loadingRenderer: function(params) {
             if (params.value !== undefined) {
                 return params.value;
             } else {
-                return '<img src="../images/loading.gif">';
+                return '<img src="https://raw.githubusercontent.com/ag-grid/ag-grid/master/grid-packages/ag-grid-docs/src/images/loading.gif">';
             }
         }
     },

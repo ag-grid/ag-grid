@@ -1,7 +1,8 @@
 var gridOptions = {
     columnDefs: [
         // this row shows the row index, doesn't use any data from the row
-        {headerName: "ID", maxWidth: 100,
+        {
+            headerName: "ID", maxWidth: 100,
             // it is important to have node.id here, so that when the id changes (which happens
             // when the row is loaded) then the cell is refreshed.
             valueGetter: 'node.id',
@@ -11,7 +12,7 @@ var gridOptions = {
         { field: "age" },
         { field: "country", minWidth: 200, checkboxSelection: true },
         { field: "year" },
-        { field: "date",  minWidth: 150 },
+        { field: "date", minWidth: 150 },
         { field: "sport", minWidth: 150 },
         { field: "gold" },
         { field: "silver" },
@@ -24,12 +25,12 @@ var gridOptions = {
         minWidth: 100,
         resizable: true
     },
-    components:{
+    components: {
         loadingRenderer: function(params) {
             if (params.value !== undefined) {
                 return params.value;
             } else {
-                return '<img src="../images/loading.gif">'
+                return '<img src="https://raw.githubusercontent.com/ag-grid/ag-grid/master/grid-packages/ag-grid-docs/src/images/loading.gif">';
             }
         }
     },
@@ -65,14 +66,14 @@ document.addEventListener('DOMContentLoaded', function() {
     var gridDiv = document.querySelector('#myGrid');
     new agGrid.Grid(gridDiv, gridOptions);
 
-    agGrid.simpleHttpRequest({url: 'https://raw.githubusercontent.com/ag-grid/ag-grid/master/grid-packages/ag-grid-docs/src/olympicWinners.json'}).then(function(data) {
+    agGrid.simpleHttpRequest({ url: 'https://raw.githubusercontent.com/ag-grid/ag-grid/master/grid-packages/ag-grid-docs/src/olympicWinners.json' }).then(function(data) {
         var dataSource = {
             rowCount: null, // behave as infinite scroll
-            getRows: function (params) {
+            getRows: function(params) {
                 // console.log('asking for ' + params.startRow + ' to ' + params.endRow);
                 // At this point in your code, you would call the server, using $http if in AngularJS 1.x.
                 // To make the demo look real, wait for 500ms before returning
-                setTimeout( function() {
+                setTimeout(function() {
                     // take a slice of the total rows
                     var rowsThisPage = data.slice(params.startRow, params.endRow);
                     // if on or after the last page, work out the last row.
