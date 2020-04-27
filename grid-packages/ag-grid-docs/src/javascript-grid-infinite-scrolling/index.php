@@ -304,7 +304,7 @@ SNIPPET
     filtering, ag-Grid-Enterprise is not required for infinite scrolling.
 </note>
 
-<?= grid_example('Server-side Sorting And Filtering', 'server-side', 'generated', ['enterprise' => true, 'modules' => ['infinite', 'setfilter', 'menu']]) ?>
+<?= grid_example('Server-side Sorting And Filtering', 'server-side', 'generated', ['enterprise' => true, 'modules' => ['infinite', 'setfilter', 'menu', 'columnpanel']]) ?>
 
 <note>
     When performing multiple row selections using shift-click, it is possible that not all rows are available in
@@ -519,7 +519,7 @@ cell renderers.</p>
     sided call is needed.
 </p>
 
-<?= grid_example('Block Larger Than Page', 'block-larger-page', 'generated', ['enterprise' => true, 'exampleHeight' => 615, 'modules' => ['infinite', 'setfilter', 'menu']]) ?>
+<?= grid_example('Block Larger Than Page', 'block-larger-page', 'generated', ['enterprise' => true, 'exampleHeight' => 615, 'modules' => ['infinite', 'setfilter', 'menu', 'columnpanel']]) ?>
 
 <h3>Example 2: Equal Pagination Page Size and Large Infinite Block Size</h3>
 
@@ -528,7 +528,7 @@ cell renderers.</p>
     every time a new page is navigated to.
 </p>
 
-<?= grid_example('Block Equal Than Page', 'block-equal-page', 'generated', ['enterprise' => true, 'exampleHeight' => 615, 'modules' => ['infinite', 'setfilter', 'menu']]) ?>
+<?= grid_example('Block Equal Than Page', 'block-equal-page', 'generated', ['enterprise' => true, 'exampleHeight' => 615, 'modules' => ['infinite', 'setfilter', 'menu', 'columnpanel']]) ?>
 
 <h2>Overlays</h2>
 
