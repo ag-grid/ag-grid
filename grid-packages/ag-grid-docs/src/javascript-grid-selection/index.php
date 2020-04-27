@@ -172,7 +172,7 @@ include '../documentation-main/documentation_header.php';
         Having a checkbox within a non-group row is best for grids that are not using grouping.
     </p>
 
-    <?= grid_example('Groups & Checkbox Selection', 'group-selection', 'generated', ['enterprise' => true, 'modules'=>['clientside', 'rowgrouping']]) ?>
+    <?= grid_example('Groups & Checkbox Selection', 'group-selection', 'generated', ['enterprise' => true, 'modules'=>['clientside', 'rowgrouping', 'menu', 'columnpanel']]) ?>
 
     <h3>Example: Groups & Checkbox Selection With Unselectable Leaf Nodes</h3>
 
@@ -183,7 +183,7 @@ include '../documentation-main/documentation_header.php';
         <code>colDef.checkboxSelection</code> and <code>autoGroupColumnDef.cellRendererParams.checkbox</code>.
     </p>
 
-    <?= grid_example('Groups & Checkbox Selection With Unselectable Leaf Nodes', 'selection-checkbox', 'generated', ['enterprise' => true, 'modules'=>['clientside', 'rowgrouping']]) ?>
+    <?= grid_example('Groups & Checkbox Selection With Unselectable Leaf Nodes', 'selection-checkbox', 'generated', ['enterprise' => true, 'modules'=>['clientside', 'rowgrouping', 'menu', 'columnpanel']]) ?>
 
     <h3>Example: Groups & Checkbox Selection With Only Filtered Children</h3>
 
@@ -204,7 +204,7 @@ include '../documentation-main/documentation_header.php';
         </ol>
     </p>
 
-    <?= grid_example('Groups & Checkbox Selection With Only Filtered Children', 'selection-checkbox-filtered', 'generated', ['enterprise' => true, 'exampleHeight' => 590, 'modules'=>['clientside', 'rowgrouping', 'setfilter', 'menu']]) ?>
+    <?= grid_example('Groups & Checkbox Selection With Only Filtered Children', 'selection-checkbox-filtered', 'generated', ['enterprise' => true, 'exampleHeight' => 590, 'modules'=>['clientside', 'rowgrouping', 'setfilter', 'menu', 'columnpanel']]) ?>
 
     <h2>Header Checkbox Selection</h2>
 
@@ -331,7 +331,7 @@ colDef = {
         </li>
     </ul>
 
-    <?= grid_example('Specifying Selectable Rows with Groups', 'specify-selectable-rows-with-groups', 'generated', ['enterprise' => true, 'exampleHeight' => 590, 'modules'=>['clientside', 'rowgrouping', 'setfilter', 'menu']]) ?>
+    <?= grid_example('Specifying Selectable Rows with Groups', 'specify-selectable-rows-with-groups', 'generated', ['enterprise' => true, 'exampleHeight' => 590, 'modules'=>['clientside', 'rowgrouping', 'setfilter', 'menu', 'columnpanel']]) ?>
 
     <h2>Selection Events</h2>
 
