@@ -156,6 +156,18 @@ export class SetFilter extends ProvidedFilter {
                 ' used as this is the default behaviour.';
             _.doOnce(() => console.warn(message), 'selectAllOnMiniFilter deprecated');
         }
+
+        if (params.suppressSyncValuesAfterDataChange) {
+            const message = 'ag-Grid: since version 23.1, the Set Filter param suppressSyncValuesAfterDataChange has' +
+                ' been deprecated and will be removed in a future major release.';
+            _.doOnce(() => console.warn(message), 'suppressSyncValuesAfterDataChange deprecated');
+        }
+
+        if (params.suppressRemoveEntries) {
+            const message = 'ag-Grid: since version 23.1, the Set Filter param suppressRemoveEntries has' +
+                ' been deprecated and will be removed in a future major release.';
+            _.doOnce(() => console.warn(message), 'suppressRemoveEntries deprecated');
+        }
     }
 
     private addEventListenersForDataChanges(): void {
