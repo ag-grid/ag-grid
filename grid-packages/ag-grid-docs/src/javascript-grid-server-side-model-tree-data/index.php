@@ -112,7 +112,7 @@ var gridOptions = {
         <li>Group keys are returned from the callback: <code>gridOptions.getServerSideGroupKey()</code>.</li>
     </ul>
 
-<?= grid_example('Tree Data', 'tree-data', 'generated', ['enterprise' => true, 'exampleHeight' => 590, 'extras' => ['lodash'], 'modules' => ['serverside', 'rowgrouping']]) ?>
+<?= grid_example('Tree Data', 'tree-data', 'generated', ['enterprise' => true, 'exampleHeight' => 590, 'extras' => ['lodash'], 'modules' => ['serverside', 'rowgrouping', 'menu', 'columnpanel']]) ?>
 
 <note>
     The examples on this page use simple method for expanding group nodes, however a better approach is covered in the
@@ -142,7 +142,7 @@ var gridOptions = {
 </ul>
 
 
-<?= grid_example('Purging Tree Data', 'purging-tree-data', 'generated', ['enterprise' => true, 'exampleHeight' => 615, 'extras' => ['lodash'], 'modules' => ['serverside', 'rowgrouping']]) ?>
+<?= grid_example('Purging Tree Data', 'purging-tree-data', 'generated', ['enterprise' => true, 'exampleHeight' => 615, 'extras' => ['lodash'], 'modules' => ['serverside', 'rowgrouping', 'menu', 'columnpanel']]) ?>
 
 <h2>Next Up</h2>
 
