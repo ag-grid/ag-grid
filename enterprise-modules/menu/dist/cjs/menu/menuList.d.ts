@@ -1,0 +1,38 @@
+import { ManagedTabComponent, MenuItemDef } from "@ag-grid-community/core";
+export declare class MenuList extends ManagedTabComponent {
+    private popupService;
+    private gridOptionsWrapper;
+    private static TEMPLATE;
+    private static SEPARATOR_TEMPLATE;
+    private static HIDE_MENU_DELAY;
+    private menuItems;
+    private activeMenuItemParams;
+    private activeMenuItem;
+    private subMenuHideTimer;
+    private subMenuShowTimer;
+    private removeChildFuncs;
+    private subMenuParentComp;
+    private subMenuComp;
+    constructor();
+    init(): void;
+    clearActiveItem(): void;
+    addMenuItems(menuItems: (MenuItemDef | string)[] | undefined): void;
+    addItem(menuItemDef: MenuItemDef): void;
+    activateFirstItem(): void;
+    private mouseEnterItem;
+    private mouseLeaveItem;
+    private activateItem;
+    private deactivateItem;
+    private handleKeyDown;
+    private findTopMenu;
+    private handleNavKey;
+    protected onTabKeyDown(e: KeyboardEvent): void;
+    private closeIfIsChild;
+    private openChild;
+    private findNextItem;
+    private addHoverForChildPopup;
+    addSeparator(): void;
+    private showChildMenu;
+    removeChildPopup(): void;
+    destroy(): void;
+}

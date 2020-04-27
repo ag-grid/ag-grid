@@ -1,6 +1,6 @@
 {
   "name": "@ag-grid-enterprise/date-time-cell-editor",
-  "version": "23.0.2",
+  "version": "23.1.0",
   "description": "Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components",
   "main": "./dist/cjs/main.js",
   "module": "./dist/es6/main.js",
@@ -43,11 +43,11 @@
   ],
   "homepage": "http://www.ag-grid.com/",
   "dependencies": {
-    "@ag-grid-community/core": "~23.0.0",
-    "@ag-grid-enterprise/core": "~23.0.0"
+    "@ag-grid-community/core": "~23.1.0",
+    "@ag-grid-enterprise/core": "~23.1.0"
   },
   "devDependencies": {
-    "@ag-grid-community/client-side-row-model": "~23.0.0",
+    "@ag-grid-community/client-side-row-model": "~23.1.0",
     "awesome-typescript-loader": "^5.2.1",
     "css-loader": "^3.4.2",
     "html-webpack-plugin": "^4.0.1",
