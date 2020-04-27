@@ -248,12 +248,6 @@
             "showInCollapsed": true
           },
           {
-            "title": "Row Dragging",
-            "box-title": "Dragging",
-            "url": "javascript-grid-row-dragging/",
-            "showInCollapsed": true
-          },
-          {
             "title": "Row Spanning",
             "box-title": "Spanning",
             "url": "javascript-grid-row-spanning/",
@@ -282,6 +276,19 @@
             "box-title": "Animation",
             "url": "javascript-grid-animation/",
             "showInCollapsed": true
+          },
+          {
+            "title": "Row Dragging",
+            "box-title": "Dragging",
+            "showInCollapsed": true,
+            "url": "javascript-grid-row-dragging/",
+            "items": [{
+              "title": "External DropZone",
+              "url": "javascript-grid-row-dragging-to-external-dropzone/"
+            }, {
+              "title": "Grid to Grid",
+              "url": "javascript-grid-row-dragging-to-grid/"
+            }]
           }
         ]
       },
@@ -661,30 +668,27 @@
                 "title": "Set Filter",
                 "url": "javascript-grid-filter-set/",
                 "enterprise": true,
+                "showInCollapsed": true,
                 "items": [
                   {
                     "title": "Filter List",
                     "url": "javascript-grid-filter-set-filter-list/",
-                    "enterprise": true,
-                    "showInCollapsed": true
+                    "enterprise": true
                   },
                   {
                     "title": "Data Updates",
                     "url": "javascript-grid-filter-set-data-updates/",
-                    "enterprise": true,
-                    "showInCollapsed": true
+                    "enterprise": true
                   },
                   {
                     "title": "Mini Filter",
                     "url": "javascript-grid-filter-set-mini-filter/",
-                    "enterprise": true,
-                    "showInCollapsed": true
+                    "enterprise": true
                   },
                   {
                     "title": "API",
                     "url": "javascript-grid-filter-set-api/",
-                    "enterprise": true,
-                    "showInCollapsed": true
+                    "enterprise": true
                   }
                 ]
               },
