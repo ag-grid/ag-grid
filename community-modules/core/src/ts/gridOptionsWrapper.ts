@@ -1645,9 +1645,9 @@ export class GridOptionsWrapper {
             }
         };
 
-        checkRenamedProperty('batchUpdateWaitMillis', 'asyncTransactionWaitMillis', '20.1.x');
-        checkRenamedProperty('deltaRowDataMode', 'immutableData', '20.1.x');
-        checkRenamedProperty('deltaColumnMode', 'immutableColumns', '20.1.x');
+        checkRenamedProperty('batchUpdateWaitMillis', 'asyncTransactionWaitMillis', '23.1.x');
+        checkRenamedProperty('deltaRowDataMode', 'immutableData', '23.1.x');
+        checkRenamedProperty('deltaColumnMode', 'immutableColumns', '23.1.x');
     }
 
     private checkForViolations() {
