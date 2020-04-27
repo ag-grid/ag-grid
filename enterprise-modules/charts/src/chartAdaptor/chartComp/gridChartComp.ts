@@ -324,8 +324,8 @@ export class GridChartComp extends Component {
 
         if (container) {
             const isEmpty = pivotModeDisabled || isEmptyChart;
-            _.setVisible(this.eChart, !isEmpty);
-            _.setVisible(this.eEmpty, isEmpty);
+            _.setDisplayed(this.eChart, !isEmpty);
+            _.setDisplayed(this.eEmpty, isEmpty);
         }
 
         if (pivotModeDisabled) {
