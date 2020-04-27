@@ -153,11 +153,13 @@ export class SetValueModel implements IEventEmitter {
                     const callback = this.providedValues as SetFilterValuesFunc;
                     const params: SetFilterValuesFuncParams = {
                         success: values => {
+                            const processedValues = _.toStrings(values);
+
                             this.setIsLoading(false);
                             this.valuesType = SetFilterModelValuesType.PROVIDED_LIST;
-                            this.providedValues = values;
+                            this.providedValues = processedValues;
 
-                            const sortedValues = this.sortValues(values);
+                            const sortedValues = this.sortValues(processedValues);
 
                             this.allValues = sortedValues;
 
