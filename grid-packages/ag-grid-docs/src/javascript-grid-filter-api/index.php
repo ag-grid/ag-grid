@@ -194,6 +194,6 @@ SNIPPET
     (Note: the example uses the Enterprise-only <a href="../javascript-grid-filter-set/">set filter</a>).
 </p>
 
-<?= grid_example('Filter Model', 'filter-model', 'generated', ['enterprise' => true, 'exampleHeight' => 590, 'modules' => ['clientside', 'menu', 'filterpanel', 'columnpanel']]) ?>
+<?= grid_example('Filter Model', 'filter-model', 'generated', ['enterprise' => true, 'exampleHeight' => 590, 'modules' => ['clientside', 'menu', 'filterpanel', 'columnpanel', 'setfilter']]) ?>
 
 <?php include '../documentation-main/documentation_footer.php';?>
