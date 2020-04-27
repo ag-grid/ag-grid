@@ -439,7 +439,7 @@ export class GridApi {
         this.redrawRows();
     }
 
-    //** @deprecated */
+    /** @deprecated */
     public refreshRows(rowNodes: RowNode[]): void {
         console.warn('since ag-Grid v11.1, refreshRows() is deprecated, please use refreshCells({rowNodes: rows}) or redrawRows({rowNodes: rows}) instead');
         this.refreshCells({ rowNodes: rowNodes });
@@ -477,6 +477,7 @@ export class GridApi {
         return this.filterManager.isAnyFilterPresent();
     }
 
+    /** @deprecated */
     public isAdvancedFilterPresent(): boolean {
         console.warn('ag-Grid: isAdvancedFilterPresent() is deprecated, please use isColumnFilterPresent()');
         return this.isColumnFilterPresent();
@@ -1164,11 +1165,11 @@ export class GridApi {
         let res: RowNodeTransaction = null;
         if (this.clientSideRowModel) {
             if (rowDataTransaction && rowDataTransaction.addIndex!=null) {
-                console.warn('ag-Grid: as of v22.1, transaction.addIndex is deprecated. If you want precision control of adding data, use immutableData instead');
+                console.warn('ag-Grid: as of v23.1, transaction.addIndex is deprecated. If you want precision control of adding data, use immutableData instead');
             }
             res = this.clientSideRowModel.updateRowData(rowDataTransaction);
         } else if (this.infiniteRowModel) {
-            console.warn('ag-Grid: as of v22.1, transactions for Infinite Row Model are deprecated. If you want to make updates to data in Infinite Row Models, then refresh the data.');
+            console.warn('ag-Grid: as of v23.1, transactions for Infinite Row Model are deprecated. If you want to make updates to data in Infinite Row Models, then refresh the data.');
             this.infiniteRowModel.updateRowData(rowDataTransaction);
         } else {
             console.error('ag-Grid: updateRowData() only works with ClientSideRowModel and InfiniteRowModel.');
@@ -1185,8 +1186,11 @@ export class GridApi {
         return res;
     }
 
+    /** @deprecated */
     public updateRowData(rowDataTransaction: RowDataTransaction): RowNodeTransaction {
-        console.warn('ag-Grid: as of v22.1, grid API updateRowData(transaction) is now called applyTransaction(transaction). updateRowData is deprecated and will be removed in a future major release.');
+        const message = 'ag-Grid: as of v23.1, grid API updateRowData(transaction) is now called applyTransaction(transaction). updateRowData is deprecated and will be removed in a future major release.';
+        _.doOnce(() => console.warn(message), 'updateRowData deprecated');
+
         return this.applyTransaction(rowDataTransaction);
     }
 
@@ -1198,8 +1202,11 @@ export class GridApi {
         this.clientSideRowModel.batchUpdateRowData(rowDataTransaction, callback);
     }
 
+    /** @deprecated */
     public batchUpdateRowData(rowDataTransaction: RowDataTransaction, callback?: (res: RowNodeTransaction) => void): void {
-        console.warn('ag-Grid: as of v22.1, grid API batchUpdateRowData(transaction, callback) is now called applyTransactionAsync(transaction, callback). batchUpdateRowData is deprecated and will be removed in a future major release.');
+        const message = 'ag-Grid: as of v23.1, grid API batchUpdateRowData(transaction, callback) is now called applyTransactionAsync(transaction, callback). batchUpdateRowData is deprecated and will be removed in a future major release.';
+        _.doOnce(() => console.warn(message), 'batchUpdateRowData deprecated');
+
         this.applyTransactionAsync(rowDataTransaction, callback);
     }
 
