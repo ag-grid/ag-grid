@@ -376,7 +376,6 @@ export class HistogramSeries extends CartesianSeries {
     }
 
     getDomain(direction: ChartAxisDirection): any[] {
-
         if (direction === ChartAxisDirection.X) {
             return this.xDomain;
         } else {
@@ -394,12 +393,7 @@ export class HistogramSeries extends CartesianSeries {
     }
 
     update(): void {
-        const {
-            visible,
-            chart,
-            xAxis,
-            yAxis
-        } = this;
+        const { visible, chart, xAxis, yAxis } = this;
 
         this.group.visible = visible;
 
@@ -417,7 +411,6 @@ export class HistogramSeries extends CartesianSeries {
     }
 
     private generateNodeData(): HistogramNodeDatum[] {
-
         if (!this.seriesItemEnabled) {
             return [];
         }

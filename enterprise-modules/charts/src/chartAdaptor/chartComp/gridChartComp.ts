@@ -14,7 +14,6 @@ import {
     PostConstruct,
     ProcessChartOptionsParams,
     RefSelector,
-    ResizeObserverService,
     GridApi,
     ColumnApi,
     ChartCreated,
@@ -67,7 +66,6 @@ export class GridChartComp extends Component {
     @RefSelector('eEmpty') private eEmpty: HTMLElement;
     @RefSelector('eTitleEditContainer') private eTitleEditContainer: HTMLDivElement;
 
-    @Autowired('resizeObserverService') private resizeObserverService: ResizeObserverService;
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('environment') private environment: Environment;
     @Autowired('chartTranslator') private chartTranslator: ChartTranslator;
@@ -113,7 +111,6 @@ export class GridChartComp extends Component {
             this.addDialog();
         }
 
-        this.addResizeListener();
         this.addMenu();
         this.addTitleEditComp();
 
@@ -365,21 +362,6 @@ export class GridChartComp extends Component {
             chartProxy.setChartOption('width', _.getInnerWidth(eChart));
             chartProxy.setChartOption('height', _.getInnerHeight(eChart));
         }
-    }
-
-    private addResizeListener(): void {
-        const eGui = this.getGui();
-
-        const resizeFunc = () => {
-            if (!eGui || !eGui.offsetParent) {
-                observeResizeFunc();
-                return;
-            }
-
-            this.refreshCanvasSize();
-        };
-
-        const observeResizeFunc = this.resizeObserverService.observeResize(this.eChart, resizeFunc, 5);
     }
 
     private setActiveChartCellRange(focusEvent: FocusEvent): void {
