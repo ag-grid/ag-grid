@@ -9,7 +9,7 @@ include '../documentation-main/documentation_header.php';
 <h1 class="heading-enterprise">Set Filter - Mini Filter</h1>
 
 <p class="lead">
-    This section describes the behaviour of the Mini Filter and shows how it can be configured to suit application requirements.
+    This section describes the behaviour of the Mini Filter and shows how it can be configured.
 </p>
 
 <div class="animated-example">
@@ -17,20 +17,26 @@ include '../documentation-main/documentation_header.php';
 </div>
 
 <p>
-    Searching in the mini filter narrows the values displayed in the filter list but won't perform any filtering in the grid.
-    Hitting the <b>Enter</b> key will select all displayed values in the filter list and perform filtering in the grid.
+    Entering text into Mini Filter filters the Filter List inside the Set Filter only. In other words it narrows
+    down the presented list of values inside the Set Filter only. The Mini Filter does not filter the data inside
+    the grid.
+</p>
+<p>
+    When the Enter Key is pressed while on the Mini Filter, the Set Filter will exclusively select all Filter Values
+    that pass the Mini Filter and apply the filter immediately (even if an Apply Button is available, hitting
+    'Enter' applies the filter).
 </p>
 
 <h2>Custom Mini Filter Searches</h2>
 
 <p>
-    Sometimes it is necessary to provide custom handling for mini filter searches, for example to substitute accented
+    Sometimes it is necessary to provide custom handling for Mini Filter searches, for example to substitute accented
     characters or to perform case-sensitive searches.
 </p>
 
 <p>
     As with the <a href="../javascript-grid-filter-text/#text-formatter">Text Filter</a> it is possible to supply a
-    text formatter to the set filter which formats the text before applying the mini filter compare logic. The snippet
+    Text Formatter to the Set Filter which formats the text before applying the Mini Filter compare logic. The snippet
     below shows how this can be configured:
 </p>
 
@@ -66,7 +72,7 @@ SNIPPET
 
 <ul class="content">
     <li>
-        The <b>Athlete</b> Set filter is supplied a text formatter via <code>filterParams.textFormatter</code> to
+        The Athlete column's Set filter is supplied a text formatter via <code>filterParams.textFormatter</code> to
         ignore accents.
     </li>
     <li>
@@ -79,21 +85,20 @@ SNIPPET
 <h2>Mini Filter Options</h2>
 
 <p>
-    The following example demonstrates some mini filter options. Note the following:
+    The following example demonstrates some Mini Filter options. Note the following:
 </p>
 
 <ul class="content">
     <li>
-        The <b>Athlete</b> set filter does not have a mini filter as <code>filterParams.suppressMiniFilter=true</code>.
+        The Athlete column's Set Filter does not have a Mini Filter as <code>filterParams.suppressMiniFilter=true</code>.
     </li>
     <li>
-        The <b>Country</b> set filter will automatically closed when the <b>Enter</b> key is pressed in the mini filter
+        The Country column's Set Filter will automatically closed when the Enter Key is pressed in the Mini Filter
         as <code>filterParams.closeOnApply=true</code>.
     </li>
 </ul>
 
 <?= grid_example('Mini Filter Options', 'mini-filter-options', 'generated', ['enterprise' => true, 'exampleHeight' => 565, 'modules' => ['clientside', 'setfilter', 'menu', 'columnpanel']]) ?>
-
 
 <h2>Next Up</h2>
 

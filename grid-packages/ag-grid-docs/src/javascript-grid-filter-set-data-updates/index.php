@@ -9,23 +9,48 @@ include '../documentation-main/documentation_header.php';
 <h1 class="heading-enterprise">Set Filter - Data Updates</h1>
 
 <p class="lead">
-    This section describes how updating data through Cell Editing, Transactions Updates and Setting New Data, affects
-    set filter values.
+    This section describes how changing data through
+    <a href="../javascript-grid-cell-editing/">Cell Editing</a> and the application
+    <a href="../javascript-grid-data-update">Updating Data</a> impacts
+    the Set Filter's values. This is only applicable when the Set Filter is taking it's
+    values form the grid's data.
 </p>
 
-<h2>Cell Editing</h2>
+<h2 id="row-cell-updates">Row / Cell Updates</h2>
 
 <p>
-    Filter values will be refreshed when data is updated through <a href="../javascript-grid-cell-editing/">Cell Editing</a>.
+    Row / Cell updates refers to any of the following:
+</p>
+<ul>
+    <li>
+        All edits via the grid's UI such as <a href="../javascript-grid-cell-editing/">Cell Editing</a> and
+        <a href="../javascript-grid-clipboard/">Clipboard Operations</a>.
+    </li>
+    <li>
+        Using the grid's <a href="../javascript-grid-data-update-single-row-cell/">Single Row / Cell Update API</a>
+        i.e. <code>rowNode.setData()</code> and <code>rowNode.setDataValue()</code> API methods.
+    </li>
+</ul>
+
+<p>
+    Filter Values will be refreshed when data is updated through any of these methods.
 </p>
 
 <p>
-    Here are the rules that determine how filter values are selected:
+    Here are the rules that determine how Filter Values are selected:
 </p>
 
 <ul class="content">
-    <li><b>No Active Filters</b>: all filter values, including new values, will be selected.</li>
-    <li><b>Active Filters</b>: previous selections will remain intact but new values will not be selected.</li>
+    <li>
+        <b>Filter Inactive</b>: Before the update 'all' values in the filter were selected (as the filter was inactive).
+        The filter list will be updated reflecting the data change and all values will remain selected leaving the
+        filter inactive
+    </li>
+    <li>
+        <b>Filter Active</b>: Before the update 'some' values in the filter were selected (as the filter was active).
+        The filter list will be updated reflecting the data change, however previous selections will remain intact.
+        If the update resulted in a new filter value, the new filter value will not be selected.
+    </li>
 </ul>
 
 <p>
@@ -49,10 +74,10 @@ SNIPPET
     , 'ts') ?>
 
 <p>
-    The following example demonstrates cell editing with the set filter. Try the following:
+    The following example demonstrates Cell Editing with the Set Filter. Try the following:
 </p>
 
-<p><b>Without selecting any filter values:</b></p>
+<p><b>Without selecting any Filter Values:</b></p>
 <ul class="content">
     <li>
         Change (Cell Edit) a <code>'B'</code> cell value to <code>'X'</code> and note it gets added to the filter list
@@ -63,7 +88,7 @@ SNIPPET
 <p><b>Click 'Reset' and deselect 'C' in the Filter List:</b></p>
 <ul class="content">
     <li>
-        Change (Cell Edit) a <code>'B'</code> cell value to <code>'X'</code> and notice it gets added to the filter list
+        Change (Cell Edit) a <code>'B'</code> cell value to <code>'X'</code> and notice it gets added to the Filter List
         but it is <b>not selected</b>.
     </li>
     <li>
@@ -79,26 +104,44 @@ SNIPPET
 <h2>Transaction Updates</h2>
 
 <p>
-    Filter values are refreshed when data is updated using
-    <a href="../javascript-grid-data-update-transactions/">Transaction Updates</a>.
+    Transaction Updates refers to any of the following:
 </p>
+<ul>
+    <li>
+        Updating data via <a href="../javascript-grid-data-update-transactions/">Transactions</a> API.
+    </li>
+    <li>
+        Updating data via <a href="../javascript-grid-data-update-high-frequency/">Async Transactions</a> API.
+    </li>
+    <li>
+        Changes when using <a href="../javascript-grid-immutable-data/">Immutable Data</a> (as this uses Transactions
+        underneath the hood).
+    </li>
+</ul>
 
-<note>
-    This section also applies to <a href="../javascript-grid-immutable-data/">Immutable Data</a> as it uses Transaction
-    Updates under the hood.
-</note>
+<p>
+    Filter values are refreshed when data is updated using any of these methods.
+</p>
 
 <p>
     Here are the rules that determine how filter values are selected:
 </p>
 
 <ul class="content">
-    <li><b>No Active Filters</b>: all filter values, including new values, will be selected.</li>
-    <li><b>Active Filters</b>: previous selections will remain intact but new values will not be selected.</li>
+    <li>
+        <b>Filter Inactive</b>: Before the update 'all' values in the filter were selected (as the filter was inactive).
+        The filter list will be updated reflecting the data change and all values will remain selected leaving the
+        filter inactive
+    </li>
+    <li>
+        <b>Filter Active</b>: Before the update 'some' values in the filter were selected (as the filter was active).
+        The filter list will be updated reflecting the data change, however previous selections will remain intact.
+        If the update resulted in a new filter value, the new filter value will not be selected.
+    </li>
 </ul>
 
 <p>
-    Unlike <a href="../javascript-grid-filter-set-data-updates#cell-editing">Cell Editing</a>, transaction updates will execute
+    Unlike <a href="#row-cell-updates">Cell Editing</a>, transaction updates will execute
     filtering in the grid.
 </p>
 
@@ -139,7 +182,7 @@ SNIPPET
 <h2>Setting New Data</h2>
 
 <p>
-    By default, when <code>api.setRowData()</code> is called, all set filter selections will be lost.
+    By default, when <code>api.setRowData()</code> is called, all Set Filter selections will be lost.
 </p>
 <p>
     It is recommended that <code>newRowsAction='keep'</code> set on the filter params to keep existing filter selections

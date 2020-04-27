@@ -1,19 +1,19 @@
 {
     "filterParams": {
         "applyButton": {
-            "description": "Set to <code>true</code> to have the filter use an Apply button. If the Apply button is present, the filter is only applied after the user hits the Apply button."
+            "description": "Set to <code>true</code> to have the filter use an Apply Button. If the Apply button is present, the filter is only applied after the user hits the Apply button."
         },
         "clearButton": {
-            "description": "Set to <code>true</code> to have the filter use a Clear button. The Clear button will clear the (form) details of the filter without removing any active filters on the column."
+            "description": "Set to <code>true</code> to have the filter use a Clear Button. The Clear button will clear the (form) details of the filter without removing any active filters on the column."
         },
         "resetButton": {
-            "description": "Set to <code>true</code> to have the filter use a Reset button. The Reset button will clear the details of the filter and any active filters on that column."
+            "description": "Set to <code>true</code> to have the filter use a Reset Button. The Reset button will clear the details of the filter and any active filters on that column."
         },
         "closeOnApply": {
             "description": "Set to <code>true</code> to immediately close the filter popup when a filter is applied."
         },
         "debounceMs": {
-            "description": "By default the <a href='../javascript-grid-filter-text'>Text</a> and <a href='../javascript-grid-filter-number'>Number</a> filters will debounce by 500ms. This is because these filters have text field inputs, so time is given to the user to type items in. The <a href='../javascript-grid-filter-set-overview/'>Set</a> and <a href='../javascript-grid-filter-date'>Date</a> will execute immediately (no debounce). To override these defaults, set <code>debounceMs</code> to the number of milliseconds to  debounce by."
+            "description": "By default the <a href='../javascript-grid-filter-text'>Text</a> and <a href='../javascript-grid-filter-number'>Number</a> filters will debounce by 500ms. This is because these filters have text field inputs, so time is given to the user to type items in. The <a href='../javascript-grid-filter-set/'>Set</a> and <a href='../javascript-grid-filter-date'>Date</a> will execute immediately (no debounce). To override these defaults, set <code>debounceMs</code> to the number of milliseconds to  debounce by."
         },
         "newRowsAction": {
             "default": "clear",
