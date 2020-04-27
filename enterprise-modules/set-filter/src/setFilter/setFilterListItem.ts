@@ -71,14 +71,11 @@ export class SetFilterListItem extends Component {
     }
 
     public render(): void {
-        const { value, params: { column } } = this;
-        const colDef = column.getColDef();
-
-        let valueFormatted = this.getValueFormatted(colDef, column, value);
-        let valueToRender = valueFormatted != null ? valueFormatted : value;
+        const { value, params: { column, colDef } } = this;
+        const formattedValue = this.getFormattedValue(colDef, column, value);
 
         if (this.params.showTooltips) {
-            this.tooltipText = _.escape(valueToRender);
+            this.tooltipText = _.escape(formattedValue != null ? formattedValue : value);
 
             if (_.exists(this.tooltipText)) {
                 if (this.gridOptionsWrapper.isEnableBrowserTooltips()) {
@@ -91,20 +88,18 @@ export class SetFilterListItem extends Component {
 
         const params: ISetFilterCellRendererParams = {
             value,
-            valueFormatted,
+            valueFormatted: formattedValue,
             api: this.gridOptionsWrapper.getApi()
         };
 
         this.renderCell(colDef, this.eFilterItemValue, params);
     }
 
-    private getValueFormatted(colDef: ColDef, column: Column, value: any) {
-        const filterParams = (<ISetFilterParams>colDef.filterParams);
-        const filterValueFormatterExists = filterParams && filterParams.valueFormatter;
-        if (filterValueFormatterExists) {
-            return this.valueFormatterService.formatValue(column, null, null, value, filterParams.valueFormatter);
-        }
-        return null;
+    private getFormattedValue(colDef: ColDef, column: Column, value: any) {
+        const filterParams = colDef.filterParams as ISetFilterParams;
+        const formatter = filterParams == null ? null : filterParams.valueFormatter;
+
+        return this.valueFormatterService.formatValue(column, null, null, value, formatter, false);
     }
 
     private renderCell(target: ColDef, eTarget: HTMLElement, params: any): void {

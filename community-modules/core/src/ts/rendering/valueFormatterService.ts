@@ -15,7 +15,8 @@ export class ValueFormatterService {
         node: RowNode | null,
         $scope: any,
         value: any,
-        suppliedFormatter?: (value: any) => string
+        suppliedFormatter?: (value: any) => string,
+        useFormatterFromColumn = true
     ): string {
         let result: string = null;
         let formatter: ((value: any) => string) | string;
@@ -25,7 +26,7 @@ export class ValueFormatterService {
         if (suppliedFormatter) {
             // favour supplied, e.g. set filter items can have their own value formatters
             formatter = suppliedFormatter;
-        } else {
+        } else if (useFormatterFromColumn) {
             // if floating, give preference to the floating formatter
             formatter = node && node.rowPinned && colDef.pinnedRowValueFormatter ?
                 colDef.pinnedRowValueFormatter : colDef.valueFormatter;
@@ -56,7 +57,7 @@ export class ValueFormatterService {
         }
 
         // if we don't do this, then arrays get displayed as 1,2,3, but we want 1, 2, 3 (ie with spaces)
-        if (result == null && Array.isArray(value)) {
+        if (result != null && Array.isArray(value)) {
             result = value.join(', ');
         }
 
