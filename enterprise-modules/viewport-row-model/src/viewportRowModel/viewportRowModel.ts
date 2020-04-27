@@ -44,17 +44,13 @@ export class ViewportRowModel implements IRowModel {
 
     private viewportDatasource: IViewportDatasource;
 
-    private events: (() => void)[] = [];
-
     // we don't implement as lazy row heights is not supported in this row model
     public ensureRowHeightsValid(startPixel: number, endPixel: number, startLimitIndex: number, endLimitIndex: number): boolean { return false; }
 
     @PostConstruct
     private init(): void {
         this.rowHeight = this.gridOptionsWrapper.getRowHeightAsNumber();
-        this.events = [
-            this.eventService.addEventListener(Events.EVENT_VIEWPORT_CHANGED, this.onViewportChanged.bind(this))
-        ]
+        this.eventService.addEventListener(Events.EVENT_VIEWPORT_CHANGED, this.onViewportChanged.bind(this));
     }
 
     public start(): void {
@@ -76,11 +72,6 @@ export class ViewportRowModel implements IRowModel {
             this.rowRenderer.datasourceChanged();
             this.firstRow = -1;
             this.lastRow = -1;
-        }
-
-        if (this.events.length) {
-            this.events.forEach(func => func());
-            this.events = [];
         }
     }
 
