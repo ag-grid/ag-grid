@@ -1524,8 +1524,7 @@ export class CellComp extends Component implements TooltipParentComp {
     }
 
     private containsWidget(target: HTMLElement): boolean {
-        return _.isElementChildOfClass(target, 'ag-selection-checkbox', 3) ||
-            _.isElementChildOfClass(target, 'ag-icon', 3);
+        return _.isElementChildOfClass(target, 'ag-selection-checkbox', 3);
     }
 
     // returns true if on iPad and this is second 'click' event in 200ms
