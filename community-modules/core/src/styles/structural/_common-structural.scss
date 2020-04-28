@@ -754,12 +754,8 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia  {
  ****************************
 */
 
-.ag-dnd-wrapper {
-    position: absolute;
-}
-
 .ag-dnd-ghost {
-    position: relative;
+    position: absolute;
     display: inline-flex;
     align-items: center;
     cursor: move;
