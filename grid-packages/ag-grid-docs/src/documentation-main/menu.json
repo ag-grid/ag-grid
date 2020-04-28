@@ -1375,6 +1375,7 @@
           {
             "title": "API",
             "isCategory": true,
+            "forceTopLevelSubItems": true,
             "items": [
               {
                 "title": "Reference",

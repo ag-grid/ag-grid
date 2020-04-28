@@ -446,6 +446,7 @@ export class AgGridAngular implements AfterViewInit {
     @Input() public allowDragFromColumnsToolPanel : any = undefined;
     @Input() public immutableData : any = undefined;
     @Input() public immutableColumns : any = undefined;
+    @Input() public pivotSuppressAutoColumn : any = undefined;
 
     @Output() public columnEverythingChanged: EventEmitter<any> = new EventEmitter<any>();
     @Output() public newColumnsLoaded: EventEmitter<any> = new EventEmitter<any>();
