@@ -13,3 +13,7 @@
 .test-header .example-section:not(:first-child) {
     margin-top: 5px;
 }
+
+#myGrid {
+    flex: 1;
+}
