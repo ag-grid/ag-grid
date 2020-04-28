@@ -86,6 +86,7 @@ export interface DraggingEvent {
     fromNudge: boolean;
     api: GridApi;
     columnApi: ColumnApi;
+    dropZoneTarget: HTMLElement;
 }
 
 @Bean('dragAndDropService')
@@ -333,13 +334,14 @@ export class DragAndDropService {
     }
 
     public createDropTargetEvent(dropTarget: DropTarget, event: MouseEvent, hDirection: HorizontalDirection, vDirection: VerticalDirection, fromNudge: boolean): DraggingEvent {
-        // localise x and y to the target component
-        const rect = dropTarget.getContainer().getBoundingClientRect();
+        // localise x and y to the target
+        const dropZoneTarget = dropTarget.getContainer();
+        const rect = dropZoneTarget.getBoundingClientRect();
         const { gridApi: api, columnApi, dragItem, dragSource } = this;
         const x = event.clientX - rect.left;
         const y = event.clientY - rect.top;
 
-        return { event, x, y, vDirection, hDirection, dragSource, fromNudge, dragItem, api, columnApi };
+        return { event, x, y, vDirection, hDirection, dragSource, fromNudge, dragItem, api, columnApi, dropZoneTarget };
     }
 
     private positionGhost(event: MouseEvent): void {

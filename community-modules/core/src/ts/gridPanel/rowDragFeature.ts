@@ -166,12 +166,11 @@ export class RowDragFeature implements DropTarget {
         return this.gridPanel.getGui().contains(draggingEvent.dragSource.eElement);
     }
 
-    private isTargetOutsideThisGrid(draggingEvent: DraggingEvent): boolean {
-        const eDoc = this.gridOptionsWrapper.getDocument();
+    private isDropZoneWithinThisGrid(draggingEvent: DraggingEvent): boolean {
         const gridGui = this.gridPanel.getGui();
-        const elementFromPoint = eDoc.elementFromPoint(draggingEvent.event.clientX, draggingEvent.event.clientY);
+        const { dropZoneTarget } = draggingEvent;
 
-        return !gridGui.contains(elementFromPoint);
+        return !gridGui.contains(dropZoneTarget);
     }
 
     private onEnterOrDragging(draggingEvent: DraggingEvent): void {
@@ -215,7 +214,7 @@ export class RowDragFeature implements DropTarget {
         }
 
         if (this.gridOptionsWrapper.isSuppressMoveWhenRowDragging() || !isFromThisGrid) {
-            if (!this.isTargetOutsideThisGrid(draggingEvent)) {
+            if (!this.isDropZoneWithinThisGrid(draggingEvent)) {
                 this.clientSideRowModel.highlightRowAtPixel(rowNodes[0], pixel);
             }
         } else {
@@ -493,7 +492,7 @@ export class RowDragFeature implements DropTarget {
         if (
             this.gridOptionsWrapper.isRowDragManaged() &&
             (this.gridOptionsWrapper.isSuppressMoveWhenRowDragging() || !this.isFromThisGrid(draggingEvent)) &&
-            !this.isTargetOutsideThisGrid(draggingEvent)
+            !this.isDropZoneWithinThisGrid(draggingEvent)
         ) {
             this.moveRowAndClearHighlight(draggingEvent);
         }
