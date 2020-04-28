@@ -1,16 +1,7 @@
 var columnDefs = [
-    // different ways to define 'categories'
-    { field: "athlete", width: 150, chartDataType: 'category' },
-    { field: "age", chartDataType: 'category', sort: 'asc' },
-    { field: "sport" }, // inferred as category by grid
-
-    // excludes year from charts
-    { field: "year", chartDataType: 'excluded' },
-
-    // different ways to define 'series'
-    { field: "gold", chartDataType: 'series' },
-    { field: "silver", chartDataType: 'series' },
-    { field: "bronze" } // inferred as series by grid
+    { field: "Month", width: 150, chartDataType: 'category' },
+    { field: "Sunshine (hours)", chartDataType: 'series' },
+    { field: "Rainfall (mm)", chartDataType: 'series' }
 ];
 
 var gridOptions = {
@@ -53,7 +44,7 @@ document.addEventListener('DOMContentLoaded', function() {
     var gridDiv = document.querySelector('#myGrid');
     new agGrid.Grid(gridDiv, gridOptions);
 
-    agGrid.simpleHttpRequest({ url: 'https://raw.githubusercontent.com/ag-grid/ag-grid/master/grid-packages/ag-grid-docs/src/wideSpreadOfSports.json' })
+    agGrid.simpleHttpRequest({ url: 'https://raw.githubusercontent.com/ag-grid/ag-grid/master/grid-packages/ag-grid-docs/src/weather_se_england.json' })
         .then(function(data) {
             gridOptions.api.setRowData(data);
         });

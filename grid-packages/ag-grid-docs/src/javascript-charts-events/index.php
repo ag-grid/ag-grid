@@ -87,7 +87,11 @@ SNIPPET
 
 <h2>Chart Events</h2>
 
-<h3>seriesNodeClick</h3>
+<h3>Example: <code>seriesNodeClick</code> Event</h3>
+
+<?= chart_example('Node Click Event', 'series-node-click-event', 'generated'); ?>
+
+<h3><code>seriesNodeClick</code> Event</h3>
 
 <p>
     Fired when a node of any series in the chart is clicked.
@@ -99,9 +103,5 @@ SNIPPET
     In this case the contents of the event object passed to the listener will depend on the type
     of series the clicked node belongs to.
 </p>
-
-<h3>Example: <code>seriesNodeClick</code> Event</h3>
-
-<?= chart_example('Node Click Event', 'series-node-click-event', 'generated'); ?>
 
 <?php include '../documentation-main/documentation_footer.php'; ?>

@@ -114,9 +114,32 @@ interface ChartDestroyed {
 
 <h2>Example: Chart Events</h2>
 
-<p>The following example demonstrates when the described events occur by writing to the console whenever they are triggered.</p>
+<p>The following example demonstrates when the described events occur by writing to the console whenever they are triggered. Try the following:</p>
+
+<ul>
+    <li>
+        Create a chart from selection, for example, select a few cells in the "Month" and "Sunshine" columns and right-click to "Chart Range" as a "Line" chart.
+        Notice that a "Created chart with ID id-xxxxxxxxxxxxx" message has been logged to the console.
+    </li>
+    <li>
+        Shrink or expand the selection by a few cells to see the "Changed range selection of chart with ID id-xxxxxxxxxxxx" logged.
+    </li>
+    <li>
+        Click the hamburger icon inside the chart dialog to show chart settings and switch to a column chart.
+        Notice that a "Changed options of chart with ID id-xxxxxxxxxxxxx" message has been logged to the console.
+    </li>
+    <li>
+        Close the chart dialog to see the "Destroyed chart with ID id-xxxxxxxxxxx" message logged.
+    </li>
+</ul>
 
 <?= grid_example('Events', 'events', 'generated', ['enterprise' => true]) ?>
+
+<h2>Other Resources</h2>
+
+<p>
+    To learn about series events refer to the standalone charting library <a href="../javascript-charts-events/">documentation</a>.
+</p>
 
 <h2>Next Up</h2>
 
