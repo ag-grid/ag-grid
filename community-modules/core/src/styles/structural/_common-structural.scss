@@ -584,6 +584,11 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia  {
     width: 100%;
 }
 
+.ag-row-loading {
+    display: flex;
+    align-items: center;
+}
+
 .ag-row-position-absolute {
     position: absolute;
 }
