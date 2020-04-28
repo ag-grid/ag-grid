@@ -16,38 +16,37 @@ include '../documentation-main/documentation_header.php';
     used for displaying panels of information.
 </p>
 
+<note>
+    You may be wondering what full width rows are useful for. Their usage is very
+    rare and most applications will not use them. If you cannot think of a use case for it,
+    then don't worry, do not use it. Full width rows were initially introduced into ag-Grid
+    to support <a href="../javascript-grid-master-detail">Master / Detail</a> before the grid
+    provided direct support for master / detail. Now that master / detail is directly
+    supported, the usefulness of full width is reduced.
+</note>
+
 <h2>Simple Example of Full Width Rows</h2>
 
 <p>
     Below shows a simple example using full width. The following can be noted:
 </p>
-    <ul class="content">
-        <li>
-            The rows for countries France, Italy and Peru have full width components
-            instead of cells.
-        </li>
-        <li>
-            Sorting and filtering all work as if the data was displayed as normal.
-        </li>
-    </ul>
+
+<ul class="content">
+    <li>
+        The rows for countries France, Italy and Peru have full width components
+        instead of cells.
+    </li>
+    <li>
+        Sorting and filtering all work as if the data was displayed as normal.
+    </li>
+</ul>
 
 <?= grid_example('Simple Full Width', 'simple-full-width', 'generated', ['exampleHeight' => 580, 'modules' => true]) ?>
 
-<note>
-    You may be wondering, what is full width rows useful for? It's usage is very
-    rare and most applications will not use it. If you cannot think of a use case for it,
-    then don't worry, do not use it. Full width rows were initially introduced into ag-Grid
-    to support <a href="../javascript-grid-master-detail">Master / Detail</a> before the grid
-    was giving direct support for master / detail. Now that master / detail is directly
-    supported, the usefulness of full width is reduced.
-</note>
-
-<h2>
-    Understanding Full Width
-</h2>
+<h2>Understanding Full Width</h2>
 
 <p>
-    A fullWidth (full width) component takes up the entire width of the grid. A fullWidth component:
+    A <code>fullWidth</code> (full width) component takes up the entire width of the grid. A full width component:
 </p>
 
 <ul class="content">
@@ -64,22 +63,22 @@ include '../documentation-main/documentation_header.php';
 
 <ol>
     <li>Implement the <code>isFullWidthCell(rowNode)</code> callback, to tell the grid which rows should be treated
-        as fullWidth.</li>
-    <li>Provide a <code>fullWidthCellRenderer</code>, to tell the grid what cellRenderer to use when doing
-        fullWidth rendering.</li>
+        as <code>fullWidth</code>.</li>
+    <li>Provide a <code>fullWidthCellRenderer</code>, to tell the grid what <code>cellRenderer</code> to use when doing
+        <code>fullWidth</code> rendering.</li>
 </ol>
 
 <p>
     The cell renderer can be any ag-Grid cell renderer. Refer to
     <a href="../javascript-grid-cell-rendering-components/">Cell Rendering</a> on how to build cell renderers.
-    The cell renderer for fullWidth has one difference to normal cell renderers, that is the parameters passed
-    are missing the value and column information as the cellRenderer, by definition, is not tied to a particular
+    The cell renderer for <code>fullWidth</code> has one difference to normal cell renderers: the parameters passed
+    are missing the value and column information as the <code>cellRenderer</code>, by definition, is not tied to a particular
     column. Instead you should work off the data parameter, which represents the value for the entire row.
 </p>
 
 <p>
-    The <code>isFullWidthCell(rowNode)</code> callback takes a rowNode as input and should return a boolean true
-    (use fullWidth) or false (do not use fullWidth and render as normal).
+    The <code>isFullWidthCell(rowNode)</code> callback takes a <code>rowNode</code> as input and should return a boolean
+    <code>true</code> (use <code>fullWidth</code>) or <code>false</code> (do not use <code>fullWidth</code> and render as normal).
 </p>
 
 <h2>Sorting and Filtering</h2>
@@ -102,14 +101,14 @@ include '../documentation-main/documentation_header.php';
 <ul class="content">
     <li>
         Full width can be applied to any row, including pinned rows. The example demonstrates full width in
-        floating top, floating bottom and body rows.
+        pinned top, pinned bottom and body rows.
     </li>
     <li>
         Full width rows can be of any height, which is specified in the usual way using the <code>getRowHeight()</code>
-        callback. The example sets body fullWidth rows to 55px.
+        callback. The example sets body <code>fullWidth</code> rows to 55px.
     </li>
     <li>
-        The floating full width rows are not impacted by either the vertical or horizontal scrolling.
+        The pinned full width rows are not impacted by either the vertical or horizontal scrolling.
     </li>
     <li>The body full width rows are impacted by vertical scrolling only, and not the horizontal scrolling.</li>
     <li>The full width rows span the entire grid, including the pinned left and pinned right sections.</li>
