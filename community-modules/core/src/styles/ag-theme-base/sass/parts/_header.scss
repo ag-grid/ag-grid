@@ -103,7 +103,7 @@
         }
 
         .ag-pinned-right-header .ag-header-cell-resize::after {
-            margin-left: 2px;
+            left: calc(50% - #{ag-param(header-column-resize-handle-width)});
         }
     }
 
