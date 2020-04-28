@@ -92,12 +92,12 @@ function binDrop(event) {
 
     var rowIsInLeftGrid = !!leftGridOptions.api.getRowNode(data.id);
     if (rowIsInLeftGrid) {
-        leftGridOptions.api.updateRowData(transaction);
+        leftGridOptions.api.applyTransaction(transaction);
     }
 
     var rowIsInRightGrid = !!rightGridOptions.api.getRowNode(data.id);
     if (rowIsInRightGrid) {
-        rightGridOptions.api.updateRowData(transaction);
+        rightGridOptions.api.applyTransaction(transaction);
     }
 }
 
@@ -144,7 +144,7 @@ function gridDrop(event, grid) {
     var transaction = {
         add: [data]
     };
-    gridApi.updateRowData(transaction);
+    gridApi.applyTransaction(transaction);
 }
 
 // setup the grid after the page has finished loading

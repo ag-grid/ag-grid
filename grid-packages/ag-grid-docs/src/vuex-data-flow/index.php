@@ -84,7 +84,7 @@ mounted() {
              ..other bindings/attributes
 methods: {
     dataModelChanged(rowData) {
-        this.$store.dispatch('updateRowData', rowData);
+        this.$store.dispatch('applyTransaction', rowData);
     }
 }
 </snippet>

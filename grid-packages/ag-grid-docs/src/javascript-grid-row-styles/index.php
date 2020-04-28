@@ -147,7 +147,7 @@ gridOptions.rowClassRules: {
             and the class 'sick-days-breach' is applied when the number of sick days > 8.</li>
         <li>The grid re-evaluates the rowClassRules when the data is changed. The example
         shows changing the data in the three different ways: <code>rowNode.setDataValue</code>, <code>rowNode.setData</code>
-            and <code>api.updateRowData</code>. See <a href="../javascript-grid-data-update">Updating Data</a> for details on these update functions.</li>
+            and <code>api.applyTransaction</code>. See <a href="../javascript-grid-data-update">Updating Data</a> for details on these update functions.</li>
     </ul>
 
     <?= grid_example('Row Class Rules', 'row-class-rules', 'generated') ?>

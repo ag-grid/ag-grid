@@ -146,12 +146,12 @@ export class AppComponent {
 
         var rowIsInLeftGrid = !!this.leftGridOptions.api.getRowNode(data.id);
         if (rowIsInLeftGrid) {
-            this.leftGridOptions.api.updateRowData(transaction);
+            this.leftGridOptions.api.applyTransaction(transaction);
         }
 
         var rowIsInRightGrid = !!this.rightGridOptions.api.getRowNode(data.id);
         if (rowIsInRightGrid) {
-            this.rightGridOptions.api.updateRowData(transaction);
+            this.rightGridOptions.api.applyTransaction(transaction);
         }
     }
 
@@ -197,7 +197,7 @@ export class AppComponent {
         var transaction = {
             add: [data]
         };
-        gridApi.updateRowData(transaction);
+        gridApi.applyTransaction(transaction);
     }
 
     onFirstDataRendered(params) {

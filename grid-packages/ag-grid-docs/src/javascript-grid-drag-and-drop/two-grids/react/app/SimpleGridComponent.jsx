@@ -111,12 +111,12 @@ export default class extends Component {
 
         const rowIsInLeftGrid = !!this.state.leftGridOptions.api.getRowNode(data.id);
         if (rowIsInLeftGrid) {
-            this.state.leftGridOptions.api.updateRowData(transaction);
+            this.state.leftGridOptions.api.applyTransaction(transaction);
         }
 
         const rowIsInRightGrid = !!this.state.rightGridOptions.api.getRowNode(data.id);
         if (rowIsInRightGrid) {
-            this.state.rightGridOptions.api.updateRowData(transaction);
+            this.state.rightGridOptions.api.applyTransaction(transaction);
         }
     };
 
@@ -161,7 +161,7 @@ export default class extends Component {
         const transaction = {
             add: [data]
         };
-        gridApi.updateRowData(transaction);
+        gridApi.applyTransaction(transaction);
     };
 
     onGridReady = (params) => {

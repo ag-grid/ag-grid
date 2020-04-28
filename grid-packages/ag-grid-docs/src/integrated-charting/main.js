@@ -102,7 +102,7 @@
                 gridOptions.api.setRowData(e.data.records);
             }
             if (e.data.type === 'updateData') {
-                gridOptions.api.batchUpdateRowData({ update: e.data.records });
+                gridOptions.api.applyTransactionAsync({ update: e.data.records });
             }
         };
         worker.postMessage('start');

@@ -156,7 +156,7 @@ function updateUsingTransaction() {
 
     console.log('updating - after', itemToUpdate);
 
-    gridOptions.api.updateRowData(transaction);
+    gridOptions.api.applyTransaction(transaction);
 }
 
 function removeUsingTransaction() {
@@ -171,7 +171,7 @@ function removeUsingTransaction() {
 
     console.log('removing', itemToRemove);
 
-    gridOptions.api.updateRowData(transaction);
+    gridOptions.api.applyTransaction(transaction);
 }
 
 function addUsingTransaction() {
@@ -186,7 +186,7 @@ function addUsingTransaction() {
 
     console.log('adding', newItem);
 
-    gridOptions.api.updateRowData(transaction);
+    gridOptions.api.applyTransaction(transaction);
 }
 
 function changeGroupUsingTransaction() {
@@ -203,7 +203,7 @@ function changeGroupUsingTransaction() {
 
     console.log('updating', itemToUpdate);
 
-    gridOptions.api.updateRowData(transaction);
+    gridOptions.api.applyTransaction(transaction);
 }
 
 // setup the grid after the page has finished loading

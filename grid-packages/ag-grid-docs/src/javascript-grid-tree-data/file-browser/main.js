@@ -158,7 +158,7 @@ function addNewGroup() {
             size: 58.9
         }
     ];
-    gridOptions.api.updateRowData({add: newGroupData});
+    gridOptions.api.applyTransaction({add: newGroupData});
 }
 
 function removeSelected() {
@@ -168,7 +168,7 @@ function removeSelected() {
         return;
     }
 
-    gridOptions.api.updateRowData({remove: getRowsToRemove(selectedNode)});
+    gridOptions.api.applyTransaction({remove: getRowsToRemove(selectedNode)});
 }
 
 function getRowsToRemove(node) {
@@ -196,7 +196,7 @@ function moveSelectedNodeToTarget(targetRowId) {
     }
 
     var rowsToUpdate = getRowsToUpdate(selectedNode, targetNode.data.filePath);
-    gridOptions.api.updateRowData({update: rowsToUpdate});
+    gridOptions.api.applyTransaction({update: rowsToUpdate});
 }
 
 function isSelectionParentOfTarget(selectedNode, targetNode) {

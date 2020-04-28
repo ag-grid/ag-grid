@@ -105,7 +105,7 @@
                     gridOptions.api.setRowData(e.data.records);
                     break;
                 case "updateData":
-                    gridOptions.api.batchUpdateRowData({ update: e.data.records });
+                    gridOptions.api.applyTransactionAsync({ update: e.data.records });
                     break;
                 default:
                     console.log("unrecognised event type " + e.type);
