@@ -57,7 +57,7 @@ setInterval(function() {
         update: [data]
     };
 
-    gridOptions.api.updateRowData(tran);
+    gridOptions.api.applyTransaction(tran);
 }, 1000);
 
 // setup the grid after the page has finished loading
