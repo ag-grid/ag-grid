@@ -35,7 +35,8 @@ var options = {
         seriesNodeClick: function (event) {
             var datum = event.datum;
             window.alert('Temperature in ' + datum[event.xKey] +
-                ': ' + String(datum[event.yKey]) + '°C');
+                ': ' + String(datum[event.yKey]) + '°C' +
+                '\nSeries: ' + event.series.id);
         }
     }
 };
