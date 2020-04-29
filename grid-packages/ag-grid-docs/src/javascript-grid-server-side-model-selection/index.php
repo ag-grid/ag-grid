@@ -1,21 +1,21 @@
 <?php
-$pageTitle = "Server-side Row Model - Row Selection";
-$pageDescription = "ag-Grid is a feature-rich datagrid available in Free or Enterprise versions. There are four available Row Models, the Server-side Row Model is arguably the most powerful giving the ultimate 'big data' user experience. Users navigate through very large data sets using a mixture of Server-side grouping and aggregation while using infinite scrolling to bring the data back in blocks to the client.";
-$pageKeywords = "ag-Grid Server-side Row Model";
+$pageTitle = "Server-Side Row Model - Row Selection";
+$pageDescription = "ag-Grid is a feature-rich datagrid available in Free or Enterprise versions. There are four available Row Models, the Server-Side Row Model is arguably the most powerful giving the ultimate 'big data' user experience. Users navigate through very large data sets using a mixture of server-side grouping and aggregation while using infinite scrolling to bring the data back in blocks to the client.";
+$pageKeywords = "ag-Grid Server-Side Row Model";
 $pageGroup = "row_models";
 include '../documentation-main/documentation_header.php';
 ?>
 
-<h1 class="heading-enterprise"> Server-side Row Selection </h1>
+<h1 class="heading-enterprise"> Server-Side Row Selection </h1>
 
 <p class="lead">
-    Learn how to implementing Row Selection with the Server-side Row Model.
+    Learn how to implementing Row Selection with the Server-Side Row Model.
 </p>
 
-<h2>Selection with Server-side Row Model</h2>
+<h2>Selection with Server-Side Row Model</h2>
 
 <p>
-    Selecting rows and groups in the Server-side Row Model is supported.
+    Selecting rows and groups in the Server-Side Row Model is supported.
     Just set the property <code>rowSelection</code> to either <code>single</code>
     or <code>multiple</code> as with any other row model.
 </p>
@@ -95,7 +95,7 @@ include '../documentation-main/documentation_header.php';
 
 <p>
     Continue to the next section to learn about setting <a href="../javascript-grid-server-side-model-row-height/">Row Heights</a>
-    using the Server-side Row Model.
+    using the Server-Side Row Model.
 </p>
 
 <?php include '../documentation-main/documentation_footer.php';?>

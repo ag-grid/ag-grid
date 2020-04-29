@@ -14,8 +14,8 @@
             (see <a href="/javascript-grid-themes-provided/#themes-summary">Themes Summary</a>).
         </li>
 
-        <li>AG-3872 - Improve Server-side Row Model docs and examples
-            (see <a href="/javascript-grid-server-side-model/">Server-side Row Model</a>).
+        <li>AG-3872 - Improve Server-Side Row Model docs and examples
+            (see <a href="/javascript-grid-server-side-model/">Server-Side Row Model</a>).
         </li>
 
         <li>
@@ -369,7 +369,7 @@
             </a></li>
 
         <li>AG-2185 - <a href="https://www.ag-grid.com/nodejs-server-side-operations">
-                New Server-side Row Model guide for Node.js with MySql</a></li>
+                New Server-Side Row Model guide for Node.js with MySql</a></li>
 
         <li>AG-1972 - Performance improvements for small changes to large datasets</li>
         <li>AG-2289 - Better management of Column Definitions after grid is created</li>
@@ -407,8 +407,8 @@
 
     <ul>
         <li>
-            AG-1709 Server-side Row Model - Add support for Master / Detail
-            <a href="https://www.ag-grid.com/javascript-grid-server-side-model-master-detail">Server-side Master Detail</a>.
+            AG-1709 Server-Side Row Model - Add support for Master / Detail
+            <a href="https://www.ag-grid.com/javascript-grid-server-side-model-master-detail">Server-Side Master Detail</a>.
         </li>
         <li>
             AG-2448 Add declarative support to vue component (column defs)
@@ -486,11 +486,11 @@
 
         <li>
             AG-1881 Lazy load hierarchical data with
-            <a href="http://localhost:8080/javascript-grid-server-side-model-tree-data/">Server-side Tree Data</a>.
+            <a href="http://localhost:8080/javascript-grid-server-side-model-tree-data/">Server-Side Tree Data</a>.
         </li>
 
         <li>
-            AG-1961 Debounce block loading with Infinite and Server-side Row Models using the new grid options
+            AG-1961 Debounce block loading with Infinite and Server-Side Row Models using the new grid options
             property: 'blockLoadDebounceMillis'.
         </li>
 
@@ -546,13 +546,13 @@
             AG-1569
             To help clarify Row Model usage, we have renamed as follows:
             <ul>
-                <li>In-Memory Row Model -> <a href="https://www.ag-grid.com/javascript-grid-client-side-model/">Client-side Row Model</a></li>
-                <li>Enterprise Row Model -> <a href="https://www.ag-grid.com/javascript-grid-server-side-model/">Server-side Row Model</a></li>
+                <li>In-Memory Row Model -> <a href="https://www.ag-grid.com/javascript-grid-client-side-model/">Client-Side Row Model</a></li>
+                <li>Enterprise Row Model -> <a href="https://www.ag-grid.com/javascript-grid-server-side-model/">Server-Side Row Model</a></li>
             </ul>
         </li>
         <li>
             AG-865
-            The Server-side Row Model now preserves group state after sorting has been performed.
+            The Server-Side Row Model now preserves group state after sorting has been performed.
         </li>
         <li>
             <p>AG-424

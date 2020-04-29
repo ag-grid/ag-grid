@@ -1,21 +1,21 @@
 <?php
-$pageTitle = "Server-side Row Model";
-$pageDescription = "ag-Grid is a feature-rich datagrid available in Free or Enterprise versions. There are four available Row Models, the Server-side Row Model is arguably the most powerful giving the ultimate 'big data' user experience. Users navigate through very large data sets using a mixture of Server-side grouping and aggregation while using infinite scrolling to bring the data back in blocks to the client.";
-$pageKeywords = "ag-Grid Server-side Row Model";
+$pageTitle = "Server-Side Row Model";
+$pageDescription = "ag-Grid is a feature-rich datagrid available in Free or Enterprise versions. There are four available Row Models, the Server-Side Row Model is arguably the most powerful giving the ultimate 'big data' user experience. Users navigate through very large data sets using a mixture of server-side grouping and aggregation while using infinite scrolling to bring the data back in blocks to the client.";
+$pageKeywords = "ag-Grid Server-Side Row Model";
 $pageGroup = "row_models";
 include '../documentation-main/documentation_header.php';
 ?>
 
-<h1 class="heading-enterprise"> Server-side Row Model </h1>
+<h1 class="heading-enterprise">Server-Side Row Model </h1>
 
 <p class="lead">
-    This section gives an overview of the Server-side Row Model and provides guidance on when it should be used.
+    This section gives an overview of the Server-Side Row Model and provides guidance on when it should be used.
 </p>
 
-<? enterprise_feature("Server-side Row Model"); ?>
+<? enterprise_feature("Server-Side Row Model"); ?>
 
 <p>
-    The Server-side Row Model allows applications to work with very large datasets by delegating grid operations such
+    The Server-Side Row Model allows applications to work with very large datasets by delegating grid operations such
     as grouping, sorting and pivoting to the server. The data is then lazy loaded from the server in blocks as
     the user browses through the data. This is demonstrated below:
 </p>
@@ -25,8 +25,8 @@ include '../documentation-main/documentation_header.php';
 </div>
 
 <p>
-    Before diving into the details of how to use the Server-side Row Model, the next section provides an overview and
-    explains when it should be used in instead of the default <a href="/javascript-grid-client-side-model/">Client-side Row Model</a>.
+    Before diving into the details of how to use the Server-Side Row Model, the next section provides an overview and
+    explains when it should be used in instead of the default <a href="/javascript-grid-client-side-model/">Client-Side Row Model</a>.
 </p>
 
 <h2>Overview</h2>
@@ -36,11 +36,11 @@ include '../documentation-main/documentation_header.php';
     the server to the client. The answer to this determines which Row Model should be selected for the grid.
 </p>
 
-<h4>Client-side Row Model</h4>
+<h4>Client-Side Row Model</h4>
 
 <p>
     The simplest approach is to send all row data to the browser in response to a single request at initialisation.
-    For this use case the <a href="/javascript-grid-client-side-model/">Client-side Row Model</a> has been designed.
+    For this use case the <a href="/javascript-grid-client-side-model/">Client-Side Row Model</a> has been designed.
 </p>
 <p>
     This scenario is illustrated below where 10,000 records are loaded directly into the browser:
@@ -49,16 +49,16 @@ include '../documentation-main/documentation_header.php';
 <p><img src="in-memory-row-model.png" alt="in-memory-row-model" width="90%" /></p>
 
 <p>
-    Once the data is loaded into the grid using the Client-side Row Model, the grid can then do sorting, filtering,
+    Once the data is loaded into the grid using the Client-Side Row Model, the grid can then do sorting, filtering,
     grouping etc on the data inside the grid without requiring further assistance from the application.
 </p>
 <p>
-    The Client-side Row Model only renders the rows currently visible using
+    The Client-Side Row Model only renders the rows currently visible using
     <a href="../javascript-grid-dom-virtualisation/">DOM Virtualisation</a>, so the upper limit of rows is governed
     by the browsers memory footprint and data transfer time, rather than any restrictions inside the grid.
 </p>
 
-<h4>Server-side Row Model</h4>
+<h4>Server-Side Row Model</h4>
 
 <p>
     However many real world applications contain much larger data sets, often involving millions of records. In this
@@ -67,12 +67,12 @@ include '../documentation-main/documentation_header.php';
 </p>
 
 <p>
-    This is precisely the problem the Server-side Row Model addresses, along with delegating server-side operations
+    This is precisely the problem the Server-Side Row Model addresses, along with delegating server-side operations
     such as filtering, sorting, grouping and pivoting.
 </p>
 
 <p>
-    The following diagram shows the approach used by the Server-side Row Model. Here there are 10 million records,
+    The following diagram shows the approach used by the Server-Side Row Model. Here there are 10 million records,
     however the number of records is only constrained by the limits of the server-side:
 </p>
 
@@ -92,19 +92,19 @@ include '../documentation-main/documentation_header.php';
 
 <p>
     You may benefit from the combination of all these features or just be interested in a subset. The features of the
-    Server-side Row Model are:
+    Server-Side Row Model are:
 </p>
 
 <ul class="content">
     <li>
         <b>Lazy Loading of Groups:</b> The grid will load the top level rows only. Children
         of groups are only loaded when the user expands the group. Some applications may use
-        the Server-side Row Model for this one feature alone e.g. you might have a managers database table,
+        the Server-Side Row Model for this one feature alone e.g. you might have a managers database table,
         you can display a list of all managers, then click 'expand' on the manager and the grid
         will then request to get the 'employees' for that manager.
     </li>
     <li>
-        <b>Server-side Grouping, Pivot and Aggregation:</b> Because the data is coming back from the server one group
+        <b>Server-Side Grouping, Pivot and Aggregation:</b> Because the data is coming back from the server one group
         level at a time, this allows you to do aggregation on the server, returning back the aggregated
         results for the top level parent rows. For example you could include 'employee count' as an attribute
         on the returned manager record, to say how many employees a manager manages.
@@ -116,7 +116,7 @@ include '../documentation-main/documentation_header.php';
         of that group are also loaded in blocks). This allows viewing very large datasets in the browser by
         only bringing back data one block at a time. This feature reuses the logic from the
         <a href="../javascript-grid-infinite-scrolling/">Infinite Scrolling</a> row model, so understanding
-        how that row model works will help you in understanding this part of the Server-side Row Model.
+        how that row model works will help you in understanding this part of the Server-Side Row Model.
     </li>
     <li>
         <b>Slice and Dice:</b> Assuming your server-side can build the data query, you can allow the user
@@ -138,7 +138,7 @@ include '../documentation-main/documentation_header.php';
 
 <p>
     To accompany the examples in the documentation, we also provide the following full stack examples for
-    reference. We advise using the examples in the documentation to learn about the Server-side Row Model
+    reference. We advise using the examples in the documentation to learn about the Server-Side Row Model
     and then using the full stack examples as reference.
 </p>
 
@@ -156,7 +156,7 @@ include '../documentation-main/documentation_header.php';
 <h2>Next Up</h2>
 
 <p>
-    To get started using the Server-side Row Model see the next section on: <a href="../javascript-grid-server-side-model-datasource/">Server-side Datasource</a>.
+    To get started using the Server-Side Row Model see the next section on: <a href="../javascript-grid-server-side-model-datasource/">Server-Side Datasource</a>.
 </p>
 
 <?php include '../documentation-main/documentation_footer.php';?>

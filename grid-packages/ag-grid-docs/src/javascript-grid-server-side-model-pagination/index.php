@@ -1,12 +1,12 @@
 <?php
-$pageTitle = "Server-side Row Model - Pagination";
-$pageDescription = "ag-Grid is a feature-rich datagrid available in Free or Enterprise versions. There are four available Row Models, the Server-side Row Model is arguably the most powerful giving the ultimate 'big data' user experience. Users navigate through very large data sets using a mixture of Server-side grouping and aggregation while using infinite scrolling to bring the data back in blocks to the client.";
-$pageKeywords = "ag-Grid Server-side Row Model";
+$pageTitle = "Server-Side Row Model - Pagination";
+$pageDescription = "ag-Grid is a feature-rich datagrid available in Free or Enterprise versions. There are four available Row Models, the Server-Side Row Model is arguably the most powerful giving the ultimate 'big data' user experience. Users navigate through very large data sets using a mixture of Server-Side grouping and aggregation while using infinite scrolling to bring the data back in blocks to the client.";
+$pageKeywords = "ag-Grid Server-Side Row Model";
 $pageGroup = "row_models";
 include '../documentation-main/documentation_header.php';
 ?>
 
-<h1 class="heading-enterprise">Server-side Pagination</h1>
+<h1 class="heading-enterprise">Server-Side Pagination</h1>
 
 <p class="lead">
     If you are dealing with large amounts of data, then some application may decide to use pagination
@@ -39,9 +39,9 @@ gridOptions: {
 <h2>Pagination on the Server</h2>
 
 <p>
-    The actual pagination of rows is performed on the server when using the Server-side Row Model. When the grid needs
+    The actual pagination of rows is performed on the server when using the Server-Side Row Model. When the grid needs
     more rows it makes a request via <code>getRows(params)</code> on the
-    <a href="../javascript-grid-server-side-model-datasource/#datasource-interface">Server-side Datasource</a> with
+    <a href="../javascript-grid-server-side-model-datasource/#datasource-interface">Server-Side Datasource</a> with
     metadata containing pagination details.
 </p>
 
@@ -66,10 +66,10 @@ gridOptions: {
     The <code>endRow</code> requested by the grid may not actually exist in the data so the correct
     <code>lastRowIndex</code> should be supplied in the response to the grid. See
     <a href="../javascript-grid-server-side-model-datasource/#implementing-the-server-side-datasource">
-        Implementing the Server-side Datasource</a> for more details.
+        Implementing the Server-Side Datasource</a> for more details.
 </p>
 
-<h2>Example: Server-side Pagination</h2>
+<h2>Example: Server-Side Pagination</h2>
 
 <p>
     The example below demonstrates server-side Pagination. Note the following:
@@ -186,7 +186,7 @@ gridOptions: {
 
 <p>
     Continue to the next section to learn about <a href="../javascript-grid-server-side-model-selection/">Row Selection</a>
-    using the Server-side Row Model.
+    using the Server-Side Row Model.
 </p>
 
 <?php include '../documentation-main/documentation_footer.php';?>

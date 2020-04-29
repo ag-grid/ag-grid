@@ -1,15 +1,15 @@
 <?php
-$pageTitle = "Server-side Row Model - Filtering";
-$pageDescription = "ag-Grid is a feature-rich datagrid available in Free or Enterprise versions. There are four available Row Models, the Server-side Row Model is arguably the most powerful giving the ultimate 'big data' user experience. Users navigate through very large data sets using a mixture of Server-side grouping and aggregation while using infinite scrolling to bring the data back in blocks to the client.";
-$pageKeywords = "ag-Grid Server-side Row Model";
+$pageTitle = "Server-Side Row Model - Filtering";
+$pageDescription = "ag-Grid is a feature-rich datagrid available in Free or Enterprise versions. There are four available Row Models, the Server-Side Row Model is arguably the most powerful giving the ultimate 'big data' user experience. Users navigate through very large data sets using a mixture of server-side grouping and aggregation while using infinite scrolling to bring the data back in blocks to the client.";
+$pageKeywords = "ag-Grid Server-Side Row Model";
 $pageGroup = "row_models";
 include '../documentation-main/documentation_header.php';
 ?>
 
-<h1 class="heading-enterprise">Server-side Filtering</h1>
+<h1 class="heading-enterprise">Server-Side Filtering</h1>
 
 <p class="lead">
-    This section covers Server-side Filtering using the Server-side Row Model.
+    This section covers Server-Side Filtering using the Server-Side Row Model.
 </p>
 
 <h2>Enabling Filtering</h2>
@@ -43,9 +43,9 @@ gridOptions: {
 <h2>Filtering on the Server</h2>
 
 <p>
-    The actual filtering of rows is performed on the server when using the Server-side Row Model. When a filter is applied
+    The actual filtering of rows is performed on the server when using the Server-Side Row Model. When a filter is applied
     in the grid a request is made for more rows via <code>getRows(params)</code> on the
-    <a href="../javascript-grid-server-side-model-datasource/#datasource-interface">Server-side Datasource</a>. The
+    <a href="../javascript-grid-server-side-model-datasource/#datasource-interface">Server-Side Datasource</a>. The
     supplied params includes a request containing filter metadata contained in the <code>filterModel</code> property.
 </p>
 
@@ -136,7 +136,7 @@ gridOptions: {
 
 <p>The snippet above shows the <code>filterModel</code> for a single column with a Set Filter where two items are selected.</p>
 
-<p>When using the Server-side Row Model it is necessary to supply the values as the grid does not have all rows loaded.
+<p>When using the Server-Side Row Model it is necessary to supply the values as the grid does not have all rows loaded.
    This can be done either synchronously or asynchronously using the <code>values</code> filter param as shown below:
 </p>
 
@@ -200,7 +200,7 @@ gridOptions: {
 
 <p>
     Continue to the next section to learn about
-    <a href="../javascript-grid-server-side-model-grouping/">Server-side Row Grouping</a>.
+    <a href="../javascript-grid-server-side-model-grouping/">Server-Side Row Grouping</a>.
 </p>
 
 <?php include '../documentation-main/documentation_footer.php';?>

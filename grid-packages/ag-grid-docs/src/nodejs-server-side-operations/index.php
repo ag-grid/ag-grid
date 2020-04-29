@@ -1,12 +1,12 @@
 <?php
-$pageTitle = "Server-side operations with GraphQL and ag-Grid";
+$pageTitle = "Server-Side Operations With Node.js";
 $pageDescription = "ag-Grid is a feature-rich datagrid available in Free or Enterprise versions. This is a guide on how to perform server-side operations with Oracle and ag-Grid.";
-$pageKeywords = "Server-side operations with GraphQL";
+$pageKeywords = "Server-Side Operations with Node.js";
 $pageGroup = "basics";
 include '../documentation-main/documentation_header.php';
 ?>
     <h1>
-        Server-side operations with Node.js
+        Server-Side Operations With Node.js
     </h1>
 
     <p class="lead">
@@ -16,7 +16,7 @@ include '../documentation-main/documentation_header.php';
 
     <p>
         This guide is intended as a starting point when learning how to use the
-        <a href="/javascript-grid-server-side-model/">Server-side Row Model</a>, as it provides a simple grid implementation
+        <a href="/javascript-grid-server-side-model/">Server-Side Row Model</a>, as it provides a simple grid implementation
         that uses limited set of features and grid configurations.
     </p>
 
@@ -153,7 +153,7 @@ const gridOptions = {
 </snippet>
 
 <p>
-    In the code snippet above, the grid is configured to use the Server-side Row Model by setting: <code>gridOptions.rowModelType = 'serverSide'</code>.
+    In the code snippet above, the grid is configured to use the Server-Side Row Model by setting: <code>gridOptions.rowModelType = 'serverSide'</code>.
 </p>
 
 <p>
@@ -170,10 +170,10 @@ const gridOptions = {
 </p>
 
 
-<h2 id="server-side-datasource">Server-side Datasource</h2>
+<h2 id="server-side-datasource">Server-Side Datasource</h2>
 
     <p>
-        In order to fetch data for the Server-side Row Model we must implement the <code>IServerSideDatasource</code>,
+        In order to fetch data for the Server-Side Row Model we must implement the <code>IServerSideDatasource</code>,
         which contains a single method <code>getRows(params)</code> which accepts request params from the grid.
     </p>
 
@@ -293,7 +293,7 @@ class OlympicWinnersService {
 <h2 id="conclusion">Conclusion</h2>
 
 <p>
-    In this guide we presented a reference implementation for integrating the Server-side Row Model with a Node.js
+    In this guide we presented a reference implementation for integrating the Server-Side Row Model with a Node.js
     server connected to a MySQL database. This included all necessary configuration and install instructions.
 </p>
 

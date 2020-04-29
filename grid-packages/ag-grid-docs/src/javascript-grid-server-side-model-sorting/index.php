@@ -1,15 +1,15 @@
 <?php
-$pageTitle = "Server-side Row Model - Sorting";
-$pageDescription = "ag-Grid is a feature-rich datagrid available in Free or Enterprise versions. There are four available Row Models, the Server-side Row Model is arguably the most powerful giving the ultimate 'big data' user experience. Users navigate through very large data sets using a mixture of Server-side grouping and aggregation while using infinite scrolling to bring the data back in blocks to the client.";
-$pageKeywords = "ag-Grid Server-side Row Model";
+$pageTitle = "Server-Side Row Model - Sorting";
+$pageDescription = "ag-Grid is a feature-rich datagrid available in Free or Enterprise versions. There are four available Row Models, the Server-Side Row Model is arguably the most powerful giving the ultimate 'big data' user experience. Users navigate through very large data sets using a mixture of server-side grouping and aggregation while using infinite scrolling to bring the data back in blocks to the client.";
+$pageKeywords = "ag-Grid Server-Side Row Model";
 $pageGroup = "row_models";
 include '../documentation-main/documentation_header.php';
 ?>
 
-<h1 class="heading-enterprise"> Server-side Sorting </h1>
+<h1 class="heading-enterprise"> Server-Side Sorting </h1>
 
 <p class="lead">
-    This section covers Server-side Sorting using the Server-side Row Model.
+    This section covers Server-Side Sorting using the Server-Side Row Model.
 </p>
 
 <h2>Enabling Sorting</h2>
@@ -38,9 +38,9 @@ gridOptions: {
 <h2>Sorting on the Server</h2>
 
 <p>
-    The actual sorting of rows is performed on the server when using the Server-side Row Model. When a sort is applied
+    The actual sorting of rows is performed on the server when using the Server-Side Row Model. When a sort is applied
     in the grid a request is made for more rows via <code>getRows(params)</code> on the
-    <a href="../javascript-grid-server-side-model-datasource/#datasource-interface">Server-side Datasource</a>. The
+    <a href="../javascript-grid-server-side-model-datasource/#datasource-interface">Server-Side Datasource</a>. The
     supplied params includes a request containing sort metadata contained in the <code>sortModel</code> property.
 </p>
 
@@ -65,7 +65,7 @@ gridOptions: {
     active sorts in the grid. The column id and sort type can then be used by the server to perform the actual sorting.
 </p>
 
-<h2>Example: Server-side Sorting</h2>
+<h2>Example: Server-Side Sorting</h2>
 
 <p>
     The example below demonstrates server-side sorting. Notice the following:
@@ -80,18 +80,18 @@ gridOptions: {
     <li>Open the browsers dev console to view the <code>sortModel</code> supplied in the request to the datasource.</li>
 </ul>
 
-<?= grid_example('Server-side Sorting', 'sorting', 'generated', ['enterprise' => true, 'extras' => ['alasql'], 'modules' => ['serverside']]) ?>
+<?= grid_example('Server-Side Sorting', 'sorting', 'generated', ['enterprise' => true, 'extras' => ['alasql'], 'modules' => ['serverside']]) ?>
 
 
 <note>
     <p>Fake Server Implementation</p>
     <p>
-    Most of the Server-side Row Model examples include a fake server that generates SQL to imitate how a real server
+    Most of the Server-Side Row Model examples include a fake server that generates SQL to imitate how a real server
     might use the requests sent from the grid. These examples use <a href="http://alasql.org/">AlaSQL</a> which is a
     JavaScript SQL database that works in browsers.
     </p>
     <p>
-        However note that the Server-side Row Model does not impose any restrictions on the server-side technologies used.
+        However note that the Server-Side Row Model does not impose any restrictions on the server-side technologies used.
     </p>
 </note>
 
@@ -99,7 +99,7 @@ gridOptions: {
 
 <p>
     Continue to the next section to learn about
-    <a href="../javascript-grid-server-side-model-filtering/">Server-side Filtering</a>.
+    <a href="../javascript-grid-server-side-model-filtering/">Server-Side Filtering</a>.
 </p>
 
 <?php include '../documentation-main/documentation_footer.php';?>

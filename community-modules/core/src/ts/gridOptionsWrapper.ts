@@ -164,7 +164,7 @@ export class GridOptionsWrapper {
         }
 
         if (this.isRowModelServerSide()) {
-            const msg = (prop: string) => `ag-Grid: '${prop}' is not supported on the Server-side Row Model`;
+            const msg = (prop: string) => `ag-Grid: '${prop}' is not supported on the Server-Side Row Model`;
             if (_.exists(this.gridOptions.groupDefaultExpanded)) {
                 console.warn(msg('groupDefaultExpanded'));
             }

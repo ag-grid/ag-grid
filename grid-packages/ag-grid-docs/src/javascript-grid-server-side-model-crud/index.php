@@ -1,23 +1,23 @@
 <?php
-$pageTitle = "Server-side Row Model - CRUD Operations";
-$pageDescription = "ag-Grid is a feature-rich datagrid available in Free or Enterprise versions. There are four available Row Models, the Server-side Row Model is arguably the most powerful giving the ultimate 'big data' user experience. Users navigate through very large data sets using a mixture of Server-side grouping and aggregation while using infinite scrolling to bring the data back in blocks to the client.";
-$pageKeywords = "ag-Grid Server-side Row Model";
+$pageTitle = "Server-Side Row Model - CRUD Operations";
+$pageDescription = "ag-Grid is a feature-rich datagrid available in Free or Enterprise versions. There are four available Row Models, the Server-Side Row Model is arguably the most powerful giving the ultimate 'big data' user experience. Users navigate through very large data sets using a mixture of server-side grouping and aggregation while using infinite scrolling to bring the data back in blocks to the client.";
+$pageKeywords = "ag-Grid Server-Side Row Model";
 $pageGroup = "row_models";
 include '../documentation-main/documentation_header.php';
 ?>
 
-<h1 class="heading-enterprise"> Server-side CRUD Operations </h1>
+<h1 class="heading-enterprise"> Server-Side CRUD Operations </h1>
 
 <p class="lead">
-    Learn how to perform CRUD operations using the Server-side Row Model.
+    Learn how to perform CRUD operations using the Server-Side Row Model.
 </p>
 
-<h2>Server-side Changing Data</h2>
+<h2>Server-Side Changing Data</h2>
 
 <p>
     Data is read back from the server side in blocks. This is similar to paging in other data-grids.
     This comes with one restriction - if the data is changing such that the data in each block changes,
-    then the Server-side row model will get the incorrect rows. For example consider the following
+    then the server-side row model will get the incorrect rows. For example consider the following
     scenario:
 <ol>
     <li>The grid asks for rows 0 to 99 (ie first block of 100 rows) and these get read from a database.</li>
@@ -29,7 +29,7 @@ block. This is because the row was at index 99 before the insert and then at ind
 </p>
 
 <p>
-    For this reason it is best use Server-side row model on data that is not changing, or a snapshot of the data.
+    For this reason it is best use server-side row model on data that is not changing, or a snapshot of the data.
 </p>
 
 <h2>Updating Row Data</h2>
@@ -77,9 +77,9 @@ gridOptions.api.forEachNode(function(rowNode) {
 
 <h2>CRUD</h2>
 <p>
-    The Server-side Row Model acts as a cache against the original store of data which typically
+    The Server-Side Row Model acts as a cache against the original store of data which typically
     resides on the server-side of an application. To add or remove records, the pattern is to update
-    the original data set (typically on the server) and then get the Server-side Row Model to
+    the original data set (typically on the server) and then get the Server-Side Row Model to
     refresh.
 </p>
 
@@ -93,6 +93,6 @@ gridOptions.api.forEachNode(function(rowNode) {
         <li>All operations are done outside of the grid and the grid is then told to refresh.</li>
     </ul>
 
-<?= grid_example('Server-side Row Model & CRUD', 'crud', 'generated', ['enterprise' => true, 'modules' => ['serverside']]) ?>
+<?= grid_example('Server-Side Row Model & CRUD', 'crud', 'generated', ['enterprise' => true, 'modules' => ['serverside']]) ?>
 
 <?php include '../documentation-main/documentation_footer.php';?>

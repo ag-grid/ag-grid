@@ -1,15 +1,15 @@
 <?php
-$pageTitle = "Server-side Row Model - Tree Data";
-$pageDescription = "ag-Grid is a feature-rich datagrid available in Free or Enterprise versions. There are four available Row Models, the Server-side Row Model is arguably the most powerful giving the ultimate 'big data' user experience. Users navigate through very large data sets using a mixture of Server-side grouping and aggregation while using infinite scrolling to bring the data back in blocks to the client.";
-$pageKeywords = "ag-Grid Server-side Row Model";
+$pageTitle = "Server-Side Row Model - Tree Data";
+$pageDescription = "ag-Grid is a feature-rich datagrid available in Free or Enterprise versions. There are four available Row Models, the Server-Side Row Model is arguably the most powerful giving the ultimate 'big data' user experience. Users navigate through very large data sets using a mixture of Server-Side grouping and aggregation while using infinite scrolling to bring the data back in blocks to the client.";
+$pageKeywords = "ag-Grid Server-Side Row Model";
 $pageGroup = "row_models";
 include '../documentation-main/documentation_header.php';
 ?>
 
-<h1 class="heading-enterprise"> Server-side Tree Data </h1>
+<h1 class="heading-enterprise"> Server-Side Tree Data </h1>
 
 <p class="lead">
-    This section shows how Tree Data can be used with the Server-side Row Model.
+    This section shows how Tree Data can be used with the Server-Side Row Model.
 </p>
 
 <h2>Tree Data</h2>
@@ -67,7 +67,7 @@ include '../documentation-main/documentation_header.php';
 <h2 id="supplying-tree-data">Supplying Tree Data</h2>
 
 <p>
-    Tree Data is supplied via the <a href="../javascript-grid-server-side-model-datasource/">Server-side Datasource</a>
+    Tree Data is supplied via the <a href="../javascript-grid-server-side-model-datasource/">Server-Side Datasource</a>
     just like flat data, however there are two additional gridOptions callbacks; <code>isServerSideGroup(dataItem)</code> and <code>getServerSideGroupKey(dataItem)</code>.
 </p>
 
@@ -79,7 +79,7 @@ include '../documentation-main/documentation_header.php';
 <snippet>
 var gridOptions = {
 
-    // choose Server-side Row Model
+    // choose Server-Side Row Model
     rowModelType: 'serverSide',
 
     // enable Tree Data
@@ -99,7 +99,7 @@ var gridOptions = {
 </snippet>
 
 <note>
-    Be careful not to get mixed up with the <a href="../javascript-grid-tree-data/">Client-side Tree Data</a> configurations by mistake.
+    Be careful not to get mixed up with the <a href="../javascript-grid-tree-data/">Client-Side Tree Data</a> configurations by mistake.
 </note>
 
     <p>
@@ -107,7 +107,7 @@ var gridOptions = {
     </p>
 
     <ul class="content">
-        <li>Tree Data is enabled with the Server-side Row Model <code>gridOptions.treeData = true</code>.</li>
+        <li>Tree Data is enabled with the Server-Side Row Model <code>gridOptions.treeData = true</code>.</li>
         <li>Group nodes are determined using the callback: <code>gridOptions.isServerSideGroup()</code>.</li>
         <li>Group keys are returned from the callback: <code>gridOptions.getServerSideGroupKey()</code>.</li>
     </ul>
@@ -148,7 +148,7 @@ var gridOptions = {
 
 <p>
     Continue to the next section to learn about <a href="../javascript-grid-server-side-model-changing-columns/">Changing Columns</a>
-    using the Server-side Row Model.
+    using the Server-Side Row Model.
 </p>
 
 <?php include '../documentation-main/documentation_footer.php';?>

@@ -1,15 +1,15 @@
 <?php
-$pageTitle = "Server-side Row Model - Master Detail";
-$pageDescription = "ag-Grid is a feature-rich datagrid available in Free or Enterprise versions. There are four available Row Models, the Server-side Row Model is arguably the most powerful giving the ultimate 'big data' user experience. Users navigate through very large data sets using a mixture of Server-side grouping and aggregation while using infinite scrolling to bring the data back in blocks to the client.";
-$pageKeywords = "ag-Grid Server-side Row Model";
+$pageTitle = "Server-Side Row Model - Master Detail";
+$pageDescription = "ag-Grid is a feature-rich datagrid available in Free or Enterprise versions. There are four available Row Models, the Server-Side Row Model is arguably the most powerful giving the ultimate 'big data' user experience. Users navigate through very large data sets using a mixture of server-side grouping and aggregation while using infinite scrolling to bring the data back in blocks to the client.";
+$pageKeywords = "ag-Grid Server-Side Row Model";
 $pageGroup = "row_models";
 include '../documentation-main/documentation_header.php';
 ?>
 
-<h1 class="heading-enterprise"> Server-side Master Detail </h1>
+<h1 class="heading-enterprise">Server-Side Master Detail</h1>
 
 <p class="lead">
-    This section shows how the Server-side Row Model can be configured with a Master / Detail view.
+    This section shows how the Server-Side Row Model can be configured with a Master / Detail view.
 </p>
 
 <p>
@@ -19,12 +19,12 @@ include '../documentation-main/documentation_header.php';
 </p>
 
 <p>
-    As this Server-side version of Master / Detail is configured in the same way as it's Client-side counterpart, this
-    guide will focus on areas that are of particular interest to this Server-side version.
+    As this server-side version of Master / Detail is configured in the same way as its client-side counterpart, this
+    guide will focus on areas that are of particular interest to this server-side version.
 <p>
 
 <note>
-    For a comprehensive look at Master / Detail configurations, see: <a href="../javascript-grid-master-detail/">Client-side Master / Detail</a>.
+    For a comprehensive look at Master / Detail configurations, see: <a href="../javascript-grid-master-detail/">Client-Side Master / Detail</a>.
 </note>
 
 <h2>Enabling Master / Detail</h2>
@@ -83,7 +83,7 @@ var detailGridOptions = {
 
 <p>
     This example shows a simple Master / Detail setup which includes the infinite scrolling capabilities provided
-    with the Server-side Row Model. From this example notice the following:
+    with the Server-Side Row Model. From this example notice the following:
 </p>
 
 <ul class="content">
@@ -98,7 +98,7 @@ var detailGridOptions = {
 <h2>Combining Row Grouping with Master Detail</h2>
 
 <p>
-    It is possible to combine <a href="../javascript-grid-server-side-model-grouping/">Server-side Grouping</a>
+    It is possible to combine <a href="../javascript-grid-server-side-model-grouping/">Server-Side Grouping</a>
     with Master Detail.
 </p>
 
@@ -197,7 +197,7 @@ masterGridOptions.getRowHeight = function (params) {
 </snippet>
 
 <note>
-    Purging the cache and dynamic row heights do not work together for the Server-side Row Model.
+    Purging the cache and dynamic row heights do not work together for the Server-Side Row Model.
     If you are using dynamic row height, ensure 'maxBlocksInCache' is not set.
 </note>
 
@@ -231,7 +231,7 @@ masterGridOptions.getRowHeight = function (params) {
 
 <p>
     Continue to the next section to learn how to work with
-    <a href="../javascript-grid-server-side-model-tree-data/">Tree Data</a> when using the Server-side Row Model.
+    <a href="../javascript-grid-server-side-model-tree-data/">Tree Data</a> when using the Server-Side Row Model.
 </p>
 
 <?php include '../documentation-main/documentation_footer.php';?>

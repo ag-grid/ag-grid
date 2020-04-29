@@ -6,7 +6,7 @@ $pageGroup = "feature";
 include '../documentation-main/documentation_header.php';
 ?>
 
-<h1>Accessing Client-side Data</h1>
+<h1>Accessing Client-Side Data</h1>
 
 <p class="lead">
     This section covers the ways data can be accessed once it has been supplied to the grid.
@@ -15,7 +15,7 @@ include '../documentation-main/documentation_header.php';
 <p>
     Each time you pass data to the grid, the grid wraps each data item
     with a <a href="../javascript-grid-row-node/">Row Node</a> object.
-    For example if your data has 20 rows, then the grid creates 20 Row Node
+    For example, if your data has 20 rows, the grid creates 20 Row Node
     objects, each Row Node wrapping one item of your data.
 </p>
 
@@ -27,7 +27,7 @@ include '../documentation-main/documentation_header.php';
 
 <p>
     The following methods are provided for accessing the individual Row Nodes.
-    A deeper explanation of these methods, along with examples, are provided
+    A deeper explanation of these methods, along with examples, is provided
     further down.
 </p>
 
@@ -64,7 +64,7 @@ SNIPPET
     Sometimes you may want to iterate through all the Row Nodes in the grid.
     This can be done using the grid's iteration APIs. The iteration APIs
     go through every Row Node, regardless of whether the Row Node is displayed
-    or not. For example if grouping and the group is closed, the group's children
+    or not. For example, if grouping and the group is closed, the group's children
     are not displayed by the grid, however the children are included in the
     iteration 'for-each' methods.
 </p>
@@ -93,10 +93,10 @@ SNIPPET
 ) ?>
 
 <note>
-    All of the methods above work with the <a href="../javascript-grid-client-side-model/">Client-side</a>
+    All of the methods above work with the <a href="../javascript-grid-client-side-model/">Client-Side</a>
     row model. For all the other row models (<a href="../javascript-grid-viewport/">Viewport</a>,
     <a href="../javascript-grid-infinite-scrolling/">Infinite</a> and
-    <a href="../javascript-grid-server-side-model/">Server-side</a>) the only method that is supported
+    <a href="../javascript-grid-server-side-model/">Server-Side</a>) the only method that is supported
     is <code>api.forEachNode()</code> and that will return back Row Nodes that are loaded into
     browser memory only (as each of these row models use a data source to lazy load rows).
 </note>
@@ -104,14 +104,14 @@ SNIPPET
 <h2 id="example-api">Example Using For-Each Methods</h2>
 
 <p>
-    The example below shows the different for-Each API methods as follows:
+    The example below shows the different For-Each API methods as follows:
 </p>
 
 <ul class="content">
     <li><b>For-Each Node</b>: Prints out every row in the grid. It ignores filtering and sorting.</li>
     <li><b>For-Each Node After Filter</b>: Prints out every row in the grid, except those filtered out.</li>
-    <li><b>For-Each Node After Filter and Sort</b>: Prints our every row in the grid, except those filtered,
-        and is the same order they appear in the screen if sorting is applied.</li>
+    <li><b>For-Each Node After Filter and Sort</b>: Prints out every row in the grid, except those filtered,
+        and in the same order they appear on the screen if sorting is applied.</li>
     <li><b>For-Each Leaf Node</b>: Prints out every row in the grid except group rows.</li>
 </ul>
 

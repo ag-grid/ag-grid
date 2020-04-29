@@ -73,7 +73,7 @@ include '../documentation-main/documentation_header.php';
 </h2>
 
 <p>
-    If using <a href="../javascript-grid-server-side-model/">Server-side Row Model</a> or
+    If using <a href="../javascript-grid-server-side-model/">Server-Side Row Model</a> or
     <a href="../javascript-grid-infinite-scrolling/">Infinite Row Model</a>, the
     <code>getDisplayedRowCount()</code> will include the
     'loading rows'. This is because Displayed Rows are a concern of the grid's rendering engine and not the underlying

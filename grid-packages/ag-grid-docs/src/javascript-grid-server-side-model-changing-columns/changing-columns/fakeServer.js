@@ -1,11 +1,11 @@
 // This fake server uses http://alasql.org/ to mimic how a real server
-// might generate sql queries from the Server-side Row Model request.
+// might generate sql queries from the Server-Side Row Model request.
 // To keep things simple it does the bare minimum to support the example.
 function FakeServer(allData) {
     alasql.options.cache = false;
 
     return {
-        getData: function (request) {
+        getData: function(request) {
             var results = executeQuery(request);
             return {
                 success: true,
@@ -29,7 +29,7 @@ function FakeServer(allData) {
     }
 
     function buildSql(request) {
-        var select= selectSql(request);
+        var select = selectSql(request);
         var from = ' FROM ?';
         var where = whereSql(request);
         var groupBy = createGroupBySql(request);
@@ -49,7 +49,7 @@ function FakeServer(allData) {
             var rowGroupCol = rowGroupCols[groupKeys.length];
             colsToSelect.push(rowGroupCol.id);
 
-            valueCols.forEach(function (valueCol) {
+            valueCols.forEach(function(valueCol) {
                 colsToSelect.push(valueCol.aggFunc + '(' + valueCol.id + ') AS ' + valueCol.id);
             });
 

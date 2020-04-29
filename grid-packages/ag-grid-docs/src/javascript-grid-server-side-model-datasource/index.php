@@ -1,44 +1,44 @@
 <?php
-$pageTitle = "Server-side Row Model - Datasource";
-$pageDescription = "ag-Grid is a feature-rich datagrid available in Free or Enterprise versions. There are four available Row Models, the Server-side Row Model is arguably the most powerful giving the ultimate 'big data' user experience. Users navigate through very large data sets using a mixture of Server-side grouping and aggregation while using infinite scrolling to bring the data back in blocks to the client.";
-$pageKeywords = "ag-Grid Server-side Row Model";
+$pageTitle = "Server-Side Row Model - Datasource";
+$pageDescription = "ag-Grid is a feature-rich datagrid available in Free or Enterprise versions. There are four available Row Models, the Server-Side Row Model is arguably the most powerful giving the ultimate 'big data' user experience. Users navigate through very large data sets using a mixture of server-side grouping and aggregation while using infinite scrolling to bring the data back in blocks to the client.";
+$pageKeywords = "ag-Grid Server-Side Row Model";
 $pageGroup = "row_models";
 include '../documentation-main/documentation_header.php';
 ?>
 
-<h1 class="heading-enterprise"> Server-side Datasource </h1>
+<h1 class="heading-enterprise"> Server-Side Datasource </h1>
 
 <p class="lead">
-    This section describes the Server-side Datasource and demonstrates how it can be used to lazy load data from a
+    This section describes the Server-Side Datasource and demonstrates how it can be used to lazy load data from a
     server through an infinite scroll.
 </p>
 
 <p>
-    The Server-side Row Model requires a datasource to fetch rows for the grid. When users scroll or perform grid
+    The Server-Side Row Model requires a datasource to fetch rows for the grid. When users scroll or perform grid
     operations such as sorting or grouping more data will be requested via the datasource.
 </p>
 
 <note>
-    The Server-side Datasource does not impose any  restrictions on the server side technologies used. It is left up
+    The Server-Side Datasource does not impose any  restrictions on the server side technologies used. It is left up
     to applications to decide how and where data is sourced for the grid.
 </note>
 
-<h2>Enabling Server-side Row Model</h2>
+<h2>Enabling Server-Side Row Model</h2>
 
 <p>
-    When no row model is specified the grid will use the <a href="../javascript-grid-client-side-model/">Client-side Row Model</a>
-    by default. To use the Server-side Row Model instead, set the <code>rowModelType</code> as follows:
+    When no row model is specified the grid will use the <a href="../javascript-grid-client-side-model/">Client-Side Row Model</a>
+    by default. To use the Server-Side Row Model instead, set the <code>rowModelType</code> as follows:
 </p>
 
 <snippet>
     gridOptions.rowModelType = 'serverSide'
 </snippet>
 
-<h2>Implementing the Server-side Datasource</h2>
+<h2>Implementing the Server-Side Datasource</h2>
 
 <p>
-    A datasource is used by the Server-side Row Model to fetch rows for the grid. Applications are required to implement
-    a datasource that conforms to the <a href="#datasource-interface">Server-side Datasource Interface</a>.
+    A datasource is used by the Server-Side Row Model to fetch rows for the grid. Applications are required to implement
+    a datasource that conforms to the <a href="#datasource-interface">Server-Side Datasource Interface</a>.
 </p>
 
 <p> The following snippet shows a simple datasource implementation: </p>
@@ -97,7 +97,7 @@ gridOptions.api.setServerSideDatasource(myDatasource);
 </p>
 
 <ul class="content">
-    <li>The Server-side Row Model is selected using the grid options property: <code>rowModelType = 'serverSide'</code>.</li>
+    <li>The Server-Side Row Model is selected using the grid options property: <code>rowModelType = 'serverSide'</code>.</li>
     <li>The datasource is registered with the grid using: <code>api.setServerSideDatasource(datasource)</code>.</li>
     <li>A request is contained in params supplied to <code>getRows(params)</code> with <code>startRow</code> and <code>endRow</code>.
         This is used by the server to determine the range of rows to return.</li>
@@ -206,7 +206,7 @@ export interface ColumnVO {
 
 <p>
     Continue to the next section to learn about
-     <a href="../javascript-grid-server-side-model-configuration/"> Server-side Configuration</a>.
+     <a href="../javascript-grid-server-side-model-configuration/">Server-Side Configuration</a>.
 </p>
 
 <?php include '../documentation-main/documentation_footer.php';?>

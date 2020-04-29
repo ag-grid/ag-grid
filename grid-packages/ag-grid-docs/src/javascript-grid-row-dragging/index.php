@@ -82,9 +82,9 @@ SNIPPET
 
 <ul class="content">
     <li>
-        Works with <a href="../javascript-grid-client-side-model/">Client-side</a> row model only and
+        Works with <a href="../javascript-grid-client-side-model/">Client-Side</a> row model only and
         not with the <a href="../javascript-grid-infinite-scrolling/">Infinite</a>,
-        <a href="../javascript-grid-server-side-model/">Server-side</a> or
+        <a href="../javascript-grid-server-side-model/">Server-Side</a> or
         <a href="../javascript-grid-viewport/">Viewport</a> row models.
     </li>
     <li>
@@ -502,7 +502,7 @@ SNIPPET
 <p>
     Unmanaged row dragging will work with any of the row models
     <a href="../javascript-grid-infinite-scrolling/">Infinite</a>,
-    <a href="../javascript-grid-server-side-model/">Server-side</a> and
+    <a href="../javascript-grid-server-side-model/">Server-Side</a> and
     <a href="../javascript-grid-viewport/">Viewport</a>.
     With unmanaged dragging, the implementation of what happens when a particular drag happens is up
     to your application.
