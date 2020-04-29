@@ -79,7 +79,8 @@ interface AxisLabelOptions {
 
     // A custom formatter function for the axis labels. If the value is a number, the number of
     // fractional digits used by the axis step will be provided as well.
-    formatter?: (value: any, fractionDigits?: number) => string;
+    // The label's index as well as the reference to the default formatter are provided as well.
+    formatter?: (params: { value: any, index: number, fractionDigits?: number, formatter?: (x: any) => string }) => string;
 }
 
 interface GridStyle {
