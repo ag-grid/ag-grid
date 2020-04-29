@@ -114,7 +114,7 @@ include '../documentation-main/documentation_header.php';
                     <li>Row Groups Section</li>
                     <li>Values (Pivot) Section</li>
                     <li>Column Labels Section</li>
-                    <li>Onto the grid</li>
+                    <li>Onto the grid (<code>gridOptions.allowDragFromColumnsToolPanel=true</code>)</li>
                 </ol>
             </li>
             <li>

@@ -83,7 +83,7 @@ function renderTitle($group) {
         echo "<h2>$title<div class=\"uiIcon icon-arrowBottom\">Open</div><div class=\"uiIcon icon-arrowTop\">Close</div></h2>";
 
         if ($groupConfig['items'] <> null) {
-            renderItems($groupConfig['items'], 0);
+            renderItems($groupConfig['items'], 0, null, $title);
         }
 
         echo "</div>";
@@ -91,18 +91,25 @@ function renderTitle($group) {
     }
 }
 
-function renderItems($items, $level) {
+function renderItems($items, $level, $forceTopLevelSubItems = NULL, $parentTitle) {
     $levelClass = $level > 0 ? 'level' : '';
+
+    if ($forceTopLevelSubItems <> NULL) {
+        $levelClass = $levelClass.' top-level-sub-items';
+    }
+
     echo "<ul class=\"docs-homepage-level$level-item $levelClass\">";
 
     foreach($items as $item) {
         echo "<li>";
-        $title = $item['title'];
+        $title = ''.$forceTopLevelSubItems ? '<span class="parent-title">'.$parentTitle.' </span>'.$item['title'] : $item['title'];
         $url = $item['url'];
         $enterprise = $item['enterprise'];
         $childItems = $item['items'];
         $hasLink = $url <> "";
         $shouldHide = $item['showInCollapsed'] <> true;
+        $shouldForceTopLevelSubItems = $item['forceTopLevelSubItems'];
+
         $spanClasses = '';
 
         if (!$hasLink) {
@@ -129,14 +136,14 @@ function renderItems($items, $level) {
             echo "</a>";
         }
 
-        if ($level > 0) {
+        if ($level > 0 and $forceTopLevelSubItems <> TRUE) {
             echo "<span class=\"item-split\">, &nbsp;</span>";
         }
 
         echo "</span>";
 
         if (!$item['hideChildren'] && $item['items'] <> null) {
-            renderItems($item['items'], $level + 1);
+            renderItems($item['items'], $level + 1, $shouldForceTopLevelSubItems, $title);
         }
 
         echo "</li>";

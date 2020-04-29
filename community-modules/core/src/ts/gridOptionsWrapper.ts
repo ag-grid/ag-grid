@@ -1638,7 +1638,7 @@ export class GridOptionsWrapper {
 
         const checkRenamedProperty = (oldProp: string, newProp: string, version: string) => {
             if (options[oldProp] != null) {
-                console.warn(`ag-grid: since version ${version}, ${oldProp} is deprecated / renamed, use the identical property ${newProp} instead`);
+                console.warn(`ag-grid: since version ${version}, '${oldProp}' is deprecated / renamed, please use the new property name '${newProp}' instead.`);
                 if (options[newProp] == null) {
                     options[newProp] = options[oldProp];
                 }

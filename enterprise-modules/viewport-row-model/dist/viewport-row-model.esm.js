@@ -9836,7 +9836,7 @@ var GridOptionsWrapper = /** @class */ (function () {
         }
         var checkRenamedProperty = function (oldProp, newProp, version) {
             if (options[oldProp] != null) {
-                console.warn("ag-grid: since version " + version + ", " + oldProp + " is deprecated / renamed, use the identical property " + newProp + " instead");
+                console.warn("ag-grid: since version " + version + ", '" + oldProp + "' is deprecated / renamed, please use the new property name '" + newProp + "' instead.");
                 if (options[newProp] == null) {
                     options[newProp] = options[oldProp];
                 }
@@ -11006,6 +11006,14 @@ var ProvidedFilter = /** @class */ (function (_super) {
         this.resetUiToDefaults(true);
         this.updateUiVisibility();
         this.setupOnBtApplyDebounce();
+        this.checkForDeprecatedParams();
+    };
+    ProvidedFilter.prototype.checkForDeprecatedParams = function () {
+        if (this.providedFilterParams.newRowsAction) {
+            var message_1 = "ag-Grid: since version 23.1, the Set Filter param 'newRowsAction' has been " +
+                "deprecated and will be removed in a future major release.";
+            _.doOnce(function () { return console.warn(message_1); }, 'newRowsAction deprecated');
+        }
     };
     ProvidedFilter.prototype.setParams = function (params) {
         this.providedFilterParams = params;
@@ -27394,7 +27402,7 @@ var GridApi = /** @class */ (function () {
         console.warn('ag-Grid: since v11.1, refreshView() is deprecated, please call refreshCells() or redrawRows() instead');
         this.redrawRows();
     };
-    //** @deprecated */
+    /** @deprecated */
     GridApi.prototype.refreshRows = function (rowNodes) {
         console.warn('since ag-Grid v11.1, refreshRows() is deprecated, please use refreshCells({rowNodes: rows}) or redrawRows({rowNodes: rows}) instead');
         this.refreshCells({ rowNodes: rowNodes });
@@ -27425,6 +27433,7 @@ var GridApi = /** @class */ (function () {
     GridApi.prototype.isAnyFilterPresent = function () {
         return this.filterManager.isAnyFilterPresent();
     };
+    /** @deprecated */
     GridApi.prototype.isAdvancedFilterPresent = function () {
         console.warn('ag-Grid: isAdvancedFilterPresent() is deprecated, please use isColumnFilterPresent()');
         return this.isColumnFilterPresent();
@@ -28013,12 +28022,14 @@ var GridApi = /** @class */ (function () {
         var res = null;
         if (this.clientSideRowModel) {
             if (rowDataTransaction && rowDataTransaction.addIndex != null) {
-                console.warn('ag-Grid: as of v22.1, transaction.addIndex is deprecated. If you want precision control of adding data, use immutableData instead');
+                var message_1 = 'ag-Grid: as of v23.1, transaction.addIndex is deprecated. If you want precision control of adding data, use immutableData instead';
+                _.doOnce(function () { return console.warn(message_1); }, 'transaction.addIndex deprecated');
             }
             res = this.clientSideRowModel.updateRowData(rowDataTransaction);
         }
         else if (this.infiniteRowModel) {
-            console.warn('ag-Grid: as of v22.1, transactions for Infinite Row Model are deprecated. If you want to make updates to data in Infinite Row Models, then refresh the data.');
+            var message_2 = 'ag-Grid: as of v23.1, transactions for Infinite Row Model are deprecated. If you want to make updates to data in Infinite Row Models, then refresh the data.';
+            _.doOnce(function () { return console.warn(message_2); }, 'applyTransaction infiniteRowModel deprecated');
             this.infiniteRowModel.updateRowData(rowDataTransaction);
         }
         else {
@@ -28032,8 +28043,10 @@ var GridApi = /** @class */ (function () {
         }
         return res;
     };
+    /** @deprecated */
     GridApi.prototype.updateRowData = function (rowDataTransaction) {
-        console.warn('ag-Grid: as of v22.1, grid API updateRowData(transaction) is now called applyTransaction(transaction). updateRowData is deprecated and will be removed in a future major release.');
+        var message = 'ag-Grid: as of v23.1, grid API updateRowData(transaction) is now called applyTransaction(transaction). updateRowData is deprecated and will be removed in a future major release.';
+        _.doOnce(function () { return console.warn(message); }, 'updateRowData deprecated');
         return this.applyTransaction(rowDataTransaction);
     };
     GridApi.prototype.applyTransactionAsync = function (rowDataTransaction, callback) {
@@ -28043,8 +28056,10 @@ var GridApi = /** @class */ (function () {
         }
         this.clientSideRowModel.batchUpdateRowData(rowDataTransaction, callback);
     };
+    /** @deprecated */
     GridApi.prototype.batchUpdateRowData = function (rowDataTransaction, callback) {
-        console.warn('ag-Grid: as of v22.1, grid API batchUpdateRowData(transaction, callback) is now called applyTransactionAsync(transaction, callback). batchUpdateRowData is deprecated and will be removed in a future major release.');
+        var message = 'ag-Grid: as of v23.1, grid API batchUpdateRowData(transaction, callback) is now called applyTransactionAsync(transaction, callback). batchUpdateRowData is deprecated and will be removed in a future major release.';
+        _.doOnce(function () { return console.warn(message); }, 'batchUpdateRowData deprecated');
         this.applyTransactionAsync(rowDataTransaction, callback);
     };
     GridApi.prototype.insertItemsAtIndex = function (index, items, skipRefresh) {
@@ -38030,12 +38045,15 @@ var ViewportRowModel = /** @class */ (function () {
         // datasource tells us this
         this.rowCount = -1;
         this.rowNodesByIndex = {};
+        this.events = [];
     }
     // we don't implement as lazy row heights is not supported in this row model
     ViewportRowModel.prototype.ensureRowHeightsValid = function (startPixel, endPixel, startLimitIndex, endLimitIndex) { return false; };
     ViewportRowModel.prototype.init = function () {
         this.rowHeight = this.gridOptionsWrapper.getRowHeightAsNumber();
-        this.eventService.addEventListener(Events.EVENT_VIEWPORT_CHANGED, this.onViewportChanged.bind(this));
+        this.events = [
+            this.eventService.addEventListener(Events.EVENT_VIEWPORT_CHANGED, this.onViewportChanged.bind(this))
+        ];
     };
     ViewportRowModel.prototype.start = function () {
         if (this.gridOptionsWrapper.getViewportDatasource()) {
@@ -38046,13 +38064,18 @@ var ViewportRowModel = /** @class */ (function () {
         return true;
     };
     ViewportRowModel.prototype.destroyDatasource = function () {
-        if (this.viewportDatasource) {
-            if (this.viewportDatasource.destroy) {
-                this.viewportDatasource.destroy();
-            }
-            this.rowRenderer.datasourceChanged();
-            this.firstRow = -1;
-            this.lastRow = -1;
+        if (!this.viewportDatasource) {
+            return;
+        }
+        if (this.viewportDatasource.destroy) {
+            this.viewportDatasource.destroy();
+        }
+        this.rowRenderer.datasourceChanged();
+        this.firstRow = -1;
+        this.lastRow = -1;
+        if (this.events.length) {
+            this.events.forEach(function (func) { return func(); });
+            this.events = [];
         }
     };
     ViewportRowModel.prototype.calculateFirstRow = function (firstRenderedRow) {
@@ -38062,9 +38085,7 @@ var ViewportRowModel = /** @class */ (function () {
         if (afterBuffer < 0) {
             return 0;
         }
-        else {
-            return Math.floor(afterBuffer / pageSize) * pageSize;
-        }
+        return Math.floor(afterBuffer / pageSize) * pageSize;
     };
     ViewportRowModel.prototype.calculateLastRow = function (lastRenderedRow) {
         if (lastRenderedRow === -1) {
@@ -38138,9 +38159,7 @@ var ViewportRowModel = /** @class */ (function () {
         if (this.rowHeight !== 0) { // avoid divide by zero error
             return Math.floor(pixel / this.rowHeight);
         }
-        else {
-            return 0;
-        }
+        return 0;
     };
     ViewportRowModel.prototype.getRowBounds = function (index) {
         return {
@@ -38221,19 +38240,20 @@ var ViewportRowModel = /** @class */ (function () {
     };
     ViewportRowModel.prototype.setRowCount = function (rowCount, keepRenderedRows) {
         if (keepRenderedRows === void 0) { keepRenderedRows = false; }
-        if (rowCount !== this.rowCount) {
-            this.rowCount = rowCount;
-            var event_1 = {
-                type: Events.EVENT_MODEL_UPDATED,
-                api: this.gridApi,
-                columnApi: this.columnApi,
-                newData: false,
-                newPage: false,
-                keepRenderedRows: keepRenderedRows,
-                animate: false
-            };
-            this.eventService.dispatchEvent(event_1);
+        if (rowCount === this.rowCount) {
+            return;
         }
+        this.rowCount = rowCount;
+        var event = {
+            type: Events.EVENT_MODEL_UPDATED,
+            api: this.gridApi,
+            columnApi: this.columnApi,
+            newData: false,
+            newPage: false,
+            keepRenderedRows: keepRenderedRows,
+            animate: false
+        };
+        this.eventService.dispatchEvent(event);
     };
     ViewportRowModel.prototype.isRowPresent = function (rowNode) {
         return false;

@@ -37,12 +37,10 @@ export class ViewportRowModel implements IRowModel {
 
     // datasource tells us this
     private rowCount = -1;
-
     private rowNodesByIndex: {[index: number]: RowNode} = {};
-
     private rowHeight: number;
-
     private viewportDatasource: IViewportDatasource;
+    private events: (() => void)[] = [];
 
     // we don't implement as lazy row heights is not supported in this row model
     public ensureRowHeightsValid(startPixel: number, endPixel: number, startLimitIndex: number, endLimitIndex: number): boolean { return false; }
@@ -50,7 +48,9 @@ export class ViewportRowModel implements IRowModel {
     @PostConstruct
     private init(): void {
         this.rowHeight = this.gridOptionsWrapper.getRowHeightAsNumber();
-        this.eventService.addEventListener(Events.EVENT_VIEWPORT_CHANGED, this.onViewportChanged.bind(this));
+        this.events = [
+            this.eventService.addEventListener(Events.EVENT_VIEWPORT_CHANGED, this.onViewportChanged.bind(this))
+        ]
     }
 
     public start(): void {
@@ -65,13 +65,19 @@ export class ViewportRowModel implements IRowModel {
 
     @PreDestroy
     private destroyDatasource(): void {
-        if (this.viewportDatasource) {
-            if (this.viewportDatasource.destroy) {
-                this.viewportDatasource.destroy();
-            }
-            this.rowRenderer.datasourceChanged();
-            this.firstRow = -1;
-            this.lastRow = -1;
+        if (!this.viewportDatasource) { return; }
+
+        if (this.viewportDatasource.destroy) {
+            this.viewportDatasource.destroy();
+        }
+
+        this.rowRenderer.datasourceChanged();
+        this.firstRow = -1;
+        this.lastRow = -1;
+
+        if (this.events.length) {
+            this.events.forEach(func => func());
+            this.events = [];
         }
     }
 
@@ -80,29 +86,27 @@ export class ViewportRowModel implements IRowModel {
         const pageSize = this.gridOptionsWrapper.getViewportRowModelPageSize();
         const afterBuffer = firstRenderedRow - bufferSize;
 
-        if (afterBuffer < 0) {
-            return 0;
-        } else {
-            return Math.floor(afterBuffer / pageSize) * pageSize;
-        }
+        if (afterBuffer < 0) { return 0; }
+
+        return Math.floor(afterBuffer / pageSize) * pageSize;
     }
 
     private calculateLastRow(lastRenderedRow: number): number {
-        if (lastRenderedRow === -1) {
-            return lastRenderedRow;
-        }
+        if (lastRenderedRow === -1) { return lastRenderedRow; }
+
         const bufferSize = this.gridOptionsWrapper.getViewportRowModelBufferSize();
         const pageSize = this.gridOptionsWrapper.getViewportRowModelPageSize();
         const afterBuffer = lastRenderedRow + bufferSize;
-
         const result = Math.ceil(afterBuffer / pageSize) * pageSize;
         const lastRowIndex = this.rowCount - 1;
+
         return Math.min(result, lastRowIndex);
     }
 
     private onViewportChanged(event: any): void {
         const newFirst = this.calculateFirstRow(event.firstRow);
         const newLast = this.calculateLastRow(event.lastRow);
+
         if (this.firstRow !== newFirst || this.lastRow !== newLast) {
             this.firstRow = newFirst;
             this.lastRow = newLast;
@@ -168,9 +172,9 @@ export class ViewportRowModel implements IRowModel {
     public getRowIndexAtPixel(pixel: number): number {
         if (this.rowHeight !== 0) { // avoid divide by zero error
             return Math.floor(pixel / this.rowHeight);
-        } else {
-            return 0;
         }
+
+        return 0;
     }
 
     public getRowBounds(index: number): RowBounds {
@@ -223,6 +227,7 @@ export class ViewportRowModel implements IRowModel {
 
     public forEachNode(callback: (rowNode: RowNode, index: number) => void): void {
         let callbackCount = 0;
+
         Object.keys(this.rowNodesByIndex).forEach(indexStr => {
             const index = parseInt(indexStr, 10);
             const rowNode: RowNode = this.rowNodesByIndex[index];
@@ -257,28 +262,31 @@ export class ViewportRowModel implements IRowModel {
 
     private createBlankRowNode(rowIndex: number): RowNode {
         const rowNode = new RowNode();
+
         this.context.wireBean(rowNode);
         rowNode.setRowHeight(this.rowHeight);
         rowNode.setRowTop(this.rowHeight * rowIndex);
         rowNode.setRowIndex(rowIndex);
+
         return rowNode;
     }
 
     public setRowCount(rowCount: number, keepRenderedRows = false): void {
-        if (rowCount !== this.rowCount) {
-            this.rowCount = rowCount;
-            const event: ModelUpdatedEvent = {
-                type: Events.EVENT_MODEL_UPDATED,
-                api: this.gridApi,
-                columnApi: this.columnApi,
-                newData: false,
-                newPage: false,
-                keepRenderedRows: keepRenderedRows,
-                animate: false
-            };
-    
-            this.eventService.dispatchEvent(event);
-        }
+        if (rowCount === this.rowCount) { return; }
+
+        this.rowCount = rowCount;
+
+        const event: ModelUpdatedEvent = {
+            type: Events.EVENT_MODEL_UPDATED,
+            api: this.gridApi,
+            columnApi: this.columnApi,
+            newData: false,
+            newPage: false,
+            keepRenderedRows: keepRenderedRows,
+            animate: false
+        };
+
+        this.eventService.dispatchEvent(event);
     }
 
     public isRowPresent(rowNode: RowNode): boolean {

@@ -8,7 +8,7 @@ export interface IProvidedFilterParams extends IFilterParams {
     resetButton?: boolean;
     applyButton?: boolean;
     closeOnApply?: boolean;
-    newRowsAction?: string;
+    /** @deprecated */ newRowsAction?: string;
     debounceMs?: number;
 }
 /**
@@ -41,6 +41,7 @@ export declare abstract class ProvidedFilter extends Component implements IFilte
     isFilterActive(): boolean;
     protected postConstruct(): void;
     init(params: IFilterParams): void;
+    protected checkForDeprecatedParams(): void;
     protected setParams(params: IProvidedFilterParams): void;
     private createButtonPanel;
     protected getDefaultDebounceMs(): number;

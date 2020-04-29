@@ -166,6 +166,7 @@ export declare class GridApi {
     timeFullRedraw(count?: number): void;
     /** @deprecated */
     refreshView(): void;
+    /** @deprecated */
     refreshRows(rowNodes: RowNode[]): void;
     /** @deprecated */
     rowDataChanged(rows: any): void;
@@ -176,6 +177,7 @@ export declare class GridApi {
     setFunctionsReadOnly(readOnly: boolean): void;
     refreshHeader(): void;
     isAnyFilterPresent(): boolean;
+    /** @deprecated */
     isAdvancedFilterPresent(): boolean;
     isColumnFilterPresent(): boolean;
     isQuickFilterPresent(): boolean;
@@ -314,8 +316,10 @@ export declare class GridApi {
     }): void;
     clearAggFuncs(): void;
     applyTransaction(rowDataTransaction: RowDataTransaction): RowNodeTransaction;
+    /** @deprecated */
     updateRowData(rowDataTransaction: RowDataTransaction): RowNodeTransaction;
     applyTransactionAsync(rowDataTransaction: RowDataTransaction, callback?: (res: RowNodeTransaction) => void): void;
+    /** @deprecated */
     batchUpdateRowData(rowDataTransaction: RowDataTransaction, callback?: (res: RowNodeTransaction) => void): void;
     insertItemsAtIndex(index: number, items: any[], skipRefresh?: boolean): void;
     removeItems(rowNodes: RowNode[], skipRefresh?: boolean): void;

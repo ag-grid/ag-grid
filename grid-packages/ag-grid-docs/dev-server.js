@@ -411,7 +411,10 @@ function updateUtilsSystemJsMappingsForFrameworks(gridCommunityModules, gridEnte
         '/* END OF GRID CSS DEV - DO NOT DELETE */',
         cssFiles,
         [],
-        cssFile => `        "@ag-grid-community/all-modules/dist/styles/${cssFile}" => "$prefix/@ag-grid-community/all-modules/dist/styles/${cssFile}",`,
+        cssFile => {
+            return `        "@ag-grid-community/all-modules/dist/styles/${cssFile}" => "$prefix/@ag-grid-community/all-modules/dist/styles/${cssFile}",
+        "@ag-grid-community/core/dist/styles/${cssFile}" => "$prefix/@ag-grid-community/core/dist/styles/${cssFile}",`
+        },
         () => {
         });
 
@@ -437,7 +440,10 @@ function updateUtilsSystemJsMappingsForFrameworks(gridCommunityModules, gridEnte
         '/* END OF GRID CSS PROD - DO NOT DELETE */',
         cssFiles,
         [],
-        cssFile => `        "@ag-grid-community/all-modules/dist/styles/${cssFile}" => "https://unpkg.com/@ag-grid-community/all-modules@" . AG_GRID_VERSION . "/dist/styles/${cssFile}",`,
+        cssFile => {
+            return `        "@ag-grid-community/all-modules/dist/styles/${cssFile}" => "https://unpkg.com/@ag-grid-community/all-modules@" . AG_GRID_VERSION . "/dist/styles/${cssFile}",
+        "@ag-grid-community/core/dist/styles/${cssFile}" => "https://unpkg.com/@ag-grid-community/core@" . AG_GRID_VERSION . "/dist/styles/${cssFile}",`
+        },
         () => {
         });
 
