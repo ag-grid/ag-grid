@@ -30,7 +30,7 @@ export function getMarker(shape: any = Square): new () => Marker {
         }
     }
 
-    if (typeof shape === 'function' && Marker.isPrototypeOf(shape)) {
+    if (typeof shape === 'function') {
         return shape;
     }
 
