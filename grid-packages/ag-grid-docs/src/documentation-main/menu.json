@@ -282,13 +282,16 @@
             "box-title": "Dragging",
             "showInCollapsed": true,
             "url": "javascript-grid-row-dragging/",
-            "items": [{
-              "title": "External DropZone",
-              "url": "javascript-grid-row-dragging-to-external-dropzone/"
-            }, {
-              "title": "Grid to Grid",
-              "url": "javascript-grid-row-dragging-to-grid/"
-            }]
+            "items": [
+              {
+                "title": "External DropZone",
+                "url": "javascript-grid-row-dragging-to-external-dropzone/"
+              },
+              {
+                "title": "Grid to Grid",
+                "url": "javascript-grid-row-dragging-to-grid/"
+              }
+            ]
           }
         ]
       },
@@ -1165,6 +1168,7 @@
             "url": "javascript-charts-overview/",
             "showInCollapsed": true,
             "hideChildren": true,
+            "matrixExcludeChildren": true,
             "items": [
               {
                 "title": "Bar/Column",

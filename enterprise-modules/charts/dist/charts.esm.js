@@ -11045,9 +11045,7 @@ var ProvidedFilter = /** @class */ (function (_super) {
                 addButton(translate('resetFilter', 'Reset Filter'), function () { return _this.onBtReset(); });
             }
             if (this.applyActive) {
-                // we do not bind onBtApply here because onBtApply() has a parameter, and it is not the event. if we
-                // just applied, the event would get passed as the second parameter, which we do not want.
-                addButton(translate('applyFilter', 'Apply Filter'), function () { return _this.onBtApply(true); });
+                addButton(translate('applyFilter', 'Apply Filter'), function () { return _this.onBtApply(); });
             }
             this.eFilterBodyWrapper.parentElement.appendChild(eButtonsPanel_1);
         }
@@ -11101,7 +11099,8 @@ var ProvidedFilter = /** @class */ (function (_super) {
             // came from floating filter
             this.providedFilterParams.filterChangedCallback({ afterFloatingFilter: afterFloatingFilter, afterDataChange: afterDataChange });
         }
-        if (this.providedFilterParams.closeOnApply && this.hidePopup) {
+        var _a = this.providedFilterParams, closeOnApply = _a.closeOnApply, applyButton = _a.applyButton, resetButton = _a.resetButton;
+        if (closeOnApply && !afterFloatingFilter && this.hidePopup && (applyButton || resetButton)) {
             this.hidePopup();
             this.hidePopup = null;
         }
@@ -11120,12 +11119,12 @@ var ProvidedFilter = /** @class */ (function (_super) {
         if (afterFloatingFilter === void 0) { afterFloatingFilter = false; }
         this.updateUiVisibility();
         this.providedFilterParams.filterModifiedCallback();
-        // applyNow=true for floating filter changes, we always act on these immediately
         if (afterFloatingFilter) {
-            this.onBtApply(afterFloatingFilter);
-            // otherwise if no apply button, we apply (but debounce for time delay)
+            // floating filter changes are always applied immediately
+            this.onBtApply(true);
         }
         else if (!this.applyActive) {
+            // if no apply button, we apply (but debounce for time delay)
             this.onBtApplyDebounce();
         }
     };
@@ -15266,7 +15265,7 @@ var SimpleFloatingFilter = /** @class */ (function (_super) {
         }
     };
     SimpleFloatingFilter.prototype.isEventFromFloatingFilter = function (event) {
-        return (event && event.afterFloatingFilter);
+        return event && event.afterFloatingFilter;
     };
     SimpleFloatingFilter.prototype.getLastType = function () {
         return this.lastType;
@@ -45200,7 +45199,7 @@ function getMarker(shape) {
                 return Square;
         }
     }
-    if (typeof shape === 'function' && Marker.isPrototypeOf(shape)) {
+    if (typeof shape === 'function') {
         return shape;
     }
     return Square;

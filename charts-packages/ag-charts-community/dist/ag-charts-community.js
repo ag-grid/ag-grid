@@ -6614,7 +6614,7 @@
                     return Square;
             }
         }
-        if (typeof shape === 'function' && Marker.isPrototypeOf(shape)) {
+        if (typeof shape === 'function') {
             return shape;
         }
         return Square;
