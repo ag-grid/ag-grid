@@ -29,7 +29,7 @@ var ModuleRegistry = /** @class */ (function () {
         if (!modules) {
             return;
         }
-        modules.forEach(ModuleRegistry.register.bind(null, moduleBased));
+        modules.forEach(function (module) { return ModuleRegistry.register(module, moduleBased); });
     };
     ModuleRegistry.assertRegistered = function (moduleName, reason) {
         if (this.isRegistered(moduleName)) {

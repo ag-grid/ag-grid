@@ -30,7 +30,7 @@ export class ModuleRegistry {
         if (!modules) {
             return;
         }
-        modules.forEach(ModuleRegistry.register.bind(null, moduleBased));
+        modules.forEach(module => ModuleRegistry.register(module, moduleBased));
     }
 
     public static assertRegistered(moduleName: ModuleNames, reason: string): boolean {

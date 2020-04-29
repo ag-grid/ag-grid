@@ -315,7 +315,7 @@ import React from "react";
 import {render} from "react-dom";
 
 import "@ag-grid-enterprise/all-modules/dist/styles/ag-grid.css";
-import "@ag-grid-enterprise/all-modules/dist/styles/ag-theme-balham.css";
+import "@ag-grid-enterprise/all-modules/dist/styles/ag-theme-alpine.css";
 
 import {LicenseManager} from "@ag-grid-enterprise/core";
 LicenseManager.setLicenseKey("your license key");
@@ -340,7 +340,7 @@ document.addEventListener('DOMContentLoaded', () =&gt; {
 import Vue from "vue";
 
 import "../node_modules/@ag-grid-enterprise/all-modules/dist/styles/ag-grid.css";
-import "../node_modules/@ag-grid-enterprise/all-modules/dist/styles/ag-theme-balham.css";
+import "../node_modules/@ag-grid-enterprise/all-modules/dist/styles/ag-theme-alpine.css";
 
 import {AllModules} from "@ag-grid-enterprise/all-modules";
 import {LicenseManager} from "@ag-grid-enterprise/core";
@@ -397,7 +397,7 @@ agGrid.LicenseManager.setLicenseKey("your license key")
 &lt;template id="template"&gt;
     &lt;div &gt;
         &lt;ag-grid-polymer style="width: 100%; height: 350px;"
-            class="ag-theme-balham"
+            class="ag-theme-alpine"
             rowData="{{rowData}}"
             columnDefs="{{columnDefs}}"&gt;&lt;/ag-grid-polymer&gt;
     &lt;/div&gt;

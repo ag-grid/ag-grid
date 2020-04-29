@@ -129,7 +129,7 @@ the relevant <code>core</code> packages - in our case we need both <code>@ag-gri
 using the Community bundle you could omit the <code>@ag-grid-enterprise/core</code> entry here.</p>
 
 <p>Additionally we can include the theme(s) we want to include in our bundle - for our example we're going to specify
-the Balham theme.</p>
+the Alpine theme.</p>
 
 <p>Let's create a file called <code>main.js</code> that will serve as our entry point:</p>
 
@@ -150,7 +150,7 @@ ModuleRegistry.register(MenuModule);
 ModuleRegistry.register(ExcelExportModule);
 
 import "@ag-grid-community/core/dist/styles/ag-grid.css";
-import "@ag-grid-community/core/dist/styles/ag-theme-balham.css";
+import "@ag-grid-community/core/dist/styles/ag-theme-alpine.css";
 </snippet>
 
 <p>Note that we've included the Module Registration step here - we do this so that consumers of our UMD bundle won't have to.
@@ -217,7 +217,7 @@ module.exports = {
     &lt;/script&gt;
 &lt;/head&gt;
 &lt;body&gt;
-&lt;div id="myGrid" style="height: 200px; width:500px;" class="ag-theme-balham"&gt;&lt;/div&gt;
+&lt;div id="myGrid" style="height: 200px; width:500px;" class="ag-theme-alpine"&gt;&lt;/div&gt;
 &lt;/body&gt;
 &lt;/html&gt;
 </snippet>

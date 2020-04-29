@@ -248,7 +248,7 @@ export function parser(js, html, exampleSettings) {
 
     if (inlineClass) {
         const theme = inlineClass.split(' ').filter(className => className.indexOf('ag-theme') >= 0);
-        exampleSettings.theme = theme && theme.length > 0 ? theme[0] : 'ag-theme-balham';
+        exampleSettings.theme = theme && theme.length > 0 ? theme[0] : 'ag-theme-alpine';
     }
 
     if (parseInt(inlineHeight)) {
@@ -264,7 +264,7 @@ export function parser(js, html, exampleSettings) {
     bindings.gridSettings = Object.assign({
         width: '100%',
         height: '100%',
-        theme: 'ag-theme-balham'
+        theme: 'ag-theme-alpine'
     }, exampleSettings);
 
     return bindings;
