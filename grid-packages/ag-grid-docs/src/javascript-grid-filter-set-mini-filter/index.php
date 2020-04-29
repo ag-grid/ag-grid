@@ -85,16 +85,12 @@ SNIPPET
 <h2>Mini Filter Options</h2>
 
 <p>
-    The following example demonstrates some Mini Filter options. Note the following:
+    The following example demonstrates the Mini Filter options. Note the following:
 </p>
 
 <ul class="content">
     <li>
         The Athlete column's Set Filter does not have a Mini Filter as <code>filterParams.suppressMiniFilter=true</code>.
-    </li>
-    <li>
-        The Country column's Set Filter will automatically closed when the Enter Key is pressed in the Mini Filter
-        as <code>filterParams.closeOnApply=true</code>.
     </li>
 </ul>
 
