@@ -5,6 +5,7 @@ import {
     Bean,
     BeanStub,
     Column,
+    ColumnApi,
     ColumnController,
     Constants,
     Context,
@@ -26,9 +27,9 @@ import {
     TabbedItem,
     TabbedLayout
 } from "@ag-grid-community/core";
-import { MenuList } from "./menuList";
-import { MenuItemComponent } from "./menuItemComponent";
-import { MenuItemMapper } from "./menuItemMapper";
+import {MenuList} from "./menuList";
+import {MenuItemComponent} from "./menuItemComponent";
+import {MenuItemMapper} from "./menuItemMapper";
 
 export interface TabSelectedEvent extends AgEvent {
     key: string;
@@ -157,6 +158,7 @@ export class EnterpriseMenu extends BeanStub {
     @Autowired('columnController') private columnController: ColumnController;
     @Autowired('filterManager') private filterManager: FilterManager;
     @Autowired('gridApi') private gridApi: GridApi;
+    @Autowired('columnApi') private columnApi: ColumnApi;
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('eventService') private eventService: EventService;
     @Autowired('menuItemMapper') private menuItemMapper: MenuItemMapper;
@@ -467,7 +469,8 @@ export class EnterpriseMenu extends BeanStub {
             suppressColumnSelectAll: false,
             suppressSideButtons: false,
             suppressSyncLayoutWithGrid: false,
-            api: this.gridApi
+            api: this.gridApi,
+            columnApi: this.columnApi
         });
 
         _.addCssClass(this.columnSelectPanel.getGui(), 'ag-menu-column-select');
