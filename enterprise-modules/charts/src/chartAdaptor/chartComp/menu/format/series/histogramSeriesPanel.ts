@@ -107,7 +107,7 @@ export class HistogramSeriesPanel extends Component {
 
     private initBins() {
         this.seriesBinCountSlider
-            .setLabel(this.chartTranslator.translate("histogramBinsCount"))
+            .setLabel(this.chartTranslator.translate("histogramBinCount"))
             .setMinValue(4)
             .setMaxValue(100)
             .setTextFieldWidth(45)

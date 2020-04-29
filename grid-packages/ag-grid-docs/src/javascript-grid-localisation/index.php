@@ -17,7 +17,7 @@ include '../documentation-main/documentation_header.php';
 <p> The example below shows all the text that can be defined.  </p>
 
 <?= createSnippet(<<<SNIPPET
-localeText = {
+localeText: {
     // for filter panel
     page: 'daPage',
     more: 'daMore',
@@ -48,8 +48,8 @@ localeText = {
     lessThanOrEqual: 'daLessThanOrEqual',
     greaterThanOrEqual: 'daGreaterThanOrEqual',
     inRange: 'daInRange',
-    inRangeStart: 'daFrom',
-    inRangeEnd: 'daTo',
+    inRangeStart: 'daTo',
+    inRangeEnd: 'daFrom',
 
     // for text filter
     contains: 'daContains',
@@ -97,7 +97,7 @@ localeText = {
     resetColumns: 'laReset Those Cols',
     expandAll: 'laOpen-em-up',
     collapseAll: 'laClose-em-up',
-    toolPanel: 'laTool Panel',
+    toolPanel: 'laTool Panelo',
     export: 'laExporto',
     csvExport: 'laCSV Exportp',
     excelExport: 'laExcel Exporto (.xlsx)',
@@ -133,10 +133,12 @@ localeText = {
     stackedArea: 'laStacked',
     normalizedArea: 'la100% Stacked',
 
+    histogramChart: 'laHistogram',
+
     // enterprise menu pinning
-    pinLeft: 'laPin <<',
-    pinRight: 'laPin >>',
-    noPin: 'laDontPin <>',
+    pinLeft: 'laPin &lt;&lt;',
+    pinRight: 'laPin &gt;&gt;',
+    noPin: 'laDontPin &lt;&gt;',
 
     // enterprise menu aggregation and status bar
     sum: 'laSum',
@@ -145,17 +147,17 @@ localeText = {
     none: 'laNone',
     count: 'laCount',
     avg: 'laAverage',
-    filteredRows: 'laFiltered'
-    selectedRows: 'laSelected'
-    totalRows: 'laTotal Rows'
-    totalAndFilteredRows: 'laRows'
+    filteredRows: 'laFiltered',
+    selectedRows: 'laSelected',
+    totalRows: 'laTotal Rows',
+    totalAndFilteredRows: 'laRows',
 
     // standard menu
     copy: 'laCopy',
     copyWithHeaders: 'laCopy With Headers',
     ctrlC: 'laCtrl n C',
     paste: 'laPaste',
-    ctrlV: 'laCtrl n V'
+    ctrlV: 'laCtrl n V',
 
     // charts
     pivotChartTitle: 'laPivot Chart',
@@ -219,12 +221,14 @@ localeText = {
     predefined: 'laPredefined',
     fillOpacity: 'laFill Opacity',
     strokeOpacity: 'laLine Opacity',
+    histogramBinCount: 'laBin Count',
     columnGroup: 'laColumn',
     barGroup: 'laBar',
     pieGroup: 'laPie',
     lineGroup: 'laLine',
     scatterGroup: 'laScatter',
     areaGroup: 'laArea',
+    histogramGroup: 'laHistogram',
     groupedColumnTooltip: 'laGrouped',
     stackedColumnTooltip: 'laStacked',
     normalizedColumnTooltip: 'la100% Stacked',
@@ -239,6 +243,7 @@ localeText = {
     normalizedAreaTooltip: 'la100% Stacked',
     scatterTooltip: 'laScatter',
     bubbleTooltip: 'laBubble',
+    histogramTooltip: 'laHistogram',
     noDataToChart: 'laNo data available to be charted.',
     pivotChartRequiresPivotMode: 'laPivot Chart requires Pivot Mode enabled.'
 }

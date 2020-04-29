@@ -8,7 +8,7 @@ export class MiniHistogram extends MiniChartWithAxes {
     private readonly bars: Rect[];
 
     constructor(container: HTMLElement, fills: string[], strokes: string[]) {
-        super(container, "groupedColumnTooltip");
+        super(container, "histogramTooltip");
 
         const padding = this.padding;
         const size = this.size;
