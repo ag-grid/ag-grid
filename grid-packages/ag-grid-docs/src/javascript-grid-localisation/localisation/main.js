@@ -72,8 +72,8 @@ var gridOptions = {
         lessThanOrEqual: 'daLessThanOrEqual',
         greaterThanOrEqual: 'daGreaterThanOrEqual',
         inRange: 'daInRange',
-        inRangeStart: 'daRangeStart',
-        inRangeEnd: 'daRangeEnd',
+        inRangeStart: 'daTo',
+        inRangeEnd: 'daFrom',
 
         // for text filter
         contains: 'daContains',
