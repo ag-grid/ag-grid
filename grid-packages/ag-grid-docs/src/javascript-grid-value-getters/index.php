@@ -344,9 +344,7 @@ colDef.valueGetter = function(params) {
         </li>
     </ul>
 
-    <?= grid_example('Never expire Value change', 'never-expire', 'generated', ['enterprise' => true, 'exampleHeight' => 610, 'modules' => true]) ?>
-
-
+    <?= grid_example('Never expire Value change', 'never-expire', 'generated', ['enterprise' => true, 'exampleHeight' => 610, 'modules'=>['clientside', 'rowgrouping']]) ?>
 
 
 <?php include '../documentation-main/documentation_footer.php';?>
