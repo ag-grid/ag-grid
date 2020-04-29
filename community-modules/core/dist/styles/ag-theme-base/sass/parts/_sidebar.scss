@@ -17,7 +17,7 @@
         overflow: hidden;
     }
 
-    .ag-side-button-button {
+    button.ag-side-button-button {
         @include ag-inherit-text-styles();
         background: transparent;
         padding: ag-param(grid-size) * 2 0 ag-param(grid-size) * 2 0;

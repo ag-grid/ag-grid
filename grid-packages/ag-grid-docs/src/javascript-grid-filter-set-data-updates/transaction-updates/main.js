@@ -27,11 +27,11 @@ function getRowData() {
 function updateFirstRow() {
     var firstRowData = gridOptions.api.getDisplayedRowAtIndex(0).data;
     firstRowData['col1'] += 'X';
-    gridOptions.api.updateRowData({update: [firstRowData]});
+    gridOptions.api.applyTransaction({update: [firstRowData]});
 }
 
 function addDRow() {
-    gridOptions.api.updateRowData({add: [{ col1: 'D'}]});
+    gridOptions.api.applyTransaction({add: [{ col1: 'D'}]});
 }
 
 function reset() {

@@ -79,11 +79,11 @@ var TitlePanel = /** @class */ (function (_super) {
                 if (enabled) {
                     var newTitle = _this.disabledTitle || _this.chartTranslator.translate('titlePlaceholder');
                     chartProxy.setTitleOption('text', newTitle);
-                    _this.disabledTitle = null;
+                    _this.disabledTitle = '';
                 }
                 else {
                     _this.disabledTitle = _this.chartController.getChartProxy().getTitleOption('text');
-                    chartProxy.setTitleOption('text', null);
+                    chartProxy.setTitleOption('text', '');
                 }
             }
         };

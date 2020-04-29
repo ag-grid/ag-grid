@@ -27,7 +27,7 @@ include '../documentation-main/documentation_header.php';
     This section introduces the two ways charts can be created from the data contained in the grid:
 </p>
 
-<ul>
+<ul class="content">
     <li>
         <a href="#user-created-charts">User Created Charts</a>: A user creates a
         chart using the grid's UI by selecting a range of cells or entering pivot mode and then creating a chart
@@ -114,7 +114,7 @@ SNIPPET
     Try it out on our <a href="../example.php">demo page</a> by doing the following:
 </p>
 
-<ul>
+<ul class="content">
     <li>
         Select a <a href="../javascript-grid-range-selection/">Cell Range</a> of numeric values in the grid by dragging
         the mouse over a range of cells.
@@ -137,7 +137,7 @@ SNIPPET
 <div style="display: flex; margin-bottom: 25px; margin-top: 25px;">
 
     <div style="flex-grow: 1;">
-        <ul>
+        <ul class="content">
             <p>
             <li><a href="../javascript-grid-charts-integrated-range-chart/#creating-chart-ranges">Chart Ranges</a>: When a chart is created, corresponding
                 chart ranges appear in the grid and can be adjusted via the chart range handle.
@@ -160,14 +160,14 @@ SNIPPET
     <img src="./chart-toolbar.png" />
 
     <div style="flex-grow: 1;">
-        <ul>
+        <ul class="content">
             <p>
                 <li><a href="../javascript-grid-charts-integrated-chart-toolbar/">Chart Toolbar</a>:
                 The chart toolbar is located in the top right area of the chart and allows
                 a user to:
             </p>
                 <p>
-                <ul>
+                <ul class="content">
                     <li style="padding-bottom: 5px">Change the chart type</li>
                     <li style="padding-bottom: 5px">Change the colour palette</li>
                     <li style="padding-bottom: 5px">Change which columns are used as categories and series</li>
@@ -225,13 +225,13 @@ SNIPPET
     </li>
 </ul>
 
-<?= grid_example('Application Created Charts', 'application-created-charts', 'vanilla', ['exampleHeight' => 660, 'enterprise' => true]) ?>
+<?= grid_example('Application Created Charts', 'application-created-charts', 'vanilla', ['exampleHeight' => 825, 'enterprise' => true]) ?>
 
 <p>
     To learn how to create charts in your applications see the following sections for details:
 </p>
 
-<ul>
+<ul class="content">
     <li><a href="../javascript-grid-charts-integrated-chart-range-api/">Chart API</a>: Used to create charts programmatically
         inside applications.
     </li>

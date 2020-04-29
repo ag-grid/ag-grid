@@ -31,7 +31,7 @@ include '../documentation-main/documentation_header.php';
     </p>
 
 <snippet>
-// normal updateRowData takes a RowDataTransaction and returns a RowNodeTransaction
+// normal applyTransaction takes a RowDataTransaction and returns a RowNodeTransaction
 applyTransaction(rowDataTransaction: RowDataTransaction): RowNodeTransaction
 
 // batch takes a RowDataTransaction and the result is provided some time later via a callback

@@ -352,6 +352,28 @@
     }
 
     ////////////////////////////////////////
+    // Ghost Element (Drag and Drop)
+    ////////////////////////////////////////
+    &.ag-dnd-ghost {
+        @include ag-card();
+        overflow: hidden;
+        text-overflow: ellipsis;
+        z-index: 10;
+        @include ag-border(secondary);
+        @include ag-color-property(color, secondary-foreground-color);
+        height: ag-param(header-height) !important;
+        line-height: ag-param(header-height);
+        margin: 0;
+        padding: 0 ag-param(grid-size) * 2;
+        transform: translateY(ag-param(grid-size) * 2);
+    }
+
+    .ag-dnd-ghost-icon {
+        margin-right: ag-param(grid-size);
+        @include ag-color-property(color, foreground-color);
+    }
+
+    ////////////////////////////////////////
     // Popup
     ////////////////////////////////////////
     .ag-popup-child:not(.ag-tooltip-custom) {

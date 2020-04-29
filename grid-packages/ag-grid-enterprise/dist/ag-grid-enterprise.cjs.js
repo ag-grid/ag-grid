@@ -23746,12 +23746,34 @@ var ChartBuilder = /** @class */ (function () {
         if (options.legend !== undefined) {
             ChartBuilder.initLegend(chart.legend, options.legend);
         }
+        var listeners = options.listeners;
+        if (listeners) {
+            for (var key in listeners) {
+                if (listeners.hasOwnProperty(key)) {
+                    var listener = listeners[key];
+                    if (typeof listener === 'function') {
+                        chart.addEventListener(key, listener);
+                    }
+                }
+            }
+        }
         return chart;
     };
     ChartBuilder.initSeries = function (series, options) {
         this.setValueIfExists(series, 'visible', options.visible);
         this.setValueIfExists(series, 'showInLegend', options.showInLegend);
         this.setValueIfExists(series, 'data', options.data);
+        var listeners = options.listeners;
+        if (listeners) {
+            for (var key in listeners) {
+                if (listeners.hasOwnProperty(key)) {
+                    var listener = listeners[key];
+                    if (typeof listener === 'function') {
+                        series.addEventListener(key, listener);
+                    }
+                }
+            }
+        }
         return series;
     };
     ChartBuilder.initLineSeries = function (series, options) {
@@ -26292,8 +26314,10 @@ var ChartProxy = /** @class */ (function () {
                 },
                 highlightStyle: {
                     fill: 'yellow',
-                }
-            }
+                },
+                listeners: {}
+            },
+            listeners: {}
         };
     };
     ChartProxy.prototype.transformData = function (data, categoryKey) {
@@ -27256,11 +27280,11 @@ var TitlePanel = /** @class */ (function (_super) {
                 if (enabled) {
                     var newTitle = _this.disabledTitle || _this.chartTranslator.translate('titlePlaceholder');
                     chartProxy.setTitleOption('text', newTitle);
-                    _this.disabledTitle = null;
+                    _this.disabledTitle = '';
                 }
                 else {
                     _this.disabledTitle = _this.chartController.getChartProxy().getTitleOption('text');
-                    chartProxy.setTitleOption('text', null);
+                    chartProxy.setTitleOption('text', '');
                 }
             }
         };

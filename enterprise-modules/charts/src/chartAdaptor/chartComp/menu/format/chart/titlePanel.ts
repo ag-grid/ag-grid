@@ -82,10 +82,10 @@ export default class TitlePanel extends Component {
                 if (enabled) {
                     const newTitle = this.disabledTitle || this.chartTranslator.translate('titlePlaceholder');
                     chartProxy.setTitleOption('text', newTitle);
-                    this.disabledTitle = null;
+                    this.disabledTitle = '';
                 } else {
                     this.disabledTitle = this.chartController.getChartProxy().getTitleOption('text');
-                    chartProxy.setTitleOption('text', null);
+                    chartProxy.setTitleOption('text', '');
                 }
             }
         };

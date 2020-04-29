@@ -5,215 +5,225 @@ $pageGroup = "feature";
 include '../documentation-main/documentation_header.php';
 ?>
 
+<h1 id="sorting">Row Sorting</h1>
 
+<p class="lead">
+    This page describes how to get your grid data sorting. Row sorting works with all frameworks
+    (e.g. Angular and React) as well as plain JavaScript.
+</p>
 
-    <h1 id="sorting">Row Sorting</h1>
+<h2>Enable Sorting</h2>
 
-    <p class="lead">
-        This page describes how to get your grid data sorting.
-        Row sorting works with all frameworks eg Angular and React as well as plain JavaScript.
-    </p>
+<p>
+    Enable sorting for columns by setting the <code>sortable</code> column definition attribute.
+    You can then sort a column by clicking on the column header.
+</p>
 
-    <h2>Enable Sorting</h2>
-
-    <p>
-        Enable sorting for columns by setting the <code>sortable</code> column definition attribute.
-        Then sort a column by clicking on the column header.
-    </p>
-
-<snippet>
+<?= createSnippet(<<<SNIPPET
 gridOptions: {
     // enable sorting on name and age columns only
     columnDefs: [
-        {field: 'name', sortable: true},
-        {field: 'age', sortable: true},
-        {field: 'address'},
+        { field: 'name', sortable: true },
+        { field: 'age', sortable: true },
+        { field: 'address' },
     ]
-}</snippet>
+}
+SNIPPET
+) ?>
 
-    <p>
-        To enable sorting for all columns, set sorting in the
-        <a href="/javascript-grid-column-definitions/#default-column-definitions">default column definition</a>.
-    </p>
+<p>
+    To enable sorting for all columns, set sorting in the
+    <a href="/javascript-grid-column-definitions/#default-column-definitions">default column definition</a>.
+</p>
 
-<snippet>
+<?= createSnippet(<<<SNIPPET
 gridOptions: {
     // enable sorting on all columns by default
     defaultColDef: {
         sortable: true
     },
     columnDefs: [
-        {field: 'name'},
-        {field: 'age'},
+        { field: 'name' },
+        { field: 'age' },
         // suppress sorting on address column
-        {field: 'address', sortable: false},
+        { field: 'address', sortable: false },
     ]
-}</snippet>
+}
+SNIPPET
+) ?>
 
-    <h2>Custom Sorting</h2>
+<h2>Custom Sorting</h2>
 
-    <p>
-        Custom sorting is provided at a column level by configuring a comparator on the column definition.
-        The sort methods gets the value as well as the row nodes.
-    </p>
+<p>
+    Custom sorting is provided at a column level by configuring a comparator on the column definition.
+    The sort methods gets the value as well as the row nodes.
+</p>
 
-    <snippet>
-colDef.comparator = function (valueA, valueB, nodeA, nodeB, isInverted) {
+<?= createSnippet(<<<SNIPPET
+colDef.comparator = function(valueA, valueB, nodeA, nodeB, isInverted) {
     return valueA - valueB;
-}</snippet>
+}
+SNIPPET
+) ?>
 
-    <h2>Example: Custom Sorting</h2>
+<h2>Example: Custom Sorting</h2>
 
-    <p> Example below shows the following: </p>
-        <ul class="content">
-            <li>Default sorting on the Athlete column.</li>
-            <li>When the year column is not sorted, it shows a custom icon, (up/down arrow).</li>
-            <li>The date column has strings as the row data, there is custom comparator so that when you sort this column
-            it sorts it as dates, not as strings.</li>
-        </ul>
-
-    <?= grid_example('Custom Sorting', 'custom-sorting', 'generated', ['modules' => true]) ?>
-
-    <h2 id="multi-column-sorting">Multi Column Sorting</h2>
-
-    <p>
-        It is possible to sort by multiple columns. The default action for multiple column sorting is for
-        the user to hold down shift while clicking the column header. To change the default action to use
-        the Control key (or Cmd key on Apple) instead set the property <code>multiSortKey='ctrl'</code>.
-    </p>
-
-    <p>
-        The example below demonstrates the following:
-        <ul>
-            <li>The grid sorts by Country then Athlete by default.</li>
-            <li>
-                The property <code>multiSortKey='ctrl'</code> is set so multiple column selection
-                is achieved by holding down Control and selecting multiple columns.
-            </li>
-        </ul>
-    </p>
-
-    <?= grid_example('Multi Column Sort', 'multi-column', 'generated', ['modules' => true]) ?>
-
-    <h2>Sorting Animation</h2>
-
-    <p>
-        To enable animation of the rows after sorting, set grid property <code>animateRows=true</code>.
-    </p>
-
-    <h2>Sorting Order</h2>
-
-    <p>
-        By default, the sorting order is as follows:
-    </p>
-    <p>
-        <b>ascending -> descending -> none</b>.
-    </p>
-    <p>
-        In other words, when you click a column that is not sorted, it will sort ascending. The next click
-        will make it sort descending. Another click will remove the sort.
-    </p>
-    <p>
-        It is possible to override this behaviour by providing your own <code>sortingOrder</code> on either
-        the gridOptions or the colDef. If defined both in colDef and gridOptions, the colDef will get
-        preference, allowing you to defined a common default, and then tailoring per column.
-    </p>
-
-    <h2>Example: Sorting Order and Animation</h2>
-
-    <p>
-        The example below shows animation of the rows plus different combinations of sorting orders as follows:
-    </p>
-        <ul class="content">
-        <li><b>Grid Default:</b> ascending -> descending -> no sort</li>
-        <li><b>Column Athlete:</b> ascending -> descending</li>
-        <li><b>Column Age:</b> descending -> ascending</li>
-        <li><b>Column Country:</b> descending -> no sort </li>
-        <li><b>Column Year:</b> ascending only</li>
+<p> Example below shows the following: </p>
+    <ul class="content">
+        <li>Default sorting on the Athlete column.</li>
+        <li>When the Year column is not sorted, it shows a custom icon (up/down arrow).</li>
+        <li>
+            The Date column has strings as the row data, but there is custom comparator so that when you sort this column
+            it sorts as dates, not as strings.
+        </li>
     </ul>
 
-    <?= grid_example('Sorting Order and Animation', 'sorting-order-and-animation', 'generated', ['modules' => true]) ?>
+<?= grid_example('Custom Sorting', 'custom-sorting', 'generated', ['modules' => true]) ?>
 
-    <h2>Sorting API</h2>
+<h2 id="multi-column-sorting">Multi Column Sorting</h2>
 
-    <p>
-        Sorting can be controlled via the Sorting API via the following methods:
-    </p>
-        <ul class="content">
-        <li><b>setSortModel(sortModel):</b> To set the sort.</li>
-        <li><b>getSortModel():</b> To return the state of the currently active sort.</li>
+<p>
+    It is possible to sort by multiple columns. The default action for multiple column sorting is for
+    the user to hold down <code>Shift</code> while clicking the column header. To change the default action to use
+    the <code>Ctrl</code> key (or <code>Cmd</code> key on Apple) instead set the property <code>multiSortKey='ctrl'</code>.
+</p>
+
+<p>
+    The example below demonstrates the following:
+    <ul>
+        <li>The grid sorts by Country then Athlete by default.</li>
+        <li>
+            The property <code>multiSortKey='ctrl'</code> is set so multiple column selection
+            is achieved by holding down <code>Ctrl</code> and selecting multiple columns.
+        </li>
     </ul>
+</p>
 
-    <p>
-        Both methods work with a list of sort objects, each object containing a sort field
-        and direction. The order of the sort objects depicts the order in which the columns
-        are sorted. For example, the below array represents the model of firstly sorting
-        by country ascending, and then by sport descending.
-    </p>
+<?= grid_example('Multi Column Sort', 'multi-column', 'generated', ['modules' => true]) ?>
 
-    <snippet>
+<h2>Sorting Animation</h2>
+
+<p>
+    To enable animation of the rows after sorting, set grid property <code>animateRows=true</code>.
+</p>
+
+<h2>Sorting Order</h2>
+
+<p>
+    By default, the sorting order is as follows:
+</p>
+<p>
+    <b>ascending -> descending -> none</b>.
+</p>
+<p>
+    In other words, when you click a column that is not sorted, it will sort ascending. The next click
+    will make it sort descending. Another click will remove the sort.
+</p>
+<p>
+    It is possible to override this behaviour by providing your own <code>sortingOrder</code> on either
+    the <code>gridOptions</code> or the <code>colDef</code>. If defined both in <code>colDef</code> and
+    <code>gridOptions</code>, the <code>colDef</code> will get preference, allowing you to define a common default,
+    and then tailor per column.
+</p>
+
+<h2>Example: Sorting Order and Animation</h2>
+
+<p>
+    The example below shows animation of the rows plus different combinations of sorting orders as follows:
+</p>
+    <ul class="content">
+    <li><b>Grid Default:</b> ascending -> descending -> no sort</li>
+    <li><b>Column Athlete:</b> ascending -> descending</li>
+    <li><b>Column Age:</b> descending -> ascending</li>
+    <li><b>Column Country:</b> descending -> no sort </li>
+    <li><b>Column Year:</b> ascending only</li>
+</ul>
+
+<?= grid_example('Sorting Order and Animation', 'sorting-order-and-animation', 'generated', ['modules' => true]) ?>
+
+<h2>Sorting API</h2>
+
+<p>
+    Sorting can be controlled via the Sorting API via the following methods:
+</p>
+    <ul class="content">
+    <li><code>setSortModel(sortModel)</code>: To set the sort.</li>
+    <li><code>getSortModel():</code> To return the state of the currently active sort.</li>
+</ul>
+
+<p>
+    Both methods work with a list of sort objects, each object containing a sort field
+    and direction. The order of the sort objects depicts the order in which the columns
+    are sorted. For example, the below array represents the model of firstly sorting
+    by Country ascending, and then by Sport descending.
+</p>
+
+<?= createSnippet(<<<SNIPPET
 [
-    {colId: 'country', sort: 'asc'},
-    {colId: 'sport', sort: 'desc'}
-]</snippet>
+    { colId: 'country', sort: 'asc' },
+    { colId: 'sport', sort: 'desc' }
+]
+SNIPPET
+) ?>
 
-    <h2>Example: Sorting API</h2>
+<h2>Example: Sorting API</h2>
 
-    <p>
-        The example below shows the API in action.
-    </p>
+<p>
+    The example below shows the API in action.
+</p>
 
-    <?= grid_example('Sorting API', 'sorting-api', 'generated', ['modules' => true]) ?>
+<?= grid_example('Sorting API', 'sorting-api', 'generated', ['modules' => true]) ?>
 
-    <h2>Sorting Groups</h2>
+<h2>Sorting Groups</h2>
 
-    <p>
-        The grid sorts using a default comparator for grouped columns, if you want to specify your own, you can do
-        so specifying it in the colDef:
-    </p>
+<p>
+    The grid sorts using a default comparator for grouped columns. If you want to specify your own, you can do
+    so by specifying it in the <code>colDef</code>:
+</p>
 
-    <snippet>
+<?= createSnippet(<<<SNIPPET
 var groupColumn = {
-    headerName: "Group",
+    headerName: 'Group',
     comparator: [yourOwnComparator], // this is the important bit
     cellRenderer: {
-        renderer: "agGroupCellRenderer",
+        renderer: 'agGroupCellRenderer',
     }
 };
-   </snippet>
+SNIPPET
+) ?>
 
-    <h2>Accented sort</h2>
+<h2>Accented Sort</h2>
 
-    <p>
-        By default sorting doesn't take into consideration locale specific characters, if you need to make your sort locale
-        specific you can configure this by setting the property <code>gridOptions.accentedSort = true</code>
-    </p>
+<p>
+    By default sorting doesn't take into consideration locale-specific characters. If you need to make your sort
+    locale-specific you can configure this by setting the property <code>gridOptions.accentedSort = true</code>
+</p>
 
-    <p>
-        Using this feature is more expensive, if you need to sort a very large amount of data, you might find that this
-        causes the sort to be noticeably slower.
-    </p>
+<p>
+    Using this feature is more expensive; if you need to sort a very large amount of data, you might find that this
+    causes the sort to be noticeably slower.
+</p>
 
-    <p>
-        The following example is configured to use this feature.
-    </p>
+<p>
+    The following example is configured to use this feature.
+</p>
 
-    <?= grid_example('Accented Sort', 'accented-sort', 'generated', ['modules' => true]) ?>
+<?= grid_example('Accented Sort', 'accented-sort', 'generated', ['modules' => true]) ?>
 
-    <h2 id="post-sort">Post Sort</h2>
+<h2 id="post-sort">Post-Sort</h2>
 
-    <p>
-        It is also possible to perform some post sorting if you require additional control over the sorted rows.
-    </p>
+<p>
+    It is also possible to perform some post-sorting if you require additional control over the sorted rows.
+</p>
 
-    <p>This is provided via the grid callback function: <code>gridOptions.postSort</code> as shown below:</p>
+<p>This is provided via the grid callback function: <code>gridOptions.postSort</code> as shown below:</p>
 
-    <snippet>
+<?= createSnippet(<<<SNIPPET
 gridOptions.postSort(rowNodes) {
     // here we put Ireland rows on top while preserving the sort order
 
     function isIreland(node) {
-        return node.data.country === "Ireland";
+        return node.data.country === 'Ireland';
     }
 
     function move(toIndex, fromIndex) {
@@ -221,6 +231,7 @@ gridOptions.postSort(rowNodes) {
     }
 
     var nextInsertPos = 0;
+
     for (var i = 0; i < rowNodes.length; i++) {
         if (isIreland(rowNodes[i])) {
             move(nextInsertPos, i)
@@ -228,12 +239,13 @@ gridOptions.postSort(rowNodes) {
         }
     }
 }
-    </snippet>
+SNIPPET
+) ?>
 
-    <p>
-        The following example uses this configuration to perform a post sort on the rows.
-    </p>
+<p>
+    The following example uses this configuration to perform a post-sort on the rows.
+</p>
 
-    <?= grid_example('Post Sort', 'post-sort', 'generated', ['enterprise' => true, 'modules' => true]) ?>
+<?= grid_example('Post Sort', 'post-sort', 'generated', ['enterprise' => true, 'modules' => true]) ?>
 
 <?php include '../documentation-main/documentation_footer.php';?>

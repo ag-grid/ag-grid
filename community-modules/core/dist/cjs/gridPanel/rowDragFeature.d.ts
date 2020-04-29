@@ -53,7 +53,7 @@ export declare class RowDragFeature implements DropTarget {
     onDragEnter(draggingEvent: DraggingEvent): void;
     onDragging(draggingEvent: DraggingEvent): void;
     private isFromThisGrid;
-    private isTargetOutsideThisGrid;
+    private isDropZoneWithinThisGrid;
     private onEnterOrDragging;
     private doManagedDrag;
     private getRowIndexNumber;

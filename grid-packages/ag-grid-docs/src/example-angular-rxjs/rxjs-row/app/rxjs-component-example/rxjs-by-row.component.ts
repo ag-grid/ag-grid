@@ -43,7 +43,7 @@ export class RxJsComponentByRow {
                         // rows will get re-rendered, improving performance
                         this.rowDataUpdates$.subscribe((updates) => {
                             if (this.gridOptions.api) { // can be null when tabbing between the examples
-                                this.gridOptions.api.updateRowData({update: updates})
+                                this.gridOptions.api.applyTransaction({update: updates})
                             }
                         });
                     }

@@ -113,11 +113,10 @@ var RowDragFeature = /** @class */ (function () {
     RowDragFeature.prototype.isFromThisGrid = function (draggingEvent) {
         return this.gridPanel.getGui().contains(draggingEvent.dragSource.eElement);
     };
-    RowDragFeature.prototype.isTargetOutsideThisGrid = function (draggingEvent) {
-        var eDoc = this.gridOptionsWrapper.getDocument();
+    RowDragFeature.prototype.isDropZoneWithinThisGrid = function (draggingEvent) {
         var gridGui = this.gridPanel.getGui();
-        var elementFromPoint = eDoc.elementFromPoint(draggingEvent.event.clientX, draggingEvent.event.clientY);
-        return !gridGui.contains(elementFromPoint);
+        var dropZoneTarget = draggingEvent.dropZoneTarget;
+        return !gridGui.contains(dropZoneTarget);
     };
     RowDragFeature.prototype.onEnterOrDragging = function (draggingEvent) {
         // this event is fired for enter and move
@@ -149,7 +148,7 @@ var RowDragFeature = /** @class */ (function () {
             return;
         }
         if (this.gridOptionsWrapper.isSuppressMoveWhenRowDragging() || !isFromThisGrid) {
-            if (!this.isTargetOutsideThisGrid(draggingEvent)) {
+            if (!this.isDropZoneWithinThisGrid(draggingEvent)) {
                 this.clientSideRowModel.highlightRowAtPixel(rowNodes[0], pixel);
             }
         }
@@ -384,7 +383,7 @@ var RowDragFeature = /** @class */ (function () {
         this.stopDragging(draggingEvent);
         if (this.gridOptionsWrapper.isRowDragManaged() &&
             (this.gridOptionsWrapper.isSuppressMoveWhenRowDragging() || !this.isFromThisGrid(draggingEvent)) &&
-            !this.isTargetOutsideThisGrid(draggingEvent)) {
+            !this.isDropZoneWithinThisGrid(draggingEvent)) {
             this.moveRowAndClearHighlight(draggingEvent);
         }
     };

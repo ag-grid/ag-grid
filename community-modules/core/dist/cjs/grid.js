@@ -129,24 +129,24 @@ var Grid = /** @class */ (function () {
         var allModules = [];
         var mapNames = {};
         // adds to list and removes duplicates
-        function addModule(module) {
+        function addModule(moduleBased, module) {
             function addIndividualModule(module) {
                 if (!mapNames[module.moduleName]) {
                     mapNames[module.moduleName] = true;
                     allModules.push(module);
-                    moduleRegistry_1.ModuleRegistry.register(module);
+                    moduleRegistry_1.ModuleRegistry.register(module, moduleBased);
                 }
             }
             addIndividualModule(module);
             if (module.dependantModules) {
-                module.dependantModules.forEach(addModule);
+                module.dependantModules.forEach(addModule.bind(null, moduleBased));
             }
         }
         if (passedViaConstructor) {
-            passedViaConstructor.forEach(addModule);
+            passedViaConstructor.forEach(addModule.bind(null, true));
         }
         if (registered) {
-            registered.forEach(addModule);
+            registered.forEach(addModule.bind(null, !moduleRegistry_1.ModuleRegistry.isPackageBased()));
         }
         return allModules;
     };

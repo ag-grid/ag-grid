@@ -36,7 +36,7 @@ const gridOptions = {
 
 <snippet>
 updates$.subscribe((updates) =&gt; {
-    gridOptions.api.updateRowData({update: updates}
+    gridOptions.api.applyTransaction({update: updates}
 }));</snippet>
 
 

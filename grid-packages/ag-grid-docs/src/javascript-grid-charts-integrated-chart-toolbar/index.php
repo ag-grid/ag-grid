@@ -18,11 +18,10 @@ include '../documentation-main/documentation_header.php';
         <img src="./chart-toolbar.png"/>
 
         <div style="flex-grow: 1;">
-            <ul>
-            <p>
+            <p style="margin-left: 22px">
                 From the toolbar, users can:</p>
             <p>
-                <ul>
+                <ul class="content">
                     <li style="padding-bottom: 5px">Change the chart type</li>
                     <li style="padding-bottom: 5px">Change the colour palette</li>
                     <li style="padding-bottom: 5px">Change which columns are used as categories and series</li>

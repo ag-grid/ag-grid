@@ -94,15 +94,6 @@ export abstract class ProvidedFilter extends Component implements IFilterComp {
         this.resetUiToDefaults(true);
         this.updateUiVisibility();
         this.setupOnBtApplyDebounce();
-        this.checkForDeprecatedParams();
-    }
-
-    protected checkForDeprecatedParams(): void {
-        if (this.providedFilterParams.newRowsAction) {
-            const message = "ag-Grid: since version 23.1, the Set Filter param 'newRowsAction' has been " +
-                "deprecated and will be removed in a future major release.";
-            _.doOnce(() => console.warn(message), 'newRowsAction deprecated');
-        }
     }
 
     protected setParams(params: IProvidedFilterParams): void {

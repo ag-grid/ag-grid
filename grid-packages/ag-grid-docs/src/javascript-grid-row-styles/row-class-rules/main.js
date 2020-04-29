@@ -53,14 +53,14 @@ function setData() {
     });
 }
 
-function updateRowData() {
+function applyTransaction() {
     var itemsToUpdate = [];
     gridOptions.api.forEachNode( function(rowNode) {
         var data = rowNode.data;
         data.sickDays = randomInt();
         itemsToUpdate.push(data);
     });
-    gridOptions.api.updateRowData({update: itemsToUpdate});
+    gridOptions.api.applyTransaction({update: itemsToUpdate});
 }
 
 function randomInt() {

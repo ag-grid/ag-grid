@@ -66,14 +66,6 @@ var ProvidedFilter = /** @class */ (function (_super) {
         this.resetUiToDefaults(true);
         this.updateUiVisibility();
         this.setupOnBtApplyDebounce();
-        this.checkForDeprecatedParams();
-    };
-    ProvidedFilter.prototype.checkForDeprecatedParams = function () {
-        if (this.providedFilterParams.newRowsAction) {
-            var message_1 = "ag-Grid: since version 23.1, the Set Filter param 'newRowsAction' has been " +
-                "deprecated and will be removed in a future major release.";
-            _.doOnce(function () { return console.warn(message_1); }, 'newRowsAction deprecated');
-        }
     };
     ProvidedFilter.prototype.setParams = function (params) {
         this.providedFilterParams = params;

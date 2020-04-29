@@ -335,15 +335,15 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia {
   top: 0;
   cursor: ew-resize; }
   .ag-ltr .ag-header-cell-resize {
-    right: -3px; }
+    right: -4px; }
   .ag-rtl .ag-header-cell-resize {
-    left: -3px; }
+    left: -4px; }
 
 .ag-pinned-left-header .ag-header-cell-resize {
-  right: -3px; }
+  right: -4px; }
 
 .ag-pinned-right-header .ag-header-cell-resize {
-  left: -3px; }
+  left: -4px; }
 
 .ag-header-select-all {
   display: flex; }
@@ -474,6 +474,10 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia {
 .ag-row {
   white-space: nowrap;
   width: 100%; }
+
+.ag-row-loading {
+  display: flex;
+  align-items: center; }
 
 .ag-row-position-absolute {
   position: absolute; }
@@ -608,11 +612,8 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia {
  * Drag & Drop
  ****************************
 */
-.ag-dnd-wrapper {
-  position: absolute; }
-
 .ag-dnd-ghost {
-  position: relative;
+  position: absolute;
   display: inline-flex;
   align-items: center;
   cursor: move;

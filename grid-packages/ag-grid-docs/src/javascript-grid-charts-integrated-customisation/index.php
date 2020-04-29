@@ -70,7 +70,7 @@ type ChartType =
     The example below demonstrates:
 </p>
 
-<ul>
+<ul class="content">
     <li><b>Stacked Bar</b>, <b>Grouped Bar</b> and <b>Normalized Bar</b> charts have the legend docked to the <code>bottom</code>.</li>
     <li><b>Stacked Column</b>, <b>Grouped Column</b> and <b>Normalized Column</b> charts have the legend docked to the <code>right</code>.</li>
     <li><b>Line</b> charts have the legend docked to the <code>left</code>.</li>
@@ -97,7 +97,7 @@ type ChartType =
     user chart formatting preferences. Notice the following:
 </p>
 
-<ul>
+<ul class="content">
     <li><b>Saving Options by Chart Type</b>: format changes (via the format panel) are preserved after leaving and
         returning to the chart by using the <code>savedUserPreferenceByChartType</code> object to keep track of user
         format changes on a per-chart type basis.</li>

@@ -1242,8 +1242,7 @@ var CellComp = /** @class */ (function (_super) {
         return false;
     };
     CellComp.prototype.containsWidget = function (target) {
-        return utils_1._.isElementChildOfClass(target, 'ag-selection-checkbox', 3) ||
-            utils_1._.isElementChildOfClass(target, 'ag-icon', 3);
+        return utils_1._.isElementChildOfClass(target, 'ag-selection-checkbox', 3);
     };
     // returns true if on iPad and this is second 'click' event in 200ms
     CellComp.prototype.isDoubleClickOnIPad = function () {

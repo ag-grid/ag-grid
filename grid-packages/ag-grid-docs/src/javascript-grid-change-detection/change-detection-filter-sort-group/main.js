@@ -40,7 +40,7 @@ var gridOptions = {
     animateRows: true,
     onCellValueChanged: function(params) {
         var changedData = [params.data];
-        params.api.updateRowData({update: changedData});
+        params.api.applyTransaction({update: changedData});
     }
 };
 

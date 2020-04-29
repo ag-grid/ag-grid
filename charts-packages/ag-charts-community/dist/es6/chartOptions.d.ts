@@ -18,6 +18,9 @@ export interface SeriesOptions {
     data?: any[];
     visible?: boolean;
     showInLegend?: boolean;
+    listeners?: {
+        [key in string]: Function;
+    };
 }
 export interface ChartOptions<T extends SeriesOptions> {
     document?: Document;
@@ -30,6 +33,9 @@ export interface ChartOptions<T extends SeriesOptions> {
     subtitle: CaptionOptions;
     legend: LegendOptions;
     tooltipClass?: string;
+    listeners?: {
+        [key in string]: Function;
+    };
 }
 export interface PaddingOptions {
     top: number;

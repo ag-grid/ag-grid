@@ -18,10 +18,10 @@
         .ag-row-group-indent-#{$i} {
             @include ag-theme-rtl(( padding-left: $i * ag-param(row-group-indent-size) ));
         }
-    }
 
-    .ag-row-group-leaf-indent:not(.ag-row-group-indent-0) {
-        @include ag-theme-rtl(( margin-left: ag-param(row-group-indent-size) ));
+        .ag-row-level-#{$i} .ag-row-group-leaf-indent {
+            @include ag-theme-rtl(( margin-left: ag-param(row-group-indent-size) ));
+        }
     }
 
     .ag-cell {

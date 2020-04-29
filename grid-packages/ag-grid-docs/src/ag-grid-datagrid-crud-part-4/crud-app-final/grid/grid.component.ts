@@ -65,7 +65,7 @@ export class GridComponent {
                         added.push(savedAthlete);
                     }
 
-                    this.api.updateRowData(
+                    this.api.applyTransaction(
                         {
                             add: added,
                             update: updated
@@ -152,7 +152,7 @@ export class GridComponent {
         Observable.forkJoin(...deleteSubscriptions).subscribe(
             results => {
                 // only redraw removed rows...
-                this.api.updateRowData(
+                this.api.applyTransaction(
                     {
                         remove: selectRows
                     }

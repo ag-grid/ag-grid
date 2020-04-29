@@ -83,6 +83,7 @@ export interface DraggingEvent {
     fromNudge: boolean;
     api: GridApi;
     columnApi: ColumnApi;
+    dropZoneTarget: HTMLElement;
 }
 export declare class DragAndDropService {
     private gridOptionsWrapper;
@@ -105,7 +106,7 @@ export declare class DragAndDropService {
     private eventLastTime;
     private dragSource;
     private dragging;
-    private eWrapper;
+    private eGhost;
     private eGhostParent;
     private eGhostIcon;
     private dropTargets;

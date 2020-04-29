@@ -551,7 +551,7 @@ constructor(staticDataService: StaticDataService) {
         <snippet>
 insertNewResult() {
     // insert a blank new row, providing the first sport as a default in the sport column
-    const updates = this.api.updateRowData(
+    const updates = this.api.applyTransaction(
         {
             add: [{
                 sport: this.sports[0]
@@ -568,7 +568,7 @@ insertNewResult() {
 
         <p>This is what gets executed when a use want to select a new <code>result</code>. We create a new empty
             record (defaulting the <code>sport</code> <code>richSelect</code> to the first available sport) and ask
-            the grid to create a new row for us using <code>this.api.updateRowData</code>.</p>
+            the grid to create a new row for us using <code>this.api.applyTransaction</code>.</p>
 
         <p>The same mechanism can be used for updates as well as deletions - see the corresponding
             <a href="../javascript-grid-data-update">Update</a> documentation for more information around this
@@ -1048,7 +1048,7 @@ getRowNodeId(params) {
 
         <p>Our data has an obvious attribute to use to uniquely identify each row - the <code>ID</code> attribute.</p>
 
-        <p>We can now use the Grids <code>api.updateRowData</code> functionality to only update/redraw changed rows -
+        <p>We can now use the Grids <code>api.applyTransaction</code> functionality to only update/redraw changed rows -
             not the entire grid.</p>
 
         <p>When we delete row(s):</p>
@@ -1067,7 +1067,7 @@ deleteSelectedRows() {
               .subscribe(
                   results => {
                       // only redraw removed rows...
-                      this.api.updateRowData(
+                      this.api.applyTransaction(
                           {
                               remove: selectRows
                           }
@@ -1098,7 +1098,7 @@ onAthleteSaved(athleteToSave: Athlete) {
                                    added.push(savedAthlete);
                                }
 
-                               this.api.updateRowData(
+                               this.api.applyTransaction(
                                    {
                                        add: added,
                                        update: updated
@@ -1122,7 +1122,7 @@ onAthleteSaved(athleteToSave: Athlete) {
         <p>With this information we can let the Grid know to either add or update the effected row:</p>
 
         <snippet>
-this.api.updateRowData(
+this.api.applyTransaction(
     {
         add: added,
         update: updated

@@ -274,8 +274,10 @@ var ChartProxy = /** @class */ (function () {
                 },
                 highlightStyle: {
                     fill: 'yellow',
-                }
-            }
+                },
+                listeners: {}
+            },
+            listeners: {}
         };
     };
     ChartProxy.prototype.transformData = function (data, categoryKey) {

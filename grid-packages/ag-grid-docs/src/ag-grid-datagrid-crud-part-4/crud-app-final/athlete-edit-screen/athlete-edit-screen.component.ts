@@ -72,7 +72,7 @@ export class AthleteEditScreenComponent implements OnInit {
 
     insertNewResult() {
         // insert a blank new row, providing the first sport as a default in the sport column
-        const updates = this.api.updateRowData(
+        const updates = this.api.applyTransaction(
             {
                 add: [{
                     sport: this.sports[0]

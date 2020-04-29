@@ -166,12 +166,34 @@ var ChartBuilder = /** @class */ (function () {
         if (options.legend !== undefined) {
             ChartBuilder.initLegend(chart.legend, options.legend);
         }
+        var listeners = options.listeners;
+        if (listeners) {
+            for (var key in listeners) {
+                if (listeners.hasOwnProperty(key)) {
+                    var listener = listeners[key];
+                    if (typeof listener === 'function') {
+                        chart.addEventListener(key, listener);
+                    }
+                }
+            }
+        }
         return chart;
     };
     ChartBuilder.initSeries = function (series, options) {
         this.setValueIfExists(series, 'visible', options.visible);
         this.setValueIfExists(series, 'showInLegend', options.showInLegend);
         this.setValueIfExists(series, 'data', options.data);
+        var listeners = options.listeners;
+        if (listeners) {
+            for (var key in listeners) {
+                if (listeners.hasOwnProperty(key)) {
+                    var listener = listeners[key];
+                    if (typeof listener === 'function') {
+                        series.addEventListener(key, listener);
+                    }
+                }
+            }
+        }
         return series;
     };
     ChartBuilder.initLineSeries = function (series, options) {

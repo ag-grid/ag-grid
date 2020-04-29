@@ -407,8 +407,10 @@ export abstract class ChartProxy<TChart extends Chart, TOptions extends ChartOpt
                 },
                 highlightStyle: {
                     fill: 'yellow',
-                }
-            }
+                },
+                listeners: {}
+            },
+            listeners: {}
         };
     }
 

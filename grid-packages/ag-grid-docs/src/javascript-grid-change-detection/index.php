@@ -15,13 +15,6 @@ include '../documentation-main/documentation_header.php';
         changes are made to the DOM.
     </p>
 
-<!--    <note>
-        The grid having change detection built in is cool. This section explains how it works.
-        If you are happy to just use the change detection and are not worried about the implementation
-        details, feel free to skip this section. You may read this section when you find you need
-        to understand what's happening.
-    </note>
--->
     <p>
         Change detection can be broken down into the following two categories:
     </p>
@@ -144,7 +137,7 @@ colDef = {
         <ol class="content">
             <li>Editing any value via the grid UI (e.g. double clicking a cell and entering a new value).</li>
             <li>Using the <code>rowNode.setDataValue(col,value)</code> Row Node method.</li>
-            <li>Using the <code>api.updateRowData(transaction)</code> API method.</li>
+            <li>Using the <code>api.applyTransaction(transaction)</code> API method.</li>
         </ol>
 
     <p>
@@ -215,7 +208,7 @@ colDef = {
         <ol>
             <li>Editing any value via the grid UI (e.g. double clicking a cell and entering a new value).</li>
             <li>Using the <code>rowNode.setDataValue(col,value)</code> Row Node method.</li>
-            <li>Using the <code>api.updateRowData(transaction)</code> API method.</li>
+            <li>Using the <code>api.applyTransaction(transaction)</code> API method.</li>
         </ol>
 
     <p>
@@ -251,7 +244,7 @@ colDef = {
     <p>
         For this reason, if you want to update the sorting, filtering or group grouping
         after an update, you should listen for the event <code>cellValueChanged</code> and call
-        <a href="../javascript-grid-client-side-model/#refreshing-the-client-side-model">api.updateRowData(transaction)</a>
+        <a href="../javascript-grid-client-side-model/#refreshing-the-client-side-model">api.applyTransaction(transaction)</a>
         with the rows that were updated.
     </p>
 
@@ -399,27 +392,27 @@ colDef = {
             The grid aggregates the new value for display.
         </li>
         <li>
-            Button '<b>Update Points</b>' updates one record using <code>api.updateRowData(transaction)</code>.
+            Button '<b>Update Points</b>' updates one record using <code>api.applyTransaction(transaction)</code>.
             The grid aggregates the new value for display.
         </li>
         <li>
-            Button '<b>Add New Group</b>' adds one record for 'Year 5' using <code>api.updateRowData(transaction)</code>.
+            Button '<b>Add New Group</b>' adds one record for 'Year 5' using <code>api.applyTransaction(transaction)</code>.
             The grid does a delta change and adds one more row to represent this group while not touching
             the DOM with the remaining rows.
         </li>
         <li>
             Button '<b>Add Physics Row</b>' adds one record with subject 'Physics' using
-            <code>api.updateRowData(transaction)</code>. This impacts the columns in the grid
+            <code>api.applyTransaction(transaction)</code>. This impacts the columns in the grid
             as we are pivoting on 'course', so a new column is added for 'Physics'. Again this is
             all done without touching the remaining columns or rows in the grid.
         </li>
         <li>
             Button '<b>Remove All Physics</b>' removes all 'Physics' records
-            <code>api.updateRowData(transaction)</code>. As before, this impacts the columns, all 'Physics'
+            <code>api.applyTransaction(transaction)</code>. As before, this impacts the columns, all 'Physics'
             columns are removed.
         </li>
         <li>
-            Button '<b>Move Course</b>' updates a row's course using <code>api.updateRowData(transaction)</code>.
+            Button '<b>Move Course</b>' updates a row's course using <code>api.applyTransaction(transaction)</code>.
             This results in the aggregations changing in two locations, once where the course was removed,
             and another where the course was added.
         </li>
