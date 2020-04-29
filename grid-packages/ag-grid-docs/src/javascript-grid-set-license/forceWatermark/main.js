@@ -26,7 +26,11 @@ var gridOptions = {
         numberColumn: { width: 83 }
     },
 
-    rowData: null
+    rowData: null,
+
+    onGridReady: function(params) {
+        params.api.sizeColumnsToFit();
+    }
 };
 
 // setup the grid after the page has finished loading

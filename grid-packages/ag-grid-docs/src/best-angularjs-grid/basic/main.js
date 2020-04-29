@@ -19,7 +19,9 @@ module.controller("exampleCtrl", function($scope) {
 
     $scope.gridOptions = {
         columnDefs: columnDefs,
-        rowData: rowData
+        rowData: rowData,
+        onGridReady: function(params) {
+            params.api.sizeColumnsToFit();
+        }
     };
-
 });
