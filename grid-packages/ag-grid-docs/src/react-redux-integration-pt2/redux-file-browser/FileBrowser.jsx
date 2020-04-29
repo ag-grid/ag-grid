@@ -8,7 +8,7 @@ import {actions} from './actions/fileActions.jsx'
 import {AllModules} from "@ag-grid-enterprise/all-modules";
 
 import "@ag-grid-community/all-modules/dist/styles/ag-grid.css";
-import "@ag-grid-community/all-modules/dist/styles/ag-theme-balham.css";
+import "@ag-grid-community/all-modules/dist/styles/ag-theme-alpine.css";
 
 import FileCellRenderer from './FileCellRenderer.jsx';
 
@@ -35,7 +35,7 @@ class FileBrowser extends Component {
 
   render() {
     return (
-      <div style={{height: '100%'}} className="ag-theme-balham">
+      <div style={{height: '100%'}} className="ag-theme-alpine">
         <AgGridReact
           columnDefs={this.colDefs}
           rowData={this.props.files}

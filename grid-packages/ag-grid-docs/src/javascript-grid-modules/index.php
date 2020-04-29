@@ -329,10 +329,10 @@ import {LicenseManager} from "@ag-grid-enterprise/core";
 <snippet>
 // CSS Community
 import "./node_modules/@ag-grid-community/core/dist/styles/ag-grid.css";
-import "./node_modules/@ag-grid-community/core/dist/styles/ag-theme-balham.css";
+import "./node_modules/@ag-grid-community/core/dist/styles/ag-theme-alpine.css";
 
 // SCSS Community
 @import "./node_modules/@ag-grid-community/core/dist/styles/ag-grid.scss";
-@import "./node_modules/@ag-grid-community/core/dist/styles/ag-theme-balham/sass/ag-theme-balham-mixin.scss";
+@import "./node_modules/@ag-grid-community/core/dist/styles/ag-theme-alpine/sass/ag-theme-alpine-mixin.scss";
 </snippet>
 <?php include '../documentation-main/documentation_footer.php'; ?>

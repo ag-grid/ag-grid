@@ -7,7 +7,7 @@ import {actions} from './actions/fileActions.jsx'
 import {AllModules} from "@ag-grid-enterprise/all-modules";
 
 import "@ag-grid-community/all-modules/dist/styles/ag-grid.css";
-import "@ag-grid-community/all-modules/dist/styles/ag-theme-balham.css";
+import "@ag-grid-community/all-modules/dist/styles/ag-theme-alpine.css";
 
 class FileView extends Component {
   colDefs = [
@@ -29,7 +29,7 @@ class FileView extends Component {
 
   render() {
     return (
-      <div id='myGrid' style={{height: 450}} className="ag-theme-balham">
+      <div id='myGrid' style={{height: 550}} className="ag-theme-alpine">
         <AgGridReact
           columnDefs={this.colDefs}
           rowData={this.props.files}
