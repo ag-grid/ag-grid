@@ -14,9 +14,11 @@
     we need once the text is laid out vertically*/
     width: 55px;
     writing-mode: vertical-lr;
+    -ms-writing-mode: tb-lr;
     line-height: 2em;
     margin-top: 60px;
 }
+
 
 .ag-pivot-off .ag-header-group-cell {
     font-size: 50px;

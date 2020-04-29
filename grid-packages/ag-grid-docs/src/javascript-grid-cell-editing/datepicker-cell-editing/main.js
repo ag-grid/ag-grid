@@ -31,6 +31,8 @@ function getDatePicker() {
         // create the cell
         this.eInput = document.createElement('input');
         this.eInput.value = params.value;
+        this.eInput.classList.add('ag-input');
+        this.eInput.style.height = '100%';
 
         // https://jqueryui.com/datepicker/
         $(this.eInput).datepicker({
