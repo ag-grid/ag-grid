@@ -16,5 +16,4 @@ export class TextFloatingFilter extends TextInputFloatingFilter {
     protected getDefaultFilterOptions(): string[] {
         return TextFilter.DEFAULT_FILTER_OPTIONS;
     }
-
 }

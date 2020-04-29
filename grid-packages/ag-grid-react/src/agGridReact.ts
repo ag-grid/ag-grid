@@ -144,11 +144,11 @@ export class AgGridReact extends Component<AgGridReactProps, {}> {
     private getStrategyTypeForProp(propKey: string) {
         if (propKey === 'rowData') {
             // for row data we either return the supplied strategy, or:
-            // if deltaRowDataMode we default to IdentityChecks,
+            // if deltaRowDataMode/immutableData we default to IdentityChecks,
             // if not we default to DeepValueChecks (with the rest of the properties)
             if (!!this.props.rowDataChangeDetectionStrategy) {
                 return this.props.rowDataChangeDetectionStrategy;
-            } else if (this.props['deltaRowDataMode']) {
+            } else if (this.props['deltaRowDataMode'] || this.props['immutableData']) {
                 return ChangeDetectionStrategyType.IdentityCheck;
             }
         }

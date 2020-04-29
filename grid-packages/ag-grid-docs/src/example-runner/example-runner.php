@@ -225,6 +225,14 @@ function grid_example($title, $dir, $type = 'vanilla', $options = array())
     $config = $common_properties['config'];
     $config['options']['grid'] = $gridSettings;
 
+    if (isset($options['showImportsDropdown'])) {
+        $config['showImportsDropdown'] = $options['showImportsDropdown'];
+    }
+
+    if ($options['defaultImportType']) {
+        $config['defaultImportType'] = $options['defaultImportType'];
+    }
+
     $query['grid'] = json_encode($gridSettings);
     $queryString = join("&", array_map('toQueryString', array_keys($query), $query));
 

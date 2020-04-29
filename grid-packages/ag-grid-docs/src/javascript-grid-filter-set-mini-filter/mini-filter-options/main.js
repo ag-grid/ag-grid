@@ -8,13 +8,7 @@ var gridOptions = {
                 suppressMiniFilter: true,
             }
         },
-        {
-            field: 'country',
-            filter: 'agSetColumnFilter',
-            filterParams: {
-                closeOnApply: true
-            }
-        },
+        { field: 'country', filter: 'agSetColumnFilter' },
 
         // number filters
         { field: 'gold', filter: 'agNumberColumnFilter' },

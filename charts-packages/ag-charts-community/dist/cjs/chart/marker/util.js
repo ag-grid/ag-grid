@@ -7,7 +7,6 @@ var diamond_1 = require("./diamond");
 var heart_1 = require("./heart");
 var plus_1 = require("./plus");
 var triangle_1 = require("./triangle");
-var marker_1 = require("./marker");
 // This function is in its own file because putting it into SeriesMarker makes the Legend
 // suddenly aware of the series (it's an agnostic component), and putting it into Marker
 // introduces circular dependencies.
@@ -31,7 +30,7 @@ function getMarker(shape) {
                 return square_1.Square;
         }
     }
-    if (typeof shape === 'function' && marker_1.Marker.isPrototypeOf(shape)) {
+    if (typeof shape === 'function') {
         return shape;
     }
     return square_1.Square;

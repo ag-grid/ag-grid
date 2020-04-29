@@ -169,7 +169,7 @@ var module = angular.module("example", ["agGrid"]);</snippet>
 
 <h2 id="basic-angularjs-1-x-example">Basic AngularJS 1.x Example</h2>
 
-<?= grid_example('Basic AngularJS 1.x ag-Grid', 'basic', 'vanilla', ['exampleHeight' => 130, 'extras' => ['angularjs1']]) ?>
+<?= grid_example('Basic AngularJS 1.x ag-Grid', 'basic', 'vanilla', ['exampleHeight' => 250, 'extras' => ['angularjs1']]) ?>
 
 
 <h2>Events & Digest Cycle</h2>
@@ -195,7 +195,7 @@ var module = angular.module("example", ["agGrid"]);</snippet>
     different options are configured is explained in the relevant parts of the documentation.
 </p>
 
-<?= grid_example('Basic AngularJS 1.x ag-Grid', 'basic2', 'vanilla', ['extras' => ['angularjs1']]) ?>
+<?= grid_example('Basic AngularJS 1.x ag-Grid', 'basic2', 'vanilla', ['exampleHeight' => 460, 'extras' => ['angularjs1']]) ?>
 
 <h2 id="ng1Components">Angular 1.x and ag-Grid Components</h2>
 
@@ -233,7 +233,7 @@ var module = angular.module("example", ["agGrid"]);</snippet>
 </ul>
 </p>
 
-<?= grid_example('Components', 'components', 'vanilla', ['exampleHeight' => 400, 'extras' => ['angularjs1', 'ui-bootstrap']]) ?>
+<?= grid_example('Components', 'components', 'vanilla', ['exampleHeight' => 250, 'extras' => ['angularjs1', 'ui-bootstrap']]) ?>
 
 <note>
     Creating child scopes and managing AngularJS compiling is part of the AngularJS

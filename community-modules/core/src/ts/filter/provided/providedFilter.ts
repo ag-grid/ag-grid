@@ -143,9 +143,7 @@ export abstract class ProvidedFilter extends Component implements IFilterComp {
             }
 
             if (this.applyActive) {
-                // we do not bind onBtApply here because onBtApply() has a parameter, and it is not the event. if we
-                // just applied, the event would get passed as the second parameter, which we do not want.
-                addButton(translate('applyFilter', 'Apply Filter'), () => this.onBtApply(true));
+                addButton(translate('applyFilter', 'Apply Filter'), () => this.onBtApply());
             }
 
             this.eFilterBodyWrapper.parentElement.appendChild(eButtonsPanel);
@@ -209,7 +207,9 @@ export abstract class ProvidedFilter extends Component implements IFilterComp {
             this.providedFilterParams.filterChangedCallback({ afterFloatingFilter, afterDataChange });
         }
 
-        if (this.providedFilterParams.closeOnApply && this.hidePopup) {
+        const { closeOnApply, applyButton, resetButton } = this.providedFilterParams;
+
+        if (closeOnApply && !afterFloatingFilter && this.hidePopup && (applyButton || resetButton)) {
             this.hidePopup();
             this.hidePopup = null;
         }
@@ -231,11 +231,11 @@ export abstract class ProvidedFilter extends Component implements IFilterComp {
         this.updateUiVisibility();
         this.providedFilterParams.filterModifiedCallback();
 
-        // applyNow=true for floating filter changes, we always act on these immediately
         if (afterFloatingFilter) {
-            this.onBtApply(afterFloatingFilter);
-            // otherwise if no apply button, we apply (but debounce for time delay)
+            // floating filter changes are always applied immediately
+            this.onBtApply(true);
         } else if (!this.applyActive) {
+            // if no apply button, we apply (but debounce for time delay)
             this.onBtApplyDebounce();
         }
     }

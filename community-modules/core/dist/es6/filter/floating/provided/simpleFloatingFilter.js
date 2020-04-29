@@ -48,7 +48,7 @@ var SimpleFloatingFilter = /** @class */ (function (_super) {
         }
     };
     SimpleFloatingFilter.prototype.isEventFromFloatingFilter = function (event) {
-        return (event && event.afterFloatingFilter);
+        return event && event.afterFloatingFilter;
     };
     SimpleFloatingFilter.prototype.getLastType = function () {
         return this.lastType;
