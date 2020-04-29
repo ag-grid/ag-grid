@@ -23,7 +23,7 @@ include '../documentation-main/documentation_header.php';
         Try it out on our <a href="../example.php">demo page</a> by doing the following:
     </p>
 
-    <ul>
+    <ul class="content">
         <li>
             Enter <a href="../javascript-grid-pivoting/#pivot-mode">Pivot Mode</a> and select a combination of group,
             pivot and value columns.

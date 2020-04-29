@@ -41,7 +41,7 @@ include '../documentation-main/documentation_header.php';
         To see how chart ranges are created from a cell range, using our <a href="../example.php">demo page</a> do the following:
     </p>
 
-    <ul>
+    <ul class="content">
         <li>
             Select a <a href="../javascript-grid-range-selection/">Cell Range</a> of numeric values in the grid by dragging
             the mouse over a range of cells.
@@ -71,6 +71,7 @@ include '../documentation-main/documentation_header.php';
     <p>
         To hide the chart ranges simply enable <code>suppressChartRanges=true</code> on the <code>ChartRangeParams</code>.
     </p>
+
     <p>
         For more details refer to <a href="../javascript-grid-charts-integrated-chart-range-api/#range-charts">Range Chart API</a>.
     </p>
@@ -165,7 +166,7 @@ include '../documentation-main/documentation_header.php';
         <li><b>Bronze</b>: considered a 'series' as data is a <code>number</code>.</li>
     </ul>
 
-<?= grid_example('Defining categories and series', 'defining-categories-and-series', 'generated', ['exampleHeight' => 610, 'enterprise' => true]) ?>
+<?= grid_example('Defining categories and series', 'defining-categories-and-series', 'generated', ['exampleHeight' => 710, 'enterprise' => true]) ?>
 
     <h2>Next Up</h2>
 

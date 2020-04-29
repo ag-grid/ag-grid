@@ -9,12 +9,27 @@ include '../documentation-main/documentation_header.php';
 <h1>Events</h1>
 
 <p class="lead">
-    This section explains how to listen and respond to various chart events.
+    This section explains how to listen and respond to various chart and series events.
 </p>
 
 <h2>Series Events</h2>
 
 <h3>Example: <code>nodeClick</code> Event</h3>
+
+<p>
+    This example shows how the <code>nodeClick</code> event listener can be used to listen to column clicks.
+    Notice the following:
+</p>
+
+<ul>
+    <li>
+        Whenever a column is clicked, an alert message is shown with information about that column.
+    </li>
+    <li>
+        The event listener pulls extra information from the object containing the column's value
+        and shows it in the alert dialog as well. In this case the breakdown of sales numbers by brand name.
+    </li>
+</ul>
 
 <?= chart_example('Node Click Event', 'node-click-event', 'generated'); ?>
 
@@ -88,6 +103,26 @@ SNIPPET
 <h2>Chart Events</h2>
 
 <h3>Example: <code>seriesNodeClick</code> Event</h3>
+
+<p>
+    This example shows how to listen to <code>nodeClick</code> events of all series at once by subscribing
+    to the chart's <code>seriesNodeClick</code> event.
+</p>
+
+<p>
+    In this case, instead of adding the <code>nodeClick</code> event to both line and column series individually,
+    we listen to the <code>seriesNodeClick</code> event on the chart. Notice the following:
+</p>
+
+<ul>
+    <li>
+        Whenever a column or line marker is clicked, an alert message is shown with information about that
+        series node.
+    </li>
+    <li>
+        The ID of the series that contains the clicked node is also logged.
+    </li>
+</ul>
 
 <?= chart_example('Node Click Event', 'series-node-click-event', 'generated'); ?>
 

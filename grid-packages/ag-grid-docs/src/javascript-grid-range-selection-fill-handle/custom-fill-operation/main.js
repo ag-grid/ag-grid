@@ -39,7 +39,7 @@ var gridOptions = {
     }
 };
 
-function updateRowData(data) {
+function createRowData(data) {
     var rowData = data.slice(0, 100);
     var currentDate = new Date();
     var currentYear = currentDate.getFullYear();
@@ -58,6 +58,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
     agGrid.simpleHttpRequest({ url: 'https://raw.githubusercontent.com/ag-grid/ag-grid/master/grid-packages/ag-grid-docs/src/olympicWinnersSmall.json' })
         .then(function(data) {
-            gridOptions.api.setRowData(updateRowData(data));
+            gridOptions.api.setRowData(createRowData(data));
         });
 });

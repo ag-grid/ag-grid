@@ -136,7 +136,7 @@ function updateUsingTransaction() {
         update: [itemToUpdate]
     };
     console.log('updating - after', itemToUpdate);
-    gridOptions.api.updateRowData(transaction);
+    gridOptions.api.applyTransaction(transaction);
 }
 
 function addNewGroupUsingTransaction() {
@@ -149,7 +149,7 @@ function addNewGroupUsingTransaction() {
     };
     console.log('add - ', item1);
     console.log('add - ', item2);
-    gridOptions.api.updateRowData(transaction);
+    gridOptions.api.applyTransaction(transaction);
 }
 
 function addNewCourse() {
@@ -159,7 +159,7 @@ function addNewCourse() {
         add: [item1]
     };
     console.log('add - ', item1);
-    gridOptions.api.updateRowData(transaction);
+    gridOptions.api.applyTransaction(transaction);
 }
 
 function removePhysics() {
@@ -173,7 +173,7 @@ function removePhysics() {
         remove: allPhysics
     };
     console.log('removing ' + allPhysics.length + ' physics items.');
-    gridOptions.api.updateRowData(transaction);
+    gridOptions.api.applyTransaction(transaction);
 }
 
 function moveCourse() {
@@ -186,7 +186,7 @@ function moveCourse() {
         update: [item]
     };
     console.log('moving ' + item);
-    gridOptions.api.updateRowData(transaction);
+    gridOptions.api.applyTransaction(transaction);
 }
 
 // setup the grid after the page has finished loading

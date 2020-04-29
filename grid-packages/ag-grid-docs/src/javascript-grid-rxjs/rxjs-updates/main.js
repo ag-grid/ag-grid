@@ -58,7 +58,7 @@ const gridOptions = {
                 // now listen for updates
                 // we process the updates with a transaction - this ensures that only the changes
                 // rows will get re-rendered, improving performance
-                updates$.subscribe((updates) => params.api.updateRowData({ update: updates }));
+                updates$.subscribe((updates) => params.api.applyTransaction({ update: updates }));
             }
         );
     }

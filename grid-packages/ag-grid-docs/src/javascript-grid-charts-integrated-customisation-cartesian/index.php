@@ -139,7 +139,7 @@ This is a continuous axis used for plotting date/time values. It is used automat
     The format string may contain the following directives, which reflect those from Python's <a href="https://strftime.org/" target="_blank">strftime</a>:
 </p>
 
-<ul>
+<ul class="content">
     <li><code>%a</code> - abbreviated weekday name.*</li>
     <li><code>%A</code> - full weekday name.*</li>
     <li><code>%b</code> - abbreviated month name.*</li>

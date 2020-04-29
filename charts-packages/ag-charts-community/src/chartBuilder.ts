@@ -49,6 +49,7 @@ import { Marker } from "./chart/marker/marker";
 import { ChartAxis, ChartAxisPosition } from "./chart/chartAxis";
 import { convertToMap } from "./util/map";
 import { TimeAxis } from "./chart/axis/timeAxis";
+import { SourceEventListener } from "./util/observable";
 
 export class ChartBuilder {
     private static createCartesianChart(container: HTMLElement, xAxis: ChartAxis, yAxis: ChartAxis, document?: Document): CartesianChart {
@@ -290,6 +291,18 @@ export class ChartBuilder {
             ChartBuilder.initLegend(chart.legend, options.legend);
         }
 
+        const listeners = options.listeners;
+        if (listeners) {
+            for (const key in listeners) {
+                if (listeners.hasOwnProperty(key)) {
+                    const listener = listeners[key];
+                    if (typeof listener === 'function') {
+                        chart.addEventListener(key, listener as SourceEventListener<C>);
+                    }
+                }
+            }
+        }
+
         return chart;
     }
 
@@ -297,6 +310,18 @@ export class ChartBuilder {
         this.setValueIfExists(series, 'visible', options.visible);
         this.setValueIfExists(series, 'showInLegend', options.showInLegend);
         this.setValueIfExists(series, 'data', options.data);
+
+        const listeners = options.listeners;
+        if (listeners) {
+            for (const key in listeners) {
+                if (listeners.hasOwnProperty(key)) {
+                    const listener = listeners[key];
+                    if (typeof listener === 'function') {
+                        series.addEventListener(key, listener as SourceEventListener<S>);
+                    }
+                }
+            }
+        }
 
         return series;
     }

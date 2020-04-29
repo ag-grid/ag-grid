@@ -42,7 +42,7 @@ var rightColumnDefs = [
             var button = document.createElement('i');
 
             button.addEventListener('click', function() {
-                params.api.updateRowData({ remove: [params.node.data] });
+                params.api.applyTransaction({ remove: [params.node.data] });
             });
 
             button.classList.add('far');
@@ -97,7 +97,7 @@ function addGridDropZone(params) {
             var nodes = params.nodes;
             
             if (moveCheck) {
-                leftGridOptions.api.updateRowData({
+                leftGridOptions.api.applyTransaction({
                     remove: nodes.map(function(node) { return node.data; })
                 });
             } else if (deselectCheck) {

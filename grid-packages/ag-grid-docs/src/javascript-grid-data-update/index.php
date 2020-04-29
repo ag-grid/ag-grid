@@ -125,7 +125,7 @@ include '../documentation-main/documentation_header.php';
             <h3>Transaction</h3>
             <p>
                 The grid takes a transaction containing rows to add, remove
-                and update. This is done using <code>api.updateRowData(transaction)</code>.
+                and update. This is done using <code>api.applyTransaction(transaction)</code>.
             </p>
             <p>
                 Use transactions for doing add, remove or update operations on a large number of rows
@@ -148,7 +148,7 @@ include '../documentation-main/documentation_header.php';
                 over a small space of time and have the grid apply all the transactions in batches.
                 The high frequency / batch method is for when you need the fastest possible way to update many continuous
                 updates, such as providing a stream of updates to the grid. This is done using
-                the API <code>batchUpdateRowData(transaction)</code>.
+                the API <code>applyTransactionAsync(transaction)</code>.
             </p>
             <p>
                 Use Async Transactions for doing add, remove or update operations that are frequent - e.g.

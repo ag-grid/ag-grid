@@ -152,11 +152,11 @@ SNIPPET
 <p><b>Without selecting any filter values:</b></p>
 <ul class="content">
     <li>
-        Click <b>Update First Displayed Row</b>: this calls <code>api.updateRowData()</code> and updates the value in the
+        Click <b>Update First Displayed Row</b>: this calls <code>api.applyTransaction()</code> and updates the value in the
         first row. Note <code>'AX'</code> now appears in the filter list and is <b>selected</b>.
     </li>
     <li>
-        Click <b>Add New 'D' Row</b>: this calls <code>api.updateRowData()</code> and adds a new row to the grid. Note
+        Click <b>Add New 'D' Row</b>: this calls <code>api.applyTransaction()</code> and adds a new row to the grid. Note
         <code>'D'</code> has been added to the filter list and is <b>selected</b>.
     </li>
 </ul>
@@ -164,7 +164,7 @@ SNIPPET
 <p><b>Click 'Reset' and deselect 'C' in the Filter List:</b></p>
 <ul class="content">
     <li>
-        Click <b>Update First Displayed Row</b>: this calls <code>api.updateRowData()</code> and updates the value in the
+        Click <b>Update First Displayed Row</b>: this calls <code>api.applyTransaction()</code> and updates the value in the
         first row. Note <code>'AX'</code> now appears in the filter list and is <b>not selected</b>.
     </li>
     <li>
@@ -172,7 +172,7 @@ SNIPPET
         because transaction updates also triggers grid filtering.
     </li>
     <li>
-        Click <b>Add New 'D' Row</b>: this calls <code>api.updateRowData()</code> and adds a new row to the grid. Note
+        Click <b>Add New 'D' Row</b>: this calls <code>api.applyTransaction()</code> and adds a new row to the grid. Note
         <code>'D'</code> has been added to the filter list and is <b>not selected</b>.
     </li>
 </ul>

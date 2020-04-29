@@ -31,7 +31,7 @@ interface ChartRef {
         The callback is called each time the user elects to create a chart via the grid UI. The callback
         is provided with a <code>ChartRef</code> containing the following:
     </p>
-    <ul>
+    <ul class="content">
         <li>
             <code>chartElement</code>: The chart DOM element, which the application is responsible for placing into the DOM.
         </li>
@@ -57,7 +57,8 @@ interface ChartRef {
     <p>
         From the example, the following can be noted:
     </p>
-    <ul>
+
+    <ul class="content">
         <li>
             Select a range of numbers (medal columns) and create a chart from the context menu.
         </li>

@@ -614,12 +614,14 @@
               {
                 "title": "Range Handle",
                 "url": "javascript-grid-range-selection-handle/",
-                "enterprise": true
+                "enterprise": true,
+                "showInCollapsed": true
               },
               {
                 "title": "Fill Handle",
                 "url": "javascript-grid-range-selection-fill-handle/",
-                "enterprise": true
+                "enterprise": true,
+                "showInCollapsed": true
               }
             ]
           }

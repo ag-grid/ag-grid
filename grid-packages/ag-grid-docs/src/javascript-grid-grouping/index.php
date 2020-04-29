@@ -283,8 +283,6 @@ SNIPPET
     group in the group column only (so you can click on the icon to close the group).
 </p>
 
-<h3>Example: Hide Open Parents</h3>
-
 <p>
     The example below demonstrates hiding open parents using auto group columns.
     To help demonstrate, the grid is configured to shade the rows different colors

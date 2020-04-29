@@ -58,72 +58,72 @@ var renderer = function(params) {
 SNIPPET
 ) ?>
 
+<h2>Row Node IDs</h2>
 
-    <h2>Row Node ID's</h2>
+<p>
+    Each Row Node is identified by a unique ID. The ID of the Row Node is used by the grid to identify the
+    row and can be used by your application to look up the Row Node using
+    the grid API <code>getRowNode(id)</code>.
+</p>
 
-    <p>
-        Each Row Node is identified by a unique ID. The ID of the Row Node is used by the grid to identify the
-        row and can be used by your application to look up the Row Node using
-        the grid API <code>getRowNode(id)</code>.
-    </p>
+<h3>Grid Assigned IDs</h3>
 
-    <h3>Grid Assigned ID's</h3>
+<p>
+    By default IDs are assigned by the grid when data is set into the grid. The grid
+    uses a sequence starting at 0 and incrementing by 1 to assign row IDs, so if for example there are three rows
+    they will have IDs of <code>0</code>, <code>1</code> and <code>2</code>.
+</p>
 
-    <p>
-        By default ID's are assigned by the grid when data is set into the grid. The grid
-        uses a sequence starting at 0 and incrementing by 1 to assign row ID's. So if there are three rows
-        they will have ID's of 0, 1 and 2.
-    </p>
+<p>
+    When using <a href="../javascript-grid-grouping/">Row Grouping</a> the grid assigns IDs to the group rows,
+    however it uses a different sequence starting at -1 and decrementing by 1, so if for example there are three groups
+    they will have IDs of <code>-1</code>, <code>-2</code> and <code>-3</code>.
+</p>
 
-    <p>
-        When using <a href="../javascript-grid-grouping/">Row Grouping</a> the grid assigns ID's the the group rows,
-        however it uses a different sequene starting at -1 and decrementing by 1. So if three groups they will have
-        ID's of -1, -2 and -3.
-    </p>
+<p>
+    In other words, normal rows get positive numbers starting at <code>0</code> and group rows get negative numbers
+    starting at <code>-1</code>.
+</p>
 
-    <p>
-        In other words, normal rows get positive numbers starting at 0 and group rows get negative numbers
-        starting at -1.
-    </p>
+<h3>Application Assigned IDs</h3>
 
-    <h3>Application Assigned ID's</h3>
+<p>
+    In some applications it is useful to tell the grid what IDs to use for particular rows. For example, if you
+    are showing employees, you could configure the grid to use the Employee ID as the row node ID. That would then
+    enable the grid API <code>getRowNode(id)</code> to be called with the Employee ID.
+</p>
 
-    <p>
-        In some applications it is useful to tell the grid what ID's to use for particular rows. For example if you
-        are showing employees, then you could configure the grid to use the Employee ID as row row ID. That would then
-        enable the gird API <code>getRowNode(id)</code> to be called with the Employee ID.
-    </p>
+<p>
+    To get the grid to use application assigned IDs, implement the grid callback <code>getRowNodeId()</code>.
+    The callback should return back the ID for a particular piece of row data. For example, the following
+    code snippet returns back the value of attribute <code>'id'</code> for the supplied data item:
+</p>
 
-    <p>
-        To get the grid to use application assigned ID's, implement the grid callback callback
-        <code>getRowNodeId()</code>.
-        The callback should return back the ID for a particular piece of row data. For example the following
-        code snippet returns back the value of attribute 'id' for the supplied data item:
-    </p>
-
-<snippet>
+<?= createSnippet(<<<SNIPPET
 function getRowNodeId(data) {
     return data.id;
-}</snippet>
+}
+SNIPPET
+) ?>
 
-    <p>
-        When providing ID's the following rules must be obeyed:
-    </p>
+<p>
+    When providing IDs the following rules must be obeyed:
+</p>
 
-    <ol>
-        <li>ID's must be unique</li>
-        <li>ID's must not change</li>
-    </ol>
+<ol>
+    <li>IDs must be unique</li>
+    <li>IDs must not change</li>
+</ol>
 
-    <p>
-        If the attribute you are intending to use as an ID is either not unique or changes, then it will cause
-        unspecified behaviour in the grid. In other words, don't use a field that is not unique or can change.
-    </p>
+<p>
+    If the attribute you are intending to use as an ID is either not unique or changes, it will cause
+    unspecified behaviour in the grid. In other words, don't use a field that is not unique or can change.
+</p>
 
-    <p>
-        If using <a href="../javascript-grid-grouping/">Row Grouping</a>, the grid will always assign ID's for
-        the group level (as there is not a one-to-one mapping with application supplied row data). The callback
-        <code>getRowNodeId()</code> is only used for non-group level rows.
-    </p>
+<p>
+    If using <a href="../javascript-grid-grouping/">Row Grouping</a>, the grid will always assign IDs for
+    the group level (as there is not a one-to-one mapping with application-supplied row data). The callback
+    <code>getRowNodeId()</code> is only used for non-group level rows.
+</p>
 
 <?php include '../documentation-main/documentation_footer.php';?>

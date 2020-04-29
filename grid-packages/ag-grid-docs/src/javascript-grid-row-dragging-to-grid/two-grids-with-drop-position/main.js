@@ -105,7 +105,7 @@ function addRecordToGrid(side, data) {
         add: [data]
     };
 
-    api.updateRowData(transaction);
+    api.applyTransaction(transaction);
 }
 
 function onFactoryButtonClick(e) {
@@ -129,7 +129,7 @@ function binDrop(data) {
         rowsInGrid = !!option.api.getRowNode(data.id);
 
         if (rowsInGrid) {
-            option.api.updateRowData(transaction);
+            option.api.applyTransaction(transaction);
         }
     });
 }

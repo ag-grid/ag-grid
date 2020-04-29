@@ -88,7 +88,7 @@ function onRowDragEnd(event) {
         var updatedRows = [];
         moveToPath(newParentPath, event.node, updatedRows);
 
-        gridOptions.api.updateRowData({
+        gridOptions.api.applyTransaction({
             update: updatedRows
         });
 
