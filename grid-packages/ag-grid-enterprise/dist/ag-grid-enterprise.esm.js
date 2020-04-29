@@ -3943,7 +3943,7 @@ var ModuleRegistry = /** @class */ (function () {
         else {
             if (ModuleRegistry.moduleBased !== moduleBased) {
                 _.doOnce(function () {
-                    console.warn("ag-Grid: You are mixing modules (i.e. @ag-grid-community/core) and packages (ag-grid-community) - you can only one or the other of these mechanisms.");
+                    console.warn("ag-Grid: You are mixing modules (i.e. @ag-grid-community/core) and packages (ag-grid-community) - you can only use one or the other of these mechanisms.");
                     console.warn('Please see https://www.ag-grid.com/javascript-grid-packages-modules/ for more information.');
                 }, 'ModulePackageCheck');
             }
@@ -11267,14 +11267,6 @@ var ProvidedFilter = /** @class */ (function (_super) {
         this.resetUiToDefaults(true);
         this.updateUiVisibility();
         this.setupOnBtApplyDebounce();
-        this.checkForDeprecatedParams();
-    };
-    ProvidedFilter.prototype.checkForDeprecatedParams = function () {
-        if (this.providedFilterParams.newRowsAction) {
-            var message_1 = "ag-Grid: since version 23.1, the Set Filter param 'newRowsAction' has been " +
-                "deprecated and will be removed in a future major release.";
-            _.doOnce(function () { return console.warn(message_1); }, 'newRowsAction deprecated');
-        }
     };
     ProvidedFilter.prototype.setParams = function (params) {
         this.providedFilterParams = params;
@@ -17157,15 +17149,16 @@ var DragAndDropService = /** @class */ (function () {
         return clientY > eClientY ? VerticalDirection.Up : VerticalDirection.Down;
     };
     DragAndDropService.prototype.createDropTargetEvent = function (dropTarget, event, hDirection, vDirection, fromNudge) {
-        // localise x and y to the target component
-        var rect = dropTarget.getContainer().getBoundingClientRect();
+        // localise x and y to the target
+        var dropZoneTarget = dropTarget.getContainer();
+        var rect = dropZoneTarget.getBoundingClientRect();
         var _a = this, api = _a.gridApi, columnApi = _a.columnApi, dragItem = _a.dragItem, dragSource = _a.dragSource;
         var x = event.clientX - rect.left;
         var y = event.clientY - rect.top;
-        return { event: event, x: x, y: y, vDirection: vDirection, hDirection: hDirection, dragSource: dragSource, fromNudge: fromNudge, dragItem: dragItem, api: api, columnApi: columnApi };
+        return { event: event, x: x, y: y, vDirection: vDirection, hDirection: hDirection, dragSource: dragSource, fromNudge: fromNudge, dragItem: dragItem, api: api, columnApi: columnApi, dropZoneTarget: dropZoneTarget };
     };
     DragAndDropService.prototype.positionGhost = function (event) {
-        var ghost = this.eWrapper.querySelector('.ag-dnd-ghost');
+        var ghost = this.eGhost;
         var ghostRect = ghost.getBoundingClientRect();
         var ghostHeight = ghostRect.height;
         // for some reason, without the '-2', it still overlapped by 1 or 2 pixels, which
@@ -17173,9 +17166,7 @@ var DragAndDropService = /** @class */ (function () {
         // works around it which is good enough for me.
         var browserWidth = _.getBodyWidth() - 2;
         var browserHeight = _.getBodyHeight() - 2;
-        // put ghost vertically in middle of cursor
         var top = event.pageY - (ghostHeight / 2);
-        // horizontally, place cursor just right of icon
         var left = event.pageX - 10;
         var usrDocument = this.gridOptionsWrapper.getDocument();
         var windowScrollY = window.pageYOffset || usrDocument.documentElement.scrollTop;
@@ -17193,39 +17184,39 @@ var DragAndDropService = /** @class */ (function () {
         if (top < 0) {
             top = 0;
         }
-        ghost.style.left = left + 'px';
-        ghost.style.top = top + 'px';
+        ghost.style.left = left + "px";
+        ghost.style.top = top + "px";
     };
     DragAndDropService.prototype.removeGhost = function () {
-        if (this.eWrapper && this.eGhostParent) {
-            this.eGhostParent.removeChild(this.eWrapper);
+        if (this.eGhost && this.eGhostParent) {
+            this.eGhostParent.removeChild(this.eGhost);
         }
-        this.eWrapper = null;
+        this.eGhost = null;
     };
     DragAndDropService.prototype.createGhost = function () {
-        this.eWrapper = _.loadTemplate(DragAndDropService_1.GHOST_TEMPLATE);
+        this.eGhost = _.loadTemplate(DragAndDropService_1.GHOST_TEMPLATE);
         var theme = this.environment.getTheme().theme;
         if (theme) {
-            _.addCssClass(this.eWrapper, theme);
+            _.addCssClass(this.eGhost, theme);
         }
-        this.eGhostIcon = this.eWrapper.querySelector('.ag-dnd-ghost-icon');
+        this.eGhostIcon = this.eGhost.querySelector('.ag-dnd-ghost-icon');
         this.setGhostIcon(null);
-        var eText = this.eWrapper.querySelector('.ag-dnd-ghost-label');
+        var eText = this.eGhost.querySelector('.ag-dnd-ghost-label');
         var dragItemName = this.dragSource.dragItemName;
         if (_.isFunction(dragItemName)) {
             dragItemName = dragItemName();
         }
         eText.innerHTML = _.escape(dragItemName);
-        this.eWrapper.style.height = '25px';
-        this.eWrapper.style.top = '20px';
-        this.eWrapper.style.left = '20px';
+        this.eGhost.style.height = '25px';
+        this.eGhost.style.top = '20px';
+        this.eGhost.style.left = '20px';
         var usrDocument = this.gridOptionsWrapper.getDocument();
         this.eGhostParent = usrDocument.querySelector('body');
         if (!this.eGhostParent) {
             console.warn('ag-Grid: could not find document body, it is needed for dragging columns');
         }
         else {
-            this.eGhostParent.appendChild(this.eWrapper);
+            this.eGhostParent.appendChild(this.eGhost);
         }
     };
     DragAndDropService.prototype.setGhostIcon = function (iconName, shake) {
@@ -17282,10 +17273,7 @@ var DragAndDropService = /** @class */ (function () {
     DragAndDropService.ICON_PIVOT = 'pivot';
     DragAndDropService.ICON_NOT_ALLOWED = 'notAllowed';
     DragAndDropService.ICON_HIDE = 'hide';
-    DragAndDropService.GHOST_TEMPLATE = '<div ref="eWrapper" class="ag-dnd-wrapper ag-unselectable"><div class="ag-dnd-ghost">' +
-        '  <span class="ag-dnd-ghost-icon ag-shake-left-to-right"></span>' +
-        '  <div class="ag-dnd-ghost-label"></div>' +
-        '</div></div>';
+    DragAndDropService.GHOST_TEMPLATE = "<div class=\"ag-dnd-ghost ag-unselectable\">\n            <span class=\"ag-dnd-ghost-icon ag-shake-left-to-right\"></span>\n            <div class=\"ag-dnd-ghost-label\"></div>\n        </div>";
     __decorate$C([
         Autowired('gridOptionsWrapper')
     ], DragAndDropService.prototype, "gridOptionsWrapper", void 0);
@@ -19119,8 +19107,7 @@ var CellComp = /** @class */ (function (_super) {
         return false;
     };
     CellComp.prototype.containsWidget = function (target) {
-        return _.isElementChildOfClass(target, 'ag-selection-checkbox', 3) ||
-            _.isElementChildOfClass(target, 'ag-icon', 3);
+        return _.isElementChildOfClass(target, 'ag-selection-checkbox', 3);
     };
     // returns true if on iPad and this is second 'click' event in 200ms
     CellComp.prototype.isDoubleClickOnIPad = function () {
@@ -25780,11 +25767,10 @@ var RowDragFeature = /** @class */ (function () {
     RowDragFeature.prototype.isFromThisGrid = function (draggingEvent) {
         return this.gridPanel.getGui().contains(draggingEvent.dragSource.eElement);
     };
-    RowDragFeature.prototype.isTargetOutsideThisGrid = function (draggingEvent) {
-        var eDoc = this.gridOptionsWrapper.getDocument();
+    RowDragFeature.prototype.isDropZoneWithinThisGrid = function (draggingEvent) {
         var gridGui = this.gridPanel.getGui();
-        var elementFromPoint = eDoc.elementFromPoint(draggingEvent.event.clientX, draggingEvent.event.clientY);
-        return !gridGui.contains(elementFromPoint);
+        var dropZoneTarget = draggingEvent.dropZoneTarget;
+        return !gridGui.contains(dropZoneTarget);
     };
     RowDragFeature.prototype.onEnterOrDragging = function (draggingEvent) {
         // this event is fired for enter and move
@@ -25816,7 +25802,7 @@ var RowDragFeature = /** @class */ (function () {
             return;
         }
         if (this.gridOptionsWrapper.isSuppressMoveWhenRowDragging() || !isFromThisGrid) {
-            if (!this.isTargetOutsideThisGrid(draggingEvent)) {
+            if (!this.isDropZoneWithinThisGrid(draggingEvent)) {
                 this.clientSideRowModel.highlightRowAtPixel(rowNodes[0], pixel);
             }
         }
@@ -26051,7 +26037,7 @@ var RowDragFeature = /** @class */ (function () {
         this.stopDragging(draggingEvent);
         if (this.gridOptionsWrapper.isRowDragManaged() &&
             (this.gridOptionsWrapper.isSuppressMoveWhenRowDragging() || !this.isFromThisGrid(draggingEvent)) &&
-            !this.isTargetOutsideThisGrid(draggingEvent)) {
+            !this.isDropZoneWithinThisGrid(draggingEvent)) {
             this.moveRowAndClearHighlight(draggingEvent);
         }
     };
@@ -36780,24 +36766,24 @@ var Grid = /** @class */ (function () {
         var allModules = [];
         var mapNames = {};
         // adds to list and removes duplicates
-        function addModule(module) {
+        function addModule(moduleBased, module) {
             function addIndividualModule(module) {
                 if (!mapNames[module.moduleName]) {
                     mapNames[module.moduleName] = true;
                     allModules.push(module);
-                    ModuleRegistry.register(module);
+                    ModuleRegistry.register(module, moduleBased);
                 }
             }
             addIndividualModule(module);
             if (module.dependantModules) {
-                module.dependantModules.forEach(addModule);
+                module.dependantModules.forEach(addModule.bind(null, moduleBased));
             }
         }
         if (passedViaConstructor) {
-            passedViaConstructor.forEach(addModule);
+            passedViaConstructor.forEach(addModule.bind(null, true));
         }
         if (registered) {
-            registered.forEach(addModule);
+            registered.forEach(addModule.bind(null, !ModuleRegistry.isPackageBased()));
         }
         return allModules;
     };
@@ -64942,12 +64928,34 @@ var ChartBuilder = /** @class */ (function () {
         if (options.legend !== undefined) {
             ChartBuilder.initLegend(chart.legend, options.legend);
         }
+        var listeners = options.listeners;
+        if (listeners) {
+            for (var key in listeners) {
+                if (listeners.hasOwnProperty(key)) {
+                    var listener = listeners[key];
+                    if (typeof listener === 'function') {
+                        chart.addEventListener(key, listener);
+                    }
+                }
+            }
+        }
         return chart;
     };
     ChartBuilder.initSeries = function (series, options) {
         this.setValueIfExists(series, 'visible', options.visible);
         this.setValueIfExists(series, 'showInLegend', options.showInLegend);
         this.setValueIfExists(series, 'data', options.data);
+        var listeners = options.listeners;
+        if (listeners) {
+            for (var key in listeners) {
+                if (listeners.hasOwnProperty(key)) {
+                    var listener = listeners[key];
+                    if (typeof listener === 'function') {
+                        series.addEventListener(key, listener);
+                    }
+                }
+            }
+        }
         return series;
     };
     ChartBuilder.initLineSeries = function (series, options) {
@@ -67488,8 +67496,10 @@ var ChartProxy = /** @class */ (function () {
                 },
                 highlightStyle: {
                     fill: 'yellow',
-                }
-            }
+                },
+                listeners: {}
+            },
+            listeners: {}
         };
     };
     ChartProxy.prototype.transformData = function (data, categoryKey) {
@@ -68452,11 +68462,11 @@ var TitlePanel = /** @class */ (function (_super) {
                 if (enabled) {
                     var newTitle = _this.disabledTitle || _this.chartTranslator.translate('titlePlaceholder');
                     chartProxy.setTitleOption('text', newTitle);
-                    _this.disabledTitle = null;
+                    _this.disabledTitle = '';
                 }
                 else {
                     _this.disabledTitle = _this.chartController.getChartProxy().getTitleOption('text');
-                    chartProxy.setTitleOption('text', null);
+                    chartProxy.setTitleOption('text', '');
                 }
             }
         };
