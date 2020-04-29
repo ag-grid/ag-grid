@@ -262,7 +262,7 @@ SNIPPET
     default language).
 </p>
 
-<?= createSnippet(<<<SNIPPET
+<snippet>
 var gridOptions = {
 
     localeTextFunc: function(key, defaultValue) {
@@ -278,7 +278,6 @@ var gridOptions = {
 
     ...
 };
-SNIPPET
-) ?>
+</snippet>
 
 <?php include '../documentation-main/documentation_footer.php';?>
