@@ -12,7 +12,7 @@ export class AgInputNumberField extends AgInputTextField {
     postConstruct() {
         super.postConstruct();
         this.addDestroyableEventListener(this.eInput, 'blur', () => {
-            const value = this.normalizeValue(this.eInput.value);
+            const value = this.normalizeValue(parseFloat(this.eInput.value).toString());
             if (this.value !== value) {
                 this.setValue(value);
             }
