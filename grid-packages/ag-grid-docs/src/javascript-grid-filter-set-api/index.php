@@ -1,5 +1,5 @@
 <?php
-$pageTitle = "Set Filter: Enterprise Grade Feature of our Datagrid";
+$pageTitle = "Set Filter - API";
 $pageDescription = "Enterprise feature of ag-Grid supporting Angular, React, Javascript and more. One such feature is Set Filter. Set Filter works like Excel, providing checkboxes to select values from a set. Version 20 is available for download now, take it for a free two month trial.";
 $pageKeywords = "ag-Grid JavaScript Data Grid Excel Set Filtering";
 $pageGroup = "feature";
@@ -55,11 +55,13 @@ SNIPPET
     <code>filterInstance.applyModel()</code> to apply the changes that have been made to the model and then
     <code>gridOptions.api.onFilterChanged()</code> at the end of the interaction with the filter.
 </p>
+
 <p>
     If no call is made to <code>filterInstance.applyModel()</code> then the filter UI will show the changes, but
     it won't be reflected in the filter model. This will appear as if the user never hit the Apply Button (regardless
     of whether the Apply Button is active or not).
 </p>
+
 <p>
     If no call to <code>gridOptions.api.onFilterChanged()</code> is provided the grid will still show the data relevant
     to the filter before it was updated through the API.
@@ -90,6 +92,5 @@ SNIPPET
 </p>
 
 <?= grid_example('Set Filter API', 'set-filter-api', 'generated', ['enterprise' => true, 'exampleHeight' => 570]) ?>
-
 
 <?php include '../documentation-main/documentation_footer.php';?>
