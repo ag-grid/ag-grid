@@ -3,8 +3,8 @@ import {AgGridReact} from '@ag-grid-community/react';
 
 import {AllCommunityModules} from '@ag-grid-community/all-modules';
 
-import "@ag-grid-community/all-modules/dist/styles/ag-grid.css";
-import "@ag-grid-community/all-modules/dist/styles/ag-theme-alpine.css";
+import '@ag-grid-community/all-modules/dist/styles/ag-grid.css';
+import '@ag-grid-community/all-modules/dist/styles/ag-theme-alpine.css';
 
 export default class extends Component {
     constructor(props) {
@@ -46,7 +46,8 @@ export default class extends Component {
             bottomOptions,
             columnDefs: [
                 {
-                    headerName: "<span style='background-color: lightblue'>Group 1</span>",
+                    headerName: 'Group 1',
+                    headerClass: 'blue',
                     groupId: 'Group1',
                     children: [
                         {field: 'athlete', pinned: true, width: 100},
@@ -60,7 +61,8 @@ export default class extends Component {
                     ]
                 },
                 {
-                    headerName: "<span style='background-color: lightgreen'>Group 2</span>",
+                    headerName: 'Group 2',
+                    headerClass: 'green',
                     groupId: 'Group2',
                     children: [
                         {field: 'athlete', pinned: true, width: 100},
@@ -103,7 +105,7 @@ export default class extends Component {
     render() {
         return (
             <div>
-                <div style={{width: '100%', height: '45%'}} className="ag-theme-alpine">
+                <div style={{width: '100%', height: '45%'}} className='ag-theme-alpine'>
                     <AgGridReact rowData={this.state.rowData} gridOptions={this.state.topOptions}
                                  columnDefs={this.state.columnDefs}
                                  defaultColDef={{resizable: true}}
@@ -114,7 +116,7 @@ export default class extends Component {
 
                 <div style={{height: '5%'}}/>
 
-                <div style={{width: '100%', height: '45%'}} className="ag-theme-alpine">
+                <div style={{width: '100%', height: '45%'}} className='ag-theme-alpine'>
                     <AgGridReact rowData={this.state.rowData} gridOptions={this.state.bottomOptions}
                                  columnDefs={this.state.columnDefs}
                                  modules={AllCommunityModules} />

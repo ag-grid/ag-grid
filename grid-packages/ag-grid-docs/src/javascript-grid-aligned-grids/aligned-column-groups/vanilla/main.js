@@ -1,30 +1,32 @@
 var columnDefs = [
     {
-        headerName: "<span style='background-color: lightblue'>Group 1</span>",
-        groupId: "Group1",
+        headerName: 'Group 1',
+        headerClass: 'blue',
+        groupId: 'Group1',
         children: [
-            { field: "athlete", pinned: true, width: 100 },
-            { field: "age", pinned: true, columnGroupShow: 'open', width: 100 },
-            { field: "country", width: 100 },
-            { field: "year", columnGroupShow: 'open', width: 100 },
-            { field: "date", width: 100 },
-            { field: "sport", columnGroupShow: 'open', width: 100 },
-            { field: "date", width: 100 },
-            { field: "sport", columnGroupShow: 'open', width: 100 }
+            { field: 'athlete', pinned: true, width: 100 },
+            { field: 'age', pinned: true, columnGroupShow: 'open', width: 100 },
+            { field: 'country', width: 100 },
+            { field: 'year', columnGroupShow: 'open', width: 100 },
+            { field: 'date', width: 100 },
+            { field: 'sport', columnGroupShow: 'open', width: 100 },
+            { field: 'date', width: 100 },
+            { field: 'sport', columnGroupShow: 'open', width: 100 }
         ]
     },
     {
-        headerName: "<span style='background-color: lightgreen'>Group 2</span>",
-        groupId: "Group2",
+        headerName: 'Group 2',
+        headerClass: 'green',
+        groupId: 'Group2',
         children: [
-            { field: "athlete", pinned: true, width: 100 },
-            { field: "age", pinned: true, columnGroupShow: 'open', width: 100 },
-            { field: "country", width: 100 },
-            { field: "year", columnGroupShow: 'open', width: 100 },
-            { field: "date", width: 100 },
-            { field: "sport", columnGroupShow: 'open', width: 100 },
-            { field: "date", width: 100 },
-            { field: "sport", columnGroupShow: 'open', width: 100 }
+            { field: 'athlete', pinned: true, width: 100 },
+            { field: 'age', pinned: true, columnGroupShow: 'open', width: 100 },
+            { field: 'country', width: 100 },
+            { field: 'year', columnGroupShow: 'open', width: 100 },
+            { field: 'date', width: 100 },
+            { field: 'sport', columnGroupShow: 'open', width: 100 },
+            { field: 'date', width: 100 },
+            { field: 'sport', columnGroupShow: 'open', width: 100 }
         ]
     }
 ];

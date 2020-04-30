@@ -3,40 +3,40 @@ import { HttpClient } from '@angular/common/http';
 
 import { AllCommunityModules } from '@ag-grid-community/all-modules';
 
-import "@ag-grid-community/all-modules/dist/styles/ag-grid.css";
-import "@ag-grid-community/all-modules/dist/styles/ag-theme-alpine.css";
+import '@ag-grid-community/all-modules/dist/styles/ag-grid.css';
+import '@ag-grid-community/all-modules/dist/styles/ag-theme-alpine.css';
 
 @Component({
     selector: 'my-app',
     template: `
         <ag-grid-angular
-                style="width: 100%; height: 45%"
+                style='width: 100%; height: 45%'
                 #topGrid
-                class="ag-theme-alpine"
-                (firstDataRendered)="onFirstDataRendered($event)"
-                [defaultColDef]="{
-            resizable: true
-        }"
-                [rowData]="rowData"
-                [modules]="modules"
-                [gridOptions]="topOptions"
-                [columnDefs]="columnDefs">
+                class='ag-theme-alpine'
+                (firstDataRendered)='onFirstDataRendered($event)'
+                [defaultColDef]='{
+                    resizable: true
+                }'
+                [rowData]='rowData'
+                [modules]='modules'
+                [gridOptions]='topOptions'
+                [columnDefs]='columnDefs'>
         </ag-grid-angular>
 
-        <div style="height: 5%"></div>
+        <div style='height: 5%'></div>
 
         <ag-grid-angular
-                style="width: 100%; height: 45%"
+                style='width: 100%; height: 45%'
                 #bottomGrid
-                class="ag-theme-alpine"
-                (firstDataRendered)="onFirstDataRendered($event)"
-                [defaultColDef]="{
-            resizable: true
-        }"
-                [rowData]="rowData"
-                [modules]="modules"
-                [gridOptions]="bottomOptions"
-                [columnDefs]="columnDefs">
+                class='ag-theme-alpine'
+                (firstDataRendered)='onFirstDataRendered($event)'
+                [defaultColDef]='{
+                    resizable: true
+                }'
+                [rowData]='rowData'
+                [modules]='modules'
+                [gridOptions]='bottomOptions'
+                [columnDefs]='columnDefs'>
         </ag-grid-angular>
     `
 })
@@ -73,7 +73,8 @@ export class AppComponent {
     constructor(private http: HttpClient) {
         this.columnDefs = [
             {
-                headerName: "<span style='background-color: lightblue'>Group 1</span>",
+                headerName: 'Group 1',
+                headerClass: 'blue',
                 groupId: 'Group1',
                 children: [
                     { field: 'athlete', pinned: true, width: 100 },
@@ -87,7 +88,8 @@ export class AppComponent {
                 ]
             },
             {
-                headerName: "<span style='background-color: lightgreen'>Group 2</span>",
+                headerName: 'Group 2',
+                headerClass: 'green',
                 groupId: 'Group2',
                 children: [
                     { field: 'athlete', pinned: true, width: 100 },
