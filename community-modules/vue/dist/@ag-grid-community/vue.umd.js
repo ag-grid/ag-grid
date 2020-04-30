@@ -5565,7 +5565,7 @@ var ResizeObserverService = /** @class */ (function () {
         var frameworkFactory = this.frameworkOverrides;
         // this gets fired too often and might cause some relayout issues
         // so we add a debounce to the callback here to avoid the flashing effect.
-        var debouncedCallback = _utils__WEBPACK_IMPORTED_MODULE_1__[/* _ */ "d"].debounce(callback, debounceDelay, true);
+        var debouncedCallback = _utils__WEBPACK_IMPORTED_MODULE_1__[/* _ */ "d"].debounce(callback, debounceDelay);
         var useBrowserResizeObserver = function () {
             var resizeObserver = new window.ResizeObserver(debouncedCallback);
             resizeObserver.observe(element);
@@ -15986,14 +15986,6 @@ var PopupService = /** @class */ (function () {
         else {
             this.bringPopupToFront(eWrapper);
         }
-        // if the popup resizes, make sure that it's not sticking off the right hand side of the screen
-        var disconnectResizeObserver = this.resizeObserverService.observeResize(eChild, function () {
-            var childRect = eChild.getBoundingClientRect();
-            var parentRect = _this.getParentRect();
-            if (childRect.right >= parentRect.right) {
-                eChild.style.left = (parentRect.right - parentRect.left - childRect.width) + 'px';
-            }
-        });
         var popupHidden = false;
         var hidePopupOnKeyboardEvent = function (event) {
             var key = event.which || event.keyCode;
@@ -16008,15 +16000,12 @@ var PopupService = /** @class */ (function () {
             hidePopup(null, event);
         };
         var hidePopup = function (mouseEvent, touchEvent) {
-            var hiddenAt = new Date().getTime();
-            disconnectResizeObserver();
             if (
             // we don't hide popup if the event was on the child, or any
             // children of this child
             _this.isEventFromCurrentPopup(mouseEvent, touchEvent, eChild) ||
                 // if the event to close is actually the open event, then ignore it
-                (_this.isEventSameChainAsOriginalEvent(click, mouseEvent, touchEvent) &&
-                    Math.abs(processedAt - hiddenAt) < 10) ||
+                _this.isEventSameChainAsOriginalEvent(click, mouseEvent, touchEvent) ||
                 // this method should only be called once. the client can have different
                 // paths, each one wanting to close, so this method may be called multiple times.
                 popupHidden) {
@@ -16166,9 +16155,6 @@ var PopupService = /** @class */ (function () {
     __decorate([
         Object(_context_context__WEBPACK_IMPORTED_MODULE_1__[/* Autowired */ "a"])('eventService')
     ], PopupService.prototype, "eventService", void 0);
-    __decorate([
-        Object(_context_context__WEBPACK_IMPORTED_MODULE_1__[/* Autowired */ "a"])('resizeObserverService')
-    ], PopupService.prototype, "resizeObserverService", void 0);
     __decorate([
         _context_context__WEBPACK_IMPORTED_MODULE_1__[/* PostConstruct */ "e"]
     ], PopupService.prototype, "init", null);
@@ -36040,29 +36026,6 @@ var __assign = (undefined && undefined.__assign) || function () {
 
 
 var utils = __assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign({}, general_namespaceObject), array), browser), csv_namespaceObject), date_namespaceObject), dom), event_namespaceObject), utils_function), fuzzyMatch_namespaceObject), generic), icon), keyboard), map_namespaceObject), mouse_namespaceObject), number_namespaceObject), object_namespaceObject), rowNode_namespaceObject), set_namespaceObject), string);
-if (sum([
-    general_namespaceObject,
-    array,
-    browser,
-    csv_namespaceObject,
-    date_namespaceObject,
-    dom,
-    event_namespaceObject,
-    utils_function,
-    fuzzyMatch_namespaceObject,
-    generic,
-    icon,
-    keyboard,
-    map_namespaceObject,
-    mouse_namespaceObject,
-    number_namespaceObject,
-    object_namespaceObject,
-    rowNode_namespaceObject,
-    set_namespaceObject,
-    string,
-].map(function (x) { return Object.keys(x).length; })) !== Object.keys(utils).length) {
-    throw new Error('Functions with the same name are being included from multiple sources into the general utils (_) class');
-}
 var _ = utils;
 
 // CONCATENATED MODULE: ../core/dist/es6/utils/numberSequence.js

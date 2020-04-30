@@ -40,11 +40,7 @@ function getBooleanValue(cssSelector) {
 }
 
 function onBtExport() {
-    var params = {
-        fileName: document.querySelector('#fileName').value,
-        sheetName: document.querySelector('#sheetName').value
-    };
-    gridOptions.api.exportDataAsExcel(params);
+    gridOptions.api.exportDataAsExcel({});
 }
 
 // setup the grid after the page has finished loading

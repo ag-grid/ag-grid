@@ -8,15 +8,16 @@ import "@ag-grid-community/all-modules/dist/styles/ag-theme-alpine.css";
 
 const VueExample = {
     template: `
-        <div style="height: 100%">
-            <ag-grid-vue style="width: 100%; height: 420px;" class="ag-theme-alpine"
+        <div style="height: 100%; display: flex; flex-direction: column" class="ag-theme-alpine"> 
+            <ag-grid-vue style="flex: 1 1 auto;"
                          :gridOptions="topGridOptions"
                          @grid-ready="onGridReady"
+                         @first-data-rendered="onFirstDataRendered"
                          :columnDefs="columnDefs"
                          :rowData="rowData"
                          :modules="modules"
             ></ag-grid-vue>
-            <ag-grid-vue style="width: 100%; height: 40px;" class="ag-theme-alpine"
+            <ag-grid-vue style="height: 60px; flex: none;"
                          :gridOptions="bottomGridOptions"
                          :headerHeight="0"
                          :columnDefs="columnDefs"
@@ -116,6 +117,10 @@ const VueExample = {
                     updateData(JSON.parse(httpRequest.responseText));
                 }
             };
+        },
+
+        onFirstDataRendered: function() {
+            this.gridColumnApi.autoSizeAllColumns();
         }
     },
 };

@@ -11,27 +11,30 @@ import "@ag-grid-community/all-modules/dist/styles/ag-theme-alpine.css";
         font-weight: bold;
     } `],
     template: `
-        <ag-grid-angular
-                style="width: 100%; height: 420px"
-                #topGrid
-                class="ag-theme-alpine"
-                [modules]="modules"
-                [rowData]="rowData"
-                [gridOptions]="topOptions"
-                [columnDefs]="columnDefs">
-        </ag-grid-angular>
+        <div style="height: 100%; display: flex; flex-direction: column">
+            <ag-grid-angular
+                    style="flex: 1 1 auto;"
+                    #topGrid
+                    class="ag-theme-alpine"
+                    [modules]="modules"
+                    [rowData]="rowData"
+                    [gridOptions]="topOptions"
+                    (firstDataRendered)='onFirstDataRendered($event)'
+                    [columnDefs]="columnDefs">
+            </ag-grid-angular>
 
-        <ag-grid-angular
-                style="width: 100%; height: 40px"
-                #bottomGrid
-                class="ag-theme-alpine"
-                [modules]="modules"
-                [rowData]="bottomData"
-                [gridOptions]="bottomOptions"
-                headerHeight="0"
-                [rowStyle]="{ fontWeight: 'bold' }"
-                [columnDefs]="columnDefs">
-        </ag-grid-angular>
+            <ag-grid-angular
+                    style="flex: none; height: 60px;"
+                    #bottomGrid
+                    class="ag-theme-alpine"
+                    [modules]="modules"
+                    [rowData]="bottomData"
+                    [gridOptions]="bottomOptions"
+                    headerHeight="0"
+                    [rowStyle]="{ fontWeight: 'bold' }"
+                    [columnDefs]="columnDefs">
+            </ag-grid-angular>
+        </div>
     `
 })
 export class AppComponent {
@@ -112,7 +115,7 @@ export class AppComponent {
             });
     }
 
-    onGridReady(params) {
-        params.api.sizeColumnsToFit();
+    onFirstDataRendered(params) {
+        params.columnApi.autoSizeAllColumns();
     }
 }

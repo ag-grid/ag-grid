@@ -89,7 +89,7 @@ SNIPPET
 <ul>
     <li>
         This example allows for <code>enableMultiRowDragging</code>, between grids. For more info on <code>multiRowDrag</code> within the grid see the
-        <a href="../javascript-grid-row-dragging/#multirow-dragging">Multi-Row Dragging</a> section in the Row Dragging documentation.
+        <a href="../javascript-grid-row-dragging/#multi-row-dragging">Multi-Row Dragging</a> section in the Row Dragging documentation.
     </li>
     <li>
         This example allows you to toggle between regular <code>multiRow</code> selection and <code>checkboxSelection</code>. For more info see the

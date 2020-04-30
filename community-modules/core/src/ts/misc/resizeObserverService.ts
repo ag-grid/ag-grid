@@ -14,7 +14,7 @@ export class ResizeObserverService {
         const frameworkFactory = this.frameworkOverrides;
         // this gets fired too often and might cause some relayout issues
         // so we add a debounce to the callback here to avoid the flashing effect.
-        const debouncedCallback = _.debounce(callback, debounceDelay, true);
+        const debouncedCallback = _.debounce(callback, debounceDelay);
         const useBrowserResizeObserver = () => {
             const resizeObserver = new (window as any).ResizeObserver(debouncedCallback);
             resizeObserver.observe(element);

@@ -1,5 +1,5 @@
 <?php
-$pageTitle = "Set Filter: Enterprise Grade Feature of our Datagrid";
+$pageTitle = "Set Filter - Data Updates";
 $pageDescription = "Enterprise feature of ag-Grid supporting Angular, React, Javascript and more. One such feature is Set Filter. Set Filter works like Excel, providing checkboxes to select values from a set. Version 20 is available for download now, take it for a free two month trial.";
 $pageKeywords = "ag-Grid JavaScript Data Grid Excel Set Filtering";
 $pageGroup = "feature";
@@ -12,7 +12,7 @@ include '../documentation-main/documentation_header.php';
     This section describes how changing data through
     <a href="../javascript-grid-cell-editing/">Cell Editing</a> and the application
     <a href="../javascript-grid-data-update">Updating Data</a> impacts
-    the Set Filter's values. This is only applicable when the Set Filter is taking it's
+    the Set Filter's values. This is only applicable when the Set Filter is taking its
     values form the grid's data.
 </p>
 
@@ -21,6 +21,7 @@ include '../documentation-main/documentation_header.php';
 <p>
     Row / Cell updates refers to any of the following:
 </p>
+
 <ul>
     <li>
         All edits via the grid's UI such as <a href="../javascript-grid-cell-editing/">Cell Editing</a> and
@@ -71,13 +72,14 @@ gridOptions: {
     // other options
 }
 SNIPPET
-    , 'ts') ?>
+) ?>
 
 <p>
     The following example demonstrates Cell Editing with the Set Filter. Try the following:
 </p>
 
 <p><b>Without selecting any Filter Values:</b></p>
+
 <ul class="content">
     <li>
         Change (Cell Edit) a <code>'B'</code> cell value to <code>'X'</code> and note it gets added to the filter list
@@ -86,6 +88,7 @@ SNIPPET
 </ul>
 
 <p><b>Click 'Reset' and deselect 'C' in the Filter List:</b></p>
+
 <ul class="content">
     <li>
         Change (Cell Edit) a <code>'B'</code> cell value to <code>'X'</code> and notice it gets added to the Filter List
@@ -97,9 +100,7 @@ SNIPPET
     </li>
 </ul>
 
-
 <?= grid_example('Cell Editing Updates', 'cell-editing-updates', 'generated', ['enterprise' => true, 'exampleHeight' => 480, 'modules' => ['clientside', 'setfilter', 'menu', 'columnpanel', 'filterpanel']]) ?>
-
 
 <h2>Transaction Updates</h2>
 
@@ -150,6 +151,7 @@ SNIPPET
 </p>
 
 <p><b>Without selecting any filter values:</b></p>
+
 <ul class="content">
     <li>
         Click <b>Update First Displayed Row</b>: this calls <code>api.applyTransaction()</code> and updates the value in the
@@ -162,6 +164,7 @@ SNIPPET
 </ul>
 
 <p><b>Click 'Reset' and deselect 'C' in the Filter List:</b></p>
+
 <ul class="content">
     <li>
         Click <b>Update First Displayed Row</b>: this calls <code>api.applyTransaction()</code> and updates the value in the
@@ -184,8 +187,9 @@ SNIPPET
 <p>
     By default, when <code>api.setRowData()</code> is called, all Set Filter selections will be lost.
 </p>
+
 <p>
-    It is recommended that <code>newRowsAction='keep'</code> set on the filter params to keep existing filter selections
+    It is recommended that <code>newRowsAction='keep'</code> is set on the filter params to keep existing filter selections
     when new rows are added, as shown below:
 </p>
 
@@ -194,15 +198,15 @@ SNIPPET
 {
     field: 'col1',
     filter: 'agSetColumnFilter',
-    filterParams: {        
+    filterParams: {
         newRowsAction: 'keep'
     }
 }
 SNIPPET
-    , 'ts') ?>
+) ?>
 
 <note>
-    <code>newRowsAction</code> is deprecated, <code>newRowsAction='keep'</code> will become the default behaviour in v24.
+    <code>newRowsAction</code> is deprecated, and <code>newRowsAction='keep'</code> will become the default behaviour in v24.
 </note>
 
 <p>
@@ -215,8 +219,8 @@ SNIPPET
 
 <ul class="content">
     <li>
-        Deselect value 'B' from the set filter list and click the <b>Set New Data</b> button which in turn calls
-        <code>api.setRowData(newData)</code> which add new data with extra rows to the grid.
+        Deselect value 'B' from the set filter list and click the <b>Set New Data</b> button which calls
+        <code>api.setRowData(newData)</code> to add new data with extra rows to the grid.
     </li>
     <li>
         Notice 'B' remains deselected after new data is supplied to the grid as the set filter has set
@@ -235,6 +239,5 @@ SNIPPET
 <p>
     Continue to the next section: <a href="../javascript-grid-filter-set-mini-filter/">Mini Filter</a>.
 </p>
-
 
 <?php include '../documentation-main/documentation_footer.php';?>

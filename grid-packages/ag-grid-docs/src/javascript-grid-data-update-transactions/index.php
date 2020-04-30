@@ -1,5 +1,5 @@
 <?php
-$pageTitle = "Update transactions";
+$pageTitle = "Client-Side Data - Transaction Updates";
 $pageDescription = "Transaction Updates allow adding, removing or updating large numbers of rows inside the grid in an efficient manner.";
 $pageKeywords = "ag-Grid Update Transaction";
 $pageGroup = "feature";

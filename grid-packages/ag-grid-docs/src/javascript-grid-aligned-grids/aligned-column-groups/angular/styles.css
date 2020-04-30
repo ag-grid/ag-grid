@@ -1,3 +1,7 @@
-/* styles */
-body {
+.blue span.ag-header-group-text {
+    background-color: lightblue;
+}
+
+.green span.ag-header-group-text {
+    background-color: lightgreen;
 }

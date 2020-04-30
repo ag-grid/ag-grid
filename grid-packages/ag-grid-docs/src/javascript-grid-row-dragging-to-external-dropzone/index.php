@@ -41,7 +41,7 @@ SNIPPET
 , 'ts') ?>
 
 <note>
-    If you read the <a href="./javascript-grid-row-dragging/#managed-dragging">Managed Dragging</a> section of the Row Dragging
+    If you read the <a href="../javascript-grid-row-dragging/#managed-dragging">Managed Dragging</a> section of the Row Dragging
     documentation you probably noticed that when you <code>sort</code>, <code>filter</code> and <code>rowGroup</code> the Grid, the
     managed Row Dragging stops working. The only exception to this rule is when you register external drop zones using <code>addRowDropZone</code>.
     In this case, you will be able to drag from one container to another, but will not be able to drag the rows within the grid.
@@ -88,7 +88,7 @@ SNIPPET
         You can move rows to the container on the right hand side.
     </li>
     <li>
-        Toggle the checkbox to enable or disable <a href="./javascript-grid-row-dragging/#suppress-move-when-dragging">suppressMoveWhenRowDragging</a>.
+        Toggle the checkbox to enable or disable <a href="../javascript-grid-row-dragging/#suppress-move-when-dragging">suppressMoveWhenRowDragging</a>.
     </li>
 </ul>
 

@@ -1,5 +1,5 @@
 <?php
-$pageTitle = "Set Filter: Enterprise Grade Feature of our Datagrid";
+$pageTitle = "Set Filter - Filter List";
 $pageDescription = "Enterprise feature of ag-Grid supporting Angular, React, Javascript and more. One such feature is Set Filter. Set Filter works like Excel, providing checkboxes to select values from a set. Version 20 is available for download now, take it for a free two month trial.";
 $pageKeywords = "ag-Grid JavaScript Data Grid Excel Set Filtering";
 $pageGroup = "feature";
@@ -12,7 +12,6 @@ include '../documentation-main/documentation_header.php';
     This section describes how Filter List values can be managed through custom sorting and formatting. Supplying filter
     values directly to the Set Filter is also discussed.
 </p>
-
 
 <h2>Sorting Filter Lists</h2>
 
@@ -27,7 +26,7 @@ include '../documentation-main/documentation_header.php';
 
 <?= createSnippet(<<<SNIPPET
 // ColDef
-{     
+{
     field: 'age',
     filter: 'agSetColumnFilter',
     filterParams: {
@@ -40,14 +39,15 @@ include '../documentation-main/documentation_header.php';
     }
 }
 SNIPPET
-    , 'ts') ?>
+) ?>
 
 <p>
     The Comparator used by the Set Filter is only provided the values in the first two parameters, whereas the Comparator
     for the Column Definition (<code>colDef</code>) is also provided the row data as additional parameters. This is because when sorting rows,
-    row data exists. For example, take 100 rows split across the color values <code>[white, black]</code>.
+    row data exists. For example, take 100 rows split across the colour values <code>[white, black]</code>.
     The column will be sorting 100 rows, however the filter will be only sorting two values.
 </p>
+
 <p>
     If you are providing a Comparator that depends on the row data and you are using the Set Filter, be sure to provide
     the Set Filter with an alternative Comparator that doesn't depend on the row data.
@@ -64,12 +64,11 @@ SNIPPET
     </li>
     <li>
         The <b>Age (with Comparator)</b> filter has a custom Comparator supplied in the <code>filterParams</code>
-        that sorts the ages by value: <code>1, 2, 3...</code>
+        that sorts the ages by numeric value: <code>1, 2, 3...</code>
     </li>
 </ul>
 
 <?= grid_example('Sorting Filter Lists', 'sorting-set-filter-values', 'generated', ['enterprise' => true, 'exampleHeight' => 720, 'modules' => ['clientside', 'setfilter', 'menu', 'filterpanel']]) ?>
-
 
 <h2>Formatting Values</h2>
 
@@ -82,6 +81,7 @@ SNIPPET
 </note>
 
 <h3>Value Formatter</h3>
+
 <p>
     A <a href="../javascript-grid-value-formatters/">Value Formatter</a> is a good choice when the string value
     displayed in the Filter List needs to be modified, for example adding country codes in parentheses after country name.
@@ -94,20 +94,19 @@ SNIPPET
 <?= createSnippet(<<<SNIPPET
 // ColDef
 {
-    field: 'a',         
-    valueFormatter: myValueFormatter, //formats cell values
+    field: 'a',
+    valueFormatter: myValueFormatter, // formats cell values
     filter: 'agSetColumnFilter',
-    filterParams: {                              
-        valueFormatter: myValueFormatter, //formats filter values            
+    filterParams: {
+        valueFormatter: myValueFormatter, // formats filter values
     }
 }
 
-function myValueFormatter(params)  {
-    return '(' + params.value + ')';        
+function myValueFormatter(params) {
+    return '(' + params.value + ')';
 }
-
 SNIPPET
-    , 'ts') ?>
+) ?>
 
 <p>
     In the code above, the same value formatter is supplied to the Column and Filter, however separate Value Formatters
@@ -121,11 +120,11 @@ SNIPPET
 <ul class="content">
     <li>
         <b>No Value Formatter</b> does not have a Value Formatter supplied to the Set Filter. The column is supplied a
-        Value Formatter through: <code>colDef.valueFormatter = countryValueFormatter</code>.
+        Value Formatter through <code>colDef.valueFormatter = countryValueFormatter</code>.
     </li>
     <li>
         <b>With Value Formatter</b> has the same Value Formatter supplied to the Column and Set Filter. The Set Filter is
-        supplied the value formatter through: <code>filterParams.valueFormatter = countryValueFormatter</code>.
+        supplied the value formatter through <code>filterParams.valueFormatter = countryValueFormatter</code>.
     </li>
     <li>
         Click <b>Print Filter Model</b> with a filter applied and note the logged Filter Model (dev console) has not been modified.
@@ -148,25 +147,25 @@ SNIPPET
 </p>
 
 <p>
-    The following snippet shows how the Cell Renderer's are configured:
+    The following snippet shows how the Cell Renderers are configured:
 </p>
 
 <?= createSnippet(<<<SNIPPET
 // ColDef
 {
-    field: 'a',         
-    cellRenderer: myCellRenderer //formats cell values    
+    field: 'a',
+    cellRenderer: myCellRenderer // formats cell values
     filter: 'agSetColumnFilter',
-    filterParams: {        
-        cellRenderer: myCellRenderer //formats filter values        
+    filterParams: {
+        cellRenderer: myCellRenderer // formats filter values
     }
 }
 
 function myCellRenderer(params)  {
-    return '<span style="font-weight: bold">' + params.value + '</span>';        
+    return '<span style="font-weight: bold">' + params.value + '</span>';
 }
 SNIPPET
-    , 'ts') ?>
+) ?>
 
 <note>
     A custom <a href="../javascript-grid-cell-rendering-components/#cell-renderer-component">Cell Renderer Component</a>
@@ -180,11 +179,11 @@ SNIPPET
 <ul class="content">
     <li>
         <b>No Cell Renderer</b> does not have a Cell Renderer supplied to the Set Filter. The Column has a Cell Renderer
-        supplied to the Column using: <code>colDef.cellRenderer = countryCellRenderer</code>.
+        supplied to the Column using <code>colDef.cellRenderer = countryCellRenderer</code>.
     </li>
     <li>
         <b>With Cell Renderer</b> uses the same Cell Renderer to format the cells and filter values. The Set Filter is
-        supplied the Value Formatter using: <code>filterParams.cellRenderer = countryCellRenderer</code>.
+        supplied the Value Formatter using <code>filterParams.cellRenderer = countryCellRenderer</code>.
     </li>
     <li>
         Click <b>Print Filter Model</b> with a filter applied and note the logged filter model (dev console) has not been modified.
@@ -203,7 +202,7 @@ SNIPPET
 
 <?= createSnippet(<<<SNIPPET
 // ColDef
-{    
+{
     field: 'country',
     keyCreator: countryKeyCreator,
     valueFormatter: countryValueFormatter,
@@ -219,7 +218,7 @@ function countryValueFormatter(params) {
     return params.value.name;
 }
 SNIPPET
-    , 'ts') ?>
+) ?>
 
 <p>
     The snippet above shows a Key Creator function that returns the country name from the complex object.
@@ -255,7 +254,6 @@ SNIPPET
 
 <?= grid_example('Complex Objects', 'complex-objects', 'generated', ['enterprise' => true, 'exampleHeight' => 505, 'modules' => ['clientside', 'setfilter', 'menu', 'filterpanel']]) ?>
 
-
 <h2>Supplying Filter Values</h2>
 
 <p>
@@ -269,16 +267,16 @@ SNIPPET
 
 <?= createSnippet(<<<SNIPPET
 // ColDef
-{      
+{
     field: 'days',
     filter: 'agSetColumnFilter',
     filterParams: {
         // provide all days, even if days are missing in data!
         values: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
-    }    
+    }
 }
 SNIPPET
-    , 'ts') ?>
+) ?>
 
 <p>
     Note that if there are missing values in the row data, the filter list will display all provided values. This could
@@ -287,7 +285,7 @@ SNIPPET
 
 <note>
     When providing filter values which are already sorted it is often useful to disable the default filter list sorting
-    using: <code>filterParams.suppressSorting=true</code>.
+    using <code>filterParams.suppressSorting=true</code>.
 </note>
 
 <p>
@@ -305,7 +303,7 @@ SNIPPET
         ordered according to the week day.
     </li>
     <li>
-        The <b>Days (Values Provided)</b> set filter is supplied it's filter list values <code>filterParams.values</code>.
+        The <b>Days (Values Provided)</b> set filter is given values using <code>filterParams.values</code>.
         As all days are supplied the filter list also contains <code>'Saturday'</code> and <code>'Sunday'</code>.
     </li>
     <li>
@@ -325,18 +323,18 @@ SNIPPET
 
 <?= createSnippet(<<<SNIPPET
 // ColDef
-{      
+{
     field: 'col1',
     filter: 'agSetColumnFilter',
     filterParams: {
         values: function(params) {
-            // async update simulated using setTimeout()   
-            setTimeout(function() {           
+            // async update simulated using setTimeout()
+            setTimeout(function() {
                 // fetch values from server
-                var values = getValuesFromServer(); 
-                           
-                // supply values to the set filter   
-                params.success(values);             
+                var values = getValuesFromServer();
+
+                // supply values to the set filter
+                params.success(values);
             }, 3000);
         }
     }
@@ -354,15 +352,15 @@ SNIPPET
 </p>
 
 <?= createSnippet(<<<SNIPPET
-export interface SetFilterValuesFuncParams {
+interface SetFilterValuesFuncParams {
     // The function to call with the values to load into the filter once they are ready
     success: (values: string[]) => void;
-    
+
     // The column definition object from which the set filter is invoked
     colDef: ColDef;
 }
 SNIPPET
-    , 'ts') ?>
+, 'ts') ?>
 
 <p>
     The following example demonstrates loading set filter values asynchronous. Note the following:
@@ -388,8 +386,8 @@ SNIPPET
 
 <p>
     If there are missing / empty values in the row data of the grid, or missing values in the list of
-    <a href="#supplying-filter-values">Supplied Values</a>, the filter list will display a blank row within it's Filter List.
-    This could give users the impression the filter is broken. If this not the desired behaviour,
+    <a href="#supplying-filter-values">Supplied Values</a>, the Filter List will contain an entry called <code>(Blanks)</code>
+    which can be used to select / deselect all of these values. If this not the desired behaviour,
     provide a <a href="#value-formatter">Formatter</a> to present blank values in a different way.
 </p>
 
@@ -410,7 +408,7 @@ SNIPPET
     }
 }
 SNIPPET
-    , 'ts') ?>
+) ?>
 
 <p>
     The default tooltip component will be used unless a
@@ -435,7 +433,5 @@ SNIPPET
 <p>
     Continue to the next section: <a href="../javascript-grid-filter-set-data-updates">Data Updates</a>.
 </p>
-
-
 
 <?php include '../documentation-main/documentation_footer.php';?>

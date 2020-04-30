@@ -15,7 +15,7 @@ import { LegendDatum } from "../../legend";
 import { CartesianSeries } from "./cartesianSeries";
 import { ChartAxisDirection } from "../../chartAxis";
 import { Chart } from "../../chart";
-import { numericExtent } from "../../../util/array";
+import { numericExtent, finiteExtent } from "../../../util/array";
 import { toFixed } from "../../../util/number";
 import { reactive, TypedEvent } from "../../../util/observable";
 import ticks, { tickStep } from "../../../util/ticks";
@@ -300,10 +300,10 @@ export class HistogramSeries extends CartesianSeries {
         }
 
         const xData = this.data.map(datum => datum[this.xKey]);
-        const xMinMax = numericExtent(xData);
+        const xDomain = this.fixNumericExtent(finiteExtent(xData), 'x');
 
-        const binStarts = ticks(xMinMax[0], xMinMax[1], this.binCount || defaultBinCount);
-        const binSize = tickStep(xMinMax[0], xMinMax[1], this.binCount || defaultBinCount);
+        const binStarts = ticks(xDomain[0], xDomain[1], this.binCount || defaultBinCount);
+        const binSize = tickStep(xDomain[0], xDomain[1], this.binCount || defaultBinCount);
         const firstBinEnd = binStarts[0];
 
         const expandStartToBin: (n: number) => [number, number] = n => [n, n + binSize];

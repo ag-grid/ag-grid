@@ -35,27 +35,4 @@ import * as RowNodeUtils from './rowNode';
 import * as SetUtils from './set';
 import * as StringUtils from './string';
 var utils = __assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign({}, GeneralUtils), ArrayUtils), BrowserUtils), CsvUtils), DateUtils), DomUtils), EventUtils), FunctionUtils), FuzzyMatchUtils), GenericUtils), IconUtils), KeyboardUtils), MapUtils), MouseUtils), NumberUtils), ObjectUtils), RowNodeUtils), SetUtils), StringUtils);
-if (NumberUtils.sum([
-    GeneralUtils,
-    ArrayUtils,
-    BrowserUtils,
-    CsvUtils,
-    DateUtils,
-    DomUtils,
-    EventUtils,
-    FunctionUtils,
-    FuzzyMatchUtils,
-    GenericUtils,
-    IconUtils,
-    KeyboardUtils,
-    MapUtils,
-    MouseUtils,
-    NumberUtils,
-    ObjectUtils,
-    RowNodeUtils,
-    SetUtils,
-    StringUtils,
-].map(function (x) { return Object.keys(x).length; })) !== Object.keys(utils).length) {
-    throw new Error('Functions with the same name are being included from multiple sources into the general utils (_) class');
-}
 export var _ = utils;

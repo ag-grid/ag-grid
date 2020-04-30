@@ -20882,9 +20882,9 @@ var HistogramSeries = /** @class */ (function (_super) {
             return bins;
         }
         var xData = this.data.map(function (datum) { return datum[_this.xKey]; });
-        var xMinMax = numericExtent(xData);
-        var binStarts = ticks(xMinMax[0], xMinMax[1], this.binCount || defaultBinCount);
-        var binSize = tickStep(xMinMax[0], xMinMax[1], this.binCount || defaultBinCount);
+        var xDomain = this.fixNumericExtent(finiteExtent(xData), 'x');
+        var binStarts = ticks(xDomain[0], xDomain[1], this.binCount || defaultBinCount);
+        var binSize = tickStep(xDomain[0], xDomain[1], this.binCount || defaultBinCount);
         var firstBinEnd = binStarts[0];
         var expandStartToBin = function (n) { return [n, n + binSize]; };
         return __spreadArrays$4([

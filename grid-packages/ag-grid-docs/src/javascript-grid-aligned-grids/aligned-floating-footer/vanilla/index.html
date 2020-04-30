@@ -2,8 +2,24 @@
     .bold-row {
         font-weight: bold;
     }
+    .example-wrapper {
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+    }
+
+    .top {
+        flex: 1 1 auto;
+    }
+
+    .bottom {
+        flex: none;
+        height: 60px;
+    }
 </style>
 
+<div class="example-wrapper ag-theme-alpine">
+    <div id="myGridTop" class="top"></div>
+    <div id="myGridBottom" class="bottom"></div>
+</div>
 
-<div id="myGridTop" style="height: 420px;" class="ag-theme-alpine"></div>
-<div id="myGridBottom" style="height: 40px;" class="ag-theme-alpine"></div>

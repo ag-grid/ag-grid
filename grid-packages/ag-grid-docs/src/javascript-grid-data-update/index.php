@@ -1,5 +1,5 @@
 <?php
-$pageTitle = "Updating Data: Core Feature of our Datagrid";
+$pageTitle = "Updating Client-Side Data";
 $pageDescription = "Core feature of ag-Grid supporting Angular, React, Javascript and more. One such feature is Updating Data. Data can be updated in real time. The grid can highlight the change by flashing the cells or by animation inside the cell as the cell refreshes. Version 20 is available for download now, take it for a free two month trial.";
 $pageKeywords = "ag-Grid Insert Remove";
 $pageGroup = "feature";
@@ -66,7 +66,7 @@ include '../documentation-main/documentation_header.php';
                 custom animation between value changes (e.g. fade or slide old value out).
             </li>
             <li>
-                <a href="../javascript-grid-animation.">Row Animation</a> will not be applied. For example,
+                <a href="../javascript-grid-animation/">Row Animation</a> will not be applied. For example,
                 if the difference in data is one row is removed, all rows below will jump up one position
                 rather than having a smooth transition.
             </li>

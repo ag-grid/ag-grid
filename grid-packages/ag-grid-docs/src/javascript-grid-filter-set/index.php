@@ -1,5 +1,5 @@
 <?php
-$pageTitle = "Set Filter: Enterprise Grade Feature of our Datagrid";
+$pageTitle = "Set Filter - Overview";
 $pageDescription = "Enterprise feature of ag-Grid supporting Angular, React, Javascript and more. One such feature is Set Filter. Set Filter works like Excel, providing checkboxes to select values from a set. Version 20 is available for download now, take it for a free two month trial.";
 $pageKeywords = "ag-Grid JavaScript Data Grid Excel Set Filtering";
 $pageGroup = "feature";
@@ -27,7 +27,6 @@ include '../documentation-main/documentation_header.php';
     The Set Filter is comprised of the following sections:
 </p>
 
-<p>
 <ul class="content">
     <li>
         <b><a href="../javascript-grid-filter-set-mini-filter/">Mini Filter</a></b>: used to narrow the values
@@ -44,13 +43,11 @@ include '../documentation-main/documentation_header.php';
         <b>Filter Buttons</b>: Action buttons that can be optionally added to the bottom of the Set Filter.
     </li>
 </ul>
-</p>
-
 
 <h2>Enabling Set Filters</h2>
 
 <p>
-    The Set Filter is the default filter used in the ag-Grid Enterprise, however it can also be explicitly
+    The Set Filter is the default filter used in ag-Grid Enterprise, but it can also be explicitly
     configured as shown below:
 </p>
 
@@ -69,7 +66,7 @@ gridOptions: {
     // other options
 }
 SNIPPET
-    , 'ts') ?>
+, 'ts') ?>
 
 <p>
     The following example demonstrates how the Set Filter can be enabled. Note the following:
@@ -107,6 +104,7 @@ SNIPPET
 <p>
     Parameters that are specific to the Set Filter:
 </p>
+
 <?php createDocumentationFromFile('setFilterParams.json', 'filterParams') ?>
 
 <h2>Next Up</h2>
@@ -114,6 +112,5 @@ SNIPPET
 <p>
     Continue to the next section: <a href="../javascript-grid-filter-set-filter-list">Filter List</a>.
 </p>
-
 
 <?php include '../documentation-main/documentation_footer.php';?>

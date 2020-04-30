@@ -76,7 +76,7 @@ var colDef3 = function(params) {
 
 <p>
     Cell renderer components can be referenced by string or directly by class. They can be
-    <a href="../javascript-grid-provided-renderers/">Provided Cell Renderers</a> (they come
+    <a href="#provided-cell-renderers">Provided Cell Renderers</a> (that come
     with the grid) or <a href="../javascript-grid-cell-rendering-components/">Custom Cell
     Renderers</a> (built by you).
 </p>

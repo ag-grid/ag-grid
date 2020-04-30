@@ -40,28 +40,4 @@ const utils = {
     ...StringUtils,
 };
 
-if (NumberUtils.sum([
-    GeneralUtils,
-    ArrayUtils,
-    BrowserUtils,
-    CsvUtils,
-    DateUtils,
-    DomUtils,
-    EventUtils,
-    FunctionUtils,
-    FuzzyMatchUtils,
-    GenericUtils,
-    IconUtils,
-    KeyboardUtils,
-    MapUtils,
-    MouseUtils,
-    NumberUtils,
-    ObjectUtils,
-    RowNodeUtils,
-    SetUtils,
-    StringUtils,
-].map(x => Object.keys(x).length)) !== Object.keys(utils).length) {
-    throw new Error('Functions with the same name are being included from multiple sources into the general utils (_) class');
-}
-
 export const _ = utils;

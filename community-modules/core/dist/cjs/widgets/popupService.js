@@ -288,14 +288,6 @@ var PopupService = /** @class */ (function () {
         else {
             this.bringPopupToFront(eWrapper);
         }
-        // if the popup resizes, make sure that it's not sticking off the right hand side of the screen
-        var disconnectResizeObserver = this.resizeObserverService.observeResize(eChild, function () {
-            var childRect = eChild.getBoundingClientRect();
-            var parentRect = _this.getParentRect();
-            if (childRect.right >= parentRect.right) {
-                eChild.style.left = (parentRect.right - parentRect.left - childRect.width) + 'px';
-            }
-        });
         var popupHidden = false;
         var hidePopupOnKeyboardEvent = function (event) {
             var key = event.which || event.keyCode;
@@ -310,15 +302,12 @@ var PopupService = /** @class */ (function () {
             hidePopup(null, event);
         };
         var hidePopup = function (mouseEvent, touchEvent) {
-            var hiddenAt = new Date().getTime();
-            disconnectResizeObserver();
             if (
             // we don't hide popup if the event was on the child, or any
             // children of this child
             _this.isEventFromCurrentPopup(mouseEvent, touchEvent, eChild) ||
                 // if the event to close is actually the open event, then ignore it
-                (_this.isEventSameChainAsOriginalEvent(click, mouseEvent, touchEvent) &&
-                    Math.abs(processedAt - hiddenAt) < 10) ||
+                _this.isEventSameChainAsOriginalEvent(click, mouseEvent, touchEvent) ||
                 // this method should only be called once. the client can have different
                 // paths, each one wanting to close, so this method may be called multiple times.
                 popupHidden) {
@@ -468,9 +457,6 @@ var PopupService = /** @class */ (function () {
     __decorate([
         context_1.Autowired('eventService')
     ], PopupService.prototype, "eventService", void 0);
-    __decorate([
-        context_1.Autowired('resizeObserverService')
-    ], PopupService.prototype, "resizeObserverService", void 0);
     __decorate([
         context_1.PostConstruct
     ], PopupService.prototype, "init", null);

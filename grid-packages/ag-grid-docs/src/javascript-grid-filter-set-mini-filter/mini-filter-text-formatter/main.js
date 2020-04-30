@@ -22,20 +22,20 @@ var gridOptions = {
     }
 };
 
-function replaceAccents(s) {
-    var r = s.toLowerCase();
-    r = r.replace(new RegExp('[àáâãäå]', 'g'), 'a');
-    r = r.replace(new RegExp('æ', 'g'), 'ae');
-    r = r.replace(new RegExp('ç', 'g'), 'c');
-    r = r.replace(new RegExp('[èéêë]', 'g'), 'e');
-    r = r.replace(new RegExp('[ìíîï]', 'g'), 'i');
-    r = r.replace(new RegExp('ñ', 'g'), 'n');
-    r = r.replace(new RegExp('[òóôõøö]', 'g'), 'o');
-    r = r.replace(new RegExp('œ', 'g'), 'oe');
-    r = r.replace(new RegExp('[ùúûü]', 'g'), 'u');
-    r = r.replace(new RegExp('[ýÿ]', 'g'), 'y');
-    r = r.replace(new RegExp('\\W', 'g'), '');
-    return r;
+function replaceAccents(value) {
+    return value
+        .toLowerCase()
+        .replace(new RegExp('[àáâãäå]', 'g'), 'a')
+        .replace(new RegExp('æ', 'g'), 'ae')
+        .replace(new RegExp('ç', 'g'), 'c')
+        .replace(new RegExp('[èéêë]', 'g'), 'e')
+        .replace(new RegExp('[ìíîï]', 'g'), 'i')
+        .replace(new RegExp('ñ', 'g'), 'n')
+        .replace(new RegExp('[òóôõøö]', 'g'), 'o')
+        .replace(new RegExp('œ', 'g'), 'oe')
+        .replace(new RegExp('[ùúûü]', 'g'), 'u')
+        .replace(new RegExp('[ýÿ]', 'g'), 'y')
+        .replace(new RegExp('\\W', 'g'), '');
 }
 
 // setup the grid after the page has finished loading
