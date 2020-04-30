@@ -1,5 +1,5 @@
 <?php
-$pageTitle = "Row / Cell Edit";
+$pageTitle = "Client-Side Data - Single Row / Cell Updates";
 $pageDescription = "How to update specific cells or rows inside the grid.";
 $pageKeywords = "ag-Grid update rows and cells";
 $pageGroup = "feature";

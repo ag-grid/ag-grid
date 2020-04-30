@@ -1,5 +1,5 @@
 <?php
-$pageTitle = "ag-Grid - Working with Data: Accessing Data";
+$pageTitle = "Accessing Client-Side Data";
 $pageDescription = "ag-Grid is a feature-rich data grid supporting major JavaScript Frameworks. One such feature is Accessing Data. Once data is in the grid, you can Access the Data using the grid's API. Free and Commercial version available.";
 $pageKeywords = "ag-Grid Accessing Data";
 $pageGroup = "feature";
