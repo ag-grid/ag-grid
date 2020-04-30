@@ -66,7 +66,7 @@ include '../documentation-main/documentation_header.php';
                 custom animation between value changes (e.g. fade or slide old value out).
             </li>
             <li>
-                <a href="../javascript-grid-animation.">Row Animation</a> will not be applied. For example,
+                <a href="../javascript-grid-animation/">Row Animation</a> will not be applied. For example,
                 if the difference in data is one row is removed, all rows below will jump up one position
                 rather than having a smooth transition.
             </li>

@@ -76,7 +76,7 @@ SNIPPET
 <p>
     If you call <code>filterInstance.setModel()</code> this will both set and apply the model. However if
     using other methods provided by the filter instance (e.g. most of the
-    <a href="../javascript-grid-filter-set/#set-filter-api">Set Filter API</a> methods) then you must call
+    <a href="../javascript-grid-filter-set-api/">Set Filter API</a> methods) then you must call
     <code>filterInstance.applyModel()</code> to have the model applied. This step is necessary regardless
     of whether the Apply button is active or not.
 </p>
