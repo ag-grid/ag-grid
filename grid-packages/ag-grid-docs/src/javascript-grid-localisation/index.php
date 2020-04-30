@@ -267,22 +267,20 @@ SNIPPET
     default language).
 </p>
 
-<snippet>
+<?= createSnippet(<<<SNIPPET
 var gridOptions = {
-
     localeTextFunc: function(key, defaultValue) {
-
         // to avoid key clash with external keys, we add 'grid' to the start of each key.
         var gridKey = 'grid.' + key;
 
-        // look the value up. here we use the AngularJS 1.x $filter service, however you
+        // look the value up. here we use the AngularJS 1.x \$filter service, however you
         // can use whatever service you want, AngularJS 1.x or otherwise.
-        var value = $filter('translate')(gridKey);
+        var value = \$filter('translate')(gridKey);
         return value === gridKey ? defaultValue : value;
     }
-
     ...
 };
-</snippet>
+SNIPPET
+) ?>
 
 <?php include '../documentation-main/documentation_footer.php';?>

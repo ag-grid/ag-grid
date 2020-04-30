@@ -52,7 +52,7 @@ export default class PartialMatchFilter extends PolymerElement {
     }
 
     afterGuiAttached(params) {
-        this.$.input.focus();
+        this.\$.input.focus();
     }
 
     onChange(event) {
