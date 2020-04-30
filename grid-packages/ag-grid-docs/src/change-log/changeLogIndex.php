@@ -630,7 +630,7 @@ include('../includes/mediaHeader.php');
         <li>AG-685: Number and Date filter have an option to configure what to do when filtering <code>null</code>
             values.
             See: <a href="../javascript-grid-filtering#nullFiltering">Null filtering</a></li>
-        <li>AG-579: Excel an CSV export now works in all row models. If exporting outside of the Client-side Row Model
+        <li>AG-579: Excel an CSV export now works in all row models. If exporting outside of the Client-Side Row Model
             Only the data loaded for the currently displayed grid gets exported.
         </li>
         <li>The event 'itemsAdded' didn't make sense any more since introducing transaction updates in v11. So now the
@@ -1263,11 +1263,11 @@ include('../includes/mediaHeader.php');
     <b>Big Feature: Client Side Pagination (AG-91)</b>
 
     <p>
-        ag-Grid 9.0.x introduces <a href="../javascript-grid-pagination/">Client-side Pagination</a>. This replaces the
+        ag-Grid 9.0.x introduces <a href="../javascript-grid-pagination/">Client-Side Pagination</a>. This replaces the
         old 'pagination row model' which forced
         you to bring back pagination pages one page at a time from the server. The client side pagination works
         with all row models and paginates on the client side. This means you have pagination work with the default
-        Client-side Row Model (and do filtering, sorting, grouping, pivoting etc on the data on the client side),
+        Client-Side Row Model (and do filtering, sorting, grouping, pivoting etc on the data on the client side),
         or you can also put pagination in front of the viewport row model or Infinite Scrolling Row Model.
     </p>
 
@@ -1282,14 +1282,14 @@ include('../includes/mediaHeader.php');
 
     <b>Enhancements</b>
     <ul>
-        <li>Enhancement: New <a href="../javascript-grid-pagination/">Client-side pagination</a> that works with all row
+        <li>Enhancement: New <a href="../javascript-grid-pagination/">Client-Side pagination</a> that works with all row
             models.
         </li>
         <li>Enhancement: New event <i>bodyHeightChanged</i>, gets called when the body height changes,
             thus the number rows rendered may change. This is used by the grid for setting the page
             size when <i>paginationAutoPageSize=true</i>.
         </li>
-        <li>Enhancement: First pass of <a href="../javascript-grid-enterprise-model/">Server-side Row Model</a>,
+        <li>Enhancement: First pass of <a href="../javascript-grid-enterprise-model/">Server-Side Row Model</a>,
             to allow ag-Grid users to see work in progress for our server side filtering, sorting, grouping and
             aggregation.
         </li>

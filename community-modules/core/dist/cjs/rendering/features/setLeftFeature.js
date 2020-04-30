@@ -101,16 +101,6 @@ var SetLeftFeature = /** @class */ (function (_super) {
         return leftWidth + leftPosition;
     };
     SetLeftFeature.prototype.setLeft = function (value) {
-        // if the scrollbar appears on the left of the grid (rtl mode) and this column
-        // is pinned left, shift iot right buy the width of the scrollbar so that it
-        // aligns with the grid cells
-        var isScrolling = this.beans.scrollVisibleService.isVerticalScrollShowing();
-        var isRtl = this.beans.gridOptionsWrapper.isEnableRtl();
-        var isPinnedLeft = this.columnOrGroup.getPinned() === constants_1.Constants.PINNED_LEFT;
-        var shouldPadLeftForScrollbar = isScrolling && isRtl && isPinnedLeft;
-        if (shouldPadLeftForScrollbar) {
-            value += this.beans.gridOptionsWrapper.getScrollbarWidth();
-        }
         // if the value is null, then that means the column is no longer
         // displayed. there is logic in the rendering to fade these columns
         // out, so we don't try and change their left positions.

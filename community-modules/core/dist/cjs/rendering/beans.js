@@ -124,9 +124,6 @@ var Beans = /** @class */ (function () {
         context_1.Autowired('selectionController')
     ], Beans.prototype, "selectionController", void 0);
     __decorate([
-        context_1.Autowired('scrollVisibleService')
-    ], Beans.prototype, "scrollVisibleService", void 0);
-    __decorate([
         context_1.PostConstruct
     ], Beans.prototype, "postConstruct", null);
     Beans = __decorate([

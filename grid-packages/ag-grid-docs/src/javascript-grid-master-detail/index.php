@@ -675,16 +675,16 @@ var masterGridOptions = {
 
 <p>
     The master grid (i.e. the top level grid) in Master / Detail can be used in the
-    <a href="../javascript-grid-client-side-model/">Client-side</a> and
-    <a href="../javascript-grid-server-side-model-master-detail/">Server-side</a> Row Models.
+    <a href="../javascript-grid-client-side-model/">Client-Side</a> and
+    <a href="../javascript-grid-server-side-model-master-detail/">Server-Side</a> Row Models.
     However it is not supported with the <a href="../javascript-grid-viewport">Viewport</a> or
     <a href="../javascript-grid-infinite-scrolling">Infinite</a> Row Models.
 </p>
 
 <p>
     The detail grid (i.e. the child grid) can use any Row Model, as long as the
-    master grid uses the <a href="../javascript-grid-client-side-model/">Client-side</a> or
-    <a href="../javascript-grid-server-side-model-master-detail/">Server-side</a> Row Models, then the detail
+    master grid uses the <a href="../javascript-grid-client-side-model/">Client-Side</a> or
+    <a href="../javascript-grid-server-side-model-master-detail/">Server-Side</a> Row Models, then the detail
     grid can use any of the other row models.
 </p>
 

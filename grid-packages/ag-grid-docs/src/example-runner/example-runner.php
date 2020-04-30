@@ -391,6 +391,12 @@ function renderExampleExtras($config)
         'rxjs' => array(
             'scripts' => array('https://cdnjs.cloudflare.com/ajax/libs/rxjs/5.4.0/Rx.min.js')
         ),
+        'bluebirdjs' => array(
+            'scripts' => array(
+                'https://cdnjs.cloudflare.com/ajax/libs/bluebird/3.7.2/bluebird.core.min.js',
+                'https://cdnjs.cloudflare.com/ajax/libs/bluebird/3.7.2/bluebird.min.js'
+            )
+        ),
         'lodash' => array(
             'scripts' => array('https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.4/lodash.min.js')
         ),

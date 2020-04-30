@@ -1,12 +1,12 @@
 <?php
-$pageTitle = "Server-side operations with GraphQL and ag-Grid";
+$pageTitle = "Server-Side Operations With GraphQL and ag-Grid";
 $pageDescription = "ag-Grid is a feature-rich datagrid available in Free or Enterprise versions. This is a guide on how to perform server-side operations with Oracle and ag-Grid.";
-$pageKeywords = "Server-side operations with GraphQL";
+$pageKeywords = "Server-Side Operations With GraphQL";
 $pageGroup = "basics";
 include '../documentation-main/documentation_header.php';
 ?>
     <h1>
-        Server-side operations with GraphQL
+        Server-Side Operations With GraphQL
     </h1>
 
     <p class="lead">
@@ -16,7 +16,7 @@ include '../documentation-main/documentation_header.php';
 
     <p>
         This guide we will develop an Olympic Medals application that demonstrates how to integrate a GraphQL endpoint
-        with ag-Grid's <a href="/javascript-grid-server-side-model/">Server-side Row Model</a>. Specifically it will
+        with ag-Grid's <a href="/javascript-grid-server-side-model/">Server-Side Row Model</a>. Specifically it will
         show how data can be lazy-loaded as required, even when performing group, filter, sort operations when working
         with large datasets.
     </p>
@@ -253,10 +253,10 @@ app.listen(4000, () => {
     <p><img src="graphiql.png" width="100%" style="border: 1px solid grey"/></p>
 
 
-    <h2 id="server-side-datasource">Server-side Datasource</h2>
+    <h2 id="server-side-datasource">Server-Side Datasource</h2>
 
     <p>
-        In order to fetch data for the Server-side Row Model we must implement the <code>IServerSideDatasource</code>,
+        In order to fetch data for the Server-Side Row Model we must implement the <code>IServerSideDatasource</code>,
         which contains a single method <code>getRows(params)</code> which accepts request params from the grid.
     </p>
 
@@ -374,7 +374,7 @@ gridOptions.api.setServerSideDatasource(datasource);
     <h2 id="conclusion">Conclusion</h2>
 
     <p>
-        In this guide we presented a reference implementation for integrating the Server-side Row Model with GraphQL
+        In this guide we presented a reference implementation for integrating the Server-Side Row Model with GraphQL
         server hosted in node and connected to a MySQL database. This included all necessary configuration and install
         instructions.
     </p>

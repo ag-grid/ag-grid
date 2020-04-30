@@ -164,7 +164,7 @@ var FilterManager = /** @class */ (function () {
             return null;
         }
         if (!this.gridOptionsWrapper.isRowModelDefault()) {
-            console.warn('ag-grid: quick filtering only works with the Client-side Row Model');
+            console.warn('ag-grid: quick filtering only works with the Client-Side Row Model');
             return null;
         }
         return newFilter.toUpperCase();

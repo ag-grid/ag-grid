@@ -132,15 +132,8 @@ var HeaderRowComp = /** @class */ (function (_super) {
         this.setWidth();
     };
     HeaderRowComp.prototype.setWidth = function () {
-        if (this.pinned === Constants.PINNED_LEFT || this.pinned === Constants.PINNED_RIGHT) {
-            // for pinned columns, the row width is always the container width, which is sometimes
-            // slightly larger than the combined column width due to the scroll bar
-            this.getGui().style.width = '100%';
-        }
-        else {
-            var width = this.getWidthForRow();
-            this.getGui().style.width = width + 'px';
-        }
+        var width = this.getWidthForRow();
+        this.getGui().style.width = width + 'px';
     };
     HeaderRowComp.prototype.getWidthForRow = function () {
         var printLayout = this.gridOptionsWrapper.getDomLayout() === Constants.DOM_LAYOUT_PRINT;

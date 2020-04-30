@@ -30,7 +30,8 @@ var AgInputNumberField = /** @class */ (function (_super) {
         var _this = this;
         _super.prototype.postConstruct.call(this);
         this.addDestroyableEventListener(this.eInput, 'blur', function () {
-            var value = _this.normalizeValue(_this.eInput.value);
+            var floatedValue = parseFloat(_this.eInput.value);
+            var value = isNaN(floatedValue) ? '' : _this.normalizeValue(floatedValue.toString());
             if (_this.value !== value) {
                 _this.setValue(value);
             }

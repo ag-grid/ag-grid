@@ -6,7 +6,7 @@ $pageGroup = "feature";
 include '../documentation-main/documentation_header.php';
 ?>
 
-    <h1>Client-side Data - Immutable Data</h1>
+    <h1>Client-Side Data - Immutable Data</h1>
 
     <p class="lead">
         In some applications it's desirable to bind the grid's <code>rowData</code> property to an immutable
@@ -129,7 +129,7 @@ include '../documentation-main/documentation_header.php';
 
     <p>
         Below is a dataset with over 11,000 rows with Row Grouping and Aggregation over three columns.
-        As far as Client-side Row Data goes, this is a fairly complex grid. From the example, note
+        As far as Client-Side Row Data goes, this is a fairly complex grid. From the example, note
         the following:
     </p>
 

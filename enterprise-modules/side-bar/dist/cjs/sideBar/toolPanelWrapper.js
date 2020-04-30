@@ -32,7 +32,8 @@ var ToolPanelWrapper = /** @class */ (function (_super) {
     ToolPanelWrapper.prototype.setToolPanelDef = function (toolPanelDef) {
         this.toolPanelId = toolPanelDef.id;
         var params = {
-            api: this.gridOptionsWrapper.getApi()
+            api: this.gridOptionsWrapper.getApi(),
+            columnApi: this.gridOptionsWrapper.getColumnApi()
         };
         var componentPromise = this.userComponentFactory.newToolPanelComponent(toolPanelDef, params);
         if (componentPromise == null) {

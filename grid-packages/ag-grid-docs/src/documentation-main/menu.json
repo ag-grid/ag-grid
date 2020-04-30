@@ -415,7 +415,7 @@
         ]
       },
       {
-        "title": "Client-side Data",
+        "title": "Client-Side Data",
         "icon": "icon-data",
         "items": [
           {
@@ -473,7 +473,7 @@
         ]
       },
       {
-        "title": "Server-side Data",
+        "title": "Server-Side Data",
         "icon": "icon-data",
         "items": [
           {
@@ -482,7 +482,7 @@
             "showInCollapsed": true
           },
           {
-            "title": "Server-side Row Model",
+            "title": "Server-Side Row Model",
             "url": "javascript-grid-server-side-model/",
             "showInCollapsed": true,
             "enterprise": true,

@@ -4131,7 +4131,8 @@ var ColumnToolPanel = /** @class */ (function (_super) {
             suppressValues: false,
             suppressPivots: false,
             suppressSyncLayoutWithGrid: false,
-            api: this.gridApi
+            api: this.gridApi,
+            columnApi: this.columnApi
         };
         agGridCommunity._.mergeDeep(defaultParams, params);
         this.params = defaultParams;
@@ -4266,6 +4267,9 @@ var ColumnToolPanel = /** @class */ (function (_super) {
     __decorate$i([
         agGridCommunity.Autowired("gridApi")
     ], ColumnToolPanel.prototype, "gridApi", void 0);
+    __decorate$i([
+        agGridCommunity.Autowired("columnApi")
+    ], ColumnToolPanel.prototype, "columnApi", void 0);
     __decorate$i([
         agGridCommunity.Autowired("eventService")
     ], ColumnToolPanel.prototype, "eventService", void 0);
@@ -4564,7 +4568,8 @@ var ToolPanelWrapper = /** @class */ (function (_super) {
     ToolPanelWrapper.prototype.setToolPanelDef = function (toolPanelDef) {
         this.toolPanelId = toolPanelDef.id;
         var params = {
-            api: this.gridOptionsWrapper.getApi()
+            api: this.gridOptionsWrapper.getApi(),
+            columnApi: this.gridOptionsWrapper.getColumnApi()
         };
         var componentPromise = this.userComponentFactory.newToolPanelComponent(toolPanelDef, params);
         if (componentPromise == null) {
@@ -8903,7 +8908,8 @@ var FiltersToolPanelListPanel = /** @class */ (function (_super) {
             suppressExpandAll: false,
             suppressFilterSearch: false,
             suppressSyncLayoutWithGrid: false,
-            api: this.gridApi
+            api: this.gridApi,
+            columnApi: this.columnApi
         };
         agGridCommunity._.mergeDeep(defaultParams, params);
         this.params = defaultParams;
@@ -9207,6 +9213,9 @@ var FiltersToolPanelListPanel = /** @class */ (function (_super) {
         agGridCommunity.Autowired("gridApi")
     ], FiltersToolPanelListPanel.prototype, "gridApi", void 0);
     __decorate$A([
+        agGridCommunity.Autowired("columnApi")
+    ], FiltersToolPanelListPanel.prototype, "columnApi", void 0);
+    __decorate$A([
         agGridCommunity.Autowired("eventService")
     ], FiltersToolPanelListPanel.prototype, "eventService", void 0);
     __decorate$A([
@@ -9250,7 +9259,8 @@ var FiltersToolPanel = /** @class */ (function (_super) {
             suppressExpandAll: false,
             suppressFilterSearch: false,
             suppressSyncLayoutWithGrid: false,
-            api: this.gridApi
+            api: this.gridApi,
+            columnApi: this.columnApi
         };
         agGridCommunity._.mergeDeep(defaultParams, params);
         this.params = defaultParams;
@@ -9317,10 +9327,13 @@ var FiltersToolPanel = /** @class */ (function (_super) {
         agGridCommunity.RefSelector('filtersToolPanelListPanel')
     ], FiltersToolPanel.prototype, "filtersToolPanelListPanel", void 0);
     __decorate$B([
-        agGridCommunity.Autowired("gridApi")
+        agGridCommunity.Autowired('gridApi')
     ], FiltersToolPanel.prototype, "gridApi", void 0);
     __decorate$B([
-        agGridCommunity.Autowired("eventService")
+        agGridCommunity.Autowired('columnApi')
+    ], FiltersToolPanel.prototype, "columnApi", void 0);
+    __decorate$B([
+        agGridCommunity.Autowired('eventService')
     ], FiltersToolPanel.prototype, "eventService", void 0);
     __decorate$B([
         agGridCommunity.Autowired('columnController')
@@ -27701,7 +27714,7 @@ var HistogramSeriesPanel = /** @class */ (function (_super) {
     HistogramSeriesPanel.prototype.initBins = function () {
         var _this = this;
         this.seriesBinCountSlider
-            .setLabel(this.chartTranslator.translate("histogramBinsCount"))
+            .setLabel(this.chartTranslator.translate("histogramBinCount"))
             .setMinValue(4)
             .setMaxValue(100)
             .setTextFieldWidth(45)
@@ -28743,7 +28756,7 @@ var __extends$1M = (undefined && undefined.__extends) || (function () {
 var MiniHistogram = /** @class */ (function (_super) {
     __extends$1M(MiniHistogram, _super);
     function MiniHistogram(container, fills, strokes) {
-        var _this = _super.call(this, container, "groupedColumnTooltip") || this;
+        var _this = _super.call(this, container, "histogramTooltip") || this;
         var padding = _this.padding;
         var size = _this.size;
         // approx normal curve
@@ -30674,6 +30687,7 @@ var ChartTranslator = /** @class */ (function () {
         predefined: 'Predefined',
         fillOpacity: 'Fill Opacity',
         strokeOpacity: 'Line Opacity',
+        histogramBinCount: 'Bin count',
         columnGroup: 'Column',
         barGroup: 'Bar',
         pieGroup: 'Pie',
@@ -30681,7 +30695,6 @@ var ChartTranslator = /** @class */ (function () {
         scatterGroup: 'X Y (Scatter)',
         areaGroup: 'Area',
         histogramGroup: 'Histogram',
-        histogramBinsCount: 'Bin count',
         groupedColumnTooltip: 'Grouped',
         stackedColumnTooltip: 'Stacked',
         normalizedColumnTooltip: '100% Stacked',
@@ -30694,9 +30707,9 @@ var ChartTranslator = /** @class */ (function () {
         groupedAreaTooltip: 'Area',
         stackedAreaTooltip: 'Stacked',
         normalizedAreaTooltip: '100% Stacked',
-        histogramChart: 'Histogram',
         scatterTooltip: 'Scatter',
         bubbleTooltip: 'Bubble',
+        histogramTooltip: 'Histogram',
         noDataToChart: 'No data available to be charted.',
         pivotChartRequiresPivotMode: 'Pivot Chart requires Pivot Mode enabled.',
     };
@@ -33147,7 +33160,8 @@ var EnterpriseMenu = /** @class */ (function (_super) {
             suppressColumnSelectAll: false,
             suppressSideButtons: false,
             suppressSyncLayoutWithGrid: false,
-            api: this.gridApi
+            api: this.gridApi,
+            columnApi: this.columnApi
         });
         agGridCommunity._.addCssClass(this.columnSelectPanel.getGui(), 'ag-menu-column-select');
         eWrapperDiv.appendChild(this.columnSelectPanel.getGui());
@@ -33205,6 +33219,9 @@ var EnterpriseMenu = /** @class */ (function (_super) {
     __decorate$1q([
         agGridCommunity.Autowired('gridApi')
     ], EnterpriseMenu.prototype, "gridApi", void 0);
+    __decorate$1q([
+        agGridCommunity.Autowired('columnApi')
+    ], EnterpriseMenu.prototype, "columnApi", void 0);
     __decorate$1q([
         agGridCommunity.Autowired('gridOptionsWrapper')
     ], EnterpriseMenu.prototype, "gridOptionsWrapper", void 0);

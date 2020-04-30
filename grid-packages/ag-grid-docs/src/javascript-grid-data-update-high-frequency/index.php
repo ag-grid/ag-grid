@@ -6,7 +6,7 @@ $pageGroup = "feature";
 include '../documentation-main/documentation_header.php';
 ?>
 
-    <h1>Client-side Data - High Frequency Updates</h1>
+    <h1>Client-Side Data - High Frequency Updates</h1>
 
     <p class="lead">
         High Frequency Updates relates to lots of updates in high succession going into the grid.

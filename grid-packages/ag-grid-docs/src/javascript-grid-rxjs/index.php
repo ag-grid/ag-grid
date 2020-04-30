@@ -43,7 +43,7 @@ updates$.subscribe((updates) =&gt; {
     <p>With these two pieces of code we can supply the updates to ag-Grid and the grid will only re-render the changes rows, resulting
     in much improved performance.</p>
 
-    <?= grid_example('RxJS - Row Updates', 'rxjs-updates', 'generated', ['enterprise' => true, 'extras' => ['lodash', 'rxjs']]) ?>
+    <?= grid_example('RxJS - Row Updates', 'rxjs-updates', 'generated', ['enterprise' => true, 'extras' => ['lodash', 'rxjs', 'bluebirdjs']]) ?>
 
     <h2>Option 2 - Providing Full Row Data With Updates Within</h2>
 
@@ -71,7 +71,7 @@ const gridOptions = {
     <p>With these configuration we can supply the updates to ag-Grid and the grid will only re-render the changes rows, resulting
         in much improved performance.</p>
 
-    <?= grid_example('RxJS - Full Updates', 'rxjs-full', 'generated', ['enterprise' => true, 'extras' => ['lodash', 'rxjs']]) ?>
+    <?= grid_example('RxJS - Full Updates', 'rxjs-full', 'generated', ['enterprise' => true, 'extras' => ['lodash', 'rxjs', 'bluebirdjs']]) ?>
 
 
 

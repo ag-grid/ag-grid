@@ -38,7 +38,7 @@
             "description": "Allows you to pass tree structure data to the grid, or row data that is already grouped."
         },
         "getChildCount(data)": {
-            "description": "(For <a href='../javascript-grid-server-side-model/'>Server-side Row Model</a> only) Allows setting the child count for a group row."
+            "description": "(For <a href='../javascript-grid-server-side-model/'>Server-Side Row Model</a> only) Allows setting the child count for a group row."
         },
         "processRowPostCreate(params)": {
             "description": "Allows you to process rows after they are created, so you can do final adding of custom attributes etc."

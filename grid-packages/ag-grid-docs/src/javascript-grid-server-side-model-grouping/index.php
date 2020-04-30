@@ -1,15 +1,15 @@
 <?php
-$pageTitle = "Server-side Row Model - Row Grouping";
-$pageDescription = "ag-Grid is a feature-rich datagrid available in Free or Enterprise versions. There are four available Row Models, the Server-side Row Model is arguably the most powerful giving the ultimate 'big data' user experience. Users navigate through very large data sets using a mixture of Server-side grouping and aggregation while using infinite scrolling to bring the data back in blocks to the client.";
-$pageKeywords = "ag-Grid Server-side Row Model";
+$pageTitle = "Server-Side Row Model - Row Grouping";
+$pageDescription = "ag-Grid is a feature-rich datagrid available in Free or Enterprise versions. There are four available Row Models, the Server-Side Row Model is arguably the most powerful giving the ultimate 'big data' user experience. Users navigate through very large data sets using a mixture of server-side grouping and aggregation while using infinite scrolling to bring the data back in blocks to the client.";
+$pageKeywords = "ag-Grid Server-Side Row Model";
 $pageGroup = "row_models";
 include '../documentation-main/documentation_header.php';
 ?>
 
-<h1 class="heading-enterprise">Server-side Row Grouping</h1>
+<h1 class="heading-enterprise">Server-Side Row Grouping</h1>
 
 <p class="lead">
-    This section covers Server-side Row Grouping.
+    This section covers Server-Side Row Grouping.
 </p>
 
 <h2>Enabling Row Grouping</h2>
@@ -38,9 +38,9 @@ gridOptions: {
 <h2>Row Grouping on the Server</h2>
 
 <p>
-    The actual grouping of rows is performed on the server when using the Server-side Row Model. When the grid needs
+    The actual grouping of rows is performed on the server when using the Server-Side Row Model. When the grid needs
     more rows it makes a request via <code>getRows(params)</code> on the
-    <a href="../javascript-grid-server-side-model-datasource/#datasource-interface">Server-side Datasource</a> with
+    <a href="../javascript-grid-server-side-model-datasource/#datasource-interface">Server-Side Datasource</a> with
     metadata containing pivoting details.
 </p>
 
@@ -66,7 +66,7 @@ gridOptions: {
     on, i.e. 'Country', 'Year', and <code>groupKeys</code> contains the list of group keys selected, i.e. ['Argentina', 2012].
 </p>
 
-<h2>Example: Server-side Row Grouping</h2>
+<h2>Example: Server-Side Row Grouping</h2>
 
 <p>
     The example below demonstrates server-side Row Grouping. Note the following:
@@ -101,7 +101,7 @@ gridOptions: {
 <h2>Group Caches</h2>
 
 <p>
-    The <a href="../javascript-grid-server-side-model-configuration/#server-side-cache">Server-side Cache</a> has already
+    The <a href="../javascript-grid-server-side-model-configuration/#server-side-cache">Server-Side Cache</a> has already
     been covered, however it is important to note that when rows are grouped each group node contains a cache. This is
     illustrated in the following diagram:</p>
 
@@ -110,7 +110,7 @@ gridOptions: {
 </p>
 
 <p>When a group node is expanded, such as 'Australia' above, a cache will be created and blocks containing rows will be
-   loaded via the <a href="../javascript-grid-server-side-model-datasource/#datasource-interface">Server-side Datasource</a>.
+   loaded via the <a href="../javascript-grid-server-side-model-datasource/#datasource-interface">Server-Side Datasource</a>.
 </p>
 
 <h2>Providing Child Counts</h2>
@@ -203,7 +203,7 @@ gridOptions: {
 
 <p>
     This can be achieved by expanding row nodes as blocks are loaded in the
-    <a href="../javascript-grid-server-side-model-datasource/">Server-side Datasource</a>. The following
+    <a href="../javascript-grid-server-side-model-datasource/">Server-Side Datasource</a>. The following
     snippet outlines a possible approach:
 </p>
 
@@ -288,7 +288,7 @@ function getRows(params) {
 <h2>Next Up</h2>
 
 <p>
-    Continue to the next section to learn how to perform <a href="../javascript-grid-server-side-model-pivoting/">Server-side Pivoting</a>.
+    Continue to the next section to learn how to perform <a href="../javascript-grid-server-side-model-pivoting/">Server-Side Pivoting</a>.
 </p>
 
 <?php include '../documentation-main/documentation_footer.php';?>

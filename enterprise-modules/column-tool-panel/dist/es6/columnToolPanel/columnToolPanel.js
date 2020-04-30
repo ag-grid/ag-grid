@@ -19,7 +19,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 };
 import { _, Autowired, Component, Events, ModuleNames, ModuleRegistry } from "@ag-grid-community/core";
 import { PivotModePanel } from "./pivotModePanel";
-import { RowGroupDropZonePanel, ValuesDropZonePanel, PivotDropZonePanel } from "@ag-grid-enterprise/row-grouping";
+import { PivotDropZonePanel, RowGroupDropZonePanel, ValuesDropZonePanel } from "@ag-grid-enterprise/row-grouping";
 var ColumnToolPanel = /** @class */ (function (_super) {
     __extends(ColumnToolPanel, _super);
     function ColumnToolPanel() {
@@ -47,7 +47,8 @@ var ColumnToolPanel = /** @class */ (function (_super) {
             suppressValues: false,
             suppressPivots: false,
             suppressSyncLayoutWithGrid: false,
-            api: this.gridApi
+            api: this.gridApi,
+            columnApi: this.columnApi
         };
         _.mergeDeep(defaultParams, params);
         this.params = defaultParams;
@@ -186,6 +187,9 @@ var ColumnToolPanel = /** @class */ (function (_super) {
     __decorate([
         Autowired("gridApi")
     ], ColumnToolPanel.prototype, "gridApi", void 0);
+    __decorate([
+        Autowired("columnApi")
+    ], ColumnToolPanel.prototype, "columnApi", void 0);
     __decorate([
         Autowired("eventService")
     ], ColumnToolPanel.prototype, "eventService", void 0);

@@ -1,11 +1,11 @@
 // This fake server uses http://alasql.org/ to mimic how a real server
-// might generate sql queries from the Server-side Row Model request.
+// might generate sql queries from the Server-Side Row Model request.
 // To keep things simple it does the bare minimum to support the example.
 function FakeServer(allData) {
     alasql.options.cache = false;
 
     return {
-        getData: function (request) {
+        getData: function(request) {
             var results = executeQuery(request);
             return {
                 success: true,

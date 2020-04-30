@@ -35,12 +35,12 @@ export class TabbedLayout extends ManagedTabComponent {
         switch (e.keyCode) {
             case Constants.KEY_RIGHT:
             case Constants.KEY_LEFT:
-                e.preventDefault();
                 if (!this.eHeader.contains(document.activeElement)) { return; }
                 const currentPosition = this.items.indexOf(this.activeItem);
                 const nextPosition = e.keyCode === Constants.KEY_RIGHT ? Math.min(currentPosition + 1, this.items.length - 1) : Math.max(currentPosition - 1, 0);
 
                 if (currentPosition === nextPosition) { return; }
+                e.preventDefault();
                 const nextItem = this.items[nextPosition];
 
                 this.showItemWrapper(nextItem);

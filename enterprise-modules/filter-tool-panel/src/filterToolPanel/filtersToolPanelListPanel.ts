@@ -3,6 +3,7 @@ import {
     AbstractColDef,
     Autowired,
     Column,
+    ColumnApi,
     ColumnController,
     Component,
     Events,
@@ -23,6 +24,7 @@ export class FiltersToolPanelListPanel extends Component {
     private static TEMPLATE = `<div class="ag-filter-list-panel"></div>`;
 
     @Autowired("gridApi") private gridApi: GridApi;
+    @Autowired("columnApi") private columnApi: ColumnApi;
     @Autowired("eventService") private eventService: EventService;
     @Autowired('toolPanelColDefService') private toolPanelColDefService: ToolPanelColDefService;
     @Autowired('columnController') private columnController: ColumnController;
@@ -46,7 +48,8 @@ export class FiltersToolPanelListPanel extends Component {
             suppressExpandAll: false,
             suppressFilterSearch: false,
             suppressSyncLayoutWithGrid: false,
-            api: this.gridApi
+            api: this.gridApi,
+            columnApi: this.columnApi
         };
         _.mergeDeep(defaultParams, params);
         this.params = defaultParams;

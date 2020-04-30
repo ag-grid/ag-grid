@@ -995,8 +995,9 @@
     justify-content: center;
     cursor: pointer; }
   .ag-theme-bootstrap .ag-keyboard-focus .ag-tab:focus {
-    outline: 1px solid;
-    outline: var(--ag-input-focus-border-color);
+    outline-width: 1px;
+    outline-style: solid;
+    outline-color: var(--ag-input-focus-border-color);
     outline-offset: -4px; }
   .ag-theme-bootstrap .ag-tab-selected {
     border-bottom-color: #000;

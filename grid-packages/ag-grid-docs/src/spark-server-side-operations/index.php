@@ -1,12 +1,12 @@
 <?php
-$pageTitle = "Server-side operations with Apache Spark and ag-Grid";
+$pageTitle = "Server-Side Operations With Apache Spark and ag-Grid";
 $pageDescription = "ag-Grid is a feature-rich datagrid available in Free or Enterprise versions. This is a guide on how to perform server-side operations with Apache Spark and ag-Grid";
-$pageKeywords = "Server-side operations with the Apache Spark";
+$pageKeywords = "Server-Side Operations With Apache Spark";
 $pageGroup = "basics";
 include '../documentation-main/documentation_header.php';
 ?>
     <h1 id="spark-enterprise">
-        Server-side operations with Java & Spark
+        Server-Side Operations With Java &amp; Spark
     </h1>
 
     <p class="lead">
@@ -20,7 +20,7 @@ include '../documentation-main/documentation_header.php';
 
     <p>
         This guide will show how to combine Apache Spark's powerful server side transformations with ag-Grid's
-        <a href="/javascript-grid-server-side-model/">Server-side Row Model</a> to create interactive reports
+        <a href="/javascript-grid-server-side-model/">Server-Side Row Model</a> to create interactive reports
         for big data analytics.
     </p>
 
@@ -82,7 +82,7 @@ include '../documentation-main/documentation_header.php';
 
     <p>
         Before preceding with this guide be sure to review the <a href="/oracle-server-side-operations/#overview">Row Model Overview</a>
-        as it provides some context for choosing the Server-side Row Model for big data applications.
+        as it provides some context for choosing the Server-Side Row Model for big data applications.
     </p>
 
     <h2 id="prerequisites">Prerequisites</h2>
@@ -195,7 +195,7 @@ public class OlympicMedalDataLoader {
 
     <p>To test the application point your browser to: <code>localhost:9090</code></p>
 
-    <h2 id="enterprise-datasource">Server-side Get Rows Request</h2>
+    <h2 id="enterprise-datasource">Server-Side Get Rows Request</h2>
 
     <p>Our Java service will use the following request:</p>
 
@@ -233,7 +233,7 @@ public class ServerSideGetRowsRequest implements Serializable {
 
     <p>
         We will discuss this in detail throughout this guide, however for more details see:
-        <a href="/javascript-grid-server-side-model/#server-side-datasource">Server-side Datasource</a>.
+        <a href="/javascript-grid-server-side-model/#server-side-datasource">Server-Side Datasource</a>.
     </p>
 
     <h2 id="service-controller">Service Controller</h2>
@@ -673,7 +673,7 @@ private DataResult paginate(Dataset&lt;Row> df, int startRow, int endRow) {
     <h2 id="conclusion">Conclusion</h2>
 
     <p>
-        In this guide we presented a reference implementation for integrating the Server-side Row Model with a Java
+        In this guide we presented a reference implementation for integrating the Server-Side Row Model with a Java
         service connected to Apache Spark. This included all necessary configuration and install instructions.
     </p>
 

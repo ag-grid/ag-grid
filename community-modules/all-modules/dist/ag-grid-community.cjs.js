@@ -8949,7 +8949,7 @@ var GridOptionsWrapper = /** @class */ (function () {
             console.warn("ag-Grid: groupRemoveSingleChildren and groupHideOpenParents do not work with each other, you need to pick one. And don't ask us how to us these together on our support forum either you will get the same answer!");
         }
         if (this.isRowModelServerSide()) {
-            var msg = function (prop) { return "ag-Grid: '" + prop + "' is not supported on the Server-side Row Model"; };
+            var msg = function (prop) { return "ag-Grid: '" + prop + "' is not supported on the Server-Side Row Model"; };
             if (_.exists(this.gridOptions.groupDefaultExpanded)) {
                 console.warn(msg('groupDefaultExpanded'));
             }
@@ -11475,8 +11475,8 @@ var DEFAULT_TRANSLATIONS = {
     lessThanOrEqual: 'Less than or equals',
     greaterThanOrEqual: 'Greater than or equals',
     filterOoo: 'Filter...',
-    rangeStart: 'From',
-    rangeEnd: 'To',
+    inRangeStart: 'From',
+    inRangeEnd: 'To',
     contains: 'Contains',
     notContains: 'Not contains',
     startsWith: 'Starts with',
@@ -15174,10 +15174,10 @@ var NumberFilter = /** @class */ (function (_super) {
         var translate = this.translate.bind(this);
         var isRange1 = this.getCondition1Type() === ScalarFilter.IN_RANGE;
         var isRange2 = this.getCondition2Type() === ScalarFilter.IN_RANGE;
-        this.eValueFrom1.setInputPlaceholder(translate(isRange1 ? 'rangeStart' : 'filterOoo'));
-        this.eValueTo1.setInputPlaceholder(translate(isRange1 ? 'rangeEnd' : 'filterOoo'));
-        this.eValueFrom2.setInputPlaceholder(translate(isRange2 ? 'rangeStart' : 'filterOoo'));
-        this.eValueTo2.setInputPlaceholder(translate(isRange2 ? 'rangeEnd' : 'filterOoo'));
+        this.eValueFrom1.setInputPlaceholder(translate(isRange1 ? 'inRangeStart' : 'filterOoo'));
+        this.eValueTo1.setInputPlaceholder(translate(isRange1 ? 'inRangeEnd' : 'filterOoo'));
+        this.eValueFrom2.setInputPlaceholder(translate(isRange2 ? 'inRangeStart' : 'filterOoo'));
+        this.eValueTo2.setInputPlaceholder(translate(isRange2 ? 'inRangeEnd' : 'filterOoo'));
     };
     NumberFilter.prototype.afterGuiAttached = function (params) {
         _super.prototype.afterGuiAttached.call(this, params);
@@ -22414,16 +22414,6 @@ var SetLeftFeature = /** @class */ (function (_super) {
         return leftWidth + leftPosition;
     };
     SetLeftFeature.prototype.setLeft = function (value) {
-        // if the scrollbar appears on the left of the grid (rtl mode) and this column
-        // is pinned left, shift iot right buy the width of the scrollbar so that it
-        // aligns with the grid cells
-        var isScrolling = this.beans.scrollVisibleService.isVerticalScrollShowing();
-        var isRtl = this.beans.gridOptionsWrapper.isEnableRtl();
-        var isPinnedLeft = this.columnOrGroup.getPinned() === Constants.PINNED_LEFT;
-        var shouldPadLeftForScrollbar = isScrolling && isRtl && isPinnedLeft;
-        if (shouldPadLeftForScrollbar) {
-            value += this.beans.gridOptionsWrapper.getScrollbarWidth();
-        }
         // if the value is null, then that means the column is no longer
         // displayed. there is logic in the rendering to fade these columns
         // out, so we don't try and change their left positions.
@@ -23735,15 +23725,8 @@ var HeaderRowComp = /** @class */ (function (_super) {
         this.setWidth();
     };
     HeaderRowComp.prototype.setWidth = function () {
-        if (this.pinned === Constants.PINNED_LEFT || this.pinned === Constants.PINNED_RIGHT) {
-            // for pinned columns, the row width is always the container width, which is sometimes
-            // slightly larger than the combined column width due to the scroll bar
-            this.getGui().style.width = '100%';
-        }
-        else {
-            var width = this.getWidthForRow();
-            this.getGui().style.width = width + 'px';
-        }
+        var width = this.getWidthForRow();
+        this.getGui().style.width = width + 'px';
     };
     HeaderRowComp.prototype.getWidthForRow = function () {
         var printLayout = this.gridOptionsWrapper.getDomLayout() === Constants.DOM_LAYOUT_PRINT;
@@ -24916,7 +24899,7 @@ var FilterManager = /** @class */ (function () {
             return null;
         }
         if (!this.gridOptionsWrapper.isRowModelDefault()) {
-            console.warn('ag-grid: quick filtering only works with the Client-side Row Model');
+            console.warn('ag-grid: quick filtering only works with the Client-Side Row Model');
             return null;
         }
         return newFilter.toUpperCase();
@@ -32480,9 +32463,6 @@ var Beans = /** @class */ (function () {
         Autowired('selectionController')
     ], Beans.prototype, "selectionController", void 0);
     __decorate$1p([
-        Autowired('scrollVisibleService')
-    ], Beans.prototype, "scrollVisibleService", void 0);
-    __decorate$1p([
         PostConstruct
     ], Beans.prototype, "postConstruct", null);
     Beans = __decorate$1p([
@@ -35280,7 +35260,8 @@ var AgInputNumberField = /** @class */ (function (_super) {
         var _this = this;
         _super.prototype.postConstruct.call(this);
         this.addDestroyableEventListener(this.eInput, 'blur', function () {
-            var value = _this.normalizeValue(_this.eInput.value);
+            var floatedValue = parseFloat(_this.eInput.value);
+            var value = isNaN(floatedValue) ? '' : _this.normalizeValue(floatedValue.toString());
             if (_this.value !== value) {
                 _this.setValue(value);
             }
@@ -37185,7 +37166,6 @@ var TabbedLayout = /** @class */ (function (_super) {
         switch (e.keyCode) {
             case Constants.KEY_RIGHT:
             case Constants.KEY_LEFT:
-                e.preventDefault();
                 if (!this.eHeader.contains(document.activeElement)) {
                     return;
                 }
@@ -37194,6 +37174,7 @@ var TabbedLayout = /** @class */ (function (_super) {
                 if (currentPosition === nextPosition) {
                     return;
                 }
+                e.preventDefault();
                 var nextItem = this.items[nextPosition];
                 this.showItemWrapper(nextItem);
                 nextItem.eHeaderButton.focus();

@@ -3,18 +3,20 @@ import {
     Autowired,
     ColDef,
     ColGroupDef,
+    ColumnApi,
     Component,
-    EventService,
     Events,
+    EventService,
     GridApi,
     GridOptionsWrapper,
+    IColumnToolPanel,
     IToolPanelComp,
     IToolPanelParams,
     ModuleNames,
-    IColumnToolPanel, ModuleRegistry
+    ModuleRegistry
 } from "@ag-grid-community/core";
 import {PivotModePanel} from "./pivotModePanel";
-import {RowGroupDropZonePanel, ValuesDropZonePanel, PivotDropZonePanel } from "@ag-grid-enterprise/row-grouping"
+import {PivotDropZonePanel, RowGroupDropZonePanel, ValuesDropZonePanel} from "@ag-grid-enterprise/row-grouping"
 import {PrimaryColsPanel} from "./primaryColsPanel";
 
 export interface ToolPanelColumnCompParams extends IToolPanelParams {
@@ -36,6 +38,7 @@ export class ColumnToolPanel extends Component implements IColumnToolPanel, IToo
 
     @Autowired("gridOptionsWrapper") private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired("gridApi") private gridApi: GridApi;
+    @Autowired("columnApi") private columnApi: ColumnApi;
     @Autowired("eventService") private eventService: EventService;
 
     private initialised = false;
@@ -73,8 +76,10 @@ export class ColumnToolPanel extends Component implements IColumnToolPanel, IToo
             suppressValues: false,
             suppressPivots: false,
             suppressSyncLayoutWithGrid: false,
-            api: this.gridApi
+            api: this.gridApi,
+            columnApi: this.columnApi
         };
+
         _.mergeDeep(defaultParams, params);
         this.params = defaultParams;
 

@@ -16,6 +16,29 @@
         @include ag-color-property(color, header-foreground-color);
     }
 
+    %ag-pinned-row-end {
+        content: '';
+        position: absolute;
+        height: calc(100% - 20px);
+        top: 10px;
+        width: 1px;
+        @include ag-color-property(background-color, border-color);
+    }
+
+    .ag-ltr {
+        .ag-pinned-right-header .ag-header-row:after {
+            @extend %ag-pinned-row-end;
+            right: 0;
+        }
+    }
+
+    .ag-rtl {
+        .ag-pinned-left-header .ag-header-row:before {
+            @extend %ag-pinned-row-end;
+            left: 0;
+        }
+    }
+
     .ag-row {
         font-size: ag-param(font-size) + 1;
     }

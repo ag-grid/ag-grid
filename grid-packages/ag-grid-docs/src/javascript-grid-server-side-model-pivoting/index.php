@@ -1,16 +1,16 @@
 <?php
-$pageTitle = "Server-side Row Model - Pivoting";
-$pageDescription = "ag-Grid is a feature-rich datagrid available in Free or Enterprise versions. There are four available Row Models, the Server-side Row Model is arguably the most powerful giving the ultimate 'big data' user experience. Users navigate through very large data sets using a mixture of Server-side grouping and aggregation while using infinite scrolling to bring the data back in blocks to the client.";
-$pageKeywords = "ag-Grid Server-side Row Model";
+$pageTitle = "Server-Side Row Model - Pivoting";
+$pageDescription = "ag-Grid is a feature-rich datagrid available in Free or Enterprise versions. There are four available Row Models, the Server-Side Row Model is arguably the most powerful giving the ultimate 'big data' user experience. Users navigate through very large data sets using a mixture of server-side grouping and aggregation while using infinite scrolling to bring the data back in blocks to the client.";
+$pageKeywords = "ag-Grid Server-Side Row Model";
 $pageGroup = "row_models";
 include '../documentation-main/documentation_header.php';
 ?>
 
-<h1 class="heading-enterprise"> Server-side Pivoting </h1>
+<h1 class="heading-enterprise"> Server-Side Pivoting </h1>
 
 <p class="lead">
-    In this section we add Server-side Pivoting to create an example with the ability to 'Slice and Dice' data using
-    the Server-side Row model.
+    In this section we add Server-Side Pivoting to create an example with the ability to 'Slice and Dice' data using
+    the Server-Side Row model.
 </p>
 
 <h2>Enabling Pivoting</h2>
@@ -44,9 +44,9 @@ gridOptions: {
 <h2>Pivoting on the Server</h2>
 
 <p>
-    The actual pivoting is performed on the server when using the Server-side Row Model. When the grid needs more
+    The actual pivoting is performed on the server when using the Server-Side Row Model. When the grid needs more
     rows it makes a request via <code>getRows(params)</code> on the
-    <a href="../javascript-grid-server-side-model-datasource/#datasource-interface">Server-side Datasource</a> with
+    <a href="../javascript-grid-server-side-model-datasource/#datasource-interface">Server-Side Datasource</a> with
     metadata containing row grouping details.
 </p>
 
@@ -226,7 +226,7 @@ columnApi.setSecondaryColumns(pivotColDefs);
 <h2>Next Up</h2>
 
 <p>
-    Continue to the next section to learn about <a href="../javascript-grid-server-side-model-pagination/">Server-side Pagination</a>.
+    Continue to the next section to learn about <a href="../javascript-grid-server-side-model-pagination/">Server-Side Pagination</a>.
 </p>
 
 <?php include '../documentation-main/documentation_footer.php';?>

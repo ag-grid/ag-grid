@@ -373,7 +373,8 @@ var EnterpriseMenu = /** @class */ (function (_super) {
             suppressColumnSelectAll: false,
             suppressSideButtons: false,
             suppressSyncLayoutWithGrid: false,
-            api: this.gridApi
+            api: this.gridApi,
+            columnApi: this.columnApi
         });
         core_1._.addCssClass(this.columnSelectPanel.getGui(), 'ag-menu-column-select');
         eWrapperDiv.appendChild(this.columnSelectPanel.getGui());
@@ -431,6 +432,9 @@ var EnterpriseMenu = /** @class */ (function (_super) {
     __decorate([
         core_1.Autowired('gridApi')
     ], EnterpriseMenu.prototype, "gridApi", void 0);
+    __decorate([
+        core_1.Autowired('columnApi')
+    ], EnterpriseMenu.prototype, "columnApi", void 0);
     __decorate([
         core_1.Autowired('gridOptionsWrapper')
     ], EnterpriseMenu.prototype, "gridOptionsWrapper", void 0);

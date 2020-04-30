@@ -86,7 +86,7 @@ var HistogramSeriesPanel = /** @class */ (function (_super) {
     HistogramSeriesPanel.prototype.initBins = function () {
         var _this = this;
         this.seriesBinCountSlider
-            .setLabel(this.chartTranslator.translate("histogramBinsCount"))
+            .setLabel(this.chartTranslator.translate("histogramBinCount"))
             .setMinValue(4)
             .setMaxValue(100)
             .setTextFieldWidth(45)

@@ -72,8 +72,8 @@ var gridOptions = {
         lessThanOrEqual: 'daLessThanOrEqual',
         greaterThanOrEqual: 'daGreaterThanOrEqual',
         inRange: 'daInRange',
-        inRangeStart: 'daRangeStart',
-        inRangeEnd: 'daRangeEnd',
+        inRangeStart: 'daTo',
+        inRangeEnd: 'daFrom',
 
         // for text filter
         contains: 'daContains',
@@ -156,6 +156,8 @@ var gridOptions = {
         area: 'laArea',
         stackedArea: 'laStacked',
         normalizedArea: 'la100% Stacked',
+
+        histogramChart: 'laHistogram',
 
         // enterprise menu pinning
         pinLeft: 'laPin &lt;&lt;',
@@ -243,12 +245,14 @@ var gridOptions = {
         predefined: 'laPredefined',
         fillOpacity: 'laFill Opacity',
         strokeOpacity: 'laLine Opacity',
+        histogramBinCount: 'laBin Count',
         columnGroup: 'laColumn',
         barGroup: 'laBar',
         pieGroup: 'laPie',
         lineGroup: 'laLine',
         scatterGroup: 'laScatter',
         areaGroup: 'laArea',
+        histogramGroup: 'laHistogram',
         groupedColumnTooltip: 'laGrouped',
         stackedColumnTooltip: 'laStacked',
         normalizedColumnTooltip: 'la100% Stacked',
@@ -263,6 +267,7 @@ var gridOptions = {
         normalizedAreaTooltip: 'la100% Stacked',
         scatterTooltip: 'laScatter',
         bubbleTooltip: 'laBubble',
+        histogramTooltip: 'laHistogram',
         noDataToChart: 'laNo data available to be charted.',
         pivotChartRequiresPivotMode: 'laPivot Chart requires Pivot Mode enabled.'
     }

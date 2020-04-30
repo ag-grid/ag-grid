@@ -1,4 +1,4 @@
-const columnDefs = [
+var columnDefs = [
     { field: 'code', maxWidth: 90 },
     { field: 'name', minWidth: 200 },
     {
@@ -29,12 +29,12 @@ const columnDefs = [
 function numberFormatter(params) {
     if (typeof params.value === 'number') {
         return params.value.toFixed(2);
-    } else {
-        return params.value;
     }
+
+    return params.value;
 }
 
-const gridOptions = {
+var gridOptions = {
     columnDefs: columnDefs,
     defaultColDef: {
         flex: 1,
@@ -44,13 +44,14 @@ const gridOptions = {
     enableRangeSelection: true,
     immutableData: true,
     // implement this so that we can do selection
-    getRowNodeId: data => data.code,
+    getRowNodeId: function(data) { return data.code; },
 
-    onGridReady: params => {
-        let mockServer = createMockServer();
-        const initialLoad$ = mockServer.initialLoad();
-        const updates$ = mockServer.allDataUpdates();
-        initialLoad$.subscribe(rowData => {
+    onGridReady: function(params) {
+        var mockServer = createMockServer(),
+            initialLoad$ = mockServer.initialLoad(),
+            updates$ = mockServer.allDataUpdates();
+        
+        initialLoad$.subscribe(function(rowData) {
             // the initial full set of data
             // note that we don't need to un-subscribe here as it's a one off data load
             params.api.setRowData(rowData);
@@ -58,13 +59,13 @@ const gridOptions = {
             // now listen for updates
             // we're using immutableData this time, so although we're setting the entire
             // data set here, the grid will only re-render changed rows, improving performance
-            updates$.subscribe(newRowData => params.api.setRowData(newRowData));
+            updates$.subscribe(function(newRowData) { return params.api.setRowData(newRowData); });
         });
     }
 };
 
 document.addEventListener('DOMContentLoaded', function() {
-    const gridDiv = document.querySelector('#myGrid');
+    var gridDiv = document.querySelector('#myGrid');
     new agGrid.Grid(gridDiv, gridOptions);
 });
 
@@ -76,13 +77,13 @@ function createMockServer() {
 
     // provides the initial (or current state) of the data
     MockServer.prototype.initialLoad = function() {
-        return Rx.Observable.fromPromise(new Promise((resolve, reject) => {
-            const that = this;
+        var that = Object(this);
 
+        return Rx.Observable.fromPromise(new Promise(function(resolve, reject) { 
             agGrid.simpleHttpRequest({ url: 'https://raw.githubusercontent.com/ag-grid/ag-grid/master/grid-packages/ag-grid-docs/src/stocks.json' })
                 .then(function(dataSet) {
                     // for this demo's purpose, lets cut the data set down to something small
-                    const reducedDataSet = dataSet.slice(0, 200);
+                    var reducedDataSet = dataSet.slice(0, 200);
 
                     // the sample data has just name and code, we need to add in dummy figures
                     that.rowData = that.backfillData(reducedDataSet);
@@ -94,37 +95,41 @@ function createMockServer() {
     // provides randomised data updates to some of the rows
     // only returns the changed data rows
     MockServer.prototype.byRowupdates = function() {
-        return Rx.Observable.create((observer) => {
-            const interval = setInterval(() => {
-                let changes = [];
+        var that = Object(this);
+
+        return Rx.Observable.create(function(observer) {
+            var interval = window.setInterval(function() {
+                var changes = [];
 
                 // make some mock changes to the data
-                this.makeSomePriceChanges(changes);
-                this.makeSomeVolumeChanges(changes);
+                that.makeSomePriceChanges(changes);
+                that.makeSomeVolumeChanges(changes);
                 observer.next(changes);
             }, 1000);
 
-            return () => clearInterval(interval);
+            return function() { window.clearInterval(interval); }
         });
     };
 
     // provides randomised data updates to some of the rows
     // only all the row data (with some rows changed)
     MockServer.prototype.allDataUpdates = function() {
-        return Rx.Observable.create((observer) => {
-            const interval = setInterval(() => {
-                let changes = [];
+        var that = Object(this);
+
+        return Rx.Observable.create(function(observer) {
+            var interval = setInterval(function() {
+                var changes = [];
 
                 // make some mock changes to the data
-                this.makeSomePriceChanges(changes);
-                this.makeSomeVolumeChanges(changes);
+                that.makeSomePriceChanges(changes);
+                that.makeSomeVolumeChanges(changes);
 
                 // this time we don't care about the delta changes only
                 // this time we return the full data set which has changed rows within it
-                observer.next(_.cloneDeep(this.rowData));
+                observer.next(_.cloneDeep(that.rowData));
             }, 1000);
 
-            return () => clearInterval(interval);
+            return function() { window.clearInterval(interval); }
         });
     };
 
@@ -134,50 +139,45 @@ function createMockServer() {
      * it is not important to understand the rest of the example (i.e. the rxjs part of it)
      */
     MockServer.prototype.backfillData = function(rowData) {
+        var that = Object(this);
         // the sample data has just name and code, we need to add in dummy figures
-        rowData.forEach((dataItem) => {
-
+        rowData.forEach(function(dataItem) {
             // have volume a random between 100 and 10,000
             dataItem.volume = Math.floor((Math.random() * 10000) + 100);
 
             // have mid random from 20 to 300
             dataItem.mid = (Math.random() * 300) + 20;
 
-            this.setBidAndAsk(dataItem);
+            that.setBidAndAsk(dataItem);
         });
         return rowData;
     };
 
     MockServer.prototype.makeSomeVolumeChanges = function(changes) {
-        for (let i = 0; i < 10; i++) {
+        for (var i = 0; i < 10; i++) {
             // pick a data item at random
-            const index = Math.floor(this.rowData.length * Math.random());
+            var index = Math.floor(this.rowData.length * Math.random()),
+                currentRowData = this.rowData[index],
+                // change by a value between -5 and 5
+                move = (Math.floor(10 * Math.random())) - 5,
+                newValue = currentRowData.volume + move;
 
-            const currentRowData = this.rowData[index];
-
-            // change by a value between -5 and 5
-            const move = (Math.floor(10 * Math.random())) - 5;
-            const newValue = currentRowData.volume + move;
             currentRowData.volume = newValue;
-
             changes.push(currentRowData);
         }
     };
 
     MockServer.prototype.makeSomePriceChanges = function(changes) {
         // randomly update data for some rows
-        for (let i = 0; i < 10; i++) {
-            const index = Math.floor(this.rowData.length * Math.random());
+        for (var i = 0; i < 10; i++) {
+            var index = Math.floor(this.rowData.length * Math.random()),
+                currentRowData = this.rowData[index],
+                // change by a value between -1 and 2 with one decimal place
+                move = (Math.floor(30 * Math.random())) / 10 - 1,
+                newValue = currentRowData.mid + move;
 
-            const currentRowData = this.rowData[index];
-
-            // change by a value between -1 and 2 with one decimal place
-            const move = (Math.floor(30 * Math.random())) / 10 - 1;
-            const newValue = currentRowData.mid + move;
             currentRowData.mid = newValue;
-
             this.setBidAndAsk(currentRowData);
-
             changes.push(currentRowData);
         }
     };

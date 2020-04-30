@@ -1077,9 +1077,10 @@
     justify-content: center;
     cursor: pointer; }
   .ag-theme-balham .ag-keyboard-focus .ag-tab:focus {
-    outline: 1px solid;
-    outline: #719ECE;
-    outline: var(--ag-input-focus-border-color, #719ECE);
+    outline-width: 1px;
+    outline-style: solid;
+    outline-color: #719ECE;
+    outline-color: var(--ag-input-focus-border-color, #719ECE);
     outline-offset: -4px; }
   .ag-theme-balham .ag-tab-selected {
     border-bottom-color: #0091ea;
@@ -1386,7 +1387,8 @@
       padding-left: 4px; }
     .ag-theme-balham .ag-rtl .ag-header-expand-icon {
       padding-right: 4px; }
-  .ag-theme-balham .ag-header-row:not(:first-child) {
+  .ag-theme-balham .ag-header-row:not(:first-child) .ag-header-cell,
+  .ag-theme-balham .ag-header-row:not(:first-child) .ag-header-group-cell.ag-header-group-cell-with-group {
     border-top: solid 1px;
     border-top-color: #bdc3c7;
     border-top-color: var(--ag-border-color, #bdc3c7); }

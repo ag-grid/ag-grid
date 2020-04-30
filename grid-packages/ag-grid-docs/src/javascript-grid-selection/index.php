@@ -43,7 +43,7 @@ include '../documentation-main/documentation_header.php';
 
     <p>
         When you pass data to the grid, it wraps each data item in an node. This is explained
-        in the section <a href="../javascript-grid-client-side-model/">Client-side Row Model</a>. When you query for
+        in the section <a href="../javascript-grid-client-side-model/">Client-Side Row Model</a>. When you query for
         the selected rows, there are two method types: ones that return nodes, and ones that
         return data items. To get the selected nodes / rows from the grid, use the following
         API methods:

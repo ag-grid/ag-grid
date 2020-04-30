@@ -242,7 +242,7 @@ ClickableStatusBarComponent.prototype.init = function (params) {
 <h2>Custom Status Bar Components</h2>
 
 <p>
-    Applications that are not using the <a href="../javascript-grid-client-side-model">Client-side Row Model</a> or
+    Applications that are not using the <a href="../javascript-grid-client-side-model">Client-Side Row Model</a> or
     which require bespoke status bar panels can provide their own custom status bar components.
 </p>
 

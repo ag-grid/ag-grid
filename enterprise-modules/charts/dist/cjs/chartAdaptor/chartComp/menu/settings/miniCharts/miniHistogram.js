@@ -19,7 +19,7 @@ var ag_charts_community_1 = require("ag-charts-community");
 var MiniHistogram = /** @class */ (function (_super) {
     __extends(MiniHistogram, _super);
     function MiniHistogram(container, fills, strokes) {
-        var _this = _super.call(this, container, "groupedColumnTooltip") || this;
+        var _this = _super.call(this, container, "histogramTooltip") || this;
         var padding = _this.padding;
         var size = _this.size;
         // approx normal curve

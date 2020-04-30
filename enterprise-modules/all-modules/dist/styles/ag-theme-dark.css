@@ -1059,8 +1059,9 @@
     justify-content: center;
     cursor: pointer; }
   .ag-theme-dark .ag-keyboard-focus .ag-tab:focus {
-    outline: 1px solid;
-    outline: var(--ag-input-focus-border-color);
+    outline-width: 1px;
+    outline-style: solid;
+    outline-color: var(--ag-input-focus-border-color);
     outline-offset: -4px; }
   .ag-theme-dark .ag-tab-selected {
     border-bottom-color: #ccc;
@@ -1367,7 +1368,8 @@
       padding-left: 4px; }
     .ag-theme-dark .ag-rtl .ag-header-expand-icon {
       padding-right: 4px; }
-  .ag-theme-dark .ag-header-row:not(:first-child) {
+  .ag-theme-dark .ag-header-row:not(:first-child) .ag-header-cell,
+  .ag-theme-dark .ag-header-row:not(:first-child) .ag-header-group-cell.ag-header-group-cell-with-group {
     border-top: solid 1px;
     border-top-color: darkgrey;
     border-top-color: var(--ag-border-color, darkgrey); }

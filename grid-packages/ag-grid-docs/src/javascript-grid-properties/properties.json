@@ -503,10 +503,10 @@
             "description": "Sets the <a href='../javascript-grid-row-models/'>Row Model</a> type."
         },
         "rowData": {
-            "description": "(<a href='../javascript-grid-client-side-model/'>Client-side Row Model</a> only) Set the data to be displayed as rows in the grid."
+            "description": "(<a href='../javascript-grid-client-side-model/'>Client-Side Row Model</a> only) Set the data to be displayed as rows in the grid."
         },
         "immutableData": {
-            "description": "(<a href='../javascript-grid-client-side-model/'>Client-side Row Model</a> only) Enables <a href='../javascript-grid-immutable-data/'>Immutable Data</a> mode, for compatibility with immutable stores."
+            "description": "(<a href='../javascript-grid-client-side-model/'>Client-Side Row Model</a> only) Enables <a href='../javascript-grid-immutable-data/'>Immutable Data</a> mode, for compatibility with immutable stores."
         },
         "pinnedTopRowData": {
             "description": "Data to be displayed as <a href='../javascript-grid-row-pinning/'>Pinned Top Rows</a> in the grid."
@@ -955,7 +955,7 @@
         },
         "serverSideSortingAlwaysResets": {
             "default": false,
-            "description": "When <code>true</code>, a full reset will be performed when sorting using the <a href='../javascript-grid-server-side-model/'>Server-side Row Model</a>."
+            "description": "When <code>true</code>, a full reset will be performed when sorting using the <a href='../javascript-grid-server-side-model/'>Server-Side Row Model</a>."
         },
         "suppressBrowserResizeObserver": {
             "default": false,

@@ -46,7 +46,6 @@ var TabbedLayout = /** @class */ (function (_super) {
         switch (e.keyCode) {
             case Constants.KEY_RIGHT:
             case Constants.KEY_LEFT:
-                e.preventDefault();
                 if (!this.eHeader.contains(document.activeElement)) {
                     return;
                 }
@@ -55,6 +54,7 @@ var TabbedLayout = /** @class */ (function (_super) {
                 if (currentPosition === nextPosition) {
                     return;
                 }
+                e.preventDefault();
                 var nextItem = this.items[nextPosition];
                 this.showItemWrapper(nextItem);
                 nextItem.eHeaderButton.focus();

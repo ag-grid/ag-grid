@@ -138,14 +138,8 @@ export class HeaderRowComp extends Component {
     }
 
     private setWidth(): void {
-        if (this.pinned === Constants.PINNED_LEFT || this.pinned === Constants.PINNED_RIGHT) {
-            // for pinned columns, the row width is always the container width, which is sometimes
-            // slightly larger than the combined column width due to the scroll bar
-            this.getGui().style.width = '100%';
-        } else {
-            const width = this.getWidthForRow();
-            this.getGui().style.width = width + 'px';
-        }
+        const width = this.getWidthForRow();
+        this.getGui().style.width = width + 'px';
     }
 
     private getWidthForRow(): number {

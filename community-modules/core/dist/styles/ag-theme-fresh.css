@@ -1057,8 +1057,9 @@
     justify-content: center;
     cursor: pointer; }
   .ag-theme-fresh .ag-keyboard-focus .ag-tab:focus {
-    outline: 1px solid;
-    outline: var(--ag-input-focus-border-color);
+    outline-width: 1px;
+    outline-style: solid;
+    outline-color: var(--ag-input-focus-border-color);
     outline-offset: -4px; }
   .ag-theme-fresh .ag-tab-selected {
     border-bottom-color: #000;
@@ -1364,7 +1365,8 @@
       padding-left: 4px; }
     .ag-theme-fresh .ag-rtl .ag-header-expand-icon {
       padding-right: 4px; }
-  .ag-theme-fresh .ag-header-row:not(:first-child) {
+  .ag-theme-fresh .ag-header-row:not(:first-child) .ag-header-cell,
+  .ag-theme-fresh .ag-header-row:not(:first-child) .ag-header-group-cell.ag-header-group-cell-with-group {
     border-top: solid 1px;
     border-top-color: darkgrey;
     border-top-color: var(--ag-border-color, darkgrey); }

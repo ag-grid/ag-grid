@@ -115,7 +115,7 @@ colDef = {
         </li>
     </ul>
 
-    <?= grid_example('Built-In Functions', 'built-in-functions', 'generated', ['enterprise' => true, 'modules' => ['clientside', 'rowgrouping', 'menu', 'columnpanel', 'setfilter']]) ?>
+    <?= grid_example('Built-In Functions', 'built-in-functions', 'generated', ['enterprise' => true, 'modules' => ['clientside', 'rowgrouping', 'menu', 'columnpanel', 'filterpanel', 'setfilter']]) ?>
 
     <note>
         Remember to mark value columns with <code>enableValue=true</code> when using the <a href="../javascript-grid-tool-panel/">Tool Panel</a>.
@@ -243,7 +243,7 @@ var columnB = {
         </li>
     </ul>
 
-    <?= grid_example('Custom Aggregation Functions', 'custom-agg-functions', 'generated', ['enterprise' => true, 'modules' => ['clientside', 'rowgrouping', 'menu', 'columnpanel', 'setfilter']]) ?>
+    <?= grid_example('Custom Aggregation Functions', 'custom-agg-functions', 'generated', ['enterprise' => true, 'modules' => ['clientside', 'rowgrouping', 'menu', 'columnpanel', 'filterpanel', 'setfilter']]) ?>
 
     <p>
         Note that custom aggregations will get called for the top level rows to calculate a 'Grand Total',
@@ -322,7 +322,7 @@ function createValueObject(gold, silver) {
         The following example demonstrates this approach in action:
     </p>
 
-    <?= grid_example('Multi-Column Aggregation', 'multi-column-aggregation', 'generated', ['enterprise' => true, 'modules' => ['clientside', 'rowgrouping', 'menu', 'columnpanel', 'setfilter']]) ?>
+    <?= grid_example('Multi-Column Aggregation', 'multi-column-aggregation', 'generated', ['enterprise' => true, 'modules' => ['clientside', 'rowgrouping', 'menu', 'columnpanel', 'filterpanel', 'setfilter']]) ?>
 
     <h2 id="aggregationApi">Aggregation API</h2>
 
@@ -385,7 +385,7 @@ colDef = {
         sum and another by multiplying the result by Math.PI.
     </p>
 
-    <?= grid_example('Custom Full Row Aggregation', 'custom-full-row-aggregation', 'generated', ['enterprise' => true, 'exampleHeight' => 620, 'modules' => ['clientside', 'rowgrouping', 'menu', 'columnpanel', 'setfilter']]) ?>
+    <?= grid_example('Custom Full Row Aggregation', 'custom-full-row-aggregation', 'generated', ['enterprise' => true, 'exampleHeight' => 620, 'modules' => ['clientside', 'rowgrouping', 'menu', 'columnpanel', 'filterpanel', 'setfilter']]) ?>
 
     <h2>Empty Aggregation Calls</h2>
 

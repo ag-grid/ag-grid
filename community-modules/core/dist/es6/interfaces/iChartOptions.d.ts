@@ -116,11 +116,17 @@ export interface AxisTickOptions {
     size: number;
     color: string;
 }
+declare type AxisLabelFormatter = (params: {
+    value: any;
+    index: number;
+    fractionDigits?: number;
+    formatter?: (x: any) => string;
+}) => string;
 export interface AxisLabelOptions extends FontOptions {
     padding: number;
     rotation: number;
     format?: string;
-    formatter?: (value: any, fractionDigits?: number) => string;
+    formatter?: AxisLabelFormatter;
 }
 export interface GridStyle {
     stroke: string;
@@ -234,3 +240,4 @@ export interface PieTooltipRendererParams extends TooltipRendererParams {
     labelKey?: string;
     labelName?: string;
 }
+export {};
