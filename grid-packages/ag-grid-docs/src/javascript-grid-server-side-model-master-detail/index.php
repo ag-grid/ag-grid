@@ -13,9 +13,8 @@ include '../documentation-main/documentation_header.php';
 </p>
 
 <p>
-    The ability to nest grids within grids is commonly referred to as Master / Detail. Here the top level grid is
-    referred to as the 'master grid' and the nested grid is referred to as the
-    'detail grid'.
+    The ability to nest grids within grids is commonly referred to as Master / Detail. Here the top-level grid is
+    referred to as the 'master grid' and the nested grid is referred to as the 'detail grid'.
 </p>
 
 <p>
@@ -32,9 +31,10 @@ include '../documentation-main/documentation_header.php';
 <p>
     To enable Master / Detail, you should set the following grid options:
 </p>
+
 <ul class="content">
     <li>
-        <b>masterDetail:</b> Set to true to inform the grid you want to allow
+        <b>masterDetail:</b> Set to <code>true</code> to inform the grid you want to allow
         expanding of rows to reveal detail grids.
     </li>
     <li>
@@ -52,7 +52,7 @@ include '../documentation-main/documentation_header.php';
     These grid options are illustrated below:
 </p>
 
-<snippet>
+<?= createSnippet(<<<SNIPPET
 var masterGridOptions = {
     columnDefs: masterColumnDefs,
     rowData: rowData,
@@ -74,10 +74,11 @@ var masterGridOptions = {
 
 var detailGridOptions = {
     columnDefs: detailColumnDefs
-}</snippet>
+}
+SNIPPET
+) ?>
 
 <note>Note that the nested detail grid can be configured to use any Row Model.</note>
-
 
 <h2>Example: Infinite Scrolling with Master / Detail</h2>
 
@@ -103,22 +104,24 @@ var detailGridOptions = {
 </p>
 
 <p>
-    The following snippet shows rows grouping on the 'country' column by setting <code>rowGroup = true</code>:
+    The following snippet shows row grouping on the 'country' column by setting <code>rowGroup = true</code>:
 </p>
 
-<snippet>
+<?= createSnippet(<<<SNIPPET
 columnDefs = [
-    {field: 'country', rowGroup: true},
+    { field: 'country', rowGroup: true },
 
     // ... more colDefs
 ]
-</snippet>
+SNIPPET
+) ?>
 
 <h2>Example: Row Grouping with Master Detail</h2>
 
 <p>
     Below shows Row Grouping combined with Master / Detail. From the example you can notice the following:
 </p>
+
 <ul class="content">
     <li><b>rowGroup</b> - is set to <code>true</code> on the 'country' column definition.</li>
     <li><b>masterDetail</b> - is set to <code>true</code> to enable Master / Detail.</li>
@@ -137,7 +140,7 @@ columnDefs = [
 </p>
 
 <p>
-    For Master / Detail, expand and collapse icons are also needed at the master level. When doing Master / Detail expand
+    For Master / Detail, expand and collapse icons are also needed at the master level. When doing Master / Detail, expand
     and collapse icons are also needed to expand the child rows where those rows are also master rows.
 </p>
 
@@ -150,19 +153,21 @@ columnDefs = [
     This is shown in the code snippet below:
 </p>
 
-<snippet>
+<?= createSnippet(<<<SNIPPET
 columnDefs = [
-    {field: 'country', rowGroup: true},
-    {field: 'accountId', maxWidth: 200, cellRenderer: 'agGroupCellRenderer'},
+    { field: 'country', rowGroup: true },
+    { field: 'accountId', maxWidth: 200, cellRenderer: 'agGroupCellRenderer' },
     // ... more colDefs
 ]
-</snippet>
+SNIPPET
+) ?>
 
 <h2>Detail Row Height</h2>
 
 <p>
     The height of detail rows can be configured in one of the following two ways:
 </p>
+
 <ol class="content">
     <li>
         Use property <code>detailRowHeight</code> to set a fixed height for each detail row.
@@ -178,27 +183,28 @@ columnDefs = [
     The following snippet compares both approaches:
 </p>
 
-<snippet>
+<?= createSnippet(<<<SNIPPET
 // option 1 - fixed detail row height, sets height for all details rows
 masterGridOptions.detailRowHeight = 500;
 
 // option 2 - dynamic detail row height, dynamically sets height for all rows
-masterGridOptions.getRowHeight = function (params) {
+masterGridOptions.getRowHeight = function(params) {
     var isDetailRow = params.node.detail;
+
     if (isDetailRow) {
-        var detailPanelHeight = params.data.children.length * 50;
         // dynamically calculate detail row height
-        return detailPanelHeight;
+        return params.data.children.length * 50;
     } else {
         // for all non-detail rows, return 25, the default row height
         return 25;
     }
 }
-</snippet>
+SNIPPET
+) ?>
 
 <note>
     Purging the cache and dynamic row heights do not work together for the Server-Side Row Model.
-    If you are using dynamic row height, ensure 'maxBlocksInCache' is not set.
+    If you are using dynamic row height, ensure <code>maxBlocksInCache</code> is not set.
 </note>
 
 <h2>Example: Dynamic Detail Row Height</h2>
@@ -207,6 +213,7 @@ masterGridOptions.getRowHeight = function (params) {
     The following example shows how the detail row height can be dynamically sized to fit the number of records.
     From the example you can notice the following:
 </p>
+
 <ul class="content">
     <li><b>getRowHeight()</b> - is implemented to size detail rows according to the number of records.</li>
     <li><b>node.detail</b> - is used to identify 'detail' row nodes.</li>
@@ -218,8 +225,8 @@ masterGridOptions.getRowHeight = function (params) {
 
 <p>
     In the examples above, the data for the detail grid was returned with the master row. However it is also possible
-    to lazy data for the detail row, see:
-    <a href="../javascript-grid-master-detail/#lazy-load-detail-rows">Lazy Loading Detail Rows</a>.
+    to lazy-load data for the detail row, see:
+    <a href="../javascript-grid-master-detail/#lazy-load-detail-rows">Lazy-Loading Detail Rows</a>.
 </p>
 
 <p>

@@ -1,0 +1,235 @@
+{
+    "features": [
+        {
+            "feature": "All Data in Client",
+            "clientSide": true,
+            "infinite": false,
+            "serverSide": false,
+            "viewport": false
+        },
+        {
+            "feature": "Fetch Data as User Scrolls",
+            "clientSide": false,
+            "infinite": true,
+            "serverSide": true,
+            "viewport": true
+        },
+        {
+            "feature": "<a href='../javascript-grid-sorting/'>Row Sorting</a>",
+            "clientSide": "(client)",
+            "infinite": "(server)",
+            "serverSide": "(server)",
+            "viewport": "(server)"
+        },
+        {
+            "feature": "<a href='../javascript-grid-filtering/'>Row Filtering</a>",
+            "clientSide": "(client)",
+            "infinite": "(server)",
+            "serverSide": "(server)",
+            "viewport": "(server)"
+        },
+        {
+            "feature": "<a href='../javascript-grid-filter-quick/'>Quick Filter</a>",
+            "clientSide": true,
+            "infinite": false,
+            "serverSide": false,
+            "viewport": false
+        },
+        {
+            "feature": "<a href='../javascript-grid-floating-filters/'>Floating Filters",
+            "clientSide": true,
+            "infinite": true,
+            "serverSide": true,
+            "viewport": true
+        },
+        {
+            "feature": "<a href='../javascript-grid-row-height/'>Dynamic Row Height</a>",
+            "clientSide": true,
+            "infinite": false,
+            "serverSide": true,
+            "viewport": false
+        },
+        {
+            "feature": "<a href='../javascript-grid-grouping/'>Row Grouping</a>",
+            "clientSide": "(client)",
+            "infinite": false,
+            "serverSide": "(server)",
+            "viewport": false
+        },
+        {
+            "feature": "<a href='../javascript-grid-grouping/'>Row Pivoting</a>",
+            "clientSide": "(client)",
+            "infinite": false,
+            "serverSide": "(server)",
+            "viewport": false
+        },
+        {
+            "feature": "Lazy Loading Row Groups",
+            "clientSide": false,
+            "infinite": false,
+            "serverSide": true,
+            "viewport": false
+        },
+        {
+            "feature": "<a href='../javascript-grid-aggregation/'>Value Aggregation</a>",
+            "clientSide": "(client)",
+            "infinite": false,
+            "serverSide": "(server)",
+            "viewport": false
+        },
+        {
+            "feature": "<a href='../javascript-grid-selection/'>Row Selection</a>",
+            "clientSide": true,
+            "infinite": true,
+            "serverSide": true,
+            "viewport": true
+        },
+        {
+            "feature": "<a href='../javascript-grid-selection/#header-checkbox-selection'>Header Checkbox Selection</a>",
+            "clientSide": true,
+            "infinite": false,
+            "serverSide": false,
+            "viewport": false
+        },
+        {
+            "feature": "<a href='../javascript-grid-range-selection/'>Range Selection</a>",
+            "clientSide": true,
+            "infinite": true,
+            "serverSide": true,
+            "viewport": true
+        },
+        {
+            "feature": "<a href='../javascript-grid-column-spanning/'>Column Spanning</a>",
+            "clientSide": true,
+            "infinite": true,
+            "serverSide": true,
+            "viewport": true
+        },
+        {
+            "feature": "<a href='../javascript-grid-column-spanning/'>Row Spanning</a>",
+            "clientSide": true,
+            "infinite": true,
+            "serverSide": true,
+            "viewport": true
+        },
+        {
+            "feature": "<a href='../javascript-grid-pinning/'>Column Pinning</a>",
+            "clientSide": true,
+            "infinite": true,
+            "serverSide": true,
+            "viewport": true
+        },
+        {
+            "feature": "<a href='../javascript-grid-row-pinning/'>Row Pinning</a>",
+            "clientSide": true,
+            "infinite": true,
+            "serverSide": true,
+            "viewport": true
+        },
+        {
+            "feature": "<a href='../javascript-grid-pagination/'>Pagination</a>",
+            "clientSide": true,
+            "infinite": true,
+            "serverSide": true,
+            "viewport": true
+        },
+        {
+            "feature": "<a href='../javascript-grid-filter-component/'>Custom Filters</a>",
+            "clientSide": true,
+            "infinite": true,
+            "serverSide": true,
+            "viewport": true
+        },
+        {
+            "feature": "<a href='../javascript-grid-cell-editor/'>Cell Editors</a>",
+            "clientSide": true,
+            "infinite": true,
+            "serverSide": true,
+            "viewport": true
+        },
+        {
+            "feature": "<a href='../javascript-grid-cell-rendering-components/'>Cell Renderers</a>",
+            "clientSide": true,
+            "infinite": true,
+            "serverSide": true,
+            "viewport": true
+        },
+        {
+            "feature": "<a href='../javascript-grid-value-getters/'>Value Getter</a>",
+            "clientSide": true,
+            "infinite": true,
+            "serverSide": true,
+            "viewport": true
+        },
+        {
+            "feature": "<a href='../javascript-grid-value-setters/'>Value Setter</a>",
+            "clientSide": true,
+            "infinite": true,
+            "serverSide": true,
+            "viewport": true
+        },
+        {
+            "feature": "<a href='../javascript-grid-value-getters/'>Value Formatter</a>",
+            "clientSide": true,
+            "infinite": true,
+            "serverSide": true,
+            "viewport": true
+        },
+        {
+            "feature": "<a href='../javascript-grid-value-setters/'>Value Parser</a>",
+            "clientSide": true,
+            "infinite": true,
+            "serverSide": true,
+            "viewport": true
+        },
+        {
+            "feature": "<a href='../javascript-grid-full-width-rows/'>Full Width Rows</a>",
+            "clientSide": true,
+            "infinite": true,
+            "serverSide": true,
+            "viewport": true
+        },
+        {
+            "feature": "<a href='../javascript-grid-export/'>CSV Export</a>",
+            "clientSide": true,
+            "infinite": "(Data on screen)",
+            "serverSide": "(Data on screen)",
+            "viewport": "(Data on screen)"
+        },
+        {
+            "feature": "<a href='../javascript-grid-excel/'>Excel Export</a>",
+            "clientSide": true,
+            "infinite": "(Data on screen)",
+            "serverSide": "(Data on screen)",
+            "viewport": "(Data on screen)"
+        },
+        {
+            "feature": "<a href='../javascript-grid-clipboard/'>Clipboard Copy & Paste</a>",
+            "clientSide": true,
+            "infinite": true,
+            "serverSide": true,
+            "viewport": true
+        },
+        {
+            "feature": "<a href='../javascript-grid-data-update-transactions/'>Update via Transaction</a>",
+            "clientSide": true,
+            "infinite": "(Add Only)",
+            "serverSide": false,
+            "viewport": false
+        },
+        {
+            "feature": "<a href='../javascript-grid-data-update-high-frequency/'>Update via Async Transactions</a>",
+            "clientSide": true,
+            "infinite": false,
+            "serverSide": false,
+            "viewport": false
+        },
+        {
+            "feature": "<a href='../javascript-grid-selection/#specify-selectable-rows'>Specify Selectable Rows</a>",
+            "clientSide": true,
+            "infinite": true,
+            "serverSide": true,
+            "viewport": false
+        }
+    ]
+}

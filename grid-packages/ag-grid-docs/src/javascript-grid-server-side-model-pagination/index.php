@@ -9,7 +9,7 @@ include '../documentation-main/documentation_header.php';
 <h1 class="heading-enterprise">Server-Side Pagination</h1>
 
 <p class="lead">
-    If you are dealing with large amounts of data, then some application may decide to use pagination
+    If you are dealing with large amounts of data, your applications may decide to use pagination
     to help the user navigate through the data.
 </p>
 
@@ -20,7 +20,7 @@ include '../documentation-main/documentation_header.php';
     typically set alongside this using the <code>paginationPageSize</code> option. These options are shown below:
 </p>
 
-<snippet>
+<?= createSnippet(<<<SNIPPET
 gridOptions: {
     // enables pagination in the grid
     pagination: true,
@@ -30,7 +30,8 @@ gridOptions: {
 
     // other options
 }
-</snippet>
+SNIPPET
+) ?>
 
 <p>
     For more configuration details see the section on <a href="../javascript-grid-pagination">Pagination</a>.
@@ -49,7 +50,7 @@ gridOptions: {
     The properties relevant to pagination in the request are shown below:
 </p>
 
-<snippet>
+<?= createSnippet(<<<SNIPPET
 // IServerSideGetRowsRequest
 {
    // first row requested
@@ -60,7 +61,8 @@ gridOptions: {
 
    ... // other params
 }
-</snippet>
+SNIPPET
+, 'ts') ?>
 
 <p>
     The <code>endRow</code> requested by the grid may not actually exist in the data so the correct
@@ -94,7 +96,7 @@ gridOptions: {
         last row index is only supplied to the grid when the last row has been reached.
     </li>
     <li>
-        Open the browsers dev console to view the request supplied to the datasource.
+        Open the browser's dev console to view the request supplied to the datasource.
     </li>
 </ul>
 
@@ -103,12 +105,12 @@ gridOptions: {
 <h2>Pagination with Groups</h2>
 
 <p>
-    When grouping, pagination splits rows according to top level groups only. This has the following implications:
+    When grouping, pagination splits rows according to top-level groups only. This has the following implications:
 </p>
 
 <ul>
     <li>
-        The number of pages is determined by the number of top level rows and not children
+        The number of pages is determined by the number of top-level rows and not children
     </li>
     <li>
         When groups are expanded, the number of pagination pages does not change.
@@ -124,19 +126,18 @@ gridOptions: {
 
 <ul>
     <li>
-        No block size is specified thus 100 rows per block is used.
+        No block size is specified so 100 rows per block is used.
     </li>
     <li>
         Grid property <code>paginationAutoPageSize=true</code> is set. This means the number of displayed
-        rows is automatically set to the number of rows that fit the vertical scroll.
-        Thus no vertical scroll is present.
+        rows is automatically set to the number of rows that fit the vertical scroll, so no vertical scroll is present.
     </li>
     <li>
         As rows are expanded, the number of visible rows in a page grows. The children appear on the same
         row as the parent and no rows are pushed to the next page.
     </li>
     <li>
-        For example expand 'Australia' which will result in a large list for which vertical scrolling will
+        For example, expand 'Australia' which will result in a large list for which vertical scrolling will
         be needed to view all children.
     </li>
 </ul>
@@ -169,7 +170,7 @@ gridOptions: {
     </li>
     <li>
         As rows are expanded, the number of visible rows in each page is fixed. This means expanding groups will push rows
-        to the next page. This includes later group rows and also it's own child rows (if the child rows don't fit
+        to the next page. This includes later group rows and also its own child rows (if the child rows don't fit
         on the current page).
     </li>
     <li>

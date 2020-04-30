@@ -6,7 +6,7 @@ $pageGroup = "row_models";
 include '../documentation-main/documentation_header.php';
 ?>
 
-<h1 class="heading-enterprise"> Server-Side Pivoting </h1>
+<h1 class="heading-enterprise">Server-Side Pivoting</h1>
 
 <p class="lead">
     In this section we add Server-Side Pivoting to create an example with the ability to 'Slice and Dice' data using
@@ -16,26 +16,27 @@ include '../documentation-main/documentation_header.php';
 <h2>Enabling Pivoting</h2>
 
 <p>
-    To pivot on a column <code>pivot=true</code> should be set on the column definition. Additionally the needs
+    To pivot on a column <code>pivot=true</code> should be set on the column definition. Additionally the grid needs
     to be in pivot mode which is set through the grid option <code>pivotMode=true</code>.
 </p>
 
 <p> In the snippet below a pivot is defined on the 'year' column and pivot mode is enabled:</p>
 
-<snippet>
+<?= createSnippet(<<<SNIPPET
 gridOptions: {
     // pivot mode enabled
     pivotMode: true,
 
     columnDefs: [
-        { field: "country", rowGroup: true },
-        { field: "year", pivot: true }, // pivot enabled
-        { field: "total" }
+        { field: 'country', rowGroup: true },
+        { field: 'year', pivot: true }, // pivot enabled
+        { field: 'total' }
     ],
 
     // other options
 }
-</snippet>
+SNIPPET
+) ?>
 
 <p>
     For more configuration details see the section on <a href="../javascript-grid-pivoting">Pivoting</a>.
@@ -54,7 +55,7 @@ gridOptions: {
     The properties relevant to pivoting in the request are shown below:
 </p>
 
-<snippet>
+<?= createSnippet(<<<SNIPPET
 // IServerSideGetRowsRequest
 {
    // pivot columns, cols with 'pivot=true'
@@ -65,7 +66,8 @@ gridOptions: {
 
    ... // other properties
 }
-</snippet>
+SNIPPET
+, 'ts') ?>
 
 <p>
     Note in the snippet above that <code>pivotCols</code> contains all the columns the grid is pivoting on,
@@ -80,33 +82,30 @@ gridOptions: {
 </p>
 
 <p>
-    For example, if you pivot on <code>Year</code>, you need to columns to the grid for each year contained in the
+    For example, if you pivot on <code>Year</code>, you need to add columns to the grid for each year contained in the
     data, e.g. <code>2000, 2002, 2004 etc...</code>
 </p>
 
 <p>
-    Secondary columns are defined identically to primary columns, you provide a list of
+    Secondary columns are defined identically to primary columns: you provide a list of
     <a href="../javascript-grid-column-definitions/">Column Definitions</a> passing a list of columns and / or column
-    groups using the following column api method:
+    groups using the following column API method:
 </p>
 
-<snippet>
-columnApi.setSecondaryColumns(pivotColDefs);
-</snippet>
+<?= createSnippet('columnApi.setSecondaryColumns(pivotColDefs);') ?>
 
 <p>
-    There is no limit or restriction as to the number of columns or groups you pass. However it's important that the
+    There is no limit or restriction as to the number of columns or groups you pass. However, it's important that the
     field (or value getter) that you set for the columns match.
 </p>
 
 <note>
-    Setting secondary columns will reset all secondary column state which means resized or reordered columns will be
+    Setting secondary columns will reset all secondary column state, which means resized or reordered columns will be
     reset. To avoid this applications should keep track of the previously supplied secondary columns and only update the
     secondary columns in the grid if they have changed.
 </note>
 
-
-<h2>Example: Simple Pivot </h2>
+<h2>Example: Simple Pivot</h2>
 
 <p>
     The example below demonstrates server-side Pivoting. Note the following:
@@ -130,20 +129,20 @@ columnApi.setSecondaryColumns(pivotColDefs);
         to perform pivoting.
     </li>
     <li>
-        New column definitions are created from the <code>pivotFields</code> returned from the server and supplied to the
+        New column definitions created from the <code>pivotFields</code> are returned from the server and supplied to the
         grid using <code>columnApi.setSecondaryColumns(pivotColDefs)</code>.
     </li>
     <li>
-        Open the browsers dev console to view the request supplied to the datasource.
+        Open the browser's dev console to view the request supplied to the datasource.
     </li>
 </ul>
 
 <?= grid_example('Simple Pivot', 'simple-pivot', 'generated', ['enterprise' => true, 'exampleHeight' => 605, 'extras' => ['alasql'], 'modules' => ['serverside', 'rowgrouping', 'menu', 'columnpanel']]) ?>
 
-<h2>Example: Pivot Column Groups </h2>
+<h2>Example: Pivot Column Groups</h2>
 
 <p>
-    The example below demonstrates server-side Pivoting with multiple row groups when there multiple value columns ('gold', 'silver', 'bronze')
+    The example below demonstrates server-side Pivoting with multiple row groups where there are multiple value columns ('gold', 'silver', 'bronze')
     under the 'year' pivot column group. Note the following:
 </p>
 
@@ -166,17 +165,18 @@ columnApi.setSecondaryColumns(pivotColDefs);
         to perform pivoting.
     </li>
     <li>
-        New column group definitions are created from the <code>pivotFields</code> returned from the server and supplied
+        New column group definitions created from the <code>pivotFields</code> are returned from the server and supplied
         to the grid using <code>columnApi.setSecondaryColumns(pivotColDefs)</code>.
     </li>
     <li>
-        Open the browsers dev console to view the request supplied to the datasource.
+        Open the browser's dev console to view the request supplied to the datasource.
     </li>
 </ul>
 
 <?= grid_example('Pivot Column Groups', 'pivot-column-groups', 'generated', ['enterprise' => true, 'exampleHeight' => 610, 'extras' => ['alasql'], 'modules' => ['serverside', 'rowgrouping', 'menu', 'columnpanel']]) ?>
 
 <h2>Example: Slice and Dice</h2>
+
 <p>
     A mock data store running inside the browser is used in the example below. The purpose of the mock server is to
     demonstrate the interaction between the grid and the server. For your application, your server will need to
@@ -187,27 +187,28 @@ columnApi.setSecondaryColumns(pivotColDefs);
 <p>
     The example demonstrates the following:
 </p>
+
 <ul class="content">
     <li>
         Columns <code>Athlete, Age, Country, Year</code> and <code>Sport</code> all have <code>enableRowGroup=true</code>
-        which means they can be grouped on. To group you drag the columns to the row group panel section.
+        which means they can be grouped on. To group, you drag the columns to the row group panel section.
         By default the example is grouping by <code>Country</code> and then <code>Year</code> as these columns have
         <code>rowGroup=true</code>.
     </li>
     <li>
         Columns <code>Gold, Silver</code> and <code>Bronze</code> all have <code>enableValue=true</code> which means
-        they can be aggregated on. To aggregate you drag the column to the <code>Values</code> section.
-        When you are grouping, then all columns in the <code>Values</code> section will be aggregated.
+        they can be aggregated on. To aggregate, you drag the column to the <code>Values</code> section.
+        When you are grouping, all columns in the <code>Values</code> section will be aggregated.
     </li>
     <li>
         You can turn the grid into <strong>Pivot Mode</strong>. To do this, you click the pivot mode checkbox.
         When the grid is in pivot mode, the grid behaves similar to an Excel grid. This extra information
-        is passed to your server as part of the request and it is your servers responsibility to return
+        is passed to your server as part of the request and it is your server's responsibility to return
         the data in the correct structure.
     </li>
     <li>
         Columns <strong>Athlete, Age, Country, Year</strong> and <strong>Sport</strong> all have <code>enablePivot=true</code> which means
-        they can be pivoted on when <strong>Pivot Mode</strong> is active. To pivot you drag the column to the <strong>Pivot</strong>
+        they can be pivoted on when <strong>Pivot Mode</strong> is active. To pivot, you drag the column to the <strong>Pivot</strong>
         section.
     </li>
     <li>
@@ -215,9 +216,9 @@ columnApi.setSecondaryColumns(pivotColDefs);
     </li>
     <li>
         In addition to grouping, aggregation and pivot, the example also demonstrates filtering.
-        The columns <b>Country</b> and <b>Year</b> have grid provided filters. The column <b>Age</b>
-        has an example provided custom filter. You can use whatever filter you want, as long as
-        your server-side knows what to do with it.
+        The columns <b>Country</b> and <b>Year</b> have grid-provided filters. The column <b>Age</b>
+        has an example-provided custom filter. You can use whatever filter you want, as long as
+        your server knows what to do with it.
     </li>
 </ul>
 

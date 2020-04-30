@@ -6,51 +6,52 @@ $pageGroup = "row_models";
 include '../documentation-main/documentation_header.php';
 ?>
 
-<h1 class="heading-enterprise"> Server-Side Tree Data </h1>
+<h1 class="heading-enterprise">Server-Side Tree Data</h1>
 
 <p class="lead">
     This section shows how Tree Data can be used with the Server-Side Row Model.
 </p>
 
 <h2>Tree Data</h2>
+
 <p>
     Tree Data is defined as data that has parent / child relationships where the parent / child relationships
     are provided as part of the data.
 </p>
 
 <p>
-    An example of a Tree Data json structure is shown below:
+    An example of a Tree Data JSON structure is shown below:
 </p>
 
-<snippet>
+<?= createSnippet(<<<SNIPPET
 [{
     "employeeId": 101,
     "employeeName": "Erica Rogers",
     "jobTitle": "CEO",
     "employmentType": "Permanent",
-    "children": [
-        {
+    "children": [{
         "employeeId": 102,
         "employeeName": "Malcolm Barrett",
         "jobTitle": "Exec. Vice President",
         "employmentType": "Permanent",
         "children": [
             {
-            "employeeId": 103,
-            "employeeName": "Leah Flowers",
-            "jobTitle": "Parts Technician",
-            "employmentType": "Contract"
+                "employeeId": 103,
+                "employeeName": "Leah Flowers",
+                "jobTitle": "Parts Technician",
+                "employmentType": "Contract"
             },
             {
-            "employeeId": 104,
-            "employeeName": "Tammy Sutton",
-            "jobTitle": "Service Technician",
-            "employmentType": "Contract"
+                "employeeId": 104,
+                "employeeName": "Tammy Sutton",
+                "jobTitle": "Service Technician",
+                "employmentType": "Contract"
             }
-         ]},
-    ]}
+        ]
+    }]
 }]
-</snippet>
+SNIPPET
+) ?>
 
 <p>
     However it is expected that the data will be too large to send over the network, so it will be lazy-loaded as more
@@ -68,7 +69,8 @@ include '../documentation-main/documentation_header.php';
 
 <p>
     Tree Data is supplied via the <a href="../javascript-grid-server-side-model-datasource/">Server-Side Datasource</a>
-    just like flat data, however there are two additional gridOptions callbacks; <code>isServerSideGroup(dataItem)</code> and <code>getServerSideGroupKey(dataItem)</code>.
+    just like flat data, however there are two additional gridOptions callbacks: <code>isServerSideGroup(dataItem)</code>
+    and <code>getServerSideGroupKey(dataItem)</code>.
 </p>
 
 <p>
@@ -76,9 +78,8 @@ include '../documentation-main/documentation_header.php';
     row model:
 </p>
 
-<snippet>
+<?= createSnippet(<<<SNIPPET
 var gridOptions = {
-
     // choose Server-Side Row Model
     rowModelType: 'serverSide',
 
@@ -86,36 +87,37 @@ var gridOptions = {
     treeData: true,
 
     // indicate if row is a group node
-    isServerSideGroup: function (dataItem) {
+    isServerSideGroup: function(dataItem) {
         return dataItem.group;
     },
 
     // specify which group key to use
-    getServerSideGroupKey: function (dataItem) {
+    getServerSideGroupKey: function(dataItem) {
         return dataItem.employeeId;
     }
     ...
 }
-</snippet>
+SNIPPET
+) ?>
 
 <note>
     Be careful not to get mixed up with the <a href="../javascript-grid-tree-data/">Client-Side Tree Data</a> configurations by mistake.
 </note>
 
-    <p>
-        The example below shows this in action where the following can be noted:
-    </p>
+<p>
+    The example below shows this in action where the following can be noted:
+</p>
 
-    <ul class="content">
-        <li>Tree Data is enabled with the Server-Side Row Model <code>gridOptions.treeData = true</code>.</li>
-        <li>Group nodes are determined using the callback: <code>gridOptions.isServerSideGroup()</code>.</li>
-        <li>Group keys are returned from the callback: <code>gridOptions.getServerSideGroupKey()</code>.</li>
-    </ul>
+<ul class="content">
+    <li>Tree Data is enabled with the Server-Side Row Model using <code>gridOptions.treeData = true</code>.</li>
+    <li>Group nodes are determined using the callback <code>gridOptions.isServerSideGroup()</code>.</li>
+    <li>Group keys are returned from the callback <code>gridOptions.getServerSideGroupKey()</code>.</li>
+</ul>
 
 <?= grid_example('Tree Data', 'tree-data', 'generated', ['enterprise' => true, 'exampleHeight' => 590, 'extras' => ['lodash'], 'modules' => ['serverside', 'rowgrouping', 'menu', 'columnpanel']]) ?>
 
 <note>
-    The examples on this page use simple method for expanding group nodes, however a better approach is covered in the
+    The examples on this page use a simple method for expanding group nodes, however a better approach is covered in the
     section <a href="../javascript-grid-server-side-model-grouping/#preserving-group-state">Preserving Group State</a>.
 </note>
 
@@ -137,10 +139,9 @@ var gridOptions = {
 </p>
 
 <ul class="content">
-    <li>Click <b>Purge Everything</b> to clear all caches by calling: <code>gridOptions.api.purgeServerSideCache([])</code>.</li>
-    <li>Click <b>Purge ['Kathryn Powers','Mabel Ward']</b> to clear a single cache by calling: <code>gridOptions.api.purgeServerSideCache(['Kathryn Powers','Mabel Ward'])</code>.</li>
+    <li>Click <b>Purge Everything</b> to clear all caches by calling <code>gridOptions.api.purgeServerSideCache([])</code>.</li>
+    <li>Click <b>Purge ['Kathryn Powers','Mabel Ward']</b> to clear a single cache by calling <code>gridOptions.api.purgeServerSideCache(['Kathryn Powers','Mabel Ward'])</code>.</li>
 </ul>
-
 
 <?= grid_example('Purging Tree Data', 'purging-tree-data', 'generated', ['enterprise' => true, 'exampleHeight' => 615, 'extras' => ['lodash'], 'modules' => ['serverside', 'rowgrouping', 'menu', 'columnpanel']]) ?>
 

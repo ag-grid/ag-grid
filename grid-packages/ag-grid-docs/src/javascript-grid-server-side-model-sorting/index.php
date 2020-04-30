@@ -6,7 +6,7 @@ $pageGroup = "row_models";
 include '../documentation-main/documentation_header.php';
 ?>
 
-<h1 class="heading-enterprise"> Server-Side Sorting </h1>
+<h1 class="heading-enterprise">Server-Side Sorting</h1>
 
 <p class="lead">
     This section covers Server-Side Sorting using the Server-Side Row Model.
@@ -19,17 +19,18 @@ include '../documentation-main/documentation_header.php';
     definitions with sorting enabled are shown below:
 </p>
 
-<snippet>
+<?= createSnippet(<<<SNIPPET
 gridOptions: {
     columnDefs: [
-        {field: 'country', sortable: true},
-        {field: 'year', sortable: true},
-        {field: 'sport'},
+        { field: 'country', sortable: true },
+        { field: 'year', sortable: true },
+        { field: 'sport' },
     ],
 
     // other options
 }
-</snippet>
+SNIPPET
+) ?>
 
 <p>
     For more details on sorting configurations see the section on <a href="../javascript-grid-sorting/">Row Sorting</a>.
@@ -48,50 +49,50 @@ gridOptions: {
     An example of the contents contained in the <code>sortModel</code> is shown below:
 </p>
 
-<snippet>
+<?= createSnippet(<<<SNIPPET
 //IServerSideGetRowsRequest
 {
     sortModel: [
-        { colId: "country", sort: "asc" },
-        { colId: "year", sort: "desc" },
+        { colId: 'country', sort: 'asc' },
+        { colId: 'year', sort: 'desc' },
     ],
 
     // other properties
 }
-</snippet>
+SNIPPET
+) ?>
 
 <p>
-    Notice in the snippet above that the <code>sortModel</code> contains an array of sorts for each column that has
-    active sorts in the grid. The column id and sort type can then be used by the server to perform the actual sorting.
+    Notice in the snippet above that the <code>sortModel</code> contains an array of models for each column that has
+    active sorts in the grid. The column ID and sort type can then be used by the server to perform the actual sorting.
 </p>
 
-<h2>Example: Server-Side Sorting</h2>
+<h3>Example: Server-Side Sorting</h3>
 
 <p>
     The example below demonstrates server-side sorting. Notice the following:
 </p>
 
 <ul class="content">
-    <li>Try single / multi column (using shift key) sorting by clicking on columns headers.</li>
+    <li>Try single / multi column (using <code>Shift</code> key) sorting by clicking on column headers.</li>
     <li>All columns have sorting enabled using the <code>defaultColDef</code> grid options property with
         <code>sortable=true</code>.
     </li>
     <li>The server uses the metadata contained in the <code>sortModel</code> to sort the rows.</li>
-    <li>Open the browsers dev console to view the <code>sortModel</code> supplied in the request to the datasource.</li>
+    <li>Open the browser's dev console to view the <code>sortModel</code> supplied in the request to the datasource.</li>
 </ul>
 
 <?= grid_example('Server-Side Sorting', 'sorting', 'generated', ['enterprise' => true, 'extras' => ['alasql'], 'modules' => ['serverside']]) ?>
 
-
 <note>
-    <p>Fake Server Implementation</p>
+    <p><strong>Fake Server Implementation</strong></p>
     <p>
-    Most of the Server-Side Row Model examples include a fake server that generates SQL to imitate how a real server
-    might use the requests sent from the grid. These examples use <a href="http://alasql.org/">AlaSQL</a> which is a
-    JavaScript SQL database that works in browsers.
+        Most of the Server-Side Row Model examples include a fake server that generates SQL to imitate how a real server
+        might use the requests sent from the grid. These examples use <a href="http://alasql.org/">AlaSQL</a> which is a
+        JavaScript SQL database that works in browsers.
     </p>
     <p>
-        However note that the Server-Side Row Model does not impose any restrictions on the server-side technologies used.
+        However, note that the Server-Side Row Model does not impose any restrictions on the server-side technologies used.
     </p>
 </note>
 
