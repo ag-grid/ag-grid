@@ -17,27 +17,32 @@ import * as ObjectUtils from './object';
 import * as RowNodeUtils from './rowNode';
 import * as SetUtils from './set';
 import * as StringUtils from './string';
+import { _ } from './utils';
 
-const utils = {
-    ...GeneralUtils,
-    ...ArrayUtils,
-    ...BrowserUtils,
-    ...CsvUtils,
-    ...DateUtils,
-    ...DomUtils,
-    ...EventUtils,
-    ...FunctionUtils,
-    ...FuzzyMatchUtils,
-    ...GenericUtils,
-    ...IconUtils,
-    ...KeyboardUtils,
-    ...MapUtils,
-    ...MouseUtils,
-    ...NumberUtils,
-    ...ObjectUtils,
-    ...RowNodeUtils,
-    ...SetUtils,
-    ...StringUtils,
-};
+it('exports all util methods', () => {
+    const combinedMethodCount = NumberUtils.sum([
+        GeneralUtils,
+        ArrayUtils,
+        BrowserUtils,
+        CsvUtils,
+        DateUtils,
+        DomUtils,
+        EventUtils,
+        FunctionUtils,
+        FuzzyMatchUtils,
+        GenericUtils,
+        IconUtils,
+        KeyboardUtils,
+        MapUtils,
+        MouseUtils,
+        NumberUtils,
+        ObjectUtils,
+        RowNodeUtils,
+        SetUtils,
+        StringUtils,
+    ].map(x => Object.keys(x).length));
 
-export const _ = utils;
+    const exportedMethodCount = Object.keys(_).length;
+
+    expect(exportedMethodCount).toBe(combinedMethodCount);
+});
