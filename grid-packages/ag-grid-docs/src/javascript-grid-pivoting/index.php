@@ -217,7 +217,7 @@ console.log('found column with id ' + sausageKingdomColumn.getId());</snippet>
         tool panel.
     </p>
 
-    <?= grid_example('Filtering With Pivot', 'filter', 'generated', ['enterprise' => true, 'exampleHeight' => 610, 'modules' => ['clientside', 'rowgrouping', 'columnpanel', 'setfilter', 'menu']]) ?>
+    <?= grid_example('Filtering With Pivot', 'filter', 'generated', ['enterprise' => true, 'exampleHeight' => 610, 'modules' => ['clientside', 'rowgrouping', 'columnpanel', 'filterpanel', 'setfilter', 'menu']]) ?>
 
     <h2>Sorting with Pivot</h2>
 
@@ -232,7 +232,7 @@ console.log('found column with id ' + sausageKingdomColumn.getId());</snippet>
         underneath the hood.
     </p>
 
-    <?= grid_example('Sorting With Pivot', 'sorting', 'generated', ['enterprise' => true, 'exampleHeight' => 630, 'modules' => ['clientside', 'rowgrouping', 'menu', 'columnpanel']]) ?>
+    <?= grid_example('Sorting With Pivot', 'sorting', 'generated', ['enterprise' => true, 'exampleHeight' => 630, 'modules' => ['clientside', 'rowgrouping', 'menu', 'columnpanel', 'filterpanel']]) ?>
 
 
     <h2 id="pivotColumnGroupTotals">Pivot Column Group Totals</h2>
@@ -269,7 +269,7 @@ console.log('found column with id ' + sausageKingdomColumn.getId());</snippet>
            <li>Expanding pivot groups reveals columns that make up totals.</li>
        </ul>
 
-    <?= grid_example('Pivot Column Group Totals', 'totals', 'generated', ['enterprise' => true, 'exampleHeight' => 655, 'modules' => ['clientside', 'rowgrouping', 'menu', 'columnpanel']]) ?>
+    <?= grid_example('Pivot Column Group Totals', 'totals', 'generated', ['enterprise' => true, 'exampleHeight' => 655, 'modules' => ['clientside', 'rowgrouping', 'menu', 'columnpanel', 'filterpanel']]) ?>
 
     <h2 id="pivotRowTotals">Pivot Row Totals</h2>
 
