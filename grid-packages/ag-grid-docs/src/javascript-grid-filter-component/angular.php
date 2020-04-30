@@ -60,7 +60,7 @@ SNIPPET
 @Component({
     selector: 'filter-cell',
     template: `
-        Filter: <input style="height: 10px" #input (ngModelChange)="onChange($event)" [ngModel]="text">
+        Filter: <input style="height: 10px" #input (ngModelChange)="onChange(\$event)" [ngModel]="text">
     `
 })
 class PartialMatchFilterComponent implements AgFilterComponent {
