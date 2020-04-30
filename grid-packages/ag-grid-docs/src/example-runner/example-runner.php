@@ -229,6 +229,10 @@ function grid_example($title, $dir, $type = 'vanilla', $options = array())
         $config['showImportsDropdown'] = $options['showImportsDropdown'];
     }
 
+    if (isset($options['removeTitles'])) {
+        $config['removeTitles'] = $options['removeTitles'];
+    }
+
     if ($options['defaultImportType']) {
         $config['defaultImportType'] = $options['defaultImportType'];
     }

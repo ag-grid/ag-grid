@@ -44,6 +44,7 @@ class ExampleRunnerController {
     private config: any;
 
     private iframeStyle: any;
+    private titlesToRemove: string[] = [];
 
     constructor(
         private $http: angular.IHttpService,
@@ -89,6 +90,7 @@ class ExampleRunnerController {
         const options = this.config.options;
 
         this.showImportsDropdown = this.config.showImportsDropdown === undefined ? true : this.config.showImportsDropdown;
+        this.titlesToRemove = this.config.removeTitles === undefined ? [] : this.config.removeTitles;
 
         if (options.exampleHeight) {
             this.iframeStyle.height = isNaN(options.exampleHeight) ? options.exampleHeight : options.exampleHeight + "px";
@@ -98,18 +100,25 @@ class ExampleRunnerController {
 
         this.selectedTab = options.showResult === false ? "code" : "result";
 
-        this.title = this.config.title;
-        this.name = this.config.name;
-        this.section = this.config.section;
-        this.showFrameworksDropdown = !options.onlyShow && (this.config.type === "multi" || this.config.type === "generated");
-        this.availableTypes = options.onlyShow ? [options.onlyShow.toLowerCase()] : Object.keys(this.config.types);
-
         this.titles = {
             vanilla: "JavaScript",
             react: "React",
             angular: "Angular",
             vue: "Vue"
         };
+
+        this.titlesToRemove.forEach(titleToRemove => {
+            delete this.titles[titleToRemove];
+            delete this.config.types[titleToRemove]
+        })
+
+        this.title = this.config.title;
+        this.name = this.config.name;
+        this.section = this.config.section;
+        this.showFrameworksDropdown = !options.onlyShow && (this.config.type === "multi" || this.config.type === "generated");
+        this.availableTypes = options.onlyShow ? [options.onlyShow.toLowerCase()] : Object.keys(this.config.types);
+
+
 
         this.importTypeTitles = {
             packages: "Packages",

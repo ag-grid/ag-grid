@@ -77,18 +77,25 @@ function createMockServer() {
     }
 
     // provides the initial (or current state) of the data
-    MockServer.prototype.initialLoad = function() {
-        var that = Object(this);
-        return Rx.Observable.fromPromise(new Promise(function(resolve, reject) {
-            agGrid.simpleHttpRequest({ url: 'https://raw.githubusercontent.com/ag-grid/ag-grid/master/grid-packages/ag-grid-docs/src/stocks.json' })
-                .then(function(dataSet) {
+    MockServer.prototype.initialLoad = function () {
+        return Rx.Observable.fromPromise(new Promise((resolve, reject) => {
+            // do http request to get our sample data - not using any framework to keep the example self contained.
+            // you will probably use a framework like JQuery, Angular or something else to do your HTTP calls.
+            let httpRequest = new XMLHttpRequest();
+            httpRequest.open('GET', 'https://raw.githubusercontent.com/ag-grid/ag-grid/master/grid-packages/ag-grid-docs/src/stocks.json');
+            httpRequest.send();
+            httpRequest.onreadystatechange = () => {
+                if (httpRequest.readyState === 4 && httpRequest.status === 200) {
+                    let dataSet = JSON.parse(httpRequest.responseText);
+
                     // for this demo's purpose, lets cut the data set down to something small
-                    var reducedDataSet = dataSet.slice(0, 200);
+                    let reducedDataSet = dataSet.slice(0, 200);
 
                     // the sample data has just name and code, we need to add in dummy figures
-                    that.rowData = that.backfillData(reducedDataSet);
-                    resolve(_.cloneDeep(that.rowData));
-                });
+                    this.rowData = this.backfillData(reducedDataSet);
+                    resolve(_.cloneDeep(this.rowData));
+                }
+            };
         }));
     };
 

@@ -51,7 +51,7 @@ SNIPPET
 <p>With these two pieces of code we can supply the updates to ag-Grid and the grid will only re-render the changes rows, resulting
 in much improved performance.</p>
 
-<?= grid_example('RxJS - Row Updates', 'rxjs-updates', 'generated', ['enterprise' => true, 'extras' => ['lodash', 'rxjs', 'bluebirdjs']]) ?>
+<?= grid_example('RxJS - Row Updates', 'rxjs-updates', 'generated', ['enterprise' => true, 'extras' => ['lodash', 'rxjs', 'bluebirdjs'], 'removeTitles' => ['vanilla']]) ?>
 
 <h2>Option 2 - Providing Full Row Data With Updates Within</h2>
 
@@ -82,6 +82,6 @@ SNIPPET
 <p>With this configuration we can supply the updates to ag-Grid and the grid will only re-render the changed rows, resulting
     in much improved performance.</p>
 
-<?= grid_example('RxJS - Full Updates', 'rxjs-full', 'generated', ['enterprise' => true, 'extras' => ['lodash', 'rxjs', 'bluebirdjs']]) ?>
+<?= grid_example('RxJS - Full Updates', 'rxjs-full', 'generated', ['enterprise' => true, 'extras' => ['lodash', 'rxjs', 'bluebirdjs'], 'removeTitles' => ['vanilla']]) ?>
 
 <?php include '../documentation-main/documentation_footer.php';?>
