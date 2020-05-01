@@ -1,3 +1,60 @@
+<div class="note" style="display: none" fixVersionNote id="fix_version_23_1_0">
+    <p>Release 23.1.0 (1st May 2020)</p>
+
+    <p>Feature Highlights:</p>
+
+    <ul>
+        <li>
+            AG-3576: Allow dragging multiple columns between grids
+            (see <a href="/javascript-grid-row-dragging-to-grid/#dragging-multiple-records-between-grids">Dragging Multiple Records Between Grids</a>)
+        </li>
+
+        <li>
+            AG-3625: Allow the grid to respond to DnD data based on the row position
+            (see <a href="/javascript-grid-row-dragging-to-grid/#example-two-grids-with-drop-position">Row Dragging Drop Position</a>)
+        </li>
+
+        <li>
+            AG-4066: Allow Grid colours to be changed using CSS variables
+            (see <a href="/javascript-grid-themes-customising/#setting-parameters-css-variables">Changing colours with CSS variables</a>)
+        </li>
+
+        <li>
+            AG-3472: Add the ability to listen to click events on Charts
+            (see <a href="/javascript-charts-events/">Chart Events</a>)
+        </li>
+
+        <li>
+            AG-588: Add tooltips to Set Filter List
+            (see <a href="/javascript-grid-filter-set-filter-list/#filter-value-tooltips">Set Filter Tooltips</a>)
+        </li>
+
+        <li>AG-2162: Add option to close filter popup when Apply button is clicked
+            (see <a href="/javascript-grid-filter-provided/#providedFilterParams">'closeOnApply' Filter Param</a>)
+        </li>
+
+        <li>
+            AG-2187: Allow floating filters to be enabled/disabled on a per-column basis
+            (see <a href="/javascript-grid-floating-filters/#floating-filters">Floating Filters on a per-column basis</a>)
+        </li>
+    </ul>
+
+    <p>Deprecations:</p>
+
+    <ul>
+        <li>Grid API updateRowData() deprecated, replaced with applyTransaction()</li>
+        <li>Grid API batchUpdateRowData() deprecated, replaced with applyTransactionAsync()</li>
+        <li>Grid Property 'batchUpdateWaitMillis' deprecated, replaced with 'asyncTransactionWaitMillis'</li>
+        <li>Grid Property 'deltaRowDataMode' deprecated, replaced with 'immutableData'</li>
+        <li>Grid Property 'deltaColumnMode' deprecated, replaced with 'immutableColumns'</li>
+        <li>RowDataTransaction Property 'addIndex' will be removed in a future major release</li>
+        <li>RowDataTransaction Property 'addIndex' will be removed in a future major release</li>
+        <li>Set Filter Param 'suppressSyncValuesAfterDataChange' will be removed in a future major release</li>
+        <li>Set Filter Param 'suppressRemoveEntries' will be removed in a future major release</li>
+        <li>Filter Param 'newRowsAction' will be removed in a future major release (newRowsAction = 'keep' will become the default behaviour)</li>
+    </ul>
+</div>
+
 <div class="note" style="display: none" fixVersionNote id="fix_version_23_0_0">
     <p>Release 23.0.0 (17th Mar 2020)</p>
 
