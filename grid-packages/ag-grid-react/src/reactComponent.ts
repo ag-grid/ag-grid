@@ -157,7 +157,7 @@ export class ReactComponent extends BaseReactComponent {
      * Note: Some use cases will throw an error (ie when using Context) so if an error occurs just ignore it any move on
      */
     private renderStaticMarkup(params: any) {
-        if (this.parentComponent.isDisableStaticMarkup() || !this.componentType.isCellRenderer()) {
+        if (this.parentComponent.isDisableStaticMarkup() || (this.componentType.isCellRenderer && !this.componentType.isCellRenderer())) {
             return;
         }
 
