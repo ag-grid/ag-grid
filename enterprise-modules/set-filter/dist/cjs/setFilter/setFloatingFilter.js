@@ -24,7 +24,7 @@ var setValueModel_1 = require("./setValueModel");
 var SetFloatingFilterComp = /** @class */ (function (_super) {
     __extends(SetFloatingFilterComp, _super);
     function SetFloatingFilterComp() {
-        var _this = _super.call(this, "<div class=\"ag-floating-filter-input\" role=\"presentation\"><ag-input-text-field ref=\"eFloatingFilterText\"></ag-input-text-field></div>") || this;
+        var _this = _super.call(this, /* html */ "\n            <div class=\"ag-floating-filter-input\" role=\"presentation\">\n                <ag-input-text-field ref=\"eFloatingFilterText\"></ag-input-text-field>\n            </div>") || this;
         _this.availableValuesListenerAdded = false;
         return _this;
     }
@@ -33,9 +33,9 @@ var SetFloatingFilterComp = /** @class */ (function (_super) {
         this.params = params;
     };
     // unlike other filters, what we show in the floating filter can be different, even
-    // if another filter changes. this is due to how set filter restricts it's values based
-    // on selections in other filters. eg if you filter Language to English, then the set filter
-    // on Country will only show English speaking countries. thus the list of items to show
+    // if another filter changes. this is due to how set filter restricts its values based
+    // on selections in other filters, e.g. if you filter Language to English, then the set filter
+    // on Country will only show English speaking countries. Thus the list of items to show
     // in the floating filter can change.
     SetFloatingFilterComp.prototype.onAvailableValuesChanged = function (filterChangedEvent) {
         this.updateSetFilterText();
@@ -48,7 +48,7 @@ var SetFloatingFilterComp = /** @class */ (function (_super) {
         var _this = this;
         this.params.parentFilterInstance(function (setFilter) {
             var setValueModel = setFilter.getValueModel();
-            _this.addDestroyableEventListener(setValueModel, setValueModel_1.SetValueModel.EVENT_AVAILABLE_VALUES_CHANGES, _this.onAvailableValuesChanged.bind(_this));
+            _this.addDestroyableEventListener(setValueModel, setValueModel_1.SetValueModel.EVENT_AVAILABLE_VALUES_CHANGED, _this.onAvailableValuesChanged.bind(_this));
         });
         this.availableValuesListenerAdded = true;
     };
@@ -62,21 +62,21 @@ var SetFloatingFilterComp = /** @class */ (function (_super) {
             this.addAvailableValuesListener();
         }
         // also supporting old filter model for backwards compatibility
-        var values = (this.lastKnownModel instanceof Array) ? this.lastKnownModel : this.lastKnownModel.values;
+        var values = this.lastKnownModel instanceof Array ? this.lastKnownModel : this.lastKnownModel.values;
         if (!values || values.length === 0) {
             this.eFloatingFilterText.setValue('');
             return;
         }
         this.params.parentFilterInstance(function (setFilter) {
             var valueModel = setFilter.getValueModel();
-            var availableValues = values.filter(valueModel.isValueAvailable.bind(valueModel));
+            var availableValues = core_1._.filter(values, function (v) { return valueModel.isValueAvailable(v); });
             // format all the values, if a formatter is provided
-            var formattedValues = availableValues.map(function (value) {
+            var formattedValues = core_1._.map(availableValues, function (value) {
                 var formattedValue = _this.valueFormatterService.formatValue(_this.params.column, null, null, value);
                 return formattedValue != null ? formattedValue : value;
             });
             var arrayToDisplay = formattedValues.length > 10 ? formattedValues.slice(0, 10).concat('...') : formattedValues;
-            var valuesString = "(" + formattedValues.length + ") " + arrayToDisplay.join(",");
+            var valuesString = "(" + formattedValues.length + ") " + arrayToDisplay.join(',');
             _this.eFloatingFilterText.setValue(valuesString);
         });
     };

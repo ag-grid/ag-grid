@@ -1,6 +1,6 @@
 
 export interface RowDataTransaction {
-    addIndex?: number;
+    /** deprecated */ addIndex?: number;
     add?: any[];
     remove?: any[];
     update?: any[];

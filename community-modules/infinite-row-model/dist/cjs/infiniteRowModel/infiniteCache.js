@@ -32,12 +32,6 @@ var InfiniteCache = /** @class */ (function (_super) {
     InfiniteCache.prototype.setBeans = function (loggerFactory) {
         this.logger = loggerFactory.create('InfiniteCache');
     };
-    InfiniteCache.prototype.init = function () {
-        _super.prototype.init.call(this);
-        // start load of data, as the virtualRowCount will remain at 0 otherwise,
-        // so we need this to kick things off, otherwise grid would never call getRow()
-        this.getRow(0);
-    };
     InfiniteCache.prototype.moveItemsDown = function (block, moveFromIndex, moveCount) {
         var startRow = block.getStartRow();
         var endRow = block.getEndRow();
@@ -132,9 +126,6 @@ var InfiniteCache = /** @class */ (function (_super) {
         this.checkBlockToLoad();
     };
     __decorate([
-        core_1.Autowired('eventService')
-    ], InfiniteCache.prototype, "eventService", void 0);
-    __decorate([
         core_1.Autowired('columnApi')
     ], InfiniteCache.prototype, "columnApi", void 0);
     __decorate([
@@ -143,9 +134,6 @@ var InfiniteCache = /** @class */ (function (_super) {
     __decorate([
         __param(0, core_1.Qualifier('loggerFactory'))
     ], InfiniteCache.prototype, "setBeans", null);
-    __decorate([
-        core_1.PostConstruct
-    ], InfiniteCache.prototype, "init", null);
     return InfiniteCache;
 }(core_1.RowNodeCache));
 exports.InfiniteCache = InfiniteCache;

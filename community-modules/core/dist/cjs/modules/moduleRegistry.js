@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v23.0.2
+ * @version v23.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -10,15 +10,28 @@ var utils_1 = require("../utils");
 var ModuleRegistry = /** @class */ (function () {
     function ModuleRegistry() {
     }
-    ModuleRegistry.register = function (module) {
+    ModuleRegistry.register = function (module, moduleBased) {
+        if (moduleBased === void 0) { moduleBased = true; }
         ModuleRegistry.modulesMap[module.moduleName] = module;
+        if (ModuleRegistry.moduleBased === undefined) {
+            ModuleRegistry.moduleBased = moduleBased;
+        }
+        else {
+            if (ModuleRegistry.moduleBased !== moduleBased) {
+                utils_1._.doOnce(function () {
+                    console.warn("ag-Grid: You are mixing modules (i.e. @ag-grid-community/core) and packages (ag-grid-community) - you can only use one or the other of these mechanisms.");
+                    console.warn('Please see https://www.ag-grid.com/javascript-grid-packages-modules/ for more information.');
+                }, 'ModulePackageCheck');
+            }
+        }
     };
     // noinspection JSUnusedGlobalSymbols
-    ModuleRegistry.registerModules = function (modules) {
+    ModuleRegistry.registerModules = function (modules, moduleBased) {
+        if (moduleBased === void 0) { moduleBased = true; }
         if (!modules) {
             return;
         }
-        modules.forEach(ModuleRegistry.register);
+        modules.forEach(function (module) { return ModuleRegistry.register(module, moduleBased); });
     };
     ModuleRegistry.assertRegistered = function (moduleName, reason) {
         if (this.isRegistered(moduleName)) {
@@ -36,6 +49,9 @@ var ModuleRegistry = /** @class */ (function () {
     };
     ModuleRegistry.getRegisteredModules = function () {
         return utils_1._.values(ModuleRegistry.modulesMap);
+    };
+    ModuleRegistry.isPackageBased = function () {
+        return !ModuleRegistry.moduleBased;
     };
     // having in a map a) removes duplicates and b) allows fast lookup
     ModuleRegistry.modulesMap = {};

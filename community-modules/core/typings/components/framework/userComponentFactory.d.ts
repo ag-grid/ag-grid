@@ -9,32 +9,32 @@ import { Promise } from "../../utils";
 import { IDateComp, IDateParams } from "../../rendering/dateComponent";
 import { IHeaderComp, IHeaderParams } from "../../headerRendering/header/headerComp";
 import { IHeaderGroupComp, IHeaderGroupParams } from "../../headerRendering/headerGroup/headerGroupComp";
-import { ICellRendererComp, ICellRendererParams } from "../../rendering/cellRenderers/iCellRenderer";
+import { ICellRendererComp, ICellRendererParams, ISetFilterCellRendererParams } from "../../rendering/cellRenderers/iCellRenderer";
 import { GroupCellRendererParams } from "../../rendering/cellRenderers/groupCellRenderer";
-import { ILoadingOverlayComp } from "../../rendering/overlays/loadingOverlayComponent";
-import { INoRowsOverlayComp } from "../../rendering/overlays/noRowsOverlayComponent";
+import { ILoadingOverlayComp, ILoadingOverlayParams } from "../../rendering/overlays/loadingOverlayComponent";
+import { INoRowsOverlayComp, INoRowsOverlayParams } from "../../rendering/overlays/noRowsOverlayComponent";
 import { ITooltipComp, ITooltipParams } from "../../rendering/tooltipComponent";
 import { IFilterComp, IFilterParams } from "../../interfaces/iFilter";
-import { IFloatingFilterComp } from "../../filter/floating/floatingFilter";
-import { ICellEditorComp } from "../../interfaces/iCellEditor";
-import { IToolPanelComp } from "../../interfaces/iToolPanel";
+import { IFloatingFilterComp, IFloatingFilterParams } from "../../filter/floating/floatingFilter";
+import { ICellEditorComp, ICellEditorParams } from "../../interfaces/iCellEditor";
+import { IToolPanelComp, IToolPanelParams } from "../../interfaces/iToolPanel";
 import { StatusPanelDef } from "../../interfaces/iStatusPanel";
 export declare type DefinitionObject = GridOptions | ColDef | ColGroupDef | ISetFilterParams | IRichCellEditorParams | ToolPanelDef | StatusPanelDef;
-export declare type AgComponentPropertyInput<A extends IComponent<any>> = AgGridRegisteredComponentInput<A> | string | boolean;
+export declare type AgComponentPropertyInput<A extends IComponent<TParams>, TParams> = AgGridRegisteredComponentInput<A> | string | boolean;
 export declare enum ComponentSource {
     DEFAULT = 0,
     REGISTERED_BY_NAME = 1,
     HARDCODED = 2
 }
-export interface ComponentSelectorResult {
+export interface ComponentSelectorResult<TParams> {
     component?: string;
-    params?: any;
+    params?: TParams;
 }
 /**
  * B the business interface (ie IHeader)
  * A the agGridComponent interface (ie IHeaderComp). The final object acceptable by ag-grid
  */
-export interface ComponentClassDef<A extends IComponent<any> & B, B> {
+export interface ComponentClassDef<A extends IComponent<TParams> & B, B, TParams> {
     component: {
         new (): A;
     } | {
@@ -42,14 +42,13 @@ export interface ComponentClassDef<A extends IComponent<any> & B, B> {
     };
     componentFromFramework: boolean;
     source: ComponentSource;
-    paramsFromSelector: any;
+    paramsFromSelector: TParams;
 }
-export interface ModifyParamsCallback {
-    (params: any, component: IComponent<any>): void;
+export interface ModifyParamsCallback<TParams> {
+    (params: TParams, component: IComponent<TParams>): void;
 }
 export declare class UserComponentFactory {
     private gridOptions;
-    private gridOptionsWrapper;
     private context;
     private agComponentUtils;
     private componentMetadataProvider;
@@ -59,18 +58,18 @@ export declare class UserComponentFactory {
     newHeaderComponent(params: IHeaderParams): Promise<IHeaderComp>;
     newHeaderGroupComponent(params: IHeaderGroupParams): Promise<IHeaderGroupComp>;
     newFullWidthGroupRowInnerCellRenderer(params: ICellRendererParams): Promise<ICellRendererComp>;
-    newFullWidthCellRenderer(params: any, cellRendererType: string, cellRendererName: string): Promise<ICellRendererComp>;
-    newCellRenderer(target: ColDef | ISetFilterParams | IRichCellEditorParams, params: ICellRendererParams): Promise<ICellRendererComp>;
-    newPinnedRowCellRenderer(target: ColDef | ISetFilterParams | IRichCellEditorParams, params: ICellRendererParams): Promise<ICellRendererComp>;
-    newCellEditor(colDef: ColDef, params: any): Promise<ICellEditorComp>;
+    newFullWidthCellRenderer(params: ICellRendererParams, cellRendererType: string, cellRendererName: string): Promise<ICellRendererComp>;
+    newCellRenderer(target: ColDef | IRichCellEditorParams, params: ICellRendererParams, isPinned?: boolean): Promise<ICellRendererComp>;
+    newCellEditor(colDef: ColDef, params: ICellEditorParams): Promise<ICellEditorComp>;
     newInnerCellRenderer(target: GroupCellRendererParams, params: ICellRendererParams): Promise<ICellRendererComp>;
-    newLoadingOverlayComponent(params: any): Promise<ILoadingOverlayComp>;
-    newNoRowsOverlayComponent(params: any): Promise<INoRowsOverlayComp>;
+    newLoadingOverlayComponent(params: ILoadingOverlayParams): Promise<ILoadingOverlayComp>;
+    newNoRowsOverlayComponent(params: INoRowsOverlayParams): Promise<INoRowsOverlayComp>;
     newTooltipComponent(params: ITooltipParams): Promise<ITooltipComp>;
-    newFilterComponent(colDef: ColDef, params: IFilterParams, defaultFilter: string, modifyParamsCallback: ModifyParamsCallback): Promise<IFilterComp>;
-    newFloatingFilterComponent(colDef: ColDef, params: any, defaultFloatingFilter: string): Promise<IFloatingFilterComp>;
-    newToolPanelComponent(toolPanelDef: ToolPanelDef, params: any): Promise<IToolPanelComp>;
-    newStatusPanelComponent(def: StatusPanelDef, params: any): Promise<IToolPanelComp>;
+    newFilterComponent(colDef: ColDef, params: IFilterParams, defaultFilter: string, modifyParamsCallback: ModifyParamsCallback<IFilterParams>): Promise<IFilterComp>;
+    newSetFilterCellRenderer(target: ISetFilterParams, params: ISetFilterCellRendererParams): Promise<ICellRendererComp>;
+    newFloatingFilterComponent(colDef: ColDef, params: IFloatingFilterParams, defaultFloatingFilter: string): Promise<IFloatingFilterComp>;
+    newToolPanelComponent(toolPanelDef: ToolPanelDef, params: IToolPanelParams): Promise<IToolPanelComp>;
+    newStatusPanelComponent(def: StatusPanelDef, params: IToolPanelParams): Promise<IToolPanelComp>;
     /**
      * This method creates a component given everything needed to guess what sort of component needs to be instantiated
      * It takes
@@ -98,9 +97,9 @@ export declare class UserComponentFactory {
      *  @param modifyParamsCallback: A chance to customise the params passed to the init method. It receives what the current
      *  params are and the component that init is about to get called for
      */
-    createUserComponentFromConcreteClass<P, A extends IComponent<P>>(clazz: {
+    createUserComponentFromConcreteClass<A extends IComponent<TParams>, TParams>(clazz: {
         new (): A;
-    }, agGridParams: P): A;
+    }, agGridParams: TParams): A;
     /**
      * This method returns the underlying representation of the component to be created. ie for Javascript the
      * underlying function where we should be calling new into. In case of the frameworks, the framework class
@@ -118,7 +117,7 @@ export declare class UserComponentFactory {
      *      invoked
      *  @param defaultComponentName: The name of the component to load if there is no component specified
      */
-    lookupComponentClassDef<A extends IComponent<any> & B, B>(definitionObject: DefinitionObject, propertyName: string, params?: any, defaultComponentName?: string): ComponentClassDef<A, B>;
+    lookupComponentClassDef<A extends IComponent<TParams> & B, B, TParams>(definitionObject: DefinitionObject, propertyName: string, params?: TParams, defaultComponentName?: string): ComponentClassDef<A, B, TParams>;
     private lookupFromRegisteredComponents;
     /**
      * Useful to check what would be the resultant params for a given object
@@ -128,9 +127,9 @@ export declare class UserComponentFactory {
      *      'floatingFilter', 'cellRenderer', is used to find if the user is specifying a custom component
      *  @param paramsFromGrid: Params to be passed to the component and passed by ag-Grid. This will get merged with any params
      *      specified by the user in the configuration
-     * @returns {any} It merges the user agGridParams with the actual params specified by the user.
+     * @returns {TParams} It merges the user agGridParams with the actual params specified by the user.
      */
-    createFinalParams(definitionObject: DefinitionObject, propertyName: string, paramsFromGrid: any, paramsFromSelector?: any): any;
+    createFinalParams<TParams>(definitionObject: DefinitionObject, propertyName: string, paramsFromGrid: TParams, paramsFromSelector?: TParams): TParams;
     private createComponentInstance;
     private initComponent;
 }

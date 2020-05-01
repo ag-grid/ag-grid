@@ -787,6 +787,24 @@
         ],
         "description": "The font family to use for the labels."
       }
+    },
+    "listeners": {
+      "meta": {
+        "description": "A map of event names to event listeners."
+      },
+      "nodeClick": {
+        "type": {
+          "parameters": {
+            "type": "'nodeClick'",
+            "series": "BarSeries",
+            "datum": "any",
+            "xKey": "string",
+            "yKey": "string"
+          },
+          "returnType": "any"
+        },
+        "description": "The listener to call when a bar/column node is clicked."
+      }
     }
   },
   "lineSeriesConfig": {
@@ -950,6 +968,24 @@
       "stroke": {
         "type": "string",
         "description": "The colour of the stroke around the markers when hovered over."
+      }
+    },
+    "listeners": {
+      "meta": {
+        "description": "A map of event names to event listeners."
+      },
+      "nodeClick": {
+        "type": {
+          "parameters": {
+            "type": "'nodeClick'",
+            "series": "LineSeries",
+            "datum": "any",
+            "xKey": "string",
+            "yKey": "string"
+          },
+          "returnType": "any"
+        },
+        "description": "The listener to call when a line series node (marker) is clicked."
       }
     }
   },
@@ -1375,6 +1411,25 @@
         "type": "string",
         "description": "The colour of the stroke around the markers when hovered over."
       }
+    },
+    "listeners": {
+      "meta": {
+        "description": "A map of event names to event listeners."
+      },
+      "nodeClick": {
+        "type": {
+          "parameters": {
+            "type": "'nodeClick'",
+            "series": "ScatterSeries",
+            "datum": "any",
+            "xKey": "string",
+            "yKey": "string",
+            "sizeKey?": "string"
+          },
+          "returnType": "any"
+        },
+        "description": "The listener to call when a scatter series node (marker) is clicked."
+      }
     }
   },
   "pieSeriesConfig": {
@@ -1722,6 +1777,166 @@
         "min": 0,
         "max": 20,
         "unit": "px"
+      }
+    },
+    "listeners": {
+      "meta": {
+        "description": "A map of event names to event listeners."
+      },
+      "nodeClick": {
+        "type": {
+          "parameters": {
+            "type": "'nodeClick'",
+            "series": "PieSeries",
+            "datum": "any",
+            "angleKey": "string",
+            "radiusKey?": "string"
+          },
+          "returnType": "any"
+        },
+        "description": "The listener to call when a pie slice is clicked."
+      }
+    }
+  },
+  "histogramSeriesConfig": {
+    "data": {
+      "type": "object[]",
+      "isRequired": true,
+      "description": "The data to use when rendering the series. If this is not supplied, data must be set on the chart instead."
+    },
+    "visible": {
+      "default": true,
+      "description": "Whether or not to display the series."
+    },
+    "showInLegend": {
+      "default": true,
+      "description": "Whether or not to include the series in the legend."
+    },
+    "tooltipEnabled": {
+      "default": true,
+      "description": "Whether or not to show tooltips when the series are hovered over."
+    },
+    "tooltipRenderer": {
+      "type": {
+        "parameters": {
+          "datum": "any",
+          "title?": "string",
+          "color?": "string",
+          "xKey": "string",
+          "xName?": "string",
+          "yKey": "string",
+          "yName?": "string",
+          "sizeKey?": "string",
+          "sizeName?": "string",
+          "labelKey?": "string",
+          "labelName?": "string"
+        },
+        "returnType": "string"
+      },
+      "description": "Function used to create the content for tooltips."
+    },
+    "xKey": {
+      "type": "string",
+      "isRequired": true,
+      "description": "The key to use to retrieve x-values from the data."
+    },
+    "xName": {
+      "type": "string",
+      "description": "A human-readable description of the x-values."
+    },
+    "yKey": {
+      "type": "string",
+      "isRequired": false,
+      "description": "The key to use to retrieve y-values from the data."
+    },
+    "yName": {
+      "type": "string",
+      "description": "A human-readable description of the y-values."
+    },
+    "meta": {
+      "displayName": "Histogram Series Configuration",
+      "description": "Configuration for histogram series."
+    },
+    "binCount": {
+      "type": "number",
+      "description": "The number of bins to try to split the x axis into. Clashes with the <code>bins</code> setting."
+    },
+    "bins": {
+      "type": "number[][]",
+      "description": "Set the bins explicitly. The bins need not be of equal width. Clashes with the <code>binCount</code> setting."
+    },
+    "aggregation": {
+      "type": "string",
+      "description": "Dictates how the bins are aggregated. If set to 'sum', the value shown for the bins will be the total of the yKey values. If set to 'mean', it will display the average yKey value of the bin",
+      "default": "sum",
+      "options": [
+        "sum",
+        "mean"
+      ]
+    },
+    "areaPlot": {
+      "type": "boolean",
+      "description": "For variable width bins, if true the histogram will represent the aggregated <code>yKey</code> values using the area of the bar. Otherwise, the height of the var represents the value as per a normal bar chart. This is useful for keeping an undistorted curve displayed when using variable-width bins",
+      "default": "false"
+    },
+    "highlightStyle": {
+      "meta": {
+        "requiresWholeObject": true,
+        "description": "Configuration for the highlighting used when the markers are hovered over."
+      },
+      "fill": {
+        "default": "yellow",
+        "description": "The fill colour of the markers when hovered over."
+      },
+      "stroke": {
+        "type": "string",
+        "description": "The colour of the stroke around the markers when hovered over."
+      }
+    },
+    "fill": {
+      "default": "#f3622d",
+      "description": "The colour of the fill for the histogram bars."
+    },
+    "fillOpacity": {
+      "default": 1,
+      "description": "The opacity of the fill for the histogram bars.",
+      "min": 0,
+      "max": 1,
+      "step": 0.05
+    },
+    "stroke": {
+      "default": "#aa4520",
+      "description": "The colour of the stroke for the histogram bars."
+    },
+    "strokeOpacity": {
+      "default": 1,
+      "description": "The opacity of the stroke for the histogram bars.",
+      "min": 0,
+      "max": 1,
+      "step": 0.05
+    },
+    "strokeWidth": {
+      "default": 1,
+      "description": "The width in pixels of the stroke for the histogram bars.",
+      "min": 0,
+      "max": 20,
+      "unit": "px"
+    },
+    "listeners": {
+      "meta": {
+        "description": "A map of event names to event listeners."
+      },
+      "nodeClick": {
+        "type": {
+          "parameters": {
+            "type": "'nodeClick'",
+            "series": "HistogramSeries",
+            "datum": "any",
+            "xKey": "string"
+          },
+          "returnType": "any"
+        },
+        "description": "The listener to call when a histogram bar is clicked."
       }
     }
   }

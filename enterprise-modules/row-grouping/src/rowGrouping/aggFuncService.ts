@@ -20,9 +20,9 @@ export class AggFuncService implements IAggFuncService {
     private static AGG_COUNT = 'count';
     private static AGG_AVG = 'avg';
 
-    @Autowired('gridOptionsWrapper') gridOptionsWrapper: GridOptionsWrapper;
+    @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
 
-    private aggFuncsMap: { [key: string]: IAggFunc } = {};
+    private aggFuncsMap: { [key: string]: IAggFunc; } = {};
     private initialised = false;
 
     @PostConstruct
@@ -61,7 +61,7 @@ export class AggFuncService implements IAggFuncService {
         }
     }
 
-    public addAggFuncs(aggFuncs?: { [key: string]: IAggFunc }): void {
+    public addAggFuncs(aggFuncs?: { [key: string]: IAggFunc; }): void {
         _.iterateObject(aggFuncs, this.addAggFunc.bind(this));
     }
 
@@ -140,8 +140,8 @@ function aggCount(input: any[]): any {
 function aggAvg(input: any[]): any {
     // the average will be the sum / count
     const { sum, count } = input.reduce(({ sum, count }, item) => {
-        const itemIsGroupResult = _.exists(item) && 
-            typeof item.value === 'number' && 
+        const itemIsGroupResult = _.exists(item) &&
+            typeof item.value === 'number' &&
             typeof item.count === 'number';
 
         if (typeof item === 'number') {
@@ -151,9 +151,9 @@ function aggAvg(input: any[]): any {
         if (itemIsGroupResult) {
             // we are aggregating groups, so we take the
             // aggregated values to calculated a weighted average
-            return { 
-                sum: sum + item.value * item.count, 
-                count: count + item.count 
+            return {
+                sum: sum + item.value * item.count,
+                count: count + item.count
             };
         }
 

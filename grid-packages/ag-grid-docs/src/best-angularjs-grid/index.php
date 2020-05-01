@@ -71,7 +71,7 @@ include '../documentation-main/documentation_header.php';
     &lt;script src="example1.js"&gt;&lt;/script&gt;
 &lt;/head&gt;
 &lt;body&gt;
-    &lt;div id="myGrid" style="height: 100%;" class="ag-theme-balham"&gt;&lt;/div&gt;
+    &lt;div id="myGrid" style="height: 100%;" class="ag-theme-alpine"&gt;&lt;/div&gt;
 &lt;/body&gt;
 &lt;/html&gt;</snippet>
 <note>
@@ -144,7 +144,7 @@ var module = angular.module("example", ["agGrid"]);</snippet>
 
 <p>
     It is also usual to provide a styling theme to
-    the grid. Three themes come with the grid, <code>ag-theme-alpine</code>, <code>ag-theme-balham</code> and <code>ag-theme-material</code>. Each one is
+    the grid. Three themes come with the grid, <code>ag-theme-alpine</code>, <code>ag-theme-alpine</code> and <code>ag-theme-material</code>. Each one is
     set by applying the corresponding class of the same name to the div.
 </p>
 
@@ -154,7 +154,7 @@ var module = angular.module("example", ["agGrid"]);</snippet>
 </p>
 
 <snippet language="html">
-&lt;div ag-grid="gridOptions" class="ag-theme-balham" style="height: 100%;"&gt;&lt;/div&gt;
+&lt;div ag-grid="gridOptions" class="ag-theme-alpine" style="height: 100%;"&gt;&lt;/div&gt;
 </snippet>
 
 <p>
@@ -169,7 +169,7 @@ var module = angular.module("example", ["agGrid"]);</snippet>
 
 <h2 id="basic-angularjs-1-x-example">Basic AngularJS 1.x Example</h2>
 
-<?= grid_example('Basic AngularJS 1.x ag-Grid', 'basic', 'vanilla', ['exampleHeight' => 130, 'extras' => ['angularjs1']]) ?>
+<?= grid_example('Basic AngularJS 1.x ag-Grid', 'basic', 'vanilla', ['exampleHeight' => 250, 'extras' => ['angularjs1']]) ?>
 
 
 <h2>Events & Digest Cycle</h2>
@@ -195,7 +195,7 @@ var module = angular.module("example", ["agGrid"]);</snippet>
     different options are configured is explained in the relevant parts of the documentation.
 </p>
 
-<?= grid_example('Basic AngularJS 1.x ag-Grid', 'basic2', 'vanilla', ['extras' => ['angularjs1']]) ?>
+<?= grid_example('Basic AngularJS 1.x ag-Grid', 'basic2', 'vanilla', ['exampleHeight' => 460, 'extras' => ['angularjs1']]) ?>
 
 <h2 id="ng1Components">Angular 1.x and ag-Grid Components</h2>
 
@@ -233,7 +233,7 @@ var module = angular.module("example", ["agGrid"]);</snippet>
 </ul>
 </p>
 
-<?= grid_example('Components', 'components', 'vanilla', ['exampleHeight' => 400, 'extras' => ['angularjs1', 'ui-bootstrap']]) ?>
+<?= grid_example('Components', 'components', 'vanilla', ['exampleHeight' => 250, 'extras' => ['angularjs1', 'ui-bootstrap']]) ?>
 
 <note>
     Creating child scopes and managing AngularJS compiling is part of the AngularJS

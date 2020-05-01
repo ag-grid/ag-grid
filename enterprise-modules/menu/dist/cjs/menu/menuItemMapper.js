@@ -244,7 +244,8 @@ var MenuItemMapper = /** @class */ (function () {
                         'rangePieChart',
                         'rangeLineChart',
                         'rangeXYChart',
-                        'rangeAreaChart'
+                        'rangeAreaChart',
+                        'rangeHistogramChart'
                     ],
                     icon: core_1._.createIconNoSpan('chart', this.gridOptionsWrapper, null),
                 };
@@ -354,6 +355,8 @@ var MenuItemMapper = /** @class */ (function () {
                 return rangeChartMenuItem('stackedArea', 'Stacked&lrm;', core_1.ChartType.StackedArea);
             case 'rangeNormalizedArea':
                 return rangeChartMenuItem('normalizedArea', '100% Stacked&lrm;', core_1.ChartType.NormalizedArea);
+            case 'rangeHistogramChart':
+                return rangeChartMenuItem('histogramChart', 'Histogram&lrm;', core_1.ChartType.Histogram);
             default:
                 return null;
         }

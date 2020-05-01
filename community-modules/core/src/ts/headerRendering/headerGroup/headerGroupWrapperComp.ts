@@ -3,10 +3,11 @@ import { Component } from "../../widgets/component";
 import { Column } from "../../entities/column";
 import { ColumnGroup } from "../../entities/columnGroup";
 import { ColumnApi } from "../../columnController/columnApi";
+import { Constants } from "../../constants";
 import { ColumnController, ColumnResizeSet } from "../../columnController/columnController";
 import { GridOptionsWrapper } from "../../gridOptionsWrapper";
 import { HorizontalResizeService } from "../horizontalResizeService";
-import { Autowired, Context, PostConstruct } from "../../context/context";
+import { Autowired, PostConstruct } from "../../context/context";
 import { CssClassApplier } from "../cssClassApplier";
 import {
     DragAndDropService,
@@ -21,8 +22,8 @@ import { GridApi } from "../../gridApi";
 import { UserComponentFactory } from "../../components/framework/userComponentFactory";
 import { Beans } from "../../rendering/beans";
 import { HoverFeature } from "../hoverFeature";
+import { TooltipFeature } from "../../widgets/tooltipFeature";
 import { _ } from "../../utils";
-import { Constants } from "../../constants";
 
 export class HeaderGroupWrapperComp extends Component {
 
@@ -119,7 +120,7 @@ export class HeaderGroupWrapperComp extends Component {
         if (this.gridOptionsWrapper.isEnableBrowserTooltips()) {
             this.getGui().setAttribute('title', tooltipText);
         } else {
-            this.beans.tooltipManager.registerTooltip(this);
+            this.addFeature(new TooltipFeature(this, 'headerGroup'));
         }
     }
 

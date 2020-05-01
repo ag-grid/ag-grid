@@ -231,9 +231,7 @@ export class AgDialog extends AgPanel {
             columnApi: this.gridOptionsWrapper.getColumnApi()
         };
 
-        if (this.localEventService) {
-            this.localEventService.dispatchEvent(params);
-        }
+        this.dispatchEvent(params);
     }
 
     private onMoveStart(e: MouseEvent) {
@@ -299,7 +297,6 @@ export class AgDialog extends AgPanel {
     }
 
     public destroy(): void {
-        super.destroy();
         this.setResizable(false);
         this.setMovable(false);
 
@@ -309,6 +306,7 @@ export class AgDialog extends AgPanel {
         }
 
         this.clearMaximizebleListeners();
+        super.destroy();
     }
 
     public setResizable(resizable: boolean | ResizableStructure) {

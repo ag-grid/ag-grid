@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v23.0.2
+ * @version v23.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -166,9 +166,7 @@ var AgDialog = /** @class */ (function (_super) {
             api: this.gridOptionsWrapper.getApi(),
             columnApi: this.gridOptionsWrapper.getColumnApi()
         };
-        if (this.localEventService) {
-            this.localEventService.dispatchEvent(params);
-        }
+        this.dispatchEvent(params);
     };
     AgDialog.prototype.onMoveStart = function (e) {
         this.isMoving = true;
@@ -225,7 +223,6 @@ var AgDialog = /** @class */ (function (_super) {
         }
     };
     AgDialog.prototype.destroy = function () {
-        _super.prototype.destroy.call(this);
         this.setResizable(false);
         this.setMovable(false);
         if (this.maximizeButtonComp) {
@@ -233,6 +230,7 @@ var AgDialog = /** @class */ (function (_super) {
             this.maximizeButtonComp = undefined;
         }
         this.clearMaximizebleListeners();
+        _super.prototype.destroy.call(this);
     };
     AgDialog.prototype.setResizable = function (resizable) {
         var _this = this;

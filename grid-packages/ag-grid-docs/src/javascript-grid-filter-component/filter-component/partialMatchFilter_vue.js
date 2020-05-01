@@ -51,5 +51,3 @@ export default Vue.extend({
         this.valueGetter = this.params.valueGetter;
     }
 })
-
-

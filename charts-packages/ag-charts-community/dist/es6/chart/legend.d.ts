@@ -1,7 +1,7 @@
 import { Group } from "../scene/group";
 import { FontStyle, FontWeight } from "../scene/shape/text";
 import { Marker } from "./marker/marker";
-import { Observable } from "../util/observable";
+import { Observable, PropertyChangeEvent } from "../util/observable";
 export interface LegendDatum {
     id: string;
     itemId: any;
@@ -68,7 +68,11 @@ export declare class Legend extends Observable {
     fontFamily: string;
     constructor();
     private _size;
-    get size(): Readonly<[number, number]>;
+    readonly size: Readonly<[number, number]>;
+    protected onDataChange(event: PropertyChangeEvent<this, LegendDatum[]>): void;
+    protected onEnabledChange(event: PropertyChangeEvent<this, Boolean>): void;
+    protected onPositionChange(event: PropertyChangeEvent<this, LegendPosition>): void;
+    protected onMarkerShapeChange(): void;
     /**
      * The method is given the desired size of the legend, which only serves as a hint.
      * The vertically oriented legend will take as much horizontal space as needed, but will

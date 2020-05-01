@@ -312,13 +312,13 @@ function webpackTask(minify, styles) {
             would require advance knowledge of what packaging plug-in will be used. For example
             some plugins reference CSS files like this:
         <snippet>
-require('ag-grid/dist/ag-theme-balham.css')</snippet>
+require('ag-grid/dist/ag-theme-alpine.css')</snippet>
         while another can expect this:
         <snippet>
-require('!ag-grid/dist/ag-theme-balham.css')</snippet>
+require('!ag-grid/dist/ag-theme-alpine.css')</snippet>
         or maybe this:
         <snippet>
-require('css!ag-grid/dist/ag-theme-balham.css')</snippet>
+require('css!ag-grid/dist/ag-theme-alpine.css')</snippet>
         </p>
         <p>Because you can't know, the safest is to let the client reference the CSS in the client code.</p>
 

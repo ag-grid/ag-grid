@@ -1,17 +1,17 @@
 var columnDefs = [
-    {field: "athlete", suppressMenu: true},
+    {field: "athlete", suppressMenu: true, minWidth: 120},
     {
         field: "age",
         sortable: false,
         headerComponentParams: {menuIcon: 'fa-external-link-alt'}
     },
-    {field: "country", suppressMenu: true},
+    {field: "country", suppressMenu: true, minWidth: 120},
     {field: "year", sortable: false},
     {field: "date", suppressMenu: true},
     {field: "sport", sortable: false},
-    {field: "gold", headerComponentParams: {menuIcon: 'fa-cog'}},
+    {field: "gold", headerComponentParams: {menuIcon: 'fa-cog'}, minWidth: 120},
     {field: "silver", sortable: false},
-    {field: "bronze", suppressMenu: true},
+    {field: "bronze", suppressMenu: true, minWidth: 120},
     {field: "total", sortable: false}
 ];
 
@@ -32,6 +32,9 @@ var gridOptions = {
         headerComponentParams: {
             menuIcon: 'fa-bars'
         }
+    },
+    onFirstDataRendered: function (params) {
+        params.api.sizeColumnsToFit();
     }
 };
 
@@ -40,15 +43,8 @@ document.addEventListener('DOMContentLoaded', function () {
     var gridDiv = document.querySelector('#myGrid');
     new agGrid.Grid(gridDiv, gridOptions);
 
-    // do http request to get our sample data - not using any framework to keep the example self contained.
-    // you will probably use a framework like JQuery, Angular or something else to do your HTTP calls.
-    var httpRequest = new XMLHttpRequest();
-    httpRequest.open('GET', 'https://raw.githubusercontent.com/ag-grid/ag-grid/master/grid-packages/ag-grid-docs/src/olympicWinnersSmall.json');
-    httpRequest.send();
-    httpRequest.onreadystatechange = function () {
-        if (httpRequest.readyState === 4 && httpRequest.status === 200) {
-            var httpResult = JSON.parse(httpRequest.responseText);
-            gridOptions.api.setRowData(httpResult);
-        }
-    };
+    agGrid.simpleHttpRequest({url: 'https://raw.githubusercontent.com/ag-grid/ag-grid/master/grid-packages/ag-grid-docs/src/olympicWinnersSmall.json'})
+        .then(function (data) {
+            gridOptions.api.setRowData(data);
+        });
 });

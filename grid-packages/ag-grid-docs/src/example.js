@@ -25,24 +25,17 @@ document.addEventListener('DOMContentLoaded', function() {
             select.appendChild(option);
         }
     }
-    gridDiv = document.querySelector('#myGrid');
+    var gridDiv = document.querySelector('#myGrid');
 
     onThemeChanged(true);
 
     new agGrid.Grid(gridDiv, gridOptions);
     createData();
-
-    api = gridOptions.api;
-    columnApi = gridOptions.columnApi;
 });
 
 // for easy access in the dev console, we put api and columnApi into global variables
 var docEl = document.documentElement;
 var isSmall = docEl.clientHeight <= 415 || docEl.clientWidth < 768;
-
-var api, columnApi;
-
-var gridDiv;
 var colNames = ["Station", "Railway", "Street", "Address", "Toy", "Soft Box", "Make and Model", "Longest Day", "Shortest Night"];
 
 var countries = [
@@ -96,7 +89,7 @@ var rowSelection = 'checkbox';
 
 var groupColumn = {
     headerName: "Group",
-    width: 200,
+    width: 250,
     field: 'name',
     headerCheckboxSelection: true,
     headerCheckboxSelectionFilteredOnly: true,
@@ -163,12 +156,13 @@ var gridOptions = {
         minWidth: 50,
         sortable: true,
         filter: true,
+        floatingFilter: !isSmall,
         resizable: true
     },
     enableCellChangeFlash: true,
     rowDragManaged: true,
     // suppressMoveWhenRowDragging: true,
-    // enableMultiRowDragging: true,
+    enableMultiRowDragging: true,
     popupParent: document.querySelector('#example-wrapper'),
     // enableBrowserTooltips: true,
     // tooltipShowDelay: 200,
@@ -183,7 +177,6 @@ var gridOptions = {
     // },
     // suppressAsyncEvents: true,
     // suppressAggAtRootLevel: true,
-    floatingFilter: !isSmall,
     debug: true,
     // editType: 'fullRow',
     // debug: true,
@@ -208,12 +201,14 @@ var gridOptions = {
     // groupDefaultExpanded: 9999, //one of [true, false], or an integer if greater than 1
     // headerHeight: 100, // set to an integer, default is 25, or 50 if grouping columns
     // groupSuppressAutoColumn: true,
+    // pivotSuppressAutoColumn: true,
     // groupSuppressBlankHeader: true,
     // suppressMovingCss: true,
     // suppressMovableColumns: true,
     // groupIncludeFooter: true,
     // groupIncludeTotalFooter: true,
     // suppressHorizontalScroll: true,
+    // alwaysShowVerticalScroll: true,
     suppressColumnMoveAnimation: suppressColumnMoveAnimation(),
     // suppressRowHoverHighlight: true,
     // suppressTouch: true,
@@ -295,6 +290,7 @@ var gridOptions = {
     // groupHideOpenParents: true,
     // suppressMenuFilterPanel: true,
     // clipboardDeliminator: ',',
+    // suppressLastEmptyLineOnPaste: true,
     // suppressMenuMainPanel: true,
     // suppressMenuColumnPanel: true,
     // forPrint: true,
@@ -413,7 +409,7 @@ var gridOptions = {
         var type = params.type;
         var options = params.options;
 
-        if (params.type === 'pie' || params.type === 'doughnut') {
+        if (type === 'pie' || type === 'doughnut') {
             options.seriesDefaults.tooltip.renderer = function(params) {
                 var titleStyle = params.color ? ' style="color: white; background-color:' + params.color + '"' : '';
                 var title = params.title ? '<div class="ag-chart-tooltip-title"' + titleStyle + '>' + params.title + '</div>' : '';
@@ -438,21 +434,21 @@ var gridOptions = {
                 if (absolute >= 1e12) standardised = '$' + +(absolute / 1e12).toFixed(1) + 'T';
 
                 return value < 0 ? '-' + standardised : standardised;
-            }
+            };
 
-            options[isBar ? 'xAxis' : 'yAxis'].label.formatter = function(params) {
+            var standardNumberFormatter = function(params) {
                 return standardiseNumber(params.value);
             };
 
+            options[isBar ? 'xAxis' : 'yAxis'].label.formatter = standardNumberFormatter;
+
             if (type === 'scatter' || type === 'bubble') {
-                options.xAxis.label.formatter = function(params) {
-                    return standardiseNumber(params.value);
-                };
+                options.xAxis.label.formatter = standardNumberFormatter;
 
                 options.seriesDefaults.tooltip.renderer = function(params) {
                     var formatCurrency = function(value) {
                         return '$' + formatThousands(value);
-                    }
+                    };
 
                     var titleStyle = params.color ? ' style="color: white; background-color:' + params.color + '"' : '';
                     var title = params.title ? '<div class="ag-chart-tooltip-title"' + titleStyle + '>' + params.title + '</div>' : '';
@@ -465,6 +461,24 @@ var gridOptions = {
                     }
                     return title + '<div class="ag-chart-tooltip-content">' + label + xValue + '<br>' + yValue + size + '</div>';
                 };
+            } else if (type === 'histogram') {
+                options.seriesDefaults.tooltip.renderer = function(params) {
+
+                    var titleStyle = params.color ? ' style="color: white; background-color:' + params.color + '"' : '';
+                    var title = params.title ? '<div class="ag-chart-tooltip-title"' + titleStyle + '>' + params.title + '</div>' : '';
+
+                    if (params.yKey) {
+                        // with a y key, the value is the total of the yKey value for the population of the bin:
+                        var value = formatThousands(Math.round(params.datum.total));
+                        return title + '<div class="ag-chart-tooltip-content">' + '$' + value + '</div>';
+                    } else {
+                        // without a y key, the value is a count of the population of the bin:
+                        var value = params.datum.frequency;
+                        return title + '<div class="ag-chart-tooltip-content">' + value + '</div>';
+                    }
+                };
+
+                options.xAxis.label.formatter = standardNumberFormatter;
             } else {
                 options.seriesDefaults.tooltip.renderer = function(params) {
                     var titleStyle = params.color ? ' style="color: white; background-color:' + params.color + '"' : '';
@@ -475,9 +489,7 @@ var gridOptions = {
             }
 
             if (options.seriesDefaults.label) {
-                options.seriesDefaults.label.formatter = function(params) {
-                    return standardiseNumber(params.value);
-                };
+                options.seriesDefaults.label.formatter = standardNumberFormatter;
             }
         }
 
@@ -812,7 +824,7 @@ var desktopDefaultCols = [
     {
         headerName: "Total Winnings", field: "totalWinnings", filter: 'agNumberColumnFilter',
         type: 'numericColumn',
-        editable: true, valueParser: numberParser, width: 170,
+        editable: true, valueParser: numberParser, width: 200,
         // aggFunc: 'sum',
         enableValue: true,
         cellClassRules: {
@@ -910,7 +922,7 @@ var monthGroup = {
 months.forEach(function(month) {
     monthGroup.children.push({
         headerName: month, field: month.toLocaleLowerCase(),
-        width: 110, filter: 'agNumberColumnFilter', editable: true, type: 'numericColumn',
+        width: 150, filter: 'agNumberColumnFilter', editable: true, type: 'numericColumn',
         enableValue: true,
         // aggFunc: 'sum',
         //hide: true,
@@ -1105,10 +1117,10 @@ function rowSelected(event) {
 }
 
 function onThemeChanged(initial) {
-    var newTheme = document.querySelector('#grid-theme').value || 'ag-theme-none'
+    var newTheme = document.querySelector('#grid-theme').value || 'ag-theme-none';
     var themedElements = Array.prototype.slice.call(document.querySelectorAll('[class*="ag-theme-"]'));
 
-    themedElements.forEach(function (el) {
+    themedElements.forEach(function(el) {
         el.className = el.className.replace(/ag-theme-[\w-]+/g, newTheme);
     });
 
@@ -1393,11 +1405,11 @@ function currencyCssFunc(params) {
 }
 
 function ratingFilterRenderer(params) {
-    return ratingRendererGeneral(params.value, true)
+    return ratingRendererGeneral(params.value, true);
 }
 
 function ratingRenderer(params) {
-    return ratingRendererGeneral(params.value, false)
+    return ratingRendererGeneral(params.value, false);
 }
 
 function ratingRendererGeneral(value, forFilter) {
@@ -1415,8 +1427,8 @@ function ratingRendererGeneral(value, forFilter) {
 }
 
 var formatThousands = function(value) {
-    return value.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,')
-}
+    return value.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,');
+};
 
 function currencyRenderer(params) {
     if (params.value === null || params.value === undefined) {

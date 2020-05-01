@@ -132,7 +132,8 @@ SNIPPET
         │   ├── DragStoppedEvent <span class="event-properties">{}</span>
         ├── RowDragEvent <span class="event-properties">{ // abstract event, never fired
         │   │    <span class="event-attribute">event</span>: MouseEvent, // The underlying mouse move event associated with the drag.
-        │   │    <span class="event-attribute">node</span>: RowNode, // The row node getting dragged.
+        │   │    <span class="event-attribute">node</span>: RowNode, // The row node getting dragged. Also the node that started the drag when multi-row dragging.
+        │   │    <span class="event-attribute">nodes</span>: RowNode[], // The list of nodes being dragged.
         │   │    <span class="event-attribute">overIndex</span>: number, // The row index the mouse is dragging over.
         │   │    <span class="event-attribute">overNode</span>: RowNode, // The row node the mouse is dragging over.
         │   │    <span class="event-attribute">y</span>: number, // The vertical pixel location the mouse is over.

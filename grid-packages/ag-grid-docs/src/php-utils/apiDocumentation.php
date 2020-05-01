@@ -105,7 +105,7 @@
         }
 
         $lines = [
-            'function(' . implode(",\n         ", $argumentDefinitions) . '): ' . ($returnTypeIsObject ? 'IReturn' : $returnType) . ';',
+            'function (' . implode(",\n         ", $argumentDefinitions) . '): ' . ($returnTypeIsObject ? 'IReturn' : $returnType) . ';',
             '',
         ];
 

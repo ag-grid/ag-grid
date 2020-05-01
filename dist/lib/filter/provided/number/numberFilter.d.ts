@@ -1,12 +1,13 @@
 import { ConditionPosition, ISimpleFilterModel } from "../simpleFilter";
-import { ScalerFilter, Comparator, IScalarFilterParams } from "../scalerFilter";
+import { ScalarFilter, Comparator, IScalarFilterParams } from "../scalarFilter";
+import { IAfterGuiAttachedParams } from '../../../interfaces/iAfterGuiAttachedParams';
 export interface NumberFilterModel extends ISimpleFilterModel {
     filter?: number;
     filterTo?: number;
 }
 export interface INumberFilterParams extends IScalarFilterParams {
 }
-export declare class NumberFilter extends ScalerFilter<NumberFilterModel, number> {
+export declare class NumberFilter extends ScalarFilter<NumberFilterModel, number> {
     private static readonly FILTER_TYPE;
     static DEFAULT_FILTER_OPTIONS: string[];
     private eValueFrom1;
@@ -25,7 +26,7 @@ export declare class NumberFilter extends ScalerFilter<NumberFilterModel, number
     protected setParams(params: INumberFilterParams): void;
     private addValueChangedListeners;
     private resetPlaceholder;
-    afterGuiAttached(): void;
+    afterGuiAttached(params: IAfterGuiAttachedParams): void;
     protected getDefaultFilterOptions(): string[];
     protected createValueTemplate(position: ConditionPosition): string;
     protected isConditionUiComplete(position: ConditionPosition): boolean;

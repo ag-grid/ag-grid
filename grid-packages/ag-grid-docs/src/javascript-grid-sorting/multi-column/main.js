@@ -20,9 +20,9 @@ var gridOptions = {
     multiSortKey: 'ctrl',
     onGridReady: function(params) {
         var defaultSortModel = [
-                {colId: "country", sort: "asc"},
-                {colId: "athlete", sort: "asc"}
-            ];
+            { colId: "country", sort: "asc" },
+            { colId: "athlete", sort: "asc" }
+        ];
         params.api.setSortModel(defaultSortModel);
     }
 };
@@ -32,10 +32,8 @@ document.addEventListener('DOMContentLoaded', function() {
     var gridDiv = document.querySelector('#myGrid');
     new agGrid.Grid(gridDiv, gridOptions);
 
-    // do http request to get our sample data - not using any framework to keep the example self contained.
-    // you will probably use a framework like JQuery, Angular or something else to do your HTTP calls.
-    agGrid.simpleHttpRequest({url: 'https://raw.githubusercontent.com/ag-grid/ag-grid/master/grid-packages/ag-grid-docs/src/olympicWinnersSmall.json'}).then(function(data) {
-        gridOptions.api.setRowData(data);
-    });
-
+    agGrid.simpleHttpRequest({ url: 'https://raw.githubusercontent.com/ag-grid/ag-grid/master/grid-packages/ag-grid-docs/src/olympicWinnersSmall.json' })
+        .then(function(data) {
+            gridOptions.api.setRowData(data);
+        });
 });

@@ -2,7 +2,7 @@ import {Component} from '@angular/core';
 import {ClientSideRowModelModule, GridOptions} from "@ag-grid-community/all-modules";
 
 import '@ag-grid-community/all-modules/dist/styles/ag-grid.css';
-import '@ag-grid-community/all-modules/dist/styles/ag-theme-balham.css';
+import '@ag-grid-community/all-modules/dist/styles/ag-theme-alpine.css';
 
 @Component({
     selector: 'my-app',
@@ -12,7 +12,7 @@ import '@ag-grid-community/all-modules/dist/styles/ag-theme-balham.css';
                  (drop)="gridDrop($event,'left')">
                 <ag-grid-angular
                         style="height: 100%"
-                        class="ag-theme-balham"
+                        class="ag-theme-alpine"
                         [gridOptions]="leftGridOptions"
                         [columnDefs]="columnDefs"
                         [modules]="modules"
@@ -22,19 +22,19 @@ import '@ag-grid-community/all-modules/dist/styles/ag-theme-balham.css';
 
             <div class="inner-col factory-panel">
                 <span id="eBin" (dragover)="binDragOver($event)" (drop)="binDrop($event)" class="factory factory-bin">
-                    <i class="fas fa-trash"><span class="filename"> Trash - </span></i>
+                    <i class="far fa-trash-alt"><span class="filename"> Trash - </span></i>
                     Drop target to destroy row
                 </span>
                 <span draggable="true" (dragstart)="dragStart($event,'Red')" class="factory factory-red">
-                    <i class="fas fa-plus-square"><span class="filename"> Create - </span></i>
+                    <i class="far fa-plus-square"><span class="filename"> Create - </span></i>
                     Drag source for new red item
                 </span>
                 <span draggable="true" (dragstart)="dragStart($event,'Green')" class="factory factory-green">
-                    <i class="fas fa-plus-square"><span class="filename"> Create - </span></i>
+                    <i class="far fa-plus-square"><span class="filename"> Create - </span></i>
                     Drag source for new green item
                 </span>
                 <span draggable="true" (dragstart)="dragStart($event,'Blue')" class="factory factory-blue">
-                    <i class="fas fa-plus-square"><span class="filename"> Create - </span></i>
+                    <i class="far fa-plus-square"><span class="filename"> Create - </span></i>
                     Drag source for new blue item
                 </span>
             </div>
@@ -43,7 +43,7 @@ import '@ag-grid-community/all-modules/dist/styles/ag-theme-balham.css';
                  (drop)="gridDrop($event,'right')">
                 <ag-grid-angular
                         style="height: 100%"
-                        class="ag-theme-balham"
+                        class="ag-theme-alpine"
                         [gridOptions]="rightGridOptions"
                         [columnDefs]="columnDefs"
                         [modules]="modules"
@@ -146,12 +146,12 @@ export class AppComponent {
 
         var rowIsInLeftGrid = !!this.leftGridOptions.api.getRowNode(data.id);
         if (rowIsInLeftGrid) {
-            this.leftGridOptions.api.updateRowData(transaction);
+            this.leftGridOptions.api.applyTransaction(transaction);
         }
 
         var rowIsInRightGrid = !!this.rightGridOptions.api.getRowNode(data.id);
         if (rowIsInRightGrid) {
-            this.rightGridOptions.api.updateRowData(transaction);
+            this.rightGridOptions.api.applyTransaction(transaction);
         }
     }
 
@@ -197,7 +197,7 @@ export class AppComponent {
         var transaction = {
             add: [data]
         };
-        gridApi.updateRowData(transaction);
+        gridApi.applyTransaction(transaction);
     }
 
     onFirstDataRendered(params) {

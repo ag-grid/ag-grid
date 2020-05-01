@@ -1,8 +1,8 @@
 var options = {
     container: document.getElementById('myChart'),
     data: generateSpiralData(),
-    width: 450,
-    height: 450,
+    width: 550,
+    height: 550,
     series: [{
         xKey: 'x',
         yKey: 'y'

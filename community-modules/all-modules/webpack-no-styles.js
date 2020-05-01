@@ -1,3 +1,7 @@
+/**
+ * AUTOMATICALLY GENERATED FILE, DO NOT EDIT MANUALLY!
+ * Update this file by running `lerna run webpack-updater` in the monorepo root folder.
+ */
 var ClientSideRowModelModule = require('../../community-modules/client-side-row-model');
 var GridCoreModule = require('../../community-modules/core');
 var CsvExportModule = require('../../community-modules/csv-export');

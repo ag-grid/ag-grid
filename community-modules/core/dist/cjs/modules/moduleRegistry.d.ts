@@ -1,13 +1,15 @@
-// Type definitions for @ag-grid-community/core v23.0.2
+// Type definitions for @ag-grid-community/core v23.1.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { Module } from "../interfaces/iModule";
 import { ModuleNames } from "./moduleNames";
 export declare class ModuleRegistry {
     private static modulesMap;
-    static register(module: Module): void;
-    static registerModules(modules: Module[]): void;
+    private static moduleBased;
+    static register(module: Module, moduleBased?: boolean): void;
+    static registerModules(modules: Module[], moduleBased?: boolean): void;
     static assertRegistered(moduleName: ModuleNames, reason: string): boolean;
     static isRegistered(moduleName: ModuleNames): boolean;
     static getRegisteredModules(): Module[];
+    static isPackageBased(): boolean;
 }

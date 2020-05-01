@@ -12,7 +12,8 @@ export enum ChartType {
     Doughnut = 'doughnut',
     Area = 'area',
     StackedArea = 'stackedArea',
-    NormalizedArea = 'normalizedArea'
+    NormalizedArea = 'normalizedArea',
+    Histogram = "histogram"
 }
 
 export type ChartMenuOptions = 'chartSettings' | 'chartData' | 'chartFormat' | 'chartUnlink' | 'chartDownload';
@@ -21,6 +22,7 @@ export interface SeriesOptions {
     fill: FillOptions;
     stroke: StrokeOptions;
     highlightStyle: HighlightOptions;
+    listeners?: { [key in string]: Function };
 }
 
 export interface ChartOptions<T extends SeriesOptions> {
@@ -34,6 +36,7 @@ export interface ChartOptions<T extends SeriesOptions> {
     subtitle: CaptionOptions;
     legend: LegendOptions;
     tooltipClass?: string;
+    listeners?: { [key in string]: Function };
 }
 
 export interface PaddingOptions {
@@ -127,11 +130,18 @@ export interface AxisTickOptions {
     color: string;
 }
 
+type AxisLabelFormatter = (params: {
+    value: any,
+    index: number,
+    fractionDigits?: number,
+    formatter?: (x: any) => string
+}) => string;
+
 export interface AxisLabelOptions extends FontOptions {
     padding: number;
     rotation: number;
     format?: string;
-    formatter?: (value: any, fractionDigits?: number) => string;
+    formatter?: AxisLabelFormatter;
 }
 
 export interface GridStyle {
@@ -190,6 +200,10 @@ export interface BarSeriesOptions extends SeriesOptions {
     shadow: DropShadowOptions;
     label: BarSeriesLabelOptions;
     tooltip: TooltipOptions<BarTooltipRendererParams>;
+}
+
+export interface HistogramSeriesOptions extends BarSeriesOptions {
+    binCount?: number;
 }
 
 export interface BarSeriesLabelOptions extends SeriesLabelOptions {

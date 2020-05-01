@@ -34,7 +34,13 @@ const css = glob.sync("./dist/styles/*.css")
 
 const webpackBase = fs.readFileSync('./webpack-base.config.js', 'UTF-8').toString();
 
-const webpackNoStyles = moduleRequireLines.join('\n').concat('\n')
+const generatedFileTemplate = `/**
+ * AUTOMATICALLY GENERATED FILE, DO NOT EDIT MANUALLY!
+ * Update this file by running \`lerna run webpack-updater\` in the monorepo root folder.
+ */
+`;
+
+const webpackNoStyles = generatedFileTemplate + moduleRequireLines.join('\n').concat('\n')
     .concat(webpackBase)
     .concat(moduleRegisterLines.join('\n').concat('\n'))
 fs.writeFileSync('./webpack-no-styles.js', webpackNoStyles);

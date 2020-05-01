@@ -122,4 +122,5 @@ export declare class AgGridColumn {
     sortable: any;
     resizable: any;
     singleClickEdit: any;
+    floatingFilter: any;
 }

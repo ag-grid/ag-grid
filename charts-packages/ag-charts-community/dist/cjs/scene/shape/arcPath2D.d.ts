@@ -18,27 +18,20 @@ export declare class Arc extends Shape {
      * is how we keep track if the path has to be updated or not.
      */
     private _dirtyPath;
-    set dirtyPath(value: boolean);
-    get dirtyPath(): boolean;
+    dirtyPath: boolean;
     private _x;
-    set x(value: number);
-    get x(): number;
+    x: number;
     private _y;
-    set y(value: number);
-    get y(): number;
+    y: number;
     private _radius;
-    set radius(value: number);
-    get radius(): number;
+    radius: number;
     private _startAngle;
-    set startAngle(value: number);
-    get startAngle(): number;
+    startAngle: number;
     private _endAngle;
-    set endAngle(value: number);
-    get endAngle(): number;
-    private get fullPie();
+    endAngle: number;
+    private readonly fullPie;
     private _counterClockwise;
-    set counterClockwise(value: boolean);
-    get counterClockwise(): boolean;
+    counterClockwise: boolean;
     /**
      * The type of arc to render:
      * - {@link ArcType.Open} - end points of the arc segment are not connected (default)
@@ -52,8 +45,7 @@ export declare class Arc extends Shape {
      * to create a closed path.
      */
     private _type;
-    set type(value: ArcType);
-    get type(): ArcType;
+    type: ArcType;
     updatePath(): void;
     isPointInPath(x: number, y: number): boolean;
     isPointInStroke(x: number, y: number): boolean;

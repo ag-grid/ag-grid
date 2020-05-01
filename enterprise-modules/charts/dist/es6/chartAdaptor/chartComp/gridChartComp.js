@@ -19,6 +19,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 };
 import { _, AgDialog, Autowired, ChartType, Component, PostConstruct, RefSelector, Events } from "@ag-grid-community/core";
 import { ChartMenu } from "./menu/chartMenu";
+import { TitleEdit } from "./titleEdit";
 import { ChartController } from "./chartController";
 import { ChartDataModel } from "./chartDataModel";
 import { BarChartProxy } from "./chartProxies/cartesian/barChartProxy";
@@ -27,6 +28,7 @@ import { LineChartProxy } from "./chartProxies/cartesian/lineChartProxy";
 import { PieChartProxy } from "./chartProxies/polar/pieChartProxy";
 import { DoughnutChartProxy } from "./chartProxies/polar/doughnutChartProxy";
 import { ScatterChartProxy } from "./chartProxies/cartesian/scatterChartProxy";
+import { HistogramChartProxy } from "./chartProxies/cartesian/histogramChartProxy";
 var GridChartComp = /** @class */ (function (_super) {
     __extends(GridChartComp, _super);
     function GridChartComp(params) {
@@ -51,8 +53,8 @@ var GridChartComp = /** @class */ (function (_super) {
         if (this.params.insideDialog) {
             this.addDialog();
         }
-        this.addResizeListener();
         this.addMenu();
+        this.addTitleEditComp();
         this.addDestroyableEventListener(this.getGui(), 'focusin', this.setActiveChartCellRange.bind(this));
         this.addDestroyableEventListener(this.chartController, ChartController.EVENT_CHART_UPDATED, this.refresh.bind(this));
         this.addDestroyableEventListener(this.chartMenu, ChartMenu.EVENT_DOWNLOAD_CHART, this.downloadChart.bind(this));
@@ -93,6 +95,7 @@ var GridChartComp = /** @class */ (function (_super) {
         // set local state used to detect when chart type changes
         this.chartType = chartType;
         this.chartProxy = this.createChartProxy(chartProxyParams);
+        this.titleEdit && this.titleEdit.setChartProxy(this.chartProxy);
         _.addCssClass(this.eChart.querySelector('canvas'), 'ag-charts-canvas');
         this.chartController.setChartProxy(this.chartProxy);
     };
@@ -121,6 +124,8 @@ var GridChartComp = /** @class */ (function (_super) {
             case ChartType.Scatter:
             case ChartType.Bubble:
                 return new ScatterChartProxy(chartProxyParams);
+            case ChartType.Histogram:
+                return new HistogramChartProxy(chartProxyParams);
         }
     };
     GridChartComp.prototype.addDialog = function () {
@@ -146,6 +151,12 @@ var GridChartComp = /** @class */ (function (_super) {
         var maxWidth = _.getAbsoluteWidth(popupParent) * 0.75;
         var maxHeight = _.getAbsoluteHeight(popupParent) * 0.75;
         var ratio = 0.553;
+        {
+            var _a = this.chartProxy.getChartOptions(), width_1 = _a.width, height_1 = _a.height;
+            if (width_1 && height_1) {
+                return { width: width_1, height: height_1 };
+            }
+        }
         var chart = this.chartProxy.getChart();
         var width = this.params.insideDialog ? 850 : chart.width;
         var height = this.params.insideDialog ? 470 : chart.height;
@@ -162,6 +173,13 @@ var GridChartComp = /** @class */ (function (_super) {
     GridChartComp.prototype.addMenu = function () {
         this.chartMenu = this.wireBean(new ChartMenu(this.eChartContainer, this.eMenuContainer, this.chartController));
         this.eChartContainer.appendChild(this.chartMenu.getGui());
+    };
+    GridChartComp.prototype.addTitleEditComp = function () {
+        this.titleEdit = this.wireBean(new TitleEdit(this.chartMenu));
+        this.eTitleEditContainer.appendChild(this.titleEdit.getGui());
+        if (this.chartProxy) {
+            this.titleEdit.setChartProxy(this.chartProxy);
+        }
     };
     GridChartComp.prototype.refresh = function () {
         if (this.shouldRecreateChart()) {
@@ -209,8 +227,8 @@ var GridChartComp = /** @class */ (function (_super) {
         var isEmptyChart = fields.length < minFieldsRequired || data.length === 0;
         if (container) {
             var isEmpty = pivotModeDisabled || isEmptyChart;
-            _.setVisible(this.eChart, !isEmpty);
-            _.setVisible(this.eEmpty, isEmpty);
+            _.setDisplayed(this.eChart, !isEmpty);
+            _.setDisplayed(this.eEmpty, isEmpty);
         }
         if (pivotModeDisabled) {
             this.eEmpty.innerText = this.chartTranslator.translate('pivotChartRequiresPivotMode');
@@ -240,18 +258,6 @@ var GridChartComp = /** @class */ (function (_super) {
             chartProxy.setChartOption('width', _.getInnerWidth(eChart));
             chartProxy.setChartOption('height', _.getInnerHeight(eChart));
         }
-    };
-    GridChartComp.prototype.addResizeListener = function () {
-        var _this = this;
-        var eGui = this.getGui();
-        var resizeFunc = function () {
-            if (!eGui || !eGui.offsetParent) {
-                observeResizeFunc();
-                return;
-            }
-            _this.refreshCanvasSize();
-        };
-        var observeResizeFunc = this.resizeObserverService.observeResize(this.eChart, resizeFunc, 5);
     };
     GridChartComp.prototype.setActiveChartCellRange = function (focusEvent) {
         if (this.getGui().contains(focusEvent.relatedTarget)) {
@@ -302,7 +308,7 @@ var GridChartComp = /** @class */ (function (_super) {
         _.removeFromParent(eGui);
         this.raiseChartDestroyedEvent();
     };
-    GridChartComp.TEMPLATE = "<div class=\"ag-chart\" tabindex=\"-1\">\n            <div ref=\"eChartContainer\" tabindex=\"-1\" class=\"ag-chart-components-wrapper\">\n                <div ref=\"eChart\" class=\"ag-chart-canvas-wrapper\">\n                </div>\n                <div ref=\"eEmpty\" class=\"ag-chart-empty-text ag-unselectable\"></div>\n            </div>\n            <div ref=\"eMenuContainer\" class=\"ag-chart-docked-container\"></div>\n        </div>";
+    GridChartComp.TEMPLATE = "<div class=\"ag-chart\" tabindex=\"-1\">\n            <div ref=\"eChartContainer\" tabindex=\"-1\" class=\"ag-chart-components-wrapper\">\n                <div ref=\"eChart\" class=\"ag-chart-canvas-wrapper\">\n                </div>\n                <div ref=\"eEmpty\" class=\"ag-chart-empty-text ag-unselectable\"></div>\n            </div>\n            <div ref=\"eTitleEditContainer\">\n            </div>\n            <div ref=\"eMenuContainer\" class=\"ag-chart-docked-container\"></div>\n        </div>";
     __decorate([
         RefSelector('eChart')
     ], GridChartComp.prototype, "eChart", void 0);
@@ -316,8 +322,8 @@ var GridChartComp = /** @class */ (function (_super) {
         RefSelector('eEmpty')
     ], GridChartComp.prototype, "eEmpty", void 0);
     __decorate([
-        Autowired('resizeObserverService')
-    ], GridChartComp.prototype, "resizeObserverService", void 0);
+        RefSelector('eTitleEditContainer')
+    ], GridChartComp.prototype, "eTitleEditContainer", void 0);
     __decorate([
         Autowired('gridOptionsWrapper')
     ], GridChartComp.prototype, "gridOptionsWrapper", void 0);

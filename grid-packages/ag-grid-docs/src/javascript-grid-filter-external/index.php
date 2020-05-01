@@ -10,34 +10,33 @@ include '../documentation-main/documentation_header.php';
 <h1>External Filter</h1>
 
 <p class="lead">
-    It is common for you to want to have widgets on the top of your grid that influence the grids filtering.
-    External filtering allows you to mix your own 'outside of the grid' filtering with the grids filtering.
+    External filtering allows you to mix your own 'outside of the grid' filtering with the grid's filtering.
 </p>
 
 <p>
-    The example below shows external filters in action. There are two methods on gridOptions you
+    The example below shows external filters in action. There are two methods on <code>gridOptions</code> you
     need to implement: <code>isExternalFilterPresent()</code> and <code>doesExternalFilterPass(node)</code>.
 </p>
 
 <ul class="content">
     <li>
         <code>isExternalFilterPresent</code> is called exactly once every time the grid senses a filter change.
-        It should return true if external filtering is active, otherwise false. If you return true, then
-        doesExternalFilterPass() will be called while filtering, otherwise doesExternalFilterPass() will
-        not be called.
+        It should return <code>true</code> if external filtering is active or <code>false</code> otherwise. If you
+        return <code>true</code>, <code>doesExternalFilterPass()</code> will be called while filtering, otherwise
+        <code>doesExternalFilterPass()</code> will not be called.
     </li>
     <li>
-        <code>doesExternalFilterPass</code> is called once for each row node in the grid. If you return false,
+        <code>doesExternalFilterPass</code> is called once for each row node in the grid. If you return <code>false</code>,
         the node will be excluded from the final set.
     </li>
 </ul>
 
 <note>
-    If the external filter changes, then you need to call api.onFilterChanged() to tell the grid.
+    If the external filter changes, you need to call <code>api.onFilterChanged()</code> to tell the grid.
 </note>
 
-<p> The example below shows the external filters in action.  </p>
+<p>The example below shows an external filter in action.</p>
 
-<?= grid_example('External Filter', 'external-filter', 'generated', ['exampleHeight' => 580]) ?>
+<?= grid_example('External Filter', 'external-filter', 'generated', ['exampleHeight' => 580, 'modules' => true]) ?>
 
 <?php include '../documentation-main/documentation_footer.php';?>

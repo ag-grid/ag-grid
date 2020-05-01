@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v23.0.2
+ * @version v23.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -39,6 +39,7 @@ var rowDragComp_1 = require("./rowDragComp");
 var popupEditorWrapper_1 = require("./cellEditors/popupEditorWrapper");
 var utils_1 = require("../utils");
 var dndSourceComp_1 = require("./dndSourceComp");
+var tooltipFeature_1 = require("../widgets/tooltipFeature");
 var CellComp = /** @class */ (function (_super) {
     __extends(CellComp, _super);
     function CellComp(scope, beans, column, rowNode, rowComp, autoHeightCell, printLayout) {
@@ -141,7 +142,7 @@ var CellComp = /** @class */ (function (_super) {
         this.angular1Compile();
         this.refreshHandle();
         if (utils_1._.exists(this.tooltip) && !this.beans.gridOptionsWrapper.isEnableBrowserTooltips()) {
-            this.beans.tooltipManager.registerTooltip(this);
+            this.addFeature(new tooltipFeature_1.TooltipFeature(this, 'cell'), this.beans.context);
         }
     };
     CellComp.prototype.onColumnHover = function () {
@@ -217,7 +218,7 @@ var CellComp = /** @class */ (function (_super) {
     };
     CellComp.prototype.onDisplayColumnsChanged = function () {
         var colsSpanning = this.getColSpanningList();
-        if (!utils_1._.compareArrays(this.colsSpanning, colsSpanning)) {
+        if (!utils_1._.areEqual(this.colsSpanning, colsSpanning)) {
             this.colsSpanning = colsSpanning;
             this.onWidthChanged();
             this.onLeftChanged(); // left changes when doing RTL
@@ -527,16 +528,6 @@ var CellComp = /** @class */ (function (_super) {
                 this.eParentOfValue.removeAttribute('title');
             }
         }
-        else {
-            if (hadTooltip) {
-                if (!hasNewTooltip) {
-                    this.beans.tooltipManager.unregisterTooltip(this);
-                }
-            }
-            else if (hasNewTooltip) {
-                this.beans.tooltipManager.registerTooltip(this);
-            }
-        }
     };
     CellComp.prototype.valuesAreEqual = function (val1, val2) {
         // if the user provided an equals method, use that, otherwise do simple comparison
@@ -562,8 +553,7 @@ var CellComp = /** @class */ (function (_super) {
                 valueFormatted: this.valueFormatted,
                 rowIndex: this.cellPosition.rowIndex,
                 node: this.rowNode,
-                data: this.rowNode.data,
-                $scope: this.scope,
+                data: this.rowNode.data
             });
         }
         return null;
@@ -666,13 +656,7 @@ var CellComp = /** @class */ (function (_super) {
             _this.createCellRendererFunc = null;
             // this can return null in the event that the user has switched from a renderer component to nothing, for example
             // when using a cellRendererSelect to return a component or null depending on row data etc
-            var componentPromise;
-            if (cellRendererTypeNormal) {
-                componentPromise = _this.beans.userComponentFactory.newCellRenderer(_this.getComponentHolder(), params);
-            }
-            else {
-                componentPromise = _this.beans.userComponentFactory.newPinnedRowCellRenderer(_this.getComponentHolder(), params);
-            }
+            var componentPromise = _this.beans.userComponentFactory.newCellRenderer(_this.getComponentHolder(), params, !cellRendererTypeNormal);
             if (componentPromise) {
                 componentPromise.then(callback);
             }
@@ -959,14 +943,21 @@ var CellComp = /** @class */ (function (_super) {
         function () {
             _this.onPopupEditorClosed();
         });
-        this.beans.popupService.positionPopupOverComponent({
+        var params = {
             column: this.column,
             rowNode: this.rowNode,
             type: 'popupCellEditor',
             eventSource: this.getGui(),
             ePopup: ePopupGui,
             keepWithinBounds: true
-        });
+        };
+        var position = this.cellEditor && this.cellEditor.getPopupPosition ? this.cellEditor.getPopupPosition() : 'over';
+        if (position === 'under') {
+            this.beans.popupService.positionPopupOverComponent(params);
+        }
+        else {
+            this.beans.popupService.positionPopupUnderComponent(params);
+        }
         this.angular1Compile();
     };
     CellComp.prototype.onPopupEditorClosed = function () {
@@ -1225,7 +1216,7 @@ var CellComp = /** @class */ (function (_super) {
         }
         // if we are clicking on a checkbox, we need to make sure the cell wrapping that checkbox
         // is focused but we don't want to change the range selection, so return here.
-        if (this.containsCheckbox(target)) {
+        if (this.containsWidget(target)) {
             return;
         }
         if (rangeController) {
@@ -1250,7 +1241,7 @@ var CellComp = /** @class */ (function (_super) {
         }
         return false;
     };
-    CellComp.prototype.containsCheckbox = function (target) {
+    CellComp.prototype.containsWidget = function (target) {
         return utils_1._.isElementChildOfClass(target, 'ag-selection-checkbox', 3);
     };
     // returns true if on iPad and this is second 'click' event in 200ms
@@ -1314,7 +1305,6 @@ var CellComp = /** @class */ (function (_super) {
     // if the row is going (removing is an expensive operation, so only need to remove
     // the top part)
     CellComp.prototype.destroy = function () {
-        _super.prototype.destroy.call(this);
         if (this.createCellRendererFunc) {
             this.beans.taskQueue.cancelTask(this.createCellRendererFunc);
         }
@@ -1326,6 +1316,7 @@ var CellComp = /** @class */ (function (_super) {
         if (this.selectionHandle) {
             this.selectionHandle.destroy();
         }
+        _super.prototype.destroy.call(this);
     };
     CellComp.prototype.onLeftChanged = function () {
         var left = this.modifyLeftForPrintLayout(this.getCellLeft());

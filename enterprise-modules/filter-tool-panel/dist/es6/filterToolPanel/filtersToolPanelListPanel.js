@@ -36,7 +36,8 @@ var FiltersToolPanelListPanel = /** @class */ (function (_super) {
             suppressExpandAll: false,
             suppressFilterSearch: false,
             suppressSyncLayoutWithGrid: false,
-            api: this.gridApi
+            api: this.gridApi,
+            columnApi: this.columnApi
         };
         _.mergeDeep(defaultParams, params);
         this.params = defaultParams;
@@ -340,6 +341,9 @@ var FiltersToolPanelListPanel = /** @class */ (function (_super) {
     __decorate([
         Autowired("gridApi")
     ], FiltersToolPanelListPanel.prototype, "gridApi", void 0);
+    __decorate([
+        Autowired("columnApi")
+    ], FiltersToolPanelListPanel.prototype, "columnApi", void 0);
     __decorate([
         Autowired("eventService")
     ], FiltersToolPanelListPanel.prototype, "eventService", void 0);

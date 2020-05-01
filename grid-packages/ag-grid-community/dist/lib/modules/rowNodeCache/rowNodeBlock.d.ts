@@ -34,6 +34,8 @@ export declare abstract class RowNodeBlock extends BeanStub implements IRowNodeB
     protected abstract setDataAndId(rowNode: RowNode, data: any, index: number): void;
     abstract getRow(displayIndex: number): RowNode | null;
     abstract getNodeIdPrefix(): string;
+    abstract getDisplayIndexStart(): number;
+    abstract getDisplayIndexEnd(): number;
     protected constructor(blockNumber: number, rowNodeCacheParams: RowNodeCacheParams);
     isAnyNodeOpen(rowCount: number): boolean;
     private forEachNodeCallback;

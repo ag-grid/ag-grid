@@ -88,8 +88,7 @@ export declare class AxisLabel {
     }) => string;
     onFormatChange?: (format?: string) => void;
     private _format?;
-    set format(value: string | undefined);
-    get format(): string | undefined;
+    format: string | undefined;
 }
 /**
  * A general purpose linear axis with no notion of orientation.
@@ -124,23 +123,19 @@ export declare class Axis<S extends Scale<D, number>, D = any> {
     };
     rotation: number;
     constructor(scale: S);
-    set range(value: number[]);
-    get range(): number[];
-    set domain(value: D[]);
-    get domain(): D[];
+    range: number[];
+    domain: D[];
     private tickFormatter?;
     private onTickFormatChange;
     protected _title: Caption | undefined;
-    set title(value: Caption | undefined);
-    get title(): Caption | undefined;
+    title: Caption | undefined;
     /**
      * The length of the grid. The grid is only visible in case of a non-zero value.
      * In case {@link radialGrid} is `true`, the value is interpreted as an angle
      * (in degrees).
      */
     protected _gridLength: number;
-    set gridLength(value: number);
-    get gridLength(): number;
+    gridLength: number;
     /**
      * The array of styles to cycle through when rendering grid lines.
      * For example, use two {@link GridStyle} objects for alternating styles.
@@ -154,8 +149,7 @@ export declare class Axis<S extends Scale<D, number>, D = any> {
      * `true` - render grid as concentric circles that go through the ticks
      */
     private _radialGrid;
-    set radialGrid(value: boolean);
-    get radialGrid(): boolean;
+    radialGrid: boolean;
     /**
      * Creates/removes/updates the scene graph nodes that constitute the axis.
      * Supposed to be called _manually_ after changing _any_ of the axis properties.

@@ -59,6 +59,9 @@ var MiniChartsContainer = /** @class */ (function (_super) {
                 miniCharts_1.MiniArea,
                 miniCharts_1.MiniStackedArea,
                 miniCharts_1.MiniNormalizedArea
+            ],
+            histogramGroup: [
+                miniCharts_1.MiniHistogram
             ]
         };
         var eGui = this.getGui();

@@ -124,7 +124,7 @@
 }
 
 #documentation .docs-homepage-section-preview:not(.open) ul.docs-homepage-level0-item ul,
-#documentation .docs-homepage-section-preview:not(.open) ul.docs-homepage-level1-item li {
+#documentation .docs-homepage-section-preview:not(.open) ul.docs-homepage-level1-item:not(.top-level-sub-items) li {
     display: inline;
 }
 
@@ -132,11 +132,16 @@
     display: none;
 }
 
-#documentation .docs-homepage-level1-item {
+#documentation .docs-homepage-level1-item:not(.top-level-sub-items),
+#documentation .docs-homepage-section-preview.open .docs-homepage-level1-item {
     font-weight: 300;
 }
 
-#documentation .docs-homepage-section-preview:not(.open) .docs-homepage-level1-item {
+#documentation .docs-homepage-section-preview.open .parent-title {
+    display: none;
+}
+
+#documentation .docs-homepage-section-preview:not(.open) .docs-homepage-level1-item:not(.top-level-sub-items) {
     font-size: 0.8rem;
     font-weight: 400;
 }
@@ -146,7 +151,7 @@
 }
 
 @media (min-width: 715px) {
-    #documentation .docs-homepage-section-preview:not(.open) ul.docs-homepage-level1-item {
+    #documentation .docs-homepage-section-preview:not(.open) ul.docs-homepage-level1-item:not(.top-level-sub-items) {
         display: block !important;
         transform: translateX(10px);
     }

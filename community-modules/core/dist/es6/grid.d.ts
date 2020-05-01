@@ -1,10 +1,11 @@
-// Type definitions for @ag-grid-community/core v23.0.2
+// Type definitions for @ag-grid-community/core v23.1.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { GridOptions } from "./entities/gridOptions";
 import { Logger } from "./logger";
 import { IFrameworkOverrides } from "./interfaces/iFrameworkOverrides";
 import { Module } from "./interfaces/iModule";
+import { Component } from "./widgets/component";
 export interface GridParams {
     globalEventListener?: Function;
     $scope?: any;
@@ -15,6 +16,9 @@ export interface GridParams {
         [key: string]: any;
     };
     modules?: Module[];
+    rootComponent?: {
+        new (): Component;
+    };
 }
 export declare class Grid {
     private context;

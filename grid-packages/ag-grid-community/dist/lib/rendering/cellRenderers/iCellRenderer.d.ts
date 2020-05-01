@@ -24,6 +24,11 @@ export interface ICellRendererParams {
     eParentOfValue: HTMLElement;
     addRenderedRowListener: (eventType: string, listener: Function) => void;
 }
+export interface ISetFilterCellRendererParams {
+    value: any;
+    valueFormatted: any;
+    api: GridApi;
+}
 export interface ICellRenderer {
     /** Get the cell to refresh. Return true if successful. Return false if not (or you don't have refresh logic),
      * then the grid will refresh the cell for you. */

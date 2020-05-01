@@ -1,14 +1,14 @@
-import { RowNode } from "./entities/rowNode";
-import { Column } from "./entities/column";
-import { ColDef } from "./entities/colDef";
-import { GridApi } from "./gridApi";
-import { ColumnApi } from "./columnController/columnApi";
-import { OriginalColumnGroup } from "./entities/originalColumnGroup";
-import { FilterRequestSource } from "./filter/filterManager";
-import { ChartOptions, ChartType } from "./interfaces/iChartOptions";
-import { IFilterComp } from "./interfaces/iFilter";
-import { CellRange, CellRangeParams } from "./interfaces/iRangeController";
-import { ChartModel } from "./interfaces/IChartService";
+import { RowNode } from './entities/rowNode';
+import { Column } from './entities/column';
+import { ColDef } from './entities/colDef';
+import { GridApi } from './gridApi';
+import { ColumnApi } from './columnController/columnApi';
+import { OriginalColumnGroup } from './entities/originalColumnGroup';
+import { FilterRequestSource } from './filter/filterManager';
+import { ChartOptions, ChartType } from './interfaces/iChartOptions';
+import { IFilterComp } from './interfaces/iFilter';
+import { CellRange, CellRangeParams } from './interfaces/iRangeController';
+import { ChartModel } from './interfaces/IChartService';
 export { Events } from './eventKeys';
 export interface ModelUpdatedEvent extends AgGridEvent {
     /** If true, the grid will try and animate the rows to the new positions */
@@ -100,6 +100,7 @@ export interface GridSizeChangedEvent extends AgGridEvent {
 }
 export interface RowDragEvent extends AgGridEvent {
     node: RowNode;
+    nodes: RowNode[];
     y: number;
     vDirection: string;
     event: MouseEvent;

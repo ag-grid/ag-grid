@@ -47,15 +47,19 @@ function getModuleImports(bindings: any, componentFileNames: string[]): string[]
     ];
 
     if (modules) {
-        const {moduleImports, suppliedModules} = modulesProcessor(modules);
+        let exampleModules = modules;
+        if(modules === true) {
+            exampleModules = ['clientside'];
+        }
+        const { moduleImports, suppliedModules } = modulesProcessor(exampleModules);
 
         imports.push(...moduleImports);
         bindings.gridSuppliedModules = `[${suppliedModules.join(', ')}]`;
 
         imports.push("import '@ag-grid-community/core/dist/styles/ag-grid.css';");
 
-        // to account for the (rare) example that has more than one class...just default to balham if it does
-        const theme = gridSettings.theme || 'ag-theme-balham';
+        // to account for the (rare) example that has more than one class...just default to alpine if it does
+        const theme = gridSettings.theme || 'ag-theme-alpine';
         imports.push(`import "@ag-grid-community/core/dist/styles/${theme}.css";`);
     } else {
         if (gridSettings.enterprise) {
@@ -68,8 +72,8 @@ function getModuleImports(bindings: any, componentFileNames: string[]): string[]
 
         imports.push("import '@ag-grid-community/all-modules/dist/styles/ag-grid.css';");
 
-        // to account for the (rare) example that has more than one class...just default to balham if it does
-        const theme = gridSettings.theme || 'ag-theme-balham';
+        // to account for the (rare) example that has more than one class...just default to alpine if it does
+        const theme = gridSettings.theme || 'ag-theme-alpine';
         imports.push(`import '@ag-grid-community/all-modules/dist/styles/${theme}.css';`);
     }
 
@@ -82,35 +86,21 @@ function getModuleImports(bindings: any, componentFileNames: string[]): string[]
 
 function getPackageImports(bindings: any, componentFileNames: string[]): string[] {
     const {gridSettings} = bindings;
-    const {modules} = gridSettings;
 
     const imports = [
         "import Vue from 'vue';",
         "import { AgGridVue } from 'ag-grid-vue';",
     ];
 
-    if (modules) {
-        const {moduleImports, suppliedModules} = modulesProcessor(modules);
-
-        imports.push(...moduleImports);
-        bindings.gridSuppliedModules = `[${suppliedModules.join(', ')}]`;
-
-        imports.push("import '@ag-grid-community/core/dist/styles/ag-grid.css';");
-
-        // to account for the (rare) example that has more than one class...just default to balham if it does
-        const theme = gridSettings.theme || 'ag-theme-balham';
-        imports.push(`import "@ag-grid-community/core/dist/styles/${theme}.css";`);
-    } else {
-        if (gridSettings.enterprise) {
-            imports.push("import 'ag-grid-enterprise';");
-        }
-
-        imports.push("import 'ag-grid-community/dist/styles/ag-grid.css';");
-
-        // to account for the (rare) example that has more than one class...just default to balham if it does
-        const theme = gridSettings.theme || 'ag-theme-balham';
-        imports.push(`import 'ag-grid-community/dist/styles/${theme}.css';`);
+    if (gridSettings.enterprise) {
+        imports.push("import 'ag-grid-enterprise';");
     }
+
+    imports.push("import 'ag-grid-community/dist/styles/ag-grid.css';");
+
+    // to account for the (rare) example that has more than one class...just default to alpine if it does
+    const theme = gridSettings.theme || 'ag-theme-alpine';
+    imports.push(`import 'ag-grid-community/dist/styles/${theme}.css';`);
 
     if (componentFileNames) {
         imports.push(...componentFileNames.map(componentFileName => getImport(componentFileName, 'Vue', '')));
@@ -214,9 +204,15 @@ function getAllMethods(bindings: any): [string[], string[], string[], string[]] 
         const aIsAssignedToWindow = a.startsWith('window.');
         const bIsAssignedToWindow = b.startsWith('window.');
 
-        if (aIsAssignedToWindow && bIsAssignedToWindow) { return 0; }
-        if (aIsAssignedToWindow) { return -1; }
-        if (bIsAssignedToWindow) { return 1; }
+        if (aIsAssignedToWindow && bIsAssignedToWindow) {
+            return 0;
+        }
+        if (aIsAssignedToWindow) {
+            return -1;
+        }
+        if (bIsAssignedToWindow) {
+            return 1;
+        }
 
         return 0;
     });

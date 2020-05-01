@@ -13,6 +13,7 @@ export declare class ViewportRowModel implements IRowModel {
     private rowNodesByIndex;
     private rowHeight;
     private viewportDatasource;
+    private events;
     ensureRowHeightsValid(startPixel: number, endPixel: number, startLimitIndex: number, endLimitIndex: number): boolean;
     private init;
     start(): void;

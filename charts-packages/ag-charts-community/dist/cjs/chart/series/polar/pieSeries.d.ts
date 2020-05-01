@@ -1,13 +1,19 @@
 import { DropShadow } from "../../../scene/dropShadow";
-import { PolarTooltipRendererParams, SeriesNodeDatum } from "./../series";
+import { PolarTooltipRendererParams, SeriesNodeDatum, HighlightStyle } from "./../series";
 import { Label } from "../../label";
 import { LegendDatum } from "../../legend";
 import { Caption } from "../../../caption";
-import { Shape } from "../../../scene/shape/shape";
-import { Observable } from "../../../util/observable";
+import { Observable, TypedEvent } from "../../../util/observable";
 import { PolarSeries } from "./polarSeries";
 import { ChartAxisDirection } from "../../chartAxis";
-interface GroupSelectionDatum extends SeriesNodeDatum {
+export interface PieSeriesNodeClickEvent extends TypedEvent {
+    type: 'nodeClick';
+    series: PieSeries;
+    datum: any;
+    angleKey: string;
+    radiusKey?: string;
+}
+interface PieNodeDatum extends SeriesNodeDatum {
     index: number;
     radius: number;
     startAngle: number;
@@ -24,6 +30,9 @@ interface GroupSelectionDatum extends SeriesNodeDatum {
 export interface PieTooltipRendererParams extends PolarTooltipRendererParams {
     labelKey?: string;
     labelName?: string;
+}
+interface PieHighlightStyle extends HighlightStyle {
+    centerOffset?: number;
 }
 declare class PieSeriesLabel extends Label {
     offset: number;
@@ -46,8 +55,7 @@ export declare class PieSeries extends PolarSeries {
     private angleScale;
     seriesItemEnabled: boolean[];
     private _title?;
-    set title(value: Caption | undefined);
-    get title(): Caption | undefined;
+    title: Caption | undefined;
     readonly label: PieSeriesLabel;
     readonly callout: PieSeriesCallout;
     constructor();
@@ -68,11 +76,9 @@ export declare class PieSeries extends PolarSeries {
     labelKey?: string;
     labelName?: string;
     private _fills;
-    set fills(values: string[]);
-    get fills(): string[];
+    fills: string[];
     private _strokes;
-    set strokes(values: string[]);
-    get strokes(): string[];
+    strokes: string[];
     fillOpacity: number;
     strokeOpacity: number;
     /**
@@ -83,18 +89,15 @@ export declare class PieSeries extends PolarSeries {
     innerRadiusOffset: number;
     strokeWidth: number;
     shadow?: DropShadow;
-    highlightStyle: {
-        fill?: string;
-        stroke?: string;
-        centerOffset?: number;
-    };
-    private highlightedNode?;
-    highlightNode(node: Shape): void;
-    dehighlightNode(): void;
+    highlightStyle: PieHighlightStyle;
+    onHighlightChange(): void;
     getDomain(direction: ChartAxisDirection): any[];
     processData(): boolean;
     update(): void;
-    getTooltipHtml(nodeDatum: GroupSelectionDatum): string;
+    private updateGroupSelection;
+    private updateNodes;
+    fireNodeClickEvent(datum: PieNodeDatum): void;
+    getTooltipHtml(nodeDatum: PieNodeDatum): string;
     tooltipRenderer?: (params: PieTooltipRendererParams) => string;
     listSeriesItems(legendData: LegendDatum[]): void;
     toggleSeriesItem(itemId: number, enabled: boolean): void;

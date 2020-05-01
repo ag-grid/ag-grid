@@ -125,7 +125,7 @@ var columnDefs = [
         sortable: false,
         suppressMenu: true
     },
-    {headerName: 'Athlete', field: 'athlete', width: 150, suppressMenu: true},
+    { headerName: 'Athlete', field: 'athlete', width: 150, suppressMenu: true },
     {
         field: 'age',
         filter: 'agNumberColumnFilter',
@@ -136,12 +136,12 @@ var columnDefs = [
     {
         field: 'country',
         filter: 'agSetColumnFilter',
-        filterParams: {values: countries()}
+        filterParams: { values: countries() }
     },
     {
         field: 'year',
         filter: 'agSetColumnFilter',
-        filterParams: {values: ['2000', '2004', '2008', '2012']}
+        filterParams: { values: ['2000', '2004', '2008', '2012'] }
     },
     { field: 'date' },
     { field: 'sport', suppressMenu: true },
@@ -156,18 +156,18 @@ var gridOptions = {
         flex: 1,
         minWidth: 150,
         sortable: true,
-        resizable: true
+        resizable: true,
+        floatingFilter: true,
     },
-    components:{
-        loadingRenderer:function(params) {
+    components: {
+        loadingRenderer: function(params) {
             if (params.value !== undefined) {
                 return params.value;
             } else {
-                return '<img src="../images/loading.gif">';
+                return '<img src="https://raw.githubusercontent.com/ag-grid/ag-grid/master/grid-packages/ag-grid-docs/src/images/loading.gif">';
             }
         }
     },
-    floatingFilter: true,
     rowSelection: 'multiple',
     rowDeselection: true,
     columnDefs: columnDefs,
@@ -273,7 +273,7 @@ document.addEventListener('DOMContentLoaded', function() {
     var gridDiv = document.querySelector('#myGrid');
     new agGrid.Grid(gridDiv, gridOptions);
 
-    agGrid.simpleHttpRequest({url: 'https://raw.githubusercontent.com/ag-grid/ag-grid/master/grid-packages/ag-grid-docs/src/olympicWinners.json'}).then(function(data) {
+    agGrid.simpleHttpRequest({ url: 'https://raw.githubusercontent.com/ag-grid/ag-grid/master/grid-packages/ag-grid-docs/src/olympicWinners.json' }).then(function(data) {
         // give each row an id
         data.forEach(function(data, index) {
             data.id = 'R' + (index + 1);

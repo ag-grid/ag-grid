@@ -11,7 +11,6 @@ export declare class VirtualList extends Component {
     private rowsInBodyContainer;
     private componentCreator;
     private rowHeight;
-    private environment;
     gridOptionsWrapper: GridOptionsWrapper;
     constructor(cssIdentifier?: string);
     private init;

@@ -54,6 +54,7 @@ export declare class RowComp extends Component {
     private scope;
     private initialised;
     private elementOrderChanged;
+    private lastMouseDownOnDragger;
     private readonly printLayout;
     private readonly embedFullWidth;
     constructor(parentScope: any, bodyContainerComp: RowContainerComponent, pinnedLeftContainerComp: RowContainerComponent, pinnedRightContainerComp: RowContainerComponent, fullWidthContainerComp: RowContainerComponent, rowNode: RowNode, beans: Beans, animateIn: boolean, useAnimationFrameForCreate: boolean, printLayout: boolean, embedFullWidth: boolean);
@@ -105,6 +106,7 @@ export declare class RowComp extends Component {
     private createRowEvent;
     private createRowEventWithSource;
     private onRowDblClick;
+    private onRowMouseDown;
     onRowClick(mouseEvent: MouseEvent): void;
     private createFullWidthRowContainer;
     private angular1Compile;

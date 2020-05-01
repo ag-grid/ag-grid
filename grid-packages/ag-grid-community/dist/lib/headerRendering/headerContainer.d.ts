@@ -1,11 +1,9 @@
-import { GridPanel } from "../gridPanel/gridPanel";
-import { HeaderRowComp } from "./headerRowComp";
-import { Component } from "../widgets/component";
+import { GridPanel } from '../gridPanel/gridPanel';
+import { HeaderRowComp } from './headerRowComp';
+import { Component } from '../widgets/component';
 export declare class HeaderContainer {
     private gridOptionsWrapper;
     private context;
-    private $scope;
-    private dragAndDropService;
     private columnController;
     private eventService;
     private scrollVisibleService;
@@ -15,6 +13,7 @@ export declare class HeaderContainer {
     private pinned;
     private scrollWidth;
     private dropTarget;
+    private events;
     constructor(eContainer: HTMLElement, eViewport: HTMLElement, pinned: string);
     registerGridComp(gridPanel: GridPanel): void;
     forEachHeaderElement(callback: (renderedHeaderElement: Component) => void): void;

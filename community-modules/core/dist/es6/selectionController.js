@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v23.0.2
+ * @version v23.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -13,7 +13,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
-import { Bean } from "./context/context";
+import { Bean, PreDestroy } from "./context/context";
 import { Qualifier } from "./context/context";
 import { Events } from "./events";
 import { Autowired } from "./context/context";
@@ -23,12 +23,13 @@ import { _ } from './utils';
 import { ChangedPath } from "./utils/changedPath";
 var SelectionController = /** @class */ (function () {
     function SelectionController() {
+        this.events = [];
     }
     SelectionController.prototype.setBeans = function (loggerFactory) {
         this.logger = loggerFactory.create('SelectionController');
         this.reset();
         if (this.gridOptionsWrapper.isRowModelDefault()) {
-            this.eventService.addEventListener(Events.EVENT_ROW_DATA_CHANGED, this.reset.bind(this));
+            this.events.push(this.eventService.addEventListener(Events.EVENT_ROW_DATA_CHANGED, this.reset.bind(this)));
         }
         else {
             this.logger.log('dont know what to do here');
@@ -36,7 +37,13 @@ var SelectionController = /** @class */ (function () {
     };
     SelectionController.prototype.init = function () {
         this.groupSelectsChildren = this.gridOptionsWrapper.isGroupSelectsChildren();
-        this.eventService.addEventListener(Events.EVENT_ROW_SELECTED, this.onRowSelected.bind(this));
+        this.events.push(this.eventService.addEventListener(Events.EVENT_ROW_SELECTED, this.onRowSelected.bind(this)));
+    };
+    SelectionController.prototype.destroy = function () {
+        if (this.events.length) {
+            this.events.forEach(function (func) { return func(); });
+        }
+        this.events = [];
     };
     SelectionController.prototype.setLastSelectedNode = function (rowNode) {
         this.lastSelectedNode = rowNode;
@@ -334,6 +341,9 @@ var SelectionController = /** @class */ (function () {
     __decorate([
         PostConstruct
     ], SelectionController.prototype, "init", null);
+    __decorate([
+        PreDestroy
+    ], SelectionController.prototype, "destroy", null);
     SelectionController = __decorate([
         Bean('selectionController')
     ], SelectionController);

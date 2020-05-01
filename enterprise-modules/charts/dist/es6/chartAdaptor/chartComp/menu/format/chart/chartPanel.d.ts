@@ -3,7 +3,6 @@ import { ChartController } from "../../../chartController";
 export declare class ChartPanel extends Component {
     static TEMPLATE: string;
     private chartGroup;
-    private titleInput;
     private chartTranslator;
     private activePanels;
     private readonly chartController;

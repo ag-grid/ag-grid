@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v23.0.2
+ * @version v23.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -32,7 +32,7 @@ var events_1 = require("../events");
 var component_1 = require("../widgets/component");
 var componentAnnotations_1 = require("../widgets/componentAnnotations");
 var constants_1 = require("../constants");
-var utils_1 = require("../utils");
+var dom_1 = require("../utils/dom");
 var HeaderRootComp = /** @class */ (function (_super) {
     __extends(HeaderRootComp, _super);
     function HeaderRootComp() {
@@ -77,16 +77,16 @@ var HeaderRootComp = /** @class */ (function (_super) {
         this.childContainers.forEach(function (childContainer) { return childContainer.forEachHeaderElement(callback); });
     };
     HeaderRootComp.prototype.destroy = function () {
-        _super.prototype.destroy.call(this);
         this.childContainers.forEach(function (container) { return container.destroy(); });
+        _super.prototype.destroy.call(this);
     };
     HeaderRootComp.prototype.refreshHeader = function () {
         this.childContainers.forEach(function (container) { return container.refresh(); });
     };
     HeaderRootComp.prototype.onPivotModeChanged = function () {
         var pivotMode = this.columnController.isPivotMode();
-        utils_1._.addOrRemoveCssClass(this.getGui(), 'ag-pivot-on', pivotMode);
-        utils_1._.addOrRemoveCssClass(this.getGui(), 'ag-pivot-off', !pivotMode);
+        dom_1.addOrRemoveCssClass(this.getGui(), 'ag-pivot-on', pivotMode);
+        dom_1.addOrRemoveCssClass(this.getGui(), 'ag-pivot-off', !pivotMode);
     };
     HeaderRootComp.prototype.setHeight = function (height) {
         // one extra pixel is needed here to account for the
@@ -115,18 +115,15 @@ var HeaderRootComp = /** @class */ (function (_super) {
         this.eHeaderContainer.style.width = width + "px";
     };
     HeaderRootComp.prototype.setLeftVisible = function (visible) {
-        utils_1._.setDisplayed(this.ePinnedLeftHeader, visible);
+        dom_1.setDisplayed(this.ePinnedLeftHeader, visible);
     };
     HeaderRootComp.prototype.setRightVisible = function (visible) {
-        utils_1._.setDisplayed(this.ePinnedRightHeader, visible);
+        dom_1.setDisplayed(this.ePinnedRightHeader, visible);
     };
     HeaderRootComp.prototype.getHeaderRowCount = function () {
-        if (this.childContainers.length === 0) {
-            return 0;
-        }
-        return this.childContainers[0].getRowComps().length;
+        return this.childContainers.length === 0 ? 0 : this.childContainers[0].getRowComps().length;
     };
-    HeaderRootComp.TEMPLATE = "<div class=\"ag-header\" role=\"presentation\">\n            <div class=\"ag-pinned-left-header\" ref=\"ePinnedLeftHeader\" role=\"presentation\"></div>\n            <div class=\"ag-header-viewport\" ref=\"eHeaderViewport\" role=\"presentation\">\n                <div class=\"ag-header-container\" ref=\"eHeaderContainer\" role=\"rowgroup\"></div>\n            </div>\n            <div class=\"ag-pinned-right-header\" ref=\"ePinnedRightHeader\" role=\"presentation\"></div>\n        </div>";
+    HeaderRootComp.TEMPLATE = "\n        <div class=\"ag-header\" role=\"presentation\">\n            <div class=\"ag-pinned-left-header\" ref=\"ePinnedLeftHeader\" role=\"presentation\"></div>\n            <div class=\"ag-header-viewport\" ref=\"eHeaderViewport\" role=\"presentation\">\n                <div class=\"ag-header-container\" ref=\"eHeaderContainer\" role=\"rowgroup\"></div>\n            </div>\n            <div class=\"ag-pinned-right-header\" ref=\"ePinnedRightHeader\" role=\"presentation\"></div>\n        </div>";
     __decorate([
         componentAnnotations_1.RefSelector('ePinnedLeftHeader')
     ], HeaderRootComp.prototype, "ePinnedLeftHeader", void 0);

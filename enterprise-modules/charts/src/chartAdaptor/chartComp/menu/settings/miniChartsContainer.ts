@@ -16,9 +16,10 @@ import {
     MiniStackedArea,
     MiniStackedBar,
     MiniStackedColumn,
+    MiniHistogram
 } from "./miniCharts";
 
-type ChartGroupsType = 'barGroup' | 'columnGroup' | 'pieGroup' | 'lineGroup' | 'scatterGroup' | 'areaGroup';
+type ChartGroupsType = 'barGroup' | 'columnGroup' | 'pieGroup' | 'lineGroup' | 'scatterGroup' | 'areaGroup' | 'histogramGroup';
 
 type ChartGroups = {
     [key in ChartGroupsType]: any[];
@@ -70,6 +71,9 @@ export class MiniChartsContainer extends Component {
                 MiniArea,
                 MiniStackedArea,
                 MiniNormalizedArea
+            ],
+            histogramGroup: [
+                MiniHistogram
             ]
         };
 

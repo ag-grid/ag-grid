@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v23.0.2
+ * @version v23.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -23,9 +23,9 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
-import { Autowired, PostConstruct } from "../../context/context";
-import { Component } from "../../widgets/component";
-import { RefSelector } from "../../widgets/componentAnnotations";
+import { Autowired, PostConstruct } from '../../context/context';
+import { Component } from '../../widgets/component';
+import { RefSelector } from '../../widgets/componentAnnotations';
 import { _ } from '../../utils';
 var LoadingType;
 (function (LoadingType) {
@@ -98,12 +98,12 @@ var OverlayWrapperComponent = /** @class */ (function (_super) {
         this.setDisplayed(false);
     };
     OverlayWrapperComponent.prototype.destroy = function () {
-        _super.prototype.destroy.call(this);
         this.destroyActiveOverlay();
+        _super.prototype.destroy.call(this);
     };
     // wrapping in outer div, and wrapper, is needed to center the loading icon
     // The idea for centering came from here: http://www.vanseodesign.com/css/vertical-centering/
-    OverlayWrapperComponent.TEMPLATE = "<div class=\"ag-overlay\" aria-hidden=\"true\">\n            <div class=\"ag-overlay-panel\">\n                <div class=\"ag-overlay-wrapper\" ref=\"eOverlayWrapper\"></div>\n            </div>\n        </div>";
+    OverlayWrapperComponent.TEMPLATE = "\n        <div class=\"ag-overlay\" aria-hidden=\"true\">\n            <div class=\"ag-overlay-panel\">\n                <div class=\"ag-overlay-wrapper\" ref=\"eOverlayWrapper\"></div>\n            </div>\n        </div>";
     __decorate([
         Autowired('gridOptionsWrapper')
     ], OverlayWrapperComponent.prototype, "gridOptionsWrapper", void 0);

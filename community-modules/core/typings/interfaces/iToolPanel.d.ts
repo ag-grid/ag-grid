@@ -1,8 +1,10 @@
 import { IComponent } from "./iComponent";
 import { GridApi } from "../gridApi";
+import { ColumnApi } from "../columnController/columnApi";
 import { ColDef, ColGroupDef } from "../entities/colDef";
 export interface IToolPanelParams {
     api: GridApi;
+    columnApi: ColumnApi;
 }
 export interface IToolPanel {
     refresh(): void;

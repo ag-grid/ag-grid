@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v23.0.2
+ * @version v23.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -59,6 +59,7 @@ var RowComp = /** @class */ (function (_super) {
         _this.removeSecondPassFuncs = [];
         _this.initialised = false;
         _this.elementOrderChanged = false;
+        _this.lastMouseDownOnDragger = false;
         _this.parentScope = parentScope;
         _this.beans = beans;
         _this.bodyContainerComp = bodyContainerComp;
@@ -632,6 +633,9 @@ var RowComp = /** @class */ (function (_super) {
             case 'click':
                 this.onRowClick(mouseEvent);
                 break;
+            case 'mousedown':
+                this.onRowMouseDown(mouseEvent);
+                break;
         }
     };
     RowComp.prototype.createRowEvent = function (type, domEvent) {
@@ -665,8 +669,11 @@ var RowComp = /** @class */ (function (_super) {
         var agEvent = this.createRowEventWithSource(Events.EVENT_ROW_DOUBLE_CLICKED, mouseEvent);
         this.beans.eventService.dispatchEvent(agEvent);
     };
+    RowComp.prototype.onRowMouseDown = function (mouseEvent) {
+        this.lastMouseDownOnDragger = _.isElementChildOfClass(mouseEvent.target, 'ag-row-drag', 3);
+    };
     RowComp.prototype.onRowClick = function (mouseEvent) {
-        var stop = _.isStopPropagationForAgGrid(mouseEvent);
+        var stop = _.isStopPropagationForAgGrid(mouseEvent) || this.lastMouseDownOnDragger;
         if (stop) {
             return;
         }
@@ -1143,7 +1150,6 @@ var RowComp = /** @class */ (function (_super) {
     };
     RowComp.prototype.destroy = function (animate) {
         if (animate === void 0) { animate = false; }
-        _super.prototype.destroy.call(this);
         this.active = false;
         // why do we have this method? shouldn't everything below be added as a destroy func beside
         // the corresponding create logic?
@@ -1162,6 +1168,7 @@ var RowComp = /** @class */ (function (_super) {
         var event = this.createRowEvent(Events.EVENT_VIRTUAL_ROW_REMOVED);
         this.dispatchEvent(event);
         this.beans.eventService.dispatchEvent(event);
+        _super.prototype.destroy.call(this);
     };
     RowComp.prototype.destroyContainingCells = function () {
         this.forEachCellComp(function (renderedCell) { return renderedCell.destroy(); });
@@ -1249,8 +1256,13 @@ var RowComp = /** @class */ (function (_super) {
         return spanList.length ? spanList[0] : undefined;
     };
     RowComp.prototype.onRowIndexChanged = function () {
-        this.onCellFocusChanged();
-        this.updateRowIndexes();
+        // we only bother updating if the rowIndex is present. if it is not present, it means this row
+        // is child of a group node, and the group node was closed, it's the only way to have no row index.
+        // when this happens, row is about to be de-rendered, so we don't care, rowComp is about to die!
+        if (this.rowNode.rowIndex != null) {
+            this.onCellFocusChanged();
+            this.updateRowIndexes();
+        }
     };
     RowComp.prototype.updateRowIndexes = function () {
         var _this = this;

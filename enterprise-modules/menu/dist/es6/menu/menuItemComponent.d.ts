@@ -13,7 +13,6 @@ export interface MenuItemSelectedEvent extends AgEvent {
 }
 export declare class MenuItemComponent extends Component {
     private gridOptionsWrapper;
-    private tooltipManager;
     private static TEMPLATE;
     private eIcon;
     private eName;

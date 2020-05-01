@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v23.0.2
+ * @version v23.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -14,7 +14,7 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
 import { Events } from "./events";
-import { Bean } from "./context/context";
+import { Bean, PreDestroy } from "./context/context";
 import { Qualifier } from "./context/context";
 import { Autowired } from "./context/context";
 import { PostConstruct } from "./context/context";
@@ -24,6 +24,7 @@ var AlignedGridsService = /** @class */ (function () {
         // while processing a master event) we mark this if consuming an event, and if we are, then
         // we don't fire back any events.
         this.consuming = false;
+        this.events = [];
     }
     AlignedGridsService.prototype.setBeans = function (loggerFactory) {
         this.logger = loggerFactory.create('AlignedGridsService');
@@ -32,12 +33,20 @@ var AlignedGridsService = /** @class */ (function () {
         this.gridPanel = gridPanel;
     };
     AlignedGridsService.prototype.init = function () {
-        this.eventService.addEventListener(Events.EVENT_COLUMN_MOVED, this.fireColumnEvent.bind(this));
-        this.eventService.addEventListener(Events.EVENT_COLUMN_VISIBLE, this.fireColumnEvent.bind(this));
-        this.eventService.addEventListener(Events.EVENT_COLUMN_PINNED, this.fireColumnEvent.bind(this));
-        this.eventService.addEventListener(Events.EVENT_COLUMN_GROUP_OPENED, this.fireColumnEvent.bind(this));
-        this.eventService.addEventListener(Events.EVENT_COLUMN_RESIZED, this.fireColumnEvent.bind(this));
-        this.eventService.addEventListener(Events.EVENT_BODY_SCROLL, this.fireScrollEvent.bind(this));
+        this.events = [
+            this.eventService.addEventListener(Events.EVENT_COLUMN_MOVED, this.fireColumnEvent.bind(this)),
+            this.eventService.addEventListener(Events.EVENT_COLUMN_VISIBLE, this.fireColumnEvent.bind(this)),
+            this.eventService.addEventListener(Events.EVENT_COLUMN_PINNED, this.fireColumnEvent.bind(this)),
+            this.eventService.addEventListener(Events.EVENT_COLUMN_GROUP_OPENED, this.fireColumnEvent.bind(this)),
+            this.eventService.addEventListener(Events.EVENT_COLUMN_RESIZED, this.fireColumnEvent.bind(this)),
+            this.eventService.addEventListener(Events.EVENT_BODY_SCROLL, this.fireScrollEvent.bind(this))
+        ];
+    };
+    AlignedGridsService.prototype.destroy = function () {
+        if (this.events.length) {
+            this.events.forEach(function (func) { return func(); });
+        }
+        this.events = [];
     };
     // common logic across all the fire methods
     AlignedGridsService.prototype.fireEvent = function (callback) {
@@ -183,7 +192,8 @@ var AlignedGridsService = /** @class */ (function () {
                 var resizedEvent_1 = colEvent;
                 masterColumns.forEach(function (column) {
                     _this.logger.log("onColumnEvent-> processing " + colEvent.type + " actualWidth = " + column.getActualWidth());
-                    _this.columnController.setColumnWidth(column.getColId(), column.getActualWidth(), false, resizedEvent_1.finished, "alignedGridChanged");
+                    var columnWidths = [{ key: column.getColId(), newWidth: column.getActualWidth() }];
+                    _this.columnController.setColumnWidths(columnWidths, false, resizedEvent_1.finished, "alignedGridChanged");
                 });
                 break;
         }
@@ -208,6 +218,9 @@ var AlignedGridsService = /** @class */ (function () {
     __decorate([
         PostConstruct
     ], AlignedGridsService.prototype, "init", null);
+    __decorate([
+        PreDestroy
+    ], AlignedGridsService.prototype, "destroy", null);
     AlignedGridsService = __decorate([
         Bean('alignedGridsService')
     ], AlignedGridsService);

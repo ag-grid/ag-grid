@@ -12,7 +12,16 @@ html {
     bottom: 0;
     left: 0;
     right: 0;
+}
+
+.container__body {
     display: flex;
+    flex-direction: row;
+    height: 100%;
+}
+
+.container__head {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
 }
 
 .container__left {

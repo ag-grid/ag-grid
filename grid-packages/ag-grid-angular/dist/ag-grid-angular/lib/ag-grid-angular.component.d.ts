@@ -101,6 +101,7 @@ export declare class AgGridAngular implements AfterViewInit {
     paginationStartPage: any;
     infiniteBlockSize: any;
     batchUpdateWaitMillis: any;
+    asyncTransactionWaitMillis: any;
     blockLoadDebounceMillis: any;
     keepDetailRowsCount: any;
     undoRedoCellEditingLimit: any;
@@ -285,6 +286,7 @@ export declare class AgGridAngular implements AfterViewInit {
     gridAutoHeight: any;
     suppressRowTransform: any;
     suppressClipboardPaste: any;
+    suppressLastEmptyLineOnPaste: any;
     serverSideSortingAlwaysResets: any;
     reactNext: any;
     suppressSetColumnStateEvents: any;
@@ -295,11 +297,15 @@ export declare class AgGridAngular implements AfterViewInit {
     suppressBrowserResizeObserver: any;
     suppressMaxRenderedRowRestriction: any;
     excludeChildrenWhenTreeDataFiltering: any;
+    tooltipMouseTrack: any;
     keepDetailRows: any;
     paginateChildRows: any;
     preventDefaultOnContextMenu: any;
     undoRedoCellEditing: any;
     allowDragFromColumnsToolPanel: any;
+    immutableData: any;
+    immutableColumns: any;
+    pivotSuppressAutoColumn: any;
     columnEverythingChanged: EventEmitter<any>;
     newColumnsLoaded: EventEmitter<any>;
     columnPivotModeChanged: EventEmitter<any>;

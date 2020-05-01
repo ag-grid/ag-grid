@@ -39,8 +39,11 @@ interface IToolPanel {
 <snippet>
 interface IToolPanelParams {
 
-    // The grid API
+    // Grid API
     api: any;
+
+    // Column API
+    columnApi: any;
 }
 </snippet>
     <h2>Registering Tool Panel Components</h2>

@@ -1,16 +1,19 @@
 import { Group } from "../../scene/group";
 import { LegendDatum } from "../legend";
-import { Shape } from "../../scene/shape/shape";
 import { Observable } from "../../util/observable";
 import { ChartAxis, ChartAxisDirection } from "../chartAxis";
 import { Chart } from "../chart";
 /**
- * `D` - raw series datum, an element in the {@link Series.data} array.
- * `SeriesNodeDatum` - processed series datum used in node selections,
- *                     contains information used to render pie sectors, bars, line markers, etc.
+ * Processed series datum used in node selections,
+ * contains information used to render pie sectors, bars, markers, etc.
  */
 export interface SeriesNodeDatum {
+    series: Series;
     seriesDatum: any;
+    point?: {
+        x: number;
+        y: number;
+    };
 }
 export interface TooltipRendererParams {
     datum: any;
@@ -35,7 +38,7 @@ export interface HighlightStyle {
 }
 export declare abstract class Series extends Observable {
     readonly id: string;
-    get type(): string;
+    readonly type: string;
     /**
      * The group node that contains all the nodes used to render this series.
      */
@@ -58,7 +61,9 @@ export declare abstract class Series extends Observable {
     abstract getDomain(direction: ChartAxisDirection): any[];
     abstract processData(): boolean;
     abstract update(): void;
-    abstract getTooltipHtml(nodeDatum: SeriesNodeDatum): string;
+    abstract getTooltipHtml(seriesDatum: any): string;
+    getNodeData(): SeriesNodeDatum[];
+    fireNodeClickEvent(datum: SeriesNodeDatum): void;
     /**
      * @private
      * Populates the given {@param data} array with the items of this series
@@ -69,8 +74,7 @@ export declare abstract class Series extends Observable {
      */
     abstract listSeriesItems(data: LegendDatum[]): void;
     toggleSeriesItem(itemId: any, enabled: boolean): void;
-    abstract highlightNode(node: Shape): void;
-    abstract dehighlightNode(): void;
+    onHighlightChange(): void;
     readonly scheduleLayout: () => void;
     readonly scheduleData: () => void;
     protected fixNumericExtent(extent?: [number, number], type?: string): [number, number];

@@ -1,14 +1,12 @@
-// Type definitions for @ag-grid-community/core v23.0.2
+// Type definitions for @ag-grid-community/core v23.1.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
-import { GridPanel } from "../gridPanel/gridPanel";
-import { HeaderRowComp } from "./headerRowComp";
-import { Component } from "../widgets/component";
+import { GridPanel } from '../gridPanel/gridPanel';
+import { HeaderRowComp } from './headerRowComp';
+import { Component } from '../widgets/component';
 export declare class HeaderContainer {
     private gridOptionsWrapper;
     private context;
-    private $scope;
-    private dragAndDropService;
     private columnController;
     private eventService;
     private scrollVisibleService;
@@ -18,6 +16,7 @@ export declare class HeaderContainer {
     private pinned;
     private scrollWidth;
     private dropTarget;
+    private events;
     constructor(eContainer: HTMLElement, eViewport: HTMLElement, pinned: string);
     registerGridComp(gridPanel: GridPanel): void;
     forEachHeaderElement(callback: (renderedHeaderElement: Component) => void): void;

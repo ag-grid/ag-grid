@@ -3,18 +3,22 @@ import './App.css';
 import { getTemplates } from './templates.jsx';
 import { Chart } from './Chart.jsx';
 import { Options } from './Options.jsx';
+import { ChartTypeSelector } from './ChartTypeSelector.jsx';
 import { Code } from './Code.jsx';
 import { deepClone, getUrlParameters } from './utils.jsx';
 
 const appName = 'chart-api';
 
 const createOptionsJson = (chartType, options) => {
-    const shouldProvideAxisConfig = (options.axes && Object.keys(options.axes).length > 0) || chartType === 'scatter';
+
+    const optionsHasAxes = (options.axes && Object.keys(options.axes).length > 0);
+    const isTwoNumberAxes = ['scatter', 'histogram'].indexOf(chartType) > -1;
+    const shouldProvideAxisConfig = optionsHasAxes || isTwoNumberAxes;
 
     const json = {
         ...options,
         axes: shouldProvideAxisConfig ? [{
-            type: chartType === 'scatter' ? 'number' : 'category',
+            type: isTwoNumberAxes ? 'number' : 'category',
             position: 'bottom',
         },
         {
@@ -77,6 +81,16 @@ const createOptionsJson = (chartType, options) => {
                 ...options.series,
             }];
             break;
+        case 'histogram':
+            json.series = [{
+                type: 'histogram',
+                xKey: 'revenue',
+                yKey: 'profit',
+                ...options.series,
+            }];
+            break;
+        default:
+            throw new Error(`unrecognised chart type ${chartType}`);
     }
 
     return json;
@@ -245,21 +259,28 @@ export class App extends React.Component {
         const { chartType, options, framework } = this.state;
         const optionsJson = createOptionsJson(chartType, options);
 
-        return <div className="container">
-            <div className="container__left">
-                <div className="container__options">
-                    <Options
-                        chartType={chartType}
-                        updateChartType={this.updateChartType}
-                        updateOptionDefault={this.updateOptionDefault}
-                        updateOption={this.updateOption} />
+        return (
+            <div className="container">
+                <div className="container__head">
+                    <ChartTypeSelector type={chartType} onChange={this.updateChartType} />
+                </div>
+                <div className="container__body">
+                    <div className="container__left">
+                        <div className="container__options">
+                            <Options
+                                chartType={chartType}
+                                updateChartType={this.updateChartType}
+                                updateOptionDefault={this.updateOptionDefault}
+                                updateOption={this.updateOption} />
+                        </div>
+                    </div>
+                    <div className="container__right">
+                        <div className="container__chart"><Chart options={optionsJson} /></div>
+                        <div className="container__code"><Code framework={framework} options={optionsJson} /></div>
+                    </div>
                 </div>
             </div>
-            <div className="container__right">
-                <div className="container__chart"><Chart options={optionsJson} /></div>
-                <div className="container__code"><Code framework={framework} options={optionsJson} /></div>
-            </div>
-        </div>;
+        );
     }
 }
 

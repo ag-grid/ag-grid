@@ -41,7 +41,7 @@ var ChartDatasource = /** @class */ (function (_super) {
         // make sure enough rows in range to chart. if user filters and less rows, then end row will be
         // the last displayed row, not where the range ends.
         var modelLastRow = this.gridRowModel.getRowCount() - 1;
-        var rangeLastRow = params.endRow > 0 ? Math.min(params.endRow, modelLastRow) : modelLastRow;
+        var rangeLastRow = params.endRow >= 0 ? Math.min(params.endRow, modelLastRow) : modelLastRow;
         var numRows = rangeLastRow - params.startRow + 1;
         var _loop_1 = function (i) {
             var data = {};

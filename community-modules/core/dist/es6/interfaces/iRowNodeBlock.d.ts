@@ -1,10 +1,12 @@
-// Type definitions for @ag-grid-community/core v23.0.2
+// Type definitions for @ag-grid-community/core v23.1.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { IEventEmitter } from "./iEventEmitter";
 import { RowNode } from "../entities/rowNode";
 import { NumberSequence } from "../utils";
 export interface IRowNodeBlock extends IEventEmitter {
+    getDisplayIndexStart(): number;
+    getDisplayIndexEnd(): number;
     getLastAccessed(): number;
     getState(): string;
     isAnyNodeOpen(rowCount: number): boolean;

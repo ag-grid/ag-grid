@@ -1,3 +1,7 @@
+/**
+ * AUTOMATICALLY GENERATED FILE, DO NOT EDIT MANUALLY!
+ * Update this file by running `lerna run webpack-updater` in the monorepo root folder.
+ */
 var ClientSideRowModelModule = require('../../community-modules/client-side-row-model');
 var GridCoreModule = require('../../community-modules/core');
 var CsvExportModule = require('../../community-modules/csv-export');
@@ -6,6 +10,7 @@ var GridChartsModule = require('../../enterprise-modules/charts');
 var ClipboardModule = require('../../enterprise-modules/clipboard');
 var ColumnsToolPanelModule = require('../../enterprise-modules/column-tool-panel');
 var AgGridEnterpriseModule = require('../../enterprise-modules/core');
+var DateTimeCellEditorModule = require('../../enterprise-modules/date-time-cell-editor');
 var ExcelExportModule = require('../../enterprise-modules/excel-export');
 var FiltersToolPanelModule = require('../../enterprise-modules/filter-tool-panel');
 var MasterDetailModule = require('../../enterprise-modules/master-detail');
@@ -37,6 +42,7 @@ agGrid.ModuleRegistry.register(InfiniteRowModelModule.InfiniteRowModelModule);
 agGrid.ModuleRegistry.register(GridChartsModule.GridChartsModule);
 agGrid.ModuleRegistry.register(ClipboardModule.ClipboardModule);
 agGrid.ModuleRegistry.register(ColumnsToolPanelModule.ColumnsToolPanelModule);
+agGrid.ModuleRegistry.register(DateTimeCellEditorModule.DateTimeCellEditorModule);
 agGrid.ModuleRegistry.register(ExcelExportModule.ExcelExportModule);
 agGrid.ModuleRegistry.register(FiltersToolPanelModule.FiltersToolPanelModule);
 agGrid.ModuleRegistry.register(MasterDetailModule.MasterDetailModule);

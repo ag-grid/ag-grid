@@ -13,7 +13,6 @@ import { ProvidedFilter } from "../providedFilter";
 import { AgInputTextField } from "../../../widgets/agInputTextField";
 
 export class DateFloatingFilter extends SimpleFloatingFilter {
-
     @Autowired('userComponentFactory') private userComponentFactory: UserComponentFactory;
 
     @RefSelector('eReadOnlyText') private eReadOnlyText: AgInputTextField;
@@ -23,8 +22,8 @@ export class DateFloatingFilter extends SimpleFloatingFilter {
     private params: IFloatingFilterParams;
 
     constructor() {
-        super(
-            `<div class="ag-floating-filter-input" role="presentation">
+        super(/* html */`
+            <div class="ag-floating-filter-input" role="presentation">
                 <ag-input-text-field ref="eReadOnlyText"></ag-input-text-field>
                 <div ref="eDateWrapper" style="display: flex; overflow: hidden;"></div>
             </div>`);
@@ -35,9 +34,7 @@ export class DateFloatingFilter extends SimpleFloatingFilter {
     }
 
     protected conditionToString(condition: DateFilterModel): string {
-        const isRange = condition.type == SimpleFilter.IN_RANGE;
-
-        if (isRange) {
+        if (condition.type === SimpleFilter.IN_RANGE) {
             return `${condition.dateFrom}-${condition.dateTo}`;
         }
 
@@ -62,9 +59,9 @@ export class DateFloatingFilter extends SimpleFloatingFilter {
     }
 
     public onParentModelChanged(model: ISimpleFilterModel, event: FilterChangedEvent): void {
-        // we don't want to update the floating filter if the floating filter caused the change.
-        // as if it caused the change, the ui is already in sycn. if we didn't do this, the UI
-        // would behave strange as it would be updating as the user is typing
+        // We don't want to update the floating filter if the floating filter caused the change,
+        // because the UI is already in sync. if we didn't do this, the UI would behave strangely
+        // as it would be updating as the user is typing
         if (this.isEventFromFloatingFilter(event)) { return; }
 
         super.setLastTypeFromModel(model);
@@ -77,10 +74,11 @@ export class DateFloatingFilter extends SimpleFloatingFilter {
             if (model) {
                 const dateModel = model as DateFilterModel;
 
-                this.dateComp.setDate(_.getDateFromString(dateModel.dateFrom));
+                this.dateComp.setDate(_.parseDateTimeFromString(dateModel.dateFrom));
             } else {
                 this.dateComp.setDate(null);
             }
+
             this.eReadOnlyText.setValue('');
         } else {
             this.eReadOnlyText.setValue(this.getTextFromModel(model));
@@ -89,8 +87,8 @@ export class DateFloatingFilter extends SimpleFloatingFilter {
     }
 
     private onDateChanged(): void {
-        const filterValueDate: Date = this.dateComp.getDate();
-        const filterValueText: string = `${_.serializeDateToYyyyMmDd(filterValueDate, "-")} ${_.getTimeFromDate(filterValueDate)}`;
+        const filterValueDate = this.dateComp.getDate();
+        const filterValueText = `${_.serialiseDate(filterValueDate)} ${_.serialiseTime(filterValueDate)}`;
 
         this.params.parentFilterInstance(filterInstance => {
             if (filterInstance) {
@@ -101,17 +99,14 @@ export class DateFloatingFilter extends SimpleFloatingFilter {
     }
 
     private createDateComponent(): void {
-        const debounceMs: number = ProvidedFilter.getDebounceMs(this.params.filterParams, this.getDefaultDebounceMs());
-        const toDebounce: () => void = _.debounce(this.onDateChanged.bind(this), debounceMs);
+        const debounceMs = ProvidedFilter.getDebounceMs(this.params.filterParams, this.getDefaultDebounceMs());
         const dateComponentParams: IDateParams = {
-            onDateChanged: toDebounce,
+            onDateChanged: _.debounce(this.onDateChanged.bind(this), debounceMs),
             filterParams: this.params.column.getColDef().filterParams
         };
 
         this.dateComp = new DateCompWrapper(this.userComponentFactory, dateComponentParams, this.eDateWrapper);
 
-        this.addDestroyFunc(() => {
-            this.dateComp.destroy();
-        });
+        this.addDestroyFunc(() => this.dateComp.destroy());
     }
 }

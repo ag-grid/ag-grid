@@ -1,21 +1,21 @@
 "use strict";
 var columnDefs = [
-    { field: 'product', chartDataType: 'category', minWidth: 130 },
+    { field: 'product', chartDataType: 'category' },
     { field: 'book', chartDataType: 'category' },
 
     { field: 'current', type: 'measure' },
-    { field: 'previous', type: 'measure', minWidth: 130 },
+    { field: 'previous', type: 'measure' },
     { headerName: 'PL 1', field: 'pl1', type: 'measure' },
     { headerName: 'PL 2', field: 'pl2', type: 'measure' },
-    { headerName: 'Gain-DX', field: 'gainDx', type: 'measure', minWidth: 130 },
+    { headerName: 'Gain-DX', field: 'gainDx', type: 'measure' },
     { headerName: 'SX / PX', field: 'sxPx', type: 'measure' },
 
     { field: 'trade', type: 'measure' },
-    { field: 'submitterID', type: 'measure', minWidth: 130 },
+    { field: 'submitterID', type: 'measure' },
     { field: 'submitterDealID', type: 'measure', minWidth: 170 },
 
-    { field: 'portfolio', minWidth: 130 },
-    { field: 'dealType', minWidth: 130 },
+    { field: 'portfolio' },
+    { field: 'dealType' },
     { headerName: 'Bid', field: 'bidFlag' }
 ];
 
@@ -27,7 +27,7 @@ var gridOptions = {
         editable: true,
         sortable: true,
         flex: 1,
-        minWidth: 100,
+        minWidth: 150,
         filter: true,
         resizable: true
     },
@@ -124,7 +124,7 @@ var worker;
             gridOptions.api.setRowData(e.data.records);
         }
         if (e.data.type === 'updateData') {
-            gridOptions.api.batchUpdateRowData({ update: e.data.records });
+            gridOptions.api.applyTransactionAsync({ update: e.data.records });
         }
     };
 

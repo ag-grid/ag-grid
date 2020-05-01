@@ -1,12 +1,22 @@
-import { SeriesNodeDatum, CartesianTooltipRendererParams } from "../series";
+import { SeriesNodeDatum, CartesianTooltipRendererParams, HighlightStyle } from "../series";
 import { LegendDatum } from "../../legend";
-import { Shape } from "../../../scene/shape/shape";
+import { TypedEvent } from "../../../util/observable";
 import { CartesianSeries, CartesianSeriesMarker } from "./cartesianSeries";
 import { ChartAxisDirection } from "../../chartAxis";
-interface GroupSelectionDatum extends SeriesNodeDatum {
-    x: number;
-    y: number;
+interface ScatterNodeDatum extends SeriesNodeDatum {
+    point: {
+        x: number;
+        y: number;
+    };
     size: number;
+}
+export interface ScatterSeriesNodeClickEvent extends TypedEvent {
+    type: 'nodeClick';
+    series: ScatterSeries;
+    datum: any;
+    xKey: string;
+    yKey: string;
+    sizeKey?: string;
 }
 export interface ScatterTooltipRendererParams extends CartesianTooltipRendererParams {
     sizeKey?: string;
@@ -23,28 +33,21 @@ export declare class ScatterSeries extends CartesianSeries {
     private yData;
     private sizeData;
     private sizeScale;
-    private groupSelection;
-    private highlightedNode?;
+    private nodeSelection;
+    private nodeData;
     readonly marker: CartesianSeriesMarker;
     private _fill;
-    set fill(value: string);
-    get fill(): string;
+    fill: string;
     private _stroke;
-    set stroke(value: string);
-    get stroke(): string;
+    stroke: string;
     private _strokeWidth;
-    set strokeWidth(value: number);
-    get strokeWidth(): number;
+    strokeWidth: number;
     private _fillOpacity;
-    set fillOpacity(value: number);
-    get fillOpacity(): number;
+    fillOpacity: number;
     private _strokeOpacity;
-    set strokeOpacity(value: number);
-    get strokeOpacity(): number;
-    highlightStyle: {
-        fill?: string;
-        stroke?: string;
-    };
+    strokeOpacity: number;
+    highlightStyle: HighlightStyle;
+    onHighlightChange(): void;
     title?: string;
     xKey: string;
     yKey: string;
@@ -59,10 +62,13 @@ export declare class ScatterSeries extends CartesianSeries {
     onMarkerShapeChange(): void;
     processData(): boolean;
     getDomain(direction: ChartAxisDirection): any[];
-    highlightNode(node: Shape): void;
-    dehighlightNode(): void;
+    getNodeData(): ScatterNodeDatum[];
+    fireNodeClickEvent(datum: ScatterNodeDatum): void;
+    private generateNodeData;
     update(): void;
-    getTooltipHtml(nodeDatum: GroupSelectionDatum): string;
+    private updateNodeSelection;
+    private updateNodes;
+    getTooltipHtml(nodeDatum: ScatterNodeDatum): string;
     listSeriesItems(legendData: LegendDatum[]): void;
 }
 export {};

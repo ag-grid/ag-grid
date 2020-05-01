@@ -2,23 +2,23 @@ var gridOptions = {
     // define grid columns
     columnDefs: [
         // using default ColDef
-        {headerName: 'Athlete', field: 'athlete'},
-        {headerName: 'Sport', field: 'sport'},
+        { headerName: 'Athlete', field: 'athlete' },
+        { headerName: 'Sport', field: 'sport' },
 
         // using number column type
-        {headerName: 'Age', field: 'age', type: 'numberColumn'},
-        {headerName: 'Year', field: 'year', type: 'numberColumn'},
+        { headerName: 'Age', field: 'age', type: 'numberColumn' },
+        { headerName: 'Year', field: 'year', type: 'numberColumn' },
 
         // using date and non-editable column types
-        {headerName: 'Date', field: 'date', type: ['dateColumn', 'nonEditableColumn'], width: 220 },
+        { headerName: 'Date', field: 'date', type: ['dateColumn', 'nonEditableColumn'], width: 220 },
         {
             headerName: 'Medals',
             groupId: 'medalsGroup',
             children: [
                 // using medal column type
-                {headerName: 'Gold', field: 'gold', type: 'medalColumn'},
-                {headerName: 'Silver', field: 'silver', type: 'medalColumn'},
-                {headerName: 'Bronze', field: 'bronze', type: 'medalColumn'}
+                { headerName: 'Gold', field: 'gold', type: 'medalColumn' },
+                { headerName: 'Silver', field: 'silver', type: 'medalColumn' },
+                { headerName: 'Bronze', field: 'bronze', type: 'medalColumn' }
             ]
         }
     ],
@@ -31,6 +31,8 @@ var gridOptions = {
         editable: true,
         // make every column use 'text' filter by default
         filter: 'agTextColumnFilter',
+        // enable floating filters by default
+        floatingFilter: true,
         // make columns resizable
         resizable: true
     },
@@ -42,9 +44,9 @@ var gridOptions = {
 
     // define specific column types
     columnTypes: {
-        numberColumn: {width: 130, filter: 'agNumberColumnFilter'},
-        medalColumn: {width: 100, columnGroupShow: 'open', filter: false},
-        nonEditableColumn: {editable: false},
+        numberColumn: { width: 130, filter: 'agNumberColumnFilter' },
+        medalColumn: { width: 100, columnGroupShow: 'open', filter: false },
+        nonEditableColumn: { editable: false },
         dateColumn: {
             // specify we want to use the date filter
             filter: 'agDateColumnFilter',
@@ -73,9 +75,7 @@ var gridOptions = {
             }
         }
     },
-
     rowData: null,
-    floatingFilter: true
 };
 
 // setup the grid after the page has finished loading
@@ -83,7 +83,8 @@ document.addEventListener('DOMContentLoaded', function() {
     var gridDiv = document.querySelector('#myGrid');
     new agGrid.Grid(gridDiv, gridOptions);
 
-    agGrid.simpleHttpRequest({url: 'https://raw.githubusercontent.com/ag-grid/ag-grid/master/grid-packages/ag-grid-docs/src/olympicWinnersSmall.json'}).then(function(data) {
-        gridOptions.api.setRowData(data);
-    });
+    agGrid.simpleHttpRequest({ url: 'https://raw.githubusercontent.com/ag-grid/ag-grid/master/grid-packages/ag-grid-docs/src/olympicWinnersSmall.json' })
+        .then(function(data) {
+            gridOptions.api.setRowData(data);
+        });
 });

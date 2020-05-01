@@ -1,22 +1,26 @@
-import { AgEvent, Column, Component } from "ag-grid-community";
+import { AgEvent, ColDef, Component, ISetFilterParams } from 'ag-grid-community';
 export interface SelectedEvent extends AgEvent {
 }
 export declare class SetFilterListItem extends Component {
+    private readonly value;
+    private readonly params;
     static EVENT_SELECTED: string;
     private gridOptionsWrapper;
     private valueFormatterService;
     private userComponentFactory;
+    private eFilterItemValue;
     private static TEMPLATE;
     private eCheckbox;
     private selected;
-    private value;
-    private column;
-    constructor(value: any, column: Column);
-    private useCellRenderer;
+    private tooltipText;
+    constructor(value: any, params: ISetFilterParams);
     private init;
     isSelected(): boolean;
     setSelected(selected: boolean): void;
     private updateCheckboxIcon;
     render(): void;
-    private getFilterValueFormatter;
+    private getFormattedValue;
+    private renderCell;
+    getComponentHolder(): ColDef;
+    getTooltipText(): string;
 }

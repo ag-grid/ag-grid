@@ -1,7 +1,7 @@
 <?php
 include dirname(__FILE__) . '/../config.php';
 
-define('USE_LOCAL', AG_GRID_VERSION == '$$LOCAL$$');
+define('USE_LOCAL', AG_GRID_VERSION == '$$GRID_VERSION$$');
 $archiveMatch = '/archive\/\d+.\d+.\d+/';
 $host = isset($_SERVER['HTTP_X_PROXY_HTTP_HOST']) ? $_SERVER['HTTP_X_PROXY_HTTP_HOST'] : $_SERVER['HTTP_HOST'];
 
@@ -37,15 +37,25 @@ if (USE_LOCAL) {
     $gridSystemJsMap = array(
         /* START OF GRID CSS DEV - DO NOT DELETE */
         "@ag-grid-community/all-modules/dist/styles/ag-grid.css" => "$prefix/@ag-grid-community/all-modules/dist/styles/ag-grid.css",
+        "@ag-grid-community/core/dist/styles/ag-grid.css" => "$prefix/@ag-grid-community/core/dist/styles/ag-grid.css",
         "@ag-grid-community/all-modules/dist/styles/ag-theme-alpine-dark.css" => "$prefix/@ag-grid-community/all-modules/dist/styles/ag-theme-alpine-dark.css",
+        "@ag-grid-community/core/dist/styles/ag-theme-alpine-dark.css" => "$prefix/@ag-grid-community/core/dist/styles/ag-theme-alpine-dark.css",
         "@ag-grid-community/all-modules/dist/styles/ag-theme-alpine.css" => "$prefix/@ag-grid-community/all-modules/dist/styles/ag-theme-alpine.css",
+        "@ag-grid-community/core/dist/styles/ag-theme-alpine.css" => "$prefix/@ag-grid-community/core/dist/styles/ag-theme-alpine.css",
         "@ag-grid-community/all-modules/dist/styles/ag-theme-balham-dark.css" => "$prefix/@ag-grid-community/all-modules/dist/styles/ag-theme-balham-dark.css",
+        "@ag-grid-community/core/dist/styles/ag-theme-balham-dark.css" => "$prefix/@ag-grid-community/core/dist/styles/ag-theme-balham-dark.css",
         "@ag-grid-community/all-modules/dist/styles/ag-theme-balham.css" => "$prefix/@ag-grid-community/all-modules/dist/styles/ag-theme-balham.css",
+        "@ag-grid-community/core/dist/styles/ag-theme-balham.css" => "$prefix/@ag-grid-community/core/dist/styles/ag-theme-balham.css",
         "@ag-grid-community/all-modules/dist/styles/ag-theme-blue.css" => "$prefix/@ag-grid-community/all-modules/dist/styles/ag-theme-blue.css",
+        "@ag-grid-community/core/dist/styles/ag-theme-blue.css" => "$prefix/@ag-grid-community/core/dist/styles/ag-theme-blue.css",
         "@ag-grid-community/all-modules/dist/styles/ag-theme-bootstrap.css" => "$prefix/@ag-grid-community/all-modules/dist/styles/ag-theme-bootstrap.css",
+        "@ag-grid-community/core/dist/styles/ag-theme-bootstrap.css" => "$prefix/@ag-grid-community/core/dist/styles/ag-theme-bootstrap.css",
         "@ag-grid-community/all-modules/dist/styles/ag-theme-dark.css" => "$prefix/@ag-grid-community/all-modules/dist/styles/ag-theme-dark.css",
+        "@ag-grid-community/core/dist/styles/ag-theme-dark.css" => "$prefix/@ag-grid-community/core/dist/styles/ag-theme-dark.css",
         "@ag-grid-community/all-modules/dist/styles/ag-theme-fresh.css" => "$prefix/@ag-grid-community/all-modules/dist/styles/ag-theme-fresh.css",
+        "@ag-grid-community/core/dist/styles/ag-theme-fresh.css" => "$prefix/@ag-grid-community/core/dist/styles/ag-theme-fresh.css",
         "@ag-grid-community/all-modules/dist/styles/ag-theme-material.css" => "$prefix/@ag-grid-community/all-modules/dist/styles/ag-theme-material.css",
+        "@ag-grid-community/core/dist/styles/ag-theme-material.css" => "$prefix/@ag-grid-community/core/dist/styles/ag-theme-material.css",
 /* END OF GRID CSS DEV - DO NOT DELETE */
         /* START OF GRID MODULES DEV - DO NOT DELETE */
         "@ag-grid-community/all-modules" => "$prefix/@ag-grid-community/all-modules",
@@ -59,6 +69,7 @@ if (USE_LOCAL) {
         "@ag-grid-enterprise/clipboard" => "$prefix/@ag-grid-enterprise/clipboard",
         "@ag-grid-enterprise/column-tool-panel" => "$prefix/@ag-grid-enterprise/column-tool-panel",
         "@ag-grid-enterprise/core" => "$prefix/@ag-grid-enterprise/core",
+        "@ag-grid-enterprise/date-time-cell-editor" => "$prefix/@ag-grid-enterprise/date-time-cell-editor",
         "@ag-grid-enterprise/excel-export" => "$prefix/@ag-grid-enterprise/excel-export",
         "@ag-grid-enterprise/filter-tool-panel" => "$prefix/@ag-grid-enterprise/filter-tool-panel",
         "@ag-grid-enterprise/master-detail" => "$prefix/@ag-grid-enterprise/master-detail",
@@ -107,6 +118,7 @@ if (USE_LOCAL) {
         "@ag-grid-enterprise/clipboard" => "$prefix/@ag-grid-enterprise/all-modules/dist/ag-grid-enterprise.cjs.js",
         "@ag-grid-enterprise/column-tool-panel" => "$prefix/@ag-grid-enterprise/all-modules/dist/ag-grid-enterprise.cjs.js",
         "@ag-grid-enterprise/core" => "$prefix/@ag-grid-enterprise/all-modules/dist/ag-grid-enterprise.cjs.js",
+        "@ag-grid-enterprise/date-time-cell-editor" => "$prefix/@ag-grid-enterprise/all-modules/dist/ag-grid-enterprise.cjs.js",
         "@ag-grid-enterprise/excel-export" => "$prefix/@ag-grid-enterprise/all-modules/dist/ag-grid-enterprise.cjs.js",
         "@ag-grid-enterprise/filter-tool-panel" => "$prefix/@ag-grid-enterprise/all-modules/dist/ag-grid-enterprise.cjs.js",
         "@ag-grid-enterprise/master-detail" => "$prefix/@ag-grid-enterprise/all-modules/dist/ag-grid-enterprise.cjs.js",
@@ -142,30 +154,37 @@ if (USE_LOCAL) {
     define('AG_CHARTS_SCRIPT_PATH', "https://unpkg.com/ag-charts-community@" . AG_CHARTS_VERSION . "/dist/ag-charts-community.min.js");
 
     $gridSystemJsMap = array(
-        "@ag-grid-community/core/dist/styles/ag-grid.css" => "https://unpkg.com/@ag-grid-community/all-modules@" . AG_GRID_VERSION . "/dist/styles/ag-grid.css",
-        "@ag-grid-community/core/dist/styles/ag-theme-balham.css" => "https://unpkg.com/@ag-grid-community/all-modules@" . AG_GRID_VERSION . "/dist/styles/ag-theme-balham.css",
-        "@ag-grid-community/core/dist/styles/ag-theme-alpine.css" => "https://unpkg.com/@ag-grid-community/all-modules@" . AG_GRID_VERSION . "/dist/styles/ag-theme-alpine.css",
         /* START OF GRID CSS PROD - DO NOT DELETE */
         "@ag-grid-community/all-modules/dist/styles/ag-grid.css" => "https://unpkg.com/@ag-grid-community/all-modules@" . AG_GRID_VERSION . "/dist/styles/ag-grid.css",
+        "@ag-grid-community/core/dist/styles/ag-grid.css" => "https://unpkg.com/@ag-grid-community/core@" . AG_GRID_VERSION . "/dist/styles/ag-grid.css",
         "@ag-grid-community/all-modules/dist/styles/ag-theme-alpine-dark.css" => "https://unpkg.com/@ag-grid-community/all-modules@" . AG_GRID_VERSION . "/dist/styles/ag-theme-alpine-dark.css",
+        "@ag-grid-community/core/dist/styles/ag-theme-alpine-dark.css" => "https://unpkg.com/@ag-grid-community/core@" . AG_GRID_VERSION . "/dist/styles/ag-theme-alpine-dark.css",
         "@ag-grid-community/all-modules/dist/styles/ag-theme-alpine.css" => "https://unpkg.com/@ag-grid-community/all-modules@" . AG_GRID_VERSION . "/dist/styles/ag-theme-alpine.css",
+        "@ag-grid-community/core/dist/styles/ag-theme-alpine.css" => "https://unpkg.com/@ag-grid-community/core@" . AG_GRID_VERSION . "/dist/styles/ag-theme-alpine.css",
         "@ag-grid-community/all-modules/dist/styles/ag-theme-balham-dark.css" => "https://unpkg.com/@ag-grid-community/all-modules@" . AG_GRID_VERSION . "/dist/styles/ag-theme-balham-dark.css",
+        "@ag-grid-community/core/dist/styles/ag-theme-balham-dark.css" => "https://unpkg.com/@ag-grid-community/core@" . AG_GRID_VERSION . "/dist/styles/ag-theme-balham-dark.css",
         "@ag-grid-community/all-modules/dist/styles/ag-theme-balham.css" => "https://unpkg.com/@ag-grid-community/all-modules@" . AG_GRID_VERSION . "/dist/styles/ag-theme-balham.css",
+        "@ag-grid-community/core/dist/styles/ag-theme-balham.css" => "https://unpkg.com/@ag-grid-community/core@" . AG_GRID_VERSION . "/dist/styles/ag-theme-balham.css",
         "@ag-grid-community/all-modules/dist/styles/ag-theme-blue.css" => "https://unpkg.com/@ag-grid-community/all-modules@" . AG_GRID_VERSION . "/dist/styles/ag-theme-blue.css",
+        "@ag-grid-community/core/dist/styles/ag-theme-blue.css" => "https://unpkg.com/@ag-grid-community/core@" . AG_GRID_VERSION . "/dist/styles/ag-theme-blue.css",
         "@ag-grid-community/all-modules/dist/styles/ag-theme-bootstrap.css" => "https://unpkg.com/@ag-grid-community/all-modules@" . AG_GRID_VERSION . "/dist/styles/ag-theme-bootstrap.css",
+        "@ag-grid-community/core/dist/styles/ag-theme-bootstrap.css" => "https://unpkg.com/@ag-grid-community/core@" . AG_GRID_VERSION . "/dist/styles/ag-theme-bootstrap.css",
         "@ag-grid-community/all-modules/dist/styles/ag-theme-dark.css" => "https://unpkg.com/@ag-grid-community/all-modules@" . AG_GRID_VERSION . "/dist/styles/ag-theme-dark.css",
+        "@ag-grid-community/core/dist/styles/ag-theme-dark.css" => "https://unpkg.com/@ag-grid-community/core@" . AG_GRID_VERSION . "/dist/styles/ag-theme-dark.css",
         "@ag-grid-community/all-modules/dist/styles/ag-theme-fresh.css" => "https://unpkg.com/@ag-grid-community/all-modules@" . AG_GRID_VERSION . "/dist/styles/ag-theme-fresh.css",
+        "@ag-grid-community/core/dist/styles/ag-theme-fresh.css" => "https://unpkg.com/@ag-grid-community/core@" . AG_GRID_VERSION . "/dist/styles/ag-theme-fresh.css",
         "@ag-grid-community/all-modules/dist/styles/ag-theme-material.css" => "https://unpkg.com/@ag-grid-community/all-modules@" . AG_GRID_VERSION . "/dist/styles/ag-theme-material.css",
+        "@ag-grid-community/core/dist/styles/ag-theme-material.css" => "https://unpkg.com/@ag-grid-community/core@" . AG_GRID_VERSION . "/dist/styles/ag-theme-material.css",
 /* END OF GRID CSS PROD - DO NOT DELETE */
         "@ag-grid-community/react" => "https://unpkg.com/@ag-grid-community/react@" . AG_GRID_REACT_VERSION . "/",
         "@ag-grid-community/angular" => "https://unpkg.com/@ag-grid-community/angular@" . AG_GRID_ANGULAR_VERSION . "/",
         "@ag-grid-community/vue" => "https://unpkg.com/@ag-grid-community/vue@" . AG_GRID_VUE_VERSION . "/",
         "ag-charts-community" => "https://unpkg.com/ag-charts-community@" . AG_CHARTS_VERSION . "/dist/ag-charts-community.cjs.js",
-        "ag-grid-community" => "https://unpkg.com/ag-grid-community@". AG_GRID_VERSION . "/",
-        "ag-grid-enterprise" => "https://unpkg.com/ag-grid-enterprise@". AG_GRID_ENTERPRISE_VERSION . "/",
-        "ag-grid-angular" => "https://unpkg.com/ag-grid-angular@". AG_GRID_ANGULAR_VERSION . "/",
-        "ag-grid-react" => "https://unpkg.com/ag-grid-react@". AG_GRID_REACT_VERSION . "/",
-        "ag-grid-vue" => "https://unpkg.com/ag-grid-vue@". AG_GRID_VUE_VERSION . "/"
+        "ag-grid-community" => "https://unpkg.com/ag-grid-community@" . AG_GRID_VERSION . "/",
+        "ag-grid-enterprise" => "https://unpkg.com/ag-grid-enterprise@" . AG_GRID_ENTERPRISE_VERSION . "/",
+        "ag-grid-angular" => "https://unpkg.com/ag-grid-angular@" . AG_GRID_ANGULAR_VERSION . "/",
+        "ag-grid-react" => "https://unpkg.com/ag-grid-react@" . AG_GRID_REACT_VERSION . "/",
+        "ag-grid-vue" => "https://unpkg.com/ag-grid-vue@" . AG_GRID_VUE_VERSION . "/"
     );
 
     $gridSystemJsCommunityPaths = array(
@@ -189,6 +208,7 @@ if (USE_LOCAL) {
         "@ag-grid-enterprise/clipboard" => "https://unpkg.com/@ag-grid-enterprise/all-modules@" . AG_GRID_ENTERPRISE_VERSION . "/dist/ag-grid-enterprise.cjs.js",
         "@ag-grid-enterprise/column-tool-panel" => "https://unpkg.com/@ag-grid-enterprise/all-modules@" . AG_GRID_ENTERPRISE_VERSION . "/dist/ag-grid-enterprise.cjs.js",
         "@ag-grid-enterprise/core" => "https://unpkg.com/@ag-grid-enterprise/all-modules@" . AG_GRID_ENTERPRISE_VERSION . "/dist/ag-grid-enterprise.cjs.js",
+        "@ag-grid-enterprise/date-time-cell-editor" => "https://unpkg.com/@ag-grid-enterprise/all-modules@" . AG_GRID_ENTERPRISE_VERSION . "/dist/ag-grid-enterprise.cjs.js",
         "@ag-grid-enterprise/excel-export" => "https://unpkg.com/@ag-grid-enterprise/all-modules@" . AG_GRID_ENTERPRISE_VERSION . "/dist/ag-grid-enterprise.cjs.js",
         "@ag-grid-enterprise/filter-tool-panel" => "https://unpkg.com/@ag-grid-enterprise/all-modules@" . AG_GRID_ENTERPRISE_VERSION . "/dist/ag-grid-enterprise.cjs.js",
         "@ag-grid-enterprise/master-detail" => "https://unpkg.com/@ag-grid-enterprise/all-modules@" . AG_GRID_ENTERPRISE_VERSION . "/dist/ag-grid-enterprise.cjs.js",

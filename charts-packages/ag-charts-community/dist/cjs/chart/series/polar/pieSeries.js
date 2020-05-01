@@ -35,12 +35,12 @@ var observable_1 = require("../../../util/observable");
 var polarSeries_1 = require("./polarSeries");
 var chartAxis_1 = require("../../chartAxis");
 var chart_1 = require("../../chart");
-var PieSeriesNodeTag;
-(function (PieSeriesNodeTag) {
-    PieSeriesNodeTag[PieSeriesNodeTag["Sector"] = 0] = "Sector";
-    PieSeriesNodeTag[PieSeriesNodeTag["Callout"] = 1] = "Callout";
-    PieSeriesNodeTag[PieSeriesNodeTag["Label"] = 2] = "Label";
-})(PieSeriesNodeTag || (PieSeriesNodeTag = {}));
+var PieNodeTag;
+(function (PieNodeTag) {
+    PieNodeTag[PieNodeTag["Sector"] = 0] = "Sector";
+    PieNodeTag[PieNodeTag["Callout"] = 1] = "Callout";
+    PieNodeTag[PieNodeTag["Label"] = 2] = "Label";
+})(PieNodeTag || (PieNodeTag = {}));
 var PieSeriesLabel = /** @class */ (function (_super) {
     __extends(PieSeriesLabel, _super);
     function PieSeriesLabel() {
@@ -116,13 +116,11 @@ var PieSeries = /** @class */ (function (_super) {
         _this.outerRadiusOffset = 0;
         _this.innerRadiusOffset = 0;
         _this.strokeWidth = 1;
-        _this.highlightStyle = {
-            fill: 'yellow'
-        };
-        _this.addEventListener('update', function () { return _this.update(); });
-        _this.label.addEventListener('change', function () { return _this.scheduleLayout(); });
-        _this.label.addEventListener('dataChange', function () { return _this.scheduleData(); });
-        _this.callout.addEventListener('change', function () { return _this.scheduleLayout(); });
+        _this.highlightStyle = { fill: 'yellow' };
+        _this.addEventListener('update', _this.update, _this);
+        _this.label.addEventListener('change', _this.scheduleLayout, _this);
+        _this.label.addEventListener('dataChange', _this.scheduleData, _this);
+        _this.callout.addEventListener('change', _this.scheduleLayout, _this);
         _this.addPropertyListener('data', function (event) {
             event.source.seriesItemEnabled = event.value.map(function () { return true; });
         });
@@ -175,16 +173,8 @@ var PieSeries = /** @class */ (function (_super) {
         enumerable: true,
         configurable: true
     });
-    PieSeries.prototype.highlightNode = function (node) {
-        if (!(node instanceof sector_1.Sector)) {
-            return;
-        }
-        this.highlightedNode = node;
-        this.scheduleLayout();
-    };
-    PieSeries.prototype.dehighlightNode = function () {
-        this.highlightedNode = undefined;
-        this.scheduleLayout();
+    PieSeries.prototype.onHighlightChange = function () {
+        this.updateNodes();
     };
     PieSeries.prototype.getDomain = function (direction) {
         if (direction === chartAxis_1.ChartAxisDirection.X) {
@@ -252,8 +242,9 @@ var PieSeries = /** @class */ (function (_super) {
                 textBaseline = 'middle';
             }
             groupSelectionData.push({
-                index: datumIndex,
+                series: _this,
                 seriesDatum: data[datumIndex],
+                index: datumIndex,
                 radius: radius,
                 startAngle: startAngle,
                 endAngle: endAngle,
@@ -277,32 +268,39 @@ var PieSeries = /** @class */ (function (_super) {
         if (!visible || !chart || chart.dataPending || chart.layoutPending) {
             return;
         }
-        var _a = this, fills = _a.fills, strokes = _a.strokes, fillOpacity = _a.fillOpacity, strokeOpacity = _a.strokeOpacity, callout = _a.callout, outerRadiusOffset = _a.outerRadiusOffset, innerRadiusOffset = _a.innerRadiusOffset, radiusScale = _a.radiusScale, title = _a.title;
-        radiusScale.range = [0, this.radius];
+        this.radiusScale.range = [0, this.radius];
         this.group.translationX = this.centerX;
         this.group.translationY = this.centerY;
+        var title = this.title;
         if (title) {
-            title.node.translationY = -this.radius - outerRadiusOffset - 2;
+            title.node.translationY = -this.radius - this.outerRadiusOffset - 2;
             title.node.visible = title.enabled;
         }
+        this.updateGroupSelection();
+        this.updateNodes();
+    };
+    PieSeries.prototype.updateGroupSelection = function () {
         var updateGroups = this.groupSelection.setData(this.groupSelectionData);
         updateGroups.exit.remove();
         var enterGroups = updateGroups.enter.append(group_1.Group);
-        enterGroups.append(sector_1.Sector).each(function (node) { return node.tag = PieSeriesNodeTag.Sector; });
+        enterGroups.append(sector_1.Sector).each(function (node) { return node.tag = PieNodeTag.Sector; });
         enterGroups.append(line_1.Line).each(function (node) {
-            node.tag = PieSeriesNodeTag.Callout;
+            node.tag = PieNodeTag.Callout;
             node.pointerEvents = node_1.PointerEvents.None;
         });
         enterGroups.append(text_1.Text).each(function (node) {
-            node.tag = PieSeriesNodeTag.Label;
+            node.tag = PieNodeTag.Label;
             node.pointerEvents = node_1.PointerEvents.None;
         });
-        var groupSelection = updateGroups.merge(enterGroups);
+        this.groupSelection = updateGroups.merge(enterGroups);
+    };
+    PieSeries.prototype.updateNodes = function () {
+        var _a = this, fills = _a.fills, strokes = _a.strokes, fillOpacity = _a.fillOpacity, strokeOpacity = _a.strokeOpacity, strokeWidth = _a.strokeWidth, outerRadiusOffset = _a.outerRadiusOffset, innerRadiusOffset = _a.innerRadiusOffset, radiusScale = _a.radiusScale, callout = _a.callout, shadow = _a.shadow, _b = _a.highlightStyle, fill = _b.fill, stroke = _b.stroke, centerOffset = _b.centerOffset;
+        var highlightedDatum = this.chart.highlightedDatum;
         var minOuterRadius = Infinity;
         var outerRadii = [];
         var centerOffsets = [];
-        var _b = this, highlightedNode = _b.highlightedNode, _c = _b.highlightStyle, fill = _c.fill, stroke = _c.stroke, centerOffset = _c.centerOffset, shadow = _b.shadow, strokeWidth = _b.strokeWidth;
-        groupSelection.selectByTag(PieSeriesNodeTag.Sector).each(function (sector, datum, index) {
+        this.groupSelection.selectByTag(PieNodeTag.Sector).each(function (sector, datum, index) {
             var radius = radiusScale.convert(datum.radius);
             var outerRadius = Math.max(0, radius + outerRadiusOffset);
             if (minOuterRadius > outerRadius) {
@@ -312,11 +310,12 @@ var PieSeries = /** @class */ (function (_super) {
             sector.innerRadius = Math.max(0, innerRadiusOffset ? radius + innerRadiusOffset : 0);
             sector.startAngle = datum.startAngle;
             sector.endAngle = datum.endAngle;
-            sector.fill = sector === highlightedNode && fill !== undefined ? fill : fills[index % fills.length];
-            sector.stroke = sector === highlightedNode && stroke !== undefined ? stroke : strokes[index % strokes.length];
+            var highlighted = datum === highlightedDatum;
+            sector.fill = highlighted && fill !== undefined ? fill : fills[index % fills.length];
+            sector.stroke = highlighted && stroke !== undefined ? stroke : strokes[index % strokes.length];
             sector.fillOpacity = fillOpacity;
             sector.strokeOpacity = strokeOpacity;
-            sector.centerOffset = sector === highlightedNode && centerOffset !== undefined ? centerOffset : 0;
+            sector.centerOffset = highlighted && centerOffset !== undefined ? centerOffset : 0;
             sector.fillShadow = shadow;
             sector.strokeWidth = strokeWidth;
             sector.lineJoin = 'round';
@@ -324,7 +323,7 @@ var PieSeries = /** @class */ (function (_super) {
             centerOffsets.push(sector.centerOffset);
         });
         var calloutColors = callout.colors, calloutLength = callout.length, calloutStrokeWidth = callout.strokeWidth;
-        groupSelection.selectByTag(PieSeriesNodeTag.Callout).each(function (line, datum, index) {
+        this.groupSelection.selectByTag(PieNodeTag.Callout).each(function (line, datum, index) {
             if (datum.label) {
                 var outerRadius = centerOffsets[index] + outerRadii[index];
                 line.strokeWidth = calloutStrokeWidth;
@@ -339,8 +338,8 @@ var PieSeries = /** @class */ (function (_super) {
             }
         });
         {
-            var _d = this.label, offset_1 = _d.offset, fontStyle_1 = _d.fontStyle, fontWeight_1 = _d.fontWeight, fontSize_1 = _d.fontSize, fontFamily_1 = _d.fontFamily, color_2 = _d.color;
-            groupSelection.selectByTag(PieSeriesNodeTag.Label).each(function (text, datum, index) {
+            var _c = this.label, offset_1 = _c.offset, fontStyle_1 = _c.fontStyle, fontWeight_1 = _c.fontWeight, fontSize_1 = _c.fontSize, fontFamily_1 = _c.fontFamily, color_2 = _c.color;
+            this.groupSelection.selectByTag(PieNodeTag.Label).each(function (text, datum, index) {
                 var label = datum.label;
                 if (label) {
                     var outerRadius = outerRadii[index];
@@ -361,7 +360,15 @@ var PieSeries = /** @class */ (function (_super) {
                 }
             });
         }
-        this.groupSelection = groupSelection;
+    };
+    PieSeries.prototype.fireNodeClickEvent = function (datum) {
+        this.fireEvent({
+            type: 'nodeClick',
+            series: this,
+            datum: datum.seriesDatum,
+            angleKey: this.angleKey,
+            radiusKey: this.radiusKey
+        });
     };
     PieSeries.prototype.getTooltipHtml = function (nodeDatum) {
         var angleKey = this.angleKey;

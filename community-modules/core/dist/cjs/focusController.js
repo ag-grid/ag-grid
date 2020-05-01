@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v23.0.2
+ * @version v23.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -19,27 +19,29 @@ var utils_1 = require("./utils");
 var FocusController = /** @class */ (function () {
     function FocusController() {
         this.keyboardFocusActive = false;
+        this.events = [];
     }
     FocusController.prototype.init = function () {
-        var _this = this;
         var eDocument = this.gridOptionsWrapper.getDocument();
-        this.eventService.addEventListener(events_1.Events.EVENT_COLUMN_PIVOT_MODE_CHANGED, this.clearFocusedCell.bind(this));
-        this.eventService.addEventListener(events_1.Events.EVENT_COLUMN_EVERYTHING_CHANGED, this.clearFocusedCell.bind(this));
-        this.eventService.addEventListener(events_1.Events.EVENT_COLUMN_GROUP_OPENED, this.clearFocusedCell.bind(this));
-        this.eventService.addEventListener(events_1.Events.EVENT_COLUMN_ROW_GROUP_CHANGED, this.clearFocusedCell.bind(this));
-        eDocument.addEventListener('keydown', function () {
-            _this.keyboardFocusActive = true;
-            _this.eventService.dispatchEvent({ type: events_1.Events.EVENT_KEYBOARD_FOCUS });
-        });
-        eDocument.addEventListener('mousedown', function () {
-            _this.keyboardFocusActive = false;
-            _this.eventService.dispatchEvent({ type: events_1.Events.EVENT_MOUSE_FOCUS });
-        });
-        // we used to remove focus when moving column, am not sure why. so taking this out and see who complains.
-        // we can delete these three lines of code soon.
-        // this.eventService.addEventListener(Events.EVENT_COLUMN_MOVED, this.clearFocusedCell.bind(this));
-        // this.eventService.addEventListener(Events.EVENT_COLUMN_PINNED, this.clearFocusedCell.bind(this));
-        // this.eventService.addEventListener(Events.EVENT_COLUMN_VISIBLE, this.clearFocusedCell.bind(this));
+        var clearFocusedCellListener = this.clearFocusedCell.bind(this);
+        this.events = [
+            this.eventService.addEventListener(events_1.Events.EVENT_COLUMN_PIVOT_MODE_CHANGED, clearFocusedCellListener),
+            this.eventService.addEventListener(events_1.Events.EVENT_COLUMN_EVERYTHING_CHANGED, clearFocusedCellListener),
+            this.eventService.addEventListener(events_1.Events.EVENT_COLUMN_GROUP_OPENED, clearFocusedCellListener),
+            this.eventService.addEventListener(events_1.Events.EVENT_COLUMN_ROW_GROUP_CHANGED, clearFocusedCellListener)
+        ];
+        var activateKeyboardModeListener = this.activateKeyboardMode.bind(this);
+        eDocument.addEventListener('keydown', activateKeyboardModeListener);
+        this.events.push(function () { return eDocument.removeEventListener('keydown', activateKeyboardModeListener); });
+        var activateMouseModeListener = this.activateMouseMode.bind(this);
+        eDocument.addEventListener('mousedown', activateMouseModeListener);
+        this.events.push(function () { return eDocument.removeEventListener('mousedown', activateMouseModeListener); });
+    };
+    FocusController.prototype.destroy = function () {
+        if (this.events.length) {
+            this.events.forEach(function (func) { return func(); });
+            this.events = [];
+        }
     };
     FocusController.prototype.isKeyboardFocus = function () {
         return this.keyboardFocusActive;
@@ -50,6 +52,14 @@ var FocusController = /** @class */ (function () {
     };
     FocusController.prototype.getFocusedCell = function () {
         return this.focusedCellPosition;
+    };
+    FocusController.prototype.activateMouseMode = function () {
+        this.keyboardFocusActive = false;
+        this.eventService.dispatchEvent({ type: events_1.Events.EVENT_MOUSE_FOCUS });
+    };
+    FocusController.prototype.activateKeyboardMode = function () {
+        this.keyboardFocusActive = true;
+        this.eventService.dispatchEvent({ type: events_1.Events.EVENT_KEYBOARD_FOCUS });
     };
     // we check if the browser is focusing something, and if it is, and
     // it's the cell we think is focused, then return the cell. so this
@@ -159,6 +169,9 @@ var FocusController = /** @class */ (function () {
     __decorate([
         context_1.PostConstruct
     ], FocusController.prototype, "init", null);
+    __decorate([
+        context_1.PreDestroy
+    ], FocusController.prototype, "destroy", null);
     FocusController = __decorate([
         context_1.Bean('focusController')
     ], FocusController);

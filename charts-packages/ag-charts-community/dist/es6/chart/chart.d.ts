@@ -1,12 +1,17 @@
 import { Scene } from "../scene/scene";
-import { Series } from "./series/series";
+import { Series, SeriesNodeDatum } from "./series/series";
 import { Padding } from "../util/padding";
 import { Node } from "../scene/node";
 import { Rect } from "../scene/shape/rect";
 import { Legend } from "./legend";
+import { BBox } from "../scene/bbox";
 import { Caption } from "../caption";
 import { Observable } from "../util/observable";
 import { ChartAxis } from "./chartAxis";
+export interface TooltipMeta {
+    pageX: number;
+    pageY: number;
+}
 export declare abstract class Chart extends Observable {
     readonly id: string;
     readonly scene: Scene;
@@ -16,21 +21,15 @@ export declare abstract class Chart extends Observable {
     protected captionAutoPadding: number;
     private tooltipElement;
     static readonly defaultTooltipClass = "ag-chart-tooltip";
-    tooltipOffset: [number, number];
     private _container;
-    set container(value: HTMLElement | undefined);
-    get container(): HTMLElement | undefined;
+    container: HTMLElement | undefined;
     private _data;
-    set data(data: any[]);
-    get data(): any[];
+    data: any[];
     private pendingSize?;
-    set width(value: number);
-    get width(): number;
-    set height(value: number);
-    get height(): number;
+    width: number;
+    height: number;
     protected _autoSize: boolean;
-    set autoSize(value: boolean);
-    get autoSize(): boolean;
+    autoSize: boolean;
     download(fileName?: string): void;
     padding: Padding;
     title?: Caption;
@@ -38,19 +37,18 @@ export declare abstract class Chart extends Observable {
     private static tooltipDocuments;
     protected constructor(document?: Document);
     destroy(): void;
-    private readonly onLayoutChange;
-    private readonly onLegendPositionChange;
+    private onLayoutChange;
+    private onLegendPositionChange;
+    private onCaptionChange;
     protected _element: HTMLElement;
-    get element(): HTMLElement;
-    abstract get seriesRoot(): Node;
+    readonly element: HTMLElement;
+    abstract readonly seriesRoot: Node;
     protected _axes: ChartAxis[];
-    set axes(values: ChartAxis[]);
-    get axes(): ChartAxis[];
+    axes: ChartAxis[];
     protected _series: Series[];
-    set series(values: Series[]);
-    get series(): Series[];
-    private readonly scheduleLayout;
-    private readonly scheduleData;
+    series: Series[];
+    private scheduleLayout;
+    private scheduleData;
     addSeries(series: Series, before?: Series): boolean;
     protected initSeries(series: Series): void;
     protected freeSeries(series: Series): void;
@@ -61,39 +59,48 @@ export declare abstract class Chart extends Observable {
     protected assignAxesToSeries(force?: boolean): void;
     private findMatchingAxis;
     protected _axesChanged: boolean;
-    protected set axesChanged(value: boolean);
-    protected get axesChanged(): boolean;
+    protected axesChanged: boolean;
     protected _seriesChanged: boolean;
-    protected set seriesChanged(value: boolean);
-    protected get seriesChanged(): boolean;
+    protected seriesChanged: boolean;
     protected layoutCallbackId: number;
-    set layoutPending(value: boolean);
     /**
-     * Only `true` while we are waiting for the layout to start.
-     * This will be `false` if the layout has already started and is ongoing.
-     */
-    get layoutPending(): boolean;
+    * Only `true` while we are waiting for the layout to start.
+    * This will be `false` if the layout has already started and is ongoing.
+    */
+    layoutPending: boolean;
     private readonly _performLayout;
     private dataCallbackId;
-    set dataPending(value: boolean);
-    get dataPending(): boolean;
+    dataPending: boolean;
     processData(): void;
-    readonly updateLegend: () => void;
+    private updateLegend;
     abstract performLayout(): void;
     protected positionCaptions(): void;
     protected positionLegend(): void;
-    private setupListeners;
-    private cleanupListeners;
+    private setupDomListeners;
+    private cleanupDomListeners;
+    protected seriesRect?: BBox;
     private pickSeriesNode;
     private lastPick?;
+    private pickClosestSeriesNodeDatum;
     private readonly onMouseMove;
     private readonly onMouseOut;
     private readonly onClick;
-    private onSeriesNodePick;
+    private checkSeriesNodeClick;
+    private onSeriesNodeClick;
+    private checkLegendClick;
+    private onSeriesDatumPick;
+    highlightedDatum?: SeriesNodeDatum;
+    highlightDatum(datum: SeriesNodeDatum): void;
+    dehighlightDatum(): void;
     private _tooltipClass;
-    set tooltipClass(value: string);
-    get tooltipClass(): string;
+    tooltipClass: string;
+    /**
+     * If `true`, the tooltip will be shown for the marker closest to the mouse cursor.
+     * Only has effect on series with markers.
+     */
+    tooltipTracking: boolean;
     private toggleTooltip;
+    private updateTooltipClass;
     /**
      * Shows tooltip at the given event's coordinates.
      * If the `html` parameter is missing, moves the existing tooltip to the new position.

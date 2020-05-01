@@ -2,6 +2,10 @@
     background-color: gold;
 }
 
+.ag-chart-tooltip::after {
+    border-top-color: gold;
+}
+
 .wrapper {
     height: 100%;
     display: flex;

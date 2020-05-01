@@ -3,6 +3,7 @@ import {
     Component,
     UserComponentFactory,
     IToolPanelComp,
+    IToolPanelParams,
     Promise,
     ToolPanelDef,
     PostConstruct,
@@ -33,8 +34,9 @@ export class ToolPanelWrapper extends Component {
     public setToolPanelDef(toolPanelDef: ToolPanelDef): void {
         this.toolPanelId = toolPanelDef.id;
 
-        const params: any = {
-            api: this.gridOptionsWrapper.getApi()
+        const params: IToolPanelParams = {
+            api: this.gridOptionsWrapper.getApi(),
+            columnApi: this.gridOptionsWrapper.getColumnApi()
         };
 
         const componentPromise: Promise<IToolPanelComp> = this.userComponentFactory.newToolPanelComponent(

@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v23.0.2
+ * @version v23.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -57,7 +57,7 @@ var Component = /** @class */ (function (_super) {
         // we MUST take a copy of the list first, as the 'swapComponentForNode' adds comments into the DOM
         // which messes up the traversal order of the children.
         var childNodeList = utils_1._.copyNodeList(parentNode.childNodes);
-        childNodeList.forEach(function (childNode) {
+        utils_1._.forEach(childNodeList, function (childNode) {
             if (!(childNode instanceof HTMLElement)) {
                 return;
             }
@@ -82,9 +82,7 @@ var Component = /** @class */ (function (_super) {
         });
     };
     Component.prototype.copyAttributesFromNode = function (source, dest) {
-        utils_1._.iterateNamedNodeMap(source.attributes, function (name, value) {
-            dest.setAttribute(name, value);
-        });
+        utils_1._.iterateNamedNodeMap(source.attributes, function (name, value) { return dest.setAttribute(name, value); });
     };
     Component.prototype.swapComponentForNode = function (newComponent, parentNode, childNode) {
         var eComponent = newComponent.getGui();
@@ -95,18 +93,21 @@ var Component = /** @class */ (function (_super) {
     };
     Component.prototype.swapInComponentForQuerySelectors = function (newComponent, childNode) {
         var thisNoType = this;
-        var thisProto = Object.getPrototypeOf(this);
-        while (thisProto != null) {
-            var metaData = thisProto.__agComponentMetaData;
-            var currentProtoName = (thisProto.constructor).name;
-            if (metaData && metaData[currentProtoName] && metaData[currentProtoName].querySelectors) {
-                metaData[currentProtoName].querySelectors.forEach(function (querySelector) {
-                    if (thisNoType[querySelector.attributeName] === childNode) {
-                        thisNoType[querySelector.attributeName] = newComponent;
-                    }
-                });
+        this.iterateOverQuerySelectors(function (querySelector) {
+            if (thisNoType[querySelector.attributeName] === childNode) {
+                thisNoType[querySelector.attributeName] = newComponent;
             }
-            thisProto = Object.getPrototypeOf(thisProto);
+        });
+    };
+    Component.prototype.iterateOverQuerySelectors = function (action) {
+        var thisPrototype = Object.getPrototypeOf(this);
+        while (thisPrototype != null) {
+            var metaData = thisPrototype.__agComponentMetaData;
+            var currentProtoName = (thisPrototype.constructor).name;
+            if (metaData && metaData[currentProtoName] && metaData[currentProtoName].querySelectors) {
+                utils_1._.forEach(metaData[currentProtoName].querySelectors, function (querySelector) { return action(querySelector); });
+            }
+            thisPrototype = Object.getPrototypeOf(thisPrototype);
         }
     };
     Component.prototype.setTemplate = function (template, paramsMap) {
@@ -119,16 +120,14 @@ var Component = /** @class */ (function (_super) {
         this.addAnnotatedEventListeners();
         this.wireQuerySelectors();
         // context will not be available when user sets template in constructor
-        var contextIsAvailable = !!this.getContext();
-        if (contextIsAvailable) {
+        if (!!this.getContext()) {
             this.createChildComponentsFromTags(this.getGui(), paramsMap);
         }
     };
     Component.prototype.createChildComponentsPreConstruct = function () {
         // ui exists if user sets template in constructor. when this happens, we have to wait for the context
         // to be autoWired first before we can create child components.
-        var uiExists = !!this.getGui();
-        if (uiExists) {
+        if (!!this.getGui()) {
             this.createChildComponentsFromTags(this.getGui());
         }
     };
@@ -137,34 +136,16 @@ var Component = /** @class */ (function (_super) {
         if (!this.eGui) {
             return;
         }
-        var thisProto = Object.getPrototypeOf(this);
-        var _loop_1 = function () {
-            var metaData = thisProto.__agComponentMetaData;
-            var currentProtoName = (thisProto.constructor).name;
-            if (metaData && metaData[currentProtoName] && metaData[currentProtoName].querySelectors) {
-                var thisNoType_1 = this_1;
-                metaData[currentProtoName].querySelectors.forEach(function (querySelector) {
-                    var resultOfQuery = _this.eGui.querySelector(querySelector.querySelector);
-                    if (resultOfQuery) {
-                        var backingComponent = resultOfQuery.__agComponent;
-                        if (backingComponent) {
-                            thisNoType_1[querySelector.attributeName] = backingComponent;
-                        }
-                        else {
-                            thisNoType_1[querySelector.attributeName] = resultOfQuery;
-                        }
-                    }
-                    else {
-                        // put debug msg in here if query selector fails???
-                    }
-                });
+        var thisNoType = this;
+        this.iterateOverQuerySelectors(function (querySelector) {
+            var resultOfQuery = _this.eGui.querySelector(querySelector.querySelector);
+            if (resultOfQuery) {
+                thisNoType[querySelector.attributeName] = resultOfQuery.__agComponent || resultOfQuery;
             }
-            thisProto = Object.getPrototypeOf(thisProto);
-        };
-        var this_1 = this;
-        while (thisProto != null) {
-            _loop_1();
-        }
+            else {
+                // put debug msg in here if query selector fails???
+            }
+        });
     };
     Component.prototype.addAnnotatedEventListeners = function () {
         var _this = this;
@@ -179,7 +160,7 @@ var Component = /** @class */ (function (_super) {
         if (!this.annotatedEventListeners) {
             this.annotatedEventListeners = [];
         }
-        listenerMethods.forEach(function (eventListener) {
+        utils_1._.forEach(listenerMethods, function (eventListener) {
             var listener = _this[eventListener.methodName].bind(_this);
             _this.eGui.addEventListener(eventListener.eventName, listener);
             _this.annotatedEventListeners.push({ eventName: eventListener.eventName, listener: listener });
@@ -213,16 +194,14 @@ var Component = /** @class */ (function (_super) {
         if (!this.annotatedEventListeners || !this.eGui) {
             return;
         }
-        this.annotatedEventListeners.forEach(function (eventListener) {
-            _this.eGui.removeEventListener(eventListener.eventName, eventListener.listener);
-        });
+        utils_1._.forEach(this.annotatedEventListeners, function (e) { return _this.eGui.removeEventListener(e.eventName, e.listener); });
         this.annotatedEventListeners = [];
     };
     Component.prototype.getGui = function () {
         return this.eGui;
     };
     Component.prototype.getFocusableElement = function () {
-        return this.getGui();
+        return this.eGui;
     };
     Component.prototype.setParentComponent = function (component) {
         this.parentComponent = component;
@@ -241,13 +220,16 @@ var Component = /** @class */ (function (_super) {
     Component.prototype.queryForHtmlInputElement = function (cssSelector) {
         return this.eGui.querySelector(cssSelector);
     };
-    Component.prototype.appendChild = function (newChild) {
+    Component.prototype.appendChild = function (newChild, container) {
+        if (!container) {
+            container = this.eGui;
+        }
         if (utils_1._.isNodeOrElement(newChild)) {
-            this.eGui.appendChild(newChild);
+            container.appendChild(newChild);
         }
         else {
             var childComponent = newChild;
-            this.eGui.appendChild(childComponent.getGui());
+            container.appendChild(childComponent.getGui());
             this.childComponents.push(childComponent);
         }
     };
@@ -274,36 +256,36 @@ var Component = /** @class */ (function (_super) {
             this.dispatchEvent(event_1);
         }
     };
-    Component.prototype.addOrRemoveCssClass = function (className, addOrRemove) {
-        utils_1._.addOrRemoveCssClass(this.eGui, className, addOrRemove);
-    };
     Component.prototype.destroy = function () {
-        _super.prototype.destroy.call(this);
-        this.childComponents.forEach(function (childComponent) {
+        utils_1._.forEach(this.childComponents, function (childComponent) {
             if (childComponent && childComponent.destroy) {
                 childComponent.destroy();
             }
         });
         this.childComponents.length = 0;
         this.removeAnnotatedEventListeners();
+        _super.prototype.destroy.call(this);
     };
     Component.prototype.addGuiEventListener = function (event, listener) {
         var _this = this;
-        this.getGui().addEventListener(event, listener);
-        this.addDestroyFunc(function () { return _this.getGui().removeEventListener(event, listener); });
+        this.eGui.addEventListener(event, listener);
+        this.addDestroyFunc(function () { return _this.eGui.removeEventListener(event, listener); });
     };
     Component.prototype.addCssClass = function (className) {
-        utils_1._.addCssClass(this.getGui(), className);
+        utils_1._.addCssClass(this.eGui, className);
     };
     Component.prototype.removeCssClass = function (className) {
-        utils_1._.removeCssClass(this.getGui(), className);
+        utils_1._.removeCssClass(this.eGui, className);
+    };
+    Component.prototype.addOrRemoveCssClass = function (className, addOrRemove) {
+        utils_1._.addOrRemoveCssClass(this.eGui, className, addOrRemove);
     };
     Component.prototype.getAttribute = function (key) {
-        var eGui = this.getGui();
+        var eGui = this.eGui;
         return eGui ? eGui.getAttribute(key) : null;
     };
     Component.prototype.getRefElement = function (refName) {
-        return this.queryForHtmlElement('[ref="' + refName + '"]');
+        return this.queryForHtmlElement("[ref=\"" + refName + "\"]");
     };
     Component.EVENT_DISPLAYED_CHANGED = 'displayedChanged';
     __decorate([

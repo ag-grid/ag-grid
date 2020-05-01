@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v23.0.2
+ * @version v23.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -79,8 +79,7 @@ var ValueService = /** @class */ (function () {
         }
         // this will only happen if user is trying to paste into a group row, which doesn't make sense
         // the user should not be trying to paste into group rows
-        var data = rowNode.data;
-        if (_.missing(data)) {
+        if (_.missing(rowNode.data)) {
             rowNode.data = {};
         }
         // for backwards compatibility we are also retrieving the newValueHandler as well as the valueSetter
@@ -111,7 +110,7 @@ var ValueService = /** @class */ (function () {
             valueWasDifferent = this.expressionService.evaluate(valueSetter, params);
         }
         else {
-            valueWasDifferent = this.setValueUsingField(data, field, newValue, column.isFieldContainsDots());
+            valueWasDifferent = this.setValueUsingField(rowNode.data, field, newValue, column.isFieldContainsDots());
         }
         // in case user forgot to return something (possible if they are not using TypeScript
         // and just forgot, or using an old newValueHandler we didn't always expect a return

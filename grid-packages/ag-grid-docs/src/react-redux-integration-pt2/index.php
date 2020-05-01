@@ -218,7 +218,7 @@ export default connect(
 
 render() {
     return (
-        &lt;div className="ag-theme-balham">
+        &lt;div className="ag-theme-alpine">
             &lt;AgGridReact
                 // provide column definitions
                 columnDefs={this.colDefs}
@@ -238,9 +238,9 @@ render() {
                 getContextMenuItems={this.getContextMenuItems}
                 // provide row drag end callback
                 onRowDragEnd={this.onRowDragEnd}
-                // enable delta updates
-                deltaRowDataMode={true}
-                // return id required for tree data and delta updates
+                // enable immutable data
+                immutableData={true}
+                // return id required for tree data and immutable data
                 getRowNodeId={data => data.id}
                 // specify our FileCellRenderer component
                 frameworkComponents={this.frameworkComponents}>
@@ -355,20 +355,20 @@ onRowDragEnd = (event) => {
         For more details see our documentation on <a href="../javascript-grid-row-dragging/">Row Dragging</a>.
     </p>
 
-    <h2 id="delta-updates">Delta Row Updates</h2>
+    <h2 id="immutable-data">Immutable Data</h2>
     <p>
         One consequence of using Redux is that when part of the state is updated in the store, the entire state is replaced
-        with a new version. Delta Row Updates is designed to work specifically with immutable stores such as Redux to ensure
-        only the rows that have been updated will be re-rendered inside the grid.
+        with a new version. The grid has an "Immutable Data" mode that is designed to work specifically with immutable
+        stores such as Redux to ensure only the rows that have been updated will be re-rendered inside the grid.
     </p>
     <p>
-        The file browser enables this feature using: <code>deltaRowDataMode={true}</code>, along with a required row id
+        The file browser enables this feature using: <code>immutableData={true}</code>, along with a required row id
         using: <code>getRowNodeId={data => data.id}</code>.
     </p>
 
     <p>
         This feature can lead to noticeable performance improvements in applications which contain alot of row data.
-        For more details see our documentation on <a href="../javascript-grid-data-update/#delta-row-data">Delta Row Updates</a>.
+        For more details see our documentation on <a href="../javascript-grid-immutable-data/">Immutable Data</a>.
     </p>
 
     <h2 id="custom-file-cell-renderer">Custom File Cell Renderer</h2>
@@ -464,7 +464,7 @@ autoGroupColumnDef = {
         <li>Tree Data</li>
         <li>Custom Context Menu</li>
         <li>Row Dragging</li>
-        <li>Delta Row Updates</li>
+        <li>Immutable Data</li>
         <li>Custom Cell Renderer Components</li>
     </ul>
 

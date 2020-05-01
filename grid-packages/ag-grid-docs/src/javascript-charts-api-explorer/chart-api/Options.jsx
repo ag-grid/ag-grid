@@ -21,7 +21,7 @@ const FunctionDefinition = ({ definition }) => {
     const { parameters, returnType } = definition;
     const returnTypeIsObject = typeof returnType === 'object';
 
-    const lines = [`function(params: ParamsType): ${returnTypeIsObject ? 'ReturnType' : returnType};`,
+    const lines = [`function (params: ParamsType): ${returnTypeIsObject ? 'ReturnType' : returnType};`,
         '',
         'interface ParamsType {',
     ...Object.keys(parameters).map(key => `  ${key}: ${parameters[key]};`),
@@ -163,7 +163,7 @@ export class Options extends React.PureComponent {
     };
 
     render() {
-        const { chartType, updateChartType } = this.props;
+        const { chartType } = this.props;
         const { searchText, hasResults } = this.state;
         const config = { ...Config.generalConfig };
 
@@ -174,7 +174,6 @@ export class Options extends React.PureComponent {
         config.series = Config[`${chartType}SeriesConfig`];
 
         return <div className="options">
-            <ChartTypeSelector type={chartType} onChange={updateChartType} />
             <Search value={searchText} onChange={value => this.setState({ searchText: value, hasResults: false })} />
             {!hasResults && <div className="options__no-content">No properties match your search: '{this.getTrimmedSearchText()}'</div>}
             <div className="options__content">{this.generateOptions(Object.freeze(config))}</div>

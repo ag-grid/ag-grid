@@ -1,17 +1,19 @@
 {
   "name": "ag-grid-angular",
-  "version": "23.0.2",
+  "version": "23.1.0",
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
-    "build": "npx gulp copy-from-module-source && npm run update-properties && ng build --prod && npm run verify-properties",
+    "build": "npx gulp copy-from-module-source && npm run update-properties && ng build --prod && npm run verify-properties && npm run hash",
     "build-cjs": "npm run build",
     "test": "ng test --watch false --browsers ChromeHeadless",
     "lint": "ng lint",
     "update-properties": "node -e 'require(\"./updateGridAndColumnProperties.js\").updatePropertiesBuilt()'",
-    "verify-properties": "node agGridPropertiesCheck.js"
+    "verify-properties": "node agGridPropertiesCheck.js",
+    "hash": "sh ../../scripts/hashDirectory.sh > .hash"
   },
   "private": true,
+  "license": "MIT",
   "main": "./dist/ag-grid-angular/bundles/ag-grid-angular.umd.js",
   "module": "./dist/ag-grid-angular/fesm5/ag-grid-angular.js",
   "typings": "./dist/ag-grid-angular/ag-grid-angular.d.ts",
@@ -37,7 +39,7 @@
     "@types/jasmine": "~3.5.0",
     "@types/jasminewd2": "~2.0.3",
     "@types/node": "^12.11.1",
-    "ag-grid-community": "~23.0.0",
+    "ag-grid-community": "~23.1.0",
     "codelyzer": "^5.1.2",
     "jasmine-core": "~3.5.0",
     "jasmine-spec-reporter": "~4.2.1",

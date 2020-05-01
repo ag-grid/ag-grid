@@ -19,6 +19,7 @@ var set_filter_1 = require("@ag-grid-enterprise/set-filter");
 var side_bar_1 = require("@ag-grid-enterprise/side-bar");
 var status_bar_1 = require("@ag-grid-enterprise/status-bar");
 var viewport_row_model_1 = require("@ag-grid-enterprise/viewport-row-model");
+var date_time_cell_editor_1 = require("@ag-grid-enterprise/date-time-cell-editor");
 __export(require("@ag-grid-community/all-modules"));
 __export(require("@ag-grid-enterprise/clipboard"));
 __export(require("@ag-grid-enterprise/column-tool-panel"));
@@ -36,6 +37,7 @@ __export(require("@ag-grid-enterprise/side-bar"));
 __export(require("@ag-grid-enterprise/status-bar"));
 __export(require("@ag-grid-enterprise/viewport-row-model"));
 __export(require("@ag-grid-enterprise/core"));
+__export(require("@ag-grid-enterprise/date-time-cell-editor"));
 exports.AllEnterpriseModules = [
     clipboard_1.ClipboardModule,
     column_tool_panel_1.ColumnsToolPanelModule,
@@ -51,7 +53,8 @@ exports.AllEnterpriseModules = [
     set_filter_1.SetFilterModule,
     side_bar_1.SideBarModule,
     status_bar_1.StatusBarModule,
-    viewport_row_model_1.ViewportRowModelModule
+    viewport_row_model_1.ViewportRowModelModule,
+    date_time_cell_editor_1.DateTimeCellEditorModule
 ];
 exports.AllModules = all_modules_1.AllCommunityModules.concat(exports.AllEnterpriseModules);
 //# sourceMappingURL=main.js.map

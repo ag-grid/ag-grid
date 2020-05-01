@@ -1,6 +1,6 @@
-import { IDoesFilterPassParams, IFilterOptionDef, ProvidedFilterModel } from "../../interfaces/iFilter";
-import { OptionsFactory } from "./optionsFactory";
-import { IProvidedFilterParams, ProvidedFilter } from "./providedFilter";
+import { IDoesFilterPassParams, IFilterOptionDef, ProvidedFilterModel } from '../../interfaces/iFilter';
+import { OptionsFactory } from './optionsFactory';
+import { IProvidedFilterParams, ProvidedFilter } from './providedFilter';
 export interface ISimpleFilterParams extends IProvidedFilterParams {
     filterOptions?: (IFilterOptionDef | string)[];
     defaultOption?: string;
@@ -41,7 +41,6 @@ export declare abstract class SimpleFilter<M extends ISimpleFilterModel> extends
     private eCondition2Body;
     private eJoinOperatorPanel;
     private allowTwoConditions;
-    private simpleFilterParams;
     protected optionsFactory: OptionsFactory;
     protected abstract getDefaultFilterOptions(): string[];
     protected abstract createValueTemplate(position: ConditionPosition): string;

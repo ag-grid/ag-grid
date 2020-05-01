@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v23.0.2
+ * @version v23.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -19,19 +19,28 @@ var utils_1 = require("../utils");
 var PopupService = /** @class */ (function () {
     function PopupService() {
         this.popupList = [];
+        this.events = [];
     }
     PopupService.prototype.init = function () {
         var _this = this;
-        this.eventService.addEventListener(events_1.Events.EVENT_KEYBOARD_FOCUS, function () {
-            _this.popupList.forEach(function (popup) {
-                utils_1._.addCssClass(popup.element, 'ag-keyboard-focus');
-            });
-        });
-        this.eventService.addEventListener(events_1.Events.EVENT_MOUSE_FOCUS, function () {
-            _this.popupList.forEach(function (popup) {
-                utils_1._.removeCssClass(popup.element, 'ag-keyboard-focus');
-            });
-        });
+        this.events = [
+            this.eventService.addEventListener(events_1.Events.EVENT_KEYBOARD_FOCUS, function () {
+                _this.popupList.forEach(function (popup) {
+                    utils_1._.addCssClass(popup.element, 'ag-keyboard-focus');
+                });
+            }),
+            this.eventService.addEventListener(events_1.Events.EVENT_MOUSE_FOCUS, function () {
+                _this.popupList.forEach(function (popup) {
+                    utils_1._.removeCssClass(popup.element, 'ag-keyboard-focus');
+                });
+            })
+        ];
+    };
+    PopupService.prototype.destroy = function () {
+        if (this.events.length) {
+            this.events.forEach(function (func) { return func(); });
+            this.events = [];
+        }
     };
     PopupService.prototype.registerGridCore = function (gridCore) {
         this.gridCore = gridCore;
@@ -195,7 +204,6 @@ var PopupService = /** @class */ (function () {
         var parentRect = popupParent.getBoundingClientRect();
         var documentRect = eDocument.documentElement.getBoundingClientRect();
         var isBody = popupParent === eDocument.body;
-        var defaultPadding = 3;
         var minHeight = Math.min(200, parentRect.height);
         var diff = 0;
         if (params.minHeight && params.minHeight < minHeight) {
@@ -209,7 +217,7 @@ var PopupService = /** @class */ (function () {
         if (isBody) {
             heightOfParent -= Math.abs(documentRect.top - parentRect.top);
         }
-        var maxY = heightOfParent - minHeight - diff - defaultPadding;
+        var maxY = heightOfParent - minHeight - diff;
         return Math.min(Math.max(y, 0), Math.abs(maxY));
     };
     PopupService.prototype.keepXWithinBounds = function (params, x) {
@@ -219,7 +227,6 @@ var PopupService = /** @class */ (function () {
         var parentRect = popupParent.getBoundingClientRect();
         var documentRect = eDocument.documentElement.getBoundingClientRect();
         var isBody = popupParent === eDocument.body;
-        var defaultPadding = 3;
         var ePopup = params.ePopup;
         var minWidth = Math.min(200, parentRect.width);
         var diff = 0;
@@ -235,7 +242,7 @@ var PopupService = /** @class */ (function () {
         if (isBody) {
             widthOfParent -= Math.abs(documentRect.left - parentRect.left);
         }
-        var maxX = widthOfParent - minWidth - diff - defaultPadding;
+        var maxX = widthOfParent - minWidth - diff;
         return Math.min(Math.max(x, 0), Math.abs(maxX));
     };
     // adds an element to a div, but also listens to background checking for clicks,
@@ -247,6 +254,7 @@ var PopupService = /** @class */ (function () {
     PopupService.prototype.addPopup = function (modal, eChild, closeOnEsc, closedCallback, click, alwaysOnTop) {
         var _this = this;
         var eDocument = this.gridOptionsWrapper.getDocument();
+        var processedAt = new Date().getTime();
         if (!eDocument) {
             console.warn('ag-grid: could not find the document, document is empty');
             return function () { };
@@ -380,7 +388,7 @@ var PopupService = /** @class */ (function () {
         }
         if (mouseEventOrTouch && originalClick) {
             // for x, allow 4px margin, to cover iPads, where touch (which opens menu) is followed
-            // by browser click (when you life finger up, touch is interrupted as click in browser)
+            // by browser click (when you finger up, touch is interrupted as click in browser)
             var screenX_1 = mouseEvent ? mouseEvent.screenX : 0;
             var screenY_1 = mouseEvent ? mouseEvent.screenY : 0;
             var xMatch = Math.abs(originalClick.screenX - screenX_1) < 5;
@@ -452,6 +460,9 @@ var PopupService = /** @class */ (function () {
     __decorate([
         context_1.PostConstruct
     ], PopupService.prototype, "init", null);
+    __decorate([
+        context_1.PreDestroy
+    ], PopupService.prototype, "destroy", null);
     PopupService = __decorate([
         context_1.Bean('popupService')
     ], PopupService);

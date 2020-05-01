@@ -30,11 +30,12 @@ document.addEventListener('DOMContentLoaded', function() {
     var gridDiv = document.querySelector('#myGrid');
     new agGrid.Grid(gridDiv, gridOptions);
 
-    agGrid.simpleHttpRequest({url: 'https://raw.githubusercontent.com/ag-grid/ag-grid/master/grid-packages/ag-grid-docs/src/olympicWinnersSmall.json'}).then(function(data) {
-        var differentHeights = [40, 80, 120, 200];
-        data.forEach(function(dataItem, index) {
-            dataItem.rowHeight = differentHeights[index % 4];
+    agGrid.simpleHttpRequest({ url: 'https://raw.githubusercontent.com/ag-grid/ag-grid/master/grid-packages/ag-grid-docs/src/olympicWinnersSmall.json' })
+        .then(function(data) {
+            var differentHeights = [40, 80, 120, 200];
+            data.forEach(function(dataItem, index) {
+                dataItem.rowHeight = differentHeights[index % 4];
+            });
+            gridOptions.api.setRowData(data);
         });
-        gridOptions.api.setRowData(data);
-    });
 });

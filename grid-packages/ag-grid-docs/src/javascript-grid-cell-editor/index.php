@@ -41,6 +41,12 @@ interface ICellEditorComp {
     // If you return true, the editor will appear in a popup
     isPopup?(): boolean;
 
+    // Gets called once, only if isPopup() returns true. Return "over" if the
+    // popup should cover the cell, or "under" if it should be positioned below
+    // leaving the cell value visible. If this method is not present, the
+    // default is "over"
+    getPopupPosition?(): string;
+
     // Gets called once before editing starts, to give editor a chance to
     // cancel the editing before it even starts.
     isCancelBeforeStart?(): boolean;

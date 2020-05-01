@@ -1,4 +1,4 @@
-// Type definitions for @ag-grid-community/core v23.0.2
+// Type definitions for @ag-grid-community/core v23.1.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { ColumnApi } from "./columnController/columnApi";
@@ -29,6 +29,7 @@ import { ChartOptions, ChartType } from "./interfaces/iChartOptions";
 import { IToolPanel } from "./interfaces/iToolPanel";
 import { RowNodeTransaction } from "./interfaces/rowNodeTransaction";
 import { RowDataTransaction } from "./interfaces/rowDataTransaction";
+import { RowDropZoneParams, RowDropZoneEvents } from "./gridPanel/rowDragFeature";
 export interface StartEditingCellParams {
     rowIndex: number;
     colKey: string | Column;
@@ -68,9 +69,9 @@ export interface CreatePivotChartParams {
     processChartOptions?: (params: ProcessChartOptionsParams) => ChartOptions<any>;
 }
 export interface DetailGridInfo {
+    api?: GridApi;
+    columnApi?: ColumnApi;
     id: string;
-    api: GridApi | null | undefined;
-    columnApi: ColumnApi | null | undefined;
 }
 export declare class GridApi {
     private immutableService;
@@ -90,6 +91,7 @@ export declare class GridApi {
     private sortController;
     private paginationProxy;
     private focusController;
+    private dragAndDropService;
     private rangeController;
     private clipboardService;
     private aggFuncService;
@@ -164,6 +166,7 @@ export declare class GridApi {
     timeFullRedraw(count?: number): void;
     /** @deprecated */
     refreshView(): void;
+    /** @deprecated */
     refreshRows(rowNodes: RowNode[]): void;
     /** @deprecated */
     rowDataChanged(rows: any): void;
@@ -174,6 +177,7 @@ export declare class GridApi {
     setFunctionsReadOnly(readOnly: boolean): void;
     refreshHeader(): void;
     isAnyFilterPresent(): boolean;
+    /** @deprecated */
     isAdvancedFilterPresent(): boolean;
     isColumnFilterPresent(): boolean;
     isQuickFilterPresent(): boolean;
@@ -217,8 +221,8 @@ export declare class GridApi {
     getRenderedNodes(): RowNode[];
     ensureColIndexVisible(index: any): void;
     ensureColumnVisible(key: string | Column): void;
-    ensureIndexVisible(index: any, position?: string): void;
-    ensureNodeVisible(comparator: any, position?: string): void;
+    ensureIndexVisible(index: any, position?: string | null): void;
+    ensureNodeVisible(comparator: any, position?: string | null): void;
     forEachLeafNode(callback: (rowNode: RowNode) => void): void;
     forEachNode(callback: (rowNode: RowNode, index: number) => void): void;
     forEachNodeAfterFilter(callback: (rowNode: RowNode, index: number) => void): void;
@@ -237,11 +241,18 @@ export declare class GridApi {
         sort: string;
     }[];
     setFilterModel(model: any): void;
-    getFilterModel(): any;
+    getFilterModel(): {
+        [key: string]: any;
+    };
     getFocusedCell(): CellPosition;
     clearFocusedCell(): void;
     setFocusedCell(rowIndex: number, colKey: string | Column, floating?: string): void;
     setSuppressRowDrag(value: boolean): void;
+    setSuppressMoveWhenRowDragging(value: boolean): void;
+    setSuppressRowClickSelection(value: boolean): void;
+    addRowDropZone(params: RowDropZoneParams): void;
+    removeRowDropZone(params: RowDropZoneParams): void;
+    getRowDropZoneParams(events: RowDropZoneEvents): RowDropZoneParams;
     setHeaderHeight(headerHeight: number): void;
     setGridAutoHeight(gridAutoHeight: boolean): void;
     setDomLayout(domLayout: string): void;
@@ -304,7 +315,11 @@ export declare class GridApi {
         [key: string]: IAggFunc;
     }): void;
     clearAggFuncs(): void;
+    applyTransaction(rowDataTransaction: RowDataTransaction): RowNodeTransaction;
+    /** @deprecated */
     updateRowData(rowDataTransaction: RowDataTransaction): RowNodeTransaction;
+    applyTransactionAsync(rowDataTransaction: RowDataTransaction, callback?: (res: RowNodeTransaction) => void): void;
+    /** @deprecated */
     batchUpdateRowData(rowDataTransaction: RowDataTransaction, callback?: (res: RowNodeTransaction) => void): void;
     insertItemsAtIndex(index: number, items: any[], skipRefresh?: boolean): void;
     removeItems(rowNodes: RowNode[], skipRefresh?: boolean): void;

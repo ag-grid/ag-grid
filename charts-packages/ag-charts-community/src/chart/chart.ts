@@ -10,7 +10,7 @@ import { BBox } from "../scene/bbox";
 import { find } from "../util/array";
 import { SizeMonitor } from "../util/sizeMonitor";
 import { Caption } from "../caption";
-import { Observable, reactive, PropertyChangeEventListener } from "../util/observable";
+import { Observable, reactive, PropertyChangeEvent, SourceEvent } from "../util/observable";
 import { ChartAxis, ChartAxisDirection } from "./chartAxis";
 import { CartesianSeries } from "./series/cartesian/cartesianSeries";
 import { createId } from "../util/id";
@@ -51,7 +51,54 @@ const defaultTooltipCss = `
     border-bottom-left-radius: 5px;
     border-bottom-right-radius: 5px;
 }
+
+.ag-chart-tooltip-arrow::before {
+    content: "";
+
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+
+    border: 6px solid #989898;
+
+    border-left-color: transparent;
+    border-right-color: transparent;
+    border-top-color: #989898;
+    border-bottom-color: transparent;
+
+    width: 0;
+    height: 0;
+
+    margin: 0 auto;
+}
+
+.ag-chart-tooltip-arrow::after {
+    content: "";
+
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+
+    border: 5px solid black;
+
+    border-left-color: transparent;
+    border-right-color: transparent;
+    border-top-color: rgb(244, 244, 244);
+    border-bottom-color: transparent;
+
+    width: 0;
+    height: 0;
+
+    margin: 0 auto;
+}
 `;
+
+export interface TooltipMeta {
+    pageX: number;
+    pageY: number;
+}
 
 export abstract class Chart extends Observable {
     readonly id = createId(this);
@@ -65,7 +112,6 @@ export abstract class Chart extends Observable {
 
     private tooltipElement: HTMLDivElement;
     static readonly defaultTooltipClass = 'ag-chart-tooltip';
-    tooltipOffset: [number, number] = [20, 20];
 
     private _container: HTMLElement | undefined = undefined;
     set container(value: HTMLElement | undefined) {
@@ -174,8 +220,8 @@ export abstract class Chart extends Observable {
         this.autoSize = true;
 
         const { legend } = this;
-        legend.addEventListener('layoutChange', this.onLayoutChange);
-        legend.addPropertyListener('position', this.onLegendPositionChange);
+        legend.addEventListener('layoutChange', this.onLayoutChange, this);
+        legend.addPropertyListener('position', this.onLegendPositionChange, this);
 
         this.tooltipElement = document.createElement('div');
         this.tooltipClass = '';
@@ -189,23 +235,10 @@ export abstract class Chart extends Observable {
             Chart.tooltipDocuments.push(document);
         }
 
-        this.setupListeners(scene.canvas.element);
+        this.setupDomListeners(scene.canvas.element);
 
-        const captionListener = (event => {
-            const { source: chart, value: caption, oldValue: oldCaption } = event;
-
-            if (oldCaption) {
-                oldCaption.removeEventListener('change', chart.onLayoutChange);
-                chart.scene.root!.removeChild(oldCaption.node);
-            }
-            if (caption) {
-                caption.addEventListener('change', chart.onLayoutChange);
-                chart.scene.root!.appendChild(caption.node);
-            }
-        }) as PropertyChangeEventListener<Chart, Caption | undefined>;
-
-        this.addPropertyListener('title', captionListener);
-        this.addPropertyListener('subtitle', captionListener);
+        this.addPropertyListener('title', this.onCaptionChange);
+        this.addPropertyListener('subtitle', this.onCaptionChange);
         this.addEventListener('layoutChange', () => this.layoutPending = true);
     }
 
@@ -217,18 +250,30 @@ export abstract class Chart extends Observable {
         SizeMonitor.unobserve(this.element);
         this.container = undefined;
 
-        this.legend.removeEventListener('layoutChange', this.onLayoutChange);
-        this.cleanupListeners(this.scene.canvas.element);
+        this.cleanupDomListeners(this.scene.canvas.element);
         this.scene.container = undefined;
     }
 
-    private readonly onLayoutChange = () => {
+    private onLayoutChange() {
         this.layoutPending = true;
     }
 
-    private readonly onLegendPositionChange = () => {
+    private onLegendPositionChange() {
         this.legendAutoPadding.clear();
         this.layoutPending = true;
+    }
+
+    private onCaptionChange(event: PropertyChangeEvent<this, Caption | undefined>) {
+        const { value, oldValue } = event;
+
+        if (oldValue) {
+            oldValue.removeEventListener('change', this.onLayoutChange, this);
+            this.scene.root!.removeChild(oldValue.node);
+        }
+        if (value) {
+            value.addEventListener('change', this.onLayoutChange, this);
+            this.scene.root!.appendChild(value.node);
+        }
     }
 
     protected _element: HTMLElement;
@@ -260,11 +305,14 @@ export abstract class Chart extends Observable {
         return this._series;
     }
 
-    private readonly scheduleLayout = () => {
+    private scheduleLayout() {
         this.layoutPending = true;
     }
 
-    private readonly scheduleData = () => {
+    private scheduleData() {
+        // To prevent the chart from thinking the cursor is over the same node
+        // after a change to data (the nodes are reused on data changes).
+        this.dehighlightDatum();
         this.dataPending = true;
     }
 
@@ -297,16 +345,18 @@ export abstract class Chart extends Observable {
         if (!series.data) {
             series.data = this.data;
         }
-        series.addEventListener('layoutChange', this.scheduleLayout);
-        series.addEventListener('dataChange', this.scheduleData);
-        series.addEventListener('legendChange', this.updateLegend);
+        series.addEventListener('layoutChange', this.scheduleLayout, this);
+        series.addEventListener('dataChange', this.scheduleData, this);
+        series.addEventListener('legendChange', this.updateLegend, this);
+        series.addEventListener('nodeClick', this.onSeriesNodeClick, this);
     }
 
     protected freeSeries(series: Series) {
         series.chart = undefined;
-        series.removeEventListener('layoutChange', this.scheduleLayout);
-        series.removeEventListener('dataChange', this.scheduleData);
-        series.removeEventListener('legendChange', this.updateLegend);
+        series.removeEventListener('layoutChange', this.scheduleLayout, this);
+        series.removeEventListener('dataChange', this.scheduleData, this);
+        series.removeEventListener('legendChange', this.updateLegend, this);
+        series.removeEventListener('nodeClick', this.onSeriesNodeClick, this);
     }
 
     addSeriesAfter(series: Series, after?: Series): boolean {
@@ -529,7 +579,7 @@ export abstract class Chart extends Observable {
         this.layoutPending = true;
     }
 
-    readonly updateLegend = () => {
+    private updateLegend() {
         const legendData: LegendDatum[] = [];
 
         this.series.filter(s => s.showInLegend).forEach(series => series.listSeriesItems(legendData));
@@ -640,18 +690,22 @@ export abstract class Chart extends Observable {
         legendGroup.translationY = Math.floor(translationY + legendGroup.translationY);
     }
 
-    private setupListeners(chartElement: HTMLCanvasElement) {
+    private setupDomListeners(chartElement: HTMLCanvasElement) {
         chartElement.addEventListener('mousemove', this.onMouseMove);
         chartElement.addEventListener('mouseout', this.onMouseOut);
         chartElement.addEventListener('click', this.onClick);
     }
 
-    private cleanupListeners(chartElement: HTMLCanvasElement) {
+    private cleanupDomListeners(chartElement: HTMLCanvasElement) {
         chartElement.removeEventListener('mousemove', this.onMouseMove);
         chartElement.removeEventListener('mouseout', this.onMouseMove);
         chartElement.removeEventListener('click', this.onClick);
     }
 
+    // Should be available after first layout.
+    protected seriesRect?: BBox;
+
+    // x/y are local canvas coordinates in CSS pixels, not actual pixels
     private pickSeriesNode(x: number, y: number): {
         series: Series,
         node: Node
@@ -672,26 +726,102 @@ export abstract class Chart extends Observable {
     }
 
     private lastPick?: {
-        series: Series,
-        node: Shape
+        datum: SeriesNodeDatum,
+        node?: Shape // we may not always have an associated node, for example
+                     // when line series are rendered without markers
     };
 
+    // Provided x/y are in canvas coordinates.
+    private pickClosestSeriesNodeDatum(x: number, y: number): SeriesNodeDatum | undefined {
+        if (!this.seriesRect || !this.seriesRect.containsPoint(x, y)) {
+            return undefined;
+        }
+
+        const allSeries = this.series;
+
+        type Point = { x: number, y: number};
+
+        function getDistance(p1: Point, p2: Point): number {
+            return Math.sqrt((p1.x - p2.x)**2 + (p1.y - p2.y)**2);
+        }
+
+        let minDistance = Infinity;
+        let closestDatum: SeriesNodeDatum;
+
+        for (let i = allSeries.length - 1; i >= 0; i--) {
+            const series = allSeries[i];
+            if (!series.visible) {
+                continue;
+            }
+            const hitPoint = series.group.transformPoint(x, y);
+            series.getNodeData().forEach(datum => {
+                if (!datum.point) {
+                    return;
+                }
+                const distance = getDistance(hitPoint, datum.point);
+                if (distance < minDistance) {
+                    minDistance = distance;
+                    closestDatum = datum;
+                }
+            });
+        }
+
+        if (closestDatum) {
+            return closestDatum;
+        }
+    }
+
     private readonly onMouseMove = (event: MouseEvent) => {
+        const { lastPick, tooltipTracking } = this;
         const pick = this.pickSeriesNode(event.offsetX, event.offsetY);
+        let nodeDatum: SeriesNodeDatum | undefined;
 
-        if (pick) {
+        if (pick && pick.node instanceof Shape) {
             const { node } = pick;
-
-            if (node instanceof Shape) {
-                if (!this.lastPick || // cursor moved from empty space to a node
-                    this.lastPick.node !== node) { // cursor moved from one node to another
-                    this.onSeriesNodePick(event, pick.series, node);
+            nodeDatum = node.datum as SeriesNodeDatum;
+            if (lastPick && lastPick.datum === nodeDatum) {
+                lastPick.node = node;
+            }
+            // Marker nodes will have the `point` info in their datums.
+            // Highlight if not a marker node or, if not in the tracking mode, highlight markers too.
+            if ((!node.datum.point || !tooltipTracking)) {
+                if (!lastPick // cursor moved from empty space to a node
+                    || lastPick.node !== node) { // cursor moved from one node to another
+                    this.onSeriesDatumPick(event, node.datum, node);
                 } else if (pick.series.tooltipEnabled) { // cursor moved within the same node
                     this.showTooltip(event);
                 }
+                // A non-marker node (takes precedence over marker nodes) was highlighted.
+                // Or we are not in the tracking mode.
+                // Either way, we are done at this point.
+                return;
             }
-        } else if (this.lastPick) { // cursor moved from a node to empty space
-            this.lastPick.series.dehighlightNode();
+        }
+
+        let hideTooltip = false;
+        // In tracking mode a tooltip is shown for the closest rendered datum.
+        // This makes it easier to show tooltips when markers are small and/or plentiful
+        // and also gives the ability to show tooltips even when the series were configured
+        // to not render markers.
+        if (tooltipTracking) {
+            const closestDatum = this.pickClosestSeriesNodeDatum(event.offsetX, event.offsetY);
+            if (closestDatum && closestDatum.point) {
+                const { x, y } = closestDatum.point;
+                const { canvas } = this.scene;
+                const point = closestDatum.series.group.inverseTransformPoint(x, y);
+                const canvasRect = canvas.element.getBoundingClientRect() as DOMRect;
+                this.onSeriesDatumPick({
+                    pageX: Math.round(canvasRect.left + window.pageXOffset + point.x),
+                    pageY: Math.round(canvasRect.top + window.pageYOffset + point.y)
+                }, closestDatum, nodeDatum === closestDatum ? pick.node as Shape : undefined);
+            } else {
+                hideTooltip = true;
+            }
+        }
+        if (lastPick && (hideTooltip || !tooltipTracking)) {
+            // cursor moved from a non-marker node to empty space
+            // lastPick.datum.series.dehighlightDatum();
+            this.dehighlightDatum();
             this.hideTooltip();
             this.lastPick = undefined;
         }
@@ -702,6 +832,24 @@ export abstract class Chart extends Observable {
     }
 
     private readonly onClick = (event: MouseEvent) => {
+        this.checkSeriesNodeClick();
+        this.checkLegendClick(event);
+    }
+
+    private checkSeriesNodeClick() {
+        const { lastPick } = this;
+
+        if (lastPick && lastPick.node) {
+            const { datum } = this.lastPick;
+            datum.series.fireNodeClickEvent(datum);
+        }
+    }
+
+    private onSeriesNodeClick(event: SourceEvent<Series>) {
+        this.fireEvent({ ...event, type: 'seriesNodeClick' });
+    }
+
+    private checkLegendClick(event: MouseEvent) {
         const datum = this.legend.getDatumForPoint(event.offsetX, event.offsetY);
 
         if (datum) {
@@ -710,26 +858,45 @@ export abstract class Chart extends Observable {
 
             if (series) {
                 series.toggleSeriesItem(itemId, !enabled);
+                if (enabled) {
+                    this.hideTooltip();
+                }
             }
         }
     }
 
-    private onSeriesNodePick(event: MouseEvent, series: Series, node: Shape) {
+    private onSeriesDatumPick(meta: TooltipMeta, datum: SeriesNodeDatum, node?: Shape) {
         if (this.lastPick) {
-            this.lastPick.series.dehighlightNode();
+            // this.lastPick.datum.series.dehighlightDatum();
+            this.dehighlightDatum();
         }
 
         this.lastPick = {
-            series,
+            datum,
             node
         };
 
-        series.highlightNode(node);
+        this.highlightDatum(datum);
+        // datum.series.highlightDatum(datum);
 
-        const html = series.tooltipEnabled && series.getTooltipHtml(node.datum as SeriesNodeDatum);
+        const html = datum.series.tooltipEnabled && datum.series.getTooltipHtml(datum);
 
         if (html) {
-            this.showTooltip(event, html);
+            this.showTooltip(meta, html);
+        }
+    }
+
+    highlightedDatum?: SeriesNodeDatum;
+
+    highlightDatum(datum: SeriesNodeDatum): void {
+        this.highlightedDatum = datum;
+        this.series.forEach(s => s.onHighlightChange());
+    }
+
+    dehighlightDatum(): void {
+        if (this.highlightedDatum) {
+            this.highlightedDatum = undefined;
+            this.series.forEach(s => s.onHighlightChange());
         }
     }
 
@@ -744,14 +911,30 @@ export abstract class Chart extends Observable {
         return this._tooltipClass;
     }
 
+    /**
+     * If `true`, the tooltip will be shown for the marker closest to the mouse cursor.
+     * Only has effect on series with markers.
+     */
+    tooltipTracking = true;
+
     private toggleTooltip(visible?: boolean) {
-        const classList = [Chart.defaultTooltipClass, this.tooltipClass];
-        if (visible) {
-            classList.push(`${Chart.defaultTooltipClass}-visible`);
-        } else if (this.lastPick) {
-            this.lastPick.series.dehighlightNode();
+        if (!visible && this.lastPick) {
+            this.dehighlightDatum();
             this.lastPick = undefined;
         }
+        this.updateTooltipClass(visible);
+    }
+
+    private updateTooltipClass(visible?: boolean, constrained?: boolean) {
+        const classList = [Chart.defaultTooltipClass, this.tooltipClass];
+
+        if (visible === true) {
+            classList.push(`${Chart.defaultTooltipClass}-visible`);
+        }
+        if (constrained !== true) {
+            classList.push(`${Chart.defaultTooltipClass}-arrow`);
+        }
+
         this.tooltipElement.setAttribute('class', classList.join(' '));
     }
 
@@ -759,10 +942,9 @@ export abstract class Chart extends Observable {
      * Shows tooltip at the given event's coordinates.
      * If the `html` parameter is missing, moves the existing tooltip to the new position.
      */
-    private showTooltip(event: MouseEvent, html?: string) {
+    private showTooltip(meta: TooltipMeta, html?: string) {
         const el = this.tooltipElement;
-        const offset = this.tooltipOffset;
-        const parent = el.parentElement;
+        const { container } = this;
 
         if (html !== undefined) {
             el.innerHTML = html;
@@ -774,15 +956,20 @@ export abstract class Chart extends Observable {
             this.toggleTooltip(true);
         }
 
-        const tooltipRect = el.getBoundingClientRect();
-        const top = event.pageY + offset[1];
-        let left = event.pageX + offset[0];
+        let left = meta.pageX - el.clientWidth / 2;
+        const top = meta.pageY - el.clientHeight - 8;
 
-        if (tooltipRect &&
-            parent &&
-            parent.parentElement &&
-            (left - pageXOffset + tooltipRect.width > parent.parentElement.offsetWidth)) {
-            left -= tooltipRect.width + offset[0] * 2;
+        if (container) {
+            const tooltipRect = el.getBoundingClientRect() as DOMRect;
+            const minLeft = 0;
+            const maxLeft = window.innerWidth - tooltipRect.width;
+            if (left < minLeft) {
+                left = minLeft;
+                this.updateTooltipClass(true, true);
+            } else if (left > maxLeft) {
+                left = maxLeft;
+                this.updateTooltipClass(true, true);
+            }
         }
 
         el.style.left = `${left}px`;

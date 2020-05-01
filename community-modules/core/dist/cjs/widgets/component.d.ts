@@ -1,4 +1,4 @@
-// Type definitions for @ag-grid-community/core v23.0.2
+// Type definitions for @ag-grid-community/core v23.1.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { AgEvent } from "../events";
@@ -23,6 +23,7 @@ export declare class Component extends BeanStub {
     private copyAttributesFromNode;
     private swapComponentForNode;
     private swapInComponentForQuerySelectors;
+    private iterateOverQuerySelectors;
     setTemplate(template: string, paramsMap?: any): void;
     setTemplateFromElement(element: HTMLElement, paramsMap?: any): void;
     private createChildComponentsPreConstruct;
@@ -37,16 +38,16 @@ export declare class Component extends BeanStub {
     protected setGui(eGui: HTMLElement): void;
     protected queryForHtmlElement(cssSelector: string): HTMLElement;
     protected queryForHtmlInputElement(cssSelector: string): HTMLInputElement;
-    appendChild(newChild: Node | IComponent<any>): void;
+    appendChild(newChild: Node | IComponent<any>, container?: HTMLElement): void;
     addFeature(feature: BeanStub, context?: Context): void;
     isDisplayed(): boolean;
     setVisible(visible: boolean): void;
     setDisplayed(displayed: boolean): void;
-    addOrRemoveCssClass(className: string, addOrRemove: boolean): void;
     destroy(): void;
     addGuiEventListener(event: string, listener: (event: any) => void): void;
     addCssClass(className: string): void;
     removeCssClass(className: string): void;
+    addOrRemoveCssClass(className: string, addOrRemove: boolean): void;
     getAttribute(key: string): string | null;
     getRefElement(refName: string): HTMLElement;
 }

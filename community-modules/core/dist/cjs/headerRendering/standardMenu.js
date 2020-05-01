@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v23.0.2
+ * @version v23.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -37,8 +37,11 @@ var StandardMenuFactory = /** @class */ (function () {
         var _this = this;
         this.showPopup(column, function (eMenu) {
             _this.popupService.positionPopupUnderComponent({
-                type: 'columnMenu', eventSource: eventSource,
-                ePopup: eMenu, keepWithinBounds: true, column: column
+                type: 'columnMenu',
+                eventSource: eventSource,
+                ePopup: eMenu,
+                keepWithinBounds: true,
+                column: column
             });
         });
     };
@@ -47,9 +50,7 @@ var StandardMenuFactory = /** @class */ (function () {
         var filterWrapper = this.filterManager.getOrCreateFilterWrapper(column, 'COLUMN_MENU');
         var eMenu = document.createElement('div');
         utils_1._.addCssClass(eMenu, 'ag-menu');
-        filterWrapper.guiPromise.promise.then(function (gui) {
-            eMenu.appendChild(gui);
-        });
+        filterWrapper.guiPromise.then(function (gui) { return eMenu.appendChild(gui); });
         var hidePopup;
         var bodyScrollListener = function (event) {
             // if h scroll, popup is no longer over the column
@@ -60,7 +61,7 @@ var StandardMenuFactory = /** @class */ (function () {
         this.eventService.addEventListener('bodyScroll', bodyScrollListener);
         var closedCallback = function () {
             _this.eventService.removeEventListener('bodyScroll', bodyScrollListener);
-            column.setMenuVisible(false, "contextMenu");
+            column.setMenuVisible(false, 'contextMenu');
         };
         // need to show filter before positioning, as only after filter
         // is visible can we find out what the width of it is
@@ -75,10 +76,10 @@ var StandardMenuFactory = /** @class */ (function () {
             }
         });
         this.hidePopup = hidePopup;
-        column.setMenuVisible(true, "contextMenu");
+        column.setMenuVisible(true, 'contextMenu');
     };
     StandardMenuFactory.prototype.isMenuEnabled = function (column) {
-        // for standard, we show menu if filter is enabled, and he menu is not suppressed
+        // for standard, we show menu if filter is enabled, and the menu is not suppressed
         return column.isFilterAllowed();
     };
     __decorate([
@@ -90,9 +91,6 @@ var StandardMenuFactory = /** @class */ (function () {
     __decorate([
         context_1.Autowired('popupService')
     ], StandardMenuFactory.prototype, "popupService", void 0);
-    __decorate([
-        context_1.Autowired('gridOptionsWrapper')
-    ], StandardMenuFactory.prototype, "gridOptionsWrapper", void 0);
     StandardMenuFactory = __decorate([
         context_1.Bean('menuFactory')
     ], StandardMenuFactory);

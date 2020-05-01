@@ -15,12 +15,13 @@ $ag-theme-alpine-default-params: (
     border-color: #babfc7,
     control-panel-background-color: #f8f8f8,
     subheader-background-color: #fff,
-
+    
     checkbox-checked-color: ag-derived(alpine-active-color),
     checkbox-unchecked-color: #999,
     checkbox-background-color: ag-derived(background-color),
-
+    
     // derived colours (shared by alpine-dark)
+    subheader-toolbar-background-color: ag-derived(subheader-background-color, $opacity: 0.5),
     selected-row-background-color: ag-derived(alpine-active-color, $opacity: 0.3),
     row-hover-color: ag-derived(alpine-active-color, $opacity: 0.1),
     chip-background-color: ag-derived(foreground-color, $opacity: 0.07),

@@ -17,7 +17,7 @@ include '../documentation-main/documentation_header.php';
 
 <snippet lang="html">
 &lt;ag-grid-vue
-        class="ag-theme-balham"
+        class="ag-theme-alpine"
         style="width: 700px; height: 400px;"
         :rowData="rowData"
         ...rest of definition

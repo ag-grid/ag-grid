@@ -22,6 +22,11 @@ import { ICellRendererAngularComp } from "@ag-grid-community/angular";
                 line-height: 42px;
                  */
             }
+
+            ::ng-deep
+            .mat-checkbox-layout .mat-ripple-element {
+                opacity: 0.2;
+            }
         `
     ]
 })
@@ -39,6 +44,10 @@ export class MatCheckboxComponent implements ICellRendererAngularComp {
     onChange(checked: boolean) {
         this.checked = checked;
         this.params.node.setDataValue(this.params.colDef, this.checked ? "On" : "Off");
+
+        if (this.params.eGridCell) {
+            this.params.eGridCell.focus();
+        }
     }
 
     refresh(params: any): boolean {

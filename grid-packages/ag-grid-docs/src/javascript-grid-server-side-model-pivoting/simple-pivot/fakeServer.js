@@ -1,11 +1,11 @@
 // This fake server uses http://alasql.org/ to mimic how a real server
-// might generate sql queries from the Server-side Row Model request.
+// might generate sql queries from the Server-Side Row Model request.
 // To keep things simple it does the bare minimum to support the example.
 function FakeServer(allData) {
     alasql.options.cache = false;
 
     return {
-        getData: function (request) {
+        getData: function(request) {
             var result = executeQuery(request);
             return {
                 success: true,
@@ -55,7 +55,7 @@ function FakeServer(allData) {
 // IE Workaround - as templates literals are not supported
 function interpolate(str, o) {
     return str.replace(/{([^{}]*)}/g,
-        function (a, b) {
+        function(a, b) {
             var r = o[b];
             return typeof r === 'string' || typeof r === 'number' ? r : a;
         }

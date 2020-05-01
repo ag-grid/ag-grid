@@ -1,4 +1,4 @@
-// Type definitions for @ag-grid-community/core v23.0.2
+// Type definitions for @ag-grid-community/core v23.1.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { GridPanel } from "./gridPanel/gridPanel";
@@ -13,7 +13,9 @@ export declare class AlignedGridsService {
     private consuming;
     private setBeans;
     registerGridComp(gridPanel: GridPanel): void;
+    private events;
     init(): void;
+    destroy(): void;
     private fireEvent;
     private onEvent;
     private fireColumnEvent;

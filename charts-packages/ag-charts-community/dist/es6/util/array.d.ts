@@ -12,6 +12,10 @@ export declare function finiteExtent<T>(values: T[]): [T, T] | undefined;
  * @param values
  */
 export declare function numericExtent<T>(values: T[]): [number, number] | undefined;
+/**
+ * finds the min and max using a process appropriate for stacked values. Ie,
+ * summing up the positive and negative numbers, and returning the totals of each
+ */
 export declare function findMinMax(values: number[]): {
     min: number;
     max: number;

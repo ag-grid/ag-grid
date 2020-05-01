@@ -100,8 +100,12 @@ export interface GridOptions {
     suppressMoveWhenRowDragging?: boolean;
     enableMultiRowDragging?: boolean;
     ensureDomOrder?: boolean;
+    /** @deprecated */
     deltaRowDataMode?: boolean;
+    /** @deprecated */
     deltaColumnMode?: boolean;
+    immutableData?: boolean;
+    immutableColumns?: boolean;
     scrollbarWidth?: number;
     /** @deprecated */
     toolPanelSuppressRowGroups?: boolean;
@@ -137,6 +141,7 @@ export interface GridOptions {
     unSortIcon?: boolean;
     rowBuffer?: number;
     tooltipShowDelay?: number;
+    tooltipMouseTrack?: boolean;
     enableRtl?: boolean;
     /** @deprecated in v20, use colDef.resizable instead */
     enableColResize?: boolean;
@@ -188,6 +193,7 @@ export interface GridOptions {
     copyHeadersToClipboard?: boolean;
     clipboardDeliminator?: string;
     suppressClipboardPaste?: boolean;
+    suppressLastEmptyLineOnPaste?: boolean;
     suppressAggFuncInHeader?: boolean;
     suppressAggAtRootLevel?: boolean;
     suppressFocusAfterRefresh?: boolean;
@@ -228,6 +234,7 @@ export interface GridOptions {
     valueCache?: boolean;
     valueCacheNeverExpires?: boolean;
     batchUpdateWaitMillis?: number;
+    asyncTransactionWaitMillis?: number;
     suppressRowTransform?: boolean;
     suppressSetColumnStateEvents?: boolean;
     allowDragFromColumnsToolPanel?: boolean;
@@ -257,7 +264,7 @@ export interface GridOptions {
 
     //This is an array of ExcelStyle, but because that class lives on the enterprise project is referenced as any from the client project
     excelStyles?: any[];
-    floatingFilter?: boolean;
+    /** @deprecated Use floatingFilter on the colDef instead */ floatingFilter?: boolean;
     suppressExcelExport?: boolean;
     suppressCsvExport?: boolean;
 
@@ -286,6 +293,7 @@ export interface GridOptions {
     defaultColDef?: ColDef;
     defaultExportParams?: CsvExportParams;
 
+    pivotSuppressAutoColumn?: boolean;
     groupSuppressAutoColumn?: boolean;
     groupSelectsChildren?: boolean;
     groupSelectsFiltered?: boolean;

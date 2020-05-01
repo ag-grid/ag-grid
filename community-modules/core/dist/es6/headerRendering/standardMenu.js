@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v23.0.2
+ * @version v23.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -10,8 +10,8 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
-import { Autowired, Bean } from "../context/context";
-import { _ } from "../utils";
+import { Autowired, Bean } from '../context/context';
+import { _ } from '../utils';
 var StandardMenuFactory = /** @class */ (function () {
     function StandardMenuFactory() {
     }
@@ -35,8 +35,11 @@ var StandardMenuFactory = /** @class */ (function () {
         var _this = this;
         this.showPopup(column, function (eMenu) {
             _this.popupService.positionPopupUnderComponent({
-                type: 'columnMenu', eventSource: eventSource,
-                ePopup: eMenu, keepWithinBounds: true, column: column
+                type: 'columnMenu',
+                eventSource: eventSource,
+                ePopup: eMenu,
+                keepWithinBounds: true,
+                column: column
             });
         });
     };
@@ -45,9 +48,7 @@ var StandardMenuFactory = /** @class */ (function () {
         var filterWrapper = this.filterManager.getOrCreateFilterWrapper(column, 'COLUMN_MENU');
         var eMenu = document.createElement('div');
         _.addCssClass(eMenu, 'ag-menu');
-        filterWrapper.guiPromise.promise.then(function (gui) {
-            eMenu.appendChild(gui);
-        });
+        filterWrapper.guiPromise.then(function (gui) { return eMenu.appendChild(gui); });
         var hidePopup;
         var bodyScrollListener = function (event) {
             // if h scroll, popup is no longer over the column
@@ -58,7 +59,7 @@ var StandardMenuFactory = /** @class */ (function () {
         this.eventService.addEventListener('bodyScroll', bodyScrollListener);
         var closedCallback = function () {
             _this.eventService.removeEventListener('bodyScroll', bodyScrollListener);
-            column.setMenuVisible(false, "contextMenu");
+            column.setMenuVisible(false, 'contextMenu');
         };
         // need to show filter before positioning, as only after filter
         // is visible can we find out what the width of it is
@@ -73,10 +74,10 @@ var StandardMenuFactory = /** @class */ (function () {
             }
         });
         this.hidePopup = hidePopup;
-        column.setMenuVisible(true, "contextMenu");
+        column.setMenuVisible(true, 'contextMenu');
     };
     StandardMenuFactory.prototype.isMenuEnabled = function (column) {
-        // for standard, we show menu if filter is enabled, and he menu is not suppressed
+        // for standard, we show menu if filter is enabled, and the menu is not suppressed
         return column.isFilterAllowed();
     };
     __decorate([
@@ -88,9 +89,6 @@ var StandardMenuFactory = /** @class */ (function () {
     __decorate([
         Autowired('popupService')
     ], StandardMenuFactory.prototype, "popupService", void 0);
-    __decorate([
-        Autowired('gridOptionsWrapper')
-    ], StandardMenuFactory.prototype, "gridOptionsWrapper", void 0);
     StandardMenuFactory = __decorate([
         Bean('menuFactory')
     ], StandardMenuFactory);

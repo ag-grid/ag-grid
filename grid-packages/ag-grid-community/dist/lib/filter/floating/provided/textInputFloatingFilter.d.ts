@@ -1,7 +1,7 @@
-import { IFloatingFilterParams } from "../floatingFilter";
-import { ProvidedFilterModel } from "../../../interfaces/iFilter";
-import { SimpleFloatingFilter } from "./simpleFloatingFilter";
-import { FilterChangedEvent } from "../../../events";
+import { IFloatingFilterParams } from '../floatingFilter';
+import { ProvidedFilterModel } from '../../../interfaces/iFilter';
+import { SimpleFloatingFilter } from './simpleFloatingFilter';
+import { FilterChangedEvent } from '../../../events';
 export declare abstract class TextInputFloatingFilter extends SimpleFloatingFilter {
     private eFloatingFilterInput;
     protected params: IFloatingFilterParams;

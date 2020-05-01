@@ -55,7 +55,7 @@ var MenuItemComponent = /** @class */ (function (_super) {
                 this.getGui().setAttribute('title', this.tooltip);
             }
             else {
-                this.tooltipManager.registerTooltip(this);
+                this.addFeature(new core_1.TooltipFeature(this, 'menu'));
             }
         }
         if (this.params.shortcut) {
@@ -125,9 +125,6 @@ var MenuItemComponent = /** @class */ (function (_super) {
     __decorate([
         core_1.Autowired('gridOptionsWrapper')
     ], MenuItemComponent.prototype, "gridOptionsWrapper", void 0);
-    __decorate([
-        core_1.Autowired('tooltipManager')
-    ], MenuItemComponent.prototype, "tooltipManager", void 0);
     __decorate([
         core_1.RefSelector('eIcon')
     ], MenuItemComponent.prototype, "eIcon", void 0);

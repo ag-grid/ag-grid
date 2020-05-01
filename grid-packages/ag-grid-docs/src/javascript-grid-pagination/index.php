@@ -23,20 +23,20 @@ include '../documentation-main/documentation_header.php';
 <h2 id="clientPagination">Supported Row Models</h2>
 
 <p>Pagination in ag-Grid is supported in <a href="../javascript-grid-row-models/">all the different row models</a>.
-    The <a href="../javascript-grid-client-side-model/">Client-side Row Model</a> (the default
+    The <a href="../javascript-grid-client-side-model/">Client-Side Row Model</a> (the default
     row model) is used for the examples on this page.</p>
 
 <p>To see the specifics of pagination on the
 other row models check the relevant documentation for <a href="../javascript-grid-infinite-scrolling/#pagination">Infinite Row Model</a>,
 <a href="../javascript-grid-viewport/#example-viewport-with-pagination">Viewport Row Model</a> and
-<a href="../javascript-grid-server-side-model-pagination/">Server-side Row Model</a>.</p>
+<a href="../javascript-grid-server-side-model-pagination/">Server-Side Row Model</a>.</p>
 
 <h2 id="paginationFeatures">Features While Using Pagination</h2>
 
 <p>
     Pagination does not reduce the feature set of the grid, as long as the underlying row model supports it.
-    In other words, if you are paging over the Client-side Row Model, all features of
-    the Client-side Row Model (grouping, filtering etc) are still available. Likewise for the other row models,
+    In other words, if you are paging over the Client-Side Row Model, all features of
+    the Client-Side Row Model (grouping, filtering etc) are still available. Likewise for the other row models,
     if the row model supports it, it's available through pagination and that row model.
 </p>
 

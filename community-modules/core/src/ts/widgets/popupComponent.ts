@@ -12,7 +12,7 @@ export class PopupComponent extends Component implements IPopupComponent<any> {
         super.setParentComponent(container);
     }
 
-    destroy() {
+    public destroy(): void {
         const parentComp = this.parentComponent;
         const hasParent = parentComp && parentComp.isAlive();
 

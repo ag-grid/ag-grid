@@ -27,7 +27,6 @@ var palettes_1 = require("../../palettes");
 var array_1 = require("../../../util/array");
 var number_1 = require("../../../util/number");
 var node_1 = require("../../../scene/node");
-var marker_1 = require("../../marker/marker");
 var cartesianSeries_1 = require("./cartesianSeries");
 var chartAxis_1 = require("../../chartAxis");
 var util_1 = require("../../marker/util");
@@ -44,7 +43,8 @@ var LineSeries = /** @class */ (function (_super) {
         _this.lineNode = new path_1.Path();
         // We use groups for this selection even though each group only contains a marker ATM
         // because in the future we might want to add label support as well.
-        _this.groupSelection = selection_1.Selection.select(_this.group).selectAll();
+        _this.nodeSelection = selection_1.Selection.select(_this.group).selectAll();
+        _this.nodeData = [];
         _this.marker = new cartesianSeries_1.CartesianSeriesMarker();
         _this.stroke = palettes_1.default.fills[0];
         _this.strokeWidth = 2;
@@ -59,26 +59,26 @@ var LineSeries = /** @class */ (function (_super) {
         lineNode.lineJoin = 'round';
         lineNode.pointerEvents = node_1.PointerEvents.None;
         _this.group.append(lineNode);
-        var update = function () { return _this.update(); };
-        _this.addEventListener('update', update);
+        _this.addEventListener('update', _this.update);
         var marker = _this.marker;
         marker.fill = palettes_1.default.fills[0];
         marker.stroke = palettes_1.default.strokes[0];
-        marker.addPropertyListener('shape', function () { return _this.onMarkerShapeChange(); });
-        marker.addPropertyListener('enabled', function (event) {
-            if (!event.value) {
-                _this.groupSelection = _this.groupSelection.setData([]);
-                _this.groupSelection.exit.remove();
-            }
-        });
-        marker.addEventListener('change', update);
+        marker.addPropertyListener('shape', _this.onMarkerShapeChange, _this);
+        marker.addPropertyListener('enabled', _this.onMarkerEnabledChange, _this);
+        marker.addEventListener('change', _this.update, _this);
         return _this;
     }
     LineSeries.prototype.onMarkerShapeChange = function () {
-        this.groupSelection = this.groupSelection.setData([]);
-        this.groupSelection.exit.remove();
+        this.nodeSelection = this.nodeSelection.setData([]);
+        this.nodeSelection.exit.remove();
         this.update();
         this.fireEvent({ type: 'legendChange' });
+    };
+    LineSeries.prototype.onMarkerEnabledChange = function (event) {
+        if (!event.value) {
+            this.nodeSelection = this.nodeSelection.setData([]);
+            this.nodeSelection.exit.remove();
+        }
     };
     Object.defineProperty(LineSeries.prototype, "xKey", {
         get: function () {
@@ -109,12 +109,13 @@ var LineSeries = /** @class */ (function (_super) {
         configurable: true
     });
     LineSeries.prototype.processData = function () {
-        var _a = this, xAxis = _a.xAxis, xKey = _a.xKey, yKey = _a.yKey, xData = _a.xData, yData = _a.yData;
+        var _a = this, xAxis = _a.xAxis, yAxis = _a.yAxis, xKey = _a.xKey, yKey = _a.yKey, xData = _a.xData, yData = _a.yData;
         var data = xKey && yKey && this.data ? this.data : [];
         if (!xAxis) {
             return false;
         }
         var isContinuousX = xAxis.scale instanceof continuousScale_1.default;
+        var isContinuousY = yAxis.scale instanceof continuousScale_1.default;
         xData.length = 0;
         yData.length = 0;
         for (var i = 0, n = data.length; i < n; i++) {
@@ -125,7 +126,7 @@ var LineSeries = /** @class */ (function (_super) {
             yData.push(y);
         }
         this.xDomain = isContinuousX ? this.fixNumericExtent(array_1.numericExtent(xData), 'x') : xData;
-        this.yDomain = this.fixNumericExtent(array_1.numericExtent(yData), 'y');
+        this.yDomain = isContinuousY ? this.fixNumericExtent(array_1.numericExtent(yData), 'y') : yData;
         return true;
     };
     LineSeries.prototype.getDomain = function (direction) {
@@ -134,37 +135,36 @@ var LineSeries = /** @class */ (function (_super) {
         }
         return this.yDomain;
     };
-    LineSeries.prototype.highlightNode = function (node) {
-        if (!(node instanceof marker_1.Marker)) {
-            return;
-        }
-        this.highlightedNode = node;
-        this.scheduleLayout();
-    };
-    LineSeries.prototype.dehighlightNode = function () {
-        this.highlightedNode = undefined;
-        this.scheduleLayout();
+    LineSeries.prototype.onHighlightChange = function () {
+        this.updateNodes();
     };
     LineSeries.prototype.update = function () {
-        var _a = this, chart = _a.chart, xAxis = _a.xAxis, yAxis = _a.yAxis;
         this.group.visible = this.visible;
-        if (!xAxis || !yAxis || !chart || chart.layoutPending || chart.dataPending) {
+        var _a = this, chart = _a.chart, xAxis = _a.xAxis, yAxis = _a.yAxis;
+        if (!chart || chart.layoutPending || chart.dataPending || !xAxis || !yAxis) {
             return;
         }
+        this.updateLinePath(); // this will generate node data too
+        this.updateNodeSelection();
+        this.updateNodes();
+    };
+    LineSeries.prototype.updateLinePath = function () {
+        var _this = this;
+        var _a = this, xAxis = _a.xAxis, yAxis = _a.yAxis, data = _a.data, xData = _a.xData, yData = _a.yData, lineNode = _a.lineNode;
         var xScale = xAxis.scale;
         var yScale = yAxis.scale;
         var xOffset = (xScale.bandwidth || 0) / 2;
         var yOffset = (yScale.bandwidth || 0) / 2;
         var isContinuousX = xScale instanceof continuousScale_1.default;
-        var _b = this, data = _b.data, xData = _b.xData, yData = _b.yData, marker = _b.marker, lineNode = _b.lineNode;
-        var groupSelectionData = [];
+        var isContinuousY = yScale instanceof continuousScale_1.default;
         var linePath = lineNode.path;
+        var nodeData = [];
         linePath.clear();
         var moveTo = true;
         xData.forEach(function (xDatum, i) {
             var yDatum = yData[i];
-            var isGap = yDatum == null || isNaN(yDatum) || !isFinite(yDatum)
-                || xDatum == null || (isContinuousX && (isNaN(xDatum) || !isFinite(xDatum)));
+            var isGap = yDatum == null || (isContinuousY && (isNaN(yDatum) || !isFinite(yDatum))) ||
+                xDatum == null || (isContinuousX && (isNaN(xDatum) || !isFinite(xDatum)));
             if (isGap) {
                 moveTo = true;
             }
@@ -178,38 +178,43 @@ var LineSeries = /** @class */ (function (_super) {
                 else {
                     linePath.lineTo(x, y);
                 }
-                if (marker) {
-                    groupSelectionData.push({
-                        seriesDatum: data[i],
-                        x: x,
-                        y: y
-                    });
-                }
+                nodeData.push({
+                    series: _this,
+                    seriesDatum: data[i],
+                    point: { x: x, y: y }
+                });
             }
         });
         lineNode.stroke = this.stroke;
         lineNode.strokeWidth = this.strokeWidth;
         lineNode.strokeOpacity = this.strokeOpacity;
-        this.updateGroupSelection(groupSelectionData);
+        // Used by marker nodes and for hit-testing even when not using markers
+        // when `chart.tooltipTracking` is true.
+        this.nodeData = nodeData;
     };
-    LineSeries.prototype.updateGroupSelection = function (groupSelectionData) {
-        var _a = this, marker = _a.marker, xKey = _a.xKey, yKey = _a.yKey, highlightedNode = _a.highlightedNode, stroke = _a.stroke, strokeWidth = _a.strokeWidth;
-        var groupSelection = this.groupSelection;
+    LineSeries.prototype.updateNodeSelection = function () {
+        var marker = this.marker;
+        var nodeData = marker.shape ? this.nodeData : [];
         var MarkerShape = util_1.getMarker(marker.shape);
-        var updateGroups = groupSelection.setData(groupSelectionData);
-        updateGroups.exit.remove();
-        var enterGroups = updateGroups.enter.append(group_1.Group);
-        enterGroups.append(MarkerShape);
+        var updateSelection = this.nodeSelection.setData(nodeData);
+        updateSelection.exit.remove();
+        var enterSelection = updateSelection.enter.append(group_1.Group);
+        enterSelection.append(MarkerShape);
+        this.nodeSelection = updateSelection.merge(enterSelection);
+    };
+    LineSeries.prototype.updateNodes = function () {
+        var _a = this, marker = _a.marker, xKey = _a.xKey, yKey = _a.yKey, stroke = _a.stroke, strokeWidth = _a.strokeWidth;
+        var MarkerShape = util_1.getMarker(marker.shape);
+        var highlightedDatum = this.chart.highlightedDatum;
         var _b = this.highlightStyle, highlightFill = _b.fill, highlightStroke = _b.stroke;
         var markerFormatter = marker.formatter;
         var markerSize = marker.size;
         var markerStrokeWidth = marker.strokeWidth !== undefined ? marker.strokeWidth : strokeWidth;
-        groupSelection = updateGroups.merge(enterGroups);
-        groupSelection.selectByClass(MarkerShape)
+        this.nodeSelection.selectByClass(MarkerShape)
             .each(function (node, datum) {
-            var isHighlightedNode = node === highlightedNode;
-            var markerFill = isHighlightedNode && highlightFill !== undefined ? highlightFill : marker.fill;
-            var markerStroke = isHighlightedNode && highlightStroke !== undefined ? highlightStroke : marker.stroke || stroke;
+            var highlighted = datum === highlightedDatum;
+            var markerFill = highlighted && highlightFill !== undefined ? highlightFill : marker.fill;
+            var markerStroke = highlighted && highlightStroke !== undefined ? highlightStroke : marker.stroke || stroke;
             var markerFormat = undefined;
             if (markerFormatter) {
                 markerFormat = markerFormatter({
@@ -220,7 +225,7 @@ var LineSeries = /** @class */ (function (_super) {
                     stroke: markerStroke,
                     strokeWidth: markerStrokeWidth,
                     size: markerSize,
-                    highlighted: isHighlightedNode
+                    highlighted: highlighted
                 });
             }
             node.fill = markerFormat && markerFormat.fill || markerFill;
@@ -231,11 +236,22 @@ var LineSeries = /** @class */ (function (_super) {
             node.size = markerFormat && markerFormat.size !== undefined
                 ? markerFormat.size
                 : markerSize;
-            node.translationX = datum.x;
-            node.translationY = datum.y;
+            node.translationX = datum.point.x;
+            node.translationY = datum.point.y;
             node.visible = marker.enabled && node.size > 0;
         });
-        this.groupSelection = groupSelection;
+    };
+    LineSeries.prototype.getNodeData = function () {
+        return this.nodeData;
+    };
+    LineSeries.prototype.fireNodeClickEvent = function (datum) {
+        this.fireEvent({
+            type: 'nodeClick',
+            series: this,
+            datum: datum.seriesDatum,
+            xKey: this.xKey,
+            yKey: this.yKey
+        });
     };
     LineSeries.prototype.getTooltipHtml = function (nodeDatum) {
         var _a = this, xKey = _a.xKey, yKey = _a.yKey;

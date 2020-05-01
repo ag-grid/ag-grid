@@ -8,7 +8,6 @@ export interface ServerSideCacheParams extends RowNodeCacheParams {
     datasource?: IServerSideDatasource;
 }
 export declare class ServerSideCache extends RowNodeCache<ServerSideBlock, ServerSideCacheParams> implements IServerSideCache {
-    private eventService;
     private gridOptionsWrapper;
     private displayIndexStart;
     private displayIndexEnd;
@@ -18,11 +17,10 @@ export declare class ServerSideCache extends RowNodeCache<ServerSideBlock, Serve
     private blockHeights;
     constructor(cacheParams: ServerSideCacheParams, parentRowNode: RowNode);
     private setBeans;
-    protected init(): void;
     getRowBounds(index: number): RowBounds;
     protected destroyBlock(block: ServerSideBlock): void;
     getRowIndexAtPixel(pixel: number): number;
-    clearRowTops(): void;
+    clearDisplayIndexes(): void;
     setDisplayIndexes(displayIndexSeq: NumberSequence, nextRowTop: {
         value: number;
     }): void;

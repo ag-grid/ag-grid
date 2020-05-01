@@ -2,12 +2,12 @@
 var CELL_DIMENSION_SIZE = 90;
 
 var columnDefs = [
-    {headerName: 'Symbol', field: 'Symbol', width: 85},
-    {headerName: 'Date', field: 'Date', width: 82},
-    {headerName: 'Open', field: 'Open', width: 72},
-    {headerName: 'High', field: 'High', width: 72},
-    {headerName: 'Low', field: 'Low', width: 72},
-    {headerName: 'Close', field: 'Close', width: 72},
+    { headerName: 'Symbol', field: 'Symbol', width: 85 },
+    { headerName: 'Date', field: 'Date', width: 82 },
+    { headerName: 'Open', field: 'Open', width: 72 },
+    { headerName: 'High', field: 'High', width: 72 },
+    { headerName: 'Low', field: 'Low', width: 72 },
+    { headerName: 'Close', field: 'Close', width: 72 },
     {
         headerName: 'Close Trend',
         field: 'CloseTrends',
@@ -82,7 +82,7 @@ var gridOptions = {
 function LineChartLineRenderer() {
 }
 
-LineChartLineRenderer.prototype.init = function (params) {
+LineChartLineRenderer.prototype.init = function(params) {
 
     var eGui = document.createElement('div');
     this.eGui = eGui;
@@ -93,24 +93,24 @@ LineChartLineRenderer.prototype.init = function (params) {
         var values = params.value
             .sort(function(a, b) { return new Date(a.Date).getTime() - new Date(b.Date).getTime(); })
             .map(function(datum) { return datum.Close; });
-        $(eGui).sparkline(values, {height: CELL_DIMENSION_SIZE, width: CELL_DIMENSION_SIZE});
+        $(eGui).sparkline(values, { height: CELL_DIMENSION_SIZE, width: CELL_DIMENSION_SIZE });
     }, 0);
 };
 
-LineChartLineRenderer.prototype.getGui = function () {
+LineChartLineRenderer.prototype.getGui = function() {
     return this.eGui;
 };
 
 function BarChartLineRenderer() {
 }
 
-BarChartLineRenderer.prototype.init = function (params) {
+BarChartLineRenderer.prototype.init = function(params) {
     var eGui = document.createElement('div');
     this.eGui = eGui;
 
     // sparklines requires the eGui to be in the dom - so we put into a timeout to allow
     // the grid to complete it's job of placing the cell into the browser.
-    setTimeout(function(){
+    setTimeout(function() {
         var values = params.value
             .sort(function(a, b) { return a.Year - b.Year; })
             .map(function(datum) { return datum.AverageVolume.toFixed(); });
@@ -125,21 +125,21 @@ BarChartLineRenderer.prototype.init = function (params) {
     }, 0);
 };
 
-BarChartLineRenderer.prototype.getGui = function () {
+BarChartLineRenderer.prototype.getGui = function() {
     return this.eGui;
 };
 
 function PieChartLineRenderer() {
 }
 
-PieChartLineRenderer.prototype.init = function (params) {
+PieChartLineRenderer.prototype.init = function(params) {
 
     var eGui = document.createElement('div');
     this.eGui = eGui;
 
     // sparklines requires the eGui to be in the dom - so we put into a timeout to allow
     // the grid to complete it's job of placing the cell into the browser.
-    setTimeout( function() {
+    setTimeout(function() {
 
         var segments = params.segments;
 
@@ -162,14 +162,14 @@ PieChartLineRenderer.prototype.init = function (params) {
     });
 };
 
-PieChartLineRenderer.prototype.getGui = function () {
+PieChartLineRenderer.prototype.getGui = function() {
     return this.eGui;
 };
 
 function PieChartLineEditor() {
 }
 
-PieChartLineEditor.prototype.init = function (params) {
+PieChartLineEditor.prototype.init = function(params) {
     this.params = params;
     this.value = this.params.value;
     this.parentGui = document.createElement('div');
@@ -186,13 +186,13 @@ PieChartLineEditor.prototype.init = function (params) {
     this.parentGui.appendChild(this.eGui);
 };
 
-PieChartLineEditor.prototype.getGui = function () {
+PieChartLineEditor.prototype.getGui = function() {
     return this.parentGui;
 };
 
 // editors have afterGuiAttached callback to know when the dom
 // element is attached. so we can use this instead of using timeouts.
-PieChartLineEditor.prototype.afterGuiAttached = function () {
+PieChartLineEditor.prototype.afterGuiAttached = function() {
     var segments = this.params.segments;
     var colourToNames = _.invert(segments);
     var values = Object.keys(segments).map(function(segment) {
@@ -220,42 +220,31 @@ PieChartLineEditor.prototype.afterGuiAttached = function () {
     });
 };
 
-PieChartLineEditor.prototype.getValue = function () {
+PieChartLineEditor.prototype.getValue = function() {
     return this.value;
 };
 
-PieChartLineEditor.prototype.isPopup = function () {
+PieChartLineEditor.prototype.isPopup = function() {
     return true;
 };
 
-PieChartLineEditor.prototype.destroy = function () {
+PieChartLineEditor.prototype.destroy = function() {
 };
 
 // setup the grid after the page has finished loading
-document.addEventListener('DOMContentLoaded', function () {
+document.addEventListener('DOMContentLoaded', function() {
     var gridDiv = document.querySelector('#myGrid');
     new agGrid.Grid(gridDiv, gridOptions);
 
-    // do http request to get our sample data - not using any framework to keep the example self contained.
-    // you will probably use a framework like JQuery, Angular or something else to do your HTTP calls.
-    var httpRequest = new XMLHttpRequest();
-    httpRequest.open('GET', 'https://rawgit.com/ag-grid/ag-grid/master/packages/ag-grid-docs/src/javascript-grid-graphing/inline-graphs/stocks/summaryExpanded.json');
-    httpRequest.send();
-    httpRequest.onreadystatechange = function () {
-        if (httpRequest.readyState === 4 && httpRequest.status === 200) {
-            var httpResult = JSON.parse(httpRequest.responseText);
-            gridOptions.api.setRowData(httpResult);
-        }
-    };
+    agGrid.simpleHttpRequest({ url: 'https://raw.githubusercontent.com/ag-grid/ag-grid/master/grid-packages/ag-grid-docs/src/javascript-grid-graphing/inline-graphs/stocks/summaryExpanded.json' })
+        .then(function(data) {
+            gridOptions.api.setRowData(data);
+        });
 });
 
-
 function renderLineGraph(symbol) {
-    var httpRequest = new XMLHttpRequest();
-    httpRequest.open('GET', 'https://rawgit.com/ag-grid/ag-grid/master/packages/ag-grid-docs/src/javascript-grid-graphing/inline-graphs/stocks/' + symbol + '-close-trend.json');
-    httpRequest.send();
-    httpRequest.onreadystatechange = function () {
-        if (httpRequest.readyState === 4 && httpRequest.status === 200) {
+    agGrid.simpleHttpRequest({ url: 'https://raw.githubusercontent.com/ag-grid/ag-grid/master/grid-packages/ag-grid-docs/src/javascript-grid-graphing/inline-graphs/stocks/' + symbol + '-close-trend.json' })
+        .then(function(responseData) {
             var noRowsMessage = document.querySelector('.centerInline');
             noRowsMessage.style.display = "None";
 
@@ -263,7 +252,7 @@ function renderLineGraph(symbol) {
             svg.selectAll("*").remove();
 
             var parseTime = d3.timeParse("%d-%b-%y");
-            var margin = {top: 20, right: 20, bottom: 30, left: 50},
+            var margin = { top: 20, right: 20, bottom: 30, left: 50 },
                 width = +svg.attr("width") - margin.left - margin.right,
                 height = +svg.attr("height") - margin.top - margin.bottom,
                 g = svg.append("g").attr("transform", "translate(" + margin.left + "," + margin.top + ")");
@@ -275,24 +264,24 @@ function renderLineGraph(symbol) {
                 .rangeRound([height, 0]);
 
             var line = d3.line()
-                .x(function (d) {
+                .x(function(d) {
                     return x(d.Date);
                 })
-                .y(function (d) {
+                .y(function(d) {
                     return y(d.Close);
                 });
 
-            var data = JSON.parse(httpRequest.responseText)
+            var data = responseData
                 .map(function(datum) {
                     return {
                         Date: parseTime(datum.Date),
                         Close: +datum.Close
-                    }
+                    };
                 });
-            x.domain(d3.extent(data, function (d) {
+            x.domain(d3.extent(data, function(d) {
                 return d.Date;
             }));
-            y.domain(d3.extent(data, function (d) {
+            y.domain(d3.extent(data, function(d) {
                 return d.Close;
             }));
 
@@ -319,6 +308,5 @@ function renderLineGraph(symbol) {
                 .attr("stroke-linecap", "round")
                 .attr("stroke-width", 1.5)
                 .attr("d", line);
-        }
-    };
+        });
 }

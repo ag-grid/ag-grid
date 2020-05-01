@@ -29,11 +29,12 @@ import {
     ValueCache,
     ValueService,
     IClientSideRowModel,
-    FilterChangedEvent
-} from "@ag-grid-community/core"
-import {ClientSideNodeManager} from "./clientSideNodeManager";
+    FilterChangedEvent,
+    PreDestroy
+} from "@ag-grid-community/core";
+import { ClientSideNodeManager } from "./clientSideNodeManager";
 
-enum RecursionType {Normal, AfterFilter, AfterFilterAndSort, PivotNodes}
+enum RecursionType { Normal, AfterFilter, AfterFilterAndSort, PivotNodes }
 
 export interface BatchTransactionItem {
     rowDataTransaction: RowDataTransaction;
@@ -76,31 +77,36 @@ export class ClientSideRowModel implements IClientSideRowModel {
     private nodeManager: ClientSideNodeManager;
     private rowDataTransactionBatch: BatchTransactionItem[] | null;
     private lastHighlightedRow: RowNode | null;
+    private events: (() => void)[] = [];
+    private refreshMapFunc: any;
 
     @PostConstruct
     public init(): void {
 
-        const refreshEverythingFunc = this.refreshModel.bind(this, {step: Constants.STEP_EVERYTHING});
+        const refreshEverythingFunc = this.refreshModel.bind(this, { step: Constants.STEP_EVERYTHING });
         const refreshEverythingAfterColsChangedFunc
-            = this.refreshModel.bind(this, {step: Constants.STEP_EVERYTHING, afterColumnsChanged: true});
+            = this.refreshModel.bind(this, { step: Constants.STEP_EVERYTHING, afterColumnsChanged: true });
 
-        this.eventService.addModalPriorityEventListener(Events.EVENT_COLUMN_EVERYTHING_CHANGED, refreshEverythingAfterColsChangedFunc);
-        this.eventService.addModalPriorityEventListener(Events.EVENT_COLUMN_ROW_GROUP_CHANGED, refreshEverythingFunc);
-        this.eventService.addModalPriorityEventListener(Events.EVENT_COLUMN_VALUE_CHANGED, this.onValueChanged.bind(this));
-        this.eventService.addModalPriorityEventListener(Events.EVENT_COLUMN_PIVOT_CHANGED, this.refreshModel.bind(this, {step: Constants.STEP_PIVOT}));
+        this.events = [
+            this.eventService.addModalPriorityEventListener(Events.EVENT_COLUMN_EVERYTHING_CHANGED, refreshEverythingAfterColsChangedFunc),
+            this.eventService.addModalPriorityEventListener(Events.EVENT_COLUMN_ROW_GROUP_CHANGED, refreshEverythingFunc),
+            this.eventService.addModalPriorityEventListener(Events.EVENT_COLUMN_VALUE_CHANGED, this.onValueChanged.bind(this)),
+            this.eventService.addModalPriorityEventListener(Events.EVENT_COLUMN_PIVOT_CHANGED, this.refreshModel.bind(this, { step: Constants.STEP_PIVOT })),
 
-        this.eventService.addModalPriorityEventListener(Events.EVENT_ROW_GROUP_OPENED, this.onRowGroupOpened.bind(this));
-        this.eventService.addModalPriorityEventListener(Events.EVENT_FILTER_CHANGED, this.onFilterChanged.bind(this));
-        this.eventService.addModalPriorityEventListener(Events.EVENT_SORT_CHANGED, this.onSortChanged.bind(this));
-        this.eventService.addModalPriorityEventListener(Events.EVENT_COLUMN_PIVOT_MODE_CHANGED, refreshEverythingFunc);
+            this.eventService.addModalPriorityEventListener(Events.EVENT_ROW_GROUP_OPENED, this.onRowGroupOpened.bind(this)),
+            this.eventService.addModalPriorityEventListener(Events.EVENT_FILTER_CHANGED, this.onFilterChanged.bind(this)),
+            this.eventService.addModalPriorityEventListener(Events.EVENT_SORT_CHANGED, this.onSortChanged.bind(this)),
+            this.eventService.addModalPriorityEventListener(Events.EVENT_COLUMN_PIVOT_MODE_CHANGED, refreshEverythingFunc)
+        ];
 
-        const refreshMapFunc = this.refreshModel.bind(this, {
+        this.refreshMapFunc = this.refreshModel.bind(this, {
             step: Constants.STEP_MAP,
             keepRenderedRows: true,
             animate: true
         });
-        this.gridOptionsWrapper.addEventListener(GridOptionsWrapper.PROP_GROUP_REMOVE_SINGLE_CHILDREN, refreshMapFunc);
-        this.gridOptionsWrapper.addEventListener(GridOptionsWrapper.PROP_GROUP_REMOVE_LOWEST_SINGLE_CHILDREN, refreshMapFunc);
+
+        this.gridOptionsWrapper.addEventListener(GridOptionsWrapper.PROP_GROUP_REMOVE_SINGLE_CHILDREN, this.refreshMapFunc);
+        this.gridOptionsWrapper.addEventListener(GridOptionsWrapper.PROP_GROUP_REMOVE_LOWEST_SINGLE_CHILDREN, this.refreshMapFunc);
 
         this.rootNode = new RowNode();
         this.nodeManager = new ClientSideNodeManager(this.rootNode, this.gridOptionsWrapper,
@@ -108,6 +114,17 @@ export class ClientSideRowModel implements IClientSideRowModel {
             this.selectionController);
 
         this.context.wireBean(this.rootNode);
+    }
+
+    @PreDestroy
+    public destroy(): void {
+        if (this.events.length) {
+            this.events.forEach(func => func());
+            this.events = [];
+        }
+
+        this.gridOptionsWrapper.removeEventListener(GridOptionsWrapper.PROP_GROUP_REMOVE_SINGLE_CHILDREN, this.refreshMapFunc);
+        this.gridOptionsWrapper.removeEventListener(GridOptionsWrapper.PROP_GROUP_REMOVE_LOWEST_SINGLE_CHILDREN, this.refreshMapFunc);
     }
 
     public start(): void {
@@ -230,7 +247,7 @@ export class ClientSideRowModel implements IClientSideRowModel {
         const indexAtPixelNow = pixel != null ? this.getRowIndexAtPixel(pixel) : null;
         const rowNodeAtPixelNow = indexAtPixelNow != null ? this.getRow(indexAtPixelNow) : null;
 
-        if (rowNodeAtPixelNow === rowNode || !rowNode || pixel == null) {
+        if (!rowNodeAtPixelNow || !rowNode || rowNodeAtPixelNow === rowNode || pixel == null) {
             if (this.lastHighlightedRow) {
                 this.lastHighlightedRow.setHighlighted(null);
                 this.lastHighlightedRow = null;
@@ -238,8 +255,7 @@ export class ClientSideRowModel implements IClientSideRowModel {
             return;
         }
 
-        const { rowTop, rowHeight } = rowNodeAtPixelNow;
-        const highlight = pixel - rowTop < rowHeight / 2 ? 'above' : 'below';
+        const highlight = this.getHighlightPosition(pixel, rowNodeAtPixelNow);
 
         if (this.lastHighlightedRow && this.lastHighlightedRow !== rowNodeAtPixelNow) {
             this.lastHighlightedRow.setHighlighted(null);
@@ -248,6 +264,19 @@ export class ClientSideRowModel implements IClientSideRowModel {
 
         rowNodeAtPixelNow.setHighlighted(highlight);
         this.lastHighlightedRow = rowNodeAtPixelNow;
+    }
+
+    public getHighlightPosition(pixel: number, rowNode?: RowNode): 'above' | 'below' {
+        if (!rowNode) {
+            const index = this.getRowIndexAtPixel(pixel);
+            rowNode = this.getRow(index || 0);
+
+            if (!rowNode) { return 'below'; }
+        }
+
+        const { rowTop, rowHeight } = rowNode;
+
+        return pixel - rowTop < rowHeight / 2 ? 'above' : 'below';
     }
 
     public getLastHighlightedRowNode(): RowNode | null {
@@ -314,18 +343,18 @@ export class ClientSideRowModel implements IClientSideRowModel {
 
     private onRowGroupOpened(): void {
         const animate = this.gridOptionsWrapper.isAnimateRows();
-        this.refreshModel({step: Constants.STEP_MAP, keepRenderedRows: true, animate: animate});
+        this.refreshModel({ step: Constants.STEP_MAP, keepRenderedRows: true, animate: animate });
     }
 
     private onFilterChanged(event: FilterChangedEvent): void {
         if (event.afterDataChange) { return; }
         const animate = this.gridOptionsWrapper.isAnimateRows();
-        this.refreshModel({step: Constants.STEP_FILTER, keepRenderedRows: true, animate: animate});
+        this.refreshModel({ step: Constants.STEP_FILTER, keepRenderedRows: true, animate: animate });
     }
 
     private onSortChanged(): void {
         const animate = this.gridOptionsWrapper.isAnimateRows();
-        this.refreshModel({step: Constants.STEP_SORT, keepRenderedRows: true, animate: animate, keepEditingRows: true});
+        this.refreshModel({ step: Constants.STEP_SORT, keepRenderedRows: true, animate: animate, keepEditingRows: true });
     }
 
     public getType(): string {
@@ -334,9 +363,9 @@ export class ClientSideRowModel implements IClientSideRowModel {
 
     private onValueChanged(): void {
         if (this.columnController.isPivotActive()) {
-            this.refreshModel({step: Constants.STEP_PIVOT});
+            this.refreshModel({ step: Constants.STEP_PIVOT });
         } else {
-            this.refreshModel({step: Constants.STEP_AGGREGATE});
+            this.refreshModel({ step: Constants.STEP_AGGREGATE });
         }
     }
 
@@ -457,7 +486,7 @@ export class ClientSideRowModel implements IClientSideRowModel {
 
         const groupsSelectChildren = this.gridOptionsWrapper.isGroupSelectsChildren();
 
-        this.forEachNodeAfterFilterAndSort((rowNode: RowNode) => {
+        this.forEachNodeAfterFilterAndSort(rowNode => {
 
             const lookingForLastRow = firstRowHit && !lastRowHit;
 
@@ -533,13 +562,14 @@ export class ClientSideRowModel implements IClientSideRowModel {
         }
 
         while (true) {
-
             const midPointer = Math.floor((bottomPointer + topPointer) / 2);
             const currentRowNode = this.rowsToDisplay[midPointer];
 
             if (this.isRowInPixel(currentRowNode, pixelToMatch)) {
                 return midPointer;
-            } else if (currentRowNode.rowTop < pixelToMatch) {
+            }
+
+            if (currentRowNode.rowTop < pixelToMatch) {
                 bottomPointer = midPointer + 1;
             } else if (currentRowNode.rowTop > pixelToMatch) {
                 topPointer = midPointer - 1;
@@ -564,25 +594,25 @@ export class ClientSideRowModel implements IClientSideRowModel {
         return 0;
     }
 
-    public forEachLeafNode(callback: Function): void {
+    public forEachLeafNode(callback: (node: RowNode, index: number) => void): void {
         if (this.rootNode.allLeafChildren) {
             this.rootNode.allLeafChildren.forEach((rowNode, index) => callback(rowNode, index));
         }
     }
 
-    public forEachNode(callback: Function): void {
+    public forEachNode(callback: (node: RowNode, index: number) => void): void {
         this.recursivelyWalkNodesAndCallback(this.rootNode.childrenAfterGroup, callback, RecursionType.Normal, 0);
     }
 
-    public forEachNodeAfterFilter(callback: Function): void {
+    public forEachNodeAfterFilter(callback: (node: RowNode, index: number) => void): void {
         this.recursivelyWalkNodesAndCallback(this.rootNode.childrenAfterFilter, callback, RecursionType.AfterFilter, 0);
     }
 
-    public forEachNodeAfterFilterAndSort(callback: Function): void {
+    public forEachNodeAfterFilterAndSort(callback: (node: RowNode, index: number) => void): void {
         this.recursivelyWalkNodesAndCallback(this.rootNode.childrenAfterSort, callback, RecursionType.AfterFilterAndSort, 0);
     }
 
-    public forEachPivotNode(callback: Function): void {
+    public forEachPivotNode(callback: (node: RowNode, index: number) => void): void {
         this.recursivelyWalkNodesAndCallback([this.rootNode], callback, RecursionType.PivotNodes, 0);
     }
 
@@ -591,7 +621,7 @@ export class ClientSideRowModel implements IClientSideRowModel {
     // callback - the user provided callback
     // recursion type - need this to know what child nodes to recurse, eg if looking at all nodes, or filtered notes etc
     // index - works similar to the index in forEach in javascript's array function
-    private recursivelyWalkNodesAndCallback(nodes: RowNode[], callback: Function, recursionType: RecursionType, index: number) {
+    private recursivelyWalkNodesAndCallback(nodes: RowNode[], callback: (node: RowNode, index: number) => void, recursionType: RecursionType, index: number) {
         if (!nodes) { return index; }
 
         for (let i = 0; i < nodes.length; i++) {
@@ -602,16 +632,16 @@ export class ClientSideRowModel implements IClientSideRowModel {
                 // depending on the recursion type, we pick a difference set of children
                 let nodeChildren: RowNode[] | null = null;
                 switch (recursionType) {
-                    case RecursionType.Normal :
+                    case RecursionType.Normal:
                         nodeChildren = node.childrenAfterGroup;
                         break;
-                    case RecursionType.AfterFilter :
+                    case RecursionType.AfterFilter:
                         nodeChildren = node.childrenAfterFilter;
                         break;
-                    case RecursionType.AfterFilterAndSort :
+                    case RecursionType.AfterFilterAndSort:
                         nodeChildren = node.childrenAfterSort;
                         break;
-                    case RecursionType.PivotNodes :
+                    case RecursionType.PivotNodes:
                         // for pivot, we don't go below leafGroup levels
                         nodeChildren = !node.leafGroup ? node.childrenAfterSort : null;
                         break;
@@ -628,7 +658,7 @@ export class ClientSideRowModel implements IClientSideRowModel {
     // + gridApi.recomputeAggregates()
     public doAggregate(changedPath?: ChangedPath): void {
         if (this.aggregationStage) {
-            this.aggregationStage.execute({rowNode: this.rootNode, changedPath: changedPath});
+            this.aggregationStage.execute({ rowNode: this.rootNode, changedPath: changedPath });
         }
     }
 
@@ -643,7 +673,7 @@ export class ClientSideRowModel implements IClientSideRowModel {
         function recursiveExpandOrCollapse(rowNodes: RowNode[]): void {
             if (!rowNodes) { return; }
 
-            rowNodes.forEach((rowNode: RowNode) => {
+            rowNodes.forEach(rowNode => {
                 const shouldExpandOrCollapse = usingTreeData ? _.exists(rowNode.childrenAfterGroup) : rowNode.group;
                 if (shouldExpandOrCollapse) {
                     rowNode.expanded = expand;
@@ -652,7 +682,7 @@ export class ClientSideRowModel implements IClientSideRowModel {
             });
         }
 
-        this.refreshModel({step: Constants.STEP_MAP});
+        this.refreshModel({ step: Constants.STEP_MAP });
 
         const eventSource = expand ? 'expandAll' : 'collapseAll';
         const event: ExpandCollapseAllEvent = {
@@ -672,12 +702,13 @@ export class ClientSideRowModel implements IClientSideRowModel {
         });
     }
 
-    private doRowGrouping(groupState: any,
-                          rowNodeTransactions: (RowNodeTransaction | null)[] | undefined,
-                          rowNodeOrder: { [id: string]: number } | undefined,
-                          changedPath: ChangedPath,
-                          afterColumnsChanged: boolean) {
-
+    private doRowGrouping(
+        groupState: any,
+        rowNodeTransactions: (RowNodeTransaction | null)[] | undefined,
+        rowNodeOrder: { [id: string]: number; } | undefined,
+        changedPath: ChangedPath,
+        afterColumnsChanged: boolean
+    ) {
         // grouping is enterprise only, so if service missing, skip the step
         const doingLegacyTreeData = _.exists(this.gridOptionsWrapper.getNodeChildDetailsFunc());
         if (doingLegacyTreeData) { return; }
@@ -689,7 +720,7 @@ export class ClientSideRowModel implements IClientSideRowModel {
                     add: [],
                     remove: [],
                     update: []
-                }
+                };
                 rowNodeTransactions.forEach(tran => {
                     _.pushAll(merged.add, tran.add);
                     _.pushAll(merged.remove, tran.remove);
@@ -736,12 +767,12 @@ export class ClientSideRowModel implements IClientSideRowModel {
     }
 
     private doFilter(changedPath: ChangedPath) {
-        this.filterStage.execute({rowNode: this.rootNode, changedPath: changedPath});
+        this.filterStage.execute({ rowNode: this.rootNode, changedPath: changedPath });
     }
 
     private doPivot(changedPath: ChangedPath) {
         if (this.pivotStage) {
-            this.pivotStage.execute({rowNode: this.rootNode, changedPath: changedPath});
+            this.pivotStage.execute({ rowNode: this.rootNode, changedPath: changedPath });
         }
     }
 
@@ -752,7 +783,7 @@ export class ClientSideRowModel implements IClientSideRowModel {
         return result;
     }
 
-    public getCopyOfNodesMap(): { [id: string]: RowNode } {
+    public getCopyOfNodesMap(): { [id: string]: RowNode; } {
         return this.nodeManager.getCopyOfNodesMap();
     }
 
@@ -792,13 +823,13 @@ export class ClientSideRowModel implements IClientSideRowModel {
     public batchUpdateRowData(rowDataTransaction: RowDataTransaction, callback?: (res: RowNodeTransaction) => void): void {
         if (!this.rowDataTransactionBatch) {
             this.rowDataTransactionBatch = [];
-            const waitMillis = this.gridOptionsWrapper.getBatchUpdateWaitMillis();
+            const waitMillis = this.gridOptionsWrapper.getAsyncTransactionWaitMillis();
             window.setTimeout(() => {
                 this.executeBatchUpdateRowData();
                 this.rowDataTransactionBatch = null;
             }, waitMillis);
         }
-        this.rowDataTransactionBatch.push({rowDataTransaction: rowDataTransaction, callback: callback});
+        this.rowDataTransactionBatch.push({ rowDataTransaction: rowDataTransaction, callback: callback });
     }
 
     private executeBatchUpdateRowData(): void {
@@ -827,7 +858,7 @@ export class ClientSideRowModel implements IClientSideRowModel {
         }
     }
 
-    public updateRowData(rowDataTran: RowDataTransaction, rowNodeOrder?: { [id: string]: number }): RowNodeTransaction | null {
+    public updateRowData(rowDataTran: RowDataTransaction, rowNodeOrder?: { [id: string]: number; }): RowNodeTransaction | null {
 
         this.valueCache.onDataChanged();
 
@@ -839,7 +870,7 @@ export class ClientSideRowModel implements IClientSideRowModel {
     }
 
     // common to updateRowData and batchUpdateRowData
-    private commonUpdateRowData(rowNodeTrans: (RowNodeTransaction | null)[], rowNodeOrder?: { [id: string]: number }): void {
+    private commonUpdateRowData(rowNodeTrans: (RowNodeTransaction | null)[], rowNodeOrder?: { [id: string]: number; }): void {
         this.refreshModel({
             step: Constants.STEP_EVERYTHING,
             rowNodeTransactions: rowNodeTrans,
@@ -858,15 +889,15 @@ export class ClientSideRowModel implements IClientSideRowModel {
     }
 
     private doRowsToDisplay() {
-        this.rowsToDisplay = this.flattenStage.execute({rowNode: this.rootNode}) as RowNode[];
+        this.rowsToDisplay = this.flattenStage.execute({ rowNode: this.rootNode }) as RowNode[];
     }
 
     public onRowHeightChanged(): void {
-        this.refreshModel({step: Constants.STEP_MAP, keepRenderedRows: true, keepEditingRows: true});
+        this.refreshModel({ step: Constants.STEP_MAP, keepRenderedRows: true, keepEditingRows: true });
     }
 
     public resetRowHeights(): void {
-        this.forEachNode((rowNode: RowNode) => rowNode.setRowHeight(null));
+        this.forEachNode(rowNode => rowNode.setRowHeight(null));
         this.onRowHeightChanged();
     }
 

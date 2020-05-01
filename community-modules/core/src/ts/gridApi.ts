@@ -35,6 +35,7 @@ import { AgEvent, ColumnEventType } from "./events";
 import { IContextMenuFactory } from "./interfaces/iContextMenuFactory";
 import { ICellRendererComp } from "./rendering/cellRenderers/iCellRenderer";
 import { ICellEditorComp } from "./interfaces/iCellEditor";
+import { DragAndDropService, DragSourceType } from "./dragAndDrop/dragAndDropService";
 import { HeaderRootComp } from "./headerRendering/headerRootComp";
 import { AnimationFrameService } from "./misc/animationFrameService";
 import { IServerSideRowModel } from "./interfaces/iServerSideRowModel";
@@ -57,6 +58,7 @@ import { IInfiniteRowModel } from "./interfaces/iInfiniteRowModel";
 import { ICsvCreator } from "./interfaces/iCsvCreator";
 import { ModuleRegistry } from "./modules/moduleRegistry";
 import { UndoRedoService } from "./undoRedo/undoRedoService";
+import { RowDropZoneParams, RowDropZoneEvents } from "./gridPanel/rowDragFeature";
 
 export interface StartEditingCellParams {
     rowIndex: number;
@@ -103,9 +105,9 @@ export interface CreatePivotChartParams {
 }
 
 export interface DetailGridInfo {
+    api?: GridApi;
+    columnApi?: ColumnApi;
     id: string;
-    api: GridApi | null | undefined;
-    columnApi: ColumnApi | null | undefined;
 }
 
 @Bean('gridApi')
@@ -128,6 +130,7 @@ export class GridApi {
     @Autowired('sortController') private sortController: SortController;
     @Autowired('paginationProxy') private paginationProxy: PaginationProxy;
     @Autowired('focusController') private focusController: FocusController;
+    @Autowired('dragAndDropService') private dragAndDropService: DragAndDropService;
     @Optional('rangeController') private rangeController: IRangeController;
     @Optional('clipboardService') private clipboardService: IClipboardService;
     @Optional('aggFuncService') private aggFuncService: IAggFuncService;
@@ -265,7 +268,7 @@ export class GridApi {
 
     public setRowData(rowData: any[]) {
         if (this.gridOptionsWrapper.isRowModelDefault()) {
-            if (this.gridOptionsWrapper.isDeltaRowDataMode()) {
+            if (this.gridOptionsWrapper.isImmutableData()) {
                 const [transaction, orderIdMap] = this.immutableService.createTransactionForRowData(rowData);
                 this.clientSideRowModel.updateRowData(transaction, orderIdMap);
                 // need to force updating of full width rows - note this wouldn't be necessary the full width cell comp listened
@@ -436,7 +439,7 @@ export class GridApi {
         this.redrawRows();
     }
 
-    //** @deprecated */
+    /** @deprecated */
     public refreshRows(rowNodes: RowNode[]): void {
         console.warn('since ag-Grid v11.1, refreshRows() is deprecated, please use refreshCells({rowNodes: rows}) or redrawRows({rowNodes: rows}) instead');
         this.refreshCells({ rowNodes: rowNodes });
@@ -474,6 +477,7 @@ export class GridApi {
         return this.filterManager.isAnyFilterPresent();
     }
 
+    /** @deprecated */
     public isAdvancedFilterPresent(): boolean {
         console.warn('ag-Grid: isAdvancedFilterPresent() is deprecated, please use isColumnFilterPresent()');
         return this.isColumnFilterPresent();
@@ -702,12 +706,12 @@ export class GridApi {
     }
 
     // Valid values for position are bottom, middle and top
-    public ensureIndexVisible(index: any, position?: string) {
+    public ensureIndexVisible(index: any, position?: string | null) {
         this.gridPanel.ensureIndexVisible(index, position);
     }
 
     // Valid values for position are bottom, middle and top
-    public ensureNodeVisible(comparator: any, position?: string) {
+    public ensureNodeVisible(comparator: any, position?: string | null) {
         this.gridCore.ensureNodeVisible(comparator, position);
     }
 
@@ -773,9 +777,8 @@ export class GridApi {
         const column = this.columnController.getPrimaryColumn(key);
         if (column) {
             return column.getColDef();
-        } else {
-            return null;
         }
+        return null;
     }
 
     public onFilterChanged() {
@@ -816,6 +819,30 @@ export class GridApi {
 
     public setSuppressRowDrag(value: boolean): void {
         this.gridOptionsWrapper.setProperty(GridOptionsWrapper.PROP_SUPPRESS_ROW_DRAG, value);
+    }
+
+    public setSuppressMoveWhenRowDragging(value: boolean): void {
+        this.gridOptionsWrapper.setProperty(GridOptionsWrapper.PROP_SUPPRESS_MOVE_WHEN_ROW_DRAG, value);
+    }
+
+    public setSuppressRowClickSelection(value: boolean): void {
+        this.gridOptionsWrapper.setProperty(GridOptionsWrapper.PROP_SUPPRESS_ROW_CLICK_SELECTION, value);
+    }
+
+    public addRowDropZone(params: RowDropZoneParams): void {
+        this.gridPanel.getRowDragFeature().addRowDropZone(params);
+    }
+
+    public removeRowDropZone(params: RowDropZoneParams): void {
+        const activeDropTarget = this.dragAndDropService.findExternalZone(params);
+
+        if (activeDropTarget) {
+            this.dragAndDropService.removeDropTarget(activeDropTarget);
+        }
+    }
+
+    public getRowDropZoneParams(events: RowDropZoneEvents): RowDropZoneParams {
+        return this.gridPanel.getRowDragFeature().getRowDropZone(events);
     }
 
     public setHeaderHeight(headerHeight: number) {
@@ -932,9 +959,8 @@ export class GridApi {
         }
         if (_.missing(column)) {
             return null;
-        } else {
-            return this.valueService.getValue(column, rowNode);
         }
+        return this.valueService.getValue(column, rowNode);
     }
 
     public addEventListener(eventType: string, listener: Function): void {
@@ -1135,11 +1161,18 @@ export class GridApi {
         }
     }
 
-    public updateRowData(rowDataTransaction: RowDataTransaction): RowNodeTransaction {
+    public applyTransaction(rowDataTransaction: RowDataTransaction): RowNodeTransaction {
         let res: RowNodeTransaction = null;
         if (this.clientSideRowModel) {
+            if (rowDataTransaction && rowDataTransaction.addIndex!=null) {
+                const message = 'ag-Grid: as of v23.1, transaction.addIndex is deprecated. If you want precision control of adding data, use immutableData instead';
+                _.doOnce(() => console.warn(message), 'transaction.addIndex deprecated');
+            }
             res = this.clientSideRowModel.updateRowData(rowDataTransaction);
         } else if (this.infiniteRowModel) {
+            const message = 'ag-Grid: as of v23.1, transactions for Infinite Row Model are deprecated. If you want to make updates to data in Infinite Row Models, then refresh the data.';
+            _.doOnce(() => console.warn(message), 'applyTransaction infiniteRowModel deprecated');
+
             this.infiniteRowModel.updateRowData(rowDataTransaction);
         } else {
             console.error('ag-Grid: updateRowData() only works with ClientSideRowModel and InfiniteRowModel.');
@@ -1156,12 +1189,28 @@ export class GridApi {
         return res;
     }
 
-    public batchUpdateRowData(rowDataTransaction: RowDataTransaction, callback?: (res: RowNodeTransaction) => void): void {
+    /** @deprecated */
+    public updateRowData(rowDataTransaction: RowDataTransaction): RowNodeTransaction {
+        const message = 'ag-Grid: as of v23.1, grid API updateRowData(transaction) is now called applyTransaction(transaction). updateRowData is deprecated and will be removed in a future major release.';
+        _.doOnce(() => console.warn(message), 'updateRowData deprecated');
+
+        return this.applyTransaction(rowDataTransaction);
+    }
+
+    public applyTransactionAsync(rowDataTransaction: RowDataTransaction, callback?: (res: RowNodeTransaction) => void): void {
         if (!this.clientSideRowModel) {
-            console.error('ag-Grid: api.batchUpdateRowData() only works with ClientSideRowModel.');
+            console.error('ag-Grid: api.applyTransactionAsync() only works with ClientSideRowModel.');
             return;
         }
         this.clientSideRowModel.batchUpdateRowData(rowDataTransaction, callback);
+    }
+
+    /** @deprecated */
+    public batchUpdateRowData(rowDataTransaction: RowDataTransaction, callback?: (res: RowNodeTransaction) => void): void {
+        const message = 'ag-Grid: as of v23.1, grid API batchUpdateRowData(transaction, callback) is now called applyTransactionAsync(transaction, callback). batchUpdateRowData is deprecated and will be removed in a future major release.';
+        _.doOnce(() => console.warn(message), 'batchUpdateRowData deprecated');
+
+        this.applyTransactionAsync(rowDataTransaction, callback);
     }
 
     public insertItemsAtIndex(index: number, items: any[], skipRefresh = false): void {

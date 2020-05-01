@@ -17,7 +17,7 @@
                 <div class="tab-pane show active" id="component" role="tabpanel" aria-labelledby="component-tab">
 <snippet>
 import 'ag-grid-community/dist/styles/ag-grid.css'
-import 'ag-grid-community/dist/styles/ag-theme-balham.css';
+import 'ag-grid-community/dist/styles/ag-theme-alpine.css';
 
 import {Grid} from '@ag-grid-community/all-modules';
 
@@ -52,7 +52,7 @@ new Grid(eGridDiv, gridOptions);
 &lt;title&gt;Ag Grid Javascript Starter Example&lt;/title>
 &lt;/head&gt;
 &lt;body&gt;
-&lt;div id="myGrid" style="height: 600px;width:500px;" class="ag-theme-balham"&gt;&lt;/div&gt;
+&lt;div id="myGrid" style="height: 600px;width:500px;" class="ag-theme-alpine"&gt;&lt;/div&gt;
 &lt;/body&gt;
 &lt;/html&gt;
 </snippet>

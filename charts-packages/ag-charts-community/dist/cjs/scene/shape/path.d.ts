@@ -15,15 +15,13 @@ export declare class Path extends Shape {
     * is how we keep track if the path has to be updated or not.
     */
     private _dirtyPath;
-    set dirtyPath(value: boolean);
-    get dirtyPath(): boolean;
+    dirtyPath: boolean;
     /**
      * Path definition in SVG path syntax:
      * https://www.w3.org/TR/SVG11/paths.html#DAttribute
      */
     private _svgPath;
-    set svgPath(value: string);
-    get svgPath(): string;
+    svgPath: string;
     isPointInPath(x: number, y: number): boolean;
     isPointInStroke(x: number, y: number): boolean;
     protected updatePath(): void;

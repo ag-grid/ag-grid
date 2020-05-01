@@ -1,8 +1,7 @@
 [
     {
         "title": "The Headliners",
-        "summary":
-            "What makes ag-Grid different from the other grids? We are proud of the amount of polish and completeness of our grid; the features below are our personal favourites. They are hard to find in alternative offerings, let alone combined and working out of the box together at the level we offer.",
+        "summary": "What makes ag-Grid different from the other grids? We are proud of the amount of polish and completeness of our grid; the features below are our personal favourites. They are hard to find in alternative offerings, let alone combined and working out of the box together at the level we offer.",
         "items": [
             {
                 "title": "Outstanding Performance",
@@ -18,8 +17,7 @@
             {
                 "title": "Works With Your Framework",
                 "img": "frameworks.png",
-                "description":
-                    "Ag-Grid supports all major web frameworks through idiomatic, hand-crafted wrappers. You don't use any of these? No problem, we support vanilla JavaScript too.",
+                "description": "Ag-Grid supports all major web frameworks through idiomatic, hand-crafted wrappers. You don't use any of these? No problem, we support vanilla JavaScript too.",
                 "links": [
                     {
                         "title": "Get Started with Angular",
@@ -42,8 +40,7 @@
             {
                 "title": "Grouping / Aggregation",
                 "img": "grouping-aggregation.gif",
-                "description":
-                    "Let your users explore their data. ag-Grid allows the end user to group by specific columns. Optionally, you can display various aggregate column values in the grouped row.",
+                "description": "Let your users explore their data. ag-Grid allows the end user to group by specific columns. Optionally, you can display various aggregate column values in the grouped row.",
                 "links": [
                     {
                         "title": "Grouping / Aggregation in Action",
@@ -54,8 +51,7 @@
             {
                 "title": "Filtering",
                 "img": "filtering.gif",
-                "description":
-                    "ag-Grid comes with an extensive set of built-in column filter types.  You can also filter by all columns simultaneously with quick filtering. You can even implement your own custom filtering UI and logic.",
+                "description": "ag-Grid comes with an extensive set of built-in column filter types.  You can also filter by all columns simultaneously with quick filtering. You can even implement your own custom filtering UI and logic.",
                 "links": [
                     {
                         "title": "Filtering UI Walkthrough",
@@ -77,8 +73,7 @@
             {
                 "title": "Lazy Loading",
                 "img": "lazy-loading.gif",
-                "description":
-                    "Save your server resources! Ag-Grid can request the right amount of records just in time when the user scrolls, or when filtering / sorting / paging is applied.",
+                "description": "Save your server resources! Ag-Grid can request the right amount of records just in time when the user scrolls, or when filtering / sorting / paging is applied.",
                 "links": [
                     {
                         "title": "Infinite Scrolling Example",
@@ -115,8 +110,7 @@
             {
                 "title": "Tree Data",
                 "img": "tree-data.gif",
-                "description":
-                    "You can easily display data has parent / child relationships by passing the relationship as part of the data. For example, a folder can contain zero or more files and other folders.",
+                "description": "You can easily display data has parent / child relationships by passing the relationship as part of the data. For example, a folder can contain zero or more files and other folders.",
                 "links": [
                     {
                         "title": "Tree Data Example",
@@ -127,8 +121,7 @@
             {
                 "title": "Customisable Appearance",
                 "img": "customizable-appearance.gif",
-                "description":
-                    "Ag-Grid ships several different themes. Pick one that matches your project look and feel, and fully customise so that the grid is consistent with your application.",
+                "description": "Ag-Grid ships several different themes. Pick one that matches your project look and feel, and fully customise so that the grid is consistent with your application.",
                 "links": [
                     {
                         "title": "Themes in Action",
@@ -143,8 +136,7 @@
             {
                 "title": "Convenient Licensing",
                 "img": "licensing.svg",
-                "description":
-                    "Ag-Grid Community is MIT licensed, no strings attached. ag-Grid Enterprise comes with a commercial license, that works for both Single and Multiple App Developers. Both are in public GitHub repositories.",
+                "description": "Ag-Grid Community is MIT licensed, no strings attached. ag-Grid Enterprise comes with a commercial license, that works for both Single and Multiple App Developers. Both are in public GitHub repositories.",
                 "links": [
                     {
                         "title": "ag-Grid Pricing",
@@ -167,8 +159,7 @@
     },
     {
         "title": "The Runner-ups",
-        "summary":
-            "Still not convinced? Let's show you some more then. Some of the these are truly unique to ag-Grid. We know the enterprise, and the complex scenarios you developers should deal with on a daily basis. ",
+        "summary": "Still not convinced? Let's show you some more then. Some of the these are truly unique to ag-Grid. We know the enterprise, and the complex scenarios you developers should deal with on a daily basis. ",
         "items": [
             {
                 "title": "Pivoting",
@@ -195,8 +186,7 @@
             {
                 "title": "State Persistence",
                 "img": "state-persistance.gif",
-                "description":
-                    "Let your users resume their work from where they left. ag-Grid lets you save and restore the user's grid preferences, including filtering, sorting and column order/visibility. ",
+                "description": "Let your users resume their work from where they left. ag-Grid lets you save and restore the user's grid preferences, including filtering, sorting and column order/visibility. ",
                 "links": [
                     {
                         "title": "State Persistence Example",
@@ -207,50 +197,82 @@
             {
                 "title": "Rich UI",
                 "img": "rich-ui.gif",
-                "description":
-                    "The grid exposes its features through several modules - column headers and menus, context menu, tool panel, and status bar. Extend these further with your own custom bits when necessary.",
+                "description": "The grid exposes its features through several modules - column headers and menus, context menu, tool panel, and status bar. Extend these further with your own custom bits when necessary.",
                 "links": []
             },
             {
                 "title": "Enables Productivity",
                 "img": "touch-support.gif",
-                "description":
-                    "Ag-Grid is fully keyboard navigable for your users' maximum productivity. It is also fully functional on touch devices. You can even provide a print friendly version of it.",
-                "links": [{ "title": "Keyboard Interaction Documentation", "url": "/javascript-grid-keyboard-navigation/" }]
+                "description": "Ag-Grid is fully keyboard navigable for your users' maximum productivity. It is also fully functional on touch devices. You can even provide a print friendly version of it.",
+                "links": [
+                    {
+                        "title": "Keyboard Interaction Documentation",
+                        "url": "/javascript-grid-keyboard-navigation/"
+                    }
+                ]
             },
             {
                 "title": "Wide Audience Support",
                 "img": "rtl.gif",
                 "description": "ag-Grid conforms to the WAI-ARIA and Section 508 specs, and also support i18n / RTL. ",
                 "links": [
-                    { "title": "I18n Example", "url": "/javascript-grid-internationalisation/#example-internationalisation" },
-                    { "title": "RTL Examples", "url": "/javascript-grid-rtl/" }
+                    {
+                        "title": "I18n Example",
+                        "url": "/javascript-grid-localisation/#example-localisation"
+                    },
+                    {
+                        "title": "RTL Examples",
+                        "url": "/javascript-grid-rtl/"
+                    }
                 ]
             },
             {
                 "title": "Data Export",
                 "img": "data-export.gif",
                 "description": "Let your users export data to CSV or Excel file format right from the grid. The excel format preserves the styling.",
-                "links": [{ "title": "Excel Export Documentation", "url": "/javascript-grid-excel/" }, { "title": "CSV Export Documentation", "url": "/javascript-grid-export/" }]
+                "links": [
+                    {
+                        "title": "Excel Export Documentation",
+                        "url": "/javascript-grid-excel/"
+                    },
+                    {
+                        "title": "CSV Export Documentation",
+                        "url": "/javascript-grid-export/"
+                    }
+                ]
             },
             {
                 "title": "Customisable Cell Contents",
                 "img": "customizable-cell-contents.gif",
-                "description":
-                    "Ag-Grid allows you to change the format of the data displayed for a certain column, add additional markup to the cell, or even insert custom components written in your framework of choice.",
-                "links": [{ "title": "Cell Renderers Documentation", "url": "/javascript-grid-cell-rendering-components/" }]
+                "description": "Ag-Grid allows you to change the format of the data displayed for a certain column, add additional markup to the cell, or even insert custom components written in your framework of choice.",
+                "links": [
+                    {
+                        "title": "Cell Renderers Documentation",
+                        "url": "/javascript-grid-cell-rendering-components/"
+                    }
+                ]
             },
             {
                 "title": "Row Reordering",
                 "img": "row-reordering.gif",
                 "description": "Let your users change the order of the records displayed. ag-Grid exposes convenient API for persisting the order changes.",
-                "links": [{ "title": "Row Reordering Example", "url": "/example.php#/row-reordering/1" }]
+                "links": [
+                    {
+                        "title": "Row Reordering Example",
+                        "url": "/example.php#/row-reordering/1"
+                    }
+                ]
             },
             {
                 "title": "Copy / Paste",
                 "img": "copy-paste.gif",
                 "description": "Ag-Grid supports range cell selection and allows the users to copy / paste data from the grid to a another grid or a spreadsheet and vice versa.",
-                "links": [{ "title": "Clipboard Support Documentation", "url": "/javascript-grid-clipboard/" }]
+                "links": [
+                    {
+                        "title": "Clipboard Support Documentation",
+                        "url": "/javascript-grid-clipboard/"
+                    }
+                ]
             }
         ]
     },
@@ -261,67 +283,108 @@
             {
                 "title": "Column Interactions",
                 "img": "column-interactions.gif",
-                "description":
-                    "Ag-Grid allows the user to resize, reorder, and pin columns to the left or right side. You can also stick the columns in expanding / collapsing groups.",
+                "description": "Ag-Grid allows the user to resize, reorder, and pin columns to the left or right side. You can also stick the columns in expanding / collapsing groups.",
                 "links": [
-                    { "title": "Resizing Example", "url": "/javascript-grid-resizing/#resizing-example" },
-                    { "title": "Pinned Columns Example", "url": "/javascript-grid-pinning/#example-column-pinning" },
-                    { "title": "Column Groups Example", "url": "/javascript-grid-grouping-headers/#grouping-example" }
+                    {
+                        "title": "Resizing Example",
+                        "url": "/javascript-grid-resizing/#resizing-example"
+                    },
+                    {
+                        "title": "Pinned Columns Example",
+                        "url": "/javascript-grid-pinning/#example-column-pinning"
+                    },
+                    {
+                        "title": "Column Groups Example",
+                        "url": "/javascript-grid-grouping-headers/#grouping-example"
+                    }
                 ]
             },
             {
                 "title": "Pagination",
                 "img": "pagination.gif",
                 "description": "Instead of long scrolling, you can configure the grid to display paging controls that allow the users to jump to a specific page of the data set",
-                "links": [{ "title": "Paging Example", "url": "/javascript-grid-pagination/#example-client-paging" }]
+                "links": [
+                    {
+                        "title": "Paging Example",
+                        "url": "/javascript-grid-pagination/#example-client-paging"
+                    }
+                ]
             },
             {
                 "title": "Sorting",
                 "img": "sorting.gif",
                 "description": "Enabling sorting lets your users sort a column by clicking the header and sort multiple columns by holding down shift.",
-                "links": [{ "title": "Sorting Documentation", "url": "/javascript-grid-sorting/#example-custom-sorting" }]
+                "links": [
+                    {
+                        "title": "Sorting Documentation",
+                        "url": "/javascript-grid-sorting/#example-custom-sorting"
+                    }
+                ]
             },
             {
                 "title": "Selection",
                 "img": "selection.gif",
                 "description": "Row Selection allows your users to select rows either by clicking on them or by using a checkbox column.",
                 "links": [
-                    { "title": "Selection Example", "url": "/javascript-grid-selection/#example-multiple-row-selection" },
-                    { "title": "Checkbox Selection Example", "url": "/javascript-grid-selection/#example-header-checkbox" }
+                    {
+                        "title": "Selection Example",
+                        "url": "/javascript-grid-selection/#example-multiple-row-selection"
+                    },
+                    {
+                        "title": "Checkbox Selection Example",
+                        "url": "/javascript-grid-selection/#example-header-checkbox"
+                    }
                 ]
             }
         ]
     },
     {
         "title": "The Rares",
-        "summary":
-            "And the list goes on. We are on the constant lookout to push the envelope of what is achievable with the grid. The following are not used that often, but can be life savers in certain scenarios.",
+        "summary": "And the list goes on. We are on the constant lookout to push the envelope of what is achievable with the grid. The following are not used that often, but can be life savers in certain scenarios.",
         "items": [
             {
                 "title": "Column Spanning",
                 "img": "column-spanning.gif",
                 "description": "Column Spanning allows cells to span columns, similar to cell span in Excel.",
-                "links": [{ "title": "Column Spanning Example", "url": "/javascript-grid-column-spanning/#example-column-spanning-simple" }]
+                "links": [
+                    {
+                        "title": "Column Spanning Example",
+                        "url": "/javascript-grid-column-spanning/#example-column-spanning-simple"
+                    }
+                ]
             },
             {
                 "title": "Pinned Rows",
                 "img": "pinned-rows.gif",
-                "description":
-                    "Typically used for displaying totals or other aggregation, pinned rows can be displayed either at the top or the bottom, and are always visible to the user.  ",
-                "links": [{ "title": "Pinned Rows Example", "url": "/javascript-grid-row-pinning/#example-row-pinning" }]
+                "description": "Typically used for displaying totals or other aggregation, pinned rows can be displayed either at the top or the bottom, and are always visible to the user.  ",
+                "links": [
+                    {
+                        "title": "Pinned Rows Example",
+                        "url": "/javascript-grid-row-pinning/#example-row-pinning"
+                    }
+                ]
             },
             {
                 "title": "Full Width Rows",
                 "img": "full-width-rows.gif",
                 "description": "Full width rows allow you to display information that does not fit tabular format. You can display them alongside regular rows.",
-                "links": [{ "title": "Full Width Rows Example", "url": "/javascript-grid-full-width-rows/#example-simple-full-width" }]
+                "links": [
+                    {
+                        "title": "Full Width Rows Example",
+                        "url": "/javascript-grid-full-width-rows/#example-simple-full-width"
+                    }
+                ]
             },
             {
                 "title": "Aligned Grids",
                 "img": "aligned-grids.gif",
-                "description":
-                    "Aligned grids will bind two or more grid instances so that any column changes in one grid impact the other grid. This allows two grids with different data to be kept horizontally in sync.",
-                "links": [{ "title": "Aligned Grids Example", "url": "/javascript-grid-aligned-grids/#example-aligned-grids" }]
+                "description": "Aligned grids will bind two or more grid instances so that any column changes in one grid impact the other grid. This allows two grids with different data to be kept horizontally in sync.",
+                "links": [
+                    {
+                        "title": "Aligned Grids Example",
+                        "url": "/javascript-grid-aligned-grids/#example-aligned-grids"
+                    }
+                ]
             }
         ]
     }

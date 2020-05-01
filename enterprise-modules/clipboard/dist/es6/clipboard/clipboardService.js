@@ -4,7 +4,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
-import { _, Autowired, Bean, ChangedPath, Constants, CsvUtils, Events, PostConstruct, Optional } from "@ag-grid-community/core";
+import { _, Autowired, Bean, ChangedPath, Constants, Events, PostConstruct, Optional } from "@ag-grid-community/core";
 var ClipboardService = /** @class */ (function () {
     function ClipboardService() {
     }
@@ -25,13 +25,16 @@ var ClipboardService = /** @class */ (function () {
             if (_.missingOrEmpty(data)) {
                 return;
             }
-            var parsedData = CsvUtils.stringToArray(data, _this.gridOptionsWrapper.getClipboardDeliminator());
+            var parsedData = _.stringToArray(data, _this.gridOptionsWrapper.getClipboardDeliminator());
             var userFunc = _this.gridOptionsWrapper.getProcessDataFromClipboardFunc();
             if (userFunc) {
                 parsedData = userFunc({ data: parsedData });
             }
             if (_.missingOrEmpty(parsedData)) {
                 return;
+            }
+            if (_this.gridOptionsWrapper.isSuppressLastEmptyLineOnPaste()) {
+                _this.removeLastLineIfBlank(parsedData);
             }
             var pasteOperation = function (cellsToFlash, updatedRowNodes, focusedCell, changedPath) {
                 var rangeActive = _this.rangeController && _this.rangeController.isMoreThanOneCell();
@@ -176,6 +179,14 @@ var ClipboardService = /** @class */ (function () {
             _this.iterateActiveRanges(true, rowCallback);
         };
         this.doPasteOperation(pasteOperation);
+    };
+    ClipboardService.prototype.removeLastLineIfBlank = function (parsedData) {
+        // remove last row if empty, excel puts empty last row in
+        var lastLine = _.last(parsedData);
+        var lastLineIsBlank = lastLine && lastLine.length === 1 && lastLine[0] === '';
+        if (lastLineIsBlank) {
+            _.removeFromArray(parsedData, lastLine);
+        }
     };
     ClipboardService.prototype.fireRowChanged = function (rowNodes) {
         var _this = this;

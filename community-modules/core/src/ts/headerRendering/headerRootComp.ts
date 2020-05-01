@@ -1,22 +1,20 @@
-import { GridOptionsWrapper } from "../gridOptionsWrapper";
-import { ColumnController } from "../columnController/columnController";
-import { GridPanel } from "../gridPanel/gridPanel";
-import { Column } from "../entities/column";
-import { Autowired, Context, PostConstruct, PreDestroy } from "../context/context";
-import { HeaderContainer } from "./headerContainer";
-import { EventService } from "../eventService";
-import { Events } from "../events";
-import { Component } from "../widgets/component";
-import { RefSelector } from "../widgets/componentAnnotations";
-import { GridApi } from "../gridApi";
-import { AutoWidthCalculator } from "../rendering/autoWidthCalculator";
-import { Constants } from "../constants";
-import { _ } from "../utils";
+import { GridOptionsWrapper } from '../gridOptionsWrapper';
+import { ColumnController } from '../columnController/columnController';
+import { GridPanel } from '../gridPanel/gridPanel';
+import { Autowired, PostConstruct } from '../context/context';
+import { HeaderContainer } from './headerContainer';
+import { EventService } from '../eventService';
+import { Events } from '../events';
+import { Component } from '../widgets/component';
+import { RefSelector } from '../widgets/componentAnnotations';
+import { GridApi } from '../gridApi';
+import { AutoWidthCalculator } from '../rendering/autoWidthCalculator';
+import { Constants } from '../constants';
+import { addOrRemoveCssClass, setDisplayed } from '../utils/dom';
 
 export class HeaderRootComp extends Component {
-
-    private static TEMPLATE =
-        `<div class="ag-header" role="presentation">
+    private static TEMPLATE = /* html */`
+        <div class="ag-header" role="presentation">
             <div class="ag-pinned-left-header" ref="ePinnedLeftHeader" role="presentation"></div>
             <div class="ag-header-viewport" ref="eHeaderViewport" role="presentation">
                 <div class="ag-header-container" ref="eHeaderContainer" role="rowgroup"></div>
@@ -34,10 +32,6 @@ export class HeaderRootComp extends Component {
     @Autowired('eventService') private eventService: EventService;
     @Autowired('gridApi') private gridApi: GridApi;
     @Autowired('autoWidthCalculator') private autoWidthCalculator: AutoWidthCalculator;
-
-    // private pinnedLeftContainer: HeaderContainer;
-    // private pinnedRightContainer: HeaderContainer;
-    // private centerContainer: HeaderContainer;
 
     private childContainers: HeaderContainer[];
 
@@ -103,8 +97,8 @@ export class HeaderRootComp extends Component {
     }
 
     public destroy(): void {
-        super.destroy();
         this.childContainers.forEach(container => container.destroy());
+        super.destroy();
     }
 
     public refreshHeader() {
@@ -113,8 +107,9 @@ export class HeaderRootComp extends Component {
 
     private onPivotModeChanged(): void {
         const pivotMode = this.columnController.isPivotMode();
-        _.addOrRemoveCssClass(this.getGui(), 'ag-pivot-on', pivotMode);
-        _.addOrRemoveCssClass(this.getGui(), 'ag-pivot-off', !pivotMode);
+
+        addOrRemoveCssClass(this.getGui(), 'ag-pivot-on', pivotMode);
+        addOrRemoveCssClass(this.getGui(), 'ag-pivot-off', !pivotMode);
     }
 
     public setHeight(height: number): void {
@@ -146,18 +141,14 @@ export class HeaderRootComp extends Component {
     }
 
     public setLeftVisible(visible: boolean): void {
-        _.setDisplayed(this.ePinnedLeftHeader, visible);
+        setDisplayed(this.ePinnedLeftHeader, visible);
     }
 
     public setRightVisible(visible: boolean): void {
-        _.setDisplayed(this.ePinnedRightHeader, visible);
+        setDisplayed(this.ePinnedRightHeader, visible);
     }
 
     public getHeaderRowCount(): number {
-        if (this.childContainers.length === 0) {
-            return 0;
-        }
-
-        return this.childContainers[0].getRowComps().length;
+        return this.childContainers.length === 0 ? 0 : this.childContainers[0].getRowComps().length;
     }
 }

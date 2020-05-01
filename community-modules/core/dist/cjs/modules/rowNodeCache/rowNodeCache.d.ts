@@ -1,4 +1,4 @@
-// Type definitions for @ag-grid-community/core v23.0.2
+// Type definitions for @ag-grid-community/core v23.1.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { RowNode } from "../../entities/rowNode";
@@ -8,6 +8,8 @@ import { RowNodeBlockLoader } from "./rowNodeBlockLoader";
 import { AgEvent } from "../../events";
 import { NumberSequence } from "../../utils";
 import { IRowNodeBlock } from "../../interfaces/iRowNodeBlock";
+import { EventService } from "../../eventService";
+import { RowRenderer } from "../../rendering/rowRenderer";
 export interface RowNodeCacheParams {
     initialRowCount: number;
     blockSize?: number;
@@ -28,6 +30,8 @@ export declare abstract class RowNodeCache<T extends IRowNodeBlock, P extends Ro
     private static MAX_EMPTY_BLOCKS_TO_KEEP;
     private virtualRowCount;
     private maxRowFound;
+    protected eventService: EventService;
+    protected rowRenderer: RowRenderer;
     protected cacheParams: P;
     private active;
     blocks: {
@@ -45,6 +49,7 @@ export declare abstract class RowNodeCache<T extends IRowNodeBlock, P extends Ro
     isMaxRowFound(): boolean;
     protected onPageLoaded(event: any): void;
     private purgeBlocksIfNeeded;
+    private isBlockCurrentlyDisplayed;
     protected postCreateBlock(newBlock: T): void;
     protected removeBlockFromCache(blockToRemove: T): void;
     protected checkBlockToLoad(): void;
@@ -59,6 +64,7 @@ export declare abstract class RowNodeCache<T extends IRowNodeBlock, P extends Ro
     protected setBlock(id: number, block: T): void;
     protected destroyBlock(block: T): void;
     protected onCacheUpdated(): void;
+    private destroyAllBlocksPastVirtualRowCount;
     purgeCache(): void;
     getRowNodesInRange(firstInRange: RowNode, lastInRange: RowNode): RowNode[];
 }

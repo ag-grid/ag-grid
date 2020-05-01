@@ -1,15 +1,23 @@
-import { Logger, LoggerFactory } from "../logger";
-import { Qualifier, PostConstruct, Bean, Autowired, PreDestroy } from "../context/context";
+import { PostConstruct, Bean, Autowired, PreDestroy } from "../context/context";
 import { Column } from "../entities/column";
+import { ColumnApi } from "../columnController/columnApi";
+import { GridApi } from "../gridApi";
 import { GridOptionsWrapper } from "../gridOptionsWrapper";
 import { DragService, DragListenerParams } from "./dragService";
 import { Environment } from "../environment";
+import { RowDropZoneParams } from "../gridPanel/rowDragFeature";
 import { RowNode } from "../entities/rowNode";
 import { _ } from "../utils";
 
 export interface DragItem {
-    /** When dragging a row, this contains the row node being dragged */
+    /**
+     * When dragging a row, this contains the row node being dragged
+     * When dragging multiple rows, this contains the row that started the drag.
+     */
     rowNode?: RowNode;
+
+    /** When dragging multiple rows, this contains all rows being dragged */
+    rowNodes?: RowNode[];
 
     /** When dragging columns, this contains the columns being dragged */
     columns?: Column[];
@@ -61,6 +69,7 @@ export interface DropTarget {
     onDragging?(params: DraggingEvent): void;
     /** Callback for when drag stops */
     onDragStop?(params: DraggingEvent): void;
+    external?: boolean;
 }
 
 export enum VerticalDirection { Up, Down }
@@ -75,6 +84,9 @@ export interface DraggingEvent {
     dragSource: DragSource;
     dragItem: DragItem;
     fromNudge: boolean;
+    api: GridApi;
+    columnApi: ColumnApi;
+    dropZoneTarget: HTMLElement;
 }
 
 @Bean('dragAndDropService')
@@ -83,6 +95,8 @@ export class DragAndDropService {
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('dragService') private dragService: DragService;
     @Autowired('environment') private environment: Environment;
+    @Autowired('columnApi') private columnApi: ColumnApi;
+    @Autowired('gridApi') private gridApi: GridApi;
 
     public static ICON_PINNED = 'pinned';
     public static ICON_MOVE = 'move';
@@ -95,10 +109,10 @@ export class DragAndDropService {
     public static ICON_HIDE = 'hide';
 
     public static GHOST_TEMPLATE =
-        '<div ref="eWrapper" class="ag-dnd-wrapper ag-unselectable"><div class="ag-dnd-ghost">' +
-        '  <span class="ag-dnd-ghost-icon ag-shake-left-to-right"></span>' +
-        '  <div class="ag-dnd-ghost-label"></div>' +
-        '</div></div>';
+        `<div class="ag-dnd-ghost ag-unselectable">
+            <span class="ag-dnd-ghost-icon ag-shake-left-to-right"></span>
+            <div class="ag-dnd-ghost-label"></div>
+        </div>`;
 
     private dragSourceAndParamsList: { params: DragListenerParams, dragSource: DragSource }[] = [];
 
@@ -107,7 +121,7 @@ export class DragAndDropService {
     private dragSource: DragSource;
     private dragging: boolean;
 
-    private eWrapper: HTMLElement;
+    private eGhost: HTMLElement;
     private eGhostParent: HTMLElement;
     private eGhostIcon: HTMLElement;
 
@@ -219,7 +233,7 @@ export class DragAndDropService {
             this.leaveLastTargetIfExists(mouseEvent, hDirection, vDirection, fromNudge);
             this.enterDragTargetIfExists(dropTarget, mouseEvent, hDirection, vDirection, fromNudge);
             this.lastDropTarget = dropTarget;
-        } else if (dropTarget) {
+        } else if (dropTarget && dropTarget.onDragging) {
             const draggingEvent = this.createDropTargetEvent(dropTarget, mouseEvent, hDirection, vDirection, fromNudge);
             dropTarget.onDragging(draggingEvent);
         }
@@ -287,6 +301,20 @@ export class DragAndDropService {
         this.dropTargets.push(dropTarget);
     }
 
+    public removeDropTarget(dropTarget: DropTarget) {
+        this.dropTargets = this.dropTargets.filter(target => target.getContainer() !== dropTarget.getContainer());
+    }
+
+    public hasExternalDropZones(): boolean {
+        return this.dropTargets.some(zones => zones.external);
+    }
+
+    public findExternalZone(params: RowDropZoneParams): DropTarget {
+        const externalTargets = this.dropTargets.filter(target => target.external);
+
+        return _.find(externalTargets, zone => zone.getContainer() === params.getContainer());
+    }
+
     public getHorizontalDirection(event: MouseEvent): HorizontalDirection {
         const clientX = this.eventLastTime.clientX;
         const eClientX = event.clientX;
@@ -306,17 +334,18 @@ export class DragAndDropService {
     }
 
     public createDropTargetEvent(dropTarget: DropTarget, event: MouseEvent, hDirection: HorizontalDirection, vDirection: VerticalDirection, fromNudge: boolean): DraggingEvent {
-        // localise x and y to the target component
-        const rect = dropTarget.getContainer().getBoundingClientRect();
-        const { dragItem, dragSource } = this;
+        // localise x and y to the target
+        const dropZoneTarget = dropTarget.getContainer();
+        const rect = dropZoneTarget.getBoundingClientRect();
+        const { gridApi: api, columnApi, dragItem, dragSource } = this;
         const x = event.clientX - rect.left;
         const y = event.clientY - rect.top;
 
-        return { event, x, y, vDirection, hDirection, dragSource, fromNudge, dragItem };
+        return { event, x, y, vDirection, hDirection, dragSource, fromNudge, dragItem, api, columnApi, dropZoneTarget };
     }
 
     private positionGhost(event: MouseEvent): void {
-        const ghost = this.eWrapper.querySelector('.ag-dnd-ghost') as HTMLDivElement;
+        const ghost = this.eGhost;
         const ghostRect = ghost.getBoundingClientRect();
         const ghostHeight = ghostRect.height;
 
@@ -326,9 +355,7 @@ export class DragAndDropService {
         const browserWidth = _.getBodyWidth() - 2;
         const browserHeight = _.getBodyHeight() - 2;
 
-        // put ghost vertically in middle of cursor
         let top = event.pageY - (ghostHeight / 2);
-        // horizontally, place cursor just right of icon
         let left = event.pageX - 10;
 
         const usrDocument = this.gridOptionsWrapper.getDocument();
@@ -352,31 +379,31 @@ export class DragAndDropService {
             top = 0;
         }
 
-        ghost.style.left = left + 'px';
-        ghost.style.top = top + 'px';
+        ghost.style.left = `${left}px`;
+        ghost.style.top = `${top}px`;
     }
 
     private removeGhost(): void {
-        if (this.eWrapper && this.eGhostParent) {
-            this.eGhostParent.removeChild(this.eWrapper);
+        if (this.eGhost && this.eGhostParent) {
+            this.eGhostParent.removeChild(this.eGhost);
         }
 
-        this.eWrapper = null;
+        this.eGhost = null;
     }
 
     private createGhost(): void {
-        this.eWrapper = _.loadTemplate(DragAndDropService.GHOST_TEMPLATE);
+        this.eGhost = _.loadTemplate(DragAndDropService.GHOST_TEMPLATE);
         const { theme } = this.environment.getTheme();
 
         if (theme) {
-            _.addCssClass(this.eWrapper, theme);
+            _.addCssClass(this.eGhost, theme);
         }
 
-        this.eGhostIcon = this.eWrapper.querySelector('.ag-dnd-ghost-icon') as HTMLElement;
+        this.eGhostIcon = this.eGhost.querySelector('.ag-dnd-ghost-icon') as HTMLElement;
 
         this.setGhostIcon(null);
 
-        const eText = this.eWrapper.querySelector('.ag-dnd-ghost-label') as HTMLElement;
+        const eText = this.eGhost.querySelector('.ag-dnd-ghost-label') as HTMLElement;
         let dragItemName = this.dragSource.dragItemName;
 
         if (_.isFunction(dragItemName)) {
@@ -385,9 +412,9 @@ export class DragAndDropService {
 
         eText.innerHTML = _.escape(dragItemName as string);
 
-        this.eWrapper.style.height = '25px';
-        this.eWrapper.style.top = '20px';
-        this.eWrapper.style.left = '20px';
+        this.eGhost.style.height = '25px';
+        this.eGhost.style.top = '20px';
+        this.eGhost.style.left = '20px';
 
         const usrDocument = this.gridOptionsWrapper.getDocument();
         this.eGhostParent = usrDocument.querySelector('body') as HTMLElement;
@@ -395,7 +422,7 @@ export class DragAndDropService {
         if (!this.eGhostParent) {
             console.warn('ag-Grid: could not find document body, it is needed for dragging columns');
         } else {
-            this.eGhostParent.appendChild(this.eWrapper);
+            this.eGhostParent.appendChild(this.eGhost);
         }
     }
 

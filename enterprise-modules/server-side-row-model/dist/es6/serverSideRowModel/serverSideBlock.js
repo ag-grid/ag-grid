@@ -307,13 +307,21 @@ var ServerSideBlock = /** @class */ (function (_super) {
         console.warn("ag-Grid: invalid pixel range for server side block " + pixel);
         return 0;
     };
-    ServerSideBlock.prototype.clearRowTops = function (virtualRowCount) {
+    ServerSideBlock.prototype.clearDisplayIndexes = function (virtualRowCount) {
+        this.displayIndexEnd = undefined;
+        this.displayIndexStart = undefined;
         this.forEachRowNode(virtualRowCount, function (rowNode) {
             rowNode.clearRowTop();
+            rowNode.setRowIndex(undefined);
             var hasChildCache = rowNode.group && _.exists(rowNode.childrenCache);
             if (hasChildCache) {
                 var serverSideCache = rowNode.childrenCache;
-                serverSideCache.clearRowTops();
+                serverSideCache.clearDisplayIndexes();
+            }
+            var hasDetailNode = rowNode.master && rowNode.detailNode;
+            if (hasDetailNode) {
+                rowNode.detailNode.clearRowTop();
+                rowNode.detailNode.setRowIndex(undefined);
             }
         });
     };
@@ -321,15 +329,24 @@ var ServerSideBlock = /** @class */ (function (_super) {
         this.displayIndexStart = displayIndexSeq.peek();
         this.blockTop = nextRowTop.value;
         this.forEachRowNode(virtualRowCount, function (rowNode) {
+            // set this row
             rowNode.setRowIndex(displayIndexSeq.next());
             rowNode.setRowTop(nextRowTop.value);
             nextRowTop.value += rowNode.rowHeight;
-            var hasDetailRow = rowNode.master && rowNode.expanded;
+            // set child for master / detail
+            var hasDetailRow = rowNode.master;
             if (hasDetailRow) {
-                rowNode.detailNode.setRowIndex(displayIndexSeq.next());
-                rowNode.detailNode.setRowTop(nextRowTop.value);
-                nextRowTop.value += rowNode.detailNode.rowHeight;
+                if (rowNode.expanded && rowNode.detailNode) {
+                    rowNode.detailNode.setRowIndex(displayIndexSeq.next());
+                    rowNode.detailNode.setRowTop(nextRowTop.value);
+                    nextRowTop.value += rowNode.detailNode.rowHeight;
+                }
+                else if (rowNode.detailNode) {
+                    rowNode.detailNode.clearRowTop();
+                    rowNode.detailNode.setRowIndex(undefined);
+                }
             }
+            // set children for SSRM child rows
             var hasChildCache = rowNode.group && _.exists(rowNode.childrenCache);
             if (hasChildCache) {
                 var serverSideCache = rowNode.childrenCache;
@@ -339,7 +356,7 @@ var ServerSideBlock = /** @class */ (function (_super) {
                 else {
                     // we need to clear the row tops, as the row renderer depends on
                     // this to know if the row should be faded out
-                    serverSideCache.clearRowTops();
+                    serverSideCache.clearDisplayIndexes();
                 }
             }
         });

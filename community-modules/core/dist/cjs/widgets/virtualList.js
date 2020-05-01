@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v23.0.2
+ * @version v23.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -44,7 +44,7 @@ var VirtualList = /** @class */ (function (_super) {
         this.rowHeight = this.getItemHeight();
     };
     VirtualList.getTemplate = function (cssIdentifier) {
-        return "<div class=\"ag-virtual-list-viewport ag-" + cssIdentifier + "-virtual-list-viewport\">\n            <div class=\"ag-virtual-list-container ag-" + cssIdentifier + "-virtual-list-container\"></div>\n        </div>";
+        return /* html */ "\n            <div class=\"ag-virtual-list-viewport ag-" + cssIdentifier + "-virtual-list-viewport\">\n                <div class=\"ag-virtual-list-container ag-" + cssIdentifier + "-virtual-list-container\"></div>\n            </div>";
     };
     VirtualList.prototype.getItemHeight = function () {
         return this.gridOptionsWrapper.getListItemHeight();
@@ -55,7 +55,6 @@ var VirtualList = /** @class */ (function (_super) {
             console.warn('invalid row index for ensureIndexVisible: ' + index);
             return;
         }
-        // let nodeAtIndex = this.rowModel.getRow(index);
         var rowTopPixel = index * this.rowHeight;
         var rowBottomPixel = rowTopPixel + this.rowHeight;
         var eGui = this.getGui();
@@ -91,7 +90,7 @@ var VirtualList = /** @class */ (function (_super) {
         if (utils_1._.missing(this.model)) {
             return;
         }
-        this.eListContainer.style.height = (this.model.getRowCount() * this.rowHeight) + "px";
+        this.eListContainer.style.height = this.model.getRowCount() * this.rowHeight + "px";
         this.clearVirtualRows();
         this.drawVirtualRows();
     };
@@ -153,16 +152,11 @@ var VirtualList = /** @class */ (function (_super) {
     };
     VirtualList.prototype.addScrollListener = function () {
         var _this = this;
-        this.addGuiEventListener('scroll', function () {
-            _this.drawVirtualRows();
-        });
+        this.addGuiEventListener('scroll', function () { return _this.drawVirtualRows(); });
     };
     VirtualList.prototype.setModel = function (model) {
         this.model = model;
     };
-    __decorate([
-        context_1.Autowired('environment')
-    ], VirtualList.prototype, "environment", void 0);
     __decorate([
         context_1.Autowired('gridOptionsWrapper')
     ], VirtualList.prototype, "gridOptionsWrapper", void 0);

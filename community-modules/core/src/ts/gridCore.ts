@@ -1,28 +1,28 @@
-import {GridOptions} from "./entities/gridOptions";
-import {GridOptionsWrapper} from "./gridOptionsWrapper";
-import {ColumnApi} from "./columnController/columnApi";
-import {ColumnController} from "./columnController/columnController";
-import {RowRenderer} from "./rendering/rowRenderer";
-import {FilterManager} from "./filter/filterManager";
-import {EventService} from "./eventService";
-import {GridPanel} from "./gridPanel/gridPanel";
-import {Logger, LoggerFactory} from "./logger";
-import {PopupService} from "./widgets/popupService";
-import {Autowired, Optional, PostConstruct} from "./context/context";
-import {IRowModel} from "./interfaces/iRowModel";
-import {FocusController} from "./focusController";
-import {Component} from "./widgets/component";
-import {IClipboardService} from "./interfaces/iClipboardService";
-import {GridApi} from "./gridApi";
-import {ISideBar} from "./interfaces/iSideBar";
-import {RefSelector} from "./widgets/componentAnnotations";
-import {Events, GridSizeChangedEvent} from "./events";
-import {ResizeObserverService} from "./misc/resizeObserverService";
-import {SideBarDef, SideBarDefParser} from "./entities/sideBar";
-import {_} from "./utils";
-import {IToolPanel} from "./interfaces/iToolPanel";
-import {ModuleNames} from "./modules/moduleNames";
-import {ModuleRegistry} from "./modules/moduleRegistry";
+import { GridOptions } from "./entities/gridOptions";
+import { GridOptionsWrapper } from "./gridOptionsWrapper";
+import { ColumnApi } from "./columnController/columnApi";
+import { ColumnController } from "./columnController/columnController";
+import { RowRenderer } from "./rendering/rowRenderer";
+import { FilterManager } from "./filter/filterManager";
+import { EventService } from "./eventService";
+import { GridPanel } from "./gridPanel/gridPanel";
+import { Logger, LoggerFactory } from "./logger";
+import { PopupService } from "./widgets/popupService";
+import { Autowired, Optional, PostConstruct } from "./context/context";
+import { IRowModel } from "./interfaces/iRowModel";
+import { FocusController } from "./focusController";
+import { Component } from "./widgets/component";
+import { IClipboardService } from "./interfaces/iClipboardService";
+import { GridApi } from "./gridApi";
+import { ISideBar } from "./interfaces/iSideBar";
+import { RefSelector } from "./widgets/componentAnnotations";
+import { Events, GridSizeChangedEvent } from "./events";
+import { ResizeObserverService } from "./misc/resizeObserverService";
+import { SideBarDef, SideBarDefParser } from "./entities/sideBar";
+import { _ } from "./utils";
+import { IToolPanel } from "./interfaces/iToolPanel";
+import { ModuleNames } from "./modules/moduleNames";
+import { ModuleRegistry } from "./modules/moduleRegistry";
 import { Environment } from "./environment";
 
 export class GridCore extends Component {
@@ -69,7 +69,6 @@ export class GridCore extends Component {
         // register with services that need grid core
         [
             this.gridApi,
-            this.filterManager,
             this.rowRenderer,
             this.popupService
         ].forEach(service => service.registerGridCore(this));
@@ -169,7 +168,7 @@ export class GridCore extends Component {
         return this.sideBarComp.isDisplayed();
     }
 
-    public setSideBarVisible(show:boolean) {
+    public setSideBarVisible(show: boolean) {
         if (!this.sideBarComp) {
             if (show) {
                 console.warn('ag-Grid: sideBar is not loaded');
@@ -231,7 +230,7 @@ export class GridCore extends Component {
         return this.sideBarComp.openedItem();
     }
 
-    public openToolPanel(key:string) {
+    public openToolPanel(key: string) {
         if (!this.sideBarComp) {
             console.warn('ag-Grid: toolPanel is only available in ag-Grid Enterprise');
             return;
@@ -244,13 +243,13 @@ export class GridCore extends Component {
         return this.sideBarComp.isToolPanelShowing();
     }
 
-    public destroy() {
-        super.destroy();
+    public destroy(): void {
         this.logger.log('Grid DOM removed');
+        super.destroy();
     }
 
     // Valid values for position are bottom, middle and top
-    public ensureNodeVisible(comparator: any, position: string = 'top') {
+    public ensureNodeVisible(comparator: any, position: string | null = null) {
         if (this.doingVirtualPaging) {
             throw new Error('Cannot use ensureNodeVisible when doing virtual paging, as we cannot check rows that are not in memory');
         }

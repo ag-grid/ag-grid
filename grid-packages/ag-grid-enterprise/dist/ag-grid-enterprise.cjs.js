@@ -1,5 +1,5 @@
 /**
- * ag-grid-enterprise - ag-Grid Enterprise Features * @version v23.0.2
+ * ag-grid-enterprise - ag-Grid Enterprise Features * @version v23.1.0
  * @link http://www.ag-grid.com/
 ' * @license Commercial
  */
@@ -48,10 +48,15 @@ var LicenseManager = /** @class */ (function () {
         return new Date(parseInt(LicenseManager_1.decode(restrictionHashed), 10));
     };
     LicenseManager.extractLicenseComponents = function (licenseKey) {
-        var hashStart = licenseKey.length - 32;
-        var md5 = licenseKey.substring(hashStart);
-        var license = licenseKey.substring(0, hashStart);
-        var _a = LicenseManager_1.extractBracketedInformation(licenseKey), version = _a[0], isTrial = _a[1];
+        // when users copy the license key from a PDF extra zero width characters are sometimes copied too
+        // carriage returns and line feeds are problematic too
+        // all of which causes license key validation to fail - strip these out
+        var cleanedLicenseKey = licenseKey.replace(/[\u200B-\u200D\uFEFF]/g, '');
+        cleanedLicenseKey = cleanedLicenseKey.replace(/\r?\n|\r/g, '');
+        var hashStart = cleanedLicenseKey.length - 32;
+        var md5 = cleanedLicenseKey.substring(hashStart);
+        var license = cleanedLicenseKey.substring(0, hashStart);
+        var _a = LicenseManager_1.extractBracketedInformation(cleanedLicenseKey), version = _a[0], isTrial = _a[1];
         return { md5: md5, license: license, version: version, isTrial: isTrial };
     };
     LicenseManager.prototype.getLicenseDetails = function (licenseKey) {
@@ -251,7 +256,7 @@ var LicenseManager = /** @class */ (function () {
         this.watermarkMessage = "License Expired";
     };
     var LicenseManager_1;
-    LicenseManager.RELEASE_INFORMATION = 'MTU4NDY5MTE5OTAwMA==';
+    LicenseManager.RELEASE_INFORMATION = 'MTU4ODAwODM2MzY3OA==';
     __decorate([
         agGridCommunity.Autowired('md5')
     ], LicenseManager.prototype, "md5", void 0);
@@ -794,12 +799,12 @@ var ToolPanelColumnGroupComp = /** @class */ (function (_super) {
             }
             if (column.isAllowValue()) {
                 columnsToAggregate.push(column);
+                return;
             }
-            else if (column.isAllowRowGroup()) {
+            if (column.isAllowRowGroup()) {
                 columnsToGroup.push(column);
-            }
-            else if (column.isAllowRowGroup()) {
                 columnsToPivot.push(column);
+                return;
             }
         });
         if (columnsToAggregate.length > 0) {
@@ -2104,7 +2109,7 @@ var GroupStage = /** @class */ (function () {
             var infoToKeyMapper = function (item) { return item.key; };
             var oldPath = _this.getExistingPathForNode(childNode, details).map(infoToKeyMapper);
             var newPath = _this.getGroupInfo(childNode, details).map(infoToKeyMapper);
-            var nodeInCorrectPath = agGridCommunity._.compareArrays(oldPath, newPath);
+            var nodeInCorrectPath = agGridCommunity._.areEqual(oldPath, newPath);
             if (!nodeInCorrectPath) {
                 _this.moveNode(childNode, details);
             }
@@ -2251,16 +2256,10 @@ var GroupStage = /** @class */ (function () {
         }
     };
     GroupStage.prototype.areGroupColsEqual = function (d1, d2) {
-        if (d1 == null || d2 == null) {
+        if (d1 == null || d2 == null || d1.pivotMode !== d2.pivotMode) {
             return false;
         }
-        if (d1.pivotMode !== d2.pivotMode) {
-            return false;
-        }
-        if (!agGridCommunity._.compareArrays(d1.groupedCols, d2.groupedCols)) {
-            return false;
-        }
-        return true;
+        return agGridCommunity._.areEqual(d1.groupedCols, d2.groupedCols);
     };
     GroupStage.prototype.shotgunResetEverything = function (details, afterColumnsChanged) {
         var skipStage = afterColumnsChanged ?
@@ -3387,7 +3386,8 @@ var BaseDropZonePanel = /** @class */ (function (_super) {
     };
     BaseDropZonePanel.prototype.init = function (params) {
         this.params = params;
-        this.beans.eventService.addEventListener(agGridCommunity.Events.EVENT_COLUMN_EVERYTHING_CHANGED, this.refreshGui.bind(this));
+        var refreshEvent = this.beans.eventService.addEventListener(agGridCommunity.Events.EVENT_COLUMN_EVERYTHING_CHANGED, this.refreshGui.bind(this));
+        this.addDestroyFunc(function () { return refreshEvent(); });
         this.addDestroyableEventListener(this.beans.gridOptionsWrapper, 'functionsReadOnly', this.refreshGui.bind(this));
         this.setupDropTarget();
         // we don't know if this bean will be initialised before columnController.
@@ -3541,7 +3541,7 @@ var BaseDropZonePanel = /** @class */ (function (_super) {
     BaseDropZonePanel.prototype.rearrangeColumns = function (columnsToAdd) {
         var newColumnList = this.getNonGhostColumns().slice();
         agGridCommunity._.insertArrayIntoArray(newColumnList, columnsToAdd, this.insertIndex);
-        if (agGridCommunity._.shallowCompare(newColumnList, this.getExistingColumns())) {
+        if (agGridCommunity._.areEqual(newColumnList, this.getExistingColumns())) {
             return false;
         }
         else {
@@ -3912,8 +3912,11 @@ var GridHeaderDropZones = /** @class */ (function (_super) {
     }
     GridHeaderDropZones.prototype.postConstruct = function () {
         this.setGui(this.createNorthPanel());
-        this.eventService.addEventListener(agGridCommunity.Events.EVENT_COLUMN_ROW_GROUP_CHANGED, this.onRowGroupChanged.bind(this));
-        this.eventService.addEventListener(agGridCommunity.Events.EVENT_COLUMN_EVERYTHING_CHANGED, this.onRowGroupChanged.bind(this));
+        var events = [
+            this.eventService.addEventListener(agGridCommunity.Events.EVENT_COLUMN_ROW_GROUP_CHANGED, this.onRowGroupChanged.bind(this)),
+            this.eventService.addEventListener(agGridCommunity.Events.EVENT_COLUMN_EVERYTHING_CHANGED, this.onRowGroupChanged.bind(this))
+        ];
+        this.addDestroyFunc(function () { return events.forEach(function (func) { return func(); }); });
         this.onRowGroupChanged();
     };
     GridHeaderDropZones.prototype.createNorthPanel = function () {
@@ -4128,7 +4131,8 @@ var ColumnToolPanel = /** @class */ (function (_super) {
             suppressValues: false,
             suppressPivots: false,
             suppressSyncLayoutWithGrid: false,
-            api: this.gridApi
+            api: this.gridApi,
+            columnApi: this.columnApi
         };
         agGridCommunity._.mergeDeep(defaultParams, params);
         this.params = defaultParams;
@@ -4263,6 +4267,9 @@ var ColumnToolPanel = /** @class */ (function (_super) {
     __decorate$i([
         agGridCommunity.Autowired("gridApi")
     ], ColumnToolPanel.prototype, "gridApi", void 0);
+    __decorate$i([
+        agGridCommunity.Autowired("columnApi")
+    ], ColumnToolPanel.prototype, "columnApi", void 0);
     __decorate$i([
         agGridCommunity.Autowired("eventService")
     ], ColumnToolPanel.prototype, "eventService", void 0);
@@ -4561,7 +4568,8 @@ var ToolPanelWrapper = /** @class */ (function (_super) {
     ToolPanelWrapper.prototype.setToolPanelDef = function (toolPanelDef) {
         this.toolPanelId = toolPanelDef.id;
         var params = {
-            api: this.gridOptionsWrapper.getApi()
+            api: this.gridOptionsWrapper.getApi(),
+            columnApi: this.gridOptionsWrapper.getColumnApi()
         };
         var componentPromise = this.userComponentFactory.newToolPanelComponent(toolPanelDef, params);
         if (componentPromise == null) {
@@ -8900,7 +8908,8 @@ var FiltersToolPanelListPanel = /** @class */ (function (_super) {
             suppressExpandAll: false,
             suppressFilterSearch: false,
             suppressSyncLayoutWithGrid: false,
-            api: this.gridApi
+            api: this.gridApi,
+            columnApi: this.columnApi
         };
         agGridCommunity._.mergeDeep(defaultParams, params);
         this.params = defaultParams;
@@ -9204,6 +9213,9 @@ var FiltersToolPanelListPanel = /** @class */ (function (_super) {
         agGridCommunity.Autowired("gridApi")
     ], FiltersToolPanelListPanel.prototype, "gridApi", void 0);
     __decorate$A([
+        agGridCommunity.Autowired("columnApi")
+    ], FiltersToolPanelListPanel.prototype, "columnApi", void 0);
+    __decorate$A([
         agGridCommunity.Autowired("eventService")
     ], FiltersToolPanelListPanel.prototype, "eventService", void 0);
     __decorate$A([
@@ -9247,7 +9259,8 @@ var FiltersToolPanel = /** @class */ (function (_super) {
             suppressExpandAll: false,
             suppressFilterSearch: false,
             suppressSyncLayoutWithGrid: false,
-            api: this.gridApi
+            api: this.gridApi,
+            columnApi: this.columnApi
         };
         agGridCommunity._.mergeDeep(defaultParams, params);
         this.params = defaultParams;
@@ -9314,10 +9327,13 @@ var FiltersToolPanel = /** @class */ (function (_super) {
         agGridCommunity.RefSelector('filtersToolPanelListPanel')
     ], FiltersToolPanel.prototype, "filtersToolPanelListPanel", void 0);
     __decorate$B([
-        agGridCommunity.Autowired("gridApi")
+        agGridCommunity.Autowired('gridApi')
     ], FiltersToolPanel.prototype, "gridApi", void 0);
     __decorate$B([
-        agGridCommunity.Autowired("eventService")
+        agGridCommunity.Autowired('columnApi')
+    ], FiltersToolPanel.prototype, "columnApi", void 0);
+    __decorate$B([
+        agGridCommunity.Autowired('eventService')
     ], FiltersToolPanel.prototype, "eventService", void 0);
     __decorate$B([
         agGridCommunity.Autowired('columnController')
@@ -9380,7 +9396,7 @@ var ChartDatasource = /** @class */ (function (_super) {
         // make sure enough rows in range to chart. if user filters and less rows, then end row will be
         // the last displayed row, not where the range ends.
         var modelLastRow = this.gridRowModel.getRowCount() - 1;
-        var rangeLastRow = params.endRow > 0 ? Math.min(params.endRow, modelLastRow) : modelLastRow;
+        var rangeLastRow = params.endRow >= 0 ? Math.min(params.endRow, modelLastRow) : modelLastRow;
         var numRows = rangeLastRow - params.startRow + 1;
         var _loop_1 = function (i) {
             var data = {};
@@ -10339,7 +10355,6 @@ var Node = /** @class */ (function () {
         // for performance optimization purposes.
         this.matrix = new Matrix();
         this.inverseMatrix = new Matrix();
-        // TODO: should this be `true` by default as well?
         this._dirtyTransform = false;
         this._scalingX = 1;
         this._scalingY = 1;
@@ -10550,13 +10565,6 @@ var Node = /** @class */ (function () {
         enumerable: true,
         configurable: true
     });
-    /**
-     * Calculates the combined inverse transformation for this node,
-     * and uses it to convert the given transformed point
-     * to the untransformed one.
-     * @param x
-     * @param y
-     */
     Node.prototype.transformPoint = function (x, y) {
         var matrix = Matrix.flyweight(this.matrix);
         var parent = this.parent;
@@ -10566,14 +10574,21 @@ var Node = /** @class */ (function () {
         }
         return matrix.invertSelf().transformPoint(x, y);
     };
+    Node.prototype.inverseTransformPoint = function (x, y) {
+        var matrix = Matrix.flyweight(this.matrix);
+        var parent = this.parent;
+        while (parent) {
+            matrix.preMultiplySelf(parent.matrix);
+            parent = parent.parent;
+        }
+        return matrix.transformPoint(x, y);
+    };
     Object.defineProperty(Node.prototype, "dirtyTransform", {
         get: function () {
             return this._dirtyTransform;
         },
         set: function (value) {
             this._dirtyTransform = value;
-            // TODO: replace this with simply `this.dirty = true`,
-            //       see `set dirty` method.
             if (value) {
                 this.dirty = true;
             }
@@ -11862,93 +11877,118 @@ var Text = /** @class */ (function (_super) {
     return Text;
 }(Shape));
 
+var __assign$1 = (undefined && undefined.__assign) || function () {
+    __assign$1 = Object.assign || function(t) {
+        for (var s, i = 1, n = arguments.length; i < n; i++) {
+            s = arguments[i];
+            for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
+                t[p] = s[p];
+        }
+        return t;
+    };
+    return __assign$1.apply(this, arguments);
+};
 var Observable = /** @class */ (function () {
     function Observable() {
-        this.propertyListeners = new Map(); // property name => property change listeners
-        this.eventListeners = new Map(); // event type => event listeners
+        // Note that these maps can't be specified generically, so they are kept untyped.
+        // Some methods in this class only need generics in their signatures, the generics inside the methods
+        // are just for clarity. The generics in signatures allow for static type checking of user provided
+        // listeners and for type inference, so that the users wouldn't have to specify the type of parameters
+        // of their inline lambdas.
+        this.allPropertyListeners = new Map(); // property name => property change listener => scopes
+        this.allEventListeners = new Map(); // event type => event listener => scopes
     }
-    Observable.prototype.addPropertyListener = function (name, listener) {
-        var propertyListeners = this.propertyListeners;
-        var listeners = propertyListeners.get(name);
-        if (!listeners) {
-            listeners = new Set();
-            propertyListeners.set(name, listeners);
+    Observable.prototype.addPropertyListener = function (name, listener, scope) {
+        if (scope === void 0) { scope = this; }
+        var allPropertyListeners = this.allPropertyListeners;
+        var propertyListeners = allPropertyListeners.get(name);
+        if (!propertyListeners) {
+            propertyListeners = new Map();
+            allPropertyListeners.set(name, propertyListeners);
         }
-        if (!listeners.has(listener)) {
-            listeners.add(listener);
-            return listener;
+        if (!propertyListeners.has(listener)) {
+            var scopes = new Set();
+            propertyListeners.set(listener, scopes);
         }
-        else {
-            console.warn('Listener ', listener, ' already added to ', this);
-        }
+        propertyListeners.get(listener).add(scope);
     };
-    Observable.prototype.removePropertyListener = function (name, listener) {
-        var propertyListeners = this.propertyListeners;
-        var listeners = propertyListeners.get(name);
-        if (listeners) {
+    Observable.prototype.removePropertyListener = function (name, listener, scope) {
+        if (scope === void 0) { scope = this; }
+        var allPropertyListeners = this.allPropertyListeners;
+        var propertyListeners = allPropertyListeners.get(name);
+        if (propertyListeners) {
             if (listener) {
-                listeners.delete(listener);
+                var scopes = propertyListeners.get(listener);
+                scopes.delete(scope);
+                if (!scopes.size) {
+                    propertyListeners.delete(listener);
+                }
             }
             else {
-                listeners.clear();
+                propertyListeners.clear();
             }
         }
     };
     Observable.prototype.notifyPropertyListeners = function (name, oldValue, value) {
         var _this = this;
-        var nameListeners = this.propertyListeners;
-        var listeners = nameListeners.get(name);
-        if (listeners) {
-            listeners.forEach(function (listener) {
-                listener({
-                    type: name,
-                    source: _this,
-                    value: value,
-                    oldValue: oldValue
-                });
+        var allPropertyListeners = this.allPropertyListeners;
+        var propertyListeners = allPropertyListeners.get(name);
+        if (propertyListeners) {
+            propertyListeners.forEach(function (scopes, listener) {
+                scopes.forEach(function (scope) { return listener.call(scope, { type: name, source: _this, value: value, oldValue: oldValue }); });
             });
         }
     };
-    Observable.prototype.addEventListener = function (type, listener) {
-        var eventListeners = this.eventListeners;
-        var listeners = eventListeners.get(type);
-        if (!listeners) {
-            listeners = new Set();
-            eventListeners.set(type, listeners);
+    Observable.prototype.addEventListener = function (type, listener, scope) {
+        if (scope === void 0) { scope = this; }
+        var allEventListeners = this.allEventListeners;
+        var eventListeners = allEventListeners.get(type);
+        if (!eventListeners) {
+            eventListeners = new Map();
+            allEventListeners.set(type, eventListeners);
         }
-        if (!listeners.has(listener)) {
-            listeners.add(listener);
-            return listener;
+        if (!eventListeners.has(listener)) {
+            var scopes = new Set();
+            eventListeners.set(listener, scopes);
         }
-        else {
-            console.warn('Category listener ', listener, ' already added to ', this);
-        }
+        eventListeners.get(listener).add(scope);
     };
-    Observable.prototype.removeEventListener = function (type, listener) {
-        var eventListeners = this.eventListeners;
-        var listeners = eventListeners.get(type);
-        if (listeners) {
+    Observable.prototype.removeEventListener = function (type, listener, scope) {
+        if (scope === void 0) { scope = this; }
+        var allEventListeners = this.allEventListeners;
+        var eventListeners = allEventListeners.get(type);
+        if (eventListeners) {
             if (listener) {
-                listeners.delete(listener);
+                var scopes = eventListeners.get(listener);
+                scopes.delete(scope);
+                if (!scopes.size) {
+                    eventListeners.delete(listener);
+                }
             }
             else {
-                listeners.clear();
+                eventListeners.clear();
             }
         }
     };
     Observable.prototype.notifyEventListeners = function (types) {
-        var eventListeners = this.eventListeners;
+        var _this = this;
+        var allEventListeners = this.allEventListeners;
         types.forEach(function (type) {
-            var listeners = eventListeners.get(type);
+            var listeners = allEventListeners.get(type);
             if (listeners) {
-                listeners.forEach(function (listener) { return listener({ type: type }); });
+                listeners.forEach(function (scopes, listener) {
+                    scopes.forEach(function (scope) { return listener.call(scope, { type: type, source: _this }); });
+                });
             }
         });
     };
     Observable.prototype.fireEvent = function (event) {
-        var listeners = this.eventListeners.get(event.type);
+        var _this = this;
+        var listeners = this.allEventListeners.get(event.type);
         if (listeners) {
-            listeners.forEach(function (listener) { return listener(event); });
+            listeners.forEach(function (scopes, listener) {
+                scopes.forEach(function (scope) { return listener.call(scope, __assign$1(__assign$1({}, event), { source: _this })); });
+            });
         }
     };
     Observable.privateKeyPrefix = '_';
@@ -13002,78 +13042,6 @@ var Line = /** @class */ (function (_super) {
     return Line;
 }(Shape));
 
-var __extends$y = (undefined && undefined.__extends) || (function () {
-    var extendStatics = function (d, b) {
-        extendStatics = Object.setPrototypeOf ||
-            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
-        return extendStatics(d, b);
-    };
-    return function (d, b) {
-        extendStatics(d, b);
-        function __() { this.constructor = d; }
-        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-})();
-function ticks (a, b, count) {
-    var step = tickStep(a, b, count);
-    a = Math.ceil(a / step) * step;
-    b = Math.floor(b / step) * step + step / 2;
-    // Add half a step here so that the array returned by `range` includes the last tick.
-    return range(a, b, step);
-}
-var e10 = Math.sqrt(50);
-var e5 = Math.sqrt(10);
-var e2 = Math.sqrt(2);
-function tickStep(a, b, count) {
-    var rawStep = Math.abs(b - a) / Math.max(0, count);
-    var step = Math.pow(10, Math.floor(Math.log(rawStep) / Math.LN10)); // = Math.log10(rawStep)
-    var error = rawStep / step;
-    if (error >= e10) {
-        step *= 10;
-    }
-    else if (error >= e5) {
-        step *= 5;
-    }
-    else if (error >= e2) {
-        step *= 2;
-    }
-    return b < a ? -step : step;
-}
-function tickIncrement(a, b, count) {
-    var rawStep = (b - a) / Math.max(0, count);
-    var power = Math.floor(Math.log(rawStep) / Math.LN10);
-    var error = rawStep / Math.pow(10, power);
-    return power >= 0
-        ? (error >= e10 ? 10 : error >= e5 ? 5 : error >= e2 ? 2 : 1) * Math.pow(10, power)
-        : -Math.pow(10, -power) / (error >= e10 ? 10 : error >= e5 ? 5 : error >= e2 ? 2 : 1);
-}
-var NumericTicks = /** @class */ (function (_super) {
-    __extends$y(NumericTicks, _super);
-    function NumericTicks(fractionDigits, size) {
-        if (size === void 0) { size = 0; }
-        var _this = _super.call(this, size) || this;
-        _this.fractionDigits = fractionDigits;
-        return _this;
-    }
-    return NumericTicks;
-}(Array));
-function range(a, b, step) {
-    if (step === void 0) { step = 1; }
-    var absStep = Math.abs(step);
-    var fractionDigits = (absStep > 0 && absStep < 1)
-        ? Math.abs(Math.floor(Math.log(absStep) / Math.LN10))
-        : 0;
-    var f = Math.pow(10, fractionDigits);
-    var n = Math.max(0, Math.ceil((b - a) / step)) || 0;
-    var values = new NumericTicks(fractionDigits, n);
-    for (var i = 0; i < n; i++) {
-        var value = a + step * i;
-        values[i] = Math.round(value * f) / f;
-    }
-    return values;
-}
-
 var twoPi = Math.PI * 2;
 /**
  * Normalize the given angle to be in the [0, 2π) interval.
@@ -13926,7 +13894,7 @@ var Path2D = /** @class */ (function () {
     return Path2D;
 }());
 
-var __extends$z = (undefined && undefined.__extends) || (function () {
+var __extends$y = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -13940,7 +13908,7 @@ var __extends$z = (undefined && undefined.__extends) || (function () {
     };
 })();
 var Path = /** @class */ (function (_super) {
-    __extends$z(Path, _super);
+    __extends$y(Path, _super);
     function Path() {
         var _this = _super !== null && _super.apply(this, arguments) || this;
         /**
@@ -14040,7 +14008,7 @@ function toFixed(value, fractionOrSignificantDigits) {
     return value.toFixed(Math.abs(power) - 1 + fractionOrSignificantDigits); // significant digits
 }
 
-var __extends$A = (undefined && undefined.__extends) || (function () {
+var __extends$z = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -14063,7 +14031,7 @@ var ArcType;
  * Elliptical arc node.
  */
 var Arc = /** @class */ (function (_super) {
-    __extends$A(Arc, _super);
+    __extends$z(Arc, _super);
     function Arc() {
         var _this = _super.call(this) || this;
         _this._centerX = 0;
@@ -14566,7 +14534,8 @@ var Axis = /** @class */ (function () {
             });
         }
         var tickFormatter = this.tickFormatter;
-        var fractionDigits = ticks instanceof NumericTicks ? ticks.fractionDigits : 0;
+        // `ticks instanceof NumericTicks` doesn't work here, so we feature detect.
+        var fractionDigits = ticks.fractionDigits >= 0 ? ticks.fractionDigits : 0;
         var labelSelection = groupSelection.selectByClass(Text)
             .each(function (node, datum, index) {
             node.fontStyle = label.fontStyle;
@@ -14697,7 +14666,7 @@ var Axis = /** @class */ (function () {
     return Axis;
 }());
 
-var __extends$B = (undefined && undefined.__extends) || (function () {
+var __extends$A = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -14733,7 +14702,7 @@ var ChartAxisPosition;
     ChartAxisPosition["Radius"] = "radius";
 })(ChartAxisPosition || (ChartAxisPosition = {}));
 var ChartAxis = /** @class */ (function (_super) {
-    __extends$B(ChartAxis, _super);
+    __extends$A(ChartAxis, _super);
     function ChartAxis() {
         var _this = _super !== null && _super.apply(this, arguments) || this;
         _this.keys = [];
@@ -14788,7 +14757,7 @@ var ChartAxis = /** @class */ (function (_super) {
     return ChartAxis;
 }(Axis));
 
-var __extends$C = (undefined && undefined.__extends) || (function () {
+var __extends$B = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -14802,7 +14771,7 @@ var __extends$C = (undefined && undefined.__extends) || (function () {
     };
 })();
 var CategoryAxis = /** @class */ (function (_super) {
-    __extends$C(CategoryAxis, _super);
+    __extends$B(CategoryAxis, _super);
     function CategoryAxis() {
         var _this = this;
         var scale = new BandScale();
@@ -14865,6 +14834,10 @@ function numericExtent(values) {
         return [min, max];
     }
 }
+/**
+ * finds the min and max using a process appropriate for stacked values. Ie,
+ * summing up the positive and negative numbers, and returning the totals of each
+ */
 function findMinMax(values) {
     var min = 0;
     var max = 0;
@@ -15207,7 +15180,7 @@ var TreeLayout = /** @class */ (function () {
     return TreeLayout;
 }());
 
-var __extends$D = (undefined && undefined.__extends) || (function () {
+var __extends$C = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -15221,7 +15194,7 @@ var __extends$D = (undefined && undefined.__extends) || (function () {
     };
 })();
 var GroupedCategoryAxisLabel = /** @class */ (function (_super) {
-    __extends$D(GroupedCategoryAxisLabel, _super);
+    __extends$C(GroupedCategoryAxisLabel, _super);
     function GroupedCategoryAxisLabel() {
         var _this = _super !== null && _super.apply(this, arguments) || this;
         _this.grid = false;
@@ -15239,7 +15212,7 @@ var GroupedCategoryAxisLabel = /** @class */ (function (_super) {
  * The output range of the axis' scale is always numeric (screen coordinates).
  */
 var GroupedCategoryAxis = /** @class */ (function (_super) {
-    __extends$D(GroupedCategoryAxis, _super);
+    __extends$C(GroupedCategoryAxis, _super);
     function GroupedCategoryAxis() {
         var _this = _super.call(this, new BandScale()) || this;
         _this.id = createId(_this);
@@ -15782,7 +15755,7 @@ var Scene = /** @class */ (function () {
     return Scene;
 }());
 
-var __extends$E = (undefined && undefined.__extends) || (function () {
+var __extends$D = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -15801,7 +15774,7 @@ var RectSizing;
     RectSizing[RectSizing["Border"] = 1] = "Border";
 })(RectSizing || (RectSizing = {}));
 var Rect = /** @class */ (function (_super) {
-    __extends$E(Rect, _super);
+    __extends$D(Rect, _super);
     function Rect() {
         var _this = _super !== null && _super.apply(this, arguments) || this;
         _this._x = 0;
@@ -16026,7 +15999,7 @@ var Rect = /** @class */ (function (_super) {
     return Rect;
 }(Path));
 
-var __extends$F = (undefined && undefined.__extends) || (function () {
+var __extends$E = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -16040,7 +16013,7 @@ var __extends$F = (undefined && undefined.__extends) || (function () {
     };
 })();
 var Marker = /** @class */ (function (_super) {
-    __extends$F(Marker, _super);
+    __extends$E(Marker, _super);
     function Marker() {
         var _this = _super !== null && _super.apply(this, arguments) || this;
         _this._x = 0;
@@ -16095,7 +16068,7 @@ var Marker = /** @class */ (function (_super) {
     return Marker;
 }(Path));
 
-var __extends$G = (undefined && undefined.__extends) || (function () {
+var __extends$F = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -16109,7 +16082,7 @@ var __extends$G = (undefined && undefined.__extends) || (function () {
     };
 })();
 var Square = /** @class */ (function (_super) {
-    __extends$G(Square, _super);
+    __extends$F(Square, _super);
     function Square() {
         return _super !== null && _super.apply(this, arguments) || this;
     }
@@ -16127,7 +16100,7 @@ var Square = /** @class */ (function (_super) {
     return Square;
 }(Marker));
 
-var __extends$H = (undefined && undefined.__extends) || (function () {
+var __extends$G = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -16141,7 +16114,7 @@ var __extends$H = (undefined && undefined.__extends) || (function () {
     };
 })();
 var MarkerLabel = /** @class */ (function (_super) {
-    __extends$H(MarkerLabel, _super);
+    __extends$G(MarkerLabel, _super);
     function MarkerLabel() {
         var _this = _super.call(this) || this;
         _this.label = new Text();
@@ -16331,7 +16304,7 @@ var MarkerLabel = /** @class */ (function (_super) {
     return MarkerLabel;
 }(Group));
 
-var __extends$I = (undefined && undefined.__extends) || (function () {
+var __extends$H = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -16345,7 +16318,7 @@ var __extends$I = (undefined && undefined.__extends) || (function () {
     };
 })();
 var Circle = /** @class */ (function (_super) {
-    __extends$I(Circle, _super);
+    __extends$H(Circle, _super);
     function Circle() {
         return _super !== null && _super.apply(this, arguments) || this;
     }
@@ -16360,7 +16333,7 @@ var Circle = /** @class */ (function (_super) {
     return Circle;
 }(Marker));
 
-var __extends$J = (undefined && undefined.__extends) || (function () {
+var __extends$I = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -16374,7 +16347,7 @@ var __extends$J = (undefined && undefined.__extends) || (function () {
     };
 })();
 var Cross = /** @class */ (function (_super) {
-    __extends$J(Cross, _super);
+    __extends$I(Cross, _super);
     function Cross() {
         return _super !== null && _super.apply(this, arguments) || this;
     }
@@ -16401,7 +16374,7 @@ var Cross = /** @class */ (function (_super) {
     return Cross;
 }(Marker));
 
-var __extends$K = (undefined && undefined.__extends) || (function () {
+var __extends$J = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -16415,7 +16388,7 @@ var __extends$K = (undefined && undefined.__extends) || (function () {
     };
 })();
 var Diamond = /** @class */ (function (_super) {
-    __extends$K(Diamond, _super);
+    __extends$J(Diamond, _super);
     function Diamond() {
         return _super !== null && _super.apply(this, arguments) || this;
     }
@@ -16435,7 +16408,7 @@ var Diamond = /** @class */ (function (_super) {
     return Diamond;
 }(Marker));
 
-var __extends$L = (undefined && undefined.__extends) || (function () {
+var __extends$K = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -16449,7 +16422,7 @@ var __extends$L = (undefined && undefined.__extends) || (function () {
     };
 })();
 var Heart = /** @class */ (function (_super) {
-    __extends$L(Heart, _super);
+    __extends$K(Heart, _super);
     function Heart() {
         return _super !== null && _super.apply(this, arguments) || this;
     }
@@ -16470,7 +16443,7 @@ var Heart = /** @class */ (function (_super) {
     return Heart;
 }(Marker));
 
-var __extends$M = (undefined && undefined.__extends) || (function () {
+var __extends$L = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -16484,7 +16457,7 @@ var __extends$M = (undefined && undefined.__extends) || (function () {
     };
 })();
 var Plus = /** @class */ (function (_super) {
-    __extends$M(Plus, _super);
+    __extends$L(Plus, _super);
     function Plus() {
         return _super !== null && _super.apply(this, arguments) || this;
     }
@@ -16512,7 +16485,7 @@ var Plus = /** @class */ (function (_super) {
     return Plus;
 }(Marker));
 
-var __extends$N = (undefined && undefined.__extends) || (function () {
+var __extends$M = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -16526,7 +16499,7 @@ var __extends$N = (undefined && undefined.__extends) || (function () {
     };
 })();
 var Triangle = /** @class */ (function (_super) {
-    __extends$N(Triangle, _super);
+    __extends$M(Triangle, _super);
     function Triangle() {
         return _super !== null && _super.apply(this, arguments) || this;
     }
@@ -16567,10 +16540,13 @@ function getMarker(shape) {
                 return Square;
         }
     }
-    return shape;
+    if (typeof shape === 'function') {
+        return shape;
+    }
+    return Square;
 }
 
-var __extends$O = (undefined && undefined.__extends) || (function () {
+var __extends$N = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -16602,7 +16578,7 @@ var LegendPosition;
     LegendPosition["Left"] = "left";
 })(LegendPosition || (LegendPosition = {}));
 var Legend = /** @class */ (function (_super) {
-    __extends$O(Legend, _super);
+    __extends$N(Legend, _super);
     function Legend() {
         var _this = _super.call(this) || this;
         _this.id = createId(_this);
@@ -16639,32 +16615,11 @@ var Legend = /** @class */ (function (_super) {
         _this.fontSize = 12;
         _this.fontFamily = 'Verdana, sans-serif';
         _this._size = [0, 0];
-        _this.addPropertyListener('data', function (event) {
-            var legend = event.source, data = event.value;
-            legend.group.visible = legend.enabled && data.length > 0;
-        });
-        _this.addPropertyListener('enabled', function (event) {
-            var legend = event.source, value = event.value;
-            legend.group.visible = value && legend.data.length > 0;
-        });
-        _this.addPropertyListener('position', function (event) {
-            var legend = event.source, position = event.value;
-            switch (position) {
-                case 'right':
-                case 'left':
-                    legend.orientation = LegendOrientation.Vertical;
-                    break;
-                case 'bottom':
-                case 'top':
-                    legend.orientation = LegendOrientation.Horizontal;
-                    break;
-            }
-        });
-        _this.addPropertyListener('markerShape', function (event) {
-            _this.itemSelection = _this.itemSelection.setData([]);
-            _this.itemSelection.exit.remove();
-        });
-        _this.addEventListener('change', function () { return _this.update(); });
+        _this.addPropertyListener('data', _this.onDataChange);
+        _this.addPropertyListener('enabled', _this.onEnabledChange);
+        _this.addPropertyListener('position', _this.onPositionChange);
+        _this.addPropertyListener('markerShape', _this.onMarkerShapeChange);
+        _this.addEventListener('change', _this.update);
         return _this;
     }
     Object.defineProperty(Legend.prototype, "size", {
@@ -16674,6 +16629,28 @@ var Legend = /** @class */ (function (_super) {
         enumerable: true,
         configurable: true
     });
+    Legend.prototype.onDataChange = function (event) {
+        this.group.visible = event.value.length > 0 && this.enabled;
+    };
+    Legend.prototype.onEnabledChange = function (event) {
+        this.group.visible = event.value && this.data.length > 0;
+    };
+    Legend.prototype.onPositionChange = function (event) {
+        switch (event.value) {
+            case 'right':
+            case 'left':
+                this.orientation = LegendOrientation.Vertical;
+                break;
+            case 'bottom':
+            case 'top':
+                this.orientation = LegendOrientation.Horizontal;
+                break;
+        }
+    };
+    Legend.prototype.onMarkerShapeChange = function () {
+        this.itemSelection = this.itemSelection.setData([]);
+        this.itemSelection.exit.remove();
+    };
     /**
      * The method is given the desired size of the legend, which only serves as a hint.
      * The vertically oriented legend will take as much horizontal space as needed, but will
@@ -16953,7 +16930,7 @@ var SizeMonitor = /** @class */ (function () {
     return SizeMonitor;
 }());
 
-var __extends$P = (undefined && undefined.__extends) || (function () {
+var __extends$O = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -16973,7 +16950,7 @@ var __decorate$G = (undefined && undefined.__decorate) || function (decorators, 
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 var Series = /** @class */ (function (_super) {
-    __extends$P(Series, _super);
+    __extends$O(Series, _super);
     function Series() {
         var _this = _super !== null && _super.apply(this, arguments) || this;
         _this.id = createId(_this);
@@ -17024,9 +17001,17 @@ var Series = /** @class */ (function (_super) {
         }
         return values;
     };
+    // Returns node data associated with the rendered portion of the series' data.
+    Series.prototype.getNodeData = function () {
+        return [];
+    };
+    Series.prototype.fireNodeClickEvent = function (datum) { };
     Series.prototype.toggleSeriesItem = function (itemId, enabled) {
         this.visible = enabled;
     };
+    // Each series is expected to have its own logic to efficiently update its nodes
+    // on hightlight changes.
+    Series.prototype.onHighlightChange = function () { };
     Series.prototype.fixNumericExtent = function (extent, type) {
         if (!extent) {
             // if (type) {
@@ -17064,7 +17049,7 @@ var Series = /** @class */ (function (_super) {
     return Series;
 }(Observable));
 
-var __extends$Q = (undefined && undefined.__extends) || (function () {
+var __extends$P = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -17084,7 +17069,7 @@ var __decorate$H = (undefined && undefined.__decorate) || function (decorators, 
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 var SeriesMarker = /** @class */ (function (_super) {
-    __extends$Q(SeriesMarker, _super);
+    __extends$P(SeriesMarker, _super);
     function SeriesMarker() {
         var _this = _super !== null && _super.apply(this, arguments) || this;
         _this.enabled = true;
@@ -17128,7 +17113,7 @@ var SeriesMarker = /** @class */ (function (_super) {
     return SeriesMarker;
 }(Observable));
 
-var __extends$R = (undefined && undefined.__extends) || (function () {
+var __extends$Q = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -17142,7 +17127,7 @@ var __extends$R = (undefined && undefined.__extends) || (function () {
     };
 })();
 var CartesianSeries = /** @class */ (function (_super) {
-    __extends$R(CartesianSeries, _super);
+    __extends$Q(CartesianSeries, _super);
     function CartesianSeries() {
         var _a;
         var _this = _super !== null && _super.apply(this, arguments) || this;
@@ -17155,14 +17140,14 @@ var CartesianSeries = /** @class */ (function (_super) {
     return CartesianSeries;
 }(Series));
 var CartesianSeriesMarker = /** @class */ (function (_super) {
-    __extends$R(CartesianSeriesMarker, _super);
+    __extends$Q(CartesianSeriesMarker, _super);
     function CartesianSeriesMarker() {
         return _super !== null && _super.apply(this, arguments) || this;
     }
     return CartesianSeriesMarker;
 }(SeriesMarker));
 
-var __extends$S = (undefined && undefined.__extends) || (function () {
+var __extends$R = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -17175,15 +17160,26 @@ var __extends$S = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
+var __assign$2 = (undefined && undefined.__assign) || function () {
+    __assign$2 = Object.assign || function(t) {
+        for (var s, i = 1, n = arguments.length; i < n; i++) {
+            s = arguments[i];
+            for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
+                t[p] = s[p];
+        }
+        return t;
+    };
+    return __assign$2.apply(this, arguments);
+};
 var __decorate$I = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
-var defaultTooltipCss = "\n.ag-chart-tooltip {\n    display: none;\n    position: absolute;\n    user-select: none;\n    pointer-events: none;\n    white-space: nowrap;\n    z-index: 99999;\n    font: 12px Verdana, sans-serif;\n    color: black;\n    background: rgb(244, 244, 244);\n    border-radius: 5px;\n    box-shadow: 0 0 1px rgba(3, 3, 3, 0.7), 0.5vh 0.5vh 1vh rgba(3, 3, 3, 0.25);\n}\n\n.ag-chart-tooltip-visible {\n    display: table;\n}\n\n.ag-chart-tooltip-title {\n    font-weight: bold;\n    padding: 7px;\n    border-top-left-radius: 5px;\n    border-top-right-radius: 5px;\n    color: white;\n    background-color: #888888;\n    border-top-left-radius: 5px;\n    border-top-right-radius: 5px;\n}\n\n.ag-chart-tooltip-content {\n    padding: 7px;\n    line-height: 1.7em;\n    border-bottom-left-radius: 5px;\n    border-bottom-right-radius: 5px;\n}\n";
+var defaultTooltipCss = "\n.ag-chart-tooltip {\n    display: none;\n    position: absolute;\n    user-select: none;\n    pointer-events: none;\n    white-space: nowrap;\n    z-index: 99999;\n    font: 12px Verdana, sans-serif;\n    color: black;\n    background: rgb(244, 244, 244);\n    border-radius: 5px;\n    box-shadow: 0 0 1px rgba(3, 3, 3, 0.7), 0.5vh 0.5vh 1vh rgba(3, 3, 3, 0.25);\n}\n\n.ag-chart-tooltip-visible {\n    display: table;\n}\n\n.ag-chart-tooltip-title {\n    font-weight: bold;\n    padding: 7px;\n    border-top-left-radius: 5px;\n    border-top-right-radius: 5px;\n    color: white;\n    background-color: #888888;\n    border-top-left-radius: 5px;\n    border-top-right-radius: 5px;\n}\n\n.ag-chart-tooltip-content {\n    padding: 7px;\n    line-height: 1.7em;\n    border-bottom-left-radius: 5px;\n    border-bottom-right-radius: 5px;\n}\n\n.ag-chart-tooltip-arrow::before {\n    content: \"\";\n\n    position: absolute;\n    top: 100%;\n    left: 50%;\n    transform: translateX(-50%);\n\n    border: 6px solid #989898;\n\n    border-left-color: transparent;\n    border-right-color: transparent;\n    border-top-color: #989898;\n    border-bottom-color: transparent;\n\n    width: 0;\n    height: 0;\n\n    margin: 0 auto;\n}\n\n.ag-chart-tooltip-arrow::after {\n    content: \"\";\n\n    position: absolute;\n    top: 100%;\n    left: 50%;\n    transform: translateX(-50%);\n\n    border: 5px solid black;\n\n    border-left-color: transparent;\n    border-right-color: transparent;\n    border-top-color: rgb(244, 244, 244);\n    border-bottom-color: transparent;\n\n    width: 0;\n    height: 0;\n\n    margin: 0 auto;\n}\n";
 var Chart = /** @class */ (function (_super) {
-    __extends$S(Chart, _super);
+    __extends$R(Chart, _super);
     function Chart(document) {
         if (document === void 0) { document = window.document; }
         var _this = _super.call(this) || this;
@@ -17192,26 +17188,12 @@ var Chart = /** @class */ (function (_super) {
         _this.legend = new Legend();
         _this.legendAutoPadding = new Padding();
         _this.captionAutoPadding = 0; // top padding only
-        _this.tooltipOffset = [20, 20];
         _this._container = undefined;
         _this._data = [];
         _this._autoSize = false;
         _this.padding = new Padding(20);
-        _this.onLayoutChange = function () {
-            _this.layoutPending = true;
-        };
-        _this.onLegendPositionChange = function () {
-            _this.legendAutoPadding.clear();
-            _this.layoutPending = true;
-        };
         _this._axes = [];
         _this._series = [];
-        _this.scheduleLayout = function () {
-            _this.layoutPending = true;
-        };
-        _this.scheduleData = function () {
-            _this.dataPending = true;
-        };
         _this._axesChanged = false;
         _this._seriesChanged = false;
         _this.layoutCallbackId = 0;
@@ -17230,27 +17212,57 @@ var Chart = /** @class */ (function (_super) {
             }
         };
         _this.dataCallbackId = 0;
-        _this.updateLegend = function () {
-            var legendData = [];
-            _this.series.filter(function (s) { return s.showInLegend; }).forEach(function (series) { return series.listSeriesItems(legendData); });
-            _this.legend.data = legendData;
-        };
         _this.onMouseMove = function (event) {
+            var _a = _this, lastPick = _a.lastPick, tooltipTracking = _a.tooltipTracking;
             var pick = _this.pickSeriesNode(event.offsetX, event.offsetY);
-            if (pick) {
+            var nodeDatum;
+            if (pick && pick.node instanceof Shape) {
                 var node = pick.node;
-                if (node instanceof Shape) {
-                    if (!_this.lastPick || // cursor moved from empty space to a node
-                        _this.lastPick.node !== node) { // cursor moved from one node to another
-                        _this.onSeriesNodePick(event, pick.series, node);
+                nodeDatum = node.datum;
+                if (lastPick && lastPick.datum === nodeDatum) {
+                    lastPick.node = node;
+                }
+                // Marker nodes will have the `point` info in their datums.
+                // Highlight if not a marker node or, if not in the tracking mode, highlight markers too.
+                if ((!node.datum.point || !tooltipTracking)) {
+                    if (!lastPick // cursor moved from empty space to a node
+                        || lastPick.node !== node) { // cursor moved from one node to another
+                        _this.onSeriesDatumPick(event, node.datum, node);
                     }
                     else if (pick.series.tooltipEnabled) { // cursor moved within the same node
                         _this.showTooltip(event);
                     }
+                    // A non-marker node (takes precedence over marker nodes) was highlighted.
+                    // Or we are not in the tracking mode.
+                    // Either way, we are done at this point.
+                    return;
                 }
             }
-            else if (_this.lastPick) { // cursor moved from a node to empty space
-                _this.lastPick.series.dehighlightNode();
+            var hideTooltip = false;
+            // In tracking mode a tooltip is shown for the closest rendered datum.
+            // This makes it easier to show tooltips when markers are small and/or plentiful
+            // and also gives the ability to show tooltips even when the series were configured
+            // to not render markers.
+            if (tooltipTracking) {
+                var closestDatum = _this.pickClosestSeriesNodeDatum(event.offsetX, event.offsetY);
+                if (closestDatum && closestDatum.point) {
+                    var _b = closestDatum.point, x = _b.x, y = _b.y;
+                    var canvas = _this.scene.canvas;
+                    var point = closestDatum.series.group.inverseTransformPoint(x, y);
+                    var canvasRect = canvas.element.getBoundingClientRect();
+                    _this.onSeriesDatumPick({
+                        pageX: Math.round(canvasRect.left + window.pageXOffset + point.x),
+                        pageY: Math.round(canvasRect.top + window.pageYOffset + point.y)
+                    }, closestDatum, nodeDatum === closestDatum ? pick.node : undefined);
+                }
+                else {
+                    hideTooltip = true;
+                }
+            }
+            if (lastPick && (hideTooltip || !tooltipTracking)) {
+                // cursor moved from a non-marker node to empty space
+                // lastPick.datum.series.dehighlightDatum();
+                _this.dehighlightDatum();
                 _this.hideTooltip();
                 _this.lastPick = undefined;
             }
@@ -17259,16 +17271,15 @@ var Chart = /** @class */ (function (_super) {
             _this.toggleTooltip(false);
         };
         _this.onClick = function (event) {
-            var datum = _this.legend.getDatumForPoint(event.offsetX, event.offsetY);
-            if (datum) {
-                var id_1 = datum.id, itemId = datum.itemId, enabled = datum.enabled;
-                var series = find(_this.series, function (series) { return series.id === id_1; });
-                if (series) {
-                    series.toggleSeriesItem(itemId, !enabled);
-                }
-            }
+            _this.checkSeriesNodeClick();
+            _this.checkLegendClick(event);
         };
         _this._tooltipClass = Chart.defaultTooltipClass;
+        /**
+         * If `true`, the tooltip will be shown for the marker closest to the mouse cursor.
+         * Only has effect on series with markers.
+         */
+        _this.tooltipTracking = true;
         var root = new Group();
         var background = _this.background;
         background.fill = 'white';
@@ -17283,8 +17294,8 @@ var Chart = /** @class */ (function (_super) {
         scene.container = element;
         _this.autoSize = true;
         var legend = _this.legend;
-        legend.addEventListener('layoutChange', _this.onLayoutChange);
-        legend.addPropertyListener('position', _this.onLegendPositionChange);
+        legend.addEventListener('layoutChange', _this.onLayoutChange, _this);
+        legend.addPropertyListener('position', _this.onLegendPositionChange, _this);
         _this.tooltipElement = document.createElement('div');
         _this.tooltipClass = '';
         document.body.appendChild(_this.tooltipElement);
@@ -17295,20 +17306,9 @@ var Chart = /** @class */ (function (_super) {
             document.head.insertBefore(styleElement, document.head.querySelector('style'));
             Chart.tooltipDocuments.push(document);
         }
-        _this.setupListeners(scene.canvas.element);
-        var captionListener = (function (event) {
-            var chart = event.source, caption = event.value, oldCaption = event.oldValue;
-            if (oldCaption) {
-                oldCaption.removeEventListener('change', chart.onLayoutChange);
-                chart.scene.root.removeChild(oldCaption.node);
-            }
-            if (caption) {
-                caption.addEventListener('change', chart.onLayoutChange);
-                chart.scene.root.appendChild(caption.node);
-            }
-        });
-        _this.addPropertyListener('title', captionListener);
-        _this.addPropertyListener('subtitle', captionListener);
+        _this.setupDomListeners(scene.canvas.element);
+        _this.addPropertyListener('title', _this.onCaptionChange);
+        _this.addPropertyListener('subtitle', _this.onCaptionChange);
         _this.addEventListener('layoutChange', function () { return _this.layoutPending = true; });
         return _this;
     }
@@ -17406,9 +17406,26 @@ var Chart = /** @class */ (function (_super) {
         }
         SizeMonitor.unobserve(this.element);
         this.container = undefined;
-        this.legend.removeEventListener('layoutChange', this.onLayoutChange);
-        this.cleanupListeners(this.scene.canvas.element);
+        this.cleanupDomListeners(this.scene.canvas.element);
         this.scene.container = undefined;
+    };
+    Chart.prototype.onLayoutChange = function () {
+        this.layoutPending = true;
+    };
+    Chart.prototype.onLegendPositionChange = function () {
+        this.legendAutoPadding.clear();
+        this.layoutPending = true;
+    };
+    Chart.prototype.onCaptionChange = function (event) {
+        var value = event.value, oldValue = event.oldValue;
+        if (oldValue) {
+            oldValue.removeEventListener('change', this.onLayoutChange, this);
+            this.scene.root.removeChild(oldValue.node);
+        }
+        if (value) {
+            value.addEventListener('change', this.onLayoutChange, this);
+            this.scene.root.appendChild(value.node);
+        }
     };
     Object.defineProperty(Chart.prototype, "element", {
         get: function () {
@@ -17445,6 +17462,15 @@ var Chart = /** @class */ (function (_super) {
         enumerable: true,
         configurable: true
     });
+    Chart.prototype.scheduleLayout = function () {
+        this.layoutPending = true;
+    };
+    Chart.prototype.scheduleData = function () {
+        // To prevent the chart from thinking the cursor is over the same node
+        // after a change to data (the nodes are reused on data changes).
+        this.dehighlightDatum();
+        this.dataPending = true;
+    };
     Chart.prototype.addSeries = function (series, before) {
         var _a = this, allSeries = _a.series, seriesRoot = _a.seriesRoot;
         var canAdd = allSeries.indexOf(series) < 0;
@@ -17470,15 +17496,17 @@ var Chart = /** @class */ (function (_super) {
         if (!series.data) {
             series.data = this.data;
         }
-        series.addEventListener('layoutChange', this.scheduleLayout);
-        series.addEventListener('dataChange', this.scheduleData);
-        series.addEventListener('legendChange', this.updateLegend);
+        series.addEventListener('layoutChange', this.scheduleLayout, this);
+        series.addEventListener('dataChange', this.scheduleData, this);
+        series.addEventListener('legendChange', this.updateLegend, this);
+        series.addEventListener('nodeClick', this.onSeriesNodeClick, this);
     };
     Chart.prototype.freeSeries = function (series) {
         series.chart = undefined;
-        series.removeEventListener('layoutChange', this.scheduleLayout);
-        series.removeEventListener('dataChange', this.scheduleData);
-        series.removeEventListener('legendChange', this.updateLegend);
+        series.removeEventListener('layoutChange', this.scheduleLayout, this);
+        series.removeEventListener('dataChange', this.scheduleData, this);
+        series.removeEventListener('legendChange', this.updateLegend, this);
+        series.removeEventListener('nodeClick', this.onSeriesNodeClick, this);
     };
     Chart.prototype.addSeriesAfter = function (series, after) {
         var _a = this, allSeries = _a.series, seriesRoot = _a.seriesRoot;
@@ -17674,6 +17702,11 @@ var Chart = /** @class */ (function (_super) {
         this.updateLegend();
         this.layoutPending = true;
     };
+    Chart.prototype.updateLegend = function () {
+        var legendData = [];
+        this.series.filter(function (s) { return s.showInLegend; }).forEach(function (series) { return series.listSeriesItems(legendData); });
+        this.legend.data = legendData;
+    };
     Chart.prototype.positionCaptions = function () {
         var _a = this, title = _a.title, subtitle = _a.subtitle;
         var titleVisible = false;
@@ -17752,16 +17785,17 @@ var Chart = /** @class */ (function (_super) {
         legendGroup.translationX = Math.floor(translationX + legendGroup.translationX);
         legendGroup.translationY = Math.floor(translationY + legendGroup.translationY);
     };
-    Chart.prototype.setupListeners = function (chartElement) {
+    Chart.prototype.setupDomListeners = function (chartElement) {
         chartElement.addEventListener('mousemove', this.onMouseMove);
         chartElement.addEventListener('mouseout', this.onMouseOut);
         chartElement.addEventListener('click', this.onClick);
     };
-    Chart.prototype.cleanupListeners = function (chartElement) {
+    Chart.prototype.cleanupDomListeners = function (chartElement) {
         chartElement.removeEventListener('mousemove', this.onMouseMove);
         chartElement.removeEventListener('mouseout', this.onMouseMove);
         chartElement.removeEventListener('click', this.onClick);
     };
+    // x/y are local canvas coordinates in CSS pixels, not actual pixels
     Chart.prototype.pickSeriesNode = function (x, y) {
         var allSeries = this.series;
         var node = undefined;
@@ -17776,18 +17810,88 @@ var Chart = /** @class */ (function (_super) {
             }
         }
     };
-    Chart.prototype.onSeriesNodePick = function (event, series, node) {
+    // Provided x/y are in canvas coordinates.
+    Chart.prototype.pickClosestSeriesNodeDatum = function (x, y) {
+        if (!this.seriesRect || !this.seriesRect.containsPoint(x, y)) {
+            return undefined;
+        }
+        var allSeries = this.series;
+        function getDistance(p1, p2) {
+            return Math.sqrt(Math.pow((p1.x - p2.x), 2) + Math.pow((p1.y - p2.y), 2));
+        }
+        var minDistance = Infinity;
+        var closestDatum;
+        var _loop_1 = function (i) {
+            var series = allSeries[i];
+            if (!series.visible) {
+                return "continue";
+            }
+            var hitPoint = series.group.transformPoint(x, y);
+            series.getNodeData().forEach(function (datum) {
+                if (!datum.point) {
+                    return;
+                }
+                var distance = getDistance(hitPoint, datum.point);
+                if (distance < minDistance) {
+                    minDistance = distance;
+                    closestDatum = datum;
+                }
+            });
+        };
+        for (var i = allSeries.length - 1; i >= 0; i--) {
+            _loop_1(i);
+        }
+        if (closestDatum) {
+            return closestDatum;
+        }
+    };
+    Chart.prototype.checkSeriesNodeClick = function () {
+        var lastPick = this.lastPick;
+        if (lastPick && lastPick.node) {
+            var datum = this.lastPick.datum;
+            datum.series.fireNodeClickEvent(datum);
+        }
+    };
+    Chart.prototype.onSeriesNodeClick = function (event) {
+        this.fireEvent(__assign$2(__assign$2({}, event), { type: 'seriesNodeClick' }));
+    };
+    Chart.prototype.checkLegendClick = function (event) {
+        var datum = this.legend.getDatumForPoint(event.offsetX, event.offsetY);
+        if (datum) {
+            var id_1 = datum.id, itemId = datum.itemId, enabled = datum.enabled;
+            var series = find(this.series, function (series) { return series.id === id_1; });
+            if (series) {
+                series.toggleSeriesItem(itemId, !enabled);
+                if (enabled) {
+                    this.hideTooltip();
+                }
+            }
+        }
+    };
+    Chart.prototype.onSeriesDatumPick = function (meta, datum, node) {
         if (this.lastPick) {
-            this.lastPick.series.dehighlightNode();
+            // this.lastPick.datum.series.dehighlightDatum();
+            this.dehighlightDatum();
         }
         this.lastPick = {
-            series: series,
+            datum: datum,
             node: node
         };
-        series.highlightNode(node);
-        var html = series.tooltipEnabled && series.getTooltipHtml(node.datum);
+        this.highlightDatum(datum);
+        // datum.series.highlightDatum(datum);
+        var html = datum.series.tooltipEnabled && datum.series.getTooltipHtml(datum);
         if (html) {
-            this.showTooltip(event, html);
+            this.showTooltip(meta, html);
+        }
+    };
+    Chart.prototype.highlightDatum = function (datum) {
+        this.highlightedDatum = datum;
+        this.series.forEach(function (s) { return s.onHighlightChange(); });
+    };
+    Chart.prototype.dehighlightDatum = function () {
+        if (this.highlightedDatum) {
+            this.highlightedDatum = undefined;
+            this.series.forEach(function (s) { return s.onHighlightChange(); });
         }
     };
     Object.defineProperty(Chart.prototype, "tooltipClass", {
@@ -17804,13 +17908,19 @@ var Chart = /** @class */ (function (_super) {
         configurable: true
     });
     Chart.prototype.toggleTooltip = function (visible) {
+        if (!visible && this.lastPick) {
+            this.dehighlightDatum();
+            this.lastPick = undefined;
+        }
+        this.updateTooltipClass(visible);
+    };
+    Chart.prototype.updateTooltipClass = function (visible, constrained) {
         var classList = [Chart.defaultTooltipClass, this.tooltipClass];
-        if (visible) {
+        if (visible === true) {
             classList.push(Chart.defaultTooltipClass + "-visible");
         }
-        else if (this.lastPick) {
-            this.lastPick.series.dehighlightNode();
-            this.lastPick = undefined;
+        if (constrained !== true) {
+            classList.push(Chart.defaultTooltipClass + "-arrow");
         }
         this.tooltipElement.setAttribute('class', classList.join(' '));
     };
@@ -17818,10 +17928,9 @@ var Chart = /** @class */ (function (_super) {
      * Shows tooltip at the given event's coordinates.
      * If the `html` parameter is missing, moves the existing tooltip to the new position.
      */
-    Chart.prototype.showTooltip = function (event, html) {
+    Chart.prototype.showTooltip = function (meta, html) {
         var el = this.tooltipElement;
-        var offset = this.tooltipOffset;
-        var parent = el.parentElement;
+        var container = this.container;
         if (html !== undefined) {
             el.innerHTML = html;
         }
@@ -17831,14 +17940,20 @@ var Chart = /** @class */ (function (_super) {
         if (html) {
             this.toggleTooltip(true);
         }
-        var tooltipRect = el.getBoundingClientRect();
-        var top = event.pageY + offset[1];
-        var left = event.pageX + offset[0];
-        if (tooltipRect &&
-            parent &&
-            parent.parentElement &&
-            (left - pageXOffset + tooltipRect.width > parent.parentElement.offsetWidth)) {
-            left -= tooltipRect.width + offset[0] * 2;
+        var left = meta.pageX - el.clientWidth / 2;
+        var top = meta.pageY - el.clientHeight - 8;
+        if (container) {
+            var tooltipRect = el.getBoundingClientRect();
+            var minLeft = 0;
+            var maxLeft = window.innerWidth - tooltipRect.width;
+            if (left < minLeft) {
+                left = minLeft;
+                this.updateTooltipClass(true, true);
+            }
+            else if (left > maxLeft) {
+                left = maxLeft;
+                this.updateTooltipClass(true, true);
+            }
         }
         el.style.left = left + "px";
         el.style.top = top + "px";
@@ -17860,7 +17975,7 @@ var Chart = /** @class */ (function (_super) {
     return Chart;
 }(Observable));
 
-var __extends$T = (undefined && undefined.__extends) || (function () {
+var __extends$S = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -17875,12 +17990,11 @@ var __extends$T = (undefined && undefined.__extends) || (function () {
 })();
 // import { ClipRect } from "../scene/clipRect";
 var CartesianChart = /** @class */ (function (_super) {
-    __extends$T(CartesianChart, _super);
+    __extends$S(CartesianChart, _super);
     function CartesianChart(document) {
         if (document === void 0) { document = window.document; }
         var _this = _super.call(this, document) || this;
         _this._seriesRoot = new Group();
-        _this._updateAxes = _this.updateAxes.bind(_this);
         // Prevent the scene from rendering chart components in an invalid state
         // (before first layout is performed).
         _this.scene.root.visible = false;
@@ -17902,12 +18016,7 @@ var CartesianChart = /** @class */ (function (_super) {
         }
         this.scene.root.visible = true;
         var _a = this, width = _a.width, height = _a.height, axes = _a.axes, legend = _a.legend;
-        var shrinkRect = {
-            x: 0,
-            y: 0,
-            width: width,
-            height: height
-        };
+        var shrinkRect = new BBox(0, 0, width, height);
         this.positionCaptions();
         this.positionLegend();
         if (legend.enabled && legend.data.length) {
@@ -18001,6 +18110,7 @@ var CartesianChart = /** @class */ (function (_super) {
             }
             // axis.tick.count = Math.abs(axis.range[1] - axis.range[0]) > 200 ? 10 : 5;
         });
+        this.seriesRect = shrinkRect;
         this.series.forEach(function (series) {
             series.group.translationX = Math.floor(shrinkRect.x);
             series.group.translationY = Math.floor(shrinkRect.y);
@@ -18016,11 +18126,11 @@ var CartesianChart = /** @class */ (function (_super) {
     };
     CartesianChart.prototype.initSeries = function (series) {
         _super.prototype.initSeries.call(this, series);
-        series.addEventListener('dataProcessed', this._updateAxes);
+        series.addEventListener('dataProcessed', this.updateAxes, this);
     };
     CartesianChart.prototype.freeSeries = function (series) {
         _super.prototype.freeSeries.call(this, series);
-        series.removeEventListener('dataProcessed', this._updateAxes);
+        series.removeEventListener('dataProcessed', this.updateAxes, this);
     };
     CartesianChart.prototype.updateAxes = function () {
         this.axes.forEach(function (axis) {
@@ -18045,7 +18155,7 @@ var CartesianChart = /** @class */ (function (_super) {
     return CartesianChart;
 }(Chart));
 
-var __extends$U = (undefined && undefined.__extends) || (function () {
+var __extends$T = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -18059,7 +18169,7 @@ var __extends$U = (undefined && undefined.__extends) || (function () {
     };
 })();
 var GroupedCategoryChart = /** @class */ (function (_super) {
-    __extends$U(GroupedCategoryChart, _super);
+    __extends$T(GroupedCategoryChart, _super);
     function GroupedCategoryChart() {
         return _super !== null && _super.apply(this, arguments) || this;
     }
@@ -18226,7 +18336,7 @@ var palettes = (function () {
     return map;
 })();
 
-var __extends$V = (undefined && undefined.__extends) || (function () {
+var __extends$U = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -18240,7 +18350,7 @@ var __extends$V = (undefined && undefined.__extends) || (function () {
     };
 })();
 var PolarSeries = /** @class */ (function (_super) {
-    __extends$V(PolarSeries, _super);
+    __extends$U(PolarSeries, _super);
     function PolarSeries() {
         var _a;
         var _this = _super !== null && _super.apply(this, arguments) || this;
@@ -18267,14 +18377,14 @@ var PolarSeries = /** @class */ (function (_super) {
     return PolarSeries;
 }(Series));
 var PolarSeriesMarker = /** @class */ (function (_super) {
-    __extends$V(PolarSeriesMarker, _super);
+    __extends$U(PolarSeriesMarker, _super);
     function PolarSeriesMarker() {
         return _super !== null && _super.apply(this, arguments) || this;
     }
     return PolarSeriesMarker;
 }(SeriesMarker));
 
-var __extends$W = (undefined && undefined.__extends) || (function () {
+var __extends$V = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -18294,7 +18404,7 @@ var __decorate$J = (undefined && undefined.__decorate) || function (decorators, 
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 var PolarChart = /** @class */ (function (_super) {
-    __extends$W(PolarChart, _super);
+    __extends$V(PolarChart, _super);
     function PolarChart(document) {
         if (document === void 0) { document = window.document; }
         var _this = _super.call(this, document) || this;
@@ -18310,12 +18420,7 @@ var PolarChart = /** @class */ (function (_super) {
         configurable: true
     });
     PolarChart.prototype.performLayout = function () {
-        var shrinkRect = {
-            x: 0,
-            y: 0,
-            width: this.width,
-            height: this.height
-        };
+        var shrinkRect = new BBox(0, 0, this.width, this.height);
         this.positionCaptions();
         this.positionLegend();
         var captionAutoPadding = this.captionAutoPadding;
@@ -18350,6 +18455,7 @@ var PolarChart = /** @class */ (function (_super) {
         shrinkRect.y += padding.top;
         shrinkRect.width -= padding.left + padding.right;
         shrinkRect.height -= padding.top + padding.bottom;
+        this.seriesRect = shrinkRect;
         var centerX = shrinkRect.x + shrinkRect.width / 2;
         var centerY = shrinkRect.y + shrinkRect.height / 2;
         var radius = Math.min(shrinkRect.width, shrinkRect.height) / 2;
@@ -18433,7 +18539,7 @@ function equal(a, b) {
     return a !== a && b !== b;
 }
 
-var __extends$X = (undefined && undefined.__extends) || (function () {
+var __extends$W = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -18453,7 +18559,7 @@ var __decorate$K = (undefined && undefined.__decorate) || function (decorators, 
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 var AreaSeries = /** @class */ (function (_super) {
-    __extends$X(AreaSeries, _super);
+    __extends$W(AreaSeries, _super);
     function AreaSeries() {
         var _this = _super.call(this) || this;
         _this.areaGroup = _this.group.appendChild(new Group);
@@ -18462,6 +18568,7 @@ var AreaSeries = /** @class */ (function (_super) {
         _this.areaSelection = Selection.select(_this.areaGroup).selectAll();
         _this.strokeSelection = Selection.select(_this.strokeGroup).selectAll();
         _this.markerSelection = Selection.select(_this.markerGroup).selectAll();
+        _this.markerSelectionData = [];
         /**
          * The assumption is that the values will be reset (to `true`)
          * in the {@link yKeys} setter.
@@ -18484,13 +18591,11 @@ var AreaSeries = /** @class */ (function (_super) {
         _this._yKeys = [];
         _this.yNames = [];
         _this.strokeWidth = 2;
-        _this.highlightStyle = {
-            fill: 'yellow'
-        };
-        _this.addEventListener('update', function () { return _this.update(); });
+        _this.highlightStyle = { fill: 'yellow' };
+        _this.addEventListener('update', _this.update);
         _this.marker.enabled = false;
-        _this.marker.addPropertyListener('shape', function () { return _this.onMarkerShapeChange(); });
-        _this.marker.addEventListener('change', function () { return _this.update(); });
+        _this.marker.addPropertyListener('shape', _this.onMarkerShapeChange, _this);
+        _this.marker.addEventListener('change', _this.update, _this);
         return _this;
     }
     AreaSeries.prototype.onMarkerShapeChange = function () {
@@ -18544,16 +18649,8 @@ var AreaSeries = /** @class */ (function (_super) {
         enumerable: true,
         configurable: true
     });
-    AreaSeries.prototype.highlightNode = function (node) {
-        if (!(node instanceof Marker)) {
-            return;
-        }
-        this.highlightedNode = node;
-        this.scheduleLayout();
-    };
-    AreaSeries.prototype.dehighlightNode = function () {
-        this.highlightedNode = undefined;
-        this.scheduleLayout();
+    AreaSeries.prototype.onHighlightChange = function () {
+        this.updateMarkerNodes();
     };
     AreaSeries.prototype.processData = function () {
         var _a = this, xKey = _a.xKey, yKeys = _a.yKeys, seriesItemEnabled = _a.seriesItemEnabled;
@@ -18643,8 +18740,11 @@ var AreaSeries = /** @class */ (function (_super) {
         this.updateAreaSelection(areaSelectionData);
         this.updateStrokeSelection(areaSelectionData);
         this.updateMarkerSelection(markerSelectionData);
+        this.updateMarkerNodes();
+        this.markerSelectionData = markerSelectionData;
     };
     AreaSeries.prototype.generateSelectionData = function () {
+        var _this = this;
         var _a = this, yKeys = _a.yKeys, data = _a.data, xData = _a.xData, yData = _a.yData, marker = _a.marker, fills = _a.fills, strokes = _a.strokes, xScale = _a.xAxis.scale, yScale = _a.yAxis.scale;
         var xOffset = (xScale.bandwidth || 0) / 2;
         var yOffset = (yScale.bandwidth || 0) / 2;
@@ -18664,11 +18764,11 @@ var AreaSeries = /** @class */ (function (_super) {
                 var yValue = seriesDatum[yKey];
                 if (marker) {
                     markerSelectionData.push({
+                        series: _this,
                         seriesDatum: seriesDatum,
                         yValue: yValue,
                         yKey: yKey,
-                        x: x,
-                        y: y,
+                        point: { x: x, y: y },
                         fill: fills[j % fills.length],
                         stroke: strokes[j % strokes.length]
                     });
@@ -18752,24 +18852,26 @@ var AreaSeries = /** @class */ (function (_super) {
         this.strokeSelection = strokeSelection;
     };
     AreaSeries.prototype.updateMarkerSelection = function (markerSelectionData) {
-        var _a = this, marker = _a.marker, xKey = _a.xKey;
-        if (!marker.shape) {
-            return;
-        }
+        var marker = this.marker;
+        var data = marker.shape ? markerSelectionData : [];
         var MarkerShape = getMarker(marker.shape);
+        var updateMarkers = this.markerSelection.setData(data);
+        updateMarkers.exit.remove();
+        var enterMarkers = updateMarkers.enter.append(MarkerShape);
+        this.markerSelection = updateMarkers.merge(enterMarkers);
+    };
+    AreaSeries.prototype.updateMarkerNodes = function () {
+        var marker = this.marker;
         var markerFormatter = marker.formatter;
         var markerStrokeWidth = marker.strokeWidth !== undefined ? marker.strokeWidth : this.strokeWidth;
         var markerSize = marker.size;
-        var _b = this, seriesItemEnabled = _b.seriesItemEnabled, highlightedNode = _b.highlightedNode;
-        var _c = this.highlightStyle, highlightFill = _c.fill, highlightStroke = _c.stroke;
-        var updateMarkers = this.markerSelection.setData(markerSelectionData);
-        updateMarkers.exit.remove();
-        var enterMarkers = updateMarkers.enter.append(MarkerShape);
-        var markerSelection = updateMarkers.merge(enterMarkers);
-        markerSelection.each(function (node, datum) {
-            var isHighlightedNode = node === highlightedNode;
-            var markerFill = isHighlightedNode && highlightFill !== undefined ? highlightFill : marker.fill || datum.fill;
-            var markerStroke = isHighlightedNode && highlightStroke !== undefined ? highlightStroke : marker.stroke || datum.stroke;
+        var _a = this, xKey = _a.xKey, seriesItemEnabled = _a.seriesItemEnabled;
+        var highlightedDatum = this.chart.highlightedDatum;
+        var _b = this.highlightStyle, highlightFill = _b.fill, highlightStroke = _b.stroke;
+        this.markerSelection.each(function (node, datum) {
+            var highlighted = datum === highlightedDatum;
+            var markerFill = highlighted && highlightFill !== undefined ? highlightFill : marker.fill || datum.fill;
+            var markerStroke = highlighted && highlightStroke !== undefined ? highlightStroke : marker.stroke || datum.stroke;
             var markerFormat = undefined;
             if (markerFormatter) {
                 markerFormat = markerFormatter({
@@ -18780,7 +18882,7 @@ var AreaSeries = /** @class */ (function (_super) {
                     stroke: markerStroke,
                     strokeWidth: markerStrokeWidth,
                     size: markerSize,
-                    highlighted: isHighlightedNode
+                    highlighted: highlighted
                 });
             }
             node.fill = markerFormat && markerFormat.fill || markerFill;
@@ -18791,11 +18893,22 @@ var AreaSeries = /** @class */ (function (_super) {
             node.size = markerFormat && markerFormat.size !== undefined
                 ? markerFormat.size
                 : markerSize;
-            node.translationX = datum.x;
-            node.translationY = datum.y;
+            node.translationX = datum.point.x;
+            node.translationY = datum.point.y;
             node.visible = marker.enabled && node.size > 0 && !!seriesItemEnabled.get(datum.yKey);
         });
-        this.markerSelection = markerSelection;
+    };
+    AreaSeries.prototype.getNodeData = function () {
+        return this.markerSelectionData;
+    };
+    AreaSeries.prototype.fireNodeClickEvent = function (datum) {
+        this.fireEvent({
+            type: 'nodeClick',
+            series: this,
+            datum: datum.seriesDatum,
+            xKey: this.xKey,
+            yKey: datum.yKey
+        });
     };
     AreaSeries.prototype.getTooltipHtml = function (nodeDatum) {
         var xKey = this.xKey;
@@ -18883,7 +18996,7 @@ var AreaSeries = /** @class */ (function (_super) {
     return AreaSeries;
 }(CartesianSeries));
 
-var __extends$Y = (undefined && undefined.__extends) || (function () {
+var __extends$X = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -18903,7 +19016,7 @@ var __decorate$L = (undefined && undefined.__decorate) || function (decorators, 
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 var Label = /** @class */ (function (_super) {
-    __extends$Y(Label, _super);
+    __extends$X(Label, _super);
     function Label() {
         var _this = _super.call(this) || this;
         _this.enabled = true;
@@ -18933,7 +19046,7 @@ var Label = /** @class */ (function (_super) {
     return Label;
 }(Observable));
 
-var __extends$Z = (undefined && undefined.__extends) || (function () {
+var __extends$Y = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -18959,29 +19072,29 @@ var __spreadArrays$3 = (undefined && undefined.__spreadArrays) || function () {
             r[k] = a[j];
     return r;
 };
-var ColumnSeriesNodeTag;
-(function (ColumnSeriesNodeTag) {
-    ColumnSeriesNodeTag[ColumnSeriesNodeTag["Column"] = 0] = "Column";
-    ColumnSeriesNodeTag[ColumnSeriesNodeTag["Label"] = 1] = "Label";
-})(ColumnSeriesNodeTag || (ColumnSeriesNodeTag = {}));
-var ColumnSeriesLabel = /** @class */ (function (_super) {
-    __extends$Z(ColumnSeriesLabel, _super);
-    function ColumnSeriesLabel() {
+var BarSeriesNodeTag;
+(function (BarSeriesNodeTag) {
+    BarSeriesNodeTag[BarSeriesNodeTag["Bar"] = 0] = "Bar";
+    BarSeriesNodeTag[BarSeriesNodeTag["Label"] = 1] = "Label";
+})(BarSeriesNodeTag || (BarSeriesNodeTag = {}));
+var BarSeriesLabel = /** @class */ (function (_super) {
+    __extends$Y(BarSeriesLabel, _super);
+    function BarSeriesLabel() {
         return _super !== null && _super.apply(this, arguments) || this;
     }
     __decorate$M([
         reactive('change')
-    ], ColumnSeriesLabel.prototype, "formatter", void 0);
-    return ColumnSeriesLabel;
+    ], BarSeriesLabel.prototype, "formatter", void 0);
+    return BarSeriesLabel;
 }(Label));
-var ColumnSeries = /** @class */ (function (_super) {
-    __extends$Z(ColumnSeries, _super);
-    function ColumnSeries() {
+var BarSeries = /** @class */ (function (_super) {
+    __extends$Y(BarSeries, _super);
+    function BarSeries() {
         var _a;
         var _this = _super.call(this) || this;
-        // Need to put column and label nodes into separate groups, because even though label nodes are
-        // created after the column nodes, this only guarantees that labels will always be on top of columns
-        // on the first run. If on the next run more columns are added, they might clip the labels
+        // Need to put bar and label nodes into separate groups, because even though label nodes are
+        // created after the bar nodes, this only guarantees that labels will always be on top of bars
+        // on the first run. If on the next run more bars are added, they might clip the labels
         // rendered during the previous run.
         _this.rectGroup = _this.group.appendChild(new Group);
         _this.textGroup = _this.group.appendChild(new Group);
@@ -18990,7 +19103,7 @@ var ColumnSeries = /** @class */ (function (_super) {
         _this.xData = [];
         _this.yData = [];
         _this.yDomain = [];
-        _this.label = new ColumnSeriesLabel();
+        _this.label = new BarSeriesLabel();
         /**
          * The assumption is that the values will be reset (to `true`)
          * in the {@link yKeys} setter.
@@ -19002,7 +19115,7 @@ var ColumnSeries = /** @class */ (function (_super) {
         _this.fillOpacity = 1;
         _this.strokeOpacity = 1;
         /**
-         * Used to get the position of columns within each group.
+         * Used to get the position of bars within each group.
          */
         _this.groupScale = new BandScale();
         _this.directionKeys = (_a = {},
@@ -19012,23 +19125,21 @@ var ColumnSeries = /** @class */ (function (_super) {
         _this._xKey = '';
         _this._xName = '';
         /**
-         * With a single value in the `yKeys` array we get the regular column series.
-         * With multiple values, we get the stacked column series.
-         * If the {@link grouped} set to `true`, we get the grouped column series.
+         * With a single value in the `yKeys` array we get the regular bar series.
+         * With multiple values, we get the stacked bar series.
+         * If the {@link grouped} set to `true`, we get the grouped bar series.
          * @param values
          */
         _this._yKeys = [];
         _this._yNames = [];
         _this.grouped = false;
         _this._strokeWidth = 1;
-        _this.highlightStyle = {
-            fill: 'yellow'
-        };
+        _this.highlightStyle = { fill: 'yellow' };
         _this.label.enabled = false;
-        _this.label.addEventListener('change', function () { return _this.update(); });
+        _this.label.addEventListener('change', _this.update, _this);
         return _this;
     }
-    ColumnSeries.prototype.getKeys = function (direction) {
+    BarSeries.prototype.getKeys = function (direction) {
         var _this = this;
         var directionKeys = this.directionKeys;
         var keys = directionKeys && directionKeys[this.flipXY ? flipChartAxisDirection(direction) : direction];
@@ -19048,7 +19159,7 @@ var ColumnSeries = /** @class */ (function (_super) {
         }
         return values;
     };
-    Object.defineProperty(ColumnSeries.prototype, "xKey", {
+    Object.defineProperty(BarSeries.prototype, "xKey", {
         get: function () {
             return this._xKey;
         },
@@ -19062,7 +19173,7 @@ var ColumnSeries = /** @class */ (function (_super) {
         enumerable: true,
         configurable: true
     });
-    Object.defineProperty(ColumnSeries.prototype, "xName", {
+    Object.defineProperty(BarSeries.prototype, "xName", {
         get: function () {
             return this._xName;
         },
@@ -19075,7 +19186,7 @@ var ColumnSeries = /** @class */ (function (_super) {
         enumerable: true,
         configurable: true
     });
-    Object.defineProperty(ColumnSeries.prototype, "yKeys", {
+    Object.defineProperty(BarSeries.prototype, "yKeys", {
         get: function () {
             return this._yKeys;
         },
@@ -19096,7 +19207,7 @@ var ColumnSeries = /** @class */ (function (_super) {
         enumerable: true,
         configurable: true
     });
-    Object.defineProperty(ColumnSeries.prototype, "yNames", {
+    Object.defineProperty(BarSeries.prototype, "yNames", {
         get: function () {
             return this._yNames;
         },
@@ -19107,7 +19218,7 @@ var ColumnSeries = /** @class */ (function (_super) {
         enumerable: true,
         configurable: true
     });
-    Object.defineProperty(ColumnSeries.prototype, "normalizedTo", {
+    Object.defineProperty(BarSeries.prototype, "normalizedTo", {
         get: function () {
             return this._normalizedTo;
         },
@@ -19121,7 +19232,7 @@ var ColumnSeries = /** @class */ (function (_super) {
         enumerable: true,
         configurable: true
     });
-    Object.defineProperty(ColumnSeries.prototype, "strokeWidth", {
+    Object.defineProperty(BarSeries.prototype, "strokeWidth", {
         get: function () {
             return this._strokeWidth;
         },
@@ -19134,7 +19245,7 @@ var ColumnSeries = /** @class */ (function (_super) {
         enumerable: true,
         configurable: true
     });
-    Object.defineProperty(ColumnSeries.prototype, "shadow", {
+    Object.defineProperty(BarSeries.prototype, "shadow", {
         get: function () {
             return this._shadow;
         },
@@ -19147,18 +19258,10 @@ var ColumnSeries = /** @class */ (function (_super) {
         enumerable: true,
         configurable: true
     });
-    ColumnSeries.prototype.highlightNode = function (node) {
-        if (!(node instanceof Rect)) {
-            return;
-        }
-        this.highlightedNode = node;
-        this.scheduleLayout();
+    BarSeries.prototype.onHighlightChange = function () {
+        this.updateRectNodes();
     };
-    ColumnSeries.prototype.dehighlightNode = function () {
-        this.highlightedNode = undefined;
-        this.scheduleLayout();
-    };
-    ColumnSeries.prototype.processData = function () {
+    BarSeries.prototype.processData = function () {
         var _a = this, xKey = _a.xKey, yKeys = _a.yKeys, seriesItemEnabled = _a.seriesItemEnabled;
         var data = xKey && yKeys.length && this.data ? this.data : [];
         // If the data is an array of rows like so:
@@ -19197,15 +19300,15 @@ var ColumnSeries = /** @class */ (function (_super) {
         //   [5, 7, -9],
         //   [10, -15, 20]
         // ]
-        var yMinMax = this.yData.map(function (values) { return findMinMax(values); }); // used for normalization of stacked columns
+        var yMinMax = this.yData.map(function (values) { return findMinMax(values); }); // used for normalization of stacked bars
         var _b = this, yData = _b.yData, normalizedTo = _b.normalizedTo;
         var yMin = Infinity;
         var yMax = -Infinity;
         if (this.grouped) {
-            // Find the tallest positive/negative column in each group,
-            // then find the tallest positive/negative column overall.
+            // Find the tallest positive/negative bar in each group,
+            // then find the tallest positive/negative bar overall.
             // The `yMin` should always be <= 0,
-            // otherwise with the `yData` like [300, 200, 100] the last column
+            // otherwise with the `yData` like [300, 200, 100] the last bar
             // will have zero height, because the y-axis range is [100, 300].
             yMin = Math.min.apply(Math, __spreadArrays$3([0], yData.map(function (values) { return Math.min.apply(Math, values); })));
             yMax = Math.max.apply(Math, yData.map(function (values) { return Math.max.apply(Math, values); }));
@@ -19233,7 +19336,7 @@ var ColumnSeries = /** @class */ (function (_super) {
         this.fireEvent({ type: 'dataProcessed' });
         return true;
     };
-    ColumnSeries.prototype.getDomain = function (direction) {
+    BarSeries.prototype.getDomain = function (direction) {
         if (this.flipXY) {
             direction = flipChartAxisDirection(direction);
         }
@@ -19244,17 +19347,17 @@ var ColumnSeries = /** @class */ (function (_super) {
             return this.yDomain;
         }
     };
-    ColumnSeries.prototype.update = function () {
-        var _a = this, visible = _a.visible, chart = _a.chart, xAxis = _a.xAxis, yAxis = _a.yAxis, xData = _a.xData, yData = _a.yData;
-        this.group.visible = visible;
-        if (!xAxis || !yAxis || !visible || !chart || chart.layoutPending || chart.dataPending || !xData.length || !yData.length) {
-            return;
-        }
-        var selectionData = this.generateSelectionData();
-        this.updateRectSelection(selectionData);
-        this.updateTextSelection(selectionData);
+    BarSeries.prototype.fireNodeClickEvent = function (datum) {
+        this.fireEvent({
+            type: 'nodeClick',
+            series: this,
+            datum: datum.seriesDatum,
+            xKey: this.xKey,
+            yKey: datum.yKey
+        });
     };
-    ColumnSeries.prototype.generateSelectionData = function () {
+    BarSeries.prototype.generateNodeData = function () {
+        var _this = this;
         var _a = this, xAxis = _a.xAxis, yAxis = _a.yAxis, flipXY = _a.flipXY;
         var xScale = (flipXY ? yAxis : xAxis).scale;
         var yScale = (flipXY ? xAxis : yAxis).scale;
@@ -19267,8 +19370,8 @@ var ColumnSeries = /** @class */ (function (_super) {
         var labelColor = label.color;
         var labelFormatter = label.formatter;
         groupScale.range = [0, xScale.bandwidth];
-        var columnWidth = grouped ? groupScale.bandwidth : xScale.bandwidth;
-        var selectionData = [];
+        var barWidth = grouped ? groupScale.bandwidth : xScale.bandwidth;
+        var nodeData = [];
         xData.forEach(function (category, i) {
             var yDatum = yData[i];
             var seriesDatum = data[i];
@@ -19277,7 +19380,7 @@ var ColumnSeries = /** @class */ (function (_super) {
             var prevMax = 0;
             yDatum.forEach(function (curr, j) {
                 var yKey = yKeys[j];
-                var columnX = grouped ? x + groupScale.convert(yKey) : x;
+                var barX = grouped ? x + groupScale.convert(yKey) : x;
                 var prev = curr < 0 ? prevMin : prevMax;
                 var y = yScale.convert(grouped ? curr : prev + curr);
                 var bottomY = yScale.convert(grouped ? 0 : prev);
@@ -19290,14 +19393,15 @@ var ColumnSeries = /** @class */ (function (_super) {
                 else {
                     labelText = yValueIsNumber && isFinite(yValue) ? yValue.toFixed(2) : '';
                 }
-                selectionData.push({
+                nodeData.push({
+                    series: _this,
                     seriesDatum: seriesDatum,
                     yValue: yValue,
                     yKey: yKey,
-                    x: flipXY ? Math.min(y, bottomY) : columnX,
-                    y: flipXY ? columnX : Math.min(y, bottomY),
-                    width: flipXY ? Math.abs(bottomY - y) : columnWidth,
-                    height: flipXY ? columnWidth : Math.abs(bottomY - y),
+                    x: flipXY ? Math.min(y, bottomY) : barX,
+                    y: flipXY ? barX : Math.min(y, bottomY),
+                    width: flipXY ? Math.abs(bottomY - y) : barWidth,
+                    height: flipXY ? barWidth : Math.abs(bottomY - y),
                     fill: fills[j % fills.length],
                     stroke: strokes[j % strokes.length],
                     strokeWidth: strokeWidth,
@@ -19308,8 +19412,8 @@ var ColumnSeries = /** @class */ (function (_super) {
                         fontSize: labelFontSize,
                         fontFamily: labelFontFamily,
                         fill: labelColor,
-                        x: flipXY ? y + (yValue >= 0 ? -1 : 1) * Math.abs(bottomY - y) / 2 : columnX + columnWidth / 2,
-                        y: flipXY ? columnX + columnWidth / 2 : y + (yValue >= 0 ? 1 : -1) * Math.abs(bottomY - y) / 2
+                        x: flipXY ? y + (yValue >= 0 ? -1 : 1) * Math.abs(bottomY - y) / 2 : barX + barWidth / 2,
+                        y: flipXY ? barX + barWidth / 2 : y + (yValue >= 0 ? 1 : -1) * Math.abs(bottomY - y) / 2
                     } : undefined
                 });
                 if (!grouped) {
@@ -19322,44 +19426,62 @@ var ColumnSeries = /** @class */ (function (_super) {
                 }
             });
         });
-        return selectionData;
+        return nodeData;
     };
-    ColumnSeries.prototype.updateRectSelection = function (selectionData) {
-        var _a = this, fillOpacity = _a.fillOpacity, strokeOpacity = _a.strokeOpacity, shadow = _a.shadow, highlightedNode = _a.highlightedNode, _b = _a.highlightStyle, fill = _b.fill, stroke = _b.stroke;
+    BarSeries.prototype.update = function () {
+        var _a = this, visible = _a.visible, chart = _a.chart, xAxis = _a.xAxis, yAxis = _a.yAxis, xData = _a.xData, yData = _a.yData;
+        this.group.visible = visible;
+        if (!chart || chart.layoutPending || chart.dataPending ||
+            !xAxis || !yAxis || !visible || !xData.length || !yData.length) {
+            return;
+        }
+        var nodeData = this.generateNodeData();
+        this.updateRectSelection(nodeData);
+        this.updateRectNodes();
+        this.updateTextSelection(nodeData);
+        this.updateTextNodes();
+    };
+    BarSeries.prototype.updateRectSelection = function (selectionData) {
         var updateRects = this.rectSelection.setData(selectionData);
         updateRects.exit.remove();
         var enterRects = updateRects.enter.append(Rect).each(function (rect) {
-            rect.tag = ColumnSeriesNodeTag.Column;
+            rect.tag = BarSeriesNodeTag.Bar;
             rect.crisp = true;
         });
-        var rectSelection = updateRects.merge(enterRects);
-        rectSelection.each(function (rect, datum) {
+        this.rectSelection = updateRects.merge(enterRects);
+    };
+    BarSeries.prototype.updateRectNodes = function () {
+        var _a = this, fillOpacity = _a.fillOpacity, strokeOpacity = _a.strokeOpacity, shadow = _a.shadow, _b = _a.highlightStyle, fill = _b.fill, stroke = _b.stroke;
+        var highlightedDatum = this.chart.highlightedDatum;
+        this.rectSelection.each(function (rect, datum) {
+            var highlighted = datum === highlightedDatum;
             rect.x = datum.x;
             rect.y = datum.y;
             rect.width = datum.width;
             rect.height = datum.height;
-            rect.fill = rect === highlightedNode && fill !== undefined ? fill : datum.fill;
-            rect.stroke = rect === highlightedNode && stroke !== undefined ? stroke : datum.stroke;
+            rect.fill = highlighted && fill !== undefined ? fill : datum.fill;
+            rect.stroke = highlighted && stroke !== undefined ? stroke : datum.stroke;
             rect.fillOpacity = fillOpacity;
             rect.strokeOpacity = strokeOpacity;
             rect.strokeWidth = datum.strokeWidth;
             rect.fillShadow = shadow;
-            rect.visible = datum.height > 0; // prevent stroke from rendering for zero height columns
+            rect.visible = datum.height > 0; // prevent stroke from rendering for zero height bars
         });
-        this.rectSelection = rectSelection;
     };
-    ColumnSeries.prototype.updateTextSelection = function (selectionData) {
-        var labelEnabled = this.label.enabled;
+    BarSeries.prototype.updateTextSelection = function (selectionData) {
         var updateTexts = this.textSelection.setData(selectionData);
         updateTexts.exit.remove();
         var enterTexts = updateTexts.enter.append(Text).each(function (text) {
-            text.tag = ColumnSeriesNodeTag.Label;
+            text.tag = BarSeriesNodeTag.Label;
             text.pointerEvents = PointerEvents.None;
             text.textAlign = 'center';
             text.textBaseline = 'middle';
         });
-        var textSelection = updateTexts.merge(enterTexts);
-        textSelection.each(function (text, datum) {
+        this.textSelection = updateTexts.merge(enterTexts);
+    };
+    BarSeries.prototype.updateTextNodes = function () {
+        var labelEnabled = this.label.enabled;
+        this.textSelection.each(function (text, datum) {
             var label = datum.label;
             if (label && labelEnabled) {
                 text.fontStyle = label.fontStyle;
@@ -19376,9 +19498,8 @@ var ColumnSeries = /** @class */ (function (_super) {
                 text.visible = false;
             }
         });
-        this.textSelection = textSelection;
     };
-    ColumnSeries.prototype.getTooltipHtml = function (nodeDatum) {
+    BarSeries.prototype.getTooltipHtml = function (nodeDatum) {
         var xKey = this.xKey;
         var yKey = nodeDatum.yKey;
         if (!xKey || !yKey) {
@@ -19409,7 +19530,7 @@ var ColumnSeries = /** @class */ (function (_super) {
             return titleString + "<div class=\"" + Chart.defaultTooltipClass + "-content\">" + xString + ": " + yString + "</div>";
         }
     };
-    ColumnSeries.prototype.listSeriesItems = function (legendData) {
+    BarSeries.prototype.listSeriesItems = function (legendData) {
         var _a = this, id = _a.id, data = _a.data, xKey = _a.xKey, yKeys = _a.yKeys, yNames = _a.yNames, seriesItemEnabled = _a.seriesItemEnabled, fills = _a.fills, strokes = _a.strokes, fillOpacity = _a.fillOpacity, strokeOpacity = _a.strokeOpacity;
         if (data && data.length && xKey && yKeys.length) {
             yKeys.forEach(function (yKey, index) {
@@ -19430,7 +19551,7 @@ var ColumnSeries = /** @class */ (function (_super) {
             });
         }
     };
-    ColumnSeries.prototype.toggleSeriesItem = function (itemId, enabled) {
+    BarSeries.prototype.toggleSeriesItem = function (itemId, enabled) {
         var seriesItemEnabled = this.seriesItemEnabled;
         var enabledSeriesItems = [];
         seriesItemEnabled.set(itemId, enabled);
@@ -19442,27 +19563,27 @@ var ColumnSeries = /** @class */ (function (_super) {
         this.groupScale.domain = enabledSeriesItems;
         this.scheduleData();
     };
-    ColumnSeries.className = 'ColumnSeries';
-    ColumnSeries.type = 'column';
+    BarSeries.className = 'BarSeries';
+    BarSeries.type = 'bar';
     __decorate$M([
         reactive('layoutChange')
-    ], ColumnSeries.prototype, "flipXY", void 0);
+    ], BarSeries.prototype, "flipXY", void 0);
     __decorate$M([
         reactive('dataChange')
-    ], ColumnSeries.prototype, "fills", void 0);
+    ], BarSeries.prototype, "fills", void 0);
     __decorate$M([
         reactive('dataChange')
-    ], ColumnSeries.prototype, "strokes", void 0);
+    ], BarSeries.prototype, "strokes", void 0);
     __decorate$M([
         reactive('layoutChange')
-    ], ColumnSeries.prototype, "fillOpacity", void 0);
+    ], BarSeries.prototype, "fillOpacity", void 0);
     __decorate$M([
         reactive('layoutChange')
-    ], ColumnSeries.prototype, "strokeOpacity", void 0);
+    ], BarSeries.prototype, "strokeOpacity", void 0);
     __decorate$M([
         reactive('dataChange')
-    ], ColumnSeries.prototype, "grouped", void 0);
-    return ColumnSeries;
+    ], BarSeries.prototype, "grouped", void 0);
+    return BarSeries;
 }(CartesianSeries));
 
 var constant = (function (x) { return function () { return x; }; });
@@ -19692,7 +19813,7 @@ var ContinuousScale = /** @class */ (function () {
     return ContinuousScale;
 }());
 
-var __extends$_ = (undefined && undefined.__extends) || (function () {
+var __extends$Z = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -19712,7 +19833,7 @@ var __decorate$N = (undefined && undefined.__decorate) || function (decorators, 
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 var LineSeries = /** @class */ (function (_super) {
-    __extends$_(LineSeries, _super);
+    __extends$Z(LineSeries, _super);
     function LineSeries() {
         var _this = _super.call(this) || this;
         _this.xDomain = [];
@@ -19722,7 +19843,8 @@ var LineSeries = /** @class */ (function (_super) {
         _this.lineNode = new Path();
         // We use groups for this selection even though each group only contains a marker ATM
         // because in the future we might want to add label support as well.
-        _this.groupSelection = Selection.select(_this.group).selectAll();
+        _this.nodeSelection = Selection.select(_this.group).selectAll();
+        _this.nodeData = [];
         _this.marker = new CartesianSeriesMarker();
         _this.stroke = borneo.fills[0];
         _this.strokeWidth = 2;
@@ -19737,26 +19859,26 @@ var LineSeries = /** @class */ (function (_super) {
         lineNode.lineJoin = 'round';
         lineNode.pointerEvents = PointerEvents.None;
         _this.group.append(lineNode);
-        var update = function () { return _this.update(); };
-        _this.addEventListener('update', update);
+        _this.addEventListener('update', _this.update);
         var marker = _this.marker;
         marker.fill = borneo.fills[0];
         marker.stroke = borneo.strokes[0];
-        marker.addPropertyListener('shape', function () { return _this.onMarkerShapeChange(); });
-        marker.addPropertyListener('enabled', function (event) {
-            if (!event.value) {
-                _this.groupSelection = _this.groupSelection.setData([]);
-                _this.groupSelection.exit.remove();
-            }
-        });
-        marker.addEventListener('change', update);
+        marker.addPropertyListener('shape', _this.onMarkerShapeChange, _this);
+        marker.addPropertyListener('enabled', _this.onMarkerEnabledChange, _this);
+        marker.addEventListener('change', _this.update, _this);
         return _this;
     }
     LineSeries.prototype.onMarkerShapeChange = function () {
-        this.groupSelection = this.groupSelection.setData([]);
-        this.groupSelection.exit.remove();
+        this.nodeSelection = this.nodeSelection.setData([]);
+        this.nodeSelection.exit.remove();
         this.update();
         this.fireEvent({ type: 'legendChange' });
+    };
+    LineSeries.prototype.onMarkerEnabledChange = function (event) {
+        if (!event.value) {
+            this.nodeSelection = this.nodeSelection.setData([]);
+            this.nodeSelection.exit.remove();
+        }
     };
     Object.defineProperty(LineSeries.prototype, "xKey", {
         get: function () {
@@ -19787,12 +19909,13 @@ var LineSeries = /** @class */ (function (_super) {
         configurable: true
     });
     LineSeries.prototype.processData = function () {
-        var _a = this, xAxis = _a.xAxis, xKey = _a.xKey, yKey = _a.yKey, xData = _a.xData, yData = _a.yData;
+        var _a = this, xAxis = _a.xAxis, yAxis = _a.yAxis, xKey = _a.xKey, yKey = _a.yKey, xData = _a.xData, yData = _a.yData;
         var data = xKey && yKey && this.data ? this.data : [];
         if (!xAxis) {
             return false;
         }
         var isContinuousX = xAxis.scale instanceof ContinuousScale;
+        var isContinuousY = yAxis.scale instanceof ContinuousScale;
         xData.length = 0;
         yData.length = 0;
         for (var i = 0, n = data.length; i < n; i++) {
@@ -19803,7 +19926,7 @@ var LineSeries = /** @class */ (function (_super) {
             yData.push(y);
         }
         this.xDomain = isContinuousX ? this.fixNumericExtent(numericExtent(xData), 'x') : xData;
-        this.yDomain = this.fixNumericExtent(numericExtent(yData), 'y');
+        this.yDomain = isContinuousY ? this.fixNumericExtent(numericExtent(yData), 'y') : yData;
         return true;
     };
     LineSeries.prototype.getDomain = function (direction) {
@@ -19812,37 +19935,36 @@ var LineSeries = /** @class */ (function (_super) {
         }
         return this.yDomain;
     };
-    LineSeries.prototype.highlightNode = function (node) {
-        if (!(node instanceof Marker)) {
-            return;
-        }
-        this.highlightedNode = node;
-        this.scheduleLayout();
-    };
-    LineSeries.prototype.dehighlightNode = function () {
-        this.highlightedNode = undefined;
-        this.scheduleLayout();
+    LineSeries.prototype.onHighlightChange = function () {
+        this.updateNodes();
     };
     LineSeries.prototype.update = function () {
-        var _a = this, chart = _a.chart, xAxis = _a.xAxis, yAxis = _a.yAxis;
         this.group.visible = this.visible;
-        if (!xAxis || !yAxis || !chart || chart.layoutPending || chart.dataPending) {
+        var _a = this, chart = _a.chart, xAxis = _a.xAxis, yAxis = _a.yAxis;
+        if (!chart || chart.layoutPending || chart.dataPending || !xAxis || !yAxis) {
             return;
         }
+        this.updateLinePath(); // this will generate node data too
+        this.updateNodeSelection();
+        this.updateNodes();
+    };
+    LineSeries.prototype.updateLinePath = function () {
+        var _this = this;
+        var _a = this, xAxis = _a.xAxis, yAxis = _a.yAxis, data = _a.data, xData = _a.xData, yData = _a.yData, lineNode = _a.lineNode;
         var xScale = xAxis.scale;
         var yScale = yAxis.scale;
         var xOffset = (xScale.bandwidth || 0) / 2;
         var yOffset = (yScale.bandwidth || 0) / 2;
         var isContinuousX = xScale instanceof ContinuousScale;
-        var _b = this, data = _b.data, xData = _b.xData, yData = _b.yData, marker = _b.marker, lineNode = _b.lineNode;
-        var groupSelectionData = [];
+        var isContinuousY = yScale instanceof ContinuousScale;
         var linePath = lineNode.path;
+        var nodeData = [];
         linePath.clear();
         var moveTo = true;
         xData.forEach(function (xDatum, i) {
             var yDatum = yData[i];
-            var isGap = yDatum == null || isNaN(yDatum) || !isFinite(yDatum)
-                || xDatum == null || (isContinuousX && (isNaN(xDatum) || !isFinite(xDatum)));
+            var isGap = yDatum == null || (isContinuousY && (isNaN(yDatum) || !isFinite(yDatum))) ||
+                xDatum == null || (isContinuousX && (isNaN(xDatum) || !isFinite(xDatum)));
             if (isGap) {
                 moveTo = true;
             }
@@ -19856,38 +19978,43 @@ var LineSeries = /** @class */ (function (_super) {
                 else {
                     linePath.lineTo(x, y);
                 }
-                if (marker) {
-                    groupSelectionData.push({
-                        seriesDatum: data[i],
-                        x: x,
-                        y: y
-                    });
-                }
+                nodeData.push({
+                    series: _this,
+                    seriesDatum: data[i],
+                    point: { x: x, y: y }
+                });
             }
         });
         lineNode.stroke = this.stroke;
         lineNode.strokeWidth = this.strokeWidth;
         lineNode.strokeOpacity = this.strokeOpacity;
-        this.updateGroupSelection(groupSelectionData);
+        // Used by marker nodes and for hit-testing even when not using markers
+        // when `chart.tooltipTracking` is true.
+        this.nodeData = nodeData;
     };
-    LineSeries.prototype.updateGroupSelection = function (groupSelectionData) {
-        var _a = this, marker = _a.marker, xKey = _a.xKey, yKey = _a.yKey, highlightedNode = _a.highlightedNode, stroke = _a.stroke, strokeWidth = _a.strokeWidth;
-        var groupSelection = this.groupSelection;
+    LineSeries.prototype.updateNodeSelection = function () {
+        var marker = this.marker;
+        var nodeData = marker.shape ? this.nodeData : [];
         var MarkerShape = getMarker(marker.shape);
-        var updateGroups = groupSelection.setData(groupSelectionData);
-        updateGroups.exit.remove();
-        var enterGroups = updateGroups.enter.append(Group);
-        enterGroups.append(MarkerShape);
+        var updateSelection = this.nodeSelection.setData(nodeData);
+        updateSelection.exit.remove();
+        var enterSelection = updateSelection.enter.append(Group);
+        enterSelection.append(MarkerShape);
+        this.nodeSelection = updateSelection.merge(enterSelection);
+    };
+    LineSeries.prototype.updateNodes = function () {
+        var _a = this, marker = _a.marker, xKey = _a.xKey, yKey = _a.yKey, stroke = _a.stroke, strokeWidth = _a.strokeWidth;
+        var MarkerShape = getMarker(marker.shape);
+        var highlightedDatum = this.chart.highlightedDatum;
         var _b = this.highlightStyle, highlightFill = _b.fill, highlightStroke = _b.stroke;
         var markerFormatter = marker.formatter;
         var markerSize = marker.size;
         var markerStrokeWidth = marker.strokeWidth !== undefined ? marker.strokeWidth : strokeWidth;
-        groupSelection = updateGroups.merge(enterGroups);
-        groupSelection.selectByClass(MarkerShape)
+        this.nodeSelection.selectByClass(MarkerShape)
             .each(function (node, datum) {
-            var isHighlightedNode = node === highlightedNode;
-            var markerFill = isHighlightedNode && highlightFill !== undefined ? highlightFill : marker.fill;
-            var markerStroke = isHighlightedNode && highlightStroke !== undefined ? highlightStroke : marker.stroke || stroke;
+            var highlighted = datum === highlightedDatum;
+            var markerFill = highlighted && highlightFill !== undefined ? highlightFill : marker.fill;
+            var markerStroke = highlighted && highlightStroke !== undefined ? highlightStroke : marker.stroke || stroke;
             var markerFormat = undefined;
             if (markerFormatter) {
                 markerFormat = markerFormatter({
@@ -19898,7 +20025,7 @@ var LineSeries = /** @class */ (function (_super) {
                     stroke: markerStroke,
                     strokeWidth: markerStrokeWidth,
                     size: markerSize,
-                    highlighted: isHighlightedNode
+                    highlighted: highlighted
                 });
             }
             node.fill = markerFormat && markerFormat.fill || markerFill;
@@ -19909,11 +20036,22 @@ var LineSeries = /** @class */ (function (_super) {
             node.size = markerFormat && markerFormat.size !== undefined
                 ? markerFormat.size
                 : markerSize;
-            node.translationX = datum.x;
-            node.translationY = datum.y;
+            node.translationX = datum.point.x;
+            node.translationY = datum.point.y;
             node.visible = marker.enabled && node.size > 0;
         });
-        this.groupSelection = groupSelection;
+    };
+    LineSeries.prototype.getNodeData = function () {
+        return this.nodeData;
+    };
+    LineSeries.prototype.fireNodeClickEvent = function (datum) {
+        this.fireEvent({
+            type: 'nodeClick',
+            series: this,
+            datum: datum.seriesDatum,
+            xKey: this.xKey,
+            yKey: this.yKey
+        });
     };
     LineSeries.prototype.getTooltipHtml = function (nodeDatum) {
         var _a = this, xKey = _a.xKey, yKey = _a.yKey;
@@ -19986,6 +20124,78 @@ var LineSeries = /** @class */ (function (_super) {
     ], LineSeries.prototype, "yName", void 0);
     return LineSeries;
 }(CartesianSeries));
+
+var __extends$_ = (undefined && undefined.__extends) || (function () {
+    var extendStatics = function (d, b) {
+        extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+        return extendStatics(d, b);
+    };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
+function ticks (a, b, count) {
+    var step = tickStep(a, b, count);
+    a = Math.ceil(a / step) * step;
+    b = Math.floor(b / step) * step + step / 2;
+    // Add half a step here so that the array returned by `range` includes the last tick.
+    return range(a, b, step);
+}
+var e10 = Math.sqrt(50);
+var e5 = Math.sqrt(10);
+var e2 = Math.sqrt(2);
+function tickStep(a, b, count) {
+    var rawStep = Math.abs(b - a) / Math.max(0, count);
+    var step = Math.pow(10, Math.floor(Math.log(rawStep) / Math.LN10)); // = Math.log10(rawStep)
+    var error = rawStep / step;
+    if (error >= e10) {
+        step *= 10;
+    }
+    else if (error >= e5) {
+        step *= 5;
+    }
+    else if (error >= e2) {
+        step *= 2;
+    }
+    return b < a ? -step : step;
+}
+function tickIncrement(a, b, count) {
+    var rawStep = (b - a) / Math.max(0, count);
+    var power = Math.floor(Math.log(rawStep) / Math.LN10);
+    var error = rawStep / Math.pow(10, power);
+    return power >= 0
+        ? (error >= e10 ? 10 : error >= e5 ? 5 : error >= e2 ? 2 : 1) * Math.pow(10, power)
+        : -Math.pow(10, -power) / (error >= e10 ? 10 : error >= e5 ? 5 : error >= e2 ? 2 : 1);
+}
+var NumericTicks = /** @class */ (function (_super) {
+    __extends$_(NumericTicks, _super);
+    function NumericTicks(fractionDigits, size) {
+        if (size === void 0) { size = 0; }
+        var _this = _super.call(this, size) || this;
+        _this.fractionDigits = fractionDigits;
+        return _this;
+    }
+    return NumericTicks;
+}(Array));
+function range(a, b, step) {
+    if (step === void 0) { step = 1; }
+    var absStep = Math.abs(step);
+    var fractionDigits = (absStep > 0 && absStep < 1)
+        ? Math.abs(Math.floor(Math.log(absStep) / Math.LN10))
+        : 0;
+    var f = Math.pow(10, fractionDigits);
+    var n = Math.max(0, Math.ceil((b - a) / step)) || 0;
+    var values = new NumericTicks(fractionDigits, n);
+    for (var i = 0; i < n; i++) {
+        var value = a + step * i;
+        values[i] = Math.round(value * f) / f;
+    }
+    return values;
+}
 
 var __extends$$ = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -20093,16 +20303,15 @@ var ScatterSeries = /** @class */ (function (_super) {
         _this.yData = [];
         _this.sizeData = [];
         _this.sizeScale = new LinearScale();
-        _this.groupSelection = Selection.select(_this.group).selectAll();
+        _this.nodeSelection = Selection.select(_this.group).selectAll();
+        _this.nodeData = [];
         _this.marker = new CartesianSeriesMarker();
         _this._fill = borneo.fills[0];
         _this._stroke = borneo.strokes[0];
         _this._strokeWidth = 2;
         _this._fillOpacity = 1;
         _this._strokeOpacity = 1;
-        _this.highlightStyle = {
-            fill: 'yellow'
-        };
+        _this.highlightStyle = { fill: 'yellow' };
         _this.xKey = '';
         _this.yKey = '';
         _this.xName = '';
@@ -20110,8 +20319,8 @@ var ScatterSeries = /** @class */ (function (_super) {
         _this.sizeName = 'Size';
         _this.labelName = 'Label';
         var marker = _this.marker;
-        marker.addPropertyListener('shape', function () { return _this.onMarkerShapeChange(); });
-        marker.addEventListener('change', function () { return _this.update(); });
+        marker.addPropertyListener('shape', _this.onMarkerShapeChange, _this);
+        marker.addEventListener('change', _this.update, _this);
         _this.addPropertyListener('xKey', function () { return _this.xData = []; });
         _this.addPropertyListener('yKey', function () { return _this.yData = []; });
         _this.addPropertyListener('sizeKey', function () { return _this.sizeData = []; });
@@ -20182,9 +20391,12 @@ var ScatterSeries = /** @class */ (function (_super) {
         enumerable: true,
         configurable: true
     });
+    ScatterSeries.prototype.onHighlightChange = function () {
+        this.updateNodes();
+    };
     ScatterSeries.prototype.onMarkerShapeChange = function () {
-        this.groupSelection = this.groupSelection.setData([]);
-        this.groupSelection.exit.remove();
+        this.nodeSelection = this.nodeSelection.setData([]);
+        this.nodeSelection.exit.remove();
         this.update();
         this.fireEvent({ type: 'legendChange' });
     };
@@ -20222,49 +20434,67 @@ var ScatterSeries = /** @class */ (function (_super) {
             return this.yDomain;
         }
     };
-    ScatterSeries.prototype.highlightNode = function (node) {
-        if (!(node instanceof Marker)) {
-            return;
-        }
-        this.highlightedNode = node;
-        this.scheduleLayout();
+    ScatterSeries.prototype.getNodeData = function () {
+        return this.nodeData;
     };
-    ScatterSeries.prototype.dehighlightNode = function () {
-        this.highlightedNode = undefined;
-        this.scheduleLayout();
+    ScatterSeries.prototype.fireNodeClickEvent = function (datum) {
+        this.fireEvent({
+            type: 'nodeClick',
+            series: this,
+            datum: datum.seriesDatum,
+            xKey: this.xKey,
+            yKey: this.yKey,
+            sizeKey: this.sizeKey
+        });
+    };
+    ScatterSeries.prototype.generateNodeData = function () {
+        var _this = this;
+        var xScale = this.xAxis.scale;
+        var yScale = this.yAxis.scale;
+        var xOffset = (xScale.bandwidth || 0) / 2;
+        var yOffset = (yScale.bandwidth || 0) / 2;
+        var _a = this, data = _a.data, xData = _a.xData, yData = _a.yData, sizeData = _a.sizeData, sizeScale = _a.sizeScale, marker = _a.marker;
+        sizeScale.range = [marker.minSize, marker.size];
+        return xData.map(function (xDatum, i) { return ({
+            series: _this,
+            seriesDatum: data[i],
+            point: {
+                x: xScale.convert(xDatum) + xOffset,
+                y: yScale.convert(yData[i]) + yOffset
+            },
+            size: sizeData.length ? sizeScale.convert(sizeData[i]) : marker.size
+        }); });
     };
     ScatterSeries.prototype.update = function () {
         var _a = this, visible = _a.visible, chart = _a.chart, xAxis = _a.xAxis, yAxis = _a.yAxis;
         this.group.visible = visible;
-        if (!xAxis || !yAxis || !visible || !chart || chart.layoutPending || chart.dataPending) {
+        if (!visible || !chart || chart.layoutPending || chart.dataPending || !xAxis || !yAxis) {
             return;
         }
-        var xScale = xAxis.scale;
-        var yScale = yAxis.scale;
-        var xOffset = (xScale.bandwidth || 0) / 2;
-        var yOffset = (yScale.bandwidth || 0) / 2;
-        var _b = this, data = _b.data, xData = _b.xData, yData = _b.yData, sizeData = _b.sizeData, xKey = _b.xKey, yKey = _b.yKey, sizeScale = _b.sizeScale, marker = _b.marker, fill = _b.fill, stroke = _b.stroke, strokeWidth = _b.strokeWidth, fillOpacity = _b.fillOpacity, strokeOpacity = _b.strokeOpacity, highlightedNode = _b.highlightedNode;
+        var nodeData = this.nodeData = this.generateNodeData();
+        this.updateNodeSelection(nodeData);
+        this.updateNodes();
+    };
+    ScatterSeries.prototype.updateNodeSelection = function (nodeData) {
+        var MarkerShape = getMarker(this.marker.shape);
+        var updateSelection = this.nodeSelection.setData(nodeData);
+        updateSelection.exit.remove();
+        var enterSelection = updateSelection.enter.append(Group);
+        enterSelection.append(MarkerShape);
+        this.nodeSelection = updateSelection.merge(enterSelection);
+    };
+    ScatterSeries.prototype.updateNodes = function () {
+        var highlightedDatum = this.chart.highlightedDatum;
+        var _a = this, marker = _a.marker, xKey = _a.xKey, yKey = _a.yKey, fill = _a.fill, stroke = _a.stroke, strokeWidth = _a.strokeWidth, fillOpacity = _a.fillOpacity, strokeOpacity = _a.strokeOpacity;
+        var _b = this.highlightStyle, highlightFill = _b.fill, highlightStroke = _b.stroke;
+        var markerStrokeWidth = marker.strokeWidth !== undefined ? marker.strokeWidth : strokeWidth;
         var MarkerShape = getMarker(marker.shape);
         var markerFormatter = marker.formatter;
-        this.sizeScale.range = [marker.minSize, marker.size];
-        var groupSelectionData = xData.map(function (xDatum, i) { return ({
-            seriesDatum: data[i],
-            x: xScale.convert(xDatum) + xOffset,
-            y: yScale.convert(yData[i]) + yOffset,
-            size: sizeData.length ? sizeScale.convert(sizeData[i]) : marker.size
-        }); });
-        var updateGroups = this.groupSelection.setData(groupSelectionData);
-        updateGroups.exit.remove();
-        var enterGroups = updateGroups.enter.append(Group);
-        enterGroups.append(MarkerShape);
-        var groupSelection = updateGroups.merge(enterGroups);
-        var _c = this.highlightStyle, highlightFill = _c.fill, highlightStroke = _c.stroke;
-        var markerStrokeWidth = marker.strokeWidth !== undefined ? marker.strokeWidth : strokeWidth;
-        groupSelection.selectByClass(MarkerShape)
+        this.nodeSelection.selectByClass(MarkerShape)
             .each(function (node, datum) {
-            var isHighlightedNode = node === highlightedNode;
-            var markerFill = isHighlightedNode && highlightFill !== undefined ? highlightFill : marker.fill || fill;
-            var markerStroke = isHighlightedNode && highlightStroke !== undefined ? highlightStroke : marker.stroke || stroke;
+            var highlighted = datum === highlightedDatum;
+            var markerFill = highlighted && highlightFill !== undefined ? highlightFill : marker.fill || fill;
+            var markerStroke = highlighted && highlightStroke !== undefined ? highlightStroke : marker.stroke || stroke;
             var markerFormat = undefined;
             if (markerFormatter) {
                 markerFormat = markerFormatter({
@@ -20275,7 +20505,7 @@ var ScatterSeries = /** @class */ (function (_super) {
                     stroke: markerStroke,
                     strokeWidth: markerStrokeWidth,
                     size: datum.size,
-                    highlighted: isHighlightedNode
+                    highlighted: highlighted
                 });
             }
             node.fill = markerFormat && markerFormat.fill || markerFill;
@@ -20288,11 +20518,10 @@ var ScatterSeries = /** @class */ (function (_super) {
                 : datum.size;
             node.fillOpacity = fillOpacity;
             node.strokeOpacity = strokeOpacity;
-            node.translationX = datum.x;
-            node.translationY = datum.y;
+            node.translationX = datum.point.x;
+            node.translationY = datum.point.y;
             node.visible = marker.enabled && node.size > 0;
         });
-        this.groupSelection = groupSelection;
     };
     ScatterSeries.prototype.getTooltipHtml = function (nodeDatum) {
         var _a = this, xKey = _a.xKey, yKey = _a.yKey;
@@ -20387,8 +20616,544 @@ var __extends$11 = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
+var __decorate$P = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __spreadArrays$4 = (undefined && undefined.__spreadArrays) || function () {
+    for (var s = 0, i = 0, il = arguments.length; i < il; i++) s += arguments[i].length;
+    for (var r = Array(s), k = 0, i = 0; i < il; i++)
+        for (var a = arguments[i], j = 0, jl = a.length; j < jl; j++, k++)
+            r[k] = a[j];
+    return r;
+};
+var HistogramSeriesNodeTag;
+(function (HistogramSeriesNodeTag) {
+    HistogramSeriesNodeTag[HistogramSeriesNodeTag["Bin"] = 0] = "Bin";
+    HistogramSeriesNodeTag[HistogramSeriesNodeTag["Label"] = 1] = "Label";
+})(HistogramSeriesNodeTag || (HistogramSeriesNodeTag = {}));
+var HistogramSeriesLabel = /** @class */ (function (_super) {
+    __extends$11(HistogramSeriesLabel, _super);
+    function HistogramSeriesLabel() {
+        return _super !== null && _super.apply(this, arguments) || this;
+    }
+    __decorate$P([
+        reactive('change')
+    ], HistogramSeriesLabel.prototype, "formatter", void 0);
+    return HistogramSeriesLabel;
+}(Label));
+var defaultBinCount = 10;
+var aggregationFunctions = {
+    count: function (bin) { return bin.data.length; },
+    sum: function (bin, yKey) { return bin.data.reduce(function (acc, datum) { return acc + datum[yKey]; }, 0); },
+    mean: function (bin, yKey) { return aggregationFunctions.sum(bin, yKey) / aggregationFunctions.count(bin, yKey); }
+};
+var HistogramBin = /** @class */ (function () {
+    function HistogramBin(_a) {
+        var domainMin = _a[0], domainMax = _a[1];
+        this.data = [];
+        this.aggregatedValue = 0;
+        this.frequency = 0;
+        this.domain = [domainMin, domainMax];
+    }
+    HistogramBin.prototype.addDatum = function (datum) {
+        this.data.push(datum);
+        this.frequency++;
+    };
+    Object.defineProperty(HistogramBin.prototype, "domainWidth", {
+        get: function () {
+            var _a = this.domain, domainMin = _a[0], domainMax = _a[1];
+            return domainMax - domainMin;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(HistogramBin.prototype, "relativeHeight", {
+        get: function () {
+            return this.aggregatedValue / this.domainWidth;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    HistogramBin.prototype.calculateAggregatedValue = function (aggregationName, yKey) {
+        if (!yKey) {
+            // not having a yKey forces us into a frequency plot
+            aggregationName = 'count';
+        }
+        var aggregationFunction = aggregationFunctions[aggregationName];
+        this.aggregatedValue = aggregationFunction(this, yKey);
+    };
+    HistogramBin.prototype.getY = function (areaPlot) {
+        return areaPlot ? this.relativeHeight : this.aggregatedValue;
+    };
+    return HistogramBin;
+}());
+var HistogramSeries = /** @class */ (function (_super) {
+    __extends$11(HistogramSeries, _super);
+    function HistogramSeries() {
+        var _a;
+        var _this = _super.call(this) || this;
+        // Need to put column and label nodes into separate groups, because even though label nodes are
+        // created after the column nodes, this only guarantees that labels will always be on top of columns
+        // on the first run. If on the next run more columns are added, they might clip the labels
+        // rendered during the previous run.
+        _this.rectGroup = _this.group.appendChild(new Group());
+        _this.textGroup = _this.group.appendChild(new Group());
+        _this.rectSelection = Selection.select(_this.rectGroup).selectAll();
+        _this.textSelection = Selection.select(_this.textGroup).selectAll();
+        _this.binnedData = [];
+        _this.xDomain = [];
+        _this.yDomain = [];
+        _this.label = new HistogramSeriesLabel();
+        _this.seriesItemEnabled = true;
+        _this.fill = borneo.fills[0];
+        _this.stroke = borneo.strokes[0];
+        _this.fillOpacity = 1;
+        _this.strokeOpacity = 1;
+        _this.directionKeys = (_a = {},
+            _a[ChartAxisDirection.X] = ['xKey'],
+            _a[ChartAxisDirection.Y] = ['yKey'],
+            _a);
+        _this._xKey = '';
+        _this._areaPlot = false;
+        _this._xName = '';
+        _this._yKey = '';
+        _this._yName = '';
+        _this._strokeWidth = 1;
+        _this.highlightStyle = { fill: 'yellow' };
+        _this.label.enabled = false;
+        _this.label.addEventListener('change', _this.update, _this);
+        return _this;
+    }
+    HistogramSeries.prototype.getKeys = function (direction) {
+        var _this = this;
+        var directionKeys = this.directionKeys;
+        var keys = directionKeys && directionKeys[direction];
+        var values = [];
+        if (keys) {
+            keys.forEach(function (key) {
+                var value = _this[key];
+                if (value) {
+                    if (Array.isArray(value)) {
+                        values.push.apply(values, value);
+                    }
+                    else {
+                        values.push(value);
+                    }
+                }
+            });
+        }
+        return values;
+    };
+    Object.defineProperty(HistogramSeries.prototype, "xKey", {
+        get: function () {
+            return this._xKey;
+        },
+        set: function (value) {
+            if (this._xKey !== value) {
+                this._xKey = value;
+                this.scheduleData();
+            }
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(HistogramSeries.prototype, "areaPlot", {
+        get: function () {
+            return this._areaPlot;
+        },
+        set: function (c) {
+            this._areaPlot = c;
+            this.scheduleData();
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(HistogramSeries.prototype, "bins", {
+        get: function () {
+            return this._bins;
+        },
+        set: function (bins) {
+            this._bins = bins;
+            this.scheduleData();
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(HistogramSeries.prototype, "aggregation", {
+        get: function () {
+            return this._aggregation;
+        },
+        set: function (aggregation) {
+            this._aggregation = aggregation;
+            this.scheduleData();
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(HistogramSeries.prototype, "binCount", {
+        get: function () {
+            return this._binCount;
+        },
+        set: function (binCount) {
+            this._binCount = binCount;
+            this.scheduleData();
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(HistogramSeries.prototype, "xName", {
+        get: function () {
+            return this._xName;
+        },
+        set: function (value) {
+            if (this._xName !== value) {
+                this._xName = value;
+                this.update();
+            }
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(HistogramSeries.prototype, "yKey", {
+        get: function () {
+            return this._yKey;
+        },
+        set: function (yKey) {
+            this._yKey = yKey;
+            this.seriesItemEnabled = true;
+            this.scheduleData();
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(HistogramSeries.prototype, "yName", {
+        get: function () {
+            return this._yName;
+        },
+        set: function (values) {
+            this._yName = values;
+            this.scheduleData();
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(HistogramSeries.prototype, "strokeWidth", {
+        get: function () {
+            return this._strokeWidth;
+        },
+        set: function (value) {
+            if (this._strokeWidth !== value) {
+                this._strokeWidth = value;
+                this.update();
+            }
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(HistogramSeries.prototype, "shadow", {
+        get: function () {
+            return this._shadow;
+        },
+        set: function (value) {
+            if (this._shadow !== value) {
+                this._shadow = value;
+                this.update();
+            }
+        },
+        enumerable: true,
+        configurable: true
+    });
+    HistogramSeries.prototype.onHighlightChange = function () {
+        this.updateRectNodes();
+    };
+    /*  during processData phase, used to unify different ways of the user specifying
+        the bins. Returns bins in format [[min1, max1], [min2, max2] ... ] */
+    HistogramSeries.prototype.deriveBins = function () {
+        var _this = this;
+        var _a = this, bins = _a.bins, binCount = _a.binCount;
+        if (bins && binCount) {
+            console.warn('bin domain and bin count both specified - these are mutually exclusive properties');
+        }
+        if (bins) {
+            // we have explicity set bins from user. Use those.
+            return bins;
+        }
+        var xData = this.data.map(function (datum) { return datum[_this.xKey]; });
+        var xDomain = this.fixNumericExtent(finiteExtent(xData), 'x');
+        var binStarts = ticks(xDomain[0], xDomain[1], this.binCount || defaultBinCount);
+        var binSize = tickStep(xDomain[0], xDomain[1], this.binCount || defaultBinCount);
+        var firstBinEnd = binStarts[0];
+        var expandStartToBin = function (n) { return [n, n + binSize]; };
+        return __spreadArrays$4([
+            [firstBinEnd - binSize, firstBinEnd]
+        ], binStarts.map(expandStartToBin));
+    };
+    HistogramSeries.prototype.placeDataInBins = function (data) {
+        var _this = this;
+        var xKey = this.xKey;
+        var derivedBins = this.deriveBins();
+        // creating a sorted copy allows binning in O(n) rather than O(n²)
+        // but at the expense of more temporary memory
+        var sortedData = data.slice().sort(function (a, b) {
+            if (a[xKey] < b[xKey]) {
+                return -1;
+            }
+            if (a[xKey] > b[xKey]) {
+                return 1;
+            }
+            return 0;
+        });
+        var currentBin = 0;
+        var bins = [new HistogramBin(derivedBins[0])];
+        sortedData.forEach(function (datum) {
+            while (datum[xKey] > derivedBins[currentBin][1]) {
+                currentBin++;
+                bins.push(new HistogramBin(derivedBins[currentBin]));
+            }
+            bins[currentBin].addDatum(datum);
+        });
+        bins.forEach(function (b) { return b.calculateAggregatedValue(_this._aggregation, _this.yKey); });
+        return bins;
+    };
+    Object.defineProperty(HistogramSeries.prototype, "xMax", {
+        get: function () {
+            var _this = this;
+            return this.data && this.data.reduce(function (acc, datum) {
+                return Math.max(acc, datum[_this.xKey]);
+            }, Number.NEGATIVE_INFINITY);
+        },
+        enumerable: true,
+        configurable: true
+    });
+    HistogramSeries.prototype.processData = function () {
+        var _this = this;
+        var _a = this, xKey = _a.xKey, data = _a.data;
+        this.binnedData = this.placeDataInBins(xKey && data ? data : []);
+        var yData = this.binnedData.map(function (b) { return b.getY(_this.areaPlot); });
+        var yMinMax = numericExtent(yData);
+        this.yDomain = this.fixNumericExtent([0, yMinMax[1]], 'y');
+        var firstBin = this.binnedData[0];
+        var lastBin = this.binnedData[this.binnedData.length - 1];
+        var xMin = firstBin.domain[0];
+        var xMax = lastBin.domain[1];
+        this.xDomain = [xMin, xMax];
+        this.fireEvent({ type: 'dataProcessed' });
+        return true;
+    };
+    HistogramSeries.prototype.getDomain = function (direction) {
+        if (direction === ChartAxisDirection.X) {
+            return this.xDomain;
+        }
+        else {
+            return this.yDomain;
+        }
+    };
+    HistogramSeries.prototype.fireNodeClickEvent = function (datum) {
+        this.fireEvent({
+            type: 'nodeClick',
+            series: this,
+            datum: datum.seriesDatum,
+            xKey: this.xKey
+        });
+    };
+    HistogramSeries.prototype.update = function () {
+        var _a = this, visible = _a.visible, chart = _a.chart, xAxis = _a.xAxis, yAxis = _a.yAxis;
+        this.group.visible = visible;
+        if (!xAxis || !yAxis || !visible || !chart || chart.layoutPending || chart.dataPending) {
+            return;
+        }
+        var nodeData = this.generateNodeData();
+        this.updateRectSelection(nodeData);
+        this.updateRectNodes();
+        this.updateTextSelection(nodeData);
+        this.updateTextNodes();
+    };
+    HistogramSeries.prototype.generateNodeData = function () {
+        var _this = this;
+        if (!this.seriesItemEnabled) {
+            return [];
+        }
+        var _a = this, xScale = _a.xAxis.scale, yScale = _a.yAxis.scale, fill = _a.fill, stroke = _a.stroke, strokeWidth = _a.strokeWidth;
+        var nodeData = [];
+        var defaultLabelFormatter = function (b) { return String(b.aggregatedValue); };
+        var _b = this.label, _c = _b.formatter, labelFormatter = _c === void 0 ? defaultLabelFormatter : _c, labelFontStyle = _b.fontStyle, labelFontWeight = _b.fontWeight, labelFontSize = _b.fontSize, labelFontFamily = _b.fontFamily, labelColor = _b.color;
+        this.binnedData.forEach(function (binOfData) {
+            var total = binOfData.aggregatedValue, frequency = binOfData.frequency, _a = binOfData.domain, xDomainMin = _a[0], xDomainMax = _a[1], relativeHeight = binOfData.relativeHeight;
+            var xMinPx = xScale.convert(xDomainMin), xMaxPx = xScale.convert(xDomainMax), 
+            // note: assuming can't be negative:
+            y = _this.areaPlot ? relativeHeight : (_this.yKey ? total : frequency), yZeroPx = yScale.convert(0), yMaxPx = yScale.convert(y), w = xMaxPx - xMinPx, h = Math.abs(yMaxPx - yZeroPx);
+            var selectionDatumLabel = y !== 0 && {
+                text: labelFormatter(binOfData),
+                fontStyle: labelFontStyle,
+                fontWeight: labelFontWeight,
+                fontSize: labelFontSize,
+                fontFamily: labelFontFamily,
+                fill: labelColor,
+                x: xMinPx + w / 2,
+                y: yMaxPx + h / 2
+            };
+            nodeData.push({
+                series: _this,
+                seriesDatum: binOfData,
+                // since each selection is an aggregation of multiple data.
+                x: xMinPx,
+                y: yMaxPx,
+                width: w,
+                height: h,
+                fill: fill,
+                stroke: stroke,
+                strokeWidth: strokeWidth,
+                label: selectionDatumLabel,
+            });
+        });
+        return nodeData;
+    };
+    HistogramSeries.prototype.updateRectSelection = function (nodeData) {
+        var updateRects = this.rectSelection.setData(nodeData);
+        updateRects.exit.remove();
+        var enterRects = updateRects.enter.append(Rect).each(function (rect) {
+            rect.tag = HistogramSeriesNodeTag.Bin;
+            rect.crisp = true;
+        });
+        this.rectSelection = updateRects.merge(enterRects);
+    };
+    HistogramSeries.prototype.updateRectNodes = function () {
+        var highlightedDatum = this.chart.highlightedDatum;
+        var _a = this, fillOpacity = _a.fillOpacity, strokeOpacity = _a.strokeOpacity, shadow = _a.shadow, _b = _a.highlightStyle, fill = _b.fill, stroke = _b.stroke;
+        this.rectSelection.each(function (rect, datum) {
+            var highlighted = datum === highlightedDatum;
+            rect.x = datum.x;
+            rect.y = datum.y;
+            rect.width = datum.width;
+            rect.height = datum.height;
+            rect.fill = highlighted && fill !== undefined ? fill : datum.fill;
+            rect.stroke = highlighted && stroke !== undefined ? stroke : datum.stroke;
+            rect.fillOpacity = fillOpacity;
+            rect.strokeOpacity = strokeOpacity;
+            rect.strokeWidth = datum.strokeWidth;
+            rect.fillShadow = shadow;
+            rect.visible = datum.height > 0; // prevent stroke from rendering for zero height columns
+        });
+    };
+    HistogramSeries.prototype.updateTextSelection = function (nodeData) {
+        var updateTexts = this.textSelection.setData(nodeData);
+        updateTexts.exit.remove();
+        var enterTexts = updateTexts.enter.append(Text).each(function (text) {
+            text.tag = HistogramSeriesNodeTag.Label;
+            text.pointerEvents = PointerEvents.None;
+            text.textAlign = 'center';
+            text.textBaseline = 'middle';
+        });
+        this.textSelection = updateTexts.merge(enterTexts);
+    };
+    HistogramSeries.prototype.updateTextNodes = function () {
+        var labelEnabled = this.label.enabled;
+        this.textSelection.each(function (text, datum) {
+            var label = datum.label;
+            if (label && labelEnabled) {
+                text.text = label.text;
+                text.x = label.x;
+                text.y = label.y;
+                text.fontStyle = label.fontStyle;
+                text.fontWeight = label.fontWeight;
+                text.fontSize = label.fontSize;
+                text.fontFamily = label.fontFamily;
+                text.fill = label.fill;
+                text.visible = true;
+            }
+            else {
+                text.visible = false;
+            }
+        });
+    };
+    HistogramSeries.prototype.getTooltipHtml = function (nodeDatum) {
+        var _a = this, xKey = _a.xKey, yKey = _a.yKey;
+        if (!xKey) {
+            return '';
+        }
+        var _b = this, xName = _b.xName, yName = _b.yName, fill = _b.fill, tooltipRenderer = _b.tooltipRenderer, aggregation = _b.aggregation;
+        var bin = nodeDatum.seriesDatum;
+        var aggregatedValue = bin.aggregatedValue, frequency = bin.frequency, _c = bin.domain, rangeMin = _c[0], rangeMax = _c[1];
+        if (tooltipRenderer) {
+            return tooltipRenderer({
+                datum: bin,
+                xKey: xKey,
+                xName: xName,
+                yKey: yKey,
+                yName: yName,
+                color: fill
+            });
+        }
+        else {
+            var titleStyle = "style=\"color: white; background-color: " + fill + "\"";
+            var titleString = "\n                <div class=\"" + Chart.defaultTooltipClass + "-title\" " + titleStyle + ">\n                    " + (xName || xKey) + " " + toFixed(rangeMin) + " - " + toFixed(rangeMax) + "\n                </div>";
+            var contentHtml = yKey ?
+                "<b>" + (yName || yKey) + " (" + aggregation + ")</b>: " + toFixed(aggregatedValue) + "<br>" :
+                '';
+            contentHtml += "<b>Frequency</b>: " + frequency;
+            return "\n                " + titleString + "\n                <div class=\"" + Chart.defaultTooltipClass + "-content\">\n                    " + contentHtml + "\n                </div>";
+        }
+    };
+    HistogramSeries.prototype.listSeriesItems = function (legendData) {
+        var _a = this, id = _a.id, data = _a.data, yKey = _a.yKey, yName = _a.yName, seriesItemEnabled = _a.seriesItemEnabled, fill = _a.fill, stroke = _a.stroke, fillOpacity = _a.fillOpacity, strokeOpacity = _a.strokeOpacity;
+        if (data && data.length) {
+            legendData.push({
+                id: id,
+                itemId: yKey,
+                enabled: seriesItemEnabled,
+                label: {
+                    text: yName || yKey || 'Frequency'
+                },
+                marker: {
+                    fill: fill,
+                    stroke: stroke,
+                    fillOpacity: fillOpacity,
+                    strokeOpacity: strokeOpacity
+                }
+            });
+        }
+    };
+    HistogramSeries.prototype.toggleSeriesItem = function (itemId, enabled) {
+        if (itemId === this.yKey) {
+            this.seriesItemEnabled = enabled;
+        }
+        this.scheduleData();
+    };
+    HistogramSeries.className = 'HistogramSeries';
+    HistogramSeries.type = 'histogram';
+    __decorate$P([
+        reactive('dataChange')
+    ], HistogramSeries.prototype, "fill", void 0);
+    __decorate$P([
+        reactive('dataChange')
+    ], HistogramSeries.prototype, "stroke", void 0);
+    __decorate$P([
+        reactive('layoutChange')
+    ], HistogramSeries.prototype, "fillOpacity", void 0);
+    __decorate$P([
+        reactive('layoutChange')
+    ], HistogramSeries.prototype, "strokeOpacity", void 0);
+    return HistogramSeries;
+}(CartesianSeries));
+
+var __extends$12 = (undefined && undefined.__extends) || (function () {
+    var extendStatics = function (d, b) {
+        extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+        return extendStatics(d, b);
+    };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
 var Sector = /** @class */ (function (_super) {
-    __extends$11(Sector, _super);
+    __extends$12(Sector, _super);
     function Sector() {
         var _this = _super !== null && _super.apply(this, arguments) || this;
         _this.path = new Path2D();
@@ -21012,7 +21777,7 @@ var Color = /** @class */ (function () {
     return Color;
 }());
 
-var __extends$12 = (undefined && undefined.__extends) || (function () {
+var __extends$13 = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -21025,36 +21790,36 @@ var __extends$12 = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$P = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$Q = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
-var PieSeriesNodeTag;
-(function (PieSeriesNodeTag) {
-    PieSeriesNodeTag[PieSeriesNodeTag["Sector"] = 0] = "Sector";
-    PieSeriesNodeTag[PieSeriesNodeTag["Callout"] = 1] = "Callout";
-    PieSeriesNodeTag[PieSeriesNodeTag["Label"] = 2] = "Label";
-})(PieSeriesNodeTag || (PieSeriesNodeTag = {}));
+var PieNodeTag;
+(function (PieNodeTag) {
+    PieNodeTag[PieNodeTag["Sector"] = 0] = "Sector";
+    PieNodeTag[PieNodeTag["Callout"] = 1] = "Callout";
+    PieNodeTag[PieNodeTag["Label"] = 2] = "Label";
+})(PieNodeTag || (PieNodeTag = {}));
 var PieSeriesLabel = /** @class */ (function (_super) {
-    __extends$12(PieSeriesLabel, _super);
+    __extends$13(PieSeriesLabel, _super);
     function PieSeriesLabel() {
         var _this = _super !== null && _super.apply(this, arguments) || this;
         _this.offset = 3; // from the callout line
         _this.minAngle = 20; // in degrees
         return _this;
     }
-    __decorate$P([
+    __decorate$Q([
         reactive('change')
     ], PieSeriesLabel.prototype, "offset", void 0);
-    __decorate$P([
+    __decorate$Q([
         reactive('dataChange')
     ], PieSeriesLabel.prototype, "minAngle", void 0);
     return PieSeriesLabel;
 }(Label));
 var PieSeriesCallout = /** @class */ (function (_super) {
-    __extends$12(PieSeriesCallout, _super);
+    __extends$13(PieSeriesCallout, _super);
     function PieSeriesCallout() {
         var _this = _super !== null && _super.apply(this, arguments) || this;
         _this.colors = borneo.strokes;
@@ -21062,19 +21827,19 @@ var PieSeriesCallout = /** @class */ (function (_super) {
         _this.strokeWidth = 1;
         return _this;
     }
-    __decorate$P([
+    __decorate$Q([
         reactive('change')
     ], PieSeriesCallout.prototype, "colors", void 0);
-    __decorate$P([
+    __decorate$Q([
         reactive('change')
     ], PieSeriesCallout.prototype, "length", void 0);
-    __decorate$P([
+    __decorate$Q([
         reactive('change')
     ], PieSeriesCallout.prototype, "strokeWidth", void 0);
     return PieSeriesCallout;
 }(Observable));
 var PieSeries = /** @class */ (function (_super) {
-    __extends$12(PieSeries, _super);
+    __extends$13(PieSeries, _super);
     function PieSeries() {
         var _this = _super.call(this) || this;
         _this.radiusScale = new LinearScale();
@@ -21112,13 +21877,11 @@ var PieSeries = /** @class */ (function (_super) {
         _this.outerRadiusOffset = 0;
         _this.innerRadiusOffset = 0;
         _this.strokeWidth = 1;
-        _this.highlightStyle = {
-            fill: 'yellow'
-        };
-        _this.addEventListener('update', function () { return _this.update(); });
-        _this.label.addEventListener('change', function () { return _this.scheduleLayout(); });
-        _this.label.addEventListener('dataChange', function () { return _this.scheduleData(); });
-        _this.callout.addEventListener('change', function () { return _this.scheduleLayout(); });
+        _this.highlightStyle = { fill: 'yellow' };
+        _this.addEventListener('update', _this.update, _this);
+        _this.label.addEventListener('change', _this.scheduleLayout, _this);
+        _this.label.addEventListener('dataChange', _this.scheduleData, _this);
+        _this.callout.addEventListener('change', _this.scheduleLayout, _this);
         _this.addPropertyListener('data', function (event) {
             event.source.seriesItemEnabled = event.value.map(function () { return true; });
         });
@@ -21171,16 +21934,8 @@ var PieSeries = /** @class */ (function (_super) {
         enumerable: true,
         configurable: true
     });
-    PieSeries.prototype.highlightNode = function (node) {
-        if (!(node instanceof Sector)) {
-            return;
-        }
-        this.highlightedNode = node;
-        this.scheduleLayout();
-    };
-    PieSeries.prototype.dehighlightNode = function () {
-        this.highlightedNode = undefined;
-        this.scheduleLayout();
+    PieSeries.prototype.onHighlightChange = function () {
+        this.updateNodes();
     };
     PieSeries.prototype.getDomain = function (direction) {
         if (direction === ChartAxisDirection.X) {
@@ -21248,8 +22003,9 @@ var PieSeries = /** @class */ (function (_super) {
                 textBaseline = 'middle';
             }
             groupSelectionData.push({
-                index: datumIndex,
+                series: _this,
                 seriesDatum: data[datumIndex],
+                index: datumIndex,
                 radius: radius,
                 startAngle: startAngle,
                 endAngle: endAngle,
@@ -21273,42 +22029,50 @@ var PieSeries = /** @class */ (function (_super) {
         if (!visible || !chart || chart.dataPending || chart.layoutPending) {
             return;
         }
-        var _a = this, fills = _a.fills, strokes = _a.strokes, fillOpacity = _a.fillOpacity, strokeOpacity = _a.strokeOpacity, callout = _a.callout, outerRadiusOffset = _a.outerRadiusOffset, innerRadiusOffset = _a.innerRadiusOffset, radiusScale = _a.radiusScale, title = _a.title;
-        radiusScale.range = [0, this.radius];
+        this.radiusScale.range = [0, this.radius];
         this.group.translationX = this.centerX;
         this.group.translationY = this.centerY;
+        var title = this.title;
         if (title) {
-            title.node.translationY = -this.radius - outerRadiusOffset - 2;
+            title.node.translationY = -this.radius - this.outerRadiusOffset - 2;
             title.node.visible = title.enabled;
         }
+        this.updateGroupSelection();
+        this.updateNodes();
+    };
+    PieSeries.prototype.updateGroupSelection = function () {
         var updateGroups = this.groupSelection.setData(this.groupSelectionData);
         updateGroups.exit.remove();
         var enterGroups = updateGroups.enter.append(Group);
-        enterGroups.append(Sector).each(function (node) { return node.tag = PieSeriesNodeTag.Sector; });
+        enterGroups.append(Sector).each(function (node) { return node.tag = PieNodeTag.Sector; });
         enterGroups.append(Line).each(function (node) {
-            node.tag = PieSeriesNodeTag.Callout;
+            node.tag = PieNodeTag.Callout;
             node.pointerEvents = PointerEvents.None;
         });
         enterGroups.append(Text).each(function (node) {
-            node.tag = PieSeriesNodeTag.Label;
+            node.tag = PieNodeTag.Label;
             node.pointerEvents = PointerEvents.None;
         });
-        var groupSelection = updateGroups.merge(enterGroups);
+        this.groupSelection = updateGroups.merge(enterGroups);
+    };
+    PieSeries.prototype.updateNodes = function () {
+        var _a = this, fills = _a.fills, strokes = _a.strokes, fillOpacity = _a.fillOpacity, strokeOpacity = _a.strokeOpacity, strokeWidth = _a.strokeWidth, outerRadiusOffset = _a.outerRadiusOffset, innerRadiusOffset = _a.innerRadiusOffset, radiusScale = _a.radiusScale, callout = _a.callout, shadow = _a.shadow, _b = _a.highlightStyle, fill = _b.fill, stroke = _b.stroke, centerOffset = _b.centerOffset;
+        var highlightedDatum = this.chart.highlightedDatum;
         var outerRadii = [];
         var centerOffsets = [];
-        var _b = this, highlightedNode = _b.highlightedNode, _c = _b.highlightStyle, fill = _c.fill, stroke = _c.stroke, centerOffset = _c.centerOffset, shadow = _b.shadow, strokeWidth = _b.strokeWidth;
-        groupSelection.selectByTag(PieSeriesNodeTag.Sector).each(function (sector, datum, index) {
+        this.groupSelection.selectByTag(PieNodeTag.Sector).each(function (sector, datum, index) {
             var radius = radiusScale.convert(datum.radius);
             var outerRadius = Math.max(0, radius + outerRadiusOffset);
             sector.outerRadius = outerRadius;
             sector.innerRadius = Math.max(0, innerRadiusOffset ? radius + innerRadiusOffset : 0);
             sector.startAngle = datum.startAngle;
             sector.endAngle = datum.endAngle;
-            sector.fill = sector === highlightedNode && fill !== undefined ? fill : fills[index % fills.length];
-            sector.stroke = sector === highlightedNode && stroke !== undefined ? stroke : strokes[index % strokes.length];
+            var highlighted = datum === highlightedDatum;
+            sector.fill = highlighted && fill !== undefined ? fill : fills[index % fills.length];
+            sector.stroke = highlighted && stroke !== undefined ? stroke : strokes[index % strokes.length];
             sector.fillOpacity = fillOpacity;
             sector.strokeOpacity = strokeOpacity;
-            sector.centerOffset = sector === highlightedNode && centerOffset !== undefined ? centerOffset : 0;
+            sector.centerOffset = highlighted && centerOffset !== undefined ? centerOffset : 0;
             sector.fillShadow = shadow;
             sector.strokeWidth = strokeWidth;
             sector.lineJoin = 'round';
@@ -21316,7 +22080,7 @@ var PieSeries = /** @class */ (function (_super) {
             centerOffsets.push(sector.centerOffset);
         });
         var calloutColors = callout.colors, calloutLength = callout.length, calloutStrokeWidth = callout.strokeWidth;
-        groupSelection.selectByTag(PieSeriesNodeTag.Callout).each(function (line, datum, index) {
+        this.groupSelection.selectByTag(PieNodeTag.Callout).each(function (line, datum, index) {
             if (datum.label) {
                 var outerRadius = centerOffsets[index] + outerRadii[index];
                 line.strokeWidth = calloutStrokeWidth;
@@ -21331,8 +22095,8 @@ var PieSeries = /** @class */ (function (_super) {
             }
         });
         {
-            var _d = this.label, offset_1 = _d.offset, fontStyle_1 = _d.fontStyle, fontWeight_1 = _d.fontWeight, fontSize_1 = _d.fontSize, fontFamily_1 = _d.fontFamily, color_1 = _d.color;
-            groupSelection.selectByTag(PieSeriesNodeTag.Label).each(function (text, datum, index) {
+            var _c = this.label, offset_1 = _c.offset, fontStyle_1 = _c.fontStyle, fontWeight_1 = _c.fontWeight, fontSize_1 = _c.fontSize, fontFamily_1 = _c.fontFamily, color_1 = _c.color;
+            this.groupSelection.selectByTag(PieNodeTag.Label).each(function (text, datum, index) {
                 var label = datum.label;
                 if (label) {
                     var outerRadius = outerRadii[index];
@@ -21353,7 +22117,15 @@ var PieSeries = /** @class */ (function (_super) {
                 }
             });
         }
-        this.groupSelection = groupSelection;
+    };
+    PieSeries.prototype.fireNodeClickEvent = function (datum) {
+        this.fireEvent({
+            type: 'nodeClick',
+            series: this,
+            datum: datum.seriesDatum,
+            angleKey: this.angleKey,
+            radiusKey: this.radiusKey
+        });
     };
     PieSeries.prototype.getTooltipHtml = function (nodeDatum) {
         var angleKey = this.angleKey;
@@ -21414,95 +22186,47 @@ var PieSeries = /** @class */ (function (_super) {
     };
     PieSeries.className = 'PieSeries';
     PieSeries.type = 'pie';
-    __decorate$P([
+    __decorate$Q([
         reactive('dataChange')
     ], PieSeries.prototype, "angleKey", void 0);
-    __decorate$P([
+    __decorate$Q([
         reactive('update')
     ], PieSeries.prototype, "angleName", void 0);
-    __decorate$P([
+    __decorate$Q([
         reactive('dataChange')
     ], PieSeries.prototype, "radiusKey", void 0);
-    __decorate$P([
+    __decorate$Q([
         reactive('update')
     ], PieSeries.prototype, "radiusName", void 0);
-    __decorate$P([
+    __decorate$Q([
         reactive('dataChange')
     ], PieSeries.prototype, "labelKey", void 0);
-    __decorate$P([
+    __decorate$Q([
         reactive('update')
     ], PieSeries.prototype, "labelName", void 0);
-    __decorate$P([
+    __decorate$Q([
         reactive('layoutChange')
     ], PieSeries.prototype, "fillOpacity", void 0);
-    __decorate$P([
+    __decorate$Q([
         reactive('layoutChange')
     ], PieSeries.prototype, "strokeOpacity", void 0);
-    __decorate$P([
+    __decorate$Q([
         reactive('dataChange')
     ], PieSeries.prototype, "rotation", void 0);
-    __decorate$P([
+    __decorate$Q([
         reactive('layoutChange')
     ], PieSeries.prototype, "outerRadiusOffset", void 0);
-    __decorate$P([
+    __decorate$Q([
         reactive('dataChange')
     ], PieSeries.prototype, "innerRadiusOffset", void 0);
-    __decorate$P([
+    __decorate$Q([
         reactive('layoutChange')
     ], PieSeries.prototype, "strokeWidth", void 0);
-    __decorate$P([
+    __decorate$Q([
         reactive('layoutChange')
     ], PieSeries.prototype, "shadow", void 0);
     return PieSeries;
 }(PolarSeries));
-
-var __extends$13 = (undefined && undefined.__extends) || (function () {
-    var extendStatics = function (d, b) {
-        extendStatics = Object.setPrototypeOf ||
-            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
-        return extendStatics(d, b);
-    };
-    return function (d, b) {
-        extendStatics(d, b);
-        function __() { this.constructor = d; }
-        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-})();
-var __decorate$Q = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
-    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
-    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
-    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
-    return c > 3 && r && Object.defineProperty(target, key, r), r;
-};
-var DropShadow = /** @class */ (function (_super) {
-    __extends$13(DropShadow, _super);
-    function DropShadow() {
-        var _this = _super !== null && _super.apply(this, arguments) || this;
-        _this.enabled = true;
-        _this.color = 'rgba(0, 0, 0, 0.5)';
-        _this.xOffset = 0;
-        _this.yOffset = 0;
-        _this.blur = 5;
-        return _this;
-    }
-    __decorate$Q([
-        reactive('change')
-    ], DropShadow.prototype, "enabled", void 0);
-    __decorate$Q([
-        reactive('change')
-    ], DropShadow.prototype, "color", void 0);
-    __decorate$Q([
-        reactive('change')
-    ], DropShadow.prototype, "xOffset", void 0);
-    __decorate$Q([
-        reactive('change')
-    ], DropShadow.prototype, "yOffset", void 0);
-    __decorate$Q([
-        reactive('change')
-    ], DropShadow.prototype, "blur", void 0);
-    return DropShadow;
-}(Observable));
 
 var __extends$14 = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -21517,8 +22241,56 @@ var __extends$14 = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
+var __decorate$R = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var DropShadow = /** @class */ (function (_super) {
+    __extends$14(DropShadow, _super);
+    function DropShadow() {
+        var _this = _super !== null && _super.apply(this, arguments) || this;
+        _this.enabled = true;
+        _this.color = 'rgba(0, 0, 0, 0.5)';
+        _this.xOffset = 0;
+        _this.yOffset = 0;
+        _this.blur = 5;
+        return _this;
+    }
+    __decorate$R([
+        reactive('change')
+    ], DropShadow.prototype, "enabled", void 0);
+    __decorate$R([
+        reactive('change')
+    ], DropShadow.prototype, "color", void 0);
+    __decorate$R([
+        reactive('change')
+    ], DropShadow.prototype, "xOffset", void 0);
+    __decorate$R([
+        reactive('change')
+    ], DropShadow.prototype, "yOffset", void 0);
+    __decorate$R([
+        reactive('change')
+    ], DropShadow.prototype, "blur", void 0);
+    return DropShadow;
+}(Observable));
+
+var __extends$15 = (undefined && undefined.__extends) || (function () {
+    var extendStatics = function (d, b) {
+        extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+        return extendStatics(d, b);
+    };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
 var NumberAxis = /** @class */ (function (_super) {
-    __extends$14(NumberAxis, _super);
+    __extends$15(NumberAxis, _super);
     function NumberAxis() {
         var _this = _super.call(this, new LinearScale()) || this;
         _this._nice = true;
@@ -21604,7 +22376,7 @@ function convertToMap(list) {
     return map;
 }
 
-var __extends$15 = (undefined && undefined.__extends) || (function () {
+var __extends$16 = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -21729,7 +22501,7 @@ var TimeInterval = /** @class */ (function () {
     return TimeInterval;
 }());
 var CountableTimeInterval = /** @class */ (function (_super) {
-    __extends$15(CountableTimeInterval, _super);
+    __extends$16(CountableTimeInterval, _super);
     function CountableTimeInterval(floor, offset, count, field) {
         var _this = _super.call(this, floor, offset) || this;
         _this._count = count;
@@ -22603,7 +23375,7 @@ function setDefaultLocale(definition) {
     return locale = formatLocale(definition);
 }
 
-var __extends$16 = (undefined && undefined.__extends) || (function () {
+var __extends$17 = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -22617,7 +23389,7 @@ var __extends$16 = (undefined && undefined.__extends) || (function () {
     };
 })();
 var TimeScale = /** @class */ (function (_super) {
-    __extends$16(TimeScale, _super);
+    __extends$17(TimeScale, _super);
     function TimeScale() {
         var _this = _super !== null && _super.apply(this, arguments) || this;
         _this.year = year;
@@ -22789,7 +23561,7 @@ var TimeScale = /** @class */ (function (_super) {
     return TimeScale;
 }(ContinuousScale));
 
-var __extends$17 = (undefined && undefined.__extends) || (function () {
+var __extends$18 = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -22803,7 +23575,7 @@ var __extends$17 = (undefined && undefined.__extends) || (function () {
     };
 })();
 var TimeAxis = /** @class */ (function (_super) {
-    __extends$17(TimeAxis, _super);
+    __extends$18(TimeAxis, _super);
     function TimeAxis() {
         var _this = _super.call(this, new TimeScale()) || this;
         _this._nice = true;
@@ -22866,7 +23638,7 @@ var ChartBuilder = /** @class */ (function () {
         var chart = this.createCartesianChart(container, ChartBuilder.createAxis(options.xAxis, 'number'), ChartBuilder.createAxis(options.yAxis, 'category'), options.document);
         ChartBuilder.initChart(chart, options);
         if (options.series) {
-            chart.series = options.series.map(function (s) { return ChartBuilder.initBarSeries(new ColumnSeries(), s); });
+            chart.series = options.series.map(function (s) { return ChartBuilder.initBarSeries(new BarSeries(), s); });
         }
         return chart;
     };
@@ -22874,7 +23646,7 @@ var ChartBuilder = /** @class */ (function () {
         var chart = this.createGroupedCategoryChart(container, ChartBuilder.createAxis(options.xAxis, 'number'), ChartBuilder.createGroupedCategoryAxis(options.yAxis), options.document);
         ChartBuilder.initChart(chart, options);
         if (options.series) {
-            chart.series = options.series.map(function (s) { return ChartBuilder.initBarSeries(new ColumnSeries(), s); });
+            chart.series = options.series.map(function (s) { return ChartBuilder.initBarSeries(new BarSeries(), s); });
         }
         return chart;
     };
@@ -22882,7 +23654,7 @@ var ChartBuilder = /** @class */ (function () {
         var chart = this.createCartesianChart(container, ChartBuilder.createAxis(options.xAxis, 'category'), ChartBuilder.createAxis(options.yAxis, 'number'), options.document);
         ChartBuilder.initChart(chart, options);
         if (options.series) {
-            chart.series = options.series.map(function (s) { return ChartBuilder.initBarSeries(new ColumnSeries(), s); });
+            chart.series = options.series.map(function (s) { return ChartBuilder.initBarSeries(new BarSeries(), s); });
         }
         return chart;
     };
@@ -22890,7 +23662,7 @@ var ChartBuilder = /** @class */ (function () {
         var chart = this.createGroupedCategoryChart(container, ChartBuilder.createGroupedCategoryAxis(options.xAxis), ChartBuilder.createAxis(options.yAxis, 'number'), options.document);
         ChartBuilder.initChart(chart, options);
         if (options.series) {
-            chart.series = options.series.map(function (s) { return ChartBuilder.initBarSeries(new ColumnSeries(), s); });
+            chart.series = options.series.map(function (s) { return ChartBuilder.initBarSeries(new BarSeries(), s); });
         }
         return chart;
     };
@@ -22934,6 +23706,11 @@ var ChartBuilder = /** @class */ (function () {
         }
         return chart;
     };
+    ChartBuilder.createHistogramChart = function (container, options) {
+        var chart = this.createCartesianChart(container, ChartBuilder.createNumberAxis(options.xAxis), ChartBuilder.createNumberAxis(options.yAxis), options.document);
+        ChartBuilder.initChart(chart, options);
+        return chart;
+    };
     ChartBuilder.createPolarChart = function (container) {
         var chart = new PolarChart();
         chart.container = container;
@@ -22957,11 +23734,13 @@ var ChartBuilder = /** @class */ (function () {
             case 'scatter':
                 return ChartBuilder.initScatterSeries(new ScatterSeries(), options);
             case 'bar':
-                return ChartBuilder.initBarSeries(new ColumnSeries(), options);
+                return ChartBuilder.initBarSeries(new BarSeries(), options);
             case 'area':
                 return ChartBuilder.initAreaSeries(new AreaSeries(), options);
             case 'pie':
                 return ChartBuilder.initPieSeries(new PieSeries(), options);
+            case 'histogram':
+                return ChartBuilder.initHistogramSeries(new HistogramSeries(), options);
             default:
                 return null;
         }
@@ -22980,12 +23759,34 @@ var ChartBuilder = /** @class */ (function () {
         if (options.legend !== undefined) {
             ChartBuilder.initLegend(chart.legend, options.legend);
         }
+        var listeners = options.listeners;
+        if (listeners) {
+            for (var key in listeners) {
+                if (listeners.hasOwnProperty(key)) {
+                    var listener = listeners[key];
+                    if (typeof listener === 'function') {
+                        chart.addEventListener(key, listener);
+                    }
+                }
+            }
+        }
         return chart;
     };
     ChartBuilder.initSeries = function (series, options) {
         this.setValueIfExists(series, 'visible', options.visible);
         this.setValueIfExists(series, 'showInLegend', options.showInLegend);
         this.setValueIfExists(series, 'data', options.data);
+        var listeners = options.listeners;
+        if (listeners) {
+            for (var key in listeners) {
+                if (listeners.hasOwnProperty(key)) {
+                    var listener = listeners[key];
+                    if (typeof listener === 'function') {
+                        series.addEventListener(key, listener);
+                    }
+                }
+            }
+        }
         return series;
     };
     ChartBuilder.initLineSeries = function (series, options) {
@@ -23175,6 +23976,31 @@ var ChartBuilder = /** @class */ (function () {
         this.setTransformedValueIfExists(series, 'shadow', function (s) { return ChartBuilder.createDropShadow(s); }, options.shadow);
         return series;
     };
+    ChartBuilder.initHistogramSeries = function (series, options) {
+        ChartBuilder.initSeries(series, options);
+        var field = options.field, fill = options.fill, stroke = options.stroke, highlightStyle = options.highlightStyle, tooltip = options.tooltip, binCount = options.binCount;
+        this.setValueIfExists(series, 'binCount', binCount);
+        if (field) {
+            this.setValueIfExists(series, 'xKey', field.xKey);
+        }
+        if (fill) {
+            this.setValueIfExists(series, 'fill', fill.color);
+            this.setValueIfExists(series, 'fillOpacity', fill.opacity);
+        }
+        if (stroke) {
+            this.setValueIfExists(series, 'stroke', stroke.color);
+            this.setValueIfExists(series, 'strokeOpacity', stroke.opacity);
+            this.setValueIfExists(series, 'strokeWidth', stroke.width);
+        }
+        if (highlightStyle) {
+            this.initHighlightStyle(series.highlightStyle, highlightStyle);
+        }
+        if (tooltip) {
+            this.setValueIfExists(series, 'tooltipEnabled', tooltip.enabled);
+            this.setValueIfExists(series, 'tooltipRenderer', tooltip.renderer);
+        }
+        return series;
+    };
     ChartBuilder.getMarkerByName = function (name) {
         return this.markerShapes.get(name) || Square;
     };
@@ -23357,7 +24183,7 @@ var ChartBuilder = /** @class */ (function () {
     return ChartBuilder;
 }());
 
-var __extends$18 = (undefined && undefined.__extends) || (function () {
+var __extends$19 = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -23376,7 +24202,7 @@ var __extends$18 = (undefined && undefined.__extends) || (function () {
  * Unlike the `Group` node, the `ClipRect` node cannot be transformed.
  */
 var ClipRect = /** @class */ (function (_super) {
-    __extends$18(ClipRect, _super);
+    __extends$19(ClipRect, _super);
     function ClipRect() {
         var _this = _super !== null && _super.apply(this, arguments) || this;
         _this.isContainerNode = true;
@@ -23546,42 +24372,8 @@ function field$9(date) {
 }
 var utcMonth = new CountableTimeInterval(floor$b, offset$b, count$b, field$9);
 
-var __extends$19 = (undefined && undefined.__extends) || (function () {
-    var extendStatics = function (d, b) {
-        extendStatics = Object.setPrototypeOf ||
-            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
-        return extendStatics(d, b);
-    };
-    return function (d, b) {
-        extendStatics(d, b);
-        function __() { this.constructor = d; }
-        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-})();
-var __decorate$R = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
-    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
-    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
-    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
-    return c > 3 && r && Object.defineProperty(target, key, r), r;
-};
-var BarSeries = /** @class */ (function (_super) {
-    __extends$19(BarSeries, _super);
-    function BarSeries() {
-        var _this = _super !== null && _super.apply(this, arguments) || this;
-        _this.flipXY = true;
-        return _this;
-    }
-    BarSeries.className = 'BarSeries';
-    BarSeries.type = 'bar';
-    __decorate$R([
-        reactive('layoutChange')
-    ], BarSeries.prototype, "flipXY", void 0);
-    return BarSeries;
-}(ColumnSeries));
-
-var __assign$1 = (undefined && undefined.__assign) || function () {
-    __assign$1 = Object.assign || function(t) {
+var __assign$3 = (undefined && undefined.__assign) || function () {
+    __assign$3 = Object.assign || function(t) {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
             s = arguments[i];
             for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
@@ -23589,17 +24381,14 @@ var __assign$1 = (undefined && undefined.__assign) || function () {
         }
         return t;
     };
-    return __assign$1.apply(this, arguments);
-};
-var __spreadArrays$4 = (undefined && undefined.__spreadArrays) || function () {
-    for (var s = 0, i = 0, il = arguments.length; i < il; i++) s += arguments[i].length;
-    for (var r = Array(s), k = 0, i = 0; i < il; i++)
-        for (var a = arguments[i], j = 0, jl = a.length; j < jl; j++, k++)
-            r[k] = a[j];
-    return r;
+    return __assign$3.apply(this, arguments);
 };
 var _a, _b, _c, _d;
-var chartMappings = {
+/*
+    This file defines the specs for creating different kinds of charts, but
+    contains no code that uses the specs to actually create charts
+*/
+var commonChartMappings = {
     background: {
         meta: {
             defaults: {
@@ -23741,7 +24530,7 @@ var labelDefaults = {
 var labelMapping = {
     label: {
         meta: {
-            defaults: __assign$1({}, labelDefaults)
+            defaults: __assign$3({}, labelDefaults)
         }
     }
 };
@@ -23796,16 +24585,16 @@ var axisMappings = {
     }
 };
 var mappings = (_a = {},
-    _a[CartesianChart.type] = __assign$1(__assign$1({ meta: __assign$1(__assign$1({ constructor: CartesianChart }, chartMeta), { defaults: __assign$1(__assign$1({}, chartDefaults), { axes: [{
+    _a[CartesianChart.type] = __assign$3(__assign$3({ meta: __assign$3(__assign$3({ constructor: CartesianChart }, chartMeta), { defaults: __assign$3(__assign$3({}, chartDefaults), { axes: [{
                         type: CategoryAxis.type,
                         position: 'bottom'
                     }, {
                         type: NumberAxis.type,
                         position: 'left'
-                    }] }) }) }, chartMappings), { axes: (_b = {},
-            _b[NumberAxis.type] = __assign$1({ meta: __assign$1({ constructor: NumberAxis, setAsIs: ['gridStyle'] }, axisDefaults) }, axisMappings),
-            _b[CategoryAxis.type] = __assign$1({ meta: __assign$1({ constructor: CategoryAxis, setAsIs: ['gridStyle'] }, axisDefaults) }, axisMappings),
-            _b[TimeAxis.type] = __assign$1({ meta: __assign$1({ constructor: TimeAxis, setAsIs: ['gridStyle'] }, axisDefaults) }, axisMappings),
+                    }] }) }) }, commonChartMappings), { axes: (_b = {},
+            _b[NumberAxis.type] = __assign$3({ meta: __assign$3({ constructor: NumberAxis, setAsIs: ['gridStyle'] }, axisDefaults) }, axisMappings),
+            _b[CategoryAxis.type] = __assign$3({ meta: __assign$3({ constructor: CategoryAxis, setAsIs: ['gridStyle'] }, axisDefaults) }, axisMappings),
+            _b[TimeAxis.type] = __assign$3({ meta: __assign$3({ constructor: TimeAxis, setAsIs: ['gridStyle'] }, axisDefaults) }, axisMappings),
             _b), series: (_c = {},
             _c[LineSeries.type] = {
                 meta: {
@@ -23828,35 +24617,44 @@ var mappings = (_a = {},
                 highlightStyle: {},
                 marker: {}
             },
-            _c[ColumnSeries.type] = __assign$1(__assign$1({ meta: {
-                    constructor: ColumnSeries,
-                    defaults: __assign$1(__assign$1({}, seriesDefaults), columnSeriesDefaults)
-                }, highlightStyle: {} }, labelMapping), shadowMapping),
-            _c[BarSeries.type] = __assign$1(__assign$1({ meta: {
+            _c.column = __assign$3(__assign$3({ meta: {
                     constructor: BarSeries,
-                    defaults: __assign$1(__assign$1({}, seriesDefaults), columnSeriesDefaults)
+                    defaults: __assign$3(__assign$3({ flipXY: false }, seriesDefaults), columnSeriesDefaults)
+                }, highlightStyle: {} }, labelMapping), shadowMapping),
+            _c.bar = __assign$3(__assign$3({ meta: {
+                    constructor: BarSeries,
+                    defaults: __assign$3(__assign$3({ flipXY: true }, seriesDefaults), columnSeriesDefaults)
                 }, highlightStyle: {} }, labelMapping), shadowMapping),
             _c[ScatterSeries.type] = {
                 meta: {
                     constructor: ScatterSeries,
-                    defaults: __assign$1(__assign$1({}, seriesDefaults), { title: undefined, xKey: '', yKey: '', sizeKey: undefined, labelKey: undefined, xName: '', yName: '', sizeName: 'Size', labelName: 'Label', fill: borneo.fills[0], stroke: borneo.strokes[0], strokeWidth: 2, fillOpacity: 1, strokeOpacity: 1, tooltipRenderer: undefined, highlightStyle: {
+                    defaults: __assign$3(__assign$3({}, seriesDefaults), { title: undefined, xKey: '', yKey: '', sizeKey: undefined, labelKey: undefined, xName: '', yName: '', sizeName: 'Size', labelName: 'Label', fill: borneo.fills[0], stroke: borneo.strokes[0], strokeWidth: 2, fillOpacity: 1, strokeOpacity: 1, tooltipRenderer: undefined, highlightStyle: {
                             fill: 'yellow'
                         } })
                 },
                 highlightStyle: {},
                 marker: {}
             },
-            _c[AreaSeries.type] = __assign$1({ meta: {
+            _c[AreaSeries.type] = __assign$3({ meta: {
                     constructor: AreaSeries,
-                    defaults: __assign$1(__assign$1({}, seriesDefaults), { xKey: '', xName: '', yKeys: [], yNames: [], normalizedTo: undefined, fills: borneo.fills, strokes: borneo.strokes, fillOpacity: 1, strokeOpacity: 1, strokeWidth: 2, shadow: undefined, highlightStyle: {
+                    defaults: __assign$3(__assign$3({}, seriesDefaults), { xKey: '', xName: '', yKeys: [], yNames: [], normalizedTo: undefined, fills: borneo.fills, strokes: borneo.strokes, fillOpacity: 1, strokeOpacity: 1, strokeWidth: 2, shadow: undefined, highlightStyle: {
                             fill: 'yellow'
                         } })
                 }, highlightStyle: {}, marker: {} }, shadowMapping),
+            _c[HistogramSeries.type] = {
+                meta: {
+                    constructor: HistogramSeries,
+                    defaults: __assign$3(__assign$3({}, seriesDefaults), { title: undefined, xKey: '', yKey: '', xName: '', yName: '', fill: borneo.fills[0], stroke: borneo.strokes[0], strokeWidth: 1, fillOpacity: 1, strokeOpacity: 1, aggregation: 'sum', tooltipRenderer: undefined, highlightStyle: {
+                            fill: 'yellow'
+                        } })
+                },
+                highlightStyle: {}
+            },
             _c) }),
-    _a[PolarChart.type] = __assign$1(__assign$1({ meta: __assign$1(__assign$1({ constructor: PolarChart }, chartMeta), { defaults: __assign$1(__assign$1({}, chartDefaults), { padding: new Padding(40) }) }) }, chartMappings), { series: (_d = {},
-            _d[PieSeries.type] = __assign$1({ meta: {
+    _a[PolarChart.type] = __assign$3(__assign$3({ meta: __assign$3(__assign$3({ constructor: PolarChart }, chartMeta), { defaults: __assign$3(__assign$3({}, chartDefaults), { padding: new Padding(40) }) }) }, commonChartMappings), { series: (_d = {},
+            _d[PieSeries.type] = __assign$3({ meta: {
                     constructor: PieSeries,
-                    defaults: __assign$1(__assign$1({}, seriesDefaults), { title: undefined, calloutColors: borneo.strokes, calloutStrokeWidth: 1, calloutLength: 10, angleKey: '', angleName: '', radiusKey: undefined, radiusName: undefined, labelKey: undefined, labelName: undefined, fills: borneo.fills, strokes: borneo.strokes, fillOpacity: 1, strokeOpacity: 1, rotation: 0, outerRadiusOffset: 0, innerRadiusOffset: 0, strokeWidth: 1, shadow: undefined })
+                    defaults: __assign$3(__assign$3({}, seriesDefaults), { title: undefined, calloutColors: borneo.strokes, calloutStrokeWidth: 1, calloutLength: 10, angleKey: '', angleName: '', radiusKey: undefined, radiusName: undefined, labelKey: undefined, labelName: undefined, fills: borneo.fills, strokes: borneo.strokes, fillOpacity: 1, strokeOpacity: 1, rotation: 0, outerRadiusOffset: 0, innerRadiusOffset: 0, strokeWidth: 1, shadow: undefined })
                 }, highlightStyle: {}, title: {
                     meta: {
                         constructor: Caption,
@@ -23873,7 +24671,7 @@ var mappings = (_a = {},
                     }
                 }, label: {
                     meta: {
-                        defaults: __assign$1(__assign$1({}, labelDefaults), { offset: 3, minAngle: 20 })
+                        defaults: __assign$3(__assign$3({}, labelDefaults), { offset: 3, minAngle: 20 })
                     }
                 }, callout: {
                     meta: {
@@ -23900,15 +24698,24 @@ var mappings = (_a = {},
     for (var type in typeToAliases) {
         _loop_1(type);
     }
-    // Special handling for scatter charts where both axes should default to type `number`.
-    mappings['scatter'] = __assign$1(__assign$1({}, mappings.cartesian), { meta: __assign$1(__assign$1({}, mappings.cartesian.meta), { defaults: __assign$1(__assign$1({}, chartDefaults), { axes: [{
+}
+// Special handling for scatter and histogram charts, for which both axes should default to type `number`.
+mappings['scatter'] =
+    mappings['histogram'] = __assign$3(__assign$3({}, mappings.cartesian), { meta: __assign$3(__assign$3({}, mappings.cartesian.meta), { defaults: __assign$3(__assign$3({}, chartDefaults), { axes: [{
                         type: 'number',
                         position: 'bottom'
                     }, {
                         type: 'number',
                         position: 'left'
                     }] }) }) });
-}
+
+var __spreadArrays$5 = (undefined && undefined.__spreadArrays) || function () {
+    for (var s = 0, i = 0, il = arguments.length; i < il; i++) s += arguments[i].length;
+    for (var r = Array(s), k = 0, i = 0; i < il; i++)
+        for (var a = arguments[i], j = 0, jl = a.length; j < jl; j++, k++)
+            r[k] = a[j];
+    return r;
+};
 
 var __extends$1a = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -24121,7 +24928,7 @@ var __decorate$T = (undefined && undefined.__decorate) || function (decorators, 
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
-var __spreadArrays$5 = (undefined && undefined.__spreadArrays) || function () {
+var __spreadArrays$6 = (undefined && undefined.__spreadArrays) || function () {
     for (var s = 0, i = 0, il = arguments.length; i < il; i++) s += arguments[i].length;
     for (var r = Array(s), k = 0, i = 0; i < il; i++)
         for (var a = arguments[i], j = 0, jl = a.length; j < jl; j++, k++)
@@ -24152,7 +24959,7 @@ var ChartDataPanel = /** @class */ (function (_super) {
         this.chartType = this.chartController.getChartType();
         if (agGridCommunity._.areEqual(agGridCommunity._.keys(this.columnComps), colIds) && this.chartType === currentChartType) {
             // if possible, we just update existing components
-            __spreadArrays$5(dimensionCols, valueCols).forEach(function (col) {
+            __spreadArrays$6(dimensionCols, valueCols).forEach(function (col) {
                 _this.columnComps.get(col.colId).setValue(col.selected, true);
             });
             if (this.chartController.isActiveXYChart()) {
@@ -24322,7 +25129,7 @@ var ChartDataPanel = /** @class */ (function (_super) {
         if (this.checkInsertIndex(draggingEvent)) {
             var column_1 = draggingEvent.dragItem.columns[0];
             var _a = this.chartController.getColStateForMenu(), dimensionCols = _a.dimensionCols, valueCols = _a.valueCols;
-            __spreadArrays$5(dimensionCols, valueCols).filter(function (state) { return state.column === column_1; })
+            __spreadArrays$6(dimensionCols, valueCols).filter(function (state) { return state.column === column_1; })
                 .forEach(function (state) {
                 state.order = _this.insertIndex;
                 _this.chartController.updateForPanelChange(state);
@@ -25246,8 +26053,8 @@ var AxisPanel = /** @class */ (function (_super) {
     return AxisPanel;
 }(agGridCommunity.Component));
 
-var __assign$2 = (undefined && undefined.__assign) || function () {
-    __assign$2 = Object.assign || function(t) {
+var __assign$4 = (undefined && undefined.__assign) || function () {
+    __assign$4 = Object.assign || function(t) {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
             s = arguments[i];
             for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
@@ -25255,7 +26062,7 @@ var __assign$2 = (undefined && undefined.__assign) || function () {
         }
         return t;
     };
-    return __assign$2.apply(this, arguments);
+    return __assign$4.apply(this, arguments);
 };
 var ChartProxy = /** @class */ (function () {
     function ChartProxy(chartProxyParams) {
@@ -25305,10 +26112,6 @@ var ChartProxy = /** @class */ (function () {
         else {
             this.chartOptions = this.getDefaultOptions();
         }
-        // we want to preserve the existing width/height if an existing chart is being changed to a different type,
-        // so this allows the chart defaults to be overridden
-        this.chartOptions.width = this.chartProxyParams.width || this.chartOptions.width;
-        this.chartOptions.height = this.chartProxyParams.height || this.chartOptions.height;
     };
     ChartProxy.prototype.overridePalette = function (chartOptions) {
         if (!this.chartProxyParams.allowPaletteOverride) {
@@ -25390,6 +26193,9 @@ var ChartProxy = /** @class */ (function () {
             this.setTitleOption('enabled', agGridCommunity._.exists(value));
         }
         this.raiseChartOptionsChangedEvent();
+    };
+    ChartProxy.prototype.getTitleOption = function (property) {
+        return this.chartOptions.title[property];
     };
     ChartProxy.prototype.setChartPaddingOption = function (property, value) {
         var padding = this.chartOptions.padding;
@@ -25491,14 +26297,14 @@ var ChartProxy = /** @class */ (function () {
                 bottom: 20,
                 left: 20,
             },
-            title: __assign$2(__assign$2({}, fontOptions), { enabled: false, fontWeight: 'bold', fontSize: 16 }),
-            subtitle: __assign$2(__assign$2({}, fontOptions), { enabled: false }),
+            title: __assign$4(__assign$4({}, fontOptions), { enabled: false, fontWeight: 'bold', fontSize: 16 }),
+            subtitle: __assign$4(__assign$4({}, fontOptions), { enabled: false }),
             legend: {
                 enabled: true,
                 position: agGridCommunity.LegendPosition.Right,
                 spacing: 20,
                 item: {
-                    label: __assign$2({}, fontOptions),
+                    label: __assign$4({}, fontOptions),
                     marker: {
                         shape: 'square',
                         size: 15,
@@ -25521,8 +26327,10 @@ var ChartProxy = /** @class */ (function () {
                 },
                 highlightStyle: {
                     fill: 'yellow',
-                }
-            }
+                },
+                listeners: {}
+            },
+            listeners: {}
         };
     };
     ChartProxy.prototype.transformData = function (data, categoryKey) {
@@ -25533,7 +26341,7 @@ var ChartProxy = /** @class */ (function () {
         return data.map(function (d, index) {
             var value = d[categoryKey];
             var valueString = value && value.toString ? value.toString() : '';
-            var datum = __assign$2({}, d);
+            var datum = __assign$4({}, d);
             datum[categoryKey] = { id: index, value: value, toString: function () { return valueString; } };
             return datum;
         });
@@ -25563,8 +26371,8 @@ var __extends$1i = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __assign$3 = (undefined && undefined.__assign) || function () {
-    __assign$3 = Object.assign || function(t) {
+var __assign$5 = (undefined && undefined.__assign) || function () {
+    __assign$5 = Object.assign || function(t) {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
             s = arguments[i];
             for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
@@ -25572,7 +26380,7 @@ var __assign$3 = (undefined && undefined.__assign) || function () {
         }
         return t;
     };
-    return __assign$3.apply(this, arguments);
+    return __assign$5.apply(this, arguments);
 };
 var CartesianChartProxy = /** @class */ (function (_super) {
     __extends$1i(CartesianChartProxy, _super);
@@ -25611,7 +26419,7 @@ var CartesianChartProxy = /** @class */ (function (_super) {
         var stroke = this.getAxisGridColor();
         var axisColor = "rgba(195, 195, 195, 1)";
         return {
-            title: __assign$3(__assign$3({}, fontOptions), { enabled: false, fontSize: 14 }),
+            title: __assign$5(__assign$5({}, fontOptions), { enabled: false, fontSize: 14 }),
             line: {
                 color: axisColor,
                 width: 1,
@@ -25621,7 +26429,7 @@ var CartesianChartProxy = /** @class */ (function (_super) {
                 size: 6,
                 width: 1,
             },
-            label: __assign$3(__assign$3({}, fontOptions), { padding: 5, rotation: 0 }),
+            label: __assign$5(__assign$5({}, fontOptions), { padding: 5, rotation: 0 }),
             gridStyle: [{
                     stroke: stroke,
                     lineDash: [4, 2]
@@ -25653,10 +26461,10 @@ var CartesianChartProxy = /** @class */ (function (_super) {
         }
         var options = this.chartOptions;
         if (isHorizontalChart && !options.yAxis.type) {
-            options = __assign$3(__assign$3({}, options), { yAxis: __assign$3(__assign$3({}, options.yAxis), { type: baseAxisType }) });
+            options = __assign$5(__assign$5({}, options), { yAxis: __assign$5(__assign$5({}, options.yAxis), { type: baseAxisType }) });
         }
         else if (!isHorizontalChart && !options.xAxis.type) {
-            options = __assign$3(__assign$3({}, options), { xAxis: __assign$3(__assign$3({}, options.xAxis), { type: baseAxisType }) });
+            options = __assign$5(__assign$5({}, options), { xAxis: __assign$5(__assign$5({}, options.xAxis), { type: baseAxisType }) });
         }
         this.recreateChart(options);
     };
@@ -25686,8 +26494,8 @@ var __extends$1j = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __assign$4 = (undefined && undefined.__assign) || function () {
-    __assign$4 = Object.assign || function(t) {
+var __assign$6 = (undefined && undefined.__assign) || function () {
+    __assign$6 = Object.assign || function(t) {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
             s = arguments[i];
             for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
@@ -25695,7 +26503,7 @@ var __assign$4 = (undefined && undefined.__assign) || function () {
         }
         return t;
     };
-    return __assign$4.apply(this, arguments);
+    return __assign$6.apply(this, arguments);
 };
 var ScatterChartProxy = /** @class */ (function (_super) {
     __extends$1j(ScatterChartProxy, _super);
@@ -25722,7 +26530,7 @@ var ScatterChartProxy = /** @class */ (function (_super) {
         this.updateAxes(xValuesAreDates ? 'time' : 'number');
         var chart = this.chart;
         var _a = this.getPalette(), fills = _a.fills, strokes = _a.strokes;
-        var seriesOptions = __assign$4({ type: "scatter" }, seriesDefaults);
+        var seriesOptions = __assign$6({ type: "scatter" }, seriesDefaults);
         var labelFieldDefinition = params.category.id === ChartDataModel.DEFAULT_CATEGORY ? undefined : params.category;
         var existingSeriesById = chart.series.reduceRight(function (map, series, i) {
             var matchingIndex = agGridCommunity._.findIndex(seriesDefinitions, function (s) {
@@ -25780,7 +26588,7 @@ var ScatterChartProxy = /** @class */ (function (_super) {
     ScatterChartProxy.prototype.getDefaultOptions = function () {
         var isBubble = this.chartType === agGridCommunity.ChartType.Bubble;
         var options = this.getDefaultCartesianChartOptions();
-        options.seriesDefaults = __assign$4(__assign$4({}, options.seriesDefaults), { fill: __assign$4(__assign$4({}, options.seriesDefaults.fill), { opacity: isBubble ? 0.7 : 1 }), stroke: __assign$4(__assign$4({}, options.seriesDefaults.stroke), { width: 3 }), marker: {
+        options.seriesDefaults = __assign$6(__assign$6({}, options.seriesDefaults), { fill: __assign$6(__assign$6({}, options.seriesDefaults.fill), { opacity: isBubble ? 0.7 : 1 }), stroke: __assign$6(__assign$6({}, options.seriesDefaults.stroke), { width: 3 }), marker: {
                 shape: 'circle',
                 enabled: true,
                 size: isBubble ? 30 : 6,
@@ -26425,36 +27233,27 @@ var __decorate$14 = (undefined && undefined.__decorate) || function (decorators,
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
-var ChartPanel = /** @class */ (function (_super) {
-    __extends$1q(ChartPanel, _super);
-    function ChartPanel(chartController) {
-        var _this = _super.call(this) || this;
+var TitlePanel = /** @class */ (function (_super) {
+    __extends$1q(TitlePanel, _super);
+    function TitlePanel(chartController) {
+        var _this = _super.call(this, TitlePanel.TEMPLATE) || this;
         _this.activePanels = [];
         _this.chartController = chartController;
         return _this;
     }
-    ChartPanel.prototype.init = function () {
-        var groupParams = {
-            cssIdentifier: 'charts-format-top-level',
-            direction: 'vertical'
-        };
-        this.setTemplate(ChartPanel.TEMPLATE, { chartGroup: groupParams });
-        this.initGroup();
-        this.initTitles();
-        this.initPaddingPanel();
-        this.initBackgroundPanel();
+    TitlePanel.prototype.init = function () {
+        this.initFontPanel();
     };
-    ChartPanel.prototype.initGroup = function () {
-        this.chartGroup
-            .setTitle(this.chartTranslator.translate('chart'))
-            .toggleGroupExpand(false)
-            .hideEnabledCheckbox(true);
-    };
-    ChartPanel.prototype.initTitles = function () {
-        var _this = this;
+    TitlePanel.prototype.hasTitle = function () {
         var chartProxy = this.chartController.getChartProxy();
         var title = chartProxy.getChartOption('title');
         var text = title && title.text ? title.text : '';
+        return agGridCommunity._.exists(text);
+    };
+    TitlePanel.prototype.initFontPanel = function () {
+        var _this = this;
+        var chartProxy = this.chartController.getChartProxy();
+        var hasTitle = this.hasTitle;
         var setFont = function (font) {
             var chartProxy = _this.chartController.getChartProxy();
             if (font.family) {
@@ -26474,71 +27273,63 @@ var ChartPanel = /** @class */ (function (_super) {
             }
         };
         var initialFont = {
-            family: title ? chartProxy.getChartOption('title.fontFamily') : 'Verdana, sans-serif',
-            style: title ? chartProxy.getChartOption('title.fontStyle') : undefined,
-            weight: title ? chartProxy.getChartOption('title.fontWeight') : undefined,
-            size: title ? chartProxy.getChartOption('title.fontSize') : 22,
-            color: title ? chartProxy.getChartOption('title.color') : 'black'
+            family: hasTitle ? chartProxy.getChartOption('title.fontFamily') : 'Verdana, sans-serif',
+            style: hasTitle ? chartProxy.getChartOption('title.fontStyle') : undefined,
+            weight: hasTitle ? chartProxy.getChartOption('title.fontWeight') : undefined,
+            size: hasTitle ? chartProxy.getChartOption('title.fontSize') : 22,
+            color: hasTitle ? chartProxy.getChartOption('title.color') : 'black'
         };
-        if (!title) {
+        if (!hasTitle) {
             setFont(initialFont);
         }
-        this.titleInput
-            .setLabel(this.chartTranslator.translate('title'))
-            .setLabelAlignment('top')
-            .setLabelWidth('flex')
-            .setValue(text)
-            .onValueChange(function (value) {
-            _this.chartController.getChartProxy().setTitleOption('text', value);
-            // only show font panel when title exists
-            fontPanelComp.setEnabled(agGridCommunity._.exists(value));
-        });
-        var params = {
-            name: this.chartTranslator.translate('font'),
-            enabled: true,
-            suppressEnabledCheckbox: true,
+        var fontPanelParams = {
+            name: this.chartTranslator.translate('title'),
+            enabled: this.hasTitle(),
+            suppressEnabledCheckbox: false,
             initialFont: initialFont,
             setFont: setFont,
+            setEnabled: function (enabled) {
+                var chartProxy = _this.chartController.getChartProxy();
+                if (enabled) {
+                    var newTitle = _this.disabledTitle || _this.chartTranslator.translate('titlePlaceholder');
+                    chartProxy.setTitleOption('text', newTitle);
+                    _this.disabledTitle = '';
+                }
+                else {
+                    _this.disabledTitle = _this.chartController.getChartProxy().getTitleOption('text');
+                    chartProxy.setTitleOption('text', '');
+                }
+            }
         };
-        var fontPanelComp = this.wireBean(new FontPanel(params));
-        this.chartGroup.addItem(fontPanelComp);
+        var fontPanelComp = this.wireBean(new FontPanel(fontPanelParams));
+        this.getGui().appendChild(fontPanelComp.getGui());
         this.activePanels.push(fontPanelComp);
-        fontPanelComp.setEnabled(agGridCommunity._.exists(text));
+        // edits to the title can disable it, so keep the checkbox in sync:
+        this.addDestroyableEventListener(this.eventService, 'chartTitleEdit', function () {
+            fontPanelComp.setEnabled(_this.hasTitle());
+        });
     };
-    ChartPanel.prototype.initPaddingPanel = function () {
-        var paddingPanelComp = this.wireBean(new PaddingPanel(this.chartController));
-        this.chartGroup.addItem(paddingPanelComp);
-        this.activePanels.push(paddingPanelComp);
-    };
-    ChartPanel.prototype.initBackgroundPanel = function () {
-        var backgroundPanelComp = this.wireBean(new BackgroundPanel(this.chartController));
-        this.chartGroup.addItem(backgroundPanelComp);
-        this.activePanels.push(backgroundPanelComp);
-    };
-    ChartPanel.prototype.destroyActivePanels = function () {
+    TitlePanel.prototype.destroyActivePanels = function () {
         this.activePanels.forEach(function (panel) {
             agGridCommunity._.removeFromParent(panel.getGui());
             panel.destroy();
         });
     };
-    ChartPanel.prototype.destroy = function () {
+    TitlePanel.prototype.destroy = function () {
         this.destroyActivePanels();
         _super.prototype.destroy.call(this);
     };
-    ChartPanel.TEMPLATE = "<div>\n            <ag-group-component ref=\"chartGroup\">\n                <ag-input-text-area ref=\"titleInput\"></ag-input-text-area>\n            </ag-group-component>\n        <div>";
-    __decorate$14([
-        agGridCommunity.RefSelector('chartGroup')
-    ], ChartPanel.prototype, "chartGroup", void 0);
-    __decorate$14([
-        agGridCommunity.RefSelector('titleInput')
-    ], ChartPanel.prototype, "titleInput", void 0);
+    TitlePanel.TEMPLATE = "<div></div>";
     __decorate$14([
         agGridCommunity.Autowired('chartTranslator')
-    ], ChartPanel.prototype, "chartTranslator", void 0);
+    ], TitlePanel.prototype, "chartTranslator", void 0);
+    __decorate$14([
+        agGridCommunity.Autowired('eventService')
+    ], TitlePanel.prototype, "eventService", void 0);
     __decorate$14([
         agGridCommunity.PostConstruct
-    ], ChartPanel.prototype, "init", null);
-    return ChartPanel;
+    ], TitlePanel.prototype, "init", null);
+    return TitlePanel;
 }(agGridCommunity.Component));
 
 var __extends$1r = (undefined && undefined.__extends) || (function () {
@@ -26560,8 +27351,90 @@ var __decorate$15 = (undefined && undefined.__decorate) || function (decorators,
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
+var ChartPanel = /** @class */ (function (_super) {
+    __extends$1r(ChartPanel, _super);
+    function ChartPanel(chartController) {
+        var _this = _super.call(this) || this;
+        _this.activePanels = [];
+        _this.chartController = chartController;
+        return _this;
+    }
+    ChartPanel.prototype.init = function () {
+        var groupParams = {
+            cssIdentifier: 'charts-format-top-level',
+            direction: 'vertical'
+        };
+        this.setTemplate(ChartPanel.TEMPLATE, { chartGroup: groupParams });
+        this.initGroup();
+        this.initTitles();
+        this.initPaddingPanel();
+        this.initBackgroundPanel();
+    };
+    ChartPanel.prototype.initGroup = function () {
+        this.chartGroup
+            .setTitle(this.chartTranslator.translate('chart'))
+            .toggleGroupExpand(true)
+            .hideEnabledCheckbox(true);
+    };
+    ChartPanel.prototype.initTitles = function () {
+        var titlePanelComp = this.wireBean(new TitlePanel(this.chartController));
+        this.chartGroup.addItem(titlePanelComp);
+        this.activePanels.push(titlePanelComp);
+    };
+    ChartPanel.prototype.initPaddingPanel = function () {
+        var paddingPanelComp = this.wireBean(new PaddingPanel(this.chartController));
+        this.chartGroup.addItem(paddingPanelComp);
+        this.activePanels.push(paddingPanelComp);
+    };
+    ChartPanel.prototype.initBackgroundPanel = function () {
+        var backgroundPanelComp = this.wireBean(new BackgroundPanel(this.chartController));
+        this.chartGroup.addItem(backgroundPanelComp);
+        this.activePanels.push(backgroundPanelComp);
+    };
+    ChartPanel.prototype.destroyActivePanels = function () {
+        this.activePanels.forEach(function (panel) {
+            agGridCommunity._.removeFromParent(panel.getGui());
+            panel.destroy();
+        });
+    };
+    ChartPanel.prototype.destroy = function () {
+        this.destroyActivePanels();
+        _super.prototype.destroy.call(this);
+    };
+    ChartPanel.TEMPLATE = "<div>\n            <ag-group-component ref=\"chartGroup\">\n            </ag-group-component>\n        </div>";
+    __decorate$15([
+        agGridCommunity.RefSelector('chartGroup')
+    ], ChartPanel.prototype, "chartGroup", void 0);
+    __decorate$15([
+        agGridCommunity.Autowired('chartTranslator')
+    ], ChartPanel.prototype, "chartTranslator", void 0);
+    __decorate$15([
+        agGridCommunity.PostConstruct
+    ], ChartPanel.prototype, "init", null);
+    return ChartPanel;
+}(agGridCommunity.Component));
+
+var __extends$1s = (undefined && undefined.__extends) || (function () {
+    var extendStatics = function (d, b) {
+        extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+        return extendStatics(d, b);
+    };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
+var __decorate$16 = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
 var AreaSeriesPanel = /** @class */ (function (_super) {
-    __extends$1r(AreaSeriesPanel, _super);
+    __extends$1s(AreaSeriesPanel, _super);
     function AreaSeriesPanel(chartController) {
         var _this = _super.call(this) || this;
         _this.activePanels = [];
@@ -26647,31 +27520,31 @@ var AreaSeriesPanel = /** @class */ (function (_super) {
         _super.prototype.destroy.call(this);
     };
     AreaSeriesPanel.TEMPLATE = "<div>\n            <ag-group-component ref=\"seriesGroup\">\n                <ag-toggle-button ref=\"seriesTooltipsToggle\"></ag-toggle-button>\n                <ag-slider ref=\"seriesLineWidthSlider\"></ag-slider>\n                <ag-slider ref=\"seriesLineOpacitySlider\"></ag-slider>\n                <ag-slider ref=\"seriesFillOpacitySlider\"></ag-slider>\n            </ag-group-component>\n        </div>";
-    __decorate$15([
+    __decorate$16([
         agGridCommunity.RefSelector('seriesGroup')
     ], AreaSeriesPanel.prototype, "seriesGroup", void 0);
-    __decorate$15([
+    __decorate$16([
         agGridCommunity.RefSelector('seriesTooltipsToggle')
     ], AreaSeriesPanel.prototype, "seriesTooltipsToggle", void 0);
-    __decorate$15([
+    __decorate$16([
         agGridCommunity.RefSelector('seriesLineWidthSlider')
     ], AreaSeriesPanel.prototype, "seriesLineWidthSlider", void 0);
-    __decorate$15([
+    __decorate$16([
         agGridCommunity.RefSelector('seriesLineOpacitySlider')
     ], AreaSeriesPanel.prototype, "seriesLineOpacitySlider", void 0);
-    __decorate$15([
+    __decorate$16([
         agGridCommunity.RefSelector('seriesFillOpacitySlider')
     ], AreaSeriesPanel.prototype, "seriesFillOpacitySlider", void 0);
-    __decorate$15([
+    __decorate$16([
         agGridCommunity.Autowired('chartTranslator')
     ], AreaSeriesPanel.prototype, "chartTranslator", void 0);
-    __decorate$15([
+    __decorate$16([
         agGridCommunity.PostConstruct
     ], AreaSeriesPanel.prototype, "init", null);
     return AreaSeriesPanel;
 }(agGridCommunity.Component));
 
-var __extends$1s = (undefined && undefined.__extends) || (function () {
+var __extends$1t = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -26684,14 +27557,14 @@ var __extends$1s = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$16 = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$17 = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 var ScatterSeriesPanel = /** @class */ (function (_super) {
-    __extends$1s(ScatterSeriesPanel, _super);
+    __extends$1t(ScatterSeriesPanel, _super);
     function ScatterSeriesPanel(chartController) {
         var _this = _super.call(this) || this;
         _this.activePanels = [];
@@ -26743,22 +27616,22 @@ var ScatterSeriesPanel = /** @class */ (function (_super) {
         _super.prototype.destroy.call(this);
     };
     ScatterSeriesPanel.TEMPLATE = "<div>\n            <ag-group-component ref=\"seriesGroup\">\n                <ag-toggle-button ref=\"seriesTooltipsToggle\"></ag-toggle-button>\n            </ag-group-component>\n        </div>";
-    __decorate$16([
+    __decorate$17([
         agGridCommunity.RefSelector('seriesGroup')
     ], ScatterSeriesPanel.prototype, "seriesGroup", void 0);
-    __decorate$16([
+    __decorate$17([
         agGridCommunity.RefSelector('seriesTooltipsToggle')
     ], ScatterSeriesPanel.prototype, "seriesTooltipsToggle", void 0);
-    __decorate$16([
+    __decorate$17([
         agGridCommunity.Autowired('chartTranslator')
     ], ScatterSeriesPanel.prototype, "chartTranslator", void 0);
-    __decorate$16([
+    __decorate$17([
         agGridCommunity.PostConstruct
     ], ScatterSeriesPanel.prototype, "init", null);
     return ScatterSeriesPanel;
 }(agGridCommunity.Component));
 
-var __extends$1t = (undefined && undefined.__extends) || (function () {
+var __extends$1u = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -26771,14 +27644,190 @@ var __extends$1t = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$17 = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$18 = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var HistogramSeriesPanel = /** @class */ (function (_super) {
+    __extends$1u(HistogramSeriesPanel, _super);
+    function HistogramSeriesPanel(chartController) {
+        var _this = _super.call(this) || this;
+        _this.activePanels = [];
+        _this.chartController = chartController;
+        return _this;
+    }
+    HistogramSeriesPanel.prototype.init = function () {
+        var groupParams = {
+            cssIdentifier: 'charts-format-top-level',
+            direction: 'vertical'
+        };
+        this.setTemplate(HistogramSeriesPanel.TEMPLATE, { seriesGroup: groupParams });
+        this.seriesGroup
+            .setTitle(this.chartTranslator.translate("series"))
+            .toggleGroupExpand(false)
+            .hideEnabledCheckbox(true);
+        this.initSeriesTooltips();
+        this.initSeriesStrokeWidth();
+        this.initOpacity();
+        this.initLabelPanel();
+        this.initShadowPanel();
+        this.initBins();
+    };
+    HistogramSeriesPanel.prototype.initSeriesTooltips = function () {
+        var _this = this;
+        this.seriesTooltipsToggle
+            .setLabel(this.chartTranslator.translate("tooltips"))
+            .setLabelAlignment("left")
+            .setLabelWidth("flex")
+            .setInputWidth(45)
+            .setValue(this.getChartProxy().getSeriesOption("tooltip.enabled") || false)
+            .onValueChange(function (newValue) { return _this.getChartProxy().setSeriesOption("tooltip.enabled", newValue); });
+    };
+    HistogramSeriesPanel.prototype.initSeriesStrokeWidth = function () {
+        var _this = this;
+        this.seriesStrokeWidthSlider
+            .setLabel(this.chartTranslator.translate("strokeWidth"))
+            .setMaxValue(10)
+            .setTextFieldWidth(45)
+            .setValue(this.getChartProxy().getSeriesOption("stroke.width"))
+            .onValueChange(function (newValue) { return _this.getChartProxy().setSeriesOption("stroke.width", newValue); });
+    };
+    HistogramSeriesPanel.prototype.initOpacity = function () {
+        var _this = this;
+        this.seriesLineOpacitySlider
+            .setLabel(this.chartTranslator.translate("strokeOpacity"))
+            .setStep(0.05)
+            .setMaxValue(1)
+            .setTextFieldWidth(45)
+            .setValue(this.getChartProxy().getSeriesOption("stroke.opacity") || "1")
+            .onValueChange(function (newValue) { return _this.getChartProxy().setSeriesOption("stroke.opacity", newValue); });
+        this.seriesFillOpacitySlider
+            .setLabel(this.chartTranslator.translate("fillOpacity"))
+            .setStep(0.05)
+            .setMaxValue(1)
+            .setTextFieldWidth(45)
+            .setValue(this.getChartProxy().getSeriesOption("fill.opacity") || "1")
+            .onValueChange(function (newValue) { return _this.getChartProxy().setSeriesOption("fill.opacity", newValue); });
+    };
+    HistogramSeriesPanel.prototype.initBins = function () {
+        var _this = this;
+        this.seriesBinCountSlider
+            .setLabel(this.chartTranslator.translate("histogramBinCount"))
+            .setMinValue(4)
+            .setMaxValue(100)
+            .setTextFieldWidth(45)
+            .setValue(this.getChartProxy().getSeriesOption("binCount"))
+            .onValueChange(function (newValue) { return _this.getChartProxy().setSeriesOption("binCount", newValue); });
+    };
+    HistogramSeriesPanel.prototype.initLabelPanel = function () {
+        var _this = this;
+        var chartProxy = this.getChartProxy();
+        var initialFont = {
+            family: chartProxy.getSeriesOption("label.fontFamily"),
+            style: chartProxy.getSeriesOption("label.fontStyle"),
+            weight: chartProxy.getSeriesOption("label.fontWeight"),
+            size: chartProxy.getSeriesOption("label.fontSize"),
+            color: chartProxy.getSeriesOption("label.color")
+        };
+        var setFont = function (font) {
+            var chartProxy = _this.getChartProxy();
+            if (font.family) {
+                chartProxy.setSeriesOption("label.fontFamily", font.family);
+            }
+            if (font.weight) {
+                chartProxy.setSeriesOption("label.fontWeight", font.weight);
+            }
+            if (font.style) {
+                chartProxy.setSeriesOption("label.fontStyle", font.style);
+            }
+            if (font.size) {
+                chartProxy.setSeriesOption("label.fontSize", font.size);
+            }
+            if (font.color) {
+                chartProxy.setSeriesOption("label.color", font.color);
+            }
+        };
+        var params = {
+            name: this.chartTranslator.translate('labels'),
+            enabled: chartProxy.getSeriesOption("label.enabled") || false,
+            setEnabled: function (enabled) { return _this.getChartProxy().setSeriesOption("label.enabled", enabled); },
+            suppressEnabledCheckbox: false,
+            initialFont: initialFont,
+            setFont: setFont
+        };
+        var labelPanelComp = this.wireBean(new FontPanel(params));
+        this.activePanels.push(labelPanelComp);
+        this.seriesGroup.addItem(labelPanelComp);
+    };
+    HistogramSeriesPanel.prototype.initShadowPanel = function () {
+        var shadowPanelComp = this.wireBean(new ShadowPanel(this.chartController));
+        this.seriesGroup.addItem(shadowPanelComp);
+        this.activePanels.push(shadowPanelComp);
+    };
+    HistogramSeriesPanel.prototype.destroyActivePanels = function () {
+        this.activePanels.forEach(function (panel) {
+            agGridCommunity._.removeFromParent(panel.getGui());
+            panel.destroy();
+        });
+    };
+    HistogramSeriesPanel.prototype.getChartProxy = function () {
+        return this.chartController.getChartProxy();
+    };
+    HistogramSeriesPanel.prototype.destroy = function () {
+        this.destroyActivePanels();
+        _super.prototype.destroy.call(this);
+    };
+    HistogramSeriesPanel.TEMPLATE = "<div>\n            <ag-group-component ref=\"seriesGroup\">\n                <ag-toggle-button ref=\"seriesTooltipsToggle\"></ag-toggle-button>\n                <ag-slider ref=\"binCountSlider\"></ag-slider>\n                <ag-slider ref=\"seriesStrokeWidthSlider\"></ag-slider>\n                <ag-slider ref=\"seriesLineOpacitySlider\"></ag-slider>\n                <ag-slider ref=\"seriesFillOpacitySlider\"></ag-slider>\n            </ag-group-component>\n        </div>";
+    __decorate$18([
+        agGridCommunity.RefSelector('seriesGroup')
+    ], HistogramSeriesPanel.prototype, "seriesGroup", void 0);
+    __decorate$18([
+        agGridCommunity.RefSelector('seriesTooltipsToggle')
+    ], HistogramSeriesPanel.prototype, "seriesTooltipsToggle", void 0);
+    __decorate$18([
+        agGridCommunity.RefSelector('binCountSlider')
+    ], HistogramSeriesPanel.prototype, "seriesBinCountSlider", void 0);
+    __decorate$18([
+        agGridCommunity.RefSelector('seriesStrokeWidthSlider')
+    ], HistogramSeriesPanel.prototype, "seriesStrokeWidthSlider", void 0);
+    __decorate$18([
+        agGridCommunity.RefSelector('seriesLineOpacitySlider')
+    ], HistogramSeriesPanel.prototype, "seriesLineOpacitySlider", void 0);
+    __decorate$18([
+        agGridCommunity.RefSelector('seriesFillOpacitySlider')
+    ], HistogramSeriesPanel.prototype, "seriesFillOpacitySlider", void 0);
+    __decorate$18([
+        agGridCommunity.Autowired('chartTranslator')
+    ], HistogramSeriesPanel.prototype, "chartTranslator", void 0);
+    __decorate$18([
+        agGridCommunity.PostConstruct
+    ], HistogramSeriesPanel.prototype, "init", null);
+    return HistogramSeriesPanel;
+}(agGridCommunity.Component));
+
+var __extends$1v = (undefined && undefined.__extends) || (function () {
+    var extendStatics = function (d, b) {
+        extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+        return extendStatics(d, b);
+    };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
+var __decorate$19 = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 var ChartFormattingPanel = /** @class */ (function (_super) {
-    __extends$1t(ChartFormattingPanel, _super);
+    __extends$1v(ChartFormattingPanel, _super);
     function ChartFormattingPanel(chartController) {
         var _this = _super.call(this, ChartFormattingPanel.TEMPLATE) || this;
         _this.panels = [];
@@ -26828,6 +27877,10 @@ var ChartFormattingPanel = /** @class */ (function (_super) {
                 this.addComponent(new AxisPanel(this.chartController));
                 this.addComponent(new AreaSeriesPanel(this.chartController));
                 break;
+            case agGridCommunity.ChartType.Histogram:
+                this.addComponent(new AxisPanel(this.chartController));
+                this.addComponent(new HistogramSeriesPanel(this.chartController));
+                break;
             default:
                 console.warn("ag-Grid: ChartFormattingPanel - unexpected chart type index: " + chartType + " supplied");
         }
@@ -26851,13 +27904,13 @@ var ChartFormattingPanel = /** @class */ (function (_super) {
         _super.prototype.destroy.call(this);
     };
     ChartFormattingPanel.TEMPLATE = "<div class=\"ag-chart-format-wrapper\"></div>";
-    __decorate$17([
+    __decorate$19([
         agGridCommunity.PostConstruct
     ], ChartFormattingPanel.prototype, "init", null);
     return ChartFormattingPanel;
 }(agGridCommunity.Component));
 
-var __extends$1u = (undefined && undefined.__extends) || (function () {
+var __extends$1w = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -26870,14 +27923,14 @@ var __extends$1u = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$18 = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$1a = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 var MiniChart = /** @class */ (function (_super) {
-    __extends$1u(MiniChart, _super);
+    __extends$1w(MiniChart, _super);
     function MiniChart(container, tooltipName) {
         var _this = _super.call(this) || this;
         _this.size = 58;
@@ -26894,16 +27947,16 @@ var MiniChart = /** @class */ (function (_super) {
     MiniChart.prototype.init = function () {
         this.scene.canvas.element.title = this.chartTranslator.translate(this.tooltipName);
     };
-    __decorate$18([
+    __decorate$1a([
         agGridCommunity.Autowired('chartTranslator')
     ], MiniChart.prototype, "chartTranslator", void 0);
-    __decorate$18([
+    __decorate$1a([
         agGridCommunity.PostConstruct
     ], MiniChart.prototype, "init", null);
     return MiniChart;
 }(agGridCommunity.Component));
 
-var __extends$1v = (undefined && undefined.__extends) || (function () {
+var __extends$1x = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -26916,14 +27969,14 @@ var __extends$1v = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$19 = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$1b = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 var MiniChartWithAxes = /** @class */ (function (_super) {
-    __extends$1v(MiniChartWithAxes, _super);
+    __extends$1x(MiniChartWithAxes, _super);
     function MiniChartWithAxes(container, tooltipName) {
         var _this = _super.call(this, container, tooltipName) || this;
         _this.stroke = 'gray';
@@ -26949,13 +28002,13 @@ var MiniChartWithAxes = /** @class */ (function (_super) {
         root.append(leftAxis);
         root.append(bottomAxis);
     };
-    __decorate$19([
+    __decorate$1b([
         agGridCommunity.PostConstruct
     ], MiniChartWithAxes.prototype, "addAxes", null);
     return MiniChartWithAxes;
 }(MiniChart));
 
-var __extends$1w = (undefined && undefined.__extends) || (function () {
+var __extends$1y = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -26969,7 +28022,7 @@ var __extends$1w = (undefined && undefined.__extends) || (function () {
     };
 })();
 var MiniColumn = /** @class */ (function (_super) {
-    __extends$1w(MiniColumn, _super);
+    __extends$1y(MiniColumn, _super);
     function MiniColumn(container, fills, strokes) {
         var _this = _super.call(this, container, "groupedColumnTooltip") || this;
         var padding = _this.padding;
@@ -27010,7 +28063,7 @@ var MiniColumn = /** @class */ (function (_super) {
     return MiniColumn;
 }(MiniChartWithAxes));
 
-var __extends$1x = (undefined && undefined.__extends) || (function () {
+var __extends$1z = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -27024,7 +28077,7 @@ var __extends$1x = (undefined && undefined.__extends) || (function () {
     };
 })();
 var MiniStackedColumn = /** @class */ (function (_super) {
-    __extends$1x(MiniStackedColumn, _super);
+    __extends$1z(MiniStackedColumn, _super);
     function MiniStackedColumn(container, fills, strokes, data, yScaleDomain, tooltipName) {
         if (data === void 0) { data = MiniStackedColumn.data; }
         if (yScaleDomain === void 0) { yScaleDomain = [0, 16]; }
@@ -27076,7 +28129,7 @@ var MiniStackedColumn = /** @class */ (function (_super) {
     return MiniStackedColumn;
 }(MiniChartWithAxes));
 
-var __extends$1y = (undefined && undefined.__extends) || (function () {
+var __extends$1A = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -27090,7 +28143,7 @@ var __extends$1y = (undefined && undefined.__extends) || (function () {
     };
 })();
 var MiniNormalizedColumn = /** @class */ (function (_super) {
-    __extends$1y(MiniNormalizedColumn, _super);
+    __extends$1A(MiniNormalizedColumn, _super);
     function MiniNormalizedColumn(container, fills, strokes) {
         return _super.call(this, container, fills, strokes, MiniNormalizedColumn.data, [0, 10], "normalizedColumnTooltip") || this;
     }
@@ -27103,7 +28156,7 @@ var MiniNormalizedColumn = /** @class */ (function (_super) {
     return MiniNormalizedColumn;
 }(MiniStackedColumn));
 
-var __extends$1z = (undefined && undefined.__extends) || (function () {
+var __extends$1B = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -27117,7 +28170,7 @@ var __extends$1z = (undefined && undefined.__extends) || (function () {
     };
 })();
 var MiniBar = /** @class */ (function (_super) {
-    __extends$1z(MiniBar, _super);
+    __extends$1B(MiniBar, _super);
     function MiniBar(container, fills, strokes) {
         var _this = _super.call(this, container, "groupedBarTooltip") || this;
         var padding = _this.padding;
@@ -27157,7 +28210,7 @@ var MiniBar = /** @class */ (function (_super) {
     return MiniBar;
 }(MiniChartWithAxes));
 
-var __extends$1A = (undefined && undefined.__extends) || (function () {
+var __extends$1C = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -27171,7 +28224,7 @@ var __extends$1A = (undefined && undefined.__extends) || (function () {
     };
 })();
 var MiniStackedBar = /** @class */ (function (_super) {
-    __extends$1A(MiniStackedBar, _super);
+    __extends$1C(MiniStackedBar, _super);
     function MiniStackedBar(container, fills, strokes, data, xScaleDomain, tooltipName) {
         if (data === void 0) { data = MiniStackedBar.data; }
         if (xScaleDomain === void 0) { xScaleDomain = [0, 16]; }
@@ -27222,7 +28275,7 @@ var MiniStackedBar = /** @class */ (function (_super) {
     return MiniStackedBar;
 }(MiniChartWithAxes));
 
-var __extends$1B = (undefined && undefined.__extends) || (function () {
+var __extends$1D = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -27236,7 +28289,7 @@ var __extends$1B = (undefined && undefined.__extends) || (function () {
     };
 })();
 var MiniNormalizedBar = /** @class */ (function (_super) {
-    __extends$1B(MiniNormalizedBar, _super);
+    __extends$1D(MiniNormalizedBar, _super);
     function MiniNormalizedBar(container, fills, strokes) {
         return _super.call(this, container, fills, strokes, MiniNormalizedBar.data, [0, 10], "normalizedBarTooltip") || this;
     }
@@ -27249,7 +28302,7 @@ var MiniNormalizedBar = /** @class */ (function (_super) {
     return MiniNormalizedBar;
 }(MiniStackedBar));
 
-var __extends$1C = (undefined && undefined.__extends) || (function () {
+var __extends$1E = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -27263,7 +28316,7 @@ var __extends$1C = (undefined && undefined.__extends) || (function () {
     };
 })();
 var MiniDoughnut = /** @class */ (function (_super) {
-    __extends$1C(MiniDoughnut, _super);
+    __extends$1E(MiniDoughnut, _super);
     function MiniDoughnut(container, fills, strokes, centerRadiusScaler, tooltipName) {
         if (centerRadiusScaler === void 0) { centerRadiusScaler = 0.6; }
         if (tooltipName === void 0) { tooltipName = "doughnutTooltip"; }
@@ -27304,7 +28357,7 @@ var MiniDoughnut = /** @class */ (function (_super) {
     return MiniDoughnut;
 }(MiniChart));
 
-var __extends$1D = (undefined && undefined.__extends) || (function () {
+var __extends$1F = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -27318,7 +28371,7 @@ var __extends$1D = (undefined && undefined.__extends) || (function () {
     };
 })();
 var MiniPie = /** @class */ (function (_super) {
-    __extends$1D(MiniPie, _super);
+    __extends$1F(MiniPie, _super);
     function MiniPie(container, fills, strokes) {
         return _super.call(this, container, fills, strokes, 0, "pieTooltip") || this;
     }
@@ -27326,7 +28379,7 @@ var MiniPie = /** @class */ (function (_super) {
     return MiniPie;
 }(MiniDoughnut));
 
-var __extends$1E = (undefined && undefined.__extends) || (function () {
+var __extends$1G = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -27340,7 +28393,7 @@ var __extends$1E = (undefined && undefined.__extends) || (function () {
     };
 })();
 var MiniLine = /** @class */ (function (_super) {
-    __extends$1E(MiniLine, _super);
+    __extends$1G(MiniLine, _super);
     function MiniLine(container, fills, strokes) {
         var _this = _super.call(this, container, "lineTooltip") || this;
         var size = _this.size;
@@ -27383,7 +28436,7 @@ var MiniLine = /** @class */ (function (_super) {
     return MiniLine;
 }(MiniChartWithAxes));
 
-var __extends$1F = (undefined && undefined.__extends) || (function () {
+var __extends$1H = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -27397,7 +28450,7 @@ var __extends$1F = (undefined && undefined.__extends) || (function () {
     };
 })();
 var MiniScatter = /** @class */ (function (_super) {
-    __extends$1F(MiniScatter, _super);
+    __extends$1H(MiniScatter, _super);
     function MiniScatter(container, fills, strokes) {
         var _this = _super.call(this, container, "scatterTooltip") || this;
         var size = _this.size;
@@ -27444,7 +28497,7 @@ var MiniScatter = /** @class */ (function (_super) {
     return MiniScatter;
 }(MiniChartWithAxes));
 
-var __extends$1G = (undefined && undefined.__extends) || (function () {
+var __extends$1I = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -27458,7 +28511,7 @@ var __extends$1G = (undefined && undefined.__extends) || (function () {
     };
 })();
 var MiniBubble = /** @class */ (function (_super) {
-    __extends$1G(MiniBubble, _super);
+    __extends$1I(MiniBubble, _super);
     function MiniBubble(container, fills, strokes) {
         var _this = _super.call(this, container, "bubbleTooltip") || this;
         var size = _this.size;
@@ -27507,7 +28560,7 @@ var MiniBubble = /** @class */ (function (_super) {
     return MiniBubble;
 }(MiniChartWithAxes));
 
-var __extends$1H = (undefined && undefined.__extends) || (function () {
+var __extends$1J = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -27521,7 +28574,7 @@ var __extends$1H = (undefined && undefined.__extends) || (function () {
     };
 })();
 var MiniArea = /** @class */ (function (_super) {
-    __extends$1H(MiniArea, _super);
+    __extends$1J(MiniArea, _super);
     function MiniArea(container, fills, strokes, data) {
         if (data === void 0) { data = MiniArea.data; }
         var _this = _super.call(this, container, "groupedAreaTooltip") || this;
@@ -27583,7 +28636,7 @@ var MiniArea = /** @class */ (function (_super) {
     return MiniArea;
 }(MiniChartWithAxes));
 
-var __extends$1I = (undefined && undefined.__extends) || (function () {
+var __extends$1K = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -27597,7 +28650,7 @@ var __extends$1I = (undefined && undefined.__extends) || (function () {
     };
 })();
 var MiniStackedArea = /** @class */ (function (_super) {
-    __extends$1I(MiniStackedArea, _super);
+    __extends$1K(MiniStackedArea, _super);
     function MiniStackedArea(container, fills, strokes, data, tooltipName) {
         if (data === void 0) { data = MiniStackedArea.data; }
         if (tooltipName === void 0) { tooltipName = "stackedAreaTooltip"; }
@@ -27660,7 +28713,7 @@ var MiniStackedArea = /** @class */ (function (_super) {
     return MiniStackedArea;
 }(MiniChartWithAxes));
 
-var __extends$1J = (undefined && undefined.__extends) || (function () {
+var __extends$1L = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -27674,7 +28727,7 @@ var __extends$1J = (undefined && undefined.__extends) || (function () {
     };
 })();
 var MiniNormalizedArea = /** @class */ (function (_super) {
-    __extends$1J(MiniNormalizedArea, _super);
+    __extends$1L(MiniNormalizedArea, _super);
     function MiniNormalizedArea(container, fills, strokes, data) {
         if (data === void 0) { data = MiniNormalizedArea.data; }
         return _super.call(this, container, fills, strokes, data, "normalizedAreaTooltip") || this;
@@ -27687,7 +28740,7 @@ var MiniNormalizedArea = /** @class */ (function (_super) {
     return MiniNormalizedArea;
 }(MiniStackedArea));
 
-var __extends$1K = (undefined && undefined.__extends) || (function () {
+var __extends$1M = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -27700,14 +28753,71 @@ var __extends$1K = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$1a = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var MiniHistogram = /** @class */ (function (_super) {
+    __extends$1M(MiniHistogram, _super);
+    function MiniHistogram(container, fills, strokes) {
+        var _this = _super.call(this, container, "histogramTooltip") || this;
+        var padding = _this.padding;
+        var size = _this.size;
+        // approx normal curve
+        var data = [2, 5, 11, 13, 10, 6, 1];
+        var xScale = scaleLinear();
+        xScale.domain = [0, data.length];
+        xScale.range = [padding, size - padding];
+        var yScale = scaleLinear();
+        yScale.domain = [0, data.reduce(function (a, b) { return Math.max(a, b); }, 0)];
+        yScale.range = [size - padding, padding];
+        var bottom = yScale.convert(0);
+        _this.bars = data.map(function (datum, i) {
+            var top = yScale.convert(datum);
+            var left = xScale.convert(i);
+            var right = xScale.convert(i + 1);
+            var rect = new Rect();
+            rect.x = left;
+            rect.y = top;
+            rect.width = right - left;
+            rect.height = bottom - top;
+            rect.strokeWidth = 1;
+            rect.crisp = true;
+            return rect;
+        });
+        _this.updateColors(fills, strokes);
+        _this.root.append(_this.bars);
+        return _this;
+    }
+    MiniHistogram.prototype.updateColors = function (_a, _b) {
+        var fill = _a[0];
+        var stroke = _b[0];
+        this.bars.forEach(function (bar) {
+            bar.fill = fill;
+            bar.stroke = stroke;
+        });
+    };
+    MiniHistogram.chartType = agGridCommunity.ChartType.Histogram;
+    return MiniHistogram;
+}(MiniChartWithAxes));
+
+var __extends$1N = (undefined && undefined.__extends) || (function () {
+    var extendStatics = function (d, b) {
+        extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+        return extendStatics(d, b);
+    };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
+var __decorate$1c = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 var MiniChartsContainer = /** @class */ (function (_super) {
-    __extends$1K(MiniChartsContainer, _super);
+    __extends$1N(MiniChartsContainer, _super);
     function MiniChartsContainer(chartController, fills, strokes) {
         var _this = _super.call(this, MiniChartsContainer.TEMPLATE) || this;
         _this.wrappers = {};
@@ -27744,6 +28854,9 @@ var MiniChartsContainer = /** @class */ (function (_super) {
                 MiniArea,
                 MiniStackedArea,
                 MiniNormalizedArea
+            ],
+            histogramGroup: [
+                MiniHistogram
             ]
         };
         var eGui = this.getGui();
@@ -27779,16 +28892,16 @@ var MiniChartsContainer = /** @class */ (function (_super) {
         }
     };
     MiniChartsContainer.TEMPLATE = '<div class="ag-chart-settings-mini-wrapper"></div>';
-    __decorate$1a([
+    __decorate$1c([
         agGridCommunity.Autowired('chartTranslator')
     ], MiniChartsContainer.prototype, "chartTranslator", void 0);
-    __decorate$1a([
+    __decorate$1c([
         agGridCommunity.PostConstruct
     ], MiniChartsContainer.prototype, "init", null);
     return MiniChartsContainer;
 }(agGridCommunity.Component));
 
-var __extends$1L = (undefined && undefined.__extends) || (function () {
+var __extends$1O = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -27801,14 +28914,14 @@ var __extends$1L = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$1b = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$1d = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 var ChartSettingsPanel = /** @class */ (function (_super) {
-    __extends$1L(ChartSettingsPanel, _super);
+    __extends$1O(ChartSettingsPanel, _super);
     function ChartSettingsPanel(chartController) {
         var _this = _super.call(this, ChartSettingsPanel.TEMPLATE) || this;
         _this.miniCharts = [];
@@ -27942,34 +29055,34 @@ var ChartSettingsPanel = /** @class */ (function (_super) {
         _super.prototype.destroy.call(this);
     };
     ChartSettingsPanel.TEMPLATE = "<div class=\"ag-chart-settings-wrapper\">\n            <div ref=\"eMiniChartsContainer\" class=\"ag-chart-settings-mini-charts-container\"></div>\n            <div ref=\"eNavBar\" class=\"ag-chart-settings-nav-bar\">\n                <div ref=\"ePrevBtn\" class=\"ag-chart-settings-prev\">\n                    <button type=\"button\" class=\"ag-chart-settings-prev-button\"></button>\n                </div>\n                <div ref=\"eCardSelector\" class=\"ag-chart-settings-card-selector\"></div>\n                <div ref=\"eNextBtn\" class=\"ag-chart-settings-next\">\n                    <button type=\"button\" class=\"ag-chart-settings-next-button\"></button>\n                </div>\n            </div>\n        </div>";
-    __decorate$1b([
+    __decorate$1d([
         agGridCommunity.Autowired('gridOptionsWrapper')
     ], ChartSettingsPanel.prototype, "gridOptionsWrapper", void 0);
-    __decorate$1b([
+    __decorate$1d([
         agGridCommunity.RefSelector('eMiniChartsContainer')
     ], ChartSettingsPanel.prototype, "eMiniChartsContainer", void 0);
-    __decorate$1b([
+    __decorate$1d([
         agGridCommunity.RefSelector('eNavBar')
     ], ChartSettingsPanel.prototype, "eNavBar", void 0);
-    __decorate$1b([
+    __decorate$1d([
         agGridCommunity.RefSelector('eCardSelector')
     ], ChartSettingsPanel.prototype, "eCardSelector", void 0);
-    __decorate$1b([
+    __decorate$1d([
         agGridCommunity.RefSelector('ePrevBtn')
     ], ChartSettingsPanel.prototype, "ePrevBtn", void 0);
-    __decorate$1b([
+    __decorate$1d([
         agGridCommunity.RefSelector('eNextBtn')
     ], ChartSettingsPanel.prototype, "eNextBtn", void 0);
-    __decorate$1b([
+    __decorate$1d([
         agGridCommunity.PostConstruct
     ], ChartSettingsPanel.prototype, "postConstruct", null);
-    __decorate$1b([
+    __decorate$1d([
         agGridCommunity.PreDestroy
     ], ChartSettingsPanel.prototype, "destroy", null);
     return ChartSettingsPanel;
 }(agGridCommunity.Component));
 
-var __extends$1M = (undefined && undefined.__extends) || (function () {
+var __extends$1P = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -27982,14 +29095,14 @@ var __extends$1M = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$1c = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$1e = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 var TabbedChartMenu = /** @class */ (function (_super) {
-    __extends$1M(TabbedChartMenu, _super);
+    __extends$1P(TabbedChartMenu, _super);
     function TabbedChartMenu(params) {
         var _this = _super.call(this) || this;
         _this.tabs = [];
@@ -28067,16 +29180,16 @@ var TabbedChartMenu = /** @class */ (function (_super) {
     TabbedChartMenu.TAB_MAIN = 'settings';
     TabbedChartMenu.TAB_DATA = 'data';
     TabbedChartMenu.TAB_FORMAT = 'format';
-    __decorate$1c([
+    __decorate$1e([
         agGridCommunity.Autowired('chartTranslator')
     ], TabbedChartMenu.prototype, "chartTranslator", void 0);
-    __decorate$1c([
+    __decorate$1e([
         agGridCommunity.PostConstruct
     ], TabbedChartMenu.prototype, "init", null);
     return TabbedChartMenu;
 }(agGridCommunity.Component));
 
-var __extends$1N = (undefined && undefined.__extends) || (function () {
+var __extends$1Q = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -28089,14 +29202,14 @@ var __extends$1N = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$1d = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$1f = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 var ChartMenu = /** @class */ (function (_super) {
-    __extends$1N(ChartMenu, _super);
+    __extends$1Q(ChartMenu, _super);
     function ChartMenu(eChartContainer, eMenuPanelContainer, chartController) {
         var _this = _super.call(this, ChartMenu.TEMPLATE) || this;
         _this.eChartContainer = eChartContainer;
@@ -28257,16 +29370,16 @@ var ChartMenu = /** @class */ (function (_super) {
     };
     ChartMenu.EVENT_DOWNLOAD_CHART = "downloadChart";
     ChartMenu.TEMPLATE = "<div class=\"ag-chart-menu\"></div>";
-    __decorate$1d([
+    __decorate$1f([
         agGridCommunity.Autowired("gridOptionsWrapper")
     ], ChartMenu.prototype, "gridOptionsWrapper", void 0);
-    __decorate$1d([
+    __decorate$1f([
         agGridCommunity.PostConstruct
     ], ChartMenu.prototype, "postConstruct", null);
     return ChartMenu;
 }(agGridCommunity.Component));
 
-var __extends$1O = (undefined && undefined.__extends) || (function () {
+var __extends$1R = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -28279,8 +29392,8 @@ var __extends$1O = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __assign$5 = (undefined && undefined.__assign) || function () {
-    __assign$5 = Object.assign || function(t) {
+var __assign$7 = (undefined && undefined.__assign) || function () {
+    __assign$7 = Object.assign || function(t) {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
             s = arguments[i];
             for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
@@ -28288,10 +29401,134 @@ var __assign$5 = (undefined && undefined.__assign) || function () {
         }
         return t;
     };
-    return __assign$5.apply(this, arguments);
+    return __assign$7.apply(this, arguments);
+};
+var __decorate$1g = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var TitleEdit = /** @class */ (function (_super) {
+    __extends$1R(TitleEdit, _super);
+    function TitleEdit(chartMenu) {
+        var _this = _super.call(this, TitleEdit.TEMPLATE) || this;
+        _this.chartMenu = chartMenu;
+        return _this;
+    }
+    TitleEdit.prototype.init = function () {
+        var _this = this;
+        this.addDestroyableEventListener(this.getGui(), 'keypress', function (e) {
+            if (e.key === 'Enter') {
+                _this.endEditing();
+            }
+        });
+        this.addDestroyableEventListener(this.getGui(), 'blur', this.endEditing.bind(this));
+    };
+    /* should be called when the containing component changes to a new chart proxy */
+    TitleEdit.prototype.setChartProxy = function (chartProxy) {
+        var _this = this;
+        if (this.chartProxy) {
+            for (var i = 0; i++; i < this.destroyableChartListeners.length) {
+                this.destroyableChartListeners[i]();
+            }
+            this.destroyableChartListeners = [];
+        }
+        this.chartProxy = chartProxy;
+        var chart = this.chartProxy.getChart();
+        var canvas = chart.scene.canvas.element;
+        var destroyDbleClickListener = this.addDestroyableEventListener(canvas, 'dblclick', function (event) {
+            var title = chart.title;
+            if (title && title.node.isPointInNode(event.offsetX, event.offsetY)) {
+                var bbox = title.node.computeBBox();
+                var xy = title.node.inverseTransformPoint(bbox.x, bbox.y);
+                _this.startEditing(__assign$7(__assign$7({}, bbox), xy));
+            }
+        });
+        var destroyMouseMoveListener = this.addDestroyableEventListener(canvas, 'mousemove', function (event) {
+            var title = chart.title;
+            var inTitle = title && title.node.isPointInNode(event.offsetX, event.offsetY);
+            canvas.style.cursor = inTitle ? 'pointer' : '';
+        });
+        this.destroyableChartListeners = [
+            destroyDbleClickListener,
+            destroyMouseMoveListener
+        ];
+    };
+    TitleEdit.prototype.startEditing = function (titleBBox) {
+        if (this.chartMenu.isVisible()) {
+            // currently we ignore requests to edit the chart title while the chart menu is showing
+            // because the click to edit the chart will also close the chart menu, making the position
+            // of the title change.
+            return;
+        }
+        var minimumTargetInputWidth = 300;
+        var maximumInputWidth = this.chartProxy.getChart().width;
+        var inputWidth = Math.max(Math.min(titleBBox.width + 20, maximumInputWidth), minimumTargetInputWidth);
+        var inputElement = this.getGui();
+        agGridCommunity._.addCssClass(inputElement, 'currently-editing');
+        var inputStyle = inputElement.style;
+        // match style of input to title that we're editing
+        inputStyle.fontFamily = this.chartProxy.getTitleOption('fontFamily');
+        inputStyle.fontWeight = this.chartProxy.getTitleOption('fontWeight');
+        inputStyle.fontStyle = this.chartProxy.getTitleOption('fontStyle');
+        inputStyle.fontSize = this.chartProxy.getTitleOption('fontSize') + 'px';
+        inputStyle.color = this.chartProxy.getTitleOption('color');
+        // populate the input with the title, unless the title is the placeholder:
+        var oldTitle = this.chartProxy.getTitleOption('text');
+        var inputValue = oldTitle === this.chartTranslator.translate('titlePlaceholder') ? '' : oldTitle;
+        inputElement.value = inputValue;
+        var inputRect = inputElement.getBoundingClientRect();
+        inputStyle.left = Math.round(titleBBox.x + titleBBox.width / 2 - inputWidth / 2) + 'px';
+        inputStyle.top = Math.round(titleBBox.y + titleBBox.height / 2 - inputRect.height / 2) + 'px';
+        inputStyle.width = Math.round(inputWidth) + 'px';
+        inputElement.focus();
+    };
+    TitleEdit.prototype.endEditing = function () {
+        var value = this.getGui().value;
+        this.chartProxy.setTitleOption('text', value);
+        this.eventService.dispatchEvent({ 'type': 'chartTitleEdit' });
+        agGridCommunity._.removeCssClass(this.getGui(), 'currently-editing');
+    };
+    TitleEdit.TEMPLATE = "<input\n            class=\"ag-chart-title-edit\"\n            style=\"padding:0; border:none; border-radius: 0; min-height: 0; text-align: center;\"\n        ></input>";
+    __decorate$1g([
+        agGridCommunity.Autowired('chartTranslator')
+    ], TitleEdit.prototype, "chartTranslator", void 0);
+    __decorate$1g([
+        agGridCommunity.Autowired('eventService')
+    ], TitleEdit.prototype, "eventService", void 0);
+    __decorate$1g([
+        agGridCommunity.PostConstruct
+    ], TitleEdit.prototype, "init", null);
+    return TitleEdit;
+}(agGridCommunity.Component));
+
+var __extends$1S = (undefined && undefined.__extends) || (function () {
+    var extendStatics = function (d, b) {
+        extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+        return extendStatics(d, b);
+    };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
+var __assign$8 = (undefined && undefined.__assign) || function () {
+    __assign$8 = Object.assign || function(t) {
+        for (var s, i = 1, n = arguments.length; i < n; i++) {
+            s = arguments[i];
+            for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
+                t[p] = s[p];
+        }
+        return t;
+    };
+    return __assign$8.apply(this, arguments);
 };
 var BarChartProxy = /** @class */ (function (_super) {
-    __extends$1O(BarChartProxy, _super);
+    __extends$1S(BarChartProxy, _super);
     function BarChartProxy(params) {
         var _this = _super.call(this, params) || this;
         _this.initChartOptions();
@@ -28336,9 +29573,9 @@ var BarChartProxy = /** @class */ (function (_super) {
         var options = this.getDefaultCartesianChartOptions();
         options.xAxis.label.rotation = isColumnChart ? 335 : 0;
         options.yAxis.label.rotation = isColumnChart ? 0 : 335;
-        options.seriesDefaults = __assign$5(__assign$5({}, options.seriesDefaults), { tooltip: {
+        options.seriesDefaults = __assign$8(__assign$8({}, options.seriesDefaults), { tooltip: {
                 enabled: true,
-            }, label: __assign$5(__assign$5({}, fontOptions), { enabled: false }), shadow: this.getDefaultDropShadowOptions() });
+            }, label: __assign$8(__assign$8({}, fontOptions), { enabled: false }), shadow: this.getDefaultDropShadowOptions() });
         return options;
     };
     BarChartProxy.prototype.isColumnChart = function () {
@@ -28348,12 +29585,12 @@ var BarChartProxy = /** @class */ (function (_super) {
         var chartType = this.chartType;
         var isGrouped = chartType === agGridCommunity.ChartType.GroupedColumn || chartType === agGridCommunity.ChartType.GroupedBar;
         var isNormalized = chartType === agGridCommunity.ChartType.NormalizedColumn || chartType === agGridCommunity.ChartType.NormalizedBar;
-        return __assign$5(__assign$5({}, this.chartOptions.seriesDefaults), { type: 'bar', grouped: isGrouped, normalizedTo: isNormalized ? 100 : undefined });
+        return __assign$8(__assign$8({}, this.chartOptions.seriesDefaults), { type: 'bar', grouped: isGrouped, normalizedTo: isNormalized ? 100 : undefined });
     };
     return BarChartProxy;
 }(CartesianChartProxy));
 
-var __extends$1P = (undefined && undefined.__extends) || (function () {
+var __extends$1T = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -28366,8 +29603,8 @@ var __extends$1P = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __assign$6 = (undefined && undefined.__assign) || function () {
-    __assign$6 = Object.assign || function(t) {
+var __assign$9 = (undefined && undefined.__assign) || function () {
+    __assign$9 = Object.assign || function(t) {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
             s = arguments[i];
             for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
@@ -28375,10 +29612,10 @@ var __assign$6 = (undefined && undefined.__assign) || function () {
         }
         return t;
     };
-    return __assign$6.apply(this, arguments);
+    return __assign$9.apply(this, arguments);
 };
 var AreaChartProxy = /** @class */ (function (_super) {
-    __extends$1P(AreaChartProxy, _super);
+    __extends$1T(AreaChartProxy, _super);
     function AreaChartProxy(params) {
         var _this = _super.call(this, params) || this;
         _this.initChartOptions();
@@ -28462,12 +29699,12 @@ var AreaChartProxy = /** @class */ (function (_super) {
             }
             else {
                 var seriesDefaults = _this.getSeriesDefaults();
-                var options = __assign$6(__assign$6({}, seriesDefaults), { data: data, field: {
+                var options = __assign$9(__assign$9({}, seriesDefaults), { data: data, field: {
                         xKey: params.category.id,
                         xName: params.category.name,
                         yKeys: [f.colId],
                         yNames: [f.displayName],
-                    }, fill: __assign$6(__assign$6({}, seriesDefaults.fill), { colors: [fill] }), stroke: __assign$6(__assign$6({}, seriesDefaults.stroke), { colors: [stroke] }) });
+                    }, fill: __assign$9(__assign$9({}, seriesDefaults.fill), { colors: [fill] }), stroke: __assign$9(__assign$9({}, seriesDefaults.stroke), { colors: [stroke] }) });
                 areaSeries = ChartBuilder.createSeries(options);
                 chart.addSeriesAfter(areaSeries, previousSeries);
             }
@@ -28477,7 +29714,7 @@ var AreaChartProxy = /** @class */ (function (_super) {
     AreaChartProxy.prototype.getDefaultOptions = function () {
         var options = this.getDefaultCartesianChartOptions();
         options.xAxis.label.rotation = 335;
-        options.seriesDefaults = __assign$6(__assign$6({}, options.seriesDefaults), { fill: __assign$6(__assign$6({}, options.seriesDefaults.fill), { opacity: this.chartType === agGridCommunity.ChartType.Area ? 0.7 : 1 }), stroke: __assign$6(__assign$6({}, options.seriesDefaults.stroke), { width: 3 }), marker: {
+        options.seriesDefaults = __assign$9(__assign$9({}, options.seriesDefaults), { fill: __assign$9(__assign$9({}, options.seriesDefaults.fill), { opacity: this.chartType === agGridCommunity.ChartType.Area ? 0.7 : 1 }), stroke: __assign$9(__assign$9({}, options.seriesDefaults.stroke), { width: 3 }), marker: {
                 shape: 'circle',
                 enabled: true,
                 size: 6,
@@ -28488,12 +29725,12 @@ var AreaChartProxy = /** @class */ (function (_super) {
         return options;
     };
     AreaChartProxy.prototype.getSeriesDefaults = function () {
-        return __assign$6(__assign$6({}, this.chartOptions.seriesDefaults), { type: 'area', normalizedTo: this.chartType === agGridCommunity.ChartType.NormalizedArea ? 100 : undefined });
+        return __assign$9(__assign$9({}, this.chartOptions.seriesDefaults), { type: 'area', normalizedTo: this.chartType === agGridCommunity.ChartType.NormalizedArea ? 100 : undefined });
     };
     return AreaChartProxy;
 }(CartesianChartProxy));
 
-var __extends$1Q = (undefined && undefined.__extends) || (function () {
+var __extends$1U = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -28506,8 +29743,8 @@ var __extends$1Q = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __assign$7 = (undefined && undefined.__assign) || function () {
-    __assign$7 = Object.assign || function(t) {
+var __assign$a = (undefined && undefined.__assign) || function () {
+    __assign$a = Object.assign || function(t) {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
             s = arguments[i];
             for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
@@ -28515,10 +29752,10 @@ var __assign$7 = (undefined && undefined.__assign) || function () {
         }
         return t;
     };
-    return __assign$7.apply(this, arguments);
+    return __assign$a.apply(this, arguments);
 };
 var LineChartProxy = /** @class */ (function (_super) {
-    __extends$1Q(LineChartProxy, _super);
+    __extends$1U(LineChartProxy, _super);
     function LineChartProxy(params) {
         var _this = _super.call(this, params) || this;
         _this.initChartOptions();
@@ -28571,12 +29808,12 @@ var LineChartProxy = /** @class */ (function (_super) {
             }
             else {
                 var seriesDefaults = _this.chartOptions.seriesDefaults;
-                var options = __assign$7(__assign$7({}, seriesDefaults), { type: 'line', title: f.displayName, data: data, field: {
+                var options = __assign$a(__assign$a({}, seriesDefaults), { type: 'line', title: f.displayName, data: data, field: {
                         xKey: params.category.id,
                         xName: params.category.name,
                         yKey: f.colId,
                         yName: f.displayName,
-                    }, fill: __assign$7(__assign$7({}, seriesDefaults.fill), { color: fill }), stroke: __assign$7(__assign$7({}, seriesDefaults.stroke), { color: fill }), marker: __assign$7(__assign$7({}, seriesDefaults.marker), { stroke: stroke }) });
+                    }, fill: __assign$a(__assign$a({}, seriesDefaults.fill), { color: fill }), stroke: __assign$a(__assign$a({}, seriesDefaults.stroke), { color: fill }), marker: __assign$a(__assign$a({}, seriesDefaults.marker), { stroke: stroke }) });
                 lineSeries = ChartBuilder.createSeries(options);
                 chart.addSeriesAfter(lineSeries, previousSeries);
             }
@@ -28587,7 +29824,7 @@ var LineChartProxy = /** @class */ (function (_super) {
     LineChartProxy.prototype.getDefaultOptions = function () {
         var options = this.getDefaultCartesianChartOptions();
         options.xAxis.label.rotation = 335;
-        options.seriesDefaults = __assign$7(__assign$7({}, options.seriesDefaults), { stroke: __assign$7(__assign$7({}, options.seriesDefaults.stroke), { width: 3 }), marker: {
+        options.seriesDefaults = __assign$a(__assign$a({}, options.seriesDefaults), { stroke: __assign$a(__assign$a({}, options.seriesDefaults.stroke), { width: 3 }), marker: {
                 enabled: true,
                 shape: 'circle',
                 size: 6,
@@ -28600,7 +29837,7 @@ var LineChartProxy = /** @class */ (function (_super) {
     return LineChartProxy;
 }(CartesianChartProxy));
 
-var __extends$1R = (undefined && undefined.__extends) || (function () {
+var __extends$1V = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -28614,14 +29851,14 @@ var __extends$1R = (undefined && undefined.__extends) || (function () {
     };
 })();
 var PolarChartProxy = /** @class */ (function (_super) {
-    __extends$1R(PolarChartProxy, _super);
+    __extends$1V(PolarChartProxy, _super);
     function PolarChartProxy(params) {
         return _super.call(this, params) || this;
     }
     return PolarChartProxy;
 }(ChartProxy));
 
-var __extends$1S = (undefined && undefined.__extends) || (function () {
+var __extends$1W = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -28634,8 +29871,8 @@ var __extends$1S = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __assign$8 = (undefined && undefined.__assign) || function () {
-    __assign$8 = Object.assign || function(t) {
+var __assign$b = (undefined && undefined.__assign) || function () {
+    __assign$b = Object.assign || function(t) {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
             s = arguments[i];
             for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
@@ -28643,10 +29880,10 @@ var __assign$8 = (undefined && undefined.__assign) || function () {
         }
         return t;
     };
-    return __assign$8.apply(this, arguments);
+    return __assign$b.apply(this, arguments);
 };
 var PieChartProxy = /** @class */ (function (_super) {
-    __extends$1S(PieChartProxy, _super);
+    __extends$1W(PieChartProxy, _super);
     function PieChartProxy(params) {
         var _this = _super.call(this, params) || this;
         _this.initChartOptions();
@@ -28671,9 +29908,9 @@ var PieChartProxy = /** @class */ (function (_super) {
         var calloutColors = seriesDefaults.callout && seriesDefaults.callout.colors;
         if (existingSeriesId !== pieSeriesField.colId) {
             chart.removeSeries(existingSeries);
-            var seriesOptions = __assign$8(__assign$8({}, seriesDefaults), { type: "pie", field: {
+            var seriesOptions = __assign$b(__assign$b({}, seriesDefaults), { type: "pie", field: {
                     angleKey: pieSeriesField.colId,
-                }, title: __assign$8(__assign$8({}, seriesDefaults.title), { text: seriesDefaults.title.text || params.fields[0].displayName }) });
+                }, title: __assign$b(__assign$b({}, seriesDefaults.title), { text: seriesDefaults.title.text || params.fields[0].displayName }) });
             pieSeries = ChartBuilder.createSeries(seriesOptions);
         }
         pieSeries.angleName = pieSeriesField.displayName;
@@ -28691,11 +29928,11 @@ var PieChartProxy = /** @class */ (function (_super) {
         var strokes = this.getPredefinedPalette().strokes;
         var options = this.getDefaultChartOptions();
         var fontOptions = this.getDefaultFontOptions();
-        options.seriesDefaults = __assign$8(__assign$8({}, options.seriesDefaults), { title: __assign$8(__assign$8({}, fontOptions), { enabled: false, fontSize: 12, fontWeight: 'bold' }), callout: {
+        options.seriesDefaults = __assign$b(__assign$b({}, options.seriesDefaults), { title: __assign$b(__assign$b({}, fontOptions), { enabled: false, fontSize: 12, fontWeight: 'bold' }), callout: {
                 colors: strokes,
                 length: 10,
                 strokeWidth: 2,
-            }, label: __assign$8(__assign$8({}, fontOptions), { enabled: false, offset: 3, minRequiredAngle: 0 }), tooltip: {
+            }, label: __assign$b(__assign$b({}, fontOptions), { enabled: false, offset: 3, minRequiredAngle: 0 }), tooltip: {
                 enabled: true,
             }, shadow: this.getDefaultDropShadowOptions() });
         return options;
@@ -28703,7 +29940,7 @@ var PieChartProxy = /** @class */ (function (_super) {
     return PieChartProxy;
 }(PolarChartProxy));
 
-var __extends$1T = (undefined && undefined.__extends) || (function () {
+var __extends$1X = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -28716,8 +29953,8 @@ var __extends$1T = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __assign$9 = (undefined && undefined.__assign) || function () {
-    __assign$9 = Object.assign || function(t) {
+var __assign$c = (undefined && undefined.__assign) || function () {
+    __assign$c = Object.assign || function(t) {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
             s = arguments[i];
             for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
@@ -28725,10 +29962,10 @@ var __assign$9 = (undefined && undefined.__assign) || function () {
         }
         return t;
     };
-    return __assign$9.apply(this, arguments);
+    return __assign$c.apply(this, arguments);
 };
 var DoughnutChartProxy = /** @class */ (function (_super) {
-    __extends$1T(DoughnutChartProxy, _super);
+    __extends$1X(DoughnutChartProxy, _super);
     function DoughnutChartProxy(params) {
         var _this = _super.call(this, params) || this;
         _this.initChartOptions();
@@ -28758,9 +29995,9 @@ var DoughnutChartProxy = /** @class */ (function (_super) {
         var offset = 0;
         params.fields.forEach(function (f, index) {
             var existingSeries = seriesMap[f.colId];
-            var seriesOptions = __assign$9(__assign$9({}, seriesDefaults), { type: "pie", field: {
+            var seriesOptions = __assign$c(__assign$c({}, seriesDefaults), { type: "pie", field: {
                     angleKey: f.colId,
-                }, showInLegend: index === 0, title: __assign$9(__assign$9({}, seriesDefaults.title), { text: seriesDefaults.title.text || f.displayName }) });
+                }, showInLegend: index === 0, title: __assign$c(__assign$c({}, seriesDefaults.title), { text: seriesDefaults.title.text || f.displayName }) });
             var calloutColors = seriesOptions.callout && seriesOptions.callout.colors;
             var pieSeries = existingSeries || ChartBuilder.createSeries(seriesOptions);
             pieSeries.angleName = f.displayName;
@@ -28803,11 +30040,11 @@ var DoughnutChartProxy = /** @class */ (function (_super) {
         var strokes = this.getPredefinedPalette().strokes;
         var options = this.getDefaultChartOptions();
         var fontOptions = this.getDefaultFontOptions();
-        options.seriesDefaults = __assign$9(__assign$9({}, options.seriesDefaults), { title: __assign$9(__assign$9({}, fontOptions), { enabled: true, fontSize: 12, fontWeight: 'bold' }), callout: {
+        options.seriesDefaults = __assign$c(__assign$c({}, options.seriesDefaults), { title: __assign$c(__assign$c({}, fontOptions), { enabled: true, fontSize: 12, fontWeight: 'bold' }), callout: {
                 colors: strokes,
                 length: 10,
                 strokeWidth: 2,
-            }, label: __assign$9(__assign$9({}, fontOptions), { enabled: false, offset: 3, minRequiredAngle: 0 }), tooltip: {
+            }, label: __assign$c(__assign$c({}, fontOptions), { enabled: false, offset: 3, minRequiredAngle: 0 }), tooltip: {
                 enabled: true,
             }, shadow: this.getDefaultDropShadowOptions() });
         return options;
@@ -28815,7 +30052,7 @@ var DoughnutChartProxy = /** @class */ (function (_super) {
     return DoughnutChartProxy;
 }(PolarChartProxy));
 
-var __extends$1U = (undefined && undefined.__extends) || (function () {
+var __extends$1Y = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -28828,14 +30065,84 @@ var __extends$1U = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$1e = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __assign$d = (undefined && undefined.__assign) || function () {
+    __assign$d = Object.assign || function(t) {
+        for (var s, i = 1, n = arguments.length; i < n; i++) {
+            s = arguments[i];
+            for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
+                t[p] = s[p];
+        }
+        return t;
+    };
+    return __assign$d.apply(this, arguments);
+};
+var HistogramChartProxy = /** @class */ (function (_super) {
+    __extends$1Y(HistogramChartProxy, _super);
+    function HistogramChartProxy(params) {
+        var _this = _super.call(this, params) || this;
+        _this.initChartOptions();
+        _this.recreateChart();
+        return _this;
+    }
+    HistogramChartProxy.prototype.createChart = function (options) {
+        var parentElement = this.chartProxyParams.parentElement;
+        var chart = ChartBuilder.createHistogramChart(parentElement, options || this.chartOptions);
+        var histogramSeries = ChartBuilder.createSeries(this.getSeriesDefaults());
+        if (histogramSeries) {
+            chart.addSeries(histogramSeries);
+        }
+        return chart;
+    };
+    HistogramChartProxy.prototype.update = function (params) {
+        var xField = params.fields[0];
+        var chart = this.chart;
+        var series = chart.series[0];
+        series.data = params.data;
+        series.xKey = xField.colId;
+        series.xName = xField.displayName;
+        // for now, only constant width is supported via integrated charts
+        series.areaPlot = false;
+        var _a = this.getPalette(), fills = _a.fills, strokes = _a.strokes;
+        series.fill = fills[0];
+        series.stroke = strokes[0];
+    };
+    HistogramChartProxy.prototype.getDefaultOptions = function () {
+        var fontOptions = this.getDefaultFontOptions();
+        var options = this.getDefaultCartesianChartOptions();
+        options.xAxis.label.rotation = 0;
+        options.yAxis.label.rotation = 0;
+        options.seriesDefaults = __assign$d(__assign$d({}, options.seriesDefaults), { tooltip: {
+                enabled: true,
+            }, label: __assign$d(__assign$d({}, fontOptions), { enabled: false }), shadow: this.getDefaultDropShadowOptions(), binCount: 10 });
+        return options;
+    };
+    HistogramChartProxy.prototype.getSeriesDefaults = function () {
+        return __assign$d(__assign$d({}, this.chartOptions.seriesDefaults), { type: 'histogram' });
+    };
+    return HistogramChartProxy;
+}(CartesianChartProxy));
+
+var __extends$1Z = (undefined && undefined.__extends) || (function () {
+    var extendStatics = function (d, b) {
+        extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+        return extendStatics(d, b);
+    };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
+var __decorate$1h = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 var GridChartComp = /** @class */ (function (_super) {
-    __extends$1U(GridChartComp, _super);
+    __extends$1Z(GridChartComp, _super);
     function GridChartComp(params) {
         var _this = _super.call(this, GridChartComp.TEMPLATE) || this;
         _this.params = params;
@@ -28858,8 +30165,8 @@ var GridChartComp = /** @class */ (function (_super) {
         if (this.params.insideDialog) {
             this.addDialog();
         }
-        this.addResizeListener();
         this.addMenu();
+        this.addTitleEditComp();
         this.addDestroyableEventListener(this.getGui(), 'focusin', this.setActiveChartCellRange.bind(this));
         this.addDestroyableEventListener(this.chartController, ChartController.EVENT_CHART_UPDATED, this.refresh.bind(this));
         this.addDestroyableEventListener(this.chartMenu, ChartMenu.EVENT_DOWNLOAD_CHART, this.downloadChart.bind(this));
@@ -28900,6 +30207,7 @@ var GridChartComp = /** @class */ (function (_super) {
         // set local state used to detect when chart type changes
         this.chartType = chartType;
         this.chartProxy = this.createChartProxy(chartProxyParams);
+        this.titleEdit && this.titleEdit.setChartProxy(this.chartProxy);
         agGridCommunity._.addCssClass(this.eChart.querySelector('canvas'), 'ag-charts-canvas');
         this.chartController.setChartProxy(this.chartProxy);
     };
@@ -28928,6 +30236,8 @@ var GridChartComp = /** @class */ (function (_super) {
             case agGridCommunity.ChartType.Scatter:
             case agGridCommunity.ChartType.Bubble:
                 return new ScatterChartProxy(chartProxyParams);
+            case agGridCommunity.ChartType.Histogram:
+                return new HistogramChartProxy(chartProxyParams);
         }
     };
     GridChartComp.prototype.addDialog = function () {
@@ -28953,6 +30263,12 @@ var GridChartComp = /** @class */ (function (_super) {
         var maxWidth = agGridCommunity._.getAbsoluteWidth(popupParent) * 0.75;
         var maxHeight = agGridCommunity._.getAbsoluteHeight(popupParent) * 0.75;
         var ratio = 0.553;
+        {
+            var _a = this.chartProxy.getChartOptions(), width_1 = _a.width, height_1 = _a.height;
+            if (width_1 && height_1) {
+                return { width: width_1, height: height_1 };
+            }
+        }
         var chart = this.chartProxy.getChart();
         var width = this.params.insideDialog ? 850 : chart.width;
         var height = this.params.insideDialog ? 470 : chart.height;
@@ -28969,6 +30285,13 @@ var GridChartComp = /** @class */ (function (_super) {
     GridChartComp.prototype.addMenu = function () {
         this.chartMenu = this.wireBean(new ChartMenu(this.eChartContainer, this.eMenuContainer, this.chartController));
         this.eChartContainer.appendChild(this.chartMenu.getGui());
+    };
+    GridChartComp.prototype.addTitleEditComp = function () {
+        this.titleEdit = this.wireBean(new TitleEdit(this.chartMenu));
+        this.eTitleEditContainer.appendChild(this.titleEdit.getGui());
+        if (this.chartProxy) {
+            this.titleEdit.setChartProxy(this.chartProxy);
+        }
     };
     GridChartComp.prototype.refresh = function () {
         if (this.shouldRecreateChart()) {
@@ -29016,8 +30339,8 @@ var GridChartComp = /** @class */ (function (_super) {
         var isEmptyChart = fields.length < minFieldsRequired || data.length === 0;
         if (container) {
             var isEmpty = pivotModeDisabled || isEmptyChart;
-            agGridCommunity._.setVisible(this.eChart, !isEmpty);
-            agGridCommunity._.setVisible(this.eEmpty, isEmpty);
+            agGridCommunity._.setDisplayed(this.eChart, !isEmpty);
+            agGridCommunity._.setDisplayed(this.eEmpty, isEmpty);
         }
         if (pivotModeDisabled) {
             this.eEmpty.innerText = this.chartTranslator.translate('pivotChartRequiresPivotMode');
@@ -29047,18 +30370,6 @@ var GridChartComp = /** @class */ (function (_super) {
             chartProxy.setChartOption('width', agGridCommunity._.getInnerWidth(eChart));
             chartProxy.setChartOption('height', agGridCommunity._.getInnerHeight(eChart));
         }
-    };
-    GridChartComp.prototype.addResizeListener = function () {
-        var _this = this;
-        var eGui = this.getGui();
-        var resizeFunc = function () {
-            if (!eGui || !eGui.offsetParent) {
-                observeResizeFunc();
-                return;
-            }
-            _this.refreshCanvasSize();
-        };
-        var observeResizeFunc = this.resizeObserverService.observeResize(this.eChart, resizeFunc, 5);
     };
     GridChartComp.prototype.setActiveChartCellRange = function (focusEvent) {
         if (this.getGui().contains(focusEvent.relatedTarget)) {
@@ -29109,50 +30420,50 @@ var GridChartComp = /** @class */ (function (_super) {
         agGridCommunity._.removeFromParent(eGui);
         this.raiseChartDestroyedEvent();
     };
-    GridChartComp.TEMPLATE = "<div class=\"ag-chart\" tabindex=\"-1\">\n            <div ref=\"eChartContainer\" tabindex=\"-1\" class=\"ag-chart-components-wrapper\">\n                <div ref=\"eChart\" class=\"ag-chart-canvas-wrapper\">\n                </div>\n                <div ref=\"eEmpty\" class=\"ag-chart-empty-text ag-unselectable\"></div>\n            </div>\n            <div ref=\"eMenuContainer\" class=\"ag-chart-docked-container\"></div>\n        </div>";
-    __decorate$1e([
+    GridChartComp.TEMPLATE = "<div class=\"ag-chart\" tabindex=\"-1\">\n            <div ref=\"eChartContainer\" tabindex=\"-1\" class=\"ag-chart-components-wrapper\">\n                <div ref=\"eChart\" class=\"ag-chart-canvas-wrapper\">\n                </div>\n                <div ref=\"eEmpty\" class=\"ag-chart-empty-text ag-unselectable\"></div>\n            </div>\n            <div ref=\"eTitleEditContainer\">\n            </div>\n            <div ref=\"eMenuContainer\" class=\"ag-chart-docked-container\"></div>\n        </div>";
+    __decorate$1h([
         agGridCommunity.RefSelector('eChart')
     ], GridChartComp.prototype, "eChart", void 0);
-    __decorate$1e([
+    __decorate$1h([
         agGridCommunity.RefSelector('eChartContainer')
     ], GridChartComp.prototype, "eChartContainer", void 0);
-    __decorate$1e([
+    __decorate$1h([
         agGridCommunity.RefSelector('eMenuContainer')
     ], GridChartComp.prototype, "eMenuContainer", void 0);
-    __decorate$1e([
+    __decorate$1h([
         agGridCommunity.RefSelector('eEmpty')
     ], GridChartComp.prototype, "eEmpty", void 0);
-    __decorate$1e([
-        agGridCommunity.Autowired('resizeObserverService')
-    ], GridChartComp.prototype, "resizeObserverService", void 0);
-    __decorate$1e([
+    __decorate$1h([
+        agGridCommunity.RefSelector('eTitleEditContainer')
+    ], GridChartComp.prototype, "eTitleEditContainer", void 0);
+    __decorate$1h([
         agGridCommunity.Autowired('gridOptionsWrapper')
     ], GridChartComp.prototype, "gridOptionsWrapper", void 0);
-    __decorate$1e([
+    __decorate$1h([
         agGridCommunity.Autowired('environment')
     ], GridChartComp.prototype, "environment", void 0);
-    __decorate$1e([
+    __decorate$1h([
         agGridCommunity.Autowired('chartTranslator')
     ], GridChartComp.prototype, "chartTranslator", void 0);
-    __decorate$1e([
+    __decorate$1h([
         agGridCommunity.Autowired('eventService')
     ], GridChartComp.prototype, "eventService", void 0);
-    __decorate$1e([
+    __decorate$1h([
         agGridCommunity.Autowired('gridApi')
     ], GridChartComp.prototype, "gridApi", void 0);
-    __decorate$1e([
+    __decorate$1h([
         agGridCommunity.Autowired('columnApi')
     ], GridChartComp.prototype, "columnApi", void 0);
-    __decorate$1e([
+    __decorate$1h([
         agGridCommunity.Autowired('popupService')
     ], GridChartComp.prototype, "popupService", void 0);
-    __decorate$1e([
+    __decorate$1h([
         agGridCommunity.PostConstruct
     ], GridChartComp.prototype, "init", null);
     return GridChartComp;
 }(agGridCommunity.Component));
 
-var __decorate$1f = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$1i = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -29269,31 +30580,31 @@ var ChartService = /** @class */ (function () {
     ChartService.prototype.destroyAllActiveCharts = function () {
         this.activeCharts.forEach(function (chart) { return chart.destroyChart(); });
     };
-    __decorate$1f([
+    __decorate$1i([
         agGridCommunity.Optional('rangeController')
     ], ChartService.prototype, "rangeController", void 0);
-    __decorate$1f([
+    __decorate$1i([
         agGridCommunity.Autowired('columnController')
     ], ChartService.prototype, "columnController", void 0);
-    __decorate$1f([
+    __decorate$1i([
         agGridCommunity.Autowired('environment')
     ], ChartService.prototype, "environment", void 0);
-    __decorate$1f([
+    __decorate$1i([
         agGridCommunity.Autowired('context')
     ], ChartService.prototype, "context", void 0);
-    __decorate$1f([
+    __decorate$1i([
         agGridCommunity.Autowired('gridOptionsWrapper')
     ], ChartService.prototype, "gridOptionsWrapper", void 0);
-    __decorate$1f([
+    __decorate$1i([
         agGridCommunity.PreDestroy
     ], ChartService.prototype, "destroyAllActiveCharts", null);
-    ChartService = __decorate$1f([
+    ChartService = __decorate$1i([
         agGridCommunity.Bean('chartService')
     ], ChartService);
     return ChartService;
 }());
 
-var __decorate$1g = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$1j = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -29337,6 +30648,7 @@ var ChartTranslator = /** @class */ (function () {
         spacing: 'Spacing',
         chart: 'Chart',
         title: 'Title',
+        titlePlaceholder: 'Chart title - double click to edit',
         background: 'Background',
         font: 'Font',
         top: 'Top',
@@ -29375,12 +30687,14 @@ var ChartTranslator = /** @class */ (function () {
         predefined: 'Predefined',
         fillOpacity: 'Fill Opacity',
         strokeOpacity: 'Line Opacity',
+        histogramBinCount: 'Bin count',
         columnGroup: 'Column',
         barGroup: 'Bar',
         pieGroup: 'Pie',
         lineGroup: 'Line',
         scatterGroup: 'X Y (Scatter)',
         areaGroup: 'Area',
+        histogramGroup: 'Histogram',
         groupedColumnTooltip: 'Grouped',
         stackedColumnTooltip: 'Stacked',
         normalizedColumnTooltip: '100% Stacked',
@@ -29395,25 +30709,26 @@ var ChartTranslator = /** @class */ (function () {
         normalizedAreaTooltip: '100% Stacked',
         scatterTooltip: 'Scatter',
         bubbleTooltip: 'Bubble',
+        histogramTooltip: 'Histogram',
         noDataToChart: 'No data available to be charted.',
         pivotChartRequiresPivotMode: 'Pivot Chart requires Pivot Mode enabled.',
     };
-    __decorate$1g([
+    __decorate$1j([
         agGridCommunity.Autowired('gridOptionsWrapper')
     ], ChartTranslator.prototype, "gridOptionsWrapper", void 0);
-    ChartTranslator = ChartTranslator_1 = __decorate$1g([
+    ChartTranslator = ChartTranslator_1 = __decorate$1j([
         agGridCommunity.Bean("chartTranslator")
     ], ChartTranslator);
     return ChartTranslator;
 }());
 
-var __decorate$1h = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$1k = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
-var __spreadArrays$6 = (undefined && undefined.__spreadArrays) || function () {
+var __spreadArrays$7 = (undefined && undefined.__spreadArrays) || function () {
     for (var s = 0, i = 0, il = arguments.length; i < il; i++) s += arguments[i].length;
     for (var r = Array(s), k = 0, i = 0; i < il; i++)
         for (var a = arguments[i], j = 0, jl = a.length; j < jl; j++, k++)
@@ -29425,6 +30740,7 @@ var RangeController = /** @class */ (function () {
         this.cellRanges = [];
         this.bodyScrollListener = this.onBodyScroll.bind(this);
         this.dragging = false;
+        this.events = [];
     }
     RangeController.prototype.registerGridComp = function (gridPanel) {
         this.gridPanel = gridPanel;
@@ -29432,13 +30748,21 @@ var RangeController = /** @class */ (function () {
     };
     RangeController.prototype.init = function () {
         this.logger = this.loggerFactory.create('RangeController');
-        this.eventService.addEventListener(agGridCommunity.Events.EVENT_COLUMN_EVERYTHING_CHANGED, this.removeAllCellRanges.bind(this));
-        this.eventService.addEventListener(agGridCommunity.Events.EVENT_COLUMN_PIVOT_MODE_CHANGED, this.removeAllCellRanges.bind(this));
-        this.eventService.addEventListener(agGridCommunity.Events.EVENT_COLUMN_ROW_GROUP_CHANGED, this.removeAllCellRanges.bind(this));
-        this.eventService.addEventListener(agGridCommunity.Events.EVENT_COLUMN_GROUP_OPENED, this.refreshLastRangeStart.bind(this));
-        this.eventService.addEventListener(agGridCommunity.Events.EVENT_COLUMN_MOVED, this.refreshLastRangeStart.bind(this));
-        this.eventService.addEventListener(agGridCommunity.Events.EVENT_COLUMN_PINNED, this.refreshLastRangeStart.bind(this));
-        this.eventService.addEventListener(agGridCommunity.Events.EVENT_COLUMN_VISIBLE, this.onColumnVisibleChange.bind(this));
+        this.events = [
+            this.eventService.addEventListener(agGridCommunity.Events.EVENT_COLUMN_EVERYTHING_CHANGED, this.removeAllCellRanges.bind(this)),
+            this.eventService.addEventListener(agGridCommunity.Events.EVENT_COLUMN_PIVOT_MODE_CHANGED, this.removeAllCellRanges.bind(this)),
+            this.eventService.addEventListener(agGridCommunity.Events.EVENT_COLUMN_ROW_GROUP_CHANGED, this.removeAllCellRanges.bind(this)),
+            this.eventService.addEventListener(agGridCommunity.Events.EVENT_COLUMN_GROUP_OPENED, this.refreshLastRangeStart.bind(this)),
+            this.eventService.addEventListener(agGridCommunity.Events.EVENT_COLUMN_MOVED, this.refreshLastRangeStart.bind(this)),
+            this.eventService.addEventListener(agGridCommunity.Events.EVENT_COLUMN_PINNED, this.refreshLastRangeStart.bind(this)),
+            this.eventService.addEventListener(agGridCommunity.Events.EVENT_COLUMN_VISIBLE, this.onColumnVisibleChange.bind(this))
+        ];
+    };
+    RangeController.prototype.destroy = function () {
+        if (this.events.length) {
+            this.events.forEach(function (func) { return func(); });
+            this.events = [];
+        }
     };
     RangeController.prototype.onColumnVisibleChange = function () {
         var _this = this;
@@ -29449,7 +30773,7 @@ var RangeController = /** @class */ (function () {
             var beforeCols = cellRange.columns;
             // remove hidden cols from cell range
             cellRange.columns = cellRange.columns.filter(function (col) { return col.isVisible(); });
-            var colsInRangeChanged = !agGridCommunity._.compareArrays(beforeCols, cellRange.columns);
+            var colsInRangeChanged = !agGridCommunity._.areEqual(beforeCols, cellRange.columns);
             if (colsInRangeChanged) {
                 // notify users and other parts of grid (i.e. status panel) that range has changed
                 _this.dispatchChangedEvent(false, true, cellRange.id);
@@ -29580,7 +30904,7 @@ var RangeController = /** @class */ (function () {
             var otherCols = cellRange.columns.filter(function (col) { return col !== colToMove; });
             if (colToMove) {
                 cellRange.startColumn = colToMove;
-                cellRange.columns = moveToFront ? __spreadArrays$6([colToMove], otherCols) : __spreadArrays$6(otherCols, [colToMove]);
+                cellRange.columns = moveToFront ? __spreadArrays$7([colToMove], otherCols) : __spreadArrays$7(otherCols, [colToMove]);
             }
             else {
                 cellRange.columns = otherCols;
@@ -29917,46 +31241,49 @@ var RangeController = /** @class */ (function () {
         }
         return columns;
     };
-    __decorate$1h([
+    __decorate$1k([
         agGridCommunity.Autowired('loggerFactory')
     ], RangeController.prototype, "loggerFactory", void 0);
-    __decorate$1h([
+    __decorate$1k([
         agGridCommunity.Autowired('rowModel')
     ], RangeController.prototype, "rowModel", void 0);
-    __decorate$1h([
+    __decorate$1k([
         agGridCommunity.Autowired('eventService')
     ], RangeController.prototype, "eventService", void 0);
-    __decorate$1h([
+    __decorate$1k([
         agGridCommunity.Autowired('columnController')
     ], RangeController.prototype, "columnController", void 0);
-    __decorate$1h([
+    __decorate$1k([
         agGridCommunity.Autowired('mouseEventService')
     ], RangeController.prototype, "mouseEventService", void 0);
-    __decorate$1h([
+    __decorate$1k([
         agGridCommunity.Autowired('gridOptionsWrapper')
     ], RangeController.prototype, "gridOptionsWrapper", void 0);
-    __decorate$1h([
+    __decorate$1k([
         agGridCommunity.Autowired('columnApi')
     ], RangeController.prototype, "columnApi", void 0);
-    __decorate$1h([
+    __decorate$1k([
         agGridCommunity.Autowired('gridApi')
     ], RangeController.prototype, "gridApi", void 0);
-    __decorate$1h([
+    __decorate$1k([
         agGridCommunity.Autowired('cellNavigationService')
     ], RangeController.prototype, "cellNavigationService", void 0);
-    __decorate$1h([
+    __decorate$1k([
         agGridCommunity.Autowired("pinnedRowModel")
     ], RangeController.prototype, "pinnedRowModel", void 0);
-    __decorate$1h([
+    __decorate$1k([
         agGridCommunity.Autowired('rowPositionUtils')
     ], RangeController.prototype, "rowPositionUtils", void 0);
-    __decorate$1h([
+    __decorate$1k([
         agGridCommunity.Autowired('cellPositionUtils')
     ], RangeController.prototype, "cellPositionUtils", void 0);
-    __decorate$1h([
+    __decorate$1k([
         agGridCommunity.PostConstruct
     ], RangeController.prototype, "init", null);
-    RangeController = __decorate$1h([
+    __decorate$1k([
+        agGridCommunity.PreDestroy
+    ], RangeController.prototype, "destroy", null);
+    RangeController = __decorate$1k([
         agGridCommunity.Bean('rangeController')
     ], RangeController);
     return RangeController;
@@ -30020,7 +31347,7 @@ var AutoScrollService = /** @class */ (function () {
     return AutoScrollService;
 }());
 
-var __extends$1V = (undefined && undefined.__extends) || (function () {
+var __extends$1_ = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -30033,14 +31360,14 @@ var __extends$1V = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$1i = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$1l = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 var AbstractSelectionHandle = /** @class */ (function (_super) {
-    __extends$1V(AbstractSelectionHandle, _super);
+    __extends$1_(AbstractSelectionHandle, _super);
     function AbstractSelectionHandle() {
         var _this = _super !== null && _super.apply(this, arguments) || this;
         _this.changedCell = false;
@@ -30178,34 +31505,34 @@ var AbstractSelectionHandle = /** @class */ (function (_super) {
             eGui.parentElement.removeChild(eGui);
         }
     };
-    __decorate$1i([
+    __decorate$1l([
         agGridCommunity.Autowired("rowRenderer")
     ], AbstractSelectionHandle.prototype, "rowRenderer", void 0);
-    __decorate$1i([
+    __decorate$1l([
         agGridCommunity.Autowired("dragService")
     ], AbstractSelectionHandle.prototype, "dragService", void 0);
-    __decorate$1i([
+    __decorate$1l([
         agGridCommunity.Autowired("rangeController")
     ], AbstractSelectionHandle.prototype, "rangeController", void 0);
-    __decorate$1i([
+    __decorate$1l([
         agGridCommunity.Autowired("mouseEventService")
     ], AbstractSelectionHandle.prototype, "mouseEventService", void 0);
-    __decorate$1i([
+    __decorate$1l([
         agGridCommunity.Autowired("columnController")
     ], AbstractSelectionHandle.prototype, "columnController", void 0);
-    __decorate$1i([
+    __decorate$1l([
         agGridCommunity.Autowired("cellNavigationService")
     ], AbstractSelectionHandle.prototype, "cellNavigationService", void 0);
-    __decorate$1i([
+    __decorate$1l([
         agGridCommunity.Autowired('rowPositionUtils')
     ], AbstractSelectionHandle.prototype, "rowPositionUtils", void 0);
-    __decorate$1i([
+    __decorate$1l([
         agGridCommunity.PostConstruct
     ], AbstractSelectionHandle.prototype, "init", null);
     return AbstractSelectionHandle;
 }(agGridCommunity.Component));
 
-var __extends$1W = (undefined && undefined.__extends) || (function () {
+var __extends$1$ = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -30218,8 +31545,8 @@ var __extends$1W = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __assign$a = (undefined && undefined.__assign) || function () {
-    __assign$a = Object.assign || function(t) {
+var __assign$e = (undefined && undefined.__assign) || function () {
+    __assign$e = Object.assign || function(t) {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
             s = arguments[i];
             for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
@@ -30227,15 +31554,15 @@ var __assign$a = (undefined && undefined.__assign) || function () {
         }
         return t;
     };
-    return __assign$a.apply(this, arguments);
+    return __assign$e.apply(this, arguments);
 };
-var __decorate$1j = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$1m = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
-var __spreadArrays$7 = (undefined && undefined.__spreadArrays) || function () {
+var __spreadArrays$8 = (undefined && undefined.__spreadArrays) || function () {
     for (var s = 0, i = 0, il = arguments.length; i < il; i++) s += arguments[i].length;
     for (var r = Array(s), k = 0, i = 0; i < il; i++)
         for (var a = arguments[i], j = 0, jl = a.length; j < jl; j++, k++)
@@ -30243,7 +31570,7 @@ var __spreadArrays$7 = (undefined && undefined.__spreadArrays) || function () {
     return r;
 };
 var FillHandle = /** @class */ (function (_super) {
-    __extends$1W(FillHandle, _super);
+    __extends$1$(FillHandle, _super);
     function FillHandle() {
         var _this = _super.call(this, FillHandle.TEMPLATE) || this;
         _this.markedCellComps = [];
@@ -30418,7 +31745,7 @@ var FillHandle = /** @class */ (function (_super) {
             });
         }
         else {
-            var columns = this.isLeft ? __spreadArrays$7(finalRange.columns).reverse() : finalRange.columns;
+            var columns = this.isLeft ? __spreadArrays$8(finalRange.columns).reverse() : finalRange.columns;
             iterateAcrossCells(undefined, columns);
         }
     };
@@ -30565,7 +31892,7 @@ var FillHandle = /** @class */ (function (_super) {
             for (var i = 0; i < colLen; i++) {
                 var column = cellRange.columns[i];
                 var rowPos = { rowIndex: row.rowIndex, rowPinned: row.rowPinned };
-                var cellPos = __assign$a(__assign$a({}, rowPos), { column: column });
+                var cellPos = __assign$e(__assign$e({}, rowPos), { column: column });
                 var cellInRange = rangeController.isCellInSpecificRange(cellPos, cellRange);
                 var isInitialRow = this.rowPositionUtils.sameRow(row, initialPosition);
                 if (isMovingUp) {
@@ -30599,7 +31926,7 @@ var FillHandle = /** @class */ (function (_super) {
             var isLastRow = this.rowPositionUtils.sameRow(row, endPosition);
             for (var i = 0; i < colLen; i++) {
                 var rowPos = { rowIndex: row.rowIndex, rowPinned: row.rowPinned };
-                var celPos = __assign$a(__assign$a({}, rowPos), { column: cellRange.columns[i] });
+                var celPos = __assign$e(__assign$e({}, rowPos), { column: cellRange.columns[i] });
                 var cellComp = this.rowRenderer.getComponentForCell(celPos);
                 if (cellComp) {
                     this.markedCellComps.push(cellComp);
@@ -30685,19 +32012,19 @@ var FillHandle = /** @class */ (function (_super) {
         _super.prototype.refresh.call(this, cellComp);
     };
     FillHandle.TEMPLATE = '<div class="ag-fill-handle"></div>';
-    __decorate$1j([
+    __decorate$1m([
         agGridCommunity.Autowired('valueService')
     ], FillHandle.prototype, "valueService", void 0);
-    __decorate$1j([
+    __decorate$1m([
         agGridCommunity.Autowired('eventService')
     ], FillHandle.prototype, "eventService", void 0);
-    __decorate$1j([
+    __decorate$1m([
         agGridCommunity.Autowired('gridOptionsWrapper')
     ], FillHandle.prototype, "gridOptionsWrapper", void 0);
     return FillHandle;
 }(AbstractSelectionHandle));
 
-var __extends$1X = (undefined && undefined.__extends) || (function () {
+var __extends$20 = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -30710,8 +32037,8 @@ var __extends$1X = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __assign$b = (undefined && undefined.__assign) || function () {
-    __assign$b = Object.assign || function(t) {
+var __assign$f = (undefined && undefined.__assign) || function () {
+    __assign$f = Object.assign || function(t) {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
             s = arguments[i];
             for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
@@ -30719,10 +32046,10 @@ var __assign$b = (undefined && undefined.__assign) || function () {
         }
         return t;
     };
-    return __assign$b.apply(this, arguments);
+    return __assign$f.apply(this, arguments);
 };
 var RangeHandle = /** @class */ (function (_super) {
-    __extends$1X(RangeHandle, _super);
+    __extends$20(RangeHandle, _super);
     function RangeHandle() {
         var _this = _super.call(this, RangeHandle.TEMPLATE) || this;
         _this.type = 'range';
@@ -30750,7 +32077,7 @@ var RangeHandle = /** @class */ (function (_super) {
             var rowChanged = !this.rowPositionUtils.sameRow(this.endPosition, this.rangeController.getRangeEndRow(lastRange));
             if (rowChanged) {
                 // ensure the dimension range is kept in sync with the value range (which has the handle)
-                this.rangeController.updateRangeEnd(cellRanges[0], __assign$b(__assign$b({}, this.endPosition), { column: cellRanges[0].columns[0] }), true);
+                this.rangeController.updateRangeEnd(cellRanges[0], __assign$f(__assign$f({}, this.endPosition), { column: cellRanges[0].columns[0] }), true);
             }
         }
         this.rangeController.extendLatestRangeToCell(this.endPosition);
@@ -30795,7 +32122,7 @@ var GridChartsModule = {
     ]
 };
 
-var __extends$1Y = (undefined && undefined.__extends) || (function () {
+var __extends$21 = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -30808,14 +32135,14 @@ var __extends$1Y = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$1k = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$1n = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 var DetailCellRenderer = /** @class */ (function (_super) {
-    __extends$1Y(DetailCellRenderer, _super);
+    __extends$21(DetailCellRenderer, _super);
     function DetailCellRenderer() {
         var _this = _super !== null && _super.apply(this, arguments) || this;
         _this.needRefresh = false;
@@ -30835,6 +32162,12 @@ var DetailCellRenderer = /** @class */ (function (_super) {
     };
     DetailCellRenderer.prototype.init = function (params) {
         var _this = this;
+        // if embedFullWidthRows=true, then this component could be in a pinned section. we should not show detail
+        // component if in the pinned section, on in the main body section.
+        if (params.pinned) {
+            this.setTemplate('<div class="ag-details-row"></div>');
+            return;
+        }
         this.rowId = params.node.id;
         this.masterGridApi = params.api;
         this.suppressRefresh = params.suppressRefresh;
@@ -30956,13 +32289,13 @@ var DetailCellRenderer = /** @class */ (function (_super) {
         }
     };
     DetailCellRenderer.TEMPLATE = "<div class=\"ag-details-row\">\n            <div ref=\"eDetailGrid\" class=\"ag-details-grid\"/>\n        </div>";
-    __decorate$1k([
+    __decorate$1n([
         agGridCommunity.RefSelector('eDetailGrid')
     ], DetailCellRenderer.prototype, "eDetailGrid", void 0);
-    __decorate$1k([
+    __decorate$1n([
         agGridCommunity.Autowired('gridOptionsWrapper')
     ], DetailCellRenderer.prototype, "gridOptionsWrapper", void 0);
-    __decorate$1k([
+    __decorate$1n([
         agGridCommunity.Autowired('environment')
     ], DetailCellRenderer.prototype, "environment", void 0);
     return DetailCellRenderer;
@@ -30979,7 +32312,7 @@ var MasterDetailModule = {
     ]
 };
 
-var __extends$1Z = (undefined && undefined.__extends) || (function () {
+var __extends$22 = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -30992,14 +32325,14 @@ var __extends$1Z = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$1l = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$1o = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 var MenuItemComponent = /** @class */ (function (_super) {
-    __extends$1Z(MenuItemComponent, _super);
+    __extends$22(MenuItemComponent, _super);
     function MenuItemComponent(params) {
         var _this = _super.call(this, MenuItemComponent.TEMPLATE) || this;
         _this.params = params;
@@ -31033,7 +32366,7 @@ var MenuItemComponent = /** @class */ (function (_super) {
                 this.getGui().setAttribute('title', this.tooltip);
             }
             else {
-                this.tooltipManager.registerTooltip(this);
+                this.addFeature(new agGridCommunity.TooltipFeature(this, 'menu'));
             }
         }
         if (this.params.shortcut) {
@@ -31100,31 +32433,28 @@ var MenuItemComponent = /** @class */ (function (_super) {
     // private instance = Math.random();
     MenuItemComponent.TEMPLATE = "<div class=\"ag-menu-option\" tabindex=\"-1\">\n            <span ref=\"eIcon\" class=\"ag-menu-option-icon ag-menu-option-part\"></span>\n            <span ref=\"eName\" class=\"ag-menu-option-text ag-menu-option-part\"></span>\n            <span ref=\"eShortcut\" class=\"ag-menu-option-shortcut ag-menu-option-part\"></span>\n            <span ref=\"ePopupPointer\" class=\"ag-menu-option-popup-pointer ag-menu-option-part\"></span>\n        </div>";
     MenuItemComponent.EVENT_ITEM_SELECTED = 'itemSelected';
-    __decorate$1l([
+    __decorate$1o([
         agGridCommunity.Autowired('gridOptionsWrapper')
     ], MenuItemComponent.prototype, "gridOptionsWrapper", void 0);
-    __decorate$1l([
-        agGridCommunity.Autowired('tooltipManager')
-    ], MenuItemComponent.prototype, "tooltipManager", void 0);
-    __decorate$1l([
+    __decorate$1o([
         agGridCommunity.RefSelector('eIcon')
     ], MenuItemComponent.prototype, "eIcon", void 0);
-    __decorate$1l([
+    __decorate$1o([
         agGridCommunity.RefSelector('eName')
     ], MenuItemComponent.prototype, "eName", void 0);
-    __decorate$1l([
+    __decorate$1o([
         agGridCommunity.RefSelector('eShortcut')
     ], MenuItemComponent.prototype, "eShortcut", void 0);
-    __decorate$1l([
+    __decorate$1o([
         agGridCommunity.RefSelector('ePopupPointer')
     ], MenuItemComponent.prototype, "ePopupPointer", void 0);
-    __decorate$1l([
+    __decorate$1o([
         agGridCommunity.PostConstruct
     ], MenuItemComponent.prototype, "init", null);
     return MenuItemComponent;
 }(agGridCommunity.Component));
 
-var __extends$1_ = (undefined && undefined.__extends) || (function () {
+var __extends$23 = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -31137,14 +32467,14 @@ var __extends$1_ = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$1m = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$1p = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 var MenuList = /** @class */ (function (_super) {
-    __extends$1_(MenuList, _super);
+    __extends$23(MenuList, _super);
     function MenuList() {
         var _this = _super.call(this, MenuList.TEMPLATE) || this;
         _this.menuItems = [];
@@ -31449,19 +32779,19 @@ var MenuList = /** @class */ (function (_super) {
     MenuList.TEMPLATE = '<div class="ag-menu-list" tabindex="-1"></div>';
     MenuList.SEPARATOR_TEMPLATE = "<div class=\"ag-menu-separator\">\n            <span class=\"ag-menu-separator-cell\"></span>\n            <span class=\"ag-menu-separator-cell\"></span>\n            <span class=\"ag-menu-separator-cell\"></span>\n            <span class=\"ag-menu-separator-cell\"></span>\n        </div>";
     MenuList.HIDE_MENU_DELAY = 80;
-    __decorate$1m([
+    __decorate$1p([
         agGridCommunity.Autowired('popupService')
     ], MenuList.prototype, "popupService", void 0);
-    __decorate$1m([
+    __decorate$1p([
         agGridCommunity.Autowired('gridOptionsWrapper')
     ], MenuList.prototype, "gridOptionsWrapper", void 0);
-    __decorate$1m([
+    __decorate$1p([
         agGridCommunity.PostConstruct
     ], MenuList.prototype, "init", null);
     return MenuList;
 }(agGridCommunity.ManagedTabComponent));
 
-var __extends$1$ = (undefined && undefined.__extends) || (function () {
+var __extends$24 = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -31474,7 +32804,7 @@ var __extends$1$ = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$1n = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$1q = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -31561,22 +32891,22 @@ var EnterpriseMenuFactory = /** @class */ (function () {
     EnterpriseMenuFactory.prototype.isMenuEnabled = function (column) {
         return column.getMenuTabs(EnterpriseMenu.TABS_DEFAULT).length > 0;
     };
-    __decorate$1n([
+    __decorate$1q([
         agGridCommunity.Autowired('context')
     ], EnterpriseMenuFactory.prototype, "context", void 0);
-    __decorate$1n([
+    __decorate$1q([
         agGridCommunity.Autowired('popupService')
     ], EnterpriseMenuFactory.prototype, "popupService", void 0);
-    __decorate$1n([
+    __decorate$1q([
         agGridCommunity.Autowired('gridOptionsWrapper')
     ], EnterpriseMenuFactory.prototype, "gridOptionsWrapper", void 0);
-    EnterpriseMenuFactory = __decorate$1n([
+    EnterpriseMenuFactory = __decorate$1q([
         agGridCommunity.Bean('menuFactory')
     ], EnterpriseMenuFactory);
     return EnterpriseMenuFactory;
 }());
 var EnterpriseMenu = /** @class */ (function (_super) {
-    __extends$1$(EnterpriseMenu, _super);
+    __extends$24(EnterpriseMenu, _super);
     function EnterpriseMenu(column, initialSelection, restrictTo) {
         var _this = _super.call(this) || this;
         _this.tabFactories = {};
@@ -31607,7 +32937,8 @@ var EnterpriseMenu = /** @class */ (function (_super) {
             onItemClicked: this.onTabItemClicked.bind(this)
         });
         this.getContext().wireBean(this.tabbedLayout);
-        this.eventService.addEventListener(agGridCommunity.Events.EVENT_DISPLAYED_COLUMNS_CHANGED, this.onDisplayedColumnsChanged.bind(this));
+        var displayedListener = this.eventService.addEventListener(agGridCommunity.Events.EVENT_DISPLAYED_COLUMNS_CHANGED, this.onDisplayedColumnsChanged.bind(this));
+        this.addDestroyFunc(function () { return displayedListener(); });
     };
     EnterpriseMenu.prototype.getTabsToCreate = function () {
         var _this = this;
@@ -31808,7 +33139,7 @@ var EnterpriseMenu = /** @class */ (function (_super) {
         }
         this.tabItemFilter = {
             title: agGridCommunity._.createIconNoSpan('filter', this.gridOptionsWrapper, this.column),
-            bodyPromise: filterWrapper.guiPromise.promise,
+            bodyPromise: filterWrapper.guiPromise,
             afterAttachedCallback: afterFilterAttachedCallback,
             name: EnterpriseMenu.TAB_FILTER
         };
@@ -31829,7 +33160,8 @@ var EnterpriseMenu = /** @class */ (function (_super) {
             suppressColumnSelectAll: false,
             suppressSideButtons: false,
             suppressSyncLayoutWithGrid: false,
-            api: this.gridApi
+            api: this.gridApi,
+            columnApi: this.columnApi
         });
         agGridCommunity._.addCssClass(this.columnSelectPanel.getGui(), 'ag-menu-column-select');
         eWrapperDiv.appendChild(this.columnSelectPanel.getGui());
@@ -31878,34 +33210,37 @@ var EnterpriseMenu = /** @class */ (function (_super) {
     EnterpriseMenu.TAB_COLUMNS = 'columnsMenuTab';
     EnterpriseMenu.TABS_DEFAULT = [EnterpriseMenu.TAB_GENERAL, EnterpriseMenu.TAB_FILTER, EnterpriseMenu.TAB_COLUMNS];
     EnterpriseMenu.MENU_ITEM_SEPARATOR = 'separator';
-    __decorate$1n([
+    __decorate$1q([
         agGridCommunity.Autowired('columnController')
     ], EnterpriseMenu.prototype, "columnController", void 0);
-    __decorate$1n([
+    __decorate$1q([
         agGridCommunity.Autowired('filterManager')
     ], EnterpriseMenu.prototype, "filterManager", void 0);
-    __decorate$1n([
+    __decorate$1q([
         agGridCommunity.Autowired('gridApi')
     ], EnterpriseMenu.prototype, "gridApi", void 0);
-    __decorate$1n([
+    __decorate$1q([
+        agGridCommunity.Autowired('columnApi')
+    ], EnterpriseMenu.prototype, "columnApi", void 0);
+    __decorate$1q([
         agGridCommunity.Autowired('gridOptionsWrapper')
     ], EnterpriseMenu.prototype, "gridOptionsWrapper", void 0);
-    __decorate$1n([
+    __decorate$1q([
         agGridCommunity.Autowired('eventService')
     ], EnterpriseMenu.prototype, "eventService", void 0);
-    __decorate$1n([
+    __decorate$1q([
         agGridCommunity.Autowired('menuItemMapper')
     ], EnterpriseMenu.prototype, "menuItemMapper", void 0);
-    __decorate$1n([
+    __decorate$1q([
         agGridCommunity.Autowired('rowModel')
     ], EnterpriseMenu.prototype, "rowModel", void 0);
-    __decorate$1n([
+    __decorate$1q([
         agGridCommunity.PostConstruct
     ], EnterpriseMenu.prototype, "init", null);
     return EnterpriseMenu;
 }(agGridCommunity.BeanStub));
 
-var __extends$20 = (undefined && undefined.__extends) || (function () {
+var __extends$25 = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -31918,7 +33253,7 @@ var __extends$20 = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$1o = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$1r = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -31995,7 +33330,11 @@ var ContextMenuFactory = /** @class */ (function () {
             rowNode: node,
             type: 'contextMenu',
             mouseEvent: mouseEvent,
-            ePopup: eMenuGui
+            ePopup: eMenuGui,
+            // move one pixel away so that accidentally double clicking
+            // won't show the browser's contextmenu
+            nudgeX: 1,
+            nudgeY: 1
         });
         menu.afterGuiAttached({
             hidePopup: hidePopup
@@ -32007,28 +33346,28 @@ var ContextMenuFactory = /** @class */ (function () {
             }
         });
     };
-    __decorate$1o([
+    __decorate$1r([
         agGridCommunity.Autowired('context')
     ], ContextMenuFactory.prototype, "context", void 0);
-    __decorate$1o([
+    __decorate$1r([
         agGridCommunity.Autowired('popupService')
     ], ContextMenuFactory.prototype, "popupService", void 0);
-    __decorate$1o([
+    __decorate$1r([
         agGridCommunity.Autowired('gridOptionsWrapper')
     ], ContextMenuFactory.prototype, "gridOptionsWrapper", void 0);
-    __decorate$1o([
+    __decorate$1r([
         agGridCommunity.Optional('rangeController')
     ], ContextMenuFactory.prototype, "rangeController", void 0);
-    __decorate$1o([
+    __decorate$1r([
         agGridCommunity.Autowired('columnController')
     ], ContextMenuFactory.prototype, "columnController", void 0);
-    ContextMenuFactory = __decorate$1o([
+    ContextMenuFactory = __decorate$1r([
         agGridCommunity.Bean('contextMenuFactory')
     ], ContextMenuFactory);
     return ContextMenuFactory;
 }());
 var ContextMenu = /** @class */ (function (_super) {
-    __extends$20(ContextMenu, _super);
+    __extends$25(ContextMenu, _super);
     function ContextMenu(menuItems) {
         var _this = _super.call(this, '<div class="ag-menu"></div>') || this;
         _this.menuList = null;
@@ -32064,25 +33403,25 @@ var ContextMenu = /** @class */ (function (_super) {
         }
         _super.prototype.destroy.call(this);
     };
-    __decorate$1o([
+    __decorate$1r([
         agGridCommunity.Autowired('eventService')
     ], ContextMenu.prototype, "eventService", void 0);
-    __decorate$1o([
+    __decorate$1r([
         agGridCommunity.Autowired('menuItemMapper')
     ], ContextMenu.prototype, "menuItemMapper", void 0);
-    __decorate$1o([
+    __decorate$1r([
         agGridCommunity.Autowired('focusController')
     ], ContextMenu.prototype, "focusController", void 0);
-    __decorate$1o([
+    __decorate$1r([
         agGridCommunity.Autowired('cellPositionUtils')
     ], ContextMenu.prototype, "cellPositionUtils", void 0);
-    __decorate$1o([
+    __decorate$1r([
         agGridCommunity.PostConstruct
     ], ContextMenu.prototype, "addMenuItems", null);
     return ContextMenu;
 }(agGridCommunity.Component));
 
-var __decorate$1p = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$1s = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -32325,7 +33664,8 @@ var MenuItemMapper = /** @class */ (function () {
                         'rangePieChart',
                         'rangeLineChart',
                         'rangeXYChart',
-                        'rangeAreaChart'
+                        'rangeAreaChart',
+                        'rangeHistogramChart'
                     ],
                     icon: agGridCommunity._.createIconNoSpan('chart', this.gridOptionsWrapper, null),
                 };
@@ -32435,6 +33775,8 @@ var MenuItemMapper = /** @class */ (function () {
                 return rangeChartMenuItem('stackedArea', 'Stacked&lrm;', agGridCommunity.ChartType.StackedArea);
             case 'rangeNormalizedArea':
                 return rangeChartMenuItem('normalizedArea', '100% Stacked&lrm;', agGridCommunity.ChartType.NormalizedArea);
+            case 'rangeHistogramChart':
+                return rangeChartMenuItem('histogramChart', 'Histogram&lrm;', agGridCommunity.ChartType.Histogram);
             default:
                 return null;
         }
@@ -32465,28 +33807,28 @@ var MenuItemMapper = /** @class */ (function () {
         });
         return result;
     };
-    __decorate$1p([
+    __decorate$1s([
         agGridCommunity.Autowired('gridOptionsWrapper')
     ], MenuItemMapper.prototype, "gridOptionsWrapper", void 0);
-    __decorate$1p([
+    __decorate$1s([
         agGridCommunity.Autowired('columnController')
     ], MenuItemMapper.prototype, "columnController", void 0);
-    __decorate$1p([
+    __decorate$1s([
         agGridCommunity.Autowired('gridApi')
     ], MenuItemMapper.prototype, "gridApi", void 0);
-    __decorate$1p([
+    __decorate$1s([
         agGridCommunity.Optional('clipboardService')
     ], MenuItemMapper.prototype, "clipboardService", void 0);
-    __decorate$1p([
+    __decorate$1s([
         agGridCommunity.Optional('aggFuncService')
     ], MenuItemMapper.prototype, "aggFuncService", void 0);
-    __decorate$1p([
+    __decorate$1s([
         agGridCommunity.Optional('chartService')
     ], MenuItemMapper.prototype, "chartService", void 0);
-    __decorate$1p([
+    __decorate$1s([
         agGridCommunity.Optional('context')
     ], MenuItemMapper.prototype, "context", void 0);
-    MenuItemMapper = __decorate$1p([
+    MenuItemMapper = __decorate$1s([
         agGridCommunity.Bean('menuItemMapper')
     ], MenuItemMapper);
     return MenuItemMapper;
@@ -32500,7 +33842,7 @@ var MenuModule = {
     ]
 };
 
-var __extends$21 = (undefined && undefined.__extends) || (function () {
+var __extends$26 = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -32513,14 +33855,14 @@ var __extends$21 = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$1q = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$1t = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 var RichSelectRow = /** @class */ (function (_super) {
-    __extends$21(RichSelectRow, _super);
+    __extends$26(RichSelectRow, _super);
     function RichSelectRow(params) {
         var _this = _super.call(this, '<div class="ag-rich-select-row"></div>') || this;
         _this.params = params;
@@ -32571,16 +33913,16 @@ var RichSelectRow = /** @class */ (function (_super) {
         }
         return false;
     };
-    __decorate$1q([
+    __decorate$1t([
         agGridCommunity.Autowired('userComponentFactory')
     ], RichSelectRow.prototype, "userComponentFactory", void 0);
-    __decorate$1q([
+    __decorate$1t([
         agGridCommunity.Autowired('gridOptionsWrapper')
     ], RichSelectRow.prototype, "gridOptionsWrapper", void 0);
     return RichSelectRow;
 }(agGridCommunity.Component));
 
-var __extends$22 = (undefined && undefined.__extends) || (function () {
+var __extends$27 = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -32593,14 +33935,14 @@ var __extends$22 = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$1r = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$1u = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 var RichSelectCellEditor = /** @class */ (function (_super) {
-    __extends$22(RichSelectCellEditor, _super);
+    __extends$27(RichSelectCellEditor, _super);
     function RichSelectCellEditor() {
         var _this = _super.call(this, RichSelectCellEditor.TEMPLATE) || this;
         _this.selectionConfirmed = false;
@@ -32792,16 +34134,16 @@ var RichSelectCellEditor = /** @class */ (function (_super) {
     };
     // tab index is needed so we can focus, which is needed for keyboard events
     RichSelectCellEditor.TEMPLATE = "<div class=\"ag-rich-select\" tabindex=\"0\">\n            <div ref=\"eValue\" class=\"ag-rich-select-value\"></div>\n            <div ref=\"eList\" class=\"ag-rich-select-list\"></div>\n        </div>";
-    __decorate$1r([
+    __decorate$1u([
         agGridCommunity.Autowired('userComponentFactory')
     ], RichSelectCellEditor.prototype, "userComponentFactory", void 0);
-    __decorate$1r([
+    __decorate$1u([
         agGridCommunity.Autowired('gridOptionsWrapper')
     ], RichSelectCellEditor.prototype, "gridOptionsWrapper", void 0);
-    __decorate$1r([
+    __decorate$1u([
         agGridCommunity.RefSelector('eValue')
     ], RichSelectCellEditor.prototype, "eValue", void 0);
-    __decorate$1r([
+    __decorate$1u([
         agGridCommunity.RefSelector('eList')
     ], RichSelectCellEditor.prototype, "eList", void 0);
     return RichSelectCellEditor;
@@ -32819,7 +34161,7 @@ var RichSelectModule = {
     ]
 };
 
-var __extends$23 = (undefined && undefined.__extends) || (function () {
+var __extends$28 = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -32832,7 +34174,7 @@ var __extends$23 = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$1s = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$1v = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -32842,7 +34184,7 @@ var __param = (undefined && undefined.__param) || function (paramIndex, decorato
     return function (target, key) { decorator(target, key, paramIndex); }
 };
 var ServerSideBlock = /** @class */ (function (_super) {
-    __extends$23(ServerSideBlock, _super);
+    __extends$28(ServerSideBlock, _super);
     function ServerSideBlock(pageNumber, parentRowNode, params, parentCache) {
         var _this = _super.call(this, pageNumber, params) || this;
         _this.params = params;
@@ -33127,13 +34469,21 @@ var ServerSideBlock = /** @class */ (function (_super) {
         console.warn("ag-Grid: invalid pixel range for server side block " + pixel);
         return 0;
     };
-    ServerSideBlock.prototype.clearRowTops = function (virtualRowCount) {
+    ServerSideBlock.prototype.clearDisplayIndexes = function (virtualRowCount) {
+        this.displayIndexEnd = undefined;
+        this.displayIndexStart = undefined;
         this.forEachRowNode(virtualRowCount, function (rowNode) {
             rowNode.clearRowTop();
+            rowNode.setRowIndex(undefined);
             var hasChildCache = rowNode.group && agGridCommunity._.exists(rowNode.childrenCache);
             if (hasChildCache) {
                 var serverSideCache = rowNode.childrenCache;
-                serverSideCache.clearRowTops();
+                serverSideCache.clearDisplayIndexes();
+            }
+            var hasDetailNode = rowNode.master && rowNode.detailNode;
+            if (hasDetailNode) {
+                rowNode.detailNode.clearRowTop();
+                rowNode.detailNode.setRowIndex(undefined);
             }
         });
     };
@@ -33141,15 +34491,24 @@ var ServerSideBlock = /** @class */ (function (_super) {
         this.displayIndexStart = displayIndexSeq.peek();
         this.blockTop = nextRowTop.value;
         this.forEachRowNode(virtualRowCount, function (rowNode) {
+            // set this row
             rowNode.setRowIndex(displayIndexSeq.next());
             rowNode.setRowTop(nextRowTop.value);
             nextRowTop.value += rowNode.rowHeight;
-            var hasDetailRow = rowNode.master && rowNode.expanded;
+            // set child for master / detail
+            var hasDetailRow = rowNode.master;
             if (hasDetailRow) {
-                rowNode.detailNode.setRowIndex(displayIndexSeq.next());
-                rowNode.detailNode.setRowTop(nextRowTop.value);
-                nextRowTop.value += rowNode.detailNode.rowHeight;
+                if (rowNode.expanded && rowNode.detailNode) {
+                    rowNode.detailNode.setRowIndex(displayIndexSeq.next());
+                    rowNode.detailNode.setRowTop(nextRowTop.value);
+                    nextRowTop.value += rowNode.detailNode.rowHeight;
+                }
+                else if (rowNode.detailNode) {
+                    rowNode.detailNode.clearRowTop();
+                    rowNode.detailNode.setRowIndex(undefined);
+                }
             }
+            // set children for SSRM child rows
             var hasChildCache = rowNode.group && agGridCommunity._.exists(rowNode.childrenCache);
             if (hasChildCache) {
                 var serverSideCache = rowNode.childrenCache;
@@ -33159,7 +34518,7 @@ var ServerSideBlock = /** @class */ (function (_super) {
                 else {
                     // we need to clear the row tops, as the row renderer depends on
                     // this to know if the row should be faded out
-                    serverSideCache.clearRowTops();
+                    serverSideCache.clearDisplayIndexes();
                 }
             }
         });
@@ -33229,34 +34588,34 @@ var ServerSideBlock = /** @class */ (function (_super) {
         return this.groupField;
     };
     ServerSideBlock.DefaultBlockSize = 100;
-    __decorate$1s([
+    __decorate$1v([
         agGridCommunity.Autowired('rowRenderer')
     ], ServerSideBlock.prototype, "rowRenderer", void 0);
-    __decorate$1s([
+    __decorate$1v([
         agGridCommunity.Autowired('columnController')
     ], ServerSideBlock.prototype, "columnController", void 0);
-    __decorate$1s([
+    __decorate$1v([
         agGridCommunity.Autowired('valueService')
     ], ServerSideBlock.prototype, "valueService", void 0);
-    __decorate$1s([
+    __decorate$1v([
         agGridCommunity.Autowired('gridOptionsWrapper')
     ], ServerSideBlock.prototype, "gridOptionsWrapper", void 0);
-    __decorate$1s([
+    __decorate$1v([
         agGridCommunity.Autowired('columnApi')
     ], ServerSideBlock.prototype, "columnApi", void 0);
-    __decorate$1s([
+    __decorate$1v([
         agGridCommunity.Autowired('gridApi')
     ], ServerSideBlock.prototype, "gridApi", void 0);
-    __decorate$1s([
+    __decorate$1v([
         agGridCommunity.PostConstruct
     ], ServerSideBlock.prototype, "init", null);
-    __decorate$1s([
+    __decorate$1v([
         __param(0, agGridCommunity.Qualifier('loggerFactory'))
     ], ServerSideBlock.prototype, "setBeans", null);
     return ServerSideBlock;
 }(agGridCommunity.RowNodeBlock));
 
-var __extends$24 = (undefined && undefined.__extends) || (function () {
+var __extends$29 = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -33269,7 +34628,7 @@ var __extends$24 = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$1t = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$1w = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -33279,7 +34638,7 @@ var __param$1 = (undefined && undefined.__param) || function (paramIndex, decora
     return function (target, key) { decorator(target, key, paramIndex); }
 };
 var ServerSideCache = /** @class */ (function (_super) {
-    __extends$24(ServerSideCache, _super);
+    __extends$29(ServerSideCache, _super);
     function ServerSideCache(cacheParams, parentRowNode) {
         var _this = _super.call(this, cacheParams) || this;
         // this will always be zero for the top level cache only,
@@ -33293,9 +34652,6 @@ var ServerSideCache = /** @class */ (function (_super) {
     }
     ServerSideCache.prototype.setBeans = function (loggerFactory) {
         this.logger = loggerFactory.create('ServerSideCache');
-    };
-    ServerSideCache.prototype.init = function () {
-        _super.prototype.init.call(this);
     };
     ServerSideCache.prototype.getRowBounds = function (index) {
         // this.logger.log(`getRowBounds(${index})`);
@@ -33390,9 +34746,11 @@ var ServerSideCache = /** @class */ (function (_super) {
         // this.logger.log(`getRowIndexAtPixel(${pixel}) result = ${result}`);
         return result;
     };
-    ServerSideCache.prototype.clearRowTops = function () {
+    ServerSideCache.prototype.clearDisplayIndexes = function () {
         var _this = this;
-        this.forEachBlockInOrder(function (block) { return block.clearRowTops(_this.getVirtualRowCount()); });
+        this.displayIndexStart = undefined;
+        this.displayIndexEnd = undefined;
+        this.forEachBlockInOrder(function (block) { return block.clearDisplayIndexes(_this.getVirtualRowCount()); });
     };
     ServerSideCache.prototype.setDisplayIndexes = function (displayIndexSeq, nextRowTop) {
         var _this = this;
@@ -33544,6 +34902,9 @@ var ServerSideCache = /** @class */ (function (_super) {
                     var serverSideCache = lastRowNode.childrenCache;
                     lastDisplayedNodeIndexInBlockBefore = serverSideCache.getDisplayIndexEnd() - 1;
                 }
+                else if (lastRowNode.expanded && lastRowNode.detailNode) {
+                    lastDisplayedNodeIndexInBlockBefore = lastRowNode.detailNode.rowIndex;
+                }
                 else {
                     lastDisplayedNodeIndexInBlockBefore = lastRowNode.rowIndex;
                 }
@@ -33634,22 +34995,16 @@ var ServerSideCache = /** @class */ (function (_super) {
             });
         }
     };
-    __decorate$1t([
-        agGridCommunity.Autowired('eventService')
-    ], ServerSideCache.prototype, "eventService", void 0);
-    __decorate$1t([
+    __decorate$1w([
         agGridCommunity.Autowired('gridOptionsWrapper')
     ], ServerSideCache.prototype, "gridOptionsWrapper", void 0);
-    __decorate$1t([
+    __decorate$1w([
         __param$1(0, agGridCommunity.Qualifier('loggerFactory'))
     ], ServerSideCache.prototype, "setBeans", null);
-    __decorate$1t([
-        agGridCommunity.PostConstruct
-    ], ServerSideCache.prototype, "init", null);
     return ServerSideCache;
 }(agGridCommunity.RowNodeCache));
 
-var __extends$25 = (undefined && undefined.__extends) || (function () {
+var __extends$2a = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -33662,7 +35017,7 @@ var __extends$25 = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$1u = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$1x = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -33672,7 +35027,7 @@ var __param$2 = (undefined && undefined.__param) || function (paramIndex, decora
     return function (target, key) { decorator(target, key, paramIndex); }
 };
 var ServerSideRowModel = /** @class */ (function (_super) {
-    __extends$25(ServerSideRowModel, _super);
+    __extends$2a(ServerSideRowModel, _super);
     function ServerSideRowModel() {
         return _super !== null && _super.apply(this, arguments) || this;
     }
@@ -34208,40 +35563,40 @@ var ServerSideRowModel = /** @class */ (function (_super) {
     ServerSideRowModel.prototype.isLoading = function () {
         return this.rowNodeBlockLoader ? this.rowNodeBlockLoader.isLoading() : false;
     };
-    __decorate$1u([
+    __decorate$1x([
         agGridCommunity.Autowired('gridOptionsWrapper')
     ], ServerSideRowModel.prototype, "gridOptionsWrapper", void 0);
-    __decorate$1u([
+    __decorate$1x([
         agGridCommunity.Autowired('eventService')
     ], ServerSideRowModel.prototype, "eventService", void 0);
-    __decorate$1u([
+    __decorate$1x([
         agGridCommunity.Autowired('columnController')
     ], ServerSideRowModel.prototype, "columnController", void 0);
-    __decorate$1u([
+    __decorate$1x([
         agGridCommunity.Autowired('filterManager')
     ], ServerSideRowModel.prototype, "filterManager", void 0);
-    __decorate$1u([
+    __decorate$1x([
         agGridCommunity.Autowired('sortController')
     ], ServerSideRowModel.prototype, "sortController", void 0);
-    __decorate$1u([
+    __decorate$1x([
         agGridCommunity.Autowired('gridApi')
     ], ServerSideRowModel.prototype, "gridApi", void 0);
-    __decorate$1u([
+    __decorate$1x([
         agGridCommunity.Autowired('columnApi')
     ], ServerSideRowModel.prototype, "columnApi", void 0);
-    __decorate$1u([
+    __decorate$1x([
         agGridCommunity.Autowired('rowRenderer')
     ], ServerSideRowModel.prototype, "rowRenderer", void 0);
-    __decorate$1u([
+    __decorate$1x([
         agGridCommunity.PostConstruct
     ], ServerSideRowModel.prototype, "postConstruct", null);
-    __decorate$1u([
+    __decorate$1x([
         agGridCommunity.PreDestroy
     ], ServerSideRowModel.prototype, "destroyDatasource", null);
-    __decorate$1u([
+    __decorate$1x([
         __param$2(0, agGridCommunity.Qualifier('loggerFactory'))
     ], ServerSideRowModel.prototype, "setBeans", null);
-    ServerSideRowModel = __decorate$1u([
+    ServerSideRowModel = __decorate$1x([
         agGridCommunity.Bean('rowModel')
     ], ServerSideRowModel);
     return ServerSideRowModel;
@@ -34255,52 +35610,54 @@ var ServerSideRowModelModule = {
     ]
 };
 
-// we cannot have 'null' as a key in a JavaScript map,
-// it needs to be a string. so we use this string for
-// storing null values.
-var NULL_VALUE = '___NULL___';
 var SetFilterModelValuesType;
 (function (SetFilterModelValuesType) {
     SetFilterModelValuesType[SetFilterModelValuesType["PROVIDED_LIST"] = 0] = "PROVIDED_LIST";
-    SetFilterModelValuesType[SetFilterModelValuesType["PROVIDED_CB"] = 1] = "PROVIDED_CB";
-    SetFilterModelValuesType[SetFilterModelValuesType["NOT_PROVIDED"] = 2] = "NOT_PROVIDED";
+    SetFilterModelValuesType[SetFilterModelValuesType["PROVIDED_CALLBACK"] = 1] = "PROVIDED_CALLBACK";
+    SetFilterModelValuesType[SetFilterModelValuesType["TAKEN_FROM_GRID_VALUES"] = 2] = "TAKEN_FROM_GRID_VALUES";
 })(SetFilterModelValuesType || (SetFilterModelValuesType = {}));
 var SetValueModel = /** @class */ (function () {
-    function SetValueModel(colDef, rowModel, valueGetter, doesRowPassOtherFilters, suppressSorting, modelUpdatedFunc, isLoadingFunc, valueFormatterService, column) {
-        this.localEventService = new agGridCommunity.EventService();
-        this.suppressSorting = suppressSorting;
+    function SetValueModel(colDef, rowModel, valueGetter, doesRowPassOtherFilters, suppressSorting, setIsLoading, valueFormatterService, column) {
+        var _this = this;
         this.colDef = colDef;
         this.valueGetter = valueGetter;
         this.doesRowPassOtherFilters = doesRowPassOtherFilters;
-        this.modelUpdatedFunc = modelUpdatedFunc;
-        this.isLoadingFunc = isLoadingFunc;
+        this.suppressSorting = suppressSorting;
+        this.setIsLoading = setIsLoading;
         this.valueFormatterService = valueFormatterService;
         this.column = column;
+        this.localEventService = new agGridCommunity.EventService();
+        this.miniFilterText = null;
+        // The lookup for a set is much faster than the lookup for an array, especially when the length of the array is
+        // thousands of records long, so where lookups are important we use a set.
+        /** Values provided to the filter for use. */
+        this.providedValues = null;
+        /** All possible values for the filter, sorted if required. */
+        this.allValues = [];
+        /** Remaining values when filters from other columns have been applied. */
+        this.availableValues = new Set();
+        /** All values that are currently displayed, after the mini-filter has been applied. */
+        this.displayedValues = [];
+        /** Values that have been selected for this filter. */
+        this.selectedValues = new Set();
         if (rowModel.getType() === agGridCommunity.Constants.ROW_MODEL_TYPE_CLIENT_SIDE) {
             this.clientSideRowModel = rowModel;
         }
-        this.filterParams = this.colDef.filterParams ? this.colDef.filterParams : {};
-        if (agGridCommunity._.exists(this.filterParams) && agGridCommunity._.exists(this.filterParams.values)) {
-            this.valuesType = Array.isArray(this.filterParams.values) ?
-                SetFilterModelValuesType.PROVIDED_LIST :
-                SetFilterModelValuesType.PROVIDED_CB;
-            this.showingAvailableOnly = this.filterParams.suppressRemoveEntries !== true;
+        this.filterParams = this.colDef.filterParams || {};
+        this.formatter = this.filterParams.textFormatter || agGridCommunity.TextFilter.DEFAULT_FORMATTER;
+        var values = this.filterParams.values;
+        if (values == null) {
+            this.valuesType = SetFilterModelValuesType.TAKEN_FROM_GRID_VALUES;
         }
         else {
-            this.valuesType = SetFilterModelValuesType.NOT_PROVIDED;
-            this.showingAvailableOnly = true;
+            this.valuesType = Array.isArray(values) ?
+                SetFilterModelValuesType.PROVIDED_LIST :
+                SetFilterModelValuesType.PROVIDED_CALLBACK;
+            this.providedValues = values;
         }
-        this.createAllUniqueValues();
-        this.createAvailableUniqueValues();
-        // by default, no filter, so we display everything
-        this.displayedValues = this.availableUniqueValues;
-        this.miniFilter = null;
-        // we use a map rather than an array for the selected values as the lookup
-        // for a map is much faster than the lookup for an array, especially when
-        // the length of the array is thousands of records long
-        this.selectNothing();
-        this.selectAllUsingMiniFilter();
-        this.formatter = this.filterParams.textFormatter ? this.filterParams.textFormatter : agGridCommunity.TextFilter.DEFAULT_FORMATTER;
+        this.updateAllValues();
+        // start with everything selected
+        this.allValuesPromise.then(function (values) { return _this.selectedValues = agGridCommunity._.convertToSet(values); });
     }
     SetValueModel.prototype.addEventListener = function (eventType, listener, async) {
         this.localEventService.addEventListener(eventType, listener, async);
@@ -34308,64 +35665,75 @@ var SetValueModel = /** @class */ (function () {
     SetValueModel.prototype.removeEventListener = function (eventType, listener, async) {
         this.localEventService.removeEventListener(eventType, listener, async);
     };
-    // if keepSelection not set will always select all filters
-    // if keepSelection set will keep current state of selected filters
-    //    unless selectAll chosen in which case will select all
-    SetValueModel.prototype.refreshAfterNewRowsLoaded = function (keepSelection, everythingSelected) {
-        this.createAllUniqueValues();
-        this.refreshSelection(keepSelection, everythingSelected);
+    /**
+     * Re-fetches the values used in the filter from the value source.
+     * If keepSelection is false or selectAll is true, the filter selection will be reset to everything selected,
+     * otherwise the current selection will be preserved.
+     */
+    SetValueModel.prototype.refetchValues = function (keepSelection) {
+        var _this = this;
+        if (keepSelection === void 0) { keepSelection = true; }
+        var currentModel = this.getModel();
+        this.updateAllValues();
+        // ensure model is updated for new values
+        this.allValuesPromise.then(function () { return _this.setModel(keepSelection ? currentModel : null); });
     };
-    // if keepSelection not set will always select all filters
-    // if keepSelection set will keep current state of selected filters
-    //    unless selectAll chosen in which case will select all
-    SetValueModel.prototype.refreshValues = function (valuesToUse, keepSelection, isSelectAll) {
-        this.setValues(valuesToUse);
-        this.refreshSelection(keepSelection, isSelectAll);
-    };
-    SetValueModel.prototype.refreshSelection = function (keepSelection, isSelectAll) {
-        this.createAvailableUniqueValues();
-        var oldModel = Object.keys(this.selectedValuesMap);
-        this.selectNothing();
-        this.processMiniFilter();
-        if (keepSelection) {
-            this.setModel(oldModel, isSelectAll);
-        }
-        else {
-            this.selectAllUsingMiniFilter();
-        }
+    /**
+     * Overrides the current values being used for the set filter.
+     * If keepSelection is false, the filter selection will be reset to everything selected,
+     * otherwise the current selection will be preserved.
+     */
+    SetValueModel.prototype.overrideValues = function (valuesToUse, keepSelection) {
+        var _this = this;
+        if (keepSelection === void 0) { keepSelection = true; }
+        // wait for any existing values to be populated before overriding
+        this.allValuesPromise.then(function () {
+            _this.valuesType = SetFilterModelValuesType.PROVIDED_LIST;
+            _this.providedValues = valuesToUse;
+            _this.refetchValues(keepSelection);
+        });
     };
     SetValueModel.prototype.refreshAfterAnyFilterChanged = function () {
-        if (this.showingAvailableOnly) {
-            this.createAvailableUniqueValues();
-            this.processMiniFilter();
+        if (this.showAvailableOnly()) {
+            this.updateAvailableValues();
         }
     };
-    SetValueModel.prototype.createAllUniqueValues = function () {
-        if (this.areValuesSync()) {
-            var valuesToUse = this.extractSyncValuesToUse();
-            this.setValues(valuesToUse);
-            this.filterValuesPromise = agGridCommunity.Promise.resolve([]);
+    SetValueModel.prototype.updateAllValues = function () {
+        var _this = this;
+        switch (this.valuesType) {
+            case SetFilterModelValuesType.TAKEN_FROM_GRID_VALUES:
+            case SetFilterModelValuesType.PROVIDED_LIST: {
+                var values = this.valuesType === SetFilterModelValuesType.TAKEN_FROM_GRID_VALUES ?
+                    this.getValuesFromRows(false) : agGridCommunity._.toStrings(this.providedValues);
+                var sortedValues = this.sortValues(values);
+                this.allValues = sortedValues;
+                this.allValuesPromise = agGridCommunity.Promise.resolve(sortedValues);
+                break;
+            }
+            case SetFilterModelValuesType.PROVIDED_CALLBACK: {
+                this.setIsLoading(true);
+                this.allValuesPromise = new agGridCommunity.Promise(function (resolve) {
+                    var callback = _this.providedValues;
+                    var params = {
+                        success: function (values) {
+                            var processedValues = agGridCommunity._.toStrings(values);
+                            _this.setIsLoading(false);
+                            _this.valuesType = SetFilterModelValuesType.PROVIDED_LIST;
+                            _this.providedValues = processedValues;
+                            var sortedValues = _this.sortValues(processedValues);
+                            _this.allValues = sortedValues;
+                            resolve(sortedValues);
+                        },
+                        colDef: _this.colDef
+                    };
+                    window.setTimeout(function () { return callback(params); }, 0);
+                });
+                break;
+            }
+            default:
+                throw new Error('Unrecognised valuesType');
         }
-        else {
-            this.filterValuesExternalPromise = agGridCommunity.Promise.external();
-            this.filterValuesPromise = this.filterValuesExternalPromise.promise;
-            this.isLoadingFunc(true);
-            this.setValues([]);
-            var callback_1 = this.filterParams.values;
-            var params_1 = {
-                success: this.onAsyncValuesLoaded.bind(this),
-                colDef: this.colDef
-            };
-            window.setTimeout(function () { return callback_1(params_1); }, 0);
-        }
-    };
-    SetValueModel.prototype.onAsyncValuesLoaded = function (values) {
-        this.modelUpdatedFunc(values);
-        this.isLoadingFunc(false);
-        this.filterValuesExternalPromise.resolve(values);
-    };
-    SetValueModel.prototype.areValuesSync = function () {
-        return this.valuesType == SetFilterModelValuesType.PROVIDED_LIST || this.valuesType == SetFilterModelValuesType.NOT_PROVIDED;
+        this.updateAvailableValues();
     };
     SetValueModel.prototype.setValuesType = function (value) {
         this.valuesType = value;
@@ -34373,149 +35741,100 @@ var SetValueModel = /** @class */ (function () {
     SetValueModel.prototype.getValuesType = function () {
         return this.valuesType;
     };
-    SetValueModel.prototype.setValues = function (valuesToUse) {
-        this.allUniqueValues = valuesToUse;
-        if (!this.suppressSorting) {
-            this.sortValues(this.allUniqueValues);
-        }
-    };
-    SetValueModel.prototype.extractSyncValuesToUse = function () {
-        var valuesToUse;
-        if (this.valuesType == SetFilterModelValuesType.PROVIDED_LIST) {
-            if (Array.isArray(this.filterParams.values)) {
-                valuesToUse = agGridCommunity._.toStrings(this.filterParams.values);
-            }
-            else {
-                // In this case the values are async but have already been resolved, so we can reuse them
-                valuesToUse = this.allUniqueValues;
-            }
-        }
-        else if (this.valuesType == SetFilterModelValuesType.PROVIDED_CB) {
-            throw Error("ag-grid: Error extracting values to use. We should not extract the values synchronously when using a callback for the filterParams.values");
-        }
-        else {
-            var uniqueValuesAsAnyObjects = this.getUniqueValues(false);
-            valuesToUse = agGridCommunity._.toStrings(uniqueValuesAsAnyObjects);
-        }
-        return valuesToUse;
-    };
     SetValueModel.prototype.isValueAvailable = function (value) {
-        return this.availableUniqueValuesMap[value];
+        return this.availableValues.has(value);
     };
-    SetValueModel.prototype.createAvailableUniqueValues = function () {
+    SetValueModel.prototype.showAvailableOnly = function () {
+        return this.valuesType === SetFilterModelValuesType.TAKEN_FROM_GRID_VALUES &&
+            !this.filterParams.suppressRemoveEntries;
+    };
+    SetValueModel.prototype.updateAvailableValues = function () {
         var _this = this;
-        var dontCheckAvailableValues = !this.showingAvailableOnly || this.valuesType == SetFilterModelValuesType.PROVIDED_LIST || this.valuesType == SetFilterModelValuesType.PROVIDED_CB;
-        if (dontCheckAvailableValues) {
-            this.availableUniqueValues = this.allUniqueValues;
-        }
-        else {
-            var uniqueValuesAsAnyObjects = this.getUniqueValues(true);
-            this.availableUniqueValues = agGridCommunity._.toStrings(uniqueValuesAsAnyObjects);
-            this.sortValues(this.availableUniqueValues);
-        }
-        this.availableUniqueValuesMap = {};
-        if (this.availableUniqueValues) {
-            this.availableUniqueValues.forEach(function (value) { return _this.availableUniqueValuesMap[value] = true; });
-        }
-        this.localEventService.dispatchEvent({ type: SetValueModel.EVENT_AVAILABLE_VALUES_CHANGES });
+        this.allValuesPromise.then(function (values) {
+            var availableValues = _this.showAvailableOnly() ? _this.sortValues(_this.getValuesFromRows(true)) : values;
+            _this.availableValues = agGridCommunity._.convertToSet(availableValues);
+            _this.localEventService.dispatchEvent({ type: SetValueModel.EVENT_AVAILABLE_VALUES_CHANGED });
+            _this.updateDisplayedValues();
+        });
     };
     SetValueModel.prototype.sortValues = function (values) {
-        if (this.filterParams && this.filterParams.comparator) {
-            values.sort(this.filterParams.comparator);
+        if (this.suppressSorting) {
+            return values;
         }
-        else if (this.colDef.comparator) {
-            values.sort(this.colDef.comparator);
-        }
-        else {
-            values.sort(agGridCommunity._.defaultComparator);
-        }
+        var comparator = this.filterParams.comparator ||
+            this.colDef.comparator ||
+            agGridCommunity._.defaultComparator;
+        return values.sort(comparator);
     };
-    SetValueModel.prototype.getUniqueValues = function (filterOutNotAvailable) {
+    SetValueModel.prototype.getValuesFromRows = function (removeUnavailableValues) {
         var _this = this;
-        var uniqueCheck = {};
-        var result = [];
+        if (removeUnavailableValues === void 0) { removeUnavailableValues = false; }
         if (!this.clientSideRowModel) {
             console.error('ag-Grid: Set Filter cannot initialise because you are using a row model that does not contain all rows in the browser. Either use a different filter type, or configure Set Filter such that you provide it with values');
             return [];
         }
+        var values = new Set();
+        var keyCreator = this.colDef.keyCreator;
         this.clientSideRowModel.forEachLeafNode(function (node) {
             // only pull values from rows that have data. this means we skip filler group nodes.
-            if (!node.data) {
+            if (!node.data || (removeUnavailableValues && !_this.doesRowPassOtherFilters(node))) {
                 return;
             }
             var value = _this.valueGetter(node);
-            if (_this.colDef.keyCreator) {
-                value = _this.colDef.keyCreator({ value: value });
+            if (keyCreator) {
+                value = keyCreator({ value: value });
             }
-            if (value === "" || value === undefined) {
-                value = null;
-            }
-            if (filterOutNotAvailable) {
-                if (!_this.doesRowPassOtherFilters(node)) {
-                    return;
-                }
-            }
+            value = agGridCommunity._.makeNull(value);
             if (value != null && Array.isArray(value)) {
-                for (var j = 0; j < value.length; j++) {
-                    addUniqueValueIfMissing(value[j]);
-                }
+                agGridCommunity._.forEach(value, function (x) {
+                    var formatted = agGridCommunity._.toStringOrNull(agGridCommunity._.makeNull(x));
+                    values.add(formatted);
+                });
             }
             else {
-                addUniqueValueIfMissing(value);
+                values.add(agGridCommunity._.toStringOrNull(value));
             }
         });
-        function addUniqueValueIfMissing(value) {
-            if (!uniqueCheck.hasOwnProperty(value)) {
-                result.push(value);
-                uniqueCheck[value] = 1;
-            }
-        }
-        return result;
+        return agGridCommunity._.values(values);
     };
-    //sets mini filter. returns true if it changed from last value, otherwise false
-    SetValueModel.prototype.setMiniFilter = function (newMiniFilter) {
-        newMiniFilter = agGridCommunity._.makeNull(newMiniFilter);
-        if (this.miniFilter === newMiniFilter) {
+    /** Sets mini filter value. Returns true if it changed from last value, otherwise false. */
+    SetValueModel.prototype.setMiniFilter = function (value) {
+        value = agGridCommunity._.makeNull(value);
+        if (this.miniFilterText === value) {
             //do nothing if filter has not changed
             return false;
         }
-        this.miniFilter = newMiniFilter;
-        this.processMiniFilter();
+        this.miniFilterText = value;
+        this.updateDisplayedValues();
         return true;
     };
     SetValueModel.prototype.getMiniFilter = function () {
-        return this.miniFilter;
+        return this.miniFilterText;
     };
-    SetValueModel.prototype.processMiniFilter = function () {
-        // if no filter, just use the unique values
-        if (this.miniFilter === null) {
-            this.displayedValues = this.availableUniqueValues;
+    SetValueModel.prototype.updateDisplayedValues = function () {
+        var _this = this;
+        // if no filter, just display all available values
+        if (this.miniFilterText == null) {
+            this.displayedValues = agGridCommunity._.values(this.availableValues);
             return;
         }
         // if filter present, we filter down the list
         this.displayedValues = [];
-        var miniFilter = this.formatter(this.miniFilter);
-        // make upper case to have search case insensitive
-        var miniFilterUpperCase = miniFilter.toUpperCase();
-        //This function encapsulates the logic to check if a string matches the mini filter
-        var matchesFn = function (valueToCheck) {
-            if (valueToCheck == null) {
-                return false;
-            }
-            // allow for case insensitive searches, make both filter and value uppercase
-            var valueUpperCase = valueToCheck.toUpperCase();
-            return valueUpperCase.indexOf(miniFilterUpperCase) >= 0;
+        // to allow for case insensitive searches, upper-case both filter text and value
+        var formattedFilterText = this.formatter(this.miniFilterText).toUpperCase();
+        var matchesFilter = function (valueToCheck) {
+            return valueToCheck != null && valueToCheck.toUpperCase().indexOf(formattedFilterText) >= 0;
         };
-        for (var i = 0, l = this.availableUniqueValues.length; i < l; i++) {
-            var value = this.availableUniqueValues[i];
-            if (value) {
-                var displayedValue = this.formatter(value.toString());
-                var formattedValue = this.valueFormatterService.formatValue(this.column, null, null, displayedValue);
-                if (matchesFn(displayedValue) || matchesFn(formattedValue)) {
-                    this.displayedValues.push(value);
-                }
+        this.availableValues.forEach(function (value) {
+            if (value == null) {
+                return;
             }
-        }
+            var displayedValue = _this.formatter(value);
+            var formattedValue = _this.valueFormatterService.formatValue(_this.column, null, null, displayedValue);
+            if (matchesFilter(displayedValue) || matchesFilter(formattedValue)) {
+                _this.displayedValues.push(value);
+            }
+        });
     };
     SetValueModel.prototype.getDisplayedValueCount = function () {
         return this.displayedValues.length;
@@ -34523,155 +35842,98 @@ var SetValueModel = /** @class */ (function () {
     SetValueModel.prototype.getDisplayedValue = function (index) {
         return this.displayedValues[index];
     };
-    SetValueModel.prototype.selectAllUsingMiniFilter = function () {
-        if (this.miniFilter) {
-            this.selectOn(this.displayedValues);
-        }
-        else {
-            this.selectOn(this.allUniqueValues);
-        }
-    };
-    SetValueModel.prototype.selectOn = function (toSelectOn) {
-        var count = toSelectOn.length;
-        for (var i = 0; i < count; i++) {
-            var key = toSelectOn[i];
-            var safeKey = this.valueToKey(key);
-            this.selectedValuesMap[safeKey] = null;
-        }
-        this.selectedValuesCount = Object.keys(this.selectedValuesMap).length;
-    };
-    SetValueModel.prototype.valueToKey = function (key) {
-        if (key === null) {
-            return NULL_VALUE;
-        }
-        else {
-            return key;
-        }
-    };
-    SetValueModel.prototype.keyToValue = function (value) {
-        if (value === NULL_VALUE) {
-            return null;
-        }
-        else {
-            return value;
-        }
-    };
     SetValueModel.prototype.isFilterActive = function () {
-        return this.allUniqueValues.length !== this.selectedValuesCount;
+        return this.allValues.length !== this.selectedValues.size;
     };
-    SetValueModel.prototype.selectNothingUsingMiniFilter = function () {
+    SetValueModel.prototype.getUniqueValueCount = function () {
+        return this.allValues.length;
+    };
+    SetValueModel.prototype.getUniqueValue = function (index) {
+        return this.allValues[index];
+    };
+    SetValueModel.prototype.selectAll = function (clearExistingSelection) {
         var _this = this;
-        if (this.miniFilter) {
-            this.displayedValues.forEach(function (it) { return _this.unselectValue(it); });
+        if (clearExistingSelection === void 0) { clearExistingSelection = false; }
+        if (this.miniFilterText == null) {
+            // ensure everything is selected
+            this.selectedValues = agGridCommunity._.convertToSet(this.allValues);
         }
         else {
-            this.selectNothing();
+            // ensure everything that matches the mini filter is selected
+            if (clearExistingSelection) {
+                this.selectedValues.clear();
+            }
+            agGridCommunity._.forEach(this.displayedValues, function (value) { return _this.selectValue(value); });
         }
     };
     SetValueModel.prototype.selectNothing = function () {
-        this.selectedValuesMap = {};
-        this.selectedValuesCount = 0;
-    };
-    SetValueModel.prototype.getUniqueValueCount = function () {
-        return this.allUniqueValues.length;
-    };
-    SetValueModel.prototype.getUniqueValue = function (index) {
-        return this.allUniqueValues[index];
-    };
-    SetValueModel.prototype.unselectValue = function (value) {
-        var safeKey = this.valueToKey(value);
-        if (this.selectedValuesMap[safeKey] !== undefined) {
-            delete this.selectedValuesMap[safeKey];
-            this.selectedValuesCount--;
+        var _this = this;
+        if (this.miniFilterText == null) {
+            // ensure everything is deselected
+            this.selectedValues.clear();
         }
-    };
-    SetValueModel.prototype.selectAllFromMiniFilter = function () {
-        this.selectNothing();
-        this.selectAllUsingMiniFilter();
+        else {
+            // ensure everything that matches the mini filter is deselected
+            agGridCommunity._.forEach(this.displayedValues, function (it) { return _this.deselectValue(it); });
+        }
     };
     SetValueModel.prototype.selectValue = function (value) {
-        var safeKey = this.valueToKey(value);
-        if (this.selectedValuesMap[safeKey] === undefined) {
-            this.selectedValuesMap[safeKey] = null;
-            this.selectedValuesCount++;
-        }
+        this.selectedValues.add(value);
+    };
+    SetValueModel.prototype.deselectValue = function (value) {
+        this.selectedValues.delete(value);
     };
     SetValueModel.prototype.isValueSelected = function (value) {
-        var safeKey = this.valueToKey(value);
-        return this.selectedValuesMap[safeKey] !== undefined;
+        return this.selectedValues.has(value);
     };
     SetValueModel.prototype.isEverythingSelected = function () {
         var _this = this;
-        if (this.miniFilter) {
-            return this.displayedValues.filter(function (it) { return _this.isValueSelected(it); }).length === this.displayedValues.length;
+        if (this.miniFilterText == null) {
+            return this.allValues.length === this.selectedValues.size;
         }
         else {
-            return this.allUniqueValues.length === this.selectedValuesCount;
+            return agGridCommunity._.filter(this.displayedValues, function (it) { return _this.isValueSelected(it); }).length === this.displayedValues.length;
         }
     };
     SetValueModel.prototype.isNothingSelected = function () {
         var _this = this;
-        if (this.miniFilter) {
-            return this.displayedValues.filter(function (it) { return _this.isValueSelected(it); }).length === 0;
+        if (this.miniFilterText == null) {
+            return this.selectedValues.size === 0;
         }
         else {
-            return this.selectedValuesCount === 0;
+            return agGridCommunity._.filter(this.displayedValues, function (it) { return _this.isValueSelected(it); }).length === 0;
         }
     };
     SetValueModel.prototype.getModel = function () {
-        var _this = this;
-        if (!this.isFilterActive()) {
-            return null;
-        }
-        var selectedValues = [];
-        agGridCommunity._.iterateObject(this.selectedValuesMap, function (key) {
-            var value = _this.keyToValue(key);
-            selectedValues.push(value);
-        });
-        return selectedValues;
+        return this.isFilterActive() ? agGridCommunity._.values(this.selectedValues) : null;
     };
-    SetValueModel.prototype.setModel = function (model, isSelectAll) {
+    SetValueModel.prototype.setModel = function (model) {
         var _this = this;
-        if (isSelectAll === void 0) { isSelectAll = false; }
-        if (this.areValuesSync()) {
-            this.setSyncModel(model, isSelectAll);
-        }
-        else {
-            this.filterValuesExternalPromise.promise.then(function (values) {
-                _this.setSyncModel(model, isSelectAll);
-                _this.modelUpdatedFunc(values, model);
-            });
-        }
-    };
-    SetValueModel.prototype.setSyncModel = function (model, isSelectAll) {
-        if (isSelectAll === void 0) { isSelectAll = false; }
-        if (model && !isSelectAll) {
-            this.selectNothingUsingMiniFilter();
-            for (var i = 0; i < model.length; i++) {
-                var rawValue = model[i];
-                var value = this.keyToValue(rawValue);
-                if (this.allUniqueValues.indexOf(value) >= 0) {
-                    this.selectValue(value);
-                }
+        this.allValuesPromise.then(function (values) {
+            if (model == null) {
+                // reset to everything selected
+                _this.selectedValues = agGridCommunity._.convertToSet(values);
             }
-        }
-        else {
-            this.selectAllUsingMiniFilter();
-        }
+            else {
+                // select all values from the model that exist in the filter
+                _this.selectedValues.clear();
+                var allValues_1 = agGridCommunity._.convertToSet(values);
+                agGridCommunity._.forEach(model, function (value) {
+                    if (allValues_1.has(value)) {
+                        _this.selectValue(value);
+                    }
+                });
+            }
+        });
     };
     SetValueModel.prototype.onFilterValuesReady = function (callback) {
-        //This guarantees that if the user is racing to set values async into the set filter, only the first instance
-        //will be used
-        // ie Values are async and the user manually wants to override them before the retrieval of values is triggered
-        // (set filter values in the following example)
-        // http://plnkr.co/edit/eFka7ynvPj68tL3VJFWf?p=preview
-        this.filterValuesPromise.firstOneOnly(callback);
+        this.allValuesPromise.then(callback);
     };
-    SetValueModel.EVENT_AVAILABLE_VALUES_CHANGES = 'availableValuesChanged';
+    SetValueModel.EVENT_AVAILABLE_VALUES_CHANGED = 'availableValuesChanged';
     return SetValueModel;
 }());
 
-var __extends$26 = (undefined && undefined.__extends) || (function () {
+var __extends$2b = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -34684,37 +35946,21 @@ var __extends$26 = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$1v = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$1y = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 var SetFilterListItem = /** @class */ (function (_super) {
-    __extends$26(SetFilterListItem, _super);
-    function SetFilterListItem(value, column) {
+    __extends$2b(SetFilterListItem, _super);
+    function SetFilterListItem(value, params) {
         var _this = _super.call(this, SetFilterListItem.TEMPLATE) || this;
-        _this.selected = true;
         _this.value = value;
-        _this.column = column;
+        _this.params = params;
+        _this.selected = true;
         return _this;
     }
-    SetFilterListItem.prototype.useCellRenderer = function (target, eTarget, params) {
-        var cellRendererPromise = this.userComponentFactory.newCellRenderer(target.filterParams, params);
-        if (cellRendererPromise != null) {
-            agGridCommunity._.bindCellRendererToHtmlElement(cellRendererPromise, eTarget);
-        }
-        else {
-            if (params.valueFormatted == null && params.value == null) {
-                var localeTextFunc = this.gridOptionsWrapper.getLocaleTextFunc();
-                eTarget.innerText = '(' + localeTextFunc('blanks', 'Blanks') + ')';
-            }
-            else {
-                eTarget.innerText = params.valueFormatted != null ? params.valueFormatted : params.value;
-            }
-        }
-        return cellRendererPromise;
-    };
     SetFilterListItem.prototype.init = function () {
         var _this = this;
         this.render();
@@ -34737,50 +35983,83 @@ var SetFilterListItem = /** @class */ (function (_super) {
         this.eCheckbox.setValue(this.isSelected(), true);
     };
     SetFilterListItem.prototype.render = function () {
-        var _this = this;
-        var valueElement = this.queryForHtmlElement('.ag-set-filter-item-value');
-        var colDef = this.column.getColDef();
-        var filterValueFormatter = this.getFilterValueFormatter(colDef);
-        var valueFormatted = this.valueFormatterService.formatValue(this.column, null, null, this.value, filterValueFormatter);
+        var _a = this, value = _a.value, _b = _a.params, column = _b.column, colDef = _b.colDef;
+        var formattedValue = this.getFormattedValue(colDef, column, value);
+        if (this.params.showTooltips) {
+            this.tooltipText = agGridCommunity._.escape(formattedValue != null ? formattedValue : value);
+            if (agGridCommunity._.exists(this.tooltipText)) {
+                if (this.gridOptionsWrapper.isEnableBrowserTooltips()) {
+                    this.eFilterItemValue.title = this.tooltipText;
+                }
+                else {
+                    this.addFeature(new agGridCommunity.TooltipFeature(this, 'setFilterValue'));
+                }
+            }
+        }
         var params = {
-            value: this.value,
-            valueFormatted: valueFormatted,
+            value: value,
+            valueFormatted: formattedValue,
             api: this.gridOptionsWrapper.getApi()
         };
-        var componentPromise = this.useCellRenderer(colDef, valueElement, params);
-        if (!componentPromise) {
+        this.renderCell(colDef, this.eFilterItemValue, params);
+    };
+    SetFilterListItem.prototype.getFormattedValue = function (colDef, column, value) {
+        var filterParams = colDef.filterParams;
+        var formatter = filterParams == null ? null : filterParams.valueFormatter;
+        return this.valueFormatterService.formatValue(column, null, null, value, formatter, false);
+    };
+    SetFilterListItem.prototype.renderCell = function (target, eTarget, params) {
+        var _this = this;
+        var filterParams = target.filterParams;
+        var cellRendererPromise = this.userComponentFactory.newSetFilterCellRenderer(filterParams, params);
+        if (cellRendererPromise == null) {
+            var valueToRender = params.valueFormatted == null ? params.value : params.valueFormatted;
+            if (valueToRender == null) {
+                var localeTextFunc = this.gridOptionsWrapper.getLocaleTextFunc();
+                eTarget.innerText = "(" + localeTextFunc('blanks', 'Blanks') + ")";
+            }
+            else {
+                eTarget.innerText = valueToRender;
+            }
             return;
         }
-        componentPromise.then(function (component) {
+        agGridCommunity._.bindCellRendererToHtmlElement(cellRendererPromise, eTarget);
+        cellRendererPromise.then(function (component) {
             if (component && component.destroy) {
                 _this.addDestroyFunc(component.destroy.bind(component));
             }
         });
     };
-    SetFilterListItem.prototype.getFilterValueFormatter = function (colDef) {
-        return colDef.filterParams ? colDef.filterParams.valueFormatter : undefined;
+    SetFilterListItem.prototype.getComponentHolder = function () {
+        return this.params.column.getColDef();
+    };
+    SetFilterListItem.prototype.getTooltipText = function () {
+        return this.tooltipText;
     };
     SetFilterListItem.EVENT_SELECTED = 'selected';
-    SetFilterListItem.TEMPLATE = "<label class=\"ag-set-filter-item\">\n            <ag-checkbox ref=\"eCheckbox\" class=\"ag-set-filter-item-checkbox\"></ag-checkbox>\n            <span class=\"ag-set-filter-item-value\"></span>\n        </label>";
-    __decorate$1v([
+    SetFilterListItem.TEMPLATE = "\n        <label class=\"ag-set-filter-item\">\n            <ag-checkbox ref=\"eCheckbox\" class=\"ag-set-filter-item-checkbox\"></ag-checkbox>\n            <span ref=\"eFilterItemValue\" class=\"ag-set-filter-item-value\"></span>\n        </label>";
+    __decorate$1y([
         agGridCommunity.Autowired('gridOptionsWrapper')
     ], SetFilterListItem.prototype, "gridOptionsWrapper", void 0);
-    __decorate$1v([
+    __decorate$1y([
         agGridCommunity.Autowired('valueFormatterService')
     ], SetFilterListItem.prototype, "valueFormatterService", void 0);
-    __decorate$1v([
+    __decorate$1y([
         agGridCommunity.Autowired('userComponentFactory')
     ], SetFilterListItem.prototype, "userComponentFactory", void 0);
-    __decorate$1v([
+    __decorate$1y([
+        agGridCommunity.RefSelector('eFilterItemValue')
+    ], SetFilterListItem.prototype, "eFilterItemValue", void 0);
+    __decorate$1y([
         agGridCommunity.RefSelector('eCheckbox')
     ], SetFilterListItem.prototype, "eCheckbox", void 0);
-    __decorate$1v([
+    __decorate$1y([
         agGridCommunity.PostConstruct
     ], SetFilterListItem.prototype, "init", null);
     return SetFilterListItem;
 }(agGridCommunity.Component));
 
-var __extends$27 = (undefined && undefined.__extends) || (function () {
+var __extends$2c = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -34793,30 +36072,34 @@ var __extends$27 = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$1w = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$1z = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 var SetFilter = /** @class */ (function (_super) {
-    __extends$27(SetFilter, _super);
+    __extends$2c(SetFilter, _super);
     function SetFilter() {
-        return _super !== null && _super.apply(this, arguments) || this;
+        var _this = _super !== null && _super.apply(this, arguments) || this;
+        // To make the filtering super fast, we store the values in an object, and check for the boolean value.
+        // Although Set would be a more natural choice of data structure, its performance across browsers is
+        // significantly worse than using an object: https://jsbench.me/hdk91jbw1h/
+        _this.appliedModelValues = null;
+        return _this;
     }
-    // unlike the simple filter's, nothing in the set filter UI shows/hides.
+    // unlike the simple filters, nothing in the set filter UI shows/hides.
     // maybe this method belongs in abstractSimpleFilter???
     SetFilter.prototype.updateUiVisibility = function () { };
     SetFilter.prototype.createBodyTemplate = function () {
         var translate = this.gridOptionsWrapper.getLocaleTextFunc();
-        return "<div ref=\"eFilterLoading\" class=\"ag-filter-loading ag-hidden\">" + translate('loadingOoo', 'Loading...') + "</div>\n                <div>\n                    <div class=\"ag-filter-header-container\" role=\"presentation\">\n                        <ag-input-text-field class=\"ag-mini-filter\" ref=\"eMiniFilter\"></ag-input-text-field>\n                        <label ref=\"eSelectAllContainer\" class=\"ag-set-filter-item ag-set-filter-select-all\">\n                            <ag-checkbox ref=\"eSelectAll\" class=\"ag-set-filter-item-checkbox\"></ag-checkbox><span class=\"ag-set-filter-item-value\">(" + translate('selectAll', 'Select All') + ")</span>\n                        </label>\n                    </div>\n                    <div ref=\"eSetFilterList\" class=\"ag-set-filter-list\" role=\"presentation\"></div>\n                </div>";
+        return /* html */ "\n            <div ref=\"eFilterLoading\" class=\"ag-filter-loading ag-hidden\">" + translate('loadingOoo', 'Loading...') + "</div>\n            <div>\n                <div class=\"ag-filter-header-container\" role=\"presentation\">\n                    <ag-input-text-field class=\"ag-mini-filter\" ref=\"eMiniFilter\"></ag-input-text-field>\n                    <label ref=\"eSelectAllContainer\" class=\"ag-set-filter-item ag-set-filter-select-all\">\n                        <ag-checkbox ref=\"eSelectAll\" class=\"ag-set-filter-item-checkbox\"></ag-checkbox><span class=\"ag-set-filter-item-value\">(" + translate('selectAll', 'Select All') + ")</span>\n                    </label>\n                </div>\n                <div ref=\"eSetFilterList\" class=\"ag-set-filter-list\" role=\"presentation\"></div>\n            </div>";
     };
     SetFilter.prototype.getCssIdentifier = function () {
         return 'set-filter';
     };
     SetFilter.prototype.resetUiToDefaults = function () {
         this.setMiniFilter(null);
-        this.valueModel.setModel(null, true);
         this.selectEverything();
     };
     SetFilter.prototype.setModelIntoUi = function (model) {
@@ -34831,10 +36114,9 @@ var SetFilter = /** @class */ (function (_super) {
             agGridCommunity._.doOnce(function () { return console.warn(message_1); }, 'setFilter.modelAsArray');
         }
         // also supporting old filter model for backwards compatibility
-        var newValues = (model instanceof Array) ? model : model.values;
+        var newValues = model instanceof Array ? model : model.values;
         this.valueModel.setModel(newValues);
-        this.updateSelectAll();
-        this.virtualList.refresh();
+        this.refresh();
     };
     SetFilter.prototype.getModelFromUi = function () {
         var values = this.valueModel.getModel();
@@ -34852,39 +36134,24 @@ var SetFilter = /** @class */ (function (_super) {
     };
     SetFilter.prototype.areModelsEqual = function (a, b) {
         // both are missing
-        if (!a && !b) {
+        if (a == null && b == null) {
             return true;
         }
-        // one is missing, other present
-        if ((!a && b) || (a && !b)) {
-            return false;
-        }
-        // both present, so compare
-        // if different sizes, they are different
-        if (a.values.length != b.values.length) {
-            return false;
-        }
-        // now check each one value by value
-        for (var i = 0; i < a.values.length; i++) {
-            if (a.values[i] !== b.values[i]) {
-                return false;
-            }
-        }
-        // got this far means value lists are identical
-        return true;
+        return a != null && b != null && agGridCommunity._.areEqual(a.values, b.values);
     };
     SetFilter.prototype.setParams = function (params) {
+        var _this = this;
         _super.prototype.setParams.call(this, params);
         this.checkSetFilterDeprecatedParams(params);
         this.setFilterParams = params;
+        this.valueModel = new SetValueModel(params.colDef, params.rowModel, params.valueGetter, params.doesRowPassOtherFilter, params.suppressSorting, function (loading) { return _this.setLoading(loading); }, this.valueFormatterService, params.column);
         this.initialiseFilterBodyUi();
-        var syncValuesAfterDataChange = !params.suppressSyncValuesAfterDataChange &&
-            // sync values only with CSRM
-            this.rowModel.getType() === agGridCommunity.Constants.ROW_MODEL_TYPE_CLIENT_SIDE &&
-            // sync only needed if user not providing values
-            !params.values;
+        this.valueModel.onFilterValuesReady(function () { return _this.refresh(); });
+        var syncValuesAfterDataChange = this.rowModel.getType() === agGridCommunity.Constants.ROW_MODEL_TYPE_CLIENT_SIDE &&
+            !params.values &&
+            !params.suppressSyncValuesAfterDataChange;
         if (syncValuesAfterDataChange) {
-            this.setupSyncValuesAfterDataChange();
+            this.addEventListenersForDataChanges();
         }
     };
     SetFilter.prototype.checkSetFilterDeprecatedParams = function (params) {
@@ -34899,22 +36166,20 @@ var SetFilter = /** @class */ (function (_super) {
                 ' used as this is the default behaviour.';
             agGridCommunity._.doOnce(function () { return console.warn(message_3); }, 'selectAllOnMiniFilter deprecated');
         }
+        if (params.suppressSyncValuesAfterDataChange) {
+            var message_4 = 'ag-Grid: since version 23.1, the Set Filter param suppressSyncValuesAfterDataChange has' +
+                ' been deprecated and will be removed in a future major release.';
+            agGridCommunity._.doOnce(function () { return console.warn(message_4); }, 'suppressSyncValuesAfterDataChange deprecated');
+        }
+        if (params.suppressRemoveEntries) {
+            var message_5 = 'ag-Grid: since version 23.1, the Set Filter param suppressRemoveEntries has' +
+                ' been deprecated and will be removed in a future major release.';
+            agGridCommunity._.doOnce(function () { return console.warn(message_5); }, 'suppressRemoveEntries deprecated');
+        }
     };
-    // gets called with change to data values, thus need to update the values available for selection
-    // in the set filter.
-    SetFilter.prototype.syncValuesAfterDataChange = function () {
-        var everythingSelected = !this.getModel();
-        this.valueModel.refreshAfterNewRowsLoaded(true, everythingSelected);
-        this.updateSelectAll();
-        this.virtualList.refresh();
-        this.onBtApply(false, true);
-    };
-    // this keeps the filter up to date with changes in the row data
-    SetFilter.prototype.setupSyncValuesAfterDataChange = function () {
+    SetFilter.prototype.addEventListenersForDataChanges = function () {
         var _this = this;
-        // add listener for when data is changed via transaction update (includes delta row mode
-        // as this uses transaction updates)
-        this.addDestroyableEventListener(this.eventService, agGridCommunity.Events.EVENT_ROW_DATA_UPDATED, this.syncValuesAfterDataChange.bind(this));
+        this.addDestroyableEventListener(this.eventService, agGridCommunity.Events.EVENT_ROW_DATA_UPDATED, function () { return _this.syncValuesAfterDataChange(); });
         this.addDestroyableEventListener(this.eventService, agGridCommunity.Events.EVENT_CELL_VALUE_CHANGED, function (event) {
             // only interested in changes to do with this column
             if (event.column !== _this.setFilterParams.column) {
@@ -34923,6 +36188,13 @@ var SetFilter = /** @class */ (function (_super) {
             _this.syncValuesAfterDataChange();
         });
     };
+    /** Called when the data in the grid changes, to prompt the set filter values to be updated. */
+    SetFilter.prototype.syncValuesAfterDataChange = function (keepSelection) {
+        if (keepSelection === void 0) { keepSelection = true; }
+        this.valueModel.refetchValues(keepSelection);
+        this.refresh();
+        this.onBtApply(false, true);
+    };
     SetFilter.prototype.updateCheckboxIcon = function () {
         this.eSelectAll.setValue(this.selectAllState);
     };
@@ -34930,28 +36202,49 @@ var SetFilter = /** @class */ (function (_super) {
         agGridCommunity._.setDisplayed(this.eFilterLoading, loading);
     };
     SetFilter.prototype.initialiseFilterBodyUi = function () {
+        this.initVirtualList();
+        this.initMiniFilter();
+        this.initSelectAll();
+    };
+    SetFilter.prototype.initVirtualList = function () {
         var _this = this;
-        this.virtualList = new agGridCommunity.VirtualList('filter');
-        this.getContext().wireBean(this.virtualList);
+        var virtualList = this.virtualList = this.wireBean(new agGridCommunity.VirtualList('filter'));
         var eSetFilterList = this.getRefElement('eSetFilterList');
         if (eSetFilterList) {
-            eSetFilterList.appendChild(this.virtualList.getGui());
+            eSetFilterList.appendChild(virtualList.getGui());
         }
-        if (agGridCommunity._.exists(this.setFilterParams.cellHeight)) {
-            this.virtualList.setRowHeight(this.setFilterParams.cellHeight);
+        var cellHeight = this.setFilterParams.cellHeight;
+        if (cellHeight != null) {
+            virtualList.setRowHeight(cellHeight);
         }
-        this.virtualList.setComponentCreator(this.createSetListItem.bind(this));
-        this.valueModel = new SetValueModel(this.setFilterParams.colDef, this.setFilterParams.rowModel, this.setFilterParams.valueGetter, this.setFilterParams.doesRowPassOtherFilter, this.setFilterParams.suppressSorting, function (values, toSelect) { return _this.setFilterValues(values, toSelect ? false : true, toSelect ? true : false, toSelect); }, this.setLoading.bind(this), this.valueFormatterService, this.setFilterParams.column);
-        this.virtualList.setModel(new ModelWrapper(this.valueModel));
-        agGridCommunity._.setDisplayed(this.eMiniFilter.getGui(), !this.setFilterParams.suppressMiniFilter);
-        this.eMiniFilter.setValue(this.valueModel.getMiniFilter());
-        this.eMiniFilter.onValueChange(function () { return _this.onMiniFilterInput(); });
-        this.addDestroyableEventListener(this.eMiniFilter.getInputElement(), 'keypress', this.onMiniFilterKeyPress.bind(this));
+        virtualList.setComponentCreator(function (value) { return _this.createSetListItem(value); });
+        virtualList.setModel(new ModelWrapper(this.valueModel));
+    };
+    SetFilter.prototype.createSetListItem = function (value) {
+        var _this = this;
+        var listItem = this.wireBean(new SetFilterListItem(value, this.setFilterParams));
+        var selected = this.valueModel.isValueSelected(value);
+        listItem.setSelected(selected);
+        listItem.addEventListener(SetFilterListItem.EVENT_SELECTED, function () { return _this.onItemSelected(value, listItem.isSelected()); });
+        return listItem;
+    };
+    SetFilter.prototype.initMiniFilter = function () {
+        var _this = this;
+        var eMiniFilter = this.eMiniFilter;
+        agGridCommunity._.setDisplayed(eMiniFilter.getGui(), !this.setFilterParams.suppressMiniFilter);
+        eMiniFilter.setValue(this.valueModel.getMiniFilter());
+        eMiniFilter.onValueChange(function () { return _this.onMiniFilterInput(); });
+        this.addDestroyableEventListener(eMiniFilter.getInputElement(), 'keypress', function (e) { return _this.onMiniFilterKeyPress(e); });
+    };
+    SetFilter.prototype.initSelectAll = function () {
+        var _this = this;
         this.updateCheckboxIcon();
-        this.addDestroyableEventListener(this.eSelectAllContainer, 'click', this.onSelectAll.bind(this));
-        this.updateSelectAll();
+        var eSelectAllContainer = this.getRefElement('eSelectAllContainer');
         if (this.setFilterParams.suppressSelectAll) {
-            agGridCommunity._.setDisplayed(this.eSelectAllContainer, false);
+            agGridCommunity._.setDisplayed(eSelectAllContainer, false);
+        }
+        else {
+            this.addDestroyableEventListener(eSelectAllContainer, 'click', function (e) { return _this.onSelectAll(e); });
         }
         this.addDestroyableEventListener(this.eSelectAll.getInputElement(), 'keydown', function (e) {
             if (e.keyCode === agGridCommunity.Constants.KEY_SPACE) {
@@ -34959,69 +36252,52 @@ var SetFilter = /** @class */ (function (_super) {
                 _this.onSelectAll(e);
             }
         });
-        this.virtualList.refresh();
     };
-    SetFilter.prototype.createSetListItem = function (value) {
-        var _this = this;
-        var listItem = new SetFilterListItem(value, this.setFilterParams.column);
-        this.getContext().wireBean(listItem);
-        var selected = this.valueModel.isValueSelected(value);
-        listItem.setSelected(selected);
-        listItem.addEventListener(SetFilterListItem.EVENT_SELECTED, function () {
-            _this.onItemSelected(value, listItem.isSelected());
-        });
-        return listItem;
-    };
-    // we need to have the gui attached before we can draw the virtual rows, as the
-    // virtual row logic needs info about the gui state
+    // we need to have the GUI attached before we can draw the virtual rows, as the
+    // virtual row logic needs info about the GUI state
     SetFilter.prototype.afterGuiAttached = function (params) {
+        _super.prototype.afterGuiAttached.call(this, params);
         var _a = this, virtualList = _a.virtualList, eMiniFilter = _a.eMiniFilter;
         var translate = this.gridOptionsWrapper.getLocaleTextFunc();
         virtualList.refresh();
         eMiniFilter.setInputPlaceholder(translate('searchOoo', 'Search...'));
         eMiniFilter.getFocusableElement().focus();
     };
-    SetFilter.prototype.refreshVirtualList = function () {
-        this.virtualList.refresh();
-    };
     SetFilter.prototype.applyModel = function () {
         var _this = this;
-        var res = _super.prototype.applyModel.call(this);
+        var result = _super.prototype.applyModel.call(this);
         // keep the appliedModelValuesMapped in sync with the applied model
         var appliedModel = this.getModel();
         if (appliedModel) {
-            this.appliedModelValuesMapped = {};
-            appliedModel.values.forEach(function (value) { return _this.appliedModelValuesMapped[value] = true; });
+            this.appliedModelValues = {};
+            agGridCommunity._.forEach(appliedModel.values, function (value) { return _this.appliedModelValues[value] = true; });
         }
         else {
-            this.appliedModelValuesMapped = undefined;
+            this.appliedModelValues = null;
         }
-        return res;
+        return result;
     };
     SetFilter.prototype.doesFilterPass = function (params) {
-        // should never happen, if filter model not set, then this method should never be called
-        if (!this.appliedModelValuesMapped) {
+        var _this = this;
+        if (this.appliedModelValues == null) {
             return true;
         }
-        var value = this.setFilterParams.valueGetter(params.node);
-        if (this.setFilterParams.colDef.keyCreator) {
-            value = this.setFilterParams.colDef.keyCreator({ value: value });
+        var _a = this.setFilterParams, valueGetter = _a.valueGetter, keyCreator = _a.colDef.keyCreator;
+        var value = valueGetter(params.node);
+        if (keyCreator) {
+            value = keyCreator({ value: value });
         }
         value = agGridCommunity._.makeNull(value);
         if (Array.isArray(value)) {
-            for (var i = 0; i < value.length; i++) {
-                var valueExistsInMap = !!this.appliedModelValuesMapped[value[i]];
-                if (valueExistsInMap) {
-                    return true;
-                }
-            }
-            return false;
+            return agGridCommunity._.some(value, function (v) { return _this.appliedModelValues[agGridCommunity._.makeNull(v)] === true; });
         }
-        return !!this.appliedModelValuesMapped[value];
+        // Comparing against a value performs better than just checking for undefined
+        // https://jsbench.me/hdk91jbw1h/
+        return this.appliedModelValues[value] === true;
     };
     SetFilter.prototype.onNewRowsLoaded = function () {
         var valuesType = this.valueModel.getValuesType();
-        var valuesTypeProvided = valuesType === SetFilterModelValuesType.PROVIDED_CB ||
+        var valuesTypeProvided = valuesType === SetFilterModelValuesType.PROVIDED_CALLBACK ||
             valuesType === SetFilterModelValuesType.PROVIDED_LIST;
         // if the user is providing values, and we are keeping the previous selection, then
         // loading new rows into the grid should have no impact.
@@ -35029,12 +36305,7 @@ var SetFilter = /** @class */ (function (_super) {
         if (keepSelection && valuesTypeProvided) {
             return;
         }
-        var everythingSelected = !this.getModel();
-        // default is reset
-        this.valueModel.refreshAfterNewRowsLoaded(keepSelection, everythingSelected);
-        this.updateSelectAll();
-        this.virtualList.refresh();
-        this.onBtApply(false, true);
+        this.syncValuesAfterDataChange(keepSelection);
     };
     //noinspection JSUnusedGlobalSymbols
     /**
@@ -35045,30 +36316,20 @@ var SetFilter = /** @class */ (function (_super) {
      * @param notify If we should let know the model that the values of the filter have changed
      * @param toSelect The subset of options to subselect
      */
-    SetFilter.prototype.setFilterValues = function (options, selectAll, notify, toSelect) {
+    SetFilter.prototype.setFilterValues = function (options) {
         var _this = this;
-        if (selectAll === void 0) { selectAll = false; }
-        if (notify === void 0) { notify = true; }
+        this.valueModel.overrideValues(options, this.isNewRowsActionKeep());
         this.valueModel.onFilterValuesReady(function () {
-            var keepSelection = _this.setFilterParams && _this.setFilterParams.newRowsAction === 'keep';
-            _this.valueModel.setValuesType(SetFilterModelValuesType.PROVIDED_LIST);
-            _this.valueModel.refreshValues(options, keepSelection, selectAll);
-            _this.updateSelectAll();
-            var actualToSelect = toSelect ? toSelect : options;
-            actualToSelect.forEach(function (option) { return _this.valueModel.selectValue(option); });
-            _this.virtualList.refresh();
-            if (notify) {
-                _this.onUiChanged();
-            }
+            _this.refresh();
+            _this.onUiChanged();
         });
     };
     //noinspection JSUnusedGlobalSymbols
     /**
-     * Public method provided so the user can reset the values of the filter once that it has started
-     * @param options The options to use.
+     * Public method provided so the user can reset the values of the filter once that it has started.
      */
     SetFilter.prototype.resetFilterValues = function () {
-        this.valueModel.setValuesType(SetFilterModelValuesType.NOT_PROVIDED);
+        this.valueModel.setValuesType(SetFilterModelValuesType.TAKEN_FROM_GRID_VALUES);
         this.onNewRowsLoaded();
     };
     SetFilter.prototype.onAnyFilterChanged = function () {
@@ -35089,18 +36350,13 @@ var SetFilter = /** @class */ (function (_super) {
     };
     SetFilter.prototype.onMiniFilterKeyPress = function (e) {
         if (agGridCommunity._.isKeyPressed(e, agGridCommunity.Constants.KEY_ENTER)) {
-            this.onEnterKeyOnMiniFilter();
+            this.valueModel.selectAll(true);
+            this.refresh();
+            this.onUiChanged(true);
         }
     };
-    SetFilter.prototype.onEnterKeyOnMiniFilter = function () {
-        this.valueModel.selectAllFromMiniFilter();
-        this.virtualList.refresh();
-        this.updateSelectAll();
-        this.onUiChanged(true);
-    };
     SetFilter.prototype.onMiniFilterInput = function () {
-        var miniFilterChanged = this.valueModel.setMiniFilter(this.eMiniFilter.getValue());
-        if (miniFilterChanged) {
+        if (this.valueModel.setMiniFilter(this.eMiniFilter.getValue())) {
             this.virtualList.refresh();
         }
         this.updateSelectAll();
@@ -35108,32 +36364,22 @@ var SetFilter = /** @class */ (function (_super) {
     SetFilter.prototype.onSelectAll = function (event) {
         event.preventDefault();
         agGridCommunity._.addAgGridEventPath(event);
-        if (this.selectAllState === true) {
-            this.selectAllState = false;
+        this.selectAllState = !this.selectAllState;
+        if (this.selectAllState) {
+            this.valueModel.selectAll();
         }
         else {
-            this.selectAllState = true;
+            this.valueModel.selectNothing();
         }
-        this.doSelectAll();
-    };
-    SetFilter.prototype.doSelectAll = function () {
-        var checked = this.selectAllState === true;
-        if (checked) {
-            this.valueModel.selectAllUsingMiniFilter();
-        }
-        else {
-            this.valueModel.selectNothingUsingMiniFilter();
-        }
-        this.virtualList.refresh();
+        this.refresh();
         this.onUiChanged();
-        this.updateSelectAll();
     };
     SetFilter.prototype.onItemSelected = function (value, selected) {
         if (selected) {
             this.valueModel.selectValue(value);
         }
         else {
-            this.valueModel.unselectValue(value);
+            this.valueModel.deselectValue(value);
         }
         this.updateSelectAll();
         this.onUiChanged();
@@ -35146,24 +36392,24 @@ var SetFilter = /** @class */ (function (_super) {
         return this.valueModel.getMiniFilter();
     };
     SetFilter.prototype.selectEverything = function () {
-        this.valueModel.selectAllUsingMiniFilter();
-        this.updateSelectAll();
-        this.virtualList.refresh();
+        this.valueModel.selectAll();
+        this.refresh();
     };
     SetFilter.prototype.selectNothing = function () {
-        this.valueModel.selectNothingUsingMiniFilter();
-        this.updateSelectAll();
-        this.virtualList.refresh();
+        this.valueModel.selectNothing();
+        this.refresh();
     };
     SetFilter.prototype.unselectValue = function (value) {
-        this.valueModel.unselectValue(value);
-        this.updateSelectAll();
-        this.virtualList.refresh();
+        this.valueModel.deselectValue(value);
+        this.refresh();
     };
     SetFilter.prototype.selectValue = function (value) {
         this.valueModel.selectValue(value);
-        this.updateSelectAll();
+        this.refresh();
+    };
+    SetFilter.prototype.refresh = function () {
         this.virtualList.refresh();
+        this.updateSelectAll();
     };
     SetFilter.prototype.isValueSelected = function (value) {
         return this.valueModel.isValueSelected(value);
@@ -35180,22 +36426,22 @@ var SetFilter = /** @class */ (function (_super) {
     SetFilter.prototype.getUniqueValue = function (index) {
         return this.valueModel.getUniqueValue(index);
     };
-    __decorate$1w([
+    SetFilter.prototype.refreshVirtualList = function () {
+        this.virtualList.refresh();
+    };
+    __decorate$1z([
         agGridCommunity.RefSelector('eSelectAll')
     ], SetFilter.prototype, "eSelectAll", void 0);
-    __decorate$1w([
-        agGridCommunity.RefSelector('eSelectAllContainer')
-    ], SetFilter.prototype, "eSelectAllContainer", void 0);
-    __decorate$1w([
+    __decorate$1z([
         agGridCommunity.RefSelector('eMiniFilter')
     ], SetFilter.prototype, "eMiniFilter", void 0);
-    __decorate$1w([
+    __decorate$1z([
         agGridCommunity.RefSelector('eFilterLoading')
     ], SetFilter.prototype, "eFilterLoading", void 0);
-    __decorate$1w([
+    __decorate$1z([
         agGridCommunity.Autowired('valueFormatterService')
     ], SetFilter.prototype, "valueFormatterService", void 0);
-    __decorate$1w([
+    __decorate$1z([
         agGridCommunity.Autowired('eventService')
     ], SetFilter.prototype, "eventService", void 0);
     return SetFilter;
@@ -35213,7 +36459,7 @@ var ModelWrapper = /** @class */ (function () {
     return ModelWrapper;
 }());
 
-var __extends$28 = (undefined && undefined.__extends) || (function () {
+var __extends$2d = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -35226,16 +36472,16 @@ var __extends$28 = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$1x = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$1A = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 var SetFloatingFilterComp = /** @class */ (function (_super) {
-    __extends$28(SetFloatingFilterComp, _super);
+    __extends$2d(SetFloatingFilterComp, _super);
     function SetFloatingFilterComp() {
-        var _this = _super.call(this, "<div class=\"ag-floating-filter-input\" role=\"presentation\"><ag-input-text-field ref=\"eFloatingFilterText\"></ag-input-text-field></div>") || this;
+        var _this = _super.call(this, /* html */ "\n            <div class=\"ag-floating-filter-input\" role=\"presentation\">\n                <ag-input-text-field ref=\"eFloatingFilterText\"></ag-input-text-field>\n            </div>") || this;
         _this.availableValuesListenerAdded = false;
         return _this;
     }
@@ -35244,9 +36490,9 @@ var SetFloatingFilterComp = /** @class */ (function (_super) {
         this.params = params;
     };
     // unlike other filters, what we show in the floating filter can be different, even
-    // if another filter changes. this is due to how set filter restricts it's values based
-    // on selections in other filters. eg if you filter Language to English, then the set filter
-    // on Country will only show English speaking countries. thus the list of items to show
+    // if another filter changes. this is due to how set filter restricts its values based
+    // on selections in other filters, e.g. if you filter Language to English, then the set filter
+    // on Country will only show English speaking countries. Thus the list of items to show
     // in the floating filter can change.
     SetFloatingFilterComp.prototype.onAvailableValuesChanged = function (filterChangedEvent) {
         this.updateSetFilterText();
@@ -35259,7 +36505,7 @@ var SetFloatingFilterComp = /** @class */ (function (_super) {
         var _this = this;
         this.params.parentFilterInstance(function (setFilter) {
             var setValueModel = setFilter.getValueModel();
-            _this.addDestroyableEventListener(setValueModel, SetValueModel.EVENT_AVAILABLE_VALUES_CHANGES, _this.onAvailableValuesChanged.bind(_this));
+            _this.addDestroyableEventListener(setValueModel, SetValueModel.EVENT_AVAILABLE_VALUES_CHANGED, _this.onAvailableValuesChanged.bind(_this));
         });
         this.availableValuesListenerAdded = true;
     };
@@ -35273,28 +36519,28 @@ var SetFloatingFilterComp = /** @class */ (function (_super) {
             this.addAvailableValuesListener();
         }
         // also supporting old filter model for backwards compatibility
-        var values = (this.lastKnownModel instanceof Array) ? this.lastKnownModel : this.lastKnownModel.values;
+        var values = this.lastKnownModel instanceof Array ? this.lastKnownModel : this.lastKnownModel.values;
         if (!values || values.length === 0) {
             this.eFloatingFilterText.setValue('');
             return;
         }
         this.params.parentFilterInstance(function (setFilter) {
             var valueModel = setFilter.getValueModel();
-            var availableValues = values.filter(valueModel.isValueAvailable.bind(valueModel));
+            var availableValues = agGridCommunity._.filter(values, function (v) { return valueModel.isValueAvailable(v); });
             // format all the values, if a formatter is provided
-            var formattedValues = availableValues.map(function (value) {
+            var formattedValues = agGridCommunity._.map(availableValues, function (value) {
                 var formattedValue = _this.valueFormatterService.formatValue(_this.params.column, null, null, value);
                 return formattedValue != null ? formattedValue : value;
             });
             var arrayToDisplay = formattedValues.length > 10 ? formattedValues.slice(0, 10).concat('...') : formattedValues;
-            var valuesString = "(" + formattedValues.length + ") " + arrayToDisplay.join(",");
+            var valuesString = "(" + formattedValues.length + ") " + arrayToDisplay.join(',');
             _this.eFloatingFilterText.setValue(valuesString);
         });
     };
-    __decorate$1x([
+    __decorate$1A([
         agGridCommunity.RefSelector('eFloatingFilterText')
     ], SetFloatingFilterComp.prototype, "eFloatingFilterText", void 0);
-    __decorate$1x([
+    __decorate$1A([
         agGridCommunity.Autowired('valueFormatterService')
     ], SetFloatingFilterComp.prototype, "valueFormatterService", void 0);
     return SetFloatingFilterComp;
@@ -35312,7 +36558,7 @@ var SetFilterModule = {
     ]
 };
 
-var __decorate$1y = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$1B = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -35329,13 +36575,13 @@ var StatusBarService = /** @class */ (function () {
     StatusBarService.prototype.getStatusPanel = function (key) {
         return this.allComponents[key];
     };
-    StatusBarService = __decorate$1y([
+    StatusBarService = __decorate$1B([
         agGridCommunity.Bean('statusBarService')
     ], StatusBarService);
     return StatusBarService;
 }());
 
-var __extends$29 = (undefined && undefined.__extends) || (function () {
+var __extends$2e = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -35348,14 +36594,14 @@ var __extends$29 = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$1z = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$1C = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 var StatusBar = /** @class */ (function (_super) {
-    __extends$29(StatusBar, _super);
+    __extends$2e(StatusBar, _super);
     function StatusBar() {
         return _super.call(this, StatusBar.TEMPLATE) || this;
     }
@@ -35413,34 +36659,34 @@ var StatusBar = /** @class */ (function (_super) {
         });
     };
     StatusBar.TEMPLATE = "<div class=\"ag-status-bar\">\n        <div ref=\"eStatusBarLeft\" class=\"ag-status-bar-left\"></div>\n        <div ref=\"eStatusBarCenter\" class=\"ag-status-bar-center\"></div>\n        <div ref=\"eStatusBarRight\" class=\"ag-status-bar-right\"></div>\n    </div>";
-    __decorate$1z([
+    __decorate$1C([
         agGridCommunity.Autowired('gridOptionsWrapper')
     ], StatusBar.prototype, "gridOptionsWrapper", void 0);
-    __decorate$1z([
+    __decorate$1C([
         agGridCommunity.Autowired('gridOptions')
     ], StatusBar.prototype, "gridOptions", void 0);
-    __decorate$1z([
+    __decorate$1C([
         agGridCommunity.Autowired('userComponentFactory')
     ], StatusBar.prototype, "userComponentFactory", void 0);
-    __decorate$1z([
+    __decorate$1C([
         agGridCommunity.Autowired('statusBarService')
     ], StatusBar.prototype, "statusBarService", void 0);
-    __decorate$1z([
+    __decorate$1C([
         agGridCommunity.RefSelector('eStatusBarLeft')
     ], StatusBar.prototype, "eStatusBarLeft", void 0);
-    __decorate$1z([
+    __decorate$1C([
         agGridCommunity.RefSelector('eStatusBarCenter')
     ], StatusBar.prototype, "eStatusBarCenter", void 0);
-    __decorate$1z([
+    __decorate$1C([
         agGridCommunity.RefSelector('eStatusBarRight')
     ], StatusBar.prototype, "eStatusBarRight", void 0);
-    __decorate$1z([
+    __decorate$1C([
         agGridCommunity.PostConstruct
     ], StatusBar.prototype, "postConstruct", null);
     return StatusBar;
 }(agGridCommunity.Component));
 
-var __extends$2a = (undefined && undefined.__extends) || (function () {
+var __extends$2f = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -35453,16 +36699,18 @@ var __extends$2a = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$1A = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$1D = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 var NameValueComp = /** @class */ (function (_super) {
-    __extends$2a(NameValueComp, _super);
+    __extends$2f(NameValueComp, _super);
     function NameValueComp() {
-        return _super.call(this, NameValueComp.TEMPLATE) || this;
+        var _this = _super.call(this, NameValueComp.TEMPLATE) || this;
+        _this.events = [];
+        return _this;
     }
     NameValueComp.prototype.setLabel = function (key, defaultValue) {
         // we want to hide until the first value comes in
@@ -35473,20 +36721,25 @@ var NameValueComp = /** @class */ (function (_super) {
     NameValueComp.prototype.setValue = function (value) {
         this.eValue.innerHTML = value;
     };
+    NameValueComp.prototype.destroy = function () {
+        this.events.forEach(function (func) { return func(); });
+        this.events = [];
+        _super.prototype.destroy.call(this);
+    };
     NameValueComp.TEMPLATE = "<div class=\"ag-status-name-value\">  \n            <span ref=\"eLabel\"></span>:&nbsp;\n            <span ref=\"eValue\" class=\"ag-status-name-value-value\"></span>\n        </div>";
-    __decorate$1A([
+    __decorate$1D([
         agGridCommunity.Autowired('gridOptionsWrapper')
     ], NameValueComp.prototype, "gridOptionsWrapper", void 0);
-    __decorate$1A([
+    __decorate$1D([
         agGridCommunity.RefSelector('eLabel')
     ], NameValueComp.prototype, "eLabel", void 0);
-    __decorate$1A([
+    __decorate$1D([
         agGridCommunity.RefSelector('eValue')
     ], NameValueComp.prototype, "eValue", void 0);
     return NameValueComp;
 }(agGridCommunity.Component));
 
-var __extends$2b = (undefined && undefined.__extends) || (function () {
+var __extends$2g = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -35499,14 +36752,14 @@ var __extends$2b = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$1B = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$1E = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 var TotalAndFilteredRowsComp = /** @class */ (function (_super) {
-    __extends$2b(TotalAndFilteredRowsComp, _super);
+    __extends$2g(TotalAndFilteredRowsComp, _super);
     function TotalAndFilteredRowsComp() {
         return _super !== null && _super.apply(this, arguments) || this;
     }
@@ -35552,19 +36805,19 @@ var TotalAndFilteredRowsComp = /** @class */ (function (_super) {
         return totalRowCount;
     };
     TotalAndFilteredRowsComp.prototype.init = function () { };
-    __decorate$1B([
+    __decorate$1E([
         agGridCommunity.Autowired('gridApi')
     ], TotalAndFilteredRowsComp.prototype, "gridApi", void 0);
-    __decorate$1B([
+    __decorate$1E([
         agGridCommunity.Autowired('eventService')
     ], TotalAndFilteredRowsComp.prototype, "eventService", void 0);
-    __decorate$1B([
+    __decorate$1E([
         agGridCommunity.PostConstruct
     ], TotalAndFilteredRowsComp.prototype, "postConstruct", null);
     return TotalAndFilteredRowsComp;
 }(NameValueComp));
 
-var __extends$2c = (undefined && undefined.__extends) || (function () {
+var __extends$2h = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -35577,14 +36830,14 @@ var __extends$2c = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$1C = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$1F = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 var FilteredRowsComp = /** @class */ (function (_super) {
-    __extends$2c(FilteredRowsComp, _super);
+    __extends$2h(FilteredRowsComp, _super);
     function FilteredRowsComp() {
         return _super !== null && _super.apply(this, arguments) || this;
     }
@@ -35599,7 +36852,7 @@ var FilteredRowsComp = /** @class */ (function (_super) {
         this.addCssClass('ag-status-panel-filtered-row-count');
         this.setDisplayed(true);
         var listener = this.onDataChanged.bind(this);
-        this.eventService.addEventListener(agGridCommunity.Events.EVENT_MODEL_UPDATED, listener);
+        this.events = [this.eventService.addEventListener(agGridCommunity.Events.EVENT_MODEL_UPDATED, listener)];
     };
     FilteredRowsComp.prototype.onDataChanged = function () {
         var totalRowCountValue = this.getTotalRowCountValue();
@@ -35622,19 +36875,19 @@ var FilteredRowsComp = /** @class */ (function (_super) {
         return filteredRowCount;
     };
     FilteredRowsComp.prototype.init = function () { };
-    __decorate$1C([
+    __decorate$1F([
         agGridCommunity.Autowired('eventService')
     ], FilteredRowsComp.prototype, "eventService", void 0);
-    __decorate$1C([
+    __decorate$1F([
         agGridCommunity.Autowired('gridApi')
     ], FilteredRowsComp.prototype, "gridApi", void 0);
-    __decorate$1C([
+    __decorate$1F([
         agGridCommunity.PostConstruct
     ], FilteredRowsComp.prototype, "postConstruct", null);
     return FilteredRowsComp;
 }(NameValueComp));
 
-var __extends$2d = (undefined && undefined.__extends) || (function () {
+var __extends$2i = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -35647,14 +36900,14 @@ var __extends$2d = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$1D = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$1G = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 var TotalRowsComp = /** @class */ (function (_super) {
-    __extends$2d(TotalRowsComp, _super);
+    __extends$2i(TotalRowsComp, _super);
     function TotalRowsComp() {
         return _super !== null && _super.apply(this, arguments) || this;
     }
@@ -35669,7 +36922,7 @@ var TotalRowsComp = /** @class */ (function (_super) {
         this.addCssClass('ag-status-panel-total-row-count');
         this.setDisplayed(true);
         var listener = this.onDataChanged.bind(this);
-        this.eventService.addEventListener(agGridCommunity.Events.EVENT_MODEL_UPDATED, listener);
+        this.events = [this.eventService.addEventListener(agGridCommunity.Events.EVENT_MODEL_UPDATED, listener)];
     };
     TotalRowsComp.prototype.onDataChanged = function () {
         this.setValue(agGridCommunity._.formatNumberCommas(this.getRowCountValue()));
@@ -35681,19 +36934,19 @@ var TotalRowsComp = /** @class */ (function (_super) {
     };
     TotalRowsComp.prototype.init = function () {
     };
-    __decorate$1D([
+    __decorate$1G([
         agGridCommunity.Autowired('eventService')
     ], TotalRowsComp.prototype, "eventService", void 0);
-    __decorate$1D([
+    __decorate$1G([
         agGridCommunity.Autowired('gridApi')
     ], TotalRowsComp.prototype, "gridApi", void 0);
-    __decorate$1D([
+    __decorate$1G([
         agGridCommunity.PostConstruct
     ], TotalRowsComp.prototype, "postConstruct", null);
     return TotalRowsComp;
 }(NameValueComp));
 
-var __extends$2e = (undefined && undefined.__extends) || (function () {
+var __extends$2j = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -35706,14 +36959,14 @@ var __extends$2e = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$1E = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$1H = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 var SelectedRowsComp = /** @class */ (function (_super) {
-    __extends$2e(SelectedRowsComp, _super);
+    __extends$2j(SelectedRowsComp, _super);
     function SelectedRowsComp() {
         return _super !== null && _super.apply(this, arguments) || this;
     }
@@ -35729,8 +36982,10 @@ var SelectedRowsComp = /** @class */ (function (_super) {
         this.setValue(agGridCommunity._.formatNumberCommas(selectedRowCount));
         this.setDisplayed(selectedRowCount > 0);
         var eventListener = this.onRowSelectionChanged.bind(this);
-        this.eventService.addEventListener(agGridCommunity.Events.EVENT_MODEL_UPDATED, eventListener);
-        this.eventService.addEventListener(agGridCommunity.Events.EVENT_SELECTION_CHANGED, eventListener);
+        this.events = [
+            this.eventService.addEventListener(agGridCommunity.Events.EVENT_MODEL_UPDATED, eventListener),
+            this.eventService.addEventListener(agGridCommunity.Events.EVENT_SELECTION_CHANGED, eventListener)
+        ];
     };
     SelectedRowsComp.prototype.isValidRowModel = function () {
         // this component is only really useful with client or server side rowmodels
@@ -35744,19 +36999,19 @@ var SelectedRowsComp = /** @class */ (function (_super) {
     };
     SelectedRowsComp.prototype.init = function () {
     };
-    __decorate$1E([
+    __decorate$1H([
         agGridCommunity.Autowired('eventService')
     ], SelectedRowsComp.prototype, "eventService", void 0);
-    __decorate$1E([
+    __decorate$1H([
         agGridCommunity.Autowired('gridApi')
     ], SelectedRowsComp.prototype, "gridApi", void 0);
-    __decorate$1E([
+    __decorate$1H([
         agGridCommunity.PostConstruct
     ], SelectedRowsComp.prototype, "postConstruct", null);
     return SelectedRowsComp;
 }(NameValueComp));
 
-var __extends$2f = (undefined && undefined.__extends) || (function () {
+var __extends$2k = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -35769,14 +37024,14 @@ var __extends$2f = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$1F = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$1I = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 var AggregationComp = /** @class */ (function (_super) {
-    __extends$2f(AggregationComp, _super);
+    __extends$2k(AggregationComp, _super);
     function AggregationComp() {
         return _super.call(this, AggregationComp.TEMPLATE) || this;
     }
@@ -35906,52 +37161,52 @@ var AggregationComp = /** @class */ (function (_super) {
         this.setAggregationComponentValue('avg', (sum / numberCount), gotNumberResult);
     };
     AggregationComp.TEMPLATE = "<div class=\"ag-status-panel ag-status-panel-aggregations\">\n                <ag-name-value ref=\"avgAggregationComp\"></ag-name-value>\n                <ag-name-value ref=\"countAggregationComp\"></ag-name-value>\n                <ag-name-value ref=\"minAggregationComp\"></ag-name-value>\n                <ag-name-value ref=\"maxAggregationComp\"></ag-name-value>\n                <ag-name-value ref=\"sumAggregationComp\"></ag-name-value>\n            </div>";
-    __decorate$1F([
+    __decorate$1I([
         agGridCommunity.Autowired('eventService')
     ], AggregationComp.prototype, "eventService", void 0);
-    __decorate$1F([
+    __decorate$1I([
         agGridCommunity.Optional('rangeController')
     ], AggregationComp.prototype, "rangeController", void 0);
-    __decorate$1F([
+    __decorate$1I([
         agGridCommunity.Autowired('valueService')
     ], AggregationComp.prototype, "valueService", void 0);
-    __decorate$1F([
+    __decorate$1I([
         agGridCommunity.Autowired('cellNavigationService')
     ], AggregationComp.prototype, "cellNavigationService", void 0);
-    __decorate$1F([
+    __decorate$1I([
         agGridCommunity.Autowired('rowRenderer')
     ], AggregationComp.prototype, "rowRenderer", void 0);
-    __decorate$1F([
+    __decorate$1I([
         agGridCommunity.Autowired('gridOptionsWrapper')
     ], AggregationComp.prototype, "gridOptionsWrapper", void 0);
-    __decorate$1F([
+    __decorate$1I([
         agGridCommunity.Autowired('gridOptions')
     ], AggregationComp.prototype, "gridOptions", void 0);
-    __decorate$1F([
+    __decorate$1I([
         agGridCommunity.Autowired('gridApi')
     ], AggregationComp.prototype, "gridApi", void 0);
-    __decorate$1F([
+    __decorate$1I([
         agGridCommunity.Autowired('cellPositionUtils')
     ], AggregationComp.prototype, "cellPositionUtils", void 0);
-    __decorate$1F([
+    __decorate$1I([
         agGridCommunity.Autowired('rowPositionUtils')
     ], AggregationComp.prototype, "rowPositionUtils", void 0);
-    __decorate$1F([
+    __decorate$1I([
         agGridCommunity.RefSelector('sumAggregationComp')
     ], AggregationComp.prototype, "sumAggregationComp", void 0);
-    __decorate$1F([
+    __decorate$1I([
         agGridCommunity.RefSelector('countAggregationComp')
     ], AggregationComp.prototype, "countAggregationComp", void 0);
-    __decorate$1F([
+    __decorate$1I([
         agGridCommunity.RefSelector('minAggregationComp')
     ], AggregationComp.prototype, "minAggregationComp", void 0);
-    __decorate$1F([
+    __decorate$1I([
         agGridCommunity.RefSelector('maxAggregationComp')
     ], AggregationComp.prototype, "maxAggregationComp", void 0);
-    __decorate$1F([
+    __decorate$1I([
         agGridCommunity.RefSelector('avgAggregationComp')
     ], AggregationComp.prototype, "avgAggregationComp", void 0);
-    __decorate$1F([
+    __decorate$1I([
         agGridCommunity.PostConstruct
     ], AggregationComp.prototype, "postConstruct", null);
     return AggregationComp;
@@ -35976,7 +37231,7 @@ var StatusBarModule = {
     ]
 };
 
-var __decorate$1G = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$1J = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -35990,12 +37245,15 @@ var ViewportRowModel = /** @class */ (function () {
         // datasource tells us this
         this.rowCount = -1;
         this.rowNodesByIndex = {};
+        this.events = [];
     }
     // we don't implement as lazy row heights is not supported in this row model
     ViewportRowModel.prototype.ensureRowHeightsValid = function (startPixel, endPixel, startLimitIndex, endLimitIndex) { return false; };
     ViewportRowModel.prototype.init = function () {
         this.rowHeight = this.gridOptionsWrapper.getRowHeightAsNumber();
-        this.eventService.addEventListener(agGridCommunity.Events.EVENT_VIEWPORT_CHANGED, this.onViewportChanged.bind(this));
+        this.events = [
+            this.eventService.addEventListener(agGridCommunity.Events.EVENT_VIEWPORT_CHANGED, this.onViewportChanged.bind(this))
+        ];
     };
     ViewportRowModel.prototype.start = function () {
         if (this.gridOptionsWrapper.getViewportDatasource()) {
@@ -36006,13 +37264,18 @@ var ViewportRowModel = /** @class */ (function () {
         return true;
     };
     ViewportRowModel.prototype.destroyDatasource = function () {
-        if (this.viewportDatasource) {
-            if (this.viewportDatasource.destroy) {
-                this.viewportDatasource.destroy();
-            }
-            this.rowRenderer.datasourceChanged();
-            this.firstRow = -1;
-            this.lastRow = -1;
+        if (!this.viewportDatasource) {
+            return;
+        }
+        if (this.viewportDatasource.destroy) {
+            this.viewportDatasource.destroy();
+        }
+        this.rowRenderer.datasourceChanged();
+        this.firstRow = -1;
+        this.lastRow = -1;
+        if (this.events.length) {
+            this.events.forEach(function (func) { return func(); });
+            this.events = [];
         }
     };
     ViewportRowModel.prototype.calculateFirstRow = function (firstRenderedRow) {
@@ -36022,9 +37285,7 @@ var ViewportRowModel = /** @class */ (function () {
         if (afterBuffer < 0) {
             return 0;
         }
-        else {
-            return Math.floor(afterBuffer / pageSize) * pageSize;
-        }
+        return Math.floor(afterBuffer / pageSize) * pageSize;
     };
     ViewportRowModel.prototype.calculateLastRow = function (lastRenderedRow) {
         if (lastRenderedRow === -1) {
@@ -36098,9 +37359,7 @@ var ViewportRowModel = /** @class */ (function () {
         if (this.rowHeight !== 0) { // avoid divide by zero error
             return Math.floor(pixel / this.rowHeight);
         }
-        else {
-            return 0;
-        }
+        return 0;
     };
     ViewportRowModel.prototype.getRowBounds = function (index) {
         return {
@@ -36181,51 +37440,52 @@ var ViewportRowModel = /** @class */ (function () {
     };
     ViewportRowModel.prototype.setRowCount = function (rowCount, keepRenderedRows) {
         if (keepRenderedRows === void 0) { keepRenderedRows = false; }
-        if (rowCount !== this.rowCount) {
-            this.rowCount = rowCount;
-            var event_1 = {
-                type: agGridCommunity.Events.EVENT_MODEL_UPDATED,
-                api: this.gridApi,
-                columnApi: this.columnApi,
-                newData: false,
-                newPage: false,
-                keepRenderedRows: keepRenderedRows,
-                animate: false
-            };
-            this.eventService.dispatchEvent(event_1);
+        if (rowCount === this.rowCount) {
+            return;
         }
+        this.rowCount = rowCount;
+        var event = {
+            type: agGridCommunity.Events.EVENT_MODEL_UPDATED,
+            api: this.gridApi,
+            columnApi: this.columnApi,
+            newData: false,
+            newPage: false,
+            keepRenderedRows: keepRenderedRows,
+            animate: false
+        };
+        this.eventService.dispatchEvent(event);
     };
     ViewportRowModel.prototype.isRowPresent = function (rowNode) {
         return false;
     };
-    __decorate$1G([
+    __decorate$1J([
         agGridCommunity.Autowired('gridOptionsWrapper')
     ], ViewportRowModel.prototype, "gridOptionsWrapper", void 0);
-    __decorate$1G([
+    __decorate$1J([
         agGridCommunity.Autowired('eventService')
     ], ViewportRowModel.prototype, "eventService", void 0);
-    __decorate$1G([
+    __decorate$1J([
         agGridCommunity.Autowired('selectionController')
     ], ViewportRowModel.prototype, "selectionController", void 0);
-    __decorate$1G([
+    __decorate$1J([
         agGridCommunity.Autowired('context')
     ], ViewportRowModel.prototype, "context", void 0);
-    __decorate$1G([
+    __decorate$1J([
         agGridCommunity.Autowired('gridApi')
     ], ViewportRowModel.prototype, "gridApi", void 0);
-    __decorate$1G([
+    __decorate$1J([
         agGridCommunity.Autowired('columnApi')
     ], ViewportRowModel.prototype, "columnApi", void 0);
-    __decorate$1G([
+    __decorate$1J([
         agGridCommunity.Autowired('rowRenderer')
     ], ViewportRowModel.prototype, "rowRenderer", void 0);
-    __decorate$1G([
+    __decorate$1J([
         agGridCommunity.PostConstruct
     ], ViewportRowModel.prototype, "init", null);
-    __decorate$1G([
+    __decorate$1J([
         agGridCommunity.PreDestroy
     ], ViewportRowModel.prototype, "destroyDatasource", null);
-    ViewportRowModel = __decorate$1G([
+    ViewportRowModel = __decorate$1J([
         agGridCommunity.Bean('rowModel')
     ], ViewportRowModel);
     return ViewportRowModel;
@@ -36239,7 +37499,7 @@ var ViewportRowModelModule = {
     ]
 };
 
-var __decorate$1H = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$1K = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -36265,13 +37525,16 @@ var ClipboardService = /** @class */ (function () {
             if (agGridCommunity._.missingOrEmpty(data)) {
                 return;
             }
-            var parsedData = agGridCommunity.CsvUtils.stringToArray(data, _this.gridOptionsWrapper.getClipboardDeliminator());
+            var parsedData = agGridCommunity._.stringToArray(data, _this.gridOptionsWrapper.getClipboardDeliminator());
             var userFunc = _this.gridOptionsWrapper.getProcessDataFromClipboardFunc();
             if (userFunc) {
                 parsedData = userFunc({ data: parsedData });
             }
             if (agGridCommunity._.missingOrEmpty(parsedData)) {
                 return;
+            }
+            if (_this.gridOptionsWrapper.isSuppressLastEmptyLineOnPaste()) {
+                _this.removeLastLineIfBlank(parsedData);
             }
             var pasteOperation = function (cellsToFlash, updatedRowNodes, focusedCell, changedPath) {
                 var rangeActive = _this.rangeController && _this.rangeController.isMoreThanOneCell();
@@ -36416,6 +37679,14 @@ var ClipboardService = /** @class */ (function () {
             _this.iterateActiveRanges(true, rowCallback);
         };
         this.doPasteOperation(pasteOperation);
+    };
+    ClipboardService.prototype.removeLastLineIfBlank = function (parsedData) {
+        // remove last row if empty, excel puts empty last row in
+        var lastLine = agGridCommunity._.last(parsedData);
+        var lastLineIsBlank = lastLine && lastLine.length === 1 && lastLine[0] === '';
+        if (lastLineIsBlank) {
+            agGridCommunity._.removeFromArray(parsedData, lastLine);
+        }
     };
     ClipboardService.prototype.fireRowChanged = function (rowNodes) {
         var _this = this;
@@ -36727,58 +37998,58 @@ var ClipboardService = /** @class */ (function () {
         }
         return startRangeIndex - endRangeIndex + 1;
     };
-    __decorate$1H([
+    __decorate$1K([
         agGridCommunity.Autowired('csvCreator')
     ], ClipboardService.prototype, "csvCreator", void 0);
-    __decorate$1H([
+    __decorate$1K([
         agGridCommunity.Autowired('loggerFactory')
     ], ClipboardService.prototype, "loggerFactory", void 0);
-    __decorate$1H([
+    __decorate$1K([
         agGridCommunity.Autowired('selectionController')
     ], ClipboardService.prototype, "selectionController", void 0);
-    __decorate$1H([
+    __decorate$1K([
         agGridCommunity.Optional('rangeController')
     ], ClipboardService.prototype, "rangeController", void 0);
-    __decorate$1H([
+    __decorate$1K([
         agGridCommunity.Autowired('rowModel')
     ], ClipboardService.prototype, "rowModel", void 0);
-    __decorate$1H([
+    __decorate$1K([
         agGridCommunity.Autowired('valueService')
     ], ClipboardService.prototype, "valueService", void 0);
-    __decorate$1H([
+    __decorate$1K([
         agGridCommunity.Autowired('focusController')
     ], ClipboardService.prototype, "focusController", void 0);
-    __decorate$1H([
+    __decorate$1K([
         agGridCommunity.Autowired('rowRenderer')
     ], ClipboardService.prototype, "rowRenderer", void 0);
-    __decorate$1H([
+    __decorate$1K([
         agGridCommunity.Autowired('columnController')
     ], ClipboardService.prototype, "columnController", void 0);
-    __decorate$1H([
+    __decorate$1K([
         agGridCommunity.Autowired('eventService')
     ], ClipboardService.prototype, "eventService", void 0);
-    __decorate$1H([
+    __decorate$1K([
         agGridCommunity.Autowired('cellNavigationService')
     ], ClipboardService.prototype, "cellNavigationService", void 0);
-    __decorate$1H([
+    __decorate$1K([
         agGridCommunity.Autowired('gridOptionsWrapper')
     ], ClipboardService.prototype, "gridOptionsWrapper", void 0);
-    __decorate$1H([
+    __decorate$1K([
         agGridCommunity.Autowired('columnApi')
     ], ClipboardService.prototype, "columnApi", void 0);
-    __decorate$1H([
+    __decorate$1K([
         agGridCommunity.Autowired('gridApi')
     ], ClipboardService.prototype, "gridApi", void 0);
-    __decorate$1H([
+    __decorate$1K([
         agGridCommunity.Autowired('cellPositionUtils')
     ], ClipboardService.prototype, "cellPositionUtils", void 0);
-    __decorate$1H([
+    __decorate$1K([
         agGridCommunity.Autowired('rowPositionUtils')
     ], ClipboardService.prototype, "rowPositionUtils", void 0);
-    __decorate$1H([
+    __decorate$1K([
         agGridCommunity.PostConstruct
     ], ClipboardService.prototype, "init", null);
-    ClipboardService = __decorate$1H([
+    ClipboardService = __decorate$1K([
         agGridCommunity.Bean('clipboardService')
     ], ClipboardService);
     return ClipboardService;
@@ -36793,21 +38064,21 @@ var ClipboardModule = {
     ]
 };
 
-agGridCommunity.ModuleRegistry.register(ColumnsToolPanelModule);
-agGridCommunity.ModuleRegistry.register(ExcelExportModule);
-agGridCommunity.ModuleRegistry.register(FiltersToolPanelModule);
-agGridCommunity.ModuleRegistry.register(GridChartsModule);
-agGridCommunity.ModuleRegistry.register(MasterDetailModule);
-agGridCommunity.ModuleRegistry.register(MenuModule);
-agGridCommunity.ModuleRegistry.register(RangeSelectionModule);
-agGridCommunity.ModuleRegistry.register(RichSelectModule);
-agGridCommunity.ModuleRegistry.register(RowGroupingModule);
-agGridCommunity.ModuleRegistry.register(ServerSideRowModelModule);
-agGridCommunity.ModuleRegistry.register(SetFilterModule);
-agGridCommunity.ModuleRegistry.register(SideBarModule);
-agGridCommunity.ModuleRegistry.register(StatusBarModule);
-agGridCommunity.ModuleRegistry.register(ViewportRowModelModule);
-agGridCommunity.ModuleRegistry.register(ClipboardModule);
+agGridCommunity.ModuleRegistry.register(ColumnsToolPanelModule, false);
+agGridCommunity.ModuleRegistry.register(ExcelExportModule, false);
+agGridCommunity.ModuleRegistry.register(FiltersToolPanelModule, false);
+agGridCommunity.ModuleRegistry.register(GridChartsModule, false);
+agGridCommunity.ModuleRegistry.register(MasterDetailModule, false);
+agGridCommunity.ModuleRegistry.register(MenuModule, false);
+agGridCommunity.ModuleRegistry.register(RangeSelectionModule, false);
+agGridCommunity.ModuleRegistry.register(RichSelectModule, false);
+agGridCommunity.ModuleRegistry.register(RowGroupingModule, false);
+agGridCommunity.ModuleRegistry.register(ServerSideRowModelModule, false);
+agGridCommunity.ModuleRegistry.register(SetFilterModule, false);
+agGridCommunity.ModuleRegistry.register(SideBarModule, false);
+agGridCommunity.ModuleRegistry.register(StatusBarModule, false);
+agGridCommunity.ModuleRegistry.register(ViewportRowModelModule, false);
+agGridCommunity.ModuleRegistry.register(ClipboardModule, false);
 
 Object.defineProperty(exports, 'VirtualList', {
     enumerable: true,

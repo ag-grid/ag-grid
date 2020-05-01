@@ -1,11 +1,11 @@
 // This fake server uses http://alasql.org/ to mimic how a real server
-// might generate sql queries from the Server-side Row Model request.
+// might generate sql queries from the Server-Side Row Model request.
 // To keep things simple it does the bare minimum to support the example.
 function FakeServer(allData) {
     alasql.options.cache = false;
 
     return {
-        getData: function (request) {
+        getData: function(request) {
             var result = executeQuery(request);
             return {
                 success: true,
@@ -23,7 +23,7 @@ function FakeServer(allData) {
         // 'alasql' only supports pivoting on a single value column, to workaround this limitation we need to perform
         // separate queries for each value column and combine the results
         var results = [];
-        request.valueCols.forEach(function (valueCol) {
+        request.valueCols.forEach(function(valueCol) {
             var pivotResult = executePivotQuery(request, pivotCol, valueCol);
 
             // merge each row into existing results
@@ -39,7 +39,7 @@ function FakeServer(allData) {
     function executePivotQuery(request, pivotCol, valueCol) {
         var groupKeys = request.groupKeys;
         var groupsToUse = request.rowGroupCols.slice(groupKeys.length, groupKeys.length + 1);
-        var selectGroupCols = groupsToUse.map(function(groupCol){ return groupCol.id }).join(", ");
+        var selectGroupCols = groupsToUse.map(function(groupCol) { return groupCol.id; }).join(", ");
 
         var SQL_TEMPLATE = 'SELECT {0}, ({1} + "_{2}") AS {1}, {2} FROM ? PIVOT (SUM([{2}]) FOR {1})';
         var SQL = interpolate(SQL_TEMPLATE, [selectGroupCols, pivotCol.id, valueCol.id]) + whereSql(request);
@@ -75,7 +75,7 @@ function FakeServer(allData) {
     function getPivotFields(request) {
         var pivotCol = request.pivotCols[0];
 
-        var result = flatten(request.valueCols.map(function (valueCol) {
+        var result = flatten(request.valueCols.map(function(valueCol) {
             var SQL_TEMPLATE = 'SELECT DISTINCT ({0} + "_{1}") AS {0} FROM ? ORDER BY {0}';
             var args = [pivotCol.id, valueCol.id];
             var SQL = interpolate(SQL_TEMPLATE, args);
@@ -97,7 +97,7 @@ function FakeServer(allData) {
 // IE Workaround - as templates literal are not supported
 function interpolate(str, o) {
     return str.replace(/{([^{}]*)}/g,
-        function (a, b) {
+        function(a, b) {
             var r = o[b];
             return typeof r === 'string' || typeof r === 'number' ? r : a;
         }

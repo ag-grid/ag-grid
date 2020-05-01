@@ -27,7 +27,6 @@ export interface ServerSideCacheParams extends RowNodeCacheParams {
 
 export class ServerSideCache extends RowNodeCache<ServerSideBlock, ServerSideCacheParams> implements IServerSideCache {
 
-    @Autowired('eventService') private eventService: EventService;
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
 
     // this will always be zero for the top level cache only,
@@ -49,11 +48,6 @@ export class ServerSideCache extends RowNodeCache<ServerSideBlock, ServerSideCac
 
     private setBeans(@Qualifier('loggerFactory') loggerFactory: LoggerFactory) {
         this.logger = loggerFactory.create('ServerSideCache');
-    }
-
-    @PostConstruct
-    protected init(): void {
-        super.init();
     }
 
     public getRowBounds(index: number): RowBounds {
@@ -168,8 +162,10 @@ export class ServerSideCache extends RowNodeCache<ServerSideBlock, ServerSideCac
         return result;
     }
 
-    public clearRowTops(): void {
-        this.forEachBlockInOrder(block => block.clearRowTops(this.getVirtualRowCount()));
+    public clearDisplayIndexes(): void {
+        this.displayIndexStart = undefined;
+        this.displayIndexEnd = undefined;
+        this.forEachBlockInOrder(block => block.clearDisplayIndexes(this.getVirtualRowCount()));
     }
 
     public setDisplayIndexes(displayIndexSeq: NumberSequence,
@@ -350,6 +346,8 @@ export class ServerSideCache extends RowNodeCache<ServerSideBlock, ServerSideCac
                 if (lastRowNode.expanded && lastRowNode.childrenCache) {
                     const serverSideCache = lastRowNode.childrenCache as ServerSideCache;
                     lastDisplayedNodeIndexInBlockBefore = serverSideCache.getDisplayIndexEnd() - 1;
+                } else if (lastRowNode.expanded && lastRowNode.detailNode) {
+                    lastDisplayedNodeIndexInBlockBefore = lastRowNode.detailNode.rowIndex;
                 } else {
                     lastDisplayedNodeIndexInBlockBefore = lastRowNode.rowIndex;
                 }

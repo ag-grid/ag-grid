@@ -51,7 +51,7 @@ const copyGridCoreStyles = (done) => {
     return gulp.src('./node_modules/ag-grid-community/dist/styles/**/*').pipe(gulp.dest('./dist/styles'));
 };
 
-const copyAndContactMainTypings = () => {
+const copyAndConcatMainTypings = () => {
     return gulp.src([
         './node_modules/@ag-grid-enterprise/core/typings/main.*',
         './node_modules/@ag-grid-enterprise/set-filter/typings/main.*'
@@ -88,11 +88,11 @@ const copyGridAllUmdFiles = (done) => {
         '!./node_modules/@ag-grid-enterprise/all-modules/dist/**/*.cjs*.js']).pipe(gulp.dest('./dist/'));
 };
 
-// copy from grid-core tasks
+// copy from core/all modules tasks
 gulp.task('copy-grid-core-styles', copyGridCoreStyles);
 gulp.task('copy-umd-files', copyGridAllUmdFiles);
 gulp.task('copy-core-typings', copyGridCoreTypings);
-gulp.task('copy-and-contact-typings-main', copyAndContactMainTypings);
+gulp.task('copy-and-concat-typings-main', copyAndConcatMainTypings);
 
 // Typescript related tasks
 gulp.task('clean', cleanDist);
@@ -100,9 +100,9 @@ gulp.task('tsc-no-clean', tscMainTask);
 gulp.task('tsc', series('clean', 'tsc-no-clean'));
 
 // build tasks
-gulp.task('package', series('tsc', 'copy-grid-core-styles', 'copy-umd-files', 'copy-core-typings', 'copy-and-contact-typings-main'));
+gulp.task('build', series('tsc', 'copy-grid-core-styles', 'copy-core-typings', 'copy-and-concat-typings-main'));
 
 // default/release task
-gulp.task('default', series('package'));
+gulp.task('default', series('build'));
 
 

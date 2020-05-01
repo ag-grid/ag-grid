@@ -7,7 +7,7 @@ function createService(): AggFuncService {
 
     gridOptionsWrapper.getAggFuncs = getAggFuncs;
 
-    const service = new AggFuncService();
+    const service = new AggFuncService() as any;
 
     service.gridOptionsWrapper = gridOptionsWrapper;
 
@@ -22,13 +22,13 @@ describe("aggSum", () => {
     });
 
     test("returns sum of numbers", () => {
-        const result = sum([ 12, 543, 921, -43, 34 ]);
+        const result = sum([12, 543, 921, -43, 34]);
 
         expect(result).toBe(1467);
     });
 
     test("returns sum of valid numbers", () => {
-        const result = sum([ 35, 'foo', 921, undefined, -43, null, 65 ]);
+        const result = sum([35, 'foo', 921, undefined, -43, null, 65]);
 
         expect(result).toBe(978);
     });
@@ -38,7 +38,7 @@ describe("aggSum", () => {
     });
 
     test("returns null for invalid values", () => {
-        expect(sum([ 'foo', undefined, null ])).toBeNull();
+        expect(sum(['foo', undefined, null])).toBeNull();
     });
 });
 
@@ -50,7 +50,7 @@ describe("aggFirst", () => {
     });
 
     test("returns first element in array", () => {
-        const result = first([ 12, 543, 921, -43, 34 ]);
+        const result = first([12, 543, 921, -43, 34]);
 
         expect(result).toBe(12);
     });
@@ -68,7 +68,7 @@ describe("aggLast", () => {
     });
 
     test("returns first element in array", () => {
-        const result = last([ 12, 543, 921, -43, 34 ]);
+        const result = last([12, 543, 921, -43, 34]);
 
         expect(result).toBe(34);
     });
@@ -86,13 +86,13 @@ describe("aggMin", () => {
     });
 
     test("returns min of numbers", () => {
-        const result = min([ 12, 543, 921, -43, 34 ]);
+        const result = min([12, 543, 921, -43, 34]);
 
         expect(result).toBe(-43);
     });
 
     test("returns min of valid numbers", () => {
-        const result = min([ 35, 'foo', 921, undefined, -54, null, 65 ]);
+        const result = min([35, 'foo', 921, undefined, -54, null, 65]);
 
         expect(result).toBe(-54);
     });
@@ -102,7 +102,7 @@ describe("aggMin", () => {
     });
 
     test("returns null for invalid values", () => {
-        expect(min([ 'foo', undefined, null ])).toBeNull();
+        expect(min(['foo', undefined, null])).toBeNull();
     });
 });
 
@@ -114,13 +114,13 @@ describe("aggMax", () => {
     });
 
     test("returns min of numbers", () => {
-        const result = max([ 12, 543, 921, -43, 34 ]);
+        const result = max([12, 543, 921, -43, 34]);
 
         expect(result).toBe(921);
     });
 
     test("returns min of valid numbers", () => {
-        const result = max([ 35, 'foo', 634, undefined, -54, null, 65 ]);
+        const result = max([35, 'foo', 634, undefined, -54, null, 65]);
 
         expect(result).toBe(634);
     });
@@ -130,7 +130,7 @@ describe("aggMax", () => {
     });
 
     test("returns null for invalid values", () => {
-        expect(max([ 'foo', undefined, null ])).toBeNull();
+        expect(max(['foo', undefined, null])).toBeNull();
     });
 });
 
@@ -142,15 +142,15 @@ describe("aggCount", () => {
     });
 
     test("returns count of elements", () => {
-        const result = count([ 12, "foo", 921, -43, null ]);
+        const result = count([12, "foo", 921, -43, null]);
 
         expect(result.toNumber()).toBe(5);
         expect(result.toString()).toBe("5");
     });
 
     test("sums count from group aggregation objects", () => {
-        const result = count([ 14, { value: 12 }, { value: 3 } ]);
-        
+        const result = count([14, { value: 12 }, { value: 3 }]);
+
         expect(result.toNumber()).toBe(16);
     });
 });
@@ -163,21 +163,21 @@ describe("aggAvg", () => {
     });
 
     test("returns average of elements", () => {
-        const result = avg([ 5, 15, 34 ]);
+        const result = avg([5, 15, 34]);
 
         expect(result.toNumber()).toBe(18);
         expect(result.toString()).toBe("18");
     });
 
     test("returns average of valid elements", () => {
-        const result = avg([ 5, "foo", 18, undefined, 34, null ]);
+        const result = avg([5, "foo", 18, undefined, 34, null]);
 
         expect(result.toNumber()).toBe(19);
     });
 
     test("calculates average from group aggregation objects", () => {
-        const result = avg([ 16, { count: 3, value: 12 }, { count: 4, value: 32 }]);
-        
+        const result = avg([16, { count: 3, value: 12 }, { count: 4, value: 32 }]);
+
         expect(result.toNumber()).toBe(22.5);
     });
 

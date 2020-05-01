@@ -38,8 +38,10 @@ var SelectedRowsComp = /** @class */ (function (_super) {
         this.setValue(core_1._.formatNumberCommas(selectedRowCount));
         this.setDisplayed(selectedRowCount > 0);
         var eventListener = this.onRowSelectionChanged.bind(this);
-        this.eventService.addEventListener(core_1.Events.EVENT_MODEL_UPDATED, eventListener);
-        this.eventService.addEventListener(core_1.Events.EVENT_SELECTION_CHANGED, eventListener);
+        this.events = [
+            this.eventService.addEventListener(core_1.Events.EVENT_MODEL_UPDATED, eventListener),
+            this.eventService.addEventListener(core_1.Events.EVENT_SELECTION_CHANGED, eventListener)
+        ];
     };
     SelectedRowsComp.prototype.isValidRowModel = function () {
         // this component is only really useful with client or server side rowmodels

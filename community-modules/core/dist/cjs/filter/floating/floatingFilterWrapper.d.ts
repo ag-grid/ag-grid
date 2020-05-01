@@ -1,8 +1,8 @@
-// Type definitions for @ag-grid-community/core v23.0.2
+// Type definitions for @ag-grid-community/core v23.1.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
-import { Column } from "../../entities/column";
-import { Component } from "../../widgets/component";
+import { Column } from '../../entities/column';
+import { Component } from '../../widgets/component';
 export declare class FloatingFilterWrapper extends Component {
     private static filterToFloatingFilterNames;
     private static TEMPLATE;
@@ -33,6 +33,7 @@ export declare class FloatingFilterWrapper extends Component {
     private onColumnWidthChanged;
     private setupWithFloatingFilter;
     private parentFilterInstance;
+    private getFilterComponent;
     private getFloatingFilterInstance;
     private createDynamicParams;
     private getFilterComponentPrototype;

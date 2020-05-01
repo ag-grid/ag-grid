@@ -1,11 +1,11 @@
-// Type definitions for @ag-grid-community/core v23.0.2
+// Type definitions for @ag-grid-community/core v23.1.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
-import { IComponent } from "../../interfaces/iComponent";
-import { Column } from "../../entities/column";
-import { GridApi } from "../../gridApi";
-import { ProvidedFilterModel, IFilterComp, IFilterParams } from "../../interfaces/iFilter";
-import { FilterChangedEvent } from "../../events";
+import { IComponent } from '../../interfaces/iComponent';
+import { Column } from '../../entities/column';
+import { GridApi } from '../../gridApi';
+import { ProvidedFilterModel, IFilterComp, IFilterParams } from '../../interfaces/iFilter';
+import { FilterChangedEvent } from '../../events';
 export interface IFloatingFilterParams {
     column: Column;
     filterParams: IFilterParams;

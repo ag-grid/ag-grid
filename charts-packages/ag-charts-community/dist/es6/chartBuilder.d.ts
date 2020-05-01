@@ -1,10 +1,11 @@
-import { ChartOptions, CartesianChartOptions, PolarChartOptions, SeriesOptions, BarSeriesOptions, LineSeriesOptions, ScatterSeriesOptions, AreaSeriesOptions, PieSeriesOptions, LegendOptions, CaptionOptions, FontWeight, DropShadowOptions, AxisOptions, SeriesLabelOptions, MarkerOptions, HighlightOptions, AxisType } from "./chartOptions";
+import { ChartOptions, CartesianChartOptions, PolarChartOptions, SeriesOptions, BarSeriesOptions, LineSeriesOptions, ScatterSeriesOptions, AreaSeriesOptions, PieSeriesOptions, HistogramSeriesOptions, LegendOptions, CaptionOptions, FontWeight, DropShadowOptions, AxisOptions, SeriesLabelOptions, MarkerOptions, HighlightOptions, AxisType } from "./chartOptions";
 import { CartesianChart } from "./chart/cartesianChart";
 import { PolarChart } from "./chart/polarChart";
 import { LineSeries } from "./chart/series/cartesian/lineSeries";
 import { ScatterSeries } from "./chart/series/cartesian/scatterSeries";
-import { ColumnSeries as BarSeries } from "./chart/series/cartesian/columnSeries";
+import { BarSeries } from "./chart/series/cartesian/barSeries";
 import { AreaSeries } from "./chart/series/cartesian/areaSeries";
+import { HistogramSeries } from "./chart/series/cartesian/histogramSeries";
 import { PieSeries } from "./chart/series/polar/pieSeries";
 import { Chart } from "./chart/chart";
 import { Series, HighlightStyle } from "./chart/series/series";
@@ -29,6 +30,7 @@ export declare class ChartBuilder {
     static createScatterChart(container: HTMLElement, options: CartesianChartOptions<ScatterSeriesOptions>): CartesianChart;
     static createAreaChart(container: HTMLElement, options: CartesianChartOptions<AreaSeriesOptions>): CartesianChart;
     static createGroupedAreaChart(container: HTMLElement, options: CartesianChartOptions<AreaSeriesOptions>): GroupedCategoryChart;
+    static createHistogramChart(container: HTMLElement, options: CartesianChartOptions<AreaSeriesOptions>): CartesianChart;
     private static createPolarChart;
     static createDoughnutChart(container: HTMLElement, options: PolarChartOptions<PieSeriesOptions>): PolarChart;
     static createPieChart(container: HTMLElement, options: PolarChartOptions<PieSeriesOptions>): PolarChart;
@@ -41,6 +43,7 @@ export declare class ChartBuilder {
     static initBarSeries(series: BarSeries, options: BarSeriesOptions): BarSeries;
     static initAreaSeries(series: AreaSeries, options: AreaSeriesOptions): AreaSeries;
     static initPieSeries(series: PieSeries, options: PieSeriesOptions): PieSeries;
+    static initHistogramSeries(series: HistogramSeries, options: HistogramSeriesOptions): HistogramSeries;
     private static markerShapes;
     private static getMarkerByName;
     static initLegend(legend: Legend, options: LegendOptions): void;

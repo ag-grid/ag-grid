@@ -21,7 +21,7 @@ include '../documentation-main/documentation_header.php';
 
     <p>A simple example where the grid receives the initial data from a subscription, and updates via another.</p>
 
-    <p>In this example the grid only receives the the full row data via the 2nd subscription but makes uses of the <a href="../javascript-grid-data-update">deltaRowDataMode</a> method
+    <p>In this example the grid only receives the the full row data via the 2nd subscription but makes uses of the <a href="../javascript-grid-immutable-data/">Immutable Data</a> method
         of row updates for improved performance.</p>
 
     <?= grid_example('RxJS - With full data set supplied to the grid', 'rxjs-bulk', 'angular', ['showImportsDropdown' => false, 'exampleHeight' => 435, 'showResult' => true]); ?>

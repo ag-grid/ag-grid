@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v23.0.2
+ * @version v23.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -48,7 +48,6 @@ var TabbedLayout = /** @class */ (function (_super) {
         switch (e.keyCode) {
             case constants_1.Constants.KEY_RIGHT:
             case constants_1.Constants.KEY_LEFT:
-                e.preventDefault();
                 if (!this.eHeader.contains(document.activeElement)) {
                     return;
                 }
@@ -57,6 +56,7 @@ var TabbedLayout = /** @class */ (function (_super) {
                 if (currentPosition === nextPosition) {
                     return;
                 }
+                e.preventDefault();
                 var nextItem = this.items[nextPosition];
                 this.showItemWrapper(nextItem);
                 nextItem.eHeaderButton.focus();

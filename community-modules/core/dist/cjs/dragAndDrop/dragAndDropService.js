@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v23.0.2
+ * @version v23.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -114,7 +114,7 @@ var DragAndDropService = /** @class */ (function () {
             this.enterDragTargetIfExists(dropTarget, mouseEvent, hDirection, vDirection, fromNudge);
             this.lastDropTarget = dropTarget;
         }
-        else if (dropTarget) {
+        else if (dropTarget && dropTarget.onDragging) {
             var draggingEvent = this.createDropTargetEvent(dropTarget, mouseEvent, hDirection, vDirection, fromNudge);
             dropTarget.onDragging(draggingEvent);
         }
@@ -169,6 +169,16 @@ var DragAndDropService = /** @class */ (function () {
     DragAndDropService.prototype.addDropTarget = function (dropTarget) {
         this.dropTargets.push(dropTarget);
     };
+    DragAndDropService.prototype.removeDropTarget = function (dropTarget) {
+        this.dropTargets = this.dropTargets.filter(function (target) { return target.getContainer() !== dropTarget.getContainer(); });
+    };
+    DragAndDropService.prototype.hasExternalDropZones = function () {
+        return this.dropTargets.some(function (zones) { return zones.external; });
+    };
+    DragAndDropService.prototype.findExternalZone = function (params) {
+        var externalTargets = this.dropTargets.filter(function (target) { return target.external; });
+        return utils_1._.find(externalTargets, function (zone) { return zone.getContainer() === params.getContainer(); });
+    };
     DragAndDropService.prototype.getHorizontalDirection = function (event) {
         var clientX = this.eventLastTime.clientX;
         var eClientX = event.clientX;
@@ -186,15 +196,16 @@ var DragAndDropService = /** @class */ (function () {
         return clientY > eClientY ? VerticalDirection.Up : VerticalDirection.Down;
     };
     DragAndDropService.prototype.createDropTargetEvent = function (dropTarget, event, hDirection, vDirection, fromNudge) {
-        // localise x and y to the target component
-        var rect = dropTarget.getContainer().getBoundingClientRect();
-        var _a = this, dragItem = _a.dragItem, dragSource = _a.dragSource;
+        // localise x and y to the target
+        var dropZoneTarget = dropTarget.getContainer();
+        var rect = dropZoneTarget.getBoundingClientRect();
+        var _a = this, api = _a.gridApi, columnApi = _a.columnApi, dragItem = _a.dragItem, dragSource = _a.dragSource;
         var x = event.clientX - rect.left;
         var y = event.clientY - rect.top;
-        return { event: event, x: x, y: y, vDirection: vDirection, hDirection: hDirection, dragSource: dragSource, fromNudge: fromNudge, dragItem: dragItem };
+        return { event: event, x: x, y: y, vDirection: vDirection, hDirection: hDirection, dragSource: dragSource, fromNudge: fromNudge, dragItem: dragItem, api: api, columnApi: columnApi, dropZoneTarget: dropZoneTarget };
     };
     DragAndDropService.prototype.positionGhost = function (event) {
-        var ghost = this.eWrapper.querySelector('.ag-dnd-ghost');
+        var ghost = this.eGhost;
         var ghostRect = ghost.getBoundingClientRect();
         var ghostHeight = ghostRect.height;
         // for some reason, without the '-2', it still overlapped by 1 or 2 pixels, which
@@ -202,9 +213,7 @@ var DragAndDropService = /** @class */ (function () {
         // works around it which is good enough for me.
         var browserWidth = utils_1._.getBodyWidth() - 2;
         var browserHeight = utils_1._.getBodyHeight() - 2;
-        // put ghost vertically in middle of cursor
         var top = event.pageY - (ghostHeight / 2);
-        // horizontally, place cursor just right of icon
         var left = event.pageX - 10;
         var usrDocument = this.gridOptionsWrapper.getDocument();
         var windowScrollY = window.pageYOffset || usrDocument.documentElement.scrollTop;
@@ -222,39 +231,39 @@ var DragAndDropService = /** @class */ (function () {
         if (top < 0) {
             top = 0;
         }
-        ghost.style.left = left + 'px';
-        ghost.style.top = top + 'px';
+        ghost.style.left = left + "px";
+        ghost.style.top = top + "px";
     };
     DragAndDropService.prototype.removeGhost = function () {
-        if (this.eWrapper && this.eGhostParent) {
-            this.eGhostParent.removeChild(this.eWrapper);
+        if (this.eGhost && this.eGhostParent) {
+            this.eGhostParent.removeChild(this.eGhost);
         }
-        this.eWrapper = null;
+        this.eGhost = null;
     };
     DragAndDropService.prototype.createGhost = function () {
-        this.eWrapper = utils_1._.loadTemplate(DragAndDropService_1.GHOST_TEMPLATE);
+        this.eGhost = utils_1._.loadTemplate(DragAndDropService_1.GHOST_TEMPLATE);
         var theme = this.environment.getTheme().theme;
         if (theme) {
-            utils_1._.addCssClass(this.eWrapper, theme);
+            utils_1._.addCssClass(this.eGhost, theme);
         }
-        this.eGhostIcon = this.eWrapper.querySelector('.ag-dnd-ghost-icon');
+        this.eGhostIcon = this.eGhost.querySelector('.ag-dnd-ghost-icon');
         this.setGhostIcon(null);
-        var eText = this.eWrapper.querySelector('.ag-dnd-ghost-label');
+        var eText = this.eGhost.querySelector('.ag-dnd-ghost-label');
         var dragItemName = this.dragSource.dragItemName;
         if (utils_1._.isFunction(dragItemName)) {
             dragItemName = dragItemName();
         }
         eText.innerHTML = utils_1._.escape(dragItemName);
-        this.eWrapper.style.height = '25px';
-        this.eWrapper.style.top = '20px';
-        this.eWrapper.style.left = '20px';
+        this.eGhost.style.height = '25px';
+        this.eGhost.style.top = '20px';
+        this.eGhost.style.left = '20px';
         var usrDocument = this.gridOptionsWrapper.getDocument();
         this.eGhostParent = usrDocument.querySelector('body');
         if (!this.eGhostParent) {
             console.warn('ag-Grid: could not find document body, it is needed for dragging columns');
         }
         else {
-            this.eGhostParent.appendChild(this.eWrapper);
+            this.eGhostParent.appendChild(this.eGhost);
         }
     };
     DragAndDropService.prototype.setGhostIcon = function (iconName, shake) {
@@ -311,10 +320,7 @@ var DragAndDropService = /** @class */ (function () {
     DragAndDropService.ICON_PIVOT = 'pivot';
     DragAndDropService.ICON_NOT_ALLOWED = 'notAllowed';
     DragAndDropService.ICON_HIDE = 'hide';
-    DragAndDropService.GHOST_TEMPLATE = '<div ref="eWrapper" class="ag-dnd-wrapper ag-unselectable"><div class="ag-dnd-ghost">' +
-        '  <span class="ag-dnd-ghost-icon ag-shake-left-to-right"></span>' +
-        '  <div class="ag-dnd-ghost-label"></div>' +
-        '</div></div>';
+    DragAndDropService.GHOST_TEMPLATE = "<div class=\"ag-dnd-ghost ag-unselectable\">\n            <span class=\"ag-dnd-ghost-icon ag-shake-left-to-right\"></span>\n            <div class=\"ag-dnd-ghost-label\"></div>\n        </div>";
     __decorate([
         context_1.Autowired('gridOptionsWrapper')
     ], DragAndDropService.prototype, "gridOptionsWrapper", void 0);
@@ -324,6 +330,12 @@ var DragAndDropService = /** @class */ (function () {
     __decorate([
         context_1.Autowired('environment')
     ], DragAndDropService.prototype, "environment", void 0);
+    __decorate([
+        context_1.Autowired('columnApi')
+    ], DragAndDropService.prototype, "columnApi", void 0);
+    __decorate([
+        context_1.Autowired('gridApi')
+    ], DragAndDropService.prototype, "gridApi", void 0);
     __decorate([
         context_1.PostConstruct
     ], DragAndDropService.prototype, "init", null);

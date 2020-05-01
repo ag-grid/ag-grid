@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v23.0.2
+ * @version v23.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -66,7 +66,11 @@ var ColumnApi = /** @class */ (function () {
     ColumnApi.prototype.setColumnAggFunc = function (column, aggFunc) { this.columnController.setColumnAggFunc(column, aggFunc); };
     ColumnApi.prototype.setColumnWidth = function (key, newWidth, finished) {
         if (finished === void 0) { finished = true; }
-        this.columnController.setColumnWidth(key, newWidth, false, finished);
+        this.columnController.setColumnWidths([{ key: key, newWidth: newWidth }], false, finished);
+    };
+    ColumnApi.prototype.setColumnWidths = function (columnWidths, finished) {
+        if (finished === void 0) { finished = true; }
+        this.columnController.setColumnWidths(columnWidths, false, finished);
     };
     ColumnApi.prototype.setPivotMode = function (pivotMode) { this.columnController.setPivotMode(pivotMode); };
     ColumnApi.prototype.isPivotMode = function () { return this.columnController.isPivotMode(); };

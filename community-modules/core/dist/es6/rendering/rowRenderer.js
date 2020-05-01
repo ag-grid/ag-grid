@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v23.0.2
+ * @version v23.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -508,9 +508,9 @@ var RowRenderer = /** @class */ (function (_super) {
         }
     };
     RowRenderer.prototype.destroy = function () {
-        _super.prototype.destroy.call(this);
         var rowIndexesToRemove = Object.keys(this.rowCompsByIndex);
         this.removeRowComps(rowIndexesToRemove);
+        _super.prototype.destroy.call(this);
     };
     RowRenderer.prototype.binRowComps = function (recycleRows) {
         var _this = this;
@@ -563,19 +563,22 @@ var RowRenderer = /** @class */ (function (_super) {
         var indexesNotToDraw = existingIndexes.filter(function (index) { return !indexesToDrawMap[index]; });
         this.removeRowComps(indexesNotToDraw);
     };
-    RowRenderer.prototype.calculateIndexesToDraw = function () {
+    RowRenderer.prototype.calculateIndexesToDraw = function (rowsToRecycle) {
         var _this = this;
         // all in all indexes in the viewport
         var indexesToDraw = _.createArrayOfNumbers(this.firstRenderedRow, this.lastRenderedRow);
-        // add in indexes of rows we want to keep, because they are currently editing
-        _.iterateObject(this.rowCompsByIndex, function (indexStr, rowComp) {
+        var checkRowToDraw = function (indexStr, rowComp) {
             var index = Number(indexStr);
             if (index < _this.firstRenderedRow || index > _this.lastRenderedRow) {
                 if (_this.doNotUnVirtualiseRow(rowComp)) {
                     indexesToDraw.push(index);
                 }
             }
-        });
+        };
+        // if we are redrawing due to scrolling change, then old rows are in this.rowCompsByIndex
+        _.iterateObject(this.rowCompsByIndex, checkRowToDraw);
+        // if we are redrawing due to model update, then old rows are in rowsToRecycle
+        _.iterateObject(rowsToRecycle, checkRowToDraw);
         indexesToDraw.sort(function (a, b) { return a - b; });
         return indexesToDraw;
     };
@@ -591,7 +594,7 @@ var RowRenderer = /** @class */ (function (_super) {
         // this.rowCompsByIndex -> if just a scroll, then this will contain what is currently in the viewport
         // this is all the indexes we want, including those that already exist, so this method
         // will end up going through each index and drawing only if the row doesn't already exist
-        var indexesToDraw = this.calculateIndexesToDraw();
+        var indexesToDraw = this.calculateIndexesToDraw(rowsToRecycle);
         this.removeRowCompsNotToDraw(indexesToDraw);
         // never animate when doing print layout - as we want to get things ready to print as quickly as possible,
         // otherwise we risk the printer printing a row that's half faded (half way through fading in)

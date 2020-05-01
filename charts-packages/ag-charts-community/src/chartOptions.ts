@@ -1,8 +1,9 @@
 import { TooltipRendererParams } from "./chart/series/series";
-import { ColumnTooltipRendererParams as BarTooltipRendererParams } from "./chart/series/cartesian/columnSeries";
+import { BarTooltipRendererParams as BarTooltipRendererParams } from "./chart/series/cartesian/barSeries";
 import { LineTooltipRendererParams } from "./chart/series/cartesian/lineSeries";
 import { AreaTooltipRendererParams } from "./chart/series/cartesian/areaSeries";
 import { ScatterTooltipRendererParams } from "./chart/series/cartesian/scatterSeries";
+import { HistogramTooltipRendererParams } from "./chart/series/cartesian/histogramSeries"
 import { PieTooltipRendererParams } from "./chart/series/polar/pieSeries";
 import { LegendPosition } from "./chart/legend";
 import { FontStyle, FontWeight } from "./scene/shape/text";
@@ -22,7 +23,7 @@ export {
 };
 
 export type MarkerShape = 'circle' | 'cross' | 'diamond' | 'plus' | 'square' | 'triangle';
-export type CartesianSeriesType = 'line' | 'scatter' | 'bar' | 'area';
+export type CartesianSeriesType = 'line' | 'scatter' | 'bar' | 'area' | 'histogram';
 export type PolarSeriesType = 'pie';
 export type SeriesType = CartesianSeriesType | PolarSeriesType;
 
@@ -31,6 +32,7 @@ export interface SeriesOptions {
     data?: any[];
     visible?: boolean;
     showInLegend?: boolean;
+    listeners?: { [key in string]: Function };
 }
 
 export interface ChartOptions<T extends SeriesOptions> {
@@ -44,6 +46,7 @@ export interface ChartOptions<T extends SeriesOptions> {
     subtitle: CaptionOptions;
     legend: LegendOptions;
     tooltipClass?: string;
+    listeners?: { [key in string]: Function };
 }
 
 export interface PaddingOptions {
@@ -125,11 +128,18 @@ export interface AxisTickOptions {
     color?: string;
 }
 
+type AxisLabelFormatter = (params: {
+    value: any,
+    index: number,
+    fractionDigits?: number,
+    formatter?: (x: any) => string
+}) => string;
+
 export interface AxisLabelOptions extends FontOptions {
     padding?: number;
     rotation?: number;
     format?: string;
-    formatter?: (value: any, fractionDigits?: number) => string;
+    formatter?: AxisLabelFormatter;
     mirror?: boolean;
     parallel?: boolean;
 }
@@ -196,6 +206,17 @@ export interface BarSeriesFieldOptions {
 
     yKeys: string[];
     yNames?: string[];
+}
+
+export interface HistogramSeriesOptions extends SeriesOptions {
+    binCount?: number;
+    field?: LineSeriesFieldOptions;
+    fill?: SingleFillOptions;
+    stroke?: SingleStrokeOptions;
+    highlightStyle?: HighlightOptions;
+    tooltip?: TooltipOptions<HistogramTooltipRendererParams>;
+    label?: BarSeriesLabelOptions;
+    shadow?: DropShadowOptions;
 }
 
 export interface BarSeriesLabelOptions extends SeriesLabelOptions {

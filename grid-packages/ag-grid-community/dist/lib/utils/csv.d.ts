@@ -1,3 +1,1 @@
-export declare class CsvUtils {
-    static stringToArray(strData: string, delimiter?: string): string[][];
-}
+export declare function stringToArray(strData: string, delimiter?: string): string[][];

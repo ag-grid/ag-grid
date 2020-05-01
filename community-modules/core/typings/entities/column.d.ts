@@ -126,6 +126,7 @@ export declare class Column implements ColumnGroupChild, OriginalColumnGroupChil
     getMinWidth(): number;
     getMaxWidth(): number;
     getFlex(): number;
+    setFlex(flex: number): void;
     setMinimum(source?: ColumnEventType): void;
     setRowGroupActive(rowGroup: boolean, source?: ColumnEventType): void;
     isRowGroupActive(): boolean;

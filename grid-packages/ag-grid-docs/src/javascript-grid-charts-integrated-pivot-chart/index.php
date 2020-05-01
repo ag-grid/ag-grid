@@ -23,7 +23,7 @@ include '../documentation-main/documentation_header.php';
         Try it out on our <a href="../example.php">demo page</a> by doing the following:
     </p>
 
-    <ul>
+    <ul class="content">
         <li>
             Enter <a href="../javascript-grid-pivoting/#pivot-mode">Pivot Mode</a> and select a combination of group,
             pivot and value columns.
@@ -35,7 +35,7 @@ include '../documentation-main/documentation_header.php';
     </ul>
 
     <div class="animated-example">
-        <img data-gifffer="pivot-chart.gif" data-gifffer-width="99%" />
+        <img data-gifffer="pivot-chart.gif" data-gifffer-width="99%" style="width: 100%; height: 100%" />
     </div>
 
     <p>

@@ -1,8 +1,8 @@
-import { IComponent } from "../../interfaces/iComponent";
-import { Column } from "../../entities/column";
-import { GridApi } from "../../gridApi";
-import { ProvidedFilterModel, IFilterComp, IFilterParams } from "../../interfaces/iFilter";
-import { FilterChangedEvent } from "../../events";
+import { IComponent } from '../../interfaces/iComponent';
+import { Column } from '../../entities/column';
+import { GridApi } from '../../gridApi';
+import { ProvidedFilterModel, IFilterComp, IFilterParams } from '../../interfaces/iFilter';
+import { FilterChangedEvent } from '../../events';
 export interface IFloatingFilterParams {
     column: Column;
     filterParams: IFilterParams;

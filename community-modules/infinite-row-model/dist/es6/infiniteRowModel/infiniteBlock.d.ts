@@ -5,6 +5,8 @@ export declare class InfiniteBlock extends RowNodeBlock implements IEventEmitter
     private rowRenderer;
     private cacheParams;
     constructor(pageNumber: number, params: InfiniteCacheParams);
+    getDisplayIndexStart(): number;
+    getDisplayIndexEnd(): number;
     protected createBlankRowNode(rowIndex: number): RowNode;
     protected setDataAndId(rowNode: RowNode, data: any, index: number): void;
     setRowNode(rowIndex: number, rowNode: RowNode): void;

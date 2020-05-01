@@ -3,7 +3,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var group_1 = require("./scene/group");
 var selection_1 = require("./scene/selection");
 var line_1 = require("./scene/shape/line");
-var ticks_1 = require("./util/ticks");
 var angle_1 = require("./util/angle");
 var text_1 = require("./scene/shape/text");
 var arc_1 = require("./scene/shape/arc");
@@ -341,7 +340,8 @@ var Axis = /** @class */ (function () {
             });
         }
         var tickFormatter = this.tickFormatter;
-        var fractionDigits = ticks instanceof ticks_1.NumericTicks ? ticks.fractionDigits : 0;
+        // `ticks instanceof NumericTicks` doesn't work here, so we feature detect.
+        var fractionDigits = ticks.fractionDigits >= 0 ? ticks.fractionDigits : 0;
         var labelSelection = groupSelection.selectByClass(text_1.Text)
             .each(function (node, datum, index) {
             node.fontStyle = label.fontStyle;

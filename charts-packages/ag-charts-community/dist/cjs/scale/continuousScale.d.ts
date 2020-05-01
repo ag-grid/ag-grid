@@ -23,24 +23,20 @@ export default abstract class ContinuousScale implements Scale<any, any> {
     unknown: any;
     constructor();
     private _clamp;
-    set clamp(value: boolean);
-    get clamp(): boolean;
+    clamp: boolean;
     protected _domain: any[];
     protected setDomain(values: any[]): void;
     protected getDomain(): any[];
-    set domain(values: any[]);
-    get domain(): any[];
+    domain: any[];
     protected _range: any[];
-    set range(values: any[]);
-    get range(): any[];
+    range: any[];
     private input?;
     private output?;
     private piecewise?;
     protected transform: (x: any) => any;
     protected untransform: (x: any) => any;
     private _interpolate;
-    set interpolate(value: any);
-    get interpolate(): any;
+    interpolate: any;
     protected rescale(): void;
     /**
      * Returns a function that converts `x` in `[a, b]` to `t` in `[0, 1]`. Non-clamping.

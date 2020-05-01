@@ -1,10 +1,10 @@
-import {Component} from "../../../widgets/component";
-import {IFloatingFilterComp, IFloatingFilterParams} from "../floatingFilter";
-import {ProvidedFilterModel} from "../../../interfaces/iFilter";
-import {ICombinedSimpleModel, ISimpleFilterModel, SimpleFilter} from "../../provided/simpleFilter";
-import {OptionsFactory} from "../../provided/optionsFactory";
-import {IScalarFilterParams} from "../../provided/scalerFilter";
-import {FilterChangedEvent} from "../../../events";
+import { Component } from '../../../widgets/component';
+import { IFloatingFilterComp, IFloatingFilterParams } from '../floatingFilter';
+import { ProvidedFilterModel } from '../../../interfaces/iFilter';
+import { ICombinedSimpleModel, ISimpleFilterModel, SimpleFilter } from '../../provided/simpleFilter';
+import { OptionsFactory } from '../../provided/optionsFactory';
+import { IScalarFilterParams } from '../../provided/scalarFilter';
+import { FilterChangedEvent } from '../../../events';
 
 export abstract class SimpleFloatingFilter extends Component implements IFloatingFilterComp {
 
@@ -49,7 +49,7 @@ export abstract class SimpleFloatingFilter extends Component implements IFloatin
     }
 
     protected isEventFromFloatingFilter(event: FilterChangedEvent): boolean {
-        return (event && (event as any).afterFloatingFilter);
+        return event && event.afterFloatingFilter;
     }
 
     protected getLastType(): string {
@@ -78,7 +78,6 @@ export abstract class SimpleFloatingFilter extends Component implements IFloatin
     }
 
     protected canWeEditAfterModelFromParentFilter(model: ProvidedFilterModel): boolean {
-
         if (!model) {
             // if no model, then we can edit as long as the lastType is something we can edit, as this
             // is the type we will provide to the parent filter if the user decides to use the floating filter.
@@ -87,14 +86,14 @@ export abstract class SimpleFloatingFilter extends Component implements IFloatin
 
         // never allow editing if the filter is combined (ie has two parts)
         const isCombined = (model as any).operator;
+
         if (isCombined) {
             return false;
         }
 
         const simpleModel = model as ISimpleFilterModel;
 
-        const typeIsEditable = this.isTypeEditable(simpleModel.type);
-        return typeIsEditable;
+        return this.isTypeEditable(simpleModel.type);
     }
 
     public init(params: IFloatingFilterParams): void {
@@ -116,13 +115,9 @@ export abstract class SimpleFloatingFilter extends Component implements IFloatin
     }
 
     private isTypeEditable(type: string): boolean {
-
-        if (this.doesFilterHaveHiddenInput(type)) {
-            return false;
-        }
-
-        return type
-            && (type != SimpleFilter.IN_RANGE)
-            && (type != SimpleFilter.EMPTY);
+        return !this.doesFilterHaveHiddenInput(type) &&
+            type
+            && type !== SimpleFilter.IN_RANGE
+            && type !== SimpleFilter.EMPTY;
     }
 }

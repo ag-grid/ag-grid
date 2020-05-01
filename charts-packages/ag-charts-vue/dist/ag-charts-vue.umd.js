@@ -718,7 +718,7 @@ vue_class_component_esm_Component.registerHooks = function registerHooks(keys) {
 
 
 // CONCATENATED MODULE: ./node_modules/vue-property-decorator/lib/vue-property-decorator.js
-/** vue-property-decorator verson 8.4.1 MIT LICENSE copyright 2019 kaorun343 */
+/** vue-property-decorator verson 8.4.2 MIT LICENSE copyright 2019 kaorun343 */
 /// <reference types='reflect-metadata'/>
 
 
@@ -956,11 +956,19 @@ function Emit(event) {
                         _this.$emit(emitName, args[0]);
                     }
                     else {
-                        _this.$emit(emitName, args);
+                        _this.$emit.apply(_this, [emitName].concat(args));
                     }
                 }
                 else {
-                    _this.$emit(emitName, returnValue);
+                    if (args.length === 0) {
+                        _this.$emit(emitName, returnValue);
+                    }
+                    else if (args.length === 1) {
+                        _this.$emit(emitName, returnValue, args[0]);
+                    }
+                    else {
+                        _this.$emit.apply(_this, [emitName, returnValue].concat(args));
+                    }
                 }
             };
             var returnValue = original.apply(this, args);

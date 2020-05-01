@@ -1,6 +1,6 @@
-import { GridOptionsWrapper } from "../../gridOptionsWrapper";
-import { Component } from "../../widgets/component";
-import { UserComponentFactory } from "../../components/framework/userComponentFactory";
+import { GridOptionsWrapper } from '../../gridOptionsWrapper';
+import { Component } from '../../widgets/component';
+import { UserComponentFactory } from '../../components/framework/userComponentFactory';
 export declare class OverlayWrapperComponent extends Component {
     private static TEMPLATE;
     gridOptionsWrapper: GridOptionsWrapper;

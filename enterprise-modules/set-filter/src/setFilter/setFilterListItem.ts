@@ -3,21 +3,20 @@ import {
     AgEvent,
     Autowired,
     ColDef,
-    Column,
     Component,
+    Column,
     GridOptionsWrapper,
-    ICellRendererComp,
     ISetFilterParams,
     PostConstruct,
-    Promise,
     UserComponentFactory,
     ValueFormatterService,
     RefSelector,
-    _
-} from "@ag-grid-community/core";
+    _,
+    TooltipFeature,
+    ISetFilterCellRendererParams,
+} from '@ag-grid-community/core';
 
-
-export interface SelectedEvent extends AgEvent {}
+export interface SelectedEvent extends AgEvent { }
 
 export class SetFilterListItem extends Component {
     public static EVENT_SELECTED = 'selected';
@@ -26,48 +25,34 @@ export class SetFilterListItem extends Component {
     @Autowired('valueFormatterService') private valueFormatterService: ValueFormatterService;
     @Autowired('userComponentFactory') private userComponentFactory: UserComponentFactory;
 
-    private static TEMPLATE = 
-        `<label class="ag-set-filter-item">
+    @RefSelector('eFilterItemValue') private eFilterItemValue: HTMLElement;
+
+    private static TEMPLATE = /* html */`
+        <label class="ag-set-filter-item">
             <ag-checkbox ref="eCheckbox" class="ag-set-filter-item-checkbox"></ag-checkbox>
-            <span class="ag-set-filter-item-value"></span>
+            <span ref="eFilterItemValue" class="ag-set-filter-item-value"></span>
         </label>`;
 
     @RefSelector('eCheckbox') private eCheckbox: AgCheckbox;
 
     private selected: boolean = true;
-    private value: any;
-    private column: Column;
+    private tooltipText: string;
 
-    constructor(value: any, column: Column) {
+    constructor(private readonly value: any, private readonly params: ISetFilterParams) {
         super(SetFilterListItem.TEMPLATE);
-        this.value = value;
-        this.column = column;
-    }
-
-    private useCellRenderer(target: ColDef, eTarget: HTMLElement, params: any): Promise<ICellRendererComp> {
-        const cellRendererPromise: Promise<ICellRendererComp> = this.userComponentFactory.newCellRenderer(target.filterParams as ISetFilterParams, params);
-        if (cellRendererPromise != null) {
-            _.bindCellRendererToHtmlElement(cellRendererPromise, eTarget);
-        } else {
-            if (params.valueFormatted == null && params.value == null) {
-                const localeTextFunc = this.gridOptionsWrapper.getLocaleTextFunc();
-                eTarget.innerText = '(' + localeTextFunc('blanks', 'Blanks') + ')';
-            } else {
-                eTarget.innerText = params.valueFormatted != null ? params.valueFormatted : params.value;
-            }
-        }
-        return cellRendererPromise;
     }
 
     @PostConstruct
     private init(): void {
         this.render();
 
-        this.eCheckbox.onValueChange((value) => {
+        this.eCheckbox.onValueChange(value => {
             this.selected = value;
+
             const event: SelectedEvent = {
                 type: SetFilterListItem.EVENT_SELECTED
             };
+
             return this.dispatchEvent(event);
         });
     }
@@ -86,29 +71,68 @@ export class SetFilterListItem extends Component {
     }
 
     public render(): void {
-        const valueElement = this.queryForHtmlElement('.ag-set-filter-item-value');
-        const colDef = this.column.getColDef();
-        const filterValueFormatter = this.getFilterValueFormatter(colDef);
-        const valueFormatted = this.valueFormatterService.formatValue(this.column, null, null, this.value, filterValueFormatter);
+        const { value, params: { column, colDef } } = this;
+        const formattedValue = this.getFormattedValue(colDef, column, value);
 
-        const params = {
-            value: this.value,
-            valueFormatted: valueFormatted,
+        if (this.params.showTooltips) {
+            this.tooltipText = _.escape(formattedValue != null ? formattedValue : value);
+
+            if (_.exists(this.tooltipText)) {
+                if (this.gridOptionsWrapper.isEnableBrowserTooltips()) {
+                    this.eFilterItemValue.title = this.tooltipText;
+                } else {
+                    this.addFeature(new TooltipFeature(this, 'setFilterValue'));
+                }
+            }
+        }
+
+        const params: ISetFilterCellRendererParams = {
+            value,
+            valueFormatted: formattedValue,
             api: this.gridOptionsWrapper.getApi()
         };
 
-        const componentPromise: Promise<ICellRendererComp> = this.useCellRenderer(colDef, valueElement, params);
+        this.renderCell(colDef, this.eFilterItemValue, params);
+    }
 
-        if (!componentPromise) { return; }
+    private getFormattedValue(colDef: ColDef, column: Column, value: any) {
+        const filterParams = colDef.filterParams as ISetFilterParams;
+        const formatter = filterParams == null ? null : filterParams.valueFormatter;
 
-        componentPromise.then(component => {
+        return this.valueFormatterService.formatValue(column, null, null, value, formatter, false);
+    }
+
+    private renderCell(target: ColDef, eTarget: HTMLElement, params: any): void {
+        const filterParams = target.filterParams as ISetFilterParams;
+        const cellRendererPromise = this.userComponentFactory.newSetFilterCellRenderer(filterParams, params);
+
+        if (cellRendererPromise == null) {
+            const valueToRender = params.valueFormatted == null ? params.value : params.valueFormatted;
+
+            if (valueToRender == null) {
+                const localeTextFunc = this.gridOptionsWrapper.getLocaleTextFunc();
+                eTarget.innerText = `(${localeTextFunc('blanks', 'Blanks')})`;
+            } else {
+                eTarget.innerText = valueToRender;
+            }
+
+            return;
+        }
+
+        _.bindCellRendererToHtmlElement(cellRendererPromise, eTarget);
+
+        cellRendererPromise.then(component => {
             if (component && component.destroy) {
                 this.addDestroyFunc(component.destroy.bind(component));
             }
         });
     }
 
-    private getFilterValueFormatter(colDef: ColDef) {
-        return colDef.filterParams ? (<ISetFilterParams>colDef.filterParams).valueFormatter : undefined;
+    public getComponentHolder(): ColDef {
+        return this.params.column.getColDef();
+    }
+
+    public getTooltipText(): string {
+        return this.tooltipText;
     }
 }

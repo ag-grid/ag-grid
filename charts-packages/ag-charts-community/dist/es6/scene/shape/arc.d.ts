@@ -27,27 +27,20 @@ export declare class Arc extends Path {
     };
     constructor();
     private _centerX;
-    set centerX(value: number);
-    get centerX(): number;
+    centerX: number;
     private _centerY;
-    set centerY(value: number);
-    get centerY(): number;
+    centerY: number;
     private _radiusX;
-    set radiusX(value: number);
-    get radiusX(): number;
+    radiusX: number;
     private _radiusY;
-    set radiusY(value: number);
-    get radiusY(): number;
+    radiusY: number;
     private _startAngle;
-    set startAngle(value: number);
-    get startAngle(): number;
+    startAngle: number;
     private _endAngle;
-    set endAngle(value: number);
-    get endAngle(): number;
-    private get fullPie();
+    endAngle: number;
+    private readonly fullPie;
     private _counterClockwise;
-    set counterClockwise(value: boolean);
-    get counterClockwise(): boolean;
+    counterClockwise: boolean;
     /**
      * The type of arc to render:
      * - {@link ArcType.Open} - end points of the arc segment are not connected (default)
@@ -61,8 +54,7 @@ export declare class Arc extends Path {
      * to create a closed path.
      */
     private _type;
-    set type(value: ArcType);
-    get type(): ArcType;
+    type: ArcType;
     updatePath(): void;
     computeBBox(): BBox;
     isPointInPath(x: number, y: number): boolean;

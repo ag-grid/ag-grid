@@ -1,6 +1,5 @@
 export interface ComponentType {
     propertyName: string;
-
     isCellRenderer(): boolean;
 }
 

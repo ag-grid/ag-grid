@@ -84,15 +84,15 @@ export declare class Selection<G extends Node | EnterNode, P extends Node | Ente
     /**
      * Returns the total number of nodes in this selection.
      */
-    get size(): number;
+    readonly size: number;
     /**
      * Returns the array of data for the selected elements.
      */
-    get data(): GDatum[];
+    readonly data: GDatum[];
     private enterGroups?;
     private exitGroups?;
-    get enter(): Selection<EnterNode, P, GDatum, PDatum>;
-    get exit(): Selection<G, P, GDatum, PDatum>;
+    readonly enter: Selection<EnterNode, P, GDatum, PDatum>;
+    readonly exit: Selection<G, P, GDatum, PDatum>;
     /**
      * Binds the given value to each selected node and returns this selection
      * with its {@link GDatum} type changed to the type of the given value.
@@ -105,7 +105,7 @@ export declare class Selection<G extends Node | EnterNode, P extends Node | Ente
      * Returns the bound datum for the first non-null element in the selection.
      * This is generally useful only if you know the selection contains exactly one element.
      */
-    get datum(): GDatum;
+    readonly datum: GDatum;
     /**
      * Binds the specified array of values with the selected nodes, returning a new selection
      * that represents the _update_ selection: the nodes successfully bound to the values.

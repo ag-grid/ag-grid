@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v23.0.2
+ * @version v23.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -32,8 +32,11 @@ var events_1 = require("../events");
 var headerWrapperComp_1 = require("./header/headerWrapperComp");
 var headerGroupWrapperComp_1 = require("./headerGroup/headerGroupWrapperComp");
 var constants_1 = require("../constants");
-var utils_1 = require("../utils");
 var floatingFilterWrapper_1 = require("../filter/floating/floatingFilterWrapper");
+var browser_1 = require("../utils/browser");
+var generic_1 = require("../utils/generic");
+var array_1 = require("../utils/array");
+var dom_1 = require("../utils/dom");
 var HeaderRowType;
 (function (HeaderRowType) {
     HeaderRowType[HeaderRowType["COLUMN_GROUP"] = 0] = "COLUMN_GROUP";
@@ -43,15 +46,15 @@ var HeaderRowType;
 var HeaderRowComp = /** @class */ (function (_super) {
     __extends(HeaderRowComp, _super);
     function HeaderRowComp(dept, type, pinned, dropTarget) {
-        var _this = _super.call(this, "<div class=\"ag-header-row\" role=\"row\"/>") || this;
+        var _this = _super.call(this, /* html */ "<div class=\"ag-header-row\" role=\"row\" />") || this;
         _this.headerComps = {};
         _this.dept = dept;
         _this.type = type;
         _this.pinned = pinned;
         _this.dropTarget = dropTarget;
-        var niceClassName = HeaderRowType[type].toLowerCase().replace(/_/g, "-");
+        var niceClassName = HeaderRowType[type].toLowerCase().replace(/_/g, '-');
         _this.addCssClass("ag-header-row-" + niceClassName);
-        if (utils_1._.isBrowserSafari()) {
+        if (browser_1.isBrowserSafari()) {
             // fix for a Safari rendering bug that caused the header to flicker above chart panels
             // as you move the mouse over the header
             _this.getGui().style.transform = 'translateZ(0)';
@@ -84,18 +87,17 @@ var HeaderRowComp = /** @class */ (function (_super) {
         var numberOfFloating = 0;
         var groupHeight;
         var headerHeight;
-        if (!this.columnController.isPivotMode()) {
-            if (this.gridOptionsWrapper.isFloatingFilter()) {
-                headerRowCount++;
-            }
-            numberOfFloating = (this.gridOptionsWrapper.isFloatingFilter()) ? 1 : 0;
-            groupHeight = this.gridOptionsWrapper.getGroupHeaderHeight();
-            headerHeight = this.gridOptionsWrapper.getHeaderHeight();
-        }
-        else {
-            numberOfFloating = 0;
+        if (this.columnController.isPivotMode()) {
             groupHeight = this.gridOptionsWrapper.getPivotGroupHeaderHeight();
             headerHeight = this.gridOptionsWrapper.getPivotHeaderHeight();
+        }
+        else {
+            if (this.columnController.hasFloatingFilters()) {
+                headerRowCount++;
+                numberOfFloating = 1;
+            }
+            groupHeight = this.gridOptionsWrapper.getGroupHeaderHeight();
+            headerHeight = this.gridOptionsWrapper.getHeaderHeight();
         }
         var numberOfNonGroups = 1 + numberOfFloating;
         var numberOfGroups = headerRowCount - numberOfNonGroups;
@@ -138,7 +140,7 @@ var HeaderRowComp = /** @class */ (function (_super) {
     HeaderRowComp.prototype.getWidthForRow = function () {
         var printLayout = this.gridOptionsWrapper.getDomLayout() === constants_1.Constants.DOM_LAYOUT_PRINT;
         if (printLayout) {
-            var centerRow = utils_1._.missing(this.pinned);
+            var centerRow = generic_1.missing(this.pinned);
             if (centerRow) {
                 return this.columnController.getContainerWidth(constants_1.Constants.PINNED_RIGHT)
                     + this.columnController.getContainerWidth(constants_1.Constants.PINNED_LEFT)
@@ -169,7 +171,7 @@ var HeaderRowComp = /** @class */ (function (_super) {
         var printLayout = this.gridOptionsWrapper.getDomLayout() === constants_1.Constants.DOM_LAYOUT_PRINT;
         if (printLayout) {
             // for print layout, we add all columns into the center
-            var centerContainer = utils_1._.missing(this.pinned);
+            var centerContainer = generic_1.missing(this.pinned);
             if (centerContainer) {
                 var result_1 = [];
                 [constants_1.Constants.PINNED_LEFT, null, constants_1.Constants.PINNED_RIGHT].forEach(function (pinned) {
@@ -211,7 +213,7 @@ var HeaderRowComp = /** @class */ (function (_super) {
             var headerComp;
             var eHeaderCompGui;
             if (colAlreadyInDom) {
-                utils_1._.removeFromArray(currentChildIds, idOfChild);
+                array_1.removeFromArray(currentChildIds, idOfChild);
             }
             else {
                 headerComp = _this.createHeaderComp(child);
@@ -226,7 +228,7 @@ var HeaderRowComp = /** @class */ (function (_super) {
         var ensureDomOrder = this.gridOptionsWrapper.isEnsureDomOrder();
         if (ensureDomOrder) {
             var correctChildOrder = correctChildIds.map(function (id) { return _this.headerComps[id].getGui(); });
-            utils_1._.setDomChildOrder(this.getGui(), correctChildOrder);
+            dom_1.setDomChildOrder(this.getGui(), correctChildOrder);
         }
     };
     HeaderRowComp.prototype.createHeaderComp = function (columnGroupChild) {
@@ -249,17 +251,11 @@ var HeaderRowComp = /** @class */ (function (_super) {
         context_1.Autowired('gridOptionsWrapper')
     ], HeaderRowComp.prototype, "gridOptionsWrapper", void 0);
     __decorate([
-        context_1.Autowired('gridApi')
-    ], HeaderRowComp.prototype, "gridApi", void 0);
-    __decorate([
         context_1.Autowired('columnController')
     ], HeaderRowComp.prototype, "columnController", void 0);
     __decorate([
         context_1.Autowired('eventService')
     ], HeaderRowComp.prototype, "eventService", void 0);
-    __decorate([
-        context_1.Autowired('filterManager')
-    ], HeaderRowComp.prototype, "filterManager", void 0);
     __decorate([
         context_1.PostConstruct
     ], HeaderRowComp.prototype, "init", null);

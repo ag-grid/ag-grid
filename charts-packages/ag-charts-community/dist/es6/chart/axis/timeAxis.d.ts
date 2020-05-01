@@ -4,8 +4,6 @@ export declare class TimeAxis extends ChartAxis {
     static type: string;
     constructor();
     private _nice;
-    set nice(value: boolean);
-    get nice(): boolean;
-    set domain(value: Date[]);
-    get domain(): Date[];
+    nice: boolean;
+    domain: Date[];
 }

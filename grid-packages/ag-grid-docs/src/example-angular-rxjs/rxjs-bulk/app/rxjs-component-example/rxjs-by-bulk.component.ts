@@ -3,7 +3,7 @@ import {Component} from "@angular/core";
 import {AllCommunityModules, GridOptions} from "@ag-grid-community/all-modules";
 
 import "@ag-grid-community/all-modules/dist/styles/ag-grid.css";
-import "@ag-grid-community/all-modules/dist/styles/ag-theme-balham.css";
+import "@ag-grid-community/all-modules/dist/styles/ag-theme-alpine.css";
 
 import {MockServerService} from "./mockServer.service";
 
@@ -27,7 +27,7 @@ export class RxJsComponentByFullSet {
             enableRangeSelection: true,
             columnDefs: this.createColumnDefs(),
 
-            deltaRowDataMode: true,
+            immutableData: true,
             getRowNodeId: function (data) {
                 // the code is unique, so perfect for the id
                 return data.code;
@@ -43,7 +43,7 @@ export class RxJsComponentByFullSet {
                         }
 
                         // now listen for updates
-                        // we're using deltaRowDataMode this time, so although we're setting the entire
+                        // we're using immutableData this time, so although we're setting the entire
                         // data set here, the grid will only re-render changed rows, improving performance
                         this.rowDataUpdates$.subscribe((newRowData) => {
                             if (this.gridOptions.api) { // can be null when tabbing between the examples

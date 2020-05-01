@@ -29,10 +29,8 @@ export declare class GroupedCategoryAxis extends ChartAxis {
     private tickTreeLayout?;
     private longestSeparatorLength;
     constructor();
-    set domain(value: any[]);
-    get domain(): any[];
-    set range(value: [number, number]);
-    get range(): [number, number];
+    domain: any[];
+    range: [number, number];
     private resizeTickTree;
     readonly translation: {
         /**
@@ -60,7 +58,7 @@ export declare class GroupedCategoryAxis extends ChartAxis {
         color?: string;
     };
     readonly label: GroupedCategoryAxisLabel;
-    private get lineHeight();
+    private readonly lineHeight;
     /**
      * The color of the labels.
      * Use `undefined` rather than `rgba(0, 0, 0, 0)` to make labels invisible.
@@ -69,8 +67,7 @@ export declare class GroupedCategoryAxis extends ChartAxis {
     /**
      * The length of the grid. The grid is only visible in case of a non-zero value.
      */
-    set gridLength(value: number);
-    get gridLength(): number;
+    gridLength: number;
     /**
      * Creates/removes/updates the scene graph nodes that constitute the axis.
      * Supposed to be called _manually_ after changing _any_ of the axis properties.

@@ -14,9 +14,9 @@ export declare class EventService implements IEventEmitter {
     private firedEvents;
     setBeans(loggerFactory: LoggerFactory, gridOptionsWrapper: GridOptionsWrapper, globalEventListener?: Function): void;
     private getListeners;
-    addEventListener(eventType: string, listener: Function, async?: boolean): void;
+    addEventListener(eventType: string, listener: Function, async?: boolean): () => void;
     removeEventListener(eventType: string, listener: Function, async?: boolean): void;
-    addModalPriorityEventListener(eventType: string, listener: Function, async?: boolean): void;
+    addModalPriorityEventListener(eventType: string, listener: Function, async?: boolean): () => void;
     addGlobalListener(listener: Function, async?: boolean): void;
     removeGlobalListener(listener: Function, async?: boolean): void;
     dispatchEvent(event: AgEvent): void;

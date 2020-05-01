@@ -43,5 +43,5 @@ export declare class GridCore extends Component {
     openToolPanel(key: string): void;
     isToolPanelShowing(): boolean;
     destroy(): void;
-    ensureNodeVisible(comparator: any, position?: string): void;
+    ensureNodeVisible(comparator: any, position?: string | null): void;
 }

@@ -3,7 +3,7 @@ import {Component} from "@angular/core";
 import {GridOptions, AllCommunityModules} from "@ag-grid-community/all-modules";
 
 import "@ag-grid-community/all-modules/dist/styles/ag-grid.css";
-import "@ag-grid-community/all-modules/dist/styles/ag-theme-balham.css";
+import "@ag-grid-community/all-modules/dist/styles/ag-theme-alpine.css";
 
 import {MockServerService} from "./mockServer.service";
 
@@ -43,7 +43,7 @@ export class RxJsComponentByRow {
                         // rows will get re-rendered, improving performance
                         this.rowDataUpdates$.subscribe((updates) => {
                             if (this.gridOptions.api) { // can be null when tabbing between the examples
-                                this.gridOptions.api.updateRowData({update: updates})
+                                this.gridOptions.api.applyTransaction({update: updates})
                             }
                         });
                     }

@@ -5,8 +5,8 @@ var columnDefs = [
         valueGetter: 'node.id',
         cellRenderer: 'loadingRenderer'
     },
-    { field: 'make'},
-    { field: 'model'},
+    { field: 'make' },
+    { field: 'model' },
     {
         field: 'price',
         valueFormatter: function(params) {
@@ -33,11 +33,6 @@ function createRowData(id) {
         model: models[id % models.length],
         price: 72000
     };
-}
-
-function liveInsertItemsAt2(count) {
-    var newDataItems = insertItemsAt2(count);
-    gridOptions.api.updateRowData({addIndex: 2, add: newDataItems});
 }
 
 function insertItemsAt2AndRefresh(count) {
@@ -147,12 +142,12 @@ var datasource = {
 };
 
 var gridOptions = {
-    components:{
+    components: {
         loadingRenderer: function(params) {
             if (params.value !== undefined) {
                 return params.value;
             } else {
-                return '<img src="../images/loading.gif">';
+                return '<img src="https://raw.githubusercontent.com/ag-grid/ag-grid/master/grid-packages/ag-grid-docs/src/images/loading.gif">';
             }
         }
     },

@@ -4,7 +4,7 @@
     // CELL (SHARED)
 
     .ag-column-drop-cell {
-        background: ag-param(chip-background-color);
+        @include ag-color-property(background, chip-background-color);
         border-radius: ag-param(grid-size) * 4;
         height: ag-param(grid-size) * 4;
         padding: 0 ag-param(grid-size) / 2;
@@ -18,7 +18,7 @@
         min-width: ag-param(grid-size) * 4;
 
         margin: 0 ag-param(grid-size) / 2;
-        color: ag-param(secondary-foreground-color);
+        @include ag-color-property(color, secondary-foreground-color);
     }
     
     .ag-column-drop-cell-drag-handle {
@@ -32,8 +32,8 @@
     // HORIZONTAL COLUMN DROP
     
     .ag-column-drop-horizontal {
-        background-color: ag-param(control-panel-background-color);
-        color: ag-param(secondary-foreground-color);
+        @include ag-color-property(background-color, control-panel-background-color);
+        @include ag-color-property(color, secondary-foreground-color);
         height: ag-param(row-height);
         @include ag-border(primary, bottom);
 
@@ -42,17 +42,17 @@
     
     .ag-column-drop-horizontal-half-width:not(:last-child) {
         @if ag-param(borders) {
-            @include ag-theme-rtl((border-right: solid 1px ag-param(border-color)));
+            @include ag-theme-rtl((border-right: solid 1px), $color-param: border-color);
         }
     }
 
     .ag-column-drop-horizontal-cell-separator {
         margin: 0 ag-param(grid-size);
-        color: ag-param(secondary-foreground-color);
+        @include ag-color-property(color, secondary-foreground-color);
     }
 
     .ag-column-drop-horizontal-empty-message {
-        color: ag-param(disabled-foreground-color);
+        @include ag-color-property(color, disabled-foreground-color);
     }
 
     .ag-column-drop-horizontal-icon {
@@ -97,14 +97,14 @@
         left: 0;
         right: 0;
         overflow: hidden;
-        color: ag-param(disabled-foreground-color);
+        @include ag-color-property(color, disabled-foreground-color);
         margin-top: ag-param(grid-size);
     }
 
     .ag-select-agg-func-popup {
         @include ag-card();
 
-        background: ag-param(background-color);
+        @include ag-color-property(background, background-color);
         height: ag-param(grid-size) * 5 * 3.5;
         padding: 0;
     }
@@ -115,7 +115,7 @@
         padding-left: ag-param(grid-size) * 2;
 
         &:hover {
-            background-color: ag-param(selected-row-background-color);
+            @include ag-color-property(background-color, selected-row-background-color);
         }
     }
 }

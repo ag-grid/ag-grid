@@ -99,7 +99,8 @@ export abstract class BaseDropZonePanel extends Component {
     public init(params: BaseDropZonePanelParams): void {
         this.params = params;
 
-        this.beans.eventService.addEventListener(Events.EVENT_COLUMN_EVERYTHING_CHANGED, this.refreshGui.bind(this));
+        const refreshEvent = this.beans.eventService.addEventListener(Events.EVENT_COLUMN_EVERYTHING_CHANGED, this.refreshGui.bind(this));
+        this.addDestroyFunc(() => refreshEvent());
 
         this.addDestroyableEventListener(this.beans.gridOptionsWrapper, 'functionsReadOnly', this.refreshGui.bind(this));
 
@@ -296,7 +297,7 @@ export abstract class BaseDropZonePanel extends Component {
         const newColumnList = this.getNonGhostColumns().slice();
         _.insertArrayIntoArray(newColumnList, columnsToAdd, this.insertIndex);
 
-        if (_.shallowCompare(newColumnList, this.getExistingColumns())) {
+        if (_.areEqual(newColumnList, this.getExistingColumns())) {
             return false;
         } else {
             this.updateColumns(newColumnList);
@@ -398,9 +399,9 @@ export abstract class BaseDropZonePanel extends Component {
         this.addElementClasses(eTitleBar, 'title-bar');
         this.addElementClasses(eGroupIcon, 'icon');
         _.addOrRemoveCssClass(this.getGui(), 'ag-column-drop-empty', this.isExistingColumnsEmpty());
-        
+
         eTitleBar.appendChild(eGroupIcon);
-        
+
         if (!this.horizontal) {
             const eTitle = document.createElement('span');
             this.addElementClasses(eTitle, 'title');

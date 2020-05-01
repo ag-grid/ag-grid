@@ -1,4 +1,4 @@
-// Type definitions for @ag-grid-community/core v23.0.2
+// Type definitions for @ag-grid-community/core v23.1.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { Column } from "./entities/column";
@@ -12,10 +12,14 @@ export declare class FocusController {
     private gridApi;
     private focusedCellPosition;
     private keyboardFocusActive;
+    private events;
     private init;
+    destroy(): void;
     isKeyboardFocus(): boolean;
     clearFocusedCell(): void;
     getFocusedCell(): CellPosition;
+    private activateMouseMode;
+    private activateKeyboardMode;
     getFocusCellToUseAfterRefresh(): CellPosition;
     private getGridCellForDomElement;
     setFocusedCell(rowIndex: number, colKey: string | Column, floating: string | undefined, forceBrowserFocus?: boolean): void;

@@ -389,14 +389,24 @@ export class ServerSideBlock extends RowNodeBlock {
         return 0;
     }
 
-    public clearRowTops(virtualRowCount: number): void {
+    public clearDisplayIndexes(virtualRowCount: number): void {
+        this.displayIndexEnd = undefined;
+        this.displayIndexStart = undefined;
+
         this.forEachRowNode(virtualRowCount, rowNode => {
             rowNode.clearRowTop();
+            rowNode.setRowIndex(undefined);
 
             const hasChildCache = rowNode.group && _.exists(rowNode.childrenCache);
             if (hasChildCache) {
                 const serverSideCache = rowNode.childrenCache as ServerSideCache;
-                serverSideCache.clearRowTops();
+                serverSideCache.clearDisplayIndexes();
+            }
+
+            const hasDetailNode = rowNode.master && rowNode.detailNode;
+            if (hasDetailNode) {
+                rowNode.detailNode.clearRowTop();
+                rowNode.detailNode.setRowIndex(undefined);
             }
         });
     }
@@ -409,17 +419,25 @@ export class ServerSideBlock extends RowNodeBlock {
         this.blockTop = nextRowTop.value;
 
         this.forEachRowNode(virtualRowCount, rowNode => {
+            // set this row
             rowNode.setRowIndex(displayIndexSeq.next());
             rowNode.setRowTop(nextRowTop.value);
             nextRowTop.value += rowNode.rowHeight;
 
-            const hasDetailRow = rowNode.master && rowNode.expanded;
+            // set child for master / detail
+            const hasDetailRow = rowNode.master;
             if (hasDetailRow) {
-                rowNode.detailNode.setRowIndex(displayIndexSeq.next());
-                rowNode.detailNode.setRowTop(nextRowTop.value);
-                nextRowTop.value += rowNode.detailNode.rowHeight;
+                if (rowNode.expanded && rowNode.detailNode) {
+                    rowNode.detailNode.setRowIndex(displayIndexSeq.next());
+                    rowNode.detailNode.setRowTop(nextRowTop.value);
+                    nextRowTop.value += rowNode.detailNode.rowHeight;
+                } else if (rowNode.detailNode) {
+                    rowNode.detailNode.clearRowTop();
+                    rowNode.detailNode.setRowIndex(undefined);
+                }
             }
 
+            // set children for SSRM child rows
             const hasChildCache = rowNode.group && _.exists(rowNode.childrenCache);
             if (hasChildCache) {
                 const serverSideCache = rowNode.childrenCache as ServerSideCache;
@@ -428,7 +446,7 @@ export class ServerSideBlock extends RowNodeBlock {
                 } else {
                     // we need to clear the row tops, as the row renderer depends on
                     // this to know if the row should be faded out
-                    serverSideCache.clearRowTops();
+                    serverSideCache.clearDisplayIndexes();
                 }
             }
         });

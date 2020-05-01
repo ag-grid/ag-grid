@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v23.0.2
+ * @version v23.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -50,7 +50,7 @@ var SimpleFloatingFilter = /** @class */ (function (_super) {
         }
     };
     SimpleFloatingFilter.prototype.isEventFromFloatingFilter = function (event) {
-        return (event && event.afterFloatingFilter);
+        return event && event.afterFloatingFilter;
     };
     SimpleFloatingFilter.prototype.getLastType = function () {
         return this.lastType;
@@ -84,8 +84,7 @@ var SimpleFloatingFilter = /** @class */ (function (_super) {
             return false;
         }
         var simpleModel = model;
-        var typeIsEditable = this.isTypeEditable(simpleModel.type);
-        return typeIsEditable;
+        return this.isTypeEditable(simpleModel.type);
     };
     SimpleFloatingFilter.prototype.init = function (params) {
         this.optionsFactory = new optionsFactory_1.OptionsFactory();
@@ -103,12 +102,10 @@ var SimpleFloatingFilter = /** @class */ (function (_super) {
         return customFilterOption && customFilterOption.hideFilterInput;
     };
     SimpleFloatingFilter.prototype.isTypeEditable = function (type) {
-        if (this.doesFilterHaveHiddenInput(type)) {
-            return false;
-        }
-        return type
-            && (type != simpleFilter_1.SimpleFilter.IN_RANGE)
-            && (type != simpleFilter_1.SimpleFilter.EMPTY);
+        return !this.doesFilterHaveHiddenInput(type) &&
+            type
+            && type !== simpleFilter_1.SimpleFilter.IN_RANGE
+            && type !== simpleFilter_1.SimpleFilter.EMPTY;
     };
     return SimpleFloatingFilter;
 }(component_1.Component));

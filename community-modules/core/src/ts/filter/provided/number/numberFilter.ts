@@ -6,8 +6,9 @@ import {
     ConditionPosition,
     ISimpleFilterModel
 } from "../simpleFilter";
-import { ScalerFilter, Comparator, IScalarFilterParams } from "../scalerFilter";
+import { ScalarFilter, Comparator, IScalarFilterParams } from "../scalarFilter";
 import { AgInputNumberField } from "../../../widgets/agInputNumberField";
+import { IAfterGuiAttachedParams } from '../../../interfaces/iAfterGuiAttachedParams';
 
 export interface NumberFilterModel extends ISimpleFilterModel {
     filter?: number;
@@ -17,18 +18,18 @@ export interface NumberFilterModel extends ISimpleFilterModel {
 export interface INumberFilterParams extends IScalarFilterParams {
 }
 
-export class NumberFilter extends ScalerFilter<NumberFilterModel, number> {
+export class NumberFilter extends ScalarFilter<NumberFilterModel, number> {
 
     private static readonly FILTER_TYPE = 'number';
 
     public static DEFAULT_FILTER_OPTIONS = [
-        ScalerFilter.EQUALS,
-        ScalerFilter.NOT_EQUAL,
-        ScalerFilter.LESS_THAN,
-        ScalerFilter.LESS_THAN_OR_EQUAL,
-        ScalerFilter.GREATER_THAN,
-        ScalerFilter.GREATER_THAN_OR_EQUAL,
-        ScalerFilter.IN_RANGE
+        ScalarFilter.EQUALS,
+        ScalarFilter.NOT_EQUAL,
+        ScalarFilter.LESS_THAN,
+        ScalarFilter.LESS_THAN_OR_EQUAL,
+        ScalarFilter.GREATER_THAN,
+        ScalarFilter.GREATER_THAN_OR_EQUAL,
+        ScalarFilter.IN_RANGE
     ];
 
     @RefSelector('eValueFrom1') private eValueFrom1: AgInputNumberField;
@@ -37,7 +38,7 @@ export class NumberFilter extends ScalerFilter<NumberFilterModel, number> {
     @RefSelector('eValueTo1') private eValueTo1: AgInputNumberField;
     @RefSelector('eValueTo2') private eValueTo2: AgInputNumberField;
 
-    protected mapRangeFromModel(filterModel: NumberFilterModel): {from: number, to: number} {
+    protected mapRangeFromModel(filterModel: NumberFilterModel): { from: number, to: number; } {
         return {
             from: filterModel.filter,
             to: filterModel.filterTo
@@ -99,17 +100,19 @@ export class NumberFilter extends ScalerFilter<NumberFilterModel, number> {
 
     private resetPlaceholder(): void {
         const translate = this.translate.bind(this);
-        const isRange1 = this.getCondition1Type() === ScalerFilter.IN_RANGE;
-        const isRange2 = this.getCondition2Type() === ScalerFilter.IN_RANGE;
+        const isRange1 = this.getCondition1Type() === ScalarFilter.IN_RANGE;
+        const isRange2 = this.getCondition2Type() === ScalarFilter.IN_RANGE;
 
-        this.eValueFrom1.setInputPlaceholder(translate(isRange1 ? 'rangeStart' : 'filterOoo'));
-        this.eValueTo1.setInputPlaceholder(translate(isRange1 ? 'rangeEnd' : 'filterOoo'));
+        this.eValueFrom1.setInputPlaceholder(translate(isRange1 ? 'inRangeStart' : 'filterOoo'));
+        this.eValueTo1.setInputPlaceholder(translate(isRange1 ? 'inRangeEnd' : 'filterOoo'));
 
-        this.eValueFrom2.setInputPlaceholder(translate(isRange2 ? 'rangeStart' : 'filterOoo'));
-        this.eValueTo2.setInputPlaceholder(translate(isRange2 ? 'rangeEnd' : 'filterOoo'));
+        this.eValueFrom2.setInputPlaceholder(translate(isRange2 ? 'inRangeStart' : 'filterOoo'));
+        this.eValueTo2.setInputPlaceholder(translate(isRange2 ? 'inRangeEnd' : 'filterOoo'));
     }
 
-    public afterGuiAttached() {
+    public afterGuiAttached(params: IAfterGuiAttachedParams): void {
+        super.afterGuiAttached(params);
+
         this.resetPlaceholder();
         this.eValueFrom1.getInputElement().focus();
     }
@@ -190,7 +193,7 @@ export class NumberFilter extends ScalerFilter<NumberFilterModel, number> {
         const value = this.stringToFloat(eValue.getValue());
         const eValueTo = positionOne ? this.eValueTo1 : this.eValueTo2;
         const valueTo = this.stringToFloat(eValueTo.getValue());
-        const model: NumberFilterModel =  {
+        const model: NumberFilterModel = {
             filterType: NumberFilter.FILTER_TYPE,
             type: type
         };

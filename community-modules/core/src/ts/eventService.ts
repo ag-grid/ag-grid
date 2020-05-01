@@ -25,7 +25,7 @@ export class EventService implements IEventEmitter {
     private static PRIORITY = '-P1';
 
     // using an object performs better than a Set for the number of different events we have
-    private firedEvents: { [key: string]: boolean } = {};
+    private firedEvents: { [key: string]: boolean; } = {};
 
     // because this class is used both inside the context and outside the context, we do not
     // use autowired attributes, as that would be confusing, as sometimes the attributes
@@ -60,8 +60,10 @@ export class EventService implements IEventEmitter {
         return listeners;
     }
 
-    public addEventListener(eventType: string, listener: Function, async = false): void {
+    public addEventListener(eventType: string, listener: Function, async = false): () => void {
         this.getListeners(eventType, async).add(listener);
+
+        return () => this.removeEventListener(eventType, listener, async);
     }
 
     public removeEventListener(eventType: string, listener: Function, async = false): void {
@@ -71,8 +73,8 @@ export class EventService implements IEventEmitter {
     // for some events, it's important that the model gets to hear about them before the view,
     // as the model may need to update before the view works on the info. if you register
     // via this method, you get notified before the view parts
-    public addModalPriorityEventListener(eventType: string, listener: Function, async = false): void {
-        this.addEventListener(eventType + EventService.PRIORITY, listener, async);
+    public addModalPriorityEventListener(eventType: string, listener: Function, async = false): () => void {
+        return this.addEventListener(eventType + EventService.PRIORITY, listener, async);
     }
 
     public addGlobalListener(listener: Function, async = false): void {

@@ -21,7 +21,6 @@ export interface InfiniteCacheParams extends RowNodeCacheParams {
 
 export class InfiniteCache extends RowNodeCache<InfiniteBlock, InfiniteCacheParams> {
 
-    @Autowired('eventService') private eventService: EventService;
     @Autowired('columnApi') private columnApi: ColumnApi;
     @Autowired('gridApi') private gridApi: GridApi;
 
@@ -31,14 +30,6 @@ export class InfiniteCache extends RowNodeCache<InfiniteBlock, InfiniteCachePara
 
     private setBeans(@Qualifier('loggerFactory') loggerFactory: LoggerFactory) {
         this.logger = loggerFactory.create('InfiniteCache');
-    }
-
-    @PostConstruct
-    protected init(): void {
-        super.init();
-        // start load of data, as the virtualRowCount will remain at 0 otherwise,
-        // so we need this to kick things off, otherwise grid would never call getRow()
-        this.getRow(0);
     }
 
     private moveItemsDown(block: InfiniteBlock, moveFromIndex: number, moveCount: number): void {

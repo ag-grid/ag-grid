@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v23.0.2
+ * @version v23.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -26,13 +26,13 @@ var UserComponentFactory = /** @class */ (function () {
     function UserComponentFactory() {
     }
     UserComponentFactory.prototype.newDateComponent = function (params) {
-        return this.createAndInitUserComponent(this.gridOptions, params, componentTypes_1.DateComponent, "agDateInput");
+        return this.createAndInitUserComponent(this.gridOptions, params, componentTypes_1.DateComponent, 'agDateInput');
     };
     UserComponentFactory.prototype.newHeaderComponent = function (params) {
-        return this.createAndInitUserComponent(params.column.getColDef(), params, componentTypes_1.HeaderComponent, "agColumnHeader");
+        return this.createAndInitUserComponent(params.column.getColDef(), params, componentTypes_1.HeaderComponent, 'agColumnHeader');
     };
     UserComponentFactory.prototype.newHeaderGroupComponent = function (params) {
-        return this.createAndInitUserComponent(params.columnGroup.getColGroupDef(), params, componentTypes_1.HeaderGroupComponent, "agColumnGroupHeader");
+        return this.createAndInitUserComponent(params.columnGroup.getColGroupDef(), params, componentTypes_1.HeaderGroupComponent, 'agColumnGroupHeader');
     };
     UserComponentFactory.prototype.newFullWidthGroupRowInnerCellRenderer = function (params) {
         return this.createAndInitUserComponent(this.gridOptions, params, componentTypes_1.GroupRowInnerRendererComponent, null, true);
@@ -45,11 +45,9 @@ var UserComponentFactory = /** @class */ (function () {
             isCellRenderer: function () { return true; }
         }, cellRendererName);
     };
-    UserComponentFactory.prototype.newCellRenderer = function (target, params) {
-        return this.createAndInitUserComponent(target, params, componentTypes_1.CellRendererComponent, null, true);
-    };
-    UserComponentFactory.prototype.newPinnedRowCellRenderer = function (target, params) {
-        return this.createAndInitUserComponent(target, params, componentTypes_1.PinnedRowCellRendererComponent, null, true);
+    UserComponentFactory.prototype.newCellRenderer = function (target, params, isPinned) {
+        if (isPinned === void 0) { isPinned = false; }
+        return this.createAndInitUserComponent(target, params, isPinned ? componentTypes_1.PinnedRowCellRendererComponent : componentTypes_1.CellRendererComponent, null, true);
     };
     UserComponentFactory.prototype.newCellEditor = function (colDef, params) {
         return this.createAndInitUserComponent(colDef, params, componentTypes_1.CellEditorComponent, 'agCellEditor');
@@ -58,17 +56,19 @@ var UserComponentFactory = /** @class */ (function () {
         return this.createAndInitUserComponent(target, params, componentTypes_1.InnerRendererComponent, null);
     };
     UserComponentFactory.prototype.newLoadingOverlayComponent = function (params) {
-        return this.createAndInitUserComponent(this.gridOptions, params, componentTypes_1.LoadingOverlayComponent, "agLoadingOverlay");
+        return this.createAndInitUserComponent(this.gridOptions, params, componentTypes_1.LoadingOverlayComponent, 'agLoadingOverlay');
     };
     UserComponentFactory.prototype.newNoRowsOverlayComponent = function (params) {
-        return this.createAndInitUserComponent(this.gridOptions, params, componentTypes_1.NoRowsOverlayComponent, "agNoRowsOverlay");
+        return this.createAndInitUserComponent(this.gridOptions, params, componentTypes_1.NoRowsOverlayComponent, 'agNoRowsOverlay');
     };
     UserComponentFactory.prototype.newTooltipComponent = function (params) {
-        var colDef = params.colDef;
-        return this.createAndInitUserComponent(colDef, params, componentTypes_1.TooltipComponent, 'agTooltipComponent');
+        return this.createAndInitUserComponent(params.colDef, params, componentTypes_1.TooltipComponent, 'agTooltipComponent');
     };
     UserComponentFactory.prototype.newFilterComponent = function (colDef, params, defaultFilter, modifyParamsCallback) {
         return this.createAndInitUserComponent(colDef, params, componentTypes_1.FilterComponent, defaultFilter, false, modifyParamsCallback);
+    };
+    UserComponentFactory.prototype.newSetFilterCellRenderer = function (target, params) {
+        return this.createAndInitUserComponent(target, params, componentTypes_1.CellRendererComponent, null, true);
     };
     UserComponentFactory.prototype.newFloatingFilterComponent = function (colDef, params, defaultFloatingFilter) {
         return this.createAndInitUserComponent(colDef, params, componentTypes_1.FloatingFilterComponent, defaultFloatingFilter, true);
@@ -128,7 +128,7 @@ var UserComponentFactory = /** @class */ (function () {
         }
         else {
             var asPromise = deferredInit;
-            return asPromise.map(function (notRelevant) { return componentInstance; });
+            return asPromise.map(function (_) { return componentInstance; });
         }
     };
     UserComponentFactory.prototype.addReactHacks = function (params) {
@@ -322,23 +322,23 @@ var UserComponentFactory = /** @class */ (function () {
      *      'floatingFilter', 'cellRenderer', is used to find if the user is specifying a custom component
      *  @param paramsFromGrid: Params to be passed to the component and passed by ag-Grid. This will get merged with any params
      *      specified by the user in the configuration
-     * @returns {any} It merges the user agGridParams with the actual params specified by the user.
+     * @returns {TParams} It merges the user agGridParams with the actual params specified by the user.
      */
     UserComponentFactory.prototype.createFinalParams = function (definitionObject, propertyName, paramsFromGrid, paramsFromSelector) {
         if (paramsFromSelector === void 0) { paramsFromSelector = null; }
-        var res = {};
-        utils_1._.mergeDeep(res, paramsFromGrid);
+        var params = {};
+        utils_1._.mergeDeep(params, paramsFromGrid);
         var userParams = definitionObject ? definitionObject[propertyName + "Params"] : null;
         if (userParams != null) {
             if (typeof userParams === 'function') {
-                utils_1._.mergeDeep(res, userParams(paramsFromGrid));
+                utils_1._.mergeDeep(params, userParams(paramsFromGrid));
             }
             else if (typeof userParams === 'object') {
-                utils_1._.mergeDeep(res, userParams);
+                utils_1._.mergeDeep(params, userParams);
             }
         }
-        utils_1._.mergeDeep(res, paramsFromSelector);
-        return res;
+        utils_1._.mergeDeep(params, paramsFromSelector);
+        return params;
     };
     UserComponentFactory.prototype.createComponentInstance = function (holder, componentType, paramsForSelector, defaultComponentName, optional) {
         var propertyName = componentType.propertyName;
@@ -367,21 +367,16 @@ var UserComponentFactory = /** @class */ (function () {
         }
         return { componentInstance: componentInstance, paramsFromSelector: componentToUse.paramsFromSelector };
     };
-    UserComponentFactory.prototype.initComponent = function (component, finalParams) {
+    UserComponentFactory.prototype.initComponent = function (component, params) {
         this.context.wireBean(component);
         if (component.init == null) {
             return;
         }
-        else {
-            return component.init(finalParams);
-        }
+        return component.init(params);
     };
     __decorate([
         context_1.Autowired("gridOptions")
     ], UserComponentFactory.prototype, "gridOptions", void 0);
-    __decorate([
-        context_1.Autowired("gridOptionsWrapper")
-    ], UserComponentFactory.prototype, "gridOptionsWrapper", void 0);
     __decorate([
         context_1.Autowired("context")
     ], UserComponentFactory.prototype, "context", void 0);

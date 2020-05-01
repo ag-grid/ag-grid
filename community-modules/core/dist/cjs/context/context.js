@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v23.0.2
+ * @version v23.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -233,7 +233,7 @@ function applyToConstructor(constructor, argArray) {
 }
 function PreConstruct(target, methodName, descriptor) {
     var props = getOrCreateProps(target.constructor);
-    if (!props.postConstructMethods) {
+    if (!props.preConstructMethods) {
         props.preConstructMethods = [];
     }
     props.preConstructMethods.push(methodName);

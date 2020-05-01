@@ -1,0 +1,23 @@
+<style>
+    .number {
+        text-align: right;
+    }
+    .ag-row-level-0 {
+        font-weight: bold;
+    }
+    .ag-row-level-1 {
+        color: darkblue;
+    }
+    .ag-row-level-2 {
+        color: darkgreen;
+    }
+</style>
+
+<div style="margin-bottom: 5px;">
+    <button onclick="onNormalUpdate()">Normal Update</button>
+    <button onclick="onAsyncUpdate()">Async Update</button>
+    <span id="eMessage"></span>
+</div>
+<div style="height: calc(100% - 25px);">
+    <div id="myGrid" style="height: 100%;" class="ag-theme-alpine"></div>
+</div>

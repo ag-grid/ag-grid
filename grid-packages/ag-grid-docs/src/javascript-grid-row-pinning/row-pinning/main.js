@@ -3,14 +3,14 @@ var columnDefs = [
         field: 'athlete',
         pinnedRowCellRenderer: 'customPinnedRowRenderer',
         pinnedRowCellRendererParams: {
-            style: {'color': 'blue'}
+            style: { 'color': 'blue' }
         }
     },
     {
         field: 'age',
         pinnedRowCellRenderer: 'customPinnedRowRenderer',
         pinnedRowCellRendererParams: {
-            style: {'font-style': 'italic'}
+            style: { 'font-style': 'italic' }
         }
     },
     { field: 'country' },
@@ -28,9 +28,9 @@ var gridOptions = {
     },
     columnDefs: columnDefs,
     rowData: null,
-    getRowStyle: function (params) {
+    getRowStyle: function(params) {
         if (params.node.rowPinned) {
-            return {'font-weight': 'bold'};
+            return { 'font-weight': 'bold' };
         }
     },
     // no rows to pin to start with
@@ -71,19 +71,12 @@ function createData(count, prefix) {
 }
 
 // setup the grid after the page has finished loading
-document.addEventListener('DOMContentLoaded', function () {
+document.addEventListener('DOMContentLoaded', function() {
     var gridDiv = document.querySelector('#myGrid');
     new agGrid.Grid(gridDiv, gridOptions);
 
-    // do http request to get our sample data - not using any framework to keep the example self contained.
-    // you will probably use a framework like JQuery, Angular or something else to do your HTTP calls.
-    var httpRequest = new XMLHttpRequest();
-    httpRequest.open('GET', 'https://raw.githubusercontent.com/ag-grid/ag-grid/master/grid-packages/ag-grid-docs/src/olympicWinnersSmall.json');
-    httpRequest.send();
-    httpRequest.onreadystatechange = function () {
-        if (httpRequest.readyState === 4 && httpRequest.status === 200) {
-            var httpResult = JSON.parse(httpRequest.responseText);
-            gridOptions.api.setRowData(httpResult);
-        }
-    };
+    agGrid.simpleHttpRequest({ url: 'https://raw.githubusercontent.com/ag-grid/ag-grid/master/grid-packages/ag-grid-docs/src/olympicWinnersSmall.json' })
+        .then(function(data) {
+            gridOptions.api.setRowData(data);
+        });
 });

@@ -35,7 +35,6 @@ var Node = /** @class */ (function () {
         // for performance optimization purposes.
         this.matrix = new matrix_1.Matrix();
         this.inverseMatrix = new matrix_1.Matrix();
-        // TODO: should this be `true` by default as well?
         this._dirtyTransform = false;
         this._scalingX = 1;
         this._scalingY = 1;
@@ -246,13 +245,6 @@ var Node = /** @class */ (function () {
         enumerable: true,
         configurable: true
     });
-    /**
-     * Calculates the combined inverse transformation for this node,
-     * and uses it to convert the given transformed point
-     * to the untransformed one.
-     * @param x
-     * @param y
-     */
     Node.prototype.transformPoint = function (x, y) {
         var matrix = matrix_1.Matrix.flyweight(this.matrix);
         var parent = this.parent;
@@ -262,14 +254,21 @@ var Node = /** @class */ (function () {
         }
         return matrix.invertSelf().transformPoint(x, y);
     };
+    Node.prototype.inverseTransformPoint = function (x, y) {
+        var matrix = matrix_1.Matrix.flyweight(this.matrix);
+        var parent = this.parent;
+        while (parent) {
+            matrix.preMultiplySelf(parent.matrix);
+            parent = parent.parent;
+        }
+        return matrix.transformPoint(x, y);
+    };
     Object.defineProperty(Node.prototype, "dirtyTransform", {
         get: function () {
             return this._dirtyTransform;
         },
         set: function (value) {
             this._dirtyTransform = value;
-            // TODO: replace this with simply `this.dirty = true`,
-            //       see `set dirty` method.
             if (value) {
                 this.dirty = true;
             }

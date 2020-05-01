@@ -1,2 +1,2 @@
-export { SetFilterModule } from "./setFilterModule";
-export { SetFilter } from "./setFilter/setFilter";
+export { SetFilterModule } from './setFilterModule';
+export { SetFilter } from './setFilter/setFilter';

@@ -1,10 +1,10 @@
-// Type definitions for @ag-grid-community/core v23.0.2
+// Type definitions for @ag-grid-community/core v23.1.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
-import { Component } from "../../../widgets/component";
-import { IFloatingFilterComp, IFloatingFilterParams } from "../floatingFilter";
-import { ProvidedFilterModel } from "../../../interfaces/iFilter";
-import { FilterChangedEvent } from "../../../events";
+import { Component } from '../../../widgets/component';
+import { IFloatingFilterComp, IFloatingFilterParams } from '../floatingFilter';
+import { ProvidedFilterModel } from '../../../interfaces/iFilter';
+import { FilterChangedEvent } from '../../../events';
 export declare abstract class SimpleFloatingFilter extends Component implements IFloatingFilterComp {
     abstract onParentModelChanged(model: ProvidedFilterModel, event: FilterChangedEvent): void;
     protected abstract conditionToString(condition: ProvidedFilterModel): string;

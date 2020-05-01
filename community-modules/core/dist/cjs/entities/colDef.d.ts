@@ -1,4 +1,4 @@
-// Type definitions for @ag-grid-community/core v23.0.2
+// Type definitions for @ag-grid-community/core v23.1.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { RowNode } from "./rowNode";
@@ -129,14 +129,14 @@ export interface ColDef extends AbstractColDef {
     } | ICellRendererFunc | string;
     cellRendererFramework?: any;
     cellRendererParams?: any;
-    cellRendererSelector?: (params: ICellRendererParams) => ComponentSelectorResult;
+    cellRendererSelector?: (params: ICellRendererParams) => ComponentSelectorResult<ICellRendererParams>;
     /** Cell editor */
     cellEditor?: {
         new (): ICellEditorComp;
     } | string;
     cellEditorFramework?: any;
     cellEditorParams?: any;
-    cellEditorSelector?: (params: ICellEditorParams) => ComponentSelectorResult;
+    cellEditorSelector?: (params: ICellEditorParams) => ComponentSelectorResult<ICellEditorParams>;
     /** A function for rendering a pinned row cell. */
     pinnedRowCellRenderer?: {
         new (): ICellRendererComp;
@@ -177,7 +177,7 @@ export interface ColDef extends AbstractColDef {
     /** For grid row dragging, set to true to enable row dragging within the grid */
     rowDrag?: boolean | ((params: any) => boolean);
     /** To configure the text to be displayed in the floating div while dragging a row when rowDrag is true */
-    rowDragText?: ((params: IRowDragItem) => string);
+    rowDragText?: ((params: IRowDragItem, dragItemCount: number) => string);
     /** For native drag and drop, set to true to enable drag source */
     dndSource?: boolean | ((params: any) => boolean);
     /** For native drag and drop, set to true to allow custom onRowDrag processing */
@@ -282,6 +282,8 @@ export interface ColDef extends AbstractColDef {
     headerComponentFramework?: any;
     /** The custom header component parameters**/
     headerComponentParams?: any;
+    /** Whether to display a floating filter for this column. */
+    floatingFilter?: boolean;
     /** The custom header component to be used for rendering the floating filter. If none specified the default ag-Grid is used**/
     floatingFilterComponent?: string | {
         new (): IFloatingFilterComp;

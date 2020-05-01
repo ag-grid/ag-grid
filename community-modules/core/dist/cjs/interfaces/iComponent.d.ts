@@ -1,8 +1,8 @@
-// Type definitions for @ag-grid-community/core v23.0.2
+// Type definitions for @ag-grid-community/core v23.1.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
-import { Promise } from "../utils";
-import { IAfterGuiAttachedParams } from "./iAfterGuiAttachedParams";
+import { Promise } from '../utils';
+import { IAfterGuiAttachedParams } from './iAfterGuiAttachedParams';
 /** This is for User Components only, do not implement this for internal components. */
 export interface IComponent<T> {
     /** Return the DOM element of your editor, this is what the grid puts into the DOM */

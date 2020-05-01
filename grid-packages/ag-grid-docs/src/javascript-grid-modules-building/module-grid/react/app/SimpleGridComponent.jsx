@@ -9,7 +9,7 @@ import {ExcelExportModule} from '@ag-grid-enterprise/excel-export';
 ModuleRegistry.registerModules([ClientSideRowModelModule, MenuModule, ExcelExportModule]);
 
 import '@ag-grid-community/core/dist/styles/ag-grid.css';
-import '@ag-grid-community/core/dist/styles/ag-theme-balham.css';
+import '@ag-grid-community/core/dist/styles/ag-theme-alpine.css';
 
 export default class App extends Component {
     constructor(props) {
@@ -34,10 +34,10 @@ export default class App extends Component {
 
     render() {
         return (
-            <div className="ag-theme-balham"
+            <div className="ag-theme-alpine"
                  style={{
                      width: '100%',
-                     height: '150px'
+                     height: '180px'
                  }}>
                 <AgGridReact
                     columnDefs={this.state.columnDefs}

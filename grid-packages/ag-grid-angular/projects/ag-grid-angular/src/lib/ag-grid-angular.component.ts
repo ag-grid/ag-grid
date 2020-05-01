@@ -24,12 +24,12 @@ import {
     GridParams,
     Module,
     Promise,
-    Utils as _
+    _
 } from "ag-grid-community";
 
-import {AngularFrameworkOverrides} from "./angularFrameworkOverrides";
-import {AngularFrameworkComponentWrapper} from "./angularFrameworkComponentWrapper";
-import {AgGridColumn} from "./ag-grid-column.component";
+import { AngularFrameworkOverrides } from "./angularFrameworkOverrides";
+import { AngularFrameworkComponentWrapper } from "./angularFrameworkComponentWrapper";
+import { AgGridColumn } from "./ag-grid-column.component";
 
 @Component({
     selector: 'ag-grid-angular',
@@ -52,8 +52,8 @@ export class AgGridAngular implements AfterViewInit {
 
     // in order to ensure firing of gridReady is deterministic
     private _fullyReady: Promise<boolean> = new Promise<boolean>(resolve => {
-            resolve(true);
-        }
+        resolve(true);
+    }
     );
 
     // making these public, so they are accessible to people using the ng2 component references
@@ -63,10 +63,10 @@ export class AgGridAngular implements AfterViewInit {
     @ContentChildren(AgGridColumn) public columns: QueryList<AgGridColumn>;
 
     constructor(elementDef: ElementRef,
-                private viewContainerRef: ViewContainerRef,
-                private angularFrameworkOverrides: AngularFrameworkOverrides,
-                private frameworkComponentWrapper: AngularFrameworkComponentWrapper,
-                private _componentFactoryResolver: ComponentFactoryResolver) {
+        private viewContainerRef: ViewContainerRef,
+        private angularFrameworkOverrides: AngularFrameworkOverrides,
+        private frameworkComponentWrapper: AngularFrameworkComponentWrapper,
+        private _componentFactoryResolver: ComponentFactoryResolver) {
         this._nativeElement = elementDef.nativeElement;
 
         this.frameworkComponentWrapper.setViewContainerRef(this.viewContainerRef);
@@ -242,6 +242,7 @@ export class AgGridAngular implements AfterViewInit {
     @Input() public paginationStartPage : any = undefined;
     @Input() public infiniteBlockSize : any = undefined;
     @Input() public batchUpdateWaitMillis : any = undefined;
+    @Input() public asyncTransactionWaitMillis : any = undefined;
     @Input() public blockLoadDebounceMillis : any = undefined;
     @Input() public keepDetailRowsCount : any = undefined;
     @Input() public undoRedoCellEditingLimit : any = undefined;
@@ -426,6 +427,7 @@ export class AgGridAngular implements AfterViewInit {
     @Input() public gridAutoHeight : any = undefined;
     @Input() public suppressRowTransform : any = undefined;
     @Input() public suppressClipboardPaste : any = undefined;
+    @Input() public suppressLastEmptyLineOnPaste : any = undefined;
     @Input() public serverSideSortingAlwaysResets : any = undefined;
     @Input() public reactNext : any = undefined;
     @Input() public suppressSetColumnStateEvents : any = undefined;
@@ -436,11 +438,15 @@ export class AgGridAngular implements AfterViewInit {
     @Input() public suppressBrowserResizeObserver : any = undefined;
     @Input() public suppressMaxRenderedRowRestriction : any = undefined;
     @Input() public excludeChildrenWhenTreeDataFiltering : any = undefined;
+    @Input() public tooltipMouseTrack : any = undefined;
     @Input() public keepDetailRows : any = undefined;
     @Input() public paginateChildRows : any = undefined;
     @Input() public preventDefaultOnContextMenu : any = undefined;
     @Input() public undoRedoCellEditing : any = undefined;
     @Input() public allowDragFromColumnsToolPanel : any = undefined;
+    @Input() public immutableData : any = undefined;
+    @Input() public immutableColumns : any = undefined;
+    @Input() public pivotSuppressAutoColumn : any = undefined;
 
     @Output() public columnEverythingChanged: EventEmitter<any> = new EventEmitter<any>();
     @Output() public newColumnsLoaded: EventEmitter<any> = new EventEmitter<any>();

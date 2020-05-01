@@ -87,18 +87,18 @@ MenuItemDef {
     <p>The following is a list of all the default built in menu items with the rules about when they are shown.</p>
 
     <ul class="content">
-        <li><code>autoSizeAll</code>: Auto-size all columns. Always shown.</li>
-        <li><code>expandAll</code>: Expand all groups. Only shown if grouping by at least one column.</li>
-        <li><code>contractAll</code>: Contract all groups. Only shown if grouping by at least one column.</li>
-        <li><code>copy</code>: Copy selected value to clipboard</li>
-        <li><code>copyWithHeaders</code>Copy selected value to clipboard with headers.</li>
-        <li><code>paste</code>: Always disabled (see note in clipboard section).</li>
-        <li><code>resetColumns</code>: Reset all columns.</li>
-        <li><code>export</code>: Export sub menu (containing csvExport and excelExport).</li>
-        <li><code>csvExport</code>: Export to CSV using all default export values.</li>
-        <li><code>excelExport</code>: Export to Excel (.xlsx) using all default export values.</li>
-        <li><code>excelXmlExport</code>: Export to Excel (.xml) using all default export values.</li>
-        <li><code>chartRange</code>: Chart a range of selected cells.</li>
+        <li><code>autoSizeAll</code>: Auto-size all columns. Not shown by default.</li>
+        <li><code>expandAll</code>: When set, it's only shown if grouping by at least one column. Not shown by default.</li>
+        <li><code>contractAll</code>: Collapse all groups. When set, it's only shown if grouping by at least one column. Not shown by default.</li>
+        <li><code>copy</code>: Copy selected value to clipboard. Shown by default.</li>
+        <li><code>copyWithHeaders</code>: Copy selected value to clipboard with headers. Shown by default.</li>
+        <li><code>paste</code>: Always disabled (see note in clipboard section). Always disabled. Shown by default.</li>
+        <li><code>resetColumns</code>: Reset all columns. Not shown by default.</li>
+        <li><code>export</code>: Export sub menu (containing csvExport and excelExport). Shown by default.</li>
+        <li><code>csvExport</code>: Export to CSV using all default export values. Shown by default.</li>
+        <li><code>excelExport</code>: Export to Excel (.xlsx) using all default export values. Shown by default.</li>
+        <li><code>excelXmlExport</code>: Export to Excel (.xml) using all default export values. Shown by default.</li>
+        <li><code>chartRange</code>: Chart a range of selected cells. Only shown if charting is enabled.</li>
     </ul>
 
     <h2>Default Context Menu</h2>
@@ -138,7 +138,7 @@ MenuItemDef {
         <li>The second menu item ('Always Disabled') has a tooltip.</li>
     </ul>
 
-    <?= grid_example('Context Menu Example', 'context-menu', 'generated', ['enterprise' => true]) ?>
+    <?= grid_example('Context Menu Example', 'context-menu', 'generated', ['enterprise' => true, 'modules' => ['clientside', 'menu', 'excel', 'range', 'clipboard', 'charts']]) ?>
 
     <h2 id="popup-parent">Popup Parent</h2>
 
@@ -155,7 +155,7 @@ MenuItemDef {
         </ul>
     </p>
 
-    <?= grid_example('Small Grid Problem', 'popup-parent-problem', 'generated', ['enterprise' => true, 'exampleHeight' => 400 ]) ?>
+    <?= grid_example('Small Grid Problem', 'popup-parent-problem', 'generated', ['enterprise' => true, 'exampleHeight' => 400, 'modules' => ['clientside', 'menu', 'excel', 'clipboard'] ]) ?>
 
     <p>
         The solution is to set the <code>popupParent</code> element which can be set in the following ways:
@@ -179,7 +179,7 @@ MenuItemDef {
         to the document body.
     </p>
 
-    <?= grid_example('Small Grid Solution', 'popup-parent-solution', 'generated', ['enterprise' => true, 'exampleHeight' => 400]) ?>
+    <?= grid_example('Small Grid Solution', 'popup-parent-solution', 'generated', ['enterprise' => true, 'exampleHeight' => 400, 'modules' => ['clientside', 'menu', 'excel', 'clipboard']]) ?>
 
 
 

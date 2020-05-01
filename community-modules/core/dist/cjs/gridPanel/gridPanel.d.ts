@@ -1,9 +1,10 @@
-// Type definitions for @ag-grid-community/core v23.0.2
+// Type definitions for @ag-grid-community/core v23.1.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
-import { RowContainerComponent } from "../rendering/rowContainerComponent";
-import { Component } from "../widgets/component";
-import { HeaderRootComp } from "../headerRendering/headerRootComp";
+import { RowContainerComponent } from '../rendering/rowContainerComponent';
+import { RowDragFeature } from './rowDragFeature';
+import { Component } from '../widgets/component';
+import { HeaderRootComp } from '../headerRendering/headerRootComp';
 export declare type RowContainerComponentNames = 'fullWidth' | 'body' | 'pinnedLeft' | 'pinnedRight' | 'floatingTop' | 'floatingTopPinnedLeft' | 'floatingTopPinnedRight' | 'floatingTopFullWidth' | 'floatingBottom' | 'floatingBottomPinnedLeft' | 'floatingBottomPinnedRight' | 'floatingBottomFullWidth';
 export declare type RowContainerComponents = {
     [K in RowContainerComponentNames]: RowContainerComponent;
@@ -27,7 +28,6 @@ export declare class GridPanel extends Component {
     private gridApi;
     private dragService;
     private mouseEventService;
-    private focusController;
     private $scope;
     private scrollVisibleService;
     private valueService;
@@ -76,6 +76,7 @@ export declare class GridPanel extends Component {
     private pinningRight;
     private pinningLeft;
     private printLayout;
+    private rowDragFeature;
     constructor();
     getVScrollPosition(): {
         top: number;
@@ -94,6 +95,7 @@ export declare class GridPanel extends Component {
     setColumnMovingCss(moving: boolean): void;
     setCellTextSelection(selectable?: boolean): void;
     private addRowDragListener;
+    getRowDragFeature(): RowDragFeature;
     private addStopEditingWhenGridLosesFocus;
     private addAngularApplyCheck;
     private disableBrowserDragging;
@@ -116,7 +118,7 @@ export declare class GridPanel extends Component {
     private onCtrlAndC;
     private onCtrlAndV;
     private onCtrlAndD;
-    ensureIndexVisible(index: any, position?: string): void;
+    ensureIndexVisible(index: any, position?: string | null): void;
     getCenterWidth(): number;
     isVerticalScrollShowing(): boolean;
     isHorizontalScrollShowing(): boolean;

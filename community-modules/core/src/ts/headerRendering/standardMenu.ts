@@ -1,20 +1,17 @@
-import { Autowired, Bean } from "../context/context";
-import { IMenuFactory } from "../interfaces/iMenuFactory";
-import { FilterManager, FilterWrapper } from "../filter/filterManager";
-import { Column } from "../entities/column";
-import { PopupService } from "../widgets/popupService";
-import { GridOptionsWrapper } from "../gridOptionsWrapper";
-import { EventService } from "../eventService";
-import { IAfterGuiAttachedParams } from "../interfaces/iAfterGuiAttachedParams";
-import { _ } from "../utils";
+import { Autowired, Bean } from '../context/context';
+import { IMenuFactory } from '../interfaces/iMenuFactory';
+import { FilterManager } from '../filter/filterManager';
+import { Column } from '../entities/column';
+import { PopupService } from '../widgets/popupService';
+import { EventService } from '../eventService';
+import { IAfterGuiAttachedParams } from '../interfaces/iAfterGuiAttachedParams';
+import { _ } from '../utils';
 
 @Bean('menuFactory')
 export class StandardMenuFactory implements IMenuFactory {
-
     @Autowired('eventService') private eventService: EventService;
     @Autowired('filterManager') private filterManager: FilterManager;
     @Autowired('popupService') private popupService: PopupService;
-    @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
 
     private hidePopup: () => void;
 
@@ -25,34 +22,35 @@ export class StandardMenuFactory implements IMenuFactory {
     }
 
     public showMenuAfterMouseEvent(column: Column, mouseEvent: MouseEvent | Touch): void {
-        this.showPopup(column, (eMenu: HTMLElement) => {
+        this.showPopup(column, eMenu => {
             this.popupService.positionPopupUnderMouseEvent({
-                column: column,
+                column,
                 type: 'columnMenu',
-                mouseEvent: mouseEvent,
+                mouseEvent,
                 ePopup: eMenu
             });
         });
     }
 
     public showMenuAfterButtonClick(column: Column, eventSource: HTMLElement): void {
-        this.showPopup(column, (eMenu: HTMLElement) => {
-            this.popupService.positionPopupUnderComponent(
-                {
-                    type: 'columnMenu', eventSource: eventSource,
-                    ePopup: eMenu, keepWithinBounds: true, column: column
-                });
+        this.showPopup(column, eMenu => {
+            this.popupService.positionPopupUnderComponent({
+                type: 'columnMenu',
+                eventSource,
+                ePopup: eMenu,
+                keepWithinBounds: true,
+                column
+            });
         });
     }
 
     public showPopup(column: Column, positionCallback: (eMenu: HTMLElement) => void): void {
-        const filterWrapper: FilterWrapper = this.filterManager.getOrCreateFilterWrapper(column, 'COLUMN_MENU');
+        const filterWrapper = this.filterManager.getOrCreateFilterWrapper(column, 'COLUMN_MENU');
         const eMenu = document.createElement('div');
 
         _.addCssClass(eMenu, 'ag-menu');
-        filterWrapper.guiPromise.promise.then(gui => {
-            eMenu.appendChild(gui);
-        });
+
+        filterWrapper.guiPromise.then(gui => eMenu.appendChild(gui));
 
         let hidePopup: (() => void);
 
@@ -64,9 +62,10 @@ export class StandardMenuFactory implements IMenuFactory {
         };
 
         this.eventService.addEventListener('bodyScroll', bodyScrollListener);
+
         const closedCallback = () => {
             this.eventService.removeEventListener('bodyScroll', bodyScrollListener);
-            column.setMenuVisible(false, "contextMenu");
+            column.setMenuVisible(false, 'contextMenu');
         };
 
         // need to show filter before positioning, as only after filter
@@ -77,20 +76,20 @@ export class StandardMenuFactory implements IMenuFactory {
         filterWrapper.filterPromise.then(filter => {
             if (filter.afterGuiAttached) {
                 const params: IAfterGuiAttachedParams = {
-                    hidePopup: hidePopup
+                    hidePopup
                 };
+
                 filter.afterGuiAttached(params);
             }
         });
 
         this.hidePopup = hidePopup;
 
-        column.setMenuVisible(true, "contextMenu");
+        column.setMenuVisible(true, 'contextMenu');
     }
 
     public isMenuEnabled(column: Column): boolean {
-        // for standard, we show menu if filter is enabled, and he menu is not suppressed
+        // for standard, we show menu if filter is enabled, and the menu is not suppressed
         return column.isFilterAllowed();
     }
-
 }

@@ -68,7 +68,7 @@ gridOptions.columnDefs = [
         pivot or value associated with them.
     </p>
 
-    <?= grid_example('Simple Example', 'simple', 'generated', ['enterprise' => true, 'exampleHeight' => 610]) ?>
+    <?= grid_example('Simple Example', 'simple', 'generated', ['enterprise' => true, 'exampleHeight' => 610, 'modules' => ['clientside', 'rowgrouping', 'menu', 'columnpanel']]) ?>
 
     <h2>Pivot Mode vs Pivot Active</h2>
 
@@ -102,7 +102,7 @@ gridOptions.columnDefs = [
         </li>
     </ul>
 
-    <?= grid_example('Pivot Mode Vs Pivot Active', 'pivot-mode', 'generated', ['enterprise' => true, 'exampleHeight' => 630]) ?>
+    <?= grid_example('Pivot Mode Vs Pivot Active', 'pivot-mode', 'generated', ['enterprise' => true, 'exampleHeight' => 630, 'modules' => ['clientside', 'rowgrouping', 'menu', 'columnpanel']]) ?>
 
     <p>
         Note that a pivot can only be active if pivot mode is on. If pivot mode is off, all pivot
@@ -217,7 +217,7 @@ console.log('found column with id ' + sausageKingdomColumn.getId());</snippet>
         tool panel.
     </p>
 
-    <?= grid_example('Filtering With Pivot', 'filter', 'generated', ['enterprise' => true, 'exampleHeight' => 610]) ?>
+    <?= grid_example('Filtering With Pivot', 'filter', 'generated', ['enterprise' => true, 'exampleHeight' => 610, 'modules' => ['clientside', 'rowgrouping', 'columnpanel', 'filterpanel', 'setfilter', 'menu']]) ?>
 
     <h2>Sorting with Pivot</h2>
 
@@ -232,7 +232,7 @@ console.log('found column with id ' + sausageKingdomColumn.getId());</snippet>
         underneath the hood.
     </p>
 
-    <?= grid_example('Sorting With Pivot', 'sorting', 'generated', ['enterprise' => true, 'exampleHeight' => 630]) ?>
+    <?= grid_example('Sorting With Pivot', 'sorting', 'generated', ['enterprise' => true, 'exampleHeight' => 630, 'modules' => ['clientside', 'rowgrouping', 'menu', 'columnpanel', 'filterpanel']]) ?>
 
 
     <h2 id="pivotColumnGroupTotals">Pivot Column Group Totals</h2>
@@ -269,7 +269,7 @@ console.log('found column with id ' + sausageKingdomColumn.getId());</snippet>
            <li>Expanding pivot groups reveals columns that make up totals.</li>
        </ul>
 
-    <?= grid_example('Pivot Column Group Totals', 'totals', 'generated', ['enterprise' => true, 'exampleHeight' => 655]) ?>
+    <?= grid_example('Pivot Column Group Totals', 'totals', 'generated', ['enterprise' => true, 'exampleHeight' => 655, 'modules' => ['clientside', 'rowgrouping', 'menu', 'columnpanel', 'filterpanel']]) ?>
 
     <h2 id="pivotRowTotals">Pivot Row Totals</h2>
 
@@ -295,7 +295,7 @@ console.log('found column with id ' + sausageKingdomColumn.getId());</snippet>
         <li>Expanding pivot column groups reveals the in the last position as 'after' is used.</li>
     </ul>
 
-    <?= grid_example('Pivot Row Totals', 'row-totals', 'generated', ['enterprise' => true, 'exampleHeight' => 655]) ?>
+    <?= grid_example('Pivot Row Totals', 'row-totals', 'generated', ['enterprise' => true, 'exampleHeight' => 655, 'modules' => ['clientside', 'rowgrouping', 'menu', 'columnpanel', 'filterpanel']]) ?>
 
     <h2>Saving & Restoring Column State with Pivot</h2>
 
@@ -311,7 +311,7 @@ console.log('found column with id ' + sausageKingdomColumn.getId());</snippet>
         needs to be stored separately.
     </p>
 
-    <?= grid_example('Saving & Restoring Column State', 'state', 'generated', ['enterprise' => true, 'exampleHeight' => 630]) ?>
+    <?= grid_example('Saving & Restoring Column State', 'state', 'generated', ['enterprise' => true, 'exampleHeight' => 630, 'modules' => ['clientside', 'rowgrouping', 'menu', 'setfilter', 'columnpanel', 'filterpanel']]) ?>
 
     <h2>Pivot API</h2>
 
@@ -324,7 +324,7 @@ console.log('found column with id ' + sausageKingdomColumn.getId());</snippet>
         is what will be exported.
     </p>
 
-    <?= grid_example('Pivot API', 'api', 'generated', ['enterprise' => true, 'exampleHeight' => 620]) ?>
+    <?= grid_example('Pivot API', 'api', 'generated', ['enterprise' => true, 'exampleHeight' => 620, 'modules' => ['clientside', 'rowgrouping', 'menu', 'setfilter', 'columnpanel', 'filterpanel', 'csv']]) ?>
 
     <h2 id="orderingPivotColumns">Ordering Pivot Columns</h2>
 
@@ -360,7 +360,7 @@ console.log('found column with id ' + sausageKingdomColumn.getId());</snippet>
         as the field attribute is needed by the grid to pull out the value.
     </p>
 
-    <?= grid_example('Secondary Columns', 'secondary-columns', 'generated', ['enterprise' => true, 'exampleHeight' => 650]) ?>
+    <?= grid_example('Secondary Columns', 'secondary-columns', 'generated', ['enterprise' => true, 'exampleHeight' => 650, 'modules' => ['clientside', 'rowgrouping', 'menu', 'columnpanel', 'filterpanel']]) ?>
 
     <h2 id="hideOpenParents">Hide Open Parents</h2>
 
@@ -376,7 +376,7 @@ console.log('found column with id ' + sausageKingdomColumn.getId());</snippet>
         <li><code>groupDefaultExpanded=2: </code> So that all the groups are opened by default</li>
         </ul>
 
-    <?= grid_example('Hide Open Parents', 'hide-open-parents', 'generated', ['enterprise' => true, 'exampleHeight' => 650]) ?>
+    <?= grid_example('Hide Open Parents', 'hide-open-parents', 'generated', ['enterprise' => true, 'exampleHeight' => 650, 'modules' => ['clientside', 'rowgrouping', 'menu', 'columnpanel', 'filterpanel']]) ?>
 
     <h2 id="change-detection">Change Detection and Pivot</h2>
 

@@ -1,7 +1,9 @@
 var columnDefs = [
-    {field: "athlete", filter: false},
+    { field: 'athlete', filter: false },
     {
-        field: "gold", filter: 'agNumberColumnFilter', suppressMenu: true,
+        field: 'gold',
+        filter: 'agNumberColumnFilter',
+        suppressMenu: true,
         floatingFilterComponent: 'customNumberFloatingFilter',
         floatingFilterComponentParams: {
             suppressFilterButton: true,
@@ -9,7 +11,9 @@ var columnDefs = [
         }
     },
     {
-        field: "silver", filter: 'agNumberColumnFilter', suppressMenu: true,
+        field: 'silver',
+        filter: 'agNumberColumnFilter',
+        suppressMenu: true,
         floatingFilterComponent: 'customNumberFloatingFilter',
         floatingFilterComponentParams: {
             suppressFilterButton: true,
@@ -17,7 +21,9 @@ var columnDefs = [
         }
     },
     {
-        field: "bronze", filter: 'agNumberColumnFilter', suppressMenu: true,
+        field: 'bronze',
+        filter: 'agNumberColumnFilter',
+        suppressMenu: true,
         floatingFilterComponent: 'customNumberFloatingFilter',
         floatingFilterComponentParams: {
             suppressFilterButton: true,
@@ -25,7 +31,9 @@ var columnDefs = [
         }
     },
     {
-        field: "total", filter: 'agNumberColumnFilter', suppressMenu: true,
+        field: 'total',
+        filter: 'agNumberColumnFilter',
+        suppressMenu: true,
         floatingFilterComponent: 'customNumberFloatingFilter',
         floatingFilterComponentParams: {
             suppressFilterButton: true,
@@ -41,12 +49,12 @@ var gridOptions = {
         flex: 1,
         minWidth: 100,
         filter: true,
-        resizable: true
+        floatingFilter: true,
+        resizable: true,
     },
     components: {
         customNumberFloatingFilter: getNumberFloatingFilterComponent()
     },
-    floatingFilter: true,
     columnDefs: columnDefs,
     rowData: null
 };
@@ -55,7 +63,7 @@ function getNumberFloatingFilterComponent() {
     function NumberFloatingFilter() {
     }
 
-    NumberFloatingFilter.prototype.init = function (params) {
+    NumberFloatingFilter.prototype.init = function(params) {
         this.eGui = document.createElement('div');
         this.eGui.innerHTML = '&gt; <input style="width:20px" type="text"/>';
         this.currentValue = null;
@@ -66,14 +74,14 @@ function getNumberFloatingFilterComponent() {
         function onInputBoxChanged() {
             if (that.eFilterInput.value === '') {
                 // Remove the filter
-                params.parentFilterInstance(function (instance) {
+                params.parentFilterInstance(function(instance) {
                     instance.onFloatingFilterChanged(null, null);
                 });
                 return;
             }
 
             that.currentValue = Number(that.eFilterInput.value);
-            params.parentFilterInstance(function (instance) {
+            params.parentFilterInstance(function(instance) {
                 instance.onFloatingFilterChanged('greaterThan', that.currentValue);
             });
         }
@@ -81,7 +89,7 @@ function getNumberFloatingFilterComponent() {
         this.eFilterInput.addEventListener('input', onInputBoxChanged);
     };
 
-    NumberFloatingFilter.prototype.onParentModelChanged = function (parentModel) {
+    NumberFloatingFilter.prototype.onParentModelChanged = function(parentModel) {
         // When the filter is empty we will receive a null message her
         if (!parentModel) {
             this.eFilterInput.value = '';
@@ -92,29 +100,20 @@ function getNumberFloatingFilterComponent() {
         }
     };
 
-    NumberFloatingFilter.prototype.getGui = function () {
+    NumberFloatingFilter.prototype.getGui = function() {
         return this.eGui;
     };
 
     return NumberFloatingFilter;
 }
 
-
 // setup the grid after the page has finished loading
-document.addEventListener('DOMContentLoaded', function () {
+document.addEventListener('DOMContentLoaded', function() {
     var gridDiv = document.querySelector('#myGrid');
     new agGrid.Grid(gridDiv, gridOptions);
 
-    // do http request to get our sample data - not using any framework to keep the example self contained.
-    // you will probably use a framework like JQuery, Angular or something else to do your HTTP calls.
-    var httpRequest = new XMLHttpRequest();
-    httpRequest.open('GET', 'https://raw.githubusercontent.com/ag-grid/ag-grid/master/grid-packages/ag-grid-docs/src/olympicWinnersSmall.json');
-    httpRequest.send();
-    httpRequest.onreadystatechange = function () {
-        if (httpRequest.readyState == 4 && httpRequest.status == 200) {
-            var httpResult = JSON.parse(httpRequest.responseText);
-            gridOptions.api.setRowData(httpResult);
-        }
-    };
+    agGrid.simpleHttpRequest({ url: 'https://raw.githubusercontent.com/ag-grid/ag-grid/master/grid-packages/ag-grid-docs/src/olympicWinnersSmall.json' })
+        .then(function(data) {
+            gridOptions.api.setRowData(data);
+        });
 });
-

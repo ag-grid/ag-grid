@@ -1,10 +1,8 @@
-import { Promise } from "../utils";
-import { IAfterGuiAttachedParams } from "./iAfterGuiAttachedParams";
-import { Component } from "../widgets/component";
+import { Promise } from '../utils';
+import { IAfterGuiAttachedParams } from './iAfterGuiAttachedParams';
 
 /** This is for User Components only, do not implement this for internal components. */
 export interface IComponent<T> {
-
     /** Return the DOM element of your editor, this is what the grid puts into the DOM */
     getGui(): HTMLElement;
 

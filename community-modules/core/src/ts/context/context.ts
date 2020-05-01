@@ -266,9 +266,7 @@ export class Context {
 
     public destroy(): void {
         // should only be able to destroy once
-        if (this.destroyed) {
-            return;
-        }
+        if (this.destroyed) { return; }
         this.logger.log(">> Shutting down ag-Application Context");
 
         const beanInstances = this.getBeanInstances();
@@ -291,7 +289,7 @@ function applyToConstructor(constructor: Function, argArray: any[]) {
 
 export function PreConstruct(target: Object, methodName: string, descriptor: TypedPropertyDescriptor<any>): void {
     const props = getOrCreateProps(target.constructor);
-    if (!props.postConstructMethods) {
+    if (!props.preConstructMethods) {
         props.preConstructMethods = [];
     }
     props.preConstructMethods.push(methodName);

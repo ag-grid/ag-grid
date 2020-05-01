@@ -17,4 +17,5 @@ __export(require("./miniBubble"));
 __export(require("./miniArea"));
 __export(require("./miniStackedArea"));
 __export(require("./miniNormalizedArea"));
+__export(require("./miniHistogram"));
 //# sourceMappingURL=index.js.map

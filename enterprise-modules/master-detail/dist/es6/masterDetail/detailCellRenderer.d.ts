@@ -25,6 +25,7 @@ export interface IDetailCellRendererParams extends ICellRendererParams {
     agGridReact: any;
     frameworkComponentWrapper: any;
     $compile: any;
+    pinned: string;
 }
 export interface GetDetailRowData {
     (params: GetDetailRowDataParams): void;

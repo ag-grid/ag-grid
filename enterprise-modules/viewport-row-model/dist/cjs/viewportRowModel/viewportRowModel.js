@@ -15,12 +15,15 @@ var ViewportRowModel = /** @class */ (function () {
         // datasource tells us this
         this.rowCount = -1;
         this.rowNodesByIndex = {};
+        this.events = [];
     }
     // we don't implement as lazy row heights is not supported in this row model
     ViewportRowModel.prototype.ensureRowHeightsValid = function (startPixel, endPixel, startLimitIndex, endLimitIndex) { return false; };
     ViewportRowModel.prototype.init = function () {
         this.rowHeight = this.gridOptionsWrapper.getRowHeightAsNumber();
-        this.eventService.addEventListener(core_1.Events.EVENT_VIEWPORT_CHANGED, this.onViewportChanged.bind(this));
+        this.events = [
+            this.eventService.addEventListener(core_1.Events.EVENT_VIEWPORT_CHANGED, this.onViewportChanged.bind(this))
+        ];
     };
     ViewportRowModel.prototype.start = function () {
         if (this.gridOptionsWrapper.getViewportDatasource()) {
@@ -31,13 +34,18 @@ var ViewportRowModel = /** @class */ (function () {
         return true;
     };
     ViewportRowModel.prototype.destroyDatasource = function () {
-        if (this.viewportDatasource) {
-            if (this.viewportDatasource.destroy) {
-                this.viewportDatasource.destroy();
-            }
-            this.rowRenderer.datasourceChanged();
-            this.firstRow = -1;
-            this.lastRow = -1;
+        if (!this.viewportDatasource) {
+            return;
+        }
+        if (this.viewportDatasource.destroy) {
+            this.viewportDatasource.destroy();
+        }
+        this.rowRenderer.datasourceChanged();
+        this.firstRow = -1;
+        this.lastRow = -1;
+        if (this.events.length) {
+            this.events.forEach(function (func) { return func(); });
+            this.events = [];
         }
     };
     ViewportRowModel.prototype.calculateFirstRow = function (firstRenderedRow) {
@@ -47,9 +55,7 @@ var ViewportRowModel = /** @class */ (function () {
         if (afterBuffer < 0) {
             return 0;
         }
-        else {
-            return Math.floor(afterBuffer / pageSize) * pageSize;
-        }
+        return Math.floor(afterBuffer / pageSize) * pageSize;
     };
     ViewportRowModel.prototype.calculateLastRow = function (lastRenderedRow) {
         if (lastRenderedRow === -1) {
@@ -123,9 +129,7 @@ var ViewportRowModel = /** @class */ (function () {
         if (this.rowHeight !== 0) { // avoid divide by zero error
             return Math.floor(pixel / this.rowHeight);
         }
-        else {
-            return 0;
-        }
+        return 0;
     };
     ViewportRowModel.prototype.getRowBounds = function (index) {
         return {
@@ -206,19 +210,20 @@ var ViewportRowModel = /** @class */ (function () {
     };
     ViewportRowModel.prototype.setRowCount = function (rowCount, keepRenderedRows) {
         if (keepRenderedRows === void 0) { keepRenderedRows = false; }
-        if (rowCount !== this.rowCount) {
-            this.rowCount = rowCount;
-            var event_1 = {
-                type: core_1.Events.EVENT_MODEL_UPDATED,
-                api: this.gridApi,
-                columnApi: this.columnApi,
-                newData: false,
-                newPage: false,
-                keepRenderedRows: keepRenderedRows,
-                animate: false
-            };
-            this.eventService.dispatchEvent(event_1);
+        if (rowCount === this.rowCount) {
+            return;
         }
+        this.rowCount = rowCount;
+        var event = {
+            type: core_1.Events.EVENT_MODEL_UPDATED,
+            api: this.gridApi,
+            columnApi: this.columnApi,
+            newData: false,
+            newPage: false,
+            keepRenderedRows: keepRenderedRows,
+            animate: false
+        };
+        this.eventService.dispatchEvent(event);
     };
     ViewportRowModel.prototype.isRowPresent = function (rowNode) {
         return false;

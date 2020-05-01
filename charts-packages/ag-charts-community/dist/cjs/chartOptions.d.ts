@@ -1,15 +1,16 @@
 import { TooltipRendererParams } from "./chart/series/series";
-import { ColumnTooltipRendererParams as BarTooltipRendererParams } from "./chart/series/cartesian/columnSeries";
+import { BarTooltipRendererParams as BarTooltipRendererParams } from "./chart/series/cartesian/barSeries";
 import { LineTooltipRendererParams } from "./chart/series/cartesian/lineSeries";
 import { AreaTooltipRendererParams } from "./chart/series/cartesian/areaSeries";
 import { ScatterTooltipRendererParams } from "./chart/series/cartesian/scatterSeries";
+import { HistogramTooltipRendererParams } from "./chart/series/cartesian/histogramSeries";
 import { PieTooltipRendererParams } from "./chart/series/polar/pieSeries";
 import { LegendPosition } from "./chart/legend";
 import { FontStyle, FontWeight } from "./scene/shape/text";
 import { GridStyle as GridStyleOptions } from "./axis";
 export { TooltipRendererParams, BarTooltipRendererParams, LineTooltipRendererParams, AreaTooltipRendererParams, ScatterTooltipRendererParams, PieTooltipRendererParams, LegendPosition, FontStyle, FontWeight, GridStyleOptions, };
 export declare type MarkerShape = 'circle' | 'cross' | 'diamond' | 'plus' | 'square' | 'triangle';
-export declare type CartesianSeriesType = 'line' | 'scatter' | 'bar' | 'area';
+export declare type CartesianSeriesType = 'line' | 'scatter' | 'bar' | 'area' | 'histogram';
 export declare type PolarSeriesType = 'pie';
 export declare type SeriesType = CartesianSeriesType | PolarSeriesType;
 export interface SeriesOptions {
@@ -17,6 +18,9 @@ export interface SeriesOptions {
     data?: any[];
     visible?: boolean;
     showInLegend?: boolean;
+    listeners?: {
+        [key in string]: Function;
+    };
 }
 export interface ChartOptions<T extends SeriesOptions> {
     document?: Document;
@@ -29,6 +33,9 @@ export interface ChartOptions<T extends SeriesOptions> {
     subtitle: CaptionOptions;
     legend: LegendOptions;
     tooltipClass?: string;
+    listeners?: {
+        [key in string]: Function;
+    };
 }
 export interface PaddingOptions {
     top: number;
@@ -95,11 +102,17 @@ export interface AxisTickOptions {
     size?: number;
     color?: string;
 }
+declare type AxisLabelFormatter = (params: {
+    value: any;
+    index: number;
+    fractionDigits?: number;
+    formatter?: (x: any) => string;
+}) => string;
 export interface AxisLabelOptions extends FontOptions {
     padding?: number;
     rotation?: number;
     format?: string;
-    formatter?: (value: any, fractionDigits?: number) => string;
+    formatter?: AxisLabelFormatter;
     mirror?: boolean;
     parallel?: boolean;
 }
@@ -155,6 +168,16 @@ export interface BarSeriesFieldOptions {
     xName?: string;
     yKeys: string[];
     yNames?: string[];
+}
+export interface HistogramSeriesOptions extends SeriesOptions {
+    binCount?: number;
+    field?: LineSeriesFieldOptions;
+    fill?: SingleFillOptions;
+    stroke?: SingleStrokeOptions;
+    highlightStyle?: HighlightOptions;
+    tooltip?: TooltipOptions<HistogramTooltipRendererParams>;
+    label?: BarSeriesLabelOptions;
+    shadow?: DropShadowOptions;
 }
 export interface BarSeriesLabelOptions extends SeriesLabelOptions {
     formatter?: (params: {

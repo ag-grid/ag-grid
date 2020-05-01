@@ -1,13 +1,12 @@
-// Type definitions for @ag-grid-community/core v23.0.2
+// Type definitions for @ag-grid-community/core v23.1.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
-import { IMenuFactory } from "../interfaces/iMenuFactory";
-import { Column } from "../entities/column";
+import { IMenuFactory } from '../interfaces/iMenuFactory';
+import { Column } from '../entities/column';
 export declare class StandardMenuFactory implements IMenuFactory {
     private eventService;
     private filterManager;
     private popupService;
-    private gridOptionsWrapper;
     private hidePopup;
     hideActiveMenu(): void;
     showMenuAfterMouseEvent(column: Column, mouseEvent: MouseEvent | Touch): void;

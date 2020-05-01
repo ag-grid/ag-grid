@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v23.0.2
+ * @version v23.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -218,8 +218,8 @@ var AgColorPanel = /** @class */ (function (_super) {
         AgColorPanel.recentColors = recentColors;
     };
     AgColorPanel.prototype.destroy = function () {
-        _super.prototype.destroy.call(this);
         this.addRecentColor();
+        _super.prototype.destroy.call(this);
     };
     AgColorPanel.maxRecentColors = 8;
     AgColorPanel.recentColors = [];

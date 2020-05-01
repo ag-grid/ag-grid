@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v23.0.2
+ * @version v23.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -23,10 +23,10 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
-import { RefSelector } from "../../widgets/componentAnnotations";
-import { OptionsFactory } from "./optionsFactory";
-import { ProvidedFilter } from "./providedFilter";
-import { _ } from "../../utils";
+import { RefSelector } from '../../widgets/componentAnnotations';
+import { OptionsFactory } from './optionsFactory';
+import { ProvidedFilter } from './providedFilter';
+import { _ } from '../../utils';
 export var ConditionPosition;
 (function (ConditionPosition) {
     ConditionPosition[ConditionPosition["One"] = 0] = "One";
@@ -43,8 +43,8 @@ var DEFAULT_TRANSLATIONS = {
     lessThanOrEqual: 'Less than or equals',
     greaterThanOrEqual: 'Greater than or equals',
     filterOoo: 'Filter...',
-    rangeStart: 'From',
-    rangeEnd: 'To',
+    inRangeStart: 'From',
+    inRangeEnd: 'To',
     contains: 'Contains',
     notContains: 'Not contains',
     startsWith: 'Starts with',
@@ -74,13 +74,13 @@ var SimpleFilter = /** @class */ (function (_super) {
     };
     // floating filter calls this when user applies filter from floating filter
     SimpleFilter.prototype.onFloatingFilterChanged = function (type, value) {
-        this.setValueFromFloatingFilter(value);
         this.setTypeFromFloatingFilter(type);
+        this.setValueFromFloatingFilter(value);
         this.onUiChanged(true);
     };
     SimpleFilter.prototype.setTypeFromFloatingFilter = function (type) {
         this.eType1.setValue(type);
-        this.eType2.setValue(null);
+        this.eType2.setValue(this.optionsFactory.getDefaultOption());
         this.eJoinOperatorAnd.setValue(true);
     };
     SimpleFilter.prototype.getModelFromUi = function () {
@@ -178,7 +178,6 @@ var SimpleFilter = /** @class */ (function (_super) {
     };
     SimpleFilter.prototype.setParams = function (params) {
         _super.prototype.setParams.call(this, params);
-        this.simpleFilterParams = params;
         this.optionsFactory = new OptionsFactory();
         this.optionsFactory.init(params, this.getDefaultFilterOptions());
         this.allowTwoConditions = !params.suppressAndOrCondition;
@@ -208,7 +207,7 @@ var SimpleFilter = /** @class */ (function (_super) {
         return this.allowTwoConditions;
     };
     SimpleFilter.prototype.createBodyTemplate = function () {
-        return "\n            <ag-select class=\"ag-filter-select\" ref=\"eOptions1\"></ag-select>\n            " + this.createValueTemplate(ConditionPosition.One) + "\n            <div class=\"ag-filter-condition\" ref=\"eJoinOperatorPanel\">\n               <ag-radio-button ref=\"eJoinOperatorAnd\" class=\"ag-filter-condition-operator ag-filter-condition-operator-and\"></ag-radio-button>\n               <ag-radio-button ref=\"eJoinOperatorOr\" class=\"ag-filter-condition-operator ag-filter-condition-operator-or\"></ag-radio-button>\n            </div>\n            <ag-select class=\"ag-filter-select\" ref=\"eOptions2\"></ag-select>\n            " + this.createValueTemplate(ConditionPosition.Two);
+        return /* html */ "\n            <ag-select class=\"ag-filter-select\" ref=\"eOptions1\"></ag-select>\n            " + this.createValueTemplate(ConditionPosition.One) + "\n            <div class=\"ag-filter-condition\" ref=\"eJoinOperatorPanel\">\n               <ag-radio-button ref=\"eJoinOperatorAnd\" class=\"ag-filter-condition-operator ag-filter-condition-operator-and\"></ag-radio-button>\n               <ag-radio-button ref=\"eJoinOperatorOr\" class=\"ag-filter-condition-operator ag-filter-condition-operator-or\"></ag-radio-button>\n            </div>\n            <ag-select class=\"ag-filter-select\" ref=\"eOptions2\"></ag-select>\n            " + this.createValueTemplate(ConditionPosition.Two);
     };
     SimpleFilter.prototype.getCssIdentifier = function () {
         return 'simple-filter';

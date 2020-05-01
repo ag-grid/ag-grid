@@ -17,32 +17,16 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
-import { Autowired, Component, PostConstruct, RefSelector, _ } from "@ag-grid-community/core";
+import { Autowired, Component, PostConstruct, RefSelector, _, TooltipFeature, } from '@ag-grid-community/core';
 var SetFilterListItem = /** @class */ (function (_super) {
     __extends(SetFilterListItem, _super);
-    function SetFilterListItem(value, column) {
+    function SetFilterListItem(value, params) {
         var _this = _super.call(this, SetFilterListItem.TEMPLATE) || this;
-        _this.selected = true;
         _this.value = value;
-        _this.column = column;
+        _this.params = params;
+        _this.selected = true;
         return _this;
     }
-    SetFilterListItem.prototype.useCellRenderer = function (target, eTarget, params) {
-        var cellRendererPromise = this.userComponentFactory.newCellRenderer(target.filterParams, params);
-        if (cellRendererPromise != null) {
-            _.bindCellRendererToHtmlElement(cellRendererPromise, eTarget);
-        }
-        else {
-            if (params.valueFormatted == null && params.value == null) {
-                var localeTextFunc = this.gridOptionsWrapper.getLocaleTextFunc();
-                eTarget.innerText = '(' + localeTextFunc('blanks', 'Blanks') + ')';
-            }
-            else {
-                eTarget.innerText = params.valueFormatted != null ? params.valueFormatted : params.value;
-            }
-        }
-        return cellRendererPromise;
-    };
     SetFilterListItem.prototype.init = function () {
         var _this = this;
         this.render();
@@ -65,31 +49,61 @@ var SetFilterListItem = /** @class */ (function (_super) {
         this.eCheckbox.setValue(this.isSelected(), true);
     };
     SetFilterListItem.prototype.render = function () {
-        var _this = this;
-        var valueElement = this.queryForHtmlElement('.ag-set-filter-item-value');
-        var colDef = this.column.getColDef();
-        var filterValueFormatter = this.getFilterValueFormatter(colDef);
-        var valueFormatted = this.valueFormatterService.formatValue(this.column, null, null, this.value, filterValueFormatter);
+        var _a = this, value = _a.value, _b = _a.params, column = _b.column, colDef = _b.colDef;
+        var formattedValue = this.getFormattedValue(colDef, column, value);
+        if (this.params.showTooltips) {
+            this.tooltipText = _.escape(formattedValue != null ? formattedValue : value);
+            if (_.exists(this.tooltipText)) {
+                if (this.gridOptionsWrapper.isEnableBrowserTooltips()) {
+                    this.eFilterItemValue.title = this.tooltipText;
+                }
+                else {
+                    this.addFeature(new TooltipFeature(this, 'setFilterValue'));
+                }
+            }
+        }
         var params = {
-            value: this.value,
-            valueFormatted: valueFormatted,
+            value: value,
+            valueFormatted: formattedValue,
             api: this.gridOptionsWrapper.getApi()
         };
-        var componentPromise = this.useCellRenderer(colDef, valueElement, params);
-        if (!componentPromise) {
+        this.renderCell(colDef, this.eFilterItemValue, params);
+    };
+    SetFilterListItem.prototype.getFormattedValue = function (colDef, column, value) {
+        var filterParams = colDef.filterParams;
+        var formatter = filterParams == null ? null : filterParams.valueFormatter;
+        return this.valueFormatterService.formatValue(column, null, null, value, formatter, false);
+    };
+    SetFilterListItem.prototype.renderCell = function (target, eTarget, params) {
+        var _this = this;
+        var filterParams = target.filterParams;
+        var cellRendererPromise = this.userComponentFactory.newSetFilterCellRenderer(filterParams, params);
+        if (cellRendererPromise == null) {
+            var valueToRender = params.valueFormatted == null ? params.value : params.valueFormatted;
+            if (valueToRender == null) {
+                var localeTextFunc = this.gridOptionsWrapper.getLocaleTextFunc();
+                eTarget.innerText = "(" + localeTextFunc('blanks', 'Blanks') + ")";
+            }
+            else {
+                eTarget.innerText = valueToRender;
+            }
             return;
         }
-        componentPromise.then(function (component) {
+        _.bindCellRendererToHtmlElement(cellRendererPromise, eTarget);
+        cellRendererPromise.then(function (component) {
             if (component && component.destroy) {
                 _this.addDestroyFunc(component.destroy.bind(component));
             }
         });
     };
-    SetFilterListItem.prototype.getFilterValueFormatter = function (colDef) {
-        return colDef.filterParams ? colDef.filterParams.valueFormatter : undefined;
+    SetFilterListItem.prototype.getComponentHolder = function () {
+        return this.params.column.getColDef();
+    };
+    SetFilterListItem.prototype.getTooltipText = function () {
+        return this.tooltipText;
     };
     SetFilterListItem.EVENT_SELECTED = 'selected';
-    SetFilterListItem.TEMPLATE = "<label class=\"ag-set-filter-item\">\n            <ag-checkbox ref=\"eCheckbox\" class=\"ag-set-filter-item-checkbox\"></ag-checkbox>\n            <span class=\"ag-set-filter-item-value\"></span>\n        </label>";
+    SetFilterListItem.TEMPLATE = "\n        <label class=\"ag-set-filter-item\">\n            <ag-checkbox ref=\"eCheckbox\" class=\"ag-set-filter-item-checkbox\"></ag-checkbox>\n            <span ref=\"eFilterItemValue\" class=\"ag-set-filter-item-value\"></span>\n        </label>";
     __decorate([
         Autowired('gridOptionsWrapper')
     ], SetFilterListItem.prototype, "gridOptionsWrapper", void 0);
@@ -99,6 +113,9 @@ var SetFilterListItem = /** @class */ (function (_super) {
     __decorate([
         Autowired('userComponentFactory')
     ], SetFilterListItem.prototype, "userComponentFactory", void 0);
+    __decorate([
+        RefSelector('eFilterItemValue')
+    ], SetFilterListItem.prototype, "eFilterItemValue", void 0);
     __decorate([
         RefSelector('eCheckbox')
     ], SetFilterListItem.prototype, "eCheckbox", void 0);

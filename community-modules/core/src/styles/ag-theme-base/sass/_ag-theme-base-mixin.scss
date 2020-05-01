@@ -14,10 +14,12 @@
 @import "./parts/footer";
 @import "./parts/column-drop";
 @import "./parts/charts";
+@import "./parts/date-time";
 
 $ag-compatibility-mode: "variables" !default;
 
 @mixin ag-theme-base($params: ()) {
+    @include ag-allow-color-param-access-with-ag-param(false);
     @include ag-include-theme-once-only();
     $params: ag-process-theme-variables($params, $ag-theme-base-default-params);
 
@@ -25,12 +27,12 @@ $ag-compatibility-mode: "variables" !default;
     @include ag-icons-webfont();
 
     -webkit-font-smoothing: antialiased;
-    color: ag-param(foreground-color);
+    @include ag-color-property(color, foreground-color);
     font-family: ag-param(font-family);
     font-size: ag-param(font-size);
     line-height: normal;
     .ag-root-wrapper {
-        background-color: ag-param(background-color);
+        @include ag-color-property(background-color, background-color);
     }
 
     @include ag-theme-base-part-reset();
@@ -45,8 +47,10 @@ $ag-compatibility-mode: "variables" !default;
     @include ag-theme-base-part-footer();
     @include ag-theme-base-part-column-drop();
     @include ag-theme-base-part-charts();
+    @include ag-theme-base-part-date-time();
 
     @if not ag-param(suppress-native-widget-styling) {
         @include ag-native-inputs();
     }
+    @include ag-allow-color-param-access-with-ag-param(true);
 }

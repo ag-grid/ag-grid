@@ -17,11 +17,11 @@
         "setRowData(rows)": {
             "description": "Set rows."
         },
-        "updateRowData(transaction)": {
+        "applyTransaction(transaction)": {
             "description": "Update row data. Pass a transaction object with lists for <code>add</code>, <code>remove</code> and <code>update</code>."
         },
-        "setDatasource(datasource)": {
-            "description": "Set new datasource. The grid will reset all paging and load the first page. If you want to reset the paging but keep the datasource, call this method with the same datasource."
+        "applyTransactionAsync(transaction, callback)": {
+            "description": "Same as applyTransaction except executes asynchronous for efficiency."
         },
         "setPinnedTopRowData(rowData)<br />setPinnedBottomRowData()<br />getPinnedTopRowCount()<br />getPinnedBottomRowCount()<br />getPinnedTopRow(index)<br />getPinnedBottomRow(index)": {
             "description": "Methods for getting and setting the data and getting the Row Nodes of the pinned rows."
@@ -30,7 +30,16 @@
             "description": "Returns the row model inside the table. From here you can see the original rows, rows after filter has been applied, rows after aggregation has been applied, and the final set of 'to be displayed' rows."
         },
         "refreshClientSideRowModel(params)": {
-            "description": "Gets the Client-side Row Model to refresh, executing the grouping, filtering and sorting again."
+            "description": "Gets the Client-Side Row Model to refresh, executing the grouping, filtering and sorting again."
+        },
+        "setDatasource(datasource)": {
+            "description": "Set new datasource for Infinite Row Model."
+        },
+        "setServerSideDatasource(datasource)": {
+            "description": "Set new datasource for Server-Side Row Model."
+        },
+        "setViewportDatasource(datasource)": {
+            "description": "Set new datasource for Viewport Row Model."
         }
     },
     "rowNodes": {
@@ -51,6 +60,11 @@
         },
         "forEachLeafNode(callback(node, index))": {
             "description": "Similar to <code>forEachNode</code>, except lists all the leaf nodes. This effectively goes through all the data that you provided to the grid before the grid performed any grouping. If using tree data, goes through all the nodes for the data you provided, including nodes that have children, but excluding groups the grid created where gaps were missing in the hierarchy."
+        }
+    },
+    "displayedRows": {
+        "meta": {
+            "displayName": "Displayed Rows"
         },
         "getDisplayedRowAtIndex(index)": {
             "description": "Returns the displayed <code>rowNode</code> at the given <code>index</code>."
@@ -117,6 +131,9 @@
         },
         "clearRangeSelection()": {
             "description": "Clears the selected range."
+        },
+        "setSuppressRowClickSelection(value)": {
+            "description": "Sets the <code>suppressRowClickSelection</code> property."
         }
     },
     "refresh": {
@@ -136,7 +153,7 @@
             "description": "Flash rows, columns or individual cells.",
             "more": {
                 "name": "Flashing Cells",
-                "url": "../javascript-grid-data-update/#flashing"
+                "url": "../javascript-grid-flashing-cells/"
             }
         }
     },
@@ -285,6 +302,26 @@
             "description": "If after getting the model, you expand or collapse a group, call this method to inform the grid. It will work out the final set of 'to be displayed' rows again (i.e. expand or collapse the group visually)."
         }
     },
+    "rowDrag": {
+        "meta": {
+            "displayName": "Row Drag"
+        },
+        "setSuppressRowDrag(value)": {
+            "description": "Sets the <code>suppressRowDrag</code> property."
+        },
+        "setSuppressMoveWhenRowDragging(value)": {
+            "description": "Sets the <code>suppressMoveWhenRowDragging</code> property."
+        },
+        "addRowDropZone(params)": {
+            "description": "Adds a DropZone outside of the Grid where rows can be dropped."
+        },
+        "removeRowDropZone(params)": {
+            "description": "Removes an external DropZone added by addRowDropZone."
+        },
+        "getRowDropZoneParams()": {
+            "description": "Returns the RowDropZoneParams to be used by another grid's addRowDropZone method."
+        }
+    },
     "rendering": {
         "meta": {
             "displayName": "Rendering"
@@ -378,7 +415,7 @@
             "displayName": "Pagination"
         },
         "paginationIsLastPageFound()": {
-            "description": "Returns <code>true</code> when the last page is known; this will always be the case if you are using the Client-side Row Model for pagination. Returns <code>false</code> when the last page is not known; this only happens when using Infinite Scrolling Row Model.</p>"
+            "description": "Returns <code>true</code> when the last page is known; this will always be the case if you are using the Client-Side Row Model for pagination. Returns <code>false</code> when the last page is not known; this only happens when using Infinite Scrolling Row Model.</p>"
         },
         "paginationGetPageSize()": {
             "description": "Returns how many rows are being shown per page."
@@ -504,9 +541,6 @@
         },
         "hidePopupMenu()": {
             "description": "Hides any showing <a href='../javascript-grid-context-menu'>context menu</a> or <a href='../javascript-grid-column-menu'>column menu</a>."
-        },
-        "setSuppressRowDrag(value)": {
-            "description": "Sets the <code>suppressRowDrag</code> property."
         },
         "setEnableCellTextSelection()": {
             "description": "Sets the <code>enableCellTextSelection</code> property."

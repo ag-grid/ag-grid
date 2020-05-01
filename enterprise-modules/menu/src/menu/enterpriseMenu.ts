@@ -5,6 +5,7 @@ import {
     Bean,
     BeanStub,
     Column,
+    ColumnApi,
     ColumnController,
     Constants,
     Context,
@@ -26,9 +27,9 @@ import {
     TabbedItem,
     TabbedLayout
 } from "@ag-grid-community/core";
-import { MenuList } from "./menuList";
-import { MenuItemComponent } from "./menuItemComponent";
-import { MenuItemMapper } from "./menuItemMapper";
+import {MenuList} from "./menuList";
+import {MenuItemComponent} from "./menuItemComponent";
+import {MenuItemMapper} from "./menuItemMapper";
 
 export interface TabSelectedEvent extends AgEvent {
     key: string;
@@ -51,7 +52,7 @@ export class EnterpriseMenuFactory implements IMenuFactory {
         }
     }
 
-    public showMenuAfterMouseEvent(column:Column, mouseEvent:MouseEvent, defaultTab?:string): void {
+    public showMenuAfterMouseEvent(column: Column, mouseEvent: MouseEvent, defaultTab?: string): void {
 
         this.showMenu(column, (menu: EnterpriseMenu) => {
             this.popupService.positionPopupUnderMouseEvent({
@@ -67,7 +68,7 @@ export class EnterpriseMenuFactory implements IMenuFactory {
 
     }
 
-    public showMenuAfterButtonClick(column: Column, eventSource: HTMLElement, defaultTab?:string, restrictToTabs?:string[]): void {
+    public showMenuAfterButtonClick(column: Column, eventSource: HTMLElement, defaultTab?: string, restrictToTabs?: string[]): void {
 
         let multiplier = -1;
         let alignSide: 'left' | 'right' = 'left';
@@ -98,11 +99,11 @@ export class EnterpriseMenuFactory implements IMenuFactory {
 
     }
 
-    public showMenu(column: Column, positionCallback: (menu: EnterpriseMenu) => void, defaultTab?:string, restrictToTabs?:string[]): void {
+    public showMenu(column: Column, positionCallback: (menu: EnterpriseMenu) => void, defaultTab?: string, restrictToTabs?: string[]): void {
         const menu = new EnterpriseMenu(column, this.lastSelectedTab, restrictToTabs);
         this.context.wireBean(menu);
 
-        const eMenuGui =  menu.getGui();
+        const eMenuGui = menu.getGui();
 
         // need to show filter before positioning, as only after filter
         // is visible can we find out what the width of it is
@@ -157,6 +158,7 @@ export class EnterpriseMenu extends BeanStub {
     @Autowired('columnController') private columnController: ColumnController;
     @Autowired('filterManager') private filterManager: FilterManager;
     @Autowired('gridApi') private gridApi: GridApi;
+    @Autowired('columnApi') private columnApi: ColumnApi;
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('eventService') private eventService: EventService;
     @Autowired('menuItemMapper') private menuItemMapper: MenuItemMapper;
@@ -174,13 +176,13 @@ export class EnterpriseMenu extends BeanStub {
     private tabItemColumns: TabbedItem;
 
     private initialSelection: string;
-    private tabFactories:{[p:string]:() => TabbedItem} = {};
-    private includeChecks:{[p:string]:() => boolean} = {};
-    private restrictTo ?: string[];
+    private tabFactories: { [p: string]: () => TabbedItem; } = {};
+    private includeChecks: { [p: string]: () => boolean; } = {};
+    private restrictTo?: string[];
 
     private timeOfLastColumnChange = Date.now();
 
-    constructor(column: Column, initialSelection: string, restrictTo ?: string[]) {
+    constructor(column: Column, initialSelection: string, restrictTo?: string[]) {
         super();
         this.column = column;
         this.initialSelection = initialSelection;
@@ -194,7 +196,7 @@ export class EnterpriseMenu extends BeanStub {
         this.restrictTo = restrictTo;
     }
 
-    public getMinDimensions(): {width: number, height: number} {
+    public getMinDimensions(): { width: number, height: number; } {
         return this.tabbedLayout.getMinDimensions();
     }
 
@@ -211,7 +213,8 @@ export class EnterpriseMenu extends BeanStub {
         });
 
         this.getContext().wireBean(this.tabbedLayout);
-        this.eventService.addEventListener(Events.EVENT_DISPLAYED_COLUMNS_CHANGED, this.onDisplayedColumnsChanged.bind(this));
+        const displayedListener = this.eventService.addEventListener(Events.EVENT_DISPLAYED_COLUMNS_CHANGED, this.onDisplayedColumnsChanged.bind(this));
+        this.addDestroyFunc(() => displayedListener());
     }
 
     private getTabsToCreate() {
@@ -223,7 +226,7 @@ export class EnterpriseMenu extends BeanStub {
             .filter(tabName => this.isModuleLoaded(tabName));
     }
 
-    private isModuleLoaded(menuTabName: string):boolean {
+    private isModuleLoaded(menuTabName: string): boolean {
         if (menuTabName === EnterpriseMenu.TAB_COLUMNS) {
             return ModuleRegistry.isRegistered(ModuleNames.ColumnToolPanelModule);
         }
@@ -236,22 +239,22 @@ export class EnterpriseMenu extends BeanStub {
         let itemsToConsider: string[] = EnterpriseMenu.TABS_DEFAULT;
 
         if (this.restrictTo != null) {
-            isValid = this.restrictTo.indexOf(menuTabName) > -1 ;
+            isValid = this.restrictTo.indexOf(menuTabName) > -1;
             itemsToConsider = this.restrictTo;
         }
 
-        isValid = isValid && EnterpriseMenu.TABS_DEFAULT.indexOf(menuTabName) > -1 ;
+        isValid = isValid && EnterpriseMenu.TABS_DEFAULT.indexOf(menuTabName) > -1;
 
         if (!isValid) { console.warn(`Trying to render an invalid menu item '${menuTabName}'. Check that your 'menuTabs' contains one of [${itemsToConsider}]`); }
 
         return isValid;
     }
 
-    private isNotSuppressed(menuTabName: string):boolean {
+    private isNotSuppressed(menuTabName: string): boolean {
         return this.includeChecks[menuTabName]();
     }
 
-    private createTab(name: string):TabbedItem {
+    private createTab(name: string): TabbedItem {
         return this.tabFactories[name]();
     }
 
@@ -260,7 +263,7 @@ export class EnterpriseMenu extends BeanStub {
         this.showTab(this.initialSelection);
     }
 
-    public showTab(toShow:string) {
+    public showTab(toShow: string) {
         if (this.tabItemColumns && toShow === EnterpriseMenu.TAB_COLUMNS) {
             this.tabbedLayout.showItem(this.tabItemColumns);
         } else if (this.tabItemFilter && toShow === EnterpriseMenu.TAB_FILTER) {
@@ -423,7 +426,7 @@ export class EnterpriseMenu extends BeanStub {
     }
 
     private createFilterPanel(): TabbedItem {
-        const filterWrapper:FilterWrapper = this.filterManager.getOrCreateFilterWrapper(this.column, 'COLUMN_MENU');
+        const filterWrapper: FilterWrapper = this.filterManager.getOrCreateFilterWrapper(this.column, 'COLUMN_MENU');
 
         let afterFilterAttachedCallback: any = null;
 
@@ -441,7 +444,7 @@ export class EnterpriseMenu extends BeanStub {
 
         this.tabItemFilter = {
             title: _.createIconNoSpan('filter', this.gridOptionsWrapper, this.column),
-            bodyPromise: filterWrapper.guiPromise.promise,
+            bodyPromise: filterWrapper.guiPromise,
             afterAttachedCallback: afterFilterAttachedCallback,
             name: EnterpriseMenu.TAB_FILTER
         };
@@ -466,7 +469,8 @@ export class EnterpriseMenu extends BeanStub {
             suppressColumnSelectAll: false,
             suppressSideButtons: false,
             suppressSyncLayoutWithGrid: false,
-            api: this.gridApi
+            api: this.gridApi,
+            columnApi: this.columnApi
         });
 
         _.addCssClass(this.columnSelectPanel.getGui(), 'ag-menu-column-select');
@@ -482,7 +486,7 @@ export class EnterpriseMenu extends BeanStub {
     }
 
     public afterGuiAttached(params: any): void {
-        this.tabbedLayout.setAfterAttachedParams({hidePopup: params.hidePopup});
+        this.tabbedLayout.setAfterAttachedParams({ hidePopup: params.hidePopup });
         this.hidePopupFunc = params.hidePopup;
         const initialScroll = this.gridApi.getHorizontalPixelRange().left;
         // if the user scrolls the grid horizontally, we want to hide the menu, as the menu will not appear in the right location anymore

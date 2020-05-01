@@ -49,6 +49,13 @@ export class DetailCellRenderer extends Component implements ICellRenderer {
 
     public init(params: IDetailCellRendererParams): void {
 
+        // if embedFullWidthRows=true, then this component could be in a pinned section. we should not show detail
+        // component if in the pinned section, on in the main body section.
+        if (params.pinned) {
+            this.setTemplate('<div class="ag-details-row"></div>');
+            return;
+        }
+
         this.rowId = params.node.id;
         this.masterGridApi = params.api;
         this.suppressRefresh = params.suppressRefresh;
@@ -189,6 +196,7 @@ export interface IDetailCellRendererParams extends ICellRendererParams {
     agGridReact: any;
     frameworkComponentWrapper: any;
     $compile: any;
+    pinned: string;
 }
 
 export interface GetDetailRowData {

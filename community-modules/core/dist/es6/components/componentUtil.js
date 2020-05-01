@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v23.0.2
+ * @version v23.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -115,6 +115,12 @@ var ComponentUtil = /** @class */ (function () {
         }
         if (changes.suppressRowDrag) {
             api.setSuppressRowDrag(ComponentUtil.toBoolean(changes.suppressRowDrag.currentValue));
+        }
+        if (changes.suppressMoveWhenRowDragging) {
+            api.setSuppressMoveWhenRowDragging(ComponentUtil.toBoolean(changes.suppressMoveWhenRowDragging.currentValue));
+        }
+        if (changes.suppressRowClickSelection) {
+            api.setSuppressRowClickSelection(ComponentUtil.toBoolean(changes.suppressRowClickSelection.currentValue));
         }
         if (changes.gridAutoHeight) {
             api.setGridAutoHeight(ComponentUtil.toBoolean(changes.gridAutoHeight.currentValue));

@@ -23,6 +23,7 @@ var chart_1 = require("./chart");
 var polarSeries_1 = require("./series/polar/polarSeries");
 var observable_1 = require("../util/observable");
 var padding_1 = require("../util/padding");
+var bbox_1 = require("../scene/bbox");
 var PolarChart = /** @class */ (function (_super) {
     __extends(PolarChart, _super);
     function PolarChart(document) {
@@ -40,12 +41,7 @@ var PolarChart = /** @class */ (function (_super) {
         configurable: true
     });
     PolarChart.prototype.performLayout = function () {
-        var shrinkRect = {
-            x: 0,
-            y: 0,
-            width: this.width,
-            height: this.height
-        };
+        var shrinkRect = new bbox_1.BBox(0, 0, this.width, this.height);
         this.positionCaptions();
         this.positionLegend();
         var captionAutoPadding = this.captionAutoPadding;
@@ -80,6 +76,7 @@ var PolarChart = /** @class */ (function (_super) {
         shrinkRect.y += padding.top;
         shrinkRect.width -= padding.left + padding.right;
         shrinkRect.height -= padding.top + padding.bottom;
+        this.seriesRect = shrinkRect;
         var centerX = shrinkRect.x + shrinkRect.width / 2;
         var centerY = shrinkRect.y + shrinkRect.height / 2;
         var radius = Math.min(shrinkRect.width, shrinkRect.height) / 2;

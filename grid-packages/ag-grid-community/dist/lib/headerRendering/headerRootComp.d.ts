@@ -1,5 +1,5 @@
-import { GridPanel } from "../gridPanel/gridPanel";
-import { Component } from "../widgets/component";
+import { GridPanel } from '../gridPanel/gridPanel';
+import { Component } from '../widgets/component';
 export declare class HeaderRootComp extends Component {
     private static TEMPLATE;
     private ePinnedLeftHeader;

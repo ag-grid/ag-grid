@@ -1,5 +1,5 @@
-import { __decorate } from "tslib";
-import { Component, ContentChildren, Input } from "@angular/core";
+import { __decorate, __metadata } from "tslib";
+import { Component, ContentChildren, Input, QueryList } from "@angular/core";
 var AgGridColumn = /** @class */ (function () {
     function AgGridColumn() {
     }
@@ -36,356 +36,477 @@ var AgGridColumn = /** @class */ (function () {
     ;
     var AgGridColumn_1;
     __decorate([
-        ContentChildren(AgGridColumn_1)
+        ContentChildren(AgGridColumn_1),
+        __metadata("design:type", QueryList)
     ], AgGridColumn.prototype, "childColumns", void 0);
     __decorate([
-        Input()
+        Input(),
+        __metadata("design:type", Object)
     ], AgGridColumn.prototype, "children", void 0);
     __decorate([
-        Input()
+        Input(),
+        __metadata("design:type", Object)
     ], AgGridColumn.prototype, "sortingOrder", void 0);
     __decorate([
-        Input()
+        Input(),
+        __metadata("design:type", Object)
     ], AgGridColumn.prototype, "allowedAggFuncs", void 0);
     __decorate([
-        Input()
+        Input(),
+        __metadata("design:type", Object)
     ], AgGridColumn.prototype, "menuTabs", void 0);
     __decorate([
-        Input()
+        Input(),
+        __metadata("design:type", Object)
     ], AgGridColumn.prototype, "cellClassRules", void 0);
     __decorate([
-        Input()
+        Input(),
+        __metadata("design:type", Object)
     ], AgGridColumn.prototype, "icons", void 0);
     __decorate([
-        Input()
+        Input(),
+        __metadata("design:type", Object)
     ], AgGridColumn.prototype, "headerGroupComponent", void 0);
     __decorate([
-        Input()
+        Input(),
+        __metadata("design:type", Object)
     ], AgGridColumn.prototype, "headerGroupComponentFramework", void 0);
     __decorate([
-        Input()
+        Input(),
+        __metadata("design:type", Object)
     ], AgGridColumn.prototype, "headerGroupComponentParams", void 0);
     __decorate([
-        Input()
+        Input(),
+        __metadata("design:type", Object)
     ], AgGridColumn.prototype, "cellStyle", void 0);
     __decorate([
-        Input()
+        Input(),
+        __metadata("design:type", Object)
     ], AgGridColumn.prototype, "cellRendererParams", void 0);
     __decorate([
-        Input()
+        Input(),
+        __metadata("design:type", Object)
     ], AgGridColumn.prototype, "cellEditorFramework", void 0);
     __decorate([
-        Input()
+        Input(),
+        __metadata("design:type", Object)
     ], AgGridColumn.prototype, "cellEditorParams", void 0);
     __decorate([
-        Input()
+        Input(),
+        __metadata("design:type", Object)
     ], AgGridColumn.prototype, "pinnedRowCellRendererFramework", void 0);
     __decorate([
-        Input()
+        Input(),
+        __metadata("design:type", Object)
     ], AgGridColumn.prototype, "pinnedRowCellRendererParams", void 0);
     __decorate([
-        Input()
+        Input(),
+        __metadata("design:type", Object)
     ], AgGridColumn.prototype, "filterFramework", void 0);
     __decorate([
-        Input()
+        Input(),
+        __metadata("design:type", Object)
     ], AgGridColumn.prototype, "filterParams", void 0);
     __decorate([
-        Input()
+        Input(),
+        __metadata("design:type", Object)
     ], AgGridColumn.prototype, "headerComponent", void 0);
     __decorate([
-        Input()
+        Input(),
+        __metadata("design:type", Object)
     ], AgGridColumn.prototype, "headerComponentFramework", void 0);
     __decorate([
-        Input()
+        Input(),
+        __metadata("design:type", Object)
     ], AgGridColumn.prototype, "headerComponentParams", void 0);
     __decorate([
-        Input()
+        Input(),
+        __metadata("design:type", Object)
     ], AgGridColumn.prototype, "floatingFilterComponent", void 0);
     __decorate([
-        Input()
+        Input(),
+        __metadata("design:type", Object)
     ], AgGridColumn.prototype, "floatingFilterComponentParams", void 0);
     __decorate([
-        Input()
+        Input(),
+        __metadata("design:type", Object)
     ], AgGridColumn.prototype, "floatingFilterComponentFramework", void 0);
     __decorate([
-        Input()
+        Input(),
+        __metadata("design:type", Object)
     ], AgGridColumn.prototype, "tooltipComponent", void 0);
     __decorate([
-        Input()
+        Input(),
+        __metadata("design:type", Object)
     ], AgGridColumn.prototype, "tooltipComponentParams", void 0);
     __decorate([
-        Input()
+        Input(),
+        __metadata("design:type", Object)
     ], AgGridColumn.prototype, "tooltipComponentFramework", void 0);
     __decorate([
-        Input()
+        Input(),
+        __metadata("design:type", Object)
     ], AgGridColumn.prototype, "refData", void 0);
     __decorate([
-        Input()
+        Input(),
+        __metadata("design:type", Object)
     ], AgGridColumn.prototype, "headerName", void 0);
     __decorate([
-        Input()
+        Input(),
+        __metadata("design:type", Object)
     ], AgGridColumn.prototype, "columnGroupShow", void 0);
     __decorate([
-        Input()
+        Input(),
+        __metadata("design:type", Object)
     ], AgGridColumn.prototype, "headerClass", void 0);
     __decorate([
-        Input()
+        Input(),
+        __metadata("design:type", Object)
     ], AgGridColumn.prototype, "toolPanelClass", void 0);
     __decorate([
-        Input()
+        Input(),
+        __metadata("design:type", Object)
     ], AgGridColumn.prototype, "headerValueGetter", void 0);
     __decorate([
-        Input()
+        Input(),
+        __metadata("design:type", Object)
     ], AgGridColumn.prototype, "groupId", void 0);
     __decorate([
-        Input()
+        Input(),
+        __metadata("design:type", Object)
     ], AgGridColumn.prototype, "colId", void 0);
     __decorate([
-        Input()
+        Input(),
+        __metadata("design:type", Object)
     ], AgGridColumn.prototype, "sort", void 0);
     __decorate([
-        Input()
+        Input(),
+        __metadata("design:type", Object)
     ], AgGridColumn.prototype, "field", void 0);
     __decorate([
-        Input()
+        Input(),
+        __metadata("design:type", Object)
     ], AgGridColumn.prototype, "type", void 0);
     __decorate([
-        Input()
+        Input(),
+        __metadata("design:type", Object)
     ], AgGridColumn.prototype, "tooltipField", void 0);
     __decorate([
-        Input()
+        Input(),
+        __metadata("design:type", Object)
     ], AgGridColumn.prototype, "headerTooltip", void 0);
     __decorate([
-        Input()
+        Input(),
+        __metadata("design:type", Object)
     ], AgGridColumn.prototype, "cellClass", void 0);
     __decorate([
-        Input()
+        Input(),
+        __metadata("design:type", Object)
     ], AgGridColumn.prototype, "showRowGroup", void 0);
     __decorate([
-        Input()
+        Input(),
+        __metadata("design:type", Object)
     ], AgGridColumn.prototype, "filter", void 0);
     __decorate([
-        Input()
+        Input(),
+        __metadata("design:type", Object)
     ], AgGridColumn.prototype, "aggFunc", void 0);
     __decorate([
-        Input()
+        Input(),
+        __metadata("design:type", Object)
     ], AgGridColumn.prototype, "cellRenderer", void 0);
     __decorate([
-        Input()
+        Input(),
+        __metadata("design:type", Object)
     ], AgGridColumn.prototype, "cellEditor", void 0);
     __decorate([
-        Input()
+        Input(),
+        __metadata("design:type", Object)
     ], AgGridColumn.prototype, "pinned", void 0);
     __decorate([
-        Input()
+        Input(),
+        __metadata("design:type", Object)
     ], AgGridColumn.prototype, "chartDataType", void 0);
     __decorate([
-        Input()
+        Input(),
+        __metadata("design:type", Object)
     ], AgGridColumn.prototype, "sortedAt", void 0);
     __decorate([
-        Input()
+        Input(),
+        __metadata("design:type", Object)
     ], AgGridColumn.prototype, "flex", void 0);
     __decorate([
-        Input()
+        Input(),
+        __metadata("design:type", Object)
     ], AgGridColumn.prototype, "width", void 0);
     __decorate([
-        Input()
+        Input(),
+        __metadata("design:type", Object)
     ], AgGridColumn.prototype, "minWidth", void 0);
     __decorate([
-        Input()
+        Input(),
+        __metadata("design:type", Object)
     ], AgGridColumn.prototype, "maxWidth", void 0);
     __decorate([
-        Input()
+        Input(),
+        __metadata("design:type", Object)
     ], AgGridColumn.prototype, "rowGroupIndex", void 0);
     __decorate([
-        Input()
+        Input(),
+        __metadata("design:type", Object)
     ], AgGridColumn.prototype, "pivotIndex", void 0);
     __decorate([
-        Input()
+        Input(),
+        __metadata("design:type", Object)
     ], AgGridColumn.prototype, "dndSourceOnRowDrag", void 0);
     __decorate([
-        Input()
+        Input(),
+        __metadata("design:type", Object)
     ], AgGridColumn.prototype, "valueGetter", void 0);
     __decorate([
-        Input()
+        Input(),
+        __metadata("design:type", Object)
     ], AgGridColumn.prototype, "valueSetter", void 0);
     __decorate([
-        Input()
+        Input(),
+        __metadata("design:type", Object)
     ], AgGridColumn.prototype, "filterValueGetter", void 0);
     __decorate([
-        Input()
+        Input(),
+        __metadata("design:type", Object)
     ], AgGridColumn.prototype, "keyCreator", void 0);
     __decorate([
-        Input()
+        Input(),
+        __metadata("design:type", Object)
     ], AgGridColumn.prototype, "cellRendererFramework", void 0);
     __decorate([
-        Input()
+        Input(),
+        __metadata("design:type", Object)
     ], AgGridColumn.prototype, "pinnedRowCellRenderer", void 0);
     __decorate([
-        Input()
+        Input(),
+        __metadata("design:type", Object)
     ], AgGridColumn.prototype, "valueFormatter", void 0);
     __decorate([
-        Input()
+        Input(),
+        __metadata("design:type", Object)
     ], AgGridColumn.prototype, "pinnedRowValueFormatter", void 0);
     __decorate([
-        Input()
+        Input(),
+        __metadata("design:type", Object)
     ], AgGridColumn.prototype, "valueParser", void 0);
     __decorate([
-        Input()
+        Input(),
+        __metadata("design:type", Object)
     ], AgGridColumn.prototype, "comparator", void 0);
     __decorate([
-        Input()
+        Input(),
+        __metadata("design:type", Object)
     ], AgGridColumn.prototype, "equals", void 0);
     __decorate([
-        Input()
+        Input(),
+        __metadata("design:type", Object)
     ], AgGridColumn.prototype, "pivotComparator", void 0);
     __decorate([
-        Input()
+        Input(),
+        __metadata("design:type", Object)
     ], AgGridColumn.prototype, "suppressKeyboardEvent", void 0);
     __decorate([
-        Input()
+        Input(),
+        __metadata("design:type", Object)
     ], AgGridColumn.prototype, "colSpan", void 0);
     __decorate([
-        Input()
+        Input(),
+        __metadata("design:type", Object)
     ], AgGridColumn.prototype, "rowSpan", void 0);
     __decorate([
-        Input()
+        Input(),
+        __metadata("design:type", Object)
     ], AgGridColumn.prototype, "getQuickFilterText", void 0);
     __decorate([
-        Input()
+        Input(),
+        __metadata("design:type", Object)
     ], AgGridColumn.prototype, "newValueHandler", void 0);
     __decorate([
-        Input()
+        Input(),
+        __metadata("design:type", Object)
     ], AgGridColumn.prototype, "onCellValueChanged", void 0);
     __decorate([
-        Input()
+        Input(),
+        __metadata("design:type", Object)
     ], AgGridColumn.prototype, "onCellClicked", void 0);
     __decorate([
-        Input()
+        Input(),
+        __metadata("design:type", Object)
     ], AgGridColumn.prototype, "onCellDoubleClicked", void 0);
     __decorate([
-        Input()
+        Input(),
+        __metadata("design:type", Object)
     ], AgGridColumn.prototype, "onCellContextMenu", void 0);
     __decorate([
-        Input()
+        Input(),
+        __metadata("design:type", Object)
     ], AgGridColumn.prototype, "rowDragText", void 0);
     __decorate([
-        Input()
+        Input(),
+        __metadata("design:type", Object)
     ], AgGridColumn.prototype, "tooltip", void 0);
     __decorate([
-        Input()
+        Input(),
+        __metadata("design:type", Object)
     ], AgGridColumn.prototype, "tooltipValueGetter", void 0);
     __decorate([
-        Input()
+        Input(),
+        __metadata("design:type", Object)
     ], AgGridColumn.prototype, "cellRendererSelector", void 0);
     __decorate([
-        Input()
+        Input(),
+        __metadata("design:type", Object)
     ], AgGridColumn.prototype, "cellEditorSelector", void 0);
     __decorate([
-        Input()
+        Input(),
+        __metadata("design:type", Object)
     ], AgGridColumn.prototype, "suppressCellFlash", void 0);
     __decorate([
-        Input()
+        Input(),
+        __metadata("design:type", Object)
     ], AgGridColumn.prototype, "suppressColumnsToolPanel", void 0);
     __decorate([
-        Input()
+        Input(),
+        __metadata("design:type", Object)
     ], AgGridColumn.prototype, "suppressFiltersToolPanel", void 0);
     __decorate([
-        Input()
+        Input(),
+        __metadata("design:type", Object)
     ], AgGridColumn.prototype, "openByDefault", void 0);
     __decorate([
-        Input()
+        Input(),
+        __metadata("design:type", Object)
     ], AgGridColumn.prototype, "marryChildren", void 0);
     __decorate([
-        Input()
+        Input(),
+        __metadata("design:type", Object)
     ], AgGridColumn.prototype, "hide", void 0);
     __decorate([
-        Input()
+        Input(),
+        __metadata("design:type", Object)
     ], AgGridColumn.prototype, "rowGroup", void 0);
     __decorate([
-        Input()
+        Input(),
+        __metadata("design:type", Object)
     ], AgGridColumn.prototype, "pivot", void 0);
     __decorate([
-        Input()
+        Input(),
+        __metadata("design:type", Object)
     ], AgGridColumn.prototype, "checkboxSelection", void 0);
     __decorate([
-        Input()
+        Input(),
+        __metadata("design:type", Object)
     ], AgGridColumn.prototype, "headerCheckboxSelection", void 0);
     __decorate([
-        Input()
+        Input(),
+        __metadata("design:type", Object)
     ], AgGridColumn.prototype, "headerCheckboxSelectionFilteredOnly", void 0);
     __decorate([
-        Input()
+        Input(),
+        __metadata("design:type", Object)
     ], AgGridColumn.prototype, "suppressMenu", void 0);
     __decorate([
-        Input()
+        Input(),
+        __metadata("design:type", Object)
     ], AgGridColumn.prototype, "suppressSorting", void 0);
     __decorate([
-        Input()
+        Input(),
+        __metadata("design:type", Object)
     ], AgGridColumn.prototype, "suppressMovable", void 0);
     __decorate([
-        Input()
+        Input(),
+        __metadata("design:type", Object)
     ], AgGridColumn.prototype, "suppressFilter", void 0);
     __decorate([
-        Input()
+        Input(),
+        __metadata("design:type", Object)
     ], AgGridColumn.prototype, "lockPosition", void 0);
     __decorate([
-        Input()
+        Input(),
+        __metadata("design:type", Object)
     ], AgGridColumn.prototype, "lockVisible", void 0);
     __decorate([
-        Input()
+        Input(),
+        __metadata("design:type", Object)
     ], AgGridColumn.prototype, "lockPinned", void 0);
     __decorate([
-        Input()
+        Input(),
+        __metadata("design:type", Object)
     ], AgGridColumn.prototype, "unSortIcon", void 0);
     __decorate([
-        Input()
+        Input(),
+        __metadata("design:type", Object)
     ], AgGridColumn.prototype, "suppressSizeToFit", void 0);
     __decorate([
-        Input()
+        Input(),
+        __metadata("design:type", Object)
     ], AgGridColumn.prototype, "suppressResize", void 0);
     __decorate([
-        Input()
+        Input(),
+        __metadata("design:type", Object)
     ], AgGridColumn.prototype, "suppressAutoSize", void 0);
     __decorate([
-        Input()
+        Input(),
+        __metadata("design:type", Object)
     ], AgGridColumn.prototype, "enableRowGroup", void 0);
     __decorate([
-        Input()
+        Input(),
+        __metadata("design:type", Object)
     ], AgGridColumn.prototype, "enablePivot", void 0);
     __decorate([
-        Input()
+        Input(),
+        __metadata("design:type", Object)
     ], AgGridColumn.prototype, "enableValue", void 0);
     __decorate([
-        Input()
+        Input(),
+        __metadata("design:type", Object)
     ], AgGridColumn.prototype, "editable", void 0);
     __decorate([
-        Input()
+        Input(),
+        __metadata("design:type", Object)
     ], AgGridColumn.prototype, "suppressPaste", void 0);
     __decorate([
-        Input()
+        Input(),
+        __metadata("design:type", Object)
     ], AgGridColumn.prototype, "suppressNavigable", void 0);
     __decorate([
-        Input()
+        Input(),
+        __metadata("design:type", Object)
     ], AgGridColumn.prototype, "enableCellChangeFlash", void 0);
     __decorate([
-        Input()
+        Input(),
+        __metadata("design:type", Object)
     ], AgGridColumn.prototype, "rowDrag", void 0);
     __decorate([
-        Input()
+        Input(),
+        __metadata("design:type", Object)
     ], AgGridColumn.prototype, "dndSource", void 0);
     __decorate([
-        Input()
+        Input(),
+        __metadata("design:type", Object)
     ], AgGridColumn.prototype, "autoHeight", void 0);
     __decorate([
-        Input()
+        Input(),
+        __metadata("design:type", Object)
     ], AgGridColumn.prototype, "sortable", void 0);
     __decorate([
-        Input()
+        Input(),
+        __metadata("design:type", Object)
     ], AgGridColumn.prototype, "resizable", void 0);
     __decorate([
-        Input()
+        Input(),
+        __metadata("design:type", Object)
     ], AgGridColumn.prototype, "singleClickEdit", void 0);
+    __decorate([
+        Input(),
+        __metadata("design:type", Object)
+    ], AgGridColumn.prototype, "floatingFilter", void 0);
     AgGridColumn = AgGridColumn_1 = __decorate([
         Component({
             selector: 'ag-grid-column',
@@ -395,4 +516,4 @@ var AgGridColumn = /** @class */ (function () {
     return AgGridColumn;
 }());
 export { AgGridColumn };
-//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoiYWctZ3JpZC1jb2x1bW4uY29tcG9uZW50LmpzIiwic291cmNlUm9vdCI6Im5nOi8vYWctZ3JpZC1hbmd1bGFyLyIsInNvdXJjZXMiOlsibGliL2FnLWdyaWQtY29sdW1uLmNvbXBvbmVudC50cyJdLCJuYW1lcyI6W10sIm1hcHBpbmdzIjoiO0FBQUEsT0FBTyxFQUFDLFNBQVMsRUFBRSxlQUFlLEVBQUUsS0FBSyxFQUFZLE1BQU0sZUFBZSxDQUFDO0FBTzNFO0lBQUE7SUE0SkEsQ0FBQztxQkE1SlksWUFBWTtJQUdkLHNDQUFlLEdBQXRCO1FBQ0ksSUFBSSxJQUFJLENBQUMsWUFBWSxJQUFJLElBQUksQ0FBQyxZQUFZLENBQUMsTUFBTSxHQUFHLENBQUMsRUFBRTtZQUNuRCx1RUFBdUU7WUFDdkUsT0FBTyxDQUFDLENBQUMsSUFBSSxDQUFDLFlBQVksQ0FBQyxNQUFNLEtBQUssQ0FBQyxJQUFJLElBQUksQ0FBQyxZQUFZLENBQUMsS0FBSyxLQUFLLElBQUksQ0FBQyxDQUFDO1NBQ2hGO1FBQ0QsT0FBTyxLQUFLLENBQUM7SUFDakIsQ0FBQztJQUVNLCtCQUFRLEdBQWY7UUFDSSxJQUFJLE1BQU0sR0FBVyxJQUFJLENBQUMsMEJBQTBCLENBQUMsSUFBSSxDQUFDLENBQUM7UUFFM0QsSUFBSSxJQUFJLENBQUMsZUFBZSxFQUFFLEVBQUU7WUFDbEIsTUFBTyxDQUFDLFVBQVUsQ0FBQyxHQUFHLElBQUksQ0FBQyxlQUFlLENBQUMsSUFBSSxDQUFDLFlBQVksQ0FBQyxDQUFDO1NBQ3ZFO1FBQ0QsT0FBTyxNQUFNLENBQUM7SUFDbEIsQ0FBQztJQUVPLHNDQUFlLEdBQXZCLFVBQXdCLFlBQXFDO1FBQ3pELE9BQU8sWUFBWTtZQUNmLHVFQUF1RTthQUN0RSxNQUFNLENBQUMsVUFBQSxNQUFNLElBQUksT0FBQSxDQUFDLE1BQU0sQ0FBQyxlQUFlLEVBQUUsRUFBekIsQ0FBeUIsQ0FBQzthQUMzQyxHQUFHLENBQUMsVUFBQyxNQUFvQjtZQUN0QixPQUFPLE1BQU0sQ0FBQyxR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O1NBQ2YsQ0FBQztPQUNXLFlBQVksQ0E0SnhCO0lBQUQsbUJBQUM7Q0FBQSxBQTVKRCxJQTRKQztTQTVKWSxZQUFZIiwic291cmNlc0NvbnRlbnQiOlsiaW1wb3J0IHtDb21wb25lbnQsIENvbnRlbnRDaGlsZHJlbiwgSW5wdXQsIFF1ZXJ5TGlzdH0gZnJvbSBcIkBhbmd1bGFyL2NvcmVcIjtcbmltcG9ydCB7Q29sRGVmfSBmcm9tIFwiYWctZ3JpZC1jb21tdW5pdHlcIjtcblxuQENvbXBvbmVudCh7XG4gICAgc2VsZWN0b3I6ICdhZy1ncmlkLWNvbHVtbicsXG4gICAgdGVtcGxhdGU6ICcnXG59KVxuZXhwb3J0IGNsYXNzIEFnR3JpZENvbHVtbiB7XG4gICAgQENvbnRlbnRDaGlsZHJlbihBZ0dyaWRDb2x1bW4pIHB1YmxpYyBjaGlsZENvbHVtbnM6IFF1ZXJ5TGlzdDxBZ0dyaWRDb2x1bW4+O1xuXG4gICAgcHVibGljIGhhc0NoaWxkQ29sdW1ucygpOiBib29sZWFuIHtcbiAgICAgICAgaWYgKHRoaXMuY2hpbGRDb2x1bW5zICYmIHRoaXMuY2hpbGRDb2x1bW5zLmxlbmd0aCA+IDApIHtcbiAgICAgICAgICAgIC8vIG5lY2Vzc2FyeSBiZWNhdXNlIG9mIGh0dHBzOi8vZ2l0aHViLmNvbS9hbmd1bGFyL2FuZ3VsYXIvaXNzdWVzLzEwMDk4XG4gICAgICAgICAgICByZXR1cm4gISh0aGlzLmNoaWxkQ29sdW1ucy5sZW5ndGggPT09IDEgJiYgdGhpcy5jaGlsZENvbHVtbnMuZmlyc3QgPT09IHRoaXMpO1xuICAgICAgICB9XG4gICAgICAgIHJldHVybiBmYWxzZTtcbiAgICB9XG5cbiAgICBwdWJsaWMgdG9Db2xEZWYoKTogQ29sRGVmIHtcbiAgICAgICAgbGV0IGNvbERlZjogQ29sRGVmID0gdGhpcy5jcmVhdGVDb2xEZWZGcm9tR3JpZENvbHVtbih0aGlzKTtcblxuICAgICAgICBpZiAodGhpcy5oYXNDaGlsZENvbHVtbnMoKSkge1xuICAgICAgICAgICAgKDxhbnk+Y29sRGVmKVtcImNoaWxkcmVuXCJdID0gdGhpcy5nZXRDaGlsZENvbERlZnModGhpcy5jaGlsZENvbHVtbnMpO1xuICAgICAgICB9XG4gICAgICAgIHJldHVybiBjb2xEZWY7XG4gICAgfVxuXG4gICAgcHJpdmF0ZSBnZXRDaGlsZENvbERlZnMoY2hpbGRDb2x1bW5zOiBRdWVyeUxpc3Q8QWdHcmlkQ29sdW1uPikge1xuICAgICAgICByZXR1cm4gY2hpbGRDb2x1bW5zXG4gICAgICAgICAgICAvLyBuZWNlc3NhcnkgYmVjYXVzZSBvZiBodHRwczovL2dpdGh1Yi5jb20vYW5ndWxhci9hbmd1bGFyL2lzc3Vlcy8xMDA5OFxuICAgICAgICAgICAgLmZpbHRlcihjb2x1bW4gPT4gIWNvbHVtbi5oYXNDaGlsZENvbHVtbnMoKSlcbiAgICAgICAgICAgIC5tYXAoKGNvbHVtbjogQWdHcmlkQ29sdW1uKSA9PiB7XG4gICAgICAgICAgICAgICAgcmV0dXJuIGNvbHVtbi50b0NvbERlZigpO1xuICAgICAgICAgICAgfSk7XG4gICAgfTtcblxuICAgIHByaXZhdGUgY3JlYXRlQ29sRGVmRnJvbUdyaWRDb2x1bW4oZnJvbTogQWdHcmlkQ29sdW1uKTogQ29sRGVmIHtcbiAgICAgICAgbGV0IGNvbERlZjogQ29sRGVmID0ge307XG4gICAgICAgIE9iamVjdC5hc3NpZ24oY29sRGVmLCBmcm9tKTtcbiAgICAgICAgZGVsZXRlICg8YW55PmNvbERlZikuY2hpbGRDb2x1bW5zO1xuICAgICAgICByZXR1cm4gY29sRGVmO1xuICAgIH07XG5cbiAgICAvLyBpbnB1dHMgLSBwcmV0dHkgbXVjaCBtb3N0IG9mIENvbERlZiwgd2l0aCB0aGUgZXhjZXB0aW9uIG9mIHRlbXBsYXRlLCB0ZW1wbGF0ZVVybCBhbmQgaW50ZXJuYWwgb25seSBwcm9wZXJ0aWVzXG4gICAgLy8gQFNUQVJUQFxuICAgIEBJbnB1dCgpIHB1YmxpYyBjaGlsZHJlbjogYW55O1xuICAgIEBJbnB1dCgpIHB1YmxpYyBzb3J0aW5nT3JkZXI6IGFueTtcbiAgICBASW5wdXQoKSBwdWJsaWMgYWxsb3dlZEFnZ0Z1bmNzOiBhbnk7XG4gICAgQElucHV0KCkgcHVibGljIG1lbnVUYWJzOiBhbnk7XG4gICAgQElucHV0KCkgcHVibGljIGNlbGxDbGFzc1J1bGVzOiBhbnk7XG4gICAgQElucHV0KCkgcHVibGljIGljb25zOiBhbnk7XG4gICAgQElucHV0KCkgcHVibGljIGhlYWRlckdyb3VwQ29tcG9uZW50OiBhbnk7XG4gICAgQElucHV0KCkgcHVibGljIGhlYWRlckdyb3VwQ29tcG9uZW50RnJhbWV3b3JrOiBhbnk7XG4gICAgQElucHV0KCkgcHVibGljIGhlYWRlckdyb3VwQ29tcG9uZW50UGFyYW1zOiBhbnk7XG4gICAgQElucHV0KCkgcHVibGljIGNlbGxTdHlsZTogYW55O1xuICAgIEBJbnB1dCgpIHB1YmxpYyBjZWxsUmVuZGVyZXJQYXJhbXM6IGFueTtcbiAgICBASW5wdXQoKSBwdWJsaWMgY2VsbEVkaXRvckZyYW1ld29yazogYW55O1xuICAgIEBJbnB1dCgpIHB1YmxpYyBjZWxsRWRpdG9yUGFyYW1zOiBhbnk7XG4gICAgQElucHV0KCkgcHVibGljIHBpbm5lZFJvd0NlbGxSZW5kZXJlckZyYW1ld29yazogYW55O1xuICAgIEBJbnB1dCgpIHB1YmxpYyBwaW5uZWRSb3dDZWxsUmVuZGVyZXJQYXJhbXM6IGFueTtcbiAgICBASW5wdXQoKSBwdWJsaWMgZmlsdGVyRnJhbWV3b3JrOiBhbnk7XG4gICAgQElucHV0KCkgcHVibGljIGZpbHRlclBhcmFtczogYW55O1xuICAgIEBJbnB1dCgpIHB1YmxpYyBoZWFkZXJDb21wb25lbnQ6IGFueTtcbiAgICBASW5wdXQoKSBwdWJsaWMgaGVhZGVyQ29tcG9uZW50RnJhbWV3b3JrOiBhbnk7XG4gICAgQElucHV0KCkgcHVibGljIGhlYWRlckNvbXBvbmVudFBhcmFtczogYW55O1xuICAgIEBJbnB1dCgpIHB1YmxpYyBmbG9hdGluZ0ZpbHRlckNvbXBvbmVudDogYW55O1xuICAgIEBJbnB1dCgpIHB1YmxpYyBmbG9hdGluZ0ZpbHRlckNvbXBvbmVudFBhcmFtczogYW55O1xuICAgIEBJbnB1dCgpIHB1YmxpYyBmbG9hdGluZ0ZpbHRlckNvbXBvbmVudEZyYW1ld29yazogYW55O1xuICAgIEBJbnB1dCgpIHB1YmxpYyB0b29sdGlwQ29tcG9uZW50OiBhbnk7XG4gICAgQElucHV0KCkgcHVibGljIHRvb2x0aXBDb21wb25lbnRQYXJhbXM6IGFueTtcbiAgICBASW5wdXQoKSBwdWJsaWMgdG9vbHRpcENvbXBvbmVudEZyYW1ld29yazogYW55O1xuICAgIEBJbnB1dCgpIHB1YmxpYyByZWZEYXRhOiBhbnk7XG4gICAgQElucHV0KCkgcHVibGljIGhlYWRlck5hbWU6IGFueTtcbiAgICBASW5wdXQoKSBwdWJsaWMgY29sdW1uR3JvdXBTaG93OiBhbnk7XG4gICAgQElucHV0KCkgcHVibGljIGhlYWRlckNsYXNzOiBhbnk7XG4gICAgQElucHV0KCkgcHVibGljIHRvb2xQYW5lbENsYXNzOiBhbnk7XG4gICAgQElucHV0KCkgcHVibGljIGhlYWRlclZhbHVlR2V0dGVyOiBhbnk7XG4gICAgQElucHV0KCkgcHVibGljIGdyb3VwSWQ6IGFueTtcbiAgICBASW5wdXQoKSBwdWJsaWMgY29sSWQ6IGFueTtcbiAgICBASW5wdXQoKSBwdWJsaWMgc29ydDogYW55O1xuICAgIEBJbnB1dCgpIHB1YmxpYyBmaWVsZDogYW55O1xuICAgIEBJbnB1dCgpIHB1YmxpYyB0eXBlOiBhbnk7XG4gICAgQElucHV0KCkgcHVibGljIHRvb2x0aXBGaWVsZDogYW55O1xuICAgIEBJbnB1dCgpIHB1YmxpYyBoZWFkZXJUb29sdGlwOiBhbnk7XG4gICAgQElucHV0KCkgcHVibGljIGNlbGxDbGFzczogYW55O1xuICAgIEBJbnB1dCgpIHB1YmxpYyBzaG93Um93R3JvdXA6IGFueTtcbiAgICBASW5wdXQoKSBwdWJsaWMgZmlsdGVyOiBhbnk7XG4gICAgQElucHV0KCkgcHVibGljIGFnZ0Z1bmM6IGFueTtcbiAgICBASW5wdXQoKSBwdWJsaWMgY2VsbFJlbmRlcmVyOiBhbnk7XG4gICAgQElucHV0KCkgcHVibGljIGNlbGxFZGl0b3I6IGFueTtcbiAgICBASW5wdXQoKSBwdWJsaWMgcGlubmVkOiBhbnk7XG4gICAgQElucHV0KCkgcHVibGljIGNoYXJ0RGF0YVR5cGU6IGFueTtcbiAgICBASW5wdXQoKSBwdWJsaWMgc29ydGVkQXQ6IGFueTtcbiAgICBASW5wdXQoKSBwdWJsaWMgZmxleDogYW55O1xuICAgIEBJbnB1dCgpIHB1YmxpYyB3aWR0aDogYW55O1xuICAgIEBJbnB1dCgpIHB1YmxpYyBtaW5XaWR0aDogYW55O1xuICAgIEBJbnB1dCgpIHB1YmxpYyBtYXhXaWR0aDogYW55O1xuICAgIEBJbnB1dCgpIHB1YmxpYyByb3dHcm91cEluZGV4OiBhbnk7XG4gICAgQElucHV0KCkgcHVibGljIHBpdm90SW5kZXg6IGFueTtcbiAgICBASW5wdXQoKSBwdWJsaWMgZG5kU291cmNlT25Sb3dEcmFnOiBhbnk7XG4gICAgQElucHV0KCkgcHVibGljIHZhbHVlR2V0dGVyOiBhbnk7XG4gICAgQElucHV0KCkgcHVibGljIHZhbHVlU2V0dGVyOiBhbnk7XG4gICAgQElucHV0KCkgcHVibGljIGZpbHRlclZhbHVlR2V0dGVyOiBhbnk7XG4gICAgQElucHV0KCkgcHVibGljIGtleUNyZWF0b3I6IGFueTtcbiAgICBASW5wdXQoKSBwdWJsaWMgY2VsbFJlbmRlcmVyRnJhbWV3b3JrOiBhbnk7XG4gICAgQElucHV0KCkgcHVibGljIHBpbm5lZFJvd0NlbGxSZW5kZXJlcjogYW55O1xuICAgIEBJbnB1dCgpIHB1YmxpYyB2YWx1ZUZvcm1hdHRlcjogYW55O1xuICAgIEBJbnB1dCgpIHB1YmxpYyBwaW5uZWRSb3dWYWx1ZUZvcm1hdHRlcjogYW55O1xuICAgIEBJbnB1dCgpIHB1YmxpYyB2YWx1ZVBhcnNlcjogYW55O1xuICAgIEBJbnB1dCgpIHB1YmxpYyBjb21wYXJhdG9yOiBhbnk7XG4gICAgQElucHV0KCkgcHVibGljIGVxdWFsczogYW55O1xuICAgIEBJbnB1dCgpIHB1YmxpYyBwaXZvdENvbXBhcmF0b3I6IGFueTtcbiAgICBASW5wdXQoKSBwdWJsaWMgc3VwcHJlc3NLZXlib2FyZEV2ZW50OiBhbnk7XG4gICAgQElucHV0KCkgcHVibGljIGNvbFNwYW46IGFueTtcbiAgICBASW5wdXQoKSBwdWJsaWMgcm93U3BhbjogYW55O1xuICAgIEBJbnB1dCgpIHB1YmxpYyBnZXRRdWlja0ZpbHRlclRleHQ6IGFueTtcbiAgICBASW5wdXQoKSBwdWJsaWMgbmV3VmFsdWVIYW5kbGVyOiBhbnk7XG4gICAgQElucHV0KCkgcHVibGljIG9uQ2VsbFZhbHVlQ2hhbmdlZDogYW55O1xuICAgIEBJbnB1dCgpIHB1YmxpYyBvbkNlbGxDbGlja2VkOiBhbnk7XG4gICAgQElucHV0KCkgcHVibGljIG9uQ2VsbERvdWJsZUNsaWNrZWQ6IGFueTtcbiAgICBASW5wdXQoKSBwdWJsaWMgb25DZWxsQ29udGV4dE1lbnU6IGFueTtcbiAgICBASW5wdXQoKSBwdWJsaWMgcm93RHJhZ1RleHQ6IGFueTtcbiAgICBASW5wdXQoKSBwdWJsaWMgdG9vbHRpcDogYW55O1xuICAgIEBJbnB1dCgpIHB1YmxpYyB0b29sdGlwVmFsdWVHZXR0ZXI6IGFueTtcbiAgICBASW5wdXQoKSBwdWJsaWMgY2VsbFJlbmRlcmVyU2VsZWN0b3I6IGFueTtcbiAgICBASW5wdXQoKSBwdWJsaWMgY2VsbEVkaXRvclNlbGVjdG9yOiBhbnk7XG4gICAgQElucHV0KCkgcHVibGljIHN1cHByZXNzQ2VsbEZsYXNoOiBhbnk7XG4gICAgQElucHV0KCkgcHVibGljIHN1cHByZXNzQ29sdW1uc1Rvb2xQYW5lbDogYW55O1xuICAgIEBJbnB1dCgpIHB1YmxpYyBzdXBwcmVzc0ZpbHRlcnNUb29sUGFuZWw6IGFueTtcbiAgICBASW5wdXQoKSBwdWJsaWMgb3BlbkJ5RGVmYXVsdDogYW55O1xuICAgIEBJbnB1dCgpIHB1YmxpYyBtYXJyeUNoaWxkcmVuOiBhbnk7XG4gICAgQElucHV0KCkgcHVibGljIGhpZGU6IGFueTtcbiAgICBASW5wdXQoKSBwdWJsaWMgcm93R3JvdXA6IGFueTtcbiAgICBASW5wdXQoKSBwdWJsaWMgcGl2b3Q6IGFueTtcbiAgICBASW5wdXQoKSBwdWJsaWMgY2hlY2tib3hTZWxlY3Rpb246IGFueTtcbiAgICBASW5wdXQoKSBwdWJsaWMgaGVhZGVyQ2hlY2tib3hTZWxlY3Rpb246IGFueTtcbiAgICBASW5wdXQoKSBwdWJsaWMgaGVhZGVyQ2hlY2tib3hTZWxlY3Rpb25GaWx0ZXJlZE9ubHk6IGFueTtcbiAgICBASW5wdXQoKSBwdWJsaWMgc3VwcHJlc3NNZW51OiBhbnk7XG4gICAgQElucHV0KCkgcHVibGljIHN1cHByZXNzU29ydGluZzogYW55O1xuICAgIEBJbnB1dCgpIHB1YmxpYyBzdXBwcmVzc01vdmFibGU6IGFueTtcbiAgICBASW5wdXQoKSBwdWJsaWMgc3VwcHJlc3NGaWx0ZXI6IGFueTtcbiAgICBASW5wdXQoKSBwdWJsaWMgbG9ja1Bvc2l0aW9uOiBhbnk7XG4gICAgQElucHV0KCkgcHVibGljIGxvY2tWaXNpYmxlOiBhbnk7XG4gICAgQElucHV0KCkgcHVibGljIGxvY2tQaW5uZWQ6IGFueTtcbiAgICBASW5wdXQoKSBwdWJsaWMgdW5Tb3J0SWNvbjogYW55O1xuICAgIEBJbnB1dCgpIHB1YmxpYyBzdXBwcmVzc1NpemVUb0ZpdDogYW55O1xuICAgIEBJbnB1dCgpIHB1YmxpYyBzdXBwcmVzc1Jlc2l6ZTogYW55O1xuICAgIEBJbnB1dCgpIHB1YmxpYyBzdXBwcmVzc0F1dG9TaXplOiBhbnk7XG4gICAgQElucHV0KCkgcHVibGljIGVuYWJsZVJvd0dyb3VwOiBhbnk7XG4gICAgQElucHV0KCkgcHVibGljIGVuYWJsZVBpdm90OiBhbnk7XG4gICAgQElucHV0KCkgcHVibGljIGVuYWJsZVZhbHVlOiBhbnk7XG4gICAgQElucHV0KCkgcHVibGljIGVkaXRhYmxlOiBhbnk7XG4gICAgQElucHV0KCkgcHVibGljIHN1cHByZXNzUGFzdGU6IGFueTtcbiAgICBASW5wdXQoKSBwdWJsaWMgc3VwcHJlc3NOYXZpZ2FibGU6IGFueTtcbiAgICBASW5wdXQoKSBwdWJsaWMgZW5hYmxlQ2VsbENoYW5nZUZsYXNoOiBhbnk7XG4gICAgQElucHV0KCkgcHVibGljIHJvd0RyYWc6IGFueTtcbiAgICBASW5wdXQoKSBwdWJsaWMgZG5kU291cmNlOiBhbnk7XG4gICAgQElucHV0KCkgcHVibGljIGF1dG9IZWlnaHQ6IGFueTtcbiAgICBASW5wdXQoKSBwdWJsaWMgc29ydGFibGU6IGFueTtcbiAgICBASW5wdXQoKSBwdWJsaWMgcmVzaXphYmxlOiBhbnk7XG4gICAgQElucHV0KCkgcHVibGljIHNpbmdsZUNsaWNrRWRpdDogYW55O1xuICAgIC8vIEBFTkRAXG5cbn1cbiJdfQ==
+//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoiYWctZ3JpZC1jb2x1bW4uY29tcG9uZW50LmpzIiwic291cmNlUm9vdCI6Im5nOi8vYWctZ3JpZC1hbmd1bGFyLyIsInNvdXJjZXMiOlsibGliL2FnLWdyaWQtY29sdW1uLmNvbXBvbmVudC50cyJdLCJuYW1lcyI6W10sIm1hcHBpbmdzIjoiO0FBQUEsT0FBTyxFQUFDLFNBQVMsRUFBRSxlQUFlLEVBQUUsS0FBSyxFQUFFLFNBQVMsRUFBQyxNQUFNLGVBQWUsQ0FBQztBQU8zRTtJQUFBO0lBNkpBLENBQUM7cUJBN0pZLFlBQVk7SUFHZCxzQ0FBZSxHQUF0QjtRQUNJLElBQUksSUFBSSxDQUFDLFlBQVksSUFBSSxJQUFJLENBQUMsWUFBWSxDQUFDLE1BQU0sR0FBRyxDQUFDLEVBQUU7WUFDbkQsdUVBQXVFO1lBQ3ZFLE9BQU8sQ0FBQyxDQUFDLElBQUksQ0FBQyxZQUFZLENBQUMsTUFBTSxLQUFLLENBQUMsSUFBSSxJQUFJLENBQUMsWUFBWSxDQUFDLEtBQUssS0FBSyxJQUFJLENBQUMsQ0FBQztTQUNoRjtRQUNELE9BQU8sS0FBSyxDQUFDO0lBQ2pCLENBQUM7SUFFTSwrQkFBUSxHQUFmO1FBQ0ksSUFBSSxNQUFNLEdBQVcsSUFBSSxDQUFDLDBCQUEwQixDQUFDLElBQUksQ0FBQyxDQUFDO1FBRTNELElBQUksSUFBSSxDQUFDLGVBQWUsRUFBRSxFQUFFO1lBQ2xCLE1BQU8sQ0FBQyxVQUFVLENBQUMsR0FBRyxJQUFJLENBQUMsZUFBZSxDQUFDLElBQUksQ0FBQyxZQUFZLENBQUMsQ0FBQztTQUN2RTtRQUNELE9BQU8sTUFBTSxDQUFDO0lBQ2xCLENBQUM7SUFFTyxzQ0FBZSxHQUF2QixVQUF3QixZQUFxQztRQUN6RCxPQUFPLFlBQVk7WUFDZix1RUFBdUU7YUFDdEUsTUFBTSxDQUFDLFVBQUEsTUFBTSxJQUFJLE9BQUEsQ0FBQyxNQUFNLENBQUMsZUFBZSxFQUFFLEVBQXpCLENBQXlCLENBQUM7YUFDM0MsR0FBRyxDQUFDLFVBQUMsTUFBb0I7WUFDdEIsT0FBTyxN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OztrREFBc0I7SUFDckI7UUFBUixLQUFLLEVBQUU7O21EQUF1QjtJQUN0QjtRQUFSLEtBQUssRUFBRTs7eURBQTZCO0lBQzVCO1FBQVIsS0FBSyxFQUFFOzt3REFBNEI7SUExSjNCLFlBQVk7UUFKeEIsU0FBUyxDQUFDO1lBQ1AsUUFBUSxFQUFFLGdCQUFnQjtZQUMxQixRQUFRLEVBQUUsRUFBRTtTQUNmLENBQUM7T0FDVyxZQUFZLENBNkp4QjtJQUFELG1CQUFDO0NBQUEsQUE3SkQsSUE2SkM7U0E3SlksWUFBWSIsInNvdXJjZXNDb250ZW50IjpbImltcG9ydCB7Q29tcG9uZW50LCBDb250ZW50Q2hpbGRyZW4sIElucHV0LCBRdWVyeUxpc3R9IGZyb20gXCJAYW5ndWxhci9jb3JlXCI7XG5pbXBvcnQge0NvbERlZn0gZnJvbSBcImFnLWdyaWQtY29tbXVuaXR5XCI7XG5cbkBDb21wb25lbnQoe1xuICAgIHNlbGVjdG9yOiAnYWctZ3JpZC1jb2x1bW4nLFxuICAgIHRlbXBsYXRlOiAnJ1xufSlcbmV4cG9ydCBjbGFzcyBBZ0dyaWRDb2x1bW4ge1xuICAgIEBDb250ZW50Q2hpbGRyZW4oQWdHcmlkQ29sdW1uKSBwdWJsaWMgY2hpbGRDb2x1bW5zOiBRdWVyeUxpc3Q8QWdHcmlkQ29sdW1uPjtcblxuICAgIHB1YmxpYyBoYXNDaGlsZENvbHVtbnMoKTogYm9vbGVhbiB7XG4gICAgICAgIGlmICh0aGlzLmNoaWxkQ29sdW1ucyAmJiB0aGlzLmNoaWxkQ29sdW1ucy5sZW5ndGggPiAwKSB7XG4gICAgICAgICAgICAvLyBuZWNlc3NhcnkgYmVjYXVzZSBvZiBodHRwczovL2dpdGh1Yi5jb20vYW5ndWxhci9hbmd1bGFyL2lzc3Vlcy8xMDA5OFxuICAgICAgICAgICAgcmV0dXJuICEodGhpcy5jaGlsZENvbHVtbnMubGVuZ3RoID09PSAxICYmIHRoaXMuY2hpbGRDb2x1bW5zLmZpcnN0ID09PSB0aGlzKTtcbiAgICAgICAgfVxuICAgICAgICByZXR1cm4gZmFsc2U7XG4gICAgfVxuXG4gICAgcHVibGljIHRvQ29sRGVmKCk6IENvbERlZiB7XG4gICAgICAgIGxldCBjb2xEZWY6IENvbERlZiA9IHRoaXMuY3JlYXRlQ29sRGVmRnJvbUdyaWRDb2x1bW4odGhpcyk7XG5cbiAgICAgICAgaWYgKHRoaXMuaGFzQ2hpbGRDb2x1bW5zKCkpIHtcbiAgICAgICAgICAgICg8YW55PmNvbERlZilbXCJjaGlsZHJlblwiXSA9IHRoaXMuZ2V0Q2hpbGRDb2xEZWZzKHRoaXMuY2hpbGRDb2x1bW5zKTtcbiAgICAgICAgfVxuICAgICAgICByZXR1cm4gY29sRGVmO1xuICAgIH1cblxuICAgIHByaXZhdGUgZ2V0Q2hpbGRDb2xEZWZzKGNoaWxkQ29sdW1uczogUXVlcnlMaXN0PEFnR3JpZENvbHVtbj4pIHtcbiAgICAgICAgcmV0dXJuIGNoaWxkQ29sdW1uc1xuICAgICAgICAgICAgLy8gbmVjZXNzYXJ5IGJlY2F1c2Ugb2YgaHR0cHM6Ly9naXRodWIuY29tL2FuZ3VsYXIvYW5ndWxhci9pc3N1ZXMvMTAwOThcbiAgICAgICAgICAgIC5maWx0ZXIoY29sdW1uID0+ICFjb2x1bW4uaGFzQ2hpbGRDb2x1bW5zKCkpXG4gICAgICAgICAgICAubWFwKChjb2x1bW46IEFnR3JpZENvbHVtbikgPT4ge1xuICAgICAgICAgICAgICAgIHJldHVybiBjb2x1bW4udG9Db2xEZWYoKTtcbiAgICAgICAgICAgIH0pO1xuICAgIH07XG5cbiAgICBwcml2YXRlIGNyZWF0ZUNvbERlZkZyb21HcmlkQ29sdW1uKGZyb206IEFnR3JpZENvbHVtbik6IENvbERlZiB7XG4gICAgICAgIGxldCBjb2xEZWY6IENvbERlZiA9IHt9O1xuICAgICAgICBPYmplY3QuYXNzaWduKGNvbERlZiwgZnJvbSk7XG4gICAgICAgIGRlbGV0ZSAoPGFueT5jb2xEZWYpLmNoaWxkQ29sdW1ucztcbiAgICAgICAgcmV0dXJuIGNvbERlZjtcbiAgICB9O1xuXG4gICAgLy8gaW5wdXRzIC0gcHJldHR5IG11Y2ggbW9zdCBvZiBDb2xEZWYsIHdpdGggdGhlIGV4Y2VwdGlvbiBvZiB0ZW1wbGF0ZSwgdGVtcGxhdGVVcmwgYW5kIGludGVybmFsIG9ubHkgcHJvcGVydGllc1xuICAgIC8vIEBTVEFSVEBcbiAgICBASW5wdXQoKSBwdWJsaWMgY2hpbGRyZW46IGFueTtcbiAgICBASW5wdXQoKSBwdWJsaWMgc29ydGluZ09yZGVyOiBhbnk7XG4gICAgQElucHV0KCkgcHVibGljIGFsbG93ZWRBZ2dGdW5jczogYW55O1xuICAgIEBJbnB1dCgpIHB1YmxpYyBtZW51VGFiczogYW55O1xuICAgIEBJbnB1dCgpIHB1YmxpYyBjZWxsQ2xhc3NSdWxlczogYW55O1xuICAgIEBJbnB1dCgpIHB1YmxpYyBpY29uczogYW55O1xuICAgIEBJbnB1dCgpIHB1YmxpYyBoZWFkZXJHcm91cENvbXBvbmVudDogYW55O1xuICAgIEBJbnB1dCgpIHB1YmxpYyBoZWFkZXJHcm91cENvbXBvbmVudEZyYW1ld29yazogYW55O1xuICAgIEBJbnB1dCgpIHB1YmxpYyBoZWFkZXJHcm91cENvbXBvbmVudFBhcmFtczogYW55O1xuICAgIEBJbnB1dCgpIHB1YmxpYyBjZWxsU3R5bGU6IGFueTtcbiAgICBASW5wdXQoKSBwdWJsaWMgY2VsbFJlbmRlcmVyUGFyYW1zOiBhbnk7XG4gICAgQElucHV0KCkgcHVibGljIGNlbGxFZGl0b3JGcmFtZXdvcms6IGFueTtcbiAgICBASW5wdXQoKSBwdWJsaWMgY2VsbEVkaXRvclBhcmFtczogYW55O1xuICAgIEBJbnB1dCgpIHB1YmxpYyBwaW5uZWRSb3dDZWxsUmVuZGVyZXJGcmFtZXdvcms6IGFueTtcbiAgICBASW5wdXQoKSBwdWJsaWMgcGlubmVkUm93Q2VsbFJlbmRlcmVyUGFyYW1zOiBhbnk7XG4gICAgQElucHV0KCkgcHVibGljIGZpbHRlckZyYW1ld29yazogYW55O1xuICAgIEBJbnB1dCgpIHB1YmxpYyBmaWx0ZXJQYXJhbXM6IGFueTtcbiAgICBASW5wdXQoKSBwdWJsaWMgaGVhZGVyQ29tcG9uZW50OiBhbnk7XG4gICAgQElucHV0KCkgcHVibGljIGhlYWRlckNvbXBvbmVudEZyYW1ld29yazogYW55O1xuICAgIEBJbnB1dCgpIHB1YmxpYyBoZWFkZXJDb21wb25lbnRQYXJhbXM6IGFueTtcbiAgICBASW5wdXQoKSBwdWJsaWMgZmxvYXRpbmdGaWx0ZXJDb21wb25lbnQ6IGFueTtcbiAgICBASW5wdXQoKSBwdWJsaWMgZmxvYXRpbmdGaWx0ZXJDb21wb25lbnRQYXJhbXM6IGFueTtcbiAgICBASW5wdXQoKSBwdWJsaWMgZmxvYXRpbmdGaWx0ZXJDb21wb25lbnRGcmFtZXdvcms6IGFueTtcbiAgICBASW5wdXQoKSBwdWJsaWMgdG9vbHRpcENvbXBvbmVudDogYW55O1xuICAgIEBJbnB1dCgpIHB1YmxpYyB0b29sdGlwQ29tcG9uZW50UGFyYW1zOiBhbnk7XG4gICAgQElucHV0KCkgcHVibGljIHRvb2x0aXBDb21wb25lbnRGcmFtZXdvcms6IGFueTtcbiAgICBASW5wdXQoKSBwdWJsaWMgcmVmRGF0YTogYW55O1xuICAgIEBJbnB1dCgpIHB1YmxpYyBoZWFkZXJOYW1lOiBhbnk7XG4gICAgQElucHV0KCkgcHVibGljIGNvbHVtbkdyb3VwU2hvdzogYW55O1xuICAgIEBJbnB1dCgpIHB1YmxpYyBoZWFkZXJDbGFzczogYW55O1xuICAgIEBJbnB1dCgpIHB1YmxpYyB0b29sUGFuZWxDbGFzczogYW55O1xuICAgIEBJbnB1dCgpIHB1YmxpYyBoZWFkZXJWYWx1ZUdldHRlcjogYW55O1xuICAgIEBJbnB1dCgpIHB1YmxpYyBncm91cElkOiBhbnk7XG4gICAgQElucHV0KCkgcHVibGljIGNvbElkOiBhbnk7XG4gICAgQElucHV0KCkgcHVibGljIHNvcnQ6IGFueTtcbiAgICBASW5wdXQoKSBwdWJsaWMgZmllbGQ6IGFueTtcbiAgICBASW5wdXQoKSBwdWJsaWMgdHlwZTogYW55O1xuICAgIEBJbnB1dCgpIHB1YmxpYyB0b29sdGlwRmllbGQ6IGFueTtcbiAgICBASW5wdXQoKSBwdWJsaWMgaGVhZGVyVG9vbHRpcDogYW55O1xuICAgIEBJbnB1dCgpIHB1YmxpYyBjZWxsQ2xhc3M6IGFueTtcbiAgICBASW5wdXQoKSBwdWJsaWMgc2hvd1Jvd0dyb3VwOiBhbnk7XG4gICAgQElucHV0KCkgcHVibGljIGZpbHRlcjogYW55O1xuICAgIEBJbnB1dCgpIHB1YmxpYyBhZ2dGdW5jOiBhbnk7XG4gICAgQElucHV0KCkgcHVibGljIGNlbGxSZW5kZXJlcjogYW55O1xuICAgIEBJbnB1dCgpIHB1YmxpYyBjZWxsRWRpdG9yOiBhbnk7XG4gICAgQElucHV0KCkgcHVibGljIHBpbm5lZDogYW55O1xuICAgIEBJbnB1dCgpIHB1YmxpYyBjaGFydERhdGFUeXBlOiBhbnk7XG4gICAgQElucHV0KCkgcHVibGljIHNvcnRlZEF0OiBhbnk7XG4gICAgQElucHV0KCkgcHVibGljIGZsZXg6IGFueTtcbiAgICBASW5wdXQoKSBwdWJsaWMgd2lkdGg6IGFueTtcbiAgICBASW5wdXQoKSBwdWJsaWMgbWluV2lkdGg6IGFueTtcbiAgICBASW5wdXQoKSBwdWJsaWMgbWF4V2lkdGg6IGFueTtcbiAgICBASW5wdXQoKSBwdWJsaWMgcm93R3JvdXBJbmRleDogYW55O1xuICAgIEBJbnB1dCgpIHB1YmxpYyBwaXZvdEluZGV4OiBhbnk7XG4gICAgQElucHV0KCkgcHVibGljIGRuZFNvdXJjZU9uUm93RHJhZzogYW55O1xuICAgIEBJbnB1dCgpIHB1YmxpYyB2YWx1ZUdldHRlcjogYW55O1xuICAgIEBJbnB1dCgpIHB1YmxpYyB2YWx1ZVNldHRlcjogYW55O1xuICAgIEBJbnB1dCgpIHB1YmxpYyBmaWx0ZXJWYWx1ZUdldHRlcjogYW55O1xuICAgIEBJbnB1dCgpIHB1YmxpYyBrZXlDcmVhdG9yOiBhbnk7XG4gICAgQElucHV0KCkgcHVibGljIGNlbGxSZW5kZXJlckZyYW1ld29yazogYW55O1xuICAgIEBJbnB1dCgpIHB1YmxpYyBwaW5uZWRSb3dDZWxsUmVuZGVyZXI6IGFueTtcbiAgICBASW5wdXQoKSBwdWJsaWMgdmFsdWVGb3JtYXR0ZXI6IGFueTtcbiAgICBASW5wdXQoKSBwdWJsaWMgcGlubmVkUm93VmFsdWVGb3JtYXR0ZXI6IGFueTtcbiAgICBASW5wdXQoKSBwdWJsaWMgdmFsdWVQYXJzZXI6IGFueTtcbiAgICBASW5wdXQoKSBwdWJsaWMgY29tcGFyYXRvcjogYW55O1xuICAgIEBJbnB1dCgpIHB1YmxpYyBlcXVhbHM6IGFueTtcbiAgICBASW5wdXQoKSBwdWJsaWMgcGl2b3RDb21wYXJhdG9yOiBhbnk7XG4gICAgQElucHV0KCkgcHVibGljIHN1cHByZXNzS2V5Ym9hcmRFdmVudDogYW55O1xuICAgIEBJbnB1dCgpIHB1YmxpYyBjb2xTcGFuOiBhbnk7XG4gICAgQElucHV0KCkgcHVibGljIHJvd1NwYW46IGFueTtcbiAgICBASW5wdXQoKSBwdWJsaWMgZ2V0UXVpY2tGaWx0ZXJUZXh0OiBhbnk7XG4gICAgQElucHV0KCkgcHVibGljIG5ld1ZhbHVlSGFuZGxlcjogYW55O1xuICAgIEBJbnB1dCgpIHB1YmxpYyBvbkNlbGxWYWx1ZUNoYW5nZWQ6IGFueTtcbiAgICBASW5wdXQoKSBwdWJsaWMgb25DZWxsQ2xpY2tlZDogYW55O1xuICAgIEBJbnB1dCgpIHB1YmxpYyBvbkNlbGxEb3VibGVDbGlja2VkOiBhbnk7XG4gICAgQElucHV0KCkgcHVibGljIG9uQ2VsbENvbnRleHRNZW51OiBhbnk7XG4gICAgQElucHV0KCkgcHVibGljIHJvd0RyYWdUZXh0OiBhbnk7XG4gICAgQElucHV0KCkgcHVibGljIHRvb2x0aXA6IGFueTtcbiAgICBASW5wdXQoKSBwdWJsaWMgdG9vbHRpcFZhbHVlR2V0dGVyOiBhbnk7XG4gICAgQElucHV0KCkgcHVibGljIGNlbGxSZW5kZXJlclNlbGVjdG9yOiBhbnk7XG4gICAgQElucHV0KCkgcHVibGljIGNlbGxFZGl0b3JTZWxlY3RvcjogYW55O1xuICAgIEBJbnB1dCgpIHB1YmxpYyBzdXBwcmVzc0NlbGxGbGFzaDogYW55O1xuICAgIEBJbnB1dCgpIHB1YmxpYyBzdXBwcmVzc0NvbHVtbnNUb29sUGFuZWw6IGFueTtcbiAgICBASW5wdXQoKSBwdWJsaWMgc3VwcHJlc3NGaWx0ZXJzVG9vbFBhbmVsOiBhbnk7XG4gICAgQElucHV0KCkgcHVibGljIG9wZW5CeURlZmF1bHQ6IGFueTtcbiAgICBASW5wdXQoKSBwdWJsaWMgbWFycnlDaGlsZHJlbjogYW55O1xuICAgIEBJbnB1dCgpIHB1YmxpYyBoaWRlOiBhbnk7XG4gICAgQElucHV0KCkgcHVibGljIHJvd0dyb3VwOiBhbnk7XG4gICAgQElucHV0KCkgcHVibGljIHBpdm90OiBhbnk7XG4gICAgQElucHV0KCkgcHVibGljIGNoZWNrYm94U2VsZWN0aW9uOiBhbnk7XG4gICAgQElucHV0KCkgcHVibGljIGhlYWRlckNoZWNrYm94U2VsZWN0aW9uOiBhbnk7XG4gICAgQElucHV0KCkgcHVibGljIGhlYWRlckNoZWNrYm94U2VsZWN0aW9uRmlsdGVyZWRPbmx5OiBhbnk7XG4gICAgQElucHV0KCkgcHVibGljIHN1cHByZXNzTWVudTogYW55O1xuICAgIEBJbnB1dCgpIHB1YmxpYyBzdXBwcmVzc1NvcnRpbmc6IGFueTtcbiAgICBASW5wdXQoKSBwdWJsaWMgc3VwcHJlc3NNb3ZhYmxlOiBhbnk7XG4gICAgQElucHV0KCkgcHVibGljIHN1cHByZXNzRmlsdGVyOiBhbnk7XG4gICAgQElucHV0KCkgcHVibGljIGxvY2tQb3NpdGlvbjogYW55O1xuICAgIEBJbnB1dCgpIHB1YmxpYyBsb2NrVmlzaWJsZTogYW55O1xuICAgIEBJbnB1dCgpIHB1YmxpYyBsb2NrUGlubmVkOiBhbnk7XG4gICAgQElucHV0KCkgcHVibGljIHVuU29ydEljb246IGFueTtcbiAgICBASW5wdXQoKSBwdWJsaWMgc3VwcHJlc3NTaXplVG9GaXQ6IGFueTtcbiAgICBASW5wdXQoKSBwdWJsaWMgc3VwcHJlc3NSZXNpemU6IGFueTtcbiAgICBASW5wdXQoKSBwdWJsaWMgc3VwcHJlc3NBdXRvU2l6ZTogYW55O1xuICAgIEBJbnB1dCgpIHB1YmxpYyBlbmFibGVSb3dHcm91cDogYW55O1xuICAgIEBJbnB1dCgpIHB1YmxpYyBlbmFibGVQaXZvdDogYW55O1xuICAgIEBJbnB1dCgpIHB1YmxpYyBlbmFibGVWYWx1ZTogYW55O1xuICAgIEBJbnB1dCgpIHB1YmxpYyBlZGl0YWJsZTogYW55O1xuICAgIEBJbnB1dCgpIHB1YmxpYyBzdXBwcmVzc1Bhc3RlOiBhbnk7XG4gICAgQElucHV0KCkgcHVibGljIHN1cHByZXNzTmF2aWdhYmxlOiBhbnk7XG4gICAgQElucHV0KCkgcHVibGljIGVuYWJsZUNlbGxDaGFuZ2VGbGFzaDogYW55O1xuICAgIEBJbnB1dCgpIHB1YmxpYyByb3dEcmFnOiBhbnk7XG4gICAgQElucHV0KCkgcHVibGljIGRuZFNvdXJjZTogYW55O1xuICAgIEBJbnB1dCgpIHB1YmxpYyBhdXRvSGVpZ2h0OiBhbnk7XG4gICAgQElucHV0KCkgcHVibGljIHNvcnRhYmxlOiBhbnk7XG4gICAgQElucHV0KCkgcHVibGljIHJlc2l6YWJsZTogYW55O1xuICAgIEBJbnB1dCgpIHB1YmxpYyBzaW5nbGVDbGlja0VkaXQ6IGFueTtcbiAgICBASW5wdXQoKSBwdWJsaWMgZmxvYXRpbmdGaWx0ZXI6IGFueTtcbiAgICAvLyBARU5EQFxuXG59XG4iXX0=

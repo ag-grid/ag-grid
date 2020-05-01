@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v23.0.2
+ * @version v23.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -26,13 +26,14 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 import { Component } from "../../widgets/component";
 import { Column } from "../../entities/column";
 import { ColumnGroup } from "../../entities/columnGroup";
+import { Constants } from "../../constants";
 import { Autowired, PostConstruct } from "../../context/context";
 import { CssClassApplier } from "../cssClassApplier";
 import { DragAndDropService, DragSourceType } from "../../dragAndDrop/dragAndDropService";
 import { SetLeftFeature } from "../../rendering/features/setLeftFeature";
 import { HoverFeature } from "../hoverFeature";
+import { TooltipFeature } from "../../widgets/tooltipFeature";
 import { _ } from "../../utils";
-import { Constants } from "../../constants";
 var HeaderGroupWrapperComp = /** @class */ (function (_super) {
     __extends(HeaderGroupWrapperComp, _super);
     function HeaderGroupWrapperComp(columnGroup, dragSourceDropTarget, pinned) {
@@ -87,7 +88,7 @@ var HeaderGroupWrapperComp = /** @class */ (function (_super) {
             this.getGui().setAttribute('title', tooltipText);
         }
         else {
-            this.beans.tooltipManager.registerTooltip(this);
+            this.addFeature(new TooltipFeature(this, 'headerGroup'));
         }
     };
     HeaderGroupWrapperComp.prototype.onColumnMovingChanged = function () {

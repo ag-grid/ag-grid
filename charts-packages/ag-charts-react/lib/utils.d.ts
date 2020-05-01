@@ -1,2 +1,2 @@
-// ag-charts-react v1.0.1
+// ag-charts-react v1.1.0
 export declare const assignProperties: (to: {}, from: {}) => void;

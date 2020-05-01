@@ -3,10 +3,10 @@ import {
     ColDef,
     Column,
     Constants,
-    ExternalPromise,
     IRowModel,
     ISetFilterParams,
     Promise,
+    SetFilterValues,
     SetFilterValuesFunc,
     SetFilterValuesFuncParams,
     TextFilter,
@@ -14,102 +14,79 @@ import {
     ValueFormatterService,
     IEventEmitter,
     _,
-    EventService
-} from "@ag-grid-community/core";
-
-// we cannot have 'null' as a key in a JavaScript map,
-// it needs to be a string. so we use this string for
-// storing null values.
-const NULL_VALUE = '___NULL___';
+    EventService,
+    RowNode
+} from '@ag-grid-community/core';
 
 export enum SetFilterModelValuesType {
-    PROVIDED_LIST, PROVIDED_CB, NOT_PROVIDED
+    PROVIDED_LIST, PROVIDED_CALLBACK, TAKEN_FROM_GRID_VALUES
 }
 
 export class SetValueModel implements IEventEmitter {
+    public static EVENT_AVAILABLE_VALUES_CHANGED = 'availableValuesChanged';
 
-    public static EVENT_AVAILABLE_VALUES_CHANGES = 'availableValuesChanged';
+    private readonly localEventService = new EventService();
+    private readonly filterParams: ISetFilterParams;
+    private readonly clientSideRowModel: IClientSideRowModel;
+    private readonly formatter: TextFormatter;
 
-    private colDef: ColDef;
-    private filterParams: ISetFilterParams;
-
-    private clientSideRowModel: IClientSideRowModel;
-    private valueGetter: any;
-    private allUniqueValues: (string | null)[]; // all values in the table
-    private availableUniqueValues: (string | null)[]; // all values not filtered by other rows
-    private availableUniqueValuesMap: { [value: string]: boolean }; // same as availableUniqueValues but in a map, for quick lookup
-    private displayedValues: any[]; // all values we are rendering on screen (ie after mini filter)
-    private miniFilter: string | null;
-    private selectedValuesCount: number;
-    private selectedValuesMap: { [value: string]: any };
-    private suppressSorting: boolean;
-    private formatter: TextFormatter;
-
-    // to make code more readable, we work these out once, and
-    // then refer to each time. both are derived from the filterParams
-    private showingAvailableOnly: boolean;
     private valuesType: SetFilterModelValuesType;
+    private miniFilterText: string = null;
 
-    private doesRowPassOtherFilters: any;
-    private modelUpdatedFunc: (values: string[] | null, selected?: string[] | null) => void;
-    private isLoadingFunc: (loading: boolean) => void;
+    // The lookup for a set is much faster than the lookup for an array, especially when the length of the array is
+    // thousands of records long, so where lookups are important we use a set.
 
-    private filterValuesExternalPromise: ExternalPromise<string[]>;
-    private filterValuesPromise: Promise<string[]>;
+    /** Values provided to the filter for use. */
+    private providedValues: SetFilterValues = null;
 
-    private valueFormatterService: ValueFormatterService;
-    private column: Column;
+    /** Values can be loaded asynchronously, so wait on this promise if you need to ensure values have been loaded. */
+    private allValuesPromise: Promise<string[]>;
 
-    private localEventService = new EventService();
+    /** All possible values for the filter, sorted if required. */
+    private allValues: string[] = [];
+
+    /** Remaining values when filters from other columns have been applied. */
+    private availableValues = new Set<string>();
+
+    /** All values that are currently displayed, after the mini-filter has been applied. */
+    private displayedValues: string[] = [];
+
+    /** Values that have been selected for this filter. */
+    private selectedValues = new Set<string>();
 
     constructor(
-        colDef: ColDef,
+        private readonly colDef: ColDef,
         rowModel: IRowModel,
-        valueGetter: any,
-        doesRowPassOtherFilters: any,
-        suppressSorting: boolean,
-        modelUpdatedFunc: (values: string[] | null, selected?: string[] | null) => void,
-        isLoadingFunc: (loading: boolean) => void,
-        valueFormatterService: ValueFormatterService,
-        column: Column
+        private readonly valueGetter: (node: RowNode) => any,
+        private readonly doesRowPassOtherFilters: (node: RowNode) => boolean,
+        private readonly suppressSorting: boolean,
+        private readonly setIsLoading: (loading: boolean) => void,
+        private readonly valueFormatterService: ValueFormatterService,
+        private readonly column: Column
     ) {
-        this.suppressSorting = suppressSorting;
-        this.colDef = colDef;
-        this.valueGetter = valueGetter;
-        this.doesRowPassOtherFilters = doesRowPassOtherFilters;
-        this.modelUpdatedFunc = modelUpdatedFunc;
-        this.isLoadingFunc = isLoadingFunc;
-        this.valueFormatterService = valueFormatterService;
-        this.column = column;
-
         if (rowModel.getType() === Constants.ROW_MODEL_TYPE_CLIENT_SIDE) {
-            this.clientSideRowModel = (rowModel as unknown) as IClientSideRowModel;
+            this.clientSideRowModel = rowModel as IClientSideRowModel;
         }
 
-        this.filterParams = this.colDef.filterParams ? this.colDef.filterParams as ISetFilterParams : {} as ISetFilterParams;
-        if (_.exists(this.filterParams) && _.exists(this.filterParams.values)) {
-            this.valuesType = Array.isArray(this.filterParams.values) ?
-                SetFilterModelValuesType.PROVIDED_LIST :
-                SetFilterModelValuesType.PROVIDED_CB;
-            this.showingAvailableOnly = this.filterParams.suppressRemoveEntries !== true;
+        this.filterParams = this.colDef.filterParams || {};
+        this.formatter = this.filterParams.textFormatter || TextFilter.DEFAULT_FORMATTER;
+
+        const { values } = this.filterParams;
+
+        if (values == null) {
+            this.valuesType = SetFilterModelValuesType.TAKEN_FROM_GRID_VALUES;
         } else {
-            this.valuesType = SetFilterModelValuesType.NOT_PROVIDED;
-            this.showingAvailableOnly = true;
+            this.valuesType = Array.isArray(values) ?
+                SetFilterModelValuesType.PROVIDED_LIST :
+                SetFilterModelValuesType.PROVIDED_CALLBACK;
+
+            this.providedValues = values;
         }
 
-        this.createAllUniqueValues();
-        this.createAvailableUniqueValues();
+        this.updateAllValues();
 
-        // by default, no filter, so we display everything
-        this.displayedValues = this.availableUniqueValues;
-        this.miniFilter = null;
-
-        // we use a map rather than an array for the selected values as the lookup
-        // for a map is much faster than the lookup for an array, especially when
-        // the length of the array is thousands of records long
-        this.selectNothing();
-        this.selectAllUsingMiniFilter();
-        this.formatter = this.filterParams.textFormatter ? this.filterParams.textFormatter : TextFilter.DEFAULT_FORMATTER;
+        // start with everything selected
+        this.allValuesPromise.then(values => this.selectedValues = _.convertToSet(values));
     }
 
     public addEventListener(eventType: string, listener: Function, async?: boolean): void {
@@ -120,72 +97,88 @@ export class SetValueModel implements IEventEmitter {
         this.localEventService.removeEventListener(eventType, listener, async);
     }
 
-    // if keepSelection not set will always select all filters
-    // if keepSelection set will keep current state of selected filters
-    //    unless selectAll chosen in which case will select all
-    public refreshAfterNewRowsLoaded(keepSelection: any, everythingSelected: boolean) {
-        this.createAllUniqueValues();
-        this.refreshSelection(keepSelection, everythingSelected);
+    /**
+     * Re-fetches the values used in the filter from the value source.
+     * If keepSelection is false or selectAll is true, the filter selection will be reset to everything selected,
+     * otherwise the current selection will be preserved.
+     */
+    public refetchValues(keepSelection = true): void {
+        const currentModel = this.getModel();
+
+        this.updateAllValues();
+
+        // ensure model is updated for new values
+        this.allValuesPromise.then(() => this.setModel(keepSelection ? currentModel : null));
     }
 
-    // if keepSelection not set will always select all filters
-    // if keepSelection set will keep current state of selected filters
-    //    unless selectAll chosen in which case will select all
-    public refreshValues(valuesToUse: string[], keepSelection: any, isSelectAll: boolean) {
-        this.setValues(valuesToUse);
-        this.refreshSelection(keepSelection, isSelectAll);
+    /**
+     * Overrides the current values being used for the set filter.
+     * If keepSelection is false, the filter selection will be reset to everything selected,
+     * otherwise the current selection will be preserved.
+     */
+    public overrideValues(valuesToUse: string[], keepSelection = true): void {
+        // wait for any existing values to be populated before overriding
+        this.allValuesPromise.then(() => {
+            this.valuesType = SetFilterModelValuesType.PROVIDED_LIST;
+            this.providedValues = valuesToUse;
+            this.refetchValues(keepSelection);
+        });
     }
 
-    private refreshSelection(keepSelection: any, isSelectAll: boolean) {
-        this.createAvailableUniqueValues();
-
-        const oldModel = Object.keys(this.selectedValuesMap);
-
-        this.selectNothing();
-        this.processMiniFilter();
-
-        if (keepSelection) {
-            this.setModel(oldModel, isSelectAll);
-        } else {
-            this.selectAllUsingMiniFilter();
+    public refreshAfterAnyFilterChanged(): void {
+        if (this.showAvailableOnly()) {
+            this.updateAvailableValues();
         }
     }
 
-    public refreshAfterAnyFilterChanged() {
-        if (this.showingAvailableOnly) {
-            this.createAvailableUniqueValues();
-            this.processMiniFilter();
+    private updateAllValues(): void {
+        switch (this.valuesType) {
+            case SetFilterModelValuesType.TAKEN_FROM_GRID_VALUES:
+            case SetFilterModelValuesType.PROVIDED_LIST: {
+                const values = this.valuesType === SetFilterModelValuesType.TAKEN_FROM_GRID_VALUES ?
+                    this.getValuesFromRows(false) : _.toStrings(this.providedValues as any[]);
+
+                const sortedValues = this.sortValues(values);
+
+                this.allValues = sortedValues;
+                this.allValuesPromise = Promise.resolve(sortedValues);
+
+                break;
+            }
+
+            case SetFilterModelValuesType.PROVIDED_CALLBACK: {
+                this.setIsLoading(true);
+
+                this.allValuesPromise = new Promise<string[]>(resolve => {
+                    const callback = this.providedValues as SetFilterValuesFunc;
+                    const params: SetFilterValuesFuncParams = {
+                        success: values => {
+                            const processedValues = _.toStrings(values);
+
+                            this.setIsLoading(false);
+                            this.valuesType = SetFilterModelValuesType.PROVIDED_LIST;
+                            this.providedValues = processedValues;
+
+                            const sortedValues = this.sortValues(processedValues);
+
+                            this.allValues = sortedValues;
+
+                            resolve(sortedValues);
+                        },
+                        colDef: this.colDef
+                    };
+
+                    window.setTimeout(() => callback(params), 0);
+                });
+
+                break;
+            }
+
+            default:
+                throw new Error('Unrecognised valuesType');
         }
-    }
 
-    private createAllUniqueValues() {
-        if (this.areValuesSync()) {
-            const valuesToUse: (string | null)[] = this.extractSyncValuesToUse();
-            this.setValues(valuesToUse);
-            this.filterValuesPromise = Promise.resolve([]);
-        } else {
-            this.filterValuesExternalPromise = Promise.external<string[]>();
-            this.filterValuesPromise = this.filterValuesExternalPromise.promise;
-            this.isLoadingFunc(true);
-            this.setValues([]);
-            const callback = this.filterParams.values as SetFilterValuesFunc;
-            const params: SetFilterValuesFuncParams = {
-                success: this.onAsyncValuesLoaded.bind(this),
-                colDef: this.colDef
-            };
-
-            window.setTimeout(() => callback(params), 0);
-        }
-    }
-
-    private onAsyncValuesLoaded(values: string[]): void {
-        this.modelUpdatedFunc(values);
-        this.isLoadingFunc(false);
-        this.filterValuesExternalPromise.resolve(values);
-    }
-
-    private areValuesSync() {
-        return this.valuesType == SetFilterModelValuesType.PROVIDED_LIST || this.valuesType == SetFilterModelValuesType.NOT_PROVIDED;
+        this.updateAvailableValues();
     }
 
     public setValuesType(value: SetFilterModelValuesType) {
@@ -196,322 +189,213 @@ export class SetValueModel implements IEventEmitter {
         return this.valuesType;
     }
 
-    private setValues(valuesToUse: (string | null)[]) {
-        this.allUniqueValues = valuesToUse;
-        if (!this.suppressSorting) {
-            this.sortValues(this.allUniqueValues);
-        }
-    }
-
-    private extractSyncValuesToUse() {
-        let valuesToUse: (string | null)[];
-        if (this.valuesType == SetFilterModelValuesType.PROVIDED_LIST) {
-            if (Array.isArray(this.filterParams.values)) {
-                valuesToUse = _.toStrings(this.filterParams.values as string[]);
-            } else {
-                // In this case the values are async but have already been resolved, so we can reuse them
-                valuesToUse = this.allUniqueValues;
-            }
-        } else if (this.valuesType == SetFilterModelValuesType.PROVIDED_CB) {
-            throw Error(`ag-grid: Error extracting values to use. We should not extract the values synchronously when using a callback for the filterParams.values`);
-        } else {
-            const uniqueValuesAsAnyObjects = this.getUniqueValues(false);
-            valuesToUse = _.toStrings(uniqueValuesAsAnyObjects);
-        }
-        return valuesToUse;
-    }
-
     public isValueAvailable(value: string): boolean {
-        return this.availableUniqueValuesMap[value];
+        return this.availableValues.has(value);
     }
 
-    private createAvailableUniqueValues() {
-        const dontCheckAvailableValues = !this.showingAvailableOnly || this.valuesType == SetFilterModelValuesType.PROVIDED_LIST || this.valuesType == SetFilterModelValuesType.PROVIDED_CB;
-        if (dontCheckAvailableValues) {
-            this.availableUniqueValues = this.allUniqueValues;
-        } else {
-            const uniqueValuesAsAnyObjects = this.getUniqueValues(true);
-            this.availableUniqueValues = _.toStrings(uniqueValuesAsAnyObjects);
-            this.sortValues(this.availableUniqueValues);
-        }
-
-        this.availableUniqueValuesMap = {};
-        if (this.availableUniqueValues) {
-            this.availableUniqueValues.forEach( value => this.availableUniqueValuesMap[value] = true);
-        }
-
-        this.localEventService.dispatchEvent({type: SetValueModel.EVENT_AVAILABLE_VALUES_CHANGES});
+    private showAvailableOnly(): boolean {
+        return this.valuesType === SetFilterModelValuesType.TAKEN_FROM_GRID_VALUES &&
+            !this.filterParams.suppressRemoveEntries;
     }
 
-    private sortValues(values: any[]): void {
-        if (this.filterParams && this.filterParams.comparator) {
-            values.sort(this.filterParams.comparator);
-        } else if (this.colDef.comparator) {
-            values.sort(this.colDef.comparator as (a: any, b: any) => number);
-        } else {
-            values.sort(_.defaultComparator);
-        }
+    private updateAvailableValues(): void {
+        this.allValuesPromise.then(values => {
+            const availableValues = this.showAvailableOnly() ? this.sortValues(this.getValuesFromRows(true)) : values;
+
+            this.availableValues = _.convertToSet(availableValues);
+            this.localEventService.dispatchEvent({ type: SetValueModel.EVENT_AVAILABLE_VALUES_CHANGED });
+            this.updateDisplayedValues();
+        });
     }
 
-    private getUniqueValues(filterOutNotAvailable: boolean): any[] {
-        const uniqueCheck = {} as any;
-        const result = [] as any;
+    private sortValues(values: string[]): string[] {
+        if (this.suppressSorting) { return values; }
 
+        const comparator = this.filterParams.comparator ||
+            this.colDef.comparator as (a: any, b: any) => number ||
+            _.defaultComparator;
+
+        return values.sort(comparator);
+    }
+
+    private getValuesFromRows(removeUnavailableValues = false): string[] {
         if (!this.clientSideRowModel) {
             console.error('ag-Grid: Set Filter cannot initialise because you are using a row model that does not contain all rows in the browser. Either use a different filter type, or configure Set Filter such that you provide it with values');
             return [];
         }
 
-        this.clientSideRowModel.forEachLeafNode((node: any) => {
+        const values = new Set<string>();
+        const { keyCreator } = this.colDef;
+
+        this.clientSideRowModel.forEachLeafNode(node => {
             // only pull values from rows that have data. this means we skip filler group nodes.
-            if (!node.data) {
+            if (!node.data || (removeUnavailableValues && !this.doesRowPassOtherFilters(node))) {
                 return;
             }
 
             let value = this.valueGetter(node);
 
-            if (this.colDef.keyCreator) {
-                value = this.colDef.keyCreator({value: value});
+            if (keyCreator) {
+                value = keyCreator({ value });
             }
 
-            if (value === "" || value === undefined) {
-                value = null;
-            }
-
-            if (filterOutNotAvailable) {
-                if (!this.doesRowPassOtherFilters(node)) {
-                    return;
-                }
-            }
+            value = _.makeNull(value);
 
             if (value != null && Array.isArray(value)) {
-                for (let j = 0; j < value.length; j++) {
-                    addUniqueValueIfMissing(value[j]);
-                }
+                _.forEach(value, x => {
+                    const formatted = _.toStringOrNull(_.makeNull(x));
+                    values.add(formatted);
+                });
             } else {
-                addUniqueValueIfMissing(value);
+                values.add(_.toStringOrNull(value));
             }
         });
 
-        function addUniqueValueIfMissing(value: any) {
-            if (!uniqueCheck.hasOwnProperty(value)) {
-                result.push(value);
-                uniqueCheck[value] = 1;
-            }
-        }
-
-        return result;
+        return _.values(values);
     }
 
-    //sets mini filter. returns true if it changed from last value, otherwise false
-    public setMiniFilter(newMiniFilter: string | null): boolean {
-        newMiniFilter = _.makeNull(newMiniFilter);
-        if (this.miniFilter === newMiniFilter) {
+    /** Sets mini filter value. Returns true if it changed from last value, otherwise false. */
+    public setMiniFilter(value?: string): boolean {
+        value = _.makeNull(value);
+
+        if (this.miniFilterText === value) {
             //do nothing if filter has not changed
             return false;
         }
-        this.miniFilter = newMiniFilter;
-        this.processMiniFilter();
+
+        this.miniFilterText = value;
+        this.updateDisplayedValues();
+
         return true;
     }
 
-    public getMiniFilter() {
-        return this.miniFilter;
+    public getMiniFilter(): string {
+        return this.miniFilterText;
     }
 
-    private processMiniFilter() {
-        // if no filter, just use the unique values
-        if (this.miniFilter === null) {
-            this.displayedValues = this.availableUniqueValues;
+    private updateDisplayedValues(): void {
+        // if no filter, just display all available values
+        if (this.miniFilterText == null) {
+            this.displayedValues = _.values(this.availableValues);
             return;
         }
 
         // if filter present, we filter down the list
         this.displayedValues = [];
-        const miniFilter = this.formatter(this.miniFilter);
 
-        // make upper case to have search case insensitive
-        const miniFilterUpperCase = miniFilter.toUpperCase();
+        // to allow for case insensitive searches, upper-case both filter text and value
+        const formattedFilterText = this.formatter(this.miniFilterText).toUpperCase();
 
-        //This function encapsulates the logic to check if a string matches the mini filter
-        const matchesFn: any = (valueToCheck: string): boolean => {
-            if (valueToCheck == null) {
-                return false;
+        const matchesFilter = (valueToCheck: string): boolean =>
+            valueToCheck != null && valueToCheck.toUpperCase().indexOf(formattedFilterText) >= 0;
+
+        this.availableValues.forEach(value => {
+            if (value == null) { return; }
+
+            const displayedValue = this.formatter(value);
+            const formattedValue = this.valueFormatterService.formatValue(this.column, null, null, displayedValue);
+
+            if (matchesFilter(displayedValue) || matchesFilter(formattedValue)) {
+                this.displayedValues.push(value);
             }
-            // allow for case insensitive searches, make both filter and value uppercase
-            const valueUpperCase = valueToCheck.toUpperCase();
-
-            return valueUpperCase.indexOf(miniFilterUpperCase) >= 0;
-        };
-
-        for (let i = 0, l = this.availableUniqueValues.length; i < l; i++) {
-            const value = this.availableUniqueValues[i];
-            if (value) {
-                const displayedValue = this.formatter(value.toString());
-
-                const formattedValue: string =
-                    this.valueFormatterService.formatValue(this.column, null, null, displayedValue);
-
-                if (matchesFn(displayedValue) || matchesFn(formattedValue)) {
-                    this.displayedValues.push(value);
-                }
-            }
-        }
+        });
     }
 
-    public getDisplayedValueCount() {
+    public getDisplayedValueCount(): number {
         return this.displayedValues.length;
     }
 
-    public getDisplayedValue(index: any) {
+    public getDisplayedValue(index: any): string {
         return this.displayedValues[index];
     }
 
-    public selectAllUsingMiniFilter() {
-        if (this.miniFilter) {
-            this.selectOn(this.displayedValues);
-        } else {
-            this.selectOn(this.allUniqueValues);
-        }
-    }
-
-    private selectOn(toSelectOn: any[]) {
-        const count = toSelectOn.length;
-        for (let i = 0; i < count; i++) {
-            const key = toSelectOn[i];
-            const safeKey = this.valueToKey(key);
-            this.selectedValuesMap[safeKey] = null;
-        }
-        this.selectedValuesCount = Object.keys(this.selectedValuesMap).length;
-    }
-
-    private valueToKey(key: string): string {
-        if (key === null) {
-            return NULL_VALUE;
-        } else {
-            return key;
-        }
-    }
-
-    private keyToValue(value: string): string | null {
-        if (value === NULL_VALUE) {
-            return null;
-        } else {
-            return value;
-        }
-    }
-
     public isFilterActive(): boolean {
-        return this.allUniqueValues.length !== this.selectedValuesCount;
-    }
-
-    public selectNothingUsingMiniFilter(): void {
-        if (this.miniFilter) {
-            this.displayedValues.forEach(it => this.unselectValue(it));
-        } else {
-            this.selectNothing();
-        }
-    }
-
-    private selectNothing(): void {
-        this.selectedValuesMap = {};
-        this.selectedValuesCount = 0;
+        return this.allValues.length !== this.selectedValues.size;
     }
 
     public getUniqueValueCount(): number {
-        return this.allUniqueValues.length;
+        return this.allValues.length;
     }
 
     public getUniqueValue(index: any): string | null {
-        return this.allUniqueValues[index];
+        return this.allValues[index];
     }
 
-    public unselectValue(value: any) {
-        const safeKey = this.valueToKey(value);
-        if (this.selectedValuesMap[safeKey] !== undefined) {
-            delete this.selectedValuesMap[safeKey];
-            this.selectedValuesCount--;
+    public selectAll(clearExistingSelection = false): void {
+        if (this.miniFilterText == null) {
+            // ensure everything is selected
+            this.selectedValues = _.convertToSet(this.allValues);
+        } else {
+            // ensure everything that matches the mini filter is selected
+            if (clearExistingSelection) { this.selectedValues.clear(); }
+
+            _.forEach(this.displayedValues, value => this.selectValue(value));
         }
     }
 
-    public selectAllFromMiniFilter(): void {
-        this.selectNothing();
-        this.selectAllUsingMiniFilter();
-    }
-
-    public selectValue(value: any) {
-        const safeKey = this.valueToKey(value);
-        if (this.selectedValuesMap[safeKey] === undefined) {
-            this.selectedValuesMap[safeKey] = null;
-            this.selectedValuesCount++;
+    public selectNothing(): void {
+        if (this.miniFilterText == null) {
+            // ensure everything is deselected
+            this.selectedValues.clear();
+        } else {
+            // ensure everything that matches the mini filter is deselected
+            _.forEach(this.displayedValues, it => this.deselectValue(it));
         }
     }
 
-    public isValueSelected(value: any) {
-        const safeKey = this.valueToKey(value);
-        return this.selectedValuesMap[safeKey] !== undefined;
+    public selectValue(value: string): void {
+        this.selectedValues.add(value);
+    }
+
+    public deselectValue(value: string): void {
+        this.selectedValues.delete(value);
+    }
+
+    public isValueSelected(value: string): boolean {
+        return this.selectedValues.has(value);
     }
 
     public isEverythingSelected(): boolean {
-        if (this.miniFilter) {
-            return this.displayedValues.filter(it => this.isValueSelected(it)).length === this.displayedValues.length;
+        if (this.miniFilterText == null) {
+            return this.allValues.length === this.selectedValues.size;
         } else {
-            return this.allUniqueValues.length === this.selectedValuesCount;
+            return _.filter(this.displayedValues, it => this.isValueSelected(it)).length === this.displayedValues.length;
         }
     }
 
-    public isNothingSelected() {
-        if (this.miniFilter) {
-            return this.displayedValues.filter(it => this.isValueSelected(it)).length === 0;
+    public isNothingSelected(): boolean {
+        if (this.miniFilterText == null) {
+            return this.selectedValues.size === 0;
         } else {
-            return this.selectedValuesCount === 0;
+            return _.filter(this.displayedValues, it => this.isValueSelected(it)).length === 0;
         }
     }
 
     public getModel(): string[] | null {
-        if (!this.isFilterActive()) {
-            return null;
-        }
-        const selectedValues: any[] = [];
-        _.iterateObject(this.selectedValuesMap, (key: string) => {
-            const value = this.keyToValue(key);
-            selectedValues.push(value);
-        });
-        return selectedValues;
+        return this.isFilterActive() ? _.values(this.selectedValues) : null;
     }
 
-    public setModel(model: string[] | null, isSelectAll = false): void {
-        if (this.areValuesSync()) {
-            this.setSyncModel(model, isSelectAll);
-        } else {
-            this.filterValuesExternalPromise.promise.then(values => {
-                this.setSyncModel(model, isSelectAll);
-                this.modelUpdatedFunc(values, model);
-            });
-        }
-    }
+    public setModel(model: string[]): void {
+        this.allValuesPromise.then(values => {
+            if (model == null) {
+                // reset to everything selected
+                this.selectedValues = _.convertToSet(values);
+            } else {
+                // select all values from the model that exist in the filter
+                this.selectedValues.clear();
 
-    private setSyncModel(model: string[] | null, isSelectAll = false): void {
-        if (model && !isSelectAll) {
-            this.selectNothingUsingMiniFilter();
-            for (let i = 0; i < model.length; i++) {
-                const rawValue = model[i];
-                const value = this.keyToValue(rawValue);
-                if (this.allUniqueValues.indexOf(value) >= 0) {
-                    this.selectValue(value);
-                }
+                const allValues = _.convertToSet(values);
+
+                _.forEach(model, value => {
+                    if (allValues.has(value)) {
+                        this.selectValue(value);
+                    }
+                });
             }
-        } else {
-            this.selectAllUsingMiniFilter();
-        }
+        });
     }
 
-    public onFilterValuesReady(callback: () => void): void {
-        //This guarantees that if the user is racing to set values async into the set filter, only the first instance
-        //will be used
-        // ie Values are async and the user manually wants to override them before the retrieval of values is triggered
-        // (set filter values in the following example)
-        // http://plnkr.co/edit/eFka7ynvPj68tL3VJFWf?p=preview
-        this.filterValuesPromise.firstOneOnly(callback);
+    public onFilterValuesReady(callback: (values: string[]) => void): void {
+        this.allValuesPromise.then(callback);
     }
 }

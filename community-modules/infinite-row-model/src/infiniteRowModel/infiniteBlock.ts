@@ -24,6 +24,17 @@ export class InfiniteBlock extends RowNodeBlock implements IEventEmitter {
         this.cacheParams = params;
     }
 
+    public getDisplayIndexStart(): number {
+        return this.getBlockNumber() * this.cacheParams.blockSize;
+    }
+
+    // this is an estimate, as the last block will probably only be partially full. however
+    // this method is used to know if this block is been rendered, before destroying, so
+    // and this estimate works in that use case.
+    public getDisplayIndexEnd(): number {
+        return this.getDisplayIndexStart() + this.cacheParams.blockSize;
+    }
+
     protected createBlankRowNode(rowIndex: number): RowNode {
         const rowNode = super.createBlankRowNode(rowIndex);
 

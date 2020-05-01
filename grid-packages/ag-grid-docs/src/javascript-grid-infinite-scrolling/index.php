@@ -126,10 +126,10 @@ interface IGetRowsParams {
     // The first row index to NOT get.
     endRow: number;
 
-    // If doing Server-side sorting, contains the sort model
+    // If doing server-side sorting, contains the sort model
     sortModel: any,
 
-    // If doing Server-side filtering, contains the filter model
+    // If doing server-side filtering, contains the filter model
     filterModel: any;
 
     // The grid context object
@@ -170,7 +170,7 @@ SNIPPET
         successCallback() or failCallback() should be called exactly once.
     </li>
     <li>
-        The <b>filterModel()</b> and <b>sortModel()</b> are passed for doing Server-side sorting and filtering.
+        The <b>filterModel()</b> and <b>sortModel()</b> are passed for doing server-side sorting and filtering.
     </li>
     <li>
         The <a href="../javascript-grid-context/"><b>context</b></a> is just passed as is
@@ -225,15 +225,15 @@ SNIPPET
     Aggregation and grouping are not available in infinite scrolling.
     This is because to do such would require the grid knowing the entire data set,
     which is not possible when using the infinite row model. If you need aggregation and / or
-    grouping for large datasets, check the <a href="../javascript-grid-server-side-model/">Server-side
-    Row Model</a> for doing aggregations on the Server-side.
+    grouping for large datasets, check the <a href="../javascript-grid-server-side-model/">Server-Side
+    Row Model</a> for doing aggregations on the server-side.
 </p>
 
-<h3>Sorting & Filtering</h3>
+<h3>Sorting &amp; Filtering</h3>
 
 <p>
     The grid cannot do sorting or filtering for you, as it does not have all of the data.
-    Sorting or filtering must be done on the Server-side. For this reason, if the sort or filter
+    Sorting or filtering must be done on the server-side. For this reason, if the sort or filter
     changes, the grid will use the datasource to get the data again and provide the sort and filter
     state to you.
 </p>
@@ -245,14 +245,14 @@ SNIPPET
     Notice that the grid will load more data when you bring the scroll all the way to the bottom.
 </p>
 
-<?= grid_example('Simple Example', 'simple', 'generated') ?>
+<?= grid_example('Simple Example', 'simple', 'generated', [ 'modules' => ['infinite']]) ?>
 
 <h3>Selection</h3>
 
 <p>
     Selection works on the rows in infinite scrolling by using the ID of the row node. If you do not
     provide ids for the row nodes, the index of the row node will be used. Using the index of the
-    row breaks down when (Server-side) filtering or sorting, as these change the index of the rows.
+    row breaks down when (server-side) filtering or sorting, as these change the index of the rows.
     For this reason, if you do not provide your own ids, then selection is cleared if sort or
     filter is changed.
 </p>
@@ -277,7 +277,7 @@ SNIPPET
 <h3>Example: Sorting, Filtering and Selection</h3>
 
 <p>
-    The following example extends the example above by adding Server-side sorting, filtering and
+    The following example extends the example above by adding server-side sorting, filtering and
     persistent selection.
 </p>
 
@@ -300,11 +300,11 @@ SNIPPET
 </p>
 
 <note>
-    The example below uses ag-Grid-Enterprise, this is to demonstrate the set filter with Server-side
-    filtering, ag-Grid-Enterprise is not required for infinite scrolling.
+    The example below uses ag-Grid-Enterprise, this is to demonstrate the set filter with server-side
+    filtering, ag-Grid Enterprise is not required for infinite scrolling.
 </note>
 
-<?= grid_example('Server-side Sorting And Filtering', 'server-side', 'generated', ['enterprise' => true]) ?>
+<?= grid_example('Server-Side Sorting And Filtering', 'server-side', 'generated', ['enterprise' => true, 'modules' => ['infinite', 'setfilter', 'menu', 'columnpanel']]) ?>
 
 <note>
     When performing multiple row selections using shift-click, it is possible that not all rows are available in
@@ -329,7 +329,7 @@ SNIPPET
         return data.country === 'United States';
     }</snippet>
 <p>
-    <?= grid_example('Specify Selectable Rows', 'specify-selectable-rows', 'generated') ?>
+    <?= grid_example('Specify Selectable Rows', 'specify-selectable-rows', 'generated', ['modules' => ['infinite']]) ?>
 
 <p>
     Note that in the above example we have also included an optional checkbox to help highlight which rows
@@ -343,7 +343,7 @@ SNIPPET
     and creates a datasource Class. The example also just creates (makes up) data on the fly.
 </p>
 
-<?= grid_example('Made Up Data', 'made-up-data', 'generated') ?>
+<?= grid_example('Made Up Data', 'made-up-data', 'generated', ['modules' => ['infinite']]) ?>
 
 <h3>Loading Spinner</h3>
 
@@ -405,21 +405,18 @@ cell renderers.</p>
 
 <ul class="content">
     <li>
-        <b>Inject 1 Row @ 2 / Inject 5 Row @ 2</b>: Inserts either one or five rows at location index 2.
+        <b>Insert Rows</b>: Inserts 5 rows at row index 2 from the server, then gets grid to refresh.
     </li>
     <li>
-        <b>Insert 1 Row @ 2 and Refresh</b>: Inserts five rows at location index 2 and then gets grid to refresh.
+        <b>Delete Rows</b>: Deletes 10 rows at row index 3 from the server, then gets the grid to refresh.
     </li>
     <li>
-        <b>Delete 10 Rows @ 3</b>: Deletes rows from the server, then gets the grid to refresh.
-    </li>
-    <li>
-        <b>Set Row Count to 200</b>: Sets the row count to 200. This adjusts the vertical scroll to
+        <b>Set Row Count</b>: Sets the row count to 200. This adjusts the vertical scroll to
         show 200 rows. If the scroll is positioned at the end, this results in the grid automatically readjusting
         as it seeks ahead for the next block of data.
     </li>
     <li>
-        <b>Print Rows and Max Found</b>: Debugging method, prints rowCount and maxFound to the console.
+        <b>Print Info</b>: Prints rowCount and maxFound to the console.
     </li>
     <li>
         <b>Jump to 500</b>: Positions the grid so that row 500 is displayed.
@@ -428,7 +425,7 @@ cell renderers.</p>
         <b>Print Cache State</b>: Debugging method, to see the state of the cache.
     </li>
     <li>
-        <b>Set Prices High & Set Prices Low</b>: Sets the prices ON THE Server-side to either high or low prices.
+        <b>Set Prices High &amp; Set Prices Low</b>: Sets the prices ON THE server-side to either high or low prices.
         This will not impact the grid until after a block cache is loaded. Use these buttons to then further
         test the refresh and purge methods.
     </li>
@@ -445,7 +442,7 @@ cell renderers.</p>
     get called after the data is set as well as when the row is created (when the data may not yet be available).
 </p>
 
-<?= grid_example('Insert And Remove Example', 'insert-remove', 'generated') ?>
+<?= grid_example('Insert And Remove Example', 'insert-remove', 'generated', ['modules' => ['infinite']]) ?>
 
 <h2 id="changing-columns">Changing Columns</h2>
 
@@ -474,7 +471,7 @@ cell renderers.</p>
     </ul>
 </p>
 
-<?= grid_example('Changing Columns', 'changing-columns', 'generated') ?>
+<?= grid_example('Changing Columns', 'changing-columns', 'generated', ['modules' => ['infinite']]) ?>
 
 <h2 id="pagination">Pagination</h2>
 
@@ -522,7 +519,7 @@ cell renderers.</p>
     sided call is needed.
 </p>
 
-<?= grid_example('Block Larger Than Page', 'block-larger-page', 'generated', ['enterprise' => true, 'exampleHeight' => 615]) ?>
+<?= grid_example('Block Larger Than Page', 'block-larger-page', 'generated', ['enterprise' => true, 'exampleHeight' => 615, 'modules' => ['infinite', 'setfilter', 'menu', 'columnpanel']]) ?>
 
 <h3>Example 2: Equal Pagination Page Size and Large Infinite Block Size</h3>
 
@@ -531,13 +528,13 @@ cell renderers.</p>
     every time a new page is navigated to.
 </p>
 
-<?= grid_example('Block Equal Than Page', 'block-equal-page', 'generated', ['enterprise' => true, 'exampleHeight' => 615]) ?>
+<?= grid_example('Block Equal Than Page', 'block-equal-page', 'generated', ['enterprise' => true, 'exampleHeight' => 615, 'modules' => ['infinite', 'setfilter', 'menu', 'columnpanel']]) ?>
 
 <h2>Overlays</h2>
 
 <p>
     The infinite row model does not use <a href="../javascript-grid-overlays/">overlays</a>
-    like the Client-side Row Model. It does not
+    like the Client-Side Row Model. It does not
     use 'loading' overlay as rows load in blocks as it would be wrong to hide all the grid
     because some rows are getting loaded. The grid does not use 'no rows' overlay as the
     'no rows' could be because you have a filter set, and a grid with a filter shows an empty

@@ -7,7 +7,9 @@ export declare class PopupService {
     private eventService;
     private gridCore;
     private popupList;
+    private events;
     private init;
+    destroy(): void;
     registerGridCore(gridCore: GridCore): void;
     getPopupParent(): HTMLElement;
     positionPopupForMenu(params: {

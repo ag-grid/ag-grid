@@ -20,7 +20,7 @@ define('skipInPageNav', true);
 
 <div class="chart-navigation">
     <a class="chart-navigation__left" href="./100--stacked-area.php">❮&nbsp;&nbsp;100% Stacked Area</a>
-    <a class="chart-navigation__right" href="./time-axis-with-irregular-intervals.php">Time Axis With Irregular Intervals&nbsp;&nbsp;❯</a>
+    <a class="chart-navigation__right" href="./simple-histogram.php">Simple Histogram&nbsp;&nbsp;❯</a>
 </div>
 
 <?php include '../documentation-main/documentation_footer.php'; ?>

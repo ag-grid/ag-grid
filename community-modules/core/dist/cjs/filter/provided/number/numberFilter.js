@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v23.0.2
+ * @version v23.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -28,7 +28,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var componentAnnotations_1 = require("../../../widgets/componentAnnotations");
 var utils_1 = require("../../../utils");
 var simpleFilter_1 = require("../simpleFilter");
-var scalerFilter_1 = require("../scalerFilter");
+var scalarFilter_1 = require("../scalarFilter");
 var NumberFilter = /** @class */ (function (_super) {
     __extends(NumberFilter, _super);
     function NumberFilter() {
@@ -87,14 +87,15 @@ var NumberFilter = /** @class */ (function (_super) {
     };
     NumberFilter.prototype.resetPlaceholder = function () {
         var translate = this.translate.bind(this);
-        var isRange1 = this.getCondition1Type() === scalerFilter_1.ScalerFilter.IN_RANGE;
-        var isRange2 = this.getCondition2Type() === scalerFilter_1.ScalerFilter.IN_RANGE;
-        this.eValueFrom1.setInputPlaceholder(translate(isRange1 ? 'rangeStart' : 'filterOoo'));
-        this.eValueTo1.setInputPlaceholder(translate(isRange1 ? 'rangeEnd' : 'filterOoo'));
-        this.eValueFrom2.setInputPlaceholder(translate(isRange2 ? 'rangeStart' : 'filterOoo'));
-        this.eValueTo2.setInputPlaceholder(translate(isRange2 ? 'rangeEnd' : 'filterOoo'));
+        var isRange1 = this.getCondition1Type() === scalarFilter_1.ScalarFilter.IN_RANGE;
+        var isRange2 = this.getCondition2Type() === scalarFilter_1.ScalarFilter.IN_RANGE;
+        this.eValueFrom1.setInputPlaceholder(translate(isRange1 ? 'inRangeStart' : 'filterOoo'));
+        this.eValueTo1.setInputPlaceholder(translate(isRange1 ? 'inRangeEnd' : 'filterOoo'));
+        this.eValueFrom2.setInputPlaceholder(translate(isRange2 ? 'inRangeStart' : 'filterOoo'));
+        this.eValueTo2.setInputPlaceholder(translate(isRange2 ? 'inRangeEnd' : 'filterOoo'));
     };
-    NumberFilter.prototype.afterGuiAttached = function () {
+    NumberFilter.prototype.afterGuiAttached = function (params) {
+        _super.prototype.afterGuiAttached.call(this, params);
         this.resetPlaceholder();
         this.eValueFrom1.getInputElement().focus();
     };
@@ -181,13 +182,13 @@ var NumberFilter = /** @class */ (function (_super) {
     };
     NumberFilter.FILTER_TYPE = 'number';
     NumberFilter.DEFAULT_FILTER_OPTIONS = [
-        scalerFilter_1.ScalerFilter.EQUALS,
-        scalerFilter_1.ScalerFilter.NOT_EQUAL,
-        scalerFilter_1.ScalerFilter.LESS_THAN,
-        scalerFilter_1.ScalerFilter.LESS_THAN_OR_EQUAL,
-        scalerFilter_1.ScalerFilter.GREATER_THAN,
-        scalerFilter_1.ScalerFilter.GREATER_THAN_OR_EQUAL,
-        scalerFilter_1.ScalerFilter.IN_RANGE
+        scalarFilter_1.ScalarFilter.EQUALS,
+        scalarFilter_1.ScalarFilter.NOT_EQUAL,
+        scalarFilter_1.ScalarFilter.LESS_THAN,
+        scalarFilter_1.ScalarFilter.LESS_THAN_OR_EQUAL,
+        scalarFilter_1.ScalarFilter.GREATER_THAN,
+        scalarFilter_1.ScalarFilter.GREATER_THAN_OR_EQUAL,
+        scalarFilter_1.ScalarFilter.IN_RANGE
     ];
     __decorate([
         componentAnnotations_1.RefSelector('eValueFrom1')
@@ -202,7 +203,7 @@ var NumberFilter = /** @class */ (function (_super) {
         componentAnnotations_1.RefSelector('eValueTo2')
     ], NumberFilter.prototype, "eValueTo2", void 0);
     return NumberFilter;
-}(scalerFilter_1.ScalerFilter));
+}(scalarFilter_1.ScalarFilter));
 exports.NumberFilter = NumberFilter;
 
 //# sourceMappingURL=numberFilter.js.map

@@ -1,12 +1,12 @@
 import * as React from 'react';
 import {ReactPortal} from 'react';
 import * as ReactDOM from 'react-dom';
-import {ComponentType, Promise, Utils} from 'ag-grid-community';
+import {_, ComponentType, Promise} from 'ag-grid-community';
 import {AgGridReact} from "./agGridReact";
-import {BaseReactComponent} from "./baseReactComponent";
-import {assignProperties} from "./utils";
-import generateNewKey from "./keyGenerator";
-import {renderToStaticMarkup} from "react-dom/server";
+import {BaseReactComponent} from './baseReactComponent';
+import {assignProperties} from './utils';
+import generateNewKey from './keyGenerator';
+import {renderToStaticMarkup} from 'react-dom/server';
 
 export class ReactComponent extends BaseReactComponent {
     static REACT_MEMO_TYPE = ReactComponent.hasSymbol() ? Symbol.for('react.memo') : 0xead3;
@@ -21,10 +21,9 @@ export class ReactComponent extends BaseReactComponent {
     private componentWrappingElement: string = 'div';
     private statelessComponent: boolean;
     private staticMarkup: HTMLElement | null | string = null;
+    private staticRenderTime: number = 0;
 
-    constructor(reactComponent: any,
-                parentComponent: AgGridReact,
-                componentType: ComponentType) {
+    constructor(reactComponent: any, parentComponent: AgGridReact, componentType: ComponentType) {
         super();
 
         this.reactComponent = reactComponent;
@@ -86,12 +85,23 @@ export class ReactComponent extends BaseReactComponent {
         this.parentComponent.mountReactPortal(portal!, this, (value: any) => {
             resolve(value);
 
+
             // functional/stateless components have a slightly different lifecycle (no refs) so we'll clean them up
             // here
-            if(this.statelessComponent) {
-                setTimeout(() => {
-                    this.removeStaticMarkup();
-                })
+            if (this.statelessComponent) {
+                // if a user supplies a time consuming renderer then it's sometimes possible both the static and
+                // actual react component are visible at the same time
+                // we check here if the rendering is "slow" (anything greater than 2ms) we'll use a listener to remove the
+                // static markup, otherwise just the next tick
+                if(this.staticRenderTime >= 2) {
+                    this.eParentElement.addEventListener('DOMNodeInserted', () => {
+                        this.removeStaticMarkup();
+                    }, false);
+                } else {
+                    setTimeout(() => {
+                        this.removeStaticMarkup();
+                    });
+                }
             }
         });
     }
@@ -102,18 +112,18 @@ export class ReactComponent extends BaseReactComponent {
         }
 
         if (this.componentInstance.getReactContainerStyle && this.componentInstance.getReactContainerStyle()) {
-            assignProperties(this.eParentElement.style, this.componentInstance.getReactContainerStyle())
+            assignProperties(this.eParentElement.style, this.componentInstance.getReactContainerStyle());
         }
         if (this.componentInstance.getReactContainerClasses && this.componentInstance.getReactContainerClasses()) {
             const parentContainerClasses: string[] = this.componentInstance.getReactContainerClasses();
-            parentContainerClasses.forEach(className => Utils.addCssClass(this.eParentElement as HTMLElement, className));
+            parentContainerClasses.forEach(className => _.addCssClass(this.eParentElement as HTMLElement, className));
         }
     }
 
     private createParentElement(params: any) {
         const eParentElement = document.createElement(this.parentComponent.props.componentWrappingElement || 'div');
 
-        Utils.addCssClass(eParentElement as HTMLElement, 'ag-react-container');
+        _.addCssClass(eParentElement as HTMLElement, 'ag-react-container');
 
         // DEPRECATED - use componentInstance.getReactContainerStyle or componentInstance.getReactContainerClasses instead
         // so user can have access to the react container, to add css class or style
@@ -151,9 +161,21 @@ export class ReactComponent extends BaseReactComponent {
             return;
         }
 
+        const originalConsoleError = console.error;
         const reactComponent = React.createElement(this.reactComponent, params);
         try {
+            // if a user is using anything that uses useLayoutEffect (like material ui) then
+            // Warning: useLayoutEffect does nothing on the s   erver will be throw and we can't do anything to stop it
+            // this is just a warning and has no effect on anything so just suppress it for this single operation
+            const originalConsoleError = console.error;
+            console.error = () => {
+            };
+
+            const start = Date.now();
             const staticMarkup = renderToStaticMarkup(reactComponent);
+            this.staticRenderTime = Date.now() - start;
+
+            console.error = originalConsoleError;
 
             // if the render method returns null the result will be an empty string
             if (staticMarkup === "") {
@@ -169,6 +191,8 @@ export class ReactComponent extends BaseReactComponent {
             }
         } catch (e) {
             // we tried - this can happen with certain (rare) edge cases
+        } finally {
+            console.error = originalConsoleError;
         }
     }
 
@@ -177,9 +201,16 @@ export class ReactComponent extends BaseReactComponent {
             return;
         }
 
-        if (this.staticMarkup && (this.staticMarkup as HTMLElement).remove) {
-            (this.staticMarkup as HTMLElement).remove();
-            this.staticMarkup = null;
+        if (this.staticMarkup) {
+            if ((this.staticMarkup as HTMLElement).remove) {
+                // everyone else in the world
+                (this.staticMarkup as HTMLElement).remove();
+                this.staticMarkup = null;
+            } else if (this.eParentElement.removeChild) {
+                // ie11...
+                this.eParentElement.removeChild(this.staticMarkup as any);
+                this.staticMarkup = null;
+            }
         }
     }
 

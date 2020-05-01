@@ -8,14 +8,14 @@ import {ExcelExportModule} from '@ag-grid-enterprise/excel-export';
 ModuleRegistry.registerModules([ClientSideRowModelModule, MenuModule, ExcelExportModule]);
 
 import "@ag-grid-community/core/dist/styles/ag-grid.css";
-import "@ag-grid-community/core/dist/styles/ag-theme-balham.css";
+import "@ag-grid-community/core/dist/styles/ag-theme-alpine.css";
 
 @Component({
     selector: 'my-app',
     template: `
         <ag-grid-angular
-                style="width: 100%; height: 150px;"
-                class="ag-theme-balham"
+                style="width: 100%; height: 180px;"
+                class="ag-theme-alpine"
                 [rowData]="rowData"
                 [columnDefs]="columnDefs"
                 (gridReady)="onGridReady($event)">

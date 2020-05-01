@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v23.0.2
+ * @version v23.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -41,7 +41,7 @@ export { RowNode } from "./entities/rowNode";
 export { FilterManager } from "./filter/filterManager";
 export { ProvidedFilter } from "./filter/provided/providedFilter";
 export { SimpleFilter } from "./filter/provided/simpleFilter";
-export { ScalerFilter } from "./filter/provided/scalerFilter";
+export { ScalarFilter } from "./filter/provided/scalarFilter";
 export { NumberFilter } from "./filter/provided/number/numberFilter";
 export { TextFilter } from "./filter/provided/text/textFilter";
 export { DateFilter } from "./filter/provided/date/dateFilter";
@@ -88,8 +88,8 @@ export { PinnedRowModel } from "./pinnedRowModel/pinnedRowModel";
 export { ChangedPath } from "./utils/changedPath";
 export { RowNodeBlock } from "./modules/rowNodeCache/rowNodeBlock";
 export { RowNodeBlockLoader } from "./modules/rowNodeCache/rowNodeBlockLoader";
-export { PaginationProxy } from "./pagination/paginationProxy";
 export { RowNodeCache } from "./modules/rowNodeCache/rowNodeCache";
+export { PaginationProxy } from "./pagination/paginationProxy";
 //styling
 export { StylingService } from "./styling/stylingService";
 // widgets
@@ -130,7 +130,7 @@ export { GridOptionsWrapper } from "./gridOptionsWrapper";
 export { EventService } from "./eventService";
 export { SelectableService } from "./rowNodes/selectableService";
 export { GridCore } from "./gridCore";
-export { Logger } from "./logger";
+export { Logger, LoggerFactory } from "./logger";
 export { SelectionController } from "./selectionController";
 export { SortController } from "./sortController";
 export { TemplateService } from "./templateService";
@@ -138,14 +138,13 @@ export * from "./utils";
 export { ValueService } from "./valueService/valueService";
 export { ValueCache } from "./valueService/valueCache";
 export { ExpressionService } from "./valueService/expressionService";
-export { LoggerFactory } from "./logger";
 export { CellPositionUtils } from "./entities/cellPosition";
 export { RowPositionUtils } from "./entities/rowPosition";
 export * from "./propertyKeys";
 export { ColumnApi } from "./columnController/columnApi";
 export { BaseComponentWrapper } from "./components/framework/frameworkComponentWrapper";
 export { Environment } from "./environment";
-export { TooltipManager } from "./widgets/tooltipManager";
+export { TooltipFeature } from "./widgets/tooltipFeature";
 // charts
 export * from "./interfaces/iChartOptions";
 export { ModuleNames } from "./modules/moduleNames";

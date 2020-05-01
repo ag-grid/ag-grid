@@ -3,22 +3,30 @@ import ContinuousScale from "../../../scale/continuousScale";
 import { Selection } from "../../../scene/selection";
 import { Group } from "../../../scene/group";
 import palette from "../../palettes";
-import { SeriesNodeDatum, CartesianTooltipRendererParams as LineTooltipRendererParams } from "../series";
+import { SeriesNodeDatum, CartesianTooltipRendererParams as LineTooltipRendererParams, HighlightStyle } from "../series";
 import { numericExtent } from "../../../util/array";
 import { toFixed } from "../../../util/number";
 import { PointerEvents } from "../../../scene/node";
 import { LegendDatum } from "../../legend";
-import { Shape } from "../../../scene/shape/shape";
-import { Marker } from "../../marker/marker";
 import { CartesianSeries, CartesianSeriesMarker, CartesianSeriesMarkerFormat } from "./cartesianSeries";
 import { ChartAxisDirection } from "../../chartAxis";
 import { getMarker } from "../../marker/util";
-import { reactive } from "../../../util/observable";
+import { reactive, PropertyChangeEvent, TypedEvent } from "../../../util/observable";
 import { Chart } from "../../chart";
 
-interface GroupSelectionDatum extends SeriesNodeDatum {
-    x: number;
-    y: number;
+interface LineNodeDatum extends SeriesNodeDatum {
+    point: {
+        x: number;
+        y: number;
+    }
+}
+
+export interface LineSeriesNodeClickEvent extends TypedEvent {
+    type: 'nodeClick';
+    series: LineSeries;
+    datum: any;
+    xKey: string;
+    yKey: string;
 }
 
 export { LineTooltipRendererParams };
@@ -37,7 +45,8 @@ export class LineSeries extends CartesianSeries {
 
     // We use groups for this selection even though each group only contains a marker ATM
     // because in the future we might want to add label support as well.
-    private groupSelection: Selection<Group, Group, GroupSelectionDatum, any> = Selection.select(this.group).selectAll<Group>();
+    private nodeSelection: Selection<Group, Group, LineNodeDatum, any> = Selection.select(this.group).selectAll<Group>();
+    private nodeData: LineNodeDatum[] = [];
 
     readonly marker = new CartesianSeriesMarker();
 
@@ -58,28 +67,29 @@ export class LineSeries extends CartesianSeries {
         lineNode.pointerEvents = PointerEvents.None;
         this.group.append(lineNode);
 
-        const update = () => this.update();
-        this.addEventListener('update', update);
+        this.addEventListener('update', this.update);
 
         const { marker } = this;
         marker.fill = palette.fills[0];
         marker.stroke = palette.strokes[0];
-        marker.addPropertyListener('shape', () => this.onMarkerShapeChange());
-        marker.addPropertyListener('enabled', event => {
-            if (!event.value) {
-                this.groupSelection = this.groupSelection.setData([]);
-                this.groupSelection.exit.remove();
-            }
-        });
-        marker.addEventListener('change', update);
+        marker.addPropertyListener('shape', this.onMarkerShapeChange, this);
+        marker.addPropertyListener('enabled', this.onMarkerEnabledChange, this);
+        marker.addEventListener('change', this.update, this);
     }
 
     onMarkerShapeChange() {
-        this.groupSelection = this.groupSelection.setData([]);
-        this.groupSelection.exit.remove();
+        this.nodeSelection = this.nodeSelection.setData([]);
+        this.nodeSelection.exit.remove();
         this.update();
 
-        this.fireEvent({type: 'legendChange'});
+        this.fireEvent({ type: 'legendChange' });
+    }
+
+    protected onMarkerEnabledChange(event: PropertyChangeEvent<CartesianSeriesMarker, boolean>) {
+        if (!event.value) {
+            this.nodeSelection = this.nodeSelection.setData([]);
+            this.nodeSelection.exit.remove();
+        }
     }
 
     protected _xKey: string = '';
@@ -111,7 +121,7 @@ export class LineSeries extends CartesianSeries {
     @reactive('update') yName: string = '';
 
     processData(): boolean {
-        const { xAxis, xKey, yKey, xData, yData } = this;
+        const { xAxis, yAxis, xKey, yKey, xData, yData } = this;
         const data = xKey && yKey && this.data ? this.data : [];
 
         if (!xAxis) {
@@ -119,6 +129,7 @@ export class LineSeries extends CartesianSeries {
         }
 
         const isContinuousX = xAxis.scale instanceof ContinuousScale;
+        const isContinuousY = yAxis.scale instanceof ContinuousScale;
 
         xData.length = 0;
         yData.length = 0;
@@ -133,7 +144,7 @@ export class LineSeries extends CartesianSeries {
         }
 
         this.xDomain = isContinuousX ? this.fixNumericExtent(numericExtent(xData), 'x') : xData;
-        this.yDomain = this.fixNumericExtent(numericExtent(yData), 'y');
+        this.yDomain = isContinuousY ? this.fixNumericExtent(numericExtent(yData), 'y') : yData;
 
         return true;
     }
@@ -145,59 +156,44 @@ export class LineSeries extends CartesianSeries {
         return this.yDomain;
     }
 
-    highlightStyle: {
-        fill?: string,
-        stroke?: string
-    } = { fill: 'yellow' };
+    highlightStyle: HighlightStyle = { fill: 'yellow' };
 
-    private highlightedNode?: Marker;
-
-    highlightNode(node: Shape) {
-        if (!(node instanceof Marker)) {
-            return;
-        }
-
-        this.highlightedNode = node;
-        this.scheduleLayout();
-    }
-
-    dehighlightNode() {
-        this.highlightedNode = undefined;
-        this.scheduleLayout();
+    onHighlightChange() {
+        this.updateNodes();
     }
 
     update(): void {
-        const { chart, xAxis, yAxis } = this;
-
         this.group.visible = this.visible;
 
-        if (!xAxis || !yAxis || !chart || chart.layoutPending || chart.dataPending) {
+        const { chart, xAxis, yAxis } = this;
+
+        if (!chart || chart.layoutPending || chart.dataPending || !xAxis || !yAxis) {
             return;
         }
 
+        this.updateLinePath(); // this will generate node data too
+        this.updateNodeSelection();
+        this.updateNodes();
+    }
+
+    private updateLinePath() {
+        const { xAxis, yAxis, data, xData, yData, lineNode } = this;
         const xScale = xAxis.scale;
         const yScale = yAxis.scale;
         const xOffset = (xScale.bandwidth || 0) / 2;
         const yOffset = (yScale.bandwidth || 0) / 2;
         const isContinuousX = xScale instanceof ContinuousScale;
-
-        const {
-            data,
-            xData,
-            yData,
-            marker,
-            lineNode
-        } = this;
-
-        const groupSelectionData: GroupSelectionDatum[] = [];
+        const isContinuousY = yScale instanceof ContinuousScale;
         const linePath = lineNode.path;
+        const nodeData: LineNodeDatum[] = [];
 
         linePath.clear();
         let moveTo = true;
         xData.forEach((xDatum, i) => {
             const yDatum = yData[i];
-            const isGap = yDatum == null || isNaN(yDatum) || !isFinite(yDatum)
-                || xDatum == null || (isContinuousX && (isNaN(xDatum) || !isFinite(xDatum)));
+            const isGap =
+                yDatum == null || (isContinuousY && (isNaN(yDatum) || !isFinite(yDatum))) ||
+                xDatum == null || (isContinuousX && (isNaN(xDatum) || !isFinite(xDatum)));
 
             if (isGap) {
                 moveTo = true;
@@ -212,13 +208,11 @@ export class LineSeries extends CartesianSeries {
                     linePath.lineTo(x, y);
                 }
 
-                if (marker) {
-                    groupSelectionData.push({
-                        seriesDatum: data[i],
-                        x,
-                        y
-                    });
-                }
+                nodeData.push({
+                    series: this,
+                    seriesDatum: data[i],
+                    point: { x, y }
+                });
             }
         });
 
@@ -226,32 +220,37 @@ export class LineSeries extends CartesianSeries {
         lineNode.strokeWidth = this.strokeWidth;
         lineNode.strokeOpacity = this.strokeOpacity;
 
-        this.updateGroupSelection(groupSelectionData);
+        // Used by marker nodes and for hit-testing even when not using markers
+        // when `chart.tooltipTracking` is true.
+        this.nodeData = nodeData;
     }
 
-    private updateGroupSelection(groupSelectionData: GroupSelectionDatum[]) {
-        const { marker, xKey, yKey, highlightedNode, stroke, strokeWidth } = this;
-        let { groupSelection } = this;
-
+    private updateNodeSelection() {
+        const { marker } = this;
+        const nodeData = marker.shape ? this.nodeData : [];
         const MarkerShape = getMarker(marker.shape);
+        const updateSelection = this.nodeSelection.setData(nodeData);
+        updateSelection.exit.remove();
+        const enterSelection = updateSelection.enter.append(Group);
+        enterSelection.append(MarkerShape);
+        this.nodeSelection = updateSelection.merge(enterSelection);
+    }
 
-        const updateGroups = groupSelection.setData(groupSelectionData);
-        updateGroups.exit.remove();
-
-        const enterGroups = updateGroups.enter.append(Group);
-        enterGroups.append(MarkerShape);
+    private updateNodes() {
+        const { marker, xKey, yKey, stroke, strokeWidth } = this;
+        const MarkerShape = getMarker(marker.shape);
+        const { highlightedDatum } = this.chart;
 
         const { fill: highlightFill, stroke: highlightStroke } = this.highlightStyle;
         const markerFormatter = marker.formatter;
         const markerSize = marker.size;
         const markerStrokeWidth = marker.strokeWidth !== undefined ? marker.strokeWidth : strokeWidth;
 
-        groupSelection = updateGroups.merge(enterGroups);
-        groupSelection.selectByClass(MarkerShape)
+        this.nodeSelection.selectByClass(MarkerShape)
             .each((node, datum) => {
-                const isHighlightedNode = node === highlightedNode;
-                const markerFill = isHighlightedNode && highlightFill !== undefined ? highlightFill : marker.fill;
-                const markerStroke = isHighlightedNode && highlightStroke !== undefined ? highlightStroke : marker.stroke || stroke;
+                const highlighted = datum === highlightedDatum;
+                const markerFill = highlighted && highlightFill !== undefined ? highlightFill : marker.fill;
+                const markerStroke = highlighted && highlightStroke !== undefined ? highlightStroke : marker.stroke || stroke;
                 let markerFormat: CartesianSeriesMarkerFormat | undefined = undefined;
 
                 if (markerFormatter) {
@@ -263,7 +262,7 @@ export class LineSeries extends CartesianSeries {
                         stroke: markerStroke,
                         strokeWidth: markerStrokeWidth,
                         size: markerSize,
-                        highlighted: isHighlightedNode
+                        highlighted
                     });
                 }
 
@@ -276,15 +275,27 @@ export class LineSeries extends CartesianSeries {
                     ? markerFormat.size
                     : markerSize;
 
-                node.translationX = datum.x;
-                node.translationY = datum.y;
+                node.translationX = datum.point.x;
+                node.translationY = datum.point.y;
                 node.visible = marker.enabled && node.size > 0;
             });
-
-        this.groupSelection = groupSelection;
     }
 
-    getTooltipHtml(nodeDatum: GroupSelectionDatum): string {
+    getNodeData(): LineNodeDatum[] {
+        return this.nodeData;
+    }
+
+    fireNodeClickEvent(datum: LineNodeDatum): void {
+        this.fireEvent<LineSeriesNodeClickEvent>({
+            type: 'nodeClick',
+            series: this,
+            datum: datum.seriesDatum,
+            xKey: this.xKey,
+            yKey: this.yKey
+        });
+    }
+
+    getTooltipHtml(nodeDatum: LineNodeDatum): string {
         const { xKey, yKey } = this;
 
         if (!xKey || !yKey) {

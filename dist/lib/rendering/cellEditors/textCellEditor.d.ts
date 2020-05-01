@@ -1,5 +1,6 @@
 import { PopupComponent } from "../../widgets/popupComponent";
 import { ICellEditorComp, ICellEditorParams } from "../../interfaces/iCellEditor";
+import { AgInputTextField } from "../../widgets/agInputTextField";
 /**
  * useFormatter: used when the cell value needs formatting prior to editing, such as when using reference data and you
  *               want to display text rather than code.
@@ -11,8 +12,8 @@ export declare class TextCellEditor extends PopupComponent implements ICellEdito
     private static TEMPLATE;
     private highlightAllOnFocus;
     private focusAfterAttached;
-    private params;
-    private eInput;
+    protected params: ICellEditorParams;
+    protected eInput: AgInputTextField;
     constructor();
     init(params: ITextCellEditorParams): void;
     afterGuiAttached(): void;

@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v23.0.2
+ * @version v23.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -73,18 +73,18 @@ var RowDragComp = /** @class */ (function (_super) {
         var dragItem = {
             rowNode: this.rowNode,
             columns: [this.column],
-            defaultTextValue: this.cellValue
+            defaultTextValue: this.cellValue,
         };
         var rowDragText = this.column.getColDef().rowDragText;
         var dragSource = {
             type: DragSourceType.RowDrag,
             eElement: this.getGui(),
             dragItemName: function () {
+                var dragItemCount = _this.getSelectedCount();
                 if (rowDragText) {
-                    return rowDragText(dragItem);
+                    return rowDragText(dragItem, dragItemCount);
                 }
-                var count = _this.getSelectedCount();
-                return count === 1 ? _this.cellValue : count + " rows";
+                return dragItemCount === 1 ? _this.cellValue : dragItemCount + " rows";
             },
             getDragItem: function () { return dragItem; },
             dragStartPixels: 0
@@ -166,39 +166,13 @@ var ManagedVisibilityStrategy = /** @class */ (function (_super) {
     }
     ManagedVisibilityStrategy.prototype.postConstruct = function () {
         // we do not show the component if sort, filter or grouping is active
-        this.addDestroyableEventListener(this.beans.eventService, Events.EVENT_SORT_CHANGED, this.onSortChanged.bind(this));
-        this.addDestroyableEventListener(this.beans.eventService, Events.EVENT_FILTER_CHANGED, this.onFilterChanged.bind(this));
-        this.addDestroyableEventListener(this.beans.eventService, Events.EVENT_COLUMN_ROW_GROUP_CHANGED, this.onRowGroupChanged.bind(this));
+        this.addDestroyableEventListener(this.beans.eventService, Events.EVENT_SORT_CHANGED, this.workOutVisibility.bind(this));
+        this.addDestroyableEventListener(this.beans.eventService, Events.EVENT_FILTER_CHANGED, this.workOutVisibility.bind(this));
+        this.addDestroyableEventListener(this.beans.eventService, Events.EVENT_COLUMN_ROW_GROUP_CHANGED, this.workOutVisibility.bind(this));
         // in case data changes, then we need to update visibility of drag item
         this.addDestroyableEventListener(this.rowNode, RowNode.EVENT_DATA_CHANGED, this.workOutVisibility.bind(this));
         this.addDestroyableEventListener(this.rowNode, RowNode.EVENT_CELL_CHANGED, this.workOutVisibility.bind(this));
         this.addDestroyableEventListener(this.beans.gridOptionsWrapper, 'suppressRowDrag', this.onSuppressRowDrag.bind(this));
-        this.updateSortActive();
-        this.updateFilterActive();
-        this.updateRowGroupActive();
-        this.workOutVisibility();
-    };
-    ManagedVisibilityStrategy.prototype.updateRowGroupActive = function () {
-        var rowGroups = this.beans.columnController.getRowGroupColumns();
-        this.rowGroupActive = !_.missingOrEmpty(rowGroups);
-    };
-    ManagedVisibilityStrategy.prototype.onRowGroupChanged = function () {
-        this.updateRowGroupActive();
-        this.workOutVisibility();
-    };
-    ManagedVisibilityStrategy.prototype.updateSortActive = function () {
-        var sortModel = this.beans.sortController.getSortModel();
-        this.sortActive = !_.missingOrEmpty(sortModel);
-    };
-    ManagedVisibilityStrategy.prototype.onSortChanged = function () {
-        this.updateSortActive();
-        this.workOutVisibility();
-    };
-    ManagedVisibilityStrategy.prototype.updateFilterActive = function () {
-        this.filterActive = this.beans.filterManager.isAnyFilterPresent();
-    };
-    ManagedVisibilityStrategy.prototype.onFilterChanged = function () {
-        this.updateFilterActive();
         this.workOutVisibility();
     };
     ManagedVisibilityStrategy.prototype.onSuppressRowDrag = function () {
@@ -206,9 +180,11 @@ var ManagedVisibilityStrategy = /** @class */ (function (_super) {
     };
     ManagedVisibilityStrategy.prototype.workOutVisibility = function () {
         // only show the drag if both sort and filter are not present
-        var sortOrFilterOrGroupActive = this.sortActive || this.filterActive || this.rowGroupActive;
+        var rowDragFeature = this.beans.gridPanel.getRowDragFeature();
+        var shouldPreventRowMove = rowDragFeature && rowDragFeature.shouldPreventRowMove();
         var suppressRowDrag = this.beans.gridOptionsWrapper.isSuppressRowDrag();
-        var neverDisplayed = sortOrFilterOrGroupActive || suppressRowDrag;
+        var hasExternalDropZones = this.beans.dragAndDropService.hasExternalDropZones();
+        var neverDisplayed = (shouldPreventRowMove && !hasExternalDropZones) || suppressRowDrag;
         this.setDisplayedOrVisible(neverDisplayed);
     };
     __decorate([

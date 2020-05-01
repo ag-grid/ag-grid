@@ -79,7 +79,8 @@ interface AxisLabelOptions {
 
     // A custom formatter function for the axis labels. If the value is a number, the number of
     // fractional digits used by the axis step will be provided as well.
-    formatter?: (value: any, fractionDigits?: number) => string;
+    // The label's index as well as the reference to the default formatter are provided as well.
+    formatter?: (params: { value: any, index: number, fractionDigits?: number, formatter?: (x: any) => string }) => string;
 }
 
 interface GridStyle {
@@ -139,7 +140,7 @@ This is a continuous axis used for plotting date/time values. It is used automat
     The format string may contain the following directives, which reflect those from Python's <a href="https://strftime.org/" target="_blank">strftime</a>:
 </p>
 
-<ul>
+<ul class="content">
     <li><code>%a</code> - abbreviated weekday name.*</li>
     <li><code>%A</code> - full weekday name.*</li>
     <li><code>%b</code> - abbreviated month name.*</li>

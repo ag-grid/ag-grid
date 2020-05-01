@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v23.0.2
+ * @version v23.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -23,19 +23,20 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
-import { Component } from "../../widgets/component";
 import { Autowired, PostConstruct } from "../../context/context";
+import { Component } from "../../widgets/component";
 import { Column } from "../../entities/column";
 import { DragAndDropService, DragSourceType } from "../../dragAndDrop/dragAndDropService";
+import { Constants } from "../../constants";
 import { CssClassApplier } from "../cssClassApplier";
-import { SetLeftFeature } from "../../rendering/features/setLeftFeature";
-import { RefSelector } from "../../widgets/componentAnnotations";
-import { SelectAllFeature } from "./selectAllFeature";
 import { Events } from "../../events";
 import { HoverFeature } from "../hoverFeature";
+import { SetLeftFeature } from "../../rendering/features/setLeftFeature";
+import { SelectAllFeature } from "./selectAllFeature";
+import { RefSelector } from "../../widgets/componentAnnotations";
 import { TouchListener } from "../../widgets/touchListener";
+import { TooltipFeature } from "../../widgets/tooltipFeature";
 import { _ } from "../../utils";
-import { Constants } from "../../constants";
 var HeaderWrapperComp = /** @class */ (function (_super) {
     __extends(HeaderWrapperComp, _super);
     function HeaderWrapperComp(column, dragSourceDropTarget, pinned) {
@@ -209,8 +210,8 @@ var HeaderWrapperComp = /** @class */ (function (_super) {
     };
     HeaderWrapperComp.prototype.onResizing = function (finished, resizeAmount) {
         var resizeAmountNormalised = this.normaliseResizeAmount(resizeAmount);
-        var newWidth = this.resizeStartWidth + resizeAmountNormalised;
-        this.columnController.setColumnWidth(this.column, newWidth, this.resizeWithShiftKey, finished, "uiColumnDragged");
+        var columnWidths = [{ key: this.column, newWidth: this.resizeStartWidth + resizeAmountNormalised }];
+        this.columnController.setColumnWidths(columnWidths, this.resizeWithShiftKey, finished, "uiColumnDragged");
         if (finished) {
             _.removeCssClass(this.getGui(), 'ag-column-resizing');
         }
@@ -234,7 +235,7 @@ var HeaderWrapperComp = /** @class */ (function (_super) {
             this.getGui().setAttribute('title', tooltipText);
         }
         else {
-            this.beans.tooltipManager.registerTooltip(this);
+            this.addFeature(new TooltipFeature(this, 'header'));
         }
     };
     HeaderWrapperComp.prototype.setupMovingCss = function () {

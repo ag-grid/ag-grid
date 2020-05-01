@@ -29,6 +29,11 @@ import { MatRadioButton } from "@angular/material";
             .radio-button {
                 margin: 5px;
             }
+
+            ::ng-deep
+            .mat-radio-container .mat-ripple-element {
+                opacity: 0.2;
+            }
         `
     ]
 })

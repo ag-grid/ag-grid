@@ -3,7 +3,7 @@ const glob = require('glob');
 const webfontsGenerator = require('@vusion/webfonts-generator');
 const mkdirp = require('mkdirp');
 
-const formats = ['woff', 'ttf'];
+const formats = ['woff'];
 const mimeTypes = {
     eot: 'application/vnd.ms-fontobject',
     svg: 'image/svg+xml',

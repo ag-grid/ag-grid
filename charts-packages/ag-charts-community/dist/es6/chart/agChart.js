@@ -1,14 +1,3 @@
-var __assign = (this && this.__assign) || function () {
-    __assign = Object.assign || function(t) {
-        for (var s, i = 1, n = arguments.length; i < n; i++) {
-            s = arguments[i];
-            for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
-                t[p] = s[p];
-        }
-        return t;
-    };
-    return __assign.apply(this, arguments);
-};
 var __spreadArrays = (this && this.__spreadArrays) || function () {
     for (var s = 0, i = 0, il = arguments.length; i < il; i++) s += arguments[i].length;
     for (var r = Array(s), k = 0, i = 0; i < il; i++)
@@ -16,25 +5,8 @@ var __spreadArrays = (this && this.__spreadArrays) || function () {
             r[k] = a[j];
     return r;
 };
-var _a, _b, _c, _d;
-import { CartesianChart } from "./cartesianChart";
-import { NumberAxis } from "./axis/numberAxis";
-import { CategoryAxis } from "./axis/categoryAxis";
-import { LineSeries } from "./series/cartesian/lineSeries";
-import { ColumnSeries } from "./series/cartesian/columnSeries";
-import { BarSeries } from "./series/cartesian/barSeries";
-import { ScatterSeries } from "./series/cartesian/scatterSeries";
-import { AreaSeries } from "./series/cartesian/areaSeries";
-import { PolarChart } from "./polarChart";
-import { PieSeries } from "./series/polar/pieSeries";
-import { Caption } from "../caption";
-import { Legend, LegendPosition } from "./legend";
-import { Padding } from "../util/padding";
-import { DropShadow } from "../scene/dropShadow";
-import { AxisLabel, AxisTick } from "../axis";
-import palette from "./palettes";
 import { find } from "../util/array";
-import { TimeAxis } from "./axis/timeAxis";
+import mappings from './chartMappings';
 var AgChart = /** @class */ (function () {
     function AgChart() {
     }
@@ -65,316 +37,6 @@ var AgChart = /** @class */ (function () {
     return AgChart;
 }());
 export { AgChart };
-var chartMappings = {
-    background: {
-        meta: {
-            defaults: {
-                visible: true,
-                fill: 'white'
-            }
-        }
-    },
-    padding: {
-        meta: {
-            constructor: Padding,
-            defaults: {
-                top: 20,
-                right: 20,
-                bottom: 20,
-                left: 20
-            }
-        }
-    },
-    title: {
-        meta: {
-            constructor: Caption,
-            defaults: {
-                enabled: true,
-                padding: new Padding(10),
-                text: 'Title',
-                fontStyle: undefined,
-                fontWeight: 'bold',
-                fontSize: 14,
-                fontFamily: 'Verdana, sans-serif',
-                color: 'rgba(70, 70, 70, 1)'
-            }
-        }
-    },
-    subtitle: {
-        meta: {
-            constructor: Caption,
-            defaults: {
-                enabled: true,
-                padding: new Padding(10),
-                text: 'Subtitle',
-                fontStyle: undefined,
-                fontWeight: undefined,
-                fontSize: 12,
-                fontFamily: 'Verdana, sans-serif',
-                color: 'rgba(140, 140, 140, 1)'
-            }
-        }
-    },
-    legend: {
-        meta: {
-            constructor: Legend,
-            defaults: {
-                enabled: true,
-                position: LegendPosition.Right,
-                spacing: 20,
-                layoutHorizontalSpacing: 16,
-                layoutVerticalSpacing: 8,
-                itemSpacing: 8,
-                markerShape: undefined,
-                markerSize: 15,
-                strokeWidth: 1,
-                color: 'black',
-                fontStyle: undefined,
-                fontWeight: undefined,
-                fontSize: 12,
-                fontFamily: 'Verdana, sans-serif'
-            }
-        }
-    }
-};
-var chartDefaults = {
-    container: undefined,
-    data: [],
-    padding: new Padding(20),
-    title: undefined,
-    subtitle: undefined,
-};
-var chartMeta = {
-    // Charts components' constructors normally don't take any parameters (which makes things consistent -- everything
-    // is configured the same way, via the properties, and makes the factory pattern work well) but the charts
-    // themselves are the exceptions.
-    // If a chart config has the (optional) `document` property, it will be passed to the constructor.
-    // There is no actual `document` property on the chart, it can only be supplied during instantiation.
-    constructorParams: ['document'],
-    setAsIs: ['container', 'data', 'tooltipOffset'],
-};
-var axisDefaults = {
-    defaults: {
-        gridStyle: [{
-                stroke: 'rgba(219, 219, 219, 1)',
-                lineDash: [4, 2]
-            }]
-    }
-};
-var seriesDefaults = {
-    visible: true,
-    showInLegend: true
-};
-var columnSeriesDefaults = {
-    fills: palette.fills,
-    strokes: palette.strokes,
-    fillOpacity: 1,
-    strokeOpacity: 1,
-    xKey: '',
-    xName: '',
-    yKeys: [],
-    yNames: [],
-    grouped: false,
-    normalizedTo: undefined,
-    strokeWidth: 1,
-    shadow: undefined,
-    highlightStyle: {
-        fill: 'yellow'
-    }
-};
-var shadowMapping = {
-    shadow: {
-        meta: {
-            constructor: DropShadow,
-            defaults: {
-                enabled: true,
-                color: 'rgba(0, 0, 0, 0.5)',
-                xOffset: 0,
-                yOffset: 0,
-                blur: 5
-            }
-        }
-    }
-};
-var labelDefaults = {
-    enabled: true,
-    fontStyle: undefined,
-    fontWeight: undefined,
-    fontSize: 12,
-    fontFamily: 'Verdana, sans-serif',
-    color: 'rgba(70, 70, 70, 1)'
-};
-var labelMapping = {
-    label: {
-        meta: {
-            defaults: __assign({}, labelDefaults)
-        }
-    }
-};
-var axisMappings = {
-    line: {
-        meta: {
-            defaults: {
-                width: 1,
-                color: 'rgba(195, 195, 195, 1)'
-            }
-        }
-    },
-    title: {
-        meta: {
-            constructor: Caption,
-            defaults: {
-                enabled: true,
-                padding: new Padding(10),
-                text: 'Axis Title',
-                fontStyle: undefined,
-                fontWeight: 'bold',
-                fontSize: 12,
-                fontFamily: 'Verdana, sans-serif',
-                color: 'rgba(70, 70, 70, 1)'
-            }
-        }
-    },
-    label: {
-        meta: {
-            constructor: AxisLabel,
-            defaults: {
-                fontStyle: undefined,
-                fontWeight: undefined,
-                fontSize: 12,
-                fontFamily: 'Verdana, sans-serif',
-                padding: 5,
-                color: 'rgba(87, 87, 87, 1)',
-                formatter: undefined
-            }
-        }
-    },
-    tick: {
-        meta: {
-            constructor: AxisTick,
-            defaults: {
-                width: 1,
-                size: 6,
-                color: 'rgba(195, 195, 195, 1)',
-                count: 10
-            }
-        }
-    }
-};
-var mappings = (_a = {},
-    _a[CartesianChart.type] = __assign(__assign({ meta: __assign(__assign({ constructor: CartesianChart }, chartMeta), { defaults: __assign(__assign({}, chartDefaults), { axes: [{
-                        type: CategoryAxis.type,
-                        position: 'bottom'
-                    }, {
-                        type: NumberAxis.type,
-                        position: 'left'
-                    }] }) }) }, chartMappings), { axes: (_b = {},
-            _b[NumberAxis.type] = __assign({ meta: __assign({ constructor: NumberAxis, setAsIs: ['gridStyle'] }, axisDefaults) }, axisMappings),
-            _b[CategoryAxis.type] = __assign({ meta: __assign({ constructor: CategoryAxis, setAsIs: ['gridStyle'] }, axisDefaults) }, axisMappings),
-            _b[TimeAxis.type] = __assign({ meta: __assign({ constructor: TimeAxis, setAsIs: ['gridStyle'] }, axisDefaults) }, axisMappings),
-            _b), series: (_c = {},
-            _c[LineSeries.type] = {
-                meta: {
-                    constructor: LineSeries,
-                    defaults: {
-                        title: undefined,
-                        xKey: '',
-                        xName: '',
-                        yKey: '',
-                        yName: '',
-                        stroke: palette.fills[0],
-                        strokeWidth: 2,
-                        fillOpacity: 1,
-                        strokeOpacity: 1,
-                        highlightStyle: {
-                            fill: 'yellow'
-                        }
-                    }
-                },
-                highlightStyle: {},
-                marker: {}
-            },
-            _c[ColumnSeries.type] = __assign(__assign({ meta: {
-                    constructor: ColumnSeries,
-                    defaults: __assign(__assign({}, seriesDefaults), columnSeriesDefaults)
-                }, highlightStyle: {} }, labelMapping), shadowMapping),
-            _c[BarSeries.type] = __assign(__assign({ meta: {
-                    constructor: BarSeries,
-                    defaults: __assign(__assign({}, seriesDefaults), columnSeriesDefaults)
-                }, highlightStyle: {} }, labelMapping), shadowMapping),
-            _c[ScatterSeries.type] = {
-                meta: {
-                    constructor: ScatterSeries,
-                    defaults: __assign(__assign({}, seriesDefaults), { title: undefined, xKey: '', yKey: '', sizeKey: undefined, labelKey: undefined, xName: '', yName: '', sizeName: 'Size', labelName: 'Label', fill: palette.fills[0], stroke: palette.strokes[0], strokeWidth: 2, fillOpacity: 1, strokeOpacity: 1, tooltipRenderer: undefined, highlightStyle: {
-                            fill: 'yellow'
-                        } })
-                },
-                highlightStyle: {},
-                marker: {}
-            },
-            _c[AreaSeries.type] = __assign({ meta: {
-                    constructor: AreaSeries,
-                    defaults: __assign(__assign({}, seriesDefaults), { xKey: '', xName: '', yKeys: [], yNames: [], normalizedTo: undefined, fills: palette.fills, strokes: palette.strokes, fillOpacity: 1, strokeOpacity: 1, strokeWidth: 2, shadow: undefined, highlightStyle: {
-                            fill: 'yellow'
-                        } })
-                }, highlightStyle: {}, marker: {} }, shadowMapping),
-            _c) }),
-    _a[PolarChart.type] = __assign(__assign({ meta: __assign(__assign({ constructor: PolarChart }, chartMeta), { defaults: __assign(__assign({}, chartDefaults), { padding: new Padding(40) }) }) }, chartMappings), { series: (_d = {},
-            _d[PieSeries.type] = __assign({ meta: {
-                    constructor: PieSeries,
-                    defaults: __assign(__assign({}, seriesDefaults), { title: undefined, calloutColors: palette.strokes, calloutStrokeWidth: 1, calloutLength: 10, angleKey: '', angleName: '', radiusKey: undefined, radiusName: undefined, labelKey: undefined, labelName: undefined, fills: palette.fills, strokes: palette.strokes, fillOpacity: 1, strokeOpacity: 1, rotation: 0, outerRadiusOffset: 0, innerRadiusOffset: 0, strokeWidth: 1, shadow: undefined })
-                }, highlightStyle: {}, title: {
-                    meta: {
-                        constructor: Caption,
-                        defaults: {
-                            enabled: true,
-                            padding: new Padding(10),
-                            text: 'Series Title',
-                            fontStyle: undefined,
-                            fontWeight: 'bold',
-                            fontSize: 14,
-                            fontFamily: 'Verdana, sans-serif',
-                            color: 'black'
-                        }
-                    }
-                }, label: {
-                    meta: {
-                        defaults: __assign(__assign({}, labelDefaults), { offset: 3, minAngle: 20 })
-                    }
-                }, callout: {
-                    meta: {
-                        defaults: {
-                            colors: palette.strokes,
-                            length: 10,
-                            strokeWidth: 1
-                        }
-                    }
-                } }, shadowMapping),
-            _d) }),
-    _a);
-// Amend the `mappings` object with aliases for different chart types.
-{
-    var typeToAliases = {
-        cartesian: ['line', 'area', 'bar', 'column'],
-        polar: ['pie']
-    };
-    var _loop_1 = function (type) {
-        typeToAliases[type].forEach(function (alias) {
-            mappings[alias] = mappings[type];
-        });
-    };
-    for (var type in typeToAliases) {
-        _loop_1(type);
-    }
-    // Special handling for scatter charts where both axes should default to type `number`.
-    mappings['scatter'] = __assign(__assign({}, mappings.cartesian), { meta: __assign(__assign({}, mappings.cartesian.meta), { defaults: __assign(__assign({}, chartDefaults), { axes: [{
-                        type: 'number',
-                        position: 'bottom'
-                    }, {
-                        type: 'number',
-                        position: 'left'
-                    }] }) }) });
-}
 var pathToSeriesTypeMap = {
     'cartesian.series': 'line',
     'line.series': 'line',
@@ -420,13 +82,13 @@ function create(options, path, component) {
         provideDefaultOptions(options, mapping);
         var meta = mapping.meta || {};
         var constructorParams = meta.constructorParams || [];
-        var skipKeys = ['type'].concat(constructorParams);
+        var skipKeys = ['type', 'listeners'].concat(constructorParams);
         // TODO: Constructor params processing could be improved, but it's good enough for current params.
         var constructorParamValues = constructorParams
             .map(function (param) { return options[param]; })
             .filter(function (value) { return value !== undefined; });
         component = component || new ((_a = meta.constructor).bind.apply(_a, __spreadArrays([void 0], constructorParamValues)))();
-        var _loop_2 = function (key) {
+        var _loop_1 = function (key) {
             // Process every non-special key in the config object.
             if (skipKeys.indexOf(key) < 0) {
                 var value = options[key];
@@ -455,7 +117,18 @@ function create(options, path, component) {
             }
         };
         for (var key in options) {
-            _loop_2(key);
+            _loop_1(key);
+        }
+        var listeners = options.listeners;
+        if (component && component.addEventListener && listeners) {
+            for (var key in listeners) {
+                if (listeners.hasOwnProperty(key)) {
+                    var listener = listeners[key];
+                    if (typeof listener === 'function') {
+                        component.addEventListener(key, listener);
+                    }
+                }
+            }
         }
         return component;
     }
@@ -477,7 +150,6 @@ function update(component, options, path) {
     if (mapping) {
         provideDefaultOptions(options, mapping);
         var meta = mapping.meta || {};
-        var defaults = meta && meta.constructor && meta.constructor.defaults;
         var constructorParams = meta && meta.constructorParams || [];
         var skipKeys = ['type'].concat(constructorParams);
         for (var key in options) {
@@ -532,7 +204,7 @@ function update(component, options, path) {
                                 var axes = oldValue;
                                 var axesToAdd = [];
                                 var axesToUpdate = [];
-                                var _loop_3 = function (config) {
+                                var _loop_2 = function (config) {
                                     var axisToUpdate = find(axes, function (axis) {
                                         return axis.type === config.type && axis.position === config.position;
                                     });
@@ -549,7 +221,7 @@ function update(component, options, path) {
                                 };
                                 for (var _i = 0, configs_1 = configs; _i < configs_1.length; _i++) {
                                     var config = configs_1[_i];
-                                    _loop_3(config);
+                                    _loop_2(config);
                                 }
                                 chart.axes = axesToUpdate.concat(axesToAdd);
                             }
@@ -619,11 +291,4 @@ function provideDefaultOptions(options, mapping) {
 }
 function isObject(value) {
     return typeof value === 'object' && !Array.isArray(value);
-}
-function flattenObject(obj) {
-    var result = Object.create(obj);
-    for (var key in result) {
-        result[key] = result[key];
-    }
-    return result;
 }

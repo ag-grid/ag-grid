@@ -20,7 +20,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
-import { Autowired, Events, PostConstruct, Qualifier, RowNodeCache, } from "@ag-grid-community/core";
+import { Autowired, Events, Qualifier, RowNodeCache, } from "@ag-grid-community/core";
 import { InfiniteBlock } from "./infiniteBlock";
 var InfiniteCache = /** @class */ (function (_super) {
     __extends(InfiniteCache, _super);
@@ -29,12 +29,6 @@ var InfiniteCache = /** @class */ (function (_super) {
     }
     InfiniteCache.prototype.setBeans = function (loggerFactory) {
         this.logger = loggerFactory.create('InfiniteCache');
-    };
-    InfiniteCache.prototype.init = function () {
-        _super.prototype.init.call(this);
-        // start load of data, as the virtualRowCount will remain at 0 otherwise,
-        // so we need this to kick things off, otherwise grid would never call getRow()
-        this.getRow(0);
     };
     InfiniteCache.prototype.moveItemsDown = function (block, moveFromIndex, moveCount) {
         var startRow = block.getStartRow();
@@ -130,9 +124,6 @@ var InfiniteCache = /** @class */ (function (_super) {
         this.checkBlockToLoad();
     };
     __decorate([
-        Autowired('eventService')
-    ], InfiniteCache.prototype, "eventService", void 0);
-    __decorate([
         Autowired('columnApi')
     ], InfiniteCache.prototype, "columnApi", void 0);
     __decorate([
@@ -141,9 +132,6 @@ var InfiniteCache = /** @class */ (function (_super) {
     __decorate([
         __param(0, Qualifier('loggerFactory'))
     ], InfiniteCache.prototype, "setBeans", null);
-    __decorate([
-        PostConstruct
-    ], InfiniteCache.prototype, "init", null);
     return InfiniteCache;
 }(RowNodeCache));
 export { InfiniteCache };

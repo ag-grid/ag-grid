@@ -7,7 +7,7 @@ import {
     MenuItemDef,
     PostConstruct,
     RefSelector,
-    TooltipManager,
+    TooltipFeature,
     _
 } from "@ag-grid-community/core";
 
@@ -27,7 +27,6 @@ export interface MenuItemSelectedEvent extends AgEvent {
 export class MenuItemComponent extends Component {
 
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
-    @Autowired('tooltipManager') private tooltipManager: TooltipManager;
 
     // private instance = Math.random();
 
@@ -79,7 +78,7 @@ export class MenuItemComponent extends Component {
             if (this.gridOptionsWrapper.isEnableBrowserTooltips()) {
                 this.getGui().setAttribute('title', this.tooltip);
             } else {
-                this.tooltipManager.registerTooltip(this);
+                this.addFeature(new TooltipFeature(this, 'menu'))
             }
         }
 

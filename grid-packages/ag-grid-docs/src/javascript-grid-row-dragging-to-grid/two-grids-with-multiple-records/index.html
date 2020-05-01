@@ -1,0 +1,32 @@
+<div class="top-container">
+    <div class="example-toolbar panel panel-default">
+        <div class="panel-body">
+            <input type="radio" id="move" name="radio" checked>
+            <label for="move">Remove Source Rows</label>
+            <input type="radio" id="deselect" name="radio">
+            <label for="deselect">Only Deselect Source Rows</label>
+            <input type="radio" id="none" name="radio">
+            <label for="none">None</label>
+            <input type="checkbox" id="toggleCheck" checked>
+            <label for="toggleCheck">Checkbox Select</label>
+            <span class="input-group-button">
+                <button type="button" class="btn btn-default reset" style="margin-left: 5px;"><i class="fas fa-redo"
+                        style="margin-right: 5px;"></i>Reset</button>
+            </span>
+        </div>
+    </div>
+    <div class="grid-wrapper ag-theme-alpine">
+        <div class="panel panel-primary" style="margin-right: 10px;">
+            <div class="panel-heading">Athletes</div>
+            <div class="panel-body">
+                <div id="eLeftGrid"></div>
+            </div>
+        </div>
+        <div class="panel panel-primary" style="margin-left: 10px;">
+            <div class="panel-heading">Selected Athletes</div>
+            <div class="panel-body">
+                <div id="eRightGrid"></div>
+            </div>
+        </div>
+    </div>
+</div>

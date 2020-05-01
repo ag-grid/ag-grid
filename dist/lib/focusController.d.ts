@@ -9,10 +9,14 @@ export declare class FocusController {
     private gridApi;
     private focusedCellPosition;
     private keyboardFocusActive;
+    private events;
     private init;
+    destroy(): void;
     isKeyboardFocus(): boolean;
     clearFocusedCell(): void;
     getFocusedCell(): CellPosition;
+    private activateMouseMode;
+    private activateKeyboardMode;
     getFocusCellToUseAfterRefresh(): CellPosition;
     private getGridCellForDomElement;
     setFocusedCell(rowIndex: number, colKey: string | Column, floating: string | undefined, forceBrowserFocus?: boolean): void;

@@ -1,74 +1,77 @@
-import { ColDef, Column, IRowModel, ValueFormatterService, IEventEmitter } from "ag-grid-community";
+import { ColDef, Column, IRowModel, ValueFormatterService, IEventEmitter, RowNode } from 'ag-grid-community';
 export declare enum SetFilterModelValuesType {
     PROVIDED_LIST = 0,
-    PROVIDED_CB = 1,
-    NOT_PROVIDED = 2
+    PROVIDED_CALLBACK = 1,
+    TAKEN_FROM_GRID_VALUES = 2
 }
 export declare class SetValueModel implements IEventEmitter {
-    static EVENT_AVAILABLE_VALUES_CHANGES: string;
-    private colDef;
-    private filterParams;
-    private clientSideRowModel;
-    private valueGetter;
-    private allUniqueValues;
-    private availableUniqueValues;
-    private availableUniqueValuesMap;
-    private displayedValues;
-    private miniFilter;
-    private selectedValuesCount;
-    private selectedValuesMap;
-    private suppressSorting;
-    private formatter;
-    private showingAvailableOnly;
+    private readonly colDef;
+    private readonly valueGetter;
+    private readonly doesRowPassOtherFilters;
+    private readonly suppressSorting;
+    private readonly setIsLoading;
+    private readonly valueFormatterService;
+    private readonly column;
+    static EVENT_AVAILABLE_VALUES_CHANGED: string;
+    private readonly localEventService;
+    private readonly filterParams;
+    private readonly clientSideRowModel;
+    private readonly formatter;
     private valuesType;
-    private doesRowPassOtherFilters;
-    private modelUpdatedFunc;
-    private isLoadingFunc;
-    private filterValuesExternalPromise;
-    private filterValuesPromise;
-    private valueFormatterService;
-    private column;
-    private localEventService;
-    constructor(colDef: ColDef, rowModel: IRowModel, valueGetter: any, doesRowPassOtherFilters: any, suppressSorting: boolean, modelUpdatedFunc: (values: string[] | null, selected?: string[] | null) => void, isLoadingFunc: (loading: boolean) => void, valueFormatterService: ValueFormatterService, column: Column);
+    private miniFilterText;
+    /** Values provided to the filter for use. */
+    private providedValues;
+    /** Values can be loaded asynchronously, so wait on this promise if you need to ensure values have been loaded. */
+    private allValuesPromise;
+    /** All possible values for the filter, sorted if required. */
+    private allValues;
+    /** Remaining values when filters from other columns have been applied. */
+    private availableValues;
+    /** All values that are currently displayed, after the mini-filter has been applied. */
+    private displayedValues;
+    /** Values that have been selected for this filter. */
+    private selectedValues;
+    constructor(colDef: ColDef, rowModel: IRowModel, valueGetter: (node: RowNode) => any, doesRowPassOtherFilters: (node: RowNode) => boolean, suppressSorting: boolean, setIsLoading: (loading: boolean) => void, valueFormatterService: ValueFormatterService, column: Column);
     addEventListener(eventType: string, listener: Function, async?: boolean): void;
     removeEventListener(eventType: string, listener: Function, async?: boolean): void;
-    refreshAfterNewRowsLoaded(keepSelection: any, everythingSelected: boolean): void;
-    refreshValues(valuesToUse: string[], keepSelection: any, isSelectAll: boolean): void;
-    private refreshSelection;
+    /**
+     * Re-fetches the values used in the filter from the value source.
+     * If keepSelection is false or selectAll is true, the filter selection will be reset to everything selected,
+     * otherwise the current selection will be preserved.
+     */
+    refetchValues(keepSelection?: boolean): void;
+    /**
+     * Overrides the current values being used for the set filter.
+     * If keepSelection is false, the filter selection will be reset to everything selected,
+     * otherwise the current selection will be preserved.
+     */
+    overrideValues(valuesToUse: string[], keepSelection?: boolean): void;
     refreshAfterAnyFilterChanged(): void;
-    private createAllUniqueValues;
-    private onAsyncValuesLoaded;
-    private areValuesSync;
+    private updateAllValues;
     setValuesType(value: SetFilterModelValuesType): void;
     getValuesType(): SetFilterModelValuesType;
-    private setValues;
-    private extractSyncValuesToUse;
     isValueAvailable(value: string): boolean;
-    private createAvailableUniqueValues;
+    private showAvailableOnly;
+    private updateAvailableValues;
     private sortValues;
-    private getUniqueValues;
-    setMiniFilter(newMiniFilter: string | null): boolean;
+    private getValuesFromRows;
+    /** Sets mini filter value. Returns true if it changed from last value, otherwise false. */
+    setMiniFilter(value?: string): boolean;
     getMiniFilter(): string;
-    private processMiniFilter;
+    private updateDisplayedValues;
     getDisplayedValueCount(): number;
-    getDisplayedValue(index: any): any;
-    selectAllUsingMiniFilter(): void;
-    private selectOn;
-    private valueToKey;
-    private keyToValue;
+    getDisplayedValue(index: any): string;
     isFilterActive(): boolean;
-    selectNothingUsingMiniFilter(): void;
-    private selectNothing;
     getUniqueValueCount(): number;
     getUniqueValue(index: any): string | null;
-    unselectValue(value: any): void;
-    selectAllFromMiniFilter(): void;
-    selectValue(value: any): void;
-    isValueSelected(value: any): boolean;
+    selectAll(clearExistingSelection?: boolean): void;
+    selectNothing(): void;
+    selectValue(value: string): void;
+    deselectValue(value: string): void;
+    isValueSelected(value: string): boolean;
     isEverythingSelected(): boolean;
     isNothingSelected(): boolean;
     getModel(): string[] | null;
-    setModel(model: string[] | null, isSelectAll?: boolean): void;
-    private setSyncModel;
-    onFilterValuesReady(callback: () => void): void;
+    setModel(model: string[]): void;
+    onFilterValuesReady(callback: (values: string[]) => void): void;
 }

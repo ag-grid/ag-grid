@@ -131,7 +131,7 @@ export class EditorComponent implements ICellEditorAngularComp {
 @Component({
     template: `
         &lt;div&gt;
-            &lt;ag-grid-angular style="width: 100%; height: 350px;" class="ag-theme-balham"
+            &lt;ag-grid-angular style="width: 100%; height: 350px;" class="ag-theme-alpine"
                              [columnDefs]="columnDefs"
                              [rowData]="rowData"
 
@@ -202,7 +202,7 @@ it('cell should be editable and editor component usable', () => {
 // not strictly required for testing but useful when debugging the grid in action
 files: [
     '../node_modules/ag-grid-community/dist/styles/ag-grid.css',
-    '../node_modules/ag-grid-community/dist/styles/ag-theme-balham.css'
+    '../node_modules/ag-grid-community/dist/styles/ag-theme-alpine.css'
 ]
 </snippet>
 <?php include '../documentation-main/documentation_footer.php'; ?>

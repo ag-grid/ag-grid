@@ -1,9 +1,9 @@
-// Type definitions for @ag-grid-community/core v23.0.2
+// Type definitions for @ag-grid-community/core v23.1.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
-import { GridOptionsWrapper } from "../../gridOptionsWrapper";
-import { Component } from "../../widgets/component";
-import { UserComponentFactory } from "../../components/framework/userComponentFactory";
+import { GridOptionsWrapper } from '../../gridOptionsWrapper';
+import { Component } from '../../widgets/component';
+import { UserComponentFactory } from '../../components/framework/userComponentFactory';
 export declare class OverlayWrapperComponent extends Component {
     private static TEMPLATE;
     gridOptionsWrapper: GridOptionsWrapper;

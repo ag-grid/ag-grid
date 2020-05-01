@@ -1,4 +1,4 @@
-// @ag-grid-community/react v23.0.2
+// @ag-grid-community/react v23.1.0
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -28,6 +28,7 @@ var ReactComponent = /** @class */ (function (_super) {
         _this.portal = null;
         _this.componentWrappingElement = 'div';
         _this.staticMarkup = null;
+        _this.staticRenderTime = 0;
         _this.reactComponent = reactComponent;
         _this.componentType = componentType;
         _this.parentComponent = parentComponent;
@@ -77,9 +78,20 @@ var ReactComponent = /** @class */ (function (_super) {
             // functional/stateless components have a slightly different lifecycle (no refs) so we'll clean them up
             // here
             if (_this.statelessComponent) {
-                setTimeout(function () {
-                    _this.removeStaticMarkup();
-                });
+                // if a user supplies a time consuming renderer then it's sometimes possible both the static and
+                // actual react component are visible at the same time
+                // we check here if the rendering is "slow" (anything greater than 2ms) we'll use a listener to remove the
+                // static markup, otherwise just the next tick
+                if (_this.staticRenderTime >= 2) {
+                    _this.eParentElement.addEventListener('DOMNodeInserted', function () {
+                        _this.removeStaticMarkup();
+                    }, false);
+                }
+                else {
+                    setTimeout(function () {
+                        _this.removeStaticMarkup();
+                    });
+                }
             }
         });
     };
@@ -93,12 +105,12 @@ var ReactComponent = /** @class */ (function (_super) {
         }
         if (this.componentInstance.getReactContainerClasses && this.componentInstance.getReactContainerClasses()) {
             var parentContainerClasses = this.componentInstance.getReactContainerClasses();
-            parentContainerClasses.forEach(function (className) { return core_1.Utils.addCssClass(_this.eParentElement, className); });
+            parentContainerClasses.forEach(function (className) { return core_1._.addCssClass(_this.eParentElement, className); });
         }
     };
     ReactComponent.prototype.createParentElement = function (params) {
         var eParentElement = document.createElement(this.parentComponent.props.componentWrappingElement || 'div');
-        core_1.Utils.addCssClass(eParentElement, 'ag-react-container');
+        core_1._.addCssClass(eParentElement, 'ag-react-container');
         // DEPRECATED - use componentInstance.getReactContainerStyle or componentInstance.getReactContainerClasses instead
         // so user can have access to the react container, to add css class or style
         params.reactContainer = eParentElement;
@@ -128,9 +140,19 @@ var ReactComponent = /** @class */ (function (_super) {
         if (this.parentComponent.isDisableStaticMarkup() || !this.componentType.isCellRenderer()) {
             return;
         }
+        var originalConsoleError = console.error;
         var reactComponent = React.createElement(this.reactComponent, params);
         try {
+            // if a user is using anything that uses useLayoutEffect (like material ui) then
+            // Warning: useLayoutEffect does nothing on the s   erver will be throw and we can't do anything to stop it
+            // this is just a warning and has no effect on anything so just suppress it for this single operation
+            var originalConsoleError_1 = console.error;
+            console.error = function () {
+            };
+            var start = Date.now();
             var staticMarkup = server_1.renderToStaticMarkup(reactComponent);
+            this.staticRenderTime = Date.now() - start;
+            console.error = originalConsoleError_1;
             // if the render method returns null the result will be an empty string
             if (staticMarkup === "") {
                 this.staticMarkup = staticMarkup;
@@ -148,14 +170,25 @@ var ReactComponent = /** @class */ (function (_super) {
         catch (e) {
             // we tried - this can happen with certain (rare) edge cases
         }
+        finally {
+            console.error = originalConsoleError;
+        }
     };
     ReactComponent.prototype.removeStaticMarkup = function () {
         if (this.parentComponent.isDisableStaticMarkup() || !this.componentType.isCellRenderer()) {
             return;
         }
-        if (this.staticMarkup && this.staticMarkup.remove) {
-            this.staticMarkup.remove();
-            this.staticMarkup = null;
+        if (this.staticMarkup) {
+            if (this.staticMarkup.remove) {
+                // everyone else in the world
+                this.staticMarkup.remove();
+                this.staticMarkup = null;
+            }
+            else if (this.eParentElement.removeChild) {
+                // ie11...
+                this.eParentElement.removeChild(this.staticMarkup);
+                this.staticMarkup = null;
+            }
         }
     };
     ReactComponent.prototype.rendered = function () {

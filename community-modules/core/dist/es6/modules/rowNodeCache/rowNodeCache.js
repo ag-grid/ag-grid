@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v23.0.2
+ * @version v23.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -17,9 +17,16 @@ var __extends = (this && this.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
 import { BeanStub } from "../../context/beanStub";
 import { RowNodeBlock } from "./rowNodeBlock";
 import { NumberSequence, _ } from "../../utils";
+import { Autowired, PostConstruct } from "../../context/context";
 var RowNodeCache = /** @class */ (function (_super) {
     __extends(RowNodeCache, _super);
     function RowNodeCache(cacheParams) {
@@ -33,8 +40,8 @@ var RowNodeCache = /** @class */ (function (_super) {
     }
     RowNodeCache.prototype.destroy = function () {
         var _this = this;
-        _super.prototype.destroy.call(this);
         this.forEachBlockInOrder(function (block) { return _this.destroyBlock(block); });
+        _super.prototype.destroy.call(this);
     };
     RowNodeCache.prototype.init = function () {
         var _this = this;
@@ -99,10 +106,31 @@ var RowNodeCache = /** @class */ (function (_super) {
                 if (block.isAnyNodeOpen(_this.virtualRowCount)) {
                     return;
                 }
+                // if the block currently has rows been displayed, then don't remove it either.
+                // this can happen if user has maxBlocks=2, and blockSize=5 (thus 10 max rows in cache)
+                // but the screen is showing 20 rows, so at least 4 blocks are needed.
+                if (_this.isBlockCurrentlyDisplayed(block)) {
+                    return;
+                }
                 // at this point, block is not needed, and no open nodes, so burn baby burn
                 _this.removeBlockFromCache(block);
             }
         });
+    };
+    RowNodeCache.prototype.isBlockCurrentlyDisplayed = function (block) {
+        var firstViewportRow = this.rowRenderer.getFirstVirtualRenderedRow();
+        var lastViewportRow = this.rowRenderer.getLastVirtualRenderedRow();
+        var firstRowIndex = block.getDisplayIndexStart();
+        var lastRowIndex = block.getDisplayIndexEnd() - 1;
+        // parent closed means the parent node is not expanded, thus these blocks are not visible
+        var parentClosed = firstRowIndex == null || lastRowIndex == null;
+        if (parentClosed) {
+            return false;
+        }
+        var blockBeforeViewport = firstRowIndex > lastViewportRow;
+        var blockAfterViewport = lastRowIndex < firstViewportRow;
+        var blockInsideViewport = !blockBeforeViewport && !blockAfterViewport;
+        return blockInsideViewport;
     };
     RowNodeCache.prototype.postCreateBlock = function (newBlock) {
         newBlock.addEventListener(RowNodeBlock.EVENT_LOAD_COMPLETE, this.onPageLoaded.bind(this));
@@ -209,6 +237,11 @@ var RowNodeCache = /** @class */ (function (_super) {
     // gets called 1) row count changed 2) cache purged 3) items inserted
     RowNodeCache.prototype.onCacheUpdated = function () {
         if (this.isActive()) {
+            // if the virtualRowCount is shortened, then it's possible blocks exist that are no longer
+            // in the valid range. so we must remove these. this can happen if user explicitly sets
+            // the virtual row count, or the datasource returns a result and sets lastRow to something
+            // less than virtualRowCount (can happen if user scrolls down, server reduces dataset size).
+            this.destroyAllBlocksPastVirtualRowCount();
             // this results in both row models (infinite and server side) firing ModelUpdated,
             // however server side row model also updates the row indexes first
             var event_1 = {
@@ -217,13 +250,29 @@ var RowNodeCache = /** @class */ (function (_super) {
             this.dispatchEvent(event_1);
         }
     };
+    RowNodeCache.prototype.destroyAllBlocksPastVirtualRowCount = function () {
+        var _this = this;
+        var blocksToDestroy = [];
+        this.forEachBlockInOrder(function (block, id) {
+            var startRow = id * _this.cacheParams.blockSize;
+            if (startRow >= _this.virtualRowCount) {
+                blocksToDestroy.push(block);
+            }
+        });
+        if (blocksToDestroy.length > 0) {
+            blocksToDestroy.forEach(function (block) { return _this.destroyBlock(block); });
+        }
+    };
     RowNodeCache.prototype.purgeCache = function () {
         var _this = this;
         this.forEachBlockInOrder(function (block) { return _this.removeBlockFromCache(block); });
+        this.maxRowFound = false;
+        // if zero rows in the cache, we need to get the SSRM to start asking for rows again.
+        // otherwise if set to zero rows last time, and we don't update the row count, then after
+        // the purge there will still be zero rows, meaning the SRRM won't request any rows.
+        // to kick things off, at lest one row needs to be asked for.
         if (this.virtualRowCount === 0) {
-            // re-initialise cache - this ensures a cache with no rows can reload when purged!
             this.virtualRowCount = this.cacheParams.initialRowCount;
-            this.maxRowFound = false;
         }
         this.onCacheUpdated();
     };
@@ -266,6 +315,15 @@ var RowNodeCache = /** @class */ (function (_super) {
     // blocks all for loading, the grid will only load the last 2 - it will assume the blocks the user quickly
     // scrolled over are not needed to be loaded.
     RowNodeCache.MAX_EMPTY_BLOCKS_TO_KEEP = 2;
+    __decorate([
+        Autowired('eventService')
+    ], RowNodeCache.prototype, "eventService", void 0);
+    __decorate([
+        Autowired('rowRenderer')
+    ], RowNodeCache.prototype, "rowRenderer", void 0);
+    __decorate([
+        PostConstruct
+    ], RowNodeCache.prototype, "init", null);
     return RowNodeCache;
 }(BeanStub));
 export { RowNodeCache };

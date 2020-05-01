@@ -75,32 +75,11 @@ var Legend = /** @class */ (function (_super) {
         _this.fontSize = 12;
         _this.fontFamily = 'Verdana, sans-serif';
         _this._size = [0, 0];
-        _this.addPropertyListener('data', function (event) {
-            var legend = event.source, data = event.value;
-            legend.group.visible = legend.enabled && data.length > 0;
-        });
-        _this.addPropertyListener('enabled', function (event) {
-            var legend = event.source, value = event.value;
-            legend.group.visible = value && legend.data.length > 0;
-        });
-        _this.addPropertyListener('position', function (event) {
-            var legend = event.source, position = event.value;
-            switch (position) {
-                case 'right':
-                case 'left':
-                    legend.orientation = LegendOrientation.Vertical;
-                    break;
-                case 'bottom':
-                case 'top':
-                    legend.orientation = LegendOrientation.Horizontal;
-                    break;
-            }
-        });
-        _this.addPropertyListener('markerShape', function (event) {
-            _this.itemSelection = _this.itemSelection.setData([]);
-            _this.itemSelection.exit.remove();
-        });
-        _this.addEventListener('change', function () { return _this.update(); });
+        _this.addPropertyListener('data', _this.onDataChange);
+        _this.addPropertyListener('enabled', _this.onEnabledChange);
+        _this.addPropertyListener('position', _this.onPositionChange);
+        _this.addPropertyListener('markerShape', _this.onMarkerShapeChange);
+        _this.addEventListener('change', _this.update);
         return _this;
     }
     Object.defineProperty(Legend.prototype, "size", {
@@ -110,6 +89,28 @@ var Legend = /** @class */ (function (_super) {
         enumerable: true,
         configurable: true
     });
+    Legend.prototype.onDataChange = function (event) {
+        this.group.visible = event.value.length > 0 && this.enabled;
+    };
+    Legend.prototype.onEnabledChange = function (event) {
+        this.group.visible = event.value && this.data.length > 0;
+    };
+    Legend.prototype.onPositionChange = function (event) {
+        switch (event.value) {
+            case 'right':
+            case 'left':
+                this.orientation = LegendOrientation.Vertical;
+                break;
+            case 'bottom':
+            case 'top':
+                this.orientation = LegendOrientation.Horizontal;
+                break;
+        }
+    };
+    Legend.prototype.onMarkerShapeChange = function () {
+        this.itemSelection = this.itemSelection.setData([]);
+        this.itemSelection.exit.remove();
+    };
     /**
      * The method is given the desired size of the legend, which only serves as a hint.
      * The vertically oriented legend will take as much horizontal space as needed, but will

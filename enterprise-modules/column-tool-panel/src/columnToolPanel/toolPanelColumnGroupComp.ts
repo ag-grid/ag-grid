@@ -231,12 +231,14 @@ export class ToolPanelColumnGroupComp extends Component implements BaseColumnIte
 
             if (column.isAllowValue()) {
                 columnsToAggregate.push(column);
-            } else if (column.isAllowRowGroup()) {
-                columnsToGroup.push(column);
-            } else if (column.isAllowRowGroup()) {
-                columnsToPivot.push(column);
+                return;
             }
 
+            if (column.isAllowRowGroup()) {
+                columnsToGroup.push(column);
+                columnsToPivot.push(column);
+                return;
+            }
         });
 
         if (columnsToAggregate.length > 0) {

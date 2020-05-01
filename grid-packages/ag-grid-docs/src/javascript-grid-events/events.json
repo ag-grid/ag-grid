@@ -202,7 +202,7 @@
             "description": "The client has set new data into the grid using <code>api.setRowData()</code> or by changing the <code>rowData</code> bound property."
         },
         "rowDataUpdated": {
-            "description": "The client has updated data for the grid using <code>api.updateRowData(transaction)</code> or by changing the <code>rowData</code> bound property with <code>deltaRowDataMode=true</code>."
+            "description": "The client has updated data for the grid using <code>api.applyTransaction(transaction)</code> or by changing the <code>rowData</code> bound property with <code>immutableData=true</code>."
         },
         "toolPanelVisibleChanged": {
             "description": "The tool panel was hidden or shown. Use <code>api.isToolPanelShowing()</code> to get status."

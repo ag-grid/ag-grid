@@ -12,7 +12,7 @@ include '../documentation-main/documentation_header.php';
     Don't use Viewport Row Model unless you understand what advantages it offers and whether or not you need them.</p>
     We find many of our users are using Viewport Row Model when they don't need to and end up with unnecessarily
     complicated applications as a result. We'd recommend taking a look at our most powerful row model the
-    <a href="../javascript-grid-server-side-model/">Server-side Row Model</a> as an alternative.
+    <a href="../javascript-grid-server-side-model/">Server-Side Row Model</a> as an alternative.
     <br><br>
     The differences between row models can be found in our <a href="../javascript-grid-row-models/">row models summary page</a>
 </note>

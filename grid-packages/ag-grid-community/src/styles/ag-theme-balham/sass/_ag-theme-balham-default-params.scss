@@ -27,6 +27,7 @@ $ag-theme-balham-default-params: (
     input-focus-box-shadow: 0 0 2px 1px ag-derived(input-focus-border-color),
 
     // derived colours (shared by balham-dark)
+    subheader-toolbar-background-color: ag-derived(subheader-background-color, $opacity: 0.5),
     range-selection-background-color: ag-derived(balham-active-color, $opacity: 0.2),
     range-selection-border-color: ag-derived(balham-active-color),
     range-selection-highlight-color: ag-derived(balham-active-color),

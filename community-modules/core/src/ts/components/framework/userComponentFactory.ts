@@ -1,9 +1,8 @@
-import {Autowired, Bean, Context, Optional} from "../../context/context";
-import {GridOptions} from "../../entities/gridOptions";
-import {GridOptionsWrapper} from "../../gridOptionsWrapper";
-import {FrameworkComponentWrapper} from "./frameworkComponentWrapper";
-import {IComponent} from "../../interfaces/iComponent";
-import {ColDef, ColGroupDef} from "../../entities/colDef";
+import { Autowired, Bean, Context, Optional } from "../../context/context";
+import { GridOptions } from "../../entities/gridOptions";
+import { FrameworkComponentWrapper } from "./frameworkComponentWrapper";
+import { IComponent } from "../../interfaces/iComponent";
+import { ColDef, ColGroupDef } from "../../entities/colDef";
 import {
     AgGridComponentFunctionInput,
     AgGridRegisteredComponentInput,
@@ -11,25 +10,25 @@ import {
     RegisteredComponentSource,
     UserComponentRegistry
 } from "./userComponentRegistry";
-import {AgComponentUtils} from "./agComponentUtils";
-import {ComponentMetadata, ComponentMetadataProvider} from "./componentMetadataProvider";
-import {ISetFilterParams} from "../../interfaces/iSetFilterParams";
-import {IRichCellEditorParams} from "../../interfaces/iRichCellEditorParams";
-import {ToolPanelDef} from "../../entities/sideBar";
-import {_, Promise} from "../../utils";
-import {IDateComp, IDateParams} from "../../rendering/dateComponent";
-import {IHeaderComp, IHeaderParams} from "../../headerRendering/header/headerComp";
-import {IHeaderGroupComp, IHeaderGroupParams} from "../../headerRendering/headerGroup/headerGroupComp";
-import {ICellRendererComp, ICellRendererParams} from "../../rendering/cellRenderers/iCellRenderer";
-import {GroupCellRendererParams} from "../../rendering/cellRenderers/groupCellRenderer";
-import {ILoadingOverlayComp} from "../../rendering/overlays/loadingOverlayComponent";
-import {INoRowsOverlayComp} from "../../rendering/overlays/noRowsOverlayComponent";
-import {ITooltipComp, ITooltipParams} from "../../rendering/tooltipComponent";
-import {IFilterComp, IFilterParams} from "../../interfaces/iFilter";
-import {IFloatingFilterComp} from "../../filter/floating/floatingFilter";
-import {ICellEditorComp} from "../../interfaces/iCellEditor";
-import {IToolPanelComp} from "../../interfaces/iToolPanel";
-import {StatusPanelDef} from "../../interfaces/iStatusPanel";
+import { AgComponentUtils } from "./agComponentUtils";
+import { ComponentMetadata, ComponentMetadataProvider } from "./componentMetadataProvider";
+import { ISetFilterParams } from "../../interfaces/iSetFilterParams";
+import { IRichCellEditorParams } from "../../interfaces/iRichCellEditorParams";
+import { ToolPanelDef } from "../../entities/sideBar";
+import { _, Promise } from "../../utils";
+import { IDateComp, IDateParams } from "../../rendering/dateComponent";
+import { IHeaderComp, IHeaderParams } from "../../headerRendering/header/headerComp";
+import { IHeaderGroupComp, IHeaderGroupParams } from "../../headerRendering/headerGroup/headerGroupComp";
+import { ICellRendererComp, ICellRendererParams, ISetFilterCellRendererParams } from "../../rendering/cellRenderers/iCellRenderer";
+import { GroupCellRendererParams } from "../../rendering/cellRenderers/groupCellRenderer";
+import { ILoadingOverlayComp, ILoadingOverlayParams } from "../../rendering/overlays/loadingOverlayComponent";
+import { INoRowsOverlayComp, INoRowsOverlayParams } from "../../rendering/overlays/noRowsOverlayComponent";
+import { ITooltipComp, ITooltipParams } from "../../rendering/tooltipComponent";
+import { IFilterComp, IFilterParams } from "../../interfaces/iFilter";
+import { IFloatingFilterComp, IFloatingFilterParams } from "../../filter/floating/floatingFilter";
+import { ICellEditorComp, ICellEditorParams } from "../../interfaces/iCellEditor";
+import { IToolPanelComp, IToolPanelParams } from "../../interfaces/iToolPanel";
+import { StatusPanelDef } from "../../interfaces/iStatusPanel";
 import {
     CellEditorComponent,
     CellRendererComponent,
@@ -58,136 +57,128 @@ export type DefinitionObject =
     | ToolPanelDef
     | StatusPanelDef;
 
-export type AgComponentPropertyInput<A extends IComponent<any>> = AgGridRegisteredComponentInput<A> | string | boolean;
+export type AgComponentPropertyInput<A extends IComponent<TParams>, TParams> =
+    AgGridRegisteredComponentInput<A> | string | boolean;
 
 export enum ComponentSource {
     DEFAULT, REGISTERED_BY_NAME, HARDCODED
 }
 
-export interface ComponentSelectorResult {
+export interface ComponentSelectorResult<TParams> {
     component?: string;
-    params?: any;
+    params?: TParams;
 }
 
 /**
  * B the business interface (ie IHeader)
  * A the agGridComponent interface (ie IHeaderComp). The final object acceptable by ag-grid
  */
-export interface ComponentClassDef<A extends IComponent<any> & B, B> {
-    component: { new(): A } | { new(): B };
+export interface ComponentClassDef<A extends IComponent<TParams> & B, B, TParams> {
+    component: { new(): A; } | { new(): B; };
     componentFromFramework: boolean; // true if component came from framework eg React or Angular
     source: ComponentSource; // [Default, Registered by Name, Hard Coded]
-    paramsFromSelector: any; // Params the selector function provided, if any
+    paramsFromSelector: TParams; // Params the selector function provided, if any
 }
 
-export interface ModifyParamsCallback {
-    (params: any, component: IComponent<any>): void;
+export interface ModifyParamsCallback<TParams> {
+    (params: TParams, component: IComponent<TParams>): void;
 }
-
 
 @Bean('userComponentFactory')
 export class UserComponentFactory {
 
-    @Autowired("gridOptions")
-    private gridOptions: GridOptions;
+    @Autowired("gridOptions") private gridOptions: GridOptions;
+    @Autowired("context") private context: Context;
+    @Autowired("agComponentUtils") private agComponentUtils: AgComponentUtils;
+    @Autowired("componentMetadataProvider") private componentMetadataProvider: ComponentMetadataProvider;
+    @Autowired("userComponentRegistry") private userComponentRegistry: UserComponentRegistry;
 
-    @Autowired("gridOptionsWrapper")
-    private gridOptionsWrapper: GridOptionsWrapper;
-
-    @Autowired("context")
-    private context: Context;
-
-    @Autowired("agComponentUtils")
-    private agComponentUtils: AgComponentUtils;
-
-    @Autowired("componentMetadataProvider")
-    private componentMetadataProvider: ComponentMetadataProvider;
-
-    @Autowired("userComponentRegistry")
-    private userComponentRegistry: UserComponentRegistry;
-
-    @Optional("frameworkComponentWrapper")
-    private frameworkComponentWrapper: FrameworkComponentWrapper;
+    @Optional("frameworkComponentWrapper") private frameworkComponentWrapper: FrameworkComponentWrapper;
 
     public newDateComponent(params: IDateParams): Promise<IDateComp> {
-        return this.createAndInitUserComponent<IDateComp>(this.gridOptions, params, DateComponent, "agDateInput");
+        return this.createAndInitUserComponent(this.gridOptions, params, DateComponent, 'agDateInput');
     }
 
     public newHeaderComponent(params: IHeaderParams): Promise<IHeaderComp> {
-        return this.createAndInitUserComponent<IHeaderComp>(
-            params.column.getColDef(), params, HeaderComponent, "agColumnHeader");
+        return this.createAndInitUserComponent(params.column.getColDef(), params, HeaderComponent, 'agColumnHeader');
     }
 
     public newHeaderGroupComponent(params: IHeaderGroupParams): Promise<IHeaderGroupComp> {
         return this.createAndInitUserComponent(
-            params.columnGroup.getColGroupDef(), params, HeaderGroupComponent, "agColumnGroupHeader");
+            params.columnGroup.getColGroupDef(), params, HeaderGroupComponent, 'agColumnGroupHeader');
     }
 
     public newFullWidthGroupRowInnerCellRenderer(params: ICellRendererParams): Promise<ICellRendererComp> {
-        return this.createAndInitUserComponent<ICellRendererComp>(
-            this.gridOptions, params, GroupRowInnerRendererComponent, null, true);
+        return this.createAndInitUserComponent(this.gridOptions, params, GroupRowInnerRendererComponent, null, true);
     }
 
     // this one is unusual, as it can be LoadingCellRenderer, DetailCellRenderer, FullWidthCellRenderer or GroupRowRenderer.
     // so we have to pass the type in.
-    public newFullWidthCellRenderer(params: any, cellRendererType: string, cellRendererName: string): Promise<ICellRendererComp> {
-        return this.createAndInitUserComponent<ICellRendererComp>(null, params, {
-            propertyName: cellRendererType,
-            isCellRenderer: () => true
-        }, cellRendererName);
+    public newFullWidthCellRenderer(
+        params: ICellRendererParams, cellRendererType: string, cellRendererName: string): Promise<ICellRendererComp> {
+        return this.createAndInitUserComponent(
+            null,
+            params,
+            {
+                propertyName: cellRendererType,
+                isCellRenderer: () => true
+            },
+            cellRendererName);
     }
 
-    public newCellRenderer(target: ColDef | ISetFilterParams | IRichCellEditorParams, params: ICellRendererParams): Promise<ICellRendererComp> {
-        return this.createAndInitUserComponent<ICellRendererComp>(
-            target, params, CellRendererComponent, null, true);
+    public newCellRenderer(
+        target: ColDef | IRichCellEditorParams,
+        params: ICellRendererParams,
+        isPinned = false): Promise<ICellRendererComp> {
+        return this.createAndInitUserComponent(
+            target, params, isPinned ? PinnedRowCellRendererComponent : CellRendererComponent, null, true);
     }
 
-    public newPinnedRowCellRenderer(target: ColDef | ISetFilterParams | IRichCellEditorParams, params: ICellRendererParams): Promise<ICellRendererComp> {
-        return this.createAndInitUserComponent<ICellRendererComp>(
-            target, params, PinnedRowCellRendererComponent, null, true);
-    }
-
-    public newCellEditor(colDef: ColDef, params: any): Promise<ICellEditorComp> {
+    public newCellEditor(colDef: ColDef, params: ICellEditorParams): Promise<ICellEditorComp> {
         return this.createAndInitUserComponent(colDef, params, CellEditorComponent, 'agCellEditor');
     }
 
     public newInnerCellRenderer(target: GroupCellRendererParams, params: ICellRendererParams): Promise<ICellRendererComp> {
-        return this.createAndInitUserComponent<ICellRendererComp>(
-            target, params, InnerRendererComponent, null);
+        return this.createAndInitUserComponent(target, params, InnerRendererComponent, null);
     }
 
-    public newLoadingOverlayComponent(params: any): Promise<ILoadingOverlayComp> {
-        return this.createAndInitUserComponent<ILoadingOverlayComp>(
-            this.gridOptions, params, LoadingOverlayComponent, "agLoadingOverlay");
+    public newLoadingOverlayComponent(params: ILoadingOverlayParams): Promise<ILoadingOverlayComp> {
+        return this.createAndInitUserComponent(this.gridOptions, params, LoadingOverlayComponent, 'agLoadingOverlay');
     }
 
-    public newNoRowsOverlayComponent(params: any): Promise<INoRowsOverlayComp> {
-        return this.createAndInitUserComponent<INoRowsOverlayComp>(
-            this.gridOptions, params, NoRowsOverlayComponent, "agNoRowsOverlay");
+    public newNoRowsOverlayComponent(params: INoRowsOverlayParams): Promise<INoRowsOverlayComp> {
+        return this.createAndInitUserComponent(this.gridOptions, params, NoRowsOverlayComponent, 'agNoRowsOverlay');
     }
 
     public newTooltipComponent(params: ITooltipParams): Promise<ITooltipComp> {
-        const colDef = params.colDef;
-        return this.createAndInitUserComponent<ITooltipComp>(
-            colDef, params, TooltipComponent, 'agTooltipComponent');
+        return this.createAndInitUserComponent(params.colDef, params, TooltipComponent, 'agTooltipComponent');
     }
 
-    public newFilterComponent(colDef: ColDef, params: IFilterParams, defaultFilter: string,
-                              modifyParamsCallback: ModifyParamsCallback): Promise<IFilterComp> {
-        return this.createAndInitUserComponent<IFilterComp>(
+    public newFilterComponent(
+        colDef: ColDef,
+        params: IFilterParams,
+        defaultFilter: string,
+        modifyParamsCallback: ModifyParamsCallback<IFilterParams>): Promise<IFilterComp> {
+        return this.createAndInitUserComponent(
             colDef, params, FilterComponent, defaultFilter, false, modifyParamsCallback);
     }
 
-    public newFloatingFilterComponent(colDef: ColDef, params: any, defaultFloatingFilter: string): Promise<IFloatingFilterComp> {
-        return this.createAndInitUserComponent<IFloatingFilterComp>(
+    public newSetFilterCellRenderer(
+        target: ISetFilterParams, params: ISetFilterCellRendererParams): Promise<ICellRendererComp> {
+        return this.createAndInitUserComponent(target, params, CellRendererComponent, null, true);
+    }
+
+    public newFloatingFilterComponent(
+        colDef: ColDef, params: IFloatingFilterParams, defaultFloatingFilter: string): Promise<IFloatingFilterComp> {
+        return this.createAndInitUserComponent(
             colDef, params, FloatingFilterComponent, defaultFloatingFilter, true);
     }
 
-    public newToolPanelComponent(toolPanelDef: ToolPanelDef, params: any): Promise<IToolPanelComp> {
+    public newToolPanelComponent(toolPanelDef: ToolPanelDef, params: IToolPanelParams): Promise<IToolPanelComp> {
         return this.createAndInitUserComponent(toolPanelDef, params, ToolPanelComponent);
     }
 
-    public newStatusPanelComponent(def: StatusPanelDef, params: any): Promise<IToolPanelComp> {
+    public newStatusPanelComponent(def: StatusPanelDef, params: IToolPanelParams): Promise<IToolPanelComp> {
         return this.createAndInitUserComponent(def, params, StatusPanelComponent);
     }
 
@@ -207,14 +198,15 @@ export class UserComponentFactory {
      *  @param modifyParamsCallback: A chance to customise the params passed to the init method. It receives what the current
      *  params are and the component that init is about to get called for
      */
-    private createAndInitUserComponent<A extends IComponent<any>>(definitionObject: DefinitionObject,
-                                                                  paramsFromGrid: any,
-                                                                  componentType: ComponentType,
-                                                                  defaultComponentName?: string,
-                                                                  // optional items are: FloatingFilter, CellComp (for cellRenderer)
-                                                                  optional = false,
-                                                                  // used by FilterManager only
-                                                                  modifyParamsCallback?: ModifyParamsCallback
+    private createAndInitUserComponent<A extends IComponent<TParams>, TParams>(
+        definitionObject: DefinitionObject,
+        paramsFromGrid: TParams,
+        componentType: ComponentType,
+        defaultComponentName?: string,
+        // optional items are: FloatingFilter, CellComp (for cellRenderer)
+        optional = false,
+        // used by FilterManager only
+        modifyParamsCallback?: ModifyParamsCallback<TParams>
     ): Promise<A> {
 
         if (!definitionObject) {
@@ -222,16 +214,18 @@ export class UserComponentFactory {
         }
 
         // Create the component instance
-        const componentAndParams: { componentInstance: A, paramsFromSelector: any }
+        const componentAndParams: { componentInstance: A, paramsFromSelector: TParams; }
             = this.createComponentInstance(definitionObject, componentType, paramsFromGrid, defaultComponentName, optional);
+
         if (!componentAndParams) {
             return null;
         }
+
         const componentInstance = componentAndParams.componentInstance;
 
         // Wire the component and call the init method with the correct params
-        const params = this.createFinalParams(definitionObject, componentType.propertyName, paramsFromGrid,
-            componentAndParams.paramsFromSelector);
+        const params = this.createFinalParams(
+            definitionObject, componentType.propertyName, paramsFromGrid, componentAndParams.paramsFromSelector);
 
         this.addReactHacks(params);
 
@@ -240,6 +234,7 @@ export class UserComponentFactory {
         const paramsAfterCallback = modifyParamsCallback ? modifyParamsCallback(params, componentInstance) : params;
 
         const deferredInit: void | Promise<void> = this.initComponent(componentInstance, paramsAfterCallback);
+
         if (deferredInit == null) {
 
             // const p = new Promise<A>(resolve => {
@@ -251,8 +246,8 @@ export class UserComponentFactory {
 
             return Promise.resolve(componentInstance);
         } else {
-            const asPromise: Promise<void> = deferredInit as Promise<void>;
-            return asPromise.map(notRelevant => componentInstance);
+            const asPromise = deferredInit as Promise<void>;
+            return asPromise.map(_ => componentInstance);
         }
     }
 
@@ -260,11 +255,14 @@ export class UserComponentFactory {
         // a temporary fix for AG-1574
         // AG-1715 raised to do a wider ranging refactor to improve this
         const agGridReact = this.context.getBean('agGridReact');
+
         if (agGridReact) {
             params.agGridReact = _.cloneObject(agGridReact);
         }
+
         // AG-1716 - directly related to AG-1574 and AG-1715
         const frameworkComponentWrapper = this.context.getBean('frameworkComponentWrapper');
+
         if (frameworkComponentWrapper) {
             params.frameworkComponentWrapper = frameworkComponentWrapper;
         }
@@ -279,14 +277,11 @@ export class UserComponentFactory {
      *  @param modifyParamsCallback: A chance to customise the params passed to the init method. It receives what the current
      *  params are and the component that init is about to get called for
      */
-    public createUserComponentFromConcreteClass<P, A extends IComponent<P>>(clazz: { new(): A }, agGridParams: P): A {
+    public createUserComponentFromConcreteClass<A extends IComponent<TParams>, TParams>(
+        clazz: { new(): A; }, agGridParams: TParams): A {
+        const internalComponent = new clazz() as A;
 
-        const internalComponent: A = new clazz() as A;
-
-        this.initComponent(
-            internalComponent,
-            agGridParams
-        );
+        this.initComponent(internalComponent, agGridParams);
 
         return internalComponent;
     }
@@ -308,12 +303,12 @@ export class UserComponentFactory {
      *      invoked
      *  @param defaultComponentName: The name of the component to load if there is no component specified
      */
-    public lookupComponentClassDef<A extends IComponent<any> & B, B>(
+    public lookupComponentClassDef<A extends IComponent<TParams> & B, B, TParams>(
         definitionObject: DefinitionObject,
         propertyName: string,
-        params: any = null,
+        params: TParams = null,
         defaultComponentName?: string
-    ): ComponentClassDef<A, B> {
+    ): ComponentClassDef<A, B, TParams> {
         /**
          * There are five things that can happen when resolving a component.
          *  a) HardcodedFwComponent: That holder[propertyName]Framework has associated a Framework native component
@@ -323,13 +318,13 @@ export class UserComponentFactory {
          *  e) That none of the three previous are specified, then we need to use the DefaultRegisteredComponent
          */
         let hardcodedNameComponent: string = null;
-        let HardcodedJsComponent: { new(): A } = null;
+        let HardcodedJsComponent: { new(): A; } = null;
         let hardcodedJsFunction: AgGridComponentFunctionInput = null;
-        let HardcodedFwComponent: { new(): B } = null;
-        let componentSelectorFunc: (params: any) => ComponentSelectorResult;
+        let HardcodedFwComponent: { new(): B; } = null;
+        let componentSelectorFunc: (params: TParams) => ComponentSelectorResult<TParams>;
 
         if (definitionObject != null) {
-            const componentPropertyValue: AgComponentPropertyInput<IComponent<any>> = (definitionObject as any)[propertyName];
+            const componentPropertyValue: AgComponentPropertyInput<IComponent<TParams>, TParams> = (definitionObject as any)[propertyName];
             // for filters only, we allow 'true' for the component, which means default filter to be used
             const usingDefaultComponent = componentPropertyValue === true;
             if (componentPropertyValue != null && !usingDefaultComponent) {
@@ -339,7 +334,7 @@ export class UserComponentFactory {
                     // never happens, as we test for usingDefaultComponent above,
                     // however it's needed for the next block to compile
                 } else if (this.agComponentUtils.doesImplementIComponent(componentPropertyValue)) {
-                    HardcodedJsComponent = componentPropertyValue as { new(): A };
+                    HardcodedJsComponent = componentPropertyValue as { new(): A; };
                 } else {
                     hardcodedJsFunction = componentPropertyValue as AgGridComponentFunctionInput;
                 }
@@ -404,7 +399,7 @@ export class UserComponentFactory {
         if (hardcodedJsFunction) {
             // console.warn(`ag-grid: Since version 12.1.0 specifying a function directly is deprecated, you should register the component by name`);
             // console.warn(`${hardcodedJsFunction}`);
-            return this.agComponentUtils.adaptFunction(propertyName, hardcodedJsFunction, false, ComponentSource.HARDCODED) as ComponentClassDef<A, B>;
+            return this.agComponentUtils.adaptFunction(propertyName, hardcodedJsFunction, false, ComponentSource.HARDCODED) as ComponentClassDef<A, B, TParams>;
         }
 
         const selectorResult = componentSelectorFunc ? componentSelectorFunc(params) : null;
@@ -422,7 +417,7 @@ export class UserComponentFactory {
             return null;
         }
 
-        const registeredCompClassDef = this.lookupFromRegisteredComponents(propertyName, componentNameToUse) as ComponentClassDef<A, B>;
+        const registeredCompClassDef = this.lookupFromRegisteredComponents(propertyName, componentNameToUse) as ComponentClassDef<A, B, TParams>;
 
         if (!registeredCompClassDef) {
             return null;
@@ -436,11 +431,12 @@ export class UserComponentFactory {
         };
     }
 
-    private lookupFromRegisteredComponents<A extends IComponent<any> & B, B>(propertyName: string,
-                                                                             componentNameOpt?: string): ComponentClassDef<A, B> {
+    private lookupFromRegisteredComponents<A extends IComponent<TParams> & B, B, TParams>(
+        propertyName: string,
+        componentNameOpt?: string): ComponentClassDef<A, B, TParams> {
         const componentName: string = componentNameOpt != null ? componentNameOpt : propertyName;
-
         const registeredComponent: RegisteredComponent<A, B> = this.userComponentRegistry.retrieve(componentName);
+
         if (registeredComponent == null) {
             return null;
         }
@@ -448,7 +444,7 @@ export class UserComponentFactory {
         //If it is a FW it has to be registered as a component
         if (registeredComponent.componentFromFramework) {
             return {
-                component: registeredComponent.component as { new(): B },
+                component: registeredComponent.component as { new(): B; },
                 componentFromFramework: true,
                 source: ComponentSource.REGISTERED_BY_NAME,
                 paramsFromSelector: null
@@ -458,7 +454,7 @@ export class UserComponentFactory {
         //If it is JS it may be a function or a component
         if (this.agComponentUtils.doesImplementIComponent(registeredComponent.component as AgGridRegisteredComponentInput<A>)) {
             return {
-                component: registeredComponent.component as { new(): A },
+                component: registeredComponent.component as { new(): A; },
                 componentFromFramework: false,
                 source: (registeredComponent.source == RegisteredComponentSource.REGISTERED) ? ComponentSource.REGISTERED_BY_NAME : ComponentSource.DEFAULT,
                 paramsFromSelector: null
@@ -482,40 +478,41 @@ export class UserComponentFactory {
      *      'floatingFilter', 'cellRenderer', is used to find if the user is specifying a custom component
      *  @param paramsFromGrid: Params to be passed to the component and passed by ag-Grid. This will get merged with any params
      *      specified by the user in the configuration
-     * @returns {any} It merges the user agGridParams with the actual params specified by the user.
+     * @returns {TParams} It merges the user agGridParams with the actual params specified by the user.
      */
-    public createFinalParams(definitionObject: DefinitionObject,
-                             propertyName: string,
-                             paramsFromGrid: any,
-                             paramsFromSelector: any = null): any {
+    public createFinalParams<TParams>(definitionObject: DefinitionObject,
+        propertyName: string,
+        paramsFromGrid: TParams,
+        paramsFromSelector: TParams = null): TParams {
+        const params = {} as TParams;
 
-        const res: any = {};
-        _.mergeDeep(res, paramsFromGrid);
+        _.mergeDeep(params, paramsFromGrid);
 
-        const userParams: any = definitionObject ? (definitionObject as any)[propertyName + "Params"] : null;
+        const userParams: TParams = definitionObject ? (definitionObject as any)[propertyName + "Params"] : null;
 
         if (userParams != null) {
             if (typeof userParams === 'function') {
-                _.mergeDeep(res, userParams(paramsFromGrid));
+                _.mergeDeep(params, userParams(paramsFromGrid));
             } else if (typeof userParams === 'object') {
-                _.mergeDeep(res, userParams);
+                _.mergeDeep(params, userParams);
             }
         }
 
-        _.mergeDeep(res, paramsFromSelector);
+        _.mergeDeep(params, paramsFromSelector);
 
-        return res;
+        return params;
     }
 
-    private createComponentInstance<A extends IComponent<any> & B, B>(holder: DefinitionObject,
-                                                                      componentType: ComponentType,
-                                                                      paramsForSelector: any,
-                                                                      defaultComponentName: string,
-                                                                      optional: boolean
-    ): { componentInstance: A, paramsFromSelector: any } {
+    private createComponentInstance<A extends IComponent<TParams> & B, B, TParams>(
+        holder: DefinitionObject,
+        componentType: ComponentType,
+        paramsForSelector: TParams,
+        defaultComponentName: string,
+        optional: boolean
+    ): { componentInstance: A, paramsFromSelector: TParams; } {
         const propertyName = componentType.propertyName;
-        const componentToUse: ComponentClassDef<A, B> =
-            this.lookupComponentClassDef(holder, propertyName, paramsForSelector, defaultComponentName) as ComponentClassDef<A, B>;
+        const componentToUse: ComponentClassDef<A, B, TParams> =
+            this.lookupComponentClassDef(holder, propertyName, paramsForSelector, defaultComponentName) as ComponentClassDef<A, B, TParams>;
 
         const missing = !componentToUse || !componentToUse.component;
         if (missing) {
@@ -533,7 +530,7 @@ export class UserComponentFactory {
 
         if (componentToUse.componentFromFramework) {
             // Using framework component
-            const FrameworkComponentRaw: { new(): B } = componentToUse.component;
+            const FrameworkComponentRaw: { new(): B; } = componentToUse.component;
             const thisComponentConfig: ComponentMetadata = this.componentMetadataProvider.retrieve(propertyName);
             componentInstance = this.frameworkComponentWrapper.wrap(FrameworkComponentRaw,
                 thisComponentConfig.mandatoryMethodList,
@@ -545,16 +542,16 @@ export class UserComponentFactory {
             componentInstance = new componentToUse.component() as A;
         }
 
-        return {componentInstance: componentInstance, paramsFromSelector: componentToUse.paramsFromSelector};
+        return { componentInstance: componentInstance, paramsFromSelector: componentToUse.paramsFromSelector };
     }
 
-    private initComponent<A extends IComponent<any>>(component: A, finalParams: any): Promise<void> | void {
+    private initComponent<A extends IComponent<TParams>, TParams>(component: A, params: TParams): Promise<void> | void {
         this.context.wireBean(component);
+
         if (component.init == null) {
             return;
-        } else {
-            return component.init(finalParams);
         }
-    }
 
+        return component.init(params);
+    }
 }

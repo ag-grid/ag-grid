@@ -1,0 +1,66 @@
+{
+  "name": "@ag-grid-enterprise/date-time-cell-editor",
+  "version": "23.1.0",
+  "description": "Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components",
+  "main": "./dist/cjs/main.js",
+  "module": "./dist/es6/main.js",
+  "types": "./dist/cjs/main.d.ts",
+  "scripts": {
+    "build-cjs": "tsc -p tsconfig.json",
+    "build-es6": "tsc -p tsconfig.es6.json",
+    "start": "webpack-dev-server --config dev/webpack.config.js --open",
+    "package": "node ../../module-build/rollup/build.js",
+    "build": "npm run build-cjs && npm run build-es6 && npm run hash",
+    "hash": "sh ../../scripts/hashDirectory.sh > .hash"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ag-grid/ag-grid.git"
+  },
+  "keywords": [
+    "web-components",
+    "grid",
+    "data",
+    "table",
+    "angular",
+    "angular-component",
+    "react",
+    "react-component",
+    "angularjs",
+    "reactjs"
+  ],
+  "author": "Niall Crosby <niall.crosby@gmail.com>",
+  "license": "Commercial",
+  "bugs": {
+    "url": "https://github.com/ag-grid/ag-grid/issues"
+  },
+  "browserslist": [
+    "> 1%",
+    "last 2 versions",
+    "not ie <= 10",
+    "not ie_mob <= 11",
+    "not blackberry > 0"
+  ],
+  "homepage": "http://www.ag-grid.com/",
+  "dependencies": {
+    "@ag-grid-community/core": "~23.1.0",
+    "@ag-grid-enterprise/core": "~23.1.0"
+  },
+  "devDependencies": {
+    "@ag-grid-community/client-side-row-model": "~23.1.0",
+    "awesome-typescript-loader": "^5.2.1",
+    "css-loader": "^3.4.2",
+    "html-webpack-plugin": "^4.0.1",
+    "node-sass": "^4.13.1",
+    "sass-loader": "^8.0.2",
+    "source-map-loader": "^0.2.4",
+    "style-loader": "^1.1.3",
+    "typescript": "^3.6.3",
+    "webpack": "^4.42.1",
+    "webpack-cli": "^3.3.11",
+    "webpack-dev-server": "^3.10.3"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}

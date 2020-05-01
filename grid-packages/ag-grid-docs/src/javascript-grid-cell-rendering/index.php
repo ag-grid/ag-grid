@@ -76,7 +76,7 @@ var colDef3 = function(params) {
 
 <p>
     Cell renderer components can be referenced by string or directly by class. They can be
-    <a href="../javascript-grid-provided-renderers/">Provided Cell Renderers</a> (they come
+    <a href="#provided-cell-renderers">Provided Cell Renderers</a> (that come
     with the grid) or <a href="../javascript-grid-cell-rendering-components/">Custom Cell
     Renderers</a> (built by you).
 </p>
@@ -149,5 +149,26 @@ var colDef3 = function(params) {
 
 <?= grid_example('Rendering Order', 'rendering-order', 'generated', ['enterprise' => true]) ?>
 
+
+<h2>Provided Cell Renderers</h2>
+
+<p class="lead">
+    The grid comes with some provided cell renderers out of the box. These cell renderers
+    cover some common complex cell rendering requirements.
+</p>
+
+<ul>
+    <li>
+        <a href="../javascript-grid-provided-renderer-group/">Group Cell Renderer</a>:
+        For showing group details with expand & collapse functionality when using any of the
+        <a href="../javascript-grid-grouping/">Row Grouping</a>,
+        <a href="../javascript-grid-master-detail/">Master Detail</a> or
+        <a href="../javascript-grid-master-detail/">Tree Data</a>.
+    </li>
+    <li>
+        <a href="../javascript-grid-provided-renderer-change/">Show Change Cell Renderers</a>:
+        For animating changes when data is changing.
+    </li>
+</ul>
 
 <?php include '../documentation-main/documentation_footer.php';?>

@@ -1,7 +1,7 @@
-import { Component } from "../../../widgets/component";
-import { IFloatingFilterComp, IFloatingFilterParams } from "../floatingFilter";
-import { ProvidedFilterModel } from "../../../interfaces/iFilter";
-import { FilterChangedEvent } from "../../../events";
+import { Component } from '../../../widgets/component';
+import { IFloatingFilterComp, IFloatingFilterParams } from '../floatingFilter';
+import { ProvidedFilterModel } from '../../../interfaces/iFilter';
+import { FilterChangedEvent } from '../../../events';
 export declare abstract class SimpleFloatingFilter extends Component implements IFloatingFilterComp {
     abstract onParentModelChanged(model: ProvidedFilterModel, event: FilterChangedEvent): void;
     protected abstract conditionToString(condition: ProvidedFilterModel): string;

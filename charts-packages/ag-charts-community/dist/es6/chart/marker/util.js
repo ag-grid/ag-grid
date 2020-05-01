@@ -28,5 +28,8 @@ export function getMarker(shape) {
                 return Square;
         }
     }
-    return shape;
+    if (typeof shape === 'function') {
+        return shape;
+    }
+    return Square;
 }

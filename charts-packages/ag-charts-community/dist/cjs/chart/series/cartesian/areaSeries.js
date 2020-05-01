@@ -24,7 +24,6 @@ var selection_1 = require("../../../scene/selection");
 var node_1 = require("../../../scene/node");
 var path_1 = require("../../../scene/shape/path");
 var palettes_1 = require("../../palettes");
-var marker_1 = require("../../marker/marker");
 var cartesianSeries_1 = require("./cartesianSeries");
 var chartAxis_1 = require("../../chartAxis");
 var util_1 = require("../../marker/util");
@@ -43,6 +42,7 @@ var AreaSeries = /** @class */ (function (_super) {
         _this.areaSelection = selection_1.Selection.select(_this.areaGroup).selectAll();
         _this.strokeSelection = selection_1.Selection.select(_this.strokeGroup).selectAll();
         _this.markerSelection = selection_1.Selection.select(_this.markerGroup).selectAll();
+        _this.markerSelectionData = [];
         /**
          * The assumption is that the values will be reset (to `true`)
          * in the {@link yKeys} setter.
@@ -65,13 +65,11 @@ var AreaSeries = /** @class */ (function (_super) {
         _this._yKeys = [];
         _this.yNames = [];
         _this.strokeWidth = 2;
-        _this.highlightStyle = {
-            fill: 'yellow'
-        };
-        _this.addEventListener('update', function () { return _this.update(); });
+        _this.highlightStyle = { fill: 'yellow' };
+        _this.addEventListener('update', _this.update);
         _this.marker.enabled = false;
-        _this.marker.addPropertyListener('shape', function () { return _this.onMarkerShapeChange(); });
-        _this.marker.addEventListener('change', function () { return _this.update(); });
+        _this.marker.addPropertyListener('shape', _this.onMarkerShapeChange, _this);
+        _this.marker.addEventListener('change', _this.update, _this);
         return _this;
     }
     AreaSeries.prototype.onMarkerShapeChange = function () {
@@ -125,16 +123,8 @@ var AreaSeries = /** @class */ (function (_super) {
         enumerable: true,
         configurable: true
     });
-    AreaSeries.prototype.highlightNode = function (node) {
-        if (!(node instanceof marker_1.Marker)) {
-            return;
-        }
-        this.highlightedNode = node;
-        this.scheduleLayout();
-    };
-    AreaSeries.prototype.dehighlightNode = function () {
-        this.highlightedNode = undefined;
-        this.scheduleLayout();
+    AreaSeries.prototype.onHighlightChange = function () {
+        this.updateMarkerNodes();
     };
     AreaSeries.prototype.processData = function () {
         var _a = this, xKey = _a.xKey, yKeys = _a.yKeys, seriesItemEnabled = _a.seriesItemEnabled;
@@ -224,8 +214,11 @@ var AreaSeries = /** @class */ (function (_super) {
         this.updateAreaSelection(areaSelectionData);
         this.updateStrokeSelection(areaSelectionData);
         this.updateMarkerSelection(markerSelectionData);
+        this.updateMarkerNodes();
+        this.markerSelectionData = markerSelectionData;
     };
     AreaSeries.prototype.generateSelectionData = function () {
+        var _this = this;
         var _a = this, yKeys = _a.yKeys, data = _a.data, xData = _a.xData, yData = _a.yData, marker = _a.marker, fills = _a.fills, strokes = _a.strokes, xScale = _a.xAxis.scale, yScale = _a.yAxis.scale;
         var xOffset = (xScale.bandwidth || 0) / 2;
         var yOffset = (yScale.bandwidth || 0) / 2;
@@ -245,11 +238,11 @@ var AreaSeries = /** @class */ (function (_super) {
                 var yValue = seriesDatum[yKey];
                 if (marker) {
                     markerSelectionData.push({
+                        series: _this,
                         seriesDatum: seriesDatum,
                         yValue: yValue,
                         yKey: yKey,
-                        x: x,
-                        y: y,
+                        point: { x: x, y: y },
                         fill: fills[j % fills.length],
                         stroke: strokes[j % strokes.length]
                     });
@@ -333,24 +326,26 @@ var AreaSeries = /** @class */ (function (_super) {
         this.strokeSelection = strokeSelection;
     };
     AreaSeries.prototype.updateMarkerSelection = function (markerSelectionData) {
-        var _a = this, marker = _a.marker, xKey = _a.xKey;
-        if (!marker.shape) {
-            return;
-        }
+        var marker = this.marker;
+        var data = marker.shape ? markerSelectionData : [];
         var MarkerShape = util_1.getMarker(marker.shape);
+        var updateMarkers = this.markerSelection.setData(data);
+        updateMarkers.exit.remove();
+        var enterMarkers = updateMarkers.enter.append(MarkerShape);
+        this.markerSelection = updateMarkers.merge(enterMarkers);
+    };
+    AreaSeries.prototype.updateMarkerNodes = function () {
+        var marker = this.marker;
         var markerFormatter = marker.formatter;
         var markerStrokeWidth = marker.strokeWidth !== undefined ? marker.strokeWidth : this.strokeWidth;
         var markerSize = marker.size;
-        var _b = this, seriesItemEnabled = _b.seriesItemEnabled, highlightedNode = _b.highlightedNode;
-        var _c = this.highlightStyle, highlightFill = _c.fill, highlightStroke = _c.stroke;
-        var updateMarkers = this.markerSelection.setData(markerSelectionData);
-        updateMarkers.exit.remove();
-        var enterMarkers = updateMarkers.enter.append(MarkerShape);
-        var markerSelection = updateMarkers.merge(enterMarkers);
-        markerSelection.each(function (node, datum) {
-            var isHighlightedNode = node === highlightedNode;
-            var markerFill = isHighlightedNode && highlightFill !== undefined ? highlightFill : marker.fill || datum.fill;
-            var markerStroke = isHighlightedNode && highlightStroke !== undefined ? highlightStroke : marker.stroke || datum.stroke;
+        var _a = this, xKey = _a.xKey, seriesItemEnabled = _a.seriesItemEnabled;
+        var highlightedDatum = this.chart.highlightedDatum;
+        var _b = this.highlightStyle, highlightFill = _b.fill, highlightStroke = _b.stroke;
+        this.markerSelection.each(function (node, datum) {
+            var highlighted = datum === highlightedDatum;
+            var markerFill = highlighted && highlightFill !== undefined ? highlightFill : marker.fill || datum.fill;
+            var markerStroke = highlighted && highlightStroke !== undefined ? highlightStroke : marker.stroke || datum.stroke;
             var markerFormat = undefined;
             if (markerFormatter) {
                 markerFormat = markerFormatter({
@@ -361,7 +356,7 @@ var AreaSeries = /** @class */ (function (_super) {
                     stroke: markerStroke,
                     strokeWidth: markerStrokeWidth,
                     size: markerSize,
-                    highlighted: isHighlightedNode
+                    highlighted: highlighted
                 });
             }
             node.fill = markerFormat && markerFormat.fill || markerFill;
@@ -372,11 +367,22 @@ var AreaSeries = /** @class */ (function (_super) {
             node.size = markerFormat && markerFormat.size !== undefined
                 ? markerFormat.size
                 : markerSize;
-            node.translationX = datum.x;
-            node.translationY = datum.y;
+            node.translationX = datum.point.x;
+            node.translationY = datum.point.y;
             node.visible = marker.enabled && node.size > 0 && !!seriesItemEnabled.get(datum.yKey);
         });
-        this.markerSelection = markerSelection;
+    };
+    AreaSeries.prototype.getNodeData = function () {
+        return this.markerSelectionData;
+    };
+    AreaSeries.prototype.fireNodeClickEvent = function (datum) {
+        this.fireEvent({
+            type: 'nodeClick',
+            series: this,
+            datum: datum.seriesDatum,
+            xKey: this.xKey,
+            yKey: datum.yKey
+        });
     };
     AreaSeries.prototype.getTooltipHtml = function (nodeDatum) {
         var xKey = this.xKey;

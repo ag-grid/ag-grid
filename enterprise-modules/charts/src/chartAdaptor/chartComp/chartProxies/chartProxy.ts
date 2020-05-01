@@ -22,7 +22,7 @@ import {
     Chart,
     ChartPalette,
     ChartPaletteName,
-    ColumnSeries,
+    BarSeries,
     DropShadow,
     Padding,
     palettes,
@@ -130,11 +130,6 @@ export abstract class ChartProxy<TChart extends Chart, TOptions extends ChartOpt
         } else {
             this.chartOptions = this.getDefaultOptions();
         }
-
-        // we want to preserve the existing width/height if an existing chart is being changed to a different type,
-        // so this allows the chart defaults to be overridden
-        this.chartOptions.width = this.chartProxyParams.width || this.chartOptions.width;
-        this.chartOptions.height = this.chartProxyParams.height || this.chartOptions.height;
     }
 
     private overridePalette(chartOptions: TOptions): void {
@@ -241,6 +236,10 @@ export abstract class ChartProxy<TChart extends Chart, TOptions extends ChartOpt
         this.raiseChartOptionsChangedEvent();
     }
 
+    public getTitleOption(property: keyof CaptionOptions) {
+        return (this.chartOptions.title as any)[property];
+    }
+
     public getChartPaddingOption = (property: keyof PaddingOptions): string => this.chartOptions.padding ? `${this.chartOptions.padding[property]}` : '';
 
     public setChartPaddingOption(property: keyof PaddingOptions, value: number): void {
@@ -292,7 +291,7 @@ export abstract class ChartProxy<TChart extends Chart, TOptions extends ChartOpt
 
         seriesDefaults.shadow[property] = value;
 
-        const series = this.getChart().series as (ColumnSeries | AreaSeries | PieSeries)[];
+        const series = this.getChart().series as (BarSeries | AreaSeries | PieSeries)[];
 
         series.forEach(s => {
             if (!s.shadow) {
@@ -408,8 +407,10 @@ export abstract class ChartProxy<TChart extends Chart, TOptions extends ChartOpt
                 },
                 highlightStyle: {
                     fill: 'yellow',
-                }
-            }
+                },
+                listeners: {}
+            },
+            listeners: {}
         };
     }
 

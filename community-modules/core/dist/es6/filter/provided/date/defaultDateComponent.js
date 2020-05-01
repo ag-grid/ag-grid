@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v23.0.2
+ * @version v23.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -23,20 +23,17 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
-import { Autowired } from "../../../context/context";
 import { Component } from "../../../widgets/component";
 import { RefSelector } from "../../../widgets/componentAnnotations";
 import { _ } from "../../../utils";
 var DefaultDateComponent = /** @class */ (function (_super) {
     __extends(DefaultDateComponent, _super);
     function DefaultDateComponent() {
-        return _super.call(this, "<div class=\"ag-filter-filter\"><ag-input-text-field class=\"ag-date-filter\" ref=\"eDateInput\"></ag-input-text-field></div>") || this;
+        return _super.call(this, /* html */ "\n            <div class=\"ag-filter-filter\">\n                <ag-input-text-field class=\"ag-date-filter\" ref=\"eDateInput\"></ag-input-text-field>\n            </div>") || this;
     }
     DefaultDateComponent.prototype.init = function (params) {
         var _this = this;
-        var translate = this.gridOptionsWrapper.getLocaleTextFunc();
-        this.eDateInput.setInputPlaceholder(translate('dateFormatOoo', 'yyyy-mm-dd'));
-        if (_.isBrowserChrome() || (params.filterParams && params.filterParams.browserDatePicker)) {
+        if (this.shouldUseBrowserDatePicker(params)) {
             if (_.isBrowserIE()) {
                 console.warn('ag-grid: browserDatePicker is specified to true, but it is not supported in IE 11, reverting to plain text date picker');
             }
@@ -53,17 +50,22 @@ var DefaultDateComponent = /** @class */ (function (_super) {
         });
     };
     DefaultDateComponent.prototype.getDate = function () {
-        return _.getDateFromString(this.eDateInput.getValue());
+        return _.parseDateTimeFromString(this.eDateInput.getValue());
     };
     DefaultDateComponent.prototype.setDate = function (date) {
-        this.eDateInput.setValue(_.serializeDateToYyyyMmDd(date, "-"));
+        this.eDateInput.setValue(_.serialiseDate(date));
     };
     DefaultDateComponent.prototype.setInputPlaceholder = function (placeholder) {
         this.eDateInput.setInputPlaceholder(placeholder);
     };
-    __decorate([
-        Autowired('gridOptionsWrapper')
-    ], DefaultDateComponent.prototype, "gridOptionsWrapper", void 0);
+    DefaultDateComponent.prototype.shouldUseBrowserDatePicker = function (params) {
+        if (params.filterParams && params.filterParams.browserDatePicker != null) {
+            return params.filterParams.browserDatePicker;
+        }
+        else {
+            return _.isBrowserChrome() || _.isBrowserFirefox();
+        }
+    };
     __decorate([
         RefSelector('eDateInput')
     ], DefaultDateComponent.prototype, "eDateInput", void 0);

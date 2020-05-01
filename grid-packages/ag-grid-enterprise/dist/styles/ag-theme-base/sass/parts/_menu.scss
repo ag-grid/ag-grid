@@ -19,7 +19,7 @@
     }
 
     .ag-menu-option-active {
-        background-color: ag-param(row-hover-color);
+        @include ag-color-property(background-color, row-hover-color);
     }
 
     .ag-menu-option-disabled {
@@ -39,7 +39,7 @@
     .ag-menu-option-shortcut {
         padding-left: ag-param(grid-size) * 2;
     }
-    
+
 
     .ag-menu-separator {
         height: ag-param(grid-size) * 2;
@@ -65,7 +65,7 @@
         width: 100%;
         display: flex;
     }
-    
+
     .ag-tab {
         border-bottom: ag-param(selected-tab-underline-width) solid transparent;
         display: flex;
@@ -77,23 +77,25 @@
         @if ag-param(full-width-tabs) {
             flex: 1 1 auto;
         }
-        
+
         @if ag-param(selected-tab-underline-transition-speed) {
             transition: border-bottom ag-param(selected-tab-underline-transition-speed);
         }
     }
 
     .ag-keyboard-focus .ag-tab:focus {
-        outline: 1px solid ag-param(input-focus-border-color);
+        outline-width: 1px;
+        outline-style: solid;
+        @include ag-color-property(outline-color, input-focus-border-color);
         outline-offset: -4px;
     }
 
     .ag-tab-selected {
-        border-bottom-color: ag-param(selected-tab-underline-color);
+        @include ag-color-property(border-bottom-color, selected-tab-underline-color);
     }
 
     .ag-menu-header {
-        color: ag-param(secondary-foreground-color);
+        @include ag-color-property(color, secondary-foreground-color);
     }
 
     ////////////////////////////////////////
@@ -108,6 +110,10 @@
         @include ag-theme-rtl((margin-left: ag-param(grid-size) * 2));
     }
 
+    .ag-set-filter-select-all {
+        padding: ag-param(widget-container-vertical-padding) 0;
+    }
+
     .ag-set-filter-list {
         height: ag-param(list-item-height) * 6;
     }
@@ -117,7 +123,7 @@
         margin-left: ag-param(widget-container-horizontal-padding);
         margin-right: ag-param(widget-container-horizontal-padding);
     }
-    
+
     .ag-filter-to {
         margin-top: ag-param(widget-vertical-spacing);
     }
@@ -126,7 +132,11 @@
         margin: ag-param(widget-container-vertical-padding) ag-param(widget-container-horizontal-padding) 0;
     }
 
-    .ag-set-filter-item-checkbox, .ag-set-filter-item-value {
+    .ag-set-filter-item {
+        margin: 0px ag-param(widget-container-horizontal-padding);
+    }
+
+    .ag-set-filter-item-value {
         @include ag-theme-rtl((margin-left: ag-param(widget-container-horizontal-padding)));
     }
 
@@ -141,7 +151,7 @@
 
         @include ag-border(secondary, top);
     }
-    
+
     .ag-filter-apply-panel-button {
         line-height: 1.5;
         @include ag-theme-rtl((margin-left: ag-param(grid-size) * 2));

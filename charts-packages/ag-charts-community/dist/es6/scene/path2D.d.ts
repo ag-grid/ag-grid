@@ -63,7 +63,7 @@ export declare class Path2D {
     quadraticCurveTo(cx: number, cy: number, x: number, y: number): void;
     cubicCurveTo(cx1: number, cy1: number, cx2: number, cy2: number, x: number, y: number): void;
     private _closedPath;
-    get closedPath(): boolean;
+    readonly closedPath: boolean;
     closePath(): void;
     clear(): void;
     isPointInPath(x: number, y: number): boolean;

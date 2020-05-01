@@ -12,8 +12,7 @@ export declare class HdpiCanvas {
     readonly context: CanvasRenderingContext2D;
     constructor(document?: Document, width?: number, height?: number);
     private _container;
-    set container(value: HTMLElement | undefined);
-    get container(): HTMLElement | undefined;
+    container: HTMLElement | undefined;
     private remove;
     destroy(): void;
     toImage(): HTMLImageElement;
@@ -24,7 +23,7 @@ export declare class HdpiCanvas {
      */
     download(fileName?: string): void;
     _pixelRatio: number;
-    get pixelRatio(): number;
+    readonly pixelRatio: number;
     /**
      * Updates the pixel ratio of the Canvas element with the given value,
      * or uses the window.devicePixelRatio (default), then resizes the Canvas
@@ -34,16 +33,16 @@ export declare class HdpiCanvas {
      */
     updatePixelRatio(ratio?: number, resize?: boolean): void;
     private _width;
-    get width(): number;
+    readonly width: number;
     private _height;
-    get height(): number;
+    readonly height: number;
     resize(width: number, height: number, callbackWhenDone?: () => void): void;
     private static _textMeasuringContext?;
-    private static get textMeasuringContext();
+    private static readonly textMeasuringContext;
     private static _svgText?;
-    private static get svgText();
+    private static readonly svgText;
     private static _has?;
-    static get has(): {
+    static readonly has: {
         textMetrics: boolean;
         getTransform: boolean;
     };

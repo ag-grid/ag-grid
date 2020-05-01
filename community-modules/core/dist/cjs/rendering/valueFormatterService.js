@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v23.0.2
+ * @version v23.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -16,7 +16,8 @@ var context_1 = require("../context/context");
 var ValueFormatterService = /** @class */ (function () {
     function ValueFormatterService() {
     }
-    ValueFormatterService.prototype.formatValue = function (column, rowNode, $scope, value, suppliedFormatter) {
+    ValueFormatterService.prototype.formatValue = function (column, node, $scope, value, suppliedFormatter, useFormatterFromColumn) {
+        if (useFormatterFromColumn === void 0) { useFormatterFromColumn = true; }
         var result = null;
         var formatter;
         var colDef = column.getColDef();
@@ -24,21 +25,17 @@ var ValueFormatterService = /** @class */ (function () {
             // favour supplied, e.g. set filter items can have their own value formatters
             formatter = suppliedFormatter;
         }
-        else {
+        else if (useFormatterFromColumn) {
             // if floating, give preference to the floating formatter
-            if (rowNode && rowNode.rowPinned) {
-                formatter = colDef.pinnedRowValueFormatter ? colDef.pinnedRowValueFormatter : colDef.valueFormatter;
-            }
-            else {
-                formatter = colDef.valueFormatter;
-            }
+            formatter = node && node.rowPinned && colDef.pinnedRowValueFormatter ?
+                colDef.pinnedRowValueFormatter : colDef.valueFormatter;
         }
         if (formatter) {
             var params = {
                 value: value,
-                node: rowNode,
-                data: rowNode ? rowNode.data : null,
-                colDef: column.getColDef(),
+                node: node,
+                data: node ? node.data : null,
+                colDef: colDef,
                 column: column,
                 api: this.gridOptionsWrapper.getApi(),
                 columnApi: this.gridOptionsWrapper.getColumnApi(),
@@ -56,7 +53,7 @@ var ValueFormatterService = /** @class */ (function () {
             return colDef.refData[value] || '';
         }
         // if we don't do this, then arrays get displayed as 1,2,3, but we want 1, 2, 3 (ie with spaces)
-        if ((result === null || result === undefined) && Array.isArray(value)) {
+        if (result != null && Array.isArray(value)) {
             result = value.join(', ');
         }
         return result;

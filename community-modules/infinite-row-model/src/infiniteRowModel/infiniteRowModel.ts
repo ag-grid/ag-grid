@@ -254,9 +254,9 @@ export class InfiniteRowModel extends BeanStub implements IInfiniteRowModel {
         if (!this.cacheParams.blockSize || !(this.cacheParams.blockSize >= 1)) {
             this.cacheParams.blockSize = 100;
         }
-        // if user doesn't give initial rows to display, we assume zero
+        // if user doesn't give initial rows to display, we assume one
         if (!(this.cacheParams.initialRowCount >= 1)) {
-            this.cacheParams.initialRowCount = 0;
+            this.cacheParams.initialRowCount = 1;
         }
         // if user doesn't provide overflow, we use default overflow of 1, so user can scroll past
         // the current page and request first row of next page

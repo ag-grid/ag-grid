@@ -1,4 +1,4 @@
-// Type definitions for @ag-grid-community/core v23.0.2
+// Type definitions for @ag-grid-community/core v23.1.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 export declare enum ModuleNames {
@@ -25,6 +25,7 @@ export declare enum ModuleNames {
     ServerSideRowModelModule = "@ag-grid-enterprise/server-side-row-model",
     ExcelExportModule = "@ag-grid-enterprise/excel-export",
     ClipboardModule = "@ag-grid-enterprise/clipboard",
+    DateTimeCellEditorModule = "@ag-grid-enterprise/date-time-cell-editor",
     AngularModule = "@ag-grid-community/angular",
     ReactModule = "@ag-grid-community/react",
     VueModule = "@ag-grid-community/vue",

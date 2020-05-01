@@ -1,5 +1,5 @@
 import { RowNode } from "./entities/rowNode";
-import { Bean } from "./context/context";
+import { Bean, PreDestroy } from "./context/context";
 import { Qualifier } from "./context/context";
 import { Logger } from "./logger";
 import { LoggerFactory } from "./logger";
@@ -33,12 +33,14 @@ export class SelectionController {
 
     private groupSelectsChildren: boolean;
 
+    private events: (() => void)[] = [];
+
     private setBeans(@Qualifier('loggerFactory') loggerFactory: LoggerFactory) {
         this.logger = loggerFactory.create('SelectionController');
         this.reset();
 
         if (this.gridOptionsWrapper.isRowModelDefault()) {
-            this.eventService.addEventListener(Events.EVENT_ROW_DATA_CHANGED, this.reset.bind(this));
+            this.events.push(this.eventService.addEventListener(Events.EVENT_ROW_DATA_CHANGED, this.reset.bind(this)));
         } else {
             this.logger.log('dont know what to do here');
         }
@@ -47,7 +49,15 @@ export class SelectionController {
     @PostConstruct
     public init(): void {
         this.groupSelectsChildren = this.gridOptionsWrapper.isGroupSelectsChildren();
-        this.eventService.addEventListener(Events.EVENT_ROW_SELECTED, this.onRowSelected.bind(this));
+        this.events.push(this.eventService.addEventListener(Events.EVENT_ROW_SELECTED, this.onRowSelected.bind(this)));
+    }
+
+    @PreDestroy
+    public destroy(): void {
+        if (this.events.length) {
+            this.events.forEach(func => func());
+        }
+        this.events = [];
     }
 
     public setLastSelectedNode(rowNode: RowNode): void {

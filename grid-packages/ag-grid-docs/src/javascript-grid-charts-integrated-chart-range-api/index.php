@@ -78,7 +78,7 @@ interface ProcessChartOptionsParams {
     The provided params contains the following attributes:
 </p>
 
-<ul>
+<ul class="content">
     <li>
         <code>cellRange</code>: Defines the range of cells to be charted. A range is normally defined
         with start and end rows and a list of columns. If the start and end rows are omitted, the range
@@ -132,7 +132,7 @@ interface ProcessChartOptionsParams {
     This example shows how charts can be created in the grid's provided popup window. The following can be noted:
 </p>
 
-<ul>
+<ul class="content">
     <li>
         Clicking 'Gold & Silver, 5 Rows' will chart the first five rows of Gold and Silver by Country.
     </li>
@@ -151,7 +151,7 @@ interface ProcessChartOptionsParams {
     than the grid's popup window. The following can be noted:
 </p>
 
-<ul>
+<ul class="content">
     <li>The charts are placed in <code>div</code> elements outside of the grid.</li>
     <li>The two pie charts are showing aggregations rather than charting individual rows.</li>
     <li>Clicking on a chart highlights the range in the grid for which the chart is based.</li>
@@ -228,14 +228,14 @@ interface GetChartImageDataUrlParams {
     It also shows how you can retrieve images rendered from the chart in multiple formats.
 </p>
 
-<ul>
-    <li>Create a range chart from the grid, which will be shown in a container below the grid</li>
-    <li>Make changes to the chart type, palette, data and/or formatting in order to see the changes restored later</li>
+<ul class="content">
+    <li>Create a range chart from the grid, which will be shown in a container below the grid.</li>
+    <li>Change the chart type, palette, data and/or formatting in order to see the changes restored later.</li>
     <li>Click "Save chart" to persist a model of the visible chart into a local variable. An alert will be shown to confirm that this has happened.</li>
-    <li>Click "Clear chart" to destroy the existing chart</li>
-    <li>Click "Restore chart" to restore the chart from the saved model (if one exists), and clear the local variable</li>
-    <li>Click "Open PNG" to open a PNG format image of the chart in a new window</li>
-    <li>Click "Open JPG" to open a JPG format image of the chart in a new window</li>
+    <li>Click "Clear chart" to destroy the existing chart.</li>
+    <li>Click "Restore chart" to restore the previously saved chart.</li>
+    <li>Click "Open PNG" to open a PNG format image of the chart in a new window.</li>
+    <li>Click "Open JPG" to open a JPG format image of the chart in a new window.</li>
 </ul>
 
 <?= grid_example('Saving and Restoring Charts', 'saving-and-restoring-charts', 'generated', ['exampleHeight' => 800,'enterprise' => true]) ?>

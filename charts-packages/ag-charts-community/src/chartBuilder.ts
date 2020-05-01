@@ -8,6 +8,7 @@ import {
     ScatterSeriesOptions,
     AreaSeriesOptions,
     PieSeriesOptions,
+    HistogramSeriesOptions,
     LegendOptions,
     CaptionOptions,
     FontWeight,
@@ -23,8 +24,9 @@ import { CartesianChart } from "./chart/cartesianChart";
 import { PolarChart } from "./chart/polarChart";
 import { LineSeries } from "./chart/series/cartesian/lineSeries";
 import { ScatterSeries } from "./chart/series/cartesian/scatterSeries";
-import { ColumnSeries as BarSeries } from "./chart/series/cartesian/columnSeries";
+import { BarSeries } from "./chart/series/cartesian/barSeries";
 import { AreaSeries } from "./chart/series/cartesian/areaSeries";
+import { HistogramSeries } from "./chart/series/cartesian/histogramSeries";
 import { PieSeries } from "./chart/series/polar/pieSeries";
 import { Chart } from "./chart/chart";
 import { Series, HighlightStyle } from "./chart/series/series";
@@ -47,6 +49,7 @@ import { Marker } from "./chart/marker/marker";
 import { ChartAxis, ChartAxisPosition } from "./chart/chartAxis";
 import { convertToMap } from "./util/map";
 import { TimeAxis } from "./chart/axis/timeAxis";
+import { SourceEventListener } from "./util/observable";
 
 export class ChartBuilder {
     private static createCartesianChart(container: HTMLElement, xAxis: ChartAxis, yAxis: ChartAxis, document?: Document): CartesianChart {
@@ -216,6 +219,20 @@ export class ChartBuilder {
         return chart;
     }
 
+    static createHistogramChart(container: HTMLElement, options: CartesianChartOptions<AreaSeriesOptions>): CartesianChart {
+
+        const chart = this.createCartesianChart(
+            container,
+            ChartBuilder.createNumberAxis(options.xAxis),
+            ChartBuilder.createNumberAxis(options.yAxis),
+            options.document
+        );
+
+        ChartBuilder.initChart(chart, options);
+
+        return chart;
+    }
+
     private static createPolarChart(container: HTMLElement): PolarChart {
         const chart = new PolarChart();
         chart.container = container;
@@ -250,6 +267,8 @@ export class ChartBuilder {
                 return ChartBuilder.initAreaSeries(new AreaSeries(), options);
             case 'pie':
                 return ChartBuilder.initPieSeries(new PieSeries(), options);
+            case 'histogram':
+                return ChartBuilder.initHistogramSeries(new HistogramSeries(), options);
             default:
                 return null;
         }
@@ -272,6 +291,18 @@ export class ChartBuilder {
             ChartBuilder.initLegend(chart.legend, options.legend);
         }
 
+        const listeners = options.listeners;
+        if (listeners) {
+            for (const key in listeners) {
+                if (listeners.hasOwnProperty(key)) {
+                    const listener = listeners[key];
+                    if (typeof listener === 'function') {
+                        chart.addEventListener(key, listener as SourceEventListener<C>);
+                    }
+                }
+            }
+        }
+
         return chart;
     }
 
@@ -279,6 +310,18 @@ export class ChartBuilder {
         this.setValueIfExists(series, 'visible', options.visible);
         this.setValueIfExists(series, 'showInLegend', options.showInLegend);
         this.setValueIfExists(series, 'data', options.data);
+
+        const listeners = options.listeners;
+        if (listeners) {
+            for (const key in listeners) {
+                if (listeners.hasOwnProperty(key)) {
+                    const listener = listeners[key];
+                    if (typeof listener === 'function') {
+                        series.addEventListener(key, listener as SourceEventListener<S>);
+                    }
+                }
+            }
+        }
 
         return series;
     }
@@ -525,6 +568,40 @@ export class ChartBuilder {
         }
 
         this.setTransformedValueIfExists(series, 'shadow', s => ChartBuilder.createDropShadow(s), options.shadow);
+
+        return series;
+    }
+
+    static initHistogramSeries(series: HistogramSeries, options: HistogramSeriesOptions): HistogramSeries {
+        ChartBuilder.initSeries(series, options);
+
+        const { field, fill, stroke, highlightStyle, tooltip, binCount } = options;
+
+        this.setValueIfExists(series, 'binCount', binCount);
+
+        if (field) {
+            this.setValueIfExists(series, 'xKey', field.xKey);
+        }
+
+        if (fill) {
+            this.setValueIfExists(series, 'fill', fill.color);
+            this.setValueIfExists(series, 'fillOpacity', fill.opacity);
+        }
+
+        if (stroke) {
+            this.setValueIfExists(series, 'stroke', stroke.color);
+            this.setValueIfExists(series, 'strokeOpacity', stroke.opacity);
+            this.setValueIfExists(series, 'strokeWidth', stroke.width);
+        }
+
+        if (highlightStyle) {
+            this.initHighlightStyle(series.highlightStyle, highlightStyle);
+        }
+
+        if (tooltip) {
+            this.setValueIfExists(series, 'tooltipEnabled', tooltip.enabled);
+            this.setValueIfExists(series, 'tooltipRenderer', tooltip.renderer);
+        }
 
         return series;
     }

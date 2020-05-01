@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v23.0.2
+ * @version v23.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -23,11 +23,11 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
-import { Component } from "../../widgets/component";
-import { RefSelector } from "../../widgets/componentAnnotations";
-import { Autowired, PostConstruct } from "../../context/context";
-import { _ } from "../../utils";
-import { Constants } from "../../constants";
+import { Component } from '../../widgets/component';
+import { RefSelector } from '../../widgets/componentAnnotations';
+import { Autowired, PostConstruct } from '../../context/context';
+import { _ } from '../../utils';
+import { Constants } from '../../constants';
 /**
  * Contains common logic to all provided filters (apply button, clear button, etc).
  * All the filters that come with ag-Grid extend this class. User filters do not
@@ -36,7 +36,17 @@ import { Constants } from "../../constants";
 var ProvidedFilter = /** @class */ (function (_super) {
     __extends(ProvidedFilter, _super);
     function ProvidedFilter() {
-        return _super !== null && _super.apply(this, arguments) || this;
+        var _this = _super !== null && _super.apply(this, arguments) || this;
+        _this.applyActive = false;
+        _this.hidePopup = null;
+        // after the user hits 'apply' the model gets copied to here. this is then the model that we use for
+        // all filtering. so if user changes UI but doesn't hit apply, then the UI will be out of sync with this model.
+        // this is what we want, as the UI should only become the 'active' filter once it's applied. when apply is
+        // inactive, this model will be in sync (following the debounce ms). if the UI is not a valid filter
+        // (eg the value is missing so nothing to filter on, or for set filter all checkboxes are checked so filter
+        // not active) then this appliedModel will be null/undefined.
+        _this.appliedModel = null;
+        return _this;
     }
     /** @deprecated */
     ProvidedFilter.prototype.onFilterChanged = function () {
@@ -48,7 +58,7 @@ var ProvidedFilter = /** @class */ (function (_super) {
         return !!this.appliedModel;
     };
     ProvidedFilter.prototype.postConstruct = function () {
-        var templateString = this.createTemplate();
+        var templateString = /* html */ "\n            <div>\n                <div class=\"ag-filter-body-wrapper ag-" + this.getCssIdentifier() + "-body-wrapper\" ref=\"eFilterBodyWrapper\">\n                    " + this.createBodyTemplate() + "\n                </div>\n            </div>";
         this.setTemplate(templateString);
     };
     ProvidedFilter.prototype.init = function (params) {
@@ -58,9 +68,7 @@ var ProvidedFilter = /** @class */ (function (_super) {
         this.setupOnBtApplyDebounce();
     };
     ProvidedFilter.prototype.setParams = function (params) {
-        var _this = this;
         this.providedFilterParams = params;
-        this.applyActive = ProvidedFilter.isUseApplyButton(params);
         if (params.newRowsAction === ProvidedFilter.NEW_ROWS_ACTION_KEEP) {
             this.newRowsActionKeep = true;
         }
@@ -73,18 +81,34 @@ var ProvidedFilter = /** @class */ (function (_super) {
             var modelsForKeep = [Constants.ROW_MODEL_TYPE_SERVER_SIDE, Constants.ROW_MODEL_TYPE_INFINITE];
             this.newRowsActionKeep = modelsForKeep.indexOf(rowModelType) >= 0;
         }
-        _.setDisplayed(this.eApplyButton, this.applyActive);
-        // we do not bind onBtApply here because onBtApply() has a parameter, and it is not the event. if we
-        // just applied, the event would get passed as the second parameter, which we do not want.
-        this.addDestroyableEventListener(this.eApplyButton, "click", function () { return _this.onBtApply(true); });
+        this.applyActive = ProvidedFilter.isUseApplyButton(params);
+        this.createButtonPanel(params);
+    };
+    ProvidedFilter.prototype.createButtonPanel = function (params) {
+        var _this = this;
         var clearActive = params.clearButton === true;
-        _.setDisplayed(this.eClearButton, clearActive);
-        this.addDestroyableEventListener(this.eClearButton, "click", function () { return _this.onBtClear(); });
         var resetActive = params.resetButton === true;
-        _.setDisplayed(this.eResetButton, resetActive);
-        this.addDestroyableEventListener(this.eResetButton, "click", function () { return _this.onBtReset(); });
         var anyButtonVisible = this.applyActive || clearActive || resetActive;
-        _.setDisplayed(this.eButtonsPanel, anyButtonVisible);
+        if (anyButtonVisible) {
+            var translate = this.gridOptionsWrapper.getLocaleTextFunc();
+            var eButtonsPanel_1 = document.createElement('div');
+            _.addCssClass(eButtonsPanel_1, 'ag-filter-apply-panel');
+            var addButton = function (text, clickListener) {
+                var button = _.loadTemplate(/* html */ "<button type=\"button\" class=\"ag-standard-button ag-filter-apply-panel-button\">" + text + "</button>");
+                eButtonsPanel_1.appendChild(button);
+                _this.addDestroyableEventListener(button, 'click', clickListener);
+            };
+            if (clearActive) {
+                addButton(translate('clearFilter', 'Clear Filter'), function () { return _this.onBtClear(); });
+            }
+            if (resetActive) {
+                addButton(translate('resetFilter', 'Reset Filter'), function () { return _this.onBtReset(); });
+            }
+            if (this.applyActive) {
+                addButton(translate('applyFilter', 'Apply Filter'), function () { return _this.onBtApply(); });
+            }
+            this.eFilterBodyWrapper.parentElement.appendChild(eButtonsPanel_1);
+        }
     };
     // subclasses can override this to provide alternative debounce defaults
     ProvidedFilter.prototype.getDefaultDebounceMs = function () {
@@ -125,17 +149,20 @@ var ProvidedFilter = /** @class */ (function (_super) {
         this.appliedModel = this.getModelFromUi();
         // models can be same if user pasted same content into text field, or maybe just changed the case
         // and it's a case insensitive filter
-        var newModelDifferent = !this.areModelsEqual(this.appliedModel, oldAppliedModel);
-        return newModelDifferent;
+        return !this.areModelsEqual(this.appliedModel, oldAppliedModel);
     };
     ProvidedFilter.prototype.onBtApply = function (afterFloatingFilter, afterDataChange) {
         if (afterFloatingFilter === void 0) { afterFloatingFilter = false; }
         if (afterDataChange === void 0) { afterDataChange = false; }
-        var newModelDifferent = this.applyModel();
-        if (newModelDifferent) {
+        if (this.applyModel()) {
             // the floating filter uses 'afterFloatingFilter' info, so it doesn't refresh after filter changed if change
             // came from floating filter
             this.providedFilterParams.filterChangedCallback({ afterFloatingFilter: afterFloatingFilter, afterDataChange: afterDataChange });
+        }
+        var _a = this.providedFilterParams, closeOnApply = _a.closeOnApply, applyButton = _a.applyButton, resetButton = _a.resetButton;
+        if (closeOnApply && !afterFloatingFilter && this.hidePopup && (applyButton || resetButton)) {
+            this.hidePopup();
+            this.hidePopup = null;
         }
     };
     ProvidedFilter.prototype.onNewRowsLoaded = function () {
@@ -152,19 +179,17 @@ var ProvidedFilter = /** @class */ (function (_super) {
         if (afterFloatingFilter === void 0) { afterFloatingFilter = false; }
         this.updateUiVisibility();
         this.providedFilterParams.filterModifiedCallback();
-        // applyNow=true for floating filter changes, we always act on these immediately
         if (afterFloatingFilter) {
-            this.onBtApply(afterFloatingFilter);
-            // otherwise if no apply button, we apply (but debounce for time delay)
+            // floating filter changes are always applied immediately
+            this.onBtApply(true);
         }
         else if (!this.applyActive) {
+            // if no apply button, we apply (but debounce for time delay)
             this.onBtApplyDebounce();
         }
     };
-    ProvidedFilter.prototype.createTemplate = function () {
-        var body = this.createBodyTemplate();
-        var translate = this.gridOptionsWrapper.getLocaleTextFunc();
-        return "<div>\n                    <div class='ag-filter-body-wrapper ag-" + this.getCssIdentifier() + "-body-wrapper' ref=\"eFilterBodyWrapper\">" + body + "</div>\n                    <div class=\"ag-filter-apply-panel\" ref=\"eButtonsPanel\">\n                        <button type=\"button\" ref=\"eClearButton\" class=\"ag-standard-button ag-filter-apply-panel-button\">" + translate('clearFilter', 'Clear Filter') + "</button>\n                        <button type=\"button\" ref=\"eResetButton\" class=\"ag-standard-button ag-filter-apply-panel-button\">" + translate('resetFilter', 'Reset Filter') + "</button>\n                        <button type=\"button\" ref=\"eApplyButton\" class=\"ag-standard-button ag-filter-apply-panel-button\">" + translate('applyFilter', 'Apply Filter') + "</button>\n                    </div>\n                </div>";
+    ProvidedFilter.prototype.afterGuiAttached = function (params) {
+        this.hidePopup = params.hidePopup;
     };
     // static, as used by floating filter also
     ProvidedFilter.getDebounceMs = function (params, debounceDefault) {
@@ -185,23 +210,15 @@ var ProvidedFilter = /** @class */ (function (_super) {
         }
         return params.applyButton === true;
     };
+    ProvidedFilter.prototype.destroy = function () {
+        this.hidePopup = null;
+        _super.prototype.destroy.call(this);
+    };
     ProvidedFilter.NEW_ROWS_ACTION_KEEP = 'keep';
     ProvidedFilter.NEW_ROWS_ACTION_CLEAR = 'clear';
     __decorate([
-        RefSelector('eButtonsPanel')
-    ], ProvidedFilter.prototype, "eButtonsPanel", void 0);
-    __decorate([
         RefSelector('eFilterBodyWrapper')
     ], ProvidedFilter.prototype, "eFilterBodyWrapper", void 0);
-    __decorate([
-        RefSelector('eClearButton')
-    ], ProvidedFilter.prototype, "eClearButton", void 0);
-    __decorate([
-        RefSelector('eResetButton')
-    ], ProvidedFilter.prototype, "eResetButton", void 0);
-    __decorate([
-        RefSelector('eApplyButton')
-    ], ProvidedFilter.prototype, "eApplyButton", void 0);
     __decorate([
         Autowired('gridOptionsWrapper')
     ], ProvidedFilter.prototype, "gridOptionsWrapper", void 0);

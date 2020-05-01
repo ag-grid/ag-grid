@@ -1,13 +1,11 @@
 import { Selection } from "../../../scene/selection";
 import { Group } from "../../../scene/group";
-import { SeriesNodeDatum, CartesianTooltipRendererParams } from "../series";
-import { numericExtent, finiteExtent } from "../../../util/array";
+import { SeriesNodeDatum, CartesianTooltipRendererParams, HighlightStyle } from "../series";
+import { finiteExtent } from "../../../util/array";
 import { toFixed } from "../../../util/number";
 import { LegendDatum } from "../../legend";
-import { Shape } from "../../../scene/shape/shape";
 import { LinearScale } from "../../../scale/linearScale";
-import { Marker } from "../../marker/marker";
-import { reactive } from "../../../util/observable";
+import { reactive, TypedEvent } from "../../../util/observable";
 import { CartesianSeries, CartesianSeriesMarker, CartesianSeriesMarkerFormat } from "./cartesianSeries";
 import { ChartAxisDirection } from "../../chartAxis";
 import palette from "../../palettes";
@@ -15,10 +13,21 @@ import { getMarker } from "../../marker/util";
 import { Chart } from "../../chart";
 import ContinuousScale from "../../../scale/continuousScale";
 
-interface GroupSelectionDatum extends SeriesNodeDatum {
-    x: number;
-    y: number;
+interface ScatterNodeDatum extends SeriesNodeDatum {
+    point: {
+        x: number;
+        y: number;
+    };
     size: number;
+}
+
+export interface ScatterSeriesNodeClickEvent extends TypedEvent {
+    type: 'nodeClick';
+    series: ScatterSeries;
+    datum: any;
+    xKey: string;
+    yKey: string;
+    sizeKey?: string;
 }
 
 export interface ScatterTooltipRendererParams extends CartesianTooltipRendererParams {
@@ -41,9 +50,8 @@ export class ScatterSeries extends CartesianSeries {
     private sizeData: number[] = [];
     private sizeScale = new LinearScale();
 
-    private groupSelection: Selection<Group, Group, GroupSelectionDatum, any> = Selection.select(this.group).selectAll<Group>();
-
-    private highlightedNode?: Marker;
+    private nodeSelection: Selection<Group, Group, ScatterNodeDatum, any> = Selection.select(this.group).selectAll<Group>();
+    private nodeData: ScatterNodeDatum[] = [];
 
     readonly marker = new CartesianSeriesMarker();
 
@@ -102,12 +110,11 @@ export class ScatterSeries extends CartesianSeries {
         return this._strokeOpacity;
     }
 
-    highlightStyle: {
-        fill?: string,
-        stroke?: string
-    } = {
-        fill: 'yellow'
-    };
+    highlightStyle: HighlightStyle = { fill: 'yellow' };
+
+    onHighlightChange() {
+        this.updateNodes();
+    }
 
     @reactive('layoutChange') title?: string;
     @reactive('dataChange') xKey: string = '';
@@ -126,8 +133,8 @@ export class ScatterSeries extends CartesianSeries {
         super();
 
         const { marker } = this;
-        marker.addPropertyListener('shape', () => this.onMarkerShapeChange());
-        marker.addEventListener('change', () => this.update());
+        marker.addPropertyListener('shape', this.onMarkerShapeChange, this);
+        marker.addEventListener('change', this.update, this);
 
         this.addPropertyListener('xKey', () => this.xData = []);
         this.addPropertyListener('yKey', () => this.yData = []);
@@ -135,21 +142,15 @@ export class ScatterSeries extends CartesianSeries {
     }
 
     onMarkerShapeChange() {
-        this.groupSelection = this.groupSelection.setData([]);
-        this.groupSelection.exit.remove();
+        this.nodeSelection = this.nodeSelection.setData([]);
+        this.nodeSelection.exit.remove();
         this.update();
 
-        this.fireEvent({type: 'legendChange'});
+        this.fireEvent({ type: 'legendChange' });
     }
 
     processData(): boolean {
-        const {
-            xKey,
-            yKey,
-            sizeKey,
-            xAxis,
-            yAxis
-        } = this;
+        const { xKey, yKey, sizeKey, xAxis, yAxis } = this;
 
         const data = xKey && yKey && this.data ? this.data : [];
 
@@ -185,18 +186,40 @@ export class ScatterSeries extends CartesianSeries {
         }
     }
 
-    highlightNode(node: Shape) {
-        if (!(node instanceof Marker)) {
-            return;
-        }
-
-        this.highlightedNode = node;
-        this.scheduleLayout();
+    getNodeData(): ScatterNodeDatum[] {
+        return this.nodeData;
     }
 
-    dehighlightNode() {
-        this.highlightedNode = undefined;
-        this.scheduleLayout();
+    fireNodeClickEvent(datum: ScatterNodeDatum): void {
+        this.fireEvent<ScatterSeriesNodeClickEvent>({
+            type: 'nodeClick',
+            series: this,
+            datum: datum.seriesDatum,
+            xKey: this.xKey,
+            yKey: this.yKey,
+            sizeKey: this.sizeKey
+        });
+    }
+
+    private generateNodeData(): ScatterNodeDatum[] {
+        const xScale = this.xAxis.scale;
+        const yScale = this.yAxis.scale;
+        const xOffset = (xScale.bandwidth || 0) / 2;
+        const yOffset = (yScale.bandwidth || 0) / 2;
+
+        const { data, xData, yData, sizeData, sizeScale, marker } = this;
+
+        sizeScale.range = [marker.minSize, marker.size];
+
+        return xData.map((xDatum, i) => ({
+            series: this,
+            seriesDatum: data[i],
+            point: {
+                x: xScale.convert(xDatum) + xOffset,
+                y: yScale.convert(yData[i]) + yOffset
+            },
+            size: sizeData.length ? sizeScale.convert(sizeData[i]) : marker.size
+        }));
     }
 
     update(): void {
@@ -204,59 +227,41 @@ export class ScatterSeries extends CartesianSeries {
 
         this.group.visible = visible;
 
-        if (!xAxis || !yAxis || !visible || !chart || chart.layoutPending || chart.dataPending) {
+        if (!visible || !chart || chart.layoutPending || chart.dataPending || !xAxis || !yAxis) {
             return;
         }
 
-        const xScale = xAxis.scale;
-        const yScale = yAxis.scale;
-        const xOffset = (xScale.bandwidth || 0) / 2;
-        const yOffset = (yScale.bandwidth || 0) / 2;
+        const nodeData = this.nodeData = this.generateNodeData();
 
-        const {
-            data,
-            xData,
-            yData,
-            sizeData,
-            xKey,
-            yKey,
-            sizeScale,
-            marker,
-            fill,
-            stroke,
-            strokeWidth,
-            fillOpacity,
-            strokeOpacity,
-            highlightedNode
-        } = this;
+        this.updateNodeSelection(nodeData);
+        this.updateNodes();
+    }
 
+    private updateNodeSelection(nodeData: ScatterNodeDatum[]): void {
+        const MarkerShape = getMarker(this.marker.shape);
+
+        const updateSelection = this.nodeSelection.setData(nodeData);
+        updateSelection.exit.remove();
+
+        const enterSelection = updateSelection.enter.append(Group);
+        enterSelection.append(MarkerShape);
+
+        this.nodeSelection = updateSelection.merge(enterSelection);
+    }
+
+    private updateNodes(): void {
+        const { highlightedDatum } = this.chart;
+        const { marker, xKey, yKey, fill, stroke, strokeWidth, fillOpacity, strokeOpacity } = this;
+        const { fill: highlightFill, stroke: highlightStroke } = this.highlightStyle;
+        const markerStrokeWidth = marker.strokeWidth !== undefined ? marker.strokeWidth : strokeWidth;
         const MarkerShape = getMarker(marker.shape);
         const markerFormatter = marker.formatter;
 
-        this.sizeScale.range = [marker.minSize, marker.size];
-
-        const groupSelectionData: GroupSelectionDatum[] = xData.map((xDatum, i) => ({
-            seriesDatum: data[i],
-            x: xScale.convert(xDatum) + xOffset,
-            y: yScale.convert(yData[i]) + yOffset,
-            size: sizeData.length ? sizeScale.convert(sizeData[i]) : marker.size
-        }));
-
-        const updateGroups = this.groupSelection.setData(groupSelectionData);
-        updateGroups.exit.remove();
-
-        const enterGroups = updateGroups.enter.append(Group);
-        enterGroups.append(MarkerShape);
-
-        const groupSelection = updateGroups.merge(enterGroups);
-        const { fill: highlightFill, stroke: highlightStroke } = this.highlightStyle;
-        const markerStrokeWidth = marker.strokeWidth !== undefined ? marker.strokeWidth : strokeWidth;
-
-        groupSelection.selectByClass(MarkerShape)
+        this.nodeSelection.selectByClass(MarkerShape)
             .each((node, datum) => {
-                const isHighlightedNode = node === highlightedNode;
-                const markerFill = isHighlightedNode && highlightFill !== undefined ? highlightFill : marker.fill || fill;
-                const markerStroke = isHighlightedNode && highlightStroke !== undefined ? highlightStroke : marker.stroke || stroke;
+                const highlighted = datum === highlightedDatum;
+                const markerFill = highlighted && highlightFill !== undefined ? highlightFill : marker.fill || fill;
+                const markerStroke = highlighted && highlightStroke !== undefined ? highlightStroke : marker.stroke || stroke;
                 let markerFormat: CartesianSeriesMarkerFormat | undefined = undefined;
 
                 if (markerFormatter) {
@@ -268,7 +273,7 @@ export class ScatterSeries extends CartesianSeries {
                         stroke: markerStroke,
                         strokeWidth: markerStrokeWidth,
                         size: datum.size,
-                        highlighted: isHighlightedNode
+                        highlighted
                     });
                 }
 
@@ -282,15 +287,13 @@ export class ScatterSeries extends CartesianSeries {
                     : datum.size;
                 node.fillOpacity = fillOpacity;
                 node.strokeOpacity = strokeOpacity;
-                node.translationX = datum.x;
-                node.translationY = datum.y;
+                node.translationX = datum.point.x;
+                node.translationY = datum.point.y;
                 node.visible = marker.enabled && node.size > 0;
             });
-
-        this.groupSelection = groupSelection;
     }
 
-    getTooltipHtml(nodeDatum: GroupSelectionDatum): string {
+    getTooltipHtml(nodeDatum: ScatterNodeDatum): string {
         const { xKey, yKey } = this;
 
         if (!xKey || !yKey) {

@@ -49,7 +49,8 @@ var ColumnToolPanel = /** @class */ (function (_super) {
             suppressValues: false,
             suppressPivots: false,
             suppressSyncLayoutWithGrid: false,
-            api: this.gridApi
+            api: this.gridApi,
+            columnApi: this.columnApi
         };
         core_1._.mergeDeep(defaultParams, params);
         this.params = defaultParams;
@@ -188,6 +189,9 @@ var ColumnToolPanel = /** @class */ (function (_super) {
     __decorate([
         core_1.Autowired("gridApi")
     ], ColumnToolPanel.prototype, "gridApi", void 0);
+    __decorate([
+        core_1.Autowired("columnApi")
+    ], ColumnToolPanel.prototype, "columnApi", void 0);
     __decorate([
         core_1.Autowired("eventService")
     ], ColumnToolPanel.prototype, "eventService", void 0);

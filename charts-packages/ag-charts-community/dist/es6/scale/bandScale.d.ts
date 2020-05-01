@@ -19,40 +19,33 @@ export declare class BandScale<D> implements Scale<D, number> {
      * the uniqueness check.
      */
     private _domain;
-    set domain(values: D[]);
-    get domain(): D[];
+    domain: D[];
     private _range;
-    set range(values: [number, number]);
-    get range(): [number, number];
+    range: [number, number];
     ticks(): D[];
     convert(d: D): number;
     private _bandwidth;
-    get bandwidth(): number;
-    set padding(value: number);
-    get padding(): number;
+    readonly bandwidth: number;
+    padding: number;
     /**
      * The ratio of the range that is reserved for space between bands.
      */
     private _paddingInner;
-    set paddingInner(value: number);
-    get paddingInner(): number;
+    paddingInner: number;
     /**
      * The ratio of the range that is reserved for space before the first
      * and after the last band.
      */
     private _paddingOuter;
-    set paddingOuter(value: number);
-    get paddingOuter(): number;
+    paddingOuter: number;
     private _round;
-    set round(value: boolean);
-    get round(): boolean;
+    round: boolean;
     /**
      * How the leftover range is distributed.
      * `0.5` - equal distribution of space before the first and after the last band,
      * with bands effectively centered within the range.
      */
     private _align;
-    set align(value: number);
-    get align(): number;
+    align: number;
     protected rescale(): void;
 }

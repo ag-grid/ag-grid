@@ -1,8 +1,10 @@
-import {Autowired, Component, GridOptionsWrapper, RefSelector} from '@ag-grid-community/core';
+import {Autowired, Component, GridOptionsWrapper, RefSelector, PreDestroy} from '@ag-grid-community/core';
 
 export class NameValueComp extends Component {
 
     @Autowired('gridOptionsWrapper') protected gridOptionsWrapper: GridOptionsWrapper;
+
+    protected events: (() => void)[] = [];
 
     private static TEMPLATE =
         `<div class="ag-status-name-value">  
@@ -27,5 +29,11 @@ export class NameValueComp extends Component {
 
     public setValue(value: any): void {
         this.eValue.innerHTML = value;
+    }
+
+    public destroy(): void {
+        this.events.forEach(func => func());
+        this.events = [];
+        super.destroy();
     }
 }

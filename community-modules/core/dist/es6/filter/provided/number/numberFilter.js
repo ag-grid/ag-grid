@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v23.0.2
+ * @version v23.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -26,7 +26,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 import { RefSelector } from "../../../widgets/componentAnnotations";
 import { _ } from "../../../utils";
 import { SimpleFilter, ConditionPosition } from "../simpleFilter";
-import { ScalerFilter } from "../scalerFilter";
+import { ScalarFilter } from "../scalarFilter";
 var NumberFilter = /** @class */ (function (_super) {
     __extends(NumberFilter, _super);
     function NumberFilter() {
@@ -85,14 +85,15 @@ var NumberFilter = /** @class */ (function (_super) {
     };
     NumberFilter.prototype.resetPlaceholder = function () {
         var translate = this.translate.bind(this);
-        var isRange1 = this.getCondition1Type() === ScalerFilter.IN_RANGE;
-        var isRange2 = this.getCondition2Type() === ScalerFilter.IN_RANGE;
-        this.eValueFrom1.setInputPlaceholder(translate(isRange1 ? 'rangeStart' : 'filterOoo'));
-        this.eValueTo1.setInputPlaceholder(translate(isRange1 ? 'rangeEnd' : 'filterOoo'));
-        this.eValueFrom2.setInputPlaceholder(translate(isRange2 ? 'rangeStart' : 'filterOoo'));
-        this.eValueTo2.setInputPlaceholder(translate(isRange2 ? 'rangeEnd' : 'filterOoo'));
+        var isRange1 = this.getCondition1Type() === ScalarFilter.IN_RANGE;
+        var isRange2 = this.getCondition2Type() === ScalarFilter.IN_RANGE;
+        this.eValueFrom1.setInputPlaceholder(translate(isRange1 ? 'inRangeStart' : 'filterOoo'));
+        this.eValueTo1.setInputPlaceholder(translate(isRange1 ? 'inRangeEnd' : 'filterOoo'));
+        this.eValueFrom2.setInputPlaceholder(translate(isRange2 ? 'inRangeStart' : 'filterOoo'));
+        this.eValueTo2.setInputPlaceholder(translate(isRange2 ? 'inRangeEnd' : 'filterOoo'));
     };
-    NumberFilter.prototype.afterGuiAttached = function () {
+    NumberFilter.prototype.afterGuiAttached = function (params) {
+        _super.prototype.afterGuiAttached.call(this, params);
         this.resetPlaceholder();
         this.eValueFrom1.getInputElement().focus();
     };
@@ -179,13 +180,13 @@ var NumberFilter = /** @class */ (function (_super) {
     };
     NumberFilter.FILTER_TYPE = 'number';
     NumberFilter.DEFAULT_FILTER_OPTIONS = [
-        ScalerFilter.EQUALS,
-        ScalerFilter.NOT_EQUAL,
-        ScalerFilter.LESS_THAN,
-        ScalerFilter.LESS_THAN_OR_EQUAL,
-        ScalerFilter.GREATER_THAN,
-        ScalerFilter.GREATER_THAN_OR_EQUAL,
-        ScalerFilter.IN_RANGE
+        ScalarFilter.EQUALS,
+        ScalarFilter.NOT_EQUAL,
+        ScalarFilter.LESS_THAN,
+        ScalarFilter.LESS_THAN_OR_EQUAL,
+        ScalarFilter.GREATER_THAN,
+        ScalarFilter.GREATER_THAN_OR_EQUAL,
+        ScalarFilter.IN_RANGE
     ];
     __decorate([
         RefSelector('eValueFrom1')
@@ -200,5 +201,5 @@ var NumberFilter = /** @class */ (function (_super) {
         RefSelector('eValueTo2')
     ], NumberFilter.prototype, "eValueTo2", void 0);
     return NumberFilter;
-}(ScalerFilter));
+}(ScalarFilter));
 export { NumberFilter };

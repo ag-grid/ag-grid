@@ -1,11 +1,11 @@
 // This fake server uses http://alasql.org/ to mimic how a real server
-// might generate sql queries from the Server-side Row Model request.
+// might generate sql queries from the Server-Side Row Model request.
 // To keep things simple it does the bare minimum to support the example.
 function FakeServer(allData) {
     alasql.options.cache = false;
 
     return {
-        getData: function (request) {
+        getData: function(request) {
             var results = executeQuery(request);
             return {
                 success: true,
@@ -44,7 +44,7 @@ function FakeServer(allData) {
         var filterModel = request.filterModel;
         if (filterModel) {
             var columnKeys = Object.keys(filterModel);
-            whereParts = columnKeys.map(function (columnKey) {
+            whereParts = columnKeys.map(function(columnKey) {
                 var filter = filterModel[columnKey];
                 if (filter.filterType === 'set') {
                     return columnKey + ' IN (\'' + filter.values.join("', '") + '\')';
@@ -95,7 +95,7 @@ function ServerSideDatasource(server) {
             var response = server.getData(params.request);
 
             // simulating real server call with a 500ms delay
-            setTimeout(function () {
+            setTimeout(function() {
                 if (response.success) {
                     // supply rows for requested block to grid
                     params.successCallback(response.rows, response.lastRow);

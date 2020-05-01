@@ -1,7 +1,7 @@
-// ag-grid-react v23.0.2
+// ag-grid-react v23.1.0
 import { ComponentType, Promise } from 'ag-grid-community';
 import { AgGridReact } from "./agGridReact";
-import { BaseReactComponent } from "./baseReactComponent";
+import { BaseReactComponent } from './baseReactComponent';
 export declare class ReactComponent extends BaseReactComponent {
     static REACT_MEMO_TYPE: number | symbol;
     private eParentElement;
@@ -13,6 +13,7 @@ export declare class ReactComponent extends BaseReactComponent {
     private componentWrappingElement;
     private statelessComponent;
     private staticMarkup;
+    private staticRenderTime;
     constructor(reactComponent: any, parentComponent: AgGridReact, componentType: ComponentType);
     getFrameworkComponentInstance(): any;
     isStatelessComponent(): boolean;

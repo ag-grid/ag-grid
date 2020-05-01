@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v23.0.2
+ * @version v23.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -46,7 +46,6 @@ var GridCore = /** @class */ (function (_super) {
         // register with services that need grid core
         [
             this.gridApi,
-            this.filterManager,
             this.rowRenderer,
             this.popupService
         ].forEach(function (service) { return service.registerGridCore(_this); });
@@ -177,12 +176,12 @@ var GridCore = /** @class */ (function (_super) {
         return this.sideBarComp.isToolPanelShowing();
     };
     GridCore.prototype.destroy = function () {
-        _super.prototype.destroy.call(this);
         this.logger.log('Grid DOM removed');
+        _super.prototype.destroy.call(this);
     };
     // Valid values for position are bottom, middle and top
     GridCore.prototype.ensureNodeVisible = function (comparator, position) {
-        if (position === void 0) { position = 'top'; }
+        if (position === void 0) { position = null; }
         if (this.doingVirtualPaging) {
             throw new Error('Cannot use ensureNodeVisible when doing virtual paging, as we cannot check rows that are not in memory');
         }

@@ -16,7 +16,7 @@ function frostierYear(extraDaysFrost) {
     // iterate over the rows and make each "days of air frost"
     gridOptions.api.forEachNode(function(rowNode) {
         rowNode.setDataValue('Days of air frost (days)', rowNode.data['Days of air frost (days)'] + extraDaysFrost);
-    })
+    });
 }
 
 /**
@@ -30,9 +30,9 @@ function deltaIndicator(params) {
 
     // visually indicate if this months value is higher or lower than last months value
     if (params.value > 15) {
-        imageElement.src = "https://raw.githubusercontent.com/ag-grid/ag-grid/master/grid-packages/ag-grid-docs/src/images/fire-plus.png"
+        imageElement.src = "https://raw.githubusercontent.com/ag-grid/ag-grid/master/grid-packages/ag-grid-docs/src/images/fire-plus.png";
     } else {
-        imageElement.src = "https://raw.githubusercontent.com/ag-grid/ag-grid/master/grid-packages/ag-grid-docs/src/images/fire-minus.png"
+        imageElement.src = "https://raw.githubusercontent.com/ag-grid/ag-grid/master/grid-packages/ag-grid-docs/src/images/fire-minus.png";
     }
     element.appendChild(imageElement);
     element.appendChild(document.createTextNode(params.value));
@@ -45,7 +45,7 @@ function deltaIndicator(params) {
 function DaysFrostRenderer() {
     this.eGui = document.createElement("span");
 }
-DaysFrostRenderer.prototype.init = function (params) {
+DaysFrostRenderer.prototype.init = function(params) {
     this.rendererImage = params.rendererImage;
     this.value = params.value;
     this.updateImages();
@@ -61,7 +61,7 @@ DaysFrostRenderer.prototype.updateImages = function() {
 DaysFrostRenderer.prototype.getGui = function getGui() {
     return this.eGui;
 };
-DaysFrostRenderer.prototype.refresh = function (params) {
+DaysFrostRenderer.prototype.refresh = function(params) {
     this.value = params.value;
 
     this.eGui.innerHTML = '';
@@ -89,7 +89,7 @@ var columnDefs = [
         headerName: "Month",
         field: "Month",
         width: 75,
-        cellStyle: {color: 'darkred'}
+        cellStyle: { color: 'darkred' }
     },
     {
         headerName: "Max Temp (˚C)",
@@ -136,7 +136,7 @@ var columnDefs = [
 var gridOptions = {
     columnDefs: columnDefs,
     rowData: null,
-    components:{
+    components: {
         deltaIndicator: deltaIndicator,
         daysFrostRenderer: DaysFrostRenderer,
         daysSunshineRenderer: daysSunshineRenderer,
@@ -153,19 +153,12 @@ var gridOptions = {
 };
 
 // setup the grid after the page has finished loading
-document.addEventListener('DOMContentLoaded', function () {
+document.addEventListener('DOMContentLoaded', function() {
     var gridDiv = document.querySelector('#myGrid');
     new agGrid.Grid(gridDiv, gridOptions);
 
-    // do http request to get our sample data - not using any framework to keep the example self contained.
-    // you will probably use a framework like JQuery, Angular or something else to do your HTTP calls.
-    var httpRequest = new XMLHttpRequest();
-    httpRequest.open('GET', 'https://raw.githubusercontent.com/ag-grid/ag-grid/master/grid-packages/ag-grid-docs/src/weather_se_england.json');
-    httpRequest.send();
-    httpRequest.onreadystatechange = function () {
-        if (httpRequest.readyState === 4 && httpRequest.status === 200) {
-            var httpResult = JSON.parse(httpRequest.responseText);
-            gridOptions.api.setRowData(httpResult);
-        }
-    };
+    agGrid.simpleHttpRequest({ url: 'https://raw.githubusercontent.com/ag-grid/ag-grid/master/grid-packages/ag-grid-docs/src/weather_se_england.json' })
+        .then(function(data) {
+            gridOptions.api.setRowData(data);
+        });
 });

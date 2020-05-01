@@ -67,8 +67,8 @@ function ServerSideDatasource(server) {
 
             var response = server.getData(params.request);
 
-            // adding delay to simulate real sever call
-            setTimeout(function () {
+            // adding delay to simulate real server call
+            setTimeout(function() {
                 if (response.success) {
                     // call the success callback
                     params.successCallback(response.rows, response.lastRow);
@@ -89,8 +89,8 @@ function createRowData() {
     }
 
     var rowData = [];
-    for (var i = 0; i<10; i++) {
-        for (var j = 0; j<50  ; j++) {
+    for (var i = 0; i < 10; i++) {
+        for (var j = 0; j < 50; j++) {
             rowData.push({
                 name: 'Group ' + j,
                 autoA: generateRandomSentence(),

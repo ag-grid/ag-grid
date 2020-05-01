@@ -1,92 +1,117 @@
 "use strict";
+var __assign = (this && this.__assign) || function () {
+    __assign = Object.assign || function(t) {
+        for (var s, i = 1, n = arguments.length; i < n; i++) {
+            s = arguments[i];
+            for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
+                t[p] = s[p];
+        }
+        return t;
+    };
+    return __assign.apply(this, arguments);
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 var Observable = /** @class */ (function () {
     function Observable() {
-        this.propertyListeners = new Map(); // property name => property change listeners
-        this.eventListeners = new Map(); // event type => event listeners
+        // Note that these maps can't be specified generically, so they are kept untyped.
+        // Some methods in this class only need generics in their signatures, the generics inside the methods
+        // are just for clarity. The generics in signatures allow for static type checking of user provided
+        // listeners and for type inference, so that the users wouldn't have to specify the type of parameters
+        // of their inline lambdas.
+        this.allPropertyListeners = new Map(); // property name => property change listener => scopes
+        this.allEventListeners = new Map(); // event type => event listener => scopes
     }
-    Observable.prototype.addPropertyListener = function (name, listener) {
-        var propertyListeners = this.propertyListeners;
-        var listeners = propertyListeners.get(name);
-        if (!listeners) {
-            listeners = new Set();
-            propertyListeners.set(name, listeners);
+    Observable.prototype.addPropertyListener = function (name, listener, scope) {
+        if (scope === void 0) { scope = this; }
+        var allPropertyListeners = this.allPropertyListeners;
+        var propertyListeners = allPropertyListeners.get(name);
+        if (!propertyListeners) {
+            propertyListeners = new Map();
+            allPropertyListeners.set(name, propertyListeners);
         }
-        if (!listeners.has(listener)) {
-            listeners.add(listener);
-            return listener;
+        if (!propertyListeners.has(listener)) {
+            var scopes = new Set();
+            propertyListeners.set(listener, scopes);
         }
-        else {
-            console.warn('Listener ', listener, ' already added to ', this);
-        }
+        propertyListeners.get(listener).add(scope);
     };
-    Observable.prototype.removePropertyListener = function (name, listener) {
-        var propertyListeners = this.propertyListeners;
-        var listeners = propertyListeners.get(name);
-        if (listeners) {
+    Observable.prototype.removePropertyListener = function (name, listener, scope) {
+        if (scope === void 0) { scope = this; }
+        var allPropertyListeners = this.allPropertyListeners;
+        var propertyListeners = allPropertyListeners.get(name);
+        if (propertyListeners) {
             if (listener) {
-                listeners.delete(listener);
+                var scopes = propertyListeners.get(listener);
+                scopes.delete(scope);
+                if (!scopes.size) {
+                    propertyListeners.delete(listener);
+                }
             }
             else {
-                listeners.clear();
+                propertyListeners.clear();
             }
         }
     };
     Observable.prototype.notifyPropertyListeners = function (name, oldValue, value) {
         var _this = this;
-        var nameListeners = this.propertyListeners;
-        var listeners = nameListeners.get(name);
-        if (listeners) {
-            listeners.forEach(function (listener) {
-                listener({
-                    type: name,
-                    source: _this,
-                    value: value,
-                    oldValue: oldValue
-                });
+        var allPropertyListeners = this.allPropertyListeners;
+        var propertyListeners = allPropertyListeners.get(name);
+        if (propertyListeners) {
+            propertyListeners.forEach(function (scopes, listener) {
+                scopes.forEach(function (scope) { return listener.call(scope, { type: name, source: _this, value: value, oldValue: oldValue }); });
             });
         }
     };
-    Observable.prototype.addEventListener = function (type, listener) {
-        var eventListeners = this.eventListeners;
-        var listeners = eventListeners.get(type);
-        if (!listeners) {
-            listeners = new Set();
-            eventListeners.set(type, listeners);
+    Observable.prototype.addEventListener = function (type, listener, scope) {
+        if (scope === void 0) { scope = this; }
+        var allEventListeners = this.allEventListeners;
+        var eventListeners = allEventListeners.get(type);
+        if (!eventListeners) {
+            eventListeners = new Map();
+            allEventListeners.set(type, eventListeners);
         }
-        if (!listeners.has(listener)) {
-            listeners.add(listener);
-            return listener;
+        if (!eventListeners.has(listener)) {
+            var scopes = new Set();
+            eventListeners.set(listener, scopes);
         }
-        else {
-            console.warn('Category listener ', listener, ' already added to ', this);
-        }
+        eventListeners.get(listener).add(scope);
     };
-    Observable.prototype.removeEventListener = function (type, listener) {
-        var eventListeners = this.eventListeners;
-        var listeners = eventListeners.get(type);
-        if (listeners) {
+    Observable.prototype.removeEventListener = function (type, listener, scope) {
+        if (scope === void 0) { scope = this; }
+        var allEventListeners = this.allEventListeners;
+        var eventListeners = allEventListeners.get(type);
+        if (eventListeners) {
             if (listener) {
-                listeners.delete(listener);
+                var scopes = eventListeners.get(listener);
+                scopes.delete(scope);
+                if (!scopes.size) {
+                    eventListeners.delete(listener);
+                }
             }
             else {
-                listeners.clear();
+                eventListeners.clear();
             }
         }
     };
     Observable.prototype.notifyEventListeners = function (types) {
-        var eventListeners = this.eventListeners;
+        var _this = this;
+        var allEventListeners = this.allEventListeners;
         types.forEach(function (type) {
-            var listeners = eventListeners.get(type);
+            var listeners = allEventListeners.get(type);
             if (listeners) {
-                listeners.forEach(function (listener) { return listener({ type: type }); });
+                listeners.forEach(function (scopes, listener) {
+                    scopes.forEach(function (scope) { return listener.call(scope, { type: type, source: _this }); });
+                });
             }
         });
     };
     Observable.prototype.fireEvent = function (event) {
-        var listeners = this.eventListeners.get(event.type);
+        var _this = this;
+        var listeners = this.allEventListeners.get(event.type);
         if (listeners) {
-            listeners.forEach(function (listener) { return listener(event); });
+            listeners.forEach(function (scopes, listener) {
+                scopes.forEach(function (scope) { return listener.call(scope, __assign(__assign({}, event), { source: _this })); });
+            });
         }
     };
     Observable.privateKeyPrefix = '_';

@@ -19,6 +19,8 @@ export interface IFilter {
     /** Gets called when new rows are inserted into the grid. If the filter needs to change it's state
      after rows are loaded, it can do it here. */
     onNewRowsLoaded?(): void;
+    /** Called whenever any filter is changed. */
+    onAnyFilterChanged?(): void;
     /** If using React or Angular 2, returns the underlying component instance, so you can call methods
      * on it if you want. */
     getFrameworkComponentInstance?(): any;

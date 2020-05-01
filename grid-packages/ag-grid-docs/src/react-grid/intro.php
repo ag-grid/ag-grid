@@ -16,7 +16,7 @@
 import { AgGridReact } from 'ag-grid-react';
 
 import 'ag-grid-community/dist/styles/ag-grid.css';
-import 'ag-grid-community/dist/styles/ag-theme-balham.css';
+import 'ag-grid-community/dist/styles/ag-theme-alpine.css';
 
 class App extends Component {
   constructor(props) {
@@ -35,7 +35,7 @@ class App extends Component {
 
   render() {
     return (
-      &lt;div className="ag-theme-balham" style={ {height: '200px', width: '600px'} }&gt;
+      &lt;div className="ag-theme-alpine" style={ {height: '200px', width: '600px'} }&gt;
         &lt;AgGridReact
             columnDefs={this.state.columnDefs}
             rowData={this.state.rowData}&gt;

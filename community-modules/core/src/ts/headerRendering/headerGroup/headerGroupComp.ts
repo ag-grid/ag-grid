@@ -124,9 +124,11 @@ export class HeaderGroupComp extends Component implements IHeaderGroupComp {
 
     private setupLabel(): void {
         // no renderer, default text render
-        if (this.params.displayName && this.params.displayName !== "") {
-            const eInnerText = this.getRefElement("agLabel");
-            eInnerText.innerHTML = this.params.displayName;
+        const displayName = this.params.displayName;
+
+        if (_.exists(displayName)) {
+            const displayNameSanitised = _.escape(displayName);
+            this.getRefElement("agLabel").innerHTML = displayNameSanitised;
         }
     }
 }

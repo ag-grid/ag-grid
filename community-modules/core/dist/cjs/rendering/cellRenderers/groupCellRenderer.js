@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v23.0.2
+ * @version v23.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -442,10 +442,10 @@ var GroupCellRenderer = /** @class */ (function (_super) {
         this.addOrRemoveCssClass('ag-row-group-leaf-indent', addLeafIndentClass);
     };
     GroupCellRenderer.prototype.destroy = function () {
-        _super.prototype.destroy.call(this);
         if (this.innerCellRenderer && this.innerCellRenderer.destroy) {
             this.innerCellRenderer.destroy();
         }
+        _super.prototype.destroy.call(this);
     };
     GroupCellRenderer.prototype.refresh = function () {
         return false;

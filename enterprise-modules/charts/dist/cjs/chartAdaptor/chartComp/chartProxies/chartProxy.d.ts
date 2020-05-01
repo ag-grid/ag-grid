@@ -60,6 +60,7 @@ export declare abstract class ChartProxy<TChart extends Chart, TOptions extends 
     getSeriesOption<T = string>(expression: string): T;
     setSeriesOption(expression: string, value: any): void;
     setTitleOption(property: keyof CaptionOptions, value: any): void;
+    getTitleOption(property: keyof CaptionOptions): any;
     getChartPaddingOption: (property: "left" | "right" | "top" | "bottom") => string;
     setChartPaddingOption(property: keyof PaddingOptions, value: number): void;
     getShadowEnabled: () => boolean;

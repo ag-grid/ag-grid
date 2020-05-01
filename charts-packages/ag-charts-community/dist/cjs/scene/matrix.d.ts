@@ -17,19 +17,13 @@ export declare class Matrix {
     constructor(elements?: number[]);
     setElements(elements: number[]): Matrix;
     setIdentityElements(): this;
-    get identity(): boolean;
-    set a(value: number);
-    get a(): number;
-    set b(value: number);
-    get b(): number;
-    set c(value: number);
-    get c(): number;
-    set d(value: number);
-    get d(): number;
-    set e(value: number);
-    get e(): number;
-    set f(value: number);
-    get f(): number;
+    readonly identity: boolean;
+    a: number;
+    b: number;
+    c: number;
+    d: number;
+    e: number;
+    f: number;
     /**
      * Performs the AxB matrix multiplication and saves the result
      * to `C`, if given, or to `A` otherwise.

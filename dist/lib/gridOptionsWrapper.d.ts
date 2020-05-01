@@ -25,7 +25,9 @@ export declare class GridOptionsWrapper {
     static PROP_GROUP_HEADER_HEIGHT: string;
     static PROP_PIVOT_GROUP_HEADER_HEIGHT: string;
     static PROP_FLOATING_FILTERS_HEIGHT: string;
+    static PROP_SUPPRESS_ROW_CLICK_SELECTION: string;
     static PROP_SUPPRESS_ROW_DRAG: string;
+    static PROP_SUPPRESS_MOVE_WHEN_ROW_DRAG: string;
     static PROP_POPUP_PARENT: string;
     static PROP_DOM_LAYOUT: string;
     private gridOptions;
@@ -40,6 +42,7 @@ export declare class GridOptionsWrapper {
     private domDataKey;
     private layoutElements;
     private scrollWidth;
+    private updateLayoutClassesListener;
     private agWire;
     private destroy;
     init(): void;
@@ -89,6 +92,7 @@ export declare class GridOptionsWrapper {
     isSuppressMultiSort(): boolean;
     isMultiSortKeyCtrl(): boolean;
     isGroupSuppressAutoColumn(): boolean;
+    isPivotSuppressAutoColumn(): boolean;
     isSuppressDragLeaveHidesColumns(): boolean;
     isSuppressScrollOnNewData(): boolean;
     isRowDragManaged(): boolean;
@@ -139,8 +143,8 @@ export declare class GridOptionsWrapper {
     getBusinessKeyForNodeFunc(): (node: RowNode) => string;
     getApi(): GridApi | undefined | null;
     getColumnApi(): ColumnApi | undefined | null;
-    isDeltaRowDataMode(): boolean;
-    isDeltaColumnMode(): boolean;
+    isImmutableData(): boolean;
+    isImmutableColumns(): boolean;
     isEnsureDomOrder(): boolean;
     isEnableCharts(): boolean;
     getColResizeDefault(): string;
@@ -188,10 +192,11 @@ export declare class GridOptionsWrapper {
     isSuppressCopyRowsToClipboard(): boolean;
     isCopyHeadersToClipboard(): boolean;
     isSuppressClipboardPaste(): boolean;
+    isSuppressLastEmptyLineOnPaste(): boolean;
     isPagination(): boolean;
     isSuppressEnterpriseResetOnNewColumns(): boolean;
     getProcessDataFromClipboardFunc(): ((params: ProcessDataFromClipboardParams) => string[][]) | undefined;
-    getBatchUpdateWaitMillis(): number | undefined;
+    getAsyncTransactionWaitMillis(): number | undefined;
     isSuppressMovableColumns(): boolean;
     isAnimateRows(): boolean;
     isSuppressColumnMoveAnimation(): boolean;
@@ -277,6 +282,7 @@ export declare class GridOptionsWrapper {
     isExternalFilterPresent(): boolean;
     doesExternalFilterPass(node: RowNode): boolean;
     getTooltipShowDelay(): number;
+    isTooltipMouseTrack(): boolean;
     getDocument(): Document;
     getMinColWidth(): number;
     getMaxColWidth(): number;

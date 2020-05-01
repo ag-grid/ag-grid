@@ -59,10 +59,6 @@ var ChartProxy = /** @class */ (function () {
         else {
             this.chartOptions = this.getDefaultOptions();
         }
-        // we want to preserve the existing width/height if an existing chart is being changed to a different type,
-        // so this allows the chart defaults to be overridden
-        this.chartOptions.width = this.chartProxyParams.width || this.chartOptions.width;
-        this.chartOptions.height = this.chartProxyParams.height || this.chartOptions.height;
     };
     ChartProxy.prototype.overridePalette = function (chartOptions) {
         if (!this.chartProxyParams.allowPaletteOverride) {
@@ -144,6 +140,9 @@ var ChartProxy = /** @class */ (function () {
             this.setTitleOption('enabled', _.exists(value));
         }
         this.raiseChartOptionsChangedEvent();
+    };
+    ChartProxy.prototype.getTitleOption = function (property) {
+        return this.chartOptions.title[property];
     };
     ChartProxy.prototype.setChartPaddingOption = function (property, value) {
         var padding = this.chartOptions.padding;
@@ -275,8 +274,10 @@ var ChartProxy = /** @class */ (function () {
                 },
                 highlightStyle: {
                     fill: 'yellow',
-                }
-            }
+                },
+                listeners: {}
+            },
+            listeners: {}
         };
     };
     ChartProxy.prototype.transformData = function (data, categoryKey) {

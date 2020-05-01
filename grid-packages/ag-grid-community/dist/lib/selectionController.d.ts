@@ -10,8 +10,10 @@ export declare class SelectionController {
     private logger;
     private lastSelectedNode;
     private groupSelectsChildren;
+    private events;
     private setBeans;
     init(): void;
+    destroy(): void;
     setLastSelectedNode(rowNode: RowNode): void;
     getLastSelectedNode(): RowNode | null;
     getSelectedNodes(): RowNode[];

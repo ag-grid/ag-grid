@@ -124,7 +124,11 @@ export class ContextMenuFactory implements IContextMenuFactory {
             rowNode: node,
             type: 'contextMenu',
             mouseEvent: mouseEvent,
-            ePopup: eMenuGui
+            ePopup: eMenuGui,
+            // move one pixel away so that accidentally double clicking
+            // won't show the browser's contextmenu
+            nudgeX: 1,
+            nudgeY: 1
         });
 
         menu.afterGuiAttached({

@@ -21,9 +21,11 @@ export declare class RangeController implements IRangeController {
     private dragging;
     private draggingCell?;
     private draggingRange?;
+    private events;
     autoScrollService: AutoScrollService;
     registerGridComp(gridPanel: GridPanel): void;
     private init;
+    destroy(): void;
     onColumnVisibleChange(): void;
     refreshLastRangeStart(): void;
     isContiguousRange(cellRange: CellRange): boolean;

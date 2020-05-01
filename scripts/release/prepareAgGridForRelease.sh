@@ -35,6 +35,8 @@ ssh -i ~/.ssh/ag_ssh ceolter@ag-grid.com "cd public_html_tmp/ && unzip $FILENAME
 echo "Copying non-versionsed directories"
 ssh -i ~/.ssh/ag_ssh ceolter@ag-grid.com  "cp -R ./public_html/support public_html_tmp/"
 ssh -i ~/.ssh/ag_ssh ceolter@ag-grid.com  "cp -R ./public_html/ecommerce public_html_tmp/"
+ssh -i ~/.ssh/ag_ssh ceolter@ag-grid.com  "cp -R ./public_html/ecommerce-uat public_html_tmp/"
+ssh -i ~/.ssh/ag_ssh ceolter@ag-grid.com  "cp -R ./public_html/zendesk public_html_tmp/"
 ssh -i ~/.ssh/ag_ssh ceolter@ag-grid.com  "cp -R ./public_html/services public_html_tmp/"
 ssh -i ~/.ssh/ag_ssh ceolter@ag-grid.com  "cp -R ./public_html/robots.txt public_html_tmp/"
 ssh -i ~/.ssh/ag_ssh ceolter@ag-grid.com  "cp -R ./public_html/.htaccess public_html_tmp/"

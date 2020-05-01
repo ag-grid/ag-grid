@@ -3,6 +3,7 @@ import { ToolPanelFiltersCompParams } from "./filtersToolPanel";
 export declare class FiltersToolPanelListPanel extends Component {
     private static TEMPLATE;
     private gridApi;
+    private columnApi;
     private eventService;
     private toolPanelColDefService;
     private columnController;

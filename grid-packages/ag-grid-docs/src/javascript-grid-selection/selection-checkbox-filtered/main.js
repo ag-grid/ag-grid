@@ -1,7 +1,7 @@
 var gridOptions = {
     columnDefs: [
         { field: "country", rowGroup: true, hide: true },
-        { field: "sport",rowGroup: true, hide: true },
+        { field: "sport", rowGroup: true, hide: true },
         { field: "age", minWidth: 120, aggFunc: 'sum' },
         { field: "year", maxWidth: 120 },
         { field: "date", minWidth: 150 },
@@ -20,7 +20,7 @@ var gridOptions = {
         headerName: "Athlete",
         field: "athlete",
         minWidth: 250,
-        cellRenderer:'agGroupCellRenderer',
+        cellRenderer: 'agGroupCellRenderer',
         cellRendererParams: {
             checkbox: true
         },
@@ -46,7 +46,7 @@ function ages16And20() {
     gridOptions.api.setFilterModel({
         age: {
             type: 'set',
-            values: ['16','20']
+            values: ['16', '20']
         }
     });
 }
@@ -60,15 +60,8 @@ document.addEventListener('DOMContentLoaded', function() {
     var gridDiv = document.querySelector('#myGrid');
     new agGrid.Grid(gridDiv, gridOptions);
 
-    // do http request to get our sample data - not using any framework to keep the example self contained.
-    // you will probably use a framework like JQuery, Angular or something else to do your HTTP calls.
-    var httpRequest = new XMLHttpRequest();
-    httpRequest.open('GET', 'https://raw.githubusercontent.com/ag-grid/ag-grid/master/grid-packages/ag-grid-docs/src/olympicWinnersSmall.json');
-    httpRequest.send();
-    httpRequest.onreadystatechange = function() {
-        if (httpRequest.readyState === 4 && httpRequest.status === 200) {
-            var httpResult = JSON.parse(httpRequest.responseText);
-            gridOptions.api.setRowData(httpResult);
-        }
-    };
+    agGrid.simpleHttpRequest({ url: 'https://raw.githubusercontent.com/ag-grid/ag-grid/master/grid-packages/ag-grid-docs/src/olympicWinnersSmall.json' })
+        .then(function(data) {
+            gridOptions.api.setRowData(data);
+        });
 });

@@ -1,12 +1,21 @@
 import { DropShadow } from "../../../scene/dropShadow";
-import { SeriesNodeDatum, CartesianTooltipRendererParams as AreaTooltipRendererParams } from "../series";
+import { SeriesNodeDatum, CartesianTooltipRendererParams as AreaTooltipRendererParams, HighlightStyle } from "../series";
 import { LegendDatum } from "../../legend";
-import { Shape } from "../../../scene/shape/shape";
 import { CartesianSeries, CartesianSeriesMarker } from "./cartesianSeries";
 import { ChartAxisDirection } from "../../chartAxis";
+import { TypedEvent } from "../../../util/observable";
+export interface AreaSeriesNodeClickEvent extends TypedEvent {
+    type: 'nodeClick';
+    series: AreaSeries;
+    datum: any;
+    xKey: string;
+    yKey: string;
+}
 interface MarkerSelectionDatum extends SeriesNodeDatum {
-    x: number;
-    y: number;
+    point: {
+        x: number;
+        y: number;
+    };
     fill?: string;
     stroke?: string;
     yKey: string;
@@ -23,6 +32,7 @@ export declare class AreaSeries extends CartesianSeries {
     private areaSelection;
     private strokeSelection;
     private markerSelection;
+    private markerSelectionData;
     /**
      * The assumption is that the values will be reset (to `true`)
      * in the {@link yKeys} setter.
@@ -43,25 +53,18 @@ export declare class AreaSeries extends CartesianSeries {
     constructor();
     onMarkerShapeChange(): void;
     protected _xKey: string;
-    set xKey(value: string);
-    get xKey(): string;
+    xKey: string;
     xName: string;
     protected _yKeys: string[];
-    set yKeys(values: string[]);
-    get yKeys(): string[];
+    yKeys: string[];
     yNames: string[];
     private _normalizedTo?;
-    set normalizedTo(value: number | undefined);
-    get normalizedTo(): number | undefined;
+    normalizedTo: number | undefined;
     strokeWidth: number;
     shadow?: DropShadow;
-    highlightStyle: {
-        fill?: string;
-        stroke?: string;
-    };
-    private highlightedNode?;
-    highlightNode(node: Shape): void;
-    dehighlightNode(): void;
+    highlightStyle: HighlightStyle;
+    protected highlightedDatum?: MarkerSelectionDatum;
+    onHighlightChange(): void;
     processData(): boolean;
     getDomain(direction: ChartAxisDirection): any[];
     update(): void;
@@ -69,6 +72,9 @@ export declare class AreaSeries extends CartesianSeries {
     private updateAreaSelection;
     private updateStrokeSelection;
     private updateMarkerSelection;
+    private updateMarkerNodes;
+    getNodeData(): MarkerSelectionDatum[];
+    fireNodeClickEvent(datum: MarkerSelectionDatum): void;
     getTooltipHtml(nodeDatum: MarkerSelectionDatum): string;
     listSeriesItems(legendData: LegendDatum[]): void;
     toggleSeriesItem(itemId: string, enabled: boolean): void;

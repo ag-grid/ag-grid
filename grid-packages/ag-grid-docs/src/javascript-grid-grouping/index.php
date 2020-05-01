@@ -56,7 +56,7 @@ SNIPPET
     by adding <code>hide: true</code> to their <code>colDef</code> as illustrated in the Multi Auto Column example.</li>
 </ul>
 
-<?= grid_example('Auto Column Group', 'auto-column-group', 'generated', ['enterprise' => true, 'exampleHeight' => 515]) ?>
+<?= grid_example('Auto Column Group', 'auto-column-group', 'generated', ['enterprise' => true, 'exampleHeight' => 515, 'modules'=>['clientside', 'rowgrouping', 'menu', 'columnpanel', 'setfilter']]) ?>
 
 <h2 id="multi-auto-column-group">Multi Auto Column Group</h2>
 
@@ -76,7 +76,7 @@ SNIPPET
         This is done by setting <code>colDef.hide = true</code>.</li>
 </ul>
 
-<?= grid_example('Multi Auto Column Group', 'multi-auto-column-group', 'generated', ['enterprise' => true, 'exampleHeight' => 515]) ?>
+<?= grid_example('Multi Auto Column Group', 'multi-auto-column-group', 'generated', ['enterprise' => true, 'exampleHeight' => 515, 'modules'=>['clientside', 'rowgrouping']]) ?>
 
 <h2 id="configuring-auto-column">Configuring the Auto Group Column</h2>
 
@@ -127,7 +127,7 @@ SNIPPET
     </li>
 </ul>
 
-<?= grid_example('Configuring the Auto Group Column', 'configuring-auto-group-column', 'generated', ['enterprise' => true, 'exampleHeight' => 515]) ?>
+<?= grid_example('Configuring the Auto Group Column', 'configuring-auto-group-column', 'generated', ['enterprise' => true, 'exampleHeight' => 515, 'modules'=>['clientside', 'rowgrouping']]) ?>
 
 <h2>Filtering on Group Columns</h2>
 
@@ -169,7 +169,7 @@ SNIPPET
     </li>
 </ul>
 
-<?= grid_example('Adding Values To Leaf Nodes', 'adding-values-to-leaf-nodes', 'generated', ['enterprise' => true, 'exampleHeight' => 515]) ?>
+<?= grid_example('Adding Values To Leaf Nodes', 'adding-values-to-leaf-nodes', 'generated', ['enterprise' => true, 'exampleHeight' => 515, 'modules'=>['clientside', 'rowgrouping', 'menu', 'columnpanel', 'setfilter']]) ?>
 
 <p>
     Adding leaf nodes data can also be achieved even if you provide your own group columns, this is illustrated
@@ -191,7 +191,7 @@ SNIPPET
     </li>
 </ul>
 
-<?= grid_example('Adding Values To Leaf Nodes for Groups', 'adding-values-to-leaf-nodes-for-groups', 'generated', ['enterprise' => true, 'exampleHeight' => 515]) ?>
+<?= grid_example('Adding Values To Leaf Nodes for Groups', 'adding-values-to-leaf-nodes-for-groups', 'generated', ['enterprise' => true, 'exampleHeight' => 515, 'modules'=>['clientside', 'rowgrouping', 'menu', 'columnpanel', 'setfilter']]) ?>
 
 <h2>Group Cell Rendering</h2>
 
@@ -260,7 +260,7 @@ SNIPPET
     Year is grouped first and Country is grouped second.
 </p>
 
-<?= grid_example('Row Group Index', 'row-group-index', 'generated', ['enterprise' => true, 'exampleHeight' => 515]) ?>
+<?= grid_example('Row Group Index', 'row-group-index', 'generated', ['enterprise' => true, 'exampleHeight' => 515, 'modules'=>['clientside', 'rowgrouping']]) ?>
 
 <h2>Hide Open Parents</h2>
 
@@ -283,8 +283,6 @@ SNIPPET
     group in the group column only (so you can click on the icon to close the group).
 </p>
 
-<h3>Example: Hide Open Parents</h3>
-
 <p>
     The example below demonstrates hiding open parents using auto group columns.
     To help demonstrate, the grid is configured to shade the rows different colors
@@ -299,7 +297,7 @@ SNIPPET
     the grouped column - eg for Country, it will filter on Country.
 </p>
 
-<?= grid_example('Hide Open Parents', 'hide-open-parents', 'generated', ['enterprise' => true, 'exampleHeight' => 515]) ?>
+<?= grid_example('Hide Open Parents', 'hide-open-parents', 'generated', ['enterprise' => true, 'exampleHeight' => 515, 'modules'=>['clientside', 'rowgrouping', 'menu', 'columnpanel', 'setfilter']]) ?>
 
 <h2 id="keepingColumnsVisible">Keeping Columns Visible</h2>
 
@@ -349,7 +347,7 @@ SNIPPET
     </ul>
 </p>
 
-<?= grid_example('Keep Columns Visible', 'keep-columns-visible', 'generated', ['enterprise' => true, 'exampleHeight' => 515]) ?>
+<?= grid_example('Keep Columns Visible', 'keep-columns-visible', 'generated', ['enterprise' => true, 'exampleHeight' => 515, 'modules'=>['clientside', 'rowgrouping']]) ?>
 
 <h2 id="fullWidthRows">Full Width Group Rows</h2>
 
@@ -366,7 +364,7 @@ SNIPPET
     Note that all that is necessary to achieve this it to add <code>groupUseEntireRow:true</code> to your gridOptions
 </p>
 
-<?= grid_example('Full Width Group Rows', 'full-width-group-rows', 'generated', ['enterprise' => true, 'exampleHeight' => 515]) ?>
+<?= grid_example('Full Width Group Rows', 'full-width-group-rows', 'generated', ['enterprise' => true, 'exampleHeight' => 515, 'modules'=>['clientside', 'rowgrouping']]) ?>
 
 <h2>Full Width Groups Rendering</h2>
 
@@ -492,7 +490,7 @@ SNIPPET
     </i>
 </p>
 
-<?= grid_example('Full Width Groups Rendering', 'full-width-groups-rendering', 'generated', ['enterprise' => true, 'exampleHeight' => 515]) ?>
+<?= grid_example('Full Width Groups Rendering', 'full-width-groups-rendering', 'generated', ['enterprise' => true, 'exampleHeight' => 515, 'modules'=>['clientside', 'rowgrouping']]) ?>
 
 <h2 id="default-group-order">Default Group Order</h2>
 
@@ -535,7 +533,7 @@ SNIPPET
     </ul>
 </p>
 
-<?= grid_example('Default Group Order', 'default-group-order', 'generated', ['enterprise' => true, 'exampleHeight' => 515]) ?>
+<?= grid_example('Default Group Order', 'default-group-order', 'generated', ['enterprise' => true, 'exampleHeight' => 515, 'modules'=>['clientside', 'rowgrouping']]) ?>
 
 <h2 id="unbalanced-groups">Unbalanced Groups</h2>
 
@@ -553,7 +551,7 @@ SNIPPET
     <li>Removing the grouping shows that the non grouped rows have no 'State' value.</li>
 </ul>
 
-<?= grid_example('Unbalanced Groups', 'unbalanced-groups', 'generated', ['enterprise' => true, 'exampleHeight' => 570]) ?>
+<?= grid_example('Unbalanced Groups', 'unbalanced-groups', 'generated', ['enterprise' => true, 'exampleHeight' => 570, 'modules'=>['clientside', 'rowgrouping']]) ?>
 
 <p>
     If you do not want rows with null or undefined to be left out of groups, but want
@@ -626,7 +624,7 @@ colDef = {
 SNIPPET
 ) ?>
 
-<?= grid_example('Grouping Complex Objects with Keys', 'grouping-complex-objects', 'generated', ['enterprise' => true, 'exampleHeight' => 515]) ?>
+<?= grid_example('Grouping Complex Objects with Keys', 'grouping-complex-objects', 'generated', ['enterprise' => true, 'exampleHeight' => 515, 'modules'=>['clientside', 'rowgrouping']]) ?>
 
 <h2 id="grouping-footers">Grouping Footers</h2>
 
@@ -682,7 +680,7 @@ SNIPPET
     <li><code>gridOptions.groupIncludeTotalFooter = true</code> -  includes a 'grand' total across all groups.</li>
 </ul>
 
-<?= grid_example('Group Footers', 'grouping-footers', 'generated', ['enterprise' => true, 'exampleHeight' => 515]) ?>
+<?= grid_example('Group Footers', 'grouping-footers', 'generated', ['enterprise' => true, 'exampleHeight' => 515, 'modules'=>['clientside', 'rowgrouping']]) ?>
 
 <note>
     Group footers are a UI concept only in the grid. It is the grids way of showing aggregated data (which belongs
@@ -699,8 +697,8 @@ SNIPPET
 
 <p>
     <note>
-        If using <a href="../javascript-grid-data-update/#transactions">transactions</a> or
-        <a href="../javascript-grid-data-update/#delta-row-data">delta updates</a>, then
+        If using <a href="../javascript-grid-data-update-transactions/">Transactions</a> or
+        <a href="../javascript-grid-immutable-data/">Immutable Data</a>, then
         you do not need to be concerned with keeping group state. When using transactions or delta updates,
         the group state is not changed.
     </note>
@@ -715,7 +713,7 @@ SNIPPET
     as such the state is not maintained. A group like 'Australia' is in both sets and is maintained.
 </p>
 
-<?= grid_example('Keeping Group State', 'keeping-group-state', 'generated', ['enterprise' => true, 'exampleHeight' => 540]) ?>
+<?= grid_example('Keeping Group State', 'keeping-group-state', 'generated', ['enterprise' => true, 'exampleHeight' => 540, 'modules'=>['clientside', 'rowgrouping', 'menu', 'columnpanel', 'setfilter']]) ?>
 
 <h2 id="removeSingleChildren">Removing Single Children</h2>
 
@@ -759,7 +757,7 @@ SNIPPET
     </ul>
 </p>
 
-<?= grid_example('Removing Single Children', 'remove-single-children', 'vanilla', ['enterprise' => true, 'exampleHeight' => 540]) ?>
+<?= grid_example('Removing Single Children', 'remove-single-children', 'vanilla', ['enterprise' => true, 'exampleHeight' => 540, 'modules'=>['clientside', 'rowgrouping', 'menu', 'columnpanel', 'setfilter']]) ?>
 
 <note>
     Filtering does not impact what groups get removed. For example if you have a group with two
@@ -840,18 +838,18 @@ SNIPPET
 
 <p>The following example shows how to appoint individual columns to show individual groups</p>
 
-<?= grid_example('Custom Grouping Many Group Columns', 'custom-grouping-many-group-columns', 'generated', ['enterprise' => true, 'exampleHeight' => 515]) ?>
+<?= grid_example('Custom Grouping Many Group Columns', 'custom-grouping-many-group-columns', 'generated', ['enterprise' => true, 'exampleHeight' => 515, 'modules'=>['clientside', 'rowgrouping']]) ?>
 
 <p>The following example shows how to display all the groups in a single column</p>
 
-<?= grid_example('Custom Grouping Single Group Column', 'custom-grouping-single-group-column', 'generated', ['enterprise' => true, 'exampleHeight' => 505]) ?>
+<?= grid_example('Custom Grouping Single Group Column', 'custom-grouping-single-group-column', 'generated', ['enterprise' => true, 'exampleHeight' => 505, 'modules'=>['clientside', 'rowgrouping']]) ?>
 
 <p>
     The last example of explicitly setting groups shows an alternative for Hide Open Parents.
     The example below demonstrates hiding open parents using explicit group columns.
 </p>
 
-<?= grid_example('Custom Grouping Hidden Parents', 'custom-grouping-hidden-parents', 'generated', ['enterprise' => true, 'exampleHeight' => 550]) ?>
+<?= grid_example('Custom Grouping Hidden Parents', 'custom-grouping-hidden-parents', 'generated', ['enterprise' => true, 'exampleHeight' => 550, 'modules'=>['clientside', 'rowgrouping']]) ?>
 
 <note>Remember these examples are achieving the same that you can achieve with
     the auto groups columns, but their configuration is not as straight forward. We are keeping this for edge cases

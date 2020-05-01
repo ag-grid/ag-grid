@@ -17,7 +17,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
-import { Autowired, Component, Constants, PostConstruct, RefSelector, _ } from "@ag-grid-community/core";
+import { Autowired, Component, Constants, PostConstruct, RefSelector, TooltipFeature, _ } from "@ag-grid-community/core";
 var MenuItemComponent = /** @class */ (function (_super) {
     __extends(MenuItemComponent, _super);
     function MenuItemComponent(params) {
@@ -53,7 +53,7 @@ var MenuItemComponent = /** @class */ (function (_super) {
                 this.getGui().setAttribute('title', this.tooltip);
             }
             else {
-                this.tooltipManager.registerTooltip(this);
+                this.addFeature(new TooltipFeature(this, 'menu'));
             }
         }
         if (this.params.shortcut) {
@@ -123,9 +123,6 @@ var MenuItemComponent = /** @class */ (function (_super) {
     __decorate([
         Autowired('gridOptionsWrapper')
     ], MenuItemComponent.prototype, "gridOptionsWrapper", void 0);
-    __decorate([
-        Autowired('tooltipManager')
-    ], MenuItemComponent.prototype, "tooltipManager", void 0);
     __decorate([
         RefSelector('eIcon')
     ], MenuItemComponent.prototype, "eIcon", void 0);

@@ -27,13 +27,16 @@ var ClipboardService = /** @class */ (function () {
             if (core_1._.missingOrEmpty(data)) {
                 return;
             }
-            var parsedData = core_1.CsvUtils.stringToArray(data, _this.gridOptionsWrapper.getClipboardDeliminator());
+            var parsedData = core_1._.stringToArray(data, _this.gridOptionsWrapper.getClipboardDeliminator());
             var userFunc = _this.gridOptionsWrapper.getProcessDataFromClipboardFunc();
             if (userFunc) {
                 parsedData = userFunc({ data: parsedData });
             }
             if (core_1._.missingOrEmpty(parsedData)) {
                 return;
+            }
+            if (_this.gridOptionsWrapper.isSuppressLastEmptyLineOnPaste()) {
+                _this.removeLastLineIfBlank(parsedData);
             }
             var pasteOperation = function (cellsToFlash, updatedRowNodes, focusedCell, changedPath) {
                 var rangeActive = _this.rangeController && _this.rangeController.isMoreThanOneCell();
@@ -178,6 +181,14 @@ var ClipboardService = /** @class */ (function () {
             _this.iterateActiveRanges(true, rowCallback);
         };
         this.doPasteOperation(pasteOperation);
+    };
+    ClipboardService.prototype.removeLastLineIfBlank = function (parsedData) {
+        // remove last row if empty, excel puts empty last row in
+        var lastLine = core_1._.last(parsedData);
+        var lastLineIsBlank = lastLine && lastLine.length === 1 && lastLine[0] === '';
+        if (lastLineIsBlank) {
+            core_1._.removeFromArray(parsedData, lastLine);
+        }
     };
     ClipboardService.prototype.fireRowChanged = function (rowNodes) {
         var _this = this;

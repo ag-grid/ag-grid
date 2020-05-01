@@ -72,6 +72,10 @@
         "allowDragFromColumnsToolPanel": {
             "default": false,
             "description": "Allow reordering and pinning columns by dragging columns from the columns tool panel to the grid."
+        },
+        "immutableColumns": {
+            "default": false,
+            "description": "Puts the grid into Immutable Column mode, so that setting new columns keeps column state."
         }
     },
     "sortFilter": {
@@ -112,7 +116,7 @@
             "description": "Set to <code>true</code> to suppress sorting of un-sorted data to match original row data.",
             "more": {
                 "name": "Big Data Small Transactions",
-                "url": "../javascript-grid-data-update/#big-data-small-transactions"
+                "url": "../javascript-grid-immutable-data/"
             }
         },
         "excludeChildrenWhenTreeDataFiltering": {
@@ -205,7 +209,7 @@
             "description": "Set to <code>true</code> to have cells flash after data changes.",
             "more": {
                 "name": "Flashing Data Changes",
-                "url": "../javascript-grid-data-update/#flashing"
+                "url": "../javascript-grid-flashing-cells/"
             }
         },
         "allowShowChangeAfterFilter": {
@@ -213,7 +217,7 @@
             "description": "Set to <code>true</code> to have cells flash after data changes even when the change is due to filtering.",
             "more": {
                 "name": "Flashing Data Changes",
-                "url": "../javascript-grid-data-update/#flashing"
+                "url": "../javascript-grid-flashing-cells/"
             }
         },
         "stopEditingWhenGridLosesFocus": {
@@ -478,6 +482,10 @@
                 "name": "Pivot Row Totals",
                 "url": "../javascript-grid-pivoting/#pivotRowTotals"
             }
+        },
+        "pivotSuppressAutoColumn": {
+            "default": false,
+            "description": "If <code>true</code>, the grid will not swap in the grouping column when pivoting. Useful if pivoting using Server Side Row Model or Viewport Row Model and you want full control of all columns including the group column."
         }
     },
     "rowModels": {
@@ -495,11 +503,10 @@
             "description": "Sets the <a href='../javascript-grid-row-models/'>Row Model</a> type."
         },
         "rowData": {
-            "description": "(<a href='../javascript-grid-client-side-model/'>Client-side Row Model</a> only) Set the data to be displayed as rows in the grid."
+            "description": "(<a href='../javascript-grid-client-side-model/'>Client-Side Row Model</a> only) Set the data to be displayed as rows in the grid."
         },
-        "deltaRowDataMode": {
-            "default": false,
-            "description": "(<a href='../javascript-grid-client-side-model/'>Client-side Row Model</a> only) Enables <a href='../javascript-grid-data-update/#delta-row-data'>delta row data mode</a>, for compatibility with immutable stores."
+        "immutableData": {
+            "description": "(<a href='../javascript-grid-client-side-model/'>Client-Side Row Model</a> only) Enables <a href='../javascript-grid-immutable-data/'>Immutable Data</a> mode, for compatibility with immutable stores."
         },
         "pinnedTopRowData": {
             "description": "Data to be displayed as <a href='../javascript-grid-row-pinning/'>Pinned Top Rows</a> in the grid."
@@ -517,7 +524,7 @@
             "description": "How many rows for each block in the cache, i.e. how many rows returned from the server at a time."
         },
         "maxBlocksInCache": {
-            "description": "How many blocks to cache in the client. Default is no limit, so every requested block is kept. Use this if you have memory concerns, and block that were least recently viewed will be purged when the limit is hit. If used, make sure you have enough blocks in the cache to display one whole view of the table (i.e. what's within the scrollable area), otherwise it won't work and an infinite loop of requesting blocks will happen."
+            "description": "How many blocks to cache in the client. Default is no limit, so every requested block is kept. Use this if you have memory concerns, and block that were least recently viewed will be purged when the limit is hit. The grid will additionally make sure it has all the blocks needed to display what is currently visible - in case this property is set to low."
         },
         "cacheOverflowSize": {
             "default": 1,
@@ -727,6 +734,34 @@
             "description": "Set to <code>true</code> to not highlight rows by adding the <code>ag-row-hover</code> CSS class."
         }
     },
+    "clipboard": {
+        "meta": {
+            "displayName": "Clipboard"
+        },
+        "suppressCopyRowsToClipboard": {
+            "default": false,
+            "description": "Set to <code>true</code> to only have the range selection, and not row selection, copied to <a href='../javascript-grid-clipboard/'>clipboard</a>."
+        },
+        "copyHeadersToClipboard": {
+            "default": false,
+            "description": "Set to <code>true</code> to also include headers when copying to clipboard using <code>Ctrl + C</code> <a href='../javascript-grid-clipboard/'>clipboard</a>."
+        },
+        "clipboardDeliminator": {
+            "description": "Specify the deliminator to use when copying to <a href='../javascript-grid-clipboard/'>clipboard</a>."
+        },
+        "suppressFocusAfterRefresh": {
+            "default": false,
+            "description": "Set to <code>true</code> to not set focus back on the grid after a refresh. This can avoid issues where you want to keep the focus on another part of the browser."
+        },
+        "suppressLastEmptyLineOnPaste": {
+            "default": false,
+            "description": "Set to <code>true</code> to work around a bug with Excel (Windows) that adds an extra empty line at the end of ranges copied to the clipboard."
+        },
+        "enableCellTextSelection": {
+            "default": false,
+            "description": "Set to <code>true</code> to be able to select the text within cells.<br /><strong>Note:</strong> When this is set to <code>true</code>, the clipboard service is disabled."
+        }
+    },
     "localisation": {
         "meta": {
             "displayName": "Localisation"
@@ -734,8 +769,8 @@
         "localeText<br />localeTextFunc": {
             "description": "You can change the text in the paging panels and the default filters by providing a <code>localeText</code> or a <code>localeTextFunc</code>.",
             "more": {
-                "name": "Internationalisation",
-                "url": "../javascript-grid-internationalisation/"
+                "name": "Localisation",
+                "url": "../javascript-grid-localisation/"
             }
         }
     },
@@ -819,7 +854,12 @@
             "description": "Set to <code>true</code> to use the browser's default tooltip instead of using ag-Grid's Tooltip Component."
         },
         "tooltipShowDelay": {
+            "default": 2000,
             "description": "The delay in milliseconds that it takes for tooltips to show up once an element is hovered.<br /> <strong>Note:</strong> This property does not work if <code>enableBrowserTooltips</code> is <code>true</code>."
+        },
+        "tooltipMouseTrack": {
+            "default": false,
+            "description": "Set to <code>true</code> to have tooltips follow the cursor once they are displayed."
         },
         "enableCellExpressions": {
             "default": false,
@@ -857,21 +897,6 @@
             "default": false,
             "description": "If <code>true</code>, when you drag a column out of the grid (e.g. to the group zone) the column is not hidden."
         },
-        "suppressCopyRowsToClipboard": {
-            "default": false,
-            "description": "Set to <code>true</code> to only have the range selection, and not row selection, copied to <a href='../javascript-grid-clipboard/'>clipboard</a>."
-        },
-        "copyHeadersToClipboard": {
-            "default": false,
-            "description": "Set to <code>true</code> to also include headers when copying to clipboard using <code>Ctrl + C</code> <a href='../javascript-grid-clipboard/'>clipboard</a>."
-        },
-        "clipboardDeliminator": {
-            "description": "Specify the deliminator to use when copying to <a href='../javascript-grid-clipboard/'>clipboard</a>."
-        },
-        "suppressFocusAfterRefresh": {
-            "default": false,
-            "description": "Set to <code>true</code> to not set focus back on the grid after a refresh. This can avoid issues where you want to keep the focus on another part of the browser."
-        },
         "layoutInterval": {
             "default": 500,
             "description": "The interval in milliseconds that the grid uses to periodically check its size and lay itself out again if the size has changed, such as when your browser changes size, or your application changes the size of the <code>div</code> element that the grid lives inside. To stop the periodic layout, set it to <code>-1</code>."
@@ -879,10 +904,6 @@
         "enableRtl": {
             "default": false,
             "description": "Set to <code>true</code> to operate grid in <a href='../javascript-grid-rtl/'>RTL (Right to Left)</a> mode."
-        },
-        "enableCellTextSelection": {
-            "default": false,
-            "description": "Set to <code>true</code> to be able to select the text within cells.<br /><strong>Note:</strong> When this is set to <code>true</code>, the clipboard service is disabled."
         },
         "debug": {
             "default": false,
@@ -921,8 +942,8 @@
             "default": false,
             "description": "Prevents the user from exporting the grid to Excel."
         },
-        "batchUpdateWaitMillis": {
-            "description": "How many milliseconds to wait before executing a <a href='../javascript-grid-data-update/#batch-transactions'>batch of update transactions</a>."
+        "asyncTransactionWaitMillis": {
+            "description": "How many milliseconds to wait before executing a <a href='../javascript-grid-data-update-high-frequency/'>batch of async transactions</a>."
         },
         "suppressPropertyNamesCheck": {
             "default": false,
@@ -934,7 +955,7 @@
         },
         "serverSideSortingAlwaysResets": {
             "default": false,
-            "description": "When <code>true</code>, a full reset will be performed when sorting using the <a href='../javascript-grid-server-side-model/'>Server-side Row Model</a>."
+            "description": "When <code>true</code>, a full reset will be performed when sorting using the <a href='../javascript-grid-server-side-model/'>Server-Side Row Model</a>."
         },
         "suppressBrowserResizeObserver": {
             "default": false,

@@ -1,4 +1,4 @@
-// Type definitions for @ag-grid-community/core v23.0.2
+// Type definitions for @ag-grid-community/core v23.1.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 /************************************************************************************************
@@ -34,8 +34,12 @@ export interface GridOptions {
     suppressMoveWhenRowDragging?: boolean;
     enableMultiRowDragging?: boolean;
     ensureDomOrder?: boolean;
+    /** @deprecated */
     deltaRowDataMode?: boolean;
+    /** @deprecated */
     deltaColumnMode?: boolean;
+    immutableData?: boolean;
+    immutableColumns?: boolean;
     scrollbarWidth?: number;
     /** @deprecated */
     toolPanelSuppressRowGroups?: boolean;
@@ -71,6 +75,7 @@ export interface GridOptions {
     unSortIcon?: boolean;
     rowBuffer?: number;
     tooltipShowDelay?: number;
+    tooltipMouseTrack?: boolean;
     enableRtl?: boolean;
     /** @deprecated in v20, use colDef.resizable instead */
     enableColResize?: boolean;
@@ -120,6 +125,7 @@ export interface GridOptions {
     copyHeadersToClipboard?: boolean;
     clipboardDeliminator?: string;
     suppressClipboardPaste?: boolean;
+    suppressLastEmptyLineOnPaste?: boolean;
     suppressAggFuncInHeader?: boolean;
     suppressAggAtRootLevel?: boolean;
     suppressFocusAfterRefresh?: boolean;
@@ -161,6 +167,7 @@ export interface GridOptions {
     valueCache?: boolean;
     valueCacheNeverExpires?: boolean;
     batchUpdateWaitMillis?: number;
+    asyncTransactionWaitMillis?: number;
     suppressRowTransform?: boolean;
     suppressSetColumnStateEvents?: boolean;
     allowDragFromColumnsToolPanel?: boolean;
@@ -185,7 +192,7 @@ export interface GridOptions {
     /** @deprecated */
     deprecatedEmbedFullWidthRows?: boolean;
     excelStyles?: any[];
-    floatingFilter?: boolean;
+    /** @deprecated Use floatingFilter on the colDef instead */ floatingFilter?: boolean;
     suppressExcelExport?: boolean;
     suppressCsvExport?: boolean;
     colWidth?: number;
@@ -202,6 +209,7 @@ export interface GridOptions {
     defaultColGroupDef?: ColGroupDef;
     defaultColDef?: ColDef;
     defaultExportParams?: CsvExportParams;
+    pivotSuppressAutoColumn?: boolean;
     groupSuppressAutoColumn?: boolean;
     groupSelectsChildren?: boolean;
     groupSelectsFiltered?: boolean;

@@ -1,4 +1,4 @@
-// Type definitions for @ag-grid-community/core v23.0.2
+// Type definitions for @ag-grid-community/core v23.1.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { LoggerFactory } from "./logger";
@@ -46,5 +46,5 @@ export declare class GridCore extends Component {
     openToolPanel(key: string): void;
     isToolPanelShowing(): boolean;
     destroy(): void;
-    ensureNodeVisible(comparator: any, position?: string): void;
+    ensureNodeVisible(comparator: any, position?: string | null): void;
 }

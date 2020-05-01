@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v23.0.2
+ * @version v23.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -106,9 +106,6 @@ var Beans = /** @class */ (function () {
     __decorate([
         Autowired('maxDivHeightScaler')
     ], Beans.prototype, "maxDivHeightScaler", void 0);
-    __decorate([
-        Autowired('tooltipManager')
-    ], Beans.prototype, "tooltipManager", void 0);
     __decorate([
         Autowired('frameworkOverrides')
     ], Beans.prototype, "frameworkOverrides", void 0);

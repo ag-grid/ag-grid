@@ -2,6 +2,7 @@ import { GridOptions } from "./entities/gridOptions";
 import { Logger } from "./logger";
 import { IFrameworkOverrides } from "./interfaces/iFrameworkOverrides";
 import { Module } from "./interfaces/iModule";
+import { Component } from "./widgets/component";
 export interface GridParams {
     globalEventListener?: Function;
     $scope?: any;
@@ -12,6 +13,9 @@ export interface GridParams {
         [key: string]: any;
     };
     modules?: Module[];
+    rootComponent?: {
+        new (): Component;
+    };
 }
 export declare class Grid {
     private context;

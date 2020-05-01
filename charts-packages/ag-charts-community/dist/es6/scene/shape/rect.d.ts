@@ -7,37 +7,29 @@ export declare enum RectSizing {
 export declare class Rect extends Path {
     static className: string;
     private _x;
-    set x(value: number);
-    get x(): number;
+    x: number;
     private _y;
-    set y(value: number);
-    get y(): number;
+    y: number;
     private _width;
-    set width(value: number);
-    get width(): number;
+    width: number;
     private _height;
-    set height(value: number);
-    get height(): number;
+    height: number;
     private _radius;
-    set radius(value: number);
-    get radius(): number;
+    radius: number;
     /**
      * If `true`, the rect is aligned to the pixel grid for crisp looking lines.
      * Animated rects may not look nice with this option enabled, for example
      * when a rect is translated by a sub-pixel value on each frame.
      */
     private _crisp;
-    set crisp(value: boolean);
-    get crisp(): boolean;
+    crisp: boolean;
     private effectiveStrokeWidth;
-    set strokeWidth(value: number);
-    get strokeWidth(): number;
+    strokeWidth: number;
     /**
      * Similar to https://developer.mozilla.org/en-US/docs/Web/CSS/box-sizing
      */
     private _sizing;
-    set sizing(value: RectSizing);
-    get sizing(): RectSizing;
+    sizing: RectSizing;
     protected updatePath(): void;
     computeBBox(): BBox;
     isPointInPath(x: number, y: number): boolean;

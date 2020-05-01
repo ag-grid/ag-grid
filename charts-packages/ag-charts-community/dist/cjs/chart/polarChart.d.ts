@@ -6,6 +6,6 @@ export declare class PolarChart extends Chart {
     static type: string;
     padding: Padding;
     constructor(document?: Document);
-    get seriesRoot(): Node;
+    readonly seriesRoot: Node;
     performLayout(): void;
 }

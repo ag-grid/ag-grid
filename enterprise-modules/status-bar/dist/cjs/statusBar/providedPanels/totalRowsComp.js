@@ -37,7 +37,7 @@ var TotalRowsComp = /** @class */ (function (_super) {
         this.addCssClass('ag-status-panel-total-row-count');
         this.setDisplayed(true);
         var listener = this.onDataChanged.bind(this);
-        this.eventService.addEventListener(core_1.Events.EVENT_MODEL_UPDATED, listener);
+        this.events = [this.eventService.addEventListener(core_1.Events.EVENT_MODEL_UPDATED, listener)];
     };
     TotalRowsComp.prototype.onDataChanged = function () {
         this.setValue(core_1._.formatNumberCommas(this.getRowCountValue()));

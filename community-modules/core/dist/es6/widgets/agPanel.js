@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v23.0.2
+ * @version v23.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -330,7 +330,6 @@ var AgPanel = /** @class */ (function (_super) {
         this.close();
     };
     AgPanel.prototype.destroy = function () {
-        _super.prototype.destroy.call(this);
         if (this.closeButtonComp) {
             this.closeButtonComp.destroy();
             this.closeButtonComp = undefined;
@@ -339,6 +338,7 @@ var AgPanel = /** @class */ (function (_super) {
         if (eGui && eGui.offsetParent) {
             this.close();
         }
+        _super.prototype.destroy.call(this);
     };
     AgPanel.CLOSE_BTN_TEMPLATE = "<div class=\"ag-button\"></div>";
     __decorate([

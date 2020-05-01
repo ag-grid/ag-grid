@@ -50,14 +50,11 @@ export declare abstract class Shape extends Node {
      */
     protected restoreOverriddenStyles(): void;
     private _fillOpacity;
-    set fillOpacity(value: number);
-    get fillOpacity(): number;
+    fillOpacity: number;
     private _strokeOpacity;
-    set strokeOpacity(value: number);
-    get strokeOpacity(): number;
+    strokeOpacity: number;
     private _fill;
-    set fill(value: string | undefined);
-    get fill(): string | undefined;
+    fill: string | undefined;
     /**
      * Note that `strokeStyle = null` means invisible stroke,
      * while `lineWidth = 0` means no stroke, and sometimes this can mean different things.
@@ -69,33 +66,24 @@ export declare abstract class Shape extends Node {
      * unless specific looks that is achieved by having an invisible stroke is desired.
      */
     private _stroke;
-    set stroke(value: string | undefined);
-    get stroke(): string | undefined;
+    stroke: string | undefined;
     protected _strokeWidth: number;
-    set strokeWidth(value: number);
-    get strokeWidth(): number;
+    strokeWidth: number;
     private _lineDash;
-    set lineDash(value: number[] | undefined);
-    get lineDash(): number[] | undefined;
+    lineDash: number[] | undefined;
     private _lineDashOffset;
-    set lineDashOffset(value: number);
-    get lineDashOffset(): number;
+    lineDashOffset: number;
     private _lineCap;
-    set lineCap(value: ShapeLineCap);
-    get lineCap(): ShapeLineCap;
+    lineCap: ShapeLineCap;
     private _lineJoin;
-    set lineJoin(value: ShapeLineJoin);
-    get lineJoin(): ShapeLineJoin;
+    lineJoin: ShapeLineJoin;
     private _opacity;
-    set opacity(value: number);
-    get opacity(): number;
+    opacity: number;
     private readonly onShadowChange;
     private _fillShadow;
-    set fillShadow(value: DropShadow | undefined);
-    get fillShadow(): DropShadow | undefined;
+    fillShadow: DropShadow | undefined;
     private _strokeShadow;
-    set strokeShadow(value: DropShadow | undefined);
-    get strokeShadow(): DropShadow | undefined;
+    strokeShadow: DropShadow | undefined;
     protected fillStroke(ctx: CanvasRenderingContext2D): void;
     isPointInNode(x: number, y: number): boolean;
     abstract isPointInPath(x: number, y: number): boolean;

@@ -422,7 +422,7 @@ function onRowDragMove(event) {
     if (needToChangeParent) {
         var movingData = movingNode.data;
         movingData.country = groupCountry;
-        gridOptions.api.updateRowData({
+        gridOptions.api.applyTransaction({
             update: [movingData]
         });
         gridOptions.api.clearFocusedCell();

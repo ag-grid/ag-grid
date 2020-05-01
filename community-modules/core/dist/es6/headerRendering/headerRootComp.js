@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v23.0.2
+ * @version v23.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -23,14 +23,14 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
-import { GridOptionsWrapper } from "../gridOptionsWrapper";
-import { Autowired, PostConstruct } from "../context/context";
-import { HeaderContainer } from "./headerContainer";
-import { Events } from "../events";
-import { Component } from "../widgets/component";
-import { RefSelector } from "../widgets/componentAnnotations";
-import { Constants } from "../constants";
-import { _ } from "../utils";
+import { GridOptionsWrapper } from '../gridOptionsWrapper';
+import { Autowired, PostConstruct } from '../context/context';
+import { HeaderContainer } from './headerContainer';
+import { Events } from '../events';
+import { Component } from '../widgets/component';
+import { RefSelector } from '../widgets/componentAnnotations';
+import { Constants } from '../constants';
+import { addOrRemoveCssClass, setDisplayed } from '../utils/dom';
 var HeaderRootComp = /** @class */ (function (_super) {
     __extends(HeaderRootComp, _super);
     function HeaderRootComp() {
@@ -75,16 +75,16 @@ var HeaderRootComp = /** @class */ (function (_super) {
         this.childContainers.forEach(function (childContainer) { return childContainer.forEachHeaderElement(callback); });
     };
     HeaderRootComp.prototype.destroy = function () {
-        _super.prototype.destroy.call(this);
         this.childContainers.forEach(function (container) { return container.destroy(); });
+        _super.prototype.destroy.call(this);
     };
     HeaderRootComp.prototype.refreshHeader = function () {
         this.childContainers.forEach(function (container) { return container.refresh(); });
     };
     HeaderRootComp.prototype.onPivotModeChanged = function () {
         var pivotMode = this.columnController.isPivotMode();
-        _.addOrRemoveCssClass(this.getGui(), 'ag-pivot-on', pivotMode);
-        _.addOrRemoveCssClass(this.getGui(), 'ag-pivot-off', !pivotMode);
+        addOrRemoveCssClass(this.getGui(), 'ag-pivot-on', pivotMode);
+        addOrRemoveCssClass(this.getGui(), 'ag-pivot-off', !pivotMode);
     };
     HeaderRootComp.prototype.setHeight = function (height) {
         // one extra pixel is needed here to account for the
@@ -113,18 +113,15 @@ var HeaderRootComp = /** @class */ (function (_super) {
         this.eHeaderContainer.style.width = width + "px";
     };
     HeaderRootComp.prototype.setLeftVisible = function (visible) {
-        _.setDisplayed(this.ePinnedLeftHeader, visible);
+        setDisplayed(this.ePinnedLeftHeader, visible);
     };
     HeaderRootComp.prototype.setRightVisible = function (visible) {
-        _.setDisplayed(this.ePinnedRightHeader, visible);
+        setDisplayed(this.ePinnedRightHeader, visible);
     };
     HeaderRootComp.prototype.getHeaderRowCount = function () {
-        if (this.childContainers.length === 0) {
-            return 0;
-        }
-        return this.childContainers[0].getRowComps().length;
+        return this.childContainers.length === 0 ? 0 : this.childContainers[0].getRowComps().length;
     };
-    HeaderRootComp.TEMPLATE = "<div class=\"ag-header\" role=\"presentation\">\n            <div class=\"ag-pinned-left-header\" ref=\"ePinnedLeftHeader\" role=\"presentation\"></div>\n            <div class=\"ag-header-viewport\" ref=\"eHeaderViewport\" role=\"presentation\">\n                <div class=\"ag-header-container\" ref=\"eHeaderContainer\" role=\"rowgroup\"></div>\n            </div>\n            <div class=\"ag-pinned-right-header\" ref=\"ePinnedRightHeader\" role=\"presentation\"></div>\n        </div>";
+    HeaderRootComp.TEMPLATE = "\n        <div class=\"ag-header\" role=\"presentation\">\n            <div class=\"ag-pinned-left-header\" ref=\"ePinnedLeftHeader\" role=\"presentation\"></div>\n            <div class=\"ag-header-viewport\" ref=\"eHeaderViewport\" role=\"presentation\">\n                <div class=\"ag-header-container\" ref=\"eHeaderContainer\" role=\"rowgroup\"></div>\n            </div>\n            <div class=\"ag-pinned-right-header\" ref=\"ePinnedRightHeader\" role=\"presentation\"></div>\n        </div>";
     __decorate([
         RefSelector('ePinnedLeftHeader')
     ], HeaderRootComp.prototype, "ePinnedLeftHeader", void 0);

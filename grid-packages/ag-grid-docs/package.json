@@ -1,14 +1,15 @@
 {
   "name": "ag-grid-docs",
-  "version": "23.0.2",
+  "version": "23.1.0",
   "description": "Documentation for ag-Grid",
   "scripts": {
     "postinstall": "webdriver-manager update",
-    "build": "gulp generate-examples",
+    "build": "gulp generate-examples && npm run hash",
     "start": "gulp serve",
     "tsc": "tsc -p tests/config/tsconfig.json",
     "validate-es5": "eslint src/",
-    "test": "npm run validate-es5 && jest"
+    "test": "npm run validate-es5 && jest",
+    "hash": "sh ../../scripts/hashDirectory.sh > .hash"
   },
   "repository": {
     "type": "git",
@@ -63,9 +64,9 @@
     "webpack-merge": "4.1.4"
   },
   "devDependencies": {
-    "@ag-grid-community/angular": "~23.0.0",
-    "@ag-grid-community/react": "~23.0.0",
-    "@ag-grid-community/vue": "~23.0.0",
+    "@ag-grid-community/angular": "~23.1.0",
+    "@ag-grid-community/react": "~23.1.0",
+    "@ag-grid-community/vue": "~23.1.0",
     "@angular/common": "7.2.3",
     "@angular/compiler": "7.2.3",
     "@angular/core": "7.2.3",
@@ -77,8 +78,8 @@
     "@babel/preset-react": "7.0.0",
     "@fortawesome/fontawesome-free": "5.6.3",
     "@types/jasmine": "^3.4.6",
-    "@types/jest": "^25.1.2",
-    "ag-grid-community": "~23.0.0",
+    "@types/jest": "^25.2.1",
+    "ag-grid-community": "~23.1.0",
     "ag-grid-testing": "0.0.2",
     "anchor-js": "4.1.0",
     "autocomplete.js": "0.33.0",
@@ -102,7 +103,7 @@
     "gulp-replace": "1.0.0",
     "html-loader": "0.5.5",
     "html-webpack-plugin": "3.2.0",
-    "jest": "^25.1.0",
+    "jest": "^25.4.0",
     "lazyload": "2.0.0-beta.2",
     "merge-stream": "1.0.1",
     "mini-css-extract-plugin": "0.4.2",
@@ -124,7 +125,7 @@
     "style-loader": "0.23.0",
     "terser-webpack-plugin": "^2.0.1",
     "thread-loader": "1.2.0",
-    "ts-jest": "^25.2.1",
+    "ts-jest": "^25.4.0",
     "ts-loader": "5.1.0",
     "tslint": "5.11.0",
     "typescript": "~3.6.2",

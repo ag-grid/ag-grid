@@ -4,7 +4,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
-import { _, Autowired, Bean, ChangedPath, Constants as constants, Constants, Events, GridOptionsWrapper, Optional, PostConstruct, RowNode } from "@ag-grid-community/core";
+import { _, Autowired, Bean, ChangedPath, Constants as constants, Constants, Events, GridOptionsWrapper, Optional, PostConstruct, RowNode, PreDestroy } from "@ag-grid-community/core";
 import { ClientSideNodeManager } from "./clientSideNodeManager";
 var RecursionType;
 (function (RecursionType) {
@@ -15,28 +15,39 @@ var RecursionType;
 })(RecursionType || (RecursionType = {}));
 var ClientSideRowModel = /** @class */ (function () {
     function ClientSideRowModel() {
+        this.events = [];
     }
     ClientSideRowModel.prototype.init = function () {
         var refreshEverythingFunc = this.refreshModel.bind(this, { step: Constants.STEP_EVERYTHING });
         var refreshEverythingAfterColsChangedFunc = this.refreshModel.bind(this, { step: Constants.STEP_EVERYTHING, afterColumnsChanged: true });
-        this.eventService.addModalPriorityEventListener(Events.EVENT_COLUMN_EVERYTHING_CHANGED, refreshEverythingAfterColsChangedFunc);
-        this.eventService.addModalPriorityEventListener(Events.EVENT_COLUMN_ROW_GROUP_CHANGED, refreshEverythingFunc);
-        this.eventService.addModalPriorityEventListener(Events.EVENT_COLUMN_VALUE_CHANGED, this.onValueChanged.bind(this));
-        this.eventService.addModalPriorityEventListener(Events.EVENT_COLUMN_PIVOT_CHANGED, this.refreshModel.bind(this, { step: Constants.STEP_PIVOT }));
-        this.eventService.addModalPriorityEventListener(Events.EVENT_ROW_GROUP_OPENED, this.onRowGroupOpened.bind(this));
-        this.eventService.addModalPriorityEventListener(Events.EVENT_FILTER_CHANGED, this.onFilterChanged.bind(this));
-        this.eventService.addModalPriorityEventListener(Events.EVENT_SORT_CHANGED, this.onSortChanged.bind(this));
-        this.eventService.addModalPriorityEventListener(Events.EVENT_COLUMN_PIVOT_MODE_CHANGED, refreshEverythingFunc);
-        var refreshMapFunc = this.refreshModel.bind(this, {
+        this.events = [
+            this.eventService.addModalPriorityEventListener(Events.EVENT_COLUMN_EVERYTHING_CHANGED, refreshEverythingAfterColsChangedFunc),
+            this.eventService.addModalPriorityEventListener(Events.EVENT_COLUMN_ROW_GROUP_CHANGED, refreshEverythingFunc),
+            this.eventService.addModalPriorityEventListener(Events.EVENT_COLUMN_VALUE_CHANGED, this.onValueChanged.bind(this)),
+            this.eventService.addModalPriorityEventListener(Events.EVENT_COLUMN_PIVOT_CHANGED, this.refreshModel.bind(this, { step: Constants.STEP_PIVOT })),
+            this.eventService.addModalPriorityEventListener(Events.EVENT_ROW_GROUP_OPENED, this.onRowGroupOpened.bind(this)),
+            this.eventService.addModalPriorityEventListener(Events.EVENT_FILTER_CHANGED, this.onFilterChanged.bind(this)),
+            this.eventService.addModalPriorityEventListener(Events.EVENT_SORT_CHANGED, this.onSortChanged.bind(this)),
+            this.eventService.addModalPriorityEventListener(Events.EVENT_COLUMN_PIVOT_MODE_CHANGED, refreshEverythingFunc)
+        ];
+        this.refreshMapFunc = this.refreshModel.bind(this, {
             step: Constants.STEP_MAP,
             keepRenderedRows: true,
             animate: true
         });
-        this.gridOptionsWrapper.addEventListener(GridOptionsWrapper.PROP_GROUP_REMOVE_SINGLE_CHILDREN, refreshMapFunc);
-        this.gridOptionsWrapper.addEventListener(GridOptionsWrapper.PROP_GROUP_REMOVE_LOWEST_SINGLE_CHILDREN, refreshMapFunc);
+        this.gridOptionsWrapper.addEventListener(GridOptionsWrapper.PROP_GROUP_REMOVE_SINGLE_CHILDREN, this.refreshMapFunc);
+        this.gridOptionsWrapper.addEventListener(GridOptionsWrapper.PROP_GROUP_REMOVE_LOWEST_SINGLE_CHILDREN, this.refreshMapFunc);
         this.rootNode = new RowNode();
         this.nodeManager = new ClientSideNodeManager(this.rootNode, this.gridOptionsWrapper, this.context, this.eventService, this.columnController, this.gridApi, this.columnApi, this.selectionController);
         this.context.wireBean(this.rootNode);
+    };
+    ClientSideRowModel.prototype.destroy = function () {
+        if (this.events.length) {
+            this.events.forEach(function (func) { return func(); });
+            this.events = [];
+        }
+        this.gridOptionsWrapper.removeEventListener(GridOptionsWrapper.PROP_GROUP_REMOVE_SINGLE_CHILDREN, this.refreshMapFunc);
+        this.gridOptionsWrapper.removeEventListener(GridOptionsWrapper.PROP_GROUP_REMOVE_LOWEST_SINGLE_CHILDREN, this.refreshMapFunc);
     };
     ClientSideRowModel.prototype.start = function () {
         var rowData = this.gridOptionsWrapper.getRowData();
@@ -138,21 +149,31 @@ var ClientSideRowModel = /** @class */ (function () {
     ClientSideRowModel.prototype.highlightRowAtPixel = function (rowNode, pixel) {
         var indexAtPixelNow = pixel != null ? this.getRowIndexAtPixel(pixel) : null;
         var rowNodeAtPixelNow = indexAtPixelNow != null ? this.getRow(indexAtPixelNow) : null;
-        if (rowNodeAtPixelNow === rowNode || !rowNode || pixel == null) {
+        if (!rowNodeAtPixelNow || !rowNode || rowNodeAtPixelNow === rowNode || pixel == null) {
             if (this.lastHighlightedRow) {
                 this.lastHighlightedRow.setHighlighted(null);
                 this.lastHighlightedRow = null;
             }
             return;
         }
-        var rowTop = rowNodeAtPixelNow.rowTop, rowHeight = rowNodeAtPixelNow.rowHeight;
-        var highlight = pixel - rowTop < rowHeight / 2 ? 'above' : 'below';
+        var highlight = this.getHighlightPosition(pixel, rowNodeAtPixelNow);
         if (this.lastHighlightedRow && this.lastHighlightedRow !== rowNodeAtPixelNow) {
             this.lastHighlightedRow.setHighlighted(null);
             this.lastHighlightedRow = null;
         }
         rowNodeAtPixelNow.setHighlighted(highlight);
         this.lastHighlightedRow = rowNodeAtPixelNow;
+    };
+    ClientSideRowModel.prototype.getHighlightPosition = function (pixel, rowNode) {
+        if (!rowNode) {
+            var index = this.getRowIndexAtPixel(pixel);
+            rowNode = this.getRow(index || 0);
+            if (!rowNode) {
+                return 'below';
+            }
+        }
+        var rowTop = rowNode.rowTop, rowHeight = rowNode.rowHeight;
+        return pixel - rowTop < rowHeight / 2 ? 'above' : 'below';
     };
     ClientSideRowModel.prototype.getLastHighlightedRowNode = function () {
         return this.lastHighlightedRow;
@@ -389,7 +410,7 @@ var ClientSideRowModel = /** @class */ (function () {
             if (this.isRowInPixel(currentRowNode, pixelToMatch)) {
                 return midPointer;
             }
-            else if (currentRowNode.rowTop < pixelToMatch) {
+            if (currentRowNode.rowTop < pixelToMatch) {
                 bottomPointer = midPointer + 1;
             }
             else if (currentRowNode.rowTop > pixelToMatch) {
@@ -615,7 +636,7 @@ var ClientSideRowModel = /** @class */ (function () {
         var _this = this;
         if (!this.rowDataTransactionBatch) {
             this.rowDataTransactionBatch = [];
-            var waitMillis = this.gridOptionsWrapper.getBatchUpdateWaitMillis();
+            var waitMillis = this.gridOptionsWrapper.getAsyncTransactionWaitMillis();
             window.setTimeout(function () {
                 _this.executeBatchUpdateRowData();
                 _this.rowDataTransactionBatch = null;
@@ -732,6 +753,9 @@ var ClientSideRowModel = /** @class */ (function () {
     __decorate([
         PostConstruct
     ], ClientSideRowModel.prototype, "init", null);
+    __decorate([
+        PreDestroy
+    ], ClientSideRowModel.prototype, "destroy", null);
     ClientSideRowModel = __decorate([
         Bean('rowModel')
     ], ClientSideRowModel);

@@ -19,7 +19,7 @@ define('skipInPageNav', true);
 <?= chart_example('Time Axis With Irregular Intervals', 'time-axis-with-irregular-intervals', 'generated', ['exampleHeight' => '60vh']) ?>
 
 <div class="chart-navigation">
-    <a class="chart-navigation__left" href="./area-with-negative-values.php">❮&nbsp;&nbsp;Area With Negative Values</a>
+    <a class="chart-navigation__left" href="./xy-histogram-with-mean-aggregation.php">❮&nbsp;&nbsp;XY Histogram With Mean Aggregation</a>
     <a class="chart-navigation__right" href="./real-time-data-updates.php">Real-Time Data Updates&nbsp;&nbsp;❯</a>
 </div>
 

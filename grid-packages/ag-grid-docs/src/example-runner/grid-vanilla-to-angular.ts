@@ -43,7 +43,11 @@ function getModuleImports(bindings: any, componentFileNames: string[]): string[]
     }
 
     if (modules) {
-        const {moduleImports, suppliedModules} = modulesProcessor(modules);
+        let exampleModules = modules;
+        if(modules === true) {
+            exampleModules = ['clientside'];
+        }
+        const { moduleImports, suppliedModules } = modulesProcessor(exampleModules);
 
         imports.push(...moduleImports);
         bindings.gridSuppliedModules = `[${suppliedModules.join(', ')}]`;
@@ -51,7 +55,7 @@ function getModuleImports(bindings: any, componentFileNames: string[]): string[]
         imports.push("import '@ag-grid-community/core/dist/styles/ag-grid.css';");
 
         // to account for the (rare) example that has more than one class...just default to balham if it does
-        const theme = gridSettings.theme || 'ag-theme-balham';
+        const theme = gridSettings.theme || 'ag-theme-alpine';
         imports.push(`import "@ag-grid-community/core/dist/styles/${theme}.css";`);
     } else {
         if (gridSettings.enterprise) {
@@ -64,8 +68,8 @@ function getModuleImports(bindings: any, componentFileNames: string[]): string[]
 
         imports.push("import '@ag-grid-community/all-modules/dist/styles/ag-grid.css';");
 
-        // to account for the (rare) example that has more than one class...just default to balham if it does
-        const theme = gridSettings.theme || 'ag-theme-balham';
+        // to account for the (rare) example that has more than one class...just default to alpine if it does
+        const theme = gridSettings.theme || 'ag-theme-alpine';
         imports.push(`import "@ag-grid-community/all-modules/dist/styles/${theme}.css";`);
     }
 
@@ -90,8 +94,8 @@ function getPackageImports(bindings: any, componentFileNames: string[]): string[
 
     imports.push("import 'ag-grid-community/dist/styles/ag-grid.css';");
 
-    // to account for the (rare) example that has more than one class...just default to balham if it does
-    const theme = gridSettings.theme || 'ag-theme-balham';
+    // to account for the (rare) example that has more than one class...just default to alpine if it does
+    const theme = gridSettings.theme || 'ag-theme-alpine';
     imports.push(`import "ag-grid-community/dist/styles/${theme}.css";`);
 
     if (componentFileNames) {

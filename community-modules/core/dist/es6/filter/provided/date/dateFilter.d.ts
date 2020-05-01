@@ -1,8 +1,8 @@
-// Type definitions for @ag-grid-community/core v23.0.2
+// Type definitions for @ag-grid-community/core v23.1.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { ConditionPosition, ISimpleFilterModel } from "../simpleFilter";
-import { Comparator, IScalarFilterParams, ScalerFilter } from "../scalerFilter";
+import { Comparator, IScalarFilterParams, ScalarFilter } from "../scalarFilter";
 export interface DateFilterModel extends ISimpleFilterModel {
     dateFrom: string;
     dateTo: string;
@@ -14,17 +14,17 @@ export interface IDateFilterParams extends IScalarFilterParams {
 export interface IDateComparatorFunc {
     (filterLocalDateAtMidnight: Date, cellValue: any): number;
 }
-export declare class DateFilter extends ScalerFilter<DateFilterModel, Date> {
+export declare class DateFilter extends ScalarFilter<DateFilterModel, Date> {
     private static readonly FILTER_TYPE;
     static DEFAULT_FILTER_OPTIONS: string[];
-    private ePanelFrom1;
-    private ePanelFrom2;
-    private ePanelTo1;
-    private ePanelTo2;
-    private dateCompFrom1;
-    private dateCompFrom2;
-    private dateCompTo1;
-    private dateCompTo2;
+    private eCondition1PanelFrom;
+    private eCondition1PanelTo;
+    private eCondition2PanelFrom;
+    private eCondition2PanelTo;
+    private dateCondition1FromComp;
+    private dateCondition1ToComp;
+    private dateCondition2FromComp;
+    private dateCondition2ToComp;
     private userComponentFactory;
     private dateFilterParams;
     protected mapRangeFromModel(filterModel: DateFilterModel): {
@@ -46,4 +46,5 @@ export declare class DateFilter extends ScalerFilter<DateFilterModel, Date> {
     protected createCondition(position: ConditionPosition): DateFilterModel;
     private resetPlaceholder;
     protected updateUiVisibility(): void;
+    private getFromToComponents;
 }

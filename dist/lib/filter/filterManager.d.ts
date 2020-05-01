@@ -1,20 +1,17 @@
-import { ExternalPromise, Promise } from "../utils";
-import { Column } from "../entities/column";
-import { ColumnEventType } from "../events";
-import { IFilterComp, IFilterParams } from "../interfaces/iFilter";
-import { ColDef } from "../entities/colDef";
-import { GridCore } from "../gridCore";
+import { Promise } from '../utils';
+import { Column } from '../entities/column';
+import { ColumnEventType } from '../events';
+import { IFilterComp, IFilterParams } from '../interfaces/iFilter';
+import { ColDef } from '../entities/colDef';
 export declare type FilterRequestSource = 'COLUMN_MENU' | 'TOOLBAR' | 'NO_UI';
 export declare class FilterManager {
     private $compile;
     private $scope;
     private gridOptionsWrapper;
-    private popupService;
     private valueService;
     private columnController;
     private rowModel;
     private eventService;
-    private context;
     private columnApi;
     private gridApi;
     private userComponentFactory;
@@ -24,15 +21,18 @@ export declare class FilterManager {
     private quickFilterParts;
     private advancedFilterPresent;
     private externalFilterPresent;
-    private gridCore;
     private processingFilterChange;
     private allowShowChangeAfterFilter;
-    registerGridCore(gridCore: GridCore): void;
+    private eventListenerDestroyers;
     init(): void;
     private setQuickFilterParts;
-    setFilterModel(model: any): void;
+    setFilterModel(model: {
+        [key: string]: any;
+    }): void;
     private setModelOnFilterWrapper;
-    getFilterModel(): any;
+    getFilterModel(): {
+        [key: string]: any;
+    };
     isAdvancedFilterPresent(): boolean;
     private setAdvancedFilterPresent;
     private updateFilterFlagInColumns;
@@ -71,5 +71,5 @@ export interface FilterWrapper {
     column: Column;
     filterPromise: Promise<IFilterComp>;
     scope: any;
-    guiPromise: ExternalPromise<HTMLElement>;
+    guiPromise: Promise<HTMLElement>;
 }

@@ -148,7 +148,8 @@ var EnterpriseMenu = /** @class */ (function (_super) {
             onItemClicked: this.onTabItemClicked.bind(this)
         });
         this.getContext().wireBean(this.tabbedLayout);
-        this.eventService.addEventListener(Events.EVENT_DISPLAYED_COLUMNS_CHANGED, this.onDisplayedColumnsChanged.bind(this));
+        var displayedListener = this.eventService.addEventListener(Events.EVENT_DISPLAYED_COLUMNS_CHANGED, this.onDisplayedColumnsChanged.bind(this));
+        this.addDestroyFunc(function () { return displayedListener(); });
     };
     EnterpriseMenu.prototype.getTabsToCreate = function () {
         var _this = this;
@@ -349,7 +350,7 @@ var EnterpriseMenu = /** @class */ (function (_super) {
         }
         this.tabItemFilter = {
             title: _.createIconNoSpan('filter', this.gridOptionsWrapper, this.column),
-            bodyPromise: filterWrapper.guiPromise.promise,
+            bodyPromise: filterWrapper.guiPromise,
             afterAttachedCallback: afterFilterAttachedCallback,
             name: EnterpriseMenu.TAB_FILTER
         };
@@ -370,7 +371,8 @@ var EnterpriseMenu = /** @class */ (function (_super) {
             suppressColumnSelectAll: false,
             suppressSideButtons: false,
             suppressSyncLayoutWithGrid: false,
-            api: this.gridApi
+            api: this.gridApi,
+            columnApi: this.columnApi
         });
         _.addCssClass(this.columnSelectPanel.getGui(), 'ag-menu-column-select');
         eWrapperDiv.appendChild(this.columnSelectPanel.getGui());
@@ -428,6 +430,9 @@ var EnterpriseMenu = /** @class */ (function (_super) {
     __decorate([
         Autowired('gridApi')
     ], EnterpriseMenu.prototype, "gridApi", void 0);
+    __decorate([
+        Autowired('columnApi')
+    ], EnterpriseMenu.prototype, "columnApi", void 0);
     __decorate([
         Autowired('gridOptionsWrapper')
     ], EnterpriseMenu.prototype, "gridOptionsWrapper", void 0);

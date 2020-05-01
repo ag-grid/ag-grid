@@ -3,6 +3,8 @@ import {RowNode} from "../entities/rowNode";
 import {NumberSequence} from "../utils";
 
 export interface IRowNodeBlock extends IEventEmitter {
+    getDisplayIndexStart(): number;
+    getDisplayIndexEnd(): number;
     getLastAccessed(): number;
     getState(): string;
     isAnyNodeOpen(rowCount: number): boolean;

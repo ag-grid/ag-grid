@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v23.0.2
+ * @version v23.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -120,7 +120,7 @@ var GridApi = /** @class */ (function () {
     };
     GridApi.prototype.setRowData = function (rowData) {
         if (this.gridOptionsWrapper.isRowModelDefault()) {
-            if (this.gridOptionsWrapper.isDeltaRowDataMode()) {
+            if (this.gridOptionsWrapper.isImmutableData()) {
                 var _a = this.immutableService.createTransactionForRowData(rowData), transaction = _a[0], orderIdMap = _a[1];
                 this.clientSideRowModel.updateRowData(transaction, orderIdMap);
                 // need to force updating of full width rows - note this wouldn't be necessary the full width cell comp listened
@@ -268,7 +268,7 @@ var GridApi = /** @class */ (function () {
         console.warn('ag-Grid: since v11.1, refreshView() is deprecated, please call refreshCells() or redrawRows() instead');
         this.redrawRows();
     };
-    //** @deprecated */
+    /** @deprecated */
     GridApi.prototype.refreshRows = function (rowNodes) {
         console.warn('since ag-Grid v11.1, refreshRows() is deprecated, please use refreshCells({rowNodes: rows}) or redrawRows({rowNodes: rows}) instead');
         this.refreshCells({ rowNodes: rowNodes });
@@ -299,6 +299,7 @@ var GridApi = /** @class */ (function () {
     GridApi.prototype.isAnyFilterPresent = function () {
         return this.filterManager.isAnyFilterPresent();
     };
+    /** @deprecated */
     GridApi.prototype.isAdvancedFilterPresent = function () {
         console.warn('ag-Grid: isAdvancedFilterPresent() is deprecated, please use isColumnFilterPresent()');
         return this.isColumnFilterPresent();
@@ -564,9 +565,7 @@ var GridApi = /** @class */ (function () {
         if (column) {
             return column.getColDef();
         }
-        else {
-            return null;
-        }
+        return null;
     };
     GridApi.prototype.onFilterChanged = function () {
         this.filterManager.onFilterChanged();
@@ -598,6 +597,24 @@ var GridApi = /** @class */ (function () {
     };
     GridApi.prototype.setSuppressRowDrag = function (value) {
         this.gridOptionsWrapper.setProperty(GridOptionsWrapper.PROP_SUPPRESS_ROW_DRAG, value);
+    };
+    GridApi.prototype.setSuppressMoveWhenRowDragging = function (value) {
+        this.gridOptionsWrapper.setProperty(GridOptionsWrapper.PROP_SUPPRESS_MOVE_WHEN_ROW_DRAG, value);
+    };
+    GridApi.prototype.setSuppressRowClickSelection = function (value) {
+        this.gridOptionsWrapper.setProperty(GridOptionsWrapper.PROP_SUPPRESS_ROW_CLICK_SELECTION, value);
+    };
+    GridApi.prototype.addRowDropZone = function (params) {
+        this.gridPanel.getRowDragFeature().addRowDropZone(params);
+    };
+    GridApi.prototype.removeRowDropZone = function (params) {
+        var activeDropTarget = this.dragAndDropService.findExternalZone(params);
+        if (activeDropTarget) {
+            this.dragAndDropService.removeDropTarget(activeDropTarget);
+        }
+    };
+    GridApi.prototype.getRowDropZoneParams = function (events) {
+        return this.gridPanel.getRowDragFeature().getRowDropZone(events);
     };
     GridApi.prototype.setHeaderHeight = function (headerHeight) {
         this.gridOptionsWrapper.setProperty(GridOptionsWrapper.PROP_HEADER_HEIGHT, headerHeight);
@@ -690,9 +707,7 @@ var GridApi = /** @class */ (function () {
         if (_.missing(column)) {
             return null;
         }
-        else {
-            return this.valueService.getValue(column, rowNode);
-        }
+        return this.valueService.getValue(column, rowNode);
     };
     GridApi.prototype.addEventListener = function (eventType, listener) {
         var async = this.gridOptionsWrapper.useAsyncEvents();
@@ -869,12 +884,18 @@ var GridApi = /** @class */ (function () {
             this.aggFuncService.clear();
         }
     };
-    GridApi.prototype.updateRowData = function (rowDataTransaction) {
+    GridApi.prototype.applyTransaction = function (rowDataTransaction) {
         var res = null;
         if (this.clientSideRowModel) {
+            if (rowDataTransaction && rowDataTransaction.addIndex != null) {
+                var message_1 = 'ag-Grid: as of v23.1, transaction.addIndex is deprecated. If you want precision control of adding data, use immutableData instead';
+                _.doOnce(function () { return console.warn(message_1); }, 'transaction.addIndex deprecated');
+            }
             res = this.clientSideRowModel.updateRowData(rowDataTransaction);
         }
         else if (this.infiniteRowModel) {
+            var message_2 = 'ag-Grid: as of v23.1, transactions for Infinite Row Model are deprecated. If you want to make updates to data in Infinite Row Models, then refresh the data.';
+            _.doOnce(function () { return console.warn(message_2); }, 'applyTransaction infiniteRowModel deprecated');
             this.infiniteRowModel.updateRowData(rowDataTransaction);
         }
         else {
@@ -888,12 +909,24 @@ var GridApi = /** @class */ (function () {
         }
         return res;
     };
-    GridApi.prototype.batchUpdateRowData = function (rowDataTransaction, callback) {
+    /** @deprecated */
+    GridApi.prototype.updateRowData = function (rowDataTransaction) {
+        var message = 'ag-Grid: as of v23.1, grid API updateRowData(transaction) is now called applyTransaction(transaction). updateRowData is deprecated and will be removed in a future major release.';
+        _.doOnce(function () { return console.warn(message); }, 'updateRowData deprecated');
+        return this.applyTransaction(rowDataTransaction);
+    };
+    GridApi.prototype.applyTransactionAsync = function (rowDataTransaction, callback) {
         if (!this.clientSideRowModel) {
-            console.error('ag-Grid: api.batchUpdateRowData() only works with ClientSideRowModel.');
+            console.error('ag-Grid: api.applyTransactionAsync() only works with ClientSideRowModel.');
             return;
         }
         this.clientSideRowModel.batchUpdateRowData(rowDataTransaction, callback);
+    };
+    /** @deprecated */
+    GridApi.prototype.batchUpdateRowData = function (rowDataTransaction, callback) {
+        var message = 'ag-Grid: as of v23.1, grid API batchUpdateRowData(transaction, callback) is now called applyTransactionAsync(transaction, callback). batchUpdateRowData is deprecated and will be removed in a future major release.';
+        _.doOnce(function () { return console.warn(message); }, 'batchUpdateRowData deprecated');
+        this.applyTransactionAsync(rowDataTransaction, callback);
     };
     GridApi.prototype.insertItemsAtIndex = function (index, items, skipRefresh) {
         if (skipRefresh === void 0) { skipRefresh = false; }
@@ -1114,6 +1147,9 @@ var GridApi = /** @class */ (function () {
     __decorate([
         Autowired('focusController')
     ], GridApi.prototype, "focusController", void 0);
+    __decorate([
+        Autowired('dragAndDropService')
+    ], GridApi.prototype, "dragAndDropService", void 0);
     __decorate([
         Optional('rangeController')
     ], GridApi.prototype, "rangeController", void 0);

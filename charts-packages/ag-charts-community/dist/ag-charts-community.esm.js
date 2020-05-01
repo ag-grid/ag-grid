@@ -1,5 +1,5 @@
 /**
- * ag-charts-community - Advanced Charting / Charts supporting Javascript / React / Angular * @version v1.0.1
+ * ag-charts-community - Advanced Charting / Charts supporting Javascript / React / Angular * @version v1.1.0
  * @link http://www.ag-grid.com/
 ' * @license MIT
  */
@@ -396,7 +396,6 @@ var Node = /** @class */ (function () {
         // for performance optimization purposes.
         this.matrix = new Matrix();
         this.inverseMatrix = new Matrix();
-        // TODO: should this be `true` by default as well?
         this._dirtyTransform = false;
         this._scalingX = 1;
         this._scalingY = 1;
@@ -607,13 +606,6 @@ var Node = /** @class */ (function () {
         enumerable: true,
         configurable: true
     });
-    /**
-     * Calculates the combined inverse transformation for this node,
-     * and uses it to convert the given transformed point
-     * to the untransformed one.
-     * @param x
-     * @param y
-     */
     Node.prototype.transformPoint = function (x, y) {
         var matrix = Matrix.flyweight(this.matrix);
         var parent = this.parent;
@@ -623,14 +615,21 @@ var Node = /** @class */ (function () {
         }
         return matrix.invertSelf().transformPoint(x, y);
     };
+    Node.prototype.inverseTransformPoint = function (x, y) {
+        var matrix = Matrix.flyweight(this.matrix);
+        var parent = this.parent;
+        while (parent) {
+            matrix.preMultiplySelf(parent.matrix);
+            parent = parent.parent;
+        }
+        return matrix.transformPoint(x, y);
+    };
     Object.defineProperty(Node.prototype, "dirtyTransform", {
         get: function () {
             return this._dirtyTransform;
         },
         set: function (value) {
             this._dirtyTransform = value;
-            // TODO: replace this with simply `this.dirty = true`,
-            //       see `set dirty` method.
             if (value) {
                 this.dirty = true;
             }
@@ -1919,93 +1918,118 @@ var Text = /** @class */ (function (_super) {
     return Text;
 }(Shape));
 
+var __assign = (undefined && undefined.__assign) || function () {
+    __assign = Object.assign || function(t) {
+        for (var s, i = 1, n = arguments.length; i < n; i++) {
+            s = arguments[i];
+            for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
+                t[p] = s[p];
+        }
+        return t;
+    };
+    return __assign.apply(this, arguments);
+};
 var Observable = /** @class */ (function () {
     function Observable() {
-        this.propertyListeners = new Map(); // property name => property change listeners
-        this.eventListeners = new Map(); // event type => event listeners
+        // Note that these maps can't be specified generically, so they are kept untyped.
+        // Some methods in this class only need generics in their signatures, the generics inside the methods
+        // are just for clarity. The generics in signatures allow for static type checking of user provided
+        // listeners and for type inference, so that the users wouldn't have to specify the type of parameters
+        // of their inline lambdas.
+        this.allPropertyListeners = new Map(); // property name => property change listener => scopes
+        this.allEventListeners = new Map(); // event type => event listener => scopes
     }
-    Observable.prototype.addPropertyListener = function (name, listener) {
-        var propertyListeners = this.propertyListeners;
-        var listeners = propertyListeners.get(name);
-        if (!listeners) {
-            listeners = new Set();
-            propertyListeners.set(name, listeners);
+    Observable.prototype.addPropertyListener = function (name, listener, scope) {
+        if (scope === void 0) { scope = this; }
+        var allPropertyListeners = this.allPropertyListeners;
+        var propertyListeners = allPropertyListeners.get(name);
+        if (!propertyListeners) {
+            propertyListeners = new Map();
+            allPropertyListeners.set(name, propertyListeners);
         }
-        if (!listeners.has(listener)) {
-            listeners.add(listener);
-            return listener;
+        if (!propertyListeners.has(listener)) {
+            var scopes = new Set();
+            propertyListeners.set(listener, scopes);
         }
-        else {
-            console.warn('Listener ', listener, ' already added to ', this);
-        }
+        propertyListeners.get(listener).add(scope);
     };
-    Observable.prototype.removePropertyListener = function (name, listener) {
-        var propertyListeners = this.propertyListeners;
-        var listeners = propertyListeners.get(name);
-        if (listeners) {
+    Observable.prototype.removePropertyListener = function (name, listener, scope) {
+        if (scope === void 0) { scope = this; }
+        var allPropertyListeners = this.allPropertyListeners;
+        var propertyListeners = allPropertyListeners.get(name);
+        if (propertyListeners) {
             if (listener) {
-                listeners.delete(listener);
+                var scopes = propertyListeners.get(listener);
+                scopes.delete(scope);
+                if (!scopes.size) {
+                    propertyListeners.delete(listener);
+                }
             }
             else {
-                listeners.clear();
+                propertyListeners.clear();
             }
         }
     };
     Observable.prototype.notifyPropertyListeners = function (name, oldValue, value) {
         var _this = this;
-        var nameListeners = this.propertyListeners;
-        var listeners = nameListeners.get(name);
-        if (listeners) {
-            listeners.forEach(function (listener) {
-                listener({
-                    type: name,
-                    source: _this,
-                    value: value,
-                    oldValue: oldValue
-                });
+        var allPropertyListeners = this.allPropertyListeners;
+        var propertyListeners = allPropertyListeners.get(name);
+        if (propertyListeners) {
+            propertyListeners.forEach(function (scopes, listener) {
+                scopes.forEach(function (scope) { return listener.call(scope, { type: name, source: _this, value: value, oldValue: oldValue }); });
             });
         }
     };
-    Observable.prototype.addEventListener = function (type, listener) {
-        var eventListeners = this.eventListeners;
-        var listeners = eventListeners.get(type);
-        if (!listeners) {
-            listeners = new Set();
-            eventListeners.set(type, listeners);
+    Observable.prototype.addEventListener = function (type, listener, scope) {
+        if (scope === void 0) { scope = this; }
+        var allEventListeners = this.allEventListeners;
+        var eventListeners = allEventListeners.get(type);
+        if (!eventListeners) {
+            eventListeners = new Map();
+            allEventListeners.set(type, eventListeners);
         }
-        if (!listeners.has(listener)) {
-            listeners.add(listener);
-            return listener;
+        if (!eventListeners.has(listener)) {
+            var scopes = new Set();
+            eventListeners.set(listener, scopes);
         }
-        else {
-            console.warn('Category listener ', listener, ' already added to ', this);
-        }
+        eventListeners.get(listener).add(scope);
     };
-    Observable.prototype.removeEventListener = function (type, listener) {
-        var eventListeners = this.eventListeners;
-        var listeners = eventListeners.get(type);
-        if (listeners) {
+    Observable.prototype.removeEventListener = function (type, listener, scope) {
+        if (scope === void 0) { scope = this; }
+        var allEventListeners = this.allEventListeners;
+        var eventListeners = allEventListeners.get(type);
+        if (eventListeners) {
             if (listener) {
-                listeners.delete(listener);
+                var scopes = eventListeners.get(listener);
+                scopes.delete(scope);
+                if (!scopes.size) {
+                    eventListeners.delete(listener);
+                }
             }
             else {
-                listeners.clear();
+                eventListeners.clear();
             }
         }
     };
     Observable.prototype.notifyEventListeners = function (types) {
-        var eventListeners = this.eventListeners;
+        var _this = this;
+        var allEventListeners = this.allEventListeners;
         types.forEach(function (type) {
-            var listeners = eventListeners.get(type);
+            var listeners = allEventListeners.get(type);
             if (listeners) {
-                listeners.forEach(function (listener) { return listener({ type: type }); });
+                listeners.forEach(function (scopes, listener) {
+                    scopes.forEach(function (scope) { return listener.call(scope, { type: type, source: _this }); });
+                });
             }
         });
     };
     Observable.prototype.fireEvent = function (event) {
-        var listeners = this.eventListeners.get(event.type);
+        var _this = this;
+        var listeners = this.allEventListeners.get(event.type);
         if (listeners) {
-            listeners.forEach(function (listener) { return listener(event); });
+            listeners.forEach(function (scopes, listener) {
+                scopes.forEach(function (scope) { return listener.call(scope, __assign(__assign({}, event), { source: _this })); });
+            });
         }
     };
     Observable.privateKeyPrefix = '_';
@@ -3059,78 +3083,6 @@ var Line = /** @class */ (function (_super) {
     return Line;
 }(Shape));
 
-var __extends$5 = (undefined && undefined.__extends) || (function () {
-    var extendStatics = function (d, b) {
-        extendStatics = Object.setPrototypeOf ||
-            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
-        return extendStatics(d, b);
-    };
-    return function (d, b) {
-        extendStatics(d, b);
-        function __() { this.constructor = d; }
-        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-})();
-function ticks (a, b, count) {
-    var step = tickStep(a, b, count);
-    a = Math.ceil(a / step) * step;
-    b = Math.floor(b / step) * step + step / 2;
-    // Add half a step here so that the array returned by `range` includes the last tick.
-    return range(a, b, step);
-}
-var e10 = Math.sqrt(50);
-var e5 = Math.sqrt(10);
-var e2 = Math.sqrt(2);
-function tickStep(a, b, count) {
-    var rawStep = Math.abs(b - a) / Math.max(0, count);
-    var step = Math.pow(10, Math.floor(Math.log(rawStep) / Math.LN10)); // = Math.log10(rawStep)
-    var error = rawStep / step;
-    if (error >= e10) {
-        step *= 10;
-    }
-    else if (error >= e5) {
-        step *= 5;
-    }
-    else if (error >= e2) {
-        step *= 2;
-    }
-    return b < a ? -step : step;
-}
-function tickIncrement(a, b, count) {
-    var rawStep = (b - a) / Math.max(0, count);
-    var power = Math.floor(Math.log(rawStep) / Math.LN10);
-    var error = rawStep / Math.pow(10, power);
-    return power >= 0
-        ? (error >= e10 ? 10 : error >= e5 ? 5 : error >= e2 ? 2 : 1) * Math.pow(10, power)
-        : -Math.pow(10, -power) / (error >= e10 ? 10 : error >= e5 ? 5 : error >= e2 ? 2 : 1);
-}
-var NumericTicks = /** @class */ (function (_super) {
-    __extends$5(NumericTicks, _super);
-    function NumericTicks(fractionDigits, size) {
-        if (size === void 0) { size = 0; }
-        var _this = _super.call(this, size) || this;
-        _this.fractionDigits = fractionDigits;
-        return _this;
-    }
-    return NumericTicks;
-}(Array));
-function range(a, b, step) {
-    if (step === void 0) { step = 1; }
-    var absStep = Math.abs(step);
-    var fractionDigits = (absStep > 0 && absStep < 1)
-        ? Math.abs(Math.floor(Math.log(absStep) / Math.LN10))
-        : 0;
-    var f = Math.pow(10, fractionDigits);
-    var n = Math.max(0, Math.ceil((b - a) / step)) || 0;
-    var values = new NumericTicks(fractionDigits, n);
-    for (var i = 0; i < n; i++) {
-        var value = a + step * i;
-        values[i] = Math.round(value * f) / f;
-    }
-    return values;
-}
-
 var twoPi = Math.PI * 2;
 /**
  * Normalize the given angle to be in the [0, 2π) interval.
@@ -3986,7 +3938,7 @@ var Path2D = /** @class */ (function () {
     return Path2D;
 }());
 
-var __extends$6 = (undefined && undefined.__extends) || (function () {
+var __extends$5 = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -4000,7 +3952,7 @@ var __extends$6 = (undefined && undefined.__extends) || (function () {
     };
 })();
 var Path = /** @class */ (function (_super) {
-    __extends$6(Path, _super);
+    __extends$5(Path, _super);
     function Path() {
         var _this = _super !== null && _super.apply(this, arguments) || this;
         /**
@@ -4100,7 +4052,7 @@ function toFixed(value, fractionOrSignificantDigits) {
     return value.toFixed(Math.abs(power) - 1 + fractionOrSignificantDigits); // significant digits
 }
 
-var __extends$7 = (undefined && undefined.__extends) || (function () {
+var __extends$6 = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -4123,7 +4075,7 @@ var ArcType;
  * Elliptical arc node.
  */
 var Arc = /** @class */ (function (_super) {
-    __extends$7(Arc, _super);
+    __extends$6(Arc, _super);
     function Arc() {
         var _this = _super.call(this) || this;
         _this._centerX = 0;
@@ -4626,7 +4578,8 @@ var Axis = /** @class */ (function () {
             });
         }
         var tickFormatter = this.tickFormatter;
-        var fractionDigits = ticks instanceof NumericTicks ? ticks.fractionDigits : 0;
+        // `ticks instanceof NumericTicks` doesn't work here, so we feature detect.
+        var fractionDigits = ticks.fractionDigits >= 0 ? ticks.fractionDigits : 0;
         var labelSelection = groupSelection.selectByClass(Text)
             .each(function (node, datum, index) {
             node.fontStyle = label.fontStyle;
@@ -4757,7 +4710,7 @@ var Axis = /** @class */ (function () {
     return Axis;
 }());
 
-var __extends$8 = (undefined && undefined.__extends) || (function () {
+var __extends$7 = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -4793,7 +4746,7 @@ var ChartAxisPosition;
     ChartAxisPosition["Radius"] = "radius";
 })(ChartAxisPosition || (ChartAxisPosition = {}));
 var ChartAxis = /** @class */ (function (_super) {
-    __extends$8(ChartAxis, _super);
+    __extends$7(ChartAxis, _super);
     function ChartAxis() {
         var _this = _super !== null && _super.apply(this, arguments) || this;
         _this.keys = [];
@@ -4848,7 +4801,7 @@ var ChartAxis = /** @class */ (function (_super) {
     return ChartAxis;
 }(Axis));
 
-var __extends$9 = (undefined && undefined.__extends) || (function () {
+var __extends$8 = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -4862,7 +4815,7 @@ var __extends$9 = (undefined && undefined.__extends) || (function () {
     };
 })();
 var CategoryAxis = /** @class */ (function (_super) {
-    __extends$9(CategoryAxis, _super);
+    __extends$8(CategoryAxis, _super);
     function CategoryAxis() {
         var _this = this;
         var scale = new BandScale();
@@ -4953,6 +4906,10 @@ function numericExtent(values) {
         return [min, max];
     }
 }
+/**
+ * finds the min and max using a process appropriate for stacked values. Ie,
+ * summing up the positive and negative numbers, and returning the totals of each
+ */
 function findMinMax(values) {
     var min = 0;
     var max = 0;
@@ -5295,7 +5252,7 @@ var TreeLayout = /** @class */ (function () {
     return TreeLayout;
 }());
 
-var __extends$a = (undefined && undefined.__extends) || (function () {
+var __extends$9 = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -5309,7 +5266,7 @@ var __extends$a = (undefined && undefined.__extends) || (function () {
     };
 })();
 var GroupedCategoryAxisLabel = /** @class */ (function (_super) {
-    __extends$a(GroupedCategoryAxisLabel, _super);
+    __extends$9(GroupedCategoryAxisLabel, _super);
     function GroupedCategoryAxisLabel() {
         var _this = _super !== null && _super.apply(this, arguments) || this;
         _this.grid = false;
@@ -5327,7 +5284,7 @@ var GroupedCategoryAxisLabel = /** @class */ (function (_super) {
  * The output range of the axis' scale is always numeric (screen coordinates).
  */
 var GroupedCategoryAxis = /** @class */ (function (_super) {
-    __extends$a(GroupedCategoryAxis, _super);
+    __extends$9(GroupedCategoryAxis, _super);
     function GroupedCategoryAxis() {
         var _this = _super.call(this, new BandScale()) || this;
         _this.id = createId(_this);
@@ -5870,7 +5827,7 @@ var Scene = /** @class */ (function () {
     return Scene;
 }());
 
-var __extends$b = (undefined && undefined.__extends) || (function () {
+var __extends$a = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -5889,7 +5846,7 @@ var RectSizing;
     RectSizing[RectSizing["Border"] = 1] = "Border";
 })(RectSizing || (RectSizing = {}));
 var Rect = /** @class */ (function (_super) {
-    __extends$b(Rect, _super);
+    __extends$a(Rect, _super);
     function Rect() {
         var _this = _super !== null && _super.apply(this, arguments) || this;
         _this._x = 0;
@@ -6114,7 +6071,7 @@ var Rect = /** @class */ (function (_super) {
     return Rect;
 }(Path));
 
-var __extends$c = (undefined && undefined.__extends) || (function () {
+var __extends$b = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -6128,7 +6085,7 @@ var __extends$c = (undefined && undefined.__extends) || (function () {
     };
 })();
 var Marker = /** @class */ (function (_super) {
-    __extends$c(Marker, _super);
+    __extends$b(Marker, _super);
     function Marker() {
         var _this = _super !== null && _super.apply(this, arguments) || this;
         _this._x = 0;
@@ -6183,7 +6140,7 @@ var Marker = /** @class */ (function (_super) {
     return Marker;
 }(Path));
 
-var __extends$d = (undefined && undefined.__extends) || (function () {
+var __extends$c = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -6197,7 +6154,7 @@ var __extends$d = (undefined && undefined.__extends) || (function () {
     };
 })();
 var Square = /** @class */ (function (_super) {
-    __extends$d(Square, _super);
+    __extends$c(Square, _super);
     function Square() {
         return _super !== null && _super.apply(this, arguments) || this;
     }
@@ -6215,7 +6172,7 @@ var Square = /** @class */ (function (_super) {
     return Square;
 }(Marker));
 
-var __extends$e = (undefined && undefined.__extends) || (function () {
+var __extends$d = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -6229,7 +6186,7 @@ var __extends$e = (undefined && undefined.__extends) || (function () {
     };
 })();
 var MarkerLabel = /** @class */ (function (_super) {
-    __extends$e(MarkerLabel, _super);
+    __extends$d(MarkerLabel, _super);
     function MarkerLabel() {
         var _this = _super.call(this) || this;
         _this.label = new Text();
@@ -6419,7 +6376,7 @@ var MarkerLabel = /** @class */ (function (_super) {
     return MarkerLabel;
 }(Group));
 
-var __extends$f = (undefined && undefined.__extends) || (function () {
+var __extends$e = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -6433,7 +6390,7 @@ var __extends$f = (undefined && undefined.__extends) || (function () {
     };
 })();
 var Circle = /** @class */ (function (_super) {
-    __extends$f(Circle, _super);
+    __extends$e(Circle, _super);
     function Circle() {
         return _super !== null && _super.apply(this, arguments) || this;
     }
@@ -6448,7 +6405,7 @@ var Circle = /** @class */ (function (_super) {
     return Circle;
 }(Marker));
 
-var __extends$g = (undefined && undefined.__extends) || (function () {
+var __extends$f = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -6462,7 +6419,7 @@ var __extends$g = (undefined && undefined.__extends) || (function () {
     };
 })();
 var Cross = /** @class */ (function (_super) {
-    __extends$g(Cross, _super);
+    __extends$f(Cross, _super);
     function Cross() {
         return _super !== null && _super.apply(this, arguments) || this;
     }
@@ -6489,7 +6446,7 @@ var Cross = /** @class */ (function (_super) {
     return Cross;
 }(Marker));
 
-var __extends$h = (undefined && undefined.__extends) || (function () {
+var __extends$g = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -6503,7 +6460,7 @@ var __extends$h = (undefined && undefined.__extends) || (function () {
     };
 })();
 var Diamond = /** @class */ (function (_super) {
-    __extends$h(Diamond, _super);
+    __extends$g(Diamond, _super);
     function Diamond() {
         return _super !== null && _super.apply(this, arguments) || this;
     }
@@ -6523,7 +6480,7 @@ var Diamond = /** @class */ (function (_super) {
     return Diamond;
 }(Marker));
 
-var __extends$i = (undefined && undefined.__extends) || (function () {
+var __extends$h = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -6537,7 +6494,7 @@ var __extends$i = (undefined && undefined.__extends) || (function () {
     };
 })();
 var Heart = /** @class */ (function (_super) {
-    __extends$i(Heart, _super);
+    __extends$h(Heart, _super);
     function Heart() {
         return _super !== null && _super.apply(this, arguments) || this;
     }
@@ -6558,7 +6515,7 @@ var Heart = /** @class */ (function (_super) {
     return Heart;
 }(Marker));
 
-var __extends$j = (undefined && undefined.__extends) || (function () {
+var __extends$i = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -6572,7 +6529,7 @@ var __extends$j = (undefined && undefined.__extends) || (function () {
     };
 })();
 var Plus = /** @class */ (function (_super) {
-    __extends$j(Plus, _super);
+    __extends$i(Plus, _super);
     function Plus() {
         return _super !== null && _super.apply(this, arguments) || this;
     }
@@ -6600,7 +6557,7 @@ var Plus = /** @class */ (function (_super) {
     return Plus;
 }(Marker));
 
-var __extends$k = (undefined && undefined.__extends) || (function () {
+var __extends$j = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -6614,7 +6571,7 @@ var __extends$k = (undefined && undefined.__extends) || (function () {
     };
 })();
 var Triangle = /** @class */ (function (_super) {
-    __extends$k(Triangle, _super);
+    __extends$j(Triangle, _super);
     function Triangle() {
         return _super !== null && _super.apply(this, arguments) || this;
     }
@@ -6655,10 +6612,13 @@ function getMarker(shape) {
                 return Square;
         }
     }
-    return shape;
+    if (typeof shape === 'function') {
+        return shape;
+    }
+    return Square;
 }
 
-var __extends$l = (undefined && undefined.__extends) || (function () {
+var __extends$k = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -6690,7 +6650,7 @@ var LegendPosition;
     LegendPosition["Left"] = "left";
 })(LegendPosition || (LegendPosition = {}));
 var Legend = /** @class */ (function (_super) {
-    __extends$l(Legend, _super);
+    __extends$k(Legend, _super);
     function Legend() {
         var _this = _super.call(this) || this;
         _this.id = createId(_this);
@@ -6727,32 +6687,11 @@ var Legend = /** @class */ (function (_super) {
         _this.fontSize = 12;
         _this.fontFamily = 'Verdana, sans-serif';
         _this._size = [0, 0];
-        _this.addPropertyListener('data', function (event) {
-            var legend = event.source, data = event.value;
-            legend.group.visible = legend.enabled && data.length > 0;
-        });
-        _this.addPropertyListener('enabled', function (event) {
-            var legend = event.source, value = event.value;
-            legend.group.visible = value && legend.data.length > 0;
-        });
-        _this.addPropertyListener('position', function (event) {
-            var legend = event.source, position = event.value;
-            switch (position) {
-                case 'right':
-                case 'left':
-                    legend.orientation = LegendOrientation.Vertical;
-                    break;
-                case 'bottom':
-                case 'top':
-                    legend.orientation = LegendOrientation.Horizontal;
-                    break;
-            }
-        });
-        _this.addPropertyListener('markerShape', function (event) {
-            _this.itemSelection = _this.itemSelection.setData([]);
-            _this.itemSelection.exit.remove();
-        });
-        _this.addEventListener('change', function () { return _this.update(); });
+        _this.addPropertyListener('data', _this.onDataChange);
+        _this.addPropertyListener('enabled', _this.onEnabledChange);
+        _this.addPropertyListener('position', _this.onPositionChange);
+        _this.addPropertyListener('markerShape', _this.onMarkerShapeChange);
+        _this.addEventListener('change', _this.update);
         return _this;
     }
     Object.defineProperty(Legend.prototype, "size", {
@@ -6762,6 +6701,28 @@ var Legend = /** @class */ (function (_super) {
         enumerable: true,
         configurable: true
     });
+    Legend.prototype.onDataChange = function (event) {
+        this.group.visible = event.value.length > 0 && this.enabled;
+    };
+    Legend.prototype.onEnabledChange = function (event) {
+        this.group.visible = event.value && this.data.length > 0;
+    };
+    Legend.prototype.onPositionChange = function (event) {
+        switch (event.value) {
+            case 'right':
+            case 'left':
+                this.orientation = LegendOrientation.Vertical;
+                break;
+            case 'bottom':
+            case 'top':
+                this.orientation = LegendOrientation.Horizontal;
+                break;
+        }
+    };
+    Legend.prototype.onMarkerShapeChange = function () {
+        this.itemSelection = this.itemSelection.setData([]);
+        this.itemSelection.exit.remove();
+    };
     /**
      * The method is given the desired size of the legend, which only serves as a hint.
      * The vertically oriented legend will take as much horizontal space as needed, but will
@@ -7041,7 +7002,7 @@ var SizeMonitor = /** @class */ (function () {
     return SizeMonitor;
 }());
 
-var __extends$m = (undefined && undefined.__extends) || (function () {
+var __extends$l = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -7061,7 +7022,7 @@ var __decorate$2 = (undefined && undefined.__decorate) || function (decorators, 
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 var Series = /** @class */ (function (_super) {
-    __extends$m(Series, _super);
+    __extends$l(Series, _super);
     function Series() {
         var _this = _super !== null && _super.apply(this, arguments) || this;
         _this.id = createId(_this);
@@ -7112,9 +7073,17 @@ var Series = /** @class */ (function (_super) {
         }
         return values;
     };
+    // Returns node data associated with the rendered portion of the series' data.
+    Series.prototype.getNodeData = function () {
+        return [];
+    };
+    Series.prototype.fireNodeClickEvent = function (datum) { };
     Series.prototype.toggleSeriesItem = function (itemId, enabled) {
         this.visible = enabled;
     };
+    // Each series is expected to have its own logic to efficiently update its nodes
+    // on hightlight changes.
+    Series.prototype.onHighlightChange = function () { };
     Series.prototype.fixNumericExtent = function (extent, type) {
         if (!extent) {
             // if (type) {
@@ -7152,7 +7121,7 @@ var Series = /** @class */ (function (_super) {
     return Series;
 }(Observable));
 
-var __extends$n = (undefined && undefined.__extends) || (function () {
+var __extends$m = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -7172,7 +7141,7 @@ var __decorate$3 = (undefined && undefined.__decorate) || function (decorators, 
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 var SeriesMarker = /** @class */ (function (_super) {
-    __extends$n(SeriesMarker, _super);
+    __extends$m(SeriesMarker, _super);
     function SeriesMarker() {
         var _this = _super !== null && _super.apply(this, arguments) || this;
         _this.enabled = true;
@@ -7216,7 +7185,7 @@ var SeriesMarker = /** @class */ (function (_super) {
     return SeriesMarker;
 }(Observable));
 
-var __extends$o = (undefined && undefined.__extends) || (function () {
+var __extends$n = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -7230,7 +7199,7 @@ var __extends$o = (undefined && undefined.__extends) || (function () {
     };
 })();
 var CartesianSeries = /** @class */ (function (_super) {
-    __extends$o(CartesianSeries, _super);
+    __extends$n(CartesianSeries, _super);
     function CartesianSeries() {
         var _a;
         var _this = _super !== null && _super.apply(this, arguments) || this;
@@ -7243,14 +7212,14 @@ var CartesianSeries = /** @class */ (function (_super) {
     return CartesianSeries;
 }(Series));
 var CartesianSeriesMarker = /** @class */ (function (_super) {
-    __extends$o(CartesianSeriesMarker, _super);
+    __extends$n(CartesianSeriesMarker, _super);
     function CartesianSeriesMarker() {
         return _super !== null && _super.apply(this, arguments) || this;
     }
     return CartesianSeriesMarker;
 }(SeriesMarker));
 
-var __extends$p = (undefined && undefined.__extends) || (function () {
+var __extends$o = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -7263,15 +7232,26 @@ var __extends$p = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
+var __assign$1 = (undefined && undefined.__assign) || function () {
+    __assign$1 = Object.assign || function(t) {
+        for (var s, i = 1, n = arguments.length; i < n; i++) {
+            s = arguments[i];
+            for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
+                t[p] = s[p];
+        }
+        return t;
+    };
+    return __assign$1.apply(this, arguments);
+};
 var __decorate$4 = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
-var defaultTooltipCss = "\n.ag-chart-tooltip {\n    display: none;\n    position: absolute;\n    user-select: none;\n    pointer-events: none;\n    white-space: nowrap;\n    z-index: 99999;\n    font: 12px Verdana, sans-serif;\n    color: black;\n    background: rgb(244, 244, 244);\n    border-radius: 5px;\n    box-shadow: 0 0 1px rgba(3, 3, 3, 0.7), 0.5vh 0.5vh 1vh rgba(3, 3, 3, 0.25);\n}\n\n.ag-chart-tooltip-visible {\n    display: table;\n}\n\n.ag-chart-tooltip-title {\n    font-weight: bold;\n    padding: 7px;\n    border-top-left-radius: 5px;\n    border-top-right-radius: 5px;\n    color: white;\n    background-color: #888888;\n    border-top-left-radius: 5px;\n    border-top-right-radius: 5px;\n}\n\n.ag-chart-tooltip-content {\n    padding: 7px;\n    line-height: 1.7em;\n    border-bottom-left-radius: 5px;\n    border-bottom-right-radius: 5px;\n}\n";
+var defaultTooltipCss = "\n.ag-chart-tooltip {\n    display: none;\n    position: absolute;\n    user-select: none;\n    pointer-events: none;\n    white-space: nowrap;\n    z-index: 99999;\n    font: 12px Verdana, sans-serif;\n    color: black;\n    background: rgb(244, 244, 244);\n    border-radius: 5px;\n    box-shadow: 0 0 1px rgba(3, 3, 3, 0.7), 0.5vh 0.5vh 1vh rgba(3, 3, 3, 0.25);\n}\n\n.ag-chart-tooltip-visible {\n    display: table;\n}\n\n.ag-chart-tooltip-title {\n    font-weight: bold;\n    padding: 7px;\n    border-top-left-radius: 5px;\n    border-top-right-radius: 5px;\n    color: white;\n    background-color: #888888;\n    border-top-left-radius: 5px;\n    border-top-right-radius: 5px;\n}\n\n.ag-chart-tooltip-content {\n    padding: 7px;\n    line-height: 1.7em;\n    border-bottom-left-radius: 5px;\n    border-bottom-right-radius: 5px;\n}\n\n.ag-chart-tooltip-arrow::before {\n    content: \"\";\n\n    position: absolute;\n    top: 100%;\n    left: 50%;\n    transform: translateX(-50%);\n\n    border: 6px solid #989898;\n\n    border-left-color: transparent;\n    border-right-color: transparent;\n    border-top-color: #989898;\n    border-bottom-color: transparent;\n\n    width: 0;\n    height: 0;\n\n    margin: 0 auto;\n}\n\n.ag-chart-tooltip-arrow::after {\n    content: \"\";\n\n    position: absolute;\n    top: 100%;\n    left: 50%;\n    transform: translateX(-50%);\n\n    border: 5px solid black;\n\n    border-left-color: transparent;\n    border-right-color: transparent;\n    border-top-color: rgb(244, 244, 244);\n    border-bottom-color: transparent;\n\n    width: 0;\n    height: 0;\n\n    margin: 0 auto;\n}\n";
 var Chart = /** @class */ (function (_super) {
-    __extends$p(Chart, _super);
+    __extends$o(Chart, _super);
     function Chart(document) {
         if (document === void 0) { document = window.document; }
         var _this = _super.call(this) || this;
@@ -7280,26 +7260,12 @@ var Chart = /** @class */ (function (_super) {
         _this.legend = new Legend();
         _this.legendAutoPadding = new Padding();
         _this.captionAutoPadding = 0; // top padding only
-        _this.tooltipOffset = [20, 20];
         _this._container = undefined;
         _this._data = [];
         _this._autoSize = false;
         _this.padding = new Padding(20);
-        _this.onLayoutChange = function () {
-            _this.layoutPending = true;
-        };
-        _this.onLegendPositionChange = function () {
-            _this.legendAutoPadding.clear();
-            _this.layoutPending = true;
-        };
         _this._axes = [];
         _this._series = [];
-        _this.scheduleLayout = function () {
-            _this.layoutPending = true;
-        };
-        _this.scheduleData = function () {
-            _this.dataPending = true;
-        };
         _this._axesChanged = false;
         _this._seriesChanged = false;
         _this.layoutCallbackId = 0;
@@ -7318,27 +7284,57 @@ var Chart = /** @class */ (function (_super) {
             }
         };
         _this.dataCallbackId = 0;
-        _this.updateLegend = function () {
-            var legendData = [];
-            _this.series.filter(function (s) { return s.showInLegend; }).forEach(function (series) { return series.listSeriesItems(legendData); });
-            _this.legend.data = legendData;
-        };
         _this.onMouseMove = function (event) {
+            var _a = _this, lastPick = _a.lastPick, tooltipTracking = _a.tooltipTracking;
             var pick = _this.pickSeriesNode(event.offsetX, event.offsetY);
-            if (pick) {
+            var nodeDatum;
+            if (pick && pick.node instanceof Shape) {
                 var node = pick.node;
-                if (node instanceof Shape) {
-                    if (!_this.lastPick || // cursor moved from empty space to a node
-                        _this.lastPick.node !== node) { // cursor moved from one node to another
-                        _this.onSeriesNodePick(event, pick.series, node);
+                nodeDatum = node.datum;
+                if (lastPick && lastPick.datum === nodeDatum) {
+                    lastPick.node = node;
+                }
+                // Marker nodes will have the `point` info in their datums.
+                // Highlight if not a marker node or, if not in the tracking mode, highlight markers too.
+                if ((!node.datum.point || !tooltipTracking)) {
+                    if (!lastPick // cursor moved from empty space to a node
+                        || lastPick.node !== node) { // cursor moved from one node to another
+                        _this.onSeriesDatumPick(event, node.datum, node);
                     }
                     else if (pick.series.tooltipEnabled) { // cursor moved within the same node
                         _this.showTooltip(event);
                     }
+                    // A non-marker node (takes precedence over marker nodes) was highlighted.
+                    // Or we are not in the tracking mode.
+                    // Either way, we are done at this point.
+                    return;
                 }
             }
-            else if (_this.lastPick) { // cursor moved from a node to empty space
-                _this.lastPick.series.dehighlightNode();
+            var hideTooltip = false;
+            // In tracking mode a tooltip is shown for the closest rendered datum.
+            // This makes it easier to show tooltips when markers are small and/or plentiful
+            // and also gives the ability to show tooltips even when the series were configured
+            // to not render markers.
+            if (tooltipTracking) {
+                var closestDatum = _this.pickClosestSeriesNodeDatum(event.offsetX, event.offsetY);
+                if (closestDatum && closestDatum.point) {
+                    var _b = closestDatum.point, x = _b.x, y = _b.y;
+                    var canvas = _this.scene.canvas;
+                    var point = closestDatum.series.group.inverseTransformPoint(x, y);
+                    var canvasRect = canvas.element.getBoundingClientRect();
+                    _this.onSeriesDatumPick({
+                        pageX: Math.round(canvasRect.left + window.pageXOffset + point.x),
+                        pageY: Math.round(canvasRect.top + window.pageYOffset + point.y)
+                    }, closestDatum, nodeDatum === closestDatum ? pick.node : undefined);
+                }
+                else {
+                    hideTooltip = true;
+                }
+            }
+            if (lastPick && (hideTooltip || !tooltipTracking)) {
+                // cursor moved from a non-marker node to empty space
+                // lastPick.datum.series.dehighlightDatum();
+                _this.dehighlightDatum();
                 _this.hideTooltip();
                 _this.lastPick = undefined;
             }
@@ -7347,16 +7343,15 @@ var Chart = /** @class */ (function (_super) {
             _this.toggleTooltip(false);
         };
         _this.onClick = function (event) {
-            var datum = _this.legend.getDatumForPoint(event.offsetX, event.offsetY);
-            if (datum) {
-                var id_1 = datum.id, itemId = datum.itemId, enabled = datum.enabled;
-                var series = find(_this.series, function (series) { return series.id === id_1; });
-                if (series) {
-                    series.toggleSeriesItem(itemId, !enabled);
-                }
-            }
+            _this.checkSeriesNodeClick();
+            _this.checkLegendClick(event);
         };
         _this._tooltipClass = Chart.defaultTooltipClass;
+        /**
+         * If `true`, the tooltip will be shown for the marker closest to the mouse cursor.
+         * Only has effect on series with markers.
+         */
+        _this.tooltipTracking = true;
         var root = new Group();
         var background = _this.background;
         background.fill = 'white';
@@ -7371,8 +7366,8 @@ var Chart = /** @class */ (function (_super) {
         scene.container = element;
         _this.autoSize = true;
         var legend = _this.legend;
-        legend.addEventListener('layoutChange', _this.onLayoutChange);
-        legend.addPropertyListener('position', _this.onLegendPositionChange);
+        legend.addEventListener('layoutChange', _this.onLayoutChange, _this);
+        legend.addPropertyListener('position', _this.onLegendPositionChange, _this);
         _this.tooltipElement = document.createElement('div');
         _this.tooltipClass = '';
         document.body.appendChild(_this.tooltipElement);
@@ -7383,20 +7378,9 @@ var Chart = /** @class */ (function (_super) {
             document.head.insertBefore(styleElement, document.head.querySelector('style'));
             Chart.tooltipDocuments.push(document);
         }
-        _this.setupListeners(scene.canvas.element);
-        var captionListener = (function (event) {
-            var chart = event.source, caption = event.value, oldCaption = event.oldValue;
-            if (oldCaption) {
-                oldCaption.removeEventListener('change', chart.onLayoutChange);
-                chart.scene.root.removeChild(oldCaption.node);
-            }
-            if (caption) {
-                caption.addEventListener('change', chart.onLayoutChange);
-                chart.scene.root.appendChild(caption.node);
-            }
-        });
-        _this.addPropertyListener('title', captionListener);
-        _this.addPropertyListener('subtitle', captionListener);
+        _this.setupDomListeners(scene.canvas.element);
+        _this.addPropertyListener('title', _this.onCaptionChange);
+        _this.addPropertyListener('subtitle', _this.onCaptionChange);
         _this.addEventListener('layoutChange', function () { return _this.layoutPending = true; });
         return _this;
     }
@@ -7494,9 +7478,26 @@ var Chart = /** @class */ (function (_super) {
         }
         SizeMonitor.unobserve(this.element);
         this.container = undefined;
-        this.legend.removeEventListener('layoutChange', this.onLayoutChange);
-        this.cleanupListeners(this.scene.canvas.element);
+        this.cleanupDomListeners(this.scene.canvas.element);
         this.scene.container = undefined;
+    };
+    Chart.prototype.onLayoutChange = function () {
+        this.layoutPending = true;
+    };
+    Chart.prototype.onLegendPositionChange = function () {
+        this.legendAutoPadding.clear();
+        this.layoutPending = true;
+    };
+    Chart.prototype.onCaptionChange = function (event) {
+        var value = event.value, oldValue = event.oldValue;
+        if (oldValue) {
+            oldValue.removeEventListener('change', this.onLayoutChange, this);
+            this.scene.root.removeChild(oldValue.node);
+        }
+        if (value) {
+            value.addEventListener('change', this.onLayoutChange, this);
+            this.scene.root.appendChild(value.node);
+        }
     };
     Object.defineProperty(Chart.prototype, "element", {
         get: function () {
@@ -7533,6 +7534,15 @@ var Chart = /** @class */ (function (_super) {
         enumerable: true,
         configurable: true
     });
+    Chart.prototype.scheduleLayout = function () {
+        this.layoutPending = true;
+    };
+    Chart.prototype.scheduleData = function () {
+        // To prevent the chart from thinking the cursor is over the same node
+        // after a change to data (the nodes are reused on data changes).
+        this.dehighlightDatum();
+        this.dataPending = true;
+    };
     Chart.prototype.addSeries = function (series, before) {
         var _a = this, allSeries = _a.series, seriesRoot = _a.seriesRoot;
         var canAdd = allSeries.indexOf(series) < 0;
@@ -7558,15 +7568,17 @@ var Chart = /** @class */ (function (_super) {
         if (!series.data) {
             series.data = this.data;
         }
-        series.addEventListener('layoutChange', this.scheduleLayout);
-        series.addEventListener('dataChange', this.scheduleData);
-        series.addEventListener('legendChange', this.updateLegend);
+        series.addEventListener('layoutChange', this.scheduleLayout, this);
+        series.addEventListener('dataChange', this.scheduleData, this);
+        series.addEventListener('legendChange', this.updateLegend, this);
+        series.addEventListener('nodeClick', this.onSeriesNodeClick, this);
     };
     Chart.prototype.freeSeries = function (series) {
         series.chart = undefined;
-        series.removeEventListener('layoutChange', this.scheduleLayout);
-        series.removeEventListener('dataChange', this.scheduleData);
-        series.removeEventListener('legendChange', this.updateLegend);
+        series.removeEventListener('layoutChange', this.scheduleLayout, this);
+        series.removeEventListener('dataChange', this.scheduleData, this);
+        series.removeEventListener('legendChange', this.updateLegend, this);
+        series.removeEventListener('nodeClick', this.onSeriesNodeClick, this);
     };
     Chart.prototype.addSeriesAfter = function (series, after) {
         var _a = this, allSeries = _a.series, seriesRoot = _a.seriesRoot;
@@ -7762,6 +7774,11 @@ var Chart = /** @class */ (function (_super) {
         this.updateLegend();
         this.layoutPending = true;
     };
+    Chart.prototype.updateLegend = function () {
+        var legendData = [];
+        this.series.filter(function (s) { return s.showInLegend; }).forEach(function (series) { return series.listSeriesItems(legendData); });
+        this.legend.data = legendData;
+    };
     Chart.prototype.positionCaptions = function () {
         var _a = this, title = _a.title, subtitle = _a.subtitle;
         var titleVisible = false;
@@ -7840,16 +7857,17 @@ var Chart = /** @class */ (function (_super) {
         legendGroup.translationX = Math.floor(translationX + legendGroup.translationX);
         legendGroup.translationY = Math.floor(translationY + legendGroup.translationY);
     };
-    Chart.prototype.setupListeners = function (chartElement) {
+    Chart.prototype.setupDomListeners = function (chartElement) {
         chartElement.addEventListener('mousemove', this.onMouseMove);
         chartElement.addEventListener('mouseout', this.onMouseOut);
         chartElement.addEventListener('click', this.onClick);
     };
-    Chart.prototype.cleanupListeners = function (chartElement) {
+    Chart.prototype.cleanupDomListeners = function (chartElement) {
         chartElement.removeEventListener('mousemove', this.onMouseMove);
         chartElement.removeEventListener('mouseout', this.onMouseMove);
         chartElement.removeEventListener('click', this.onClick);
     };
+    // x/y are local canvas coordinates in CSS pixels, not actual pixels
     Chart.prototype.pickSeriesNode = function (x, y) {
         var allSeries = this.series;
         var node = undefined;
@@ -7864,18 +7882,88 @@ var Chart = /** @class */ (function (_super) {
             }
         }
     };
-    Chart.prototype.onSeriesNodePick = function (event, series, node) {
+    // Provided x/y are in canvas coordinates.
+    Chart.prototype.pickClosestSeriesNodeDatum = function (x, y) {
+        if (!this.seriesRect || !this.seriesRect.containsPoint(x, y)) {
+            return undefined;
+        }
+        var allSeries = this.series;
+        function getDistance(p1, p2) {
+            return Math.sqrt(Math.pow((p1.x - p2.x), 2) + Math.pow((p1.y - p2.y), 2));
+        }
+        var minDistance = Infinity;
+        var closestDatum;
+        var _loop_1 = function (i) {
+            var series = allSeries[i];
+            if (!series.visible) {
+                return "continue";
+            }
+            var hitPoint = series.group.transformPoint(x, y);
+            series.getNodeData().forEach(function (datum) {
+                if (!datum.point) {
+                    return;
+                }
+                var distance = getDistance(hitPoint, datum.point);
+                if (distance < minDistance) {
+                    minDistance = distance;
+                    closestDatum = datum;
+                }
+            });
+        };
+        for (var i = allSeries.length - 1; i >= 0; i--) {
+            _loop_1(i);
+        }
+        if (closestDatum) {
+            return closestDatum;
+        }
+    };
+    Chart.prototype.checkSeriesNodeClick = function () {
+        var lastPick = this.lastPick;
+        if (lastPick && lastPick.node) {
+            var datum = this.lastPick.datum;
+            datum.series.fireNodeClickEvent(datum);
+        }
+    };
+    Chart.prototype.onSeriesNodeClick = function (event) {
+        this.fireEvent(__assign$1(__assign$1({}, event), { type: 'seriesNodeClick' }));
+    };
+    Chart.prototype.checkLegendClick = function (event) {
+        var datum = this.legend.getDatumForPoint(event.offsetX, event.offsetY);
+        if (datum) {
+            var id_1 = datum.id, itemId = datum.itemId, enabled = datum.enabled;
+            var series = find(this.series, function (series) { return series.id === id_1; });
+            if (series) {
+                series.toggleSeriesItem(itemId, !enabled);
+                if (enabled) {
+                    this.hideTooltip();
+                }
+            }
+        }
+    };
+    Chart.prototype.onSeriesDatumPick = function (meta, datum, node) {
         if (this.lastPick) {
-            this.lastPick.series.dehighlightNode();
+            // this.lastPick.datum.series.dehighlightDatum();
+            this.dehighlightDatum();
         }
         this.lastPick = {
-            series: series,
+            datum: datum,
             node: node
         };
-        series.highlightNode(node);
-        var html = series.tooltipEnabled && series.getTooltipHtml(node.datum);
+        this.highlightDatum(datum);
+        // datum.series.highlightDatum(datum);
+        var html = datum.series.tooltipEnabled && datum.series.getTooltipHtml(datum);
         if (html) {
-            this.showTooltip(event, html);
+            this.showTooltip(meta, html);
+        }
+    };
+    Chart.prototype.highlightDatum = function (datum) {
+        this.highlightedDatum = datum;
+        this.series.forEach(function (s) { return s.onHighlightChange(); });
+    };
+    Chart.prototype.dehighlightDatum = function () {
+        if (this.highlightedDatum) {
+            this.highlightedDatum = undefined;
+            this.series.forEach(function (s) { return s.onHighlightChange(); });
         }
     };
     Object.defineProperty(Chart.prototype, "tooltipClass", {
@@ -7892,13 +7980,19 @@ var Chart = /** @class */ (function (_super) {
         configurable: true
     });
     Chart.prototype.toggleTooltip = function (visible) {
+        if (!visible && this.lastPick) {
+            this.dehighlightDatum();
+            this.lastPick = undefined;
+        }
+        this.updateTooltipClass(visible);
+    };
+    Chart.prototype.updateTooltipClass = function (visible, constrained) {
         var classList = [Chart.defaultTooltipClass, this.tooltipClass];
-        if (visible) {
+        if (visible === true) {
             classList.push(Chart.defaultTooltipClass + "-visible");
         }
-        else if (this.lastPick) {
-            this.lastPick.series.dehighlightNode();
-            this.lastPick = undefined;
+        if (constrained !== true) {
+            classList.push(Chart.defaultTooltipClass + "-arrow");
         }
         this.tooltipElement.setAttribute('class', classList.join(' '));
     };
@@ -7906,10 +8000,9 @@ var Chart = /** @class */ (function (_super) {
      * Shows tooltip at the given event's coordinates.
      * If the `html` parameter is missing, moves the existing tooltip to the new position.
      */
-    Chart.prototype.showTooltip = function (event, html) {
+    Chart.prototype.showTooltip = function (meta, html) {
         var el = this.tooltipElement;
-        var offset = this.tooltipOffset;
-        var parent = el.parentElement;
+        var container = this.container;
         if (html !== undefined) {
             el.innerHTML = html;
         }
@@ -7919,14 +8012,20 @@ var Chart = /** @class */ (function (_super) {
         if (html) {
             this.toggleTooltip(true);
         }
-        var tooltipRect = el.getBoundingClientRect();
-        var top = event.pageY + offset[1];
-        var left = event.pageX + offset[0];
-        if (tooltipRect &&
-            parent &&
-            parent.parentElement &&
-            (left - pageXOffset + tooltipRect.width > parent.parentElement.offsetWidth)) {
-            left -= tooltipRect.width + offset[0] * 2;
+        var left = meta.pageX - el.clientWidth / 2;
+        var top = meta.pageY - el.clientHeight - 8;
+        if (container) {
+            var tooltipRect = el.getBoundingClientRect();
+            var minLeft = 0;
+            var maxLeft = window.innerWidth - tooltipRect.width;
+            if (left < minLeft) {
+                left = minLeft;
+                this.updateTooltipClass(true, true);
+            }
+            else if (left > maxLeft) {
+                left = maxLeft;
+                this.updateTooltipClass(true, true);
+            }
         }
         el.style.left = left + "px";
         el.style.top = top + "px";
@@ -7948,7 +8047,7 @@ var Chart = /** @class */ (function (_super) {
     return Chart;
 }(Observable));
 
-var __extends$q = (undefined && undefined.__extends) || (function () {
+var __extends$p = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -7963,12 +8062,11 @@ var __extends$q = (undefined && undefined.__extends) || (function () {
 })();
 // import { ClipRect } from "../scene/clipRect";
 var CartesianChart = /** @class */ (function (_super) {
-    __extends$q(CartesianChart, _super);
+    __extends$p(CartesianChart, _super);
     function CartesianChart(document) {
         if (document === void 0) { document = window.document; }
         var _this = _super.call(this, document) || this;
         _this._seriesRoot = new Group();
-        _this._updateAxes = _this.updateAxes.bind(_this);
         // Prevent the scene from rendering chart components in an invalid state
         // (before first layout is performed).
         _this.scene.root.visible = false;
@@ -7990,12 +8088,7 @@ var CartesianChart = /** @class */ (function (_super) {
         }
         this.scene.root.visible = true;
         var _a = this, width = _a.width, height = _a.height, axes = _a.axes, legend = _a.legend;
-        var shrinkRect = {
-            x: 0,
-            y: 0,
-            width: width,
-            height: height
-        };
+        var shrinkRect = new BBox(0, 0, width, height);
         this.positionCaptions();
         this.positionLegend();
         if (legend.enabled && legend.data.length) {
@@ -8089,6 +8182,7 @@ var CartesianChart = /** @class */ (function (_super) {
             }
             // axis.tick.count = Math.abs(axis.range[1] - axis.range[0]) > 200 ? 10 : 5;
         });
+        this.seriesRect = shrinkRect;
         this.series.forEach(function (series) {
             series.group.translationX = Math.floor(shrinkRect.x);
             series.group.translationY = Math.floor(shrinkRect.y);
@@ -8104,11 +8198,11 @@ var CartesianChart = /** @class */ (function (_super) {
     };
     CartesianChart.prototype.initSeries = function (series) {
         _super.prototype.initSeries.call(this, series);
-        series.addEventListener('dataProcessed', this._updateAxes);
+        series.addEventListener('dataProcessed', this.updateAxes, this);
     };
     CartesianChart.prototype.freeSeries = function (series) {
         _super.prototype.freeSeries.call(this, series);
-        series.removeEventListener('dataProcessed', this._updateAxes);
+        series.removeEventListener('dataProcessed', this.updateAxes, this);
     };
     CartesianChart.prototype.updateAxes = function () {
         this.axes.forEach(function (axis) {
@@ -8133,7 +8227,7 @@ var CartesianChart = /** @class */ (function (_super) {
     return CartesianChart;
 }(Chart));
 
-var __extends$r = (undefined && undefined.__extends) || (function () {
+var __extends$q = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -8147,7 +8241,7 @@ var __extends$r = (undefined && undefined.__extends) || (function () {
     };
 })();
 var GroupedCategoryChart = /** @class */ (function (_super) {
-    __extends$r(GroupedCategoryChart, _super);
+    __extends$q(GroupedCategoryChart, _super);
     function GroupedCategoryChart() {
         return _super !== null && _super.apply(this, arguments) || this;
     }
@@ -8314,7 +8408,7 @@ var palettes = (function () {
     return map;
 })();
 
-var __extends$s = (undefined && undefined.__extends) || (function () {
+var __extends$r = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -8328,7 +8422,7 @@ var __extends$s = (undefined && undefined.__extends) || (function () {
     };
 })();
 var PolarSeries = /** @class */ (function (_super) {
-    __extends$s(PolarSeries, _super);
+    __extends$r(PolarSeries, _super);
     function PolarSeries() {
         var _a;
         var _this = _super !== null && _super.apply(this, arguments) || this;
@@ -8355,14 +8449,14 @@ var PolarSeries = /** @class */ (function (_super) {
     return PolarSeries;
 }(Series));
 var PolarSeriesMarker = /** @class */ (function (_super) {
-    __extends$s(PolarSeriesMarker, _super);
+    __extends$r(PolarSeriesMarker, _super);
     function PolarSeriesMarker() {
         return _super !== null && _super.apply(this, arguments) || this;
     }
     return PolarSeriesMarker;
 }(SeriesMarker));
 
-var __extends$t = (undefined && undefined.__extends) || (function () {
+var __extends$s = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -8382,7 +8476,7 @@ var __decorate$5 = (undefined && undefined.__decorate) || function (decorators, 
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 var PolarChart = /** @class */ (function (_super) {
-    __extends$t(PolarChart, _super);
+    __extends$s(PolarChart, _super);
     function PolarChart(document) {
         if (document === void 0) { document = window.document; }
         var _this = _super.call(this, document) || this;
@@ -8398,12 +8492,7 @@ var PolarChart = /** @class */ (function (_super) {
         configurable: true
     });
     PolarChart.prototype.performLayout = function () {
-        var shrinkRect = {
-            x: 0,
-            y: 0,
-            width: this.width,
-            height: this.height
-        };
+        var shrinkRect = new BBox(0, 0, this.width, this.height);
         this.positionCaptions();
         this.positionLegend();
         var captionAutoPadding = this.captionAutoPadding;
@@ -8438,6 +8527,7 @@ var PolarChart = /** @class */ (function (_super) {
         shrinkRect.y += padding.top;
         shrinkRect.width -= padding.left + padding.right;
         shrinkRect.height -= padding.top + padding.bottom;
+        this.seriesRect = shrinkRect;
         var centerX = shrinkRect.x + shrinkRect.width / 2;
         var centerY = shrinkRect.y + shrinkRect.height / 2;
         var radius = Math.min(shrinkRect.width, shrinkRect.height) / 2;
@@ -8521,7 +8611,7 @@ function equal(a, b) {
     return a !== a && b !== b;
 }
 
-var __extends$u = (undefined && undefined.__extends) || (function () {
+var __extends$t = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -8541,7 +8631,7 @@ var __decorate$6 = (undefined && undefined.__decorate) || function (decorators, 
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 var AreaSeries = /** @class */ (function (_super) {
-    __extends$u(AreaSeries, _super);
+    __extends$t(AreaSeries, _super);
     function AreaSeries() {
         var _this = _super.call(this) || this;
         _this.areaGroup = _this.group.appendChild(new Group);
@@ -8550,6 +8640,7 @@ var AreaSeries = /** @class */ (function (_super) {
         _this.areaSelection = Selection.select(_this.areaGroup).selectAll();
         _this.strokeSelection = Selection.select(_this.strokeGroup).selectAll();
         _this.markerSelection = Selection.select(_this.markerGroup).selectAll();
+        _this.markerSelectionData = [];
         /**
          * The assumption is that the values will be reset (to `true`)
          * in the {@link yKeys} setter.
@@ -8572,13 +8663,11 @@ var AreaSeries = /** @class */ (function (_super) {
         _this._yKeys = [];
         _this.yNames = [];
         _this.strokeWidth = 2;
-        _this.highlightStyle = {
-            fill: 'yellow'
-        };
-        _this.addEventListener('update', function () { return _this.update(); });
+        _this.highlightStyle = { fill: 'yellow' };
+        _this.addEventListener('update', _this.update);
         _this.marker.enabled = false;
-        _this.marker.addPropertyListener('shape', function () { return _this.onMarkerShapeChange(); });
-        _this.marker.addEventListener('change', function () { return _this.update(); });
+        _this.marker.addPropertyListener('shape', _this.onMarkerShapeChange, _this);
+        _this.marker.addEventListener('change', _this.update, _this);
         return _this;
     }
     AreaSeries.prototype.onMarkerShapeChange = function () {
@@ -8632,16 +8721,8 @@ var AreaSeries = /** @class */ (function (_super) {
         enumerable: true,
         configurable: true
     });
-    AreaSeries.prototype.highlightNode = function (node) {
-        if (!(node instanceof Marker)) {
-            return;
-        }
-        this.highlightedNode = node;
-        this.scheduleLayout();
-    };
-    AreaSeries.prototype.dehighlightNode = function () {
-        this.highlightedNode = undefined;
-        this.scheduleLayout();
+    AreaSeries.prototype.onHighlightChange = function () {
+        this.updateMarkerNodes();
     };
     AreaSeries.prototype.processData = function () {
         var _a = this, xKey = _a.xKey, yKeys = _a.yKeys, seriesItemEnabled = _a.seriesItemEnabled;
@@ -8731,8 +8812,11 @@ var AreaSeries = /** @class */ (function (_super) {
         this.updateAreaSelection(areaSelectionData);
         this.updateStrokeSelection(areaSelectionData);
         this.updateMarkerSelection(markerSelectionData);
+        this.updateMarkerNodes();
+        this.markerSelectionData = markerSelectionData;
     };
     AreaSeries.prototype.generateSelectionData = function () {
+        var _this = this;
         var _a = this, yKeys = _a.yKeys, data = _a.data, xData = _a.xData, yData = _a.yData, marker = _a.marker, fills = _a.fills, strokes = _a.strokes, xScale = _a.xAxis.scale, yScale = _a.yAxis.scale;
         var xOffset = (xScale.bandwidth || 0) / 2;
         var yOffset = (yScale.bandwidth || 0) / 2;
@@ -8752,11 +8836,11 @@ var AreaSeries = /** @class */ (function (_super) {
                 var yValue = seriesDatum[yKey];
                 if (marker) {
                     markerSelectionData.push({
+                        series: _this,
                         seriesDatum: seriesDatum,
                         yValue: yValue,
                         yKey: yKey,
-                        x: x,
-                        y: y,
+                        point: { x: x, y: y },
                         fill: fills[j % fills.length],
                         stroke: strokes[j % strokes.length]
                     });
@@ -8840,24 +8924,26 @@ var AreaSeries = /** @class */ (function (_super) {
         this.strokeSelection = strokeSelection;
     };
     AreaSeries.prototype.updateMarkerSelection = function (markerSelectionData) {
-        var _a = this, marker = _a.marker, xKey = _a.xKey;
-        if (!marker.shape) {
-            return;
-        }
+        var marker = this.marker;
+        var data = marker.shape ? markerSelectionData : [];
         var MarkerShape = getMarker(marker.shape);
+        var updateMarkers = this.markerSelection.setData(data);
+        updateMarkers.exit.remove();
+        var enterMarkers = updateMarkers.enter.append(MarkerShape);
+        this.markerSelection = updateMarkers.merge(enterMarkers);
+    };
+    AreaSeries.prototype.updateMarkerNodes = function () {
+        var marker = this.marker;
         var markerFormatter = marker.formatter;
         var markerStrokeWidth = marker.strokeWidth !== undefined ? marker.strokeWidth : this.strokeWidth;
         var markerSize = marker.size;
-        var _b = this, seriesItemEnabled = _b.seriesItemEnabled, highlightedNode = _b.highlightedNode;
-        var _c = this.highlightStyle, highlightFill = _c.fill, highlightStroke = _c.stroke;
-        var updateMarkers = this.markerSelection.setData(markerSelectionData);
-        updateMarkers.exit.remove();
-        var enterMarkers = updateMarkers.enter.append(MarkerShape);
-        var markerSelection = updateMarkers.merge(enterMarkers);
-        markerSelection.each(function (node, datum) {
-            var isHighlightedNode = node === highlightedNode;
-            var markerFill = isHighlightedNode && highlightFill !== undefined ? highlightFill : marker.fill || datum.fill;
-            var markerStroke = isHighlightedNode && highlightStroke !== undefined ? highlightStroke : marker.stroke || datum.stroke;
+        var _a = this, xKey = _a.xKey, seriesItemEnabled = _a.seriesItemEnabled;
+        var highlightedDatum = this.chart.highlightedDatum;
+        var _b = this.highlightStyle, highlightFill = _b.fill, highlightStroke = _b.stroke;
+        this.markerSelection.each(function (node, datum) {
+            var highlighted = datum === highlightedDatum;
+            var markerFill = highlighted && highlightFill !== undefined ? highlightFill : marker.fill || datum.fill;
+            var markerStroke = highlighted && highlightStroke !== undefined ? highlightStroke : marker.stroke || datum.stroke;
             var markerFormat = undefined;
             if (markerFormatter) {
                 markerFormat = markerFormatter({
@@ -8868,7 +8954,7 @@ var AreaSeries = /** @class */ (function (_super) {
                     stroke: markerStroke,
                     strokeWidth: markerStrokeWidth,
                     size: markerSize,
-                    highlighted: isHighlightedNode
+                    highlighted: highlighted
                 });
             }
             node.fill = markerFormat && markerFormat.fill || markerFill;
@@ -8879,11 +8965,22 @@ var AreaSeries = /** @class */ (function (_super) {
             node.size = markerFormat && markerFormat.size !== undefined
                 ? markerFormat.size
                 : markerSize;
-            node.translationX = datum.x;
-            node.translationY = datum.y;
+            node.translationX = datum.point.x;
+            node.translationY = datum.point.y;
             node.visible = marker.enabled && node.size > 0 && !!seriesItemEnabled.get(datum.yKey);
         });
-        this.markerSelection = markerSelection;
+    };
+    AreaSeries.prototype.getNodeData = function () {
+        return this.markerSelectionData;
+    };
+    AreaSeries.prototype.fireNodeClickEvent = function (datum) {
+        this.fireEvent({
+            type: 'nodeClick',
+            series: this,
+            datum: datum.seriesDatum,
+            xKey: this.xKey,
+            yKey: datum.yKey
+        });
     };
     AreaSeries.prototype.getTooltipHtml = function (nodeDatum) {
         var xKey = this.xKey;
@@ -8971,7 +9068,7 @@ var AreaSeries = /** @class */ (function (_super) {
     return AreaSeries;
 }(CartesianSeries));
 
-var __extends$v = (undefined && undefined.__extends) || (function () {
+var __extends$u = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -8991,7 +9088,7 @@ var __decorate$7 = (undefined && undefined.__decorate) || function (decorators, 
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 var Label = /** @class */ (function (_super) {
-    __extends$v(Label, _super);
+    __extends$u(Label, _super);
     function Label() {
         var _this = _super.call(this) || this;
         _this.enabled = true;
@@ -9021,7 +9118,7 @@ var Label = /** @class */ (function (_super) {
     return Label;
 }(Observable));
 
-var __extends$w = (undefined && undefined.__extends) || (function () {
+var __extends$v = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -9047,29 +9144,29 @@ var __spreadArrays = (undefined && undefined.__spreadArrays) || function () {
             r[k] = a[j];
     return r;
 };
-var ColumnSeriesNodeTag;
-(function (ColumnSeriesNodeTag) {
-    ColumnSeriesNodeTag[ColumnSeriesNodeTag["Column"] = 0] = "Column";
-    ColumnSeriesNodeTag[ColumnSeriesNodeTag["Label"] = 1] = "Label";
-})(ColumnSeriesNodeTag || (ColumnSeriesNodeTag = {}));
-var ColumnSeriesLabel = /** @class */ (function (_super) {
-    __extends$w(ColumnSeriesLabel, _super);
-    function ColumnSeriesLabel() {
+var BarSeriesNodeTag;
+(function (BarSeriesNodeTag) {
+    BarSeriesNodeTag[BarSeriesNodeTag["Bar"] = 0] = "Bar";
+    BarSeriesNodeTag[BarSeriesNodeTag["Label"] = 1] = "Label";
+})(BarSeriesNodeTag || (BarSeriesNodeTag = {}));
+var BarSeriesLabel = /** @class */ (function (_super) {
+    __extends$v(BarSeriesLabel, _super);
+    function BarSeriesLabel() {
         return _super !== null && _super.apply(this, arguments) || this;
     }
     __decorate$8([
         reactive('change')
-    ], ColumnSeriesLabel.prototype, "formatter", void 0);
-    return ColumnSeriesLabel;
+    ], BarSeriesLabel.prototype, "formatter", void 0);
+    return BarSeriesLabel;
 }(Label));
-var ColumnSeries = /** @class */ (function (_super) {
-    __extends$w(ColumnSeries, _super);
-    function ColumnSeries() {
+var BarSeries = /** @class */ (function (_super) {
+    __extends$v(BarSeries, _super);
+    function BarSeries() {
         var _a;
         var _this = _super.call(this) || this;
-        // Need to put column and label nodes into separate groups, because even though label nodes are
-        // created after the column nodes, this only guarantees that labels will always be on top of columns
-        // on the first run. If on the next run more columns are added, they might clip the labels
+        // Need to put bar and label nodes into separate groups, because even though label nodes are
+        // created after the bar nodes, this only guarantees that labels will always be on top of bars
+        // on the first run. If on the next run more bars are added, they might clip the labels
         // rendered during the previous run.
         _this.rectGroup = _this.group.appendChild(new Group);
         _this.textGroup = _this.group.appendChild(new Group);
@@ -9078,7 +9175,7 @@ var ColumnSeries = /** @class */ (function (_super) {
         _this.xData = [];
         _this.yData = [];
         _this.yDomain = [];
-        _this.label = new ColumnSeriesLabel();
+        _this.label = new BarSeriesLabel();
         /**
          * The assumption is that the values will be reset (to `true`)
          * in the {@link yKeys} setter.
@@ -9090,7 +9187,7 @@ var ColumnSeries = /** @class */ (function (_super) {
         _this.fillOpacity = 1;
         _this.strokeOpacity = 1;
         /**
-         * Used to get the position of columns within each group.
+         * Used to get the position of bars within each group.
          */
         _this.groupScale = new BandScale();
         _this.directionKeys = (_a = {},
@@ -9100,23 +9197,21 @@ var ColumnSeries = /** @class */ (function (_super) {
         _this._xKey = '';
         _this._xName = '';
         /**
-         * With a single value in the `yKeys` array we get the regular column series.
-         * With multiple values, we get the stacked column series.
-         * If the {@link grouped} set to `true`, we get the grouped column series.
+         * With a single value in the `yKeys` array we get the regular bar series.
+         * With multiple values, we get the stacked bar series.
+         * If the {@link grouped} set to `true`, we get the grouped bar series.
          * @param values
          */
         _this._yKeys = [];
         _this._yNames = [];
         _this.grouped = false;
         _this._strokeWidth = 1;
-        _this.highlightStyle = {
-            fill: 'yellow'
-        };
+        _this.highlightStyle = { fill: 'yellow' };
         _this.label.enabled = false;
-        _this.label.addEventListener('change', function () { return _this.update(); });
+        _this.label.addEventListener('change', _this.update, _this);
         return _this;
     }
-    ColumnSeries.prototype.getKeys = function (direction) {
+    BarSeries.prototype.getKeys = function (direction) {
         var _this = this;
         var directionKeys = this.directionKeys;
         var keys = directionKeys && directionKeys[this.flipXY ? flipChartAxisDirection(direction) : direction];
@@ -9136,7 +9231,7 @@ var ColumnSeries = /** @class */ (function (_super) {
         }
         return values;
     };
-    Object.defineProperty(ColumnSeries.prototype, "xKey", {
+    Object.defineProperty(BarSeries.prototype, "xKey", {
         get: function () {
             return this._xKey;
         },
@@ -9150,7 +9245,7 @@ var ColumnSeries = /** @class */ (function (_super) {
         enumerable: true,
         configurable: true
     });
-    Object.defineProperty(ColumnSeries.prototype, "xName", {
+    Object.defineProperty(BarSeries.prototype, "xName", {
         get: function () {
             return this._xName;
         },
@@ -9163,7 +9258,7 @@ var ColumnSeries = /** @class */ (function (_super) {
         enumerable: true,
         configurable: true
     });
-    Object.defineProperty(ColumnSeries.prototype, "yKeys", {
+    Object.defineProperty(BarSeries.prototype, "yKeys", {
         get: function () {
             return this._yKeys;
         },
@@ -9184,7 +9279,7 @@ var ColumnSeries = /** @class */ (function (_super) {
         enumerable: true,
         configurable: true
     });
-    Object.defineProperty(ColumnSeries.prototype, "yNames", {
+    Object.defineProperty(BarSeries.prototype, "yNames", {
         get: function () {
             return this._yNames;
         },
@@ -9195,7 +9290,7 @@ var ColumnSeries = /** @class */ (function (_super) {
         enumerable: true,
         configurable: true
     });
-    Object.defineProperty(ColumnSeries.prototype, "normalizedTo", {
+    Object.defineProperty(BarSeries.prototype, "normalizedTo", {
         get: function () {
             return this._normalizedTo;
         },
@@ -9209,7 +9304,7 @@ var ColumnSeries = /** @class */ (function (_super) {
         enumerable: true,
         configurable: true
     });
-    Object.defineProperty(ColumnSeries.prototype, "strokeWidth", {
+    Object.defineProperty(BarSeries.prototype, "strokeWidth", {
         get: function () {
             return this._strokeWidth;
         },
@@ -9222,7 +9317,7 @@ var ColumnSeries = /** @class */ (function (_super) {
         enumerable: true,
         configurable: true
     });
-    Object.defineProperty(ColumnSeries.prototype, "shadow", {
+    Object.defineProperty(BarSeries.prototype, "shadow", {
         get: function () {
             return this._shadow;
         },
@@ -9235,18 +9330,10 @@ var ColumnSeries = /** @class */ (function (_super) {
         enumerable: true,
         configurable: true
     });
-    ColumnSeries.prototype.highlightNode = function (node) {
-        if (!(node instanceof Rect)) {
-            return;
-        }
-        this.highlightedNode = node;
-        this.scheduleLayout();
+    BarSeries.prototype.onHighlightChange = function () {
+        this.updateRectNodes();
     };
-    ColumnSeries.prototype.dehighlightNode = function () {
-        this.highlightedNode = undefined;
-        this.scheduleLayout();
-    };
-    ColumnSeries.prototype.processData = function () {
+    BarSeries.prototype.processData = function () {
         var _a = this, xKey = _a.xKey, yKeys = _a.yKeys, seriesItemEnabled = _a.seriesItemEnabled;
         var data = xKey && yKeys.length && this.data ? this.data : [];
         // If the data is an array of rows like so:
@@ -9285,15 +9372,15 @@ var ColumnSeries = /** @class */ (function (_super) {
         //   [5, 7, -9],
         //   [10, -15, 20]
         // ]
-        var yMinMax = this.yData.map(function (values) { return findMinMax(values); }); // used for normalization of stacked columns
+        var yMinMax = this.yData.map(function (values) { return findMinMax(values); }); // used for normalization of stacked bars
         var _b = this, yData = _b.yData, normalizedTo = _b.normalizedTo;
         var yMin = Infinity;
         var yMax = -Infinity;
         if (this.grouped) {
-            // Find the tallest positive/negative column in each group,
-            // then find the tallest positive/negative column overall.
+            // Find the tallest positive/negative bar in each group,
+            // then find the tallest positive/negative bar overall.
             // The `yMin` should always be <= 0,
-            // otherwise with the `yData` like [300, 200, 100] the last column
+            // otherwise with the `yData` like [300, 200, 100] the last bar
             // will have zero height, because the y-axis range is [100, 300].
             yMin = Math.min.apply(Math, __spreadArrays([0], yData.map(function (values) { return Math.min.apply(Math, values); })));
             yMax = Math.max.apply(Math, yData.map(function (values) { return Math.max.apply(Math, values); }));
@@ -9321,7 +9408,7 @@ var ColumnSeries = /** @class */ (function (_super) {
         this.fireEvent({ type: 'dataProcessed' });
         return true;
     };
-    ColumnSeries.prototype.getDomain = function (direction) {
+    BarSeries.prototype.getDomain = function (direction) {
         if (this.flipXY) {
             direction = flipChartAxisDirection(direction);
         }
@@ -9332,17 +9419,17 @@ var ColumnSeries = /** @class */ (function (_super) {
             return this.yDomain;
         }
     };
-    ColumnSeries.prototype.update = function () {
-        var _a = this, visible = _a.visible, chart = _a.chart, xAxis = _a.xAxis, yAxis = _a.yAxis, xData = _a.xData, yData = _a.yData;
-        this.group.visible = visible;
-        if (!xAxis || !yAxis || !visible || !chart || chart.layoutPending || chart.dataPending || !xData.length || !yData.length) {
-            return;
-        }
-        var selectionData = this.generateSelectionData();
-        this.updateRectSelection(selectionData);
-        this.updateTextSelection(selectionData);
+    BarSeries.prototype.fireNodeClickEvent = function (datum) {
+        this.fireEvent({
+            type: 'nodeClick',
+            series: this,
+            datum: datum.seriesDatum,
+            xKey: this.xKey,
+            yKey: datum.yKey
+        });
     };
-    ColumnSeries.prototype.generateSelectionData = function () {
+    BarSeries.prototype.generateNodeData = function () {
+        var _this = this;
         var _a = this, xAxis = _a.xAxis, yAxis = _a.yAxis, flipXY = _a.flipXY;
         var xScale = (flipXY ? yAxis : xAxis).scale;
         var yScale = (flipXY ? xAxis : yAxis).scale;
@@ -9355,8 +9442,8 @@ var ColumnSeries = /** @class */ (function (_super) {
         var labelColor = label.color;
         var labelFormatter = label.formatter;
         groupScale.range = [0, xScale.bandwidth];
-        var columnWidth = grouped ? groupScale.bandwidth : xScale.bandwidth;
-        var selectionData = [];
+        var barWidth = grouped ? groupScale.bandwidth : xScale.bandwidth;
+        var nodeData = [];
         xData.forEach(function (category, i) {
             var yDatum = yData[i];
             var seriesDatum = data[i];
@@ -9365,7 +9452,7 @@ var ColumnSeries = /** @class */ (function (_super) {
             var prevMax = 0;
             yDatum.forEach(function (curr, j) {
                 var yKey = yKeys[j];
-                var columnX = grouped ? x + groupScale.convert(yKey) : x;
+                var barX = grouped ? x + groupScale.convert(yKey) : x;
                 var prev = curr < 0 ? prevMin : prevMax;
                 var y = yScale.convert(grouped ? curr : prev + curr);
                 var bottomY = yScale.convert(grouped ? 0 : prev);
@@ -9378,14 +9465,15 @@ var ColumnSeries = /** @class */ (function (_super) {
                 else {
                     labelText = yValueIsNumber && isFinite(yValue) ? yValue.toFixed(2) : '';
                 }
-                selectionData.push({
+                nodeData.push({
+                    series: _this,
                     seriesDatum: seriesDatum,
                     yValue: yValue,
                     yKey: yKey,
-                    x: flipXY ? Math.min(y, bottomY) : columnX,
-                    y: flipXY ? columnX : Math.min(y, bottomY),
-                    width: flipXY ? Math.abs(bottomY - y) : columnWidth,
-                    height: flipXY ? columnWidth : Math.abs(bottomY - y),
+                    x: flipXY ? Math.min(y, bottomY) : barX,
+                    y: flipXY ? barX : Math.min(y, bottomY),
+                    width: flipXY ? Math.abs(bottomY - y) : barWidth,
+                    height: flipXY ? barWidth : Math.abs(bottomY - y),
                     fill: fills[j % fills.length],
                     stroke: strokes[j % strokes.length],
                     strokeWidth: strokeWidth,
@@ -9396,8 +9484,8 @@ var ColumnSeries = /** @class */ (function (_super) {
                         fontSize: labelFontSize,
                         fontFamily: labelFontFamily,
                         fill: labelColor,
-                        x: flipXY ? y + (yValue >= 0 ? -1 : 1) * Math.abs(bottomY - y) / 2 : columnX + columnWidth / 2,
-                        y: flipXY ? columnX + columnWidth / 2 : y + (yValue >= 0 ? 1 : -1) * Math.abs(bottomY - y) / 2
+                        x: flipXY ? y + (yValue >= 0 ? -1 : 1) * Math.abs(bottomY - y) / 2 : barX + barWidth / 2,
+                        y: flipXY ? barX + barWidth / 2 : y + (yValue >= 0 ? 1 : -1) * Math.abs(bottomY - y) / 2
                     } : undefined
                 });
                 if (!grouped) {
@@ -9410,44 +9498,62 @@ var ColumnSeries = /** @class */ (function (_super) {
                 }
             });
         });
-        return selectionData;
+        return nodeData;
     };
-    ColumnSeries.prototype.updateRectSelection = function (selectionData) {
-        var _a = this, fillOpacity = _a.fillOpacity, strokeOpacity = _a.strokeOpacity, shadow = _a.shadow, highlightedNode = _a.highlightedNode, _b = _a.highlightStyle, fill = _b.fill, stroke = _b.stroke;
+    BarSeries.prototype.update = function () {
+        var _a = this, visible = _a.visible, chart = _a.chart, xAxis = _a.xAxis, yAxis = _a.yAxis, xData = _a.xData, yData = _a.yData;
+        this.group.visible = visible;
+        if (!chart || chart.layoutPending || chart.dataPending ||
+            !xAxis || !yAxis || !visible || !xData.length || !yData.length) {
+            return;
+        }
+        var nodeData = this.generateNodeData();
+        this.updateRectSelection(nodeData);
+        this.updateRectNodes();
+        this.updateTextSelection(nodeData);
+        this.updateTextNodes();
+    };
+    BarSeries.prototype.updateRectSelection = function (selectionData) {
         var updateRects = this.rectSelection.setData(selectionData);
         updateRects.exit.remove();
         var enterRects = updateRects.enter.append(Rect).each(function (rect) {
-            rect.tag = ColumnSeriesNodeTag.Column;
+            rect.tag = BarSeriesNodeTag.Bar;
             rect.crisp = true;
         });
-        var rectSelection = updateRects.merge(enterRects);
-        rectSelection.each(function (rect, datum) {
+        this.rectSelection = updateRects.merge(enterRects);
+    };
+    BarSeries.prototype.updateRectNodes = function () {
+        var _a = this, fillOpacity = _a.fillOpacity, strokeOpacity = _a.strokeOpacity, shadow = _a.shadow, _b = _a.highlightStyle, fill = _b.fill, stroke = _b.stroke;
+        var highlightedDatum = this.chart.highlightedDatum;
+        this.rectSelection.each(function (rect, datum) {
+            var highlighted = datum === highlightedDatum;
             rect.x = datum.x;
             rect.y = datum.y;
             rect.width = datum.width;
             rect.height = datum.height;
-            rect.fill = rect === highlightedNode && fill !== undefined ? fill : datum.fill;
-            rect.stroke = rect === highlightedNode && stroke !== undefined ? stroke : datum.stroke;
+            rect.fill = highlighted && fill !== undefined ? fill : datum.fill;
+            rect.stroke = highlighted && stroke !== undefined ? stroke : datum.stroke;
             rect.fillOpacity = fillOpacity;
             rect.strokeOpacity = strokeOpacity;
             rect.strokeWidth = datum.strokeWidth;
             rect.fillShadow = shadow;
-            rect.visible = datum.height > 0; // prevent stroke from rendering for zero height columns
+            rect.visible = datum.height > 0; // prevent stroke from rendering for zero height bars
         });
-        this.rectSelection = rectSelection;
     };
-    ColumnSeries.prototype.updateTextSelection = function (selectionData) {
-        var labelEnabled = this.label.enabled;
+    BarSeries.prototype.updateTextSelection = function (selectionData) {
         var updateTexts = this.textSelection.setData(selectionData);
         updateTexts.exit.remove();
         var enterTexts = updateTexts.enter.append(Text).each(function (text) {
-            text.tag = ColumnSeriesNodeTag.Label;
+            text.tag = BarSeriesNodeTag.Label;
             text.pointerEvents = PointerEvents.None;
             text.textAlign = 'center';
             text.textBaseline = 'middle';
         });
-        var textSelection = updateTexts.merge(enterTexts);
-        textSelection.each(function (text, datum) {
+        this.textSelection = updateTexts.merge(enterTexts);
+    };
+    BarSeries.prototype.updateTextNodes = function () {
+        var labelEnabled = this.label.enabled;
+        this.textSelection.each(function (text, datum) {
             var label = datum.label;
             if (label && labelEnabled) {
                 text.fontStyle = label.fontStyle;
@@ -9464,9 +9570,8 @@ var ColumnSeries = /** @class */ (function (_super) {
                 text.visible = false;
             }
         });
-        this.textSelection = textSelection;
     };
-    ColumnSeries.prototype.getTooltipHtml = function (nodeDatum) {
+    BarSeries.prototype.getTooltipHtml = function (nodeDatum) {
         var xKey = this.xKey;
         var yKey = nodeDatum.yKey;
         if (!xKey || !yKey) {
@@ -9497,7 +9602,7 @@ var ColumnSeries = /** @class */ (function (_super) {
             return titleString + "<div class=\"" + Chart.defaultTooltipClass + "-content\">" + xString + ": " + yString + "</div>";
         }
     };
-    ColumnSeries.prototype.listSeriesItems = function (legendData) {
+    BarSeries.prototype.listSeriesItems = function (legendData) {
         var _a = this, id = _a.id, data = _a.data, xKey = _a.xKey, yKeys = _a.yKeys, yNames = _a.yNames, seriesItemEnabled = _a.seriesItemEnabled, fills = _a.fills, strokes = _a.strokes, fillOpacity = _a.fillOpacity, strokeOpacity = _a.strokeOpacity;
         if (data && data.length && xKey && yKeys.length) {
             yKeys.forEach(function (yKey, index) {
@@ -9518,7 +9623,7 @@ var ColumnSeries = /** @class */ (function (_super) {
             });
         }
     };
-    ColumnSeries.prototype.toggleSeriesItem = function (itemId, enabled) {
+    BarSeries.prototype.toggleSeriesItem = function (itemId, enabled) {
         var seriesItemEnabled = this.seriesItemEnabled;
         var enabledSeriesItems = [];
         seriesItemEnabled.set(itemId, enabled);
@@ -9530,27 +9635,27 @@ var ColumnSeries = /** @class */ (function (_super) {
         this.groupScale.domain = enabledSeriesItems;
         this.scheduleData();
     };
-    ColumnSeries.className = 'ColumnSeries';
-    ColumnSeries.type = 'column';
+    BarSeries.className = 'BarSeries';
+    BarSeries.type = 'bar';
     __decorate$8([
         reactive('layoutChange')
-    ], ColumnSeries.prototype, "flipXY", void 0);
+    ], BarSeries.prototype, "flipXY", void 0);
     __decorate$8([
         reactive('dataChange')
-    ], ColumnSeries.prototype, "fills", void 0);
+    ], BarSeries.prototype, "fills", void 0);
     __decorate$8([
         reactive('dataChange')
-    ], ColumnSeries.prototype, "strokes", void 0);
+    ], BarSeries.prototype, "strokes", void 0);
     __decorate$8([
         reactive('layoutChange')
-    ], ColumnSeries.prototype, "fillOpacity", void 0);
+    ], BarSeries.prototype, "fillOpacity", void 0);
     __decorate$8([
         reactive('layoutChange')
-    ], ColumnSeries.prototype, "strokeOpacity", void 0);
+    ], BarSeries.prototype, "strokeOpacity", void 0);
     __decorate$8([
         reactive('dataChange')
-    ], ColumnSeries.prototype, "grouped", void 0);
-    return ColumnSeries;
+    ], BarSeries.prototype, "grouped", void 0);
+    return BarSeries;
 }(CartesianSeries));
 
 var constant = (function (x) { return function () { return x; }; });
@@ -9780,7 +9885,7 @@ var ContinuousScale = /** @class */ (function () {
     return ContinuousScale;
 }());
 
-var __extends$x = (undefined && undefined.__extends) || (function () {
+var __extends$w = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -9800,7 +9905,7 @@ var __decorate$9 = (undefined && undefined.__decorate) || function (decorators, 
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 var LineSeries = /** @class */ (function (_super) {
-    __extends$x(LineSeries, _super);
+    __extends$w(LineSeries, _super);
     function LineSeries() {
         var _this = _super.call(this) || this;
         _this.xDomain = [];
@@ -9810,7 +9915,8 @@ var LineSeries = /** @class */ (function (_super) {
         _this.lineNode = new Path();
         // We use groups for this selection even though each group only contains a marker ATM
         // because in the future we might want to add label support as well.
-        _this.groupSelection = Selection.select(_this.group).selectAll();
+        _this.nodeSelection = Selection.select(_this.group).selectAll();
+        _this.nodeData = [];
         _this.marker = new CartesianSeriesMarker();
         _this.stroke = borneo.fills[0];
         _this.strokeWidth = 2;
@@ -9825,26 +9931,26 @@ var LineSeries = /** @class */ (function (_super) {
         lineNode.lineJoin = 'round';
         lineNode.pointerEvents = PointerEvents.None;
         _this.group.append(lineNode);
-        var update = function () { return _this.update(); };
-        _this.addEventListener('update', update);
+        _this.addEventListener('update', _this.update);
         var marker = _this.marker;
         marker.fill = borneo.fills[0];
         marker.stroke = borneo.strokes[0];
-        marker.addPropertyListener('shape', function () { return _this.onMarkerShapeChange(); });
-        marker.addPropertyListener('enabled', function (event) {
-            if (!event.value) {
-                _this.groupSelection = _this.groupSelection.setData([]);
-                _this.groupSelection.exit.remove();
-            }
-        });
-        marker.addEventListener('change', update);
+        marker.addPropertyListener('shape', _this.onMarkerShapeChange, _this);
+        marker.addPropertyListener('enabled', _this.onMarkerEnabledChange, _this);
+        marker.addEventListener('change', _this.update, _this);
         return _this;
     }
     LineSeries.prototype.onMarkerShapeChange = function () {
-        this.groupSelection = this.groupSelection.setData([]);
-        this.groupSelection.exit.remove();
+        this.nodeSelection = this.nodeSelection.setData([]);
+        this.nodeSelection.exit.remove();
         this.update();
         this.fireEvent({ type: 'legendChange' });
+    };
+    LineSeries.prototype.onMarkerEnabledChange = function (event) {
+        if (!event.value) {
+            this.nodeSelection = this.nodeSelection.setData([]);
+            this.nodeSelection.exit.remove();
+        }
     };
     Object.defineProperty(LineSeries.prototype, "xKey", {
         get: function () {
@@ -9875,12 +9981,13 @@ var LineSeries = /** @class */ (function (_super) {
         configurable: true
     });
     LineSeries.prototype.processData = function () {
-        var _a = this, xAxis = _a.xAxis, xKey = _a.xKey, yKey = _a.yKey, xData = _a.xData, yData = _a.yData;
+        var _a = this, xAxis = _a.xAxis, yAxis = _a.yAxis, xKey = _a.xKey, yKey = _a.yKey, xData = _a.xData, yData = _a.yData;
         var data = xKey && yKey && this.data ? this.data : [];
         if (!xAxis) {
             return false;
         }
         var isContinuousX = xAxis.scale instanceof ContinuousScale;
+        var isContinuousY = yAxis.scale instanceof ContinuousScale;
         xData.length = 0;
         yData.length = 0;
         for (var i = 0, n = data.length; i < n; i++) {
@@ -9891,7 +9998,7 @@ var LineSeries = /** @class */ (function (_super) {
             yData.push(y);
         }
         this.xDomain = isContinuousX ? this.fixNumericExtent(numericExtent(xData), 'x') : xData;
-        this.yDomain = this.fixNumericExtent(numericExtent(yData), 'y');
+        this.yDomain = isContinuousY ? this.fixNumericExtent(numericExtent(yData), 'y') : yData;
         return true;
     };
     LineSeries.prototype.getDomain = function (direction) {
@@ -9900,37 +10007,36 @@ var LineSeries = /** @class */ (function (_super) {
         }
         return this.yDomain;
     };
-    LineSeries.prototype.highlightNode = function (node) {
-        if (!(node instanceof Marker)) {
-            return;
-        }
-        this.highlightedNode = node;
-        this.scheduleLayout();
-    };
-    LineSeries.prototype.dehighlightNode = function () {
-        this.highlightedNode = undefined;
-        this.scheduleLayout();
+    LineSeries.prototype.onHighlightChange = function () {
+        this.updateNodes();
     };
     LineSeries.prototype.update = function () {
-        var _a = this, chart = _a.chart, xAxis = _a.xAxis, yAxis = _a.yAxis;
         this.group.visible = this.visible;
-        if (!xAxis || !yAxis || !chart || chart.layoutPending || chart.dataPending) {
+        var _a = this, chart = _a.chart, xAxis = _a.xAxis, yAxis = _a.yAxis;
+        if (!chart || chart.layoutPending || chart.dataPending || !xAxis || !yAxis) {
             return;
         }
+        this.updateLinePath(); // this will generate node data too
+        this.updateNodeSelection();
+        this.updateNodes();
+    };
+    LineSeries.prototype.updateLinePath = function () {
+        var _this = this;
+        var _a = this, xAxis = _a.xAxis, yAxis = _a.yAxis, data = _a.data, xData = _a.xData, yData = _a.yData, lineNode = _a.lineNode;
         var xScale = xAxis.scale;
         var yScale = yAxis.scale;
         var xOffset = (xScale.bandwidth || 0) / 2;
         var yOffset = (yScale.bandwidth || 0) / 2;
         var isContinuousX = xScale instanceof ContinuousScale;
-        var _b = this, data = _b.data, xData = _b.xData, yData = _b.yData, marker = _b.marker, lineNode = _b.lineNode;
-        var groupSelectionData = [];
+        var isContinuousY = yScale instanceof ContinuousScale;
         var linePath = lineNode.path;
+        var nodeData = [];
         linePath.clear();
         var moveTo = true;
         xData.forEach(function (xDatum, i) {
             var yDatum = yData[i];
-            var isGap = yDatum == null || isNaN(yDatum) || !isFinite(yDatum)
-                || xDatum == null || (isContinuousX && (isNaN(xDatum) || !isFinite(xDatum)));
+            var isGap = yDatum == null || (isContinuousY && (isNaN(yDatum) || !isFinite(yDatum))) ||
+                xDatum == null || (isContinuousX && (isNaN(xDatum) || !isFinite(xDatum)));
             if (isGap) {
                 moveTo = true;
             }
@@ -9944,38 +10050,43 @@ var LineSeries = /** @class */ (function (_super) {
                 else {
                     linePath.lineTo(x, y);
                 }
-                if (marker) {
-                    groupSelectionData.push({
-                        seriesDatum: data[i],
-                        x: x,
-                        y: y
-                    });
-                }
+                nodeData.push({
+                    series: _this,
+                    seriesDatum: data[i],
+                    point: { x: x, y: y }
+                });
             }
         });
         lineNode.stroke = this.stroke;
         lineNode.strokeWidth = this.strokeWidth;
         lineNode.strokeOpacity = this.strokeOpacity;
-        this.updateGroupSelection(groupSelectionData);
+        // Used by marker nodes and for hit-testing even when not using markers
+        // when `chart.tooltipTracking` is true.
+        this.nodeData = nodeData;
     };
-    LineSeries.prototype.updateGroupSelection = function (groupSelectionData) {
-        var _a = this, marker = _a.marker, xKey = _a.xKey, yKey = _a.yKey, highlightedNode = _a.highlightedNode, stroke = _a.stroke, strokeWidth = _a.strokeWidth;
-        var groupSelection = this.groupSelection;
+    LineSeries.prototype.updateNodeSelection = function () {
+        var marker = this.marker;
+        var nodeData = marker.shape ? this.nodeData : [];
         var MarkerShape = getMarker(marker.shape);
-        var updateGroups = groupSelection.setData(groupSelectionData);
-        updateGroups.exit.remove();
-        var enterGroups = updateGroups.enter.append(Group);
-        enterGroups.append(MarkerShape);
+        var updateSelection = this.nodeSelection.setData(nodeData);
+        updateSelection.exit.remove();
+        var enterSelection = updateSelection.enter.append(Group);
+        enterSelection.append(MarkerShape);
+        this.nodeSelection = updateSelection.merge(enterSelection);
+    };
+    LineSeries.prototype.updateNodes = function () {
+        var _a = this, marker = _a.marker, xKey = _a.xKey, yKey = _a.yKey, stroke = _a.stroke, strokeWidth = _a.strokeWidth;
+        var MarkerShape = getMarker(marker.shape);
+        var highlightedDatum = this.chart.highlightedDatum;
         var _b = this.highlightStyle, highlightFill = _b.fill, highlightStroke = _b.stroke;
         var markerFormatter = marker.formatter;
         var markerSize = marker.size;
         var markerStrokeWidth = marker.strokeWidth !== undefined ? marker.strokeWidth : strokeWidth;
-        groupSelection = updateGroups.merge(enterGroups);
-        groupSelection.selectByClass(MarkerShape)
+        this.nodeSelection.selectByClass(MarkerShape)
             .each(function (node, datum) {
-            var isHighlightedNode = node === highlightedNode;
-            var markerFill = isHighlightedNode && highlightFill !== undefined ? highlightFill : marker.fill;
-            var markerStroke = isHighlightedNode && highlightStroke !== undefined ? highlightStroke : marker.stroke || stroke;
+            var highlighted = datum === highlightedDatum;
+            var markerFill = highlighted && highlightFill !== undefined ? highlightFill : marker.fill;
+            var markerStroke = highlighted && highlightStroke !== undefined ? highlightStroke : marker.stroke || stroke;
             var markerFormat = undefined;
             if (markerFormatter) {
                 markerFormat = markerFormatter({
@@ -9986,7 +10097,7 @@ var LineSeries = /** @class */ (function (_super) {
                     stroke: markerStroke,
                     strokeWidth: markerStrokeWidth,
                     size: markerSize,
-                    highlighted: isHighlightedNode
+                    highlighted: highlighted
                 });
             }
             node.fill = markerFormat && markerFormat.fill || markerFill;
@@ -9997,11 +10108,22 @@ var LineSeries = /** @class */ (function (_super) {
             node.size = markerFormat && markerFormat.size !== undefined
                 ? markerFormat.size
                 : markerSize;
-            node.translationX = datum.x;
-            node.translationY = datum.y;
+            node.translationX = datum.point.x;
+            node.translationY = datum.point.y;
             node.visible = marker.enabled && node.size > 0;
         });
-        this.groupSelection = groupSelection;
+    };
+    LineSeries.prototype.getNodeData = function () {
+        return this.nodeData;
+    };
+    LineSeries.prototype.fireNodeClickEvent = function (datum) {
+        this.fireEvent({
+            type: 'nodeClick',
+            series: this,
+            datum: datum.seriesDatum,
+            xKey: this.xKey,
+            yKey: this.yKey
+        });
     };
     LineSeries.prototype.getTooltipHtml = function (nodeDatum) {
         var _a = this, xKey = _a.xKey, yKey = _a.yKey;
@@ -10074,6 +10196,78 @@ var LineSeries = /** @class */ (function (_super) {
     ], LineSeries.prototype, "yName", void 0);
     return LineSeries;
 }(CartesianSeries));
+
+var __extends$x = (undefined && undefined.__extends) || (function () {
+    var extendStatics = function (d, b) {
+        extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+        return extendStatics(d, b);
+    };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
+function ticks (a, b, count) {
+    var step = tickStep(a, b, count);
+    a = Math.ceil(a / step) * step;
+    b = Math.floor(b / step) * step + step / 2;
+    // Add half a step here so that the array returned by `range` includes the last tick.
+    return range(a, b, step);
+}
+var e10 = Math.sqrt(50);
+var e5 = Math.sqrt(10);
+var e2 = Math.sqrt(2);
+function tickStep(a, b, count) {
+    var rawStep = Math.abs(b - a) / Math.max(0, count);
+    var step = Math.pow(10, Math.floor(Math.log(rawStep) / Math.LN10)); // = Math.log10(rawStep)
+    var error = rawStep / step;
+    if (error >= e10) {
+        step *= 10;
+    }
+    else if (error >= e5) {
+        step *= 5;
+    }
+    else if (error >= e2) {
+        step *= 2;
+    }
+    return b < a ? -step : step;
+}
+function tickIncrement(a, b, count) {
+    var rawStep = (b - a) / Math.max(0, count);
+    var power = Math.floor(Math.log(rawStep) / Math.LN10);
+    var error = rawStep / Math.pow(10, power);
+    return power >= 0
+        ? (error >= e10 ? 10 : error >= e5 ? 5 : error >= e2 ? 2 : 1) * Math.pow(10, power)
+        : -Math.pow(10, -power) / (error >= e10 ? 10 : error >= e5 ? 5 : error >= e2 ? 2 : 1);
+}
+var NumericTicks = /** @class */ (function (_super) {
+    __extends$x(NumericTicks, _super);
+    function NumericTicks(fractionDigits, size) {
+        if (size === void 0) { size = 0; }
+        var _this = _super.call(this, size) || this;
+        _this.fractionDigits = fractionDigits;
+        return _this;
+    }
+    return NumericTicks;
+}(Array));
+function range(a, b, step) {
+    if (step === void 0) { step = 1; }
+    var absStep = Math.abs(step);
+    var fractionDigits = (absStep > 0 && absStep < 1)
+        ? Math.abs(Math.floor(Math.log(absStep) / Math.LN10))
+        : 0;
+    var f = Math.pow(10, fractionDigits);
+    var n = Math.max(0, Math.ceil((b - a) / step)) || 0;
+    var values = new NumericTicks(fractionDigits, n);
+    for (var i = 0; i < n; i++) {
+        var value = a + step * i;
+        values[i] = Math.round(value * f) / f;
+    }
+    return values;
+}
 
 var __extends$y = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -10181,16 +10375,15 @@ var ScatterSeries = /** @class */ (function (_super) {
         _this.yData = [];
         _this.sizeData = [];
         _this.sizeScale = new LinearScale();
-        _this.groupSelection = Selection.select(_this.group).selectAll();
+        _this.nodeSelection = Selection.select(_this.group).selectAll();
+        _this.nodeData = [];
         _this.marker = new CartesianSeriesMarker();
         _this._fill = borneo.fills[0];
         _this._stroke = borneo.strokes[0];
         _this._strokeWidth = 2;
         _this._fillOpacity = 1;
         _this._strokeOpacity = 1;
-        _this.highlightStyle = {
-            fill: 'yellow'
-        };
+        _this.highlightStyle = { fill: 'yellow' };
         _this.xKey = '';
         _this.yKey = '';
         _this.xName = '';
@@ -10198,8 +10391,8 @@ var ScatterSeries = /** @class */ (function (_super) {
         _this.sizeName = 'Size';
         _this.labelName = 'Label';
         var marker = _this.marker;
-        marker.addPropertyListener('shape', function () { return _this.onMarkerShapeChange(); });
-        marker.addEventListener('change', function () { return _this.update(); });
+        marker.addPropertyListener('shape', _this.onMarkerShapeChange, _this);
+        marker.addEventListener('change', _this.update, _this);
         _this.addPropertyListener('xKey', function () { return _this.xData = []; });
         _this.addPropertyListener('yKey', function () { return _this.yData = []; });
         _this.addPropertyListener('sizeKey', function () { return _this.sizeData = []; });
@@ -10270,9 +10463,12 @@ var ScatterSeries = /** @class */ (function (_super) {
         enumerable: true,
         configurable: true
     });
+    ScatterSeries.prototype.onHighlightChange = function () {
+        this.updateNodes();
+    };
     ScatterSeries.prototype.onMarkerShapeChange = function () {
-        this.groupSelection = this.groupSelection.setData([]);
-        this.groupSelection.exit.remove();
+        this.nodeSelection = this.nodeSelection.setData([]);
+        this.nodeSelection.exit.remove();
         this.update();
         this.fireEvent({ type: 'legendChange' });
     };
@@ -10310,49 +10506,67 @@ var ScatterSeries = /** @class */ (function (_super) {
             return this.yDomain;
         }
     };
-    ScatterSeries.prototype.highlightNode = function (node) {
-        if (!(node instanceof Marker)) {
-            return;
-        }
-        this.highlightedNode = node;
-        this.scheduleLayout();
+    ScatterSeries.prototype.getNodeData = function () {
+        return this.nodeData;
     };
-    ScatterSeries.prototype.dehighlightNode = function () {
-        this.highlightedNode = undefined;
-        this.scheduleLayout();
+    ScatterSeries.prototype.fireNodeClickEvent = function (datum) {
+        this.fireEvent({
+            type: 'nodeClick',
+            series: this,
+            datum: datum.seriesDatum,
+            xKey: this.xKey,
+            yKey: this.yKey,
+            sizeKey: this.sizeKey
+        });
+    };
+    ScatterSeries.prototype.generateNodeData = function () {
+        var _this = this;
+        var xScale = this.xAxis.scale;
+        var yScale = this.yAxis.scale;
+        var xOffset = (xScale.bandwidth || 0) / 2;
+        var yOffset = (yScale.bandwidth || 0) / 2;
+        var _a = this, data = _a.data, xData = _a.xData, yData = _a.yData, sizeData = _a.sizeData, sizeScale = _a.sizeScale, marker = _a.marker;
+        sizeScale.range = [marker.minSize, marker.size];
+        return xData.map(function (xDatum, i) { return ({
+            series: _this,
+            seriesDatum: data[i],
+            point: {
+                x: xScale.convert(xDatum) + xOffset,
+                y: yScale.convert(yData[i]) + yOffset
+            },
+            size: sizeData.length ? sizeScale.convert(sizeData[i]) : marker.size
+        }); });
     };
     ScatterSeries.prototype.update = function () {
         var _a = this, visible = _a.visible, chart = _a.chart, xAxis = _a.xAxis, yAxis = _a.yAxis;
         this.group.visible = visible;
-        if (!xAxis || !yAxis || !visible || !chart || chart.layoutPending || chart.dataPending) {
+        if (!visible || !chart || chart.layoutPending || chart.dataPending || !xAxis || !yAxis) {
             return;
         }
-        var xScale = xAxis.scale;
-        var yScale = yAxis.scale;
-        var xOffset = (xScale.bandwidth || 0) / 2;
-        var yOffset = (yScale.bandwidth || 0) / 2;
-        var _b = this, data = _b.data, xData = _b.xData, yData = _b.yData, sizeData = _b.sizeData, xKey = _b.xKey, yKey = _b.yKey, sizeScale = _b.sizeScale, marker = _b.marker, fill = _b.fill, stroke = _b.stroke, strokeWidth = _b.strokeWidth, fillOpacity = _b.fillOpacity, strokeOpacity = _b.strokeOpacity, highlightedNode = _b.highlightedNode;
+        var nodeData = this.nodeData = this.generateNodeData();
+        this.updateNodeSelection(nodeData);
+        this.updateNodes();
+    };
+    ScatterSeries.prototype.updateNodeSelection = function (nodeData) {
+        var MarkerShape = getMarker(this.marker.shape);
+        var updateSelection = this.nodeSelection.setData(nodeData);
+        updateSelection.exit.remove();
+        var enterSelection = updateSelection.enter.append(Group);
+        enterSelection.append(MarkerShape);
+        this.nodeSelection = updateSelection.merge(enterSelection);
+    };
+    ScatterSeries.prototype.updateNodes = function () {
+        var highlightedDatum = this.chart.highlightedDatum;
+        var _a = this, marker = _a.marker, xKey = _a.xKey, yKey = _a.yKey, fill = _a.fill, stroke = _a.stroke, strokeWidth = _a.strokeWidth, fillOpacity = _a.fillOpacity, strokeOpacity = _a.strokeOpacity;
+        var _b = this.highlightStyle, highlightFill = _b.fill, highlightStroke = _b.stroke;
+        var markerStrokeWidth = marker.strokeWidth !== undefined ? marker.strokeWidth : strokeWidth;
         var MarkerShape = getMarker(marker.shape);
         var markerFormatter = marker.formatter;
-        this.sizeScale.range = [marker.minSize, marker.size];
-        var groupSelectionData = xData.map(function (xDatum, i) { return ({
-            seriesDatum: data[i],
-            x: xScale.convert(xDatum) + xOffset,
-            y: yScale.convert(yData[i]) + yOffset,
-            size: sizeData.length ? sizeScale.convert(sizeData[i]) : marker.size
-        }); });
-        var updateGroups = this.groupSelection.setData(groupSelectionData);
-        updateGroups.exit.remove();
-        var enterGroups = updateGroups.enter.append(Group);
-        enterGroups.append(MarkerShape);
-        var groupSelection = updateGroups.merge(enterGroups);
-        var _c = this.highlightStyle, highlightFill = _c.fill, highlightStroke = _c.stroke;
-        var markerStrokeWidth = marker.strokeWidth !== undefined ? marker.strokeWidth : strokeWidth;
-        groupSelection.selectByClass(MarkerShape)
+        this.nodeSelection.selectByClass(MarkerShape)
             .each(function (node, datum) {
-            var isHighlightedNode = node === highlightedNode;
-            var markerFill = isHighlightedNode && highlightFill !== undefined ? highlightFill : marker.fill || fill;
-            var markerStroke = isHighlightedNode && highlightStroke !== undefined ? highlightStroke : marker.stroke || stroke;
+            var highlighted = datum === highlightedDatum;
+            var markerFill = highlighted && highlightFill !== undefined ? highlightFill : marker.fill || fill;
+            var markerStroke = highlighted && highlightStroke !== undefined ? highlightStroke : marker.stroke || stroke;
             var markerFormat = undefined;
             if (markerFormatter) {
                 markerFormat = markerFormatter({
@@ -10363,7 +10577,7 @@ var ScatterSeries = /** @class */ (function (_super) {
                     stroke: markerStroke,
                     strokeWidth: markerStrokeWidth,
                     size: datum.size,
-                    highlighted: isHighlightedNode
+                    highlighted: highlighted
                 });
             }
             node.fill = markerFormat && markerFormat.fill || markerFill;
@@ -10376,11 +10590,10 @@ var ScatterSeries = /** @class */ (function (_super) {
                 : datum.size;
             node.fillOpacity = fillOpacity;
             node.strokeOpacity = strokeOpacity;
-            node.translationX = datum.x;
-            node.translationY = datum.y;
+            node.translationX = datum.point.x;
+            node.translationY = datum.point.y;
             node.visible = marker.enabled && node.size > 0;
         });
-        this.groupSelection = groupSelection;
     };
     ScatterSeries.prototype.getTooltipHtml = function (nodeDatum) {
         var _a = this, xKey = _a.xKey, yKey = _a.yKey;
@@ -10475,8 +10688,544 @@ var __extends$A = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
+var __decorate$b = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __spreadArrays$1 = (undefined && undefined.__spreadArrays) || function () {
+    for (var s = 0, i = 0, il = arguments.length; i < il; i++) s += arguments[i].length;
+    for (var r = Array(s), k = 0, i = 0; i < il; i++)
+        for (var a = arguments[i], j = 0, jl = a.length; j < jl; j++, k++)
+            r[k] = a[j];
+    return r;
+};
+var HistogramSeriesNodeTag;
+(function (HistogramSeriesNodeTag) {
+    HistogramSeriesNodeTag[HistogramSeriesNodeTag["Bin"] = 0] = "Bin";
+    HistogramSeriesNodeTag[HistogramSeriesNodeTag["Label"] = 1] = "Label";
+})(HistogramSeriesNodeTag || (HistogramSeriesNodeTag = {}));
+var HistogramSeriesLabel = /** @class */ (function (_super) {
+    __extends$A(HistogramSeriesLabel, _super);
+    function HistogramSeriesLabel() {
+        return _super !== null && _super.apply(this, arguments) || this;
+    }
+    __decorate$b([
+        reactive('change')
+    ], HistogramSeriesLabel.prototype, "formatter", void 0);
+    return HistogramSeriesLabel;
+}(Label));
+var defaultBinCount = 10;
+var aggregationFunctions = {
+    count: function (bin) { return bin.data.length; },
+    sum: function (bin, yKey) { return bin.data.reduce(function (acc, datum) { return acc + datum[yKey]; }, 0); },
+    mean: function (bin, yKey) { return aggregationFunctions.sum(bin, yKey) / aggregationFunctions.count(bin, yKey); }
+};
+var HistogramBin = /** @class */ (function () {
+    function HistogramBin(_a) {
+        var domainMin = _a[0], domainMax = _a[1];
+        this.data = [];
+        this.aggregatedValue = 0;
+        this.frequency = 0;
+        this.domain = [domainMin, domainMax];
+    }
+    HistogramBin.prototype.addDatum = function (datum) {
+        this.data.push(datum);
+        this.frequency++;
+    };
+    Object.defineProperty(HistogramBin.prototype, "domainWidth", {
+        get: function () {
+            var _a = this.domain, domainMin = _a[0], domainMax = _a[1];
+            return domainMax - domainMin;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(HistogramBin.prototype, "relativeHeight", {
+        get: function () {
+            return this.aggregatedValue / this.domainWidth;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    HistogramBin.prototype.calculateAggregatedValue = function (aggregationName, yKey) {
+        if (!yKey) {
+            // not having a yKey forces us into a frequency plot
+            aggregationName = 'count';
+        }
+        var aggregationFunction = aggregationFunctions[aggregationName];
+        this.aggregatedValue = aggregationFunction(this, yKey);
+    };
+    HistogramBin.prototype.getY = function (areaPlot) {
+        return areaPlot ? this.relativeHeight : this.aggregatedValue;
+    };
+    return HistogramBin;
+}());
+var HistogramSeries = /** @class */ (function (_super) {
+    __extends$A(HistogramSeries, _super);
+    function HistogramSeries() {
+        var _a;
+        var _this = _super.call(this) || this;
+        // Need to put column and label nodes into separate groups, because even though label nodes are
+        // created after the column nodes, this only guarantees that labels will always be on top of columns
+        // on the first run. If on the next run more columns are added, they might clip the labels
+        // rendered during the previous run.
+        _this.rectGroup = _this.group.appendChild(new Group());
+        _this.textGroup = _this.group.appendChild(new Group());
+        _this.rectSelection = Selection.select(_this.rectGroup).selectAll();
+        _this.textSelection = Selection.select(_this.textGroup).selectAll();
+        _this.binnedData = [];
+        _this.xDomain = [];
+        _this.yDomain = [];
+        _this.label = new HistogramSeriesLabel();
+        _this.seriesItemEnabled = true;
+        _this.fill = borneo.fills[0];
+        _this.stroke = borneo.strokes[0];
+        _this.fillOpacity = 1;
+        _this.strokeOpacity = 1;
+        _this.directionKeys = (_a = {},
+            _a[ChartAxisDirection.X] = ['xKey'],
+            _a[ChartAxisDirection.Y] = ['yKey'],
+            _a);
+        _this._xKey = '';
+        _this._areaPlot = false;
+        _this._xName = '';
+        _this._yKey = '';
+        _this._yName = '';
+        _this._strokeWidth = 1;
+        _this.highlightStyle = { fill: 'yellow' };
+        _this.label.enabled = false;
+        _this.label.addEventListener('change', _this.update, _this);
+        return _this;
+    }
+    HistogramSeries.prototype.getKeys = function (direction) {
+        var _this = this;
+        var directionKeys = this.directionKeys;
+        var keys = directionKeys && directionKeys[direction];
+        var values = [];
+        if (keys) {
+            keys.forEach(function (key) {
+                var value = _this[key];
+                if (value) {
+                    if (Array.isArray(value)) {
+                        values.push.apply(values, value);
+                    }
+                    else {
+                        values.push(value);
+                    }
+                }
+            });
+        }
+        return values;
+    };
+    Object.defineProperty(HistogramSeries.prototype, "xKey", {
+        get: function () {
+            return this._xKey;
+        },
+        set: function (value) {
+            if (this._xKey !== value) {
+                this._xKey = value;
+                this.scheduleData();
+            }
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(HistogramSeries.prototype, "areaPlot", {
+        get: function () {
+            return this._areaPlot;
+        },
+        set: function (c) {
+            this._areaPlot = c;
+            this.scheduleData();
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(HistogramSeries.prototype, "bins", {
+        get: function () {
+            return this._bins;
+        },
+        set: function (bins) {
+            this._bins = bins;
+            this.scheduleData();
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(HistogramSeries.prototype, "aggregation", {
+        get: function () {
+            return this._aggregation;
+        },
+        set: function (aggregation) {
+            this._aggregation = aggregation;
+            this.scheduleData();
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(HistogramSeries.prototype, "binCount", {
+        get: function () {
+            return this._binCount;
+        },
+        set: function (binCount) {
+            this._binCount = binCount;
+            this.scheduleData();
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(HistogramSeries.prototype, "xName", {
+        get: function () {
+            return this._xName;
+        },
+        set: function (value) {
+            if (this._xName !== value) {
+                this._xName = value;
+                this.update();
+            }
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(HistogramSeries.prototype, "yKey", {
+        get: function () {
+            return this._yKey;
+        },
+        set: function (yKey) {
+            this._yKey = yKey;
+            this.seriesItemEnabled = true;
+            this.scheduleData();
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(HistogramSeries.prototype, "yName", {
+        get: function () {
+            return this._yName;
+        },
+        set: function (values) {
+            this._yName = values;
+            this.scheduleData();
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(HistogramSeries.prototype, "strokeWidth", {
+        get: function () {
+            return this._strokeWidth;
+        },
+        set: function (value) {
+            if (this._strokeWidth !== value) {
+                this._strokeWidth = value;
+                this.update();
+            }
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(HistogramSeries.prototype, "shadow", {
+        get: function () {
+            return this._shadow;
+        },
+        set: function (value) {
+            if (this._shadow !== value) {
+                this._shadow = value;
+                this.update();
+            }
+        },
+        enumerable: true,
+        configurable: true
+    });
+    HistogramSeries.prototype.onHighlightChange = function () {
+        this.updateRectNodes();
+    };
+    /*  during processData phase, used to unify different ways of the user specifying
+        the bins. Returns bins in format [[min1, max1], [min2, max2] ... ] */
+    HistogramSeries.prototype.deriveBins = function () {
+        var _this = this;
+        var _a = this, bins = _a.bins, binCount = _a.binCount;
+        if (bins && binCount) {
+            console.warn('bin domain and bin count both specified - these are mutually exclusive properties');
+        }
+        if (bins) {
+            // we have explicity set bins from user. Use those.
+            return bins;
+        }
+        var xData = this.data.map(function (datum) { return datum[_this.xKey]; });
+        var xDomain = this.fixNumericExtent(finiteExtent(xData), 'x');
+        var binStarts = ticks(xDomain[0], xDomain[1], this.binCount || defaultBinCount);
+        var binSize = tickStep(xDomain[0], xDomain[1], this.binCount || defaultBinCount);
+        var firstBinEnd = binStarts[0];
+        var expandStartToBin = function (n) { return [n, n + binSize]; };
+        return __spreadArrays$1([
+            [firstBinEnd - binSize, firstBinEnd]
+        ], binStarts.map(expandStartToBin));
+    };
+    HistogramSeries.prototype.placeDataInBins = function (data) {
+        var _this = this;
+        var xKey = this.xKey;
+        var derivedBins = this.deriveBins();
+        // creating a sorted copy allows binning in O(n) rather than O(n²)
+        // but at the expense of more temporary memory
+        var sortedData = data.slice().sort(function (a, b) {
+            if (a[xKey] < b[xKey]) {
+                return -1;
+            }
+            if (a[xKey] > b[xKey]) {
+                return 1;
+            }
+            return 0;
+        });
+        var currentBin = 0;
+        var bins = [new HistogramBin(derivedBins[0])];
+        sortedData.forEach(function (datum) {
+            while (datum[xKey] > derivedBins[currentBin][1]) {
+                currentBin++;
+                bins.push(new HistogramBin(derivedBins[currentBin]));
+            }
+            bins[currentBin].addDatum(datum);
+        });
+        bins.forEach(function (b) { return b.calculateAggregatedValue(_this._aggregation, _this.yKey); });
+        return bins;
+    };
+    Object.defineProperty(HistogramSeries.prototype, "xMax", {
+        get: function () {
+            var _this = this;
+            return this.data && this.data.reduce(function (acc, datum) {
+                return Math.max(acc, datum[_this.xKey]);
+            }, Number.NEGATIVE_INFINITY);
+        },
+        enumerable: true,
+        configurable: true
+    });
+    HistogramSeries.prototype.processData = function () {
+        var _this = this;
+        var _a = this, xKey = _a.xKey, data = _a.data;
+        this.binnedData = this.placeDataInBins(xKey && data ? data : []);
+        var yData = this.binnedData.map(function (b) { return b.getY(_this.areaPlot); });
+        var yMinMax = numericExtent(yData);
+        this.yDomain = this.fixNumericExtent([0, yMinMax[1]], 'y');
+        var firstBin = this.binnedData[0];
+        var lastBin = this.binnedData[this.binnedData.length - 1];
+        var xMin = firstBin.domain[0];
+        var xMax = lastBin.domain[1];
+        this.xDomain = [xMin, xMax];
+        this.fireEvent({ type: 'dataProcessed' });
+        return true;
+    };
+    HistogramSeries.prototype.getDomain = function (direction) {
+        if (direction === ChartAxisDirection.X) {
+            return this.xDomain;
+        }
+        else {
+            return this.yDomain;
+        }
+    };
+    HistogramSeries.prototype.fireNodeClickEvent = function (datum) {
+        this.fireEvent({
+            type: 'nodeClick',
+            series: this,
+            datum: datum.seriesDatum,
+            xKey: this.xKey
+        });
+    };
+    HistogramSeries.prototype.update = function () {
+        var _a = this, visible = _a.visible, chart = _a.chart, xAxis = _a.xAxis, yAxis = _a.yAxis;
+        this.group.visible = visible;
+        if (!xAxis || !yAxis || !visible || !chart || chart.layoutPending || chart.dataPending) {
+            return;
+        }
+        var nodeData = this.generateNodeData();
+        this.updateRectSelection(nodeData);
+        this.updateRectNodes();
+        this.updateTextSelection(nodeData);
+        this.updateTextNodes();
+    };
+    HistogramSeries.prototype.generateNodeData = function () {
+        var _this = this;
+        if (!this.seriesItemEnabled) {
+            return [];
+        }
+        var _a = this, xScale = _a.xAxis.scale, yScale = _a.yAxis.scale, fill = _a.fill, stroke = _a.stroke, strokeWidth = _a.strokeWidth;
+        var nodeData = [];
+        var defaultLabelFormatter = function (b) { return String(b.aggregatedValue); };
+        var _b = this.label, _c = _b.formatter, labelFormatter = _c === void 0 ? defaultLabelFormatter : _c, labelFontStyle = _b.fontStyle, labelFontWeight = _b.fontWeight, labelFontSize = _b.fontSize, labelFontFamily = _b.fontFamily, labelColor = _b.color;
+        this.binnedData.forEach(function (binOfData) {
+            var total = binOfData.aggregatedValue, frequency = binOfData.frequency, _a = binOfData.domain, xDomainMin = _a[0], xDomainMax = _a[1], relativeHeight = binOfData.relativeHeight;
+            var xMinPx = xScale.convert(xDomainMin), xMaxPx = xScale.convert(xDomainMax), 
+            // note: assuming can't be negative:
+            y = _this.areaPlot ? relativeHeight : (_this.yKey ? total : frequency), yZeroPx = yScale.convert(0), yMaxPx = yScale.convert(y), w = xMaxPx - xMinPx, h = Math.abs(yMaxPx - yZeroPx);
+            var selectionDatumLabel = y !== 0 && {
+                text: labelFormatter(binOfData),
+                fontStyle: labelFontStyle,
+                fontWeight: labelFontWeight,
+                fontSize: labelFontSize,
+                fontFamily: labelFontFamily,
+                fill: labelColor,
+                x: xMinPx + w / 2,
+                y: yMaxPx + h / 2
+            };
+            nodeData.push({
+                series: _this,
+                seriesDatum: binOfData,
+                // since each selection is an aggregation of multiple data.
+                x: xMinPx,
+                y: yMaxPx,
+                width: w,
+                height: h,
+                fill: fill,
+                stroke: stroke,
+                strokeWidth: strokeWidth,
+                label: selectionDatumLabel,
+            });
+        });
+        return nodeData;
+    };
+    HistogramSeries.prototype.updateRectSelection = function (nodeData) {
+        var updateRects = this.rectSelection.setData(nodeData);
+        updateRects.exit.remove();
+        var enterRects = updateRects.enter.append(Rect).each(function (rect) {
+            rect.tag = HistogramSeriesNodeTag.Bin;
+            rect.crisp = true;
+        });
+        this.rectSelection = updateRects.merge(enterRects);
+    };
+    HistogramSeries.prototype.updateRectNodes = function () {
+        var highlightedDatum = this.chart.highlightedDatum;
+        var _a = this, fillOpacity = _a.fillOpacity, strokeOpacity = _a.strokeOpacity, shadow = _a.shadow, _b = _a.highlightStyle, fill = _b.fill, stroke = _b.stroke;
+        this.rectSelection.each(function (rect, datum) {
+            var highlighted = datum === highlightedDatum;
+            rect.x = datum.x;
+            rect.y = datum.y;
+            rect.width = datum.width;
+            rect.height = datum.height;
+            rect.fill = highlighted && fill !== undefined ? fill : datum.fill;
+            rect.stroke = highlighted && stroke !== undefined ? stroke : datum.stroke;
+            rect.fillOpacity = fillOpacity;
+            rect.strokeOpacity = strokeOpacity;
+            rect.strokeWidth = datum.strokeWidth;
+            rect.fillShadow = shadow;
+            rect.visible = datum.height > 0; // prevent stroke from rendering for zero height columns
+        });
+    };
+    HistogramSeries.prototype.updateTextSelection = function (nodeData) {
+        var updateTexts = this.textSelection.setData(nodeData);
+        updateTexts.exit.remove();
+        var enterTexts = updateTexts.enter.append(Text).each(function (text) {
+            text.tag = HistogramSeriesNodeTag.Label;
+            text.pointerEvents = PointerEvents.None;
+            text.textAlign = 'center';
+            text.textBaseline = 'middle';
+        });
+        this.textSelection = updateTexts.merge(enterTexts);
+    };
+    HistogramSeries.prototype.updateTextNodes = function () {
+        var labelEnabled = this.label.enabled;
+        this.textSelection.each(function (text, datum) {
+            var label = datum.label;
+            if (label && labelEnabled) {
+                text.text = label.text;
+                text.x = label.x;
+                text.y = label.y;
+                text.fontStyle = label.fontStyle;
+                text.fontWeight = label.fontWeight;
+                text.fontSize = label.fontSize;
+                text.fontFamily = label.fontFamily;
+                text.fill = label.fill;
+                text.visible = true;
+            }
+            else {
+                text.visible = false;
+            }
+        });
+    };
+    HistogramSeries.prototype.getTooltipHtml = function (nodeDatum) {
+        var _a = this, xKey = _a.xKey, yKey = _a.yKey;
+        if (!xKey) {
+            return '';
+        }
+        var _b = this, xName = _b.xName, yName = _b.yName, fill = _b.fill, tooltipRenderer = _b.tooltipRenderer, aggregation = _b.aggregation;
+        var bin = nodeDatum.seriesDatum;
+        var aggregatedValue = bin.aggregatedValue, frequency = bin.frequency, _c = bin.domain, rangeMin = _c[0], rangeMax = _c[1];
+        if (tooltipRenderer) {
+            return tooltipRenderer({
+                datum: bin,
+                xKey: xKey,
+                xName: xName,
+                yKey: yKey,
+                yName: yName,
+                color: fill
+            });
+        }
+        else {
+            var titleStyle = "style=\"color: white; background-color: " + fill + "\"";
+            var titleString = "\n                <div class=\"" + Chart.defaultTooltipClass + "-title\" " + titleStyle + ">\n                    " + (xName || xKey) + " " + toFixed(rangeMin) + " - " + toFixed(rangeMax) + "\n                </div>";
+            var contentHtml = yKey ?
+                "<b>" + (yName || yKey) + " (" + aggregation + ")</b>: " + toFixed(aggregatedValue) + "<br>" :
+                '';
+            contentHtml += "<b>Frequency</b>: " + frequency;
+            return "\n                " + titleString + "\n                <div class=\"" + Chart.defaultTooltipClass + "-content\">\n                    " + contentHtml + "\n                </div>";
+        }
+    };
+    HistogramSeries.prototype.listSeriesItems = function (legendData) {
+        var _a = this, id = _a.id, data = _a.data, yKey = _a.yKey, yName = _a.yName, seriesItemEnabled = _a.seriesItemEnabled, fill = _a.fill, stroke = _a.stroke, fillOpacity = _a.fillOpacity, strokeOpacity = _a.strokeOpacity;
+        if (data && data.length) {
+            legendData.push({
+                id: id,
+                itemId: yKey,
+                enabled: seriesItemEnabled,
+                label: {
+                    text: yName || yKey || 'Frequency'
+                },
+                marker: {
+                    fill: fill,
+                    stroke: stroke,
+                    fillOpacity: fillOpacity,
+                    strokeOpacity: strokeOpacity
+                }
+            });
+        }
+    };
+    HistogramSeries.prototype.toggleSeriesItem = function (itemId, enabled) {
+        if (itemId === this.yKey) {
+            this.seriesItemEnabled = enabled;
+        }
+        this.scheduleData();
+    };
+    HistogramSeries.className = 'HistogramSeries';
+    HistogramSeries.type = 'histogram';
+    __decorate$b([
+        reactive('dataChange')
+    ], HistogramSeries.prototype, "fill", void 0);
+    __decorate$b([
+        reactive('dataChange')
+    ], HistogramSeries.prototype, "stroke", void 0);
+    __decorate$b([
+        reactive('layoutChange')
+    ], HistogramSeries.prototype, "fillOpacity", void 0);
+    __decorate$b([
+        reactive('layoutChange')
+    ], HistogramSeries.prototype, "strokeOpacity", void 0);
+    return HistogramSeries;
+}(CartesianSeries));
+
+var __extends$B = (undefined && undefined.__extends) || (function () {
+    var extendStatics = function (d, b) {
+        extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+        return extendStatics(d, b);
+    };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
 var Sector = /** @class */ (function (_super) {
-    __extends$A(Sector, _super);
+    __extends$B(Sector, _super);
     function Sector() {
         var _this = _super !== null && _super.apply(this, arguments) || this;
         _this.path = new Path2D();
@@ -11100,7 +11849,7 @@ var Color = /** @class */ (function () {
     return Color;
 }());
 
-var __extends$B = (undefined && undefined.__extends) || (function () {
+var __extends$C = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -11113,36 +11862,36 @@ var __extends$B = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate$b = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$c = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
-var PieSeriesNodeTag;
-(function (PieSeriesNodeTag) {
-    PieSeriesNodeTag[PieSeriesNodeTag["Sector"] = 0] = "Sector";
-    PieSeriesNodeTag[PieSeriesNodeTag["Callout"] = 1] = "Callout";
-    PieSeriesNodeTag[PieSeriesNodeTag["Label"] = 2] = "Label";
-})(PieSeriesNodeTag || (PieSeriesNodeTag = {}));
+var PieNodeTag;
+(function (PieNodeTag) {
+    PieNodeTag[PieNodeTag["Sector"] = 0] = "Sector";
+    PieNodeTag[PieNodeTag["Callout"] = 1] = "Callout";
+    PieNodeTag[PieNodeTag["Label"] = 2] = "Label";
+})(PieNodeTag || (PieNodeTag = {}));
 var PieSeriesLabel = /** @class */ (function (_super) {
-    __extends$B(PieSeriesLabel, _super);
+    __extends$C(PieSeriesLabel, _super);
     function PieSeriesLabel() {
         var _this = _super !== null && _super.apply(this, arguments) || this;
         _this.offset = 3; // from the callout line
         _this.minAngle = 20; // in degrees
         return _this;
     }
-    __decorate$b([
+    __decorate$c([
         reactive('change')
     ], PieSeriesLabel.prototype, "offset", void 0);
-    __decorate$b([
+    __decorate$c([
         reactive('dataChange')
     ], PieSeriesLabel.prototype, "minAngle", void 0);
     return PieSeriesLabel;
 }(Label));
 var PieSeriesCallout = /** @class */ (function (_super) {
-    __extends$B(PieSeriesCallout, _super);
+    __extends$C(PieSeriesCallout, _super);
     function PieSeriesCallout() {
         var _this = _super !== null && _super.apply(this, arguments) || this;
         _this.colors = borneo.strokes;
@@ -11150,19 +11899,19 @@ var PieSeriesCallout = /** @class */ (function (_super) {
         _this.strokeWidth = 1;
         return _this;
     }
-    __decorate$b([
+    __decorate$c([
         reactive('change')
     ], PieSeriesCallout.prototype, "colors", void 0);
-    __decorate$b([
+    __decorate$c([
         reactive('change')
     ], PieSeriesCallout.prototype, "length", void 0);
-    __decorate$b([
+    __decorate$c([
         reactive('change')
     ], PieSeriesCallout.prototype, "strokeWidth", void 0);
     return PieSeriesCallout;
 }(Observable));
 var PieSeries = /** @class */ (function (_super) {
-    __extends$B(PieSeries, _super);
+    __extends$C(PieSeries, _super);
     function PieSeries() {
         var _this = _super.call(this) || this;
         _this.radiusScale = new LinearScale();
@@ -11200,13 +11949,11 @@ var PieSeries = /** @class */ (function (_super) {
         _this.outerRadiusOffset = 0;
         _this.innerRadiusOffset = 0;
         _this.strokeWidth = 1;
-        _this.highlightStyle = {
-            fill: 'yellow'
-        };
-        _this.addEventListener('update', function () { return _this.update(); });
-        _this.label.addEventListener('change', function () { return _this.scheduleLayout(); });
-        _this.label.addEventListener('dataChange', function () { return _this.scheduleData(); });
-        _this.callout.addEventListener('change', function () { return _this.scheduleLayout(); });
+        _this.highlightStyle = { fill: 'yellow' };
+        _this.addEventListener('update', _this.update, _this);
+        _this.label.addEventListener('change', _this.scheduleLayout, _this);
+        _this.label.addEventListener('dataChange', _this.scheduleData, _this);
+        _this.callout.addEventListener('change', _this.scheduleLayout, _this);
         _this.addPropertyListener('data', function (event) {
             event.source.seriesItemEnabled = event.value.map(function () { return true; });
         });
@@ -11259,16 +12006,8 @@ var PieSeries = /** @class */ (function (_super) {
         enumerable: true,
         configurable: true
     });
-    PieSeries.prototype.highlightNode = function (node) {
-        if (!(node instanceof Sector)) {
-            return;
-        }
-        this.highlightedNode = node;
-        this.scheduleLayout();
-    };
-    PieSeries.prototype.dehighlightNode = function () {
-        this.highlightedNode = undefined;
-        this.scheduleLayout();
+    PieSeries.prototype.onHighlightChange = function () {
+        this.updateNodes();
     };
     PieSeries.prototype.getDomain = function (direction) {
         if (direction === ChartAxisDirection.X) {
@@ -11336,8 +12075,9 @@ var PieSeries = /** @class */ (function (_super) {
                 textBaseline = 'middle';
             }
             groupSelectionData.push({
-                index: datumIndex,
+                series: _this,
                 seriesDatum: data[datumIndex],
+                index: datumIndex,
                 radius: radius,
                 startAngle: startAngle,
                 endAngle: endAngle,
@@ -11361,42 +12101,50 @@ var PieSeries = /** @class */ (function (_super) {
         if (!visible || !chart || chart.dataPending || chart.layoutPending) {
             return;
         }
-        var _a = this, fills = _a.fills, strokes = _a.strokes, fillOpacity = _a.fillOpacity, strokeOpacity = _a.strokeOpacity, callout = _a.callout, outerRadiusOffset = _a.outerRadiusOffset, innerRadiusOffset = _a.innerRadiusOffset, radiusScale = _a.radiusScale, title = _a.title;
-        radiusScale.range = [0, this.radius];
+        this.radiusScale.range = [0, this.radius];
         this.group.translationX = this.centerX;
         this.group.translationY = this.centerY;
+        var title = this.title;
         if (title) {
-            title.node.translationY = -this.radius - outerRadiusOffset - 2;
+            title.node.translationY = -this.radius - this.outerRadiusOffset - 2;
             title.node.visible = title.enabled;
         }
+        this.updateGroupSelection();
+        this.updateNodes();
+    };
+    PieSeries.prototype.updateGroupSelection = function () {
         var updateGroups = this.groupSelection.setData(this.groupSelectionData);
         updateGroups.exit.remove();
         var enterGroups = updateGroups.enter.append(Group);
-        enterGroups.append(Sector).each(function (node) { return node.tag = PieSeriesNodeTag.Sector; });
+        enterGroups.append(Sector).each(function (node) { return node.tag = PieNodeTag.Sector; });
         enterGroups.append(Line).each(function (node) {
-            node.tag = PieSeriesNodeTag.Callout;
+            node.tag = PieNodeTag.Callout;
             node.pointerEvents = PointerEvents.None;
         });
         enterGroups.append(Text).each(function (node) {
-            node.tag = PieSeriesNodeTag.Label;
+            node.tag = PieNodeTag.Label;
             node.pointerEvents = PointerEvents.None;
         });
-        var groupSelection = updateGroups.merge(enterGroups);
+        this.groupSelection = updateGroups.merge(enterGroups);
+    };
+    PieSeries.prototype.updateNodes = function () {
+        var _a = this, fills = _a.fills, strokes = _a.strokes, fillOpacity = _a.fillOpacity, strokeOpacity = _a.strokeOpacity, strokeWidth = _a.strokeWidth, outerRadiusOffset = _a.outerRadiusOffset, innerRadiusOffset = _a.innerRadiusOffset, radiusScale = _a.radiusScale, callout = _a.callout, shadow = _a.shadow, _b = _a.highlightStyle, fill = _b.fill, stroke = _b.stroke, centerOffset = _b.centerOffset;
+        var highlightedDatum = this.chart.highlightedDatum;
         var outerRadii = [];
         var centerOffsets = [];
-        var _b = this, highlightedNode = _b.highlightedNode, _c = _b.highlightStyle, fill = _c.fill, stroke = _c.stroke, centerOffset = _c.centerOffset, shadow = _b.shadow, strokeWidth = _b.strokeWidth;
-        groupSelection.selectByTag(PieSeriesNodeTag.Sector).each(function (sector, datum, index) {
+        this.groupSelection.selectByTag(PieNodeTag.Sector).each(function (sector, datum, index) {
             var radius = radiusScale.convert(datum.radius);
             var outerRadius = Math.max(0, radius + outerRadiusOffset);
             sector.outerRadius = outerRadius;
             sector.innerRadius = Math.max(0, innerRadiusOffset ? radius + innerRadiusOffset : 0);
             sector.startAngle = datum.startAngle;
             sector.endAngle = datum.endAngle;
-            sector.fill = sector === highlightedNode && fill !== undefined ? fill : fills[index % fills.length];
-            sector.stroke = sector === highlightedNode && stroke !== undefined ? stroke : strokes[index % strokes.length];
+            var highlighted = datum === highlightedDatum;
+            sector.fill = highlighted && fill !== undefined ? fill : fills[index % fills.length];
+            sector.stroke = highlighted && stroke !== undefined ? stroke : strokes[index % strokes.length];
             sector.fillOpacity = fillOpacity;
             sector.strokeOpacity = strokeOpacity;
-            sector.centerOffset = sector === highlightedNode && centerOffset !== undefined ? centerOffset : 0;
+            sector.centerOffset = highlighted && centerOffset !== undefined ? centerOffset : 0;
             sector.fillShadow = shadow;
             sector.strokeWidth = strokeWidth;
             sector.lineJoin = 'round';
@@ -11404,7 +12152,7 @@ var PieSeries = /** @class */ (function (_super) {
             centerOffsets.push(sector.centerOffset);
         });
         var calloutColors = callout.colors, calloutLength = callout.length, calloutStrokeWidth = callout.strokeWidth;
-        groupSelection.selectByTag(PieSeriesNodeTag.Callout).each(function (line, datum, index) {
+        this.groupSelection.selectByTag(PieNodeTag.Callout).each(function (line, datum, index) {
             if (datum.label) {
                 var outerRadius = centerOffsets[index] + outerRadii[index];
                 line.strokeWidth = calloutStrokeWidth;
@@ -11419,8 +12167,8 @@ var PieSeries = /** @class */ (function (_super) {
             }
         });
         {
-            var _d = this.label, offset_1 = _d.offset, fontStyle_1 = _d.fontStyle, fontWeight_1 = _d.fontWeight, fontSize_1 = _d.fontSize, fontFamily_1 = _d.fontFamily, color_1 = _d.color;
-            groupSelection.selectByTag(PieSeriesNodeTag.Label).each(function (text, datum, index) {
+            var _c = this.label, offset_1 = _c.offset, fontStyle_1 = _c.fontStyle, fontWeight_1 = _c.fontWeight, fontSize_1 = _c.fontSize, fontFamily_1 = _c.fontFamily, color_1 = _c.color;
+            this.groupSelection.selectByTag(PieNodeTag.Label).each(function (text, datum, index) {
                 var label = datum.label;
                 if (label) {
                     var outerRadius = outerRadii[index];
@@ -11441,7 +12189,15 @@ var PieSeries = /** @class */ (function (_super) {
                 }
             });
         }
-        this.groupSelection = groupSelection;
+    };
+    PieSeries.prototype.fireNodeClickEvent = function (datum) {
+        this.fireEvent({
+            type: 'nodeClick',
+            series: this,
+            datum: datum.seriesDatum,
+            angleKey: this.angleKey,
+            radiusKey: this.radiusKey
+        });
     };
     PieSeries.prototype.getTooltipHtml = function (nodeDatum) {
         var angleKey = this.angleKey;
@@ -11502,95 +12258,47 @@ var PieSeries = /** @class */ (function (_super) {
     };
     PieSeries.className = 'PieSeries';
     PieSeries.type = 'pie';
-    __decorate$b([
+    __decorate$c([
         reactive('dataChange')
     ], PieSeries.prototype, "angleKey", void 0);
-    __decorate$b([
+    __decorate$c([
         reactive('update')
     ], PieSeries.prototype, "angleName", void 0);
-    __decorate$b([
+    __decorate$c([
         reactive('dataChange')
     ], PieSeries.prototype, "radiusKey", void 0);
-    __decorate$b([
+    __decorate$c([
         reactive('update')
     ], PieSeries.prototype, "radiusName", void 0);
-    __decorate$b([
+    __decorate$c([
         reactive('dataChange')
     ], PieSeries.prototype, "labelKey", void 0);
-    __decorate$b([
+    __decorate$c([
         reactive('update')
     ], PieSeries.prototype, "labelName", void 0);
-    __decorate$b([
+    __decorate$c([
         reactive('layoutChange')
     ], PieSeries.prototype, "fillOpacity", void 0);
-    __decorate$b([
+    __decorate$c([
         reactive('layoutChange')
     ], PieSeries.prototype, "strokeOpacity", void 0);
-    __decorate$b([
+    __decorate$c([
         reactive('dataChange')
     ], PieSeries.prototype, "rotation", void 0);
-    __decorate$b([
+    __decorate$c([
         reactive('layoutChange')
     ], PieSeries.prototype, "outerRadiusOffset", void 0);
-    __decorate$b([
+    __decorate$c([
         reactive('dataChange')
     ], PieSeries.prototype, "innerRadiusOffset", void 0);
-    __decorate$b([
+    __decorate$c([
         reactive('layoutChange')
     ], PieSeries.prototype, "strokeWidth", void 0);
-    __decorate$b([
+    __decorate$c([
         reactive('layoutChange')
     ], PieSeries.prototype, "shadow", void 0);
     return PieSeries;
 }(PolarSeries));
-
-var __extends$C = (undefined && undefined.__extends) || (function () {
-    var extendStatics = function (d, b) {
-        extendStatics = Object.setPrototypeOf ||
-            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
-        return extendStatics(d, b);
-    };
-    return function (d, b) {
-        extendStatics(d, b);
-        function __() { this.constructor = d; }
-        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-})();
-var __decorate$c = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
-    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
-    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
-    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
-    return c > 3 && r && Object.defineProperty(target, key, r), r;
-};
-var DropShadow = /** @class */ (function (_super) {
-    __extends$C(DropShadow, _super);
-    function DropShadow() {
-        var _this = _super !== null && _super.apply(this, arguments) || this;
-        _this.enabled = true;
-        _this.color = 'rgba(0, 0, 0, 0.5)';
-        _this.xOffset = 0;
-        _this.yOffset = 0;
-        _this.blur = 5;
-        return _this;
-    }
-    __decorate$c([
-        reactive('change')
-    ], DropShadow.prototype, "enabled", void 0);
-    __decorate$c([
-        reactive('change')
-    ], DropShadow.prototype, "color", void 0);
-    __decorate$c([
-        reactive('change')
-    ], DropShadow.prototype, "xOffset", void 0);
-    __decorate$c([
-        reactive('change')
-    ], DropShadow.prototype, "yOffset", void 0);
-    __decorate$c([
-        reactive('change')
-    ], DropShadow.prototype, "blur", void 0);
-    return DropShadow;
-}(Observable));
 
 var __extends$D = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -11605,8 +12313,56 @@ var __extends$D = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
+var __decorate$d = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var DropShadow = /** @class */ (function (_super) {
+    __extends$D(DropShadow, _super);
+    function DropShadow() {
+        var _this = _super !== null && _super.apply(this, arguments) || this;
+        _this.enabled = true;
+        _this.color = 'rgba(0, 0, 0, 0.5)';
+        _this.xOffset = 0;
+        _this.yOffset = 0;
+        _this.blur = 5;
+        return _this;
+    }
+    __decorate$d([
+        reactive('change')
+    ], DropShadow.prototype, "enabled", void 0);
+    __decorate$d([
+        reactive('change')
+    ], DropShadow.prototype, "color", void 0);
+    __decorate$d([
+        reactive('change')
+    ], DropShadow.prototype, "xOffset", void 0);
+    __decorate$d([
+        reactive('change')
+    ], DropShadow.prototype, "yOffset", void 0);
+    __decorate$d([
+        reactive('change')
+    ], DropShadow.prototype, "blur", void 0);
+    return DropShadow;
+}(Observable));
+
+var __extends$E = (undefined && undefined.__extends) || (function () {
+    var extendStatics = function (d, b) {
+        extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+        return extendStatics(d, b);
+    };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
 var NumberAxis = /** @class */ (function (_super) {
-    __extends$D(NumberAxis, _super);
+    __extends$E(NumberAxis, _super);
     function NumberAxis() {
         var _this = _super.call(this, new LinearScale()) || this;
         _this._nice = true;
@@ -11692,7 +12448,7 @@ function convertToMap(list) {
     return map;
 }
 
-var __extends$E = (undefined && undefined.__extends) || (function () {
+var __extends$F = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -11817,7 +12573,7 @@ var TimeInterval = /** @class */ (function () {
     return TimeInterval;
 }());
 var CountableTimeInterval = /** @class */ (function (_super) {
-    __extends$E(CountableTimeInterval, _super);
+    __extends$F(CountableTimeInterval, _super);
     function CountableTimeInterval(floor, offset, count, field) {
         var _this = _super.call(this, floor, offset) || this;
         _this._count = count;
@@ -12691,7 +13447,7 @@ function setDefaultLocale(definition) {
     return locale = formatLocale(definition);
 }
 
-var __extends$F = (undefined && undefined.__extends) || (function () {
+var __extends$G = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -12705,7 +13461,7 @@ var __extends$F = (undefined && undefined.__extends) || (function () {
     };
 })();
 var TimeScale = /** @class */ (function (_super) {
-    __extends$F(TimeScale, _super);
+    __extends$G(TimeScale, _super);
     function TimeScale() {
         var _this = _super !== null && _super.apply(this, arguments) || this;
         _this.year = year;
@@ -12877,7 +13633,7 @@ var TimeScale = /** @class */ (function (_super) {
     return TimeScale;
 }(ContinuousScale));
 
-var __extends$G = (undefined && undefined.__extends) || (function () {
+var __extends$H = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -12891,7 +13647,7 @@ var __extends$G = (undefined && undefined.__extends) || (function () {
     };
 })();
 var TimeAxis = /** @class */ (function (_super) {
-    __extends$G(TimeAxis, _super);
+    __extends$H(TimeAxis, _super);
     function TimeAxis() {
         var _this = _super.call(this, new TimeScale()) || this;
         _this._nice = true;
@@ -12954,7 +13710,7 @@ var ChartBuilder = /** @class */ (function () {
         var chart = this.createCartesianChart(container, ChartBuilder.createAxis(options.xAxis, 'number'), ChartBuilder.createAxis(options.yAxis, 'category'), options.document);
         ChartBuilder.initChart(chart, options);
         if (options.series) {
-            chart.series = options.series.map(function (s) { return ChartBuilder.initBarSeries(new ColumnSeries(), s); });
+            chart.series = options.series.map(function (s) { return ChartBuilder.initBarSeries(new BarSeries(), s); });
         }
         return chart;
     };
@@ -12962,7 +13718,7 @@ var ChartBuilder = /** @class */ (function () {
         var chart = this.createGroupedCategoryChart(container, ChartBuilder.createAxis(options.xAxis, 'number'), ChartBuilder.createGroupedCategoryAxis(options.yAxis), options.document);
         ChartBuilder.initChart(chart, options);
         if (options.series) {
-            chart.series = options.series.map(function (s) { return ChartBuilder.initBarSeries(new ColumnSeries(), s); });
+            chart.series = options.series.map(function (s) { return ChartBuilder.initBarSeries(new BarSeries(), s); });
         }
         return chart;
     };
@@ -12970,7 +13726,7 @@ var ChartBuilder = /** @class */ (function () {
         var chart = this.createCartesianChart(container, ChartBuilder.createAxis(options.xAxis, 'category'), ChartBuilder.createAxis(options.yAxis, 'number'), options.document);
         ChartBuilder.initChart(chart, options);
         if (options.series) {
-            chart.series = options.series.map(function (s) { return ChartBuilder.initBarSeries(new ColumnSeries(), s); });
+            chart.series = options.series.map(function (s) { return ChartBuilder.initBarSeries(new BarSeries(), s); });
         }
         return chart;
     };
@@ -12978,7 +13734,7 @@ var ChartBuilder = /** @class */ (function () {
         var chart = this.createGroupedCategoryChart(container, ChartBuilder.createGroupedCategoryAxis(options.xAxis), ChartBuilder.createAxis(options.yAxis, 'number'), options.document);
         ChartBuilder.initChart(chart, options);
         if (options.series) {
-            chart.series = options.series.map(function (s) { return ChartBuilder.initBarSeries(new ColumnSeries(), s); });
+            chart.series = options.series.map(function (s) { return ChartBuilder.initBarSeries(new BarSeries(), s); });
         }
         return chart;
     };
@@ -13022,6 +13778,11 @@ var ChartBuilder = /** @class */ (function () {
         }
         return chart;
     };
+    ChartBuilder.createHistogramChart = function (container, options) {
+        var chart = this.createCartesianChart(container, ChartBuilder.createNumberAxis(options.xAxis), ChartBuilder.createNumberAxis(options.yAxis), options.document);
+        ChartBuilder.initChart(chart, options);
+        return chart;
+    };
     ChartBuilder.createPolarChart = function (container) {
         var chart = new PolarChart();
         chart.container = container;
@@ -13045,11 +13806,13 @@ var ChartBuilder = /** @class */ (function () {
             case 'scatter':
                 return ChartBuilder.initScatterSeries(new ScatterSeries(), options);
             case 'bar':
-                return ChartBuilder.initBarSeries(new ColumnSeries(), options);
+                return ChartBuilder.initBarSeries(new BarSeries(), options);
             case 'area':
                 return ChartBuilder.initAreaSeries(new AreaSeries(), options);
             case 'pie':
                 return ChartBuilder.initPieSeries(new PieSeries(), options);
+            case 'histogram':
+                return ChartBuilder.initHistogramSeries(new HistogramSeries(), options);
             default:
                 return null;
         }
@@ -13068,12 +13831,34 @@ var ChartBuilder = /** @class */ (function () {
         if (options.legend !== undefined) {
             ChartBuilder.initLegend(chart.legend, options.legend);
         }
+        var listeners = options.listeners;
+        if (listeners) {
+            for (var key in listeners) {
+                if (listeners.hasOwnProperty(key)) {
+                    var listener = listeners[key];
+                    if (typeof listener === 'function') {
+                        chart.addEventListener(key, listener);
+                    }
+                }
+            }
+        }
         return chart;
     };
     ChartBuilder.initSeries = function (series, options) {
         this.setValueIfExists(series, 'visible', options.visible);
         this.setValueIfExists(series, 'showInLegend', options.showInLegend);
         this.setValueIfExists(series, 'data', options.data);
+        var listeners = options.listeners;
+        if (listeners) {
+            for (var key in listeners) {
+                if (listeners.hasOwnProperty(key)) {
+                    var listener = listeners[key];
+                    if (typeof listener === 'function') {
+                        series.addEventListener(key, listener);
+                    }
+                }
+            }
+        }
         return series;
     };
     ChartBuilder.initLineSeries = function (series, options) {
@@ -13263,6 +14048,31 @@ var ChartBuilder = /** @class */ (function () {
         this.setTransformedValueIfExists(series, 'shadow', function (s) { return ChartBuilder.createDropShadow(s); }, options.shadow);
         return series;
     };
+    ChartBuilder.initHistogramSeries = function (series, options) {
+        ChartBuilder.initSeries(series, options);
+        var field = options.field, fill = options.fill, stroke = options.stroke, highlightStyle = options.highlightStyle, tooltip = options.tooltip, binCount = options.binCount;
+        this.setValueIfExists(series, 'binCount', binCount);
+        if (field) {
+            this.setValueIfExists(series, 'xKey', field.xKey);
+        }
+        if (fill) {
+            this.setValueIfExists(series, 'fill', fill.color);
+            this.setValueIfExists(series, 'fillOpacity', fill.opacity);
+        }
+        if (stroke) {
+            this.setValueIfExists(series, 'stroke', stroke.color);
+            this.setValueIfExists(series, 'strokeOpacity', stroke.opacity);
+            this.setValueIfExists(series, 'strokeWidth', stroke.width);
+        }
+        if (highlightStyle) {
+            this.initHighlightStyle(series.highlightStyle, highlightStyle);
+        }
+        if (tooltip) {
+            this.setValueIfExists(series, 'tooltipEnabled', tooltip.enabled);
+            this.setValueIfExists(series, 'tooltipRenderer', tooltip.renderer);
+        }
+        return series;
+    };
     ChartBuilder.getMarkerByName = function (name) {
         return this.markerShapes.get(name) || Square;
     };
@@ -13445,7 +14255,7 @@ var ChartBuilder = /** @class */ (function () {
     return ChartBuilder;
 }());
 
-var __extends$H = (undefined && undefined.__extends) || (function () {
+var __extends$I = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -13464,7 +14274,7 @@ var __extends$H = (undefined && undefined.__extends) || (function () {
  * Unlike the `Group` node, the `ClipRect` node cannot be transformed.
  */
 var ClipRect = /** @class */ (function (_super) {
-    __extends$H(ClipRect, _super);
+    __extends$I(ClipRect, _super);
     function ClipRect() {
         var _this = _super !== null && _super.apply(this, arguments) || this;
         _this.isContainerNode = true;
@@ -13634,42 +14444,8 @@ function field$9(date) {
 }
 var utcMonth = new CountableTimeInterval(floor$b, offset$b, count$b, field$9);
 
-var __extends$I = (undefined && undefined.__extends) || (function () {
-    var extendStatics = function (d, b) {
-        extendStatics = Object.setPrototypeOf ||
-            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
-        return extendStatics(d, b);
-    };
-    return function (d, b) {
-        extendStatics(d, b);
-        function __() { this.constructor = d; }
-        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-})();
-var __decorate$d = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
-    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
-    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
-    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
-    return c > 3 && r && Object.defineProperty(target, key, r), r;
-};
-var BarSeries = /** @class */ (function (_super) {
-    __extends$I(BarSeries, _super);
-    function BarSeries() {
-        var _this = _super !== null && _super.apply(this, arguments) || this;
-        _this.flipXY = true;
-        return _this;
-    }
-    BarSeries.className = 'BarSeries';
-    BarSeries.type = 'bar';
-    __decorate$d([
-        reactive('layoutChange')
-    ], BarSeries.prototype, "flipXY", void 0);
-    return BarSeries;
-}(ColumnSeries));
-
-var __assign = (undefined && undefined.__assign) || function () {
-    __assign = Object.assign || function(t) {
+var __assign$2 = (undefined && undefined.__assign) || function () {
+    __assign$2 = Object.assign || function(t) {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
             s = arguments[i];
             for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
@@ -13677,46 +14453,14 @@ var __assign = (undefined && undefined.__assign) || function () {
         }
         return t;
     };
-    return __assign.apply(this, arguments);
-};
-var __spreadArrays$1 = (undefined && undefined.__spreadArrays) || function () {
-    for (var s = 0, i = 0, il = arguments.length; i < il; i++) s += arguments[i].length;
-    for (var r = Array(s), k = 0, i = 0; i < il; i++)
-        for (var a = arguments[i], j = 0, jl = a.length; j < jl; j++, k++)
-            r[k] = a[j];
-    return r;
+    return __assign$2.apply(this, arguments);
 };
 var _a, _b, _c, _d;
-var AgChart = /** @class */ (function () {
-    function AgChart() {
-    }
-    AgChart.create = function (options, container, data) {
-        options = Object.create(options); // avoid mutating user provided options
-        if (container) {
-            options.container = container;
-        }
-        if (data) {
-            options.data = data;
-        }
-        // special handling when both `autoSize` and `width` / `height` are present in the options
-        var autoSize = options && options.autoSize;
-        var chart = create(options);
-        if (chart && autoSize) { // `autoSize` takes precedence over `width` / `height`
-            chart.autoSize = true;
-        }
-        // console.log(JSON.stringify(flattenObject(options), null, 4));
-        return chart;
-    };
-    AgChart.update = function (chart, options) {
-        var autoSize = options && options.autoSize;
-        update(chart, Object.create(options));
-        if (chart && autoSize) {
-            chart.autoSize = true;
-        }
-    };
-    return AgChart;
-}());
-var chartMappings = {
+/*
+    This file defines the specs for creating different kinds of charts, but
+    contains no code that uses the specs to actually create charts
+*/
+var commonChartMappings = {
     background: {
         meta: {
             defaults: {
@@ -13858,7 +14602,7 @@ var labelDefaults = {
 var labelMapping = {
     label: {
         meta: {
-            defaults: __assign({}, labelDefaults)
+            defaults: __assign$2({}, labelDefaults)
         }
     }
 };
@@ -13913,16 +14657,16 @@ var axisMappings = {
     }
 };
 var mappings = (_a = {},
-    _a[CartesianChart.type] = __assign(__assign({ meta: __assign(__assign({ constructor: CartesianChart }, chartMeta), { defaults: __assign(__assign({}, chartDefaults), { axes: [{
+    _a[CartesianChart.type] = __assign$2(__assign$2({ meta: __assign$2(__assign$2({ constructor: CartesianChart }, chartMeta), { defaults: __assign$2(__assign$2({}, chartDefaults), { axes: [{
                         type: CategoryAxis.type,
                         position: 'bottom'
                     }, {
                         type: NumberAxis.type,
                         position: 'left'
-                    }] }) }) }, chartMappings), { axes: (_b = {},
-            _b[NumberAxis.type] = __assign({ meta: __assign({ constructor: NumberAxis, setAsIs: ['gridStyle'] }, axisDefaults) }, axisMappings),
-            _b[CategoryAxis.type] = __assign({ meta: __assign({ constructor: CategoryAxis, setAsIs: ['gridStyle'] }, axisDefaults) }, axisMappings),
-            _b[TimeAxis.type] = __assign({ meta: __assign({ constructor: TimeAxis, setAsIs: ['gridStyle'] }, axisDefaults) }, axisMappings),
+                    }] }) }) }, commonChartMappings), { axes: (_b = {},
+            _b[NumberAxis.type] = __assign$2({ meta: __assign$2({ constructor: NumberAxis, setAsIs: ['gridStyle'] }, axisDefaults) }, axisMappings),
+            _b[CategoryAxis.type] = __assign$2({ meta: __assign$2({ constructor: CategoryAxis, setAsIs: ['gridStyle'] }, axisDefaults) }, axisMappings),
+            _b[TimeAxis.type] = __assign$2({ meta: __assign$2({ constructor: TimeAxis, setAsIs: ['gridStyle'] }, axisDefaults) }, axisMappings),
             _b), series: (_c = {},
             _c[LineSeries.type] = {
                 meta: {
@@ -13945,35 +14689,44 @@ var mappings = (_a = {},
                 highlightStyle: {},
                 marker: {}
             },
-            _c[ColumnSeries.type] = __assign(__assign({ meta: {
-                    constructor: ColumnSeries,
-                    defaults: __assign(__assign({}, seriesDefaults), columnSeriesDefaults)
-                }, highlightStyle: {} }, labelMapping), shadowMapping),
-            _c[BarSeries.type] = __assign(__assign({ meta: {
+            _c.column = __assign$2(__assign$2({ meta: {
                     constructor: BarSeries,
-                    defaults: __assign(__assign({}, seriesDefaults), columnSeriesDefaults)
+                    defaults: __assign$2(__assign$2({ flipXY: false }, seriesDefaults), columnSeriesDefaults)
+                }, highlightStyle: {} }, labelMapping), shadowMapping),
+            _c.bar = __assign$2(__assign$2({ meta: {
+                    constructor: BarSeries,
+                    defaults: __assign$2(__assign$2({ flipXY: true }, seriesDefaults), columnSeriesDefaults)
                 }, highlightStyle: {} }, labelMapping), shadowMapping),
             _c[ScatterSeries.type] = {
                 meta: {
                     constructor: ScatterSeries,
-                    defaults: __assign(__assign({}, seriesDefaults), { title: undefined, xKey: '', yKey: '', sizeKey: undefined, labelKey: undefined, xName: '', yName: '', sizeName: 'Size', labelName: 'Label', fill: borneo.fills[0], stroke: borneo.strokes[0], strokeWidth: 2, fillOpacity: 1, strokeOpacity: 1, tooltipRenderer: undefined, highlightStyle: {
+                    defaults: __assign$2(__assign$2({}, seriesDefaults), { title: undefined, xKey: '', yKey: '', sizeKey: undefined, labelKey: undefined, xName: '', yName: '', sizeName: 'Size', labelName: 'Label', fill: borneo.fills[0], stroke: borneo.strokes[0], strokeWidth: 2, fillOpacity: 1, strokeOpacity: 1, tooltipRenderer: undefined, highlightStyle: {
                             fill: 'yellow'
                         } })
                 },
                 highlightStyle: {},
                 marker: {}
             },
-            _c[AreaSeries.type] = __assign({ meta: {
+            _c[AreaSeries.type] = __assign$2({ meta: {
                     constructor: AreaSeries,
-                    defaults: __assign(__assign({}, seriesDefaults), { xKey: '', xName: '', yKeys: [], yNames: [], normalizedTo: undefined, fills: borneo.fills, strokes: borneo.strokes, fillOpacity: 1, strokeOpacity: 1, strokeWidth: 2, shadow: undefined, highlightStyle: {
+                    defaults: __assign$2(__assign$2({}, seriesDefaults), { xKey: '', xName: '', yKeys: [], yNames: [], normalizedTo: undefined, fills: borneo.fills, strokes: borneo.strokes, fillOpacity: 1, strokeOpacity: 1, strokeWidth: 2, shadow: undefined, highlightStyle: {
                             fill: 'yellow'
                         } })
                 }, highlightStyle: {}, marker: {} }, shadowMapping),
+            _c[HistogramSeries.type] = {
+                meta: {
+                    constructor: HistogramSeries,
+                    defaults: __assign$2(__assign$2({}, seriesDefaults), { title: undefined, xKey: '', yKey: '', xName: '', yName: '', fill: borneo.fills[0], stroke: borneo.strokes[0], strokeWidth: 1, fillOpacity: 1, strokeOpacity: 1, aggregation: 'sum', tooltipRenderer: undefined, highlightStyle: {
+                            fill: 'yellow'
+                        } })
+                },
+                highlightStyle: {}
+            },
             _c) }),
-    _a[PolarChart.type] = __assign(__assign({ meta: __assign(__assign({ constructor: PolarChart }, chartMeta), { defaults: __assign(__assign({}, chartDefaults), { padding: new Padding(40) }) }) }, chartMappings), { series: (_d = {},
-            _d[PieSeries.type] = __assign({ meta: {
+    _a[PolarChart.type] = __assign$2(__assign$2({ meta: __assign$2(__assign$2({ constructor: PolarChart }, chartMeta), { defaults: __assign$2(__assign$2({}, chartDefaults), { padding: new Padding(40) }) }) }, commonChartMappings), { series: (_d = {},
+            _d[PieSeries.type] = __assign$2({ meta: {
                     constructor: PieSeries,
-                    defaults: __assign(__assign({}, seriesDefaults), { title: undefined, calloutColors: borneo.strokes, calloutStrokeWidth: 1, calloutLength: 10, angleKey: '', angleName: '', radiusKey: undefined, radiusName: undefined, labelKey: undefined, labelName: undefined, fills: borneo.fills, strokes: borneo.strokes, fillOpacity: 1, strokeOpacity: 1, rotation: 0, outerRadiusOffset: 0, innerRadiusOffset: 0, strokeWidth: 1, shadow: undefined })
+                    defaults: __assign$2(__assign$2({}, seriesDefaults), { title: undefined, calloutColors: borneo.strokes, calloutStrokeWidth: 1, calloutLength: 10, angleKey: '', angleName: '', radiusKey: undefined, radiusName: undefined, labelKey: undefined, labelName: undefined, fills: borneo.fills, strokes: borneo.strokes, fillOpacity: 1, strokeOpacity: 1, rotation: 0, outerRadiusOffset: 0, innerRadiusOffset: 0, strokeWidth: 1, shadow: undefined })
                 }, highlightStyle: {}, title: {
                     meta: {
                         constructor: Caption,
@@ -13990,7 +14743,7 @@ var mappings = (_a = {},
                     }
                 }, label: {
                     meta: {
-                        defaults: __assign(__assign({}, labelDefaults), { offset: 3, minAngle: 20 })
+                        defaults: __assign$2(__assign$2({}, labelDefaults), { offset: 3, minAngle: 20 })
                     }
                 }, callout: {
                     meta: {
@@ -14017,15 +14770,53 @@ var mappings = (_a = {},
     for (var type in typeToAliases) {
         _loop_1(type);
     }
-    // Special handling for scatter charts where both axes should default to type `number`.
-    mappings['scatter'] = __assign(__assign({}, mappings.cartesian), { meta: __assign(__assign({}, mappings.cartesian.meta), { defaults: __assign(__assign({}, chartDefaults), { axes: [{
+}
+// Special handling for scatter and histogram charts, for which both axes should default to type `number`.
+mappings['scatter'] =
+    mappings['histogram'] = __assign$2(__assign$2({}, mappings.cartesian), { meta: __assign$2(__assign$2({}, mappings.cartesian.meta), { defaults: __assign$2(__assign$2({}, chartDefaults), { axes: [{
                         type: 'number',
                         position: 'bottom'
                     }, {
                         type: 'number',
                         position: 'left'
                     }] }) }) });
-}
+
+var __spreadArrays$2 = (undefined && undefined.__spreadArrays) || function () {
+    for (var s = 0, i = 0, il = arguments.length; i < il; i++) s += arguments[i].length;
+    for (var r = Array(s), k = 0, i = 0; i < il; i++)
+        for (var a = arguments[i], j = 0, jl = a.length; j < jl; j++, k++)
+            r[k] = a[j];
+    return r;
+};
+var AgChart = /** @class */ (function () {
+    function AgChart() {
+    }
+    AgChart.create = function (options, container, data) {
+        options = Object.create(options); // avoid mutating user provided options
+        if (container) {
+            options.container = container;
+        }
+        if (data) {
+            options.data = data;
+        }
+        // special handling when both `autoSize` and `width` / `height` are present in the options
+        var autoSize = options && options.autoSize;
+        var chart = create(options);
+        if (chart && autoSize) { // `autoSize` takes precedence over `width` / `height`
+            chart.autoSize = true;
+        }
+        // console.log(JSON.stringify(flattenObject(options), null, 4));
+        return chart;
+    };
+    AgChart.update = function (chart, options) {
+        var autoSize = options && options.autoSize;
+        update(chart, Object.create(options));
+        if (chart && autoSize) {
+            chart.autoSize = true;
+        }
+    };
+    return AgChart;
+}());
 var pathToSeriesTypeMap = {
     'cartesian.series': 'line',
     'line.series': 'line',
@@ -14071,13 +14862,13 @@ function create(options, path, component) {
         provideDefaultOptions(options, mapping);
         var meta = mapping.meta || {};
         var constructorParams = meta.constructorParams || [];
-        var skipKeys = ['type'].concat(constructorParams);
+        var skipKeys = ['type', 'listeners'].concat(constructorParams);
         // TODO: Constructor params processing could be improved, but it's good enough for current params.
         var constructorParamValues = constructorParams
             .map(function (param) { return options[param]; })
             .filter(function (value) { return value !== undefined; });
-        component = component || new ((_a = meta.constructor).bind.apply(_a, __spreadArrays$1([void 0], constructorParamValues)))();
-        var _loop_2 = function (key) {
+        component = component || new ((_a = meta.constructor).bind.apply(_a, __spreadArrays$2([void 0], constructorParamValues)))();
+        var _loop_1 = function (key) {
             // Process every non-special key in the config object.
             if (skipKeys.indexOf(key) < 0) {
                 var value = options[key];
@@ -14106,7 +14897,18 @@ function create(options, path, component) {
             }
         };
         for (var key in options) {
-            _loop_2(key);
+            _loop_1(key);
+        }
+        var listeners = options.listeners;
+        if (component && component.addEventListener && listeners) {
+            for (var key in listeners) {
+                if (listeners.hasOwnProperty(key)) {
+                    var listener = listeners[key];
+                    if (typeof listener === 'function') {
+                        component.addEventListener(key, listener);
+                    }
+                }
+            }
         }
         return component;
     }
@@ -14128,7 +14930,6 @@ function update(component, options, path) {
     if (mapping) {
         provideDefaultOptions(options, mapping);
         var meta = mapping.meta || {};
-        var defaults = meta && meta.constructor && meta.constructor.defaults;
         var constructorParams = meta && meta.constructorParams || [];
         var skipKeys = ['type'].concat(constructorParams);
         for (var key in options) {
@@ -14183,7 +14984,7 @@ function update(component, options, path) {
                                 var axes = oldValue;
                                 var axesToAdd = [];
                                 var axesToUpdate = [];
-                                var _loop_3 = function (config) {
+                                var _loop_2 = function (config) {
                                     var axisToUpdate = find(axes, function (axis) {
                                         return axis.type === config.type && axis.position === config.position;
                                     });
@@ -14200,7 +15001,7 @@ function update(component, options, path) {
                                 };
                                 for (var _i = 0, configs_1 = configs; _i < configs_1.length; _i++) {
                                     var config = configs_1[_i];
-                                    _loop_3(config);
+                                    _loop_2(config);
                                 }
                                 chart.axes = axesToUpdate.concat(axesToAdd);
                             }
@@ -14288,4 +15089,4 @@ var time = {
     utcYear: utcYear
 };
 
-export { AgChart, Arc, ArcType, AreaSeries, BandScale, Caption, CartesianChart, CategoryAxis, Chart, ChartAxis, ChartAxisDirection, ChartAxisPosition, ChartBuilder, ClipRect, ColumnSeries, DropShadow, Group, GroupedCategoryAxis, GroupedCategoryChart, LegendPosition, Line, LineSeries, LinearScale, Marker, Padding, Path, PieSeries, PolarChart, Rect, RectSizing, ScatterSeries, Scene, Sector, Shape, borneo, bright, extent, find, findLargestMinMax, findMinMax, finiteExtent, flat, flipChartAxisDirection, scaleLinear as linearScale, material, normalizeAngle180, normalizeAngle360, normalizeAngle360Inclusive, numericExtent, palettes, pastel, time, toDegrees, toRadians };
+export { AgChart, Arc, ArcType, AreaSeries, BandScale, BarSeries, Caption, CartesianChart, CategoryAxis, Chart, ChartAxis, ChartAxisDirection, ChartAxisPosition, ChartBuilder, ClipRect, DropShadow, Group, GroupedCategoryAxis, GroupedCategoryChart, HistogramBin, HistogramSeries, LegendPosition, Line, LineSeries, LinearScale, Marker, Padding, Path, PieSeries, PolarChart, Rect, RectSizing, ScatterSeries, Scene, Sector, Shape, borneo, bright, extent, find, findLargestMinMax, findMinMax, finiteExtent, flat, flipChartAxisDirection, scaleLinear as linearScale, material, normalizeAngle180, normalizeAngle360, normalizeAngle360Inclusive, numericExtent, palettes, pastel, time, toDegrees, toRadians };

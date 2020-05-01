@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v23.0.2
+ * @version v23.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -102,9 +102,10 @@ var HeaderGroupComp = /** @class */ (function (_super) {
     };
     HeaderGroupComp.prototype.setupLabel = function () {
         // no renderer, default text render
-        if (this.params.displayName && this.params.displayName !== "") {
-            var eInnerText = this.getRefElement("agLabel");
-            eInnerText.innerHTML = this.params.displayName;
+        var displayName = this.params.displayName;
+        if (utils_1._.exists(displayName)) {
+            var displayNameSanitised = utils_1._.escape(displayName);
+            this.getRefElement("agLabel").innerHTML = displayNameSanitised;
         }
     };
     HeaderGroupComp.TEMPLATE = "<div class=\"ag-header-group-cell-label\" ref=\"agContainer\" role=\"presentation\">" +

@@ -9,7 +9,7 @@ var lineSeries_1 = require("./chart/series/cartesian/lineSeries");
 var scatterSeries_1 = require("./chart/series/cartesian/scatterSeries");
 var areaSeries_1 = require("./chart/series/cartesian/areaSeries");
 var pieSeries_1 = require("./chart/series/polar/pieSeries");
-var columnSeries_1 = require("./chart/series/cartesian/columnSeries");
+var barSeries_1 = require("./chart/series/cartesian/barSeries");
 require("jest-canvas-mock");
 describe('createAxis', function () {
     it('returns category axis when specified in options', function () {
@@ -78,7 +78,7 @@ describe('createSeries', function () {
     it('returns a column series when specified in options', function () {
         var options = { type: 'bar' };
         var series = chartBuilder_1.ChartBuilder.createSeries(options);
-        expect(series).toBeInstanceOf(columnSeries_1.ColumnSeries);
+        expect(series).toBeInstanceOf(barSeries_1.BarSeries);
     });
     it('returns an area series when specified in options', function () {
         var options = { type: 'area' };

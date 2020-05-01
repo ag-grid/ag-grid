@@ -65,9 +65,10 @@
   },
   {
     "title": "Charts",
+    "shortname": "charts",
     "module": "@ag-grid-enterprise/charts",
     "enterprise": true,
-    "exported": "ChartsModule"
+    "exported": "GridChartsModule"
   },
   {
     "title": "Clipboard",
@@ -77,8 +78,8 @@
     "exported": "ClipboardModule"
   },
   {
-    "title": "Column Tool Panel",
-    "shortname": "column",
+    "title": "Column Tool Panel & Column Menu Panel",
+    "shortname": "columnpanel",
     "module": "@ag-grid-enterprise/column-tool-panel",
     "enterprise": true,
     "exported": "ColumnsToolPanelModule"
@@ -92,7 +93,7 @@
   },
   {
     "title": "Filter Tool Panel",
-    "shortname": "filter",
+    "shortname": "filterpanel",
     "module": "@ag-grid-enterprise/filter-tool-panel",
     "enterprise": true,
     "exported": "FiltersToolPanelModule"
@@ -105,8 +106,8 @@
     "exported": "MasterDetailModule"
   },
   {
-    "title": "Context Menu",
-    "shortname": "context",
+    "title": "Context & Column Menu",
+    "shortname": "menu",
     "module": "@ag-grid-enterprise/menu",
     "enterprise": true,
     "exported": "MenuModule"
@@ -126,7 +127,7 @@
     "exported": "RichSelectModule"
   },
   {
-    "title": "Row Grouping",
+    "title": "Row Grouping, Pivoting & Tree Data",
     "shortname": "rowgrouping",
     "module": "@ag-grid-enterprise/row-grouping",
     "enterprise": true,

@@ -127,7 +127,7 @@ var GroupStage = /** @class */ (function () {
             var infoToKeyMapper = function (item) { return item.key; };
             var oldPath = _this.getExistingPathForNode(childNode, details).map(infoToKeyMapper);
             var newPath = _this.getGroupInfo(childNode, details).map(infoToKeyMapper);
-            var nodeInCorrectPath = core_1._.compareArrays(oldPath, newPath);
+            var nodeInCorrectPath = core_1._.areEqual(oldPath, newPath);
             if (!nodeInCorrectPath) {
                 _this.moveNode(childNode, details);
             }
@@ -274,16 +274,10 @@ var GroupStage = /** @class */ (function () {
         }
     };
     GroupStage.prototype.areGroupColsEqual = function (d1, d2) {
-        if (d1 == null || d2 == null) {
+        if (d1 == null || d2 == null || d1.pivotMode !== d2.pivotMode) {
             return false;
         }
-        if (d1.pivotMode !== d2.pivotMode) {
-            return false;
-        }
-        if (!core_1._.compareArrays(d1.groupedCols, d2.groupedCols)) {
-            return false;
-        }
-        return true;
+        return core_1._.areEqual(d1.groupedCols, d2.groupedCols);
     };
     GroupStage.prototype.shotgunResetEverything = function (details, afterColumnsChanged) {
         var skipStage = afterColumnsChanged ?

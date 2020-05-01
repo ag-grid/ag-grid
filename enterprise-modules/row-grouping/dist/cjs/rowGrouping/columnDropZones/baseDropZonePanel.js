@@ -48,7 +48,8 @@ var BaseDropZonePanel = /** @class */ (function (_super) {
     };
     BaseDropZonePanel.prototype.init = function (params) {
         this.params = params;
-        this.beans.eventService.addEventListener(core_1.Events.EVENT_COLUMN_EVERYTHING_CHANGED, this.refreshGui.bind(this));
+        var refreshEvent = this.beans.eventService.addEventListener(core_1.Events.EVENT_COLUMN_EVERYTHING_CHANGED, this.refreshGui.bind(this));
+        this.addDestroyFunc(function () { return refreshEvent(); });
         this.addDestroyableEventListener(this.beans.gridOptionsWrapper, 'functionsReadOnly', this.refreshGui.bind(this));
         this.setupDropTarget();
         // we don't know if this bean will be initialised before columnController.
@@ -202,7 +203,7 @@ var BaseDropZonePanel = /** @class */ (function (_super) {
     BaseDropZonePanel.prototype.rearrangeColumns = function (columnsToAdd) {
         var newColumnList = this.getNonGhostColumns().slice();
         core_1._.insertArrayIntoArray(newColumnList, columnsToAdd, this.insertIndex);
-        if (core_1._.shallowCompare(newColumnList, this.getExistingColumns())) {
+        if (core_1._.areEqual(newColumnList, this.getExistingColumns())) {
             return false;
         }
         else {

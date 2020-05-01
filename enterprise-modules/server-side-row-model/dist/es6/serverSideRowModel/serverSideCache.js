@@ -20,7 +20,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
-import { _, Autowired, NumberSequence, PostConstruct, Qualifier, RowNodeCache } from "@ag-grid-community/core";
+import { _, Autowired, NumberSequence, Qualifier, RowNodeCache } from "@ag-grid-community/core";
 import { ServerSideBlock } from "./serverSideBlock";
 var ServerSideCache = /** @class */ (function (_super) {
     __extends(ServerSideCache, _super);
@@ -37,9 +37,6 @@ var ServerSideCache = /** @class */ (function (_super) {
     }
     ServerSideCache.prototype.setBeans = function (loggerFactory) {
         this.logger = loggerFactory.create('ServerSideCache');
-    };
-    ServerSideCache.prototype.init = function () {
-        _super.prototype.init.call(this);
     };
     ServerSideCache.prototype.getRowBounds = function (index) {
         // this.logger.log(`getRowBounds(${index})`);
@@ -134,9 +131,11 @@ var ServerSideCache = /** @class */ (function (_super) {
         // this.logger.log(`getRowIndexAtPixel(${pixel}) result = ${result}`);
         return result;
     };
-    ServerSideCache.prototype.clearRowTops = function () {
+    ServerSideCache.prototype.clearDisplayIndexes = function () {
         var _this = this;
-        this.forEachBlockInOrder(function (block) { return block.clearRowTops(_this.getVirtualRowCount()); });
+        this.displayIndexStart = undefined;
+        this.displayIndexEnd = undefined;
+        this.forEachBlockInOrder(function (block) { return block.clearDisplayIndexes(_this.getVirtualRowCount()); });
     };
     ServerSideCache.prototype.setDisplayIndexes = function (displayIndexSeq, nextRowTop) {
         var _this = this;
@@ -288,6 +287,9 @@ var ServerSideCache = /** @class */ (function (_super) {
                     var serverSideCache = lastRowNode.childrenCache;
                     lastDisplayedNodeIndexInBlockBefore = serverSideCache.getDisplayIndexEnd() - 1;
                 }
+                else if (lastRowNode.expanded && lastRowNode.detailNode) {
+                    lastDisplayedNodeIndexInBlockBefore = lastRowNode.detailNode.rowIndex;
+                }
                 else {
                     lastDisplayedNodeIndexInBlockBefore = lastRowNode.rowIndex;
                 }
@@ -379,17 +381,11 @@ var ServerSideCache = /** @class */ (function (_super) {
         }
     };
     __decorate([
-        Autowired('eventService')
-    ], ServerSideCache.prototype, "eventService", void 0);
-    __decorate([
         Autowired('gridOptionsWrapper')
     ], ServerSideCache.prototype, "gridOptionsWrapper", void 0);
     __decorate([
         __param(0, Qualifier('loggerFactory'))
     ], ServerSideCache.prototype, "setBeans", null);
-    __decorate([
-        PostConstruct
-    ], ServerSideCache.prototype, "init", null);
     return ServerSideCache;
 }(RowNodeCache));
 export { ServerSideCache };

@@ -112,6 +112,7 @@ export class RowComp extends Component {
     private initialised = false;
 
     private elementOrderChanged = false;
+    private lastMouseDownOnDragger = false;
 
     private readonly printLayout: boolean;
     private readonly embedFullWidth: boolean;
@@ -781,6 +782,7 @@ export class RowComp extends Component {
         switch (eventName) {
             case 'dblclick': this.onRowDblClick(mouseEvent); break;
             case 'click': this.onRowClick(mouseEvent); break;
+            case 'mousedown': this.onRowMouseDown(mouseEvent); break;
         }
     }
 
@@ -818,8 +820,12 @@ export class RowComp extends Component {
         this.beans.eventService.dispatchEvent(agEvent);
     }
 
+    private onRowMouseDown(mouseEvent: MouseEvent) {
+        this.lastMouseDownOnDragger = _.isElementChildOfClass(mouseEvent.target as HTMLElement, 'ag-row-drag', 3);
+    }
+
     public onRowClick(mouseEvent: MouseEvent) {
-        const stop = _.isStopPropagationForAgGrid(mouseEvent);
+        const stop = _.isStopPropagationForAgGrid(mouseEvent) || this.lastMouseDownOnDragger;
 
         if (stop) { return; }
 
@@ -1374,8 +1380,6 @@ export class RowComp extends Component {
     }
 
     public destroy(animate = false): void {
-        super.destroy();
-
         this.active = false;
 
         // why do we have this method? shouldn't everything below be added as a destroy func beside
@@ -1399,6 +1403,7 @@ export class RowComp extends Component {
 
         this.dispatchEvent(event);
         this.beans.eventService.dispatchEvent(event);
+        super.destroy();
     }
 
     private destroyContainingCells(): void {
@@ -1499,8 +1504,13 @@ export class RowComp extends Component {
     }
 
     private onRowIndexChanged(): void {
-        this.onCellFocusChanged();
-        this.updateRowIndexes();
+        // we only bother updating if the rowIndex is present. if it is not present, it means this row
+        // is child of a group node, and the group node was closed, it's the only way to have no row index.
+        // when this happens, row is about to be de-rendered, so we don't care, rowComp is about to die!
+        if (this.rowNode.rowIndex!=null) {
+            this.onCellFocusChanged();
+            this.updateRowIndexes();
+        }
     }
 
     private updateRowIndexes(): void {

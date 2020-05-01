@@ -67,7 +67,7 @@ function createMyDataSource(data) {
 
     MyDatasource.prototype.getRows = function (params) {
         // take a slice of the total rows
-        var rowsThisPage = data.slice(params.startRow, params.endRow);
+        var rowsThisPage = data.slice(params.request.startRow, params.request.endRow);
         // call the success callback
         params.successCallback(rowsThisPage, window.rowDataServerSide.length);
     };

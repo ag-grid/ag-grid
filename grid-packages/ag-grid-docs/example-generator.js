@@ -1,5 +1,5 @@
 const { JSDOM } = require('jsdom');
-const { window, document } = new JSDOM('<html></html>');
+const { window, document } = new JSDOM('<!DOCTYPE html><html lang="en"></html>');
 
 window.Date = Date;
 global.window = window;
@@ -110,7 +110,7 @@ function forEachExample(done, name, importType, regex, generateExample, scope = 
                         count++;
                     } catch (error) {
                         console.error(`Could not process example ${example} in ${file}. Does the example directory exist?`);
-                        console.error(`Error: ${error.message}`);
+                        console.error(error);
                     }
                 }
             }
@@ -140,12 +140,21 @@ function createExampleGenerator(prefix, importType) {
         const getMatchingPaths = (pattern, options = {}) => glob.sync(createExamplePath(pattern), options);
 
         const document = getMatchingPaths('index.html')[0];
+
+        if( !document ) {
+            throw new Error('examples are required to have an index.html file');
+        }
+
         let scripts = getMatchingPaths('*.js');
         let mainScript = scripts[0];
 
         if (scripts.length > 1) {
             // multiple scripts - main.js is the main one, the rest are supplemental
             mainScript = getMatchingPaths('main.js')[0];
+
+            if( !mainScript ) {
+                throw new Error('for an example with multiple scripts matching *.js, one must be named main.js');
+            }
 
             // get the rest of the scripts
             scripts = getMatchingPaths('*.js', { ignore: ['**/main.js', '**/*_{angular,react,vanilla,vue}.js'] });

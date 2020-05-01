@@ -37,7 +37,7 @@ var FilteredRowsComp = /** @class */ (function (_super) {
         this.addCssClass('ag-status-panel-filtered-row-count');
         this.setDisplayed(true);
         var listener = this.onDataChanged.bind(this);
-        this.eventService.addEventListener(core_1.Events.EVENT_MODEL_UPDATED, listener);
+        this.events = [this.eventService.addEventListener(core_1.Events.EVENT_MODEL_UPDATED, listener)];
     };
     FilteredRowsComp.prototype.onDataChanged = function () {
         var totalRowCountValue = this.getTotalRowCountValue();

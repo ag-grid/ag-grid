@@ -45,16 +45,15 @@ The following code snippet overrides the Balham theme pin icon used in the drag 
 .ag-theme-alpine {
     @include ag-theme-alpine((
         "icon-font-family": "Font Awesome 5 Free",
-        "icons-data": null, // prevent default font frombeing embedded
+        "icons-data": null, // prevent default font from being embedded
+        // define icon map - not required when changing between two
+        // provided theme fonts, see next code sample for more details
         "icons-font-codes": (
             "aggregation": "\f247",
             "arrows": "\f0b2",
             "asc": "\f062",
             "cancel": "\f057",
             "chart": "\f080",
-            "checkbox-checked": "\f14a",
-            "checkbox-indeterminate": "\f146",
-            "checkbox-unchecked": "\f0c8",
             "color-picker": "\f576",
             "columns": "\f0db",
             "contracted": "\f146",
@@ -82,8 +81,6 @@ The following code snippet overrides the Balham theme pin icon used in the drag 
             "pin": "\f276",
             "pivot": "\f074",
             "previous": "\f104",
-            "radio-button-off": "\f111",
-            "radio-button-on": "\f058",
             "right": "\f061",
             "save": "\f0c7",
             "small-down": "\f107",
@@ -106,19 +103,19 @@ The following code snippet overrides the Balham theme pin icon used in the drag 
 
 </snippet>
 
-<p>Alternatively, if you are swapping one theme's icon set for another, you do not need to define an icon map because all theme fonts use the same map. This example shows the use of Alpine with the Material font:
+<p>If you are swapping one theme's icon set for another, you do not need to define an icon map because all theme fonts use the same map. This example shows the use of Alpine with the Material font:</p>
 
 <snippet>
 @import "~ag-grid-community/src/styles/ag-grid.scss";
 @import "~ag-grid-community/src/styles/ag-theme-alpine-mixin.scss";
 
-// load Material font
+// embed the Material font
 @import "~ag-grid-community/src/styles/webfont/agGridMaterialFont.scss";
 
 .ag-theme-alpine {
     @include ag-theme-alpine((
         "icon-font-family": "agGridMaterial", // use Material font
-        "icons-data": null, // prevent default font from being embedded
+        "icons-data": null, // prevent default Alpine font from being embedded
     ));
 }
 
@@ -278,7 +275,7 @@ sortUnSort
 <h2>SVG Icons</h2>
 
 <p>
-    When you create your own theme as described in <a href="/javascript-grid-themes-provided/#customising-themes">Customising Themes</a>,
+    When you create your own theme as described in <a href="../javascript-grid-themes-customising/">Customising Themes</a>,
     you are also able to replace the WebFont with SVG Icons.
 
     To do that you will need to override the <code>ag-icon</code> SASS rules and also the rules for each icon.
@@ -288,7 +285,7 @@ sortUnSort
 
 <note>
     <p>
-        The grid sets the CSS <code>color</code> property on the <code>&lt; span class="ag-icon"&gt;</code> element representing the icon. This works for webfont-based icons, but not for SVG. If you are using SVG for icons, you should ensure that the provided SVG image is already the correct color.
+        The grid uses the CSS <code>color</code> property to change the color of icons. This works for webfont-based icons, but not for SVG. If you are using SVG for icons, you should ensure that the provided SVG image is already the correct color.
     </p>
 </note>
 

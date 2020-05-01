@@ -1,4 +1,4 @@
-// Type definitions for @ag-grid-community/core v23.0.2
+// Type definitions for @ag-grid-community/core v23.1.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { RowNode } from "./entities/rowNode";
@@ -13,8 +13,10 @@ export declare class SelectionController {
     private logger;
     private lastSelectedNode;
     private groupSelectsChildren;
+    private events;
     private setBeans;
     init(): void;
+    destroy(): void;
     setLastSelectedNode(rowNode: RowNode): void;
     getLastSelectedNode(): RowNode | null;
     getSelectedNodes(): RowNode[];

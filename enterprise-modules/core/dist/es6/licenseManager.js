@@ -37,10 +37,15 @@ var LicenseManager = /** @class */ (function () {
         return new Date(parseInt(LicenseManager_1.decode(restrictionHashed), 10));
     };
     LicenseManager.extractLicenseComponents = function (licenseKey) {
-        var hashStart = licenseKey.length - 32;
-        var md5 = licenseKey.substring(hashStart);
-        var license = licenseKey.substring(0, hashStart);
-        var _a = LicenseManager_1.extractBracketedInformation(licenseKey), version = _a[0], isTrial = _a[1];
+        // when users copy the license key from a PDF extra zero width characters are sometimes copied too
+        // carriage returns and line feeds are problematic too
+        // all of which causes license key validation to fail - strip these out
+        var cleanedLicenseKey = licenseKey.replace(/[\u200B-\u200D\uFEFF]/g, '');
+        cleanedLicenseKey = cleanedLicenseKey.replace(/\r?\n|\r/g, '');
+        var hashStart = cleanedLicenseKey.length - 32;
+        var md5 = cleanedLicenseKey.substring(hashStart);
+        var license = cleanedLicenseKey.substring(0, hashStart);
+        var _a = LicenseManager_1.extractBracketedInformation(cleanedLicenseKey), version = _a[0], isTrial = _a[1];
         return { md5: md5, license: license, version: version, isTrial: isTrial };
     };
     LicenseManager.prototype.getLicenseDetails = function (licenseKey) {
@@ -240,7 +245,7 @@ var LicenseManager = /** @class */ (function () {
         this.watermarkMessage = "License Expired";
     };
     var LicenseManager_1;
-    LicenseManager.RELEASE_INFORMATION = 'MTU4NDY5MTE5OTAwMA==';
+    LicenseManager.RELEASE_INFORMATION = 'MTU4ODAwODM2MzY3OA==';
     __decorate([
         Autowired('md5')
     ], LicenseManager.prototype, "md5", void 0);

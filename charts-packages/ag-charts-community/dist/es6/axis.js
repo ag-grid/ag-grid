@@ -1,7 +1,6 @@
 import { Group } from "./scene/group";
 import { Selection } from "./scene/selection";
 import { Line } from "./scene/shape/line";
-import { NumericTicks } from "./util/ticks";
 import { normalizeAngle360, normalizeAngle360Inclusive, toRadians } from "./util/angle";
 import { Text } from "./scene/shape/text";
 import { Arc } from "./scene/shape/arc";
@@ -339,7 +338,8 @@ var Axis = /** @class */ (function () {
             });
         }
         var tickFormatter = this.tickFormatter;
-        var fractionDigits = ticks instanceof NumericTicks ? ticks.fractionDigits : 0;
+        // `ticks instanceof NumericTicks` doesn't work here, so we feature detect.
+        var fractionDigits = ticks.fractionDigits >= 0 ? ticks.fractionDigits : 0;
         var labelSelection = groupSelection.selectByClass(Text)
             .each(function (node, datum, index) {
             node.fontStyle = label.fontStyle;

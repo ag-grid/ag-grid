@@ -88,6 +88,10 @@ export default class extends Component {
         }.bind(this);
     }
 
+    onFirstDataRendered() {
+        this.topGrid.columnApi.autoSizeAllColumns();
+    }
+
     // Warning - mutating the state is not recommended from react, doing it for example purposes
     onCbAthlete(e) {
         this.athleteVisible = !this.athleteVisible;
@@ -107,21 +111,26 @@ export default class extends Component {
     render() {
         return (
             <div>
-                <div style={{width: '100%', height: '420px'}} className="ag-theme-alpine">
-                    <AgGridReact rowData={this.state.rowData} gridOptions={this.state.topOptions}
-                                 columnDefs={this.state.columnDefs} onGridReady={this.onGridReady.bind(this)}
-                                 modules={AllCommunityModules}/>
-                </div>
+                <div style={{ display: 'flex', 'flex-direction': 'column', height: '100%' }} className="ag-theme-alpine">
+                    <div style={{flex: '1 1 auto'}} >
+                        <AgGridReact rowData={this.state.rowData}
+                                     gridOptions={this.state.topOptions}
+                                     columnDefs={this.state.columnDefs}
+                                     onGridReady={this.onGridReady.bind(this)}
+                                     onFirstDataRendered={this.onFirstDataRendered.bind(this)}
+                                     modules={AllCommunityModules}/>
+                    </div>
 
-                <div style={{width: '100%', height: '40px'}} className="ag-theme-alpine">
-                    <AgGridReact
-                        rowData={this.state.bottomData}
-                        gridOptions={this.state.bottomOptions}
-                        columnDefs={this.state.columnDefs}
-                        headerHeight="0"
-                        modules={AllCommunityModules}
-                        rowStyle={{fontWeight: 'bold'}}
-                    />
+                    <div style={{flex: 'none', height: '60px'}}>
+                        <AgGridReact
+                            rowData={this.state.bottomData}
+                            gridOptions={this.state.bottomOptions}
+                            columnDefs={this.state.columnDefs}
+                            headerHeight="0"
+                            modules={AllCommunityModules}
+                            rowStyle={{fontWeight: 'bold'}}
+                        />
+                    </div>
                 </div>
             </div>
         );

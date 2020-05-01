@@ -22,6 +22,7 @@ export declare enum ModuleNames {
     ServerSideRowModelModule = "@ag-grid-enterprise/server-side-row-model",
     ExcelExportModule = "@ag-grid-enterprise/excel-export",
     ClipboardModule = "@ag-grid-enterprise/clipboard",
+    DateTimeCellEditorModule = "@ag-grid-enterprise/date-time-cell-editor",
     AngularModule = "@ag-grid-community/angular",
     ReactModule = "@ag-grid-community/react",
     VueModule = "@ag-grid-community/vue",

@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v23.0.2
+ * @version v23.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -54,8 +54,10 @@ var EventService = /** @class */ (function () {
         return listeners;
     };
     EventService.prototype.addEventListener = function (eventType, listener, async) {
+        var _this = this;
         if (async === void 0) { async = false; }
         this.getListeners(eventType, async).add(listener);
+        return function () { return _this.removeEventListener(eventType, listener, async); };
     };
     EventService.prototype.removeEventListener = function (eventType, listener, async) {
         if (async === void 0) { async = false; }
@@ -66,7 +68,7 @@ var EventService = /** @class */ (function () {
     // via this method, you get notified before the view parts
     EventService.prototype.addModalPriorityEventListener = function (eventType, listener, async) {
         if (async === void 0) { async = false; }
-        this.addEventListener(eventType + EventService_1.PRIORITY, listener, async);
+        return this.addEventListener(eventType + EventService_1.PRIORITY, listener, async);
     };
     EventService.prototype.addGlobalListener = function (listener, async) {
         if (async === void 0) { async = false; }

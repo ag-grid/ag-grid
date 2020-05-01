@@ -147,7 +147,6 @@ test('addPropertyListener', function () {
     var listener1 = function () { sum += 1; };
     var listener2 = function () { sum += 2; };
     var listener3 = function () { sum += 3; };
-    expect(c.addPropertyListener('john', listener1)).toBe(listener1);
     expect(c.addPropertyListener('john', listener1)).toBe(undefined);
     c.addPropertyListener('john', listener2);
     c.addPropertyListener('john', listener3);
@@ -184,14 +183,24 @@ test('addPropertyListener', function () {
 test('addEventListener', function () {
     var c = new Component();
     var sum = 0;
-    var listener = function () {
+    var eventSource;
+    var listener1Scope;
+    expect(c.addEventListener('name', function (event) {
+        eventSource = event.source;
+        listener1Scope = this;
         sum += 1;
-    };
-    expect(c.addEventListener('name', listener)).toBe(listener);
-    expect(c.addEventListener('name', listener)).toBe(undefined);
+    })).toBe(undefined);
+    var that = {};
+    var listener2Scope;
+    c.addEventListener('name', function (event) {
+        listener2Scope = this;
+    }, that);
     c.john = 'test';
     c.bob = 'test';
     expect(sum).toBe(2);
+    expect(eventSource).toBe(c);
+    expect(listener1Scope).toBe(c);
+    expect(listener2Scope).toBe(that);
     var arrChange = false;
     c.addPropertyListener('arr', function () { return arrChange = true; });
     c.arr = [];
@@ -243,6 +252,29 @@ test('removeEventListener', function () {
     c.removeEventListener('name', listener3);
     c.john = 'test4';
     expect(sum).toBe(0);
+    var scopeSum = 0;
+    function listener4() {
+        scopeSum += this.$value || 1;
+    }
+    var scope1 = { $value: 5 };
+    var scope2 = { $value: 7 };
+    c.addEventListener('change', listener4);
+    c.addEventListener('change', listener4, scope1);
+    c.addEventListener('change', listener4, scope2);
+    c.foo = 'lalala';
+    expect(scopeSum).toBe(13);
+    c.removeEventListener('change', listener4, scope2);
+    scopeSum = 0;
+    c.foo = 'lala';
+    expect(scopeSum).toBe(6);
+    c.removeEventListener('change', listener4, scope1);
+    scopeSum = 0;
+    c.foo = 'la';
+    expect(scopeSum).toBe(1);
+    c.removeEventListener('change', listener4);
+    scopeSum = 0;
+    c.foo = '';
+    expect(scopeSum).toBe(0);
 });
 test('inheritance', function () {
     var subClass = new SubClass();

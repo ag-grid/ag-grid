@@ -1,10 +1,17 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v23.0.2
+ * @version v23.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
 "use strict";
+var __spreadArrays = (this && this.__spreadArrays) || function () {
+    for (var s = 0, i = 0, il = arguments.length; i < il; i++) s += arguments[i].length;
+    for (var r = Array(s), k = 0, i = 0; i < il; i++)
+        for (var a = arguments[i], j = 0, jl = a.length; j < jl; j++, k++)
+            r[k] = a[j];
+    return r;
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 var ColDefUtil = /** @class */ (function () {
     function ColDefUtil() {
@@ -112,7 +119,8 @@ var ColDefUtil = /** @class */ (function () {
         'autoHeight',
         'sortable',
         'resizable',
-        'singleClickEdit'
+        'singleClickEdit',
+        'floatingFilter',
     ];
     ColDefUtil.FUNCTION_PROPERTIES = [
         'dndSourceOnRowDrag',
@@ -146,12 +154,7 @@ var ColDefUtil = /** @class */ (function () {
         'cellRendererSelector',
         'cellEditorSelector'
     ];
-    ColDefUtil.ALL_PROPERTIES = ColDefUtil.ARRAY_PROPERTIES
-        .concat(ColDefUtil.OBJECT_PROPERTIES)
-        .concat(ColDefUtil.STRING_PROPERTIES)
-        .concat(ColDefUtil.NUMBER_PROPERTIES)
-        .concat(ColDefUtil.FUNCTION_PROPERTIES)
-        .concat(ColDefUtil.BOOLEAN_PROPERTIES);
+    ColDefUtil.ALL_PROPERTIES = __spreadArrays(ColDefUtil.ARRAY_PROPERTIES, ColDefUtil.OBJECT_PROPERTIES, ColDefUtil.STRING_PROPERTIES, ColDefUtil.NUMBER_PROPERTIES, ColDefUtil.FUNCTION_PROPERTIES, ColDefUtil.BOOLEAN_PROPERTIES);
     // used when doing property checks - this causes noise when using frameworks which can add their own fw specific
     // properties to colDefs, gridOptions etc
     ColDefUtil.FRAMEWORK_PROPERTIES = ['__ob__', '__metadata__', 'mappedColumnProperties', 'hasChildColumns',

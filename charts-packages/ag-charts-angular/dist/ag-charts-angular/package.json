@@ -1,6 +1,6 @@
 {
   "name": "ag-charts-angular",
-  "version": "1.0.1",
+  "version": "1.1.0",
   "repository": {
     "type": "git",
     "url": "https://github.com/ag-grid/ag-grid.git"
@@ -21,7 +21,7 @@
   "peerDependencies": {
     "@angular/common": "^8.2.14",
     "@angular/core": "^8.2.14",
-    "ag-charts-community": "~1.0.0"
+    "ag-charts-community": "~1.1.0"
   },
   "main": "bundles/ag-charts-angular.umd.js",
   "module": "fesm5/ag-charts-angular.js",

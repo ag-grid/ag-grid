@@ -75,9 +75,17 @@ var Series = /** @class */ (function (_super) {
         }
         return values;
     };
+    // Returns node data associated with the rendered portion of the series' data.
+    Series.prototype.getNodeData = function () {
+        return [];
+    };
+    Series.prototype.fireNodeClickEvent = function (datum) { };
     Series.prototype.toggleSeriesItem = function (itemId, enabled) {
         this.visible = enabled;
     };
+    // Each series is expected to have its own logic to efficiently update its nodes
+    // on hightlight changes.
+    Series.prototype.onHighlightChange = function () { };
     Series.prototype.fixNumericExtent = function (extent, type) {
         if (!extent) {
             // if (type) {

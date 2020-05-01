@@ -15,6 +15,11 @@ export interface ICellEditor {
      * for selection. Default is false (ie if you don't provide the method).
      */
     isPopup?(): boolean;
+    /** Gets called once, only if isPopup() returns true. Return "over" if the popup
+     * should cover the cell, or "under" if it should be positioned below leaving the
+     * cell value visible. If this method is not present, the default is "over".
+     */
+    getPopupPosition?(): string;
     /** Gets called once after initialised. If you return true, the editor will not be
      * used and the grid will continue editing. Use this to make a decision on editing
      * inside the init() function, eg maybe you want to only start editing if the user

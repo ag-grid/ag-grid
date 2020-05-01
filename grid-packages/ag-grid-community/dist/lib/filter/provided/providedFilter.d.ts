@@ -1,12 +1,14 @@
-import { Component } from "../../widgets/component";
-import { ProvidedFilterModel, IDoesFilterPassParams, IFilterComp, IFilterParams } from "../../interfaces/iFilter";
-import { GridOptionsWrapper } from "../../gridOptionsWrapper";
-import { IRowModel } from "../../interfaces/iRowModel";
+import { Component } from '../../widgets/component';
+import { ProvidedFilterModel, IDoesFilterPassParams, IFilterComp, IFilterParams } from '../../interfaces/iFilter';
+import { GridOptionsWrapper } from '../../gridOptionsWrapper';
+import { IRowModel } from '../../interfaces/iRowModel';
+import { IAfterGuiAttachedParams } from '../../interfaces/iAfterGuiAttachedParams';
 export interface IProvidedFilterParams extends IFilterParams {
     clearButton?: boolean;
     resetButton?: boolean;
     applyButton?: boolean;
-    newRowsAction?: string;
+    closeOnApply?: boolean;
+    /** @deprecated */ newRowsAction?: string;
     debounceMs?: number;
 }
 /**
@@ -20,18 +22,15 @@ export declare abstract class ProvidedFilter extends Component implements IFilte
     private newRowsActionKeep;
     private providedFilterParams;
     private applyActive;
-    private eButtonsPanel;
+    private hidePopup;
     protected eFilterBodyWrapper: HTMLElement;
-    private eClearButton;
-    private eResetButton;
-    private eApplyButton;
     protected gridOptionsWrapper: GridOptionsWrapper;
     protected rowModel: IRowModel;
     abstract doesFilterPass(params: IDoesFilterPassParams): boolean;
     protected abstract updateUiVisibility(): void;
     protected abstract createBodyTemplate(): string;
     protected abstract getCssIdentifier(): string;
-    protected abstract resetUiToDefaults(siltent?: boolean): void;
+    protected abstract resetUiToDefaults(silent?: boolean): void;
     protected abstract setModelIntoUi(model: ProvidedFilterModel): void;
     protected abstract areModelsEqual(a: ProvidedFilterModel, b: ProvidedFilterModel): boolean;
     abstract getModelFromUi(): ProvidedFilterModel | null;
@@ -43,6 +42,7 @@ export declare abstract class ProvidedFilter extends Component implements IFilte
     protected postConstruct(): void;
     init(params: IFilterParams): void;
     protected setParams(params: IProvidedFilterParams): void;
+    private createButtonPanel;
     protected getDefaultDebounceMs(): number;
     private setupOnBtApplyDebounce;
     getModel(): ProvidedFilterModel;
@@ -54,7 +54,8 @@ export declare abstract class ProvidedFilter extends Component implements IFilte
     onNewRowsLoaded(): void;
     protected isNewRowsActionKeep(): boolean;
     protected onUiChanged(afterFloatingFilter?: boolean): void;
-    private createTemplate;
+    afterGuiAttached(params: IAfterGuiAttachedParams): void;
     static getDebounceMs(params: IProvidedFilterParams, debounceDefault: number): number;
     static isUseApplyButton(params: IProvidedFilterParams): boolean;
+    destroy(): void;
 }

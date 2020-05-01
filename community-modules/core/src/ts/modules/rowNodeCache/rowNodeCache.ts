@@ -6,6 +6,9 @@ import { RowNodeBlockLoader } from "./rowNodeBlockLoader";
 import { AgEvent } from "../../events";
 import { NumberSequence,  _ } from "../../utils";
 import {IRowNodeBlock} from "../../interfaces/iRowNodeBlock";
+import {Autowired, PostConstruct} from "../../context/context";
+import {EventService} from "../../eventService";
+import {RowRenderer} from "../../rendering/rowRenderer";
 
 export interface RowNodeCacheParams {
     initialRowCount: number;
@@ -37,6 +40,9 @@ export abstract class RowNodeCache<T extends IRowNodeBlock, P extends RowNodeCac
     private virtualRowCount: number;
     private maxRowFound = false;
 
+    @Autowired('eventService') protected eventService: EventService;
+    @Autowired('rowRenderer') protected rowRenderer: RowRenderer;
+
     protected cacheParams: P;
 
     private active: boolean;
@@ -55,10 +61,11 @@ export abstract class RowNodeCache<T extends IRowNodeBlock, P extends RowNodeCac
     }
 
     public destroy(): void {
-        super.destroy();
         this.forEachBlockInOrder(block => this.destroyBlock(block));
+        super.destroy();
     }
 
+    @PostConstruct
     protected init(): void {
         this.active = true;
         this.addDestroyFunc(() => this.active = false);
@@ -135,12 +142,35 @@ export abstract class RowNodeCache<T extends IRowNodeBlock, P extends RowNodeCac
                 // children, jeeeesus, just thinking about it freaks me out) so best is have a
                 // rule, if block is open, we never purge.
                 if (block.isAnyNodeOpen(this.virtualRowCount)) { return; }
+
+                // if the block currently has rows been displayed, then don't remove it either.
+                // this can happen if user has maxBlocks=2, and blockSize=5 (thus 10 max rows in cache)
+                // but the screen is showing 20 rows, so at least 4 blocks are needed.
+                if (this.isBlockCurrentlyDisplayed(block)) { return; }
+
                 // at this point, block is not needed, and no open nodes, so burn baby burn
                 this.removeBlockFromCache(block);
-
             }
 
         });
+    }
+
+    private isBlockCurrentlyDisplayed(block: T): boolean {
+        const firstViewportRow = this.rowRenderer.getFirstVirtualRenderedRow();
+        const lastViewportRow = this.rowRenderer.getLastVirtualRenderedRow();
+
+        const firstRowIndex = block.getDisplayIndexStart();
+        const lastRowIndex = block.getDisplayIndexEnd() - 1;
+
+        // parent closed means the parent node is not expanded, thus these blocks are not visible
+        const parentClosed = firstRowIndex==null || lastRowIndex==null;
+        if (parentClosed) { return false; }
+
+        const blockBeforeViewport = firstRowIndex > lastViewportRow;
+        const blockAfterViewport = lastRowIndex < firstViewportRow;
+        const blockInsideViewport = !blockBeforeViewport && !blockAfterViewport;
+
+        return blockInsideViewport;
     }
 
     protected postCreateBlock(newBlock: T): void {
@@ -261,6 +291,13 @@ export abstract class RowNodeCache<T extends IRowNodeBlock, P extends RowNodeCac
     // gets called 1) row count changed 2) cache purged 3) items inserted
     protected onCacheUpdated(): void {
         if (this.isActive()) {
+
+            // if the virtualRowCount is shortened, then it's possible blocks exist that are no longer
+            // in the valid range. so we must remove these. this can happen if user explicitly sets
+            // the virtual row count, or the datasource returns a result and sets lastRow to something
+            // less than virtualRowCount (can happen if user scrolls down, server reduces dataset size).
+            this.destroyAllBlocksPastVirtualRowCount();
+
             // this results in both row models (infinite and server side) firing ModelUpdated,
             // however server side row model also updates the row indexes first
             const event: CacheUpdatedEvent = {
@@ -270,15 +307,29 @@ export abstract class RowNodeCache<T extends IRowNodeBlock, P extends RowNodeCac
         }
     }
 
+    private destroyAllBlocksPastVirtualRowCount(): void {
+        const blocksToDestroy: T[] = [];
+        this.forEachBlockInOrder( (block: T, id: number) => {
+            const startRow = id * this.cacheParams.blockSize;
+            if (startRow >= this.virtualRowCount) {
+                blocksToDestroy.push(block);
+            }
+        });
+        if (blocksToDestroy.length > 0) {
+            blocksToDestroy.forEach( block => this.destroyBlock(block) );
+        }
+    }
+
     public purgeCache(): void {
         this.forEachBlockInOrder(block => this.removeBlockFromCache(block));
-
+        this.maxRowFound = false;
+        // if zero rows in the cache, we need to get the SSRM to start asking for rows again.
+        // otherwise if set to zero rows last time, and we don't update the row count, then after
+        // the purge there will still be zero rows, meaning the SRRM won't request any rows.
+        // to kick things off, at lest one row needs to be asked for.
         if (this.virtualRowCount === 0) {
-            // re-initialise cache - this ensures a cache with no rows can reload when purged!
             this.virtualRowCount = this.cacheParams.initialRowCount;
-            this.maxRowFound = false;
         }
-
         this.onCacheUpdated();
     }
 

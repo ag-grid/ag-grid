@@ -1,0 +1,13 @@
+.custom-tooltip {
+    position: absolute;
+    padding: 20px;
+    width: 200px;
+    border: 1px solid cornflowerblue;
+    pointer-events: none;
+    transition: opacity 1s;
+    background-color: white;
+}
+
+.custom-tooltip.ag-tooltip-hiding {
+    opacity: 0;
+}

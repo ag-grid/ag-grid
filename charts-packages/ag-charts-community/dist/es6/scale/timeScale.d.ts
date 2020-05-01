@@ -41,8 +41,7 @@ export declare class TimeScale extends ContinuousScale {
      */
     tickInterval(interval: number | CountableTimeInterval, start: number, stop: number, step?: number): CountableTimeInterval | TimeInterval | undefined;
     protected _domain: Date[];
-    set domain(values: Date[]);
-    get domain(): Date[];
+    domain: Date[];
     invert(y: number): Date;
     /**
      * Returns uniformly-spaced dates that represent the scale's domain.

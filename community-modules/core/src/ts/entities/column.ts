@@ -237,16 +237,32 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild, IEven
                 ['enableRowGroup', 'rowGroup', 'rowGroupIndex', 'enablePivot', 'enableValue', 'pivot', 'pivotIndex', 'aggFunc'];
             rowGroupingItems.forEach(item => {
                 if (_.exists(colDefAny[item])) {
-                    warnOnce(`ag-Grid: ${item} is only valid with module Row Grouping, your column definition `
-                        + `should not have ${item}`, 'ColumnRowGroupingMissing'+item);
+                    if(ModuleRegistry.isPackageBased()) {
+                        warnOnce(`ag-Grid: ${item} is only valid in ag-grid-enterprise, your column definition should not have ${item}`, 'ColumnRowGroupingMissing'+item);
+                    } else {
+                        warnOnce(`ag-Grid: ${item} is only valid with ag-Grid Enterprise Module ${ModuleNames.RowGroupingModule} - your column definition should not have ${item}`, 'ColumnRowGroupingMissing'+item);
+                    }
                 }
             });
         }
 
         if (!ModuleRegistry.isRegistered(ModuleNames.RichSelectModule)) {
             if (this.colDef.cellEditor==='agRichSelect' || this.colDef.cellEditor==='agRichSelectCellEditor') {
-                warnOnce(`ag-Grid: ${this.colDef.cellEditor} can only be used with `
-                    + `module ${ModuleNames.RichSelectModule}`, 'ColumnRichSelectMissing');
+                if(ModuleRegistry.isPackageBased()) {
+                    warnOnce(`ag-Grid: ${this.colDef.cellEditor} can only be used with ag-grid-enterprise`, 'ColumnRichSelectMissing');
+                } else {
+                    warnOnce(`ag-Grid: ${this.colDef.cellEditor} can only be used with ag-Grid Enterprise Module ${ModuleNames.RichSelectModule}`, 'ColumnRichSelectMissing');
+                }
+            }
+        }
+
+        if (!ModuleRegistry.isRegistered(ModuleNames.DateTimeCellEditorModule)) {
+            if (this.colDef.cellEditor === 'agRichSelect' || this.colDef.cellEditor === 'agDateTimeCellEditor') {
+                if(ModuleRegistry.isPackageBased()) {
+                    warnOnce(`ag-Grid: ${this.colDef.cellEditor} can only be used with ag-grid-enterprise`, 'ColumnDateTimeMissing');
+                } else {
+                    warnOnce(`ag-Grid: ${this.colDef.cellEditor} can only be used with ag-Grid Enterprise Module ${ModuleNames.DateTimeCellEditorModule}`, 'ColumnDateTimeMissing');
+                }
             }
         }
 
@@ -255,8 +271,7 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild, IEven
                 ['rowGroup', 'rowGroupIndex', 'pivot', 'pivotIndex'];
             itemsNotAllowedWithTreeData.forEach(item => {
                 if (_.exists(colDefAny[item])) {
-                    warnOnce(`ag-Grid: ${item} is not possible when doing tree data, your `
-                        + `column definition should not have ${item}`, 'TreeDataCannotRowGroup');
+                    warnOnce(`ag-Grid: ${item} is not possible when doing tree data, your column definition should not have ${item}`, 'TreeDataCannotRowGroup');
                 }
             });
         }
@@ -677,6 +692,12 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild, IEven
 
     public getFlex(): number {
         return this.flex || 0;
+    }
+
+    // this method should only be used by the columnController to
+    // change flex when required by the setColumnState method.
+    public setFlex(flex: number) {
+        if (this.flex !== flex) { this.flex = flex; }
     }
 
     public setMinimum(source: ColumnEventType = "api"): void {

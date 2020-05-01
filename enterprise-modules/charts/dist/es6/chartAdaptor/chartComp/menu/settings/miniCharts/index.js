@@ -12,3 +12,4 @@ export * from "./miniBubble";
 export * from "./miniArea";
 export * from "./miniStackedArea";
 export * from "./miniNormalizedArea";
+export * from "./miniHistogram";

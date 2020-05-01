@@ -14,6 +14,9 @@ const ClipboardModule = require("../../../../../enterprise-modules/clipboard/dis
 require("../../../../../enterprise-modules/column-tool-panel/dist/cjs/columnsToolPanelModule");
 const ColumnsToolPanelModule = require("../../../../../enterprise-modules/column-tool-panel/dist/cjs/columnsToolPanelModule").ColumnsToolPanelModule;
         
+require("../../../../../enterprise-modules/date-time-cell-editor/dist/cjs/dateTimeCellEditorModule");
+const DateTimeCellEditorModule = require("../../../../../enterprise-modules/date-time-cell-editor/dist/cjs/dateTimeCellEditorModule").DateTimeCellEditorModule;
+        
 require("../../../../../enterprise-modules/excel-export/dist/cjs/excelExportModule");
 const ExcelExportModule = require("../../../../../enterprise-modules/excel-export/dist/cjs/excelExportModule").ExcelExportModule;
         
@@ -62,6 +65,7 @@ const InfiniteRowModelModule = require("../../../../../community-modules/infinit
 ModuleRegistry.ModuleRegistry.register(GridChartsModule);
 ModuleRegistry.ModuleRegistry.register(ClipboardModule);
 ModuleRegistry.ModuleRegistry.register(ColumnsToolPanelModule);
+ModuleRegistry.ModuleRegistry.register(DateTimeCellEditorModule);
 ModuleRegistry.ModuleRegistry.register(ExcelExportModule);
 ModuleRegistry.ModuleRegistry.register(FiltersToolPanelModule);
 ModuleRegistry.ModuleRegistry.register(MasterDetailModule);

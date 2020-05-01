@@ -19,8 +19,7 @@ export declare class ChartAxis extends Axis<Scale<any, number>> {
     direction: ChartAxisDirection;
     boundSeries: Series[];
     linkedTo?: ChartAxis;
-    get type(): string;
+    readonly type: string;
     protected _position: ChartAxisPosition;
-    set position(value: ChartAxisPosition);
-    get position(): ChartAxisPosition;
+    position: ChartAxisPosition;
 }

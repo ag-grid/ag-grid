@@ -1,4 +1,4 @@
-// Type definitions for @ag-grid-community/core v23.0.2
+// Type definitions for @ag-grid-community/core v23.1.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { Context } from "../context/context";
@@ -28,7 +28,6 @@ import { DragAndDropService } from "../dragAndDrop/dragAndDropService";
 import { SortController } from "../sortController";
 import { FilterManager } from "../filter/filterManager";
 import { MaxDivHeightScaler } from "./maxDivHeightScaler";
-import { TooltipManager } from "../widgets/tooltipManager";
 import { IFrameworkOverrides } from "../interfaces/iFrameworkOverrides";
 import { DetailRowCompCache } from "./detailRowCompCache";
 import { CellPositionUtils } from "../entities/cellPosition";
@@ -67,7 +66,6 @@ export declare class Beans {
     sortController: SortController;
     filterManager: FilterManager;
     maxDivHeightScaler: MaxDivHeightScaler;
-    tooltipManager: TooltipManager;
     frameworkOverrides: IFrameworkOverrides;
     detailRowCompCache: DetailRowCompCache;
     cellPositionUtils: CellPositionUtils;

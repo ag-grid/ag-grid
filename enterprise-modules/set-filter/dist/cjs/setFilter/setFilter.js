@@ -25,21 +25,25 @@ var setFilterListItem_1 = require("./setFilterListItem");
 var SetFilter = /** @class */ (function (_super) {
     __extends(SetFilter, _super);
     function SetFilter() {
-        return _super !== null && _super.apply(this, arguments) || this;
+        var _this = _super !== null && _super.apply(this, arguments) || this;
+        // To make the filtering super fast, we store the values in an object, and check for the boolean value.
+        // Although Set would be a more natural choice of data structure, its performance across browsers is
+        // significantly worse than using an object: https://jsbench.me/hdk91jbw1h/
+        _this.appliedModelValues = null;
+        return _this;
     }
-    // unlike the simple filter's, nothing in the set filter UI shows/hides.
+    // unlike the simple filters, nothing in the set filter UI shows/hides.
     // maybe this method belongs in abstractSimpleFilter???
     SetFilter.prototype.updateUiVisibility = function () { };
     SetFilter.prototype.createBodyTemplate = function () {
         var translate = this.gridOptionsWrapper.getLocaleTextFunc();
-        return "<div ref=\"eFilterLoading\" class=\"ag-filter-loading ag-hidden\">" + translate('loadingOoo', 'Loading...') + "</div>\n                <div>\n                    <div class=\"ag-filter-header-container\" role=\"presentation\">\n                        <ag-input-text-field class=\"ag-mini-filter\" ref=\"eMiniFilter\"></ag-input-text-field>\n                        <label ref=\"eSelectAllContainer\" class=\"ag-set-filter-item ag-set-filter-select-all\">\n                            <ag-checkbox ref=\"eSelectAll\" class=\"ag-set-filter-item-checkbox\"></ag-checkbox><span class=\"ag-set-filter-item-value\">(" + translate('selectAll', 'Select All') + ")</span>\n                        </label>\n                    </div>\n                    <div ref=\"eSetFilterList\" class=\"ag-set-filter-list\" role=\"presentation\"></div>\n                </div>";
+        return /* html */ "\n            <div ref=\"eFilterLoading\" class=\"ag-filter-loading ag-hidden\">" + translate('loadingOoo', 'Loading...') + "</div>\n            <div>\n                <div class=\"ag-filter-header-container\" role=\"presentation\">\n                    <ag-input-text-field class=\"ag-mini-filter\" ref=\"eMiniFilter\"></ag-input-text-field>\n                    <label ref=\"eSelectAllContainer\" class=\"ag-set-filter-item ag-set-filter-select-all\">\n                        <ag-checkbox ref=\"eSelectAll\" class=\"ag-set-filter-item-checkbox\"></ag-checkbox><span class=\"ag-set-filter-item-value\">(" + translate('selectAll', 'Select All') + ")</span>\n                    </label>\n                </div>\n                <div ref=\"eSetFilterList\" class=\"ag-set-filter-list\" role=\"presentation\"></div>\n            </div>";
     };
     SetFilter.prototype.getCssIdentifier = function () {
         return 'set-filter';
     };
     SetFilter.prototype.resetUiToDefaults = function () {
         this.setMiniFilter(null);
-        this.valueModel.setModel(null, true);
         this.selectEverything();
     };
     SetFilter.prototype.setModelIntoUi = function (model) {
@@ -54,10 +58,9 @@ var SetFilter = /** @class */ (function (_super) {
             core_1._.doOnce(function () { return console.warn(message_1); }, 'setFilter.modelAsArray');
         }
         // also supporting old filter model for backwards compatibility
-        var newValues = (model instanceof Array) ? model : model.values;
+        var newValues = model instanceof Array ? model : model.values;
         this.valueModel.setModel(newValues);
-        this.updateSelectAll();
-        this.virtualList.refresh();
+        this.refresh();
     };
     SetFilter.prototype.getModelFromUi = function () {
         var values = this.valueModel.getModel();
@@ -75,39 +78,24 @@ var SetFilter = /** @class */ (function (_super) {
     };
     SetFilter.prototype.areModelsEqual = function (a, b) {
         // both are missing
-        if (!a && !b) {
+        if (a == null && b == null) {
             return true;
         }
-        // one is missing, other present
-        if ((!a && b) || (a && !b)) {
-            return false;
-        }
-        // both present, so compare
-        // if different sizes, they are different
-        if (a.values.length != b.values.length) {
-            return false;
-        }
-        // now check each one value by value
-        for (var i = 0; i < a.values.length; i++) {
-            if (a.values[i] !== b.values[i]) {
-                return false;
-            }
-        }
-        // got this far means value lists are identical
-        return true;
+        return a != null && b != null && core_1._.areEqual(a.values, b.values);
     };
     SetFilter.prototype.setParams = function (params) {
+        var _this = this;
         _super.prototype.setParams.call(this, params);
         this.checkSetFilterDeprecatedParams(params);
         this.setFilterParams = params;
+        this.valueModel = new setValueModel_1.SetValueModel(params.colDef, params.rowModel, params.valueGetter, params.doesRowPassOtherFilter, params.suppressSorting, function (loading) { return _this.setLoading(loading); }, this.valueFormatterService, params.column);
         this.initialiseFilterBodyUi();
-        var syncValuesAfterDataChange = !params.suppressSyncValuesAfterDataChange &&
-            // sync values only with CSRM
-            this.rowModel.getType() === core_1.Constants.ROW_MODEL_TYPE_CLIENT_SIDE &&
-            // sync only needed if user not providing values
-            !params.values;
+        this.valueModel.onFilterValuesReady(function () { return _this.refresh(); });
+        var syncValuesAfterDataChange = this.rowModel.getType() === core_1.Constants.ROW_MODEL_TYPE_CLIENT_SIDE &&
+            !params.values &&
+            !params.suppressSyncValuesAfterDataChange;
         if (syncValuesAfterDataChange) {
-            this.setupSyncValuesAfterDataChange();
+            this.addEventListenersForDataChanges();
         }
     };
     SetFilter.prototype.checkSetFilterDeprecatedParams = function (params) {
@@ -122,22 +110,20 @@ var SetFilter = /** @class */ (function (_super) {
                 ' used as this is the default behaviour.';
             core_1._.doOnce(function () { return console.warn(message_3); }, 'selectAllOnMiniFilter deprecated');
         }
+        if (params.suppressSyncValuesAfterDataChange) {
+            var message_4 = 'ag-Grid: since version 23.1, the Set Filter param suppressSyncValuesAfterDataChange has' +
+                ' been deprecated and will be removed in a future major release.';
+            core_1._.doOnce(function () { return console.warn(message_4); }, 'suppressSyncValuesAfterDataChange deprecated');
+        }
+        if (params.suppressRemoveEntries) {
+            var message_5 = 'ag-Grid: since version 23.1, the Set Filter param suppressRemoveEntries has' +
+                ' been deprecated and will be removed in a future major release.';
+            core_1._.doOnce(function () { return console.warn(message_5); }, 'suppressRemoveEntries deprecated');
+        }
     };
-    // gets called with change to data values, thus need to update the values available for selection
-    // in the set filter.
-    SetFilter.prototype.syncValuesAfterDataChange = function () {
-        var everythingSelected = !this.getModel();
-        this.valueModel.refreshAfterNewRowsLoaded(true, everythingSelected);
-        this.updateSelectAll();
-        this.virtualList.refresh();
-        this.onBtApply(false, true);
-    };
-    // this keeps the filter up to date with changes in the row data
-    SetFilter.prototype.setupSyncValuesAfterDataChange = function () {
+    SetFilter.prototype.addEventListenersForDataChanges = function () {
         var _this = this;
-        // add listener for when data is changed via transaction update (includes delta row mode
-        // as this uses transaction updates)
-        this.addDestroyableEventListener(this.eventService, core_1.Events.EVENT_ROW_DATA_UPDATED, this.syncValuesAfterDataChange.bind(this));
+        this.addDestroyableEventListener(this.eventService, core_1.Events.EVENT_ROW_DATA_UPDATED, function () { return _this.syncValuesAfterDataChange(); });
         this.addDestroyableEventListener(this.eventService, core_1.Events.EVENT_CELL_VALUE_CHANGED, function (event) {
             // only interested in changes to do with this column
             if (event.column !== _this.setFilterParams.column) {
@@ -146,6 +132,13 @@ var SetFilter = /** @class */ (function (_super) {
             _this.syncValuesAfterDataChange();
         });
     };
+    /** Called when the data in the grid changes, to prompt the set filter values to be updated. */
+    SetFilter.prototype.syncValuesAfterDataChange = function (keepSelection) {
+        if (keepSelection === void 0) { keepSelection = true; }
+        this.valueModel.refetchValues(keepSelection);
+        this.refresh();
+        this.onBtApply(false, true);
+    };
     SetFilter.prototype.updateCheckboxIcon = function () {
         this.eSelectAll.setValue(this.selectAllState);
     };
@@ -153,28 +146,49 @@ var SetFilter = /** @class */ (function (_super) {
         core_1._.setDisplayed(this.eFilterLoading, loading);
     };
     SetFilter.prototype.initialiseFilterBodyUi = function () {
+        this.initVirtualList();
+        this.initMiniFilter();
+        this.initSelectAll();
+    };
+    SetFilter.prototype.initVirtualList = function () {
         var _this = this;
-        this.virtualList = new core_1.VirtualList('filter');
-        this.getContext().wireBean(this.virtualList);
+        var virtualList = this.virtualList = this.wireBean(new core_1.VirtualList('filter'));
         var eSetFilterList = this.getRefElement('eSetFilterList');
         if (eSetFilterList) {
-            eSetFilterList.appendChild(this.virtualList.getGui());
+            eSetFilterList.appendChild(virtualList.getGui());
         }
-        if (core_1._.exists(this.setFilterParams.cellHeight)) {
-            this.virtualList.setRowHeight(this.setFilterParams.cellHeight);
+        var cellHeight = this.setFilterParams.cellHeight;
+        if (cellHeight != null) {
+            virtualList.setRowHeight(cellHeight);
         }
-        this.virtualList.setComponentCreator(this.createSetListItem.bind(this));
-        this.valueModel = new setValueModel_1.SetValueModel(this.setFilterParams.colDef, this.setFilterParams.rowModel, this.setFilterParams.valueGetter, this.setFilterParams.doesRowPassOtherFilter, this.setFilterParams.suppressSorting, function (values, toSelect) { return _this.setFilterValues(values, toSelect ? false : true, toSelect ? true : false, toSelect); }, this.setLoading.bind(this), this.valueFormatterService, this.setFilterParams.column);
-        this.virtualList.setModel(new ModelWrapper(this.valueModel));
-        core_1._.setDisplayed(this.eMiniFilter.getGui(), !this.setFilterParams.suppressMiniFilter);
-        this.eMiniFilter.setValue(this.valueModel.getMiniFilter());
-        this.eMiniFilter.onValueChange(function () { return _this.onMiniFilterInput(); });
-        this.addDestroyableEventListener(this.eMiniFilter.getInputElement(), 'keypress', this.onMiniFilterKeyPress.bind(this));
+        virtualList.setComponentCreator(function (value) { return _this.createSetListItem(value); });
+        virtualList.setModel(new ModelWrapper(this.valueModel));
+    };
+    SetFilter.prototype.createSetListItem = function (value) {
+        var _this = this;
+        var listItem = this.wireBean(new setFilterListItem_1.SetFilterListItem(value, this.setFilterParams));
+        var selected = this.valueModel.isValueSelected(value);
+        listItem.setSelected(selected);
+        listItem.addEventListener(setFilterListItem_1.SetFilterListItem.EVENT_SELECTED, function () { return _this.onItemSelected(value, listItem.isSelected()); });
+        return listItem;
+    };
+    SetFilter.prototype.initMiniFilter = function () {
+        var _this = this;
+        var eMiniFilter = this.eMiniFilter;
+        core_1._.setDisplayed(eMiniFilter.getGui(), !this.setFilterParams.suppressMiniFilter);
+        eMiniFilter.setValue(this.valueModel.getMiniFilter());
+        eMiniFilter.onValueChange(function () { return _this.onMiniFilterInput(); });
+        this.addDestroyableEventListener(eMiniFilter.getInputElement(), 'keypress', function (e) { return _this.onMiniFilterKeyPress(e); });
+    };
+    SetFilter.prototype.initSelectAll = function () {
+        var _this = this;
         this.updateCheckboxIcon();
-        this.addDestroyableEventListener(this.eSelectAllContainer, 'click', this.onSelectAll.bind(this));
-        this.updateSelectAll();
+        var eSelectAllContainer = this.getRefElement('eSelectAllContainer');
         if (this.setFilterParams.suppressSelectAll) {
-            core_1._.setDisplayed(this.eSelectAllContainer, false);
+            core_1._.setDisplayed(eSelectAllContainer, false);
+        }
+        else {
+            this.addDestroyableEventListener(eSelectAllContainer, 'click', function (e) { return _this.onSelectAll(e); });
         }
         this.addDestroyableEventListener(this.eSelectAll.getInputElement(), 'keydown', function (e) {
             if (e.keyCode === core_1.Constants.KEY_SPACE) {
@@ -182,69 +196,52 @@ var SetFilter = /** @class */ (function (_super) {
                 _this.onSelectAll(e);
             }
         });
-        this.virtualList.refresh();
     };
-    SetFilter.prototype.createSetListItem = function (value) {
-        var _this = this;
-        var listItem = new setFilterListItem_1.SetFilterListItem(value, this.setFilterParams.column);
-        this.getContext().wireBean(listItem);
-        var selected = this.valueModel.isValueSelected(value);
-        listItem.setSelected(selected);
-        listItem.addEventListener(setFilterListItem_1.SetFilterListItem.EVENT_SELECTED, function () {
-            _this.onItemSelected(value, listItem.isSelected());
-        });
-        return listItem;
-    };
-    // we need to have the gui attached before we can draw the virtual rows, as the
-    // virtual row logic needs info about the gui state
+    // we need to have the GUI attached before we can draw the virtual rows, as the
+    // virtual row logic needs info about the GUI state
     SetFilter.prototype.afterGuiAttached = function (params) {
+        _super.prototype.afterGuiAttached.call(this, params);
         var _a = this, virtualList = _a.virtualList, eMiniFilter = _a.eMiniFilter;
         var translate = this.gridOptionsWrapper.getLocaleTextFunc();
         virtualList.refresh();
         eMiniFilter.setInputPlaceholder(translate('searchOoo', 'Search...'));
         eMiniFilter.getFocusableElement().focus();
     };
-    SetFilter.prototype.refreshVirtualList = function () {
-        this.virtualList.refresh();
-    };
     SetFilter.prototype.applyModel = function () {
         var _this = this;
-        var res = _super.prototype.applyModel.call(this);
+        var result = _super.prototype.applyModel.call(this);
         // keep the appliedModelValuesMapped in sync with the applied model
         var appliedModel = this.getModel();
         if (appliedModel) {
-            this.appliedModelValuesMapped = {};
-            appliedModel.values.forEach(function (value) { return _this.appliedModelValuesMapped[value] = true; });
+            this.appliedModelValues = {};
+            core_1._.forEach(appliedModel.values, function (value) { return _this.appliedModelValues[value] = true; });
         }
         else {
-            this.appliedModelValuesMapped = undefined;
+            this.appliedModelValues = null;
         }
-        return res;
+        return result;
     };
     SetFilter.prototype.doesFilterPass = function (params) {
-        // should never happen, if filter model not set, then this method should never be called
-        if (!this.appliedModelValuesMapped) {
+        var _this = this;
+        if (this.appliedModelValues == null) {
             return true;
         }
-        var value = this.setFilterParams.valueGetter(params.node);
-        if (this.setFilterParams.colDef.keyCreator) {
-            value = this.setFilterParams.colDef.keyCreator({ value: value });
+        var _a = this.setFilterParams, valueGetter = _a.valueGetter, keyCreator = _a.colDef.keyCreator;
+        var value = valueGetter(params.node);
+        if (keyCreator) {
+            value = keyCreator({ value: value });
         }
         value = core_1._.makeNull(value);
         if (Array.isArray(value)) {
-            for (var i = 0; i < value.length; i++) {
-                var valueExistsInMap = !!this.appliedModelValuesMapped[value[i]];
-                if (valueExistsInMap) {
-                    return true;
-                }
-            }
-            return false;
+            return core_1._.some(value, function (v) { return _this.appliedModelValues[core_1._.makeNull(v)] === true; });
         }
-        return !!this.appliedModelValuesMapped[value];
+        // Comparing against a value performs better than just checking for undefined
+        // https://jsbench.me/hdk91jbw1h/
+        return this.appliedModelValues[value] === true;
     };
     SetFilter.prototype.onNewRowsLoaded = function () {
         var valuesType = this.valueModel.getValuesType();
-        var valuesTypeProvided = valuesType === setValueModel_1.SetFilterModelValuesType.PROVIDED_CB ||
+        var valuesTypeProvided = valuesType === setValueModel_1.SetFilterModelValuesType.PROVIDED_CALLBACK ||
             valuesType === setValueModel_1.SetFilterModelValuesType.PROVIDED_LIST;
         // if the user is providing values, and we are keeping the previous selection, then
         // loading new rows into the grid should have no impact.
@@ -252,12 +249,7 @@ var SetFilter = /** @class */ (function (_super) {
         if (keepSelection && valuesTypeProvided) {
             return;
         }
-        var everythingSelected = !this.getModel();
-        // default is reset
-        this.valueModel.refreshAfterNewRowsLoaded(keepSelection, everythingSelected);
-        this.updateSelectAll();
-        this.virtualList.refresh();
-        this.onBtApply(false, true);
+        this.syncValuesAfterDataChange(keepSelection);
     };
     //noinspection JSUnusedGlobalSymbols
     /**
@@ -268,30 +260,20 @@ var SetFilter = /** @class */ (function (_super) {
      * @param notify If we should let know the model that the values of the filter have changed
      * @param toSelect The subset of options to subselect
      */
-    SetFilter.prototype.setFilterValues = function (options, selectAll, notify, toSelect) {
+    SetFilter.prototype.setFilterValues = function (options) {
         var _this = this;
-        if (selectAll === void 0) { selectAll = false; }
-        if (notify === void 0) { notify = true; }
+        this.valueModel.overrideValues(options, this.isNewRowsActionKeep());
         this.valueModel.onFilterValuesReady(function () {
-            var keepSelection = _this.setFilterParams && _this.setFilterParams.newRowsAction === 'keep';
-            _this.valueModel.setValuesType(setValueModel_1.SetFilterModelValuesType.PROVIDED_LIST);
-            _this.valueModel.refreshValues(options, keepSelection, selectAll);
-            _this.updateSelectAll();
-            var actualToSelect = toSelect ? toSelect : options;
-            actualToSelect.forEach(function (option) { return _this.valueModel.selectValue(option); });
-            _this.virtualList.refresh();
-            if (notify) {
-                _this.onUiChanged();
-            }
+            _this.refresh();
+            _this.onUiChanged();
         });
     };
     //noinspection JSUnusedGlobalSymbols
     /**
-     * Public method provided so the user can reset the values of the filter once that it has started
-     * @param options The options to use.
+     * Public method provided so the user can reset the values of the filter once that it has started.
      */
     SetFilter.prototype.resetFilterValues = function () {
-        this.valueModel.setValuesType(setValueModel_1.SetFilterModelValuesType.NOT_PROVIDED);
+        this.valueModel.setValuesType(setValueModel_1.SetFilterModelValuesType.TAKEN_FROM_GRID_VALUES);
         this.onNewRowsLoaded();
     };
     SetFilter.prototype.onAnyFilterChanged = function () {
@@ -312,18 +294,13 @@ var SetFilter = /** @class */ (function (_super) {
     };
     SetFilter.prototype.onMiniFilterKeyPress = function (e) {
         if (core_1._.isKeyPressed(e, core_1.Constants.KEY_ENTER)) {
-            this.onEnterKeyOnMiniFilter();
+            this.valueModel.selectAll(true);
+            this.refresh();
+            this.onUiChanged(true);
         }
     };
-    SetFilter.prototype.onEnterKeyOnMiniFilter = function () {
-        this.valueModel.selectAllFromMiniFilter();
-        this.virtualList.refresh();
-        this.updateSelectAll();
-        this.onUiChanged(true);
-    };
     SetFilter.prototype.onMiniFilterInput = function () {
-        var miniFilterChanged = this.valueModel.setMiniFilter(this.eMiniFilter.getValue());
-        if (miniFilterChanged) {
+        if (this.valueModel.setMiniFilter(this.eMiniFilter.getValue())) {
             this.virtualList.refresh();
         }
         this.updateSelectAll();
@@ -331,32 +308,22 @@ var SetFilter = /** @class */ (function (_super) {
     SetFilter.prototype.onSelectAll = function (event) {
         event.preventDefault();
         core_1._.addAgGridEventPath(event);
-        if (this.selectAllState === true) {
-            this.selectAllState = false;
+        this.selectAllState = !this.selectAllState;
+        if (this.selectAllState) {
+            this.valueModel.selectAll();
         }
         else {
-            this.selectAllState = true;
+            this.valueModel.selectNothing();
         }
-        this.doSelectAll();
-    };
-    SetFilter.prototype.doSelectAll = function () {
-        var checked = this.selectAllState === true;
-        if (checked) {
-            this.valueModel.selectAllUsingMiniFilter();
-        }
-        else {
-            this.valueModel.selectNothingUsingMiniFilter();
-        }
-        this.virtualList.refresh();
+        this.refresh();
         this.onUiChanged();
-        this.updateSelectAll();
     };
     SetFilter.prototype.onItemSelected = function (value, selected) {
         if (selected) {
             this.valueModel.selectValue(value);
         }
         else {
-            this.valueModel.unselectValue(value);
+            this.valueModel.deselectValue(value);
         }
         this.updateSelectAll();
         this.onUiChanged();
@@ -369,24 +336,24 @@ var SetFilter = /** @class */ (function (_super) {
         return this.valueModel.getMiniFilter();
     };
     SetFilter.prototype.selectEverything = function () {
-        this.valueModel.selectAllUsingMiniFilter();
-        this.updateSelectAll();
-        this.virtualList.refresh();
+        this.valueModel.selectAll();
+        this.refresh();
     };
     SetFilter.prototype.selectNothing = function () {
-        this.valueModel.selectNothingUsingMiniFilter();
-        this.updateSelectAll();
-        this.virtualList.refresh();
+        this.valueModel.selectNothing();
+        this.refresh();
     };
     SetFilter.prototype.unselectValue = function (value) {
-        this.valueModel.unselectValue(value);
-        this.updateSelectAll();
-        this.virtualList.refresh();
+        this.valueModel.deselectValue(value);
+        this.refresh();
     };
     SetFilter.prototype.selectValue = function (value) {
         this.valueModel.selectValue(value);
-        this.updateSelectAll();
+        this.refresh();
+    };
+    SetFilter.prototype.refresh = function () {
         this.virtualList.refresh();
+        this.updateSelectAll();
     };
     SetFilter.prototype.isValueSelected = function (value) {
         return this.valueModel.isValueSelected(value);
@@ -403,12 +370,12 @@ var SetFilter = /** @class */ (function (_super) {
     SetFilter.prototype.getUniqueValue = function (index) {
         return this.valueModel.getUniqueValue(index);
     };
+    SetFilter.prototype.refreshVirtualList = function () {
+        this.virtualList.refresh();
+    };
     __decorate([
         core_1.RefSelector('eSelectAll')
     ], SetFilter.prototype, "eSelectAll", void 0);
-    __decorate([
-        core_1.RefSelector('eSelectAllContainer')
-    ], SetFilter.prototype, "eSelectAllContainer", void 0);
     __decorate([
         core_1.RefSelector('eMiniFilter')
     ], SetFilter.prototype, "eMiniFilter", void 0);

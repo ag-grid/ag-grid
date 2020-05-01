@@ -1,8 +1,16 @@
 import { Column } from "../entities/column";
+import { ColumnApi } from "../columnController/columnApi";
+import { GridApi } from "../gridApi";
+import { RowDropZoneParams } from "../gridPanel/rowDragFeature";
 import { RowNode } from "../entities/rowNode";
 export interface DragItem {
-    /** When dragging a row, this contains the row node being dragged */
+    /**
+     * When dragging a row, this contains the row node being dragged
+     * When dragging multiple rows, this contains the row that started the drag.
+     */
     rowNode?: RowNode;
+    /** When dragging multiple rows, this contains all rows being dragged */
+    rowNodes?: RowNode[];
     /** When dragging columns, this contains the columns being dragged */
     columns?: Column[];
     /** When dragging columns, this contains the visible state of the columns */
@@ -54,6 +62,7 @@ export interface DropTarget {
     onDragging?(params: DraggingEvent): void;
     /** Callback for when drag stops */
     onDragStop?(params: DraggingEvent): void;
+    external?: boolean;
 }
 export declare enum VerticalDirection {
     Up = 0,
@@ -72,11 +81,16 @@ export interface DraggingEvent {
     dragSource: DragSource;
     dragItem: DragItem;
     fromNudge: boolean;
+    api: GridApi;
+    columnApi: ColumnApi;
+    dropZoneTarget: HTMLElement;
 }
 export declare class DragAndDropService {
     private gridOptionsWrapper;
     private dragService;
     private environment;
+    private columnApi;
+    private gridApi;
     static ICON_PINNED: string;
     static ICON_MOVE: string;
     static ICON_LEFT: string;
@@ -92,7 +106,7 @@ export declare class DragAndDropService {
     private eventLastTime;
     private dragSource;
     private dragging;
-    private eWrapper;
+    private eGhost;
     private eGhostParent;
     private eGhostIcon;
     private dropTargets;
@@ -119,6 +133,9 @@ export declare class DragAndDropService {
     private getAllContainersFromDropTarget;
     private isMouseOnDropTarget;
     addDropTarget(dropTarget: DropTarget): void;
+    removeDropTarget(dropTarget: DropTarget): void;
+    hasExternalDropZones(): boolean;
+    findExternalZone(params: RowDropZoneParams): DropTarget;
     getHorizontalDirection(event: MouseEvent): HorizontalDirection;
     getVerticalDirection(event: MouseEvent): VerticalDirection;
     createDropTargetEvent(dropTarget: DropTarget, event: MouseEvent, hDirection: HorizontalDirection, vDirection: VerticalDirection, fromNudge: boolean): DraggingEvent;

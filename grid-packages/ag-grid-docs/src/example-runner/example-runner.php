@@ -225,6 +225,18 @@ function grid_example($title, $dir, $type = 'vanilla', $options = array())
     $config = $common_properties['config'];
     $config['options']['grid'] = $gridSettings;
 
+    if (isset($options['showImportsDropdown'])) {
+        $config['showImportsDropdown'] = $options['showImportsDropdown'];
+    }
+
+    if (isset($options['removeTitles'])) {
+        $config['removeTitles'] = $options['removeTitles'];
+    }
+
+    if ($options['defaultImportType']) {
+        $config['defaultImportType'] = $options['defaultImportType'];
+    }
+
     $query['grid'] = json_encode($gridSettings);
     $queryString = join("&", array_map('toQueryString', array_keys($query), $query));
 
@@ -382,6 +394,12 @@ function renderExampleExtras($config)
         ),
         'rxjs' => array(
             'scripts' => array('https://cdnjs.cloudflare.com/ajax/libs/rxjs/5.4.0/Rx.min.js')
+        ),
+        'bluebirdjs' => array(
+            'scripts' => array(
+                'https://cdnjs.cloudflare.com/ajax/libs/bluebird/3.7.2/bluebird.core.min.js',
+                'https://cdnjs.cloudflare.com/ajax/libs/bluebird/3.7.2/bluebird.min.js'
+            )
         ),
         'lodash' => array(
             'scripts' => array('https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.4/lodash.min.js')

@@ -118,8 +118,8 @@
                 headerName: 'Employee',
                 children: [
                     {headerName: "Name", field: "name",
-                        width: 150, pinned: true},
-                    {headerName: "Country", field: "country", width: 150,
+                        minWidth: 150, pinned: true},
+                    {headerName: "Country", field: "country", minWidth: 170,
                         cellRenderer: countryCellRenderer, pinned: true,
                         filterParams: {cellRenderer: countryCellRenderer, cellHeight: 20}},
                 ]
@@ -127,15 +127,15 @@
             {
                 headerName: 'IT Skills',
                 children: [
-                    {headerName: "Skills", width: 125, sortable: false, cellRenderer: skillsCellRenderer, filter: SkillFilter},
-                    {headerName: "Proficiency", field: "proficiency", filter: 'agNumberColumnFilter', width: 120, cellRenderer: percentCellRenderer, filter: ProficiencyFilter},
+                    {headerName: "Skills", minWidth: 125, sortable: false, cellRenderer: skillsCellRenderer, filter: SkillFilter},
+                    {headerName: "Proficiency", field: "proficiency", filter: 'agNumberColumnFilter', minWidth: 140, cellRenderer: percentCellRenderer, filter: ProficiencyFilter},
                 ]
             },
             {
                 headerName: 'Contact',
                 children: [
-                    {headerName: "Mobile", field: "mobile", width: 150, filter: 'agTextColumnFilter'},
-                    {headerName: "Land-line", field: "landline", width: 150, filter: 'agTextColumnFilter'},
+                    {headerName: "Mobile", field: "mobile", minWidth: 150, filter: 'agTextColumnFilter'},
+                    {headerName: "Land-line", field: "landline", minWidth: 150, filter: 'agTextColumnFilter'},
                     {headerName: "Address", field: "address", width: 500, filter: 'agTextColumnFilter'}
                 ]
             }
@@ -151,6 +151,9 @@
                 sortable: true,
                 filter: true,
                 resize: true
+            },
+            onGridReady: function(params) {
+                params.api.sizeColumnsToFit();
             }
         };
 

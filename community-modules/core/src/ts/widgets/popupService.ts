@@ -1,5 +1,5 @@
 import { Constants } from "../constants";
-import { Autowired, Bean, PostConstruct } from "../context/context";
+import { Autowired, Bean, PostConstruct, PreDestroy } from "../context/context";
 import { GridCore } from "../gridCore";
 import { GridOptionsWrapper } from "../gridOptionsWrapper";
 import { PostProcessPopupParams } from "../entities/gridOptions";
@@ -33,20 +33,31 @@ export class PopupService {
 
     private gridCore: GridCore;
     private popupList: AgPopup[] = [];
+    private events: (() => void)[] = [];
 
     @PostConstruct
     private init(): void {
-        this.eventService.addEventListener(Events.EVENT_KEYBOARD_FOCUS, () => {
-            this.popupList.forEach(popup => {
-                _.addCssClass(popup.element, 'ag-keyboard-focus');
-            });
-        });
+        this.events = [
+            this.eventService.addEventListener(Events.EVENT_KEYBOARD_FOCUS, () => {
+                this.popupList.forEach(popup => {
+                    _.addCssClass(popup.element, 'ag-keyboard-focus');
+                });
+            }),
 
-        this.eventService.addEventListener(Events.EVENT_MOUSE_FOCUS, () => {
-            this.popupList.forEach(popup => {
-                _.removeCssClass(popup.element, 'ag-keyboard-focus');
-            });
-        });
+            this.eventService.addEventListener(Events.EVENT_MOUSE_FOCUS, () => {
+                this.popupList.forEach(popup => {
+                    _.removeCssClass(popup.element, 'ag-keyboard-focus');
+                });
+            })
+        ];
+    }
+
+    @PreDestroy
+    public destroy(): void {
+        if (this.events.length) {
+            this.events.forEach(func => func());
+            this.events = [];
+        }
     }
 
     public registerGridCore(gridCore: GridCore): void {
@@ -278,7 +289,6 @@ export class PopupService {
         const parentRect = popupParent.getBoundingClientRect();
         const documentRect = eDocument.documentElement!.getBoundingClientRect();
         const isBody = popupParent === eDocument.body;
-        const defaultPadding = 3;
 
         let minHeight = Math.min(200, parentRect.height);
         let diff = 0;
@@ -294,7 +304,7 @@ export class PopupService {
         if (isBody) {
             heightOfParent -= Math.abs(documentRect.top - parentRect.top);
         }
-        const maxY = heightOfParent - minHeight - diff - defaultPadding;
+        const maxY = heightOfParent - minHeight - diff;
 
         return Math.min(Math.max(y, 0), Math.abs(maxY));
     }
@@ -306,7 +316,6 @@ export class PopupService {
         const parentRect = popupParent.getBoundingClientRect();
         const documentRect = eDocument.documentElement!.getBoundingClientRect();
         const isBody = popupParent === eDocument.body;
-        const defaultPadding = 3;
         const ePopup = params.ePopup;
 
         let minWidth = Math.min(200, parentRect.width);
@@ -326,7 +335,7 @@ export class PopupService {
             widthOfParent -= Math.abs(documentRect.left - parentRect.left);
         }
 
-        const maxX = widthOfParent - minWidth - diff - defaultPadding;
+        const maxX = widthOfParent - minWidth - diff;
 
         return Math.min(Math.max(x, 0), Math.abs(maxX));
     }
@@ -347,6 +356,7 @@ export class PopupService {
         alwaysOnTop?: boolean
     ): (event?: any) => void {
         const eDocument = this.gridOptionsWrapper.getDocument();
+        const processedAt = new Date().getTime();
 
         if (!eDocument) {
             console.warn('ag-grid: could not find the document, document is empty');
@@ -511,7 +521,7 @@ export class PopupService {
         }
         if (mouseEventOrTouch && originalClick) {
             // for x, allow 4px margin, to cover iPads, where touch (which opens menu) is followed
-            // by browser click (when you life finger up, touch is interrupted as click in browser)
+            // by browser click (when you finger up, touch is interrupted as click in browser)
             const screenX = mouseEvent ? mouseEvent.screenX : 0;
             const screenY = mouseEvent ? mouseEvent.screenY : 0;
 

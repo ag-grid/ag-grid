@@ -40,7 +40,7 @@ export declare class ServerSideBlock extends RowNodeBlock {
     isPixelInRange(pixel: number): boolean;
     getRowBounds(index: number, virtualRowCount: number): RowBounds | null;
     getRowIndexAtPixel(pixel: number, virtualRowCount: number): number;
-    clearRowTops(virtualRowCount: number): void;
+    clearDisplayIndexes(virtualRowCount: number): void;
     setDisplayIndexes(displayIndexSeq: NumberSequence, virtualRowCount: number, nextRowTop: {
         value: number;
     }): void;

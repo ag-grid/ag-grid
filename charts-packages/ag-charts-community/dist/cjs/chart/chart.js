@@ -12,6 +12,17 @@ var __extends = (this && this.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
+var __assign = (this && this.__assign) || function () {
+    __assign = Object.assign || function(t) {
+        for (var s, i = 1, n = arguments.length; i < n; i++) {
+            s = arguments[i];
+            for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
+                t[p] = s[p];
+        }
+        return t;
+    };
+    return __assign.apply(this, arguments);
+};
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -30,7 +41,7 @@ var sizeMonitor_1 = require("../util/sizeMonitor");
 var observable_1 = require("../util/observable");
 var cartesianSeries_1 = require("./series/cartesian/cartesianSeries");
 var id_1 = require("../util/id");
-var defaultTooltipCss = "\n.ag-chart-tooltip {\n    display: none;\n    position: absolute;\n    user-select: none;\n    pointer-events: none;\n    white-space: nowrap;\n    z-index: 99999;\n    font: 12px Verdana, sans-serif;\n    color: black;\n    background: rgb(244, 244, 244);\n    border-radius: 5px;\n    box-shadow: 0 0 1px rgba(3, 3, 3, 0.7), 0.5vh 0.5vh 1vh rgba(3, 3, 3, 0.25);\n}\n\n.ag-chart-tooltip-visible {\n    display: table;\n}\n\n.ag-chart-tooltip-title {\n    font-weight: bold;\n    padding: 7px;\n    border-top-left-radius: 5px;\n    border-top-right-radius: 5px;\n    color: white;\n    background-color: #888888;\n    border-top-left-radius: 5px;\n    border-top-right-radius: 5px;\n}\n\n.ag-chart-tooltip-content {\n    padding: 7px;\n    line-height: 1.7em;\n    border-bottom-left-radius: 5px;\n    border-bottom-right-radius: 5px;\n}\n";
+var defaultTooltipCss = "\n.ag-chart-tooltip {\n    display: none;\n    position: absolute;\n    user-select: none;\n    pointer-events: none;\n    white-space: nowrap;\n    z-index: 99999;\n    font: 12px Verdana, sans-serif;\n    color: black;\n    background: rgb(244, 244, 244);\n    border-radius: 5px;\n    box-shadow: 0 0 1px rgba(3, 3, 3, 0.7), 0.5vh 0.5vh 1vh rgba(3, 3, 3, 0.25);\n}\n\n.ag-chart-tooltip-visible {\n    display: table;\n}\n\n.ag-chart-tooltip-title {\n    font-weight: bold;\n    padding: 7px;\n    border-top-left-radius: 5px;\n    border-top-right-radius: 5px;\n    color: white;\n    background-color: #888888;\n    border-top-left-radius: 5px;\n    border-top-right-radius: 5px;\n}\n\n.ag-chart-tooltip-content {\n    padding: 7px;\n    line-height: 1.7em;\n    border-bottom-left-radius: 5px;\n    border-bottom-right-radius: 5px;\n}\n\n.ag-chart-tooltip-arrow::before {\n    content: \"\";\n\n    position: absolute;\n    top: 100%;\n    left: 50%;\n    transform: translateX(-50%);\n\n    border: 6px solid #989898;\n\n    border-left-color: transparent;\n    border-right-color: transparent;\n    border-top-color: #989898;\n    border-bottom-color: transparent;\n\n    width: 0;\n    height: 0;\n\n    margin: 0 auto;\n}\n\n.ag-chart-tooltip-arrow::after {\n    content: \"\";\n\n    position: absolute;\n    top: 100%;\n    left: 50%;\n    transform: translateX(-50%);\n\n    border: 5px solid black;\n\n    border-left-color: transparent;\n    border-right-color: transparent;\n    border-top-color: rgb(244, 244, 244);\n    border-bottom-color: transparent;\n\n    width: 0;\n    height: 0;\n\n    margin: 0 auto;\n}\n";
 var Chart = /** @class */ (function (_super) {
     __extends(Chart, _super);
     function Chart(document) {
@@ -41,26 +52,12 @@ var Chart = /** @class */ (function (_super) {
         _this.legend = new legend_1.Legend();
         _this.legendAutoPadding = new padding_1.Padding();
         _this.captionAutoPadding = 0; // top padding only
-        _this.tooltipOffset = [20, 20];
         _this._container = undefined;
         _this._data = [];
         _this._autoSize = false;
         _this.padding = new padding_1.Padding(20);
-        _this.onLayoutChange = function () {
-            _this.layoutPending = true;
-        };
-        _this.onLegendPositionChange = function () {
-            _this.legendAutoPadding.clear();
-            _this.layoutPending = true;
-        };
         _this._axes = [];
         _this._series = [];
-        _this.scheduleLayout = function () {
-            _this.layoutPending = true;
-        };
-        _this.scheduleData = function () {
-            _this.dataPending = true;
-        };
         _this._axesChanged = false;
         _this._seriesChanged = false;
         _this.layoutCallbackId = 0;
@@ -79,27 +76,57 @@ var Chart = /** @class */ (function (_super) {
             }
         };
         _this.dataCallbackId = 0;
-        _this.updateLegend = function () {
-            var legendData = [];
-            _this.series.filter(function (s) { return s.showInLegend; }).forEach(function (series) { return series.listSeriesItems(legendData); });
-            _this.legend.data = legendData;
-        };
         _this.onMouseMove = function (event) {
+            var _a = _this, lastPick = _a.lastPick, tooltipTracking = _a.tooltipTracking;
             var pick = _this.pickSeriesNode(event.offsetX, event.offsetY);
-            if (pick) {
+            var nodeDatum;
+            if (pick && pick.node instanceof shape_1.Shape) {
                 var node = pick.node;
-                if (node instanceof shape_1.Shape) {
-                    if (!_this.lastPick || // cursor moved from empty space to a node
-                        _this.lastPick.node !== node) { // cursor moved from one node to another
-                        _this.onSeriesNodePick(event, pick.series, node);
+                nodeDatum = node.datum;
+                if (lastPick && lastPick.datum === nodeDatum) {
+                    lastPick.node = node;
+                }
+                // Marker nodes will have the `point` info in their datums.
+                // Highlight if not a marker node or, if not in the tracking mode, highlight markers too.
+                if ((!node.datum.point || !tooltipTracking)) {
+                    if (!lastPick // cursor moved from empty space to a node
+                        || lastPick.node !== node) { // cursor moved from one node to another
+                        _this.onSeriesDatumPick(event, node.datum, node);
                     }
                     else if (pick.series.tooltipEnabled) { // cursor moved within the same node
                         _this.showTooltip(event);
                     }
+                    // A non-marker node (takes precedence over marker nodes) was highlighted.
+                    // Or we are not in the tracking mode.
+                    // Either way, we are done at this point.
+                    return;
                 }
             }
-            else if (_this.lastPick) { // cursor moved from a node to empty space
-                _this.lastPick.series.dehighlightNode();
+            var hideTooltip = false;
+            // In tracking mode a tooltip is shown for the closest rendered datum.
+            // This makes it easier to show tooltips when markers are small and/or plentiful
+            // and also gives the ability to show tooltips even when the series were configured
+            // to not render markers.
+            if (tooltipTracking) {
+                var closestDatum = _this.pickClosestSeriesNodeDatum(event.offsetX, event.offsetY);
+                if (closestDatum && closestDatum.point) {
+                    var _b = closestDatum.point, x = _b.x, y = _b.y;
+                    var canvas = _this.scene.canvas;
+                    var point = closestDatum.series.group.inverseTransformPoint(x, y);
+                    var canvasRect = canvas.element.getBoundingClientRect();
+                    _this.onSeriesDatumPick({
+                        pageX: Math.round(canvasRect.left + window.pageXOffset + point.x),
+                        pageY: Math.round(canvasRect.top + window.pageYOffset + point.y)
+                    }, closestDatum, nodeDatum === closestDatum ? pick.node : undefined);
+                }
+                else {
+                    hideTooltip = true;
+                }
+            }
+            if (lastPick && (hideTooltip || !tooltipTracking)) {
+                // cursor moved from a non-marker node to empty space
+                // lastPick.datum.series.dehighlightDatum();
+                _this.dehighlightDatum();
                 _this.hideTooltip();
                 _this.lastPick = undefined;
             }
@@ -108,16 +135,15 @@ var Chart = /** @class */ (function (_super) {
             _this.toggleTooltip(false);
         };
         _this.onClick = function (event) {
-            var datum = _this.legend.getDatumForPoint(event.offsetX, event.offsetY);
-            if (datum) {
-                var id_2 = datum.id, itemId = datum.itemId, enabled = datum.enabled;
-                var series = array_1.find(_this.series, function (series) { return series.id === id_2; });
-                if (series) {
-                    series.toggleSeriesItem(itemId, !enabled);
-                }
-            }
+            _this.checkSeriesNodeClick();
+            _this.checkLegendClick(event);
         };
         _this._tooltipClass = Chart.defaultTooltipClass;
+        /**
+         * If `true`, the tooltip will be shown for the marker closest to the mouse cursor.
+         * Only has effect on series with markers.
+         */
+        _this.tooltipTracking = true;
         var root = new group_1.Group();
         var background = _this.background;
         background.fill = 'white';
@@ -132,8 +158,8 @@ var Chart = /** @class */ (function (_super) {
         scene.container = element;
         _this.autoSize = true;
         var legend = _this.legend;
-        legend.addEventListener('layoutChange', _this.onLayoutChange);
-        legend.addPropertyListener('position', _this.onLegendPositionChange);
+        legend.addEventListener('layoutChange', _this.onLayoutChange, _this);
+        legend.addPropertyListener('position', _this.onLegendPositionChange, _this);
         _this.tooltipElement = document.createElement('div');
         _this.tooltipClass = '';
         document.body.appendChild(_this.tooltipElement);
@@ -144,20 +170,9 @@ var Chart = /** @class */ (function (_super) {
             document.head.insertBefore(styleElement, document.head.querySelector('style'));
             Chart.tooltipDocuments.push(document);
         }
-        _this.setupListeners(scene.canvas.element);
-        var captionListener = (function (event) {
-            var chart = event.source, caption = event.value, oldCaption = event.oldValue;
-            if (oldCaption) {
-                oldCaption.removeEventListener('change', chart.onLayoutChange);
-                chart.scene.root.removeChild(oldCaption.node);
-            }
-            if (caption) {
-                caption.addEventListener('change', chart.onLayoutChange);
-                chart.scene.root.appendChild(caption.node);
-            }
-        });
-        _this.addPropertyListener('title', captionListener);
-        _this.addPropertyListener('subtitle', captionListener);
+        _this.setupDomListeners(scene.canvas.element);
+        _this.addPropertyListener('title', _this.onCaptionChange);
+        _this.addPropertyListener('subtitle', _this.onCaptionChange);
         _this.addEventListener('layoutChange', function () { return _this.layoutPending = true; });
         return _this;
     }
@@ -255,9 +270,26 @@ var Chart = /** @class */ (function (_super) {
         }
         sizeMonitor_1.SizeMonitor.unobserve(this.element);
         this.container = undefined;
-        this.legend.removeEventListener('layoutChange', this.onLayoutChange);
-        this.cleanupListeners(this.scene.canvas.element);
+        this.cleanupDomListeners(this.scene.canvas.element);
         this.scene.container = undefined;
+    };
+    Chart.prototype.onLayoutChange = function () {
+        this.layoutPending = true;
+    };
+    Chart.prototype.onLegendPositionChange = function () {
+        this.legendAutoPadding.clear();
+        this.layoutPending = true;
+    };
+    Chart.prototype.onCaptionChange = function (event) {
+        var value = event.value, oldValue = event.oldValue;
+        if (oldValue) {
+            oldValue.removeEventListener('change', this.onLayoutChange, this);
+            this.scene.root.removeChild(oldValue.node);
+        }
+        if (value) {
+            value.addEventListener('change', this.onLayoutChange, this);
+            this.scene.root.appendChild(value.node);
+        }
     };
     Object.defineProperty(Chart.prototype, "element", {
         get: function () {
@@ -294,6 +326,15 @@ var Chart = /** @class */ (function (_super) {
         enumerable: true,
         configurable: true
     });
+    Chart.prototype.scheduleLayout = function () {
+        this.layoutPending = true;
+    };
+    Chart.prototype.scheduleData = function () {
+        // To prevent the chart from thinking the cursor is over the same node
+        // after a change to data (the nodes are reused on data changes).
+        this.dehighlightDatum();
+        this.dataPending = true;
+    };
     Chart.prototype.addSeries = function (series, before) {
         var _a = this, allSeries = _a.series, seriesRoot = _a.seriesRoot;
         var canAdd = allSeries.indexOf(series) < 0;
@@ -319,15 +360,17 @@ var Chart = /** @class */ (function (_super) {
         if (!series.data) {
             series.data = this.data;
         }
-        series.addEventListener('layoutChange', this.scheduleLayout);
-        series.addEventListener('dataChange', this.scheduleData);
-        series.addEventListener('legendChange', this.updateLegend);
+        series.addEventListener('layoutChange', this.scheduleLayout, this);
+        series.addEventListener('dataChange', this.scheduleData, this);
+        series.addEventListener('legendChange', this.updateLegend, this);
+        series.addEventListener('nodeClick', this.onSeriesNodeClick, this);
     };
     Chart.prototype.freeSeries = function (series) {
         series.chart = undefined;
-        series.removeEventListener('layoutChange', this.scheduleLayout);
-        series.removeEventListener('dataChange', this.scheduleData);
-        series.removeEventListener('legendChange', this.updateLegend);
+        series.removeEventListener('layoutChange', this.scheduleLayout, this);
+        series.removeEventListener('dataChange', this.scheduleData, this);
+        series.removeEventListener('legendChange', this.updateLegend, this);
+        series.removeEventListener('nodeClick', this.onSeriesNodeClick, this);
     };
     Chart.prototype.addSeriesAfter = function (series, after) {
         var _a = this, allSeries = _a.series, seriesRoot = _a.seriesRoot;
@@ -523,6 +566,11 @@ var Chart = /** @class */ (function (_super) {
         this.updateLegend();
         this.layoutPending = true;
     };
+    Chart.prototype.updateLegend = function () {
+        var legendData = [];
+        this.series.filter(function (s) { return s.showInLegend; }).forEach(function (series) { return series.listSeriesItems(legendData); });
+        this.legend.data = legendData;
+    };
     Chart.prototype.positionCaptions = function () {
         var _a = this, title = _a.title, subtitle = _a.subtitle;
         var titleVisible = false;
@@ -601,16 +649,17 @@ var Chart = /** @class */ (function (_super) {
         legendGroup.translationX = Math.floor(translationX + legendGroup.translationX);
         legendGroup.translationY = Math.floor(translationY + legendGroup.translationY);
     };
-    Chart.prototype.setupListeners = function (chartElement) {
+    Chart.prototype.setupDomListeners = function (chartElement) {
         chartElement.addEventListener('mousemove', this.onMouseMove);
         chartElement.addEventListener('mouseout', this.onMouseOut);
         chartElement.addEventListener('click', this.onClick);
     };
-    Chart.prototype.cleanupListeners = function (chartElement) {
+    Chart.prototype.cleanupDomListeners = function (chartElement) {
         chartElement.removeEventListener('mousemove', this.onMouseMove);
         chartElement.removeEventListener('mouseout', this.onMouseMove);
         chartElement.removeEventListener('click', this.onClick);
     };
+    // x/y are local canvas coordinates in CSS pixels, not actual pixels
     Chart.prototype.pickSeriesNode = function (x, y) {
         var allSeries = this.series;
         var node = undefined;
@@ -625,18 +674,88 @@ var Chart = /** @class */ (function (_super) {
             }
         }
     };
-    Chart.prototype.onSeriesNodePick = function (event, series, node) {
+    // Provided x/y are in canvas coordinates.
+    Chart.prototype.pickClosestSeriesNodeDatum = function (x, y) {
+        if (!this.seriesRect || !this.seriesRect.containsPoint(x, y)) {
+            return undefined;
+        }
+        var allSeries = this.series;
+        function getDistance(p1, p2) {
+            return Math.sqrt(Math.pow((p1.x - p2.x), 2) + Math.pow((p1.y - p2.y), 2));
+        }
+        var minDistance = Infinity;
+        var closestDatum;
+        var _loop_1 = function (i) {
+            var series = allSeries[i];
+            if (!series.visible) {
+                return "continue";
+            }
+            var hitPoint = series.group.transformPoint(x, y);
+            series.getNodeData().forEach(function (datum) {
+                if (!datum.point) {
+                    return;
+                }
+                var distance = getDistance(hitPoint, datum.point);
+                if (distance < minDistance) {
+                    minDistance = distance;
+                    closestDatum = datum;
+                }
+            });
+        };
+        for (var i = allSeries.length - 1; i >= 0; i--) {
+            _loop_1(i);
+        }
+        if (closestDatum) {
+            return closestDatum;
+        }
+    };
+    Chart.prototype.checkSeriesNodeClick = function () {
+        var lastPick = this.lastPick;
+        if (lastPick && lastPick.node) {
+            var datum = this.lastPick.datum;
+            datum.series.fireNodeClickEvent(datum);
+        }
+    };
+    Chart.prototype.onSeriesNodeClick = function (event) {
+        this.fireEvent(__assign(__assign({}, event), { type: 'seriesNodeClick' }));
+    };
+    Chart.prototype.checkLegendClick = function (event) {
+        var datum = this.legend.getDatumForPoint(event.offsetX, event.offsetY);
+        if (datum) {
+            var id_2 = datum.id, itemId = datum.itemId, enabled = datum.enabled;
+            var series = array_1.find(this.series, function (series) { return series.id === id_2; });
+            if (series) {
+                series.toggleSeriesItem(itemId, !enabled);
+                if (enabled) {
+                    this.hideTooltip();
+                }
+            }
+        }
+    };
+    Chart.prototype.onSeriesDatumPick = function (meta, datum, node) {
         if (this.lastPick) {
-            this.lastPick.series.dehighlightNode();
+            // this.lastPick.datum.series.dehighlightDatum();
+            this.dehighlightDatum();
         }
         this.lastPick = {
-            series: series,
+            datum: datum,
             node: node
         };
-        series.highlightNode(node);
-        var html = series.tooltipEnabled && series.getTooltipHtml(node.datum);
+        this.highlightDatum(datum);
+        // datum.series.highlightDatum(datum);
+        var html = datum.series.tooltipEnabled && datum.series.getTooltipHtml(datum);
         if (html) {
-            this.showTooltip(event, html);
+            this.showTooltip(meta, html);
+        }
+    };
+    Chart.prototype.highlightDatum = function (datum) {
+        this.highlightedDatum = datum;
+        this.series.forEach(function (s) { return s.onHighlightChange(); });
+    };
+    Chart.prototype.dehighlightDatum = function () {
+        if (this.highlightedDatum) {
+            this.highlightedDatum = undefined;
+            this.series.forEach(function (s) { return s.onHighlightChange(); });
         }
     };
     Object.defineProperty(Chart.prototype, "tooltipClass", {
@@ -653,13 +772,19 @@ var Chart = /** @class */ (function (_super) {
         configurable: true
     });
     Chart.prototype.toggleTooltip = function (visible) {
+        if (!visible && this.lastPick) {
+            this.dehighlightDatum();
+            this.lastPick = undefined;
+        }
+        this.updateTooltipClass(visible);
+    };
+    Chart.prototype.updateTooltipClass = function (visible, constrained) {
         var classList = [Chart.defaultTooltipClass, this.tooltipClass];
-        if (visible) {
+        if (visible === true) {
             classList.push(Chart.defaultTooltipClass + "-visible");
         }
-        else if (this.lastPick) {
-            this.lastPick.series.dehighlightNode();
-            this.lastPick = undefined;
+        if (constrained !== true) {
+            classList.push(Chart.defaultTooltipClass + "-arrow");
         }
         this.tooltipElement.setAttribute('class', classList.join(' '));
     };
@@ -667,10 +792,9 @@ var Chart = /** @class */ (function (_super) {
      * Shows tooltip at the given event's coordinates.
      * If the `html` parameter is missing, moves the existing tooltip to the new position.
      */
-    Chart.prototype.showTooltip = function (event, html) {
+    Chart.prototype.showTooltip = function (meta, html) {
         var el = this.tooltipElement;
-        var offset = this.tooltipOffset;
-        var parent = el.parentElement;
+        var container = this.container;
         if (html !== undefined) {
             el.innerHTML = html;
         }
@@ -680,14 +804,20 @@ var Chart = /** @class */ (function (_super) {
         if (html) {
             this.toggleTooltip(true);
         }
-        var tooltipRect = el.getBoundingClientRect();
-        var top = event.pageY + offset[1];
-        var left = event.pageX + offset[0];
-        if (tooltipRect &&
-            parent &&
-            parent.parentElement &&
-            (left - pageXOffset + tooltipRect.width > parent.parentElement.offsetWidth)) {
-            left -= tooltipRect.width + offset[0] * 2;
+        var left = meta.pageX - el.clientWidth / 2;
+        var top = meta.pageY - el.clientHeight - 8;
+        if (container) {
+            var tooltipRect = el.getBoundingClientRect();
+            var minLeft = 0;
+            var maxLeft = window.innerWidth - tooltipRect.width;
+            if (left < minLeft) {
+                left = minLeft;
+                this.updateTooltipClass(true, true);
+            }
+            else if (left > maxLeft) {
+                left = maxLeft;
+                this.updateTooltipClass(true, true);
+            }
         }
         el.style.left = left + "px";
         el.style.top = top + "px";

@@ -21,7 +21,6 @@ import { Selection } from "../../../../scene/selection";
 import { Group } from "../../../../scene/group";
 import { numericExtent } from "../../../../util/array";
 import { toFixed } from "../../../../util/number";
-import { OHLC } from "./marker/ohlc";
 import { Candlestick } from "./marker/candlestick";
 import { locale } from "../../../../util/time/format/defaultLocale";
 import { CartesianSeries } from "../cartesianSeries";
@@ -64,17 +63,18 @@ var OHLCSeries = /** @class */ (function (_super) {
         };
         _this.dateFormatter = locale.format('%d %b, %Y');
         _this.marker.type = Candlestick;
-        _this.marker.addEventListener('styleChange', function () { return _this.update(); });
-        _this.marker.addPropertyListener('type', function () { return _this.onMarkerTypeChange(); });
-        _this.addEventListener('dataChange', function () {
-            _this.dirtyDateData = true;
-            _this.dirtyOpenData = true;
-            _this.dirtyHighData = true;
-            _this.dirtyLowData = true;
-            _this.dirtyCloseData = true;
-        });
+        _this.marker.addEventListener('styleChange', _this.update, _this);
+        _this.marker.addPropertyListener('type', _this.onMarkerTypeChange, _this);
+        _this.addEventListener('dataChange', _this.onDataChange);
         return _this;
     }
+    OHLCSeries.prototype.onDataChange = function () {
+        this.dirtyDateData = true;
+        this.dirtyOpenData = true;
+        this.dirtyHighData = true;
+        this.dirtyLowData = true;
+        this.dirtyCloseData = true;
+    };
     OHLCSeries.prototype.onMarkerTypeChange = function () {
         this.groupSelection = this.groupSelection.setData([]);
         this.groupSelection.exit.remove();
@@ -217,28 +217,14 @@ var OHLCSeries = /** @class */ (function (_super) {
             return this.yDomain;
         }
     };
-    OHLCSeries.prototype.highlightNode = function (node) {
-        if (!(node instanceof OHLC)) {
-            return;
-        }
-        this.highlightedNode = node;
-        this.scheduleLayout();
-    };
-    OHLCSeries.prototype.dehighlightNode = function () {
-        this.highlightedNode = undefined;
-        this.scheduleLayout();
-    };
     OHLCSeries.prototype.update = function () {
-        var visible = this.group.visible = this.visible;
-        // if (!chart || !visible || chart.dataPending || chart.layoutPending || !(chart.xAxis && chart.yAxis)) {
-        //     return;
-        // }
+        var _this = this;
         var _a = this, xAxis = _a.xAxis, yAxis = _a.yAxis;
         var xScale = xAxis.scale;
         var yScale = yAxis.scale;
         var xOffset = (xScale.bandwidth || 0) / 2;
         var yOffset = (yScale.bandwidth || 0) / 2;
-        var _b = this, data = _b.data, dateData = _b.dateData, openData = _b.openData, highData = _b.highData, lowData = _b.lowData, closeData = _b.closeData, marker = _b.marker, highlightedNode = _b.highlightedNode;
+        var _b = this, data = _b.data, dateData = _b.dateData, openData = _b.openData, highData = _b.highData, lowData = _b.lowData, closeData = _b.closeData, marker = _b.marker, highlightedDatum = _b.highlightedDatum;
         var Marker = marker.type;
         var groupSelectionData = dateData.map(function (dateDatum, i) {
             var open = openData[i];
@@ -246,6 +232,7 @@ var OHLCSeries = /** @class */ (function (_super) {
             var yOpen = yScale.convert(open) + yOffset;
             var yClose = yScale.convert(close) + yOffset;
             return {
+                series: _this,
                 seriesDatum: data[i],
                 date: xScale.convert(dateDatum) + xOffset,
                 open: yOpen,
@@ -266,14 +253,17 @@ var OHLCSeries = /** @class */ (function (_super) {
         var _c = this.highlightStyle, highlightFill = _c.fill, highlightStroke = _c.stroke;
         groupSelection.selectByClass(Marker)
             .each(function (node, datum) {
+            var highlighted = highlightedDatum &&
+                highlightedDatum.series === datum.series &&
+                highlightedDatum.seriesDatum === datum.seriesDatum;
             node.date = datum.date;
             node.open = datum.open;
             node.high = datum.high;
             node.low = datum.low;
             node.close = datum.close;
             node.width = datum.width;
-            node.fill = node === highlightedNode && highlightFill !== undefined ? highlightFill : datum.fill;
-            node.stroke = node === highlightedNode && highlightStroke !== undefined ? highlightStroke : datum.stroke;
+            node.fill = highlighted && highlightFill !== undefined ? highlightFill : datum.fill;
+            node.stroke = highlighted && highlightStroke !== undefined ? highlightStroke : datum.stroke;
             node.fillOpacity = marker.fillOpacity;
             node.strokeOpacity = marker.strokeOpacity;
             node.strokeWidth = datum.strokeWidth;

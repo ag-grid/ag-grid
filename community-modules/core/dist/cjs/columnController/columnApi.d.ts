@@ -1,4 +1,4 @@
-// Type definitions for @ag-grid-community/core v23.0.2
+// Type definitions for @ag-grid-community/core v23.1.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { ColDef, ColGroupDef } from "../entities/colDef";
@@ -50,6 +50,10 @@ export declare class ColumnApi {
     moveRowGroupColumn(fromIndex: number, toIndex: number): void;
     setColumnAggFunc(column: Column, aggFunc: string): void;
     setColumnWidth(key: string | Column, newWidth: number, finished?: boolean): void;
+    setColumnWidths(columnWidths: {
+        key: string | Column;
+        newWidth: number;
+    }[], finished?: boolean): void;
     setPivotMode(pivotMode: boolean): void;
     isPivotMode(): boolean;
     getSecondaryPivotColumn(pivotKeys: string[], valueColKey: string | Column): Column;

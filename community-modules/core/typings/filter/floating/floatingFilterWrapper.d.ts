@@ -1,5 +1,5 @@
-import { Column } from "../../entities/column";
-import { Component } from "../../widgets/component";
+import { Column } from '../../entities/column';
+import { Component } from '../../widgets/component';
 export declare class FloatingFilterWrapper extends Component {
     private static filterToFloatingFilterNames;
     private static TEMPLATE;
@@ -30,6 +30,7 @@ export declare class FloatingFilterWrapper extends Component {
     private onColumnWidthChanged;
     private setupWithFloatingFilter;
     private parentFilterInstance;
+    private getFilterComponent;
     private getFloatingFilterInstance;
     private createDynamicParams;
     private getFilterComponentPrototype;

@@ -101,7 +101,7 @@ function onRowDragEnd(event) {
         var updatedRows = [];
         moveToPath(newParentPath, event.node, updatedRows);
 
-        gridOptions.api.updateRowData({
+        gridOptions.api.applyTransaction({
             update: updatedRows
         });
         gridOptions.api.clearFocusedCell();
@@ -210,6 +210,15 @@ function getFileCellRenderer() {
     };
 
     return FileCellRenderer;
+}
+
+if (!String.prototype.endsWith) {
+	String.prototype.endsWith = function(search, this_len) {
+		if (this_len === undefined || this_len > this.length) {
+			this_len = this.length;
+		}
+		return this.substring(this_len - search.length, this_len) === search;
+	};
 }
 
 function getFileIcon(filename) {

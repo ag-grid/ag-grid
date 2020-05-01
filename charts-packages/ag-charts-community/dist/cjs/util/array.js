@@ -81,6 +81,10 @@ function numericExtent(values) {
     }
 }
 exports.numericExtent = numericExtent;
+/**
+ * finds the min and max using a process appropriate for stacked values. Ie,
+ * summing up the positive and negative numbers, and returning the totals of each
+ */
 function findMinMax(values) {
     var min = 0;
     var max = 0;

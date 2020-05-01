@@ -29,6 +29,7 @@ export class RowDragComp extends Component {
     @PostConstruct
     private postConstruct(): void {
         const eGui = this.getGui();
+
         eGui.appendChild(_.createIconNoSpan('rowDrag', this.beans.gridOptionsWrapper, null));
         this.addDragSource();
 
@@ -67,7 +68,7 @@ export class RowDragComp extends Component {
         const dragItem: IRowDragItem = {
             rowNode: this.rowNode,
             columns: [this.column],
-            defaultTextValue: this.cellValue
+            defaultTextValue: this.cellValue,
         };
 
         const rowDragText = this.column.getColDef().rowDragText;
@@ -76,13 +77,12 @@ export class RowDragComp extends Component {
             type: DragSourceType.RowDrag,
             eElement: this.getGui(),
             dragItemName: () => {
+                const dragItemCount = this.getSelectedCount();
                 if (rowDragText) {
-                    return rowDragText(dragItem);
+                    return rowDragText(dragItem, dragItemCount);
                 }
 
-                const count = this.getSelectedCount();
-
-                return count === 1 ? this.cellValue : `${count} rows`;
+                return dragItemCount === 1 ? this.cellValue : `${dragItemCount} rows`;
             },
             getDragItem: () => dragItem,
             dragStartPixels: 0
@@ -160,10 +160,6 @@ class NonManagedVisibilityStrategy extends VisibilityStrategy {
 class ManagedVisibilityStrategy extends VisibilityStrategy {
     private readonly beans: Beans;
 
-    private sortActive: boolean;
-    private filterActive: boolean;
-    private rowGroupActive: boolean;
-
     constructor(parent: RowDragComp, beans: Beans, rowNode: RowNode, column: Column) {
         super(parent, rowNode, column);
         this.beans = beans;
@@ -173,9 +169,9 @@ class ManagedVisibilityStrategy extends VisibilityStrategy {
     private postConstruct(): void {
         // we do not show the component if sort, filter or grouping is active
 
-        this.addDestroyableEventListener(this.beans.eventService, Events.EVENT_SORT_CHANGED, this.onSortChanged.bind(this));
-        this.addDestroyableEventListener(this.beans.eventService, Events.EVENT_FILTER_CHANGED, this.onFilterChanged.bind(this));
-        this.addDestroyableEventListener(this.beans.eventService, Events.EVENT_COLUMN_ROW_GROUP_CHANGED, this.onRowGroupChanged.bind(this));
+        this.addDestroyableEventListener(this.beans.eventService, Events.EVENT_SORT_CHANGED, this.workOutVisibility.bind(this));
+        this.addDestroyableEventListener(this.beans.eventService, Events.EVENT_FILTER_CHANGED, this.workOutVisibility.bind(this));
+        this.addDestroyableEventListener(this.beans.eventService, Events.EVENT_COLUMN_ROW_GROUP_CHANGED, this.workOutVisibility.bind(this));
 
         // in case data changes, then we need to update visibility of drag item
         this.addDestroyableEventListener(this.rowNode, RowNode.EVENT_DATA_CHANGED, this.workOutVisibility.bind(this));
@@ -183,39 +179,6 @@ class ManagedVisibilityStrategy extends VisibilityStrategy {
 
         this.addDestroyableEventListener(this.beans.gridOptionsWrapper, 'suppressRowDrag', this.onSuppressRowDrag.bind(this));
 
-        this.updateSortActive();
-        this.updateFilterActive();
-        this.updateRowGroupActive();
-
-        this.workOutVisibility();
-    }
-
-    private updateRowGroupActive(): void {
-        const rowGroups = this.beans.columnController.getRowGroupColumns();
-        this.rowGroupActive = !_.missingOrEmpty(rowGroups);
-    }
-
-    private onRowGroupChanged(): void {
-        this.updateRowGroupActive();
-        this.workOutVisibility();
-    }
-
-    private updateSortActive(): void {
-        const sortModel = this.beans.sortController.getSortModel();
-        this.sortActive = !_.missingOrEmpty(sortModel);
-    }
-
-    private onSortChanged(): void {
-        this.updateSortActive();
-        this.workOutVisibility();
-    }
-
-    private updateFilterActive(): void {
-        this.filterActive = this.beans.filterManager.isAnyFilterPresent();
-    }
-
-    private onFilterChanged(): void {
-        this.updateFilterActive();
         this.workOutVisibility();
     }
 
@@ -225,10 +188,11 @@ class ManagedVisibilityStrategy extends VisibilityStrategy {
 
     private workOutVisibility(): void {
         // only show the drag if both sort and filter are not present
-        const sortOrFilterOrGroupActive = this.sortActive || this.filterActive || this.rowGroupActive;
+        const rowDragFeature = this.beans.gridPanel.getRowDragFeature();
+        const shouldPreventRowMove = rowDragFeature && rowDragFeature.shouldPreventRowMove();
         const suppressRowDrag = this.beans.gridOptionsWrapper.isSuppressRowDrag();
-
-        const neverDisplayed = sortOrFilterOrGroupActive || suppressRowDrag;
+        const hasExternalDropZones = this.beans.dragAndDropService.hasExternalDropZones();
+        const neverDisplayed = (shouldPreventRowMove && !hasExternalDropZones) || suppressRowDrag;
 
         this.setDisplayedOrVisible(neverDisplayed);
     }

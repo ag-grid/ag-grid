@@ -27,8 +27,10 @@ import { PopupEditorWrapper } from "./cellEditors/popupEditorWrapper";
 import { _, Promise } from "../utils";
 import { IFrameworkOverrides } from "../interfaces/iFrameworkOverrides";
 import { DndSourceComp } from "./dndSourceComp";
+import { TooltipFeature } from "../widgets/tooltipFeature";
+import { TooltipParentComp } from '../widgets/tooltipFeature';
 
-export class CellComp extends Component {
+export class CellComp extends Component implements TooltipParentComp {
 
     public static DOM_DATA_KEY_CELL_COMP = 'cellComp';
 
@@ -217,7 +219,7 @@ export class CellComp extends Component {
         this.refreshHandle();
 
         if (_.exists(this.tooltip) && !this.beans.gridOptionsWrapper.isEnableBrowserTooltips()) {
-            this.beans.tooltipManager.registerTooltip(this);
+            this.addFeature(new TooltipFeature(this, 'cell'), this.beans.context);
         }
     }
 
@@ -305,7 +307,7 @@ export class CellComp extends Component {
     private onDisplayColumnsChanged(): void {
         const colsSpanning: Column[] = this.getColSpanningList();
 
-        if (!_.compareArrays(this.colsSpanning, colsSpanning)) {
+        if (!_.areEqual(this.colsSpanning, colsSpanning)) {
             this.colsSpanning = colsSpanning;
             this.onWidthChanged();
             this.onLeftChanged(); // left changes when doing RTL
@@ -685,14 +687,6 @@ export class CellComp extends Component {
             } else {
                 this.eParentOfValue.removeAttribute('title');
             }
-        } else {
-            if (hadTooltip) {
-                if (!hasNewTooltip) {
-                    this.beans.tooltipManager.unregisterTooltip(this);
-                }
-            } else if (hasNewTooltip) {
-                this.beans.tooltipManager.registerTooltip(this);
-            }
         }
     }
 
@@ -725,8 +719,7 @@ export class CellComp extends Component {
                 valueFormatted: this.valueFormatted,
                 rowIndex: this.cellPosition.rowIndex,
                 node: this.rowNode,
-                data: this.rowNode.data,
-                $scope: this.scope,
+                data: this.rowNode.data
             });
         }
 
@@ -852,13 +845,8 @@ export class CellComp extends Component {
             this.createCellRendererFunc = null;
             // this can return null in the event that the user has switched from a renderer component to nothing, for example
             // when using a cellRendererSelect to return a component or null depending on row data etc
-            let componentPromise: Promise<ICellRendererComp>;
-
-            if (cellRendererTypeNormal) {
-                componentPromise = this.beans.userComponentFactory.newCellRenderer(this.getComponentHolder(), params);
-            } else {
-                componentPromise = this.beans.userComponentFactory.newPinnedRowCellRenderer(this.getComponentHolder(), params);
-            }
+            const componentPromise = this.beans.userComponentFactory.newCellRenderer(
+                this.getComponentHolder(), params, !cellRendererTypeNormal);
 
             if (componentPromise) {
                 componentPromise.then(callback);
@@ -1202,14 +1190,21 @@ export class CellComp extends Component {
             }
         );
 
-        this.beans.popupService.positionPopupOverComponent({
+        const params = {
             column: this.column,
             rowNode: this.rowNode,
             type: 'popupCellEditor',
             eventSource: this.getGui(),
             ePopup: ePopupGui,
             keepWithinBounds: true
-        });
+        };
+
+        const position = this.cellEditor && this.cellEditor.getPopupPosition ? this.cellEditor.getPopupPosition() : 'over';
+        if (position === 'under') {
+            this.beans.popupService.positionPopupOverComponent(params);
+        } else {
+            this.beans.popupService.positionPopupUnderComponent(params);
+        }
 
         this.angular1Compile();
     }
@@ -1460,7 +1455,7 @@ export class CellComp extends Component {
     }
 
     private onSpaceKeyPressed(event: KeyboardEvent): void {
-        const { gridOptionsWrapper }  = this.beans;
+        const { gridOptionsWrapper } = this.beans;
         if (!this.editingCell && gridOptionsWrapper.isRowSelection()) {
             const newSelection = !this.rowNode.isSelected();
             if (newSelection || gridOptionsWrapper.isRowDeselection()) {
@@ -1496,7 +1491,7 @@ export class CellComp extends Component {
 
         // if we are clicking on a checkbox, we need to make sure the cell wrapping that checkbox
         // is focused but we don't want to change the range selection, so return here.
-        if (this.containsCheckbox(target)) {
+        if (this.containsWidget(target)) {
             return;
         }
 
@@ -1528,7 +1523,7 @@ export class CellComp extends Component {
         return false;
     }
 
-    private containsCheckbox(target: HTMLElement): boolean {
+    private containsWidget(target: HTMLElement): boolean {
         return _.isElementChildOfClass(target, 'ag-selection-checkbox', 3);
     }
 
@@ -1609,8 +1604,6 @@ export class CellComp extends Component {
     // if the row is going (removing is an expensive operation, so only need to remove
     // the top part)
     public destroy(): void {
-        super.destroy();
-
         if (this.createCellRendererFunc) {
             this.beans.taskQueue.cancelTask(this.createCellRendererFunc);
         }
@@ -1625,6 +1618,8 @@ export class CellComp extends Component {
         if (this.selectionHandle) {
             this.selectionHandle.destroy();
         }
+
+        super.destroy();
     }
 
     public onLeftChanged(): void {

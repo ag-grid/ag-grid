@@ -1,11 +1,12 @@
 {
   "name": "ag-charts-angular",
-  "version": "1.0.1",
+  "version": "1.1.0",
   "scripts": {
     "ng": "ng",
-    "build": "ng build",
+    "build": "ng build && npm run hash",
     "test": "ng test  --watch false --browsers ChromeHeadless",
-    "lint": "ng lint"
+    "lint": "ng lint",
+    "hash": "sh ../../scripts/hashDirectory.sh > .hash"
   },
   "repository": {
     "type": "git",
@@ -40,7 +41,7 @@
     "rxjs": "~6.4.0",
     "tslib": "^1.10.0",
     "zone.js": "~0.9.1",
-    "ag-charts-community": "~1.0.0"
+    "ag-charts-community": "~1.1.0"
   },
   "devDependencies": {
     "@angular-devkit/build-angular": "~0.803.23",

@@ -125,7 +125,7 @@ export const ColourEditor = ({ value, onChange }) => {
     const color = rgb || colourString || 'black';
 
     return <div className="colour-editor">
-        <div class="colour-editor__input-wrapper">
+        <div className="colour-editor__input-wrapper">
             <input className="colour-editor__input" type="text" value={colourString} maxLength={25} onChange={inputOnChange} />
             <div style={{ 'backgroundColor': colourString }} className="colour-editor__sample"></div>
         </div>

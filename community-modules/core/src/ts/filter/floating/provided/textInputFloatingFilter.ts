@@ -1,17 +1,17 @@
-import { IFloatingFilterParams } from "../floatingFilter";
-import { RefSelector } from "../../../widgets/componentAnnotations";
-import { ProvidedFilterModel } from "../../../interfaces/iFilter";
-import { _ } from "../../../utils";
-import { Constants } from "../../../constants";
-import { ProvidedFilter } from "../../provided/providedFilter";
-import { PostConstruct } from "../../../context/context";
-import { SimpleFloatingFilter } from "./simpleFloatingFilter";
-import { ISimpleFilterModel, SimpleFilter } from "../../provided/simpleFilter";
-import { FilterChangedEvent } from "../../../events";
-import { AgInputTextField } from "../../../widgets/agInputTextField";
+import { IFloatingFilterParams } from '../floatingFilter';
+import { RefSelector } from '../../../widgets/componentAnnotations';
+import { ProvidedFilterModel } from '../../../interfaces/iFilter';
+import { debounce } from '../../../utils/function';
+import { Constants } from '../../../constants';
+import { ProvidedFilter } from '../../provided/providedFilter';
+import { PostConstruct } from '../../../context/context';
+import { SimpleFloatingFilter } from './simpleFloatingFilter';
+import { ISimpleFilterModel, SimpleFilter } from '../../provided/simpleFilter';
+import { FilterChangedEvent } from '../../../events';
+import { AgInputTextField } from '../../../widgets/agInputTextField';
+import { isKeyPressed } from '../../../utils/keyboard';
 
 export abstract class TextInputFloatingFilter extends SimpleFloatingFilter {
-
     @RefSelector('eFloatingFilterInput') private eFloatingFilterInput: AgInputTextField;
 
     protected params: IFloatingFilterParams;
@@ -20,8 +20,8 @@ export abstract class TextInputFloatingFilter extends SimpleFloatingFilter {
 
     @PostConstruct
     private postConstruct(): void {
-        this.setTemplate(
-            `<div class="ag-floating-filter-input" role="presentation">
+        this.setTemplate(/* html */`
+            <div class="ag-floating-filter-input" role="presentation">
                 <ag-input-text-field ref="eFloatingFilterInput"></ag-input-text-field>
             </div>`);
     }
@@ -32,7 +32,7 @@ export abstract class TextInputFloatingFilter extends SimpleFloatingFilter {
 
     public onParentModelChanged(model: ProvidedFilterModel, event: FilterChangedEvent): void {
         // we don't want to update the floating filter if the floating filter caused the change.
-        // as if it caused the change, the ui is already in sycn. if we didn't do this, the UI
+        // as if it caused the change, the ui is already in sync. if we didn't do this, the UI
         // would behave strange as it would be updating as the user is typing
         if (this.isEventFromFloatingFilter(event)) { return; }
 
@@ -50,8 +50,7 @@ export abstract class TextInputFloatingFilter extends SimpleFloatingFilter {
         this.applyActive = ProvidedFilter.isUseApplyButton(this.params.filterParams);
         const debounceMs = ProvidedFilter.getDebounceMs(this.params.filterParams, this.getDefaultDebounceMs());
 
-        const toDebounce: () => void = _.debounce(this.syncUpWithParentFilter.bind(this), debounceMs);
-
+        const toDebounce: () => void = debounce(this.syncUpWithParentFilter.bind(this), debounceMs);
         const filterGui = this.eFloatingFilterInput.getGui();
 
         this.addDestroyableEventListener(filterGui, 'input', toDebounce);
@@ -59,15 +58,19 @@ export abstract class TextInputFloatingFilter extends SimpleFloatingFilter {
         this.addDestroyableEventListener(filterGui, 'keydown', toDebounce);
 
         const columnDef = (params.column.getDefinition() as any);
-        if (columnDef.filterParams && columnDef.filterParams.filterOptions && columnDef.filterParams.filterOptions.length === 1 && columnDef.filterParams.filterOptions[0] === 'inRange') {
+
+        if (columnDef.filterParams &&
+            columnDef.filterParams.filterOptions &&
+            columnDef.filterParams.filterOptions.length === 1 &&
+            columnDef.filterParams.filterOptions[0] === 'inRange') {
             this.eFloatingFilterInput.setDisabled(true);
         }
     }
 
     private syncUpWithParentFilter(e: KeyboardEvent): void {
         const value = this.eFloatingFilterInput.getValue();
+        const enterKeyPressed = isKeyPressed(e, Constants.KEY_ENTER);
 
-        const enterKeyPressed = _.isKeyPressed(e, Constants.KEY_ENTER);
         if (this.applyActive && !enterKeyPressed) { return; }
 
         this.params.parentFilterInstance(filterInstance => {

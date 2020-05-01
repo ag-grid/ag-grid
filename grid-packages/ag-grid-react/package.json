@@ -1,17 +1,18 @@
 {
   "name": "ag-grid-react",
-  "version": "23.0.2",
+  "version": "23.1.0",
   "description": "ag-Grid React Component",
   "main": "main.js",
   "typings": "./main.d.ts",
   "scripts": {
-    "build": "gulp",
+    "build": "gulp && npm run hash",
     "umd": "rollup -c",
     "test:e2e": "gulp link-umd-e2e && npm run cypress",
     "test:watch": "jest --watch",
     "test:debug": "node --inspect-brk node_modules/.bin/jest --runInBand",
     "cypress:open": "cypress open",
-    "cypress": "cypress run --spec 'cypress/integration/**/*spec.js'"
+    "cypress": "cypress run --spec 'cypress/integration/**/*spec.js'",
+    "hash": "sh ../../scripts/hashDirectory.sh > .hash"
   },
   "repository": {
     "type": "git",
@@ -37,7 +38,7 @@
     "@types/jest": "24.0.18",
     "@types/react": "16.9.2",
     "@types/react-dom": "16.9.0",
-    "ag-grid-community": "~23.0.0",
+    "ag-grid-community": "~23.1.0",
     "babel-preset-react-app": "^9.0.1",
     "cypress": "3.0.1",
     "enzyme": "^3.10.0",
@@ -69,7 +70,7 @@
     "vinyl-source-stream": "^2.0.0"
   },
   "peerDependencies": {
-    "ag-grid-community": "~23.0.0",
+    "ag-grid-community": "~23.1.0",
     "react": "^16.3.0",
     "react-dom": "^16.3.0"
   },

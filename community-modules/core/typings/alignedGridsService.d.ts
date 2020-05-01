@@ -10,7 +10,9 @@ export declare class AlignedGridsService {
     private consuming;
     private setBeans;
     registerGridComp(gridPanel: GridPanel): void;
+    private events;
     init(): void;
+    destroy(): void;
     private fireEvent;
     private onEvent;
     private fireColumnEvent;

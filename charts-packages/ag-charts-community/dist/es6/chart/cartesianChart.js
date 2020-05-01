@@ -17,6 +17,7 @@ import { Group } from "../scene/group";
 import { CategoryAxis } from "./axis/categoryAxis";
 import { GroupedCategoryAxis } from "./axis/groupedCategoryAxis";
 import { ChartAxisPosition } from "./chartAxis";
+import { BBox } from "../scene/bbox";
 // import { ClipRect } from "../scene/clipRect";
 var CartesianChart = /** @class */ (function (_super) {
     __extends(CartesianChart, _super);
@@ -24,7 +25,6 @@ var CartesianChart = /** @class */ (function (_super) {
         if (document === void 0) { document = window.document; }
         var _this = _super.call(this, document) || this;
         _this._seriesRoot = new Group();
-        _this._updateAxes = _this.updateAxes.bind(_this);
         // Prevent the scene from rendering chart components in an invalid state
         // (before first layout is performed).
         _this.scene.root.visible = false;
@@ -46,12 +46,7 @@ var CartesianChart = /** @class */ (function (_super) {
         }
         this.scene.root.visible = true;
         var _a = this, width = _a.width, height = _a.height, axes = _a.axes, legend = _a.legend;
-        var shrinkRect = {
-            x: 0,
-            y: 0,
-            width: width,
-            height: height
-        };
+        var shrinkRect = new BBox(0, 0, width, height);
         this.positionCaptions();
         this.positionLegend();
         if (legend.enabled && legend.data.length) {
@@ -145,6 +140,7 @@ var CartesianChart = /** @class */ (function (_super) {
             }
             // axis.tick.count = Math.abs(axis.range[1] - axis.range[0]) > 200 ? 10 : 5;
         });
+        this.seriesRect = shrinkRect;
         this.series.forEach(function (series) {
             series.group.translationX = Math.floor(shrinkRect.x);
             series.group.translationY = Math.floor(shrinkRect.y);
@@ -160,11 +156,11 @@ var CartesianChart = /** @class */ (function (_super) {
     };
     CartesianChart.prototype.initSeries = function (series) {
         _super.prototype.initSeries.call(this, series);
-        series.addEventListener('dataProcessed', this._updateAxes);
+        series.addEventListener('dataProcessed', this.updateAxes, this);
     };
     CartesianChart.prototype.freeSeries = function (series) {
         _super.prototype.freeSeries.call(this, series);
-        series.removeEventListener('dataProcessed', this._updateAxes);
+        series.removeEventListener('dataProcessed', this.updateAxes, this);
     };
     CartesianChart.prototype.updateAxes = function () {
         this.axes.forEach(function (axis) {

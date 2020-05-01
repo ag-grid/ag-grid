@@ -17,7 +17,7 @@ export declare class GridChartComp extends Component {
     private eChartContainer;
     private eMenuContainer;
     private eEmpty;
-    private resizeObserverService;
+    private eTitleEditContainer;
     private gridOptionsWrapper;
     private environment;
     private chartTranslator;
@@ -26,6 +26,7 @@ export declare class GridChartComp extends Component {
     private columnApi;
     private popupService;
     private chartMenu;
+    private titleEdit;
     private chartDialog;
     private model;
     private chartController;
@@ -39,6 +40,7 @@ export declare class GridChartComp extends Component {
     private addDialog;
     private getBestDialogSize;
     private addMenu;
+    private addTitleEditComp;
     private refresh;
     private shouldRecreateChart;
     getCurrentChartType(): ChartType;
@@ -47,7 +49,6 @@ export declare class GridChartComp extends Component {
     private handleEmptyChart;
     private downloadChart;
     refreshCanvasSize(): void;
-    private addResizeListener;
     private setActiveChartCellRange;
     private raiseChartCreatedEvent;
     private raiseChartDestroyedEvent;

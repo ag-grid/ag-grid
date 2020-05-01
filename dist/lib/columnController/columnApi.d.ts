@@ -47,6 +47,10 @@ export declare class ColumnApi {
     moveRowGroupColumn(fromIndex: number, toIndex: number): void;
     setColumnAggFunc(column: Column, aggFunc: string): void;
     setColumnWidth(key: string | Column, newWidth: number, finished?: boolean): void;
+    setColumnWidths(columnWidths: {
+        key: string | Column;
+        newWidth: number;
+    }[], finished?: boolean): void;
     setPivotMode(pivotMode: boolean): void;
     isPivotMode(): boolean;
     getSecondaryPivotColumn(pivotKeys: string[], valueColKey: string | Column): Column;

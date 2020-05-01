@@ -191,7 +191,12 @@ define('skipInPageNav', true);
             <div class="chart-gallery-item__name">Bubble With Negative Values</div>
         </a>
     </div>
-    
+    <div class="chart-gallery-item">
+        <a href="./bubble-with-categories.php" class="chart-gallery-item__link">
+            <img class="chart-gallery-item__thumbnail" src="./thumbnails/bubble-with-categories.png" /><br />
+            <div class="chart-gallery-item__name">Bubble Chart with Category Data</div>
+        </a>
+    </div>
 </div>
 
 <h3 id="area" class="chart-gallery__title">Area</h3>
@@ -223,6 +228,30 @@ define('skipInPageNav', true);
     </div>
     <div class="chart-gallery-item chart-gallery-item--empty"></div>
     <div class="chart-gallery-item chart-gallery-item--empty"></div>
+</div>
+
+<h3 id="histogram" class="chart-gallery__title">Histogram</h3>
+
+<div class="chart-gallery">
+    <div class="chart-gallery-item">
+        <a href="./simple-histogram.php" class="chart-gallery-item__link">
+            <img class="chart-gallery-item__thumbnail" src="./thumbnails/simple-histogram.png" /><br />
+            <div class="chart-gallery-item__name">Simple Histogram</div>
+        </a>
+    </div>
+    <div class="chart-gallery-item">
+        <a href="./histogram-with-specified-bins.php" class="chart-gallery-item__link">
+            <img class="chart-gallery-item__thumbnail" src="./thumbnails/histogram-with-specified-bins.png" /><br />
+            <div class="chart-gallery-item__name">Histogram With Specified Bins</div>
+        </a>
+    </div>
+    <div class="chart-gallery-item">
+        <a href="./xy-histogram-with-mean-aggregation.php" class="chart-gallery-item__link">
+            <img class="chart-gallery-item__thumbnail" src="./thumbnails/xy-histogram-with-mean-aggregation.png" /><br />
+            <div class="chart-gallery-item__name">XY Histogram With Mean Aggregation</div>
+        </a>
+    </div>
+
 </div>
 
 <h3 id="feature-highlights" class="chart-gallery__title">Feature Highlights</h3>

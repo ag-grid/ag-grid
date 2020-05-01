@@ -25,6 +25,15 @@ var InfiniteBlock = /** @class */ (function (_super) {
         _this.cacheParams = params;
         return _this;
     }
+    InfiniteBlock.prototype.getDisplayIndexStart = function () {
+        return this.getBlockNumber() * this.cacheParams.blockSize;
+    };
+    // this is an estimate, as the last block will probably only be partially full. however
+    // this method is used to know if this block is been rendered, before destroying, so
+    // and this estimate works in that use case.
+    InfiniteBlock.prototype.getDisplayIndexEnd = function () {
+        return this.getDisplayIndexStart() + this.cacheParams.blockSize;
+    };
     InfiniteBlock.prototype.createBlankRowNode = function (rowIndex) {
         var rowNode = _super.prototype.createBlankRowNode.call(this, rowIndex);
         rowNode.uiLevel = 0;

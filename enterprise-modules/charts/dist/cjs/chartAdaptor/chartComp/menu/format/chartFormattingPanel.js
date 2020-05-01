@@ -29,6 +29,7 @@ var pieSeriesPanel_1 = require("./series/pieSeriesPanel");
 var chartPanel_1 = require("./chart/chartPanel");
 var areaSeriesPanel_1 = require("./series/areaSeriesPanel");
 var scatterSeriesPanel_1 = require("./series/scatterSeriesPanel");
+var histogramSeriesPanel_1 = require("./series/histogramSeriesPanel");
 var ChartFormattingPanel = /** @class */ (function (_super) {
     __extends(ChartFormattingPanel, _super);
     function ChartFormattingPanel(chartController) {
@@ -79,6 +80,10 @@ var ChartFormattingPanel = /** @class */ (function (_super) {
             case core_1.ChartType.NormalizedArea:
                 this.addComponent(new axisPanel_1.AxisPanel(this.chartController));
                 this.addComponent(new areaSeriesPanel_1.AreaSeriesPanel(this.chartController));
+                break;
+            case core_1.ChartType.Histogram:
+                this.addComponent(new axisPanel_1.AxisPanel(this.chartController));
+                this.addComponent(new histogramSeriesPanel_1.HistogramSeriesPanel(this.chartController));
                 break;
             default:
                 console.warn("ag-Grid: ChartFormattingPanel - unexpected chart type index: " + chartType + " supplied");

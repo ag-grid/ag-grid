@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v23.0.2
+ * @version v23.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -82,8 +82,8 @@ var providedFilter_1 = require("./filter/provided/providedFilter");
 exports.ProvidedFilter = providedFilter_1.ProvidedFilter;
 var simpleFilter_1 = require("./filter/provided/simpleFilter");
 exports.SimpleFilter = simpleFilter_1.SimpleFilter;
-var scalerFilter_1 = require("./filter/provided/scalerFilter");
-exports.ScalerFilter = scalerFilter_1.ScalerFilter;
+var scalarFilter_1 = require("./filter/provided/scalarFilter");
+exports.ScalarFilter = scalarFilter_1.ScalarFilter;
 var numberFilter_1 = require("./filter/provided/number/numberFilter");
 exports.NumberFilter = numberFilter_1.NumberFilter;
 var textFilter_1 = require("./filter/provided/text/textFilter");
@@ -169,10 +169,10 @@ var rowNodeBlock_1 = require("./modules/rowNodeCache/rowNodeBlock");
 exports.RowNodeBlock = rowNodeBlock_1.RowNodeBlock;
 var rowNodeBlockLoader_1 = require("./modules/rowNodeCache/rowNodeBlockLoader");
 exports.RowNodeBlockLoader = rowNodeBlockLoader_1.RowNodeBlockLoader;
-var paginationProxy_1 = require("./pagination/paginationProxy");
-exports.PaginationProxy = paginationProxy_1.PaginationProxy;
 var rowNodeCache_1 = require("./modules/rowNodeCache/rowNodeCache");
 exports.RowNodeCache = rowNodeCache_1.RowNodeCache;
+var paginationProxy_1 = require("./pagination/paginationProxy");
+exports.PaginationProxy = paginationProxy_1.PaginationProxy;
 //styling
 var stylingService_1 = require("./styling/stylingService");
 exports.StylingService = stylingService_1.StylingService;
@@ -251,6 +251,7 @@ var gridCore_1 = require("./gridCore");
 exports.GridCore = gridCore_1.GridCore;
 var logger_1 = require("./logger");
 exports.Logger = logger_1.Logger;
+exports.LoggerFactory = logger_1.LoggerFactory;
 var selectionController_1 = require("./selectionController");
 exports.SelectionController = selectionController_1.SelectionController;
 var sortController_1 = require("./sortController");
@@ -264,8 +265,6 @@ var valueCache_1 = require("./valueService/valueCache");
 exports.ValueCache = valueCache_1.ValueCache;
 var expressionService_1 = require("./valueService/expressionService");
 exports.ExpressionService = expressionService_1.ExpressionService;
-var logger_2 = require("./logger");
-exports.LoggerFactory = logger_2.LoggerFactory;
 var cellPosition_1 = require("./entities/cellPosition");
 exports.CellPositionUtils = cellPosition_1.CellPositionUtils;
 var rowPosition_1 = require("./entities/rowPosition");
@@ -277,8 +276,8 @@ var frameworkComponentWrapper_1 = require("./components/framework/frameworkCompo
 exports.BaseComponentWrapper = frameworkComponentWrapper_1.BaseComponentWrapper;
 var environment_1 = require("./environment");
 exports.Environment = environment_1.Environment;
-var tooltipManager_1 = require("./widgets/tooltipManager");
-exports.TooltipManager = tooltipManager_1.TooltipManager;
+var tooltipFeature_1 = require("./widgets/tooltipFeature");
+exports.TooltipFeature = tooltipFeature_1.TooltipFeature;
 // charts
 __export(require("./interfaces/iChartOptions"));
 var moduleNames_1 = require("./modules/moduleNames");

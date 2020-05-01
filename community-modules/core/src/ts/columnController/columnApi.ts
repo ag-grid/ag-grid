@@ -1,10 +1,10 @@
-import { ColDef, ColGroupDef } from "../entities/colDef";
-import { ColumnGroupChild } from "../entities/columnGroupChild";
-import { ColumnController, ColumnState } from "./columnController";
-import { OriginalColumnGroup } from "../entities/originalColumnGroup";
-import { ColumnGroup } from "../entities/columnGroup";
-import { Column } from "../entities/column";
-import { Autowired, Bean } from "../context/context";
+import {ColDef, ColGroupDef} from "../entities/colDef";
+import {ColumnGroupChild} from "../entities/columnGroupChild";
+import {ColumnController, ColumnState} from "./columnController";
+import {OriginalColumnGroup} from "../entities/originalColumnGroup";
+import {ColumnGroup} from "../entities/columnGroup";
+import {Column} from "../entities/column";
+import {Autowired, Bean} from "../context/context";
 
 @Bean('columnApi')
 export class ColumnApi {
@@ -66,7 +66,14 @@ export class ColumnApi {
 
     public moveRowGroupColumn(fromIndex: number, toIndex: number): void { this.columnController.moveRowGroupColumn(fromIndex, toIndex); }
     public setColumnAggFunc(column: Column, aggFunc: string): void { this.columnController.setColumnAggFunc(column, aggFunc); }
-    public setColumnWidth(key: string | Column, newWidth: number, finished: boolean = true): void { this.columnController.setColumnWidth(key, newWidth, false, finished); }
+
+    public setColumnWidth(key: string | Column, newWidth: number, finished: boolean = true): void {
+        this.columnController.setColumnWidths([{key, newWidth}], false, finished);
+    }
+    public setColumnWidths(columnWidths: {key: string | Column, newWidth: number}[], finished: boolean = true): void {
+        this.columnController.setColumnWidths(columnWidths, false, finished);
+    }
+
     public setPivotMode(pivotMode: boolean): void { this.columnController.setPivotMode(pivotMode); }
     public isPivotMode(): boolean { return this.columnController.isPivotMode(); }
     public getSecondaryPivotColumn(pivotKeys: string[], valueColKey: string | Column): Column { return this.columnController.getSecondaryPivotColumn(pivotKeys, valueColKey); }

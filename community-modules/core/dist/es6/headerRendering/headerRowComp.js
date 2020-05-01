@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v23.0.2
+ * @version v23.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -23,15 +23,18 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
-import { Component } from "../widgets/component";
-import { Autowired, PostConstruct } from "../context/context";
-import { GridOptionsWrapper } from "../gridOptionsWrapper";
-import { Events } from "../events";
-import { HeaderWrapperComp } from "./header/headerWrapperComp";
-import { HeaderGroupWrapperComp } from "./headerGroup/headerGroupWrapperComp";
-import { Constants } from "../constants";
-import { _ } from "../utils";
-import { FloatingFilterWrapper } from "../filter/floating/floatingFilterWrapper";
+import { Component } from '../widgets/component';
+import { Autowired, PostConstruct } from '../context/context';
+import { GridOptionsWrapper } from '../gridOptionsWrapper';
+import { Events } from '../events';
+import { HeaderWrapperComp } from './header/headerWrapperComp';
+import { HeaderGroupWrapperComp } from './headerGroup/headerGroupWrapperComp';
+import { Constants } from '../constants';
+import { FloatingFilterWrapper } from '../filter/floating/floatingFilterWrapper';
+import { isBrowserSafari } from '../utils/browser';
+import { missing } from '../utils/generic';
+import { removeFromArray } from '../utils/array';
+import { setDomChildOrder } from '../utils/dom';
 export var HeaderRowType;
 (function (HeaderRowType) {
     HeaderRowType[HeaderRowType["COLUMN_GROUP"] = 0] = "COLUMN_GROUP";
@@ -41,15 +44,15 @@ export var HeaderRowType;
 var HeaderRowComp = /** @class */ (function (_super) {
     __extends(HeaderRowComp, _super);
     function HeaderRowComp(dept, type, pinned, dropTarget) {
-        var _this = _super.call(this, "<div class=\"ag-header-row\" role=\"row\"/>") || this;
+        var _this = _super.call(this, /* html */ "<div class=\"ag-header-row\" role=\"row\" />") || this;
         _this.headerComps = {};
         _this.dept = dept;
         _this.type = type;
         _this.pinned = pinned;
         _this.dropTarget = dropTarget;
-        var niceClassName = HeaderRowType[type].toLowerCase().replace(/_/g, "-");
+        var niceClassName = HeaderRowType[type].toLowerCase().replace(/_/g, '-');
         _this.addCssClass("ag-header-row-" + niceClassName);
-        if (_.isBrowserSafari()) {
+        if (isBrowserSafari()) {
             // fix for a Safari rendering bug that caused the header to flicker above chart panels
             // as you move the mouse over the header
             _this.getGui().style.transform = 'translateZ(0)';
@@ -82,18 +85,17 @@ var HeaderRowComp = /** @class */ (function (_super) {
         var numberOfFloating = 0;
         var groupHeight;
         var headerHeight;
-        if (!this.columnController.isPivotMode()) {
-            if (this.gridOptionsWrapper.isFloatingFilter()) {
-                headerRowCount++;
-            }
-            numberOfFloating = (this.gridOptionsWrapper.isFloatingFilter()) ? 1 : 0;
-            groupHeight = this.gridOptionsWrapper.getGroupHeaderHeight();
-            headerHeight = this.gridOptionsWrapper.getHeaderHeight();
-        }
-        else {
-            numberOfFloating = 0;
+        if (this.columnController.isPivotMode()) {
             groupHeight = this.gridOptionsWrapper.getPivotGroupHeaderHeight();
             headerHeight = this.gridOptionsWrapper.getPivotHeaderHeight();
+        }
+        else {
+            if (this.columnController.hasFloatingFilters()) {
+                headerRowCount++;
+                numberOfFloating = 1;
+            }
+            groupHeight = this.gridOptionsWrapper.getGroupHeaderHeight();
+            headerHeight = this.gridOptionsWrapper.getHeaderHeight();
         }
         var numberOfNonGroups = 1 + numberOfFloating;
         var numberOfGroups = headerRowCount - numberOfNonGroups;
@@ -136,7 +138,7 @@ var HeaderRowComp = /** @class */ (function (_super) {
     HeaderRowComp.prototype.getWidthForRow = function () {
         var printLayout = this.gridOptionsWrapper.getDomLayout() === Constants.DOM_LAYOUT_PRINT;
         if (printLayout) {
-            var centerRow = _.missing(this.pinned);
+            var centerRow = missing(this.pinned);
             if (centerRow) {
                 return this.columnController.getContainerWidth(Constants.PINNED_RIGHT)
                     + this.columnController.getContainerWidth(Constants.PINNED_LEFT)
@@ -167,7 +169,7 @@ var HeaderRowComp = /** @class */ (function (_super) {
         var printLayout = this.gridOptionsWrapper.getDomLayout() === Constants.DOM_LAYOUT_PRINT;
         if (printLayout) {
             // for print layout, we add all columns into the center
-            var centerContainer = _.missing(this.pinned);
+            var centerContainer = missing(this.pinned);
             if (centerContainer) {
                 var result_1 = [];
                 [Constants.PINNED_LEFT, null, Constants.PINNED_RIGHT].forEach(function (pinned) {
@@ -209,7 +211,7 @@ var HeaderRowComp = /** @class */ (function (_super) {
             var headerComp;
             var eHeaderCompGui;
             if (colAlreadyInDom) {
-                _.removeFromArray(currentChildIds, idOfChild);
+                removeFromArray(currentChildIds, idOfChild);
             }
             else {
                 headerComp = _this.createHeaderComp(child);
@@ -224,7 +226,7 @@ var HeaderRowComp = /** @class */ (function (_super) {
         var ensureDomOrder = this.gridOptionsWrapper.isEnsureDomOrder();
         if (ensureDomOrder) {
             var correctChildOrder = correctChildIds.map(function (id) { return _this.headerComps[id].getGui(); });
-            _.setDomChildOrder(this.getGui(), correctChildOrder);
+            setDomChildOrder(this.getGui(), correctChildOrder);
         }
     };
     HeaderRowComp.prototype.createHeaderComp = function (columnGroupChild) {
@@ -247,17 +249,11 @@ var HeaderRowComp = /** @class */ (function (_super) {
         Autowired('gridOptionsWrapper')
     ], HeaderRowComp.prototype, "gridOptionsWrapper", void 0);
     __decorate([
-        Autowired('gridApi')
-    ], HeaderRowComp.prototype, "gridApi", void 0);
-    __decorate([
         Autowired('columnController')
     ], HeaderRowComp.prototype, "columnController", void 0);
     __decorate([
         Autowired('eventService')
     ], HeaderRowComp.prototype, "eventService", void 0);
-    __decorate([
-        Autowired('filterManager')
-    ], HeaderRowComp.prototype, "filterManager", void 0);
     __decorate([
         PostConstruct
     ], HeaderRowComp.prototype, "init", null);

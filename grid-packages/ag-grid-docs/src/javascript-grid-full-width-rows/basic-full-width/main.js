@@ -1,6 +1,6 @@
 var rowData = createData(100, 'body');
-var pinnedTopRowData = createData(3, 'floating');
-var pinnedBottomRowData = createData(3, 'floating');
+var pinnedTopRowData = createData(3, 'pinned');
+var pinnedBottomRowData = createData(3, 'pinned');
 
 function alphabet() {
     return 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
@@ -58,12 +58,12 @@ var gridOptions = {
     // see ag-Grid docs cellRenderer for details on how to build cellRenderers
     // this is a simple function cellRenderer, returns plain HTML, not a component
     fullWidthCellRenderer: function(params) {
-        // pinned rows will have node.floating set to either 'top' or 'bottom' - see docs for floating
+        // pinned rows will have node.rowPinned set to either 'top' or 'bottom' - see docs for row pinning
         var cssClass;
         var message;
 
         if (params.node.rowPinned) {
-            cssClass = 'example-full-width-floating-row';
+            cssClass = 'example-full-width-pinned-row';
             message = 'Pinned full width row at index ' + params.rowIndex;
         } else {
             cssClass = 'example-full-width-row';

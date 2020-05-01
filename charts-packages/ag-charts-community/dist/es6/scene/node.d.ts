@@ -37,12 +37,12 @@ export declare abstract class Node {
     protected isContainerNode: boolean;
     protected _scene?: Scene;
     _setScene(value?: Scene): void;
-    get scene(): Scene | undefined;
+    readonly scene: Scene | undefined;
     private _parent?;
     _setParent(value?: Node): void;
-    get parent(): Node | undefined;
+    readonly parent: Node | undefined;
     private _children;
-    get children(): ReadonlyArray<Node>;
+    readonly children: ReadonlyArray<Node>;
     private static MAX_SAFE_INTEGER;
     countChildren(depth?: number): number;
     private childSet;
@@ -66,29 +66,23 @@ export declare abstract class Node {
      * @param nextNode
      */
     insertBefore<T extends Node>(node: T, nextNode?: Node | null): T;
-    get nextSibling(): Node | undefined;
+    readonly nextSibling: Node | undefined;
     matrix: Matrix;
     protected inverseMatrix: Matrix;
-    /**
-     * Calculates the combined inverse transformation for this node,
-     * and uses it to convert the given transformed point
-     * to the untransformed one.
-     * @param x
-     * @param y
-     */
     transformPoint(x: number, y: number): {
         x: number;
         y: number;
     };
+    inverseTransformPoint(x: number, y: number): {
+        x: number;
+        y: number;
+    };
     private _dirtyTransform;
-    set dirtyTransform(value: boolean);
-    get dirtyTransform(): boolean;
+    dirtyTransform: boolean;
     private _scalingX;
-    set scalingX(value: number);
-    get scalingX(): number;
+    scalingX: number;
     private _scalingY;
-    set scalingY(value: number);
-    get scalingY(): number;
+    scalingY: number;
     /**
      * The center of scaling.
      * The default value of `null` means the scaling center will be
@@ -96,25 +90,20 @@ export declare abstract class Node {
      * of a node.
      */
     private _scalingCenterX;
-    set scalingCenterX(value: number | null);
-    get scalingCenterX(): number | null;
+    scalingCenterX: number | null;
     private _scalingCenterY;
-    set scalingCenterY(value: number | null);
-    get scalingCenterY(): number | null;
+    scalingCenterY: number | null;
     private _rotationCenterX;
-    set rotationCenterX(value: number | null);
-    get rotationCenterX(): number | null;
+    rotationCenterX: number | null;
     private _rotationCenterY;
-    set rotationCenterY(value: number | null);
-    get rotationCenterY(): number | null;
+    rotationCenterY: number | null;
     /**
      * Rotation angle in radians.
      * The value is set as is. No normalization to the [-180, 180) or [0, 360)
      * interval is performed.
      */
     private _rotation;
-    set rotation(value: number);
-    get rotation(): number;
+    rotation: number;
     /**
      * For performance reasons the rotation angle's internal representation
      * is in radians. Therefore, don't expect to get the same number you set.
@@ -127,14 +116,11 @@ export declare abstract class Node {
      *
      * @param value Rotation angle in degrees.
      */
-    set rotationDeg(value: number);
-    get rotationDeg(): number;
+    rotationDeg: number;
     private _translationX;
-    set translationX(value: number);
-    get translationX(): number;
+    translationX: number;
     private _translationY;
-    set translationY(value: number);
-    get translationY(): number;
+    translationY: number;
     isPointInNode(x: number, y: number): boolean;
     /**
      * Hit testing method.
@@ -178,10 +164,8 @@ export declare abstract class Node {
      * The animation frame callback is only scheduled if it hasn't been already.
      */
     private _dirty;
-    set dirty(value: boolean);
-    get dirty(): boolean;
+    dirty: boolean;
     private _visible;
-    set visible(value: boolean);
-    get visible(): boolean;
+    visible: boolean;
     pointerEvents: PointerEvents;
 }

@@ -27,6 +27,6 @@
 
     .ag-column-group-icons,
     .ag-column-select-header-icon {
-        color: ag-param(secondary-foreground-color);
+        @include ag-color-property(color, secondary-foreground-color);
     }
 }

@@ -24,6 +24,7 @@ export declare class EnterpriseMenu extends BeanStub {
     private columnController;
     private filterManager;
     private gridApi;
+    private columnApi;
     private gridOptionsWrapper;
     private eventService;
     private menuItemMapper;

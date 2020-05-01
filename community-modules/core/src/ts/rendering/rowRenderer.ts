@@ -663,12 +663,12 @@ export class RowRenderer extends BeanStub {
         }
     }
 
-    public destroy() {
-        super.destroy();
-
+    public destroy(): void {
         const rowIndexesToRemove = Object.keys(this.rowCompsByIndex);
 
         this.removeRowComps(rowIndexesToRemove);
+
+        super.destroy();
     }
 
     private binRowComps(recycleRows: boolean): { [key: string]: RowComp } {
@@ -727,19 +727,24 @@ export class RowRenderer extends BeanStub {
         this.removeRowComps(indexesNotToDraw);
     }
 
-    private calculateIndexesToDraw(): number[] {
+    private calculateIndexesToDraw(rowsToRecycle: { [key: string]: RowComp }): number[] {
         // all in all indexes in the viewport
         const indexesToDraw = _.createArrayOfNumbers(this.firstRenderedRow, this.lastRenderedRow);
 
-        // add in indexes of rows we want to keep, because they are currently editing
-        _.iterateObject(this.rowCompsByIndex, (indexStr: string, rowComp: RowComp) => {
+        const checkRowToDraw = (indexStr: string, rowComp: RowComp) => {
             const index = Number(indexStr);
             if (index < this.firstRenderedRow || index > this.lastRenderedRow) {
                 if (this.doNotUnVirtualiseRow(rowComp)) {
                     indexesToDraw.push(index);
                 }
             }
-        });
+        };
+
+        // if we are redrawing due to scrolling change, then old rows are in this.rowCompsByIndex
+        _.iterateObject(this.rowCompsByIndex, checkRowToDraw);
+
+        // if we are redrawing due to model update, then old rows are in rowsToRecycle
+        _.iterateObject(rowsToRecycle, checkRowToDraw);
 
         indexesToDraw.sort((a: number, b: number) => a - b);
 
@@ -757,7 +762,7 @@ export class RowRenderer extends BeanStub {
 
         // this is all the indexes we want, including those that already exist, so this method
         // will end up going through each index and drawing only if the row doesn't already exist
-        const indexesToDraw = this.calculateIndexesToDraw();
+        const indexesToDraw = this.calculateIndexesToDraw(rowsToRecycle);
 
         this.removeRowCompsNotToDraw(indexesToDraw);
 

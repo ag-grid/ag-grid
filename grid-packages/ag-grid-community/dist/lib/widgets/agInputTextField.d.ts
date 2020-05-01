@@ -1,4 +1,4 @@
-import { AgAbstractInputField, IInputField } from "./agAbstractInputField";
+import { AgAbstractInputField, IInputField } from './agAbstractInputField';
 export declare class AgInputTextField extends AgAbstractInputField<HTMLInputElement, string> {
     protected className: string;
     protected displayTag: string;

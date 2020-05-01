@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v23.0.2
+ * @version v23.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -74,6 +74,7 @@ var GridOptionsWrapper = /** @class */ (function () {
         // of the grid to be picked up by the garbage collector
         this.gridOptions.api = null;
         this.gridOptions.columnApi = null;
+        this.removeEventListener(GridOptionsWrapper_1.PROP_DOM_LAYOUT, this.updateLayoutClassesListener);
     };
     GridOptionsWrapper.prototype.init = function () {
         var _this = this;
@@ -100,7 +101,7 @@ var GridOptionsWrapper = /** @class */ (function () {
             console.warn("ag-Grid: groupRemoveSingleChildren and groupHideOpenParents do not work with each other, you need to pick one. And don't ask us how to us these together on our support forum either you will get the same answer!");
         }
         if (this.isRowModelServerSide()) {
-            var msg = function (prop) { return "ag-Grid: '" + prop + "' is not supported on the Server-side Row Model"; };
+            var msg = function (prop) { return "ag-Grid: '" + prop + "' is not supported on the Server-Side Row Model"; };
             if (utils_1._.exists(this.gridOptions.groupDefaultExpanded)) {
                 console.warn(msg('groupDefaultExpanded'));
             }
@@ -127,7 +128,8 @@ var GridOptionsWrapper = /** @class */ (function () {
         warnOfDeprecaredIcon('checkboxChecked');
         warnOfDeprecaredIcon('checkboxUnchecked');
         warnOfDeprecaredIcon('checkboxIndeterminate');
-        this.addEventListener(GridOptionsWrapper_1.PROP_DOM_LAYOUT, this.updateLayoutClasses.bind(this));
+        this.updateLayoutClassesListener = this.updateLayoutClasses.bind(this);
+        this.addEventListener(GridOptionsWrapper_1.PROP_DOM_LAYOUT, this.updateLayoutClassesListener);
     };
     GridOptionsWrapper.prototype.checkColumnDefProperties = function () {
         var _this = this;
@@ -299,6 +301,9 @@ var GridOptionsWrapper = /** @class */ (function () {
     GridOptionsWrapper.prototype.isGroupSuppressAutoColumn = function () {
         return isTrue(this.gridOptions.groupSuppressAutoColumn);
     };
+    GridOptionsWrapper.prototype.isPivotSuppressAutoColumn = function () {
+        return isTrue(this.gridOptions.pivotSuppressAutoColumn);
+    };
     GridOptionsWrapper.prototype.isSuppressDragLeaveHidesColumns = function () {
         return isTrue(this.gridOptions.suppressDragLeaveHidesColumns);
     };
@@ -456,11 +461,11 @@ var GridOptionsWrapper = /** @class */ (function () {
     GridOptionsWrapper.prototype.getColumnApi = function () {
         return this.gridOptions.columnApi;
     };
-    GridOptionsWrapper.prototype.isDeltaRowDataMode = function () {
-        return isTrue(this.gridOptions.deltaRowDataMode);
+    GridOptionsWrapper.prototype.isImmutableData = function () {
+        return isTrue(this.gridOptions.immutableData);
     };
-    GridOptionsWrapper.prototype.isDeltaColumnMode = function () {
-        return isTrue(this.gridOptions.deltaColumnMode);
+    GridOptionsWrapper.prototype.isImmutableColumns = function () {
+        return isTrue(this.gridOptions.immutableColumns);
     };
     GridOptionsWrapper.prototype.isEnsureDomOrder = function () {
         return isTrue(this.gridOptions.ensureDomOrder);
@@ -608,6 +613,9 @@ var GridOptionsWrapper = /** @class */ (function () {
     GridOptionsWrapper.prototype.isSuppressClipboardPaste = function () {
         return isTrue(this.gridOptions.suppressClipboardPaste);
     };
+    GridOptionsWrapper.prototype.isSuppressLastEmptyLineOnPaste = function () {
+        return isTrue(this.gridOptions.suppressLastEmptyLineOnPaste);
+    };
     GridOptionsWrapper.prototype.isPagination = function () {
         return isTrue(this.gridOptions.pagination);
     };
@@ -617,8 +625,8 @@ var GridOptionsWrapper = /** @class */ (function () {
     GridOptionsWrapper.prototype.getProcessDataFromClipboardFunc = function () {
         return this.gridOptions.processDataFromClipboard;
     };
-    GridOptionsWrapper.prototype.getBatchUpdateWaitMillis = function () {
-        return utils_1._.exists(this.gridOptions.batchUpdateWaitMillis) ? this.gridOptions.batchUpdateWaitMillis : constants_1.Constants.BATCH_WAIT_MILLIS;
+    GridOptionsWrapper.prototype.getAsyncTransactionWaitMillis = function () {
+        return utils_1._.exists(this.gridOptions.asyncTransactionWaitMillis) ? this.gridOptions.asyncTransactionWaitMillis : constants_1.Constants.BATCH_WAIT_MILLIS;
     };
     GridOptionsWrapper.prototype.isSuppressMovableColumns = function () {
         return isTrue(this.gridOptions.suppressMovableColumns);
@@ -828,8 +836,6 @@ var GridOptionsWrapper = /** @class */ (function () {
     GridOptionsWrapper.prototype.getViewportRowModelBufferSize = function () {
         return zeroOrGreater(this.gridOptions.viewportRowModelBufferSize, DEFAULT_VIEWPORT_ROW_MODEL_BUFFER_SIZE);
     };
-    // public getCellRenderers(): {[key: string]: {new(): ICellRenderer} | ICellRendererFunc} { return this.gridOptions.cellRenderers; }
-    // public getCellEditors(): {[key: string]: {new(): ICellEditor}} { return this.gridOptions.cellEditors; }
     GridOptionsWrapper.prototype.isServerSideSortingAlwaysResets = function () {
         return isTrue(this.gridOptions.serverSideSortingAlwaysResets);
     };
@@ -942,6 +948,9 @@ var GridOptionsWrapper = /** @class */ (function () {
             return Math.max(200, tooltipShowDelay);
         }
         return null;
+    };
+    GridOptionsWrapper.prototype.isTooltipMouseTrack = function () {
+        return isTrue(this.gridOptions.tooltipMouseTrack);
     };
     GridOptionsWrapper.prototype.getDocument = function () {
         // if user is providing document, we use the users one,
@@ -1214,6 +1223,26 @@ var GridOptionsWrapper = /** @class */ (function () {
         if (options.enableOldSetFilterModel) {
             console.warn('ag-Grid: since v22.x, enableOldSetFilterModel is deprecated. Please move to the new Set Filter Model as the old one may not be supported in v23 onwards.');
         }
+        if (options.floatingFilter) {
+            console.warn('ag-Grid: since v23.1, floatingFilter on the gridOptions is deprecated. Please use floatingFilter on the colDef instead.');
+            if (!options.defaultColDef) {
+                options.defaultColDef = {};
+            }
+            if (options.defaultColDef.floatingFilter == null) {
+                options.defaultColDef.floatingFilter = true;
+            }
+        }
+        var checkRenamedProperty = function (oldProp, newProp, version) {
+            if (options[oldProp] != null) {
+                console.warn("ag-grid: since version " + version + ", '" + oldProp + "' is deprecated / renamed, please use the new property name '" + newProp + "' instead.");
+                if (options[newProp] == null) {
+                    options[newProp] = options[oldProp];
+                }
+            }
+        };
+        checkRenamedProperty('batchUpdateWaitMillis', 'asyncTransactionWaitMillis', '23.1.x');
+        checkRenamedProperty('deltaRowDataMode', 'immutableData', '23.1.x');
+        checkRenamedProperty('deltaColumnMode', 'immutableColumns', '23.1.x');
     };
     GridOptionsWrapper.prototype.checkForViolations = function () {
         if (this.isTreeData()) {
@@ -1343,7 +1372,9 @@ var GridOptionsWrapper = /** @class */ (function () {
     GridOptionsWrapper.PROP_GROUP_HEADER_HEIGHT = 'groupHeaderHeight';
     GridOptionsWrapper.PROP_PIVOT_GROUP_HEADER_HEIGHT = 'pivotGroupHeaderHeight';
     GridOptionsWrapper.PROP_FLOATING_FILTERS_HEIGHT = 'floatingFiltersHeight';
+    GridOptionsWrapper.PROP_SUPPRESS_ROW_CLICK_SELECTION = 'suppressRowClickSelection';
     GridOptionsWrapper.PROP_SUPPRESS_ROW_DRAG = 'suppressRowDrag';
+    GridOptionsWrapper.PROP_SUPPRESS_MOVE_WHEN_ROW_DRAG = 'suppressMoveWhenRowDragging';
     GridOptionsWrapper.PROP_POPUP_PARENT = 'popupParent';
     GridOptionsWrapper.PROP_DOM_LAYOUT = 'domLayout';
     __decorate([

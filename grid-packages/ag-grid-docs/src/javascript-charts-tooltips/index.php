@@ -234,6 +234,11 @@ SNIPPET
 <?php createDocumentationFromFile('../javascript-charts-api-explorer/config.json', 'pieSeriesConfig',
     ['tooltipEnabled', 'tooltipRenderer']) ?>
 
+<h3>Histogram Tooltips</h3>
+
+<?php createDocumentationFromFile('../javascript-charts-api-explorer/config.json', 'histogramSeriesConfig',
+    ['tooltipEnabled', 'tooltipRenderer']) ?>
+
 <h2>Next Up</h2>
 
 <p>

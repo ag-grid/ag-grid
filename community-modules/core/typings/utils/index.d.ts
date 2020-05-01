@@ -1,6 +1,6 @@
 export * from "./color";
 export * from "./csv";
-export * from "./general";
+export * from "./utils";
 export * from "./numberSequence";
 export * from "./promise";
 export * from "./timer";

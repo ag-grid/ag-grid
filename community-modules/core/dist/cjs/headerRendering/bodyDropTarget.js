@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v23.0.2
+ * @version v23.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -44,8 +44,8 @@ var BodyDropTarget = /** @class */ (function () {
         }
     };
     BodyDropTarget.prototype.isInterestedIn = function (type) {
-        return type === dragAndDropService_1.DragSourceType.HeaderCell
-            || (type === dragAndDropService_1.DragSourceType.ToolPanel && this.gridOptionsWrapper.isAllowDragFromColumnsToolPanel());
+        return type === dragAndDropService_1.DragSourceType.HeaderCell ||
+            (type === dragAndDropService_1.DragSourceType.ToolPanel && this.gridOptionsWrapper.isAllowDragFromColumnsToolPanel());
     };
     BodyDropTarget.prototype.getSecondaryContainers = function () {
         return this.eSecondaryContainers;
@@ -76,14 +76,10 @@ var BodyDropTarget = /** @class */ (function () {
             if (draggingEvent.dragSource.type === dragAndDropService_1.DragSourceType.ToolPanel) {
                 return DropType.Pivot;
             }
-            else {
-                return DropType.ColumnMove;
-            }
-        }
-        else {
-            // it's a column, and not pivot mode, so always moving
             return DropType.ColumnMove;
         }
+        // it's a column, and not pivot mode, so always moving
+        return DropType.ColumnMove;
     };
     BodyDropTarget.prototype.onDragEnter = function (draggingEvent) {
         // we pick the drop listener depending on whether we are in pivot mode are not. if we are

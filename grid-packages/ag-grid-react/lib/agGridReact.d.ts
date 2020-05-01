@@ -1,4 +1,4 @@
-// ag-grid-react v23.0.2
+// ag-grid-react v23.1.0
 import * as React from "react";
 import { Component, ReactPortal } from "react";
 import { ColumnApi, GridApi, GridOptions, Module } from "ag-grid-community";

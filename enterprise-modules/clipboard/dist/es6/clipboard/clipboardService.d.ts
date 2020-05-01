@@ -27,6 +27,7 @@ export declare class ClipboardService implements IClipboardService {
     private pasteStartingFromFocusedCell;
     private hasOnlyOneValueToPaste;
     copyRangeDown(): void;
+    private removeLastLineIfBlank;
     private fireRowChanged;
     private pasteMultipleValues;
     private pasteSingleValue;

@@ -18,11 +18,10 @@ include '../documentation-main/documentation_header.php';
         <img src="./chart-toolbar.png"/>
 
         <div style="flex-grow: 1;">
-            <ul>
-            <p>
+            <p style="margin-left: 22px">
                 From the toolbar, users can:</p>
             <p>
-                <ul>
+                <ul class="content">
                     <li style="padding-bottom: 5px">Change the chart type</li>
                     <li style="padding-bottom: 5px">Change the colour palette</li>
                     <li style="padding-bottom: 5px">Change which columns are used as categories and series</li>
@@ -50,7 +49,7 @@ include '../documentation-main/documentation_header.php';
     </p>
 
     <div class="animated-example">
-        <img data-gifffer="chart-settings.gif" data-gifffer-width="99%" />
+        <img data-gifffer="chart-settings.gif" data-gifffer-width="99%" style="width: 100%; height: 100%" />
     </div>
 
     <p>
@@ -71,7 +70,7 @@ include '../documentation-main/documentation_header.php';
     </p>
 
     <div class="animated-example">
-        <img data-gifffer="chart-data.gif" data-gifffer-width="99%" />
+        <img data-gifffer="chart-data.gif" data-gifffer-width="99%" style="width: 100%; height: 100%" />
     </div>
 
     <p>
@@ -97,7 +96,7 @@ include '../documentation-main/documentation_header.php';
     </p>
 
     <div class="animated-example">
-        <img data-gifffer="chart-format.gif" data-gifffer-width="99%" />
+        <img data-gifffer="chart-format.gif" data-gifffer-width="99%" style="width: 100%; height: 100%" />
     </div>
 
     <p>
@@ -119,7 +118,7 @@ include '../documentation-main/documentation_header.php';
     </p>
 
     <div class="animated-example">
-        <img data-gifffer="chart-unlinking.gif" data-gifffer-width="99%" />
+        <img data-gifffer="chart-unlinking.gif" data-gifffer-width="99%" style="width: 100%; height: 100%" />
     </div>
 
     <p>

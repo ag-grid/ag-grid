@@ -15,10 +15,8 @@ export declare class OrdinalScale<D, R> implements Scale<D, R> {
      */
     private index;
     private _domain;
-    set domain(values: D[]);
-    get domain(): D[];
+    domain: D[];
     private _range;
-    set range(values: R[]);
-    get range(): R[];
+    range: R[];
     convert(d: D): R;
 }

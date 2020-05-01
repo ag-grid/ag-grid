@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v23.0.2
+ * @version v23.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -111,11 +111,11 @@ var AgSelect = /** @class */ (function (_super) {
         return _super.prototype.setValue.call(this, value, silent);
     };
     AgSelect.prototype.destroy = function () {
-        _super.prototype.destroy.call(this);
         if (this.hideList) {
             this.hideList();
         }
         this.listComponent.destroy();
+        _super.prototype.destroy.call(this);
     };
     __decorate([
         Autowired('popupService')

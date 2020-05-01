@@ -1,0 +1,16 @@
+<div style="margin-bottom: 5px;">
+    <div>
+        <button class="bt-action" onclick="onAddRow('For Sale')">Add For Sale</button>
+        <button class="bt-action" onclick="onAddRow('In Workshop')">Add In Workshop</button>
+        <button class="bt-action" onclick="onRemoveSelected()">Remove Selected</button>
+        <button class="bt-action" onclick="getRowData()">Get Row Data</button>
+    </div>
+    <div style="margin-top: 5px;">
+        <button class="bt-action" onclick="onMoveToGroup('For Sale')">Move to For Sale</button>
+        <button class="bt-action" onclick="onMoveToGroup('In Workshop')">Move to In Workshop</button>
+        <button class="bt-action" onclick="onMoveToGroup('Sold')">Move to Sold</button>
+    </div>
+</div>
+<div style="height: calc(100% - 60px);">
+    <div id="myGrid" style="height: 100%;" class="ag-theme-alpine"></div>
+</div>

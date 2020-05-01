@@ -15,6 +15,7 @@ $ag-theme-alpine-dark-default-params: (
         0 0 2px 0.5px rgba(255, 255, 255, 0.5),
         0 0 4px 3px ag-derived(input-focus-border-color, $opacity: 0.6)
     ),
+    card-shadow: 0 1px 20px 1px black,
 );
 
 $ag-theme-alpine-dark-default-params: map-merge($ag-theme-alpine-default-params, $ag-theme-alpine-dark-default-params);

@@ -14,7 +14,7 @@
                 <div class="tab-pane show active" id="component" role="tabpanel" aria-labelledby="component-tab">
 <snippet>
 import "ag-grid-community/dist/styles/ag-grid.css";
-import "ag-grid-community/dist/styles/ag-theme-balham.css";
+import "ag-grid-community/dist/styles/ag-theme-alpine.css";
 import { AgGridVue } from 'ag-grid-vue';
 
 export const App = {
@@ -43,7 +43,7 @@ export const App = {
     },
     template: `
     &lt;ag-grid-vue style="width: 500px; height: 300px;"
-        class="ag-theme-balham"
+        class="ag-theme-alpine"
         :columnDefs="columnDefs"
         :rowData="rowData"&gt;
     &lt;/ag-grid-vue&gt;

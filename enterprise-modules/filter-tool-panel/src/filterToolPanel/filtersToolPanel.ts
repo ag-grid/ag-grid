@@ -1,15 +1,17 @@
 import {
     _,
     Autowired,
-    ColDef, ColGroupDef,
+    ColDef,
+    ColGroupDef,
+    ColumnApi,
     ColumnController,
     Component,
     EventService,
     GridApi,
+    IFiltersToolPanel,
     IToolPanelComp,
     IToolPanelParams,
-    RefSelector,
-    IFiltersToolPanel
+    RefSelector
 } from "@ag-grid-community/core";
 import {FiltersToolPanelHeaderPanel} from "./filtersToolPanelHeaderPanel";
 import {FiltersToolPanelListPanel} from "./filtersToolPanelListPanel";
@@ -34,8 +36,9 @@ export class FiltersToolPanel extends Component implements IFiltersToolPanel, IT
     @RefSelector('filtersToolPanelListPanel')
     private filtersToolPanelListPanel: FiltersToolPanelListPanel;
 
-    @Autowired("gridApi") private gridApi: GridApi;
-    @Autowired("eventService") private eventService: EventService;
+    @Autowired('gridApi') private gridApi: GridApi;
+    @Autowired('columnApi') private columnApi: ColumnApi;
+    @Autowired('eventService') private eventService: EventService;
     @Autowired('columnController') private columnController: ColumnController;
 
     private initialised = false;
@@ -52,7 +55,8 @@ export class FiltersToolPanel extends Component implements IFiltersToolPanel, IT
             suppressExpandAll: false,
             suppressFilterSearch: false,
             suppressSyncLayoutWithGrid: false,
-            api: this.gridApi
+            api: this.gridApi,
+            columnApi: this.columnApi
         };
         _.mergeDeep(defaultParams, params);
         this.params = defaultParams;

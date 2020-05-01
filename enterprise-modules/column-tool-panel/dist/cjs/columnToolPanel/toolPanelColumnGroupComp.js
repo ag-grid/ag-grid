@@ -164,12 +164,12 @@ var ToolPanelColumnGroupComp = /** @class */ (function (_super) {
             }
             if (column.isAllowValue()) {
                 columnsToAggregate.push(column);
+                return;
             }
-            else if (column.isAllowRowGroup()) {
+            if (column.isAllowRowGroup()) {
                 columnsToGroup.push(column);
-            }
-            else if (column.isAllowRowGroup()) {
                 columnsToPivot.push(column);
+                return;
             }
         });
         if (columnsToAggregate.length > 0) {

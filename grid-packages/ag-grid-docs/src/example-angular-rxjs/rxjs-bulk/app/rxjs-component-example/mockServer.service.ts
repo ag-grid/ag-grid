@@ -6,7 +6,7 @@ import {cloneDeep} from "lodash";
 
 @Injectable()
 export class MockServerService {
-    stocksUrl: string = 'https://rawgit.com/ag-grid/ag-grid/master/grid-packages/ag-grid-docs/src/stocks.json';
+    stocksUrl: string = 'https://raw.githubusercontent.com/ag-grid/ag-grid/master/grid-packages/ag-grid-docs/src/stocks.json';
     rowData: any[];
 
     constructor(private http: Http) {

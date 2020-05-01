@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v23.0.2
+ * @version v23.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -34,14 +34,13 @@ import { ProvidedFilter } from "../providedFilter";
 var DateFloatingFilter = /** @class */ (function (_super) {
     __extends(DateFloatingFilter, _super);
     function DateFloatingFilter() {
-        return _super.call(this, "<div class=\"ag-floating-filter-input\" role=\"presentation\">\n                <ag-input-text-field ref=\"eReadOnlyText\"></ag-input-text-field>\n                <div ref=\"eDateWrapper\" style=\"display: flex; overflow: hidden;\"></div>\n            </div>") || this;
+        return _super.call(this, /* html */ "\n            <div class=\"ag-floating-filter-input\" role=\"presentation\">\n                <ag-input-text-field ref=\"eReadOnlyText\"></ag-input-text-field>\n                <div ref=\"eDateWrapper\" style=\"display: flex; overflow: hidden;\"></div>\n            </div>") || this;
     }
     DateFloatingFilter.prototype.getDefaultFilterOptions = function () {
         return DateFilter.DEFAULT_FILTER_OPTIONS;
     };
     DateFloatingFilter.prototype.conditionToString = function (condition) {
-        var isRange = condition.type == SimpleFilter.IN_RANGE;
-        if (isRange) {
+        if (condition.type === SimpleFilter.IN_RANGE) {
             return condition.dateFrom + "-" + condition.dateTo;
         }
         // cater for when the type doesn't need a value
@@ -61,9 +60,9 @@ var DateFloatingFilter = /** @class */ (function (_super) {
         _.setDisplayed(this.eReadOnlyText.getGui(), !editable);
     };
     DateFloatingFilter.prototype.onParentModelChanged = function (model, event) {
-        // we don't want to update the floating filter if the floating filter caused the change.
-        // as if it caused the change, the ui is already in sycn. if we didn't do this, the UI
-        // would behave strange as it would be updating as the user is typing
+        // We don't want to update the floating filter if the floating filter caused the change,
+        // because the UI is already in sync. if we didn't do this, the UI would behave strangely
+        // as it would be updating as the user is typing
         if (this.isEventFromFloatingFilter(event)) {
             return;
         }
@@ -73,7 +72,7 @@ var DateFloatingFilter = /** @class */ (function (_super) {
         if (allowEditing) {
             if (model) {
                 var dateModel = model;
-                this.dateComp.setDate(_.getDateFromString(dateModel.dateFrom));
+                this.dateComp.setDate(_.parseDateTimeFromString(dateModel.dateFrom));
             }
             else {
                 this.dateComp.setDate(null);
@@ -88,7 +87,7 @@ var DateFloatingFilter = /** @class */ (function (_super) {
     DateFloatingFilter.prototype.onDateChanged = function () {
         var _this = this;
         var filterValueDate = this.dateComp.getDate();
-        var filterValueText = _.serializeDateToYyyyMmDd(filterValueDate, "-") + " " + _.getTimeFromDate(filterValueDate);
+        var filterValueText = _.serialiseDate(filterValueDate) + " " + _.serialiseTime(filterValueDate);
         this.params.parentFilterInstance(function (filterInstance) {
             if (filterInstance) {
                 var simpleFilter = filterInstance;
@@ -99,15 +98,12 @@ var DateFloatingFilter = /** @class */ (function (_super) {
     DateFloatingFilter.prototype.createDateComponent = function () {
         var _this = this;
         var debounceMs = ProvidedFilter.getDebounceMs(this.params.filterParams, this.getDefaultDebounceMs());
-        var toDebounce = _.debounce(this.onDateChanged.bind(this), debounceMs);
         var dateComponentParams = {
-            onDateChanged: toDebounce,
+            onDateChanged: _.debounce(this.onDateChanged.bind(this), debounceMs),
             filterParams: this.params.column.getColDef().filterParams
         };
         this.dateComp = new DateCompWrapper(this.userComponentFactory, dateComponentParams, this.eDateWrapper);
-        this.addDestroyFunc(function () {
-            _this.dateComp.destroy();
-        });
+        this.addDestroyFunc(function () { return _this.dateComp.destroy(); });
     };
     __decorate([
         Autowired('userComponentFactory')

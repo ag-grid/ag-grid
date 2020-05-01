@@ -37,11 +37,9 @@ include '../documentation-main/documentation_header.php';
             How the grid creates HTML for inside the cells.
         </li>
         <li>
-            <a href="../javascript-grid-provided-renderers/">Provided Renderers</a>:
-            The cell renderers the come provided with the grid.
+            <a href="../javascript-grid-cell-rendering/#provided-cell-renderers">Provided Renderers</a>:
+            The cell renderers that come provided with the grid.
         </li>
-
-
         <li>
             <a href="../javascript-grid-refresh/">View Refresh</a>:
             How to refresh cells in the grid.

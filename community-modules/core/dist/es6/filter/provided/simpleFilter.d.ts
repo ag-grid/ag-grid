@@ -1,9 +1,9 @@
-// Type definitions for @ag-grid-community/core v23.0.2
+// Type definitions for @ag-grid-community/core v23.1.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
-import { IDoesFilterPassParams, IFilterOptionDef, ProvidedFilterModel } from "../../interfaces/iFilter";
-import { OptionsFactory } from "./optionsFactory";
-import { IProvidedFilterParams, ProvidedFilter } from "./providedFilter";
+import { IDoesFilterPassParams, IFilterOptionDef, ProvidedFilterModel } from '../../interfaces/iFilter';
+import { OptionsFactory } from './optionsFactory';
+import { IProvidedFilterParams, ProvidedFilter } from './providedFilter';
 export interface ISimpleFilterParams extends IProvidedFilterParams {
     filterOptions?: (IFilterOptionDef | string)[];
     defaultOption?: string;
@@ -44,7 +44,6 @@ export declare abstract class SimpleFilter<M extends ISimpleFilterModel> extends
     private eCondition2Body;
     private eJoinOperatorPanel;
     private allowTwoConditions;
-    private simpleFilterParams;
     protected optionsFactory: OptionsFactory;
     protected abstract getDefaultFilterOptions(): string[];
     protected abstract createValueTemplate(position: ConditionPosition): string;

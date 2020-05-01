@@ -1,17 +1,17 @@
 var columnDefs = [
-    { field: "country", rowGroup: true, hide: true},
-    { field: "year", rowGroup: true, hide: true},
+    { field: "country", rowGroup: true, hide: true },
+    { field: "year", rowGroup: true, hide: true },
 
     // this column uses min and max func
-    {headerName: "minMax(age)", field: "age", aggFunc: minAndMaxAggFunction},
+    { headerName: "minMax(age)", field: "age", aggFunc: minAndMaxAggFunction },
     // here we use an average func and specify the function directly
-    {headerName: "avg(age)", field: "age", aggFunc: avgAggFunction, enableValue: true, minWidth: 200},
+    { headerName: "avg(age)", field: "age", aggFunc: avgAggFunction, enableValue: true, minWidth: 200 },
     // here we use a custom sum function that was registered with the grid,
     // which overrides the built in sum function
-    {headerName: "sum(gold)", field: "gold", aggFunc: 'sum', enableValue: true},
+    { headerName: "sum(gold)", field: "gold", aggFunc: 'sum', enableValue: true },
     // and these two use the built in sum func
-    {headerName: "abc(silver)", field: "silver", aggFunc: '123', enableValue: true},
-    {headerName: "xyz(bronze)", field: "bronze", aggFunc: 'xyz', enableValue: true},
+    { headerName: "abc(silver)", field: "silver", aggFunc: '123', enableValue: true },
+    { headerName: "xyz(bronze)", field: "bronze", aggFunc: 'xyz', enableValue: true },
 ];
 
 var gridOptions = {
@@ -67,7 +67,7 @@ function xyzFunc(nodes) {
 // hwo the aggregation functions work.
 function sumFunction(values) {
     var result = 0;
-    values.forEach( function(value) {
+    values.forEach(function(value) {
         if (typeof value === 'number') {
             result += value;
         }
@@ -88,13 +88,13 @@ function minAndMaxAggFunction(values) {
         // get around it in a customer cellRenderer, however this is a trick that will also work
         // with clipboard.
         toString: function() {
-            return '(' + this.min + '..'+ this.max + ')';
+            return '(' + this.min + '..' + this.max + ')';
         }
     };
     // update the result based on each value
-    values.forEach( function(value) {
+    values.forEach(function(value) {
 
-        var groupNode = value !== null && value!== undefined && typeof value === 'object';
+        var groupNode = value !== null && value !== undefined && typeof value === 'object';
 
         var minValue = groupNode ? value.min : value;
         var maxValue = groupNode ? value.max : value;
@@ -116,8 +116,8 @@ function avgAggFunction(values) {
     var sum = 0;
     var count = 0;
 
-    values.forEach( function(value) {
-        var groupNode = value !== null && value!== undefined && typeof value === 'object';
+    values.forEach(function(value) {
+        var groupNode = value !== null && value !== undefined && typeof value === 'object';
         if (groupNode) {
             // we are aggregating groups, so we take the
             // aggregated values to calculated a weighted average
@@ -133,7 +133,7 @@ function avgAggFunction(values) {
     });
 
     // avoid divide by zero error
-    if (count!==0) {
+    if (count !== 0) {
         var avg = sum / count;
     } else {
         avg = null;
@@ -198,10 +198,8 @@ document.addEventListener('DOMContentLoaded', function() {
     var gridDiv = document.querySelector('#myGrid');
     new agGrid.Grid(gridDiv, gridOptions);
 
-    // do http request to get our sample data - not using any framework to keep the example self contained.
-    // you will probably use a framework like JQuery, Angular or something else to do your HTTP calls.
-    agGrid.simpleHttpRequest({url: 'https://raw.githubusercontent.com/ag-grid/ag-grid/master/grid-packages/ag-grid-docs/src/olympicWinnersSmall.json'})
-        .then( function(data) {
+    agGrid.simpleHttpRequest({ url: 'https://raw.githubusercontent.com/ag-grid/ag-grid/master/grid-packages/ag-grid-docs/src/olympicWinnersSmall.json' })
+        .then(function(data) {
             gridOptions.api.setRowData(data);
         });
 });

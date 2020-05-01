@@ -106,8 +106,11 @@
         "setColumnAggFunc(column, aggFunc)": {
             "description": "Sets the agg function for a column. <code>aggFunc</code> can be one of <code>'min' | 'max' | 'sum'</>."
         },
-        "setColumnWidth(column, newWidth, finished = true)": {
-            "description": "Sets the column width. The finished flag gets included in the resulting event and not used internally by the grid. The finished flag is intended for dragging, where a dragging action will produce many <code>columnWidth</code> events, so the consumer of events knows when it receives the last event in a stream. The finished parameter is optional, and defaults to <code>true</code>."
+        "setColumnWidth(colKey, newWidth, finished = true)": {
+            "description": "Sets the column width on a single column. The finished flag gets included in the resulting event and not used internally by the grid. The finished flag is intended for dragging, where a dragging action will produce many <code>columnWidth</code> events, so the consumer of events knows when it receives the last event in a stream. The finished parameter is optional, and defaults to <code>true</code>."
+        },
+        "setColumnWidths(columnWidths: {colKey, newWidth}[], finished = true)": {
+            "description": "Sets the column widths on multiple columns. This method offers better performance than calling <code>setColumnWidth</code> multiple times. The finished flag gets included in the resulting event and not used internally by the grid. The finished flag is intended for dragging, where a dragging action will produce many <code>columnWidth</code> events, so the consumer of events knows when it receives the last event in a stream. The finished parameter is optional, and defaults to <code>true</code>."
         },
         "getRowGroupColumns()<br />addRowGroupColumn(colKey)<br />addRowGroupColumns(colKeys)<br />removeRowGroupColumn(colKey)<br />removeRowGroupColumns(colKeys)<br />setRowGroupColumns(colKeys)<br />moveRowGroupColumn(fromIndex, toIndex)": {
             "description": "Methods for management of column row groups."

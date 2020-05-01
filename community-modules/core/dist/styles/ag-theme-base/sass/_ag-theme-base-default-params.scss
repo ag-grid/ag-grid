@@ -32,6 +32,9 @@ $ag-theme-base-default-params: (
     // Background colour for second level headings within UI components
     subheader-background-color: null,
 
+    // Background colour for toolbars directly under subheadings (as used in the chart settings menu)
+    subheader-toolbar-background-color: null,
+
     // Background for areas of the interface that contain UI controls, like tool panels and the chart settings menu
     control-panel-background-color: null,
 
@@ -41,14 +44,24 @@ $ag-theme-base-default-params: (
     // Background colour applied to every other row or null to use background-color for all rows
     odd-row-background-color: null,
 
+    // Background color of the overlay shown over the grid when it is covered by an overlay, e.g. a data loading indicator.
+    modal-overlay-background-color: ag-derived(background-color, $opacity: 0.66),
+
     // Background color when hovering over rows in the grid and in dropdown menus, or null for no rollover effect (note - if you want a rollover on one but not the other, set to null and use CSS to achieve the rollover)
     row-hover-color: null,
 
     // Color to draw around selected cell ranges
     range-selection-border-color: ag-derived(foreground-color),
 
-    // Background colour of selected cell ranges. Choosing a semi-transparent color (opacity of 0.1 to 0.5 works well) will ensure that it looks good when multiple ranges overlap.
+    // Background colour of selected cell ranges. By default, setting this to a semi-transparent color (opacity of 0.1 to 0.5 works well) will generate appropriate values for the range-selection-background-color-{1..4} colours used when multiple ranges overlap.
+    // NOTE: if setting this value to a CSS variable, and your app supports overlapping range selections, also set range-selection-background-color-{1..4}.
     range-selection-background-color: ag-derived(range-selection-border-color, $opacity: 0.2),
+    
+    // These 4 parameters are used for fine-grained control over the background color used when 1, 2, 3 or 4 ranges overlap.
+    range-selection-background-color-1: ag-derived(range-selection-background-color),
+    range-selection-background-color-2: ag-derived(range-selection-background-color, $self-overlay: 2),
+    range-selection-background-color-3: ag-derived(range-selection-background-color, $self-overlay: 3),
+    range-selection-background-color-4: ag-derived(range-selection-background-color, $self-overlay: 4),
 
     // Background colour to apply to a cell range when it is copied from or pasted into
     range-selection-highlight-color: ag-derived(range-selection-border-color),
@@ -79,6 +92,11 @@ $ag-theme-base-default-params: (
 
     // Colour for the "chip" that repersents a column that has been dragged onto a drop zone
     chip-background-color: null,
+
+    // By default, color variables can be overridden at runtime by CSS variables, e.g.
+    // background-color can be overridden with the CSS var --ag-background-color. Pass true
+    // to disable this behaviour.
+    suppress-css-var-overrides: false,
 
     //
     // BORDERS
@@ -126,11 +144,12 @@ $ag-theme-base-default-params: (
     // INPUTS
     //
 
-    // Suppress styling of native widgets: <input type=checkbox/radio/range>. If you want to style these yourself, set this to true. If you only want to disable styling for some kinds of input, you can set this to true and e.g. @include ag-native-inputs((checkbox: false)) which will emit styles for all kinds of input except checkboxes.
+    // Suppress styling of checkbox/radio/range input elements. If you want to style these yourself, set this to true. If you only want to disable styling for some kinds of input, you can set this to true and e.g. @include ag-native-inputs((checkbox: false)) which will emit styles for all kinds of input except checkboxes.
     suppress-native-widget-styling: false,
-
-    input-disabled-background-color: null,
+    
     input-border-color: null,
+    input-disabled-border-color: ag-derived(input-border-color, $opacity: 0.3),
+    input-disabled-background-color: null,
 
     checkbox-background-color: null,
     checkbox-border-radius: ag-derived(border-radius),

@@ -2,6 +2,7 @@
 @import "./ag-theme-material-default-params";
 
 @mixin ag-theme-material($params: ()) {
+    @include ag-allow-color-param-access-with-ag-param(false);
   
     $params: ag-process-theme-variables($params, $ag-theme-material-default-params);
     @include ag-theme-base($params);
@@ -14,7 +15,7 @@
     .ag-side-button-button {
         font-size: ag-param(font-size) - 1;
         font-weight: 600;
-        color: ag-param(header-foreground-color);
+        @include ag-color-property(color, header-foreground-color);
     }
 
     .ag-tab {
@@ -23,7 +24,7 @@
 
     .ag-tabs-header,
     .ag-column-drop-horizontal {
-        background-color: ag-param(subheader-background-color);
+        @include ag-color-property(background-color, subheader-background-color);
     }
 
     .ag-tabs-body {
@@ -34,17 +35,22 @@
         transition: background-color 0.5s;
     }
 
+    .ag-row-last .ag-cell-inline-editing {
+        bottom: 0;
+    }
+
     .ag-cell-inline-editing {
         padding: ag-param(grid-size);
         height: ag-param(row-height) + ag-param(grid-size) * 3;
     }
 
     .ag-side-button-button {
-        color: ag-param(secondary-foreground-color);
+        @include ag-color-property(color, secondary-foreground-color);
     }
 
     .ag-column-drop-vertical {
-        border-bottom: solid 1px ag-param(border-color);
+        border-bottom: solid 1px;
+        @include ag-color-property(border-bottom-color, border-color);
         padding-top: ag-param(grid-size);
         
         &.ag-last-column-drop {
@@ -57,16 +63,14 @@
     }
 
     .ag-set-filter-select-all {
-        border-bottom: solid 1px ag-param(border-color);
-        height: auto;
-        padding-top: ag-param(grid-size) * 2;
-        padding-bottom: ag-param(grid-size) * 2;
+        border-bottom: solid 1px;
+        @include ag-color-property(border-bottom-color, border-color);
     }
 
     .ag-column-drop-vertical-empty-message {
         font-size: ag-param(font-size) - 1;
         font-weight: 600;
-        color: ag-param(disabled-foreground-color);
+        @include ag-color-property(color, disabled-foreground-color);
 
         @include ag-theme-rtl((
             padding-left: ag-param(icon-size) + ag-param(grid-size) * 2,
@@ -75,15 +79,18 @@
     }
 
     .ag-status-bar {
-        border: solid 1px ag-param(border-color);
+        border: solid 1px;
+        @include ag-color-property(border-color, border-color);
     }
 
     .ag-column-panel-column-select {
-        border-top: solid 1px ag-param(border-color);
+        border-top: solid 1px;
+        @include ag-color-property(border-top-color, border-color);
     }
 
     .ag-column-select, .ag-column-select-header {
-        border-bottom: solid 1px ag-param(border-color);
+        border-bottom: solid 1px;
+        @include ag-color-property(border-bottom-color, border-color);
     }
 
     .ag-column-select-header {
@@ -111,27 +118,30 @@
 
     %ag-text-input {
         background: transparent;
-        color: ag-param(foreground-color);
+        @include ag-color-property(color, foreground-color);
         font-family: inherit;
         font-size: inherit;
         height: ag-param(grid-size) * 5;
         padding-bottom: ag-param(grid-size);
 
         border-width: 0;
-        border-bottom: 2px solid ag-param(border-color);
+        border-bottom: 2px solid;
+        @include ag-color-property(border-bottom-color, border-color);
 
         &:focus {
-            border-bottom: 2px solid ag-param(material-primary-color);
+            border-bottom: 2px solid;
+            @include ag-color-property(border-bottom-color, material-primary-color);
             outline: none;
             box-shadow: none;
         }
 
         &::placeholder {
-            color: ag-param(disabled-foreground-color);
+            @include ag-color-property(color, disabled-foreground-color);
         }
 
         &:disabled {
-            border-bottom: 1px solid ag-param(border-color);
+            border-bottom: 1px solid;
+            @include ag-color-property(border-bottom-color, border-color);
         }
     }
 
@@ -139,7 +149,7 @@
         appearance: none;
         background-color: transparent;
         border: 0;
-        color: ag-param(material-primary-color);
+        @include ag-color-property(color, material-primary-color);
         font-family: inherit;
         font-size: inherit;
         margin: 0;
@@ -163,4 +173,5 @@
     .ag-overlay-no-rows-wrapper.ag-layout-auto-height {
         padding-top: 60px;
     }
+    @include ag-allow-color-param-access-with-ag-param(true);
 }

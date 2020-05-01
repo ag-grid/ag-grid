@@ -422,8 +422,6 @@ export class AgPanel extends Component {
     }
 
     public destroy(): void {
-        super.destroy();
-
         if (this.closeButtonComp) {
             this.closeButtonComp.destroy();
             this.closeButtonComp = undefined;
@@ -434,5 +432,7 @@ export class AgPanel extends Component {
         if (eGui && eGui.offsetParent) {
             this.close();
         }
+
+        super.destroy();
     }
 }

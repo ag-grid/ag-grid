@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v23.0.2
+ * @version v23.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -23,26 +23,27 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
-import { RefSelector } from "../../../widgets/componentAnnotations";
-import { _ } from "../../../utils";
-import { Constants } from "../../../constants";
-import { ProvidedFilter } from "../../provided/providedFilter";
-import { PostConstruct } from "../../../context/context";
-import { SimpleFloatingFilter } from "./simpleFloatingFilter";
+import { RefSelector } from '../../../widgets/componentAnnotations';
+import { debounce } from '../../../utils/function';
+import { Constants } from '../../../constants';
+import { ProvidedFilter } from '../../provided/providedFilter';
+import { PostConstruct } from '../../../context/context';
+import { SimpleFloatingFilter } from './simpleFloatingFilter';
+import { isKeyPressed } from '../../../utils/keyboard';
 var TextInputFloatingFilter = /** @class */ (function (_super) {
     __extends(TextInputFloatingFilter, _super);
     function TextInputFloatingFilter() {
         return _super !== null && _super.apply(this, arguments) || this;
     }
     TextInputFloatingFilter.prototype.postConstruct = function () {
-        this.setTemplate("<div class=\"ag-floating-filter-input\" role=\"presentation\">\n                <ag-input-text-field ref=\"eFloatingFilterInput\"></ag-input-text-field>\n            </div>");
+        this.setTemplate(/* html */ "\n            <div class=\"ag-floating-filter-input\" role=\"presentation\">\n                <ag-input-text-field ref=\"eFloatingFilterInput\"></ag-input-text-field>\n            </div>");
     };
     TextInputFloatingFilter.prototype.getDefaultDebounceMs = function () {
         return 500;
     };
     TextInputFloatingFilter.prototype.onParentModelChanged = function (model, event) {
         // we don't want to update the floating filter if the floating filter caused the change.
-        // as if it caused the change, the ui is already in sycn. if we didn't do this, the UI
+        // as if it caused the change, the ui is already in sync. if we didn't do this, the UI
         // would behave strange as it would be updating as the user is typing
         if (this.isEventFromFloatingFilter(event)) {
             return;
@@ -58,20 +59,23 @@ var TextInputFloatingFilter = /** @class */ (function (_super) {
         this.params = params;
         this.applyActive = ProvidedFilter.isUseApplyButton(this.params.filterParams);
         var debounceMs = ProvidedFilter.getDebounceMs(this.params.filterParams, this.getDefaultDebounceMs());
-        var toDebounce = _.debounce(this.syncUpWithParentFilter.bind(this), debounceMs);
+        var toDebounce = debounce(this.syncUpWithParentFilter.bind(this), debounceMs);
         var filterGui = this.eFloatingFilterInput.getGui();
         this.addDestroyableEventListener(filterGui, 'input', toDebounce);
         this.addDestroyableEventListener(filterGui, 'keypress', toDebounce);
         this.addDestroyableEventListener(filterGui, 'keydown', toDebounce);
         var columnDef = params.column.getDefinition();
-        if (columnDef.filterParams && columnDef.filterParams.filterOptions && columnDef.filterParams.filterOptions.length === 1 && columnDef.filterParams.filterOptions[0] === 'inRange') {
+        if (columnDef.filterParams &&
+            columnDef.filterParams.filterOptions &&
+            columnDef.filterParams.filterOptions.length === 1 &&
+            columnDef.filterParams.filterOptions[0] === 'inRange') {
             this.eFloatingFilterInput.setDisabled(true);
         }
     };
     TextInputFloatingFilter.prototype.syncUpWithParentFilter = function (e) {
         var _this = this;
         var value = this.eFloatingFilterInput.getValue();
-        var enterKeyPressed = _.isKeyPressed(e, Constants.KEY_ENTER);
+        var enterKeyPressed = isKeyPressed(e, Constants.KEY_ENTER);
         if (this.applyActive && !enterKeyPressed) {
             return;
         }

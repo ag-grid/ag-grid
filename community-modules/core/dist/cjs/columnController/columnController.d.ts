@@ -1,14 +1,14 @@
-// Type definitions for @ag-grid-community/core v23.0.2
+// Type definitions for @ag-grid-community/core v23.1.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
-import { ColumnGroup } from "../entities/columnGroup";
-import { Column } from "../entities/column";
-import { ColDef, ColGroupDef, IAggFunc } from "../entities/colDef";
-import { ColumnGroupChild } from "../entities/columnGroupChild";
-import { OriginalColumnGroupChild } from "../entities/originalColumnGroupChild";
-import { ColumnEventType } from "../events";
-import { OriginalColumnGroup } from "../entities/originalColumnGroup";
-import { RowNode } from "../entities/rowNode";
+import { ColumnGroup } from '../entities/columnGroup';
+import { Column } from '../entities/column';
+import { ColDef, ColGroupDef, IAggFunc } from '../entities/colDef';
+import { ColumnGroupChild } from '../entities/columnGroupChild';
+import { OriginalColumnGroupChild } from '../entities/originalColumnGroupChild';
+import { ColumnEventType } from '../events';
+import { OriginalColumnGroup } from '../entities/originalColumnGroup';
+import { RowNode } from '../entities/rowNode';
 export interface ColumnResizeSet {
     columns: Column[];
     ratios: number[];
@@ -20,8 +20,9 @@ export interface ColumnState {
     aggFunc?: string | IAggFunc | null;
     width?: number;
     pivotIndex?: number | null;
-    pinned?: boolean | string | "left" | "right";
+    pinned?: boolean | string | 'left' | 'right';
     rowGroupIndex?: number | null;
+    flex?: number;
 }
 export declare class ColumnController {
     private gridOptionsWrapper;
@@ -31,11 +32,11 @@ export declare class ColumnController {
     private autoWidthCalculator;
     private eventService;
     private columnUtils;
-    private context;
     private columnAnimationService;
     private autoGroupColService;
     private aggFuncService;
     private valueCache;
+    private animationFrameService;
     private columnApi;
     private gridApi;
     private primaryColumnTree;
@@ -143,9 +144,10 @@ export declare class ColumnController {
     removeValueColumns(keys: (string | Column)[], source?: ColumnEventType): void;
     private normaliseColumnWidth;
     private getPrimaryOrGridColumn;
-    setColumnWidth(key: string | Column, // @key - the column who's size we want to change
-    newWidth: number, // @newWidth - width in pixels
-    shiftKey: boolean, // @takeFromAdjacent - if user has 'shift' pressed, then pixels are taken from adjacent column
+    setColumnWidths(columnWidths: {
+        key: string | Column;
+        newWidth: number;
+    }[], shiftKey: boolean, // @takeFromAdjacent - if user has 'shift' pressed, then pixels are taken from adjacent column
     finished: boolean, // @finished - ends up in the event, tells the user if more events are to come
     source?: ColumnEventType): void;
     private checkMinAndMaxWidthsForSet;
@@ -266,4 +268,5 @@ export declare class ColumnController {
     private autoColsEqual;
     private getWidthOfColsInList;
     getGridBalancedTree(): OriginalColumnGroupChild[];
+    hasFloatingFilters(): boolean;
 }

@@ -1,5 +1,5 @@
-import React, {Component} from "react";
-import ReactDOM from "react-dom";
+import React, { Component } from 'react';
+import ReactDOM from 'react-dom';
 
 export default class PartialMatchFilter extends Component {
     constructor(props) {
@@ -15,19 +15,17 @@ export default class PartialMatchFilter extends Component {
     }
 
     isFilterActive() {
-        return this.state.text !== null && this.state.text !== undefined && this.state.text !== '';
+        return this.state.text != null && this.state.text !== '';
     }
 
     doesFilterPass(params) {
         return this.state.text.toLowerCase()
-            .split(" ")
-            .every((filterWord) => {
-                return this.valueGetter(params.node).toString().toLowerCase().indexOf(filterWord) >= 0;
-            });
+            .split(' ')
+            .every(filterWord => this.valueGetter(params.node).toString().toLowerCase().indexOf(filterWord) >= 0);
     }
 
     getModel() {
-        return {value: this.state.text};
+        return { value: this.state.text };
     }
 
     setModel(model) {
@@ -40,7 +38,8 @@ export default class PartialMatchFilter extends Component {
 
     focus() {
         window.setTimeout(() => {
-            let container = ReactDOM.findDOMNode(this.refs.input);
+            const container = ReactDOM.findDOMNode(this.refs.input);
+
             if (container) {
                 container.focus();
             }
@@ -48,11 +47,12 @@ export default class PartialMatchFilter extends Component {
     }
 
     componentMethod(message) {
-        alert(`Alert from PartialMatchFilterComponent ${message}`);
+        alert(`Alert from PartialMatchFilterComponent: ${message}`);
     }
 
     onChange(event) {
-        let newValue = event.target.value;
+        const newValue = event.target.value;
+
         if (this.state.text !== newValue) {
             this.setState({
                 text: newValue
@@ -64,17 +64,17 @@ export default class PartialMatchFilter extends Component {
     }
 
     render() {
-        let style = {
-            border: "2px solid #22ff22",
-            borderRadius: "5px",
-            backgroundColor: "#bbffbb",
-            width: "200px",
-            height: "50px"
+        const style = {
+            border: '2px solid #22ff22',
+            borderRadius: '5px',
+            backgroundColor: '#bbffbb',
+            width: '200px',
+            height: '50px'
         };
 
         return (
-            <div style={style}>Filter: <input style={{height: "20px"}} ref="input" value={this.state.text}
-                                              onChange={this.onChange} className="form-control"/></div>
+            <div style={style}>Filter: <input style={{ height: '20px' }} ref="input" value={this.state.text}
+                onChange={this.onChange} className="form-control" /></div>
         );
     }
 };

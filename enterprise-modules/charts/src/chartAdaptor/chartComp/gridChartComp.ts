@@ -14,7 +14,6 @@ import {
     PostConstruct,
     ProcessChartOptionsParams,
     RefSelector,
-    ResizeObserverService,
     GridApi,
     ColumnApi,
     ChartCreated,
@@ -23,6 +22,7 @@ import {
     PopupService
 } from "@ag-grid-community/core";
 import { ChartMenu } from "./menu/chartMenu";
+import { TitleEdit } from "./titleEdit";
 import { ChartController } from "./chartController";
 import { ChartDataModel, ChartModelParams } from "./chartDataModel";
 import { BarChartProxy } from "./chartProxies/cartesian/barChartProxy";
@@ -32,6 +32,7 @@ import { LineChartProxy } from "./chartProxies/cartesian/lineChartProxy";
 import { PieChartProxy } from "./chartProxies/polar/pieChartProxy";
 import { DoughnutChartProxy } from "./chartProxies/polar/doughnutChartProxy";
 import { ScatterChartProxy } from "./chartProxies/cartesian/scatterChartProxy";
+import { HistogramChartProxy } from "./chartProxies/cartesian/histogramChartProxy";
 import { ChartPaletteName } from "ag-charts-community";
 import { ChartTranslator } from "./chartTranslator";
 
@@ -54,6 +55,8 @@ export class GridChartComp extends Component {
                 </div>
                 <div ref="eEmpty" class="ag-chart-empty-text ag-unselectable"></div>
             </div>
+            <div ref="eTitleEditContainer">
+            </div>
             <div ref="eMenuContainer" class="ag-chart-docked-container"></div>
         </div>`;
 
@@ -61,8 +64,8 @@ export class GridChartComp extends Component {
     @RefSelector('eChartContainer') private eChartContainer: HTMLElement;
     @RefSelector('eMenuContainer') private eMenuContainer: HTMLElement;
     @RefSelector('eEmpty') private eEmpty: HTMLElement;
+    @RefSelector('eTitleEditContainer') private eTitleEditContainer: HTMLDivElement;
 
-    @Autowired('resizeObserverService') private resizeObserverService: ResizeObserverService;
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('environment') private environment: Environment;
     @Autowired('chartTranslator') private chartTranslator: ChartTranslator;
@@ -72,6 +75,7 @@ export class GridChartComp extends Component {
     @Autowired('popupService') private popupService: PopupService;
 
     private chartMenu: ChartMenu;
+    private titleEdit: TitleEdit;
     private chartDialog: AgDialog;
 
     private model: ChartDataModel;
@@ -107,8 +111,8 @@ export class GridChartComp extends Component {
             this.addDialog();
         }
 
-        this.addResizeListener();
         this.addMenu();
+        this.addTitleEditComp();
 
         this.addDestroyableEventListener(this.getGui(), 'focusin', this.setActiveChartCellRange.bind(this));
         this.addDestroyableEventListener(this.chartController, ChartController.EVENT_CHART_UPDATED, this.refresh.bind(this));
@@ -158,6 +162,8 @@ export class GridChartComp extends Component {
         // set local state used to detect when chart type changes
         this.chartType = chartType;
         this.chartProxy = this.createChartProxy(chartProxyParams);
+        this.titleEdit && this.titleEdit.setChartProxy(this.chartProxy);
+
         _.addCssClass(this.eChart.querySelector('canvas'), 'ag-charts-canvas');
         this.chartController.setChartProxy(this.chartProxy);
     }
@@ -188,6 +194,8 @@ export class GridChartComp extends Component {
             case ChartType.Scatter:
             case ChartType.Bubble:
                 return new ScatterChartProxy(chartProxyParams);
+            case ChartType.Histogram:
+                return new HistogramChartProxy(chartProxyParams);
         }
     }
 
@@ -219,6 +227,13 @@ export class GridChartComp extends Component {
         const maxHeight = _.getAbsoluteHeight(popupParent) * 0.75;
         const ratio = 0.553;
 
+        {
+            const { width, height } = this.chartProxy.getChartOptions();
+            if (width && height) {
+                return { width, height };
+            }
+        }
+
         const chart = this.chartProxy.getChart() as any;
         let width = this.params.insideDialog ? 850 : chart.width;
         let height = this.params.insideDialog ? 470 : chart.height;
@@ -239,6 +254,15 @@ export class GridChartComp extends Component {
     private addMenu(): void {
         this.chartMenu = this.wireBean(new ChartMenu(this.eChartContainer, this.eMenuContainer, this.chartController));
         this.eChartContainer.appendChild(this.chartMenu.getGui());
+    }
+
+    private addTitleEditComp(): void {
+        this.titleEdit = this.wireBean(new TitleEdit(this.chartMenu));
+        this.eTitleEditContainer.appendChild(this.titleEdit.getGui());
+
+        if( this.chartProxy ) {
+            this.titleEdit.setChartProxy(this.chartProxy)
+        }
     }
 
     private refresh(): void {
@@ -300,8 +324,8 @@ export class GridChartComp extends Component {
 
         if (container) {
             const isEmpty = pivotModeDisabled || isEmptyChart;
-            _.setVisible(this.eChart, !isEmpty);
-            _.setVisible(this.eEmpty, isEmpty);
+            _.setDisplayed(this.eChart, !isEmpty);
+            _.setDisplayed(this.eEmpty, isEmpty);
         }
 
         if (pivotModeDisabled) {
@@ -338,21 +362,6 @@ export class GridChartComp extends Component {
             chartProxy.setChartOption('width', _.getInnerWidth(eChart));
             chartProxy.setChartOption('height', _.getInnerHeight(eChart));
         }
-    }
-
-    private addResizeListener(): void {
-        const eGui = this.getGui();
-
-        const resizeFunc = () => {
-            if (!eGui || !eGui.offsetParent) {
-                observeResizeFunc();
-                return;
-            }
-
-            this.refreshCanvasSize();
-        };
-
-        const observeResizeFunc = this.resizeObserverService.observeResize(this.eChart, resizeFunc, 5);
     }
 
     private setActiveChartCellRange(focusEvent: FocusEvent): void {

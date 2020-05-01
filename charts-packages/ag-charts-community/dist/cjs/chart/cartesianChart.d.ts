@@ -6,9 +6,8 @@ export declare class CartesianChart extends Chart {
     static type: string;
     constructor(document?: Document);
     private _seriesRoot;
-    get seriesRoot(): Group;
+    readonly seriesRoot: Group;
     performLayout(): void;
-    private _updateAxes;
     protected initSeries(series: Series): void;
     protected freeSeries(series: Series): void;
     updateAxes(): void;

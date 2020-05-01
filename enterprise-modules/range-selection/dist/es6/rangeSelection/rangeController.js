@@ -11,12 +11,13 @@ var __spreadArrays = (this && this.__spreadArrays) || function () {
             r[k] = a[j];
     return r;
 };
-import { Autowired, Bean, Constants, Events, PostConstruct, _, } from "@ag-grid-community/core";
+import { Autowired, Bean, Constants, Events, PostConstruct, _, PreDestroy, } from "@ag-grid-community/core";
 var RangeController = /** @class */ (function () {
     function RangeController() {
         this.cellRanges = [];
         this.bodyScrollListener = this.onBodyScroll.bind(this);
         this.dragging = false;
+        this.events = [];
     }
     RangeController.prototype.registerGridComp = function (gridPanel) {
         this.gridPanel = gridPanel;
@@ -24,13 +25,21 @@ var RangeController = /** @class */ (function () {
     };
     RangeController.prototype.init = function () {
         this.logger = this.loggerFactory.create('RangeController');
-        this.eventService.addEventListener(Events.EVENT_COLUMN_EVERYTHING_CHANGED, this.removeAllCellRanges.bind(this));
-        this.eventService.addEventListener(Events.EVENT_COLUMN_PIVOT_MODE_CHANGED, this.removeAllCellRanges.bind(this));
-        this.eventService.addEventListener(Events.EVENT_COLUMN_ROW_GROUP_CHANGED, this.removeAllCellRanges.bind(this));
-        this.eventService.addEventListener(Events.EVENT_COLUMN_GROUP_OPENED, this.refreshLastRangeStart.bind(this));
-        this.eventService.addEventListener(Events.EVENT_COLUMN_MOVED, this.refreshLastRangeStart.bind(this));
-        this.eventService.addEventListener(Events.EVENT_COLUMN_PINNED, this.refreshLastRangeStart.bind(this));
-        this.eventService.addEventListener(Events.EVENT_COLUMN_VISIBLE, this.onColumnVisibleChange.bind(this));
+        this.events = [
+            this.eventService.addEventListener(Events.EVENT_COLUMN_EVERYTHING_CHANGED, this.removeAllCellRanges.bind(this)),
+            this.eventService.addEventListener(Events.EVENT_COLUMN_PIVOT_MODE_CHANGED, this.removeAllCellRanges.bind(this)),
+            this.eventService.addEventListener(Events.EVENT_COLUMN_ROW_GROUP_CHANGED, this.removeAllCellRanges.bind(this)),
+            this.eventService.addEventListener(Events.EVENT_COLUMN_GROUP_OPENED, this.refreshLastRangeStart.bind(this)),
+            this.eventService.addEventListener(Events.EVENT_COLUMN_MOVED, this.refreshLastRangeStart.bind(this)),
+            this.eventService.addEventListener(Events.EVENT_COLUMN_PINNED, this.refreshLastRangeStart.bind(this)),
+            this.eventService.addEventListener(Events.EVENT_COLUMN_VISIBLE, this.onColumnVisibleChange.bind(this))
+        ];
+    };
+    RangeController.prototype.destroy = function () {
+        if (this.events.length) {
+            this.events.forEach(function (func) { return func(); });
+            this.events = [];
+        }
     };
     RangeController.prototype.onColumnVisibleChange = function () {
         var _this = this;
@@ -41,7 +50,7 @@ var RangeController = /** @class */ (function () {
             var beforeCols = cellRange.columns;
             // remove hidden cols from cell range
             cellRange.columns = cellRange.columns.filter(function (col) { return col.isVisible(); });
-            var colsInRangeChanged = !_.compareArrays(beforeCols, cellRange.columns);
+            var colsInRangeChanged = !_.areEqual(beforeCols, cellRange.columns);
             if (colsInRangeChanged) {
                 // notify users and other parts of grid (i.e. status panel) that range has changed
                 _this.dispatchChangedEvent(false, true, cellRange.id);
@@ -548,6 +557,9 @@ var RangeController = /** @class */ (function () {
     __decorate([
         PostConstruct
     ], RangeController.prototype, "init", null);
+    __decorate([
+        PreDestroy
+    ], RangeController.prototype, "destroy", null);
     RangeController = __decorate([
         Bean('rangeController')
     ], RangeController);

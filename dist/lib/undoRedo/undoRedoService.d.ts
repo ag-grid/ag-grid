@@ -12,7 +12,9 @@ export declare class UndoRedoService {
     private isRowEditing;
     private isPasting;
     private isFilling;
+    private events;
     init(): void;
+    destroy(): void;
     private onCellValueChanged;
     private clearStacks;
     undo(): void;

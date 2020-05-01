@@ -1,4 +1,4 @@
-// Type definitions for @ag-grid-community/core v23.0.2
+// Type definitions for @ag-grid-community/core v23.1.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { ColumnGroupChild } from "./columnGroupChild";
@@ -129,6 +129,7 @@ export declare class Column implements ColumnGroupChild, OriginalColumnGroupChil
     getMinWidth(): number;
     getMaxWidth(): number;
     getFlex(): number;
+    setFlex(flex: number): void;
     setMinimum(source?: ColumnEventType): void;
     setRowGroupActive(rowGroup: boolean, source?: ColumnEventType): void;
     isRowGroupActive(): boolean;

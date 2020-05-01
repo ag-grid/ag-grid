@@ -1,33 +1,34 @@
-import { Component } from "../../widgets/component";
+import { AgCheckbox } from "../../widgets/agCheckbox";
 import { Autowired, PostConstruct } from "../../context/context";
+import { Component } from "../../widgets/component";
+import { Beans } from "../../rendering/beans";
 import { Column } from "../../entities/column";
 import {
     DragAndDropService, DragItem, DragSource, DragSourceType,
     DropTarget
 } from "../../dragAndDrop/dragAndDropService";
 import { ColDef } from "../../entities/colDef";
-import { IHeaderComp, IHeaderParams, IHeader } from "./headerComp";
+import { Constants } from "../../constants";
 import { ColumnApi } from "../../columnController/columnApi";
 import { ColumnController } from "../../columnController/columnController";
-import { HorizontalResizeService } from "../horizontalResizeService";
-import { GridOptionsWrapper } from "../../gridOptionsWrapper";
+import { ColumnHoverService } from "../../rendering/columnHoverService";
 import { CssClassApplier } from "../cssClassApplier";
-import { SetLeftFeature } from "../../rendering/features/setLeftFeature";
+import { Events } from "../../events";
+import { EventService } from "../../eventService";
+import { IHeaderComp, IHeaderParams, IHeader } from "./headerComp";
 import { IMenuFactory } from "../../interfaces/iMenuFactory";
 import { GridApi } from "../../gridApi";
-import { SortController } from "../../sortController";
-import { EventService } from "../../eventService";
-import { UserComponentFactory } from "../../components/framework/userComponentFactory";
-import { AgCheckbox } from "../../widgets/agCheckbox";
-import { RefSelector } from "../../widgets/componentAnnotations";
-import { SelectAllFeature } from "./selectAllFeature";
-import { Events } from "../../events";
-import { ColumnHoverService } from "../../rendering/columnHoverService";
-import { Beans } from "../../rendering/beans";
+import { GridOptionsWrapper } from "../../gridOptionsWrapper";
+import { HorizontalResizeService } from "../horizontalResizeService";
 import { HoverFeature } from "../hoverFeature";
+import { SetLeftFeature } from "../../rendering/features/setLeftFeature";
+import { SortController } from "../../sortController";
+import { SelectAllFeature } from "./selectAllFeature";
+import { RefSelector } from "../../widgets/componentAnnotations";
 import { TouchListener } from "../../widgets/touchListener";
+import { TooltipFeature } from "../../widgets/tooltipFeature";
+import { UserComponentFactory } from "../../components/framework/userComponentFactory";
 import { _ } from "../../utils";
-import { Constants } from "../../constants";
 
 export class HeaderWrapperComp extends Component {
 
@@ -267,8 +268,8 @@ export class HeaderWrapperComp extends Component {
 
     public onResizing(finished: boolean, resizeAmount: number): void {
         const resizeAmountNormalised = this.normaliseResizeAmount(resizeAmount);
-        const newWidth = this.resizeStartWidth + resizeAmountNormalised;
-        this.columnController.setColumnWidth(this.column, newWidth, this.resizeWithShiftKey, finished, "uiColumnDragged");
+        const columnWidths = [{key: this.column, newWidth: this.resizeStartWidth + resizeAmountNormalised}];
+        this.columnController.setColumnWidths(columnWidths, this.resizeWithShiftKey, finished, "uiColumnDragged");
 
         if (finished) {
             _.removeCssClass(this.getGui(), 'ag-column-resizing');
@@ -297,7 +298,7 @@ export class HeaderWrapperComp extends Component {
         if (this.gridOptionsWrapper.isEnableBrowserTooltips()) {
             this.getGui().setAttribute('title', tooltipText);
         } else {
-            this.beans.tooltipManager.registerTooltip(this);
+            this.addFeature(new TooltipFeature(this, 'header'));
         }
     }
 

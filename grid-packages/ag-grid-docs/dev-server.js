@@ -11,7 +11,7 @@ const webpackMiddleware = require('webpack-dev-middleware');
 const chokidar = require('chokidar');
 const tcpPortUsed = require('tcp-port-used');
 const generateExamples = require('./example-generator').generateExamples;
-const { updateBetweenStrings, getAllModules } = require("./utils");
+const {updateBetweenStrings, getAllModules} = require("./utils");
 const docsLock = require('./../../scripts/docsLock');
 
 const lnk = require('lnk').sync;
@@ -27,7 +27,7 @@ const WINDOWS = /^win/.test(os.platform());
 // }
 
 function reporter(middlewareOptions, options) {
-    const { log, state, stats } = options;
+    const {log, state, stats} = options;
 
     if (state) {
         const displayStats = middlewareOptions.stats !== false;
@@ -79,13 +79,13 @@ function addWebpackMiddleware(app, configFile, prefix, bundleDescriptor) {
 function launchPhpCP(app) {
     const php = cp.spawn('php', ['-S', `${HOST}:${PHP_PORT}`, '-t', 'src'], {
         stdio: ['ignore', 'ignore', 'ignore'],
-        env: { AG_DEV: 'true' }
+        env: {AG_DEV: 'true'}
     });
 
     app.use(
         '/',
         proxy(`${HOST}:${PHP_PORT}`, {
-            proxyReqOptDecorator: function(proxyReqOpts, srcReq) {
+            proxyReqOptDecorator: function (proxyReqOpts, srcReq) {
                 proxyReqOpts.headers['X-PROXY-HTTP-HOST'] = srcReq.headers.host;
                 return proxyReqOpts;
             }
@@ -150,7 +150,7 @@ function symlinkModules(gridCommunityModules, gridEnterpriseModules, chartCommun
         linkType = 'junction';
     }
 
-    lnk('../../community-modules/vue/', '_dev/@ag-grid-community', { force: true, type: linkType, rename: 'vue' });
+    lnk('../../community-modules/vue/', '_dev/@ag-grid-community', {force: true, type: linkType, rename: 'vue'});
     lnk('../../community-modules/angular/', '_dev/@ag-grid-community', {
         force: true,
         type: linkType,
@@ -249,10 +249,17 @@ function regenerateExamplesForFileChange(file) {
     }
 }
 
-function watchAndGenerateExamples(scope) {
-    generateExamples(scope);
+function watchAndGenerateExamples(scope, moduleChangedCheck) {
+    if (!moduleChangedCheck || moduleChanged('.')) {
+        generateExamples(scope);
 
-    chokidar.watch([`./src/${scope || '*'}/**/*.{php,html,css,js}`], { ignored: ['**/_gen/**/*'] }).on('change', regenerateExamplesForFileChange);
+        const npm = WINDOWS ? 'npm.cmd' : 'npm';
+        cp.spawnSync(npm, ['run', 'hash']);
+    } else {
+        console.log("Docs contents haven't changed - skipping example generation");
+    }
+
+    chokidar.watch([`./src/${scope || '*'}/**/*.{php,html,css,js}`], {ignored: ['**/_gen/**/*']}).on('change', regenerateExamplesForFileChange);
 }
 
 const updateLegacyWebpackSourceFiles = (gridCommunityModules, gridEnterpriseModules) => {
@@ -404,7 +411,10 @@ function updateUtilsSystemJsMappingsForFrameworks(gridCommunityModules, gridEnte
         '/* END OF GRID CSS DEV - DO NOT DELETE */',
         cssFiles,
         [],
-        cssFile => `        "@ag-grid-community/all-modules/dist/styles/${cssFile}" => "$prefix/@ag-grid-community/all-modules/dist/styles/${cssFile}",`,
+        cssFile => {
+            return `        "@ag-grid-community/all-modules/dist/styles/${cssFile}" => "$prefix/@ag-grid-community/all-modules/dist/styles/${cssFile}",
+        "@ag-grid-community/core/dist/styles/${cssFile}" => "$prefix/@ag-grid-community/core/dist/styles/${cssFile}",`
+        },
         () => {
         });
 
@@ -430,7 +440,10 @@ function updateUtilsSystemJsMappingsForFrameworks(gridCommunityModules, gridEnte
         '/* END OF GRID CSS PROD - DO NOT DELETE */',
         cssFiles,
         [],
-        cssFile => `        "@ag-grid-community/all-modules/dist/styles/${cssFile}" => "https://unpkg.com/@ag-grid-community/all-modules@" . AG_GRID_VERSION . "/dist/styles/${cssFile}",`,
+        cssFile => {
+            return `        "@ag-grid-community/all-modules/dist/styles/${cssFile}" => "https://unpkg.com/@ag-grid-community/all-modules@" . AG_GRID_VERSION . "/dist/styles/${cssFile}",
+        "@ag-grid-community/core/dist/styles/${cssFile}" => "https://unpkg.com/@ag-grid-community/core@" . AG_GRID_VERSION . "/dist/styles/${cssFile}",`
+        },
         () => {
         });
 
@@ -504,39 +517,60 @@ function buildCoreModules() {
     return 0;
 }
 
-function buildFrameworks(rootDirectory, frameworkDirectories, exitOnError) {
+function moduleChanged(moduleRoot) {
+    let changed = true;
+
+    // Windows... convert c:\\xxx to /c/xxx - can only work in git bash
+    const resolvedPath = path.resolve(moduleRoot).replace(/\\/g, '/').replace("C:", "/c");
+
+    const checkResult = cp.spawnSync('sh', ['../../scripts/hashChanged.sh', resolvedPath], {
+        stdio: 'pipe',
+        encoding: 'utf-8'
+    });
+
+    if (checkResult && checkResult.status !== 1) {
+        changed = checkResult.output[1].trim() === '1';
+    }
+    return changed;
+}
+
+function buildFrameworks(rootDirectory, frameworkDirectories, exitOnError, moduleChangedCheck) {
     frameworkDirectories.forEach(frameworkDirectory => {
         const frameworkRoot = WINDOWS ? `..\\..\\${rootDirectory}\\${frameworkDirectory}\\` : `../../${rootDirectory}/${frameworkDirectory}/`;
-        const npm = WINDOWS ? 'npm.cmd' : 'npm';
-        const result = cp.spawnSync(npm, ['run', 'build'], {
-            stdio: 'inherit',
-            cwd: frameworkRoot
-        });
 
-        if (result && result.status !== 0) {
-            console.log(`ERROR Building The ${frameworkDirectory} Module`);
-            console.error(result.error);
+        if (!moduleChangedCheck || moduleChanged(frameworkRoot)) {
+            console.log(`${frameworkRoot} has changed - rebuilding`);
+            const npm = WINDOWS ? 'npm.cmd' : 'npm';
+            const result = cp.spawnSync(npm, ['run', 'build'], {
+                stdio: 'inherit',
+                cwd: frameworkRoot
+            });
 
-            if(exitOnError) {
-                process.exit(result.status)
+            if (result && result.status !== 0) {
+                console.log(`ERROR Building The ${frameworkDirectory} Module`);
+                console.error(result.error);
+
+                if (exitOnError) {
+                    process.exit(result.status)
+                }
             }
         }
     });
 }
 
-function buildGridFrameworkModules(exitOnError) {
+function buildGridFrameworkModules(exitOnError, moduleChangedCheck) {
     console.log("Building Grid Framework Modules...");
-    return buildFrameworks('community-modules', ['react', 'angular', 'vue'], exitOnError);
+    return buildFrameworks('community-modules', ['react', 'angular', 'vue'], exitOnError, moduleChangedCheck);
 }
 
-function buildGridPackages(exitOnError) {
+function buildGridPackages(exitOnError, moduleChangedCheck) {
     console.log("Building Grid Packages...");
-    return buildFrameworks('grid-packages', ['ag-grid-community', 'ag-grid-enterprise', 'ag-grid-react', 'ag-grid-angular', 'ag-grid-vue'], exitOnError);
+    return buildFrameworks('grid-packages', ['ag-grid-community', 'ag-grid-enterprise', 'ag-grid-react', 'ag-grid-angular', 'ag-grid-vue'], exitOnError, moduleChangedCheck);
 }
 
-function buildChartsPackages(exitOnError) {
+function buildChartsPackages(exitOnError, moduleChangedCheck) {
     console.log("Building Chart Framework Packages...");
-    return buildFrameworks('charts-packages', ['ag-charts-react', 'ag-charts-angular', 'ag-charts-vue'], exitOnError);
+    return buildFrameworks('charts-packages', ['ag-charts-react', 'ag-charts-angular', 'ag-charts-vue'], exitOnError, moduleChangedCheck);
 }
 
 function buildCss() {
@@ -545,7 +579,7 @@ function buildCss() {
         `node .\\scripts\\modules\\lernaWatch.js --buildBeta`
         :
         `node ./scripts/modules/lernaWatch.js --buildBeta`
-        ;
+    ;
     require('child_process').execSync(lernaScript, {
         stdio: 'inherit',
         cwd: WINDOWS ? '..\\..\\' : '../../'
@@ -585,7 +619,7 @@ defaultExtension: 'js'
     });
 }
 
-module.exports = (buildSourceModuleOnly = false, legacy = false, alreadyRunningCheck = false, done) => {
+module.exports = (buildSourceModuleOnly = false, legacy = false, alreadyRunningCheck = false, moduleChangedCheck = true, done) => {
     tcpPortUsed.check(EXPRESS_PORT)
         .then(inUse => {
             if (inUse) {
@@ -614,12 +648,12 @@ module.exports = (buildSourceModuleOnly = false, legacy = false, alreadyRunningC
                 process.exit(0);
             });
 
-            const { gridCommunityModules, gridEnterpriseModules, chartCommunityModules } = getAllModules();
+            const {gridCommunityModules, gridEnterpriseModules, chartCommunityModules} = getAllModules();
 
             const app = express();
 
             // necessary for plunkers
-            app.use(function(req, res, next) {
+            app.use(function (req, res, next) {
                 res.setHeader('Access-Control-Allow-Origin', '*');
                 return next();
             });
@@ -629,9 +663,9 @@ module.exports = (buildSourceModuleOnly = false, legacy = false, alreadyRunningC
             // if we encounter a build failure on startup we exit
             // prevents the need to have to CTRL+C several times for certain types of error
             buildCoreModules(!legacy);
-            buildGridFrameworkModules(!legacy);
-            buildGridPackages(!legacy);
-            buildChartsPackages(!legacy);
+            buildGridFrameworkModules(!legacy, moduleChangedCheck);
+            buildGridPackages(!legacy, moduleChangedCheck);
+            buildChartsPackages(!legacy, moduleChangedCheck);
 
             buildCss();
 
@@ -692,7 +726,7 @@ module.exports = (buildSourceModuleOnly = false, legacy = false, alreadyRunningC
             serveFramework(app, 'ag-grid-react');
 
             // regenerate examples
-            watchAndGenerateExamples();
+            watchAndGenerateExamples(undefined, moduleChangedCheck);
 
             // PHP
             launchPhpCP(app);
@@ -702,22 +736,10 @@ module.exports = (buildSourceModuleOnly = false, legacy = false, alreadyRunningC
                 launchTSCCheck(gridCommunityModules, gridEnterpriseModules);
             }
 
-            app.listen(EXPRESS_PORT, function() {
+            app.listen(EXPRESS_PORT, function () {
                 console.log(`ag-Grid dev server available on http://${HOST}:${EXPRESS_PORT}`);
             });
             done();
         });
 };
 
-// *** Don't remove these unused vars! ***
-//     node dev-server.js generate-examples [src directory]
-// eg: node dev-server.js generate-examples javascript-grid-accessing-data
-const [cmd, script, execFunc, exampleDir, watch] = process.argv;
-
-if (process.argv.length >= 3 && execFunc === 'generate-examples') {
-    if (watch && exampleDir) {
-        watchAndGenerateExamples(exampleDir);
-    } else {
-        generateExamples(exampleDir);
-    }
-}

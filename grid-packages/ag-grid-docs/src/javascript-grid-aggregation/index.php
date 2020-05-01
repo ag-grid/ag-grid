@@ -65,6 +65,12 @@ function myCustomAggFunc(values) {
     return sum;
 }</snippet>
 
+<note>
+Using a function directly will not work with column state, like
+<a href="../javascript-grid-column-definitions/#saving-and-restoring-column-state">Saving and Restoring Column State</a>.
+If you require state management with custom aggregation, use <code>addAggFunc</code> to register it.
+</note>
+
     <h2>Restricting Functions</h2>
 
     <p>
@@ -109,7 +115,7 @@ colDef = {
         </li>
     </ul>
 
-    <?= grid_example('Built-In Functions', 'built-in-functions', 'generated', ['enterprise' => true]) ?>
+    <?= grid_example('Built-In Functions', 'built-in-functions', 'generated', ['enterprise' => true, 'modules' => ['clientside', 'rowgrouping', 'menu', 'columnpanel', 'filterpanel', 'setfilter']]) ?>
 
     <note>
         Remember to mark value columns with <code>enableValue=true</code> when using the <a href="../javascript-grid-tool-panel/">Tool Panel</a>.
@@ -237,7 +243,7 @@ var columnB = {
         </li>
     </ul>
 
-    <?= grid_example('Custom Aggregation Functions', 'custom-agg-functions', 'generated', ['enterprise' => true]) ?>
+    <?= grid_example('Custom Aggregation Functions', 'custom-agg-functions', 'generated', ['enterprise' => true, 'modules' => ['clientside', 'rowgrouping', 'menu', 'columnpanel', 'filterpanel', 'setfilter']]) ?>
 
     <p>
         Note that custom aggregations will get called for the top level rows to calculate a 'Grand Total',
@@ -316,7 +322,7 @@ function createValueObject(gold, silver) {
         The following example demonstrates this approach in action:
     </p>
 
-    <?= grid_example('Multi-Column Aggregation', 'multi-column-aggregation', 'generated', ['enterprise' => true]) ?>
+    <?= grid_example('Multi-Column Aggregation', 'multi-column-aggregation', 'generated', ['enterprise' => true, 'modules' => ['clientside', 'rowgrouping', 'menu', 'columnpanel', 'filterpanel', 'setfilter']]) ?>
 
     <h2 id="aggregationApi">Aggregation API</h2>
 
@@ -379,7 +385,7 @@ colDef = {
         sum and another by multiplying the result by Math.PI.
     </p>
 
-    <?= grid_example('Custom Full Row Aggregation', 'custom-full-row-aggregation', 'generated', ['enterprise' => true, 'exampleHeight' => 620]) ?>
+    <?= grid_example('Custom Full Row Aggregation', 'custom-full-row-aggregation', 'generated', ['enterprise' => true, 'exampleHeight' => 620, 'modules' => ['clientside', 'rowgrouping', 'menu', 'columnpanel', 'filterpanel', 'setfilter']]) ?>
 
     <h2>Empty Aggregation Calls</h2>
 

@@ -30,14 +30,14 @@ function getRenderer() {
     function CellRenderer() {
     }
 
-    CellRenderer.prototype.createGui = function () {
+    CellRenderer.prototype.createGui = function() {
         var template = '<span><button id="theButton" style="height: 39px">#</button><span id="theValue" style="padding-left: 4px;"></span></span>';
         var tempDiv = document.createElement('div');
         tempDiv.innerHTML = template;
         this.eGui = tempDiv.firstElementChild;
     };
 
-    CellRenderer.prototype.init = function (params) {
+    CellRenderer.prototype.init = function(params) {
 
         // create the gui
         this.createGui();
@@ -56,7 +56,7 @@ function getRenderer() {
         // add the listener
         this.eButton.addEventListener('click', this.buttonClickListener);
     };
-    CellRenderer.prototype.onButtonClicked = function () {
+    CellRenderer.prototype.onButtonClicked = function() {
 
         // start editing this cell. see the docs on the params that this method takes
         var startEditingParams = {
@@ -65,11 +65,11 @@ function getRenderer() {
         };
         this.params.api.startEditingCell(startEditingParams);
     };
-    CellRenderer.prototype.getGui = function () {
+    CellRenderer.prototype.getGui = function() {
         // returns our gui to the grid for this cell
         return this.eGui;
     };
-    CellRenderer.prototype.destroy = function () {
+    CellRenderer.prototype.destroy = function() {
 
         // be good, clean up the listener
         this.eButton.removeEventListener('click', this.buttonClickListener);
@@ -79,19 +79,12 @@ function getRenderer() {
 }
 
 // setup the grid after the page has finished loading
-document.addEventListener('DOMContentLoaded', function () {
-    var div = document.querySelector('#myGrid');
-    new agGrid.Grid(div, gridOptions);
+document.addEventListener('DOMContentLoaded', function() {
+    var gridDiv = document.querySelector('#myGrid');
+    new agGrid.Grid(gridDiv, gridOptions);
 
-    // do http request to get our sample data - not using any framework to keep the example self contained.
-    // you will probably use a framework like JQuery, Angular or something else to do your HTTP calls.
-    var httpRequest = new XMLHttpRequest();
-    httpRequest.open('GET', 'https://raw.githubusercontent.com/ag-grid/ag-grid/master/grid-packages/ag-grid-docs/src/olympicWinnersSmall.json');
-    httpRequest.send();
-    httpRequest.onreadystatechange = function () {
-        if (httpRequest.readyState === 4 && httpRequest.status === 200) {
-            var httpResult = JSON.parse(httpRequest.responseText);
-            gridOptions.api.setRowData(httpResult);
-        }
-    };
+    agGrid.simpleHttpRequest({ url: 'https://raw.githubusercontent.com/ag-grid/ag-grid/master/grid-packages/ag-grid-docs/src/olympicWinnersSmall.json' })
+        .then(function(data) {
+            gridOptions.api.setRowData(data);
+        });
 });

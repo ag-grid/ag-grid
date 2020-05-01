@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v23.0.2
+ * @version v23.1.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -171,7 +171,6 @@ var RowNodeBlock = /** @class */ (function (_super) {
         }
     };
     RowNodeBlock.prototype.destroy = function () {
-        _super.prototype.destroy.call(this);
         this.rowNodes.forEach(function (rowNode) {
             if (rowNode.childrenCache) {
                 rowNode.childrenCache.destroy();
@@ -182,6 +181,7 @@ var RowNodeBlock = /** @class */ (function (_super) {
             // rowNode should have a flag on whether it is visible???
             rowNode.clearRowTop();
         });
+        _super.prototype.destroy.call(this);
     };
     RowNodeBlock.prototype.pageLoaded = function (version, rows, lastRow) {
         // we need to check the version, in case there was an old request

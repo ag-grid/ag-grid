@@ -1,9 +1,9 @@
-// Type definitions for @ag-grid-community/core v23.0.2
+// Type definitions for @ag-grid-community/core v23.1.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
-import { Component } from "../widgets/component";
-import { DropTarget } from "../dragAndDrop/dragAndDropService";
-import { IComponent } from "../interfaces/iComponent";
+import { Component } from '../widgets/component';
+import { DropTarget } from '../dragAndDrop/dragAndDropService';
+import { IComponent } from '../interfaces/iComponent';
 export declare enum HeaderRowType {
     COLUMN_GROUP = 0,
     COLUMN = 1,
@@ -11,10 +11,8 @@ export declare enum HeaderRowType {
 }
 export declare class HeaderRowComp extends Component {
     private gridOptionsWrapper;
-    private gridApi;
     private columnController;
     private eventService;
-    private filterManager;
     private readonly dept;
     private readonly pinned;
     private readonly dropTarget;
