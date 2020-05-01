@@ -25,3 +25,5 @@ export const waitForAsyncCondition = (condition, maxAttempts, attempts=0) => new
         setTimeout(waitForCondition, 20);
     })();
 });
+
+export const wait = ms => new Promise((r) => setTimeout(r, 10));
