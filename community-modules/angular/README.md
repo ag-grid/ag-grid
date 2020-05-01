@@ -13,6 +13,7 @@ It delivers [outstanding performance](https://www.ag-grid.com/example.php?utm_so
 
 ![alt text](./github-grid-demo.jpg "Logo Title Text 1")
 
+<br/>Version 22.1.1 of <code>@ag-grid-community/angular</code> is the last version that supports Angular 5 and before.<br/>Version 23 onwards of <code>@ag-grid-community/angular</code> will support Angular 6+ only.
 
 Features
 --------------
