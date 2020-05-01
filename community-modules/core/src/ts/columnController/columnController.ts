@@ -186,6 +186,13 @@ export class ColumnController {
     }
 
     public setColumnDefs(columnDefs: (ColDef | ColGroupDef)[], source: ColumnEventType = 'api') {
+        // if immutable cols, means this setColumnDefs call is making changes to the
+        // current column list, so makes sense for the columns to animate
+        const immutableCols = this.gridOptionsWrapper.isImmutableColumns();
+        if (immutableCols) {
+            this.columnAnimationService.start();
+        }
+
         const colsPreviouslyExisted = !!this.columnDefs;
 
         this.columnDefs = columnDefs;
@@ -239,6 +246,10 @@ export class ColumnController {
         this.eventService.dispatchEvent(newColumnsLoadedEvent);
 
         this.flexActive = this.getDisplayedCenterColumns().some(col => !!col.getFlex());
+
+        if (immutableCols) {
+            this.columnAnimationService.finish();
+        }
     }
 
     public isAutoRowHeightActive(): boolean {

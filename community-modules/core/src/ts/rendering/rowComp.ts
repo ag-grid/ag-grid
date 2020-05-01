@@ -3,7 +3,7 @@ import {CellComp} from "./cellComp";
 import {CellChangedEvent, DataChangedEvent, RowNode} from "../entities/rowNode";
 import {Column} from "../entities/column";
 import {
-    Events,
+    Events, GridColumnsChangedEvent,
     RowClickedEvent,
     RowDoubleClickedEvent,
     RowEditingStartedEvent,
@@ -488,10 +488,13 @@ export class RowComp extends Component {
 
     }
 
-    // when grid columns change, then all cells should be cleaned out,
-    // as the new columns could have same id as the previous columns and may conflict
-    private onGridColumnsChanged(): void {
-        this.removeRenderedCells(Object.keys(this.cellComps));
+    private onGridColumnsChanged(e: GridColumnsChangedEvent): void {
+        // when grid columns change, then all cells should be cleaned out if cols are not immutable,
+        // as the new columns could have same id as the previous columns but still be different columns and conflict
+        const immutableColumns = this.beans.gridOptionsWrapper.isImmutableColumns();
+        if (!immutableColumns) {
+            this.removeRenderedCells(Object.keys(this.cellComps));
+        }
     }
 
     private onRowNodeDataChanged(event: DataChangedEvent): void {

@@ -85,7 +85,7 @@ export class ClientSideRowModel implements IClientSideRowModel {
 
         const refreshEverythingFunc = this.refreshModel.bind(this, { step: Constants.STEP_EVERYTHING });
         const refreshEverythingAfterColsChangedFunc
-            = this.refreshModel.bind(this, { step: Constants.STEP_EVERYTHING, afterColumnsChanged: true });
+            = this.refreshModel.bind(this, { step: Constants.STEP_EVERYTHING, afterColumnsChanged: true, keepRenderedRows: true });
 
         this.events = [
             this.eventService.addModalPriorityEventListener(Events.EVENT_COLUMN_EVERYTHING_CHANGED, refreshEverythingAfterColsChangedFunc),

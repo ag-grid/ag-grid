@@ -10,9 +10,10 @@ import { RowNode } from "./entities/rowNode";
 import { GridApi } from "./gridApi";
 import { CellComp } from "./rendering/cellComp";
 import { _ } from "./utils";
+import {BeanStub} from "./context/beanStub";
 
 @Bean('focusController')
-export class FocusController {
+export class FocusController extends BeanStub {
 
     @Autowired('eventService') private eventService: EventService;
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
@@ -33,7 +34,7 @@ export class FocusController {
 
         this.events = [
             this.eventService.addEventListener(Events.EVENT_COLUMN_PIVOT_MODE_CHANGED, clearFocusedCellListener),
-            this.eventService.addEventListener(Events.EVENT_COLUMN_EVERYTHING_CHANGED, clearFocusedCellListener),
+            this.eventService.addEventListener(Events.EVENT_COLUMN_EVERYTHING_CHANGED, this.onColumnEverythingChanged.bind(this)),
             this.eventService.addEventListener(Events.EVENT_COLUMN_GROUP_OPENED, clearFocusedCellListener),
             this.eventService.addEventListener(Events.EVENT_COLUMN_ROW_GROUP_CHANGED, clearFocusedCellListener)
         ];
@@ -45,6 +46,19 @@ export class FocusController {
         const activateMouseModeListener = this.activateMouseMode.bind(this);
         eDocument.addEventListener('mousedown', activateMouseModeListener);
         this.events.push(() => eDocument.removeEventListener('mousedown', activateMouseModeListener));
+    }
+
+    public onColumnEverythingChanged(): void {
+        // if the columns change, check and see if this column still exists. if it does,
+        // then we can keep the focused cell. if it doesn't, then we need to drop the focused
+        // cell.
+        if (this.focusedCellPosition) {
+            const col = this.focusedCellPosition.column;
+            const colFromColumnController = this.columnController.getGridColumn(col.getId());
+            if (col!==colFromColumnController) {
+                this.clearFocusedCell();
+            }
+        }
     }
 
     @PreDestroy
