@@ -7,6 +7,7 @@ function FakeServer(allData) {
     return {
         getData: function(request) {
             var results = executeQuery(request);
+
             return {
                 success: true,
                 rows: results,
@@ -14,29 +15,22 @@ function FakeServer(allData) {
             };
         },
         getAthletes: function() {
-            var SQL = 'SELECT DISTINCT athlete FROM ? ORDER BY athlete asc';
-            var result = alasql(SQL, [allData]);
-            return result.map(Object.values);
+            var sql = 'SELECT DISTINCT athlete FROM ? ORDER BY athlete ASC';
+
+            return alasql(sql, [allData]).map(function(x) { return x.athlete; });
         }
     };
 
     function executeQuery(request) {
-        var SQL = buildSql(request);
+        var sql = buildSql(request);
 
-        console.log('[FakeServer] - about to execute query:', SQL);
+        console.log('[FakeServer] - about to execute query:', sql);
 
-        return alasql(SQL, [allData]);
+        return alasql(sql, [allData]);
     }
 
     function buildSql(request) {
-        var select = selectSql(request);
-        var from = ' FROM ?';
-        var where = whereSql(request);
-        var groupBy = createGroupBySql(request);
-        var orderBy = orderBySql(request);
-        var limit = limitSql(request);
-
-        return select + from + where + groupBy + orderBy + limit;
+        return selectSql(request) + ' FROM ?' + whereSql(request) + groupBySql(request) + orderBySql(request) + limitSql(request);
     }
 
     function selectSql(request) {
@@ -45,46 +39,47 @@ function FakeServer(allData) {
         var groupKeys = request.groupKeys;
 
         if (isDoingGrouping(rowGroupCols, groupKeys)) {
-            var colsToSelect = [];
             var rowGroupCol = rowGroupCols[groupKeys.length];
-            colsToSelect.push(rowGroupCol.id);
+            var colsToSelect = [rowGroupCol.id];
 
             valueCols.forEach(function(valueCol) {
                 colsToSelect.push(valueCol.aggFunc + '(' + valueCol.id + ') AS ' + valueCol.id);
             });
 
-            return ' SELECT ' + colsToSelect.join(', ');
+            return 'SELECT ' + colsToSelect.join(', ');
         }
 
-        return ' SELECT *';
+        return 'SELECT *';
     }
 
     function whereSql(request) {
         var rowGroups = request.rowGroupCols;
         var groupKeys = request.groupKeys;
+        var whereParts = [];
 
-        var whereClause = '';
         if (groupKeys) {
-            for (var i = 0; i < groupKeys.length; i++) {
-                whereClause += (i === 0) ? ' WHERE ' : ' AND ';
-                var value = typeof groupKeys[i] === 'string' ? ' = "' + groupKeys[i] + '"' : ' = ' + groupKeys[i];
-                whereClause += rowGroups[i].id + value;
-            }
+            groupKeys.forEach(function(key, i) {
+                var value = typeof key === 'string' ? "'" + key + "'" : key;
+
+                whereParts.push(rowGroups[i].id + ' = ' + value);
+            });
         }
-        return whereClause;
+
+        if (whereParts.length > 0) {
+            return ' WHERE ' + whereParts.join(' AND ');
+        }
+
+        return '';
     }
 
-    function createGroupBySql(request) {
+    function groupBySql(request) {
         var rowGroupCols = request.rowGroupCols;
         var groupKeys = request.groupKeys;
 
         if (isDoingGrouping(rowGroupCols, groupKeys)) {
-            var colsToGroupBy = [];
-
             var rowGroupCol = rowGroupCols[groupKeys.length];
-            colsToGroupBy.push(rowGroupCol.id);
 
-            return ' GROUP BY ' + colsToGroupBy.join(', ');
+            return ' GROUP BY ' + rowGroupCol.id;
         }
 
         return '';
@@ -92,17 +87,19 @@ function FakeServer(allData) {
 
     function orderBySql(request) {
         var sortModel = request.sortModel;
+
         if (sortModel.length === 0) return '';
 
         var sorts = sortModel.map(function(s) {
-            return s.colId + ' ' + s.sort;
+            return s.colId + ' ' + s.sort.toUpperCase();
         });
 
-        return ' ORDER BY ' + sorts.join(', ') + ' ';
+        return ' ORDER BY ' + sorts.join(', ');
     }
 
     function limitSql(request) {
         var blockSize = request.endRow - request.startRow;
+
         return ' LIMIT ' + (blockSize + 1) + ' OFFSET ' + request.startRow;
     }
 
@@ -112,8 +109,10 @@ function FakeServer(allData) {
     }
 
     function getLastRowIndex(request, results) {
-        if (!results || results.length === 0) return null;
+        if (!results || results.length === 0) { return null; };
+
         var currentLastRow = request.startRow + results.length;
+
         return currentLastRow <= request.endRow ? currentLastRow : -1;
     }
 }
