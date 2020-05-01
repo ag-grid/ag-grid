@@ -9,16 +9,17 @@ include '../documentation-main/documentation_header.php';
 <h1>Infinite Row Model</h1>
 
 <note>
-    If you are an enterprise user you should consider using the <a href="../javascript-grid-server-side-model/">server-side row model</a>
-    instead of the infinite row model. It offers the same functionality with many more features.<br /><br />
+    If you are an Enterprise user you should consider using the <a href="../javascript-grid-server-side-model/">Server-Side Row Model</a>
+    instead of the Infinite Row Model. It offers the same functionality with many more features.<br /><br />
     The differences between row models can be found in our <a href="../javascript-grid-row-models/">row models summary page</a>.
 </note>
 
 <p>
-    Infinite scrolling allows the grid to lazy load rows from the server depending on what
+    Infinite scrolling allows the grid to lazy-load rows from the server depending on what
     the scroll position is of the grid. In its simplest form, the more the user scrolls
     down, the more rows get loaded.
 </p>
+
 <p>
     The grid will have an 'auto extending' vertical scroll. That means as the scroll reaches
     the bottom position, the grid will extend the height to allow scrolling even further down,
@@ -31,7 +32,7 @@ include '../documentation-main/documentation_header.php';
 <p>
     The grid will ask your application, via a datasource, for the rows in blocks.
     Each block contains a subset of rows of the entire
-    data set. The following diagram is a high level overview.
+    dataset. The following diagram is a high-level overview.
 </p>
 
 <p>
@@ -80,16 +81,16 @@ SNIPPET
 
 <p>
     Changing the datasource after the grid is initialised will reset the infinite scrolling in the grid.
-    This is useful if the context of your data changes, ie if you want to look at a different set of data.
+    This is useful if the context of your data changes, i.e. if you want to look at a different set of data.
 </p>
 
 <note>
     If you call <code>setDatasource()</code> the grid will act assuming
     it's a new datasource, resetting the block cache. However you can pass in the same datasource instance.
     So your application, for example, might have one instance of a datasource that is aware of some
-    external context (eg the business date selected for a report, or the 'bank ATM instance' data you are
+    external context (e.g. the business date selected for a report, or the 'bank ATM instance' data you are
     connecting to), and when the context changes, you want to reset, but still keep the same datasource
-    instance. In this case, just call setDatasource() and pass the same datasource in again.
+    instance. In this case, just call <code>setDatasource()</code> and pass the same datasource in again.
 </note>
 
 <h3>Datasource Interface</h3>
@@ -110,12 +111,11 @@ interface IDatasource {
     destroy?(): void;
 }
 SNIPPET
-) ?>
+, 'ts') ?>
 
 <p>
     The <code>getRows()</code> method takes the following parameters:
 </p>
-
 
 <?= createSnippet(<<<SNIPPET
 // Params for the above IDatasource.getRows()
@@ -142,38 +142,39 @@ interface IGetRowsParams {
     failCallback(): void;
 }
 SNIPPET
-) ?>
+, 'ts') ?>
 
 <h3><code>getRows()</code></h3>
 
 <p>
-    The <code>getRows()</code> function is called by the grid to load a block of rows into the browser side cache of blocks.
+    The <code>getRows()</code> function is called by the grid to load a block of rows into the browser-side cache of blocks.
     It takes the following as parameters:
 </p>
 
 <ul class="content">
     <li>
-        The <b>startRow</b> and <b>endRow</b> define the range expected for the call. For example, if block
-        size is 100, the getRows function will be called with `startRow: 0` and `endRow: 100` and the grid will
-        expect a result with 100 rows (that's rows 0 to 99).
+        The <code>startRow</code> and <code>endRow</code> define the range expected for the call. For example, if block
+        size is 100, the <code>getRows</code> function will be called with <code>startRow: 0</code> and <code>endRow: 100</code>
+        and the grid will expect a result with 100 rows (rows 0 to 99).
     </li>
     <li>
-        The <b>successCallback(rowsThisBlock, lastRow)</b> should be called when you successfully receive data
+        The <code>successCallback(rowsThisBlock, lastRow)</code> should be called when you successfully receive data
         from the server. The callback has the following parameters:
+
         <ul class="content">
-            <li><b>rowsThisBlock</b> should be the rows you have received for the current block.</li>
-            <li><b>lastRow</b> should be the index of the last row if known.</li>
+            <li><code>rowsThisBlock</code> should be the rows you have received for the current block.</li>
+            <li><code>lastRow</code> should be the index of the last row if known.</li>
         </ul>
     </li>
     <li>
-        The <b>failCallback()</b> should be called if the loading failed. Either one of
-        successCallback() or failCallback() should be called exactly once.
+        The <code>failCallback()</code> should be called if the loading failed. Either one of
+        <code>successCallback()</code> or <code>failCallback()</code> should be called exactly once.
     </li>
     <li>
-        The <b>filterModel()</b> and <b>sortModel()</b> are passed for doing server-side sorting and filtering.
+        The <code>filterModel()</code> and <code>sortModel()</code> are passed for doing server-side sorting and filtering.
     </li>
     <li>
-        The <a href="../javascript-grid-context/"><b>context</b></a> is just passed as is
+        The <a href="../javascript-grid-context/"><code>context</code></a> is just passed as is
         and nothing to do with infinite scrolling. It's there if you need it for providing
         application state to your datasource.
     </li>
@@ -184,14 +185,14 @@ SNIPPET
 <p>
     The success callback parameter <code>lastRow</code> is used to move the grid out of infinite scrolling.
     If the last row is known, then this should be the index of the last row. If the last row is unknown,
-    then leave blank (undefined, null or -1). This attribute is only used when in infinite scrolling.
+    then leave blank (<code>undefined</code>, <code>null</code> or <code>-1</code>). This attribute is only used when in infinite scrolling.
     Once the total record count is known, the <code>lastRow</code> parameter will be ignored.
 </p>
 
 <p>
-    Under normal operation, you will return null or undefined for lastRow for every time getRows() is called
+    Under normal operation, you will return <code>null</code> or <code>undefined</code> for <code>lastRow</code> for every time <code>getRows()</code> is called
     with the exception of when you get to the last block. For example, if block size is 100 and you have 250 rows,
-    when getRows() is called for the third time, you will return back 50 rows in the result and set rowCount to 250.
+    when <code>getRows()</code> is called for the third time, you will return back 50 rows in the result and set <code>rowCount</code> to 250.
     This will then get the grid to set the scrollbar to fit exactly 250 rows and will not ask for any more blocks.
 </p>
 
@@ -208,8 +209,7 @@ SNIPPET
 
 <p>
     The block size is set using the grid property <code>cacheBlockSize</code>. This is how many rows each block in the
-    cache should contain.
-    Each call to your datasource will be for one block.
+    cache should contain. Each call to your datasource will be for one block.
 </p>
 
 <h3>Debounce Block Loading</h3>
@@ -223,8 +223,8 @@ SNIPPET
 
 <p>
     Aggregation and grouping are not available in infinite scrolling.
-    This is because to do such would require the grid knowing the entire data set,
-    which is not possible when using the infinite row model. If you need aggregation and / or
+    This is because to do so would require the grid knowing the entire dataset,
+    which is not possible when using the Infinite Row Model. If you need aggregation and / or
     grouping for large datasets, check the <a href="../javascript-grid-server-side-model/">Server-Side
     Row Model</a> for doing aggregations on the server-side.
 </p>
@@ -251,20 +251,20 @@ SNIPPET
 
 <p>
     Selection works on the rows in infinite scrolling by using the ID of the row node. If you do not
-    provide ids for the row nodes, the index of the row node will be used. Using the index of the
+    provide IDs for the row nodes, the index of the row node will be used. Using the index of the
     row breaks down when (server-side) filtering or sorting, as these change the index of the rows.
-    For this reason, if you do not provide your own ids, then selection is cleared if sort or
+    For this reason, if you do not provide your own IDs, then selection is cleared if sort or
     filter is changed.
 </p>
 
 <p>
-    To provide your own ids, implement the method <code>getRowNodeId(data)</code>, which takes the data
-    and should return the id for the data.
+    To provide your own IDs, implement the method <code>getRowNodeId(data)</code>, which takes the data
+    and should return the ID for the data.
 </p>
 
 <?= createSnippet(<<<SNIPPET
 gridOptions.getRowNodeId: function(item) {
-    // the id can be any string, as long as it's unique within your dataset
+    // the ID can be any string, as long as it's unique within your dataset
     return item.id.toString();
 }
 SNIPPET
@@ -293,15 +293,15 @@ SNIPPET
 
 <p>
     When a row is selected, the selection will remain inside the grid, even if the grid gets sorted
-    or filtered. Notice that when the grid loads a selected row (eg select first row, scroll down
-    so the first block is removed form cache, then scroll back up again) the row is not highlighted
-    until the row is loaded from the server. This is because the grid is waiting to see what the id
+    or filtered. Notice that when the grid loads a selected row (e.g. select first row, scroll down
+    so the first block is removed from cache, then scroll back up again) the row is not highlighted
+    until the row is loaded from the server. This is because the grid is waiting to see what the ID
     is of the row to be loaded.
 </p>
 
 <note>
-    The example below uses ag-Grid-Enterprise, this is to demonstrate the set filter with server-side
-    filtering, ag-Grid Enterprise is not required for infinite scrolling.
+    The example below uses ag-Grid Enterprise, to demonstrate the set filter with server-side
+    filtering. ag-Grid Enterprise is not required for infinite scrolling.
 </note>
 
 <?= grid_example('Server-Side Sorting And Filtering', 'server-side', 'generated', ['enterprise' => true, 'modules' => ['infinite', 'setfilter', 'menu', 'columnpanel']]) ?>
@@ -312,35 +312,37 @@ SNIPPET
     will not be allowed.
 </note>
 
-
 <h2>Specify Selectable Rows</h2>
 
 <p>
     It is also possible to specify which rows can be selected via the <code>gridOptions.isRowSelectable()</code>
     callback function.
 </p>
+
 <p>
     For instance if we only wanted to allow rows where the <code>data.country</code> property is the
     'United States' we could implement the following:
 </p>
 
-<snippet>
-    gridOptions.isRowSelectable: function(data) {
-        return data.country === 'United States';
-    }</snippet>
-<p>
-    <?= grid_example('Specify Selectable Rows', 'specify-selectable-rows', 'generated', ['modules' => ['infinite']]) ?>
+<?= createSnippet(<<<SNIPPET
+gridOptions.isRowSelectable: function(data) {
+    return data.country === 'United States';
+}
+SNIPPET
+) ?>
+
+<?= grid_example('Specify Selectable Rows', 'specify-selectable-rows', 'generated', ['modules' => ['infinite']]) ?>
 
 <p>
     Note that in the above example we have also included an optional checkbox to help highlight which rows
     are selectable.
 </p>
 
-<h3>Configuring A Bit Differently</h3>
+<h3>Configuring a Bit Differently</h3>
 
 <p>
-    The examples above use old style JavaScript objects for the datasource. This example turns things around slightly
-    and creates a datasource Class. The example also just creates (makes up) data on the fly.
+    The examples above use old-style JavaScript objects for the datasource. This example turns things around slightly
+    and creates a datasource Class. The example also just generates data on the fly.
 </p>
 
 <?= grid_example('Made Up Data', 'made-up-data', 'generated', ['modules' => ['infinite']]) ?>
@@ -350,8 +352,8 @@ SNIPPET
 <p>
     The examples on this page use a loading spinner to show if the row is waiting for its data to be loaded. The
     grid does not provide this, rather it is a simple rendering technique used in the examples. If the data
-    is loading, then the rowNode will have no id. So if you use the id as the value, the cell will get refreshed
-    when the id is set.
+    is loading, then the <code>rowNode</code> will have no ID, so if you use the ID as the value, the cell will get refreshed
+    when the ID is set.
 </p>
 
 <?= createSnippet(<<<SNIPPET
@@ -380,7 +382,7 @@ cell renderers.</p>
 
 <p>
     Infinite scrolling has a cache working behind the scenes. The following properties and API are provided
-    to allow you control of the cache.
+    to give you control of the cache.
 </p>
 
 <h3 id="properties">Properties</h3>
@@ -399,24 +401,24 @@ cell renderers.</p>
 <h3 id="example-using-cache-api-methods">Example: Using Cache API Methods</h3>
 
 <p>
-    Below demonstrates the different api methods via the buttons. The example outputs a lot of debugging items
+    Below demonstrates the different API methods via the buttons. The example outputs a lot of debugging items
     to the console because the grid property <code>debug=true</code> is set. The buttons are as follows:
 </p>
 
 <ul class="content">
     <li>
-        <b>Insert Rows</b>: Inserts 5 rows at row index 2 from the server, then gets grid to refresh.
+        <b>Insert Rows</b>: Inserts 5 rows at row index 2 from the server, then refreshes the grid.
     </li>
     <li>
-        <b>Delete Rows</b>: Deletes 10 rows at row index 3 from the server, then gets the grid to refresh.
+        <b>Delete Rows</b>: Deletes 10 rows at row index 3 from the server, then refreshes the grid.
     </li>
     <li>
         <b>Set Row Count</b>: Sets the row count to 200. This adjusts the vertical scroll to
-        show 200 rows. If the scroll is positioned at the end, this results in the grid automatically readjusting
+        show 200 rows. If the scroll is positioned at the end, this results in the grid automatically re-adjusting
         as it seeks ahead for the next block of data.
     </li>
     <li>
-        <b>Print Info</b>: Prints rowCount and maxFound to the console.
+        <b>Print Info</b>: Prints <code>rowCount</code> and <code>maxFound</code> to the console.
     </li>
     <li>
         <b>Jump to 500</b>: Positions the grid so that row 500 is displayed.
@@ -425,7 +427,7 @@ cell renderers.</p>
         <b>Print Cache State</b>: Debugging method, to see the state of the cache.
     </li>
     <li>
-        <b>Set Prices High &amp; Set Prices Low</b>: Sets the prices ON THE server-side to either high or low prices.
+        <b>Set Prices High &amp; Set Prices Low</b>: Sets the prices on the server-side to either high or low prices.
         This will not impact the grid until after a block cache is loaded. Use these buttons to then further
         test the refresh and purge methods.
     </li>
@@ -449,7 +451,7 @@ cell renderers.</p>
 <p>
     <a href="../javascript-grid-column-definitions/#column-changes">Changing columns</a>
     is possible using infinite scroll and it does not require the data getting fetched again
-    from the server. If the change of columns impacts the sort or filter (ie a column with a sort
+    from the server. If the change of columns impacts the sort or filter (i.e. a column with a sort
     of filter applied is removed), then the grid will fetch data again similar to how data is
     fetched again after the user changes the sort or filter explicitly.
 </p>
@@ -457,19 +459,20 @@ cell renderers.</p>
 <p>
     The example below demonstrates changing columns on the infinite row model. The following
     can be noted:
-    <ul>
-        <li>Hit the buttons 'Show Year' and 'Hide Year'. Notice that the data is not re-fetched.</li>
-        <li>
-            Add a sort or filter to Age column. When the sort or filter is applied the data is re-fetched.
-            However once fetched, you can add and remove the Year column without re-fetching the data.
-        </li>
-        <li>
-            Add a sort or filter to the Year column. When the sort or filter is applied the data
-            is re-fetched. Now remove the Year column and the data is re-fetched again as the sort or
-            filter has changed.
-        </li>
-    </ul>
 </p>
+
+<ul>
+    <li>Hit the buttons 'Show Year' and 'Hide Year'. Notice that the data is not re-fetched.</li>
+    <li>
+        Add a sort or filter to Age column. When the sort or filter is applied the data is re-fetched.
+        However once fetched, you can add and remove the Year column without re-fetching the data.
+    </li>
+    <li>
+        Add a sort or filter to the Year column. When the sort or filter is applied the data
+        is re-fetched. Now remove the Year column and the data is re-fetched again as the sort or
+        filter has changed.
+    </li>
+</ul>
 
 <?= grid_example('Changing Columns', 'changing-columns', 'generated', ['modules' => ['infinite']]) ?>
 
@@ -535,7 +538,7 @@ cell renderers.</p>
 <p>
     The infinite row model does not use <a href="../javascript-grid-overlays/">overlays</a>
     like the Client-Side Row Model. It does not
-    use 'loading' overlay as rows load in blocks as it would be wrong to hide all the grid
+    use 'loading' overlay as rows load in blocks and it would be wrong to hide all the grid
     because some rows are getting loaded. The grid does not use 'no rows' overlay as the
     'no rows' could be because you have a filter set, and a grid with a filter shows an empty
     grid when no rows pass the filter.
