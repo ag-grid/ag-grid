@@ -1,7 +1,7 @@
 {
   "name": "ag-charts-vue",
   "description": "ag-Charts Vue Component",
-  "version": "1.0.1",
+  "version": "1.1.0",
   "author": "Sean Landsman <sean@thelandsmans.com>",
   "license": "MIT",
   "main": "main.js",
@@ -30,7 +30,7 @@
     "hash": "sh ../../scripts/hashDirectory.sh > .hash"
   },
   "devDependencies": {
-    "ag-charts-community": "~1.0.0",
+    "ag-charts-community": "~1.1.0",
     "@types/node": "12.12.22",
     "@vue/cli-plugin-typescript": "^3.11.0",
     "@vue/cli-plugin-unit-jest": "^3.11.0",
@@ -44,7 +44,7 @@
     "vue-template-compiler": "^2.6.10"
   },
   "peerDependencies": {
-    "ag-charts-community": "~1.0.0",
+    "ag-charts-community": "~1.1.0",
     "vue": ">= 2.2 <= 2.5.17 || >= 2.5.20",
     "vue-property-decorator": "^7.2.0 || ^8.0.0"
   },
