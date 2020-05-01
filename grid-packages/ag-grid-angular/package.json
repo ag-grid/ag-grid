@@ -13,6 +13,7 @@
     "hash": "sh ../../scripts/hashDirectory.sh > .hash"
   },
   "private": true,
+  "license": "MIT",
   "main": "./dist/ag-grid-angular/bundles/ag-grid-angular.umd.js",
   "module": "./dist/ag-grid-angular/fesm5/ag-grid-angular.js",
   "typings": "./dist/ag-grid-angular/ag-grid-angular.d.ts",
