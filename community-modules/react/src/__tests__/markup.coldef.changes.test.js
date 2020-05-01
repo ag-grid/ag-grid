@@ -43,7 +43,7 @@ it('declarative grid hiding a column removes it from the dom', async () => {
     expect(component.render().find('.ag-cell-value').text()).toEqual("24");
 });
 
-xit('declarative grid unpinning a column moves it to the center header section', async () => {
+it('declarative grid unpinning a column moves it to the center header section', async () => {
     component.setState({
         pinName: false
     });
