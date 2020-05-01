@@ -19,17 +19,18 @@ include '../documentation-main/documentation_header.php';
     shows how to group rows by 'country':
 </p>
 
-<snippet>
+<?= createSnippet(<<<SNIPPET
 gridOptions: {
     columnDefs: [
-        { field: "country", rowGroup: true },
-        { field: "sport" },
-        { field: "year" },
+        { field: 'country', rowGroup: true },
+        { field: 'sport' },
+        { field: 'year' },
     ],
 
     // other options
 }
-</snippet>
+SNIPPET
+) ?>
 
 <p>
     For more configuration details see the section on <a href="../javascript-grid-grouping">Row Grouping</a>.
@@ -48,7 +49,7 @@ gridOptions: {
     The properties relevant to row grouping in the request are shown below:
 </p>
 
-<snippet>
+<?= createSnippet(<<<SNIPPET
 // IServerSideGetRowsRequest
 {
     // row group columns
@@ -59,11 +60,12 @@ gridOptions: {
 
     ... // other params
 }
-</snippet>
+SNIPPET
+, 'ts') ?>
 
 <p>
     Note in the snippet above that <code>rowGroupCols</code> contains all the columns (dimensions) the grid is grouping
-    on, i.e. 'Country', 'Year', and <code>groupKeys</code> contains the list of group keys selected, i.e. ['Argentina', 2012].
+    on, e.g. 'Country', 'Year', and <code>groupKeys</code> contains the list of group keys selected, e.g. <code>['Argentina', 2012]</code>.
 </p>
 
 <h2>Example: Server-Side Row Grouping</h2>
@@ -81,7 +83,7 @@ gridOptions: {
         to perform grouping.
     </li>
     <li>
-        Open the browsers dev console to view the request supplied to the datasource.
+        Open the browser's dev console to view the request supplied to the datasource.
     </li>
 </ul>
 
@@ -89,12 +91,14 @@ gridOptions: {
 
 <note>
     <p>
-    The example above also demonstrates <a href="../javascript-grid-server-side-model-sorting/">Sorting</a> with groups.
-    When the grid sort changes, only impacted rows will get reloaded. For example if 'Sport' groups are expanded, sorting
-    on the 'Year' column won't cause the top level 'Country' groups to reload but sorting on the 'Gold' column will.
+        The example above also demonstrates <a href="../javascript-grid-server-side-model-sorting/">Sorting</a> with groups.
+        When the grid sort changes, only impacted rows will be reloaded. For example, if 'Sport' groups are expanded, sorting
+        on the 'Year' column won't cause the top level 'Country' groups to reload, but sorting on the 'Gold' column will.
     </p>
-    To avoid this and always refresh top level groups regardless of which column is sorted,
-    set the grid property <code>serverSideSortingAlwaysResets = true</code>.
+    <p>
+        To avoid this and always refresh top level groups regardless of which column is sorted,
+        set the grid property <code>serverSideSortingAlwaysResets=true</code>.
+    </p>
 </note>
 
 
@@ -103,14 +107,16 @@ gridOptions: {
 <p>
     The <a href="../javascript-grid-server-side-model-configuration/#server-side-cache">Server-Side Cache</a> has already
     been covered, however it is important to note that when rows are grouped each group node contains a cache. This is
-    illustrated in the following diagram:</p>
+    illustrated in the following diagram:
+</p>
 
 <p>
     <img src="groupCache.png" width="100%" height="100%" style="border: 1px  grey"/>
 </p>
 
-<p>When a group node is expanded, such as 'Australia' above, a cache will be created and blocks containing rows will be
-   loaded via the <a href="../javascript-grid-server-side-model-datasource/#datasource-interface">Server-Side Datasource</a>.
+<p>
+    When a group node is expanded, such as 'Australia' above, a cache will be created and blocks containing rows will be
+    loaded via the <a href="../javascript-grid-server-side-model-datasource/#datasource-interface">Server-Side Datasource</a>.
 </p>
 
 <h2>Providing Child Counts</h2>
@@ -118,13 +124,12 @@ gridOptions: {
 <p>
     By default, the grid will not show row counts beside the group names. If you do want
     row counts, you need to implement the <code>getChildCount()</code> callback for the
-    grid. The callback provides you with the row data, it is your applications responsibility
+    grid. The callback provides you with the row data; it is your application's responsibility
     to know what the child row count is. The suggestion is you set this information into
     the row data item you provide to the grid.
 </p>
 
-<snippet>
-
+<?= createSnippet(<<<SNIPPET
 gridOptions: {
     getChildCount = function(data) {
         // here child count is stored in the 'childCount' property
@@ -133,11 +138,10 @@ gridOptions: {
 
     // other options
 }
-</snippet>
-
+SNIPPET
+) ?>
 
 <?= grid_example('Child Counts', 'child-counts', 'generated', ['enterprise' => true, 'exampleHeight' => 590, 'extras' => ['alasql'], 'modules' => ['serverside', 'rowgrouping']]) ?>
-
 
 <h2>Purging Groups</h2>
 
@@ -153,9 +157,9 @@ gridOptions: {
     <tr id="api-purge-virtual-page-cache">
         <th>purgeServerSideCache(route)</th>
         <td><p>Purges the cache. If you pass no parameters, then the top level cache is purged. To
-                purge a child cache, then pass in the string of keys to get to the child cache.
+                purge a child cache, pass in the string of keys to get to the child cache.
                 For example, to purge the cache two levels down under 'Canada' and then '2002', pass
-                in the string array ['Canada','2002']. If you purge a cache, then all row nodes
+                in the string array <code>['Canada','2002']</code>. If you purge a cache, then all row nodes
                 for that cache will be reset to the closed state, and all child caches will be destroyed.</p></td>
     </tr>
     <tr id="api-get-virtual-page-state">
@@ -207,7 +211,7 @@ gridOptions: {
     snippet outlines a possible approach:
 </p>
 
-<snippet>
+<?= createSnippet(<<<SNIPPET
 function getRows(params) {
     // 1) get data from server
     var response = getServerResponse(params.request);
@@ -216,13 +220,14 @@ function getRows(params) {
     params.successCallback(response.rowsThisBlock, response.lastRow);
 
     // 3) to preserve group state we expand any previously expanded groups for this block
-    rowsInThisBlock.forEach(row => {
+    rowsInThisBlock.forEach(function(row) {
         if (expandedGroupIds.indexOf(row.id) > -1) {
             gridOptions.api.getRowNode(row.id).setExpanded(true);
         }
     });
 }
-</snippet>
+SNIPPET
+) ?>
 
 <p>
     Notice that in step 3, newly loaded row nodes for the current block are expanded if they are defined in <code>expandedGroupIds</code>,
@@ -236,13 +241,14 @@ function getRows(params) {
 
 <p>
     In the example below, the following can be noted:
+</p>
+
 <ul>
     <li>The grid has an initial expanded group state where:
-        <code>expandedGroupIds = ["Russia", "Russia-2002", "Ireland", "Ireland-2008"]</code></li>
+        <code>expandedGroupIds = ['Russia', "Russia-2002", "Ireland", 'Ireland-2008']</code></li>
     <li>The group state is updated in <code>expandedGroupIds</code> by using listening to the grid event: <code>RowGroupOpened</code>.</li>
     <li>Clicking the 'Purge Caches' button reloads data. Notice that the group state has been preserved.</li>
 </ul>
-</p>
 
 <?= grid_example('Preserve Group State', 'preserve-group-state', 'generated', ['enterprise' => true, 'exampleHeight' => 615, 'extras' => ['alasql'], 'modules' => ['serverside', 'rowgrouping']]) ?>
 
@@ -251,14 +257,14 @@ function getRows(params) {
 <p>
     It is possible the data provided has composite objects, in which case it's more difficult for the grid
     to extract group names. This can be worked with using value getters or embedded fields
-    (ie the field attribute has dot notation).
+    (i.e. the field attribute has dot notation).
 </p>
 
 <p>
     In the example below, all rows back are modified so that the rows looks something like this:
 </p>
 
-<snippet>
+<?= createSnippet(<<<SNIPPET
 // sample contents of row data
 {
     // country field is complex object
@@ -276,11 +282,12 @@ function getRows(params) {
     // other fields as normal
     ...
 }
-</snippet>
+SNIPPET
+) ?>
 
 <p>
     Then the columns are set up so that country uses a <code>valueGetter</code> and year uses a field
-    with dot notation, ie <code>year.name</code>
+    with dot notation, i.e. <code>year.name</code>
 </p>
 
 <?= grid_example('Complex Objects', 'complex-objects', 'generated', ['enterprise' => true, 'exampleHeight' => 590, 'extras' => ['alasql'], 'modules' => ['serverside', 'rowgrouping']]) ?>

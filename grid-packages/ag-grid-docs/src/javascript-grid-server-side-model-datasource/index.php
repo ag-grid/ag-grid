@@ -6,20 +6,20 @@ $pageGroup = "row_models";
 include '../documentation-main/documentation_header.php';
 ?>
 
-<h1 class="heading-enterprise"> Server-Side Datasource </h1>
+<h1 class="heading-enterprise">Server-Side Datasource</h1>
 
 <p class="lead">
-    This section describes the Server-Side Datasource and demonstrates how it can be used to lazy load data from a
+    This section describes the Server-Side Datasource and demonstrates how it can be used to lazy-load data from a
     server through an infinite scroll.
 </p>
 
 <p>
     The Server-Side Row Model requires a datasource to fetch rows for the grid. When users scroll or perform grid
-    operations such as sorting or grouping more data will be requested via the datasource.
+    operations such as sorting or grouping, more data will be requested via the datasource.
 </p>
 
 <note>
-    The Server-Side Datasource does not impose any  restrictions on the server side technologies used. It is left up
+    The Server-Side Datasource does not impose any restrictions on the server-side technologies used. It is left up
     to applications to decide how and where data is sourced for the grid.
 </note>
 
@@ -30,9 +30,7 @@ include '../documentation-main/documentation_header.php';
     by default. To use the Server-Side Row Model instead, set the <code>rowModelType</code> as follows:
 </p>
 
-<snippet>
-    gridOptions.rowModelType = 'serverSide'
-</snippet>
+<?= createSnippet("gridOptions.rowModelType = 'serverSide'") ?>
 
 <h2>Implementing the Server-Side Datasource</h2>
 
@@ -41,9 +39,9 @@ include '../documentation-main/documentation_header.php';
     a datasource that conforms to the <a href="#datasource-interface">Server-Side Datasource Interface</a>.
 </p>
 
-<p> The following snippet shows a simple datasource implementation: </p>
+<p>The following snippet shows a simple datasource implementation:</p>
 
-<snippet>
+<?= createSnippet(<<<SNIPPET
 function createDatasource(server) {
     return {
         // called by the grid when more rows are required
@@ -62,12 +60,13 @@ function createDatasource(server) {
         }
     };
 }
-</snippet>
+SNIPPET
+) ?>
 
 <p>
-Notice that the datasource contains a single method <code>getRows(params)</code> which is called by the grid when more
-rows are required. A request is supplied in the <code>params</code> which contains all the information required
-by the server to fetch data from the server.
+    Notice that the datasource contains a single method <code>getRows(params)</code> which is called by the grid when more
+    rows are required. A request is supplied in the <code>params</code> which contains all the information required
+    by the server to fetch data from the server.
 </p>
 
 <p>
@@ -82,18 +81,19 @@ by the server to fetch data from the server.
 <h2>Registering the Datasource</h2>
 
 <p>
-The datasource is registered with the grid via the grid api as follows:
+    The datasource is registered with the grid via the grid api as follows:
 </p>
 
-<snippet>
+<?= createSnippet(<<<SNIPPET
 var myDatasource = createDatasource();
 gridOptions.api.setServerSideDatasource(myDatasource);
-</snippet>
+SNIPPET
+) ?>
 
 <h2>Example: Infinite Scroll</h2>
 
 <p>
-    The example below demonstrates lazy loading of data with an infinite scroll. Notice the following:
+    The example below demonstrates lazy-loading of data with an infinite scroll. Notice the following:
 </p>
 
 <ul class="content">
@@ -102,7 +102,7 @@ gridOptions.api.setServerSideDatasource(myDatasource);
     <li>A request is contained in params supplied to <code>getRows(params)</code> with <code>startRow</code> and <code>endRow</code>.
         This is used by the server to determine the range of rows to return.</li>
     <li>When scrolling down there is a delay as more rows are fetched from the server.</li>
-    <li>Open the browsers dev console to view the contents of the requests made by the grid for more rows.</li>
+    <li>Open the browser's dev console to view the contents of the requests made by the grid for more rows.</li>
 </ul>
 
 <?= grid_example('Infinite Scroll', 'infinite-scroll', 'generated', ['enterprise' => true, 'modules' => ['serverside', 'menu', 'columnpanel']]) ?>
@@ -113,14 +113,16 @@ gridOptions.api.setServerSideDatasource(myDatasource);
     The interface for the Server-sie Datasource is show below:
 </p>
 
-<snippet>
+<?= createSnippet(<<<SNIPPET
 interface IServerSideDatasource {
     // grid calls this to get rows
     getRows(params: IServerSideGetRowsParams): void;
 
     // optional destroy method, if your datasource has state it needs to clean up
     destroy?(): void;
-}</snippet>
+}
+SNIPPET
+, 'ts') ?>
 
 <p>
     Each time the grid requires more rows, it will call the <code>getRows()</code> method.
@@ -131,13 +133,13 @@ interface IServerSideDatasource {
 
 <p>The interface for the <code>params</code> is shown below:</p>
 
-<snippet>
+<?= createSnippet(<<<SNIPPET
 interface IServerSideGetRowsParams {
     // details for the request, simple object, can be converted to JSON
     request: IServerSideGetRowsRequest;
 
     // the parent row node. is the RootNode (level -1) if request is top level.
-    // this is NOT part fo the request as it cannot be serialised to JSON (a rowNode has methods)
+    // this is NOT part of the request as it cannot be serialised to JSON (a rowNode has methods)
     parentNode: RowNode;
 
     // success callback, pass the rows back the grid asked for.
@@ -153,17 +155,19 @@ interface IServerSideGetRowsParams {
 
     // column API
     columnApi: ColumnApi;
-}</snippet>
+}
+SNIPPET
+, 'ts') ?>
 
 <p>
     The request gives details on what the grid is looking for. The success and failure callbacks are not included
-    inside the request object to keep the request object simple data (ie simple data types, no functions). This
-    allows the request object to be serialised (eg via JSON) and sent to your server.
+    inside the request object to keep the request object simple data (i.e. simple data types, no functions). This
+    allows the request object to be serialised (e.g. via JSON) and sent to your server.
 </p>
 
 <p>The interface for the <code>request</code> is shown below:</p>
 
-<snippet>
+<?= createSnippet(<<<SNIPPET
 interface IServerSideGetRowsRequest {
     // first row requested
    startRow: number;
@@ -200,7 +204,9 @@ export interface ColumnVO {
     displayName: string;
     field: string;
     aggFunc: string;
-}</snippet>
+}
+SNIPPET
+, 'ts') ?>
 
 <h2>Next Up</h2>
 

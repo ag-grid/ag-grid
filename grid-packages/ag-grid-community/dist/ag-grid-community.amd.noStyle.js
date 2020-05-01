@@ -1756,29 +1756,6 @@ var __assign = (undefined && undefined.__assign) || function () {
 
 
 var utils = __assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign({}, _general__WEBPACK_IMPORTED_MODULE_0__), _array__WEBPACK_IMPORTED_MODULE_1__), _browser__WEBPACK_IMPORTED_MODULE_2__), _csv__WEBPACK_IMPORTED_MODULE_3__), _date__WEBPACK_IMPORTED_MODULE_4__), _dom__WEBPACK_IMPORTED_MODULE_5__), _event__WEBPACK_IMPORTED_MODULE_6__), _function__WEBPACK_IMPORTED_MODULE_7__), _fuzzyMatch__WEBPACK_IMPORTED_MODULE_8__), _generic__WEBPACK_IMPORTED_MODULE_9__), _icon__WEBPACK_IMPORTED_MODULE_10__), _keyboard__WEBPACK_IMPORTED_MODULE_11__), _map__WEBPACK_IMPORTED_MODULE_12__), _mouse__WEBPACK_IMPORTED_MODULE_13__), _number__WEBPACK_IMPORTED_MODULE_14__), _object__WEBPACK_IMPORTED_MODULE_15__), _rowNode__WEBPACK_IMPORTED_MODULE_16__), _set__WEBPACK_IMPORTED_MODULE_17__), _string__WEBPACK_IMPORTED_MODULE_18__);
-if (_number__WEBPACK_IMPORTED_MODULE_14__["sum"]([
-    _general__WEBPACK_IMPORTED_MODULE_0__,
-    _array__WEBPACK_IMPORTED_MODULE_1__,
-    _browser__WEBPACK_IMPORTED_MODULE_2__,
-    _csv__WEBPACK_IMPORTED_MODULE_3__,
-    _date__WEBPACK_IMPORTED_MODULE_4__,
-    _dom__WEBPACK_IMPORTED_MODULE_5__,
-    _event__WEBPACK_IMPORTED_MODULE_6__,
-    _function__WEBPACK_IMPORTED_MODULE_7__,
-    _fuzzyMatch__WEBPACK_IMPORTED_MODULE_8__,
-    _generic__WEBPACK_IMPORTED_MODULE_9__,
-    _icon__WEBPACK_IMPORTED_MODULE_10__,
-    _keyboard__WEBPACK_IMPORTED_MODULE_11__,
-    _map__WEBPACK_IMPORTED_MODULE_12__,
-    _mouse__WEBPACK_IMPORTED_MODULE_13__,
-    _number__WEBPACK_IMPORTED_MODULE_14__,
-    _object__WEBPACK_IMPORTED_MODULE_15__,
-    _rowNode__WEBPACK_IMPORTED_MODULE_16__,
-    _set__WEBPACK_IMPORTED_MODULE_17__,
-    _string__WEBPACK_IMPORTED_MODULE_18__,
-].map(function (x) { return Object.keys(x).length; })) !== Object.keys(utils).length) {
-    throw new Error('Functions with the same name are being included from multiple sources into the general utils (_) class');
-}
 var _ = utils;
 
 
@@ -32162,14 +32139,6 @@ var PopupService = /** @class */ (function () {
         else {
             this.bringPopupToFront(eWrapper);
         }
-        // if the popup resizes, make sure that it's not sticking off the right hand side of the screen
-        var disconnectResizeObserver = this.resizeObserverService.observeResize(eChild, function () {
-            var childRect = eChild.getBoundingClientRect();
-            var parentRect = _this.getParentRect();
-            if (childRect.right >= parentRect.right) {
-                eChild.style.left = (parentRect.right - parentRect.left - childRect.width) + 'px';
-            }
-        });
         var popupHidden = false;
         var hidePopupOnKeyboardEvent = function (event) {
             var key = event.which || event.keyCode;
@@ -32184,15 +32153,12 @@ var PopupService = /** @class */ (function () {
             hidePopup(null, event);
         };
         var hidePopup = function (mouseEvent, touchEvent) {
-            var hiddenAt = new Date().getTime();
-            disconnectResizeObserver();
             if (
             // we don't hide popup if the event was on the child, or any
             // children of this child
             _this.isEventFromCurrentPopup(mouseEvent, touchEvent, eChild) ||
                 // if the event to close is actually the open event, then ignore it
-                (_this.isEventSameChainAsOriginalEvent(click, mouseEvent, touchEvent) &&
-                    Math.abs(processedAt - hiddenAt) < 10) ||
+                _this.isEventSameChainAsOriginalEvent(click, mouseEvent, touchEvent) ||
                 // this method should only be called once. the client can have different
                 // paths, each one wanting to close, so this method may be called multiple times.
                 popupHidden) {
@@ -32342,9 +32308,6 @@ var PopupService = /** @class */ (function () {
     __decorate([
         Object(_context_context__WEBPACK_IMPORTED_MODULE_1__["Autowired"])('eventService')
     ], PopupService.prototype, "eventService", void 0);
-    __decorate([
-        Object(_context_context__WEBPACK_IMPORTED_MODULE_1__["Autowired"])('resizeObserverService')
-    ], PopupService.prototype, "resizeObserverService", void 0);
     __decorate([
         _context_context__WEBPACK_IMPORTED_MODULE_1__["PostConstruct"]
     ], PopupService.prototype, "init", null);
@@ -37186,7 +37149,7 @@ var ResizeObserverService = /** @class */ (function () {
         var frameworkFactory = this.frameworkOverrides;
         // this gets fired too often and might cause some relayout issues
         // so we add a debounce to the callback here to avoid the flashing effect.
-        var debouncedCallback = _utils__WEBPACK_IMPORTED_MODULE_1__["_"].debounce(callback, debounceDelay, true);
+        var debouncedCallback = _utils__WEBPACK_IMPORTED_MODULE_1__["_"].debounce(callback, debounceDelay);
         var useBrowserResizeObserver = function () {
             var resizeObserver = new window.ResizeObserver(debouncedCallback);
             resizeObserver.observe(element);

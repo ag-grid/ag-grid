@@ -9,18 +9,18 @@ include '../documentation-main/documentation_header.php';
 <h1 class="heading-enterprise">Server-Side Changing Columns</h1>
 
 <p class="lead">
-    It is possible to add and remove columns to the server side row model without having
+    It is possible to add and remove columns to the Server-Side Row Model without having
     the row model reset.
 </p>
 
 <p>
-    <a href="../javascript-grid-column-definitions/#column-changes">Changing columns</a> allow you to
+    <a href="../javascript-grid-column-definitions/#column-changes">Changing columns</a> allows you to
     specify new column definitions to the grid and the grid will work out which columns are new
     and which are old, keeping the state of the old columns.
 </p>
 
 <p>
-    For the server side row model this means adding and removing columns will reload the data
+    For the Server-Side Row Model this means adding and removing columns will reload the data
     if the changed column has row group, pivot, value, sort or filter active. This is because
     a change to row group, pivot, value, sort or filter will impact the row data that comes
     back.
@@ -29,14 +29,15 @@ include '../documentation-main/documentation_header.php';
 <p>
     The example below demonstrates how changing columns impacts the server side row model.
     The following can be noted:
-    <ul>
-        <li>Adding or removing Athlete, Age or Sport will not reload the data as they have
-        no row group, pivot, value, sort or filter set.</li>
-        <li>Adding or removing Country or Year will reload the data as they are part of the grouping.</li>
-        <li>Adding or removing Gold, Silver or Bronze will reload the data as they are selected as values.</li>
-        <li>If you apply a sort or filter (on Athlete) and then remove the column the data will reload.</li>
-    </ul>
 </p>
+
+<ul>
+    <li>Adding or removing Athlete, Age or Sport will not reload the data as they have
+    no row group, pivot, value, sort or filter set.</li>
+    <li>Adding or removing Country or Year will reload the data as they are part of the grouping.</li>
+    <li>Adding or removing Gold, Silver or Bronze will reload the data as they are selected as values.</li>
+    <li>If you apply a sort or filter (on Athlete) and then remove the column the data will reload.</li>
+</ul>
 
 <?= grid_example('Changing Columns', 'changing-columns', 'generated', ['enterprise' => true, 'exampleHeight' => 605, 'extras' => ['alasql'], 'modules' => ['serverside', 'rowgrouping', 'menu', 'columnpanel']]) ?>
 

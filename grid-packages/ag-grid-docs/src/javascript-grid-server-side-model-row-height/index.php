@@ -6,24 +6,24 @@ $pageGroup = "row_models";
 include '../documentation-main/documentation_header.php';
 ?>
 
-<h1 class="heading-enterprise"> Server-Side Row Height </h1>
+<h1 class="heading-enterprise">Server-Side Row Height</h1>
 
 <p class="lead">
-    Learn how to set Row Heights when using the Server-Side Row Model.
+    Learn how to set Row Height when using the Server-Side Row Model.
 </p>
 
 <h2>Dynamic Row Height</h2>
 
 <p>
-    To enable <a href="../javascript-grid-row-height/#">Dynamic Row Height</a> when using the Server-Side Row Model you need to provide an implementation
-    for the 'getRowHeight' Grid Options property. This is demonstrated in the example below:
+    To enable <a href="../javascript-grid-row-height/#">Dynamic Row Height</a> when using the Server-Side Row Model
+    you need to provide an implementation for the <code>getRowHeight</code> Grid Options property. This is demonstrated in the example below:
 </p>
 
 <?= grid_example('Dynamic Row Height Example', 'dynamic-row-height', 'generated', ['enterprise' => true, 'exampleHeight' => 630, 'extras' => ['alasql'], 'modules' => ['serverside', 'rowgrouping']]) ?>
 
 <note>
     Purging the cache and dynamic row heights do not work together for the Server-Side Row Model.
-    If you are using dynamic row height, ensure 'maxBlocksInCache' is not set.
+    If you are using dynamic row height, ensure <code>maxBlocksInCache</code> is not set.
 </note>
 
 <h2>Auto Row Height</h2>
@@ -41,18 +41,19 @@ include '../documentation-main/documentation_header.php';
 
 <p>
     In the example below, the following can be noted:
-    <ul>
-        <li>All top level groups are the same height.</li>
-        <li>All bottom level rows are auto-sized based on the contents of the Auto A, Auto B and Auto C columns.</li>
-        <li>All columns with auto-size have CSS <code>white-space: normal</code> to wrap the text.</li>
-    </ul>
 </p>
+
+<ul>
+    <li>All top level groups are the same height.</li>
+    <li>All bottom level rows are auto-sized based on the contents of the Auto A, Auto B and Auto C columns.</li>
+    <li>All columns with auto-size have CSS <code>white-space: normal</code> to wrap the text.</li>
+</ul>
 
 <?= grid_example('Auto Row Height Example', 'auto-row-height', 'generated', ['enterprise' => true, 'exampleHeight' => 610, 'extras' => ['alasql'], 'modules' => ['serverside', 'rowgrouping']]) ?>
 
 <note>
     Purging the cache and auto row heights do not work together for the Server-Side Row Model.
-    If you are using auto row height, ensure 'maxBlocksInCache' is not set.
+    If you are using auto row height, ensure <code>maxBlocksInCache</code> is not set.
 </note>
 
 <h2>Next Up</h2>

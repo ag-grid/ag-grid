@@ -6,21 +6,21 @@ $pageGroup = "row_models";
 include '../documentation-main/documentation_header.php';
 ?>
 
-<h1 class="heading-enterprise"> Server-Side Configuration </h1>
+<h1 class="heading-enterprise">Server-Side Configuration</h1>
 
 <p class="lead">
     This section covers the Server-Side Cache and configurations available in the Server-Side Row Model.
 </p>
 
 <p>
-    As many of the configurations available in the Server-Side Row Model relate to the Server-Side Cache it important
+    As many of the configurations available in the Server-Side Row Model relate to the Server-Side Cache it is important
     to understand how the grid organises data obtained from the server into caches.
 </p>
 
 <h2>Server-Side Cache</h2>
 
 <p>
-    At the heart of the Server-Side Row Model lies the Server-Side Cache. There is a cache containing the top level
+    At the heart of the Server-Side Row Model lies the Server-Side Cache. There is a cache containing the top-level
     rows (i.e. on the root node) and for each individual <a href="../javascript-grid-server-side-model-grouping/">Row Grouping</a> level.
 </p>
 
@@ -31,7 +31,7 @@ include '../documentation-main/documentation_header.php';
 </p>
 
 <p>
-    The following illustration shows how the grid arranges rows into blocks which are in turn contained in a cache:
+    The following illustration shows how the grid arranges rows into blocks which are in turn stored in a cache:
 </p>
 
 <p>
@@ -46,7 +46,7 @@ include '../documentation-main/documentation_header.php';
 <h2>Configurations</h2>
 
 <p>
-    Applications can fine tune the Server-Side Row Model based on specific application requirements using the following
+    Applications can fine-tune the Server-Side Row Model based on specific application requirements using the following
     configurations:
 </p>
 
@@ -58,12 +58,10 @@ include '../documentation-main/documentation_header.php';
     When experimenting with different configurations it is useful to enable debug mode as follows:
 </p>
 
-<snippet>
-gridOptions.debug = true;
-</snippet>
+<?= createSnippet('gridOptions.debug = true;') ?>
 
 <p>
-    The screenshot below is taken from the browsers dev console when <code>debug</code> is enabled:
+    The screenshot below is taken from the browser's dev console when <code>debug</code> is enabled:
 </p>
 
 <p>
@@ -75,7 +73,7 @@ gridOptions.debug = true;
     <code>endRow</code>.
 </p>
 
-<p> This can be very useful when debugging issues on the server.</p>
+<p>This can be very useful when debugging issues on the server.</p>
 
 <h2>Example: Block Loading Debounce</h2>
 
@@ -95,7 +93,7 @@ gridOptions.debug = true;
         allows for skipping over blocks when scrolling to advanced positions. Note that the last row index
         should be supplied in <code>successCallback(rows, lastRow)</code> so that the scrollbars are sized correctly.
     </li>
-    <li><code>debug=true</code> - open the browsers dev console to view the cache status and block details.</li>
+    <li><code>debug=true</code> - open the browser's dev console to view the cache status and block details.</li>
 </ul>
 
 <?= grid_example('Block Loading Debounce', 'block-load-debounce', 'generated', ['enterprise' => true, 'modules' => ['serverside', 'menu', 'columnpanel']]) ?>

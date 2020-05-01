@@ -6,7 +6,7 @@ $pageGroup = "row_models";
 include '../documentation-main/documentation_header.php';
 ?>
 
-<h1 class="heading-enterprise">Server-Side Row Model </h1>
+<h1 class="heading-enterprise">Server-Side Row Model</h1>
 
 <p class="lead">
     This section gives an overview of the Server-Side Row Model and provides guidance on when it should be used.
@@ -16,7 +16,7 @@ include '../documentation-main/documentation_header.php';
 
 <p>
     The Server-Side Row Model allows applications to work with very large datasets by delegating grid operations such
-    as grouping, sorting and pivoting to the server. The data is then lazy loaded from the server in blocks as
+    as grouping, sorting and pivoting to the server. The data is then lazy-loaded from the server in blocks as
     the user browses through the data. This is demonstrated below:
 </p>
 
@@ -26,22 +26,23 @@ include '../documentation-main/documentation_header.php';
 
 <p>
     Before diving into the details of how to use the Server-Side Row Model, the next section provides an overview and
-    explains when it should be used in instead of the default <a href="/javascript-grid-client-side-model/">Client-Side Row Model</a>.
+    explains when it should be used instead of the default <a href="/javascript-grid-client-side-model/">Client-Side Row Model</a>.
 </p>
 
 <h2>Overview</h2>
 
 <p>
-    When designing a grid based application, one of the key considerations is how much data needs to be sent from
+    When designing a grid-based application, one of the key considerations is how much data needs to be sent from
     the server to the client. The answer to this determines which Row Model should be selected for the grid.
 </p>
 
-<h4>Client-Side Row Model</h4>
+<h3>Client-Side Row Model</h3>
 
 <p>
     The simplest approach is to send all row data to the browser in response to a single request at initialisation.
     For this use case the <a href="/javascript-grid-client-side-model/">Client-Side Row Model</a> has been designed.
 </p>
+
 <p>
     This scenario is illustrated below where 10,000 records are loaded directly into the browser:
 </p>
@@ -50,19 +51,20 @@ include '../documentation-main/documentation_header.php';
 
 <p>
     Once the data is loaded into the grid using the Client-Side Row Model, the grid can then do sorting, filtering,
-    grouping etc on the data inside the grid without requiring further assistance from the application.
+    grouping etc. on the data inside the grid without requiring further assistance from the application.
 </p>
+
 <p>
     The Client-Side Row Model only renders the rows currently visible using
     <a href="../javascript-grid-dom-virtualisation/">DOM Virtualisation</a>, so the upper limit of rows is governed
-    by the browsers memory footprint and data transfer time, rather than any restrictions inside the grid.
+    by the browser's memory footprint and data transfer time, rather than any restrictions inside the grid.
 </p>
 
-<h4>Server-Side Row Model</h4>
+<h3>Server-Side Row Model</h3>
 
 <p>
-    However many real world applications contain much larger data sets, often involving millions of records. In this
-    case it simply isn't feasible to load all the data into the browser in one go. Instead data will somehow need
+    However many real world applications contain much larger datasets, often involving millions of records. In this
+    case it simply isn't feasible to load all the data into the browser in one go. Instead the data will need
     to be lazy-loaded as required and then purged to limit the memory footprint in the browser.
 </p>
 
@@ -80,8 +82,8 @@ include '../documentation-main/documentation_header.php';
 
 <p>
     As the user performs operations such as sorting and grouping, the grid issues requests to the server that contains
-    all the necessary metadata required, including which portion of data should be returned based on the users position in
-    the data set.
+    all the necessary metadata required, including which portion of data should be returned based on the user's position in
+    the dataset.
 </p>
 
 <p>
@@ -97,7 +99,7 @@ include '../documentation-main/documentation_header.php';
 
 <ul class="content">
     <li>
-        <b>Lazy Loading of Groups:</b> The grid will load the top level rows only. Children
+        <b>Lazy-Loading of Groups:</b> The grid will load the top level rows only. Children
         of groups are only loaded when the user expands the group. Some applications may use
         the Server-Side Row Model for this one feature alone e.g. you might have a managers database table,
         you can display a list of all managers, then click 'expand' on the manager and the grid
@@ -112,9 +114,9 @@ include '../documentation-main/documentation_header.php';
     <li>
         <b>Infinite Scrolling:</b> Rows are read back from the server in blocks to provide the experience
         of infinite scrolling. This happens at each grouping level
-        (ie the top level rows are brought back in blocks, then when you expand a group, the children
+        (i.e. the top level rows are brought back in blocks, then when you expand a group, the children
         of that group are also loaded in blocks). This allows viewing very large datasets in the browser by
-        only bringing back data one block at a time. This feature reuses the logic from the
+        only bringing back data one block at a time. This feature re-uses the logic from the
         <a href="../javascript-grid-infinite-scrolling/">Infinite Scrolling</a> row model, so understanding
         how that row model works will help you in understanding this part of the Server-Side Row Model.
     </li>
@@ -124,7 +126,7 @@ include '../documentation-main/documentation_header.php';
         on. What the user selects will then be forwarded to your datasource as part of the request. This feature
         is advanced and will require some difficult server-side coding from you, however if done correctly then
         your users will have an experience of slicing and dicing large data in real time, something previously
-        only available in expensive reporting tools, now you can embed it into your JavaScript application.
+        only available in expensive reporting tools, which you can now embed into your JavaScript application.
     </li>
 </ul>
 
@@ -133,7 +135,7 @@ include '../documentation-main/documentation_header.php';
 <p>
     All the examples in this documentation are standalone examples that can be run inside the documentation
     and exported to Plunker. This is excellent as you can easily inspect fully working examples. To allow this,
-    all the examples have mocked servers (as the examples in the docs and Plunker are client side only).
+    all the examples have mocked servers (as the examples in the docs and Plunker are client-side only).
 </p>
 
 <p>

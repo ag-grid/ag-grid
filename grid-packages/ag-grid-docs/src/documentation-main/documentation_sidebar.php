@@ -3,28 +3,33 @@
 
 <div class="card card-highlight mb-4">
     <div class="card-body">
-        <h5 class="card-title"><a href="../ag-grid-changelog/?fixVersion=23.0.0">Version 23.0.0</a></h5>
-        <h6 class="card-subtitle mb-2 text-muted">Mar 17</h6>
+        <h5 class="card-title"><a href="../ag-grid-changelog/?fixVersion=23.1.0">Version 23.1.0</a></h5>
+        <h6 class="card-subtitle mb-2 text-muted">May 1</h6>
         <p class="card-text">
-            Major release with new features and bug fixes:
+            Minor release with new features and bug fixes:
         </p>
         <ul>
-            <li><a class="learn-more"
-                   href="https://www.ag-grid.com/javascript-charts-overview/">Standalone Charting Library</a></li>
+            <li>
+                <a class="learn-more" href="/javascript-grid-row-dragging-to-grid/">Row Dragging Between Grids</a>
+            </li>
 
-            <li><a class="learn-more"
-                   href="https://www.ag-grid.com/javascript-grid-themes-provided/#themes-summary">New Alpine Theme</a></li>
+            <li>
+                <a class="learn-more"
+                   href="/javascript-grid-row-dragging-to-external-dropzone/">Row Dragging to External Dropzone</a>
+            </li>
 
-            <li><a class="learn-more"
-                   href="https://www.ag-grid.com/javascript-grid-server-side-model/">SSRM Doc Improvements</a></li>
+            <li>
+                <a class="learn-more"
+                   href="/javascript-grid-themes-customising/#setting-parameters-css-variables">Support for CSS Variables</a>
+            </li>
 
-            <li><a class="learn-more"
-                   href="https://www.ag-grid.com/javascript-grid-context-menu/">
-                    Improved Keyboard Navigation</a></li>
+            <li>
+                <a class="learn-more" href="/javascript-charts-events/">Chart Events</a>
+            </li>
         </ul>
 
         <p class="text-right">
-            <a class="learn-more" href="../ag-grid-changelog/?fixVersion=23.0.0">Change Log</a>
+            <a class="learn-more" href="../ag-grid-changelog/?fixVersion=23.1.0">Change Log</a>
         </p>
     </div>
 </div>

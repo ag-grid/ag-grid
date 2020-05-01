@@ -19,22 +19,23 @@ include '../documentation-main/documentation_header.php';
     definitions with filtering enabled are shown below:
 </p>
 
-<snippet>
+<?= createSnippet(<<<SNIPPET
 gridOptions: {
     columnDefs: [
         // sets the 'number' filter
-        {field: "country", filter: "agNumberColumnFilter"},
+        { field: 'country', filter: 'agNumberColumnFilter' },
 
         // use the default 'set' filter
-        {field: "year", filter: true},
+        { field: 'year', filter: true },
 
         // no filter (unspecified)
-        {field: "sport"}
+        { field: 'sport' }
     ],
 
     // other options
 }
-</snippet>
+SNIPPET
+) ?>
 
 <p>
     For more details on filtering configurations see the section on <a href="../javascript-grid-filtering/">Column Filtering</a>.
@@ -53,18 +54,18 @@ gridOptions: {
     An example of the contents contained in the <code>filterModel</code> is shown below:
 </p>
 
-<snippet>
+<?= createSnippet(<<<SNIPPET
 // IServerSideGetRowsRequest
 {
     filterModel: {
         athlete: {
-            filterType: "text",
-            type: "contains",
-            filter: "fred"
+            filterType: 'text',
+            type: 'contains',
+            filter: 'fred'
         },
         year: {
-            filterType: "number",
-            type: "greaterThan",
+            filterType: 'number',
+            type: 'greaterThan',
             filter: 2005,
             filterTo: null
         }
@@ -72,10 +73,11 @@ gridOptions: {
 
     // other properties
 }
-</snippet>
+SNIPPET
+) ?>
 
 <p>
-    Notice in the snippet above that the <code>filterModel</code> object contains a 'text' and 'number' filter. This filter
+    Notice in the snippet above that the <code>filterModel</code> object contains a <code>'text'</code> and <code>'number'</code> filter. This filter
     metadata can be used by the server to perform the actual filtering.
 </p>
 <p>
@@ -83,7 +85,7 @@ gridOptions: {
     <a href="../javascript-grid-filter-provided-simple/">Simple Column Filters</a>.
 </p>
 
-<h2>Example: Simple Column Filters</h2>
+<h3>Example: Simple Column Filters</h3>
 
 <p>
     The example below demonstrates server-side filtering using
@@ -92,16 +94,16 @@ gridOptions: {
 
 <ul class="content">
     <li>
-        <b>Athlete</b> column has a 'text' filter defined using: <code>filter: "agTextColumnFilter"</code>.
+        <b>Athlete</b> column has a <code>'text'</code> filter defined using <code>filter: 'agTextColumnFilter'</code>.
     </li>
     <li>
-        <b>Year</b> column has a 'number' filter defined using: <code>filter: "agNumberColumnFilter"</code>.
+        <b>Year</b> column has a <code>'number'</code> filter defined using <code>filter: 'agNumberColumnFilter'</code>.
     </li>
     <li>
         The server uses the metadata contained in the <code>filterModel</code> to filter the rows.
     </li>
     <li>
-        Open the browsers dev console to view the <code>filterModel</code> supplied in the request to the datasource.
+        Open the browser's dev console to view the <code>filterModel</code> supplied in the request to the datasource.
     </li>
 </ul>
 
@@ -110,37 +112,38 @@ gridOptions: {
 <h2>Filtering with the Set Filter</h2>
 
 <p>
-    The <a href="../javascript-grid-filter-set/">Set Filter</a> is the default filter used if <code>filter: true</code>
-
-    entries in the <code>filterModel</code>
-    have a different format to the <a href="../javascript-grid-filter-provided-simple/">Simple Column Filters</a>.
+    The <a href="../javascript-grid-filter-set/">Set Filter</a> is the default filter used if <code>filter: true</code>.
 </p>
 
 <p>
+    Entries in the <code>filterModel</code> have a different format to the
+    <a href="../javascript-grid-filter-provided-simple/">Simple Column Filters</a>.
     An example of the contents contained in the <code>filterModel</code> for the Set Filter is shown below:
 </p>
 
-<snippet>
+<?= createSnippet(<<<SNIPPET
 // IServerSideGetRowsRequest
 {
     filterModel: {
         country: {
-            filterType: "set",
-            values: ["Australia", "Belgium"]
+            filterType: 'set',
+            values: ['Australia', 'Belgium']
         }
     },
 
     // other properties
 }
-</snippet>
+SNIPPET
+) ?>
 
 <p>The snippet above shows the <code>filterModel</code> for a single column with a Set Filter where two items are selected.</p>
 
-<p>When using the Server-Side Row Model it is necessary to supply the values as the grid does not have all rows loaded.
-   This can be done either synchronously or asynchronously using the <code>values</code> filter param as shown below:
+<p>
+    When using the Server-Side Row Model it is necessary to supply the values as the grid does not have all rows loaded.
+    This can be done either synchronously or asynchronously using the <code>values</code> filter param as shown below:
 </p>
 
-<snippet>
+<?= createSnippet(<<<SNIPPET
 // colDef with Set Filter values supplied synchronously
 {
     field: 'country',
@@ -155,7 +158,7 @@ gridOptions: {
     field: 'country',
     filter: 'agSetColumnFilter',
     filterParams: {
-        values: (params) => {
+        values: function(params) {
             // simulating async delay
             setTimeout(() => {
                 params.success(['Australia', 'China', 'Sweden'])
@@ -163,13 +166,14 @@ gridOptions: {
         }
     }
 }
-</snippet>
+SNIPPET
+) ?>
 
 <p>
     For more details on setting values refer to the <a href="../javascript-grid-filter-set/">Set Filter</a> documentation.
 </p>
 
-<h2>Example: Set Filter</h2>
+<h3>Example: Set Filter</h3>
 
 <p>
     The example below demonstrates server-side filtering using the Set Filter. Notice the following:
@@ -177,7 +181,7 @@ gridOptions: {
 
 <ul class="content">
     <li>
-        <b>Country</b> column has a Set Filter defined using: <code>filter: "agSetColumnFilter"</code>.
+        <b>Country</b> column has a Set Filter defined using <code>filter: 'agSetColumnFilter'</code>.
     </li>
     <li>
         Set Filter values are fetched asynchronously and supplied via the <code>params.success(values)</code> callback.
@@ -186,7 +190,7 @@ gridOptions: {
         The server uses the metadata contained in the <code>filterModel</code> to filter the rows.
     </li>
     <li>
-        Open the browsers dev console to view the <code>filterModel</code> supplied in the request to the datasource.
+        Open the browser's dev console to view the <code>filterModel</code> supplied in the request to the datasource.
     </li>
 </ul>
 
