@@ -20,7 +20,7 @@ export class HdpiCanvas {
         this.element.style.display = 'block';
 
         this.updatePixelRatio();
-        this.resize(this._width = width, this._height = height);
+        this.resize(width, height);
     }
 
     private _container: HTMLElement | undefined = undefined;
@@ -336,41 +336,5 @@ export class HdpiCanvas {
                 (ctx as any)[name] = overrides[name];
             }
         }
-    }
-
-    private static makeHdpiOverrides(pixelRatio: number) {
-        let depth = 0;
-        return {
-            save() {
-                this.$save();
-                depth++;
-            },
-            restore() {
-                if (depth > 0) {
-                    this.$restore();
-                    depth--;
-                }
-            },
-            setTransform(a: number, b: number, c: number, d: number, e: number, f: number) {
-                this.$setTransform(
-                    a * pixelRatio,
-                    b * pixelRatio,
-                    c * pixelRatio,
-                    d * pixelRatio,
-                    e * pixelRatio,
-                    f * pixelRatio
-                );
-            },
-            resetTransform() {
-                // As of Jan 8, 2019, `resetTransform` is still an "experimental technology",
-                // and doesn't work in IE11 and Edge 44.
-                this.$setTransform(pixelRatio, 0, 0, pixelRatio, 0, 0);
-                this.save();
-                depth = 0;
-                // The scale above will be impossible to restore,
-                // because we override the `ctx.restore` above and
-                // check `depth` there.
-            }
-        } as any;
     }
 }
