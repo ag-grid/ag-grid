@@ -1,40 +1,9 @@
-// TODO: requires TypeScript 3.7 - reintroduce after upgrade
-//import { mock } from 'jest-mock-extended';
 import { ProvidedFilter, IProvidedFilterParams } from './providedFilter';
 import { ProvidedFilterModel, IDoesFilterPassParams } from '../../interfaces/iFilter';
 import { Constants } from '../../constants';
 import { IRowModel } from '../../interfaces/iRowModel';
 import { GridOptionsWrapper } from '../../gridOptionsWrapper';
-
-/* Taken from https://github.com/facebook/jest/issues/7832#issuecomment-462343138 */
-type GenericFunction = (...args: any[]) => any;
-
-type PickByTypeKeyFilter<T, C> = {
-    [K in keyof T]: T[K] extends C ? K : never
-};
-
-type KeysByType<T, C> = PickByTypeKeyFilter<T, C>[keyof T];
-
-type ValuesByType<T, C> = {
-    [K in keyof T]: T[K] extends C ? T[K] : never
-};
-
-type PickByType<T, C> = Pick<ValuesByType<T, C>, KeysByType<T, C>>;
-
-type MethodsOf<T> = KeysByType<Required<T>, GenericFunction>;
-
-type InterfaceOf<T> = PickByType<T, GenericFunction>;
-
-type PartiallyMockedInterfaceOf<T> = {
-    [K in MethodsOf<T>]?: jest.Mock<InterfaceOf<T>[K]>
-};
-
-export function mock<T>(...mockedMethods: MethodsOf<T>[]): jest.Mocked<T> {
-    const partiallyMocked: PartiallyMockedInterfaceOf<T> = {};
-    mockedMethods.forEach(mockedMethod => partiallyMocked[mockedMethod] = jest.fn());
-
-    return partiallyMocked as jest.Mocked<T>;
-}
+import { mock } from '../../test-utils/mock';
 
 class TestFilter extends ProvidedFilter {
     private uiModel: ProvidedFilterModel;

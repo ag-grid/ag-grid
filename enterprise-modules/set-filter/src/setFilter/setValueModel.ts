@@ -99,7 +99,7 @@ export class SetValueModel implements IEventEmitter {
 
     /**
      * Re-fetches the values used in the filter from the value source.
-     * If keepSelection is false or selectAll is true, the filter selection will be reset to everything selected,
+     * If keepSelection is false, the filter selection will be reset to everything selected,
      * otherwise the current selection will be preserved.
      */
     public refetchValues(keepSelection = true): void {

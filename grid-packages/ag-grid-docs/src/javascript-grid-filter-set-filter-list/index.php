@@ -307,7 +307,7 @@ SNIPPET
         As all days are supplied the filter list also contains <code>'Saturday'</code> and <code>'Sunday'</code>.
     </li>
     <li>
-        As the <b>Days (Values Not Provided)</b> filter values are provided in the correct order, the default filter list
+        As the <b>Days (Values Provided)</b> filter values are provided in the correct order, the default filter list
         sorting is turned off using: <code>filterParams.suppressSorting=true</code>.
     </li>
 </ul>
