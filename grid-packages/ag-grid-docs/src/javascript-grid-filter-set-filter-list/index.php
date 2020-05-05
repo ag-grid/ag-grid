@@ -382,6 +382,51 @@ SNIPPET
 
 <?= grid_example('Callback/Async', 'callback-async', 'generated', ['enterprise' => true, 'exampleHeight' => 510, 'modules' => ['clientside', 'setfilter', 'menu', 'columnpanel']]) ?>
 
+<h2>Refreshing Values</h2>
+
+<p>
+    By default, when values are passed to the set filter they are only loaded once when the set filter is initially
+    created. It may be desirable to refresh the values at a later point, for example to
+    reflect other filtering that has occurred in the grid. To achieve this, you can call
+    <code>refreshFilterValues</code> on the relevant filter that you would like to refresh. This will cause the values
+    used in the filter to be refreshed from the original source, whether that is by looking at the provided
+    <code>values</code> array again, or by re-executing the <code>values</code> callback.
+</p>
+
+<p>
+    If you are using the grid as a source of values (i.e. you are not providing values yourself), calling this method
+    will also refresh the filter values using values taken from the grid, but this should not be necessary as the values
+    are automatically refreshed for you whenever any data changes in the grid.
+</p>
+
+<p>
+    If you want to refresh the values every time the filter is opened, you can use the <code>onFilterOpened</code>
+    callback and call <code>refreshFilterValues</code> from there.
+</p>
+
+<p>
+    The following example demonstrates refreshing values. Note the following:
+</p>
+
+<ul class="content">
+    <li>
+        The first column has values provided as an array. Clicking the "Refresh Array Values" button will change the
+        values in the array provided to the filter and then refresh the filter for the column.
+    </li>
+    <li>
+        The second column has values provided as a callback, and is configured using <code>onFilterOpened</code> to
+        refresh the values every time the filter is opened from the column menu.
+    </li>
+    <li>
+        Any existing selections that still exist in the new values are preserved when a filter refreshes.
+    </li>
+    <li>
+        A filter is re-applied after values have been refreshed.
+    </li>
+</ul>
+
+<?= grid_example('Refreshing Values', 'refreshing-values', 'generated', ['enterprise' => true, 'modules' => ['clientside', 'setfilter', 'menu', 'columnpanel']]) ?>
+
 <h2>Missing Values</h2>
 
 <p>

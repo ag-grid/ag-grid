@@ -172,24 +172,30 @@ export class SetFilter extends ProvidedFilter {
 
     private addEventListenersForDataChanges(): void {
         this.addDestroyableEventListener(
-            this.eventService, Events.EVENT_ROW_DATA_UPDATED, () => this.syncValuesAfterDataChange());
+            this.eventService, Events.EVENT_ROW_DATA_UPDATED, () => this.syncAfterDataChange());
 
         this.addDestroyableEventListener(
             this.eventService,
             Events.EVENT_CELL_VALUE_CHANGED,
             (event: CellValueChangedEvent) => {
                 // only interested in changes to do with this column
-                if (event.column !== this.setFilterParams.column) { return; }
-
-                this.syncValuesAfterDataChange();
+                if (event.column === this.setFilterParams.column) {
+                    this.syncAfterDataChange();
+                }
             });
     }
 
-    /** Called when the data in the grid changes, to prompt the set filter values to be updated. */
-    private syncValuesAfterDataChange(keepSelection = true): void {
-        this.valueModel.refetchValues(keepSelection);
-        this.refresh();
-        this.onBtApply(false, true);
+    private syncAfterDataChange(refreshValues = true, keepSelection = true): void {
+        if (refreshValues) {
+            this.valueModel.refreshValues(keepSelection);
+        } else if (!keepSelection) {
+            this.valueModel.setModel(null);
+        }
+
+        this.valueModel.onFilterValuesReady(() => {
+            this.refresh();
+            this.onBtApply(false, true);
+        });
     }
 
     private updateCheckboxIcon(): void {
@@ -320,17 +326,9 @@ export class SetFilter extends ProvidedFilter {
 
     public onNewRowsLoaded(): void {
         const valuesType = this.valueModel.getValuesType();
-        const valuesTypeProvided =
-            valuesType === SetFilterModelValuesType.PROVIDED_CALLBACK ||
-            valuesType === SetFilterModelValuesType.PROVIDED_LIST;
-
-        // if the user is providing values, and we are keeping the previous selection, then
-        // loading new rows into the grid should have no impact.
         const keepSelection = this.isNewRowsActionKeep();
 
-        if (keepSelection && valuesTypeProvided) { return; }
-
-        this.syncValuesAfterDataChange(keepSelection);
+        this.syncAfterDataChange(valuesType === SetFilterModelValuesType.TAKEN_FROM_GRID_VALUES, keepSelection);
     }
 
     //noinspection JSUnusedGlobalSymbols
@@ -338,9 +336,6 @@ export class SetFilter extends ProvidedFilter {
      * Public method provided so the user can change the value of the filter once
      * the filter has been already started
      * @param options The options to use.
-     * @param selectAll If by default all the values should be selected.
-     * @param notify If we should let know the model that the values of the filter have changed
-     * @param toSelect The subset of options to subselect
      */
     public setFilterValues(options: string[]): void {
         this.valueModel.overrideValues(options, this.isNewRowsActionKeep());
@@ -356,7 +351,15 @@ export class SetFilter extends ProvidedFilter {
      */
     public resetFilterValues(): void {
         this.valueModel.setValuesType(SetFilterModelValuesType.TAKEN_FROM_GRID_VALUES);
-        this.onNewRowsLoaded();
+        this.syncAfterDataChange(true, this.isNewRowsActionKeep());
+    }
+
+    public refreshFilterValues(): void {
+        this.valueModel.refreshValues();
+        this.valueModel.onFilterValuesReady(() => {
+            this.refresh();
+            this.onUiChanged();
+        });
     }
 
     public onAnyFilterChanged(): void {
@@ -378,7 +381,7 @@ export class SetFilter extends ProvidedFilter {
 
     private onMiniFilterKeyPress(e: KeyboardEvent): void {
         if (_.isKeyPressed(e, Constants.KEY_ENTER)) {
-            this.valueModel.selectAll(true);
+            this.valueModel.selectAllDisplayed(true);
             this.refresh();
             this.onUiChanged(true);
         }
@@ -400,9 +403,9 @@ export class SetFilter extends ProvidedFilter {
         this.selectAllState = !this.selectAllState;
 
         if (this.selectAllState) {
-            this.valueModel.selectAll();
+            this.valueModel.selectAllDisplayed();
         } else {
-            this.valueModel.selectNothing();
+            this.valueModel.deselectAllDisplayed();
         }
 
         this.refresh();
@@ -430,12 +433,12 @@ export class SetFilter extends ProvidedFilter {
     }
 
     public selectEverything() {
-        this.valueModel.selectAll();
+        this.valueModel.selectAllDisplayed();
         this.refresh();
     }
 
     public selectNothing() {
-        this.valueModel.selectNothing();
+        this.valueModel.deselectAllDisplayed();
         this.refresh();
     }
 

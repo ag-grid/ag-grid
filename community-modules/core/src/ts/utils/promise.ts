@@ -3,11 +3,11 @@ import { forEach } from './array';
 export type ResolveAndRejectCallback<T> = (resolve: (value: T) => void, reject: (params: any) => void) => void;
 
 export enum PromiseStatus {
-    IN_PROGRESS, RESOLVED
+    NOT_STARTED, IN_PROGRESS, RESOLVED
 }
 
 export class Promise<T> {
-    private status: PromiseStatus = PromiseStatus.IN_PROGRESS;
+    private status: PromiseStatus = PromiseStatus.NOT_STARTED;
     private resolution: T | null = null;
     private waiters: ((value: T) => void)[] = [];
 
@@ -33,15 +33,28 @@ export class Promise<T> {
         return new Promise<T>(resolve => resolve(value));
     }
 
-    constructor(callback: ResolveAndRejectCallback<T>) {
-        callback(value => this.onDone(value), params => this.onReject(params));
+    constructor(private readonly callback: ResolveAndRejectCallback<T>, lazyEvaluate = false) {
+        if (lazyEvaluate) { return; }
+
+        this.start();
     }
 
-    public then(func: (result: T) => void): void {
-        if (this.status === PromiseStatus.IN_PROGRESS) {
-            this.waiters.push(func);
-        } else {
+    public start() {
+        if (this.status !== PromiseStatus.NOT_STARTED) { return; }
+
+        this.status = PromiseStatus.IN_PROGRESS;
+        this.callback(value => this.onDone(value), params => this.onReject(params));
+    }
+
+    public then(func: (result: T) => void, lazyEvaluate = false): void {
+        if (this.status === PromiseStatus.RESOLVED) {
             func(this.resolution);
+        } else {
+            this.waiters.push(func);
+
+            if (!lazyEvaluate) {
+                this.start();
+            }
         }
     }
 
@@ -50,7 +63,7 @@ export class Promise<T> {
     }
 
     public resolveNow<Z>(ifNotResolvedValue: Z, ifResolved: (current: T | null) => Z): Z {
-        return this.status == PromiseStatus.IN_PROGRESS ? ifNotResolvedValue : ifResolved(this.resolution);
+        return this.status === PromiseStatus.RESOLVED ? ifResolved(this.resolution) : ifNotResolvedValue;
     }
 
     private onDone(value: T): void {

@@ -79,7 +79,7 @@ describe('isFilterActive', () => {
     it('returns true if all values are deselected', () => {
         const model = createSetValueModel();
 
-        model.selectNothing();
+        model.deselectAllDisplayed();
 
         expect(model.isFilterActive()).toBe(true);
     });
@@ -117,7 +117,7 @@ describe('value selection', () => {
         expect(model.isValueSelected(value)).toBe(true);
     });
 
-    it('keeps value selections when values are refetched', () => {
+    it('keeps value selections when values are refreshed', () => {
         const model = createSetValueModel();
         const value = 'A';
 
@@ -125,12 +125,12 @@ describe('value selection', () => {
 
         expect(model.isValueSelected(value)).toBe(false);
 
-        model.refetchValues();
+        model.refreshValues();
 
         expect(model.isValueSelected(value)).toBe(false);
     });
 
-    it('can reset value selections when values are refetched', () => {
+    it('can reset value selections when values are refreshed', () => {
         const model = createSetValueModel();
         const value = 'A';
 
@@ -138,7 +138,7 @@ describe('value selection', () => {
 
         expect(model.isValueSelected(value)).toBe(false);
 
-        model.refetchValues(false);
+        model.refreshValues(false);
 
         expect(model.isValueSelected(value)).toBe(true);
     });
@@ -408,14 +408,14 @@ describe('mini filter', () => {
     });
 });
 
-describe('selectAll', () => {
+describe('selectAllDisplayed', () => {
     it('selects all values if no mini filter', () => {
         const values = ['A', 'B', 'C'];
         const model = createSetValueModel(values);
 
         values.forEach(v => model.deselectValue(v));
 
-        model.selectAll();
+        model.selectAllDisplayed();
 
         values.forEach(v => expect(model.isValueSelected(v)).toBe(true));
     });
@@ -427,7 +427,7 @@ describe('selectAll', () => {
         model.deselectValue('B');
         model.deselectValue('C');
         model.setMiniFilter('B');
-        model.selectAll();
+        model.selectAllDisplayed();
 
         expect(model.isValueSelected('A')).toBe(true);
         expect(model.isValueSelected('B')).toBe(true);
@@ -441,7 +441,7 @@ describe('selectAll', () => {
         model.deselectValue('B');
         model.deselectValue('C');
         model.setMiniFilter('B');
-        model.selectAll(true);
+        model.selectAllDisplayed(true);
 
         expect(model.isValueSelected('A')).toBe(false);
         expect(model.isValueSelected('B')).toBe(true);
@@ -449,12 +449,12 @@ describe('selectAll', () => {
     });
 });
 
-describe('selectNothing', () => {
+describe('deselectAllDisplayed', () => {
     it('deselects all values if no mini filter', () => {
         const values = ['A', 'B', 'C'];
         const model = createSetValueModel(values);
 
-        model.selectNothing();
+        model.deselectAllDisplayed();
 
         values.forEach(v => expect(model.isValueSelected(v)).toBe(false));
     });
@@ -465,7 +465,7 @@ describe('selectNothing', () => {
 
         model.deselectValue('C');
         model.setMiniFilter('B');
-        model.selectNothing();
+        model.deselectAllDisplayed();
 
         expect(model.isValueSelected('A')).toBe(true);
         expect(model.isValueSelected('B')).toBe(false);

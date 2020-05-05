@@ -40,7 +40,14 @@
             "description": "Useful if you want to change the available options on the fly."
         },
         "resetFilterValues()": {
-            "description": "Useful if you want to rebuild the filter options based on the underlying data."
+            "description": "Configures the set filter to use values from the grid, rather than any values that have been provided directly to the filter. Useful if you want to rebuild the filter options based on the underlying data."
+        },
+        "refreshFilterValues()": {
+            "description": "Refreshes the values shown in the filter from the original source. For example, if a callback was provided, the callback will be executed again and the filter will refresh using the values returned.",
+            "more": {
+                "name": "Refreshing Values",
+                "url": "../javascript-grid-filter-set-filter-list/#refreshing-values"
+            }
         },
         "setLoading(loading)": {
             "description": "Useful if you want to show/hide the loading overlay in the set filter."

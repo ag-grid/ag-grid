@@ -1,5 +1,5 @@
-import {ColumnGroupChild} from "./columnGroupChild";
-import {OriginalColumnGroupChild} from "./originalColumnGroupChild";
+import { ColumnGroupChild } from "./columnGroupChild";
+import { OriginalColumnGroupChild } from "./originalColumnGroupChild";
 import {
     AbstractColDef,
     BaseColDefParams,
@@ -10,21 +10,21 @@ import {
     IsColumnFuncParams,
     RowSpanParams
 } from "./colDef";
-import {EventService} from "../eventService";
-import {_} from "../utils";
-import {Autowired, Context, PostConstruct} from "../context/context";
-import {GridOptionsWrapper} from "../gridOptionsWrapper";
-import {ColumnUtils} from "../columnController/columnUtils";
-import {RowNode} from "./rowNode";
-import {IEventEmitter} from "../interfaces/iEventEmitter";
-import {ColumnEvent, ColumnEventType} from "../events";
-import {ColumnApi} from "../columnController/columnApi";
-import {GridApi} from "../gridApi";
-import {ColumnGroup} from "./columnGroup";
-import {OriginalColumnGroup} from "./originalColumnGroup";
-import {Constants} from "../constants";
-import {ModuleNames} from "../modules/moduleNames";
-import {ModuleRegistry} from "../modules/moduleRegistry";
+import { EventService } from "../eventService";
+import { _ } from "../utils";
+import { Autowired, Context, PostConstruct } from "../context/context";
+import { GridOptionsWrapper } from "../gridOptionsWrapper";
+import { ColumnUtils } from "../columnController/columnUtils";
+import { RowNode } from "./rowNode";
+import { IEventEmitter } from "../interfaces/iEventEmitter";
+import { ColumnEvent, ColumnEventType } from "../events";
+import { ColumnApi } from "../columnController/columnApi";
+import { GridApi } from "../gridApi";
+import { ColumnGroup } from "./columnGroup";
+import { OriginalColumnGroup } from "./originalColumnGroup";
+import { Constants } from "../constants";
+import { ModuleNames } from "../modules/moduleNames";
+import { ModuleRegistry } from "../modules/moduleRegistry";
 
 // Wrapper around a user provide column definition. The grid treats the column definition as ready only.
 // This class contains all the runtime information about a column, plus some logic (the definition has no logic).
@@ -223,11 +223,11 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild, IEven
         const colDefAny = this.colDef as any;
 
         function warnOnce(msg: string, key: string, obj?: any) {
-            _.doOnce( ()=> {
+            _.doOnce(() => {
                 if (obj) {
-                console.warn(msg, obj)
+                    console.warn(msg, obj);
                 } else {
-                    _.doOnce( ()=> console.warn(msg), key);
+                    _.doOnce(() => console.warn(msg), key);
                 }
             }, key);
         }
@@ -237,18 +237,18 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild, IEven
                 ['enableRowGroup', 'rowGroup', 'rowGroupIndex', 'enablePivot', 'enableValue', 'pivot', 'pivotIndex', 'aggFunc'];
             rowGroupingItems.forEach(item => {
                 if (_.exists(colDefAny[item])) {
-                    if(ModuleRegistry.isPackageBased()) {
-                        warnOnce(`ag-Grid: ${item} is only valid in ag-grid-enterprise, your column definition should not have ${item}`, 'ColumnRowGroupingMissing'+item);
+                    if (ModuleRegistry.isPackageBased()) {
+                        warnOnce(`ag-Grid: ${item} is only valid in ag-grid-enterprise, your column definition should not have ${item}`, 'ColumnRowGroupingMissing' + item);
                     } else {
-                        warnOnce(`ag-Grid: ${item} is only valid with ag-Grid Enterprise Module ${ModuleNames.RowGroupingModule} - your column definition should not have ${item}`, 'ColumnRowGroupingMissing'+item);
+                        warnOnce(`ag-Grid: ${item} is only valid with ag-Grid Enterprise Module ${ModuleNames.RowGroupingModule} - your column definition should not have ${item}`, 'ColumnRowGroupingMissing' + item);
                     }
                 }
             });
         }
 
         if (!ModuleRegistry.isRegistered(ModuleNames.RichSelectModule)) {
-            if (this.colDef.cellEditor==='agRichSelect' || this.colDef.cellEditor==='agRichSelectCellEditor') {
-                if(ModuleRegistry.isPackageBased()) {
+            if (this.colDef.cellEditor === 'agRichSelect' || this.colDef.cellEditor === 'agRichSelectCellEditor') {
+                if (ModuleRegistry.isPackageBased()) {
                     warnOnce(`ag-Grid: ${this.colDef.cellEditor} can only be used with ag-grid-enterprise`, 'ColumnRichSelectMissing');
                 } else {
                     warnOnce(`ag-Grid: ${this.colDef.cellEditor} can only be used with ag-Grid Enterprise Module ${ModuleNames.RichSelectModule}`, 'ColumnRichSelectMissing');
@@ -258,7 +258,7 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild, IEven
 
         if (!ModuleRegistry.isRegistered(ModuleNames.DateTimeCellEditorModule)) {
             if (this.colDef.cellEditor === 'agRichSelect' || this.colDef.cellEditor === 'agDateTimeCellEditor') {
-                if(ModuleRegistry.isPackageBased()) {
+                if (ModuleRegistry.isPackageBased()) {
                     warnOnce(`ag-Grid: ${this.colDef.cellEditor} can only be used with ag-grid-enterprise`, 'ColumnDateTimeMissing');
                 } else {
                     warnOnce(`ag-Grid: ${this.colDef.cellEditor} can only be used with ag-Grid Enterprise Module ${ModuleNames.DateTimeCellEditorModule}`, 'ColumnDateTimeMissing');
@@ -757,7 +757,7 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild, IEven
         return this.colDef.enableRowGroup === true;
     }
 
-    public getMenuTabs(defaultValues: string[]): string [] {
+    public getMenuTabs(defaultValues: string[]): string[] {
         let menuTabs: string[] = this.getColDef().menuTabs;
         if (menuTabs == null) {
             menuTabs = defaultValues;

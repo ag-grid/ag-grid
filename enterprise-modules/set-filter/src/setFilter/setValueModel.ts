@@ -102,7 +102,7 @@ export class SetValueModel implements IEventEmitter {
      * If keepSelection is false, the filter selection will be reset to everything selected,
      * otherwise the current selection will be preserved.
      */
-    public refetchValues(keepSelection = true): void {
+    public refreshValues(keepSelection = true): void {
         const currentModel = this.getModel();
 
         this.updateAllValues();
@@ -121,7 +121,7 @@ export class SetValueModel implements IEventEmitter {
         this.allValuesPromise.then(() => {
             this.valuesType = SetFilterModelValuesType.PROVIDED_LIST;
             this.providedValues = valuesToUse;
-            this.refetchValues(keepSelection);
+            this.refreshValues(keepSelection);
         });
     }
 
@@ -132,32 +132,31 @@ export class SetValueModel implements IEventEmitter {
     }
 
     private updateAllValues(): void {
-        switch (this.valuesType) {
-            case SetFilterModelValuesType.TAKEN_FROM_GRID_VALUES:
-            case SetFilterModelValuesType.PROVIDED_LIST: {
-                const values = this.valuesType === SetFilterModelValuesType.TAKEN_FROM_GRID_VALUES ?
-                    this.getValuesFromRows(false) : _.toStrings(this.providedValues as any[]);
+        this.allValuesPromise = new Promise<string[]>(resolve => {
+            switch (this.valuesType) {
+                case SetFilterModelValuesType.TAKEN_FROM_GRID_VALUES:
+                case SetFilterModelValuesType.PROVIDED_LIST: {
+                    const values = this.valuesType === SetFilterModelValuesType.TAKEN_FROM_GRID_VALUES ?
+                        this.getValuesFromRows(false) : _.toStrings(this.providedValues as any[]);
 
-                const sortedValues = this.sortValues(values);
+                    const sortedValues = this.sortValues(values);
 
-                this.allValues = sortedValues;
-                this.allValuesPromise = Promise.resolve(sortedValues);
+                    this.allValues = sortedValues;
 
-                break;
-            }
+                    resolve(sortedValues);
 
-            case SetFilterModelValuesType.PROVIDED_CALLBACK: {
-                this.setIsLoading(true);
+                    break;
+                }
 
-                this.allValuesPromise = new Promise<string[]>(resolve => {
+                case SetFilterModelValuesType.PROVIDED_CALLBACK: {
+                    this.setIsLoading(true);
+
                     const callback = this.providedValues as SetFilterValuesFunc;
                     const params: SetFilterValuesFuncParams = {
                         success: values => {
                             const processedValues = _.toStrings(values);
 
                             this.setIsLoading(false);
-                            this.valuesType = SetFilterModelValuesType.PROVIDED_LIST;
-                            this.providedValues = processedValues;
 
                             const sortedValues = this.sortValues(processedValues);
 
@@ -169,14 +168,14 @@ export class SetValueModel implements IEventEmitter {
                     };
 
                     window.setTimeout(() => callback(params), 0);
-                });
 
-                break;
+                    break;
+                }
+
+                default:
+                    throw new Error('Unrecognised valuesType');
             }
-
-            default:
-                throw new Error('Unrecognised valuesType');
-        }
+        });
 
         this.updateAvailableValues();
     }
@@ -321,7 +320,7 @@ export class SetValueModel implements IEventEmitter {
         return this.allValues[index];
     }
 
-    public selectAll(clearExistingSelection = false): void {
+    public selectAllDisplayed(clearExistingSelection = false): void {
         if (this.miniFilterText == null) {
             // ensure everything is selected
             this.selectedValues = _.convertToSet(this.allValues);
@@ -333,7 +332,7 @@ export class SetValueModel implements IEventEmitter {
         }
     }
 
-    public selectNothing(): void {
+    public deselectAllDisplayed(): void {
         if (this.miniFilterText == null) {
             // ensure everything is deselected
             this.selectedValues.clear();
