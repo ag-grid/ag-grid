@@ -51,7 +51,6 @@ npm install --save ag-grid-community ag-grid-react
 <snippet language="jsx">
 <div ng-non-bindable>
 import React, { Component } from 'react';
-import logo from './logo.svg';
 import './App.css';
 import { AgGridReact } from 'ag-grid-react';
 import 'ag-grid-community/dist/styles/ag-grid.css';
@@ -83,7 +82,7 @@ class App extends Component {
       &lt;div
         className="ag-theme-alpine"
         style={{
-        height: '500px',
+        height: '250px',
         width: '600px' }}
       &gt;
         &lt;AgGridReact
@@ -140,7 +139,7 @@ each column entry specifies the header label and the data field to be displayed 
 
 <snippet language="jsx">
 <div ng-non-bindable>
-&lt;div style={{ height: '150px', width: '600px' }} className="ag-theme-alpine"&gt;
+&lt;div style={{ height: '250px', width: '600px' }} className="ag-theme-alpine"&gt;
     &lt;AgGridReact
         columnDefs={this.state.columnDefs}
         rowData={this.state.rowData}&gt;
@@ -200,7 +199,7 @@ Notice that the actual data fetching is performed outside of the grid component 
 }
 
 + componentDidMount() {
-+   fetch('https://api.myjson.com/bins/15psn9')
++   fetch('https://raw.githubusercontent.com/ag-grid/ag-grid/master/grid-packages/ag-grid-docs/src/sample-data/rowData.json')
 +     .then(result =&gt; result.json())
 +     .then(rowData =&gt; this.setState({rowData}))
 + }
@@ -235,24 +234,25 @@ this.state = {
 
 <p>Great! Now the first column contains a checkbox that, when clicked, selects the row. The only thing we have to add is a button that gets the selected data and sends it to the server. To do this, we need the following change:</p>
 
-<snippet language="diff" >
-<div ng-non-bindable>
-  &lt;div style={{ height: '150px', width: '600px' }} className="ag-theme-alpine"&gt;
-  +    &lt;button onClick={this.onButtonClick}&gt;Get selected rows&lt;/button&gt;
-  +
-   &lt;AgGridReact
-  +      onGridReady={ params =&gt; this.gridApi = params.api }
-</div>
+<snippet language="jsx">
+&lt;div style=<span>{</span>{ height: '250px', width: '600px' }<span>}</span> className="ag-theme-alpine"&gt;
+      &lt;button onClick=<span>{</span>this.onButtonClick}&gt;Get selected rows&lt;/button&gt;
+      &lt;AgGridReact
+        onGridReady={ params =&gt; this.gridApi = params.api }
+        columnDefs={this.state.columnDefs}
+        rowData={this.state.rowData}&gt;
+    &lt;/AgGridReact&gt;
+&lt;/div&gt;
 </snippet>
 
 <p>Afterwards, add the following event handler at the end of the component class:</p>
 
 <snippet language="jsx">
 onButtonClick = e =&gt; {
-const selectedNodes = this.gridApi.getSelectedNodes()
-const selectedData = selectedNodes.map( node =&gt; node.data )
-const selectedDataStringPresentation = selectedData.map( node =&gt; node.make + ' ' + node.model).join(', ')
-alert(`Selected nodes: ${selectedDataStringPresentation}`)
+    const selectedNodes = this.gridApi.getSelectedNodes()
+    const selectedData = selectedNodes.map( node =&gt; node.data )
+    const selectedDataStringPresentation = selectedData.map( node =&gt; node.make + ' ' + node.model).join(', ')
+    alert(`Selected nodes: ${selectedDataStringPresentation}`)
 }
 </snippet>
 
@@ -274,18 +274,9 @@ Hopefully you will forgive us this shortcut for the sake of keeping the article 
     for production.
 </div>
 
-<p>In addition to filtering and sorting, <a href="https://www.ag-grid.com/javascript-grid-grouping/">grouping</a> is another  effective way for the user to make sense out of large amounts of data. In our case, the data is not that much. Let's switch to a slightly larger data set:</p>
+<p>In addition to filtering and sorting, <a href="https://www.ag-grid.com/javascript-grid-grouping/">grouping</a> is another effective way for the user to make sense out of large amounts of data.</p>
 
-<snippet language="diff">
-componentDidMount() {
--        fetch('https://api.myjson.com/bins/15psn9')
-+        fetch('https://api.myjson.com/bins/ly7d1')
-.then(result =&gt; result.json())
-.then(rowData =&gt; this.setState({rowData}))
-}
-</snippet>
-
-<p>Afterwards, let's enable the enterprise features of ag-grid. Install the additional package:</p>
+<p>Let's enable the enterprise features of ag-grid. Install the additional package:</p>
 
 <snippet language="sh">
 npm install --save ag-grid-enterprise
@@ -318,6 +309,7 @@ this.state = {
   },{
     headerName: "Price", field: "price"
   }],
+  rowData: null,
   autoGroupColumnDef: {
     headerName: "Model",
     field: "model",
