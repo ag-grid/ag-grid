@@ -18,6 +18,6 @@ FILENAME=release_"$TIMESTAMP"_v"$VERSION".zip
 ./scripts/release/uploadReleaseZip.sh $FILENAME
 
 ./scripts/release/archiveCurrentRelease.sh
-./scripts/release/prepareAgGridForRelease.sh $FILENAME
+./scripts/release/prepareNewDeployment.sh $FILENAME
 ./scripts/release/switchRelease.sh $TIMESTAMP
 
