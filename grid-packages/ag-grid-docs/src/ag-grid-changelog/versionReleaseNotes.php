@@ -20,6 +20,11 @@
         </li>
 
         <li>
+            AG-3312: Add Histogram Charts
+            (see <a href="/javascript-charts-histogram-series/">Histogram Series</a>)
+        </li>
+
+        <li>
             AG-3472: Add the ability to listen to click events on Charts
             (see <a href="/javascript-charts-events/">Chart Events</a>)
         </li>

@@ -24,6 +24,10 @@
             </li>
 
             <li>
+                <a class="learn-more" href="/javascript-charts-histogram-series/">Histogram Chart</a>
+            </li>
+
+            <li>
                 <a class="learn-more" href="/javascript-charts-events/">Chart Events</a>
             </li>
         </ul>
