@@ -78,106 +78,123 @@ class TestFilter extends ProvidedFilter {
     }
 }
 
-it('calls filterChangedCallback when filter has changed', () => {
-    const params = mock<IProvidedFilterParams>('filterChangedCallback');
-    const filter = new TestFilter(params);
+describe('filterChangedCallback', () => {
+    it('calls filterChangedCallback when filter has changed', () => {
+        const params = mock<IProvidedFilterParams>('filterChangedCallback');
+        const filter = new TestFilter(params);
 
-    filter.setModelHasChanged(true);
-    filter.apply();
+        filter.setModelHasChanged(true);
+        filter.apply();
 
-    expect(params.filterChangedCallback).toHaveBeenCalledTimes(1);
+        expect(params.filterChangedCallback).toHaveBeenCalledTimes(1);
+    });
+
+    it('does not call filterChangedCallback when filter has not changed', () => {
+        const params = mock<IProvidedFilterParams>('filterChangedCallback');
+        const filter = new TestFilter(params);
+
+        filter.apply();
+
+        expect(params.filterChangedCallback).not.toHaveBeenCalled();
+    });
 });
 
-it('does not call filterChangedCallback when filter has not changed', () => {
-    const params = mock<IProvidedFilterParams>('filterChangedCallback');
-    const filter = new TestFilter(params);
+describe('closeOnApply', () => {
+    it('closes popup if closeOnApply is true and applyButton is true', () => {
+        const hidePopup = jest.fn();
+        const params = mock<IProvidedFilterParams>('filterChangedCallback');
+        params.applyButton = true;
+        params.closeOnApply = true;
+        const filter = new TestFilter(params);
 
-    filter.apply();
+        filter.afterGuiAttached({ hidePopup });
+        filter.setModelHasChanged(true);
+        filter.apply();
 
-    expect(params.filterChangedCallback).not.toHaveBeenCalled();
+        expect(hidePopup).toHaveBeenCalledTimes(1);
+    });
+
+    it('closes popup if closeOnApply is true and resetButton is true', () => {
+        const hidePopup = jest.fn();
+        const params = mock<IProvidedFilterParams>('filterChangedCallback');
+        params.resetButton = true;
+        params.closeOnApply = true;
+        const filter = new TestFilter(params);
+
+        filter.afterGuiAttached({ hidePopup });
+        filter.setModelHasChanged(true);
+        filter.apply();
+
+        expect(hidePopup).toHaveBeenCalledTimes(1);
+    });
+
+    it('closes popup if closeOnApply is true even if model did not change', () => {
+        const hidePopup = jest.fn();
+        const params = mock<IProvidedFilterParams>('filterChangedCallback');
+        params.applyButton = true;
+        params.closeOnApply = true;
+
+        const filter = new TestFilter(params);
+
+        filter.afterGuiAttached({ hidePopup });
+        filter.apply();
+
+        expect(hidePopup).toHaveBeenCalledTimes(1);
+    });
+
+    it('does not close popup if neither apply nor reset button is present', () => {
+        const hidePopup = jest.fn();
+        const params = mock<IProvidedFilterParams>('filterChangedCallback');
+        params.closeOnApply = true;
+        const filter = new TestFilter(params);
+
+        filter.afterGuiAttached({ hidePopup });
+        filter.setModelHasChanged(true);
+        filter.apply();
+
+        expect(hidePopup).toHaveBeenCalledTimes(0);
+    });
+
+    it('does not close popup if from change came from floating filter', () => {
+        const hidePopup = jest.fn();
+        const params = mock<IProvidedFilterParams>('filterChangedCallback');
+        params.applyButton = true;
+        params.closeOnApply = true;
+        const filter = new TestFilter(params);
+
+        filter.afterGuiAttached({ hidePopup });
+        filter.setModelHasChanged(true);
+        filter.apply(true);
+
+        expect(hidePopup).toHaveBeenCalledTimes(0);
+    });
+
+    it.each([undefined, false])('does not close popup if closeOnApply is %s', value => {
+        const hidePopup = jest.fn();
+        const params = mock<IProvidedFilterParams>('filterChangedCallback');
+
+        // mocking library does not set property correctly for falsy values, so we have to do this instead
+        Object.defineProperty(params, 'closeOnApply', { get: () => value, set: () => { } });
+
+        const filter = new TestFilter(params);
+
+        filter.afterGuiAttached({ hidePopup });
+        filter.setModelHasChanged(true);
+        filter.apply();
+
+        expect(hidePopup).not.toHaveBeenCalled();
+    });
 });
 
-it('closes popup if closeOnApply is true and applyButton is true', () => {
-    const hidePopup = jest.fn();
-    const params = mock<IProvidedFilterParams>('filterChangedCallback');
-    params.applyButton = true;
-    params.closeOnApply = true;
-    const filter = new TestFilter(params);
+describe('afterGuiAttached', () => {
+    it('publishes event for filter opened', () => {
+        const params = mock<IProvidedFilterParams>();
+        const filter = new TestFilter(params);
+        let eventPublished = false;
 
-    filter.afterGuiAttached({ hidePopup });
-    filter.setModelHasChanged(true);
-    filter.apply();
+        filter.addEventListener(ProvidedFilter.EVENT_FILTER_OPENED, () => eventPublished = true);
+        filter.afterGuiAttached({});
 
-    expect(hidePopup).toHaveBeenCalledTimes(1);
-});
-
-it('closes popup if closeOnApply is true and resetButton is true', () => {
-    const hidePopup = jest.fn();
-    const params = mock<IProvidedFilterParams>('filterChangedCallback');
-    params.resetButton = true;
-    params.closeOnApply = true;
-    const filter = new TestFilter(params);
-
-    filter.afterGuiAttached({ hidePopup });
-    filter.setModelHasChanged(true);
-    filter.apply();
-
-    expect(hidePopup).toHaveBeenCalledTimes(1);
-});
-
-it('closes popup if closeOnApply is true even if model did not change', () => {
-    const hidePopup = jest.fn();
-    const params = mock<IProvidedFilterParams>('filterChangedCallback');
-    params.applyButton = true;
-    params.closeOnApply = true;
-
-    const filter = new TestFilter(params);
-
-    filter.afterGuiAttached({ hidePopup });
-    filter.apply();
-
-    expect(hidePopup).toHaveBeenCalledTimes(1);
-});
-
-it('does not close popup if neither apply nor reset button is present', () => {
-    const hidePopup = jest.fn();
-    const params = mock<IProvidedFilterParams>('filterChangedCallback');
-    params.closeOnApply = true;
-    const filter = new TestFilter(params);
-
-    filter.afterGuiAttached({ hidePopup });
-    filter.setModelHasChanged(true);
-    filter.apply();
-
-    expect(hidePopup).toHaveBeenCalledTimes(0);
-});
-
-it('does not close popup if from change came from floating filter', () => {
-    const hidePopup = jest.fn();
-    const params = mock<IProvidedFilterParams>('filterChangedCallback');
-    params.applyButton = true;
-    params.closeOnApply = true;
-    const filter = new TestFilter(params);
-
-    filter.afterGuiAttached({ hidePopup });
-    filter.setModelHasChanged(true);
-    filter.apply(true);
-
-    expect(hidePopup).toHaveBeenCalledTimes(0);
-});
-
-it.each([undefined, false])('does not close popup if closeOnApply is %s', value => {
-    const hidePopup = jest.fn();
-    const params = mock<IProvidedFilterParams>('filterChangedCallback');
-
-    // mocking library does not set property correctly for falsy values, so we have to do this instead
-    Object.defineProperty(params, 'closeOnApply', { get: () => value, set: () => { } });
-
-    const filter = new TestFilter(params);
-
-    filter.afterGuiAttached({ hidePopup });
-    filter.setModelHasChanged(true);
-    filter.apply();
-
-    expect(hidePopup).not.toHaveBeenCalled();
+        expect(eventPublished).toBe(true);
+    });
 });
