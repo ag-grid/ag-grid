@@ -75,9 +75,7 @@ export class StatusBar extends Component {
                 componentDetails.forEach(componentDetail => {
                     componentDetail.promise.then((component: Component) => {
                         const destroyFunc = () => {
-                            if (component.destroy) {
-                                component.destroy();
-                            }
+                            this.getContext().destroyUserComp(component);
                         };
 
                         if (this.isAlive()) {

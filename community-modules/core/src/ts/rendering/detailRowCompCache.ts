@@ -4,6 +4,7 @@ import { Column } from "../entities/column";
 import { Autowired, Bean, PostConstruct, PreDestroy } from "../context/context";
 import { GridOptionsWrapper } from "../gridOptionsWrapper";
 import {Constants} from "../constants";
+import {BeanStub} from "../context/beanStub";
 
 /**
  * For Master Detail, it is required to keep components between expanding & collapsing parents.
@@ -13,7 +14,7 @@ import {Constants} from "../constants";
  * still be applied after the detail grid is shown for the second time.
  */
 @Bean('detailRowCompCache')
-export class DetailRowCompCache {
+export class DetailRowCompCache extends BeanStub {
 
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
 
@@ -95,9 +96,7 @@ export class DetailRowCompCache {
     }
 
     private destroyFullWidthRow(comp: ICellRendererComp): void {
-        if (comp && comp.destroy) {
-            comp.destroy();
-        }
+        this.getContext().destroyUserComp(comp);
     }
 
     private purgeCache(startIndex: number): void {

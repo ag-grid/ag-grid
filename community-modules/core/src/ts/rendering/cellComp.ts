@@ -511,11 +511,7 @@ export class CellComp extends Component implements TooltipParentComp {
         _.clearElement(this.eParentOfValue);
 
         // remove old renderer component if it exists
-        if (this.cellRenderer && this.cellRenderer.destroy) {
-            this.cellRenderer.destroy();
-        }
-
-        this.cellRenderer = null;
+        this.cellRenderer = this.beans.context.destroyUserComp(this.cellRenderer);
         this.cellRendererGui = null;
 
         // populate
@@ -861,12 +857,9 @@ export class CellComp extends Component implements TooltipParentComp {
     }
 
     private afterCellRendererCreated(cellRendererVersion: number, cellRenderer: ICellRendererComp): void {
-        // see if daemon
-        if (!this.isAlive() || (cellRendererVersion !== this.cellRendererVersion)) {
-            if (cellRenderer.destroy) {
-                cellRenderer.destroy();
-            }
-
+        const cellRendererNotRequired = !this.isAlive() || (cellRendererVersion !== this.cellRendererVersion);
+        if (cellRendererNotRequired) {
+            this.beans.context.destroyUserComp(cellRenderer);
             return;
         }
 
@@ -1112,21 +1105,16 @@ export class CellComp extends Component implements TooltipParentComp {
         //   is the first editor which is now stale.
         const versionMismatch = cellEditorVersion !== this.cellEditorVersion;
 
-        if (versionMismatch || !this.editingCell) {
-            if (cellEditor.destroy) {
-                cellEditor.destroy();
-            }
-
+        const cellEditorNotNeeded = versionMismatch || !this.editingCell;
+        if (cellEditorNotNeeded) {
+            this.beans.context.destroyUserComp(cellEditor);
             return;
         }
 
-        if (cellEditor.isCancelBeforeStart && cellEditor.isCancelBeforeStart()) {
-            if (cellEditor.destroy) {
-                cellEditor.destroy();
-            }
-
+        const editingCancelledByUserComp = cellEditor.isCancelBeforeStart && cellEditor.isCancelBeforeStart();
+        if (editingCancelledByUserComp) {
+            this.beans.context.destroyUserComp(cellEditor);
             this.editingCell = false;
-
             return;
         }
 
@@ -1138,10 +1126,7 @@ export class CellComp extends Component implements TooltipParentComp {
                 console.warn(`ag-Grid: we found 'render' on the component, are you trying to set a React renderer but added it as colDef.cellEditor instead of colDef.cellEditorFmk?`);
             }
 
-            if (cellEditor.destroy) {
-                cellEditor.destroy();
-            }
-
+            this.beans.context.destroyUserComp(cellEditor);
             this.editingCell = false;
 
             return;
@@ -1610,10 +1595,7 @@ export class CellComp extends Component implements TooltipParentComp {
 
         this.stopEditing();
 
-        if (this.cellRenderer && this.cellRenderer.destroy) {
-            this.cellRenderer.destroy();
-            this.cellRenderer = null;
-        }
+        this.cellRenderer = this.beans.context.destroyUserComp(this.cellRenderer);
 
         if (this.selectionHandle) {
             this.selectionHandle.destroy();
@@ -2085,12 +2067,9 @@ export class CellComp extends Component implements TooltipParentComp {
         // refresh directly and we suppress the flash.
         this.editingCell = false;
 
-        if (this.cellEditor.destroy) {
-            this.cellEditor.destroy();
-        }
-
         // important to clear this out - as parts of the code will check for
         // this to see if an async cellEditor has yet to be created
+        this.cellEditor = this.beans.context.destroyUserComp(this.cellEditor);
         this.cellEditor = null;
 
         if (this.cellEditorInPopup && this.hideEditorPopup) {

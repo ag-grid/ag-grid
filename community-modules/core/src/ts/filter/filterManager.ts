@@ -16,11 +16,13 @@ import { UserComponentFactory } from '../components/framework/userComponentFacto
 import { ModuleNames } from '../modules/moduleNames';
 import { ModuleRegistry } from '../modules/moduleRegistry';
 import { forEach } from '../utils/array';
+import {BeanStub} from "../context/beanStub";
 
 export type FilterRequestSource = 'COLUMN_MENU' | 'TOOLBAR' | 'NO_UI';
 
 @Bean('filterManager')
-export class FilterManager {
+export class FilterManager extends BeanStub {
+
     @Autowired('$compile') private $compile: any;
     @Autowired('$scope') private $scope: any;
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
@@ -563,9 +565,7 @@ export class FilterManager {
         filterWrapper.filterPromise.then(filter => {
             filter.setModel(null);
 
-            if (filter.destroy) {
-                filter.destroy();
-            }
+            this.getContext().destroyUserComp(filter);
 
             filterWrapper.column.setFilterActive(false, source);
 

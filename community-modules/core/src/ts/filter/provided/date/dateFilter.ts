@@ -126,10 +126,10 @@ export class DateFilter extends ScalarFilter<DateFilterModel, Date> {
             filterParams: this.dateFilterParams
         };
 
-        this.dateCondition1FromComp = new DateCompWrapper(this.userComponentFactory, dateComponentParams, this.eCondition1PanelFrom);
-        this.dateCondition1ToComp = new DateCompWrapper(this.userComponentFactory, dateComponentParams, this.eCondition1PanelTo);
-        this.dateCondition2FromComp = new DateCompWrapper(this.userComponentFactory, dateComponentParams, this.eCondition2PanelFrom);
-        this.dateCondition2ToComp = new DateCompWrapper(this.userComponentFactory, dateComponentParams, this.eCondition2PanelTo);
+        this.dateCondition1FromComp = new DateCompWrapper(this.getContext(), this.userComponentFactory, dateComponentParams, this.eCondition1PanelFrom);
+        this.dateCondition1ToComp = new DateCompWrapper(this.getContext(), this.userComponentFactory, dateComponentParams, this.eCondition1PanelTo);
+        this.dateCondition2FromComp = new DateCompWrapper(this.getContext(), this.userComponentFactory, dateComponentParams, this.eCondition2PanelFrom);
+        this.dateCondition2ToComp = new DateCompWrapper(this.getContext(), this.userComponentFactory, dateComponentParams, this.eCondition2PanelTo);
 
         this.addDestroyFunc(() => {
             this.dateCondition1FromComp.destroy();

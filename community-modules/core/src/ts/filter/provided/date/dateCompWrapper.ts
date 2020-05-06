@@ -3,22 +3,25 @@
 // is finally created, it gets the temp value if set.
 import { IDateComp, IDateParams } from "../../../rendering/dateComponent";
 import { UserComponentFactory } from "../../../components/framework/userComponentFactory";
+import {BeanStub} from "../../../context/beanStub";
+import {Context} from "../../../context/context";
 
 /** Provides sync access to async component. Date component can be lazy created - this class encapsulates
  * this by keeping value locally until DateComp has loaded, then passing DateComp the value. */
 export class DateCompWrapper {
+
     private dateComp: IDateComp;
     private tempValue: Date;
     private alive = true;
+    private context: Context;
 
-    constructor(userComponentFactory: UserComponentFactory, dateComponentParams: IDateParams, eParent: HTMLElement) {
+    constructor(context: Context, userComponentFactory: UserComponentFactory, dateComponentParams: IDateParams, eParent: HTMLElement) {
+        this.context = context;
+
         userComponentFactory.newDateComponent(dateComponentParams).then(dateComp => {
             // because async, check the filter still exists after component comes back
             if (!this.alive) {
-                if (dateComp.destroy) {
-                    dateComp.destroy();
-                }
-
+                context.destroyUserComp(dateComp);
                 return;
             }
 
@@ -37,10 +40,7 @@ export class DateCompWrapper {
 
     public destroy(): void {
         this.alive = false;
-
-        if (this.dateComp && this.dateComp.destroy) {
-            this.dateComp.destroy();
-        }
+        this.dateComp = this.context.destroyUserComp(this.dateComp);
     }
 
     public getDate(): Date {

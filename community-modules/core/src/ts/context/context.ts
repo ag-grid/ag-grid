@@ -1,6 +1,7 @@
 import { ILogger } from "../iLogger";
 import { Component } from "../widgets/component";
 import { _ } from "../utils";
+import {IComponent} from "../interfaces/iComponent";
 
 // steps in booting up:
 // 1. create all beans
@@ -252,12 +253,19 @@ export class Context {
 
     private callLifeCycleMethods(beanInstances: any[], lifeCycleMethod: string): void {
         beanInstances.forEach((beanInstance: any) => {
-            this.forEachMetaDataInHierarchy(beanInstance, (metaData: any) => {
-                const methods = metaData[lifeCycleMethod] as string[];
-                if (!methods) { return; }
-                methods.forEach(methodName => beanInstance[methodName]());
-            });
+            this.callLifeCycleMethodsOneBean(beanInstance, lifeCycleMethod);
         });
+    }
+
+    private callLifeCycleMethodsOneBean(beanInstance: any, lifeCycleMethod: string): string[] {
+        const res: string[] = [];
+        this.forEachMetaDataInHierarchy(beanInstance, (metaData: any) => {
+            const methods = metaData[lifeCycleMethod] as string[];
+            if (!methods) { return; }
+            methods.forEach(methodName => beanInstance[methodName]());
+            res.push.apply(res, methods);
+        });
+        return res;
     }
 
     public getBean(name: string): any {
@@ -285,6 +293,21 @@ export class Context {
     public destroyBeans(beans: any[]): void {
         this.callLifeCycleMethods(beans, 'preDestroyMethods');
     }
+
+    // cellRenderer, cellEditor, dateCompWrapper, groupCellRenderer
+    public destroyUserComp<T extends IComponent<any>>(comp: T): T {
+        if (!comp) { return undefined; }
+
+        const methods = this.callLifeCycleMethodsOneBean(comp, 'preDestroyMethods');
+
+        const destroyMethodDoesntHavePreDestroyAnnotation = comp.destroy && methods.indexOf('destroy')<0;
+        if (destroyMethodDoesntHavePreDestroyAnnotation) {
+            comp.destroy();
+        }
+
+        return undefined;
+    }
+
 }
 
 // taken from: http://stackoverflow.com/questions/3362471/how-can-i-call-a-javascript-constructor-using-call-or-apply

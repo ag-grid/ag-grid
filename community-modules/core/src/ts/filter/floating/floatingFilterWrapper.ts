@@ -149,9 +149,7 @@ export class FloatingFilterWrapper extends Component {
 
     private setupWithFloatingFilter(floatingFilterComp: IFloatingFilterComp): void {
         const disposeFunc = () => {
-            if (floatingFilterComp.destroy) {
-                floatingFilterComp.destroy();
-            }
+            this.getContext().destroyUserComp(floatingFilterComp)
         };
 
         if (!this.isAlive()) {

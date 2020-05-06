@@ -17,8 +17,6 @@ export class AgCheckbox extends AgAbstractInputField<HTMLInputElement, boolean> 
     protected inputType = 'checkbox';
     protected labelAlignment: LabelAlignment = 'right';
 
-    private static count = 0;
-
     @Autowired('gridOptionsWrapper') protected gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('eventService') protected eventService: EventService;
 
@@ -28,14 +26,10 @@ export class AgCheckbox extends AgAbstractInputField<HTMLInputElement, boolean> 
 
     constructor() {
         super();
-        AgCheckbox.count++;
-        console.log('AgCheckbox.constructor() count = ' + AgCheckbox.count);
         this.setTemplate(this.TEMPLATE.replace(/%displayField%/g, this.displayTag));
     }
 
     public destroy(): void {
-        AgCheckbox.count--;
-        console.log('AgCheckbox.destroy() count = ' + AgCheckbox.count);
         super.destroy();
     }
 

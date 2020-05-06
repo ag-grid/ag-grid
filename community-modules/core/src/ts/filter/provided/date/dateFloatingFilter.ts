@@ -105,7 +105,7 @@ export class DateFloatingFilter extends SimpleFloatingFilter {
             filterParams: this.params.column.getColDef().filterParams
         };
 
-        this.dateComp = new DateCompWrapper(this.userComponentFactory, dateComponentParams, this.eDateWrapper);
+        this.dateComp = new DateCompWrapper(this.getContext(), this.userComponentFactory, dateComponentParams, this.eDateWrapper);
 
         this.addDestroyFunc(() => this.dateComp.destroy());
     }

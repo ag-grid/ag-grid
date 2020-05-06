@@ -14,7 +14,6 @@ export class Component extends BeanStub {
 
     public static EVENT_DISPLAYED_CHANGED = 'displayedChanged';
     private eGui: HTMLElement;
-    private childComponents: IComponent<any>[] = [];
     private annotatedEventListeners: any[] = [];
 
     // if false, then CSS class "ag-hidden" is applied, which sets "display: none"
@@ -84,7 +83,7 @@ export class Component extends BeanStub {
         const eComponent = newComponent.getGui();
         parentNode.replaceChild(eComponent, childNode);
         parentNode.insertBefore(document.createComment(childNode.nodeName), eComponent);
-        this.childComponents.push(newComponent);
+        this.addDestroyFunc(this.destroyBean.bind(this, newComponent));
         this.swapInComponentForQuerySelectors(newComponent, childNode);
     }
 
@@ -252,7 +251,16 @@ export class Component extends BeanStub {
         return this.eGui.querySelector(cssSelector) as HTMLInputElement;
     }
 
-    public appendChild(newChild: Node | IComponent<any>, container?: HTMLElement): void {
+    // headerComp, headerGroupComp, toolPanelComp
+    public appendUserComp<T>(comp: IComponent<T>): IComponent<T> {
+        this.getGui().appendChild(comp.getGui());
+        this.addDestroyFunc(()=> {
+            this.getContext().destroyUserComp(comp);
+        });
+        return comp;
+    }
+
+    public appendChild(newChild: Node | Component, container?: HTMLElement): void {
         if (!container) {
             container = this.eGui;
         }
@@ -260,9 +268,9 @@ export class Component extends BeanStub {
         if (_.isNodeOrElement(newChild)) {
             container.appendChild(newChild as Node);
         } else {
-            const childComponent = newChild as IComponent<any>;
+            const childComponent = newChild as Component;
             container.appendChild(childComponent.getGui());
-            this.childComponents.push(childComponent);
+            this.addDestroyFunc(this.destroyBean.bind(this, childComponent));
         }
     }
 
@@ -294,15 +302,7 @@ export class Component extends BeanStub {
     }
 
     public destroy(): void {
-        _.forEach(this.childComponents, childComponent => {
-            if (childComponent && childComponent.destroy) {
-                (childComponent as any).destroy();
-            }
-        });
-
-        this.childComponents.length = 0;
         this.removeAnnotatedEventListeners();
-
         super.destroy();
     }
 

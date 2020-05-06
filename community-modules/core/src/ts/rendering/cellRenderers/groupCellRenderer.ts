@@ -554,10 +554,7 @@ export class GroupCellRenderer extends Component implements ICellRendererComp {
     }
 
     public destroy(): void {
-        if (this.innerCellRenderer && this.innerCellRenderer.destroy) {
-            this.innerCellRenderer.destroy();
-        }
-
+        this.getContext().destroyUserComp(this.innerCellRenderer);
         super.destroy();
     }
 
