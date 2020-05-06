@@ -26,6 +26,11 @@ include '../documentation-main/documentation_header.php';
     expanded to reveal the detail grid.
 </p>
 
+<note>
+    It's important to mention that because the Master Detail is rendered in a different container, it will not be part of the
+    selection when used in combination with <code>enableRangeSelection</code> or <code>enableCellTextSelection</code>.
+</note>
+
 <h2>Enabling Master Detail</h2>
 
 <?= videoLink("https://www.youtube.com/watch?v=8OeJn75or2w&t=7s", "00:07") ?>
