@@ -219,7 +219,7 @@ export class CellComp extends Component implements TooltipParentComp {
         this.refreshHandle();
 
         if (_.exists(this.tooltip) && !this.beans.gridOptionsWrapper.isEnableBrowserTooltips()) {
-            this.addFeature(new TooltipFeature(this, 'cell'), this.beans.context);
+            this.wireDependentBean(new TooltipFeature(this, 'cell'), this.beans.context);
         }
     }
 
@@ -1969,7 +1969,7 @@ export class CellComp extends Component implements TooltipParentComp {
         }
 
         const rowDraggingComp = new RowDragComp(this.rowNode, this.column, this.getValueToUse(), this.beans);
-        this.addFeature(rowDraggingComp, this.beans.context);
+        this.wireDependentBean(rowDraggingComp, this.beans.context);
 
         // put the checkbox in before the value
         this.eCellWrapper.insertBefore(rowDraggingComp.getGui(), this.eParentOfValue);
@@ -1977,7 +1977,7 @@ export class CellComp extends Component implements TooltipParentComp {
 
     private addDndSource(): void {
         const dndSourceComp = new DndSourceComp(this.rowNode, this.column, this.getValueToUse(), this.beans, this.getGui());
-        this.addFeature(dndSourceComp, this.beans.context);
+        this.wireDependentBean(dndSourceComp, this.beans.context);
 
         // put the checkbox in before the value
         this.eCellWrapper.insertBefore(dndSourceComp.getGui(), this.eParentOfValue);

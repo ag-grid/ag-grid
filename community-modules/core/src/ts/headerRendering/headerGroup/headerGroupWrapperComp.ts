@@ -56,7 +56,7 @@ export class HeaderGroupWrapperComp extends Component {
     private resizeTakeFromRatios: number[];
 
     // the children can change, we keep destroy functions related to listening to the children here
-    private childColumnsDestroyFuncs: Function[] = [];
+    private removeChildListenersFuncs: Function[] = [];
 
     constructor(columnGroup: ColumnGroup, dragSourceDropTarget: DropTarget, pinned: string) {
         super(HeaderGroupWrapperComp.TEMPLATE);
@@ -81,11 +81,8 @@ export class HeaderGroupWrapperComp extends Component {
         this.setupMovingCss();
         this.setupTooltip();
 
-        this.addFeature(new HoverFeature(this.columnGroup.getOriginalColumnGroup().getLeafColumns(), this.getGui()));
-
-        const setLeftFeature = new SetLeftFeature(this.columnGroup, this.getGui(), this.beans);
-        setLeftFeature.init();
-        this.addDestroyFunc(setLeftFeature.destroy.bind(setLeftFeature));
+        this.wireDependentBean(new HoverFeature(this.columnGroup.getOriginalColumnGroup().getLeafColumns(), this.getGui()));
+        this.wireDependentBean(new SetLeftFeature(this.columnGroup, this.getGui(), this.beans));
     }
 
     private setupMovingCss(): void {
@@ -120,7 +117,7 @@ export class HeaderGroupWrapperComp extends Component {
         if (this.gridOptionsWrapper.isEnableBrowserTooltips()) {
             this.getGui().setAttribute('title', tooltipText);
         } else {
-            this.addFeature(new TooltipFeature(this, 'headerGroup'));
+            this.wireDependentBean(new TooltipFeature(this, 'headerGroup'));
         }
     }
 
@@ -265,7 +262,7 @@ export class HeaderGroupWrapperComp extends Component {
         // the child listeners are not tied to this components life-cycle, as children can get added and removed
         // to the group - hence they are on a different life-cycle. so we must make sure the existing children
         // listeners are removed when we finally get destroyed
-        this.addDestroyFunc(this.destroyListenersOnChildrenColumns.bind(this));
+        this.addDestroyFunc(this.removeListenersOnChildrenColumns.bind(this));
     }
 
     private onDisplayedChildrenChanged(): void {
@@ -275,23 +272,23 @@ export class HeaderGroupWrapperComp extends Component {
 
     private addListenersToChildrenColumns(): void {
         // first destroy any old listeners
-        this.destroyListenersOnChildrenColumns();
+        this.removeListenersOnChildrenColumns();
 
         // now add new listeners to the new set of children
         const widthChangedListener = this.onWidthChanged.bind(this);
         this.columnGroup.getLeafColumns().forEach(column => {
             column.addEventListener(Column.EVENT_WIDTH_CHANGED, widthChangedListener);
             column.addEventListener(Column.EVENT_VISIBLE_CHANGED, widthChangedListener);
-            this.childColumnsDestroyFuncs.push(() => {
+            this.removeChildListenersFuncs.push(() => {
                 column.removeEventListener(Column.EVENT_WIDTH_CHANGED, widthChangedListener);
                 column.removeEventListener(Column.EVENT_VISIBLE_CHANGED, widthChangedListener);
             });
         });
     }
 
-    private destroyListenersOnChildrenColumns(): void {
-        this.childColumnsDestroyFuncs.forEach(func => func());
-        this.childColumnsDestroyFuncs = [];
+    private removeListenersOnChildrenColumns(): void {
+        this.removeChildListenersFuncs.forEach(func => func());
+        this.removeChildListenersFuncs = [];
     }
 
     private onWidthChanged(): void {

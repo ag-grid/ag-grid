@@ -78,7 +78,7 @@ export class MenuItemComponent extends Component {
             if (this.gridOptionsWrapper.isEnableBrowserTooltips()) {
                 this.getGui().setAttribute('title', this.tooltip);
             } else {
-                this.addFeature(new TooltipFeature(this, 'menu'))
+                this.wireDependentBean(new TooltipFeature(this, 'menu'));
             }
         }
 

@@ -6,7 +6,7 @@ import { RowNodeBlockLoader } from "./rowNodeBlockLoader";
 import { AgEvent } from "../../events";
 import { NumberSequence,  _ } from "../../utils";
 import {IRowNodeBlock} from "../../interfaces/iRowNodeBlock";
-import {Autowired, PostConstruct} from "../../context/context";
+import {Autowired, PostConstruct, PreDestroy} from "../../context/context";
 import {EventService} from "../../eventService";
 import {RowRenderer} from "../../rendering/rowRenderer";
 
@@ -60,9 +60,9 @@ export abstract class RowNodeCache<T extends IRowNodeBlock, P extends RowNodeCac
         this.cacheParams = cacheParams;
     }
 
-    public destroy(): void {
+    @PreDestroy
+    private destroyAllBlocks(): void {
         this.forEachBlockInOrder(block => this.destroyBlock(block));
-        super.destroy();
     }
 
     @PostConstruct
@@ -283,7 +283,7 @@ export abstract class RowNodeCache<T extends IRowNodeBlock, P extends RowNodeCac
 
     protected destroyBlock(block: T): void {
         delete this.blocks[block.getBlockNumber()];
-        block.destroy();
+        this.destroyBean(block);
         this.blockCount--;
         this.cacheParams.rowNodeBlockLoader.removeBlock(block);
     }

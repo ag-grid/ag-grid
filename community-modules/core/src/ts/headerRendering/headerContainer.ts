@@ -11,10 +11,11 @@ import { ScrollVisibleService } from '../gridPanel/scrollVisibleService';
 import { Component } from '../widgets/component';
 import { Constants } from '../constants';
 import { setFixedWidth, clearElement } from '../utils/dom';
+import {BeanStub} from "../context/beanStub";
 
-export class HeaderContainer {
+export class HeaderContainer extends BeanStub {
+
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
-    @Autowired('context') private context: Context;
     @Autowired('columnController') private columnController: ColumnController;
     @Autowired('eventService') private eventService: EventService;
     @Autowired('scrollVisibleService') private scrollVisibleService: ScrollVisibleService;
@@ -30,9 +31,8 @@ export class HeaderContainer {
 
     private dropTarget: DropTarget;
 
-    private events: (() => void)[] = [];
-
     constructor(eContainer: HTMLElement, eViewport: HTMLElement, pinned: string) {
+        super();
         this.eContainer = eContainer;
         this.pinned = pinned;
         this.eViewport = eViewport;
@@ -52,14 +52,12 @@ export class HeaderContainer {
 
         // if value changes, then if not pivoting, we at least need to change the label eg from sum() to avg(),
         // if pivoting, then the columns have changed
-        this.events = [
-            this.eventService.addEventListener(Events.EVENT_COLUMN_VALUE_CHANGED, this.onColumnValueChanged.bind(this)),
-            this.eventService.addEventListener(Events.EVENT_COLUMN_ROW_GROUP_CHANGED, this.onColumnRowGroupChanged.bind(this)),
-            this.eventService.addEventListener(Events.EVENT_GRID_COLUMNS_CHANGED, this.onGridColumnsChanged.bind(this)),
-            this.eventService.addEventListener(Events.EVENT_SCROLL_VISIBILITY_CHANGED, this.onScrollVisibilityChanged.bind(this)),
-            this.eventService.addEventListener(Events.EVENT_COLUMN_RESIZED, this.onColumnResized.bind(this)),
-            this.eventService.addEventListener(Events.EVENT_DISPLAYED_COLUMNS_CHANGED, this.onDisplayedColumnsChanged.bind(this))
-        ];
+        this.addDestroyableEventListener(this.eventService, Events.EVENT_COLUMN_VALUE_CHANGED, this.onColumnValueChanged.bind(this)),
+        this.addDestroyableEventListener(this.eventService, Events.EVENT_COLUMN_ROW_GROUP_CHANGED, this.onColumnRowGroupChanged.bind(this)),
+        this.addDestroyableEventListener(this.eventService, Events.EVENT_GRID_COLUMNS_CHANGED, this.onGridColumnsChanged.bind(this)),
+        this.addDestroyableEventListener(this.eventService, Events.EVENT_SCROLL_VISIBILITY_CHANGED, this.onScrollVisibilityChanged.bind(this)),
+        this.addDestroyableEventListener(this.eventService, Events.EVENT_COLUMN_RESIZED, this.onColumnResized.bind(this)),
+        this.addDestroyableEventListener(this.eventService, Events.EVENT_DISPLAYED_COLUMNS_CHANGED, this.onDisplayedColumnsChanged.bind(this))
     }
 
     // if row group changes, that means we may need to add aggFuncs to the column headers,
@@ -108,16 +106,6 @@ export class HeaderContainer {
         }
     }
 
-    @PreDestroy
-    public destroy(): void {
-        this.removeHeaderRowComps();
-
-        if (this.events.length) {
-            this.events.forEach(func => func());
-            this.events = [];
-        }
-    }
-
     public getRowComps(): HeaderRowComp[] {
         return this.headerRowComps;
     }
@@ -141,12 +129,13 @@ export class HeaderContainer {
     private setupDragAndDrop(gridComp: GridPanel): void {
         const dropContainer = this.eViewport ? this.eViewport : this.eContainer;
         const bodyDropTarget = new BodyDropTarget(this.pinned, dropContainer);
-        this.context.wireBean(bodyDropTarget);
+        this.wireDependentBean(bodyDropTarget);
         bodyDropTarget.registerGridComp(gridComp);
     }
 
+    @PreDestroy
     private removeHeaderRowComps(): void {
-        this.headerRowComps.forEach(headerRowComp => headerRowComp.destroy());
+        this.headerRowComps.forEach(headerRowComp => this.destroyBean(headerRowComp) );
         this.headerRowComps.length = 0;
 
         clearElement(this.eContainer);
@@ -161,7 +150,7 @@ export class HeaderContainer {
             const groupRow = dept !== (rowCount - 1);
             const type = groupRow ? HeaderRowType.COLUMN_GROUP : HeaderRowType.COLUMN;
             const headerRowComp = new HeaderRowComp(dept, type, this.pinned, this.dropTarget);
-            this.context.wireBean(headerRowComp);
+            this.wireBean(headerRowComp);
             this.headerRowComps.push(headerRowComp);
             headerRowComp.getGui().setAttribute('aria-rowindex', this.headerRowComps.length.toString());
             this.eContainer.appendChild(headerRowComp.getGui());
@@ -169,7 +158,7 @@ export class HeaderContainer {
 
         if (!this.columnController.isPivotMode() && this.columnController.hasFloatingFilters()) {
             const headerRowComp = new HeaderRowComp(rowCount, HeaderRowType.FLOATING_FILTER, this.pinned, this.dropTarget);
-            this.context.wireBean(headerRowComp);
+            this.wireBean(headerRowComp);
             this.headerRowComps.push(headerRowComp);
             headerRowComp.getGui().setAttribute('aria-rowindex', this.headerRowComps.length.toString());
             this.eContainer.appendChild(headerRowComp.getGui());

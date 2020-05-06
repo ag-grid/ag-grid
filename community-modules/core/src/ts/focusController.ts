@@ -24,28 +24,19 @@ export class FocusController extends BeanStub {
     private focusedCellPosition: CellPosition;
     private keyboardFocusActive: boolean = false;
 
-    private events: (() => void)[] = [];
-
     @PostConstruct
     private init(): void {
         const eDocument = this.gridOptionsWrapper.getDocument();
 
         const clearFocusedCellListener = this.clearFocusedCell.bind(this);
 
-        this.events = [
-            this.eventService.addEventListener(Events.EVENT_COLUMN_PIVOT_MODE_CHANGED, clearFocusedCellListener),
-            this.eventService.addEventListener(Events.EVENT_COLUMN_EVERYTHING_CHANGED, this.onColumnEverythingChanged.bind(this)),
-            this.eventService.addEventListener(Events.EVENT_COLUMN_GROUP_OPENED, clearFocusedCellListener),
-            this.eventService.addEventListener(Events.EVENT_COLUMN_ROW_GROUP_CHANGED, clearFocusedCellListener)
-        ];
+        this.addDestroyableEventListener(this.eventService, Events.EVENT_COLUMN_PIVOT_MODE_CHANGED, clearFocusedCellListener);
+        this.addDestroyableEventListener(this.eventService, Events.EVENT_COLUMN_EVERYTHING_CHANGED, this.onColumnEverythingChanged.bind(this));
+        this.addDestroyableEventListener(this.eventService, Events.EVENT_COLUMN_GROUP_OPENED, clearFocusedCellListener);
+        this.addDestroyableEventListener(this.eventService, Events.EVENT_COLUMN_ROW_GROUP_CHANGED, clearFocusedCellListener);
 
-        const activateKeyboardModeListener = this.activateKeyboardMode.bind(this);
-        eDocument.addEventListener('keydown', activateKeyboardModeListener);
-        this.events.push(() => eDocument.removeEventListener('keydown', activateKeyboardModeListener));
-
-        const activateMouseModeListener = this.activateMouseMode.bind(this);
-        eDocument.addEventListener('mousedown', activateMouseModeListener);
-        this.events.push(() => eDocument.removeEventListener('mousedown', activateMouseModeListener));
+        this.addDestroyableEventListener(eDocument, 'keydown', this.activateKeyboardMode.bind(this));
+        this.addDestroyableEventListener(eDocument, 'mousedown', this.activateMouseMode.bind(this));
     }
 
     public onColumnEverythingChanged(): void {
@@ -58,14 +49,6 @@ export class FocusController extends BeanStub {
             if (col!==colFromColumnController) {
                 this.clearFocusedCell();
             }
-        }
-    }
-
-    @PreDestroy
-    public destroy(): void {
-        if (this.events.length) {
-            this.events.forEach(func => func());
-            this.events = [];
         }
     }
 

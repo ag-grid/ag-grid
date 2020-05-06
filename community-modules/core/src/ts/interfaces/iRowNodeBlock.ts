@@ -10,7 +10,6 @@ export interface IRowNodeBlock extends IEventEmitter {
     isAnyNodeOpen(rowCount: number): boolean;
     getBlockNumber(): number;
     forEachNodeDeep(callback: (rowNode: RowNode, index: number) => void, sequence: NumberSequence, rowCount: number): void;
-    destroy(): void;
     forEachNodeShallow(callback: (rowNode: RowNode, index: number) => void, sequence: NumberSequence, rowCount: number): void;
     load(): void;
 }

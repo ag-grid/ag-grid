@@ -62,7 +62,7 @@ export class HeaderRootComp extends Component {
 
         this.childContainers = [centerContainer, pinnedLeftContainer, pinnedRightContainer];
 
-        this.childContainers.forEach(container => this.getContext().wireBean(container));
+        this.childContainers.forEach(container => this.wireDependentBean(container));
 
         // shotgun way to get labels to change, eg from sum(amount) to avg(amount)
         this.addDestroyableEventListener(this.eventService, Events.EVENT_COLUMN_VALUE_CHANGED, this.refreshHeader.bind(this));
@@ -94,11 +94,6 @@ export class HeaderRootComp extends Component {
 
     public forEachHeaderElement(callback: (renderedHeaderElement: Component) => void): void {
         this.childContainers.forEach(childContainer => childContainer.forEachHeaderElement(callback));
-    }
-
-    public destroy(): void {
-        this.childContainers.forEach(container => container.destroy());
-        super.destroy();
     }
 
     public refreshHeader() {

@@ -470,7 +470,6 @@ export class RowComp extends Component {
         this.addDestroyableEventListener(eventService, Events.EVENT_COLUMN_RESIZED, this.onColumnResized.bind(this));
         this.addDestroyableEventListener(eventService, Events.EVENT_CELL_FOCUSED, this.onCellFocusChanged.bind(this));
         this.addDestroyableEventListener(eventService, Events.EVENT_PAGINATION_CHANGED, this.onPaginationChanged.bind(this));
-        this.addDestroyableEventListener(eventService, Events.EVENT_GRID_COLUMNS_CHANGED, this.onGridColumnsChanged.bind(this));
         this.addDestroyableEventListener(eventService, Events.EVENT_MODEL_UPDATED, this.onModelUpdated.bind(this));
         this.addDestroyableEventListener(eventService, Events.EVENT_COLUMN_MOVED, this.onColumnMoved.bind(this));
 
@@ -486,15 +485,6 @@ export class RowComp extends Component {
             this.forEachCellComp(cellComp => cellComp.onCellChanged(event));
         });
 
-    }
-
-    private onGridColumnsChanged(e: GridColumnsChangedEvent): void {
-        // when grid columns change, then all cells should be cleaned out if cols are not immutable,
-        // as the new columns could have same id as the previous columns but still be different columns and conflict
-        const immutableColumns = this.beans.gridOptionsWrapper.isImmutableColumns();
-        if (!immutableColumns) {
-            this.removeRenderedCells(Object.keys(this.cellComps));
-        }
     }
 
     private onRowNodeDataChanged(event: DataChangedEvent): void {

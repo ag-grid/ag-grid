@@ -98,16 +98,15 @@ export class HeaderWrapperComp extends Component {
         this.addColumnHoverListener();
         this.addMouseListeners();
 
-        this.addFeature(new HoverFeature([this.column], this.getGui()));
+        this.wireDependentBean(new HoverFeature([this.column], this.getGui()));
 
         this.addDestroyableEventListener(this.column, Column.EVENT_FILTER_ACTIVE_CHANGED, this.onFilterChanged.bind(this));
         this.onFilterChanged();
 
-        this.addFeature(new SelectAllFeature(this.cbSelectAll, this.column));
+        this.wireDependentBean(new SelectAllFeature(this.cbSelectAll, this.column));
 
         const setLeftFeature = new SetLeftFeature(this.column, this.getGui(), this.beans);
-        setLeftFeature.init();
-        this.addDestroyFunc(setLeftFeature.destroy.bind(setLeftFeature));
+        this.wireDependentBean(setLeftFeature);
 
         this.addAttributes();
         CssClassApplier.addHeaderClassesFromColDef(colDef, this.getGui(), this.gridOptionsWrapper, this.column, null);
@@ -298,7 +297,7 @@ export class HeaderWrapperComp extends Component {
         if (this.gridOptionsWrapper.isEnableBrowserTooltips()) {
             this.getGui().setAttribute('title', tooltipText);
         } else {
-            this.addFeature(new TooltipFeature(this, 'header'));
+            this.wireDependentBean(new TooltipFeature(this, 'header'));
         }
     }
 

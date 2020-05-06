@@ -367,7 +367,7 @@ export class ServerSideCache extends RowNodeCache<ServerSideBlock, ServerSideCac
     private createBlock(blockNumber: number, displayIndex: number, nextRowTop: { value: number }): ServerSideBlock {
 
         const newBlock = new ServerSideBlock(blockNumber, this.parentRowNode, this.cacheParams, this);
-        this.getContext().wireBean(newBlock);
+        this.wireBean(newBlock);
 
         const displayIndexSequence = new NumberSequence(displayIndex);
 

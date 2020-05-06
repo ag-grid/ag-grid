@@ -1,5 +1,5 @@
 import { Component } from '../widgets/component';
-import { Autowired, PostConstruct } from '../context/context';
+import {Autowired, PostConstruct, PreDestroy} from '../context/context';
 import { GridOptionsWrapper } from '../gridOptionsWrapper';
 import { ColumnGroupChild } from '../entities/columnGroupChild';
 import { ColumnGroup } from '../entities/columnGroup';
@@ -58,17 +58,17 @@ export class HeaderRowComp extends Component {
         });
     }
 
-    public destroy(): void {
+    @PreDestroy
+    private destroyAllChildComponents(): void {
         const idsOfAllChildren = Object.keys(this.headerComps);
-        this.removeAndDestroyChildComponents(idsOfAllChildren);
-        super.destroy();
+        this.destroyChildComponents(idsOfAllChildren);
     }
 
-    private removeAndDestroyChildComponents(idsToDestroy: string[]): void {
+    private destroyChildComponents(idsToDestroy: string[]): void {
         idsToDestroy.forEach(id => {
             const childHeaderComp: IComponent<any> = this.headerComps[id];
             this.getGui().removeChild(childHeaderComp.getGui());
-            childHeaderComp.destroy();
+            this.destroyBean(childHeaderComp);
             delete this.headerComps[id];
         });
     }
@@ -166,7 +166,7 @@ export class HeaderRowComp extends Component {
 
     private removeAndDestroyAllChildComponents(): void {
         const idsOfAllChildren = Object.keys(this.headerComps);
-        this.removeAndDestroyChildComponents(idsOfAllChildren);
+        this.destroyChildComponents(idsOfAllChildren);
     }
 
     private onDisplayedColumnsChanged(): void {
@@ -240,7 +240,7 @@ export class HeaderRowComp extends Component {
         });
 
         // at this point, anything left in currentChildIds is an element that is no longer in the viewport
-        this.removeAndDestroyChildComponents(currentChildIds);
+        this.destroyChildComponents(currentChildIds);
 
         const ensureDomOrder = this.gridOptionsWrapper.isEnsureDomOrder();
         if (ensureDomOrder) {
@@ -264,7 +264,7 @@ export class HeaderRowComp extends Component {
                 break;
         }
 
-        this.getContext().wireBean(result);
+        this.wireBean(result);
 
         return result;
     }

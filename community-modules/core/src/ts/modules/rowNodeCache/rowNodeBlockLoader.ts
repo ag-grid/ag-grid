@@ -3,8 +3,9 @@ import { Logger, LoggerFactory } from "../../logger";
 import { Qualifier } from "../../context/context";
 import { _ } from "../../utils";
 import {IRowNodeBlock} from "../../interfaces/iRowNodeBlock";
+import {BeanStub} from "../../context/beanStub";
 
-export class RowNodeBlockLoader {
+export class RowNodeBlockLoader extends BeanStub {
 
     private readonly maxConcurrentRequests: number;
 
@@ -19,6 +20,8 @@ export class RowNodeBlockLoader {
     private active = true;
 
     constructor(maxConcurrentRequests: number, blockLoadDebounceMillis: number | undefined) {
+        super();
+
         this.maxConcurrentRequests = maxConcurrentRequests;
 
         if (blockLoadDebounceMillis && blockLoadDebounceMillis > 0) {

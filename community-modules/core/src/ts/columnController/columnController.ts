@@ -44,6 +44,7 @@ import { Constants } from '../constants';
 import { areEqual } from '../utils/array';
 import { AnimationFrameService } from "../misc/animationFrameService";
 import { _ } from '../utils';
+import {BeanStub} from "../context/beanStub";
 
 export interface ColumnResizeSet {
     columns: Column[];
@@ -63,7 +64,8 @@ export interface ColumnState {
 }
 
 @Bean('columnController')
-export class ColumnController {
+export class ColumnController extends BeanStub {
+
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('expressionService') private expressionService: ExpressionService;
     @Autowired('columnFactory') private columnFactory: ColumnFactory;
@@ -186,12 +188,8 @@ export class ColumnController {
     }
 
     public setColumnDefs(columnDefs: (ColDef | ColGroupDef)[], source: ColumnEventType = 'api') {
-        // if immutable cols, means this setColumnDefs call is making changes to the
-        // current column list, so makes sense for the columns to animate
-        const immutableCols = this.gridOptionsWrapper.isImmutableColumns();
-        if (immutableCols) {
-            this.columnAnimationService.start();
-        }
+        // if making changes to cols, makes sense for the columns to animate
+        this.columnAnimationService.start();
 
         const colsPreviouslyExisted = !!this.columnDefs;
 
@@ -247,9 +245,7 @@ export class ColumnController {
 
         this.flexActive = this.getDisplayedCenterColumns().some(col => !!col.getFlex());
 
-        if (immutableCols) {
-            this.columnAnimationService.finish();
-        }
+        this.columnAnimationService.finish();
     }
 
     public isAutoRowHeightActive(): boolean {
@@ -2113,7 +2109,7 @@ export class ColumnController {
                 originalColumnGroup: originalColumnGroup,
                 location: location,
                 api: this.gridOptionsWrapper.getApi(),
-                context: this.gridOptionsWrapper.getContext()
+                context: this.getContext()
             };
 
             if (typeof headerValueGetter === 'function') {

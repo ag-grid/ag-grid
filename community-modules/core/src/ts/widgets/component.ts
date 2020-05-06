@@ -266,10 +266,6 @@ export class Component extends BeanStub {
         }
     }
 
-    public addFeature(feature: BeanStub, context?: Context): void {
-        this.wireDependentBean(feature, context);
-    }
-
     public isDisplayed(): boolean {
         return this.displayed;
     }

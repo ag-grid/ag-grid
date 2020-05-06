@@ -365,7 +365,8 @@ var gridOptions = {
         console.log("Callback onColumnVisible:", event);
     },
     onColumnResized: function(event) {
-        console.log("Callback onColumnResized:", event);
+        // leave this out, as it slows things down when resizing
+        // console.log("Callback onColumnResized:", event);
     },
     onCellValueChanged: function(params) {
         // taking this out, as clipboard paste operation can result in this getting called

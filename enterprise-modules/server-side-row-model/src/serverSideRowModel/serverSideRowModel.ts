@@ -269,7 +269,7 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
         this.rootNode = new RowNode();
         this.rootNode.group = true;
         this.rootNode.level = -1;
-        this.getContext().wireBean(this.rootNode);
+        this.wireBean(this.rootNode);
 
         if (this.datasource) {
             this.createNewRowNodeBlockLoader();
@@ -307,12 +307,13 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
         const maxConcurrentRequests = this.gridOptionsWrapper.getMaxConcurrentDatasourceRequests();
         const blockLoadDebounceMillis = this.gridOptionsWrapper.getBlockLoadDebounceMillis();
         this.rowNodeBlockLoader = new RowNodeBlockLoader(maxConcurrentRequests, blockLoadDebounceMillis);
-        this.getContext().wireBean(this.rowNodeBlockLoader);
+        this.wireBean(this.rowNodeBlockLoader);
     }
 
+    @PreDestroy
     private destroyRowNodeBlockLoader(): void {
         if (this.rowNodeBlockLoader) {
-            this.rowNodeBlockLoader.destroy();
+            this.destroyBean(this.rowNodeBlockLoader);
             this.rowNodeBlockLoader = undefined;
         }
     }

@@ -270,12 +270,20 @@ export class Context {
         this.logger.log(">> Shutting down ag-Application Context");
 
         const beanInstances = this.getBeanInstances();
-        this.callLifeCycleMethods(beanInstances, 'preDestroyMethods');
+        this.destroyBeans(beanInstances);
 
         this.contextParams.providedBeanInstances = null;
 
         this.destroyed = true;
         this.logger.log(">> ag-Application Context shut down - component is dead");
+    }
+
+    public destroyBean(bean: any): void {
+        this.destroyBeans([bean]);
+    }
+
+    public destroyBeans(beans: any[]): void {
+        this.callLifeCycleMethods(beans, 'preDestroyMethods');
     }
 }
 

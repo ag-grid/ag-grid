@@ -78,7 +78,7 @@ export class FloatingFilterWrapper extends Component {
         this.setupWidth();
         this.setupLeftPositioning();
         this.setupColumnHover();
-        this.addFeature(new HoverFeature([this.column], this.getGui()));
+        this.wireDependentBean(new HoverFeature([this.column], this.getGui()));
 
         this.addDestroyableEventListener(this.eButtonShowMainFilter, 'click', this.showParentFilter.bind(this));
     }
@@ -108,8 +108,7 @@ export class FloatingFilterWrapper extends Component {
 
     private setupLeftPositioning(): void {
         const setLeftFeature = new SetLeftFeature(this.column, this.getGui(), this.beans);
-        setLeftFeature.init();
-        this.addDestroyFunc(setLeftFeature.destroy.bind(setLeftFeature));
+        this.wireDependentBean(setLeftFeature);
     }
 
     private setupSyncWithFilter(): void {

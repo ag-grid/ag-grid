@@ -1,5 +1,5 @@
 import { Component } from "../widgets/component";
-import { PostConstruct } from "../context/context";
+import {PostConstruct, PreDestroy} from "../context/context";
 import { RowNode } from "../entities/rowNode";
 import { DragItem, DragSource, DragSourceType } from "../dragAndDrop/dragAndDropService";
 import { Events } from "../eventKeys";
@@ -39,7 +39,7 @@ export class RowDragComp extends Component {
             new ManagedVisibilityStrategy(this, this.beans, this.rowNode, this.column) :
             new NonManagedVisibilityStrategy(this, this.beans, this.rowNode, this.column);
 
-        this.addFeature(strategy, this.beans.context);
+        this.wireDependentBean(strategy, this.beans.context);
     }
 
     private getSelectedCount(): number {
@@ -158,6 +158,7 @@ class NonManagedVisibilityStrategy extends VisibilityStrategy {
 
 // when managed, the visibility depends on sort, filter and row group, as well as suppressRowDrag property
 class ManagedVisibilityStrategy extends VisibilityStrategy {
+
     private readonly beans: Beans;
 
     constructor(parent: RowDragComp, beans: Beans, rowNode: RowNode, column: Column) {
