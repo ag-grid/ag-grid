@@ -1,4 +1,4 @@
-import { serialiseDate, serialiseTime, parseDateTimeFromString } from './date';
+import { serialiseDate, parseDateTimeFromString } from './date';
 
 describe('serialiseDate', () => {
     it('returns null if no date is supplied', () => {
@@ -6,35 +6,31 @@ describe('serialiseDate', () => {
     });
 
     it('serialises dates using hyphen by default', () => {
-        const date = new Date(2020, 2, 7);
+        const date = new Date(2020, 2, 27, 14, 22, 19);
         const result = serialiseDate(date);
 
-        expect(result).toBe('2020-03-07');
+        expect(result).toBe('2020-03-27 14:22:19');
     });
 
     it('can serialise with a different separator', () => {
-        const date = new Date(2020, 2, 27);
-        const result = serialiseDate(date, '/');
+        const date = new Date(2020, 2, 27, 14, 22, 19);
+        const result = serialiseDate(date, true, '/');
 
-        expect(result).toBe('2020/03/27');
-    });
-});
-
-describe('serialiseTime', () => {
-    it('returns null if no time is supplied', () => {
-        expect(serialiseTime(null)).toBeNull();
+        expect(result).toBe('2020/03/27 14:22:19');
     });
 
-    it('returns colon separated time string', () => {
-        const time = new Date(0, 0, 0, 14, 22, 19);
+    it('pads parts to two digits', () => {
+        const date = new Date(2020, 2, 4, 3, 7, 2);
+        const result = serialiseDate(date, true, '/');
 
-        expect(serialiseTime(time)).toBe('14:22:19');
+        expect(result).toBe('2020/03/04 03:07:02');
     });
 
-    it('pads all time parts to two digits', () => {
-        const time = new Date(0, 0, 0, 4, 2, 9);
+    it('will not include time if instructed', () => {
+        const date = new Date(2020, 2, 27, 14, 22, 19);
+        const result = serialiseDate(date, false);
 
-        expect(serialiseTime(time)).toBe('04:02:09');
+        expect(result).toBe('2020-03-27');
     });
 });
 

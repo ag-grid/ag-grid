@@ -1,16 +1,18 @@
-import { DateFilter, DateFilterModel } from "./dateFilter";
-import { Autowired } from "../../../context/context";
-import { UserComponentFactory } from "../../../components/framework/userComponentFactory";
-import { _ } from "../../../utils";
-import { IDateParams } from "../../../rendering/dateComponent";
-import { IFloatingFilterParams } from "../../floating/floatingFilter";
-import { DateCompWrapper } from "./dateCompWrapper";
-import { RefSelector } from "../../../widgets/componentAnnotations";
-import { SimpleFilter, ISimpleFilterModel } from "../simpleFilter";
-import { SimpleFloatingFilter } from "../../floating/provided/simpleFloatingFilter";
-import { FilterChangedEvent } from "../../../events";
-import { ProvidedFilter } from "../providedFilter";
-import { AgInputTextField } from "../../../widgets/agInputTextField";
+import { DateFilter, DateFilterModel } from './dateFilter';
+import { Autowired } from '../../../context/context';
+import { UserComponentFactory } from '../../../components/framework/userComponentFactory';
+import { IDateParams } from '../../../rendering/dateComponent';
+import { IFloatingFilterParams } from '../../floating/floatingFilter';
+import { DateCompWrapper } from './dateCompWrapper';
+import { RefSelector } from '../../../widgets/componentAnnotations';
+import { SimpleFilter, ISimpleFilterModel } from '../simpleFilter';
+import { SimpleFloatingFilter } from '../../floating/provided/simpleFloatingFilter';
+import { FilterChangedEvent } from '../../../events';
+import { ProvidedFilter } from '../providedFilter';
+import { AgInputTextField } from '../../../widgets/agInputTextField';
+import { setDisplayed } from '../../../utils/dom';
+import { parseDateTimeFromString, serialiseDate } from '../../../utils/date';
+import { debounce } from '../../../utils/function';
 
 export class DateFloatingFilter extends SimpleFloatingFilter {
     @Autowired('userComponentFactory') private userComponentFactory: UserComponentFactory;
@@ -54,8 +56,8 @@ export class DateFloatingFilter extends SimpleFloatingFilter {
     }
 
     protected setEditable(editable: boolean): void {
-        _.setDisplayed(this.eDateWrapper, editable);
-        _.setDisplayed(this.eReadOnlyText.getGui(), !editable);
+        setDisplayed(this.eDateWrapper, editable);
+        setDisplayed(this.eReadOnlyText.getGui(), !editable);
     }
 
     public onParentModelChanged(model: ISimpleFilterModel, event: FilterChangedEvent): void {
@@ -74,7 +76,7 @@ export class DateFloatingFilter extends SimpleFloatingFilter {
             if (model) {
                 const dateModel = model as DateFilterModel;
 
-                this.dateComp.setDate(_.parseDateTimeFromString(dateModel.dateFrom));
+                this.dateComp.setDate(parseDateTimeFromString(dateModel.dateFrom));
             } else {
                 this.dateComp.setDate(null);
             }
@@ -88,7 +90,7 @@ export class DateFloatingFilter extends SimpleFloatingFilter {
 
     private onDateChanged(): void {
         const filterValueDate = this.dateComp.getDate();
-        const filterValueText = `${_.serialiseDate(filterValueDate)} ${_.serialiseTime(filterValueDate)}`;
+        const filterValueText = serialiseDate(filterValueDate);
 
         this.params.parentFilterInstance(filterInstance => {
             if (filterInstance) {
@@ -101,7 +103,7 @@ export class DateFloatingFilter extends SimpleFloatingFilter {
     private createDateComponent(): void {
         const debounceMs = ProvidedFilter.getDebounceMs(this.params.filterParams, this.getDefaultDebounceMs());
         const dateComponentParams: IDateParams = {
-            onDateChanged: _.debounce(this.onDateChanged.bind(this), debounceMs),
+            onDateChanged: debounce(this.onDateChanged.bind(this), debounceMs),
             filterParams: this.params.column.getColDef().filterParams
         };
 
