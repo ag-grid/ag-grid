@@ -11,7 +11,7 @@ export interface VirtualListModel {
 export class VirtualList extends Component {
     private model: VirtualListModel;
     private eListContainer: HTMLElement;
-    private rowsInBodyContainer: { [key: string]: { rowComponent: Component, eDiv: HTMLDivElement; }; } = {};
+    private renderedRows = new Map<number, { rowComponent: Component, eDiv: HTMLDivElement; }>();
     private componentCreator: (value: any) => Component;
     private rowHeight = 20;
 
@@ -96,14 +96,13 @@ export class VirtualList extends Component {
     }
 
     private clearVirtualRows() {
-        const rowsToRemove = Object.keys(this.rowsInBodyContainer);
-        this.removeVirtualRows(rowsToRemove);
+        this.renderedRows.forEach((_, rowIndex) => this.removeRow(rowIndex));
     }
 
     private drawVirtualRows() {
-        const topPixel = this.getGui().scrollTop;
-        const bottomPixel = topPixel + this.getGui().offsetHeight;
-
+        const gui = this.getGui();
+        const topPixel = gui.scrollTop;
+        const bottomPixel = topPixel + gui.offsetHeight;
         const firstRow = Math.floor(topPixel / this.rowHeight);
         const lastRow = Math.floor(bottomPixel / this.rowHeight);
 
@@ -111,40 +110,23 @@ export class VirtualList extends Component {
     }
 
     private ensureRowsRendered(start: number, finish: number) {
-        // at the end, this array will contain the items we need to remove
-        const rowsToRemove = Object.keys(this.rowsInBodyContainer);
-
-        // add in new rows
-        for (let rowIndex = start; rowIndex <= finish; rowIndex++) {
-            // see if item already there, and if yes, take it out of the 'to remove' array
-            if (rowsToRemove.indexOf(rowIndex.toString()) >= 0) {
-                rowsToRemove.splice(rowsToRemove.indexOf(rowIndex.toString()), 1);
-                continue;
+        // remove any rows that are no longer required
+        this.renderedRows.forEach((_, rowIndex) => {
+            if (rowIndex < start || rowIndex > finish) {
+                this.removeRow(rowIndex);
             }
+        });
+
+        // insert any required new rows
+        for (let rowIndex = start; rowIndex <= finish; rowIndex++) {
+            if (this.renderedRows.has(rowIndex)) { continue; }
 
             // check this row actually exists (in case overflow buffer window exceeds real data)
-            if (this.model.getRowCount() > rowIndex) {
+            if (rowIndex < this.model.getRowCount()) {
                 const value = this.model.getRow(rowIndex);
                 this.insertRow(value, rowIndex);
             }
         }
-
-        // at this point, everything in our 'rowsToRemove' . . .
-        this.removeVirtualRows(rowsToRemove);
-    }
-
-    // takes array of row id's
-    private removeVirtualRows(rowsToRemove: string[]) {
-        rowsToRemove.forEach(index => {
-            const component = this.rowsInBodyContainer[index];
-            this.eListContainer.removeChild(component.eDiv);
-
-            if (component.rowComponent.destroy) {
-                component.rowComponent.destroy();
-            }
-
-            delete this.rowsInBodyContainer[index];
-        });
     }
 
     private insertRow(value: any, rowIndex: number) {
@@ -161,10 +143,19 @@ export class VirtualList extends Component {
         eDiv.appendChild(rowComponent.getGui());
 
         this.eListContainer.appendChild(eDiv);
-        this.rowsInBodyContainer[rowIndex] = {
-            rowComponent: rowComponent,
-            eDiv: eDiv
-        };
+        this.renderedRows.set(rowIndex, { rowComponent, eDiv });
+    }
+
+    private removeRow(rowIndex: number) {
+        const component = this.renderedRows.get(rowIndex);
+
+        this.eListContainer.removeChild(component.eDiv);
+
+        if (component.rowComponent.destroy) {
+            component.rowComponent.destroy();
+        }
+
+        this.renderedRows.delete(rowIndex);
     }
 
     private addScrollListener() {
