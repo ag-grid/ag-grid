@@ -13,11 +13,11 @@ import {
     OriginalColumnGroupChild
 } from "@ag-grid-community/core";
 
-import {ToolPanelFilterComp} from "./toolPanelFilterComp";
-import {ToolPanelFiltersCompParams} from "./filtersToolPanel";
-import {ToolPanelFilterGroupComp, ToolPanelFilterItem} from "./toolPanelFilterGroupComp";
-import {EXPAND_STATE} from "./filtersToolPanelHeaderPanel";
-import {ToolPanelColDefService} from "@ag-grid-enterprise/side-bar";
+import { ToolPanelFilterComp } from "./toolPanelFilterComp";
+import { ToolPanelFiltersCompParams } from "./filtersToolPanel";
+import { ToolPanelFilterGroupComp, ToolPanelFilterItem } from "./toolPanelFilterGroupComp";
+import { EXPAND_STATE } from "./filtersToolPanelHeaderPanel";
+import { ToolPanelColDefService } from "@ag-grid-enterprise/side-bar";
 
 export class FiltersToolPanelListPanel extends Component {
 
@@ -91,7 +91,7 @@ export class FiltersToolPanelListPanel extends Component {
 
         if (len) {
             this.filterGroupComps.forEach(comp => this.appendChild(comp));
-            this.setFirstAndLastVisible(0, len -1);
+            this.setFirstAndLastVisible(0, len - 1);
         }
 
         // perform search if searchFilterText exists
@@ -112,7 +112,7 @@ export class FiltersToolPanelListPanel extends Component {
 
         if (len) {
             this.filterGroupComps.forEach(comp => this.appendChild(comp));
-            this.setFirstAndLastVisible(0, len -1);
+            this.setFirstAndLastVisible(0, len - 1);
         }
 
         // perform search if searchFilterText exists
@@ -132,7 +132,7 @@ export class FiltersToolPanelListPanel extends Component {
 
             const column = child as Column;
 
-            if (!this.shouldDisplayFilter(column)) { return [] };
+            if (!this.shouldDisplayFilter(column)) { return []; };
 
             const hideFilterCompHeader = depth === 0;
             const filterComp = new ToolPanelFilterComp(hideFilterCompHeader);
@@ -187,7 +187,7 @@ export class FiltersToolPanelListPanel extends Component {
     }
 
     // we don't support refreshing, but must implement because it's on the tool panel interface
-    public refresh(): void {}
+    public refresh(): void { }
 
     // lazy initialise the panel
     public setVisible(visible: boolean): void {
@@ -310,7 +310,7 @@ export class FiltersToolPanelListPanel extends Component {
             state = EXPAND_STATE.EXPANDED;
         }
 
-       this.dispatchEvent({type: 'groupExpanded', state: state});
+        this.dispatchEvent({ type: 'groupExpanded', state: state });
     }
 
     public performFilterSearch(searchText: string) {

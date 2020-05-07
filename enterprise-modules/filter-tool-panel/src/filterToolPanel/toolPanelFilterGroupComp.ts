@@ -15,15 +15,15 @@ import {
     RefSelector,
     AgGroupComponentParams
 } from "@ag-grid-community/core";
-import {ToolPanelFilterComp} from "./toolPanelFilterComp";
+import { ToolPanelFilterComp } from "./toolPanelFilterComp";
 
 export type ToolPanelFilterItem = ToolPanelFilterGroupComp | ToolPanelFilterComp;
 
 export class ToolPanelFilterGroupComp extends Component {
-    private static TEMPLATE =
-        `<div class="ag-filter-toolpanel-group-wrapper">
+    private static TEMPLATE = /* html */`
+        <div class="ag-filter-toolpanel-group-wrapper">
             <ag-group-component ref="filterGroupComp"></ag-group-component>
-         </div>`;
+        </div>`;
 
     @RefSelector('filterGroupComp') private filterGroupComp: AgGroupComponent;
 
@@ -37,7 +37,7 @@ export class ToolPanelFilterGroupComp extends Component {
     private filterGroupName: string;
 
     constructor(columnGroup: OriginalColumnGroupChild, childFilterComps: ToolPanelFilterItem[],
-                expandedCallback: () => void, depth: number) {
+        expandedCallback: () => void, depth: number) {
         super();
         this.columnGroup = columnGroup;
         this.childFilterComps = childFilterComps;
@@ -51,7 +51,7 @@ export class ToolPanelFilterGroupComp extends Component {
             cssIdentifier: 'filter-toolpanel',
             direction: 'vertical'
         };
-        this.setTemplate(ToolPanelFilterGroupComp.TEMPLATE, {filterGroupComp: groupParams});
+        this.setTemplate(ToolPanelFilterGroupComp.TEMPLATE, { filterGroupComp: groupParams });
     }
 
     @PostConstruct
@@ -60,26 +60,14 @@ export class ToolPanelFilterGroupComp extends Component {
         this.filterGroupComp.setAlignItems('stretch');
 
         _.addCssClass(this.filterGroupComp.getGui(), `ag-filter-toolpanel-group-level-${this.depth}`);
-        this.filterGroupComp.addCssClassToTitleBar(`ag-filter-toolpanel-group-level-${this.depth}-header`)
+        this.filterGroupComp.addCssClassToTitleBar(`ag-filter-toolpanel-group-level-${this.depth}-header`);
 
         this.childFilterComps.forEach(filterComp => {
             this.filterGroupComp.addItem(filterComp as Component);
-            filterComp.addCssClassToTitleBar(`ag-filter-toolpanel-group-level-${this.depth+1}-header`);
+            filterComp.addCssClassToTitleBar(`ag-filter-toolpanel-group-level-${this.depth + 1}-header`);
         });
 
-        if (!this.isColumnGroup()) {
-            this.addTopLevelColumnGroupExpandListener();
-        }
-        else {
-            this.addDestroyableEventListener(this.filterGroupComp, 'expanded', () => {
-                this.expandedCallback();
-            });
-
-            this.addDestroyableEventListener(this.filterGroupComp, 'collapsed', () => {
-                this.expandedCallback();
-            });
-        }
-
+        this.addExpandCollapseListeners();
         this.addFilterChangedListeners();
     }
 
@@ -88,11 +76,11 @@ export class ToolPanelFilterGroupComp extends Component {
     }
 
     public refreshFilters() {
-        this.childFilterComps.forEach((filterComp: ToolPanelFilterComp | ToolPanelFilterGroupComp) => {
+        this.childFilterComps.forEach(filterComp => {
             if (filterComp instanceof ToolPanelFilterGroupComp) {
-               filterComp.refreshFilters();
+                filterComp.refreshFilters();
             } else {
-               filterComp.refreshFilter();
+                filterComp.refreshFilter();
             }
         });
     }
@@ -125,25 +113,32 @@ export class ToolPanelFilterGroupComp extends Component {
         _.addOrRemoveCssClass(this.getGui(), 'ag-hidden', hide);
     }
 
-    private addTopLevelColumnGroupExpandListener() {
-        this.addDestroyableEventListener(this.filterGroupComp, 'expanded', () => {
-            this.childFilterComps.forEach(filterComp => {
-                // also need to refresh the virtual list on set filters as the filter may have been updated elsewhere
-                if (filterComp instanceof ToolPanelFilterComp) {
-                   filterComp.expand();
-                   filterComp.refreshFilter();
-                } else {
-                    filterComp.refreshFilters();
-                }
-            });
+    private forEachToolPanelFilterChild(action: (filterComp: ToolPanelFilterItem) => void) {
+        _.forEach(this.childFilterComps, filterComp => {
+            if (filterComp instanceof ToolPanelFilterComp) {
+                action(filterComp);
+            }
         });
     }
 
-    private addFilterChangedListeners() {
+    private addExpandCollapseListeners() {
+        const expandListener = this.isColumnGroup() ?
+            () => this.expandedCallback() :
+            () => this.forEachToolPanelFilterChild(filterComp => filterComp.expand());
 
+        const collapseListener = this.isColumnGroup() ?
+            () => this.expandedCallback() :
+            () => this.forEachToolPanelFilterChild(filterComp => filterComp.collapse());
+
+        this.addDestroyableEventListener(this.filterGroupComp, AgGroupComponent.EVENT_EXPANDED, expandListener);
+        this.addDestroyableEventListener(this.filterGroupComp, AgGroupComponent.EVENT_COLLAPSED, collapseListener);
+    }
+
+    private addFilterChangedListeners() {
         if (this.columnGroup instanceof OriginalColumnGroup) {
             const group = this.columnGroup as OriginalColumnGroup;
             const anyChildFiltersActive = () => group.getLeafColumns().some(col => col.isFilterActive());
+
             group.getLeafColumns().forEach(column => {
                 this.addDestroyableEventListener(column, Column.EVENT_FILTER_CHANGED, () => {
                     _.addOrRemoveCssClass(this.filterGroupComp.getGui(), 'ag-has-filter', anyChildFiltersActive());

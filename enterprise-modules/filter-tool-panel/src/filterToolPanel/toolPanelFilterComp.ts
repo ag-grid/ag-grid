@@ -7,7 +7,6 @@ import {
     EventService,
     FilterManager,
     FilterOpenedEvent,
-    GridApi,
     GridOptionsWrapper,
     IFilterComp,
     RefSelector,
@@ -16,14 +15,15 @@ import {
 } from "@ag-grid-community/core";
 
 export class ToolPanelFilterComp extends Component {
-    private static TEMPLATE =
-        `<div class="ag-filter-toolpanel-instance">
+    private static TEMPLATE = /* html */`
+        <div class="ag-filter-toolpanel-instance">
             <div class="ag-filter-toolpanel-header ag-filter-toolpanel-instance-header" ref="eFilterToolPanelHeader">
                 <div ref="eExpand" class="ag-filter-toolpanel-expand"></div>
                 <span ref="eFilterName" class="ag-header-cell-text"></span>
                 <span ref="eFilterIcon" class="ag-header-icon ag-filter-icon ag-filter-toolpanel-instance-header-icon" aria-hidden="true"></span>
             </div>
-            <div class="ag-filter-toolpanel-instance-body ag-filter" ref="agFilterToolPanelBody"/></div>`;
+            <div class="ag-filter-toolpanel-instance-body ag-filter" ref="agFilterToolPanelBody" />
+        </div>`;
 
     @RefSelector('eFilterToolPanelHeader') private eFilterToolPanelHeader: HTMLElement;
     @RefSelector('eFilterName') private eFilterName: HTMLElement;
@@ -31,7 +31,6 @@ export class ToolPanelFilterComp extends Component {
     @RefSelector('eFilterIcon') private eFilterIcon: HTMLElement;
     @RefSelector('eExpand') private eExpand: HTMLElement;
 
-    @Autowired('gridApi') private gridApi: GridApi;
     @Autowired('filterManager') private filterManager: FilterManager;
     @Autowired('eventService') private eventService: EventService;
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
@@ -62,8 +61,8 @@ export class ToolPanelFilterComp extends Component {
         this.eFilterName.innerText = this.columnController.getDisplayNameForColumn(this.column, 'header', false) as string;
         this.addDestroyableEventListener(this.eFilterToolPanelHeader, 'click', this.toggleExpanded.bind(this));
         this.addDestroyableEventListener(this.eventService, Events.EVENT_FILTER_OPENED, this.onFilterOpened.bind(this));
-
         this.addInIcon('filter', this.eFilterIcon, this.column);
+
         _.addOrRemoveCssClass(this.eFilterIcon, 'ag-hidden', !this.isFilterActive());
         _.addCssClass(this.eExpandChecked, 'ag-hidden');
 
@@ -99,6 +98,7 @@ export class ToolPanelFilterComp extends Component {
 
     private onFilterChanged(): void {
         _.addOrRemoveCssClass(this.eFilterIcon, 'ag-hidden', !this.isFilterActive());
+
         this.dispatchEvent({ type: Column.EVENT_FILTER_CHANGED });
     }
 
@@ -110,14 +110,18 @@ export class ToolPanelFilterComp extends Component {
         if (this.expanded) return;
 
         this.expanded = true;
-        const container: HTMLElement = _.loadTemplate(`<div class="ag-filter-toolpanel-instance-filter" />`);
 
+        const container = _.loadTemplate(/* html */`<div class="ag-filter-toolpanel-instance-filter" />`);
         const filterPromise = this.filterManager.getOrCreateFilterWrapper(this.column, 'TOOLBAR').filterPromise;
+
         if (filterPromise) {
-            filterPromise.then((filter: IFilterComp): void => {
+            filterPromise.then(filter => {
                 this.underlyingFilter = filter;
+
                 container.appendChild(filter.getGui());
+
                 this.agFilterToolPanelBody.appendChild(container);
+
                 if (filter.afterGuiAttached) {
                     filter.afterGuiAttached({});
                 }
@@ -139,13 +143,17 @@ export class ToolPanelFilterComp extends Component {
     }
 
     public refreshFilter(): void {
+        if (!this.expanded) { return; }
+
         const filter = this.underlyingFilter as any;
+
         if (!filter) return;
 
         // set filters should be updated when the filter has been changed elsewhere, i.e. via api. Note that we can't
         // use 'afterGuiAttached' to refresh the virtual list as it also focuses on the mini filter which changes the
         // scroll position in the filter list panel
         const isSetFilter = filter.refreshVirtualList as any;
+
         if (isSetFilter) {
             filter.refreshVirtualList();
         }
