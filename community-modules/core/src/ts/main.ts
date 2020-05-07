@@ -90,7 +90,7 @@ export { SideBarDef, ToolPanelDef } from "./entities/sideBar";
 export { FilterManager, FilterWrapper, FilterRequestSource } from "./filter/filterManager";
 
 export { ProvidedFilter, IProvidedFilterParams } from "./filter/provided/providedFilter";
-export { SimpleFilter, ISimpleFilterParams, ISimpleFilterModel } from "./filter/provided/simpleFilter";
+export { SimpleFilter, ISimpleFilterParams, ISimpleFilterModel, ICombinedSimpleModel } from "./filter/provided/simpleFilter";
 export { ScalarFilter, IScalarFilterParams } from "./filter/provided/scalarFilter";
 
 export { NumberFilter, INumberFilterParams, NumberFilterModel } from "./filter/provided/number/numberFilter";
