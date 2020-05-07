@@ -1,7 +1,7 @@
-import { Component } from "./component";
-import { Autowired, PostConstruct } from "../context/context";
-import { GridOptionsWrapper } from "../gridOptionsWrapper";
-import { _ } from "../utils";
+import { Component } from './component';
+import { Autowired, PostConstruct } from '../context/context';
+import { GridOptionsWrapper } from '../gridOptionsWrapper';
+import { _ } from '../utils';
 
 export interface VirtualListModel {
     getRowCount(): number;
@@ -11,13 +11,13 @@ export interface VirtualListModel {
 export class VirtualList extends Component {
     private model: VirtualListModel;
     private eListContainer: HTMLElement;
-    private rowsInBodyContainer: any = {};
+    private rowsInBodyContainer: { [key: string]: { rowComponent: Component, eDiv: HTMLDivElement; }; } = {};
     private componentCreator: (value: any) => Component;
     private rowHeight = 20;
 
     @Autowired('gridOptionsWrapper') gridOptionsWrapper: GridOptionsWrapper;
 
-    constructor(private cssIdentifier = 'default') {
+    constructor(private readonly cssIdentifier = 'default') {
         super(VirtualList.getTemplate(cssIdentifier));
     }
 
@@ -87,7 +87,7 @@ export class VirtualList extends Component {
     }
 
     public refresh(): void {
-        if (_.missing(this.model)) { return; }
+        if (this.model == null) { return; }
 
         this.eListContainer.style.height = `${this.model.getRowCount() * this.rowHeight}px`;
 
@@ -110,7 +110,7 @@ export class VirtualList extends Component {
         this.ensureRowsRendered(firstRow, lastRow);
     }
 
-    private ensureRowsRendered(start: any, finish: any) {
+    private ensureRowsRendered(start: number, finish: number) {
         // at the end, this array will contain the items we need to remove
         const rowsToRemove = Object.keys(this.rowsInBodyContainer);
 
@@ -147,8 +147,9 @@ export class VirtualList extends Component {
         });
     }
 
-    private insertRow(value: any, rowIndex: any) {
+    private insertRow(value: any, rowIndex: number) {
         const eDiv = document.createElement('div');
+
         _.addCssClass(eDiv, 'ag-virtual-list-item');
         _.addCssClass(eDiv, `ag-${this.cssIdentifier}-virtual-list-item`);
 
@@ -156,6 +157,7 @@ export class VirtualList extends Component {
         eDiv.style.top = `${this.rowHeight * rowIndex}px`;
 
         const rowComponent = this.componentCreator(value);
+
         eDiv.appendChild(rowComponent.getGui());
 
         this.eListContainer.appendChild(eDiv);
