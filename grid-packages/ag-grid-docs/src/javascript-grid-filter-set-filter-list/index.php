@@ -363,7 +363,7 @@ SNIPPET
 , 'ts') ?>
 
 <p>
-    The following example demonstrates loading set filter values asynchronous. Note the following:
+    The following example demonstrates loading set filter values asynchronously. Note the following:
 </p>
 
 <ul class="content">
@@ -400,8 +400,8 @@ SNIPPET
 </p>
 
 <p>
-    If you want to refresh the values every time the filter is opened, you can use the <code>onFilterOpened</code>
-    callback and call <code>refreshFilterValues</code> from there.
+    If you want to refresh the values every time the filter is opened, you can set <code>refreshValuesOnOpen</code> to
+    <code>true</code> in the <code>filterParams</code>.
 </p>
 
 <p>
@@ -414,7 +414,7 @@ SNIPPET
         values in the array provided to the filter and then refresh the filter for the column.
     </li>
     <li>
-        The second column has values provided as a callback, and is configured using <code>onFilterOpened</code> to
+        The second column has values provided as a callback, and is configured using <code>refreshValuesOnOpen</code> to
         refresh the values every time the filter is opened from the column menu.
     </li>
     <li>

@@ -276,10 +276,10 @@ export class SetFilter extends ProvidedFilter {
     public afterGuiAttached(params: IAfterGuiAttachedParams): void {
         super.afterGuiAttached(params);
 
-        const { virtualList, eMiniFilter } = this;
-        const translate = this.gridOptionsWrapper.getLocaleTextFunc();
+        this.refreshVirtualList();
 
-        virtualList.refresh();
+        const translate = this.gridOptionsWrapper.getLocaleTextFunc();
+        const { eMiniFilter } = this;
 
         eMiniFilter.setInputPlaceholder(translate('searchOoo', 'Search...'));
         eMiniFilter.getFocusableElement().focus();
@@ -478,7 +478,12 @@ export class SetFilter extends ProvidedFilter {
     }
 
     public refreshVirtualList(): void {
-        this.virtualList.refresh();
+        if (this.setFilterParams.refreshValuesOnOpen) {
+            this.refreshFilterValues();
+        }
+        else {
+            this.virtualList.refresh();
+        }
     }
 }
 

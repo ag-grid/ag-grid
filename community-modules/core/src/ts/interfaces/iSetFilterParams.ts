@@ -13,6 +13,7 @@ export type SetFilterValues = SetFilterValuesFunc | any[];
 export interface ISetFilterParams extends IProvidedFilterParams {
     /** @deprecated */ suppressRemoveEntries?: boolean;
     values?: SetFilterValues;
+    refreshValuesOnOpen?: boolean;
     cellHeight?: number;
     suppressSorting?: boolean;
     cellRenderer?: { new(): ICellRendererComp; } | ICellRendererFunc | string;
