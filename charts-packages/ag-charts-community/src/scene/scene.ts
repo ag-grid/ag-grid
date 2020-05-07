@@ -18,6 +18,7 @@ export class Scene {
     // - knowing something at construction time meaningfully improves performance (width, height)
     constructor(document = window.document, width?: number, height?: number) {
         this.canvas = new HdpiCanvas(document, width, height);
+        this.canvas.onResize = () => this.dirty = true;
         this.ctx = this.canvas.context;
     }
 
@@ -45,13 +46,7 @@ export class Scene {
     }
 
     resize(width: number, height: number) {
-        this.canvas.resize(
-            width, height,
-
-            // resizing a canvas clears the pixel content so when resizing is done
-            // mark as dirty to ensure a re-render
-            () => this.dirty = true
-        );
+        this.canvas.resize(width, height);
     }
 
     private _dirty = false;

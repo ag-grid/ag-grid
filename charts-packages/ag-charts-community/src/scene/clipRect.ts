@@ -1,5 +1,6 @@
 import { Node } from "./node";
 import { Path2D } from "./path2D";
+import { BBox } from "./bbox";
 
 /**
  * Acts as `Group` node but with specified bounds that form a rectangle.
@@ -14,7 +15,7 @@ export class ClipRect extends Node {
 
     protected path = new Path2D();
 
-    isPointInNode(x: number, y: number): boolean {
+    containsPoint(x: number, y: number): boolean {
         const point = this.transformPoint(x, y);
         return point.x >= this.x && point.x <= this.x + this.width
             && point.y >= this.y && point.y <= this.y + this.height;
@@ -97,6 +98,11 @@ export class ClipRect extends Node {
         this.dirtyPath = false;
     }
 
+    computeBBox(): BBox {
+        const { x, y, width, height } = this;
+        return new BBox(x, y, width, height);
+    }
+
     render(ctx: CanvasRenderingContext2D) {
         if (this.active) {
             if (this.dirtyPath) {
@@ -117,5 +123,12 @@ export class ClipRect extends Node {
             }
             ctx.restore();
         }
+
+        // debug
+        // this.computeBBox().render(ctx, {
+        //     label: this.id,
+        //     resetTransform: true,
+        //     fillStyle: 'rgba(0, 0, 0, 0.5)'
+        // });
     }
 }
