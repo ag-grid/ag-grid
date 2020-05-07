@@ -91,8 +91,11 @@ export class VirtualList extends Component {
 
         this.eListContainer.style.height = `${this.model.getRowCount() * this.rowHeight}px`;
 
-        this.clearVirtualRows();
-        this.drawVirtualRows();
+        // ensure height is applied before attempting to redraw rows
+        setTimeout(() => {
+            this.clearVirtualRows();
+            this.drawVirtualRows();
+        }, 0);
     }
 
     private clearVirtualRows() {
