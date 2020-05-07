@@ -9,37 +9,37 @@ include '../documentation-main/documentation_header.php';
 <h1>Overlay Component</h1>
 
 <p class="lead">
-    Overlay components allow you to add your own overlays to ag-Grid. Use these when the provided overlay's do not meet
+    Overlay components allow you to add your own overlays to ag-Grid. Use these when the provided overlays do not meet
     your requirements.
 </p>
 
 <h2>Loading Rows Overlay Interface</h2>
 
-<p> Implement this interface to provide a custom overlay when loading rows.  </p>
+<p>Implement this interface to provide a custom overlay when loading rows.</p>
 
-<snippet>
+<?= createSnippet(<<<SNIPPET
 interface ILoadingOverlayComp {
-
     // mandatory methods
 
     // The init(params) method is called on the overlay once. See below for details on the parameters.
     init(params: ILoadingOverlayParams): void;
 
-    // Returns the GUI for this overlay. The GUI can be a) a string of html or b) a DOM element or node.
-    getGui(): any;
+    // Returns the DOM element for this overlay
+    getGui(): HTMLElement;
 }
-</snippet>
+SNIPPET
+, 'ts') ?>
 
-<snippet>
-interface ILoadingOverlayCompParams {
-
+<?= createSnippet(<<<SNIPPET
+interface ILoadingOverlayParams {
     // an optional template for the loading rows overlay
     loadingRowsTemplate?: string
 
     // The grid API
     api: any;
 }
-</snippet>
+SNIPPET
+, 'ts') ?>
 
 <h2>No Rows Overlay Interface</h2>
 
@@ -47,30 +47,29 @@ interface ILoadingOverlayCompParams {
     Implement this interface to provide a custom overlay when no rows loaded.
 </p>
 
-<snippet>
+<?= createSnippet(<<<SNIPPET
 interface INoRowsOverlayComp {
-
     // mandatory methods
 
     // The init(params) method is called on the overlay once. See below for details on the parameters.
     init(params: INoRowsOverlayParams): void;
 
-    // Returns the GUI for this overlay. The GUI can be a) a string of html or b) a DOM element or node.
-    getGui(): any;
+    // Returns the DOM element for this overlay
+    getGui(): HTMLElement;
 }
-</snippet>
+SNIPPET
+, 'ts') ?>
 
-<snippet>
+<?= createSnippet(<<<SNIPPET
 interface INoRowsOverlayParams {
-
     // an optional template for the no rows overlay
     noRowsTemplate?: string
 
     // The grid API
     api: any;
 }
-</snippet>
-
+SNIPPET
+, 'ts') ?>
 
 <h2>Registering Overlay Components</h2>
 

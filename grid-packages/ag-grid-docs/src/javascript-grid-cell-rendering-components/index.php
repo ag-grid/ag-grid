@@ -10,13 +10,13 @@ include '../documentation-main/documentation_header.php';
 
 <p class="lead">
     The job of the grid is to lay out the cells. By default the grid will create the cell values
-    using simple text. If you want more complex HTML inside the cells then this is achieved using
+    using simple text. If you want more complex HTML inside the cells you can achieve this using
     cell renderers.
 </p>
 
 <p>
     This page explains first how to create cell renderers using standard JavaScript. It then continues
-    on how to create cell renderers using components of different frameworks (eg how to create a cell
+    on how to create cell renderers using components of different frameworks (e.g. how to create a cell
     renderer using a React or Angular component). If you intend to use the framework variant, you should
     first read the JavaScript sections as the framework sections build on this.
 </p>
@@ -24,7 +24,7 @@ include '../documentation-main/documentation_header.php';
 <h2>Simple Cell Renderer Example</h2>
 
 <p>
-    The example below shows a simple cell renderer in action. It uses a cell renderer to show a hash '#'
+    The example below shows a simple cell renderer in action. It uses a cell renderer to show a hash (<code>#</code>)
     symbol instead of the medal count.
 </p>
 
@@ -36,7 +36,7 @@ include '../documentation-main/documentation_header.php';
     The interface for the cell renderer component is as follows:
 </p>
 
-<snippet>
+<?= createSnippet(<<<SNIPPET
 interface ICellRendererComp {
     // Optional - Params for rendering. The same params that are passed to the cellRenderer function.
     init?(params: ICellRendererParams): void;
@@ -50,37 +50,39 @@ interface ICellRendererComp {
 
     // Mandatory - Get the cell to refresh. Return true if the refresh succeeded, otherwise return false.
     // If you return false, the grid will remove the component from the DOM and create
-    // a new component in it's place with the new values.
+    // a new component in its place with the new values.
     refresh(params: ICellRendererParams): boolean;
 }
-</snippet>
+SNIPPET
+, 'ts') ?>
 
 <p>The interface for the cell renderer parameters is as follows:</p>
 
-<snippet>
+<?= createSnippet(<<<SNIPPET
 interface ICellRendererParams {
     value: any, // value to be rendered
     valueFormatted: any, // value to be rendered formatted
-    getValue: ()=&gt; any, // convenience function to get most recent up to date value
-    setValue: (value: any) =&gt; void, // convenience to set the value
-    formatValue: (value: any) =&gt; any, // convenience to format a value using the columns formatter
-    data: any, // the rows data
-    node: RowNode, // row rows row node
-    colDef: ColDef, // the cells column definition
-    column: Column, // the cells column
+    getValue: () => any, // convenience function to get most recent up to date value
+    setValue: (value: any) => void, // convenience to set the value
+    formatValue: (value: any) => any, // convenience to format a value using the column's formatter
+    data: any, // the row's data
+    node: RowNode, // row node
+    colDef: ColDef, // the cell's column definition
+    column: Column, // the cell's column
     rowIndex: number, // the current index of the row (this changes after filter and sort)
     api: GridApi, // the grid API
     eGridCell: HTMLElement, // the grid's cell, a DOM div element
     eParentOfValue: HTMLElement, // the parent DOM item for the cell renderer, same as eGridCell unless using checkbox selection
     columnApi: ColumnApi, // grid column API
     context: any, // the grid's context
-    refreshCell: ()=&gt;void // convenience function to refresh the cell
+    refreshCell: () => void // convenience function to refresh the cell
 }
-</snippet>
+SNIPPET
+, 'ts') ?>
 
 <p> Below is a simple example of cell renderer class: </p>
 
-<snippet>
+<?= createSnippet(<<<SNIPPET
 // function to act as a class
 function MyCellRenderer () {}
 
@@ -88,7 +90,7 @@ function MyCellRenderer () {}
 MyCellRenderer.prototype.init = function(params) {
     // create the cell
     this.eGui = document.createElement('div');
-    this.eGui.innerHTML = '&lt;span class="my-css-class"&gt;&lt;button class="btn-simple"&gt;Push Me&lt;/button&gt;&lt;span class="my-value"&gt;&lt;/span&gt;&lt;/span&gt;';
+    this.eGui.innerHTML = '<span class="my-css-class"><button class="btn-simple">Push Me</button><span class="my-value"></span></span>';
 
     // get references to the elements we want
     this.eButton = this.eGui.querySelector('.btn-simple');
@@ -125,7 +127,8 @@ MyCellRenderer.prototype.destroy = function() {
         this.eButton.removeEventListener('click', this.eventListener);
     }
 };
-</snippet>
+SNIPPET
+) ?>
 
 <h2>Registering Cell Renderers with Columns</h2>
 
@@ -136,7 +139,7 @@ MyCellRenderer.prototype.destroy = function() {
 
 <h2>Component Refresh</h2>
 
-<p>Component refresh needs a bit more explanation. Here we go through some of the finer details. </p>
+<p>Component refresh needs a bit more explanation. Here we go through some of the finer details.</p>
 
 <h3>Events Causing Refresh</h3>
 
@@ -160,19 +163,20 @@ MyCellRenderer.prototype.destroy = function() {
     </li>
 </ul>
 
-<p>If any of the above occur and the grid confirms the data has changed via
-<a href="../javascript-grid-change-detection/">Change Detection</a>, then the <code>refresh()</code>
-method will be called.
+<p>
+    If any of the above occur and the grid confirms the data has changed via
+    <a href="../javascript-grid-change-detection/">Change Detection</a>, then the <code>refresh()</code>
+    method will be called.
 </p>
 
 <p>
-    The following will <b>not</b> result in the cell renderers refresh method getting called:
+    The following will <b>not</b> result in the cell renderer's refresh method being called:
 </p>
 
 <ul class="content">
     <li>
         Calling <code>rowNode.setData(data)</code> to set new data into a <code>rowNode</code>.
-        When you set the data for the whole row, then the whole row in the DOM is recreated again from scratch.
+        When you set the data for the whole row, the whole row in the DOM is recreated again from scratch.
     </li>
     <li>
         Scrolling the grid vertically causes columns (and their containing cells) to be removed and inserted
@@ -181,7 +185,7 @@ method will be called.
 </ul>
 
 <p>
-All of the above will result in the component getting destroyed and recreated.
+    All of the above will result in the component being destroyed and recreated.
 </p>
 
 <h3>Change Detection</h3>
@@ -196,7 +200,7 @@ All of the above will result in the component getting destroyed and recreated.
 <p>
     The refresh method returns back a boolean value. If you do not want to handle the refresh in the
     cell renderer, just return back <code>false</code> from an otherwise empty method. This will indicate
-    to the grid that you did not refresh and the grid will instead rip the component out and destroy it
+    to the grid that you did not refresh and the grid will instead destroy the component
     and create another instance of your component from scratch instead.
 </p>
 
@@ -211,15 +215,15 @@ All of the above will result in the component getting destroyed and recreated.
 <ul class="content">
     <li><code>new</code> is called on the class.</li>
     <li><code>init()</code> is called once.</li>
-    <li><code>getGui()</code> is called 0 or 1 times (destroy could get called first, i.e. when scrolling quickly)</li>
-    <li><code>refresh()</code> is called 0..n times (i.e. it may never be called, or called multiple times)</li>
+    <li><code>getGui()</code> is called 0 or 1 times (<code>destroy</code> could get called first, i.e. when scrolling quickly)</li>
+    <li><code>refresh()</code> is called 0...n times (i.e. it may never be called, or called multiple times)</li>
     <li><code>destroy()</code> is called once.</li>
 </ul>
 
 <p>
-In other words, <code>new()</code>, <code>init()</code> and
-<code>destroy()</code> are always called exactly once. <code>getGui()</code> will typically get called once unless <code>destroy()</code> is called first.
-<code>refresh()</code> is optionally called multiple times.
+    In other words, <code>new()</code>, <code>init()</code> and <code>destroy()</code> are always called exactly once.
+    <code>getGui()</code> will typically get called once unless <code>destroy()</code> is called first.
+    <code>refresh()</code> is optionally called multiple times.
 </p>
 
 <note>
@@ -236,7 +240,7 @@ In other words, <code>new()</code>, <code>init()</code> and
 <h2>Cell Rendering Flow</h2>
 
 <p>
-    The diagram below (which is taken from the section <a href="../javascript-grid-value-getters/">Value Getters & Formatters</a>)
+    The diagram below (which is taken from the section <a href="../javascript-grid-value-getters/">Value Getters &amp; Formatters</a>)
     summarises the steps the grid takes while working out what to render and how to render.
 </p>
 
@@ -247,7 +251,7 @@ In other words, <code>new()</code>, <code>init()</code> and
     <code>colDef.cellRenderer</code>.
 </p>
 
-<img class="img-fluid" src="../javascript-grid-value-getters/valueGetterFlow.svg"/ alt="Value Getter Flow">
+<img class="img-fluid" src="../javascript-grid-value-getters/valueGetterFlow.svg" alt="Value Getter Flow" />
 
 <h2>Complementing Cell Renderer Params</h2>
 
@@ -261,24 +265,25 @@ In other words, <code>new()</code>, <code>init()</code> and
     Provide params to a cell renderer using the colDef option <code>cellRendererParams</code>.
 </p>
 
-<snippet>
+<?= createSnippet(<<<SNIPPET
 // define cellRenderer to be reused
 var myCellRenderer = function(params) {
-    return '&lt;span style="color: '+params.color+'"&gt;' + params.value + '&lt;/span&gt;';
+    return '<span style="color: ' + params.color + '">' + params.value + '</span>';
 }
 
-// use with a color
+// use with a colour
 colDef.cellRenderer = myCellRenderer;
 colDef.cellRendererParams = {
     color: 'guinnessBlack'
 }
 
-// use with another color
+// use with another colour
 colDef.cellRenderer = myCellRenderer;
 colDef.cellRendererParams = {
     color: 'irishGreen'
 }
-</snippet>
+SNIPPET
+) ?>
 
 <h2>Cell Renderers and Row Groups</h2>
 
@@ -293,18 +298,19 @@ colDef.cellRendererParams = {
     This is simply fixed by checking for the existence of the data before you use it like the following:
 </p>
 
-<snippet>
+<?= createSnippet(<<<SNIPPET
 colDef.cellRenderer = function(params) {
     // check the data exists, to avoid error
     if (!params.node.group) {
         // data exists, so we can access it
-        return '&lt;b&gt;'+params.data.theBoldValue+'&lt;/b&gt;';
+        return '<b>' + params.data.theBoldValue + '</b>';
     } else {
         // when we return null, the grid will display a blank cell
         return null;
     }
 };
-</snippet>
+SNIPPET
+) ?>
 
 <h2>Cell Renderer Function</h2>
 
@@ -328,21 +334,21 @@ colDef.cellRenderer = function(params) {
     Below are some simple examples of cell renderers provided as simple functions:
 </p>
 
-<snippet>
+<?= createSnippet(<<<SNIPPET
 // put the value in bold
 colDef.cellRenderer = function(params) {
-    return '&lt;b&gt;' + params.value.toUpperCase() + '&lt;/b&gt;';
+    return '<b>' + params.value.toUpperCase() + '</b>';
 }
 
 // put a tooltip on the value
 colDef.cellRenderer = function(params) {
-    return '&lt;span title="the tooltip"&gt;'+params.value+'&lt;/span&gt;';
+    return '<span title="the tooltip">' + params.value + '</span>';
 }
 
 // create a DOM object
 colDef.cellRenderer = function(params) {
     var eDiv = document.createElement('div');
-    eDiv.innerHTML = '&lt;span class="my-css-class"&gt;&lt;button class="btn-simple"&gt;Push Me&lt;/button&gt;&lt;/span&gt;';
+    eDiv.innerHTML = '<span class="my-css-class"><button class="btn-simple">Push Me</button></span>';
     var eButton = eDiv.querySelectorAll('.btn-simple')[0];
 
     eButton.addEventListener('click', function() {
@@ -351,7 +357,8 @@ colDef.cellRenderer = function(params) {
 
     return eDiv;
 }
-</snippet>
+SNIPPET
+) ?>
 
 <note>
     You might be wondering how the grid knows if you have provided a cell renderer component class or
@@ -387,8 +394,8 @@ colDef.cellRenderer = function(params) {
     <code>getCellRendererInstances(params)</code>.
 </p>
 
-<snippet>
-// function takes params to identify what cells and returns back a list of cell renderers
+<?= createSnippet(<<<SNIPPET
+// function takes params to identify which cells and returns back a list of cell renderers
 function getCellRendererInstances(params: GetCellRendererInstancesParams): ICellRendererComp[];
 
 // params object for the above
@@ -396,24 +403,27 @@ interface GetCellRendererInstancesParams {
     // an optional list of row nodes
     rowNodes?: RowNode[];
     // an optional list of columns
-    columns?: (string|Column)[];
+    columns?: (string | Column)[];
 }
-</snippet>
+SNIPPET
+, 'ts') ?>
 
 <p>
     An example of getting the cell renderer for exactly one cell is as follows:
 </p>
 
-<snippet>
+<?= createSnippet(<<<SNIPPET
 // example - get cell renderer for first row and column 'gold'
 var firstRowNode = gridOptions.api.getDisplayedRowAtIndex(0);
-var params = { columns: ['gold'], rowNodes: [firstRowNode]};
+var params = { columns: ['gold'], rowNodes: [firstRowNode] };
 var instances = gridOptions.api.getCellRendererInstances(params);
+
 if (instances.length > 0) {
     // got it, user must be scrolled so that it exists
     var instance = instances[0];
 }
-</snippet>
+SNIPPET
+) ?>
 
 <p>
     Not that this method will only return instances of the cell renderer that exists. Due to row
@@ -452,18 +462,19 @@ if (instances.length > 0) {
     is a wrapper and you can get the underlying cell renderer using <code>getFrameworkComponentInstance()</code>
 </p>
 
-<snippet>
+<?= createSnippet(<<<SNIPPET
 // example - get cell renderer for first row and column 'gold'
 var firstRowNode = gridOptions.api.getDisplayedRowAtIndex(0);
-var params = { columns: ['gold'], rowNodes: [firstRowNode]};
+var params = { columns: ['gold'], rowNodes: [firstRowNode] };
 var instances = gridOptions.api.getCellRendererInstances(params);
+
 if (instances.length > 0) {
     // got it, user must be scrolled so that it exists
     var wrapperInstance = instances[0];
     var frameworkInstance = wrapperInstance.getFrameworkComponentInstance();
 }
-</snippet>
-
+SNIPPET
+) ?>
 
 <?php include './angular.php'; ?>
 

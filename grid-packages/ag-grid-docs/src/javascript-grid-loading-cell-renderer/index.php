@@ -17,29 +17,29 @@ include '../documentation-main/documentation_header.php';
 
 <p> Implement this interface to provide a custom loading cell renderer when loading rows.  </p>
 
-<snippet>
+<?= createSnippet(<<<SNIPPET
 interface ILoadingCellRenderer {
-
     // mandatory methods
 
     // The init(params) method is called on the loading cell renderer once. See below for details on the parameters.
     init(params: ILoadingCellRendererParams): void;
 
-    // Returns the GUI for this loading cell renderer. The GUI can be a) a string of html or b) a DOM element or node.
-    getGui(): any;
+    // Returns the DOM element for this loading cell renderer
+    getGui(): HTMLElement;
 }
-</snippet>
+SNIPPET
+, 'ts') ?>
 
-<snippet>
+<?= createSnippet(<<<SNIPPET
 interface ILoadingCellRendererParams {
-
     // an optional template for the loading cell renderer
     loadingMessage?: string
 
     // The grid API
     api: any;
 }
-</snippet>
+SNIPPET
+, 'ts') ?>
 
 <h2>Registering Loading Cell Renderer Components</h2>
 
