@@ -31,6 +31,7 @@
   },
   "devDependencies": {
     "gulp": "^4.0.2",
-    "gulp-replace": "^1.0.0"
+    "gulp-replace": "^1.0.0",
+    "@ag-grid-community/polymer": "~23.1.0"
   }
 }
