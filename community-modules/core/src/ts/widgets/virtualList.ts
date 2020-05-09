@@ -154,9 +154,7 @@ export class VirtualList extends Component {
 
         this.eListContainer.removeChild(component.eDiv);
 
-        if (component.rowComponent.destroy) {
-            component.rowComponent.destroy();
-        }
+        this.destroyBean(component.rowComponent);
 
         this.renderedRows.delete(rowIndex);
     }
