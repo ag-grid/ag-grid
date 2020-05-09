@@ -156,7 +156,7 @@ export class BarSeriesPanel extends Component {
     private destroyActivePanels(): void {
         this.activePanels.forEach(panel => {
             _.removeFromParent(panel.getGui());
-            panel.destroy();
+            this.destroyBean(panel);
         });
     }
 
@@ -164,7 +164,7 @@ export class BarSeriesPanel extends Component {
         return this.chartController.getChartProxy() as BarChartProxy;
     }
 
-    public destroy(): void {
+    protected destroy(): void {
         this.destroyActivePanels();
         super.destroy();
     }

@@ -11,6 +11,7 @@ import { RowNode } from '../entities/rowNode';
 import { _ } from '../utils';
 
 export class CheckboxSelectionComponent extends Component {
+
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('eventService') private eventService: EventService;
 

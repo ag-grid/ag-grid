@@ -18,6 +18,12 @@ export class ReadOnlyFloatingFilter extends Component implements IFloatingFilter
             </div>`);
     }
 
+    // this is a user component, and IComponent has "public destroy()" as part of the interface.
+    // so we need to override destroy() just to make the method public.
+    public destroy(): void {
+        super.destroy();
+    }
+
     public init(params: IFloatingFilterParams): void {
         this.params = params;
         this.eFloatingFilterText.setDisabled(true);

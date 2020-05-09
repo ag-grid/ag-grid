@@ -102,7 +102,7 @@ export class GridChartComp extends Component {
         _.addCssClass(this.getGui(), isRtl ? 'ag-rtl' : 'ag-ltr');
 
         this.model = this.wireBean(new ChartDataModel(modelParams));
-        this.chartController = this.wireBean(new ChartController(this.model, this.params.chartPaletteName));
+        this.chartController = this.wireDependentBean(new ChartController(this.model, this.params.chartPaletteName));
 
         // create chart before dialog to ensure dialog is correct size
         this.createChart();
@@ -396,24 +396,18 @@ export class GridChartComp extends Component {
         this.eventService.dispatchEvent(event);
     }
 
-    public destroy(): void {
+    protected destroy(): void {
         super.destroy();
-
-        if (this.chartController) {
-            this.chartController.destroy();
-        }
 
         if (this.chartProxy) {
             this.chartProxy.destroy();
         }
 
-        if (this.chartMenu) {
-            this.chartMenu.destroy();
-        }
+        this.destroyBean(this.chartMenu);
 
         // don't want to invoke destroy() on the Dialog (prevents destroy loop)
         if (this.chartDialog && this.chartDialog.isAlive()) {
-            this.chartDialog.destroy();
+            this.destroyBean(this.chartDialog);
         }
 
         // if the user is providing containers for the charts, we need to clean up, otherwise the old chart

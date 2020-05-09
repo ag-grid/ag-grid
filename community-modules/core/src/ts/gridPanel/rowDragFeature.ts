@@ -85,7 +85,7 @@ export class RowDragFeature implements DropTarget {
     }
 
     @PreDestroy
-    public destroy(): void {
+    protected destroy(): void {
         if (this.events.length) {
             this.events.forEach(func => func());
         }

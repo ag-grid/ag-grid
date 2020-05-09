@@ -296,14 +296,11 @@ export class AgDialog extends AgPanel {
         }
     }
 
-    public destroy(): void {
+    protected destroy(): void {
         this.setResizable(false);
         this.setMovable(false);
 
-        if (this.maximizeButtonComp) {
-            this.maximizeButtonComp.destroy();
-            this.maximizeButtonComp = undefined;
-        }
+        this.maximizeButtonComp = this.destroyBean(this.maximizeButtonComp);
 
         this.clearMaximizebleListeners();
         super.destroy();
@@ -375,7 +372,7 @@ export class AgDialog extends AgPanel {
             this.clearMaximizebleListeners();
 
             if (this.maximizeButtonComp) {
-                this.maximizeButtonComp.destroy();
+                this.destroyBean(this.maximizeButtonComp);
                 this.maximizeButtonComp = this.maximizeIcon = this.minimizeIcon = undefined;
             }
             return;

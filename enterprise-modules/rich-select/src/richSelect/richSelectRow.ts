@@ -63,7 +63,7 @@ export class RichSelectRow extends Component {
         if (cellRendererPromise) {
             cellRendererPromise.then(childComponent => {
                 this.addDestroyFunc( ()=> {
-                    this.getContext().destroyUserComp(childComponent);
+                    this.getContext().destroyUserBean(childComponent);
                 });
             });
             return true;

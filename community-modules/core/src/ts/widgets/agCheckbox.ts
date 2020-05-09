@@ -29,10 +29,6 @@ export class AgCheckbox extends AgAbstractInputField<HTMLInputElement, boolean> 
         this.setTemplate(this.TEMPLATE.replace(/%displayField%/g, this.displayTag));
     }
 
-    public destroy(): void {
-        super.destroy();
-    }
-
     protected addInputListeners() {
         this.addDestroyableEventListener(this.eInput, 'click', this.onCheckboxClick.bind(this));
     }

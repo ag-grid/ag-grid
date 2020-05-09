@@ -886,7 +886,7 @@ export class RowComp extends Component {
                     eRow.appendChild(gui);
                     cellRendererCallback(cellRenderer);
                 } else {
-                    this.beans.context.destroyUserComp(cellRenderer);
+                    this.beans.context.destroyUserBean(cellRenderer);
                 }
             };
 
@@ -1372,6 +1372,7 @@ export class RowComp extends Component {
         super.removeEventListener(eventType, listener);
     }
 
+    // note - this is NOT called by context, as we don't wire / unwire the CellComp for performance reasons.
     public destroy(animate = false): void {
         this.active = false;
 

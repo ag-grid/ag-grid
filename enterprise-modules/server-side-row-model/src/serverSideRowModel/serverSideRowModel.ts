@@ -238,8 +238,7 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
             }
         } else {
             if (this.gridOptionsWrapper.isPurgeClosedRowNodes() && _.exists(rowNode.childrenCache)) {
-                rowNode.childrenCache!.destroy();
-                rowNode.childrenCache = null;
+                rowNode.childrenCache = this.destroyBean(rowNode.childrenCache);
             }
         }
 

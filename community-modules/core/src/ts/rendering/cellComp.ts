@@ -511,7 +511,7 @@ export class CellComp extends Component implements TooltipParentComp {
         _.clearElement(this.eParentOfValue);
 
         // remove old renderer component if it exists
-        this.cellRenderer = this.beans.context.destroyUserComp(this.cellRenderer);
+        this.cellRenderer = this.beans.context.destroyUserBean(this.cellRenderer);
         this.cellRendererGui = null;
 
         // populate
@@ -859,7 +859,7 @@ export class CellComp extends Component implements TooltipParentComp {
     private afterCellRendererCreated(cellRendererVersion: number, cellRenderer: ICellRendererComp): void {
         const cellRendererNotRequired = !this.isAlive() || (cellRendererVersion !== this.cellRendererVersion);
         if (cellRendererNotRequired) {
-            this.beans.context.destroyUserComp(cellRenderer);
+            this.beans.context.destroyUserBean(cellRenderer);
             return;
         }
 
@@ -1107,13 +1107,13 @@ export class CellComp extends Component implements TooltipParentComp {
 
         const cellEditorNotNeeded = versionMismatch || !this.editingCell;
         if (cellEditorNotNeeded) {
-            this.beans.context.destroyUserComp(cellEditor);
+            this.beans.context.destroyUserBean(cellEditor);
             return;
         }
 
         const editingCancelledByUserComp = cellEditor.isCancelBeforeStart && cellEditor.isCancelBeforeStart();
         if (editingCancelledByUserComp) {
-            this.beans.context.destroyUserComp(cellEditor);
+            this.beans.context.destroyUserBean(cellEditor);
             this.editingCell = false;
             return;
         }
@@ -1126,7 +1126,7 @@ export class CellComp extends Component implements TooltipParentComp {
                 console.warn(`ag-Grid: we found 'render' on the component, are you trying to set a React renderer but added it as colDef.cellEditor instead of colDef.cellEditorFmk?`);
             }
 
-            this.beans.context.destroyUserComp(cellEditor);
+            this.beans.context.destroyUserBean(cellEditor);
             this.editingCell = false;
 
             return;
@@ -1588,6 +1588,8 @@ export class CellComp extends Component implements TooltipParentComp {
     // as the row will also get removed, so no need to take out the cells from the row
     // if the row is going (removing is an expensive operation, so only need to remove
     // the top part)
+    //
+    // note - this is NOT called by context, as we don't wire / unwire the CellComp for performance reasons.
     public destroy(): void {
         if (this.createCellRendererFunc) {
             this.beans.taskQueue.cancelTask(this.createCellRendererFunc);
@@ -1595,11 +1597,9 @@ export class CellComp extends Component implements TooltipParentComp {
 
         this.stopEditing();
 
-        this.cellRenderer = this.beans.context.destroyUserComp(this.cellRenderer);
+        this.cellRenderer = this.beans.context.destroyUserBean(this.cellRenderer);
 
-        if (this.selectionHandle) {
-            this.selectionHandle.destroy();
-        }
+        this.beans.context.destroyBean(this.selectionHandle);
 
         super.destroy();
     }
@@ -1829,8 +1829,7 @@ export class CellComp extends Component implements TooltipParentComp {
         const type = (gridOptionsWrapper.isEnableFillHandle() && _.missing(cellRangeType)) ? 'fill' : 'range';
 
         if (this.selectionHandle && this.selectionHandle.getType() !== type) {
-            this.selectionHandle.destroy();
-            this.selectionHandle = undefined;
+            this.selectionHandle = this.beans.context.destroyBean(this.selectionHandle);
         }
 
         if (!this.selectionHandle) {
@@ -1856,8 +1855,7 @@ export class CellComp extends Component implements TooltipParentComp {
         const shouldHaveSelectionHandle = this.shouldHaveSelectionHandle();
 
         if (this.selectionHandle && !shouldHaveSelectionHandle) {
-            this.selectionHandle.destroy();
-            this.selectionHandle = null;
+            this.selectionHandle = this.beans.context.destroyBean(this.selectionHandle);
         }
 
         if (shouldHaveSelectionHandle) {
@@ -1973,7 +1971,7 @@ export class CellComp extends Component implements TooltipParentComp {
         visibleFunc = typeof visibleFunc === 'function' ? visibleFunc : null;
 
         cbSelectionComponent.init({ rowNode: this.rowNode, column: this.column, visibleFunc: visibleFunc });
-        this.addDestroyFunc(() => cbSelectionComponent.destroy());
+        this.addDestroyFunc(() => this.beans.context.destroyBean(cbSelectionComponent) );
 
         // put the checkbox in before the value
         this.eCellWrapper.insertBefore(cbSelectionComponent.getGui(), this.eParentOfValue);
@@ -2069,7 +2067,7 @@ export class CellComp extends Component implements TooltipParentComp {
 
         // important to clear this out - as parts of the code will check for
         // this to see if an async cellEditor has yet to be created
-        this.cellEditor = this.beans.context.destroyUserComp(this.cellEditor);
+        this.cellEditor = this.beans.context.destroyUserBean(this.cellEditor);
         this.cellEditor = null;
 
         if (this.cellEditorInPopup && this.hideEditorPopup) {

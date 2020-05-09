@@ -83,7 +83,7 @@ export abstract class BaseDropZonePanel extends Component {
         this.beans = beans;
     }
 
-    public destroy(): void {
+    protected destroy(): void {
         this.destroyGui();
         super.destroy();
     }
@@ -384,7 +384,7 @@ export abstract class BaseDropZonePanel extends Component {
         columnComponent.addEventListener(DropZoneColumnComp.EVENT_COLUMN_REMOVE, this.removeColumns.bind(this, [column]));
 
         this.beans.context.wireBean(columnComponent);
-        this.guiDestroyFunctions.push(() => columnComponent.destroy());
+        this.guiDestroyFunctions.push(() => this.destroyBean(columnComponent));
 
         if (!ghost) {
             this.childColumnComponents.push(columnComponent);

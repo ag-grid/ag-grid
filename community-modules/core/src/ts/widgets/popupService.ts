@@ -9,6 +9,7 @@ import { Environment } from "../environment";
 import { EventService } from "../eventService";
 import { Events } from '../events';
 import { _ } from "../utils";
+import {BeanStub} from "../context/beanStub";
 
 interface AgPopup {
     element: HTMLElement;
@@ -23,7 +24,7 @@ interface Rect {
 }
 
 @Bean('popupService')
-export class PopupService {
+export class PopupService extends BeanStub {
 
     // really this should be using eGridDiv, not sure why it's not working.
     // maybe popups in the future should be parent to the body??
@@ -33,31 +34,20 @@ export class PopupService {
 
     private gridCore: GridCore;
     private popupList: AgPopup[] = [];
-    private events: (() => void)[] = [];
 
     @PostConstruct
     private init(): void {
-        this.events = [
-            this.eventService.addEventListener(Events.EVENT_KEYBOARD_FOCUS, () => {
-                this.popupList.forEach(popup => {
-                    _.addCssClass(popup.element, 'ag-keyboard-focus');
-                });
-            }),
+        this.addDestroyableEventListener(this.eventService, Events.EVENT_KEYBOARD_FOCUS, () => {
+            this.popupList.forEach(popup => {
+                _.addCssClass(popup.element, 'ag-keyboard-focus');
+            });
+        });
 
-            this.eventService.addEventListener(Events.EVENT_MOUSE_FOCUS, () => {
-                this.popupList.forEach(popup => {
-                    _.removeCssClass(popup.element, 'ag-keyboard-focus');
-                });
-            })
-        ];
-    }
-
-    @PreDestroy
-    public destroy(): void {
-        if (this.events.length) {
-            this.events.forEach(func => func());
-            this.events = [];
-        }
+        this.addDestroyableEventListener(this.eventService, Events.EVENT_MOUSE_FOCUS, () => {
+            this.popupList.forEach(popup => {
+                _.removeCssClass(popup.element, 'ag-keyboard-focus');
+            });
+        });
     }
 
     public registerGridCore(gridCore: GridCore): void {

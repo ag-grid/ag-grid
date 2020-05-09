@@ -144,7 +144,7 @@ export class MenuItemComponent extends Component {
         }
     }
 
-    public destroy(): void {
+    protected destroy(): void {
         // console.log('MenuItemComponent->destroy() ' + this.instance);
         super.destroy();
     }

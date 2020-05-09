@@ -28,7 +28,7 @@ import { IFilterComp, IFilterParams } from "../../interfaces/iFilter";
 import { IFloatingFilterComp, IFloatingFilterParams } from "../../filter/floating/floatingFilter";
 import { ICellEditorComp, ICellEditorParams } from "../../interfaces/iCellEditor";
 import { IToolPanelComp, IToolPanelParams } from "../../interfaces/iToolPanel";
-import { StatusPanelDef } from "../../interfaces/iStatusPanel";
+import {IStatusPanel, IStatusPanelComp, IStatusPanelParams, StatusPanelDef} from "../../interfaces/iStatusPanel";
 import {
     CellEditorComponent,
     CellRendererComponent,
@@ -178,7 +178,7 @@ export class UserComponentFactory {
         return this.createAndInitUserComponent(toolPanelDef, params, ToolPanelComponent);
     }
 
-    public newStatusPanelComponent(def: StatusPanelDef, params: IToolPanelParams): Promise<IToolPanelComp> {
+    public newStatusPanelComponent(def: StatusPanelDef, params: IStatusPanelParams): Promise<IStatusPanelComp> {
         return this.createAndInitUserComponent(def, params, StatusPanelComponent);
     }
 

@@ -55,7 +55,7 @@ export class AgColorPicker extends AgPickerField<HTMLElement, string> {
 
         colorPanel.addDestroyFunc(() => {
             if (colorDialog.isAlive()) {
-                colorDialog.destroy();
+                this.destroyBean(colorDialog);
             }
         });
 
@@ -71,7 +71,7 @@ export class AgColorPicker extends AgPickerField<HTMLElement, string> {
             if (!wasDestroying) {
                 this.isDestroyingPicker = true;
                 if (colorPanel.isAlive()) {
-                    colorPanel.destroy();
+                    this.destroyBean(colorPanel);
                 }
             } else {
                 this.isDestroyingPicker = false;

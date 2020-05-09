@@ -368,8 +368,8 @@ export class AgPanel extends Component {
         } else if (this.closeButtonComp) {
             const eGui = this.closeButtonComp.getGui();
             eGui.parentElement.removeChild(eGui);
-            this.closeButtonComp.destroy();
-            this.closeButtonComp = undefined;
+
+            this.closeButtonComp = this.destroyBean(this.closeButtonComp);
         }
     }
 
@@ -421,10 +421,9 @@ export class AgPanel extends Component {
         this.close();
     }
 
-    public destroy(): void {
+    protected destroy(): void {
         if (this.closeButtonComp) {
-            this.closeButtonComp.destroy();
-            this.closeButtonComp = undefined;
+            this.closeButtonComp = this.destroyBean(this.closeButtonComp);
         }
 
         const eGui = this.getGui();

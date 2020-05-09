@@ -565,7 +565,7 @@ export class FilterManager extends BeanStub {
         filterWrapper.filterPromise.then(filter => {
             filter.setModel(null);
 
-            this.getContext().destroyUserComp(filter);
+            this.getContext().destroyUserBean(filter);
 
             filterWrapper.column.setFilterActive(false, source);
 
@@ -582,7 +582,9 @@ export class FilterManager extends BeanStub {
     }
 
     @PreDestroy
-    public destroy() {
+    protected destroy() {
+        super.destroy();
+
         this.allFilters.forEach(filterWrapper => this.disposeFilterWrapper(filterWrapper, 'filterDestroyed'));
 
         if (this.eventListenerDestroyers.length) {

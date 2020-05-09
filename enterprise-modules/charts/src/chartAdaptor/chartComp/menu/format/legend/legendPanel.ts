@@ -162,11 +162,11 @@ export class LegendPanel extends Component {
     private destroyActivePanels(): void {
         this.activePanels.forEach(panel => {
             _.removeFromParent(panel.getGui());
-            panel.destroy();
+            this.destroyBean(panel);
         });
     }
 
-    public destroy(): void {
+    protected destroy(): void {
         this.destroyActivePanels();
         super.destroy();
     }

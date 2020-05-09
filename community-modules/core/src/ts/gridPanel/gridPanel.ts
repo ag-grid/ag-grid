@@ -342,8 +342,7 @@ export class GridPanel extends Component {
 
     private addRowDragListener(): void {
         const rowDragFeature = new RowDragFeature(this.eBodyViewport, this);
-
-        this.getContext().wireBean(rowDragFeature);
+        this.wireDependentBean(rowDragFeature);
         this.dragAndDropService.addDropTarget(rowDragFeature);
         this.rowDragFeature = rowDragFeature;
     }

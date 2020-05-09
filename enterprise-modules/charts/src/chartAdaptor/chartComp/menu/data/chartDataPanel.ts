@@ -47,7 +47,7 @@ export class ChartDataPanel extends Component {
         this.addDestroyableEventListener(this.chartController, ChartController.EVENT_CHART_UPDATED, this.updatePanels.bind(this));
     }
 
-    public destroy(): void {
+    protected destroy(): void {
         this.clearComponents();
         super.destroy();
     }
@@ -251,17 +251,8 @@ export class ChartDataPanel extends Component {
 
     private clearComponents() {
         _.clearElement(this.getGui());
-
-        if (this.categoriesGroupComp) {
-            this.categoriesGroupComp.destroy();
-            this.categoriesGroupComp = undefined;
-        }
-
-        if (this.seriesGroupComp) {
-            this.seriesGroupComp.destroy();
-            this.seriesGroupComp = undefined;
-        }
-
+        this.categoriesGroupComp = this.destroyBean(this.categoriesGroupComp);
+        this.seriesGroupComp = this.destroyBean(this.seriesGroupComp);
         this.columnComps.clear();
     }
 

@@ -286,8 +286,10 @@ export class Context {
         this.logger.log(">> ag-Application Context shut down - component is dead");
     }
 
-    public destroyBean(bean: any): void {
+    public destroyBean<T extends any>(bean: T): T {
+        if (!bean) { return undefined; }
         this.destroyBeans([bean]);
+        return undefined;
     }
 
     public destroyBeans(beans: any[]): void {
@@ -295,13 +297,13 @@ export class Context {
     }
 
     // cellRenderer, cellEditor, dateCompWrapper, groupCellRenderer
-    public destroyUserComp<T extends IComponent<any>>(comp: T): T {
+    public destroyUserBean<T extends any>(comp: T): T {
         if (!comp) { return undefined; }
 
         const methods = this.callLifeCycleMethodsOneBean(comp, 'preDestroyMethods');
 
-        const destroyMethodDoesntHavePreDestroyAnnotation = comp.destroy && methods.indexOf('destroy')<0;
-        if (destroyMethodDoesntHavePreDestroyAnnotation) {
+        const destroyMethodDoesntHaveAnnotation = comp.destroy && methods.indexOf('destroy')<0;
+        if (destroyMethodDoesntHaveAnnotation) {
             comp.destroy();
         }
 

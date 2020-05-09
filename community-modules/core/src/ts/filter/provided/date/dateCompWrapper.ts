@@ -21,7 +21,7 @@ export class DateCompWrapper {
         userComponentFactory.newDateComponent(dateComponentParams).then(dateComp => {
             // because async, check the filter still exists after component comes back
             if (!this.alive) {
-                context.destroyUserComp(dateComp);
+                context.destroyUserBean(dateComp);
                 return;
             }
 
@@ -40,7 +40,7 @@ export class DateCompWrapper {
 
     public destroy(): void {
         this.alive = false;
-        this.dateComp = this.context.destroyUserComp(this.dateComp);
+        this.dateComp = this.context.destroyUserBean(this.dateComp);
     }
 
     public getDate(): Date {

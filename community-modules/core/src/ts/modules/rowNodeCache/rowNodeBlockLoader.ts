@@ -41,7 +41,8 @@ export class RowNodeBlockLoader extends BeanStub {
         _.removeFromArray(this.blocks, block);
     }
 
-    public destroy(): void {
+    protected destroy(): void {
+        super.destroy();
         this.active = false;
     }
 

@@ -203,12 +203,12 @@ export class SideBarComp extends Component implements ISideBar {
     private destroyToolPanelWrappers(): void {
         this.toolPanelWrappers.forEach(wrapper => {
             _.removeFromParent(wrapper.getGui());
-            wrapper.destroy();
+            this.destroyBean(wrapper);
         });
         this.toolPanelWrappers.length = 0;
     }
 
-    public destroy(): void {
+    protected destroy(): void {
         this.destroyToolPanelWrappers();
         super.destroy();
     }

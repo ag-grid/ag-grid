@@ -59,6 +59,7 @@ import { ICsvCreator } from "./interfaces/iCsvCreator";
 import { ModuleRegistry } from "./modules/moduleRegistry";
 import { UndoRedoService } from "./undoRedo/undoRedoService";
 import { RowDropZoneParams, RowDropZoneEvents } from "./gridPanel/rowDragFeature";
+import {BeanStub} from "./context/beanStub";
 
 export interface StartEditingCellParams {
     rowIndex: number;
@@ -989,7 +990,7 @@ export class GridApi {
 
     public destroy(): void {
         // destroy the UI first (as they use the services)
-        this.gridCore.destroy();
+        this.context.destroyBean(this.gridCore);
         // destroy the services
         this.context.destroy();
     }

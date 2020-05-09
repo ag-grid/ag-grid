@@ -22,6 +22,7 @@ export interface ChartModelUpdatedEvent extends AgEvent {
 }
 
 export class ChartController extends BeanStub {
+
     public static EVENT_CHART_UPDATED = 'chartUpdated';
 
     @Autowired('eventService') private eventService: EventService;
@@ -206,7 +207,7 @@ export class ChartController extends BeanStub {
         this.eventService.dispatchEvent(event);
     }
 
-    public destroy(): void {
+    protected destroy(): void {
         super.destroy();
 
         if (this.rangeController) {

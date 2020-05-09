@@ -663,7 +663,7 @@ export class RowRenderer extends BeanStub {
         }
     }
 
-    public destroy(): void {
+    protected destroy(): void {
         const rowIndexesToRemove = Object.keys(this.rowCompsByIndex);
 
         this.removeRowComps(rowIndexesToRemove);

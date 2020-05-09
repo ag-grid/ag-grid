@@ -70,12 +70,10 @@ export class MenuList extends ManagedTabComponent {
     }
 
     public addItem(menuItemDef: MenuItemDef): void {
-        const cMenuItem = new MenuItemComponent(menuItemDef);
-        this.getContext().wireBean(cMenuItem);
+        const cMenuItem = this.wireDependentBean(new MenuItemComponent(menuItemDef));
         this.menuItems.push({comp: cMenuItem, params: menuItemDef });
 
         this.getGui().appendChild(cMenuItem.getGui());
-        this.addDestroyFunc(() => cMenuItem.destroy());
 
         cMenuItem.addEventListener(MenuItemComponent.EVENT_ITEM_SELECTED, (event: MenuItemSelectedEvent) => {
             if (menuItemDef.subMenu && !menuItemDef.action) {
@@ -374,7 +372,7 @@ export class MenuList extends ManagedTabComponent {
         this.removeChildFuncs = [];
     }
 
-    public destroy(): void {
+    protected destroy(): void {
         this.removeChildPopup();
         super.destroy();
     }

@@ -395,12 +395,11 @@ export class FiltersToolPanelListPanel extends Component {
     }
 
     private destroyFilters() {
-        this.filterGroupComps.forEach(filterComp => filterComp.destroy());
-        this.filterGroupComps.length = 0;
+        this.filterGroupComps = this.destroyBeans(this.filterGroupComps);
         _.clearElement(this.getGui());
     }
 
-    public destroy() {
+    protected destroy() {
         this.destroyFilters();
         super.destroy();
     }

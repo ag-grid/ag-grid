@@ -121,12 +121,11 @@ export class ColumnToolPanel extends Component implements IColumnToolPanel, IToo
         if (this.pivotModePanel) {
             this.pivotModePanel.setDisplayed(visible);
         } else if (visible) {
-            this.pivotModePanel = new PivotModePanel();
-            this.getContext().wireBean(this.pivotModePanel);
+            this.pivotModePanel = this.wireBean(new PivotModePanel());
 
             // ensure pivot mode panel is positioned at the top of the columns tool panel
             this.getGui().insertBefore(this.pivotModePanel.getGui(), this.getGui().firstChild);
-            this.childDestroyFuncs.push(this.pivotModePanel.destroy.bind(this.pivotModePanel));
+            this.childDestroyFuncs.push( ()=> this.destroyBean(this.pivotModePanel));
         }
         this.setLastVisible();
     }
@@ -208,7 +207,7 @@ export class ColumnToolPanel extends Component implements IColumnToolPanel, IToo
     private addComponent(component: Component): void {
         this.getContext().wireBean(component);
         this.getGui().appendChild(component.getGui());
-        this.childDestroyFuncs.push(component.destroy.bind(component));
+        this.childDestroyFuncs.push( ()=> this.destroyBean(component));
     }
 
     public destroyChildren(): void {
@@ -222,6 +221,8 @@ export class ColumnToolPanel extends Component implements IColumnToolPanel, IToo
         this.init(this.params);
     }
 
+    // this is a user component, and IComponent has "public destroy()" as part of the interface.
+    // so this must be public.
     public destroy(): void {
         this.destroyChildren();
         super.destroy();

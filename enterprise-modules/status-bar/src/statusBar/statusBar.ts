@@ -7,7 +7,8 @@ import {
     PostConstruct,
     Promise,
     RefSelector,
-    _
+    _,
+    IStatusPanelComp
 } from '@ag-grid-community/core';
 import { StatusBarService } from "./statusBarService";
 
@@ -52,7 +53,7 @@ export class StatusBar extends Component {
     }
 
     private createAndRenderComponents(statusBarComponents: any[], ePanelComponent: HTMLElement) {
-        const componentDetails: { key: string; promise: Promise<any> }[] = [];
+        const componentDetails: { key: string; promise: Promise<IStatusPanelComp> }[] = [];
 
         statusBarComponents.forEach(componentConfig => {
             const params = {
@@ -73,9 +74,9 @@ export class StatusBar extends Component {
         Promise.all(componentDetails.map((details) => details.promise))
             .then(() => {
                 componentDetails.forEach(componentDetail => {
-                    componentDetail.promise.then((component: Component) => {
+                    componentDetail.promise.then((component: IStatusPanelComp) => {
                         const destroyFunc = () => {
-                            this.getContext().destroyUserComp(component);
+                            this.getContext().destroyUserBean(component);
                         };
 
                         if (this.isAlive()) {

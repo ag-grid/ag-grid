@@ -210,15 +210,10 @@ export class ChartSettingsPanel extends Component {
     private destroyMiniCharts(): void {
         _.clearElement(this.eMiniChartsContainer);
 
-        if (this.miniCharts) {
-            this.miniCharts.forEach(c => c.destroy());
-        }
-
-        this.miniCharts = [];
+        this.miniCharts = this.destroyBeans(this.miniCharts);
     }
 
-    @PreDestroy
-    public destroy(): void {
+    protected destroy(): void {
         this.destroyMiniCharts();
         super.destroy();
     }

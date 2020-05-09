@@ -95,7 +95,7 @@ export class OverlayWrapperComponent extends Component {
             return;
         }
 
-        this.activeOverlay = this.getContext().destroyUserComp(this.activeOverlay);
+        this.activeOverlay = this.getContext().destroyUserBean(this.activeOverlay);
 
         _.clearElement(this.eOverlayWrapper);
     }

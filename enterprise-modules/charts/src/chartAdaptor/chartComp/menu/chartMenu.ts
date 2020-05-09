@@ -158,7 +158,7 @@ export class ChartMenu extends Component {
         this.addDestroyableEventListener(
             menuPanel,
             Component.EVENT_DESTROYED,
-            () => this.tabbedMenu.destroy()
+            () => this.destroyBean(this.tabbedMenu)
         );
 
         return new Promise((res: (arg0: any) => void) => {
@@ -223,11 +223,11 @@ export class ChartMenu extends Component {
         this.eMenuPanelContainer.style.minWidth = '0';
     }
 
-    public destroy() {
+    protected destroy() {
         super.destroy();
 
         if (this.menuPanel && this.menuPanel.isAlive()) {
-            this.menuPanel.destroy();
+            this.destroyBean(this.menuPanel);
         }
     }
 }

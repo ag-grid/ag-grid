@@ -47,9 +47,7 @@ export class EnterpriseMenuFactory implements IMenuFactory {
     private activeMenu: EnterpriseMenu | null;
 
     public hideActiveMenu(): void {
-        if (this.activeMenu) {
-            this.activeMenu.destroy();
-        }
+        this.context.destroyBean(this.activeMenu);
     }
 
     public showMenuAfterMouseEvent(column: Column, mouseEvent: MouseEvent, defaultTab?: string): void {
@@ -111,7 +109,7 @@ export class EnterpriseMenuFactory implements IMenuFactory {
             eMenuGui,
             true,
             () => { // menu closed callback
-                menu.destroy();
+                this.context.destroyBean(menu);
                 column.setMenuVisible(false, "contextMenu");
             }
         );
@@ -295,13 +293,9 @@ export class EnterpriseMenu extends BeanStub {
         this.dispatchEvent(ev);
     }
 
-    public destroy(): void {
-        if (this.columnSelectPanel) {
-            this.columnSelectPanel.destroy();
-        }
-        if (this.mainMenuList) {
-            this.mainMenuList.destroy();
-        }
+    protected destroy(): void {
+        this.destroyBean(this.columnSelectPanel);
+        this.destroyBean(this.mainMenuList);
         super.destroy();
     }
 

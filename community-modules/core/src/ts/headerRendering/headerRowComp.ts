@@ -33,7 +33,7 @@ export class HeaderRowComp extends Component {
     private readonly dropTarget: DropTarget;
     private readonly type: HeaderRowType;
 
-    private headerComps: { [key: string]: IComponent<any>; } = {};
+    private headerComps: { [key: string]: Component } = {};
 
     constructor(dept: number, type: HeaderRowType, pinned: string, dropTarget: DropTarget) {
         super(/* html */`<div class="ag-header-row" role="row" />`);
@@ -52,7 +52,7 @@ export class HeaderRowComp extends Component {
         }
     }
 
-    public forEachHeaderElement(callback: (comp: IComponent<any>) => void): void {
+    public forEachHeaderElement(callback: (comp: Component) => void): void {
         Object.keys(this.headerComps).forEach(key => {
             callback(this.headerComps[key]);
         });
@@ -66,7 +66,7 @@ export class HeaderRowComp extends Component {
 
     private destroyChildComponents(idsToDestroy: string[]): void {
         idsToDestroy.forEach(id => {
-            const childHeaderComp: IComponent<any> = this.headerComps[id];
+            const childHeaderComp: Component = this.headerComps[id];
             this.getGui().removeChild(childHeaderComp.getGui());
             this.destroyBean(childHeaderComp);
             delete this.headerComps[id];
@@ -225,7 +225,7 @@ export class HeaderRowComp extends Component {
 
             // if we already have this cell rendered, do nothing
             const colAlreadyInDom = currentChildIds.indexOf(idOfChild) >= 0;
-            let headerComp: IComponent<any>;
+            let headerComp: Component;
             let eHeaderCompGui: HTMLElement;
             if (colAlreadyInDom) {
                 removeFromArray(currentChildIds, idOfChild);
@@ -249,8 +249,8 @@ export class HeaderRowComp extends Component {
         }
     }
 
-    private createHeaderComp(columnGroupChild: ColumnGroupChild): IComponent<any> {
-        let result: IComponent<any>;
+    private createHeaderComp(columnGroupChild: ColumnGroupChild): Component {
+        let result: Component;
 
         switch (this.type) {
             case HeaderRowType.COLUMN:

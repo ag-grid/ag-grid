@@ -54,7 +54,7 @@ export class TabbedChartMenu extends Component {
             const { comp, tab } = this.createTab(panel, panelType, this.getPanelClass(panelType));
 
             this.tabs.push(tab);
-            this.addDestroyFunc(() => comp.destroy());
+            this.addDestroyFunc(() => this.destroyBean(comp));
         });
 
         this.tabbedLayout = new TabbedLayout({
@@ -110,9 +110,9 @@ export class TabbedChartMenu extends Component {
         return this.tabbedLayout && this.tabbedLayout.getGui();
     }
 
-    public destroy(): void {
+    protected destroy(): void {
         if (this.parentComponent && this.parentComponent.isAlive()) {
-            this.parentComponent.destroy();
+            this.destroyBean(this.parentComponent);
         }
         super.destroy();
     }

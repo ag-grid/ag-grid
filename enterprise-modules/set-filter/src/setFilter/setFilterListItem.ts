@@ -122,7 +122,7 @@ export class SetFilterListItem extends Component {
         _.bindCellRendererToHtmlElement(cellRendererPromise, eTarget);
 
         cellRendererPromise.then(component => {
-            this.addDestroyFunc( ()=> this.getContext().destroyUserComp(component) );
+            this.addDestroyFunc( ()=> this.getContext().destroyUserBean(component) );
         });
     }
 

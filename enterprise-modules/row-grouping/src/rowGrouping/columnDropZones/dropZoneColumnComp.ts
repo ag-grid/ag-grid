@@ -176,7 +176,7 @@ export class DropZoneColumnComp extends Component {
         ePopup.style.width = this.getGui().clientWidth + 'px';
 
         const popupHiddenFunc = () => {
-            virtualList.destroy();
+            this.destroyBean(virtualList);
             this.popupShowing = false;
         };
 

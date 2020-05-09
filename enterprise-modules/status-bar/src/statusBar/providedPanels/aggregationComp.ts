@@ -51,6 +51,12 @@ export class AggregationComp extends Component implements IStatusPanelComp {
         super(AggregationComp.TEMPLATE);
     }
 
+    // this is a user component, and IComponent has "public destroy()" as part of the interface.
+    // so we need to override destroy() just to make the method public.
+    public destroy(): void {
+        super.destroy();
+    }
+
     @PostConstruct
     private postConstruct(): void {
         if (!this.isValidRowModel()) {

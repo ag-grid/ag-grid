@@ -113,12 +113,12 @@ export class AgSelect extends AgPickerField<HTMLSelectElement, string> {
         return super.setValue(value, silent);
     }
 
-    public destroy(): void {
+    protected destroy(): void {
         if (this.hideList) {
             this.hideList();
         }
 
-        this.listComponent.destroy();
+        this.getContext().destroyBean(this.listComponent);
         super.destroy();
     }
 }

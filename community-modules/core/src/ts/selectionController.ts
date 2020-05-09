@@ -47,13 +47,13 @@ export class SelectionController {
     }
 
     @PostConstruct
-    public init(): void {
+    private init(): void {
         this.groupSelectsChildren = this.gridOptionsWrapper.isGroupSelectsChildren();
         this.events.push(this.eventService.addEventListener(Events.EVENT_ROW_SELECTED, this.onRowSelected.bind(this)));
     }
 
     @PreDestroy
-    public destroy(): void {
+    private destroy(): void {
         if (this.events.length) {
             this.events.forEach(func => func());
         }

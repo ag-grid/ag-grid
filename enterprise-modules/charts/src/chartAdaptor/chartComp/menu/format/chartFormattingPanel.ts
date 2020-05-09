@@ -95,11 +95,11 @@ export class ChartFormattingPanel extends Component {
     private destroyPanels(): void {
         this.panels.forEach(panel => {
             _.removeFromParent(panel.getGui());
-            panel.destroy();
+            this.destroyBean(panel);
         });
     }
 
-    public destroy(): void {
+    protected destroy(): void {
         this.destroyPanels();
         super.destroy();
     }

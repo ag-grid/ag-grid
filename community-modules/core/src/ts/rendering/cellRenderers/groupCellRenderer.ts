@@ -390,7 +390,7 @@ export class GroupCellRenderer extends Component implements ICellRendererComp {
 
             cbSelectionComponent.init({ rowNode: rowNode, column: this.params.column });
             this.eCheckbox.appendChild(cbSelectionComponent.getGui());
-            this.addDestroyFunc(() => cbSelectionComponent.destroy());
+            this.addDestroyFunc(() => this.getContext().destroyBean(cbSelectionComponent));
         }
 
         _.addOrRemoveCssClass(this.eCheckbox, 'ag-invisible', !checkboxNeeded);
@@ -553,8 +553,10 @@ export class GroupCellRenderer extends Component implements ICellRendererComp {
         this.addOrRemoveCssClass('ag-row-group-leaf-indent', addLeafIndentClass);
     }
 
+    // this is a user component, and IComponent has "public destroy()" as part of the interface.
+    // so we need to have public here instead of private or protected
     public destroy(): void {
-        this.getContext().destroyUserComp(this.innerCellRenderer);
+        this.getContext().destroyUserBean(this.innerCellRenderer);
         super.destroy();
     }
 

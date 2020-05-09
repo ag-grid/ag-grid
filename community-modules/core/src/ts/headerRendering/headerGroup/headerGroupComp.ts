@@ -44,6 +44,12 @@ export class HeaderGroupComp extends Component implements IHeaderGroupComp {
         super(HeaderGroupComp.TEMPLATE);
     }
 
+    // this is a user component, and IComponent has "public destroy()" as part of the interface.
+    // so we need to override destroy() just to make the method public.
+    public destroy(): void {
+        super.destroy();
+    }
+
     public init(params: IHeaderGroupParams) {
         this.params = params;
 

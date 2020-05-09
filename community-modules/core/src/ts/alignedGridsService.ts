@@ -43,7 +43,7 @@ export class AlignedGridsService {
     private events: (() => void)[] = [];
 
     @PostConstruct
-    public init(): void {
+    private init(): void {
         this.events = [
             this.eventService.addEventListener(Events.EVENT_COLUMN_MOVED, this.fireColumnEvent.bind(this)),
             this.eventService.addEventListener(Events.EVENT_COLUMN_VISIBLE, this.fireColumnEvent.bind(this)),
@@ -55,7 +55,7 @@ export class AlignedGridsService {
     }
 
     @PreDestroy
-    public destroy(): void {
+    protected destroy(): void {
         if (this.events.length) {
             this.events.forEach(func => func());
         }

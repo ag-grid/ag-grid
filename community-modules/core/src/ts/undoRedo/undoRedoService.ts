@@ -74,7 +74,7 @@ export class UndoRedoService {
     }
 
     @PreDestroy
-    public destroy() {
+    private destroy() {
         if (this.events.length) {
             this.events.forEach(func => func());
             this.events = [];

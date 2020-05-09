@@ -35,6 +35,12 @@ export class DetailCellRenderer extends Component implements ICellRenderer {
 
     private suppressRefresh: boolean;
 
+    // this is a user component, and IComponent has "public destroy()" as part of the interface.
+    // so we need to override destroy() just to make the method public.
+    public destroy(): void {
+        super.destroy();
+    }
+
     public refresh(): boolean {
         // if we return true, it means we pretend to the grid
         // that we have refreshed, so refresh will never happen.

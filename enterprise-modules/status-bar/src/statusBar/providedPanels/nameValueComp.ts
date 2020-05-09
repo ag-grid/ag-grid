@@ -31,7 +31,7 @@ export class NameValueComp extends Component {
         this.eValue.innerHTML = value;
     }
 
-    public destroy(): void {
+    protected destroy(): void {
         this.events.forEach(func => func());
         this.events = [];
         super.destroy();

@@ -163,7 +163,7 @@ export class ChartService implements IChartService {
         const chartRef: ChartRef = {
             destroyChart: () => {
                 if (this.activeCharts.has(chartRef)) {
-                    chartComp.destroy();
+                    this.context.destroyBean(chartComp);
                     this.activeChartComps.delete(chartComp);
                     this.activeCharts.delete(chartRef);
                 }

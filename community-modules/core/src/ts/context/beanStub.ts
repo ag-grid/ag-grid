@@ -41,7 +41,7 @@ export class BeanStub implements IEventEmitter {
     public getContext = (): Context => this.context;
 
     @PreDestroy
-    public destroy(): void {
+    protected destroy(): void {
 
         // let prototype: any = Object.getPrototypeOf(this);
         // const constructor: any = prototype.constructor;
@@ -135,7 +135,9 @@ export class BeanStub implements IEventEmitter {
     }
 
     protected destroyBeans<T>(beans: T[], context?: Context): T[] {
-        beans.forEach( bean => this.destroyBean(bean, context));
+        if (beans) {
+            beans.forEach( bean => this.destroyBean(bean, context));
+        }
         return [];
     }
 }

@@ -6,7 +6,8 @@ import {
     PostConstruct,
     ToolPanelDef,
     RefSelector,
-    _
+    _,
+    PreDestroy
 } from "@ag-grid-community/core";
 
 export interface SideBarButtonClickedEvent extends AgEvent {
@@ -51,18 +52,12 @@ export class SideBarButtonsComp extends Component {
         });
     }
 
+    @PreDestroy
     public clearButtons(): void {
-        if (this.buttonComps) {
-            this.buttonComps.forEach(comp => comp.destroy());
-        }
+        this.buttonComps = this.destroyBeans(this.buttonComps);
         _.clearElement(this.getGui());
-        this.buttonComps.length = 0;
     }
 
-    public destroy(): void {
-        this.clearButtons();
-        super.destroy();
-    }
 }
 
 class SideBarButtonComp extends Component {

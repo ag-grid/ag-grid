@@ -195,12 +195,11 @@ export class ToolPanelFilterGroupComp extends Component {
     }
 
     private destroyFilters() {
-        this.childFilterComps.forEach(filterComp => filterComp.destroy());
-        this.childFilterComps.length = 0;
+        this.childFilterComps = this.destroyBeans(this.childFilterComps);
         _.clearElement(this.getGui());
     }
 
-    public destroy() {
+    protected destroy() {
         this.destroyFilters();
         super.destroy();
     }

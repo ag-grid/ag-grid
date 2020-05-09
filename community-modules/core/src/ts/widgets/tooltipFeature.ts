@@ -79,7 +79,7 @@ export class TooltipFeature extends BeanStub {
         this.addDestroyableEventListener(el, 'mousedown', this.onMouseDown.bind(this));
     }
 
-    public destroy(): void {
+    protected destroy(): void {
         // if this component gets destroyed while tooltip is showing, need to make sure
         // we don't end with no mouseLeave event resulting in zombie tooltip
         this.setToDoNothing();
@@ -150,7 +150,7 @@ export class TooltipFeature extends BeanStub {
 
         window.setTimeout(() => {
             tooltipPopupDestroyFunc();
-            this.getContext().destroyUserComp(tooltipComp);
+            this.getContext().destroyUserBean(tooltipComp);
         }, this.FADE_OUT_TOOLTIP_TIMEOUT);
 
         this.tooltipPopupDestroyFunc = undefined;
@@ -199,7 +199,7 @@ export class TooltipFeature extends BeanStub {
         const compNoLongerNeeded = this.state !== TooltipStates.SHOWING || this.tooltipInstanceCount !== tooltipInstanceCopy;
 
         if (compNoLongerNeeded) {
-            this.getContext().destroyUserComp(tooltipComp);
+            this.getContext().destroyUserBean(tooltipComp);
             return;
         }
 

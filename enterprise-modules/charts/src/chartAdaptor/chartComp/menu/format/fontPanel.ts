@@ -211,11 +211,11 @@ export class FontPanel extends Component {
     private destroyActiveComps(): void {
         this.activeComps.forEach(comp => {
             _.removeFromParent(comp.getGui());
-            comp.destroy();
+            this.destroyBean(comp);
         });
     }
 
-    public destroy(): void {
+    protected destroy(): void {
         this.destroyActiveComps();
         super.destroy();
     }

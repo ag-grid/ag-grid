@@ -81,7 +81,7 @@ export class ChartDataModel extends BeanStub {
 
     @PostConstruct
     private init(): void {
-        this.datasource = this.wireBean(new ChartDatasource());
+        this.datasource = this.wireDependentBean(new ChartDatasource());
 
         this.updateCellRanges();
     }
@@ -520,14 +520,6 @@ export class ChartDataModel extends BeanStub {
             selectedValueCols.sort((a, b) => orderedColIds.indexOf(a.getColId()) - orderedColIds.indexOf(b.getColId()));
 
             this.valueCellRange = this.createCellRange(CellRangeType.VALUE, ...selectedValueCols);
-        }
-    }
-
-    public destroy(): void {
-        super.destroy();
-
-        if (this.datasource) {
-            this.datasource.destroy();
         }
     }
 }

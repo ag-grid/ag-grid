@@ -42,9 +42,7 @@ export class ContextMenuFactory implements IContextMenuFactory {
     private activeMenu: ContextMenu | null;
 
     public hideActiveMenu(): void {
-        if (!this.activeMenu) { return; }
-
-        this.activeMenu.destroy();
+        this.context.destroyBean(this.activeMenu);
     }
 
     private getMenuItems(node: RowNode, column: Column, value: any): (MenuItemDef | string)[] | undefined {
@@ -115,7 +113,7 @@ export class ContextMenuFactory implements IContextMenuFactory {
         const hidePopup = this.popupService.addAsModalPopup(
             eMenuGui,
             true,
-            () => menu.destroy(),
+            () => this.context.destroyBean(menu),
             mouseEvent
         );
 
@@ -145,7 +143,7 @@ export class ContextMenuFactory implements IContextMenuFactory {
     }
 }
 
-class ContextMenu extends Component implements IComponent<any> {
+class ContextMenu extends Component {
 
     @Autowired('eventService') private eventService: EventService;
     @Autowired('menuItemMapper') private menuItemMapper: MenuItemMapper;
@@ -191,7 +189,7 @@ class ContextMenu extends Component implements IComponent<any> {
         this.addDestroyableEventListener(this.eventService, 'bodyScroll', this.destroy.bind(this));
     }
 
-    public destroy(): void {
+    protected destroy(): void {
         const currentFocusedCell = this.focusController.getFocusedCell();
 
         if (currentFocusedCell && this.focusedCell && this.cellPositionUtils.equals(currentFocusedCell, this.focusedCell)) {

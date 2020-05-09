@@ -243,7 +243,7 @@ export class GridCore extends Component {
         return this.sideBarComp.isToolPanelShowing();
     }
 
-    public destroy(): void {
+    protected destroy(): void {
         this.logger.log('Grid DOM removed');
         super.destroy();
     }

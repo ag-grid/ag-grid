@@ -251,15 +251,6 @@ export class Component extends BeanStub {
         return this.eGui.querySelector(cssSelector) as HTMLInputElement;
     }
 
-    // headerComp, headerGroupComp, toolPanelComp
-    public appendUserComp<T>(comp: IComponent<T>): IComponent<T> {
-        this.getGui().appendChild(comp.getGui());
-        this.addDestroyFunc(()=> {
-            this.getContext().destroyUserComp(comp);
-        });
-        return comp;
-    }
-
     public appendChild(newChild: Node | Component, container?: HTMLElement): void {
         if (!container) {
             container = this.eGui;
@@ -301,7 +292,7 @@ export class Component extends BeanStub {
         }
     }
 
-    public destroy(): void {
+    protected destroy(): void {
         this.removeAnnotatedEventListeners();
         super.destroy();
     }

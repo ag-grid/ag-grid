@@ -32,7 +32,6 @@ export interface IRangeController {
 
 export interface ISelectionHandle {
     getGui(): HTMLElement;
-    destroy(): void;
     getType(): string;
     refresh(cellComp: CellComp): void;
 }

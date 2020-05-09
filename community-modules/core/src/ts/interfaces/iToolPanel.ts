@@ -30,7 +30,6 @@ export interface ToolPanelColumnCompParams extends IToolPanelParams {
 export interface IPrimaryColsPanel {
     getGui(): HTMLElement;
     init(allowDragging: boolean, params: ToolPanelColumnCompParams): void;
-    destroy(): void;
     onExpandAll(): void;
     onCollapseAll(): void;
     expandGroups(groupIds?: string[]): void;

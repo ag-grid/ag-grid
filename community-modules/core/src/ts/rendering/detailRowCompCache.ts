@@ -96,7 +96,7 @@ export class DetailRowCompCache extends BeanStub {
     }
 
     private destroyFullWidthRow(comp: ICellRendererComp): void {
-        this.getContext().destroyUserComp(comp);
+        this.getContext().destroyUserBean(comp);
     }
 
     private purgeCache(startIndex: number): void {
@@ -145,7 +145,8 @@ export class DetailRowCompCache extends BeanStub {
     }
 
     @PreDestroy
-    public destroy(): void {
+    protected destroy(): void {
+        super.destroy();
         this.purgeCache(0);
     }
 

@@ -86,7 +86,7 @@ export class RangeController implements IRangeController {
     }
 
     @PreDestroy
-    public destroy(): void {
+    private destroy(): void {
         if (this.events.length) {
             this.events.forEach(func => func());
             this.events = [];

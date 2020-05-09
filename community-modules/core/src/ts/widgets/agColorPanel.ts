@@ -304,7 +304,7 @@ export class AgColorPanel extends Component {
         AgColorPanel.recentColors = recentColors;
     }
 
-    public destroy(): void {
+    protected destroy(): void {
         this.addRecentColor();
         super.destroy();
     }

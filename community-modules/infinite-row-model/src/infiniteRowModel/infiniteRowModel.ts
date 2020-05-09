@@ -80,9 +80,7 @@ export class InfiniteRowModel extends BeanStub implements IInfiniteRowModel {
     @PreDestroy
     private destroyDatasource(): void {
         if (this.datasource) {
-            if (this.datasource.destroy) {
-                this.datasource.destroy();
-            }
+            this.getContext().destroyUserBean(this.datasource);
             this.rowRenderer.datasourceChanged();
             this.datasource = null;
         }
@@ -272,12 +270,10 @@ export class InfiniteRowModel extends BeanStub implements IInfiniteRowModel {
 
     private destroyCache(): void {
         if (this.infiniteCache) {
-            this.infiniteCache.destroy();
-            this.infiniteCache = null;
+            this.infiniteCache = this.destroyBean(this.infiniteCache);
         }
         if (this.rowNodeBlockLoader) {
-            this.rowNodeBlockLoader.destroy();
-            this.rowNodeBlockLoader = null;
+            this.rowNodeBlockLoader = this.destroyBean(this.rowNodeBlockLoader);
         }
     }
 

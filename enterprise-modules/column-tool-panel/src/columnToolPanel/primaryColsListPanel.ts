@@ -460,12 +460,12 @@ export class PrimaryColsListPanel extends Component {
     private destroyColumnComps(): void {
         _.clearElement(this.getGui());
         if (this.columnComps) {
-            _.iterateObject(this.columnComps, (key: string, renderedItem: Component) => renderedItem.destroy());
+            _.iterateObject(this.columnComps, (key: string, renderedItem: Component) => this.destroyBean(renderedItem));
         }
         this.columnComps = {};
     }
 
-    public destroy(): void {
+    protected destroy(): void {
         super.destroy();
         this.destroyColumnComps();
     }

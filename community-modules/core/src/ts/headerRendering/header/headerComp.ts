@@ -69,6 +69,12 @@ export class HeaderComp extends Component implements IHeaderComp {
 
     private lastMovingChanged = 0;
 
+    // this is a user component, and IComponent has "public destroy()" as part of the interface.
+    // so we need to override destroy() just to make the method public.
+    public destroy(): void {
+        super.destroy();
+    }
+
     public init(params: IHeaderParams): void {
         let template:string = _.firstExistingValue(
             params.template,
