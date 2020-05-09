@@ -34,6 +34,7 @@
     "@vue/cli-plugin-unit-jest": "^3.11.0",
     "@vue/cli-service": "^3.11.0",
     "ag-grid-community": "~23.1.0",
+    "@ag-grid-community/vue": "~23.1.0",
     "gulp": "^4.0.0",
     "gulp-replace": "^1.0.0",
     "gulp-typescript": "^5.0.0",

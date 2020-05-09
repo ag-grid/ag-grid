@@ -23,9 +23,8 @@ interface IFilterComp {
     // parameters.
     init(params: IFilterParams): void;
 
-    // Returns the GUI for this filter. The GUI can be a) a string of HTML or b) a DOM element or
-    // node.
-    getGui(): any;
+    // Returns the DOM element for this filter
+    getGui(): HTMLElement;
 
     // Return true if the filter is active. If active then 1) the grid will show the filter icon in the column
     // header and 2) the filter will be included in the filtering of the data.

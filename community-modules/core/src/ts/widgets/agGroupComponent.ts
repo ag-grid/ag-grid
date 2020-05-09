@@ -25,6 +25,8 @@ export interface AgGroupComponentParams {
 }
 
 export class AgGroupComponent extends Component {
+    public static EVENT_EXPANDED = 'expanded';
+    public static EVENT_COLLAPSED = 'collapsed';
 
     private items: GroupItem[];
     private title: string;
@@ -162,15 +164,9 @@ export class AgGroupComponent extends Component {
         _.setDisplayed(this.eContainer, expanded);
 
         if (this.expanded) {
-            const event = {
-                type: 'expanded',
-            };
-            this.dispatchEvent(event);
+            this.dispatchEvent({ type: AgGroupComponent.EVENT_EXPANDED });
         } else {
-            const event = {
-                type: 'collapsed',
-            };
-            this.dispatchEvent(event);
+            this.dispatchEvent({ type: AgGroupComponent.EVENT_COLLAPSED });
         }
 
         return this;

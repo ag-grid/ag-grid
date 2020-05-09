@@ -76,6 +76,12 @@ export class PopupEditorWrapper extends PopupComponent implements ICellEditorCom
         }
     }
 
+    public getPopupPosition(): string {
+        if (this.cellEditor.getPopupPosition) {
+            return this.cellEditor.getPopupPosition();
+        }
+    }
+
     public focusIn(): void {
         if (this.cellEditor.focusIn) {
             this.cellEditor.focusIn();

@@ -185,16 +185,3 @@ describe('closeOnApply', () => {
         expect(hidePopup).not.toHaveBeenCalled();
     });
 });
-
-describe('afterGuiAttached', () => {
-    it('publishes event for filter opened', () => {
-        const params = mock<IProvidedFilterParams>();
-        const filter = new TestFilter(params);
-        let eventPublished = false;
-
-        filter.addEventListener(ProvidedFilter.EVENT_FILTER_OPENED, () => eventPublished = true);
-        filter.afterGuiAttached({});
-
-        expect(eventPublished).toBe(true);
-    });
-});

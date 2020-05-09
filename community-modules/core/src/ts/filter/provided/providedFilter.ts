@@ -23,8 +23,6 @@ export interface IProvidedFilterParams extends IFilterParams {
  * extend this class.
  */
 export abstract class ProvidedFilter extends Component implements IFilterComp {
-    public static EVENT_FILTER_OPENED = 'FILTER_OPENED';
-
     private static NEW_ROWS_ACTION_KEEP = 'keep';
     private static NEW_ROWS_ACTION_CLEAR = 'clear';
 
@@ -244,7 +242,6 @@ export abstract class ProvidedFilter extends Component implements IFilterComp {
 
     public afterGuiAttached(params: IAfterGuiAttachedParams): void {
         this.hidePopup = params.hidePopup;
-        this.dispatchEvent({ type: ProvidedFilter.EVENT_FILTER_OPENED });
     }
 
     // static, as used by floating filter also

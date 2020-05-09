@@ -197,7 +197,7 @@ beforeMount() {
         {headerName: 'Price', field: 'price'}
     ];
 
-    fetch('https://api.myjson.com/bins/15psn9')
+    fetch('https://raw.githubusercontent.com/ag-grid/ag-grid/master/grid-packages/ag-grid-docs/src/sample-data/rowData.json')
         .then(result =&gt; result.json())
         .then(rowData =&gt; this.rowData = rowData);
 }
@@ -245,7 +245,7 @@ We will leave the flag toggle state and persistence to the backend team. On our 
                 {headerName: 'Price', field: 'price'}
             ];
 
-            fetch('https://api.myjson.com/bins/15psn9')
+            fetch('https://raw.githubusercontent.com/ag-grid/ag-grid/master/grid-packages/ag-grid-docs/src/sample-data/rowData.json')
                 .then(result =&gt; result.json())
                 .then(rowData =&gt; this.rowData = rowData);
         }
@@ -326,7 +326,7 @@ We will leave the flag toggle state and persistence to the backend team. On our 
                 {headerName: 'Price', field: 'price'}
             ];
 
-            fetch('https://api.myjson.com/bins/15psn9')
+            fetch('https://raw.githubusercontent.com/ag-grid/ag-grid/master/grid-packages/ag-grid-docs/src/sample-data/rowData.json')
                 .then(result =&gt; result.json())
                 .then(rowData =&gt; this.rowData = rowData);
         }
@@ -348,26 +348,9 @@ Hopefully you will forgive us this shortcut for the sake of keeping the article 
     for production.
 </div>
 
-<p>In addition to filtering and sorting, <a href="https://www.ag-grid.com/javascript-grid-grouping/">grouping</a> is another  effective way for the user to make sense out of large amounts of data. In our case, the data is not that much. Let's switch to a slightly larger data set:</p>
+<p>In addition to filtering and sorting, <a href="https://www.ag-grid.com/javascript-grid-grouping/">grouping</a> is another  effective way for the user to make sense out of large amounts of data.</p>
 
-<snippet language="diff">
-beforeMount() {
-    this.columnDefs = [
-        {headerName: 'Make', field: 'make', checkboxSelection: true},
-        {headerName: 'Model', field: 'model'},
-        {headerName: 'Price', field: 'price'}
-    ];
-
--    fetch('https://api.myjson.com/bins/15psn9')
--        .then(result => result.json())
--        .then(rowData => this.rowData = rowData);
-+    fetch('https://api.myjson.com/bins/ly7d1')
-+        .then(result => result.json())
-+        .then(rowData => this.rowData = rowData);
-}
-</snippet>
-
-<p>Afterwards, let's enable the enterprise features of ag-grid. Install the additional package:</p>
+<p>Let's enable the enterprise features of ag-grid. Install the additional package:</p>
 
 <snippet language="sh">
 npm install --save ag-grid-enterprise
@@ -454,7 +437,7 @@ import App from './App'
                 }
             };
 
-            fetch('https://api.myjson.com/bins/15psn9')
+            fetch('https://raw.githubusercontent.com/ag-grid/ag-grid/master/grid-packages/ag-grid-docs/src/sample-data/rowData.json')
                 .then(result =&gt; result.json())
                 .then(rowData =&gt; this.rowData = rowData);
         }

@@ -22,15 +22,15 @@ interface ITooltipComp {
     // The init(params) method is called on the tooltip component once. See below for details on the parameters.
     init(params: ITooltipParams): void;
 
-    // Returns the GUI for this tooltip. The GUI can be either a string of HTML or a DOM element/node.
-    getGui(): any;
+    // Returns the DOM element for this tooltip
+    getGui(): HTMLElement;
 }
 SNIPPET
 , 'ts') ?>
 
 <?= createSnippet(<<<SNIPPET
 interface ITooltipParams {
-    location: string; // what part of the application is showing the tooltip, eg 'cell', 'header', 'menuItem' etc
+    location: string; // what part of the application is showing the tooltip, e.g. 'cell', 'header', 'menuItem' etc
     api: any; // the grid API
     columnApi: any; // the column API
     colDef: any; // the grid colDef

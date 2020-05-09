@@ -9,7 +9,8 @@
     "build-cjs": "tsc -p tsconfig.json",
     "build-es6": "tsc -p tsconfig.es6.json",
     "package": "node ../../module-build/rollup/build.js",
-    "build": "npm run build-cjs && npm run build-es6"
+    "build": "npm run build-cjs && npm run build-es6 && npm run hash",
+    "hash": "sh ../../scripts/hashDirectory.sh > .hash"
   },
   "repository": {
     "type": "git",

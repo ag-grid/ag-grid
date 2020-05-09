@@ -1,7 +1,7 @@
-import { Component } from "./component";
-import { Autowired, PostConstruct } from "../context/context";
-import { GridOptionsWrapper } from "../gridOptionsWrapper";
-import { _ } from "../utils";
+import { Component } from './component';
+import { Autowired, PostConstruct } from '../context/context';
+import { GridOptionsWrapper } from '../gridOptionsWrapper';
+import { _ } from '../utils';
 
 export interface VirtualListModel {
     getRowCount(): number;
@@ -11,13 +11,13 @@ export interface VirtualListModel {
 export class VirtualList extends Component {
     private model: VirtualListModel;
     private eListContainer: HTMLElement;
-    private rowsInBodyContainer: any = {};
+    private renderedRows = new Map<number, { rowComponent: Component, eDiv: HTMLDivElement; }>();
     private componentCreator: (value: any) => Component;
     private rowHeight = 20;
 
     @Autowired('gridOptionsWrapper') gridOptionsWrapper: GridOptionsWrapper;
 
-    constructor(private cssIdentifier = 'default') {
+    constructor(private readonly cssIdentifier = 'default') {
         super(VirtualList.getTemplate(cssIdentifier));
     }
 
@@ -87,68 +87,54 @@ export class VirtualList extends Component {
     }
 
     public refresh(): void {
-        if (_.missing(this.model)) { return; }
+        if (this.model == null) { return; }
 
         this.eListContainer.style.height = `${this.model.getRowCount() * this.rowHeight}px`;
 
-        this.clearVirtualRows();
-        this.drawVirtualRows();
+        // ensure height is applied before attempting to redraw rows
+        setTimeout(() => {
+            this.clearVirtualRows();
+            this.drawVirtualRows();
+        }, 0);
     }
 
     private clearVirtualRows() {
-        const rowsToRemove = Object.keys(this.rowsInBodyContainer);
-        this.removeVirtualRows(rowsToRemove);
+        this.renderedRows.forEach((_, rowIndex) => this.removeRow(rowIndex));
     }
 
     private drawVirtualRows() {
-        const topPixel = this.getGui().scrollTop;
-        const bottomPixel = topPixel + this.getGui().offsetHeight;
-
+        const gui = this.getGui();
+        const topPixel = gui.scrollTop;
+        const bottomPixel = topPixel + gui.offsetHeight;
         const firstRow = Math.floor(topPixel / this.rowHeight);
         const lastRow = Math.floor(bottomPixel / this.rowHeight);
 
         this.ensureRowsRendered(firstRow, lastRow);
     }
 
-    private ensureRowsRendered(start: any, finish: any) {
-        // at the end, this array will contain the items we need to remove
-        const rowsToRemove = Object.keys(this.rowsInBodyContainer);
-
-        // add in new rows
-        for (let rowIndex = start; rowIndex <= finish; rowIndex++) {
-            // see if item already there, and if yes, take it out of the 'to remove' array
-            if (rowsToRemove.indexOf(rowIndex.toString()) >= 0) {
-                rowsToRemove.splice(rowsToRemove.indexOf(rowIndex.toString()), 1);
-                continue;
+    private ensureRowsRendered(start: number, finish: number) {
+        // remove any rows that are no longer required
+        this.renderedRows.forEach((_, rowIndex) => {
+            if (rowIndex < start || rowIndex > finish) {
+                this.removeRow(rowIndex);
             }
+        });
+
+        // insert any required new rows
+        for (let rowIndex = start; rowIndex <= finish; rowIndex++) {
+            if (this.renderedRows.has(rowIndex)) { continue; }
 
             // check this row actually exists (in case overflow buffer window exceeds real data)
-            if (this.model.getRowCount() > rowIndex) {
+            if (rowIndex < this.model.getRowCount()) {
                 const value = this.model.getRow(rowIndex);
                 this.insertRow(value, rowIndex);
             }
         }
-
-        // at this point, everything in our 'rowsToRemove' . . .
-        this.removeVirtualRows(rowsToRemove);
     }
 
-    // takes array of row id's
-    private removeVirtualRows(rowsToRemove: string[]) {
-        rowsToRemove.forEach(index => {
-            const component = this.rowsInBodyContainer[index];
-            this.eListContainer.removeChild(component.eDiv);
-
-            if (component.rowComponent.destroy) {
-                component.rowComponent.destroy();
-            }
-
-            delete this.rowsInBodyContainer[index];
-        });
-    }
-
-    private insertRow(value: any, rowIndex: any) {
+    private insertRow(value: any, rowIndex: number) {
         const eDiv = document.createElement('div');
+
         _.addCssClass(eDiv, 'ag-virtual-list-item');
         _.addCssClass(eDiv, `ag-${this.cssIdentifier}-virtual-list-item`);
 
@@ -156,13 +142,23 @@ export class VirtualList extends Component {
         eDiv.style.top = `${this.rowHeight * rowIndex}px`;
 
         const rowComponent = this.componentCreator(value);
+
         eDiv.appendChild(rowComponent.getGui());
 
         this.eListContainer.appendChild(eDiv);
-        this.rowsInBodyContainer[rowIndex] = {
-            rowComponent: rowComponent,
-            eDiv: eDiv
-        };
+        this.renderedRows.set(rowIndex, { rowComponent, eDiv });
+    }
+
+    private removeRow(rowIndex: number) {
+        const component = this.renderedRows.get(rowIndex);
+
+        this.eListContainer.removeChild(component.eDiv);
+
+        if (component.rowComponent.destroy) {
+            component.rowComponent.destroy();
+        }
+
+        this.renderedRows.delete(rowIndex);
     }
 
     private addScrollListener() {

@@ -87,6 +87,7 @@
     "awesome-typescript-loader": "5.2.1",
     "babel-loader": "8.0.5",
     "bootstrap": "4.4.1",
+    "execa": "^3.2.0",
     "cache-loader": "1.2.2",
     "core-js": "^2.6.5",
     "css-loader": "1.0.0",

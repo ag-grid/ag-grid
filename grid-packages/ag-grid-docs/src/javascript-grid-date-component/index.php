@@ -34,11 +34,11 @@ SNIPPET
 interface IDateComp {
     // Mandatory methods
 
-    // The init(params) method is called on the filter once. See below for details on the parameters.
-    init(params: IFilterParams): void;
+    // The init(params) method is called on the component once. See below for details on the parameters.
+    init(params: IDateParams): void;
 
-    // Returns the GUI for this filter. The GUI can be a string of HTML, or a DOM element or node.
-    getGui(): any;
+    // Returns the DOM element for this component
+    getGui(): HTMLElement;
 
     // Returns the current date represented by this editor
     getDate(): Date;

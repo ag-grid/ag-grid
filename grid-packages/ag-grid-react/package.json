@@ -39,6 +39,7 @@
     "@types/react": "16.9.2",
     "@types/react-dom": "16.9.0",
     "ag-grid-community": "~23.1.0",
+    "@ag-grid-community/react": "~23.1.0",
     "babel-preset-react-app": "^9.0.1",
     "cypress": "3.0.1",
     "enzyme": "^3.10.0",

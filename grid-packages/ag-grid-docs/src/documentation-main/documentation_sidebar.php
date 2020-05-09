@@ -1,5 +1,5 @@
-<div id="side-bar-announcements">
-</div>
+<!-- <div id="side-bar-announcements">
+</div> -->
 
 <div class="card card-highlight mb-4">
     <div class="card-body">

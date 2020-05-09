@@ -202,6 +202,3 @@ module.exports = {
         }
     }
 };
-
-
-// module.exports.updatePropertiesSrc = updatePropertiesSrc;

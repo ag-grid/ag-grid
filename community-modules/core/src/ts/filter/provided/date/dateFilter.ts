@@ -1,11 +1,12 @@
-import { IDateParams } from "../../../rendering/dateComponent";
-import { RefSelector } from "../../../widgets/componentAnnotations";
-import { Autowired } from "../../../context/context";
-import { UserComponentFactory } from "../../../components/framework/userComponentFactory";
-import { _ } from "../../../utils";
-import { DateCompWrapper } from "./dateCompWrapper";
-import { ConditionPosition, ISimpleFilterModel, SimpleFilter } from "../simpleFilter";
-import { Comparator, IScalarFilterParams, ScalarFilter } from "../scalarFilter";
+import { IDateParams } from '../../../rendering/dateComponent';
+import { RefSelector } from '../../../widgets/componentAnnotations';
+import { Autowired } from '../../../context/context';
+import { UserComponentFactory } from '../../../components/framework/userComponentFactory';
+import { DateCompWrapper } from './dateCompWrapper';
+import { ConditionPosition, ISimpleFilterModel, SimpleFilter } from '../simpleFilter';
+import { Comparator, IScalarFilterParams, ScalarFilter } from '../scalarFilter';
+import { serialiseDate, parseDateTimeFromString } from '../../../utils/date';
+import { setDisplayed } from '../../../utils/dom';
 
 // The date filter model takes strings, although the filter actually works with dates. This is because a Date object
 // won't convert easily to JSON. When the model is used for doing the filtering, it's converted to a Date object.
@@ -59,14 +60,14 @@ export class DateFilter extends ScalarFilter<DateFilterModel, Date> {
         //       a date from the UI, it will have timezone info in it. This is lost when creating
         //       the model. When we recreate the date again here, it's without a timezone.
         return {
-            from: _.parseDateTimeFromString(filterModel.dateFrom),
-            to: _.parseDateTimeFromString(filterModel.dateTo)
+            from: parseDateTimeFromString(filterModel.dateFrom),
+            to: parseDateTimeFromString(filterModel.dateTo)
         };
     }
 
     protected setValueFromFloatingFilter(value: string): void {
         if (value != null) {
-            const dateFrom = _.parseDateTimeFromString(value);
+            const dateFrom = parseDateTimeFromString(value);
             this.dateCondition1FromComp.setDate(dateFrom);
         } else {
             this.dateCondition1FromComp.setDate(null);
@@ -79,7 +80,7 @@ export class DateFilter extends ScalarFilter<DateFilterModel, Date> {
 
     protected setConditionIntoUi(model: DateFilterModel, position: ConditionPosition): void {
         const [dateFrom, dateTo] = model ?
-            [_.parseDateTimeFromString(model.dateFrom), _.parseDateTimeFromString(model.dateTo)] :
+            [parseDateTimeFromString(model.dateFrom), parseDateTimeFromString(model.dateTo)] :
             [null, null];
 
         const [compFrom, compTo] = this.getFromToComponents(position);
@@ -185,12 +186,10 @@ export class DateFilter extends ScalarFilter<DateFilterModel, Date> {
         const positionOne = position === ConditionPosition.One;
         const type = positionOne ? this.getCondition1Type() : this.getCondition2Type();
         const [compFrom, compTo] = this.getFromToComponents(position);
-        const dateFrom = compFrom.getDate();
-        const dateTo = compTo.getDate();
 
         return {
-            dateFrom: `${_.serialiseDate(dateFrom)} ${_.serialiseTime(dateFrom)}`,
-            dateTo: `${_.serialiseDate(dateTo)} ${_.serialiseTime(dateTo)}`,
+            dateFrom: serialiseDate(compFrom.getDate()),
+            dateTo: serialiseDate(compTo.getDate()),
             type,
             filterType: DateFilter.FILTER_TYPE
         };
@@ -212,12 +211,12 @@ export class DateFilter extends ScalarFilter<DateFilterModel, Date> {
         this.resetPlaceholder();
 
         const condition1Type = this.getCondition1Type();
-        _.setDisplayed(this.eCondition1PanelFrom, this.showValueFrom(condition1Type));
-        _.setDisplayed(this.eCondition1PanelTo, this.showValueTo(condition1Type));
+        setDisplayed(this.eCondition1PanelFrom, this.showValueFrom(condition1Type));
+        setDisplayed(this.eCondition1PanelTo, this.showValueTo(condition1Type));
 
         const condition2Type = this.getCondition2Type();
-        _.setDisplayed(this.eCondition2PanelFrom, this.showValueFrom(condition2Type));
-        _.setDisplayed(this.eCondition2PanelTo, this.showValueTo(condition2Type));
+        setDisplayed(this.eCondition2PanelFrom, this.showValueFrom(condition2Type));
+        setDisplayed(this.eCondition2PanelTo, this.showValueTo(condition2Type));
     }
 
     private getFromToComponents(position: ConditionPosition): [DateCompWrapper, DateCompWrapper] {
