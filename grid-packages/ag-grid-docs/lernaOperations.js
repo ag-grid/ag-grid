@@ -218,11 +218,7 @@ const getFlattenedBuildChainInfo = async () => {
     const packageNames = Object.keys(buildChainInfo.buildChains);
     packageNames.forEach(packageName => {
         flattenedBuildChainInfo[packageName] = flattenArray(Object.values(buildChainInfo.buildChains[packageName]));
-
-        // the first element is always this package itself - we don't need this for the flattened build chain
-        flattenedBuildChainInfo[packageName].shift();
     })
-
     return flattenedBuildChainInfo;
 }
 
