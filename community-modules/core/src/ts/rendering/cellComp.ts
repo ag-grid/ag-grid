@@ -2064,9 +2064,9 @@ export class CellComp extends Component implements TooltipParentComp {
             return;
         }
 
+        const oldValue = this.getValue();
         let newValueExists = false;
         let newValue: any;
-        let oldValue = this.getValue();
 
         if (!cancel) {
             // also have another option here to cancel after editing, so for example user could have a popup editor and
@@ -2104,25 +2104,24 @@ export class CellComp extends Component implements TooltipParentComp {
             if (this.usingWrapper) {
                 // if wrapper, then put the wrapper back
                 this.getGui().appendChild(this.eCellWrapper);
-            } else {
+            } else if (this.cellRenderer) {
                 // if cellRenderer, then put the gui back in. if the renderer has
                 // a refresh, it will be called. however if it doesn't, then later
                 // the renderer will be destroyed and a new one will be created.
-                if (this.cellRenderer) {
-                    // we know it's a dom element (not a string) because we converted
-                    // it after the gui was attached if it was a string.
-                    const eCell = this.cellRendererGui as HTMLElement;
+                // we know it's a dom element (not a string) because we converted
+                // it after the gui was attached if it was a string.
+                const eCell = this.cellRendererGui as HTMLElement;
 
-                    // can be null if cell was previously null / contained empty string,
-                    // this will result in new value not being rendered.
-                    if (eCell) {
-                        this.getGui().appendChild(eCell);
-                    }
+                // can be null if cell was previously null / contained empty string,
+                // this will result in new value not being rendered.
+                if (eCell) {
+                    this.getGui().appendChild(eCell);
                 }
             }
         }
 
         this.setInlineEditingClass();
+        this.refreshHandle();
 
         if (newValueExists && newValue !== oldValue) {
             // we suppressRefreshCell because the call to rowNode.setDataValue() results in change detection
