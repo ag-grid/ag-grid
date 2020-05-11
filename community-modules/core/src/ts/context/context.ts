@@ -2,6 +2,7 @@ import { ILogger } from "../iLogger";
 import { Component } from "../widgets/component";
 import { _ } from "../utils";
 import {IComponent} from "../interfaces/iComponent";
+import {RowComp} from "../rendering/rowComp";
 
 // steps in booting up:
 // 1. create all beans
@@ -258,15 +259,24 @@ export class Context {
         });
     }
 
-    private callLifeCycleMethodsOneBean(beanInstance: any, lifeCycleMethod: string): string[] {
-        const res: string[] = [];
+    private callLifeCycleMethodsOneBean(beanInstance: any, lifeCycleMethod: string, methodToIgnore?: string): void {
+        // putting all methods into a map removes duplicates
+        const allMethods: {[methodName: string]: boolean} = {};
+
+        // dump methods from each level of the metadata hierarchy
         this.forEachMetaDataInHierarchy(beanInstance, (metaData: any) => {
             const methods = metaData[lifeCycleMethod] as string[];
-            if (!methods) { return; }
-            methods.forEach(methodName => beanInstance[methodName]());
-            res.push.apply(res, methods);
+            if (methods) {
+                methods.forEach(methodName => {
+                    if (methodName!=methodToIgnore) {
+                        allMethods[methodName] = true;
+                    }
+                });
+            }
         });
-        return res;
+
+        const allMethodsList = Object.keys(allMethods);
+        allMethodsList.forEach(methodName => beanInstance[methodName]());
     }
 
     public getBean(name: string): any {
@@ -293,24 +303,20 @@ export class Context {
         return undefined;
     }
 
-    public destroyBeans(beans: any[]): void {
-        this.callLifeCycleMethods(beans, 'preDestroyMethods');
+    public destroyBeans<T extends any>(beans: T[]): T[] {
+        if (!beans) { return []; }
+
+        beans.forEach( bean => {
+            this.callLifeCycleMethodsOneBean(bean, 'preDestroyMethods', 'destroy')
+
+            // call destroy() explicitly if it exists
+            if (bean.destroy) {
+                bean.destroy();
+            }
+        });
+
+        return [];
     }
-
-    // cellRenderer, cellEditor, dateCompWrapper, groupCellRenderer
-    public destroyUserBean<T extends any>(comp: T): T {
-        if (!comp) { return undefined; }
-
-        const methods = this.callLifeCycleMethodsOneBean(comp, 'preDestroyMethods');
-
-        const destroyMethodDoesntHaveAnnotation = comp.destroy && methods.indexOf('destroy')<0;
-        if (destroyMethodDoesntHaveAnnotation) {
-            comp.destroy();
-        }
-
-        return undefined;
-    }
-
 }
 
 // taken from: http://stackoverflow.com/questions/3362471/how-can-i-call-a-javascript-constructor-using-call-or-apply

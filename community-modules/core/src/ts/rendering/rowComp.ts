@@ -886,7 +886,7 @@ export class RowComp extends Component {
                     eRow.appendChild(gui);
                     cellRendererCallback(cellRenderer);
                 } else {
-                    this.beans.context.destroyUserBean(cellRenderer);
+                    this.beans.context.destroyBean(cellRenderer);
                 }
             };
 

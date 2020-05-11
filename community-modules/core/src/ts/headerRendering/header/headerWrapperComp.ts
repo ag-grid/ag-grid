@@ -174,7 +174,7 @@ export class HeaderWrapperComp extends Component {
     private afterHeaderCompCreated(displayName: string, headerComp: IHeaderComp): void {
         this.getGui().appendChild(headerComp.getGui());
         this.addDestroyFunc(()=> {
-            this.getContext().destroyUserBean(headerComp);
+            this.getContext().destroyBean(headerComp);
         });
 
         this.setupMove(headerComp.getGui(), displayName);

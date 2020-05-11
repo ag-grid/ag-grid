@@ -76,7 +76,7 @@ export class StatusBar extends Component {
                 componentDetails.forEach(componentDetail => {
                     componentDetail.promise.then((component: IStatusPanelComp) => {
                         const destroyFunc = () => {
-                            this.getContext().destroyUserBean(component);
+                            this.getContext().destroyBean(component);
                         };
 
                         if (this.isAlive()) {

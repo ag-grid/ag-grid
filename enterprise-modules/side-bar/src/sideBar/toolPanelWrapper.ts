@@ -62,7 +62,7 @@ export class ToolPanelWrapper extends Component {
 
         this.getGui().appendChild(compInstance.getGui());
         this.addDestroyFunc(()=> {
-            this.getContext().destroyUserBean(compInstance);
+            this.getContext().destroyBean(compInstance);
         });
     }
 

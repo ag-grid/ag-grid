@@ -150,7 +150,7 @@ export class TooltipFeature extends BeanStub {
 
         window.setTimeout(() => {
             tooltipPopupDestroyFunc();
-            this.getContext().destroyUserBean(tooltipComp);
+            this.getContext().destroyBean(tooltipComp);
         }, this.FADE_OUT_TOOLTIP_TIMEOUT);
 
         this.tooltipPopupDestroyFunc = undefined;
@@ -199,7 +199,7 @@ export class TooltipFeature extends BeanStub {
         const compNoLongerNeeded = this.state !== TooltipStates.SHOWING || this.tooltipInstanceCount !== tooltipInstanceCopy;
 
         if (compNoLongerNeeded) {
-            this.getContext().destroyUserBean(tooltipComp);
+            this.getContext().destroyBean(tooltipComp);
             return;
         }
 

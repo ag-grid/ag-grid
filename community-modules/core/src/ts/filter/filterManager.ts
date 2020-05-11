@@ -565,7 +565,7 @@ export class FilterManager extends BeanStub {
         filterWrapper.filterPromise.then(filter => {
             filter.setModel(null);
 
-            this.getContext().destroyUserBean(filter);
+            this.getContext().destroyBean(filter);
 
             filterWrapper.column.setFilterActive(false, source);
 

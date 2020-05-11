@@ -195,7 +195,7 @@ export class RichSelectCellEditor extends PopupComponent implements ICellEditor 
 
         if (promise) {
             promise.then(renderer => {
-                this.addDestroyFunc(() => this.getContext().destroyUserBean(renderer))
+                this.addDestroyFunc(() => this.getContext().destroyBean(renderer))
             });
         } else {
             if (_.exists(this.selectedValue)) {

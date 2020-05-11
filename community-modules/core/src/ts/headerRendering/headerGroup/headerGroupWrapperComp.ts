@@ -176,7 +176,7 @@ export class HeaderGroupWrapperComp extends Component {
     private afterHeaderCompCreated(displayName: string, headerGroupComp: IHeaderGroupComp): void {
         this.getGui().appendChild(headerGroupComp.getGui());
         this.addDestroyFunc(()=> {
-            this.getContext().destroyUserBean(headerGroupComp);
+            this.getContext().destroyBean(headerGroupComp);
         });
 
         this.setupMove(headerGroupComp.getGui(), displayName);
