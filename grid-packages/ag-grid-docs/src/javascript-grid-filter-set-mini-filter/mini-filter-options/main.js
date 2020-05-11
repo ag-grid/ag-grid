@@ -1,14 +1,21 @@
 var gridOptions = {
     columnDefs: [
         // set filters
+        { field: 'athlete', filter: 'agSetColumnFilter', },
         {
-            field: 'athlete',
+            field: 'country',
             filter: 'agSetColumnFilter',
             filterParams: {
                 suppressMiniFilter: true,
             }
         },
-        { field: 'country', filter: 'agSetColumnFilter' },
+        {
+            field: 'sport',
+            filter: 'agSetColumnFilter',
+            filterParams: {
+                applyMiniFilterWhileTyping: true,
+            }
+        },
 
         // number filters
         { field: 'gold', filter: 'agNumberColumnFilter' },

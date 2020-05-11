@@ -27,4 +27,5 @@ export interface ISetFilterParams extends IProvidedFilterParams {
     /** @deprecated */ selectAllOnMiniFilter?: boolean;
     /** @deprecated */ syncValuesLikeExcel?: boolean;
     showTooltips?: boolean;
+    applyMiniFilterWhileTyping?: boolean;
 }

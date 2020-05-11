@@ -17,16 +17,42 @@ include '../documentation-main/documentation_header.php';
 </div>
 
 <p>
-    Entering text into Mini Filter filters the Filter List inside the Set Filter only. In other words, it narrows
-    down the presented list of values shown inside the Set Filter, but does not filter the data inside
-    the grid.
+    The Mini Filter allows the user to search for particular values in the Filter List. Entering text into
+    the Mini Filter will narrow down the presented list of values shown inside the Set Filter, but by default will not
+    filter the data inside the grid.
 </p>
 
 <p>
-    When the <code>Enter</code> key is pressed while on the Mini Filter, the Set Filter will exclusively select all Filter Values
-    that pass the Mini Filter and apply the filter immediately (even if an Apply Button is available, hitting
-    <code>Enter</code> applies the filter).
+    When the <code>Enter</code> key is pressed while on the Mini Filter, the Set Filter will exclusively select all
+    values in the Filter List that pass the Mini Filter and apply the filter immediately (note that even if an Apply
+    Button is used, hitting <code>Enter</code> applies the filter).
 </p>
+
+<p>
+    Alternatively, you can choose to have the Mini Filter applied as the user is typing, i.e. as the Filter List is
+    filtered, the Set Filter will be applied as described above so that the results in the grid will also be filtered
+    at the same time. To enable this behaviour, set <code>applyMiniFilterWhileTyping&nbsp;=&nbsp;true</code>.
+</p>
+
+<h2>Mini Filter Options</h2>
+
+<p>
+    The following example demonstrates different Mini Filter options. Note the following:
+</p>
+
+<ul class="content">
+    <li>
+        The Athlete column's Set Filter shows the Mini Filter with default behaviour.
+    </li>
+    <li>
+        The Country column's Set Filter does not have a Mini Filter as <?= inlineCode('filterParams.suppressMiniFilter = true') ?>.
+    </li>
+    <li>
+        The Sport column's Set Filter applies the Mini Filter as you type as <?= inlineCode('filterParams.applyMiniFilterWhileTyping = true') ?>.
+    </li>
+</ul>
+
+<?= grid_example('Mini Filter Options', 'mini-filter-options', 'generated', ['enterprise' => true, 'exampleHeight' => 565, 'modules' => ['clientside', 'setfilter', 'menu', 'columnpanel']]) ?>
 
 <h2>Custom Mini Filter Searches</h2>
 
@@ -83,20 +109,6 @@ SNIPPET
 </ul>
 
 <?= grid_example('Mini Filter Text Formatter', 'mini-filter-text-formatter', 'generated', ['enterprise' => true, 'exampleHeight' => 565, 'modules' => ['clientside', 'setfilter', 'menu', 'columnpanel']]) ?>
-
-<h2>Mini Filter Options</h2>
-
-<p>
-    The following example demonstrates the Mini Filter options. Note the following:
-</p>
-
-<ul class="content">
-    <li>
-        The Athlete column's Set Filter does not have a Mini Filter as <code>filterParams.suppressMiniFilter=true</code>.
-    </li>
-</ul>
-
-<?= grid_example('Mini Filter Options', 'mini-filter-options', 'generated', ['enterprise' => true, 'exampleHeight' => 565, 'modules' => ['clientside', 'setfilter', 'menu', 'columnpanel']]) ?>
 
 <h2>Next Up</h2>
 
