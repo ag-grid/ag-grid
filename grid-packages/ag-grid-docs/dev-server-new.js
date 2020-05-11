@@ -458,21 +458,22 @@ function updateUtilsSystemJsMappingsForFrameworks(gridCommunityModules, gridEnte
     fs.writeFileSync(utilityFilename, updatedUtilFileContents, 'UTF-8');
 }
 
-const rebuildPackagesBasedOnChangeState = async () => {
-    console.log("Rebuilding non-core packages...");
+const rebuildPackagesBasedOnChangeState = async (skipSelf = true) => {
     const modulesState = readModulesState()
 
     const changedPackages = flattenArray(Object.keys(modulesState)
         .filter(key => modulesState[key].moduleChanged)
-        .map(changedPackage => lernaBuildChainInfo[changedPackage]));
+        .map(changedPackage => skipSelf ? lernaBuildChainInfo[changedPackage].slice(1) : lernaBuildChainInfo[changedPackage]));
 
     const lernaPackagesToRebuild = new Set();
     changedPackages.forEach(lernaPackagesToRebuild.add, lernaPackagesToRebuild);
 
-    if(changedPackages.length > 0) {
+    if (changedPackages.length > 0) {
+        console.log("Rebuilding changed packages...");
+
         await buildPackages(changedPackages)
 
-        if(changedPackages.includes("@ag-grid-community/core")) {
+        if (changedPackages.includes("@ag-grid-community/core")) {
             await buildCss();
         }
     } else {
@@ -542,7 +543,7 @@ const buildCoreModules = async (exitOnError) => {
         return result.status;
     }
 
-    await rebuildPackagesBasedOnChangeState();
+    await rebuildPackagesBasedOnChangeState(false);
 
     // because we use TSC to build the core modules (and not npm) we need to manually update the changed
     // hashes on build
@@ -633,9 +634,31 @@ const addWebpackMiddleware = (app) => {
     addWebpackMiddlewareForConfig(app, 'webpack.site.config.js', '/dist', 'site bundle');
 };
 
-const watchModules = async () => {
+const watchCoreModulesAndCss = async () => {
     watchCss();
     await watchCoreModules();
+};
+
+const watchFrameworkModules = async () => {
+    console.log("Watching Framework Modules");
+    const moduleFrameworks = ['angular', 'vue', 'react'];
+    const moduleRootDirectory = WINDOWS ? `..\\..\\community-modules\\` : `../../community-modules/`;
+    moduleFrameworks.forEach(moduleFramework => {
+        const frameworkDirectory = `${moduleRootDirectory}${moduleFramework}`
+        chokidar.watch([`${frameworkDirectory}`], {
+            ignored: [
+                '**/node_modules/**/*',
+                '**/lib/**/*',
+                '**/dist/**/*',
+                '**/bundles/**/*',
+                '.hash',
+            ],
+            cwd: frameworkDirectory,
+            persistent: true
+        }).on('change', async (data) => {
+            await rebuildPackagesBasedOnChangeState(false);
+        });
+    })
 };
 
 const serveModuleAndPackages = (app, gridCommunityModules, gridEnterpriseModules, chartCommunityModules) => {
@@ -706,7 +729,8 @@ module.exports = async (done) => {
             updateWebpackConfigWithBundles(gridCommunityModules, gridEnterpriseModules);
 
             await performInitialBuild();
-            await watchModules();
+            await watchCoreModulesAndCss();
+            watchFrameworkModules();
 
             addWebpackMiddleware(app);
             symlinkModules(gridCommunityModules, gridEnterpriseModules, chartCommunityModules);
