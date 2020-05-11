@@ -27,10 +27,11 @@ import {
     PinnedRowModel,
     _,
     PreDestroy,
+    BeanStub
 } from "@ag-grid-community/core";
 
 @Bean('rangeController')
-export class RangeController implements IRangeController {
+export class RangeController extends BeanStub implements IRangeController {
 
     @Autowired('loggerFactory') private loggerFactory: LoggerFactory;
     @Autowired('rowModel') private rowModel: IRowModel;
@@ -59,7 +60,6 @@ export class RangeController implements IRangeController {
     private dragging = false;
     private draggingCell?: CellPosition;
     private draggingRange?: CellRange;
-    private events: (() => void)[] = [];
 
     public autoScrollService: AutoScrollService;
 
@@ -72,25 +72,13 @@ export class RangeController implements IRangeController {
     private init(): void {
         this.logger = this.loggerFactory.create('RangeController');
 
-        this.events = [
-            this.eventService.addEventListener(Events.EVENT_COLUMN_EVERYTHING_CHANGED, this.removeAllCellRanges.bind(this)),
-            this.eventService.addEventListener(Events.EVENT_COLUMN_PIVOT_MODE_CHANGED, this.removeAllCellRanges.bind(this)),
-            this.eventService.addEventListener(Events.EVENT_COLUMN_ROW_GROUP_CHANGED, this.removeAllCellRanges.bind(this)),
-
-            this.eventService.addEventListener(Events.EVENT_COLUMN_GROUP_OPENED, this.refreshLastRangeStart.bind(this)),
-            this.eventService.addEventListener(Events.EVENT_COLUMN_MOVED, this.refreshLastRangeStart.bind(this)),
-            this.eventService.addEventListener(Events.EVENT_COLUMN_PINNED, this.refreshLastRangeStart.bind(this)),
-
-            this.eventService.addEventListener(Events.EVENT_COLUMN_VISIBLE, this.onColumnVisibleChange.bind(this))
-        ]
-    }
-
-    @PreDestroy
-    private destroy(): void {
-        if (this.events.length) {
-            this.events.forEach(func => func());
-            this.events = [];
-        }
+        this.addDestroyableEventListener(this.eventService, Events.EVENT_COLUMN_EVERYTHING_CHANGED, this.removeAllCellRanges.bind(this));
+        this.addDestroyableEventListener(this.eventService, Events.EVENT_COLUMN_PIVOT_MODE_CHANGED, this.removeAllCellRanges.bind(this));
+        this.addDestroyableEventListener(this.eventService, Events.EVENT_COLUMN_ROW_GROUP_CHANGED, this.removeAllCellRanges.bind(this));
+        this.addDestroyableEventListener(this.eventService, Events.EVENT_COLUMN_GROUP_OPENED, this.refreshLastRangeStart.bind(this));
+        this.addDestroyableEventListener(this.eventService, Events.EVENT_COLUMN_MOVED, this.refreshLastRangeStart.bind(this));
+        this.addDestroyableEventListener(this.eventService, Events.EVENT_COLUMN_PINNED, this.refreshLastRangeStart.bind(this));
+        this.addDestroyableEventListener(this.eventService, Events.EVENT_COLUMN_VISIBLE, this.onColumnVisibleChange.bind(this));
     }
 
     public onColumnVisibleChange(): void {

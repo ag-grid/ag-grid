@@ -17,16 +17,16 @@ import {
     ColumnApi,
     ModelUpdatedEvent,
     RowRenderer,
-    _
+    _,
+    BeanStub
 } from "@ag-grid-community/core";
 
 @Bean('rowModel')
-export class ViewportRowModel implements IRowModel {
+export class ViewportRowModel extends BeanStub implements IRowModel {
 
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('eventService') private eventService: EventService;
     @Autowired('selectionController') private selectionController: SelectionController;
-    @Autowired('context') private context: Context;
     @Autowired('gridApi') private gridApi: GridApi;
     @Autowired('columnApi') private columnApi: ColumnApi;
     @Autowired('rowRenderer') private rowRenderer: RowRenderer;
@@ -40,7 +40,6 @@ export class ViewportRowModel implements IRowModel {
     private rowNodesByIndex: {[index: number]: RowNode} = {};
     private rowHeight: number;
     private viewportDatasource: IViewportDatasource;
-    private events: (() => void)[] = [];
 
     // we don't implement as lazy row heights is not supported in this row model
     public ensureRowHeightsValid(startPixel: number, endPixel: number, startLimitIndex: number, endLimitIndex: number): boolean { return false; }
@@ -48,9 +47,7 @@ export class ViewportRowModel implements IRowModel {
     @PostConstruct
     private init(): void {
         this.rowHeight = this.gridOptionsWrapper.getRowHeightAsNumber();
-        this.events = [
-            this.eventService.addEventListener(Events.EVENT_VIEWPORT_CHANGED, this.onViewportChanged.bind(this))
-        ]
+        this.addDestroyableEventListener(this.eventService, Events.EVENT_VIEWPORT_CHANGED, this.onViewportChanged.bind(this));
     }
 
     public start(): void {
@@ -74,11 +71,6 @@ export class ViewportRowModel implements IRowModel {
         this.rowRenderer.datasourceChanged();
         this.firstRow = -1;
         this.lastRow = -1;
-
-        if (this.events.length) {
-            this.events.forEach(func => func());
-            this.events = [];
-        }
     }
 
     private calculateFirstRow(firstRenderedRow: number): number {
@@ -263,7 +255,7 @@ export class ViewportRowModel implements IRowModel {
     private createBlankRowNode(rowIndex: number): RowNode {
         const rowNode = new RowNode();
 
-        this.context.createBean(rowNode);
+        this.createBean(rowNode);
         rowNode.setRowHeight(this.rowHeight);
         rowNode.setRowTop(this.rowHeight * rowIndex);
         rowNode.setRowIndex(rowIndex);

@@ -4,8 +4,6 @@ export class NameValueComp extends Component {
 
     @Autowired('gridOptionsWrapper') protected gridOptionsWrapper: GridOptionsWrapper;
 
-    protected events: (() => void)[] = [];
-
     private static TEMPLATE =
         `<div class="ag-status-name-value">  
             <span ref="eLabel"></span>:&nbsp;
@@ -29,11 +27,5 @@ export class NameValueComp extends Component {
 
     public setValue(value: any): void {
         this.eValue.innerHTML = value;
-    }
-
-    protected destroy(): void {
-        this.events.forEach(func => func());
-        this.events = [];
-        super.destroy();
     }
 }

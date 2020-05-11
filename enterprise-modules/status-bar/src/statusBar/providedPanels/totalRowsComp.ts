@@ -21,8 +21,7 @@ export class TotalRowsComp extends NameValueComp implements IStatusPanelComp {
 
         this.setDisplayed(true);
 
-        const listener = this.onDataChanged.bind(this);
-        this.events = [this.eventService.addEventListener(Events.EVENT_MODEL_UPDATED, listener)];
+        this.addDestroyableEventListener(this.eventService, Events.EVENT_MODEL_UPDATED, this.onDataChanged.bind(this));
     }
 
     private onDataChanged() {
