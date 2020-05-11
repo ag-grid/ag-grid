@@ -1085,7 +1085,17 @@ export class GridApi {
 
     public showColumnMenuAfterMouseClick(colKey: string | Column, mouseEvent: MouseEvent | Touch): void {
         // use grid column so works with pivot mode
-        const column = this.columnController.getGridColumn(colKey);
+        let column = this.columnController.getGridColumn(colKey);
+
+        if (!column) {
+            column = this.columnController.getPrimaryColumn(colKey);
+        }
+
+        if (!column) {
+            console.error(`ag-Grid: column '${colKey}' not found`);
+            return;
+        }
+
         this.menuFactory.showMenuAfterMouseEvent(column, mouseEvent);
     }
 
