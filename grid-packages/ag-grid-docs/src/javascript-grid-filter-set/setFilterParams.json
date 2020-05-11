@@ -4,8 +4,8 @@
             "default": false,
             "description": "Set to <code>true</code> to apply the Set Filter immediately when the user is typing in the Mini Filter.",
             "more": {
-                "name": "Mini Filter",
-                "url": "../javascript-grid-filter-set-mini-filter/"
+                "name": "Mini Filter Options",
+                "url": "../javascript-grid-filter-set-mini-filter/#mini-filter-options"
             }
         },
         "cellHeight": {

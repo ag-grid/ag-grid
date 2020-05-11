@@ -473,6 +473,10 @@ SNIPPET
 
 <?= grid_example('Filter Value Tooltips', 'filter-value-tooltips', 'generated', ['enterprise' => true, 'exampleHeight' => 500, 'modules' => ['clientside', 'setfilter', 'menu', 'columnpanel']]) ?>
 
+<h2>API Reference</h2>
+
+<?= createDocumentationFromFile('../javascript-grid-filter-set/setFilterParams.json', 'filterParams', ['cellHeight', 'cellRenderer', 'comparator(a, b)', 'showTooltips', 'suppressSelectAll', 'suppressSorting', 'values']) ?>
+
 <h2>Next Up</h2>
 
 <p>
