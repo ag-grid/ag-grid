@@ -125,8 +125,10 @@
         .ag-picker-field-wrapper {
             @include ag-color-property(background-color, background-color);
             min-height: ag-param(list-item-height);
-            height: ag-param(list-item-height);
             cursor: default;
+        }
+        &:not(.ag-cell-editor) {
+            height: ag-param(list-item-height);
         }
         .ag-picker-field-display {
             margin: 4px;

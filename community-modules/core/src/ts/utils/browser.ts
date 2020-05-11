@@ -71,6 +71,37 @@ export function isIOSUserAgent(): boolean {
     return isIOS;
 }
 
+export function getTabIndex(el: HTMLElement): string | null {
+    if (!el) { return null; }
+
+    const numberTabIndex = el.tabIndex;
+    const tabIndex = el.getAttribute('tabIndex');
+
+    if (isBrowserIE() && numberTabIndex === 0 && el.getAttribute('tabIndex') === null) {
+        const map:{ [key: string]: boolean; } = {
+            a: true,
+            body: true,
+            button: true,
+            frame: true,
+            iframe: true,
+            img: true,
+            input: true,
+            isindex: true,
+            object: true,
+            select: true,
+            textarea: true
+        };
+
+        return map[el.nodeName.toLowerCase()] === true ? '0' : null;
+    }
+
+    if (numberTabIndex === -1 && (tabIndex === null || (tabIndex === '' && !isBrowserFirefox()))) {
+        return null;
+    }
+
+    return numberTabIndex.toString();
+}
+
 export function getMaxDivHeight(): number {
     if (!document.body) { return -1; }
 

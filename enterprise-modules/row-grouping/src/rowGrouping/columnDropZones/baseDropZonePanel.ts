@@ -10,7 +10,6 @@ import {
     EventService,
     GridOptionsWrapper,
     HorizontalDirection,
-    Logger,
     LoggerFactory,
     VerticalDirection,
     _

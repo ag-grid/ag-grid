@@ -131,6 +131,7 @@ export class EnterpriseMenuFactory implements IMenuFactory {
         column.setMenuVisible(true, "contextMenu");
 
         this.activeMenu = menu;
+
         menu.addEventListener(BeanStub.EVENT_DESTROYED, () => {
             if (this.activeMenu === menu) {
                 this.activeMenu = null;

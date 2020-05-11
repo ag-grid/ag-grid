@@ -98,10 +98,10 @@ export class ContextMenuFactory implements IContextMenuFactory {
         return defaultMenuOptions;
     }
 
-    public showMenu(node: RowNode, column: Column, value: any, mouseEvent: MouseEvent | Touch): void {
+    public showMenu(node: RowNode, column: Column, value: any, mouseEvent: MouseEvent | Touch): boolean {
         const menuItems = this.getMenuItems(node, column, value);
 
-        if (menuItems === undefined || _.missingOrEmpty(menuItems)) { return; }
+        if (menuItems === undefined || _.missingOrEmpty(menuItems)) { return false; }
 
         const menu = new ContextMenu(menuItems);
         this.context.createBean(menu);
@@ -140,6 +140,8 @@ export class ContextMenuFactory implements IContextMenuFactory {
                 this.activeMenu = null;
             }
         });
+
+        return true;
     }
 }
 

@@ -6,7 +6,6 @@ import {
     Events,
     EventService,
     GridOptionsWrapper,
-    ModuleNames,
     PostConstruct,
     _
 } from "@ag-grid-community/core";

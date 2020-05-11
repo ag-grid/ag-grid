@@ -57,10 +57,10 @@ const GRID_PANEL_NORMAL_TEMPLATE = /* html */
             <div class="ag-pinned-right-floating-top" ref="eRightTop" role="presentation" unselectable="on"></div>
             <div class="ag-floating-top-full-width-container" ref="eTopFullWidthContainer" role="presentation" unselectable="on"></div>
         </div>
-        <div class="ag-body-viewport" ref="eBodyViewport" role="presentation" unselectable="on">
+        <div class="ag-body-viewport" ref="eBodyViewport" role="presentation">
             <div class="ag-pinned-left-cols-container" ref="eLeftContainer" role="presentation" unselectable="on"></div>
             <div class="ag-center-cols-clipper" ref="eCenterColsClipper" role="presentation" unselectable="on">
-                <div class="ag-center-cols-viewport" ref="eCenterViewport" role="presentation" unselectable="on">
+                <div class="ag-center-cols-viewport" ref="eCenterViewport" role="presentation">
                     <div class="ag-center-cols-container" ref="eCenterContainer" role="rowgroup" unselectable="on"></div>
                 </div>
             </div>
@@ -352,20 +352,25 @@ export class GridPanel extends Component {
     private addStopEditingWhenGridLosesFocus(): void {
         if (!this.gridOptionsWrapper.isStopEditingWhenGridLosesFocus()) { return; }
 
+        const viewports = [this.eBodyViewport, this.eBottom, this.eTop];
+
         const focusOutListener = (event: FocusEvent): void => {
             // this is the element the focus is moving to
-            const elementWithFocus = event.relatedTarget;
+            const elementWithFocus = event.relatedTarget as HTMLElement;
 
-            // see if the element the focus is going to is part of the grid
-            let clickInsideGrid = false;
-            let pointer: any = elementWithFocus;
+            if (_.getTabIndex(elementWithFocus) === null) {
+                this.rowRenderer.stopEditing();
+                return;
+            }
 
-            while (_.exists(pointer) && !clickInsideGrid) {
-                const isPopup = !!this.gridOptionsWrapper.getDomData(pointer, PopupEditorWrapper.DOM_KEY_POPUP_EDITOR_WRAPPER);
-                const isBody = this.eBodyViewport === pointer || this.eBottom === pointer || this.eTop === pointer;
+            let clickInsideGrid = viewports.some(viewport => viewport.contains(elementWithFocus));
 
-                clickInsideGrid = isPopup || isBody;
-                pointer = pointer.parentNode;
+            if (!clickInsideGrid) {
+                const popupService = this.beans.popupService;
+
+                clickInsideGrid =
+                    popupService.getActivePopups().some(popup => popup.contains(elementWithFocus)) ||
+                    popupService.isElementWithinCustomPopup(elementWithFocus);
             }
 
             if (!clickInsideGrid) {
@@ -373,9 +378,7 @@ export class GridPanel extends Component {
             }
         };
 
-        this.addDestroyableEventListener(this.eBodyViewport, 'focusout', focusOutListener);
-        this.addDestroyableEventListener(this.eTop, 'focusout', focusOutListener);
-        this.addDestroyableEventListener(this.eBottom, 'focusout', focusOutListener);
+        viewports.forEach((viewport) => this.addDestroyableEventListener(viewport, 'focusout', focusOutListener));
     }
 
     private addAngularApplyCheck(): void {
@@ -658,9 +661,10 @@ export class GridPanel extends Component {
 
         if (this.contextMenuFactory && !this.gridOptionsWrapper.isSuppressContextMenu()) {
             const eventOrTouch: (MouseEvent | Touch) = mouseEvent ? mouseEvent : touchEvent.touches[0];
-            this.contextMenuFactory.showMenu(rowNode, column, value, eventOrTouch);
-            const event = mouseEvent ? mouseEvent : touchEvent;
-            event.preventDefault();
+            if (this.contextMenuFactory.showMenu(rowNode, column, value, eventOrTouch)) {
+                const event = mouseEvent ? mouseEvent : touchEvent;
+                event.preventDefault();
+            }
         }
     }
 

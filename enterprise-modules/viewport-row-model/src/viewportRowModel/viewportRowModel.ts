@@ -1,8 +1,8 @@
 import {
-    Bean,
-    PostConstruct,
     Autowired,
-    Context,
+    Bean,
+    BeanStub,
+    PostConstruct,
     PreDestroy,
     IRowModel,
     RowNode,
@@ -10,15 +10,13 @@ import {
     GridOptionsWrapper,
     EventService,
     Events,
-    SelectionController,
     IViewportDatasource,
     RowBounds,
     GridApi,
     ColumnApi,
     ModelUpdatedEvent,
     RowRenderer,
-    _,
-    BeanStub
+    _
 } from "@ag-grid-community/core";
 
 @Bean('rowModel')
@@ -26,7 +24,6 @@ export class ViewportRowModel extends BeanStub implements IRowModel {
 
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('eventService') private eventService: EventService;
-    @Autowired('selectionController') private selectionController: SelectionController;
     @Autowired('gridApi') private gridApi: GridApi;
     @Autowired('columnApi') private columnApi: ColumnApi;
     @Autowired('rowRenderer') private rowRenderer: RowRenderer;

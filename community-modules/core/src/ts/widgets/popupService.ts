@@ -252,6 +252,10 @@ export class PopupService extends BeanStub {
         params.ePopup!.style.top = `${y}px`;
     }
 
+    public getActivePopups(): HTMLElement[] {
+        return this.popupList.map((popup) => popup.element);
+    }
+
     private getParentRect(): Rect {
         // subtract the popup parent borders, because popupParent.getBoundingClientRect
         // returns the rect outside the borders, but the 0,0 coordinate for absolute
@@ -484,13 +488,20 @@ export class PopupService extends BeanStub {
         }
 
         // if the user did not write their own Custom Element to be rendered as popup
-        // and this component has additional popup element, they should have the
+        // and this component has an additional popup element, they should have the
         // `ag-custom-component-popup` class to be detected as part of the Custom Component
-        let el = event.target as HTMLElement;
-        while (el && el != document.body) {
+        return this.isElementWithinCustomPopup(event.target as HTMLElement);
+    }
+
+    public isElementWithinCustomPopup(el: HTMLElement): boolean {
+        if (!this.popupList.length) { return false; }
+
+        while (el && el !== document.body) {
             if (el.classList.contains('ag-custom-component-popup') || el.parentElement === null) { return true; }
             el = el.parentElement;
         }
+
+        return false;
     }
 
     // in some browsers, the context menu event can be fired before the click event, which means
