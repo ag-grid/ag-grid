@@ -379,20 +379,26 @@ export class SetFilter extends ProvidedFilter {
         this.updateCheckboxIcon();
     }
 
-    private onMiniFilterKeyPress(e: KeyboardEvent): void {
-        if (_.isKeyPressed(e, Constants.KEY_ENTER)) {
-            this.valueModel.selectAllDisplayed(true);
-            this.refresh();
-            this.onUiChanged(true);
+    private onMiniFilterInput() {
+        if (this.valueModel.setMiniFilter(this.eMiniFilter.getValue())) {
+            if (this.setFilterParams.applyMiniFilterWhileTyping) {
+                this.applyMiniFilter();
+            } else {
+                this.refresh();
+            }
         }
     }
 
-    private onMiniFilterInput() {
-        if (this.valueModel.setMiniFilter(this.eMiniFilter.getValue())) {
-            this.virtualList.refresh();
+    private onMiniFilterKeyPress(e: KeyboardEvent): void {
+        if (_.isKeyPressed(e, Constants.KEY_ENTER)) {
+            this.applyMiniFilter();
         }
+    }
 
-        this.updateSelectAll();
+    private applyMiniFilter(): void {
+        this.valueModel.selectAllDisplayed(true);
+        this.refresh();
+        this.onUiChanged(true);
     }
 
     private onSelectAll(event: Event) {
