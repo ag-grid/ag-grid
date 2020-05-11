@@ -20,6 +20,7 @@ import { last } from '../utils/array';
 import { SortController } from "../sortController";
 import { FilterManager } from "../filter/filterManager";
 import { _ } from "../utils";
+import {BeanStub} from "../context/beanStub";
 
 export interface RowDropZoneEvents {
     onDragEnter?: (params: RowDragEnterEvent) => void;
@@ -33,7 +34,7 @@ export interface RowDropZoneParams extends RowDropZoneEvents {
     fromGrid?: boolean;
 }
 
-export class RowDragFeature implements DropTarget {
+export class RowDragFeature extends BeanStub implements DropTarget {
 
     @Autowired('dragAndDropService') private dragAndDropService: DragAndDropService;
     // this feature is only created when row model is ClientSide, so we can type it as ClientSide
@@ -57,12 +58,12 @@ export class RowDragFeature implements DropTarget {
     private intervalCount: number;
     private lastDraggingEvent: DraggingEvent;
     private isMultiRowDrag: boolean = false;
-    private events: (() => void)[] = [];
     private isGridSorted: boolean = false;
     private isGridFiltered: boolean = false;
     private isRowGroupActive: boolean = false;
 
     constructor(eContainer: HTMLElement, gridPanel: GridPanel) {
+        super();
         this.eContainer = eContainer;
         this.gridPanel = gridPanel;
     }
@@ -73,22 +74,13 @@ export class RowDragFeature implements DropTarget {
             this.clientSideRowModel = this.rowModel as IClientSideRowModel;
         }
 
-        this.events.push(
-            this.eventService.addEventListener(Events.EVENT_SORT_CHANGED, this.onSortChanged.bind(this)),
-            this.eventService.addEventListener(Events.EVENT_FILTER_CHANGED, this.onFilterChanged.bind(this)),
-            this.eventService.addEventListener(Events.EVENT_COLUMN_ROW_GROUP_CHANGED, this.onRowGroupChanged.bind(this))
-        );
+        this.addDestroyableEventListener(this.eventService, Events.EVENT_SORT_CHANGED, this.onSortChanged.bind(this))
+        this.addDestroyableEventListener(this.eventService, Events.EVENT_FILTER_CHANGED, this.onFilterChanged.bind(this))
+        this.addDestroyableEventListener(this.eventService, Events.EVENT_COLUMN_ROW_GROUP_CHANGED, this.onRowGroupChanged.bind(this))
 
         this.onSortChanged();
         this.onFilterChanged();
         this.onRowGroupChanged();
-    }
-
-    @PreDestroy
-    protected destroy(): void {
-        if (this.events.length) {
-            this.events.forEach(func => func());
-        }
     }
 
     private onSortChanged(): void {
@@ -149,7 +141,7 @@ export class RowDragFeature implements DropTarget {
     public onDragEnter(draggingEvent: DraggingEvent): void {
         // when entering, we fire the enter event, then in onEnterOrDragging,
         // we also fire the move event. so we get both events when entering.
-        this.dispatchEvent(Events.EVENT_ROW_DRAG_ENTER, draggingEvent);
+        this.dispatchGridEvent(Events.EVENT_ROW_DRAG_ENTER, draggingEvent);
 
         this.getRowNodes(draggingEvent).forEach(rowNode => {
             rowNode.setDragging(true);
@@ -175,7 +167,7 @@ export class RowDragFeature implements DropTarget {
 
     private onEnterOrDragging(draggingEvent: DraggingEvent): void {
         // this event is fired for enter and move
-        this.dispatchEvent(Events.EVENT_ROW_DRAG_MOVE, draggingEvent);
+        this.dispatchGridEvent(Events.EVENT_ROW_DRAG_MOVE, draggingEvent);
 
         this.lastDraggingEvent = draggingEvent;
 
@@ -469,14 +461,14 @@ export class RowDragFeature implements DropTarget {
         return event;
     }
 
-    public dispatchEvent(type: string, draggingEvent: DraggingEvent): void {
+    private dispatchGridEvent(type: string, draggingEvent: DraggingEvent): void {
         const event = this.draggingToRowDragEvent(type, draggingEvent);
 
         this.eventService.dispatchEvent(event);
     }
 
     public onDragLeave(draggingEvent: DraggingEvent): void {
-        this.dispatchEvent(Events.EVENT_ROW_DRAG_LEAVE, draggingEvent);
+        this.dispatchGridEvent(Events.EVENT_ROW_DRAG_LEAVE, draggingEvent);
         this.stopDragging(draggingEvent);
         this.clearRowHighlight();
 
@@ -486,7 +478,7 @@ export class RowDragFeature implements DropTarget {
     }
 
     public onDragStop(draggingEvent: DraggingEvent): void {
-        this.dispatchEvent(Events.EVENT_ROW_DRAG_END, draggingEvent);
+        this.dispatchGridEvent(Events.EVENT_ROW_DRAG_END, draggingEvent);
         this.stopDragging(draggingEvent);
 
         if (

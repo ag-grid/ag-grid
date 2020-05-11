@@ -15,9 +15,10 @@ import { GridApi } from "./gridApi";
 import { _ } from './utils';
 import { ChangedPath } from "./utils/changedPath";
 import {IClientSideRowModel} from "./interfaces/iClientSideRowModel";
+import {BeanStub} from "./context/beanStub";
 
 @Bean('selectionController')
-export class SelectionController {
+export class SelectionController extends BeanStub {
 
     @Autowired('eventService') private eventService: EventService;
     @Autowired('rowModel') private rowModel: IRowModel;
@@ -33,31 +34,19 @@ export class SelectionController {
 
     private groupSelectsChildren: boolean;
 
-    private events: (() => void)[] = [];
-
     private setBeans(@Qualifier('loggerFactory') loggerFactory: LoggerFactory) {
         this.logger = loggerFactory.create('SelectionController');
         this.reset();
 
         if (this.gridOptionsWrapper.isRowModelDefault()) {
-            this.events.push(this.eventService.addEventListener(Events.EVENT_ROW_DATA_CHANGED, this.reset.bind(this)));
-        } else {
-            this.logger.log('dont know what to do here');
+            this.addDestroyableEventListener(this.eventService, Events.EVENT_ROW_DATA_CHANGED, this.reset.bind(this));
         }
     }
 
     @PostConstruct
     private init(): void {
         this.groupSelectsChildren = this.gridOptionsWrapper.isGroupSelectsChildren();
-        this.events.push(this.eventService.addEventListener(Events.EVENT_ROW_SELECTED, this.onRowSelected.bind(this)));
-    }
-
-    @PreDestroy
-    private destroy(): void {
-        if (this.events.length) {
-            this.events.forEach(func => func());
-        }
-        this.events = [];
+        this.addDestroyableEventListener(this.eventService, Events.EVENT_ROW_SELECTED, this.onRowSelected.bind(this));
     }
 
     public setLastSelectedNode(rowNode: RowNode): void {

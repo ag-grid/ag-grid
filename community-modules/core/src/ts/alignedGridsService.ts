@@ -16,9 +16,10 @@ import { Qualifier } from "./context/context";
 import { Autowired } from "./context/context";
 import { PostConstruct } from "./context/context";
 import { OriginalColumnGroup } from "./entities/originalColumnGroup";
+import {BeanStub} from "./context/beanStub";
 
 @Bean('alignedGridsService')
-export class AlignedGridsService {
+export class AlignedGridsService extends BeanStub {
 
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('columnController') private columnController: ColumnController;
@@ -40,26 +41,14 @@ export class AlignedGridsService {
         this.gridPanel = gridPanel;
     }
 
-    private events: (() => void)[] = [];
-
     @PostConstruct
     private init(): void {
-        this.events = [
-            this.eventService.addEventListener(Events.EVENT_COLUMN_MOVED, this.fireColumnEvent.bind(this)),
-            this.eventService.addEventListener(Events.EVENT_COLUMN_VISIBLE, this.fireColumnEvent.bind(this)),
-            this.eventService.addEventListener(Events.EVENT_COLUMN_PINNED, this.fireColumnEvent.bind(this)),
-            this.eventService.addEventListener(Events.EVENT_COLUMN_GROUP_OPENED, this.fireColumnEvent.bind(this)),
-            this.eventService.addEventListener(Events.EVENT_COLUMN_RESIZED, this.fireColumnEvent.bind(this)),
-            this.eventService.addEventListener(Events.EVENT_BODY_SCROLL, this.fireScrollEvent.bind(this))
-        ];
-    }
-
-    @PreDestroy
-    protected destroy(): void {
-        if (this.events.length) {
-            this.events.forEach(func => func());
-        }
-        this.events = [];
+        this.addDestroyableEventListener(this.eventService,  Events.EVENT_COLUMN_MOVED, this.fireColumnEvent.bind(this));
+        this.addDestroyableEventListener(this.eventService,  Events.EVENT_COLUMN_VISIBLE, this.fireColumnEvent.bind(this));
+        this.addDestroyableEventListener(this.eventService,  Events.EVENT_COLUMN_PINNED, this.fireColumnEvent.bind(this));
+        this.addDestroyableEventListener(this.eventService,  Events.EVENT_COLUMN_GROUP_OPENED, this.fireColumnEvent.bind(this));
+        this.addDestroyableEventListener(this.eventService,  Events.EVENT_COLUMN_RESIZED, this.fireColumnEvent.bind(this));
+        this.addDestroyableEventListener(this.eventService,  Events.EVENT_BODY_SCROLL, this.fireScrollEvent.bind(this));
     }
 
     // common logic across all the fire methods

@@ -60,10 +60,8 @@ export class EventService implements IEventEmitter {
         return listeners;
     }
 
-    public addEventListener(eventType: string, listener: Function, async = false): () => void {
+    public addEventListener(eventType: string, listener: Function, async = false): void {
         this.getListeners(eventType, async).add(listener);
-
-        return () => this.removeEventListener(eventType, listener, async);
     }
 
     public removeEventListener(eventType: string, listener: Function, async = false): void {
@@ -73,8 +71,8 @@ export class EventService implements IEventEmitter {
     // for some events, it's important that the model gets to hear about them before the view,
     // as the model may need to update before the view works on the info. if you register
     // via this method, you get notified before the view parts
-    public addModalPriorityEventListener(eventType: string, listener: Function, async = false): () => void {
-        return this.addEventListener(eventType + EventService.PRIORITY, listener, async);
+    public addModalPriorityEventListener(eventType: string, listener: Function, async = false): void {
+        this.addEventListener(eventType + EventService.PRIORITY, listener, async);
     }
 
     public addGlobalListener(listener: Function, async = false): void {

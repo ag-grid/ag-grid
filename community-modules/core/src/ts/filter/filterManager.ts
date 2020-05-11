@@ -51,14 +51,10 @@ export class FilterManager extends BeanStub {
     private processingFilterChange = false;
     private allowShowChangeAfterFilter: boolean;
 
-    private eventListenerDestroyers: (() => void)[] = [];
-
     @PostConstruct
     public init(): void {
-        this.eventListenerDestroyers = [
-            this.eventService.addEventListener(Events.EVENT_ROW_DATA_CHANGED, this.onNewRowsLoaded.bind(this)),
-            this.eventService.addEventListener(Events.EVENT_NEW_COLUMNS_LOADED, this.onNewColumnsLoaded.bind(this))
-        ];
+        this.addDestroyableEventListener(this.eventService, Events.EVENT_ROW_DATA_CHANGED, this.onNewRowsLoaded.bind(this));
+        this.addDestroyableEventListener(this.eventService, Events.EVENT_NEW_COLUMNS_LOADED, this.onNewColumnsLoaded.bind(this));
 
         this.quickFilter = this.parseQuickFilter(this.gridOptionsWrapper.getQuickFilterText());
         this.setQuickFilterParts();
@@ -584,13 +580,7 @@ export class FilterManager extends BeanStub {
     @PreDestroy
     protected destroy() {
         super.destroy();
-
         this.allFilters.forEach(filterWrapper => this.disposeFilterWrapper(filterWrapper, 'filterDestroyed'));
-
-        if (this.eventListenerDestroyers.length) {
-            this.eventListenerDestroyers.forEach(func => func());
-            this.eventListenerDestroyers.length = 0;
-        }
     }
 }
 
