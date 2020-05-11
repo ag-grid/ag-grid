@@ -18,7 +18,9 @@ export interface ISetFilterParams extends IProvidedFilterParams {
     suppressSorting?: boolean;
     cellRenderer?: { new(): ICellRendererComp; } | ICellRendererFunc | string;
     suppressMiniFilter?: boolean;
+    applyMiniFilterWhileTyping?: boolean;
     suppressSelectAll?: boolean;
+    defaultToNothingSelected?: boolean;
     /** @deprecated */ suppressSyncValuesAfterDataChange?: boolean;
     comparator?: (a: any, b: any) => number;
     miniFilterSearchByRefDataKey?: boolean;
@@ -27,5 +29,4 @@ export interface ISetFilterParams extends IProvidedFilterParams {
     /** @deprecated */ selectAllOnMiniFilter?: boolean;
     /** @deprecated */ syncValuesLikeExcel?: boolean;
     showTooltips?: boolean;
-    applyMiniFilterWhileTyping?: boolean;
 }

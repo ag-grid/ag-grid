@@ -15,7 +15,8 @@ import {
     VirtualList,
     VirtualListModel,
     _,
-    IAfterGuiAttachedParams
+    IAfterGuiAttachedParams,
+    Promise
 } from '@ag-grid-community/core';
 
 import { SetFilterModelValuesType, SetValueModel } from './setValueModel';
@@ -67,7 +68,7 @@ export class SetFilter extends ProvidedFilter {
 
     protected resetUiToDefaults(): void {
         this.setMiniFilter(null);
-        this.selectEverything();
+        this.valueModel.setModel(null).then(() => this.refresh());
     }
 
     protected setModelIntoUi(model: SetFilterModel): void {
@@ -85,8 +86,7 @@ export class SetFilter extends ProvidedFilter {
         // also supporting old filter model for backwards compatibility
         const newValues = model instanceof Array ? model as string[] : model.values;
 
-        this.valueModel.setModel(newValues);
-        this.refresh();
+        this.valueModel.setModel(newValues).then(() => this.refresh());
     }
 
     public getModelFromUi(): SetFilterModel | null {
@@ -131,7 +131,6 @@ export class SetFilter extends ProvidedFilter {
         );
 
         this.initialiseFilterBodyUi();
-        this.valueModel.onFilterValuesReady(() => this.refresh());
 
         const syncValuesAfterDataChange =
             this.rowModel.getType() === Constants.ROW_MODEL_TYPE_CLIENT_SIDE &&
@@ -186,13 +185,15 @@ export class SetFilter extends ProvidedFilter {
     }
 
     private syncAfterDataChange(refreshValues = true, keepSelection = true): void {
+        let promise = Promise.resolve<void>(null);
+
         if (refreshValues) {
-            this.valueModel.refreshValues(keepSelection);
+            promise = this.valueModel.refreshValues(keepSelection);
         } else if (!keepSelection) {
-            this.valueModel.setModel(null);
+            promise = this.valueModel.setModel(null);
         }
 
-        this.valueModel.onFilterValuesReady(() => {
+        promise.then(() => {
             this.refresh();
             this.onBtApply(false, true);
         });
@@ -338,8 +339,7 @@ export class SetFilter extends ProvidedFilter {
      * @param options The options to use.
      */
     public setFilterValues(options: string[]): void {
-        this.valueModel.overrideValues(options, this.isNewRowsActionKeep());
-        this.valueModel.onFilterValuesReady(() => {
+        this.valueModel.overrideValues(options, this.isNewRowsActionKeep()).then(() => {
             this.refresh();
             this.onUiChanged();
         });
@@ -355,8 +355,7 @@ export class SetFilter extends ProvidedFilter {
     }
 
     public refreshFilterValues(): void {
-        this.valueModel.refreshValues();
-        this.valueModel.onFilterValuesReady(() => {
+        this.valueModel.refreshValues().then(() => {
             this.refresh();
             this.onUiChanged();
         });

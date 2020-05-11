@@ -51,14 +51,16 @@ function getDisplayedValues(model: SetValueModel) {
 }
 
 function delayAssert(done: (error?: Error) => void, ...assertions: (() => void)[]) {
-    setTimeout(() => {
-        try {
-            assertions.forEach(a => a());
-            done();
-        } catch (error) {
-            done(error);
-        }
-    }, 0);
+    setTimeout(() => asyncAssert(done, ...assertions), 0);
+}
+
+function asyncAssert(done: (error?: Error) => void, ...assertions: (() => void)[]) {
+    try {
+        assertions.forEach(a => a());
+        done();
+    } catch (error) {
+        done(error);
+    }
 }
 
 describe('isFilterActive', () => {
@@ -117,7 +119,7 @@ describe('value selection', () => {
         expect(model.isValueSelected(value)).toBe(true);
     });
 
-    it('keeps value selections when values are refreshed', () => {
+    it('keeps value selections when values are refreshed', done => {
         const model = createSetValueModel();
         const value = 'A';
 
@@ -125,12 +127,12 @@ describe('value selection', () => {
 
         expect(model.isValueSelected(value)).toBe(false);
 
-        model.refreshValues();
-
-        expect(model.isValueSelected(value)).toBe(false);
+        model.refreshValues().then(() => {
+            asyncAssert(done, () => expect(model.isValueSelected(value)).toBe(false));
+        });
     });
 
-    it('can reset value selections when values are refreshed', () => {
+    it('can reset value selections when values are refreshed', done => {
         const model = createSetValueModel();
         const value = 'A';
 
@@ -138,51 +140,51 @@ describe('value selection', () => {
 
         expect(model.isValueSelected(value)).toBe(false);
 
-        model.refreshValues(false);
-
-        expect(model.isValueSelected(value)).toBe(true);
+        model.refreshValues(false).then(() => {
+            asyncAssert(done, () => expect(model.isValueSelected(value)).toBe(true));
+        });
     });
 });
 
 describe('overrideValues', () => {
-    it('sets new values', () => {
+    it('sets new values', done => {
         const model = createSetValueModel(['A1', 'B1', 'C1']);
         const values = ['A2', 'B2', 'C2'];
 
-        model.overrideValues(values);
-
-        expect(getDisplayedValues(model)).toStrictEqual(values);
+        model.overrideValues(values).then(() => {
+            asyncAssert(done, () => expect(getDisplayedValues(model)).toStrictEqual(values));
+        });
     });
 
-    it('updates values type to provided list', () => {
+    it('updates values type to provided list', done => {
         const model = createSetValueModel(['A1', 'B1', 'C1']);
         const values = ['A2', 'B2', 'C2'];
 
-        model.overrideValues(values);
-
-        expect(model.getValuesType()).toBe(SetFilterModelValuesType.PROVIDED_LIST);
+        model.overrideValues(values).then(() => {
+            asyncAssert(done, () => expect(model.getValuesType()).toBe(SetFilterModelValuesType.PROVIDED_LIST));
+        });
     });
 
-    it('keeps existing selection', () => {
+    it('keeps existing selection', done => {
         const value = 'B1';
         const model = createSetValueModel(['A1', value, 'C1']);
         const values = ['A2', value, 'C2'];
 
         model.deselectValue(value);
-        model.overrideValues(values);
-
-        expect(model.isValueSelected(value)).toBe(false);
+        model.overrideValues(values).then(() => {
+            asyncAssert(done, () => expect(model.isValueSelected(value)).toBe(false));
+        });
     });
 
-    it('can reset existing selection', () => {
+    it('can reset existing selection', done => {
         const value = 'B1';
         const model = createSetValueModel(['A1', value, 'C1']);
         const values = ['A2', value, 'C2'];
 
         model.deselectValue(value);
-        model.overrideValues(values, false);
-
-        expect(model.isValueSelected(value)).toBe(true);
+        model.overrideValues(values, false).then(() => {
+            asyncAssert(done, () => expect(model.isValueSelected(value)).toBe(true));
+        });
     });
 });
 
@@ -581,25 +583,27 @@ describe('getModel', () => {
 });
 
 describe('setModel', () => {
-    it('exclusively selects provided values', () => {
+    it('exclusively selects provided values', done => {
         const expectedValues = ['A', 'B'];
         const otherValues = ['C', 'D', 'E'];
         const model = createSetValueModel([...expectedValues, ...otherValues]);
 
-        model.setModel(expectedValues);
-
-        expectedValues.forEach(v => expect(model.isValueSelected(v)).toBe(true));
-        otherValues.forEach(v => expect(model.isValueSelected(v)).toBe(false));
+        model.setModel(expectedValues).then(() => {
+            asyncAssert(
+                done,
+                () => expectedValues.forEach(v => expect(model.isValueSelected(v)).toBe(true)),
+                () => otherValues.forEach(v => expect(model.isValueSelected(v)).toBe(false)));
+        });
     });
 
-    it('selects all values if provided model is null', () => {
+    it('selects all values if provided model is null', done => {
         const values = ['A', 'B', 'C', 'D', 'E'];
         const model = createSetValueModel(values);
 
         values.forEach(v => model.deselectValue(v));
 
-        model.setModel(null);
-
-        values.forEach(v => expect(model.isValueSelected(v)).toBe(true));
+        model.setModel(null).then(() => {
+            asyncAssert(done, () => values.forEach(v => expect(model.isValueSelected(v)).toBe(true)));
+        });
     });
 });

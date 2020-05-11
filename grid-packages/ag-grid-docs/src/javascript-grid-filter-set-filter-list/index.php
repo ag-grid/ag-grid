@@ -436,6 +436,33 @@ SNIPPET
     provide a <a href="#value-formatter">Formatter</a> to present blank values in a different way.
 </p>
 
+<h2>Default State</h2>
+
+<p>
+    By default, when the Set Filter is created all values are selected. If you would prefer to invert this behaviour
+    and have everything de-selected by default, you can set <?= inlineCode('defaultToNothingSelected = true') ?> in the
+    filter params. In this case, no filtering will occur until at least one value is selected.
+</p>
+
+<p>
+    The following example demonstrates different default states. Note the following:
+</p>
+
+<ul class="content">
+    <li>
+        The Athlete column has everything selected when the Set Filter is first opened, which is the default
+    </li>
+    <li>
+        The Country column has nothing selected by default, as <?= inlineCode('defaultToNothingSelected = true') ?>
+    </li>
+    <li>
+        When the Set Filter for the Country column is opened, the grid is not filtered until at least one value has
+        been selected
+    </li>
+</ul>
+
+<?= grid_example('Default State', 'default-state', 'generated', ['enterprise' => true, 'modules' => ['clientside', 'setfilter', 'menu']]) ?>
+
 <h2>Filter Value Tooltips</h2>
 
 <p>
@@ -475,7 +502,7 @@ SNIPPET
 
 <h2>API Reference</h2>
 
-<?= createDocumentationFromFile('../javascript-grid-filter-set/setFilterParams.json', 'filterParams', ['cellHeight', 'cellRenderer', 'comparator(a, b)', 'showTooltips', 'suppressSelectAll', 'suppressSorting', 'values']) ?>
+<?= createDocumentationFromFile('../javascript-grid-filter-set/setFilterParams.json', 'filterParams', ['cellHeight', 'cellRenderer', 'comparator(a, b)', 'defaultToNothingSelected', 'showTooltips', 'suppressSelectAll', 'suppressSorting', 'values']) ?>
 
 <h2>Next Up</h2>
 

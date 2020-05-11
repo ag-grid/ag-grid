@@ -83,10 +83,7 @@ export class SetValueModel implements IEventEmitter {
             this.providedValues = values;
         }
 
-        this.updateAllValues();
-
-        // start with everything selected
-        this.allValuesPromise.then(values => this.selectedValues = _.convertToSet(values));
+        this.updateAllValues().then(values => this.resetSelectionState(values));
     }
 
     public addEventListener(eventType: string, listener: Function, async?: boolean): void {
@@ -102,13 +99,13 @@ export class SetValueModel implements IEventEmitter {
      * If keepSelection is false, the filter selection will be reset to everything selected,
      * otherwise the current selection will be preserved.
      */
-    public refreshValues(keepSelection = true): void {
-        const currentModel = this.getModel();
+    public refreshValues(keepSelection = true): Promise<void> {
+        return new Promise<void>(resolve => {
+            const currentModel = this.getModel();
 
-        this.updateAllValues();
-
-        // ensure model is updated for new values
-        this.allValuesPromise.then(() => this.setModel(keepSelection ? currentModel : null));
+            // ensure model is updated for new values
+            this.updateAllValues().then(_ => this.setModel(keepSelection ? currentModel : null).then(() => resolve()));
+        });
     }
 
     /**
@@ -116,22 +113,24 @@ export class SetValueModel implements IEventEmitter {
      * If keepSelection is false, the filter selection will be reset to everything selected,
      * otherwise the current selection will be preserved.
      */
-    public overrideValues(valuesToUse: string[], keepSelection = true): void {
-        // wait for any existing values to be populated before overriding
-        this.allValuesPromise.then(() => {
-            this.valuesType = SetFilterModelValuesType.PROVIDED_LIST;
-            this.providedValues = valuesToUse;
-            this.refreshValues(keepSelection);
+    public overrideValues(valuesToUse: string[], keepSelection = true): Promise<void> {
+        return new Promise<void>(resolve => {
+            // wait for any existing values to be populated before overriding
+            this.allValuesPromise.then(() => {
+                this.valuesType = SetFilterModelValuesType.PROVIDED_LIST;
+                this.providedValues = valuesToUse;
+                this.refreshValues(keepSelection).then(() => resolve());
+            });
         });
     }
 
     public refreshAfterAnyFilterChanged(): void {
         if (this.showAvailableOnly()) {
-            this.updateAvailableValues();
+            this.allValuesPromise.then(values => this.updateAvailableValues(values));
         }
     }
 
-    private updateAllValues(): void {
+    private updateAllValues(): Promise<string[]> {
         this.allValuesPromise = new Promise<string[]>(resolve => {
             switch (this.valuesType) {
                 case SetFilterModelValuesType.TAKEN_FROM_GRID_VALUES:
@@ -177,7 +176,9 @@ export class SetValueModel implements IEventEmitter {
             }
         });
 
-        this.updateAvailableValues();
+        this.allValuesPromise.then(values => this.updateAvailableValues(values));
+
+        return this.allValuesPromise;
     }
 
     public setValuesType(value: SetFilterModelValuesType) {
@@ -197,14 +198,12 @@ export class SetValueModel implements IEventEmitter {
             !this.filterParams.suppressRemoveEntries;
     }
 
-    private updateAvailableValues(): void {
-        this.allValuesPromise.then(values => {
-            const availableValues = this.showAvailableOnly() ? this.sortValues(this.getValuesFromRows(true)) : values;
+    private updateAvailableValues(allValues: string[]): void {
+        const availableValues = this.showAvailableOnly() ? this.sortValues(this.getValuesFromRows(true)) : allValues;
 
-            this.availableValues = _.convertToSet(availableValues);
-            this.localEventService.dispatchEvent({ type: SetValueModel.EVENT_AVAILABLE_VALUES_CHANGED });
-            this.updateDisplayedValues();
-        });
+        this.availableValues = _.convertToSet(availableValues);
+        this.localEventService.dispatchEvent({ type: SetValueModel.EVENT_AVAILABLE_VALUES_CHANGED });
+        this.updateDisplayedValues();
     }
 
     private sortValues(values: string[]): string[] {
@@ -309,7 +308,9 @@ export class SetValueModel implements IEventEmitter {
     }
 
     public isFilterActive(): boolean {
-        return this.allValues.length !== this.selectedValues.size;
+        return this.filterParams.defaultToNothingSelected ?
+            this.selectedValues.size > 0 :
+            this.allValues.length !== this.selectedValues.size;
     }
 
     public getUniqueValueCount(): number {
@@ -374,27 +375,34 @@ export class SetValueModel implements IEventEmitter {
         return this.isFilterActive() ? _.values(this.selectedValues) : null;
     }
 
-    public setModel(model: string[]): void {
-        this.allValuesPromise.then(values => {
-            if (model == null) {
-                // reset to everything selected
-                this.selectedValues = _.convertToSet(values);
-            } else {
-                // select all values from the model that exist in the filter
-                this.selectedValues.clear();
+    public setModel(model: string[]): Promise<void> {
+        return new Promise<void>(resolve => {
+            this.allValuesPromise.then(values => {
+                if (model == null) {
+                    this.resetSelectionState(values);
+                } else {
+                    // select all values from the model that exist in the filter
+                    this.selectedValues.clear();
 
-                const allValues = _.convertToSet(values);
+                    const allValues = _.convertToSet(values);
 
-                _.forEach(model, value => {
-                    if (allValues.has(value)) {
-                        this.selectValue(value);
-                    }
-                });
-            }
+                    _.forEach(model, value => {
+                        if (allValues.has(value)) {
+                            this.selectValue(value);
+                        }
+                    });
+                }
+
+                resolve();
+            });
         });
     }
 
-    public onFilterValuesReady(callback: (values: string[]) => void): void {
-        this.allValuesPromise.then(callback);
+    private resetSelectionState(values: string[]): void {
+        if (this.filterParams.defaultToNothingSelected) {
+            this.selectedValues.clear();
+        } else {
+            this.selectedValues = _.convertToSet(values);
+        }
     }
 }
