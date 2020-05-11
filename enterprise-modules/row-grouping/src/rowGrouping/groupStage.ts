@@ -480,7 +480,7 @@ export class GroupStage implements IRowNodeStage {
 
     private createGroup(groupInfo: GroupInfo, parent: RowNode, level: number, details: GroupingDetails): RowNode {
         const groupNode = new RowNode();
-        this.context.wireBean(groupNode);
+        this.context.createBean(groupNode);
 
         groupNode.group = true;
         groupNode.field = groupInfo.field;

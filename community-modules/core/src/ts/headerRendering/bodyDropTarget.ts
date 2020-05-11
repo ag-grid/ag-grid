@@ -68,10 +68,10 @@ export class BodyDropTarget implements DropTarget {
     private init(): void {
 
         this.moveColumnController = new MoveColumnController(this.pinned, this.eContainer);
-        this.context.wireBean(this.moveColumnController);
+        this.context.createBean(this.moveColumnController);
 
         const bodyDropPivotTarget = new BodyDropPivotTarget(this.pinned);
-        this.context.wireBean(bodyDropPivotTarget);
+        this.context.createBean(bodyDropPivotTarget);
 
         this.dropListeners[DropType.ColumnMove] = this.moveColumnController;
         this.dropListeners[DropType.Pivot] = bodyDropPivotTarget;

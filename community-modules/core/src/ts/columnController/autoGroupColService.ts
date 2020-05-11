@@ -76,7 +76,7 @@ export class AutoGroupColService {
         }
 
         const newCol = new Column(defaultAutoColDef, null, colId, true);
-        this.context.wireBean(newCol);
+        this.context.createBean(newCol);
 
         return newCol;
     }

@@ -46,7 +46,7 @@ export class DateTimeCellEditor extends PopupComponent implements ICellEditor {
             onValueSelect: this.handleValueSelect.bind(this),
             initialValue: initialValue
         });
-        this.wireBean(this.editor);
+        this.createBean(this.editor);
         this.appendChild(this.editor);
     }
 

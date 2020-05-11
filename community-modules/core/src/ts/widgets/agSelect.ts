@@ -26,7 +26,7 @@ export class AgSelect extends AgPickerField<HTMLSelectElement, string> {
     @PostConstruct
     public init(): void {
         this.listComponent = new AgList('select');
-        this.getContext().wireBean(this.listComponent);
+        this.getContext().createBean(this.listComponent);
         this.listComponent.setParentComponent(this);
         this.eWrapper.tabIndex = 0;
 

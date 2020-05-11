@@ -55,20 +55,20 @@ export class ChartPanel extends Component {
     }
 
     private initTitles(): void {
-        const titlePanelComp = this.wireBean(new TitlePanel(this.chartController));
+        const titlePanelComp = this.createBean(new TitlePanel(this.chartController));
 
         this.chartGroup.addItem(titlePanelComp);
         this.activePanels.push(titlePanelComp);
     }
 
     private initPaddingPanel(): void {
-        const paddingPanelComp = this.wireBean(new PaddingPanel(this.chartController));
+        const paddingPanelComp = this.createBean(new PaddingPanel(this.chartController));
         this.chartGroup.addItem(paddingPanelComp);
         this.activePanels.push(paddingPanelComp);
     }
 
     private initBackgroundPanel(): void {
-        const backgroundPanelComp = this.wireBean(new BackgroundPanel(this.chartController));
+        const backgroundPanelComp = this.createBean(new BackgroundPanel(this.chartController));
         this.chartGroup.addItem(backgroundPanelComp);
         this.activePanels.push(backgroundPanelComp);
     }

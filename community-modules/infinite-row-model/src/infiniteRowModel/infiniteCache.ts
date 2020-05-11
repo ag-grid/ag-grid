@@ -129,7 +129,7 @@ export class InfiniteCache extends RowNodeCache<InfiniteBlock, InfiniteCachePara
 
     private createBlock(blockNumber: number): InfiniteBlock {
         const newBlock = new InfiniteBlock(blockNumber, this.cacheParams);
-        this.getContext().wireBean(newBlock);
+        this.getContext().createBean(newBlock);
         this.postCreateBlock(newBlock);
         return newBlock;
     }

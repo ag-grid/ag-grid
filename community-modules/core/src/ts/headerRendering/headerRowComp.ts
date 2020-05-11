@@ -264,7 +264,7 @@ export class HeaderRowComp extends Component {
                 break;
         }
 
-        this.wireBean(result);
+        this.createBean(result);
 
         return result;
     }

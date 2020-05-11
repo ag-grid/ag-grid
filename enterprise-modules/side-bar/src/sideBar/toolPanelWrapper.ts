@@ -52,7 +52,7 @@ export class ToolPanelWrapper extends Component {
     @PostConstruct
     private setupResize(): void {
         const resizeBar = this.resizeBar = new HorizontalResizeComp();
-        this.getContext().wireBean(resizeBar);
+        this.getContext().createBean(resizeBar);
         resizeBar.setElementToResize(this.getGui());
         this.appendChild(resizeBar);
     }

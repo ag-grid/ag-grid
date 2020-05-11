@@ -109,7 +109,7 @@ export class DisplayedGroupCreator {
             columnGroup.reset();
         } else {
             columnGroup = new ColumnGroup(originalGroup, groupId, instanceId, pinned);
-            this.context.wireBean(columnGroup);
+            this.context.createBean(columnGroup);
         }
 
         return columnGroup;

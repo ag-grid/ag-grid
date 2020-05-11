@@ -383,7 +383,7 @@ export abstract class BaseDropZonePanel extends Component {
         const columnComponent = new DropZoneColumnComp(column, this.dropTarget, ghost, this.valueColumn, this.horizontal);
         columnComponent.addEventListener(DropZoneColumnComp.EVENT_COLUMN_REMOVE, this.removeColumns.bind(this, [column]));
 
-        this.beans.context.wireBean(columnComponent);
+        this.beans.context.createBean(columnComponent);
         this.guiDestroyFunctions.push(() => this.destroyBean(columnComponent));
 
         if (!ghost) {

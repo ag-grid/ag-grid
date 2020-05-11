@@ -81,7 +81,7 @@ export class MiniChartsContainer extends Component {
 
         Object.keys(chartGroups).forEach(group => {
             const chartGroup = chartGroups[group as ChartGroupsType];
-            const groupComponent = this.wireBean(new AgGroupComponent({
+            const groupComponent = this.createBean(new AgGroupComponent({
                 title: this.chartTranslator.translate(group),
                 suppressEnabledCheckbox: true,
                 enabled: true,
@@ -101,7 +101,7 @@ export class MiniChartsContainer extends Component {
 
                 this.wrappers[MiniClass.chartType] = miniWrapper;
 
-                this.wireBean(new MiniClass(miniWrapper, this.fills, this.strokes));
+                this.createBean(new MiniClass(miniWrapper, this.fills, this.strokes));
                 groupComponent.addItem(miniWrapper);
             });
 

@@ -355,7 +355,7 @@ export class AgPanel extends Component {
 
         if (closable) {
             const closeButtonComp = this.closeButtonComp = new Component(AgPanel.CLOSE_BTN_TEMPLATE);
-            this.getContext().wireBean(closeButtonComp);
+            this.getContext().createBean(closeButtonComp);
 
             const eGui = closeButtonComp.getGui();
             eGui.appendChild(_.addCssClass(

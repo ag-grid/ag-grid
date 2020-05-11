@@ -44,14 +44,14 @@ export class AgColorPicker extends AgPickerField<HTMLElement, string> {
             x: eGuiRect.right - 190,
             y: eGuiRect.top - 250
         });
-        this.getContext().wireBean(colorDialog);
+        this.getContext().createBean(colorDialog);
 
         _.addCssClass(colorDialog.getGui(), 'ag-color-dialog');
 
         const colorPanel = new AgColorPanel({
             picker: this
         });
-        this.getContext().wireBean(colorPanel);
+        this.getContext().createBean(colorPanel);
 
         colorPanel.addDestroyFunc(() => {
             if (colorDialog.isAlive()) {

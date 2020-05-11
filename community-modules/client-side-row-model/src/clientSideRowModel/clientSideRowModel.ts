@@ -111,7 +111,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
             this.getContext(), this.eventService, this.columnController, this.gridApi, this.columnApi,
             this.selectionController);
 
-        this.wireBean(this.rootNode);
+        this.createBean(this.rootNode);
     }
 
     public start(): void {

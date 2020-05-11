@@ -216,7 +216,7 @@ export class InfiniteRowModel extends BeanStub implements IInfiniteRowModel {
         // there is a bi-directional dependency between the loader and the cache,
         // so we create loader here, and then pass dependencies in setDependencies() method later
         this.rowNodeBlockLoader = new RowNodeBlockLoader(maxConcurrentRequests, blockLoadDebounceMillis);
-        this.getContext().wireBean(this.rowNodeBlockLoader);
+        this.getContext().createBean(this.rowNodeBlockLoader);
 
         this.cacheParams = {
             // the user provided datasource
@@ -263,7 +263,7 @@ export class InfiniteRowModel extends BeanStub implements IInfiniteRowModel {
         }
 
         this.infiniteCache = new InfiniteCache(this.cacheParams);
-        this.getContext().wireBean(this.infiniteCache);
+        this.getContext().createBean(this.infiniteCache);
 
         this.infiniteCache.addEventListener(RowNodeCache.EVENT_CACHE_UPDATED, this.onCacheUpdated.bind(this));
     }

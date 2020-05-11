@@ -46,10 +46,10 @@ export class GridHeaderDropZones extends Component {
         _.addCssClass(topPanelGui, 'ag-column-drop-wrapper');
 
         this.rowGroupComp = new RowGroupDropZonePanel(true);
-        this.wireDependentBean(this.rowGroupComp);
+        this.createBeanAndDestroyWithMe(this.rowGroupComp);
 
         this.pivotComp = new PivotDropZonePanel(true);
-        this.wireDependentBean(this.pivotComp);
+        this.createBeanAndDestroyWithMe(this.pivotComp);
 
         topPanelGui.appendChild(this.rowGroupComp.getGui());
         topPanelGui.appendChild(this.pivotComp.getGui());

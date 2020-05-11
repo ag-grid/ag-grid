@@ -118,20 +118,18 @@ export class BeanStub implements IEventEmitter {
         }
     }
 
-    public wireDependentBean<T>(bean: T, context?: Context): T {
-        const res = this.wireBean(bean, context);
+    public createBeanAndDestroyWithMe<T>(bean: T, context?: Context): T {
+        const res = this.createBean(bean, context);
         this.addDestroyFunc(this.destroyBean.bind(this, bean, context));
         return res;
     }
 
-    protected wireBean<T>(bean: T, context?: Context): T {
-        (context || this.getContext()).wireBean(bean);
-        return bean;
+    protected createBean<T>(bean: T, context?: Context): T {
+        return (context || this.getContext()).createBean(bean);
     }
 
     protected destroyBean<T>(bean: T, context?: Context): T {
-        (context || this.getContext()).destroyBean(bean);
-        return undefined;
+        return (context || this.getContext()).destroyBean(bean);
     }
 
     protected destroyBeans<T>(beans: T[], context?: Context): T[] {

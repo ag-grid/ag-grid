@@ -546,7 +546,7 @@ export class UserComponentFactory {
     }
 
     private initComponent<A extends IComponent<TParams>, TParams>(component: A, params: TParams): Promise<void> | void {
-        this.context.wireBean(component);
+        this.context.createBean(component);
 
         if (component.init == null) {
             return;

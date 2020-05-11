@@ -146,10 +146,10 @@ export class PieSeriesPanel extends Component {
             setFont: setFont
         };
 
-        const labelPanelComp = this.wireBean(new FontPanel(params));
+        const labelPanelComp = this.createBean(new FontPanel(params));
         this.activePanels.push(labelPanelComp);
 
-        const calloutPanelComp = this.wireBean(new CalloutPanel(this.chartController));
+        const calloutPanelComp = this.createBean(new CalloutPanel(this.chartController));
         labelPanelComp.addCompToPanel(calloutPanelComp);
         this.activePanels.push(calloutPanelComp);
 
@@ -157,7 +157,7 @@ export class PieSeriesPanel extends Component {
     }
 
     private initShadowPanel() {
-        const shadowPanelComp = this.wireBean(new ShadowPanel(this.chartController));
+        const shadowPanelComp = this.createBean(new ShadowPanel(this.chartController));
         this.seriesGroup.getGui().appendChild(shadowPanelComp.getGui());
         this.seriesGroup.addItem(shadowPanelComp);
     }

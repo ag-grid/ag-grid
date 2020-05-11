@@ -142,7 +142,7 @@ export class PrimaryColsListPanel extends Component {
             const renderedGroup = new ToolPanelColumnGroupComp(columnGroup, dept, this.allowDragging, this.expandGroupsByDefault,
                 this.onGroupExpanded.bind(this), () => this.filterResults);
 
-            this.getContext().wireBean(renderedGroup);
+            this.getContext().createBean(renderedGroup);
             this.getGui().appendChild(renderedGroup.getGui());
 
             // we want to indent on the gui for the children
@@ -166,7 +166,7 @@ export class PrimaryColsListPanel extends Component {
         }
 
         const columnComp = new ToolPanelColumnComp(column, dept, this.allowDragging, groupsExist);
-        this.getContext().wireBean(columnComp);
+        this.getContext().createBean(columnComp);
         this.getGui().appendChild(columnComp.getGui());
 
         this.columnComps[column.getId()] = columnComp;

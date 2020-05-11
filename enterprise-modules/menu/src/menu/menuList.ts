@@ -70,7 +70,7 @@ export class MenuList extends ManagedTabComponent {
     }
 
     public addItem(menuItemDef: MenuItemDef): void {
-        const cMenuItem = this.wireDependentBean(new MenuItemComponent(menuItemDef));
+        const cMenuItem = this.createBeanAndDestroyWithMe(new MenuItemComponent(menuItemDef));
         this.menuItems.push({comp: cMenuItem, params: menuItemDef });
 
         this.getGui().appendChild(cMenuItem.getGui());
@@ -327,7 +327,7 @@ export class MenuList extends ManagedTabComponent {
         const childMenu = new MenuList();
         childMenu.setParentComponent(menuItemComp);
 
-        this.getContext().wireBean(childMenu);
+        this.getContext().createBean(childMenu);
         childMenu.addMenuItems(menuItemDef.subMenu);
 
         const ePopup = _.loadTemplate('<div class="ag-menu" tabindex="-1"></div>');

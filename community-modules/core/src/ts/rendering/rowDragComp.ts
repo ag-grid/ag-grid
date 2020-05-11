@@ -39,7 +39,7 @@ export class RowDragComp extends Component {
             new ManagedVisibilityStrategy(this, this.beans, this.rowNode, this.column) :
             new NonManagedVisibilityStrategy(this, this.beans, this.rowNode, this.column);
 
-        this.wireDependentBean(strategy, this.beans.context);
+        this.createBeanAndDestroyWithMe(strategy, this.beans.context);
     }
 
     private getSelectedCount(): number {

@@ -154,7 +154,7 @@ export class LegendPanel extends Component {
             setFont: setFont
         };
 
-        const fontPanelComp = this.wireBean(new FontPanel(params));
+        const fontPanelComp = this.createBean(new FontPanel(params));
         this.legendGroup.addItem(fontPanelComp);
         this.activePanels.push(fontPanelComp);
     }

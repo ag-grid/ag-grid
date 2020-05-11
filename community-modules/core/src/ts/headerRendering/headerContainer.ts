@@ -129,7 +129,7 @@ export class HeaderContainer extends BeanStub {
     private setupDragAndDrop(gridComp: GridPanel): void {
         const dropContainer = this.eViewport ? this.eViewport : this.eContainer;
         const bodyDropTarget = new BodyDropTarget(this.pinned, dropContainer);
-        this.wireDependentBean(bodyDropTarget);
+        this.createBeanAndDestroyWithMe(bodyDropTarget);
         bodyDropTarget.registerGridComp(gridComp);
     }
 
@@ -150,7 +150,7 @@ export class HeaderContainer extends BeanStub {
             const groupRow = dept !== (rowCount - 1);
             const type = groupRow ? HeaderRowType.COLUMN_GROUP : HeaderRowType.COLUMN;
             const headerRowComp = new HeaderRowComp(dept, type, this.pinned, this.dropTarget);
-            this.wireBean(headerRowComp);
+            this.createBean(headerRowComp);
             this.headerRowComps.push(headerRowComp);
             headerRowComp.getGui().setAttribute('aria-rowindex', this.headerRowComps.length.toString());
             this.eContainer.appendChild(headerRowComp.getGui());
@@ -158,7 +158,7 @@ export class HeaderContainer extends BeanStub {
 
         if (!this.columnController.isPivotMode() && this.columnController.hasFloatingFilters()) {
             const headerRowComp = new HeaderRowComp(rowCount, HeaderRowType.FLOATING_FILTER, this.pinned, this.dropTarget);
-            this.wireBean(headerRowComp);
+            this.createBean(headerRowComp);
             this.headerRowComps.push(headerRowComp);
             headerRowComp.getGui().setAttribute('aria-rowindex', this.headerRowComps.length.toString());
             this.eContainer.appendChild(headerRowComp.getGui());

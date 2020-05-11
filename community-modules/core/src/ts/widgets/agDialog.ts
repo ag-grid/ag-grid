@@ -382,7 +382,7 @@ export class AgDialog extends AgPanel {
         if (!eTitleBar || maximizable === this.isMaximizable) { return; }
 
         const maximizeButtonComp = this.maximizeButtonComp = new Component(this.MAXIMIZE_BTN_TEMPLATE);
-        this.getContext().wireBean(maximizeButtonComp);
+        this.getContext().createBean(maximizeButtonComp);
 
         const eGui = maximizeButtonComp.getGui();
         eGui.appendChild(this.maximizeIcon = _.createIconNoSpan('maximize', this.gridOptionsWrapper));

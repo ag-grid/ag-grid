@@ -81,8 +81,8 @@ export class HeaderGroupWrapperComp extends Component {
         this.setupMovingCss();
         this.setupTooltip();
 
-        this.wireDependentBean(new HoverFeature(this.columnGroup.getOriginalColumnGroup().getLeafColumns(), this.getGui()));
-        this.wireDependentBean(new SetLeftFeature(this.columnGroup, this.getGui(), this.beans));
+        this.createBeanAndDestroyWithMe(new HoverFeature(this.columnGroup.getOriginalColumnGroup().getLeafColumns(), this.getGui()));
+        this.createBeanAndDestroyWithMe(new SetLeftFeature(this.columnGroup, this.getGui(), this.beans));
     }
 
     private setupMovingCss(): void {
@@ -117,7 +117,7 @@ export class HeaderGroupWrapperComp extends Component {
         if (this.gridOptionsWrapper.isEnableBrowserTooltips()) {
             this.getGui().setAttribute('title', tooltipText);
         } else {
-            this.wireDependentBean(new TooltipFeature(this, 'headerGroup'));
+            this.createBeanAndDestroyWithMe(new TooltipFeature(this, 'headerGroup'));
         }
     }
 

@@ -121,7 +121,7 @@ export class ColumnToolPanel extends Component implements IColumnToolPanel, IToo
         if (this.pivotModePanel) {
             this.pivotModePanel.setDisplayed(visible);
         } else if (visible) {
-            this.pivotModePanel = this.wireBean(new PivotModePanel());
+            this.pivotModePanel = this.createBean(new PivotModePanel());
 
             // ensure pivot mode panel is positioned at the top of the columns tool panel
             this.getGui().insertBefore(this.pivotModePanel.getGui(), this.getGui().firstChild);
@@ -205,7 +205,7 @@ export class ColumnToolPanel extends Component implements IColumnToolPanel, IToo
     }
 
     private addComponent(component: Component): void {
-        this.getContext().wireBean(component);
+        this.getContext().createBean(component);
         this.getGui().appendChild(component.getGui());
         this.childDestroyFuncs.push( ()=> this.destroyBean(component));
     }

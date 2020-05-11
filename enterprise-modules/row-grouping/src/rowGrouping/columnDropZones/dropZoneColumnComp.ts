@@ -166,7 +166,7 @@ export class DropZoneColumnComp extends Component {
             getRowCount: function() { return rows.length; }
         });
 
-        this.getContext().wireBean(virtualList);
+        this.getContext().createBean(virtualList);
 
         const ePopup = _.loadTemplate('<div class="ag-select-agg-func-popup"></div>');
         ePopup.style.top = '0px';

@@ -268,7 +268,7 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
         this.rootNode = new RowNode();
         this.rootNode.group = true;
         this.rootNode.level = -1;
-        this.wireBean(this.rootNode);
+        this.createBean(this.rootNode);
 
         if (this.datasource) {
             this.createNewRowNodeBlockLoader();
@@ -306,7 +306,7 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
         const maxConcurrentRequests = this.gridOptionsWrapper.getMaxConcurrentDatasourceRequests();
         const blockLoadDebounceMillis = this.gridOptionsWrapper.getBlockLoadDebounceMillis();
         this.rowNodeBlockLoader = new RowNodeBlockLoader(maxConcurrentRequests, blockLoadDebounceMillis);
-        this.wireBean(this.rowNodeBlockLoader);
+        this.createBean(this.rowNodeBlockLoader);
     }
 
     @PreDestroy
@@ -395,7 +395,7 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
 
     private createNodeCache(rowNode: RowNode): void {
         const cache = new ServerSideCache(this.cacheParams, rowNode);
-        this.getContext().wireBean(cache);
+        this.getContext().createBean(cache);
 
         cache.addEventListener(RowNodeCache.EVENT_CACHE_UPDATED, this.onCacheUpdated.bind(this));
 
@@ -669,7 +669,7 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
             return masterNode.detailNode;
         } else {
             const detailNode = new RowNode();
-            this.getContext().wireBean(detailNode);
+            this.getContext().createBean(detailNode);
             detailNode.detail = true;
             detailNode.selectable = false;
 

@@ -81,7 +81,7 @@ export class SetFilterListItem extends Component {
                 if (this.gridOptionsWrapper.isEnableBrowserTooltips()) {
                     this.eFilterItemValue.title = this.tooltipText;
                 } else {
-                    this.wireDependentBean(new TooltipFeature(this, 'setFilterValue'));
+                    this.createBeanAndDestroyWithMe(new TooltipFeature(this, 'setFilterValue'));
                 }
             }
         }

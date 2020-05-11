@@ -109,7 +109,7 @@ export class AxisPanel extends Component {
     }
 
     private initAxisTicks() {
-        const axisTicksComp = this.wireBean(new AxisTicksPanel(this.chartController));
+        const axisTicksComp = this.createBean(new AxisTicksPanel(this.chartController));
         this.axisGroup.addItem(axisTicksComp);
         this.activePanels.push(axisTicksComp);
     }
@@ -143,7 +143,7 @@ export class AxisPanel extends Component {
             setFont
         };
 
-        const labelPanelComp = this.wireBean(new FontPanel(params));
+        const labelPanelComp = this.createBean(new FontPanel(params));
         this.axisGroup.addItem(labelPanelComp);
         this.activePanels.push(labelPanelComp);
 
@@ -152,7 +152,7 @@ export class AxisPanel extends Component {
 
     private addAdditionalLabelComps(labelPanelComp: FontPanel) {
         const createAngleComp = (label: string, initialValue: number, updateFunc: (value: number) => void) => {
-            const rotationInput = this.wireBean(new AgAngleSelect()
+            const rotationInput = this.createBean(new AgAngleSelect()
                 .setLabel(label)
                 .setLabelWidth("flex")
                 .setValue(initialValue || 0)
@@ -178,7 +178,7 @@ export class AxisPanel extends Component {
         createAngleComp(xRotationLabel, this.getChartProxy().getChartOption("xAxis.label.rotation"), createLabelUpdateFunc(ChartAxisPosition.Bottom));
         createAngleComp(yRotationLabel, this.getChartProxy().getChartOption("yAxis.label.rotation"), createLabelUpdateFunc(ChartAxisPosition.Left));
 
-        const labelPaddingSlider = this.wireBean(new AgSlider());
+        const labelPaddingSlider = this.createBean(new AgSlider());
 
         labelPaddingSlider.setLabel(this.chartTranslator.translate("padding"))
             .setValue(this.getChartProxy().getAxisProperty("label.padding"))

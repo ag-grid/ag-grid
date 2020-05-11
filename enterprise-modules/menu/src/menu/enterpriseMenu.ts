@@ -99,7 +99,7 @@ export class EnterpriseMenuFactory implements IMenuFactory {
 
     public showMenu(column: Column, positionCallback: (menu: EnterpriseMenu) => void, defaultTab?: string, restrictToTabs?: string[]): void {
         const menu = new EnterpriseMenu(column, this.lastSelectedTab, restrictToTabs);
-        this.context.wireBean(menu);
+        this.context.createBean(menu);
 
         const eMenuGui = menu.getGui();
 
@@ -210,7 +210,7 @@ export class EnterpriseMenu extends BeanStub {
             onItemClicked: this.onTabItemClicked.bind(this)
         });
 
-        this.getContext().wireBean(this.tabbedLayout);
+        this.getContext().createBean(this.tabbedLayout);
         const displayedListener = this.eventService.addEventListener(Events.EVENT_DISPLAYED_COLUMNS_CHANGED, this.onDisplayedColumnsChanged.bind(this));
         this.addDestroyFunc(() => displayedListener());
     }
@@ -398,7 +398,7 @@ export class EnterpriseMenu extends BeanStub {
 
     private createMainPanel(): TabbedItem {
         this.mainMenuList = new MenuList();
-        this.getContext().wireBean(this.mainMenuList);
+        this.getContext().createBean(this.mainMenuList);
 
         const menuItems = this.getMenuItems();
         const menuItemsMapped = this.menuItemMapper.mapWithStockItems(menuItems, this.column);

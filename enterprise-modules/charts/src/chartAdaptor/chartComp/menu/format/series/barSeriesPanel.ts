@@ -141,14 +141,14 @@ export class BarSeriesPanel extends Component {
             setFont: setFont
         };
 
-        const labelPanelComp = this.wireBean(new FontPanel(params));
+        const labelPanelComp = this.createBean(new FontPanel(params));
         this.activePanels.push(labelPanelComp);
 
         this.seriesGroup.addItem(labelPanelComp);
     }
 
     private initShadowPanel() {
-        const shadowPanelComp = this.wireBean(new ShadowPanel(this.chartController));
+        const shadowPanelComp = this.createBean(new ShadowPanel(this.chartController));
         this.seriesGroup.addItem(shadowPanelComp);
         this.activePanels.push(shadowPanelComp);
     }

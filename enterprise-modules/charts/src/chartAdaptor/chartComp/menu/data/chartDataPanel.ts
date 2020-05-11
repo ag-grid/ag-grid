@@ -96,7 +96,7 @@ export class ChartDataPanel extends Component {
     }
 
     private createCategoriesGroupComponent(columns: ColState[]): void {
-        this.categoriesGroupComp = this.wireBean(new AgGroupComponent({
+        this.categoriesGroupComp = this.createBean(new AgGroupComponent({
             title: this.getCategoryGroupTitle(),
             enabled: true,
             suppressEnabledCheckbox: true,
@@ -107,7 +107,7 @@ export class ChartDataPanel extends Component {
         const inputName = `chartDimension${this.getCompId()}`;
 
         columns.forEach(col => {
-            const comp = this.categoriesGroupComp!.wireDependentBean(new AgRadioButton());
+            const comp = this.categoriesGroupComp!.createBeanAndDestroyWithMe(new AgRadioButton());
 
             comp.setLabel(_.escape(col.displayName)!);
             comp.setValue(col.selected);
@@ -122,7 +122,7 @@ export class ChartDataPanel extends Component {
     }
 
     private createSeriesGroupComponent(columns: ColState[]): void {
-        this.seriesGroupComp = this.wireDependentBean(new AgGroupComponent({
+        this.seriesGroupComp = this.createBeanAndDestroyWithMe(new AgGroupComponent({
             title: this.getSeriesGroupTitle(),
             enabled: true,
             suppressEnabledCheckbox: true,
@@ -131,7 +131,7 @@ export class ChartDataPanel extends Component {
         }));
 
         if (this.chartController.isActiveXYChart()) {
-            const pairedModeToggle = this.seriesGroupComp.wireDependentBean(new AgToggleButton());
+            const pairedModeToggle = this.seriesGroupComp.createBeanAndDestroyWithMe(new AgToggleButton());
             const chartProxy = this.chartController.getChartProxy();
 
             pairedModeToggle
@@ -151,7 +151,7 @@ export class ChartDataPanel extends Component {
         const getSeriesLabel = this.generateGetSeriesLabel();
 
         columns.forEach(col => {
-            const comp = this.seriesGroupComp.wireDependentBean(new AgCheckbox());
+            const comp = this.seriesGroupComp.createBeanAndDestroyWithMe(new AgCheckbox());
             comp.addCssClass('ag-data-select-checkbox');
 
             const label = getSeriesLabel(col);

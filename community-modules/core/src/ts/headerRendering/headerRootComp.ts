@@ -62,7 +62,7 @@ export class HeaderRootComp extends Component {
 
         this.childContainers = [centerContainer, pinnedLeftContainer, pinnedRightContainer];
 
-        this.childContainers.forEach(container => this.wireDependentBean(container));
+        this.childContainers.forEach(container => this.createBeanAndDestroyWithMe(container));
 
         // shotgun way to get labels to change, eg from sum(amount) to avg(amount)
         this.addDestroyableEventListener(this.eventService, Events.EVENT_COLUMN_VALUE_CHANGED, this.refreshHeader.bind(this));

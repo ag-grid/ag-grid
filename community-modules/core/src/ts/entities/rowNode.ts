@@ -272,7 +272,7 @@ export class RowNode implements IEventEmitter {
     private createDaemonNode(): RowNode {
         const oldNode = new RowNode();
 
-        this.context.wireBean(oldNode);
+        this.context.createBean(oldNode);
         // just copy the id and data, this is enough for the node to be used
         // in the selection controller (the selection controller is the only
         // place where daemon nodes can live).

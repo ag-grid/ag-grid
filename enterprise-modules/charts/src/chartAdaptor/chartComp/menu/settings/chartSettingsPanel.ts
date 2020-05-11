@@ -96,7 +96,7 @@ export class ChartSettingsPanel extends Component {
 
             const isActivePalette = this.activePalette === name;
             const { fills, strokes } = palette;
-            const miniChartsContainer = this.wireBean(new MiniChartsContainer(this.chartController, fills, strokes));
+            const miniChartsContainer = this.createBean(new MiniChartsContainer(this.chartController, fills, strokes));
 
             this.miniCharts.push(miniChartsContainer);
             this.eMiniChartsContainer.appendChild(miniChartsContainer.getGui());

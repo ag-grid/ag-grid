@@ -104,13 +104,13 @@ export class AreaSeriesPanel extends Component {
     }
 
     private initMarkersPanel() {
-        const markersPanelComp = this.wireBean(new MarkersPanel(this.chartController));
+        const markersPanelComp = this.createBean(new MarkersPanel(this.chartController));
         this.seriesGroup.addItem(markersPanelComp);
         this.activePanels.push(markersPanelComp);
     }
 
     private initShadowPanel() {
-        const shadowPanelComp = this.wireBean(new ShadowPanel(this.chartController));
+        const shadowPanelComp = this.createBean(new ShadowPanel(this.chartController));
         this.seriesGroup.addItem(shadowPanelComp);
         this.activePanels.push(shadowPanelComp);
     }

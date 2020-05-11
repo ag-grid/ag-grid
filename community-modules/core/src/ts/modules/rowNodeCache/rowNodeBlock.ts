@@ -189,7 +189,7 @@ export abstract class RowNodeBlock extends BeanStub implements IRowNodeBlock {
 
     protected createBlankRowNode(rowIndex: number): RowNode {
         const rowNode = new RowNode();
-        this.beans.context.wireBean(rowNode);
+        this.beans.context.createBean(rowNode);
         rowNode.setRowHeight(this.rowNodeCacheParams.rowHeight);
         return rowNode;
     }

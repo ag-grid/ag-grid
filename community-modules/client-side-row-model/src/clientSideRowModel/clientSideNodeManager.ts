@@ -280,7 +280,7 @@ export class ClientSideNodeManager {
 
     private createNode(dataItem: any, parent: RowNode, level: number): RowNode {
         const node = new RowNode();
-        this.context.wireBean(node);
+        this.context.createBean(node);
 
         const doingTreeData = this.gridOptionsWrapper.isTreeData();
         const doingLegacyTreeData = !doingTreeData && _.exists(this.getNodeChildDetails);

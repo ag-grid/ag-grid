@@ -62,7 +62,7 @@ export class RichSelectCellEditor extends PopupComponent implements ICellEditor 
         this.eValue.appendChild(icon);
 
         this.virtualList = new VirtualList('rich-select');
-        this.getContext().wireBean(this.virtualList);
+        this.getContext().createBean(this.virtualList);
 
         this.virtualList.setComponentCreator(this.createRowComponent.bind(this));
 
@@ -223,7 +223,7 @@ export class RichSelectCellEditor extends PopupComponent implements ICellEditor 
     private createRowComponent(value: any): Component {
         const valueFormatted = this.params.formatValue(value);
         const row = new RichSelectRow(this.params);
-        this.getContext().wireBean(row);
+        this.getContext().createBean(row);
         row.setState(value, valueFormatted, value === this.selectedValue);
 
         return row;

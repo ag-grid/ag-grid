@@ -101,8 +101,8 @@ export class GridChartComp extends Component {
         const isRtl = this.gridOptionsWrapper.isEnableRtl();
         _.addCssClass(this.getGui(), isRtl ? 'ag-rtl' : 'ag-ltr');
 
-        this.model = this.wireBean(new ChartDataModel(modelParams));
-        this.chartController = this.wireDependentBean(new ChartController(this.model, this.params.chartPaletteName));
+        this.model = this.createBean(new ChartDataModel(modelParams));
+        this.chartController = this.createBeanAndDestroyWithMe(new ChartController(this.model, this.params.chartPaletteName));
 
         // create chart before dialog to ensure dialog is correct size
         this.createChart();
@@ -216,7 +216,7 @@ export class GridChartComp extends Component {
             closable: true
         });
 
-        this.getContext().wireBean(this.chartDialog);
+        this.getContext().createBean(this.chartDialog);
 
         this.chartDialog.addEventListener(AgDialog.EVENT_DESTROYED, () => this.destroy());
     }
@@ -252,12 +252,12 @@ export class GridChartComp extends Component {
     }
 
     private addMenu(): void {
-        this.chartMenu = this.wireBean(new ChartMenu(this.eChartContainer, this.eMenuContainer, this.chartController));
+        this.chartMenu = this.createBean(new ChartMenu(this.eChartContainer, this.eMenuContainer, this.chartController));
         this.eChartContainer.appendChild(this.chartMenu.getGui());
     }
 
     private addTitleEditComp(): void {
-        this.titleEdit = this.wireBean(new TitleEdit(this.chartMenu));
+        this.titleEdit = this.createBean(new TitleEdit(this.chartMenu));
         this.eTitleEditContainer.appendChild(this.titleEdit.getGui());
 
         if( this.chartProxy ) {

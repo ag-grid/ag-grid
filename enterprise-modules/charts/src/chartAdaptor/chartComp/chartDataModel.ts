@@ -81,7 +81,7 @@ export class ChartDataModel extends BeanStub {
 
     @PostConstruct
     private init(): void {
-        this.datasource = this.wireDependentBean(new ChartDatasource());
+        this.datasource = this.createBeanAndDestroyWithMe(new ChartDatasource());
 
         this.updateCellRanges();
     }

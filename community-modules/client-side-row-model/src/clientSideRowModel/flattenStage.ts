@@ -141,7 +141,7 @@ export class FlattenStage implements IRowNodeStage {
         if (_.exists(groupNode.sibling)) { return; }
 
         const footerNode = new RowNode();
-        this.context.wireBean(footerNode);
+        this.context.createBean(footerNode);
 
         Object.keys(groupNode).forEach(function (key) {
             (footerNode as any)[key] = (groupNode as any)[key];
@@ -165,7 +165,7 @@ export class FlattenStage implements IRowNodeStage {
         if (_.exists(masterNode.detailNode)) { return masterNode.detailNode; }
 
         const detailNode = new RowNode();
-        this.context.wireBean(detailNode);
+        this.context.createBean(detailNode);
 
         detailNode.detail = true;
         detailNode.selectable = false;

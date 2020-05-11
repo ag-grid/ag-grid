@@ -78,7 +78,7 @@ export class PinnedRowModel {
             let nextRowTop = 0;
             allData.forEach((dataItem: any, index: number) => {
                 const rowNode = new RowNode();
-                this.context.wireBean(rowNode);
+                this.context.createBean(rowNode);
                 rowNode.data = dataItem;
                 rowNode.id = `${isTop ? 't' : 'b'}-${index}`;
                 rowNode.rowPinned = isTop ? Constants.PINNED_TOP : Constants.PINNED_BOTTOM;

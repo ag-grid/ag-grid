@@ -219,7 +219,7 @@ export class CellComp extends Component implements TooltipParentComp {
         this.refreshHandle();
 
         if (_.exists(this.tooltip) && !this.beans.gridOptionsWrapper.isEnableBrowserTooltips()) {
-            this.wireDependentBean(new TooltipFeature(this, 'cell'), this.beans.context);
+            this.createBeanAndDestroyWithMe(new TooltipFeature(this, 'cell'), this.beans.context);
         }
     }
 
@@ -1091,7 +1091,7 @@ export class CellComp extends Component implements TooltipParentComp {
 
             // if a popup, then we wrap in a popup editor and return the popup
             const popupEditorWrapper = new PopupEditorWrapper(cellEditor);
-            this.beans.context.wireBean(popupEditorWrapper);
+            this.beans.context.createBean(popupEditorWrapper);
             popupEditorWrapper.init(params);
 
             return popupEditorWrapper;
@@ -1950,7 +1950,7 @@ export class CellComp extends Component implements TooltipParentComp {
         }
 
         const rowDraggingComp = new RowDragComp(this.rowNode, this.column, this.getValueToUse(), this.beans);
-        this.wireDependentBean(rowDraggingComp, this.beans.context);
+        this.createBeanAndDestroyWithMe(rowDraggingComp, this.beans.context);
 
         // put the checkbox in before the value
         this.eCellWrapper.insertBefore(rowDraggingComp.getGui(), this.eParentOfValue);
@@ -1958,7 +1958,7 @@ export class CellComp extends Component implements TooltipParentComp {
 
     private addDndSource(): void {
         const dndSourceComp = new DndSourceComp(this.rowNode, this.column, this.getValueToUse(), this.beans, this.getGui());
-        this.wireDependentBean(dndSourceComp, this.beans.context);
+        this.createBeanAndDestroyWithMe(dndSourceComp, this.beans.context);
 
         // put the checkbox in before the value
         this.eCellWrapper.insertBefore(dndSourceComp.getGui(), this.eParentOfValue);
@@ -1966,7 +1966,7 @@ export class CellComp extends Component implements TooltipParentComp {
 
     private addSelectionCheckbox(): void {
         const cbSelectionComponent = new CheckboxSelectionComponent();
-        this.beans.context.wireBean(cbSelectionComponent);
+        this.beans.context.createBean(cbSelectionComponent);
 
         let visibleFunc = this.getComponentHolder().checkboxSelection;
         visibleFunc = typeof visibleFunc === 'function' ? visibleFunc : null;

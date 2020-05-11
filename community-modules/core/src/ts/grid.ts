@@ -154,7 +154,7 @@ export class Grid {
 
         const gridCoreClass = (params && params.rootComponent) || GridCore;
         const gridCore = new gridCoreClass();
-        this.context.wireBean(gridCore);
+        this.context.createBean(gridCore);
 
         this.setColumnsAndData();
         this.dispatchGridReadyEvent(gridOptions);

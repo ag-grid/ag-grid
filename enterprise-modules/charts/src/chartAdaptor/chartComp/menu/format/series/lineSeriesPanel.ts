@@ -80,7 +80,7 @@ export class LineSeriesPanel extends Component {
     }
 
     private initMarkersPanel() {
-        const markersPanelComp = this.wireBean(new MarkersPanel(this.chartController));
+        const markersPanelComp = this.createBean(new MarkersPanel(this.chartController));
         this.seriesGroup.addItem(markersPanelComp);
         this.activePanels.push(markersPanelComp);
     }

@@ -104,7 +104,7 @@ export class ContextMenuFactory implements IContextMenuFactory {
         if (menuItems === undefined || _.missingOrEmpty(menuItems)) { return; }
 
         const menu = new ContextMenu(menuItems);
-        this.context.wireBean(menu);
+        this.context.createBean(menu);
 
         const eMenuGui = menu.getGui();
 
@@ -163,7 +163,7 @@ class ContextMenu extends Component {
     @PostConstruct
     private addMenuItems(): void {
         const menuList = new MenuList();
-        this.getContext().wireBean(menuList);
+        this.getContext().createBean(menuList);
 
         const menuItemsMapped = this.menuItemMapper.mapWithStockItems(this.menuItems, null);
 

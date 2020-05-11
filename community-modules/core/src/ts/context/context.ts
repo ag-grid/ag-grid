@@ -93,17 +93,18 @@ export class Context {
         if (this.componentsMappedByName && this.componentsMappedByName[key]) {
             const cls = this.componentsMappedByName[key];
             const newComponent = new this.componentsMappedByName[key](componentParams) as Component;
-            this.wireBean(newComponent, afterPreCreateCallback);
+            this.createBean(newComponent, afterPreCreateCallback);
             return newComponent;
         }
         return null;
     }
 
-    public wireBean(bean: any, afterPreCreateCallback?: (comp: Component) => void): void {
+    public createBean<T extends any>(bean: T, afterPreCreateCallback?: (comp: Component) => void): T {
         if (!bean) {
             throw Error(`Can't wire to bean since it is null`);
         }
         this.wireBeans([bean], afterPreCreateCallback);
+        return bean;
     }
 
     private wireBeans(beanInstances: any[], afterPreCreateCallback?: (comp: Component) => void): void {

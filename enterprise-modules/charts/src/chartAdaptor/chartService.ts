@@ -126,7 +126,7 @@ export class ChartService implements IChartService {
         };
 
         const chartComp = new GridChartComp(params);
-        this.context.wireBean(chartComp);
+        this.context.createBean(chartComp);
 
         const chartRef = this.createChartRef(chartComp);
 

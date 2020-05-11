@@ -40,7 +40,7 @@ export class SideBarButtonsComp extends Component {
 
     private addButtonComp(def: ToolPanelDef): void {
         const buttonComp = new SideBarButtonComp(def);
-        this.getContext().wireBean(buttonComp);
+        this.getContext().createBean(buttonComp);
         this.buttonComps.push(buttonComp);
         this.getGui().appendChild(buttonComp.getGui());
 

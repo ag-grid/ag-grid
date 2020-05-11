@@ -90,7 +90,7 @@ export default class TitlePanel extends Component {
             }
         };
 
-        const fontPanelComp = this.wireBean(new FontPanel(fontPanelParams));
+        const fontPanelComp = this.createBean(new FontPanel(fontPanelParams));
         this.getGui().appendChild(fontPanelComp.getGui());
         this.activePanels.push(fontPanelComp);
 

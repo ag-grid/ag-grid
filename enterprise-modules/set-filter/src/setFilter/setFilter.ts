@@ -213,7 +213,7 @@ export class SetFilter extends ProvidedFilter {
     }
 
     private initVirtualList() {
-        const virtualList = this.virtualList = this.wireBean(new VirtualList('filter'));
+        const virtualList = this.virtualList = this.createBean(new VirtualList('filter'));
         const eSetFilterList = this.getRefElement('eSetFilterList');
 
         if (eSetFilterList) {
@@ -231,7 +231,7 @@ export class SetFilter extends ProvidedFilter {
     }
 
     private createSetListItem(value: any): Component {
-        const listItem = this.wireBean(new SetFilterListItem(value, this.setFilterParams));
+        const listItem = this.createBean(new SetFilterListItem(value, this.setFilterParams));
         const selected = this.valueModel.isValueSelected(value);
 
         listItem.setSelected(selected);

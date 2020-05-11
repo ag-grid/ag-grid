@@ -125,7 +125,7 @@ export class SideBarComp extends Component implements ISideBar {
             }
 
             const wrapper = new ToolPanelWrapper();
-            this.getContext().wireBean(wrapper);
+            this.getContext().createBean(wrapper);
             wrapper.setToolPanelDef(def);
             wrapper.setDisplayed(false);
             this.getGui().appendChild(wrapper.getGui());
