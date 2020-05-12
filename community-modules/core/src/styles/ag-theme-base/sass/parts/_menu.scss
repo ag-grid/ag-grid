@@ -14,8 +14,9 @@
     }
 
     .ag-menu-option-part {
-        padding-top: ag-param(grid-size) * 1.5;
-        padding-bottom: ag-param(grid-size) * 1.5;
+        padding-top: ag-param(grid-size) + 2;
+        padding-bottom: ag-param(grid-size) + 2;
+        line-height: ag-param(icon-size);
     }
 
     .ag-menu-option-active {
@@ -48,14 +49,13 @@
     .ag-menu-separator-cell:after {
         content: "";
         display: block;
-        @include ag-border(secondary, top);
+        @include ag-border(critical, top);
     }
 
     .ag-menu-option-popup-pointer {
         width: ag-param(icon-size) + ag-param(grid-size) * 2;
         text-align: center;
     }
-
 
     ////////////////////////////////////////
     // Column Filter
@@ -129,7 +129,7 @@
     }
 
     .ag-mini-filter {
-        margin: ag-param(widget-container-vertical-padding) ag-param(widget-container-horizontal-padding) 0;
+        margin: ag-param(grid-size) ag-param(grid-size) 0;
     }
 
     .ag-set-filter-item {

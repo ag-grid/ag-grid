@@ -11,7 +11,6 @@ import { CheckboxSelectionComponent } from "../checkboxSelectionComponent";
 import { ColumnController } from "../../columnController/columnController";
 import { Column } from "../../entities/column";
 import { RefSelector } from "../../widgets/componentAnnotations";
-import { MouseEventService } from "../../gridPanel/mouseEventService";
 import { ColDef } from "../../entities/colDef";
 import {
     ComponentClassDef,
@@ -19,7 +18,6 @@ import {
     UserComponentFactory
 } from "../../components/framework/userComponentFactory";
 import { _, Promise } from "../../utils";
-import { ICellEditorParams } from '../../interfaces/iCellEditor';
 
 export interface GroupCellRendererParams extends ICellRendererParams {
     pinned: string;

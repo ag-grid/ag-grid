@@ -1,9 +1,9 @@
-import {Beans} from "./beans";
-import {CellComp} from "./cellComp";
-import {CellChangedEvent, DataChangedEvent, RowNode} from "../entities/rowNode";
-import {Column} from "../entities/column";
+import { Beans } from "./beans";
+import { CellComp } from "./cellComp";
+import { DataChangedEvent, RowNode } from "../entities/rowNode";
+import { Column } from "../entities/column";
 import {
-    Events, GridColumnsChangedEvent,
+    Events,
     RowClickedEvent,
     RowDoubleClickedEvent,
     RowEditingStartedEvent,
@@ -13,16 +13,16 @@ import {
     VirtualRowRemovedEvent
 } from "../events";
 
-import {ICellRendererComp} from "./cellRenderers/iCellRenderer";
-import {RowContainerComponent} from "./rowContainerComponent";
-import {Component} from "../widgets/component";
+import { ICellRendererComp } from "./cellRenderers/iCellRenderer";
+import { RowContainerComponent } from "./rowContainerComponent";
+import { Component } from "../widgets/component";
 
-import {ProcessRowParams} from "../entities/gridOptions";
-import {IFrameworkOverrides} from "../interfaces/iFrameworkOverrides";
-import {Constants} from "../constants";
-import {ModuleNames} from "../modules/moduleNames";
-import {ModuleRegistry} from "../modules/moduleRegistry";
-import {_} from "../utils";
+import { ProcessRowParams } from "../entities/gridOptions";
+import { IFrameworkOverrides } from "../interfaces/iFrameworkOverrides";
+import { Constants } from "../constants";
+import { ModuleNames } from "../modules/moduleNames";
+import { ModuleRegistry } from "../modules/moduleRegistry";
+import { _ } from "../utils";
 
 interface CellTemplate {
     template: string;

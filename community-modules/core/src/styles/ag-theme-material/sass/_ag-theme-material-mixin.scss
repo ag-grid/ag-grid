@@ -31,6 +31,11 @@
         padding: ag-param(grid-size) / 2 0;
     }
 
+    .ag-tabs-body .ag-menu-list {
+        padding-top: 0;
+        padding-bottom: 0;
+    }
+
     .ag-header-cell, .ag-header-group-cell {
         transition: background-color 0.5s;
     }
@@ -173,5 +178,6 @@
     .ag-overlay-no-rows-wrapper.ag-layout-auto-height {
         padding-top: 60px;
     }
+
     @include ag-allow-color-param-access-with-ag-param(true);
 }
