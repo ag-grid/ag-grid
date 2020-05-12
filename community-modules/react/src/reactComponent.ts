@@ -1,12 +1,12 @@
 import * as React from 'react';
-import {ReactPortal} from 'react';
+import { ReactPortal } from 'react';
 import * as ReactDOM from 'react-dom';
-import {_, ComponentType, Promise} from '@ag-grid-community/core';
-import {AgGridReact} from "./agGridReact";
-import {BaseReactComponent} from './baseReactComponent';
-import {assignProperties} from './utils';
+import { _, ComponentType, Promise } from '@ag-grid-community/core';
+import { AgGridReact } from "./agGridReact";
+import { BaseReactComponent } from './baseReactComponent';
+import { assignProperties } from './utils';
 import generateNewKey from './keyGenerator';
-import {renderToStaticMarkup} from 'react-dom/server';
+import { renderToStaticMarkup } from 'react-dom/server';
 
 export class ReactComponent extends BaseReactComponent {
     static REACT_MEMO_TYPE = ReactComponent.hasSymbol() ? Symbol.for('react.memo') : 0xead3;
@@ -49,9 +49,7 @@ export class ReactComponent extends BaseReactComponent {
 
         this.renderStaticMarkup(params);
 
-        return new Promise<void>((resolve: any) => {
-            this.createReactComponent(params, resolve);
-        });
+        return new Promise<void>(resolve => this.createReactComponent(params, resolve));
     }
 
     public getGui(): HTMLElement {
@@ -93,7 +91,7 @@ export class ReactComponent extends BaseReactComponent {
                 // actual react component are visible at the same time
                 // we check here if the rendering is "slow" (anything greater than 2ms) we'll use a listener to remove the
                 // static markup, otherwise just the next tick
-                if(this.staticRenderTime >= 2) {
+                if (this.staticRenderTime >= 2) {
                     this.eParentElement.addEventListener('DOMNodeInserted', () => {
                         this.removeStaticMarkup();
                     }, false);

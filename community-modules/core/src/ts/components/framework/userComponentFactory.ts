@@ -28,7 +28,7 @@ import { IFilterComp, IFilterParams } from "../../interfaces/iFilter";
 import { IFloatingFilterComp, IFloatingFilterParams } from "../../filter/floating/floatingFilter";
 import { ICellEditorComp, ICellEditorParams } from "../../interfaces/iCellEditor";
 import { IToolPanelComp, IToolPanelParams } from "../../interfaces/iToolPanel";
-import {IStatusPanel, IStatusPanelComp, IStatusPanelParams, StatusPanelDef} from "../../interfaces/iStatusPanel";
+import { IStatusPanel, IStatusPanelComp, IStatusPanelParams, StatusPanelDef } from "../../interfaces/iStatusPanel";
 import {
     CellEditorComponent,
     CellRendererComponent,
@@ -47,7 +47,7 @@ import {
     ToolPanelComponent,
     TooltipComponent
 } from "./componentTypes";
-import {BeanStub} from "../../context/beanStub";
+import { BeanStub } from "../../context/beanStub";
 
 export type DefinitionObject =
     GridOptions
@@ -236,18 +236,9 @@ export class UserComponentFactory extends BeanStub {
         const deferredInit: void | Promise<void> = this.initComponent(componentInstance, paramsAfterCallback);
 
         if (deferredInit == null) {
-
-            // const p = new Promise<A>(resolve => {
-            //     setTimeout( ()=> {
-            //         resolve(componentInstance);
-            //     }, 1000);
-            // });
-            // return p;
-
             return Promise.resolve(componentInstance);
         } else {
-            const asPromise = deferredInit as Promise<void>;
-            return asPromise.map(_ => componentInstance);
+            return (deferredInit as Promise<void>).then(() => componentInstance);
         }
     }
 

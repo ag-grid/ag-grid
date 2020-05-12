@@ -1,14 +1,16 @@
 import { Promise } from './promise';
 
-function delayExecute(done: (error?: Error) => void, ...expressions: (() => void)[]) {
-    setTimeout(() => {
-        try {
-            expressions.forEach(a => a());
-            done();
-        } catch (error) {
-            done(error);
-        }
-    }, 0);
+function delayAssert(done: (error?: Error) => void, ...assertions: (() => void)[]) {
+    setTimeout(() => asyncAssert(done, ...assertions), 0);
+}
+
+function asyncAssert(done: (error?: Error) => void, ...assertions: (() => void)[]) {
+    try {
+        assertions.forEach(a => a());
+        done();
+    } catch (error) {
+        done(error);
+    }
 }
 
 describe('Promise', () => {
@@ -41,7 +43,7 @@ describe('then', () => {
 
         canResolve = true;
 
-        delayExecute(done, () => expect(then).toBeCalledTimes(1));
+        delayAssert(done, () => expect(then).toBeCalledTimes(1));
     });
 
     it('executes immediately if the promise has already resolved', () => {
@@ -66,6 +68,15 @@ describe('then', () => {
         promise.then(then);
 
         expect(receivedValue).toBe(value);
+    });
+
+    it('returns a promise that can be chained', done => {
+        new Promise<number>(resolve => setTimeout(() => resolve(3), 0))
+            .then(value => value * 3)
+            .then(value => value + 20)
+            .then(value => {
+                asyncAssert(done, () => expect(value).toBe(29));
+            });
     });
 });
 
@@ -130,7 +141,7 @@ describe('resolveNow', () => {
 
     it('returns value from promise if promise has resolved', () => {
         const value = 456;
-        const promise = new Promise<number>(resolve => resolve(value));
+        const promise = Promise.resolve(value);
 
         expect(promise.resolveNow(123, x => x)).toBe(value);
     });

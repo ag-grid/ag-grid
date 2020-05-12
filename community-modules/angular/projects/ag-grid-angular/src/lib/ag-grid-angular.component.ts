@@ -51,10 +51,7 @@ export class AgGridAngular implements AfterViewInit {
     private gridParams: GridParams;
 
     // in order to ensure firing of gridReady is deterministic
-    private _fullyReady: Promise<boolean> = new Promise<boolean>(resolve => {
-        resolve(true);
-    }
-    );
+    private _fullyReady: Promise<boolean> = Promise.resolve(true);
 
     // making these public, so they are accessible to people using the ng2 component references
     public api: GridApi;

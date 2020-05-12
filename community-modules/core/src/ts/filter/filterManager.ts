@@ -16,7 +16,7 @@ import { UserComponentFactory } from '../components/framework/userComponentFacto
 import { ModuleNames } from '../modules/moduleNames';
 import { ModuleRegistry } from '../modules/moduleRegistry';
 import { forEach } from '../utils/array';
-import {BeanStub} from "../context/beanStub";
+import { BeanStub } from "../context/beanStub";
 
 export type FilterRequestSource = 'COLUMN_MENU' | 'TOOLBAR' | 'NO_UI';
 

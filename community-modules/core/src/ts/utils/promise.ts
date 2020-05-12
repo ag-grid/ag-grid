@@ -37,16 +37,14 @@ export class Promise<T> {
         callback(value => this.onDone(value), params => this.onReject(params));
     }
 
-    public then(func: (result: T) => void): void {
-        if (this.status === PromiseStatus.RESOLVED) {
-            func(this.resolution);
-        } else {
-            this.waiters.push(func);
-        }
-    }
-
-    public map<Z>(adapter: (from: T) => Z): Promise<Z> {
-        return new Promise<Z>(resolve => this.then(value => resolve(adapter(value))));
+    public then<V>(func: (result: T) => V): Promise<V> {
+        return new Promise(resolve => {
+            if (this.status === PromiseStatus.RESOLVED) {
+                resolve(func(this.resolution));
+            } else {
+                this.waiters.push(value => resolve(func(value)));
+            }
+        });
     }
 
     public resolveNow<Z>(ifNotResolvedValue: Z, ifResolved: (current: T | null) => Z): Z {

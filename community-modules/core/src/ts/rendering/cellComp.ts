@@ -1092,7 +1092,7 @@ export class CellComp extends Component implements TooltipParentComp {
     private createCellEditor(params: ICellEditorParams): Promise<ICellEditorComp> {
         const cellEditorPromise = this.beans.userComponentFactory.newCellEditor(this.column.getColDef(), params);
 
-        return cellEditorPromise.map(cellEditor => {
+        return cellEditorPromise.then(cellEditor => {
             const isPopup = cellEditor.isPopup && cellEditor.isPopup();
 
             if (!isPopup) { return cellEditor; }
@@ -1985,7 +1985,7 @@ export class CellComp extends Component implements TooltipParentComp {
         visibleFunc = typeof visibleFunc === 'function' ? visibleFunc : null;
 
         cbSelectionComponent.init({ rowNode: this.rowNode, column: this.column, visibleFunc: visibleFunc });
-        this.addDestroyFunc(() => this.beans.context.destroyBean(cbSelectionComponent) );
+        this.addDestroyFunc(() => this.beans.context.destroyBean(cbSelectionComponent));
 
         // put the checkbox in before the value
         this.eCellWrapper.insertBefore(cbSelectionComponent.getGui(), this.eParentOfValue);

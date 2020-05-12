@@ -100,12 +100,12 @@ export class SetValueModel implements IEventEmitter {
      * otherwise the current selection will be preserved.
      */
     public refreshValues(keepSelection = true): Promise<void> {
-        return new Promise<void>(resolve => {
-            const currentModel = this.getModel();
+        const currentModel = this.getModel();
 
-            // ensure model is updated for new values
-            this.updateAllValues().then(_ => this.setModel(keepSelection ? currentModel : null).then(() => resolve()));
-        });
+        this.updateAllValues();
+
+        // ensure model is updated for new values
+        return this.setModel(keepSelection ? currentModel : null);
     }
 
     /**
@@ -376,25 +376,21 @@ export class SetValueModel implements IEventEmitter {
     }
 
     public setModel(model: string[]): Promise<void> {
-        return new Promise<void>(resolve => {
-            this.allValuesPromise.then(values => {
-                if (model == null) {
-                    this.resetSelectionState(values);
-                } else {
-                    // select all values from the model that exist in the filter
-                    this.selectedValues.clear();
+        return this.allValuesPromise.then(values => {
+            if (model == null) {
+                this.resetSelectionState(values);
+            } else {
+                // select all values from the model that exist in the filter
+                this.selectedValues.clear();
 
-                    const allValues = _.convertToSet(values);
+                const allValues = _.convertToSet(values);
 
-                    _.forEach(model, value => {
-                        if (allValues.has(value)) {
-                            this.selectValue(value);
-                        }
-                    });
-                }
-
-                resolve();
-            });
+                _.forEach(model, value => {
+                    if (allValues.has(value)) {
+                        this.selectValue(value);
+                    }
+                });
+            }
         });
     }
 
