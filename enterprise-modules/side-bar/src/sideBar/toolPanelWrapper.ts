@@ -60,9 +60,9 @@ export class ToolPanelWrapper extends Component {
     private setToolPanelComponent(compInstance: IToolPanelComp): void {
         this.toolPanelCompInstance = compInstance;
 
-        this.getGui().appendChild(compInstance.getGui());
+        this.appendChild(compInstance.getGui());
         this.addDestroyFunc(()=> {
-            this.getContext().destroyBean(compInstance);
+            this.destroyBean(compInstance);
         });
     }
 

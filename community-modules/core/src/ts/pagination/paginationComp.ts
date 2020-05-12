@@ -60,9 +60,9 @@ export class PaginationComp extends Component {
             return;
         }
 
-        // this.addDestroyableEventListener(this.eventService, Events.EVENT_PAGINATION_CHANGED, this.onPaginationChanged.bind(this));
+        this.addDestroyableEventListener(this.eventService, Events.EVENT_PAGINATION_CHANGED, this.onPaginationChanged.bind(this));
 
-        // this.addDestroyableEventListener(this.btFirst, 'click', this.onBtFirst.bind(this));
+        this.addDestroyableEventListener(this.btFirst, 'click', this.onBtFirst.bind(this));
         this.addDestroyableEventListener(this.btLast, 'click', this.onBtLast.bind(this));
         this.addDestroyableEventListener(this.btNext, 'click', this.onBtNext.bind(this));
         this.addDestroyableEventListener(this.btPrevious, 'click', this.onBtPrevious.bind(this));
@@ -70,7 +70,6 @@ export class PaginationComp extends Component {
         this.onPaginationChanged();
     }
 
-    @GridListener(Events.EVENT_PAGINATION_CHANGED)
     private onPaginationChanged(): void {
         this.enableOrDisableButtons();
         this.updateRowLabels();
@@ -78,7 +77,6 @@ export class PaginationComp extends Component {
         this.setTotalLabels();
     }
 
-    @GuiListener('btFirst','click')
     private onBtFirst() {
         if (!this.previousAndFirstButtonsDisabled) {
             this.paginationProxy.goToFirstPage();

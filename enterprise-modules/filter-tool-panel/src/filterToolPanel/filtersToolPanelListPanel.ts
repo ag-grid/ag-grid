@@ -140,10 +140,7 @@ export class FiltersToolPanelListPanel extends Component {
 
             if (depth > 0) { return filterComp; }
 
-            const filterGroupComp =
-                new ToolPanelFilterGroupComp(column, [filterComp], this.onGroupExpanded.bind(this), depth);
-
-            this.getContext().createBean(filterGroupComp);
+            const filterGroupComp = this.createBean(new ToolPanelFilterGroupComp(column, [filterComp], this.onGroupExpanded.bind(this), depth));
             filterGroupComp.addCssClassToTitleBar('ag-filter-toolpanel-header');
             filterGroupComp.collapse();
             return filterGroupComp;
