@@ -20,7 +20,6 @@ enum DropType { ColumnMove, Pivot }
 
 export class BodyDropTarget extends BeanStub implements DropTarget {
 
-    @Autowired('context') private context: Context;
     @Autowired('dragAndDropService') private dragAndDropService: DragAndDropService;
     @Autowired('columnController') private columnController: ColumnController;
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
