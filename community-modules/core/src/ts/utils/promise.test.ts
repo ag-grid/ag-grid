@@ -18,13 +18,6 @@ describe('Promise', () => {
 
         expect(initial).toBeCalledTimes(1);
     });
-
-    it('does not execute initial function when lazy evaluation is enabled', () => {
-        const initial = jest.fn();
-        const promise = new Promise(resolve => initial(), true);
-
-        expect(initial).toBeCalledTimes(0);
-    });
 });
 
 describe('then', () => {
@@ -49,55 +42,6 @@ describe('then', () => {
         canResolve = true;
 
         delayExecute(done, () => expect(then).toBeCalledTimes(1));
-    });
-
-    it('triggers and waits for lazy evaluated initial function', done => {
-        let wasCalled = false;
-        let canResolve = false;
-
-        const initial = (resolve: (x: boolean) => void) => {
-            wasCalled = true;
-
-            if (canResolve) {
-                resolve(true);
-            } else {
-                setTimeout(() => initial(resolve), 0);
-            }
-        };
-
-        const promise = new Promise(initial, true);
-
-        expect(wasCalled).toBe(false);
-
-        const then = jest.fn();
-
-        promise.then(then);
-
-        expect(wasCalled).toBe(true);
-        expect(then).toBeCalledTimes(0);
-
-        canResolve = true;
-
-        delayExecute(done, () => expect(then).toBeCalledTimes(1));
-    });
-
-    it('does not trigger if then is also lazy-evaluated', () => {
-        let wasCalled = false;
-
-        const initial = (resolve: (x: boolean) => void) => {
-            wasCalled = true;
-            resolve(true);
-        };
-
-        const promise = new Promise(initial, true);
-
-        expect(wasCalled).toBe(false);
-
-        const then = jest.fn();
-
-        promise.then(then, true);
-
-        expect(wasCalled).toBe(false);
     });
 
     it('executes immediately if the promise has already resolved', () => {
@@ -189,28 +133,5 @@ describe('resolveNow', () => {
         const promise = new Promise<number>(resolve => resolve(value));
 
         expect(promise.resolveNow(123, x => x)).toBe(value);
-    });
-});
-
-describe('start', () => {
-    it('initiates callback if not yet done', () => {
-        const initial = jest.fn();
-        const promise = new Promise(resolve => initial(), true);
-
-        expect(initial).toBeCalledTimes(0);
-
-        promise.start();
-
-        expect(initial).toBeCalledTimes(1);
-    });
-
-    it('does not re-execute callback if already started', () => {
-        const initial = jest.fn();
-        const promise = new Promise(resolve => initial(), true);
-
-        promise.start();
-        promise.start();
-
-        expect(initial).toBeCalledTimes(1);
     });
 });

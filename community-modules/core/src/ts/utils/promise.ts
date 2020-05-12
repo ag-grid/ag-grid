@@ -3,11 +3,11 @@ import { forEach } from './array';
 export type ResolveAndRejectCallback<T> = (resolve: (value: T) => void, reject: (params: any) => void) => void;
 
 export enum PromiseStatus {
-    NOT_STARTED, IN_PROGRESS, RESOLVED
+    IN_PROGRESS, RESOLVED
 }
 
 export class Promise<T> {
-    private status: PromiseStatus = PromiseStatus.NOT_STARTED;
+    private status: PromiseStatus = PromiseStatus.IN_PROGRESS;
     private resolution: T | null = null;
     private waiters: ((value: T) => void)[] = [];
 
@@ -33,28 +33,15 @@ export class Promise<T> {
         return new Promise<T>(resolve => resolve(value));
     }
 
-    constructor(private readonly callback: ResolveAndRejectCallback<T>, lazyEvaluate = false) {
-        if (lazyEvaluate) { return; }
-
-        this.start();
+    constructor(callback: ResolveAndRejectCallback<T>) {
+        callback(value => this.onDone(value), params => this.onReject(params));
     }
 
-    public start() {
-        if (this.status !== PromiseStatus.NOT_STARTED) { return; }
-
-        this.status = PromiseStatus.IN_PROGRESS;
-        this.callback(value => this.onDone(value), params => this.onReject(params));
-    }
-
-    public then(func: (result: T) => void, lazyEvaluate = false): void {
+    public then(func: (result: T) => void): void {
         if (this.status === PromiseStatus.RESOLVED) {
             func(this.resolution);
         } else {
             this.waiters.push(func);
-
-            if (!lazyEvaluate) {
-                this.start();
-            }
         }
     }
 
