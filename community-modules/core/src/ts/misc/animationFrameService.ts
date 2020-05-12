@@ -4,6 +4,7 @@ import { GridOptionsWrapper } from "../gridOptionsWrapper";
 import { AnimationQueueEmptyEvent } from "../events";
 import { Events } from "../eventKeys";
 import { EventService } from "../eventService";
+import {BeanStub} from "../context/beanStub";
 
 interface TaskItem {
     task: () => void;
@@ -16,10 +17,9 @@ interface TaskList {
     sorted: boolean;
 }
 @Bean('animationFrameService')
-export class AnimationFrameService {
+export class AnimationFrameService extends BeanStub {
 
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
-    @Autowired('eventService') private eventService: EventService;
 
     // p1 and p2 are create tasks are to do with row and cell creation.
     // for them we want to execute according to row order, so we use

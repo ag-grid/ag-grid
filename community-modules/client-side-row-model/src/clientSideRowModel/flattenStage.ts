@@ -2,9 +2,8 @@ import {
     _,
     Autowired,
     Bean,
+    BeanStub,
     ColumnController,
-    Context,
-    EventService,
     GridOptionsWrapper,
     IRowNodeStage,
     RowNode,
@@ -13,12 +12,10 @@ import {
 } from "@ag-grid-community/core"
 
 @Bean('flattenStage')
-export class FlattenStage implements IRowNodeStage {
+export class FlattenStage extends BeanStub implements IRowNodeStage {
 
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('selectionController') private selectionController: SelectionController;
-    @Autowired('eventService') private eventService: EventService;
-    @Autowired('context') private context: Context;
     @Autowired('columnController') private columnController: ColumnController;
 
     public execute(params: StageExecuteParams): RowNode[] {

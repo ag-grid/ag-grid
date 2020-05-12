@@ -1,8 +1,9 @@
 import { Bean } from "./context/context";
+import {BeanStub} from "./context/beanStub";
 const LINE_SEPARATOR = '\r\n';
 
 @Bean('xmlFactory')
-export class XmlFactory {
+export class XmlFactory extends BeanStub {
     createXml(xmlElement: XmlElement, booleanTransformer?:(currentValue:boolean) => string) :string {
         let props: string = '';
         if (xmlElement.properties) {

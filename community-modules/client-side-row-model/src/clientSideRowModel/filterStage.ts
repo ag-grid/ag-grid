@@ -4,13 +4,14 @@ import {
     GridOptionsWrapper,
     IRowNodeStage,
     SelectableService,
-    StageExecuteParams
+    StageExecuteParams,
+    BeanStub
 } from "@ag-grid-community/core"
 
 import {FilterService} from "./filterService";
 
 @Bean('filterStage')
-export class FilterStage implements IRowNodeStage {
+export class FilterStage extends BeanStub implements IRowNodeStage {
 
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('selectableService') private selectableService: SelectableService;

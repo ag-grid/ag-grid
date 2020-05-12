@@ -9,14 +9,14 @@ import { Column } from "../entities/column";
 import { Autowired, Bean, Context, Qualifier } from "../context/context";
 import { DefaultColumnTypes } from "../entities/defaultColumnTypes";
 import { _ } from "../utils";
+import {BeanStub} from "../context/beanStub";
 
 // takes ColDefs and ColGroupDefs and turns them into Columns and OriginalGroups
 @Bean('columnFactory')
-export class ColumnFactory {
+export class ColumnFactory extends BeanStub {
 
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('columnUtils') private columnUtils: ColumnUtils;
-    @Autowired('context') private context: Context;
 
     private logger: Logger;
 

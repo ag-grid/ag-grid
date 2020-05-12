@@ -1,8 +1,9 @@
 import { Bean } from "./context/context";
 import { Autowired } from "./context/context";
+import {BeanStub} from "./context/beanStub";
 
 @Bean('templateService')
-export class TemplateService {
+export class TemplateService extends BeanStub {
 
     @Autowired('$scope') private $scope: any;
 

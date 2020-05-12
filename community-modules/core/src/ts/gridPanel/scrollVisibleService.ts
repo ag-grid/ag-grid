@@ -6,6 +6,7 @@ import { ColumnApi } from "../columnController/columnApi";
 import { GridApi } from "../gridApi";
 import { GridOptionsWrapper } from "../gridOptionsWrapper";
 import { _ } from "../utils";
+import {BeanStub} from "../context/beanStub";
 
 export interface SetScrollsVisibleParams {
     horizontalScrollShowing: boolean;
@@ -13,9 +14,8 @@ export interface SetScrollsVisibleParams {
 }
 
 @Bean('scrollVisibleService')
-export class ScrollVisibleService {
+export class ScrollVisibleService extends BeanStub {
 
-    @Autowired('eventService') private eventService: EventService;
     @Autowired('columnController') private columnController: ColumnController;
     @Autowired('columnApi') private columnApi: ColumnApi;
     @Autowired('gridApi') private gridApi: GridApi;

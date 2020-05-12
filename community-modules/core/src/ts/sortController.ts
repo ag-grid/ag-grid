@@ -7,15 +7,15 @@ import { EventService } from "./eventService";
 import { ColumnEventType, Events, SortChangedEvent } from "./events";
 import { GridApi } from "./gridApi";
 import {Constants} from "./constants";
+import {BeanStub} from "./context/beanStub";
 
 @Bean('sortController')
-export class SortController {
+export class SortController extends BeanStub {
 
     private static DEFAULT_SORTING_ORDER = [Constants.SORT_ASC, Constants.SORT_DESC, null];
 
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('columnController') private columnController: ColumnController;
-    @Autowired('eventService') private eventService: EventService;
     @Autowired('columnApi') private columnApi: ColumnApi;
     @Autowired('gridApi') private gridApi: GridApi;
 

@@ -5,9 +5,10 @@ import { ComponentMetadata, ComponentMetadataProvider } from "./componentMetadat
 import { ComponentClassDef, ComponentSource } from "./userComponentFactory";
 import { ICellRendererComp, ICellRendererParams } from "../../rendering/cellRenderers/iCellRenderer";
 import { _ } from "../../utils";
+import {BeanStub} from "../../context/beanStub";
 
 @Bean("agComponentUtils")
-export class AgComponentUtils {
+export class AgComponentUtils extends BeanStub {
 
     @Autowired("componentMetadataProvider")
     private componentMetadataProvider: ComponentMetadataProvider;

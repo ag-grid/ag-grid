@@ -4,6 +4,7 @@ import {IRowModel} from "../interfaces/iRowModel";
 import {RowNode} from "./rowNode";
 import {_} from "../utils";
 import {PinnedRowModel} from "../pinnedRowModel/pinnedRowModel";
+import {BeanStub} from "../context/beanStub";
 
 export interface RowPosition {
     rowIndex: number;
@@ -11,7 +12,7 @@ export interface RowPosition {
 }
 
 @Bean('rowPositionUtils')
-export class RowPositionUtils {
+export class RowPositionUtils extends BeanStub {
 
     @Autowired('rowModel') private rowModel: IRowModel;
     @Autowired('pinnedRowModel') private pinnedRowModel: PinnedRowModel;

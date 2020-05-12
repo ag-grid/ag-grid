@@ -11,9 +11,10 @@ import { IRangeController } from "../interfaces/iRangeController";
 import { ColumnController } from "../columnController/columnController";
 import { GridOptionsWrapper } from "../gridOptionsWrapper";
 import { _ } from "../utils";
+import {BeanStub} from "../context/beanStub";
 
 @Bean('navigationService')
-export class NavigationService {
+export class NavigationService extends BeanStub {
 
     @Autowired('mouseEventService') private mouseEventService: MouseEventService;
     @Autowired('paginationProxy') private paginationProxy: PaginationProxy;

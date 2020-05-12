@@ -7,13 +7,14 @@ import {
     RowNode,
     RowNodeTransaction,
     SortController,
-    StageExecuteParams
+    StageExecuteParams,
+    BeanStub
 } from "@ag-grid-community/core";
 
 import {SortOption, SortService} from "./sortService";
 
 @Bean('sortStage')
-export class SortStage {
+export class SortStage extends BeanStub {
 
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('sortService') private sortService: SortService;

@@ -1,6 +1,7 @@
 import { GridOptionsWrapper } from "../gridOptionsWrapper";
 import { Autowired, Bean } from "../context/context";
 import { DragListenerParams, DragService } from "../dragAndDrop/dragService";
+import {BeanStub} from "../context/beanStub";
 
 export interface HorizontalResizeParams {
     eResizeBar: HTMLElement;
@@ -11,7 +12,7 @@ export interface HorizontalResizeParams {
 }
 
 @Bean('horizontalResizeService')
-export class HorizontalResizeService {
+export class HorizontalResizeService extends BeanStub {
 
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('dragService') private dragService: DragService;

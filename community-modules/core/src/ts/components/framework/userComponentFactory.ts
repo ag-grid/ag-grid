@@ -47,6 +47,7 @@ import {
     ToolPanelComponent,
     TooltipComponent
 } from "./componentTypes";
+import {BeanStub} from "../../context/beanStub";
 
 export type DefinitionObject =
     GridOptions
@@ -85,10 +86,9 @@ export interface ModifyParamsCallback<TParams> {
 }
 
 @Bean('userComponentFactory')
-export class UserComponentFactory {
+export class UserComponentFactory extends BeanStub {
 
     @Autowired("gridOptions") private gridOptions: GridOptions;
-    @Autowired("context") private context: Context;
     @Autowired("agComponentUtils") private agComponentUtils: AgComponentUtils;
     @Autowired("componentMetadataProvider") private componentMetadataProvider: ComponentMetadataProvider;
     @Autowired("userComponentRegistry") private userComponentRegistry: UserComponentRegistry;

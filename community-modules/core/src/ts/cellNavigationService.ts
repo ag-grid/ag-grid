@@ -9,9 +9,10 @@ import { Column } from "./entities/column";
 import { _ } from "./utils";
 import { RowPosition } from "./entities/rowPosition";
 import {PinnedRowModel} from "./pinnedRowModel/pinnedRowModel";
+import {BeanStub} from "./context/beanStub";
 
 @Bean('cellNavigationService')
-export class CellNavigationService {
+export class CellNavigationService extends BeanStub {
 
     @Autowired('columnController') private columnController: ColumnController;
     @Autowired('rowModel') private rowModel: IRowModel;

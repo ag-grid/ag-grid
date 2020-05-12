@@ -8,13 +8,13 @@ import { ColumnGroup } from "../entities/columnGroup";
 import { OriginalColumnGroup } from "../entities/originalColumnGroup";
 import { Bean, Context } from "../context/context";
 import { _ } from "../utils";
+import {BeanStub} from "../context/beanStub";
 
 // takes in a list of columns, as specified by the column definitions, and returns column groups
 @Bean('displayedGroupCreator')
-export class DisplayedGroupCreator {
+export class DisplayedGroupCreator extends BeanStub {
 
     @Autowired('columnUtils') private columnUtils: ColumnUtils;
-    @Autowired('context') private context: Context;
 
     public createDisplayedGroups(
         // all displayed columns sorted - this is the columns the grid should show

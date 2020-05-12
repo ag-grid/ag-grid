@@ -6,10 +6,11 @@ import { PopupService } from '../widgets/popupService';
 import { EventService } from '../eventService';
 import { IAfterGuiAttachedParams } from '../interfaces/iAfterGuiAttachedParams';
 import { _ } from '../utils';
+import {BeanStub} from "../context/beanStub";
 
 @Bean('menuFactory')
-export class StandardMenuFactory implements IMenuFactory {
-    @Autowired('eventService') private eventService: EventService;
+export class StandardMenuFactory extends BeanStub implements IMenuFactory {
+
     @Autowired('filterManager') private filterManager: FilterManager;
     @Autowired('popupService') private popupService: PopupService;
 

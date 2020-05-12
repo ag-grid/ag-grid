@@ -6,14 +6,14 @@ import { ColumnController } from "./columnController";
 import { ColumnFactory } from "./columnFactory";
 import { Constants } from "../constants";
 import { _ } from "../utils";
+import {BeanStub} from "../context/beanStub";
 
 @Bean('autoGroupColService')
-export class AutoGroupColService {
+export class AutoGroupColService extends BeanStub {
 
     public static GROUP_AUTO_COLUMN_BUNDLE_ID = Constants.GROUP_AUTO_COLUMN_ID;
 
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
-    @Autowired('context') private context: Context;
     @Autowired('columnController') private columnController: ColumnController;
     @Autowired('columnFactory') private columnFactory: ColumnFactory;
 

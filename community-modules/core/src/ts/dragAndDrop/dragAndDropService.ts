@@ -8,6 +8,7 @@ import { Environment } from "../environment";
 import { RowDropZoneParams } from "../gridPanel/rowDragFeature";
 import { RowNode } from "../entities/rowNode";
 import { _ } from "../utils";
+import {BeanStub} from "../context/beanStub";
 
 export interface DragItem {
     /**
@@ -90,7 +91,7 @@ export interface DraggingEvent {
 }
 
 @Bean('dragAndDropService')
-export class DragAndDropService {
+export class DragAndDropService extends BeanStub {
 
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('dragService') private dragService: DragService;
@@ -175,7 +176,7 @@ export class DragAndDropService {
     }
 
     @PreDestroy
-    private destroy(): void {
+    private clearDragSourceParamsList(): void {
         this.dragSourceAndParamsList.forEach(sourceAndParams => this.dragService.removeDragSource(sourceAndParams.params));
         this.dragSourceAndParamsList.length = 0;
     }

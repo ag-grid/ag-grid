@@ -24,6 +24,7 @@ import { DateFloatingFilter } from "../../filter/provided/date/dateFloatingFilte
 import { TextFilter } from "../../filter/provided/text/textFilter";
 import { NumberFloatingFilter } from "../../filter/provided/number/numberFloatingFilter";
 import { TextFloatingFilter } from "../../filter/provided/text/textFloatingFilter";
+import {BeanStub} from "../../context/beanStub";
 
 export enum RegisteredComponentSource {
     DEFAULT, REGISTERED
@@ -51,13 +52,10 @@ export interface DeprecatedComponentName {
 }
 
 @Bean('userComponentRegistry')
-export class UserComponentRegistry {
+export class UserComponentRegistry extends BeanStub {
 
     @Autowired('gridOptions')
     private gridOptions: GridOptions;
-
-    @Autowired('context')
-    private context: Context;
 
     private agGridDefaults: { [key: string]: AgGridRegisteredComponentInput<any> } = {
         //date

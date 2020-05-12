@@ -5,11 +5,12 @@ import {
     FilterManager,
     GridOptionsWrapper,
     PostConstruct,
-    RowNode
+    RowNode,
+    BeanStub
 } from "@ag-grid-community/core"
 
 @Bean("filterService")
-export class FilterService {
+export class FilterService extends BeanStub {
 
     @Autowired('filterManager') private filterManager: FilterManager;
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
