@@ -481,14 +481,26 @@ export class CellComp extends Component implements TooltipParentComp {
     }
 
     // user can also call this via API
-    public flashCell(): void {
-        this.animateCell('data-changed');
+    public flashCell(delays?: { flashDelay: number; fadeDelay: number; }): void {
+        const flashDelay = delays && delays.flashDelay;
+        const fadeDelay = delays && delays.fadeDelay;
+
+        this.animateCell('data-changed', flashDelay, fadeDelay);
     }
 
-    private animateCell(cssName: string): void {
+    private animateCell(cssName: string, flashDelay?: number, fadeDelay?: number): void {
         const fullName = `ag-cell-${cssName}`;
         const animationFullName = `ag-cell-${cssName}-animation`;
         const element = this.getGui();
+        const { gridOptionsWrapper } = this.beans;
+
+        if (!flashDelay) {
+            flashDelay = gridOptionsWrapper.getCellFlashDelay();
+        }
+
+        if (!fadeDelay) {
+            fadeDelay = gridOptionsWrapper.getCellFadeDelay();
+        }
 
         // we want to highlight the cells, without any animation
         _.addCssClass(element, fullName);
@@ -498,12 +510,13 @@ export class CellComp extends Component implements TooltipParentComp {
         window.setTimeout(() => {
             _.removeCssClass(element, fullName);
             _.addCssClass(element, animationFullName);
-
+            element.style.transition = `background-color ${fadeDelay}ms`;
             window.setTimeout(() => {
                 // and then to leave things as we got them, we remove the animation
                 _.removeCssClass(element, animationFullName);
-            }, 1000);
-        }, 500);
+                element.style.transition = null;
+            }, fadeDelay);
+        }, flashDelay);
     }
 
     private replaceContentsAfterRefresh(): void {

@@ -526,7 +526,8 @@ export class RowRenderer extends BeanStub {
     }
 
     public flashCells(params: FlashCellsParams = {}): void {
-        this.forEachCellCompFiltered(params.rowNodes, params.columns, cellComp => cellComp.flashCell());
+        const { flashDelay, fadeDelay }  = params;
+        this.forEachCellCompFiltered(params.rowNodes, params.columns, cellComp => cellComp.flashCell({ flashDelay, fadeDelay }));
     }
 
     public refreshCells(params: RefreshCellsParams = {}): void {

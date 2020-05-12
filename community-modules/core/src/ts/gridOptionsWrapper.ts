@@ -382,6 +382,14 @@ export class GridOptionsWrapper {
         return isTrue(this.gridOptions.enableCellChangeFlash);
     }
 
+    public getCellFlashDelay(): number {
+        return this.gridOptions.cellFlashDelay || 500;
+    }
+
+    public getCellFadeDelay(): number {
+        return this.gridOptions.cellFadeDelay || 1000;
+    }
+
     public isGroupSelectsChildren() {
         const result = isTrue(this.gridOptions.groupSelectsChildren);
 

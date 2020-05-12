@@ -78,7 +78,10 @@ export interface RefreshCellsParams extends GetCellsParams {
     force?: boolean;
 }
 
-export interface FlashCellsParams extends GetCellsParams { }
+export interface FlashCellsParams extends GetCellsParams {
+    flashDelay?: number;
+    fadeDelay?: number;
+}
 
 export interface GetCellRendererInstancesParams extends GetCellsParams { }
 

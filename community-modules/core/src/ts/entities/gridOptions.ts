@@ -217,6 +217,8 @@ export interface GridOptions {
     viewportRowModelPageSize?: number;
     viewportRowModelBufferSize?: number;
     enableCellChangeFlash?: boolean;
+    cellFlashDelay?: number;
+    cellFadeDelay?: number;
     allowShowChangeAfterFilter?: boolean;
     quickFilterText?: string;
     cacheQuickFilter?: boolean;

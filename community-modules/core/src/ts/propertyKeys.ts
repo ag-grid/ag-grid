@@ -29,7 +29,7 @@ export class PropertyKeys {
         'autoSizePadding', 'maxBlocksInCache', 'maxConcurrentDatasourceRequests', 'tooltipShowDelay',
         'cacheOverflowSize', 'paginationPageSize', 'cacheBlockSize', 'infiniteInitialRowCount',
         'scrollbarWidth', 'paginationStartPage', 'infiniteBlockSize', 'batchUpdateWaitMillis', 'asyncTransactionWaitMillis',
-        'blockLoadDebounceMillis', 'keepDetailRowsCount', 'undoRedoCellEditingLimit'
+        'blockLoadDebounceMillis', 'keepDetailRowsCount', 'undoRedoCellEditingLimit', 'cellFlashDelay', 'cellFadeDelay'
     ];
 
     public static BOOLEAN_PROPERTIES = [

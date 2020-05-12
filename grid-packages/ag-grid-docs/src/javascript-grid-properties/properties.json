@@ -212,6 +212,14 @@
                 "url": "../javascript-grid-flashing-cells/"
             }
         },
+        "cellFlashDelay": {
+            "default": 500,
+            "description": "To be used in combination with <code>enableCellChangeFlash</code>, this configuration will set delay in ms of how long a cell should remain in its \"flashed\n state."
+        },
+        "cellFadeDelay": {
+            "default": 1000,
+            "description": "To be used in combination with <code>enableCellChangeFlash</code>, this configuration will set delay in ms of how long the \"flashed\n state animation takes to fade away after the timer set by <code>cellFlashDelay</code> has completed."
+        },
         "allowShowChangeAfterFilter": {
             "default": false,
             "description": "Set to <code>true</code> to have cells flash after data changes even when the change is due to filtering.",
