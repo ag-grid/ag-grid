@@ -20,7 +20,6 @@ import {BeanStub} from "./context/beanStub";
 @Bean('selectionController')
 export class SelectionController extends BeanStub {
 
-    @Autowired('eventService') private eventService: EventService;
     @Autowired('rowModel') private rowModel: IRowModel;
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('columnApi') private columnApi: ColumnApi;

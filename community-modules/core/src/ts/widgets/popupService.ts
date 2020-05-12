@@ -30,7 +30,6 @@ export class PopupService extends BeanStub {
     // maybe popups in the future should be parent to the body??
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('environment') private environment: Environment;
-    @Autowired('eventService') private eventService: EventService;
 
     private gridCore: GridCore;
     private popupList: AgPopup[] = [];

@@ -9,7 +9,6 @@ import { GridApi } from "../gridApi";
 @Bean('columnHoverService')
 export class ColumnHoverService extends BeanStub {
 
-    @Autowired('eventService') private eventService: EventService;
     @Autowired('columnApi') private columnApi: ColumnApi;
     @Autowired('gridApi') private gridApi: GridApi;
 

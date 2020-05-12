@@ -13,7 +13,6 @@ import { _ } from '../utils';
 export class CheckboxSelectionComponent extends Component {
 
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
-    @Autowired('eventService') private eventService: EventService;
 
     @RefSelector('eCheckbox') private eCheckbox: AgCheckbox;
 

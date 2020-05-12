@@ -107,7 +107,6 @@ export class GridPanel extends Component {
     @Autowired('columnController') private columnController: ColumnController;
     @Autowired('rowRenderer') private rowRenderer: RowRenderer;
     @Autowired('pinnedRowModel') private pinnedRowModel: PinnedRowModel;
-    @Autowired('eventService') private eventService: EventService;
     @Autowired('animationFrameService') private animationFrameService: AnimationFrameService;
     @Autowired('navigationService') private navigationService: NavigationService;
     @Autowired('autoHeightCalculator') private autoHeightCalculator: AutoHeightCalculator;

@@ -4,7 +4,6 @@ import { AgEvent } from '../events';
 import { AgAbstractInputField } from './agAbstractInputField';
 import { LabelAlignment } from './agAbstractLabel';
 import { _ } from '../utils';
-import { EventService } from '../eventService';
 import { Events, CheckboxChangedEvent } from "../events";
 
 export interface ChangeEvent extends AgEvent {
@@ -18,7 +17,6 @@ export class AgCheckbox extends AgAbstractInputField<HTMLInputElement, boolean> 
     protected labelAlignment: LabelAlignment = 'right';
 
     @Autowired('gridOptionsWrapper') protected gridOptionsWrapper: GridOptionsWrapper;
-    @Autowired('eventService') protected eventService: EventService;
 
     private selected: boolean | undefined = false;
     private readOnly = false;

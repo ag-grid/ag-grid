@@ -17,7 +17,6 @@ export default class TitlePanel extends Component {
     public static TEMPLATE = `<div></div>`;
 
     @Autowired('chartTranslator') private chartTranslator: ChartTranslator;
-    @Autowired('eventService') private eventService: EventService;
 
     private activePanels: Component[] = [];
     private readonly chartController: ChartController;

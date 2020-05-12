@@ -25,7 +25,6 @@ export class ChartController extends BeanStub {
 
     public static EVENT_CHART_UPDATED = 'chartUpdated';
 
-    @Autowired('eventService') private eventService: EventService;
     @Autowired('rangeController') rangeController: IRangeController;
     @Autowired('gridApi') private gridApi: GridApi;
     @Autowired('columnApi') private columnApi: ColumnApi;

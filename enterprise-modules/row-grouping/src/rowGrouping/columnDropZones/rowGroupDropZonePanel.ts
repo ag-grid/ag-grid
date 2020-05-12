@@ -18,7 +18,6 @@ import { BaseDropZonePanel } from "./baseDropZonePanel";
 export class RowGroupDropZonePanel extends BaseDropZonePanel {
 
     @Autowired('columnController') private columnController: ColumnController;
-    @Autowired('eventService') private eventService: EventService;
 
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('loggerFactory') private loggerFactory: LoggerFactory;

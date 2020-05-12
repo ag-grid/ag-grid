@@ -17,7 +17,6 @@ export class ChangeDetectionService extends BeanStub {
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('rowModel') private rowModel: IRowModel;
     @Autowired('rowRenderer') private rowRenderer: RowRenderer;
-    @Autowired('eventService') private eventService: EventService;
 
     private clientSideRowModel: IClientSideRowModel;
 

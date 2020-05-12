@@ -38,7 +38,6 @@ export class FiltersToolPanel extends Component implements IFiltersToolPanel, IT
 
     @Autowired('gridApi') private gridApi: GridApi;
     @Autowired('columnApi') private columnApi: ColumnApi;
-    @Autowired('eventService') private eventService: EventService;
     @Autowired('columnController') private columnController: ColumnController;
 
     private initialised = false;

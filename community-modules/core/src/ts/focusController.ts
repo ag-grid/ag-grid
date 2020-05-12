@@ -15,7 +15,6 @@ import {BeanStub} from "./context/beanStub";
 @Bean('focusController')
 export class FocusController extends BeanStub {
 
-    @Autowired('eventService') private eventService: EventService;
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('columnController') private columnController: ColumnController;
     @Autowired('columnApi') private columnApi: ColumnApi;

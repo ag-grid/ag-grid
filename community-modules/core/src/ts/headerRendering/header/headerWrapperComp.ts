@@ -47,7 +47,6 @@ export class HeaderWrapperComp extends Component {
     @Autowired('gridApi') private gridApi: GridApi;
     @Autowired('columnApi') private columnApi: ColumnApi;
     @Autowired('sortController') private sortController: SortController;
-    @Autowired('eventService') private eventService: EventService;
     @Autowired('userComponentFactory') private userComponentFactory: UserComponentFactory;
     @Autowired('columnHoverService') private columnHoverService: ColumnHoverService;
     @Autowired('beans') private beans: Beans;

@@ -23,7 +23,6 @@ export class AlignedGridsService extends BeanStub {
 
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('columnController') private columnController: ColumnController;
-    @Autowired('eventService') private eventService: EventService;
 
     private logger: Logger;
     private gridPanel: GridPanel;

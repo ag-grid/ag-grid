@@ -155,6 +155,8 @@ export class GridApi {
 
     private detailGridInfoMap: { [id: string]: DetailGridInfo } = {};
 
+    private destroyCalled = false;
+
     public registerGridComp(gridPanel: GridPanel): void {
         this.gridPanel = gridPanel;
     }
@@ -989,6 +991,11 @@ export class GridApi {
     }
 
     public destroy(): void {
+        // this is needed as GridAPI is a bean, and GridAPI.destroy() is called as part
+        // of context.destroy(). so we need to stop the infinite loop.
+        if (this.destroyCalled) { return; }
+        this.destroyCalled = true;
+
         // destroy the UI first (as they use the services)
         this.context.destroyBean(this.gridCore);
         // destroy the services

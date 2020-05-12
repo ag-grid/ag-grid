@@ -11,7 +11,6 @@ export class HorizontalResizeComp extends Component {
 
     @Autowired('horizontalResizeService') private horizontalResizeService: HorizontalResizeService;
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
-    @Autowired('eventService') private eventService: EventService;
 
     private startingWidth: number;
     private elementToResize: HTMLElement;

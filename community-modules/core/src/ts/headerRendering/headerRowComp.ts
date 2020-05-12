@@ -25,7 +25,6 @@ export enum HeaderRowType {
 export class HeaderRowComp extends Component {
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('columnController') private columnController: ColumnController;
-    @Autowired('eventService') private eventService: EventService;
 
     private readonly dept: number;
     private readonly pinned: string;

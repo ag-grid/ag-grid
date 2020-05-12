@@ -27,7 +27,6 @@ export class ToolPanelFilterGroupComp extends Component {
 
     @RefSelector('filterGroupComp') private filterGroupComp: AgGroupComponent;
 
-    @Autowired('eventService') private eventService: EventService;
     @Autowired('columnController') private columnController: ColumnController;
 
     private readonly depth: number;

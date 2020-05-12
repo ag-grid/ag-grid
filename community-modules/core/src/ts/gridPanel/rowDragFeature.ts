@@ -47,7 +47,6 @@ export class RowDragFeature extends BeanStub implements DropTarget {
     @Autowired('selectionController') private selectionController: SelectionController;
     @Optional('rangeController') private rangeController: IRangeController;
     @Autowired('mouseEventService') private mouseEventService: MouseEventService;
-    @Autowired('eventService') private eventService: EventService;
 
     private gridPanel: GridPanel;
     private clientSideRowModel: IClientSideRowModel;

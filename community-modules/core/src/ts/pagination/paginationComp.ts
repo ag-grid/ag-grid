@@ -1,7 +1,7 @@
 import { Component } from "../widgets/component";
 import { Autowired, PostConstruct } from "../context/context";
 import { GridOptionsWrapper } from "../gridOptionsWrapper";
-import { RefSelector } from "../widgets/componentAnnotations";
+import {GridListener, GuiListener, RefSelector} from "../widgets/componentAnnotations";
 import { EventService } from "../eventService";
 import { Events } from "../events";
 import { RowRenderer } from "../rendering/rowRenderer";
@@ -14,7 +14,6 @@ import { Constants } from "../constants";
 export class PaginationComp extends Component {
 
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
-    @Autowired('eventService') private eventService: EventService;
     @Autowired('paginationProxy') private paginationProxy: PaginationProxy;
     @Autowired('rowRenderer') private rowRenderer: RowRenderer;
     @Autowired('rowModel') private rowModel: IRowModel;
@@ -61,9 +60,9 @@ export class PaginationComp extends Component {
             return;
         }
 
-        this.addDestroyableEventListener(this.eventService, Events.EVENT_PAGINATION_CHANGED, this.onPaginationChanged.bind(this));
+        // this.addDestroyableEventListener(this.eventService, Events.EVENT_PAGINATION_CHANGED, this.onPaginationChanged.bind(this));
 
-        this.addDestroyableEventListener(this.btFirst, 'click', this.onBtFirst.bind(this));
+        // this.addDestroyableEventListener(this.btFirst, 'click', this.onBtFirst.bind(this));
         this.addDestroyableEventListener(this.btLast, 'click', this.onBtLast.bind(this));
         this.addDestroyableEventListener(this.btNext, 'click', this.onBtNext.bind(this));
         this.addDestroyableEventListener(this.btPrevious, 'click', this.onBtPrevious.bind(this));
@@ -71,11 +70,19 @@ export class PaginationComp extends Component {
         this.onPaginationChanged();
     }
 
+    @GridListener(Events.EVENT_PAGINATION_CHANGED)
     private onPaginationChanged(): void {
         this.enableOrDisableButtons();
         this.updateRowLabels();
         this.setCurrentPageLabel();
         this.setTotalLabels();
+    }
+
+    @GuiListener('btFirst','click')
+    private onBtFirst() {
+        if (!this.previousAndFirstButtonsDisabled) {
+            this.paginationProxy.goToFirstPage();
+        }
     }
 
     private setCurrentPageLabel(): void {
@@ -149,12 +156,6 @@ export class PaginationComp extends Component {
     private onBtPrevious() {
         if (!this.previousAndFirstButtonsDisabled) {
             this.paginationProxy.goToPreviousPage();
-        }
-    }
-
-    private onBtFirst() {
-        if (!this.previousAndFirstButtonsDisabled) {
-            this.paginationProxy.goToFirstPage();
         }
     }
 

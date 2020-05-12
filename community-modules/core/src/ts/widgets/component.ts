@@ -1,6 +1,6 @@
 import { AgEvent } from "../events";
 import { BeanStub } from "../context/beanStub";
-import { Context, PreConstruct } from "../context/context";
+import {Context, PostConstruct, PreConstruct} from "../context/context";
 import { IComponent } from "../interfaces/iComponent";
 import { _, NumberSequence } from "../utils";
 
@@ -14,7 +14,7 @@ export class Component extends BeanStub {
 
     public static EVENT_DISPLAYED_CHANGED = 'displayedChanged';
     private eGui: HTMLElement;
-    private annotatedEventListeners: any[] = [];
+    private annotatedGuiListeners: any[] = [];
 
     // if false, then CSS class "ag-hidden" is applied, which sets "display: none"
     private displayed = true;
@@ -120,7 +120,7 @@ export class Component extends BeanStub {
     public setTemplateFromElement(element: HTMLElement, paramsMap?: any): void {
         this.eGui = element;
         (this.eGui as any).__agComponent = this;
-        this.addAnnotatedEventListeners();
+        this.addAnnotatedGuiEventListeners();
         this.wireQuerySelectors();
 
         // context will not be available when user sets template in constructor
@@ -156,27 +156,40 @@ export class Component extends BeanStub {
         });
     }
 
-    private addAnnotatedEventListeners(): void {
-        this.removeAnnotatedEventListeners();
+    private addAnnotatedGuiEventListeners(): void {
+        this.removeAnnotatedGuiEventListeners();
 
         if (!this.eGui) {
             return;
         }
 
-        const listenerMethods = this.getAgComponentMetaData('listenerMethods');
+        const listenerMethods = this.getAgComponentMetaData('guiListenerMethods');
 
-        if (_.missingOrEmpty(listenerMethods)) {
-            return;
+        if (!listenerMethods) { return; }
+
+        if (!this.annotatedGuiListeners) {
+            this.annotatedGuiListeners = [];
         }
 
-        if (!this.annotatedEventListeners) {
-            this.annotatedEventListeners = [];
-        }
+        listenerMethods.forEach( meta => {
+            const element = this.getRefElement(meta.ref);
+            if (!element) { return; }
+            const listener = (this as any)[meta.methodName].bind(this);
+            element.addEventListener(meta.eventName, listener);
+            this.annotatedGuiListeners.push({ eventName: meta.eventName, listener, element });
+        });
+    }
 
-        _.forEach(listenerMethods, (eventListener: any) => {
-            const listener = (this as any)[eventListener.methodName].bind(this);
-            this.eGui.addEventListener(eventListener.eventName, listener);
-            this.annotatedEventListeners.push({ eventName: eventListener.eventName, listener });
+    @PostConstruct
+    private addAnnotatedGridEventListeners(): void {
+        const listenerMetas = this.getAgComponentMetaData('gridListenerMethods');
+
+        if (!listenerMetas) { return; }
+
+        listenerMetas.forEach( meta => {
+
+            const listener = (this as any)[meta.methodName].bind(this);
+            this.addDestroyableEventListener(this.eventService, meta.eventName, listener);
         });
     }
 
@@ -211,14 +224,16 @@ export class Component extends BeanStub {
         return res;
     }
 
-    private removeAnnotatedEventListeners(): void {
-        if (!this.annotatedEventListeners || !this.eGui) {
+    private removeAnnotatedGuiEventListeners(): void {
+        if (!this.annotatedGuiListeners) {
             return;
         }
 
-        _.forEach(this.annotatedEventListeners, e => this.eGui.removeEventListener(e.eventName, e.listener));
+        _.forEach(this.annotatedGuiListeners, e => {
+            e.element.removeEventListener(e.eventName, e.listener)
+        });
 
-        this.annotatedEventListeners = [];
+        this.annotatedGuiListeners = [];
     }
 
     public getGui(): HTMLElement {
@@ -293,7 +308,7 @@ export class Component extends BeanStub {
     }
 
     protected destroy(): void {
-        this.removeAnnotatedEventListeners();
+        this.removeAnnotatedGuiEventListeners();
         super.destroy();
     }
 

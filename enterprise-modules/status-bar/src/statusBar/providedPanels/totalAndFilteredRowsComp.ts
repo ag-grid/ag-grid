@@ -12,7 +12,6 @@ import {NameValueComp} from "./nameValueComp";
 export class TotalAndFilteredRowsComp extends NameValueComp implements IStatusPanelComp {
 
     @Autowired('gridApi') private gridApi: GridApi;
-    @Autowired('eventService') private eventService: EventService;
 
     @PostConstruct
     protected postConstruct(): void {

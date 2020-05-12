@@ -30,7 +30,6 @@ export class AggregationComp extends Component implements IStatusPanelComp {
                 <ag-name-value ref="sumAggregationComp"></ag-name-value>
             </div>`;
 
-    @Autowired('eventService') private eventService: EventService;
     @Optional('rangeController') private rangeController: IRangeController;
     @Autowired('valueService') private valueService: ValueService;
     @Autowired('cellNavigationService') private cellNavigationService: CellNavigationService;

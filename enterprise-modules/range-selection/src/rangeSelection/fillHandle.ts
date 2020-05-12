@@ -26,7 +26,6 @@ type Direction = 'x' | 'y';
 export class FillHandle extends AbstractSelectionHandle {
 
     @Autowired('valueService') private valueService: ValueService;
-    @Autowired('eventService') private eventService: EventService;
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
 
     static TEMPLATE = '<div class="ag-fill-handle"></div>';

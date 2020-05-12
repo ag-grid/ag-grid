@@ -14,7 +14,6 @@ import {_} from "../utils";
 export class PaginationProxy extends BeanStub {
 
     @Autowired('rowModel') private rowModel: IRowModel;
-    @Autowired('eventService') private eventService: EventService;
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('selectionController') private selectionController: SelectionController;
     @Autowired('columnApi') private columnApi: ColumnApi;

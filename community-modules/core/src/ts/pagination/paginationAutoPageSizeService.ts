@@ -9,7 +9,6 @@ import {ScrollVisibleService} from "../gridPanel/scrollVisibleService";
 @Bean('paginationAutoPageSizeService')
 export class PaginationAutoPageSizeService extends BeanStub {
 
-    @Autowired('eventService') private eventService: EventService;
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('scrollVisibleService') private scrollVisibleService: ScrollVisibleService;
 

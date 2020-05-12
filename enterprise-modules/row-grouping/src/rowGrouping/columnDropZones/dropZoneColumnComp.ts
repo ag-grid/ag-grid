@@ -43,7 +43,6 @@ export class DropZoneColumnComp extends Component {
     @Autowired('popupService') popupService: PopupService;
     @Optional('aggFuncService') aggFuncService: IAggFuncService;
     @Autowired('gridOptionsWrapper') gridOptionsWrapper: GridOptionsWrapper;
-    @Autowired('eventService') eventService: EventService;
     @Autowired('columnApi') private columnApi: ColumnApi;
     @Autowired('gridApi') private gridApi: GridApi;
 

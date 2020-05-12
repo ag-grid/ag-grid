@@ -25,7 +25,6 @@ export interface IToolPanelChildComp extends IComponent<any> {
 
 export class SideBarComp extends Component implements ISideBar {
 
-    @Autowired("eventService") private eventService: EventService;
     @Autowired("gridOptionsWrapper") private gridOptionsWrapper: GridOptionsWrapper;
 
     @RefSelector('sideBarButtons') private sideBarButtonsComp: SideBarButtonsComp;

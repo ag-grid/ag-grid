@@ -16,7 +16,6 @@ export class GridHeaderDropZones extends Component {
 
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('columnController') private columnController: ColumnController;
-    @Autowired('eventService') private eventService: EventService;
 
     private rowGroupComp: Component;
     private pivotComp: Component;

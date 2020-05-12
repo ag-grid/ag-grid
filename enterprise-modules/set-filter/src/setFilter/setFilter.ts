@@ -31,7 +31,6 @@ export class SetFilter extends ProvidedFilter {
     @RefSelector('eFilterLoading') private eFilterLoading: HTMLInputElement;
 
     @Autowired('valueFormatterService') private valueFormatterService: ValueFormatterService;
-    @Autowired('eventService') private eventService: EventService;
 
     private selectAllState?: boolean;
     private setFilterParams: ISetFilterParams;

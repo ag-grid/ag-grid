@@ -20,7 +20,6 @@ export enum EXPAND_STATE { EXPANDED, COLLAPSED, INDETERMINATE }
 export class PrimaryColsHeaderPanel extends Component {
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('columnController') private columnController: ColumnController;
-    @Autowired('eventService') private eventService: EventService;
 
     @RefSelector('eExpand') private eExpand: HTMLElement;
     @RefSelector('eSelect') private eSelect: AgCheckbox;

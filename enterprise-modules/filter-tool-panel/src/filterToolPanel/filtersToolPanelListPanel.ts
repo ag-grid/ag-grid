@@ -25,7 +25,6 @@ export class FiltersToolPanelListPanel extends Component {
 
     @Autowired("gridApi") private gridApi: GridApi;
     @Autowired("columnApi") private columnApi: ColumnApi;
-    @Autowired("eventService") private eventService: EventService;
     @Autowired('toolPanelColDefService') private toolPanelColDefService: ToolPanelColDefService;
     @Autowired('columnController') private columnController: ColumnController;
 

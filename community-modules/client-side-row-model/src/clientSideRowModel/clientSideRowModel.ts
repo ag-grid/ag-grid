@@ -54,7 +54,6 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
     @Autowired('filterManager') private filterManager: FilterManager;
     @Autowired('$scope') private $scope: any;
     @Autowired('selectionController') private selectionController: SelectionController;
-    @Autowired('eventService') private eventService: EventService;
     @Autowired('valueService') private valueService: ValueService;
     @Autowired('valueCache') private valueCache: ValueCache;
     @Autowired('columnApi') private columnApi: ColumnApi;

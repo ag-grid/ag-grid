@@ -14,7 +14,6 @@ import { _ } from "../utils";
 @Bean('maxDivHeightScaler')
 export class MaxDivHeightScaler extends BeanStub {
 
-    @Autowired('eventService') private eventService: EventService;
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
 
     private gridPanel: GridPanel;

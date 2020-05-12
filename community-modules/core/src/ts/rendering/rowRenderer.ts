@@ -38,7 +38,6 @@ export class RowRenderer extends BeanStub {
     @Autowired("columnController") private columnController: ColumnController;
     @Autowired("gridOptionsWrapper") private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired("$scope") private $scope: any;
-    @Autowired("eventService") private eventService: EventService;
     @Autowired("pinnedRowModel") private pinnedRowModel: PinnedRowModel;
     @Autowired("rowModel") private rowModel: IRowModel;
     @Autowired("loggerFactory") private loggerFactory: LoggerFactory;

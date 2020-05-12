@@ -48,7 +48,6 @@ export class FloatingFilterWrapper extends Component {
         </div>`;
 
     @Autowired('columnHoverService') private columnHoverService: ColumnHoverService;
-    @Autowired('eventService') private eventService: EventService;
     @Autowired('beans') private beans: Beans;
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('userComponentFactory') private userComponentFactory: UserComponentFactory;

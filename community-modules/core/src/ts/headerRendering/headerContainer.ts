@@ -17,7 +17,6 @@ export class HeaderContainer extends BeanStub {
 
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('columnController') private columnController: ColumnController;
-    @Autowired('eventService') private eventService: EventService;
     @Autowired('scrollVisibleService') private scrollVisibleService: ScrollVisibleService;
 
     private eContainer: HTMLElement;

@@ -147,7 +147,6 @@ export class ContextMenuFactory implements IContextMenuFactory {
 
 class ContextMenu extends Component {
 
-    @Autowired('eventService') private eventService: EventService;
     @Autowired('menuItemMapper') private menuItemMapper: MenuItemMapper;
     @Autowired('focusController') private focusController: FocusController;
     @Autowired('cellPositionUtils') private cellPositionUtils: CellPositionUtils;

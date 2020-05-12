@@ -28,7 +28,6 @@ export class PrimaryColsListPanel extends Component {
 
     @Autowired('columnController') private columnController: ColumnController;
     @Autowired('toolPanelColDefService') private colDefService: ToolPanelColDefService;
-    @Autowired('eventService') private eventService: EventService;
     @Autowired('columnApi') private columnApi: ColumnApi;
 
     private columnTree: OriginalColumnGroupChild[];

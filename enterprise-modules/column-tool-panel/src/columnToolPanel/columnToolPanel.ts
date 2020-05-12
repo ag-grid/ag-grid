@@ -39,7 +39,6 @@ export class ColumnToolPanel extends Component implements IColumnToolPanel, IToo
     @Autowired("gridOptionsWrapper") private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired("gridApi") private gridApi: GridApi;
     @Autowired("columnApi") private columnApi: ColumnApi;
-    @Autowired("eventService") private eventService: EventService;
 
     private initialised = false;
     private params: ToolPanelColumnCompParams;

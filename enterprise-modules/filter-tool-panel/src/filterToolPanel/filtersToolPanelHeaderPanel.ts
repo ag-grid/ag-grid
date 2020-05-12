@@ -19,7 +19,6 @@ export class FiltersToolPanelHeaderPanel extends Component {
 
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('columnController') private columnController: ColumnController;
-    @Autowired('eventService') private eventService: EventService;
 
     @RefSelector('eExpand') private eExpand: HTMLElement;
     @RefSelector('eFilterTextField') private eSearchTextField: AgInputTextField;

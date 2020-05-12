@@ -32,7 +32,6 @@ export class ToolPanelFilterComp extends Component {
     @RefSelector('eExpand') private eExpand: HTMLElement;
 
     @Autowired('filterManager') private filterManager: FilterManager;
-    @Autowired('eventService') private eventService: EventService;
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('columnController') private columnController: ColumnController;
 

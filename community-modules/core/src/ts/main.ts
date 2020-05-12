@@ -39,7 +39,7 @@ export {
     Qualifier,
     PreDestroy
 } from "./context/context";
-export { QuerySelector, Listener, RefSelector } from "./widgets/componentAnnotations";
+export { QuerySelector, GuiListener, RefSelector, GridListener } from "./widgets/componentAnnotations";
 
 // excel
 export {

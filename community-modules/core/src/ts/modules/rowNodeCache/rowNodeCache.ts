@@ -40,7 +40,6 @@ export abstract class RowNodeCache<T extends IRowNodeBlock, P extends RowNodeCac
     private virtualRowCount: number;
     private maxRowFound = false;
 
-    @Autowired('eventService') protected eventService: EventService;
     @Autowired('rowRenderer') protected rowRenderer: RowRenderer;
 
     protected cacheParams: P;

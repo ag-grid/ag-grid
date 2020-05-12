@@ -21,7 +21,6 @@ export class TitleEdit extends Component {
         ></input>`;
 
     @Autowired('chartTranslator') private chartTranslator: ChartTranslator;
-    @Autowired('eventService') private eventService: EventService;
 
     private chartProxy: ChartProxy<Chart, any>;
 
