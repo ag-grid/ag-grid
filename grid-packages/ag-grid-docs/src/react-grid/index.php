@@ -199,7 +199,7 @@ Notice that the actual data fetching is performed outside of the grid component 
 }
 
 + componentDidMount() {
-+   fetch('https://raw.githubusercontent.com/ag-grid/ag-grid/master/grid-packages/ag-grid-docs/src/sample-data/rowData.json')
++   fetch('https://raw.githubusercontent.com/ag-grid/ag-grid/master/grid-packages/ag-grid-docs/src/sample-data/smallRowData.json')
 +     .then(result =&gt; result.json())
 +     .then(rowData =&gt; this.setState({rowData}))
 + }
@@ -275,6 +275,13 @@ Hopefully you will forgive us this shortcut for the sake of keeping the article 
 </div>
 
 <p>In addition to filtering and sorting, <a href="https://www.ag-grid.com/javascript-grid-grouping/">grouping</a> is another effective way for the user to make sense out of large amounts of data.</p>
+
+<p>Our current data set is pretty small so let's switch to a larger one:</p>
+
+<snippet language="diff">
+    - fetch('https://raw.githubusercontent.com/ag-grid/ag-grid/master/grid-packages/ag-grid-docs/src/sample-data/smallRowData.json')
+    + fetch('https://raw.githubusercontent.com/ag-grid/ag-grid/master/grid-packages/ag-grid-docs/src/sample-data/rowData.json')
+</snippet>
 
 <p>Let's enable the enterprise features of ag-grid. Install the additional package:</p>
 
