@@ -1,13 +1,12 @@
-import { Column } from "./entities/column";
 import { Autowired, Bean } from "./context/context";
-import { GridOptionsWrapper } from "./gridOptionsWrapper";
+import { BeanStub } from "./context/beanStub";
+import { Column } from "./entities/column";
+import { Constants } from "./constants";
 import { ColumnApi } from "./columnController/columnApi";
 import { ColumnController } from "./columnController/columnController";
-import { EventService } from "./eventService";
 import { ColumnEventType, Events, SortChangedEvent } from "./events";
 import { GridApi } from "./gridApi";
-import {Constants} from "./constants";
-import {BeanStub} from "./context/beanStub";
+import { GridOptionsWrapper } from "./gridOptionsWrapper";
 
 @Bean('sortController')
 export class SortController extends BeanStub {

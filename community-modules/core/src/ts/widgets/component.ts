@@ -1,7 +1,6 @@
 import { AgEvent } from "../events";
 import { BeanStub } from "../context/beanStub";
-import {Context, PostConstruct, PreConstruct} from "../context/context";
-import { IComponent } from "../interfaces/iComponent";
+import { PostConstruct, PreConstruct } from "../context/context";
 import { _, NumberSequence } from "../utils";
 
 const compIdSequence = new NumberSequence();

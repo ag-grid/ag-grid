@@ -5,10 +5,9 @@ import { Logger } from "../../logger";
 import { RowNodeBlockLoader } from "./rowNodeBlockLoader";
 import { AgEvent } from "../../events";
 import { NumberSequence,  _ } from "../../utils";
-import {IRowNodeBlock} from "../../interfaces/iRowNodeBlock";
-import {Autowired, PostConstruct, PreDestroy} from "../../context/context";
-import {EventService} from "../../eventService";
-import {RowRenderer} from "../../rendering/rowRenderer";
+import { IRowNodeBlock } from "../../interfaces/iRowNodeBlock";
+import { Autowired, PostConstruct, PreDestroy } from "../../context/context";
+import { RowRenderer } from "../../rendering/rowRenderer";
 
 export interface RowNodeCacheParams {
     initialRowCount: number;

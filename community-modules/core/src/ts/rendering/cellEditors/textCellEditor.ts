@@ -1,9 +1,9 @@
 import { Constants } from "../../constants";
 import { PopupComponent } from "../../widgets/popupComponent";
 import { ICellEditorComp, ICellEditorParams } from "../../interfaces/iCellEditor";
-import { _ } from '../../utils';
 import { AgInputTextField } from "../../widgets/agInputTextField";
 import { RefSelector } from "../../widgets/componentAnnotations";
+import { _ } from '../../utils';
 
 /**
  * useFormatter: used when the cell value needs formatting prior to editing, such as when using reference data and you

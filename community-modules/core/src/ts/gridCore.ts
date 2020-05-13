@@ -4,7 +4,6 @@ import { ColumnApi } from "./columnController/columnApi";
 import { ColumnController } from "./columnController/columnController";
 import { RowRenderer } from "./rendering/rowRenderer";
 import { FilterManager } from "./filter/filterManager";
-import { EventService } from "./eventService";
 import { GridPanel } from "./gridPanel/gridPanel";
 import { Logger, LoggerFactory } from "./logger";
 import { PopupService } from "./widgets/popupService";
@@ -19,11 +18,11 @@ import { RefSelector } from "./widgets/componentAnnotations";
 import { Events, GridSizeChangedEvent } from "./events";
 import { ResizeObserverService } from "./misc/resizeObserverService";
 import { SideBarDef, SideBarDefParser } from "./entities/sideBar";
-import { _ } from "./utils";
 import { IToolPanel } from "./interfaces/iToolPanel";
 import { ModuleNames } from "./modules/moduleNames";
 import { ModuleRegistry } from "./modules/moduleRegistry";
 import { Environment } from "./environment";
+import { _ } from "./utils";
 
 export class GridCore extends Component {
 
@@ -32,7 +31,6 @@ export class GridCore extends Component {
     @Autowired('rowModel') private rowModel: IRowModel;
     @Autowired('resizeObserverService') private resizeObserverService: ResizeObserverService;
 
-    @Autowired('columnController') private columnController: ColumnController;
     @Autowired('rowRenderer') private rowRenderer: RowRenderer;
     @Autowired('filterManager') private filterManager: FilterManager;
 

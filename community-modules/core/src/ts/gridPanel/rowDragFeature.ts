@@ -2,13 +2,12 @@ import {
     DragAndDropService, DraggingEvent, DragSourceType, DropTarget,
     VerticalDirection
 } from "../dragAndDrop/dragAndDropService";
-import { Autowired, Optional, PostConstruct, PreDestroy } from "../context/context";
+import { Autowired, Optional, PostConstruct } from "../context/context";
 import { ColumnController } from "../columnController/columnController";
 import { FocusController } from "../focusController";
 import { IRangeController } from "../interfaces/iRangeController";
 import { GridPanel } from "./gridPanel";
 import { GridOptionsWrapper } from "../gridOptionsWrapper";
-import { EventService } from "../eventService";
 import { RowDragEvent, RowDragEnterEvent, RowDragLeaveEvent, RowDragMoveEvent, RowDragEndEvent } from "../events";
 import { Events } from "../eventKeys";
 import { IRowModel } from "../interfaces/iRowModel";
@@ -19,8 +18,8 @@ import { MouseEventService } from "./mouseEventService";
 import { last } from '../utils/array';
 import { SortController } from "../sortController";
 import { FilterManager } from "../filter/filterManager";
+import { BeanStub } from "../context/beanStub";
 import { _ } from "../utils";
-import {BeanStub} from "../context/beanStub";
 
 export interface RowDropZoneEvents {
     onDragEnter?: (params: RowDragEnterEvent) => void;

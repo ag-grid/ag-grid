@@ -17,7 +17,6 @@ import {
     ProcessDataFromClipboardParams,
     TabToNextCellParams
 } from './entities/gridOptions';
-import { _ } from './utils';
 import { EventService } from './eventService';
 import { Constants } from './constants';
 import { ComponentUtil } from './components/componentUtil';
@@ -41,6 +40,7 @@ import { SideBarDef, SideBarDefParser, ToolPanelDef } from './entities/sideBar';
 import { ModuleNames } from './modules/moduleNames';
 import { ChartOptions } from './interfaces/iChartOptions';
 import { ModuleRegistry } from './modules/moduleRegistry';
+import { _ } from './utils';
 
 const DEFAULT_ROW_HEIGHT = 25;
 const DEFAULT_DETAIL_ROW_HEIGHT = 300;

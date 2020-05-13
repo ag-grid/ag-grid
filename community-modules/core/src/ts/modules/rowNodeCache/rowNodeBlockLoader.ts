@@ -1,22 +1,18 @@
 import { RowNodeBlock } from "./rowNodeBlock";
 import { Logger, LoggerFactory } from "../../logger";
 import { Qualifier } from "../../context/context";
+import { IRowNodeBlock } from "../../interfaces/iRowNodeBlock";
+import { BeanStub } from "../../context/beanStub";
 import { _ } from "../../utils";
-import {IRowNodeBlock} from "../../interfaces/iRowNodeBlock";
-import {BeanStub} from "../../context/beanStub";
 
 export class RowNodeBlockLoader extends BeanStub {
 
     private readonly maxConcurrentRequests: number;
-
     private readonly checkBlockToLoadDebounce: () => void;
 
     private activeBlockLoadsCount = 0;
-
     private blocks: IRowNodeBlock[] = [];
-
     private logger: Logger;
-
     private active = true;
 
     constructor(maxConcurrentRequests: number, blockLoadDebounceMillis: number | undefined) {

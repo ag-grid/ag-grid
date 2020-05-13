@@ -1,3 +1,4 @@
+import { BeanStub } from "../context/beanStub";
 import { PostConstruct, Bean, Autowired, PreDestroy } from "../context/context";
 import { Column } from "../entities/column";
 import { ColumnApi } from "../columnController/columnApi";
@@ -8,7 +9,6 @@ import { Environment } from "../environment";
 import { RowDropZoneParams } from "../gridPanel/rowDragFeature";
 import { RowNode } from "../entities/rowNode";
 import { _ } from "../utils";
-import {BeanStub} from "../context/beanStub";
 
 export interface DragItem {
     /**

@@ -6,9 +6,9 @@ import { GroupInstanceIdCreator } from "./groupInstanceIdCreator";
 import { ColumnGroupChild } from "../entities/columnGroupChild";
 import { ColumnGroup } from "../entities/columnGroup";
 import { OriginalColumnGroup } from "../entities/originalColumnGroup";
-import { Bean, Context } from "../context/context";
+import { Bean } from "../context/context";
 import { _ } from "../utils";
-import {BeanStub} from "../context/beanStub";
+import { BeanStub } from "../context/beanStub";
 
 // takes in a list of columns, as specified by the column definitions, and returns column groups
 @Bean('displayedGroupCreator')

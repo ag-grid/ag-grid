@@ -1,6 +1,6 @@
-import {IEventEmitter} from "./iEventEmitter";
-import {RowNode} from "../entities/rowNode";
-import {NumberSequence} from "../utils";
+import { IEventEmitter } from "./iEventEmitter";
+import { RowNode } from "../entities/rowNode";
+import { NumberSequence } from "../utils";
 
 export interface IRowNodeBlock extends IEventEmitter {
     getDisplayIndexStart(): number;

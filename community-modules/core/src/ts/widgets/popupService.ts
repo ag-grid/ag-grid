@@ -1,15 +1,14 @@
 import { Constants } from "../constants";
-import { Autowired, Bean, PostConstruct, PreDestroy } from "../context/context";
+import { Autowired, Bean, PostConstruct } from "../context/context";
 import { GridCore } from "../gridCore";
 import { GridOptionsWrapper } from "../gridOptionsWrapper";
 import { PostProcessPopupParams } from "../entities/gridOptions";
 import { RowNode } from "../entities/rowNode";
 import { Column } from "../entities/column";
 import { Environment } from "../environment";
-import { EventService } from "../eventService";
 import { Events } from '../events';
+import { BeanStub } from "../context/beanStub";
 import { _ } from "../utils";
-import {BeanStub} from "../context/beanStub";
 
 interface AgPopup {
     element: HTMLElement;

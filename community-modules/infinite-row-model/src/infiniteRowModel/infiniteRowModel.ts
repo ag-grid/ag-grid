@@ -6,7 +6,6 @@ import {
     ColumnApi,
     Constants,
     Events,
-    EventService,
     FilterManager,
     GridApi,
     GridOptionsWrapper,
@@ -25,7 +24,7 @@ import {
     SortController,
     IInfiniteRowModel
 } from "@ag-grid-community/core";
-import {InfiniteCache, InfiniteCacheParams} from "./infiniteCache";
+import { InfiniteCache, InfiniteCacheParams } from "./infiniteCache";
 
 @Bean('rowModel')
 export class InfiniteRowModel extends BeanStub implements IInfiniteRowModel {

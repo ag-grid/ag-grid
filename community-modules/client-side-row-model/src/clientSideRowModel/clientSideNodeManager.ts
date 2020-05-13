@@ -9,9 +9,9 @@ import {
     GridApi,
     ColumnApi,
     SelectionController,
-    _,
     RowDataTransaction,
-    RowNodeTransaction
+    RowNodeTransaction,
+    _
 } from "@ag-grid-community/core";
 
 export class ClientSideNodeManager {

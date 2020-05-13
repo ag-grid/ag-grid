@@ -1,10 +1,9 @@
 import { ICellRendererComp } from "./cellRenderers/iCellRenderer";
 import { RowNode } from "../entities/rowNode";
-import { Column } from "../entities/column";
 import { Autowired, Bean, PostConstruct, PreDestroy } from "../context/context";
 import { GridOptionsWrapper } from "../gridOptionsWrapper";
-import {Constants} from "../constants";
-import {BeanStub} from "../context/beanStub";
+import { Constants } from "../constants";
+import { BeanStub } from "../context/beanStub";
 
 /**
  * For Master Detail, it is required to keep components between expanding & collapsing parents.
@@ -19,9 +18,7 @@ export class DetailRowCompCache extends BeanStub {
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
 
     private cacheItems: CacheItem[] = [];
-
     private maxCacheSize: number;
-
     private active: boolean;
 
     @PostConstruct

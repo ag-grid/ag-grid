@@ -6,10 +6,10 @@ import { ColumnKeyCreator } from "./columnKeyCreator";
 import { OriginalColumnGroupChild } from "../entities/originalColumnGroupChild";
 import { OriginalColumnGroup } from "../entities/originalColumnGroup";
 import { Column } from "../entities/column";
-import { Autowired, Bean, Context, Qualifier } from "../context/context";
+import { Autowired, Bean, Qualifier } from "../context/context";
 import { DefaultColumnTypes } from "../entities/defaultColumnTypes";
 import { _ } from "../utils";
-import {BeanStub} from "../context/beanStub";
+import { BeanStub } from "../context/beanStub";
 
 // takes ColDefs and ColGroupDefs and turns them into Columns and OriginalGroups
 @Bean('columnFactory')

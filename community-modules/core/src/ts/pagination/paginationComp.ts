@@ -1,15 +1,14 @@
 import { Component } from "../widgets/component";
 import { Autowired, PostConstruct } from "../context/context";
 import { GridOptionsWrapper } from "../gridOptionsWrapper";
-import {GridListener, GuiListener, RefSelector} from "../widgets/componentAnnotations";
-import { EventService } from "../eventService";
+import { RefSelector } from "../widgets/componentAnnotations";
 import { Events } from "../events";
 import { RowRenderer } from "../rendering/rowRenderer";
 import { PaginationProxy } from "./paginationProxy";
-import { _ } from "../utils";
 import { IServerSideRowModel } from "../interfaces/iServerSideRowModel";
 import { IRowModel } from "../interfaces/iRowModel";
 import { Constants } from "../constants";
+import { _ } from "../utils";
 
 export class PaginationComp extends Component {
 

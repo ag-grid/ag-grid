@@ -1,16 +1,13 @@
-import {BeanStub} from "../context/beanStub";
-import {EventService} from "../eventService";
-import {Events} from "../events";
-import {Autowired, Bean} from "../context/context";
-import {GridOptionsWrapper} from "../gridOptionsWrapper";
-import {GridPanel} from "../gridPanel/gridPanel";
-import {ScrollVisibleService} from "../gridPanel/scrollVisibleService";
+import { BeanStub } from "../context/beanStub";
+import { Events } from "../events";
+import { Autowired, Bean } from "../context/context";
+import { GridOptionsWrapper } from "../gridOptionsWrapper";
+import { GridPanel } from "../gridPanel/gridPanel";
 
 @Bean('paginationAutoPageSizeService')
 export class PaginationAutoPageSizeService extends BeanStub {
 
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
-    @Autowired('scrollVisibleService') private scrollVisibleService: ScrollVisibleService;
 
     private gridPanel: GridPanel;
 

@@ -1,11 +1,11 @@
 import { NumberSequence, _ } from "../../utils";
 import { RowNode } from "../../entities/rowNode";
-import {Context, PreDestroy} from "../../context/context";
+import { Context, PreDestroy } from "../../context/context";
 import { BeanStub } from "../../context/beanStub";
 import { RowNodeCacheParams } from "./rowNodeCache";
 import { RowRenderer } from "../../rendering/rowRenderer";
 import { AgEvent } from "../../events";
-import {IRowNodeBlock} from "../../interfaces/iRowNodeBlock";
+import { IRowNodeBlock } from "../../interfaces/iRowNodeBlock";
 
 export interface RowNodeBlockBeans {
     context: Context;

@@ -1,12 +1,11 @@
 import { Bean, Autowired } from "../context/context";
-import { EventService } from "../eventService";
+import { BeanStub } from "../context/beanStub";
 import { Events, ScrollVisibilityChangedEvent } from "../events";
 import { ColumnController } from "../columnController/columnController";
 import { ColumnApi } from "../columnController/columnApi";
 import { GridApi } from "../gridApi";
 import { GridOptionsWrapper } from "../gridOptionsWrapper";
 import { _ } from "../utils";
-import {BeanStub} from "../context/beanStub";
 
 export interface SetScrollsVisibleParams {
     horizontalScrollShowing: boolean;

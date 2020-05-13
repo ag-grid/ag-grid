@@ -1,6 +1,5 @@
 import { BeanStub } from "../context/beanStub";
 import { Autowired, Bean, PostConstruct } from "../context/context";
-import { EventService } from "../eventService";
 import { Events } from "../eventKeys";
 import { GridOptionsWrapper } from "../gridOptionsWrapper";
 import { GridPanel } from "../gridPanel/gridPanel";

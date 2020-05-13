@@ -1,5 +1,6 @@
 import { Bean } from "./context/context";
-import {BeanStub} from "./context/beanStub";
+import { BeanStub } from "./context/beanStub";
+
 const LINE_SEPARATOR = '\r\n';
 
 @Bean('xmlFactory')

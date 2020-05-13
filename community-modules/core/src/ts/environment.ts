@@ -1,6 +1,6 @@
 import { Bean, Autowired } from './context/context';
+import { BeanStub } from "./context/beanStub";
 import { _ } from './utils';
-import {BeanStub} from "./context/beanStub";
 
 export type SASS_PROPERTIES = 'headerHeight' | 'headerCellMinWidth' | 'listItemHeight' | 'rowHeight' | 'chartMenuPanelWidth';
 

@@ -1,12 +1,11 @@
 import { Autowired, Bean } from '../context/context';
+import { BeanStub } from "../context/beanStub";
 import { IMenuFactory } from '../interfaces/iMenuFactory';
 import { FilterManager } from '../filter/filterManager';
 import { Column } from '../entities/column';
 import { PopupService } from '../widgets/popupService';
-import { EventService } from '../eventService';
 import { IAfterGuiAttachedParams } from '../interfaces/iAfterGuiAttachedParams';
 import { _ } from '../utils';
-import {BeanStub} from "../context/beanStub";
 
 @Bean('menuFactory')
 export class StandardMenuFactory extends BeanStub implements IMenuFactory {

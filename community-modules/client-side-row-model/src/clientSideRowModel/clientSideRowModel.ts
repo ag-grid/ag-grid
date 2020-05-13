@@ -1,5 +1,4 @@
 import {
-    _,
     Autowired,
     Bean,
     ChangedPath,
@@ -8,7 +7,6 @@ import {
     Constants as constants,
     Constants,
     Events,
-    EventService,
     ExpandCollapseAllEvent,
     FilterManager,
     GridApi,
@@ -29,8 +27,8 @@ import {
     ValueService,
     IClientSideRowModel,
     FilterChangedEvent,
-    PreDestroy,
-    BeanStub
+    BeanStub,
+    _
 } from "@ag-grid-community/core";
 import { ClientSideNodeManager } from "./clientSideNodeManager";
 

@@ -9,7 +9,6 @@ import { GridOptionsWrapper } from '../../gridOptionsWrapper';
 import { Beans } from '../../rendering/beans';
 import { HoverFeature } from '../../headerRendering/hoverFeature';
 import { Events, FilterChangedEvent } from '../../events';
-import { EventService } from '../../eventService';
 import { ColumnHoverService } from '../../rendering/columnHoverService';
 import { Promise } from '../../utils';
 import { ColDef } from '../../entities/colDef';

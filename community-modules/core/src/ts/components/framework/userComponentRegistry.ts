@@ -1,6 +1,6 @@
 import { TextCellEditor } from "../../rendering/cellEditors/textCellEditor";
 
-import { Autowired, Bean, Context, PostConstruct } from "../../context/context";
+import { Autowired, Bean, PostConstruct } from "../../context/context";
 import { IComponent } from "../../interfaces/iComponent";
 import { DateFilter } from "../../filter/provided/date/dateFilter";
 import { HeaderComp } from "../../headerRendering/header/headerComp";
@@ -24,7 +24,7 @@ import { DateFloatingFilter } from "../../filter/provided/date/dateFloatingFilte
 import { TextFilter } from "../../filter/provided/text/textFilter";
 import { NumberFloatingFilter } from "../../filter/provided/number/numberFloatingFilter";
 import { TextFloatingFilter } from "../../filter/provided/text/textFloatingFilter";
-import {BeanStub} from "../../context/beanStub";
+import { BeanStub } from "../../context/beanStub";
 
 export enum RegisteredComponentSource {
     DEFAULT, REGISTERED

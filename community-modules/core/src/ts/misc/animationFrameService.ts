@@ -3,8 +3,7 @@ import { Autowired, Bean, PostConstruct } from "../context/context";
 import { GridOptionsWrapper } from "../gridOptionsWrapper";
 import { AnimationQueueEmptyEvent } from "../events";
 import { Events } from "../eventKeys";
-import { EventService } from "../eventService";
-import {BeanStub} from "../context/beanStub";
+import { BeanStub } from "../context/beanStub";
 
 interface TaskItem {
     task: () => void;

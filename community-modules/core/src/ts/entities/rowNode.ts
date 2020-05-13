@@ -13,8 +13,8 @@ import { RowNodeCache, RowNodeCacheParams } from "../modules/rowNodeCache/rowNod
 import { IEventEmitter } from "../interfaces/iEventEmitter";
 import { ValueCache } from "../valueService/valueCache";
 import { DetailGridInfo, GridApi } from "../gridApi";
+import { IRowNodeBlock } from "../interfaces/iRowNodeBlock";
 import { _ } from "../utils";
-import {IRowNodeBlock} from "../interfaces/iRowNodeBlock";
 
 export interface SetSelectedParams {
     // true or false, whatever you want to set selection to

@@ -1,14 +1,13 @@
-import {BeanStub} from "../context/beanStub";
-import {IRowModel, RowBounds} from "../interfaces/iRowModel";
-import {EventService} from "../eventService";
-import {Events, ModelUpdatedEvent, PaginationChangedEvent} from "../events";
-import {RowNode} from "../entities/rowNode";
-import {Autowired, Bean, PostConstruct} from "../context/context";
-import {GridOptionsWrapper} from "../gridOptionsWrapper";
-import {SelectionController} from "../selectionController";
-import {ColumnApi} from "../columnController/columnApi";
-import {GridApi} from "../gridApi";
-import {_} from "../utils";
+import { IRowModel, RowBounds } from "../interfaces/iRowModel";
+import { BeanStub } from "../context/beanStub";
+import { Events, ModelUpdatedEvent, PaginationChangedEvent } from "../events";
+import { RowNode } from "../entities/rowNode";
+import { Autowired, Bean, PostConstruct } from "../context/context";
+import { GridOptionsWrapper } from "../gridOptionsWrapper";
+import { SelectionController } from "../selectionController";
+import { ColumnApi } from "../columnController/columnApi";
+import { GridApi } from "../gridApi";
+import { _ } from "../utils";
 
 @Bean('paginationProxy')
 export class PaginationProxy extends BeanStub {

@@ -1,7 +1,7 @@
-import {ComponentMeta} from "../context/context";
-import {AgGridRegisteredComponentInput} from "../components/framework/userComponentRegistry";
-import {IComponent} from "./iComponent";
-import {IRowModel} from "./iRowModel";
+import { ComponentMeta } from "../context/context";
+import { AgGridRegisteredComponentInput } from "../components/framework/userComponentRegistry";
+import { IComponent } from "./iComponent";
+import { IRowModel } from "./iRowModel";
 
 export interface Module {
     moduleName: string;

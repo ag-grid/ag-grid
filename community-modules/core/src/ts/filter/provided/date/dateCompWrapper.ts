@@ -3,8 +3,7 @@
 // is finally created, it gets the temp value if set.
 import { IDateComp, IDateParams } from "../../../rendering/dateComponent";
 import { UserComponentFactory } from "../../../components/framework/userComponentFactory";
-import {BeanStub} from "../../../context/beanStub";
-import {Context} from "../../../context/context";
+import { Context } from "../../../context/context";
 
 /** Provides sync access to async component. Date component can be lazy created - this class encapsulates
  * this by keeping value locally until DateComp has loaded, then passing DateComp the value. */

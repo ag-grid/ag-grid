@@ -1,3 +1,1 @@
-export interface IServerSideCache {
-
-}
+export interface IServerSideCache { }

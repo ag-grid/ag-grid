@@ -4,8 +4,8 @@ import { IComponent } from "../../interfaces/iComponent";
 import { ComponentMetadata, ComponentMetadataProvider } from "./componentMetadataProvider";
 import { ComponentClassDef, ComponentSource } from "./userComponentFactory";
 import { ICellRendererComp, ICellRendererParams } from "../../rendering/cellRenderers/iCellRenderer";
+import { BeanStub } from "../../context/beanStub";
 import { _ } from "../../utils";
-import {BeanStub} from "../../context/beanStub";
 
 @Bean("agComponentUtils")
 export class AgComponentUtils extends BeanStub {

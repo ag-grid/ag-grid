@@ -1,6 +1,6 @@
-import { Bean } from "./context/context";
 import { Autowired } from "./context/context";
-import {BeanStub} from "./context/beanStub";
+import { Bean } from "./context/context";
+import { BeanStub } from "./context/beanStub";
 
 @Bean('templateService')
 export class TemplateService extends BeanStub {

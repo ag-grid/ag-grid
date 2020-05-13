@@ -3,8 +3,8 @@
 // over the wire
 import { RowNode } from "../entities/rowNode";
 import { ColumnVO } from "./iColumnVO";
-import {ColumnApi} from "../columnController/columnApi";
-import {GridApi} from "../gridApi";
+import { ColumnApi } from "../columnController/columnApi";
+import { GridApi } from "../gridApi";
 
 export interface IServerSideGetRowsRequest {
     // first row requested

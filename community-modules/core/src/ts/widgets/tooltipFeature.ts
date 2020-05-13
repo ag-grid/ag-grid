@@ -8,7 +8,7 @@ import { ColumnGroup } from "../entities/columnGroup";
 import { CellPosition } from "../entities/cellPosition";
 import { GridApi } from "../gridApi";
 import { GridOptionsWrapper } from "../gridOptionsWrapper";
-import {ITooltipComp, ITooltipParams} from "../rendering/tooltipComponent";
+import { ITooltipComp, ITooltipParams } from "../rendering/tooltipComponent";
 import { PopupService } from "./popupService";
 import { UserComponentFactory } from "../components/framework/userComponentFactory";
 import { _ } from "../utils";

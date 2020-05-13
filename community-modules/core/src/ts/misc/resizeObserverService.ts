@@ -1,8 +1,7 @@
 import { Autowired, Bean } from "../context/context";
 import { GridOptionsWrapper } from "../gridOptionsWrapper";
-import { IFrameworkOverrides } from "../interfaces/iFrameworkOverrides";
+import { BeanStub } from "../context/beanStub";
 import { _ } from "../utils";
-import {BeanStub} from "../context/beanStub";
 
 @Bean('resizeObserverService')
 export class ResizeObserverService extends BeanStub {

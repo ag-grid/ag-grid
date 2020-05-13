@@ -1,6 +1,5 @@
 import { GridOptionsWrapper } from "../../gridOptionsWrapper";
 import { ExpressionService } from "../../valueService/expressionService";
-import { EventService } from "../../eventService";
 import { Constants } from "../../constants";
 import { Autowired } from "../../context/context";
 import { Component } from "../../widgets/component";

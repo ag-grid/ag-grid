@@ -7,7 +7,7 @@ import { NumberSequence, _ } from '../utils';
 import { GridPanel } from "./gridPanel";
 import { Constants } from "../constants";
 import { DraggingEvent } from "../dragAndDrop/dragAndDropService";
-import {BeanStub} from "../context/beanStub";
+import { BeanStub } from "../context/beanStub";
 
 @Bean('mouseEventService')
 export class MouseEventService extends BeanStub {

@@ -16,8 +16,6 @@ export interface IStatusPanelParams {
     context: any;
 }
 
-export interface IStatusPanel {
-}
+export interface IStatusPanel { }
 
-export interface IStatusPanelComp extends IStatusPanel, IComponent<IStatusPanelParams> {
-}
+export interface IStatusPanelComp extends IStatusPanel, IComponent<IStatusPanelParams> { }

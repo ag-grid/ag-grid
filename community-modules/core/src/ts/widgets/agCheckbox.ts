@@ -1,10 +1,10 @@
 import { Autowired } from '../context/context';
+import { Events, CheckboxChangedEvent } from "../events";
 import { GridOptionsWrapper } from '../gridOptionsWrapper';
 import { AgEvent } from '../events';
 import { AgAbstractInputField } from './agAbstractInputField';
 import { LabelAlignment } from './agAbstractLabel';
 import { _ } from '../utils';
-import { Events, CheckboxChangedEvent } from "../events";
 
 export interface ChangeEvent extends AgEvent {
     selected: boolean;

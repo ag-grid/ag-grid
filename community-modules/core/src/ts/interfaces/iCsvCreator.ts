@@ -1,4 +1,4 @@
-import {CsvExportParams} from "./exportParams";
+import { CsvExportParams } from "./exportParams";
 
 export interface ICsvCreator {
     getDataAsCsv(params?: CsvExportParams): string;

@@ -24,7 +24,7 @@ import {
     RowAccumulator,
     RowSpanningAccumulator
 } from "./gridSerializer";
-import {Downloader} from "./downloader";
+import { Downloader } from "./downloader";
 
 const LINE_SEPARATOR = '\r\n';
 

@@ -1,6 +1,6 @@
-import {IRowModel} from "./iRowModel";
-import {IDatasource} from "./iDatasource";
-import {RowDataTransaction} from "./rowDataTransaction";
+import { IRowModel } from "./iRowModel";
+import { IDatasource } from "./iDatasource";
+import { RowDataTransaction } from "./rowDataTransaction";
 
 export interface IInfiniteRowModel extends IRowModel {
     setDatasource(datasource: IDatasource | undefined): void;

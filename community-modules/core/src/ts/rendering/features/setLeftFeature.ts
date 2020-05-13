@@ -3,8 +3,8 @@ import { Column } from "../../entities/column";
 import { BeanStub } from "../../context/beanStub";
 import { Beans } from "../beans";
 import { Constants } from "../../constants";
+import { PostConstruct } from "../../context/context";
 import { _ } from "../../utils";
-import {PostConstruct} from "../../context/context";
 
 export class SetLeftFeature extends BeanStub {
 

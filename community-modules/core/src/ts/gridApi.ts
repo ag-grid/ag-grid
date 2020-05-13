@@ -35,7 +35,7 @@ import { AgEvent, ColumnEventType } from "./events";
 import { IContextMenuFactory } from "./interfaces/iContextMenuFactory";
 import { ICellRendererComp } from "./rendering/cellRenderers/iCellRenderer";
 import { ICellEditorComp } from "./interfaces/iCellEditor";
-import { DragAndDropService, DragSourceType } from "./dragAndDrop/dragAndDropService";
+import { DragAndDropService } from "./dragAndDrop/dragAndDropService";
 import { HeaderRootComp } from "./headerRendering/headerRootComp";
 import { AnimationFrameService } from "./misc/animationFrameService";
 import { IServerSideRowModel } from "./interfaces/iServerSideRowModel";
@@ -44,7 +44,6 @@ import { IStatusPanelComp } from "./interfaces/iStatusPanel";
 import { SideBarDef } from "./entities/sideBar";
 import { IChartService, ChartModel } from "./interfaces/IChartService";
 import { ModuleNames } from "./modules/moduleNames";
-import { _ } from "./utils";
 import { ChartRef, ProcessChartOptionsParams } from "./entities/gridOptions";
 import { ChartOptions, ChartType } from "./interfaces/iChartOptions";
 import { IToolPanel } from "./interfaces/iToolPanel";
@@ -59,7 +58,7 @@ import { ICsvCreator } from "./interfaces/iCsvCreator";
 import { ModuleRegistry } from "./modules/moduleRegistry";
 import { UndoRedoService } from "./undoRedo/undoRedoService";
 import { RowDropZoneParams, RowDropZoneEvents } from "./gridPanel/rowDragFeature";
-import {BeanStub} from "./context/beanStub";
+import { _ } from "./utils";
 
 export interface StartEditingCellParams {
     rowIndex: number;
@@ -395,7 +394,6 @@ export class GridApi {
     }
 
     public timeFullRedraw(count = 1) {
-
         let iterationCount = 0;
         let totalProcessing = 0;
         let totalReflow = 0;
@@ -1019,10 +1017,10 @@ export class GridApi {
     public getCellRanges(): CellRange[] {
         if (this.rangeController) {
             return this.rangeController.getCellRanges();
-        } else {
-            console.warn('ag-Grid: cell range selection is only available in ag-Grid Enterprise');
-            return null;
         }
+
+        console.warn('ag-Grid: cell range selection is only available in ag-Grid Enterprise');
+        return null;
     }
 
     public camelCaseToHumanReadable(camelCase: string): string {

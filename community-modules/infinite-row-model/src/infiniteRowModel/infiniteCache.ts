@@ -2,18 +2,16 @@ import {
     Autowired,
     ColumnApi,
     Events,
-    EventService,
     GridApi,
     IDatasource,
     LoggerFactory,
-    PostConstruct,
     Qualifier,
     RowDataUpdatedEvent,
     RowNode,
     RowNodeCache,
     RowNodeCacheParams,
 } from "@ag-grid-community/core";
-import {InfiniteBlock} from "./infiniteBlock";
+import { InfiniteBlock } from "./infiniteBlock";
 
 export interface InfiniteCacheParams extends RowNodeCacheParams {
     datasource: IDatasource;

@@ -2,7 +2,6 @@ import { GridOptionsWrapper } from "./gridOptionsWrapper";
 import { ColumnController } from "./columnController/columnController";
 import { GridPanel } from "./gridPanel/gridPanel";
 import { Logger } from "./logger";
-import { EventService } from "./eventService";
 import { LoggerFactory } from "./logger";
 import {
     AgEvent, BodyScrollEvent,
@@ -11,7 +10,7 @@ import {
 } from "./events";
 import { GridOptions } from "./entities/gridOptions";
 import { Column } from "./entities/column";
-import { Bean, PreDestroy } from "./context/context";
+import { Bean } from "./context/context";
 import { Qualifier } from "./context/context";
 import { Autowired } from "./context/context";
 import { PostConstruct } from "./context/context";

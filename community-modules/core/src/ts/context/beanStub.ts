@@ -3,8 +3,8 @@ import { EventService } from "../eventService";
 import { GridOptionsWrapper } from "../gridOptionsWrapper";
 import { AgEvent } from "../events";
 import { Autowired, Context, PreDestroy } from "./context";
-import { _ } from "../utils";
 import { IFrameworkOverrides } from "../interfaces/iFrameworkOverrides";
+import { _ } from "../utils";
 
 export class BeanStub implements IEventEmitter {
 

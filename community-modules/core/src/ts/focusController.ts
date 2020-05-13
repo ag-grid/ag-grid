@@ -1,5 +1,5 @@
-import { Bean, Autowired, PostConstruct, PreDestroy } from "./context/context";
-import { EventService } from "./eventService";
+import { Bean, Autowired, PostConstruct } from "./context/context";
+import { BeanStub } from "./context/beanStub";
 import { Column } from "./entities/column";
 import { CellFocusedEvent, Events } from "./events";
 import { GridOptionsWrapper } from "./gridOptionsWrapper";
@@ -10,7 +10,6 @@ import { RowNode } from "./entities/rowNode";
 import { GridApi } from "./gridApi";
 import { CellComp } from "./rendering/cellComp";
 import { _ } from "./utils";
-import {BeanStub} from "./context/beanStub";
 
 @Bean('focusController')
 export class FocusController extends BeanStub {

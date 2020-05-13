@@ -1,4 +1,4 @@
-import {RowNodeTransaction} from "./rowNodeTransaction";
+import { RowNodeTransaction } from "./rowNodeTransaction";
 
 export interface RefreshModelParams {
     // how much of the pipeline to execute

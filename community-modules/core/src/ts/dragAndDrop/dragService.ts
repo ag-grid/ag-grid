@@ -1,12 +1,11 @@
 import { Bean, PreDestroy, Autowired, PostConstruct } from "../context/context";
 import { LoggerFactory, Logger } from "../logger";
-import { EventService } from "../eventService";
 import { DragStartedEvent, DragStoppedEvent, Events } from "../events";
 import { GridOptionsWrapper } from "../gridOptionsWrapper";
 import { ColumnApi } from "../columnController/columnApi";
 import { GridApi } from "../gridApi";
 import { _ } from "../utils";
-import {BeanStub} from "../context/beanStub";
+import { BeanStub } from "../context/beanStub";
 
 /** Adds drag listening onto an element. In ag-Grid this is used twice, first is resizing columns,
  * second is moving the columns and column groups around (ie the 'drag' part of Drag and Drop. */

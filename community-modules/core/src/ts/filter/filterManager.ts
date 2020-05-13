@@ -7,7 +7,6 @@ import { RowNode } from '../entities/rowNode';
 import { Column } from '../entities/column';
 import { Autowired, Bean, PostConstruct, PreDestroy } from '../context/context';
 import { IRowModel } from '../interfaces/iRowModel';
-import { EventService } from '../eventService';
 import { ColumnEventType, Events, FilterChangedEvent, FilterModifiedEvent, FilterOpenedEvent } from '../events';
 import { IFilterComp, IFilterParams } from '../interfaces/iFilter';
 import { ColDef, GetQuickFilterTextParams } from '../entities/colDef';

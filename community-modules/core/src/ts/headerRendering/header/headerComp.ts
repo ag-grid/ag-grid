@@ -1,12 +1,11 @@
 import { Component } from "../../widgets/component";
 import { Column } from "../../entities/column";
-import {Autowired, PreDestroy} from "../../context/context";
+import { Autowired } from "../../context/context";
 import { IMenuFactory } from "../../interfaces/iMenuFactory";
 import { GridOptionsWrapper } from "../../gridOptionsWrapper";
 import { SortController } from "../../sortController";
 import { TapEvent, LongTapEvent, TouchListener } from "../../widgets/touchListener";
 import { IComponent } from "../../interfaces/iComponent";
-import { EventService } from "../../eventService";
 import { RefSelector } from "../../widgets/componentAnnotations";
 import { Events } from "../../events";
 import { ColumnApi } from "../../columnController/columnApi";
@@ -27,9 +26,7 @@ export interface IHeaderParams {
     template: string;
 }
 
-export interface IHeader {
-
-}
+export interface IHeader { }
 
 export interface IHeaderComp extends IHeader, IComponent<IHeaderParams> {
     setMouseOverParent?(overParent: boolean): void;

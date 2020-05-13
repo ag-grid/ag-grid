@@ -8,7 +8,6 @@ import { ColumnFactory } from './columnFactory';
 import { DisplayedGroupCreator } from './displayedGroupCreator';
 import { AutoWidthCalculator } from '../rendering/autoWidthCalculator';
 import { OriginalColumnGroupChild } from '../entities/originalColumnGroupChild';
-import { EventService } from '../eventService';
 import { ColumnUtils } from './columnUtils';
 import { Logger, LoggerFactory } from '../logger';
 import {
@@ -44,7 +43,7 @@ import { Constants } from '../constants';
 import { areEqual } from '../utils/array';
 import { AnimationFrameService } from "../misc/animationFrameService";
 import { _ } from '../utils';
-import {BeanStub} from "../context/beanStub";
+import { BeanStub } from "../context/beanStub";
 
 export interface ColumnResizeSet {
     columns: Column[];

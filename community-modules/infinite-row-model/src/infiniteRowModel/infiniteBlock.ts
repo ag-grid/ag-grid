@@ -9,7 +9,7 @@ import {
     RowRenderer,
     _
 } from "@ag-grid-community/core";
-import {InfiniteCacheParams} from "./infiniteCache";
+import { InfiniteCacheParams } from "./infiniteCache";
 
 export class InfiniteBlock extends RowNodeBlock implements IEventEmitter {
 

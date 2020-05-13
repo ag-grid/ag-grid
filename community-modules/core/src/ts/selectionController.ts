@@ -1,9 +1,9 @@
 import { RowNode } from "./entities/rowNode";
-import { Bean, PreDestroy } from "./context/context";
+import { Bean } from "./context/context";
+import { BeanStub } from "./context/beanStub";
 import { Qualifier } from "./context/context";
 import { Logger } from "./logger";
 import { LoggerFactory } from "./logger";
-import { EventService } from "./eventService";
 import { Events, SelectionChangedEvent } from "./events";
 import { Autowired } from "./context/context";
 import { IRowModel } from "./interfaces/iRowModel";
@@ -12,10 +12,9 @@ import { PostConstruct } from "./context/context";
 import { Constants } from "./constants";
 import { ColumnApi } from "./columnController/columnApi";
 import { GridApi } from "./gridApi";
-import { _ } from './utils';
 import { ChangedPath } from "./utils/changedPath";
-import {IClientSideRowModel} from "./interfaces/iClientSideRowModel";
-import {BeanStub} from "./context/beanStub";
+import { IClientSideRowModel } from "./interfaces/iClientSideRowModel";
+import { _ } from './utils';
 
 @Bean('selectionController')
 export class SelectionController extends BeanStub {

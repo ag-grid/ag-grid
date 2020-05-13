@@ -1,14 +1,14 @@
 import { Autowired, PostConstruct } from "../context/context";
-import { Logger, LoggerFactory } from "../logger";
+import { Constants } from "../constants";
 import { ColumnController } from "../columnController/columnController";
 import { Column } from "../entities/column";
-import { _ } from "../utils";
 import { DragAndDropService, DraggingEvent, DragSourceType, HorizontalDirection } from "../dragAndDrop/dragAndDropService";
+import { DropListener } from "./bodyDropTarget";
 import { GridPanel } from "../gridPanel/gridPanel";
 import { GridOptionsWrapper } from "../gridOptionsWrapper";
-import { DropListener } from "./bodyDropTarget";
+import { Logger, LoggerFactory } from "../logger";
 import { ColumnEventType } from "../events";
-import { Constants } from "../constants";
+import { _ } from "../utils";
 
 export class MoveColumnController implements DropListener {
 

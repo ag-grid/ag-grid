@@ -3,8 +3,8 @@ import { AgInputRange } from "./agInputRange";
 import { AgAbstractLabel, LabelAlignment } from "./agAbstractLabel";
 import { AgInputNumberField } from "./agInputNumberField";
 import { AgAbstractField } from "./agAbstractField";
-import { _ } from "../utils";
 import { PostConstruct } from "../context/context";
+import { _ } from "../utils";
 
 export class AgSlider extends AgAbstractLabel {
     private static TEMPLATE =

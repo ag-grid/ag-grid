@@ -1,9 +1,8 @@
 import { GridOptionsWrapper } from '../gridOptionsWrapper';
-import { Autowired, Context, PostConstruct, PreDestroy } from '../context/context';
+import { Autowired, PostConstruct, PreDestroy } from '../context/context';
 import { DropTarget } from '../dragAndDrop/dragAndDropService';
 import { ColumnController } from '../columnController/columnController';
 import { GridPanel } from '../gridPanel/gridPanel';
-import { EventService } from '../eventService';
 import { Events } from '../events';
 import { HeaderRowComp, HeaderRowType } from './headerRowComp';
 import { BodyDropTarget } from './bodyDropTarget';
@@ -11,7 +10,7 @@ import { ScrollVisibleService } from '../gridPanel/scrollVisibleService';
 import { Component } from '../widgets/component';
 import { Constants } from '../constants';
 import { setFixedWidth, clearElement } from '../utils/dom';
-import {BeanStub} from "../context/beanStub";
+import { BeanStub } from "../context/beanStub";
 
 export class HeaderContainer extends BeanStub {
 

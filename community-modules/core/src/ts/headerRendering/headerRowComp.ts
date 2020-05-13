@@ -1,16 +1,14 @@
 import { Component } from '../widgets/component';
-import {Autowired, PostConstruct, PreDestroy} from '../context/context';
+import { Autowired, PostConstruct, PreDestroy } from '../context/context';
 import { GridOptionsWrapper } from '../gridOptionsWrapper';
 import { ColumnGroupChild } from '../entities/columnGroupChild';
 import { ColumnGroup } from '../entities/columnGroup';
 import { ColumnController } from '../columnController/columnController';
 import { Column } from '../entities/column';
 import { DropTarget } from '../dragAndDrop/dragAndDropService';
-import { EventService } from '../eventService';
 import { Events } from '../events';
 import { HeaderWrapperComp } from './header/headerWrapperComp';
 import { HeaderGroupWrapperComp } from './headerGroup/headerGroupWrapperComp';
-import { IComponent } from '../interfaces/iComponent';
 import { Constants } from '../constants';
 import { FloatingFilterWrapper } from '../filter/floating/floatingFilterWrapper';
 import { isBrowserSafari } from '../utils/browser';

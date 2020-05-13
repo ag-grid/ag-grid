@@ -1,5 +1,4 @@
-import { IComponent } from "./iComponent";
-import {IToolPanel} from "./iToolPanel";
+import { IToolPanel } from "./iToolPanel";
 
 export interface ISideBar {
     refresh(): void;

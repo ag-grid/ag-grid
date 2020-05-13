@@ -1,4 +1,4 @@
-import {ColDef} from "../entities/colDef";
+import { ColDef } from "../entities/colDef";
 
 export interface IFiltersToolPanel {
     setFilterLayout(colDefs: ColDef[]): void;

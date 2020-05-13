@@ -1,6 +1,5 @@
 import { GridOptionsWrapper } from "../gridOptionsWrapper";
 import { GridPanel, RowContainerComponents } from "../gridPanel/gridPanel";
-import { EventService } from "../eventService";
 import { RowComp } from "./rowComp";
 import { Column } from "../entities/column";
 import { RowNode } from "../entities/rowNode";
@@ -27,9 +26,9 @@ import { MaxDivHeightScaler } from "./maxDivHeightScaler";
 import { ICellRendererComp } from "./cellRenderers/iCellRenderer";
 import { ICellEditorComp } from "../interfaces/iCellEditor";
 import { IRowModel } from "../interfaces/iRowModel";
-import { _ } from "../utils";
 import { RowPosition, RowPositionUtils } from "../entities/rowPosition";
-import {PinnedRowModel} from "../pinnedRowModel/pinnedRowModel";
+import { PinnedRowModel } from "../pinnedRowModel/pinnedRowModel";
+import { _ } from "../utils";
 
 @Bean("rowRenderer")
 export class RowRenderer extends BeanStub {

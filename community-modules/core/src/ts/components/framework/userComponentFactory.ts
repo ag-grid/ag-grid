@@ -1,4 +1,4 @@
-import { Autowired, Bean, Context, Optional } from "../../context/context";
+import { Autowired, Bean, Optional } from "../../context/context";
 import { GridOptions } from "../../entities/gridOptions";
 import { FrameworkComponentWrapper } from "./frameworkComponentWrapper";
 import { IComponent } from "../../interfaces/iComponent";
@@ -28,7 +28,7 @@ import { IFilterComp, IFilterParams } from "../../interfaces/iFilter";
 import { IFloatingFilterComp, IFloatingFilterParams } from "../../filter/floating/floatingFilter";
 import { ICellEditorComp, ICellEditorParams } from "../../interfaces/iCellEditor";
 import { IToolPanelComp, IToolPanelParams } from "../../interfaces/iToolPanel";
-import { IStatusPanel, IStatusPanelComp, IStatusPanelParams, StatusPanelDef } from "../../interfaces/iStatusPanel";
+import { IStatusPanelComp, IStatusPanelParams, StatusPanelDef } from "../../interfaces/iStatusPanel";
 import {
     CellEditorComponent,
     CellRendererComponent,

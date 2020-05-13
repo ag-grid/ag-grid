@@ -1,12 +1,12 @@
 import { DragAndDropService, DraggingEvent, DragSourceType, DropTarget } from "../dragAndDrop/dragAndDropService";
-import { Autowired, Context, PostConstruct } from "../context/context";
+import { Autowired, PostConstruct } from "../context/context";
 import { MoveColumnController } from "./moveColumnController";
 import { GridPanel } from "../gridPanel/gridPanel";
 import { BodyDropPivotTarget } from "./bodyDropPivotTarget";
 import { ColumnController } from "../columnController/columnController";
-import {Constants} from "../constants";
+import { Constants } from "../constants";
 import { GridOptionsWrapper } from "../gridOptionsWrapper";
-import {BeanStub} from "../context/beanStub";
+import { BeanStub } from "../context/beanStub";
 
 export interface DropListener {
     getIconName(): string;

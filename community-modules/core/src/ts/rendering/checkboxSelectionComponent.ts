@@ -3,7 +3,6 @@ import { Autowired } from '../context/context';
 import { Column } from '../entities/column';
 import { Component } from '../widgets/component';
 import { Events } from '../events';
-import { EventService } from '../eventService';
 import { GridOptionsWrapper } from '../gridOptionsWrapper';
 import { IsRowSelectable } from '../entities/gridOptions';
 import { RefSelector } from '../widgets/componentAnnotations';

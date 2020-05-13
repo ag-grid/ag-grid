@@ -3,7 +3,6 @@ import { ColumnController } from '../columnController/columnController';
 import { ColumnApi } from '../columnController/columnApi';
 import { RowRenderer } from '../rendering/rowRenderer';
 import { Autowired, Optional, PostConstruct } from '../context/context';
-import { EventService } from '../eventService';
 import { BodyHeightChangedEvent, BodyScrollEvent, CellKeyDownEvent, CellKeyPressEvent, Events } from '../events';
 import { DragListenerParams, DragService } from '../dragAndDrop/dragService';
 import { IRangeController } from '../interfaces/iRangeController';
@@ -17,7 +16,6 @@ import { RowContainerComponent } from '../rendering/rowContainerComponent';
 import { RowNode } from '../entities/rowNode';
 import { PaginationProxy } from '../pagination/paginationProxy';
 import { PaginationAutoPageSizeService } from '../pagination/paginationAutoPageSizeService';
-import { PopupEditorWrapper } from '../rendering/cellEditors/popupEditorWrapper';
 import { AlignedGridsService } from '../alignedGridsService';
 import { GridApi } from '../gridApi';
 import { AnimationFrameService } from '../misc/animationFrameService';
@@ -38,11 +36,11 @@ import { Beans } from '../rendering/beans';
 import { RefSelector } from '../widgets/componentAnnotations';
 import { HeaderRootComp } from '../headerRendering/headerRootComp';
 import { ResizeObserverService } from '../misc/resizeObserverService';
-import { _ } from "../utils";
 import { PinnedRowModel } from '../pinnedRowModel/pinnedRowModel';
 import { ModuleRegistry } from '../modules/moduleRegistry';
 import { ModuleNames } from '../modules/moduleNames';
 import { UndoRedoService } from '../undoRedo/undoRedoService';
+import { _ } from "../utils";
 
 // in the html below, it is important that there are no white space between some of the divs, as if there is white space,
 // it won't render correctly in safari, as safari renders white space as a gap

@@ -3,7 +3,6 @@ import { ColumnController } from '../columnController/columnController';
 import { GridPanel } from '../gridPanel/gridPanel';
 import { Autowired, PostConstruct } from '../context/context';
 import { HeaderContainer } from './headerContainer';
-import { EventService } from '../eventService';
 import { Events } from '../events';
 import { Component } from '../widgets/component';
 import { RefSelector } from '../widgets/componentAnnotations';

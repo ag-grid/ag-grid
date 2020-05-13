@@ -1,4 +1,4 @@
-import { Autowired, Bean, Context } from "../context/context";
+import { Autowired, Bean } from "../context/context";
 import { Column } from "../entities/column";
 import { GridOptionsWrapper } from "../gridOptionsWrapper";
 import { ColDef } from "../entities/colDef";
@@ -6,7 +6,7 @@ import { ColumnController } from "./columnController";
 import { ColumnFactory } from "./columnFactory";
 import { Constants } from "../constants";
 import { _ } from "../utils";
-import {BeanStub} from "../context/beanStub";
+import { BeanStub } from "../context/beanStub";
 
 @Bean('autoGroupColService')
 export class AutoGroupColService extends BeanStub {
