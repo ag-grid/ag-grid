@@ -4,8 +4,8 @@
             "default": false,
             "description": "Set to <code>true</code> to apply the Set Filter immediately when the user is typing in the Mini Filter.",
             "more": {
-                "name": "Mini Filter Options",
-                "url": "../javascript-grid-filter-set-mini-filter/#mini-filter-options"
+                "name": "Keyboard Shortcuts",
+                "url": "../javascript-grid-filter-set-mini-filter/#keyboard-shortcuts"
             }
         },
         "cellHeight": {
@@ -45,8 +45,8 @@
             "default": false,
             "description": "Set to <code>true</code> to hide the Mini Filter.",
             "more": {
-                "name": "Mini Filter Options",
-                "url": "../javascript-grid-filter-set-mini-filter/#mini-filter-options"
+                "name": "Hiding the Mini Filter",
+                "url": "../javascript-grid-filter-set-mini-filter/#hiding-the-mini-filter"
             }
         },
         "suppressSelectAll": {
@@ -64,8 +64,8 @@
         "textFormatter": {
             "description": "If specified, this formats the text before applying the Mini Filter compare logic, useful for instance if substituting accented characters or if you want to perform case-sensitive Mini Filtering.",
             "more": {
-                "name": "Custom Mini Filter Searches",
-                "url": "../javascript-grid-filter-set-mini-filter/#custom-mini-filter-searches"
+                "name": "Custom Searches",
+                "url": "../javascript-grid-filter-set-mini-filter/#custom-searches"
             }
         },
         "values": {

@@ -9,13 +9,6 @@ var gridOptions = {
                 suppressMiniFilter: true,
             }
         },
-        {
-            field: 'sport',
-            filter: 'agSetColumnFilter',
-            filterParams: {
-                applyMiniFilterWhileTyping: true,
-            }
-        },
 
         // number filters
         { field: 'gold', filter: 'agNumberColumnFilter' },
