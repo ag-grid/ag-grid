@@ -1,8 +1,8 @@
 import { AgEvent } from "../events";
+import { Autowired, PostConstruct, PreConstruct } from "../context/context";
+import { AgStackComponentsRegistry } from "../components/agStackComponentsRegistry";
 import { BeanStub } from "../context/beanStub";
-import {Autowired, Context, PostConstruct, PreConstruct} from "../context/context";
 import { _, NumberSequence } from "../utils";
-import {AgStackComponentsRegistry} from "../components/agStackComponentsRegistry";
 
 const compIdSequence = new NumberSequence();
 

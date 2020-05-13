@@ -68,7 +68,6 @@ import { AgPanel } from "./widgets/agPanel";
 import { AgInputTextField } from "./widgets/agInputTextField";
 import { AgInputTextArea } from "./widgets/agInputTextArea";
 import { AgSlider } from "./widgets/agSlider";
-import { _ } from "./utils";
 import { AgColorPicker } from "./widgets/agColorPicker";
 import { AgInputNumberField } from "./widgets/agInputNumberField";
 import { AgInputRange } from "./widgets/agInputRange";
@@ -84,7 +83,8 @@ import { ModuleRegistry } from "./modules/moduleRegistry";
 import { ModuleNames } from "./modules/moduleNames";
 import { UndoRedoService } from "./undoRedo/undoRedoService";
 import { Component } from "./widgets/component";
-import {AgStackComponentsRegistry} from "./components/agStackComponentsRegistry";
+import { AgStackComponentsRegistry } from "./components/agStackComponentsRegistry";
+import { _ } from "./utils";
 
 export interface GridParams {
     // used by Web Components

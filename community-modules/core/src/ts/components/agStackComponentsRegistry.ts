@@ -1,4 +1,4 @@
-import {Bean, ComponentMeta} from "../context/context";
+import { Bean, ComponentMeta } from "../context/context";
 
 @Bean('agStackComponentsRegistry')
 export class AgStackComponentsRegistry {
