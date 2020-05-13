@@ -19,7 +19,7 @@ include '../documentation-main/documentation_header.php';
     The column interface is the combination of the following items:
 </p>
 
-<ul>
+<ul class="content">
     <li>
         <a href="../javascript-grid-column-properties/">Column Properties</a>:
         Columns are configured through column definitions. A column definition contains the column properties
@@ -235,7 +235,7 @@ SNIPPET
 
 <p>
     If the user provides <code>colId</code> in the column definition, then this is used, otherwise the <code>field</code>
-    is used. If both <code>coldId</code> and <code>field</code> then <code>colId</code> gets preference. If neither
+    is used. If both <code>colId</code> and <code>field</code> then <code>colId</code> gets preference. If neither
     <code>colId</code> or <code>field</code> then numeric is provided. Then finally the ID ensured to be unique by
     appending <code>'_n'</code> where <code>n</code> is the first positive number that allows uniqueness.
 </p>
@@ -370,7 +370,7 @@ SNIPPET
         </li>
         <li>
             <b>Column Filter:</b> If you filter the data by a column (e.g. Year)
-            and then add or remove other columns (e.g. remove Year) then the filter
+            and then add or remove other columns (e.g. remove Age) then the filter (on Year)
             remains unchanged. Conversely if you remove a column with a filter
             (e.g. remove Year while also filtering on Year) then the filter
             is removed.
