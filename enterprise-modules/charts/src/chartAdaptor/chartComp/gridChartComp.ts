@@ -101,7 +101,7 @@ export class GridChartComp extends Component {
         _.addCssClass(this.getGui(), isRtl ? 'ag-rtl' : 'ag-ltr');
 
         this.model = this.createBean(new ChartDataModel(modelParams));
-        this.chartController = this.createBeanAndDestroyWithMe(new ChartController(this.model, this.params.chartPaletteName));
+        this.chartController = this.createManagedBean(new ChartController(this.model, this.params.chartPaletteName));
 
         // create chart before dialog to ensure dialog is correct size
         this.createChart();
@@ -113,9 +113,9 @@ export class GridChartComp extends Component {
         this.addMenu();
         this.addTitleEditComp();
 
-        this.addDestroyableEventListener(this.getGui(), 'focusin', this.setActiveChartCellRange.bind(this));
-        this.addDestroyableEventListener(this.chartController, ChartController.EVENT_CHART_UPDATED, this.refresh.bind(this));
-        this.addDestroyableEventListener(this.chartMenu, ChartMenu.EVENT_DOWNLOAD_CHART, this.downloadChart.bind(this));
+        this.addManagedListener(this.getGui(), 'focusin', this.setActiveChartCellRange.bind(this));
+        this.addManagedListener(this.chartController, ChartController.EVENT_CHART_UPDATED, this.refresh.bind(this));
+        this.addManagedListener(this.chartMenu, ChartMenu.EVENT_DOWNLOAD_CHART, this.downloadChart.bind(this));
 
         this.refresh();
         this.raiseChartCreatedEvent();

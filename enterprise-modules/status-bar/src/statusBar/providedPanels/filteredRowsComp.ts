@@ -29,7 +29,7 @@ export class FilteredRowsComp extends NameValueComp implements IStatusPanelComp 
         this.setDisplayed(true);
 
         const listener = this.onDataChanged.bind(this);
-        this.addDestroyableEventListener(this.eventService, Events.EVENT_MODEL_UPDATED, listener);
+        this.addManagedListener(this.eventService, Events.EVENT_MODEL_UPDATED, listener);
     }
 
     private onDataChanged() {

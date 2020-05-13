@@ -94,7 +94,7 @@ export class MiniChartsContainer extends Component {
                 const miniWrapper = document.createElement('div');
                 _.addCssClass(miniWrapper, 'ag-chart-mini-thumbnail');
 
-                this.addDestroyableEventListener(miniWrapper, 'click', () => {
+                this.addManagedListener(miniWrapper, 'click', () => {
                     this.chartController.setChartType(MiniClass.chartType);
                     this.refreshSelected();
                 });

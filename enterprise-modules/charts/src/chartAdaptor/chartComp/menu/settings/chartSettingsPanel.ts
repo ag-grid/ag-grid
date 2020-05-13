@@ -61,9 +61,9 @@ export class ChartSettingsPanel extends Component {
         this.ePrevBtn.insertAdjacentElement('afterbegin', _.createIconNoSpan('previous', this.gridOptionsWrapper));
         this.eNextBtn.insertAdjacentElement('afterbegin', _.createIconNoSpan('next', this.gridOptionsWrapper));
 
-        this.addDestroyableEventListener(this.ePrevBtn, 'click', this.prev.bind(this));
-        this.addDestroyableEventListener(this.eNextBtn, 'click', this.next.bind(this));
-        this.addDestroyableEventListener(this.chartController, ChartController.EVENT_CHART_UPDATED, this.resetPalettes.bind(this));
+        this.addManagedListener(this.ePrevBtn, 'click', this.prev.bind(this));
+        this.addManagedListener(this.eNextBtn, 'click', this.next.bind(this));
+        this.addManagedListener(this.chartController, ChartController.EVENT_CHART_UPDATED, this.resetPalettes.bind(this));
     }
 
     private resetPalettes(): void {
@@ -119,7 +119,7 @@ export class ChartSettingsPanel extends Component {
         const link = document.createElement('div');
         _.addCssClass(link, 'ag-chart-settings-card-item');
 
-        this.addDestroyableEventListener(link, 'click', () => {
+        this.addManagedListener(link, 'click', () => {
             const { activePalette, isAnimating, paletteNames } = this;
 
             if (paletteName === activePalette || isAnimating) {

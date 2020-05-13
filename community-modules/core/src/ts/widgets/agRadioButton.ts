@@ -18,7 +18,7 @@ export class AgRadioButton extends AgCheckbox {
     protected addInputListeners() {
         super.addInputListeners();
 
-        this.addDestroyableEventListener(this.eventService, Events.EVENT_CHECKBOX_CHANGED, this.onChange.bind(this));
+        this.addManagedListener(this.eventService, Events.EVENT_CHECKBOX_CHANGED, this.onChange.bind(this));
     }
 
     /**

@@ -101,7 +101,7 @@ export class AgPanel extends Component {
             _.addCssClass(this.eTitleBar, 'ag-hidden');
         }
 
-        this.addDestroyableEventListener(this.eTitleBar, 'mousedown', (e: MouseEvent) => {
+        this.addManagedListener(this.eTitleBar, 'mousedown', (e: MouseEvent) => {
             if (
                 eGui.contains(e.relatedTarget as HTMLElement) ||
                 eGui.contains(document.activeElement) ||
@@ -364,7 +364,7 @@ export class AgPanel extends Component {
             );
 
             this.addTitleBarButton(closeButtonComp);
-            closeButtonComp.addDestroyableEventListener(eGui, 'click', this.onBtClose.bind(this));
+            closeButtonComp.addManagedListener(eGui, 'click', this.onBtClose.bind(this));
         } else if (this.closeButtonComp) {
             const eGui = this.closeButtonComp.getGui();
             eGui.parentElement.removeChild(eGui);

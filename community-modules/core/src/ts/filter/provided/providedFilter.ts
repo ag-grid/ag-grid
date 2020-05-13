@@ -131,7 +131,7 @@ export abstract class ProvidedFilter extends Component implements IFilterComp {
                     `<button type="button" class="ag-standard-button ag-filter-apply-panel-button">${text}</button>`);
 
                 eButtonsPanel.appendChild(button);
-                this.addDestroyableEventListener(button, 'click', clickListener);
+                this.addManagedListener(button, 'click', clickListener);
             };
 
             if (clearActive) {

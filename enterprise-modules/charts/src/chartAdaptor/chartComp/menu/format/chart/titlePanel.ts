@@ -94,7 +94,7 @@ export default class TitlePanel extends Component {
         this.activePanels.push(fontPanelComp);
 
         // edits to the title can disable it, so keep the checkbox in sync:
-        this.addDestroyableEventListener(this.eventService, 'chartTitleEdit', () => {
+        this.addManagedListener(this.eventService, 'chartTitleEdit', () => {
             fontPanelComp.setEnabled(this.hasTitle());
         });
     }

@@ -61,15 +61,15 @@ export class HeaderRootComp extends Component {
 
         this.childContainers = [centerContainer, pinnedLeftContainer, pinnedRightContainer];
 
-        this.childContainers.forEach(container => this.createBeanAndDestroyWithMe(container));
+        this.childContainers.forEach(container => this.createManagedBean(container));
 
         // shotgun way to get labels to change, eg from sum(amount) to avg(amount)
-        this.addDestroyableEventListener(this.eventService, Events.EVENT_COLUMN_VALUE_CHANGED, this.refreshHeader.bind(this));
+        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_VALUE_CHANGED, this.refreshHeader.bind(this));
 
-        this.addDestroyableEventListener(this.gridOptionsWrapper, GridOptionsWrapper.PROP_DOM_LAYOUT, this.onDomLayoutChanged.bind(this));
+        this.addManagedListener(this.gridOptionsWrapper, GridOptionsWrapper.PROP_DOM_LAYOUT, this.onDomLayoutChanged.bind(this));
 
         // for setting ag-pivot-on / ag-pivot-off CSS classes
-        this.addDestroyableEventListener(this.eventService, Events.EVENT_COLUMN_PIVOT_MODE_CHANGED, this.onPivotModeChanged.bind(this));
+        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_PIVOT_MODE_CHANGED, this.onPivotModeChanged.bind(this));
 
         this.onPivotModeChanged();
         this.addPreventHeaderScroll();
@@ -118,7 +118,7 @@ export class HeaderRootComp extends Component {
     // end up scrolling to show items off the screen, leaving the grid and header
     // and the grid columns no longer in sync.
     private addPreventHeaderScroll() {
-        this.addDestroyableEventListener(this.eHeaderViewport, 'scroll', () => {
+        this.addManagedListener(this.eHeaderViewport, 'scroll', () => {
             // if the header scrolls, the header will be out of sync. so we reset the
             // header scroll, and then scroll the body, which will in turn set the offset
             // on the header, giving the impression that the header scrolled as expected.

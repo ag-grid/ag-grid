@@ -94,7 +94,7 @@ export class AgDialog extends AgPanel {
 
         super.postConstruct();
 
-        this.addDestroyableEventListener(eGui, 'focusin', (e: FocusEvent) => {
+        this.addManagedListener(eGui, 'focusin', (e: FocusEvent) => {
             if (eGui.contains(e.relatedTarget as HTMLElement)) { return; }
             this.popupService.bringPopupToFront(eGui);
         });
@@ -392,14 +392,14 @@ export class AgDialog extends AgPanel {
 
         _.addCssClass(this.minimizeIcon, 'ag-hidden');
 
-        maximizeButtonComp.addDestroyableEventListener(eGui, 'click', this.toggleMaximize.bind(this));
+        maximizeButtonComp.addManagedListener(eGui, 'click', this.toggleMaximize.bind(this));
         this.addTitleBarButton(maximizeButtonComp, 0);
 
         this.maximizeListeners.push(
-            this.addDestroyableEventListener(eTitleBar, 'dblclick', this.toggleMaximize.bind(this))
+            this.addManagedListener(eTitleBar, 'dblclick', this.toggleMaximize.bind(this))
         );
 
-        this.resizeListenerDestroy = this.addDestroyableEventListener(this, 'resize', () => {
+        this.resizeListenerDestroy = this.addManagedListener(this, 'resize', () => {
             this.isMaximized = false;
             this.refreshMaximizeIcon();
         });

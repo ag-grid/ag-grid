@@ -43,7 +43,7 @@ export class PopupEditorWrapper extends PopupComponent implements ICellEditorCom
 
         this.addDestroyFunc(() => this.destroyBean(this.cellEditor) );
 
-        this.addDestroyableEventListener(
+        this.addManagedListener(
             // this needs to be 'super' and not 'this' as if we call 'this',
             // it ends up called 'getGui()' on the child before 'init' was called,
             // which is not good

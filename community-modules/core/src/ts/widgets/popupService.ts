@@ -36,13 +36,13 @@ export class PopupService extends BeanStub {
 
     @PostConstruct
     private init(): void {
-        this.addDestroyableEventListener(this.eventService, Events.EVENT_KEYBOARD_FOCUS, () => {
+        this.addManagedListener(this.eventService, Events.EVENT_KEYBOARD_FOCUS, () => {
             this.popupList.forEach(popup => {
                 _.addCssClass(popup.element, 'ag-keyboard-focus');
             });
         });
 
-        this.addDestroyableEventListener(this.eventService, Events.EVENT_MOUSE_FOCUS, () => {
+        this.addManagedListener(this.eventService, Events.EVENT_MOUSE_FOCUS, () => {
             this.popupList.forEach(popup => {
                 _.removeCssClass(popup.element, 'ag-keyboard-focus');
             });

@@ -189,7 +189,7 @@ export class Component extends BeanStub {
         listenerMetas.forEach( meta => {
 
             const listener = (this as any)[meta.methodName].bind(this);
-            this.addDestroyableEventListener(this.eventService, meta.eventName, listener);
+            this.addManagedListener(this.eventService, meta.eventName, listener);
         });
     }
 

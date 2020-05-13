@@ -52,7 +52,7 @@ export abstract class AgAbstractInputField<T extends FieldElement, K> extends Ag
     }
 
     protected addInputListeners() {
-        this.addDestroyableEventListener(this.eInput, 'input', (e) => {
+        this.addManagedListener(this.eInput, 'input', (e) => {
             const value = e.target.value;
 
             this.setValue(value);

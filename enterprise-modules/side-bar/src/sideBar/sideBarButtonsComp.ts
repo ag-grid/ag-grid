@@ -84,7 +84,7 @@ class SideBarButtonComp extends Component {
         const template = this.createTemplate();
         this.setTemplate(template);
         this.eIconWrapper.insertAdjacentElement('afterbegin', _.createIconNoSpan(this.toolPanelDef.iconKey, this.gridOptionsWrapper));
-        this.addDestroyableEventListener(this.eToggleButton, 'click', this.onButtonPressed.bind(this));
+        this.addManagedListener(this.eToggleButton, 'click', this.onButtonPressed.bind(this));
     }
 
     private createTemplate(): string {

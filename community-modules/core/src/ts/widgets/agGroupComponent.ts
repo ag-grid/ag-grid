@@ -116,7 +116,7 @@ export class AgGroupComponent extends Component {
     private setupExpandContract(): void {
         this.eGroupClosedIcon.appendChild(_.createIcon('columnSelectClosed', this.gridOptionsWrapper, null));
         this.eGroupOpenedIcon.appendChild(_.createIcon('columnSelectOpen', this.gridOptionsWrapper, null));
-        this.addDestroyableEventListener(this.eTitleBar, 'click', () => this.toggleGroupExpand());
+        this.addManagedListener(this.eTitleBar, 'click', () => this.toggleGroupExpand());
     }
 
     private refreshChildDisplay(): void {

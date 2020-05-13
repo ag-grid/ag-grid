@@ -83,24 +83,24 @@ export class HeaderGroupComp extends Component implements IHeaderGroupComp {
         // then close again straight away. if we also listened to double click, then the group would open,
         // close, then open, which is not what we want. double click should only action if the user double
         // clicks outside of the icons.
-        this.addDestroyableEventListener(this.eCloseIcon, "dblclick", stopPropagationAction);
-        this.addDestroyableEventListener(this.eOpenIcon, "dblclick", stopPropagationAction);
+        this.addManagedListener(this.eCloseIcon, "dblclick", stopPropagationAction);
+        this.addManagedListener(this.eOpenIcon, "dblclick", stopPropagationAction);
 
-        this.addDestroyableEventListener(this.getGui(), "dblclick", expandAction);
+        this.addManagedListener(this.getGui(), "dblclick", expandAction);
 
         this.updateIconVisibility();
 
         const originalColumnGroup = this.params.columnGroup.getOriginalColumnGroup();
-        this.addDestroyableEventListener(originalColumnGroup, OriginalColumnGroup.EVENT_EXPANDED_CHANGED, this.updateIconVisibility.bind(this));
-        this.addDestroyableEventListener(originalColumnGroup, OriginalColumnGroup.EVENT_EXPANDABLE_CHANGED, this.updateIconVisibility.bind(this));
+        this.addManagedListener(originalColumnGroup, OriginalColumnGroup.EVENT_EXPANDED_CHANGED, this.updateIconVisibility.bind(this));
+        this.addManagedListener(originalColumnGroup, OriginalColumnGroup.EVENT_EXPANDABLE_CHANGED, this.updateIconVisibility.bind(this));
     }
 
     private addTouchAndClickListeners(eElement: HTMLElement, action: (event: MouseEvent) => void): void {
         const touchListener = new TouchListener(eElement);
 
-        this.addDestroyableEventListener(touchListener, TouchListener.EVENT_TAP, action);
+        this.addManagedListener(touchListener, TouchListener.EVENT_TAP, action);
         this.addDestroyFunc(() => touchListener.destroy());
-        this.addDestroyableEventListener(eElement, "click", action);
+        this.addManagedListener(eElement, "click", action);
     }
 
     private updateIconVisibility(): void {

@@ -81,7 +81,7 @@ export class BeanStub implements IEventEmitter {
         }
     }
 
-    public addDestroyableEventListener(
+    public addManagedListener(
         object: Window | HTMLElement | IEventEmitter | GridOptionsWrapper,
         event: string,
         listener: (event?: any) => void
@@ -120,7 +120,7 @@ export class BeanStub implements IEventEmitter {
         }
     }
 
-    public createBeanAndDestroyWithMe<T>(bean: T, context?: Context): T {
+    public createManagedBean<T>(bean: T, context?: Context): T {
         const res = this.createBean(bean, context);
         this.addDestroyFunc(this.destroyBean.bind(this, bean, context));
         return res;

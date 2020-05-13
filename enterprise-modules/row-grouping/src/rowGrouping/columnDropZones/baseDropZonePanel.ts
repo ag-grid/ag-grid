@@ -98,9 +98,9 @@ export abstract class BaseDropZonePanel extends Component {
     public init(params: BaseDropZonePanelParams): void {
         this.params = params;
 
-        this.addDestroyableEventListener(this.beans.eventService, Events.EVENT_COLUMN_EVERYTHING_CHANGED, this.refreshGui.bind(this));
+        this.addManagedListener(this.beans.eventService, Events.EVENT_COLUMN_EVERYTHING_CHANGED, this.refreshGui.bind(this));
 
-        this.addDestroyableEventListener(this.beans.gridOptionsWrapper, 'functionsReadOnly', this.refreshGui.bind(this));
+        this.addManagedListener(this.beans.gridOptionsWrapper, 'functionsReadOnly', this.refreshGui.bind(this));
 
         this.setupDropTarget();
         // we don't know if this bean will be initialised before columnController.

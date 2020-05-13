@@ -219,7 +219,7 @@ export class CellComp extends Component implements TooltipParentComp {
         this.refreshHandle();
 
         if (_.exists(this.tooltip) && !this.beans.gridOptionsWrapper.isEnableBrowserTooltips()) {
-            this.createBeanAndDestroyWithMe(new TooltipFeature(this, 'cell'), this.beans.context);
+            this.createManagedBean(new TooltipFeature(this, 'cell'), this.beans.context);
         }
     }
 
@@ -268,12 +268,12 @@ export class CellComp extends Component implements TooltipParentComp {
         if (_.missing(this.getComponentHolder().colSpan)) { return; }
 
         // because we are col spanning, a reorder of the cols can change what cols we are spanning over
-        this.addDestroyableEventListener(this.beans.eventService, Events.EVENT_DISPLAYED_COLUMNS_CHANGED, this.onDisplayColumnsChanged.bind(this));
+        this.addManagedListener(this.beans.eventService, Events.EVENT_DISPLAYED_COLUMNS_CHANGED, this.onDisplayColumnsChanged.bind(this));
         // because we are spanning over multiple cols, we check for width any time any cols width changes.
         // this is expensive - really we should be explicitly checking only the cols we are spanning over
         // instead of every col, however it would be tricky code to track the cols we are spanning over, so
         // because hardly anyone will be using colSpan, am favouring this easier way for more maintainable code.
-        this.addDestroyableEventListener(this.beans.eventService, Events.EVENT_DISPLAYED_COLUMNS_WIDTH_CHANGED, this.onWidthChanged.bind(this));
+        this.addManagedListener(this.beans.eventService, Events.EVENT_DISPLAYED_COLUMNS_WIDTH_CHANGED, this.onWidthChanged.bind(this));
 
         this.colsSpanning = this.getColSpanningList();
     }
@@ -1963,7 +1963,7 @@ export class CellComp extends Component implements TooltipParentComp {
         }
 
         const rowDraggingComp = new RowDragComp(this.rowNode, this.column, this.getValueToUse(), this.beans);
-        this.createBeanAndDestroyWithMe(rowDraggingComp, this.beans.context);
+        this.createManagedBean(rowDraggingComp, this.beans.context);
 
         // put the checkbox in before the value
         this.eCellWrapper.insertBefore(rowDraggingComp.getGui(), this.eParentOfValue);
@@ -1971,7 +1971,7 @@ export class CellComp extends Component implements TooltipParentComp {
 
     private addDndSource(): void {
         const dndSourceComp = new DndSourceComp(this.rowNode, this.column, this.getValueToUse(), this.beans, this.getGui());
-        this.createBeanAndDestroyWithMe(dndSourceComp, this.beans.context);
+        this.createManagedBean(dndSourceComp, this.beans.context);
 
         // put the checkbox in before the value
         this.eCellWrapper.insertBefore(dndSourceComp.getGui(), this.eParentOfValue);

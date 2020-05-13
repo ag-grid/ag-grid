@@ -28,8 +28,8 @@ export class GridHeaderDropZones extends Component {
     private postConstruct(): void {
         this.setGui(this.createNorthPanel());
 
-        this.addDestroyableEventListener(this.eventService, Events.EVENT_COLUMN_ROW_GROUP_CHANGED, this.onRowGroupChanged.bind(this));
-        this.addDestroyableEventListener(this.eventService, Events.EVENT_COLUMN_EVERYTHING_CHANGED, this.onRowGroupChanged.bind(this));
+        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_ROW_GROUP_CHANGED, this.onRowGroupChanged.bind(this));
+        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_EVERYTHING_CHANGED, this.onRowGroupChanged.bind(this));
 
         this.onRowGroupChanged();
     }
@@ -41,10 +41,10 @@ export class GridHeaderDropZones extends Component {
         _.addCssClass(topPanelGui, 'ag-column-drop-wrapper');
 
         this.rowGroupComp = new RowGroupDropZonePanel(true);
-        this.createBeanAndDestroyWithMe(this.rowGroupComp);
+        this.createManagedBean(this.rowGroupComp);
 
         this.pivotComp = new PivotDropZonePanel(true);
-        this.createBeanAndDestroyWithMe(this.pivotComp);
+        this.createManagedBean(this.pivotComp);
 
         topPanelGui.appendChild(this.rowGroupComp.getGui());
         topPanelGui.appendChild(this.pivotComp.getGui());

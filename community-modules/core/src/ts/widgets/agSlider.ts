@@ -33,13 +33,13 @@ export class AgSlider extends AgAbstractLabel {
 
     public onValueChange(callbackFn: (newValue: number) => void) {
         const eventChanged = AgAbstractField.EVENT_CHANGED;
-        this.addDestroyableEventListener(this.eText, eventChanged, () => {
+        this.addManagedListener(this.eText, eventChanged, () => {
             const textValue = parseFloat(this.eText.getValue());
             this.eSlider.setValue(textValue.toString(), true);
             callbackFn(textValue || 0);
         });
 
-        this.addDestroyableEventListener(this.eSlider, eventChanged, () => {
+        this.addManagedListener(this.eSlider, eventChanged, () => {
             const sliderValue = this.eSlider.getValue();
             this.eText.setValue(sliderValue, true);
             callbackFn(parseFloat(sliderValue));

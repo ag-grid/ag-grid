@@ -38,14 +38,14 @@ export class SelectionController extends BeanStub {
         this.reset();
 
         if (this.gridOptionsWrapper.isRowModelDefault()) {
-            this.addDestroyableEventListener(this.eventService, Events.EVENT_ROW_DATA_CHANGED, this.reset.bind(this));
+            this.addManagedListener(this.eventService, Events.EVENT_ROW_DATA_CHANGED, this.reset.bind(this));
         }
     }
 
     @PostConstruct
     private init(): void {
         this.groupSelectsChildren = this.gridOptionsWrapper.isGroupSelectsChildren();
-        this.addDestroyableEventListener(this.eventService, Events.EVENT_ROW_SELECTED, this.onRowSelected.bind(this));
+        this.addManagedListener(this.eventService, Events.EVENT_ROW_SELECTED, this.onRowSelected.bind(this));
     }
 
     public setLastSelectedNode(rowNode: RowNode): void {

@@ -29,13 +29,13 @@ export class FocusController extends BeanStub {
 
         const clearFocusedCellListener = this.clearFocusedCell.bind(this);
 
-        this.addDestroyableEventListener(this.eventService, Events.EVENT_COLUMN_PIVOT_MODE_CHANGED, clearFocusedCellListener);
-        this.addDestroyableEventListener(this.eventService, Events.EVENT_COLUMN_EVERYTHING_CHANGED, this.onColumnEverythingChanged.bind(this));
-        this.addDestroyableEventListener(this.eventService, Events.EVENT_COLUMN_GROUP_OPENED, clearFocusedCellListener);
-        this.addDestroyableEventListener(this.eventService, Events.EVENT_COLUMN_ROW_GROUP_CHANGED, clearFocusedCellListener);
+        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_PIVOT_MODE_CHANGED, clearFocusedCellListener);
+        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_EVERYTHING_CHANGED, this.onColumnEverythingChanged.bind(this));
+        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_GROUP_OPENED, clearFocusedCellListener);
+        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_ROW_GROUP_CHANGED, clearFocusedCellListener);
 
-        this.addDestroyableEventListener(eDocument, 'keydown', this.activateKeyboardMode.bind(this));
-        this.addDestroyableEventListener(eDocument, 'mousedown', this.activateMouseMode.bind(this));
+        this.addManagedListener(eDocument, 'keydown', this.activateKeyboardMode.bind(this));
+        this.addManagedListener(eDocument, 'mousedown', this.activateMouseMode.bind(this));
     }
 
     public onColumnEverythingChanged(): void {

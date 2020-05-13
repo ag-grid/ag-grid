@@ -79,7 +79,7 @@ export class AgAngleSelect extends AgAbstractLabel {
             this.eAngleValue.setValue(this.normalizeNegativeValue(this.getValue()).toString());
         }
 
-        this.addDestroyableEventListener(this, AgAbstractField.EVENT_CHANGED, () => {
+        this.addManagedListener(this, AgAbstractField.EVENT_CHANGED, () => {
             if (this.eAngleValue.getInputElement().contains(document.activeElement)) {
                 return;
             }
@@ -193,7 +193,7 @@ export class AgAngleSelect extends AgAbstractLabel {
     }
 
     public onValueChange(callbackFn: (newValue: number) => void): this {
-        this.addDestroyableEventListener(this, AgAbstractField.EVENT_CHANGED, () => {
+        this.addManagedListener(this, AgAbstractField.EVENT_CHANGED, () => {
             callbackFn(this.degrees);
         });
         return this;

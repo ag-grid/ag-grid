@@ -55,18 +55,18 @@ export class UndoRedoService extends BeanStub {
         this.addPasteListeners();
         this.addFillListeners();
 
-        this.addDestroyableEventListener(this.eventService, Events.EVENT_CELL_VALUE_CHANGED, this.onCellValueChanged);
+        this.addManagedListener(this.eventService, Events.EVENT_CELL_VALUE_CHANGED, this.onCellValueChanged);
         // undo / redo is restricted to actual editing so we clear the stacks when other operations are
         // performed that change the order of the row / cols.
-        this.addDestroyableEventListener(this.eventService, Events.EVENT_MODEL_UPDATED, this.clearStacks);
-        this.addDestroyableEventListener(this.eventService, Events.EVENT_COLUMN_PIVOT_MODE_CHANGED, this.clearStacks);
-        this.addDestroyableEventListener(this.eventService, Events.EVENT_COLUMN_EVERYTHING_CHANGED, this.clearStacks);
-        this.addDestroyableEventListener(this.eventService, Events.EVENT_COLUMN_GROUP_OPENED, this.clearStacks);
-        this.addDestroyableEventListener(this.eventService, Events.EVENT_COLUMN_ROW_GROUP_CHANGED, this.clearStacks);
-        this.addDestroyableEventListener(this.eventService, Events.EVENT_COLUMN_MOVED, this.clearStacks);
-        this.addDestroyableEventListener(this.eventService, Events.EVENT_COLUMN_PINNED, this.clearStacks);
-        this.addDestroyableEventListener(this.eventService, Events.EVENT_COLUMN_VISIBLE, this.clearStacks);
-        this.addDestroyableEventListener(this.eventService, Events.EVENT_ROW_DRAG_END, this.clearStacks);
+        this.addManagedListener(this.eventService, Events.EVENT_MODEL_UPDATED, this.clearStacks);
+        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_PIVOT_MODE_CHANGED, this.clearStacks);
+        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_EVERYTHING_CHANGED, this.clearStacks);
+        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_GROUP_OPENED, this.clearStacks);
+        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_ROW_GROUP_CHANGED, this.clearStacks);
+        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_MOVED, this.clearStacks);
+        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_PINNED, this.clearStacks);
+        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_VISIBLE, this.clearStacks);
+        this.addManagedListener(this.eventService, Events.EVENT_ROW_DRAG_END, this.clearStacks);
     }
 
     private onCellValueChanged = (event: CellValueChangedEvent): void => {
@@ -205,10 +205,10 @@ export class UndoRedoService extends BeanStub {
     }
 
     private addRowEditingListeners(): void {
-        this.addDestroyableEventListener(this.eventService, Events.EVENT_ROW_EDITING_STARTED, () => {
+        this.addManagedListener(this.eventService, Events.EVENT_ROW_EDITING_STARTED, () => {
             this.isRowEditing = true;
         });
-        this.addDestroyableEventListener(this.eventService, Events.EVENT_ROW_EDITING_STOPPED, () => {
+        this.addManagedListener(this.eventService, Events.EVENT_ROW_EDITING_STOPPED, () => {
             const action = new UndoRedoAction(this.cellValueChanges);
             this.pushActionsToUndoStack(action);
             this.isRowEditing = false;
@@ -216,10 +216,10 @@ export class UndoRedoService extends BeanStub {
     }
 
     private addCellEditingListeners(): void {
-        this.addDestroyableEventListener(this.eventService, Events.EVENT_CELL_EDITING_STARTED, () => {
+        this.addManagedListener(this.eventService, Events.EVENT_CELL_EDITING_STARTED, () => {
             this.isCellEditing = true;
         });
-        this.addDestroyableEventListener(this.eventService, Events.EVENT_CELL_EDITING_STOPPED, () => {
+        this.addManagedListener(this.eventService, Events.EVENT_CELL_EDITING_STOPPED, () => {
             this.isCellEditing = false;
 
             const shouldPushAction = !this.isRowEditing && !this.isPasting && !this.isFilling;
@@ -231,10 +231,10 @@ export class UndoRedoService extends BeanStub {
     }
 
     private addPasteListeners(): void {
-        this.addDestroyableEventListener(this.eventService, Events.EVENT_PASTE_START, () => {
+        this.addManagedListener(this.eventService, Events.EVENT_PASTE_START, () => {
             this.isPasting = true;
         });
-        this.addDestroyableEventListener(this.eventService, Events.EVENT_PASTE_END, () => {
+        this.addManagedListener(this.eventService, Events.EVENT_PASTE_END, () => {
             const action = new UndoRedoAction(this.cellValueChanges);
             this.pushActionsToUndoStack(action);
             this.isPasting = false;
@@ -242,11 +242,11 @@ export class UndoRedoService extends BeanStub {
     }
 
     private addFillListeners(): void {
-        this.addDestroyableEventListener(this.eventService, Events.EVENT_FILL_START, () => {
+        this.addManagedListener(this.eventService, Events.EVENT_FILL_START, () => {
             this.isFilling = true;
         });
 
-        this.addDestroyableEventListener(this.eventService, Events.EVENT_FILL_END, (event: FillEndEvent) => {
+        this.addManagedListener(this.eventService, Events.EVENT_FILL_END, (event: FillEndEvent) => {
             const action = new FillUndoRedoAction(this.cellValueChanges, event.initialRange, event.finalRange);
             this.pushActionsToUndoStack(action);
             this.isFilling = false;

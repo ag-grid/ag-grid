@@ -187,7 +187,7 @@ class ContextMenu extends Component {
         }
 
         // if the body scrolls, we want to hide the menu, as the menu will not appear in the right location anymore
-        this.addDestroyableEventListener(this.eventService, 'bodyScroll', this.destroy.bind(this));
+        this.addManagedListener(this.eventService, 'bodyScroll', this.destroy.bind(this));
     }
 
     protected destroy(): void {

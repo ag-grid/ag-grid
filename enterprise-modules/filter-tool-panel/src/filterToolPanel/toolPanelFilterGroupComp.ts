@@ -129,8 +129,8 @@ export class ToolPanelFilterGroupComp extends Component {
             () => this.expandedCallback() :
             () => this.forEachToolPanelFilterChild(filterComp => filterComp.collapse());
 
-        this.addDestroyableEventListener(this.filterGroupComp, AgGroupComponent.EVENT_EXPANDED, expandListener);
-        this.addDestroyableEventListener(this.filterGroupComp, AgGroupComponent.EVENT_COLLAPSED, collapseListener);
+        this.addManagedListener(this.filterGroupComp, AgGroupComponent.EVENT_EXPANDED, expandListener);
+        this.addManagedListener(this.filterGroupComp, AgGroupComponent.EVENT_COLLAPSED, collapseListener);
     }
 
     private addFilterChangedListeners() {
@@ -139,16 +139,16 @@ export class ToolPanelFilterGroupComp extends Component {
             const anyChildFiltersActive = () => group.getLeafColumns().some(col => col.isFilterActive());
 
             group.getLeafColumns().forEach(column => {
-                this.addDestroyableEventListener(column, Column.EVENT_FILTER_CHANGED, () => {
+                this.addManagedListener(column, Column.EVENT_FILTER_CHANGED, () => {
                     _.addOrRemoveCssClass(this.filterGroupComp.getGui(), 'ag-has-filter', anyChildFiltersActive());
                 });
             });
         } else {
             const column = this.columnGroup as Column;
 
-            this.addDestroyableEventListener(this.eventService, Events.EVENT_FILTER_OPENED, this.onFilterOpened.bind(this));
+            this.addManagedListener(this.eventService, Events.EVENT_FILTER_OPENED, this.onFilterOpened.bind(this));
 
-            this.addDestroyableEventListener(column, Column.EVENT_FILTER_CHANGED, () => {
+            this.addManagedListener(column, Column.EVENT_FILTER_CHANGED, () => {
                 _.addOrRemoveCssClass(this.filterGroupComp.getGui(), 'ag-has-filter', column.isFilterActive());
             });
         }

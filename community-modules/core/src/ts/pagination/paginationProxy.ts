@@ -40,9 +40,9 @@ export class PaginationProxy extends BeanStub {
         this.active = this.gridOptionsWrapper.isPagination();
         this.paginateChildRows = this.gridOptionsWrapper.isPaginateChildRows();
 
-        this.addDestroyableEventListener(this.eventService, Events.EVENT_MODEL_UPDATED, this.onModelUpdated.bind(this));
+        this.addManagedListener(this.eventService, Events.EVENT_MODEL_UPDATED, this.onModelUpdated.bind(this));
 
-        this.addDestroyableEventListener(this.gridOptionsWrapper, 'paginationPageSize', this.onModelUpdated.bind(this));
+        this.addManagedListener(this.gridOptionsWrapper, 'paginationPageSize', this.onModelUpdated.bind(this));
 
         this.onModelUpdated();
     }

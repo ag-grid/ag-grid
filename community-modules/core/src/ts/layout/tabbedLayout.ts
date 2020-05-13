@@ -28,7 +28,7 @@ export class TabbedLayout extends ManagedTabComponent {
 
     @PostConstruct
     public init(): void {
-        this.addDestroyableEventListener(this.getGui(), 'keydown', this.handleKeyDown.bind(this));
+        this.addManagedListener(this.getGui(), 'keydown', this.handleKeyDown.bind(this));
     }
 
     private handleKeyDown(e: KeyboardEvent): void {

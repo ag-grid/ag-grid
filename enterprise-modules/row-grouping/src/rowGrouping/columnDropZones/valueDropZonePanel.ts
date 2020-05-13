@@ -50,7 +50,7 @@ export class ValuesDropZonePanel extends BaseDropZonePanel {
             title: title
         });
 
-        this.addDestroyableEventListener(this.eventService, Events.EVENT_COLUMN_VALUE_CHANGED, this.refreshGui.bind(this));
+        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_VALUE_CHANGED, this.refreshGui.bind(this));
     }
 
     protected getIconName(): string {

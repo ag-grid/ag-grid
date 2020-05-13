@@ -185,7 +185,7 @@ export class GroupCellRenderer extends Component implements ICellRendererComp {
         const suppressPadding = this.params.suppressPadding;
 
         if (!suppressPadding) {
-            this.addDestroyableEventListener(node, RowNode.EVENT_UI_LEVEL_CHANGED, this.setIndent.bind(this));
+            this.addManagedListener(node, RowNode.EVENT_UI_LEVEL_CHANGED, this.setIndent.bind(this));
             this.setIndent();
         }
     }
@@ -346,7 +346,7 @@ export class GroupCellRenderer extends Component implements ICellRendererComp {
         // then this could be left out, or set to -1, ie no child count
         if (this.params.suppressCount) { return; }
 
-        this.addDestroyableEventListener(this.displayedGroup, RowNode.EVENT_ALL_CHILDREN_COUNT_CHANGED, this.updateChildCount.bind(this));
+        this.addManagedListener(this.displayedGroup, RowNode.EVENT_ALL_CHILDREN_COUNT_CHANGED, this.updateChildCount.bind(this));
 
         // filtering changes the child count, so need to cater for it
         this.updateChildCount();
@@ -403,22 +403,22 @@ export class GroupCellRenderer extends Component implements ICellRendererComp {
         this.eExpanded.appendChild(eExpandedIcon);
         this.eContracted.appendChild(eContractedIcon);
 
-        this.addDestroyableEventListener(this.eExpanded, 'click', this.onExpandClicked.bind(this));
-        this.addDestroyableEventListener(this.eContracted, 'click', this.onExpandClicked.bind(this));
+        this.addManagedListener(this.eExpanded, 'click', this.onExpandClicked.bind(this));
+        this.addManagedListener(this.eContracted, 'click', this.onExpandClicked.bind(this));
         // expand / contract as the user hits enter
-        this.addDestroyableEventListener(eGroupCell, 'keydown', this.onKeyDown.bind(this));
-        this.addDestroyableEventListener(params.node, RowNode.EVENT_EXPANDED_CHANGED, this.showExpandAndContractIcons.bind(this));
+        this.addManagedListener(eGroupCell, 'keydown', this.onKeyDown.bind(this));
+        this.addManagedListener(params.node, RowNode.EVENT_EXPANDED_CHANGED, this.showExpandAndContractIcons.bind(this));
 
         this.showExpandAndContractIcons();
 
         // because we don't show the expand / contract when there are no children, we need to check every time
         // the number of children change.
-        this.addDestroyableEventListener(this.displayedGroup, RowNode.EVENT_ALL_CHILDREN_COUNT_CHANGED,
+        this.addManagedListener(this.displayedGroup, RowNode.EVENT_ALL_CHILDREN_COUNT_CHANGED,
             this.onAllChildrenCountChanged.bind(this));
 
         // if editing groups, then double click is to start editing
         if (!this.gridOptionsWrapper.isEnableGroupEdit() && this.isExpandable() && !params.suppressDoubleClickExpand) {
-            this.addDestroyableEventListener(eGroupCell, 'dblclick', this.onCellDblClicked.bind(this));
+            this.addManagedListener(eGroupCell, 'dblclick', this.onCellDblClicked.bind(this));
         }
     }
 

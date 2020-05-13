@@ -26,7 +26,7 @@ export class ChangeDetectionService extends BeanStub {
             this.clientSideRowModel = this.rowModel as IClientSideRowModel;
         }
 
-        this.addDestroyableEventListener(this.eventService, Events.EVENT_CELL_VALUE_CHANGED, this.onCellValueChanged.bind(this));
+        this.addManagedListener(this.eventService, Events.EVENT_CELL_VALUE_CHANGED, this.onCellValueChanged.bind(this));
     }
 
     private onCellValueChanged(event: CellValueChangedEvent): void {

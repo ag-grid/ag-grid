@@ -98,12 +98,12 @@ export class RowRenderer extends BeanStub {
         this.gridPanel = gridPanel;
 
         this.rowContainers = this.gridPanel.getRowContainers();
-        this.addDestroyableEventListener(this.eventService, Events.EVENT_PAGINATION_CHANGED, this.onPageLoaded.bind(this));
-        this.addDestroyableEventListener(this.eventService, Events.EVENT_PINNED_ROW_DATA_CHANGED, this.onPinnedRowDataChanged.bind(this));
-        this.addDestroyableEventListener(this.eventService, Events.EVENT_DISPLAYED_COLUMNS_CHANGED, this.onDisplayedColumnsChanged.bind(this));
-        this.addDestroyableEventListener(this.eventService, Events.EVENT_BODY_SCROLL, this.redrawAfterScroll.bind(this));
-        this.addDestroyableEventListener(this.eventService, Events.EVENT_BODY_HEIGHT_CHANGED, this.redrawAfterScroll.bind(this));
-        this.addDestroyableEventListener(this.gridOptionsWrapper, GridOptionsWrapper.PROP_DOM_LAYOUT, this.onDomLayoutChanged.bind(this));
+        this.addManagedListener(this.eventService, Events.EVENT_PAGINATION_CHANGED, this.onPageLoaded.bind(this));
+        this.addManagedListener(this.eventService, Events.EVENT_PINNED_ROW_DATA_CHANGED, this.onPinnedRowDataChanged.bind(this));
+        this.addManagedListener(this.eventService, Events.EVENT_DISPLAYED_COLUMNS_CHANGED, this.onDisplayedColumnsChanged.bind(this));
+        this.addManagedListener(this.eventService, Events.EVENT_BODY_SCROLL, this.redrawAfterScroll.bind(this));
+        this.addManagedListener(this.eventService, Events.EVENT_BODY_HEIGHT_CHANGED, this.redrawAfterScroll.bind(this));
+        this.addManagedListener(this.gridOptionsWrapper, GridOptionsWrapper.PROP_DOM_LAYOUT, this.onDomLayoutChanged.bind(this));
 
         this.registerCellEventListeners();
 
@@ -118,15 +118,15 @@ export class RowRenderer extends BeanStub {
     // all active cells.
     private registerCellEventListeners(): void {
 
-        this.addDestroyableEventListener(this.eventService, Events.EVENT_CELL_FOCUSED, event => {
+        this.addManagedListener(this.eventService, Events.EVENT_CELL_FOCUSED, event => {
             this.forEachCellComp(cellComp => cellComp.onCellFocused(event));
         });
 
-        this.addDestroyableEventListener(this.eventService, Events.EVENT_FLASH_CELLS, event => {
+        this.addManagedListener(this.eventService, Events.EVENT_FLASH_CELLS, event => {
             this.forEachCellComp(cellComp => cellComp.onFlashCells(event));
         });
 
-        this.addDestroyableEventListener(this.eventService, Events.EVENT_COLUMN_HOVER_CHANGED, () => {
+        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_HOVER_CHANGED, () => {
             this.forEachCellComp(cellComp => cellComp.onColumnHover());
         });
 
@@ -135,7 +135,7 @@ export class RowRenderer extends BeanStub {
         // left position adjusted by the width of the left pinned column, so if the pinned left column width changes,
         // all the center cols need to be shifted to accommodate this. when in normal layout, the pinned cols are
         // in different containers so doesn't impact.
-        this.addDestroyableEventListener(this.eventService, Events.EVENT_DISPLAYED_COLUMNS_WIDTH_CHANGED, () => {
+        this.addManagedListener(this.eventService, Events.EVENT_DISPLAYED_COLUMNS_WIDTH_CHANGED, () => {
             if (this.printLayout) {
                 this.forEachCellComp(cellComp => cellComp.onLeftChanged());
             }
@@ -144,16 +144,16 @@ export class RowRenderer extends BeanStub {
         const rangeSelectionEnabled = this.gridOptionsWrapper.isEnableRangeSelection();
         if (rangeSelectionEnabled) {
 
-            this.addDestroyableEventListener(this.eventService, Events.EVENT_RANGE_SELECTION_CHANGED, () => {
+            this.addManagedListener(this.eventService, Events.EVENT_RANGE_SELECTION_CHANGED, () => {
                 this.forEachCellComp(cellComp => cellComp.onRangeSelectionChanged());
             });
-            this.addDestroyableEventListener(this.eventService, Events.EVENT_COLUMN_MOVED, () => {
+            this.addManagedListener(this.eventService, Events.EVENT_COLUMN_MOVED, () => {
                 this.forEachCellComp(cellComp => cellComp.updateRangeBordersIfRangeCount());
             });
-            this.addDestroyableEventListener(this.eventService, Events.EVENT_COLUMN_PINNED, () => {
+            this.addManagedListener(this.eventService, Events.EVENT_COLUMN_PINNED, () => {
                 this.forEachCellComp(cellComp => cellComp.updateRangeBordersIfRangeCount());
             });
-            this.addDestroyableEventListener(this.eventService, Events.EVENT_COLUMN_VISIBLE, () => {
+            this.addManagedListener(this.eventService, Events.EVENT_COLUMN_VISIBLE, () => {
                 this.forEachCellComp(cellComp => cellComp.updateRangeBordersIfRangeCount());
             });
 
@@ -162,7 +162,7 @@ export class RowRenderer extends BeanStub {
         // add listeners to the grid columns
         this.refreshListenersToColumnsForCellComps();
         // if the grid columns change, then refresh the listeners again
-        this.addDestroyableEventListener(this.eventService, Events.EVENT_GRID_COLUMNS_CHANGED, this.refreshListenersToColumnsForCellComps.bind(this));
+        this.addManagedListener(this.eventService, Events.EVENT_GRID_COLUMNS_CHANGED, this.refreshListenersToColumnsForCellComps.bind(this));
 
         this.addDestroyFunc(this.removeGridColumnListeners.bind(this));
     }

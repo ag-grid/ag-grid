@@ -49,10 +49,10 @@ export class PrimaryColsListPanel extends Component {
         this.allowDragging = allowDragging;
 
         if (!this.params.suppressSyncLayoutWithGrid) {
-            this.addDestroyableEventListener(this.eventService, Events.EVENT_COLUMN_MOVED, this.onColumnsChanged.bind(this));
+            this.addManagedListener(this.eventService, Events.EVENT_COLUMN_MOVED, this.onColumnsChanged.bind(this));
         }
 
-        this.addDestroyableEventListener(this.eventService, Events.EVENT_COLUMN_EVERYTHING_CHANGED, this.onColumnsChanged.bind(this));
+        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_EVERYTHING_CHANGED, this.onColumnsChanged.bind(this));
 
         const eventsImpactingCheckedState: string[] = [
             Events.EVENT_COLUMN_EVERYTHING_CHANGED,
@@ -66,7 +66,7 @@ export class PrimaryColsListPanel extends Component {
 
         eventsImpactingCheckedState.forEach(event => {
             // update header select all checkbox with current selection state
-            this.addDestroyableEventListener(this.eventService, event, this.fireSelectionChangedEvent.bind(this));
+            this.addManagedListener(this.eventService, event, this.fireSelectionChangedEvent.bind(this));
         });
 
         this.expandGroupsByDefault = !this.params.contractColumnSelection;

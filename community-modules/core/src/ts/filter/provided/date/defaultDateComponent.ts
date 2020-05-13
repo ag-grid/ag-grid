@@ -35,7 +35,7 @@ export class DefaultDateComponent extends Component implements IDateComp {
 
         this.listener = params.onDateChanged;
 
-        this.addDestroyableEventListener(this.eDateInput.getInputElement(), 'input', e => {
+        this.addManagedListener(this.eDateInput.getInputElement(), 'input', e => {
             if (e.target !== document.activeElement) { return; }
 
             this.listener();

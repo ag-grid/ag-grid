@@ -58,8 +58,8 @@ export class ToolPanelFilterComp extends Component {
     public setColumn(column: Column): void {
         this.column = column;
         this.eFilterName.innerText = this.columnController.getDisplayNameForColumn(this.column, 'header', false) as string;
-        this.addDestroyableEventListener(this.eFilterToolPanelHeader, 'click', this.toggleExpanded.bind(this));
-        this.addDestroyableEventListener(this.eventService, Events.EVENT_FILTER_OPENED, this.onFilterOpened.bind(this));
+        this.addManagedListener(this.eFilterToolPanelHeader, 'click', this.toggleExpanded.bind(this));
+        this.addManagedListener(this.eventService, Events.EVENT_FILTER_OPENED, this.onFilterOpened.bind(this));
         this.addInIcon('filter', this.eFilterIcon, this.column);
 
         _.addOrRemoveCssClass(this.eFilterIcon, 'ag-hidden', !this.isFilterActive());
@@ -69,7 +69,7 @@ export class ToolPanelFilterComp extends Component {
             _.addOrRemoveCssClass(this.eFilterToolPanelHeader, 'ag-hidden', true);
         }
 
-        this.addDestroyableEventListener(this.column, Column.EVENT_FILTER_CHANGED, this.onFilterChanged.bind(this));
+        this.addManagedListener(this.column, Column.EVENT_FILTER_CHANGED, this.onFilterChanged.bind(this));
     }
 
     public getColumn(): Column {

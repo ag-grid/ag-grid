@@ -19,7 +19,7 @@ export class ManagedTabComponent extends Component {
             this.tabListener = this.tabListener();
         }
 
-        this.tabListener = this.addDestroyableEventListener(eGui, 'keydown', (e: KeyboardEvent) => {
+        this.tabListener = this.addManagedListener(eGui, 'keydown', (e: KeyboardEvent) => {
             if (e.keyCode === Constants.KEY_TAB) {
                 this.onTabKeyDown(e);
             }

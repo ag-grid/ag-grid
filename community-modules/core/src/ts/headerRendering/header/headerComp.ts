@@ -131,7 +131,7 @@ export class HeaderComp extends Component implements IHeaderComp {
             const showMenuFn = (event: TapEvent | LongTapEvent) => {
                 options.getApi().showColumnMenuAfterMouseClick(this.params.column, event.touchStart);
             };
-            this.addDestroyableEventListener(menuTouchListener, TouchListener[eventType], showMenuFn);
+            this.addManagedListener(menuTouchListener, TouchListener[eventType], showMenuFn);
         }
 
         if (this.params.enableSorting) {
@@ -144,7 +144,7 @@ export class HeaderComp extends Component implements IHeaderComp {
                 this.sortController.progressSort(this.params.column, false, "uiColumnSorted");
             };
 
-            this.addDestroyableEventListener(touchListener, TouchListener.EVENT_TAP, tapListener);
+            this.addManagedListener(touchListener, TouchListener.EVENT_TAP, tapListener);
         }
 
         // if tapMenuButton is true `touchListener` and `menuTouchListener` are different
@@ -171,7 +171,7 @@ export class HeaderComp extends Component implements IHeaderComp {
             return;
         }
 
-        this.addDestroyableEventListener(this.eMenu, 'click', () => this.showMenu(this.eMenu));
+        this.addManagedListener(this.eMenu, 'click', () => this.showMenu(this.eMenu));
 
         if (!suppressMenuHide) {
             this.eMenu.style.opacity = '0';
@@ -209,13 +209,13 @@ export class HeaderComp extends Component implements IHeaderComp {
         const sortUsingCtrl = this.gridOptionsWrapper.isMultiSortKeyCtrl();
 
         // keep track of last time the moving changed flag was set
-        this.addDestroyableEventListener(this.params.column, Column.EVENT_MOVING_CHANGED, () => {
+        this.addManagedListener(this.params.column, Column.EVENT_MOVING_CHANGED, () => {
             this.lastMovingChanged = new Date().getTime();
         });
 
         // add the event on the header, so when clicked, we do sorting
         if (this.eLabel) {
-            this.addDestroyableEventListener(this.eLabel, 'click', (event:MouseEvent) => {
+            this.addManagedListener(this.eLabel, 'click', (event:MouseEvent) => {
 
                 // sometimes when moving a column via dragging, this was also firing a clicked event.
                 // here is issue raised by user: https://ag-grid.zendesk.com/agent/tickets/1076
@@ -233,10 +233,10 @@ export class HeaderComp extends Component implements IHeaderComp {
             });
         }
 
-        this.addDestroyableEventListener(this.params.column, Column.EVENT_SORT_CHANGED, this.onSortChanged.bind(this));
+        this.addManagedListener(this.params.column, Column.EVENT_SORT_CHANGED, this.onSortChanged.bind(this));
         this.onSortChanged();
 
-        this.addDestroyableEventListener(this.eventService, Events.EVENT_SORT_CHANGED, this.setMultiSortOrder.bind(this));
+        this.addManagedListener(this.eventService, Events.EVENT_SORT_CHANGED, this.setMultiSortOrder.bind(this));
         this.setMultiSortOrder();
     }
 
@@ -286,7 +286,7 @@ export class HeaderComp extends Component implements IHeaderComp {
 
         if (!this.eFilter) { return; }
 
-        this.addDestroyableEventListener(this.params.column, Column.EVENT_FILTER_CHANGED, this.onFilterChanged.bind(this));
+        this.addManagedListener(this.params.column, Column.EVENT_FILTER_CHANGED, this.onFilterChanged.bind(this));
         this.onFilterChanged();
     }
 

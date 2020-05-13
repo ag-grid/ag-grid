@@ -169,10 +169,10 @@ export class SetFilter extends ProvidedFilter {
     }
 
     private addEventListenersForDataChanges(): void {
-        this.addDestroyableEventListener(
+        this.addManagedListener(
             this.eventService, Events.EVENT_ROW_DATA_UPDATED, () => this.syncAfterDataChange());
 
-        this.addDestroyableEventListener(
+        this.addManagedListener(
             this.eventService,
             Events.EVENT_CELL_VALUE_CHANGED,
             (event: CellValueChangedEvent) => {
@@ -249,7 +249,7 @@ export class SetFilter extends ProvidedFilter {
         eMiniFilter.setValue(this.valueModel.getMiniFilter());
         eMiniFilter.onValueChange(() => this.onMiniFilterInput());
 
-        this.addDestroyableEventListener(eMiniFilter.getInputElement(), 'keypress', e => this.onMiniFilterKeyPress(e));
+        this.addManagedListener(eMiniFilter.getInputElement(), 'keypress', e => this.onMiniFilterKeyPress(e));
     }
 
     private initSelectAll() {
@@ -260,10 +260,10 @@ export class SetFilter extends ProvidedFilter {
         if (this.setFilterParams.suppressSelectAll) {
             _.setDisplayed(eSelectAllContainer, false);
         } else {
-            this.addDestroyableEventListener(eSelectAllContainer, 'click', e => this.onSelectAll(e));
+            this.addManagedListener(eSelectAllContainer, 'click', e => this.onSelectAll(e));
         }
 
-        this.addDestroyableEventListener(this.eSelectAll.getInputElement(), 'keydown', (e: KeyboardEvent) => {
+        this.addManagedListener(this.eSelectAll.getInputElement(), 'keydown', (e: KeyboardEvent) => {
             if (e.keyCode === Constants.KEY_SPACE) {
                 e.preventDefault();
                 this.onSelectAll(e);

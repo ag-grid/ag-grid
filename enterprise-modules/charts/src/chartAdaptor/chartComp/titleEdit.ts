@@ -32,12 +32,12 @@ export class TitleEdit extends Component {
 
     @PostConstruct
     public init(): void {
-        this.addDestroyableEventListener(this.getGui(), 'keypress', (e: KeyboardEvent) => {
+        this.addManagedListener(this.getGui(), 'keypress', (e: KeyboardEvent) => {
             if (e.key === 'Enter') {
                 this.endEditing();
             }
         });
-        this.addDestroyableEventListener(this.getGui(), 'blur', this.endEditing.bind(this));
+        this.addManagedListener(this.getGui(), 'blur', this.endEditing.bind(this));
     }
 
     /* should be called when the containing component changes to a new chart proxy */
@@ -53,7 +53,7 @@ export class TitleEdit extends Component {
         const chart = this.chartProxy.getChart();
         const canvas = chart.scene.canvas.element;
 
-        const destroyDbleClickListener = this.addDestroyableEventListener(canvas, 'dblclick', event => {
+        const destroyDbleClickListener = this.addManagedListener(canvas, 'dblclick', event => {
             const { title } = chart;
 
             if (title && title.node.isPointInNode(event.offsetX, event.offsetY)) {
@@ -64,7 +64,7 @@ export class TitleEdit extends Component {
             }
         });
 
-        const destroyMouseMoveListener = this.addDestroyableEventListener(canvas, 'mousemove', event => {
+        const destroyMouseMoveListener = this.addManagedListener(canvas, 'mousemove', event => {
             const { title } = chart;
 
             const inTitle = title && title.node.isPointInNode(event.offsetX, event.offsetY);

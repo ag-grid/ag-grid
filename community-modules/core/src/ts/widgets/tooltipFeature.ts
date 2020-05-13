@@ -73,10 +73,10 @@ export class TooltipFeature extends BeanStub {
 
         const el = this.parentComp.getGui();
 
-        this.addDestroyableEventListener(el, 'mouseenter', this.onMouseEnter.bind(this));
-        this.addDestroyableEventListener(el, 'mouseleave', this.onMouseLeave.bind(this));
-        this.addDestroyableEventListener(el, 'mousemove', this.onMouseMove.bind(this));
-        this.addDestroyableEventListener(el, 'mousedown', this.onMouseDown.bind(this));
+        this.addManagedListener(el, 'mouseenter', this.onMouseEnter.bind(this));
+        this.addManagedListener(el, 'mouseleave', this.onMouseLeave.bind(this));
+        this.addManagedListener(el, 'mousemove', this.onMouseMove.bind(this));
+        this.addManagedListener(el, 'mousedown', this.onMouseDown.bind(this));
     }
 
     protected destroy(): void {

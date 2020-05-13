@@ -123,7 +123,7 @@ export class ChartMenu extends Component {
             );
             _.addCssClass(buttonEl, 'ag-chart-menu-icon');
 
-            this.addDestroyableEventListener(buttonEl, 'click', callback);
+            this.addManagedListener(buttonEl, 'click', callback);
 
             gui.appendChild(buttonEl);
         });
@@ -155,7 +155,7 @@ export class ChartMenu extends Component {
             panels: this.tabs
         }));
 
-        this.addDestroyableEventListener(
+        this.addManagedListener(
             menuPanel,
             Component.EVENT_DESTROYED,
             () => this.destroyBean(this.tabbedMenu)
@@ -165,7 +165,7 @@ export class ChartMenu extends Component {
             window.setTimeout(() => {
                 menuPanel.setBodyComponent(this.tabbedMenu);
                 this.tabbedMenu.showTab(defaultTab);
-                this.addDestroyableEventListener(
+                this.addManagedListener(
                     this.eChartContainer,
                     'click',
                     (event: MouseEvent) => {

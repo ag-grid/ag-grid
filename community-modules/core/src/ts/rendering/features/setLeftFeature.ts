@@ -46,7 +46,7 @@ export class SetLeftFeature extends BeanStub {
 
     @PostConstruct
     private postConstruct(): void {
-        this.addDestroyableEventListener(this.columnOrGroup, Column.EVENT_LEFT_CHANGED, this.onLeftChanged.bind(this));
+        this.addManagedListener(this.columnOrGroup, Column.EVENT_LEFT_CHANGED, this.onLeftChanged.bind(this));
         this.setLeftFirstTime();
     }
 

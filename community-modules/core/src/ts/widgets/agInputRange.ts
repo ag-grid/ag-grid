@@ -48,7 +48,7 @@ export class AgInputRange extends AgAbstractInputField<HTMLInputElement, string>
         const isIE = _.isBrowserIE();
         const eventName = isIE ? 'change' : 'input';
 
-        this.addDestroyableEventListener(this.eInput, eventName, (e) => {
+        this.addManagedListener(this.eInput, eventName, (e) => {
             const value = e.target.value;
 
             this.setValue(value);

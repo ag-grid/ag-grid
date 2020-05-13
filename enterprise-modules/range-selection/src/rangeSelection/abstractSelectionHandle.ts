@@ -69,7 +69,7 @@ export abstract class AbstractSelectionHandle extends Component implements ISele
             }
         });
 
-        this.addDestroyableEventListener(
+        this.addManagedListener(
             this.getGui(),
             'mousedown',
             this.preventRangeExtension.bind(this)
@@ -125,7 +125,7 @@ export abstract class AbstractSelectionHandle extends Component implements ISele
     }
 
     protected onDragStart(e: MouseEvent) {
-        this.cellHoverListener = this.addDestroyableEventListener(
+        this.cellHoverListener = this.addManagedListener(
             this.rowRenderer.getGridCore().getRootGui(), 
             'mousemove', 
             this.updateLastCellPositionHovered.bind(this)

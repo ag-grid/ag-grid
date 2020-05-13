@@ -97,22 +97,22 @@ export class HeaderWrapperComp extends Component {
         this.addColumnHoverListener();
         this.addMouseListeners();
 
-        this.createBeanAndDestroyWithMe(new HoverFeature([this.column], this.getGui()));
+        this.createManagedBean(new HoverFeature([this.column], this.getGui()));
 
-        this.addDestroyableEventListener(this.column, Column.EVENT_FILTER_ACTIVE_CHANGED, this.onFilterChanged.bind(this));
+        this.addManagedListener(this.column, Column.EVENT_FILTER_ACTIVE_CHANGED, this.onFilterChanged.bind(this));
         this.onFilterChanged();
 
-        this.createBeanAndDestroyWithMe(new SelectAllFeature(this.cbSelectAll, this.column));
+        this.createManagedBean(new SelectAllFeature(this.cbSelectAll, this.column));
 
         const setLeftFeature = new SetLeftFeature(this.column, this.getGui(), this.beans);
-        this.createBeanAndDestroyWithMe(setLeftFeature);
+        this.createManagedBean(setLeftFeature);
 
         this.addAttributes();
         CssClassApplier.addHeaderClassesFromColDef(colDef, this.getGui(), this.gridOptionsWrapper, this.column, null);
     }
 
     private addColumnHoverListener(): void {
-        this.addDestroyableEventListener(this.eventService, Events.EVENT_COLUMN_HOVER_CHANGED, this.onColumnHover.bind(this));
+        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_HOVER_CHANGED, this.onColumnHover.bind(this));
         this.onColumnHover();
     }
 
@@ -254,13 +254,13 @@ export class HeaderWrapperComp extends Component {
         const skipHeaderOnAutoSize = this.gridOptionsWrapper.isSkipHeaderOnAutoSize();
 
         if (weWantAutoSize) {
-            this.addDestroyableEventListener(this.eResize, 'dblclick', () => {
+            this.addManagedListener(this.eResize, 'dblclick', () => {
                 this.columnController.autoSizeColumn(this.column, skipHeaderOnAutoSize, "uiColumnResized");
             });
 
             const touchListener: TouchListener = new TouchListener(this.eResize);
 
-            this.addDestroyableEventListener(touchListener, TouchListener.EVENT_DOUBLE_TAP, () => {
+            this.addManagedListener(touchListener, TouchListener.EVENT_DOUBLE_TAP, () => {
                 this.columnController.autoSizeColumn(this.column, skipHeaderOnAutoSize, "uiColumnResized");
             });
 
@@ -300,12 +300,12 @@ export class HeaderWrapperComp extends Component {
         if (this.gridOptionsWrapper.isEnableBrowserTooltips()) {
             this.getGui().setAttribute('title', tooltipText);
         } else {
-            this.createBeanAndDestroyWithMe(new TooltipFeature(this, 'header'));
+            this.createManagedBean(new TooltipFeature(this, 'header'));
         }
     }
 
     private setupMovingCss(): void {
-        this.addDestroyableEventListener(this.column, Column.EVENT_MOVING_CHANGED, this.onColumnMovingChanged.bind(this));
+        this.addManagedListener(this.column, Column.EVENT_MOVING_CHANGED, this.onColumnMovingChanged.bind(this));
         this.onColumnMovingChanged();
     }
 
@@ -314,12 +314,12 @@ export class HeaderWrapperComp extends Component {
     }
 
     private setupWidth(): void {
-        this.addDestroyableEventListener(this.column, Column.EVENT_WIDTH_CHANGED, this.onColumnWidthChanged.bind(this));
+        this.addManagedListener(this.column, Column.EVENT_WIDTH_CHANGED, this.onColumnWidthChanged.bind(this));
         this.onColumnWidthChanged();
     }
 
     private setupMenuClass(): void {
-        this.addDestroyableEventListener(this.column, Column.EVENT_MENU_VISIBLE_CHANGED, this.onMenuVisible.bind(this));
+        this.addManagedListener(this.column, Column.EVENT_MENU_VISIBLE_CHANGED, this.onMenuVisible.bind(this));
         this.onColumnWidthChanged();
     }
 

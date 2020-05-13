@@ -53,9 +53,9 @@ export abstract class TextInputFloatingFilter extends SimpleFloatingFilter {
         const toDebounce: () => void = debounce(this.syncUpWithParentFilter.bind(this), debounceMs);
         const filterGui = this.eFloatingFilterInput.getGui();
 
-        this.addDestroyableEventListener(filterGui, 'input', toDebounce);
-        this.addDestroyableEventListener(filterGui, 'keypress', toDebounce);
-        this.addDestroyableEventListener(filterGui, 'keydown', toDebounce);
+        this.addManagedListener(filterGui, 'input', toDebounce);
+        this.addManagedListener(filterGui, 'keypress', toDebounce);
+        this.addManagedListener(filterGui, 'keydown', toDebounce);
 
         const columnDef = (params.column.getDefinition() as any);
 

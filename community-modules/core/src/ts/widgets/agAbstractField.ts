@@ -18,7 +18,7 @@ export abstract class AgAbstractField<T> extends AgAbstractLabel {
     }
 
     public onValueChange(callbackFn: (newValue: T) => void) {
-        this.addDestroyableEventListener(this, AgAbstractField.EVENT_CHANGED, () => {
+        this.addManagedListener(this, AgAbstractField.EVENT_CHANGED, () => {
             callbackFn(this.getValue());
         });
         return this;

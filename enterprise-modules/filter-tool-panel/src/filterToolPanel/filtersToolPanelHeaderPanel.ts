@@ -48,8 +48,8 @@ export class FiltersToolPanelHeaderPanel extends Component {
 
         this.createExpandIcons();
         this.setExpandState(EXPAND_STATE.EXPANDED);
-        this.addDestroyableEventListener(this.eExpand, 'click', this.onExpandClicked.bind(this));
-        this.addDestroyableEventListener(this.eventService, Events.EVENT_NEW_COLUMNS_LOADED, this.showOrHideOptions.bind(this));
+        this.addManagedListener(this.eExpand, 'click', this.onExpandClicked.bind(this));
+        this.addManagedListener(this.eventService, Events.EVENT_NEW_COLUMNS_LOADED, this.showOrHideOptions.bind(this));
     }
 
     public init(params: ToolPanelFiltersCompParams): void {

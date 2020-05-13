@@ -55,7 +55,7 @@ export class SetFloatingFilterComp extends Component implements IFloatingFilter 
             // on selections in other filters, e.g. if you filter Language to English, then the set filter
             // on Country will only show English speaking countries. Thus the list of items to show
             // in the floating filter can change.
-            this.addDestroyableEventListener(
+            this.addManagedListener(
                 setValueModel, SetValueModel.EVENT_AVAILABLE_VALUES_CHANGED, () => this.updateSetFilterText());
         });
 

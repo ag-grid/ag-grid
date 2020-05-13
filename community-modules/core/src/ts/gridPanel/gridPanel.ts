@@ -295,11 +295,11 @@ export class GridPanel extends Component {
         });
 
         [this.eTop, this.eBodyViewport, this.eBottom].forEach(element => {
-            this.addDestroyableEventListener(element, 'focusin', () => {
+            this.addManagedListener(element, 'focusin', () => {
                 _.addCssClass(element, 'ag-has-focus');
             });
 
-            this.addDestroyableEventListener(element, 'focusout', (e: FocusEvent) => {
+            this.addManagedListener(element, 'focusout', (e: FocusEvent) => {
                 if (!element.contains(e.relatedTarget as HTMLElement)) {
                     _.removeCssClass(element, 'ag-has-focus');
                 }
@@ -340,7 +340,7 @@ export class GridPanel extends Component {
     }
 
     private addRowDragListener(): void {
-        this.rowDragFeature = this.createBeanAndDestroyWithMe(new RowDragFeature(this.eBodyViewport, this));
+        this.rowDragFeature = this.createManagedBean(new RowDragFeature(this.eBodyViewport, this));
         this.dragAndDropService.addDropTarget(this.rowDragFeature);
     }
 
@@ -377,7 +377,7 @@ export class GridPanel extends Component {
             }
         };
 
-        viewports.forEach((viewport) => this.addDestroyableEventListener(viewport, 'focusout', focusOutListener));
+        viewports.forEach((viewport) => this.addManagedListener(viewport, 'focusout', focusOutListener));
     }
 
     private addAngularApplyCheck(): void {
@@ -396,8 +396,8 @@ export class GridPanel extends Component {
 
         // these are the events we need to do an apply after - these are the ones that can end up
         // with columns added or removed
-        this.addDestroyableEventListener(this.eventService, Events.EVENT_DISPLAYED_COLUMNS_CHANGED, listener);
-        this.addDestroyableEventListener(this.eventService, Events.EVENT_VIRTUAL_COLUMNS_CHANGED, listener);
+        this.addManagedListener(this.eventService, Events.EVENT_DISPLAYED_COLUMNS_CHANGED, listener);
+        this.addManagedListener(this.eventService, Events.EVENT_VIRTUAL_COLUMNS_CHANGED, listener);
     }
 
     // if we do not do this, then the user can select a pic in the grid (eg an image in a custom cell renderer)
@@ -412,19 +412,19 @@ export class GridPanel extends Component {
     }
 
     private addEventListeners(): void {
-        this.addDestroyableEventListener(this.eventService, Events.EVENT_DISPLAYED_COLUMNS_CHANGED, this.onDisplayedColumnsChanged.bind(this));
-        this.addDestroyableEventListener(this.eventService, Events.EVENT_DISPLAYED_COLUMNS_WIDTH_CHANGED, this.onDisplayedColumnsWidthChanged.bind(this));
-        this.addDestroyableEventListener(this.eventService, Events.EVENT_PINNED_ROW_DATA_CHANGED, this.setHeaderAndFloatingHeights.bind(this));
-        this.addDestroyableEventListener(this.eventService, Events.EVENT_ROW_DATA_CHANGED, this.onRowDataChanged.bind(this));
-        this.addDestroyableEventListener(this.eventService, Events.EVENT_ROW_DATA_UPDATED, this.onRowDataChanged.bind(this));
-        this.addDestroyableEventListener(this.eventService, Events.EVENT_NEW_COLUMNS_LOADED, this.onNewColumnsLoaded.bind(this));
+        this.addManagedListener(this.eventService, Events.EVENT_DISPLAYED_COLUMNS_CHANGED, this.onDisplayedColumnsChanged.bind(this));
+        this.addManagedListener(this.eventService, Events.EVENT_DISPLAYED_COLUMNS_WIDTH_CHANGED, this.onDisplayedColumnsWidthChanged.bind(this));
+        this.addManagedListener(this.eventService, Events.EVENT_PINNED_ROW_DATA_CHANGED, this.setHeaderAndFloatingHeights.bind(this));
+        this.addManagedListener(this.eventService, Events.EVENT_ROW_DATA_CHANGED, this.onRowDataChanged.bind(this));
+        this.addManagedListener(this.eventService, Events.EVENT_ROW_DATA_UPDATED, this.onRowDataChanged.bind(this));
+        this.addManagedListener(this.eventService, Events.EVENT_NEW_COLUMNS_LOADED, this.onNewColumnsLoaded.bind(this));
 
-        this.addDestroyableEventListener(this.gridOptionsWrapper, GridOptionsWrapper.PROP_HEADER_HEIGHT, this.setHeaderAndFloatingHeights.bind(this));
-        this.addDestroyableEventListener(this.gridOptionsWrapper, GridOptionsWrapper.PROP_PIVOT_HEADER_HEIGHT, this.setHeaderAndFloatingHeights.bind(this));
-        this.addDestroyableEventListener(this.gridOptionsWrapper, GridOptionsWrapper.PROP_GROUP_HEADER_HEIGHT, this.setHeaderAndFloatingHeights.bind(this));
-        this.addDestroyableEventListener(this.gridOptionsWrapper, GridOptionsWrapper.PROP_PIVOT_GROUP_HEADER_HEIGHT, this.setHeaderAndFloatingHeights.bind(this));
-        this.addDestroyableEventListener(this.gridOptionsWrapper, GridOptionsWrapper.PROP_FLOATING_FILTERS_HEIGHT, this.setHeaderAndFloatingHeights.bind(this));
-        this.addDestroyableEventListener(this.gridOptionsWrapper, GridOptionsWrapper.PROP_DOM_LAYOUT, this.onDomLayoutChanged.bind(this));
+        this.addManagedListener(this.gridOptionsWrapper, GridOptionsWrapper.PROP_HEADER_HEIGHT, this.setHeaderAndFloatingHeights.bind(this));
+        this.addManagedListener(this.gridOptionsWrapper, GridOptionsWrapper.PROP_PIVOT_HEADER_HEIGHT, this.setHeaderAndFloatingHeights.bind(this));
+        this.addManagedListener(this.gridOptionsWrapper, GridOptionsWrapper.PROP_GROUP_HEADER_HEIGHT, this.setHeaderAndFloatingHeights.bind(this));
+        this.addManagedListener(this.gridOptionsWrapper, GridOptionsWrapper.PROP_PIVOT_GROUP_HEADER_HEIGHT, this.setHeaderAndFloatingHeights.bind(this));
+        this.addManagedListener(this.gridOptionsWrapper, GridOptionsWrapper.PROP_FLOATING_FILTERS_HEIGHT, this.setHeaderAndFloatingHeights.bind(this));
+        this.addManagedListener(this.gridOptionsWrapper, GridOptionsWrapper.PROP_DOM_LAYOUT, this.onDomLayoutChanged.bind(this));
     }
 
     private addDragListeners(): void {
@@ -462,7 +462,7 @@ export class GridPanel extends Component {
         eventNames.forEach(eventName => {
             const listener = this.processMouseEvent.bind(this, eventName);
             this.eAllCellContainers.forEach(container =>
-                this.addDestroyableEventListener(container, eventName, listener)
+                this.addManagedListener(container, eventName, listener)
             );
         });
     }
@@ -473,7 +473,7 @@ export class GridPanel extends Component {
         eventNames.forEach(eventName => {
             const listener = this.processKeyboardEvent.bind(this, eventName);
             this.eAllCellContainers.forEach(container => {
-                this.addDestroyableEventListener(container, eventName, listener);
+                this.addManagedListener(container, eventName, listener);
             });
         });
     }
@@ -490,7 +490,7 @@ export class GridPanel extends Component {
             }
         };
 
-        this.addDestroyableEventListener(this.eBodyViewport, 'contextmenu', listener);
+        this.addManagedListener(this.eBodyViewport, 'contextmenu', listener);
     }
 
     // + rangeController - used to know when to scroll when user is dragging outside the
@@ -630,7 +630,7 @@ export class GridPanel extends Component {
                 this.handleContextMenuMouseEvent(null, event.touchEvent, rowComp, cellComp);
             };
 
-            this.addDestroyableEventListener(touchListener, TouchListener.EVENT_LONG_TAP, longTapListener);
+            this.addManagedListener(touchListener, TouchListener.EVENT_LONG_TAP, longTapListener);
             this.addDestroyFunc(() => touchListener.destroy());
         });
 
@@ -1103,7 +1103,7 @@ export class GridPanel extends Component {
 
         listener();
 
-        this.addDestroyableEventListener(this.eventService, Events.EVENT_HEIGHT_SCALE_CHANGED, listener);
+        this.addManagedListener(this.eventService, Events.EVENT_HEIGHT_SCALE_CHANGED, listener);
     }
 
     // when editing a pinned row, if the cell is half outside the scrollable area, the browser can
@@ -1113,8 +1113,8 @@ export class GridPanel extends Component {
         const resetTopScroll = () => this.eTopViewport.scrollLeft = 0;
         const resetBottomScroll = () => this.eTopViewport.scrollLeft = 0;
 
-        this.addDestroyableEventListener(this.eTopViewport, 'scroll', resetTopScroll);
-        this.addDestroyableEventListener(this.eBottomViewport, 'scroll', resetBottomScroll);
+        this.addManagedListener(this.eTopViewport, 'scroll', resetTopScroll);
+        this.addManagedListener(this.eBottomViewport, 'scroll', resetBottomScroll);
     }
 
     public getRowContainers(): RowContainerComponents {
@@ -1348,9 +1348,9 @@ export class GridPanel extends Component {
     }
 
     private addScrollListener() {
-        this.addDestroyableEventListener(this.eCenterViewport, 'scroll', this.onCenterViewportScroll.bind(this));
-        this.addDestroyableEventListener(this.eBodyHorizontalScrollViewport, 'scroll', this.onFakeHorizontalScroll.bind(this));
-        this.addDestroyableEventListener(this.eBodyViewport, 'scroll', this.onVerticalScroll.bind(this));
+        this.addManagedListener(this.eCenterViewport, 'scroll', this.onCenterViewportScroll.bind(this));
+        this.addManagedListener(this.eBodyHorizontalScrollViewport, 'scroll', this.onFakeHorizontalScroll.bind(this));
+        this.addManagedListener(this.eBodyViewport, 'scroll', this.onVerticalScroll.bind(this));
     }
 
     private onVerticalScroll(): void {

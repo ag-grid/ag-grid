@@ -77,9 +77,9 @@ export class FloatingFilterWrapper extends Component {
         this.setupWidth();
         this.setupLeftPositioning();
         this.setupColumnHover();
-        this.createBeanAndDestroyWithMe(new HoverFeature([this.column], this.getGui()));
+        this.createManagedBean(new HoverFeature([this.column], this.getGui()));
 
-        this.addDestroyableEventListener(this.eButtonShowMainFilter, 'click', this.showParentFilter.bind(this));
+        this.addManagedListener(this.eButtonShowMainFilter, 'click', this.showParentFilter.bind(this));
     }
 
     private setupFloatingFilter(): void {
@@ -107,7 +107,7 @@ export class FloatingFilterWrapper extends Component {
 
     private setupLeftPositioning(): void {
         const setLeftFeature = new SetLeftFeature(this.column, this.getGui(), this.beans);
-        this.createBeanAndDestroyWithMe(setLeftFeature);
+        this.createManagedBean(setLeftFeature);
     }
 
     private setupSyncWithFilter(): void {
@@ -116,7 +116,7 @@ export class FloatingFilterWrapper extends Component {
             this.onParentModelChanged(parentModel, filterChangedEvent);
         };
 
-        this.addDestroyableEventListener(this.column, Column.EVENT_FILTER_CHANGED, syncWithFilter);
+        this.addManagedListener(this.column, Column.EVENT_FILTER_CHANGED, syncWithFilter);
 
         if (this.filterManager.isFilterActive(this.column)) {
             syncWithFilter(null);
@@ -129,7 +129,7 @@ export class FloatingFilterWrapper extends Component {
     }
 
     private setupColumnHover(): void {
-        this.addDestroyableEventListener(this.eventService, Events.EVENT_COLUMN_HOVER_CHANGED, this.onColumnHover.bind(this));
+        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_HOVER_CHANGED, this.onColumnHover.bind(this));
         this.onColumnHover();
     }
 
@@ -138,7 +138,7 @@ export class FloatingFilterWrapper extends Component {
     }
 
     private setupWidth(): void {
-        this.addDestroyableEventListener(this.column, Column.EVENT_WIDTH_CHANGED, this.onColumnWidthChanged.bind(this));
+        this.addManagedListener(this.column, Column.EVENT_WIDTH_CHANGED, this.onColumnWidthChanged.bind(this));
         this.onColumnWidthChanged();
     }
 

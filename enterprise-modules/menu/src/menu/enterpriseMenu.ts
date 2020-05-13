@@ -212,7 +212,7 @@ export class EnterpriseMenu extends BeanStub {
 
         this.getContext().createBean(this.tabbedLayout);
 
-        this.addDestroyableEventListener(this.eventService, Events.EVENT_DISPLAYED_COLUMNS_CHANGED, this.onDisplayedColumnsChanged.bind(this));
+        this.addManagedListener(this.eventService, Events.EVENT_DISPLAYED_COLUMNS_CHANGED, this.onDisplayedColumnsChanged.bind(this));
     }
 
     private getTabsToCreate() {
@@ -504,7 +504,7 @@ export class EnterpriseMenu extends BeanStub {
         };
 
         this.addDestroyFunc(params.hidePopup);
-        this.addDestroyableEventListener(this.eventService, 'bodyScroll', onBodyScroll);
+        this.addManagedListener(this.eventService, 'bodyScroll', onBodyScroll);
     }
 
     public getGui(): HTMLElement {

@@ -27,7 +27,7 @@ export class ChartFormattingPanel extends Component {
     @PostConstruct
     private init() {
         this.createPanels();
-        this.addDestroyableEventListener(this.chartController, ChartController.EVENT_CHART_UPDATED, this.createPanels.bind(this));
+        this.addManagedListener(this.chartController, ChartController.EVENT_CHART_UPDATED, this.createPanels.bind(this));
     }
 
     private createPanels() {

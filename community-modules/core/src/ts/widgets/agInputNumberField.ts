@@ -11,7 +11,7 @@ export class AgInputNumberField extends AgInputTextField {
 
     postConstruct() {
         super.postConstruct();
-        this.addDestroyableEventListener(this.eInput, 'blur', () => {
+        this.addManagedListener(this.eInput, 'blur', () => {
             const floatedValue = parseFloat(this.eInput.value);
             const value = isNaN(floatedValue) ?  '' : this.normalizeValue(floatedValue.toString());
 

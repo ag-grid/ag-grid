@@ -108,7 +108,7 @@ export class ColumnToolPanel extends Component implements IColumnToolPanel, IToo
                 this.addComponent(this.pivotDropZonePanel);
             }
             this.setLastVisible();
-            this.addDestroyableEventListener(this.eventService, Events.EVENT_COLUMN_PIVOT_MODE_CHANGED, this.setLastVisible.bind(this));
+            this.addManagedListener(this.eventService, Events.EVENT_COLUMN_PIVOT_MODE_CHANGED, this.setLastVisible.bind(this));
         }
 
         this.initialised = true;

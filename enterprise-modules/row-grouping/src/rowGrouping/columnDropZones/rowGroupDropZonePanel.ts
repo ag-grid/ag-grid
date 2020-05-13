@@ -50,7 +50,7 @@ export class RowGroupDropZonePanel extends BaseDropZonePanel {
             title: title
         });
 
-        this.addDestroyableEventListener(this.eventService, Events.EVENT_COLUMN_ROW_GROUP_CHANGED, this.refreshGui.bind(this));
+        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_ROW_GROUP_CHANGED, this.refreshGui.bind(this));
     }
 
     protected isColumnDroppable(column: Column): boolean {

@@ -85,7 +85,7 @@ export class DetailCellRenderer extends Component implements ICellRenderer {
                 'Please add ref="eDetailGrid" to the template.');
         }
 
-        this.addDestroyableEventListener(params.node.parent!, RowNode.EVENT_DATA_CHANGED, () => {
+        this.addManagedListener(params.node.parent!, RowNode.EVENT_DATA_CHANGED, () => {
             this.needRefresh = true;
         });
     }

@@ -51,26 +51,26 @@ export class PrimaryColsHeaderPanel extends Component {
     public postConstruct(): void {
         this.createExpandIcons();
 
-        this.addDestroyableEventListener(
+        this.addManagedListener(
             this.eExpand,
             "click",
             this.onExpandClicked.bind(this)
         );
 
-        this.addDestroyableEventListener(this.eSelect.getInputElement(),
+        this.addManagedListener(this.eSelect.getInputElement(),
             'click',
             this.onSelectClicked.bind(this)
         );
 
         this.eFilterTextField.onValueChange(() => this.onFilterTextChanged());
         
-        this.addDestroyableEventListener(
+        this.addManagedListener(
             this.eFilterTextField.getInputElement(),
             "keypress",
             this.onMiniFilterKeyPress.bind(this)
         );
 
-        this.addDestroyableEventListener(
+        this.addManagedListener(
             this.eventService,
             Events.EVENT_NEW_COLUMNS_LOADED,
             this.showOrHideOptions.bind(this)

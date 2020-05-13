@@ -42,12 +42,12 @@ export class AlignedGridsService extends BeanStub {
 
     @PostConstruct
     private init(): void {
-        this.addDestroyableEventListener(this.eventService,  Events.EVENT_COLUMN_MOVED, this.fireColumnEvent.bind(this));
-        this.addDestroyableEventListener(this.eventService,  Events.EVENT_COLUMN_VISIBLE, this.fireColumnEvent.bind(this));
-        this.addDestroyableEventListener(this.eventService,  Events.EVENT_COLUMN_PINNED, this.fireColumnEvent.bind(this));
-        this.addDestroyableEventListener(this.eventService,  Events.EVENT_COLUMN_GROUP_OPENED, this.fireColumnEvent.bind(this));
-        this.addDestroyableEventListener(this.eventService,  Events.EVENT_COLUMN_RESIZED, this.fireColumnEvent.bind(this));
-        this.addDestroyableEventListener(this.eventService,  Events.EVENT_BODY_SCROLL, this.fireScrollEvent.bind(this));
+        this.addManagedListener(this.eventService,  Events.EVENT_COLUMN_MOVED, this.fireColumnEvent.bind(this));
+        this.addManagedListener(this.eventService,  Events.EVENT_COLUMN_VISIBLE, this.fireColumnEvent.bind(this));
+        this.addManagedListener(this.eventService,  Events.EVENT_COLUMN_PINNED, this.fireColumnEvent.bind(this));
+        this.addManagedListener(this.eventService,  Events.EVENT_COLUMN_GROUP_OPENED, this.fireColumnEvent.bind(this));
+        this.addManagedListener(this.eventService,  Events.EVENT_COLUMN_RESIZED, this.fireColumnEvent.bind(this));
+        this.addManagedListener(this.eventService,  Events.EVENT_BODY_SCROLL, this.fireScrollEvent.bind(this));
     }
 
     // common logic across all the fire methods

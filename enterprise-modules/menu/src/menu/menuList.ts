@@ -46,7 +46,7 @@ export class MenuList extends ManagedTabComponent {
 
     @PostConstruct
     public init(): void {
-        this.addDestroyableEventListener(this.getGui(), 'keydown', this.handleKeyDown.bind(this));
+        this.addManagedListener(this.getGui(), 'keydown', this.handleKeyDown.bind(this));
     }
 
     public clearActiveItem(): void {
@@ -70,7 +70,7 @@ export class MenuList extends ManagedTabComponent {
     }
 
     public addItem(menuItemDef: MenuItemDef): void {
-        const cMenuItem = this.createBeanAndDestroyWithMe(new MenuItemComponent(menuItemDef));
+        const cMenuItem = this.createManagedBean(new MenuItemComponent(menuItemDef));
         this.menuItems.push({comp: cMenuItem, params: menuItemDef });
 
         this.getGui().appendChild(cMenuItem.getGui());
@@ -343,7 +343,7 @@ export class MenuList extends ManagedTabComponent {
         this.subMenuParentComp = menuItemComp;
         this.subMenuComp = childMenu;
 
-        childMenu.addDestroyableEventListener(ePopup, 'mouseover', () => {
+        childMenu.addManagedListener(ePopup, 'mouseover', () => {
             if (this.subMenuHideTimer && menuItemComp === this.subMenuParentComp) {
                 window.clearTimeout(this.subMenuHideTimer);
                 window.clearTimeout(this.subMenuShowTimer);

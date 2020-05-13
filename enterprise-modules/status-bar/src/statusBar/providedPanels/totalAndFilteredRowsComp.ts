@@ -29,7 +29,7 @@ export class TotalAndFilteredRowsComp extends NameValueComp implements IStatusPa
 
         this.setDisplayed(true);
 
-        this.addDestroyableEventListener(this.eventService, Events.EVENT_MODEL_UPDATED, this.onDataChanged.bind(this));
+        this.addManagedListener(this.eventService, Events.EVENT_MODEL_UPDATED, this.onDataChanged.bind(this));
     }
 
     private onDataChanged() {

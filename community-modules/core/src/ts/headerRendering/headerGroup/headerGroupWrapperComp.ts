@@ -81,8 +81,8 @@ export class HeaderGroupWrapperComp extends Component {
         this.setupMovingCss();
         this.setupTooltip();
 
-        this.createBeanAndDestroyWithMe(new HoverFeature(this.columnGroup.getOriginalColumnGroup().getLeafColumns(), this.getGui()));
-        this.createBeanAndDestroyWithMe(new SetLeftFeature(this.columnGroup, this.getGui(), this.beans));
+        this.createManagedBean(new HoverFeature(this.columnGroup.getOriginalColumnGroup().getLeafColumns(), this.getGui()));
+        this.createManagedBean(new SetLeftFeature(this.columnGroup, this.getGui(), this.beans));
     }
 
     private setupMovingCss(): void {
@@ -90,7 +90,7 @@ export class HeaderGroupWrapperComp extends Component {
         const leafColumns = originalColumnGroup.getLeafColumns();
 
         leafColumns.forEach(col => {
-            this.addDestroyableEventListener(col, Column.EVENT_MOVING_CHANGED, this.onColumnMovingChanged.bind(this));
+            this.addManagedListener(col, Column.EVENT_MOVING_CHANGED, this.onColumnMovingChanged.bind(this));
         });
 
         this.onColumnMovingChanged();
@@ -117,7 +117,7 @@ export class HeaderGroupWrapperComp extends Component {
         if (this.gridOptionsWrapper.isEnableBrowserTooltips()) {
             this.getGui().setAttribute('title', tooltipText);
         } else {
-            this.createBeanAndDestroyWithMe(new TooltipFeature(this, 'headerGroup'));
+            this.createManagedBean(new TooltipFeature(this, 'headerGroup'));
         }
     }
 
@@ -259,7 +259,7 @@ export class HeaderGroupWrapperComp extends Component {
         this.addListenersToChildrenColumns();
 
         // the children belonging to this group can change, so we need to add and remove listeners as they change
-        this.addDestroyableEventListener(this.columnGroup, ColumnGroup.EVENT_DISPLAYED_CHILDREN_CHANGED, this.onDisplayedChildrenChanged.bind(this));
+        this.addManagedListener(this.columnGroup, ColumnGroup.EVENT_DISPLAYED_CHILDREN_CHANGED, this.onDisplayedChildrenChanged.bind(this));
 
         this.onWidthChanged();
 
