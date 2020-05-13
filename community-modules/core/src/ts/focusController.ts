@@ -44,7 +44,7 @@ export class FocusController extends BeanStub {
         if (this.focusedCellPosition) {
             const col = this.focusedCellPosition.column;
             const colFromColumnController = this.columnController.getGridColumn(col.getId());
-            if (col!==colFromColumnController) {
+            if (col !== colFromColumnController) {
                 this.clearFocusedCell();
             }
         }

@@ -1,8 +1,9 @@
-import {ChartType} from "@ag-grid-community/core";
-import {MiniChartWithAxes} from "./miniChartWithAxes";
-import { linearScale, Arc, ClipRect, Shape} from "ag-charts-community";
+import { ChartType} from "@ag-grid-community/core";
+import { MiniChartWithAxes} from "./miniChartWithAxes";
+import { linearScale, Arc, ClipRect, Shape } from "ag-charts-community";
 
 export class MiniScatter extends MiniChartWithAxes {
+
     static chartType = ChartType.Scatter;
     private readonly points: Shape[];
 

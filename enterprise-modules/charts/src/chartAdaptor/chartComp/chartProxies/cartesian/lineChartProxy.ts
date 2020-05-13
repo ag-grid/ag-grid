@@ -1,15 +1,16 @@
-import {CartesianChartOptions, LineSeriesOptions} from "@ag-grid-community/core";
+import { CartesianChartOptions, LineSeriesOptions } from "@ag-grid-community/core";
 import {
     CartesianChart,
     ChartBuilder,
     LineSeries,
     LineSeriesOptions as InternalLineSeriesOptions
 } from "ag-charts-community";
-import {ChartProxyParams, UpdateChartParams} from "../chartProxy";
-import {CartesianChartProxy} from "./cartesianChartProxy";
-import {isDate} from '../../typeChecker';
+import { ChartProxyParams, UpdateChartParams } from "../chartProxy";
+import { CartesianChartProxy } from "./cartesianChartProxy";
+import { isDate } from '../../typeChecker';
 
 export class LineChartProxy extends CartesianChartProxy<LineSeriesOptions> {
+
     public constructor(params: ChartProxyParams) {
         super(params);
 

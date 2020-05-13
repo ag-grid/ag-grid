@@ -18,7 +18,7 @@ import { ChartTranslator } from "../../../chartTranslator";
 
 export class LegendPanel extends Component {
 
-    public static TEMPLATE =
+    public static TEMPLATE = /* html */
         `<div>
             <ag-group-component ref="legendGroup">
                 <ag-select ref="legendPositionSelect"></ag-select>

@@ -8,7 +8,6 @@ import {
     ChartType,
     ColumnApi,
     Events,
-    EventService,
     GridApi,
     IRangeController,
     PostConstruct,

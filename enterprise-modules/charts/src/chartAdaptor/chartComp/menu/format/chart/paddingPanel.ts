@@ -8,12 +8,12 @@ import {
     RefSelector,
     AgGroupComponentParams
 } from "@ag-grid-community/core";
-import {ChartController} from "../../../chartController";
-import {ChartTranslator} from "../../../chartTranslator";
+import { ChartController } from "../../../chartController";
+import { ChartTranslator } from "../../../chartTranslator";
 
 export class PaddingPanel extends Component {
 
-    public static TEMPLATE =
+    public static TEMPLATE = /* html */
         `<div>
             <ag-group-component ref="chartPaddingGroup">
                 <ag-slider ref="paddingTopSlider"></ag-slider>

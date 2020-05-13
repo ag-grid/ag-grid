@@ -8,7 +8,7 @@ import { _ } from "../utils";
 
 export class AgAngleSelect extends AgAbstractLabel {
 
-    private static TEMPLATE =
+    private static TEMPLATE = /* html */
         `<div class="ag-angle-select">
             <label ref="eLabel"></label>
             <div class="ag-wrapper ag-angle-select-wrapper">

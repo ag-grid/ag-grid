@@ -1,9 +1,10 @@
-import {ChartType} from "@ag-grid-community/core";
-import {MiniChartWithAxes} from "./miniChartWithAxes";
-import {ICoordinate} from "./miniArea";
-import { linearScale, BandScale, Path} from "ag-charts-community";
+import { ChartType } from "@ag-grid-community/core";
+import { MiniChartWithAxes } from "./miniChartWithAxes";
+import { ICoordinate } from "./miniArea";
+import { linearScale, BandScale, Path } from "ag-charts-community";
 
 export class MiniStackedArea extends MiniChartWithAxes {
+
     static chartType = ChartType.StackedArea;
     static readonly data = [
         [2, 3, 2],

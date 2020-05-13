@@ -14,11 +14,12 @@ import { StatusBarService } from "./statusBarService";
 
 export class StatusBar extends Component {
 
-    private static TEMPLATE = `<div class="ag-status-bar">
-        <div ref="eStatusBarLeft" class="ag-status-bar-left"></div>
-        <div ref="eStatusBarCenter" class="ag-status-bar-center"></div>
-        <div ref="eStatusBarRight" class="ag-status-bar-right"></div>
-    </div>`;
+    private static TEMPLATE = /* html */
+        `<div class="ag-status-bar">
+            <div ref="eStatusBarLeft" class="ag-status-bar-left"></div>
+            <div ref="eStatusBarCenter" class="ag-status-bar-center"></div>
+            <div ref="eStatusBarRight" class="ag-status-bar-right"></div>
+        </div>`;
 
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('gridOptions') private gridOptions: GridOptions;

@@ -9,15 +9,15 @@ import {
     RefSelector,
     AgGroupComponentParams
 } from "@ag-grid-community/core";
-import {ChartController} from "../../../chartController";
-import {MarkersPanel} from "./markersPanel";
-import {ChartTranslator} from "../../../chartTranslator";
-import {ShadowPanel} from "./shadowPanel";
-import {AreaChartProxy} from "../../../chartProxies/cartesian/areaChartProxy";
+import { ChartController } from "../../../chartController";
+import { MarkersPanel } from "./markersPanel";
+import { ChartTranslator } from "../../../chartTranslator";
+import { ShadowPanel } from "./shadowPanel";
+import { AreaChartProxy } from "../../../chartProxies/cartesian/areaChartProxy";
 
 export class AreaSeriesPanel extends Component {
 
-    public static TEMPLATE =
+    public static TEMPLATE = /* html */
         `<div>
             <ag-group-component ref="seriesGroup">
                 <ag-toggle-button ref="seriesTooltipsToggle"></ag-toggle-button>

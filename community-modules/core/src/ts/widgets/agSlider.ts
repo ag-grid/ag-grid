@@ -7,7 +7,7 @@ import { PostConstruct } from "../context/context";
 import { _ } from "../utils";
 
 export class AgSlider extends AgAbstractLabel {
-    private static TEMPLATE =
+    private static TEMPLATE = /* html */
         `<div class="ag-slider">
             <label ref="eLabel"></label>
             <div class="ag-wrapper ag-slider-wrapper">

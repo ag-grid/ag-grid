@@ -3,7 +3,6 @@ import {
     CellNavigationService,
     Component,
     Events,
-    EventService,
     GridApi,
     GridOptions,
     GridOptionsWrapper,
@@ -21,14 +20,14 @@ import { NameValueComp } from "./nameValueComp";
 
 export class AggregationComp extends Component implements IStatusPanelComp {
 
-    private static TEMPLATE =
-            `<div class="ag-status-panel ag-status-panel-aggregations">
-                <ag-name-value ref="avgAggregationComp"></ag-name-value>
-                <ag-name-value ref="countAggregationComp"></ag-name-value>
-                <ag-name-value ref="minAggregationComp"></ag-name-value>
-                <ag-name-value ref="maxAggregationComp"></ag-name-value>
-                <ag-name-value ref="sumAggregationComp"></ag-name-value>
-            </div>`;
+    private static TEMPLATE = /* html */
+        `<div class="ag-status-panel ag-status-panel-aggregations">
+            <ag-name-value ref="avgAggregationComp"></ag-name-value>
+            <ag-name-value ref="countAggregationComp"></ag-name-value>
+            <ag-name-value ref="minAggregationComp"></ag-name-value>
+            <ag-name-value ref="maxAggregationComp"></ag-name-value>
+            <ag-name-value ref="sumAggregationComp"></ag-name-value>
+        </div>`;
 
     @Optional('rangeController') private rangeController: IRangeController;
     @Autowired('valueService') private valueService: ValueService;

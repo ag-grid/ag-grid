@@ -1,17 +1,17 @@
-import {_, ChartType, Component, PostConstruct} from "@ag-grid-community/core";
-import {ChartController} from "../../chartController";
-import {LegendPanel} from "./legend/legendPanel";
-import {BarSeriesPanel} from "./series/barSeriesPanel";
-import {AxisPanel} from "./axis/axisPanel";
-import {LineSeriesPanel} from "./series/lineSeriesPanel";
-import {PieSeriesPanel} from "./series/pieSeriesPanel";
-import {ChartPanel} from "./chart/chartPanel";
-import {AreaSeriesPanel} from "./series/areaSeriesPanel";
-import {ScatterSeriesPanel} from "./series/scatterSeriesPanel";
-import {HistogramSeriesPanel} from "./series/histogramSeriesPanel";
+import { _, ChartType, Component, PostConstruct } from "@ag-grid-community/core";
+import { ChartController } from "../../chartController";
+import { LegendPanel } from "./legend/legendPanel";
+import { BarSeriesPanel } from "./series/barSeriesPanel";
+import { AxisPanel } from "./axis/axisPanel";
+import { LineSeriesPanel } from "./series/lineSeriesPanel";
+import { PieSeriesPanel } from "./series/pieSeriesPanel";
+import { ChartPanel } from "./chart/chartPanel";
+import { AreaSeriesPanel } from "./series/areaSeriesPanel";
+import { ScatterSeriesPanel } from "./series/scatterSeriesPanel";
+import { HistogramSeriesPanel } from "./series/histogramSeriesPanel";
 
 export class ChartFormattingPanel extends Component {
-    public static TEMPLATE = `<div class="ag-chart-format-wrapper"></div>`;
+    public static TEMPLATE = /* html */ `<div class="ag-chart-format-wrapper"></div>`;
 
     private chartType: ChartType;
     private isGrouping: boolean;

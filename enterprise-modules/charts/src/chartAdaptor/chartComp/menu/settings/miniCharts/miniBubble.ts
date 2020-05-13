@@ -1,8 +1,9 @@
-import {ChartType} from "@ag-grid-community/core";
-import {MiniChartWithAxes} from "./miniChartWithAxes";
-import { linearScale, Arc, ClipRect, Shape} from "ag-charts-community";
+import { ChartType } from "@ag-grid-community/core";
+import { MiniChartWithAxes } from "./miniChartWithAxes";
+import { linearScale, Arc, ClipRect, Shape } from "ag-charts-community";
 
 export class MiniBubble extends MiniChartWithAxes {
+
     static chartType = ChartType.Bubble;
     private readonly points: Shape[];
 

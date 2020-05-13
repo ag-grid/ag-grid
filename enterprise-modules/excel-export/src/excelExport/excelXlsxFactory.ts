@@ -10,7 +10,7 @@ import worksheetFactory from './files/ooxml/worksheet';
 import relationshipsFactory from './files/ooxml/relationships';
 
 import { ExcelStyle, ExcelWorksheet } from '@ag-grid-community/core';
-import {XmlFactory} from "@ag-grid-community/csv-export";
+import { XmlFactory } from "@ag-grid-community/csv-export";
 
 /**
  * See https://www.ecma-international.org/news/TC45_current_work/OpenXML%20White%20Paper.pdf

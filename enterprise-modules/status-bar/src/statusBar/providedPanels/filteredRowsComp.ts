@@ -1,7 +1,6 @@
 import {
     Autowired,
     Events,
-    EventService,
     GridApi,
     PostConstruct,
     IStatusPanelComp,

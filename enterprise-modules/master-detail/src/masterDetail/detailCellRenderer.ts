@@ -6,7 +6,6 @@ import {
     Grid,
     GridApi,
     GridOptions,
-    GridOptionsWrapper,
     ICellRendererParams,
     ICellRenderer,
     RefSelector,
@@ -16,23 +15,19 @@ import {
 
 export class DetailCellRenderer extends Component implements ICellRenderer {
 
-    private static TEMPLATE =
+    private static TEMPLATE = /* html */
         `<div class="ag-details-row">
             <div ref="eDetailGrid" class="ag-details-grid"/>
         </div>`;
 
-    @RefSelector('eDetailGrid') private eDetailGrid: HTMLElement;
-    @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('environment') private environment: Environment;
-
+        
+    @RefSelector('eDetailGrid') private eDetailGrid: HTMLElement;
+    
     private detailGridOptions: GridOptions;
-
     private masterGridApi: GridApi;
-
     private rowId: string;
-
     private needRefresh = false;
-
     private suppressRefresh: boolean;
 
     // this is a user component, and IComponent has "public destroy()" as part of the interface.

@@ -1,10 +1,10 @@
-import {Autowired, Component, GridOptionsWrapper, RefSelector, PreDestroy} from '@ag-grid-community/core';
+import { Autowired, Component, GridOptionsWrapper, RefSelector } from '@ag-grid-community/core';
 
 export class NameValueComp extends Component {
 
     @Autowired('gridOptionsWrapper') protected gridOptionsWrapper: GridOptionsWrapper;
 
-    private static TEMPLATE =
+    private static TEMPLATE = /* html */
         `<div class="ag-status-name-value">  
             <span ref="eLabel"></span>:&nbsp;
             <span ref="eValue" class="ag-status-name-value-value"></span>

@@ -21,8 +21,8 @@ import {
     ProcessChartOptionsParams,
     SeriesOptions
 } from "@ag-grid-community/core";
-import {GridChartComp, GridChartParams} from "./chartComp/gridChartComp";
-import {ChartPaletteName} from "ag-charts-community";
+import { GridChartComp, GridChartParams } from "./chartComp/gridChartComp";
+import { ChartPaletteName } from "ag-charts-community";
 
 @Bean('chartService')
 export class ChartService implements IChartService {

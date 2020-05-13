@@ -1,8 +1,9 @@
-import {ChartType} from "@ag-grid-community/core";
-import {MiniChartWithAxes} from "./miniChartWithAxes";
-import { linearScale, ClipRect, Path} from "ag-charts-community";
+import { ChartType } from "@ag-grid-community/core";
+import { MiniChartWithAxes } from "./miniChartWithAxes";
+import { linearScale, ClipRect, Path } from "ag-charts-community";
 
 export class MiniLine extends MiniChartWithAxes {
+
     static chartType = ChartType.Line;
     private readonly lines: Path[];
 

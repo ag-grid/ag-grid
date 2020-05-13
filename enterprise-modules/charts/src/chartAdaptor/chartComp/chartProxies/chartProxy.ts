@@ -62,6 +62,7 @@ export interface UpdateChartParams {
 }
 
 export abstract class ChartProxy<TChart extends Chart, TOptions extends ChartOptions<any>> {
+
     protected readonly chartId: string;
     protected readonly chartType: ChartType;
     protected readonly eventService: EventService;

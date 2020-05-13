@@ -7,11 +7,11 @@ import {
     RefSelector,
     AgGroupComponentParams
 } from "@ag-grid-community/core";
-import {ChartController} from "../../../chartController";
-import {ChartTranslator} from "../../../chartTranslator";
+import { ChartController } from "../../../chartController";
+import { ChartTranslator } from "../../../chartTranslator";
 
 export class BackgroundPanel extends Component {
-    public static TEMPLATE =
+    public static TEMPLATE = /* html */
         `<div>
             <ag-group-component ref="chartBackgroundGroup">
                 <ag-color-picker ref="colorPicker"></ag-color-picker>

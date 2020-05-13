@@ -1,1 +1,1 @@
-export {FiltersToolPanelModule} from "./filtersToolPanelModule"
+export { FiltersToolPanelModule } from "./filtersToolPanelModule"

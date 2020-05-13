@@ -17,12 +17,12 @@ import {
     PostConstruct,
     VerticalDirection
 } from "@ag-grid-community/core";
-import {ChartController} from "../../chartController";
-import {ColState} from "../../chartDataModel";
-import {ChartTranslator} from "../../chartTranslator";
+import { ChartController } from "../../chartController";
+import { ColState } from "../../chartDataModel";
+import { ChartTranslator } from "../../chartTranslator";
 
 export class ChartDataPanel extends Component {
-    public static TEMPLATE = `<div class="ag-chart-data-wrapper"></div>`;
+    public static TEMPLATE = /* html */ `<div class="ag-chart-data-wrapper"></div>`;
 
     @Autowired('dragAndDropService') private dragAndDropService: DragAndDropService;
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;

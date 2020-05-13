@@ -5,7 +5,6 @@ import {
     Column,
     ColumnController,
     Context,
-    EventService,
     GetDataPath,
     GridOptionsWrapper,
     IRowNodeStage,
@@ -14,7 +13,6 @@ import {
     RowNode,
     RowNodeTransaction,
     SelectableService,
-    SelectionController,
     StageExecuteParams,
     ValueService,
     _
@@ -41,12 +39,10 @@ interface GroupingDetails {
 @Bean('groupStage')
 export class GroupStage implements IRowNodeStage {
 
-    @Autowired('selectionController') private selectionController: SelectionController;
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('columnController') private columnController: ColumnController;
     @Autowired('selectableService') private selectableService: SelectableService;
     @Autowired('valueService') private valueService: ValueService;
-    @Autowired('eventService') private eventService: EventService;
     @Autowired('context') private context: Context;
 
     // if doing tree data, this is true. we set this at create time - as our code does not

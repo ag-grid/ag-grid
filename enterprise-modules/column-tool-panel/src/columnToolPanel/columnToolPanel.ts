@@ -6,18 +6,16 @@ import {
     ColumnApi,
     Component,
     Events,
-    EventService,
     GridApi,
-    GridOptionsWrapper,
     IColumnToolPanel,
     IToolPanelComp,
     IToolPanelParams,
     ModuleNames,
     ModuleRegistry
 } from "@ag-grid-community/core";
-import {PivotModePanel} from "./pivotModePanel";
-import {PivotDropZonePanel, RowGroupDropZonePanel, ValuesDropZonePanel} from "@ag-grid-enterprise/row-grouping"
-import {PrimaryColsPanel} from "./primaryColsPanel";
+import { PivotModePanel } from "./pivotModePanel";
+import { PivotDropZonePanel, RowGroupDropZonePanel, ValuesDropZonePanel } from "@ag-grid-enterprise/row-grouping"
+import { PrimaryColsPanel } from "./primaryColsPanel";
 
 export interface ToolPanelColumnCompParams extends IToolPanelParams {
     suppressRowGroups: boolean;
@@ -36,7 +34,6 @@ export class ColumnToolPanel extends Component implements IColumnToolPanel, IToo
 
     private static TEMPLATE = `<div class="ag-column-panel"></div>`;
 
-    @Autowired("gridOptionsWrapper") private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired("gridApi") private gridApi: GridApi;
     @Autowired("columnApi") private columnApi: ColumnApi;
 

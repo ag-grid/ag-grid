@@ -14,7 +14,7 @@ import { CaptionOptions } from "ag-charts-community";
 
 export default class TitlePanel extends Component {
 
-    public static TEMPLATE = `<div></div>`;
+    public static TEMPLATE = /* html */ `<div></div>`;
 
     @Autowired('chartTranslator') private chartTranslator: ChartTranslator;
 

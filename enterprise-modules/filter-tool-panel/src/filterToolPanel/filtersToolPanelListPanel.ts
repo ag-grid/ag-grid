@@ -7,7 +7,6 @@ import {
     ColumnController,
     Component,
     Events,
-    EventService,
     GridApi,
     OriginalColumnGroup,
     OriginalColumnGroupChild
@@ -21,7 +20,7 @@ import { ToolPanelColDefService } from "@ag-grid-enterprise/side-bar";
 
 export class FiltersToolPanelListPanel extends Component {
 
-    private static TEMPLATE = `<div class="ag-filter-list-panel"></div>`;
+    private static TEMPLATE = /* html */ `<div class="ag-filter-list-panel"></div>`;
 
     @Autowired("gridApi") private gridApi: GridApi;
     @Autowired("columnApi") private columnApi: ColumnApi;

@@ -40,7 +40,7 @@ export interface ISelectionHandleFactory {
     createSelectionHandle(type: SelectionHandleType): ISelectionHandle;
 }
 
-export enum SelectionHandleType {FILL,  RANGE}
+export enum SelectionHandleType { FILL,  RANGE }
 
 export enum CellRangeType { VALUE, DIMENSION }
 

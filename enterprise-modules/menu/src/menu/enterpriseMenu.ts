@@ -8,9 +8,7 @@ import {
     ColumnApi,
     ColumnController,
     Constants,
-    Context,
     Events,
-    EventService,
     FilterManager,
     FilterWrapper,
     GridApi,
@@ -27,10 +25,11 @@ import {
     TabbedItem,
     TabbedLayout
 } from "@ag-grid-community/core";
-import {MenuList} from "./menuList";
-import {MenuItemComponent} from "./menuItemComponent";
-import {MenuItemMapper} from "./menuItemMapper";
-import {PrimaryColsPanel} from "@ag-grid-enterprise/column-tool-panel";
+
+import { MenuList } from "./menuList";
+import { MenuItemComponent } from "./menuItemComponent";
+import { MenuItemMapper } from "./menuItemMapper";
+import { PrimaryColsPanel } from "@ag-grid-enterprise/column-tool-panel";
 
 export interface TabSelectedEvent extends AgEvent {
     key: string;

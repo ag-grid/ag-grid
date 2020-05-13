@@ -1,14 +1,15 @@
-import {_, HistogramSeriesOptions, CartesianChartOptions} from "@ag-grid-community/core";
+import { _, HistogramSeriesOptions, CartesianChartOptions } from "@ag-grid-community/core";
 import {
     HistogramSeriesOptions as InternalHistogramSeriesOptions,
     CartesianChart,
     ChartBuilder,
     HistogramSeries
 } from "ag-charts-community";
-import {ChartProxyParams, UpdateChartParams} from "../chartProxy";
-import {CartesianChartProxy} from "./cartesianChartProxy";
+import { ChartProxyParams, UpdateChartParams } from "../chartProxy";
+import { CartesianChartProxy } from "./cartesianChartProxy";
 
 export class HistogramChartProxy extends CartesianChartProxy<HistogramSeriesOptions> {
+
     public constructor(params: ChartProxyParams) {
         super(params);
 

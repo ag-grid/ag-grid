@@ -1,1 +1,1 @@
-export {MenuModule} from "./menuModule"
+export { MenuModule } from "./menuModule"

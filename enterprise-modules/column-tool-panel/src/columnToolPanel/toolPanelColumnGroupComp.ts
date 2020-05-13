@@ -10,7 +10,6 @@ import {
     DragSource,
     DragSourceType,
     Events,
-    EventService,
     GridOptionsWrapper,
     OriginalColumnGroup,
     PostConstruct,
@@ -22,7 +21,7 @@ import { ColumnFilterResults } from "./primaryColsListPanel";
 
 export class ToolPanelColumnGroupComp extends Component implements BaseColumnItem {
 
-    private static TEMPLATE =
+    private static TEMPLATE = /* html */
         `<div class="ag-column-select-column-group">
             <span class="ag-column-group-icons" ref="eColumnGroupIcons" >
                 <span class="ag-column-group-closed-icon" ref="eGroupClosedIcon"></span>

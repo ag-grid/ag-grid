@@ -11,7 +11,7 @@ import {
     RefSelector,
     AgGroupComponentParams
 } from "@ag-grid-community/core";
-import {ChartTranslator} from "../../chartTranslator";
+import { ChartTranslator } from "../../chartTranslator";
 
 export type Font = {
     family?: string;
@@ -32,7 +32,7 @@ export interface FontPanelParams {
 
 export class FontPanel extends Component {
 
-    public static TEMPLATE =
+    public static TEMPLATE = /* html */
         `<div class="ag-font-panel">
             <ag-group-component ref="fontGroup">
                 <ag-select ref="familySelect"></ag-select>

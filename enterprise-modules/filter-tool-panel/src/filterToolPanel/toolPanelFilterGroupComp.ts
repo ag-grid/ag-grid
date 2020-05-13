@@ -6,7 +6,6 @@ import {
     ColumnController,
     Component,
     Events,
-    EventService,
     FilterOpenedEvent,
     OriginalColumnGroup,
     OriginalColumnGroupChild,
@@ -20,8 +19,8 @@ import { ToolPanelFilterComp } from "./toolPanelFilterComp";
 export type ToolPanelFilterItem = ToolPanelFilterGroupComp | ToolPanelFilterComp;
 
 export class ToolPanelFilterGroupComp extends Component {
-    private static TEMPLATE = /* html */`
-        <div class="ag-filter-toolpanel-group-wrapper">
+    private static TEMPLATE = /* html */
+        `<div class="ag-filter-toolpanel-group-wrapper">
             <ag-group-component ref="filterGroupComp"></ag-group-component>
         </div>`;
 

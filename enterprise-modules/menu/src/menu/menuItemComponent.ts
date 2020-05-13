@@ -30,7 +30,7 @@ export class MenuItemComponent extends Component {
 
     // private instance = Math.random();
 
-    private static TEMPLATE =
+    private static TEMPLATE = /* html */
         `<div class="ag-menu-option" tabindex="-1">
             <span ref="eIcon" class="ag-menu-option-icon ag-menu-option-part"></span>
             <span ref="eName" class="ag-menu-option-text ag-menu-option-part"></span>

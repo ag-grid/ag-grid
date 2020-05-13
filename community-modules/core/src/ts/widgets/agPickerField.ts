@@ -7,7 +7,7 @@ import { RefSelector } from "./componentAnnotations";
 import { _ } from "../utils";
 
 export abstract class AgPickerField<T, K> extends AgAbstractField<K> {
-    protected TEMPLATE =
+    protected TEMPLATE = /* html */
         `<div class="ag-picker-field" role="presentation">
             <label ref="eLabel"></label>
             <div ref="eWrapper" class="ag-wrapper ag-picker-field-wrapper" tabIndex="-1">

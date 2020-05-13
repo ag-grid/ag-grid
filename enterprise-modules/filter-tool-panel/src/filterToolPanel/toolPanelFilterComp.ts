@@ -4,7 +4,6 @@ import {
     ColumnController,
     Component,
     Events,
-    EventService,
     FilterManager,
     FilterOpenedEvent,
     GridOptionsWrapper,

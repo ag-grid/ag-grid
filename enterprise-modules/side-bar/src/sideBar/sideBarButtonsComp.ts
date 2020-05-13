@@ -18,9 +18,7 @@ export class SideBarButtonsComp extends Component {
 
     public static EVENT_SIDE_BAR_BUTTON_CLICKED = 'sideBarButtonClicked';
 
-    @Autowired("gridOptionsWrapper") private gridOptionsWrapper: GridOptionsWrapper;
-
-    private static readonly TEMPLATE: string = `<div class="ag-side-buttons"></div>`;
+    private static readonly TEMPLATE: string = /* html */ `<div class="ag-side-buttons"></div>`;
 
     private buttonComps: SideBarButtonComp[] = [];
 

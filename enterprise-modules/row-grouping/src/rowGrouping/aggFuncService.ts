@@ -56,9 +56,9 @@ export class AggFuncService implements IAggFuncService {
 
         if (sumInKeysList && sumInFuncs) {
             return AggFuncService.AGG_SUM;
-        } else {
-            return _.existsAndNotEmpty(allKeys) ? allKeys[0] : null;
         }
+
+        return _.existsAndNotEmpty(allKeys) ? allKeys[0] : null;
     }
 
     public addAggFuncs(aggFuncs?: { [key: string]: IAggFunc; }): void {
@@ -80,9 +80,9 @@ export class AggFuncService implements IAggFuncService {
 
         if (_.exists(userAllowedFuncs) && userAllowedFuncs) {
             return userAllowedFuncs;
-        } else {
-            return Object.keys(this.aggFuncsMap).sort();
         }
+
+        return Object.keys(this.aggFuncsMap).sort();
     }
 
     public clear(): void {
@@ -174,9 +174,9 @@ function aggAvg(input: any[]): any {
         toString: function() {
             if (typeof this.value === 'number') {
                 return this.value.toString();
-            } else {
-                return '';
             }
+
+            return '';
         },
         // used for sorting
         toNumber: function() {

@@ -8,23 +8,22 @@ import {
     ColumnController,
     Component,
     Events,
-    EventService,
     OriginalColumnGroup,
     OriginalColumnGroupChild,
     ToolPanelColumnCompParams
 } from "@ag-grid-community/core";
-import {ToolPanelColumnGroupComp} from "./toolPanelColumnGroupComp";
-import {ToolPanelColumnComp} from "./toolPanelColumnComp";
-import {BaseColumnItem} from "./primaryColsPanel";
-import {ToolPanelColDefService} from "@ag-grid-enterprise/side-bar";
-import {EXPAND_STATE} from "./primaryColsHeaderPanel";
+import { ToolPanelColumnGroupComp } from "./toolPanelColumnGroupComp";
+import { ToolPanelColumnComp } from "./toolPanelColumnComp";
+import { BaseColumnItem } from "./primaryColsPanel";
+import { ToolPanelColDefService } from "@ag-grid-enterprise/side-bar";
+import { EXPAND_STATE } from "./primaryColsHeaderPanel";
 
 export type ColumnItem = BaseColumnItem & Component;
 export type ColumnFilterResults = { [id: string]: boolean };
 
 export class PrimaryColsListPanel extends Component {
 
-    public static TEMPLATE = `<div class="ag-column-select-list"></div>`;
+    public static TEMPLATE = /* html */ `<div class="ag-column-select-list"></div>`;
 
     @Autowired('columnController') private columnController: ColumnController;
     @Autowired('toolPanelColDefService') private colDefService: ToolPanelColDefService;

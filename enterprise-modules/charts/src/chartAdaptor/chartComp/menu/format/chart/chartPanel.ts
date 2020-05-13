@@ -15,10 +15,9 @@ import TitlePanel from "./titlePanel";
 
 export class ChartPanel extends Component {
 
-    public static TEMPLATE =
+    public static TEMPLATE = /* html */
         `<div>
-            <ag-group-component ref="chartGroup">
-            </ag-group-component>
+            <ag-group-component ref="chartGroup"></ag-group-component>
         </div>`;
 
     @RefSelector('chartGroup') private chartGroup: AgGroupComponent;

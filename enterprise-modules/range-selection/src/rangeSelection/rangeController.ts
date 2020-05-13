@@ -9,7 +9,6 @@ import {
     ColumnController,
     Constants,
     Events,
-    EventService,
     GridApi,
     GridOptionsWrapper,
     GridPanel,
@@ -25,9 +24,8 @@ import {
     RowPosition,
     RowPositionUtils,
     PinnedRowModel,
-    _,
-    PreDestroy,
-    BeanStub
+    BeanStub,
+    _
 } from "@ag-grid-community/core";
 
 @Bean('rangeController')

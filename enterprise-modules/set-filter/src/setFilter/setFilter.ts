@@ -6,7 +6,6 @@ import {
     Component,
     Constants,
     Events,
-    EventService,
     IDoesFilterPassParams,
     ISetFilterParams,
     ProvidedFilter,
@@ -14,9 +13,9 @@ import {
     ValueFormatterService,
     VirtualList,
     VirtualListModel,
-    _,
     IAfterGuiAttachedParams,
-    Promise
+    Promise,
+    _
 } from '@ag-grid-community/core';
 
 import { SetFilterModelValuesType, SetValueModel } from './setValueModel';

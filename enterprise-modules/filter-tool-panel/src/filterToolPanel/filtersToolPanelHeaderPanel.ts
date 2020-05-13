@@ -4,14 +4,13 @@ import {
     ColumnController,
     Component,
     Events,
-    EventService,
     GridOptionsWrapper,
     PostConstruct,
     PreConstruct,
     RefSelector,
     AgInputTextField
 } from "@ag-grid-community/core";
-import {ToolPanelFiltersCompParams} from "./filtersToolPanel";
+import { ToolPanelFiltersCompParams } from "./filtersToolPanel";
 
 export enum EXPAND_STATE { EXPANDED, COLLAPSED, INDETERMINATE }
 
@@ -35,11 +34,12 @@ export class FiltersToolPanelHeaderPanel extends Component {
 
     @PreConstruct
     private preConstruct(): void {
-        this.setTemplate(
-        `<div class="ag-filter-toolpanel-search" role="presentation">
-            <div ref="eExpand" class="ag-filter-toolpanel-expand"></div>
-            <ag-input-text-field ref="eFilterTextField" class="ag-filter-toolpanel-search-input"></ag-input-text-field>
-        </div>`);
+        this.setTemplate( /* html */
+            `<div class="ag-filter-toolpanel-search" role="presentation">
+                <div ref="eExpand" class="ag-filter-toolpanel-expand"></div>
+                <ag-input-text-field ref="eFilterTextField" class="ag-filter-toolpanel-search-input"></ag-input-text-field>
+            </div>`
+        );
     }
 
     @PostConstruct

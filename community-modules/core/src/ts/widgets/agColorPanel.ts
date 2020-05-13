@@ -25,7 +25,7 @@ export class AgColorPanel extends Component {
     private static maxRecentColors = 8;
     private static recentColors: string[] = [];
 
-    private static TEMPLATE =
+    private static TEMPLATE = /* html */
         `<div class="ag-color-panel">
             <div ref="spectrumColor" class="ag-spectrum-color">
                 <div class="ag-spectrum-sat ag-spectrum-fill">

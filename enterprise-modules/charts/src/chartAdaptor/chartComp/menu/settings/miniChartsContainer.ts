@@ -1,6 +1,6 @@
-import {_, AgGroupComponent, Autowired, Component, PostConstruct} from "@ag-grid-community/core";
-import {ChartController} from "../../chartController";
-import {ChartTranslator} from "../../chartTranslator";
+import { _, AgGroupComponent, Autowired, Component, PostConstruct } from "@ag-grid-community/core";
+import { ChartController } from "../../chartController";
+import { ChartTranslator } from "../../chartTranslator";
 import {
     MiniArea,
     MiniBar,
@@ -26,7 +26,8 @@ type ChartGroups = {
 };
 
 export class MiniChartsContainer extends Component {
-    static TEMPLATE = '<div class="ag-chart-settings-mini-wrapper"></div>';
+
+    static TEMPLATE = /* html */ `<div class="ag-chart-settings-mini-wrapper"></div>`;
 
     private readonly fills: string[];
     private readonly strokes: string[];

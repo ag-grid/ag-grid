@@ -13,7 +13,6 @@ import {
     DragSource,
     DragSourceType,
     Events,
-    EventService,
     GridApi,
     GridOptionsWrapper,
     PostConstruct,
@@ -24,7 +23,7 @@ import { BaseColumnItem } from "./primaryColsPanel";
 
 export class ToolPanelColumnComp extends Component implements BaseColumnItem {
 
-    private static TEMPLATE =
+    private static TEMPLATE = /* html */
         `<div class="ag-column-select-column">
             <ag-checkbox ref="cbSelect" class="ag-column-select-checkbox"></ag-checkbox>
             <span class="ag-column-select-column-label" ref="eLabel"></span>

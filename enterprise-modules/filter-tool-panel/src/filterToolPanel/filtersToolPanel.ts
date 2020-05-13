@@ -4,17 +4,15 @@ import {
     ColDef,
     ColGroupDef,
     ColumnApi,
-    ColumnController,
     Component,
-    EventService,
     GridApi,
     IFiltersToolPanel,
     IToolPanelComp,
     IToolPanelParams,
     RefSelector
 } from "@ag-grid-community/core";
-import {FiltersToolPanelHeaderPanel} from "./filtersToolPanelHeaderPanel";
-import {FiltersToolPanelListPanel} from "./filtersToolPanelListPanel";
+import { FiltersToolPanelHeaderPanel } from "./filtersToolPanelHeaderPanel";
+import { FiltersToolPanelListPanel } from "./filtersToolPanelListPanel";
 
 export interface ToolPanelFiltersCompParams extends IToolPanelParams {
     suppressExpandAll: boolean;
@@ -24,21 +22,18 @@ export interface ToolPanelFiltersCompParams extends IToolPanelParams {
 
 export class FiltersToolPanel extends Component implements IFiltersToolPanel, IToolPanelComp {
 
-    private static TEMPLATE =
+    private static TEMPLATE = /* html */
         `<div class="ag-filter-toolpanel">
             <ag-filters-tool-panel-header ref="filtersToolPanelHeaderPanel"></ag-filters-tool-panel-header>
             <ag-filters-tool-panel-list ref="filtersToolPanelListPanel"></ag-filters-tool-panel-list> 
          </div>`;
 
-    @RefSelector('filtersToolPanelHeaderPanel')
-    private filtersToolPanelHeaderPanel: FiltersToolPanelHeaderPanel;
+    @RefSelector('filtersToolPanelHeaderPanel') private filtersToolPanelHeaderPanel: FiltersToolPanelHeaderPanel;
 
-    @RefSelector('filtersToolPanelListPanel')
-    private filtersToolPanelListPanel: FiltersToolPanelListPanel;
+    @RefSelector('filtersToolPanelListPanel') private filtersToolPanelListPanel: FiltersToolPanelListPanel;
 
     @Autowired('gridApi') private gridApi: GridApi;
     @Autowired('columnApi') private columnApi: ColumnApi;
-    @Autowired('columnController') private columnController: ColumnController;
 
     private initialised = false;
     private params: ToolPanelFiltersCompParams;

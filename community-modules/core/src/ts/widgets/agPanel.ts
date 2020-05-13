@@ -22,7 +22,7 @@ export interface PanelOptions {
 
 export class AgPanel extends Component {
 
-    protected static CLOSE_BTN_TEMPLATE = `<div class="ag-button"></div>`;
+    protected static CLOSE_BTN_TEMPLATE = /* html */ `<div class="ag-button"></div>`;
 
     @Autowired('popupService') protected popupService: PopupService;
     @Autowired('gridOptionsWrapper') protected gridOptionsWrapper: GridOptionsWrapper;

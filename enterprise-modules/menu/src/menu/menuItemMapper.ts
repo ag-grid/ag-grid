@@ -6,7 +6,6 @@ import {
     Column,
     ColumnController,
     Constants,
-    Context,
     GridApi,
     GridOptionsWrapper,
     IAggFuncService,
@@ -26,7 +25,6 @@ export class MenuItemMapper {
     @Optional('clipboardService') private clipboardService: IClipboardService;
     @Optional('aggFuncService') private aggFuncService: IAggFuncService;
     @Optional('chartService') private chartService: IChartService;
-    @Optional('context') private context: Context;
 
     public mapWithStockItems(originalList: (MenuItemDef | string)[], column: Column | null): (MenuItemDef | string)[] {
         if (!originalList) {

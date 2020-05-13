@@ -8,13 +8,13 @@ import {
     RefSelector,
     AgGroupComponentParams
 } from "@ag-grid-community/core";
-import {ChartTranslator} from "../../../chartTranslator";
-import {ScatterChartProxy} from "../../../chartProxies/cartesian/scatterChartProxy";
-import {ChartController} from "../../../chartController";
+import { ChartTranslator } from "../../../chartTranslator";
+import { ScatterChartProxy } from "../../../chartProxies/cartesian/scatterChartProxy";
+import { ChartController } from "../../../chartController";
 
 export class MarkersPanel extends Component {
 
-    public static TEMPLATE =
+    public static TEMPLATE = /* html */
         `<div>
             <ag-group-component ref="seriesMarkersGroup">
                 <ag-slider ref="seriesMarkerMinSizeSlider"></ag-slider>

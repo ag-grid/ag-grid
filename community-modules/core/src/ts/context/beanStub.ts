@@ -4,8 +4,8 @@ import { GridOptionsWrapper } from "../gridOptionsWrapper";
 import { AgEvent } from "../events";
 import { Autowired, Context, PreDestroy } from "./context";
 import { IFrameworkOverrides } from "../interfaces/iFrameworkOverrides";
+import { Component } from "../widgets/component";
 import { _ } from "../utils";
-import {Component} from "../widgets/component";
 
 export class BeanStub implements IEventEmitter {
 

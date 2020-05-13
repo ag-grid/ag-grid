@@ -8,7 +8,6 @@ import {
     ChartType,
     Component,
     Environment,
-    EventService,
     GridOptionsWrapper,
     IAggFunc,
     PostConstruct,
@@ -48,15 +47,13 @@ export interface GridChartParams {
 }
 
 export class GridChartComp extends Component {
-    private static TEMPLATE =
+    private static TEMPLATE = /* html */
         `<div class="ag-chart" tabindex="-1">
             <div ref="eChartContainer" tabindex="-1" class="ag-chart-components-wrapper">
-                <div ref="eChart" class="ag-chart-canvas-wrapper">
-                </div>
+                <div ref="eChart" class="ag-chart-canvas-wrapper"></div>
                 <div ref="eEmpty" class="ag-chart-empty-text ag-unselectable"></div>
             </div>
-            <div ref="eTitleEditContainer">
-            </div>
+            <div ref="eTitleEditContainer"></div>
             <div ref="eMenuContainer" class="ag-chart-docked-container"></div>
         </div>`;
 

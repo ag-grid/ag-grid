@@ -36,8 +36,8 @@ export interface DialogOptions extends PanelOptions {
 
 export class AgDialog extends AgPanel {
 
-    private RESIZE_TEMPLATE = `
-        <div class="ag-resizer-wrapper">
+    private RESIZE_TEMPLATE = /* html */
+        `<div class="ag-resizer-wrapper">
             <div ref="eTopLeftResizer" class="ag-resizer ag-resizer-topLeft"></div>
             <div ref="eTopResizer" class="ag-resizer ag-resizer-top"></div>
             <div ref="eTopRightResizer" class="ag-resizer ag-resizer-topRight"></div>
@@ -46,8 +46,7 @@ export class AgDialog extends AgPanel {
             <div ref="eBottomResizer" class="ag-resizer ag-resizer-bottom"></div>
             <div ref="eBottomLeftResizer" class="ag-resizer ag-resizer-bottomLeft"></div>
             <div ref="eLeftResizer" class="ag-resizer ag-resizer-left"></div>
-        </div>
-    `;
+        </div>`;
 
     private MAXIMIZE_BTN_TEMPLATE = `<div class="ag-dialog-button"></span>`;
 

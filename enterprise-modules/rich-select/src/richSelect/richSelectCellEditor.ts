@@ -19,7 +19,7 @@ import { RichSelectRow } from "./richSelectRow";
 export class RichSelectCellEditor extends PopupComponent implements ICellEditor {
 
     // tab index is needed so we can focus, which is needed for keyboard events
-    private static TEMPLATE =
+    private static TEMPLATE = /* html */
         `<div class="ag-rich-select" tabindex="0">
             <div ref="eValue" class="ag-rich-select-value"></div>
             <div ref="eList" class="ag-rich-select-list"></div>

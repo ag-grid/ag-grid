@@ -17,9 +17,9 @@ export class MenuList extends ManagedTabComponent {
     @Autowired('popupService') private popupService: PopupService;
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
 
-    private static TEMPLATE = '<div class="ag-menu-list" tabindex="-1"></div>';
+    private static TEMPLATE = /* html */ `<div class="ag-menu-list" tabindex="-1"></div>`;
 
-    private static SEPARATOR_TEMPLATE =
+    private static SEPARATOR_TEMPLATE = /* html */
         `<div class="ag-menu-separator">
             <span class="ag-menu-separator-cell"></span>
             <span class="ag-menu-separator-cell"></span>

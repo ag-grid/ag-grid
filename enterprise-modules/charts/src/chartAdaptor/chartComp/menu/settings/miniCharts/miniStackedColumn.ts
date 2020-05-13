@@ -1,8 +1,9 @@
-import {ChartType} from "@ag-grid-community/core";
-import {MiniChartWithAxes} from "./miniChartWithAxes";
-import { linearScale, BandScale, Rect} from "ag-charts-community";
+import { ChartType } from "@ag-grid-community/core";
+import { MiniChartWithAxes } from "./miniChartWithAxes";
+import { linearScale, BandScale, Rect } from "ag-charts-community";
 
 export class MiniStackedColumn extends MiniChartWithAxes {
+
     static chartType = ChartType.StackedColumn;
     static data = [
         [8, 12, 16],

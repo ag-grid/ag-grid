@@ -3,7 +3,6 @@ import {
     Autowired,
     Component,
     Events,
-    EventService,
     GridOptionsWrapper,
     IComponent,
     ISideBar,
@@ -16,8 +15,8 @@ import {
     ToolPanelDef,
     ToolPanelVisibleChangedEvent
 } from "@ag-grid-community/core";
-import {SideBarButtonClickedEvent, SideBarButtonsComp} from "./sideBarButtonsComp";
-import {ToolPanelWrapper} from "./toolPanelWrapper";
+import { SideBarButtonClickedEvent, SideBarButtonsComp } from "./sideBarButtonsComp";
+import { ToolPanelWrapper } from "./toolPanelWrapper";
 
 export interface IToolPanelChildComp extends IComponent<any> {
     refresh(): void;
@@ -31,10 +30,10 @@ export class SideBarComp extends Component implements ISideBar {
 
     private toolPanelWrappers: ToolPanelWrapper[] = [];
 
-    private static readonly TEMPLATE =
+    private static readonly TEMPLATE = /* html */
         `<div class="ag-side-bar ag-unselectable">
-              <ag-side-bar-buttons ref="sideBarButtons">
-          </div>`;
+            <ag-side-bar-buttons ref="sideBarButtons"></ag-side-bar-buttons>
+        </div>`;
 
     constructor() {
         super(SideBarComp.TEMPLATE);

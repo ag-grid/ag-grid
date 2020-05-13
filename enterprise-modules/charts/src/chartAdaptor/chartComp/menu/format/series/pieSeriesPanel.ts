@@ -11,17 +11,17 @@ import {
     RefSelector,
     AgGroupComponentParams
 } from "@ag-grid-community/core";
-import {ChartController} from "../../../chartController";
-import {ShadowPanel} from "./shadowPanel";
-import {Font, FontPanel, FontPanelParams} from "../fontPanel";
-import {CalloutPanel} from "./calloutPanel";
-import {ChartTranslator} from "../../../chartTranslator";
-import {PieChartProxy} from "../../../chartProxies/polar/pieChartProxy";
-import {DoughnutChartProxy} from "../../../chartProxies/polar/doughnutChartProxy";
+import { ChartController } from "../../../chartController";
+import { ShadowPanel } from "./shadowPanel";
+import { Font, FontPanel, FontPanelParams } from "../fontPanel";
+import { CalloutPanel } from "./calloutPanel";
+import { ChartTranslator } from "../../../chartTranslator";
+import { PieChartProxy } from "../../../chartProxies/polar/pieChartProxy";
+import { DoughnutChartProxy } from "../../../chartProxies/polar/doughnutChartProxy";
 
 export class PieSeriesPanel extends Component {
 
-    public static TEMPLATE =
+    public static TEMPLATE = /* html */
         `<div>
             <ag-group-component ref="seriesGroup">
                 <ag-toggle-button ref="seriesTooltipsToggle"></ag-toggle-button>

@@ -8,7 +8,6 @@ import {
     RowNode,
     RowPosition,
     ValueService,
-    EventService,
     Events,
     FillEndEvent,
     FillStartEvent,
@@ -29,7 +28,7 @@ export class FillHandle extends AbstractSelectionHandle {
     @Autowired('valueService') private valueService: ValueService;
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
 
-    static TEMPLATE = '<div class="ag-fill-handle"></div>';
+    static TEMPLATE = /* html */ `<div class="ag-fill-handle"></div>`;
 
     private initialPosition: CellPosition | undefined;
     private initialXY: { x: number, y: number };

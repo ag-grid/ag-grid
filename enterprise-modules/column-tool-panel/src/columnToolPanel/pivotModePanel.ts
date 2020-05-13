@@ -4,7 +4,6 @@ import {
     ColumnController,
     Component,
     Events,
-    EventService,
     GridOptionsWrapper,
     PreConstruct,
     RefSelector
@@ -18,8 +17,8 @@ export class PivotModePanel extends Component {
     @RefSelector('cbPivotMode') private cbPivotMode: AgCheckbox;
 
     private createTemplate(): string {
-        return `<div class="ag-pivot-mode-panel">
-                <ag-toggle-button ref="cbPivotMode" class="ag-pivot-mode-select"></ag-checkbox>
+        return /* html */ `<div class="ag-pivot-mode-panel">
+                <ag-toggle-button ref="cbPivotMode" class="ag-pivot-mode-select"></ag-toggle-button>
             </div>`;
     }
 

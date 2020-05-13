@@ -4,18 +4,17 @@ import {
     Component,
     GridOptionsWrapper,
     PostConstruct,
-    PreDestroy,
     RefSelector
 } from "@ag-grid-community/core";
 import { MiniChartsContainer } from "./miniChartsContainer";
-import {ChartPalette, ChartPaletteName} from "ag-charts-community";
-import {ChartController} from "../../chartController";
+import { ChartPalette, ChartPaletteName } from "ag-charts-community";
+import { ChartController } from "../../chartController";
 
 type AnimationDirection = 'left' | 'right';
 
 export class ChartSettingsPanel extends Component {
 
-    public static TEMPLATE =
+    public static TEMPLATE = /* html */
         `<div class="ag-chart-settings-wrapper">
             <div ref="eMiniChartsContainer" class="ag-chart-settings-mini-charts-container"></div>
             <div ref="eNavBar" class="ag-chart-settings-nav-bar">

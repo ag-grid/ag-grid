@@ -6,8 +6,6 @@ import {
     ColGroupDef,
     Column,
     ColumnController,
-    EventService,
-    IRowModel,
     IRowNodeStage,
     RowNode,
     StageExecuteParams,
@@ -20,10 +18,8 @@ import { PivotColDefService } from "./pivotColDefService";
 export class PivotStage implements IRowNodeStage {
 
     // these should go into the pivot column creator
-    @Autowired('rowModel') private rowModel: IRowModel;
     @Autowired('valueService') private valueService: ValueService;
     @Autowired('columnController') private columnController: ColumnController;
-    @Autowired('eventService') private eventService: EventService;
     @Autowired('pivotColDefService') private pivotColDefService: PivotColDefService;
 
     private uniqueValues: any = {};

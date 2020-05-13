@@ -9,12 +9,12 @@ import {
     RefSelector,
     AgGroupComponentParams,
 } from "@ag-grid-community/core";
-import {ChartTranslator} from "../../../chartTranslator";
-import {ChartController} from "../../../chartController";
+import { ChartTranslator } from "../../../chartTranslator";
+import { ChartController } from "../../../chartController";
 
 export class ShadowPanel extends Component {
 
-    public static TEMPLATE =
+    public static TEMPLATE = /* html */
         `<div>
             <ag-group-component ref="shadowGroup">
                 <ag-color-picker ref="shadowColorPicker"></ag-color-picker>

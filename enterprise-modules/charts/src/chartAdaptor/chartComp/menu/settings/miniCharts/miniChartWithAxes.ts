@@ -1,8 +1,9 @@
-import {PostConstruct} from "@ag-grid-community/core";
-import {MiniChart} from "./miniChart";
-import {Line} from "ag-charts-community";
+import { PostConstruct } from "@ag-grid-community/core";
+import { MiniChart } from "./miniChart";
+import { Line } from "ag-charts-community";
 
 export abstract class MiniChartWithAxes extends MiniChart {
+
     private readonly stroke = 'gray';
     private readonly axisOvershoot = 3;
 

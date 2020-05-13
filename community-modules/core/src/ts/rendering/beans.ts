@@ -9,7 +9,7 @@ import { TemplateService } from "../templateService";
 import { ValueService } from "../valueService/valueService";
 import { EventService } from "../eventService";
 import { ColumnAnimationService } from "./columnAnimationService";
-import {IRangeController, ISelectionHandleFactory} from "../interfaces/iRangeController";
+import { IRangeController, ISelectionHandleFactory } from "../interfaces/iRangeController";
 import { FocusController } from "../focusController";
 import { IContextMenuFactory } from "../interfaces/iContextMenuFactory";
 import { CellRendererFactory } from "./cellRendererFactory";

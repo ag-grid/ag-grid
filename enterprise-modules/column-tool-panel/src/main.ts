@@ -1,4 +1,3 @@
-export {ColumnsToolPanelModule} from "./columnsToolPanelModule"
-
+export { ColumnsToolPanelModule } from "./columnsToolPanelModule"
 // used by the enterprise column menu
-export {PrimaryColsPanel} from "./columnToolPanel/primaryColsPanel";
+export { PrimaryColsPanel } from "./columnToolPanel/primaryColsPanel";

@@ -33,8 +33,8 @@ interface IData {
 export class ChartDatasource extends BeanStub {
     @Autowired('rowModel') gridRowModel: IRowModel;
     @Autowired('valueService') valueService: ValueService;
-    @Optional('aggregationStage') aggregationStage: IAggregationStage;
     @Autowired('columnController') private columnController: ColumnController;
+    @Optional('aggregationStage') aggregationStage: IAggregationStage;
 
     public getData(params: ChartDatasourceParams): IData {
         const result = this.extractRowsFromGridRowModel(params);
