@@ -5,6 +5,7 @@ import { AgEvent } from "../events";
 import { Autowired, Context, PreDestroy } from "./context";
 import { IFrameworkOverrides } from "../interfaces/iFrameworkOverrides";
 import { _ } from "../utils";
+import {Component} from "../widgets/component";
 
 export class BeanStub implements IEventEmitter {
 
@@ -126,8 +127,8 @@ export class BeanStub implements IEventEmitter {
         return res;
     }
 
-    protected createBean<T>(bean: T, context?: Context): T {
-        return (context || this.getContext()).createBean(bean);
+    protected createBean<T>(bean: T, context?: Context, afterPreCreateCallback?: (comp: Component) => void): T {
+        return (context || this.getContext()).createBean(bean, afterPreCreateCallback);
     }
 
     protected destroyBean<T>(bean: T, context?: Context): T {

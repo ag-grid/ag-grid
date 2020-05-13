@@ -20,7 +20,7 @@ import { ICellRendererComp, ICellRendererParams } from "./cellRenderers/iCellRen
 import { CheckboxSelectionComponent } from "./checkboxSelectionComponent";
 import { ColDef, NewValueParams } from "../entities/colDef";
 import { CellPosition } from "../entities/cellPosition";
-import { CellRangeType, ISelectionHandle } from "../interfaces/iRangeController";
+import {CellRangeType, ISelectionHandle, SelectionHandleType} from "../interfaces/iRangeController";
 import { RowComp } from "./rowComp";
 import { RowDragComp } from "./rowDragComp";
 import { PopupEditorWrapper } from "./cellEditors/popupEditorWrapper";
@@ -1840,16 +1840,15 @@ export class CellComp extends Component implements TooltipParentComp {
     private addSelectionHandle() {
         const { gridOptionsWrapper, context, rangeController } = this.beans;
         const cellRangeType = _.last(rangeController.getCellRanges()).type;
-        const type = (gridOptionsWrapper.isEnableFillHandle() && _.missing(cellRangeType)) ? 'fill' : 'range';
+        const selectionHandleFill = gridOptionsWrapper.isEnableFillHandle() && _.missing(cellRangeType);
+        const type = selectionHandleFill ? SelectionHandleType.FILL : SelectionHandleType.RANGE;
 
         if (this.selectionHandle && this.selectionHandle.getType() !== type) {
             this.selectionHandle = this.beans.context.destroyBean(this.selectionHandle);
         }
 
         if (!this.selectionHandle) {
-            this.selectionHandle = context.createComponentFromElement(
-                document.createElement(`ag-${type}-handle`)
-            ) as any as ISelectionHandle;
+            this.selectionHandle = this.beans.selectionHandleFactory.createSelectionHandle(type);
         }
 
         this.selectionHandle.refresh(this);

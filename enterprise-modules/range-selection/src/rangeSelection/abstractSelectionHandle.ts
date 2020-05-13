@@ -13,7 +13,8 @@ import {
     PostConstruct,
     ISelectionHandle,
     RowPositionUtils,
-    _
+    _,
+    SelectionHandleType
 } from "@ag-grid-community/core";
 import { RangeController } from "./rangeController";
 
@@ -38,7 +39,7 @@ export abstract class AbstractSelectionHandle extends Component implements ISele
     private changedCell: boolean = false;
     private dragging: boolean = false;
     
-    protected abstract type: string;
+    protected abstract type: SelectionHandleType;
     protected shouldDestroyOnEndDragging: boolean = false;
 
     @PostConstruct
@@ -144,7 +145,7 @@ export abstract class AbstractSelectionHandle extends Component implements ISele
         this.changedCell = true;
     }
 
-    public getType(): string {
+    public getType(): SelectionHandleType {
         return this.type;
     }
 

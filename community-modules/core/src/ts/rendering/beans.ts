@@ -9,7 +9,7 @@ import { TemplateService } from "../templateService";
 import { ValueService } from "../valueService/valueService";
 import { EventService } from "../eventService";
 import { ColumnAnimationService } from "./columnAnimationService";
-import { IRangeController } from "../interfaces/iRangeController";
+import {IRangeController, ISelectionHandleFactory} from "../interfaces/iRangeController";
 import { FocusController } from "../focusController";
 import { IContextMenuFactory } from "../interfaces/iContextMenuFactory";
 import { CellRendererFactory } from "./cellRendererFactory";
@@ -71,6 +71,7 @@ export class Beans {
     @Autowired('cellPositionUtils') public cellPositionUtils: CellPositionUtils;
     @Autowired('rowPositionUtils') public rowPositionUtils: RowPositionUtils;
     @Autowired('selectionController') public selectionController: SelectionController;
+    @Optional('selectionHandleFactory') public selectionHandleFactory: ISelectionHandleFactory;
 
     public doingMasterDetail: boolean;
     public gridPanel: GridPanel;

@@ -3,10 +3,11 @@ import {EnterpriseCoreModule} from "@ag-grid-enterprise/core";
 import {RangeController} from "./rangeSelection/rangeController";
 import {FillHandle} from "./rangeSelection/fillHandle";
 import {RangeHandle} from "./rangeSelection/rangeHandle";
+import {SelectionHandleFactory} from "./rangeSelection/selectionHandleFactory";
 
 export const RangeSelectionModule: Module = {
     moduleName: ModuleNames.RangeSelectionModule,
-    beans: [RangeController],
+    beans: [RangeController, SelectionHandleFactory],
     agStackComponents: [
         {componentName: 'AgFillHandle', componentClass: FillHandle},
         {componentName: 'AgRangeHandle', componentClass: RangeHandle}
@@ -15,4 +16,3 @@ export const RangeSelectionModule: Module = {
         EnterpriseCoreModule
     ]
 };
-

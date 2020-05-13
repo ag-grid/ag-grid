@@ -51,7 +51,7 @@ export class Component extends BeanStub {
                 return;
             }
 
-            const childComp = this.getContext().createComponentFromElement(childNode, (childComp) => {
+            const childComp = this.createComponentFromElement(childNode, (childComp) => {
                 // copy over all attributes, including css classes, so any attributes user put on the tag
                 // wll be carried across
                 this.copyAttributesFromNode(childNode, childComp.getGui());
@@ -72,6 +72,22 @@ export class Component extends BeanStub {
                 this.createChildComponentsFromTags(childNode);
             }
         });
+    }
+
+    public createComponentFromElement(element: HTMLElement, afterPreCreateCallback?: (comp: Component) => void, paramsMap?: any): Component {
+        const key = element.nodeName;
+        const componentParams = paramsMap ? paramsMap[element.getAttribute('ref')] : undefined;
+        return this.createComponent(key, afterPreCreateCallback, element, componentParams);
+    }
+
+    public createComponent(key: string, afterPreCreateCallback?: (comp: Component) => void, element?: HTMLElement, componentParams?: any): Component {
+        const ComponentClass = this.context.getComponentClass(key);
+        if (ComponentClass) {
+            const newComponent = new ComponentClass(componentParams) as Component;
+            this.createBean(newComponent, null, afterPreCreateCallback);
+            return newComponent;
+        }
+        return null;
     }
 
     private copyAttributesFromNode(source: Element, dest: Element): void {

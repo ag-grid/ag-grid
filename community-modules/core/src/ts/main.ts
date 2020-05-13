@@ -214,7 +214,8 @@ export { VirtualList, VirtualListModel } from "./widgets/virtualList";
 
 // range
 export {
-    CellRange, CellRangeParams, CellRangeType, RangeSelection, AddRangeSelectionParams, IRangeController, ISelectionHandle
+    CellRange, CellRangeParams, CellRangeType, RangeSelection, AddRangeSelectionParams, IRangeController,
+    ISelectionHandle, SelectionHandleType, ISelectionHandleFactory
 } from "./interfaces/iRangeController";
 export { IChartService, ChartModel, GetChartImageDataUrlParams } from "./interfaces/IChartService";
 

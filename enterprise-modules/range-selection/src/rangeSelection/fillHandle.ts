@@ -12,6 +12,7 @@ import {
     Events,
     FillEndEvent,
     FillStartEvent,
+    SelectionHandleType,
     _
 } from '@ag-grid-community/core';
 import { AbstractSelectionHandle } from "./abstractSelectionHandle";
@@ -41,7 +42,7 @@ export class FillHandle extends AbstractSelectionHandle {
     private isLeft: boolean = false;
     private isReduce: boolean = false;
 
-    protected type = 'fill';
+    protected type = SelectionHandleType.FILL;
 
     constructor() {
         super(FillHandle.TEMPLATE);
