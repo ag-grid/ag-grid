@@ -80,12 +80,11 @@ SNIPPET
     Notice in the snippet above that the <code>filterModel</code> object contains a <code>'text'</code> and <code>'number'</code> filter. This filter
     metadata can be used by the server to perform the actual filtering.
 </p>
+
 <p>
     For more details on properties and values used in these filters see the section on
     <a href="../javascript-grid-filter-provided-simple/">Simple Column Filters</a>.
 </p>
-
-<h3>Example: Simple Column Filters</h3>
 
 <p>
     The example below demonstrates server-side filtering using
@@ -160,8 +159,8 @@ SNIPPET
     filterParams: {
         values: function(params) {
             // simulating async delay
-            setTimeout(() => {
-                params.success(['Australia', 'China', 'Sweden'])
+            setTimeout(function() {
+                params.success(['Australia', 'China', 'Sweden']);
             }, 500);
         }
     }
@@ -170,10 +169,12 @@ SNIPPET
 ) ?>
 
 <p>
-    For more details on setting values refer to the <a href="../javascript-grid-filter-set/">Set Filter</a> documentation.
+    For more details on setting values, see
+    <a href="../javascript-grid-filter-set-filter-list/#supplying-filter-values">Supplying Filter Values</a>.
+    Once you have supplied values to the Set Filter, they will not change unless you ask for them to be refreshed;
+    see <a href="../javascript-grid-filter-set-filter-list/#refreshing-values">Refreshing Values</a>
+    for more information.
 </p>
-
-<h3>Example: Set Filter</h3>
 
 <p>
     The example below demonstrates server-side filtering using the Set Filter. Notice the following:
@@ -181,10 +182,14 @@ SNIPPET
 
 <ul class="content">
     <li>
-        <b>Country</b> column has a Set Filter defined using <code>filter: 'agSetColumnFilter'</code>.
+        The <b>Country</b> and <b>Sport</b> columns have Set Filters defined using <code>filter: 'agSetColumnFilter'</code>.
     </li>
     <li>
         Set Filter values are fetched asynchronously and supplied via the <code>params.success(values)</code> callback.
+    </li>
+    <li>
+        The filter for the <b>Sport</b> column only shows the values which are available for the selected countries.
+        When the filter for the <b>Country</b> column is changed, the values for the <b>Sport</b> filter are updated.
     </li>
     <li>
         The server uses the metadata contained in the <code>filterModel</code> to filter the rows.

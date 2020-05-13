@@ -11,13 +11,21 @@ function FakeServer(allData) {
             return {
                 success: true,
                 rows: results,
-                lastRow: getLastRowIndex(request, results)
+                lastRow: getLastRowIndex(request, results),
             };
         },
         getCountries: function() {
             var sql = 'SELECT DISTINCT country FROM ? ORDER BY country ASC';
 
             return alasql(sql, [allData]).map(function(x) { return x.country; });
+        },
+        getSports: function(countries) {
+            console.log('Returning sports for ' + (countries ? countries.join(', ') : 'all countries'));
+
+            var where = countries ? " WHERE country IN ('" + countries.join("', '") + "')" : '';
+            var sql = 'SELECT DISTINCT sport FROM ? ' + where + ' ORDER BY sport ASC';
+
+            return alasql(sql, [allData]).map(function(x) { return x.sport; });
         }
     };
 
@@ -84,25 +92,4 @@ function FakeServer(allData) {
 
         return currentLastRow <= request.endRow ? currentLastRow : -1;
     }
-}
-
-function ServerSideDatasource(server) {
-    return {
-        getRows: function(params) {
-            console.log('[Datasource] - rows requested by grid:', params.request);
-
-            // get data for request from our fake server
-            var response = server.getData(params.request);
-
-            // simulating real server call with a 500ms delay
-            setTimeout(function() {
-                if (response.success) {
-                    // supply rows for requested block to grid
-                    params.successCallback(response.rows, response.lastRow);
-                } else {
-                    params.failCallback();
-                }
-            }, 500);
-        }
-    };
 }
