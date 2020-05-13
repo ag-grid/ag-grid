@@ -4,6 +4,7 @@ $pageDescription = "ag-Grid is a feature-rich datagrid available in Free or Ente
 $pageKeywords = "ag-Grid Column API";
 $pageGroup = "reference";
 include '../documentation-main/documentation_header.php';
+define('skipInPageNav', true);
 ?>
 
 <h1>Column API</h1>

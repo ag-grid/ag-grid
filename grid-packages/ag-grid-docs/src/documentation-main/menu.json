@@ -172,7 +172,7 @@
           },
           {
             "title": "Column Interface",
-            "url": "javascript-grid-column-definitions/",
+            "url": "javascript-grid-column-interface/",
             "showInCollapsed": true,
             "items": [
               {
@@ -199,6 +199,12 @@
         "icon": "icon-columns",
         "matrixExclude": true,
         "items": [
+          {
+            "title": "Column Definitions",
+            "box-title": "Definitions",
+            "url": "javascript-grid-column-definitions/",
+            "showInCollapsed": true
+          },
           {
             "title": "Column Headers",
             "box-title": "Headers",

@@ -10,7 +10,7 @@ var gridOptions = {
         { field: "bronze", aggFunc: 'sum' }
     ],
     defaultColDef: {
-        flex: 1,
+        // flex: 1,
         minWidth: 150,
         filter: true,
         resizable: true
@@ -19,7 +19,7 @@ var gridOptions = {
         minWidth: 250,
     },
     pivotMode: true,
-    sideBar: true,
+    // sideBar: true,
     pivotColumnGroupTotals: 'before',
 };
 
@@ -30,6 +30,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
     agGrid.simpleHttpRequest({ url: 'https://raw.githubusercontent.com/ag-grid/ag-grid/master/grid-packages/ag-grid-docs/src/olympicWinners.json' })
         .then(function(data) {
-            gridOptions.api.setRowData(data);
+            gridOptions.api.setRowData(data.slice(0,2));
         });
 });

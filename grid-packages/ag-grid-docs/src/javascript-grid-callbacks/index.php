@@ -4,6 +4,7 @@ $pageDescription = "ag-Grid is a feature-rich datagrid available in Free or Ente
 $pageKeywords = "javascript data grid ag-Grid Callbacks";
 $pageGroup = "reference";
 include '../documentation-main/documentation_header.php';
+define('skipInPageNav', true);
 ?>
 
 <h1>Grid Callbacks</h1>
