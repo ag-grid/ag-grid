@@ -83,29 +83,30 @@ export class ColumnToolPanel extends Component implements IColumnToolPanel, IToo
         this.params = defaultParams;
 
         if (this.isRowGroupingModuleLoaded() && !this.params.suppressPivotMode) {
-            this.pivotModePanel = new PivotModePanel();
-            this.addComponent(this.pivotModePanel);
+            this.pivotModePanel = this.createManagedBean(new PivotModePanel());
+            this.appendChild(this.pivotModePanel);
         }
 
-        this.primaryColsPanel = this.getContext().createComponent('AG-PRIMARY-COLS') as PrimaryColsPanel;
+        this.primaryColsPanel = this.createManagedBean(new PrimaryColsPanel());
+
         this.primaryColsPanel.init(true, this.params);
         _.addCssClass(this.primaryColsPanel.getGui(), 'ag-column-panel-column-select');
-        this.addComponent(this.primaryColsPanel);
+        this.appendChild(this.primaryColsPanel);
 
         if (this.isRowGroupingModuleLoaded()) {
             if (!this.params.suppressRowGroups) {
-                this.rowGroupDropZonePanel = new RowGroupDropZonePanel(false);
-                this.addComponent(this.rowGroupDropZonePanel);
+                this.rowGroupDropZonePanel = this.createManagedBean(new RowGroupDropZonePanel(false));
+                this.appendChild(this.rowGroupDropZonePanel);
             }
 
             if (!this.params.suppressValues) {
-                this.valuesDropZonePanel = new ValuesDropZonePanel(false);
-                this.addComponent(this.valuesDropZonePanel);
+                this.valuesDropZonePanel = this.createManagedBean(new ValuesDropZonePanel(false));
+                this.appendChild(this.valuesDropZonePanel);
             }
 
             if (!this.params.suppressPivots) {
-                this.pivotDropZonePanel = new PivotDropZonePanel(false);
-                this.addComponent(this.pivotDropZonePanel);
+                this.pivotDropZonePanel = this.createManagedBean(new PivotDropZonePanel(false));
+                this.appendChild(this.pivotDropZonePanel);
             }
             this.setLastVisible();
             this.addManagedListener(this.eventService, Events.EVENT_COLUMN_PIVOT_MODE_CHANGED, this.setLastVisible.bind(this));
@@ -135,8 +136,8 @@ export class ColumnToolPanel extends Component implements IColumnToolPanel, IToo
         if (this.rowGroupDropZonePanel) {
             this.rowGroupDropZonePanel.setDisplayed(visible);
         } else if (visible) {
-            this.rowGroupDropZonePanel = new RowGroupDropZonePanel(false);
-            this.addComponent(new RowGroupDropZonePanel(false));
+            this.rowGroupDropZonePanel = this.createManagedBean(new RowGroupDropZonePanel(false));
+            this.appendChild(this.rowGroupDropZonePanel);
         }
 
         this.setLastVisible();
@@ -148,8 +149,8 @@ export class ColumnToolPanel extends Component implements IColumnToolPanel, IToo
         if (this.valuesDropZonePanel) {
             this.valuesDropZonePanel.setDisplayed(visible);
         } else if (visible) {
-            this.valuesDropZonePanel = new ValuesDropZonePanel(false);
-            this.addComponent(this.valuesDropZonePanel);
+            this.valuesDropZonePanel = this.createManagedBean(new ValuesDropZonePanel(false));
+            this.appendChild(this.valuesDropZonePanel);
         }
 
         this.setLastVisible();
@@ -161,8 +162,8 @@ export class ColumnToolPanel extends Component implements IColumnToolPanel, IToo
         if (this.pivotDropZonePanel) {
             this.pivotDropZonePanel.setDisplayed(visible);
         } else if (visible) {
-            this.pivotDropZonePanel = new PivotDropZonePanel(false);
-            this.addComponent(this.pivotDropZonePanel);
+            this.pivotDropZonePanel = this.createManagedBean(new PivotDropZonePanel(false));
+            this.appendChild(this.pivotDropZonePanel);
             this.pivotDropZonePanel.setDisplayed(visible);
         }
 
@@ -201,12 +202,6 @@ export class ColumnToolPanel extends Component implements IColumnToolPanel, IToo
 
     public syncLayoutWithGrid(): void {
         this.primaryColsPanel.syncLayoutWithGrid();
-    }
-
-    private addComponent(component: Component): void {
-        this.getContext().createBean(component);
-        this.getGui().appendChild(component.getGui());
-        this.childDestroyFuncs.push( ()=> this.destroyBean(component));
     }
 
     public destroyChildren(): void {

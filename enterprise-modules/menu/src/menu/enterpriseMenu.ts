@@ -30,15 +30,15 @@ import {
 import {MenuList} from "./menuList";
 import {MenuItemComponent} from "./menuItemComponent";
 import {MenuItemMapper} from "./menuItemMapper";
+import {PrimaryColsPanel} from "@ag-grid-enterprise/column-tool-panel";
 
 export interface TabSelectedEvent extends AgEvent {
     key: string;
 }
 
 @Bean('menuFactory')
-export class EnterpriseMenuFactory implements IMenuFactory {
+export class EnterpriseMenuFactory extends BeanStub implements IMenuFactory {
 
-    @Autowired('context') private context: Context;
     @Autowired('popupService') private popupService: PopupService;
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
 
@@ -47,7 +47,7 @@ export class EnterpriseMenuFactory implements IMenuFactory {
     private activeMenu: EnterpriseMenu | null;
 
     public hideActiveMenu(): void {
-        this.context.destroyBean(this.activeMenu);
+        this.destroyBean(this.activeMenu);
     }
 
     public showMenuAfterMouseEvent(column: Column, mouseEvent: MouseEvent, defaultTab?: string): void {
@@ -99,7 +99,7 @@ export class EnterpriseMenuFactory implements IMenuFactory {
 
     public showMenu(column: Column, positionCallback: (menu: EnterpriseMenu) => void, defaultTab?: string, restrictToTabs?: string[]): void {
         const menu = new EnterpriseMenu(column, this.lastSelectedTab, restrictToTabs);
-        this.context.createBean(menu);
+        this.createBean(menu);
 
         const eMenuGui = menu.getGui();
 
@@ -109,7 +109,7 @@ export class EnterpriseMenuFactory implements IMenuFactory {
             eMenuGui,
             true,
             () => { // menu closed callback
-                this.context.destroyBean(menu);
+                this.destroyBean(menu);
                 column.setMenuVisible(false, "contextMenu");
             }
         );
@@ -210,7 +210,7 @@ export class EnterpriseMenu extends BeanStub {
             onItemClicked: this.onTabItemClicked.bind(this)
         });
 
-        this.getContext().createBean(this.tabbedLayout);
+        this.createBean(this.tabbedLayout);
 
         this.addManagedListener(this.eventService, Events.EVENT_DISPLAYED_COLUMNS_CHANGED, this.onDisplayedColumnsChanged.bind(this));
     }
@@ -291,12 +291,6 @@ export class EnterpriseMenu extends BeanStub {
             key: tab
         };
         this.dispatchEvent(ev);
-    }
-
-    protected destroy(): void {
-        this.destroyBean(this.columnSelectPanel);
-        this.destroyBean(this.mainMenuList);
-        super.destroy();
     }
 
     private getMenuItems(): (string | MenuItemDef)[] {
@@ -398,7 +392,7 @@ export class EnterpriseMenu extends BeanStub {
 
     private createMainPanel(): TabbedItem {
         this.mainMenuList = new MenuList();
-        this.getContext().createBean(this.mainMenuList);
+        this.createManagedBean(this.mainMenuList);
 
         const menuItems = this.getMenuItems();
         const menuItemsMapped = this.menuItemMapper.mapWithStockItems(menuItems, this.column);
@@ -450,7 +444,7 @@ export class EnterpriseMenu extends BeanStub {
         const eWrapperDiv = document.createElement('div');
         _.addCssClass(eWrapperDiv, 'ag-menu-column-select-wrapper');
 
-        this.columnSelectPanel = this.getContext().createComponent('AG-PRIMARY-COLS') as any as IPrimaryColsPanel;
+        this.columnSelectPanel = this.createManagedBean(new PrimaryColsPanel());
 
         this.columnSelectPanel.init(false, {
             suppressValues: false,

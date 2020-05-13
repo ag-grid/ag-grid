@@ -90,8 +90,8 @@ export class Context {
 
     public createComponent(key: string, afterPreCreateCallback?: (comp: Component) => void, element?: HTMLElement, componentParams?: any): Component {
         if (this.componentsMappedByName && this.componentsMappedByName[key]) {
-            const cls = this.componentsMappedByName[key];
-            const newComponent = new this.componentsMappedByName[key](componentParams) as Component;
+            const ComponentClass = this.componentsMappedByName[key];
+            const newComponent = new ComponentClass(componentParams) as Component;
             this.createBean(newComponent, afterPreCreateCallback);
             return newComponent;
         }
