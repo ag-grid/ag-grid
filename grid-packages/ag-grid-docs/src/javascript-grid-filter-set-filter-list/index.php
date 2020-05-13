@@ -33,7 +33,9 @@ include '../documentation-main/documentation_header.php';
         comparator: function(a, b) {
             var valA = parseInt(a);
             var valB = parseInt(b);
+
             if (valA === valB) return 0;
+
             return valA > valB ? 1 : -1;
         }
     }
@@ -210,8 +212,7 @@ SNIPPET
 },
 
 function countryKeyCreator(params) {
-    var countryObject = params.value;
-    return countryObject.name;
+    return params.value.name;
 }
 
 function countryValueFormatter(params) {
@@ -382,7 +383,7 @@ SNIPPET
 
 <?= grid_example('Callback/Async', 'callback-async', 'generated', ['enterprise' => true, 'exampleHeight' => 510, 'modules' => ['clientside', 'setfilter', 'menu', 'columnpanel']]) ?>
 
-<h2>Refreshing Values</h2>
+<h3>Refreshing Values</h3>
 
 <p>
     By default, when values are passed to the set filter they are only loaded once when the set filter is initially
@@ -390,8 +391,19 @@ SNIPPET
     reflect other filtering that has occurred in the grid. To achieve this, you can call
     <code>refreshFilterValues</code> on the relevant filter that you would like to refresh. This will cause the values
     used in the filter to be refreshed from the original source, whether that is by looking at the provided
-    <code>values</code> array again, or by re-executing the <code>values</code> callback.
+    <code>values</code> array again, or by re-executing the <code>values</code> callback. For example, you might use
+    something like the following:
 </p>
+
+<?= createSnippet(<<<SNIPPET
+gridOptions: {
+    onFilterChanged: function(params) {
+        var setFilter = gridOptions.api.getFilterInstance('columnName');
+        setFilter.refreshFilterValues();
+    }
+}
+SNIPPET
+) ?>
 
 <p>
     If you are using the grid as a source of values (i.e. you are not providing values yourself), calling this method
@@ -400,8 +412,21 @@ SNIPPET
 </p>
 
 <p>
-    If you want to refresh the values every time the filter is opened, you can set <code>refreshValuesOnOpen</code> to
-    <code>true</code> in the <code>filterParams</code>.
+    If instead you want to refresh the values every time the Set Filter is opened, you can configure that using
+    <code>refreshValuesOnOpen</code>:
+</p>
+
+<?= createSnippet(<<<SNIPPET
+filterParams: {
+    refreshValuesOnOpen: true,
+    ...
+}
+SNIPPET
+) ?>
+
+<p>
+    When you refresh the values, any values that were selected in the filter that still exist in the new values will
+    stay selected, but any other selected values will be discarded.
 </p>
 
 <p>
@@ -410,22 +435,26 @@ SNIPPET
 
 <ul class="content">
     <li>
-        The first column has values provided as an array. Clicking the "Refresh Array Values" button will change the
-        values in the array provided to the filter and then refresh the filter for the column.
+        The Values Array column has values provided as an array. Clicking the buttons to change the values will update
+        the values in the array provided to the filter and call <code>refreshFilterValues()</code> to immediately refresh
+        the filter for the column.
     </li>
     <li>
-        The second column has values provided as a callback, and is configured using <code>refreshValuesOnOpen</code> to
-        refresh the values every time the filter is opened from the column menu.
+        The Values Callback column has values provided as a callback and is configured with
+        <?= inlineCode('refreshValuesOnOpen = true') ?>. Clicking the buttons to change the values will update
+        the values that will be returned the next time the callback is called. Note that the values are not updated until
+        the next time the filter is opened.
     </li>
     <li>
-        Any existing selections that still exist in the new values are preserved when a filter refreshes.
+        If you select <code>'Elephant'</code> and change the values, it will stay selected as it is present in both lists.
     </li>
+    <li>If you select any of the other options, that selection will be lost when you change to different values.</li>
     <li>
         A filter is re-applied after values have been refreshed.
     </li>
 </ul>
 
-<?= grid_example('Refreshing Values', 'refreshing-values', 'generated', ['enterprise' => true, 'modules' => ['clientside', 'setfilter', 'menu', 'columnpanel']]) ?>
+<?= grid_example('Refreshing Values', 'refreshing-values', 'generated', ['enterprise' => true, 'exampleHeight' => 750, 'modules' => ['clientside', 'setfilter', 'menu', 'columnpanel']]) ?>
 
 <h2>Missing Values</h2>
 

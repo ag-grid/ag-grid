@@ -1,9 +1,19 @@
+var list1 = ['Elephant', 'Lion', 'Monkey'];
+var list2 = ['Elephant', 'Giraffe', 'Tiger'];
+
+var valuesArray = list1.slice();
+var valuesCallbackList = list1;
+
+function valuesCallback(params) {
+    setTimeout(function() { params.success(valuesCallbackList); }, 1000);
+}
+
 var gridOptions = {
     columnDefs: [
         {
             colId: 'array',
             headerName: 'Values Array',
-            field: 'code',
+            field: 'animal',
             filter: 'agSetColumnFilter',
             filterParams: {
                 values: valuesArray
@@ -12,7 +22,7 @@ var gridOptions = {
         {
             colId: 'callback',
             headerName: 'Values Callback',
-            field: 'code',
+            field: 'animal',
             filter: 'agSetColumnFilter',
             filterParams: {
                 values: valuesCallback,
@@ -31,22 +41,26 @@ var gridOptions = {
 };
 
 function onFirstDataRendered(params) {
-    updateValuesArray();
-
     params.api.getToolPanelInstance('filters').expandFilters();
 }
 
-function refreshArrayValues() {
-    console.log('Refreshing array values');
-    updateValuesArray();
+function useList(list) {
+    console.log('Updating values to ' + list);
+    valuesArray.length = 0;
+    list.forEach(function(value) { valuesArray.push(value); });
+
     var filter = gridOptions.api.getFilterInstance('array');
     filter.refreshFilterValues();
+
+    valuesCallbackList = list;
 }
 
-function refreshCallbackValues() {
-    console.log('Refreshing callback values');
-    var filter = gridOptions.api.getFilterInstance('callback');
-    filter.refreshFilterValues();
+function useList1() {
+    useList(list1);
+}
+
+function useList2() {
+    useList(list2);
 }
 
 // setup the grid after the page has finished loading
