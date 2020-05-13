@@ -1,7 +1,7 @@
-import { Bean, PostConstruct } from "@ag-grid-community/core";
+import { Bean, BeanStub, PostConstruct } from "@ag-grid-community/core";
 
 @Bean('md5')
-export class MD5 {
+export class MD5 extends BeanStub {
     private ieCompatibility = false;
 
     @PostConstruct

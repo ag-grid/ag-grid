@@ -19,18 +19,18 @@ import {
     Optional,
     PreDestroy,
     ProcessChartOptionsParams,
-    SeriesOptions
+    SeriesOptions,
+    BeanStub
 } from "@ag-grid-community/core";
 import { GridChartComp, GridChartParams } from "./chartComp/gridChartComp";
 import { ChartPaletteName } from "ag-charts-community";
 
 @Bean('chartService')
-export class ChartService implements IChartService {
+export class ChartService extends BeanStub implements IChartService {
 
     @Optional('rangeController') private rangeController: IRangeController;
     @Autowired('columnController') private columnController: ColumnController;
     @Autowired('environment') private environment: Environment;
-    @Autowired('context') private context: Context;
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
 
     // we destroy all charts bound to this grid when grid is destroyed. activeCharts contains all charts, including

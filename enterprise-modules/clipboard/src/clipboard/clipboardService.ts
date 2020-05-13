@@ -2,6 +2,7 @@ import {
     _,
     Autowired,
     Bean,
+    BeanStub,
     CellNavigationService,
     CellPosition,
     CellPositionUtils,
@@ -50,7 +51,7 @@ interface ColumnCallback {
 }
 
 @Bean('clipboardService')
-export class ClipboardService implements IClipboardService {
+export class ClipboardService extends BeanStub implements IClipboardService {
 
     @Autowired('csvCreator') private csvCreator: ICsvCreator;
     @Autowired('loggerFactory') private loggerFactory: LoggerFactory;
@@ -62,7 +63,6 @@ export class ClipboardService implements IClipboardService {
     @Autowired('focusController') private focusController: FocusController;
     @Autowired('rowRenderer') private rowRenderer: RowRenderer;
     @Autowired('columnController') private columnController: ColumnController;
-    @Autowired('eventService') private eventService: EventService;
     @Autowired('cellNavigationService') private cellNavigationService: CellNavigationService;
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('columnApi') private columnApi: ColumnApi;

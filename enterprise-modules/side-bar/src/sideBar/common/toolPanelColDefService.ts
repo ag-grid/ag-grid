@@ -3,6 +3,7 @@ import {
     AbstractColDef,
     Autowired,
     Bean,
+    BeanStub,
     ColDef,
     ColGroupDef,
     Column,
@@ -12,7 +13,7 @@ import {
 } from "@ag-grid-community/core";
 
 @Bean('toolPanelColDefService')
-export class ToolPanelColDefService {
+export class ToolPanelColDefService extends BeanStub {
 
     @Autowired('columnController') private columnController: ColumnController;
 

@@ -1,6 +1,7 @@
 import {
     Autowired,
     Bean,
+    BeanStub,
     ChangedPath,
     ColDef,
     ColGroupDef,
@@ -15,7 +16,7 @@ import {
 import { PivotColDefService } from "./pivotColDefService";
 
 @Bean('pivotStage')
-export class PivotStage implements IRowNodeStage {
+export class PivotStage extends BeanStub implements IRowNodeStage {
 
     // these should go into the pivot column creator
     @Autowired('valueService') private valueService: ValueService;

@@ -1,7 +1,8 @@
 import { Bean, ComponentMeta } from "../context/context";
+import { BeanStub } from "../context/beanStub";
 
 @Bean('agStackComponentsRegistry')
-export class AgStackComponentsRegistry {
+export class AgStackComponentsRegistry extends BeanStub {
 
     private componentsMappedByName: { [key: string]: any } = {};
 

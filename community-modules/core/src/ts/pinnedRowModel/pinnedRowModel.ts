@@ -7,13 +7,12 @@ import { Constants } from "../constants";
 import { ColumnApi } from "../columnController/columnApi";
 import { GridApi } from "../gridApi";
 import { _ } from '../utils';
+import { BeanStub } from "../context/beanStub";
 
 @Bean('pinnedRowModel')
-export class PinnedRowModel {
+export class PinnedRowModel extends BeanStub {
 
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
-    @Autowired('eventService') private eventService: EventService;
-    @Autowired('context') private context: Context;
     @Autowired('columnApi') private columnApi: ColumnApi;
     @Autowired('gridApi') private gridApi: GridApi;
 

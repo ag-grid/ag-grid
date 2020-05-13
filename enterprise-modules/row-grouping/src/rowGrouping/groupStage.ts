@@ -1,6 +1,7 @@
 import {
     Autowired,
     Bean,
+    BeanStub,
     ChangedPath,
     Column,
     ColumnController,
@@ -37,13 +38,12 @@ interface GroupingDetails {
 }
 
 @Bean('groupStage')
-export class GroupStage implements IRowNodeStage {
+export class GroupStage extends BeanStub implements IRowNodeStage {
 
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('columnController') private columnController: ColumnController;
     @Autowired('selectableService') private selectableService: SelectableService;
     @Autowired('valueService') private valueService: ValueService;
-    @Autowired('context') private context: Context;
 
     // if doing tree data, this is true. we set this at create time - as our code does not
     // cater for the scenario where this is switched on / off dynamically

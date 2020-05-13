@@ -1,6 +1,7 @@
 import {
     Autowired,
     Bean,
+    BeanStub,
     Column,
     GridOptionsWrapper,
     IAggFunc,
@@ -10,7 +11,7 @@ import {
 } from "@ag-grid-community/core";
 
 @Bean('aggFuncService')
-export class AggFuncService implements IAggFuncService {
+export class AggFuncService extends BeanStub implements IAggFuncService {
 
     private static AGG_SUM = 'sum';
     private static AGG_FIRST = 'first';

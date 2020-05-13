@@ -6,7 +6,6 @@ import {
     Column,
     ColumnController,
     Component,
-    Context,
     FocusController,
     GetContextMenuItems,
     GetContextMenuItemsParams,
@@ -29,9 +28,8 @@ import { MenuList } from "./menuList";
 import { MenuItemMapper } from "./menuItemMapper";
 
 @Bean('contextMenuFactory')
-export class ContextMenuFactory implements IContextMenuFactory {
+export class ContextMenuFactory extends BeanStub implements IContextMenuFactory {
 
-    @Autowired('context') private context: Context;
     @Autowired('popupService') private popupService: PopupService;
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Optional('rangeController') private rangeController: IRangeController;
@@ -40,7 +38,7 @@ export class ContextMenuFactory implements IContextMenuFactory {
     private activeMenu: ContextMenu | null;
 
     public hideActiveMenu(): void {
-        this.context.destroyBean(this.activeMenu);
+        this.destroyBean(this.activeMenu);
     }
 
     private getMenuItems(node: RowNode, column: Column, value: any): (MenuItemDef | string)[] | undefined {
@@ -102,7 +100,7 @@ export class ContextMenuFactory implements IContextMenuFactory {
         if (menuItems === undefined || _.missingOrEmpty(menuItems)) { return false; }
 
         const menu = new ContextMenu(menuItems);
-        this.context.createBean(menu);
+        this.createBean(menu);
 
         const eMenuGui = menu.getGui();
 
@@ -111,7 +109,7 @@ export class ContextMenuFactory implements IContextMenuFactory {
         const hidePopup = this.popupService.addAsModalPopup(
             eMenuGui,
             true,
-            () => this.context.destroyBean(menu),
+            () => this.destroyBean(menu),
             mouseEvent
         );
 
@@ -148,7 +146,6 @@ class ContextMenu extends Component {
     @Autowired('menuItemMapper') private menuItemMapper: MenuItemMapper;
     @Autowired('focusController') private focusController: FocusController;
     @Autowired('cellPositionUtils') private cellPositionUtils: CellPositionUtils;
-
 
     private menuItems: (MenuItemDef | string)[];
     private menuList: MenuList | null = null;

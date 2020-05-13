@@ -1,5 +1,6 @@
 import {
     Bean,
+    BeanStub,
     IRowNodeStage,
     Autowired,
     GridOptionsWrapper,
@@ -22,7 +23,7 @@ interface AggregationDetails {
 }
 
 @Bean('aggregationStage')
-export class AggregationStage implements IRowNodeStage {
+export class AggregationStage extends BeanStub implements IRowNodeStage {
 
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('columnController') private columnController: ColumnController;

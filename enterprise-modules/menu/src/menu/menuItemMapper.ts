@@ -2,6 +2,7 @@ import {
     _,
     Autowired,
     Bean,
+    BeanStub,
     ChartType,
     Column,
     ColumnController,
@@ -17,7 +18,7 @@ import {
 } from '@ag-grid-community/core';
 
 @Bean('menuItemMapper')
-export class MenuItemMapper {
+export class MenuItemMapper extends BeanStub {
 
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('columnController') private columnController: ColumnController;

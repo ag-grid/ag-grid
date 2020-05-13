@@ -1,4 +1,4 @@
-import { Bean, _ } from "@ag-grid-community/core";
+import { Bean, BeanStub, _ } from "@ag-grid-community/core";
 
 export interface ZipFolder {
     path: string;
@@ -47,7 +47,7 @@ const crcTable:number[] = [
 ];
 
 @Bean('zipContainer')
-export class ZipContainer {
+export class ZipContainer extends BeanStub {
     private folders: ZipFolder[] = [];
     private files: ZipFile[] = [];
 

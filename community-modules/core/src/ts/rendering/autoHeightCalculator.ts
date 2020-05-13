@@ -5,9 +5,10 @@ import { RowNode } from "../entities/rowNode";
 import { CellComp } from "./cellComp";
 import { ColumnController } from "../columnController/columnController";
 import { _ } from "../utils";
+import { BeanStub } from "../context/beanStub";
 
 @Bean('autoHeightCalculator')
-export class AutoHeightCalculator {
+export class AutoHeightCalculator extends BeanStub {
 
     @Autowired('beans') private beans: Beans;
     @Autowired("$scope") private $scope: any;

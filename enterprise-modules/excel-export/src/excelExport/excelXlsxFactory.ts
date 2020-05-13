@@ -1,4 +1,4 @@
-import { Autowired, Bean, XmlElement } from '@ag-grid-community/core';
+import { Autowired, Bean, BeanStub, XmlElement } from '@ag-grid-community/core';
 
 import coreFactory from './files/ooxml/core';
 import contentTypesFactory from './files/ooxml/contentTypes';
@@ -16,7 +16,7 @@ import { XmlFactory } from "@ag-grid-community/csv-export";
  * See https://www.ecma-international.org/news/TC45_current_work/OpenXML%20White%20Paper.pdf
  */
 @Bean('excelXlsxFactory')
-export class ExcelXlsxFactory {
+export class ExcelXlsxFactory extends BeanStub {
 
     @Autowired('xmlFactory') private xmlFactory: XmlFactory;
 
