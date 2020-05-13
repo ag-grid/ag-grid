@@ -1,7 +1,8 @@
 import { AgEvent } from "../events";
 import { BeanStub } from "../context/beanStub";
-import { PostConstruct, PreConstruct } from "../context/context";
+import {Autowired, Context, PostConstruct, PreConstruct} from "../context/context";
 import { _, NumberSequence } from "../utils";
+import {AgStackComponentsRegistry} from "../components/agStackComponentsRegistry";
 
 const compIdSequence = new NumberSequence();
 
@@ -14,6 +15,8 @@ export class Component extends BeanStub {
     public static EVENT_DISPLAYED_CHANGED = 'displayedChanged';
     private eGui: HTMLElement;
     private annotatedGuiListeners: any[] = [];
+
+    @Autowired('agStackComponentsRegistry') protected agStackComponentsRegistry: AgStackComponentsRegistry;
 
     // if false, then CSS class "ag-hidden" is applied, which sets "display: none"
     private displayed = true;
@@ -81,7 +84,7 @@ export class Component extends BeanStub {
     }
 
     public createComponent(key: string, afterPreCreateCallback?: (comp: Component) => void, element?: HTMLElement, componentParams?: any): Component {
-        const ComponentClass = this.context.getComponentClass(key);
+        const ComponentClass = this.agStackComponentsRegistry.getComponentClass(key);
         if (ComponentClass) {
             const newComponent = new ComponentClass(componentParams) as Component;
             this.createBean(newComponent, null, afterPreCreateCallback);

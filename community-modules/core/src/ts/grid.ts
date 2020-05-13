@@ -84,6 +84,7 @@ import { ModuleRegistry } from "./modules/moduleRegistry";
 import { ModuleNames } from "./modules/moduleNames";
 import { UndoRedoService } from "./undoRedo/undoRedoService";
 import { Component } from "./widgets/component";
+import {AgStackComponentsRegistry} from "./components/agStackComponentsRegistry";
 
 export interface GridParams {
     // used by Web Components
@@ -132,7 +133,6 @@ export class Grid {
         const registeredModules = this.getRegisteredModules(params);
 
         const beanClasses = this.createBeansList(registeredModules);
-        const agStackComponents = this.createAgStackComponentsList(registeredModules);
         const providedBeanInstances = this.createProvidedBeans(eGridDiv, params);
 
         if (!beanClasses) {
@@ -142,7 +142,6 @@ export class Grid {
         const contextParams: ContextParams = {
             providedBeanInstances: providedBeanInstances,
             beanClasses: beanClasses,
-            components: agStackComponents,
             debug: debug
         };
 
@@ -152,6 +151,8 @@ export class Grid {
 
         this.registerModuleUserComponents(registeredModules);
 
+        this.registerStackComponents(registeredModules);
+
         const gridCoreClass = (params && params.rootComponent) || GridCore;
         const gridCore = new gridCoreClass();
         this.context.createBean(gridCore);
@@ -160,6 +161,13 @@ export class Grid {
         this.dispatchGridReadyEvent(gridOptions);
         const isEnterprise = ModuleRegistry.isRegistered(ModuleNames.EnterpriseCoreModule);
         this.logger.log(`initialised successfully, enterprise = ${isEnterprise}`);
+    }
+
+    private registerStackComponents(registeredModules: Module[]): void {
+        const agStackComponents = this.createAgStackComponentsList(registeredModules);
+        const agStackComponentsRegistry =
+            this.context.getBean('agStackComponentsRegistry') as AgStackComponentsRegistry;
+        agStackComponentsRegistry.setupComponents(agStackComponents);
     }
 
     private getRegisteredModules(params: GridParams): Module[] {
@@ -281,7 +289,8 @@ export class Grid {
             StandardMenuFactory, DragAndDropService, ColumnApi, FocusController, MouseEventService, Environment,
             CellNavigationService, ValueFormatterService, StylingService, ScrollVisibleService, SortController,
             ColumnHoverService, ColumnAnimationService, SelectableService, AutoGroupColService,
-            ChangeDetectionService, AnimationFrameService, DetailRowCompCache, UndoRedoService
+            ChangeDetectionService, AnimationFrameService, DetailRowCompCache, UndoRedoService,
+            AgStackComponentsRegistry
         ];
 
         const moduleBeans = this.extractModuleEntity(registeredModules, (module) => module.beans ? module.beans : []);

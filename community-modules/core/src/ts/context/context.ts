@@ -14,7 +14,6 @@ import { _ } from "../utils";
 export interface ContextParams {
     providedBeanInstances: any;
     beanClasses: any[];
-    components: ComponentMeta[];
     debug: boolean;
 }
 
@@ -35,8 +34,6 @@ export class Context {
     private contextParams: ContextParams;
     private logger: ILogger;
 
-    private componentsMappedByName: { [key: string]: any } = {};
-
     private destroyed = false;
 
     public constructor(params: ContextParams, logger: ILogger) {
@@ -49,8 +46,6 @@ export class Context {
         this.logger = logger;
         this.logger.log(">> creating ag-Application Context");
 
-        this.setupComponents();
-
         this.createBeans();
 
         const beanInstances = this.getBeanInstances();
@@ -62,28 +57,6 @@ export class Context {
 
     private getBeanInstances(): any[] {
         return _.values(this.beanWrappers).map(beanEntry => beanEntry.beanInstance);
-    }
-
-    private setupComponents(): void {
-        if (this.contextParams.components) {
-            this.contextParams.components.forEach(componentMeta => this.addComponent(componentMeta));
-        }
-    }
-
-    private addComponent(componentMeta: ComponentMeta): void {
-        // get name of the class as a string
-        // let className = _.getNameOfClass(ComponentClass);
-        // insert a dash after every capital letter
-        // let classEscaped = className.replace(/([A-Z])/g, "-$1").toLowerCase();
-        const classEscaped = componentMeta.componentName.replace(/([a-z])([A-Z])/g, "$1-$2").toLowerCase();
-        // put all to upper case
-        const classUpperCase = classEscaped.toUpperCase();
-        // finally store
-        this.componentsMappedByName[classUpperCase] = componentMeta.componentClass;
-    }
-
-    public getComponentClass(htmlTag: string): any {
-        return this.componentsMappedByName[htmlTag];
     }
 
     public createBean<T extends any>(bean: T, afterPreCreateCallback?: (comp: Component) => void): T {
