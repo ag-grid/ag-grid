@@ -80,10 +80,6 @@ export class Component extends BeanStub {
     public createComponentFromElement(element: HTMLElement, afterPreCreateCallback?: (comp: Component) => void, paramsMap?: any): Component {
         const key = element.nodeName;
         const componentParams = paramsMap ? paramsMap[element.getAttribute('ref')] : undefined;
-        return this.createComponent(key, afterPreCreateCallback, element, componentParams);
-    }
-
-    public createComponent(key: string, afterPreCreateCallback?: (comp: Component) => void, element?: HTMLElement, componentParams?: any): Component {
         const ComponentClass = this.agStackComponentsRegistry.getComponentClass(key);
         if (ComponentClass) {
             const newComponent = new ComponentClass(componentParams) as Component;
