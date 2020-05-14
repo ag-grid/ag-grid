@@ -29,7 +29,7 @@ export class Promise<T> {
         });
     }
 
-    static resolve<T>(value: T): Promise<T> {
+    static resolve<T>(value: T = null): Promise<T> {
         return new Promise<T>(resolve => resolve(value));
     }
 

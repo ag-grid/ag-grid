@@ -2,7 +2,7 @@ import { IDoesFilterPassParams, IFilterOptionDef, ProvidedFilterModel } from '..
 import { RefSelector } from '../../widgets/componentAnnotations';
 import { OptionsFactory } from './optionsFactory';
 import { IProvidedFilterParams, ProvidedFilter } from './providedFilter';
-import { _ } from '../../utils';
+import { _, Promise } from '../../utils';
 import { AgSelect } from '../../widgets/agSelect';
 import { AgRadioButton } from '../../widgets/agRadioButton';
 
@@ -191,7 +191,7 @@ export abstract class SimpleFilter<M extends ISimpleFilterModel> extends Provide
         return res;
     }
 
-    protected setModelIntoUi(model: ISimpleFilterModel | ICombinedSimpleModel<M>): void {
+    protected setModelIntoUi(model: ISimpleFilterModel | ICombinedSimpleModel<M>): Promise<void> {
         const isCombined = (model as any).operator;
 
         if (isCombined) {
@@ -218,6 +218,8 @@ export abstract class SimpleFilter<M extends ISimpleFilterModel> extends Provide
             this.setConditionIntoUi(simpleModel as M, ConditionPosition.One);
             this.setConditionIntoUi(null, ConditionPosition.Two);
         }
+
+        return Promise.resolve();
     }
 
     public doesFilterPass(params: IDoesFilterPassParams): boolean {
@@ -306,7 +308,7 @@ export abstract class SimpleFilter<M extends ISimpleFilterModel> extends Provide
         _.setDisplayed(this.eJoinOperatorPanel, showSecondFilter);
     }
 
-    protected resetUiToDefaults(silent?: boolean): void {
+    protected resetUiToDefaults(silent?: boolean): Promise<void> {
         const uniqueGroupId = 'ag-simple-filter-and-or-' + this.getCompId();
         const translate = this.gridOptionsWrapper.getLocaleTextFunc();
         const defaultOption = this.optionsFactory.getDefaultOption();
@@ -322,6 +324,8 @@ export abstract class SimpleFilter<M extends ISimpleFilterModel> extends Provide
             .setValue(false, silent)
             .setName(uniqueGroupId)
             .setLabel(translate('orCondition', 'OR'));
+
+        return Promise.resolve();
     }
 
     public translate(toTranslate: string): string {

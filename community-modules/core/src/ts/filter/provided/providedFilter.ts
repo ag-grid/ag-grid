@@ -3,10 +3,12 @@ import { ProvidedFilterModel, IDoesFilterPassParams, IFilterComp, IFilterParams 
 import { RefSelector } from '../../widgets/componentAnnotations';
 import { Autowired, PostConstruct } from '../../context/context';
 import { GridOptionsWrapper } from '../../gridOptionsWrapper';
-import { _ } from '../../utils';
 import { IRowModel } from '../../interfaces/iRowModel';
 import { Constants } from '../../constants';
 import { IAfterGuiAttachedParams } from '../../interfaces/iAfterGuiAttachedParams';
+import { loadTemplate, addCssClass } from '../../utils/dom';
+import { debounce } from '../../utils/function';
+import { Promise } from '../../utils/promise';
 
 export interface IProvidedFilterParams extends IFilterParams {
     clearButton?: boolean;
@@ -46,9 +48,9 @@ export abstract class ProvidedFilter extends Component implements IFilterComp {
 
     protected abstract createBodyTemplate(): string;
     protected abstract getCssIdentifier(): string;
-    protected abstract resetUiToDefaults(silent?: boolean): void;
+    protected abstract resetUiToDefaults(silent?: boolean): Promise<void>;
 
-    protected abstract setModelIntoUi(model: ProvidedFilterModel): void;
+    protected abstract setModelIntoUi(model: ProvidedFilterModel): Promise<void>;
     protected abstract areModelsEqual(a: ProvidedFilterModel, b: ProvidedFilterModel): boolean;
 
     public abstract getModelFromUi(): ProvidedFilterModel | null;
@@ -89,11 +91,13 @@ export abstract class ProvidedFilter extends Component implements IFilterComp {
         this.setTemplate(templateString);
     }
 
-    public init(params: IFilterParams): void {
+    public init(params: IFilterParams): Promise<void> {
         this.setParams(params);
-        this.resetUiToDefaults(true);
-        this.updateUiVisibility();
-        this.setupOnBtApplyDebounce();
+
+        return this.resetUiToDefaults(true).then(() => {
+            this.updateUiVisibility();
+            this.setupOnBtApplyDebounce();
+        });
     }
 
     protected setParams(params: IProvidedFilterParams): void {
@@ -124,10 +128,10 @@ export abstract class ProvidedFilter extends Component implements IFilterComp {
             const translate = this.gridOptionsWrapper.getLocaleTextFunc();
             const eButtonsPanel = document.createElement('div');
 
-            _.addCssClass(eButtonsPanel, 'ag-filter-apply-panel');
+            addCssClass(eButtonsPanel, 'ag-filter-apply-panel');
 
             const addButton = (text: string, clickListener: () => void): void => {
-                const button = _.loadTemplate(/* html */
+                const button = loadTemplate(/* html */
                     `<button type="button" class="ag-standard-button ag-filter-apply-panel-button">${text}</button>`);
 
                 eButtonsPanel.appendChild(button);
@@ -157,7 +161,7 @@ export abstract class ProvidedFilter extends Component implements IFilterComp {
 
     private setupOnBtApplyDebounce(): void {
         const debounceMs = ProvidedFilter.getDebounceMs(this.providedFilterParams, this.getDefaultDebounceMs());
-        this.onBtApplyDebounce = _.debounce(this.onBtApply.bind(this), debounceMs);
+        this.onBtApplyDebounce = debounce(this.onBtApply.bind(this), debounceMs);
     }
 
     public getModel(): ProvidedFilterModel {
@@ -165,24 +169,23 @@ export abstract class ProvidedFilter extends Component implements IFilterComp {
     }
 
     public setModel(model: ProvidedFilterModel): void {
-        if (model) {
-            this.setModelIntoUi(model);
-        } else {
-            this.resetUiToDefaults();
-        }
+        const promise = model ? this.setModelIntoUi(model) : this.resetUiToDefaults();
 
-        this.updateUiVisibility();
+        promise.then(() => {
+            this.updateUiVisibility();
 
-        // we set the model from the gui, rather than the provided model,
-        // so the model is consistent. eg handling of null/undefined will be the same,
-        // of if model is case insensitive, then casing is removed.
-        this.applyModel();
+            // we set the model from the gui, rather than the provided model,
+            // so the model is consistent. eg handling of null/undefined will be the same,
+            // of if model is case insensitive, then casing is removed.
+            this.applyModel();
+        });
     }
 
     private onBtClear() {
-        this.resetUiToDefaults();
-        this.updateUiVisibility();
-        this.onUiChanged();
+        this.resetUiToDefaults().then(() => {
+            this.updateUiVisibility();
+            this.onUiChanged();
+        });
     }
 
     private onBtReset() {
@@ -217,8 +220,7 @@ export abstract class ProvidedFilter extends Component implements IFilterComp {
 
     public onNewRowsLoaded() {
         if (!this.newRowsActionKeep) {
-            this.resetUiToDefaults();
-            this.appliedModel = null;
+            this.resetUiToDefaults().then(() => this.appliedModel = null);
         }
     }
 

@@ -20,9 +20,9 @@ export interface IHeaderGroupParams {
     context: any;
 }
 
-export interface IHeaderGroup {}
+export interface IHeaderGroup { }
 
-export interface IHeaderGroupComp extends IHeaderGroup, IComponent<IHeaderGroupParams> {}
+export interface IHeaderGroupComp extends IHeaderGroup, IComponent<IHeaderGroupParams> { }
 
 export class HeaderGroupComp extends Component implements IHeaderGroupComp {
 
@@ -50,7 +50,7 @@ export class HeaderGroupComp extends Component implements IHeaderGroupComp {
         super.destroy();
     }
 
-    public init(params: IHeaderGroupParams) {
+    public init(params: IHeaderGroupParams): void {
         this.params = params;
 
         this.setupLabel();

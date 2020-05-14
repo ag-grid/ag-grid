@@ -15,7 +15,8 @@ import {
     VirtualListModel,
     IAfterGuiAttachedParams,
     Promise,
-    _
+    _,
+    IFilterParams
 } from '@ag-grid-community/core';
 
 import { SetFilterModelValuesType, SetValueModel } from './setValueModel';
@@ -64,12 +65,13 @@ export class SetFilter extends ProvidedFilter {
         return 'set-filter';
     }
 
-    protected resetUiToDefaults(): void {
+    protected resetUiToDefaults(): Promise<void> {
         this.setMiniFilter(null);
-        this.valueModel.setModel(null).then(() => this.refresh());
+
+        return this.valueModel.setModel(null).then(() => this.refresh());
     }
 
-    protected setModelIntoUi(model: SetFilterModel): void {
+    protected setModelIntoUi(model: SetFilterModel): Promise<void> {
         this.resetUiToDefaults();
 
         if (!model) { return; }
@@ -84,7 +86,7 @@ export class SetFilter extends ProvidedFilter {
         // also supporting old filter model for backwards compatibility
         const newValues = model instanceof Array ? model as string[] : model.values;
 
-        this.valueModel.setModel(newValues).then(() => this.refresh());
+        return this.valueModel.setModel(newValues).then(() => this.refresh());
     }
 
     public getModelFromUi(): SetFilterModel | null {

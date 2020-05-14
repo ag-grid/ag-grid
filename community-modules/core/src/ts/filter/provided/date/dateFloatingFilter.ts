@@ -48,7 +48,7 @@ export class DateFloatingFilter extends SimpleFloatingFilter {
         return `${condition.type}`;
     }
 
-    public init(params: IFloatingFilterParams) {
+    public init(params: IFloatingFilterParams): void {
         super.init(params);
         this.params = params;
         this.createDateComponent();

@@ -10,6 +10,8 @@ import { AgInputTextField } from '../../../widgets/agInputTextField';
 import { makeNull } from '../../../utils/generic';
 import { setDisplayed } from '../../../utils/dom';
 import { IAfterGuiAttachedParams } from '../../../interfaces/iAfterGuiAttachedParams';
+import { Promise } from '../../../utils';
+import { forEach } from '../../../utils/array';
 
 export interface TextFilterModel extends ISimpleFilterModel {
     filter?: string;
@@ -144,22 +146,22 @@ export class TextFilter extends SimpleFilter<TextFilterModel> {
         return aSimple.filter === bSimple.filter && aSimple.type === bSimple.type;
     }
 
-    protected resetUiToDefaults(silent?: boolean): void {
-        super.resetUiToDefaults(silent);
-
-        const fields = [this.eValue1, this.eValue2];
-
-        fields.forEach(field => field.setValue(null, silent));
-        this.resetPlaceholder();
+    protected resetUiToDefaults(silent?: boolean): Promise<void> {
+        return super.resetUiToDefaults(silent).then(() => {
+            this.forEachInput(field => field.setValue(null, silent));
+            this.resetPlaceholder();
+        });
     }
 
     private resetPlaceholder(): void {
         const translate = this.translate.bind(this);
         const placeholder = translate('filterOoo', 'Filter...');
 
-        const fields = [this.eValue1, this.eValue2];
+        this.forEachInput(field => field.setInputPlaceholder(placeholder));
+    }
 
-        fields.forEach(field => field.setInputPlaceholder(placeholder));
+    private forEachInput(action: (field: AgInputTextField) => void): void {
+        forEach([this.eValue1, this.eValue2], action);
     }
 
     protected setValueFromFloatingFilter(value: string): void {

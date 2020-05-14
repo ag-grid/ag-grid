@@ -4,6 +4,7 @@ import { Constants } from '../../constants';
 import { IRowModel } from '../../interfaces/iRowModel';
 import { GridOptionsWrapper } from '../../gridOptionsWrapper';
 import { mock } from '../../test-utils/mock';
+import { Promise } from '../../utils';
 
 class TestFilter extends ProvidedFilter {
     private uiModel: ProvidedFilterModel;
@@ -49,11 +50,11 @@ class TestFilter extends ProvidedFilter {
         throw new Error('Method not implemented.');
     }
 
-    protected resetUiToDefaults(silent?: boolean): void {
+    protected resetUiToDefaults(silent?: boolean): Promise<void> {
         throw new Error('Method not implemented.');
     }
 
-    protected setModelIntoUi(model: ProvidedFilterModel): void {
+    protected setModelIntoUi(model: ProvidedFilterModel): Promise<void> {
         throw new Error('Method not implemented.');
     }
 

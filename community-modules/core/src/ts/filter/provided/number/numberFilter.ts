@@ -1,5 +1,5 @@
 import { RefSelector } from "../../../widgets/componentAnnotations";
-import { _ } from "../../../utils";
+import { _, Promise } from "../../../utils";
 
 import {
     SimpleFilter,
@@ -49,13 +49,14 @@ export class NumberFilter extends ScalarFilter<NumberFilterModel, number> {
         return 500;
     }
 
-    protected resetUiToDefaults(silent?: boolean): void {
-        super.resetUiToDefaults(silent);
+    protected resetUiToDefaults(silent?: boolean): Promise<void> {
+        return super.resetUiToDefaults(silent).then(() => {
+            const fields = [this.eValueFrom1, this.eValueFrom2, this.eValueTo1, this.eValueTo2];
 
-        const fields = [this.eValueFrom1, this.eValueFrom2, this.eValueTo1, this.eValueTo2];
+            fields.forEach(field => field.setValue(null, silent));
 
-        fields.forEach(field => field.setValue(null, silent));
-        this.resetPlaceholder();
+            this.resetPlaceholder();
+        });
     }
 
     protected setConditionIntoUi(model: NumberFilterModel, position: ConditionPosition): void {
