@@ -27,7 +27,8 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 Object.defineProperty(exports, "__esModule", { value: true });
 var component_1 = require("../../../widgets/component");
 var componentAnnotations_1 = require("../../../widgets/componentAnnotations");
-var utils_1 = require("../../../utils");
+var date_1 = require("../../../utils/date");
+var browser_1 = require("../../../utils/browser");
 var DefaultDateComponent = /** @class */ (function (_super) {
     __extends(DefaultDateComponent, _super);
     function DefaultDateComponent() {
@@ -36,7 +37,7 @@ var DefaultDateComponent = /** @class */ (function (_super) {
     DefaultDateComponent.prototype.init = function (params) {
         var _this = this;
         if (this.shouldUseBrowserDatePicker(params)) {
-            if (utils_1._.isBrowserIE()) {
+            if (browser_1.isBrowserIE()) {
                 console.warn('ag-grid: browserDatePicker is specified to true, but it is not supported in IE 11, reverting to plain text date picker');
             }
             else {
@@ -52,10 +53,10 @@ var DefaultDateComponent = /** @class */ (function (_super) {
         });
     };
     DefaultDateComponent.prototype.getDate = function () {
-        return utils_1._.parseDateTimeFromString(this.eDateInput.getValue());
+        return date_1.parseDateTimeFromString(this.eDateInput.getValue());
     };
     DefaultDateComponent.prototype.setDate = function (date) {
-        this.eDateInput.setValue(utils_1._.serialiseDate(date));
+        this.eDateInput.setValue(date_1.serialiseDate(date, false));
     };
     DefaultDateComponent.prototype.setInputPlaceholder = function (placeholder) {
         this.eDateInput.setInputPlaceholder(placeholder);
@@ -65,7 +66,7 @@ var DefaultDateComponent = /** @class */ (function (_super) {
             return params.filterParams.browserDatePicker;
         }
         else {
-            return utils_1._.isBrowserChrome() || utils_1._.isBrowserFirefox();
+            return browser_1.isBrowserChrome() || browser_1.isBrowserFirefox();
         }
     };
     __decorate([

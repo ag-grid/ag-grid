@@ -370,7 +370,7 @@ __webpack_require__.d(__webpack_exports__, "a", function() { return /* binding *
 // EXTERNAL MODULE: ../core/dist/es6/widgets/component.js
 var component = __webpack_require__("6045");
 
-// EXTERNAL MODULE: ../core/dist/es6/utils/index.js + 16 modules
+// EXTERNAL MODULE: ../core/dist/es6/utils/index.js + 14 modules
 var utils = __webpack_require__("e3d3");
 
 // EXTERNAL MODULE: ../core/dist/es6/widgets/componentAnnotations.js
@@ -815,7 +815,7 @@ var context = __webpack_require__("d196");
 // EXTERNAL MODULE: ../core/dist/es6/constants.js
 var constants = __webpack_require__("f2fb");
 
-// EXTERNAL MODULE: ../core/dist/es6/utils/index.js + 16 modules
+// EXTERNAL MODULE: ../core/dist/es6/utils/index.js + 14 modules
 var utils = __webpack_require__("e3d3");
 
 // CONCATENATED MODULE: ../core/dist/es6/widgets/agList.js
@@ -2658,7 +2658,7 @@ var ValueFormatterService = /** @class */ (function () {
             return colDef.refData[value] || '';
         }
         // if we don't do this, then arrays get displayed as 1,2,3, but we want 1, 2, 3 (ie with spaces)
-        if (result != null && Array.isArray(value)) {
+        if (result == null && Array.isArray(value)) {
             result = value.join(', ');
         }
         return result;
@@ -7347,7 +7347,7 @@ var hoverFeature = __webpack_require__("cc17");
 // EXTERNAL MODULE: ../core/dist/es6/widgets/tooltipFeature.js
 var tooltipFeature = __webpack_require__("261e");
 
-// EXTERNAL MODULE: ../core/dist/es6/utils/index.js + 16 modules
+// EXTERNAL MODULE: ../core/dist/es6/utils/index.js + 14 modules
 var utils = __webpack_require__("e3d3");
 
 // CONCATENATED MODULE: ../core/dist/es6/headerRendering/headerGroup/headerGroupWrapperComp.js
@@ -10047,6 +10047,82 @@ function AngularDirectiveController($element, $scope, $compile, $attrs) {
         grid.destroy();
         grid = null;
     });
+}
+
+
+/***/ }),
+
+/***/ "5dca":
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "serialiseDate", function() { return serialiseDate; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "parseDateTimeFromString", function() { return parseDateTimeFromString; });
+/* harmony import */ var _number__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("95a8");
+/**
+ * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
+ * @version v23.1.1
+ * @link http://www.ag-grid.com/
+ * @license MIT
+ */
+
+/**
+ * Serialises a Date to a string of format `yyyy-MM-dd HH:mm:ss`.
+ * An alternative separator can be provided to be used instead of hyphens.
+ * @param date The date to serialise
+ * @param includeTime Whether to include the time in the serialised string
+ * @param separator The separator to use between date parts
+ */
+function serialiseDate(date, includeTime, separator) {
+    if (includeTime === void 0) { includeTime = true; }
+    if (separator === void 0) { separator = '-'; }
+    if (!date) {
+        return null;
+    }
+    var serialised = [date.getFullYear(), date.getMonth() + 1, date.getDate()].map(function (part) { return Object(_number__WEBPACK_IMPORTED_MODULE_0__["padStart"])(part, 2); }).join(separator);
+    if (includeTime) {
+        serialised += ' ' + [date.getHours(), date.getMinutes(), date.getSeconds()].map(function (part) { return Object(_number__WEBPACK_IMPORTED_MODULE_0__["padStart"])(part, 2); }).join(':');
+    }
+    return serialised;
+}
+/**
+ * Parses a date and time from a string in the format `yyyy-MM-dd HH:mm:ss`
+ */
+function parseDateTimeFromString(value) {
+    if (!value) {
+        return null;
+    }
+    var _a = value.split(' '), dateStr = _a[0], timeStr = _a[1];
+    if (!dateStr) {
+        return null;
+    }
+    var fields = dateStr.split('-').map(function (f) { return parseInt(f, 10); });
+    if (fields.filter(function (f) { return !isNaN(f); }).length !== 3) {
+        return null;
+    }
+    var year = fields[0], month = fields[1], day = fields[2];
+    var date = new Date(year, month - 1, day);
+    if (date.getFullYear() !== year ||
+        date.getMonth() !== month - 1 ||
+        date.getDate() !== day) {
+        // date was not parsed as expected so must have been invalid
+        return null;
+    }
+    if (!timeStr || timeStr === '00:00:00') {
+        return date;
+    }
+    var _b = timeStr.split(':').map(function (part) { return parseInt(part, 10); }), hours = _b[0], minutes = _b[1], seconds = _b[2];
+    if (hours >= 0 && hours < 24) {
+        date.setHours(hours);
+    }
+    if (minutes >= 0 && minutes < 60) {
+        date.setMinutes(minutes);
+    }
+    if (seconds >= 0 && seconds < 60) {
+        date.setSeconds(seconds);
+    }
+    return date;
 }
 
 
@@ -16401,7 +16477,7 @@ var eventKeys = __webpack_require__("9bc1");
 // EXTERNAL MODULE: ../core/dist/es6/context/beanStub.js
 var beanStub = __webpack_require__("ab2d");
 
-// EXTERNAL MODULE: ../core/dist/es6/utils/index.js + 16 modules
+// EXTERNAL MODULE: ../core/dist/es6/utils/index.js + 14 modules
 var utils = __webpack_require__("e3d3");
 
 // CONCATENATED MODULE: ../core/dist/es6/rendering/rowDragComp.js
@@ -17650,10 +17726,10 @@ var cellComp_CellComp = /** @class */ (function (_super) {
         };
         var position = this.cellEditor && this.cellEditor.getPopupPosition ? this.cellEditor.getPopupPosition() : 'over';
         if (position === 'under') {
-            this.beans.popupService.positionPopupOverComponent(params);
+            this.beans.popupService.positionPopupUnderComponent(params);
         }
         else {
-            this.beans.popupService.positionPopupUnderComponent(params);
+            this.beans.popupService.positionPopupOverComponent(params);
         }
         this.angular1Compile();
     };
@@ -19631,6 +19707,98 @@ var FocusController = /** @class */ (function () {
 
 /***/ }),
 
+/***/ "95a8":
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "padStart", function() { return padStart; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "createArrayOfNumbers", function() { return createArrayOfNumbers; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "isNumeric", function() { return isNumeric; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getMaxSafeInteger", function() { return getMaxSafeInteger; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "cleanNumber", function() { return cleanNumber; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "decToHex", function() { return decToHex; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "formatNumberTwoDecimalPlacesAndCommas", function() { return formatNumberTwoDecimalPlacesAndCommas; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "formatNumberCommas", function() { return formatNumberCommas; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "sum", function() { return sum; });
+/**
+ * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
+ * @version v23.1.1
+ * @link http://www.ag-grid.com/
+ * @license MIT
+ */
+function padStart(value, totalStringSize) {
+    var asString = "" + value;
+    while (asString.length < totalStringSize) {
+        asString = "0" + asString;
+    }
+    return asString;
+}
+function createArrayOfNumbers(first, last) {
+    var result = [];
+    for (var i = first; i <= last; i++) {
+        result.push(i);
+    }
+    return result;
+}
+/**
+ * Check if a value is numeric
+ * from http://stackoverflow.com/questions/9716468/is-there-any-function-like-isnumeric-in-javascript-to-validate-numbers
+ * @param {any} value
+ * @return {boolean}
+ */
+function isNumeric(value) {
+    return value !== '' && !isNaN(parseFloat(value)) && isFinite(value);
+}
+function getMaxSafeInteger() {
+    // eslint-disable-next-line
+    return Number.MAX_SAFE_INTEGER || 9007199254740991;
+}
+function cleanNumber(value) {
+    if (typeof value === 'string') {
+        value = parseInt(value, 10);
+    }
+    if (typeof value === 'number') {
+        return Math.floor(value);
+    }
+    else {
+        return null;
+    }
+}
+function decToHex(number, bytes) {
+    var hex = '';
+    for (var i = 0; i < bytes; i++) {
+        hex += String.fromCharCode(number & 0xff);
+        number >>>= 8;
+    }
+    return hex;
+}
+function formatNumberTwoDecimalPlacesAndCommas(value) {
+    if (typeof value !== 'number') {
+        return '';
+    }
+    return formatNumberCommas(Math.round(value * 100) / 100);
+}
+/**
+ * the native method number.toLocaleString(undefined, {minimumFractionDigits: 0})
+ * puts in decimal places in IE, so we use this method instead
+ * from: http://blog.tompawlak.org/number-currency-formatting-javascript
+ * @param {number} value
+ * @returns {string}
+ */
+function formatNumberCommas(value) {
+    if (typeof value !== 'number') {
+        return '';
+    }
+    return value.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,");
+}
+function sum(values) {
+    return values == null ? null : values.reduce(function (total, value) { return total + value; }, 0);
+}
+
+
+/***/ }),
+
 /***/ "961a":
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
@@ -20193,6 +20361,11 @@ var PopupEditorWrapper = /** @class */ (function (_super) {
             return this.cellEditor.isCancelAfterEnd();
         }
     };
+    PopupEditorWrapper.prototype.getPopupPosition = function () {
+        if (this.cellEditor.getPopupPosition) {
+            return this.cellEditor.getPopupPosition();
+        }
+    };
     PopupEditorWrapper.prototype.focusIn = function () {
         if (this.cellEditor.focusIn) {
             this.cellEditor.focusIn();
@@ -20543,10 +20716,11 @@ var Events = /** @class */ (function () {
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return DateFilter; });
 /* harmony import */ var _widgets_componentAnnotations__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__("f737");
 /* harmony import */ var _context_context__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__("d196");
-/* harmony import */ var _utils__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("e3d3");
-/* harmony import */ var _dateCompWrapper__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("1790");
-/* harmony import */ var _simpleFilter__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("937d");
-/* harmony import */ var _scalarFilter__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__("963e");
+/* harmony import */ var _dateCompWrapper__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__("1790");
+/* harmony import */ var _simpleFilter__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__("937d");
+/* harmony import */ var _scalarFilter__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__("963e");
+/* harmony import */ var _utils_date__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__("5dca");
+/* harmony import */ var _utils_dom__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__("683d");
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
  * @version v23.1.1
@@ -20578,6 +20752,7 @@ var __decorate = (undefined && undefined.__decorate) || function (decorators, ta
 
 
 
+
 var DateFilter = /** @class */ (function (_super) {
     __extends(DateFilter, _super);
     function DateFilter() {
@@ -20593,13 +20768,13 @@ var DateFilter = /** @class */ (function (_super) {
         //       a date from the UI, it will have timezone info in it. This is lost when creating
         //       the model. When we recreate the date again here, it's without a timezone.
         return {
-            from: _utils__WEBPACK_IMPORTED_MODULE_2__[/* _ */ "d"].parseDateTimeFromString(filterModel.dateFrom),
-            to: _utils__WEBPACK_IMPORTED_MODULE_2__[/* _ */ "d"].parseDateTimeFromString(filterModel.dateTo)
+            from: Object(_utils_date__WEBPACK_IMPORTED_MODULE_5__["parseDateTimeFromString"])(filterModel.dateFrom),
+            to: Object(_utils_date__WEBPACK_IMPORTED_MODULE_5__["parseDateTimeFromString"])(filterModel.dateTo)
         };
     };
     DateFilter.prototype.setValueFromFloatingFilter = function (value) {
         if (value != null) {
-            var dateFrom = _utils__WEBPACK_IMPORTED_MODULE_2__[/* _ */ "d"].parseDateTimeFromString(value);
+            var dateFrom = Object(_utils_date__WEBPACK_IMPORTED_MODULE_5__["parseDateTimeFromString"])(value);
             this.dateCondition1FromComp.setDate(dateFrom);
         }
         else {
@@ -20611,7 +20786,7 @@ var DateFilter = /** @class */ (function (_super) {
     };
     DateFilter.prototype.setConditionIntoUi = function (model, position) {
         var _a = model ?
-            [_utils__WEBPACK_IMPORTED_MODULE_2__[/* _ */ "d"].parseDateTimeFromString(model.dateFrom), _utils__WEBPACK_IMPORTED_MODULE_2__[/* _ */ "d"].parseDateTimeFromString(model.dateTo)] :
+            [Object(_utils_date__WEBPACK_IMPORTED_MODULE_5__["parseDateTimeFromString"])(model.dateFrom), Object(_utils_date__WEBPACK_IMPORTED_MODULE_5__["parseDateTimeFromString"])(model.dateTo)] :
             [null, null], dateFrom = _a[0], dateTo = _a[1];
         var _b = this.getFromToComponents(position), compFrom = _b[0], compTo = _b[1];
         compFrom.setDate(dateFrom);
@@ -20650,10 +20825,10 @@ var DateFilter = /** @class */ (function (_super) {
             onDateChanged: function () { return _this.onUiChanged(); },
             filterParams: this.dateFilterParams
         };
-        this.dateCondition1FromComp = new _dateCompWrapper__WEBPACK_IMPORTED_MODULE_3__[/* DateCompWrapper */ "a"](this.userComponentFactory, dateComponentParams, this.eCondition1PanelFrom);
-        this.dateCondition1ToComp = new _dateCompWrapper__WEBPACK_IMPORTED_MODULE_3__[/* DateCompWrapper */ "a"](this.userComponentFactory, dateComponentParams, this.eCondition1PanelTo);
-        this.dateCondition2FromComp = new _dateCompWrapper__WEBPACK_IMPORTED_MODULE_3__[/* DateCompWrapper */ "a"](this.userComponentFactory, dateComponentParams, this.eCondition2PanelFrom);
-        this.dateCondition2ToComp = new _dateCompWrapper__WEBPACK_IMPORTED_MODULE_3__[/* DateCompWrapper */ "a"](this.userComponentFactory, dateComponentParams, this.eCondition2PanelTo);
+        this.dateCondition1FromComp = new _dateCompWrapper__WEBPACK_IMPORTED_MODULE_2__[/* DateCompWrapper */ "a"](this.userComponentFactory, dateComponentParams, this.eCondition1PanelFrom);
+        this.dateCondition1ToComp = new _dateCompWrapper__WEBPACK_IMPORTED_MODULE_2__[/* DateCompWrapper */ "a"](this.userComponentFactory, dateComponentParams, this.eCondition1PanelTo);
+        this.dateCondition2FromComp = new _dateCompWrapper__WEBPACK_IMPORTED_MODULE_2__[/* DateCompWrapper */ "a"](this.userComponentFactory, dateComponentParams, this.eCondition2PanelFrom);
+        this.dateCondition2ToComp = new _dateCompWrapper__WEBPACK_IMPORTED_MODULE_2__[/* DateCompWrapper */ "a"](this.userComponentFactory, dateComponentParams, this.eCondition2PanelTo);
         this.addDestroyFunc(function () {
             _this.dateCondition1FromComp.destroy();
             _this.dateCondition1ToComp.destroy();
@@ -20665,20 +20840,20 @@ var DateFilter = /** @class */ (function (_super) {
         return DateFilter.DEFAULT_FILTER_OPTIONS;
     };
     DateFilter.prototype.createValueTemplate = function (position) {
-        var pos = position === _simpleFilter__WEBPACK_IMPORTED_MODULE_4__[/* ConditionPosition */ "a"].One ? '1' : '2';
+        var pos = position === _simpleFilter__WEBPACK_IMPORTED_MODULE_3__[/* ConditionPosition */ "a"].One ? '1' : '2';
         return /* html */ "\n            <div class=\"ag-filter-body\" ref=\"eCondition" + pos + "Body\">\n                <div class=\"ag-filter-from ag-filter-date-from\" ref=\"eCondition" + pos + "PanelFrom\">\n                </div>\n                <div class=\"ag-filter-to ag-filter-date-to\" ref=\"eCondition" + pos + "PanelTo\">\n                </div>\n            </div>";
     };
     DateFilter.prototype.isConditionUiComplete = function (position) {
-        var positionOne = position === _simpleFilter__WEBPACK_IMPORTED_MODULE_4__[/* ConditionPosition */ "a"].One;
+        var positionOne = position === _simpleFilter__WEBPACK_IMPORTED_MODULE_3__[/* ConditionPosition */ "a"].One;
         var option = positionOne ? this.getCondition1Type() : this.getCondition2Type();
-        if (option === _simpleFilter__WEBPACK_IMPORTED_MODULE_4__[/* SimpleFilter */ "b"].EMPTY) {
+        if (option === _simpleFilter__WEBPACK_IMPORTED_MODULE_3__[/* SimpleFilter */ "b"].EMPTY) {
             return false;
         }
         if (this.doesFilterHaveHiddenInput(option)) {
             return true;
         }
         var _a = this.getFromToComponents(position), compFrom = _a[0], compTo = _a[1];
-        return compFrom.getDate() != null && (option !== _simpleFilter__WEBPACK_IMPORTED_MODULE_4__[/* SimpleFilter */ "b"].IN_RANGE || compTo.getDate() != null);
+        return compFrom.getDate() != null && (option !== _simpleFilter__WEBPACK_IMPORTED_MODULE_3__[/* SimpleFilter */ "b"].IN_RANGE || compTo.getDate() != null);
     };
     DateFilter.prototype.areSimpleModelsEqual = function (aSimple, bSimple) {
         return aSimple.dateFrom === bSimple.dateFrom
@@ -20690,14 +20865,12 @@ var DateFilter = /** @class */ (function (_super) {
         return DateFilter.FILTER_TYPE;
     };
     DateFilter.prototype.createCondition = function (position) {
-        var positionOne = position === _simpleFilter__WEBPACK_IMPORTED_MODULE_4__[/* ConditionPosition */ "a"].One;
+        var positionOne = position === _simpleFilter__WEBPACK_IMPORTED_MODULE_3__[/* ConditionPosition */ "a"].One;
         var type = positionOne ? this.getCondition1Type() : this.getCondition2Type();
         var _a = this.getFromToComponents(position), compFrom = _a[0], compTo = _a[1];
-        var dateFrom = compFrom.getDate();
-        var dateTo = compTo.getDate();
         return {
-            dateFrom: _utils__WEBPACK_IMPORTED_MODULE_2__[/* _ */ "d"].serialiseDate(dateFrom) + " " + _utils__WEBPACK_IMPORTED_MODULE_2__[/* _ */ "d"].serialiseTime(dateFrom),
-            dateTo: _utils__WEBPACK_IMPORTED_MODULE_2__[/* _ */ "d"].serialiseDate(dateTo) + " " + _utils__WEBPACK_IMPORTED_MODULE_2__[/* _ */ "d"].serialiseTime(dateTo),
+            dateFrom: Object(_utils_date__WEBPACK_IMPORTED_MODULE_5__["serialiseDate"])(compFrom.getDate()),
+            dateTo: Object(_utils_date__WEBPACK_IMPORTED_MODULE_5__["serialiseDate"])(compTo.getDate()),
             type: type,
             filterType: DateFilter.FILTER_TYPE
         };
@@ -20714,24 +20887,24 @@ var DateFilter = /** @class */ (function (_super) {
         _super.prototype.updateUiVisibility.call(this);
         this.resetPlaceholder();
         var condition1Type = this.getCondition1Type();
-        _utils__WEBPACK_IMPORTED_MODULE_2__[/* _ */ "d"].setDisplayed(this.eCondition1PanelFrom, this.showValueFrom(condition1Type));
-        _utils__WEBPACK_IMPORTED_MODULE_2__[/* _ */ "d"].setDisplayed(this.eCondition1PanelTo, this.showValueTo(condition1Type));
+        Object(_utils_dom__WEBPACK_IMPORTED_MODULE_6__["setDisplayed"])(this.eCondition1PanelFrom, this.showValueFrom(condition1Type));
+        Object(_utils_dom__WEBPACK_IMPORTED_MODULE_6__["setDisplayed"])(this.eCondition1PanelTo, this.showValueTo(condition1Type));
         var condition2Type = this.getCondition2Type();
-        _utils__WEBPACK_IMPORTED_MODULE_2__[/* _ */ "d"].setDisplayed(this.eCondition2PanelFrom, this.showValueFrom(condition2Type));
-        _utils__WEBPACK_IMPORTED_MODULE_2__[/* _ */ "d"].setDisplayed(this.eCondition2PanelTo, this.showValueTo(condition2Type));
+        Object(_utils_dom__WEBPACK_IMPORTED_MODULE_6__["setDisplayed"])(this.eCondition2PanelFrom, this.showValueFrom(condition2Type));
+        Object(_utils_dom__WEBPACK_IMPORTED_MODULE_6__["setDisplayed"])(this.eCondition2PanelTo, this.showValueTo(condition2Type));
     };
     DateFilter.prototype.getFromToComponents = function (position) {
-        return position === _simpleFilter__WEBPACK_IMPORTED_MODULE_4__[/* ConditionPosition */ "a"].One ?
+        return position === _simpleFilter__WEBPACK_IMPORTED_MODULE_3__[/* ConditionPosition */ "a"].One ?
             [this.dateCondition1FromComp, this.dateCondition1ToComp] :
             [this.dateCondition2FromComp, this.dateCondition2ToComp];
     };
     DateFilter.FILTER_TYPE = 'date';
     DateFilter.DEFAULT_FILTER_OPTIONS = [
-        _scalarFilter__WEBPACK_IMPORTED_MODULE_5__[/* ScalarFilter */ "a"].EQUALS,
-        _scalarFilter__WEBPACK_IMPORTED_MODULE_5__[/* ScalarFilter */ "a"].GREATER_THAN,
-        _scalarFilter__WEBPACK_IMPORTED_MODULE_5__[/* ScalarFilter */ "a"].LESS_THAN,
-        _scalarFilter__WEBPACK_IMPORTED_MODULE_5__[/* ScalarFilter */ "a"].NOT_EQUAL,
-        _scalarFilter__WEBPACK_IMPORTED_MODULE_5__[/* ScalarFilter */ "a"].IN_RANGE
+        _scalarFilter__WEBPACK_IMPORTED_MODULE_4__[/* ScalarFilter */ "a"].EQUALS,
+        _scalarFilter__WEBPACK_IMPORTED_MODULE_4__[/* ScalarFilter */ "a"].GREATER_THAN,
+        _scalarFilter__WEBPACK_IMPORTED_MODULE_4__[/* ScalarFilter */ "a"].LESS_THAN,
+        _scalarFilter__WEBPACK_IMPORTED_MODULE_4__[/* ScalarFilter */ "a"].NOT_EQUAL,
+        _scalarFilter__WEBPACK_IMPORTED_MODULE_4__[/* ScalarFilter */ "a"].IN_RANGE
     ];
     __decorate([
         Object(_widgets_componentAnnotations__WEBPACK_IMPORTED_MODULE_0__[/* RefSelector */ "a"])('eCondition1PanelFrom')
@@ -20749,7 +20922,7 @@ var DateFilter = /** @class */ (function (_super) {
         Object(_context_context__WEBPACK_IMPORTED_MODULE_1__[/* Autowired */ "a"])('userComponentFactory')
     ], DateFilter.prototype, "userComponentFactory", void 0);
     return DateFilter;
-}(_scalarFilter__WEBPACK_IMPORTED_MODULE_5__[/* ScalarFilter */ "a"]));
+}(_scalarFilter__WEBPACK_IMPORTED_MODULE_4__[/* ScalarFilter */ "a"]));
 
 
 
@@ -23338,7 +23511,7 @@ var componentAnnotations = __webpack_require__("f737");
 // EXTERNAL MODULE: ../core/dist/es6/events.js
 var events = __webpack_require__("1284");
 
-// EXTERNAL MODULE: ../core/dist/es6/utils/index.js + 16 modules
+// EXTERNAL MODULE: ../core/dist/es6/utils/index.js + 14 modules
 var utils = __webpack_require__("e3d3");
 
 // CONCATENATED MODULE: ../core/dist/es6/headerRendering/header/headerComp.js
@@ -23967,6 +24140,12 @@ var TooltipComponent = /** @class */ (function (_super) {
 }(popupComponent["a" /* PopupComponent */]));
 
 
+// EXTERNAL MODULE: ../core/dist/es6/utils/date.js
+var utils_date = __webpack_require__("5dca");
+
+// EXTERNAL MODULE: ../core/dist/es6/utils/browser.js
+var browser = __webpack_require__("d62c");
+
 // CONCATENATED MODULE: ../core/dist/es6/filter/provided/date/defaultDateComponent.js
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
@@ -23996,6 +24175,7 @@ var defaultDateComponent_decorate = (undefined && undefined.__decorate) || funct
 
 
 
+
 var defaultDateComponent_DefaultDateComponent = /** @class */ (function (_super) {
     defaultDateComponent_extends(DefaultDateComponent, _super);
     function DefaultDateComponent() {
@@ -24004,7 +24184,7 @@ var defaultDateComponent_DefaultDateComponent = /** @class */ (function (_super)
     DefaultDateComponent.prototype.init = function (params) {
         var _this = this;
         if (this.shouldUseBrowserDatePicker(params)) {
-            if (utils["d" /* _ */].isBrowserIE()) {
+            if (Object(browser["isBrowserIE"])()) {
                 console.warn('ag-grid: browserDatePicker is specified to true, but it is not supported in IE 11, reverting to plain text date picker');
             }
             else {
@@ -24020,10 +24200,10 @@ var defaultDateComponent_DefaultDateComponent = /** @class */ (function (_super)
         });
     };
     DefaultDateComponent.prototype.getDate = function () {
-        return utils["d" /* _ */].parseDateTimeFromString(this.eDateInput.getValue());
+        return Object(utils_date["parseDateTimeFromString"])(this.eDateInput.getValue());
     };
     DefaultDateComponent.prototype.setDate = function (date) {
-        this.eDateInput.setValue(utils["d" /* _ */].serialiseDate(date));
+        this.eDateInput.setValue(Object(utils_date["serialiseDate"])(date, false));
     };
     DefaultDateComponent.prototype.setInputPlaceholder = function (placeholder) {
         this.eDateInput.setInputPlaceholder(placeholder);
@@ -24033,7 +24213,7 @@ var defaultDateComponent_DefaultDateComponent = /** @class */ (function (_super)
             return params.filterParams.browserDatePicker;
         }
         else {
-            return utils["d" /* _ */].isBrowserChrome() || utils["d" /* _ */].isBrowserFirefox();
+            return Object(browser["isBrowserChrome"])() || Object(browser["isBrowserFirefox"])();
         }
     };
     defaultDateComponent_decorate([
@@ -24167,6 +24347,12 @@ var simpleFloatingFilter_SimpleFloatingFilter = /** @class */ (function (_super)
 // EXTERNAL MODULE: ../core/dist/es6/filter/provided/providedFilter.js
 var providedFilter = __webpack_require__("b5e7");
 
+// EXTERNAL MODULE: ../core/dist/es6/utils/dom.js
+var dom = __webpack_require__("683d");
+
+// EXTERNAL MODULE: ../core/dist/es6/utils/function.js
+var utils_function = __webpack_require__("ba38");
+
 // CONCATENATED MODULE: ../core/dist/es6/filter/provided/date/dateFloatingFilter.js
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
@@ -24201,6 +24387,8 @@ var dateFloatingFilter_decorate = (undefined && undefined.__decorate) || functio
 
 
 
+
+
 var dateFloatingFilter_DateFloatingFilter = /** @class */ (function (_super) {
     dateFloatingFilter_extends(DateFloatingFilter, _super);
     function DateFloatingFilter() {
@@ -24226,8 +24414,8 @@ var dateFloatingFilter_DateFloatingFilter = /** @class */ (function (_super) {
         this.eReadOnlyText.setDisabled(true);
     };
     DateFloatingFilter.prototype.setEditable = function (editable) {
-        utils["d" /* _ */].setDisplayed(this.eDateWrapper, editable);
-        utils["d" /* _ */].setDisplayed(this.eReadOnlyText.getGui(), !editable);
+        Object(dom["setDisplayed"])(this.eDateWrapper, editable);
+        Object(dom["setDisplayed"])(this.eReadOnlyText.getGui(), !editable);
     };
     DateFloatingFilter.prototype.onParentModelChanged = function (model, event) {
         // We don't want to update the floating filter if the floating filter caused the change,
@@ -24242,7 +24430,7 @@ var dateFloatingFilter_DateFloatingFilter = /** @class */ (function (_super) {
         if (allowEditing) {
             if (model) {
                 var dateModel = model;
-                this.dateComp.setDate(utils["d" /* _ */].parseDateTimeFromString(dateModel.dateFrom));
+                this.dateComp.setDate(Object(utils_date["parseDateTimeFromString"])(dateModel.dateFrom));
             }
             else {
                 this.dateComp.setDate(null);
@@ -24257,7 +24445,7 @@ var dateFloatingFilter_DateFloatingFilter = /** @class */ (function (_super) {
     DateFloatingFilter.prototype.onDateChanged = function () {
         var _this = this;
         var filterValueDate = this.dateComp.getDate();
-        var filterValueText = utils["d" /* _ */].serialiseDate(filterValueDate) + " " + utils["d" /* _ */].serialiseTime(filterValueDate);
+        var filterValueText = Object(utils_date["serialiseDate"])(filterValueDate);
         this.params.parentFilterInstance(function (filterInstance) {
             if (filterInstance) {
                 var simpleFilter = filterInstance;
@@ -24269,7 +24457,7 @@ var dateFloatingFilter_DateFloatingFilter = /** @class */ (function (_super) {
         var _this = this;
         var debounceMs = providedFilter["a" /* ProvidedFilter */].getDebounceMs(this.params.filterParams, this.getDefaultDebounceMs());
         var dateComponentParams = {
-            onDateChanged: utils["d" /* _ */].debounce(this.onDateChanged.bind(this), debounceMs),
+            onDateChanged: Object(utils_function["debounce"])(this.onDateChanged.bind(this), debounceMs),
             filterParams: this.params.column.getColDef().filterParams
         };
         this.dateComp = new dateCompWrapper["a" /* DateCompWrapper */](this.userComponentFactory, dateComponentParams, this.eDateWrapper);
@@ -24290,9 +24478,6 @@ var dateFloatingFilter_DateFloatingFilter = /** @class */ (function (_super) {
 
 // EXTERNAL MODULE: ../core/dist/es6/filter/provided/text/textFilter.js
 var textFilter = __webpack_require__("3bf7");
-
-// EXTERNAL MODULE: ../core/dist/es6/utils/function.js
-var utils_function = __webpack_require__("ba38");
 
 // EXTERNAL MODULE: ../core/dist/es6/constants.js
 var constants = __webpack_require__("f2fb");
@@ -25404,7 +25589,7 @@ var DefaultColumnTypes = {
     }
 };
 
-// EXTERNAL MODULE: ../core/dist/es6/utils/index.js + 16 modules
+// EXTERNAL MODULE: ../core/dist/es6/utils/index.js + 14 modules
 var utils = __webpack_require__("e3d3");
 
 // CONCATENATED MODULE: ../core/dist/es6/columnController/columnFactory.js
@@ -25998,7 +26183,7 @@ var es6_events = __webpack_require__("1284");
 // EXTERNAL MODULE: ../core/dist/es6/constants.js
 var constants = __webpack_require__("f2fb");
 
-// EXTERNAL MODULE: ../core/dist/es6/utils/index.js + 16 modules
+// EXTERNAL MODULE: ../core/dist/es6/utils/index.js + 14 modules
 var utils = __webpack_require__("e3d3");
 
 // CONCATENATED MODULE: ../core/dist/es6/rendering/rowContainerComponent.js
@@ -30381,7 +30566,7 @@ var entities_column = __webpack_require__("77ff");
 // EXTERNAL MODULE: ../core/dist/es6/constants.js
 var constants = __webpack_require__("f2fb");
 
-// EXTERNAL MODULE: ../core/dist/es6/utils/index.js + 16 modules
+// EXTERNAL MODULE: ../core/dist/es6/utils/index.js + 14 modules
 var utils = __webpack_require__("e3d3");
 
 // CONCATENATED MODULE: ../core/dist/es6/columnController/autoGroupColService.js
@@ -30839,7 +31024,7 @@ var componentMetadataProvider_ComponentMetadataProvider = /** @class */ (functio
             },
             cellEditor: {
                 mandatoryMethodList: ['getValue'],
-                optionalMethodList: ['isPopup', 'isCancelBeforeStart', 'isCancelAfterEnd', 'focusIn', 'focusOut', 'afterGuiAttached']
+                optionalMethodList: ['isPopup', 'isCancelBeforeStart', 'isCancelAfterEnd', 'getPopupPosition', 'focusIn', 'focusOut', 'afterGuiAttached']
             },
             innerRenderer: {
                 mandatoryMethodList: [],
@@ -34418,26 +34603,6 @@ __webpack_require__.d(general_namespaceObject, "cssStyleObjectToMarkup", functio
 __webpack_require__.d(general_namespaceObject, "message", function() { return message; });
 __webpack_require__.d(general_namespaceObject, "bindCellRendererToHtmlElement", function() { return bindCellRendererToHtmlElement; });
 
-// NAMESPACE OBJECT: ../core/dist/es6/utils/number.js
-var number_namespaceObject = {};
-__webpack_require__.r(number_namespaceObject);
-__webpack_require__.d(number_namespaceObject, "padStart", function() { return padStart; });
-__webpack_require__.d(number_namespaceObject, "createArrayOfNumbers", function() { return createArrayOfNumbers; });
-__webpack_require__.d(number_namespaceObject, "isNumeric", function() { return isNumeric; });
-__webpack_require__.d(number_namespaceObject, "getMaxSafeInteger", function() { return getMaxSafeInteger; });
-__webpack_require__.d(number_namespaceObject, "cleanNumber", function() { return cleanNumber; });
-__webpack_require__.d(number_namespaceObject, "decToHex", function() { return decToHex; });
-__webpack_require__.d(number_namespaceObject, "formatNumberTwoDecimalPlacesAndCommas", function() { return formatNumberTwoDecimalPlacesAndCommas; });
-__webpack_require__.d(number_namespaceObject, "formatNumberCommas", function() { return formatNumberCommas; });
-__webpack_require__.d(number_namespaceObject, "sum", function() { return sum; });
-
-// NAMESPACE OBJECT: ../core/dist/es6/utils/date.js
-var date_namespaceObject = {};
-__webpack_require__.r(date_namespaceObject);
-__webpack_require__.d(date_namespaceObject, "serialiseDate", function() { return serialiseDate; });
-__webpack_require__.d(date_namespaceObject, "serialiseTime", function() { return serialiseTime; });
-__webpack_require__.d(date_namespaceObject, "parseDateTimeFromString", function() { return parseDateTimeFromString; });
-
 // NAMESPACE OBJECT: ../core/dist/es6/utils/event.js
 var event_namespaceObject = {};
 __webpack_require__.r(event_namespaceObject);
@@ -35266,148 +35431,8 @@ var array = __webpack_require__("26c1");
 // EXTERNAL MODULE: ../core/dist/es6/utils/browser.js
 var browser = __webpack_require__("d62c");
 
-// CONCATENATED MODULE: ../core/dist/es6/utils/number.js
-/**
- * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v23.1.1
- * @link http://www.ag-grid.com/
- * @license MIT
- */
-function padStart(value, totalStringSize) {
-    var asString = "" + value;
-    while (asString.length < totalStringSize) {
-        asString = "0" + asString;
-    }
-    return asString;
-}
-function createArrayOfNumbers(first, last) {
-    var result = [];
-    for (var i = first; i <= last; i++) {
-        result.push(i);
-    }
-    return result;
-}
-/**
- * Check if a value is numeric
- * from http://stackoverflow.com/questions/9716468/is-there-any-function-like-isnumeric-in-javascript-to-validate-numbers
- * @param {any} value
- * @return {boolean}
- */
-function isNumeric(value) {
-    return value !== '' && !isNaN(parseFloat(value)) && isFinite(value);
-}
-function getMaxSafeInteger() {
-    // eslint-disable-next-line
-    return Number.MAX_SAFE_INTEGER || 9007199254740991;
-}
-function cleanNumber(value) {
-    if (typeof value === 'string') {
-        value = parseInt(value, 10);
-    }
-    if (typeof value === 'number') {
-        return Math.floor(value);
-    }
-    else {
-        return null;
-    }
-}
-function decToHex(number, bytes) {
-    var hex = '';
-    for (var i = 0; i < bytes; i++) {
-        hex += String.fromCharCode(number & 0xff);
-        number >>>= 8;
-    }
-    return hex;
-}
-function formatNumberTwoDecimalPlacesAndCommas(value) {
-    if (typeof value !== 'number') {
-        return '';
-    }
-    return formatNumberCommas(Math.round(value * 100) / 100);
-}
-/**
- * the native method number.toLocaleString(undefined, {minimumFractionDigits: 0})
- * puts in decimal places in IE, so we use this method instead
- * from: http://blog.tompawlak.org/number-currency-formatting-javascript
- * @param {number} value
- * @returns {string}
- */
-function formatNumberCommas(value) {
-    if (typeof value !== 'number') {
-        return '';
-    }
-    return value.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,");
-}
-function sum(values) {
-    return values == null ? null : values.reduce(function (total, value) { return total + value; }, 0);
-}
-
-// CONCATENATED MODULE: ../core/dist/es6/utils/date.js
-/**
- * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v23.1.1
- * @link http://www.ag-grid.com/
- * @license MIT
- */
-
-/**
- * Serialises a date to a string of format `yyyy-MM-dd`.
- * An alternative separator can be provided to be used instead of hyphens.
- */
-function serialiseDate(date, separator) {
-    if (separator === void 0) { separator = '-'; }
-    if (!date) {
-        return null;
-    }
-    return [date.getFullYear(), date.getMonth() + 1, date.getDate()].map(function (part) { return padStart(part, 2); }).join(separator);
-}
-/**
- * Serialises a time to a string of format `HH:mm:ss`.
- */
-function serialiseTime(date) {
-    if (!date) {
-        return null;
-    }
-    return [date.getHours(), date.getMinutes(), date.getSeconds()].map(function (part) { return padStart(part, 2); }).join(':');
-}
-/**
- * Parses a date and time from a string in the format `yyyy-MM-dd HH:mm:ss`
- */
-function parseDateTimeFromString(value) {
-    if (!value) {
-        return null;
-    }
-    var _a = value.split(' '), dateStr = _a[0], timeStr = _a[1];
-    if (!dateStr) {
-        return null;
-    }
-    var fields = dateStr.split('-').map(function (f) { return parseInt(f, 10); });
-    if (fields.filter(function (f) { return !isNaN(f); }).length !== 3) {
-        return null;
-    }
-    var year = fields[0], month = fields[1], day = fields[2];
-    var date = new Date(year, month - 1, day);
-    if (date.getFullYear() !== year ||
-        date.getMonth() !== month - 1 ||
-        date.getDate() !== day) {
-        // date was not parsed as expected so must have been invalid
-        return null;
-    }
-    if (!timeStr || timeStr === '00:00:00') {
-        return date;
-    }
-    var _b = timeStr.split(':').map(function (part) { return parseInt(part, 10); }), hours = _b[0], minutes = _b[1], seconds = _b[2];
-    if (hours >= 0 && hours < 24) {
-        date.setHours(hours);
-    }
-    if (minutes >= 0 && minutes < 60) {
-        date.setMinutes(minutes);
-    }
-    if (seconds >= 0 && seconds < 60) {
-        date.setSeconds(seconds);
-    }
-    return date;
-}
+// EXTERNAL MODULE: ../core/dist/es6/utils/date.js
+var date = __webpack_require__("5dca");
 
 // CONCATENATED MODULE: ../core/dist/es6/utils/event.js
 /**
@@ -35557,7 +35582,12 @@ function addSafePassiveEventListener(frameworkOverrides, eElement, event, listen
     var isOutsideAngular = Object(array["includes"])(OUTSIDE_ANGULAR_EVENTS, event);
     var options = isPassive ? { passive: true } : undefined;
     if (isOutsideAngular) {
-        frameworkOverrides.addEventListenerOutsideAngular(eElement, event, listener, options);
+        // this happens in certain scenarios where I believe the user must be destroying the grid somehow but continuing
+        // for it to be used
+        // don't fall through to the else part either - just don't add the listener
+        if (frameworkOverrides && frameworkOverrides.addEventListenerOutsideAngular) {
+            frameworkOverrides.addEventListenerOutsideAngular(eElement, event, listener, options);
+        }
     }
     else {
         eElement.addEventListener(event, listener, options);
@@ -35885,6 +35915,9 @@ function areEventsNear(e1, e2, pixelCount) {
     return Math.max(diffX, diffY) <= pixelCount;
 }
 
+// EXTERNAL MODULE: ../core/dist/es6/utils/number.js
+var number = __webpack_require__("95a8");
+
 // CONCATENATED MODULE: ../core/dist/es6/utils/rowNode.js
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
@@ -36016,7 +36049,7 @@ var __assign = (undefined && undefined.__assign) || function () {
 
 
 
-var utils = __assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign({}, general_namespaceObject), array), browser), csv_namespaceObject), date_namespaceObject), dom), event_namespaceObject), utils_function), fuzzyMatch_namespaceObject), generic), icon), keyboard), map_namespaceObject), mouse_namespaceObject), number_namespaceObject), object_namespaceObject), rowNode_namespaceObject), set_namespaceObject), string);
+var utils = __assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign({}, general_namespaceObject), array), browser), csv_namespaceObject), date), dom), event_namespaceObject), utils_function), fuzzyMatch_namespaceObject), generic), icon), keyboard), map_namespaceObject), mouse_namespaceObject), number), object_namespaceObject), rowNode_namespaceObject), set_namespaceObject), string);
 var _ = utils;
 
 // CONCATENATED MODULE: ../core/dist/es6/utils/numberSequence.js
@@ -37087,7 +37120,7 @@ var widgets_touchListener = __webpack_require__("86d8");
 // EXTERNAL MODULE: ../core/dist/es6/widgets/tooltipFeature.js
 var tooltipFeature = __webpack_require__("261e");
 
-// EXTERNAL MODULE: ../core/dist/es6/utils/index.js + 16 modules
+// EXTERNAL MODULE: ../core/dist/es6/utils/index.js + 14 modules
 var utils = __webpack_require__("e3d3");
 
 // CONCATENATED MODULE: ../core/dist/es6/headerRendering/header/headerWrapperComp.js
@@ -41141,7 +41174,7 @@ var context = __webpack_require__("d196");
 // EXTERNAL MODULE: ../core/dist/es6/components/framework/userComponentRegistry.js + 12 modules
 var userComponentRegistry = __webpack_require__("ad57");
 
-// EXTERNAL MODULE: ../core/dist/es6/utils/index.js + 16 modules
+// EXTERNAL MODULE: ../core/dist/es6/utils/index.js + 14 modules
 var utils = __webpack_require__("e3d3");
 
 // CONCATENATED MODULE: ../core/dist/es6/components/framework/componentTypes.js
@@ -41836,16 +41869,13 @@ function __generator(thisArg, body) {
     }
 }
 
-const __createBinding = Object.create ? (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    Object.defineProperty(o, k2, { enumerable: true, get: function() { return m[k]; } });
-}) : (function(o, m, k, k2) {
+function __createBinding(o, m, k, k2) {
     if (k2 === undefined) k2 = k;
     o[k2] = m[k];
-});
+}
 
 function __exportStar(m, exports) {
-    for (var p in m) if (p !== "default" && !exports.hasOwnProperty(p)) __createBinding(exports, m, p);
+    for (var p in m) if (p !== "default" && !exports.hasOwnProperty(p)) exports[p] = m[p];
 }
 
 function __values(o) {
@@ -41926,17 +41956,11 @@ function __makeTemplateObject(cooked, raw) {
     return cooked;
 };
 
-const __setModuleDefault = Object.create ? (function(o, v) {
-    Object.defineProperty(o, "default", { enumerable: true, value: v });
-}) : function(o, v) {
-    o["default"] = v;
-};
-
 function __importStar(mod) {
     if (mod && mod.__esModule) return mod;
     var result = {};
-    if (mod != null) for (var k in mod) if (Object.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
-    __setModuleDefault(result, mod);
+    if (mod != null) for (var k in mod) if (Object.hasOwnProperty.call(mod, k)) result[k] = mod[k];
+    result.default = mod;
     return result;
 }
 

@@ -125,7 +125,9 @@
     }
 
     .ag-row-hover {
-        @include ag-color-property(background-color, row-hover-color);
+        @if ag-param-is-set(row-hover-color) {
+            @include ag-color-property(background-color, row-hover-color);
+        }
     }
 
     .ag-right-aligned-cell {

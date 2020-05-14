@@ -2057,24 +2057,23 @@ var NumberUtils = /*#__PURE__*/Object.freeze({
  * @license MIT
  */
 /**
- * Serialises a date to a string of format `yyyy-MM-dd`.
+ * Serialises a Date to a string of format `yyyy-MM-dd HH:mm:ss`.
  * An alternative separator can be provided to be used instead of hyphens.
+ * @param date The date to serialise
+ * @param includeTime Whether to include the time in the serialised string
+ * @param separator The separator to use between date parts
  */
-function serialiseDate(date, separator) {
+function serialiseDate(date, includeTime, separator) {
+    if (includeTime === void 0) { includeTime = true; }
     if (separator === void 0) { separator = '-'; }
     if (!date) {
         return null;
     }
-    return [date.getFullYear(), date.getMonth() + 1, date.getDate()].map(function (part) { return padStart(part, 2); }).join(separator);
-}
-/**
- * Serialises a time to a string of format `HH:mm:ss`.
- */
-function serialiseTime(date) {
-    if (!date) {
-        return null;
+    var serialised = [date.getFullYear(), date.getMonth() + 1, date.getDate()].map(function (part) { return padStart(part, 2); }).join(separator);
+    if (includeTime) {
+        serialised += ' ' + [date.getHours(), date.getMinutes(), date.getSeconds()].map(function (part) { return padStart(part, 2); }).join(':');
     }
-    return [date.getHours(), date.getMinutes(), date.getSeconds()].map(function (part) { return padStart(part, 2); }).join(':');
+    return serialised;
 }
 /**
  * Parses a date and time from a string in the format `yyyy-MM-dd HH:mm:ss`
@@ -2118,7 +2117,6 @@ function parseDateTimeFromString(value) {
 var DateUtils = /*#__PURE__*/Object.freeze({
     __proto__: null,
     serialiseDate: serialiseDate,
-    serialiseTime: serialiseTime,
     parseDateTimeFromString: parseDateTimeFromString
 });
 
@@ -2268,7 +2266,12 @@ function addSafePassiveEventListener(frameworkOverrides, eElement, event, listen
     var isOutsideAngular = includes(OUTSIDE_ANGULAR_EVENTS, event);
     var options = isPassive ? { passive: true } : undefined;
     if (isOutsideAngular) {
-        frameworkOverrides.addEventListenerOutsideAngular(eElement, event, listener, options);
+        // this happens in certain scenarios where I believe the user must be destroying the grid somehow but continuing
+        // for it to be used
+        // don't fall through to the else part either - just don't add the listener
+        if (frameworkOverrides && frameworkOverrides.addEventListenerOutsideAngular) {
+            frameworkOverrides.addEventListenerOutsideAngular(eElement, event, listener, options);
+        }
     }
     else {
         eElement.addEventListener(event, listener, options);
@@ -11798,13 +11801,13 @@ var DateFilter = /** @class */ (function (_super) {
         //       a date from the UI, it will have timezone info in it. This is lost when creating
         //       the model. When we recreate the date again here, it's without a timezone.
         return {
-            from: _.parseDateTimeFromString(filterModel.dateFrom),
-            to: _.parseDateTimeFromString(filterModel.dateTo)
+            from: parseDateTimeFromString(filterModel.dateFrom),
+            to: parseDateTimeFromString(filterModel.dateTo)
         };
     };
     DateFilter.prototype.setValueFromFloatingFilter = function (value) {
         if (value != null) {
-            var dateFrom = _.parseDateTimeFromString(value);
+            var dateFrom = parseDateTimeFromString(value);
             this.dateCondition1FromComp.setDate(dateFrom);
         }
         else {
@@ -11816,7 +11819,7 @@ var DateFilter = /** @class */ (function (_super) {
     };
     DateFilter.prototype.setConditionIntoUi = function (model, position) {
         var _a = model ?
-            [_.parseDateTimeFromString(model.dateFrom), _.parseDateTimeFromString(model.dateTo)] :
+            [parseDateTimeFromString(model.dateFrom), parseDateTimeFromString(model.dateTo)] :
             [null, null], dateFrom = _a[0], dateTo = _a[1];
         var _b = this.getFromToComponents(position), compFrom = _b[0], compTo = _b[1];
         compFrom.setDate(dateFrom);
@@ -11898,11 +11901,9 @@ var DateFilter = /** @class */ (function (_super) {
         var positionOne = position === ConditionPosition.One;
         var type = positionOne ? this.getCondition1Type() : this.getCondition2Type();
         var _a = this.getFromToComponents(position), compFrom = _a[0], compTo = _a[1];
-        var dateFrom = compFrom.getDate();
-        var dateTo = compTo.getDate();
         return {
-            dateFrom: _.serialiseDate(dateFrom) + " " + _.serialiseTime(dateFrom),
-            dateTo: _.serialiseDate(dateTo) + " " + _.serialiseTime(dateTo),
+            dateFrom: serialiseDate(compFrom.getDate()),
+            dateTo: serialiseDate(compTo.getDate()),
             type: type,
             filterType: DateFilter.FILTER_TYPE
         };
@@ -11919,11 +11920,11 @@ var DateFilter = /** @class */ (function (_super) {
         _super.prototype.updateUiVisibility.call(this);
         this.resetPlaceholder();
         var condition1Type = this.getCondition1Type();
-        _.setDisplayed(this.eCondition1PanelFrom, this.showValueFrom(condition1Type));
-        _.setDisplayed(this.eCondition1PanelTo, this.showValueTo(condition1Type));
+        setDisplayed(this.eCondition1PanelFrom, this.showValueFrom(condition1Type));
+        setDisplayed(this.eCondition1PanelTo, this.showValueTo(condition1Type));
         var condition2Type = this.getCondition2Type();
-        _.setDisplayed(this.eCondition2PanelFrom, this.showValueFrom(condition2Type));
-        _.setDisplayed(this.eCondition2PanelTo, this.showValueTo(condition2Type));
+        setDisplayed(this.eCondition2PanelFrom, this.showValueFrom(condition2Type));
+        setDisplayed(this.eCondition2PanelTo, this.showValueTo(condition2Type));
     };
     DateFilter.prototype.getFromToComponents = function (position) {
         return position === ConditionPosition.One ?
@@ -15384,7 +15385,7 @@ var DefaultDateComponent = /** @class */ (function (_super) {
     DefaultDateComponent.prototype.init = function (params) {
         var _this = this;
         if (this.shouldUseBrowserDatePicker(params)) {
-            if (_.isBrowserIE()) {
+            if (isBrowserIE()) {
                 console.warn('ag-grid: browserDatePicker is specified to true, but it is not supported in IE 11, reverting to plain text date picker');
             }
             else {
@@ -15400,10 +15401,10 @@ var DefaultDateComponent = /** @class */ (function (_super) {
         });
     };
     DefaultDateComponent.prototype.getDate = function () {
-        return _.parseDateTimeFromString(this.eDateInput.getValue());
+        return parseDateTimeFromString(this.eDateInput.getValue());
     };
     DefaultDateComponent.prototype.setDate = function (date) {
-        this.eDateInput.setValue(_.serialiseDate(date));
+        this.eDateInput.setValue(serialiseDate(date, false));
     };
     DefaultDateComponent.prototype.setInputPlaceholder = function (placeholder) {
         this.eDateInput.setInputPlaceholder(placeholder);
@@ -15413,7 +15414,7 @@ var DefaultDateComponent = /** @class */ (function (_super) {
             return params.filterParams.browserDatePicker;
         }
         else {
-            return _.isBrowserChrome() || _.isBrowserFirefox();
+            return isBrowserChrome() || isBrowserFirefox();
         }
     };
     __decorate$v([
@@ -15579,8 +15580,8 @@ var DateFloatingFilter = /** @class */ (function (_super) {
         this.eReadOnlyText.setDisabled(true);
     };
     DateFloatingFilter.prototype.setEditable = function (editable) {
-        _.setDisplayed(this.eDateWrapper, editable);
-        _.setDisplayed(this.eReadOnlyText.getGui(), !editable);
+        setDisplayed(this.eDateWrapper, editable);
+        setDisplayed(this.eReadOnlyText.getGui(), !editable);
     };
     DateFloatingFilter.prototype.onParentModelChanged = function (model, event) {
         // We don't want to update the floating filter if the floating filter caused the change,
@@ -15595,7 +15596,7 @@ var DateFloatingFilter = /** @class */ (function (_super) {
         if (allowEditing) {
             if (model) {
                 var dateModel = model;
-                this.dateComp.setDate(_.parseDateTimeFromString(dateModel.dateFrom));
+                this.dateComp.setDate(parseDateTimeFromString(dateModel.dateFrom));
             }
             else {
                 this.dateComp.setDate(null);
@@ -15610,7 +15611,7 @@ var DateFloatingFilter = /** @class */ (function (_super) {
     DateFloatingFilter.prototype.onDateChanged = function () {
         var _this = this;
         var filterValueDate = this.dateComp.getDate();
-        var filterValueText = _.serialiseDate(filterValueDate) + " " + _.serialiseTime(filterValueDate);
+        var filterValueText = serialiseDate(filterValueDate);
         this.params.parentFilterInstance(function (filterInstance) {
             if (filterInstance) {
                 var simpleFilter = filterInstance;
@@ -15622,7 +15623,7 @@ var DateFloatingFilter = /** @class */ (function (_super) {
         var _this = this;
         var debounceMs = ProvidedFilter.getDebounceMs(this.params.filterParams, this.getDefaultDebounceMs());
         var dateComponentParams = {
-            onDateChanged: _.debounce(this.onDateChanged.bind(this), debounceMs),
+            onDateChanged: debounce(this.onDateChanged.bind(this), debounceMs),
             filterParams: this.params.column.getColDef().filterParams
         };
         this.dateComp = new DateCompWrapper(this.userComponentFactory, dateComponentParams, this.eDateWrapper);
@@ -17510,6 +17511,11 @@ var PopupEditorWrapper = /** @class */ (function (_super) {
             return this.cellEditor.isCancelAfterEnd();
         }
     };
+    PopupEditorWrapper.prototype.getPopupPosition = function () {
+        if (this.cellEditor.getPopupPosition) {
+            return this.cellEditor.getPopupPosition();
+        }
+    };
     PopupEditorWrapper.prototype.focusIn = function () {
         if (this.cellEditor.focusIn) {
             this.cellEditor.focusIn();
@@ -18760,10 +18766,10 @@ var CellComp = /** @class */ (function (_super) {
         };
         var position = this.cellEditor && this.cellEditor.getPopupPosition ? this.cellEditor.getPopupPosition() : 'over';
         if (position === 'under') {
-            this.beans.popupService.positionPopupOverComponent(params);
+            this.beans.popupService.positionPopupUnderComponent(params);
         }
         else {
-            this.beans.popupService.positionPopupUnderComponent(params);
+            this.beans.popupService.positionPopupOverComponent(params);
         }
         this.angular1Compile();
     };
@@ -30828,7 +30834,7 @@ var ValueFormatterService = /** @class */ (function () {
             return colDef.refData[value] || '';
         }
         // if we don't do this, then arrays get displayed as 1,2,3, but we want 1, 2, 3 (ie with spaces)
-        if (result != null && Array.isArray(value)) {
+        if (result == null && Array.isArray(value)) {
             result = value.join(', ');
         }
         return result;
@@ -32207,7 +32213,7 @@ var ComponentMetadataProvider = /** @class */ (function () {
             },
             cellEditor: {
                 mandatoryMethodList: ['getValue'],
-                optionalMethodList: ['isPopup', 'isCancelBeforeStart', 'isCancelAfterEnd', 'focusIn', 'focusOut', 'afterGuiAttached']
+                optionalMethodList: ['isPopup', 'isCancelBeforeStart', 'isCancelAfterEnd', 'getPopupPosition', 'focusIn', 'focusOut', 'afterGuiAttached']
             },
             innerRenderer: {
                 mandatoryMethodList: [],

@@ -794,8 +794,6 @@
     border-left: solid 1px;
     border-left-color: darkgrey;
     border-left-color: var(--ag-border-color, darkgrey); }
-  .ag-theme-dark .ag-row-hover {
-    background-color: var(--ag-row-hover-color); }
   .ag-theme-dark .ag-ltr .ag-right-aligned-cell {
     text-align: right; }
   .ag-theme-dark .ag-rtl .ag-right-aligned-cell {

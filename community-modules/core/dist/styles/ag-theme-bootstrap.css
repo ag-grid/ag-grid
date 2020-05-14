@@ -761,8 +761,6 @@
   .ag-theme-bootstrap .ag-row-odd {
     background-color: #f6f6f6;
     background-color: var(--ag-odd-row-background-color, #f6f6f6); }
-  .ag-theme-bootstrap .ag-row-hover {
-    background-color: var(--ag-row-hover-color); }
   .ag-theme-bootstrap .ag-ltr .ag-right-aligned-cell {
     text-align: right; }
   .ag-theme-bootstrap .ag-rtl .ag-right-aligned-cell {

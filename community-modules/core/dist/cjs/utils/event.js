@@ -156,7 +156,12 @@ function addSafePassiveEventListener(frameworkOverrides, eElement, event, listen
     var isOutsideAngular = array_1.includes(OUTSIDE_ANGULAR_EVENTS, event);
     var options = isPassive ? { passive: true } : undefined;
     if (isOutsideAngular) {
-        frameworkOverrides.addEventListenerOutsideAngular(eElement, event, listener, options);
+        // this happens in certain scenarios where I believe the user must be destroying the grid somehow but continuing
+        // for it to be used
+        // don't fall through to the else part either - just don't add the listener
+        if (frameworkOverrides && frameworkOverrides.addEventListenerOutsideAngular) {
+            frameworkOverrides.addEventListenerOutsideAngular(eElement, event, listener, options);
+        }
     }
     else {
         eElement.addEventListener(event, listener, options);

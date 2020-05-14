@@ -81,6 +81,11 @@ var PopupEditorWrapper = /** @class */ (function (_super) {
             return this.cellEditor.isCancelAfterEnd();
         }
     };
+    PopupEditorWrapper.prototype.getPopupPosition = function () {
+        if (this.cellEditor.getPopupPosition) {
+            return this.cellEditor.getPopupPosition();
+        }
+    };
     PopupEditorWrapper.prototype.focusIn = function () {
         if (this.cellEditor.focusIn) {
             this.cellEditor.focusIn();

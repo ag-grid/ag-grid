@@ -15,6 +15,7 @@ export declare class PopupEditorWrapper extends PopupComponent implements ICellE
     getValue(): any;
     isCancelBeforeStart(): boolean;
     isCancelAfterEnd(): boolean;
+    getPopupPosition(): string;
     focusIn(): void;
     focusOut(): void;
 }
