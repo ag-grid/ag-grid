@@ -22,8 +22,8 @@ include '../documentation-main/documentation_header.php';
 <?= createSnippet(<<<SNIPPET
 gridOptions: {
     columnDefs: [
-        // sets the 'number' filter
-        { field: 'country', filter: 'agNumberColumnFilter' },
+        // sets the 'text' filter
+        { field: 'country', filter: 'agTextColumnFilter' },
 
         // use the default 'set' filter
         { field: 'year', filter: true },
@@ -93,10 +93,14 @@ SNIPPET
 
 <ul class="content">
     <li>
-        <b>Athlete</b> column has a <code>'text'</code> filter defined using <code>filter: 'agTextColumnFilter'</code>.
+        The <b>Athlete</b> column has a <code>'text'</code> filter defined using <code>filter: 'agTextColumnFilter'</code>.
     </li>
     <li>
-        <b>Year</b> column has a <code>'number'</code> filter defined using <code>filter: 'agNumberColumnFilter'</code>.
+        The <b>Year</b> column has a <code>'number'</code> filter defined using <code>filter: 'agNumberColumnFilter'</code>.
+    </li>
+    <li>
+        The medals columns have a <code>'number'</code> filter defined using <code>filter: 'agNumberColumnFilter'</code>
+        on the <code>'number'</code> column type.
     </li>
     <li>
         The server uses the metadata contained in the <code>filterModel</code> to filter the rows.
