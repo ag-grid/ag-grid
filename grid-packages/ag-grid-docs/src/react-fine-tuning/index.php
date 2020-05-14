@@ -52,11 +52,11 @@ somePointLater() {
     and once for the actual component creation.</p>
 
     <p>In the vast majority of cases this will result in overall improved performance but if you wish to disable this behaviour
-        you can do so by setting the <code>disableStaticMarkup</code> property on the <code>AgGridReact</code> component to <code>false</code>:</p>
+        you can do so by setting the <code>disableStaticMarkup</code> property on the <code>AgGridReact</code> component to <code>true</code>:</p>
 
 <snippet language="jsx">
 &lt;AgGridReact
-    disableStaticMarkup={false}
+    disableStaticMarkup={true}
 </snippet>
 
     <p>Note that this pre-render only applies to Cell Components - other types of Components are unaffected.</p>

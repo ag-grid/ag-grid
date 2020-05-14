@@ -19,7 +19,7 @@
     "clean": "npx lerna run clean && npx lerna clean --yes",
     "bootstrap": "npx lerna bootstrap --no-ci --ignore ag-grid-charts-example",
     "build": "npx lerna run build --ignore ag-grid-polymer-example --ignore ag-grid-charts-example",
-    "package": "npx lerna run package --parallel --ignore ag-grid-polymer-example --ignore ag-grid-charts-example",
+    "package": "npx lerna run package --parallel --ignore ag-grid-polymer-example --ignore ag-grid-charts-example && npx lerna run package --scope ag-grid-community --scope ag-grid-enterprise",
     "test": "npx lerna run test --stream",
     "cleanCoreDependencies": "npx lerna clean --yes --scope ag-grid-angular --scope ag-grid-react --scope ag-grid-vue --scope ag-grid-docs",
     "bootstrapCoreDependencies": "npx lerna bootstrap --scope ag-grid-angular --scope ag-grid-react --scope ag-grid-vue --scope ag-grid-docs",
