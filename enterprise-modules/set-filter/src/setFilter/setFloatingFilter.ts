@@ -75,7 +75,7 @@ export class SetFloatingFilterComp extends Component implements IFloatingFilter 
         // also supporting old filter model for backwards compatibility
         const values = this.lastKnownModel instanceof Array ? this.lastKnownModel as string[] : this.lastKnownModel.values;
 
-        if (!values || values.length === 0) {
+        if (!values) {
             this.eFloatingFilterText.setValue('');
             return;
         }
