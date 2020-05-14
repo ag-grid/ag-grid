@@ -1,22 +1,22 @@
 import { padStart } from './number';
 
 /**
- * Serialises a date to a string of format `yyyy-MM-dd`.
+ * Serialises a Date to a string of format `yyyy-MM-dd HH:mm:ss`.
  * An alternative separator can be provided to be used instead of hyphens.
+ * @param date The date to serialise
+ * @param includeTime Whether to include the time in the serialised string
+ * @param separator The separator to use between date parts
  */
-export function serialiseDate(date: Date, separator = '-'): string | null {
+export function serialiseDate(date: Date, includeTime = true, separator = '-'): string | null {
     if (!date) { return null; }
 
-    return [date.getFullYear(), date.getMonth() + 1, date.getDate()].map(part => padStart(part, 2)).join(separator);
-}
+    let serialised = [date.getFullYear(), date.getMonth() + 1, date.getDate()].map(part => padStart(part, 2)).join(separator);
 
-/**
- * Serialises a time to a string of format `HH:mm:ss`.
- */
-export function serialiseTime(date: Date): string | null {
-    if (!date) { return null; }
+    if (includeTime) {
+        serialised += ' ' + [date.getHours(), date.getMinutes(), date.getSeconds()].map(part => padStart(part, 2)).join(':');
+    }
 
-    return [date.getHours(), date.getMinutes(), date.getSeconds()].map(part => padStart(part, 2)).join(':');
+    return serialised;
 }
 
 /**
