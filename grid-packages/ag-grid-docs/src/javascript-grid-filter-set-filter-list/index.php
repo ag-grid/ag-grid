@@ -469,9 +469,18 @@ SNIPPET
 
 <p>
     By default, when the Set Filter is created all values are selected. If you would prefer to invert this behaviour
-    and have everything de-selected by default, you can set <?= inlineCode('defaultToNothingSelected = true') ?> in the
-    filter params. In this case, no filtering will occur until at least one value is selected.
+    and have everything de-selected by default, you can use the following:
 </p>
+
+<?= createSnippet(<<<SNIPPET
+filterParams: {
+    defaultToNothingSelected: true,
+    ...
+}
+SNIPPET
+) ?>
+
+<p>In this case, no filtering will occur until at least one value is selected.</p>
 
 <p>
     The following example demonstrates different default states. Note the following:
