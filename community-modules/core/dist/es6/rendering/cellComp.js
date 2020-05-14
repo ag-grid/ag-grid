@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v23.1.0
+ * @version v23.1.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -951,10 +951,10 @@ var CellComp = /** @class */ (function (_super) {
         };
         var position = this.cellEditor && this.cellEditor.getPopupPosition ? this.cellEditor.getPopupPosition() : 'over';
         if (position === 'under') {
-            this.beans.popupService.positionPopupOverComponent(params);
+            this.beans.popupService.positionPopupUnderComponent(params);
         }
         else {
-            this.beans.popupService.positionPopupUnderComponent(params);
+            this.beans.popupService.positionPopupOverComponent(params);
         }
         this.angular1Compile();
     };

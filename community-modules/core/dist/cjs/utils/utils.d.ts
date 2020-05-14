@@ -1,4 +1,4 @@
-// Type definitions for @ag-grid-community/core v23.1.0
+// Type definitions for @ag-grid-community/core v23.1.1
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 export declare const _: {
@@ -147,8 +147,7 @@ export declare const _: {
     copyNodeList(nodeList: NodeList): Node[];
     iterateNamedNodeMap(map: NamedNodeMap, callback: (key: string, value: string) => void): void;
     setCheckboxState(eCheckbox: HTMLInputElement, state: any): void;
-    serialiseDate(date: Date, separator?: string): string;
-    serialiseTime(date: Date): string;
+    serialiseDate(date: Date, includeTime?: boolean, separator?: string): string;
     parseDateTimeFromString(value: string): Date;
     stringToArray(strData: string, delimiter?: string): string[][];
     isBrowserIE(): boolean;

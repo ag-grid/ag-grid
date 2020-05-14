@@ -57,7 +57,7 @@ export class ValueFormatterService {
         }
 
         // if we don't do this, then arrays get displayed as 1,2,3, but we want 1, 2, 3 (ie with spaces)
-        if (result != null && Array.isArray(value)) {
+        if (result == null && Array.isArray(value)) {
             result = value.join(', ');
         }
 

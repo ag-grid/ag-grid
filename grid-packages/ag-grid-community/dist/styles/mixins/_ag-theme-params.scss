@@ -106,6 +106,7 @@
 @mixin ag-color-property($property, $param, $important: false) {
     $value: ag-param($param, $caller: "permitted internal _ag-theme-params.scss access");
     $important: if($important, !important, null);
+
     @if $value != null {
         #{$property}: $value $important;
     }
@@ -115,10 +116,10 @@
             #{$property}: $value-as-css-var $important;
         }
     }
-    $-ag-is-permitted-internal-color-access: false !global;
 }
 
-$-ag-allow-color-param-access-with-ag-param: true !global;
+
+$-ag-allow-color-param-access-with-ag-param: true;
 @mixin ag-allow-color-param-access-with-ag-param($allow) {
     $-ag-allow-color-param-access-with-ag-param: $allow !global;
 }
@@ -176,11 +177,12 @@ $-ag-params: null !default;
             $value: -ag-param-as-css-var($reference-name);
         }
     }
+
     @if $value == null {
         @return var(--ag-#{$name});
-    } @else {
-        @return var(--ag-#{$name}, #{$value});
     }
+
+    @return var(--ag-#{$name}, #{$value});
 }
 
 // Get a parameter, with no checks other than that the parameter exists

@@ -1,8 +1,8 @@
-import { DateFilterModel } from "./dateFilter";
-import { IFloatingFilterParams } from "../../floating/floatingFilter";
-import { ISimpleFilterModel } from "../simpleFilter";
-import { SimpleFloatingFilter } from "../../floating/provided/simpleFloatingFilter";
-import { FilterChangedEvent } from "../../../events";
+import { DateFilterModel } from './dateFilter';
+import { IFloatingFilterParams } from '../../floating/floatingFilter';
+import { ISimpleFilterModel } from '../simpleFilter';
+import { SimpleFloatingFilter } from '../../floating/provided/simpleFloatingFilter';
+import { FilterChangedEvent } from '../../../events';
 export declare class DateFloatingFilter extends SimpleFloatingFilter {
     private userComponentFactory;
     private eReadOnlyText;

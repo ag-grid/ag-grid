@@ -1,5 +1,5 @@
-import { ConditionPosition, ISimpleFilterModel } from "../simpleFilter";
-import { Comparator, IScalarFilterParams, ScalarFilter } from "../scalarFilter";
+import { ConditionPosition, ISimpleFilterModel } from '../simpleFilter';
+import { Comparator, IScalarFilterParams, ScalarFilter } from '../scalarFilter';
 export interface DateFilterModel extends ISimpleFilterModel {
     dateFrom: string;
     dateTo: string;

@@ -144,8 +144,7 @@ export declare const _: {
     copyNodeList(nodeList: NodeList): Node[];
     iterateNamedNodeMap(map: NamedNodeMap, callback: (key: string, value: string) => void): void;
     setCheckboxState(eCheckbox: HTMLInputElement, state: any): void;
-    serialiseDate(date: Date, separator?: string): string;
-    serialiseTime(date: Date): string;
+    serialiseDate(date: Date, includeTime?: boolean, separator?: string): string;
     parseDateTimeFromString(value: string): Date;
     stringToArray(strData: string, delimiter?: string): string[][];
     isBrowserIE(): boolean;

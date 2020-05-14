@@ -1,8 +1,9 @@
-import { AgInputTextField } from "../../../widgets/agInputTextField";
-import { Component } from "../../../widgets/component";
-import { IDateComp, IDateParams } from "../../../rendering/dateComponent";
-import { RefSelector } from "../../../widgets/componentAnnotations";
-import { _ } from "../../../utils";
+import { AgInputTextField } from '../../../widgets/agInputTextField';
+import { Component } from '../../../widgets/component';
+import { IDateComp, IDateParams } from '../../../rendering/dateComponent';
+import { RefSelector } from '../../../widgets/componentAnnotations';
+import { serialiseDate, parseDateTimeFromString } from '../../../utils/date';
+import { isBrowserChrome, isBrowserFirefox, isBrowserIE } from '../../../utils/browser';
 
 export class DefaultDateComponent extends Component implements IDateComp {
     @RefSelector('eDateInput') private eDateInput: AgInputTextField;
@@ -19,7 +20,7 @@ export class DefaultDateComponent extends Component implements IDateComp {
 
     public init(params: IDateParams): void {
         if (this.shouldUseBrowserDatePicker(params)) {
-            if (_.isBrowserIE()) {
+            if (isBrowserIE()) {
                 console.warn('ag-grid: browserDatePicker is specified to true, but it is not supported in IE 11, reverting to plain text date picker');
             } else {
                 (this.eDateInput.getInputElement() as HTMLInputElement).type = 'date';
@@ -36,11 +37,11 @@ export class DefaultDateComponent extends Component implements IDateComp {
     }
 
     public getDate(): Date {
-        return _.parseDateTimeFromString(this.eDateInput.getValue());
+        return parseDateTimeFromString(this.eDateInput.getValue());
     }
 
     public setDate(date: Date): void {
-        this.eDateInput.setValue(_.serialiseDate(date));
+        this.eDateInput.setValue(serialiseDate(date, false));
     }
 
     public setInputPlaceholder(placeholder: string): void {
@@ -51,7 +52,7 @@ export class DefaultDateComponent extends Component implements IDateComp {
         if (params.filterParams && params.filterParams.browserDatePicker != null) {
             return params.filterParams.browserDatePicker;
         } else {
-            return _.isBrowserChrome() || _.isBrowserFirefox();
+            return isBrowserChrome() || isBrowserFirefox();
         }
     }
 }

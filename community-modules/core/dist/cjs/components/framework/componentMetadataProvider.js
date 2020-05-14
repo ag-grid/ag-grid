@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v23.1.0
+ * @version v23.1.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -61,7 +61,7 @@ var ComponentMetadataProvider = /** @class */ (function () {
             },
             cellEditor: {
                 mandatoryMethodList: ['getValue'],
-                optionalMethodList: ['isPopup', 'isCancelBeforeStart', 'isCancelAfterEnd', 'focusIn', 'focusOut', 'afterGuiAttached']
+                optionalMethodList: ['isPopup', 'isCancelBeforeStart', 'isCancelAfterEnd', 'getPopupPosition', 'focusIn', 'focusOut', 'afterGuiAttached']
             },
             innerRenderer: {
                 mandatoryMethodList: [],

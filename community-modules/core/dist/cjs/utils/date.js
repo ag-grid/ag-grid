@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v23.1.0
+ * @version v23.1.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -8,27 +8,25 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 var number_1 = require("./number");
 /**
- * Serialises a date to a string of format `yyyy-MM-dd`.
+ * Serialises a Date to a string of format `yyyy-MM-dd HH:mm:ss`.
  * An alternative separator can be provided to be used instead of hyphens.
+ * @param date The date to serialise
+ * @param includeTime Whether to include the time in the serialised string
+ * @param separator The separator to use between date parts
  */
-function serialiseDate(date, separator) {
+function serialiseDate(date, includeTime, separator) {
+    if (includeTime === void 0) { includeTime = true; }
     if (separator === void 0) { separator = '-'; }
     if (!date) {
         return null;
     }
-    return [date.getFullYear(), date.getMonth() + 1, date.getDate()].map(function (part) { return number_1.padStart(part, 2); }).join(separator);
+    var serialised = [date.getFullYear(), date.getMonth() + 1, date.getDate()].map(function (part) { return number_1.padStart(part, 2); }).join(separator);
+    if (includeTime) {
+        serialised += ' ' + [date.getHours(), date.getMinutes(), date.getSeconds()].map(function (part) { return number_1.padStart(part, 2); }).join(':');
+    }
+    return serialised;
 }
 exports.serialiseDate = serialiseDate;
-/**
- * Serialises a time to a string of format `HH:mm:ss`.
- */
-function serialiseTime(date) {
-    if (!date) {
-        return null;
-    }
-    return [date.getHours(), date.getMinutes(), date.getSeconds()].map(function (part) { return number_1.padStart(part, 2); }).join(':');
-}
-exports.serialiseTime = serialiseTime;
 /**
  * Parses a date and time from a string in the format `yyyy-MM-dd HH:mm:ss`
  */

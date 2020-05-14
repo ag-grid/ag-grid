@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v23.1.0
+ * @version v23.1.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -23,14 +23,16 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
-import { DateFilter } from "./dateFilter";
-import { Autowired } from "../../../context/context";
-import { _ } from "../../../utils";
-import { DateCompWrapper } from "./dateCompWrapper";
-import { RefSelector } from "../../../widgets/componentAnnotations";
-import { SimpleFilter } from "../simpleFilter";
-import { SimpleFloatingFilter } from "../../floating/provided/simpleFloatingFilter";
-import { ProvidedFilter } from "../providedFilter";
+import { DateFilter } from './dateFilter';
+import { Autowired } from '../../../context/context';
+import { DateCompWrapper } from './dateCompWrapper';
+import { RefSelector } from '../../../widgets/componentAnnotations';
+import { SimpleFilter } from '../simpleFilter';
+import { SimpleFloatingFilter } from '../../floating/provided/simpleFloatingFilter';
+import { ProvidedFilter } from '../providedFilter';
+import { setDisplayed } from '../../../utils/dom';
+import { parseDateTimeFromString, serialiseDate } from '../../../utils/date';
+import { debounce } from '../../../utils/function';
 var DateFloatingFilter = /** @class */ (function (_super) {
     __extends(DateFloatingFilter, _super);
     function DateFloatingFilter() {
@@ -56,8 +58,8 @@ var DateFloatingFilter = /** @class */ (function (_super) {
         this.eReadOnlyText.setDisabled(true);
     };
     DateFloatingFilter.prototype.setEditable = function (editable) {
-        _.setDisplayed(this.eDateWrapper, editable);
-        _.setDisplayed(this.eReadOnlyText.getGui(), !editable);
+        setDisplayed(this.eDateWrapper, editable);
+        setDisplayed(this.eReadOnlyText.getGui(), !editable);
     };
     DateFloatingFilter.prototype.onParentModelChanged = function (model, event) {
         // We don't want to update the floating filter if the floating filter caused the change,
@@ -72,7 +74,7 @@ var DateFloatingFilter = /** @class */ (function (_super) {
         if (allowEditing) {
             if (model) {
                 var dateModel = model;
-                this.dateComp.setDate(_.parseDateTimeFromString(dateModel.dateFrom));
+                this.dateComp.setDate(parseDateTimeFromString(dateModel.dateFrom));
             }
             else {
                 this.dateComp.setDate(null);
@@ -87,7 +89,7 @@ var DateFloatingFilter = /** @class */ (function (_super) {
     DateFloatingFilter.prototype.onDateChanged = function () {
         var _this = this;
         var filterValueDate = this.dateComp.getDate();
-        var filterValueText = _.serialiseDate(filterValueDate) + " " + _.serialiseTime(filterValueDate);
+        var filterValueText = serialiseDate(filterValueDate);
         this.params.parentFilterInstance(function (filterInstance) {
             if (filterInstance) {
                 var simpleFilter = filterInstance;
@@ -99,7 +101,7 @@ var DateFloatingFilter = /** @class */ (function (_super) {
         var _this = this;
         var debounceMs = ProvidedFilter.getDebounceMs(this.params.filterParams, this.getDefaultDebounceMs());
         var dateComponentParams = {
-            onDateChanged: _.debounce(this.onDateChanged.bind(this), debounceMs),
+            onDateChanged: debounce(this.onDateChanged.bind(this), debounceMs),
             filterParams: this.params.column.getColDef().filterParams
         };
         this.dateComp = new DateCompWrapper(this.userComponentFactory, dateComponentParams, this.eDateWrapper);

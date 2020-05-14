@@ -1,11 +1,11 @@
-// Type definitions for @ag-grid-community/core v23.1.0
+// Type definitions for @ag-grid-community/core v23.1.1
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
-import { DateFilterModel } from "./dateFilter";
-import { IFloatingFilterParams } from "../../floating/floatingFilter";
-import { ISimpleFilterModel } from "../simpleFilter";
-import { SimpleFloatingFilter } from "../../floating/provided/simpleFloatingFilter";
-import { FilterChangedEvent } from "../../../events";
+import { DateFilterModel } from './dateFilter';
+import { IFloatingFilterParams } from '../../floating/floatingFilter';
+import { ISimpleFilterModel } from '../simpleFilter';
+import { SimpleFloatingFilter } from '../../floating/provided/simpleFloatingFilter';
+import { FilterChangedEvent } from '../../../events';
 export declare class DateFloatingFilter extends SimpleFloatingFilter {
     private userComponentFactory;
     private eReadOnlyText;

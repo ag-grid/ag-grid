@@ -1,4 +1,4 @@
-// Type definitions for @ag-grid-community/core v23.1.0
+// Type definitions for @ag-grid-community/core v23.1.1
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { PopupComponent } from "../../widgets/popupComponent";
@@ -18,6 +18,7 @@ export declare class PopupEditorWrapper extends PopupComponent implements ICellE
     getValue(): any;
     isCancelBeforeStart(): boolean;
     isCancelAfterEnd(): boolean;
+    getPopupPosition(): string;
     focusIn(): void;
     focusOut(): void;
 }

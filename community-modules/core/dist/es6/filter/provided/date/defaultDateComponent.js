@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v23.1.0
+ * @version v23.1.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -23,9 +23,10 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
-import { Component } from "../../../widgets/component";
-import { RefSelector } from "../../../widgets/componentAnnotations";
-import { _ } from "../../../utils";
+import { Component } from '../../../widgets/component';
+import { RefSelector } from '../../../widgets/componentAnnotations';
+import { serialiseDate, parseDateTimeFromString } from '../../../utils/date';
+import { isBrowserChrome, isBrowserFirefox, isBrowserIE } from '../../../utils/browser';
 var DefaultDateComponent = /** @class */ (function (_super) {
     __extends(DefaultDateComponent, _super);
     function DefaultDateComponent() {
@@ -34,7 +35,7 @@ var DefaultDateComponent = /** @class */ (function (_super) {
     DefaultDateComponent.prototype.init = function (params) {
         var _this = this;
         if (this.shouldUseBrowserDatePicker(params)) {
-            if (_.isBrowserIE()) {
+            if (isBrowserIE()) {
                 console.warn('ag-grid: browserDatePicker is specified to true, but it is not supported in IE 11, reverting to plain text date picker');
             }
             else {
@@ -50,10 +51,10 @@ var DefaultDateComponent = /** @class */ (function (_super) {
         });
     };
     DefaultDateComponent.prototype.getDate = function () {
-        return _.parseDateTimeFromString(this.eDateInput.getValue());
+        return parseDateTimeFromString(this.eDateInput.getValue());
     };
     DefaultDateComponent.prototype.setDate = function (date) {
-        this.eDateInput.setValue(_.serialiseDate(date));
+        this.eDateInput.setValue(serialiseDate(date, false));
     };
     DefaultDateComponent.prototype.setInputPlaceholder = function (placeholder) {
         this.eDateInput.setInputPlaceholder(placeholder);
@@ -63,7 +64,7 @@ var DefaultDateComponent = /** @class */ (function (_super) {
             return params.filterParams.browserDatePicker;
         }
         else {
-            return _.isBrowserChrome() || _.isBrowserFirefox();
+            return isBrowserChrome() || isBrowserFirefox();
         }
     };
     __decorate([

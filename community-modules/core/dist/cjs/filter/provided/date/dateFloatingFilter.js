@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v23.1.0
+ * @version v23.1.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -27,12 +27,14 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 Object.defineProperty(exports, "__esModule", { value: true });
 var dateFilter_1 = require("./dateFilter");
 var context_1 = require("../../../context/context");
-var utils_1 = require("../../../utils");
 var dateCompWrapper_1 = require("./dateCompWrapper");
 var componentAnnotations_1 = require("../../../widgets/componentAnnotations");
 var simpleFilter_1 = require("../simpleFilter");
 var simpleFloatingFilter_1 = require("../../floating/provided/simpleFloatingFilter");
 var providedFilter_1 = require("../providedFilter");
+var dom_1 = require("../../../utils/dom");
+var date_1 = require("../../../utils/date");
+var function_1 = require("../../../utils/function");
 var DateFloatingFilter = /** @class */ (function (_super) {
     __extends(DateFloatingFilter, _super);
     function DateFloatingFilter() {
@@ -58,8 +60,8 @@ var DateFloatingFilter = /** @class */ (function (_super) {
         this.eReadOnlyText.setDisabled(true);
     };
     DateFloatingFilter.prototype.setEditable = function (editable) {
-        utils_1._.setDisplayed(this.eDateWrapper, editable);
-        utils_1._.setDisplayed(this.eReadOnlyText.getGui(), !editable);
+        dom_1.setDisplayed(this.eDateWrapper, editable);
+        dom_1.setDisplayed(this.eReadOnlyText.getGui(), !editable);
     };
     DateFloatingFilter.prototype.onParentModelChanged = function (model, event) {
         // We don't want to update the floating filter if the floating filter caused the change,
@@ -74,7 +76,7 @@ var DateFloatingFilter = /** @class */ (function (_super) {
         if (allowEditing) {
             if (model) {
                 var dateModel = model;
-                this.dateComp.setDate(utils_1._.parseDateTimeFromString(dateModel.dateFrom));
+                this.dateComp.setDate(date_1.parseDateTimeFromString(dateModel.dateFrom));
             }
             else {
                 this.dateComp.setDate(null);
@@ -89,7 +91,7 @@ var DateFloatingFilter = /** @class */ (function (_super) {
     DateFloatingFilter.prototype.onDateChanged = function () {
         var _this = this;
         var filterValueDate = this.dateComp.getDate();
-        var filterValueText = utils_1._.serialiseDate(filterValueDate) + " " + utils_1._.serialiseTime(filterValueDate);
+        var filterValueText = date_1.serialiseDate(filterValueDate);
         this.params.parentFilterInstance(function (filterInstance) {
             if (filterInstance) {
                 var simpleFilter = filterInstance;
@@ -101,7 +103,7 @@ var DateFloatingFilter = /** @class */ (function (_super) {
         var _this = this;
         var debounceMs = providedFilter_1.ProvidedFilter.getDebounceMs(this.params.filterParams, this.getDefaultDebounceMs());
         var dateComponentParams = {
-            onDateChanged: utils_1._.debounce(this.onDateChanged.bind(this), debounceMs),
+            onDateChanged: function_1.debounce(this.onDateChanged.bind(this), debounceMs),
             filterParams: this.params.column.getColDef().filterParams
         };
         this.dateComp = new dateCompWrapper_1.DateCompWrapper(this.userComponentFactory, dateComponentParams, this.eDateWrapper);

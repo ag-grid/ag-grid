@@ -1,4 +1,4 @@
-// ag-grid-react v23.1.0
+// ag-grid-react v23.1.1
 import { Component } from "react";
 import * as AgGrid from "ag-grid-community";
 import { ColDef, ColGroupDef } from "ag-grid-community";
