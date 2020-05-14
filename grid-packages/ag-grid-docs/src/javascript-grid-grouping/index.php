@@ -490,7 +490,7 @@ SNIPPET
     </i>
 </p>
 
-<?= grid_example('Full Width Groups Rendering', 'full-width-groups-rendering', 'generated', ['enterprise' => true, 'exampleHeight' => 515, 'modules'=>['clientside', 'rowgrouping']]) ?>
+<?= grid_example('Full Width Groups Rendering', 'full-width-groups-rendering', 'generated', ['enterprise' => true, 'exampleHeight' => 515, 'modules' => ['clientside', 'rowgrouping'], 'extras' => ['fontawesome']]) ?>
 
 <h2 id="default-group-order">Default Group Order</h2>
 

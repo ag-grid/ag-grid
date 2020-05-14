@@ -43,17 +43,19 @@ export default class GroupRowInnerRenderer extends Component {
 
     render() {
         let img = '';
-        if(this.state.flagCode) {
-            img = <img className="flag" border="0" width="20" height="15" src={this.state.flagCodeImg}/>
+        const { countryName, goldCount, silverCount, bronzeCount, flagCode, flagCodeImg } = this.state;
+        
+        if (flagCode) {
+            img = <img className="flag" border="0" width="20" height="15" src={flagCodeImg}/>
         }
 
         return (
             <div style={{display: "inline-block"}}>
                 { img }
-                <span className="groupTitle"> {this.state.countryName}</span>
-                <span className="medal gold"> Gold: {this.state.goldCount}</span>
-                <span className="medal silver"> Silver: {this.state.silverCount}</span>
-                <span className="medal bronze"> Bronze: {this.state.bronzeCount}</span>
+                <span className="groupTitle">{countryName}</span>
+                <span className="medal gold" aria-label={`${countryName} - ${goldCount} gold medals`}><i class="fas fa-medal"></i>{goldCount}</span>
+                <span className="medal silver" aria-label={`${countryName} - ${silverCount} silver medals`}><i class="fas fa-medal"></i>{silverCount}</span>
+                <span className="medal bronze"aria-label={`${countryName} - ${bronzeCount} bronze medals`}><i class="fas fa-medal"></i>{bronzeCount}</span>
             </div>
         );
     }
