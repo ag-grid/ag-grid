@@ -39,7 +39,7 @@ import {ICellRendererAngularComp} from "@ag-grid-community/angular";
         }
         
         .flag {
-            margin-left: 4px;
+            margin: 0 4px;
             position: relative;
             top: 2px;
         }
