@@ -12,7 +12,6 @@ import {
     RowNode,
     _
 } from "@ag-grid-community/core";
-import { rowData } from "../../../../examples-grid/ag-grid-charts-example/src/treemap-test/convert";
 
 export class DetailCellRenderer extends Component implements ICellRenderer {
 
@@ -233,7 +232,7 @@ export class DetailCellRenderer extends Component implements ICellRenderer {
         const funcParams: any = {
             node: this.params.node,
             data: this.params.data,
-            successCallback: successCallback(rowData)
+            successCallback: successCallback
         };
         userFunc(funcParams);
     }
