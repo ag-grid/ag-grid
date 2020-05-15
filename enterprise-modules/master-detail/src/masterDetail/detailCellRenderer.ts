@@ -12,6 +12,7 @@ import {
     RowNode,
     _
 } from "@ag-grid-community/core";
+import { rowData } from "../../../../examples-grid/ag-grid-charts-example/src/treemap-test/convert";
 
 export class DetailCellRenderer extends Component implements ICellRenderer {
 
@@ -21,14 +22,19 @@ export class DetailCellRenderer extends Component implements ICellRenderer {
         </div>`;
 
     @Autowired('environment') private environment: Environment;
-        
     @RefSelector('eDetailGrid') private eDetailGrid: HTMLElement;
-    
+
+    private static REFRESH_STRATEGY_ROWS = 'rows';
+    private static REFRESH_STRATEGY_EVERYTHING = 'everything';
+    private static REFRESH_STRATEGY_NOTHING = 'nothing';
+
     private detailGridOptions: GridOptions;
-    private masterGridApi: GridApi;
-    private rowId: string;
+
     private needRefresh = false;
-    private suppressRefresh: boolean;
+
+    private params: IDetailCellRendererParams;
+
+    private loadRowDataVersion = 0;
 
     // this is a user component, and IComponent has "public destroy()" as part of the interface.
     // so we need to override destroy() just to make the method public.
@@ -37,15 +43,49 @@ export class DetailCellRenderer extends Component implements ICellRenderer {
     }
 
     public refresh(): boolean {
+        const GET_GRID_TO_REFRESH = false;
+        const GET_GRID_TO_DO_NOTHING = true;
+
+        const refreshStrategy = this.getRefreshStrategy();
+
         // if we return true, it means we pretend to the grid
         // that we have refreshed, so refresh will never happen.
-        if (this.suppressRefresh) { return true; }
+        const doNotRefresh = !this.needRefresh || refreshStrategy===DetailCellRenderer.REFRESH_STRATEGY_NOTHING;
+        if (doNotRefresh) {
+            // we do nothing in this refresh method, and also tell the grid to do nothing
+            return GET_GRID_TO_DO_NOTHING;
+        }
 
-        // otherwise we only refresh if the data has changed in the node
-        // since the last time. this happens when user updates data using transaction.
-        const res = !this.needRefresh;
+        // reset flag, so don't refresh again until more data changes.
         this.needRefresh = false;
-        return res;
+
+        if (refreshStrategy===DetailCellRenderer.REFRESH_STRATEGY_EVERYTHING) {
+            // we want full refresh, so tell the grid to destroy and recreate this cell
+            return GET_GRID_TO_REFRESH;
+        } else {
+            // do the refresh here, and tell the grid to do nothing
+            this.loadRowData();
+            return GET_GRID_TO_DO_NOTHING;
+        }
+    }
+
+    private checkForDeprecations(): void {
+        if (this.params.suppressRefresh) {
+            console.warn(`ag-Grid: as of v23.2.0, cellRendererParams.suppressRefresh for Detail Cell Renderer is no longer used. Please set cellRendererParams.refreshStrategy = ${DetailCellRenderer.REFRESH_STRATEGY_NOTHING} instead.`);
+            this.params.refreshStrategy = DetailCellRenderer.REFRESH_STRATEGY_NOTHING;
+        }
+    }
+
+    private getRefreshStrategy(): string {
+        if (this.params.refreshStrategy===DetailCellRenderer.REFRESH_STRATEGY_NOTHING) {
+            return DetailCellRenderer.REFRESH_STRATEGY_NOTHING;
+        } else if (this.params.refreshStrategy===DetailCellRenderer.REFRESH_STRATEGY_EVERYTHING) {
+            return DetailCellRenderer.REFRESH_STRATEGY_EVERYTHING;
+        } else {
+            // this is the default, so no need to check explicitly, if it isn't the other two strategies,
+            // we always use this one.
+            return DetailCellRenderer.REFRESH_STRATEGY_ROWS;
+        }
     }
 
     public init(params: IDetailCellRendererParams): void {
@@ -57,17 +97,16 @@ export class DetailCellRenderer extends Component implements ICellRenderer {
             return;
         }
 
-        this.rowId = params.node.id;
-        this.masterGridApi = params.api;
-        this.suppressRefresh = params.suppressRefresh;
+        this.params = params;
 
-        this.selectAndSetTemplate(params);
+        this.checkForDeprecations();
+        this.selectAndSetTemplate();
 
         if (_.exists(this.eDetailGrid)) {
             this.addThemeToDetailGrid();
-            this.createDetailsGrid(params);
-            this.registerDetailWithMaster(params.node);
-            this.loadRowData(params);
+            this.createDetailsGrid();
+            this.registerDetailWithMaster();
+            this.loadRowData();
 
             window.setTimeout(() => {
                 // ensure detail grid api still exists (grid may be destroyed when async call tries to set data)
@@ -94,38 +133,41 @@ export class DetailCellRenderer extends Component implements ICellRenderer {
         }
     }
 
-    private registerDetailWithMaster(rowNode: RowNode): void {
+    private registerDetailWithMaster(): void {
+        const rowId = this.params.node.id;
+        const masterGridApi = this.params.api;
+
         const gridInfo: DetailGridInfo = {
-            id: this.rowId,
+            id: rowId,
             api: this.detailGridOptions.api,
             columnApi: this.detailGridOptions.columnApi
         };
 
+        const rowNode = this.params.node;
+
         // register with api
-        this.masterGridApi.addDetailGridInfo(this.rowId, gridInfo);
+        masterGridApi.addDetailGridInfo(rowId, gridInfo);
 
         // register with node
         rowNode.detailGridInfo = gridInfo;
 
         this.addDestroyFunc(() => {
-            this.masterGridApi.removeDetailGridInfo(this.rowId); // unregister from api
+            masterGridApi.removeDetailGridInfo(rowId); // unregister from api
             rowNode.detailGridInfo = null; // unregister from node
         });
     }
 
-    private selectAndSetTemplate(params: ICellRendererParams): void {
-        const paramsAny = params as any;
-
-        if (_.missing(paramsAny.template)) {
+    private selectAndSetTemplate(): void {
+        if (_.missing(this.params.template)) {
             // use default template
             this.setTemplate(DetailCellRenderer.TEMPLATE);
         } else {
             // use user provided template
-            if (typeof paramsAny.template === 'string') {
-                this.setTemplate(paramsAny.template as string);
-            } else if (typeof paramsAny.template === 'function') {
-                const templateFunc: TemplateFunc = paramsAny.template as TemplateFunc;
-                const template = templateFunc(params);
+            if (typeof this.params.template === 'string') {
+                this.setTemplate(this.params.template);
+            } else if (typeof this.params.template === 'function') {
+                const templateFunc = this.params.template as TemplateFunc;
+                const template = templateFunc(this.params);
                 this.setTemplate(template);
             } else {
                 console.warn('ag-Grid: detailCellRendererParams.template should be function or string');
@@ -134,12 +176,12 @@ export class DetailCellRenderer extends Component implements ICellRenderer {
         }
     }
 
-    private createDetailsGrid(params: IDetailCellRendererParams): void {
+    private createDetailsGrid(): void {
         // we clone the detail grid options, as otherwise it would be shared
         // across many instances, and that would be a problem because we set
         // api and columnApi into gridOptions
 
-        const gridOptions = params.detailGridOptions;
+        const gridOptions = this.params.detailGridOptions;
         if (_.missing(gridOptions)) {
             console.warn('ag-Grid: could not find detail grid options for master detail, ' +
                 'please set gridOptions.detailCellRendererParams.detailGridOptions');
@@ -149,14 +191,14 @@ export class DetailCellRenderer extends Component implements ICellRenderer {
         this.detailGridOptions = _.cloneObject(gridOptions);
         // tslint:disable-next-line
         new Grid(this.eDetailGrid, this.detailGridOptions, {
-            $scope: params.$scope,
-            $compile: params.$compile,
+            $scope: this.params.$scope,
+            $compile: this.params.$compile,
             providedBeanInstances: {
                 // a temporary fix for AG-1574
                 // AG-1715 raised to do a wider ranging refactor to improve this
-                agGridReact: params.agGridReact,
+                agGridReact: this.params.agGridReact,
                 // AG-1716 - directly related to AG-1574 and AG-1715
-                frameworkComponentWrapper: params.frameworkComponentWrapper
+                frameworkComponentWrapper: this.params.frameworkComponentWrapper
             }
         });
 
@@ -167,17 +209,31 @@ export class DetailCellRenderer extends Component implements ICellRenderer {
         });
     }
 
-    private loadRowData(params: IDetailCellRendererParams): void {
-        const userFunc = params.getDetailRowData;
+    private loadRowData(): void {
+
+        // in case a refresh happens before the last refresh completes (as we depend on async
+        // application logic) we keep track on what the latest call was.
+        this.loadRowDataVersion++;
+        const versionThisCall = this.loadRowDataVersion;
+
+        const userFunc = this.params.getDetailRowData;
         if (!userFunc) {
             console.warn('ag-Grid: could not find getDetailRowData for master / detail, ' +
                 'please set gridOptions.detailCellRendererParams.getDetailRowData');
             return;
         }
+
+        const successCallback = (rowData: any[])=> {
+            const mostRecentCall = this.loadRowDataVersion!==versionThisCall;
+            if (mostRecentCall) {
+                this.setRowData(rowData);
+            }
+        };
+
         const funcParams: any = {
-            node: params.node,
-            data: params.data,
-            successCallback: this.setRowData.bind(this)
+            node: this.params.node,
+            data: this.params.data,
+            successCallback: successCallback(rowData)
         };
         userFunc(funcParams);
     }
@@ -193,11 +249,14 @@ export class DetailCellRenderer extends Component implements ICellRenderer {
 export interface IDetailCellRendererParams extends ICellRendererParams {
     detailGridOptions: GridOptions;
     getDetailRowData: GetDetailRowData;
-    suppressRefresh: boolean;
+    refreshStrategy: string;
     agGridReact: any;
     frameworkComponentWrapper: any;
     $compile: any;
     pinned: string;
+    template: string | TemplateFunc;
+    /** @deprecated */
+    suppressRefresh: boolean;
 }
 
 export interface GetDetailRowData {

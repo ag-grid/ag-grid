@@ -12,12 +12,22 @@ var gridOptions = {
     masterDetail: true,
     enableCellChangeFlash: true,
     detailCellRendererParams: {
-        // this property stops the refresh in the detail grid
-        suppressRefresh: true,
+        refreshStrategy: 'nothing',
+
+        template: function(params) {
+            return '<div class="ag-details-row">' +
+                        '<div style="padding: 4px; font-weight: bold;">'+params.data.name+' '+params.data.calls+' calls</div>' +
+                        '<div ref="eDetailGrid" class="ag-details-grid"/>' +
+                    '</div>';
+        },
 
         detailGridOptions: {
+            rowSelection: 'multiple',
+            enableCellChangeFlash: true,
+            immutableData: true,
+            getRowNodeId: function(data) {return data.callId;},
             columnDefs: [
-                { field: 'callId' },
+                { field: 'callId', checkboxSelection: true },
                 { field: 'direction' },
                 { field: 'number', minWidth: 150 },
                 { field: 'duration', valueFormatter: "x.toLocaleString() + 's'" },
@@ -36,7 +46,6 @@ var gridOptions = {
     onFirstDataRendered: onFirstDataRendered,
 };
 
-var count = 0;
 var allRowData;
 
 function onFirstDataRendered(params) {
@@ -45,13 +54,26 @@ function onFirstDataRendered(params) {
         params.api.getDisplayedRowAtIndex(0).setExpanded(true);
     }, 0);
 
-
     setInterval(function() {
         if (!allRowData) {
             return;
         }
 
-        var data = allRowData[count++ % allRowData.length];
+        var data = allRowData[0];
+
+        var newCallRecords = [];
+        data.callRecords.forEach( function(record, index) {
+            newCallRecords.push({
+                name: record.name,
+                callId: record.callId,
+                duration: record.duration + (index % 2),
+                switchCode: record.switchCode,
+                direction: record.direction,
+                number: record.number
+            });
+        });
+
+        data.callRecords = newCallRecords;
         data.calls++;
 
         var tran = {
@@ -59,7 +81,7 @@ function onFirstDataRendered(params) {
         };
 
         params.api.applyTransaction(tran);
-    }, 1000);
+    }, 2000);
 
 }
 

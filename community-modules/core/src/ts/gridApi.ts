@@ -274,7 +274,9 @@ export class GridApi {
     public setRowData(rowData: any[]) {
         if (this.gridOptionsWrapper.isRowModelDefault()) {
             if (this.gridOptionsWrapper.isImmutableData()) {
-                const [transaction, orderIdMap] = this.immutableService.createTransactionForRowData(rowData);
+                const res = this.immutableService.createTransactionForRowData(rowData);
+                if (!res) { return; }
+                const [transaction, orderIdMap] = res;
                 this.clientSideRowModel.updateRowData(transaction, orderIdMap);
                 // need to force updating of full width rows - note this wouldn't be necessary the full width cell comp listened
                 // to the data change event on the row node and refreshed itself.
