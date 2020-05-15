@@ -877,7 +877,14 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
     }
 
     public resetRowHeights(): void {
-        this.forEachNode(rowNode => rowNode.setRowHeight(null));
+        this.forEachNode(rowNode => {
+            rowNode.setRowHeight(null);
+            // forEachNode doesn't go through detail rows, so need to check
+            // for detail nodes explicitly.
+            if (rowNode.detailNode) {
+                rowNode.detailNode.setRowHeight(null);
+            }
+        });
         this.onRowHeightChanged();
     }
 
