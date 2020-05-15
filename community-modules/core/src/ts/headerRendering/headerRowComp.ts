@@ -15,6 +15,8 @@ import { isBrowserSafari } from '../utils/browser';
 import { missing } from '../utils/generic';
 import { removeFromArray } from '../utils/array';
 import { setDomChildOrder } from '../utils/dom';
+import { FocusController } from '../focusController';
+import { AbstractHeaderWrapper } from './header/abstractHeaderWrapper';
 
 export enum HeaderRowType {
     COLUMN_GROUP, COLUMN, FLOATING_FILTER
@@ -23,14 +25,16 @@ export enum HeaderRowType {
 export class HeaderRowComp extends Component {
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('columnController') private columnController: ColumnController;
+    @Autowired('focusController') private focusController: FocusController;
 
     private readonly dept: number;
     private readonly pinned: string;
 
     private readonly dropTarget: DropTarget;
     private readonly type: HeaderRowType;
+    private rowIndex: number;
 
-    private headerComps: { [key: string]: Component } = {};
+    private headerComps: { [key: string]: AbstractHeaderWrapper } = {};
 
     constructor(dept: number, type: HeaderRowType, pinned: string, dropTarget: DropTarget) {
         super(/* html */`<div class="ag-header-row" role="row" />`);
@@ -55,17 +59,35 @@ export class HeaderRowComp extends Component {
         });
     }
 
+    public setRowIndex(idx: number) {
+        this.rowIndex = idx;
+        this.getGui().setAttribute('aria-rowindex', (idx + 1).toString());
+    }
+
+    public getRowIndex(): number {
+        return this.rowIndex;
+    }
+
     @PreDestroy
     private destroyAllChildComponents(): void {
         const idsOfAllChildren = Object.keys(this.headerComps);
         this.destroyChildComponents(idsOfAllChildren);
     }
 
-    private destroyChildComponents(idsToDestroy: string[]): void {
+    private destroyChildComponents(idsToDestroy: string[], keepFocused?: boolean): void {
         idsToDestroy.forEach(id => {
-            const childHeaderComp: Component = this.headerComps[id];
-            this.getGui().removeChild(childHeaderComp.getGui());
-            this.destroyBean(childHeaderComp);
+            const childHeaderWrapper: AbstractHeaderWrapper = this.headerComps[id];
+
+            if (
+                keepFocused &&
+                !childHeaderWrapper.getColumn().isMoving() &&
+                this.focusController.isHeaderWrapperFocused(childHeaderWrapper)
+            ) {
+                return;
+            }
+
+            this.getGui().removeChild(childHeaderWrapper.getGui());
+            this.destroyBean(childHeaderWrapper);
             delete this.headerComps[id];
         });
     }
@@ -111,7 +133,6 @@ export class HeaderRowComp extends Component {
     //noinspection JSUnusedLocalSymbols
     @PostConstruct
     private init(): void {
-
         this.onRowHeightChanged();
         this.onVirtualColumnsChanged();
         this.setWidth();
@@ -144,17 +165,18 @@ export class HeaderRowComp extends Component {
 
         if (printLayout) {
             const centerRow = missing(this.pinned);
+
             if (centerRow) {
                 return this.columnController.getContainerWidth(Constants.PINNED_RIGHT)
                     + this.columnController.getContainerWidth(Constants.PINNED_LEFT)
                     + this.columnController.getContainerWidth(null);
-            } else {
-                return 0;
             }
-        } else {
-            // if not printing, just return the width as normal
-            return this.columnController.getContainerWidth(this.pinned);
+
+            return 0;
         }
+
+        // if not printing, just return the width as normal
+        return this.columnController.getContainerWidth(this.pinned);
     }
 
     private onGridColumnsChanged(): void {
@@ -189,18 +211,17 @@ export class HeaderRowComp extends Component {
                     result = result.concat(items);
                 });
                 return result;
-            } else {
-                return [];
             }
-        } else {
-            // when in normal layout, we add the columns for that container only
-            return this.columnController.getVirtualHeaderGroupRow(
-                this.pinned,
-                this.type == HeaderRowType.FLOATING_FILTER ?
-                    this.dept - 1 :
-                    this.dept
-            );
+            return [];
         }
+
+        // when in normal layout, we add the columns for that container only
+        return this.columnController.getVirtualHeaderGroupRow(
+            this.pinned,
+            this.type == HeaderRowType.FLOATING_FILTER ?
+                this.dept - 1 :
+                this.dept
+        );
     }
 
     private onVirtualColumnsChanged(): void {
@@ -222,7 +243,7 @@ export class HeaderRowComp extends Component {
 
             // if we already have this cell rendered, do nothing
             const colAlreadyInDom = currentChildIds.indexOf(idOfChild) >= 0;
-            let headerComp: Component;
+            let headerComp: AbstractHeaderWrapper;
             let eHeaderCompGui: HTMLElement;
             if (colAlreadyInDom) {
                 removeFromArray(currentChildIds, idOfChild);
@@ -237,7 +258,7 @@ export class HeaderRowComp extends Component {
         });
 
         // at this point, anything left in currentChildIds is an element that is no longer in the viewport
-        this.destroyChildComponents(currentChildIds);
+        this.destroyChildComponents(currentChildIds, true);
 
         const ensureDomOrder = this.gridOptionsWrapper.isEnsureDomOrder();
         if (ensureDomOrder) {
@@ -246,8 +267,8 @@ export class HeaderRowComp extends Component {
         }
     }
 
-    private createHeaderComp(columnGroupChild: ColumnGroupChild): Component {
-        let result: Component;
+    private createHeaderComp(columnGroupChild: ColumnGroupChild): AbstractHeaderWrapper {
+        let result: AbstractHeaderWrapper;
 
         switch (this.type) {
             case HeaderRowType.COLUMN:
@@ -257,12 +278,17 @@ export class HeaderRowComp extends Component {
                 result = new HeaderGroupWrapperComp(columnGroupChild as ColumnGroup, this.dropTarget, this.pinned);
                 break;
             case HeaderRowType.FLOATING_FILTER:
-                result = new FloatingFilterWrapper(columnGroupChild as Column);
+                result = new FloatingFilterWrapper(columnGroupChild as Column, this.pinned);
                 break;
         }
 
         this.createBean(result);
+        result.setParentComponent(this);
 
         return result;
+    }
+
+    public getHeaderComps(): { [key: string]: AbstractHeaderWrapper }  {
+        return this.headerComps;
     }
 }

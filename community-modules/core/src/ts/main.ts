@@ -206,7 +206,7 @@ export { AgGroupComponent, AgGroupComponentParams } from "./widgets/agGroupCompo
 export { AgDialog } from "./widgets/agDialog";
 export { AgPanel } from "./widgets/agPanel";
 export { Component, VisibleChangedEvent } from "./widgets/component";
-export { ManagedTabComponent } from "./widgets/managedTabComponent";
+export { ManagedFocusComponent } from "./widgets/managedFocusComponent";
 export { PopupComponent } from "./widgets/popupComponent";
 export { PopupService } from "./widgets/popupService";
 export { TouchListener, TapEvent, LongTapEvent } from "./widgets/touchListener";
@@ -257,6 +257,7 @@ export { IClipboardService } from "./interfaces/iClipboardService";
 export { IMenuFactory } from "./interfaces/iMenuFactory";
 export { CellPosition, CellPositionUtils } from "./entities/cellPosition";
 export { RowPosition, RowPositionUtils } from "./entities/rowPosition";
+export { HeaderPosition, HeaderPositionUtils } from "./headerRendering/header/headerPosition";
 export {
     IAggFunc,
     ColGroupDef,

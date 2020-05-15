@@ -1,7 +1,5 @@
 import { AgCheckbox } from "../../widgets/agCheckbox";
-import { Autowired, PostConstruct } from "../../context/context";
-import { Component } from "../../widgets/component";
-import { Beans } from "../../rendering/beans";
+import { Autowired } from "../../context/context";
 import { Column } from "../../entities/column";
 import {
     DragAndDropService, DragItem, DragSource, DragSourceType,
@@ -14,8 +12,7 @@ import { ColumnController } from "../../columnController/columnController";
 import { ColumnHoverService } from "../../rendering/columnHoverService";
 import { CssClassApplier } from "../cssClassApplier";
 import { Events } from "../../events";
-import { EventService } from "../../eventService";
-import { IHeaderComp, IHeaderParams, IHeader } from "./headerComp";
+import { IHeaderComp, IHeaderParams } from "./headerComp";
 import { IMenuFactory } from "../../interfaces/iMenuFactory";
 import { GridApi } from "../../gridApi";
 import { GridOptionsWrapper } from "../../gridOptionsWrapper";
@@ -28,16 +25,16 @@ import { RefSelector } from "../../widgets/componentAnnotations";
 import { TouchListener } from "../../widgets/touchListener";
 import { TooltipFeature } from "../../widgets/tooltipFeature";
 import { UserComponentFactory } from "../../components/framework/userComponentFactory";
+import { AbstractHeaderWrapper } from "./abstractHeaderWrapper";
 import { _ } from "../../utils";
 
-export class HeaderWrapperComp extends Component {
+export class HeaderWrapperComp extends AbstractHeaderWrapper {
 
-    private static TEMPLATE =
-        '<div class="ag-header-cell" role="presentation" unselectable="on">' +
-        '  <div ref="eResize" class="ag-header-cell-resize" role="presentation"></div>' +
-        '  <ag-checkbox ref="cbSelectAll" class="ag-header-select-all" role="presentation"></ag-checkbox>' +
-        // <inner component goes here>
-        '</div>';
+    private static TEMPLATE = /* html */
+        `<div class="ag-header-cell" role="presentation" unselectable="on" tabindex="-1">
+            <div ref="eResize" class="ag-header-cell-resize" role="presentation"></div>
+            <ag-checkbox ref="cbSelectAll" class="ag-header-select-all" role="presentation"></ag-checkbox>
+        </div>`;
 
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('dragAndDropService') private dragAndDropService: DragAndDropService;
@@ -49,17 +46,15 @@ export class HeaderWrapperComp extends Component {
     @Autowired('sortController') private sortController: SortController;
     @Autowired('userComponentFactory') private userComponentFactory: UserComponentFactory;
     @Autowired('columnHoverService') private columnHoverService: ColumnHoverService;
-    @Autowired('beans') private beans: Beans;
 
     @RefSelector('eResize') private eResize: HTMLElement;
     @RefSelector('cbSelectAll') private cbSelectAll: AgCheckbox;
 
-    private headerComp: IHeaderComp;
-
-    private readonly column: Column;
     private readonly dragSourceDropTarget: DropTarget;
-    private readonly pinned: string;
+    protected readonly column: Column;
+    protected readonly pinned: string;
 
+    private headerComp: IHeaderComp;
     private resizeStartWidth: number;
     private resizeWithShiftKey: boolean;
 
@@ -70,17 +65,11 @@ export class HeaderWrapperComp extends Component {
         this.pinned = pinned;
     }
 
-    public getColumn(): Column {
-        return this.column;
-    }
-
     public getComponentHolder(): ColDef {
         return this.column.getColDef();
     }
 
-    @PostConstruct
-    public init(): void {
-
+    protected postConstruct(): void {
         const colDef = this.getComponentHolder();
         const displayName = this.columnController.getDisplayNameForColumn(this.column, 'header', true);
         const enableSorting = colDef.sortable;
@@ -109,6 +98,8 @@ export class HeaderWrapperComp extends Component {
 
         this.addAttributes();
         CssClassApplier.addHeaderClassesFromColDef(colDef, this.getGui(), this.gridOptionsWrapper, this.column, null);
+
+        super.postConstruct();
     }
 
     private addColumnHoverListener(): void {
@@ -172,7 +163,7 @@ export class HeaderWrapperComp extends Component {
 
     private afterHeaderCompCreated(displayName: string, headerComp: IHeaderComp): void {
         this.getGui().appendChild(headerComp.getGui());
-        this.addDestroyFunc(()=> {
+        this.addDestroyFunc(() => {
             this.getContext().destroyBean(headerComp);
         });
 

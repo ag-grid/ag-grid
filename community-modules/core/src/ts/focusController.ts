@@ -9,6 +9,9 @@ import { CellPosition } from "./entities/cellPosition";
 import { RowNode } from "./entities/rowNode";
 import { GridApi } from "./gridApi";
 import { CellComp } from "./rendering/cellComp";
+import { HeaderRowComp } from "./headerRendering/headerRowComp";
+import { AbstractHeaderWrapper } from "./headerRendering/header/abstractHeaderWrapper";
+import { HeaderPosition } from "./headerRendering/header/headerPosition";
 import { _ } from "./utils";
 
 @Bean('focusController')
@@ -20,6 +23,7 @@ export class FocusController extends BeanStub {
     @Autowired('gridApi') private gridApi: GridApi;
 
     private focusedCellPosition: CellPosition;
+    private focusedHeaderPosition: HeaderPosition;
     private keyboardFocusActive: boolean = false;
 
     @PostConstruct
@@ -52,15 +56,6 @@ export class FocusController extends BeanStub {
 
     public isKeyboardFocus(): boolean {
         return this.keyboardFocusActive;
-    }
-
-    public clearFocusedCell(): void {
-        this.focusedCellPosition = null;
-        this.onCellFocused(false);
-    }
-
-    public getFocusedCell(): CellPosition {
-        return this.focusedCellPosition;
     }
 
     private activateMouseMode(): void {
@@ -113,6 +108,15 @@ export class FocusController extends BeanStub {
         return null;
     }
 
+    public clearFocusedCell(): void {
+        this.focusedCellPosition = null;
+        this.onCellFocused(false);
+    }
+
+    public getFocusedCell(): CellPosition {
+        return this.focusedCellPosition;
+    }
+
     public setFocusedCell(rowIndex: number, colKey: string | Column, floating: string | undefined, forceBrowserFocus = false): void {
         const column = _.makeNull(this.columnController.getGridColumn(colKey));
         this.focusedCellPosition = {rowIndex: rowIndex, rowPinned: _.makeNull(floating), column: column};
@@ -126,6 +130,37 @@ export class FocusController extends BeanStub {
 
     public isRowNodeFocused(rowNode: RowNode): boolean {
         return this.isRowFocused(rowNode.rowIndex, rowNode.rowPinned);
+    }
+
+    public isHeaderWrapperFocused(headerWrapper: AbstractHeaderWrapper): boolean {
+        if (_.missing(this.focusedHeaderPosition)) { return false; }
+        const column = headerWrapper.getColumn();
+        const headerRowIndex = (headerWrapper.getParentComponent() as HeaderRowComp).getRowIndex();
+        const pinned = headerWrapper.getPinned();
+
+        return column === this.focusedHeaderPosition.column &&
+            headerRowIndex === this.focusedHeaderPosition.headerRowIndex &&
+            pinned == this.focusedHeaderPosition.pinned;
+    }
+
+    public clearFocusedHeader(): void {
+        this.focusedHeaderPosition = null;
+    }
+
+    public getFocusedHeader(): HeaderPosition {
+        return this.focusedHeaderPosition;
+    }
+
+    public setHeaderFocused(headerWrapper: AbstractHeaderWrapper): void {
+        const column = headerWrapper.getColumn();
+        const headerRowIndex = (headerWrapper.getParentComponent() as HeaderRowComp).getRowIndex();
+        const pinned = headerWrapper.getPinned();
+
+        this.focusedHeaderPosition = {
+            column,
+            headerRowIndex,
+            pinned
+        };
     }
 
     public isAnyCellFocused(): boolean {

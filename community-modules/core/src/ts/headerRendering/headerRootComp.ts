@@ -10,10 +10,23 @@ import { GridApi } from '../gridApi';
 import { AutoWidthCalculator } from '../rendering/autoWidthCalculator';
 import { Constants } from '../constants';
 import { addOrRemoveCssClass, setDisplayed } from '../utils/dom';
+import { ManagedFocusComponent } from '../widgets/managedFocusComponent';
+import { FocusController } from '../focusController';
+import { RowPositionUtils } from '../entities/rowPosition';
+import { ColumnGroup } from '../entities/columnGroup';
+import { HeaderPositionUtils, HeaderPosition } from './header/headerPosition';
+import { Column } from '../entities/column';
+import { _ } from '../utils';
 
-export class HeaderRootComp extends Component {
-    private static TEMPLATE = /* html */`
-        <div class="ag-header" role="presentation">
+enum GridContainers {
+    CenterContainer,
+    LeftContainer,
+    RightContainer
+}
+
+export class HeaderRootComp extends ManagedFocusComponent {
+    private static TEMPLATE = /* html */
+        `<div class="ag-header" role="presentation">
             <div class="ag-pinned-left-header" ref="ePinnedLeftHeader" role="presentation"></div>
             <div class="ag-header-viewport" ref="eHeaderViewport" role="presentation">
                 <div class="ag-header-container" ref="eHeaderContainer" role="rowgroup"></div>
@@ -30,11 +43,12 @@ export class HeaderRootComp extends Component {
     @Autowired('columnController') private columnController: ColumnController;
     @Autowired('gridApi') private gridApi: GridApi;
     @Autowired('autoWidthCalculator') private autoWidthCalculator: AutoWidthCalculator;
+    @Autowired('focusController') private focusController: FocusController;
+    @Autowired('rowPositionUtils')  private rowPositionUtils: RowPositionUtils;
+    @Autowired('headerPositionUtils') private headerPositionUtils: HeaderPositionUtils;
 
-    private childContainers: HeaderContainer[];
-
+    private childContainers: HeaderContainer[] = [];
     private gridPanel: GridPanel;
-
     private printLayout: boolean;
 
     constructor() {
@@ -48,7 +62,6 @@ export class HeaderRootComp extends Component {
 
     @PostConstruct
     private postConstruct(): void {
-
         this.printLayout = this.gridOptionsWrapper.getDomLayout() === Constants.DOM_LAYOUT_PRINT;
 
         this.gridApi.registerHeaderRootComp(this);
@@ -58,13 +71,14 @@ export class HeaderRootComp extends Component {
         const pinnedLeftContainer = new HeaderContainer(this.ePinnedLeftHeader, null, Constants.PINNED_LEFT);
         const pinnedRightContainer = new HeaderContainer(this.ePinnedRightHeader, null, Constants.PINNED_RIGHT);
 
-        this.childContainers = [centerContainer, pinnedLeftContainer, pinnedRightContainer];
+        this.childContainers[GridContainers.LeftContainer] = pinnedLeftContainer;
+        this.childContainers[GridContainers.CenterContainer] = centerContainer;
+        this.childContainers[GridContainers.RightContainer] = pinnedRightContainer;
 
         this.childContainers.forEach(container => this.createManagedBean(container));
 
         // shotgun way to get labels to change, eg from sum(amount) to avg(amount)
         this.addManagedListener(this.eventService, Events.EVENT_COLUMN_VALUE_CHANGED, this.refreshHeader.bind(this));
-
         this.addManagedListener(this.gridOptionsWrapper, GridOptionsWrapper.PROP_DOM_LAYOUT, this.onDomLayoutChanged.bind(this));
 
         // for setting ag-pivot-on / ag-pivot-off CSS classes
@@ -76,6 +90,126 @@ export class HeaderRootComp extends Component {
         if (this.columnController.isReady()) {
             this.refreshHeader();
         }
+    }
+
+    protected onTabKeyDown(e: KeyboardEvent): void {
+        const focusedHeader = this.focusController.getFocusedHeader();
+        if (!focusedHeader) { return; }
+
+        const { headerRowIndex, column, pinned } = focusedHeader;
+        const nextRow = e.shiftKey ?  headerRowIndex - 1 : headerRowIndex + 1;
+
+        if (nextRow < 0) { return; }
+
+        const currentContainer = this.getChildContainer(pinned);
+        const rowComps = currentContainer.getRowComps();
+
+        if (nextRow >= rowComps.length) {
+            if (!this.focusGridView()) { return; }
+        } else {
+            const nextRowComp = rowComps[nextRow];
+            const nextColumn = e.shiftKey ? column.getParent() : (column as ColumnGroup).getChildren()[0];
+            if (!nextColumn) { return; }
+            const nextHeader = nextRowComp.getHeaderComps()[nextColumn.getUniqueId() as string];
+
+            if (nextHeader) {
+
+                nextHeader.getFocusableElement().focus();
+            }
+        }
+        super.onTabKeyDown(e);
+    }
+
+    private getChildContainer(pinned: string): HeaderContainer {
+        const containerIdx = GridContainers[pinned === 'left'
+            ? 'LeftContainer'
+            : (pinned === 'right'
+                ? 'RightContainer'
+                : 'CenterContainer')
+        ];
+
+        return this.childContainers[containerIdx];
+    }
+
+    protected handleKeyDown(e: KeyboardEvent): void {
+        switch (e.keyCode) {
+            case Constants.KEY_LEFT:
+            case Constants.KEY_RIGHT:
+                this.navigateToNextHeader(e);
+        }
+    }
+
+    protected onFocusOut(e: FocusEvent): void {
+        const { relatedTarget }  = e;
+        const eGui = this.getGui();
+
+        if (!relatedTarget && eGui.contains(document.activeElement)) { return; }
+
+        if (!eGui.contains(relatedTarget as HTMLElement)) {
+            this.focusController.clearFocusedHeader();
+        }
+    }
+
+    private focusGridView(): boolean {
+        const { focusController } = this;
+        const cellToFocus = focusController.getFocusedCell();
+
+        if (cellToFocus) {
+            this.focusController.setFocusedCell(cellToFocus.rowIndex, cellToFocus.column, cellToFocus.rowPinned, true);
+        } else {
+            const firstRow = this.rowPositionUtils.getFirstRow();
+            const firstColumn = this.columnController.getFirstDisplayedColumn();
+
+            if (!firstRow || !firstColumn) { return false; }
+
+            this.focusController.setFocusedCell(firstRow.rowIndex, firstColumn, firstRow.rowPinned, true);
+        }
+
+        return true;
+    }
+
+    private navigateToNextHeader(e: KeyboardEvent): void {
+        const focusedHeader = this.focusController.getFocusedHeader();
+        const isRtl = this.gridOptionsWrapper.isEnableRtl();
+        let nextHeader: HeaderPosition;
+        let direction: 'Before' |  'After';
+
+        // faking a bitwise XOR using !==
+        if (e.keyCode === Constants.KEY_LEFT !== isRtl) {
+            direction = 'Before';
+            nextHeader = this.headerPositionUtils.findHeader(focusedHeader, direction);
+        } else {
+            direction = 'After';
+            nextHeader = this.headerPositionUtils.findHeader(focusedHeader, direction);
+        }
+
+        if (nextHeader) {
+            this.scrollToColumn(nextHeader.column, direction);
+
+            const childContainer = this.getChildContainer(nextHeader.pinned);
+            const rowComp = childContainer.getRowComps()[nextHeader.headerRowIndex];
+            const headerComps = rowComp.getHeaderComps();
+
+            const headerCompId = Object.keys(headerComps).find(key => headerComps[key].getColumn() === nextHeader.column);
+
+            if (headerCompId) {
+                headerComps[headerCompId].getFocusableElement().focus();
+            }
+        }
+    }
+
+    private scrollToColumn(column: Column | ColumnGroup, direction: 'Before' | 'After'): void {
+        if (column.getPinned()) { return; }
+        let columnToScrollTo: Column;
+
+        if (column instanceof ColumnGroup) {
+            const columns = column.getDisplayedLeafColumns();
+            columnToScrollTo = direction === 'Before' ? _.last(columns) : columns[0];
+        } else {
+            columnToScrollTo = column;
+        }
+
+        this.gridPanel.ensureColumnVisible(columnToScrollTo);
     }
 
     private onDomLayoutChanged(): void {

@@ -1,12 +1,10 @@
-import { Autowired, PostConstruct } from '../../context/context';
+import { Autowired } from '../../context/context';
 import { IMenuFactory } from '../../interfaces/iMenuFactory';
 import { Column } from '../../entities/column';
 import { SetLeftFeature } from '../../rendering/features/setLeftFeature';
 import { IFloatingFilterComp, IFloatingFilterParams } from './../floating/floatingFilter';
-import { Component } from '../../widgets/component';
 import { RefSelector } from '../../widgets/componentAnnotations';
 import { GridOptionsWrapper } from '../../gridOptionsWrapper';
-import { Beans } from '../../rendering/beans';
 import { HoverFeature } from '../../headerRendering/hoverFeature';
 import { Events, FilterChangedEvent } from '../../events';
 import { ColumnHoverService } from '../../rendering/columnHoverService';
@@ -22,8 +20,9 @@ import { ModuleNames } from '../../modules/moduleNames';
 import { ModuleRegistry } from '../../modules/moduleRegistry';
 import { addOrRemoveCssClass, setDisplayed } from '../../utils/dom';
 import { createIconNoSpan } from '../../utils/icon';
+import { AbstractHeaderWrapper  } from '../../headerRendering/header/abstractHeaderWrapper';
 
-export class FloatingFilterWrapper extends Component {
+export class FloatingFilterWrapper extends AbstractHeaderWrapper {
     private static filterToFloatingFilterNames: { [p: string]: string; } = {
         set: 'agSetColumnFloatingFilter',
         agSetColumnFilter: 'agSetColumnFloatingFilter',
@@ -38,8 +37,8 @@ export class FloatingFilterWrapper extends Component {
         agTextColumnFilter: 'agTextColumnFloatingFilter'
     };
 
-    private static TEMPLATE =
-        /* html */`<div class="ag-header-cell" role="presentation">
+    private static TEMPLATE = /* html */
+        `<div class="ag-header-cell" role="presentation" tabindex="-1">
             <div ref="eFloatingFilterBody" role="columnheader"></div>
             <div class="ag-floating-filter-button" ref="eButtonWrapper" role="presentation">
                 <button type="button" class="ag-floating-filter-button-button" ref="eButtonShowMainFilter"></button>
@@ -47,7 +46,6 @@ export class FloatingFilterWrapper extends Component {
         </div>`;
 
     @Autowired('columnHoverService') private columnHoverService: ColumnHoverService;
-    @Autowired('beans') private beans: Beans;
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('userComponentFactory') private userComponentFactory: UserComponentFactory;
     @Autowired('gridApi') private gridApi: GridApi;
@@ -59,19 +57,20 @@ export class FloatingFilterWrapper extends Component {
     @RefSelector('eButtonWrapper') private eButtonWrapper: HTMLElement;
     @RefSelector('eButtonShowMainFilter') private eButtonShowMainFilter: HTMLElement;
 
-    private readonly column: Column;
+    protected readonly column: Column;
+    protected readonly pinned: string;
 
     private suppressFilterButton: boolean;
 
     private floatingFilterCompPromise: Promise<IFloatingFilterComp>;
 
-    constructor(column: Column) {
+    constructor(column: Column, pinned: string) {
         super(FloatingFilterWrapper.TEMPLATE);
         this.column = column;
+        this.pinned = pinned;
     }
 
-    @PostConstruct
-    private postConstruct(): void {
+    protected postConstruct(): void {
         this.setupFloatingFilter();
         this.setupWidth();
         this.setupLeftPositioning();
@@ -79,6 +78,7 @@ export class FloatingFilterWrapper extends Component {
         this.createManagedBean(new HoverFeature([this.column], this.getGui()));
 
         this.addManagedListener(this.eButtonShowMainFilter, 'click', this.showParentFilter.bind(this));
+        super.postConstruct();
     }
 
     private setupFloatingFilter(): void {
@@ -147,7 +147,7 @@ export class FloatingFilterWrapper extends Component {
 
     private setupWithFloatingFilter(floatingFilterComp: IFloatingFilterComp): void {
         const disposeFunc = () => {
-            this.getContext().destroyBean(floatingFilterComp)
+            this.getContext().destroyBean(floatingFilterComp);
         };
 
         if (!this.isAlive()) {

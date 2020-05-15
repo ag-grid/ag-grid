@@ -17,6 +17,22 @@ export class RowPositionUtils extends BeanStub {
     @Autowired('rowModel') private rowModel: IRowModel;
     @Autowired('pinnedRowModel') private pinnedRowModel: PinnedRowModel;
 
+    public getFirstRow(): RowPosition {
+        if (this.pinnedRowModel.getPinnedTopRowCount()) {
+            return { rowIndex: 0, rowPinned: Constants.PINNED_TOP };
+        }
+
+        if (this.rowModel.getRowCount()) {
+            return { rowIndex: 0, rowPinned: undefined };
+        }
+
+        if (this.pinnedRowModel.getPinnedBottomRowCount()) {
+            return { rowIndex: 0, rowPinned: Constants.PINNED_BOTTOM };
+        }
+
+        return null;
+    }
+
     public getRowNode(gridRow: RowPosition): RowNode | null {
         switch (gridRow.rowPinned) {
             case Constants.PINNED_TOP:

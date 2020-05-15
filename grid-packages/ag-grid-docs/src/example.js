@@ -156,7 +156,7 @@ var gridOptions = {
         minWidth: 50,
         sortable: true,
         filter: true,
-        floatingFilter: !isSmall,
+        floatingFilter: false, //!isSmall,
         resizable: true
     },
     enableCellChangeFlash: true,

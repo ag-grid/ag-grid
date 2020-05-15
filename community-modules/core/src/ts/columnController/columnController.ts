@@ -1529,6 +1529,30 @@ export class ColumnController extends BeanStub {
         return null;
     }
 
+    public getDisplayedGroupBefore(columnGroup: ColumnGroup): ColumnGroup | null {
+        // pick one col in this group at random
+        let col: Column | null = columnGroup.getDisplayedLeafColumns()[0];
+        const requiredLevel = columnGroup.getOriginalColumnGroup().getLevel();
+
+        while (true) {
+            // keep moving to the next col, until we get to another group
+            col = this.getDisplayedColBefore(col);
+
+            // if no col after, means no group after
+            if (!col) { return null; }
+
+            // get group at same level as the one we are looking for
+            let groupPointer = col.getParent();
+            while (groupPointer.getOriginalColumnGroup().getLevel() !== requiredLevel) {
+                groupPointer = groupPointer.getParent();
+            }
+
+            if (groupPointer !== columnGroup) {
+                return groupPointer;
+            }
+        }
+    }
+
     public getDisplayedGroupAfter(columnGroup: ColumnGroup): ColumnGroup | null {
         // pick one col in this group at random
         let col: Column | null = columnGroup.getDisplayedLeafColumns()[0];
@@ -3149,5 +3173,27 @@ export class ColumnController extends BeanStub {
 
         return (defaultColDef != null && defaultColDef.floatingFilter === true) ||
             (this.columnDefs != null && this.columnDefs.some((c: ColDef) => c.floatingFilter === true));
+    }
+
+    public getFirstDisplayedColumn(): Column {
+        const isRtl = this.gridOptionsWrapper.isEnableRtl();
+        const queryOrder: ('getDisplayedLeftColumns' | 'getDisplayedCenterColumns' | 'getDisplayedRightColumns')[] = [
+            'getDisplayedLeftColumns',
+            'getDisplayedCenterColumns',
+            'getDisplayedRightColumns'
+        ];
+
+        if (isRtl) {
+            queryOrder.reverse();
+        }
+
+        for (let i = 0; i < queryOrder.length; i++) {
+            const container = this[queryOrder[i]]();
+            if (container.length) {
+                return isRtl ? _.last(container) : container[0];
+            }
+        }
+
+        return null;
     }
 }

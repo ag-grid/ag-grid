@@ -3,9 +3,9 @@ import { RefSelector } from '../widgets/componentAnnotations';
 import { PostConstruct, Autowired } from '../context/context';
 import { Constants } from '../constants';
 import { FocusController } from '../focusController';
-import { ManagedTabComponent } from '../widgets/managedTabComponent';
+import { ManagedFocusComponent } from '../widgets/managedFocusComponent';
 
-export class TabbedLayout extends ManagedTabComponent {
+export class TabbedLayout extends ManagedFocusComponent {
 
     @Autowired('focusController') private focusController: FocusController;
 
@@ -26,12 +26,7 @@ export class TabbedLayout extends ManagedTabComponent {
         }
     }
 
-    @PostConstruct
-    public init(): void {
-        this.addManagedListener(this.getGui(), 'keydown', this.handleKeyDown.bind(this));
-    }
-
-    private handleKeyDown(e: KeyboardEvent): void {
+    protected handleKeyDown(e: KeyboardEvent): void {
         switch (e.keyCode) {
             case Constants.KEY_RIGHT:
             case Constants.KEY_LEFT:

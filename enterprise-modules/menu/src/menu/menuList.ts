@@ -2,7 +2,7 @@ import {
     Autowired,
     Constants,
     GridOptionsWrapper,
-    ManagedTabComponent,
+    ManagedFocusComponent,
     MenuItemDef,
     PopupService,
     PostConstruct,
@@ -12,7 +12,7 @@ import { MenuItemComponent, MenuItemSelectedEvent } from "./menuItemComponent";
 
 type MenuItem = { comp: MenuItemComponent, params: MenuItemDef };
 
-export class MenuList extends ManagedTabComponent {
+export class MenuList extends ManagedFocusComponent {
 
     @Autowired('popupService') private popupService: PopupService;
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
@@ -42,11 +42,6 @@ export class MenuList extends ManagedTabComponent {
 
     constructor() {
         super(MenuList.TEMPLATE);
-    }
-
-    @PostConstruct
-    public init(): void {
-        this.addManagedListener(this.getGui(), 'keydown', this.handleKeyDown.bind(this));
     }
 
     public clearActiveItem(): void {
@@ -190,7 +185,7 @@ export class MenuList extends ManagedTabComponent {
         this.activeMenuItemParams = null;
     }
 
-    private handleKeyDown(e: KeyboardEvent): void {
+    protected handleKeyDown(e: KeyboardEvent): void {
         switch (e.keyCode) {
             case Constants.KEY_UP:
             case Constants.KEY_RIGHT:
