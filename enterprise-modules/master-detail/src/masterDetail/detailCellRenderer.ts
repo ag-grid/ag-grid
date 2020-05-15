@@ -223,7 +223,7 @@ export class DetailCellRenderer extends Component implements ICellRenderer {
         }
 
         const successCallback = (rowData: any[])=> {
-            const mostRecentCall = this.loadRowDataVersion!==versionThisCall;
+            const mostRecentCall = this.loadRowDataVersion === versionThisCall;
             if (mostRecentCall) {
                 this.setRowData(rowData);
             }
