@@ -16,7 +16,6 @@ import {
     IAfterGuiAttachedParams,
     Promise,
     _,
-    IFilterParams
 } from '@ag-grid-community/core';
 
 import { SetFilterModelValuesType, SetValueModel } from './setValueModel';
@@ -27,6 +26,7 @@ export class SetFilter extends ProvidedFilter {
     private valueModel: SetValueModel;
 
     @RefSelector('eSelectAll') private eSelectAll: AgCheckbox;
+    @RefSelector('eSelectAllLabel') private eSelectAllLabel: HTMLElement;
     @RefSelector('eMiniFilter') private eMiniFilter: AgInputTextField;
     @RefSelector('eFilterLoading') private eFilterLoading: HTMLInputElement;
 
@@ -54,7 +54,8 @@ export class SetFilter extends ProvidedFilter {
                 <div class="ag-filter-header-container" role="presentation">
                     <ag-input-text-field class="ag-mini-filter" ref="eMiniFilter"></ag-input-text-field>
                     <label ref="eSelectAllContainer" class="ag-set-filter-item ag-set-filter-select-all">
-                        <ag-checkbox ref="eSelectAll" class="ag-set-filter-item-checkbox"></ag-checkbox><span class="ag-set-filter-item-value">(${translate('selectAll', 'Select All')})</span>
+                        <ag-checkbox ref="eSelectAll" class="ag-set-filter-item-checkbox"></ag-checkbox>
+                        <span ref="eSelectAllLabel" class="ag-set-filter-item-value"></span>
                     </label>
                 </div>
                 <div ref="eSetFilterList" class="ag-set-filter-list" role="presentation"></div>
@@ -255,6 +256,7 @@ export class SetFilter extends ProvidedFilter {
 
     private initSelectAll() {
         this.updateCheckboxIcon();
+        this.updateSelectAllText();
 
         const eSelectAllContainer = this.getRefElement('eSelectAllContainer');
 
@@ -385,7 +387,18 @@ export class SetFilter extends ProvidedFilter {
             } else {
                 this.refresh();
             }
+
+            this.updateSelectAllText();
         }
+    }
+
+    private updateSelectAllText() {
+        const translate = this.gridOptionsWrapper.getLocaleTextFunc();
+        const label = this.valueModel.getMiniFilter() == null ?
+            translate('selectAll', 'Select All') :
+            translate('selectAllSearchResults', 'Select All Search Results');
+
+        this.eSelectAllLabel.innerText = `(${label})`;
     }
 
     private onMiniFilterKeyPress(e: KeyboardEvent): void {
@@ -431,6 +444,7 @@ export class SetFilter extends ProvidedFilter {
     public setMiniFilter(newMiniFilter: string): void {
         this.valueModel.setMiniFilter(newMiniFilter);
         this.eMiniFilter.setValue(this.valueModel.getMiniFilter());
+        this.updateSelectAllText();
     }
 
     public getMiniFilter() {

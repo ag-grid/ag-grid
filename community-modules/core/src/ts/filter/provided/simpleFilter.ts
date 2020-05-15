@@ -43,6 +43,7 @@ const DEFAULT_TRANSLATIONS: { [name: string]: string; } = {
     endsWith: 'Ends with',
     searchOoo: 'Search...',
     selectAll: 'Select All',
+    selectAllSearchResults: 'Select All Search Results',
     applyFilter: 'Apply Filter',
     clearFilter: 'Clear Filter',
     andCondition: 'AND',
