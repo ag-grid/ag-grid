@@ -55,6 +55,7 @@ var gridOptions = {
 
         // for set filter
         selectAll: 'daSelect Allen',
+        selectAllSearchResults: 'daSelect Allen Searchen Resulten',
         searchOoo: 'daSearch...',
         blanks: 'daBlanc',
 
