@@ -307,6 +307,8 @@ const rebuildPackagesBasedOnChangeState = async () => {
         const packagesToRun = Array.from(lernaPackagesToRebuild);
         await buildPackages(packagesToRun)
         await buildPackages(packagesToRun, 'package')
+        await buildPackages(packagesToRun, 'test')
+        await buildPackages(packagesToRun, 'test:e2e')
     } else {
         console.log("No changed packages to process!");
     }
