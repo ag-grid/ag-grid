@@ -107,13 +107,21 @@ export class HeaderRootComp extends ManagedFocusComponent {
         if (nextRow >= rowComps.length) {
             if (!this.focusGridView()) { return; }
         } else {
+            const currentColumn = column as ColumnGroup;
             const nextRowComp = rowComps[nextRow];
-            const nextColumn = e.shiftKey ? column.getParent() : (column as ColumnGroup).getChildren()[0];
+            const nextColumn = e.shiftKey ? currentColumn.getParent() : currentColumn.getDisplayedChildren()[0];
+
             if (!nextColumn) { return; }
+
+            if (!e.shiftKey) {
+                this.scrollToColumn(currentColumn.getDisplayedLeafColumns()[0]);
+            } else {
+                this.scrollToColumn(currentColumn);
+            }
+
             const nextHeader = nextRowComp.getHeaderComps()[nextColumn.getUniqueId() as string];
 
             if (nextHeader) {
-
                 nextHeader.getFocusableElement().focus();
             }
         }
@@ -190,7 +198,18 @@ export class HeaderRootComp extends ManagedFocusComponent {
             const rowComp = childContainer.getRowComps()[nextHeader.headerRowIndex];
             const headerComps = rowComp.getHeaderComps();
 
-            const headerCompId = Object.keys(headerComps).find(key => headerComps[key].getColumn() === nextHeader.column);
+            const headerCompId = Object.keys(headerComps).find(key => {
+                const nextHeaderColumn = nextHeader.column;
+                let currentHeaderColumn = headerComps[key].getColumn();
+
+                while (currentHeaderColumn) {
+                    if (nextHeaderColumn === currentHeaderColumn) {
+                        return true;
+                    }
+                    currentHeaderColumn = currentHeaderColumn.getParent();
+                }
+                return false;
+            });
 
             if (headerCompId) {
                 headerComps[headerCompId].getFocusableElement().focus();
@@ -198,7 +217,7 @@ export class HeaderRootComp extends ManagedFocusComponent {
         }
     }
 
-    private scrollToColumn(column: Column | ColumnGroup, direction: 'Before' | 'After'): void {
+    private scrollToColumn(column: Column | ColumnGroup, direction: 'Before' | 'After' = 'After'): void {
         if (column.getPinned()) { return; }
         let columnToScrollTo: Column;
 

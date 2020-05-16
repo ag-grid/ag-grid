@@ -1529,45 +1529,40 @@ export class ColumnController extends BeanStub {
         return null;
     }
 
-    public getDisplayedGroupBefore(columnGroup: ColumnGroup): ColumnGroup | null {
-        // pick one col in this group at random
-        let col: Column | null = columnGroup.getDisplayedLeafColumns()[0];
-        const requiredLevel = columnGroup.getOriginalColumnGroup().getLevel();
-
-        while (true) {
-            // keep moving to the next col, until we get to another group
-            col = this.getDisplayedColBefore(col);
-
-            // if no col after, means no group after
-            if (!col) { return null; }
-
-            // get group at same level as the one we are looking for
-            let groupPointer = col.getParent();
-            while (groupPointer.getOriginalColumnGroup().getLevel() !== requiredLevel) {
-                groupPointer = groupPointer.getParent();
-            }
-
-            if (groupPointer !== columnGroup) {
-                return groupPointer;
-            }
-        }
+    public getDisplayedGroupAfter(columnGroup: ColumnGroup): ColumnGroup | null {
+        return this.getDisplayedGroupAtDirection(columnGroup, 'After');
     }
 
-    public getDisplayedGroupAfter(columnGroup: ColumnGroup): ColumnGroup | null {
-        // pick one col in this group at random
-        let col: Column | null = columnGroup.getDisplayedLeafColumns()[0];
-        const requiredLevel = columnGroup.getOriginalColumnGroup().getLevel();
+    public getDisplayedGroupBefore(columnGroup: ColumnGroup): ColumnGroup | null {
+        return this.getDisplayedGroupAtDirection(columnGroup, 'Before');
+    }
+
+    public getDisplayedGroupAtDirection(columnGroup: ColumnGroup, direction: 'After' | 'Before'): ColumnGroup | null {
+        // pick the last displayed column in this group
+        const requiredLevel = columnGroup.getOriginalColumnGroup().getLevel() + columnGroup.getPaddingLevel();
+        const getDisplayColMethod: 'getDisplayedColAfter' | 'getDisplayedColBefore' = `getDisplayedCol${direction}` as any;
+        const colGroupLeafColumns = columnGroup.getDisplayedLeafColumns();
+
+        let col: Column | null = direction === 'After' ? _.last(colGroupLeafColumns) : colGroupLeafColumns[0];
 
         while (true) {
             // keep moving to the next col, until we get to another group
-            col = this.getDisplayedColAfter(col);
+            col = this[getDisplayColMethod](col);
 
             // if no col after, means no group after
             if (!col) { return null; }
 
             // get group at same level as the one we are looking for
-            let groupPointer = col.getParent();
-            while (groupPointer.getOriginalColumnGroup().getLevel() !== requiredLevel) {
+            let groupPointer: ColumnGroup = col.getParent();
+            let originalGroupLevel: number;
+            let groupPointerLevel: number;
+
+            while (true) {
+                const groupPointerOriginalColumnGroup = groupPointer.getOriginalColumnGroup();
+                originalGroupLevel = groupPointerOriginalColumnGroup.getLevel();
+                groupPointerLevel = groupPointer.getPaddingLevel();
+
+                if (originalGroupLevel + groupPointerLevel <= requiredLevel) { break; }
                 groupPointer = groupPointer.getParent();
             }
 

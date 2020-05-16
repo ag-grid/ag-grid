@@ -274,6 +274,16 @@ export class ColumnGroup implements ColumnGroupChild {
         return this.originalColumnGroup;
     }
 
+    public getPaddingLevel(): number {
+        const parent = this.getParent();
+
+        if (!this.isPadding() || !parent || !parent.isPadding()) {
+            return 0;
+        }
+
+        return 1 + parent.getPaddingLevel();
+    }
+
     public calculateDisplayedColumns() {
         // clear out last time we calculated
         this.displayedChildren = [];
