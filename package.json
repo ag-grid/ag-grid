@@ -19,6 +19,7 @@
     "clean": "npx lerna run clean && npx lerna clean --yes",
     "bootstrap": "npx lerna bootstrap --no-ci --ignore ag-grid-charts-example",
     "build": "npx lerna run build --ignore ag-grid-polymer-example --ignore ag-grid-charts-example",
+    "ciBuild": "cd grid-packages/ag-grid-docs && node -e 'require(\"./lernaOperations.js\").rebuildPackagesBasedOnChangeState()'",
     "package": "npx lerna run package --parallel --ignore ag-grid-polymer-example --ignore ag-grid-charts-example && npx lerna run package --scope ag-grid-community --scope ag-grid-enterprise",
     "test": "npx lerna run test --stream",
     "cleanCoreDependencies": "npx lerna clean --yes --scope ag-grid-angular --scope ag-grid-react --scope ag-grid-vue --scope ag-grid-docs",
@@ -47,6 +48,7 @@
     "docs": "cd grid-packages/ag-grid-docs && npm start",
     "docs-speedy": "cd grid-packages/ag-grid-docs && npx gulp serve-speedy",
     "updateAndRebuild": "npm i && npm run bootstrap && npm run build",
+    "ciUpdateAndRebuild": "npm i && npm run bootstrap && npm run ciBuild",
     "cleanAndRebuild": "npm run clean && npm run updateAndRebuild"
   },
   "devDependencies": {

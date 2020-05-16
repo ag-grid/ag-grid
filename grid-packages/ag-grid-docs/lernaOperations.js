@@ -1,7 +1,11 @@
+const cp = require('child_process');
+const os = require('os');
 const path = require("path");
 const fs = require("fs");
 const execa = require("execa");
 const chokidar = require("chokidar");
+
+const WINDOWS = /^win/.test(os.platform());
 
 const flattenArray = array => [].concat.apply([], array);
 
@@ -232,6 +236,80 @@ const buildPackages = async (packageNames) => {
     await buildDependencies(packageNames, 'build')
 }
 
+/* To be extracted/refactored */
+const getAgBuildChain = async () => {
+    const lernaBuildChainInfo = await getFlattenedBuildChainInfo();
+
+    Object.keys(lernaBuildChainInfo).forEach(packageName => {
+        lernaBuildChainInfo[packageName] = lernaBuildChainInfo[packageName]
+            .filter(dependent => dependent.startsWith('@ag-') || dependent.startsWith('ag-'));
+    })
+
+    return lernaBuildChainInfo;
+}
+
+
+function moduleChanged(moduleRoot) {
+    let changed = true;
+
+    // Windows... convert c:\\xxx to /c/xxx - can only work in git bash
+    const resolvedPath = path.resolve(moduleRoot).replace(/\\/g, '/').replace("C:", "/c");
+
+    const checkResult = cp.spawnSync('sh', ['../../scripts/hashChanged.sh', resolvedPath], {
+        stdio: 'pipe',
+        encoding: 'utf-8'
+    });
+
+    if (checkResult && checkResult.status !== 1) {
+        changed = checkResult.output[1].trim() === '1';
+    }
+    return changed;
+}
+
+const readModulesState = () => {
+    const moduleRootNames = ['grid-packages', 'community-modules', 'enterprise-modules', 'charts-packages', 'examples-grid'];
+    const exclusions = ['ag-grid-dev', 'polymer', 'ag-grid-polymer', 'ag-grid-charts-example'];
+
+    const modulesState = {};
+
+    moduleRootNames.forEach(moduleRootName => {
+        const moduleRootDirectory = WINDOWS ? `..\\..\\${moduleRootName}\\` : `../../${moduleRootName}/`;
+        fs.readdirSync(moduleRootDirectory, {
+            withFileTypes: true
+        })
+            .filter(d => d.isDirectory())
+            .filter(d => !exclusions.includes(d.name))
+            .map(d => WINDOWS ? `..\\..\\${moduleRootName}\\${d.name}` : `../../${moduleRootName}/${d.name}`)
+            .map(d => {
+                const packageName = require(WINDOWS ? `${d}\\package.json` : `${d}/package.json`).name;
+                modulesState[packageName] = {moduleChanged: moduleChanged(d)}
+            })
+    });
+
+    return modulesState;
+}
+
+const rebuildPackagesBasedOnChangeState = async () => {
+    const buildChain = await getAgBuildChain();
+    const modulesState = readModulesState()
+
+    const changedPackages = flattenArray(Object.keys(modulesState)
+        .filter(key => modulesState[key].moduleChanged)
+        .map(changedPackage => buildChain[changedPackage] ? buildChain[changedPackage] : changedPackage));
+
+    const lernaPackagesToRebuild = new Set();
+    changedPackages.forEach(lernaPackagesToRebuild.add, lernaPackagesToRebuild);
+
+    if (changedPackages.length > 0) {
+        console.log("Rebuilding changed packages...");
+
+        console.log(changedPackages);
+        await buildPackages(changedPackages)
+    }
+}
+/* To be extracted/refactored */
+
+exports.rebuildPackagesBasedOnChangeState = rebuildPackagesBasedOnChangeState;
 exports.buildPackages = buildPackages;
 exports.getFlattenedBuildChainInfo = getFlattenedBuildChainInfo;
 exports.buildCss = buildCss;

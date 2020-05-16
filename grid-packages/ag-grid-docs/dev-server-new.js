@@ -458,12 +458,13 @@ function updateUtilsSystemJsMappingsForFrameworks(gridCommunityModules, gridEnte
     fs.writeFileSync(utilityFilename, updatedUtilFileContents, 'UTF-8');
 }
 
-const rebuildPackagesBasedOnChangeState = async (skipSelf = true) => {
+const rebuildPackagesBasedOnChangeState = async (skipSelf = true, lernaBuildChain) => {
+    const buildChain = lernaBuildChain || lernaBuildChainInfo;
     const modulesState = readModulesState()
 
     const changedPackages = flattenArray(Object.keys(modulesState)
         .filter(key => modulesState[key].moduleChanged)
-        .map(changedPackage => skipSelf ? lernaBuildChainInfo[changedPackage].slice(1) : lernaBuildChainInfo[changedPackage]));
+        .map(changedPackage => skipSelf ? buildChain[changedPackage].slice(1) : buildChain[changedPackage]));
 
     const lernaPackagesToRebuild = new Set();
     changedPackages.forEach(lernaPackagesToRebuild.add, lernaPackagesToRebuild);
