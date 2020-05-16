@@ -291,7 +291,7 @@ const readModulesState = () => {
 
 const rebuildPackagesBasedOnChangeState = async () => {
     const buildChain = await getAgBuildChain();
-    const modulesState = readModulesState()
+    const modulesState = readModulesState();
 
     const changedPackages = flattenArray(Object.keys(modulesState)
         .filter(key => modulesState[key].moduleChanged)
@@ -300,11 +300,11 @@ const rebuildPackagesBasedOnChangeState = async () => {
     const lernaPackagesToRebuild = new Set();
     changedPackages.forEach(lernaPackagesToRebuild.add, lernaPackagesToRebuild);
 
-    if (changedPackages.length > 0) {
+    if (lernaPackagesToRebuild.size > 0) {
         console.log("Rebuilding changed packages...");
+        console.log(lernaPackagesToRebuild);
 
-        console.log(changedPackages);
-        await buildPackages(changedPackages)
+        await buildPackages(Array.from(lernaPackagesToRebuild))
     }
 }
 /* To be extracted/refactored */

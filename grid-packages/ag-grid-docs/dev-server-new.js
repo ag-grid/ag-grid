@@ -458,23 +458,22 @@ function updateUtilsSystemJsMappingsForFrameworks(gridCommunityModules, gridEnte
     fs.writeFileSync(utilityFilename, updatedUtilFileContents, 'UTF-8');
 }
 
-const rebuildPackagesBasedOnChangeState = async (skipSelf = true, lernaBuildChain) => {
-    const buildChain = lernaBuildChain || lernaBuildChainInfo;
+const rebuildPackagesBasedOnChangeState = async (skipSelf = true) => {
     const modulesState = readModulesState()
 
     const changedPackages = flattenArray(Object.keys(modulesState)
         .filter(key => modulesState[key].moduleChanged)
-        .map(changedPackage => skipSelf ? buildChain[changedPackage].slice(1) : buildChain[changedPackage]));
+        .map(changedPackage => skipSelf ? lernaBuildChainInfo[changedPackage].slice(1) : lernaBuildChainInfo[changedPackage]));
 
     const lernaPackagesToRebuild = new Set();
     changedPackages.forEach(lernaPackagesToRebuild.add, lernaPackagesToRebuild);
 
-    if (changedPackages.length > 0) {
+    if (lernaPackagesToRebuild.size > 0) {
         console.log("Rebuilding changed packages...");
 
-        await buildPackages(changedPackages)
+        await buildPackages(Array.from(lernaPackagesToRebuild))
 
-        if (changedPackages.includes("@ag-grid-community/core")) {
+        if (lernaPackagesToRebuild.includes("@ag-grid-community/core")) {
             await buildCss();
         }
     } else {
