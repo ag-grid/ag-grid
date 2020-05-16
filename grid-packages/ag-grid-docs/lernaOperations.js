@@ -307,6 +307,8 @@ const rebuildPackagesBasedOnChangeState = async () => {
         const packagesToRun = Array.from(lernaPackagesToRebuild);
         await buildPackages(packagesToRun)
         await buildPackages(packagesToRun, 'package')
+    } else {
+        console.log("No changed packages to process!");
     }
 }
 /* To be extracted/refactored */
