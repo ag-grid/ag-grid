@@ -232,8 +232,8 @@ const buildCss = async () => {
     await buildDependencyChain("@ag-grid-community/core", cssBuildChain.buildChains);
 };
 
-const buildPackages = async (packageNames) => {
-    await buildDependencies(packageNames, 'build')
+const buildPackages = async (packageNames, command='build') => {
+    await buildDependencies(packageNames, command)
 }
 
 /* To be extracted/refactored */
@@ -304,7 +304,9 @@ const rebuildPackagesBasedOnChangeState = async () => {
         console.log("Rebuilding changed packages...");
         console.log(lernaPackagesToRebuild);
 
-        await buildPackages(Array.from(lernaPackagesToRebuild))
+        const packagesToRun = Array.from(lernaPackagesToRebuild);
+        await buildPackages(packagesToRun)
+        await buildPackages(packagesToRun, 'package')
     }
 }
 /* To be extracted/refactored */
