@@ -16,6 +16,7 @@ import { RowPositionUtils } from '../entities/rowPosition';
 import { ColumnGroup } from '../entities/columnGroup';
 import { HeaderPositionUtils, HeaderPosition } from './header/headerPosition';
 import { Column } from '../entities/column';
+import { AnimationFrameService } from '../misc/animationFrameService';
 import { _ } from '../utils';
 
 enum GridContainers {
@@ -41,6 +42,7 @@ export class HeaderRootComp extends ManagedFocusComponent {
 
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('columnController') private columnController: ColumnController;
+    @Autowired("animationFrameService") private animationFrameService: AnimationFrameService;
     @Autowired('gridApi') private gridApi: GridApi;
     @Autowired('autoWidthCalculator') private autoWidthCalculator: AutoWidthCalculator;
     @Autowired('focusController') private focusController: FocusController;
@@ -229,6 +231,13 @@ export class HeaderRootComp extends ManagedFocusComponent {
         }
 
         this.gridPanel.ensureColumnVisible(columnToScrollTo);
+
+        // need to nudge the scrolls for the floating items. otherwise when we set focus on a non-visible
+        // floating cell, the scrolls get out of sync
+        this.gridPanel.horizontallyScrollHeaderCenterAndFloatingCenter();
+
+        // need to flush frames, to make sure the correct cells are rendered
+        this.animationFrameService.flushAllFrames();
     }
 
     private onDomLayoutChanged(): void {

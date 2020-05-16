@@ -339,6 +339,7 @@ export class HeaderGroupWrapperComp extends AbstractHeaderWrapper {
         this.resizeCols.forEach(col => this.resizeRatios.push(col.getActualWidth() / this.resizeStartWidth));
 
         let takeFromGroup: ColumnGroup = null;
+
         if (shiftKey) {
             takeFromGroup = this.columnController.getDisplayedGroupAfter(this.column);
         }
@@ -363,7 +364,6 @@ export class HeaderGroupWrapperComp extends AbstractHeaderWrapper {
     }
 
     public onResizing(finished: boolean, resizeAmount: any): void {
-
         const resizeSets: ColumnResizeSet[] = [];
         const resizeAmountNormalised = this.normaliseDragChange(resizeAmount);
 
