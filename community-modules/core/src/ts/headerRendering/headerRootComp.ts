@@ -17,6 +17,7 @@ import { ColumnGroup } from '../entities/columnGroup';
 import { HeaderPositionUtils, HeaderPosition } from './header/headerPosition';
 import { Column } from '../entities/column';
 import { AnimationFrameService } from '../misc/animationFrameService';
+import { HeaderRowType } from './headerRowComp';
 import { _ } from '../utils';
 
 enum GridContainers {
@@ -105,21 +106,27 @@ export class HeaderRootComp extends ManagedFocusComponent {
 
         const currentContainer = this.getChildContainer(pinned);
         const rowComps = currentContainer.getRowComps();
+        const currentRowType = rowComps[headerRowIndex].getType();
+        let nextColumn;
 
         if (nextRow >= rowComps.length) {
             if (!this.focusGridView()) { return; }
         } else {
-            const currentColumn = column as ColumnGroup;
             const nextRowComp = rowComps[nextRow];
-            const nextColumn = e.shiftKey ? currentColumn.getParent() : currentColumn.getDisplayedChildren()[0];
+
+            if (currentRowType === HeaderRowType.COLUMN_GROUP) {
+                const currentColumn = column as ColumnGroup;
+                nextColumn = e.shiftKey ? currentColumn.getParent() : currentColumn.getDisplayedLeafColumns()[0];
+            } else if (currentRowType === HeaderRowType.FLOATING_FILTER) {
+                nextColumn = column;
+            } else {
+                const currentColumn = column as Column;
+                nextColumn = e.shiftKey ? currentColumn.getParent() : currentColumn;
+            }
 
             if (!nextColumn) { return; }
 
-            if (!e.shiftKey) {
-                this.scrollToColumn(currentColumn.getDisplayedLeafColumns()[0]);
-            } else {
-                this.scrollToColumn(currentColumn);
-            }
+            this.scrollToColumn(nextColumn);
 
             const nextHeader = nextRowComp.getHeaderComps()[nextColumn.getUniqueId() as string];
 

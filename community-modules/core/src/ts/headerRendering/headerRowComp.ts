@@ -68,6 +68,10 @@ export class HeaderRowComp extends Component {
         return this.rowIndex;
     }
 
+    public getType(): HeaderRowType {
+        return this.type;
+    }
+
     @PreDestroy
     private destroyAllChildComponents(): void {
         const idsOfAllChildren = Object.keys(this.headerComps);
