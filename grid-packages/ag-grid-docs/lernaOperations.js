@@ -11,7 +11,7 @@ const flattenArray = array => [].concat.apply([], array);
 
 const buildDependencies = async (dependencies, command = 'build-css') => {
     console.log("------------------------------------------------------------------------------------------");
-    console.log(`Building ${dependencies.join(' ')}`);
+    console.log(`Running ${command} on the following packages: ${dependencies.join(' ')}`);
     console.log("------------------------------------------------------------------------------------------");
 
     const scopedDependencies = dependencies.map(dependency => `--scope ${dependency}`).join(' ');
