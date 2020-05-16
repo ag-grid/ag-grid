@@ -9,13 +9,13 @@ const WINDOWS = /^win/.test(os.platform());
 
 const flattenArray = array => [].concat.apply([], array);
 
-const buildDependencies = async (dependencies, command = 'build-css') => {
+const buildDependencies = async (dependencies, command = 'build-css', arguments='') => {
     console.log("------------------------------------------------------------------------------------------");
     console.log(`Running ${command} on the following packages: ${dependencies.join(' ')}`);
     console.log("------------------------------------------------------------------------------------------");
 
     const scopedDependencies = dependencies.map(dependency => `--scope ${dependency}`).join(' ');
-    const lernaArgs = `run ${command} ${scopedDependencies}`.split(" ");
+    const lernaArgs = `run ${command} ${scopedDependencies} ${arguments}`.trim().split(" ");
     await execa("./node_modules/.bin/lerna", lernaArgs, {stdio: "inherit", cwd: '../../'});
 };
 
@@ -232,8 +232,8 @@ const buildCss = async () => {
     await buildDependencyChain("@ag-grid-community/core", cssBuildChain.buildChains);
 };
 
-const buildPackages = async (packageNames, command='build') => {
-    await buildDependencies(packageNames, command)
+const buildPackages = async (packageNames, command='build', arguments) => {
+    await buildDependencies(packageNames, command, arguments)
 }
 
 /* To be extracted/refactored */
@@ -306,7 +306,7 @@ const rebuildPackagesBasedOnChangeState = async () => {
 
         const packagesToRun = Array.from(lernaPackagesToRebuild);
         await buildPackages(packagesToRun)
-        await buildPackages(packagesToRun, 'package')
+        await buildPackages(packagesToRun, 'package', '--parallel')
         await buildPackages(packagesToRun, 'test')
         await buildPackages(packagesToRun, 'test:e2e')
     } else {
