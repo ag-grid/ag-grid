@@ -71,6 +71,8 @@ export class FloatingFilterWrapper extends AbstractHeaderWrapper {
     }
 
     protected postConstruct(): void {
+        super.postConstruct();
+
         this.setupFloatingFilter();
         this.setupWidth();
         this.setupLeftPositioning();
@@ -78,7 +80,6 @@ export class FloatingFilterWrapper extends AbstractHeaderWrapper {
         this.createManagedBean(new HoverFeature([this.column], this.getGui()));
 
         this.addManagedListener(this.eButtonShowMainFilter, 'click', this.showParentFilter.bind(this));
-        super.postConstruct();
     }
 
     private setupFloatingFilter(): void {

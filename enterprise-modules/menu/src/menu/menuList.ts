@@ -245,7 +245,7 @@ export class MenuList extends ManagedFocusComponent {
     }
 
     protected onTabKeyDown(e: KeyboardEvent) {
-        super.onTabKeyDown(e);
+        e.preventDefault();
 
         if (e.shiftKey) {
             this.closeIfIsChild(e);

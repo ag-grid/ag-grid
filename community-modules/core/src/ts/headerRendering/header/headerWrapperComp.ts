@@ -65,18 +65,15 @@ export class HeaderWrapperComp extends AbstractHeaderWrapper {
         this.pinned = pinned;
     }
 
-    public getComponentHolder(): ColDef {
-        return this.column.getColDef();
-    }
-
     protected postConstruct(): void {
+        super.postConstruct();
+
         const colDef = this.getComponentHolder();
         const displayName = this.columnController.getDisplayNameForColumn(this.column, 'header', true);
         const enableSorting = colDef.sortable;
         const enableMenu = this.menuFactory.isMenuEnabled(this.column) && !colDef.suppressMenu;
 
         this.appendHeaderComp(displayName, enableSorting, enableMenu);
-
         this.setupWidth();
         this.setupMovingCss();
         this.setupTooltip();
@@ -98,8 +95,10 @@ export class HeaderWrapperComp extends AbstractHeaderWrapper {
 
         this.addAttributes();
         CssClassApplier.addHeaderClassesFromColDef(colDef, this.getGui(), this.gridOptionsWrapper, this.column, null);
+    }
 
-        super.postConstruct();
+    public getComponentHolder(): ColDef {
+        return this.column.getColDef();
     }
 
     private addColumnHoverListener(): void {

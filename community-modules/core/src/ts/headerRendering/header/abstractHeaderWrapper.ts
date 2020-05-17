@@ -1,25 +1,20 @@
-import { Component } from "../../widgets/component";
+import { Autowired } from "../../context/context";
+import { Beans } from "../../rendering/beans";
 import { ColumnGroup } from "../../entities/columnGroup";
 import { Column } from "../../entities/column";
-import { PostConstruct, Autowired } from "../../context/context";
-import { Beans } from "../../rendering/beans";
+import { ManagedFocusComponent } from "../../widgets/managedFocusComponent";
 
-export abstract class AbstractHeaderWrapper extends Component {
+export abstract class AbstractHeaderWrapper extends ManagedFocusComponent {
 
     protected abstract readonly column: Column | ColumnGroup;
     protected abstract readonly pinned: string;
 
     @Autowired('beans') protected beans: Beans;
 
-    @PostConstruct
-    protected postConstruct(): void {
-        const eGui = this.getGui();
-        this.addManagedListener(eGui, 'focusin', (e: FocusEvent) => {
-            if (!eGui.contains(e.relatedTarget as HTMLElement)) {
-                eGui.focus();
-                this.beans.focusController.setHeaderFocused(this);
-            }
-        });
+    protected onFocusIn(e: FocusEvent) {
+        if (!this.getGui().contains(e.relatedTarget as HTMLElement)) {
+            this.beans.focusController.setHeaderFocused(this);
+        }
     }
 
     public getColumn(): Column | ColumnGroup {

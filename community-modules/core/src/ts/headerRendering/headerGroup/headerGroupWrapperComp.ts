@@ -64,6 +64,8 @@ export class HeaderGroupWrapperComp extends AbstractHeaderWrapper {
     }
 
     protected postConstruct(): void {
+        super.postConstruct();
+
         CssClassApplier.addHeaderClassesFromColDef(this.getComponentHolder(), this.getGui(), this.gridOptionsWrapper, null, this.column);
 
         const displayName = this.columnController.getDisplayNameForColumnGroup(this.column, 'header');
@@ -79,8 +81,6 @@ export class HeaderGroupWrapperComp extends AbstractHeaderWrapper {
 
         this.createManagedBean(new HoverFeature(this.column.getOriginalColumnGroup().getLeafColumns(), this.getGui()));
         this.createManagedBean(new SetLeftFeature(this.column, this.getGui(), this.beans));
-
-        super.postConstruct();
     }
 
     private setupMovingCss(): void {

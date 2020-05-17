@@ -1,6 +1,6 @@
 import { Promise, _ } from '../utils';
 import { RefSelector } from '../widgets/componentAnnotations';
-import { PostConstruct, Autowired } from '../context/context';
+import { Autowired } from '../context/context';
 import { Constants } from '../constants';
 import { FocusController } from '../focusController';
 import { ManagedFocusComponent } from '../widgets/managedFocusComponent';
@@ -49,7 +49,7 @@ export class TabbedLayout extends ManagedFocusComponent {
     }
 
     protected onTabKeyDown(e: KeyboardEvent) {
-        super.onTabKeyDown(e);
+        e.preventDefault();
 
         const focusableItems = this.focusController.findFocusableElements(this.eBody, '.ag-set-filter-list *, .ag-menu-list *');
         const activeElement = document.activeElement as HTMLElement;
@@ -74,7 +74,7 @@ export class TabbedLayout extends ManagedFocusComponent {
     }
 
     private static getTemplate(cssClass?: string) {
-        return `<div class="ag-tabs ${cssClass}">
+        return /* html */ `<div class="ag-tabs ${cssClass}">
             <div ref="eHeader" class="ag-tabs-header ${cssClass ? `${cssClass}-header` : ''}"></div>
             <div ref="eBody" class="ag-tabs-body ${cssClass ? `${cssClass}-body` : ''}"></div>
         </div>`;

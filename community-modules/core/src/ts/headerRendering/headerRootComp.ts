@@ -1,7 +1,7 @@
 import { GridOptionsWrapper } from '../gridOptionsWrapper';
 import { ColumnController } from '../columnController/columnController';
 import { GridPanel } from '../gridPanel/gridPanel';
-import { Autowired, PostConstruct } from '../context/context';
+import { Autowired } from '../context/context';
 import { HeaderContainer } from './headerContainer';
 import { Events } from '../events';
 import { Component } from '../widgets/component';
@@ -58,13 +58,9 @@ export class HeaderRootComp extends ManagedFocusComponent {
         super(HeaderRootComp.TEMPLATE);
     }
 
-    public registerGridComp(gridPanel: GridPanel): void {
-        this.gridPanel = gridPanel;
-        this.childContainers.forEach(c => c.registerGridComp(gridPanel));
-    }
+    protected postConstruct(): void {
+        super.postConstruct();
 
-    @PostConstruct
-    private postConstruct(): void {
         this.printLayout = this.gridOptionsWrapper.getDomLayout() === Constants.DOM_LAYOUT_PRINT;
 
         this.gridApi.registerHeaderRootComp(this);
@@ -134,18 +130,8 @@ export class HeaderRootComp extends ManagedFocusComponent {
                 nextHeader.getFocusableElement().focus();
             }
         }
-        super.onTabKeyDown(e);
-    }
 
-    private getChildContainer(pinned: string): HeaderContainer {
-        const containerIdx = GridContainers[pinned === 'left'
-            ? 'LeftContainer'
-            : (pinned === 'right'
-                ? 'RightContainer'
-                : 'CenterContainer')
-        ];
-
-        return this.childContainers[containerIdx];
+        e.preventDefault();
     }
 
     protected handleKeyDown(e: KeyboardEvent): void {
@@ -165,6 +151,22 @@ export class HeaderRootComp extends ManagedFocusComponent {
         if (!eGui.contains(relatedTarget as HTMLElement)) {
             this.focusController.clearFocusedHeader();
         }
+    }
+
+    public registerGridComp(gridPanel: GridPanel): void {
+        this.gridPanel = gridPanel;
+        this.childContainers.forEach(c => c.registerGridComp(gridPanel));
+    }
+
+    private getChildContainer(pinned: string): HeaderContainer {
+        const containerIdx = GridContainers[pinned === 'left'
+            ? 'LeftContainer'
+            : (pinned === 'right'
+                ? 'RightContainer'
+                : 'CenterContainer')
+        ];
+
+        return this.childContainers[containerIdx];
     }
 
     private focusGridView(): boolean {
