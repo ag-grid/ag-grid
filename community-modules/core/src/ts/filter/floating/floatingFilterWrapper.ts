@@ -21,6 +21,9 @@ import { ModuleRegistry } from '../../modules/moduleRegistry';
 import { addOrRemoveCssClass, setDisplayed } from '../../utils/dom';
 import { createIconNoSpan } from '../../utils/icon';
 import { AbstractHeaderWrapper  } from '../../headerRendering/header/abstractHeaderWrapper';
+import { FocusController } from '../../focusController';
+import { Constants } from '../../constants';
+import { Beans } from '../../rendering/beans';
 
 export class FloatingFilterWrapper extends AbstractHeaderWrapper {
     private static filterToFloatingFilterNames: { [p: string]: string; } = {
@@ -41,7 +44,7 @@ export class FloatingFilterWrapper extends AbstractHeaderWrapper {
         `<div class="ag-header-cell" role="presentation" tabindex="-1">
             <div ref="eFloatingFilterBody" role="columnheader"></div>
             <div class="ag-floating-filter-button" ref="eButtonWrapper" role="presentation">
-                <button type="button" class="ag-floating-filter-button-button" ref="eButtonShowMainFilter"></button>
+                <button type="button" class="ag-floating-filter-button-button" ref="eButtonShowMainFilter" tabindex="-1"></button>
             </div>
         </div>`;
 
@@ -52,6 +55,8 @@ export class FloatingFilterWrapper extends AbstractHeaderWrapper {
     @Autowired('columnApi') private columnApi: ColumnApi;
     @Autowired('filterManager') private filterManager: FilterManager;
     @Autowired('menuFactory') private menuFactory: IMenuFactory;
+    @Autowired('focusController') private focusController: FocusController;
+    @Autowired('beans') protected beans: Beans;
 
     @RefSelector('eFloatingFilterBody') private eFloatingFilterBody: HTMLElement;
     @RefSelector('eButtonWrapper') private eButtonWrapper: HTMLElement;
@@ -80,6 +85,58 @@ export class FloatingFilterWrapper extends AbstractHeaderWrapper {
         this.createManagedBean(new HoverFeature([this.column], this.getGui()));
 
         this.addManagedListener(this.eButtonShowMainFilter, 'click', this.showParentFilter.bind(this));
+    }
+
+    protected onTabKeyDown(e: KeyboardEvent) {
+        const activeEl = document.activeElement as HTMLElement;
+        const eGui = this.getGui();
+        const wrapperHasFocus = activeEl === eGui;
+
+        if (wrapperHasFocus) { return; }
+
+        const focusableElements = this.focusController.findFocusableElements(eGui);
+        const idx = focusableElements.indexOf(activeEl);
+        const nextIdx = e.shiftKey ? idx - 1 : idx + 1;
+
+        if (nextIdx < 0 || nextIdx >= focusableElements.length) {
+            eGui.focus();
+        } else {
+            focusableElements[nextIdx].focus();
+        }
+
+        e.preventDefault();
+    }
+
+    protected handleKeyDown(e: KeyboardEvent) {
+        const activeEl = document.activeElement;
+        const eGui = this.getGui();
+        const wrapperHasFocus = activeEl === eGui;
+
+        switch (e.keyCode) {
+            case Constants.KEY_UP:
+            case Constants.KEY_DOWN:
+                e.preventDefault();
+            case Constants.KEY_LEFT:
+            case Constants.KEY_RIGHT:
+                if (wrapperHasFocus) { return; }
+                e.stopPropagation();
+            case Constants.KEY_ENTER:
+                if (wrapperHasFocus) {
+                    const focusableElements = this.focusController.findFocusableElements(eGui);
+                    if (focusableElements.length) {
+                        focusableElements[0].focus();
+                        e.preventDefault();
+                    }
+                }
+        }
+    }
+
+    protected onFocusIn(e: FocusEvent) {
+        const eGui = this.getGui();
+
+        if (!eGui.contains(e.relatedTarget as HTMLElement)) {
+            this.beans.focusController.setHeaderFocused(this);
+        }
     }
 
     private setupFloatingFilter(): void {

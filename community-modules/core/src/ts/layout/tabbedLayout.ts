@@ -26,6 +26,13 @@ export class TabbedLayout extends ManagedFocusComponent {
         }
     }
 
+    private static getTemplate(cssClass?: string) {
+        return /* html */ `<div class="ag-tabs ${cssClass}">
+            <div ref="eHeader" class="ag-tabs-header ${cssClass ? `${cssClass}-header` : ''}"></div>
+            <div ref="eBody" class="ag-tabs-body ${cssClass ? `${cssClass}-body` : ''}"></div>
+        </div>`;
+    }
+
     protected handleKeyDown(e: KeyboardEvent): void {
         switch (e.keyCode) {
             case Constants.KEY_RIGHT:
@@ -71,13 +78,6 @@ export class TabbedLayout extends ManagedFocusComponent {
 
             if (nextItem) { nextItem.focus(); }
         }
-    }
-
-    private static getTemplate(cssClass?: string) {
-        return /* html */ `<div class="ag-tabs ${cssClass}">
-            <div ref="eHeader" class="ag-tabs-header ${cssClass ? `${cssClass}-header` : ''}"></div>
-            <div ref="eBody" class="ag-tabs-body ${cssClass ? `${cssClass}-body` : ''}"></div>
-        </div>`;
     }
 
     public setAfterAttachedParams(params: any): void {

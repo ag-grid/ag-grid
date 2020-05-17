@@ -5,7 +5,6 @@ import {
     ManagedFocusComponent,
     MenuItemDef,
     PopupService,
-    PostConstruct,
     _
 } from "@ag-grid-community/core";
 import { MenuItemComponent, MenuItemSelectedEvent } from "./menuItemComponent";
@@ -42,6 +41,33 @@ export class MenuList extends ManagedFocusComponent {
 
     constructor() {
         super(MenuList.TEMPLATE);
+    }
+
+    protected onTabKeyDown(e: KeyboardEvent) {
+        e.preventDefault();
+
+        if (e.shiftKey) {
+            this.closeIfIsChild(e);
+        }
+    }
+
+    protected handleKeyDown(e: KeyboardEvent): void {
+        switch (e.keyCode) {
+            case Constants.KEY_UP:
+            case Constants.KEY_RIGHT:
+            case Constants.KEY_DOWN:
+            case Constants.KEY_LEFT:
+                e.preventDefault();
+                this.handleNavKey(e.keyCode);
+                break;
+            case Constants.KEY_ESCAPE:
+                const topMenu = this.findTopMenu();
+
+                if (topMenu) {
+                    topMenu.getGui().focus();
+                }
+                break;
+        }
     }
 
     public clearActiveItem(): void {
@@ -185,25 +211,6 @@ export class MenuList extends ManagedFocusComponent {
         this.activeMenuItemParams = null;
     }
 
-    protected handleKeyDown(e: KeyboardEvent): void {
-        switch (e.keyCode) {
-            case Constants.KEY_UP:
-            case Constants.KEY_RIGHT:
-            case Constants.KEY_DOWN:
-            case Constants.KEY_LEFT:
-                e.preventDefault();
-                this.handleNavKey(e.keyCode);
-                break;
-            case Constants.KEY_ESCAPE:
-                const topMenu = this.findTopMenu();
-
-                if (topMenu) {
-                    topMenu.getGui().focus();
-                }
-                break;
-        }
-    }
-
     private findTopMenu(): MenuList | undefined {
         let parent = this.getParentComponent();
         
@@ -241,14 +248,6 @@ export class MenuList extends ManagedFocusComponent {
             this.closeIfIsChild();
         } else {
             this.openChild();
-        }
-    }
-
-    protected onTabKeyDown(e: KeyboardEvent) {
-        e.preventDefault();
-
-        if (e.shiftKey) {
-            this.closeIfIsChild(e);
         }
     }
 

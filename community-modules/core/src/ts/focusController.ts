@@ -95,8 +95,8 @@ export class FocusController extends BeanStub {
     }
 
     private getGridCellForDomElement(eBrowserCell: Node): CellPosition {
-
         let ePointer = eBrowserCell;
+
         while (ePointer) {
             const cellComp = this.gridOptionsWrapper.getDomData(ePointer, CellComp.DOM_DATA_KEY_CELL_COMP) as CellComp;
             if (cellComp) {

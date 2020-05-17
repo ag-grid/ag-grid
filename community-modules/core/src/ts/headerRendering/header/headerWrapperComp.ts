@@ -27,6 +27,7 @@ import { TooltipFeature } from "../../widgets/tooltipFeature";
 import { UserComponentFactory } from "../../components/framework/userComponentFactory";
 import { AbstractHeaderWrapper } from "./abstractHeaderWrapper";
 import { _ } from "../../utils";
+import { Beans } from "../../rendering/beans";
 
 export class HeaderWrapperComp extends AbstractHeaderWrapper {
 
@@ -46,6 +47,7 @@ export class HeaderWrapperComp extends AbstractHeaderWrapper {
     @Autowired('sortController') private sortController: SortController;
     @Autowired('userComponentFactory') private userComponentFactory: UserComponentFactory;
     @Autowired('columnHoverService') private columnHoverService: ColumnHoverService;
+    @Autowired('beans') protected beans: Beans;
 
     @RefSelector('eResize') private eResize: HTMLElement;
     @RefSelector('cbSelectAll') private cbSelectAll: AgCheckbox;
@@ -95,6 +97,12 @@ export class HeaderWrapperComp extends AbstractHeaderWrapper {
 
         this.addAttributes();
         CssClassApplier.addHeaderClassesFromColDef(colDef, this.getGui(), this.gridOptionsWrapper, this.column, null);
+    }
+
+    protected onFocusIn(e: FocusEvent) {
+        if (!this.getGui().contains(e.relatedTarget as HTMLElement)) {
+            this.beans.focusController.setHeaderFocused(this);
+        }
     }
 
     public getComponentHolder(): ColDef {

@@ -22,6 +22,7 @@ import { UserComponentFactory } from "../../components/framework/userComponentFa
 import { HoverFeature } from "../hoverFeature";
 import { TooltipFeature } from "../../widgets/tooltipFeature";
 import { AbstractHeaderWrapper } from "../header/abstractHeaderWrapper";
+import { Beans } from "../../rendering/beans";
 import { _ } from "../../utils";
 
 export class HeaderGroupWrapperComp extends AbstractHeaderWrapper {
@@ -36,6 +37,7 @@ export class HeaderGroupWrapperComp extends AbstractHeaderWrapper {
     @Autowired('horizontalResizeService') private horizontalResizeService: HorizontalResizeService;
     @Autowired('dragAndDropService') private dragAndDropService: DragAndDropService;
     @Autowired('userComponentFactory') private userComponentFactory: UserComponentFactory;
+    @Autowired('beans') protected beans: Beans;
     @Autowired('gridApi') private gridApi: GridApi;
     @Autowired('columnApi') private columnApi: ColumnApi;
 
@@ -81,6 +83,12 @@ export class HeaderGroupWrapperComp extends AbstractHeaderWrapper {
 
         this.createManagedBean(new HoverFeature(this.column.getOriginalColumnGroup().getLeafColumns(), this.getGui()));
         this.createManagedBean(new SetLeftFeature(this.column, this.getGui(), this.beans));
+    }
+
+    protected onFocusIn(e: FocusEvent) {
+        if (!this.getGui().contains(e.relatedTarget as HTMLElement)) {
+            this.beans.focusController.setHeaderFocused(this);
+        }
     }
 
     private setupMovingCss(): void {

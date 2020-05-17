@@ -93,7 +93,8 @@ export class HeaderRootComp extends ManagedFocusComponent {
 
     protected onTabKeyDown(e: KeyboardEvent): void {
         const focusedHeader = this.focusController.getFocusedHeader();
-        if (!focusedHeader) { return; }
+
+        if (!focusedHeader || e.defaultPrevented) { return; }
 
         const { headerRowIndex, column, pinned } = focusedHeader;
         const nextRow = e.shiftKey ?  headerRowIndex - 1 : headerRowIndex + 1;
@@ -138,7 +139,9 @@ export class HeaderRootComp extends ManagedFocusComponent {
         switch (e.keyCode) {
             case Constants.KEY_LEFT:
             case Constants.KEY_RIGHT:
-                this.navigateToNextHeader(e);
+                if (!e.defaultPrevented) {
+                    this.navigateToNextHeader(e);
+                }
         }
     }
 
