@@ -10,9 +10,16 @@ import { Events } from '../events';
 import { BeanStub } from "../context/beanStub";
 import { _ } from "../utils";
 
+interface PopupEventParams {
+    originalMouseEvent?: MouseEvent | Touch;
+    mouseEvent?: MouseEvent;
+    touchEvent?: TouchEvent;
+    keyboardEvent?: KeyboardEvent;
+}
+
 interface AgPopup {
     element: HTMLElement;
-    hideFunc: () => void;
+    hideFunc: (params: PopupEventParams) => void;
 }
 
 interface Rect {
@@ -128,7 +135,7 @@ export class PopupService extends BeanStub {
             keepWithinBounds: true
         });
 
-        this.callPostProcessPopup(params.ePopup, null, params.mouseEvent, params.type, params.column, params.rowNode);
+        this.callPostProcessPopup(params.type, params.ePopup, null, params.mouseEvent, params.column, params.rowNode);
     }
 
     private calculatePointerAlign(e: MouseEvent | Touch): { x: number, y: number } {
@@ -174,7 +181,7 @@ export class PopupService extends BeanStub {
             keepWithinBounds: params.keepWithinBounds
         });
 
-        this.callPostProcessPopup(params.ePopup, params.eventSource, null, params.type, params.column, params.rowNode);
+        this.callPostProcessPopup(params.type, params.ePopup, params.eventSource, null, params.column, params.rowNode);
     }
 
     public positionPopupOverComponent(params: {
@@ -201,10 +208,17 @@ export class PopupService extends BeanStub {
             keepWithinBounds: params.keepWithinBounds
         });
 
-        this.callPostProcessPopup(params.ePopup, params.eventSource, null, params.type, params.column, params.rowNode);
+        this.callPostProcessPopup(params.type, params.ePopup, params.eventSource, null, params.column, params.rowNode);
     }
 
-    private callPostProcessPopup(ePopup: HTMLElement | null, eventSource: HTMLElement | null, mouseEvent: MouseEvent | Touch | null, type: string, column: Column | null | undefined, rowNode: RowNode | undefined): void {
+    private callPostProcessPopup(
+        type: string,
+        ePopup?: HTMLElement,
+        eventSource?: HTMLElement,
+        mouseEvent?: MouseEvent | Touch,
+        column?: Column,
+        rowNode?: RowNode
+    ): void {
         const callback = this.gridOptionsWrapper.getPostProcessPopupFunc();
         if (callback) {
             const params: PostProcessPopupParams = {
@@ -335,7 +349,12 @@ export class PopupService extends BeanStub {
     // adds an element to a div, but also listens to background checking for clicks,
     // so that when the background is clicked, the child is removed again, giving
     // a model look to popups.
-    public addAsModalPopup(eChild: any, closeOnEsc: boolean, closedCallback?: () => void, click?: MouseEvent | Touch | null): (event?: any) => void {
+    public addAsModalPopup(
+        eChild: any,
+        closeOnEsc: boolean,
+        closedCallback?: (e?: MouseEvent | TouchEvent | KeyboardEvent) => void,
+        click?: MouseEvent | Touch | null
+    ): (event?: any) => void {
         return this.addPopup(true, eChild, closeOnEsc, closedCallback, click);
     }
 
@@ -343,12 +362,11 @@ export class PopupService extends BeanStub {
         modal: boolean,
         eChild: any,
         closeOnEsc: boolean,
-        closedCallback?: () => void,
+        closedCallback?: (e?: MouseEvent | TouchEvent | KeyboardEvent) => void,
         click?: MouseEvent | Touch | null,
         alwaysOnTop?: boolean
-    ): (event?: any) => void {
+    ): (params?: PopupEventParams) => void {
         const eDocument = this.gridOptionsWrapper.getDocument();
-        const processedAt = new Date().getTime();
 
         if (!eDocument) {
             console.warn('ag-grid: could not find the document, document is empty');
@@ -399,25 +417,26 @@ export class PopupService extends BeanStub {
         const hidePopupOnKeyboardEvent = (event: KeyboardEvent) => {
             const key = event.which || event.keyCode;
             if (key === Constants.KEY_ESCAPE && eWrapper.contains(document.activeElement)) {
-                hidePopup(null);
+                hidePopup({ keyboardEvent: event });
             }
         };
 
         const hidePopupOnMouseEvent = (event: MouseEvent) => {
-            hidePopup(event);
+            hidePopup({ mouseEvent: event });
         };
 
         const hidePopupOnTouchEvent = (event: TouchEvent) => {
-            hidePopup(null, event);
+            hidePopup({ touchEvent: event });
         };
 
-        const hidePopup = (mouseEvent?: MouseEvent | null, touchEvent?: TouchEvent) => {
+        const hidePopup = (params: PopupEventParams = {}) => {
+            const { mouseEvent, touchEvent, keyboardEvent } = params;
             if (
                 // we don't hide popup if the event was on the child, or any
                 // children of this child
-                this.isEventFromCurrentPopup(mouseEvent, touchEvent, eChild) ||
+                this.isEventFromCurrentPopup({ mouseEvent, touchEvent }, eChild) ||
                 // if the event to close is actually the open event, then ignore it
-                this.isEventSameChainAsOriginalEvent(click, mouseEvent, touchEvent) ||
+                this.isEventSameChainAsOriginalEvent({ originalMouseEvent: click, mouseEvent, touchEvent }) ||
                 // this method should only be called once. the client can have different
                 // paths, each one wanting to close, so this method may be called multiple times.
                 popupHidden
@@ -436,7 +455,7 @@ export class PopupService extends BeanStub {
             this.eventService.removeEventListener(Events.EVENT_DRAG_STARTED, hidePopupOnMouseEvent);
 
             if (closedCallback) {
-                closedCallback();
+                closedCallback(mouseEvent || touchEvent || keyboardEvent);
             }
 
             this.popupList = this.popupList.filter(popup => popup.element !== eChild);
@@ -464,14 +483,16 @@ export class PopupService extends BeanStub {
         return hidePopup;
     }
 
-    private isEventFromCurrentPopup(mouseEvent: MouseEvent | null | undefined, touchEvent: TouchEvent | undefined, eChild: HTMLElement): boolean {
+    private isEventFromCurrentPopup(params: PopupEventParams, target: HTMLElement): boolean {
+        const { mouseEvent, touchEvent } = params;
+
         const event = mouseEvent ? mouseEvent : touchEvent;
 
         if (!event) {
             return false;
         }
 
-        const indexOfThisChild = _.findIndex(this.popupList, popup => popup.element === eChild);
+        const indexOfThisChild = _.findIndex(this.popupList, popup => popup.element === target);
 
         if (indexOfThisChild === -1) {
             return false;
@@ -504,7 +525,8 @@ export class PopupService extends BeanStub {
 
     // in some browsers, the context menu event can be fired before the click event, which means
     // the context menu event could open the popup, but then the click event closes it straight away.
-    private isEventSameChainAsOriginalEvent(originalClick: MouseEvent | Touch | undefined | null, mouseEvent: MouseEvent | undefined | null, touchEvent: TouchEvent | undefined): boolean {
+    private isEventSameChainAsOriginalEvent(params: PopupEventParams): boolean {
+        const { originalMouseEvent, mouseEvent, touchEvent } = params;
         // we check the coordinates of the event, to see if it's the same event. there is a 1 / 1000 chance that
         // the event is a different event, however that is an edge case that is not very relevant (the user clicking
         // twice on the same location isn't a normal path).
@@ -518,14 +540,14 @@ export class PopupService extends BeanStub {
             // touch event doesn't have coordinates, need it's touch object
             mouseEventOrTouch = touchEvent.touches[0];
         }
-        if (mouseEventOrTouch && originalClick) {
+        if (mouseEventOrTouch && originalMouseEvent) {
             // for x, allow 4px margin, to cover iPads, where touch (which opens menu) is followed
             // by browser click (when you finger up, touch is interrupted as click in browser)
             const screenX = mouseEvent ? mouseEvent.screenX : 0;
             const screenY = mouseEvent ? mouseEvent.screenY : 0;
 
-            const xMatch = Math.abs(originalClick.screenX - screenX) < 5;
-            const yMatch = Math.abs(originalClick.screenY - screenY) < 5;
+            const xMatch = Math.abs(originalMouseEvent.screenX - screenX) < 5;
+            const yMatch = Math.abs(originalMouseEvent.screenY - screenY) < 5;
 
             if (xMatch && yMatch) {
                 return true;

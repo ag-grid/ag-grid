@@ -23,7 +23,8 @@ import {
     PostConstruct,
     Promise,
     TabbedItem,
-    TabbedLayout
+    TabbedLayout,
+    FocusController
 } from "@ag-grid-community/core";
 
 import { MenuList } from "./menuList";
@@ -40,9 +41,9 @@ export class EnterpriseMenuFactory extends BeanStub implements IMenuFactory {
 
     @Autowired('popupService') private popupService: PopupService;
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
+    @Autowired('focusController') private focusController: FocusController;
 
     private lastSelectedTab: string;
-
     private activeMenu: EnterpriseMenu | null;
 
     public hideActiveMenu(): void {
@@ -61,12 +62,11 @@ export class EnterpriseMenuFactory extends BeanStub implements IMenuFactory {
             if (defaultTab) {
                 menu.showTab(defaultTab);
             }
-        }, defaultTab);
+        }, defaultTab, undefined, mouseEvent.target as HTMLElement);
 
     }
 
     public showMenuAfterButtonClick(column: Column, eventSource: HTMLElement, defaultTab?: string, restrictToTabs?: string[]): void {
-
         let multiplier = -1;
         let alignSide: 'left' | 'right' = 'left';
 
@@ -77,26 +77,37 @@ export class EnterpriseMenuFactory extends BeanStub implements IMenuFactory {
 
         this.showMenu(column, (menu: EnterpriseMenu) => {
             const minDims = menu.getMinDimensions();
+            const { width: minWidth, height: minHeight } = minDims;
+            const ePopup = menu.getGui();
+
             this.popupService.positionPopupUnderComponent({
-                column: column,
+                column,
                 type: 'columnMenu',
-                eventSource: eventSource,
-                ePopup: menu.getGui(),
+                eventSource,
+                ePopup,
                 nudgeX: 9 * multiplier,
                 nudgeY: -23,
-                minWidth: minDims.width,
-                minHeight: minDims.height,
+                minWidth,
+                minHeight,
                 alignSide,
                 keepWithinBounds: true
             });
+
             if (defaultTab) {
                 menu.showTab(defaultTab);
             }
-        }, defaultTab, restrictToTabs);
+
+        }, defaultTab, restrictToTabs, eventSource);
 
     }
 
-    public showMenu(column: Column, positionCallback: (menu: EnterpriseMenu) => void, defaultTab?: string, restrictToTabs?: string[]): void {
+    public showMenu(
+        column: Column,
+        positionCallback: (menu: EnterpriseMenu) => void,
+        defaultTab?: string,
+        restrictToTabs?: string[],
+        eventSource?: HTMLElement
+    ): void {
         const menu = new EnterpriseMenu(column, this.lastSelectedTab, restrictToTabs);
         this.createBean(menu);
 
@@ -107,9 +118,16 @@ export class EnterpriseMenuFactory extends BeanStub implements IMenuFactory {
         const hidePopup = this.popupService.addAsModalPopup(
             eMenuGui,
             true,
-            () => { // menu closed callback
+            (e: Event) => { // menu closed callback
                 this.destroyBean(menu);
                 column.setMenuVisible(false, "contextMenu");
+                const event = e && e as KeyboardEvent;
+
+                if (event && event.keyCode === Constants.KEY_ESCAPE && eventSource && _.isVisible(eventSource)) {
+                    const focusableEl = this.focusController.findTabbableParent(eventSource);
+
+                    if (focusableEl) { focusableEl.focus(); }
+                }
             }
         );
 
@@ -146,7 +164,6 @@ export class EnterpriseMenuFactory extends BeanStub implements IMenuFactory {
 export class EnterpriseMenu extends BeanStub {
 
     public static EVENT_TAB_SELECTED = 'tabSelected';
-
     public static TAB_FILTER = 'filterMenuTab';
     public static TAB_GENERAL = 'generalMenuTab';
     public static TAB_COLUMNS = 'columnsMenuTab';
@@ -160,6 +177,7 @@ export class EnterpriseMenu extends BeanStub {
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('menuItemMapper') private menuItemMapper: MenuItemMapper;
     @Autowired('rowModel') private rowModel: IRowModel;
+    @Autowired('focusController') private focusController: FocusController;
 
     private tabbedLayout: TabbedLayout;
     private hidePopupFunc: Function;
@@ -410,6 +428,15 @@ export class EnterpriseMenu extends BeanStub {
 
     private onHidePopup(): void {
         this.hidePopupFunc();
+
+        // this method only gets called when the menu was closed by selection an option
+        // in this case we highlight the cell that was previously highlighted
+        const focusedCell = this.focusController.getFocusedCell();
+
+        if (focusedCell) {
+            const { rowIndex, rowPinned, column } = focusedCell;
+            this.focusController.setFocusedCell(rowIndex, column, rowPinned, true);
+        }
     }
 
     private createFilterPanel(): TabbedItem {

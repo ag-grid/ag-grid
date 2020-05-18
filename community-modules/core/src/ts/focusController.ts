@@ -192,6 +192,18 @@ export class FocusController extends BeanStub {
         return diff(nodes, excludeNodes);
     }
 
+    public findTabbableParent(node: HTMLElement, limit: number = 5): HTMLElement {
+        let counter = 0;
+
+        while (node && _.getTabIndex(node) === null && ++counter <= limit) {
+            node = node.parentElement;
+        }
+
+        if (_.getTabIndex(node) === null) { return null; }
+
+        return node;
+    }
+
     private onCellFocused(forceBrowserFocus: boolean): void {
         const event: CellFocusedEvent = {
             type: Events.EVENT_CELL_FOCUSED,
