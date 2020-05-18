@@ -12,8 +12,74 @@ include '../documentation-main/documentation_header.php';
     This section describes...
 </p>
 
+<?php createDocumentationFromFile('./properties.json', 'detailCellRenderer') ?>
 
-<h2>Overriding the Default Detail Cell Renderer</h2>
+
+<h2 id="grid-per-row">Detail Grid Options</h2>
+
+<p>
+    The property <code>detailCellRendererParams</code> can be a function to allow providing
+    different parameters for each row. This can be used to provide a differently configured grid
+    for each row.
+</p>
+
+<p>
+    The example below shows different grid configurations based on the data. Note the following:
+</p>
+
+<ul class="content">
+    <li>
+        Expanding rows 'Mila Smith' or 'Harper Johnson' will use a detail grid with the
+        columns {Call ID, Number}.
+    </li>
+    <li>
+        Expanding all other rows will use a detail grid with the columns {Call ID, Direction,
+            Duration, Switch Code}.
+    </li>
+</ul>
+
+<?= grid_example('Dynamic Params', 'dynamic-params', 'generated', ['enterprise' => true, 'modules'=>['clientside', 'masterdetail', 'menu', 'columnpanel']]) ?>
+
+
+<h2>Loading Detail Rows</h2>
+
+<p>
+    It is possible to lazy load detail row data as it becomes available. For instance an asynchronous request could be
+    sent when expanding a master row to fetch detail records.
+</p>
+
+<p>
+    The following snippet illustrates this using a simple <code>setTimeout()</code> function to delay supplying
+    data to the detail row after a fixed timeout.
+</p>
+
+<snippet>
+    var masterGridOptions = {
+    detailCellRendererParams: {
+    getDetailRowData: function (params) {
+    // simulate delayed supply of data to the detail pane
+    setTimeout(function () {
+    params.successCallback(params.data.childRecords);
+    }, 1000);
+    }
+    }
+    };
+</snippet>
+
+<p>
+    Note that the key to this approach is the <code>params.successCallback(data)</code> function provided via the params, which can
+    be invoked later or asynchronously once the data for the detail row is available.
+</p>
+
+<p>
+    Below shows a simple Master / Detail setup which uses <code>setTimeout()</code> to simulate lazying loading of data
+    in the detail rows:
+</p>
+
+<?= grid_example('Lazy Load Detail Rows', 'lazy-load-rows', 'generated', ['enterprise' => true, 'exampleHeight' => 550, 'modules'=>['clientside', 'masterdetail', 'menu', 'columnpanel']]) ?>
+
+
+<h2>Detail Template</h2>
 
 <p>
     The template used by default detail Cell Renderer can be overridden with a user defined template. This is a convenient
@@ -85,34 +151,7 @@ include '../documentation-main/documentation_header.php';
 <?= grid_example('Customising via Template Callback', 'template-callback-customisation', 'generated', ['enterprise' => true, 'exampleHeight' => 550, 'modules'=>['clientside', 'masterdetail', 'menu', 'columnpanel']]) ?>
 
 
-
-<h2 id="grid-per-row">Configure Grid per Row</h2>
-
-<p>
-    The property <code>detailCellRendererParams</code> can be a function to allow providing
-    different parameters for each row. This can be used to provide a differently configured grid
-    for each row.
-</p>
-
-<p>
-    The example below shows different grid configurations based on the data. Note the following:
-</p>
-
-<ul class="content">
-    <li>
-        Expanding rows 'Mila Smith' or 'Harper Johnson' will use a detail grid with the
-        columns {Call ID, Number}.
-    </li>
-    <li>
-        Expanding all other rows will use a detail grid with the columns {Call ID, Direction,
-            Duration, Switch Code}.
-    </li>
-</ul>
-
-<?= grid_example('Dynamic Params', 'dynamic-params', 'generated', ['enterprise' => true, 'modules'=>['clientside', 'masterdetail', 'menu', 'columnpanel']]) ?>
-
-
-<h2>Accessing Detail Grid API</h2>
+<h2>Accessing Detail Grids</h2>
 
 <p>
     You can access the API of all detail grids via the master grid. The API for each detail grid
@@ -180,7 +219,7 @@ masterGridOptions.api.forEachDetailGridInfo(function(detailGridInfo) {
 <?= grid_example('Editing Cells with Master / Detail', 'cell-editing', 'generated', ['enterprise' => true, 'exampleHeight' => 535, 'modules'=>['clientside', 'masterdetail', 'menu', 'columnpanel']]) ?>
 
 
-<h2>Changing Data & Refresh</h2>
+<h2>Refresh Detail Rows</h2>
 
 <p>
     It is desirable for the Detail Grid to refresh when fresh data is available for it. The grid will attempt
@@ -341,7 +380,7 @@ masterGridOptions.api.forEachDetailGridInfo(function(detailGridInfo) {
 <?= grid_example('Refresh Nothing', 'refresh-nothing', 'generated', ['enterprise' => true, 'exampleHeight' => 550, 'modules'=>['clientside', 'masterdetail', 'menu', 'columnpanel']]) ?>
 
 
-<h2>Detail Row Height</h2>
+<h2>Detail Grid Height</h2>
 
 <p>
     The height of detail rows can be configured in one of the following two ways:
@@ -397,45 +436,7 @@ masterGridOptions.getRowHeight = function (params) {
 <?= grid_example('Dynamic Detail Row Height', 'dynamic-detail-row-height', 'generated', ['enterprise' => true, 'modules'=>['clientside', 'masterdetail', 'menu', 'columnpanel']]) ?>
 
 
-<h2>Lazy Load Detail Rows</h2>
-
-<p>
-    It is possible to lazy load detail row data as it becomes available. For instance an asynchronous request could be
-    sent when expanding a master row to fetch detail records.
-</p>
-
-<p>
-    The following snippet illustrates this using a simple <code>setTimeout()</code> function to delay supplying
-    data to the detail row after a fixed timeout.
-</p>
-
-<snippet>
-    var masterGridOptions = {
-    detailCellRendererParams: {
-    getDetailRowData: function (params) {
-    // simulate delayed supply of data to the detail pane
-    setTimeout(function () {
-    params.successCallback(params.data.childRecords);
-    }, 1000);
-    }
-    }
-    };
-</snippet>
-
-<p>
-    Note that the key to this approach is the <code>params.successCallback(data)</code> function provided via the params, which can
-    be invoked later or asynchronously once the data for the detail row is available.
-</p>
-
-<p>
-    Below shows a simple Master / Detail setup which uses <code>setTimeout()</code> to simulate lazying loading of data
-    in the detail rows:
-</p>
-
-<?= grid_example('Lazy Load Detail Rows', 'lazy-load-rows', 'generated', ['enterprise' => true, 'exampleHeight' => 550, 'modules'=>['clientside', 'masterdetail', 'menu', 'columnpanel']]) ?>
-
-
-<h2 id="keeping-row-details">Keeping Detail Rows</h2>
+<h2 id="keeping-row-details">Detail Grid Lifecycle</h2>
 
 <p>
     When a master row is expanded a detail row is created. When the master row is collapsed, the detail row is

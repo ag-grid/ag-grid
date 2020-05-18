@@ -29,7 +29,7 @@ var gridOptions = {
         template: function(params) {
             var personName = params.data.name;
             return '<div style="height: 100%; background-color: #EDF6FF; padding: 20px; box-sizing: border-box;">'
-                + '  <div style="height: 10%;">Name: ' + personName + '</div>'
+                + '  <div style="height: 10%; padding: 2px; font-weight: bold;">###### Name: ' + personName + '</div>'
                 + '  <div ref="eDetailGrid" style="height: 90%;"></div>'
                 + '</div>';
         }

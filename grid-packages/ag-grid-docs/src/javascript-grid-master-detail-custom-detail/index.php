@@ -12,6 +12,10 @@ include '../documentation-main/documentation_header.php';
     This section describes...
 </p>
 
+<p>
+    Cell Renderer Params Properties - pinned
+</p>
+
 
 <h2>Providing a Custom Detail Cell Renderer</h2>
 
