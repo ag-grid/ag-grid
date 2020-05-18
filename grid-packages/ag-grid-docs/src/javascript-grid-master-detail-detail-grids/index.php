@@ -9,22 +9,72 @@ include '../documentation-main/documentation_header.php';
 <h1 class="heading-enterprise">Master / Detail - Detail Grids</h1>
 
 <p class="lead">
-    This section describes...
+    When a row in the Master Grid is expanded, a new Detail Grid appears underneath that row.
+    This page describes configuration options relevant to the Detail Grid.
+</p>
+
+<p>
+    The Detail Grid fits inside one row of the Master Grid. The new child row doesn't use the columns
+    of the Master Grid, instead it fills the entire row with one cell. When a row only has one cell and spans
+    the full width of the grid, it is called a Full Width Row.
+</p>
+<p>
+    It is the job of the Detail Cell Renderer to draw the Detail Grid into the provided Full Width cell.
+    You tell the grid what Detail Cell Renderer to use via the grid property <code>detailCellRenderer</code>
+    and you pass configuration details to it using the grid property <code>detailCellRendererParams</code>.
+    If no Detail Cell Renderer is specified, the grid will use it's own default. The grid's default covers
+    most scenarios required, thus most usages of Master / Detail will provide Detail Cell Renderer Params
+    only and assume the default Detail Cell Renderer.
+</p>
+
+<p>
+    This page outlines how to configure the grid's default Detail Cell Renderer.
+    See <a href="../javascript-grid-master-detail-custom-detail/">Custom Detail</a> for details on how
+    to configure a custom Detail Cell Renderer.
+</p>
+
+<p>
+    The list of Detail Cell Renderer Params are as follows:
 </p>
 
 <?php createDocumentationFromFile('./properties.json', 'detailCellRenderer') ?>
 
-
-<h2 id="grid-per-row">Detail Grid Options</h2>
-
 <p>
-    The property <code>detailCellRendererParams</code> can be a function to allow providing
-    different parameters for each row. This can be used to provide a differently configured grid
-    for each row.
+    The pattern of setting components such as Cell Renderer's and providing parameters to those components
+    is consistent across the grid and explained in <a href="../javascript-grid-components/">Grid Components</a>.
 </p>
 
 <p>
-    The example below shows different grid configurations based on the data. Note the following:
+    As with all components, the parameters object (in this case <code>detailCellRendererParams</code>) can either
+    be a JSON Object, or it can be a function that returns a JSON Object. The latter allows providing different
+    parameters for each Detail Grid, allowing Detail Grids to be configured differently.
+</p>
+
+
+<h2 id="detail-grid-options">Detail Grid Options</h2>
+
+<p>
+    The Detail Grid is a fully fledged independent grid instance. This means that the Detail Grid has access to
+    the full range of grid features.
+</p>
+<p>
+    The instance of the grid is instantiated using native JavaScript and not any particular framework.
+    This means properties are provided via a plain JavaScript object called Grid Options and not bound by any
+    framework or HTML tags or bindings.
+</p>
+<p>
+    The Grid Options JSON is provided to the Detail Grid using the parameter <code>detailGridOptions</code>.
+</p>
+<p>
+    The <a href="../javascript-grid-master-detail/#example-simple">Simple Master / Detail Example</a>
+    shows providing one Grid Options object for all details grids and as such the simple scenario is not repeated here.
+</p>
+
+<h2 id="grid-per-row">Different Detail Grids</h2>
+
+<p>
+    It is possible to have Detail Grids configured differently by utilising the function variant of the
+    <code>detailCellRendererParams</code> property. The example below demonstrates this. Note the following:
 </p>
 
 <ul class="content">
