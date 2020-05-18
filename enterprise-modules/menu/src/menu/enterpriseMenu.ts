@@ -53,11 +53,14 @@ export class EnterpriseMenuFactory extends BeanStub implements IMenuFactory {
     public showMenuAfterMouseEvent(column: Column, mouseEvent: MouseEvent, defaultTab?: string): void {
 
         this.showMenu(column, (menu: EnterpriseMenu) => {
+            const ePopup = menu.getGui();
+
+            this.focusFirstFocusableEl(ePopup);
             this.popupService.positionPopupUnderMouseEvent({
-                column: column,
                 type: 'columnMenu',
-                mouseEvent: mouseEvent,
-                ePopup: menu.getGui()
+                column,
+                mouseEvent,
+                ePopup
             });
             if (defaultTab) {
                 menu.showTab(defaultTab);
@@ -80,16 +83,17 @@ export class EnterpriseMenuFactory extends BeanStub implements IMenuFactory {
             const { width: minWidth, height: minHeight } = minDims;
             const ePopup = menu.getGui();
 
+            this.focusFirstFocusableEl(ePopup);
             this.popupService.positionPopupUnderComponent({
-                column,
                 type: 'columnMenu',
+                column,
                 eventSource,
                 ePopup,
-                nudgeX: 9 * multiplier,
-                nudgeY: -23,
                 minWidth,
                 minHeight,
                 alignSide,
+                nudgeX: 9 * multiplier,
+                nudgeY: -23,
                 keepWithinBounds: true
             });
 
@@ -98,7 +102,14 @@ export class EnterpriseMenuFactory extends BeanStub implements IMenuFactory {
             }
 
         }, defaultTab, restrictToTabs, eventSource);
+    }
 
+    private focusFirstFocusableEl(el: HTMLElement) {
+        const focusableEls = this.focusController.findFocusableElements(el);
+
+        if (focusableEls.length) {
+            focusableEls[0].focus();
+        }
     }
 
     public showMenu(
