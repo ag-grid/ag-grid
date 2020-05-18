@@ -1,5 +1,6 @@
 import { AgCheckbox } from "../../widgets/agCheckbox";
 import { Autowired } from "../../context/context";
+import { Beans } from "../../rendering/beans";
 import { Column } from "../../entities/column";
 import {
     DragAndDropService, DragItem, DragSource, DragSourceType,
@@ -27,7 +28,6 @@ import { TooltipFeature } from "../../widgets/tooltipFeature";
 import { UserComponentFactory } from "../../components/framework/userComponentFactory";
 import { AbstractHeaderWrapper } from "./abstractHeaderWrapper";
 import { _ } from "../../utils";
-import { Beans } from "../../rendering/beans";
 
 export class HeaderWrapperComp extends AbstractHeaderWrapper {
 
