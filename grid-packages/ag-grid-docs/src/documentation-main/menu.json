@@ -882,6 +882,12 @@
                 "showInCollapsed": false
               },
               {
+                "title": "Custom Detail",
+                "url": "javascript-grid-master-detail-custom-detail/",
+                "enterprise": true,
+                "showInCollapsed": false
+              },
+              {
                 "title": "Other",
                 "url": "javascript-grid-master-detail-other/",
                 "enterprise": true,
