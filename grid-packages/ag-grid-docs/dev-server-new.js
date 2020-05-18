@@ -473,7 +473,7 @@ const rebuildPackagesBasedOnChangeState = async (skipSelf = true) => {
 
         await buildPackages(Array.from(lernaPackagesToRebuild))
 
-        if (lernaPackagesToRebuild.includes("@ag-grid-community/core")) {
+        if (lernaPackagesToRebuild.has("@ag-grid-community/core")) {
             await buildCss();
         }
     } else {
