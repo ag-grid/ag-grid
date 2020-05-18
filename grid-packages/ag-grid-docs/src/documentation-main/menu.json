@@ -679,6 +679,7 @@
                 "title": "Set Filter",
                 "url": "javascript-grid-filter-set/",
                 "enterprise": true,
+                "matrixExcludeChildren": true,
                 "showInCollapsed": true,
                 "items": [
                   {
@@ -859,7 +860,34 @@
             "title": "Master Detail",
             "url": "javascript-grid-master-detail/",
             "enterprise": true,
-            "showInCollapsed": true
+            "showInCollapsed": true,
+            "matrixExcludeChildren": true,
+            "items": [
+              {
+                "title": "Detail Grids",
+                "url": "javascript-grid-master-detail-detail-grids/",
+                "enterprise": true,
+                "showInCollapsed": false
+              },
+              {
+                "title": "Master Rows",
+                "url": "javascript-grid-master-detail-master-rows/",
+                "enterprise": true,
+                "showInCollapsed": false
+              },
+              {
+                "title": "Nesting",
+                "url": "javascript-grid-master-detail-nesting/",
+                "enterprise": true,
+                "showInCollapsed": false
+              },
+              {
+                "title": "Other",
+                "url": "javascript-grid-master-detail-other/",
+                "enterprise": true,
+                "showInCollapsed": false
+              }
+            ]
           },
           {
             "title": "Tree Data",
@@ -1115,6 +1143,7 @@
             "title": "Customisation",
             "url": "javascript-grid-charts-integrated-customisation/",
             "enterprise": true,
+            "matrixExcludeChildren": true,
             "showInCollapsed": true,
             "items": [
               {
