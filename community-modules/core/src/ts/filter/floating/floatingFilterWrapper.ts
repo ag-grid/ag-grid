@@ -1,12 +1,10 @@
-import { Autowired, PostConstruct } from '../../context/context';
+import { Autowired } from '../../context/context';
 import { IMenuFactory } from '../../interfaces/iMenuFactory';
 import { Column } from '../../entities/column';
 import { SetLeftFeature } from '../../rendering/features/setLeftFeature';
 import { IFloatingFilterComp, IFloatingFilterParams } from './../floating/floatingFilter';
-import { Component } from '../../widgets/component';
 import { RefSelector } from '../../widgets/componentAnnotations';
 import { GridOptionsWrapper } from '../../gridOptionsWrapper';
-import { Beans } from '../../rendering/beans';
 import { HoverFeature } from '../../headerRendering/hoverFeature';
 import { Events, FilterChangedEvent } from '../../events';
 import { ColumnHoverService } from '../../rendering/columnHoverService';
@@ -22,8 +20,12 @@ import { ModuleNames } from '../../modules/moduleNames';
 import { ModuleRegistry } from '../../modules/moduleRegistry';
 import { addOrRemoveCssClass, setDisplayed } from '../../utils/dom';
 import { createIconNoSpan } from '../../utils/icon';
+import { AbstractHeaderWrapper  } from '../../headerRendering/header/abstractHeaderWrapper';
+import { FocusController } from '../../focusController';
+import { Constants } from '../../constants';
+import { Beans } from '../../rendering/beans';
 
-export class FloatingFilterWrapper extends Component {
+export class FloatingFilterWrapper extends AbstractHeaderWrapper {
     private static filterToFloatingFilterNames: { [p: string]: string; } = {
         set: 'agSetColumnFloatingFilter',
         agSetColumnFilter: 'agSetColumnFloatingFilter',
@@ -38,40 +40,44 @@ export class FloatingFilterWrapper extends Component {
         agTextColumnFilter: 'agTextColumnFloatingFilter'
     };
 
-    private static TEMPLATE =
-        /* html */`<div class="ag-header-cell" role="presentation">
+    private static TEMPLATE = /* html */
+        `<div class="ag-header-cell" role="presentation" tabindex="-1">
             <div ref="eFloatingFilterBody" role="columnheader"></div>
             <div class="ag-floating-filter-button" ref="eButtonWrapper" role="presentation">
-                <button type="button" class="ag-floating-filter-button-button" ref="eButtonShowMainFilter"></button>
+                <button type="button" class="ag-floating-filter-button-button" ref="eButtonShowMainFilter" tabindex="-1"></button>
             </div>
         </div>`;
 
     @Autowired('columnHoverService') private columnHoverService: ColumnHoverService;
-    @Autowired('beans') private beans: Beans;
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('userComponentFactory') private userComponentFactory: UserComponentFactory;
     @Autowired('gridApi') private gridApi: GridApi;
     @Autowired('columnApi') private columnApi: ColumnApi;
     @Autowired('filterManager') private filterManager: FilterManager;
     @Autowired('menuFactory') private menuFactory: IMenuFactory;
+    @Autowired('focusController') private focusController: FocusController;
+    @Autowired('beans') protected beans: Beans;
 
     @RefSelector('eFloatingFilterBody') private eFloatingFilterBody: HTMLElement;
     @RefSelector('eButtonWrapper') private eButtonWrapper: HTMLElement;
     @RefSelector('eButtonShowMainFilter') private eButtonShowMainFilter: HTMLElement;
 
-    private readonly column: Column;
+    protected readonly column: Column;
+    protected readonly pinned: string;
 
     private suppressFilterButton: boolean;
 
     private floatingFilterCompPromise: Promise<IFloatingFilterComp>;
 
-    constructor(column: Column) {
+    constructor(column: Column, pinned: string) {
         super(FloatingFilterWrapper.TEMPLATE);
         this.column = column;
+        this.pinned = pinned;
     }
 
-    @PostConstruct
-    private postConstruct(): void {
+    protected postConstruct(): void {
+        super.postConstruct();
+
         this.setupFloatingFilter();
         this.setupWidth();
         this.setupLeftPositioning();
@@ -79,6 +85,58 @@ export class FloatingFilterWrapper extends Component {
         this.createManagedBean(new HoverFeature([this.column], this.getGui()));
 
         this.addManagedListener(this.eButtonShowMainFilter, 'click', this.showParentFilter.bind(this));
+    }
+
+    protected onTabKeyDown(e: KeyboardEvent) {
+        const activeEl = document.activeElement as HTMLElement;
+        const eGui = this.getGui();
+        const wrapperHasFocus = activeEl === eGui;
+
+        if (wrapperHasFocus) { return; }
+
+        const focusableElements = this.focusController.findFocusableElements(eGui);
+        const idx = focusableElements.indexOf(activeEl);
+        const nextIdx = e.shiftKey ? idx - 1 : idx + 1;
+
+        if (nextIdx < 0 || nextIdx >= focusableElements.length) {
+            eGui.focus();
+        } else {
+            focusableElements[nextIdx].focus();
+        }
+
+        e.preventDefault();
+    }
+
+    protected handleKeyDown(e: KeyboardEvent) {
+        const activeEl = document.activeElement;
+        const eGui = this.getGui();
+        const wrapperHasFocus = activeEl === eGui;
+
+        switch (e.keyCode) {
+            case Constants.KEY_UP:
+            case Constants.KEY_DOWN:
+                e.preventDefault();
+            case Constants.KEY_LEFT:
+            case Constants.KEY_RIGHT:
+                if (wrapperHasFocus) { return; }
+                e.stopPropagation();
+            case Constants.KEY_ENTER:
+                if (wrapperHasFocus) {
+                    const focusableElements = this.focusController.findFocusableElements(eGui);
+                    if (focusableElements.length) {
+                        focusableElements[0].focus();
+                        e.preventDefault();
+                    }
+                }
+        }
+    }
+
+    protected onFocusIn(e: FocusEvent) {
+        const eGui = this.getGui();
+
+        if (!eGui.contains(e.relatedTarget as HTMLElement)) {
+            this.beans.focusController.setHeaderFocused(this);
+        }
     }
 
     private setupFloatingFilter(): void {
@@ -147,7 +205,7 @@ export class FloatingFilterWrapper extends Component {
 
     private setupWithFloatingFilter(floatingFilterComp: IFloatingFilterComp): void {
         const disposeFunc = () => {
-            this.getContext().destroyBean(floatingFilterComp)
+            this.getContext().destroyBean(floatingFilterComp);
         };
 
         if (!this.isAlive()) {

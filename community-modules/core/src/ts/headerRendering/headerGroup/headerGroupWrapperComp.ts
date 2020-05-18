@@ -1,5 +1,4 @@
 import { ColGroupDef } from "../../entities/colDef";
-import { Component } from "../../widgets/component";
 import { Column } from "../../entities/column";
 import { ColumnGroup } from "../../entities/columnGroup";
 import { ColumnApi } from "../../columnController/columnApi";
@@ -7,7 +6,7 @@ import { Constants } from "../../constants";
 import { ColumnController, ColumnResizeSet } from "../../columnController/columnController";
 import { GridOptionsWrapper } from "../../gridOptionsWrapper";
 import { HorizontalResizeService } from "../horizontalResizeService";
-import { Autowired, PostConstruct } from "../../context/context";
+import { Autowired } from "../../context/context";
 import { CssClassApplier } from "../cssClassApplier";
 import {
     DragAndDropService,
@@ -20,30 +19,31 @@ import { SetLeftFeature } from "../../rendering/features/setLeftFeature";
 import { IHeaderGroupComp, IHeaderGroupParams } from "./headerGroupComp";
 import { GridApi } from "../../gridApi";
 import { UserComponentFactory } from "../../components/framework/userComponentFactory";
-import { Beans } from "../../rendering/beans";
 import { HoverFeature } from "../hoverFeature";
 import { TooltipFeature } from "../../widgets/tooltipFeature";
+import { AbstractHeaderWrapper } from "../header/abstractHeaderWrapper";
+import { Beans } from "../../rendering/beans";
 import { _ } from "../../utils";
 
-export class HeaderGroupWrapperComp extends Component {
+export class HeaderGroupWrapperComp extends AbstractHeaderWrapper {
 
-    private static TEMPLATE =
-        '<div class="ag-header-group-cell" role="presentation">' +
-        '  <div ref="agResize" class="ag-header-cell-resize" role="presentation"></div>' +
-        '</div>';
+    private static TEMPLATE = /* html */
+        `<div class="ag-header-group-cell" role="presentation" tabindex="-1">
+            <div ref="agResize" class="ag-header-cell-resize" role="presentation"></div>
+        </div>`;
 
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('columnController') private columnController: ColumnController;
     @Autowired('horizontalResizeService') private horizontalResizeService: HorizontalResizeService;
     @Autowired('dragAndDropService') private dragAndDropService: DragAndDropService;
     @Autowired('userComponentFactory') private userComponentFactory: UserComponentFactory;
+    @Autowired('beans') protected beans: Beans;
     @Autowired('gridApi') private gridApi: GridApi;
     @Autowired('columnApi') private columnApi: ColumnApi;
-    @Autowired('beans') private beans: Beans;
 
-    private readonly columnGroup: ColumnGroup;
     private readonly dragSourceDropTarget: DropTarget;
-    private readonly pinned: string;
+    protected readonly column: ColumnGroup;
+    protected readonly pinned: string;
 
     private eHeaderCellResize: HTMLElement;
 
@@ -60,17 +60,17 @@ export class HeaderGroupWrapperComp extends Component {
 
     constructor(columnGroup: ColumnGroup, dragSourceDropTarget: DropTarget, pinned: string) {
         super(HeaderGroupWrapperComp.TEMPLATE);
-        this.columnGroup = columnGroup;
+        this.column = columnGroup;
         this.dragSourceDropTarget = dragSourceDropTarget;
         this.pinned = pinned;
     }
 
-    @PostConstruct
-    private postConstruct(): void {
+    protected postConstruct(): void {
+        super.postConstruct();
 
-        CssClassApplier.addHeaderClassesFromColDef(this.getComponentHolder(), this.getGui(), this.gridOptionsWrapper, null, this.columnGroup);
+        CssClassApplier.addHeaderClassesFromColDef(this.getComponentHolder(), this.getGui(), this.gridOptionsWrapper, null, this.column);
 
-        const displayName = this.columnController.getDisplayNameForColumnGroup(this.columnGroup, 'header');
+        const displayName = this.columnController.getDisplayNameForColumnGroup(this.column, 'header');
 
         this.appendHeaderGroupComp(displayName);
 
@@ -81,12 +81,18 @@ export class HeaderGroupWrapperComp extends Component {
         this.setupMovingCss();
         this.setupTooltip();
 
-        this.createManagedBean(new HoverFeature(this.columnGroup.getOriginalColumnGroup().getLeafColumns(), this.getGui()));
-        this.createManagedBean(new SetLeftFeature(this.columnGroup, this.getGui(), this.beans));
+        this.createManagedBean(new HoverFeature(this.column.getOriginalColumnGroup().getLeafColumns(), this.getGui()));
+        this.createManagedBean(new SetLeftFeature(this.column, this.getGui(), this.beans));
+    }
+
+    protected onFocusIn(e: FocusEvent) {
+        if (!this.getGui().contains(e.relatedTarget as HTMLElement)) {
+            this.beans.focusController.setHeaderFocused(this);
+        }
     }
 
     private setupMovingCss(): void {
-        const originalColumnGroup = this.columnGroup.getOriginalColumnGroup();
+        const originalColumnGroup = this.column.getOriginalColumnGroup();
         const leafColumns = originalColumnGroup.getLeafColumns();
 
         leafColumns.forEach(col => {
@@ -96,12 +102,8 @@ export class HeaderGroupWrapperComp extends Component {
         this.onColumnMovingChanged();
     }
 
-    public getColumn(): ColumnGroup {
-        return this.columnGroup;
-    }
-
     public getComponentHolder(): ColGroupDef {
-        return this.columnGroup.getColGroupDef();
+        return this.column.getColGroupDef();
     }
 
     public getTooltipText(): string | undefined {
@@ -125,19 +127,19 @@ export class HeaderGroupWrapperComp extends Component {
         // this function adds or removes the moving css, based on if the col is moving.
         // this is what makes the header go dark when it is been moved (gives impression to
         // user that the column was picked up).
-        _.addOrRemoveCssClass(this.getGui(), 'ag-header-cell-moving', this.columnGroup.isMoving());
+        _.addOrRemoveCssClass(this.getGui(), 'ag-header-cell-moving', this.column.isMoving());
     }
 
     private addAttributes(): void {
-        this.getGui().setAttribute("col-id", this.columnGroup.getUniqueId());
+        this.getGui().setAttribute("col-id", this.column.getUniqueId());
     }
 
     private appendHeaderGroupComp(displayName: string): void {
         const params: IHeaderGroupParams = {
             displayName: displayName,
-            columnGroup: this.columnGroup,
+            columnGroup: this.column,
             setExpanded: (expanded: boolean) => {
-                this.columnController.setColumnGroupOpened(this.columnGroup.getOriginalColumnGroup(), expanded, "gridInitializing");
+                this.columnController.setColumnGroupOpened(this.column.getOriginalColumnGroup(), expanded, "gridInitializing");
             },
             api: this.gridApi,
             columnApi: this.columnApi,
@@ -145,7 +147,7 @@ export class HeaderGroupWrapperComp extends Component {
         };
 
         if (!displayName) {
-            let columnGroup = this.columnGroup;
+            let columnGroup = this.column;
             const leafCols = columnGroup.getLeafColumns();
 
             // find the top most column group that represents the same columns. so if we are dragging a group, we also
@@ -175,7 +177,7 @@ export class HeaderGroupWrapperComp extends Component {
 
     private afterHeaderCompCreated(displayName: string, headerGroupComp: IHeaderGroupComp): void {
         this.getGui().appendChild(headerGroupComp.getGui());
-        this.addDestroyFunc(()=> {
+        this.addDestroyFunc(() => {
             this.getContext().destroyBean(headerGroupComp);
         });
 
@@ -186,7 +188,7 @@ export class HeaderGroupWrapperComp extends Component {
         // having different classes below allows the style to not have a bottom border
         // on the group header, if no group is specified
         // columnGroup.getColGroupDef
-        const style = this.columnGroup.isPadding() ? 'no' : 'with';
+        const style = this.column.isPadding() ? 'no' : 'with';
 
         this.addCssClass(`ag-header-group-cell-${style}-group`);
     }
@@ -195,7 +197,7 @@ export class HeaderGroupWrapperComp extends Component {
         if (!eHeaderGroup) { return; }
         if (this.isSuppressMoving()) { return; }
 
-        const allLeafColumns = this.columnGroup.getOriginalColumnGroup().getLeafColumns();
+        const allLeafColumns = this.column.getOriginalColumnGroup().getLeafColumns();
         const dragSource: DragSource = {
             type: DragSourceType.HeaderCell,
             eElement: eHeaderGroup,
@@ -215,7 +217,7 @@ export class HeaderGroupWrapperComp extends Component {
     // when moving the columns, we want to move all the columns (contained within the DragItem) in this group in one go,
     // and in the order they are currently in the screen.
     public getDragItemForGroup(): DragItem {
-        const allColumnsOriginalOrder = this.columnGroup.getOriginalColumnGroup().getLeafColumns();
+        const allColumnsOriginalOrder = this.column.getOriginalColumnGroup().getLeafColumns();
 
         // capture visible state, used when re-entering grid to dictate which columns should be visible
         const visibleState: { [key: string]: boolean } = {};
@@ -242,7 +244,7 @@ export class HeaderGroupWrapperComp extends Component {
     private isSuppressMoving(): boolean {
         // if any child is fixed, then don't allow moving
         let childSuppressesMoving = false;
-        this.columnGroup.getLeafColumns().forEach((column: Column) => {
+        this.column.getLeafColumns().forEach((column: Column) => {
             if (column.getColDef().suppressMovable || column.getColDef().lockPosition) {
                 childSuppressesMoving = true;
             }
@@ -259,7 +261,7 @@ export class HeaderGroupWrapperComp extends Component {
         this.addListenersToChildrenColumns();
 
         // the children belonging to this group can change, so we need to add and remove listeners as they change
-        this.addManagedListener(this.columnGroup, ColumnGroup.EVENT_DISPLAYED_CHILDREN_CHANGED, this.onDisplayedChildrenChanged.bind(this));
+        this.addManagedListener(this.column, ColumnGroup.EVENT_DISPLAYED_CHILDREN_CHANGED, this.onDisplayedChildrenChanged.bind(this));
 
         this.onWidthChanged();
 
@@ -280,7 +282,7 @@ export class HeaderGroupWrapperComp extends Component {
 
         // now add new listeners to the new set of children
         const widthChangedListener = this.onWidthChanged.bind(this);
-        this.columnGroup.getLeafColumns().forEach(column => {
+        this.column.getLeafColumns().forEach(column => {
             column.addEventListener(Column.EVENT_WIDTH_CHANGED, widthChangedListener);
             column.addEventListener(Column.EVENT_VISIBLE_CHANGED, widthChangedListener);
             this.removeChildListenersFuncs.push(() => {
@@ -296,13 +298,13 @@ export class HeaderGroupWrapperComp extends Component {
     }
 
     private onWidthChanged(): void {
-        this.getGui().style.width = this.columnGroup.getActualWidth() + 'px';
+        this.getGui().style.width = this.column.getActualWidth() + 'px';
     }
 
     private setupResize(): void {
         this.eHeaderCellResize = this.getRefElement('agResize');
 
-        if (!this.columnGroup.isResizable()) {
+        if (!this.column.isResizable()) {
             _.removeFromParent(this.eHeaderCellResize);
             return;
         }
@@ -322,7 +324,7 @@ export class HeaderGroupWrapperComp extends Component {
             this.eHeaderCellResize.addEventListener('dblclick', (event: MouseEvent) => {
                 // get list of all the column keys we are responsible for
                 const keys: string[] = [];
-                this.columnGroup.getDisplayedLeafColumns().forEach((column: Column) => {
+                this.column.getDisplayedLeafColumns().forEach((column: Column) => {
                     // not all cols in the group may be participating with auto-resize
                     if (!column.getColDef().suppressAutoSize) {
                         keys.push(column.getColId());
@@ -337,7 +339,7 @@ export class HeaderGroupWrapperComp extends Component {
     }
 
     public onResizeStart(shiftKey: boolean): void {
-        const leafCols = this.columnGroup.getDisplayedLeafColumns();
+        const leafCols = this.column.getDisplayedLeafColumns();
         this.resizeCols = leafCols.filter(col => col.isResizable());
         this.resizeStartWidth = 0;
         this.resizeCols.forEach(col => this.resizeStartWidth += col.getActualWidth());
@@ -345,8 +347,9 @@ export class HeaderGroupWrapperComp extends Component {
         this.resizeCols.forEach(col => this.resizeRatios.push(col.getActualWidth() / this.resizeStartWidth));
 
         let takeFromGroup: ColumnGroup = null;
+
         if (shiftKey) {
-            takeFromGroup = this.columnController.getDisplayedGroupAfter(this.columnGroup);
+            takeFromGroup = this.columnController.getDisplayedGroupAfter(this.column);
         }
 
         if (takeFromGroup) {
@@ -369,7 +372,6 @@ export class HeaderGroupWrapperComp extends Component {
     }
 
     public onResizing(finished: boolean, resizeAmount: any): void {
-
         const resizeSets: ColumnResizeSet[] = [];
         const resizeAmountNormalised = this.normaliseDragChange(resizeAmount);
 

@@ -9,6 +9,9 @@ import { CellPosition } from "./entities/cellPosition";
 import { RowNode } from "./entities/rowNode";
 import { GridApi } from "./gridApi";
 import { CellComp } from "./rendering/cellComp";
+import { HeaderRowComp } from "./headerRendering/headerRowComp";
+import { AbstractHeaderWrapper } from "./headerRendering/header/abstractHeaderWrapper";
+import { HeaderPosition } from "./headerRendering/header/headerPosition";
 import { _ } from "./utils";
 
 @Bean('focusController')
@@ -20,6 +23,7 @@ export class FocusController extends BeanStub {
     @Autowired('gridApi') private gridApi: GridApi;
 
     private focusedCellPosition: CellPosition;
+    private focusedHeaderPosition: HeaderPosition;
     private keyboardFocusActive: boolean = false;
 
     @PostConstruct
@@ -52,15 +56,6 @@ export class FocusController extends BeanStub {
 
     public isKeyboardFocus(): boolean {
         return this.keyboardFocusActive;
-    }
-
-    public clearFocusedCell(): void {
-        this.focusedCellPosition = null;
-        this.onCellFocused(false);
-    }
-
-    public getFocusedCell(): CellPosition {
-        return this.focusedCellPosition;
     }
 
     private activateMouseMode(): void {
@@ -100,8 +95,8 @@ export class FocusController extends BeanStub {
     }
 
     private getGridCellForDomElement(eBrowserCell: Node): CellPosition {
-
         let ePointer = eBrowserCell;
+
         while (ePointer) {
             const cellComp = this.gridOptionsWrapper.getDomData(ePointer, CellComp.DOM_DATA_KEY_CELL_COMP) as CellComp;
             if (cellComp) {
@@ -111,6 +106,15 @@ export class FocusController extends BeanStub {
         }
 
         return null;
+    }
+
+    public clearFocusedCell(): void {
+        this.focusedCellPosition = null;
+        this.onCellFocused(false);
+    }
+
+    public getFocusedCell(): CellPosition {
+        return this.focusedCellPosition;
     }
 
     public setFocusedCell(rowIndex: number, colKey: string | Column, floating: string | undefined, forceBrowserFocus = false): void {
@@ -126,6 +130,37 @@ export class FocusController extends BeanStub {
 
     public isRowNodeFocused(rowNode: RowNode): boolean {
         return this.isRowFocused(rowNode.rowIndex, rowNode.rowPinned);
+    }
+
+    public isHeaderWrapperFocused(headerWrapper: AbstractHeaderWrapper): boolean {
+        if (_.missing(this.focusedHeaderPosition)) { return false; }
+        const column = headerWrapper.getColumn();
+        const headerRowIndex = (headerWrapper.getParentComponent() as HeaderRowComp).getRowIndex();
+        const pinned = headerWrapper.getPinned();
+
+        return column === this.focusedHeaderPosition.column &&
+            headerRowIndex === this.focusedHeaderPosition.headerRowIndex &&
+            pinned == this.focusedHeaderPosition.pinned;
+    }
+
+    public clearFocusedHeader(): void {
+        this.focusedHeaderPosition = null;
+    }
+
+    public getFocusedHeader(): HeaderPosition {
+        return this.focusedHeaderPosition;
+    }
+
+    public setHeaderFocused(headerWrapper: AbstractHeaderWrapper): void {
+        const column = headerWrapper.getColumn();
+        const headerRowIndex = (headerWrapper.getParentComponent() as HeaderRowComp).getRowIndex();
+        const pinned = headerWrapper.getPinned();
+
+        this.focusedHeaderPosition = {
+            column,
+            headerRowIndex,
+            pinned
+        };
     }
 
     public isAnyCellFocused(): boolean {
@@ -155,6 +190,18 @@ export class FocusController extends BeanStub {
 
         const diff = (a: HTMLElement[], b: HTMLElement[]) => a.filter(element => b.indexOf(element) === -1);
         return diff(nodes, excludeNodes);
+    }
+
+    public findTabbableParent(node: HTMLElement, limit: number = 5): HTMLElement {
+        let counter = 0;
+
+        while (node && _.getTabIndex(node) === null && ++counter <= limit) {
+            node = node.parentElement;
+        }
+
+        if (_.getTabIndex(node) === null) { return null; }
+
+        return node;
     }
 
     private onCellFocused(forceBrowserFocus: boolean): void {

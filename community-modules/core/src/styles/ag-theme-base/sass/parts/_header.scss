@@ -40,6 +40,18 @@
         }
     }
 
+    .ag-keyboard-focus {
+        .ag-header-cell,
+        .ag-header-group-cell {
+            &:focus {
+                outline-width: 1px;
+                outline-style: solid;
+                @include ag-color-property(outline-color, input-focus-border-color);
+                outline-offset: -4px;
+            }
+        }
+    }
+
     .ag-header-icon {
         @include ag-color-property(color, secondary-foreground-color);
     }

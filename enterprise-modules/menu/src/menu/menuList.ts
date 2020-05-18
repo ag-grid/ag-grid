@@ -2,17 +2,16 @@ import {
     Autowired,
     Constants,
     GridOptionsWrapper,
-    ManagedTabComponent,
+    ManagedFocusComponent,
     MenuItemDef,
     PopupService,
-    PostConstruct,
     _
 } from "@ag-grid-community/core";
 import { MenuItemComponent, MenuItemSelectedEvent } from "./menuItemComponent";
 
 type MenuItem = { comp: MenuItemComponent, params: MenuItemDef };
 
-export class MenuList extends ManagedTabComponent {
+export class MenuList extends ManagedFocusComponent {
 
     @Autowired('popupService') private popupService: PopupService;
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
@@ -44,9 +43,31 @@ export class MenuList extends ManagedTabComponent {
         super(MenuList.TEMPLATE);
     }
 
-    @PostConstruct
-    public init(): void {
-        this.addManagedListener(this.getGui(), 'keydown', this.handleKeyDown.bind(this));
+    protected onTabKeyDown(e: KeyboardEvent) {
+        e.preventDefault();
+
+        if (e.shiftKey) {
+            this.closeIfIsChild(e);
+        }
+    }
+
+    protected handleKeyDown(e: KeyboardEvent): void {
+        switch (e.keyCode) {
+            case Constants.KEY_UP:
+            case Constants.KEY_RIGHT:
+            case Constants.KEY_DOWN:
+            case Constants.KEY_LEFT:
+                e.preventDefault();
+                this.handleNavKey(e.keyCode);
+                break;
+            case Constants.KEY_ESCAPE:
+                const topMenu = this.findTopMenu();
+
+                if (topMenu) {
+                    topMenu.getGui().focus();
+                }
+                break;
+        }
     }
 
     public clearActiveItem(): void {
@@ -190,25 +211,6 @@ export class MenuList extends ManagedTabComponent {
         this.activeMenuItemParams = null;
     }
 
-    private handleKeyDown(e: KeyboardEvent): void {
-        switch (e.keyCode) {
-            case Constants.KEY_UP:
-            case Constants.KEY_RIGHT:
-            case Constants.KEY_DOWN:
-            case Constants.KEY_LEFT:
-                e.preventDefault();
-                this.handleNavKey(e.keyCode);
-                break;
-            case Constants.KEY_ESCAPE:
-                const topMenu = this.findTopMenu();
-
-                if (topMenu) {
-                    topMenu.getGui().focus();
-                }
-                break;
-        }
-    }
-
     private findTopMenu(): MenuList | undefined {
         let parent = this.getParentComponent();
         
@@ -246,14 +248,6 @@ export class MenuList extends ManagedTabComponent {
             this.closeIfIsChild();
         } else {
             this.openChild();
-        }
-    }
-
-    protected onTabKeyDown(e: KeyboardEvent) {
-        super.onTabKeyDown(e);
-
-        if (e.shiftKey) {
-            this.closeIfIsChild(e);
         }
     }
 

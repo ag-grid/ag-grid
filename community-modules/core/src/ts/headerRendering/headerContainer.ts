@@ -150,7 +150,7 @@ export class HeaderContainer extends BeanStub {
             const headerRowComp = new HeaderRowComp(dept, type, this.pinned, this.dropTarget);
             this.createBean(headerRowComp);
             this.headerRowComps.push(headerRowComp);
-            headerRowComp.getGui().setAttribute('aria-rowindex', this.headerRowComps.length.toString());
+            headerRowComp.setRowIndex(this.headerRowComps.length - 1);
             this.eContainer.appendChild(headerRowComp.getGui());
         }
 
@@ -158,7 +158,7 @@ export class HeaderContainer extends BeanStub {
             const headerRowComp = new HeaderRowComp(rowCount, HeaderRowType.FLOATING_FILTER, this.pinned, this.dropTarget);
             this.createBean(headerRowComp);
             this.headerRowComps.push(headerRowComp);
-            headerRowComp.getGui().setAttribute('aria-rowindex', this.headerRowComps.length.toString());
+            headerRowComp.setRowIndex(this.headerRowComps.length - 1);
             this.eContainer.appendChild(headerRowComp.getGui());
         }
     }

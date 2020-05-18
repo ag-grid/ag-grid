@@ -84,6 +84,7 @@ import { ModuleNames } from "./modules/moduleNames";
 import { UndoRedoService } from "./undoRedo/undoRedoService";
 import { Component } from "./widgets/component";
 import { AgStackComponentsRegistry } from "./components/agStackComponentsRegistry";
+import { HeaderPositionUtils } from "./headerRendering/header/headerPosition";
 import { _ } from "./utils";
 
 export interface GridParams {
@@ -278,7 +279,7 @@ export class Grid {
         // beans should only contain SERVICES, it should NEVER contain COMPONENTS
 
         const beans = [
-            rowModelClass, Beans, RowPositionUtils, CellPositionUtils,
+            rowModelClass, Beans, RowPositionUtils, CellPositionUtils, HeaderPositionUtils,
             PaginationAutoPageSizeService, GridApi, UserComponentRegistry, AgComponentUtils,
             ComponentMetadataProvider, ResizeObserverService, UserComponentFactory,
             MaxDivHeightScaler, AutoHeightCalculator, CellRendererFactory, HorizontalResizeService,

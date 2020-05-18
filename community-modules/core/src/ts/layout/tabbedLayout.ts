@@ -1,11 +1,11 @@
 import { Promise, _ } from '../utils';
 import { RefSelector } from '../widgets/componentAnnotations';
-import { PostConstruct, Autowired } from '../context/context';
+import { Autowired } from '../context/context';
 import { Constants } from '../constants';
 import { FocusController } from '../focusController';
-import { ManagedTabComponent } from '../widgets/managedTabComponent';
+import { ManagedFocusComponent } from '../widgets/managedFocusComponent';
 
-export class TabbedLayout extends ManagedTabComponent {
+export class TabbedLayout extends ManagedFocusComponent {
 
     @Autowired('focusController') private focusController: FocusController;
 
@@ -26,12 +26,14 @@ export class TabbedLayout extends ManagedTabComponent {
         }
     }
 
-    @PostConstruct
-    public init(): void {
-        this.addManagedListener(this.getGui(), 'keydown', this.handleKeyDown.bind(this));
+    private static getTemplate(cssClass?: string) {
+        return /* html */ `<div class="ag-tabs ${cssClass}">
+            <div ref="eHeader" class="ag-tabs-header ${cssClass ? `${cssClass}-header` : ''}"></div>
+            <div ref="eBody" class="ag-tabs-body ${cssClass ? `${cssClass}-body` : ''}"></div>
+        </div>`;
     }
 
-    private handleKeyDown(e: KeyboardEvent): void {
+    protected handleKeyDown(e: KeyboardEvent): void {
         switch (e.keyCode) {
             case Constants.KEY_RIGHT:
             case Constants.KEY_LEFT:
@@ -54,7 +56,7 @@ export class TabbedLayout extends ManagedTabComponent {
     }
 
     protected onTabKeyDown(e: KeyboardEvent) {
-        super.onTabKeyDown(e);
+        e.preventDefault();
 
         const focusableItems = this.focusController.findFocusableElements(this.eBody, '.ag-set-filter-list *, .ag-menu-list *');
         const activeElement = document.activeElement as HTMLElement;
@@ -76,13 +78,6 @@ export class TabbedLayout extends ManagedTabComponent {
 
             if (nextItem) { nextItem.focus(); }
         }
-    }
-
-    private static getTemplate(cssClass?: string) {
-        return `<div class="ag-tabs ${cssClass}">
-            <div ref="eHeader" class="ag-tabs-header ${cssClass ? `${cssClass}-header` : ''}"></div>
-            <div ref="eBody" class="ag-tabs-body ${cssClass ? `${cssClass}-body` : ''}"></div>
-        </div>`;
     }
 
     public setAfterAttachedParams(params: any): void {
