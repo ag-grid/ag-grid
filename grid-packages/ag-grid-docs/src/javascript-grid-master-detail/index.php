@@ -9,157 +9,93 @@ include '../documentation-main/documentation_header.php';
 <h1 class="heading-enterprise">Master / Detail</h1>
 
 <p class="lead">
-    This section describes how to nest grids inside grids using a Master / Detail configuration.
+    Master Detail refers to a top level grid called a Master Grid having rows that expand. When
+    the row is expanded, another grid is displayed with more details related to the expanded
+    row. The grid that appears is known as the Detail Grid.
 </p>
 
 <? enterprise_feature("Master Detail"); ?>
 
 <?= videoSection("https://www.youtube.com/embed/8OeJn75or2w", "master-detail-video", "Master / Detail Video Tutorial") ?>
 
+
+<h2>Enabling Master / Detail</h2>
+
 <p>
-    With the Master Detail grid configuration, the top level grid is referred to as the 'master grid' and the nested grid
-    is referred to as the 'detail grid'.
+    Set the following three items within the Master Grid to enabled Master / Detail:
 </p>
 
-<p>
-    With this configuration the detail grid can be used to display more information about the row in the master grid that was
-    expanded to reveal the detail grid.
+<ol class="content">
+    <li>
+        Set the grid property <code>masterDetail=true</code>. This tells the grid to allow expanding rows
+        to display Detail Grids.
+    </li>
+    <li>
+        Set the Cell Renderer on one Master Grid column to <code>agGroupCellRenderer</code>. This tells the grid
+        to use the Group Cell Renderer which in turn includes the expand / collapse functionality for that column.
+    </li>
+    <li>
+        Set the Detail Cell Renderer* parameter <code>detailGridOptions</code>. This contains configuration for
+        the Detail Grid such as what columns to display and what grid features you want enabled inside
+        the Detail Grid.
+    </li>
+    <li>
+        Provide a callback via the Detail Cell Renderer* parameter <code>getDetailRowData</code>. The callback is called
+        for each Detail Grid and sets the rows to display in each Detail Grid.
+    </li>
+</ol>
+
+<p style="font-style: italic;">
+    * The significance of using Detail Cell Renderer parameters to configure the Detail Grid is explained in
+    <a href="../javascript-grid-master-detail-detail-grids/">Detail Grids</a>.
 </p>
 
-<note>
-    It's important to mention that because the Master Detail is rendered in a different container, it will not be part of the
-    selection when used in combination with <code>enableRangeSelection</code> or <code>enableCellTextSelection</code>.
-</note>
-
-<h2>Enabling Master Detail</h2>
+<h2>Master / Detail Example</h2>
 
 <p>
-    To enable Master / Detail, you should set the following grid options:
-</p>
-    <ul class="content">
-        <li>
-            <b>masterDetail:</b> Set to true to inform the grid you want to allow
-            expanding of rows to reveal detail grids.
-        </li>
-        <li>
-            <b>detailGridOptions:</b> The grid options to set for the detail grid.
-            The detail grid is a fully featured instance of ag-Grid, so any configuration
-            can be set on the detail grid that you would set any other grid.
-        </li>
-        <li>
-            <b>getDetailRowData:</b> A function you implement to provide the grid
-            with rows for display in the detail grids.
-        </li>
-    </ul>
-
-<p>
-    These grid options are illustrated below:
-</p>
-
-<snippet>
-var masterGridOptions = {
-    columnDefs: masterColumnDefs,
-    rowData: rowData,
-
-    // enable master detail
-    masterDetail: true,
-
-    // specify params for default detail cell renderer
-    detailCellRendererParams: {
-        // provide detail grid options
-        detailGridOptions: detailGridOptions,
-
-        // extract and supply row data for detail
-        getDetailRowData: function(params) {
-            params.successCallback(params.data.childRecords);
-        }
-    }
-}
-
-var detailGridOptions = {
-    columnDefs: detailColumnDefs
-}</snippet>
-
-
-
-<p>
-    The example shows a simple Master / Detail setup. Note the following:
+    The example below shows a simple Master / Detail configuration. Note the following:
 </p>
 
 <ul class="content">
-  <li><b>masterDetail</b> - is set to <code>true</code> in the master grid options.</li>
-  <li><b>detailCellRendererParams</b> - specifies the <code>detailGridOptions</code> to use and <code>getDetailRowData</code>
-extracts the data for the detail row.</li>
+    <li>
+      The Master Grid has <code>masterDetail=true</code>. This enables Master / Detail for the Master Grid.
+    </li>
+
+    <li>
+        The Master Grid has it's first column configured with the Row Group Cell Renderer by setting
+        the Column Property <code>cellRenderer='agGroupCellRenderer'</code>. This configures the
+        column with the expand / collapse functionality.
+    </li>
+
+    <li>
+      The Master Grid has <code>detailCellRendererParams</code> configured to tell the Master Grid what the
+      Detail Grid should look like. The following are set:
+      <ul>
+          <li>
+              The <code>detailGridOptions</code> provides the Grid Options to be used for the Detail Grids.
+          </li>
+          <li>
+              The <code>getDetailRowData</code> provides the rows for each detail grid. In this example,
+              the Detail Rows are taken from an attribute of the Master Grid's data.
+          </li>
+      </ul>
+    </li>
 </ul>
 
 <?= grid_example('Simple Example', 'simple', 'generated', ['enterprise' => true, 'exampleHeight' => 535, 'modules'=>['clientside', 'masterdetail', 'menu', 'columnpanel']]) ?>
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<h2>Supported Modes</h2>
+<h2>Row Models</h2>
 
 <p>
-    The Master / Detail feature organises the grid in a way which overlaps with other features.
-    For example, Master / Detail expands rows, which is also the case with row grouping. For this reason,
-    Master / Detail does not work with certain grid configurations. These configurations are listed below:
-</p>
-
-<h3 id="row-models">Row Models</h3>
-
-<p>
-    The master grid (i.e. the top level grid) in Master / Detail can be used in the
-    <a href="../javascript-grid-client-side-model/">Client-Side</a> and
+    When using Master / Detail the Master Grid must be using either the
+    <a href="../javascript-grid-client-side-model/">Client-Side</a> or
     <a href="../javascript-grid-server-side-model-master-detail/">Server-Side</a> Row Models.
-    However it is not supported with the <a href="../javascript-grid-viewport">Viewport</a> or
+    It is not supported with the <a href="../javascript-grid-viewport">Viewport</a> or
     <a href="../javascript-grid-infinite-scrolling">Infinite</a> Row Models.
 </p>
 
 <p>
-    The detail grid (i.e. the child grid) can use any Row Model, as long as the
-    master grid uses the <a href="../javascript-grid-client-side-model/">Client-Side</a> or
-    <a href="../javascript-grid-server-side-model-master-detail/">Server-Side</a> Row Models, then the detail
-    grid can use any of the other row models.
-</p>
-
-<h3 id="tree-data">Tree Data</h3>
-
-<p>
-    Master / Detail is not supported with <a href="../javascript-grid-tree-data">Tree Data</a>.
-    This is because the concept of tree data conflicts with Master / Detail, in that in tree
-    data, any row can expand to show child rows, which would result in a clash when a row
-    has child rows in addition to having Master / Detail at the same row.
-</p>
-
-<h3 id="layouts">Layouts</h3>
-
-<p>
-    It is not possible to mix <a href="../javascript-grid-width-and-height/#dom-layout">DOM layout</a>
-    for master detail. This is because the layout is a CSS setting that would be inherited by all
-    grids contained with the master grid. So if your master grid was 'for-print', then all child grids
-    would pick up the 'for-print' layout.
-</p>
-
-<p>
-    When using Master / Detail and <a href="../javascript-grid-for-print/">for-print</a>,
-    then all detail grids need to use for-print.
-</p>
-
-<p>
-    When using Master / Detail and <a href="../javascript-grid-width-and-height/#auto-height">auto-height</a>,
-    then all detail grids need to use auto-height.
+    The Detail Grid on the other hand can use any Row Model.
 </p>
 
 <?php include '../documentation-main/documentation_footer.php';?>

@@ -86,5 +86,48 @@ include '../documentation-main/documentation_header.php';
 
 <?= grid_example('Exporting Master / Detail Data', 'exporting', 'generated', ['enterprise' => true, 'exampleHeight' => 550, 'modules'=>['clientside', 'masterdetail', 'menu', 'columnpanel', 'clipboard', 'excel']]) ?>
 
+<h2>Supported Modes</h2>
+
+<p>
+    The Master / Detail feature organises the grid in a way which overlaps with other features.
+    For this reason, Master / Detail does not work with certain grid configurations. These
+    configurations are as follows:
+</p>
+
+
+<p style="font-weight: bold; margin-top: 30px;">Tree Data</p>
+
+<p>
+    Master / Detail is not supported with <a href="../javascript-grid-tree-data">Tree Data</a>.
+    This is because the concept of tree data conflicts with Master / Detail, in that in tree
+    data, any row can expand to show child rows, which would result in a clash when a row
+    has child rows in addition to having Master / Detail at the same row.
+</p>
+
+<p style="font-weight: bold; margin-top: 30px;">Layouts</p>
+
+<p>
+    It is not possible to mix <a href="../javascript-grid-width-and-height/#dom-layout">DOM layout</a>
+    for master detail. This is because the layout is a CSS setting that would be inherited by all
+    grids contained with the master grid. So if your master grid was 'for-print', then all child grids
+    would pick up the 'for-print' layout.
+</p>
+
+<p>
+    When using Master / Detail and <a href="../javascript-grid-for-print/">for-print</a>,
+    then all detail grids need to use for-print.
+</p>
+
+<p>
+    When using Master / Detail and <a href="../javascript-grid-width-and-height/#auto-height">auto-height</a>,
+    then all detail grids need to use auto-height.
+</p>
+
+<p style="font-weight: bold; margin-top: 30px;">Range Selection</p>
+
+<p>
+    When <a href="../angular-grid-range-selection/">Range Selection</a> is enabled on the Master Grid,
+    the Detail Grid will not participate in the Range Selection of the Master Grid.
+</p>
 
 <?php include '../documentation-main/documentation_footer.php';?>
