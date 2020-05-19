@@ -10,10 +10,13 @@ import { loadTemplate, addCssClass } from '../../utils/dom';
 import { debounce } from '../../utils/function';
 import { Promise } from '../../utils/promise';
 
+type FilterButton = 'apply' | 'clear' | 'reset';
+
 export interface IProvidedFilterParams extends IFilterParams {
-    clearButton?: boolean;
-    resetButton?: boolean;
-    applyButton?: boolean;
+    /** @deprecated */ clearButton?: boolean;
+    /** @deprecated */ resetButton?: boolean;
+    /** @deprecated */ applyButton?: boolean;
+    buttons?: FilterButton[];
     closeOnApply?: boolean;
     /** @deprecated */ newRowsAction?: string;
     debounceMs?: number;
@@ -25,9 +28,6 @@ export interface IProvidedFilterParams extends IFilterParams {
  * extend this class.
  */
 export abstract class ProvidedFilter extends Component implements IFilterComp {
-    private static NEW_ROWS_ACTION_KEEP = 'keep';
-    private static NEW_ROWS_ACTION_CLEAR = 'clear';
-
     private newRowsActionKeep: boolean;
 
     // each level in the hierarchy will save params with the appropriate type for that level.
@@ -101,57 +101,82 @@ export abstract class ProvidedFilter extends Component implements IFilterComp {
     }
 
     protected setParams(params: IProvidedFilterParams): void {
+        ProvidedFilter.checkForDeprecatedParams(params);
+
         this.providedFilterParams = params;
 
-        if (params.newRowsAction === ProvidedFilter.NEW_ROWS_ACTION_KEEP) {
+        if (params.newRowsAction === 'keep') {
             this.newRowsActionKeep = true;
-        } else if (params.newRowsAction === ProvidedFilter.NEW_ROWS_ACTION_CLEAR) {
+        } else if (params.newRowsAction === 'clear') {
             this.newRowsActionKeep = false;
         } else {
             // the default for SSRM and IRM is 'keep', for CSRM and VRM the default is 'clear'
-            const rowModelType = this.rowModel.getType();
             const modelsForKeep = [Constants.ROW_MODEL_TYPE_SERVER_SIDE, Constants.ROW_MODEL_TYPE_INFINITE];
-            this.newRowsActionKeep = modelsForKeep.indexOf(rowModelType) >= 0;
+            this.newRowsActionKeep = modelsForKeep.indexOf(this.rowModel.getType()) >= 0;
         }
 
         this.applyActive = ProvidedFilter.isUseApplyButton(params);
 
-        this.createButtonPanel(params);
+        this.createButtonPanel();
     }
 
-    private createButtonPanel(params: IProvidedFilterParams): void {
-        const clearActive = params.clearButton === true;
-        const resetActive = params.resetButton === true;
-        const anyButtonVisible = this.applyActive || clearActive || resetActive;
+    private createButtonPanel(): void {
+        const { buttons } = this.providedFilterParams;
 
-        if (anyButtonVisible) {
-            const translate = this.gridOptionsWrapper.getLocaleTextFunc();
-            const eButtonsPanel = document.createElement('div');
+        if (!buttons || buttons.length < 1) { return; }
 
-            addCssClass(eButtonsPanel, 'ag-filter-apply-panel');
+        const translate = this.gridOptionsWrapper.getLocaleTextFunc();
+        const eButtonsPanel = document.createElement('div');
 
-            const addButton = (text: string, clickListener: () => void): void => {
-                const button = loadTemplate(/* html */
-                    `<button type="button" class="ag-standard-button ag-filter-apply-panel-button">${text}</button>`);
+        addCssClass(eButtonsPanel, 'ag-filter-apply-panel');
 
-                eButtonsPanel.appendChild(button);
-                this.addManagedListener(button, 'click', clickListener);
-            };
+        const addButton = (text: string, clickListener: () => void): void => {
+            const button = loadTemplate(/* html */
+                `<button type="button" class="ag-standard-button ag-filter-apply-panel-button">${text}</button>`);
 
-            if (clearActive) {
-                addButton(translate('clearFilter', 'Clear Filter'), () => this.onBtClear());
-            }
+            eButtonsPanel.appendChild(button);
+            this.addManagedListener(button, 'click', clickListener);
+        };
 
-            if (resetActive) {
-                addButton(translate('resetFilter', 'Reset Filter'), () => this.onBtReset());
-            }
+        const creators = new Map<FilterButton, () => void>();
 
-            if (this.applyActive) {
-                addButton(translate('applyFilter', 'Apply Filter'), () => this.onBtApply());
-            }
+        creators.set('apply', () => addButton(translate('applyFilter', 'Apply Filter'), () => this.onBtApply()));
+        creators.set('clear', () => addButton(translate('clearFilter', 'Clear Filter'), () => this.onBtClear()));
+        creators.set('reset', () => addButton(translate('resetFilter', 'Reset Filter'), () => this.onBtReset()));
 
-            this.eFilterBodyWrapper.parentElement.appendChild(eButtonsPanel);
+        new Set(buttons).forEach(button => creators.get(button)());
+
+        this.eFilterBodyWrapper.parentElement.appendChild(eButtonsPanel);
+    }
+
+    private static checkForDeprecatedParams(params: IProvidedFilterParams): void {
+        const buttons = params.buttons || [];
+
+        if (buttons.length > 0) { return; }
+
+        const { applyButton, resetButton, clearButton } = params;
+
+        if (clearButton) {
+            console.warn('ag-Grid: as of ag-Grid v23.2, filterParams.clearButton is deprecated. Please use filterParams.buttons instead');
+            buttons.push('clear');
         }
+
+        if (resetButton) {
+            console.warn('ag-Grid: as of ag-Grid v23.2, filterParams.resetButton is deprecated. Please use filterParams.buttons instead');
+            buttons.push('reset');
+        }
+
+        if (applyButton) {
+            console.warn('ag-Grid: as of ag-Grid v23.2, filterParams.applyButton is deprecated. Please use filterParams.buttons instead');
+            buttons.push('apply');
+        }
+
+        if ((params as any).apply) {
+            console.warn('ag-Grid: as of ag-Grid v21, filterParams.apply is deprecated. Please use filterParams.buttons instead');
+            buttons.push('apply');
+        }
+
+        params.buttons = buttons;
     }
 
     // subclasses can override this to provide alternative debounce defaults
@@ -193,14 +218,17 @@ export abstract class ProvidedFilter extends Component implements IFilterComp {
         this.onBtApply();
     }
 
-    // returns true if the new model is different to the old model
+    /**
+     * Applies changes made in the UI to the filter, and returns true if the model has changed.
+     */
     public applyModel(): boolean {
-        const oldAppliedModel = this.appliedModel;
+        const previousModel = this.appliedModel;
+
         this.appliedModel = this.getModelFromUi();
 
         // models can be same if user pasted same content into text field, or maybe just changed the case
         // and it's a case insensitive filter
-        return !this.areModelsEqual(this.appliedModel, oldAppliedModel);
+        return !this.areModelsEqual(this.appliedModel, previousModel);
     }
 
     protected onBtApply(afterFloatingFilter = false, afterDataChange = false) {
@@ -210,9 +238,10 @@ export abstract class ProvidedFilter extends Component implements IFilterComp {
             this.providedFilterParams.filterChangedCallback({ afterFloatingFilter, afterDataChange });
         }
 
-        const { closeOnApply, applyButton, resetButton } = this.providedFilterParams;
+        const { closeOnApply } = this.providedFilterParams;
 
-        if (closeOnApply && !afterFloatingFilter && this.hidePopup && (applyButton || resetButton)) {
+        // only close if an apply button is visible, otherwise we'd be closing every time a change was made!
+        if (closeOnApply && !afterFloatingFilter && this.hidePopup && this.applyActive) {
             this.hidePopup();
             this.hidePopup = null;
         }
@@ -248,11 +277,9 @@ export abstract class ProvidedFilter extends Component implements IFilterComp {
 
     // static, as used by floating filter also
     public static getDebounceMs(params: IProvidedFilterParams, debounceDefault: number): number {
-        const applyActive = ProvidedFilter.isUseApplyButton(params);
-
-        if (applyActive) {
+        if (ProvidedFilter.isUseApplyButton(params)) {
             if (params.debounceMs != null) {
-                console.warn('ag-Grid: debounceMs is ignored when applyButton = true');
+                console.warn('ag-Grid: debounceMs is ignored when apply button is present');
             }
 
             return 0;
@@ -263,12 +290,9 @@ export abstract class ProvidedFilter extends Component implements IFilterComp {
 
     // static, as used by floating filter also
     public static isUseApplyButton(params: IProvidedFilterParams): boolean {
-        if ((params as any).apply && !params.applyButton) {
-            console.warn('ag-Grid: as of ag-Grid v21, filterParams.apply is now filterParams.applyButton, please change to applyButton');
-            params.applyButton = true;
-        }
+        ProvidedFilter.checkForDeprecatedParams(params);
 
-        return params.applyButton === true;
+        return params.buttons && params.buttons.indexOf('apply') >= 0;
     }
 
     public destroy() {

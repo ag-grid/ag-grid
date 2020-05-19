@@ -101,24 +101,10 @@ describe('filterChangedCallback', () => {
 });
 
 describe('closeOnApply', () => {
-    it('closes popup if closeOnApply is true and applyButton is true', () => {
+    it('closes popup if closeOnApply is true and apply button is present', () => {
         const hidePopup = jest.fn();
         const params = mock<IProvidedFilterParams>('filterChangedCallback');
-        params.applyButton = true;
-        params.closeOnApply = true;
-        const filter = new TestFilter(params);
-
-        filter.afterGuiAttached({ hidePopup });
-        filter.setModelHasChanged(true);
-        filter.apply();
-
-        expect(hidePopup).toHaveBeenCalledTimes(1);
-    });
-
-    it('closes popup if closeOnApply is true and resetButton is true', () => {
-        const hidePopup = jest.fn();
-        const params = mock<IProvidedFilterParams>('filterChangedCallback');
-        params.resetButton = true;
+        params.buttons = ['apply'];
         params.closeOnApply = true;
         const filter = new TestFilter(params);
 
@@ -132,7 +118,7 @@ describe('closeOnApply', () => {
     it('closes popup if closeOnApply is true even if model did not change', () => {
         const hidePopup = jest.fn();
         const params = mock<IProvidedFilterParams>('filterChangedCallback');
-        params.applyButton = true;
+        params.buttons = ['apply'];
         params.closeOnApply = true;
 
         const filter = new TestFilter(params);
@@ -143,7 +129,7 @@ describe('closeOnApply', () => {
         expect(hidePopup).toHaveBeenCalledTimes(1);
     });
 
-    it('does not close popup if neither apply nor reset button is present', () => {
+    it('does not close popup if apply button is not present', () => {
         const hidePopup = jest.fn();
         const params = mock<IProvidedFilterParams>('filterChangedCallback');
         params.closeOnApply = true;
@@ -159,7 +145,7 @@ describe('closeOnApply', () => {
     it('does not close popup if from change came from floating filter', () => {
         const hidePopup = jest.fn();
         const params = mock<IProvidedFilterParams>('filterChangedCallback');
-        params.applyButton = true;
+        params.buttons = ['apply'];
         params.closeOnApply = true;
         const filter = new TestFilter(params);
 

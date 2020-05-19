@@ -89,24 +89,28 @@ include '../documentation-main/documentation_header.php';
 </p>
 
 <p>
-    The example below demonstrates using the Apply button. It also demonstrates the relationship between
-    the Apply button and filter events. Note the following:
+    The buttons will be displayed in the order they are specified in the <code>buttons</code> array.
+</p>
+
+<p>
+    The example below demonstrates using the different buttons. It also demonstrates the relationship between
+    the buttons and filter events. Note the following:
 </p>
 
 <ul class="content">
-    <li>The Athlete and Age columns have filters with Apply and Reset buttons.</li>
+    <li>The <b>Athlete</b> and <b>Age</b> columns have filters with Apply and Reset buttons, but different orders.</li>
+    <li>The <b>Country</b> column has a filter with Apply and Clear buttons.</li>
     <li>
-        The Age column has <code>closeOnApply</code> set to <code>true</code>, so the filter popup will be closed
-        immediately when the filter is applied or reset.
+        The <b>Age</b> column has <code>closeOnApply</code> set to <code>true</code>, so the filter
+        popup will be closed immediately when the filter is applied or reset.
     </li>
-    <li>The Country column has a filter with Apply and Clear buttons.</li>
-    <li><code>onFilterModified</code> gets called when the filter changes regardless of the Apply button.</li>
-    <li><code>onFilterChanged</code> gets called only after a new filter is applied.</li>
+    <li><code>onFilterModified</code> is called when the filter changes regardless of whether the Apply button is present.</li>
+    <li><code>onFilterChanged</code> is called only after a new filter is applied.</li>
     <li>Looking at the console, it can be noted when a filter is changed, the result of <code>getModel()</code>
     and <code>getModelFromUi()</code> are different. The first reflects the active filter, while the second reflects
     what is in the UI (and not yet applied).</li>
 </ul>
 
-<?= grid_example('Apply Button and Filter Events', 'apply-and-filter-events', 'generated', ['enterprise' => true, 'exampleHeight' => 560, 'modules' => ['clientside', 'setfilter', 'menu', 'columnpanel']]) ?>
+<?= grid_example('Buttons and Filter Events', 'buttons-and-filter-events', 'generated', ['enterprise' => true, 'exampleHeight' => 560, 'modules' => ['clientside', 'setfilter', 'menu', 'columnpanel']]) ?>
 
 <?php include '../documentation-main/documentation_footer.php';?>
