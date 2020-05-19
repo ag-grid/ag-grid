@@ -701,6 +701,11 @@
                     "title": "API",
                     "url": "javascript-grid-filter-set-api/",
                     "enterprise": true
+                  },
+                  {
+                    "title": "Excel Mode",
+                    "url": "javascript-grid-filter-set-excel-mode/",
+                    "enterprise": true
                   }
                 ]
               },

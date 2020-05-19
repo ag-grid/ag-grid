@@ -1,0 +1,97 @@
+{
+    "behaviours": [
+        {
+            "behaviour": "All values initially selected",
+            "agGrid": true,
+            "windowsExcel": true,
+            "macExcel": true
+        },
+        {
+            "behaviour": "Allows filter with no values selected",
+            "agGrid": true,
+            "windowsExcel": false,
+            "macExcel": false
+        },
+        {
+            "behaviour": "Applies filter immediately while making changes",
+            "agGrid": true,
+            "windowsExcel": false,
+            "macExcel": true
+        },
+        {
+            "behaviour": "Filter only applied when <code>Apply</code> clicked",
+            "agGrid": false,
+            "windowsExcel": true,
+            "macExcel": null
+        },
+        {
+            "behaviour": "Can search for values",
+            "agGrid": true,
+            "windowsExcel": true,
+            "macExcel": true
+        },
+        {
+            "behaviour": "Pressing <code>Enter</code> on a search applies filter using only visible values",
+            "agGrid": true,
+            "windowsExcel": true,
+            "macExcel": true
+        },
+        {
+            "behaviour": "Filter popup is closed when <code>Enter</code> is pressed",
+            "agGrid": false,
+            "windowsExcel": true,
+            "macExcel": true
+        },
+        {
+            "behaviour": "Clicking <code>Apply</code> on a search applies filter using only visible values",
+            "agGrid": false,
+            "windowsExcel": true,
+            "macExcel": null
+        },
+        {
+            "behaviour": "Filter popup is closed when <code>Apply</code> is clicked",
+            "agGrid": false,
+            "windowsExcel": true,
+            "macExcel": null
+        },
+        {
+            "behaviour": "Can combine values from different searches",
+            "agGrid": true,
+            "windowsExcel": false,
+            "macExcel": false
+        },
+        {
+            "behaviour": "Resets search text when filter is closed",
+            "agGrid": false,
+            "windowsExcel": true,
+            "macExcel": true
+        },
+        {
+            "behaviour": "Allows blank values to be selected",
+            "agGrid": true,
+            "windowsExcel": true,
+            "macExcel": true
+        },
+        {
+            "behaviour": "(Blanks) option shows at end of the list",
+            "agGrid": [
+                false,
+                "sorted with other values"
+            ],
+            "windowsExcel": true,
+            "macExcel": true
+        },
+        {
+            "behaviour": "Closing the popup discards unapplied changes",
+            "agGrid": false,
+            "windowsExcel": true,
+            "macExcel": true
+        },
+        {
+            "behaviour": "Clicking <code>Cancel</code> discards unapplied changes",
+            "agGrid": true,
+            "windowsExcel": true,
+            "macExcel": null
+        }
+    ]
+}
