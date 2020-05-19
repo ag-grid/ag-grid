@@ -27,6 +27,13 @@ enum GridContainers {
     RightContainer
 }
 
+enum NavigationDirection {
+    UP,
+    DOWN,
+    LEFT,
+    RIGHT
+}
+
 export class HeaderRootComp extends ManagedFocusComponent {
     private static TEMPLATE = /* html */
         `<div class="ag-header" role="presentation">
@@ -93,57 +100,28 @@ export class HeaderRootComp extends ManagedFocusComponent {
     }
 
     protected onTabKeyDown(e: KeyboardEvent): void {
-        const focusedHeader = this.focusController.getFocusedHeader();
-
-        if (!focusedHeader || e.defaultPrevented) { return; }
-
-        const { headerRowIndex, column, pinned } = focusedHeader;
-        const nextRow = e.shiftKey ?  headerRowIndex - 1 : headerRowIndex + 1;
-
-        if (nextRow < 0) { return; }
-
-        const currentContainer = this.getChildContainer(pinned);
-        const rowComps = currentContainer.getRowComps();
-        const currentRowType = rowComps[headerRowIndex].getType();
-
-        if (nextRow >= rowComps.length) {
-            if (!this.focusGridView()) { return; }
-        } else {
-            const nextRowComp = rowComps[nextRow];
-            let nextScrollColumn: ColumnGroup | Column;
-            let nextFocusColumn: ColumnGroupChild | Column;
-
-            if (currentRowType === HeaderRowType.COLUMN_GROUP) {
-                const currentColumn = column as ColumnGroup;
-                nextScrollColumn = e.shiftKey ? currentColumn.getParent() : currentColumn.getDisplayedLeafColumns()[0];
-                nextFocusColumn = e.shiftKey ? nextScrollColumn : currentColumn.getDisplayedChildren()[0];
-            } else if (currentRowType === HeaderRowType.FLOATING_FILTER) {
-                nextScrollColumn = nextFocusColumn = column;
-            } else {
-                const currentColumn = column as Column;
-                nextScrollColumn = nextFocusColumn = e.shiftKey ? currentColumn.getParent() : currentColumn;
-            }
-
-            if (!nextScrollColumn || !nextFocusColumn) { return; }
-
-            this.scrollToColumn(nextScrollColumn);
-
-            const nextHeader = nextRowComp.getHeaderComps()[nextFocusColumn.getUniqueId() as string];
-
-            if (nextHeader) {
-                nextHeader.getFocusableElement().focus();
-            }
-        }
+        // defaultPrevented will be true when inner elements of the header are already managing the tab behavior.
+        // navigateVertically returns false if there is no valid vertical movement towards the direction passed.
+        // in which case we should return and let the browser handle tab.
+        if (e.defaultPrevented || !this.navigateVertically(
+            e.shiftKey ? NavigationDirection.UP : NavigationDirection.DOWN)
+        ) { return; }
 
         e.preventDefault();
     }
 
     protected handleKeyDown(e: KeyboardEvent): void {
+        let direction: NavigationDirection;
+
         switch (e.keyCode) {
             case Constants.KEY_LEFT:
+                direction = NavigationDirection.LEFT;
             case Constants.KEY_RIGHT:
+                if (!direction) {
+                    direction = NavigationDirection.RIGHT;
+                }
                 if (!e.defaultPrevented) {
-                    this.navigateToNextHeader(e);
+                    this.navigateHorizontally(direction);
                 }
         }
     }
@@ -164,52 +142,72 @@ export class HeaderRootComp extends ManagedFocusComponent {
         this.childContainers.forEach(c => c.registerGridComp(gridPanel));
     }
 
-    private getChildContainer(pinned: string): HeaderContainer {
-        const containerIdx = GridContainers[pinned === 'left'
-            ? 'LeftContainer'
-            : (pinned === 'right'
-                ? 'RightContainer'
-                : 'CenterContainer')
-        ];
+    private navigateVertically(direction: NavigationDirection): boolean {
+        const focusedHeader = this.focusController.getFocusedHeader();
 
-        return this.childContainers[containerIdx];
-    }
+        if (!focusedHeader) { return false; }
 
-    private focusGridView(): boolean {
-        const { focusController } = this;
-        const cellToFocus = focusController.getFocusedCell();
+        const { headerRowIndex, pinned, column } = focusedHeader;
+        const currentContainer = this.getChildContainer(pinned);
+        const rowComps = currentContainer.getRowComps();
+        const rowLen = rowComps.length;
+        const isUp = direction === NavigationDirection.UP ;
+        const nextRow = isUp ?  headerRowIndex - 1 : headerRowIndex + 1;
 
-        if (cellToFocus) {
-            this.focusController.setFocusedCell(cellToFocus.rowIndex, cellToFocus.column, cellToFocus.rowPinned, true);
-        } else {
-            const firstRow = this.rowPositionUtils.getFirstRow();
-            const firstColumn = this.columnController.getFirstDisplayedColumn();
+        if (nextRow < 0) { return false; }
 
-            if (!firstRow || !firstColumn) { return false; }
-
-            this.focusController.setFocusedCell(firstRow.rowIndex, firstColumn, firstRow.rowPinned, true);
+        if (nextRow >= rowLen) {
+            // focusGridView returns false when the grid has no cells rendered.
+            return this.focusGridView();
         }
 
-        return true;
+        const currentRowType = rowComps[headerRowIndex].getType();
+        const nextRowComp = rowComps[nextRow];
+
+        let nextScrollColumn: ColumnGroup | Column;
+        let nextFocusColumn: ColumnGroupChild | Column;
+
+        if (currentRowType === HeaderRowType.COLUMN_GROUP) {
+            const currentColumn = column as ColumnGroup;
+            nextScrollColumn = isUp ? currentColumn.getParent() : currentColumn.getDisplayedLeafColumns()[0];
+            nextFocusColumn = isUp ? nextScrollColumn : currentColumn.getDisplayedChildren()[0];
+        } else if (currentRowType === HeaderRowType.FLOATING_FILTER) {
+            nextScrollColumn = nextFocusColumn = column;
+        } else {
+            const currentColumn = column as Column;
+            nextScrollColumn = nextFocusColumn = isUp ? currentColumn.getParent() : currentColumn;
+        }
+
+        if (!nextScrollColumn || !nextFocusColumn) { return; }
+
+        this.scrollToColumn(nextScrollColumn);
+
+        const nextHeader = nextRowComp.getHeaderComps()[nextFocusColumn.getUniqueId() as string];
+
+        if (nextHeader) {
+            nextHeader.getFocusableElement().focus();
+            return true;
+        }
+
+        return false;
     }
 
-    private navigateToNextHeader(e: KeyboardEvent): void {
+    private navigateHorizontally(direction: NavigationDirection): void {
         const focusedHeader = this.focusController.getFocusedHeader();
         const isRtl = this.gridOptionsWrapper.isEnableRtl();
         let nextHeader: HeaderPosition;
-        let direction: 'Before' |  'After';
+        let normalisedDirection: 'Before' |  'After';
 
-        // faking a bitwise XOR using !==
-        if (e.keyCode === Constants.KEY_LEFT !== isRtl) {
-            direction = 'Before';
-            nextHeader = this.headerPositionUtils.findHeader(focusedHeader, direction);
+        if (direction === NavigationDirection.LEFT !== isRtl) {
+            normalisedDirection = 'Before';
+            nextHeader = this.headerPositionUtils.findHeader(focusedHeader, normalisedDirection);
         } else {
-            direction = 'After';
-            nextHeader = this.headerPositionUtils.findHeader(focusedHeader, direction);
+            normalisedDirection = 'After';
+            nextHeader = this.headerPositionUtils.findHeader(focusedHeader, normalisedDirection);
         }
 
         if (nextHeader) {
-            this.scrollToColumn(nextHeader.column, direction);
+            this.scrollToColumn(nextHeader.column, normalisedDirection);
 
             const childContainer = this.getChildContainer(nextHeader.pinned);
             const rowComp = childContainer.getRowComps()[nextHeader.headerRowIndex];
@@ -232,6 +230,35 @@ export class HeaderRootComp extends ManagedFocusComponent {
                 headerComps[headerCompId].getFocusableElement().focus();
             }
         }
+    }
+
+    private getChildContainer(pinned: string): HeaderContainer {
+        const containerIdx = pinned === 'left'
+            ? GridContainers.LeftContainer
+            : (pinned === 'right'
+                ? GridContainers.RightContainer
+                : GridContainers.CenterContainer
+            );
+
+        return this.childContainers[containerIdx];
+    }
+
+    private focusGridView(): boolean {
+        const { focusController } = this;
+        const cellToFocus = focusController.getFocusedCell();
+
+        if (cellToFocus) {
+            this.focusController.setFocusedCell(cellToFocus.rowIndex, cellToFocus.column, cellToFocus.rowPinned, true);
+        } else {
+            const firstRow = this.rowPositionUtils.getFirstRow();
+            const firstColumn = this.columnController.getFirstDisplayedColumn();
+
+            if (!firstRow || !firstColumn) { return false; }
+
+            this.focusController.setFocusedCell(firstRow.rowIndex, firstColumn, firstRow.rowPinned, true);
+        }
+
+        return true;
     }
 
     private scrollToColumn(column: Column | ColumnGroup, direction: 'Before' | 'After' = 'After'): void {
