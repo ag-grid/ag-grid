@@ -270,93 +270,6 @@ detailCellRendererParams: {
 
 <?= grid_example('Customising via Template Callback', 'template-callback-customisation', 'generated', ['enterprise' => true, 'exampleHeight' => 550, 'modules'=>['clientside', 'masterdetail', 'menu', 'columnpanel']]) ?>
 
-<h2>Accessing Detail Grids</h2>
-
-<p>
-    The Master Grid manages all the Detail Grid instances. You can access the API of the underlying
-    Detail Grids to call API methods directly on those grids. The Master Grid stores references to
-    the Detail Grid API's in Detail Grid Info objects.
-</p>
-
-<p>
-    The Detail Grid Info objects contain a reference to the underlying <a href="../javascript-grid-api/">Grid API</a>
-    and <a href="../javascript-grid-column-api/">Column API</a> for each detail grid. The interface for Detail Grid
-    Info is as follows:
-</p>
-
-<snippet>
-interface DetailGridInfo {
-    // id of the detail grid, the format is detail_&lt;row-id>
-    // where row-id is the id of the parent row.
-    id: string;
-
-    // the grid API of the detail grid
-    api: GridApi;
-
-    // the column API of the detail grid
-    columnApi: ColumnApi;
-}
-</snippet>
-
-<p>
-    The Detail Grid Info objects are accessed via the Master Grid's API via the following
-    methods:
-</p>
-
-<ul>
-    <li>
-        <p>
-            <code>getDetailGridInfo(id)</code>: Returns back the Detail Grid Info for the Detail Grid
-            with the provided ID.
-        </p>
-
-        <snippet>
-// lookup a specific DetailGridInfo by id, and then call stopEditing() on it
-var detailGridInfo = masterGridOptions.api.getDetailGridInfo('someDetailGridId');
-detailGridInfo.api.flashCells();
-        </snippet>
-
-    </li>
-    <li>
-        <p>
-            <code>forEachDetailGridInfo(callback)</code>: Calls the callback for each existing instance
-            of a Detail Grid.
-        </p>
-
-        <snippet>
-// iterate over all DetailGridInfo's, and call stopEditing() on each one
-masterGridOptions.api.forEachDetailGridInfo(function(detailGridInfo) {
-    detailGridInfo.api.flashCells();
-});
-        </snippet>
-
-    </li>
-</ul>
-
-
-
-<p>
-    This example shows how to control cell editing when using Master / Detail. Note the following:
-</p>
-
-<ul class="content">
-    <li><b>Edit Master</b> - performs editing on a master cell using the master grid options:
-        <code>masterGridOptions.api.startEditingCell()</code>
-    </li>
-    <li><b>Stop Edit Master</b> - iterates over each master row node using <code>masterGridOptions.api.forEachNode</code>
-        and then calls <code>masterGridOptions.api.stopEditing()</code> on each node.
-    </li>
-    <li><b>Edit Detail</b> - looks up the corresponding <code>DetailGridInfo</code> using <code>masterGridOptions.api.getDetailGridInfo()</code>
-        and then uses the grid api on that detail grid start editing: <code>detailGrid.api.startEditingCell()</code>
-    </li>
-    <li><b>Stop Edit Detail</b> - iterates over each detail grid using <code>masterGridOptions.api.forEachDetailGridInfo()</code>
-        and then calls <code>detailGridApi.api.stopEditing()</code> on each detail grid.
-    </li>
-</ul>
-
-<?= grid_example('Editing Cells with Master / Detail', 'cell-editing', 'generated', ['enterprise' => true, 'exampleHeight' => 535, 'modules'=>['clientside', 'masterdetail', 'menu', 'columnpanel']]) ?>
-
-
 <h2>Refresh Detail Rows</h2>
 
 <p>
@@ -521,51 +434,52 @@ masterGridOptions.api.forEachDetailGridInfo(function(detailGridInfo) {
 <h2>Detail Grid Height</h2>
 
 <p>
-    The height of detail rows can be configured in one of the following two ways:
+    The height of detail rows can be configured statically (same height for each detail row)
+    or dynamically (different height for each detail row).
 </p>
-<ol class="content">
-    <li>
-        Use property <code>detailRowHeight</code> to set a fixed height for each detail row.
-    </li>
-    <li>
-        Use callback <code>getRowHeight()</code> to set height for each row individually.
-        One extra complication here is that this method is called for every row in the grid
-        including master rows.
-    </li>
-</ol>
+
+<p class="example-title">Static Detail Height Height</p>
 
 <p>
-    The following snippet compares both approaches:
+    Use the grid property <code>detailRowHeight</code> to set a fixed height for each detail row.
 </p>
 
-
 <snippet>
-// option 1 - fixed detail row height, sets height for all details rows
-masterGridOptions.detailRowHeight = 500;
-
-// option 2 - dynamic detail row height, dynamically sets height for all rows
-masterGridOptions.getRowHeight = function (params) {
-    var isDetailRow = params.node.detail;
-    if (isDetailRow) {
-        var detailPanelHeight = params.data.children.length * 50;
-        // dynamically calculate detail row height
-        return detailPanelHeight;
-    } else {
-        // for all non-detail rows, return 25, the default row height
-        return 25;
-    }
-}
+// statically fix row height for all detail grids
+masterGridOptions.detailRowHeight = 200;
 </snippet>
 
 <p>
-    Note that the <code>detail</code> property can be used to identify detail rows.
-</p>
-
-<p>
-    The following demonstrates a fixed detail row height:
+    The following example sets a fixed row height for all detail rows.
 </p>
 
 <?= grid_example('Fixed Detail Row Height', 'fixed-detail-row-height', 'generated', ['enterprise' => true, 'exampleHeight' => 575, 'modules'=>['clientside', 'masterdetail', 'menu', 'columnpanel']]) ?>
+
+<p class="example-title">Dynamic Detail Row Height</p>
+
+<p>
+    Use callback <code>getRowHeight()</code> to set height for each row individually.
+</p>
+<p>
+    Note that this callback gets called for <b>all rows</b> in the Master Grid, not just
+    rows containing Detail Grids. If you do not want to set row heights explicitly for
+    other rows simply return <code>undefined / null</code> and the grid will ignore the
+    result for that particular row.
+</p>
+
+<snippet>
+// dynamically assigning detail row height
+masterGridOptions.getRowHeight = function (params) {
+    var isDetailRow = params.node.detail;
+
+    // for all rows that are not detail rows, return nothing
+    if (!isDetailRow) { return undefined; }
+
+    // otherwise return height based on number of rows in detail grid
+    var detailPanelHeight = params.data.children.length * 50;
+    return detailPanelHeight;
+}
+</snippet>
 
 <p>
     The following example demonstrates dynamic detail row heights:
@@ -574,43 +488,137 @@ masterGridOptions.getRowHeight = function (params) {
 <?= grid_example('Dynamic Detail Row Height', 'dynamic-detail-row-height', 'generated', ['enterprise' => true, 'modules'=>['clientside', 'masterdetail', 'menu', 'columnpanel']]) ?>
 
 
-<h2 id="keeping-row-details">Detail Grid Lifecycle</h2>
+
+<h2>Accessing Detail Grids</h2>
 
 <p>
-    When a master row is expanded a detail row is created. When the master row is collapsed, the detail row is
-    destroyed. When the master row is expanded a second time, a detail rows is created again from scratch. This can
-    be undesirable behaviour if there was context in the detail row, e.g. if the user sorted or filtered data
-    in the detail row, the sort or filter will be reset the second time the detail row is displayed.
+    The Master Grid manages all the Detail Grid instances. You can access the API of the underlying
+    Detail Grids to call API methods directly on those grids. The Master Grid stores references to
+    the Detail Grid API's in Detail Grid Info objects.
 </p>
 
 <p>
-    To prevent losing the context of details rows, the grid provides two properties to cache the details rows
+    The Detail Grid Info objects contain a reference to the underlying <a href="../javascript-grid-api/">Grid API</a>
+    and <a href="../javascript-grid-column-api/">Column API</a> for each detail grid. The interface for Detail Grid
+    Info is as follows:
+</p>
+
+<snippet>
+interface DetailGridInfo {
+    // id of the detail grid, the format is detail_&lt;row-id>
+    // where row-id is the id of the parent row.
+    id: string;
+
+    // the grid API of the detail grid
+    api: GridApi;
+
+    // the column API of the detail grid
+    columnApi: ColumnApi;
+}
+</snippet>
+
+<p>
+    The Detail Grid Info objects are accessed via the Master Grid's API via the following
+    methods:
+</p>
+
+<ul>
+    <li>
+        <p>
+            <code>getDetailGridInfo(id)</code>: Returns back the Detail Grid Info for the Detail Grid
+            with the provided ID.
+        </p>
+
+        <snippet>
+// lookup a specific DetailGridInfo by id, and then call stopEditing() on it
+var detailGridInfo = masterGridOptions.api.getDetailGridInfo('detail_someId');
+detailGridInfo.api.flashCells();
+        </snippet>
+
+        <p>
+            The grid generates ID's for detail grids by prefixing the parent row's ID with "detail_".
+            For example if the ID of the expanded Master Row is "88", then the ID of the Detail Grid / row
+            will be "detail_88".
+        </p>
+    </li>
+    <li>
+        <p>
+            <code>forEachDetailGridInfo(callback)</code>: Calls the callback for each existing instance
+            of a Detail Grid.
+        </p>
+
+        <snippet>
+// iterate over all DetailGridInfo's, and call stopEditing() on each one
+masterGridOptions.api.forEachDetailGridInfo(function(detailGridInfo) {
+    detailGridInfo.api.flashCells();
+});
+        </snippet>
+
+    </li>
+</ul>
+
+<p>
+    This example shows flashing cells on the details grids by using the Grid API <code>flashCells()</code>.
+    Note the following:
+</p>
+
+<ul class="content">
+    <li>
+        The example is made more compact by a) setting Detail Row Height to 200 pixels and
+        b) setting CSS to reduce padding around the Detail Grid.
+    </li>
+    <li>
+        The callback <code>getRowNodeId</code> is implemented in the Master Grid to give each row an
+        ID. In this instance the <code>account</code> attribute is used.
+    </li>
+    <li>
+        Button 'Flash Mila Smith' uses <code>getDetailGridInfo</code> to get access to the Grid API
+        for the Mila Smith Detail Grid.
+    </li>
+    <li>
+        Button 'Flash All' uses <code>forEachDetailGridInfo</code> to access all existing Detail Grid's.
+    </li>
+</ul>
+
+<?= grid_example('Detail Grid API', 'detail-grid-api', 'generated', ['enterprise' => true, 'exampleHeight' => 535, 'modules'=>['clientside', 'masterdetail', 'menu', 'columnpanel']]) ?>
+
+<h2 id="keeping-row-details">Detail Grid Lifecycle</h2>
+
+<p>
+    When a Master Row is expanded a Detail Row is created. When the Master Row is collapsed, the Detail Row is
+    destroyed. When the Master Row is expanded a second time, a Detail Row is created again from scratch. This can
+    be undesirable behaviour if there was context in the Detail Row, e.g. if the user sorted or filtered data
+    in the Detail Row, the sort or filter will be reset the second time the Retail Row is displayed.
+</p>
+
+<p>
+    To prevent losing the context of Details Rows, the grid provides two properties to cache the Details Rows
     to be reused the next time the row is shows. The properties are as follows:
 </p>
 
 <?php createDocumentationFromFile('../javascript-grid-properties/properties.json', 'masterDetail', ['keepDetailRows', 'keepDetailRowsCount']) ?>
 
 <p>
-    The example below demonstrates keeping detail rows. Note the following:
+    The example below demonstrates keeping Detail Rows. Note the following:
 </p>
 
 <ul class="content">
     <li>
-        The detail grid has property <code>keepDetailRows=true</code> to turn on keeping detail rows.
+        The Master Grid has property <code>keepDetailRows=true</code> to turn on keeping Detail Rows.
     </li>
     <li>
-        The detail grid has property <code>keepDetailRowsCount=2</code> which sets the number of details rows
+        The Master Grid has property <code>keepDetailRowsCount=2</code> which sets the number of Details Rows
         to keep to 2.
     </li>
     <li>
-        All the detail grids allow moving and sorting columns. If you change the state of a detail grid
-        (e.g. by sorting a detail grid), that state will be kept if you close the parent row and then open
-        the parent row again.
+        All the Detail Grids allow moving and sorting columns. If you change the state of a Detail Grid
+        (e.g. by sorting a Detail Grid), that state will be kept if you close the Parent Row and then open
+        the Parent Row again.
     </li>
     <li>
-        The maximum number of detail rows kept is two. If you open three detail grids and apply sorting on
-        each grid, then close all three detail grids (so none are showing) and then open the three grids
-        again, only two of the grids will have the sort state kept.
+        The maximum number of Detail Rows kept is two. If you open three Detail Rows and apply sorting on
+        each Detail Grid, then close all three Detail Rows (so none are showing) and then open all three again,
+        only two of them will have the sort state kept.
     </li>
 </ul>
 

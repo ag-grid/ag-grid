@@ -10,7 +10,7 @@ var gridOptions = {
         flex: 1
     },
     masterDetail: true,
-    detailRowHeight: 365,
+    detailRowHeight: 200,
     detailCellRendererParams: {
         detailGridOptions: {
             columnDefs: [

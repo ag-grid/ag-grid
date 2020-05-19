@@ -7,6 +7,7 @@ var gridOptions = {
         { field: 'minutes', valueFormatter: "x.toLocaleString() + 'm'" }
     ],
     masterDetail: true,
+    detailRowHeight: 200,
     detailCellRendererParams: {
         detailGridOptions: {
             columnDefs: [
@@ -26,6 +27,10 @@ var gridOptions = {
             params.successCallback(params.data.callRecords);
         }
     },
+    getRowNodeId: function(data) {
+        // use 'account' as the row ID
+        return data.account;
+    },
     defaultColDef: {
         flex: 1,
         editable: true,
@@ -35,36 +40,25 @@ var gridOptions = {
 };
 
 function onFirstDataRendered(params) {
-    // arbitrarily expand a row for presentational purposes
-    setTimeout(function() { params.api.getDisplayedRowAtIndex(1).setExpanded(true); }, 0);
+    // expand the first two rows
+    setTimeout(function() {
+        params.api.forEachNode( function(node) {
+            node.setExpanded(true);
+        });
+    }, 0);
 }
 
-function startEditingInMasterRow() {
-    // stop editing in detail grid
+function flashMilaSmithOnly() {
+    // flash Mila Smith - we know her account is 177001 and we use the account for the row ID
+    var detailGrid = gridOptions.api.getDetailGridInfo("detail_177001");
+    if (detailGrid) {
+        detailGrid.api.flashCells();
+    }
+}
+
+function flashAll() {
     gridOptions.api.forEachDetailGridInfo(function(detailGridApi) {
-        detailGridApi.api.stopEditing();
-    });
-
-    // start editing in master grid
-    gridOptions.api.startEditingCell({ rowIndex: 0, colKey: 'calls' });
-}
-
-function stopEditingInMasterRows() {
-    gridOptions.api.stopEditing();
-}
-
-function startEditingInDetailRow() {
-    // stop editing in master grid
-    gridOptions.api.stopEditing();
-
-    // start editing in detail grid
-    var detailGrid = gridOptions.api.getDetailGridInfo("detail_1");
-    detailGrid.api.startEditingCell({ rowIndex: 0, colKey: 'number' });
-}
-
-function stopEditingInDetailRows() {
-    gridOptions.api.forEachDetailGridInfo(function(detailGridApi) {
-        detailGridApi.api.stopEditing();
+        detailGridApi.api.flashCells();
     });
 }
 
