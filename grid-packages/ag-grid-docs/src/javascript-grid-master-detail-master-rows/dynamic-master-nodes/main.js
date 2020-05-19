@@ -1,4 +1,8 @@
 var gridOptions = {
+    masterDetail: true,
+    isRowMaster: function(dataItem) {
+        return dataItem ? dataItem.callRecords.length > 0 : false;
+    },
     columnDefs: [
         // group cell renderer needed for expand / collapse icons
         { field: 'name', cellRenderer: 'agGroupCellRenderer' },
@@ -9,7 +13,6 @@ var gridOptions = {
     defaultColDef: {
         flex: 1
     },
-    masterDetail: true,
     detailCellRendererParams: {
         detailGridOptions: {
             columnDefs: [
@@ -26,12 +29,6 @@ var gridOptions = {
         getDetailRowData: function(params) {
             params.successCallback(params.data.callRecords);
         }
-    },
-    isRowMaster: function(dataItem) {
-        return dataItem ? dataItem.callRecords.length > 0 : false;
-    },
-    isFullWidthCell: function() {
-        return false;
     },
     onFirstDataRendered: onFirstDataRendered
 };
