@@ -4,6 +4,7 @@ import { Constants } from "../constants";
 import { IRowModel } from "../interfaces/iRowModel";
 import { RowNode } from "./rowNode";
 import { PinnedRowModel } from "../pinnedRowModel/pinnedRowModel";
+import { RowRenderer } from "../rendering/rowRenderer";
 import { _ } from "../utils";
 
 export interface RowPosition {
@@ -15,6 +16,7 @@ export interface RowPosition {
 export class RowPositionUtils extends BeanStub {
 
     @Autowired('rowModel') private rowModel: IRowModel;
+    @Autowired('rowRenderer') private rowRenderer: RowRenderer;
     @Autowired('pinnedRowModel') private pinnedRowModel: PinnedRowModel;
 
     public getFirstRow(): RowPosition {
@@ -23,7 +25,8 @@ export class RowPositionUtils extends BeanStub {
         }
 
         if (this.rowModel.getRowCount()) {
-            return { rowIndex: 0, rowPinned: undefined };
+            const rowIndex = this.rowRenderer.getFirstVirtualRenderedRow();
+            return { rowIndex, rowPinned: undefined };
         }
 
         if (this.pinnedRowModel.getPinnedBottomRowCount()) {

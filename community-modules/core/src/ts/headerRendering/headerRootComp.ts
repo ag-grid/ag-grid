@@ -12,13 +12,13 @@ import { Constants } from '../constants';
 import { addOrRemoveCssClass, setDisplayed } from '../utils/dom';
 import { ManagedFocusComponent } from '../widgets/managedFocusComponent';
 import { FocusController } from '../focusController';
-import { RowPositionUtils } from '../entities/rowPosition';
 import { ColumnGroup } from '../entities/columnGroup';
 import { HeaderPositionUtils, HeaderPosition } from './header/headerPosition';
 import { Column } from '../entities/column';
 import { AnimationFrameService } from '../misc/animationFrameService';
 import { HeaderRowType } from './headerRowComp';
 import { ColumnGroupChild } from '../entities/columnGroupChild';
+import { RowPositionUtils } from '../entities/rowPosition';
 import { _ } from '../utils';
 
 enum GridContainers {
@@ -55,7 +55,7 @@ export class HeaderRootComp extends ManagedFocusComponent {
     @Autowired('gridApi') private gridApi: GridApi;
     @Autowired('autoWidthCalculator') private autoWidthCalculator: AutoWidthCalculator;
     @Autowired('focusController') private focusController: FocusController;
-    @Autowired('rowPositionUtils')  private rowPositionUtils: RowPositionUtils;
+    @Autowired('rowPositionUtils') private rowPositionUtils: RowPositionUtils;
     @Autowired('headerPositionUtils') private headerPositionUtils: HeaderPositionUtils;
 
     private childContainers: HeaderContainer[] = [];
@@ -99,6 +99,11 @@ export class HeaderRootComp extends ManagedFocusComponent {
         }
     }
 
+    public registerGridComp(gridPanel: GridPanel): void {
+        this.gridPanel = gridPanel;
+        this.childContainers.forEach(c => c.registerGridComp(gridPanel));
+    }
+
     protected onTabKeyDown(e: KeyboardEvent): void {
         // defaultPrevented will be true when inner elements of the header are already managing the tab behavior.
         // navigateVertically returns false if there is no valid vertical movement towards the direction passed.
@@ -135,11 +140,6 @@ export class HeaderRootComp extends ManagedFocusComponent {
         if (!eGui.contains(relatedTarget as HTMLElement)) {
             this.focusController.clearFocusedHeader();
         }
-    }
-
-    public registerGridComp(gridPanel: GridPanel): void {
-        this.gridPanel = gridPanel;
-        this.childContainers.forEach(c => c.registerGridComp(gridPanel));
     }
 
     private navigateVertically(direction: NavigationDirection): boolean {
@@ -250,12 +250,12 @@ export class HeaderRootComp extends ManagedFocusComponent {
         if (cellToFocus) {
             this.focusController.setFocusedCell(cellToFocus.rowIndex, cellToFocus.column, cellToFocus.rowPinned, true);
         } else {
-            const firstRow = this.rowPositionUtils.getFirstRow();
-            const firstColumn = this.columnController.getFirstDisplayedColumn();
+            const { rowIndex, rowPinned } = this.rowPositionUtils.getFirstRow();
+            const { column } = this.focusController.getFocusedHeader();
 
-            if (!firstRow || !firstColumn) { return false; }
+            if (!_.exists(rowIndex)) { return false; }
 
-            this.focusController.setFocusedCell(firstRow.rowIndex, firstColumn, firstRow.rowPinned, true);
+            this.focusController.setFocusedCell(rowIndex, column as Column, rowPinned, true);
         }
 
         return true;
