@@ -147,10 +147,6 @@ SNIPPET
 
 <?= grid_example('Hiding the Mini Filter', 'mini-filter-hiding', 'generated', ['enterprise' => true, 'exampleHeight' => 565, 'modules' => ['clientside', 'setfilter', 'menu']]) ?>
 
-<h2>API Reference</h2>
-
-<?= createDocumentationFromFile('../javascript-grid-filter-set/setFilterParams.json', 'filterParams', ['applyMiniFilterWhileTyping', 'suppressMiniFilter', 'textFormatter']) ?>
-
 <h2>Next Up</h2>
 
 <p>
