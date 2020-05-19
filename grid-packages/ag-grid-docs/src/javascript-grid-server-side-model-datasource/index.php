@@ -110,7 +110,7 @@ SNIPPET
 <h2>Datasource Interface</h2>
 
 <p>
-    The interface for the Server-sie Datasource is show below:
+    The interface for the Server-side Datasource is show below:
 </p>
 
 <?= createSnippet(<<<SNIPPET
