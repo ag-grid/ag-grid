@@ -311,8 +311,13 @@ export class HeaderRootComp extends ManagedFocusComponent {
     }
 
     private focusGridView(column?: Column): boolean {
-        const { rowIndex, rowPinned } = this.rowPositionUtils.getFirstRow();
+        const firstRow = this.rowPositionUtils.getFirstRow();
+
+        if (!firstRow) { return false; }
+
+        const { rowIndex, rowPinned } = firstRow;
         const focusedHeader = this.focusController.getFocusedHeader();
+
         if (!column) {
             column = focusedHeader.column as Column;
         }
