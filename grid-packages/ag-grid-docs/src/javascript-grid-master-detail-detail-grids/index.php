@@ -6,6 +6,13 @@ $pageGroup = "feature";
 include '../documentation-main/documentation_header.php';
 ?>
 
+<style>
+    .example-title {
+        font-size: 20px;
+        padding-top: 20px;
+    }
+</style>
+
 <h1 class="heading-enterprise">Master / Detail - Detail Grids</h1>
 
 <p class="lead">
@@ -66,15 +73,44 @@ include '../documentation-main/documentation_header.php';
     The Grid Options JSON is provided to the Detail Grid using the parameter <code>detailGridOptions</code>.
 </p>
 <p>
-    The <a href="../javascript-grid-master-detail/#example-simple">Simple Master / Detail Example</a>
-    shows providing one Grid Options object for all details grids and as such the simple scenario is not repeated here.
+    The example below shows configuring a Detail Grid with some additional Grid Options set. Note the following:
 </p>
+<ul>
+    <li>
+        The <code>detailGridOptions</code> is provided inside the <code>detailCellRendererParams</code>.
+    </li>
+    <li>
+        The Detail Grid Options has the following properties set:
+        <code>rowSelection=multiple</code>,
+        <code>suppressRowClickSelection=true</code>,
+        <code>enableRangeSelection=true</code>,
+        <code>enableRangeSelection=true</code>,
+        <code>pagination=true</code> and
+        <code>paginationAutoPageSize=true</code>.
+    </li>
+    <li>
+        The Detail Grid Options is provided with a Default Column Definition (<code>defaultColDef</code>) that
+        makes all columns sortable and use Flex for sizing.
+    </li>
+    <li>
+        The first Column Definition is configured to use Checkbox Selection.
+    </li>
+</ul>
 
-<h2 id="grid-per-row">Different Detail Grids</h2>
+<?= grid_example('Detail Grid Options', 'grid-options', 'generated', ['enterprise' => true, 'modules'=>['clientside', 'masterdetail', 'menu', 'columnpanel']]) ?>
+
+<h2 id="grid-per-row">Dynamic Detail Grid Options</h2>
 
 <p>
-    It is possible to have Detail Grids configured differently by utilising the function variant of the
-    <code>detailCellRendererParams</code> property. The example below demonstrates this. Note the following:
+    There will be many instances of Detail Grids within one Master Grid, as each time you expand a Master Row,
+    a new instance of Detail Grid is created. It is possible to dynamically create Detail Cell Renderer Params
+    so each Detail Grid gets it's own version of the params, allowing each Detail Grid to be configured differently.
+    This is done by providing a function to <code>detailCellRendererParams</code> that in turn returns the params to
+    use for that Detail Grid.
+</p>
+
+<p>
+    Below shows an example of this, where the Detail Grids are configured with different columns. Note the following:
 </p>
 
 <ul class="content">
@@ -94,8 +130,34 @@ include '../documentation-main/documentation_header.php';
 <h2>Loading Detail Rows</h2>
 
 <p>
-    It is possible to lazy load detail row data as it becomes available. For instance an asynchronous request could be
-    sent when expanding a master row to fetch detail records.
+    Data is provided to the Detail Grid by implementing the <code>getDetailRowData</code> callback of the
+    Detail Cell Renderer Params. The interface of this callback is as follows:
+</p>
+<snippet>
+function getDetailRowData(params: GetDetailRowDataParams): void;
+
+interface GetDetailRowDataParams {
+    // details for the request,
+    node: RowNode;
+    data: any;
+
+    // success callback, pass the rows back the grid asked for
+    successCallback(rowData: any[]): void;
+}
+</snippet>
+
+<p>
+    The <code>successCallback</code> can be called synchronously immediately (typical if the data is already available) or
+    asynchronously sometime in the future (typical if the data needs to be fetched remotely).
+</p>
+
+<p>
+    The Master Grid in turn will call <code>api.setRowData()</code> on the Detail Grid with the data provided.
+</p>
+
+<p>
+    All the previous examples on Master Detail provided the result synchronously and as such another specific example
+    is not given here.
 </p>
 
 <p>
@@ -103,103 +165,110 @@ include '../documentation-main/documentation_header.php';
     data to the detail row after a fixed timeout.
 </p>
 
-<snippet>
-    var masterGridOptions = {
-    detailCellRendererParams: {
-    getDetailRowData: function (params) {
-    // simulate delayed supply of data to the detail pane
-    setTimeout(function () {
-    params.successCallback(params.data.childRecords);
-    }, 1000);
-    }
-    }
-    };
-</snippet>
-
 <p>
-    Note that the key to this approach is the <code>params.successCallback(data)</code> function provided via the params, which can
-    be invoked later or asynchronously once the data for the detail row is available.
-</p>
-
-<p>
-    Below shows a simple Master / Detail setup which uses <code>setTimeout()</code> to simulate lazying loading of data
-    in the detail rows:
+    Below shows an example using <code>setTimeout()</code> to simulate lazying loading of data
+    in the detail.
 </p>
 
 <?= grid_example('Lazy Load Detail Rows', 'lazy-load-rows', 'generated', ['enterprise' => true, 'exampleHeight' => 550, 'modules'=>['clientside', 'masterdetail', 'menu', 'columnpanel']]) ?>
 
 
-<h2>Detail Template</h2>
+<h2>Changing Detail Template</h2>
 
 <p>
-    The template used by default detail Cell Renderer can be overridden with a user defined template. This is a convenient
-    way to provide custom layouts and styles to the detail rows.
+    By default the Detail Cell Renderer does not include any other information around the Detail Grid. It is possible
+    to change this to allow additional details, such as header information, around the Detail Grid. This is done
+    by providing an alternative Detail Template.
 </p>
 
-<p> There are two ways to achieve this: </p>
+<p>
+    If providing an alternative template, you <b>must</b> contain an element with attribute
+    <code>ref="eDetailGrid"</code>. This tells the grid where to place the Detail Grid.
+</p>
+
+<p>
+    For comparison, the default template is as follows. It is simplistic, only intended for allowing
+    spacing around the Detail Grid.
+</p>
+<snippet>
+    &lt;div class="ag-details-row">
+    &lt;div ref="eDetailGrid" class="ag-details-grid"/>
+    &lt;/div>
+</snippet>
+
+<p>
+    To change the Detail Template, set the <code>template</code> inside the Detail Cell Renderer Params.
+    The Detail Template can be a String of Function depending on whether you want to provide the template
+    statically or dynamically:
+</p>
+
 <ul class="content">
     <li>
-        <b>String Template</b> - statically overrides the template used by the grid.
-        The same fixed template is used for each row.
-    </li>
-    <li>
-        <b>Template Callback</b> - called each time a detail row is shown so can
-        dynamically provide a template based on the data.
-    </li>
-</ul>
+        <b>String Template</b> - Statically overrides the template used by the grid.
+        The same fixed template is used for each row. This is useful for styling
+        or generic information.
 
-<p> Both methods require specifying the <code>detailCellRendererParams.template</code> property as shown below: </p>
-
-<snippet>
-    // override using string template
-    detailCellRendererParams: {
+        <snippet>
+// example override using string template
+detailCellRendererParams: {
     template:
-        '&lt;div style="background-color: #edf6ff; padding: 20px; box-sizing: border-box;">' +
+        '&lt;div style="background-color: #edf6ff;">' +
         '  &lt;div style="height: 10%;">Call Details&lt;/div>' +
         '  &lt;div ref="eDetailGrid" style="height: 90%;">&lt;/div>' +
         '&lt;/div>'
     }
-    }
+}
+        </snippet>
+    </li>
+    <li>
+        <b>Function Template</b> - Called each time a detail row is shown so can
+        dynamically provide a template based on the data. Useful for displaying information
+        specific to the Detail Grid dataset
 
-    // override using template callback
-    detailCellRendererParams: {
+        <snippet>
+// override using template callback
+detailCellRendererParams: {
     template: function (params) {
-    var personName = params.data.name;
-    return '&lt;div style="height: 100%; background-color: #EDF6FF; padding: 20px; box-sizing: border-box;">'
-    + '  &lt;div style="height: 10%;">Name: ' + personName + '&lt;/div>'
-    + '  &lt;div ref="eDetailGrid" style="height: 90%;">&lt;/div>'
-    + '&lt;/div>';
+        var personName = params.data.name;
+        return '&lt;div style="height: 100%; background-color: #EDF6FF;">'
+            + '  &lt;div style="height: 10%;">Name: ' + personName + '&lt;/div>'
+            + '  &lt;div ref="eDetailGrid" style="height: 90%;">&lt;/div>'
+            + '&lt;/div>';
     }
-    }
-</snippet>
+}
+        </snippet>
+    </li>
+</ul>
 
 <p>
-    The template <b>must</b> contain an element with attribute <code>ref="eDetailGrid"</code>.
-    This element is used to host the detail grid instance.
+    The following two examples demonstrate both approaches.
 </p>
 
-<note>
-    The element containing <code>ref="eDetailGrid"</code> must be wrapped inside a div with the height set appropriately.
-</note>
+<p class="example-title">Example Static Template</p>
 
 <p>
-    The following examples demonstrate both approaches.
+    In this first example, the template is set statically. Note the following:
 </p>
 
-<p>
-    This examples demonstrates a static string template which is supplied to the <code>detailCellRendererParams.template</code>
-    property to customise the layout and background colour.
-</p>
+<ul>
+    <li>All Detail Grid's have a spacing with blue background.</li>
+    <li>All Detail Grid's have the same static title 'Call Details'.</li>
+</ul>
 
 <?= grid_example('Customising via String Template', 'string-template-customisation', 'generated', ['enterprise' => true, 'exampleHeight' => 550, 'modules'=>['clientside', 'masterdetail', 'menu', 'columnpanel']]) ?>
 
+<p class="example-title">Example Dynamic Template</p>
+
 <p>
-    A template callback function is supplied to the <code>detailCellRendererParams.template</code> property to customise
-    the layout and background colour. It additionally adds the name from the master row using the data supplied via callback parameters.
+    In this second example, the template is set dynamically. Note the following:
 </p>
 
-<?= grid_example('Customising via Template Callback', 'template-callback-customisation', 'generated', ['enterprise' => true, 'exampleHeight' => 550, 'modules'=>['clientside', 'masterdetail', 'menu', 'columnpanel']]) ?>
+<ul>
+    <li>All Detail Grid's have a spacing with blue background.</li>
+    <li>All Detail Grid's have the a different dynamic title including the persons name eg 'Mila Smith'.</li>
+</ul>
 
+<?= grid_example('Customising via Template Callback', 'template-callback-customisation', 'generated', ['enterprise' => true, 'exampleHeight' => 550, 'modules'=>['clientside', 'masterdetail', 'menu', 'columnpanel']]) ?>
 
 <h2>Accessing Detail Grids</h2>
 
@@ -349,7 +418,7 @@ masterGridOptions.api.forEachDetailGridInfo(function(detailGridInfo) {
     </li>
 </ul>
 
-<p style="font-size: 20px; padding-top: 20px;">Example - Strategy Refresh Rows</p>
+<p class="example-title">Example - Strategy Refresh Rows</p>
 
 <p>
     This example shows the Refresh Rows strategy. Note the following:
