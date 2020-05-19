@@ -22,8 +22,41 @@ include '../documentation-main/documentation_header.php';
 <h2>Enabling Master / Detail</h2>
 
 <p>
-    Set the following three items within the Master Grid to enabled Master / Detail:
+    Set the following items within the Master Grid to enabled Master / Detail:
 </p>
+
+<snippet>
+var gridOptions = {
+
+    // enable Master / Detail
+    masterDetail: true,
+
+    // the first Column is configured to use agGroupCellRenderer
+    columnDefs: [
+        { field: 'name', cellRenderer: 'agGroupCellRenderer' },
+        { field: 'account' }
+    },
+
+    // provide Detail Cell Renderer Params
+    detailCellRendererParams: {
+
+        // provide the Grid Options to use on the Detail Grid
+        detailGridOptions: {
+            columnDefs: [
+                { field: 'callId' },
+                { field: 'direction' },
+                { field: 'number'}
+            ]
+        },
+
+        // get the rows for each Detail Grid
+        getDetailRowData: function(params) {
+            params.successCallback(params.data.callRecords);
+        }
+    }
+    ...
+}
+</snippet>
 
 <ol class="content">
     <li>
@@ -50,37 +83,9 @@ include '../documentation-main/documentation_header.php';
     <a href="../javascript-grid-master-detail-detail-grids/">Detail Grids</a>.
 </p>
 
-<h2>Master / Detail Example</h2>
-
 <p>
-    The example below shows a simple Master / Detail configuration. Note the following:
+    The example below shows a simple Master / Detail with all the above configured.
 </p>
-
-<ul class="content">
-    <li>
-      The Master Grid has <code>masterDetail=true</code>. This enables Master / Detail for the Master Grid.
-    </li>
-
-    <li>
-        The Master Grid has it's first column configured with the Row Group Cell Renderer by setting
-        the Column Property <code>cellRenderer='agGroupCellRenderer'</code>. This configures the
-        column with the expand / collapse functionality.
-    </li>
-
-    <li>
-      The Master Grid has <code>detailCellRendererParams</code> configured to tell the Master Grid what the
-      Detail Grid should look like. The following are set:
-      <ul>
-          <li>
-              The <code>detailGridOptions</code> provides the Grid Options to be used for the Detail Grids.
-          </li>
-          <li>
-              The <code>getDetailRowData</code> provides the rows for each detail grid. In this example,
-              the Detail Rows are taken from an attribute of the Master Grid's data.
-          </li>
-      </ul>
-    </li>
-</ul>
 
 <?= grid_example('Simple Example', 'simple', 'generated', ['enterprise' => true, 'exampleHeight' => 535, 'modules'=>['clientside', 'masterdetail', 'menu', 'columnpanel']]) ?>
 
