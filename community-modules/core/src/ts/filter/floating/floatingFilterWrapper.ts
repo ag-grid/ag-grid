@@ -115,7 +115,9 @@ export class FloatingFilterWrapper extends AbstractHeaderWrapper {
         switch (e.keyCode) {
             case Constants.KEY_UP:
             case Constants.KEY_DOWN:
-                e.preventDefault();
+                if (!wrapperHasFocus) {
+                    e.preventDefault();
+                }
             case Constants.KEY_LEFT:
             case Constants.KEY_RIGHT:
                 if (wrapperHasFocus) { return; }
@@ -127,6 +129,11 @@ export class FloatingFilterWrapper extends AbstractHeaderWrapper {
                         focusableElements[0].focus();
                         e.preventDefault();
                     }
+                }
+                break;
+            case Constants.KEY_ESCAPE:
+                if (!wrapperHasFocus) {
+                    this.getGui().focus();
                 }
         }
     }

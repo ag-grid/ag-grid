@@ -1,7 +1,7 @@
 import { GridOptionsWrapper } from '../gridOptionsWrapper';
 import { ColumnController } from '../columnController/columnController';
 import { GridPanel } from '../gridPanel/gridPanel';
-import { Autowired } from '../context/context';
+import { Autowired, Optional } from '../context/context';
 import { HeaderContainer } from './headerContainer';
 import { Events } from '../events';
 import { Component } from '../widgets/component';
@@ -19,6 +19,7 @@ import { AnimationFrameService } from '../misc/animationFrameService';
 import { HeaderRowType } from './headerRowComp';
 import { ColumnGroupChild } from '../entities/columnGroupChild';
 import { RowPositionUtils } from '../entities/rowPosition';
+import { IRangeController } from '../interfaces/iRangeController';
 import { _ } from '../utils';
 
 enum GridContainers {
@@ -57,6 +58,7 @@ export class HeaderRootComp extends ManagedFocusComponent {
     @Autowired('focusController') private focusController: FocusController;
     @Autowired('rowPositionUtils') private rowPositionUtils: RowPositionUtils;
     @Autowired('headerPositionUtils') private headerPositionUtils: HeaderPositionUtils;
+    @Optional('rangeController') private rangeController: IRangeController;
 
     private childContainers: HeaderContainer[] = [];
     private gridPanel: GridPanel;
@@ -106,28 +108,38 @@ export class HeaderRootComp extends ManagedFocusComponent {
 
     protected onTabKeyDown(e: KeyboardEvent): void {
         // defaultPrevented will be true when inner elements of the header are already managing the tab behavior.
-        // navigateVertically returns false if there is no valid vertical movement towards the direction passed.
-        // in which case we should return and let the browser handle tab.
-        if (e.defaultPrevented || !this.navigateVertically(
-            e.shiftKey ? NavigationDirection.UP : NavigationDirection.DOWN)
-        ) { return; }
+        if (e.defaultPrevented) { return; }
+
+        this.navigateHorizontally(e.shiftKey ? NavigationDirection.LEFT : NavigationDirection.RIGHT);
 
         e.preventDefault();
     }
 
     protected handleKeyDown(e: KeyboardEvent): void {
+        if (e.defaultPrevented) { return; }
+
         let direction: NavigationDirection;
 
         switch (e.keyCode) {
             case Constants.KEY_LEFT:
                 direction = NavigationDirection.LEFT;
             case Constants.KEY_RIGHT:
-                if (!direction) {
+                if (!_.exists(direction)) {
                     direction = NavigationDirection.RIGHT;
                 }
-                if (!e.defaultPrevented) {
-                    this.navigateHorizontally(direction);
+                this.navigateHorizontally(direction);
+                break;
+            case Constants.KEY_UP:
+                direction = NavigationDirection.UP;
+            case Constants.KEY_DOWN:
+                if (!_.exists(direction)) {
+                    direction = NavigationDirection.DOWN;
                 }
+                if (!this.navigateVertically(direction)) { return; }
+                e.preventDefault();
+                break;
+            default:
+                return;
         }
     }
 
@@ -244,18 +256,25 @@ export class HeaderRootComp extends ManagedFocusComponent {
     }
 
     private focusGridView(): boolean {
-        const { focusController } = this;
-        const cellToFocus = focusController.getFocusedCell();
+        const { rowIndex, rowPinned } = this.rowPositionUtils.getFirstRow();
+        const focusedHeader = this.focusController.getFocusedHeader();
+        const column = focusedHeader.column as Column;
 
-        if (cellToFocus) {
-            this.focusController.setFocusedCell(cellToFocus.rowIndex, cellToFocus.column, cellToFocus.rowPinned, true);
-        } else {
-            const { rowIndex, rowPinned } = this.rowPositionUtils.getFirstRow();
-            const { column } = this.focusController.getFocusedHeader();
+        if (!_.exists(rowIndex)) { return false; }
 
-            if (!_.exists(rowIndex)) { return false; }
+        if (!rowPinned) {
+            this.gridPanel.ensureColumnVisible(column);
+            this.gridPanel.ensureIndexVisible(rowIndex, 'top');
 
-            this.focusController.setFocusedCell(rowIndex, column as Column, rowPinned, true);
+            // make sure the cell is rendered, needed if we are to focus
+            this.animationFrameService.flushAllFrames();
+        }
+
+        this.focusController.setFocusedCell(rowIndex, column, _.makeNull(rowPinned), true);
+
+        if (this.rangeController) {
+            const cellPosition = { rowIndex, rowPinned, column };
+            this.rangeController.setRangeToCell(cellPosition);
         }
 
         return true;
