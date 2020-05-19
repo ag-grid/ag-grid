@@ -9,55 +9,49 @@ include '../documentation-main/documentation_header.php';
 <h1 class="heading-enterprise">Master / Detail - Nesting</h1>
 
 <p class="lead">
-    This section describes...
-</p>
-
-<h2>Nesting Master / Detail</h2>
-
-<p>
-    It is possible to nest Master / Detail grids. There are no special configurations required to achieve this,
-    you just configure another detail grid inside the first detail grid.
+    It is possible to nest Master / Detail grids. There is no special configuration required to do this,
+    you just configure another Detail Grid to also act as a Master Grid.
 </p>
 
 <p>
-    The following snippet illustrates how to achieve nesting via successive grid option configurations:
+    The following snippet illustrates how to achieve nesting by configuring Detail Grids to also act as Master Grids.
 </p>
 
 <snippet>
-// Level 1 (master)
-var gridOptionsLevel1Master = {
+// Level 3 (bottom level), Detail Grid only, no Master / Detail configuration
+var gridOptionsLevel3 = {
     ...
-        masterDetail: true,
-        detailCellRendererParams: {
-            detailGridOptions: gridOptionsLevel2Master,
-            getDetailRowData: function (params) {
-                params.successCallback(params.data.children);
-            }
+}
+
+
+// Level 2, configured to be a Master Grid and use Level 3 grid as Detail Grid,
+var gridOptionsLevel2 = {
+    masterDetail: true,
+    detailCellRendererParams: {
+        detailGridOptions: gridOptionsLevel3,
+        getDetailRowData: function (params) {
+            ...
         }
     }
-
-    // Level 2 (detail and master)
-    var gridOptionsLevel2Master = {
-        ...
-        masterDetail: true,
-        detailCellRendererParams: {
-                detailGridOptions: gridOptionsLevel3Detail,
-                        getDetailRowData: function (params) {
-                        params.successCallback(params.data.children);
-                                }
-                }
-        }
-
-    // Level 3 (detail only)
-    var gridOptionsLevel3Detail = {
     ...
-    // no master / detail configuration
+}
+
+// Level 1, configured to be a Master Grid and use Level 2 grid as Detail Grid,
+var gridOptionsLevel1 = {
+    masterDetail: true,
+    detailCellRendererParams: {
+        detailGridOptions: gridOptionsLevel2,
+        getDetailRowData: function (params) {
+            ...
+        }
+    }
+    ...
 }
 </snippet>
 
 <p>
-    Below shows a contrived master detail setup to help illustrate how nesting can be achieved.
-    The example has very little data - this is on purpose to focus on the nesting.
+    Below shows a simple Master Detail setup with two levels of Master Detail.
+    The example is kept short (few rows and columns) so as to focus on the nesting.
 </p>
 
 <?= grid_example('Nesting Master / Detail', 'nesting', 'generated', ['enterprise' => true, 'exampleHeight' => 425, 'modules'=>['clientside', 'masterdetail', 'menu', 'columnpanel']]) ?>

@@ -21,42 +21,15 @@ include '../documentation-main/documentation_header.php';
 </p>
 
 <p>
-    The Detail Grid fits inside one row of the Master Grid. The new child row doesn't use the columns
-    of the Master Grid, instead it fills the entire row with one cell. When a row only has one cell and spans
-    the full width of the grid, it is called a Full Width Row.
-</p>
-<p>
-    It is the job of the Detail Cell Renderer to draw the Detail Grid into the provided Full Width cell.
-    You tell the grid what Detail Cell Renderer to use via the grid property <code>detailCellRenderer</code>
-    and you pass configuration details to it using the grid property <code>detailCellRendererParams</code>.
-    If no Detail Cell Renderer is specified, the grid will use it's own default. The grid's default covers
-    most scenarios required, thus most usages of Master / Detail will provide Detail Cell Renderer Params
-    only and assume the default Detail Cell Renderer.
+    The Detail Grid fits inside one row of the Master Grid without using any of the Master Grid's columns.
+    It is the job of the Detail Cell Renderer to draw the Detail Grid into the provided detail row.
+    This page explains how to configure the Detail Cell Renderer using the grid property
+    <code>detailCellRendererParams</code> and how you can interact with the Detail Grids using the Master Grid's API.
 </p>
 
 <p>
     This page outlines how to configure the grid's default Detail Cell Renderer.
-    See <a href="../javascript-grid-master-detail-custom-detail/">Custom Detail</a> for details on how
-    to configure a custom Detail Cell Renderer.
 </p>
-
-<p>
-    The list of Detail Cell Renderer Params are as follows:
-</p>
-
-<?php createDocumentationFromFile('./properties.json', 'detailCellRenderer') ?>
-
-<p>
-    The pattern of setting components such as Cell Renderer's and providing parameters to those components
-    is consistent across the grid and explained in <a href="../javascript-grid-components/">Grid Components</a>.
-</p>
-
-<p>
-    As with all components, the parameters object (in this case <code>detailCellRendererParams</code>) can either
-    be a JSON Object, or it can be a function that returns a JSON Object. The latter allows providing different
-    parameters for each Detail Grid, allowing Detail Grids to be configured differently.
-</p>
-
 
 <h2 id="detail-grid-options">Detail Grid Options</h2>
 
@@ -624,6 +597,23 @@ masterGridOptions.api.forEachDetailGridInfo(function(detailGridInfo) {
 
 <?= grid_example('Keep Detail Rows', 'keep-detail-rows', 'generated', ['enterprise' => true, 'exampleHeight' => 565, 'modules'=>['clientside', 'masterdetail', 'menu', 'columnpanel', 'filterpanel', 'setfilter']]) ?>
 
+<h2 id="detail-parameters">Detail Cell Renderer Parameters</h2>
 
+<p>
+    The full list of Detail Cell Renderer Params are as follows:
+</p>
+
+<?php createDocumentationFromFile('./properties.json', 'detailCellRenderer') ?>
+
+<p>
+    The pattern of setting components such as Cell Renderer's and providing parameters to those components
+    is consistent across the grid and explained in <a href="../javascript-grid-components/">Grid Components</a>.
+</p>
+
+<p>
+    As with all components, the parameters object (in this case <code>detailCellRendererParams</code>) can either
+    be a JSON Object, or it can be a function that returns a JSON Object. The latter allows providing different
+    parameters for each Detail Grid, allowing Detail Grids to be configured differently.
+</p>
 
 <?php include '../documentation-main/documentation_footer.php';?>
