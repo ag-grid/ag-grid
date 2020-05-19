@@ -18,6 +18,7 @@ import { HeaderPositionUtils, HeaderPosition } from './header/headerPosition';
 import { Column } from '../entities/column';
 import { AnimationFrameService } from '../misc/animationFrameService';
 import { HeaderRowType } from './headerRowComp';
+import { ColumnGroupChild } from '../entities/columnGroupChild';
 import { _ } from '../utils';
 
 enum GridContainers {
@@ -104,28 +105,30 @@ export class HeaderRootComp extends ManagedFocusComponent {
         const currentContainer = this.getChildContainer(pinned);
         const rowComps = currentContainer.getRowComps();
         const currentRowType = rowComps[headerRowIndex].getType();
-        let nextColumn;
 
         if (nextRow >= rowComps.length) {
             if (!this.focusGridView()) { return; }
         } else {
             const nextRowComp = rowComps[nextRow];
+            let nextScrollColumn: ColumnGroup | Column;
+            let nextFocusColumn: ColumnGroupChild | Column;
 
             if (currentRowType === HeaderRowType.COLUMN_GROUP) {
                 const currentColumn = column as ColumnGroup;
-                nextColumn = e.shiftKey ? currentColumn.getParent() : currentColumn.getDisplayedLeafColumns()[0];
+                nextScrollColumn = e.shiftKey ? currentColumn.getParent() : currentColumn.getDisplayedLeafColumns()[0];
+                nextFocusColumn = e.shiftKey ? nextScrollColumn : currentColumn.getDisplayedChildren()[0];
             } else if (currentRowType === HeaderRowType.FLOATING_FILTER) {
-                nextColumn = column;
+                nextScrollColumn = nextFocusColumn = column;
             } else {
                 const currentColumn = column as Column;
-                nextColumn = e.shiftKey ? currentColumn.getParent() : currentColumn;
+                nextScrollColumn = nextFocusColumn = e.shiftKey ? currentColumn.getParent() : currentColumn;
             }
 
-            if (!nextColumn) { return; }
+            if (!nextScrollColumn || !nextFocusColumn) { return; }
 
-            this.scrollToColumn(nextColumn);
+            this.scrollToColumn(nextScrollColumn);
 
-            const nextHeader = nextRowComp.getHeaderComps()[nextColumn.getUniqueId() as string];
+            const nextHeader = nextRowComp.getHeaderComps()[nextFocusColumn.getUniqueId() as string];
 
             if (nextHeader) {
                 nextHeader.getFocusableElement().focus();

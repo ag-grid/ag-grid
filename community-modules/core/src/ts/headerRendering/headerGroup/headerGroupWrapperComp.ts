@@ -91,6 +91,25 @@ export class HeaderGroupWrapperComp extends AbstractHeaderWrapper {
         }
     }
 
+    protected handleKeyDown(e: KeyboardEvent) {
+        const activeEl = document.activeElement;
+        const eGui = this.getGui();
+        const wrapperHasFocus = activeEl === eGui;
+
+        switch (e.keyCode) {
+            case Constants.KEY_ENTER:
+                if (wrapperHasFocus) {
+                    const column = this.getColumn() as ColumnGroup;
+                    const expandable = column.isExpandable();
+
+                    if (expandable) {
+                        const newExpandedValue = !column.isExpanded();
+                        this.columnController.setColumnGroupOpened(column.getOriginalColumnGroup(), newExpandedValue, "uiColumnExpanded");
+                    }
+                }
+        }
+    }
+
     private setupMovingCss(): void {
         const originalColumnGroup = this.column.getOriginalColumnGroup();
         const leafColumns = originalColumnGroup.getLeafColumns();
@@ -256,7 +275,6 @@ export class HeaderGroupWrapperComp extends AbstractHeaderWrapper {
     }
 
     private setupWidth(): void {
-
         // we need to listen to changes in child columns, as they impact our width
         this.addListenersToChildrenColumns();
 
