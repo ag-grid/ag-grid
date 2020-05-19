@@ -1,7 +1,6 @@
 import { GridOptions } from "./entities/gridOptions";
 import { GridOptionsWrapper } from "./gridOptionsWrapper";
 import { ColumnApi } from "./columnController/columnApi";
-import { ColumnController } from "./columnController/columnController";
 import { RowRenderer } from "./rendering/rowRenderer";
 import { FilterManager } from "./filter/filterManager";
 import { GridPanel } from "./gridPanel/gridPanel";
@@ -108,6 +107,29 @@ export class GridCore extends Component {
         this.addManagedListener(this.eventService, Events.EVENT_MOUSE_FOCUS, () => {
             _.removeCssClass(eGui, 'ag-keyboard-focus');
         });
+
+        const focusEl = this.getFocusableElement();
+
+        this.addManagedListener(focusEl, 'focusin', () => {
+            focusEl.setAttribute('tabindex', '-1');
+        });
+
+        this.addManagedListener(focusEl, 'focusout', (e: FocusEvent) => {
+            if (!focusEl.contains(e.relatedTarget as HTMLElement)) {
+                focusEl.setAttribute('tabindex', '0');
+            }
+        });
+
+        this.addManagedListener(focusEl, 'focus', () => {
+            const focusableElements = this.focusController.findFocusableElements(focusEl);
+            if (focusableElements.length) {
+                focusableElements[0].focus();
+            }
+        });
+    }
+
+    public getFocusableElement(): HTMLElement {
+        return this.eRootWrapperBody;
     }
 
     private createTemplate(): string {
@@ -125,7 +147,7 @@ export class GridCore extends Component {
         const template =
             `<div class="ag-root-wrapper">
                 ${dropZones}
-                <div class="ag-root-wrapper-body" ref="rootWrapperBody">
+                <div class="ag-root-wrapper-body" ref="rootWrapperBody" tabindex="0">
                     <ag-grid-comp ref="gridPanel"></ag-grid-comp>
                     ${sideBar}
                 </div>
