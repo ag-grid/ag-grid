@@ -1,7 +1,7 @@
 {
     "filterParams": {
         "buttons": {
-            "description": "Specifies the buttons to be shown in the filter, in the order they should be displayed in. The options are: <ul><li><code>'apply'</code>: If the Apply button is present, the filter is only applied after the user hits the Apply button.</li><li><code>'clear'</code>: The Clear button will clear the (form) details of the filter without removing any active filters on the column.</li><li><code>'reset'</code>: The Reset button will clear the details of the filter and any active filters on that column.</li></ul>"
+            "description": "Specifies the buttons to be shown in the filter, in the order they should be displayed in. The options are: <ul><li><code>'apply'</code>: If the Apply button is present, the filter is only applied after the user hits the Apply button.</li><li><code>'clear'</code>: The Clear button will clear the (form) details of the filter without removing any active filters on the column.</li><li><code>'reset'</code>: The Reset button will clear the details of the filter and any active filters on that column.</li><li><code>'cancel'</code>: The Cancel button will discard any changes that have been made to the filter in the UI, restoring the applied model.</li></ul>"
         },
         "closeOnApply": {
             "description": "If the Apply button is present, the filter popup will be closed immediately when the Apply or Reset button is clicked if this is set to <code>true</code>."

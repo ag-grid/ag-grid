@@ -1,16 +1,16 @@
 var columnDefs = [
     // this row just shows the row index, doesn't use any data from the row
-    { headerName: "#", cellRenderer: 'rowNodeIdRenderer' },
-    { field: "athlete" },
-    { field: "age", enablePivot: true },
-    { field: "country", enableRowGroup: true },
-    { field: "year", filter: 'agNumberColumnFilter' },
-    { field: "date" },
-    { field: "sport", filter: 'agTextColumnFilter' },
-    { field: "gold", enableValue: true },
-    { field: "silver", enableValue: true },
-    { field: "bronze", enableValue: true },
-    { field: "total", enableValue: true }
+    { headerName: '#', cellRenderer: 'rowNodeIdRenderer' },
+    { field: 'athlete', filterParams: { buttons: ['clear', 'reset', 'apply'] } },
+    { field: 'age', filterParams: { buttons: ['apply', 'cancel'] }, enablePivot: true },
+    { field: 'country', enableRowGroup: true },
+    { field: 'year', filter: 'agNumberColumnFilter' },
+    { field: 'date' },
+    { field: 'sport', filter: 'agTextColumnFilter' },
+    { field: 'gold', enableValue: true },
+    { field: 'silver', enableValue: true },
+    { field: 'bronze', enableValue: true },
+    { field: 'total', enableValue: true }
 ];
 
 var gridOptions = {
@@ -90,6 +90,7 @@ var gridOptions = {
         applyFilter: 'daApply',
         resetFilter: 'daReset',
         clearFilter: 'daClear',
+        cancelFilter: 'daCancel',
 
         // the header of the default group column
         group: 'laGroup',

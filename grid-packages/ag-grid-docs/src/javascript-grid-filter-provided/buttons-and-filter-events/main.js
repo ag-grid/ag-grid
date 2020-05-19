@@ -25,6 +25,10 @@ var columnDefs = [
     {
         field: 'year',
         filter: 'agSetColumnFilter',
+        filterParams: {
+            buttons: ['apply', 'cancel'],
+            closeOnApply: true,
+        },
         maxWidth: 100,
     },
     { field: 'sport' },

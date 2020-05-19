@@ -10,7 +10,7 @@ import { loadTemplate, addCssClass } from '../../utils/dom';
 import { debounce } from '../../utils/function';
 import { Promise } from '../../utils/promise';
 
-type FilterButton = 'apply' | 'clear' | 'reset';
+type FilterButton = 'apply' | 'clear' | 'reset' | 'cancel';
 
 export interface IProvidedFilterParams extends IFilterParams {
     /** @deprecated */ clearButton?: boolean;
@@ -143,6 +143,7 @@ export abstract class ProvidedFilter extends Component implements IFilterComp {
         creators.set('apply', () => addButton(translate('applyFilter', 'Apply Filter'), () => this.onBtApply()));
         creators.set('clear', () => addButton(translate('clearFilter', 'Clear Filter'), () => this.onBtClear()));
         creators.set('reset', () => addButton(translate('resetFilter', 'Reset Filter'), () => this.onBtReset()));
+        creators.set('cancel', () => addButton(translate('cancelFilter', 'Cancel Filter'), () => this.onBtCancel()));
 
         new Set(buttons).forEach(button => creators.get(button)());
 
@@ -204,6 +205,15 @@ export abstract class ProvidedFilter extends Component implements IFilterComp {
             // of if model is case insensitive, then casing is removed.
             this.applyModel();
         });
+    }
+
+    private onBtCancel() {
+        this.setModel(this.getModel());
+
+        if (this.hidePopup && this.providedFilterParams.closeOnApply) {
+            this.hidePopup();
+            this.hidePopup = null;
+        }
     }
 
     private onBtClear() {
