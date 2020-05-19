@@ -60,6 +60,7 @@ export class GroupedCategoryAxis extends ChartAxis {
 
         scale.paddingOuter = 0.1;
         scale.paddingInner = scale.paddingOuter * 2;
+        this.requestedRange = scale.range.slice();
 
         tickScale.paddingInner = 1;
         tickScale.paddingOuter = 0;
@@ -87,13 +88,22 @@ export class GroupedCategoryAxis extends ChartAxis {
         return this.scale.domain;
     }
 
-    set range(value: [number, number]) {
-        this.scale.range = value;
-        this.tickScale.range = value;
-        this.resizeTickTree();
+    set range(value: number[]) {
+        this.requestedRange = value.slice();
+        this.updateRange();
     }
-    get range(): [number, number] {
-        return this.scale.range;
+    get range(): number[] {
+        return this.requestedRange.slice();
+    }
+
+    protected updateRange() {
+        const { requestedRange: rr, visibleRange: vr, scale } = this;
+        const span = (rr[1] - rr[0]) / (vr[1] - vr[0]);
+        const shift = span * vr[0];
+        const start = rr[0] - shift;
+
+        this.tickScale.range = scale.range = [start, start + span];
+        this.resizeTickTree();
     }
 
     private resizeTickTree() {

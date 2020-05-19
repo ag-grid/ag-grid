@@ -145,25 +145,16 @@ export class Rect extends Path {
         this.effectiveStrokeWidth = strokeWidth;
 
         if (this.crisp && !borderSizing) {
-            const alignment = Math.floor(strokeWidth) % 2 / 2;
-            path.rect(
-                Math.floor(x) + alignment,
-                Math.floor(y) + alignment,
-                Math.floor(width) + Math.floor(x % 1 + width % 1),
-                Math.floor(height) + Math.floor(y % 1 + height % 1)
-            );
+            const { alignment: a, align: al } = this;
+            path.rect(al(a, x), al(a, y), al(a, x, width), al(a, y, height));
         } else {
             path.rect(x, y, width, height);
         }
     }
 
     computeBBox(): BBox {
-        return new BBox(
-            this.x,
-            this.y,
-            this.width,
-            this.height
-        );
+        const { x, y, width, height } = this;
+        return new BBox(x, y, width, height);
     }
 
     isPointInPath(x: number, y: number): boolean {

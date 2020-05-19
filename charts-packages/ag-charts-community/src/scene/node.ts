@@ -404,7 +404,7 @@ export abstract class Node { // Don't confuse with `window.Node`.
         return this._translationY;
     }
 
-    isPointInNode(x: number, y: number): boolean {
+    containsPoint(x: number, y: number): boolean {
         return false;
     }
 
@@ -417,7 +417,7 @@ export abstract class Node { // Don't confuse with `window.Node`.
      * @param y
      */
     pickNode(x: number, y: number): Node | undefined {
-        if (!this.visible || this.pointerEvents === PointerEvents.None || !this.isPointInNode(x, y)) {
+        if (!this.visible || this.pointerEvents === PointerEvents.None || !this.containsPoint(x, y)) {
             return;
         }
 
