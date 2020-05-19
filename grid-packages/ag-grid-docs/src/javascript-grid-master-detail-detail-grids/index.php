@@ -273,8 +273,15 @@ detailCellRendererParams: {
 <h2>Accessing Detail Grids</h2>
 
 <p>
-    You can access the API of all detail grids via the master grid. The API for each detail grid
-    is stored in a <code>DetailGridInfo</code> object that has the following properties:
+    The Master Grid manages all the Detail Grid instances. You can access the API of the underlying
+    Detail Grids to call API methods directly on those grids. The Master Grid stores references to
+    the Detail Grid API's in Detail Grid Info objects.
+</p>
+
+<p>
+    The Detail Grid Info objects contain a reference to the underlying <a href="../javascript-grid-api/">Grid API</a>
+    and <a href="../javascript-grid-column-api/">Column API</a> for each detail grid. The interface for Detail Grid
+    Info is as follows:
 </p>
 
 <snippet>
@@ -292,29 +299,41 @@ interface DetailGridInfo {
 </snippet>
 
 <p>
-    The <code>DetailGridInfo</code> is accessed via the <code>GridApi</code> of the master
-    <code>gridOptions</code>. You can either reference a particular detail grid API by ID,
-    or loop through all the existing detail grid APIs.
+    The Detail Grid Info objects are accessed via the Master Grid's API via the following
+    methods:
 </p>
 
-<snippet>
+<ul>
+    <li>
+        <p>
+            <code>getDetailGridInfo(id)</code>: Returns back the Detail Grid Info for the Detail Grid
+            with the provided ID.
+        </p>
+
+        <snippet>
 // lookup a specific DetailGridInfo by id, and then call stopEditing() on it
 var detailGridInfo = masterGridOptions.api.getDetailGridInfo('someDetailGridId');
-detailGridInfo.api.stopEditing();
+detailGridInfo.api.flashCells();
+        </snippet>
 
+    </li>
+    <li>
+        <p>
+            <code>forEachDetailGridInfo(callback)</code>: Calls the callback for each existing instance
+            of a Detail Grid.
+        </p>
+
+        <snippet>
 // iterate over all DetailGridInfo's, and call stopEditing() on each one
 masterGridOptions.api.forEachDetailGridInfo(function(detailGridInfo) {
-    console.log("detailGridInfo: ", detailGridInfo);
-    // then e.g. call stopEditing() on that detail grid
-    detailGridInfo.api.stopEditing();
+    detailGridInfo.api.flashCells();
 });
-</snippet>
+        </snippet>
 
-<p>
-    The <code>DetailGridInfo</code> contains a reference to the underlying <a href="../javascript-grid-api/">Grid API</a>
-    and <a href="../javascript-grid-column-api/">Column API</a> for each detail grid. Methods invoked on these API's
-    will only operate on the specific detail grid.
-</p>
+    </li>
+</ul>
+
+
 
 <p>
     This example shows how to control cell editing when using Master / Detail. Note the following:
