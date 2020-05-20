@@ -1,5 +1,6 @@
 import { AgAbstractLabel } from "./agAbstractLabel";
 import { _ } from "../utils";
+import { setDisabled } from '../utils/dom';
 
 export type FieldElement = HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement;
 export abstract class AgAbstractField<T> extends AgAbstractLabel {
@@ -53,13 +54,8 @@ export abstract class AgAbstractField<T> extends AgAbstractLabel {
 
     public setDisabled(disabled: boolean): this {
         disabled = !!disabled;
-        const eGui = this.getGui();
 
-        if (disabled) {
-            eGui.setAttribute('disabled', 'true');
-        }
-
-        _.addOrRemoveCssClass(eGui, 'ag-disabled', disabled);
+        setDisabled(this.getGui(), disabled);
 
         this.disabled = disabled;
 

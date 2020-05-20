@@ -5,17 +5,17 @@ import { GridOptionsWrapper } from '../../gridOptionsWrapper';
 import { IRowModel } from '../../interfaces/iRowModel';
 import { Constants } from '../../constants';
 import { IAfterGuiAttachedParams } from '../../interfaces/iAfterGuiAttachedParams';
-import { loadTemplate, addCssClass } from '../../utils/dom';
+import { loadTemplate, addCssClass, setDisabled } from '../../utils/dom';
 import { debounce } from '../../utils/function';
 import { Promise } from '../../utils/promise';
 
-type FilterButton = 'apply' | 'clear' | 'reset' | 'cancel';
+type FilterButtonType = 'apply' | 'clear' | 'reset' | 'cancel';
 
 export interface IProvidedFilterParams extends IFilterParams {
     /** @deprecated */ clearButton?: boolean;
     /** @deprecated */ resetButton?: boolean;
     /** @deprecated */ applyButton?: boolean;
-    buttons?: FilterButton[];
+    buttons?: FilterButtonType[];
     closeOnApply?: boolean;
     /** @deprecated */ newRowsAction?: string;
     debounceMs?: number;
@@ -127,22 +127,43 @@ export abstract class ProvidedFilter extends Component implements IFilterComp {
 
         addCssClass(eButtonsPanel, 'ag-filter-apply-panel');
 
-        const addButton = (text: string, clickListener: () => void): void => {
+        const addButton = (type: FilterButtonType): void => {
+            let text;
+            let clickListener: () => void;
+
+            switch (type) {
+                case 'apply':
+                    text = translate('applyFilter', 'Apply Filter');
+                    clickListener = () => this.onBtApply();
+                    break;
+                case 'clear':
+                    text = translate('clearFilter', 'Clear Filter');
+                    clickListener = () => this.onBtClear();
+                    break;
+                case 'reset':
+                    text = translate('resetFilter', 'Reset Filter');
+                    clickListener = () => this.onBtReset();
+                    break;
+                case 'cancel':
+                    text = translate('cancelFilter', 'Cancel Filter');
+                    clickListener = () => this.onBtCancel();
+                    break;
+                default:
+                    console.warn('Unknown button type specified');
+                    return;
+            }
+
             const button = loadTemplate(/* html */
-                `<button type="button" class="ag-standard-button ag-filter-apply-panel-button">${text}</button>`);
+                `<button
+                    type="button"
+                    ref="${type}FilterButton"
+                    class="ag-standard-button ag-filter-apply-panel-button">${text}</button>`);
 
             eButtonsPanel.appendChild(button);
             this.addManagedListener(button, 'click', clickListener);
         };
 
-        const creators = new Map<FilterButton, () => void>();
-
-        creators.set('apply', () => addButton(translate('applyFilter', 'Apply Filter'), () => this.onBtApply()));
-        creators.set('clear', () => addButton(translate('clearFilter', 'Clear Filter'), () => this.onBtClear()));
-        creators.set('reset', () => addButton(translate('resetFilter', 'Reset Filter'), () => this.onBtReset()));
-        creators.set('cancel', () => addButton(translate('cancelFilter', 'Cancel Filter'), () => this.onBtCancel()));
-
-        new Set(buttons).forEach(button => creators.get(button)());
+        new Set(buttons).forEach(type => addButton(type));
 
         this.getGui().appendChild(eButtonsPanel);
     }
@@ -206,6 +227,8 @@ export abstract class ProvidedFilter extends Component implements IFilterComp {
 
     private onBtCancel() {
         this.setModel(this.getModel());
+        this.updateUiVisibility();
+        this.onUiChanged();
 
         if (this.hidePopup && this.providedFilterParams.closeOnApply) {
             this.hidePopup();
@@ -276,6 +299,12 @@ export abstract class ProvidedFilter extends Component implements IFilterComp {
     protected onUiChanged(afterFloatingFilter = false): void {
         this.updateUiVisibility();
         this.providedFilterParams.filterModifiedCallback();
+
+        if (this.applyActive) {
+            const isValid = this.isModelValid(this.getModelFromUi());
+
+            setDisabled(this.getRefElement('applyFilterButton'), !isValid);
+        }
 
         if (afterFloatingFilter) {
             // floating filter changes are always applied immediately

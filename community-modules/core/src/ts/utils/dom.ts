@@ -100,6 +100,18 @@ export function setVisible(element: HTMLElement, visible: boolean) {
     addOrRemoveCssClass(element, 'ag-invisible', !visible);
 }
 
+export function setDisabled(element: HTMLElement, disabled: boolean) {
+    const attributeName = 'disabled';
+
+    if (disabled) {
+        element.setAttribute(attributeName, '');
+    } else {
+        element.removeAttribute(attributeName);
+    }
+
+    addOrRemoveCssClass(element, 'ag-disabled', disabled);
+}
+
 export function isElementChildOfClass(element: HTMLElement, cls: string, maxNest?: number): boolean {
     let counter = 0;
 
