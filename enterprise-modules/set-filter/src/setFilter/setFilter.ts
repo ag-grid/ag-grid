@@ -405,7 +405,7 @@ export class SetFilter extends ProvidedFilter {
 
     private updateSelectAllText() {
         const translate = this.gridOptionsWrapper.getLocaleTextFunc();
-        const label = this.valueModel.getMiniFilter() == null ?
+        const label = this.valueModel.getMiniFilter() == null || !this.setFilterParams.excelMode ?
             translate('selectAll', 'Select All') :
             translate('selectAllSearchResults', 'Select All Search Results');
 
