@@ -411,7 +411,7 @@ detailCellRendererParams: {
     or dynamically (different height for each detail row).
 </p>
 
-<p class="example-title">Static Detail Height Height</p>
+<p class="example-title">Static Detail Grid Height</p>
 
 <p>
     Use the grid property <code>detailRowHeight</code> to set a fixed height for each detail row.

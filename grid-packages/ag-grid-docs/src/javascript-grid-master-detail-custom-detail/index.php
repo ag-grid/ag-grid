@@ -72,28 +72,28 @@ gridOptions = {
 
 <p>
     When the Detail Grid is created, register it via <code>masterGridApi.addDetailGridInfo()</code> and
-    when the Detail Grid is destroyed, de-register it via <code>masterGridApi.removeDetailGridInfo()</code>.
+    when the Detail Grid is destroyed, unregister it via <code>masterGridApi.removeDetailGridInfo()</code>.
+    A Detail ID is required when calling these methods. Any unique ID can be used, however for consistency
+    with how the default Detail Cell Renderer works it's recommended to use the ID of the detail Row Node.
 </p>
-
 <snippet>
 
+//////////////////////////////
 // Register with Master Grid
+var detailId = params.node.id;
 
-    var detailGridId = 'detail_' + ;
+// Create Grid Info object
+var detailGridInfo = {
+    id: detailId,
+    api: params.api,
+    columnApi: params.columnApi
+};
 
-    // Create Grid Info object
-    var detailGridInfo = {
-        id: myUniqueId,
-        api: params.api,
-        columnApi: params.columnApi
-    };
+this.masterGridApi.addDetailGridInfo(detailId, detailGridInfo);
 
-    // Register
-    this.masterGridApi.addDetailGridInfo(myUniqueId, detailGridInfo);
-
-
-// De-register with Master Grid
-    this.masterGridApi.removeDetailGridInfo(myUniqueId);
+//////////////////////////////
+// Unregister with Master Grid
+this.masterGridApi.removeDetailGridInfo(detailId);
 
 </snippet>
 
