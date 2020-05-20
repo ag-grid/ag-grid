@@ -46,11 +46,14 @@ export interface CellChangedEvent extends RowNodeEvent {
 }
 
 export class RowNode implements IEventEmitter {
+
     private static OBJECT_ID_SEQUENCE = 0;
+
     public static EVENT_ROW_SELECTED = 'rowSelected';
     public static EVENT_DATA_CHANGED = 'dataChanged';
     public static EVENT_CELL_CHANGED = 'cellChanged';
     public static EVENT_ALL_CHILDREN_COUNT_CHANGED = 'allChildrenCountChanged';
+    public static EVENT_MASTER_CHANGED = 'masterChanged';
     public static EVENT_MOUSE_ENTER = 'mouseEnter';
     public static EVENT_MOUSE_LEAVE = 'mouseLeave';
     public static EVENT_HEIGHT_CHANGED = 'heightChanged';
@@ -412,6 +415,22 @@ export class RowNode implements IEventEmitter {
 
         if (this.eventService) {
             this.eventService.dispatchEvent(this.createLocalRowEvent(RowNode.EVENT_ALL_CHILDREN_COUNT_CHANGED));
+        }
+    }
+
+    public setMaster(master: boolean): void {
+        if (this.master === master) { return; }
+
+        // if changing AWAY from master, then unexpand, otherwise
+        // next time it's shown it is expanded again
+        if (this.master && !master) {
+            this.expanded = false;
+        }
+
+        this.master = master;
+
+        if (this.eventService) {
+            this.eventService.dispatchEvent(this.createLocalRowEvent(RowNode.EVENT_MASTER_CHANGED));
         }
     }
 

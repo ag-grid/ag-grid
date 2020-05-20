@@ -63,7 +63,12 @@ gridOptions = {
     The following example only shows detail rows when there are corresponding child records.
 </p>
 
-<?= grid_example('Dynamically Specify Master Nodes', 'dynamic-master-nodes', 'generated', ['enterprise' => true, 'exampleHeight' => 510, 'modules'=>['clientside', 'masterdetail', 'menu', 'columnpanel']]) ?>
+<?= grid_example('Dynamic Master Rows', 'dynamic-master-rows', 'generated', ['enterprise' => true, 'exampleHeight' => 510, 'modules'=>['clientside', 'masterdetail', 'menu', 'columnpanel']]) ?>
+
+
+<h2>Changing Dynamic Master Rows</h2>
+
+<?= grid_example('Dynamically Changing Master Rows', 'changing-dynamic-master-rows', 'generated', ['enterprise' => true, 'exampleHeight' => 510, 'modules'=>['clientside', 'masterdetail', 'menu', 'columnpanel']]) ?>
 
 
 <?php include '../documentation-main/documentation_footer.php';?>
