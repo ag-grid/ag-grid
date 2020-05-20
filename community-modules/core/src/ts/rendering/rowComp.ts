@@ -175,7 +175,7 @@ export class RowComp extends Component {
         const businessKeySanitised = _.escape(businessKey);
         const rowTopStyle = this.getInitialRowTopStyle();
         const rowIdx = this.rowNode.getRowIndexString();
-        const headerRowCount = this.beans.gridPanel.headerRootComp.getHeaderRowCount();
+        const headerRowCount = this.beans.headerController.getHeaderRowCount();
 
         templateParts.push(`<div`);
         templateParts.push(` role="row"`);
@@ -1501,7 +1501,7 @@ export class RowComp extends Component {
         // we only bother updating if the rowIndex is present. if it is not present, it means this row
         // is child of a group node, and the group node was closed, it's the only way to have no row index.
         // when this happens, row is about to be de-rendered, so we don't care, rowComp is about to die!
-        if (this.rowNode.rowIndex!=null) {
+        if (this.rowNode.rowIndex != null) {
             this.onCellFocusChanged();
             this.updateRowIndexes();
         }
@@ -1511,7 +1511,7 @@ export class RowComp extends Component {
         const rowIndexStr = this.rowNode.getRowIndexString();
         const rowIsEven = this.rowNode.rowIndex % 2 === 0;
         const rowIsEvenChanged = this.rowIsEven !== rowIsEven;
-        const headerRowCount = this.beans.gridPanel.headerRootComp.getHeaderRowCount();
+        const headerRowCount = this.beans.headerController.getHeaderRowCount();
 
         if (rowIsEvenChanged) {
             this.rowIsEven = rowIsEven;

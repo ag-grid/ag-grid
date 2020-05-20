@@ -5,8 +5,8 @@ import { ColDef } from "../entities/colDef";
 import { ColumnController } from "./columnController";
 import { ColumnFactory } from "./columnFactory";
 import { Constants } from "../constants";
-import { _ } from "../utils";
 import { BeanStub } from "../context/beanStub";
+import { _ } from "../utils";
 
 @Bean('autoGroupColService')
 export class AutoGroupColService extends BeanStub {

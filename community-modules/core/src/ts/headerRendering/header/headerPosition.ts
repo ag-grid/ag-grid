@@ -3,10 +3,11 @@ import { ColumnGroup } from "../../entities/columnGroup";
 import { Bean, Autowired } from "../../context/context";
 import { BeanStub } from "../../context/beanStub";
 import { ColumnController } from "../../columnController/columnController";
+import { HeaderController } from "./headerController";
+import { HeaderRowType } from "../headerRowComp";
 
 export interface HeaderPosition {
     headerRowIndex: number;
-    pinned: string;
     column: Column | ColumnGroup;
 }
 
@@ -14,6 +15,7 @@ export interface HeaderPosition {
 export class HeaderPositionUtils extends BeanStub {
 
     @Autowired('columnController') private columnController: ColumnController;
+    @Autowired('headerController') private headerController: HeaderController;
 
     public findHeader(focusedHeader: HeaderPosition, direction: 'Before' | 'After'): HeaderPosition {
         let nextColumn: Column | ColumnGroup;
@@ -31,9 +33,32 @@ export class HeaderPositionUtils extends BeanStub {
         if (nextColumn) {
             return {
                 column: nextColumn,
-                pinned: nextColumn.getPinned(),
                 headerRowIndex: focusedHeader.headerRowIndex
             };
         }
+    }
+
+    public findColAtEdgeForHeaderRow(level: number, position: 'start' | 'end'): HeaderPosition {
+        const displayedColumns = this.columnController.getAllDisplayedColumns();
+        const column = displayedColumns[position === 'start' ? 0 : displayedColumns.length - 1];
+
+        if (!column) { return; }
+
+        const childContainer = this.headerController.getHeaderContainer(column.getPinned());
+        const headerRowComp = childContainer.getRowComps()[level];
+        const type = headerRowComp && headerRowComp.getType();
+
+        if (type == HeaderRowType.COLUMN_GROUP) {
+            const columnGroup = this.columnController.getColumnGroupAtLevel(column, level);
+            return {
+                headerRowIndex: level,
+                column: columnGroup
+            };
+        }
+
+        return {
+            headerRowIndex: !headerRowComp ? -1 : level,
+            column
+        };
     }
 }
