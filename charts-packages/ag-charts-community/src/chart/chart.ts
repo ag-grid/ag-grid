@@ -698,13 +698,17 @@ export abstract class Chart extends Observable {
     }
 
     protected setupDomListeners(chartElement: HTMLCanvasElement) {
+        chartElement.addEventListener('mousedown', this._onMouseDown);
         chartElement.addEventListener('mousemove', this._onMouseMove);
+        chartElement.addEventListener('mouseup', this._onMouseUp);
         chartElement.addEventListener('mouseout', this._onMouseOut);
         chartElement.addEventListener('click', this._onClick);
     }
 
     protected cleanupDomListeners(chartElement: HTMLCanvasElement) {
+        chartElement.removeEventListener('mousedown', this._onMouseDown);
         chartElement.removeEventListener('mousemove', this._onMouseMove);
+        chartElement.removeEventListener('mouseup', this._onMouseUp);
         chartElement.removeEventListener('mouseout', this._onMouseOut);
         chartElement.removeEventListener('click', this._onClick);
     }
@@ -777,6 +781,8 @@ export abstract class Chart extends Observable {
         }
     }
 
+    private _onMouseDown = this.onMouseDown.bind(this);
+    private _onMouseUp = this.onMouseUp.bind(this);
     private _onMouseMove = this.onMouseMove.bind(this);
     private _onMouseOut = this.onMouseOut.bind(this);
     private _onClick = this.onClick.bind(this);
@@ -835,6 +841,9 @@ export abstract class Chart extends Observable {
             this.lastPick = undefined;
         }
     }
+
+    protected onMouseDown(event: MouseEvent) {}
+    protected onMouseUp(event: MouseEvent) {}
 
     protected onMouseOut(event: MouseEvent) {
         this.toggleTooltip(false);

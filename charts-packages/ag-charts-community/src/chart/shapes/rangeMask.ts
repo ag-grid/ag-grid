@@ -4,8 +4,9 @@ import { BBox } from "../../scene/bbox";
 export class RangeMask extends Path {
     static className = 'RangeMask';
 
-    protected _stroke = 'black';
+    protected _stroke = '#999999';
     protected _strokeWidth = 1;
+    protected _fill = '#f2f2f2';
     protected _fillOpacity = 0.2;
 
     protected _x: number = 0;

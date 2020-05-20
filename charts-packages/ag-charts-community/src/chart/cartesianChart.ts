@@ -8,6 +8,162 @@ import { BBox } from "../scene/bbox";
 import { ClipRect } from "../scene/clipRect";
 import { RangeSelector } from "./shapes/rangeSelector";
 
+export class Navigator {
+    private readonly rs = new RangeSelector();
+    private chart: CartesianChart;
+
+    private minHandleDragging = false;
+    private maxHandleDragging = false;
+    private panHandleOffset = NaN;
+
+    set enabled(value: boolean) {
+        this.rs.visible = value;
+        this.chart.layoutPending = true;
+    }
+    get enabled(): boolean {
+        return this.rs.visible;
+    }
+
+    set x(value: number) {
+        this.rs.x = value;
+    }
+    get x(): number {
+        return this.rs.x;
+    }
+
+    set y(value: number) {
+        this.rs.y = value;
+    }
+    get y(): number {
+        return this.rs.y;
+    }
+
+    set width(value: number) {
+        this.rs.width = value;
+    }
+    get width(): number {
+        return this.rs.width;
+    }
+
+    set height(value: number) {
+        this.rs.height = value;
+        this.chart.layoutPending = true;
+    }
+    get height(): number {
+        return this.rs.height;
+    }
+
+    private _margin = 10;
+    set margin(value: number) {
+        this._margin = value;
+        this.chart.layoutPending = true;
+    }
+    get margin(): number {
+        return this._margin;
+    }
+
+    set min(value: number) {
+        this.rs.min = value;
+    }
+    get min(): number {
+        return this.rs.min;
+    }
+
+    set max(value: number) {
+        this.rs.max = value;
+    }
+    get max(): number {
+        return this.rs.max;
+    }
+
+    constructor(chart: CartesianChart) {
+        this.chart = chart;
+
+        chart.scene.root.append(this.rs);
+        this.rs.onRangeChange = (min, max) => this.updateAxes(min, max);
+    }
+
+    updateAxes(min: number, max: number) {
+        this.chart.axes.forEach(axis => {
+            if (axis.direction === ChartAxisDirection.X) {
+                axis.visibleRange = [min, max];
+                axis.update();
+            }
+        });
+        this.chart.series.forEach(series => series.update());
+    }
+
+    onMouseDown(event: MouseEvent) {
+        const { offsetX, offsetY } = event;
+        const { rs } = this;
+        const { minHandle, maxHandle, x, width, min } = rs;
+        const visibleRange = rs.computeVisibleRangeBBox();
+
+        if (!(this.minHandleDragging || this.maxHandleDragging)) {
+            if (minHandle.containsPoint(offsetX, offsetY)) {
+                this.minHandleDragging = true;
+            } else if (maxHandle.containsPoint(offsetX, offsetY)) {
+                this.maxHandleDragging = true;
+            } else if (visibleRange.containsPoint(offsetX, offsetY)) {
+                this.panHandleOffset = (offsetX - x) / width - min;
+            }
+        }
+    }
+
+    onMouseMove(event: MouseEvent) {
+        const { rs, panHandleOffset } = this;
+        const { x, y, width, height, minHandle, maxHandle } = rs;
+        const { style } = this.chart.element;
+        const { offsetX, offsetY } = event;
+        const minX = x + width * rs.min;
+        const maxX = x + width * rs.max;
+        const visibleRange = new BBox(minX, y, maxX - minX, height);
+
+        function getRatio() {
+            return Math.min(Math.max((offsetX - x) / width, 0), 1);
+        }
+
+        if (minHandle.containsPoint(offsetX, offsetY)) {
+            style.cursor = 'ew-resize';
+        } else if (maxHandle.containsPoint(offsetX, offsetY)) {
+            style.cursor = 'ew-resize';
+        } else if (visibleRange.containsPoint(offsetX, offsetY)) {
+            style.cursor = 'grab';
+        } else {
+            style.cursor = 'default';
+        }
+
+        if (this.minHandleDragging) {
+            rs.min = getRatio();
+        } else if (this.maxHandleDragging) {
+            rs.max = getRatio();
+        } else if (!isNaN(panHandleOffset)) {
+            const span = rs.max - rs.min;
+            const min = Math.min(getRatio() - panHandleOffset, 1 - span);
+            if (min <= rs.min) { // pan left
+                rs.min = min;
+                rs.max = rs.min + span;
+            } else { // pan right
+                rs.max = min + span;
+                rs.min = rs.max - span;
+            }
+        }
+    }
+
+    onMouseOut(event: MouseEvent) {
+        this.stopHandleDragging();
+    }
+
+    onMouseUp(event: MouseEvent) {
+        this.stopHandleDragging();
+    }
+
+    stopHandleDragging() {
+        this.minHandleDragging = this.maxHandleDragging = false;
+        this.panHandleOffset = NaN;
+    }
+}
+
 export class CartesianChart extends Chart {
     static className = 'CartesianChart';
     static type = 'cartesian';
@@ -23,18 +179,6 @@ export class CartesianChart extends Chart {
         root.append(this.xAxesClip);
         root.append(this.seriesRoot);
         root.append(this.legend.group);
-        root.append(this.rangeSelector);
-
-        this.rangeSelector.height = 30;
-        this.rangeSelector.onRangeChange = (min, max) => {
-            this.axes.forEach(axis => {
-                if (axis.direction === ChartAxisDirection.X) {
-                    axis.visibleRange = [min, max];
-                    axis.update();
-                }
-            });
-            this.series.forEach(series => series.update());
-        };
     }
 
     private _seriesRoot = new ClipRect();
@@ -42,9 +186,9 @@ export class CartesianChart extends Chart {
         return this._seriesRoot;
     }
 
-    readonly rangeSelector = new RangeSelector();
-    private rangeSelectorMargin = 10;
     private xAxesClip = new ClipRect();
+
+    readonly navigator = new Navigator(this);
 
     performLayout(): void {
         if (this.dataPending) {
@@ -53,7 +197,7 @@ export class CartesianChart extends Chart {
 
         this.scene.root.visible = true;
 
-        const { width, height, axes, legend, rangeSelector } = this;
+        const { width, height, axes, legend, navigator } = this;
 
         const shrinkRect = new BBox(0, 0, width, height);
 
@@ -97,8 +241,8 @@ export class CartesianChart extends Chart {
         shrinkRect.y += padding.top + captionAutoPadding;
         shrinkRect.height -= padding.top + captionAutoPadding + padding.bottom;
 
-        if (rangeSelector.visible) {
-            shrinkRect.height -= rangeSelector.height + this.rangeSelectorMargin;
+        if (navigator.enabled) {
+            shrinkRect.height -= navigator.height + navigator.margin;
         }
 
         let bottomAxesHeight = 0;
@@ -183,10 +327,10 @@ export class CartesianChart extends Chart {
         xAxesClip.width = shrinkRect.width;
         xAxesClip.height = height;
 
-        if (rangeSelector.visible) {
-            rangeSelector.x = shrinkRect.x;
-            rangeSelector.y = shrinkRect.y + shrinkRect.height + bottomAxesHeight + this.rangeSelectorMargin;
-            rangeSelector.width = shrinkRect.width;
+        if (navigator.enabled) {
+            navigator.x = shrinkRect.x;
+            navigator.y = shrinkRect.y + shrinkRect.height + bottomAxesHeight + navigator.margin;
+            navigator.width = shrinkRect.width;
         }
 
         this.axes.forEach(axis => axis.update());
@@ -218,104 +362,24 @@ export class CartesianChart extends Chart {
         series.removeEventListener('dataProcessed', this.updateAxes, this);
     }
 
+    protected onMouseDown(event: MouseEvent) {
+        super.onMouseDown(event);
+        this.navigator.onMouseDown(event);
+    }
+
     protected onMouseMove(event: MouseEvent) {
         super.onMouseMove(event);
-        this.onRangeSelectorMouseMove(event);
+        this.navigator.onMouseMove(event);
     }
 
-    protected onRangeSelectorMouseMove(event: MouseEvent) {
-        const { rangeSelector, panHandleOffset } = this;
-        const { minHandle, maxHandle } = rangeSelector;
-        const { style } = this.element;
-        const { offsetX, offsetY } = event;
-        const { x, y, width, height } = rangeSelector;
-        const minX = x + width * rangeSelector.min;
-        const maxX = x + width * rangeSelector.max;
-        const visibleRange = new BBox(minX, y, maxX - minX, height);
-
-        function getRatio() {
-            return Math.min(Math.max((offsetX - x) / width, 0), 1);
-        }
-
-        if (minHandle.containsPoint(offsetX, offsetY)) {
-            style.cursor = 'ew-resize';
-        } else if (maxHandle.containsPoint(offsetX, offsetY)) {
-            style.cursor = 'ew-resize';
-        } else if (visibleRange.containsPoint(offsetX, offsetY)) {
-            style.cursor = 'grab';
-        } else {
-            style.cursor = 'default';
-        }
-
-        if (this.minHandleDragging) {
-            rangeSelector.min = getRatio();
-        } else if (this.maxHandleDragging) {
-            rangeSelector.max = getRatio();
-        } else if (!isNaN(panHandleOffset)) {
-            const span = rangeSelector.max - rangeSelector.min;
-            const min = Math.min(getRatio() - panHandleOffset, 1 - span);
-            if (min <= rangeSelector.min) { // pan left
-                rangeSelector.min = min;
-                rangeSelector.max = rangeSelector.min + span;
-            } else { // pan right
-                rangeSelector.max = min + span;
-                rangeSelector.min = rangeSelector.max - span;
-            }
-        }
-    }
-
-    private _onMouseDown: any;
-    private _onMouseUp: any;
-
-    private minHandleDragging = false;
-    private maxHandleDragging = false;
-    private panHandleOffset = NaN;
-
-    protected onMouseDown(event: MouseEvent) {
-        const { offsetX, offsetY } = event;
-        const { rangeSelector } = this;
-        const { minHandle, maxHandle, x, width, min } = rangeSelector;
-        const visibleRange = rangeSelector.computeVisibleRangeBBox();
-
-        if (!(this.minHandleDragging || this.maxHandleDragging)) {
-            if (minHandle.containsPoint(offsetX, offsetY)) {
-                this.minHandleDragging = true;
-            } else if (maxHandle.containsPoint(offsetX, offsetY)) {
-                this.maxHandleDragging = true;
-            } else if (visibleRange.containsPoint(offsetX, offsetY)) {
-                this.panHandleOffset = (offsetX - x) / width - min;
-            }
-        }
+    protected onMouseUp(event: MouseEvent) {
+        super.onMouseUp(event);
+        this.navigator.onMouseUp(event);
     }
 
     protected onMouseOut(event: MouseEvent) {
         super.onMouseOut(event);
-        this.stopHandleDragging();
-    }
-
-    protected onMouseUp(event: MouseEvent) {
-        this.stopHandleDragging();
-    }
-
-    protected stopHandleDragging() {
-        this.minHandleDragging = this.maxHandleDragging = false;
-        this.panHandleOffset = NaN;
-    }
-
-    protected setupDomListeners(chartElement: HTMLCanvasElement) {
-        super.setupDomListeners(chartElement);
-
-        this._onMouseDown = this.onMouseDown.bind(this);
-        this._onMouseUp = this.onMouseUp.bind(this);
-        chartElement.addEventListener('mousedown', this._onMouseDown);
-        chartElement.addEventListener('mouseup', this._onMouseUp);
-    }
-
-    protected cleanupDomListeners(chartElement: HTMLCanvasElement) {
-        super.cleanupDomListeners(chartElement);
-
-        chartElement.removeEventListener('mousedown', this._onMouseDown);
-        chartElement.removeEventListener('mouseup', this._onMouseUp);
+        this.navigator.onMouseUp(event);
     }
 
     updateAxes() {

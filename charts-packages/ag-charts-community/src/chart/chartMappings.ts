@@ -1,5 +1,5 @@
 import { Padding } from "../util/padding";
-import { CartesianChart } from "./cartesianChart";
+import { CartesianChart, Navigator } from "./cartesianChart";
 import { NumberAxis } from "./axis/numberAxis";
 import { CategoryAxis } from "./axis/categoryAxis";
 import { LineSeries } from "./series/cartesian/lineSeries";
@@ -114,6 +114,7 @@ const chartMeta = {
 
 const axisDefaults = {
     defaults: {
+        visibleRange: [0, 1],
         gridStyle: [{
             stroke: 'rgba(219, 219, 219, 1)',
             lineDash: [4, 2]
@@ -250,7 +251,7 @@ const mappings = {
             [NumberAxis.type]: {
                 meta: {
                     constructor: NumberAxis,
-                    setAsIs: ['gridStyle'],
+                    setAsIs: ['gridStyle', 'visibleRange'],
                     ...axisDefaults
                 },
                 ...axisMappings
@@ -258,7 +259,7 @@ const mappings = {
             [CategoryAxis.type]: {
                 meta: {
                     constructor: CategoryAxis,
-                    setAsIs: ['gridStyle'],
+                    setAsIs: ['gridStyle', 'visibleRange'],
                     ...axisDefaults
                 },
                 ...axisMappings
@@ -266,7 +267,7 @@ const mappings = {
             [TimeAxis.type]: {
                 meta: {
                     constructor: TimeAxis,
-                    setAsIs: ['gridStyle'],
+                    setAsIs: ['gridStyle', 'visibleRange'],
                     ...axisDefaults
                 },
                 ...axisMappings
@@ -396,6 +397,17 @@ const mappings = {
                     }
                 },
                 highlightStyle: {}
+            }
+        },
+        navigator: {
+            meta: {
+                constructor: Navigator,
+                defaults: {
+                    enabled: true,
+                    height: 30,
+                    min: 0,
+                    max: 1
+                }
             }
         }
     },
