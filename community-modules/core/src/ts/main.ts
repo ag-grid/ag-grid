@@ -258,6 +258,7 @@ export { IMenuFactory } from "./interfaces/iMenuFactory";
 export { CellPosition, CellPositionUtils } from "./entities/cellPosition";
 export { RowPosition, RowPositionUtils } from "./entities/rowPosition";
 export { HeaderPosition, HeaderPositionUtils } from "./headerRendering/header/headerPosition";
+export { HeaderController, HeaderContainerTypes, HeaderNavigationDirection } from "./headerRendering/header/headerController";
 export {
     IAggFunc,
     ColGroupDef,

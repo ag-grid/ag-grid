@@ -29,6 +29,7 @@ import {
     NewColumnsLoadedEvent,
     VirtualColumnsChangedEvent
 } from '../events';
+import { BeanStub } from "../context/beanStub";
 import { OriginalColumnGroup } from '../entities/originalColumnGroup';
 import { GroupInstanceIdCreator } from './groupInstanceIdCreator';
 import { Autowired, Bean, Optional, PostConstruct, Qualifier } from '../context/context';
@@ -43,7 +44,6 @@ import { Constants } from '../constants';
 import { areEqual } from '../utils/array';
 import { AnimationFrameService } from "../misc/animationFrameService";
 import { _ } from '../utils';
-import { BeanStub } from "../context/beanStub";
 
 export interface ColumnResizeSet {
     columns: Column[];
@@ -1540,36 +1540,40 @@ export class ColumnController extends BeanStub {
     public getDisplayedGroupAtDirection(columnGroup: ColumnGroup, direction: 'After' | 'Before'): ColumnGroup | null {
         // pick the last displayed column in this group
         const requiredLevel = columnGroup.getOriginalColumnGroup().getLevel() + columnGroup.getPaddingLevel();
-        const getDisplayColMethod: 'getDisplayedColAfter' | 'getDisplayedColBefore' = `getDisplayedCol${direction}` as any;
         const colGroupLeafColumns = columnGroup.getDisplayedLeafColumns();
-
-        let col: Column | null = direction === 'After' ? _.last(colGroupLeafColumns) : colGroupLeafColumns[0];
+        const col: Column | null = direction === 'After' ? _.last(colGroupLeafColumns) : colGroupLeafColumns[0];
+        const getDisplayColMethod: 'getDisplayedColAfter' | 'getDisplayedColBefore' = `getDisplayedCol${direction}` as any;
 
         while (true) {
             // keep moving to the next col, until we get to another group
-            col = this[getDisplayColMethod](col);
+            const column = this[getDisplayColMethod](col);
 
-            // if no col after, means no group after
-            if (!col) { return null; }
+            if (!column) { return null; }
 
-            // get group at same level as the one we are looking for
-            let groupPointer: ColumnGroup = col.getParent();
-            let originalGroupLevel: number;
-            let groupPointerLevel: number;
-
-            while (true) {
-                const groupPointerOriginalColumnGroup = groupPointer.getOriginalColumnGroup();
-                originalGroupLevel = groupPointerOriginalColumnGroup.getLevel();
-                groupPointerLevel = groupPointer.getPaddingLevel();
-
-                if (originalGroupLevel + groupPointerLevel <= requiredLevel) { break; }
-                groupPointer = groupPointer.getParent();
-            }
+            const groupPointer = this.getColumnGroupAtLevel(column, requiredLevel);
 
             if (groupPointer !== columnGroup) {
                 return groupPointer;
             }
         }
+    }
+
+    public getColumnGroupAtLevel(column: Column, level: number): ColumnGroup | null {
+        // get group at same level as the one we are looking for
+        let groupPointer: ColumnGroup = column.getParent();
+        let originalGroupLevel: number;
+        let groupPointerLevel: number;
+
+        while (true) {
+            const groupPointerOriginalColumnGroup = groupPointer.getOriginalColumnGroup();
+            originalGroupLevel = groupPointerOriginalColumnGroup.getLevel();
+            groupPointerLevel = groupPointer.getPaddingLevel();
+
+            if (originalGroupLevel + groupPointerLevel <= level) { break; }
+            groupPointer = groupPointer.getParent();
+        }
+
+        return groupPointer;
     }
 
     public isPinningLeft(): boolean {

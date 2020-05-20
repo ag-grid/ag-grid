@@ -1,4 +1,4 @@
-import { Bean, Autowired, PostConstruct } from "./context/context";
+import { Bean, Autowired, PostConstruct, Optional } from "./context/context";
 import { BeanStub } from "./context/beanStub";
 import { Column } from "./entities/column";
 import { CellFocusedEvent, Events } from "./events";
@@ -12,6 +12,9 @@ import { CellComp } from "./rendering/cellComp";
 import { HeaderRowComp } from "./headerRendering/headerRowComp";
 import { AbstractHeaderWrapper } from "./headerRendering/header/abstractHeaderWrapper";
 import { HeaderPosition } from "./headerRendering/header/headerPosition";
+import { RowPositionUtils } from "./entities/rowPosition";
+import { HeaderController } from "./headerRendering/header/headerController";
+import { IRangeController } from "./interfaces/iRangeController";
 import { _ } from "./utils";
 
 @Bean('focusController')
@@ -19,8 +22,11 @@ export class FocusController extends BeanStub {
 
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('columnController') private columnController: ColumnController;
+    @Autowired('headerController') private headerController: HeaderController;
     @Autowired('columnApi') private columnApi: ColumnApi;
     @Autowired('gridApi') private gridApi: GridApi;
+    @Autowired('rowPositionUtils') private rowPositionUtils: RowPositionUtils;
+    @Optional('rangeController') private rangeController: IRangeController;
 
     private focusedCellPosition: CellPosition;
     private focusedHeaderPosition: HeaderPosition;
@@ -138,9 +144,11 @@ export class FocusController extends BeanStub {
         const headerRowIndex = (headerWrapper.getParentComponent() as HeaderRowComp).getRowIndex();
         const pinned = headerWrapper.getPinned();
 
-        return column === this.focusedHeaderPosition.column &&
-            headerRowIndex === this.focusedHeaderPosition.headerRowIndex &&
-            pinned == this.focusedHeaderPosition.pinned;
+        const { column: focusedColumn, headerRowIndex: focusedHeaderRowIndex } = this.focusedHeaderPosition;
+
+        return column === focusedColumn &&
+            headerRowIndex === focusedHeaderRowIndex &&
+            pinned == focusedColumn.getPinned();
     }
 
     public clearFocusedHeader(): void {
@@ -154,12 +162,10 @@ export class FocusController extends BeanStub {
     public setHeaderFocused(headerWrapper: AbstractHeaderWrapper): void {
         const column = headerWrapper.getColumn();
         const headerRowIndex = (headerWrapper.getParentComponent() as HeaderRowComp).getRowIndex();
-        const pinned = headerWrapper.getPinned();
 
         this.focusedHeaderPosition = {
             column,
-            headerRowIndex,
-            pinned
+            headerRowIndex
         };
     }
 
@@ -223,5 +229,29 @@ export class FocusController extends BeanStub {
         }
 
         this.eventService.dispatchEvent(event);
+    }
+
+    public focusGridView(column?: Column): boolean {
+        const firstRow = this.rowPositionUtils.getFirstRow();
+
+        if (!firstRow) { return false; }
+
+        const { rowIndex, rowPinned } = firstRow;
+        const focusedHeader = this.getFocusedHeader();
+
+        if (!column) {
+            column = focusedHeader.column as Column;
+        }
+
+        if (!_.exists(rowIndex)) { return false; }
+
+        this.setFocusedCell(rowIndex, column, _.makeNull(rowPinned), true);
+
+        if (this.rangeController) {
+            const cellPosition = { rowIndex, rowPinned, column };
+            this.rangeController.setRangeToCell(cellPosition);
+        }
+
+        return true;
     }
 }

@@ -1,5 +1,4 @@
 import { GridOptionsWrapper } from '../gridOptionsWrapper';
-import { ColumnController } from '../columnController/columnController';
 import { ColumnApi } from '../columnController/columnApi';
 import { RowRenderer } from '../rendering/rowRenderer';
 import { Autowired, Optional, PostConstruct } from '../context/context';
@@ -40,6 +39,8 @@ import { PinnedRowModel } from '../pinnedRowModel/pinnedRowModel';
 import { ModuleRegistry } from '../modules/moduleRegistry';
 import { ModuleNames } from '../modules/moduleNames';
 import { UndoRedoService } from '../undoRedo/undoRedoService';
+import { ColumnController } from '../columnController/columnController';
+import { HeaderController } from '../headerRendering/header/headerController';
 import { _ } from "../utils";
 
 // in the html below, it is important that there are no white space between some of the divs, as if there is white space,
@@ -102,7 +103,6 @@ export type RowContainerComponents = { [K in RowContainerComponentNames]: RowCon
 export class GridPanel extends Component {
     @Autowired('alignedGridsService') private alignedGridsService: AlignedGridsService;
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
-    @Autowired('columnController') private columnController: ColumnController;
     @Autowired('rowRenderer') private rowRenderer: RowRenderer;
     @Autowired('pinnedRowModel') private pinnedRowModel: PinnedRowModel;
     @Autowired('animationFrameService') private animationFrameService: AnimationFrameService;
@@ -124,6 +124,8 @@ export class GridPanel extends Component {
     @Autowired('maxDivHeightScaler') private heightScaler: MaxDivHeightScaler;
     @Autowired('resizeObserverService') private resizeObserverService: ResizeObserverService;
     @Autowired('undoRedoService') private undoRedoService: UndoRedoService;
+    @Autowired('columnController') private columnController: ColumnController;
+    @Autowired('headerController') private headerController: HeaderController;
 
     @Optional('rangeController') private rangeController: IRangeController;
     @Optional('contextMenuFactory') private contextMenuFactory: IContextMenuFactory;
@@ -224,7 +226,7 @@ export class GridPanel extends Component {
         // this problem exists before of the race condition between the services (column controller in this case)
         // and the view (grid panel). if the model beans were all initialised first, and then the view beans second,
         // this race condition would not happen.
-        if (this.columnController.isReady() && !this.paginationProxy.isEmpty()) {
+        if (this.beans.columnController.isReady() && !this.paginationProxy.isEmpty()) {
             this.hideOverlay();
         }
     }
@@ -319,7 +321,7 @@ export class GridPanel extends Component {
     private onCenterViewportResized(): void {
         if (_.isVisible(this.eCenterViewport)) {
             this.checkViewportAndScrolls();
-            this.columnController.refreshFlexedColumns(
+            this.beans.columnController.refreshFlexedColumns(
                 this.getCenterWidth()
             );
         } else {
@@ -683,7 +685,7 @@ export class GridPanel extends Component {
 
     private onCtrlAndA(event: KeyboardEvent): void {
 
-        const { columnController, pinnedRowModel, paginationProxy, rangeController } = this;
+        const { beans, pinnedRowModel, paginationProxy, rangeController } = this;
         const { PINNED_BOTTOM, PINNED_TOP } = Constants;
 
         if (rangeController && paginationProxy.isRowsToRender()) {
@@ -704,7 +706,7 @@ export class GridPanel extends Component {
                 rowEnd = pinnedRowModel.getPinnedBottomRowData().length - 1;
             }
 
-            const allDisplayedColumns = columnController.getAllDisplayedColumns();
+            const allDisplayedColumns = beans.columnController.getAllDisplayedColumns();
             if (_.missingOrEmpty(allDisplayedColumns)) { return; }
 
             rangeController.setCellRange({
@@ -910,7 +912,7 @@ export class GridPanel extends Component {
     }
 
     public updateRowCount(): void {
-        const headerCount = this.headerRootComp.getHeaderRowCount();
+        const headerCount = this.headerController.getHeaderRowCount();
         const rowCount = this.paginationProxy.getRowCount();
         const total = (headerCount + rowCount).toString();
 
@@ -918,7 +920,7 @@ export class GridPanel extends Component {
     }
 
     private updateColumnCount(): void {
-        const columns = this.beans.columnController.getAllDisplayedColumns();
+        const columns = this.columnController.getAllDisplayedColumns();
 
         this.getGui().setAttribute('aria-colcount', columns.length.toString());
     }
@@ -1152,15 +1154,16 @@ export class GridPanel extends Component {
     }
 
     private setCenterWidth(): void {
-        let width = this.columnController.getBodyContainerWidth();
+        const { headerRootComp, columnController } = this;
+        let width = columnController.getBodyContainerWidth();
 
         if (this.printLayout) {
-            const pinnedContainerWidths = this.columnController.getPinnedLeftContainerWidth()
-                + this.columnController.getPinnedRightContainerWidth();
+            const pinnedContainerWidths = columnController.getPinnedLeftContainerWidth()
+                + columnController.getPinnedRightContainerWidth();
             width += pinnedContainerWidths;
         }
 
-        this.headerRootComp.setHeaderContainerWidth(width);
+        headerRootComp.setHeaderContainerWidth(width);
 
         const widthPx = `${width}px`;
 

@@ -2,7 +2,6 @@ import { GridOptionsWrapper } from '../gridOptionsWrapper';
 import { Autowired, PostConstruct, PreDestroy } from '../context/context';
 import { DropTarget } from '../dragAndDrop/dragAndDropService';
 import { ColumnController } from '../columnController/columnController';
-import { GridPanel } from '../gridPanel/gridPanel';
 import { Events } from '../events';
 import { HeaderRowComp, HeaderRowType } from './headerRowComp';
 import { BodyDropTarget } from './bodyDropTarget';
@@ -11,6 +10,7 @@ import { Component } from '../widgets/component';
 import { Constants } from '../constants';
 import { setFixedWidth, clearElement } from '../utils/dom';
 import { BeanStub } from "../context/beanStub";
+import { GridPanel } from '../gridPanel/gridPanel';
 
 export class HeaderContainer extends BeanStub {
 
@@ -20,13 +20,9 @@ export class HeaderContainer extends BeanStub {
 
     private eContainer: HTMLElement;
     private eViewport: HTMLElement;
-
     private headerRowComps: HeaderRowComp[] = [];
-
     private pinned: string;
-
     private scrollWidth: number;
-
     private dropTarget: DropTarget;
 
     constructor(eContainer: HTMLElement, eViewport: HTMLElement, pinned: string) {
@@ -34,10 +30,6 @@ export class HeaderContainer extends BeanStub {
         this.eContainer = eContainer;
         this.pinned = pinned;
         this.eViewport = eViewport;
-    }
-
-    public registerGridComp(gridPanel: GridPanel): void {
-        this.setupDragAndDrop(gridPanel);
     }
 
     public forEachHeaderElement(callback: (renderedHeaderElement: Component) => void): void {
@@ -124,7 +116,7 @@ export class HeaderContainer extends BeanStub {
         this.removeAndCreateAllRowComps();
     }
 
-    private setupDragAndDrop(gridComp: GridPanel): void {
+    public setupDragAndDrop(gridComp: GridPanel): void {
         const dropContainer = this.eViewport ? this.eViewport : this.eContainer;
         const bodyDropTarget = new BodyDropTarget(this.pinned, dropContainer);
         this.createManagedBean(bodyDropTarget);
