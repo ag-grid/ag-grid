@@ -13,7 +13,7 @@ import { ColumnController } from "../../columnController/columnController";
 import { ColumnHoverService } from "../../rendering/columnHoverService";
 import { CssClassApplier } from "../cssClassApplier";
 import { Events } from "../../events";
-import { IHeaderComp, IHeaderParams } from "./headerComp";
+import { IHeaderComp, IHeaderParams, HeaderComp } from "./headerComp";
 import { IMenuFactory } from "../../interfaces/iMenuFactory";
 import { GridApi } from "../../gridApi";
 import { GridOptionsWrapper } from "../../gridOptionsWrapper";
@@ -59,6 +59,8 @@ export class HeaderWrapperComp extends AbstractHeaderWrapper {
     private headerComp: IHeaderComp;
     private resizeStartWidth: number;
     private resizeWithShiftKey: boolean;
+    private sortable: boolean;
+    private menuEnabled: boolean;
 
     constructor(column: Column, dragSourceDropTarget: DropTarget, pinned: string) {
         super(HeaderWrapperComp.TEMPLATE);
@@ -73,7 +75,7 @@ export class HeaderWrapperComp extends AbstractHeaderWrapper {
         const colDef = this.getComponentHolder();
         const displayName = this.columnController.getDisplayNameForColumn(this.column, 'header', true);
         const enableSorting = colDef.sortable;
-        const enableMenu = this.menuFactory.isMenuEnabled(this.column) && !colDef.suppressMenu;
+        const enableMenu = this.menuEnabled = this.menuFactory.isMenuEnabled(this.column) && !colDef.suppressMenu;
 
         this.appendHeaderComp(displayName, enableSorting, enableMenu);
         this.setupWidth();
@@ -83,7 +85,7 @@ export class HeaderWrapperComp extends AbstractHeaderWrapper {
         this.setupMenuClass();
         this.setupSortableClass(enableSorting);
         this.addColumnHoverListener();
-        this.addMouseListeners();
+        this.addDisplayMenuListeners();
 
         this.createManagedBean(new HoverFeature([this.column], this.getGui()));
 
@@ -99,9 +101,59 @@ export class HeaderWrapperComp extends AbstractHeaderWrapper {
         CssClassApplier.addHeaderClassesFromColDef(colDef, this.getGui(), this.gridOptionsWrapper, this.column, null);
     }
 
+    private addDisplayMenuListeners(): void {
+        const mouseListener = this.onMouseOverOut.bind(this);
+        this.addGuiEventListener('mouseenter', mouseListener);
+        this.addGuiEventListener('mouseleave', mouseListener);
+    }
+
+    private onMouseOverOut(e: MouseEvent): void {
+        if (this.headerComp && this.headerComp.setActiveParent) {
+            this.headerComp.setActiveParent(e.type === 'mouseenter');
+        }
+    }
+
     protected onFocusIn(e: FocusEvent) {
         if (!this.getGui().contains(e.relatedTarget as HTMLElement)) {
             this.beans.focusController.setHeaderFocused(this);
+        }
+
+        if (this.headerComp && this.headerComp.setActiveParent) {
+            this.headerComp.setActiveParent(true);
+        }
+    }
+
+    protected onFocusOut(e: FocusEvent) {
+        if (
+            !this.headerComp ||
+            !this.headerComp.setActiveParent ||
+            this.getGui().contains(e.relatedTarget as HTMLElement)
+        ) { return; }
+
+        this.headerComp.setActiveParent(false);
+    }
+
+    protected handleKeyDown(e: KeyboardEvent): void {
+        const headerComp = this.headerComp as HeaderComp;
+        if (!headerComp) { return; }
+
+        if (e.keyCode === Constants.KEY_SPACE) {
+            const checkbox = this.cbSelectAll;
+            if (checkbox.isDisplayed() && !checkbox.getGui().contains(document.activeElement)) {
+                checkbox.setValue(!checkbox.getValue());
+            }
+        }
+
+        if (e.keyCode === Constants.KEY_ENTER) {
+            if (e.altKey) {
+                if (this.menuEnabled && headerComp.showMenu) {
+                    headerComp.showMenu();
+                }
+            } else if (this.sortable) {
+                const sortUsingCtrl = this.gridOptionsWrapper.isMultiSortKeyCtrl();
+                const multiSort = sortUsingCtrl ? (e.ctrlKey || e.metaKey) : e.shiftKey;
+                this.sortController.progressSort(this.column, multiSort, "uiColumnSorted");
+            }
         }
     }
 
@@ -119,23 +171,12 @@ export class HeaderWrapperComp extends AbstractHeaderWrapper {
         _.addOrRemoveCssClass(this.getGui(), 'ag-column-hover', isHovered);
     }
 
-    private addMouseListeners(): void {
-        const listener = this.onMouseOverOut.bind(this);
-        this.addGuiEventListener("mouseenter", listener);
-        this.addGuiEventListener("mouseleave", listener);
-    }
-
-    private onMouseOverOut(e: MouseEvent): void {
-        if (this.headerComp && this.headerComp.setMouseOverParent) {
-            this.headerComp.setMouseOverParent(e.type === "mouseenter");
-        }
-    }
-
     private setupSortableClass(enableSorting: boolean): void {
-        if (enableSorting) {
-            const element = this.getGui();
-            _.addCssClass(element, 'ag-header-cell-sortable');
-        }
+        if (!enableSorting) { return; }
+
+        const element = this.getGui();
+        _.addCssClass(element, 'ag-header-cell-sortable');
+        this.sortable = true;
     }
 
     private onFilterChanged(): void {

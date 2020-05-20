@@ -5,7 +5,6 @@ import { PostConstruct, Autowired } from "../../context/context";
 import { ColumnApi } from "../../columnController/columnApi";
 import { GridApi } from "../../gridApi";
 import { Events } from "../../events";
-import { EventService } from "../../eventService";
 import { IRowModel } from "../../interfaces/iRowModel";
 import { Constants } from "../../constants";
 import { Column } from "../../entities/column";
@@ -39,7 +38,6 @@ export class SelectAllFeature extends BeanStub {
 
     @PostConstruct
     private postConstruct(): void {
-
         this.showOrHideSelectAll();
 
         this.addManagedListener(this.eventService, Events.EVENT_DISPLAYED_COLUMNS_CHANGED, this.showOrHideSelectAll.bind(this));
@@ -49,7 +47,6 @@ export class SelectAllFeature extends BeanStub {
     }
 
     private showOrHideSelectAll(): void {
-
         this.cbSelectAllVisible = this.isCheckboxSelection();
         this.cbSelectAll.setDisplayed(this.cbSelectAllVisible);
 
@@ -92,7 +89,6 @@ export class SelectAllFeature extends BeanStub {
     }
 
     private updateStateOfCheckbox(): void {
-
         if (this.processingEventFromCheckbox) { return; }
 
         this.processingEventFromCheckbox = true;
