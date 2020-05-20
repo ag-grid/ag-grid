@@ -115,9 +115,15 @@ export class SetFilter extends ProvidedFilter {
     }
 
     public setParams(params: ISetFilterParams): void {
-        if (params.excelMode === 'windows' && !params.buttons) {
-            // set up default buttons for Windows Excel Mode
-            params.buttons = ['apply', 'cancel'];
+        if (params.excelMode === 'windows') {
+            if (!params.buttons) {
+                // set up default buttons for Windows Excel Mode
+                params.buttons = ['apply', 'cancel'];
+            }
+
+            if (params.closeOnApply == null) {
+                params.closeOnApply = true;
+            }
         }
 
         super.setParams(params);

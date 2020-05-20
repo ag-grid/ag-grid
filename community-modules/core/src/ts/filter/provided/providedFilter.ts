@@ -225,25 +225,24 @@ export abstract class ProvidedFilter extends Component implements IFilterComp {
         });
     }
 
-    private onBtCancel() {
+    private onBtCancel(): void {
         this.setModel(this.getModel());
         this.updateUiVisibility();
         this.onUiChanged();
 
-        if (this.hidePopup && this.providedFilterParams.closeOnApply) {
-            this.hidePopup();
-            this.hidePopup = null;
+        if (this.providedFilterParams.closeOnApply) {
+            this.close();
         }
     }
 
-    private onBtClear() {
+    private onBtClear(): void {
         this.resetUiToDefaults().then(() => {
             this.updateUiVisibility();
             this.onUiChanged();
         });
     }
 
-    private onBtReset() {
+    private onBtReset(): void {
         this.onBtClear();
         this.onBtApply();
     }
@@ -269,7 +268,7 @@ export abstract class ProvidedFilter extends Component implements IFilterComp {
         return true;
     }
 
-    protected onBtApply(afterFloatingFilter = false, afterDataChange = false) {
+    protected onBtApply(afterFloatingFilter = false, afterDataChange = false): void {
         if (this.applyModel()) {
             // the floating filter uses 'afterFloatingFilter' info, so it doesn't refresh after filter changed if change
             // came from floating filter
@@ -279,16 +278,22 @@ export abstract class ProvidedFilter extends Component implements IFilterComp {
         const { closeOnApply } = this.providedFilterParams;
 
         // only close if an apply button is visible, otherwise we'd be closing every time a change was made!
-        if (closeOnApply && !afterFloatingFilter && this.hidePopup && this.applyActive) {
-            this.hidePopup();
-            this.hidePopup = null;
+        if (closeOnApply && !afterFloatingFilter && this.applyActive) {
+            this.close();
         }
     }
 
-    public onNewRowsLoaded() {
+    public onNewRowsLoaded(): void {
         if (!this.newRowsActionKeep) {
             this.resetUiToDefaults().then(() => this.appliedModel = null);
         }
+    }
+
+    public close(): void {
+        if (!this.hidePopup) { return; }
+
+        this.hidePopup();
+        this.hidePopup = null;
     }
 
     // called by set filter
@@ -339,7 +344,7 @@ export abstract class ProvidedFilter extends Component implements IFilterComp {
         return params.buttons && params.buttons.indexOf('apply') >= 0;
     }
 
-    public destroy() {
+    public destroy(): void {
         this.hidePopup = null;
 
         super.destroy();
