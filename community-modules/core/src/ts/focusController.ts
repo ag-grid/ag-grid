@@ -13,8 +13,8 @@ import { HeaderRowComp } from "./headerRendering/headerRowComp";
 import { AbstractHeaderWrapper } from "./headerRendering/header/abstractHeaderWrapper";
 import { HeaderPosition } from "./headerRendering/header/headerPosition";
 import { RowPositionUtils } from "./entities/rowPosition";
-import { HeaderController } from "./headerRendering/header/headerController";
 import { IRangeController } from "./interfaces/iRangeController";
+import { RowRenderer } from "./rendering/rowRenderer";
 import { _ } from "./utils";
 
 @Bean('focusController')
@@ -22,9 +22,9 @@ export class FocusController extends BeanStub {
 
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('columnController') private columnController: ColumnController;
-    @Autowired('headerController') private headerController: HeaderController;
     @Autowired('columnApi') private columnApi: ColumnApi;
     @Autowired('gridApi') private gridApi: GridApi;
+    @Autowired('rowRenderer') private rowRenderer: RowRenderer;
     @Autowired('rowPositionUtils') private rowPositionUtils: RowPositionUtils;
     @Optional('rangeController') private rangeController: IRangeController;
 
@@ -82,11 +82,7 @@ export class FocusController extends BeanStub {
     // grid cell will still be focused as far as the grid is concerned,
     // however the browser focus will have moved somewhere else.
     public getFocusCellToUseAfterRefresh(): CellPosition {
-        if (this.gridOptionsWrapper.isSuppressFocusAfterRefresh()) {
-            return null;
-        }
-
-        if (!this.focusedCellPosition) {
+        if (this.gridOptionsWrapper.isSuppressFocusAfterRefresh() || !this.focusedCellPosition) {
             return null;
         }
 
@@ -244,6 +240,8 @@ export class FocusController extends BeanStub {
         }
 
         if (!_.exists(rowIndex)) { return false; }
+
+        this.rowRenderer.ensureCellVisible({ rowIndex, column, rowPinned });
 
         this.setFocusedCell(rowIndex, column, _.makeNull(rowPinned), true);
 
