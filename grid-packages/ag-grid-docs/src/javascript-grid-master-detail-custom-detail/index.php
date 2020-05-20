@@ -6,83 +6,95 @@ $pageGroup = "feature";
 include '../documentation-main/documentation_header.php';
 ?>
 
-<h1 class="heading-enterprise">Custom Detail Panel</h1>
+<h1 class="heading-enterprise">Custom Detail</h1>
 
 <p class="lead">
-    This section describes...
+    When a Master Row is expanded, the grid uses the default Detail Cell Renderer to create and display
+    the Detail Grid inside one row of the Master Grid. You can provide a customer Detail Cell Renderer
+    to display something else if the default Detail Cell Renderer doesn't do what you want.
 </p>
 
 <p>
-    Cell Renderer Params Properties - pinned
+    Configure the grid to use a customer Detail Cell Renderer using the grid property <code>detailCellRenderer</code>.
 </p>
-
-
-<h2>Providing a Custom Detail Cell Renderer</h2>
-
-<p>
-    The previous section described how to override the detail template used in the default Cell Renderer, however it is also
-    possible to provide a custom detail <a href="../javascript-grid-cell-rendering-components/">Cell Renderer Component</a>.
-    This approach provides more flexibility but is more difficult to implement as you have to provide your
-    own custom detail cell renderer. Use this approach if you want to add additional functionality to the
-    detail panel that cannot be done by simply changing the template.
-</p>
-
-<p>
-    To supply a custom detail Cell Renderer instead of using the default use: <code>gridOptions.detailCellRenderer</code>
-</p>
-
-<p>
-    The following examples demonstrate custom Cell Renderer components for the detail row with and without a grid.
-</p>
-
-<p>
-    By the very nature of a custom detail cell renderer it can contain zero or many grid instances. For this reason if
-    you need the master grid to reference it's detail grids you will have to register them manually.
-</p>
-
-<p>
-    When the detail grid is initialised, register it via <code>masterGridApi.addDetailGridInfo()</code> like so:
-</p>
-
 <snippet>
-    onGridReady(params) {
-    var detailGridId = "detail_" + masterRowIndex;
+gridOptions = {
 
-    var detailGridInfo = {
-    id: detailGridId,
-    api: params.api,
-    columnApi: params.columnApi
-    };
+    // normally you leave this blank, means the grid
+    // will use the default Detail Cell Renderer
+    detailCellRenderer: 'myCellRendererComp',
 
-    this.masterGridApi.addDetailGridInfo(detailGridId, detailGridInfo);
-    }
+    // these are the parameters that will get sent to the Detail Cell Renderer,
+    // in this case, to an instance of your MyCellRendererComp
+    detailCellRendererParams: {...},
+}
 </snippet>
 
 <p>
-    And in a similar way unregister it when the detail cell renderer is destroyed using:
-</p>
-
-<snippet>
-    var detailGridId = "detail_" + masterRowIndex;
-    this.masterGridApi.removeDetailGridInfo(detailGridId);
-</snippet>
-
-<p>
-    For details on how to access the detail grid api see:
-    <a href="../javascript-grid-master-detail/#accessing-detail-grid-api">Accessing Detail Grid API</a>.
+    The Detail Cell Renderer should be a <a href="../javascript-grid-cell-rendering-components/">Cell Renderer</a>
+    component. See <a href="../javascript-grid-cell-rendering-components/">Cell Renderer</a> on how to build
+    and register a Cell Renderer with the grid.
 </p>
 
 <p>
-    This example demonstrates how to embed a grid into the detail row using a custom Cell Renderer component:
+    The following examples demonstrate minimalist custom Detail Cell Renderer. Note that where a Detail Grid would
+    normally appear, only the message "My Customer Detail" is shown.
+</p>
+
+<?= grid_example('Simple Detail Cell Renderer', 'simple-custom-detail', 'generated', ['enterprise' => true, 'exampleHeight' => 545, 'modules'=>['clientside', 'masterdetail', 'menu', 'columnpanel']]) ?>
+
+<h2>Custom Detail With Form</h2>
+
+<p>
+    It is not mandatory to display a grid inside the detail section. As you are providing a custom component,
+    there are no restrictions as to what can appear inside the custom component.
+</p>
+<p>
+    This example shows a custom Detail Cell Renderer that uses a form rather than a grid.
+</p>
+
+<?= grid_example('Custom Detail Cell Renderer with Form', 'custom-detail-with-form', 'generated', ['enterprise' => true, 'modules'=>['clientside', 'masterdetail', 'menu', 'columnpanel']]) ?>
+
+<h2>Custom Detail With Grid</h2>
+
+<p>
+    It is possible to provide a Customer Detail Grid that does a similar job to the default Detail Cell Renderer.
+    This example demonstrates displaying a customer grid as the detail.
 </p>
 
 <?= grid_example('Custom Detail Cell Renderer with Grid', 'custom-detail-with-grid', 'generated', ['enterprise' => true, 'exampleHeight' => 545, 'modules'=>['clientside', 'masterdetail', 'menu', 'columnpanel']]) ?>
 
 <p>
-    This example demonstrates a custom Cell Renderer Component that uses a form rather than a grid:
+    In order for the Detail Grid's API to be available via the Master Grid as explained in
+    <a href="../javascript-grid-master-detail-custom-detail/#accessing-detail-grids">Accessing Detail Grids</a>,
+    a Grid Info object needs to be registered with the Master Grid.
 </p>
 
-<?= grid_example('Custom Detail Cell Renderer with Form', 'custom-detail-with-form', 'generated', ['enterprise' => true, 'modules'=>['clientside', 'masterdetail', 'menu', 'columnpanel']]) ?>
+<p>
+    When the Detail Grid is created, register it via <code>masterGridApi.addDetailGridInfo()</code> and
+    when the Detail Grid is destroyed, de-register it via <code>masterGridApi.removeDetailGridInfo()</code>.
+</p>
 
+<snippet>
+
+// Register with Master Grid
+
+    var detailGridId = 'detail_' + ;
+
+    // Create Grid Info object
+    var detailGridInfo = {
+        id: myUniqueId,
+        api: params.api,
+        columnApi: params.columnApi
+    };
+
+    // Register
+    this.masterGridApi.addDetailGridInfo(myUniqueId, detailGridInfo);
+
+
+// De-register with Master Grid
+    this.masterGridApi.removeDetailGridInfo(myUniqueId);
+
+</snippet>
 
 <?php include '../documentation-main/documentation_footer.php';?>

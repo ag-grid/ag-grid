@@ -1,23 +1,19 @@
-function DetailCellRenderer() {
-  this.masterGridApi = null;
-  this.masterRowIndex = null;
-}
+function DetailCellRenderer() {}
 
 DetailCellRenderer.prototype.init = function(params) {
+  this.params = params;
+
   // trick to convert string of HTML into DOM object
   var eTemp = document.createElement('div');
-  eTemp.innerHTML = this.getTemplate(params.data);
+  eTemp.innerHTML = this.getTemplate();
   this.eGui = eTemp.firstElementChild;
 
-  this.masterGridApi = params.api;
-  this.masterRowIndex = params.rowIndex;
-
-  this.setupDetailGrid(params.data.callRecords, params.api, params.rowIndex);
+  this.setupDetailGrid(params.data.callRecords, params.api, params.node.id);
 };
 
-DetailCellRenderer.prototype.setupDetailGrid = function(callRecords, masterGridApi, masterRowIndex) {
+DetailCellRenderer.prototype.setupDetailGrid = function() {
   var eDetailGrid = this.eGui.querySelector('.full-width-grid');
-  new agGrid.Grid(eDetailGrid, {
+  var detailGridOptions = {
     columnDefs: [
       { field: 'callId' },
       { field: 'direction' },
@@ -29,23 +25,28 @@ DetailCellRenderer.prototype.setupDetailGrid = function(callRecords, masterGridA
       flex: 1,
       minWidth: 150
     },
-    rowData: callRecords,
-    onGridReady: function(params) {
-      var detailGridId = "detail_" + masterRowIndex;
+    rowData: this.params.data.callRecords
+  };
 
-      var gridInfo = {
-        id: detailGridId,
-        api: params.api,
-        columnApi: params.columnApi
-      };
+  new agGrid.Grid(eDetailGrid, detailGridOptions);
 
-      console.log("adding detail grid info with id: ", detailGridId);
-      masterGridApi.addDetailGridInfo(detailGridId, gridInfo);
-    }
-  });
+  this.detailGridApi = detailGridOptions.api;
+
+  var masterGridApi = this.params.api;
+  var rowId = this.params.node.id;
+
+  var gridInfo = {
+    id: rowId,
+    api: detailGridOptions.api,
+    columnApi: detailGridOptions.columnApi
+  };
+
+  console.log("adding detail grid info with id: ", rowId);
+  masterGridApi.addDetailGridInfo(rowId, gridInfo);
 };
 
-DetailCellRenderer.prototype.getTemplate = function(data) {
+DetailCellRenderer.prototype.getTemplate = function() {
+  var data = this.params.data;
   var template =
     '<div class="full-width-panel">' +
     '  <div class="full-width-details">' +
@@ -63,11 +64,11 @@ DetailCellRenderer.prototype.getGui = function() {
 };
 
 DetailCellRenderer.prototype.destroy = function() {
-  var detailGridId = "detail_" + this.masterRowIndex;
+  var rowId = this.params.node.id;
+  console.log("removing Grid Info with id: " + rowId);
+  var masterGridApi = this.params.api;
+  masterGridApi.removeDetailGridInfo(rowId);
 
-  console.log("destroying detail grid with id: ", detailGridId);
-  this.masterGridApi.getDetailGridInfo(detailGridId).api.destroy();
-
-  console.log("removing detail grid info with id: ", detailGridId);
-  this.masterGridApi.removeDetailGridInfo(detailGridId);
+  console.log("destroying detail grid");
+  this.detailGridApi.destroy();
 };

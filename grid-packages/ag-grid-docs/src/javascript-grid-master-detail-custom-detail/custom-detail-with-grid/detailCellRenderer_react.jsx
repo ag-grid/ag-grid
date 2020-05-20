@@ -25,7 +25,7 @@ export default class DetailCellRenderer extends Component {
       rowData: props.data.callRecords
     };
 
-    this.state.rowIndex = props.rowIndex;
+    this.state.rowId = props.node.id;
     this.state.masterGridApi = props.api;
   }
 
@@ -43,7 +43,6 @@ export default class DetailCellRenderer extends Component {
           defaultColDef={this.state.defaultColDef}
           rowData={this.state.rowData}
           modules={AllModules}
-          debug={true}
           onGridReady={this.onGridReady}
         />
       </div>
@@ -51,28 +50,21 @@ export default class DetailCellRenderer extends Component {
   }
 
   onGridReady = params => {
-    let detailGridId = this.createDetailGridId();
 
     let gridInfo = {
-      id: detailGridId,
+      id: this.state.rowId,
       api: params.api,
       columnApi: params.columnApi
     };
 
-    console.log("adding detail grid info with id: ", detailGridId);
-    this.state.masterGridApi.addDetailGridInfo(detailGridId, gridInfo);
+    console.log("adding detail grid info with id: ", this.state.rowId);
+    this.state.masterGridApi.addDetailGridInfo(this.state.rowId, gridInfo);
   };
 
   componentWillUnmount = () => {
-    let detailGridId = this.createDetailGridId();
+    // the detail grid is automatically destroyed as it is a React component
 
-    // ag-Grid is automatically destroyed
-
-    console.log("removing detail grid info with id: ", detailGridId);
-    this.state.masterGridApi.removeDetailGridInfo(detailGridId);
+    console.log("removing detail grid info with id: ", this.state.rowId);
+    this.state.masterGridApi.removeDetailGridInfo(this.state.rowId);
   };
-
-  createDetailGridId = () => {
-    return "detail_" + this.state.rowIndex;
-  }
 }

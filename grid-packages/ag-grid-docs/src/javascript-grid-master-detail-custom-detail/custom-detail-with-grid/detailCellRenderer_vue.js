@@ -32,7 +32,7 @@ export default Vue.extend({
         };
     },
     beforeMount() {
-        this.gridOptions = {debug: true};
+        this.gridOptions = {};
         this.colDefs = [
             {field: 'callId'},
             {field: 'direction'},
@@ -47,29 +47,23 @@ export default Vue.extend({
     },
     mounted() {
         this.rowData = this.params.data.callRecords;
-        this.rowIndex = this.params.rowIndex;
+        this.rowId = this.params.node.id;
         this.masterGridApi = this.params.api;
     },
     beforeDestroy() {
-      let detailGridId = "detail_" + this.rowIndex;
-
-      // ag-Grid is automatically destroyed
-
-      console.log("removing detail grid info with id: ", detailGridId);
-      this.masterGridApi.removeDetailGridInfo(detailGridId);
+      console.log("removing detail grid info with id: ", this.rowId);
+      this.masterGridApi.removeDetailGridInfo(this.rowId);
     },
     methods: {
       onGridReady(params) {
-        let detailGridId = "detail_" + this.rowIndex;
-
         let gridInfo = {
-          id: detailGridId,
+          id: this.rowId,
           api: params.api,
           columnApi: params.columnApi
         };
 
-        console.log("adding detail grid info with id: ", detailGridId);
-        this.masterGridApi.addDetailGridInfo(detailGridId, gridInfo);
+        console.log("adding detail grid info with id: ", this.rowId);
+        this.masterGridApi.addDetailGridInfo(this.rowId, gridInfo);
       }
     }
 });
