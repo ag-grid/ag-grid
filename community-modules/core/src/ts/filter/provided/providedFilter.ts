@@ -1,6 +1,5 @@
 import { Component } from '../../widgets/component';
 import { ProvidedFilterModel, IDoesFilterPassParams, IFilterComp, IFilterParams } from '../../interfaces/iFilter';
-import { RefSelector } from '../../widgets/componentAnnotations';
 import { Autowired, PostConstruct } from '../../context/context';
 import { GridOptionsWrapper } from '../../gridOptionsWrapper';
 import { IRowModel } from '../../interfaces/iRowModel';
@@ -35,8 +34,6 @@ export abstract class ProvidedFilter extends Component implements IFilterComp {
 
     private applyActive = false;
     private hidePopup: () => void = null;
-
-    @RefSelector('eFilterBodyWrapper') protected eFilterBodyWrapper: HTMLElement;
 
     @Autowired('gridOptionsWrapper') protected gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('rowModel') protected rowModel: IRowModel;
@@ -83,7 +80,7 @@ export abstract class ProvidedFilter extends Component implements IFilterComp {
     protected postConstruct(): void {
         const templateString = /* html */`
             <div>
-                <div class="ag-filter-body-wrapper ag-${this.getCssIdentifier()}-body-wrapper" ref="eFilterBodyWrapper">
+                <div class="ag-filter-body-wrapper ag-${this.getCssIdentifier()}-body-wrapper">
                     ${this.createBodyTemplate()}
                 </div>
             </div>`;
@@ -147,7 +144,7 @@ export abstract class ProvidedFilter extends Component implements IFilterComp {
 
         new Set(buttons).forEach(button => creators.get(button)());
 
-        this.eFilterBodyWrapper.parentElement.appendChild(eButtonsPanel);
+        this.getGui().appendChild(eButtonsPanel);
     }
 
     private static checkForDeprecatedParams(params: IProvidedFilterParams): void {
@@ -232,13 +229,21 @@ export abstract class ProvidedFilter extends Component implements IFilterComp {
      * Applies changes made in the UI to the filter, and returns true if the model has changed.
      */
     public applyModel(): boolean {
+        const newModel = this.getModelFromUi();
+
+        if (!this.isModelValid(newModel)) { return false; }
+
         const previousModel = this.appliedModel;
 
-        this.appliedModel = this.getModelFromUi();
+        this.appliedModel = newModel;
 
         // models can be same if user pasted same content into text field, or maybe just changed the case
         // and it's a case insensitive filter
-        return !this.areModelsEqual(this.appliedModel, previousModel);
+        return !this.areModelsEqual(previousModel, newModel);
+    }
+
+    protected isModelValid(model: ProvidedFilterModel): boolean {
+        return true;
     }
 
     protected onBtApply(afterFloatingFilter = false, afterDataChange = false) {

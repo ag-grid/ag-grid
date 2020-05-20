@@ -13,24 +13,17 @@ class TestFilter extends ProvidedFilter {
     constructor(params: IProvidedFilterParams, rowModelType: string = Constants.ROW_MODEL_TYPE_CLIENT_SIDE) {
         super();
 
+        const eGui = mock<HTMLElement>('appendChild');
+        this.setGui(eGui);
+
         const gridOptionsWrapper = mock<GridOptionsWrapper>('getLocaleTextFunc');
-
         gridOptionsWrapper.getLocaleTextFunc.mockReturnValue(() => (_: string, defaultValue: string) => defaultValue);
-
         this.gridOptionsWrapper = gridOptionsWrapper;
 
-        const parentElement = document.createElement('div');
-        const eFilterBodyWrapper = document.createElement('div');
-
-        parentElement.appendChild(eFilterBodyWrapper);
-
-        this.eFilterBodyWrapper = eFilterBodyWrapper;
-
         const rowModel = mock<IRowModel>('getType');
-
         rowModel.getType.mockReturnValue(rowModelType);
-
         this.rowModel = rowModel;
+
         this.setParams(params);
     }
 

@@ -185,7 +185,7 @@ export class Component extends BeanStub {
             this.annotatedGuiListeners = [];
         }
 
-        listenerMethods.forEach( meta => {
+        listenerMethods.forEach(meta => {
             const element = this.getRefElement(meta.ref);
             if (!element) { return; }
             const listener = (this as any)[meta.methodName].bind(this);
@@ -200,7 +200,7 @@ export class Component extends BeanStub {
 
         if (!listenerMetas) { return; }
 
-        listenerMetas.forEach( meta => {
+        listenerMetas.forEach(meta => {
 
             const listener = (this as any)[meta.methodName].bind(this);
             this.addManagedListener(this.eventService, meta.eventName, listener);
@@ -244,7 +244,7 @@ export class Component extends BeanStub {
         }
 
         _.forEach(this.annotatedGuiListeners, e => {
-            e.element.removeEventListener(e.eventName, e.listener)
+            e.element.removeEventListener(e.eventName, e.listener);
         });
 
         this.annotatedGuiListeners = [];

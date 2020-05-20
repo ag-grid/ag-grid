@@ -296,18 +296,24 @@ export class SetFilter extends ProvidedFilter {
     public applyModel(): boolean {
         const result = super.applyModel();
 
-        // keep the appliedModelValuesMapped in sync with the applied model
-        const appliedModel = this.getModel() as SetFilterModel;
+        if (result) {
+            // keep appliedModelValues in sync with the applied model
+            const appliedModel = this.getModel() as SetFilterModel;
 
-        if (appliedModel) {
-            this.appliedModelValues = {};
+            if (appliedModel) {
+                this.appliedModelValues = {};
 
-            _.forEach(appliedModel.values, value => this.appliedModelValues[value] = true);
-        } else {
-            this.appliedModelValues = null;
+                _.forEach(appliedModel.values, value => this.appliedModelValues[value] = true);
+            } else {
+                this.appliedModelValues = null;
+            }
         }
 
         return result;
+    }
+
+    protected isModelValid(model: SetFilterModel): boolean {
+        return this.setFilterParams.excelMode ? model == null || model.values.length > 0 : true;
     }
 
     public doesFilterPass(params: IDoesFilterPassParams): boolean {
