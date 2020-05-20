@@ -246,5 +246,4 @@ gulp.task('release', series('generate-examples', 'process-src', 'bundle-site-rel
 gulp.task('default', series('release'));
 gulp.task('serve-dist', serveDist);
 
-gulp.task('serve',        require('./dev-server').bind(null, true,  false, false, false));
-gulp.task('serve-speedy', require('./dev-server-new'));
+gulp.task('serve',        require('./dev-server'));
