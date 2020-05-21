@@ -115,16 +115,7 @@ export class SetFilter extends ProvidedFilter {
     }
 
     public setParams(params: ISetFilterParams): void {
-        if (params.excelMode === 'windows') {
-            if (!params.buttons) {
-                // set up default buttons for Windows Excel Mode
-                params.buttons = ['apply', 'cancel'];
-            }
-
-            if (params.closeOnApply == null) {
-                params.closeOnApply = true;
-            }
-        }
+        this.applyExcelModeOptions(params);
 
         super.setParams(params);
 
@@ -151,6 +142,23 @@ export class SetFilter extends ProvidedFilter {
 
         if (syncValuesAfterDataChange) {
             this.addEventListenersForDataChanges();
+        }
+    }
+
+    private applyExcelModeOptions(params: ISetFilterParams): void {
+        if (params.excelMode === 'windows') {
+            if (!params.buttons) {
+                // set up default buttons for Windows Excel Mode
+                params.buttons = ['apply', 'cancel'];
+            }
+
+            if (params.closeOnApply == null) {
+                params.closeOnApply = true;
+            }
+        } else if (params.excelMode === 'mac') {
+            if (params.applyMiniFilterWhileTyping == null) {
+                params.applyMiniFilterWhileTyping = true;
+            }
         }
     }
 
@@ -400,13 +408,27 @@ export class SetFilter extends ProvidedFilter {
     private onMiniFilterInput() {
         if (this.valueModel.setMiniFilter(this.eMiniFilter.getValue())) {
             if (this.setFilterParams.applyMiniFilterWhileTyping) {
-                this.applyMiniFilter();
+                this.filterOnAllVisibleValues();
             } else {
-                this.refresh();
+                this.updateUiAfterMiniFilterChange();
             }
 
             this.updateSelectAllText();
         }
+    }
+
+    private updateUiAfterMiniFilterChange(): void {
+        if (this.setFilterParams.excelMode) {
+            if (this.valueModel.getMiniFilter() == null) {
+                // reset to active model
+                this.setModel(this.getModel());
+                this.onUiChanged();
+            } else {
+                this.valueModel.selectAllDisplayed(true);
+            }
+        }
+
+        this.refresh();
     }
 
     private updateSelectAllText() {
@@ -420,11 +442,16 @@ export class SetFilter extends ProvidedFilter {
 
     private onMiniFilterKeyPress(e: KeyboardEvent): void {
         if (_.isKeyPressed(e, Constants.KEY_ENTER)) {
-            this.applyMiniFilter();
+            if (this.setFilterParams.excelMode === 'windows') {
+                // in Windows mode, hitting Enter is the same as pressing the Apply button
+                this.onBtApply();
+            } else {
+                this.filterOnAllVisibleValues();
+            }
         }
     }
 
-    private applyMiniFilter(): void {
+    private filterOnAllVisibleValues(): void {
         this.valueModel.selectAllDisplayed(true);
         this.refresh();
         this.onUiChanged(true);
@@ -459,9 +486,8 @@ export class SetFilter extends ProvidedFilter {
     }
 
     public setMiniFilter(newMiniFilter: string): void {
-        this.valueModel.setMiniFilter(newMiniFilter);
-        this.eMiniFilter.setValue(this.valueModel.getMiniFilter());
-        this.updateSelectAllText();
+        this.eMiniFilter.setValue(newMiniFilter);
+        this.onMiniFilterInput();
     }
 
     public getMiniFilter() {

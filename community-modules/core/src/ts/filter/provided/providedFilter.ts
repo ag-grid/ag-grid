@@ -227,7 +227,6 @@ export abstract class ProvidedFilter extends Component implements IFilterComp {
 
     private onBtCancel(): void {
         this.setModel(this.getModel());
-        this.updateUiVisibility();
         this.onUiChanged();
 
         if (this.providedFilterParams.closeOnApply) {
@@ -236,10 +235,7 @@ export abstract class ProvidedFilter extends Component implements IFilterComp {
     }
 
     private onBtClear(): void {
-        this.resetUiToDefaults().then(() => {
-            this.updateUiVisibility();
-            this.onUiChanged();
-        });
+        this.resetUiToDefaults().then(() => this.onUiChanged());
     }
 
     private onBtReset(): void {
@@ -301,7 +297,7 @@ export abstract class ProvidedFilter extends Component implements IFilterComp {
         return this.newRowsActionKeep;
     }
 
-    protected onUiChanged(afterFloatingFilter = false): void {
+    protected onUiChanged(applyChangesImmediately = false): void {
         this.updateUiVisibility();
         this.providedFilterParams.filterModifiedCallback();
 
@@ -311,8 +307,7 @@ export abstract class ProvidedFilter extends Component implements IFilterComp {
             setDisabled(this.getRefElement('applyFilterButton'), !isValid);
         }
 
-        if (afterFloatingFilter) {
-            // floating filter changes are always applied immediately
+        if (applyChangesImmediately) {
             this.onBtApply(true);
         } else if (!this.applyActive) {
             // if no apply button, we apply (but debounce for time delay)
