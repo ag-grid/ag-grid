@@ -108,8 +108,6 @@ export function setDisabled(element: HTMLElement, disabled: boolean) {
     } else {
         element.removeAttribute(attributeName);
     }
-
-    addOrRemoveCssClass(element, 'ag-disabled', disabled);
 }
 
 export function isElementChildOfClass(element: HTMLElement, cls: string, maxNest?: number): boolean {

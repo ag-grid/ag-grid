@@ -11,7 +11,6 @@ import {
     GridOptionsWrapper,
     EventService,
     VirtualList,
-    FieldElement,
 } from '@ag-grid-community/core';
 import { mock } from '../test-utils/mock';
 import { SetFilter } from './setFilter';
@@ -54,13 +53,13 @@ function createSetFilter(setValueModel?: SetValueModel, filterParams?: any): Set
 
     const eMiniFilter = mock<AgInputTextField>('getGui', 'setValue', 'onValueChange', 'getInputElement');
     eMiniFilter.getGui.mockImplementation(() => mock<HTMLElement>());
-    eMiniFilter.getInputElement.mockImplementation(() => mock<FieldElement>('addEventListener'));
+    eMiniFilter.getInputElement.mockImplementation(() => mock<HTMLInputElement>('addEventListener'));
 
     const eGui = mock<HTMLElement>('querySelector', 'appendChild');
     eGui.querySelector.mockImplementation(() => mock<HTMLElement>('appendChild', 'addEventListener'));
 
     const eSelectAll = mock<AgCheckbox>('setValue', 'getInputElement');
-    eSelectAll.getInputElement.mockImplementation(() => mock<FieldElement>('addEventListener'));
+    eSelectAll.getInputElement.mockImplementation(() => mock<HTMLInputElement>('addEventListener'));
 
     const eSelectAllLabel = mock<HTMLElement>();
 

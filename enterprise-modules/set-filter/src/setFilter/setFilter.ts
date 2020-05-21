@@ -449,9 +449,14 @@ export class SetFilter extends ProvidedFilter {
 
     private onMiniFilterKeyPress(e: KeyboardEvent): void {
         if (_.isKeyPressed(e, Constants.KEY_ENTER)) {
-            if (this.setFilterParams.excelMode === 'windows') {
-                // in Windows mode, hitting Enter is the same as pressing the Apply button
+            if (this.setFilterParams.excelMode) {
+                // in Excel Mode, hitting Enter is the same as pressing the Apply button
                 this.onBtApply();
+
+                if (this.setFilterParams.excelMode === 'mac') {
+                    // in Mac version, select all the input text
+                    this.eMiniFilter.getInputElement().select();
+                }
             } else {
                 this.filterOnAllVisibleValues();
             }
