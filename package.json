@@ -52,6 +52,7 @@
   },
   "devDependencies": {
     "archiver": "^3.0.0",
+    "command-line-args": "^5.1.1",
     "glob": "^7.1.6",
     "inquirer": "^7.0.0",
     "lerna": "^3.18.3",
