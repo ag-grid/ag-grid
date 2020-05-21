@@ -273,7 +273,7 @@ export class Selection<G extends Node | EnterNode, P extends Node | EnterNode, G
             if (Node.isNode(node)) {
                 const parent = node.parent;
                 if (parent) {
-                    parent.removeChild(node);
+                    parent.removeChild(node as unknown as Node);
                 }
             }
         });
