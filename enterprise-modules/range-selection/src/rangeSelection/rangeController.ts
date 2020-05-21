@@ -479,7 +479,7 @@ export class RangeController extends BeanStub implements IRangeController {
         const lastRow = this.rowPositionUtils.before(startRow, endRow) ? endRow : startRow;
 
         const isRightColumn = allColumns.indexOf(cell.column) === _.last(allPositions);
-        const isLastRow = cell.rowIndex === lastRow.rowIndex && cell.rowPinned === lastRow.rowPinned;
+        const isLastRow = cell.rowIndex === lastRow.rowIndex && _.makeNull(cell.rowPinned) === _.makeNull(lastRow.rowPinned);
 
         return isRightColumn && isLastRow;
     }

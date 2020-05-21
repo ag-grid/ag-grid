@@ -1312,6 +1312,15 @@ export class RowRenderer extends BeanStub {
 
         if (success) {
             keyboardEvent.preventDefault();
+        } else if (keyboardEvent.shiftKey) {
+            const cellPosition = previousRenderedCell.getCellPosition();
+            if (cellPosition.rowIndex === 0) {
+                keyboardEvent.preventDefault();
+                this.focusController.focusHeaderPosition({
+                    headerRowIndex: this.beans.headerController.getHeaderRowCount() - 1,
+                    column: _.last(this.columnController.getAllDisplayedColumns())
+                });
+            }
         }
     }
 
