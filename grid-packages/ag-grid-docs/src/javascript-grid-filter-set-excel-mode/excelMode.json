@@ -13,7 +13,7 @@
             "macExcel": false
         },
         {
-            "behaviour": "Apply filter immediately while making changes",
+            "behaviour": "Apply filter immediately when a value is selected/deselected",
             "agGrid": true,
             "windowsExcel": false,
             "macExcel": true
@@ -25,25 +25,31 @@
             "macExcel": null
         },
         {
-            "behaviour": "Search for values with matching text",
+            "behaviour": "Type into search box to show values with matching text",
             "agGrid": true,
             "windowsExcel": true,
             "macExcel": true
         },
         {
-            "behaviour": "Press <code>Enter</code> on a search to apply filter using all visible values",
+            "behaviour": "Press <code>Enter</code> in the search box to apply filter using all visible values",
             "agGrid": true,
             "windowsExcel": false,
             "macExcel": false
         },
         {
-            "behaviour": "Press <code>Enter</code> on a search to apply filter using selected visible values",
+            "behaviour": "Press <code>Enter</code> in the search box to apply filter using selected visible values",
             "agGrid": false,
             "windowsExcel": true,
             "macExcel": true
         },
         {
-            "behaviour": "Press <code>Enter</code> on a search to select all search text",
+            "behaviour": "Press <code>Enter</code> in the search box to select all search text",
+            "agGrid": false,
+            "windowsExcel": false,
+            "macExcel": true
+        },
+        {
+            "behaviour": "Apply filter immediately with all visible options while typing in search box",
             "agGrid": false,
             "windowsExcel": false,
             "macExcel": true
@@ -55,13 +61,13 @@
             "macExcel": null
         },
         {
-            "behaviour": "Clearing the search restores the applied filter state",
+            "behaviour": "Restore the applied filter state when the search box is cleared",
             "agGrid": false,
             "windowsExcel": true,
             "macExcel": false
         },
         {
-            "behaviour": "Clearing the search removes any active filter",
+            "behaviour": "Remove any active filter when the search box is cleared",
             "agGrid": false,
             "windowsExcel": false,
             "macExcel": true
@@ -73,19 +79,19 @@
             "macExcel": false
         },
         {
-            "behaviour": "Close filter popup when Apply button is clicked",
+            "behaviour": "Close filter popup when the Apply button is clicked",
             "agGrid": false,
             "windowsExcel": true,
             "macExcel": null
         },
         {
-            "behaviour": "Can combine selected values from different searches before applying",
+            "behaviour": "Combine selected values from different searches before applying",
             "agGrid": true,
             "windowsExcel": false,
             "macExcel": false
         },
         {
-            "behaviour": "Reset search text when filter is closed",
+            "behaviour": "Clear search box when the filter is closed",
             "agGrid": false,
             "windowsExcel": true,
             "macExcel": true
@@ -106,14 +112,20 @@
             "macExcel": true
         },
         {
-            "behaviour": "Closing the popup discards un-applied changes",
+            "behaviour": "Discard un-applied changes when the popup is closed",
             "agGrid": false,
             "windowsExcel": true,
-            "macExcel": true
+            "macExcel": null
         },
         {
-            "behaviour": "Clicking <code>Cancel</code> discards un-applied changes",
+            "behaviour": "Discard un-applied changes when the Cancel button is clicked",
             "agGrid": true,
+            "windowsExcel": true,
+            "macExcel": null
+        },
+        {
+            "behaviour": "Close the popup when the Cancel button is clicked",
+            "agGrid": false,
             "windowsExcel": true,
             "macExcel": null
         }

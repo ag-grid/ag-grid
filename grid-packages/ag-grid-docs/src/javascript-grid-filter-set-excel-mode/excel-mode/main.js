@@ -26,7 +26,8 @@ var gridOptions = {
         flex: 1,
         minWidth: 200,
         resizable: true,
-    }
+    },
+    sideBar: ['filters'],
 };
 
 var animals = ['Monkey', 'Lion', 'Elephant', 'Tiger', 'Giraffe', 'Antelope', 'Otter', 'Penguin', null];
