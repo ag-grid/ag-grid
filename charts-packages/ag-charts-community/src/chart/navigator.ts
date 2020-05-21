@@ -1,5 +1,6 @@
 import { RangeSelector } from "./shapes/rangeSelector";
-import { CartesianChart, ChartAxisDirection } from "../main";
+import { CartesianChart } from "../chart/cartesianChart";
+import { ChartAxisDirection } from "../chart/chartAxis";
 import { BBox } from "../scene/bbox";
 import { RangeMask } from "./shapes/rangeMask";
 import { RangeHandle } from "./shapes/rangeHandle";
