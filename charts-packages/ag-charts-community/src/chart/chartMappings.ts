@@ -1,5 +1,5 @@
 import { Padding } from "../util/padding";
-import { CartesianChart, Navigator } from "./cartesianChart";
+import { CartesianChart } from "./cartesianChart";
 import { NumberAxis } from "./axis/numberAxis";
 import { CategoryAxis } from "./axis/categoryAxis";
 import { LineSeries } from "./series/cartesian/lineSeries";
@@ -15,6 +15,7 @@ import { Caption } from "../caption";
 import { DropShadow } from "../scene/dropShadow";
 import { Legend, LegendPosition } from "./legend";
 import palette from "./palettes";
+import { Navigator, NavigatorMask, NavigatorHandle } from "./navigator";
 
 /*
     This file defines the specs for creating different kinds of charts, but
@@ -407,6 +408,27 @@ const mappings = {
                     height: 30,
                     min: 0,
                     max: 1
+                }
+            },
+            mask: {
+                meta: {
+                    constructor: NavigatorMask,
+                    defaults: {
+                        fill: '#f2f2f2',
+                        stroke: '#999999',
+                        strokeWidth: 1,
+                        fillOpacity: 0.2
+                    }
+                }
+            },
+            handle: {
+                meta: {
+                    constructor: NavigatorHandle,
+                    defaults: {
+                        fill: '#f2f2f2',
+                        stroke: '#999999',
+                        strokeWidth: 1
+                    }
                 }
             }
         }

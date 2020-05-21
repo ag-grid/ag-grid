@@ -19,7 +19,7 @@ export class RangeSelector extends Group {
 
     readonly minHandle = new RangeHandle();
     readonly maxHandle = new RangeHandle();
-    private mask = (() => {
+    readonly mask = (() => {
         const { x, y, width, height, min, max } = RangeSelector.defaults;
         const mask = new RangeMask();
 
