@@ -23,7 +23,7 @@ export type ColumnFilterResults = { [id: string]: boolean };
 
 export class PrimaryColsListPanel extends Component {
 
-    public static TEMPLATE = /* html */ `<div class="ag-column-select-list"></div>`;
+    public static TEMPLATE = /* html */ `<div class="ag-column-select-list" tabindex="0"></div>`;
 
     @Autowired('columnController') private columnController: ColumnController;
     @Autowired('toolPanelColDefService') private colDefService: ToolPanelColDefService;
