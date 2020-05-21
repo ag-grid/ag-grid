@@ -109,12 +109,9 @@ export class SetFilterListItem extends Component {
         if (cellRendererPromise == null) {
             const valueToRender = params.valueFormatted == null ? params.value : params.valueFormatted;
 
-            if (valueToRender == null) {
-                const localeTextFunc = this.gridOptionsWrapper.getLocaleTextFunc();
-                eTarget.innerText = `(${localeTextFunc('blanks', 'Blanks')})`;
-            } else {
-                eTarget.innerText = valueToRender;
-            }
+            eTarget.innerText = valueToRender == null ?
+                `(${this.gridOptionsWrapper.getLocaleTextFunc()('blanks', 'Blanks')})` :
+                valueToRender;
 
             return;
         }
@@ -122,7 +119,7 @@ export class SetFilterListItem extends Component {
         _.bindCellRendererToHtmlElement(cellRendererPromise, eTarget);
 
         cellRendererPromise.then(component => {
-            this.addDestroyFunc( ()=> this.getContext().destroyBean(component) );
+            this.addDestroyFunc(() => this.getContext().destroyBean(component));
         });
     }
 

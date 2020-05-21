@@ -213,7 +213,13 @@ export class SetValueModel implements IEventEmitter {
             this.colDef.comparator as (a: any, b: any) => number ||
             _.defaultComparator;
 
-        return values.sort(comparator);
+        if (!this.filterParams.excelMode || values.indexOf(null) < 0) {
+            return values.sort(comparator);
+        }
+
+        // ensure the blank value always appears last
+        return _.filter(values, v => v != null).sort(comparator).concat(null);
+
     }
 
     private getValuesFromRows(removeUnavailableValues = false): string[] {

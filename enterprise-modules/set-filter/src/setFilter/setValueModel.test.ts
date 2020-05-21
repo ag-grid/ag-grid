@@ -263,6 +263,20 @@ describe('values from grid', () => {
         expect(getDisplayedValues(model)).toStrictEqual([null]);
     });
 
+    it('orders null first by default', () => {
+        const values = ['A', 'B', null, 'C'];
+        const model = createSetValueModel(values);
+
+        expect(getDisplayedValues(model)).toStrictEqual([null, 'A', 'B', 'C']);
+    });
+
+    it.each(['windows', 'mac'])('orders null last in Excel Model', excelMode => {
+        const values = ['A', 'B', null, 'C'];
+        const model = createSetValueModel(values, { excelMode });
+
+        expect(getDisplayedValues(model)).toStrictEqual(['A', 'B', 'C', null]);
+    });
+
     it('extracts multiple values into separate entries', () => {
         const model = createSetValueModel([['A', 'B'], ['A', undefined, 'C'], ['D', 'B', null], ['']]);
 
