@@ -163,7 +163,10 @@ export class TabbedLayout extends ManagedFocusComponent {
         _.clearElement(this.eBody);
         wrapper.tabbedItem.bodyPromise.then(body => {
             this.eBody.appendChild(body);
-            body.focus();
+            const focusable = this.focusController.findFocusableElements(this.eBody);
+            if (focusable.length) {
+                focusable[0].focus();
+            }
         });
 
         if (this.activeItem) {
