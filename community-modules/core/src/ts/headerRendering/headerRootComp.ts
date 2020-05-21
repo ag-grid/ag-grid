@@ -93,9 +93,6 @@ export class HeaderRootComp extends ManagedFocusComponent {
     }
 
     protected onTabKeyDown(e: KeyboardEvent): void {
-        // defaultPrevented will be true when inner elements of the header are already managing the tab behavior.
-        if (e.defaultPrevented) { return; }
-
         if (this.headerController.navigateHorizontally(
             e.shiftKey ? HeaderNavigationDirection.LEFT : HeaderNavigationDirection.RIGHT, true)
         ) {
@@ -104,8 +101,6 @@ export class HeaderRootComp extends ManagedFocusComponent {
     }
 
     protected handleKeyDown(e: KeyboardEvent): void {
-        if (e.defaultPrevented) { return; }
-
         let direction: HeaderNavigationDirection;
 
         switch (e.keyCode) {

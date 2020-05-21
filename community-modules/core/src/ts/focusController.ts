@@ -187,12 +187,16 @@ export class FocusController extends BeanStub {
         return this.focusedCellPosition.rowIndex === rowIndex && this.focusedCellPosition.rowPinned === floatingOrNull;
     }
 
-    public findFocusableElements(rootNode: HTMLElement, exclude?: string): HTMLElement[] {
+    public findFocusableElements(rootNode: HTMLElement, exclude?: string, onlyUnmanaged?: boolean): HTMLElement[] {
         const focusableString = '[tabindex], input, select, button, textarea';
         let excludeString = '.ag-hidden, .ag-hidden *, .ag-disabled, .ag-disabled *';
 
         if (exclude) {
             excludeString += ', ' + exclude;
+        }
+
+        if (onlyUnmanaged) {
+            excludeString += ', [tabindex="-1"]';
         }
 
         const nodes = Array.from(rootNode.querySelectorAll(focusableString)) as HTMLElement[];

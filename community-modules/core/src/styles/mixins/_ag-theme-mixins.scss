@@ -39,6 +39,19 @@
     }
 }
 
+@mixin ag-keyboard-focus($selectors, $offset) {
+    .ag-keyboard-focus {
+        @each $selector in $selectors {
+            .#{$selector}:focus {
+                outline-width: 1px;
+                outline-style: solid;
+                @include ag-color-property(outline-color, input-focus-border-color);
+                outline-offset: $offset;
+            }
+        }
+    }
+}
+
 @mixin ag-vertical-widget-container {
     padding: ag-param(widget-container-vertical-padding) ag-param(widget-container-horizontal-padding);
     padding-bottom: ag-param(widget-container-vertical-padding) - ag-param(widget-vertical-spacing);

@@ -31,6 +31,8 @@ export class ManagedFocusComponent extends Component {
 
     private addKeyDownListeners(eGui: HTMLElement): void {
         this.addManagedListener(eGui, 'keydown', (e: KeyboardEvent) => {
+            if (e.defaultPrevented) { return; }
+
             if (e.keyCode === Constants.KEY_TAB && this.onTabKeyDown) {
                 this.onTabKeyDown(e);
             } else if (this.handleKeyDown) {

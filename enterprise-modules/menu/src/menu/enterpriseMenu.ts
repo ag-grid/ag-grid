@@ -230,6 +230,10 @@ export class EnterpriseMenu extends BeanStub {
 
         this.createBean(this.tabbedLayout);
 
+        if (this.mainMenuList) {
+            this.mainMenuList.setParentComponent(this.tabbedLayout);
+        }
+
         this.addManagedListener(this.eventService, Events.EVENT_DISPLAYED_COLUMNS_CHANGED, this.onDisplayedColumnsChanged.bind(this));
     }
 

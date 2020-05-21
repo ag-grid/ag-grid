@@ -16,7 +16,7 @@ export class MenuList extends ManagedFocusComponent {
     @Autowired('popupService') private popupService: PopupService;
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
 
-    private static TEMPLATE = /* html */ `<div class="ag-menu-list" tabindex="-1"></div>`;
+    private static TEMPLATE = /* html */ `<div class="ag-menu-list" tabindex="0"></div>`;
 
     private static SEPARATOR_TEMPLATE = /* html */
         `<div class="ag-menu-separator">
@@ -44,7 +44,12 @@ export class MenuList extends ManagedFocusComponent {
     }
 
     protected onTabKeyDown(e: KeyboardEvent) {
-        e.preventDefault();
+        const parent = this.getParentComponent();
+        const isManaged = parent && parent instanceof ManagedFocusComponent;
+
+        if (!isManaged) {
+            e.preventDefault();
+        }
 
         if (e.shiftKey) {
             this.closeIfIsChild(e);
