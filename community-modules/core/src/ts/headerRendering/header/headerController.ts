@@ -107,7 +107,7 @@ export class HeaderController extends BeanStub {
 
         if (!nextFocusColumn) { return false; }
 
-        this.focusHeaderPosition({
+        this.focusController.focusHeaderPosition({
             headerRowIndex: nextRow,
             column: nextFocusColumn
         });
@@ -134,7 +134,7 @@ export class HeaderController extends BeanStub {
         }
 
         if (nextHeader) {
-            this.focusHeaderPosition(nextHeader, normalisedDirection);
+            this.focusController.focusHeaderPosition(nextHeader, normalisedDirection);
             return true;
         }
 
@@ -161,23 +161,9 @@ export class HeaderController extends BeanStub {
             if (nextPosition.headerRowIndex === -1) {
                 this.focusController.focusGridView(nextPosition.column as Column);
             } else {
-                this.focusHeaderPosition(nextPosition, direction);
+                this.focusController.focusHeaderPosition(nextPosition, direction);
             }
             return true;
-        }
-    }
-
-    private focusHeaderPosition(headerPosition: HeaderPosition, direction?: 'Before' | 'After'): void {
-        this.scrollToColumn(headerPosition.column, direction);
-
-        const childContainer = this.getHeaderContainer(headerPosition.column.getPinned());
-        const rowComps = childContainer.getRowComps();
-        const nextRowComp = rowComps[headerPosition.headerRowIndex];
-        const headerComps = nextRowComp.getHeaderComps();
-        const nextHeader = headerComps[headerPosition.column.getUniqueId() as string];
-
-        if (nextHeader) {
-            nextHeader.getFocusableElement().focus();
         }
     }
 

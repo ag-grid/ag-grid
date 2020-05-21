@@ -15,6 +15,8 @@ import { HeaderPosition } from "./headerRendering/header/headerPosition";
 import { RowPositionUtils } from "./entities/rowPosition";
 import { IRangeController } from "./interfaces/iRangeController";
 import { RowRenderer } from "./rendering/rowRenderer";
+import { HeaderController } from "./headerRendering/header/headerController";
+import { ColumnGroup } from "./entities/columnGroup";
 import { _ } from "./utils";
 
 @Bean('focusController')
@@ -22,6 +24,7 @@ export class FocusController extends BeanStub {
 
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('columnController') private columnController: ColumnController;
+    @Autowired('headerController') private headerController: HeaderController;
     @Autowired('columnApi') private columnApi: ColumnApi;
     @Autowired('gridApi') private gridApi: GridApi;
     @Autowired('rowRenderer') private rowRenderer: RowRenderer;
@@ -155,14 +158,23 @@ export class FocusController extends BeanStub {
         return this.focusedHeaderPosition;
     }
 
-    public setHeaderFocused(headerWrapper: AbstractHeaderWrapper): void {
-        const column = headerWrapper.getColumn();
-        const headerRowIndex = (headerWrapper.getParentComponent() as HeaderRowComp).getRowIndex();
+    public setFocusedHeader(headerRowIndex: number, column: ColumnGroup | Column): void {
+        this.focusedHeaderPosition = { headerRowIndex, column };
+    }
 
-        this.focusedHeaderPosition = {
-            column,
-            headerRowIndex
-        };
+    public focusHeaderPosition(headerPosition: HeaderPosition, direction?: 'Before' | 'After'): void {
+        this.headerController.scrollToColumn(headerPosition.column, direction);
+
+        const childContainer = this.headerController.getHeaderContainer(headerPosition.column.getPinned());
+        const rowComps = childContainer.getRowComps();
+        const nextRowComp = rowComps[headerPosition.headerRowIndex];
+        const headerComps = nextRowComp.getHeaderComps();
+        const nextHeader = headerComps[headerPosition.column.getUniqueId() as string];
+
+        if (nextHeader) {
+            // this will automatically call the setFocusedHeader method above
+            nextHeader.getFocusableElement().focus();
+        }
     }
 
     public isAnyCellFocused(): boolean {

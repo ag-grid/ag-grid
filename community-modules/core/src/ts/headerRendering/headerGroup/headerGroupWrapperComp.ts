@@ -22,6 +22,7 @@ import { UserComponentFactory } from "../../components/framework/userComponentFa
 import { HoverFeature } from "../hoverFeature";
 import { TooltipFeature } from "../../widgets/tooltipFeature";
 import { AbstractHeaderWrapper } from "../header/abstractHeaderWrapper";
+import { HeaderRowComp } from "../headerRowComp";
 import { Beans } from "../../rendering/beans";
 import { _ } from "../../utils";
 
@@ -87,7 +88,11 @@ export class HeaderGroupWrapperComp extends AbstractHeaderWrapper {
 
     protected onFocusIn(e: FocusEvent) {
         if (!this.getGui().contains(e.relatedTarget as HTMLElement)) {
-            this.beans.focusController.setHeaderFocused(this);
+            const headerRow = this.getParentComponent() as HeaderRowComp;
+            this.beans.focusController.setFocusedHeader(
+                headerRow.getRowIndex(),
+                this.getColumn()
+            );
         }
     }
 

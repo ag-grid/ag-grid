@@ -27,6 +27,7 @@ import { TouchListener } from "../../widgets/touchListener";
 import { TooltipFeature } from "../../widgets/tooltipFeature";
 import { UserComponentFactory } from "../../components/framework/userComponentFactory";
 import { AbstractHeaderWrapper } from "./abstractHeaderWrapper";
+import { HeaderRowComp } from "../headerRowComp";
 import { _ } from "../../utils";
 
 export class HeaderWrapperComp extends AbstractHeaderWrapper {
@@ -115,7 +116,11 @@ export class HeaderWrapperComp extends AbstractHeaderWrapper {
 
     protected onFocusIn(e: FocusEvent) {
         if (!this.getGui().contains(e.relatedTarget as HTMLElement)) {
-            this.beans.focusController.setHeaderFocused(this);
+            const headerRow = this.getParentComponent() as HeaderRowComp;
+            this.beans.focusController.setFocusedHeader(
+                headerRow.getRowIndex(),
+                this.getColumn()
+            );
         }
 
         if (this.headerComp && this.headerComp.setActiveParent) {

@@ -24,6 +24,7 @@ import { AbstractHeaderWrapper  } from '../../headerRendering/header/abstractHea
 import { FocusController } from '../../focusController';
 import { Constants } from '../../constants';
 import { Beans } from '../../rendering/beans';
+import { HeaderRowComp } from '../../headerRendering/headerRowComp';
 
 export class FloatingFilterWrapper extends AbstractHeaderWrapper {
     private static filterToFloatingFilterNames: { [p: string]: string; } = {
@@ -142,7 +143,11 @@ export class FloatingFilterWrapper extends AbstractHeaderWrapper {
         const eGui = this.getGui();
 
         if (!eGui.contains(e.relatedTarget as HTMLElement)) {
-            this.beans.focusController.setHeaderFocused(this);
+            const headerRow = this.getParentComponent() as HeaderRowComp;
+            this.beans.focusController.setFocusedHeader(
+                headerRow.getRowIndex(),
+                this.getColumn()
+            );
         }
     }
 
