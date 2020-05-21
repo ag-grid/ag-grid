@@ -75,7 +75,7 @@ export class SetFilter extends ProvidedFilter {
     protected setModelIntoUi(model: SetFilterModel): Promise<void> {
         this.resetUiToDefaults();
 
-        if (!model) { return; }
+        if (!model) { return Promise.resolve(); }
 
         if (model instanceof Array) {
             const message = 'ag-Grid: The Set Filter Model is no longer an array and models as arrays are ' +
@@ -274,9 +274,6 @@ export class SetFilter extends ProvidedFilter {
     }
 
     private initSelectAll() {
-        this.updateCheckboxIcon();
-        this.updateSelectAllText();
-
         const eSelectAllContainer = this.getRefElement('eSelectAllContainer');
 
         if (this.setFilterParams.suppressSelectAll) {
@@ -299,6 +296,10 @@ export class SetFilter extends ProvidedFilter {
         super.afterGuiAttached(params);
 
         this.refreshVirtualList();
+
+        if (this.setFilterParams.excelMode) {
+            this.resetUiToActiveModel();
+        }
 
         const translate = this.gridOptionsWrapper.getLocaleTextFunc();
         const { eMiniFilter } = this;
@@ -393,7 +394,7 @@ export class SetFilter extends ProvidedFilter {
         this.virtualList.refresh();
     }
 
-    private updateSelectAll(): void {
+    private updateSelectAllCheckbox(): void {
         if (this.valueModel.isEverythingSelected()) {
             this.selectAllState = true;
         } else if (this.valueModel.isNothingSelected()) {
@@ -412,26 +413,32 @@ export class SetFilter extends ProvidedFilter {
             } else {
                 this.updateUiAfterMiniFilterChange();
             }
-
-            this.updateSelectAllText();
         }
     }
 
     private updateUiAfterMiniFilterChange(): void {
         if (this.setFilterParams.excelMode) {
             if (this.valueModel.getMiniFilter() == null) {
-                // reset to active model
-                this.setModel(this.getModel());
-                this.onUiChanged();
+                this.resetUiToActiveModel();
             } else {
                 this.valueModel.selectAllDisplayed(true);
+                this.refresh();
             }
+        } else {
+            this.refresh();
         }
-
-        this.refresh();
     }
 
-    private updateSelectAllText() {
+    private resetUiToActiveModel(): void {
+        this.eMiniFilter.setValue(null, true);
+        this.valueModel.setMiniFilter(null);
+        this.setModelIntoUi(this.getModel() as SetFilterModel).then(() => {
+            this.refresh();
+            this.onUiChanged();
+        });
+    }
+
+    private updateSelectAllLabel() {
         const translate = this.gridOptionsWrapper.getLocaleTextFunc();
         const label = this.valueModel.getMiniFilter() == null || !this.setFilterParams.excelMode ?
             translate('selectAll', 'Select All') :
@@ -481,7 +488,7 @@ export class SetFilter extends ProvidedFilter {
             this.valueModel.deselectValue(value);
         }
 
-        this.updateSelectAll();
+        this.updateSelectAllCheckbox();
         this.onUiChanged();
     }
 
@@ -516,7 +523,8 @@ export class SetFilter extends ProvidedFilter {
 
     private refresh() {
         this.virtualList.refresh();
-        this.updateSelectAll();
+        this.updateSelectAllCheckbox();
+        this.updateSelectAllLabel();
     }
 
     public isValueSelected(value: string) {
