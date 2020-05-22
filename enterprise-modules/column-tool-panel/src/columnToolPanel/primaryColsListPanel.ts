@@ -110,6 +110,14 @@ export class PrimaryColsListPanel extends ManagedFocusComponent {
         if (nextIndex < 0 || nextIndex >= focusable.length) { return; }
 
         focusable[nextIndex].focus();
+
+        const eGui = this.getGui();
+
+        if (nextIndex === 0) {
+            eGui.scrollTop = 0;
+        } else if (nextIndex === focusable.length -1) {
+            eGui.scrollTop = eGui.scrollHeight;
+        }
     }
 
     private expandOrCollapseNode(expand: boolean): void {
@@ -191,7 +199,7 @@ export class PrimaryColsListPanel extends ManagedFocusComponent {
 
             this.getContext().createBean(renderedGroup);
             const renderedGroupGui = renderedGroup.getGui();
-            this.getGui().appendChild(renderedGroupGui);
+            this.appendChild(renderedGroupGui);
 
             // we want to indent on the gui for the children
             newDept = dept + 1;
@@ -217,7 +225,7 @@ export class PrimaryColsListPanel extends ManagedFocusComponent {
         this.getContext().createBean(columnComp);
 
         const columnCompGui = columnComp.getGui();
-        this.getGui().appendChild(columnCompGui);
+        this.appendChild(columnCompGui);
 
         this.columnComps.set(column.getId(), columnComp);
     }
@@ -489,9 +497,9 @@ export class PrimaryColsListPanel extends ManagedFocusComponent {
             // to distinguish individual column groups after they have been split by user
             const childIds = columnGroupChild.getLeafColumns().map(child => child.getId()).join('-');
             return columnGroupChild.getId() + '-' + childIds;
-        } else {
-            return columnGroupChild.getId();
         }
+
+        return columnGroupChild.getId();
     }
 
     private notifyListeners(): void {
@@ -510,15 +518,18 @@ export class PrimaryColsListPanel extends ManagedFocusComponent {
     }
 
     private destroyColumnComps(): void {
-        _.clearElement(this.getGui());
+        const eGui = this.getGui();
         if (this.columnComps) {
-            this.columnComps.forEach(renderedItem => this.destroyBean(renderedItem))
+            this.columnComps.forEach(renderedItem => {
+                eGui.removeChild(renderedItem.getGui());
+                this.destroyBean(renderedItem);
+            });
         }
         this.columnComps = new Map();
     }
 
     protected destroy(): void {
-        super.destroy();
         this.destroyColumnComps();
+        super.destroy();
     }
 }

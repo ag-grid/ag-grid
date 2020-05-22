@@ -143,7 +143,7 @@ export class GridCore extends ManagedFocusComponent {
         return true;
     }
 
-    protected focusFirstElement(): void {
+    protected focusInnerElement(): void {
         let firstColumn: Column | ColumnGroup = this.columnController.getAllDisplayedColumns()[0];
         if (!firstColumn) { return; }
 

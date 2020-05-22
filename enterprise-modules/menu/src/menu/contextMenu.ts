@@ -178,7 +178,10 @@ class ContextMenu extends Component {
         this.focusedCell = this.focusController.getFocusedCell();
 
         if (this.menuList) {
-            this.menuList.getGui().focus();
+            const focusable = this.focusController.findFocusableElements(this.menuList.getGui());
+            if (focusable.length) {
+                focusable[0].focus();
+            }
         }
 
         // if the body scrolls, we want to hide the menu, as the menu will not appear in the right location anymore

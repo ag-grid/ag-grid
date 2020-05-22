@@ -1,13 +1,14 @@
 import { PostConstruct, Autowired } from "../context/context";
 import { Component } from "./component";
 import { Constants } from "../constants";
-import { _ } from "../utils";
 import { FocusController } from "../focusController";
+import { _ } from "../utils";
 
 export class ManagedFocusComponent extends Component {
 
     protected onTabKeyDown?(e: KeyboardEvent): void;
     protected handleKeyDown?(e: KeyboardEvent): void;
+    private tabGuards: HTMLElement[] = [];
 
     @Autowired('focusController') protected focusController: FocusController;
 
@@ -17,18 +18,91 @@ export class ManagedFocusComponent extends Component {
         if (!focusableElement) { return; }
 
         if (this.isFocusableContainer()) {
-            focusableElement.setAttribute('tabindex', '0');
+            this.createTabGuards().addTabGuards();
+            this.activateTabGuards();
+            this.forEachTabGuard(tabGuards => {
+                this.addManagedListener(tabGuards, 'focus', this.onFocus.bind(this));
+            });
         }
 
         if (this.onTabKeyDown || this.handleKeyDown) {
             this.addKeyDownListeners(focusableElement);
         }
-
-        this.addManagedListener(focusableElement, 'focus', this.onFocus.bind(this));
-        this.addManagedListener(focusableElement, 'blur', this.onBlur.bind(this));
         this.addManagedListener(focusableElement, 'focusin', this.onFocusIn.bind(this));
         this.addManagedListener(focusableElement, 'focusout', this.onFocusOut.bind(this));
 
+    }
+
+    protected isFocusableContainer(): boolean {
+        return false;
+    }
+
+    protected focusInnerElement(fromBottom?: boolean): void {
+        const focusable = this.focusController.findFocusableElements(this.getFocusableElement(), '.ag-tab-guard, :not([tabindex="-1"])');
+
+        if (focusable.length) {
+            focusable[fromBottom ? focusable.length - 1 : 0].focus();
+        }
+    }
+
+    protected onFocusIn(e: FocusEvent): void {
+        if (!this.isFocusableContainer()) { return; }
+
+        this.deactivateTabGuards();
+    }
+
+    protected onFocusOut(e: FocusEvent): void {
+        if (!this.isFocusableContainer()) { return; }
+
+        const focusEl = this.getFocusableElement();
+
+        if (!focusEl.contains(e.relatedTarget as HTMLElement)) {
+            this.activateTabGuards();
+        }
+    }
+
+    protected getTabGuards(): HTMLElement[] {
+        return this.tabGuards;
+    }
+
+    public appendChild(newChild: HTMLElement | Component, container?: HTMLElement): void {
+        if (!this.isFocusableContainer()) {
+            super.appendChild(newChild, container);
+        } else {
+            const tabGuards = this.getTabGuards();
+
+            if (!_.isNodeOrElement(newChild)) {
+                newChild = (newChild as Component).getGui();
+            }
+
+            if (tabGuards.length) {
+                _.last(tabGuards).insertAdjacentElement('beforebegin', newChild as HTMLElement);
+            } else {
+                super.appendChild(newChild, container);
+            }
+        }
+    }
+
+    private createTabGuards(): this {
+        this.tabGuards = ['top', 'bottom'].map(side => {
+            const tabGuard = document.createElement('div');
+            tabGuard.classList.add('ag-tab-guard');
+            tabGuard.classList.add(`ag-tab-guard-${side}`);
+
+            return tabGuard as HTMLElement;
+        });
+
+        return this;
+    }
+
+    private addTabGuards(): void {
+        const focusableEl = this.getFocusableElement();
+        focusableEl.insertAdjacentElement('afterbegin', this.tabGuards[0]);
+        focusableEl.insertAdjacentElement('beforeend', this.tabGuards[1]);
+    }
+
+    private forEachTabGuard(callback: (tabGuard: HTMLElement) => void) {
+        this.tabGuards.forEach(callback);
     }
 
     private addKeyDownListeners(eGui: HTMLElement): void {
@@ -43,46 +117,17 @@ export class ManagedFocusComponent extends Component {
         });
     }
 
-    protected onFocusIn(e: FocusEvent): void {
-        if (!this.isFocusableContainer()) { return; }
+    private onFocus(e: FocusEvent): void {
+        if (!this.isFocusableContainer() || !this.focusInnerElement) { return; }
 
-        const focusEl = this.getFocusableElement();
-
-        focusEl.removeAttribute('tabindex');
+        this.focusInnerElement(e.target === this.tabGuards[1]);
     }
 
-    protected onFocusOut(e: FocusEvent): void {
-        if (!this.isFocusableContainer()) { return; }
-
-        const focusEl = this.getFocusableElement();
-
-        if (!focusEl.contains(e.relatedTarget as HTMLElement)) {
-            focusEl.setAttribute('tabindex', '0');
-        }
+    private activateTabGuards(): void {
+        this.forEachTabGuard(tabGuard => tabGuard.setAttribute('tabIndex', '0'));
     }
 
-    protected onFocus(e: FocusEvent): void {
-        const fromWithin = this.getFocusableElement().contains(e.relatedTarget as HTMLElement);
-
-        if (fromWithin) { e.preventDefault(); e.stopImmediatePropagation(); }
-
-        if (!this.isFocusableContainer() || !this.focusFirstElement || fromWithin) { return; }
-        this.focusFirstElement();
-    }
-
-    protected onBlur(e: FocusEvent): void {
-
-    }
-
-    protected isFocusableContainer(): boolean {
-        return false;
-    }
-
-    protected focusFirstElement(): void {
-        const focusable = this.focusController.findFocusableElements(this.getFocusableElement());
-
-        if (focusable.length) {
-            focusable[0].focus();
-        }
+    private deactivateTabGuards(): void {
+        this.forEachTabGuard(tabGuards => tabGuards.removeAttribute('tabindex'));
     }
 }
