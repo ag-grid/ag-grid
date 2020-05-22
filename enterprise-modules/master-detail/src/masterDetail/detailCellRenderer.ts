@@ -231,7 +231,9 @@ export class DetailCellRenderer extends Component implements ICellRenderer {
 
         const funcParams: any = {
             node: this.params.node,
-            data: this.params.data,
+            // we take data from node, rather than params.data
+            // as the data could have been updated with new instance
+            data: this.params.node.data,
             successCallback: successCallback
         };
         userFunc(funcParams);
