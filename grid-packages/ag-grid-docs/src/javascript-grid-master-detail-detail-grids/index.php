@@ -31,6 +31,10 @@ include '../documentation-main/documentation_header.php';
     This page outlines how to configure the grid's default Detail Cell Renderer.
 </p>
 
+<h2 id="auto-height">Auto Height</h2>
+
+<?= grid_example('Auto Height', 'auto-height', 'generated', ['enterprise' => true, 'modules'=>['clientside', 'masterdetail']]) ?>
+
 <h2 id="detail-grid-options">Detail Grid Options</h2>
 
 <p>

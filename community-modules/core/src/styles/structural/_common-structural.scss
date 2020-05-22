@@ -1184,13 +1184,19 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia  {
 }
 
 .ag-details-row {
-    height: 100%;
     width: 100%;
 }
 
-.ag-details-grid {
+.ag-details-row-fixed-height {
     height: 100%;
+}
+
+.ag-details-grid {
     width: 100%;
+}
+
+.ag-details-grid-fixed-height {
+    height: 100%;
 }
 
 .ag-header-group-cell {

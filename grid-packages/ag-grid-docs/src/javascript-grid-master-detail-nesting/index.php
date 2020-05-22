@@ -56,5 +56,12 @@ var gridOptionsLevel1 = {
 
 <?= grid_example('Nesting Master / Detail', 'nesting', 'generated', ['enterprise' => true, 'exampleHeight' => 425, 'modules'=>['clientside', 'masterdetail', 'menu', 'columnpanel']]) ?>
 
+<p>
+    The next example is identical to the previous except all the Detail Grid's have property
+    <code>autoHeight=true</code>. Notice that this removes all vertical scrolls from all the Detail Grids, leaving
+    just the main Master Grid with a vertical scroll.
+</p>
+
+<?= grid_example('Nesting Auto-Height', 'nesting-autoheight', 'generated', ['enterprise' => true, 'exampleHeight' => 425, 'modules'=>['clientside', 'masterdetail', 'menu', 'columnpanel']]) ?>
 
 <?php include '../documentation-main/documentation_footer.php';?>

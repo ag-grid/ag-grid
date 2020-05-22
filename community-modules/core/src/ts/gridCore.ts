@@ -125,7 +125,7 @@ export class GridCore extends ManagedFocusComponent {
         const watermark = enterpriseCoreLoaded ? '<ag-watermark></ag-watermark>' : '';
 
         const template =
-            `<div class="ag-root-wrapper">
+            `<div ref="eRootWrapper" class="ag-root-wrapper">
                 ${dropZones}
                 <div class="ag-root-wrapper-body" ref="rootWrapperBody">
                     <ag-grid-comp ref="gridPanel"></ag-grid-comp>

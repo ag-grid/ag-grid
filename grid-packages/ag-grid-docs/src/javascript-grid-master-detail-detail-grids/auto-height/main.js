@@ -1,23 +1,16 @@
 var gridOptions = {
-    masterDetail: true,
-    isRowMaster: function(dataItem) {
-        return dataItem ? dataItem.callRecords.length > 0 : false;
-    },
     columnDefs: [
         // group cell renderer needed for expand / collapse icons
         { field: 'name', cellRenderer: 'agGroupCellRenderer' },
         { field: 'account' },
-        { field: 'calls', cellRenderer: 'CallsCellRenderer' },
+        { field: 'calls' },
         { field: 'minutes', valueFormatter: "x.toLocaleString() + 'm'" }
     ],
     defaultColDef: {
         flex: 1
     },
     animateRows: true,
-    getRowNodeId: function(data) { return data.account; },
-    components: {
-        CallsCellRenderer: CallsCellRenderer
-    },
+    masterDetail: true,
     detailCellRendererParams: {
         detailGridOptions: {
             columnDefs: [
@@ -29,7 +22,7 @@ var gridOptions = {
             ],
             defaultColDef: {
                 flex: 1
-            },
+            }
         },
         getDetailRowData: function(params) {
             params.successCallback(params.data.callRecords);
@@ -37,8 +30,6 @@ var gridOptions = {
     },
     onFirstDataRendered: onFirstDataRendered
 };
-
-
 
 function onFirstDataRendered(params) {
     // arbitrarily expand a row for presentational purposes
@@ -50,7 +41,7 @@ document.addEventListener('DOMContentLoaded', function() {
     var gridDiv = document.querySelector('#myGrid');
     new agGrid.Grid(gridDiv, gridOptions);
 
-    agGrid.simpleHttpRequest({ url: 'https://raw.githubusercontent.com/ag-grid/ag-grid-docs/latest/src/javascript-grid-master-detail/dynamic-master-nodes/data/data.json' }).then(function(data) {
+    agGrid.simpleHttpRequest({ url: 'https://raw.githubusercontent.com/ag-grid/ag-grid-docs/latest/src/javascript-grid-master-detail/simple/data/data.json' }).then(function(data) {
         gridOptions.api.setRowData(data);
     });
 });

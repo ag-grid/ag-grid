@@ -40,6 +40,8 @@ var gridOptions = {
     masterDetail: true,
     detailCellRendererParams: {
 
+        autoHeight: true,
+
         // level 2 grid options
         detailGridOptions: {
             columnDefs: [
@@ -53,6 +55,8 @@ var gridOptions = {
             masterDetail: true,
             detailRowHeight: 240,
             detailCellRendererParams: {
+
+                autoHeight: true,
 
                 // level 3 grid options
                 detailGridOptions: {
