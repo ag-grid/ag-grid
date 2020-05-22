@@ -6,9 +6,8 @@ import { FilterManager } from "./filter/filterManager";
 import { GridPanel } from "./gridPanel/gridPanel";
 import { Logger, LoggerFactory } from "./logger";
 import { PopupService } from "./widgets/popupService";
-import { Autowired, Optional, PostConstruct } from "./context/context";
+import { Autowired, Optional } from "./context/context";
 import { IRowModel } from "./interfaces/iRowModel";
-import { FocusController } from "./focusController";
 import { Component } from "./widgets/component";
 import { IClipboardService } from "./interfaces/iClipboardService";
 import { GridApi } from "./gridApi";
@@ -40,7 +39,6 @@ export class GridCore extends ManagedFocusComponent {
     @Autowired('$scope') private $scope: any;
     @Autowired('quickFilterOnScope') private quickFilterOnScope: string;
     @Autowired('popupService') private popupService: PopupService;
-    @Autowired('focusController') private focusController: FocusController;
     @Autowired('columnController') private columnController: ColumnController;
     @Autowired('loggerFactory') loggerFactory: LoggerFactory;
 

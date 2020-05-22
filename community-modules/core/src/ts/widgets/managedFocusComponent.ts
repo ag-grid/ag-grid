@@ -2,12 +2,14 @@ import { PostConstruct, Autowired } from "../context/context";
 import { Component } from "./component";
 import { Constants } from "../constants";
 import { _ } from "../utils";
+import { FocusController } from "../focusController";
 
 export class ManagedFocusComponent extends Component {
 
     protected onTabKeyDown?(e: KeyboardEvent): void;
     protected handleKeyDown?(e: KeyboardEvent): void;
-    protected focusFirstElement?(): void;
+
+    @Autowired('focusController') protected focusController: FocusController;
 
     @PostConstruct
     protected postConstruct(): void {
@@ -74,5 +76,13 @@ export class ManagedFocusComponent extends Component {
 
     protected isFocusableContainer(): boolean {
         return false;
+    }
+
+    protected focusFirstElement(): void {
+        const focusable = this.focusController.findFocusableElements(this.getFocusableElement());
+
+        if (focusable.length) {
+            focusable[0].focus();
+        }
     }
 }

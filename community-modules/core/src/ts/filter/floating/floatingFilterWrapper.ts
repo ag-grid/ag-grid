@@ -21,7 +21,6 @@ import { ModuleRegistry } from '../../modules/moduleRegistry';
 import { addOrRemoveCssClass, setDisplayed } from '../../utils/dom';
 import { createIconNoSpan } from '../../utils/icon';
 import { AbstractHeaderWrapper  } from '../../headerRendering/header/abstractHeaderWrapper';
-import { FocusController } from '../../focusController';
 import { Constants } from '../../constants';
 import { Beans } from '../../rendering/beans';
 import { HeaderRowComp } from '../../headerRendering/headerRowComp';
@@ -56,7 +55,6 @@ export class FloatingFilterWrapper extends AbstractHeaderWrapper {
     @Autowired('columnApi') private columnApi: ColumnApi;
     @Autowired('filterManager') private filterManager: FilterManager;
     @Autowired('menuFactory') private menuFactory: IMenuFactory;
-    @Autowired('focusController') private focusController: FocusController;
     @Autowired('beans') protected beans: Beans;
 
     @RefSelector('eFloatingFilterBody') private eFloatingFilterBody: HTMLElement;

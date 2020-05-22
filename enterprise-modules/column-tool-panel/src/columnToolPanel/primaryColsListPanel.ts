@@ -10,7 +10,9 @@ import {
     Events,
     OriginalColumnGroup,
     OriginalColumnGroupChild,
-    ToolPanelColumnCompParams
+    ToolPanelColumnCompParams,
+    ManagedFocusComponent,
+    Constants
 } from "@ag-grid-community/core";
 import { ToolPanelColumnGroupComp } from "./toolPanelColumnGroupComp";
 import { ToolPanelColumnComp } from "./toolPanelColumnComp";
@@ -21,9 +23,9 @@ import { EXPAND_STATE } from "./primaryColsHeaderPanel";
 export type ColumnItem = BaseColumnItem & Component;
 export type ColumnFilterResults = { [id: string]: boolean };
 
-export class PrimaryColsListPanel extends Component {
+export class PrimaryColsListPanel extends ManagedFocusComponent {
 
-    public static TEMPLATE = /* html */ `<div class="ag-column-select-list" tabindex="0"></div>`;
+    public static TEMPLATE = /* html */ `<div class="ag-column-select-list"></div>`;
 
     @Autowired('columnController') private columnController: ColumnController;
     @Autowired('toolPanelColDefService') private colDefService: ToolPanelColDefService;
@@ -37,7 +39,7 @@ export class PrimaryColsListPanel extends Component {
     private filterResults: ColumnFilterResults;
     private expandGroupsByDefault: boolean;
     private params: ToolPanelColumnCompParams;
-    private columnComps: { [key: string]: ColumnItem };
+    private columnComps: Map<string, ColumnItem> = new Map();
 
     constructor() {
         super(PrimaryColsListPanel.TEMPLATE);
@@ -73,6 +75,53 @@ export class PrimaryColsListPanel extends Component {
         if (this.columnController.isReady()) {
             this.onColumnsChanged();
         }
+    }
+
+    protected isFocusableContainer(): boolean {
+        return true;
+    }
+
+    protected handleKeyDown(e: KeyboardEvent): void {
+        switch (e.keyCode) {
+            case Constants.KEY_UP:
+            case Constants.KEY_DOWN:
+                e.preventDefault();
+                this.nagivateToNextItem(e.keyCode === Constants.KEY_UP);
+                break;
+            case Constants.KEY_LEFT:
+            case Constants.KEY_RIGHT:
+                e.preventDefault();
+                this.expandOrCollapseNode(e.keyCode === Constants.KEY_RIGHT);
+            case Constants.KEY_SPACE:
+                e.preventDefault();
+                this.selectCurrentItem();
+        }
+        
+    }
+
+    private nagivateToNextItem(up: boolean): void {
+        const focusable = this.focusController.findFocusableElements(this.getFocusableElement(), ':not([tabindex="-1"])');
+        const currentIndex = _.findIndex(focusable, el => el.contains(document.activeElement));
+
+        if (currentIndex === -1) { return; }
+
+        const nextIndex = currentIndex + (up ? -1 : 1);
+
+        if (nextIndex < 0 || nextIndex >= focusable.length) { return; }
+
+        focusable[nextIndex].focus();
+    }
+
+    private expandOrCollapseNode(expand: boolean): void {
+
+    }
+
+    private selectCurrentItem(): void {
+
+    }
+
+    private getFocusedColumnItem(): void {
+
     }
 
     public onColumnsChanged(): void {
@@ -150,7 +199,7 @@ export class PrimaryColsListPanel extends Component {
             // group comps are stored using a custom key (groupId + child colIds concatenated) as we need
             // to distinguish individual column groups after they have been split by user
             const key = this.getColumnCompId(columnGroup);
-            this.columnComps[key] = renderedGroup;
+            this.columnComps.set(key, renderedGroup);
         } else {
             // no children, so no indent
             newDept = dept;
@@ -170,7 +219,7 @@ export class PrimaryColsListPanel extends Component {
         const columnCompGui = columnComp.getGui();
         this.getGui().appendChild(columnCompGui);
 
-        this.columnComps[column.getId()] = columnComp;
+        this.columnComps.set(column.getId(), columnComp);
     }
 
     public onGroupExpanded(): void {
@@ -179,7 +228,7 @@ export class PrimaryColsListPanel extends Component {
     }
 
     public doSetExpandedAll(value: boolean): void {
-        _.iterateObject(this.columnComps, (key, renderedItem) => {
+        this.columnComps.forEach(renderedItem => {
             if (renderedItem.isExpandable()) {
                 renderedItem.setExpanded(value);
             }
@@ -196,7 +245,7 @@ export class PrimaryColsListPanel extends Component {
 
         groupIds.forEach(suppliedGroupId => {
             // we need to search through all comps to handle the case when groups are split
-            _.iterateObject(this.columnComps, (key, comp) => {
+            this.columnComps.forEach((comp, key) => {
                 // check if group comp starts with supplied group id as the tool panel keys contain
                 // groupId + childIds concatenated
                 const foundMatchingGroupComp = key.indexOf(suppliedGroupId) === 0;
@@ -223,7 +272,7 @@ export class PrimaryColsListPanel extends Component {
                 // only interested in groups
                 if (item instanceof OriginalColumnGroup) {
                     const compId = this.getColumnCompId(item);
-                    const comp = this.columnComps[compId] as ToolPanelColumnGroupComp;
+                    const comp = this.columnComps.get(compId) as ToolPanelColumnGroupComp;
 
                     if (comp) {
                         if (comp.isExpanded()) {
@@ -245,11 +294,13 @@ export class PrimaryColsListPanel extends Component {
 
         if (expandedCount > 0 && notExpandedCount > 0) {
             return EXPAND_STATE.INDETERMINATE;
-        } else if (notExpandedCount > 0) {
-            return EXPAND_STATE.COLLAPSED;
-        } else {
-            return EXPAND_STATE.EXPANDED;
         }
+        
+        if (notExpandedCount > 0) {
+            return EXPAND_STATE.COLLAPSED;
+        }
+
+        return EXPAND_STATE.EXPANDED;
     }
 
     public doSetSelectedAll(selectAllChecked: boolean): void {
@@ -261,9 +312,7 @@ export class PrimaryColsListPanel extends Component {
         if (this.columnApi.isPivotMode()) {
             // if pivot mode is on, then selecting columns has special meaning (eg group, aggregate, pivot etc),
             // so there is no bulk operation we can do.
-            _.iterateObject(this.columnComps, (key, column) => {
-                column.onSelectAllChanged(this.selectAllChecked);
-            });
+            this.columnComps.forEach(column => column.onSelectAllChanged(this.selectAllChecked));
         } else {
             // we don't want to change visibility on lock visible columns
             const primaryCols = this.columnApi.getPrimaryColumns();
@@ -342,7 +391,9 @@ export class PrimaryColsListPanel extends Component {
 
         if (checkedCount > 0 && uncheckedCount > 0) {
             return undefined;
-        } else if (checkedCount === 0 || uncheckedCount > 0) {
+        }
+        
+        if (checkedCount === 0 || uncheckedCount > 0) {
             return false
         }
 
@@ -355,7 +406,7 @@ export class PrimaryColsListPanel extends Component {
         this.recursivelySetVisibility(this.columnTree, true);
 
         // groups selection state may need to be updated when filter is present
-        _.iterateObject(this.columnComps, (key, columnComp) => {
+        this.columnComps.forEach(columnComp => {
             if (columnComp instanceof ToolPanelColumnGroupComp) {
                 columnComp.onColumnStateChanged();
             }
@@ -373,7 +424,7 @@ export class PrimaryColsListPanel extends Component {
             if(!_.exists(this.filterText)) return true;
 
             const columnCompId = this.getColumnCompId(item);
-            const comp = this.columnComps[columnCompId];
+            const comp = this.columnComps.get(columnCompId);
             if (!comp) return false;
 
             const isPaddingGroup = item instanceof OriginalColumnGroup && item.isPadding();
@@ -408,7 +459,7 @@ export class PrimaryColsListPanel extends Component {
     private recursivelySetVisibility(columnTree: any[], parentGroupsOpen: boolean): void {
         columnTree.forEach(child => {
             const compId = this.getColumnCompId(child);
-            let comp: ColumnItem = this.columnComps[compId];
+            let comp: ColumnItem = this.columnComps.get(compId);
             if (comp) {
                 const filterResultExists = this.filterResults && _.exists(this.filterResults[compId]);
                 const passesFilter = filterResultExists ? this.filterResults[compId] : true;
@@ -461,9 +512,9 @@ export class PrimaryColsListPanel extends Component {
     private destroyColumnComps(): void {
         _.clearElement(this.getGui());
         if (this.columnComps) {
-            _.iterateObject(this.columnComps, (key: string, renderedItem: Component) => this.destroyBean(renderedItem));
+            this.columnComps.forEach(renderedItem => this.destroyBean(renderedItem))
         }
-        this.columnComps = {};
+        this.columnComps = new Map();
     }
 
     protected destroy(): void {

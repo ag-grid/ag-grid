@@ -1,13 +1,9 @@
 import { Promise, _ } from '../utils';
 import { RefSelector } from '../widgets/componentAnnotations';
-import { Autowired } from '../context/context';
 import { Constants } from '../constants';
-import { FocusController } from '../focusController';
 import { ManagedFocusComponent } from '../widgets/managedFocusComponent';
 
 export class TabbedLayout extends ManagedFocusComponent {
-
-    @Autowired('focusController') private focusController: FocusController;
 
     @RefSelector('eHeader') private eHeader: HTMLElement;
     @RefSelector('eBody') private eBody: HTMLElement;
@@ -78,7 +74,7 @@ export class TabbedLayout extends ManagedFocusComponent {
             let nextPosition: number;
 
             if (focusedPosition === -1) {
-                nextPosition = -1;
+                nextPosition = e.shiftKey ? focusableItems.length - 1 : -1;
             } else {
                 nextPosition = e.shiftKey ? focusedPosition - 1 : focusedPosition + 1;
             }
