@@ -1,6 +1,7 @@
 import { Component } from './component';
 import { Autowired, PostConstruct } from '../context/context';
 import { GridOptionsWrapper } from '../gridOptionsWrapper';
+import { RefSelector } from './componentAnnotations';
 import { _ } from '../utils';
 
 export interface VirtualListModel {
@@ -16,6 +17,7 @@ export class VirtualList extends Component {
     private rowHeight = 20;
 
     @Autowired('gridOptionsWrapper') gridOptionsWrapper: GridOptionsWrapper;
+    @RefSelector('eContainer') private eContainer: HTMLElement;
 
     constructor(private readonly cssIdentifier = 'default') {
         super(VirtualList.getTemplate(cssIdentifier));
@@ -31,8 +33,8 @@ export class VirtualList extends Component {
 
     private static getTemplate(cssIdentifier: string) {
         return /* html */`
-            <div class="ag-virtual-list-viewport ag-${cssIdentifier}-virtual-list-viewport" tabindex="0">
-                <div class="ag-virtual-list-container ag-${cssIdentifier}-virtual-list-container"></div>
+            <div class="ag-virtual-list-viewport ag-${cssIdentifier}-virtual-list-viewport">
+                <div class="ag-virtual-list-container ag-${cssIdentifier}-virtual-list-container" ref="eContainer"></div>
             </div>`;
     }
 
@@ -88,8 +90,10 @@ export class VirtualList extends Component {
 
     public refresh(): void {
         if (this.model == null) { return; }
+        const rowCount = this.model.getRowCount();
 
-        this.eListContainer.style.height = `${this.model.getRowCount() * this.rowHeight}px`;
+        this.eListContainer.style.height = `${rowCount * this.rowHeight}px`;
+        this.eContainer.setAttribute('aria-rowcount', rowCount.toString());
 
         // ensure height is applied before attempting to redraw rows
         setTimeout(() => {
@@ -137,6 +141,7 @@ export class VirtualList extends Component {
 
         _.addCssClass(eDiv, 'ag-virtual-list-item');
         _.addCssClass(eDiv, `ag-${this.cssIdentifier}-virtual-list-item`);
+        eDiv.setAttribute('aria-rowindex', (rowIndex + 1).toString());
 
         eDiv.style.height = `${this.rowHeight}px`;
         eDiv.style.top = `${this.rowHeight * rowIndex}px`;
