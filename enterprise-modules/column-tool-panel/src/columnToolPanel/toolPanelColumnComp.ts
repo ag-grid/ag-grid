@@ -24,7 +24,7 @@ import { BaseColumnItem } from "./primaryColsPanel";
 export class ToolPanelColumnComp extends Component implements BaseColumnItem {
 
     private static TEMPLATE = /* html */
-        `<div class="ag-column-select-column">
+        `<div class="ag-column-select-column" tabindex="-1">
             <ag-checkbox ref="cbSelect" class="ag-column-select-checkbox"></ag-checkbox>
             <span class="ag-column-select-column-label" ref="eLabel"></span>
         </div>`;

@@ -20,7 +20,7 @@ import {ICellRendererAngularComp} from "@ag-grid-community/angular";
                  (gridReady)="onGridReady($event)"
              >
             </ag-grid-angular>
-            </div>`
+        </div>`
 })
 export class DetailCellRenderer implements ICellRendererAngularComp {
     // called on init
@@ -28,7 +28,7 @@ export class DetailCellRenderer implements ICellRendererAngularComp {
         this.params = params;
 
         this.masterGridApi = params.api;
-        this.masterRowIndex = params.rowIndex;
+        this.rowId = params.node.id;
 
         this.colDefs = [
             {field: 'callId'},
@@ -52,24 +52,20 @@ export class DetailCellRenderer implements ICellRendererAngularComp {
     }
 
     onGridReady(params) {
-        var detailGridId = "detail_" + this.masterRowIndex;
-
         var gridInfo = {
-            id: detailGridId,
+            id: this.rowId,
             api: params.api,
             columnApi: params.columnApi
         };
 
-        console.log("adding detail grid info with id: ", detailGridId);
-        this.masterGridApi.addDetailGridInfo(detailGridId, gridInfo);
+        console.log("adding detail grid info with id: ", this.rowId);
+        this.masterGridApi.addDetailGridInfo(this.rowId, gridInfo);
     }
 
     ngOnDestroy(): void {
-        var detailGridId = "detail_" + this.masterRowIndex;
+        // detail grid is automatically destroyed as it is an Angular component
 
-        // ag-Grid is automatically destroyed
-
-        console.log("removing detail grid info with id: ", detailGridId);
-        this.masterGridApi.removeDetailGridInfo(detailGridId);
+        console.log("removing detail grid info with id: ", this.rowId);
+        this.masterGridApi.removeDetailGridInfo(this.rowId);
     }
 }

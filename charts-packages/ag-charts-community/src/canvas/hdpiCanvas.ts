@@ -19,7 +19,7 @@ export class HdpiCanvas {
         this.element.style.userSelect = 'none';
         this.element.style.display = 'block';
 
-        this.updatePixelRatio();
+        this.setPixelRatio();
         this.resize(width, height);
     }
 
@@ -106,11 +106,11 @@ export class HdpiCanvas {
     }
 
     /**
-     * Updates the pixel ratio of the Canvas element with the given value,
+     * Changes the pixel ratio of the Canvas element to the given value,
      * or uses the window.devicePixelRatio (default), then resizes the Canvas
      * element accordingly (default).
      */
-    updatePixelRatio(ratio?: number) {
+    setPixelRatio(ratio?: number) {
         const pixelRatio = ratio || window.devicePixelRatio;
 
         if (pixelRatio === this.pixelRatio) {
@@ -123,6 +123,13 @@ export class HdpiCanvas {
         this.resize(this.width, this.height);
     }
 
+    set pixelated(value: boolean) {
+        this.element.style.imageRendering = value ? 'pixelated' : 'auto';
+    }
+    get pixelated(): boolean {
+        return this.element.style.imageRendering === 'pixelated';
+    }
+
     private _width: number;
     get width(): number {
         return this._width;
@@ -133,8 +140,10 @@ export class HdpiCanvas {
         return this._height;
     }
 
+    onResize?: (width: number, height: number) => any;
+
     private _resizeHandle = 0;
-    resize(width: number, height: number, callbackWhenDone?: (width: number, height: number) => void) {
+    resize(width: number, height: number) {
         cancelAnimationFrame(this._resizeHandle);
 
         this._width = width = Math.round(width);
@@ -148,9 +157,7 @@ export class HdpiCanvas {
             element.style.height = height + 'px';
             context.resetTransform();
 
-            // The canvas being resized is asynchronous. For the case where we
-            // need to do something after it is resized, return a promise.
-            callbackWhenDone && callbackWhenDone(width, height);
+            this.onResize && this.onResize(width, height);
         });
     }
 

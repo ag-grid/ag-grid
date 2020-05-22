@@ -1,41 +1,72 @@
-import { PostConstruct } from "../context/context";
+import { PostConstruct, Autowired } from "../context/context";
 import { Component } from "./component";
 import { Constants } from "../constants";
+import { _ } from "../utils";
 
 export class ManagedFocusComponent extends Component {
 
     protected onTabKeyDown?(e: KeyboardEvent): void;
     protected handleKeyDown?(e: KeyboardEvent): void;
+    protected focusFirstElement?(): void;
 
-    protected onFocusIn?(e: FocusEvent): void;
-    protected onFocusOut?(e: FocusEvent): void;
+    private focusableContainer: boolean;
 
     @PostConstruct
     protected postConstruct(): void {
-        const eGui = this.getGui();
+        const focusableElement = this.getFocusableElement();
+        if (!focusableElement) { return; }
 
-        if (!eGui) { return; }
+        if (focusableElement && _.getTabIndex(focusableElement) === '0') {
+            this.focusableContainer = true;
+        }
 
         if (this.onTabKeyDown || this.handleKeyDown) {
-            this.addKeyDownListeners(eGui);
+            this.addKeyDownListeners(focusableElement);
         }
 
-        if (this.onFocusIn) {
-            this.addManagedListener(eGui, 'focusin', this.onFocusIn.bind(this));
-        }
+        this.addManagedListener(focusableElement, 'focus', this.onFocus.bind(this));
+        this.addManagedListener(focusableElement, 'blur', this.onBlur.bind(this));
+        this.addManagedListener(focusableElement, 'focusin', this.onFocusIn.bind(this));
+        this.addManagedListener(focusableElement, 'focusout', this.onFocusOut.bind(this));
 
-        if (this.onFocusOut) {
-            this.addManagedListener(eGui, 'focusout', this.onFocusOut.bind(this));
-        }
     }
 
     private addKeyDownListeners(eGui: HTMLElement): void {
         this.addManagedListener(eGui, 'keydown', (e: KeyboardEvent) => {
-            if (e.keyCode === Constants.KEY_TAB) {
+            if (e.defaultPrevented) { return; }
+
+            if (e.keyCode === Constants.KEY_TAB && this.onTabKeyDown) {
                 this.onTabKeyDown(e);
-            } else {
+            } else if (this.handleKeyDown) {
                 this.handleKeyDown(e);
             }
         });
+    }
+
+    protected onFocusIn(e: FocusEvent): void {
+        if (!this.focusableContainer) { return; }
+
+        const focusEl = this.getFocusableElement();
+
+        focusEl.setAttribute('tabindex', '-1');
+    }
+
+    protected onFocusOut(e: FocusEvent): void {
+        if (!this.focusableContainer) { return; }
+
+        const focusEl = this.getFocusableElement();
+
+        if (!focusEl.contains(e.relatedTarget as HTMLElement)) {
+            focusEl.setAttribute('tabindex', '0');
+        }
+    }
+
+    protected onFocus(e: FocusEvent): void {
+        if (!this.focusableContainer || !this.focusFirstElement) { return; }
+        this.focusFirstElement();
+    }
+
+    protected onBlur(e: FocusEvent): void {
+
     }
 }

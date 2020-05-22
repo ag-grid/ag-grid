@@ -29,7 +29,7 @@ export interface IHeaderParams {
 export interface IHeader { }
 
 export interface IHeaderComp extends IHeader, IComponent<IHeaderParams> {
-    setMouseOverParent?(overParent: boolean): void;
+    setActiveParent?(activeParent: boolean): void;
 }
 
 export class HeaderComp extends Component implements IHeaderComp {
@@ -178,13 +178,16 @@ export class HeaderComp extends Component implements IHeaderComp {
         style['-webkit-transition'] = 'opacity 0.2s, border 0.2s';
     }
 
-    public setMouseOverParent(overParent: boolean): void {
+    public setActiveParent(activeParent: boolean): void {
         if (!this.gridOptionsWrapper.isSuppressMenuHide()) {
-            this.eMenu.style.opacity = overParent ? '1' : '0';
+            this.eMenu.style.opacity = activeParent ? '1' : '0';
         }
     }
 
-    public showMenu(eventSource: HTMLElement) {
+    public showMenu(eventSource?: HTMLElement) {
+        if (!eventSource) {
+            eventSource = this.eMenu;
+        }
         this.menuFactory.showMenuAfterButtonClick(this.params.column, eventSource);
     }
 

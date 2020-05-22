@@ -12,6 +12,8 @@
 
         @include ag-theme-rtl(( margin-left: ag-param(widget-container-horizontal-padding) ));
     }
+
+    @include ag-keyboard-focus((ag-column-select-header), -4px);
     
     .ag-column-select-header {
         height: ag-param(header-height);

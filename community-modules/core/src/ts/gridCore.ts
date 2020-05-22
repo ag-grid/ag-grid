@@ -1,7 +1,6 @@
 import { GridOptions } from "./entities/gridOptions";
 import { GridOptionsWrapper } from "./gridOptionsWrapper";
 import { ColumnApi } from "./columnController/columnApi";
-import { ColumnController } from "./columnController/columnController";
 import { RowRenderer } from "./rendering/rowRenderer";
 import { FilterManager } from "./filter/filterManager";
 import { GridPanel } from "./gridPanel/gridPanel";
@@ -21,10 +20,13 @@ import { SideBarDef, SideBarDefParser } from "./entities/sideBar";
 import { IToolPanel } from "./interfaces/iToolPanel";
 import { ModuleNames } from "./modules/moduleNames";
 import { ModuleRegistry } from "./modules/moduleRegistry";
-import { Environment } from "./environment";
+import { ManagedFocusComponent } from "./widgets/managedFocusComponent";
+import { ColumnController } from "./columnController/columnController";
+import { ColumnGroup } from "./entities/columnGroup";
+import { Column } from "./entities/column";
 import { _ } from "./utils";
 
-export class GridCore extends Component {
+export class GridCore extends ManagedFocusComponent {
 
     @Autowired('gridOptions') private gridOptions: GridOptions;
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
@@ -39,11 +41,11 @@ export class GridCore extends Component {
     @Autowired('quickFilterOnScope') private quickFilterOnScope: string;
     @Autowired('popupService') private popupService: PopupService;
     @Autowired('focusController') private focusController: FocusController;
+    @Autowired('columnController') private columnController: ColumnController;
     @Autowired('loggerFactory') loggerFactory: LoggerFactory;
 
     @Autowired('columnApi') private columnApi: ColumnApi;
     @Autowired('gridApi') private gridApi: GridApi;
-    @Autowired('environment') private environment: Environment;
 
     @Optional('clipboardService') private clipboardService: IClipboardService;
 
@@ -55,9 +57,7 @@ export class GridCore extends Component {
 
     private logger: Logger;
 
-    @PostConstruct
-    public init(): void {
-
+    protected postConstruct(): void {
         this.logger = this.loggerFactory.create('GridCore');
 
         const template = this.createTemplate();
@@ -108,10 +108,15 @@ export class GridCore extends Component {
         this.addManagedListener(this.eventService, Events.EVENT_MOUSE_FOCUS, () => {
             _.removeCssClass(eGui, 'ag-keyboard-focus');
         });
+
+        super.postConstruct();
+    }
+
+    public getFocusableElement(): HTMLElement {
+        return this.eRootWrapperBody;
     }
 
     private createTemplate(): string {
-
         const sideBarModuleLoaded = ModuleRegistry.isRegistered(ModuleNames.SideBarModule);
         const statusBarModuleLoaded = ModuleRegistry.isRegistered(ModuleNames.StatusBarModule);
         const rowGroupingLoaded = ModuleRegistry.isRegistered(ModuleNames.RowGroupingModule);
@@ -125,7 +130,7 @@ export class GridCore extends Component {
         const template =
             `<div class="ag-root-wrapper">
                 ${dropZones}
-                <div class="ag-root-wrapper-body" ref="rootWrapperBody">
+                <div class="ag-root-wrapper-body" ref="rootWrapperBody" tabindex="0">
                     <ag-grid-comp ref="gridPanel"></ag-grid-comp>
                     ${sideBar}
                 </div>
@@ -135,6 +140,20 @@ export class GridCore extends Component {
             </div>`;
 
         return template;
+    }
+
+    protected focusFirstElement(): void {
+        let firstColumn: Column | ColumnGroup = this.columnController.getAllDisplayedColumns()[0];
+        if (!firstColumn) { return; }
+
+        if (firstColumn.getParent()) {
+            firstColumn = this.columnController.getColumnGroupAtLevel(firstColumn, 0);
+        }
+
+        this.focusController.focusHeaderPosition({
+            headerRowIndex: 0,
+            column: firstColumn
+        });
     }
 
     private onGridSizeChanged(): void {

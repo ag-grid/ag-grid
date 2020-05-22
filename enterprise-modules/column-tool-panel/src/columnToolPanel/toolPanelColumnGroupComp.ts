@@ -22,7 +22,7 @@ import { ColumnFilterResults } from "./primaryColsListPanel";
 export class ToolPanelColumnGroupComp extends Component implements BaseColumnItem {
 
     private static TEMPLATE = /* html */
-        `<div class="ag-column-select-column-group">
+        `<div class="ag-column-select-column-group" tabindex="-1">
             <span class="ag-column-group-icons" ref="eColumnGroupIcons" >
                 <span class="ag-column-group-closed-icon" ref="eGroupClosedIcon"></span>
                 <span class="ag-column-group-opened-icon" ref="eGroupOpenedIcon"></span>

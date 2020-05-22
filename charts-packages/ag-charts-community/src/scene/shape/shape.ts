@@ -90,7 +90,7 @@ export abstract class Shape extends Node {
         }
     }
 
-    private _fillOpacity: number = 1;
+    protected _fillOpacity: number = 1;
     set fillOpacity(value: number) {
         if (this._fillOpacity !== value) {
             this._fillOpacity = value;
@@ -101,7 +101,7 @@ export abstract class Shape extends Node {
         return this._fillOpacity;
     }
 
-    private _strokeOpacity: number = 1;
+    protected _strokeOpacity: number = 1;
     set strokeOpacity(value: number) {
         if (this._strokeOpacity !== value) {
             this._strokeOpacity = value;
@@ -112,7 +112,7 @@ export abstract class Shape extends Node {
         return this._strokeOpacity;
     }
 
-    private _fill: string | undefined = Shape.defaultStyles.fill;
+    protected _fill: string | undefined = Shape.defaultStyles.fill;
     set fill(value: string | undefined) {
         if (this._fill !== value) {
             this._fill = value;
@@ -133,7 +133,7 @@ export abstract class Shape extends Node {
      * The preferred way of making the stroke invisible is setting the `lineWidth` to zero,
      * unless specific looks that is achieved by having an invisible stroke is desired.
      */
-    private _stroke: string | undefined = Shape.defaultStyles.stroke;
+    protected _stroke: string | undefined = Shape.defaultStyles.stroke;
     set stroke(value: string | undefined) {
         if (this._stroke !== value) {
             this._stroke = value;
@@ -155,7 +155,20 @@ export abstract class Shape extends Node {
         return this._strokeWidth;
     }
 
-    private _lineDash: number[] | undefined = Shape.defaultStyles.lineDash;
+    // An offset value to align to the pixel grid.
+    get alignment(): number {
+        return Math.floor(this.strokeWidth) % 2 / 2;
+    }
+    // Returns the aligned `start` or `length` value.
+    // For example: `start` could be `y` and `length` could be `height` of a rectangle.
+    align(alignment: number, start: number, length?: number) {
+        if (length != undefined) {
+            return Math.floor(length) + Math.floor(start % 1 + length % 1);
+        }
+        return Math.floor(start) + alignment;
+    }
+
+    protected _lineDash: number[] | undefined = Shape.defaultStyles.lineDash;
     set lineDash(value: number[] | undefined) {
         const oldValue = this._lineDash;
 
@@ -181,7 +194,7 @@ export abstract class Shape extends Node {
         return this._lineDash;
     }
 
-    private _lineDashOffset: number = Shape.defaultStyles.lineDashOffset;
+    protected _lineDashOffset: number = Shape.defaultStyles.lineDashOffset;
     set lineDashOffset(value: number) {
         if (this._lineDashOffset !== value) {
             this._lineDashOffset = value;
@@ -192,7 +205,7 @@ export abstract class Shape extends Node {
         return this._lineDashOffset;
     }
 
-    private _lineCap: ShapeLineCap = Shape.defaultStyles.lineCap;
+    protected _lineCap: ShapeLineCap = Shape.defaultStyles.lineCap;
     set lineCap(value: ShapeLineCap) {
         if (this._lineCap !== value) {
             this._lineCap = value;
@@ -203,7 +216,7 @@ export abstract class Shape extends Node {
         return this._lineCap;
     }
 
-    private _lineJoin: ShapeLineJoin = Shape.defaultStyles.lineJoin;
+    protected _lineJoin: ShapeLineJoin = Shape.defaultStyles.lineJoin;
     set lineJoin(value: ShapeLineJoin) {
         if (this._lineJoin !== value) {
             this._lineJoin = value;
@@ -214,7 +227,7 @@ export abstract class Shape extends Node {
         return this._lineJoin;
     }
 
-    private _opacity: number = Shape.defaultStyles.opacity;
+    protected _opacity: number = Shape.defaultStyles.opacity;
     set opacity(value: number) {
         value = Math.min(1, Math.max(0, value));
         if (this._opacity !== value) {
@@ -230,7 +243,7 @@ export abstract class Shape extends Node {
         this.dirty = true;
     }
 
-    private _fillShadow: DropShadow | undefined = Shape.defaultStyles.fillShadow;
+    protected _fillShadow: DropShadow | undefined = Shape.defaultStyles.fillShadow;
     set fillShadow(value: DropShadow | undefined) {
         const oldValue = this._fillShadow;
         if (oldValue !== value) {
@@ -248,7 +261,7 @@ export abstract class Shape extends Node {
         return this._fillShadow;
     }
 
-    private _strokeShadow: DropShadow | undefined = Shape.defaultStyles.strokeShadow;
+    protected _strokeShadow: DropShadow | undefined = Shape.defaultStyles.strokeShadow;
     set strokeShadow(value: DropShadow | undefined) {
         const oldValue = this._strokeShadow;
         if (oldValue !== value) {
@@ -317,7 +330,7 @@ export abstract class Shape extends Node {
         }
     }
 
-    isPointInNode(x: number, y: number): boolean {
+    containsPoint(x: number, y: number): boolean {
         return this.isPointInPath(x, y);
     }
 

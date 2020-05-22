@@ -413,7 +413,10 @@ export class GroupCellRenderer extends Component implements ICellRendererComp {
         // because we don't show the expand / contract when there are no children, we need to check every time
         // the number of children change.
         this.addManagedListener(this.displayedGroup, RowNode.EVENT_ALL_CHILDREN_COUNT_CHANGED,
-            this.onAllChildrenCountChanged.bind(this));
+            this.onRowNodeIsExpandableChanged.bind(this));
+
+        this.addManagedListener(this.displayedGroup, RowNode.EVENT_MASTER_CHANGED,
+            this.onRowNodeIsExpandableChanged.bind(this));
 
         // if editing groups, then double click is to start editing
         if (!this.gridOptionsWrapper.isEnableGroupEdit() && this.isExpandable() && !params.suppressDoubleClickExpand) {
@@ -421,7 +424,7 @@ export class GroupCellRenderer extends Component implements ICellRendererComp {
         }
     }
 
-    private onAllChildrenCountChanged(): void {
+    private onRowNodeIsExpandableChanged(): void {
         // maybe if no children now, we should hide the expand / contract icons
         this.showExpandAndContractIcons();
         // if we have no children, this impacts the indent

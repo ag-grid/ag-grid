@@ -35,6 +35,7 @@ export class ClientSideNodeManager {
     private suppressParentsInRowNodes: boolean;
 
     private doingLegacyTreeData: boolean;
+    private doingTreeData: boolean;
     private doingMasterDetail: boolean;
 
     // when user is provide the id's, we also keep a map of ids to row nodes for convenience
@@ -74,7 +75,8 @@ export class ClientSideNodeManager {
         this.doesDataFlower = this.gridOptionsWrapper.getDoesDataFlowerFunc();
         this.isRowMasterFunc = this.gridOptionsWrapper.getIsRowMasterFunc();
 
-        this.doingLegacyTreeData = _.exists(this.getNodeChildDetails);
+        this.doingTreeData = this.gridOptionsWrapper.isTreeData();
+        this.doingLegacyTreeData = !this.doingTreeData && _.exists(this.getNodeChildDetails);
         this.doingMasterDetail = this.gridOptionsWrapper.isMasterDetail();
 
         if (this.getNodeChildDetails) {
@@ -84,6 +86,8 @@ export class ClientSideNodeManager {
                                     tree data. If you are reading this message, please go to the docs to see how
                                     to implement Tree Data without using nodeChildDetailsFunc().`);
         }
+
+
     }
 
     public getCopyOfNodesMap(): {[id:string]: RowNode} {
@@ -221,6 +225,8 @@ export class ClientSideNodeManager {
 
             rowNode.updateData(item);
 
+            this.setMasterForRow(rowNode, item, ClientSideNodeManager.TOP_LEVEL, false);
+
             rowNodeTransaction.update.push(rowNode);
         });
     }
@@ -282,10 +288,7 @@ export class ClientSideNodeManager {
         const node = new RowNode();
         this.context.createBean(node);
 
-        const doingTreeData = this.gridOptionsWrapper.isTreeData();
-        const doingLegacyTreeData = !doingTreeData && _.exists(this.getNodeChildDetails);
-
-        const nodeChildDetails = doingLegacyTreeData ? this.getNodeChildDetails(dataItem) : null;
+        const nodeChildDetails = this.doingLegacyTreeData ? this.getNodeChildDetails(dataItem) : null;
 
         if (nodeChildDetails && nodeChildDetails.group) {
             node.group = true;
@@ -293,44 +296,15 @@ export class ClientSideNodeManager {
             node.expanded = nodeChildDetails.expanded === true;
             node.field = nodeChildDetails.field;
             node.key = nodeChildDetails.key;
-            /** @deprecated is now 'master' */
-            node.canFlower = node.master;
             // pull out all the leaf children and add to our node
             this.setLeafChildren(node);
         } else {
-
             node.group = false;
-
-            if (doingTreeData) {
-                node.master = false;
-                node.expanded = false;
-            } else {
-                // this is the default, for when doing grid data
-                if (this.doesDataFlower) {
-                    node.master = this.doesDataFlower(dataItem);
-                } else if (this.doingMasterDetail) {
-                    // if we are doing master detail, then the
-                    // default is that everything can flower.
-                    if (this.isRowMasterFunc) {
-                        node.master = this.isRowMasterFunc(dataItem);
-                    } else {
-                        node.master = true;
-                    }
-                } else {
-                    node.master = false;
-                }
-
-                const rowGroupColumns = this.columnController.getRowGroupColumns();
-                const numRowGroupColumns = rowGroupColumns ? rowGroupColumns.length : 0;
-
-                // need to take row group into account when determining level
-                const masterRowLevel = level + numRowGroupColumns;
-
-                node.expanded = node.master ? this.isExpanded(masterRowLevel) : false;
-            }
+            this.setMasterForRow(node, dataItem, level, true);
         }
 
         // support for backwards compatibility, canFlow is now called 'master'
+        /** @deprecated is now 'master' */
         node.canFlower = node.master;
 
         if (parent && !this.suppressParentsInRowNodes) {
@@ -347,6 +321,40 @@ export class ClientSideNodeManager {
         this.nextId++;
 
         return node;
+    }
+
+    private setMasterForRow(rowNode: RowNode, data: any, level: number, setExpanded: boolean): void {
+        if (this.doingTreeData) {
+            rowNode.setMaster(false);
+            if (setExpanded) {
+                rowNode.expanded = false;
+            }
+        } else {
+            // this is the default, for when doing grid data
+            if (this.doesDataFlower) {
+                rowNode.setMaster(this.doesDataFlower(data));
+            } else if (this.doingMasterDetail) {
+                // if we are doing master detail, then the
+                // default is that everything can be a Master Row.
+                if (this.isRowMasterFunc) {
+                    rowNode.setMaster(this.isRowMasterFunc(data));
+                } else {
+                    rowNode.setMaster(true);
+                }
+            } else {
+                rowNode.setMaster(false);
+            }
+
+            if (setExpanded) {
+                const rowGroupColumns = this.columnController.getRowGroupColumns();
+                const numRowGroupColumns = rowGroupColumns ? rowGroupColumns.length : 0;
+
+                // need to take row group into account when determining level
+                const masterRowLevel = level + numRowGroupColumns;
+
+                rowNode.expanded = rowNode.master ? this.isExpanded(masterRowLevel) : false;
+            }
+        }
     }
 
     private isExpanded(level: any) {

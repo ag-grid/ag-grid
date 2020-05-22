@@ -22,6 +22,7 @@ import { UserComponentFactory } from "../../components/framework/userComponentFa
 import { HoverFeature } from "../hoverFeature";
 import { TooltipFeature } from "../../widgets/tooltipFeature";
 import { AbstractHeaderWrapper } from "../header/abstractHeaderWrapper";
+import { HeaderRowComp } from "../headerRowComp";
 import { Beans } from "../../rendering/beans";
 import { _ } from "../../utils";
 
@@ -87,7 +88,30 @@ export class HeaderGroupWrapperComp extends AbstractHeaderWrapper {
 
     protected onFocusIn(e: FocusEvent) {
         if (!this.getGui().contains(e.relatedTarget as HTMLElement)) {
-            this.beans.focusController.setHeaderFocused(this);
+            const headerRow = this.getParentComponent() as HeaderRowComp;
+            this.beans.focusController.setFocusedHeader(
+                headerRow.getRowIndex(),
+                this.getColumn()
+            );
+        }
+    }
+
+    protected handleKeyDown(e: KeyboardEvent) {
+        const activeEl = document.activeElement;
+        const eGui = this.getGui();
+        const wrapperHasFocus = activeEl === eGui;
+
+        switch (e.keyCode) {
+            case Constants.KEY_ENTER:
+                if (wrapperHasFocus) {
+                    const column = this.getColumn() as ColumnGroup;
+                    const expandable = column.isExpandable();
+
+                    if (expandable) {
+                        const newExpandedValue = !column.isExpanded();
+                        this.columnController.setColumnGroupOpened(column.getOriginalColumnGroup(), newExpandedValue, "uiColumnExpanded");
+                    }
+                }
         }
     }
 
@@ -256,7 +280,6 @@ export class HeaderGroupWrapperComp extends AbstractHeaderWrapper {
     }
 
     private setupWidth(): void {
-
         // we need to listen to changes in child columns, as they impact our width
         this.addListenersToChildrenColumns();
 

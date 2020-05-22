@@ -24,6 +24,7 @@ import { AbstractHeaderWrapper  } from '../../headerRendering/header/abstractHea
 import { FocusController } from '../../focusController';
 import { Constants } from '../../constants';
 import { Beans } from '../../rendering/beans';
+import { HeaderRowComp } from '../../headerRendering/headerRowComp';
 
 export class FloatingFilterWrapper extends AbstractHeaderWrapper {
     private static filterToFloatingFilterNames: { [p: string]: string; } = {
@@ -115,7 +116,9 @@ export class FloatingFilterWrapper extends AbstractHeaderWrapper {
         switch (e.keyCode) {
             case Constants.KEY_UP:
             case Constants.KEY_DOWN:
-                e.preventDefault();
+                if (!wrapperHasFocus) {
+                    e.preventDefault();
+                }
             case Constants.KEY_LEFT:
             case Constants.KEY_RIGHT:
                 if (wrapperHasFocus) { return; }
@@ -128,6 +131,11 @@ export class FloatingFilterWrapper extends AbstractHeaderWrapper {
                         e.preventDefault();
                     }
                 }
+                break;
+            case Constants.KEY_ESCAPE:
+                if (!wrapperHasFocus) {
+                    this.getGui().focus();
+                }
         }
     }
 
@@ -135,7 +143,11 @@ export class FloatingFilterWrapper extends AbstractHeaderWrapper {
         const eGui = this.getGui();
 
         if (!eGui.contains(e.relatedTarget as HTMLElement)) {
-            this.beans.focusController.setHeaderFocused(this);
+            const headerRow = this.getParentComponent() as HeaderRowComp;
+            this.beans.focusController.setFocusedHeader(
+                headerRow.getRowIndex(),
+                this.getColumn()
+            );
         }
     }
 

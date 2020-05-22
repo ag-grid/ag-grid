@@ -1,12 +1,15 @@
-import Vue from "vue";
+import Vue from 'vue';
+
+const KEY_BACKSPACE = 8;
+const KEY_DELETE = 46;
 
 export default Vue.extend({
     template: `<input :ref="'input'" @keydown="onKeyDown($event)" v-model="value"/>`,
     data() {
         return {
             value: '',
-            cancelBeforeStart: true
-        }
+            cancelBeforeStart: true,
+        };
     },
     methods: {
         getValue() {
@@ -38,17 +41,32 @@ export default Vue.extend({
             return /\d/.test(charStr);
         },
 
+        getStartValue(params) {
+            if (params.keyPress === KEY_BACKSPACE || params.keyPress === KEY_DELETE) {
+                // if backspace or delete pressed, we clear the cell
+                return '';
+            } else if (params.charPress) {
+                // if a letter was pressed, we start with the letter
+                return params.charPress;
+            } else {
+                // otherwise we start with the current value
+                return params.value;
+            }
+        },
+
         isKeyPressedNumeric(event) {
             const charCode = this.getCharCodeFromEvent(event);
             const charStr = String.fromCharCode(charCode);
             return this.isCharNumeric(charStr);
-        }
+        },
     },
+
     created() {
-        this.value = this.params.value;
+        this.value = this.getStartValue(this.params);
 
         // only start edit if key pressed is a number, not a letter
-        this.cancelBeforeStart = this.params.charPress && ('1234567890'.indexOf(this.params.charPress) < 0);
+        this.cancelBeforeStart =
+            this.params.charPress && '1234567890'.indexOf(this.params.charPress) < 0;
     },
     mounted() {
         Vue.nextTick(() => {
@@ -58,7 +76,5 @@ export default Vue.extend({
                 this.$refs.input.focus();
             }
         });
-    }
-})
-
-
+    },
+});

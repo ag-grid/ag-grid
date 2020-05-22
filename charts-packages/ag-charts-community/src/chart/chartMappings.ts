@@ -15,6 +15,7 @@ import { Caption } from "../caption";
 import { DropShadow } from "../scene/dropShadow";
 import { Legend, LegendPosition } from "./legend";
 import palette from "./palettes";
+import { Navigator, NavigatorMask, NavigatorHandle } from "./navigator";
 
 /*
     This file defines the specs for creating different kinds of charts, but
@@ -114,6 +115,7 @@ const chartMeta = {
 
 const axisDefaults = {
     defaults: {
+        visibleRange: [0, 1],
         gridStyle: [{
             stroke: 'rgba(219, 219, 219, 1)',
             lineDash: [4, 2]
@@ -250,7 +252,7 @@ const mappings = {
             [NumberAxis.type]: {
                 meta: {
                     constructor: NumberAxis,
-                    setAsIs: ['gridStyle'],
+                    setAsIs: ['gridStyle', 'visibleRange'],
                     ...axisDefaults
                 },
                 ...axisMappings
@@ -258,7 +260,7 @@ const mappings = {
             [CategoryAxis.type]: {
                 meta: {
                     constructor: CategoryAxis,
-                    setAsIs: ['gridStyle'],
+                    setAsIs: ['gridStyle', 'visibleRange'],
                     ...axisDefaults
                 },
                 ...axisMappings
@@ -266,7 +268,7 @@ const mappings = {
             [TimeAxis.type]: {
                 meta: {
                     constructor: TimeAxis,
-                    setAsIs: ['gridStyle'],
+                    setAsIs: ['gridStyle', 'visibleRange'],
                     ...axisDefaults
                 },
                 ...axisMappings
@@ -396,6 +398,38 @@ const mappings = {
                     }
                 },
                 highlightStyle: {}
+            }
+        },
+        navigator: {
+            meta: {
+                constructor: Navigator,
+                defaults: {
+                    enabled: true,
+                    height: 30,
+                    min: 0,
+                    max: 1
+                }
+            },
+            mask: {
+                meta: {
+                    constructor: NavigatorMask,
+                    defaults: {
+                        fill: '#f2f2f2',
+                        stroke: '#999999',
+                        strokeWidth: 1,
+                        fillOpacity: 0.2
+                    }
+                }
+            },
+            handle: {
+                meta: {
+                    constructor: NavigatorHandle,
+                    defaults: {
+                        fill: '#f2f2f2',
+                        stroke: '#999999',
+                        strokeWidth: 1
+                    }
+                }
             }
         }
     },

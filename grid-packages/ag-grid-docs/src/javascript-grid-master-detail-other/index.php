@@ -9,26 +9,32 @@ include '../documentation-main/documentation_header.php';
 <h1 class="heading-enterprise">Master / Detail - Other</h1>
 
 <p class="lead">
-    This section describes...
+    Here we discuss areas of Master / Detail that didn't quite fit with the other sections within
+    the documentation.
 </p>
-
 
 
 <h2>Syncing Detail Scrolling with Master</h2>
 
 <p>
-    By default, detail grids scroll independently to the master grid. This happens because the Master Detail is
-    rendered inside the <a href="/javascript-grid-full-width-rows"> Full Width Row</a> (an element that spans across
-    the Grid Viewport).
+    By default, the Detail Grid takes up the width of the Master Grid and does not move when the Master Grid's
+    columns are horizontally scrolled. This is because the Detail Grid is not sitting with the other Master Grid's
+    cells, rather it is in a separate container that overlays the Master Grid's cells and takes up with full width
+    of the grid ignoring all the Master Grid's columns.
+</p>
+<p>
+    The underlying feature of the grid that allows the Detail Grid to span the width of the Master Grid is called
+    <a href="../javascript-grid-full-width-rows/">Full Width Row</a>.
 </p>
 
 <p>
-    To force this full width row to fill the Grid scrollable area, it is necessary to enable the
-    <code>embedFullWidthRows</code> property.
+    It is possible to have the Detail Grid sit within the same container as the Master Grid's cells and hence move
+    with the Master Grid's horizontall scrolling. To do this set the grid property <code>embedFullWidthRows=true</code>
+    inside the Master Grid.
 </p>
 
 <p>
-    In the example below, notice that horizontal scrolling from within the detail grid also scrolls the master:
+    In the example below, notice that horizontal scrolling is combined for both Master Grid and Detail Grid.
 </p>
 
 <?= grid_example('Detail scrolls with Master', 'detail-scrolls-with-master', 'generated', ['enterprise' => true, 'exampleHeight' => 525, 'modules'=>['clientside', 'masterdetail', 'menu', 'columnpanel']]) ?>

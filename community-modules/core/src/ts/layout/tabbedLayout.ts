@@ -58,16 +58,30 @@ export class TabbedLayout extends ManagedFocusComponent {
     protected onTabKeyDown(e: KeyboardEvent) {
         e.preventDefault();
 
-        const focusableItems = this.focusController.findFocusableElements(this.eBody, '.ag-set-filter-list *, .ag-menu-list *');
+        const exclude: string[] = [];
+
+        // the following items support their own focus and should be removed
+        exclude.push('.ag-virtual-list-viewport *');
+        exclude.push('.ag-column-select-list *');
+        exclude.push('.ag-menu-list *');
+
+        const focusInHeader = this.eHeader.contains(document.activeElement);
+        const focusableItems = this.focusController.findFocusableElements(this.eBody, exclude.join(','));
         const activeElement = document.activeElement as HTMLElement;
 
-        if (this.eHeader.contains(activeElement)) {
+        if (focusInHeader) {
             if (focusableItems.length) {
                 focusableItems[e.shiftKey ? focusableItems.length - 1 : 0].focus();
             }
         } else {
             const focusedPosition = focusableItems.indexOf(activeElement);
-            const nextPosition = e.shiftKey ? focusedPosition - 1 : focusedPosition + 1;
+            let nextPosition: number;
+
+            if (focusedPosition === -1) {
+                nextPosition = -1;
+            } else {
+                nextPosition = e.shiftKey ? focusedPosition - 1 : focusedPosition + 1;
+            }
 
             if (nextPosition < 0 || nextPosition >= focusableItems.length) {
                 this.activeItem.eHeaderButton.focus();
@@ -163,7 +177,12 @@ export class TabbedLayout extends ManagedFocusComponent {
         _.clearElement(this.eBody);
         wrapper.tabbedItem.bodyPromise.then(body => {
             this.eBody.appendChild(body);
-            body.focus();
+            const onlyUnmanaged = !this.focusController.isKeyboardFocus();
+            const focusable = this.focusController.findFocusableElements(this.eBody, null, onlyUnmanaged);
+
+            if (focusable.length) {
+                focusable[0].focus();
+            }
         });
 
         if (this.activeItem) {

@@ -55,7 +55,6 @@ export class EnterpriseMenuFactory extends BeanStub implements IMenuFactory {
         this.showMenu(column, (menu: EnterpriseMenu) => {
             const ePopup = menu.getGui();
 
-            this.focusFirstFocusableEl(ePopup);
             this.popupService.positionPopupUnderMouseEvent({
                 type: 'columnMenu',
                 column,
@@ -83,7 +82,6 @@ export class EnterpriseMenuFactory extends BeanStub implements IMenuFactory {
             const { width: minWidth, height: minHeight } = minDims;
             const ePopup = menu.getGui();
 
-            this.focusFirstFocusableEl(ePopup);
             this.popupService.positionPopupUnderComponent({
                 type: 'columnMenu',
                 column,
@@ -102,14 +100,6 @@ export class EnterpriseMenuFactory extends BeanStub implements IMenuFactory {
             }
 
         }, defaultTab, restrictToTabs, eventSource);
-    }
-
-    private focusFirstFocusableEl(el: HTMLElement) {
-        const focusableEls = this.focusController.findFocusableElements(el);
-
-        if (focusableEls.length) {
-            focusableEls[0].focus();
-        }
     }
 
     public showMenu(
@@ -239,6 +229,10 @@ export class EnterpriseMenu extends BeanStub {
         });
 
         this.createBean(this.tabbedLayout);
+
+        if (this.mainMenuList) {
+            this.mainMenuList.setParentComponent(this.tabbedLayout);
+        }
 
         this.addManagedListener(this.eventService, Events.EVENT_DISPLAYED_COLUMNS_CHANGED, this.onDisplayedColumnsChanged.bind(this));
     }

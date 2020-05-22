@@ -285,15 +285,22 @@ export abstract class Chart extends Observable {
 
     protected _axes: ChartAxis[] = [];
     set axes(values: ChartAxis[]) {
-        const root = this.scene.root!;
-        this._axes.forEach(axis => root.removeChild(axis.group));
+        this._axes.forEach(axis => this.detachAxis(axis));
         // make linked axes go after the regular ones (simulates stable sort by `linkedTo` property)
         this._axes = values.filter(a => !a.linkedTo).concat(values.filter(a => a.linkedTo));
-        this._axes.forEach(axis => root.insertBefore(axis.group, this.seriesRoot));
+        this._axes.forEach(axis => this.attachAxis(axis));
         this.axesChanged = true;
     }
     get axes(): ChartAxis[] {
         return this._axes;
+    }
+
+    protected attachAxis(axis: ChartAxis) {
+        this.scene.root!.insertBefore(axis.group, this.seriesRoot);
+    }
+
+    protected detachAxis(axis: ChartAxis) {
+        this.scene.root!.removeChild(axis.group);
     }
 
     protected _series: Series[] = [];
@@ -690,16 +697,20 @@ export abstract class Chart extends Observable {
         legendGroup.translationY = Math.floor(translationY + legendGroup.translationY);
     }
 
-    private setupDomListeners(chartElement: HTMLCanvasElement) {
-        chartElement.addEventListener('mousemove', this.onMouseMove);
-        chartElement.addEventListener('mouseout', this.onMouseOut);
-        chartElement.addEventListener('click', this.onClick);
+    protected setupDomListeners(chartElement: HTMLCanvasElement) {
+        chartElement.addEventListener('mousedown', this._onMouseDown);
+        chartElement.addEventListener('mousemove', this._onMouseMove);
+        chartElement.addEventListener('mouseup', this._onMouseUp);
+        chartElement.addEventListener('mouseout', this._onMouseOut);
+        chartElement.addEventListener('click', this._onClick);
     }
 
-    private cleanupDomListeners(chartElement: HTMLCanvasElement) {
-        chartElement.removeEventListener('mousemove', this.onMouseMove);
-        chartElement.removeEventListener('mouseout', this.onMouseMove);
-        chartElement.removeEventListener('click', this.onClick);
+    protected cleanupDomListeners(chartElement: HTMLCanvasElement) {
+        chartElement.removeEventListener('mousedown', this._onMouseDown);
+        chartElement.removeEventListener('mousemove', this._onMouseMove);
+        chartElement.removeEventListener('mouseup', this._onMouseUp);
+        chartElement.removeEventListener('mouseout', this._onMouseOut);
+        chartElement.removeEventListener('click', this._onClick);
     }
 
     // Should be available after first layout.
@@ -710,8 +721,11 @@ export abstract class Chart extends Observable {
         series: Series,
         node: Node
     } | undefined {
-        const allSeries = this.series;
+        if (!this.seriesRect || !this.seriesRect.containsPoint(x, y)) {
+            return undefined;
+        }
 
+        const allSeries = this.series;
         let node: Node | undefined = undefined;
         for (let i = allSeries.length - 1; i >= 0; i--) {
             const series = allSeries[i];
@@ -733,10 +747,6 @@ export abstract class Chart extends Observable {
 
     // Provided x/y are in canvas coordinates.
     private pickClosestSeriesNodeDatum(x: number, y: number): SeriesNodeDatum | undefined {
-        if (!this.seriesRect || !this.seriesRect.containsPoint(x, y)) {
-            return undefined;
-        }
-
         const allSeries = this.series;
 
         type Point = { x: number, y: number};
@@ -771,7 +781,13 @@ export abstract class Chart extends Observable {
         }
     }
 
-    private readonly onMouseMove = (event: MouseEvent) => {
+    private _onMouseDown = this.onMouseDown.bind(this);
+    private _onMouseUp = this.onMouseUp.bind(this);
+    private _onMouseMove = this.onMouseMove.bind(this);
+    private _onMouseOut = this.onMouseOut.bind(this);
+    private _onClick = this.onClick.bind(this);
+
+    protected onMouseMove(event: MouseEvent) {
         const { lastPick, tooltipTracking } = this;
         const pick = this.pickSeriesNode(event.offsetX, event.offsetY);
         let nodeDatum: SeriesNodeDatum | undefined;
@@ -820,18 +836,20 @@ export abstract class Chart extends Observable {
         }
         if (lastPick && (hideTooltip || !tooltipTracking)) {
             // cursor moved from a non-marker node to empty space
-            // lastPick.datum.series.dehighlightDatum();
             this.dehighlightDatum();
             this.hideTooltip();
             this.lastPick = undefined;
         }
     }
 
-    private readonly onMouseOut = (_: MouseEvent) => {
+    protected onMouseDown(event: MouseEvent) {}
+    protected onMouseUp(event: MouseEvent) {}
+
+    protected onMouseOut(event: MouseEvent) {
         this.toggleTooltip(false);
     }
 
-    private readonly onClick = (event: MouseEvent) => {
+    protected onClick(event: MouseEvent) {
         this.checkSeriesNodeClick();
         this.checkLegendClick(event);
     }
@@ -877,7 +895,6 @@ export abstract class Chart extends Observable {
         };
 
         this.highlightDatum(datum);
-        // datum.series.highlightDatum(datum);
 
         const html = datum.series.tooltipEnabled && datum.series.getTooltipHtml(datum);
 

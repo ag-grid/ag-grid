@@ -1,4 +1,8 @@
 var gridOptions = {
+    masterDetail: true,
+    isRowMaster: function(dataItem) {
+        return dataItem ? dataItem.callRecords.length > 0 : false;
+    },
     columnDefs: [
         // group cell renderer needed for expand / collapse icons
         { field: 'name', cellRenderer: 'agGroupCellRenderer' },
@@ -6,7 +10,10 @@ var gridOptions = {
         { field: 'calls' },
         { field: 'minutes', valueFormatter: "x.toLocaleString() + 'm'" }
     ],
-    masterDetail: true,
+    defaultColDef: {
+        flex: 1
+    },
+    getRowNodeId: function(data) { return data.account; },
     detailCellRendererParams: {
         detailGridOptions: {
             columnDefs: [
@@ -17,19 +24,12 @@ var gridOptions = {
                 { field: 'switchCode', minWidth: 150 }
             ],
             defaultColDef: {
-                flex: 1,
-                editable: true,
-                resizable: true
-            }
+                flex: 1
+            },
         },
         getDetailRowData: function(params) {
             params.successCallback(params.data.callRecords);
         }
-    },
-    defaultColDef: {
-        flex: 1,
-        editable: true,
-        resizable: true
     },
     onFirstDataRendered: onFirstDataRendered
 };
@@ -39,33 +39,32 @@ function onFirstDataRendered(params) {
     setTimeout(function() { params.api.getDisplayedRowAtIndex(1).setExpanded(true); }, 0);
 }
 
-function startEditingInMasterRow() {
-    // stop editing in detail grid
-    gridOptions.api.forEachDetailGridInfo(function(detailGridApi) {
-        detailGridApi.api.stopEditing();
-    });
-
-    // start editing in master grid
-    gridOptions.api.startEditingCell({ rowIndex: 0, colKey: 'calls' });
+function onBtClearMilaCalls() {
+    var milaSmithRowNode = gridOptions.api.getRowNode('177001');
+    var milaSmithData = milaSmithRowNode.data;
+    milaSmithData.callRecords = [];
+    gridOptions.api.applyTransaction({update: [milaSmithData]});
 }
 
-function stopEditingInMasterRows() {
-    gridOptions.api.stopEditing();
-}
-
-function startEditingInDetailRow() {
-    // stop editing in master grid
-    gridOptions.api.stopEditing();
-
-    // start editing in detail grid
-    var detailGrid = gridOptions.api.getDetailGridInfo("detail_1");
-    detailGrid.api.startEditingCell({ rowIndex: 0, colKey: 'number' });
-}
-
-function stopEditingInDetailRows() {
-    gridOptions.api.forEachDetailGridInfo(function(detailGridApi) {
-        detailGridApi.api.stopEditing();
-    });
+function onBtSetMilaCalls() {
+    var milaSmithRowNode = gridOptions.api.getRowNode('177001');
+    var milaSmithData = milaSmithRowNode.data;
+    milaSmithData.callRecords = [{
+        "name": "susan",
+        "callId": 579,
+        "duration": 23,
+        "switchCode": "SW5",
+        "direction": "Out",
+        "number": "(02) 47485405"
+    }, {
+        "name": "susan",
+        "callId": 580,
+        "duration": 52,
+        "switchCode": "SW3",
+        "direction": "In",
+        "number": "(02) 32367069"
+    }];
+    gridOptions.api.applyTransaction({update: [milaSmithData]});
 }
 
 // setup the grid after the page has finished loading
@@ -73,7 +72,7 @@ document.addEventListener('DOMContentLoaded', function() {
     var gridDiv = document.querySelector('#myGrid');
     new agGrid.Grid(gridDiv, gridOptions);
 
-    agGrid.simpleHttpRequest({ url: 'https://raw.githubusercontent.com/ag-grid/ag-grid-docs/latest/src/javascript-grid-master-detail/cell-editing/data/data.json' }).then(function(data) {
+    agGrid.simpleHttpRequest({ url: 'https://raw.githubusercontent.com/ag-grid/ag-grid-docs/latest/src/javascript-grid-master-detail/dynamic-master-nodes/data/data.json' }).then(function(data) {
         gridOptions.api.setRowData(data);
     });
 });

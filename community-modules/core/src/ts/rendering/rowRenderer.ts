@@ -1118,9 +1118,9 @@ export class RowRenderer extends BeanStub {
     public navigateToNextCell(event: KeyboardEvent | null, key: number, currentCell: CellPosition, allowUserOverride: boolean) {
         // we keep searching for a next cell until we find one. this is how the group rows get skipped
         let nextCell = currentCell;
-        let finished = false;
+        let hitEdgeOfGrid = false;
 
-        while (!finished) {
+        while (nextCell && (nextCell === currentCell || !this.isValidNavigateCell(nextCell))) {
             // if the current cell is spanning across multiple columns, we need to move
             // our current position to be the last cell on the right before finding the
             // the next target.
@@ -1135,33 +1135,15 @@ export class RowRenderer extends BeanStub {
             nextCell = this.cellNavigationService.getNextCellToFocus(key, nextCell);
 
             // eg if going down, and nextCell=undefined, means we are gone past the last row
-            const hitEdgeOfGrid = _.missing(nextCell);
+            hitEdgeOfGrid = _.missing(nextCell);
+        }
 
-            if (hitEdgeOfGrid) {
-                finished = true;
-                continue;
-            }
-
-            const rowNode = this.rowPositionUtils.getRowNode(nextCell);
-
-            // we do not allow focusing on detail rows and full width rows
-            if (rowNode.detail || rowNode.isFullWidthCell()) {
-                continue;
-            }
-
-            // if not a group, then we have a valid row, so quit the search
-            if (!rowNode.group) {
-                finished = true;
-                continue;
-            }
-
-            // full width rows cannot be focused, so if it's a group and using full width rows,
-            // we need to skip over the row
-            const pivotMode = this.columnController.isPivotMode();
-            const usingFullWidthRows = this.gridOptionsWrapper.isGroupUseEntireRow(pivotMode);
-            if (!usingFullWidthRows) {
-                finished = true;
-            }
+        if (hitEdgeOfGrid && event.keyCode === Constants.KEY_UP) {
+            nextCell = {
+                rowIndex: -1,
+                rowPinned: null,
+                column: currentCell.column
+            };
         }
 
         // allow user to override what cell to go to next. when doing normal cell navigation (with keys)
@@ -1195,6 +1177,16 @@ export class RowRenderer extends BeanStub {
         // no next cell means we have reached a grid boundary, eg left, right, top or bottom of grid
         if (!nextCell) { return; }
 
+        if (nextCell.rowIndex < 0) {
+            const headerLen = this.beans.headerController.getHeaderRowCount();
+
+            this.focusController.focusHeaderPosition({
+                headerRowIndex: headerLen + (nextCell.rowIndex), column: currentCell.column
+            });
+
+            return;
+        }
+
         // in case we have col spanning we get the cellComp and use it to
         // get the position. This was we always focus the first cell inside
         // the spanning.
@@ -1218,6 +1210,25 @@ export class RowRenderer extends BeanStub {
         if (this.rangeController) {
             this.rangeController.setRangeToCell(nextCell);
         }
+    }
+
+    private isValidNavigateCell(cell: CellPosition): boolean {
+        const rowNode = this.rowPositionUtils.getRowNode(cell);
+
+        // we do not allow focusing on detail rows and full width rows
+        if (rowNode.detail || rowNode.isFullWidthCell()) { return false; }
+
+        // if not a group, then we have a valid row, so quit the search
+        if (!rowNode.group) { return true; }
+
+        // full width rows cannot be focused, so if it's a group and using full width rows,
+        // we need to skip over the row
+        const pivotMode = this.columnController.isPivotMode();
+        const usingFullWidthRows = this.gridOptionsWrapper.isGroupUseEntireRow(pivotMode);
+
+        if (!usingFullWidthRows) { return true; }
+
+        return false;
     }
 
     private getLastCellOfColSpan(cell: CellPosition): CellPosition {
@@ -1301,6 +1312,15 @@ export class RowRenderer extends BeanStub {
 
         if (success) {
             keyboardEvent.preventDefault();
+        } else if (keyboardEvent.shiftKey) {
+            const cellPosition = previousRenderedCell.getCellPosition();
+            if (cellPosition.rowIndex === 0) {
+                keyboardEvent.preventDefault();
+                this.focusController.focusHeaderPosition({
+                    headerRowIndex: this.beans.headerController.getHeaderRowCount() - 1,
+                    column: _.last(this.columnController.getAllDisplayedColumns())
+                });
+            }
         }
     }
 

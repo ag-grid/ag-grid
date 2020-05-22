@@ -38,7 +38,7 @@ export class PrimaryColsHeaderPanel extends Component {
     @PreConstruct
     private preConstruct(): void {
         this.setTemplate(/* html */
-            `<div class="ag-column-select-header" role="presentation">
+            `<div class="ag-column-select-header" role="presentation" tabindex="-1">
                 <div ref="eExpand" class="ag-column-select-header-icon"></div>
                 <ag-checkbox ref="eSelect" class="ag-column-select-header-checkbox"></ag-checkbox>
                 <ag-input-text-field class="ag-column-select-header-filter-wrapper" ref="eFilterTextField"></ag-input-text-field>

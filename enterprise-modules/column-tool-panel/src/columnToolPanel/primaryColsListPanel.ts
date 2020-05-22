@@ -23,7 +23,7 @@ export type ColumnFilterResults = { [id: string]: boolean };
 
 export class PrimaryColsListPanel extends Component {
 
-    public static TEMPLATE = /* html */ `<div class="ag-column-select-list"></div>`;
+    public static TEMPLATE = /* html */ `<div class="ag-column-select-list" tabindex="0"></div>`;
 
     @Autowired('columnController') private columnController: ColumnController;
     @Autowired('toolPanelColDefService') private colDefService: ToolPanelColDefService;
@@ -141,7 +141,8 @@ export class PrimaryColsListPanel extends Component {
                 this.onGroupExpanded.bind(this), () => this.filterResults);
 
             this.getContext().createBean(renderedGroup);
-            this.getGui().appendChild(renderedGroup.getGui());
+            const renderedGroupGui = renderedGroup.getGui();
+            this.getGui().appendChild(renderedGroupGui);
 
             // we want to indent on the gui for the children
             newDept = dept + 1;
@@ -165,7 +166,9 @@ export class PrimaryColsListPanel extends Component {
 
         const columnComp = new ToolPanelColumnComp(column, dept, this.allowDragging, groupsExist);
         this.getContext().createBean(columnComp);
-        this.getGui().appendChild(columnComp.getGui());
+
+        const columnCompGui = columnComp.getGui();
+        this.getGui().appendChild(columnCompGui);
 
         this.columnComps[column.getId()] = columnComp;
     }

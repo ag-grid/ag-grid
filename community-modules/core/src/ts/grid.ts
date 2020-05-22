@@ -85,6 +85,7 @@ import { UndoRedoService } from "./undoRedo/undoRedoService";
 import { Component } from "./widgets/component";
 import { AgStackComponentsRegistry } from "./components/agStackComponentsRegistry";
 import { HeaderPositionUtils } from "./headerRendering/header/headerPosition";
+import { HeaderController } from "./headerRendering/header/headerController";
 import { _ } from "./utils";
 
 export interface GridParams {
@@ -283,15 +284,15 @@ export class Grid {
             PaginationAutoPageSizeService, GridApi, UserComponentRegistry, AgComponentUtils,
             ComponentMetadataProvider, ResizeObserverService, UserComponentFactory,
             MaxDivHeightScaler, AutoHeightCalculator, CellRendererFactory, HorizontalResizeService,
-            PinnedRowModel, DragService, DisplayedGroupCreator, EventService, GridOptionsWrapper, PopupService,
-            SelectionController, FilterManager, ColumnController, PaginationProxy, RowRenderer, ExpressionService,
-            ColumnFactory, TemplateService, AlignedGridsService,
-            NavigationService, ValueCache, ValueService, LoggerFactory, ColumnUtils, AutoWidthCalculator,
-            StandardMenuFactory, DragAndDropService, ColumnApi, FocusController, MouseEventService, Environment,
-            CellNavigationService, ValueFormatterService, StylingService, ScrollVisibleService, SortController,
-            ColumnHoverService, ColumnAnimationService, SelectableService, AutoGroupColService,
-            ChangeDetectionService, AnimationFrameService, DetailRowCompCache, UndoRedoService,
-            AgStackComponentsRegistry
+            PinnedRowModel, DragService, DisplayedGroupCreator, EventService, GridOptionsWrapper,
+            PopupService, SelectionController, FilterManager, ColumnController, HeaderController,
+            PaginationProxy, RowRenderer, ExpressionService, ColumnFactory, TemplateService,
+            AlignedGridsService, NavigationService, ValueCache, ValueService, LoggerFactory,
+            ColumnUtils, AutoWidthCalculator, StandardMenuFactory, DragAndDropService, ColumnApi,
+            FocusController, MouseEventService, Environment, CellNavigationService, ValueFormatterService,
+            StylingService, ScrollVisibleService, SortController, ColumnHoverService, ColumnAnimationService,
+            SelectableService, AutoGroupColService, ChangeDetectionService, AnimationFrameService,
+            DetailRowCompCache, UndoRedoService, AgStackComponentsRegistry
         ];
 
         const moduleBeans = this.extractModuleEntity(registeredModules, (module) => module.beans ? module.beans : []);

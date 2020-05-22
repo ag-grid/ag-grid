@@ -1,4 +1,4 @@
-import { Bean, Autowired, PostConstruct } from "./context/context";
+import { Bean, Autowired, PostConstruct, Optional } from "./context/context";
 import { BeanStub } from "./context/beanStub";
 import { Column } from "./entities/column";
 import { CellFocusedEvent, Events } from "./events";
@@ -12,6 +12,11 @@ import { CellComp } from "./rendering/cellComp";
 import { HeaderRowComp } from "./headerRendering/headerRowComp";
 import { AbstractHeaderWrapper } from "./headerRendering/header/abstractHeaderWrapper";
 import { HeaderPosition } from "./headerRendering/header/headerPosition";
+import { RowPositionUtils } from "./entities/rowPosition";
+import { IRangeController } from "./interfaces/iRangeController";
+import { RowRenderer } from "./rendering/rowRenderer";
+import { HeaderController } from "./headerRendering/header/headerController";
+import { ColumnGroup } from "./entities/columnGroup";
 import { _ } from "./utils";
 
 @Bean('focusController')
@@ -19,8 +24,12 @@ export class FocusController extends BeanStub {
 
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('columnController') private columnController: ColumnController;
+    @Autowired('headerController') private headerController: HeaderController;
     @Autowired('columnApi') private columnApi: ColumnApi;
     @Autowired('gridApi') private gridApi: GridApi;
+    @Autowired('rowRenderer') private rowRenderer: RowRenderer;
+    @Autowired('rowPositionUtils') private rowPositionUtils: RowPositionUtils;
+    @Optional('rangeController') private rangeController: IRangeController;
 
     private focusedCellPosition: CellPosition;
     private focusedHeaderPosition: HeaderPosition;
@@ -76,11 +85,7 @@ export class FocusController extends BeanStub {
     // grid cell will still be focused as far as the grid is concerned,
     // however the browser focus will have moved somewhere else.
     public getFocusCellToUseAfterRefresh(): CellPosition {
-        if (this.gridOptionsWrapper.isSuppressFocusAfterRefresh()) {
-            return null;
-        }
-
-        if (!this.focusedCellPosition) {
+        if (this.gridOptionsWrapper.isSuppressFocusAfterRefresh() || !this.focusedCellPosition) {
             return null;
         }
 
@@ -138,9 +143,11 @@ export class FocusController extends BeanStub {
         const headerRowIndex = (headerWrapper.getParentComponent() as HeaderRowComp).getRowIndex();
         const pinned = headerWrapper.getPinned();
 
-        return column === this.focusedHeaderPosition.column &&
-            headerRowIndex === this.focusedHeaderPosition.headerRowIndex &&
-            pinned == this.focusedHeaderPosition.pinned;
+        const { column: focusedColumn, headerRowIndex: focusedHeaderRowIndex } = this.focusedHeaderPosition;
+
+        return column === focusedColumn &&
+            headerRowIndex === focusedHeaderRowIndex &&
+            pinned == focusedColumn.getPinned();
     }
 
     public clearFocusedHeader(): void {
@@ -151,16 +158,23 @@ export class FocusController extends BeanStub {
         return this.focusedHeaderPosition;
     }
 
-    public setHeaderFocused(headerWrapper: AbstractHeaderWrapper): void {
-        const column = headerWrapper.getColumn();
-        const headerRowIndex = (headerWrapper.getParentComponent() as HeaderRowComp).getRowIndex();
-        const pinned = headerWrapper.getPinned();
+    public setFocusedHeader(headerRowIndex: number, column: ColumnGroup | Column): void {
+        this.focusedHeaderPosition = { headerRowIndex, column };
+    }
 
-        this.focusedHeaderPosition = {
-            column,
-            headerRowIndex,
-            pinned
-        };
+    public focusHeaderPosition(headerPosition: HeaderPosition, direction?: 'Before' | 'After'): void {
+        this.headerController.scrollToColumn(headerPosition.column, direction);
+
+        const childContainer = this.headerController.getHeaderContainer(headerPosition.column.getPinned());
+        const rowComps = childContainer.getRowComps();
+        const nextRowComp = rowComps[headerPosition.headerRowIndex];
+        const headerComps = nextRowComp.getHeaderComps();
+        const nextHeader = headerComps[headerPosition.column.getUniqueId() as string];
+
+        if (nextHeader) {
+            // this will automatically call the setFocusedHeader method above
+            nextHeader.getFocusableElement().focus();
+        }
     }
 
     public isAnyCellFocused(): boolean {
@@ -173,12 +187,16 @@ export class FocusController extends BeanStub {
         return this.focusedCellPosition.rowIndex === rowIndex && this.focusedCellPosition.rowPinned === floatingOrNull;
     }
 
-    public findFocusableElements(rootNode: HTMLElement, exclude?: string): HTMLElement[] {
+    public findFocusableElements(rootNode: HTMLElement, exclude?: string, onlyUnmanaged?: boolean): HTMLElement[] {
         const focusableString = '[tabindex], input, select, button, textarea';
         let excludeString = '.ag-hidden, .ag-hidden *, .ag-disabled, .ag-disabled *';
 
         if (exclude) {
             excludeString += ', ' + exclude;
+        }
+
+        if (onlyUnmanaged) {
+            excludeString += ', [tabindex="-1"]';
         }
 
         const nodes = Array.from(rootNode.querySelectorAll(focusableString)) as HTMLElement[];
@@ -223,5 +241,31 @@ export class FocusController extends BeanStub {
         }
 
         this.eventService.dispatchEvent(event);
+    }
+
+    public focusGridView(column?: Column): boolean {
+        const firstRow = this.rowPositionUtils.getFirstRow();
+
+        if (!firstRow) { return false; }
+
+        const { rowIndex, rowPinned } = firstRow;
+        const focusedHeader = this.getFocusedHeader();
+
+        if (!column) {
+            column = focusedHeader.column as Column;
+        }
+
+        if (!_.exists(rowIndex)) { return false; }
+
+        this.rowRenderer.ensureCellVisible({ rowIndex, column, rowPinned });
+
+        this.setFocusedCell(rowIndex, column, _.makeNull(rowPinned), true);
+
+        if (this.rangeController) {
+            const cellPosition = { rowIndex, rowPinned, column };
+            this.rangeController.setRangeToCell(cellPosition);
+        }
+
+        return true;
     }
 }

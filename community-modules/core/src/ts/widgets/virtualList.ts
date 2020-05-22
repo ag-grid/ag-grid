@@ -31,7 +31,7 @@ export class VirtualList extends Component {
 
     private static getTemplate(cssIdentifier: string) {
         return /* html */`
-            <div class="ag-virtual-list-viewport ag-${cssIdentifier}-virtual-list-viewport">
+            <div class="ag-virtual-list-viewport ag-${cssIdentifier}-virtual-list-viewport" tabindex="0">
                 <div class="ag-virtual-list-container ag-${cssIdentifier}-virtual-list-container"></div>
             </div>`;
     }

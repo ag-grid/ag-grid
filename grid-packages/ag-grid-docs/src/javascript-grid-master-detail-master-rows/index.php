@@ -9,38 +9,66 @@ include '../documentation-main/documentation_header.php';
 <h1 class="heading-enterprise">Master / Detail - Master Rows</h1>
 
 <p class="lead">
-    This section describes...
+    Master Rows are the rows inside the Master Grid that can be expanded to display
+    Detail Grids.
 </p>
 
-
-<h2>Optional Master Rows</h2>
-
-<p>
-    It certain cases it may be required to not treat all top level rows as a master rows. For instance if a master has
-    no child records it may not be desirable to expand the master row to an empty detail.
-</p>
+<h2>Static Master Rows</h2>
 
 <p>
-    In order to prevent this the following callback can be used on the master grid options:
+    Once a Master Grid is configured with <code>masterDetail=true</code>, all rows in the
+    Master Grid behave as Master Rows, in that they can be expanded to display Detail Grids.
 </p>
 
 <snippet>
-    masterGridOptions.isRowMaster = function (dataItem) {
-    // return true when row data has children, false otherwise
-    return dataItem ? dataItem.children.length > 0 : false;
-    }
+gridOptions = {
+
+    // by itself, all rows will be expandable
+    masterDetail=true,
+
+    ...
+}
 </snippet>
 
+<h2>Dynamic Master Rows</h2>
+
 <p>
-    As shown above our callback function will return <code>true</code> when there are detail (i.e. children) records,
-    otherwise it will return <code>false</code>.
+    Dynamic Master Rows allows specifically deciding what rows in the Master Grid can be expanded.
+    This can be useful if, for example, a Master Row has no child records, then it may not be desirable
+    to allow expanding the Master Row.
 </p>
+
+<p>
+    In specify which rows should expand, provide the grid callback <code>isRowMaster</code>. The callback
+    will be called once for each row. Return
+    <code>true</code> to allow expanding and <code>false</code> to disallow expanding for that row.
+</p>
+
+<snippet>
+gridOptions = {
+
+    // turn on master detail
+    masterDetail = true,
+
+    // specify which rows to expand
+    isRowMaster = function(dataItem) {
+        return expandThisRow ? true : false;
+    }
+
+    ...
+}
+</snippet>
 
 <p>
     The following example only shows detail rows when there are corresponding child records.
 </p>
 
-<?= grid_example('Dynamically Specify Master Nodes', 'dynamic-master-nodes', 'generated', ['enterprise' => true, 'exampleHeight' => 510, 'modules'=>['clientside', 'masterdetail', 'menu', 'columnpanel']]) ?>
+<?= grid_example('Dynamic Master Rows', 'dynamic-master-rows', 'generated', ['enterprise' => true, 'exampleHeight' => 510, 'modules'=>['clientside', 'masterdetail', 'menu', 'columnpanel']]) ?>
+
+
+<h2>Changing Dynamic Master Rows</h2>
+
+<?= grid_example('Dynamically Changing Master Rows', 'changing-dynamic-master-rows', 'generated', ['enterprise' => true, 'exampleHeight' => 510, 'modules'=>['clientside', 'masterdetail', 'menu', 'columnpanel']]) ?>
 
 
 <?php include '../documentation-main/documentation_footer.php';?>

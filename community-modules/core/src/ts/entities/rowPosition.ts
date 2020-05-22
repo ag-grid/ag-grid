@@ -4,6 +4,7 @@ import { Constants } from "../constants";
 import { IRowModel } from "../interfaces/iRowModel";
 import { RowNode } from "./rowNode";
 import { PinnedRowModel } from "../pinnedRowModel/pinnedRowModel";
+import { RowRenderer } from "../rendering/rowRenderer";
 import { _ } from "../utils";
 
 export interface RowPosition {
@@ -15,22 +16,22 @@ export interface RowPosition {
 export class RowPositionUtils extends BeanStub {
 
     @Autowired('rowModel') private rowModel: IRowModel;
+    @Autowired('rowRenderer') private rowRenderer: RowRenderer;
     @Autowired('pinnedRowModel') private pinnedRowModel: PinnedRowModel;
 
     public getFirstRow(): RowPosition {
+        const rowIndex = 0;
+        let rowPinned;
+
         if (this.pinnedRowModel.getPinnedTopRowCount()) {
-            return { rowIndex: 0, rowPinned: Constants.PINNED_TOP };
+            rowPinned = Constants.PINNED_TOP;
+        } else if (this.rowModel.getRowCount()) {
+            rowPinned = null;
+        } else if (this.pinnedRowModel.getPinnedBottomRowCount()) {
+            rowPinned = Constants.PINNED_BOTTOM;
         }
 
-        if (this.rowModel.getRowCount()) {
-            return { rowIndex: 0, rowPinned: undefined };
-        }
-
-        if (this.pinnedRowModel.getPinnedBottomRowCount()) {
-            return { rowIndex: 0, rowPinned: Constants.PINNED_BOTTOM };
-        }
-
-        return null;
+        return rowPinned === undefined ? null : { rowIndex, rowPinned };
     }
 
     public getRowNode(gridRow: RowPosition): RowNode | null {
