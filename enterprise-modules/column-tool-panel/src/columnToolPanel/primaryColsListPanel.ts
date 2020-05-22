@@ -88,13 +88,6 @@ export class PrimaryColsListPanel extends ManagedFocusComponent {
                 e.preventDefault();
                 this.nagivateToNextItem(e.keyCode === Constants.KEY_UP);
                 break;
-            case Constants.KEY_LEFT:
-            case Constants.KEY_RIGHT:
-                e.preventDefault();
-                this.expandOrCollapseNode(e.keyCode === Constants.KEY_RIGHT);
-            case Constants.KEY_SPACE:
-                e.preventDefault();
-                this.selectCurrentItem();
         }
         
     }
@@ -118,18 +111,6 @@ export class PrimaryColsListPanel extends ManagedFocusComponent {
         } else if (nextIndex === focusable.length -1) {
             eGui.scrollTop = eGui.scrollHeight;
         }
-    }
-
-    private expandOrCollapseNode(expand: boolean): void {
-
-    }
-
-    private selectCurrentItem(): void {
-
-    }
-
-    private getFocusedColumnItem(): void {
-
     }
 
     public onColumnsChanged(): void {

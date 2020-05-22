@@ -441,6 +441,8 @@
         cursor: pointer;
     }
 
+    @include ag-keyboard-focus((ag-column-select-header-icon), 0);
+
     .ag-column-group-icons,
     .ag-column-select-header-icon,
     .ag-column-select-header-checkbox,

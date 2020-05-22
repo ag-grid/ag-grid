@@ -28,21 +28,30 @@ export class ManagedFocusComponent extends Component {
         if (this.onTabKeyDown || this.handleKeyDown) {
             this.addKeyDownListeners(focusableElement);
         }
+
         this.addManagedListener(focusableElement, 'focusin', this.onFocusIn.bind(this));
         this.addManagedListener(focusableElement, 'focusout', this.onFocusOut.bind(this));
 
     }
 
+    /*
+     * Override this method to return true if this component will contain multiple focus-managed
+     * elements within. When set to true, this component will add tabGuards that will be responsible
+     * for receiving focus from outside and focusing an internal element using the focusInnerElementMethod
+     */
     protected isFocusableContainer(): boolean {
         return false;
     }
 
+    /*
+     * Override this method if focusing the default element requires special logic.
+     */
     protected focusInnerElement(fromBottom?: boolean): void {
         const focusable = this.focusController.findFocusableElements(this.getFocusableElement(), '.ag-tab-guard, :not([tabindex="-1"])');
 
-        if (focusable.length) {
-            focusable[fromBottom ? focusable.length - 1 : 0].focus();
-        }
+        if (!focusable.length) { return; }
+
+        focusable[fromBottom ? focusable.length - 1 : 0].focus();
     }
 
     protected onFocusIn(e: FocusEvent): void {
@@ -118,7 +127,7 @@ export class ManagedFocusComponent extends Component {
     }
 
     private onFocus(e: FocusEvent): void {
-        if (!this.isFocusableContainer() || !this.focusInnerElement) { return; }
+        if (!this.isFocusableContainer()) { return; }
 
         this.focusInnerElement(e.target === this.tabGuards[1]);
     }

@@ -58,7 +58,6 @@ export class TabbedLayout extends ManagedFocusComponent {
 
         // the following items support their own focus and should be removed
         exclude.push('.ag-virtual-list-viewport *:not(.ag-tab-guard)');
-        exclude.push('.ag-column-select-header *:not(.ag-tab-guard)');
         exclude.push('.ag-column-select-list *:not(.ag-tab-guard)');
         exclude.push('.ag-menu-list *:not(.ag-tab-guard)');
 
