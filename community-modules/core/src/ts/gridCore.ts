@@ -54,7 +54,6 @@ export class GridCore extends ManagedFocusComponent {
     @RefSelector('rootWrapperBody') private eRootWrapperBody: HTMLElement;
 
     private doingVirtualPaging: boolean;
-
     private logger: Logger;
 
     protected postConstruct(): void {
@@ -130,7 +129,7 @@ export class GridCore extends ManagedFocusComponent {
         const template =
             `<div class="ag-root-wrapper">
                 ${dropZones}
-                <div class="ag-root-wrapper-body" ref="rootWrapperBody" tabindex="0">
+                <div class="ag-root-wrapper-body" ref="rootWrapperBody">
                     <ag-grid-comp ref="gridPanel"></ag-grid-comp>
                     ${sideBar}
                 </div>
@@ -140,6 +139,10 @@ export class GridCore extends ManagedFocusComponent {
             </div>`;
 
         return template;
+    }
+
+    protected isFocusableContainer(): boolean {
+        return true;
     }
 
     protected focusFirstElement(): void {

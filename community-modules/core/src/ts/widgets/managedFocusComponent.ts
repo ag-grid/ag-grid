@@ -9,15 +9,13 @@ export class ManagedFocusComponent extends Component {
     protected handleKeyDown?(e: KeyboardEvent): void;
     protected focusFirstElement?(): void;
 
-    private focusableContainer: boolean;
-
     @PostConstruct
     protected postConstruct(): void {
         const focusableElement = this.getFocusableElement();
         if (!focusableElement) { return; }
 
-        if (focusableElement && _.getTabIndex(focusableElement) === '0') {
-            this.focusableContainer = true;
+        if (this.isFocusableContainer()) {
+            focusableElement.setAttribute('tabindex', '0');
         }
 
         if (this.onTabKeyDown || this.handleKeyDown) {
@@ -44,15 +42,15 @@ export class ManagedFocusComponent extends Component {
     }
 
     protected onFocusIn(e: FocusEvent): void {
-        if (!this.focusableContainer) { return; }
+        if (!this.isFocusableContainer()) { return; }
 
         const focusEl = this.getFocusableElement();
 
-        focusEl.setAttribute('tabindex', '-1');
+        focusEl.removeAttribute('tabindex');
     }
 
     protected onFocusOut(e: FocusEvent): void {
-        if (!this.focusableContainer) { return; }
+        if (!this.isFocusableContainer()) { return; }
 
         const focusEl = this.getFocusableElement();
 
@@ -62,11 +60,19 @@ export class ManagedFocusComponent extends Component {
     }
 
     protected onFocus(e: FocusEvent): void {
-        if (!this.focusableContainer || !this.focusFirstElement) { return; }
+        const fromWithin = this.getFocusableElement().contains(e.relatedTarget as HTMLElement);
+
+        if (fromWithin) { e.preventDefault(); e.stopImmediatePropagation(); }
+
+        if (!this.isFocusableContainer() || !this.focusFirstElement || fromWithin) { return; }
         this.focusFirstElement();
     }
 
     protected onBlur(e: FocusEvent): void {
 
+    }
+
+    protected isFocusableContainer(): boolean {
+        return false;
     }
 }

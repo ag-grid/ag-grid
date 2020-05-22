@@ -16,7 +16,7 @@ export class MenuList extends ManagedFocusComponent {
     @Autowired('popupService') private popupService: PopupService;
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
 
-    private static TEMPLATE = /* html */ `<div class="ag-menu-list" tabindex="0"></div>`;
+    private static TEMPLATE = /* html */ `<div class="ag-menu-list"></div>`;
 
     private static SEPARATOR_TEMPLATE = /* html */
         `<div class="ag-menu-separator">
@@ -73,6 +73,10 @@ export class MenuList extends ManagedFocusComponent {
                 }
                 break;
         }
+    }
+
+    protected isFocusableContainer(): boolean {
+        return true;
     }
 
     public clearActiveItem(): void {
