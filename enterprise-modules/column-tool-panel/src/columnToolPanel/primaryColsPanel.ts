@@ -1,10 +1,10 @@
 import {
     ColDef,
     ColGroupDef,
-    Component,
     ToolPanelColumnCompParams,
     RefSelector,
     IPrimaryColsPanel,
+    ManagedFocusComponent,
     _
 } from "@ag-grid-community/core";
 import { PrimaryColsListPanel } from "./primaryColsListPanel";
@@ -19,7 +19,7 @@ export interface BaseColumnItem {
     setExpanded(value: boolean): void;
 }
 
-export class PrimaryColsPanel extends Component implements IPrimaryColsPanel {
+export class PrimaryColsPanel extends ManagedFocusComponent implements IPrimaryColsPanel {
 
     private static TEMPLATE = /* html */
         `<div class="ag-column-select">
@@ -62,6 +62,20 @@ export class PrimaryColsPanel extends Component implements IPrimaryColsPanel {
         this.addManagedListener(this.primaryColsHeaderPanel, 'selectAll', this.onSelectAll.bind(this));
         this.addManagedListener(this.primaryColsHeaderPanel, 'unselectAll', this.onUnselectAll.bind(this));
         this.addManagedListener(this.primaryColsHeaderPanel, 'filterChanged', this.onFilterChanged.bind(this));
+        this.wireFocusManagement();
+    }
+
+    protected isFocusableContainer(): boolean {
+        return true;
+    }
+
+    protected onTabKeyDown(e: KeyboardEvent): void {
+        const nextEl = this.focusController.findNextFocusableElement(this.getFocusableElement(), false, e.shiftKey);
+
+        if (nextEl) {
+            e.preventDefault();
+            nextEl.focus();
+        }
     }
 
     public onExpandAll(): void {

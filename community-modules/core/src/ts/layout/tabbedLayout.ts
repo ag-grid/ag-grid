@@ -52,41 +52,35 @@ export class TabbedLayout extends ManagedFocusComponent {
     }
 
     protected onTabKeyDown(e: KeyboardEvent) {
+        const { focusController, eHeader, eBody, activeItem } = this;
+
+        const activeElement = document.activeElement as HTMLElement;
+        const focusInHeader = eHeader.contains(activeElement);
+
         e.preventDefault();
 
-        const exclude: string[] = [];
-
-        // the following items support their own focus and should be removed
-        exclude.push('.ag-virtual-list-viewport *:not(.ag-tab-guard)');
-        exclude.push('.ag-column-select-list *:not(.ag-tab-guard)');
-        exclude.push('.ag-menu-list *:not(.ag-tab-guard)');
-
-        const focusInHeader = this.eHeader.contains(document.activeElement);
-        const focusableItems = this.focusController.findFocusableElements(this.eBody, exclude.join(','));
-        const activeElement = document.activeElement as HTMLElement;
-
         if (focusInHeader) {
-            if (focusableItems.length) {
-                focusableItems[e.shiftKey ? focusableItems.length - 1 : 0].focus();
+            const element = e.shiftKey
+                ? focusController.findLastFocusableElement(eBody)
+                : focusController.findFirstFocusableElement(eBody);
+
+            if (element) {
+                element.focus();
             }
         } else {
-            const focusedPosition = focusableItems.indexOf(activeElement);
-            let nextPosition: number;
+            const isFocusManaged = focusController.isManagedFocus(eBody);
 
-            if (focusedPosition === -1) {
-                nextPosition = e.shiftKey ? focusableItems.length - 1 : -1;
+            if (isFocusManaged) {
+                activeItem.eHeaderButton.focus();
             } else {
-                nextPosition = e.shiftKey ? focusedPosition - 1 : focusedPosition + 1;
+                const nextEl = focusController.findNextFocusableElement(eBody, false, e.shiftKey);
+
+                if (nextEl) {
+                    nextEl.focus();
+                } else {
+                    activeItem.eHeaderButton.focus();
+                }
             }
-
-            if (nextPosition < 0 || nextPosition >= focusableItems.length) {
-                this.activeItem.eHeaderButton.focus();
-                return;
-            }
-
-            const nextItem = focusableItems[nextPosition];
-
-            if (nextItem) { nextItem.focus(); }
         }
     }
 
@@ -174,10 +168,10 @@ export class TabbedLayout extends ManagedFocusComponent {
         wrapper.tabbedItem.bodyPromise.then(body => {
             this.eBody.appendChild(body);
             const onlyUnmanaged = !this.focusController.isKeyboardFocus();
-            const focusable = this.focusController.findFocusableElements(this.eBody, null, onlyUnmanaged);
+            const focusable = this.focusController.findFirstFocusableElement(this.eBody, onlyUnmanaged);
 
-            if (focusable.length) {
-                focusable[0].focus();
+            if (focusable) {
+                focusable.focus();
             }
         });
 

@@ -178,9 +178,9 @@ class ContextMenu extends Component {
         this.focusedCell = this.focusController.getFocusedCell();
 
         if (this.menuList) {
-            const focusable = this.focusController.findFocusableElements(this.menuList.getGui());
-            if (focusable.length) {
-                focusable[0].focus();
+            const focusable = this.focusController.findFirstFocusableElement(this.menuList.getGui());
+            if (focusable) {
+                focusable.focus();
             }
         }
 

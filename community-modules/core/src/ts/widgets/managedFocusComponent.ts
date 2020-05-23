@@ -8,6 +8,8 @@ export class ManagedFocusComponent extends Component {
 
     protected onTabKeyDown?(e: KeyboardEvent): void;
     protected handleKeyDown?(e: KeyboardEvent): void;
+
+    public static FOCUS_MANAGED_CLASS = 'ag-focus-managed';
     private tabGuards: HTMLElement[] = [];
 
     @Autowired('focusController') protected focusController: FocusController;
@@ -16,6 +18,14 @@ export class ManagedFocusComponent extends Component {
     protected postConstruct(): void {
         const focusableElement = this.getFocusableElement();
         if (!focusableElement) { return; }
+
+        this.wireFocusManagement();
+    }
+
+    protected wireFocusManagement() {
+        const focusableElement = this.getFocusableElement();
+
+        _.addCssClass(focusableElement, ManagedFocusComponent.FOCUS_MANAGED_CLASS);
 
         if (this.isFocusableContainer()) {
             this.createTabGuards().addTabGuards();
@@ -31,7 +41,6 @@ export class ManagedFocusComponent extends Component {
 
         this.addManagedListener(focusableElement, 'focusin', this.onFocusIn.bind(this));
         this.addManagedListener(focusableElement, 'focusout', this.onFocusOut.bind(this));
-
     }
 
     /*

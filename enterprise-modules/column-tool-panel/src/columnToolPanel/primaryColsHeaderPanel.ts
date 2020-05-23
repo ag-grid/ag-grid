@@ -37,7 +37,7 @@ export class PrimaryColsHeaderPanel extends ManagedFocusComponent {
     @PreConstruct
     private preConstruct(): void {
         this.setTemplate(/* html */
-            `<div class="ag-column-select-header" role="presentation">
+            `<div class="ag-column-select-header" role="presentation" tabindex="-1">
                 <div ref="eExpand" class="ag-column-select-header-icon" tabindex="0"></div>
                 <ag-checkbox ref="eSelect" class="ag-column-select-header-checkbox"></ag-checkbox>
                 <ag-input-text-field class="ag-column-select-header-filter-wrapper" ref="eFilterTextField"></ag-input-text-field>
@@ -90,28 +90,12 @@ export class PrimaryColsHeaderPanel extends ManagedFocusComponent {
         }
     }
 
-    protected isFocusableContainer() {
-         return true;
-    }
-
-    protected focusInnerElement(fromBelow: boolean) {
-        const focusable = this.focusController.findFocusableElements(this.getFocusableElement(), '.ag-tab-guard', true);
-
-        if (focusable.length) {
-            focusable[fromBelow ? focusable.length - 1 : 0].focus();
-        }
-    }
-
     protected onTabKeyDown(e: KeyboardEvent): void {
-        const focusable = this.focusController.findFocusableElements(this.getFocusableElement(), null, true);
-        const index = focusable.indexOf(document.activeElement as HTMLElement);
-        const nextIndex = index + (e.shiftKey ? -1 : 1);
+        const nextEl = this.focusController.findNextFocusableElement(this.getFocusableElement(), false, e.shiftKey);
 
-        if (index === -1 || nextIndex < 0 || nextIndex >= focusable.length) {
-            return;
-        } else {
+        if (nextEl) {
             e.preventDefault();
-            focusable[nextIndex].focus();
+            nextEl.focus();
         }
     }
 

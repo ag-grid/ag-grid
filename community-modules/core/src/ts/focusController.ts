@@ -17,6 +17,8 @@ import { IRangeController } from "./interfaces/iRangeController";
 import { RowRenderer } from "./rendering/rowRenderer";
 import { HeaderController } from "./headerRendering/header/headerController";
 import { ColumnGroup } from "./entities/columnGroup";
+import { Component } from "./widgets/component";
+import { ManagedFocusComponent } from "./widgets/managedFocusComponent";
 import { _ } from "./utils";
 
 @Bean('focusController')
@@ -30,6 +32,9 @@ export class FocusController extends BeanStub {
     @Autowired('rowRenderer') private rowRenderer: RowRenderer;
     @Autowired('rowPositionUtils') private rowPositionUtils: RowPositionUtils;
     @Optional('rangeController') private rangeController: IRangeController;
+
+    private static FOCUSABLE_SELECTOR = '[tabindex], input, select, button, textarea';
+    private static FOCUSABLE_EXCLUDE = '.ag-hidden, .ag-hidden *, .ag-disabled, .ag-disabled *';
 
     private focusedCellPosition: CellPosition;
     private focusedHeaderPosition: HeaderPosition;
@@ -188,8 +193,8 @@ export class FocusController extends BeanStub {
     }
 
     public findFocusableElements(rootNode: HTMLElement, exclude?: string, onlyUnmanaged?: boolean): HTMLElement[] {
-        const focusableString = '[tabindex], input, select, button, textarea';
-        let excludeString = '.ag-hidden, .ag-hidden *, .ag-disabled, .ag-disabled *';
+        const focusableString = FocusController.FOCUSABLE_SELECTOR;
+        let excludeString = FocusController.FOCUSABLE_EXCLUDE;
 
         if (exclude) {
             excludeString += ', ' + exclude;
@@ -208,6 +213,41 @@ export class FocusController extends BeanStub {
 
         const diff = (a: HTMLElement[], b: HTMLElement[]) => a.filter(element => b.indexOf(element) === -1);
         return diff(nodes, excludeNodes);
+    }
+
+    public findFirstFocusableElement(rootNode: HTMLElement, onlyUnmanaged?: boolean): HTMLElement {
+        return this.findFocusableElements(rootNode, null, onlyUnmanaged)[0];
+    }
+
+    public findLastFocusableElement(rootNode: HTMLElement, onlyUnmanaged?: boolean): HTMLElement {
+        return _.last(this.findFocusableElements(rootNode, null, onlyUnmanaged));
+    }
+
+    public findNextFocusableElement(rootNode: HTMLElement, onlyManaged?: boolean, backwards?: boolean): HTMLElement {
+        const focusable = this.findFocusableElements(rootNode, onlyManaged ? ':not([tabindex="-1"])' : null);
+        let currentIndex: number;
+
+        if (onlyManaged) {
+            currentIndex = _.findIndex(focusable, el => el.contains(document.activeElement));
+        } else {
+            currentIndex = focusable.indexOf(document.activeElement as HTMLElement);
+        }
+
+        const nextIndex = currentIndex + (backwards ? -1 : 1);
+
+        if (nextIndex < 0 || nextIndex > focusable.length) {
+            return;
+        }
+
+        return focusable[nextIndex];
+    }
+
+    public isManagedFocus(comp: Component | HTMLElement): boolean {
+        if (comp instanceof Component) {
+            return comp instanceof ManagedFocusComponent;
+        }
+
+        return !!comp.querySelector(`.${ManagedFocusComponent.FOCUS_MANAGED_CLASS}`);
     }
 
     public findTabbableParent(node: HTMLElement, limit: number = 5): HTMLElement {

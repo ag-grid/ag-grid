@@ -77,10 +77,6 @@ export class PrimaryColsListPanel extends ManagedFocusComponent {
         }
     }
 
-    protected isFocusableContainer(): boolean {
-        return true;
-    }
-
     protected handleKeyDown(e: KeyboardEvent): void {
         switch (e.keyCode) {
             case Constants.KEY_UP:
@@ -93,23 +89,10 @@ export class PrimaryColsListPanel extends ManagedFocusComponent {
     }
 
     private nagivateToNextItem(up: boolean): void {
-        const focusable = this.focusController.findFocusableElements(this.getFocusableElement(), ':not([tabindex="-1"])');
-        const currentIndex = _.findIndex(focusable, el => el.contains(document.activeElement));
+        const nextEl = this.focusController.findNextFocusableElement(this.getFocusableElement(), true, up);
 
-        if (currentIndex === -1) { return; }
-
-        const nextIndex = currentIndex + (up ? -1 : 1);
-
-        if (nextIndex < 0 || nextIndex >= focusable.length) { return; }
-
-        focusable[nextIndex].focus();
-
-        const eGui = this.getGui();
-
-        if (nextIndex === 0) {
-            eGui.scrollTop = 0;
-        } else if (nextIndex === focusable.length -1) {
-            eGui.scrollTop = eGui.scrollHeight;
+        if (nextEl) {
+            nextEl.focus();
         }
     }
 

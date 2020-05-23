@@ -93,17 +93,15 @@ export class FloatingFilterWrapper extends AbstractHeaderWrapper {
 
         if (wrapperHasFocus) { return; }
 
-        const focusableElements = this.focusController.findFocusableElements(eGui);
-        const idx = focusableElements.indexOf(activeEl);
-        const nextIdx = e.shiftKey ? idx - 1 : idx + 1;
-
-        if (nextIdx < 0 || nextIdx >= focusableElements.length) {
-            eGui.focus();
-        } else {
-            focusableElements[nextIdx].focus();
-        }
-
         e.preventDefault();
+
+        const nextFocusableEl = this.focusController.findNextFocusableElement(eGui, null, e.shiftKey);
+
+        if (nextFocusableEl) {
+            nextFocusableEl.focus();
+        } else {
+            eGui.focus();
+        }
     }
 
     protected handleKeyDown(e: KeyboardEvent) {
@@ -123,10 +121,10 @@ export class FloatingFilterWrapper extends AbstractHeaderWrapper {
                 e.stopPropagation();
             case Constants.KEY_ENTER:
                 if (wrapperHasFocus) {
-                    const focusableElements = this.focusController.findFocusableElements(eGui);
-                    if (focusableElements.length) {
-                        focusableElements[0].focus();
+                    const focusableElement = this.focusController.findFirstFocusableElement(eGui);
+                    if (focusableElement) {
                         e.preventDefault();
+                        focusableElement.focus();
                     }
                 }
                 break;
