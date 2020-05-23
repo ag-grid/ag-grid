@@ -323,7 +323,7 @@ export interface ColDef extends AbstractColDef {
     cellClassRules?: { [cssClassName: string]: (Function | string); };
 
     /** Callbacks for editing.See editing section for further details. */
-    onCellValueChanged?: Function;
+    onCellValueChanged?: (params: NewValueParams) => void;
 
     /** Function callback, gets called when a cell is clicked. */
     onCellClicked?: (event: CellClickedEvent) => void;
