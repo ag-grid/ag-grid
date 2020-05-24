@@ -26,7 +26,8 @@ var gridOptions = {
         },
         getDetailRowData: function(params) {
             params.successCallback(params.data.callRecords);
-        }
+        },
+        autoHeight: true
     },
     onFirstDataRendered: onFirstDataRendered
 };

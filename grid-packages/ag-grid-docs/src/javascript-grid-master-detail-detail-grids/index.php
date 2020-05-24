@@ -31,7 +31,7 @@ include '../documentation-main/documentation_header.php';
     This page outlines how to configure the grid's default Detail Cell Renderer.
 </p>
 
-<h2 id="detail-grid-options">Detail Grid Options</h2>
+<h2 id="detail-grid-options">Detail Grid Definition</h2>
 
 <p>
     The Detail Grid is a fully fledged independent grid instance. This means that the Detail Grid has access to
@@ -72,7 +72,7 @@ include '../documentation-main/documentation_header.php';
 
 <?= grid_example('Detail Grid Options', 'grid-options', 'generated', ['enterprise' => true, 'modules'=>['clientside', 'masterdetail', 'menu', 'columnpanel']]) ?>
 
-<h2 id="grid-per-row">Dynamic Grid Options</h2>
+<h2 id="grid-per-row">Dynamic Definitions</h2>
 
 <p>
     There will be many instances of Detail Grids within one Master Grid, as each time you expand a Master Row,
@@ -100,10 +100,10 @@ include '../documentation-main/documentation_header.php';
 <?= grid_example('Dynamic Params', 'dynamic-params', 'generated', ['enterprise' => true, 'modules'=>['clientside', 'masterdetail', 'menu', 'columnpanel']]) ?>
 
 
-<h2>Detail Rows</h2>
+<h2>Providing Rows</h2>
 
 <p>
-    Data is provided to the Detail Grid by implementing the <code>getDetailRowData</code> callback of the
+    Row data is provided to the Detail Grid by implementing the <code>getDetailRowData</code> callback of the
     Detail Cell Renderer Params. The interface of this callback is as follows:
 </p>
 <snippet>
@@ -146,7 +146,7 @@ interface GetDetailRowDataParams {
 <?= grid_example('Lazy Load Detail Rows', 'lazy-load-rows', 'generated', ['enterprise' => true, 'exampleHeight' => 550, 'modules'=>['clientside', 'masterdetail', 'menu', 'columnpanel']]) ?>
 
 
-<h2>Detail Template</h2>
+<h2>Changing the Template</h2>
 
 <p>
     By default the Detail Cell Renderer does not include any other information around the Detail Grid. It is possible
@@ -342,7 +342,7 @@ masterGridOptions.api.forEachDetailGridInfo(function(detailGridInfo) {
 
 <?= grid_example('Detail Grid API', 'detail-grid-api', 'generated', ['enterprise' => true, 'exampleHeight' => 535, 'modules'=>['clientside', 'masterdetail', 'menu', 'columnpanel']]) ?>
 
-<h2 id="keeping-row-details">Detail Lifecycle</h2>
+<h2 id="keeping-row-details">Detail Grid Lifecycle</h2>
 
 <p>
     When a Master Row is expanded a Detail Row is created. When the Master Row is collapsed, the Detail Row is

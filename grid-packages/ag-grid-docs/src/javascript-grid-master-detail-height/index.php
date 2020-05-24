@@ -37,6 +37,42 @@ masterGridOptions.detailRowHeight = 200;
 
 <?= grid_example('Fixed Detail Row Height', 'fixed-detail-row-height', 'generated', ['enterprise' => true, 'exampleHeight' => 575, 'modules'=>['clientside', 'masterdetail', 'menu', 'columnpanel']]) ?>
 
+<h2 id="auto-height">Auto Height</h2>
+
+<p>
+    Set <code>detailCellRendererParams.autoHeight=true</code> to have the detail grid to dynamically change
+    it's height to fit it's rows.
+</p>
+
+<snippet>
+detailCellRendererParams: {
+    // enable auto-height
+    autoHeight: true
+
+    // define detail grid options as normal
+    detailGridOptions: {
+        ...
+    },
+
+    ...
+},
+</snippet>
+
+<?= grid_example('Auto Height', 'auto-height', 'generated', ['enterprise' => true, 'modules'=>['clientside', 'masterdetail']]) ?>
+
+<note>
+    <p>
+        When using Auto Height feature, the Detail Grid will render all of it's rows all the time.
+        <a href="../javascript-grid-dom-virtualisation/">Row Virtualisation</a> will not happen.
+        This means if the Detail Grid has many rows, it could slow down your application and could
+        result in stalling he browser.
+    </p>
+    <p>
+        Do not use Auto Height if you have many rows (eg 100+) in the Detail Grid's. To know if this
+        is a concern for your grid and dataset, try it out and check the performance.
+    </p>
+</note>
+
 <h2 id="dynamic-height">Dynamic Height</h2>
 
 <p>
@@ -68,8 +104,5 @@ masterGridOptions.getRowHeight = function (params) {
 </p>
 
 <?= grid_example('Dynamic Detail Row Height', 'dynamic-detail-row-height', 'generated', ['enterprise' => true, 'modules'=>['clientside', 'masterdetail', 'menu', 'columnpanel']]) ?>
-
-<h2 id="auto-height">Auto Height</h2>
-<?= grid_example('Auto Height', 'auto-height', 'generated', ['enterprise' => true, 'modules'=>['clientside', 'masterdetail']]) ?>
 
 <?php include '../documentation-main/documentation_footer.php';?>
