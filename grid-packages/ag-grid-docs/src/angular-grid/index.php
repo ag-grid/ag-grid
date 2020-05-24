@@ -20,9 +20,10 @@ include '../documentation-main/documentation_header.php';
 include './intro.php';
 ?>
 
+<h2>Getting Started</h2>
+
 <?= videoSection("https://www.youtube.com/embed/AeEfiWAGyLc", "angular-demo", "Getting Started Video Tutorial") ?>
 
-<h2>Getting Started</h2>
 <p>
     Below we walk through the necessary steps to add ag-Grid
     (both <a href="../javascript-grid-set-license/">Community and Enterprise</a> are covered) to an
@@ -31,7 +32,7 @@ include './intro.php';
 
 <div class="row">
   <div class="col">
-    <ol style="columns: 2">
+    <ol>
     <li><a href="#add-ag-grid-to-your-project">Add ag-Grid to Your Project</li></a>
     <li><a href="#enable-sorting-and-filtering">Enable Sorting and Filtering</li></a>
     <li><a href="#fetch-remote-data">Fetch Remote Data</li></a>

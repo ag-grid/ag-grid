@@ -1,6 +1,8 @@
 <?php
     function videoSection($url, $sectionId, $title) {
-        return "
+        return "<iframe style='float: right; width: 300px; margin-left: 20px;' src='$url' frameborder='0' allow='accelerometer; encrypted-media; gyroscope; picture-in-picture' allowfullscreen></iframe>";
+
+/*        return "
             <section id='$sectionId' class='mb-3'>
                 <div class='card'>
                     <div class='card-header'>$title</div>
@@ -11,7 +13,7 @@
                     </div>
                 </div>
             </section>
-        ";
+        ";*/
     }
 
     function videoLink($url, $time) {

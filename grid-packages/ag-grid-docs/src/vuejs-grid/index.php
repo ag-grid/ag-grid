@@ -19,8 +19,6 @@ include './intro.php';
 
 <?= videoSection("https://www.youtube.com/embed/eW3qCti1lsA", "vuejs-demo","Getting Started Video Tutorial") ?>
 
-<h2>Getting Started</h2>
-
 <p>
     In this article, we will walk you through the necessary steps to add ag-Grid
     (both <a href="../javascript-grid-set-license/">Community and Enterprise</a> are covered)

@@ -8,16 +8,13 @@ include '../documentation-main/documentation_header.php';
 
 <h1 class="heading-enterprise">Master / Detail</h1>
 
+<?= videoSection("https://www.youtube.com/embed/8OeJn75or2w", "master-detail-video", "Master / Detail Video Tutorial") ?>
+
 <p class="lead">
     Master Detail refers to a top level grid called a Master Grid having rows that expand. When
     the row is expanded, another grid is displayed with more details related to the expanded
     row. The grid that appears is known as the Detail Grid.
 </p>
-
-<? enterprise_feature("Master Detail"); ?>
-
-<?= videoSection("https://www.youtube.com/embed/8OeJn75or2w", "master-detail-video", "Master / Detail Video Tutorial") ?>
-
 
 <h2>Enabling Master / Detail</h2>
 
