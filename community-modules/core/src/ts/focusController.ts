@@ -242,12 +242,18 @@ export class FocusController extends BeanStub {
         return focusable[nextIndex];
     }
 
-    public isManagedFocus(comp: Component | HTMLElement): boolean {
-        if (comp instanceof Component) {
-            return comp instanceof ManagedFocusComponent;
+    public isFocusUnderManagedComponent(rootNode: HTMLElement): boolean {
+        const managedContainers = rootNode.querySelectorAll(`.${ManagedFocusComponent.FOCUS_MANAGED_CLASS}`);
+
+        if (!managedContainers.length) { return false; }
+
+        for (let i = 0; i < managedContainers.length; i++) {
+            if (managedContainers[i].contains(document.activeElement)) {
+                return true;
+            }
         }
 
-        return !!comp.querySelector(`.${ManagedFocusComponent.FOCUS_MANAGED_CLASS}`);
+        return false;
     }
 
     public findTabbableParent(node: HTMLElement, limit: number = 5): HTMLElement {

@@ -95,6 +95,8 @@
         height: ag-param(list-item-height);
     }
 
+    @include ag-keyboard-focus((ag-virtual-list-item), -4px);
+
     .ag-select-list {
         @include ag-color-property(background-color, background-color);
         overflow-y: auto;
