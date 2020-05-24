@@ -168,9 +168,15 @@ interface GetDetailRowDataParams {
     spacing around the Detail Grid.
 </p>
 <snippet>
-    &lt;div class="ag-details-row">
-    &lt;div ref="eDetailGrid" class="ag-details-grid"/>
-    &lt;/div>
+// for when fixed height (normal)
+&lt;div class="ag-details-row ag-details-row-fixed-height">
+    &lt;div ref="eDetailGrid" class="ag-details-grid ag-details-grid-fixed-height"/>
+&lt;/div>
+
+// for when auto-height (detailCellRendererParams.autoHeight=true)
+&lt;div class="ag-details-row ag-details-row-auto-height">
+    &lt;div ref="eDetailGrid" class="ag-details-grid ag-details-grid-auto-height"/>
+&lt;/div>
 </snippet>
 
 <p>
