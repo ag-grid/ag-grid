@@ -870,6 +870,18 @@
                 "showInCollapsed": false
               },
               {
+                "title": "Detail Height",
+                "url": "javascript-grid-master-detail-height/",
+                "enterprise": true,
+                "showInCollapsed": false
+              },
+              {
+                "title": "Detail Refresh",
+                "url": "javascript-grid-master-detail-refresh/",
+                "enterprise": true,
+                "showInCollapsed": false
+              },
+              {
                 "title": "Master Rows",
                 "url": "javascript-grid-master-detail-master-rows/",
                 "enterprise": true,

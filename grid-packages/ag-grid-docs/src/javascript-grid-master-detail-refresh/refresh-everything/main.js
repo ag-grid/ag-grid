@@ -12,12 +12,12 @@ var gridOptions = {
     masterDetail: true,
     enableCellChangeFlash: true,
     detailCellRendererParams: {
-        refreshStrategy: 'rows',
+        refreshStrategy: 'everything',
 
         template: function(params) {
-            return '<div class="ag-details-row">' +
+            return '<div class="ag-details-row ag-details-row-fixed-height">' +
                         '<div style="padding: 4px; font-weight: bold;">'+params.data.name+' '+params.data.calls+' calls</div>' +
-                        '<div ref="eDetailGrid" class="ag-details-grid"/>' +
+                        '<div ref="eDetailGrid" class="ag-details-grid ag-details-grid-fixed-height"/>' +
                     '</div>';
         },
 
