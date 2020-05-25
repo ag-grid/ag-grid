@@ -78,14 +78,18 @@ export class VirtualList extends ManagedFocusComponent {
 
         const nextRow = this.lastFocusedRow + (up ? -1 : 1);
 
-        if (nextRow < 0 || nextRow > this.model.getRowCount()) { return false; }
+        if (nextRow < 0 || nextRow >= this.model.getRowCount()) { return false; }
 
         this.focusRow(nextRow);
 
         return true;
     }
 
-    private focusRow(rowNumber: number): void {
+    public getLastFocusedRow(): number {
+        return this.lastFocusedRow;
+    }
+
+    public focusRow(rowNumber: number): void {
         this.ensureIndexVisible(rowNumber);
         window.setTimeout(() => {
             const renderedRow = this.renderedRows.get(rowNumber);
@@ -94,6 +98,12 @@ export class VirtualList extends ManagedFocusComponent {
                 renderedRow.eDiv.focus();
             }
         }, 10);
+    }
+
+    public getComponentAt(rowIndex: number): Component {
+        const comp = this.renderedRows.get(rowIndex);
+
+        return comp && comp.rowComponent;
     }
 
     private static getTemplate(cssIdentifier: string) {

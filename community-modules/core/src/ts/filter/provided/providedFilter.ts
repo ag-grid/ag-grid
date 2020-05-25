@@ -9,6 +9,7 @@ import { IAfterGuiAttachedParams } from '../../interfaces/iAfterGuiAttachedParam
 import { loadTemplate, addCssClass } from '../../utils/dom';
 import { debounce } from '../../utils/function';
 import { Promise } from '../../utils/promise';
+import { ManagedFocusComponent } from '../../widgets/managedFocusComponent';
 
 export interface IProvidedFilterParams extends IFilterParams {
     clearButton?: boolean;

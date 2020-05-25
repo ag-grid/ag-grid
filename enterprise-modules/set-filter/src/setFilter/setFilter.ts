@@ -15,7 +15,8 @@ import {
     VirtualListModel,
     IAfterGuiAttachedParams,
     Promise,
-    _,
+    FocusController,
+    _
 } from '@ag-grid-community/core';
 
 import { SetFilterModelValuesType, SetValueModel } from './setValueModel';
@@ -29,8 +30,10 @@ export class SetFilter extends ProvidedFilter {
     @RefSelector('eSelectAllLabel') private eSelectAllLabel: HTMLElement;
     @RefSelector('eMiniFilter') private eMiniFilter: AgInputTextField;
     @RefSelector('eFilterLoading') private eFilterLoading: HTMLInputElement;
+    @RefSelector('eSetFilterList') private eSetFilterList: HTMLElement;
 
     @Autowired('valueFormatterService') private valueFormatterService: ValueFormatterService;
+    @Autowired('focusController') private focusController: FocusController;
 
     private selectAllState?: boolean;
     private setFilterParams: ISetFilterParams;
@@ -44,6 +47,15 @@ export class SetFilter extends ProvidedFilter {
     // unlike the simple filters, nothing in the set filter UI shows/hides.
     // maybe this method belongs in abstractSimpleFilter???
     protected updateUiVisibility(): void { }
+
+    protected postConstruct(): void {
+        super.postConstruct();
+
+        const focusableEl = this.getFocusableElement();
+        if (focusableEl) {
+            this.addManagedListener(focusableEl, 'keydown', this.handleKeyDown.bind(this));
+        }
+    }
 
     protected createBodyTemplate(): string {
         const translate = this.gridOptionsWrapper.getLocaleTextFunc();
@@ -60,6 +72,53 @@ export class SetFilter extends ProvidedFilter {
                 </div>
                 <div ref="eSetFilterList" class="ag-set-filter-list" role="presentation"></div>
             </div>`;
+    }
+
+    private handleKeyDown(e: KeyboardEvent) {
+        if (!this.eSetFilterList.contains(document.activeElement) || e.defaultPrevented) { return; }
+        switch (e.keyCode) {
+            case Constants.KEY_TAB:
+                this.handleKeyTab(e);
+                break;
+            case Constants.KEY_ENTER:
+            case Constants.KEY_SPACE:
+                const currentItem = this.virtualList.getLastFocusedRow();
+                if (_.exists(currentItem)) {
+                    const component = this.virtualList.getComponentAt(currentItem) as SetFilterListItem;
+                    if (component) {
+                        e.preventDefault();
+                        component.setSelected(!component.isSelected(), true);
+                    }
+                }
+        }
+    }
+
+    private handleKeyTab(e: KeyboardEvent): void {
+        const focusableElement = this.getFocusableElement();
+        const method = e.shiftKey ? 'previousElementSibling': 'nextElementSibling';
+        
+        let currentRoot = this.eSetFilterList;
+        let nextRoot: HTMLElement;
+
+        while (currentRoot !== focusableElement && !nextRoot) {
+            nextRoot = currentRoot[method] as HTMLElement;
+            currentRoot = currentRoot.parentElement;
+        }
+
+        if (!nextRoot) { return; }
+
+        let nextFocusEl: HTMLElement;
+
+        if (e.shiftKey) {
+            nextFocusEl = this.focusController.findLastFocusableElement(nextRoot)
+        } else {
+            nextFocusEl = this.focusController.findFirstFocusableElement(nextRoot);
+        }
+        
+        if (nextFocusEl) {
+            e.preventDefault();
+            nextFocusEl.focus();
+        }
     }
 
     protected getCssIdentifier(): string {
@@ -238,7 +297,8 @@ export class SetFilter extends ProvidedFilter {
 
         listItem.setSelected(selected);
         listItem.addEventListener(
-            SetFilterListItem.EVENT_SELECTED, () => this.onItemSelected(value, listItem.isSelected()));
+            SetFilterListItem.EVENT_SELECTED, () => this.onItemSelected(value, listItem.isSelected())
+        );
 
         return listItem;
     }
@@ -437,8 +497,18 @@ export class SetFilter extends ProvidedFilter {
             this.valueModel.deselectValue(value);
         }
 
+        const focusedRow = this.virtualList.getLastFocusedRow();
+
         this.updateSelectAll();
         this.onUiChanged();
+
+        if (_.exists(focusedRow)) {
+            window.setTimeout(() => {
+                if (this.isAlive()) {
+                    this.virtualList.focusRow(focusedRow);
+                }
+            }, 10)
+        }
     }
 
     public setMiniFilter(newMiniFilter: string): void {
