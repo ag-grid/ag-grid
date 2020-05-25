@@ -3,6 +3,7 @@ import { RefSelector } from "./componentAnnotations";
 import { Autowired, PostConstruct } from "../context/context";
 import { GridOptionsWrapper } from "../gridOptionsWrapper";
 import { AgCheckbox } from "./agCheckbox";
+import { Constants } from "../constants";
 import { _ } from "../utils";
 
 type GroupItem = Component | HTMLElement;
@@ -118,6 +119,11 @@ export class AgGroupComponent extends Component {
         this.eGroupClosedIcon.appendChild(_.createIcon('columnSelectClosed', this.gridOptionsWrapper, null));
         this.eGroupOpenedIcon.appendChild(_.createIcon('columnSelectOpen', this.gridOptionsWrapper, null));
         this.addManagedListener(this.eTitleBar, 'click', () => this.toggleGroupExpand());
+        this.addManagedListener(this.eTitleBar, 'keydown', (e: KeyboardEvent) => {
+            if (e.keyCode === Constants.KEY_ENTER) {
+                this.toggleGroupExpand();
+            }
+        });
     }
 
     private refreshChildDisplay(): void {
@@ -245,7 +251,13 @@ export class AgGroupComponent extends Component {
 
     private refreshDisabledStyles() {
         _.addOrRemoveCssClass(this.getGui(), 'ag-disabled', !this.enabled);
-        _.addOrRemoveCssClass(this.eTitleBar, 'ag-disabled-group-title-bar', this.suppressEnabledCheckbox && !this.enabled);
+        if (this.suppressEnabledCheckbox && !this.enabled) {
+            _.addCssClass(this.eTitleBar, 'ag-disabled-group-title-bar');
+            this.eTitleBar.removeAttribute('tabindex');
+        } else {
+            _.removeCssClass(this.eTitleBar, 'ag-disabled-group-title-bar');
+            this.eTitleBar.setAttribute('tabindex', '0');
+        }
         _.addOrRemoveCssClass(this.eContainer, 'ag-disabled-group-container', !this.enabled);
     }
 }

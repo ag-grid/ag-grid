@@ -10,6 +10,7 @@ import {
     IFilterComp,
     RefSelector,
     PostConstruct,
+    Constants,
     _
 } from "@ag-grid-community/core";
 
@@ -58,6 +59,11 @@ export class ToolPanelFilterComp extends Component {
         this.column = column;
         this.eFilterName.innerText = this.columnController.getDisplayNameForColumn(this.column, 'header', false) as string;
         this.addManagedListener(this.eFilterToolPanelHeader, 'click', this.toggleExpanded.bind(this));
+        this.addManagedListener(this.eFilterToolPanelHeader, 'keydown', (e: KeyboardEvent) => {
+            if (e.keyCode === Constants.KEY_ENTER) {
+                this.toggleExpanded();
+            }
+        });
         this.addManagedListener(this.eventService, Events.EVENT_FILTER_OPENED, this.onFilterOpened.bind(this));
         this.addInIcon('filter', this.eFilterIcon, this.column);
 
@@ -66,6 +72,9 @@ export class ToolPanelFilterComp extends Component {
 
         if (this.hideHeader) {
             _.addOrRemoveCssClass(this.eFilterToolPanelHeader, 'ag-hidden', true);
+            this.eFilterToolPanelHeader.removeAttribute('tabindex');
+        } else {
+            this.eFilterToolPanelHeader.setAttribute('tabindex', '0');
         }
 
         this.addManagedListener(this.column, Column.EVENT_FILTER_CHANGED, this.onFilterChanged.bind(this));

@@ -65,7 +65,7 @@ export class AgPanel extends Component {
 
     private static getTemplate(config?: PanelOptions) {
         const cssIdentifier = (config && config.cssIdentifier) || 'default';
-        return `<div class="ag-panel ag-${cssIdentifier}-panel" tabindex="-1">
+        return /* html */ `<div class="ag-panel ag-${cssIdentifier}-panel" tabindex="-1">
             <div ref="eTitleBar" class="ag-panel-title-bar ag-${cssIdentifier}-panel-title-bar ag-unselectable">
                 <span ref="eTitle" class="ag-panel-title-bar-title ag-${cssIdentifier}-panel-title-bar-title"></span>
                 <div ref="eTitleBarButtons" class="ag-panel-title-bar-buttons ag-${cssIdentifier}-panel-title-bar-buttons"></div>
