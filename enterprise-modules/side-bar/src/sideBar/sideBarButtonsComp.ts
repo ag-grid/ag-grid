@@ -6,8 +6,11 @@ import {
     PostConstruct,
     ToolPanelDef,
     RefSelector,
-    _,
-    PreDestroy
+    PreDestroy,
+    Constants,
+    FocusController,
+    HeaderPositionUtils,
+    _
 } from "@ag-grid-community/core";
 
 export interface SideBarButtonClickedEvent extends AgEvent {
@@ -17,13 +20,31 @@ export interface SideBarButtonClickedEvent extends AgEvent {
 export class SideBarButtonsComp extends Component {
 
     public static EVENT_SIDE_BAR_BUTTON_CLICKED = 'sideBarButtonClicked';
-
     private static readonly TEMPLATE: string = /* html */ `<div class="ag-side-buttons"></div>`;
-
     private buttonComps: SideBarButtonComp[] = [];
+
+    @Autowired('focusController') private focusController: FocusController;
+    @Autowired('headerPositionUtils') private headerPositionUtils: HeaderPositionUtils;
 
     constructor() {
         super(SideBarButtonsComp.TEMPLATE);
+    }
+
+    @PostConstruct
+    private postConstruct(): void {
+        this.addManagedListener(this.getFocusableElement(), 'keydown', this.handleKeyDown.bind(this));
+    }
+
+    private handleKeyDown(e: KeyboardEvent): void {
+        if (e.keyCode !== Constants.KEY_TAB || !e.shiftKey) { return; }
+        const prevEl = this.focusController.findNextFocusableElement(this.getFocusableElement(), null, true);
+
+        if (!prevEl) {
+            const headerPosition = this.headerPositionUtils.findColAtEdgeForHeaderRow(0, 'start');
+            if (!headerPosition) { return; }
+            e.preventDefault();
+            this.focusController.focusHeaderPosition(headerPosition);
+        }
     }
 
     public setToolPanelDefs(toolPanelDefs: ToolPanelDef[]): void {
