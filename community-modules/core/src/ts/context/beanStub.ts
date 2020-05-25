@@ -83,22 +83,23 @@ export class BeanStub implements IEventEmitter {
     }
 
     public addManagedListener(
-        object: Window | HTMLElement | IEventEmitter | GridOptionsWrapper,
+        object: Window | HTMLElement | GridOptionsWrapper | IEventEmitter,
         event: string,
-        listener: (event?: any) => void
+        listener: (event?: any) => void,
+        options?: AddEventListenerOptions
     ): (() => null) | undefined {
         if (this.destroyed) {
             return;
         }
 
         if (object instanceof HTMLElement) {
-            _.addSafePassiveEventListener(this.getFrameworkOverrides(), object as HTMLElement, event, listener);
+            _.addSafePassiveEventListener(this.getFrameworkOverrides(), object as HTMLElement, event, listener, options);
         } else {
-            (object as any).addEventListener(event, listener);
+            object.addEventListener(event, listener, undefined, options);
         }
 
         const destroyFunc: () => null = () => {
-            (object as any).removeEventListener(event, listener);
+            object.removeEventListener(event, listener, undefined, options);
 
             this.destroyFunctions = this.destroyFunctions.filter(fn => fn !== destroyFunc);
 

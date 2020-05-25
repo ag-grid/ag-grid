@@ -519,7 +519,7 @@ export class GridPanel extends Component {
     private processKeyboardEvent(eventName: string, keyboardEvent: KeyboardEvent): void {
         const cellComp = _.getCellCompForEvent(this.gridOptionsWrapper, keyboardEvent);
 
-        if (!cellComp) { return; }
+        if (!cellComp || keyboardEvent.defaultPrevented) { return; }
 
         const rowNode = cellComp.getRenderedRow().getRowNode();
         const column = cellComp.getColumn();

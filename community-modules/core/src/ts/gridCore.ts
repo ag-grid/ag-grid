@@ -6,7 +6,7 @@ import { FilterManager } from "./filter/filterManager";
 import { GridPanel } from "./gridPanel/gridPanel";
 import { Logger, LoggerFactory } from "./logger";
 import { PopupService } from "./widgets/popupService";
-import { Autowired, Optional } from "./context/context";
+import { Autowired, Optional, PostConstruct } from "./context/context";
 import { IRowModel } from "./interfaces/iRowModel";
 import { Component } from "./widgets/component";
 import { IClipboardService } from "./interfaces/iClipboardService";
@@ -54,6 +54,7 @@ export class GridCore extends ManagedFocusComponent {
     private doingVirtualPaging: boolean;
     private logger: Logger;
 
+    @PostConstruct
     protected postConstruct(): void {
         this.logger = this.loggerFactory.create('GridCore');
 
@@ -106,7 +107,7 @@ export class GridCore extends ManagedFocusComponent {
             _.removeCssClass(eGui, 'ag-keyboard-focus');
         });
 
-        super.postConstruct();
+        this.wireFocusManagement(true);
     }
 
     public getFocusableElement(): HTMLElement {
@@ -143,7 +144,28 @@ export class GridCore extends ManagedFocusComponent {
         return true;
     }
 
-    protected focusInnerElement(): void {
+    protected onTabKeyDown(e: KeyboardEvent): void {
+        const sideBar = this.sideBarComp && this.sideBarComp.getFocusableElement();
+        if (sideBar && e.altKey) {
+            const activeFocus = document.activeElement;
+            e.preventDefault();
+
+            this.focusInnerElement(!sideBar.contains(activeFocus));
+        }
+    }
+
+    protected focusInnerElement(fromBottom?: boolean): void {
+        if (fromBottom && this.sideBarComp) {
+            const focusEl = this.focusController.findFirstFocusableElement(
+                this.sideBarComp.getFocusableElement()
+            );
+
+            if (focusEl) {
+                focusEl.focus();
+            }
+            return;
+        }
+
         let firstColumn: Column | ColumnGroup = this.columnController.getAllDisplayedColumns()[0];
         if (!firstColumn) { return; }
 

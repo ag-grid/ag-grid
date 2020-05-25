@@ -42,6 +42,8 @@
         }
     }
 
+    @include ag-keyboard-focus((ag-side-button-button), -4px);
+
     .ag-selected .ag-side-button-button {
         @if ag-param(borders-side-button) {
             @include ag-color-property(background-color, control-panel-background-color);

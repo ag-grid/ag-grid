@@ -169,11 +169,15 @@ export function getEventPath(event: Event): EventTarget[] {
 export function addSafePassiveEventListener(
     frameworkOverrides: IFrameworkOverrides,
     eElement: HTMLElement,
-    event: string, listener: (event?: any) => void
+    event: string, listener: (event?: any) => void,
+    options: AddEventListenerOptions = {}
 ) {
     const isPassive = includes(PASSIVE_EVENTS, event);
     const isOutsideAngular = includes(OUTSIDE_ANGULAR_EVENTS, event);
-    const options = isPassive ? { passive: true } : undefined;
+
+    if (isPassive) {
+        options.passive = true;
+    }
 
     if (isOutsideAngular) {
         // this happens in certain scenarios where I believe the user must be destroying the grid somehow but continuing
