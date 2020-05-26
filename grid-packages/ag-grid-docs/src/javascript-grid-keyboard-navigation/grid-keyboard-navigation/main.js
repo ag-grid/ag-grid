@@ -8,28 +8,31 @@ var columnDefs = [
         minWidth: 50,
         maxWidth: 50,
         width: 50,
+        flex: 0,
         resizable: false,
         sortable: false,
-        editable: false
+        editable: false,
+        filter: false,
+        suppressColumnsToolPanel: true
     },
     {
         headerName: 'Participant',
         children: [
             { field: 'athlete', minWidth: 170 },
-            { field: 'country' }
+            { field: 'country', minWidth: 150 }
         ],
     },
-    { field: 'year', filter: 'agNumberColumnFilter' },
     { field: 'sport' },
     {
         headerName: 'Medals',
         children: [
-            { field: 'total', columnGroupShow: 'closed', filter: 'agNumberColumnFilter' },
-            { field: 'gold', columnGroupShow: 'open', filter: 'agNumberColumnFilter' },
-            { field: 'silver', columnGroupShow: 'open', filter: 'agNumberColumnFilter' },
-            { field: 'bronze', columnGroupShow: 'open', filter: 'agNumberColumnFilter' },
+            { field: 'total', columnGroupShow: 'closed', filter: 'agNumberColumnFilter', width: 120, flex: 0 },
+            { field: 'gold', columnGroupShow: 'open', filter: 'agNumberColumnFilter', width: 100, flex: 0 },
+            { field: 'silver', columnGroupShow: 'open', filter: 'agNumberColumnFilter', width: 100, flex: 0 },
+            { field: 'bronze', columnGroupShow: 'open', filter: 'agNumberColumnFilter',  width: 100, flex: 0 },
         ]
-    }
+    },
+    { field: 'year', filter: 'agNumberColumnFilter'}
 ];
 
 var gridOptions = {
@@ -42,11 +45,33 @@ var gridOptions = {
     defaultColDef: {
         editable: true,
         sortable: true,
-        flex: 1,
         minWidth: 100,
         filter: true,
         resizable: true,
-        floatingFilter: true
+        floatingFilter: true,
+        flex: 1
+    },
+    sideBar: {
+        toolPanels: [{
+            id: 'columns',
+            labelDefault: 'Columns',
+            labelKey: 'columns',
+            iconKey: 'columns',
+            toolPanel: 'agColumnsToolPanel',
+            toolPanelParams: {
+              suppressRowGroups: true,
+              suppressValues: true,
+              suppressPivots: true,
+              suppressPivotMode: true,
+              suppressSideButtons: true,
+              suppressColumnFilter: true,
+              suppressColumnSelectAll: true,
+              suppressColumnExpandAll: true,
+            },
+          },
+         'filters'
+        ],
+        defaultToolPanel: ''
     }
 };
 

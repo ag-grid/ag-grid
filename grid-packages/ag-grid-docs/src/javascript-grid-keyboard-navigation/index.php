@@ -121,13 +121,22 @@ include '../documentation-main/documentation_header.php';
         the focus to the floating filter cell.
     </p>
 
+    <h2>Side Bar</h2>
+
+    <p>
+        To navigated between the main view of the grid and the side bar, you can use the <code>Alt/Option + Tab</code>
+        combination. This will focus the first button of the side bar, or the first header of the grid. Just like focusing
+        the grid from outside, if the first header is not currently in the view due to horizontal scroll, the grid will
+        automatically scroll before focusing the header.
+    </p>
+
     <h2>Example</h2>
 
     <p>
         The example below has grouped headers, headers and floating filters to demonstrate the features mentioned above:
     </p>
 
-    <?= grid_example('Keyboard Navigation', 'grid-keyboard-navigation', 'generated') ?>
+    <?= grid_example('Keyboard Navigation', 'grid-keyboard-navigation', 'generated', ['enterprise' => true]) ?>
 
     <h2>Custom Navigation</h2>
 

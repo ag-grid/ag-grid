@@ -80,7 +80,6 @@ export class SetFilter extends ProvidedFilter {
             case Constants.KEY_TAB:
                 this.handleKeyTab(e);
                 break;
-            case Constants.KEY_ENTER:
             case Constants.KEY_SPACE:
                 const currentItem = this.virtualList.getLastFocusedRow();
                 if (_.exists(currentItem)) {
