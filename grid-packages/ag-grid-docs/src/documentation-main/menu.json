@@ -1491,6 +1491,10 @@
                 "url": "javascript-charts-legend/"
               },
               {
+                "title": "Navigator",
+                "url": "javascript-charts-navigator/"
+              },
+              {
                 "title": "Markers",
                 "url": "javascript-charts-markers/"
               },

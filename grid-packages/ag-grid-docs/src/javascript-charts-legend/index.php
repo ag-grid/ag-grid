@@ -184,7 +184,7 @@ SNIPPET
 <h2>Next Up</h2>
 
 <p>
-    Continue to the next section to learn more about <a href="../javascript-charts-markers/">markers</a>.
+    Continue to the next section to learn more about the <a href="../javascript-charts-navigator/">navigator</a>.
 </p>
 
 <?php include '../documentation-main/documentation_footer.php'; ?>
