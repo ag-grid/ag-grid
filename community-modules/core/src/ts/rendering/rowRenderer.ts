@@ -532,7 +532,8 @@ export class RowRenderer extends BeanStub {
     public refreshCells(params: RefreshCellsParams = {}): void {
         const refreshCellParams = {
             forceRefresh: params.force,
-            newData: false
+            newData: false,
+            suppressFlash: params.suppressFlash
         };
         this.forEachCellCompFiltered(params.rowNodes, params.columns, cellComp => cellComp.refreshCell(refreshCellParams));
     }
