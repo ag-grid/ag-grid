@@ -11,7 +11,8 @@ var columnDefs = [
         flex: 0,
         resizable: false,
         sortable: false,
-        editable: false
+        editable: false,
+        filter: false
     },
     {
         headerName: 'Participant',
@@ -48,6 +49,10 @@ var gridOptions = {
         resizable: true,
         floatingFilter: true,
         flex: 1
+    },
+    sideBar: {
+        toolPanels: ['filters'],
+        defaultToolPanel: ''
     }
 };
 
