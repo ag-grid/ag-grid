@@ -1,5 +1,6 @@
 import { Path } from "../../scene/shape/path";
 import { BBox } from "../../scene/bbox";
+import { ShapeLineCap } from "../../scene/shape/shape";
 
 export class RangeHandle extends Path {
     static className = 'RangeHandle';
@@ -7,6 +8,7 @@ export class RangeHandle extends Path {
     protected _fill = '#f2f2f2';
     protected _stroke = '#999999';
     protected _strokeWidth = 1;
+    protected _lineCap = 'square' as ShapeLineCap;
 
     protected _centerX: number = 0;
     set centerX(value: number) {
@@ -30,7 +32,7 @@ export class RangeHandle extends Path {
         return this._centerY;
     }
 
-    // Use even numbers for better looking results.
+    // Use an even number for better looking results.
     protected _width: number = 8;
     set width(value: number) {
         if (this._width !== value) {
@@ -40,6 +42,30 @@ export class RangeHandle extends Path {
     }
     get width(): number {
         return this._width;
+    }
+
+    // Use an even number for better looking results.
+    protected _gripLineGap: number = 2;
+    set gripLineGap(value: number) {
+        if (this._gripLineGap !== value) {
+            this._gripLineGap = value;
+            this.dirtyPath = true;
+        }
+    }
+    get gripLineGap(): number {
+        return this._gripLineGap;
+    }
+
+    // Use an even number for better looking results.
+    protected _gripLineLength: number = 8;
+    set gripLineLength(value: number) {
+        if (this._gripLineLength !== value) {
+            this._gripLineLength = value;
+            this.dirtyPath = true;
+        }
+    }
+    get gripLineLength(): number {
+        return this._gripLineLength;
     }
 
     protected _height: number = 16;
@@ -90,9 +116,11 @@ export class RangeHandle extends Path {
         path.lineTo(ax, ay);
 
         // Grip lines.
-        path.moveTo(al(a, centerX - 1), al(a, centerY - 4));
-        path.lineTo(al(a, centerX - 1), al(a, centerY + 4));
-        path.moveTo(al(a, centerX + 1), al(a, centerY - 4));
-        path.lineTo(al(a, centerX + 1), al(a, centerY + 4));
+        const dx = this.gripLineGap / 2;
+        const dy = this.gripLineLength / 2;
+        path.moveTo(al(a, centerX - dx), al(a, centerY - dy));
+        path.lineTo(al(a, centerX - dx), al(a, centerY + dy));
+        path.moveTo(al(a, centerX + dx), al(a, centerY - dy));
+        path.lineTo(al(a, centerX + dx), al(a, centerY + dy));
     }
 }

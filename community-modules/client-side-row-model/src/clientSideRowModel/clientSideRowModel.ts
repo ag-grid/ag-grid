@@ -696,19 +696,9 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
         if (this.groupStage) {
 
             if (rowNodeTransactions) {
-                const merged: RowNodeTransaction = {
-                    add: [],
-                    remove: [],
-                    update: []
-                };
-                rowNodeTransactions.forEach(tran => {
-                    _.pushAll(merged.add, tran.add);
-                    _.pushAll(merged.remove, tran.remove);
-                    _.pushAll(merged.update, tran.update);
-                });
                 this.groupStage.execute({
                     rowNode: this.rootNode,
-                    rowNodeTransaction: merged,
+                    rowNodeTransactions: rowNodeTransactions,
                     rowNodeOrder: rowNodeOrder,
                     changedPath: changedPath
                 });

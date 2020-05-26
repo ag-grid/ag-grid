@@ -8,7 +8,6 @@ import { Logger, LoggerFactory } from "./logger";
 import { PopupService } from "./widgets/popupService";
 import { Autowired, Optional, PostConstruct } from "./context/context";
 import { IRowModel } from "./interfaces/iRowModel";
-import { FocusController } from "./focusController";
 import { Component } from "./widgets/component";
 import { IClipboardService } from "./interfaces/iClipboardService";
 import { GridApi } from "./gridApi";
@@ -40,7 +39,6 @@ export class GridCore extends ManagedFocusComponent {
     @Autowired('$scope') private $scope: any;
     @Autowired('quickFilterOnScope') private quickFilterOnScope: string;
     @Autowired('popupService') private popupService: PopupService;
-    @Autowired('focusController') private focusController: FocusController;
     @Autowired('columnController') private columnController: ColumnController;
     @Autowired('loggerFactory') loggerFactory: LoggerFactory;
 
@@ -54,9 +52,9 @@ export class GridCore extends ManagedFocusComponent {
     @RefSelector('rootWrapperBody') private eRootWrapperBody: HTMLElement;
 
     private doingVirtualPaging: boolean;
-
     private logger: Logger;
 
+    @PostConstruct
     protected postConstruct(): void {
         this.logger = this.loggerFactory.create('GridCore');
 
@@ -109,7 +107,7 @@ export class GridCore extends ManagedFocusComponent {
             _.removeCssClass(eGui, 'ag-keyboard-focus');
         });
 
-        super.postConstruct();
+        this.wireFocusManagement(true);
     }
 
     public getFocusableElement(): HTMLElement {
@@ -128,9 +126,9 @@ export class GridCore extends ManagedFocusComponent {
         const watermark = enterpriseCoreLoaded ? '<ag-watermark></ag-watermark>' : '';
 
         const template =
-            `<div class="ag-root-wrapper">
+            `<div ref="eRootWrapper" class="ag-root-wrapper">
                 ${dropZones}
-                <div class="ag-root-wrapper-body" ref="rootWrapperBody" tabindex="0">
+                <div class="ag-root-wrapper-body" ref="rootWrapperBody">
                     <ag-grid-comp ref="gridPanel"></ag-grid-comp>
                     ${sideBar}
                 </div>
@@ -142,7 +140,32 @@ export class GridCore extends ManagedFocusComponent {
         return template;
     }
 
-    protected focusFirstElement(): void {
+    protected isFocusableContainer(): boolean {
+        return true;
+    }
+
+    protected onTabKeyDown(e: KeyboardEvent): void {
+        const sideBar = this.sideBarComp && this.sideBarComp.getFocusableElement();
+        if (sideBar && e.altKey) {
+            const activeFocus = document.activeElement;
+            e.preventDefault();
+
+            this.focusInnerElement(!sideBar.contains(activeFocus));
+        }
+    }
+
+    protected focusInnerElement(fromBottom?: boolean): void {
+        if (fromBottom && this.sideBarComp) {
+            const focusEl = this.focusController.findFirstFocusableElement(
+                this.sideBarComp.getFocusableElement()
+            );
+
+            if (focusEl) {
+                focusEl.focus();
+            }
+            return;
+        }
+
         let firstColumn: Column | ColumnGroup = this.columnController.getAllDisplayedColumns()[0];
         if (!firstColumn) { return; }
 

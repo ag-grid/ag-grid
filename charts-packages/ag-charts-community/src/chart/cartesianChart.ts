@@ -6,7 +6,7 @@ import { ChartAxisPosition, ChartAxisDirection, ChartAxis } from "./chartAxis";
 import { Series } from "./series/series";
 import { BBox } from "../scene/bbox";
 import { ClipRect } from "../scene/clipRect";
-import { Navigator } from "./navigator";
+import { Navigator } from "./navigator/navigator";
 
 export class CartesianChart extends Chart {
     static className = 'CartesianChart';

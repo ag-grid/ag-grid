@@ -4,7 +4,6 @@ import {
     Autowired,
     Column,
     ColumnController,
-    Component,
     CssClassApplier,
     DragAndDropService,
     DragSource,
@@ -14,12 +13,14 @@ import {
     OriginalColumnGroup,
     PostConstruct,
     RefSelector,
-    TouchListener
+    TouchListener,
+    ManagedFocusComponent,
+    Constants
 } from "@ag-grid-community/core";
 import { BaseColumnItem } from "./primaryColsPanel";
 import { ColumnFilterResults } from "./primaryColsListPanel";
 
-export class ToolPanelColumnGroupComp extends Component implements BaseColumnItem {
+export class ToolPanelColumnGroupComp extends ManagedFocusComponent implements BaseColumnItem {
 
     private static TEMPLATE = /* html */
         `<div class="ag-column-select-column-group" tabindex="-1">
@@ -100,6 +101,23 @@ export class ToolPanelColumnGroupComp extends Component implements BaseColumnIte
         CssClassApplier.addToolPanelClassesFromColDef(this.columnGroup.getColGroupDef(), this.getGui(), this.gridOptionsWrapper, null, this.columnGroup);
     }
 
+    protected handleKeyDown(e: KeyboardEvent): void {
+        switch (e.keyCode) {
+            case Constants.KEY_LEFT:
+            case Constants.KEY_RIGHT:
+                e.preventDefault();
+                if (this.isExpandable()){
+                    this.toggleExpandOrContract(e.keyCode === Constants.KEY_RIGHT);
+                }
+                break;
+            case Constants.KEY_SPACE:
+                e.preventDefault();
+                if (this.isSelectable()) {
+                    this.onSelectAllChanged(!this.isSelected());
+                }
+        }
+    }
+
     private addVisibilityListenersToAllChildren(): void {
         this.columnGroup.getLeafColumns().forEach(column => {
             this.addManagedListener(column, Column.EVENT_VISIBLE_CHANGED, this.onColumnStateChanged.bind(this));
@@ -110,7 +128,6 @@ export class ToolPanelColumnGroupComp extends Component implements BaseColumnIte
     }
 
     private setupDragging(): void {
-
         if (!this.allowDragging) {
             _.setDisplayed(this.eDragHandle, false);
             return;
@@ -340,7 +357,14 @@ export class ToolPanelColumnGroupComp extends Component implements BaseColumnIte
     }
 
     private onExpandOrContractClicked(): void {
-        this.expanded = !this.expanded;
+        this.toggleExpandOrContract();
+    }
+
+    private toggleExpandOrContract(expanded?: boolean) {
+        if (expanded === undefined) {
+            expanded = !this.expanded;
+        }
+        this.expanded = expanded;
         this.setOpenClosedIcons();
         this.expandedCallback();
     }

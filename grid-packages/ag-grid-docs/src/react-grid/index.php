@@ -18,9 +18,10 @@ include '../documentation-main/documentation_header.php';
 include './intro.php';
 ?>
 
+<h2>Getting Started</h2>
+
 <?= videoSection("https://www.youtube.com/embed/6PA45adHun8", "react-demo", "Getting Started Video Tutorial") ?>
 
-<h2>Getting Started</h2>
 <p>In this article, we will walk you through the necessary steps to add ag-Grid
   (both <a href="../javascript-grid-set-license/">Community and Enterprise</a> are covered)
   to an existing React project,

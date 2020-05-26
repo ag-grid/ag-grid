@@ -2,21 +2,20 @@ import {
     _,
     Autowired,
     ColumnController,
-    Component,
     Events,
     GridOptionsWrapper,
-    PostConstruct,
     PreConstruct,
     RefSelector,
     ToolPanelColumnCompParams,
     Constants,
     AgCheckbox,
-    AgInputTextField
+    AgInputTextField,
+    ManagedFocusComponent
 } from "@ag-grid-community/core";
 
 export enum EXPAND_STATE { EXPANDED, COLLAPSED, INDETERMINATE }
 
-export class PrimaryColsHeaderPanel extends Component {
+export class PrimaryColsHeaderPanel extends ManagedFocusComponent {
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('columnController') private columnController: ColumnController;
 
@@ -39,15 +38,14 @@ export class PrimaryColsHeaderPanel extends Component {
     private preConstruct(): void {
         this.setTemplate(/* html */
             `<div class="ag-column-select-header" role="presentation" tabindex="-1">
-                <div ref="eExpand" class="ag-column-select-header-icon"></div>
+                <div ref="eExpand" class="ag-column-select-header-icon" tabindex="0"></div>
                 <ag-checkbox ref="eSelect" class="ag-column-select-header-checkbox"></ag-checkbox>
                 <ag-input-text-field class="ag-column-select-header-filter-wrapper" ref="eFilterTextField"></ag-input-text-field>
             </div>`
         );
     }
 
-    @PostConstruct
-    public postConstruct(): void {
+    protected postConstruct(): void {
         this.createExpandIcons();
 
         this.addManagedListener(
@@ -55,6 +53,12 @@ export class PrimaryColsHeaderPanel extends Component {
             "click",
             this.onExpandClicked.bind(this)
         );
+
+        this.addManagedListener(this.eExpand, 'keydown', (e: KeyboardEvent) => {
+            if (e.keyCode === Constants.KEY_SPACE) {
+                this.onExpandClicked();
+            }
+        });
 
         this.addManagedListener(this.eSelect.getInputElement(),
             'click',
@@ -74,6 +78,8 @@ export class PrimaryColsHeaderPanel extends Component {
             Events.EVENT_NEW_COLUMNS_LOADED,
             this.showOrHideOptions.bind(this)
         );
+
+        super.postConstruct();
     }
 
     public init(params: ToolPanelColumnCompParams): void {
@@ -81,6 +87,15 @@ export class PrimaryColsHeaderPanel extends Component {
 
         if (this.columnController.isReady()) {
             this.showOrHideOptions();
+        }
+    }
+
+    protected onTabKeyDown(e: KeyboardEvent): void {
+        const nextEl = this.focusController.findNextFocusableElement(this.getFocusableElement(), false, e.shiftKey);
+
+        if (nextEl) {
+            e.preventDefault();
+            nextEl.focus();
         }
     }
 

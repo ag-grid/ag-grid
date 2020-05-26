@@ -8,6 +8,7 @@ import { IAfterGuiAttachedParams } from '../../interfaces/iAfterGuiAttachedParam
 import { loadTemplate, addCssClass, setDisabled } from '../../utils/dom';
 import { debounce } from '../../utils/function';
 import { Promise } from '../../utils/promise';
+import { ManagedFocusComponent } from '../../widgets/managedFocusComponent';
 
 type FilterButtonType = 'apply' | 'clear' | 'reset' | 'cancel';
 

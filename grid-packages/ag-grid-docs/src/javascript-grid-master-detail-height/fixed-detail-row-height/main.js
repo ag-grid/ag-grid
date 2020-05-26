@@ -22,7 +22,7 @@ var gridOptions = {
             ],
             defaultColDef: {
                 flex: 1
-            },
+            }
         },
         getDetailRowData: function(params) {
             params.successCallback(params.data.callRecords);

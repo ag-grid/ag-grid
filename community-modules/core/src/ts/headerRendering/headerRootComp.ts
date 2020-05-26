@@ -1,7 +1,7 @@
 import { GridOptionsWrapper } from '../gridOptionsWrapper';
 import { ColumnController } from '../columnController/columnController';
 import { GridPanel } from '../gridPanel/gridPanel';
-import { Autowired, Optional } from '../context/context';
+import { Autowired } from '../context/context';
 import { HeaderContainer } from './headerContainer';
 import { Events } from '../events';
 import { Component } from '../widgets/component';
@@ -11,7 +11,6 @@ import { AutoWidthCalculator } from '../rendering/autoWidthCalculator';
 import { Constants } from '../constants';
 import { addOrRemoveCssClass, setDisplayed } from '../utils/dom';
 import { ManagedFocusComponent } from '../widgets/managedFocusComponent';
-import { FocusController } from '../focusController';
 import { HeaderController, HeaderContainerTypes, HeaderNavigationDirection } from './header/headerController';
 import { _ } from '../utils';
 
@@ -34,7 +33,6 @@ export class HeaderRootComp extends ManagedFocusComponent {
     @Autowired('columnController') private columnController: ColumnController;
     @Autowired('gridApi') private gridApi: GridApi;
     @Autowired('autoWidthCalculator') private autoWidthCalculator: AutoWidthCalculator;
-    @Autowired('focusController') private focusController: FocusController;
     @Autowired('headerController') private headerController: HeaderController;
 
     private gridPanel: GridPanel;

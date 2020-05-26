@@ -11,9 +11,9 @@ import {
     UserComponentFactory,
     ValueFormatterService,
     RefSelector,
-    _,
     TooltipFeature,
     ISetFilterCellRendererParams,
+    _
 } from '@ag-grid-community/core';
 
 export interface SelectedEvent extends AgEvent { }
@@ -61,13 +61,13 @@ export class SetFilterListItem extends Component {
         return this.selected;
     }
 
-    public setSelected(selected: boolean): void {
+    public setSelected(selected: boolean, forceEvent?: boolean): void {
         this.selected = selected;
-        this.updateCheckboxIcon();
+        this.updateCheckboxIcon(forceEvent);
     }
 
-    private updateCheckboxIcon() {
-        this.eCheckbox.setValue(this.isSelected(), true);
+    private updateCheckboxIcon(forceEvent?: boolean) {
+        this.eCheckbox.setValue(this.isSelected(), !forceEvent);
     }
 
     public render(): void {

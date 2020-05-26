@@ -112,7 +112,7 @@ function navigateToNextCell(params) {
         case KEY_DOWN:
             // return the cell above
             var nextRowIndex = previousCell.rowIndex - 1;
-            if (nextRowIndex < 0) {
+            if (nextRowIndex < -1) {
                 // returning null means don't navigate
                 return null;
             } else {

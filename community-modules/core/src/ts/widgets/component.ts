@@ -280,13 +280,13 @@ export class Component extends BeanStub {
         return this.eGui.querySelector(cssSelector) as HTMLInputElement;
     }
 
-    public appendChild(newChild: Node | Component, container?: HTMLElement): void {
+    public appendChild(newChild: HTMLElement | Component, container?: HTMLElement): void {
         if (!container) {
             container = this.eGui;
         }
 
         if (_.isNodeOrElement(newChild)) {
-            container.appendChild(newChild as Node);
+            container.appendChild(newChild as HTMLElement);
         } else {
             const childComponent = newChild as Component;
             container.appendChild(childComponent.getGui());

@@ -95,6 +95,8 @@
         height: ag-param(list-item-height);
     }
 
+    @include ag-keyboard-focus((ag-virtual-list-item), -4px);
+
     .ag-select-list {
         @include ag-color-property(background-color, background-color);
         overflow-y: auto;
@@ -222,6 +224,8 @@
         @include ag-color-property(background-color, subheader-background-color);
         padding: ag-param(grid-size);
     }
+
+    @include ag-keyboard-focus((ag-group-title-bar), -4px);
     
     .ag-group-toolbar {
         padding: ag-param(grid-size);
@@ -440,6 +444,8 @@
     .ag-column-select-header-icon {
         cursor: pointer;
     }
+
+    @include ag-keyboard-focus((ag-column-select-header-icon), 0);
 
     .ag-column-group-icons,
     .ag-column-select-header-icon,

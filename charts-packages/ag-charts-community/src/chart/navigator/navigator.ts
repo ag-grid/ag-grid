@@ -1,74 +1,9 @@
-import { RangeSelector } from "./shapes/rangeSelector";
-import { CartesianChart } from "../chart/cartesianChart";
-import { ChartAxisDirection } from "../chart/chartAxis";
-import { BBox } from "../scene/bbox";
-import { RangeMask } from "./shapes/rangeMask";
-import { RangeHandle } from "./shapes/rangeHandle";
-
-export class NavigatorMask {
-    private readonly rm: RangeMask;
-
-    set fill(value: string) {
-        this.rm.fill = value;
-    }
-    get fill(): string {
-        return this.rm.fill;
-    }
-
-    set stroke(value: string) {
-        this.rm.stroke = value;
-    }
-    get stroke(): string {
-        return this.rm.stroke;
-    }
-
-    set strokeWidth(value: number) {
-        this.rm.strokeWidth = value;
-    }
-    get strokeWidth(): number {
-        return this.rm.strokeWidth;
-    }
-
-    set fillOpacity(value: number) {
-        this.rm.fillOpacity = value;
-    }
-    get fillOpacity(): number {
-        return this.rm.fillOpacity;
-    }
-
-    constructor(rangeMask: RangeMask) {
-        this.rm = rangeMask;
-    }
-}
-
-export class NavigatorHandle {
-    private readonly rh: RangeHandle;
-
-    set fill(value: string) {
-        this.rh.fill = value;
-    }
-    get fill(): string {
-        return this.rh.fill;
-    }
-
-    set stroke(value: string) {
-        this.rh.stroke = value;
-    }
-    get stroke(): string {
-        return this.rh.stroke;
-    }
-
-    set strokeWidth(value: number) {
-        this.rh.strokeWidth = value;
-    }
-    get strokeWidth(): number {
-        return this.rh.strokeWidth;
-    }
-
-    constructor(rangeHandle: RangeHandle) {
-        this.rh = rangeHandle;
-    }
-}
+import { RangeSelector } from "../shapes/rangeSelector";
+import { CartesianChart } from "../cartesianChart";
+import { ChartAxisDirection } from "../chartAxis";
+import { BBox } from "../../scene/bbox";
+import { NavigatorMask } from "./navigatorMask";
+import { NavigatorHandle } from "./navigatorHandle";
 
 export class Navigator {
     private readonly rs = new RangeSelector();

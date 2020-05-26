@@ -7,7 +7,6 @@ import {
     ColumnPivotChangeRequestEvent,
     ColumnRowGroupChangeRequestEvent,
     ColumnValueChangeRequestEvent,
-    Component,
     CssClassApplier,
     DragAndDropService,
     DragSource,
@@ -17,11 +16,13 @@ import {
     GridOptionsWrapper,
     PostConstruct,
     RefSelector,
-    _
+    ManagedFocusComponent,
+    _,
+    Constants
 } from "@ag-grid-community/core";
 import { BaseColumnItem } from "./primaryColsPanel";
 
-export class ToolPanelColumnComp extends Component implements BaseColumnItem {
+export class ToolPanelColumnComp extends ManagedFocusComponent implements BaseColumnItem {
 
     private static TEMPLATE = /* html */
         `<div class="ag-column-select-column" tabindex="-1">
@@ -92,6 +93,16 @@ export class ToolPanelColumnComp extends Component implements BaseColumnItem {
         this.onColumnStateChanged();
 
         CssClassApplier.addToolPanelClassesFromColDef(this.column.getColDef(), this.getGui(), this.gridOptionsWrapper, this.column, null);
+    }
+
+    protected handleKeyDown(e: KeyboardEvent): void {
+        switch (e.keyCode) {
+            case Constants.KEY_SPACE:
+                e.preventDefault();
+                if (this.isSelectable()) {
+                    this.onSelectAllChanged(!this.isSelected());
+                }
+        }
     }
 
     private onLabelClicked(): void {

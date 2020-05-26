@@ -1,6 +1,9 @@
 import { Component } from './component';
-import { Autowired, PostConstruct } from '../context/context';
+import { Autowired } from '../context/context';
 import { GridOptionsWrapper } from '../gridOptionsWrapper';
+import { RefSelector } from './componentAnnotations';
+import { ManagedFocusComponent } from './managedFocusComponent';
+import { Constants } from '../constants';
 import { _ } from '../utils';
 
 export interface VirtualListModel {
@@ -8,31 +11,105 @@ export interface VirtualListModel {
     getRow(index: number): any;
 }
 
-export class VirtualList extends Component {
+export class VirtualList extends ManagedFocusComponent {
     private model: VirtualListModel;
-    private eListContainer: HTMLElement;
     private renderedRows = new Map<number, { rowComponent: Component, eDiv: HTMLDivElement; }>();
     private componentCreator: (value: any) => Component;
     private rowHeight = 20;
+    private lastFocusedRow: number;
 
     @Autowired('gridOptionsWrapper') gridOptionsWrapper: GridOptionsWrapper;
+    @RefSelector('eContainer') private eContainer: HTMLElement;
 
     constructor(private readonly cssIdentifier = 'default') {
         super(VirtualList.getTemplate(cssIdentifier));
     }
 
-    @PostConstruct
-    private init(): void {
-        this.eListContainer = this.queryForHtmlElement('.ag-virtual-list-container');
-
+    protected postConstruct(): void {
         this.addScrollListener();
         this.rowHeight = this.getItemHeight();
+
+        super.postConstruct();
+    }
+
+    protected isFocusableContainer(): boolean {
+        return true;
+    }
+
+    protected focusInnerElement(fromBottom: boolean): void {
+        const rowCount = this.model.getRowCount();
+        this.focusRow(fromBottom ? rowCount - 1 : 0);
+    }
+
+    protected onFocusIn(e: FocusEvent): void {
+        super.onFocusIn(e);
+        const target = e.target as HTMLElement;
+
+        if (_.containsClass(target, 'ag-virtual-list-item')) {
+            this.lastFocusedRow = parseInt(target.getAttribute('aria-rowindex'), 10) - 1;
+        }
+    }
+
+    protected onFocusOut(e: FocusEvent) {
+        super.onFocusOut(e);
+
+        if (!this.getFocusableElement().contains(e.relatedTarget as HTMLElement)) {
+            this.lastFocusedRow = null;
+        }
+    }
+
+    protected handleKeyDown(e: KeyboardEvent) {
+        switch (e.keyCode) {
+            case Constants.KEY_UP:
+            case Constants.KEY_DOWN:
+            case Constants.KEY_TAB:
+                if (this.navigate(
+                    e.keyCode === Constants.KEY_UP ||
+                    (e.keyCode === Constants.KEY_TAB && e.shiftKey)
+                )) {
+                    e.preventDefault();
+                }
+                break;
+        }
+    }
+
+    private navigate(up: boolean): boolean {
+        if (!_.exists(this.lastFocusedRow)) { return false; }
+
+        const nextRow = this.lastFocusedRow + (up ? -1 : 1);
+
+        if (nextRow < 0 || nextRow >= this.model.getRowCount()) { return false; }
+
+        this.focusRow(nextRow);
+
+        return true;
+    }
+
+    public getLastFocusedRow(): number {
+        return this.lastFocusedRow;
+    }
+
+    public focusRow(rowNumber: number): void {
+        this.ensureIndexVisible(rowNumber);
+        window.setTimeout(() => {
+            const renderedRow = this.renderedRows.get(rowNumber);
+
+            if (renderedRow) {
+                renderedRow.eDiv.focus();
+            }
+        }, 10);
+    }
+
+    public getComponentAt(rowIndex: number): Component {
+        const comp = this.renderedRows.get(rowIndex);
+
+        return comp && comp.rowComponent;
     }
 
     private static getTemplate(cssIdentifier: string) {
         return /* html */`
-            <div class="ag-virtual-list-viewport ag-${cssIdentifier}-virtual-list-viewport" tabindex="0">
-                <div class="ag-virtual-list-container ag-${cssIdentifier}-virtual-list-container"></div>
+            <div class="ag-virtual-list-viewport ag-${cssIdentifier}-virtual-list-viewport">
+                <div class="ag-virtual-list-container ag-${cssIdentifier}-virtual-list-container" ref="eContainer"></div>
             </div>`;
     }
 
@@ -88,8 +165,10 @@ export class VirtualList extends Component {
 
     public refresh(): void {
         if (this.model == null) { return; }
+        const rowCount = this.model.getRowCount();
 
-        this.eListContainer.style.height = `${this.model.getRowCount() * this.rowHeight}px`;
+        this.eContainer.style.height = `${rowCount * this.rowHeight}px`;
+        this.eContainer.setAttribute('aria-rowcount', rowCount.toString());
 
         // ensure height is applied before attempting to redraw rows
         setTimeout(() => {
@@ -115,7 +194,7 @@ export class VirtualList extends Component {
     private ensureRowsRendered(start: number, finish: number) {
         // remove any rows that are no longer required
         this.renderedRows.forEach((_, rowIndex) => {
-            if (rowIndex < start || rowIndex > finish) {
+            if ((rowIndex < start || rowIndex > finish) && rowIndex !== this.lastFocusedRow) {
                 this.removeRow(rowIndex);
             }
         });
@@ -137,6 +216,8 @@ export class VirtualList extends Component {
 
         _.addCssClass(eDiv, 'ag-virtual-list-item');
         _.addCssClass(eDiv, `ag-${this.cssIdentifier}-virtual-list-item`);
+        eDiv.setAttribute('aria-rowindex', (rowIndex + 1).toString());
+        eDiv.setAttribute('tabindex', '-1');
 
         eDiv.style.height = `${this.rowHeight}px`;
         eDiv.style.top = `${this.rowHeight * rowIndex}px`;
@@ -145,17 +226,15 @@ export class VirtualList extends Component {
 
         eDiv.appendChild(rowComponent.getGui());
 
-        this.eListContainer.appendChild(eDiv);
+        this.eContainer.appendChild(eDiv);
         this.renderedRows.set(rowIndex, { rowComponent, eDiv });
     }
 
     private removeRow(rowIndex: number) {
         const component = this.renderedRows.get(rowIndex);
 
-        this.eListContainer.removeChild(component.eDiv);
-
+        this.eContainer.removeChild(component.eDiv);
         this.destroyBean(component.rowComponent);
-
         this.renderedRows.delete(rowIndex);
     }
 

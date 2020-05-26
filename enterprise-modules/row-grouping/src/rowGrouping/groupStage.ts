@@ -33,7 +33,7 @@ interface GroupingDetails {
     rootNode: RowNode;
     groupedCols: Column[];
     groupedColCount: number;
-    transaction: RowNodeTransaction;
+    transactions: RowNodeTransaction[];
     rowNodeOrder: { [id: string]: number; };
 }
 
@@ -76,7 +76,7 @@ export class GroupStage extends BeanStub implements IRowNodeStage {
 
         const details = this.createGroupingDetails(params);
 
-        if (details.transaction) {
+        if (details.transactions) {
             this.handleTransaction(details);
         } else {
             const afterColsChanged = params.afterColumnsChanged === true;
@@ -89,11 +89,9 @@ export class GroupStage extends BeanStub implements IRowNodeStage {
     }
 
     private createGroupingDetails(params: StageExecuteParams): GroupingDetails {
-        const { rowNode, changedPath, rowNodeTransaction, rowNodeOrder } = params;
+        const { rowNode, changedPath, rowNodeTransactions, rowNodeOrder } = params;
 
         const groupedCols = this.usingTreeData ? null : this.columnController.getRowGroupColumns();
-        const isGrouping = this.usingTreeData || (groupedCols && groupedCols.length > 0);
-        const usingTransaction = isGrouping && _.exists(rowNodeTransaction);
 
         const details: GroupingDetails = {
             // someone complained that the parent attribute was causing some change detection
@@ -107,11 +105,7 @@ export class GroupStage extends BeanStub implements IRowNodeStage {
             pivotMode: this.columnController.isPivotMode(),
             groupedColCount: this.usingTreeData || !groupedCols ? 0 : groupedCols.length,
             rowNodeOrder: rowNodeOrder,
-
-            // important not to do transaction if we are not grouping, as otherwise the 'insert index' is ignored.
-            // ie, if not grouping, then we just want to shotgun so the rootNode.allLeafChildren gets copied
-            // to rootNode.childrenAfterGroup and maintaining order (as delta transaction misses the order).
-            transaction: usingTransaction ? rowNodeTransaction : null,
+            transactions: rowNodeTransactions,
 
             // if no transaction, then it's shotgun, changed path would be 'not active' at this point anyway
             changedPath: changedPath
@@ -121,17 +115,20 @@ export class GroupStage extends BeanStub implements IRowNodeStage {
     }
 
     private handleTransaction(details: GroupingDetails): void {
-        const tran = details.transaction;
-        // remove nodes first in case a node is removed and re-added in the same transaction
-        if (tran.remove) {
-            this.removeNodes(tran.remove, details);
-        }
-        if (tran.add) {
-            this.insertNodes(tran.add, details, false);
-        }
-        if (tran.update) {
-            this.moveNodesInWrongPath(tran.update, details);
-        }
+
+        details.transactions.forEach( tran => {
+            // remove nodes first in case a node is removed and re-added in the same transaction
+            if (_.existsAndNotEmpty(tran.remove)) {
+                this.removeNodes(tran.remove, details);
+            }
+            if (_.existsAndNotEmpty(tran.add)) {
+                this.insertNodes(tran.add, details, false);
+            }
+            if (_.existsAndNotEmpty(tran.update)) {
+                this.moveNodesInWrongPath(tran.update, details);
+            }
+        });
+
         if (details.rowNodeOrder) {
             this.sortChildren(details);
         }

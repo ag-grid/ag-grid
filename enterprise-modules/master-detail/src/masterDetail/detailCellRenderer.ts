@@ -10,6 +10,7 @@ import {
     ICellRenderer,
     RefSelector,
     RowNode,
+    ResizeObserverService,
     _
 } from "@ag-grid-community/core";
 
@@ -22,6 +23,7 @@ export class DetailCellRenderer extends Component implements ICellRenderer {
 
     @Autowired('environment') private environment: Environment;
     @RefSelector('eDetailGrid') private eDetailGrid: HTMLElement;
+    @Autowired('resizeObserverService') private resizeObserverService: ResizeObserverService;
 
     private static REFRESH_STRATEGY_ROWS = 'rows';
     private static REFRESH_STRATEGY_EVERYTHING = 'everything';
@@ -121,6 +123,31 @@ export class DetailCellRenderer extends Component implements ICellRenderer {
         this.addManagedListener(params.node.parent!, RowNode.EVENT_DATA_CHANGED, () => {
             this.needRefresh = true;
         });
+
+        this.setupAutoGridHeight();
+    }
+
+    private setupAutoGridHeight(): void {
+
+        if (!this.params.autoHeight) { return; }
+
+        const gridApi = this.params.api;
+        const onRowHeightChangedDebounced = _.debounce(gridApi.onRowHeightChanged.bind(gridApi), 20);
+
+        const checkRowSizeFunc = ()=> {
+            const clientHeight = this.getGui().clientHeight;
+
+            if (clientHeight!=null) {
+                this.params.node.setRowHeight(clientHeight);
+                onRowHeightChangedDebounced();
+            }
+        };
+
+        const resizeObserverDestroyFunc = this.resizeObserverService.observeResize(this.getGui(), checkRowSizeFunc);
+
+        this.addDestroyFunc(resizeObserverDestroyFunc);
+
+        checkRowSizeFunc();
     }
 
     private addThemeToDetailGrid(): void {
@@ -157,9 +184,18 @@ export class DetailCellRenderer extends Component implements ICellRenderer {
     }
 
     private selectAndSetTemplate(): void {
+
+        const setDefaultTemplate = () => {
+            this.setTemplate(DetailCellRenderer.TEMPLATE);
+            const autoHeight = this.params.autoHeight;
+
+            this.addCssClass(autoHeight ? 'ag-details-row-auto-height' : 'ag-details-row-fixed-height');
+            _.addCssClass(this.eDetailGrid, autoHeight ? 'ag-details-grid-auto-height' : 'ag-details-grid-fixed-height');
+        };
+
         if (_.missing(this.params.template)) {
             // use default template
-            this.setTemplate(DetailCellRenderer.TEMPLATE);
+            setDefaultTemplate();
         } else {
             // use user provided template
             if (typeof this.params.template === 'string') {
@@ -170,7 +206,7 @@ export class DetailCellRenderer extends Component implements ICellRenderer {
                 this.setTemplate(template);
             } else {
                 console.warn('ag-Grid: detailCellRendererParams.template should be function or string');
-                this.setTemplate(DetailCellRenderer.TEMPLATE);
+                setDefaultTemplate();
             }
         }
     }
@@ -188,6 +224,10 @@ export class DetailCellRenderer extends Component implements ICellRenderer {
 
         // IMPORTANT - gridOptions must be cloned
         this.detailGridOptions = _.cloneObject(gridOptions);
+        if (this.params.autoHeight) {
+            this.detailGridOptions.domLayout = 'autoHeight';
+        }
+
         // tslint:disable-next-line
         new Grid(this.eDetailGrid, this.detailGridOptions, {
             $scope: this.params.$scope,
@@ -231,7 +271,9 @@ export class DetailCellRenderer extends Component implements ICellRenderer {
 
         const funcParams: any = {
             node: this.params.node,
-            data: this.params.data,
+            // we take data from node, rather than params.data
+            // as the data could have been updated with new instance
+            data: this.params.node.data,
             successCallback: successCallback
         };
         userFunc(funcParams);
@@ -254,6 +296,7 @@ export interface IDetailCellRendererParams extends ICellRendererParams {
     $compile: any;
     pinned: string;
     template: string | TemplateFunc;
+    autoHeight: boolean;
     /** @deprecated */
     suppressRefresh: boolean;
 }

@@ -8,16 +8,24 @@ include '../documentation-main/documentation_header.php';
 
 <h1 class="heading-enterprise">Master / Detail</h1>
 
+<?= videoSection("https://www.youtube.com/embed/8OeJn75or2w", "master-detail-video", "Master / Detail Video Tutorial") ?>
+
 <p class="lead">
     Master Detail refers to a top level grid called a Master Grid having rows that expand. When
     the row is expanded, another grid is displayed with more details related to the expanded
     row. The grid that appears is known as the Detail Grid.
 </p>
 
-<? enterprise_feature("Master Detail"); ?>
+<!--
+This "clear: both" is to stop the video included above from dropping into the demo
+-->
+<p style="clear: both;"/>
 
-<?= videoSection("https://www.youtube.com/embed/8OeJn75or2w", "master-detail-video", "Master / Detail Video Tutorial") ?>
+<p>
+    The example below shows a simple Master / Detail with all the above configured.
+</p>
 
+<?= grid_example('Master Detail Example', 'simple', 'generated', ['enterprise' => true, 'exampleHeight' => 535, 'modules'=>['clientside', 'masterdetail', 'menu', 'columnpanel']]) ?>
 
 <h2>Enabling Master / Detail</h2>
 
@@ -82,12 +90,6 @@ var gridOptions = {
     * The significance of using Detail Cell Renderer parameters to configure the Detail Grid is explained in
     <a href="../javascript-grid-master-detail-detail-grids/">Detail Grids</a>.
 </p>
-
-<p>
-    The example below shows a simple Master / Detail with all the above configured.
-</p>
-
-<?= grid_example('Simple Example', 'simple', 'generated', ['enterprise' => true, 'exampleHeight' => 535, 'modules'=>['clientside', 'masterdetail', 'menu', 'columnpanel']]) ?>
 
 <h2>Row Models</h2>
 

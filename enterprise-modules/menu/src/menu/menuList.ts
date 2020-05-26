@@ -16,7 +16,8 @@ export class MenuList extends ManagedFocusComponent {
     @Autowired('popupService') private popupService: PopupService;
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
 
-    private static TEMPLATE = /* html */ `<div class="ag-menu-list" tabindex="0"></div>`;
+    private static TEMPLATE = /* html */ `
+        <div class="ag-menu-list"><div class="ag-menu-list-body"></div>`;
 
     private static SEPARATOR_TEMPLATE = /* html */
         `<div class="ag-menu-separator">
@@ -75,6 +76,10 @@ export class MenuList extends ManagedFocusComponent {
         }
     }
 
+    protected isFocusableContainer(): boolean {
+        return true;
+    }
+
     public clearActiveItem(): void {
         this.deactivateItem();
         this.removeChildPopup();
@@ -99,7 +104,7 @@ export class MenuList extends ManagedFocusComponent {
         const cMenuItem = this.createManagedBean(new MenuItemComponent(menuItemDef));
         this.menuItems.push({comp: cMenuItem, params: menuItemDef });
 
-        this.getGui().appendChild(cMenuItem.getGui());
+        this.appendChild(cMenuItem.getGui());
 
         cMenuItem.addEventListener(MenuItemComponent.EVENT_ITEM_SELECTED, (event: MenuItemSelectedEvent) => {
             if (menuItemDef.subMenu && !menuItemDef.action) {
@@ -317,7 +322,8 @@ export class MenuList extends ManagedFocusComponent {
     }
 
     public addSeparator(): void {
-        this.getGui().appendChild(_.loadTemplate(MenuList.SEPARATOR_TEMPLATE));
+        const template = _.loadTemplate(MenuList.SEPARATOR_TEMPLATE);
+        this.appendChild(template);
     }
 
     private showChildMenu(menuItemComp: MenuItemComponent, menuItemDef: MenuItemDef): void {
