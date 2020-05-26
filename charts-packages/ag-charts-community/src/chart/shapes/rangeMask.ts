@@ -1,5 +1,6 @@
 import { Path } from "../../scene/shape/path";
 import { BBox } from "../../scene/bbox";
+import { ShapeLineCap } from "../../main";
 
 export class RangeMask extends Path {
     static className = 'RangeMask';
@@ -8,6 +9,7 @@ export class RangeMask extends Path {
     protected _strokeWidth = 1;
     protected _fill = '#f2f2f2';
     protected _fillOpacity = 0.2;
+    protected _lineCap = 'square' as ShapeLineCap;
 
     protected _x: number = 0;
     set x(value: number) {

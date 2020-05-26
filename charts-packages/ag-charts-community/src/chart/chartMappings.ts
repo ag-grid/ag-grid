@@ -15,7 +15,9 @@ import { Caption } from "../caption";
 import { DropShadow } from "../scene/dropShadow";
 import { Legend, LegendPosition } from "./legend";
 import palette from "./palettes";
-import { Navigator, NavigatorMask, NavigatorHandle } from "./navigator";
+import { Navigator } from "./navigator/navigator";
+import { NavigatorMask } from "./navigator/navigatorMask";
+import { NavigatorHandle } from "./navigator/navigatorHandle";
 
 /*
     This file defines the specs for creating different kinds of charts, but
@@ -421,13 +423,31 @@ const mappings = {
                     }
                 }
             },
-            handle: {
+            minHandle: {
                 meta: {
                     constructor: NavigatorHandle,
                     defaults: {
                         fill: '#f2f2f2',
                         stroke: '#999999',
-                        strokeWidth: 1
+                        strokeWidth: 1,
+                        width: 8,
+                        height: 16,
+                        gripLineGap: 2,
+                        gripLineLength: 8
+                    }
+                }
+            },
+            maxHandle: {
+                meta: {
+                    constructor: NavigatorHandle,
+                    defaults: {
+                        fill: '#f2f2f2',
+                        stroke: '#999999',
+                        strokeWidth: 1,
+                        width: 8,
+                        height: 16,
+                        gripLineGap: 2,
+                        gripLineLength: 8
                     }
                 }
             }
