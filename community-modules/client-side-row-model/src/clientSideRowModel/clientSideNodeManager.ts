@@ -138,15 +138,43 @@ export class ClientSideNodeManager {
             add: []
         };
 
+        const nodesToUnselect: RowNode[] = [];
+
         this.executeAdd(rowDataTran, rowNodeTransaction);
-        this.executeRemove(rowDataTran, rowNodeTransaction);
-        this.executeUpdate(rowDataTran, rowNodeTransaction);
+        this.executeRemove(rowDataTran, rowNodeTransaction, nodesToUnselect);
+        this.executeUpdate(rowDataTran, rowNodeTransaction, nodesToUnselect);
+
+        this.updateSelection(nodesToUnselect);
 
         if (rowNodeOrder) {
             _.sortRowNodesByOrder(this.rootNode.allLeafChildren, rowNodeOrder);
         }
 
         return rowNodeTransaction;
+    }
+
+    private updateSelection(nodesToUnselect: RowNode[]): void {
+        const selectionChanged = nodesToUnselect.length > 0;
+        if (selectionChanged) {
+            nodesToUnselect.forEach(rowNode => {
+                rowNode.setSelected(false, false, true);
+            });
+        }
+
+        // we do this regardless of nodes to unselect or not, as it's possible
+        // a new node was inserted, so a parent that was previously selected (as all
+        // children were selected) should not be tri-state (as new one unselected against
+        // all other selected children).
+        this.selectionController.updateGroupsFromChildrenSelections();
+
+        if (selectionChanged) {
+            const event: SelectionChangedEvent = {
+                type: Events.EVENT_SELECTION_CHANGED,
+                api: this.gridApi,
+                columnApi: this.columnApi
+            };
+            this.eventService.dispatchEvent(event);
+        }
     }
 
     private executeAdd(rowDataTran: RowDataTransaction, rowNodeTransaction: RowNodeTransaction): void {
@@ -168,26 +196,23 @@ export class ClientSideNodeManager {
         }
     }
 
-    private executeRemove(rowDataTran: RowDataTransaction, rowNodeTransaction: RowNodeTransaction): void {
+    private executeRemove(rowDataTran: RowDataTransaction, rowNodeTransaction: RowNodeTransaction, nodesToUnselect: RowNode[]): void {
         const {remove} = rowDataTran;
 
         if (!remove) { return; }
 
         const rowIdsRemoved: {[key: string]: boolean} = {};
-        let anyNodesSelected = false;
 
         remove.forEach(item => {
             const rowNode = this.lookupRowNode(item);
 
             if (!rowNode) { return; }
 
-            if (rowNode.isSelected()) {
-                anyNodesSelected = true;
-            }
-
-            // do delete - setting 'tailingNodeInSequence = true' to ensure EVENT_SELECTION_CHANGED is not raised for
+            // do delete - setting 'suppressFinishActions = true' to ensure EVENT_SELECTION_CHANGED is not raised for
             // each row node updated, instead it is raised once by the calling code if any selected nodes exist.
-            rowNode.setSelected(false, false, true);
+            if (rowNode.isSelected()) {
+                nodesToUnselect.push(rowNode);
+            }
 
             // so row renderer knows to fade row out (and not reposition it)
             rowNode.clearRowTop();
@@ -202,19 +227,9 @@ export class ClientSideNodeManager {
         });
 
         this.rootNode.allLeafChildren = this.rootNode.allLeafChildren.filter(rowNode => !rowIdsRemoved[rowNode.id]);
-
-        if (anyNodesSelected) {
-            this.selectionController.updateGroupsFromChildrenSelections();
-            const event: SelectionChangedEvent = {
-                type: Events.EVENT_SELECTION_CHANGED,
-                api: this.gridApi,
-                columnApi: this.columnApi
-            };
-            this.eventService.dispatchEvent(event);
-        }
     }
 
-    private executeUpdate(rowDataTran: RowDataTransaction, rowNodeTransaction: RowNodeTransaction): void {
+    private executeUpdate(rowDataTran: RowDataTransaction, rowNodeTransaction: RowNodeTransaction, nodesToUnselect: RowNode[]): void {
         const {update} = rowDataTran;
         if (!update) { return; }
 
@@ -224,6 +239,9 @@ export class ClientSideNodeManager {
             if (!rowNode) { return; }
 
             rowNode.updateData(item);
+            if (!rowNode.selectable && rowNode.isSelected()) {
+                nodesToUnselect.push(rowNode);
+            }
 
             this.setMasterForRow(rowNode, item, ClientSideNodeManager.TOP_LEVEL, false);
 
