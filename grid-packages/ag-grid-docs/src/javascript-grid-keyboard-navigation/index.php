@@ -104,7 +104,7 @@ include '../documentation-main/documentation_header.php';
                 Press <code>CTRL/CMD + ENTER</code> to toggle multi-sort for that column.
             </li>
             <li>
-                Press <code>ALT/OPTION + ENTER</code> to open the menu for the focused header.
+                Press <code>m</code> to open the menu for the focused header.
             </li>
             <li>
                 When a menu is open, simply press <code>ESCAPE</code> to close it and the focus will
@@ -119,15 +119,6 @@ include '../documentation-main/documentation_header.php';
         from header cell to header cell, if you wish to navigate within the cell, press <code>ENTER</code> to focus
         the first enabled element within the current floating filter cell, and press <code>ESCAPE</code> to return 
         the focus to the floating filter cell.
-    </p>
-
-    <h2>Side Bar</h2>
-
-    <p>
-        To navigated between the main view of the grid and the side bar, you can use the <code>Alt/Option + Tab</code>
-        combination. This will focus the first button of the side bar, or the first header of the grid. Just like focusing
-        the grid from outside, if the first header is not currently in the view due to horizontal scroll, the grid will
-        automatically scroll before focusing the header.
     </p>
 
     <h2>Example</h2>
