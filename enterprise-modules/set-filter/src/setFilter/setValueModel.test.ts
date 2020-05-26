@@ -144,6 +144,58 @@ describe('value selection', () => {
             asyncAssert(done, () => expect(model.isValueSelected(value)).toBe(true));
         });
     });
+
+    it.each(['windows', 'mac'])('only uses visible values in set when first value is deselected in %s Excel mode', excelMode => {
+        const values = ['A', 'B', 'C'];
+        const doesRowPassOtherFilters = (row: RowNode) => row.data.value != 'B';
+        const model = createSetValueModel(values, { excelMode }, doesRowPassOtherFilters);
+
+        model.deselectValue('C');
+
+        expect(model.getModel()).toStrictEqual(['A']);
+    });
+
+    it('uses all values in set when first value is deselected when not in Excel mode', () => {
+        const values = ['A', 'B', 'C'];
+        const doesRowPassOtherFilters = (row: RowNode) => row.data.value != 'B';
+        const model = createSetValueModel(values, undefined, doesRowPassOtherFilters);
+
+        model.deselectValue('C');
+
+        expect(model.getModel()).toStrictEqual(['A', 'B']);
+    });
+
+    it.each(['windows', 'mac'])('removes any filter once all visible values are selected in %s Excel mode', excelMode => {
+        const values = ['A', 'B', 'C'];
+        let valueToExclude = '';
+        const doesRowPassOtherFilters = (row: RowNode) => row.data.value != valueToExclude;
+        const model = createSetValueModel(values, { excelMode }, doesRowPassOtherFilters);
+
+        model.deselectValue('B');
+        valueToExclude = 'B';
+        model.refreshAfterAnyFilterChanged();
+
+        model.deselectValue('C');
+        model.selectValue('C');
+
+        expect(model.isFilterActive()).toBe(false);
+    });
+
+    it('preserves unselected values even if all visible values are selected when not in Excel mode', () => {
+        const values = ['A', 'B', 'C'];
+        let valueToExclude = '';
+        const doesRowPassOtherFilters = (row: RowNode) => row.data.value != valueToExclude;
+        const model = createSetValueModel(values, undefined, doesRowPassOtherFilters);
+
+        model.deselectValue('B');
+        valueToExclude = 'B';
+        model.refreshAfterAnyFilterChanged();
+
+        model.deselectValue('C');
+        model.selectValue('C');
+
+        expect(model.isFilterActive()).toBe(true);
+    });
 });
 
 describe('overrideValues', () => {
@@ -270,7 +322,7 @@ describe('values from grid', () => {
         expect(getDisplayedValues(model)).toStrictEqual([null, 'A', 'B', 'C']);
     });
 
-    it.each(['windows', 'mac'])('orders null last in Excel Model', excelMode => {
+    it.each(['windows', 'mac'])('orders null last in %s Excel Model', excelMode => {
         const values = ['A', 'B', null, 'C'];
         const model = createSetValueModel(values, { excelMode });
 
@@ -450,9 +502,9 @@ describe('selectAllDisplayed', () => {
         expect(model.isValueSelected('C')).toBe(false);
     });
 
-    it('selects all values that match mini filter, replacing existing selection if requested', () => {
+    it.each([undefined, 'windows', 'mac'])('selects all values that match mini filter, replacing existing selection if requested, for excelMode = %s', excelMode => {
         const values = ['A', 'B', 'C'];
-        const model = createSetValueModel(values);
+        const model = createSetValueModel(values, { excelMode });
 
         model.deselectValue('B');
         model.deselectValue('C');
@@ -475,9 +527,9 @@ describe('deselectAllDisplayed', () => {
         values.forEach(v => expect(model.isValueSelected(v)).toBe(false));
     });
 
-    it('deselects all values that match mini filter', () => {
+    it.each([undefined, 'windows', 'mac'])('deselects all values that match mini filter, for excelMode = %s', excelMode => {
         const values = ['A', 'B', 'C'];
-        const model = createSetValueModel(values);
+        const model = createSetValueModel(values, { excelMode });
 
         model.deselectValue('C');
         model.setMiniFilter('B');
@@ -621,3 +673,4 @@ describe('setModel', () => {
         });
     });
 });
+

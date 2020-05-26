@@ -203,6 +203,7 @@ export class SetValueModel implements IEventEmitter {
 
         this.availableValues = _.convertToSet(availableValues);
         this.localEventService.dispatchEvent({ type: SetValueModel.EVENT_AVAILABLE_VALUES_CHANGED });
+
         this.updateDisplayedValues();
     }
 
@@ -335,7 +336,7 @@ export class SetValueModel implements IEventEmitter {
             // ensure everything that matches the mini filter is selected
             if (clearExistingSelection) { this.selectedValues.clear(); }
 
-            _.forEach(this.displayedValues, value => this.selectValue(value));
+            _.forEach(this.displayedValues, value => this.selectedValues.add(value));
         }
     }
 
@@ -345,15 +346,25 @@ export class SetValueModel implements IEventEmitter {
             this.selectedValues.clear();
         } else {
             // ensure everything that matches the mini filter is deselected
-            _.forEach(this.displayedValues, it => this.deselectValue(it));
+            _.forEach(this.displayedValues, value => this.selectedValues.delete(value));
         }
     }
 
     public selectValue(value: string): void {
         this.selectedValues.add(value);
+
+        if (this.filterParams.excelMode && this.isEverythingSelected()) {
+            // remove filter
+            this.resetSelectionState(this.allValues);
+        }
     }
 
     public deselectValue(value: string): void {
+        if (this.filterParams.excelMode && this.isEverythingSelected()) {
+            // ensure we're starting from the correct "everything selected" state
+            this.resetSelectionState(_.values(this.availableValues));
+        }
+
         this.selectedValues.delete(value);
     }
 
@@ -362,19 +373,11 @@ export class SetValueModel implements IEventEmitter {
     }
 
     public isEverythingSelected(): boolean {
-        if (this.miniFilterText == null) {
-            return this.allValues.length === this.selectedValues.size;
-        } else {
-            return _.filter(this.displayedValues, it => this.isValueSelected(it)).length === this.displayedValues.length;
-        }
+        return _.filter(this.displayedValues, it => this.isValueSelected(it)).length === this.displayedValues.length;
     }
 
     public isNothingSelected(): boolean {
-        if (this.miniFilterText == null) {
-            return this.selectedValues.size === 0;
-        } else {
-            return _.filter(this.displayedValues, it => this.isValueSelected(it)).length === 0;
-        }
+        return _.filter(this.displayedValues, it => this.isValueSelected(it)).length === 0;
     }
 
     public getModel(): string[] | null {
@@ -393,7 +396,7 @@ export class SetValueModel implements IEventEmitter {
 
                 _.forEach(model, value => {
                     if (allValues.has(value)) {
-                        this.selectValue(value);
+                        this.selectedValues.add(value);
                     }
                 });
             }

@@ -64,13 +64,7 @@
             "behaviour": "Restore the applied filter state when the search box is cleared",
             "agGrid": false,
             "windowsExcel": true,
-            "macExcel": false
-        },
-        {
-            "behaviour": "Remove any active filter when the search box is cleared",
-            "agGrid": false,
-            "windowsExcel": false,
-            "macExcel": true
+            "macExcel": null
         },
         {
             "behaviour": "Close filter popup when <code>Enter</code> is pressed",
@@ -128,6 +122,18 @@
             "agGrid": false,
             "windowsExcel": true,
             "macExcel": null
+        },
+        {
+            "behaviour": "Hide unavailable values in other Set Filters when a filter is applied",
+            "agGrid": true,
+            "windowsExcel": true,
+            "macExcel": true
+        },
+        {
+            "behaviour": "When a new filter is started, only include visible selected values in the set",
+            "agGrid": false,
+            "windowsExcel": true,
+            "macExcel": true
         }
     ]
 }

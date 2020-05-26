@@ -73,9 +73,7 @@ export class SetFilter extends ProvidedFilter {
     }
 
     protected setModelIntoUi(model: SetFilterModel): Promise<void> {
-        this.resetUiToDefaults();
-
-        if (!model) { return Promise.resolve(); }
+        this.setMiniFilter(null);
 
         if (model instanceof Array) {
             const message = 'ag-Grid: The Set Filter Model is no longer an array and models as arrays are ' +
@@ -85,9 +83,9 @@ export class SetFilter extends ProvidedFilter {
         }
 
         // also supporting old filter model for backwards compatibility
-        const newValues = model instanceof Array ? model as string[] : model.values;
+        const values = model == null ? null : (model instanceof Array ? model as string[] : model.values);
 
-        return this.valueModel.setModel(newValues).then(() => this.refresh());
+        return this.valueModel.setModel(values).then(() => this.refresh());
     }
 
     public getModelFromUi(): SetFilterModel | null {
@@ -217,10 +215,6 @@ export class SetFilter extends ProvidedFilter {
             this.refresh();
             this.onBtApply(false, true);
         });
-    }
-
-    private updateCheckboxIcon(): void {
-        this.eSelectAll.setValue(this.selectAllState);
     }
 
     public setLoading(loading: boolean): void {
@@ -403,7 +397,7 @@ export class SetFilter extends ProvidedFilter {
             this.selectAllState = undefined;
         }
 
-        this.updateCheckboxIcon();
+        this.eSelectAll.setValue(this.selectAllState);
     }
 
     private onMiniFilterInput() {
