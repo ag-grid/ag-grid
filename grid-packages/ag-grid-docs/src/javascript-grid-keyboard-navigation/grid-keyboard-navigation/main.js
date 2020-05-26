@@ -52,25 +52,7 @@ var gridOptions = {
         flex: 1
     },
     sideBar: {
-        toolPanels: [{
-            id: 'columns',
-            labelDefault: 'Columns',
-            labelKey: 'columns',
-            iconKey: 'columns',
-            toolPanel: 'agColumnsToolPanel',
-            toolPanelParams: {
-              suppressRowGroups: true,
-              suppressValues: true,
-              suppressPivots: true,
-              suppressPivotMode: true,
-              suppressSideButtons: true,
-              suppressColumnFilter: true,
-              suppressColumnSelectAll: true,
-              suppressColumnExpandAll: true,
-            },
-          },
-         'filters'
-        ],
+        toolPanels: ['columns', 'filters'],
         defaultToolPanel: ''
     }
 };
