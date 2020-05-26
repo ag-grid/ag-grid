@@ -121,10 +121,8 @@ export class FloatingFilterWrapper extends AbstractHeaderWrapper {
                 e.stopPropagation();
             case Constants.KEY_ENTER:
                 if (wrapperHasFocus) {
-                    const focusableElement = this.focusController.findFirstFocusableElement(eGui);
-                    if (focusableElement) {
+                    if (this.focusController.focusFirstFocusableElement(eGui)) {
                         e.preventDefault();
-                        focusableElement.focus();
                     }
                 }
                 break;

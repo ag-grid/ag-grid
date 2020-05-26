@@ -92,7 +92,8 @@ export class HeaderRootComp extends ManagedFocusComponent {
 
     protected onTabKeyDown(e: KeyboardEvent): void {
         if (this.headerController.navigateHorizontally(
-            e.shiftKey ? HeaderNavigationDirection.LEFT : HeaderNavigationDirection.RIGHT, true)
+            e.shiftKey ? HeaderNavigationDirection.LEFT : HeaderNavigationDirection.RIGHT, true) ||
+            this.focusController.focusNextGridCoreContainer(e.shiftKey)
         ) {
             e.preventDefault();
         }

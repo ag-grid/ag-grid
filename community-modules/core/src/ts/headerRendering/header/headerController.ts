@@ -159,12 +159,13 @@ export class HeaderController extends BeanStub {
 
         if (nextPosition) {
             if (nextPosition.headerRowIndex === -1) {
-                this.focusController.focusGridView(nextPosition.column as Column);
-            } else {
-                this.focusController.focusHeaderPosition(nextPosition, direction);
+                return this.focusController.focusGridView(nextPosition.column as Column);
             }
-            return true;
+
+            return this.focusController.focusHeaderPosition(nextPosition, direction);
         }
+
+        return false;
     }
 
     public scrollToColumn(column: Column | ColumnGroup, direction: 'Before' | 'After' = 'After'): void {
