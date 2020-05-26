@@ -220,7 +220,6 @@ export class SetValueModel implements IEventEmitter {
 
         // ensure the blank value always appears last
         return _.filter(values, v => v != null).sort(comparator).concat(null);
-
     }
 
     private getValuesFromRows(removeUnavailableValues = false): string[] {

@@ -95,8 +95,8 @@ export class SetFilter extends ProvidedFilter {
 
     private handleKeyTab(e: KeyboardEvent): void {
         const focusableElement = this.getFocusableElement();
-        const method = e.shiftKey ? 'previousElementSibling': 'nextElementSibling';
-        
+        const method = e.shiftKey ? 'previousElementSibling' : 'nextElementSibling';
+
         let currentRoot = this.eSetFilterList;
         let nextRoot: HTMLElement;
 
@@ -110,11 +110,11 @@ export class SetFilter extends ProvidedFilter {
         let nextFocusEl: HTMLElement;
 
         if (e.shiftKey) {
-            nextFocusEl = this.focusController.findLastFocusableElement(nextRoot)
+            nextFocusEl = this.focusController.findLastFocusableElement(nextRoot);
         } else {
             nextFocusEl = this.focusController.findFirstFocusableElement(nextRoot);
         }
-        
+
         if (nextFocusEl) {
             e.preventDefault();
             nextFocusEl.focus();
@@ -203,16 +203,20 @@ export class SetFilter extends ProvidedFilter {
     }
 
     private applyExcelModeOptions(params: ISetFilterParams): void {
+        // apply default options to match Excel behaviour, unless they have already been specified
         if (params.excelMode === 'windows') {
             if (!params.buttons) {
-                // set up default buttons for Windows Excel Mode
-                params.buttons = ['apply', 'cancel'];
+                params.buttons = ['reset', 'apply', 'cancel'];
             }
 
             if (params.closeOnApply == null) {
                 params.closeOnApply = true;
             }
         } else if (params.excelMode === 'mac') {
+            if (!params.buttons) {
+                params.buttons = ['reset'];
+            }
+
             if (params.applyMiniFilterWhileTyping == null) {
                 params.applyMiniFilterWhileTyping = true;
             }
@@ -481,6 +485,7 @@ export class SetFilter extends ProvidedFilter {
             } else {
                 this.valueModel.selectAllDisplayed(true);
                 this.refresh();
+                this.onUiChanged();
             }
         } else {
             this.refresh();
@@ -561,7 +566,7 @@ export class SetFilter extends ProvidedFilter {
                 if (this.isAlive()) {
                     this.virtualList.focusRow(focusedRow);
                 }
-            }, 10)
+            }, 10);
         }
     }
 

@@ -16,7 +16,7 @@
             "behaviour": "Apply filter immediately when a value is selected/deselected",
             "agGrid": true,
             "windowsExcel": false,
-            "macExcel": true
+            "macExcel": "after 500ms delay"
         },
         {
             "behaviour": "Only apply filter when Apply button is clicked",
@@ -52,7 +52,7 @@
             "behaviour": "Apply filter immediately with all visible options while typing in search box",
             "agGrid": false,
             "windowsExcel": false,
-            "macExcel": true
+            "macExcel": "after 500ms delay"
         },
         {
             "behaviour": "Click Apply button on a search to apply filter using only visible selected values",
