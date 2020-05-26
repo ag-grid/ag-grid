@@ -416,7 +416,7 @@ const mappings = {
                 meta: {
                     constructor: NavigatorMask,
                     defaults: {
-                        fill: '#f2f2f2',
+                        fill: '#999999',
                         stroke: '#999999',
                         strokeWidth: 1,
                         fillOpacity: 0.2
