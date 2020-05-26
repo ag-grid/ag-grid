@@ -37,6 +37,7 @@ var gridOptions = {
     columnDefs: columnDefs,
     rowSelection: 'multiple',
     suppressRowClickSelection: true,
+    multiSortKey: 'ctrl',
     rowDeselection: true,
     defaultColDef: {
         editable: true,
