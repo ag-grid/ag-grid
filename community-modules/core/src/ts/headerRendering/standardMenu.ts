@@ -17,6 +17,7 @@ export class StandardMenuFactory extends BeanStub implements IMenuFactory {
     @Autowired('focusController') private focusController: FocusController;
 
     private hidePopup: () => void;
+    private tabListener: () => null;
 
     public hideActiveMenu(): void {
         if (this.hidePopup) {
@@ -53,6 +54,8 @@ export class StandardMenuFactory extends BeanStub implements IMenuFactory {
 
         _.addCssClass(eMenu, 'ag-menu');
 
+        this.tabListener = this.addManagedListener(eMenu, 'keydown', (e) => this.trapFocusWithin(e, eMenu));
+
         filterWrapper.guiPromise.then(gui => eMenu.appendChild(gui));
 
         let hidePopup: (() => void);
@@ -70,6 +73,10 @@ export class StandardMenuFactory extends BeanStub implements IMenuFactory {
             this.eventService.removeEventListener('bodyScroll', bodyScrollListener);
             column.setMenuVisible(false, 'contextMenu');
             const event = e as KeyboardEvent;
+
+            if (this.tabListener) {
+                this.tabListener = this.tabListener();
+            }
 
             if (event && event.keyCode === Constants.KEY_ESCAPE && eventSource && _.isVisible(eventSource)) {
                 const focusableEl = this.focusController.findTabbableParent(eventSource);
@@ -96,6 +103,23 @@ export class StandardMenuFactory extends BeanStub implements IMenuFactory {
         this.hidePopup = hidePopup;
 
         column.setMenuVisible(true, 'contextMenu');
+    }
+
+    private trapFocusWithin(e: KeyboardEvent, menu: HTMLElement) {
+        if (e.keyCode !== Constants.KEY_TAB) { return; }
+
+        let nextEl = this.focusController.findNextFocusableElement(menu, false, e.shiftKey);
+
+        if (nextEl) { return; }
+
+        e.preventDefault();
+        nextEl = e.shiftKey
+            ? this.focusController.findLastFocusableElement(menu)
+            : this.focusController.findFirstFocusableElement(menu);
+
+        if (nextEl) {
+            nextEl.focus();
+        }
     }
 
     public isMenuEnabled(column: Column): boolean {
