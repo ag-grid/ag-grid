@@ -16,6 +16,17 @@ include '../documentation-main/documentation_header.php';
     row. The grid that appears is known as the Detail Grid.
 </p>
 
+<!--
+This "clear: both" is to stop the video included above from dropping into the demo
+-->
+<p style="clear: both;"/>
+
+<p>
+    The example below shows a simple Master / Detail with all the above configured.
+</p>
+
+<?= grid_example('Master Detail Example', 'simple', 'generated', ['enterprise' => true, 'exampleHeight' => 535, 'modules'=>['clientside', 'masterdetail', 'menu', 'columnpanel']]) ?>
+
 <h2>Enabling Master / Detail</h2>
 
 <p>
@@ -79,12 +90,6 @@ var gridOptions = {
     * The significance of using Detail Cell Renderer parameters to configure the Detail Grid is explained in
     <a href="../javascript-grid-master-detail-detail-grids/">Detail Grids</a>.
 </p>
-
-<p>
-    The example below shows a simple Master / Detail with all the above configured.
-</p>
-
-<?= grid_example('Simple Example', 'simple', 'generated', ['enterprise' => true, 'exampleHeight' => 535, 'modules'=>['clientside', 'masterdetail', 'menu', 'columnpanel']]) ?>
 
 <h2>Row Models</h2>
 

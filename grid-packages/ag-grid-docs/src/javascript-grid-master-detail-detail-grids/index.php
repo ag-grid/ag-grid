@@ -27,10 +27,6 @@ include '../documentation-main/documentation_header.php';
     <code>detailCellRendererParams</code> and how you can interact with the Detail Grids using the Master Grid's API.
 </p>
 
-<p>
-    This page outlines how to configure the grid's default Detail Cell Renderer.
-</p>
-
 <h2 id="detail-grid-options">Detail Grid Definition</h2>
 
 <p>
@@ -71,34 +67,6 @@ include '../documentation-main/documentation_header.php';
 </ul>
 
 <?= grid_example('Detail Grid Options', 'grid-options', 'generated', ['enterprise' => true, 'modules'=>['clientside', 'masterdetail', 'menu', 'columnpanel']]) ?>
-
-<h2 id="grid-per-row">Dynamic Definitions</h2>
-
-<p>
-    There will be many instances of Detail Grids within one Master Grid, as each time you expand a Master Row,
-    a new instance of Detail Grid is created. It is possible to dynamically create Detail Cell Renderer Params
-    so each Detail Grid gets it's own version of the params, allowing each Detail Grid to be configured differently.
-    This is done by providing a function to <code>detailCellRendererParams</code> that in turn returns the params to
-    use for that Detail Grid.
-</p>
-
-<p>
-    Below shows an example of this, where the Detail Grids are configured with different columns. Note the following:
-</p>
-
-<ul class="content">
-    <li>
-        Expanding rows 'Mila Smith' or 'Harper Johnson' will use a detail grid with the
-        columns {Call ID, Number}.
-    </li>
-    <li>
-        Expanding all other rows will use a detail grid with the columns {Call ID, Direction,
-            Duration, Switch Code}.
-    </li>
-</ul>
-
-<?= grid_example('Dynamic Params', 'dynamic-params', 'generated', ['enterprise' => true, 'modules'=>['clientside', 'masterdetail', 'menu', 'columnpanel']]) ?>
-
 
 <h2>Providing Rows</h2>
 
@@ -144,6 +112,33 @@ interface GetDetailRowDataParams {
 </p>
 
 <?= grid_example('Lazy Load Detail Rows', 'lazy-load-rows', 'generated', ['enterprise' => true, 'exampleHeight' => 550, 'modules'=>['clientside', 'masterdetail', 'menu', 'columnpanel']]) ?>
+
+<h2 id="grid-per-row">Dynamic Definitions</h2>
+
+<p>
+    There will be many instances of Detail Grids within one Master Grid, as each time you expand a Master Row,
+    a new instance of Detail Grid is created. It is possible to dynamically create Detail Cell Renderer Params
+    so each Detail Grid gets it's own version of the params, allowing each Detail Grid to be configured differently.
+    This is done by providing a function to <code>detailCellRendererParams</code> that in turn returns the params to
+    use for that Detail Grid.
+</p>
+
+<p>
+    Below shows an example of this, where the Detail Grids are configured with different columns. Note the following:
+</p>
+
+<ul class="content">
+    <li>
+        Expanding rows 'Mila Smith' or 'Harper Johnson' will use a detail grid with the
+        columns {Call ID, Number}.
+    </li>
+    <li>
+        Expanding all other rows will use a detail grid with the columns {Call ID, Direction,
+            Duration, Switch Code}.
+    </li>
+</ul>
+
+<?= grid_example('Dynamic Params', 'dynamic-params', 'generated', ['enterprise' => true, 'modules'=>['clientside', 'masterdetail', 'menu', 'columnpanel']]) ?>
 
 
 <h2>Changing the Template</h2>

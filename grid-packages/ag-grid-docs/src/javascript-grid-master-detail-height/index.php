@@ -16,9 +16,31 @@ include '../documentation-main/documentation_header.php';
 <h1 class="heading-enterprise">Master / Detail - Detail Height</h1>
 
 <p class="lead">
-    The height of detail rows can be configured statically (same height for each detail row)
-    or dynamically (different height for each detail row).
+    The default height of each detail section (ie the row containing the Detail Grid in the master)
+    is fixed at 300px. The height does not change based on how much data there is to display in the detail
+    section.
 </p>
+
+<p>
+    To change the height of the details section from the default you have the following options:
+</p>
+
+<ul>
+    <li>
+        Set a <b>Fixed Height</b> for all detail sections using grid property <code>detailRowHeight</code>.
+        This will fix all detail sections to the new height in pixels.
+    </li>
+    <li>
+        Set the detail sections to <b>Auto Height</b> by setting the property
+        <code>detailCellRendererParams.autoHeight=true</code>. This will get each detail section to
+        auto-size to fit it's content.
+    </li>
+    <li>
+        Use <b>Dynamic Height</b> to set a different height for each details section by implementing
+        the grid callback <code>getRowHeight()</code>. This callback is called once for each detail section thus
+        allowing different heights to be provided for different sections.
+    </li>
+</ul>
 
 <h2 id="fixed-height">Fixed Height</h2>
 
@@ -76,7 +98,9 @@ detailCellRendererParams: {
 <h2 id="dynamic-height">Dynamic Height</h2>
 
 <p>
-    Use callback <code>getRowHeight()</code> to set height for each row individually.
+    Use the callback <code>getRowHeight()</code> to set height for each row individually. This is a specific use
+    of the callback that is explained in more detail in
+    <a href="../javascript-grid-row-height/#getrowheight-callback">Get Row Height</a>
 </p>
 <p>
     Note that this callback gets called for <b>all rows</b> in the Master Grid, not just
