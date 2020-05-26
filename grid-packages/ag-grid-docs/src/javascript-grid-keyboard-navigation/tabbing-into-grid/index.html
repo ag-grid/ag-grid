@@ -1,7 +1,17 @@
 <div class="test-container">
-    <div class="test-header">
-        <label>Tab into Grid</label>
-        <input  id="my-input"/>
+    <div>
+        <div class="form-container">
+            <label>Tab into Grid (Focus the First Cell)</label>
+            <input  id="my-input"/>
+        </div>
+        <div class="form-container">
+            <label>Tab into the Grid (Default Behavior)</label>
+            <input/>
+        </div>
     </div>
-    <div id="myGrid" style="height: calc(100% - 30px);" class="ag-theme-alpine"></div>
+    <div id="myGrid" class="ag-theme-alpine"></div>
+    <div class="form-container">
+        <label>Tab into the grid with Shift-Tab (Default Behavior)</label>
+        <input/>
+    </div>
 </div>

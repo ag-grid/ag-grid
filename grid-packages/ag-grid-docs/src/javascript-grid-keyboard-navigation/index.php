@@ -17,16 +17,29 @@ include '../documentation-main/documentation_header.php';
     <h2>Navigation</h2>
 
     <p>
-        Use the <b>arrow keys</b> to move focus to the selection up, down, left and right. If the selected cell is
+        Use the <b>arrow keys</b> to move focus up, down, left and right. If the focused cell is
         already on the boundary for that position (eg if on the first column and the left key is pressed)
-        then the key press has no effect. User <b>ctrl + left and right</b> to move to start and end of the
+        then the key press has no effect. Use <b>ctrl + left and right</b> to move to start and end of the
         line.
+    </p>
+
+    <p>
+        If a cell on the first grid row is focused and you you press <code>arrow up</code>, the focus will be moved into
+        the grid header.
+        The header navigation focus navigation works the same as the grid's, arrows will move up/down/left/right, tab will
+        move the focus horizontally until the last header cell and the move on to the next row.
     </p>
 
     <p>
         Use <b>page up</b> and <b>page down</b> to move the scroll up and down by one page.
         Use <b>home</b> and <b>end</b> to go to the first and last rows.
     </p>
+
+    <note>
+        When a header cell is focused, commands like <strong>page up</strong>, <strong>page down</strong>, 
+        <strong>home</strong>, <strong>end</strong>, <strong>ctrl + left / right</strong> will not work as they
+        do when a grid cell is focused.
+    </note>
 
     <p>
         If using grouping and <code>groupUseEntireRow=true</code>, then the group row is not focusable. When
@@ -61,12 +74,60 @@ include '../documentation-main/documentation_header.php';
         If you want keyboard navigation turned off, then set <code>suppressCellSelection=true</code> in the <code>gridOptions</code>.
     </p>
 
+    <h2>Header Navigation</h2>
+
+    <p>
+        The grid header is supports full keyboard navigation, however, the behaviour my differ based on the type
+        of header is currently focused.
+    </p>
+
+    <h3>Grouped Headers</h3>
+    
+    <p>
+        While navigating grouped headers, if the current grouped header is expandable, pressing <code>ENTER</code>
+        will toggle the expanded state of the group
+    </p>
+
+    <h3>Normal Headers</h3>
+
+    <p>
+        Regular header may have selection checkboxes, sorting functions and menus, so to access all these functions
+        while focusing a header, you can do the following: 
+        <ul>
+            <li>
+                Press <code>SPACE</code> to toggle the header checkbox selection.
+            </li>
+            <li>
+                Press <code>ENTER</code> to toggle the sorting state of that column.
+            </li>
+            <li>
+                Press <code>CTRL/CMD + ENTER</code> to toggle multi-sort for that column.
+            </li>
+            <li>
+                Press <code>ALT/OPTION + ENTER</code> to open the menu for the focused header.
+            </li>
+            <li>
+                When a menu is open, simply press <code>ESCAPE</code> to close it and the focus will
+                return to the header.
+            </li>
+        </ul>
+
+    <h3>Floating Filters</h3>
+    
+    <p>
+        While navigation the floating filters header with the keyboard pressing left/right the focus will move
+        from header cell to header cell, if you wish to navigate within the cell, press <code>ENTER</code> to focus
+        the first enabled element within the current floating filter cell, and press <code>ESCAPE</code> to return 
+        the focus to the floating filter cell.
+    </p>
+
     <h2>Example</h2>
 
     <p>
-        All the items above (navigation, editing, groups, selection) are observable in the test drive.
-        As such, a separate example is not provided here.
+        The example below has grouped headers, headers and floating filters to demonstrate the features mentioned above:
     </p>
+
+    <?= grid_example('Keyboard Navigation', 'grid-keyboard-navigation', 'generated') ?>
 
     <h2>Custom Navigation</h2>
 
@@ -149,6 +210,12 @@ interface CellPosition {
         to stick with the grid default behaviour. Return null/undefined to skip the navigation.
     </p>
 
+    <note>
+        The <code>navigateToNextCell</code> and <code>tabToNextCell</code> methods are not called while using the keyboard to navigate
+        within the grid header. If you need to use these methods to into the grid header, you can pass <strong>rowIndex: -1</strong>, but
+        one focus is within the header, the standard keyboard navigation will take place.
+    </note>
+
     <h2>Example Custom Navigation</h2>
 
     <p>
@@ -163,13 +230,13 @@ interface CellPosition {
     <h2>Tabbing into the Grid</h2>
 
     <p>
-        In applications where the grid is embedded into a larger page it may be useful to tab into grid from another
-        element or user action such as a button click.
+        In applications where the grid is embedded into a larger page, by default, when tabbing into the grid, 
+        the first column header will be focused.
     </p>
 
     <p>
-        This can be achieved by using a combination of DOM event listeners and Grid API calls shown in the following code
-        snippet:
+        You could override this behavior to focus the first grid cell, if that is a preferred scenario using a combination
+        of DOM event listeners and Grid API calls shown in the following code snippet:
     </p>
 
     <snippet>
@@ -208,12 +275,22 @@ myInput.addEventListener("keydown", function (event) {
 
         <ul class="content">
             <li>
-                Tabbing out of the input box will gain focus on the first grid cell.
+                Tabbing out of the first input box will gain focus on the first grid cell.
             </li>
             <li>
                 When the first cell is out of view due to either scrolling down (rows) or across (columns), tabbing out
-                of the input will cause the grid to navigate to the first cell.
+                of the first input will cause the grid to navigate to the first cell.
             </li>
+            <li>
+                Tabbing out of the second input box will have the default behavior which is to focus the first grid header.
+            </li>
+            <li>
+                Shift-Tabbing out third input (below the grid) will have the default focus behavior, which is to focus
+                the first grid header.
+            </li>
+            <li>
+                When the first header is out of view due to horizontal scroll, tabbing into the grid will cause the grid
+                to scroll to focus the first header.
         </ul>
 
 

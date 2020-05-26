@@ -4,8 +4,16 @@
     flex-direction: column;
 }
 
-.test-header {
+#myGrid {
+    flex: 1 1 auto;
+}
+
+.form-container {
     font-family: Verdana, Geneva, Tahoma, sans-serif;
     font-size: 13px;
     margin-bottom: 5px;
+}
+
+.form-container:last-child {
+    margin-top: 5px;
 }
