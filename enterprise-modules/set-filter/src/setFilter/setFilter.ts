@@ -157,6 +157,10 @@ export class SetFilter extends ProvidedFilter {
             if (params.applyMiniFilterWhileTyping == null) {
                 params.applyMiniFilterWhileTyping = true;
             }
+
+            if (params.debounceMs == null) {
+                params.debounceMs = 500;
+            }
         }
     }
 
@@ -403,7 +407,7 @@ export class SetFilter extends ProvidedFilter {
     private onMiniFilterInput() {
         if (this.valueModel.setMiniFilter(this.eMiniFilter.getValue())) {
             if (this.setFilterParams.applyMiniFilterWhileTyping) {
-                this.filterOnAllVisibleValues();
+                this.filterOnAllVisibleValues(false);
             } else {
                 this.updateUiAfterMiniFilterChange();
             }
@@ -457,10 +461,10 @@ export class SetFilter extends ProvidedFilter {
         }
     }
 
-    private filterOnAllVisibleValues(): void {
+    private filterOnAllVisibleValues(applyImmediately = true): void {
         this.valueModel.selectAllDisplayed(true);
         this.refresh();
-        this.onUiChanged(true);
+        this.onUiChanged(false, applyImmediately ? 'immediately' : 'debounce');
     }
 
     private onSelectAll(event: Event) {

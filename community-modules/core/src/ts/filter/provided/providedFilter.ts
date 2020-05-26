@@ -297,7 +297,12 @@ export abstract class ProvidedFilter extends Component implements IFilterComp {
         return this.newRowsActionKeep;
     }
 
-    protected onUiChanged(applyChangesImmediately = false): void {
+    /**
+     * By default, if the change came from a floating filter it will be applied immediately, otherwise if there is no
+     * apply button it will be applied after a debounce, otherwise it will not be applied at all. This behaviour can
+     * be adjusted by using the apply parameter.
+     */
+    protected onUiChanged(fromFloatingFilter = false, apply?: 'immediately' | 'debounce'): void {
         this.updateUiVisibility();
         this.providedFilterParams.filterModifiedCallback();
 
@@ -307,10 +312,9 @@ export abstract class ProvidedFilter extends Component implements IFilterComp {
             setDisabled(this.getRefElement('applyFilterButton'), !isValid);
         }
 
-        if (applyChangesImmediately) {
-            this.onBtApply(true);
-        } else if (!this.applyActive) {
-            // if no apply button, we apply (but debounce for time delay)
+        if ((fromFloatingFilter && !apply) || apply === 'immediately') {
+            this.onBtApply(fromFloatingFilter);
+        } else if (!this.applyActive || apply === 'debounce') {
             this.onBtApplyDebounce();
         }
     }
