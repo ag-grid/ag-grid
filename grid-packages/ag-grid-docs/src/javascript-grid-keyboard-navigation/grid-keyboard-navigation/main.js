@@ -12,7 +12,8 @@ var columnDefs = [
         resizable: false,
         sortable: false,
         editable: false,
-        filter: false
+        filter: false,
+        suppressColumnsToolPanel: true
     },
     {
         headerName: 'Participant',
