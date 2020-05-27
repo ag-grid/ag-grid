@@ -78,37 +78,22 @@ export class SetFilter extends ProvidedFilter {
     private handleKeyDown(e: KeyboardEvent) {
         if (e.defaultPrevented) { return; }
 
-        switch (e.keyCode) {
+        switch (e.which || e.keyCode) {
             case Constants.KEY_TAB:
                 this.handleKeyTab(e);
                 break;
             case Constants.KEY_SPACE:
-                const currentItem = this.virtualList.getLastFocusedRow();
-
-                if (_.exists(currentItem)) {
-                    const component = this.virtualList.getComponentAt(currentItem) as SetFilterListItem;
-
-                    if (component) {
-                        e.preventDefault();
-                        component.setSelected(!component.isSelected(), true);
-                    }
-                }
+                this.handleKeySpace(e);
                 break;
             case Constants.KEY_ENTER:
-                if (this.setFilterParams.excelMode) {
-                    // in Excel Mode, hitting Enter is the same as pressing the Apply button
-                    this.onBtApply();
-    
-                    if (this.setFilterParams.excelMode === 'mac') {
-                        // in Mac version, select all the input text
-                        this.eMiniFilter.getInputElement().select();
-                    }
-                }
+                this.handleKeyEnter(e);
                 break;
         }
     }
 
     private handleKeyTab(e: KeyboardEvent): void {
+        if (!this.eSetFilterList.contains(document.activeElement)) { return; }
+
         const focusableElement = this.getFocusableElement();
         const method = e.shiftKey ? 'previousElementSibling' : 'nextElementSibling';
 
@@ -127,6 +112,35 @@ export class SetFilter extends ProvidedFilter {
             (!e.shiftKey && this.focusController.focusFirstFocusableElement(nextRoot))
         ) {
             e.preventDefault();
+        }
+    }
+
+    private handleKeySpace(e: KeyboardEvent): void {
+        if (!this.eSetFilterList.contains(document.activeElement)) { return; }
+
+        const currentItem = this.virtualList.getLastFocusedRow();
+
+        if (_.exists(currentItem)) {
+            const component = this.virtualList.getComponentAt(currentItem) as SetFilterListItem;
+
+            if (component) {
+                e.preventDefault();
+                component.setSelected(!component.isSelected(), true);
+            }
+        }
+    }
+
+    private handleKeyEnter(e: KeyboardEvent): void {
+        if (this.setFilterParams.excelMode) {
+            e.preventDefault();
+
+            // in Excel Mode, hitting Enter is the same as pressing the Apply button
+            this.onBtApply();
+
+            if (this.setFilterParams.excelMode === 'mac') {
+                // in Mac version, select all the input text
+                this.eMiniFilter.getInputElement().select();
+            }
         }
     }
 
