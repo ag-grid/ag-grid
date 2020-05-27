@@ -52,6 +52,7 @@ export class SetFilter extends ProvidedFilter {
         super.postConstruct();
 
         const focusableEl = this.getFocusableElement();
+
         if (focusableEl) {
             this.addManagedListener(focusableEl, 'keydown', this.handleKeyDown.bind(this));
         }
@@ -75,20 +76,35 @@ export class SetFilter extends ProvidedFilter {
     }
 
     private handleKeyDown(e: KeyboardEvent) {
-        if (!this.eSetFilterList.contains(document.activeElement) || e.defaultPrevented) { return; }
+        if (e.defaultPrevented) { return; }
+
         switch (e.keyCode) {
             case Constants.KEY_TAB:
                 this.handleKeyTab(e);
                 break;
             case Constants.KEY_SPACE:
                 const currentItem = this.virtualList.getLastFocusedRow();
+
                 if (_.exists(currentItem)) {
                     const component = this.virtualList.getComponentAt(currentItem) as SetFilterListItem;
+
                     if (component) {
                         e.preventDefault();
                         component.setSelected(!component.isSelected(), true);
                     }
                 }
+                break;
+            case Constants.KEY_ENTER:
+                if (this.setFilterParams.excelMode) {
+                    // in Excel Mode, hitting Enter is the same as pressing the Apply button
+                    this.onBtApply();
+    
+                    if (this.setFilterParams.excelMode === 'mac') {
+                        // in Mac version, select all the input text
+                        this.eMiniFilter.getInputElement().select();
+                    }
+                }
+                break;
         }
     }
 
@@ -338,8 +354,7 @@ export class SetFilter extends ProvidedFilter {
         }
 
         this.addManagedListener(this.eSelectAll.getInputElement(), 'keydown', (e: KeyboardEvent) => {
-            if (e.keyCode === Constants.KEY_SPACE) {
-                e.preventDefault();
+            if (_.isKeyPressed(e, Constants.KEY_SPACE)) {
                 this.onSelectAll(e);
             }
         });
@@ -510,18 +525,8 @@ export class SetFilter extends ProvidedFilter {
     }
 
     private onMiniFilterKeyPress(e: KeyboardEvent): void {
-        if (_.isKeyPressed(e, Constants.KEY_ENTER)) {
-            if (this.setFilterParams.excelMode) {
-                // in Excel Mode, hitting Enter is the same as pressing the Apply button
-                this.onBtApply();
-
-                if (this.setFilterParams.excelMode === 'mac') {
-                    // in Mac version, select all the input text
-                    this.eMiniFilter.getInputElement().select();
-                }
-            } else {
-                this.filterOnAllVisibleValues();
-            }
+        if (_.isKeyPressed(e, Constants.KEY_ENTER) && !this.setFilterParams.excelMode) {
+            this.filterOnAllVisibleValues();
         }
     }
 
