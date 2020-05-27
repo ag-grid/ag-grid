@@ -1,7 +1,10 @@
 var options = {
     container: document.getElementById('myChart'),
     title: {
-        text: 'Navigator Styling'
+        text: 'Try dragging the havigator\'s handles to zoom in'
+    },
+    subtitle: {
+        text: 'or the area between them to pan around'
     },
     data: [
         { label: 'Android', value: 56.9 },
@@ -27,28 +30,12 @@ var options = {
         enabled: false
     },
     navigator: {
-        height: 50,
-        min: 0.2,
-        max: 0.7,
-        mask: {
-            fill: 'red',
-            strokeWidth: 2,
-            fillOpacity: 0.3
-        },
-        minHandle: {
-            fill: 'yellow',
-            stroke: 'blue',
-            width: 16,
-            height: 30,
-            gripLineGap: 4,
-            gripLineLength: 12,
-            strokeWidth: 2
-        },
-        maxHandle: {
-            fill: 'lime',
-            stroke: 'black'
-        }
+        enabled: true
     }
 };
 
 var chart = agCharts.AgChart.create(options);
+
+function toggleEnabled(value) {
+    chart.navigator.enabled = value;
+}

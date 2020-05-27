@@ -34,6 +34,10 @@ navigator: {}
 SNIPPET
 ) ?>
 
+<h3>Example: Showing the Navigator</h3>
+
+<?= chart_example('Showing the Navigator', 'navigator', 'generated') ?>
+
 <h2>Setting the Visible Range</h2>
 
 <p>
