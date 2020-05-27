@@ -53,6 +53,62 @@ const getCaptionOptions = (name, description, defaultText, fontSize = 10, fontWe
     ...getFontOptions(name, fontWeight, fontSize)
 });
 
+const getNavigatorHandleOptions = (description) => ({
+    meta: {
+        description,
+    },
+    fill: {
+        default: '#f2f2f2',
+        description: `The fill color used by the handle.`,
+        editor: ColourEditor,
+    },
+    stroke: {
+        default: '#999999',
+        description: `The stroke color used by the handle.`,
+        editor: ColourEditor,
+    },
+    strokeWidth: {
+        default: 1,
+        description: `The stroke width used by the handle.`,
+        editor: NumberEditor,
+        min: 0,
+        max: 5,
+        unit: 'px',
+    },
+    width: {
+        default: 8,
+        description: `The width of the handle.`,
+        editor: NumberEditor,
+        min: 4,
+        max: 20,
+        unit: 'px',
+    },
+    height: {
+        default: 16,
+        description: `The height of the handle.`,
+        editor: NumberEditor,
+        min: 8,
+        max: 26,
+        unit: 'px',
+    },
+    gripLineLength: {
+        default: 8,
+        description: `The length of the handle's grip lines.`,
+        editor: NumberEditor,
+        min: 4,
+        max: 16,
+        unit: 'px',
+    },
+    gripLineGap: {
+        default: 2,
+        description: `The distance between the handle's grip lines.`,
+        editor: NumberEditor,
+        min: 1,
+        max: 8,
+        unit: 'px',
+    },
+});
+
 const getPaddingOption = position => ({
     default: 20,
     description: `The number of pixels of padding at the ${position} of the chart area.`,
@@ -215,6 +271,73 @@ export const generalConfig = Object.freeze({
         },
         ...getFontOptions('legend'),
     },
+    navigator: {
+        meta: {
+            description: 'Configuration for the chart navigator. Not supported in pie charts.',
+        },
+        enabled: {
+            default: false,
+            description: 'Whether or not to show the navigator.',
+            editor: BooleanEditor,
+        },
+        height: {
+            default: 30,
+            description: 'The height of the navigator.',
+            editor: NumberEditor,
+            min: 10,
+            max: 100,
+            unit: 'px',
+        },
+        min: {
+            default: 0,
+            description: 'The start of the visible range in the [0, 1] interval.',
+            editor: NumberEditor,
+            min: 0,
+            max: 1,
+            step: 0.01,
+        },
+        max: {
+            default: 1,
+            description: 'The end of the visible range in the [0, 1] interval.',
+            editor: NumberEditor,
+            min: 0,
+            max: 1,
+            step: 0.01,
+        },
+        mask: {
+            meta: {
+                description: `Configuration for the navigator's visible range mask.`,
+            },
+            fill: {
+                default: '#999999',
+                description: `The fill color used by the mask.`,
+                editor: ColourEditor,
+            },
+            stroke: {
+                default: '#999999',
+                description: `The stroke color used by the mask.`,
+                editor: ColourEditor,
+            },
+            strokeWidth: {
+                default: 1,
+                description: `The stroke width used by the mask.`,
+                editor: NumberEditor,
+                min: 0,
+                max: 5,
+                unit: 'px',
+            },
+            fillOpacity: {
+                default: 0.2,
+                description: `The opacity of the mask's fill in the [0, 1] interval, where 0 is effectively no masking.`,
+                editor: NumberEditor,
+                min: 0,
+                max: 1,
+                step: 0.05,
+            },
+        },
+        minHandle: getNavigatorHandleOptions(`Configuration for the navigator's left handle.`),
+        maxHandle: getNavigatorHandleOptions(`Configuration for the navigator's right handle.`),
+    }
 });
 
 export const axisConfig = Object.freeze({
