@@ -28,11 +28,12 @@ var gridOptions = {
         resizable: true,
     },
     sideBar: ['filters'],
+    rowData: this.getRowData()
 };
 
-var animals = ['Monkey', 'Lion', 'Elephant', 'Tiger', 'Giraffe', 'Antelope', 'Otter', 'Penguin', null];
-
+// inScope[getRowData]
 function getRowData() {
+    var animals = ['Monkey', 'Lion', 'Elephant', 'Tiger', 'Giraffe', 'Antelope', 'Otter', 'Penguin', null];
     var rows = [];
 
     for (var i = 0; i < 2000; i++) {
@@ -47,6 +48,4 @@ function getRowData() {
 document.addEventListener('DOMContentLoaded', function() {
     var gridDiv = document.querySelector('#myGrid');
     new agGrid.Grid(gridDiv, gridOptions);
-
-    gridOptions.api.setRowData(getRowData());
 });
