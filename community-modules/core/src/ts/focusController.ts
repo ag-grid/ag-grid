@@ -213,8 +213,8 @@ export class FocusController extends BeanStub {
             excludeString += ', [tabindex="-1"]';
         }
 
-        const nodes = Array.from(rootNode.querySelectorAll(focusableString)) as HTMLElement[];
-        const excludeNodes = Array.from(rootNode.querySelectorAll(excludeString)) as HTMLElement[];
+        const nodes = Array.prototype.slice.apply(rootNode.querySelectorAll(focusableString)) as HTMLElement[];
+        const excludeNodes = Array.prototype.slice.apply(rootNode.querySelectorAll(excludeString)) as HTMLElement[];
 
         if (!excludeNodes.length) {
             return nodes;
