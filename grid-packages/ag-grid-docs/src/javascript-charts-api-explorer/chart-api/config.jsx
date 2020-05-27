@@ -59,12 +59,12 @@ const getNavigatorHandleOptions = (description) => ({
     },
     fill: {
         default: '#f2f2f2',
-        description: `The fill color used by the handle.`,
+        description: `The fill colour used by the handle.`,
         editor: ColourEditor,
     },
     stroke: {
         default: '#999999',
-        description: `The stroke color used by the handle.`,
+        description: `The stroke colour used by the handle.`,
         editor: ColourEditor,
     },
     strokeWidth: {
@@ -310,12 +310,12 @@ export const generalConfig = Object.freeze({
             },
             fill: {
                 default: '#999999',
-                description: `The fill color used by the mask.`,
+                description: `The fill colour used by the mask.`,
                 editor: ColourEditor,
             },
             stroke: {
                 default: '#999999',
-                description: `The stroke color used by the mask.`,
+                description: `The stroke colour used by the mask.`,
                 editor: ColourEditor,
             },
             strokeWidth: {

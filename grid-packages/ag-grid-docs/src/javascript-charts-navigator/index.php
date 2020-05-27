@@ -105,7 +105,7 @@ SNIPPET
 
 <h2>API Reference</h2>
 
-<?php createDocumentationFromFile('../javascript-charts-api-explorer/config.json', 'generalConfig.legend') ?>
+<?php createDocumentationFromFile('../javascript-charts-api-explorer/config.json', 'generalConfig.navigator') ?>
 
 <h2>Next Up</h2>
 
