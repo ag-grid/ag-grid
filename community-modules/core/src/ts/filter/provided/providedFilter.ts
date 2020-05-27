@@ -227,12 +227,13 @@ export abstract class ProvidedFilter extends Component implements IFilterComp {
     }
 
     private onBtCancel(): void {
-        this.setModel(this.getModel());
-        this.onUiChanged();
+        this.setModelIntoUi(this.getModel()).then(() => {
+            this.onUiChanged(false, 'prevent');
 
-        if (this.providedFilterParams.closeOnApply) {
-            this.close();
-        }
+            if (this.providedFilterParams.closeOnApply) {
+                this.close();
+            }
+        });
     }
 
     private onBtClear(): void {
