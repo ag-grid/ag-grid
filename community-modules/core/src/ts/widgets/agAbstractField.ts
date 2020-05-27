@@ -1,5 +1,5 @@
-import { AgAbstractLabel } from "./agAbstractLabel";
-import { _ } from "../utils";
+import { AgAbstractLabel } from './agAbstractLabel';
+import { setDisabled, addOrRemoveCssClass, setFixedWidth, addCssClass } from '../utils/dom';
 
 export type FieldElement = HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement;
 export abstract class AgAbstractField<T> extends AgAbstractLabel {
@@ -14,13 +14,12 @@ export abstract class AgAbstractField<T> extends AgAbstractLabel {
     protected postConstruct(): void {
         super.postConstruct();
 
-        _.addCssClass(this.getGui(), this.className);
+        addCssClass(this.getGui(), this.className);
     }
 
     public onValueChange(callbackFn: (newValue: T) => void) {
-        this.addManagedListener(this, AgAbstractField.EVENT_CHANGED, () => {
-            callbackFn(this.getValue());
-        });
+        this.addManagedListener(this, AgAbstractField.EVENT_CHANGED, () => callbackFn(this.getValue()));
+
         return this;
     }
 
@@ -29,7 +28,8 @@ export abstract class AgAbstractField<T> extends AgAbstractLabel {
     }
 
     public setWidth(width: number): this {
-        _.setFixedWidth(this.getGui(), width);
+        setFixedWidth(this.getGui(), width);
+
         return this;
     }
 
@@ -53,13 +53,11 @@ export abstract class AgAbstractField<T> extends AgAbstractLabel {
 
     public setDisabled(disabled: boolean): this {
         disabled = !!disabled;
-        const eGui = this.getGui();
 
-        if (disabled) {
-            eGui.setAttribute('disabled', 'true');
-        }
+        const element = this.getGui();
 
-        _.addOrRemoveCssClass(eGui, 'ag-disabled', disabled);
+        setDisabled(element, disabled);
+        addOrRemoveCssClass(element, 'ag-disabled', disabled);
 
         this.disabled = disabled;
 

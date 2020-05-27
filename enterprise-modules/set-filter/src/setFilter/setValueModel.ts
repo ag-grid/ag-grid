@@ -203,6 +203,7 @@ export class SetValueModel implements IEventEmitter {
 
         this.availableValues = _.convertToSet(availableValues);
         this.localEventService.dispatchEvent({ type: SetValueModel.EVENT_AVAILABLE_VALUES_CHANGED });
+
         this.updateDisplayedValues();
     }
 
@@ -213,7 +214,12 @@ export class SetValueModel implements IEventEmitter {
             this.colDef.comparator as (a: any, b: any) => number ||
             _.defaultComparator;
 
-        return values.sort(comparator);
+        if (!this.filterParams.excelMode || values.indexOf(null) < 0) {
+            return values.sort(comparator);
+        }
+
+        // ensure the blank value always appears last
+        return _.filter(values, v => v != null).sort(comparator).concat(null);
     }
 
     private getValuesFromRows(removeUnavailableValues = false): string[] {
@@ -321,7 +327,7 @@ export class SetValueModel implements IEventEmitter {
         return this.allValues[index];
     }
 
-    public selectAllDisplayed(clearExistingSelection = false): void {
+    public selectAllMatchingMiniFilter(clearExistingSelection = false): void {
         if (this.miniFilterText == null) {
             // ensure everything is selected
             this.selectedValues = _.convertToSet(this.allValues);
@@ -329,17 +335,17 @@ export class SetValueModel implements IEventEmitter {
             // ensure everything that matches the mini filter is selected
             if (clearExistingSelection) { this.selectedValues.clear(); }
 
-            _.forEach(this.displayedValues, value => this.selectValue(value));
+            _.forEach(this.displayedValues, value => this.selectedValues.add(value));
         }
     }
 
-    public deselectAllDisplayed(): void {
+    public deselectAllMatchingMiniFilter(): void {
         if (this.miniFilterText == null) {
             // ensure everything is deselected
             this.selectedValues.clear();
         } else {
             // ensure everything that matches the mini filter is deselected
-            _.forEach(this.displayedValues, it => this.deselectValue(it));
+            _.forEach(this.displayedValues, value => this.selectedValues.delete(value));
         }
     }
 
@@ -348,6 +354,11 @@ export class SetValueModel implements IEventEmitter {
     }
 
     public deselectValue(value: string): void {
+        if (this.filterParams.excelMode && this.isEverythingVisibleSelected()) {
+            // ensure we're starting from the correct "everything selected" state
+            this.resetSelectionState(this.displayedValues);
+        }
+
         this.selectedValues.delete(value);
     }
 
@@ -355,20 +366,12 @@ export class SetValueModel implements IEventEmitter {
         return this.selectedValues.has(value);
     }
 
-    public isEverythingSelected(): boolean {
-        if (this.miniFilterText == null) {
-            return this.allValues.length === this.selectedValues.size;
-        } else {
-            return _.filter(this.displayedValues, it => this.isValueSelected(it)).length === this.displayedValues.length;
-        }
+    public isEverythingVisibleSelected(): boolean {
+        return _.filter(this.displayedValues, it => this.isValueSelected(it)).length === this.displayedValues.length;
     }
 
-    public isNothingSelected(): boolean {
-        if (this.miniFilterText == null) {
-            return this.selectedValues.size === 0;
-        } else {
-            return _.filter(this.displayedValues, it => this.isValueSelected(it)).length === 0;
-        }
+    public isNothingVisibleSelected(): boolean {
+        return _.filter(this.displayedValues, it => this.isValueSelected(it)).length === 0;
     }
 
     public getModel(): string[] | null {
@@ -387,7 +390,7 @@ export class SetValueModel implements IEventEmitter {
 
                 _.forEach(model, value => {
                     if (allValues.has(value)) {
-                        this.selectValue(value);
+                        this.selectedValues.add(value);
                     }
                 });
             }

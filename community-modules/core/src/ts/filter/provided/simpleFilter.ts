@@ -46,6 +46,7 @@ const DEFAULT_TRANSLATIONS: { [name: string]: string; } = {
     selectAllSearchResults: 'Select All Search Results',
     applyFilter: 'Apply Filter',
     clearFilter: 'Clear Filter',
+    cancelFilter: 'Cancel Filter',
     andCondition: 'AND',
     orCondition: 'OR'
 };

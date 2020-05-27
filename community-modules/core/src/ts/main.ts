@@ -190,7 +190,7 @@ export { IGetRowsParams, IDatasource } from "./interfaces/iDatasource";
 export { StylingService } from "./styling/stylingService";
 
 // widgets
-export { AgAbstractField } from "./widgets/agAbstractField";
+export { AgAbstractField, FieldElement } from "./widgets/agAbstractField";
 export { AgCheckbox } from "./widgets/agCheckbox";
 export { AgRadioButton } from "./widgets/agRadioButton";
 export { AgToggleButton } from "./widgets/agToggleButton";

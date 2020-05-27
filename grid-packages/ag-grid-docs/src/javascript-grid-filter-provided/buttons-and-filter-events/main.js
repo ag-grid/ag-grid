@@ -1,36 +1,41 @@
 var columnDefs = [
     {
-        field: "athlete",
+        field: 'athlete',
         filter: 'agTextColumnFilter',
         filterParams: {
-            applyButton: true,
-            resetButton: true
+            buttons: ['reset', 'apply'],
         }
     },
     {
-        field: "age",
+        field: 'age',
         maxWidth: 100,
         filter: 'agNumberColumnFilter',
         filterParams: {
-            applyButton: true,
-            resetButton: true,
+            buttons: ['apply', 'reset'],
             closeOnApply: true,
         }
     },
     {
-        field: "country",
+        field: 'country',
         filter: 'agSetColumnFilter',
         filterParams: {
-            applyButton: true,
-            clearButton: true,
+            buttons: ['clear', 'apply'],
         }
     },
-    { field: "year", maxWidth: 100, },
-    { field: "sport" },
-    { field: "gold", filter: 'agNumberColumnFilter' },
-    { field: "silver", filter: 'agNumberColumnFilter' },
-    { field: "bronze", filter: 'agNumberColumnFilter' },
-    { field: "total", filter: 'agNumberColumnFilter' },
+    {
+        field: 'year',
+        filter: 'agSetColumnFilter',
+        filterParams: {
+            buttons: ['apply', 'cancel'],
+            closeOnApply: true,
+        },
+        maxWidth: 100,
+    },
+    { field: 'sport' },
+    { field: 'gold', filter: 'agNumberColumnFilter' },
+    { field: 'silver', filter: 'agNumberColumnFilter' },
+    { field: 'bronze', filter: 'agNumberColumnFilter' },
+    { field: 'total', filter: 'agNumberColumnFilter' },
 ];
 
 var gridOptions = {

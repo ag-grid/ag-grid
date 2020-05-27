@@ -66,6 +66,7 @@ localeText: {
     applyFilter: 'daApply',
     resetFilter: 'daReset',
     clearFilter: 'daClear',
+    cancelFilter: 'daCancel',
 
     // the header of the default group column
     group: 'laGroup',

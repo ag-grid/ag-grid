@@ -23,10 +23,10 @@ export interface ISetFilterParams extends IProvidedFilterParams {
     defaultToNothingSelected?: boolean;
     /** @deprecated */ suppressSyncValuesAfterDataChange?: boolean;
     comparator?: (a: any, b: any) => number;
-    miniFilterSearchByRefDataKey?: boolean;
     textFormatter?: (from: string) => string;
     valueFormatter?: (params: ValueFormatterParams) => string;
     /** @deprecated */ selectAllOnMiniFilter?: boolean;
     /** @deprecated */ syncValuesLikeExcel?: boolean;
     showTooltips?: boolean;
+    excelMode?: 'mac' | 'windows';
 }

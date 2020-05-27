@@ -52,6 +52,7 @@ export class SetFilter extends ProvidedFilter {
         super.postConstruct();
 
         const focusableEl = this.getFocusableElement();
+
         if (focusableEl) {
             this.addManagedListener(focusableEl, 'keydown', this.handleKeyDown.bind(this));
         }
@@ -75,27 +76,27 @@ export class SetFilter extends ProvidedFilter {
     }
 
     private handleKeyDown(e: KeyboardEvent) {
-        if (!this.eSetFilterList.contains(document.activeElement) || e.defaultPrevented) { return; }
-        switch (e.keyCode) {
+        if (e.defaultPrevented) { return; }
+
+        switch (e.which || e.keyCode) {
             case Constants.KEY_TAB:
                 this.handleKeyTab(e);
                 break;
             case Constants.KEY_SPACE:
-                const currentItem = this.virtualList.getLastFocusedRow();
-                if (_.exists(currentItem)) {
-                    const component = this.virtualList.getComponentAt(currentItem) as SetFilterListItem;
-                    if (component) {
-                        e.preventDefault();
-                        component.setSelected(!component.isSelected(), true);
-                    }
-                }
+                this.handleKeySpace(e);
+                break;
+            case Constants.KEY_ENTER:
+                this.handleKeyEnter(e);
+                break;
         }
     }
 
     private handleKeyTab(e: KeyboardEvent): void {
+        if (!this.eSetFilterList.contains(document.activeElement)) { return; }
+
         const focusableElement = this.getFocusableElement();
-        const method = e.shiftKey ? 'previousElementSibling': 'nextElementSibling';
-        
+        const method = e.shiftKey ? 'previousElementSibling' : 'nextElementSibling';
+
         let currentRoot = this.eSetFilterList;
         let nextRoot: HTMLElement;
 
@@ -114,6 +115,35 @@ export class SetFilter extends ProvidedFilter {
         }
     }
 
+    private handleKeySpace(e: KeyboardEvent): void {
+        if (!this.eSetFilterList.contains(document.activeElement)) { return; }
+
+        const currentItem = this.virtualList.getLastFocusedRow();
+
+        if (_.exists(currentItem)) {
+            const component = this.virtualList.getComponentAt(currentItem) as SetFilterListItem;
+
+            if (component) {
+                e.preventDefault();
+                component.setSelected(!component.isSelected(), true);
+            }
+        }
+    }
+
+    private handleKeyEnter(e: KeyboardEvent): void {
+        if (this.setFilterParams.excelMode) {
+            e.preventDefault();
+
+            // in Excel Mode, hitting Enter is the same as pressing the Apply button
+            this.onBtApply();
+
+            if (this.setFilterParams.excelMode === 'mac') {
+                // in Mac version, select all the input text
+                this.eMiniFilter.getInputElement().select();
+            }
+        }
+    }
+
     protected getCssIdentifier(): string {
         return 'set-filter';
     }
@@ -125,9 +155,7 @@ export class SetFilter extends ProvidedFilter {
     }
 
     protected setModelIntoUi(model: SetFilterModel): Promise<void> {
-        this.resetUiToDefaults();
-
-        if (!model) { return; }
+        this.setMiniFilter(null);
 
         if (model instanceof Array) {
             const message = 'ag-Grid: The Set Filter Model is no longer an array and models as arrays are ' +
@@ -137,9 +165,9 @@ export class SetFilter extends ProvidedFilter {
         }
 
         // also supporting old filter model for backwards compatibility
-        const newValues = model instanceof Array ? model as string[] : model.values;
+        const values = model == null ? null : (model instanceof Array ? model as string[] : model.values);
 
-        return this.valueModel.setModel(newValues).then(() => this.refresh());
+        return this.valueModel.setModel(values).then(() => this.refresh());
     }
 
     public getModelFromUi(): SetFilterModel | null {
@@ -167,6 +195,8 @@ export class SetFilter extends ProvidedFilter {
     }
 
     public setParams(params: ISetFilterParams): void {
+        this.applyExcelModeOptions(params);
+
         super.setParams(params);
 
         this.checkSetFilterDeprecatedParams(params);
@@ -192,6 +222,31 @@ export class SetFilter extends ProvidedFilter {
 
         if (syncValuesAfterDataChange) {
             this.addEventListenersForDataChanges();
+        }
+    }
+
+    private applyExcelModeOptions(params: ISetFilterParams): void {
+        // apply default options to match Excel behaviour, unless they have already been specified
+        if (params.excelMode === 'windows') {
+            if (!params.buttons) {
+                params.buttons = ['reset', 'apply', 'cancel'];
+            }
+
+            if (params.closeOnApply == null) {
+                params.closeOnApply = true;
+            }
+        } else if (params.excelMode === 'mac') {
+            if (!params.buttons) {
+                params.buttons = ['reset'];
+            }
+
+            if (params.applyMiniFilterWhileTyping == null) {
+                params.applyMiniFilterWhileTyping = true;
+            }
+
+            if (params.debounceMs == null) {
+                params.debounceMs = 500;
+            }
         }
     }
 
@@ -252,10 +307,6 @@ export class SetFilter extends ProvidedFilter {
         });
     }
 
-    private updateCheckboxIcon(): void {
-        this.eSelectAll.setValue(this.selectAllState);
-    }
-
     public setLoading(loading: boolean): void {
         _.setDisplayed(this.eFilterLoading, loading);
     }
@@ -308,9 +359,6 @@ export class SetFilter extends ProvidedFilter {
     }
 
     private initSelectAll() {
-        this.updateCheckboxIcon();
-        this.updateSelectAllText();
-
         const eSelectAllContainer = this.getRefElement('eSelectAllContainer');
 
         if (this.setFilterParams.suppressSelectAll) {
@@ -320,8 +368,7 @@ export class SetFilter extends ProvidedFilter {
         }
 
         this.addManagedListener(this.eSelectAll.getInputElement(), 'keydown', (e: KeyboardEvent) => {
-            if (e.keyCode === Constants.KEY_SPACE) {
-                e.preventDefault();
+            if (_.isKeyPressed(e, Constants.KEY_SPACE)) {
                 this.onSelectAll(e);
             }
         });
@@ -334,6 +381,10 @@ export class SetFilter extends ProvidedFilter {
 
         this.refreshVirtualList();
 
+        if (this.setFilterParams.excelMode) {
+            this.resetUiToActiveModel();
+        }
+
         const translate = this.gridOptionsWrapper.getLocaleTextFunc();
         const { eMiniFilter } = this;
 
@@ -342,20 +393,32 @@ export class SetFilter extends ProvidedFilter {
     }
 
     public applyModel(): boolean {
+        if (this.setFilterParams.excelMode && this.valueModel.isEverythingVisibleSelected()) {
+            // In Excel, if the filter is applied with all visible values selected, then any active filter on the
+            // column is removed. This ensures the filter is removed in this situation.
+            this.valueModel.selectAllMatchingMiniFilter();
+        }
+
         const result = super.applyModel();
 
-        // keep the appliedModelValuesMapped in sync with the applied model
-        const appliedModel = this.getModel() as SetFilterModel;
+        if (result) {
+            // keep appliedModelValues in sync with the applied model
+            const appliedModel = this.getModel() as SetFilterModel;
 
-        if (appliedModel) {
-            this.appliedModelValues = {};
+            if (appliedModel) {
+                this.appliedModelValues = {};
 
-            _.forEach(appliedModel.values, value => this.appliedModelValues[value] = true);
-        } else {
-            this.appliedModelValues = null;
+                _.forEach(appliedModel.values, value => this.appliedModelValues[value] = true);
+            } else {
+                this.appliedModelValues = null;
+            }
         }
 
         return result;
+    }
+
+    protected isModelValid(model: SetFilterModel): boolean {
+        return this.setFilterParams.excelMode ? model == null || model.values.length > 0 : true;
     }
 
     public doesFilterPass(params: IDoesFilterPassParams): boolean {
@@ -421,33 +484,54 @@ export class SetFilter extends ProvidedFilter {
         this.virtualList.refresh();
     }
 
-    private updateSelectAll(): void {
-        if (this.valueModel.isEverythingSelected()) {
+    private updateSelectAllCheckbox(): void {
+        if (this.valueModel.isEverythingVisibleSelected()) {
             this.selectAllState = true;
-        } else if (this.valueModel.isNothingSelected()) {
+        } else if (this.valueModel.isNothingVisibleSelected()) {
             this.selectAllState = false;
         } else {
             this.selectAllState = undefined;
         }
 
-        this.updateCheckboxIcon();
+        this.eSelectAll.setValue(this.selectAllState);
     }
 
     private onMiniFilterInput() {
         if (this.valueModel.setMiniFilter(this.eMiniFilter.getValue())) {
             if (this.setFilterParams.applyMiniFilterWhileTyping) {
-                this.applyMiniFilter();
+                this.filterOnAllVisibleValues(false);
             } else {
-                this.refresh();
+                this.updateUiAfterMiniFilterChange();
             }
-
-            this.updateSelectAllText();
         }
     }
 
-    private updateSelectAllText() {
+    private updateUiAfterMiniFilterChange(): void {
+        if (this.setFilterParams.excelMode) {
+            if (this.valueModel.getMiniFilter() == null) {
+                this.resetUiToActiveModel();
+            } else {
+                this.valueModel.selectAllMatchingMiniFilter(true);
+                this.refresh();
+                this.onUiChanged();
+            }
+        } else {
+            this.refresh();
+        }
+    }
+
+    private resetUiToActiveModel(): void {
+        this.eMiniFilter.setValue(null, true);
+        this.valueModel.setMiniFilter(null);
+        this.setModelIntoUi(this.getModel() as SetFilterModel).then(() => {
+            this.refresh();
+            this.onUiChanged(false, 'prevent');
+        });
+    }
+
+    private updateSelectAllLabel() {
         const translate = this.gridOptionsWrapper.getLocaleTextFunc();
-        const label = this.valueModel.getMiniFilter() == null ?
+        const label = this.valueModel.getMiniFilter() == null || !this.setFilterParams.excelMode ?
             translate('selectAll', 'Select All') :
             translate('selectAllSearchResults', 'Select All Search Results');
 
@@ -455,15 +539,15 @@ export class SetFilter extends ProvidedFilter {
     }
 
     private onMiniFilterKeyPress(e: KeyboardEvent): void {
-        if (_.isKeyPressed(e, Constants.KEY_ENTER)) {
-            this.applyMiniFilter();
+        if (_.isKeyPressed(e, Constants.KEY_ENTER) && !this.setFilterParams.excelMode) {
+            this.filterOnAllVisibleValues();
         }
     }
 
-    private applyMiniFilter(): void {
-        this.valueModel.selectAllDisplayed(true);
+    private filterOnAllVisibleValues(applyImmediately = true): void {
+        this.valueModel.selectAllMatchingMiniFilter(true);
         this.refresh();
-        this.onUiChanged(true);
+        this.onUiChanged(false, applyImmediately ? 'immediately' : 'debounce');
     }
 
     private onSelectAll(event: Event) {
@@ -474,9 +558,9 @@ export class SetFilter extends ProvidedFilter {
         this.selectAllState = !this.selectAllState;
 
         if (this.selectAllState) {
-            this.valueModel.selectAllDisplayed();
+            this.valueModel.selectAllMatchingMiniFilter();
         } else {
-            this.valueModel.deselectAllDisplayed();
+            this.valueModel.deselectAllMatchingMiniFilter();
         }
 
         this.refresh();
@@ -492,7 +576,7 @@ export class SetFilter extends ProvidedFilter {
 
         const focusedRow = this.virtualList.getLastFocusedRow();
 
-        this.updateSelectAll();
+        this.updateSelectAllCheckbox();
         this.onUiChanged();
 
         if (_.exists(focusedRow)) {
@@ -500,14 +584,13 @@ export class SetFilter extends ProvidedFilter {
                 if (this.isAlive()) {
                     this.virtualList.focusRow(focusedRow);
                 }
-            }, 10)
+            }, 10);
         }
     }
 
     public setMiniFilter(newMiniFilter: string): void {
-        this.valueModel.setMiniFilter(newMiniFilter);
-        this.eMiniFilter.setValue(this.valueModel.getMiniFilter());
-        this.updateSelectAllText();
+        this.eMiniFilter.setValue(newMiniFilter);
+        this.onMiniFilterInput();
     }
 
     public getMiniFilter() {
@@ -515,12 +598,12 @@ export class SetFilter extends ProvidedFilter {
     }
 
     public selectEverything() {
-        this.valueModel.selectAllDisplayed();
+        this.valueModel.selectAllMatchingMiniFilter();
         this.refresh();
     }
 
     public selectNothing() {
-        this.valueModel.deselectAllDisplayed();
+        this.valueModel.deselectAllMatchingMiniFilter();
         this.refresh();
     }
 
@@ -536,7 +619,8 @@ export class SetFilter extends ProvidedFilter {
 
     private refresh() {
         this.virtualList.refresh();
-        this.updateSelectAll();
+        this.updateSelectAllCheckbox();
+        this.updateSelectAllLabel();
     }
 
     public isValueSelected(value: string) {
@@ -544,11 +628,11 @@ export class SetFilter extends ProvidedFilter {
     }
 
     public isEverythingSelected() {
-        return this.valueModel.isEverythingSelected();
+        return this.valueModel.isEverythingVisibleSelected();
     }
 
     public isNothingSelected() {
-        return this.valueModel.isNothingSelected();
+        return this.valueModel.isNothingVisibleSelected();
     }
 
     public getUniqueValueCount() {
