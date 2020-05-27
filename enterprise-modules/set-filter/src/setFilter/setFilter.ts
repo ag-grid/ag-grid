@@ -364,14 +364,8 @@ export class SetFilter extends ProvidedFilter {
         if (this.setFilterParams.suppressSelectAll) {
             _.setDisplayed(eSelectAllContainer, false);
         } else {
-            this.addManagedListener(eSelectAllContainer, 'click', e => this.onSelectAll(e));
+            this.eSelectAll.onValueChange(() => { this.onSelectAll(); });
         }
-
-        this.addManagedListener(this.eSelectAll.getInputElement(), 'keydown', (e: KeyboardEvent) => {
-            if (_.isKeyPressed(e, Constants.KEY_SPACE)) {
-                this.onSelectAll(e);
-            }
-        });
     }
 
     // we need to have the GUI attached before we can draw the virtual rows, as the
@@ -493,7 +487,7 @@ export class SetFilter extends ProvidedFilter {
             this.selectAllState = undefined;
         }
 
-        this.eSelectAll.setValue(this.selectAllState);
+        this.eSelectAll.setValue(this.selectAllState, true);
     }
 
     private onMiniFilterInput() {
@@ -550,11 +544,7 @@ export class SetFilter extends ProvidedFilter {
         this.onUiChanged(false, applyImmediately ? 'immediately' : 'debounce');
     }
 
-    private onSelectAll(event: Event) {
-        event.preventDefault();
-
-        _.addAgGridEventPath(event);
-
+    private onSelectAll() {
         this.selectAllState = !this.selectAllState;
 
         if (this.selectAllState) {
