@@ -58,7 +58,7 @@ function createSetFilter(setValueModel?: SetValueModel, filterParams?: any): Set
     const eGui = mock<HTMLElement>('querySelector', 'appendChild');
     eGui.querySelector.mockImplementation(() => mock<HTMLElement>('appendChild', 'addEventListener'));
 
-    const eSelectAll = mock<AgCheckbox>('setValue', 'getInputElement');
+    const eSelectAll = mock<AgCheckbox>('setValue', 'getInputElement', 'onValueChange');
     eSelectAll.getInputElement.mockImplementation(() => mock<HTMLInputElement>('addEventListener'));
 
     const eSelectAllLabel = mock<HTMLElement>();
