@@ -60,12 +60,10 @@ export class TabbedLayout extends ManagedFocusComponent {
         e.preventDefault();
 
         if (focusInHeader) {
-            const element = e.shiftKey
-                ? focusController.findLastFocusableElement(eBody)
-                : focusController.findFirstFocusableElement(eBody);
-
-            if (element) {
-                element.focus();
+            if (e.shiftKey) {
+                focusController.focusLastFocusableElement(eBody);
+            } else {
+                focusController.focusFirstFocusableElement(eBody);
             }
         } else {
             const isFocusManaged = focusController.isFocusUnderManagedComponent(eBody);
@@ -168,11 +166,8 @@ export class TabbedLayout extends ManagedFocusComponent {
         wrapper.tabbedItem.bodyPromise.then(body => {
             this.eBody.appendChild(body);
             const onlyUnmanaged = !this.focusController.isKeyboardFocus();
-            const focusable = this.focusController.findFirstFocusableElement(this.eBody, onlyUnmanaged);
 
-            if (focusable) {
-                focusable.focus();
-            }
+            this.focusController.focusFirstFocusableElement(this.eBody, onlyUnmanaged);
         });
 
         if (this.activeItem) {

@@ -149,15 +149,16 @@ export class HeaderWrapperComp extends AbstractHeaderWrapper {
             }
         }
 
-        if (e.keyCode === Constants.KEY_ENTER) {
-            if (e.altKey) {
-                if (this.menuEnabled && headerComp.showMenu) {
-                    headerComp.showMenu();
-                }
-            } else if (this.sortable) {
-                const sortUsingCtrl = this.gridOptionsWrapper.isMultiSortKeyCtrl();
-                const multiSort = sortUsingCtrl ? (e.ctrlKey || e.metaKey) : e.shiftKey;
-                this.sortController.progressSort(this.column, multiSort, "uiColumnSorted");
+        if (e.keyCode === Constants.KEY_ENTER && this.sortable) {
+            const sortUsingCtrl = this.gridOptionsWrapper.isMultiSortKeyCtrl();
+            const multiSort = sortUsingCtrl ? (e.ctrlKey || e.metaKey) : e.shiftKey;
+            this.sortController.progressSort(this.column, multiSort, "uiColumnSorted");
+        }
+
+        if (e.key.toLowerCase() === 'm') {
+            if (this.menuEnabled && headerComp.showMenu) {
+                e.preventDefault();
+                headerComp.showMenu();
             }
         }
     }

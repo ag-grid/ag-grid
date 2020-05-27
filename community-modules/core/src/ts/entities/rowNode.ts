@@ -778,7 +778,13 @@ export class RowNode implements IEventEmitter {
     }
 
     public selectThisNode(newValue: boolean): boolean {
-        if (!this.selectable || this.selected === newValue) { return false; }
+
+        // we only check selectable when newValue=true (ie selecting) to allow unselecting values,
+        // as selectable is dynamic, need a way to unselect rows when selectable becomes false.
+        const selectionNotAllowed = !this.selectable && newValue;
+        const selectionNotChanged = this.selected === newValue;
+
+        if ( selectionNotAllowed || selectionNotChanged) { return false; }
 
         this.selected = newValue;
 

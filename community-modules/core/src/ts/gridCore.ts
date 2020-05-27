@@ -6,7 +6,7 @@ import { FilterManager } from "./filter/filterManager";
 import { GridPanel } from "./gridPanel/gridPanel";
 import { Logger, LoggerFactory } from "./logger";
 import { PopupService } from "./widgets/popupService";
-import { Autowired, Optional, PostConstruct } from "./context/context";
+import { Autowired, Optional } from "./context/context";
 import { IRowModel } from "./interfaces/iRowModel";
 import { Component } from "./widgets/component";
 import { IClipboardService } from "./interfaces/iClipboardService";
@@ -54,7 +54,6 @@ export class GridCore extends ManagedFocusComponent {
     private doingVirtualPaging: boolean;
     private logger: Logger;
 
-    @PostConstruct
     protected postConstruct(): void {
         this.logger = this.loggerFactory.create('GridCore');
 
@@ -65,7 +64,8 @@ export class GridCore extends ManagedFocusComponent {
         [
             this.gridApi,
             this.rowRenderer,
-            this.popupService
+            this.popupService,
+            this.focusController
         ].forEach(service => service.registerGridCore(this));
 
         if (ModuleRegistry.isRegistered(ModuleNames.ClipboardModule)) {
@@ -107,7 +107,7 @@ export class GridCore extends ManagedFocusComponent {
             _.removeCssClass(eGui, 'ag-keyboard-focus');
         });
 
-        this.wireFocusManagement(true);
+        super.postConstruct();
     }
 
     public getFocusableElement(): HTMLElement {
@@ -144,30 +144,49 @@ export class GridCore extends ManagedFocusComponent {
         return true;
     }
 
-    protected onTabKeyDown(e: KeyboardEvent): void {
-        const sideBar = this.sideBarComp && this.sideBarComp.getFocusableElement();
-        if (sideBar && e.altKey) {
-            const activeFocus = document.activeElement;
-            e.preventDefault();
+    protected getFocusableContainers(): HTMLElement[] {
+        const focusableContainers = [
+            this.gridPanel.getGui()
+        ];
 
-            this.focusInnerElement(!sideBar.contains(activeFocus));
+        if (this.sideBarComp) {
+            focusableContainers.push(
+                this.sideBarComp.getGui()
+            );
         }
+
+        return focusableContainers.filter(el => _.isVisible(el));
     }
 
-    protected focusInnerElement(fromBottom?: boolean): void {
-        if (fromBottom && this.sideBarComp) {
-            const focusEl = this.focusController.findFirstFocusableElement(
-                this.sideBarComp.getFocusableElement()
-            );
+    public focusNextInnerContainer(backwards: boolean): boolean {
+        const focusableContainers = this.getFocusableContainers();
+        const idxWithFocus = _.findIndex(focusableContainers, container => container.contains(document.activeElement));
+        const nextIdx = idxWithFocus + (backwards ? -1 : 1);
 
-            if (focusEl) {
-                focusEl.focus();
-            }
-            return;
+        if (nextIdx < 0 || nextIdx >= focusableContainers.length) {
+            return false;
         }
 
+        if (nextIdx === 0) {
+            return this.focusGridHeader();
+        }
+
+        return this.focusController.focusFirstFocusableElement(focusableContainers[nextIdx]);
+
+    }
+
+    public focusInnerElement(fromBottom?: boolean): boolean {
+        const focusableContainers = this.getFocusableContainers();
+        if (fromBottom && focusableContainers.length > 1) {
+            return this.focusController.focusFirstFocusableElement(_.last(focusableContainers));
+        }
+
+        return this.focusGridHeader();
+    }
+
+    private focusGridHeader(): boolean {
         let firstColumn: Column | ColumnGroup = this.columnController.getAllDisplayedColumns()[0];
-        if (!firstColumn) { return; }
+        if (!firstColumn) { return false; }
 
         if (firstColumn.getParent()) {
             firstColumn = this.columnController.getColumnGroupAtLevel(firstColumn, 0);
@@ -177,6 +196,8 @@ export class GridCore extends ManagedFocusComponent {
             headerRowIndex: 0,
             column: firstColumn
         });
+
+        return true;
     }
 
     private onGridSizeChanged(): void {

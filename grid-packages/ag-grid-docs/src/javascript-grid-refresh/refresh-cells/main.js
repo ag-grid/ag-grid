@@ -51,10 +51,15 @@ function isForceRefreshSelected() {
     return document.querySelector('#forceRefresh').checked;
 }
 
+function isSuppressFlashSelected() {
+    return document.querySelector('#suppressFlash').checked;
+}
+
 function scrambleAndRefreshAll() {
     scramble();
     var params = {
-        force: isForceRefreshSelected()
+        force: isForceRefreshSelected(),
+        suppressFlash: isSuppressFlashSelected()
     };
     gridOptions.api.refreshCells(params);
 }
@@ -67,6 +72,7 @@ function scrambleAndRefreshLeftToRight() {
         var millis = index * 100;
         var params = {
             force: isForceRefreshSelected(),
+            suppressFlash: isSuppressFlashSelected(),
             columns: [col]
         };
         callRefreshAfterMillis(params, millis, api);
@@ -101,6 +107,7 @@ function scrambleAndRefreshTopToBottom() {
         var rowNodes = [rowNode]; // params needs an array
         var params = {
             force: isForceRefreshSelected(),
+            suppressFlash: isSuppressFlashSelected(),
             rowNodes: rowNodes
         };
         callRefreshAfterMillis(params, millis, api);

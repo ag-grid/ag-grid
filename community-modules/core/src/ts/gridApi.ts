@@ -75,6 +75,7 @@ export interface GetCellsParams {
 
 export interface RefreshCellsParams extends GetCellsParams {
     force?: boolean;
+    suppressFlash?: boolean;
 }
 
 export interface FlashCellsParams extends GetCellsParams {

@@ -11,6 +11,7 @@ export class ManagedFocusComponent extends Component {
 
     public static FOCUS_MANAGED_CLASS = 'ag-focus-managed';
     private tabGuards: HTMLElement[] = [];
+    private skipTabGuardFocus:boolean = false;
 
     @Autowired('focusController') protected focusController: FocusController;
 
@@ -83,6 +84,14 @@ export class ManagedFocusComponent extends Component {
         return this.tabGuards;
     }
 
+    public forceFocusOutOfContainer(): void {
+        this.activateTabGuards();
+
+        this.skipTabGuardFocus = true;
+        this.getTabGuards()[1].focus();
+
+    }
+
     public appendChild(newChild: HTMLElement | Component, container?: HTMLElement): void {
         if (!this.isFocusableContainer()) {
             super.appendChild(newChild, container);
@@ -139,6 +148,10 @@ export class ManagedFocusComponent extends Component {
 
     private onFocus(e: FocusEvent): void {
         if (!this.isFocusableContainer()) { return; }
+        if (this.skipTabGuardFocus) {
+            this.skipTabGuardFocus = false;
+            return;
+        }
 
         this.focusInnerElement(e.target === this.tabGuards[1]);
     }

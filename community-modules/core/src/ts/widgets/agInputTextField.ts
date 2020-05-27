@@ -21,7 +21,7 @@ export class AgInputTextField extends AgAbstractInputField<HTMLInputElement, str
         const ret = super.setValue(value, silent);
 
         if (this.eInput.value !== value) {
-            this.eInput.value = value;
+            this.eInput.value = _.exists(value) ? value : '';
         }
 
         return ret;

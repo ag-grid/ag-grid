@@ -1,7 +1,7 @@
 import { Bean, Autowired, PostConstruct, Optional } from "./context/context";
 import { BeanStub } from "./context/beanStub";
 import { Column } from "./entities/column";
-import { CellFocusedEvent, Events } from "./events";
+import { CellFocusedEvent, Events, GridColumnsChangedEvent } from "./events";
 import { GridOptionsWrapper } from "./gridOptionsWrapper";
 import { ColumnApi } from "./columnController/columnApi";
 import { ColumnController } from "./columnController/columnController";
@@ -20,6 +20,7 @@ import { ColumnGroup } from "./entities/columnGroup";
 import { Component } from "./widgets/component";
 import { ManagedFocusComponent } from "./widgets/managedFocusComponent";
 import { _ } from "./utils";
+import { GridCore } from "./gridCore";
 
 @Bean('focusController')
 export class FocusController extends BeanStub {
@@ -36,6 +37,7 @@ export class FocusController extends BeanStub {
     private static FOCUSABLE_SELECTOR = '[tabindex], input, select, button, textarea';
     private static FOCUSABLE_EXCLUDE = '.ag-hidden, .ag-hidden *, .ag-disabled, .ag-disabled *';
 
+    private gridCore: GridCore;
     private focusedCellPosition: CellPosition;
     private focusedHeaderPosition: HeaderPosition;
     private keyboardFocusActive: boolean = false;
@@ -53,6 +55,10 @@ export class FocusController extends BeanStub {
 
         this.addManagedListener(eDocument, 'keydown', this.activateKeyboardMode.bind(this));
         this.addManagedListener(eDocument, 'mousedown', this.activateMouseMode.bind(this));
+    }
+
+    public registerGridCore(gridCore: GridCore): void {
+        this.gridCore = gridCore;
     }
 
     public onColumnEverythingChanged(): void {
@@ -167,7 +173,7 @@ export class FocusController extends BeanStub {
         this.focusedHeaderPosition = { headerRowIndex, column };
     }
 
-    public focusHeaderPosition(headerPosition: HeaderPosition, direction?: 'Before' | 'After'): void {
+    public focusHeaderPosition(headerPosition: HeaderPosition, direction?: 'Before' | 'After'): boolean {
         this.headerController.scrollToColumn(headerPosition.column, direction);
 
         const childContainer = this.headerController.getHeaderContainer(headerPosition.column.getPinned());
@@ -179,7 +185,10 @@ export class FocusController extends BeanStub {
         if (nextHeader) {
             // this will automatically call the setFocusedHeader method above
             nextHeader.getFocusableElement().focus();
+            return true;
         }
+
+        return false;
     }
 
     public isAnyCellFocused(): boolean {
@@ -215,12 +224,25 @@ export class FocusController extends BeanStub {
         return diff(nodes, excludeNodes);
     }
 
-    public findFirstFocusableElement(rootNode: HTMLElement, onlyUnmanaged?: boolean): HTMLElement {
-        return this.findFocusableElements(rootNode, null, onlyUnmanaged)[0];
+    public focusFirstFocusableElement(rootNode: HTMLElement, onlyUnmanaged?: boolean): boolean {
+        const focusable = this.findFocusableElements(rootNode, null, onlyUnmanaged)[0];
+
+        if (focusable) {
+            focusable.focus();
+            return true;
+        }
+        return false;
     }
 
-    public findLastFocusableElement(rootNode: HTMLElement, onlyUnmanaged?: boolean): HTMLElement {
-        return _.last(this.findFocusableElements(rootNode, null, onlyUnmanaged));
+    public focusLastFocusableElement(rootNode: HTMLElement, onlyUnmanaged?: boolean): boolean {
+        const focusable = _.last(this.findFocusableElements(rootNode, null, onlyUnmanaged));
+
+        if (focusable) {
+            focusable.focus();
+            return true;
+        }
+
+        return false;
     }
 
     public findNextFocusableElement(rootNode: HTMLElement, onlyManaged?: boolean, backwards?: boolean): HTMLElement {
@@ -313,5 +335,15 @@ export class FocusController extends BeanStub {
         }
 
         return true;
+    }
+
+    public focusNextGridCoreContainer(backwards: boolean): boolean {
+        if (this.gridCore.focusNextInnerContainer(backwards)) {
+            return true;
+        }
+
+        if (!backwards) {
+            this.gridCore.forceFocusOutOfContainer();
+        }
     }
 }

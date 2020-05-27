@@ -104,7 +104,7 @@ include '../documentation-main/documentation_header.php';
                 Press <code>CTRL/CMD + ENTER</code> to toggle multi-sort for that column.
             </li>
             <li>
-                Press <code>ALT/OPTION + ENTER</code> to open the menu for the focused header.
+                Press <code>m</code> to open the menu for the focused header.
             </li>
             <li>
                 When a menu is open, simply press <code>ESCAPE</code> to close it and the focus will
@@ -127,7 +127,7 @@ include '../documentation-main/documentation_header.php';
         The example below has grouped headers, headers and floating filters to demonstrate the features mentioned above:
     </p>
 
-    <?= grid_example('Keyboard Navigation', 'grid-keyboard-navigation', 'generated') ?>
+    <?= grid_example('Keyboard Navigation', 'grid-keyboard-navigation', 'generated', ['enterprise' => true]) ?>
 
     <h2>Custom Navigation</h2>
 

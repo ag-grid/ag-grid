@@ -7,7 +7,7 @@ export class RangeMask extends Path {
 
     protected _stroke = '#999999';
     protected _strokeWidth = 1;
-    protected _fill = '#f2f2f2';
+    protected _fill = '#999999';
     protected _fillOpacity = 0.2;
     protected _lineCap = 'square' as ShapeLineCap;
 

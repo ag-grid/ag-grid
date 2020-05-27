@@ -80,7 +80,6 @@ export class SetFilter extends ProvidedFilter {
             case Constants.KEY_TAB:
                 this.handleKeyTab(e);
                 break;
-            case Constants.KEY_ENTER:
             case Constants.KEY_SPACE:
                 const currentItem = this.virtualList.getLastFocusedRow();
                 if (_.exists(currentItem)) {
@@ -107,17 +106,11 @@ export class SetFilter extends ProvidedFilter {
 
         if (!nextRoot) { return; }
 
-        let nextFocusEl: HTMLElement;
-
-        if (e.shiftKey) {
-            nextFocusEl = this.focusController.findLastFocusableElement(nextRoot);
-        } else {
-            nextFocusEl = this.focusController.findFirstFocusableElement(nextRoot);
-        }
-
-        if (nextFocusEl) {
+        if (
+            (e.shiftKey && this.focusController.focusLastFocusableElement(nextRoot)) ||
+            (!e.shiftKey && this.focusController.focusFirstFocusableElement(nextRoot))
+        ) {
             e.preventDefault();
-            nextFocusEl.focus();
         }
     }
 
