@@ -81,7 +81,7 @@ describe('isFilterActive', () => {
     it('returns true if all values are deselected', () => {
         const model = createSetValueModel();
 
-        model.deselectAllDisplayed();
+        model.deselectAllMatchingMiniFilter();
 
         expect(model.isFilterActive()).toBe(true);
     });
@@ -101,7 +101,7 @@ describe('value selection', () => {
     it('has all values selected by default', () => {
         const model = createSetValueModel();
 
-        expect(model.isEverythingSelected()).toBe(true);
+        expect(model.isEverythingVisibleSelected()).toBe(true);
     });
 
     it('can change value selection', () => {
@@ -163,38 +163,6 @@ describe('value selection', () => {
         model.deselectValue('C');
 
         expect(model.getModel()).toStrictEqual(['A', 'B']);
-    });
-
-    it.each(['windows', 'mac'])('removes any filter once all visible values are selected in %s Excel mode', excelMode => {
-        const values = ['A', 'B', 'C'];
-        let valueToExclude = '';
-        const doesRowPassOtherFilters = (row: RowNode) => row.data.value != valueToExclude;
-        const model = createSetValueModel(values, { excelMode }, doesRowPassOtherFilters);
-
-        model.deselectValue('B');
-        valueToExclude = 'B';
-        model.refreshAfterAnyFilterChanged();
-
-        model.deselectValue('C');
-        model.selectValue('C');
-
-        expect(model.isFilterActive()).toBe(false);
-    });
-
-    it('preserves unselected values even if all visible values are selected when not in Excel mode', () => {
-        const values = ['A', 'B', 'C'];
-        let valueToExclude = '';
-        const doesRowPassOtherFilters = (row: RowNode) => row.data.value != valueToExclude;
-        const model = createSetValueModel(values, undefined, doesRowPassOtherFilters);
-
-        model.deselectValue('B');
-        valueToExclude = 'B';
-        model.refreshAfterAnyFilterChanged();
-
-        model.deselectValue('C');
-        model.selectValue('C');
-
-        expect(model.isFilterActive()).toBe(true);
     });
 });
 
@@ -476,14 +444,14 @@ describe('mini filter', () => {
     });
 });
 
-describe('selectAllDisplayed', () => {
+describe('selectAllMatchingMiniFilter', () => {
     it('selects all values if no mini filter', () => {
         const values = ['A', 'B', 'C'];
         const model = createSetValueModel(values);
 
         values.forEach(v => model.deselectValue(v));
 
-        model.selectAllDisplayed();
+        model.selectAllMatchingMiniFilter();
 
         values.forEach(v => expect(model.isValueSelected(v)).toBe(true));
     });
@@ -495,7 +463,7 @@ describe('selectAllDisplayed', () => {
         model.deselectValue('B');
         model.deselectValue('C');
         model.setMiniFilter('B');
-        model.selectAllDisplayed();
+        model.selectAllMatchingMiniFilter();
 
         expect(model.isValueSelected('A')).toBe(true);
         expect(model.isValueSelected('B')).toBe(true);
@@ -509,7 +477,7 @@ describe('selectAllDisplayed', () => {
         model.deselectValue('B');
         model.deselectValue('C');
         model.setMiniFilter('B');
-        model.selectAllDisplayed(true);
+        model.selectAllMatchingMiniFilter(true);
 
         expect(model.isValueSelected('A')).toBe(false);
         expect(model.isValueSelected('B')).toBe(true);
@@ -517,12 +485,12 @@ describe('selectAllDisplayed', () => {
     });
 });
 
-describe('deselectAllDisplayed', () => {
+describe('deselectAllMatchingMiniFilter', () => {
     it('deselects all values if no mini filter', () => {
         const values = ['A', 'B', 'C'];
         const model = createSetValueModel(values);
 
-        model.deselectAllDisplayed();
+        model.deselectAllMatchingMiniFilter();
 
         values.forEach(v => expect(model.isValueSelected(v)).toBe(false));
     });
@@ -533,7 +501,7 @@ describe('deselectAllDisplayed', () => {
 
         model.deselectValue('C');
         model.setMiniFilter('B');
-        model.deselectAllDisplayed();
+        model.deselectAllMatchingMiniFilter();
 
         expect(model.isValueSelected('A')).toBe(true);
         expect(model.isValueSelected('B')).toBe(false);
@@ -541,14 +509,14 @@ describe('deselectAllDisplayed', () => {
     });
 });
 
-describe('isEverythingSelected', () => {
+describe('isEverythingVisibleSelected', () => {
     it('returns true if all values are selected', () => {
         const values = ['A', 'B', 'C'];
         const model = createSetValueModel(values);
 
         values.forEach(v => model.selectValue(v));
 
-        expect(model.isEverythingSelected()).toBe(true);
+        expect(model.isEverythingVisibleSelected()).toBe(true);
     });
 
     it('returns false if any values are not selected', () => {
@@ -557,7 +525,7 @@ describe('isEverythingSelected', () => {
 
         model.deselectValue('B');
 
-        expect(model.isEverythingSelected()).toBe(false);
+        expect(model.isEverythingVisibleSelected()).toBe(false);
     });
 
     it('returns true if everything that matches mini filter is selected', () => {
@@ -570,7 +538,7 @@ describe('isEverythingSelected', () => {
         model.selectValue(value);
         model.setMiniFilter(value);
 
-        expect(model.isEverythingSelected()).toBe(true);
+        expect(model.isEverythingVisibleSelected()).toBe(true);
     });
 
     it('returns true if any values that match mini filter are not selected', () => {
@@ -581,18 +549,18 @@ describe('isEverythingSelected', () => {
         model.selectValue('fooB');
         model.setMiniFilter('foo');
 
-        expect(model.isEverythingSelected()).toBe(false);
+        expect(model.isEverythingVisibleSelected()).toBe(false);
     });
 });
 
-describe('isNothingSelected', () => {
+describe('isNothingVisibleSelected', () => {
     it('returns true if no values are selected', () => {
         const values = ['A', 'B', 'C'];
         const model = createSetValueModel(values);
 
         values.forEach(v => model.deselectValue(v));
 
-        expect(model.isNothingSelected()).toBe(true);
+        expect(model.isNothingVisibleSelected()).toBe(true);
     });
 
     it('returns false if any values are selected', () => {
@@ -602,7 +570,7 @@ describe('isNothingSelected', () => {
         values.forEach(v => model.deselectValue(v));
         model.selectValue('B');
 
-        expect(model.isNothingSelected()).toBe(false);
+        expect(model.isNothingVisibleSelected()).toBe(false);
     });
 
     it('returns true if everything that matches mini filter is not selected', () => {
@@ -614,7 +582,7 @@ describe('isNothingSelected', () => {
         model.selectValue('A');
         model.setMiniFilter('B');
 
-        expect(model.isNothingSelected()).toBe(true);
+        expect(model.isNothingVisibleSelected()).toBe(true);
     });
 
     it('returns false if any values that match mini filter are selected', () => {
@@ -625,7 +593,7 @@ describe('isNothingSelected', () => {
         model.selectValue('fooB');
         model.setMiniFilter('foo');
 
-        expect(model.isNothingSelected()).toBe(false);
+        expect(model.isNothingVisibleSelected()).toBe(false);
     });
 });
 

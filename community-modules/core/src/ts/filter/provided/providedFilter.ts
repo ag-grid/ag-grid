@@ -303,7 +303,7 @@ export abstract class ProvidedFilter extends Component implements IFilterComp {
      * apply button it will be applied after a debounce, otherwise it will not be applied at all. This behaviour can
      * be adjusted by using the apply parameter.
      */
-    protected onUiChanged(fromFloatingFilter = false, apply?: 'immediately' | 'debounce'): void {
+    protected onUiChanged(fromFloatingFilter = false, apply?: 'immediately' | 'debounce' | 'prevent'): void {
         this.updateUiVisibility();
         this.providedFilterParams.filterModifiedCallback();
 
@@ -315,7 +315,7 @@ export abstract class ProvidedFilter extends Component implements IFilterComp {
 
         if ((fromFloatingFilter && !apply) || apply === 'immediately') {
             this.onBtApply(fromFloatingFilter);
-        } else if (!this.applyActive || apply === 'debounce') {
+        } else if ((!this.applyActive && !apply) || apply === 'debounce') {
             this.onBtApplyDebounce();
         }
     }

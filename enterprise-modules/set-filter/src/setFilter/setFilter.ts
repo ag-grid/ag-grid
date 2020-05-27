@@ -371,6 +371,12 @@ export class SetFilter extends ProvidedFilter {
     }
 
     public applyModel(): boolean {
+        if (this.setFilterParams.excelMode && this.valueModel.isEverythingVisibleSelected()) {
+            // In Excel, if the filter is applied with all visible values selected, then any active filter on the
+            // column is removed. This ensures the filter is removed in this situation.
+            this.valueModel.selectAllMatchingMiniFilter();
+        }
+
         const result = super.applyModel();
 
         if (result) {
@@ -457,9 +463,9 @@ export class SetFilter extends ProvidedFilter {
     }
 
     private updateSelectAllCheckbox(): void {
-        if (this.valueModel.isEverythingSelected()) {
+        if (this.valueModel.isEverythingVisibleSelected()) {
             this.selectAllState = true;
-        } else if (this.valueModel.isNothingSelected()) {
+        } else if (this.valueModel.isNothingVisibleSelected()) {
             this.selectAllState = false;
         } else {
             this.selectAllState = undefined;
@@ -483,7 +489,7 @@ export class SetFilter extends ProvidedFilter {
             if (this.valueModel.getMiniFilter() == null) {
                 this.resetUiToActiveModel();
             } else {
-                this.valueModel.selectAllDisplayed(true);
+                this.valueModel.selectAllMatchingMiniFilter(true);
                 this.refresh();
                 this.onUiChanged();
             }
@@ -497,7 +503,7 @@ export class SetFilter extends ProvidedFilter {
         this.valueModel.setMiniFilter(null);
         this.setModelIntoUi(this.getModel() as SetFilterModel).then(() => {
             this.refresh();
-            this.onUiChanged();
+            this.onUiChanged(false, 'prevent');
         });
     }
 
@@ -527,7 +533,7 @@ export class SetFilter extends ProvidedFilter {
     }
 
     private filterOnAllVisibleValues(applyImmediately = true): void {
-        this.valueModel.selectAllDisplayed(true);
+        this.valueModel.selectAllMatchingMiniFilter(true);
         this.refresh();
         this.onUiChanged(false, applyImmediately ? 'immediately' : 'debounce');
     }
@@ -540,9 +546,9 @@ export class SetFilter extends ProvidedFilter {
         this.selectAllState = !this.selectAllState;
 
         if (this.selectAllState) {
-            this.valueModel.selectAllDisplayed();
+            this.valueModel.selectAllMatchingMiniFilter();
         } else {
-            this.valueModel.deselectAllDisplayed();
+            this.valueModel.deselectAllMatchingMiniFilter();
         }
 
         this.refresh();
@@ -580,12 +586,12 @@ export class SetFilter extends ProvidedFilter {
     }
 
     public selectEverything() {
-        this.valueModel.selectAllDisplayed();
+        this.valueModel.selectAllMatchingMiniFilter();
         this.refresh();
     }
 
     public selectNothing() {
-        this.valueModel.deselectAllDisplayed();
+        this.valueModel.deselectAllMatchingMiniFilter();
         this.refresh();
     }
 
@@ -610,11 +616,11 @@ export class SetFilter extends ProvidedFilter {
     }
 
     public isEverythingSelected() {
-        return this.valueModel.isEverythingSelected();
+        return this.valueModel.isEverythingVisibleSelected();
     }
 
     public isNothingSelected() {
-        return this.valueModel.isNothingSelected();
+        return this.valueModel.isNothingVisibleSelected();
     }
 
     public getUniqueValueCount() {

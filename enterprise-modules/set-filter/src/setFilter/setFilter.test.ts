@@ -87,14 +87,14 @@ function createSetFilter(setValueModel?: SetValueModel, filterParams?: any): Set
 
 describe('applyModel', () => {
     it('returns false if nothing has changed', () => {
-        const setValueModel = mock<SetValueModel>('getModel');
+        const setValueModel = mock<SetValueModel>('getModel', 'isEverythingVisibleSelected');
         const setFilter = createSetFilter(setValueModel);
 
         expect(setFilter.applyModel()).toBe(false);
     });
 
     it('returns true if something has changed', () => {
-        const setValueModel = mock<SetValueModel>('getModel');
+        const setValueModel = mock<SetValueModel>('getModel', 'isEverythingVisibleSelected');
         const setFilter = createSetFilter(setValueModel);
 
         setValueModel.getModel.mockReturnValue(['A']);
@@ -103,7 +103,7 @@ describe('applyModel', () => {
     });
 
     it('can apply empty model', () => {
-        const setValueModel = mock<SetValueModel>('getModel');
+        const setValueModel = mock<SetValueModel>('getModel', 'isEverythingVisibleSelected');
         const setFilter = createSetFilter(setValueModel);
 
         setValueModel.getModel.mockReturnValue([]);
@@ -113,7 +113,7 @@ describe('applyModel', () => {
     });
 
     it.each(['windows', 'mac'])('will not apply model with zero values in %s Excel Mode', excelMode => {
-        const setValueModel = mock<SetValueModel>('getModel');
+        const setValueModel = mock<SetValueModel>('getModel', 'isEverythingVisibleSelected');
         const setFilter = createSetFilter(setValueModel, { excelMode });
 
         setValueModel.getModel.mockReturnValue([]);
@@ -123,7 +123,7 @@ describe('applyModel', () => {
     });
 
     it.each(['windows', 'mac'])('preserves existing model if new model with zero values applied in %s Excel Mode', excelMode => {
-        const setValueModel = mock<SetValueModel>('getModel');
+        const setValueModel = mock<SetValueModel>('getModel', 'isEverythingVisibleSelected');
         const setFilter = createSetFilter(setValueModel, { excelMode });
         const model = ['A', 'B'];
 
@@ -139,7 +139,7 @@ describe('applyModel', () => {
     });
 
     it.each(['windows', 'mac'])('can reset model in %s Excel Mode', excelMode => {
-        const setValueModel = mock<SetValueModel>('getModel');
+        const setValueModel = mock<SetValueModel>('getModel', 'isEverythingVisibleSelected');
         const setFilter = createSetFilter(setValueModel, { excelMode });
         const model = ['A', 'B'];
 
@@ -152,5 +152,17 @@ describe('applyModel', () => {
         setFilter.applyModel();
 
         expect(setFilter.getModel()).toBeNull();
+    });
+
+    it.each(['windows', 'mac'])('ensures any active filter is removed by selecting all values if all visible values are selected', excelMode => {
+        const setValueModel = mock<SetValueModel>('getModel', 'isEverythingVisibleSelected', 'selectAllMatchingMiniFilter');
+        const setFilter = createSetFilter(setValueModel, { excelMode });
+
+        setValueModel.isEverythingVisibleSelected.mockReturnValue(true);
+        setValueModel.getModel.mockReturnValue(null);
+
+        setFilter.applyModel();
+
+        expect(setValueModel.selectAllMatchingMiniFilter).toBeCalledTimes(1);
     });
 });
