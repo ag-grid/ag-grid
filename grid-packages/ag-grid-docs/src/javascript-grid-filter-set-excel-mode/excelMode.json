@@ -13,70 +13,52 @@
             "macExcel": false
         },
         {
-            "behaviour": "Apply filter immediately when a value is selected/deselected",
+            "behaviour": "Apply the filter immediately when a value is selected/deselected",
             "agGrid": true,
             "windowsExcel": false,
             "macExcel": "after 500ms delay"
         },
         {
-            "behaviour": "Only apply filter when Apply button is clicked",
+            "behaviour": "Apply the filter when the Apply button is clicked",
+            "agGrid": "when button enabled",
+            "windowsExcel": true,
+            "macExcel": null
+        },
+        {
+            "behaviour": "Close the filter when the Apply button is clicked",
             "agGrid": false,
             "windowsExcel": true,
             "macExcel": null
         },
         {
-            "behaviour": "Type into search box to show values with matching text",
-            "agGrid": true,
-            "windowsExcel": true,
-            "macExcel": true
-        },
-        {
-            "behaviour": "Press <code>Enter</code> in the search box to apply filter using all visible values",
-            "agGrid": true,
-            "windowsExcel": false,
-            "macExcel": false
-        },
-        {
-            "behaviour": "Press <code>Enter</code> in the search box to apply filter using selected visible values",
-            "agGrid": false,
-            "windowsExcel": true,
-            "macExcel": true
-        },
-        {
-            "behaviour": "Press <code>Enter</code> in the search box to select all search text",
-            "agGrid": false,
-            "windowsExcel": false,
-            "macExcel": true
-        },
-        {
-            "behaviour": "Apply filter immediately with all visible options while typing in search box",
-            "agGrid": false,
-            "windowsExcel": false,
-            "macExcel": "after 500ms delay"
-        },
-        {
-            "behaviour": "Click Apply button on a search to apply filter using only visible selected values",
+            "behaviour": "Press <code>Enter</code> to apply the filter",
             "agGrid": false,
             "windowsExcel": true,
             "macExcel": null
         },
         {
-            "behaviour": "Restore the applied filter state when the search box is cleared",
-            "agGrid": false,
-            "windowsExcel": true,
-            "macExcel": null
-        },
-        {
-            "behaviour": "Close filter popup when <code>Enter</code> is pressed",
+            "behaviour": "Close the filter when <code>Enter</code> is pressed",
             "agGrid": false,
             "windowsExcel": true,
             "macExcel": false
         },
         {
-            "behaviour": "Close filter popup when the Apply button is clicked",
+            "behaviour": "Discard the selected state of values that are not visible when the filter is applied",
             "agGrid": false,
             "windowsExcel": true,
-            "macExcel": null
+            "macExcel": true
+        },
+        {
+            "behaviour": "Hide unavailable values in other Set Filters when a filter is applied",
+            "agGrid": true,
+            "windowsExcel": true,
+            "macExcel": true
+        },
+        {
+            "behaviour": "Type into search box to only show values with matching text",
+            "agGrid": true,
+            "windowsExcel": true,
+            "macExcel": true
         },
         {
             "behaviour": "Combine selected values from different searches before applying",
@@ -85,10 +67,52 @@
             "macExcel": false
         },
         {
-            "behaviour": "Clear search box when the filter is closed",
+            "behaviour": "Press <code>Enter</code> in the search box to apply the filter using all visible values",
+            "agGrid": true,
+            "windowsExcel": false,
+            "macExcel": false
+        },
+        {
+            "behaviour": "Apply the filter immediately using all visible values while typing in the search box",
+            "agGrid": false,
+            "windowsExcel": false,
+            "macExcel": "after 500ms delay"
+        },
+        {
+            "behaviour": "Press <code>Enter</code> in the search box to select all search text",
+            "agGrid": false,
+            "windowsExcel": false,
+            "macExcel": true
+        },
+        {
+            "behaviour": "Restore the applied filter state when the search box is cleared",
+            "agGrid": false,
+            "windowsExcel": true,
+            "macExcel": null
+        },
+        {
+            "behaviour": "Clear the search box when the filter is closed",
             "agGrid": false,
             "windowsExcel": true,
             "macExcel": true
+        },
+        {
+            "behaviour": "Discard un-applied changes when the filter is closed",
+            "agGrid": false,
+            "windowsExcel": true,
+            "macExcel": null
+        },
+        {
+            "behaviour": "Discard un-applied changes when the Cancel button is clicked",
+            "agGrid": true,
+            "windowsExcel": true,
+            "macExcel": null
+        },
+        {
+            "behaviour": "Close the filter when the Cancel button is clicked",
+            "agGrid": false,
+            "windowsExcel": true,
+            "macExcel": null
         },
         {
             "behaviour": "Allow blank values to be selected",
@@ -102,36 +126,6 @@
                 false,
                 "sorted with other values"
             ],
-            "windowsExcel": true,
-            "macExcel": true
-        },
-        {
-            "behaviour": "Discard un-applied changes when the popup is closed",
-            "agGrid": false,
-            "windowsExcel": true,
-            "macExcel": null
-        },
-        {
-            "behaviour": "Discard un-applied changes when the Cancel button is clicked",
-            "agGrid": true,
-            "windowsExcel": true,
-            "macExcel": null
-        },
-        {
-            "behaviour": "Close the popup when the Cancel button is clicked",
-            "agGrid": false,
-            "windowsExcel": true,
-            "macExcel": null
-        },
-        {
-            "behaviour": "Hide unavailable values in other Set Filters when a filter is applied",
-            "agGrid": true,
-            "windowsExcel": true,
-            "macExcel": true
-        },
-        {
-            "behaviour": "When a new filter is started, only include visible selected values in the set",
-            "agGrid": false,
             "windowsExcel": true,
             "macExcel": true
         }
