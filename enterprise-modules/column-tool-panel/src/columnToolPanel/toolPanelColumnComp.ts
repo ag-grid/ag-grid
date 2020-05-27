@@ -69,6 +69,7 @@ export class ToolPanelColumnComp extends ManagedFocusComponent implements BaseCo
         this.displayName = this.columnController.getDisplayNameForColumn(this.column, 'toolPanel');
         const displayNameSanitised: any = _.escape(this.displayName);
         this.eLabel.innerHTML = displayNameSanitised;
+        this.cbSelect.setInputAriaLabel(`${this.displayName} Toggle Selection`);
 
         // if grouping, we add an extra level of indent, to cater for expand/contract icons we need to indent for
         const indent = this.columnDept;

@@ -1291,6 +1291,7 @@ PersonFloatingFilterComponent.prototype.init = function(params) {
     eGui.className = 'ag-input-wrapper';
     var input = this.input = document.createElement('input');
     input.className = 'ag-floating-filter-input';
+    input.setAttribute('aria-label', 'Name Filter Input');
     eGui.appendChild(input);
     this.changeEventListener = function() {
         params.parentFilterInstance(function(instance) {
@@ -1417,7 +1418,7 @@ function ratingRendererGeneral(value, forFilter) {
     var result = '<span>';
     for (var i = 0; i < 5; i++) {
         if (value > i) {
-            result += '<img src="images/star.svg" class="star" width=12 height=12 />';
+            result += '<img src="images/star.svg" alt="' + value + ' stars" class="star" width=12 height=12 />';
         }
     }
     if (forFilter && value === 0) {
@@ -1566,7 +1567,7 @@ function countryCellRenderer(params) {
     if (params.value === "" || params.value === undefined || params.value === null) {
         return '';
     } else {
-        var flag = '<img class="flag" border="0" width="15" height="10" src="https://flags.fmcdn.net/data/flags/mini/' + COUNTRY_CODES[params.value] + '.png">';
+        var flag = '<img class="flag" alt="' + params.value + '" border="0" width="15" height="10" src="https://flags.fmcdn.net/data/flags/mini/' + COUNTRY_CODES[params.value] + '.png">';
         return flag + ' ' + params.value;
     }
 }

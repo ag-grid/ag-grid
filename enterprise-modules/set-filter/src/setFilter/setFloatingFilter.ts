@@ -7,7 +7,8 @@ import {
     IFloatingFilterParams,
     AgInputTextField,
     _,
-    GridOptionsWrapper
+    GridOptionsWrapper,
+    ColumnController
 } from '@ag-grid-community/core';
 
 import { SetFilterModel } from './setFilterModel';
@@ -18,6 +19,7 @@ export class SetFloatingFilterComp extends Component implements IFloatingFilter 
     @RefSelector('eFloatingFilterText') private eFloatingFilterText: AgInputTextField;
     @Autowired('valueFormatterService') private valueFormatterService: ValueFormatterService;
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
+    @Autowired('columnController') private columnController: ColumnController;
 
     private params: IFloatingFilterParams;
     private lastKnownModel: SetFilterModel;
@@ -38,7 +40,11 @@ export class SetFloatingFilterComp extends Component implements IFloatingFilter 
     }
 
     public init(params: IFloatingFilterParams): void {
-        this.eFloatingFilterText.setDisabled(true);
+        const displayName = this.columnController.getDisplayNameForColumn(params.column, 'header', true);
+        this.eFloatingFilterText
+            .setDisabled(true)
+            .setInputAriaLabel(`${displayName} Filter Input`);
+
         this.params = params;
     }
 

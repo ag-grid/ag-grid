@@ -4,14 +4,16 @@ import { ProvidedFilterModel } from '../../../interfaces/iFilter';
 import { debounce } from '../../../utils/function';
 import { Constants } from '../../../constants';
 import { ProvidedFilter } from '../../provided/providedFilter';
-import { PostConstruct } from '../../../context/context';
+import { PostConstruct, Autowired } from '../../../context/context';
 import { SimpleFloatingFilter } from './simpleFloatingFilter';
 import { ISimpleFilterModel, SimpleFilter } from '../../provided/simpleFilter';
 import { FilterChangedEvent } from '../../../events';
 import { AgInputTextField } from '../../../widgets/agInputTextField';
 import { isKeyPressed } from '../../../utils/keyboard';
+import { ColumnController } from '../../../columnController/columnController';
 
 export abstract class TextInputFloatingFilter extends SimpleFloatingFilter {
+    @Autowired('columnController') private columnController: ColumnController;
     @RefSelector('eFloatingFilterInput') private eFloatingFilterInput: AgInputTextField;
 
     protected params: IFloatingFilterParams;
@@ -65,6 +67,9 @@ export abstract class TextInputFloatingFilter extends SimpleFloatingFilter {
             columnDef.filterParams.filterOptions[0] === 'inRange') {
             this.eFloatingFilterInput.setDisabled(true);
         }
+
+        const displayName = this.columnController.getDisplayNameForColumn(params.column, 'header', true);
+        this.eFloatingFilterInput.setInputAriaLabel(`${displayName} Filter Input`);
     }
 
     private syncUpWithParentFilter(e: KeyboardEvent): void {

@@ -44,7 +44,7 @@ export class FloatingFilterWrapper extends AbstractHeaderWrapper {
         `<div class="ag-header-cell" role="presentation" tabindex="-1">
             <div ref="eFloatingFilterBody" role="columnheader"></div>
             <div class="ag-floating-filter-button" ref="eButtonWrapper" role="presentation">
-                <button type="button" class="ag-floating-filter-button-button" ref="eButtonShowMainFilter" tabindex="-1"></button>
+                <button type="button" aria-label="Open Filter Menu" class="ag-floating-filter-button-button" ref="eButtonShowMainFilter" tabindex="-1"></button>
             </div>
         </div>`;
 

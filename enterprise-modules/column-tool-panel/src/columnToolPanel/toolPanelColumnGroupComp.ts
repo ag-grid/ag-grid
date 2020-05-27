@@ -81,6 +81,8 @@ export class ToolPanelColumnGroupComp extends ManagedFocusComponent implements B
             this.displayName = '>>';
         }
 
+        this.cbSelect.setInputAriaLabel(`${this.displayName} Toggle Selection`);
+
         this.eLabel.innerHTML = this.displayName ? this.displayName : '';
         this.setupExpandContract();
 

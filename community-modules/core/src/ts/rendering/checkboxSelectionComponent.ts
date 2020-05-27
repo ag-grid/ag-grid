@@ -20,7 +20,11 @@ export class CheckboxSelectionComponent extends Component {
     private isRowSelectableFunc: IsRowSelectable;
 
     constructor() {
-        super(`<div class="ag-selection-checkbox"><ag-checkbox role="presentation" ref="eCheckbox"></ag-checkbox></div>`);
+        super(/* html*/`
+            <div class="ag-selection-checkbox">
+                <ag-checkbox role="presentation" ref="eCheckbox"></ag-checkbox>
+            </div>`
+        );
     }
 
     private onDataChanged(): void {
@@ -81,6 +85,8 @@ export class CheckboxSelectionComponent extends Component {
             this.addManagedListener(this.eventService, Events.EVENT_DISPLAYED_COLUMNS_CHANGED, this.showOrHideSelect.bind(this));
             this.showOrHideSelect();
         }
+
+        this.eCheckbox.setInputAriaLabel('Select Row');
     }
 
     private showOrHideSelect(): void {

@@ -52,7 +52,9 @@ export class DateFloatingFilter extends SimpleFloatingFilter {
         super.init(params);
         this.params = params;
         this.createDateComponent();
-        this.eReadOnlyText.setDisabled(true);
+        this.eReadOnlyText
+            .setDisabled(true)
+            .setInputAriaLabel('Date Filter Input');
     }
 
     protected setEditable(editable: boolean): void {

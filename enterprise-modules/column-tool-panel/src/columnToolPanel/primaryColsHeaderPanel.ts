@@ -79,6 +79,9 @@ export class PrimaryColsHeaderPanel extends ManagedFocusComponent {
             this.showOrHideOptions.bind(this)
         );
 
+        this.eSelect.setInputAriaLabel('Toggle Select All Columns');
+        this.eFilterTextField.setInputAriaLabel('Filter Columns Input');
+
         super.postConstruct();
     }
 

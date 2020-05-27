@@ -87,6 +87,7 @@ export class HeaderWrapperComp extends AbstractHeaderWrapper {
         this.setupSortableClass(enableSorting);
         this.addColumnHoverListener();
         this.addDisplayMenuListeners();
+        this.cbSelectAll.setInputAriaLabel('Toggle Selection of All Rows');
 
         this.createManagedBean(new HoverFeature([this.column], this.getGui()));
 
