@@ -356,7 +356,7 @@ export class SetValueModel implements IEventEmitter {
     public deselectValue(value: string): void {
         if (this.filterParams.excelMode && this.isEverythingVisibleSelected()) {
             // ensure we're starting from the correct "everything selected" state
-            this.resetSelectionState(_.values(this.availableValues));
+            this.resetSelectionState(this.displayedValues);
         }
 
         this.selectedValues.delete(value);
