@@ -40,7 +40,7 @@
         }
     }
 
-    @include ag-keyboard-focus((ag-header-cell, ag-header-group-cell), -4px);
+    @include ag-keyboard-focus((ag-header-cell, ag-header-group-cell), 4px);
 
     .ag-header-icon {
         @include ag-color-property(color, secondary-foreground-color);

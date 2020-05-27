@@ -95,7 +95,7 @@
         height: ag-param(list-item-height);
     }
 
-    @include ag-keyboard-focus((ag-virtual-list-item), -4px);
+    @include ag-keyboard-focus((ag-virtual-list-item), 4px);
 
     .ag-select-list {
         @include ag-color-property(background-color, background-color);
@@ -224,8 +224,6 @@
         @include ag-color-property(background-color, subheader-background-color);
         padding: ag-param(grid-size);
     }
-
-    @include ag-keyboard-focus((ag-group-title-bar), -4px);
     
     .ag-group-toolbar {
         padding: ag-param(grid-size);
@@ -445,7 +443,7 @@
         cursor: pointer;
     }
 
-    @include ag-keyboard-focus((ag-column-select-header-icon), 0);
+    @include ag-keyboard-focus((ag-column-select-header-icon), 0px);
 
     .ag-column-group-icons,
     .ag-column-select-header-icon,
@@ -463,7 +461,7 @@
     @include ag-keyboard-focus((
         ag-column-select-column-group,
         ag-column-select-column
-    ), ag-param(grid-size) / 2);
+    ), ag-param(grid-size) / -2);
 
     .ag-column-select-column-group,
     .ag-column-select-column {

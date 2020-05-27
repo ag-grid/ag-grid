@@ -42,7 +42,7 @@
         }
     }
 
-    @include ag-keyboard-focus((ag-side-button-button), -4px);
+    @include ag-keyboard-focus((ag-side-button-button), 4px);
 
     .ag-selected .ag-side-button-button {
         @if ag-param(borders-side-button) {

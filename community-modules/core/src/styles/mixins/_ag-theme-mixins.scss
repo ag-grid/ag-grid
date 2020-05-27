@@ -43,10 +43,20 @@
     .ag-keyboard-focus {
         @each $selector in $selectors {
             .#{$selector}:focus {
-                outline-width: 1px;
-                outline-style: solid;
-                @include ag-color-property(outline-color, input-focus-border-color);
-                outline-offset: $offset;
+                outline: none;
+                &:after {
+                    content: '';
+                    position: absolute;
+                    background-color: transparent;
+                    pointer-events: none;
+                    top: $offset;
+                    left: $offset;
+                    display: block;
+                    width: calc(100% - #{$offset * 2});
+                    height: calc(100% - #{$offset * 2});
+                    border: 1px solid;
+                    @include ag-color-property(border-color, input-focus-border-color);
+                }
             }
         }
     }

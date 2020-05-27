@@ -27,12 +27,9 @@ navigator: {
 SNIPPET
 ) ?>
 
-<p>Or simply:</p>
+<h3>Example: Showing the Navigator</h3>
 
-<?= createSnippet(<<<SNIPPET
-navigator: {}
-SNIPPET
-) ?>
+<?= chart_example('Showing the Navigator', 'navigator', 'generated') ?>
 
 <h2>Setting the Visible Range</h2>
 
@@ -49,6 +46,7 @@ SNIPPET
 
 <?= createSnippet(<<<SNIPPET
 navigator: {
+    enabled: true,
     min: 0.75,
     max: 1
 }
@@ -69,6 +67,7 @@ SNIPPET
 
 <?= createSnippet(<<<SNIPPET
 navigator: {
+    enabled: true,
     height: 50
 }
 SNIPPET

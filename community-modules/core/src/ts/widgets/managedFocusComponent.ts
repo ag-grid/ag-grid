@@ -23,7 +23,7 @@ export class ManagedFocusComponent extends Component {
         this.wireFocusManagement();
     }
 
-    protected wireFocusManagement(highPriorityTab?: boolean) {
+    protected wireFocusManagement() {
         const focusableElement = this.getFocusableElement();
 
         _.addCssClass(focusableElement, ManagedFocusComponent.FOCUS_MANAGED_CLASS);
@@ -37,7 +37,7 @@ export class ManagedFocusComponent extends Component {
         }
 
         if (this.onTabKeyDown || this.handleKeyDown) {
-            this.addKeyDownListeners(focusableElement, highPriorityTab);
+            this.addKeyDownListeners(focusableElement);
         }
 
         this.addManagedListener(focusableElement, 'focusin', this.onFocusIn.bind(this));
@@ -132,7 +132,7 @@ export class ManagedFocusComponent extends Component {
         this.tabGuards.forEach(callback);
     }
 
-    private addKeyDownListeners(eGui: HTMLElement, isCapture?: boolean): void {
+    private addKeyDownListeners(eGui: HTMLElement): void {
         this.addManagedListener(eGui, 'keydown', (e: KeyboardEvent) => {
             if (e.defaultPrevented) { return; }
 
@@ -141,8 +141,6 @@ export class ManagedFocusComponent extends Component {
             } else if (this.handleKeyDown) {
                 this.handleKeyDown(e);
             }
-        }, {
-            capture: isCapture ? true : undefined
         });
     }
 
