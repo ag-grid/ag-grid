@@ -14,10 +14,10 @@ import { TimeAxis } from "./axis/timeAxis";
 import { Caption } from "../caption";
 import { DropShadow } from "../scene/dropShadow";
 import { Legend, LegendPosition } from "./legend";
-import palette from "./palettes";
 import { Navigator } from "./navigator/navigator";
 import { NavigatorMask } from "./navigator/navigatorMask";
 import { NavigatorHandle } from "./navigator/navigatorHandle";
+import palette from "./palettes";
 
 /*
     This file defines the specs for creating different kinds of charts, but
@@ -406,7 +406,7 @@ const mappings = {
             meta: {
                 constructor: Navigator,
                 defaults: {
-                    enabled: true,
+                    enabled: false,
                     height: 30,
                     min: 0,
                     max: 1
