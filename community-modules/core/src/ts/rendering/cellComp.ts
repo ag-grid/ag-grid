@@ -1331,7 +1331,7 @@ export class CellComp extends Component implements TooltipParentComp {
 
         switch (key) {
             case Constants.KEY_ENTER:
-                this.onEnterKeyDown();
+                this.onEnterKeyDown(event);
                 break;
             case Constants.KEY_F2:
                 this.onF2KeyDown();
@@ -1394,13 +1394,14 @@ export class CellComp extends Component implements TooltipParentComp {
         }
     }
 
-    private onEnterKeyDown(): void {
+    private onEnterKeyDown(e: KeyboardEvent): void {
         if (this.editingCell || this.rowComp.isEditing()) {
             this.stopEditingAndFocus();
         } else {
             if (this.beans.gridOptionsWrapper.isEnterMovesDown()) {
                 this.beans.rowRenderer.navigateToNextCell(null, Constants.KEY_DOWN, this.cellPosition, false);
             } else {
+                e.preventDefault();
                 this.startRowOrCellEdit(Constants.KEY_ENTER);
             }
         }
