@@ -10,7 +10,7 @@ import { Events } from '../events';
 import { BeanStub } from "../context/beanStub";
 import { _ } from "../utils";
 
-interface PopupEventParams {
+export interface PopupEventParams {
     originalMouseEvent?: MouseEvent | Touch;
     mouseEvent?: MouseEvent;
     touchEvent?: TouchEvent;
@@ -416,8 +416,11 @@ export class PopupService extends BeanStub {
 
         const hidePopupOnKeyboardEvent = (event: KeyboardEvent) => {
             const key = event.which || event.keyCode;
-            if (key === Constants.KEY_ESCAPE && eWrapper.contains(document.activeElement)) {
-                hidePopup({ keyboardEvent: event });
+            if (!eWrapper.contains(document.activeElement)) { return; }
+
+            switch (key) {
+                case Constants.KEY_ESCAPE:
+                    hidePopup({ keyboardEvent: event });
             }
         };
 

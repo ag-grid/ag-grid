@@ -8,7 +8,7 @@ import { IAfterGuiAttachedParams } from '../../interfaces/iAfterGuiAttachedParam
 import { loadTemplate, addCssClass, setDisabled } from '../../utils/dom';
 import { debounce } from '../../utils/function';
 import { Promise } from '../../utils/promise';
-import { ManagedFocusComponent } from '../../widgets/managedFocusComponent';
+import { PopupEventParams } from '../../widgets/popupService';
 
 type FilterButtonType = 'apply' | 'clear' | 'reset' | 'cancel';
 
@@ -34,7 +34,7 @@ export abstract class ProvidedFilter extends Component implements IFilterComp {
     private providedFilterParams: IProvidedFilterParams;
 
     private applyActive = false;
-    private hidePopup: () => void = null;
+    private hidePopup: (params: PopupEventParams) => void = null;
 
     @Autowired('gridOptionsWrapper') protected gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('rowModel') protected rowModel: IRowModel;
@@ -130,12 +130,12 @@ export abstract class ProvidedFilter extends Component implements IFilterComp {
 
         const addButton = (type: FilterButtonType): void => {
             let text;
-            let clickListener: () => void;
+            let clickListener: (e?: Event) => void;
 
             switch (type) {
                 case 'apply':
                     text = translate('applyFilter', 'Apply Filter');
-                    clickListener = () => this.onBtApply();
+                    clickListener = (e) => this.onBtApply(false, false, e);
                     break;
                 case 'clear':
                     text = translate('clearFilter', 'Clear Filter');
@@ -147,7 +147,7 @@ export abstract class ProvidedFilter extends Component implements IFilterComp {
                     break;
                 case 'cancel':
                     text = translate('cancelFilter', 'Cancel Filter');
-                    clickListener = () => this.onBtCancel();
+                    clickListener = (e) => { this.onBtCancel(e); };
                     break;
                 default:
                     console.warn('Unknown button type specified');
@@ -226,12 +226,12 @@ export abstract class ProvidedFilter extends Component implements IFilterComp {
         });
     }
 
-    private onBtCancel(): void {
+    private onBtCancel(e: Event): void {
         this.setModelIntoUi(this.getModel()).then(() => {
             this.onUiChanged(false, 'prevent');
 
             if (this.providedFilterParams.closeOnApply) {
-                this.close();
+                this.close(e);
             }
         });
     }
@@ -266,7 +266,7 @@ export abstract class ProvidedFilter extends Component implements IFilterComp {
         return true;
     }
 
-    protected onBtApply(afterFloatingFilter = false, afterDataChange = false): void {
+    protected onBtApply(afterFloatingFilter = false, afterDataChange = false, e?: Event): void {
         if (this.applyModel()) {
             // the floating filter uses 'afterFloatingFilter' info, so it doesn't refresh after filter changed if change
             // came from floating filter
@@ -277,7 +277,7 @@ export abstract class ProvidedFilter extends Component implements IFilterComp {
 
         // only close if an apply button is visible, otherwise we'd be closing every time a change was made!
         if (closeOnApply && !afterFloatingFilter && this.applyActive) {
-            this.close();
+            this.close(e);
         }
     }
 
@@ -287,10 +287,18 @@ export abstract class ProvidedFilter extends Component implements IFilterComp {
         }
     }
 
-    public close(): void {
+    public close(e?: Event): void {
         if (!this.hidePopup) { return; }
 
-        this.hidePopup();
+        const keyboardEvent = e as KeyboardEvent;
+        const key = keyboardEvent && keyboardEvent.key;
+        let params: PopupEventParams;
+
+        if (key === 'Enter' || key === 'Space') {
+            params = { keyboardEvent };
+        }
+
+        this.hidePopup(params);
         this.hidePopup = null;
     }
 

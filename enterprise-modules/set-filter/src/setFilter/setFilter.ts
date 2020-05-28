@@ -135,7 +135,7 @@ export class SetFilter extends ProvidedFilter {
             e.preventDefault();
 
             // in Excel Mode, hitting Enter is the same as pressing the Apply button
-            this.onBtApply();
+            this.onBtApply(false, false, e);
 
             if (this.setFilterParams.excelMode === 'mac') {
                 // in Mac version, select all the input text
