@@ -153,13 +153,13 @@ export interface ColDef extends AbstractColDef {
     cellRenderer?: { new(): ICellRendererComp; } | ICellRendererFunc | string;
     cellRendererFramework?: any;
     cellRendererParams?: any;
-    cellRendererSelector?: (params: ICellRendererParams) => ComponentSelectorResult<ICellRendererParams>;
+    cellRendererSelector?: (params: ICellRendererParams) => ComponentSelectorResult;
 
     /** Cell editor */
     cellEditor?: { new(): ICellEditorComp; } | string;
     cellEditorFramework?: any;
     cellEditorParams?: any;
-    cellEditorSelector?: (params: ICellEditorParams) => ComponentSelectorResult<ICellEditorParams>;
+    cellEditorSelector?: (params: ICellEditorParams) => ComponentSelectorResult;
 
     /** A function for rendering a pinned row cell. */
     pinnedRowCellRenderer?: { new(): ICellRendererComp; } | ICellRendererFunc | string;

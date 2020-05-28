@@ -66,9 +66,9 @@ export enum ComponentSource {
     DEFAULT, REGISTERED_BY_NAME, HARDCODED
 }
 
-export interface ComponentSelectorResult<TParams> {
+export interface ComponentSelectorResult {
     component?: string;
-    params?: TParams;
+    params?: any;
 }
 
 /**
@@ -83,7 +83,7 @@ export interface ComponentClassDef<A extends IComponent<TParams> & B, B, TParams
 }
 
 export interface ModifyParamsCallback<TParams> {
-    (params: TParams, component: IComponent<TParams>): void;
+    (params: TParams, component: IComponent<TParams>): TParams;
 }
 
 @Bean('userComponentFactory')
@@ -312,7 +312,7 @@ export class UserComponentFactory extends BeanStub {
         let HardcodedJsComponent: { new(): A; } = null;
         let hardcodedJsFunction: AgGridComponentFunctionInput = null;
         let HardcodedFwComponent: { new(): B; } = null;
-        let componentSelectorFunc: (params: TParams) => ComponentSelectorResult<TParams>;
+        let componentSelectorFunc: (params: TParams) => ComponentSelectorResult;
 
         if (definitionObject != null) {
             const componentPropertyValue: AgComponentPropertyInput<IComponent<TParams>, TParams> = (definitionObject as any)[propertyName];
@@ -471,10 +471,11 @@ export class UserComponentFactory extends BeanStub {
      *      specified by the user in the configuration
      * @returns {TParams} It merges the user agGridParams with the actual params specified by the user.
      */
-    public createFinalParams<TParams>(definitionObject: DefinitionObject,
+    public createFinalParams<TParams>(
+        definitionObject: DefinitionObject,
         propertyName: string,
         paramsFromGrid: TParams,
-        paramsFromSelector: TParams = null): TParams {
+        paramsFromSelector: any = null): TParams {
         const params = {} as TParams;
 
         mergeDeep(params, paramsFromGrid);
@@ -500,7 +501,7 @@ export class UserComponentFactory extends BeanStub {
         paramsForSelector: TParams,
         defaultComponentName: string,
         optional: boolean
-    ): { componentInstance: A, paramsFromSelector: TParams; } {
+    ): { componentInstance: A, paramsFromSelector: any; } {
         const propertyName = componentType.propertyName;
         const componentToUse: ComponentClassDef<A, B, TParams> =
             this.lookupComponentClassDef(holder, propertyName, paramsForSelector, defaultComponentName) as ComponentClassDef<A, B, TParams>;
