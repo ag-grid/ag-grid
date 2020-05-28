@@ -29,10 +29,10 @@ var columnDefs = [
                     return 1;
                 }
             },
-            // browserDatePicker: true,
+            browserDatePicker: true,
         },
     },
-    { field: 'sport', filter: 'agSetColumnFilter' },
+    { field: 'sport', filter: 'agTextColumnFilter' },
     { field: 'gold', filter: 'agNumberColumnFilter' },
     { field: 'silver', filter: 'agNumberColumnFilter' },
     { field: 'bronze', filter: 'agNumberColumnFilter' },
@@ -104,20 +104,20 @@ function printCountryModel() {
     }
 }
 
-function sportStartsWithS() {
+function sportStartsWithC() {
     var sportsFilterComponent = gridOptions.api.getFilterInstance('sport');
     sportsFilterComponent.setModel({
         type: 'startsWith',
-        filter: 's'
+        filter: 'c'
     });
     gridOptions.api.onFilterChanged();
 }
 
-function sportEndsWithG() {
+function sportEndsWithS() {
     var sportsFilterComponent = gridOptions.api.getFilterInstance('sport');
     sportsFilterComponent.setModel({
         type: 'endsWith',
-        filter: 'g'
+        filter: 's'
     });
     gridOptions.api.onFilterChanged();
 }
@@ -125,16 +125,22 @@ function sportEndsWithG() {
 function sportsCombined() {
     var sportsFilterComponent = gridOptions.api.getFilterInstance('sport');
     sportsFilterComponent.setModel({
+        condition1: {
+            type: 'startsWith',
+            filter: 'c'
+        },
+        operator: 'AND',
         condition2: {
             type: 'endsWith',
             filter: 'g'
         },
-        condition1: {
-            type: 'startsWith',
-            filter: 's'
-        },
-        operator: 'AND'
     });
+    gridOptions.api.onFilterChanged();
+}
+
+function clearSportFilter() {
+    var sportsFilterComponent = gridOptions.api.getFilterInstance('sport');
+    sportsFilterComponent.setModel(null);
     gridOptions.api.onFilterChanged();
 }
 
