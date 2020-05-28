@@ -28,7 +28,12 @@ var gridOptions = {
         resizable: true,
     },
     sideBar: ['filters'],
-    rowData: this.getRowData()
+    rowData: this.getRowData(),
+    localeText: {
+        applyFilter: 'OK',
+        cancelFilter: 'Cancel',
+        resetFilter: 'Clear Filter',
+    }
 };
 
 // inScope[getRowData]

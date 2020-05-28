@@ -229,7 +229,7 @@ export class SetFilter extends ProvidedFilter {
         // apply default options to match Excel behaviour, unless they have already been specified
         if (params.excelMode === 'windows') {
             if (!params.buttons) {
-                params.buttons = ['reset', 'apply', 'cancel'];
+                params.buttons = ['apply', 'cancel'];
             }
 
             if (params.closeOnApply == null) {
