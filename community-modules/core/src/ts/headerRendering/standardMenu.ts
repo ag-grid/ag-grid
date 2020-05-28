@@ -72,13 +72,13 @@ export class StandardMenuFactory extends BeanStub implements IMenuFactory {
         const closedCallback = (e: Event) => {
             this.eventService.removeEventListener('bodyScroll', bodyScrollListener);
             column.setMenuVisible(false, 'contextMenu');
-            const event = e as KeyboardEvent;
+            const isKeyboardEvent = e instanceof KeyboardEvent;
 
             if (this.tabListener) {
                 this.tabListener = this.tabListener();
             }
 
-            if (event && event.keyCode === Constants.KEY_ESCAPE && eventSource && _.isVisible(eventSource)) {
+            if (isKeyboardEvent && eventSource && _.isVisible(eventSource)) {
                 const focusableEl = this.focusController.findTabbableParent(eventSource);
 
                 if (focusableEl) { focusableEl.focus(); }

@@ -124,7 +124,7 @@ export class EnterpriseMenuFactory extends BeanStub implements IMenuFactory {
                 column.setMenuVisible(false, "contextMenu");
                 const isKeyboardEvent = e instanceof KeyboardEvent;
 
-                if (event && isKeyboardEvent && eventSource && _.isVisible(eventSource)) {
+                if (isKeyboardEvent && eventSource && _.isVisible(eventSource)) {
                     const focusableEl = this.focusController.findTabbableParent(eventSource);
 
                     if (focusableEl) { focusableEl.focus(); }
