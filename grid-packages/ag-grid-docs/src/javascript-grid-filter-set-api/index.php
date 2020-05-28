@@ -93,10 +93,4 @@ SNIPPET
 
 <?= grid_example('Set Filter API', 'set-filter-api', 'generated', ['enterprise' => true, 'exampleHeight' => 570]) ?>
 
-<h2>Next Up</h2>
-
-<p>
-    Continue to the next section: <a href="../javascript-grid-filter-set-excel-mode">Excel Mode</a>.
-</p>
-
 <?php include '../documentation-main/documentation_footer.php';?>

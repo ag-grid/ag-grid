@@ -19,9 +19,13 @@ include '../documentation-main/documentation_header.php';
 <p>To enable Excel Mode, simply add the <code>excelMode</code> option to your filter params:</p>
 
 <?= createSnippet(<<<SNIPPET
-filterParams: {
-    excelMode: 'windows' // can be 'windows' or 'mac'
-    ...
+// ColDef
+{
+    field: 'animal',
+    filter: 'agSetColumnFilter',
+    filterParams: {
+        excelMode: 'windows', // can be 'windows' or 'mac'
+    },
 }
 SNIPPET
 ) ?>
@@ -110,5 +114,10 @@ SNIPPET
     <?php printBehaviourListRows(); ?>
 </table>
 
+<h2>Next Up</h2>
+
+<p>
+    Continue to the next section: <a href="../javascript-grid-filter-set-api">API</a>.
+</p>
 
 <?php include '../documentation-main/documentation_footer.php';?>

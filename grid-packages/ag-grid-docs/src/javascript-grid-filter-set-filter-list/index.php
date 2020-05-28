@@ -209,7 +209,7 @@ SNIPPET
     keyCreator: countryKeyCreator,
     valueFormatter: countryValueFormatter,
     filter: 'agSetColumnFilter',
-},
+}
 
 function countryKeyCreator(params) {
     return params.value.name;
@@ -417,9 +417,16 @@ SNIPPET
 </p>
 
 <?= createSnippet(<<<SNIPPET
-filterParams: {
-    refreshValuesOnOpen: true,
-    ...
+// ColDef
+{
+    field: 'col1',
+    filter: 'agSetColumnFilter',
+    filterParams: {
+        values: function(params) {
+            params.success(getValuesFromServer());
+        },
+        refreshValuesOnOpen: true,
+    }
 }
 SNIPPET
 ) ?>
@@ -473,9 +480,13 @@ SNIPPET
 </p>
 
 <?= createSnippet(<<<SNIPPET
-filterParams: {
-    defaultToNothingSelected: true,
-    ...
+// ColDef
+{
+    field: 'country',
+    filter: 'agSetColumnFilter',
+    filterParams: {
+        defaultToNothingSelected: true,
+    }
 }
 SNIPPET
 ) ?>

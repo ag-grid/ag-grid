@@ -37,9 +37,13 @@ include '../documentation-main/documentation_header.php';
 </p>
 
 <?= createSnippet(<<<SNIPPET
-filterParams: {
-    applyMiniFilterWhileTyping: true,
-    ...
+// ColDef
+{
+    field: 'country',
+    filter: 'agSetColumnFilter',
+    filterParams: {
+        applyMiniFilterWhileTyping: true,
+    },
 }
 SNIPPET
 ) ?>
@@ -125,9 +129,13 @@ SNIPPET
 </p>
 
 <?= createSnippet(<<<SNIPPET
-filterParams: {
-    suppressMiniFilter: true,
-    ...
+// ColDef
+{
+    field: 'country',
+    filter: 'agSetColumnFilter',
+    filterParams: {
+        suppressMiniFilter: true,
+    },
 }
 SNIPPET
 ) ?>
