@@ -186,9 +186,6 @@ export class ColumnController extends BeanStub {
     }
 
     public setColumnDefs(columnDefs: (ColDef | ColGroupDef)[], source: ColumnEventType = 'api') {
-        // if making changes to cols, makes sense for the columns to animate
-        this.columnAnimationService.start();
-
         const colsPreviouslyExisted = !!this.columnDefs;
 
         this.columnDefs = columnDefs;
@@ -242,8 +239,6 @@ export class ColumnController extends BeanStub {
         this.eventService.dispatchEvent(newColumnsLoadedEvent);
 
         this.flexActive = this.getDisplayedCenterColumns().some(col => !!col.getFlex());
-
-        this.columnAnimationService.finish();
     }
 
     public isAutoRowHeightActive(): boolean {
