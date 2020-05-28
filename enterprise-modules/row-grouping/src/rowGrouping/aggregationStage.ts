@@ -252,7 +252,7 @@ export class AggregationStage extends BeanStub implements IRowNodeStage {
         return values;
     }
 
-    public aggregateValues(values: any[], aggFuncOrString: string | IAggFunc, column: Column, rowNode: RowNode): any {
+    public aggregateValues(values: any[], aggFuncOrString: string | IAggFunc, column?: Column, rowNode?: RowNode): any {
         const aggFunction = typeof aggFuncOrString === 'string' ? 
             this.aggFuncService.getAggFunc(aggFuncOrString) : 
             aggFuncOrString;
