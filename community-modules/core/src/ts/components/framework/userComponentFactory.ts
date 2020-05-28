@@ -15,7 +15,7 @@ import { ComponentMetadata, ComponentMetadataProvider } from "./componentMetadat
 import { ISetFilterParams } from "../../interfaces/iSetFilterParams";
 import { IRichCellEditorParams } from "../../interfaces/iRichCellEditorParams";
 import { ToolPanelDef } from "../../entities/sideBar";
-import { _, Promise } from "../../utils";
+import { Promise } from "../../utils";
 import { IDateComp, IDateParams } from "../../rendering/dateComponent";
 import { IHeaderComp, IHeaderParams } from "../../headerRendering/header/headerComp";
 import { IHeaderGroupComp, IHeaderGroupParams } from "../../headerRendering/headerGroup/headerGroupComp";
@@ -48,6 +48,7 @@ import {
     TooltipComponent
 } from "./componentTypes";
 import { BeanStub } from "../../context/beanStub";
+import { cloneObject, mergeDeep } from '../../utils/object';
 
 export type DefinitionObject =
     GridOptions
@@ -208,7 +209,6 @@ export class UserComponentFactory extends BeanStub {
         // used by FilterManager only
         modifyParamsCallback?: ModifyParamsCallback<TParams>
     ): Promise<A> {
-
         if (!definitionObject) {
             definitionObject = this.gridOptions;
         }
@@ -233,7 +233,7 @@ export class UserComponentFactory extends BeanStub {
         // componentInstance was not available when createUserComponent was called)
         const paramsAfterCallback = modifyParamsCallback ? modifyParamsCallback(params, componentInstance) : params;
 
-        const deferredInit: void | Promise<void> = this.initComponent(componentInstance, paramsAfterCallback);
+        const deferredInit = this.initComponent(componentInstance, paramsAfterCallback);
 
         if (deferredInit == null) {
             return Promise.resolve(componentInstance);
@@ -248,7 +248,7 @@ export class UserComponentFactory extends BeanStub {
         const agGridReact = this.context.getBean('agGridReact');
 
         if (agGridReact) {
-            params.agGridReact = _.cloneObject(agGridReact);
+            params.agGridReact = cloneObject(agGridReact);
         }
 
         // AG-1716 - directly related to AG-1574 and AG-1715
@@ -477,19 +477,19 @@ export class UserComponentFactory extends BeanStub {
         paramsFromSelector: TParams = null): TParams {
         const params = {} as TParams;
 
-        _.mergeDeep(params, paramsFromGrid);
+        mergeDeep(params, paramsFromGrid);
 
         const userParams: TParams = definitionObject ? (definitionObject as any)[propertyName + "Params"] : null;
 
         if (userParams != null) {
             if (typeof userParams === 'function') {
-                _.mergeDeep(params, userParams(paramsFromGrid));
+                mergeDeep(params, userParams(paramsFromGrid));
             } else if (typeof userParams === 'object') {
-                _.mergeDeep(params, userParams);
+                mergeDeep(params, userParams);
             }
         }
 
-        _.mergeDeep(params, paramsFromSelector);
+        mergeDeep(params, paramsFromSelector);
 
         return params;
     }

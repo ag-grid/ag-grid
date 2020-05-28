@@ -1,9 +1,10 @@
-import { Column } from "../entities/column";
-import { ColDef } from "../entities/colDef";
-import { IRowModel } from "./iRowModel";
-import { RowNode } from "../entities/rowNode";
-import { IComponent } from "./iComponent";
-import { GridApi } from "../gridApi";
+import { Column } from '../entities/column';
+import { ColDef } from '../entities/colDef';
+import { IRowModel } from './iRowModel';
+import { RowNode } from '../entities/rowNode';
+import { IComponent } from './iComponent';
+import { GridApi } from '../gridApi';
+import { Promise } from '../utils';
 
 export interface IFilter {
     /** This is used to let the grid know if the filter is active or not */
@@ -17,7 +18,7 @@ export interface IFilter {
     /** Gets the filter state for storing */
     getModel(): any;
     /** Restores the filter state. */
-    setModel(model: any): void;
+    setModel(model: any): void | Promise<void>;
     /** Gets called when new rows are inserted into the grid. If the filter needs to change it's state
      after rows are loaded, it can do it here. */
     onNewRowsLoaded?(): void;

@@ -1,4 +1,4 @@
-import { _, Promise } from '../utils';
+import { Promise } from '../utils';
 import { GridOptionsWrapper } from '../gridOptionsWrapper';
 import { ValueService } from '../valueService/valueService';
 import { ColumnController } from '../columnController/columnController';
@@ -14,8 +14,12 @@ import { GridApi } from '../gridApi';
 import { UserComponentFactory } from '../components/framework/userComponentFactory';
 import { ModuleNames } from '../modules/moduleNames';
 import { ModuleRegistry } from '../modules/moduleRegistry';
-import { forEach } from '../utils/array';
-import { BeanStub } from "../context/beanStub";
+import { forEach, some, every } from '../utils/array';
+import { BeanStub } from '../context/beanStub';
+import { convertToSet } from '../utils/set';
+import { exists } from '../utils/generic';
+import { mergeDeep, cloneObject, assign } from '../utils/object';
+import { loadTemplate } from '../utils/dom';
 
 export type FilterRequestSource = 'COLUMN_MENU' | 'TOOLBAR' | 'NO_UI';
 
@@ -68,18 +72,16 @@ export class FilterManager extends BeanStub {
     }
 
     public setFilterModel(model: { [key: string]: any; }): void {
-        const allPromises: Promise<IFilterComp>[] = [];
+        const allPromises: Promise<void>[] = [];
 
         if (model) {
             // mark the filters as we set them, so any active filters left over we stop
-            const modelKeys = _.convertToSet(Object.keys(model));
+            const modelKeys = convertToSet(Object.keys(model));
 
             this.allFilters.forEach((filterWrapper, colId) => {
                 const newModel = model[colId];
 
-                this.setModelOnFilterWrapper(filterWrapper.filterPromise, newModel);
-
-                allPromises.push(filterWrapper.filterPromise);
+                allPromises.push(this.setModelOnFilterWrapper(filterWrapper.filterPromise, newModel));
                 modelKeys.delete(colId);
             });
 
@@ -94,28 +96,33 @@ export class FilterManager extends BeanStub {
 
                 const filterWrapper = this.getOrCreateFilterWrapper(column, 'NO_UI');
 
-                this.setModelOnFilterWrapper(filterWrapper.filterPromise, model[colId]);
-
-                allPromises.push(filterWrapper.filterPromise);
+                allPromises.push(this.setModelOnFilterWrapper(filterWrapper.filterPromise, model[colId]));
             });
         } else {
             this.allFilters.forEach(filterWrapper => {
-                this.setModelOnFilterWrapper(filterWrapper.filterPromise, null);
-                allPromises.push(filterWrapper.filterPromise);
+                allPromises.push(this.setModelOnFilterWrapper(filterWrapper.filterPromise, null));
             });
         }
 
         Promise.all(allPromises).then(_ => this.onFilterChanged());
     }
 
-    private setModelOnFilterWrapper(filterPromise: Promise<IFilterComp>, newModel: any): void {
-        filterPromise.then(filter => {
-            if (typeof filter.setModel !== 'function') {
-                console.warn('Warning ag-grid - filter missing setModel method, which is needed for setFilterModel');
-                return;
-            }
+    private setModelOnFilterWrapper(filterPromise: Promise<IFilterComp>, newModel: any): Promise<void> {
+        return new Promise<void>(resolve => {
+            filterPromise.then(filter => {
+                if (typeof filter.setModel !== 'function') {
+                    console.warn('Warning ag-grid - filter missing setModel method, which is needed for setFilterModel');
+                    resolve();
+                }
 
-            filter.setModel(newModel);
+                const promise = filter.setModel(newModel);
+
+                if (promise == null) {
+                    resolve();
+                } else {
+                    (promise as Promise<void>).then(() => resolve());
+                }
+            });
         });
     }
 
@@ -136,7 +143,7 @@ export class FilterManager extends BeanStub {
 
             const model = filter.getModel();
 
-            if (_.exists(model)) {
+            if (exists(model)) {
                 result[key] = model;
             }
         });
@@ -205,7 +212,7 @@ export class FilterManager extends BeanStub {
     }
 
     private parseQuickFilter(newFilter: string): string {
-        if (!_.exists(newFilter)) {
+        if (!exists(newFilter)) {
             return null;
         }
 
@@ -251,7 +258,7 @@ export class FilterManager extends BeanStub {
         };
 
         if (additionalEventAttributes) {
-            _.mergeDeep(filterChangedEvent, additionalEventAttributes);
+            mergeDeep(filterChangedEvent, additionalEventAttributes);
         }
 
         // because internal events are not async in ag-grid, when the dispatchEvent
@@ -280,10 +287,10 @@ export class FilterManager extends BeanStub {
     private doesRowPassQuickFilterNoCache(node: RowNode, filterPart: string): boolean {
         const columns = this.columnController.getAllColumnsForQuickFilter();
 
-        return _.some(columns, column => {
+        return some(columns, column => {
             const part = this.getQuickFilterTextForColumn(column, node);
 
-            return _.exists(part) && part.indexOf(filterPart) >= 0;
+            return exists(part) && part.indexOf(filterPart) >= 0;
         });
     }
 
@@ -299,7 +306,7 @@ export class FilterManager extends BeanStub {
         const usingCache = this.gridOptionsWrapper.isCacheQuickFilter();
 
         // each part must pass, if any fails, then the whole filter fails
-        return _.every(this.quickFilterParts, part =>
+        return every(this.quickFilterParts, part =>
             usingCache ? this.doesRowPassQuickFilterCache(node, part) : this.doesRowPassQuickFilterNoCache(node, part)
         );
     }
@@ -345,7 +352,7 @@ export class FilterManager extends BeanStub {
             value = colDef.getQuickFilterText(params);
         }
 
-        return _.exists(value) ? value.toString().toUpperCase() : null;
+        return exists(value) ? value.toString().toUpperCase() : null;
     }
 
     private aggregateRowForQuickFilter(node: RowNode): void {
@@ -355,7 +362,7 @@ export class FilterManager extends BeanStub {
         forEach(columns, column => {
             const part = this.getQuickFilterTextForColumn(column, node);
 
-            if (_.exists(part)) {
+            if (exists(part)) {
                 stringParts.push(part);
             }
         });
@@ -411,7 +418,7 @@ export class FilterManager extends BeanStub {
         const defaultFilter =
             ModuleRegistry.isRegistered(ModuleNames.SetFilterModule) ? 'agSetColumnFilter' : 'agTextColumnFilter';
 
-        const sanitisedColDef = _.cloneObject(column.getColDef());
+        const sanitisedColDef = cloneObject(column.getColDef());
 
         let filterInstance: IFilterComp;
 
@@ -432,7 +439,7 @@ export class FilterManager extends BeanStub {
 
         // we modify params in a callback as we need the filter instance, and this isn't available
         // when creating the params above
-        const modifyParamsCallback = (params: any, filterInstance: IFilterComp) => _.assign(params, {
+        const modifyParamsCallback = (params: any, filterInstance: IFilterComp) => assign(params, {
             doesRowPassOtherFilter: this.doesRowPassOtherFilters.bind(this, filterInstance),
         });
 
@@ -494,7 +501,7 @@ export class FilterManager extends BeanStub {
             filterWrapper.filterPromise.then(filter => {
                 let guiFromFilter = filter.getGui();
 
-                if (_.missing(guiFromFilter)) {
+                if (!exists(guiFromFilter)) {
                     console.warn(`getGui method from filter returned ${guiFromFilter}, it should be a DOM element or an HTML template string.`);
                 }
 
@@ -503,7 +510,7 @@ export class FilterManager extends BeanStub {
                 // once we move away from supporting Angular 1
                 // directly, we can change this.
                 if (typeof guiFromFilter === 'string') {
-                    guiFromFilter = _.loadTemplate(guiFromFilter as string);
+                    guiFromFilter = loadTemplate(guiFromFilter as string);
                 }
 
                 eFilterGui.appendChild(guiFromFilter);

@@ -89,10 +89,10 @@ export abstract class ProvidedFilter extends Component implements IFilterComp {
         this.setTemplate(templateString);
     }
 
-    public init(params: IFilterParams): Promise<void> {
+    public init(params: IFilterParams): void {
         this.setParams(params);
 
-        return this.resetUiToDefaults(true).then(() => {
+        this.resetUiToDefaults(true).then(() => {
             this.updateUiVisibility();
             this.setupOnBtApplyDebounce();
         });
@@ -213,10 +213,10 @@ export abstract class ProvidedFilter extends Component implements IFilterComp {
         return this.appliedModel;
     }
 
-    public setModel(model: ProvidedFilterModel): void {
+    public setModel(model: ProvidedFilterModel): Promise<void> {
         const promise = model ? this.setModelIntoUi(model) : this.resetUiToDefaults();
 
-        promise.then(() => {
+        return promise.then(() => {
             this.updateUiVisibility();
 
             // we set the model from the gui, rather than the provided model,

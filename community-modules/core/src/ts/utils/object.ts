@@ -1,12 +1,13 @@
 import { missing, exists, values } from './generic';
+import { forEach } from './array';
 
 export function iterateObject<T>(object: { [p: string]: T; } | T[] | undefined, callback: (key: string, value: T) => void) {
-    if (!object || missing(object)) { return; }
+    if (object == null) { return; }
 
     if (Array.isArray(object)) {
-        object.forEach((value, index) => callback(`${index}`, value));
+        forEach(object, (value, index) => callback(`${index}`, value));
     } else {
-        Object.keys(object).forEach(key => callback(key, object[key]));
+        forEach(Object.keys(object), key => callback(key, object[key]));
     }
 }
 
@@ -40,7 +41,7 @@ export function setProperty<T, K extends keyof T>(object: T, key: K, value: any)
  * a value of `undefined`.
  */
 export function copyPropertiesIfPresent<S, T extends S, K extends keyof S>(source: S, target: T, ...properties: K[]) {
-    properties.forEach(p => copyPropertyIfPresent(source, target, p));
+    forEach(properties, p => copyPropertyIfPresent(source, target, p));
 }
 
 /**
@@ -59,7 +60,7 @@ export function getAllKeysInObjects(objects: any[]): string[] {
     const allValues: any = {};
 
     objects.filter(obj => obj != null).forEach(obj => {
-        Object.keys(obj).forEach(key => allValues[key] = null);
+        forEach(Object.keys(obj), key => allValues[key] = null);
     });
 
     return Object.keys(allValues);
@@ -82,13 +83,7 @@ export function mergeDeep(dest: any, source: any, copyUndefined = true): void {
 }
 
 export function assign(object: any, ...sources: any[]): any {
-    sources.forEach(source => {
-        if (exists(source)) {
-            iterateObject(source, function(key: string, value: any) {
-                object[key] = value;
-            });
-        }
-    });
+    forEach(sources, source => iterateObject(source, (key: string, value: any) => object[key] = value));
 
     return object;
 }
@@ -136,8 +131,8 @@ export function set(target: any, expression: string, value: any) {
 export function deepFreeze(object: any): any {
     Object.freeze(object);
 
-    values(object).filter(v => v != null).forEach(v => {
-        if (typeof v === 'object' || typeof v === 'function') {
+    forEach(values(object), v => {
+        if (v != null && (typeof v === 'object' || typeof v === 'function')) {
             deepFreeze(v);
         }
     });
