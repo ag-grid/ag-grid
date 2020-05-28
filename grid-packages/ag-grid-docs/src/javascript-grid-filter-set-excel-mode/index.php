@@ -4,7 +4,6 @@ $pageDescription = "Enterprise feature of ag-Grid supporting Angular, React, Jav
 $pageKeywords = "ag-Grid JavaScript Data Grid Excel Set Filtering";
 $pageGroup = "feature";
 include '../documentation-main/documentation_header.php';
-define('skipInPageNav', true);
 ?>
 
 <h1 class="heading-enterprise">Set Filter - Excel Mode</h1>
@@ -14,6 +13,10 @@ define('skipInPageNav', true);
     for filtering in less time. However, sometimes you may want to provide your users with an Excel-like experience.
     For this you can use Excel Mode.
 </p>
+
+<h2>Enabling Excel Mode</h2>
+
+<p>To enable Excel Mode, simply add the <code>excelMode</code> option to your filter params:</p>
 
 <?= createSnippet(<<<SNIPPET
 filterParams: {
@@ -25,9 +28,29 @@ SNIPPET
 
 <p>
     Excel's AutoFilter behaves differently depending on whether you are using the Windows or Mac
-    version. ag-Grid therefore allows you to choose which behaviour you would like to use, by setting
+    version. ag-Grid therefore allows you to choose which behaviour you would like by setting
     <code>excelMode</code> to <code>'windows'</code> or <code>'mac'</code> respectively.
 </p>
+
+<p>
+    The example below demonstrates the differences between the different modes:
+</p>
+
+<ul class="content">
+    <li>
+        The <b>ag-Grid</b> column demonstrates the default behaviour of the Set Filter in ag-grid.
+    </li>
+    <li>
+        The <b>Excel (Windows)</b> column demonstrates the behaviour of the Set Filter in Windows Excel Mode.
+    </li>
+    <li>
+        The <b>Excel (Mac)</b> column demonstrates the behaviour of the Set Filter in Mac Excel Mode.
+    </li>
+</ul>
+
+<?= grid_example('Excel Mode', 'excel-mode', 'generated', ['enterprise' => true, 'modules' => ['clientside', 'setfilter', 'menu', 'filterpanel']]) ?>
+
+<h2>Differences Between Modes</h2>
 
 <p>
     The table below shows the differences in behaviour alongside the default behaviour of ag-Grid for comparison.
@@ -87,22 +110,5 @@ SNIPPET
     <?php printBehaviourListRows(); ?>
 </table>
 
-<p>
-    The example below demonstrates the differences between the different modes:
-</p>
-
-<ul class="content">
-    <li>
-        The <b>ag-Grid</b> column demonstrates the default behaviour of the Set Filter in ag-grid.
-    </li>
-    <li>
-        The <b>Excel (Windows)</b> column demonstrates the behaviour of the Set Filter in Windows Excel Mode.
-    </li>
-    <li>
-        The <b>Excel (Mac)</b> column demonstrates the behaviour of the Set Filter in Mac Excel Mode.
-    </li>
-</ul>
-
-<?= grid_example('Excel Mode', 'excel-mode', 'generated', ['enterprise' => true, 'modules' => ['clientside', 'setfilter', 'menu', 'filterpanel']]) ?>
 
 <?php include '../documentation-main/documentation_footer.php';?>
