@@ -84,7 +84,7 @@ export class ChartBuilder {
             ChartBuilder.createAxis(options.yAxis, 'category'),
             options.document);
 
-        ChartBuilder.initChart(chart, options);
+        ChartBuilder.initCartesianChart(chart, options);
 
         if (options.series) {
             chart.series = options.series.map(s => ChartBuilder.initBarSeries(new BarSeries(), s));
@@ -101,7 +101,7 @@ export class ChartBuilder {
             options.document
         );
 
-        ChartBuilder.initChart(chart, options);
+        ChartBuilder.initCartesianChart(chart, options);
 
         if (options.series) {
             chart.series = options.series.map(s => ChartBuilder.initBarSeries(new BarSeries(), s));
@@ -117,7 +117,7 @@ export class ChartBuilder {
             ChartBuilder.createAxis(options.yAxis, 'number'),
             options.document);
 
-        ChartBuilder.initChart(chart, options);
+        ChartBuilder.initCartesianChart(chart, options);
 
         if (options.series) {
             chart.series = options.series.map(s => ChartBuilder.initBarSeries(new BarSeries(), s));
@@ -134,7 +134,7 @@ export class ChartBuilder {
             options.document
         );
 
-        ChartBuilder.initChart(chart, options);
+        ChartBuilder.initCartesianChart(chart, options);
 
         if (options.series) {
             chart.series = options.series.map(s => ChartBuilder.initBarSeries(new BarSeries(), s));
@@ -150,7 +150,7 @@ export class ChartBuilder {
             ChartBuilder.createAxis(options.yAxis, 'number'),
             options.document);
 
-        ChartBuilder.initChart(chart, options);
+        ChartBuilder.initCartesianChart(chart, options);
 
         if (options.series) {
             chart.series = options.series.map(s => ChartBuilder.initLineSeries(new LineSeries(), s));
@@ -167,7 +167,7 @@ export class ChartBuilder {
             options.document,
         );
 
-        ChartBuilder.initChart(chart, options);
+        ChartBuilder.initCartesianChart(chart, options);
 
         if (options.series) {
             chart.series = options.series.map(s => ChartBuilder.initLineSeries(new LineSeries(), s));
@@ -183,7 +183,7 @@ export class ChartBuilder {
             ChartBuilder.createAxis(options.yAxis, 'number'),
             options.document);
 
-        ChartBuilder.initChart(chart, options);
+        ChartBuilder.initCartesianChart(chart, options);
 
         if (options.series) {
             chart.series = options.series.map(s => ChartBuilder.initScatterSeries(new ScatterSeries(), s));
@@ -199,7 +199,7 @@ export class ChartBuilder {
             ChartBuilder.createAxis(options.yAxis, 'number'),
             options.document);
 
-        ChartBuilder.initChart(chart, options);
+        ChartBuilder.initCartesianChart(chart, options);
 
         if (options.series) {
             chart.series = options.series.map(s => ChartBuilder.initAreaSeries(new AreaSeries(), s));
@@ -216,7 +216,7 @@ export class ChartBuilder {
             options.document
         );
 
-        ChartBuilder.initChart(chart, options);
+        ChartBuilder.initCartesianChart(chart, options);
 
         if (options.series) {
             chart.series = options.series.map(s => ChartBuilder.initAreaSeries(new AreaSeries(), s));
@@ -234,7 +234,7 @@ export class ChartBuilder {
             options.document
         );
 
-        ChartBuilder.initChart(chart, options);
+        ChartBuilder.initCartesianChart(chart, options);
 
         return chart;
     }
@@ -280,6 +280,14 @@ export class ChartBuilder {
         }
     }
 
+    static initCartesianChart<C extends CartesianChart, T extends SeriesOptions>(chart: C, options: CartesianChartOptions<T>): C {
+        if (options.navigator !== undefined) {
+            ChartBuilder.initNavigator(chart.navigator, options.navigator);
+        }
+
+        return this.initChart(chart, options);
+    }
+
     static initChart<C extends Chart, T extends SeriesOptions>(chart: C, options: ChartOptions<T>): C {
         this.setValueIfExists(chart, 'width', options.width);
         this.setValueIfExists(chart, 'height', options.height);
@@ -295,10 +303,6 @@ export class ChartBuilder {
 
         if (options.legend !== undefined) {
             ChartBuilder.initLegend(chart.legend, options.legend);
-        }
-
-        if (chart instanceof CartesianChart && options.navigator !== undefined) {
-            ChartBuilder.initNavigator(chart.navigator, options.navigator);
         }
 
         const listeners = options.listeners;

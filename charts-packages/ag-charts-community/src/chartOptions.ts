@@ -45,7 +45,6 @@ export interface ChartOptions<T extends SeriesOptions> {
     title: CaptionOptions;
     subtitle: CaptionOptions;
     legend: LegendOptions;
-    navigator: NavigatorOptions;
     tooltipClass?: string;
     listeners?: { [key in string]: Function };
 }
