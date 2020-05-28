@@ -320,7 +320,7 @@ export class Axis<S extends Scale<D, number>, D = any> {
      * it will also make it harder to reason about the program.
      */
     update() {
-        const { group, scale, tick, label, gridStyle } = this;
+        const { group, scale, tick, label, gridStyle, requestedRange } = this;
         const rotation = toRadians(this.rotation);
         const parallelLabels = label.parallel;
         const labelRotation = normalizeAngle360(toRadians(label.rotation));
@@ -373,7 +373,8 @@ export class Axis<S extends Scale<D, number>, D = any> {
         const groupSelection = update.merge(enter);
 
         groupSelection
-            .attrFn('translationY', (_, datum) => Math.round(scale.convert(datum) + halfBandwidth));
+            .attrFn('translationY', (_, datum) => Math.round(scale.convert(datum) + halfBandwidth))
+            .attrFn('visible', node => node.translationY >= requestedRange[0] && node.translationY <= requestedRange[1]);
 
         groupSelection.selectByTag<Line>(Tags.Tick)
             .each(line => {
@@ -473,8 +474,8 @@ export class Axis<S extends Scale<D, number>, D = any> {
         const lineNode = this.lineNode;
         lineNode.x1 = 0;
         lineNode.x2 = 0;
-        lineNode.y1 = scale.range[0];
-        lineNode.y2 = scale.range[scale.range.length - 1];
+        lineNode.y1 = requestedRange[0];
+        lineNode.y2 = requestedRange[1];
         lineNode.strokeWidth = this.line.width;
         lineNode.stroke = this.line.color;
         lineNode.visible = ticks.length > 0;
@@ -491,7 +492,7 @@ export class Axis<S extends Scale<D, number>, D = any> {
 
             titleNode.rotation = titleRotationFlag * sideFlag * Math.PI / 2;
             titleNode.x = titleRotationFlag * sideFlag * (lineNode.y1 + lineNode.y2) / 2;
-            titleNode.x = titleRotationFlag * sideFlag * (this.requestedRange[0] + this.requestedRange[1]) / 2;
+            titleNode.x = titleRotationFlag * sideFlag * (requestedRange[0] + requestedRange[1]) / 2;
 
             if (sideFlag === -1) {
                 titleNode.y = titleRotationFlag * (-padding - bbox.width + Math.max(bbox.x + bbox.width, 0));

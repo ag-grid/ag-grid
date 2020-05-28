@@ -20,19 +20,16 @@ export class CartesianChart extends Chart {
         this.scene.root.visible = false;
 
         const root = this.scene.root!;
-        root.append(this.xAxesClip);
         root.append(this.seriesRoot);
         root.append(this.legend.group);
 
-        this.navigator.enabled = false;
+        // this.navigator.enabled = false;
     }
 
     private _seriesRoot = new ClipRect();
     get seriesRoot(): ClipRect {
         return this._seriesRoot;
     }
-
-    private xAxesClip = new ClipRect();
 
     readonly navigator = new Navigator(this);
 
@@ -167,12 +164,6 @@ export class CartesianChart extends Chart {
         seriesRoot.width = shrinkRect.width;
         seriesRoot.height = shrinkRect.height;
 
-        const { xAxesClip } = this;
-        xAxesClip.x = shrinkRect.x;
-        xAxesClip.y = 0;
-        xAxesClip.width = shrinkRect.width;
-        xAxesClip.height = height;
-
         if (navigator.enabled) {
             navigator.x = shrinkRect.x;
             navigator.y = shrinkRect.y + shrinkRect.height + bottomAxesHeight + navigator.margin;
@@ -180,22 +171,6 @@ export class CartesianChart extends Chart {
         }
 
         this.axes.forEach(axis => axis.update());
-    }
-
-    protected attachAxis(axis: ChartAxis) {
-        if (axis.direction === ChartAxisDirection.X) {
-            this.xAxesClip.appendChild(axis.group);
-        } else {
-            super.attachAxis(axis);
-        }
-    }
-
-    protected detachAxis(axis: ChartAxis) {
-        if (axis.direction === ChartAxisDirection.X) {
-            this.xAxesClip.removeChild(axis.group);
-        } else {
-            super.detachAxis(axis);
-        }
     }
 
     protected initSeries(series: Series) {
