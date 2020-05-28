@@ -23,7 +23,7 @@ export class CartesianChart extends Chart {
         root.append(this.seriesRoot);
         root.append(this.legend.group);
 
-        // this.navigator.enabled = false;
+        this.navigator.enabled = false;
     }
 
     private _seriesRoot = new ClipRect();

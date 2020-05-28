@@ -134,7 +134,8 @@ describe('createBarChart', () => {
             yAxis: {},
             title: {},
             subtitle: {},
-            legend: {}
+            legend: {},
+            navigator: {}
         };
 
         const chart = ChartBuilder.createBarChart(null, options);
@@ -151,7 +152,8 @@ describe('createColumnChart', () => {
             yAxis: {},
             title: {},
             subtitle: {},
-            legend: {}
+            legend: {},
+            navigator: {}
         };
 
         const chart = ChartBuilder.createColumnChart(null, options);
@@ -168,7 +170,8 @@ describe('createLineChart', () => {
             yAxis: {},
             title: {},
             subtitle: {},
-            legend: {}
+            legend: {},
+            navigator: {}
         };
 
         const chart = ChartBuilder.createLineChart(null, options);
@@ -185,7 +188,8 @@ describe('createScatterChart', () => {
             yAxis: {},
             title: {},
             subtitle: {},
-            legend: {}
+            legend: {},
+            navigator: {}
         };
 
         const chart = ChartBuilder.createScatterChart(null, options);
@@ -202,7 +206,8 @@ describe('createAreaChart', () => {
             yAxis: {},
             title: {},
             subtitle: {},
-            legend: {}
+            legend: {},
+            navigator: {}
         };
 
         const chart = ChartBuilder.createAreaChart(null, options);
@@ -219,7 +224,8 @@ describe('createGroupedColumnChart', () => {
             yAxis: {},
             title: {},
             subtitle: {},
-            legend: {}
+            legend: {},
+            navigator: {}
         };
 
         const chart = ChartBuilder.createGroupedColumnChart(null, options);
@@ -236,7 +242,8 @@ describe('createGroupedBarChart', () => {
             yAxis: {},
             title: {},
             subtitle: {},
-            legend: {}
+            legend: {},
+            navigator: {}
         };
 
         const chart = ChartBuilder.createGroupedBarChart(null, options);
@@ -253,7 +260,8 @@ describe('createGroupedLineChart', () => {
             yAxis: {},
             title: {},
             subtitle: {},
-            legend: {}
+            legend: {},
+            navigator: {}
         };
 
         const chart = ChartBuilder.createGroupedLineChart(null, options);
@@ -270,7 +278,8 @@ describe('createGroupedAreaChart', () => {
             yAxis: {},
             title: {},
             subtitle: {},
-            legend: {}
+            legend: {},
+            navigator: {}
         };
 
         const chart = ChartBuilder.createGroupedAreaChart(null, options);
