@@ -33,6 +33,13 @@
                 "url": "../javascript-grid-filter-set-filter-list/#default-state"
             }
         },
+        "excelMode": {
+            "description": "Changes the behaviour of the Set Filter to match that of Excel's AutoFilter.",
+            "more": {
+                "name": "Excel Mode",
+                "url": "../javascript-grid-filter-set-excel-mode/"
+            }
+        },
         "showTooltips": {
             "default": false,
             "description": "If <code>true</code>, hovering over a value in the Set Filter will show a tooltip containing the full, untruncated value.",

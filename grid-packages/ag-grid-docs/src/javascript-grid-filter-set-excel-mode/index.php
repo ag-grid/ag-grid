@@ -28,7 +28,7 @@ SNIPPET
 
 <p>
     Excel's AutoFilter behaves differently depending on whether you are using the Windows or Mac
-    version. ag-Grid therefore allows you to choose which behaviour you would like by setting
+    version. The grid therefore allows you to choose which behaviour you would like by setting
     <code>excelMode</code> to <code>'windows'</code> or <code>'mac'</code> respectively.
 </p>
 
@@ -38,7 +38,7 @@ SNIPPET
 
 <ul class="content">
     <li>
-        The <b>ag-Grid</b> column demonstrates the default behaviour of the Set Filter in ag-grid.
+        The <b>Default</b> column demonstrates the default behaviour of the Set Filter in the grid.
     </li>
     <li>
         The <b>Excel (Windows)</b> column demonstrates the behaviour of the Set Filter in Windows Excel Mode.
@@ -53,8 +53,8 @@ SNIPPET
 <h2>Differences Between Modes</h2>
 
 <p>
-    The table below shows the differences in behaviour alongside the default behaviour of ag-Grid for comparison.
-    Note that the behaviour of ag-Grid can be changed from the defaults in many ways using the other options detailed
+    The table below shows the differences in behaviour alongside the default behaviour of the grid for comparison.
+    Note that the behaviour of the grid can be changed from the defaults in many ways using the other options detailed
     on the <a href="../javascript-grid-filter-set/">Set Filter</a> page. These options can also be used in conjunction
     with the Excel Mode to give you the maximum amount of flexibility.
 </p>
@@ -103,7 +103,7 @@ SNIPPET
 <table class="row-model-table reference">
     <tr class="first-row">
         <th>Behaviour</th>
-        <th>ag-Grid</th>
+        <th>Default</th>
         <th>Excel (Windows)</th>
         <th>Excel (Mac)</th>
     </tr>

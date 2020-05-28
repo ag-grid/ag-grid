@@ -1,7 +1,7 @@
 var gridOptions = {
     columnDefs: [
         {
-            headerName: 'ag-Grid',
+            headerName: 'Default',
             field: 'animal',
             filter: 'agSetColumnFilter',
         },
