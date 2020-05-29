@@ -132,12 +132,9 @@
     .ag-filter-loading {
         @include ag-color-property(background-color, control-panel-background-color);
         height: 100%;
-        padding: 5px;
+        padding: ag-param(widget-container-vertical-padding) ag-param(widget-container-horizontal-padding);
         position: absolute;
-        top: 34px;
         width: 100%;
         z-index: 1;
-
-        @include ag-border(critical, top);
     }
 }

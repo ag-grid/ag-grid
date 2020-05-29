@@ -29,7 +29,7 @@ export class SetFilter extends ProvidedFilter {
     @RefSelector('eSelectAll') private eSelectAll: AgCheckbox;
     @RefSelector('eSelectAllLabel') private eSelectAllLabel: HTMLElement;
     @RefSelector('eMiniFilter') private eMiniFilter: AgInputTextField;
-    @RefSelector('eFilterLoading') private eFilterLoading: HTMLInputElement;
+    @RefSelector('eFilterLoading') private eFilterLoading: HTMLElement;
     @RefSelector('eSetFilterList') private eSetFilterList: HTMLElement;
     @RefSelector('eFilterNoMatches') private eNoMatches: HTMLElement;
     @RefSelector('eSelectAllContainer') private eSelectAllContainer: HTMLElement;
@@ -64,8 +64,8 @@ export class SetFilter extends ProvidedFilter {
         const translate = this.gridOptionsWrapper.getLocaleTextFunc();
 
         return /* html */`
-            <div ref="eFilterLoading" class="ag-filter-loading ag-hidden">${translate('loadingOoo', 'Loading...')}</div>
             <div>
+                <div ref="eFilterLoading" class="ag-filter-loading ag-hidden">${translate('loadingOoo', 'Loading...')}</div>
                 <div class="ag-filter-header-container" role="presentation">
                     <ag-input-text-field class="ag-mini-filter" ref="eMiniFilter"></ag-input-text-field>
                     <label ref="eSelectAllContainer" class="ag-set-filter-item ag-set-filter-select-all">
