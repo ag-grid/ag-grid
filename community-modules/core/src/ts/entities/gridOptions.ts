@@ -285,7 +285,7 @@ export interface GridOptions {
 
     // just set once
     localeText?: any;
-    localeTextFunc?: Function;
+    localeTextFunc?: (key: string, defaultValue: string) => string;
     suppressAnimationFrame?: boolean;
     /* a map of strings (cellRenderer keys) to cellRenderers (that can be ICellRenderer or ICellRendererFunc) */
     // cellRenderers?: {[key: string]: {new(): ICellRenderer} | ICellRendererFunc};

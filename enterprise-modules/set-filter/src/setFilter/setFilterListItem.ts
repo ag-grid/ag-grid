@@ -15,6 +15,7 @@ import {
     ISetFilterCellRendererParams,
     _
 } from '@ag-grid-community/core';
+import { ISetFilterLocaleText } from './localeText';
 
 export interface SelectedEvent extends AgEvent { }
 
@@ -38,7 +39,10 @@ export class SetFilterListItem extends Component {
     private selected: boolean = true;
     private tooltipText: string;
 
-    constructor(private readonly value: any, private readonly params: ISetFilterParams) {
+    constructor(
+        private readonly value: any,
+        private readonly params: ISetFilterParams,
+        private readonly translate: (key: keyof ISetFilterLocaleText) => string) {
         super(SetFilterListItem.TEMPLATE);
     }
 
@@ -109,18 +113,14 @@ export class SetFilterListItem extends Component {
         if (cellRendererPromise == null) {
             const valueToRender = params.valueFormatted == null ? params.value : params.valueFormatted;
 
-            eTarget.innerText = valueToRender == null ?
-                `(${this.gridOptionsWrapper.getLocaleTextFunc()('blanks', 'Blanks')})` :
-                valueToRender;
+            eTarget.innerText = valueToRender == null ? `(${this.translate('blanks')})` : valueToRender;
 
             return;
         }
 
         _.bindCellRendererToHtmlElement(cellRendererPromise, eTarget);
 
-        cellRendererPromise.then(component => {
-            this.addDestroyFunc(() => this.getContext().destroyBean(component));
-        });
+        cellRendererPromise.then(component => this.addDestroyFunc(() => this.getContext().destroyBean(component)));
     }
 
     public getComponentHolder(): ColDef {

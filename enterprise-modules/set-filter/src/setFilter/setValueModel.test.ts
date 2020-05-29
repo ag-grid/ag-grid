@@ -20,24 +20,15 @@ function createSetValueModel(
     valueFormatterService.formatValue.mockImplementation((_1, _2, _3, value) => value);
 
     return new SetValueModel(
-        colDef,
         rowModel,
+        colDef,
+        null,
         node => node.data.value,
         doesRowPassOtherFilters,
         suppressSorting,
         _ => { },
         valueFormatterService,
-        null);
-}
-
-function getValues(model: SetValueModel) {
-    const values = [];
-
-    for (let i = 0; i < model.getUniqueValueCount(); i++) {
-        values.push(model.getUniqueValue(i));
-    }
-
-    return values;
+        key => key === 'blanks' ? 'Blanks' : null);
 }
 
 function getDisplayedValues(model: SetValueModel) {
@@ -441,6 +432,24 @@ describe('mini filter', () => {
         model.setMiniFilter('foo');
 
         expect(getDisplayedValues(model)).toStrictEqual([]);
+    });
+
+    it('does not show Blanks entry if mini filter matches', () => {
+        const values = ['A', null, 'B'];
+        const model = createSetValueModel(values);
+
+        model.setMiniFilter('bla');
+
+        expect(getDisplayedValues(model)).toStrictEqual([]);
+    });
+
+    it.each(['windows', 'mac'])('shows Blanks entry if mini filter matches in %s Excel mode', excelMode => {
+        const values = ['A', null, 'B'];
+        const model = createSetValueModel(values, { excelMode });
+
+        model.setMiniFilter('bla');
+
+        expect(getDisplayedValues(model)).toStrictEqual([null]);
     });
 });
 

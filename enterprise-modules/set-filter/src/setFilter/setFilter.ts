@@ -22,6 +22,7 @@ import {
 import { SetFilterModelValuesType, SetValueModel } from './setValueModel';
 import { SetFilterListItem } from './setFilterListItem';
 import { SetFilterModel } from './setFilterModel';
+import { ISetFilterLocaleText, DEFAULT_LOCALE_TEXT } from './localeText';
 
 export class SetFilter extends ProvidedFilter {
     private valueModel: SetValueModel;
@@ -61,11 +62,9 @@ export class SetFilter extends ProvidedFilter {
     }
 
     protected createBodyTemplate(): string {
-        const translate = this.gridOptionsWrapper.getLocaleTextFunc();
-
         return /* html */`
             <div>
-                <div ref="eFilterLoading" class="ag-filter-loading ag-hidden">${translate('loadingOoo', 'Loading...')}</div>
+                <div ref="eFilterLoading" class="ag-filter-loading ag-hidden">${this.translate('loadingOoo')}</div>
                 <div class="ag-filter-header-container" role="presentation">
                     <ag-input-text-field class="ag-mini-filter" ref="eMiniFilter"></ag-input-text-field>
                     <label ref="eSelectAllContainer" class="ag-set-filter-item ag-set-filter-select-all">
@@ -73,7 +72,7 @@ export class SetFilter extends ProvidedFilter {
                         <span ref="eSelectAllLabel" class="ag-set-filter-item-value"></span>
                     </label>
                 </div>
-                <div ref="eFilterNoMatches" class="ag-filter-no-matches ag-hidden">${translate('noMatches', 'No matches.')}</div>
+                <div ref="eFilterNoMatches" class="ag-filter-no-matches ag-hidden">${this.translate('noMatches')}</div>
                 <div ref="eSetFilterList" class="ag-set-filter-list" role="presentation"></div>
             </div>`;
     }
@@ -206,14 +205,15 @@ export class SetFilter extends ProvidedFilter {
         this.setFilterParams = params;
 
         this.valueModel = new SetValueModel(
-            params.colDef,
             params.rowModel,
+            params.colDef,
+            params.column,
             params.valueGetter,
             params.doesRowPassOtherFilter,
             params.suppressSorting,
             loading => this.setLoading(loading),
             this.valueFormatterService,
-            params.column
+            key => this.translate(key),
         );
 
         this.initialiseFilterBodyUi();
@@ -339,7 +339,7 @@ export class SetFilter extends ProvidedFilter {
     }
 
     private createSetListItem(value: any): Component {
-        const listItem = this.createBean(new SetFilterListItem(value, this.setFilterParams));
+        const listItem = this.createBean(new SetFilterListItem(value, this.setFilterParams, key => this.translate(key)));
         const selected = this.valueModel.isValueSelected(value);
 
         listItem.setSelected(selected);
@@ -380,10 +380,9 @@ export class SetFilter extends ProvidedFilter {
             this.resetUiToActiveModel();
         }
 
-        const translate = this.gridOptionsWrapper.getLocaleTextFunc();
         const { eMiniFilter } = this;
 
-        eMiniFilter.setInputPlaceholder(translate('searchOoo', 'Search...'));
+        eMiniFilter.setInputPlaceholder(this.translate('searchOoo'));
         eMiniFilter.getFocusableElement().focus();
     }
 
@@ -530,10 +529,9 @@ export class SetFilter extends ProvidedFilter {
     }
 
     private updateSelectAllLabel() {
-        const translate = this.gridOptionsWrapper.getLocaleTextFunc();
         const label = this.valueModel.getMiniFilter() == null || !this.setFilterParams.excelMode ?
-            translate('selectAll', 'Select All') :
-            translate('selectAllSearchResults', 'Select All Search Results');
+            this.translate('selectAll') :
+            this.translate('selectAllSearchResults');
 
         this.eSelectAllLabel.innerText = `(${label})`;
     }
@@ -646,6 +644,12 @@ export class SetFilter extends ProvidedFilter {
         else {
             this.virtualList.refresh();
         }
+    }
+
+    private translate(key: keyof ISetFilterLocaleText): string {
+        const translate = this.gridOptionsWrapper.getLocaleTextFunc();
+
+        return translate(key, DEFAULT_LOCALE_TEXT[key]);
     }
 }
 
