@@ -86,7 +86,7 @@ export class CheckboxSelectionComponent extends Component {
             this.showOrHideSelect();
         }
 
-        this.eCheckbox.setInputAriaLabel('Select Row');
+        this.eCheckbox.setInputAriaLabel('Toggle Row Selection');
     }
 
     private showOrHideSelect(): void {
