@@ -69,7 +69,7 @@ export class TextFilter extends SimpleFilter<TextFilterModel> {
                 console.warn('invalid filter type ' + filter);
                 return false;
         }
-    }
+    };
 
     @RefSelector('eValue1') private eValue1: AgInputTextField;
     @RefSelector('eValue2') private eValue2: AgInputTextField;
@@ -154,8 +154,7 @@ export class TextFilter extends SimpleFilter<TextFilterModel> {
     }
 
     private resetPlaceholder(): void {
-        const translate = this.translate.bind(this);
-        const placeholder = translate('filterOoo', 'Filter...');
+        const placeholder = this.translate('filterOoo');
 
         this.forEachInput(field => field.setInputPlaceholder(placeholder));
     }

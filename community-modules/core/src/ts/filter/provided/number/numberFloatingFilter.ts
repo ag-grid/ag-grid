@@ -1,6 +1,6 @@
-import { NumberFilter, NumberFilterModel } from "./numberFilter";
-import { SimpleFilter } from "../simpleFilter";
-import { TextInputFloatingFilter } from "../../floating/provided/textInputFloatingFilter";
+import { NumberFilter, NumberFilterModel } from './numberFilter';
+import { SimpleFilter } from '../simpleFilter';
+import { TextInputFloatingFilter } from '../../floating/provided/textInputFloatingFilter';
 
 export class NumberFloatingFilter extends TextInputFloatingFilter {
 
@@ -22,5 +22,4 @@ export class NumberFloatingFilter extends TextInputFloatingFilter {
 
         return `${condition.type}`;
     }
-
 }

@@ -58,7 +58,7 @@ var gridOptions = {
         selectAllSearchResults: 'daSelect Allen Searchen Resulten',
         searchOoo: 'daSearch...',
         blanks: 'daBlanc',
-        noMatches: 'daNo Matchen',
+        noMatches: 'daNo Matchen.',
 
         // for number filter and text filter
         filterOoo: 'daFilter...',

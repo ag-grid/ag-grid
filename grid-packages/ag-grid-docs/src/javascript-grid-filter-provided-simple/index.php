@@ -517,14 +517,14 @@ SNIPPET
 </p>
 
 <?= createSnippet(<<<SNIPPET
-export interface IFilterOptionDef {
+interface IFilterOptionDef {
     displayKey: string;
     displayName: string;
     test: (filterValue: any, cellValue: any) => boolean;
     hideFilterInput?: boolean;
 }
 SNIPPET
-) ?>
+, 'ts') ?>
 
 <p>
     The <code>displayKey</code> should contain a unique key value that doesn't clash with the built-in filter keys.

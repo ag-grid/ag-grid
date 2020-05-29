@@ -2,9 +2,11 @@ import { IDoesFilterPassParams, IFilterOptionDef, ProvidedFilterModel } from '..
 import { RefSelector } from '../../widgets/componentAnnotations';
 import { OptionsFactory } from './optionsFactory';
 import { IProvidedFilterParams, ProvidedFilter } from './providedFilter';
-import { _, Promise } from '../../utils';
+import { Promise } from '../../utils';
 import { AgSelect } from '../../widgets/agSelect';
 import { AgRadioButton } from '../../widgets/agRadioButton';
+import { forEach } from '../../utils/array';
+import { setDisplayed } from '../../utils/dom';
 
 export interface ISimpleFilterParams extends IProvidedFilterParams {
     filterOptions?: (IFilterOptionDef | string)[];
@@ -24,32 +26,44 @@ export interface ICombinedSimpleModel<M extends ISimpleFilterModel> extends Prov
 
 export enum ConditionPosition { One, Two }
 
-const DEFAULT_TRANSLATIONS: { [name: string]: string; } = {
-    loadingOoo: 'Loading...',
+interface ISimpleFilterTranslations {
+    filterOoo: string;
+    empty: string;
+    equals: string;
+    notEqual: string;
+    lessThan: string;
+    greaterThan: string;
+    inRange: string;
+    inRangeStart: string;
+    inRangeEnd: string;
+    lessThanOrEqual: string;
+    greaterThanOrEqual: string;
+    contains: string;
+    notContains: string;
+    startsWith: string;
+    endsWith: string;
+    andCondition: string;
+    orCondition: string;
+}
+
+const DEFAULT_TRANSLATIONS: ISimpleFilterTranslations = {
+    filterOoo: 'Filter...',
     empty: 'Choose One',
     equals: 'Equals',
     notEqual: 'Not equal',
     lessThan: 'Less than',
     greaterThan: 'Greater than',
     inRange: 'In range',
-    lessThanOrEqual: 'Less than or equals',
-    greaterThanOrEqual: 'Greater than or equals',
-    filterOoo: 'Filter...',
     inRangeStart: 'From',
     inRangeEnd: 'To',
+    lessThanOrEqual: 'Less than or equals',
+    greaterThanOrEqual: 'Greater than or equals',
     contains: 'Contains',
     notContains: 'Not contains',
     startsWith: 'Starts with',
     endsWith: 'Ends with',
-    searchOoo: 'Search...',
-    selectAll: 'Select All',
-    selectAllSearchResults: 'Select All Search Results',
-    applyFilter: 'Apply Filter',
-    clearFilter: 'Clear Filter',
-    cancelFilter: 'Cancel Filter',
     andCondition: 'AND',
     orCondition: 'OR',
-    noMatches: 'No matches',
 };
 
 /**
@@ -263,22 +277,29 @@ export abstract class SimpleFilter<M extends ISimpleFilterModel> extends Provide
     private putOptionsIntoDropdown(): void {
         const filterOptions = this.optionsFactory.getFilterOptions();
 
-        filterOptions.forEach(option => {
-            const createOption = () => {
-                const key = (typeof option === 'string') ? option : option.displayKey;
-                const localName = this.translate(key);
+        forEach(filterOptions, option => {
+            let value: string;
+            let text: string;
 
-                return {
-                    value: key,
-                    text: localName
-                };
-            };
+            if (typeof option === 'string') {
+                value = option;
+                text = this.translate(value as keyof ISimpleFilterTranslations);
+            } else {
+                value = option.displayKey;
+
+                const customOption = this.optionsFactory.getCustomOption(value);
+
+                text = customOption ? customOption.displayName : this.translate(value as keyof ISimpleFilterTranslations);
+            }
+
+            const createOption = () => ({ value, text });
 
             this.eType1.addOption(createOption());
             this.eType2.addOption(createOption());
         });
 
         const readOnly = filterOptions.length <= 1;
+
         this.eType1.setDisabled(readOnly);
         this.eType2.setDisabled(readOnly);
     }
@@ -306,14 +327,14 @@ export abstract class SimpleFilter<M extends ISimpleFilterModel> extends Provide
     protected updateUiVisibility(): void {
         const firstConditionComplete = this.isConditionUiComplete(ConditionPosition.One);
         const showSecondFilter = this.allowTwoConditions && firstConditionComplete;
-        _.setDisplayed(this.eCondition2Body, showSecondFilter);
-        _.setDisplayed(this.eType2.getGui(), showSecondFilter);
-        _.setDisplayed(this.eJoinOperatorPanel, showSecondFilter);
+
+        setDisplayed(this.eCondition2Body, showSecondFilter);
+        setDisplayed(this.eType2.getGui(), showSecondFilter);
+        setDisplayed(this.eJoinOperatorPanel, showSecondFilter);
     }
 
     protected resetUiToDefaults(silent?: boolean): Promise<void> {
         const uniqueGroupId = 'ag-simple-filter-and-or-' + this.getCompId();
-        const translate = this.gridOptionsWrapper.getLocaleTextFunc();
         const defaultOption = this.optionsFactory.getDefaultOption();
 
         this.eType1.setValue(defaultOption, silent);
@@ -321,26 +342,20 @@ export abstract class SimpleFilter<M extends ISimpleFilterModel> extends Provide
         this.eJoinOperatorAnd
             .setValue(true, silent)
             .setName(uniqueGroupId)
-            .setLabel(translate('andCondition', 'AND'));
+            .setLabel(this.translate('andCondition'));
 
         this.eJoinOperatorOr
             .setValue(false, silent)
             .setName(uniqueGroupId)
-            .setLabel(translate('orCondition', 'OR'));
+            .setLabel(this.translate('orCondition'));
 
         return Promise.resolve();
     }
 
-    public translate(toTranslate: string): string {
+    public translate(toTranslate: keyof ISimpleFilterTranslations): string {
         const translate = this.gridOptionsWrapper.getLocaleTextFunc();
 
-        let defaultTranslation = DEFAULT_TRANSLATIONS[toTranslate];
-
-        if (!defaultTranslation && this.optionsFactory.getCustomOption(toTranslate)) {
-            defaultTranslation = this.optionsFactory.getCustomOption(toTranslate).displayName;
-        }
-
-        return translate(toTranslate, defaultTranslation);
+        return translate(toTranslate, DEFAULT_TRANSLATIONS[toTranslate]);
     }
 
     public addChangedListeners() {
