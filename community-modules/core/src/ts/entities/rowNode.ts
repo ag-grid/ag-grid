@@ -332,7 +332,9 @@ export class RowNode implements IEventEmitter {
             // this is important for virtual pagination and viewport, where empty rows exist.
             if (this.data) {
                 this.id = getRowNodeId(this.data);
-                if (this.id && this.id.startsWith(RowNode.ID_PREFIX_ROW_GROUP)) {
+                // make sure id provided doesn't start with 'row-group-' as this is reserved. also check that
+                // it has 'startsWith' in case the user provided a number.
+                if (this.id && this.id.startsWith && this.id.startsWith(RowNode.ID_PREFIX_ROW_GROUP)) {
                     console.error(`ag-Grid: Row ID's cannot start with ${RowNode.ID_PREFIX_ROW_GROUP}, this is a reserved prefix for ag-Grid's row grouping feature.`);
                 }
             } else {
