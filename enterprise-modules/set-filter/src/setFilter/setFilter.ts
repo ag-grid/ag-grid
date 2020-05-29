@@ -31,6 +31,8 @@ export class SetFilter extends ProvidedFilter {
     @RefSelector('eMiniFilter') private eMiniFilter: AgInputTextField;
     @RefSelector('eFilterLoading') private eFilterLoading: HTMLInputElement;
     @RefSelector('eSetFilterList') private eSetFilterList: HTMLElement;
+    @RefSelector('eFilterNoMatches') private eNoMatches: HTMLElement;
+    @RefSelector('eSelectAllContainer') private eSelectAllContainer: HTMLElement;
 
     @Autowired('valueFormatterService') private valueFormatterService: ValueFormatterService;
     @Autowired('focusController') private focusController: FocusController;
@@ -71,6 +73,7 @@ export class SetFilter extends ProvidedFilter {
                         <span ref="eSelectAllLabel" class="ag-set-filter-item-value"></span>
                     </label>
                 </div>
+                <div ref="eFilterNoMatches" class="ag-filter-no-matches ag-hidden">${translate('noMatches', 'No matches.')}</div>
                 <div ref="eSetFilterList" class="ag-set-filter-list" role="presentation"></div>
             </div>`;
     }
@@ -359,12 +362,10 @@ export class SetFilter extends ProvidedFilter {
     }
 
     private initSelectAll() {
-        const eSelectAllContainer = this.getRefElement('eSelectAllContainer');
-
         if (this.setFilterParams.suppressSelectAll) {
-            _.setDisplayed(eSelectAllContainer, false);
+            _.setDisplayed(this.eSelectAllContainer, false);
         } else {
-            this.eSelectAll.onValueChange(() => { this.onSelectAll(); });
+            this.eSelectAll.onValueChange(() => this.onSelectAll());
         }
     }
 
@@ -511,6 +512,14 @@ export class SetFilter extends ProvidedFilter {
             }
         } else {
             this.refresh();
+        }
+
+        const hideResults = this.valueModel.getMiniFilter() != null && this.valueModel.getDisplayedValueCount() < 1;
+
+        _.setDisplayed(this.eNoMatches, hideResults);
+
+        if (!this.setFilterParams.suppressSelectAll) {
+            _.setDisplayed(this.eSelectAllContainer, !hideResults);
         }
     }
 

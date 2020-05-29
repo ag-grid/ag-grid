@@ -1,11 +1,10 @@
-
 @mixin ag-theme-base-part-header {
-    
+
     .ag-header {
         @include ag-color-property(background-color, header-background-color);
         @include ag-border(critical, bottom);
     }
-    
+
     .ag-header-row {
         @include ag-color-property(color, header-foreground-color);
     }
@@ -34,7 +33,7 @@
     .ag-header-group-cell {
         padding-left: ag-param(cell-horizontal-padding);
         padding-right: ag-param(cell-horizontal-padding);
-        
+
         &.ag-header-cell-moving {
             @include ag-color-property(background-color, header-cell-moving-background-color);
         }
@@ -72,7 +71,7 @@
             }
         }
     }
-    
+
     @if ag-param(header-column-separator) {
         .ag-header-cell::after,
         .ag-header-group-cell::after {
@@ -88,7 +87,7 @@
             @include ag-theme-rtl(( right: 0 ));
         }
     }
-    
+
     @if ag-param(header-column-resize-handle) {
         .ag-header-cell-resize {
             display: flex;
@@ -115,7 +114,7 @@
     .ag-header-select-all {
         @include ag-theme-rtl(( margin-right: ag-param(cell-horizontal-padding) ));
     }
-    
+
     .ag-floating-filter-button {
         @include ag-theme-rtl(( margin-left: ag-param(grid-size) * 3 ));
     }

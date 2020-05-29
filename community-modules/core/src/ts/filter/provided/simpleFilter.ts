@@ -48,7 +48,8 @@ const DEFAULT_TRANSLATIONS: { [name: string]: string; } = {
     clearFilter: 'Clear Filter',
     cancelFilter: 'Cancel Filter',
     andCondition: 'AND',
-    orCondition: 'OR'
+    orCondition: 'OR',
+    noMatches: 'No matches',
 };
 
 /**
