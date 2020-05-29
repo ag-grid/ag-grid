@@ -52,9 +52,8 @@ export class GroupStage extends BeanStub implements IRowNodeStage {
 
     // we use a sequence variable so that each time we do a grouping, we don't
     // reuse the ids - otherwise the rowRenderer will confuse rowNodes between redraws
-    // when it tries to animate between rows. we set to -1 as others row id 0 will be shared
-    // with the other rows.
-    private groupIdSequence = new NumberSequence(1);
+    // when it tries to animate between rows.
+    private groupIdSequence = new NumberSequence();
 
     // when grouping, these items are of note:
     // rowNode.parent: RowNode: set to the parent
@@ -491,9 +490,9 @@ export class GroupStage extends BeanStub implements IRowNodeStage {
             }
         });
 
-        // we use negative number for the ids of the groups, this makes sure we don't clash with the
-        // id's of the leaf nodes.
-        groupNode.id = (this.groupIdSequence.next() * -1).toString();
+        // we put 'row-group-' before the group id, so it doesn't clash with standard row id's. we also use 't-' and 'b-'
+        // for top pinned and bottom pinned rows.
+        groupNode.id = RowNode.ID_PREFIX_ROW_GROUP + this.groupIdSequence.next();
         groupNode.key = groupInfo.key;
 
         groupNode.level = level;

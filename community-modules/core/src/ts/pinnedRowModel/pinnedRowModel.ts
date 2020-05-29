@@ -79,7 +79,10 @@ export class PinnedRowModel extends BeanStub {
                 const rowNode = new RowNode();
                 this.context.createBean(rowNode);
                 rowNode.data = dataItem;
-                rowNode.id = `${isTop ? 't' : 'b'}-${index}`;
+
+                const idPrefix = isTop ? RowNode.ID_PREFIX_TOP_PINNED : RowNode.ID_PREFIX_BOTTOM_PINNED;
+                rowNode.id = idPrefix + index;
+
                 rowNode.rowPinned = isTop ? Constants.PINNED_TOP : Constants.PINNED_BOTTOM;
                 rowNode.setRowTop(nextRowTop);
                 rowNode.setRowHeight(this.gridOptionsWrapper.getRowHeightForNode(rowNode).height);
