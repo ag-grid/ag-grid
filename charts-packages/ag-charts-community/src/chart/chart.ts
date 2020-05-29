@@ -747,6 +747,10 @@ export abstract class Chart extends Observable {
 
     // Provided x/y are in canvas coordinates.
     private pickClosestSeriesNodeDatum(x: number, y: number): SeriesNodeDatum | undefined {
+        if (!this.seriesRect || !this.seriesRect.containsPoint(x, y)) {
+            return undefined;
+        }
+
         const allSeries = this.series;
 
         type Point = { x: number, y: number};
