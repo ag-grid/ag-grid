@@ -104,7 +104,7 @@ export class FilterManager extends BeanStub {
             });
         }
 
-        Promise.all(allPromises).then(_ => this.onFilterChanged());
+        Promise.all(allPromises).then(() => this.onFilterChanged());
     }
 
     private setModelOnFilterWrapper(filterPromise: Promise<IFilterComp>, newModel: any): Promise<void> {
@@ -238,14 +238,14 @@ export class FilterManager extends BeanStub {
         this.externalFilterPresent = this.gridOptionsWrapper.isExternalFilterPresent();
     }
 
-    public onFilterChanged(additionalEventAttributes?: any): void {
+    public onFilterChanged(filterInstance?: IFilterComp, additionalEventAttributes?: any): void {
         this.setAdvancedFilterPresent();
         this.updateFilterFlagInColumns('filterChanged', additionalEventAttributes);
         this.checkExternalFilter();
 
         this.allFilters.forEach(filterWrapper => {
             filterWrapper.filterPromise.then(filter => {
-                if (filter.onAnyFilterChanged) {
+                if (filter !== filterInstance && filter.onAnyFilterChanged) {
                     filter.onAnyFilterChanged();
                 }
             });
@@ -424,7 +424,6 @@ export class FilterManager extends BeanStub {
 
         const params = this.createFilterParams(column, sanitisedColDef, $scope);
 
-        params.filterChangedCallback = this.onFilterChanged.bind(this);
         params.filterModifiedCallback = () => {
             const event: FilterModifiedEvent = {
                 type: Events.EVENT_FILTER_MODIFIED,
@@ -440,7 +439,9 @@ export class FilterManager extends BeanStub {
         // we modify params in a callback as we need the filter instance, and this isn't available
         // when creating the params above
         const modifyParamsCallback = (params: any, filterInstance: IFilterComp) => assign(params, {
-            doesRowPassOtherFilter: this.doesRowPassOtherFilters.bind(this, filterInstance),
+            doesRowPassOtherFilter: (node: RowNode) => this.doesRowPassOtherFilters(filterInstance, node),
+            filterChangedCallback: (additionalEventAttributes?: any) =>
+                this.onFilterChanged(filterInstance, additionalEventAttributes)
         });
 
         const res = this.userComponentFactory.newFilterComponent(sanitisedColDef, params, defaultFilter, modifyParamsCallback);

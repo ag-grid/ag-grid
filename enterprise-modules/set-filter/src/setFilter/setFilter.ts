@@ -526,10 +526,7 @@ export class SetFilter extends ProvidedFilter {
     private resetUiToActiveModel(): void {
         this.eMiniFilter.setValue(null, true);
         this.valueModel.setMiniFilter(null);
-        this.setModelIntoUi(this.getModel() as SetFilterModel).then(() => {
-            this.refresh();
-            this.onUiChanged(false, 'prevent');
-        });
+        this.setModelIntoUi(this.getModel() as SetFilterModel).then(() => this.onUiChanged(false, 'prevent'));
     }
 
     private updateSelectAllLabel() {
