@@ -36,7 +36,7 @@ include '../documentation-main/documentation_header.php';
     </p>
 
     <note>
-        When a header cell is focused, commands like <strong>page up</strong>, <strong>page down</strong>, 
+        When a header cell is focused, commands like <strong>page up</strong>, <strong>page down</strong>,
         <strong>home</strong>, <strong>end</strong>, <strong>ctrl + left / right</strong> will not work as they
         do when a grid cell is focused.
     </note>
@@ -82,7 +82,7 @@ include '../documentation-main/documentation_header.php';
     </p>
 
     <h3>Grouped Headers</h3>
-    
+
     <p>
         While navigating grouped headers, if the current grouped header is expandable, pressing <code>ENTER</code>
         will toggle the expanded state of the group
@@ -92,7 +92,7 @@ include '../documentation-main/documentation_header.php';
 
     <p>
         Regular header may have selection checkboxes, sorting functions and menus, so to access all these functions
-        while focusing a header, you can do the following: 
+        while focusing a header, you can do the following:
         <ul>
             <li>
                 Press <code>SPACE</code> to toggle the header checkbox selection.
@@ -113,11 +113,11 @@ include '../documentation-main/documentation_header.php';
         </ul>
 
     <h3>Floating Filters</h3>
-    
+
     <p>
         While navigation the floating filters header with the keyboard pressing left/right the focus will move
         from header cell to header cell, if you wish to navigate within the cell, press <code>ENTER</code> to focus
-        the first enabled element within the current floating filter cell, and press <code>ESCAPE</code> to return 
+        the first enabled element within the current floating filter cell, and press <code>ESCAPE</code> to return
         the focus to the floating filter cell.
     </p>
 
@@ -230,7 +230,7 @@ interface CellPosition {
     <h2>Tabbing into the Grid</h2>
 
     <p>
-        In applications where the grid is embedded into a larger page, by default, when tabbing into the grid, 
+        In applications where the grid is embedded into a larger page, by default, when tabbing into the grid,
         the first column header will be focused.
     </p>
 
@@ -338,10 +338,10 @@ myInput.addEventListener("keydown", function (event) {
         The callback has the following signature:
     </p>
 
-<snippet>function suppressKeyboardEvent(params: SuppressKeyboardEventParams) => boolean;
+<?= createSnippet(<<<SNIPPET
+function suppressKeyboardEvent(params: SuppressKeyboardEventParams) => boolean;
 
-export interface SuppressKeyboardEventParams extends IsColumnFuncParams {
-
+interface SuppressKeyboardEventParams extends IsColumnFuncParams {
     // the keyboard event the grid received. inspect this to see what key was pressed
     event: KeyboardEvent;
 
@@ -356,7 +356,9 @@ export interface SuppressKeyboardEventParams extends IsColumnFuncParams {
     context: any; // context object
     api: GridApi | null | undefined; // grid API
     columnApi: ColumnApi | null | undefined; // column API
-}</snippet>
+}
+SNIPPET
+, 'ts') ?>
 
     <p>
         The callback is available as a <a href="../javascript-grid-callbacks/">grid callback</a>

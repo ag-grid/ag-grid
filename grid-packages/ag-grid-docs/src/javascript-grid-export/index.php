@@ -114,7 +114,7 @@ include '../documentation-main/documentation_header.php';
 <p><code>customHeader</code> and <code>customFooter</code> both take a 2D array of ExcelCell objects:</p>
 
 <?= createSnippet(<<<SNIPPET
-export interface ExcelCell {
+interface ExcelCell {
     data: ExcelData;
     // Optional style to apply
     styleId?: string;
@@ -123,13 +123,13 @@ export interface ExcelCell {
     mergeAcross?: number;
 }
 
-export interface ExcelData {
+interface ExcelData {
     // Excel data type. Case sensitive.
     type: 'String' | 'Number' | 'Boolean' | 'DateTime' | 'Error';
     value: string | null;
 }
 SNIPPET
-) ?>
+, 'ts') ?>
 
 <p>See the styles section of the <a href="../javascript-grid-excel/">Excel Export</a> page for
 more information how the <code>styleId</code> property is interpreted. The CSV exporter will

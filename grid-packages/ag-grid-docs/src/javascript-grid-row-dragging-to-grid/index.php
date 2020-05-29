@@ -19,14 +19,14 @@ function removeRowDropZone(params: RowDropZoneParams) => void;
 function getRowDropZoneParams(events: RowDropZoneEvents) => RowDropZoneParams;
 
 // interface for events
-export interface RowDropZoneEvents {
+interface RowDropZoneEvents {
     onDragEnter?: (params: RowDragEnterEvent) => void;
     onDragLeave?: (params: RowDragLeaveEvent) => void;
     onDragging?: (params: RowDragMoveEvent) => void;
     onDragStop?: (params: RowDragEndEvent) => void;
 }
 SNIPPET
-) ?>
+, 'ts') ?>
 
 <h2>Adding a Grid as Target</h2>
 
