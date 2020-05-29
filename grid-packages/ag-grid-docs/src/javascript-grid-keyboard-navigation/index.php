@@ -101,10 +101,10 @@ include '../documentation-main/documentation_header.php';
                 Press <code>ENTER</code> to toggle the sorting state of that column.
             </li>
             <li>
-                Press <code>CTRL/CMD + ENTER</code> to toggle multi-sort for that column.
+                Press <code>Shift + ENTER</code> to toggle multi-sort for that column.
             </li>
             <li>
-                Press <code>m</code> to open the menu for the focused header.
+                Press <code>Ctrl/Cmd + ENTER</code> to open the menu for the focused header.
             </li>
             <li>
                 When a menu is open, simply press <code>ESCAPE</code> to close it and the focus will

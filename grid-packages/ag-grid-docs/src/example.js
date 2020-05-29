@@ -217,7 +217,7 @@ var gridOptions = {
     // unSortIcon: true,
     enableRtl: /[?&]rtl=true/.test(window.location.search),
     enableCharts: true,
-    multiSortKey: 'ctrl',
+    // multiSortKey: 'ctrl',
     animateRows: true,
 
     enableRangeSelection: true,
