@@ -68,7 +68,7 @@ export function parser(js, html, exampleSettings) {
     const collectors = [];
     const gridOptionsCollectors = [];
     const onReadyCollectors = [];
-    const indentOne = { format: { indent: { base: 1 } } };
+    const indentOne = { format: { indent: { base: 1 }, quotes: 'double' } };
     const registered = ['gridOptions'];
 
     // handler is the function name, params are any function parameters
@@ -199,10 +199,12 @@ export function parser(js, html, exampleSettings) {
 
         gridOptionsCollectors.push({
             matches: node => nodeIsPropertyWithName(node, propertyName),
-            apply: (bindings, node) => bindings.properties.push({
-                name: propertyName,
-                value: generate(node.value, indentOne)
-            })
+            apply: (bindings, node) => {
+                bindings.properties.push({
+                    name: propertyName,
+                    value: generate(node.value, indentOne)
+                })
+            }
         });
     });
 

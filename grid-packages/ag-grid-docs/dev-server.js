@@ -750,3 +750,12 @@ module.exports = async (done) => {
             done();
         });
 };
+
+
+// *** Don't remove these unused vars! ***
+//     node dev-server.js generate-examples [src directory]
+// eg: node dev-server.js generate-examples javascript-grid-accessing-data
+const [cmd, script, execFunc, exampleDir] = process.argv;
+if (process.argv.length >= 4 && exampleDir && execFunc === 'generate-examples') {
+    generateExamples(exampleDir);
+}

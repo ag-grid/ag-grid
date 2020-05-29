@@ -131,9 +131,10 @@ function format(source, parser) {
 }
 
 function createExampleGenerator(prefix, importType) {
-    const [parser, vanillaToVue, vanillaToReact, vanillaToAngular, appModuleAngular] = getGeneratorCode(prefix, importType);
+    const [parser, vanillaToVue, vanillaToReact, vanillaToReactDeclarative, vanillaToAngular, appModuleAngular] = getGeneratorCode(prefix, importType);
 
     return (examplePath, options) => {
+
         //    src section                        example        glob
         // eg src/javascript-grid-accessing-data/using-for-each/*.js
         const createExamplePath = pattern => path.join(examplePath, pattern);
@@ -182,14 +183,26 @@ function createExampleGenerator(prefix, importType) {
 
         const reactScripts = getMatchingPaths('*_react*');
         let indexJSX;
-
         try {
             const source = vanillaToReact(bindings, extractComponentFileNames(reactScripts, '_react'), importType);
-
             indexJSX = format(source, 'babel');
         } catch (e) {
             console.error(`Failed to process React example in ${examplePath}`, e);
             throw e;
+        }
+
+        // spl spike
+        let reactDeclarativeScripts = null;
+        let indexDeclarativeJSX = null;
+        if(vanillaToReactDeclarative && options.reactDeclarative) {
+            reactDeclarativeScripts = getMatchingPaths('*_react*');
+            try {
+                const source = vanillaToReactDeclarative(bindings, extractComponentFileNames(reactDeclarativeScripts, '_react'), importType);
+                indexDeclarativeJSX = format(source, 'babel');
+            } catch (e) {
+                console.error(`Failed to process React example in ${examplePath}`, e);
+                throw e;
+            }
         }
 
         const angularScripts = getMatchingPaths('*_angular*');
@@ -198,7 +211,6 @@ function createExampleGenerator(prefix, importType) {
 
         try {
             const source = vanillaToAngular(bindings, angularComponentFileNames, importType);
-
             appComponentTS = format(source, 'typescript');
             appModuleTS = format(appModuleAngular(angularComponentFileNames), 'typescript');
         } catch (e) {
@@ -211,7 +223,6 @@ function createExampleGenerator(prefix, importType) {
 
         try {
             const source = vanillaToVue(bindings, extractComponentFileNames(vueScripts, '_vue', 'Vue'), importType);
-
             mainApp = format(source, 'babel');
         } catch (e) {
             console.error(`Failed to process Vue example in ${examplePath}`, e);
@@ -241,21 +252,26 @@ function createExampleGenerator(prefix, importType) {
             copyFilesSync(frameworkScripts, scriptsPath, `_${framework}`, componentPostfix);
         };
 
-        writeExampleFiles('react', reactScripts, { 'index.jsx': indexJSX });
+        if(vanillaToReactDeclarative && options.reactDeclarative) {
+            writeExampleFiles('react', reactDeclarativeScripts, {'index.jsx': indexDeclarativeJSX});
+        } else {
+            writeExampleFiles('react', reactScripts, { 'index.jsx': indexJSX });
+        }
 
-        writeExampleFiles('angular', angularScripts, {
-            'app.component.ts': appComponentTS,
-            'app.module.ts': appModuleTS,
-        }, 'app');
+
+        // writeExampleFiles('angular', angularScripts, {
+        //     'app.component.ts': appComponentTS,
+        //     'app.module.ts': appModuleTS,
+        // }, 'app');
 
         // we rename the files so that they end with "Vue.js" - we do this so that we can (later, at runtime) exclude these
         // from index.html will still including other non-component files
-        writeExampleFiles('vue', vueScripts, { 'main.js': mainApp }, undefined, 'Vue');
+        // writeExampleFiles('vue', vueScripts, { 'main.js': mainApp }, undefined, 'Vue');
 
         inlineStyles = undefined; // unset these as they don't need to be copied for vanilla
 
         const vanillaScripts = getMatchingPaths('*.{html,js}', { ignore: ['**/*_{angular,react,vue}.js'] });
-        writeExampleFiles('vanilla', vanillaScripts, {});
+        // writeExampleFiles('vanilla', vanillaScripts, {});
 
         // allow developers to override the example theme with an environment variable
         const themeOverride = process.env.AG_EXAMPLE_THEME_OVERRIDE;
@@ -275,10 +291,17 @@ function getGeneratorCode(prefix, importType) {
     const { parser } = require(`${prefix}vanilla-src-parser.ts`);
     const { vanillaToVue } = require(`${prefix}vanilla-to-vue.ts`);
     const { vanillaToReact } = require(`${prefix}vanilla-to-react.ts`);
+
+    // spl temporary for spike - will add charts if successful
+    let vanillaToReactDeclarative = null;
+    if(prefix === './src/example-runner/grid-') {
+        vanillaToReactDeclarative = require(`${prefix}vanilla-to-react-declarative.ts`).vanillaToReactDeclarative;
+    }
+
     const { vanillaToAngular } = require(`${prefix}vanilla-to-angular.ts`);
     const { appModuleAngular } = require(`${prefix}${importType}-angular-app-module.ts`);
 
-    return [parser, vanillaToVue, vanillaToReact, vanillaToAngular, appModuleAngular];
+    return [parser, vanillaToVue, vanillaToReact, vanillaToReactDeclarative, vanillaToAngular, appModuleAngular];
 }
 
 function generateExamples(type, importType, scope, trigger, done) {
@@ -334,7 +357,7 @@ module.exports.generateExamples = (scope, trigger) => {
         console.log(`\u27F3 Generating all examples...`);
     }
 
-    module.exports.generateGridPackageExamples(scope, trigger);
+    // module.exports.generateGridPackageExamples(scope, trigger);
     module.exports.generateGridModuleExamples(scope, trigger);
-    module.exports.generateChartExamples(scope, trigger);
+    // module.exports.generateChartExamples(scope, trigger);
 };
