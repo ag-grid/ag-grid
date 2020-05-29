@@ -199,7 +199,7 @@ interface IServerSideGetRowsRequest {
 
 // we pass a VO (Value Object) of the column and not the column itself,
 // so the data can be converted to a JSON string and passed to server-side
-export interface ColumnVO {
+interface ColumnVO {
     id: string;
     displayName: string;
     field: string;

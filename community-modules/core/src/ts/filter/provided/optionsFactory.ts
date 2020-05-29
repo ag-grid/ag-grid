@@ -1,18 +1,16 @@
-import { IFilterOptionDef, IFilterParams } from "../../interfaces/iFilter";
-import { IScalarFilterParams } from "./scalarFilter";
-import { ISimpleFilterParams } from "./simpleFilter";
+import { IFilterOptionDef } from '../../interfaces/iFilter';
+import { IScalarFilterParams } from './scalarFilter';
+import { ISimpleFilterParams } from './simpleFilter';
+import { every } from '../../utils/array';
 
 /* Common logic for options, used by both filters and floating filters. */
 export class OptionsFactory {
-
     protected customFilterOptions: { [name: string]: IFilterOptionDef; } = {};
-
     protected filterOptions: (IFilterOptionDef | string)[];
-
     protected defaultOption: string;
 
     public init(params: IScalarFilterParams, defaultOptions: string[]): void {
-        this.filterOptions = params.filterOptions ? params.filterOptions : defaultOptions;
+        this.filterOptions = params.filterOptions || defaultOptions;
         this.mapCustomOptions();
         this.selectDefaultItem(params);
     }
@@ -26,20 +24,19 @@ export class OptionsFactory {
 
         this.filterOptions.forEach(filterOption => {
             if (typeof filterOption === 'string') { return; }
-            if (!filterOption.displayKey) {
-                console.warn("ag-Grid: ignoring FilterOptionDef as it doesn't contain a 'displayKey'");
-                return;
-            }
-            if (!filterOption.displayName) {
-                console.warn("ag-Grid: ignoring FilterOptionDef as it doesn't contain a 'displayName'");
-                return;
-            }
-            if (!filterOption.test) {
-                console.warn("ag-Grid: ignoring FilterOptionDef as it doesn't contain a 'test'");
-                return;
-            }
 
-            this.customFilterOptions[filterOption.displayKey] = filterOption;
+            const requiredProperties: (keyof IFilterOptionDef)[] = ['displayKey', 'displayName', 'test'];
+
+            if (every(requiredProperties, key => {
+                if (!filterOption[key]) {
+                    console.warn(`ag-Grid: ignoring FilterOptionDef as it doesn't contain a '${key}'`);
+                    return false;
+                }
+
+                return true;
+            })) {
+                this.customFilterOptions[filterOption.displayKey] = filterOption;
+            }
         });
     }
 
@@ -48,6 +45,7 @@ export class OptionsFactory {
             this.defaultOption = params.defaultOption;
         } else if (this.filterOptions.length >= 1) {
             const firstFilterOption = this.filterOptions[0];
+
             if (typeof firstFilterOption === 'string') {
                 this.defaultOption = firstFilterOption;
             } else if (firstFilterOption.displayKey) {

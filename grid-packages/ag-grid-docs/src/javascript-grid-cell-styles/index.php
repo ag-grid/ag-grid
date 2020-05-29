@@ -119,8 +119,8 @@ cellClassRules: {
         All cellClass cellStyle and cellClassRules functions take a params object that implements the following interface:
     </p>
 
-    <snippet>
-export interface CellClassParams {
+<?= createSnippet(<<<SNIPPET
+interface CellClassParams {
     // The value to be rendered.
     value: any,
     // The row (from the rowData array, where value was taken) been rendered.
@@ -132,13 +132,14 @@ export interface CellClassParams {
     // The index of the row about to be rendered
     rowIndex: number,
     // If compiling to Angular, is the row's child scope, otherwise null.
-    $scope: any,
+    \$scope: any,
     // A reference to the ag-Grid API.
     api: GridApi,
     // If provided in gridOptions, a context object
     context: any,
-}</snippet>
-
+}
+SNIPPET
+, 'ts') ?>
 
     <p>
         As an alternative, you can also provide shorthands of the functions using an expression.

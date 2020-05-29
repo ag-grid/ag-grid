@@ -218,7 +218,8 @@ include '../documentation-main/documentation_header.php';
     <h3>Processing Individual Cells</h3>
 
     <p>The interfaces and parameters for processing individual cells are as follows:</p>
-    <snippet>
+
+<?= createSnippet(<<<SNIPPET
 // for processing cell during a copy / cut operation
 processCellForClipboard(params: ProcessCellForExportParams): any;
 
@@ -229,24 +230,25 @@ processHeaderForClipboard?params: ProcessHeaderForExportParams): any;
 processCellFromClipboard(params: ProcessCellForExportParams): any;
 
 // for processCellForClipboard and processCellFromClipboard
-export interface ProcessCellForExportParams {
+interface ProcessCellForExportParams {
     value: any, // the value to paste
     node: RowNode, // the row node
     column: Column, // the column
     api: GridApi, // the grid's API
-    columnApi: ColumnApi, // the grids column API
+    columnApi: ColumnApi, // the grid's column API
     context: any, // the context object
     type: string // clipboard, dragCopy (ctrl+D), export
 }
 
 // for processHeaderForClipboard
-export interface ProcessHeaderForExportParams {
+interface ProcessHeaderForExportParams {
     column: Column, // the column
-    api: GridApi, // the api
-    columnApi: ColumnApi, // the column aPI
+    api: GridApi, // the grid API
+    columnApi: ColumnApi, // the column API
     context: any // the context object
 }
-    </snippet>
+SNIPPET
+, 'ts_') ?>
 
     <p>
         These three callbacks above are demonstrated in the example below. Note the following:
@@ -272,15 +274,16 @@ export interface ProcessHeaderForExportParams {
 
     <p>The interface and parameters for processing the whole paste operation is as follows:</p>
 
-    <snippet>
+<?= createSnippet(<<<SNIPPET
 // for processing data from the clipboard
-processDataFromClipboard(params: ProcessDataFromClipboardParams)=>string[][];
+processDataFromClipboard(params: ProcessDataFromClipboardParams) => string[][];
 
 // params for processDataFromClipboard
-export interface ProcessDataFromClipboardParams {
-    data: string[][]; // 2d array of all cells from the clipboard
+interface ProcessDataFromClipboardParams {
+    data: string[][]; // 2D array of all cells from the clipboard
 }
-    </snippet>
+SNIPPET
+, 'ts') ?>
 
     <p>
         In summary the <code>processDataFromClipboard</code> takes a 2d array of data that was taken from
