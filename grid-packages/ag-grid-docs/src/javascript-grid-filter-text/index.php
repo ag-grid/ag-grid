@@ -17,6 +17,21 @@ include '../documentation-main/documentation_header.php';
     details that are specific to the text filter.
 </p>
 
+<h2>Text Filter Parameters</h2>
+
+<p>
+    Text Filters are configured though the <code>filterParams</code> attribute of the column definition. All of the
+    parameters from Provided Filters are available:
+</p>
+
+<?= createDocumentationFromFile('../javascript-grid-filter-provided/providedFilters.json', 'filterParams'); ?>
+
+<p>
+    In addition, the following parameters are also available:
+</p>
+
+<?= createDocumentationFromFile('../javascript-grid-filter-provided-simple/simpleFilters.json', 'filterParams', ['Text']); ?>
+
 <h2>Text Custom Comparator</h2>
 
 <p>

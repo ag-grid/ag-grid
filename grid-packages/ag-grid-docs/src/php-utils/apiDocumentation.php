@@ -36,7 +36,8 @@
         echo '<table class="table content reference">';
 
         foreach ($properties as $name => $definition) {
-            if ($name == 'meta' || (!empty($names) && !in_array($name, $names))) {
+            if ($name == 'meta' ||
+                (!empty($names) && !in_array($name, $names) && !in_array($names[0], $definition->relevantTo))) {
                 continue;
             }
 
@@ -61,17 +62,17 @@
                 }
 
                 if (isset($definition->options)) {
-                    echo "<br />Options: <code>" . implode(' | ', array_map(formatJson, $definition->options)) . "</code>";
+                    echo '<br />Options: <code>' . implode('</code>, <code>', array_map(formatJson, $definition->options)) . '</code>';
                 }
 
                 if (is_object($definition->type)) {
                     createCodeSample($definition->type);
                 }
 
-                echo "</td></tr>";
+                echo "</td>";
             } else if (is_string($definition)) {
                 // process simple property string
-                echo "</td><td>$definition</td></tr>";
+                echo "</td><td>$definition</td>";
             } else {
                 // this must be the parent of a child object
                 $targetId = "$newPrefix.$name";
@@ -81,9 +82,15 @@
                     echo $definition->meta->description . " ";
                 }
 
-                echo "See <a href='#$targetId'>$name</a> for more details about this configuration object.</td></tr>";
+                echo "See <a href='#$targetId'>$name</a> for more details about this configuration object.</td>";
                 $toProcess[$name] = $definition;
             }
+
+            if ($definition->relevantTo && empty($names)) {
+                echo '<td style="white-space: nowrap;">' . join($definition->relevantTo, ', ') . '</td>';
+            }
+
+            echo '</tr>';
         }
 
         echo '</table>';
@@ -140,7 +147,7 @@
         $properties = getJsonFromFile($path);
 
         if (isset($expression)) {
-            $keys = explode(".", $expression);
+            $keys = explode('.', $expression);
             $key = null;
 
             while (count($keys) > 0) {
