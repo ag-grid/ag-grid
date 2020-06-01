@@ -6,7 +6,7 @@ import { GridApi } from "../gridApi";
 import { ColumnApi } from "../columnController/columnApi";
 import { Column } from "./column";
 import { IViewportDatasource } from "../interfaces/iViewportDatasource";
-import { ICellRendererComp, ICellRendererFunc, ICellRenderer } from "../rendering/cellRenderers/iCellRenderer";
+import { ICellRendererComp, ICellRendererFunc, ICellRenderer, ICellRendererParams } from "../rendering/cellRenderers/iCellRenderer";
 import { ColDef, ColGroupDef, IAggFunc, SuppressKeyboardEventParams } from "./colDef";
 import { IDatasource } from "../interfaces/iDatasource";
 import { CellPosition } from "./cellPosition";
@@ -339,7 +339,7 @@ export interface GridOptions {
     isRowMaster?: IsRowMaster;
     detailCellRenderer?: { new(): ICellRendererComp; } | ICellRendererFunc | string;
     detailCellRendererFramework?: any;
-    detailCellRendererParams?: any;
+    detailCellRendererParams?: ICellRendererParams;
 
     // changeable with impact
     rowData?: any[];
