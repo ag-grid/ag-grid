@@ -25,7 +25,7 @@
             "description": "Returns the filter model from the UI. If changes have been made to the UI but not yet applied, this model will reflect those changes."
         },
         "setModel(model)": {
-            "description": "Sets the state of the filter using the supplied model and applies the filter."
+            "description": "Sets the state of the filter using the supplied model and calls <code>applyModel()</code>."
         }
     }
 }

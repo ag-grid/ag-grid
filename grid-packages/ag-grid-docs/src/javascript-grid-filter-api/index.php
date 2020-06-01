@@ -74,11 +74,9 @@ SNIPPET
 <h3>Applying the Model</h3>
 
 <p>
-    If you call <code>filterInstance.setModel()</code> this will both set and apply the model. However if
-    using other methods provided by the filter instance (e.g. most of the
-    <a href="../javascript-grid-filter-set-api/">Set Filter API</a> methods) then you must call
-    <code>filterInstance.applyModel()</code> to have the model applied. This step is necessary regardless
-    of whether the Apply button is active or not.
+    If you call <code>filterInstance.setModel()</code> this will both set and apply the model. However if changes
+    are made either in the UI when the Apply button is active, or via other API methods whether the Apply button is
+    active or not, you must call <code>filterInstance.applyModel()</code> if you want to ensure the UI is applied.
 </p>
 <p>
     Applying the model is then typically followed by calling
@@ -89,11 +87,7 @@ SNIPPET
 // Get a reference to the 'name' filter instance
 var filterInstance = gridApi.getFilterInstance('name');
 
-// Call some methods on Set Filter API that don't apply the filter
-filterInstance.selectNothing();
-filterInstance.selectValue('Ireland');
-
-// APPLY THE MODEL!!!!
+// Apply the model to ensure any changes in the UI or via API methods are recognised
 filterInstance.applyModel();
 
 // Tell grid to run filter operation again
@@ -102,7 +96,7 @@ SNIPPET
 ) ?>
 
 <p>
-    If no call is made to <code>filterInstance.applyModel()</code> then the filter UI will show the changes, but
+    If no call is made to <code>filterInstance.applyModel()</code> then the filter UI will show any changes, but
     they won't be reflected in the filter model. This will appear as if the user never hit the Apply button (regardless
     of whether the Apply button is active or not).
 </p>
@@ -114,7 +108,7 @@ SNIPPET
 </p>
 
 <p>
-    The example also shows <code>gridApi.destroyFilter(col)</code> which completely destroys a filter. Use this is if you want
+    The example also shows <code>gridApi.destroyFilter(col)</code> which completely destroys a filter. Use this if you want
     a filter to be created again with new initialisation values.
 </p>
 
@@ -126,7 +120,10 @@ SNIPPET
 
 <h2>Reset Individual Filters</h2>
 
-<p>You can reset a filter to its original state by getting the filter instance and then performing the action that makes sense for the filter type.</p>
+<p>
+    You can reset a filter to its original state by getting the filter instance and setting the model to
+    <code>null</code>.
+</p>
 
 <p>For all the filter types the sequence would be:</p>
 
@@ -134,34 +131,13 @@ SNIPPET
 // Get a reference to the filter instance
 var filterInstance = gridApi.getFilterInstance('filter_name');
 
-// perform reset action for filter type
-...
+// set the model to null
+filterInstance.setModel(null);
 
 // Tell grid to run filter operation again
 gridApi.onFilterChanged();
 SNIPPET
 ) ?>
-
-<p>The following are the appropriate methods for the corresponding filter types:</p>
-
-<table class="table reference">
-    <tr>
-        <th>Filter Type</th>
-        <th>Action</th>
-    </tr>
-    <tr>
-        <td>Number</td>
-        <td><code>filterComponent.setModel(null);</code></td>
-    </tr>
-    <tr>
-        <td>Text</td>
-        <td><code>filterComponent.setModel(null);</code></td>
-    </tr>
-    <tr>
-        <td>Set</td>
-        <td><code>filterComponent.selectEverything();</code></td>
-    </tr>
-</table>
 
 <h2>Reset All Filters</h2>
 

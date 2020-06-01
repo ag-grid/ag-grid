@@ -49,20 +49,15 @@ var gridOptions = {
     },
 };
 
-
 function irelandAndUk() {
     var countryFilterComponent = gridOptions.api.getFilterInstance('country');
-    countryFilterComponent.selectNothing();
-    countryFilterComponent.selectValue('Ireland');
-    countryFilterComponent.selectValue('Great Britain');
-    countryFilterComponent.applyModel();
+    countryFilterComponent.setModel({ values: ['Ireland', 'Great Britain'] });
     gridOptions.api.onFilterChanged();
 }
 
 function clearCountryFilter() {
     var countryFilterComponent = gridOptions.api.getFilterInstance('country');
-    countryFilterComponent.selectEverything();
-    countryFilterComponent.applyModel();
+    countryFilterComponent.setModel(null);
     gridOptions.api.onFilterChanged();
 }
 
@@ -72,33 +67,21 @@ function destroyCountryFilter() {
 
 function endingStan() {
     var countryFilterComponent = gridOptions.api.getFilterInstance('country');
-    countryFilterComponent.selectNothing();
-    for (var i = 0; i < countryFilterComponent.getUniqueValueCount(); i++) {
-        var value = countryFilterComponent.getUniqueValue(i);
-        var valueEndsWithStan = value.indexOf('stan') === value.length - 4;
-        if (valueEndsWithStan) {
-            countryFilterComponent.selectValue(value);
-        }
-    }
-    countryFilterComponent.applyModel();
+    var countriesEndingWithStan = countryFilterComponent.getValues().filter(function(value) {
+        return value.indexOf('stan') === value.length - 4;
+    });
+
+    countryFilterComponent.setModel({ values: countriesEndingWithStan });
     gridOptions.api.onFilterChanged();
 }
 
-function setCountryModel() {
-    var countryFilterComponent = gridOptions.api.getFilterInstance('country');
-    var model = {
-        type: 'set',
-        values: ['Algeria', 'Argentina']
-    };
-    countryFilterComponent.setModel(model);
-    gridOptions.api.onFilterChanged();
-}
 
 function printCountryModel() {
     var countryFilterComponent = gridOptions.api.getFilterInstance('country');
     var model = countryFilterComponent.getModel();
+
     if (model) {
-        console.log('Country model is: [' + model.values.join(',') + ']');
+        console.log('Country model is: ' + JSON.stringify(model));
     } else {
         console.log('Country model filter is not active');
     }
@@ -110,6 +93,7 @@ function sportStartsWithC() {
         type: 'startsWith',
         filter: 'c'
     });
+
     gridOptions.api.onFilterChanged();
 }
 
@@ -119,6 +103,7 @@ function sportEndsWithS() {
         type: 'endsWith',
         filter: 's'
     });
+
     gridOptions.api.onFilterChanged();
 }
 
@@ -135,6 +120,7 @@ function sportsCombined() {
             filter: 'g'
         },
     });
+
     gridOptions.api.onFilterChanged();
 }
 
@@ -151,6 +137,7 @@ function ageBelow25() {
         filter: 25,
         filterTo: null
     });
+
     gridOptions.api.onFilterChanged();
 }
 
@@ -161,6 +148,7 @@ function ageAbove30() {
         filter: 30,
         filterTo: null
     });
+
     gridOptions.api.onFilterChanged();
 }
 
@@ -179,6 +167,7 @@ function ageBelow25OrAbove30() {
             filterTo: null
         }
     });
+
     gridOptions.api.onFilterChanged();
 }
 
@@ -189,6 +178,7 @@ function ageBetween25And30() {
         filter: 25,
         filterTo: 30
     });
+
     gridOptions.api.onFilterChanged();
 }
 
@@ -205,6 +195,7 @@ function after2010() {
         dateFrom: '2010-01-01',
         dateTo: null
     });
+
     gridOptions.api.onFilterChanged();
 }
 
@@ -215,6 +206,7 @@ function before2012() {
         dateFrom: '2012-01-01',
         dateTo: null
     });
+
     gridOptions.api.onFilterChanged();
 }
 
@@ -226,13 +218,14 @@ function dateCombined() {
             dateFrom: '2012-01-01',
             dateTo: null
         },
+        operator: 'OR',
         condition2: {
             type: 'greaterThan',
             dateFrom: '2010-01-01',
             dateTo: null
         },
-        operator: 'OR'
     });
+
     gridOptions.api.onFilterChanged();
 }
 

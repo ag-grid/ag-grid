@@ -335,6 +335,10 @@ export class SetValueModel implements IEventEmitter {
         return this.allValues[index];
     }
 
+    public getValues(): string[] {
+        return this.allValues;
+    }
+
     public selectAllMatchingMiniFilter(clearExistingSelection = false): void {
         if (this.miniFilterText == null) {
             // ensure everything is selected

@@ -659,8 +659,7 @@ PersonFilter.prototype.getApi = function() {
     var that = this;
     return {
         getModel: function() {
-            var model = { value: that.filterText.value };
-            return model;
+            return { value: that.filterText.value };
         },
         setModel: function(model) {
             that.eFilterText.value = model.value;
@@ -671,6 +670,7 @@ PersonFilter.prototype.getApi = function() {
 // lazy, the example doesn't use getModel() and setModel()
 PersonFilter.prototype.getModel = function() {
 };
+
 PersonFilter.prototype.setModel = function() {
 };
 
@@ -733,6 +733,7 @@ WinningsFilter.prototype.isFilterActive = function() {
 // lazy, the example doesn't use getModel() and setModel()
 WinningsFilter.prototype.getModel = function() {
 };
+
 WinningsFilter.prototype.setModel = function() {
 };
 

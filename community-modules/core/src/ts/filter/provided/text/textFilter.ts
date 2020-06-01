@@ -168,7 +168,7 @@ export class TextFilter extends SimpleFilter<TextFilterModel> {
         this.eValue2.setValue(null);
     }
 
-    public getDefaultFilterOptions(): string[] {
+    protected getDefaultFilterOptions(): string[] {
         return TextFilter.DEFAULT_FILTER_OPTIONS;
     }
 
