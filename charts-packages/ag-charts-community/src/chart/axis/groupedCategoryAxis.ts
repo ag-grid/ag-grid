@@ -200,7 +200,7 @@ export class GroupedCategoryAxis extends ChartAxis {
      * it will also make it harder to reason about the program.
      */
     update() {
-        const { group, scale, label, tickScale } = this;
+        const { group, scale, label, tickScale, requestedRange } = this;
         const rangeStart = scale.range[0];
         const rangeEnd = scale.range[1];
         const rangeLength = Math.abs(rangeEnd - rangeStart);
@@ -272,6 +272,9 @@ export class GroupedCategoryAxis extends ChartAxis {
                 // label.textBaseline = parallelLabels && !labelRotation
                 //     ? (sideFlag * parallelFlipFlag === -1 ? 'hanging' : 'bottom')
                 //     : 'middle';
+                node.textAlign = 'center';
+                node.translationX = datum.screenY - label.fontSize * 0.25;
+                node.translationY = datum.screenX;
                 if (title && index === 0) { // use the phantom root as the axis title
                     node.text = title.text;
                     node.fontSize = title.fontSize;
@@ -287,10 +290,10 @@ export class GroupedCategoryAxis extends ChartAxis {
                             index
                         })
                         : String(datum.label);
+                    node.visible =
+                        datum.screenX >= requestedRange[0] &&
+                        datum.screenX <= requestedRange[1];
                 }
-                node.textAlign = 'center';
-                node.translationX = datum.screenY - label.fontSize * 0.25;
-                node.translationY = datum.screenX;
                 const bbox = node.computeBBox();
                 if (bbox && bbox.width > maxLeafLabelWidth) {
                     maxLeafLabelWidth = bbox.width;
@@ -364,11 +367,13 @@ export class GroupedCategoryAxis extends ChartAxis {
         const separatorSelection = updateSeparators.merge(enterSeparators);
         this.separatorSelection = separatorSelection;
 
-        separatorSelection.each((line, datum) => {
+        const epsilon = 0.0000001;
+        separatorSelection.each((line, datum, i) => {
             line.x1 = datum.x1;
             line.x2 = datum.x2;
             line.y1 = datum.y;
             line.y2 = datum.y;
+            line.visible = datum.y >= requestedRange[0] - epsilon && datum.y <= requestedRange[1] + epsilon;
             line.stroke = this.tick.color;
             line.fill = undefined;
             line.strokeWidth = 1;
@@ -394,8 +399,8 @@ export class GroupedCategoryAxis extends ChartAxis {
             const x = index > 0 ? -maxLeafLabelWidth - this.label.padding * 2 - (index - 1) * lineHeight : 0;
             line.x1 = x;
             line.x2 = x;
-            line.y1 = rangeStart;
-            line.y2 = rangeEnd;
+            line.y1 = requestedRange[0];
+            line.y2 = requestedRange[1];
             line.strokeWidth = this.line.width;
             line.stroke = this.line.color;
             line.visible = labels.length > 0 && (index === 0 || (labelGrid && isLabelTree));
@@ -412,7 +417,8 @@ export class GroupedCategoryAxis extends ChartAxis {
                     line.x2 = -sideFlag * this.gridLength;
                     line.y1 = y;
                     line.y2 = y;
-                    line.visible = Math.abs(line.parent!.translationY - rangeStart) > 1;
+                    line.visible = y >= requestedRange[0] && y <= requestedRange[1] &&
+                        Math.abs(line.parent!.translationY - rangeStart) > 1;
 
                     const style = styles[index % styleCount];
                     line.stroke = style.stroke;
