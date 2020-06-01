@@ -43,10 +43,8 @@ export class DetailCellRenderer extends Component implements ICellRenderer {
 
         this.params = params;
 
-        // if no refresh strategy is supplied, default to 'rows'
-        this.params.refreshStrategy = this.params.refreshStrategy ? this.params.refreshStrategy : 'rows';
-
         this.checkForDeprecations();
+        this.ensureValidRefreshStrategy();
         this.selectAndSetTemplate();
 
         if (_.exists(this.eDetailGrid)) {
@@ -106,10 +104,27 @@ export class DetailCellRenderer extends Component implements ICellRenderer {
 
     private checkForDeprecations(): void {
         if (this.params.suppressRefresh) {
-            console.warn(`ag-Grid: as of v23.2.0, cellRendererParams.suppressRefresh for Detail Cell Renderer is no 
-                          longer used. Please set cellRendererParams.refreshStrategy = 'nothing' instead.`);
+            console.warn("ag-Grid: as of v23.2.0, cellRendererParams.suppressRefresh for Detail Cell Renderer is no " +
+                "longer used. Please set cellRendererParams.refreshStrategy = 'nothing' instead.");
             this.params.refreshStrategy = 'nothing';
         }
+    }
+
+    private ensureValidRefreshStrategy(): void {
+        switch (this.params.refreshStrategy) {
+            case 'rows': return;
+            case 'nothing': return;
+            case 'everything': return;
+        }
+
+        // check for incorrectly supplied refresh strategy
+        if (this.params.refreshStrategy) {
+            console.warn("ag-Grid: invalid cellRendererParams.refreshStrategy = '" + this.params.refreshStrategy +
+                "' supplied, defaulting to refreshStrategy = 'rows'.");
+        }
+
+        // use default strategy
+        this.params.refreshStrategy = 'rows';
     }
 
     private setupAutoGridHeight(): void {
