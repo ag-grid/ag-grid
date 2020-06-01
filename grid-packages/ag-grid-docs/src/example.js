@@ -668,7 +668,7 @@ var desktopDefaultCols = [
                 headerTooltip: "Example tooltip for Language",
                 filterParams: {
                     newRowsAction: 'keep',
-                    resetButton: true
+                    buttons: ['reset']
                 }
             },
             {
@@ -720,7 +720,7 @@ var desktopDefaultCols = [
                     cellRenderer: 'countryCellRenderer',
                     // cellHeight: 20,
                     newRowsAction: 'keep',
-                    resetButton: true,
+                    buttons: ['reset'],
                     // suppressSelectAll: true
                 },
                 floatingFilterComponent: 'countryFloatingFilterComponent',
@@ -743,7 +743,7 @@ var desktopDefaultCols = [
                 },
                 filterParams: {
                     newRowsAction: 'keep',
-                    resetButton: true
+                    buttons: ['reset'],
                 },
                 enableRowGroup: true,
                 enablePivot: true,
@@ -767,7 +767,7 @@ var desktopDefaultCols = [
                 filterParams: {
                     cellRenderer: 'booleanFilterCellRenderer',
                     newRowsAction: 'keep',
-                    resetButton: true
+                    buttons: ['reset'],
                 }
             }
         ]
@@ -922,8 +922,12 @@ var monthGroup = {
 
 months.forEach(function(month) {
     monthGroup.children.push({
-        headerName: month, field: month.toLocaleLowerCase(),
-        width: 150, filter: 'agNumberColumnFilter', editable: true, type: 'numericColumn',
+        headerName: month,
+        field: month.toLocaleLowerCase(),
+        width: 150,
+        filter: 'agNumberColumnFilter',
+        editable: true,
+        type: 'numericColumn',
         enableValue: true,
         // aggFunc: 'sum',
         //hide: true,
@@ -932,9 +936,10 @@ months.forEach(function(month) {
             'bad-score': 'typeof x === "number" && x < 10000',
             'currencyCell': 'typeof x === "number" && x >= 10000 && x <= 50000'
         },
-        valueParser: numberParser, valueFormatter: currencyFormatter,
+        valueParser: numberParser,
+        valueFormatter: currencyFormatter,
         filterParams: {
-            resetButton: true,
+            buttons: ['reset'],
             inRangeInclusive: true
         }
     });

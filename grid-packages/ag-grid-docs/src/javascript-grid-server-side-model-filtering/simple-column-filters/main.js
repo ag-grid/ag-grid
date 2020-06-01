@@ -9,7 +9,7 @@ var gridOptions = {
             field: 'year',
             filter: 'agNumberColumnFilter',
             filterParams: {
-                resetButton: true,
+                buttons: ['reset'],
                 debounceMs: 1000,
                 suppressAndOrCondition: true,
             }

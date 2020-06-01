@@ -115,7 +115,7 @@ var columnDefs = [
         field: 'gold',
         filter: 'agNumberColumnFilter',
         filterParams: {
-            applyButton: true
+            buttons: ['apply']
         },
         suppressMenu: true
     },
