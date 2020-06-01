@@ -168,7 +168,7 @@ var gridOptions = {
         console.log('Callback onGridSizeChanged: clientWidth = ' + event.clientWidth + ', clientHeight = ' + event.clientHeight);
     },
     onRowGroupOpened: function(event) {
-        console.log('Callback onRowGroupOpened: node = ' + event.node.key + ', ' + event.node.expanded);
+        console.log('Callback onRowGroupOpened: node = ' + event.node.key + ', ' + event.expanded);
     },
     onRangeSelectionChanged: function(event) {
         // console.log('Callback onRangeSelectionChanged: finished = ' + event.finished);

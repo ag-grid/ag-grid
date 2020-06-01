@@ -479,7 +479,10 @@ export class RowNode implements IEventEmitter {
             this.eventService.dispatchEvent(this.createLocalRowEvent(RowNode.EVENT_EXPANDED_CHANGED));
         }
 
-        const event: RowGroupOpenedEvent = this.createGlobalRowEvent(Events.EVENT_ROW_GROUP_OPENED);
+        const event = _.assign({}, this.createGlobalRowEvent(Events.EVENT_ROW_GROUP_OPENED), {
+            expanded
+        });
+
         this.mainEventService.dispatchEvent(event);
 
         if (this.gridOptionsWrapper.isGroupIncludeFooter()) {

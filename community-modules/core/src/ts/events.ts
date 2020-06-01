@@ -298,7 +298,9 @@ export interface RowEvent extends AgGridEvent {
     event?: Event | null;
 }
 
-export interface RowGroupOpenedEvent extends RowEvent { }
+export interface RowGroupOpenedEvent extends RowEvent {
+    expanded: boolean;
+}
 
 export interface RowValueChangedEvent extends RowEvent { }
 
