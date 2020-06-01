@@ -163,11 +163,12 @@ export class AxisPanel extends Component {
 
         const degreesSymbol = String.fromCharCode(176);
         const createLabelUpdateFunc = (axisPosition: ChartAxisPosition) => (newValue: number) => {
-            const chart = this.getChartProxy().getChart();
+            const chartProxy = this.getChartProxy();
+            const chart = chartProxy.getChart();
             const axis = find(chart.axes, axis => axis.position === axisPosition);
 
             if (axis) {
-                axis.label.rotation = newValue;
+                chartProxy.setAxisProperty("label.rotation", newValue);
                 chart.performLayout();
             }
         };
