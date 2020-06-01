@@ -1383,6 +1383,7 @@ export class GridPanel extends Component {
 
     private onBodyHorizontalScroll(eSource: HTMLElement): void {
         const { scrollWidth, clientWidth } = this.eCenterViewport;
+
         // in chrome, fractions can be in the scroll left, eg 250.342234 - which messes up our 'scrollWentPastBounds'
         // formula. so we floor it to allow the formula to work.
         let scrollLeft = Math.floor(_.getScrollLeft(eSource, this.enableRtl));
@@ -1392,17 +1393,12 @@ export class GridPanel extends Component {
         // scroll past the left until the user releases the mouse). when this happens, we want ignore the scroll,
         // as otherwise it was causing the rows and header to flicker.
 
-        // AG-3905 - sometimes when scrolling, we got values that extended the maximum scroll allowed. we used to
+        // sometimes when scrolling, we got values that extended the maximum scroll allowed. we used to
         // ignore these scrolls. problem is the max scroll position could be skipped (eg the previous scroll event
         // could be 10px before the max position, and then current scroll event could be 20px after the max position).
         // if we just ignored the last event, we would be setting the scroll to 10px before the max position, when in
         // actual fact the user has exceeded the max scroll and thus scroll should be set to the max.
 
-        // old code
-        // const scrollWentPastBounds = scrollLeft < 0 || (scrollLeft + clientWidth > scrollWidth);
-        // if (scrollWentPastBounds) { return; }
-
-        // AG-3905 code
         const minScroll = 0;
         const maxScroll = scrollWidth - clientWidth;
         if (scrollLeft < minScroll) {
@@ -1410,7 +1406,6 @@ export class GridPanel extends Component {
         } else if (scrollLeft > maxScroll) {
             scrollLeft = maxScroll;
         }
-        // end AG-3905
 
         this.doHorizontalScroll(scrollLeft);
         this.resetLastHorizontalScrollElementDebounced();
