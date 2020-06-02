@@ -140,25 +140,16 @@ export class HdpiCanvas {
         return this._height;
     }
 
-    onResize?: (width: number, height: number) => any;
-
-    private _resizeHandle = 0;
     resize(width: number, height: number) {
-        cancelAnimationFrame(this._resizeHandle);
+        const { element, context, pixelRatio } = this;
+        element.width = Math.round(width * pixelRatio);
+        element.height = Math.round(height * pixelRatio);
+        element.style.width = width + 'px';
+        element.style.height = height + 'px';
+        context.resetTransform();
 
-        this._width = width = Math.round(width);
-        this._height = height = Math.round(height);
-
-        this._resizeHandle = requestAnimationFrame(() => {
-            const { element, context, pixelRatio } = this;
-            element.width = Math.round(width * pixelRatio);
-            element.height = Math.round(height * pixelRatio);
-            element.style.width = width + 'px';
-            element.style.height = height + 'px';
-            context.resetTransform();
-
-            this.onResize && this.onResize(width, height);
-        });
+        this._width = width;
+        this._height = height;
     }
 
     // 2D canvas context used for measuring text.

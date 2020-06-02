@@ -82,7 +82,10 @@ var gridOptions = {
             bronze: 244,
             total: 255
         }
-    ]
+    ],
+    onGridReady: function(params) {
+        document.querySelector("#columnGroups").checked = true;
+    }
 };
 
 function getBooleanValue(checkboxSelector) {
@@ -146,6 +149,7 @@ function onBtnExportDataAsExcel() {
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function() {
+
     var gridDiv = document.querySelector('#myGrid');
     new agGrid.Grid(gridDiv, gridOptions);
 
