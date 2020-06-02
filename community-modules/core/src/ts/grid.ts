@@ -85,7 +85,7 @@ import { UndoRedoService } from "./undoRedo/undoRedoService";
 import { Component } from "./widgets/component";
 import { AgStackComponentsRegistry } from "./components/agStackComponentsRegistry";
 import { HeaderPositionUtils } from "./headerRendering/header/headerPosition";
-import { HeaderController } from "./headerRendering/header/headerController";
+import { HeaderNavigationService } from "./headerRendering/header/headerNavigationService";
 import { _ } from "./utils";
 
 export interface GridParams {
@@ -285,7 +285,7 @@ export class Grid {
             ComponentMetadataProvider, ResizeObserverService, UserComponentFactory,
             MaxDivHeightScaler, AutoHeightCalculator, CellRendererFactory, HorizontalResizeService,
             PinnedRowModel, DragService, DisplayedGroupCreator, EventService, GridOptionsWrapper,
-            PopupService, SelectionController, FilterManager, ColumnController, HeaderController,
+            PopupService, SelectionController, FilterManager, ColumnController, HeaderNavigationService,
             PaginationProxy, RowRenderer, ExpressionService, ColumnFactory, TemplateService,
             AlignedGridsService, NavigationService, ValueCache, ValueService, LoggerFactory,
             ColumnUtils, AutoWidthCalculator, StandardMenuFactory, DragAndDropService, ColumnApi,

@@ -63,8 +63,8 @@ export class Constants {
 
     static SOURCE_PASTE = 'paste';
 
-    static PINNED_RIGHT = 'right';
-    static PINNED_LEFT = 'left';
+    static PINNED_RIGHT: 'right' = 'right';
+    static PINNED_LEFT: 'left' = 'left';
 
     static SORT_ASC = 'asc';
     static SORT_DESC = 'desc';

@@ -40,7 +40,7 @@ import { ModuleRegistry } from '../modules/moduleRegistry';
 import { ModuleNames } from '../modules/moduleNames';
 import { UndoRedoService } from '../undoRedo/undoRedoService';
 import { ColumnController } from '../columnController/columnController';
-import { HeaderController } from '../headerRendering/header/headerController';
+import { HeaderNavigationService } from '../headerRendering/header/headerNavigationService';
 import { _ } from "../utils";
 
 // in the html below, it is important that there are no white space between some of the divs, as if there is white space,
@@ -125,7 +125,7 @@ export class GridPanel extends Component {
     @Autowired('resizeObserverService') private resizeObserverService: ResizeObserverService;
     @Autowired('undoRedoService') private undoRedoService: UndoRedoService;
     @Autowired('columnController') private columnController: ColumnController;
-    @Autowired('headerController') private headerController: HeaderController;
+    @Autowired('headerNavigationService') private headerNavigationService: HeaderNavigationService;
 
     @Optional('rangeController') private rangeController: IRangeController;
     @Optional('contextMenuFactory') private contextMenuFactory: IContextMenuFactory;
@@ -275,6 +275,7 @@ export class GridPanel extends Component {
         this.alignedGridsService.registerGridComp(this);
         this.headerRootComp.registerGridComp(this);
         this.navigationService.registerGridComp(this);
+        this.headerNavigationService.registerGridComp(this);
         this.heightScaler.registerGridComp(this);
         this.autoHeightCalculator.registerGridComp(this);
         this.columnAnimationService.registerGridComp(this);
@@ -912,7 +913,7 @@ export class GridPanel extends Component {
     }
 
     public updateRowCount(): void {
-        const headerCount = this.headerController.getHeaderRowCount();
+        const headerCount = this.headerNavigationService.getHeaderRowCount();
         const rowCount = this.paginationProxy.getRowCount();
         const total = (headerCount + rowCount).toString();
 

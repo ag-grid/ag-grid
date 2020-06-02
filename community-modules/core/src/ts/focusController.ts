@@ -1,7 +1,7 @@
 import { Bean, Autowired, PostConstruct, Optional } from "./context/context";
 import { BeanStub } from "./context/beanStub";
 import { Column } from "./entities/column";
-import { CellFocusedEvent, Events, GridColumnsChangedEvent } from "./events";
+import { CellFocusedEvent, Events } from "./events";
 import { GridOptionsWrapper } from "./gridOptionsWrapper";
 import { ColumnApi } from "./columnController/columnApi";
 import { ColumnController } from "./columnController/columnController";
@@ -15,9 +15,8 @@ import { HeaderPosition } from "./headerRendering/header/headerPosition";
 import { RowPositionUtils } from "./entities/rowPosition";
 import { IRangeController } from "./interfaces/iRangeController";
 import { RowRenderer } from "./rendering/rowRenderer";
-import { HeaderController } from "./headerRendering/header/headerController";
+import { HeaderNavigationService } from "./headerRendering/header/headerNavigationService";
 import { ColumnGroup } from "./entities/columnGroup";
-import { Component } from "./widgets/component";
 import { ManagedFocusComponent } from "./widgets/managedFocusComponent";
 import { _ } from "./utils";
 import { GridCore } from "./gridCore";
@@ -27,7 +26,7 @@ export class FocusController extends BeanStub {
 
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('columnController') private columnController: ColumnController;
-    @Autowired('headerController') private headerController: HeaderController;
+    @Autowired('headerNavigationService') private headerNavigationService: HeaderNavigationService;
     @Autowired('columnApi') private columnApi: ColumnApi;
     @Autowired('gridApi') private gridApi: GridApi;
     @Autowired('rowRenderer') private rowRenderer: RowRenderer;
@@ -174,9 +173,9 @@ export class FocusController extends BeanStub {
     }
 
     public focusHeaderPosition(headerPosition: HeaderPosition, direction?: 'Before' | 'After'): boolean {
-        this.headerController.scrollToColumn(headerPosition.column, direction);
+        this.headerNavigationService.scrollToColumn(headerPosition.column, direction);
 
-        const childContainer = this.headerController.getHeaderContainer(headerPosition.column.getPinned());
+        const childContainer = this.headerNavigationService.getHeaderContainer(headerPosition.column.getPinned());
         const rowComps = childContainer.getRowComps();
         const nextRowComp = rowComps[headerPosition.headerRowIndex];
         const headerComps = nextRowComp.getHeaderComps();

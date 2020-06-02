@@ -175,7 +175,7 @@ export class RowComp extends Component {
         const businessKeySanitised = _.escape(businessKey);
         const rowTopStyle = this.getInitialRowTopStyle();
         const rowIdx = this.rowNode.getRowIndexString();
-        const headerRowCount = this.beans.headerController.getHeaderRowCount();
+        const headerRowCount = this.beans.headerNavigationService.getHeaderRowCount();
 
         templateParts.push(`<div`);
         templateParts.push(` role="row"`);
@@ -1511,7 +1511,7 @@ export class RowComp extends Component {
         const rowIndexStr = this.rowNode.getRowIndexString();
         const rowIsEven = this.rowNode.rowIndex % 2 === 0;
         const rowIsEvenChanged = this.rowIsEven !== rowIsEven;
-        const headerRowCount = this.beans.headerController.getHeaderRowCount();
+        const headerRowCount = this.beans.headerNavigationService.getHeaderRowCount();
 
         if (rowIsEvenChanged) {
             this.rowIsEven = rowIsEven;

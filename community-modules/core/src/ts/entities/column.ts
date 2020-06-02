@@ -79,7 +79,7 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild, IEven
     private actualWidth: any;
 
     private visible: any;
-    private pinned: string | null;
+    private pinned: 'left' | 'right' | null;
     private left: number;
     private oldLeft: number;
     private aggFunc: string | IAggFunc | null;
@@ -589,7 +589,7 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild, IEven
         return this.pinned === Constants.PINNED_RIGHT;
     }
 
-    public getPinned(): string {
+    public getPinned(): 'left' | 'right' {
         return this.pinned;
     }
 

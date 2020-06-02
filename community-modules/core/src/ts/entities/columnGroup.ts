@@ -33,7 +33,7 @@ export class ColumnGroup implements ColumnGroupChild {
     private readonly groupId: string;
     private readonly instanceId: number;
     private readonly originalColumnGroup: OriginalColumnGroup;
-    private readonly pinned: string;
+    private readonly pinned: 'left' | 'right';
 
     // private moving = false
     private left: number;
@@ -42,7 +42,7 @@ export class ColumnGroup implements ColumnGroupChild {
 
     private parent: ColumnGroup;
 
-    constructor(originalColumnGroup: OriginalColumnGroup, groupId: string, instanceId: number, pinned: string) {
+    constructor(originalColumnGroup: OriginalColumnGroup, groupId: string, instanceId: number, pinned: 'left' | 'right') {
         this.groupId = groupId;
         this.instanceId = instanceId;
         this.originalColumnGroup = originalColumnGroup;
@@ -121,7 +121,7 @@ export class ColumnGroup implements ColumnGroupChild {
         }
     }
 
-    public getPinned(): string {
+    public getPinned(): 'left' | 'right' {
         return this.pinned;
     }
 
