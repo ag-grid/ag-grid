@@ -142,28 +142,26 @@ export abstract class Chart extends Observable {
         return this._data;
     }
 
-    private pendingSize?: [number, number];
-
     set width(value: number) {
         this.autoSize = false;
         if (this.width !== value) {
-            this.pendingSize = [value, this.height];
+            this.scene.resize(value, this.height);
             this.fireEvent({ type: 'layoutChange' });
         }
     }
     get width(): number {
-        return this.pendingSize ? this.pendingSize[0] : this.scene.width;
+        return this.scene.width;
     }
 
     set height(value: number) {
         this.autoSize = false;
         if (this.height !== value) {
-            this.pendingSize = [this.width, value];
+            this.scene.resize(this.width, value);
             this.fireEvent({ type: 'layoutChange' });
         }
     }
     get height(): number {
-        return this.pendingSize ? this.pendingSize[1] : this.scene.height;
+        return this.scene.height;
     }
 
     protected _autoSize = false;
@@ -174,7 +172,7 @@ export abstract class Chart extends Observable {
                 const chart = this; // capture `this` for IE11
                 SizeMonitor.observe(this.element, size => {
                     if (size.width !== chart.width || size.height !== chart.height) {
-                        chart.pendingSize = [size.width, size.height];
+                        chart.scene.resize(size.width, size.height);
                         chart.fireEvent({ type: 'layoutChange' });
                     }
                 });
@@ -536,10 +534,6 @@ export abstract class Chart extends Observable {
 
     private readonly _performLayout = () => {
         this.layoutCallbackId = 0;
-        if (this.pendingSize) {
-            this.scene.resize(...this.pendingSize);
-            this.pendingSize = undefined;
-        }
 
         this.background.width = this.width;
         this.background.height = this.height;
