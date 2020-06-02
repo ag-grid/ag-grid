@@ -336,7 +336,7 @@ export class SetValueModel implements IEventEmitter {
     }
 
     public getValues(): string[] {
-        return this.allValues;
+        return this.allValues.slice();
     }
 
     public selectAllMatchingMiniFilter(clearExistingSelection = false): void {
