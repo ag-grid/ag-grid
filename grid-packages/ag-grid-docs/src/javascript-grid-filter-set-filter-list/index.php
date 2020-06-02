@@ -255,6 +255,40 @@ SNIPPET
 
 <?= grid_example('Complex Objects', 'complex-objects', 'generated', ['enterprise' => true, 'exampleHeight' => 505, 'modules' => ['clientside', 'setfilter', 'menu', 'filterpanel']]) ?>
 
+<h2>Multiple Values Per Cell</h2>
+
+<p>
+    Sometimes you might wish to support multiple values in a single cell, for example when using tags. In this case,
+    the Set Filter can extract each of the individual values from the cells, creating an entry in the Filter List for
+    each individual value. Selecting a value will then show rows where any of the values in the cell match the selected
+    value.
+</p>
+
+<p>
+    The example below demonstrates this in action. Note the following:
+</p>
+
+<ul>
+    <li>The <strong>Animals (array)</strong> column uses an array in the data containing multiple values.</li>
+    <li>
+        The <strong>Animals (string)</strong> column uses a single string in the data to represent multiple values, with a
+        <a href="../javascript-grid-value-getters/">Value Getter</a> used to extract an array of values from the data.
+    </li>
+    <li>
+        The <strong>Animals (objects)</strong> column retrieves values from an array of objects, using a
+        <a href="#complex-objects">Key Creator</a>.
+    </li>
+    <li>
+        For all scenarios, the Set Filter displays a list of all the individual, unique values present from the data.
+    </li>
+    <li>
+        Selecting values in the Set Filter will show rows where the data for that row contains <strong>any</strong> of
+        the selected values.
+    </li>
+</ul>
+
+<?= grid_example('Multiple Values', 'multiple-values', 'generated', ['enterprise' => true, 'modules' => ['clientside', 'setfilter', 'menu']]) ?>
+
 <h2>Supplying Filter Values</h2>
 
 <p>
