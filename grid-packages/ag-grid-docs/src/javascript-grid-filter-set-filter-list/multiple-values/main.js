@@ -27,7 +27,7 @@ var gridOptions = {
     defaultColDef: {
         flex: 1,
     },
-    rowData: rowData,
+    rowData: getRowData(),
 };
 
 // setup the grid after the page has finished loading

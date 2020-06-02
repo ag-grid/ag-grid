@@ -613,6 +613,7 @@ export class SetFilter extends ProvidedFilter {
         this.refresh();
     }
 
+    /** @deprecated since version 23.2. Please use setModel instead. */
     public unselectValue(value: string) {
         const message = 'ag-Grid: since version 23.2, unselectValue has been deprecated. Please use setModel instead.';
         _.doOnce(() => console.warn(message), 'setFilter.unselectValue');
