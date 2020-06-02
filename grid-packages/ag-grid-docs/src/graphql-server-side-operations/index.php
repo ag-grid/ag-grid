@@ -317,7 +317,7 @@ const query = (request, columns) => {
             rowGroups: \$groups,
             groupKeys: \$groupKeys
         ) {
-            ${getFields(columns)}
+            \${getFields(columns)}
         }
       }
     `,
