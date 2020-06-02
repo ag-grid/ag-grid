@@ -5,8 +5,6 @@ $pageKeywords = "Javascript Grid Clipboard";
 $pageGroup = "feature";
 include '../documentation-main/documentation_header.php';
 ?>
-
-
     <h1 class="heading-enterprise">Clipboard</h1>
 
     <p class="lead">
@@ -93,6 +91,12 @@ include '../documentation-main/documentation_header.php';
         Pasting is on by default as long as cells are editable (non-editable cells cannot be modified, even
         with a paste operation). To turn paste operations off, set grid property
         <code>suppressClipboardPaste=true</code>.
+    </p>
+
+    <p>
+        The colDef has a property <code>suppressPaste</code> where you can specify to not allowing
+        clipboard paste for a particular cell. This can be a boolean or a function (use a function
+        to specify for a particular cell, or boolean for the whole column).
     </p>
 
     <h2 id="events">Clipboard Events</h2>
@@ -336,14 +340,6 @@ SNIPPET
     <note>This is not an enterprise config and can be used at any time to enable cell text selection.</note>
 
     <?= grid_example('Using enableCellTextSelection', 'cellTextSelection', 'generated') ?>
-
-    <h2>Suppress Paste</h2>
-
-    <p>
-        The colDef has a property <code>suppressPaste</code> where you can specify to not allowing
-        clipboard paste for a particular cell. This can be a boolean or a function (use a function
-        to specify for a particular cell, or boolean for the whole column).
-    </p>
 
     <h2>More Complex Example</h2>
 

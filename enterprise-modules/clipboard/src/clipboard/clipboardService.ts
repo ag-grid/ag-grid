@@ -303,7 +303,7 @@ export class ClipboardService extends BeanStub implements IClipboardService {
                     // otherwise we are not the first row, so copy
                     updatedRowNodes.push(rowNode);
                     columns.forEach((column, index) => {
-                        if (!column.isCellEditable(rowNode)) { return; }
+                        if (!column.isCellEditable(rowNode) || column.isSuppressPaste(rowNode)) { return; }
 
                         const firstRowValue = this.processCell(
                             rowNode, column, firstRowValues[index], Constants.EXPORT_TYPE_DRAG_COPY, processCellFromClipboardFunc);
