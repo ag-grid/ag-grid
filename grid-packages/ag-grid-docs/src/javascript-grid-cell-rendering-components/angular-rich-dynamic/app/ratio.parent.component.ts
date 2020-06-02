@@ -6,11 +6,12 @@ import {ICellRendererAngularComp} from "@ag-grid-community/angular";
 @Component({
     selector: 'ratio-cell',
     template: `
-        <ag-ratio style="height:20px" [topRatio]="params?.value?.top" [bottomRatio]="params?.value?.bottom">
-        </ag-ratio>
+        <ag-ratio [topRatio]="params?.value?.top" [bottomRatio]="params?.value?.bottom"></ag-ratio>
     `,
     styles: [`
         ag-ratio {
+            height:30px;
+            margin: 5px;
             display: block;
             overflow: hidden;
             border: 1px solid #ccc;
