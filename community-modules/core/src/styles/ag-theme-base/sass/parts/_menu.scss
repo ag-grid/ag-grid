@@ -123,7 +123,7 @@
     }
 
     .ag-mini-filter {
-        margin: ag-param(widget-container-vertical-padding) ag-param(grid-size);
+        margin: ag-param(widget-container-vertical-padding) ag-param(widget-container-horizontal-padding);
         margin-bottom: 0;
     }
 

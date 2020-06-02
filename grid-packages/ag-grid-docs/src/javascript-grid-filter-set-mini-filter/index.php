@@ -121,6 +121,24 @@ SNIPPET
 
 <?= grid_example('Mini Filter Text Formatter', 'mini-filter-text-formatter', 'generated', ['enterprise' => true, 'exampleHeight' => 565, 'modules' => ['clientside', 'setfilter', 'menu', 'columnpanel']]) ?>
 
+<h2>Text Customisation</h2>
+
+<p>Text used in the Mini Filter can be customised using <a href="../javascript-grid-localisation/">Localisation</a>.</p>
+
+<p>
+    The text shown as a placeholder in the Mini Filter textbox can be customised by setting
+    <code>'search'</code>.
+</p>
+
+<p>
+    When no matching values are found when typing in the Mini Filter, a message is displayed. This can be customised by
+    setting <code>'noMatches'</code>.
+</p>
+
+<p>The example below shows this text being customised.</p>
+
+<?= grid_example('Text Customisation', 'text-customisation', 'generated', ['enterprise' => true, 'modules' => ['clientside', 'setfilter', 'menu']]) ?>
+
 <h2>Hiding the Mini Filter</h2>
 
 <p>
