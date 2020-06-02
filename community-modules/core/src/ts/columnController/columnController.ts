@@ -151,6 +151,7 @@ export class ColumnController extends BeanStub {
     private logger: Logger;
 
     private autoGroupsNeedBuilding = false;
+    private forceRecreateAutoGroups = false;
 
     private pivotMode = false;
     private usingTreeData: boolean;
@@ -183,6 +184,15 @@ export class ColumnController extends BeanStub {
         }
 
         this.usingTreeData = this.gridOptionsWrapper.isTreeData();
+
+        this.addManagedListener(this.gridOptionsWrapper, 'autoGroupColumnDef', this.onAutoGroupColumnDefChanged.bind(this));
+    }
+
+    public onAutoGroupColumnDefChanged() {
+        this.autoGroupsNeedBuilding = true;
+        this.forceRecreateAutoGroups = true;
+        this.updateGridColumns();
+        this.updateDisplayedColumns('gridOptionsChanged');
     }
 
     public setColumnDefs(columnDefs: (ColDef | ColGroupDef)[], source: ColumnEventType = 'api') {
@@ -3142,7 +3152,9 @@ export class ColumnController extends BeanStub {
         if (needAutoColumns) {
             const newAutoGroupCols = this.autoGroupColService.createAutoGroupColumns(this.rowGroupColumns);
             const autoColsDifferent = !this.autoColsEqual(newAutoGroupCols, this.groupAutoColumns);
-            if (autoColsDifferent) {
+            // we force recreate when suppressSetColumnStateEvents changes, so new group cols pick up the new
+            // definitions. otherwise we could ignore the new cols becasue they appear to be the same.
+            if (autoColsDifferent || this.forceRecreateAutoGroups) {
                 this.groupAutoColumns = newAutoGroupCols;
             }
         } else {

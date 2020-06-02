@@ -355,6 +355,10 @@ export class GridApi {
         this.columnController.setColumnDefs(colDefs, source);
     }
 
+    public setAutoGroupColumnDef(colDef: ColDef, source: ColumnEventType = "api") {
+        this.gridOptionsWrapper.setProperty('autoGroupColumnDef', colDef, true);
+    }
+
     public expireValueCache(): void {
         this.valueCache.expire();
     }

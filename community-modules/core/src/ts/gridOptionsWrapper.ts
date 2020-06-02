@@ -1176,11 +1176,11 @@ export class GridOptionsWrapper {
         return _.exists(this.gridOptions.clipboardDeliminator) ? this.gridOptions.clipboardDeliminator : '\t';
     }
 
-    public setProperty(key: string, value: any): void {
+    public setProperty(key: string, value: any, force = false): void {
         const gridOptionsNoType = this.gridOptions as any;
         const previousValue = gridOptionsNoType[key];
 
-        if (previousValue !== value) {
+        if (force || previousValue !== value) {
             gridOptionsNoType[key] = value;
             const event: PropertyChangedEvent = {
                 type: key,

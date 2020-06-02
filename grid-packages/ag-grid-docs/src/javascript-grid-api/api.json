@@ -8,6 +8,9 @@
         },
         "setColumnDefs(colDefs)": {
             "description": "Call to set new column definitions. The grid will redraw all the column headers, and then redraw all of the rows."
+        },
+        "setAutoGroupColumnDef(colDef)": {
+            "description": "Call to set new auto group column definition. The grid will recreate any auto-group columns if present."
         }
     },
     "data": {
