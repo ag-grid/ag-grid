@@ -194,101 +194,6 @@ SNIPPET
 
 <?= grid_example('Filter List Cell Renderers', 'filter-list-cell-renderer', 'generated', ['enterprise' => true, 'exampleHeight' => 745, 'modules' => ['clientside', 'setfilter', 'menu', 'filterpanel']]) ?>
 
-<h2>Complex Objects</h2>
-
-<p>
-    If you are providing complex objects as values, then you need to provide a Key Creator function (<code>colDef.keyCreator</code>)
-    to convert the objects to strings when using the Set Filter. Note the string is used to compare objects when
-    filtering and to render a label in the filter UI.
-</p>
-
-<?= createSnippet(<<<SNIPPET
-// ColDef
-{
-    field: 'country',
-    keyCreator: countryKeyCreator,
-    valueFormatter: countryValueFormatter,
-    filter: 'agSetColumnFilter',
-}
-
-function countryKeyCreator(params) {
-    return params.value.name;
-}
-
-function countryValueFormatter(params) {
-    return params.value.name;
-}
-SNIPPET
-) ?>
-
-<p>
-    The snippet above shows a Key Creator function that returns the country name from the complex object.
-    If the Key Creator was not provided on the Column Definition, the Set Filter would not work.
-</p>
-
-<p>
-    If the value returned by Key Creator is not human-readable then you should consider also providing
-    a Formatter for the Filter List label.
-</p>
-
-<p>
-    The following example shows the Key Creator handling complex objects for the Set Filter. Note the following:
-</p>
-
-<ul class="content">
-    <li>
-        <b>Country (Complex Object)</b> column is supplied a complex object through <code>colDef.field</code>.
-    </li>
-    <li>
-        A Key Creator is supplied to the column using <code>colDef.keyCreator = countryKeyCreator</code> which extracts
-        the <code>name</code> property for the Set Filter.
-    </li>
-    <li>
-        A value formatter is supplied to the column using <code>colDef.valueFormatter = countryValueFormatter</code>
-        which extracts the <code>name</code> property for the cell values.
-    </li>
-    <li>
-        Click <b>Print Filter Model</b> with a filter active and note the logged Filter Model (dev console) uses the <code>name</code>
-        property from the complex object.
-    </li>
-</ul>
-
-<?= grid_example('Complex Objects', 'complex-objects', 'generated', ['enterprise' => true, 'exampleHeight' => 505, 'modules' => ['clientside', 'setfilter', 'menu', 'filterpanel']]) ?>
-
-<h2>Multiple Values Per Cell</h2>
-
-<p>
-    Sometimes you might wish to support multiple values in a single cell, for example when using tags. In this case,
-    the Set Filter can extract each of the individual values from the cells, creating an entry in the Filter List for
-    each individual value. Selecting a value will then show rows where any of the values in the cell match the selected
-    value.
-</p>
-
-<p>
-    The example below demonstrates this in action. Note the following:
-</p>
-
-<ul>
-    <li>The <strong>Animals (array)</strong> column uses an array in the data containing multiple values.</li>
-    <li>
-        The <strong>Animals (string)</strong> column uses a single string in the data to represent multiple values, with a
-        <a href="../javascript-grid-value-getters/">Value Getter</a> used to extract an array of values from the data.
-    </li>
-    <li>
-        The <strong>Animals (objects)</strong> column retrieves values from an array of objects, using a
-        <a href="#complex-objects">Key Creator</a>.
-    </li>
-    <li>
-        For all scenarios, the Set Filter displays a list of all the individual, unique values present from the data.
-    </li>
-    <li>
-        Selecting values in the Set Filter will show rows where the data for that row contains <strong>any</strong> of
-        the selected values.
-    </li>
-</ul>
-
-<?= grid_example('Multiple Values', 'multiple-values', 'generated', ['enterprise' => true, 'modules' => ['clientside', 'setfilter', 'menu']]) ?>
-
 <h2>Supplying Filter Values</h2>
 
 <p>
@@ -505,6 +410,101 @@ SNIPPET
     which can be used to select / deselect all of these values. If this not the desired behaviour,
     provide a <a href="#value-formatter">Formatter</a> to present blank values in a different way.
 </p>
+
+<h2>Complex Objects</h2>
+
+<p>
+    If you are providing complex objects as values, then you need to provide a Key Creator function (<code>colDef.keyCreator</code>)
+    to convert the objects to strings when using the Set Filter. Note the string is used to compare objects when
+    filtering and to render a label in the filter UI.
+</p>
+
+<?= createSnippet(<<<SNIPPET
+// ColDef
+{
+    field: 'country',
+    keyCreator: countryKeyCreator,
+    valueFormatter: countryValueFormatter,
+    filter: 'agSetColumnFilter',
+}
+
+function countryKeyCreator(params) {
+    return params.value.name;
+}
+
+function countryValueFormatter(params) {
+    return params.value.name;
+}
+SNIPPET
+) ?>
+
+<p>
+    The snippet above shows a Key Creator function that returns the country name from the complex object.
+    If the Key Creator was not provided on the Column Definition, the Set Filter would not work.
+</p>
+
+<p>
+    If the value returned by Key Creator is not human-readable then you should consider also providing
+    a Formatter for the Filter List label.
+</p>
+
+<p>
+    The following example shows the Key Creator handling complex objects for the Set Filter. Note the following:
+</p>
+
+<ul class="content">
+    <li>
+        <b>Country (Complex Object)</b> column is supplied a complex object through <code>colDef.field</code>.
+    </li>
+    <li>
+        A Key Creator is supplied to the column using <code>colDef.keyCreator = countryKeyCreator</code> which extracts
+        the <code>name</code> property for the Set Filter.
+    </li>
+    <li>
+        A value formatter is supplied to the column using <code>colDef.valueFormatter = countryValueFormatter</code>
+        which extracts the <code>name</code> property for the cell values.
+    </li>
+    <li>
+        Click <b>Print Filter Model</b> with a filter active and note the logged Filter Model (dev console) uses the <code>name</code>
+        property from the complex object.
+    </li>
+</ul>
+
+<?= grid_example('Complex Objects', 'complex-objects', 'generated', ['enterprise' => true, 'exampleHeight' => 505, 'modules' => ['clientside', 'setfilter', 'menu', 'filterpanel']]) ?>
+
+<h2>Multiple Values Per Cell</h2>
+
+<p>
+    Sometimes you might wish to support multiple values in a single cell, for example when using tags. In this case,
+    the Set Filter can extract each of the individual values from the cells, creating an entry in the Filter List for
+    each individual value. Selecting a value will then show rows where any of the values in the cell match the selected
+    value.
+</p>
+
+<p>
+    The example below demonstrates this in action. Note the following:
+</p>
+
+<ul>
+    <li>The <strong>Animals (array)</strong> column uses an array in the data containing multiple values.</li>
+    <li>
+        The <strong>Animals (string)</strong> column uses a single string in the data to represent multiple values, with a
+        <a href="../javascript-grid-value-getters/">Value Getter</a> used to extract an array of values from the data.
+    </li>
+    <li>
+        The <strong>Animals (objects)</strong> column retrieves values from an array of objects, using a
+        <a href="#complex-objects">Key Creator</a>.
+    </li>
+    <li>
+        For all scenarios, the Set Filter displays a list of all the individual, unique values present from the data.
+    </li>
+    <li>
+        Selecting values in the Set Filter will show rows where the data for that row contains <strong>any</strong> of
+        the selected values.
+    </li>
+</ul>
+
+<?= grid_example('Multiple Values', 'multiple-values', 'generated', ['enterprise' => true, 'modules' => ['clientside', 'setfilter', 'menu']]) ?>
 
 <h2>Default State</h2>
 
