@@ -310,6 +310,7 @@ export class SetFilter extends ProvidedFilter {
         });
     }
 
+    /** @deprecated since version 23.2. The loading screen is displayed automatically when the set filter is retrieving values. */
     public setLoading(loading: boolean): void {
         const message = 'ag-Grid: since version 23.2, setLoading has been deprecated. The loading screen is displayed automatically when the set filter is retrieving values.';
         _.doOnce(() => console.warn(message), 'setFilter.setLoading');
@@ -594,6 +595,7 @@ export class SetFilter extends ProvidedFilter {
         return this.valueModel.getMiniFilter();
     }
 
+    /** @deprecated since version 23.2. Please use setModel instead. */
     public selectEverything() {
         const message = 'ag-Grid: since version 23.2, selectEverything has been deprecated. Please use setModel instead.';
         _.doOnce(() => console.warn(message), 'setFilter.selectEverything');
@@ -602,6 +604,7 @@ export class SetFilter extends ProvidedFilter {
         this.refresh();
     }
 
+    /** @deprecated since version 23.2. Please use setModel instead. */
     public selectNothing() {
         const message = 'ag-Grid: since version 23.2, selectNothing has been deprecated. Please use setModel instead.';
         _.doOnce(() => console.warn(message), 'setFilter.selectNothing');
@@ -618,6 +621,7 @@ export class SetFilter extends ProvidedFilter {
         this.refresh();
     }
 
+    /** @deprecated since version 23.2. Please use setModel instead. */
     public selectValue(value: string) {
         const message = 'ag-Grid: since version 23.2, selectValue has been deprecated. Please use setModel instead.';
         _.doOnce(() => console.warn(message), 'setFilter.selectValue');
@@ -632,6 +636,7 @@ export class SetFilter extends ProvidedFilter {
         this.updateSelectAllLabel();
     }
 
+    /** @deprecated since version 23.2. Please use getModel instead. */
     public isValueSelected(value: string) {
         const message = 'ag-Grid: since version 23.2, isValueSelected has been deprecated. Please use getModel instead.';
         _.doOnce(() => console.warn(message), 'setFilter.isValueSelected');
@@ -639,6 +644,7 @@ export class SetFilter extends ProvidedFilter {
         return this.valueModel.isValueSelected(value);
     }
 
+    /** @deprecated since version 23.2. Please use getModel instead. */
     public isEverythingSelected() {
         const message = 'ag-Grid: since version 23.2, isEverythingSelected has been deprecated. Please use getModel instead.';
         _.doOnce(() => console.warn(message), 'setFilter.isEverythingSelected');
@@ -646,6 +652,7 @@ export class SetFilter extends ProvidedFilter {
         return this.valueModel.isEverythingVisibleSelected();
     }
 
+    /** @deprecated since version 23.2. Please use getModel instead. */
     public isNothingSelected() {
         const message = 'ag-Grid: since version 23.2, isNothingSelected has been deprecated. Please use getModel instead.';
         _.doOnce(() => console.warn(message), 'setFilter.isNothingSelected');
@@ -653,6 +660,7 @@ export class SetFilter extends ProvidedFilter {
         return this.valueModel.isNothingVisibleSelected();
     }
 
+    /** @deprecated since version 23.2. Please use getValues instead. */
     public getUniqueValueCount() {
         const message = 'ag-Grid: since version 23.2, getUniqueValueCount has been deprecated. Please use getValues instead.';
         _.doOnce(() => console.warn(message), 'setFilter.getUniqueValueCount');
@@ -660,6 +668,7 @@ export class SetFilter extends ProvidedFilter {
         return this.valueModel.getUniqueValueCount();
     }
 
+    /** @deprecated since version 23.2. Please use getValues instead. */
     public getUniqueValue(index: any) {
         const message = 'ag-Grid: since version 23.2, getUniqueValue has been deprecated. Please use getValues instead.';
         _.doOnce(() => console.warn(message), 'setFilter.getUniqueValue');
