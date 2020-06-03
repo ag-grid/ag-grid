@@ -236,7 +236,7 @@ gtm_data_layer('community-enterprise');
                     </div>
                     <div>
                         <h3>Single Application Development License</h3>
-                        <p/>
+                        <p></p>
                         <p>
                             Licenses <b>one application</b>, developed for internal use, to embed ag-Grid
                             Enterprise in perpetuity.
@@ -284,7 +284,7 @@ gtm_data_layer('community-enterprise');
                     <div>
 
                         <h3>Multiple Application Development License</h3>
-                        <p/>
+                        <p></p>
 
                         <p>
                             Licenses <b>unlimited number of applications</b>, developed for internal use, to embed ag-Grid

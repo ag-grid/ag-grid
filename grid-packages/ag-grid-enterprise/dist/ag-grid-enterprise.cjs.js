@@ -14703,6 +14703,8 @@ var Axis = /** @class */ (function () {
     Axis.prototype.update = function () {
         var _this = this;
         var _a = this, group = _a.group, scale = _a.scale, tick = _a.tick, label = _a.label, gridStyle = _a.gridStyle, requestedRange = _a.requestedRange;
+        var requestedRangeMin = Math.min(requestedRange[0], requestedRange[1]);
+        var requestedRangeMax = Math.max(requestedRange[0], requestedRange[1]);
         var rotation = toRadians(this.rotation);
         var parallelLabels = label.parallel;
         var labelRotation = normalizeAngle360(toRadians(label.rotation));
@@ -14746,8 +14748,12 @@ var Axis = /** @class */ (function () {
         enter.append(Text);
         var groupSelection = update.merge(enter);
         groupSelection
-            .attrFn('translationY', function (_, datum) { return Math.round(scale.convert(datum) + halfBandwidth); })
-            .attrFn('visible', function (node) { return node.translationY >= requestedRange[0] && node.translationY <= requestedRange[1]; });
+            .attrFn('translationY', function (_, datum) {
+            return Math.round(scale.convert(datum) + halfBandwidth);
+        })
+            .attrFn('visible', function (node) {
+            return node.translationY >= requestedRangeMin && node.translationY <= requestedRangeMax;
+        });
         groupSelection.selectByTag(Tags.Tick)
             .each(function (line) {
             line.strokeWidth = tick.width;
@@ -27157,7 +27163,13 @@ var AxisPanel = /** @class */ (function (_super) {
             var chart = chartProxy.getChart();
             var axis = find(chart.axes, function (axis) { return axis.position === axisPosition; });
             if (axis) {
-                chartProxy.setAxisProperty("label.rotation", newValue);
+                axis.label.rotation = newValue;
+                if (axis.position === ChartAxisPosition.Bottom) {
+                    agGridCommunity._.set(chartProxy.getChartOptions().xAxis, "label.rotation", newValue);
+                }
+                else if (axis.position === ChartAxisPosition.Left) {
+                    agGridCommunity._.set(chartProxy.getChartOptions().yAxis, "label.rotation", newValue);
+                }
                 chart.performLayout();
             }
         }; };

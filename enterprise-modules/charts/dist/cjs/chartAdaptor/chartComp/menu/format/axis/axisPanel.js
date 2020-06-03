@@ -143,7 +143,13 @@ var AxisPanel = /** @class */ (function (_super) {
             var chart = chartProxy.getChart();
             var axis = ag_charts_community_1.find(chart.axes, function (axis) { return axis.position === axisPosition; });
             if (axis) {
-                chartProxy.setAxisProperty("label.rotation", newValue);
+                axis.label.rotation = newValue;
+                if (axis.position === ag_charts_community_1.ChartAxisPosition.Bottom) {
+                    core_1._.set(chartProxy.getChartOptions().xAxis, "label.rotation", newValue);
+                }
+                else if (axis.position === ag_charts_community_1.ChartAxisPosition.Left) {
+                    core_1._.set(chartProxy.getChartOptions().yAxis, "label.rotation", newValue);
+                }
                 chart.performLayout();
             }
         }; };

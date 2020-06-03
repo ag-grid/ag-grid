@@ -5,11 +5,9 @@
 }
 
 .button-bar {
-    padding-bottom: 4px;
+    margin-bottom: 1rem;
 }
 
 .grid-wrapper {
-    height: 20px;
     flex: 1;
 }
-
