@@ -7,13 +7,13 @@ import "@ag-grid-community/all-modules/dist/styles/ag-theme-alpine.css";
 
 const VueExample = {
     template: `
-        <div style="height: 100%">
+        <div style="display: flex; flex-direction: column; height: 100%">
             <div style="margin-bottom: 5px;">
                 <button @click="fillLarge">Fill 100%</button>
                 <button @click="fillMedium">Fill 60%</button>
                 <button @click="fillExact">Exactly 400 x 400 pixels</button>
             </div>
-            <div style="height: calc(100% - 25px);">
+            <div style="width: 100%; flex: 1 1 auto;">
                 <ag-grid-vue :style="{width, height}" class="ag-theme-alpine"
                              @grid-ready="onGridReady"
                              :columnDefs="columnDefs"

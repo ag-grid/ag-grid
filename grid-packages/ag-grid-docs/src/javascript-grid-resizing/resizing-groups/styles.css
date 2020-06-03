@@ -1,3 +1,14 @@
+.example-wrapper {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+#myGrid {
+    flex: 1 1 auto;
+    width: 100%;
+}
+
 .fixed-size-header {
     background-color: #ffdddd;
 }
@@ -10,9 +21,6 @@
     border: 1px solid #aaa;
 }
 
-.grid-wrapper {
-    height: calc(100% - 25px);
-}
 .legend-bar {
     font-family: Verdana, Geneva, Tahoma, sans-serif;
     font-size: 13px;
