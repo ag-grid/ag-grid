@@ -480,7 +480,7 @@ SNIPPET
 
 <ul class="content">
     <li>The 'Athlete' column contains two custom filter options: <code>Starts with "A"</code> and
-        <code>Starts with "B"</code>. Both these options take no text filter input.
+        <code>Starts with "N"</code>. Both these options take no text filter input.
     </li>
     <li>The 'Age' column contains three custom filter options: <code>evenNumbers</code>, <code>oddNumbers</code> and
         <code>blanks</code>. It also uses the built-in <code>'empty'</code> filter along with <code>suppressAndOrCondition=true</code>.
