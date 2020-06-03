@@ -16,8 +16,14 @@ include '../documentation-main/documentation_header.php';
 <h1 class="heading-enterprise">Master / Detail - Detail Height</h1>
 
 <p class="lead">
+    This section shows how the detail height can be customised to suit application requirements.
+</p>
+
+<h2>Detail Height Options</h2>
+
+<p>
     The default height of each detail section (ie the row containing the Detail Grid in the master)
-    is fixed at 300px. The height does not change based on how much data there is to display in the detail
+    is fixed at <code>300px</code>. The height does not change based on how much data there is to display in the detail
     section.
 </p>
 
@@ -25,20 +31,18 @@ include '../documentation-main/documentation_header.php';
     To change the height of the details section from the default you have the following options:
 </p>
 
-<ul>
+<ul class="content">
     <li>
-        Set a <b>Fixed Height</b> for all detail sections using grid property <code>detailRowHeight</code>.
-        This will fix all detail sections to the new height in pixels.
+        <a href="../javascript-grid-master-detail-height/#fixed-height">Fixed Height</a>: a custom fixed height can be
+        provided for all detail sections instead of the default <code>300px</code>.
     </li>
     <li>
-        Set the detail sections to <b>Auto Height</b> by setting the property
-        <code>detailCellRendererParams.autoHeight=true</code>. This will get each detail section to
-        auto-size to fit it's content.
+        <a href="../javascript-grid-master-detail-height/#auto-height">Auto Height</a>: detail sections can auto-size
+        to fit based off the contents.
     </li>
     <li>
-        Use <b>Dynamic Height</b> to set a different height for each details section by implementing
-        the grid callback <code>getRowHeight()</code>. This callback is called once for each detail section thus
-        allowing different heights to be provided for different sections.
+        <a href="../javascript-grid-master-detail-height/#dynamic-height">Dynamic Height</a>: different heights can be
+        provided for each detail section.
     </li>
 </ul>
 
