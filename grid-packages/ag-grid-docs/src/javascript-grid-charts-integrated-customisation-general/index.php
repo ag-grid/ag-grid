@@ -29,6 +29,11 @@ interface ChartOptions {
 
     // Additional CSS class to be added to the tooltip element
     tooltipClass?: string;
+
+    // A map of chart events to their listener functions.
+    // Please see the feature section on chart events in standalone charts
+    // documentation.
+    listeners?: { [key in string]: Function };
 }
 
 interface PaddingOptions {
