@@ -1,0 +1,34 @@
+
+@mixin ag-theme-base-part-columns-tool-panel {
+    
+    .ag-pivot-mode-panel {
+        height: ag-param(header-height);
+        display: flex;
+    }
+
+    .ag-pivot-mode-select {
+        display: flex;
+        align-items: center;
+
+        @include ag-theme-rtl(( margin-left: ag-param(widget-container-horizontal-padding) ));
+    }
+
+    @include ag-keyboard-focus((ag-column-select-header), 4px);
+    
+    .ag-column-select-header {
+        height: ag-param(header-height);
+        align-items: center;
+        padding: 0 ag-param(widget-container-horizontal-padding);
+
+        @include ag-border(secondary, bottom);
+    }
+    
+    .ag-column-panel-column-select {
+        @include ag-border(secondary, (bottom, top));
+    }
+
+    .ag-column-group-icons,
+    .ag-column-select-header-icon {
+        @include ag-color-property(color, secondary-foreground-color);
+    }
+}

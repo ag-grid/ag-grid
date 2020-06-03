@@ -1,0 +1,62 @@
+
+@mixin ag-theme-base-part-footer {
+    
+    .ag-paging-panel {
+        border-top: 1px solid;
+        @include ag-color-property(border-top-color, border-color);
+        @include ag-color-property(color, secondary-foreground-color);
+        height: ag-param(header-height);
+        // padding: 0 ag-param(cell-horizontal-padding);
+
+        > * {
+            margin: 0 ag-param(cell-horizontal-padding);
+        }
+    }
+
+    .ag-paging-button {
+        cursor: pointer;
+        opacity: 0;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        left: 0;
+        padding: 0;
+        width: ag-param(icon-size);
+    }
+    .ag-disabled .ag-paging-button {
+        cursor: default;
+    }
+
+    .ag-paging-button-wrapper.ag-disabled {
+        @include ag-color-property(color, disabled-foreground-color);
+        cursor: default;
+    }
+
+    .ag-paging-button-wrapper, .ag-paging-description {
+        margin: 0 ag-param(grid-size);
+    }
+
+    .ag-status-bar {
+        @include ag-border(primary, top);
+        @include ag-color-property(color, disabled-foreground-color);
+        padding-right: ag-param(grid-size) * 4;
+        padding-left: ag-param(grid-size) * 4;
+        line-height: 1.5;
+    }
+
+    .ag-status-name-value-value {
+        @include ag-color-property(color, foreground-color);
+    }
+
+    .ag-status-bar-center {
+        text-align: center;
+    }
+
+    .ag-status-name-value {
+        margin-left: ag-param(grid-size);
+        margin-right: ag-param(grid-size);
+        padding-top: ag-param(grid-size) * 2;
+        padding-bottom: ag-param(grid-size) * 2;
+    }
+
+}

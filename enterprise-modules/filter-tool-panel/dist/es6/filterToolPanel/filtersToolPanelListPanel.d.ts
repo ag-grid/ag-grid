@@ -1,0 +1,35 @@
+import { AbstractColDef, Component } from "@ag-grid-community/core";
+import { ToolPanelFiltersCompParams } from "./filtersToolPanel";
+export declare class FiltersToolPanelListPanel extends Component {
+    private static TEMPLATE;
+    private gridApi;
+    private columnApi;
+    private toolPanelColDefService;
+    private columnController;
+    private initialised;
+    private params;
+    private filterGroupComps;
+    private searchFilterText;
+    constructor();
+    init(params: ToolPanelFiltersCompParams): void;
+    onColumnsChanged(): void;
+    syncFilterLayout(): void;
+    private buildTreeFromProvidedColumnDefs;
+    setFiltersLayout(colDefs: AbstractColDef[]): void;
+    private recursivelyAddComps;
+    private recursivelyAddFilterGroupComps;
+    private filtersExistInChildren;
+    private shouldDisplayFilter;
+    refresh(): void;
+    setVisible(visible: boolean): void;
+    expandFilterGroups(expand: boolean, groupIds?: string[]): void;
+    expandFilters(expand: boolean, colIds?: string[]): void;
+    private onGroupExpanded;
+    private fireExpandedEvent;
+    performFilterSearch(searchText: string): void;
+    private searchFilters;
+    private setFirstAndLastVisible;
+    private refreshFilters;
+    private destroyFilters;
+    protected destroy(): void;
+}
