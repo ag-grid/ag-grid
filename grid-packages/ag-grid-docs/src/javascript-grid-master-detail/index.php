@@ -21,19 +21,14 @@ This "clear: both" is to stop the video included above from dropping into the de
 -->
 <p style="clear: both;"/>
 
-<p>
-    The example below shows a simple Master / Detail with all the above configured.
-</p>
-
-<?= grid_example('Master Detail Example', 'simple', 'generated', ['enterprise' => true, 'exampleHeight' => 535, 'modules'=>['clientside', 'masterdetail', 'menu', 'columnpanel']]) ?>
-
 <h2>Enabling Master / Detail</h2>
 
 <p>
-    Set the following items within the Master Grid to enabled Master / Detail:
+    Master / Detail can be enabled using the <code>masterDetail</code> grid option with detail rows configured using
+    <code>detailCellRendererParams</code> as shown below:
 </p>
 
-<snippet>
+<?= createSnippet(<<<SNIPPET
 var gridOptions = {
 
     // enable Master / Detail
@@ -64,7 +59,12 @@ var gridOptions = {
     }
     ...
 }
-</snippet>
+SNIPPET
+) ?>
+
+<p>
+    The example below shows a simple Master / Detail with all the above configured.
+</p>
 
 <ol class="content">
     <li>
@@ -86,10 +86,13 @@ var gridOptions = {
     </li>
 </ol>
 
-<p style="font-style: italic;">
-    * The significance of using Detail Cell Renderer parameters to configure the Detail Grid is explained in
-    <a href="../javascript-grid-master-detail-detail-grids/">Detail Grids</a>.
-</p>
+<note>
+    To learn more about <code>detailCellRendererParams</code> configuration see the
+    <a href="../javascript-grid-master-detail-detail-grids/">Detail Grids</a> section.
+</note>
+
+<?= grid_example('Master Detail Example', 'simple', 'generated', ['enterprise' => true, 'exampleHeight' => 535, 'modules'=>['clientside', 'masterdetail', 'menu', 'columnpanel']]) ?>
+
 
 <h2>Row Models</h2>
 
@@ -104,5 +107,25 @@ var gridOptions = {
 <p>
     The Detail Grid on the other hand can use any Row Model.
 </p>
+
+
+<h2>API Reference</h2>
+
+<h3>Master Detail Properties</h3>
+
+<p>
+    Top level Master Detail properties available on the Grid Options:
+</p>
+
+<?php createDocumentationFromFile('../javascript-grid-properties/properties.json', 'masterDetail') ?>
+
+<h3>Detail Cell Renderer Params</h3>
+
+<p>
+    Detail Cell Renderer parameters available on the <code>detailCellRendererParams</code> object:
+</p>
+
+<?php createDocumentationFromFile('../javascript-grid-master-detail-detail-grids/properties.json', 'detailCellRenderer') ?>
+
 
 <?php include '../documentation-main/documentation_footer.php';?>
