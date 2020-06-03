@@ -127,7 +127,7 @@ SNIPPET
 
 <p>
     The text shown as a placeholder in the Mini Filter textbox can be customised by setting
-    <code>'search'</code>.
+    <code>'searchOoo'</code>.
 </p>
 
 <p>
