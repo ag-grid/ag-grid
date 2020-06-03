@@ -18,11 +18,15 @@
 }
 
 .legend-box {
+    display: inline-block;
     border: 1px solid #aaa;
+    height: 15px;
+    width: 15px;
+    vertical-align: text-top;
 }
 
 .legend-bar {
     font-family: Verdana, Geneva, Tahoma, sans-serif;
     font-size: 13px;
-    margin-bottom: 5px;
+    margin-bottom: 1rem;
 }

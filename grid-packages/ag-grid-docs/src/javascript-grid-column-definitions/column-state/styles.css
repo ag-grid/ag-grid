@@ -7,12 +7,12 @@
 .test-header {
     font-family: Verdana, Geneva, Tahoma, sans-serif;
     font-size: 13px;
-    margin-bottom: 5px;
+    margin-bottom: 0.5rem;
 }
-
-.test-header .example-section:not(:first-child) {
-    margin-top: 5px;
-}
+  
+.test-header .example-section {
+    margin-bottom: 0.5rem;
+}  
 
 #myGrid {
     flex: 1;

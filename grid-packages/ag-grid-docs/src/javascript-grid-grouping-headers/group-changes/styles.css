@@ -1,7 +1,5 @@
 .test-grid {
-    height: 1px;
-    min-height: 1px;
-    flex-grow: 1;
+    flex: 1;
 }
 
 .test-container {
@@ -13,7 +11,7 @@
 .test-header {
     font-family: Verdana, Geneva, Tahoma, sans-serif;
     font-size: 13px;
-    margin-bottom: 5px;
+    margin-bottom: 1rem;
 }
 
 .test-header label {

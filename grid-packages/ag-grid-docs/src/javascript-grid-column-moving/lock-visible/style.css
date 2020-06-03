@@ -1,22 +1,27 @@
+.example-wrapper {
+    display: flex; 
+    flex-direction: column;
+    height: 100%;
+}
+
+#myGrid {
+    flex: 1;
+}
+
 .locked-visible {
     background: #008b8b;
 }
 
 .legend-box {
     border: 1px solid #aaa;
+    width: 15px;
+    height: 15px;
+    display: inline-block;
+    vertical-align: text-top;
 }
 
 .legend-bar {
-    position: absolute;
-    top: 1rem;
-    left: 1rem;
-    padding: 1px;
     font-family: Verdana, Geneva, Tahoma, sans-serif;
     font-size: 13px;
-}
-
-.grid-wrapper {
-    height: 100%;
-    padding-top: 26px;
-    box-sizing: border-box;
+    margin-bottom: 1rem;
 }
