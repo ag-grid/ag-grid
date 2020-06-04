@@ -1,18 +1,18 @@
-<div class="test-header" style="padding: 5px;justify-content: space-between">
+<div class="test-header" style="padding: 5px; justify-content: space-between">
     <div style="align-items: start;">
         <button onclick="setRowData(0)">0 Rows</button>
         <button onclick="setRowData(5)">5 Rows</button>
         <button onclick="setRowData(50)">50 Rows</button>
     </div>
     <div style="align-items: center;">
-        <div style="display: inline-block">
-            <input type="checkbox" id="floating-rows" onclick="cbFloatingRows()"/>
-            <span style="background-color: #00e5ff; width: 15px; height: 15px; border: 1px solid #888; display: inline-block; position: relative; top: 2px;"></span>Pinned
-            Rows
-        </div>
+        <label>
+            <input type="checkbox" id="floating-rows" onclick="cbFloatingRows()" style="vertical-align: text-top;" />
+            <span style="background-color: #00e5ff; width: 15px; height: 15px; border: 1px solid #888; display: inline-block; vertical-align: text-top;"></span>
+            Pinned Rows
+        </label>
+
         <button onclick="setAutoHeight()">Auto Height</button>
         <button onclick="setFixedHeight()">Fixed Height</button>
-
     </div>
     <div style="align-items: end;">
         Row Count = <span id="currentRowCount"></span>
