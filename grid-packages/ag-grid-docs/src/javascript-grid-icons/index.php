@@ -342,6 +342,14 @@ sortUnSort
         margin: 0;
     }
 
+    .download {
+        display: none;
+    }
+
+    .row + .download {
+        display: block;
+    }
+
     .download a {
         color: #ebebeb;
     }
@@ -375,7 +383,9 @@ sortUnSort
         var wrapper = document.createElement('div');
         wrapper.classList.add('row');
         wrapper.classList.add('mx-0');
-        wrapper.style.overflowY = 'auto';
+        wrapper.classList.add('w-100');
+        wrapper.classList.add('flex-fill');
+        wrapper.style.overflowY = 'scroll';
         container.insertAdjacentElement('afterbegin', wrapper);
 
         icons.forEach(function(icon) {
@@ -428,19 +438,16 @@ sortUnSort
     </li>
 </ul>
 <div class="tab-content border border-top-0" id="icon-content" style="max-height: 34rem; overflow: hidden;">
-    <div class="tab-pane show active container px-0" id="alpine" role="tabpanel" aria-labelledby="alpine-tab" style="max-height: 34rem;position: relative;">
-        <div class="download bg-primary p-2" style="bottom: 0; left: 0;"><a href="./resources/alpine/alpine-icons.zip">Download All</a></div>
+    <div class="tab-pane show active container px-0" id="alpine" role="tabpanel" aria-labelledby="alpine-tab" style="height: 34rem;position: relative;">
+        <div class="download bg-primary p-2"><a href="./resources/alpine/alpine-icons.zip">Download All</a></div>
     </div>
-    <div class="tab-pane show active container px-0" id="balham" role="tabpanel" aria-labelledby="balham-tab" style="max-height: 34rem;position: relative;">
-        <div class="download bg-primary p-2" style="bottom: 0; left: 0;"><a href="./resources/balham/balham-icons.zip">Download All</a></div>
+    <div class="tab-pane container px-0" id="balham" role="tabpanel" aria-labelledby="balham-tab" style="height: 34rem;position: relative;">
+        <div class="download bg-primary p-2"><a href="./resources/balham/balham-icons.zip">Download All</a></div>
     </div>
-    <div class="tab-pane show active container px-0" id="balham" role="tabpanel" aria-labelledby="balham-tab" style="max-height: 34rem;position: relative;">
-        <div class="download bg-primary p-2" style="bottom: 0; left: 0;"><a href="./resources/balham/balham-icons.zip">Download All</a></div>
-    </div>
-    <div class="tab-pane container px-0" id="material" role="tabpanel" aria-labelledby="material-tab" style="max-height: 34rem;">
+    <div class="tab-pane container px-0" id="material" role="tabpanel" aria-labelledby="material-tab" style="height: 34rem;position: relative;">
         <div class="download bg-primary p-2"><a href="./resources/material/material-icons.zip">Download All</a></div>
     </div>
-    <div class="tab-pane container px-0" id="base" role="tabpanel" aria-labelledby="base-tab" style="max-height: 34rem;">
+    <div class="tab-pane container px-0" id="base" role="tabpanel" aria-labelledby="base-tab" style="height: 34rem;position: relative;">
         <div class="download bg-primary p-2"><a href="./resources/base/base-icons.zip">Download All</a></div>
     </div>
 </div>
