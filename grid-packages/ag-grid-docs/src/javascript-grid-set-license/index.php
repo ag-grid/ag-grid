@@ -75,7 +75,7 @@ function printFeatureRecursive($parentItem, $indent) {
         echo "<tr>";
         echo "<td><span class='feature-title feature-title-indent-$indent'><a href='../$itemUrl'>$itemTitle</a> ";
         if ($item['enterprise']) {
-            echo "<img src=\"../_assets/svg/enterprise.svg\" style=\"width: 16px;\"/>";
+            echo "<img src=\"../_assets/svg/enterprise.svg\" style=\"max-width: 16px;\"/>";
         }
         echo "</span></td>";
         if ($item['enterprise']) {
@@ -111,7 +111,7 @@ function printFeatureRecursive($parentItem, $indent) {
             The Enterprise version of ag-Grid comes with more grid features and
             <a href="https://ag-grid.zendesk.com/">Support via Zendesk</a>.
             The features that are available in agGrid Enterprise only are marked with the
-            Enterprise icon <img src="../_assets/svg/enterprise.svg" style="width: 16px;"/> as demonstrated
+            Enterprise icon <img src="../_assets/svg/enterprise.svg" style="max-width: 16px;"/> as demonstrated
             in the image to the right.
             See <a href="../license-pricing.php">Pricing</a> for details on purchasing an ag-Grid Enterprise license.
         </p>
@@ -139,7 +139,7 @@ function printFeatureRecursive($parentItem, $indent) {
         <tr>
             <th></th>
             <th>Community</th>
-            <th>Enterprise <img src="../_assets/svg/enterprise.svg" style="width: 16px;"/></th>
+            <th>Enterprise <img src="../_assets/svg/enterprise.svg" style="max-width: 16px;"/></th>
         </tr>
 
         <?php doLevel1Features(); ?>
