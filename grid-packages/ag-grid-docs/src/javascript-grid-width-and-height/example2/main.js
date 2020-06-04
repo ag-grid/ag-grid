@@ -36,6 +36,10 @@ var gridOptions = {
         params.api.sizeColumnsToFit();
     },
 
+    onFirstDataRendered: function(params) {
+        onGridSizeChanged(params);
+    },
+
     rowData: rowData,
 
     onGridSizeChanged: onGridSizeChanged,
