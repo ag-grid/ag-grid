@@ -8,13 +8,12 @@ include '../documentation-main/documentation_header.php';
 
 <h1>Angular Grid | Get Started with ag-Grid and Angular</h1>
 
-<note>Version 22.1.1 of <code>ag-grid-angular</code> / <code>@ag-grid-community/angular</code> is the last version that
-    supports Angular 5 and before.<br/><br/>Version 23 onwards of <code>ag-grid-angular</code> / <code>@ag-grid-community/angular</code> will support Angular 6+ only.</note>
-
 <p class="lead" id="angular-grid">
     ag-Grid is the industry standard for Angular Enterprise Applications. Developers using ag-Grid
     are building applications that would not be possible if ag-Grid did not exist.
 </p>
+
+<note>Please refer to our <a href="#compatibility">Compatibility Chart</a> for Supported Versions of Angular & ag-Grid.</note>
 
 <?php
 include './intro.php';
@@ -545,6 +544,25 @@ The grouping documentation section contains plenty of real-world runnable exampl
 <p>If everything is configured correctly, the second row of the grid will get slightly darker. Congratulations!
 You now know now bend the grid look to your will - there are a few dozens more Sass variables that let you control the font family and size, border color,
 header background color and even the amount of spacing in the cells and columns. The full <a href="https://www.ag-grid.com/javascript-grid-themes-provided/#customising-themes">theme parameter list</a> is available in the themes documentation section.</p>
+
+<h2 id="compatibility">ag-Grid & Angular Compatibility Chart</h2>
+
+<div>
+    <table class="properties">
+        <tr>
+            <th>Angular Version</th>
+            <th>ag-Grid Versions</th>
+        </tr>
+        <tr>
+            <td>6</td>
+            <td>18 - 22</td>
+        </tr>
+        <tr>
+            <td>7 - 9</td>
+            <td>18 - 23+ (23+ recommended for Angular 9+)</td>
+        </tr>
+    </table>
+</div>
 
 <h2 id="summary">Summary</h2>
 

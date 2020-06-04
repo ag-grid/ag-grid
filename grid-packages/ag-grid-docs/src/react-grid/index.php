@@ -9,10 +9,13 @@ include '../documentation-main/documentation_header.php';
 <div>
   <h1>React Grid | Get Started with ag-Grid and React</h1>
 
-  <p class="lead" id="react-grid-description">
-    ag-Grid is the industry standard for React Enterprise Applications. Developers using ag-Grid
-    are building applications that would not be possible if ag-Grid did not exist.
-  </p>
+
+<p class="lead" id="react-grid-description">
+ag-Grid is the industry standard for React Enterprise Applications. Developers using ag-Grid
+are building applications that would not be possible if ag-Grid did not exist.
+</p>
+
+<note>Please refer to our <a href="#compatibility">Compatibility Chart</a> for Supported Versions of React & ag-Grid.</note>
 
 <?php
 include './intro.php';
@@ -368,6 +371,26 @@ import { AgGridReact } from 'ag-grid-react';
 <p>If everything is configured correctly, the second row of the grid will be blue. Congratulations!
   You now know now bend the grid look to your will - there are a few dozens more theme parameters variables that let you control the font family and size, border color,
   header background color and even the amount of spacing in the cells and columns. The <a href="https://www.ag-grid.com/javascript-grid-themes-provided/#customising-themes">full list of theme parameters</a> is available in the themes documentation section.</p>
+
+<h2 id="compatibility">ag-Grid & React Compatibility Chart</h2>
+
+<div>
+    <table class="properties">
+        <tr>
+            <th>React Version</th>
+            <th>ag-Grid Versions</th>
+        </tr>
+        <tr>
+            <td>15.x</td>
+            <td>18 - 21.2.0</td>
+        </tr>
+        <tr>
+            <td>16.3+</td>
+            <td>22+</td>
+        </tr>
+    </table>
+</div>
+
 
   <h2 id="summary">Summary</h2>
 
