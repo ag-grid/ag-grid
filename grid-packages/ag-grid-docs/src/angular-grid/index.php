@@ -558,7 +558,7 @@ header background color and even the amount of spacing in the cells and columns.
             <td>18 - 22</td>
         </tr>
         <tr>
-            <td>7 - 9</td>
+            <td>7 - 9+</td>
             <td>18 - 23+ (23+ recommended for Angular 9+)</td>
         </tr>
     </table>
