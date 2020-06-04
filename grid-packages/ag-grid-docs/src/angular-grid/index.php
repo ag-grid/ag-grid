@@ -13,11 +13,11 @@ include '../documentation-main/documentation_header.php';
     are building applications that would not be possible if ag-Grid did not exist.
 </p>
 
-<note>Please refer to our <a href="#compatibility">Compatibility Chart</a> for Supported Versions of Angular & ag-Grid.</note>
-
 <?php
 include './intro.php';
 ?>
+
+<note>Please refer to our <a href="#compatibility">Compatibility Chart</a> for Supported Versions of Angular & ag-Grid.</note>
 
 <h2>Getting Started</h2>
 
@@ -42,6 +42,22 @@ include './intro.php';
 </ol>
 </div>
 </div>
+
+<note>
+    <div style="display: flex;">
+        <span style="display: inline-block; background: radial-gradient(#41a3ff, #0273D4); border-radius: 5px; padding: 3px;">
+            <a href="https://thinkster.io/topics/ag-grid">
+                <img style="width: 150px;" src="../images/thinkster.png"/>
+            </a>
+        </span>
+        <span style="flex-grow: 1; display: inline-block; padding-left: 10px;">
+            Thinkster has provided a free course
+            <a href="https://thinkster.io/topics/ag-grid">
+                Learning ag-Grid with Angular
+            </a>
+        </span>
+    </div>
+</note>
 
 <h2 id="add-ag-grid-to-your-project">Add ag-Grid to Your Project</h2>
 
