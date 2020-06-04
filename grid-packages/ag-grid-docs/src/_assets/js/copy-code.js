@@ -46,7 +46,7 @@
     button.onclick = copyCode;
 
     var wrapper = document.createElement('div');
-    wrapper.style = 'position: relative';
+    wrapper.style.setProperty('position', 'relative');
 
     snippet.parentNode.insertBefore(wrapper, snippet);
 
