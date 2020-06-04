@@ -38,18 +38,6 @@
     </div>
 </div>
 
-
-<div class="card card-highlight mb-4">
-    <div class="card-body">
-        <h5 class="card-title"><a href="../ag-grid-changelog/?fixVersion=22.0.0">Best Web Grids for 2020</a></h5>
-        <h6 class="card-subtitle mb-2 text-muted">Jan 27th</h6>
-        <p class="card-text">
-            ag-Grid is the "Absolute Winner" according to
-            <a class="learn-more" href="https://www.crankuptheamps.com//blog/posts/2020/01/23/grid-comparison-2/#">Best Web Grids for 2020</a>.
-        </p>
-    </div>
-</div>
-
 <div class="card card-highlight mb-4">
     <div class="card-body">
         <h5 class="card-title">
@@ -60,6 +48,17 @@
         <p class="card-text">
             There are free <a class="learn-more" href="https://thinkster.io/topics/ag-grid">Thinkster Courses</a> for learning
             ag-Grid with Angular and React.
+        </p>
+    </div>
+</div>
+
+<div class="card card-highlight mb-4">
+    <div class="card-body">
+        <h5 class="card-title"><a href="../ag-grid-changelog/?fixVersion=22.0.0">Best Web Grids for 2020</a></h5>
+        <h6 class="card-subtitle mb-2 text-muted">Jan 27th</h6>
+        <p class="card-text">
+            ag-Grid is the "Absolute Winner" according to
+            <a class="learn-more" href="https://www.crankuptheamps.com//blog/posts/2020/01/23/grid-comparison-2/#">Best Web Grids for 2020</a>.
         </p>
     </div>
 </div>
