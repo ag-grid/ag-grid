@@ -310,7 +310,7 @@ colDef = {
         </li>
     </ul>
 
-    <?= grid_example('Selectable Rows with Header Checkbox', 'specify-selectable-rows', 'generated', ['modules'=>['clientside', 'rowgrouping']]) ?>
+    <?= grid_example('Selectable Rows with Header Checkbox', 'specify-selectable-rows', 'generated', ['enterprise' => true, 'modules'=>['clientside', 'rowgrouping']]) ?>
 
     <h3>Example: Specifying Selectable Rows with Groups</h3>
 
