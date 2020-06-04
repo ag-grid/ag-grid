@@ -133,6 +133,7 @@ export class TabbedLayout extends ManagedFocusComponent {
         eHeaderButton.appendChild(item.title);
         _.addCssClass(eHeaderButton, 'ag-tab');
         this.eHeader.appendChild(eHeaderButton);
+        eHeaderButton.setAttribute('aria-label', item.titleLabel);
 
         const wrapper: TabbedItemWrapper = {
             tabbedItem: item,
@@ -192,6 +193,7 @@ export interface TabbedLayoutParams {
 
 export interface TabbedItem {
     title: Element;
+    titleLabel: string;
     bodyPromise: Promise<HTMLElement>;
     name: string;
     afterAttachedCallback?: Function;

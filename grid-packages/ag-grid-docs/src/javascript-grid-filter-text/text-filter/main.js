@@ -22,7 +22,6 @@ var columnDefs = [
                     .replace(/\W/g, '');
             },
             debounceMs: 0,
-            caseSensitive: true,
             suppressAndOrCondition: true
         }
     },
@@ -65,6 +64,7 @@ var columnDefs = [
         field: 'sport',
         filter: 'agTextColumnFilter',
         filterParams: {
+            caseSensitive: true,
             defaultOption: 'startsWith'
         }
     }

@@ -9,7 +9,7 @@ import "@ag-grid-community/all-modules/dist/styles/ag-theme-alpine.css";
 @Component({
     selector: 'my-app',
     template: `
-        <div style='height: 95%'>
+        <div style='height: 100%; display: flex; flex-direction: column;'>
             <div style="margin-bottom: 5px;">
                 <button (click)="fillLarge()">Fill 100%</button>
                 <button (click)="fillMedium()">Fill 60%</button>
@@ -17,7 +17,7 @@ import "@ag-grid-community/all-modules/dist/styles/ag-theme-alpine.css";
             </div>
             <div [ngStyle]="style">
                 <ag-grid-angular
-                        style="width: 100%; height: calc(100% - 25px);"
+                        style="width: 100%; flex: 1 1 auto;"
                         #agGrid
                         class="ag-theme-alpine"
                         [rowData]="rowData"

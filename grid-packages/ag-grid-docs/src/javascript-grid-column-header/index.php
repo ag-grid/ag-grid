@@ -180,10 +180,10 @@ SNIPPET
 
 <ul>
     <li>
-        The first two columns (Athlete and Age) have no header tooltip.
+        The first two columns (<strong>Athlete</strong> and <strong>Age</strong>) have no header tooltip.
     </li>
     <li>
-        The remaining columns (Country through to Total) have a header tooltip set.
+        The remaining columns (<strong>Country</strong> through to <strong>Total</strong>) have a header tooltip set.
     </li>
 </ul>
 
@@ -297,9 +297,9 @@ SNIPPET
     Note that specifying your own templates is compatible with other configurations:
 </p>
 <ul class="content">
-    <li><code>suppressMenu</code> is specified in: Athlete, Country, Date and Bronze columns</li>
-    <li><code>sortable=false</code> is specified in: Age, Year, Sport, Silver and Total columns</li>
-    <li>Gold is the only column that doesn't have <code>sortable=false</code> or <code>suppressMenu</code></li>
+    <li><code>suppressMenu</code> is specified in: <strong>Athlete</strong>, <strong>Country</strong>, <strong>Date</strong> and <strong>Bronze</strong> columns</li>
+    <li><code>sortable=false</code> is specified in: <strong>Age</strong>, <strong>Year</strong>, <strong>Sport</strong>, <strong>Silver</strong> and <strong>Total</strong> columns</li>
+    <li><strong>Gold</strong> is the only column that doesn't have <code>sortable=false</code> or <code>suppressMenu</code></li>
 </ul>
 
 <?= grid_example('Header template', 'header-template', 'vanilla', ['extras' => ['fontawesome']]) ?>

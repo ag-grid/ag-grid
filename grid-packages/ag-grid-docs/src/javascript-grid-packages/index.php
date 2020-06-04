@@ -138,7 +138,7 @@ Angular you'd add the <code>ag-grid-angular</code> package:</p>
     </div>
 </div>
 
-<p>Or maybe your are doing something a little less common...</p>
+<p>Or maybe you are using something a little less common...</p>
 
 <ul>
     <li><a href="../best-angularjs-grid/">Start with AngularJS</a></li>

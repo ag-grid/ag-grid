@@ -1,6 +1,18 @@
+.example-wrapper {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+#myGrid {
+    flex: 1 1 auto;
+    width: 100%;
+}
+
 .sick-days-warning {
     background-color: sandybrown !important;
 }
+
 .sick-days-breach {
     background-color: lightcoral !important;
 }

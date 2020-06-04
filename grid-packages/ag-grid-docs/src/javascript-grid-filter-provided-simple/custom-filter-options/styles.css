@@ -1,3 +1,14 @@
+.example-wrapper {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+#myGrid {
+    flex: 1 1 auto;
+    width: 100%;
+}
+
 .ag-header-cell-filtered {
     background-color: #1b6d85 !important;
     color: #fff !important;

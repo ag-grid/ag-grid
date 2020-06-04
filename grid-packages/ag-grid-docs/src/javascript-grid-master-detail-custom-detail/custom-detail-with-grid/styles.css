@@ -1,4 +1,15 @@
 
+.example-wrapper {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+#myGrid {
+    flex: 1 1 auto;
+    width: 100%;
+}
+
 .full-width-panel {
     position: relative;
     background: #EDF6FF;

@@ -1,0 +1,37 @@
+.example-wrapper {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+#myGrid {
+    flex: 1 1 auto;
+    width: 100%;
+}
+
+.example-header {
+    display: flex;
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
+    font-size: 13px;
+    align-items: center;
+    margin-bottom: 5px;
+}
+
+.example-header label {
+    margin-right: 15px;
+}
+
+.example-header button {
+    height: 25px;
+    cursor: pointer;
+}
+
+.greenBackground {
+    background-color: #008000;
+    color: #e0ffc1;
+}
+
+.blueBackground {
+    background-color: #00008B;
+    color: white;
+}

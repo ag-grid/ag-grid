@@ -50,16 +50,16 @@ Follow @ag_grid</a></li>
 <script async defer src="https://platform.twitter.com/widgets.js"></script>
 <script async defer src="https://buttons.github.io/buttons.js"></script>
 
+<div id="cookie-warning" style="display: none;">
+  <div style="margin-bottom: 5px">
+    <p>
+      This website uses cookies to ensure you get the best experience on our website. This enables us to understand how you use the site and track any patterns with regards how you are using our website. By using our website you consent to all cookies in accordance with our Cookie Policy.
+    </p>
 
-<div id="cookie-warning" style="display: none">
-<div style="margin-bottom:5px">
-    <p> <font size="3">
-    This website uses cookies to ensure you get the best experience on our website. This enables us to understand how you use the site and track any patterns with regards how you are using our website. By using our website you consent to all cookies in accordance with our Cookie Policy.</font></p>
-
-  <a style="margin-left: 20px!important" class="btn btn-primary" id="cookie-accept">OK</a>
-  <a style="margin-left:-25px!important" href="/cookies.php" class="btn btn-primary" id="read-more" style="margin:0px!important">Read More</a>
-
-
+    <a style="margin-left: 20px!important" class="btn btn-primary" id="cookie-accept">OK</a>
+    <a style="margin-left:-25px!important" href="/cookies.php" class="btn btn-primary" id="read-more" style="margin:0px!important">Read More</a>
+  </div>
+</div>
 
 <script src="https://ajax.googleapis.com/ajax/libs/webfont/1.6.26/webfont.js"></script>
 <script>

@@ -1,13 +1,18 @@
-.test-container {
-    height: 100%;
+.example-wrapper {
     display: flex;
     flex-direction: column;
+    height: 100%;
 }
 
-.test-header {
+#myGrid {
+    flex: 1 1 auto;
+    width: 100%;
+}
+
+.example-header {
     font-family: Verdana, Geneva, Tahoma, sans-serif;
     font-size: 13px;
-    margin-bottom: 5px;
+    margin-bottom: 1rem;
 }
 
 .lock-pinned {
@@ -16,4 +21,8 @@
 
 .legend-box {
     border: 1px solid #aaa;
+    width: 15px;
+    height: 15px;
+    display: inline-block;
+    vertical-align: text-top;
 }

@@ -34,6 +34,11 @@ interface LineChartOptions {
 
         // Configures the tooltip for bars when they are hovered over or tapped
         tooltip: TooltipOptions;
+
+        // A map of series events to their listener functions.
+        // Please see the feature section on series events in standalone charts
+        // documentation.
+        listeners?: { [key in string]: Function };
     };
 }
 

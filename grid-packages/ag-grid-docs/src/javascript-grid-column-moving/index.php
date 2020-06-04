@@ -102,7 +102,7 @@ include '../documentation-main/documentation_header.php';
     and cannot be moved out of position by dragging other columns.
 </p>
 
-<h2>Suppress Movable & Lock Position Example</h2>
+<h2>Suppress Movable &amp; Lock Position Example</h2>
 
 <p>
     The example below demonstrates these properties as follows:
@@ -110,13 +110,13 @@ include '../documentation-main/documentation_header.php';
 
 <ul class="content">
     <li>
-        The column 'Age' is locked as the first column in the scrollable area of the grid. It is not possible
-        to move this column, or have other columns moved over it to impact its position. As a result the 'Age'
-        column marks the beginning of the scrollable area regardless of its position.
+        The <strong>Age</strong> column is locked as the first column in the scrollable area of the grid. It is not
+        possible to move this column, or have other columns moved over it to impact its position. As a result the
+        <strong>Age</strong> column marks the beginning of the scrollable area regardless of its position.
     </li>
     <li>
-        The column 'Athlete' has moving suppressed. It is not possible to move
-        this column, however it is possible to move other columns around it.
+        The <strong>Athlete</strong> column has moving suppressed. It is not possible to move
+        this column, but it is possible to move other columns around it.
     </li>
     <li>
         The grid has <code>suppressDragLeaveHidesColumns=true</code> so columns dragged
@@ -124,7 +124,7 @@ include '../documentation-main/documentation_header.php';
         will hide the column).
     </li>
     <li>
-        Age and Athlete columns have the user provided <code>locked-col</code>
+        The <strong>Age</strong> and <strong>Athlete</strong> columns have the user provided <code>locked-col</code>
         and <code>suppress-movable-col</code> CSS classes applied to them respectively to
         change the background colour.
     </li>
@@ -213,7 +213,7 @@ include '../documentation-main/documentation_header.php';
 
 <ul class="content">
     <li>
-        The columns Age, Gold, Silver and Bronze are all locked visible.
+        The columns <strong>Age</strong>, <strong>Gold</strong>, <strong>Silver</strong> and <strong>Bronze</strong> are all locked visible.
         It is not possible to hide the columns by dragging them out of the grid
         and not possible to show the columns by dragging them in from the tool panel.
     </li>
@@ -222,7 +222,7 @@ include '../documentation-main/documentation_header.php';
         are not impacted.
     </li>
     <li>
-        If you drag a group (eg the 'Athlete' group) out of the grid, all normal
+        If you drag a group (e.g. the <strong>Athlete</strong> group) out of the grid, all normal
         columns in the group are removed and all locked columns in the group are left intact.
     </li>
 </ul>

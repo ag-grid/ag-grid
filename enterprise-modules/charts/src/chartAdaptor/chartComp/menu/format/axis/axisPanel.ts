@@ -168,7 +168,12 @@ export class AxisPanel extends Component {
             const axis = find(chart.axes, axis => axis.position === axisPosition);
 
             if (axis) {
-                chartProxy.setAxisProperty("label.rotation", newValue);
+                axis.label.rotation = newValue;
+                if (axis.position === ChartAxisPosition.Bottom) {
+                    _.set(chartProxy.getChartOptions().xAxis, "label.rotation", newValue);
+                } else if (axis.position === ChartAxisPosition.Left) {
+                    _.set(chartProxy.getChartOptions().yAxis, "label.rotation", newValue);
+                }
                 chart.performLayout();
             }
         };

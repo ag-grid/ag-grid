@@ -108,7 +108,7 @@ SNIPPET
     When grouping, pagination splits rows according to top-level groups only. This has the following implications:
 </p>
 
-<ul>
+<ul class="content">
     <li>
         The number of pages is determined by the number of top-level rows and not children
     </li>
@@ -124,7 +124,7 @@ SNIPPET
     The example below demonstrates pagination with grouping. Note the following:
 </p>
 
-<ul>
+<ul class="content">
     <li>
         No block size is specified so 100 rows per block is used.
     </li>
@@ -160,7 +160,7 @@ SNIPPET
     The example below demonstrates pagination with grouping and <code>paginateChildRows=true</code>. Note the following:
 </p>
 
-<ul>
+<ul class="content">
     <li>
         No block size is specified thus 100 rows per block is used.
     </li>

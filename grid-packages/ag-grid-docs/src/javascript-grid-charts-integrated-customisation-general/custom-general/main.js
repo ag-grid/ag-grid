@@ -49,7 +49,7 @@ function processChartOptions(params) {
 
     console.log('chart options:', options);
 
-    options.width = 700;
+    options.width = 500;
     options.height = 400;
 
     options.padding.top = 20;
