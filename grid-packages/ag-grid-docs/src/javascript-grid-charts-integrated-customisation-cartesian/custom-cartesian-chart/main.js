@@ -132,6 +132,32 @@ function processChartOptions(params) {
         return value === 'United Kingdom' ? 'UK' : '(' + value + ')';
     };
 
+    options.navigator.enabled = true;
+    options.navigator.height = 9;
+    options.navigator.min = 0.2;
+    options.navigator.max = 1;
+
+    options.navigator.mask.fill = 'lime';
+    options.navigator.mask.stroke = 'black';
+    options.navigator.mask.strokeWidth = 2;
+    options.navigator.mask.fillOpacity = 0.3;
+
+    options.navigator.minHandle.fill = 'yellow';
+    options.navigator.minHandle.stroke = 'blue';
+    options.navigator.minHandle.strokeWidth = 2;
+    options.navigator.minHandle.width = 12;
+    options.navigator.minHandle.height = 22;
+    options.navigator.minHandle.gripLineGap = 4;
+    options.navigator.minHandle.gripLineLength = 12;
+
+    options.navigator.maxHandle.fill = 'yellow';
+    options.navigator.maxHandle.stroke = 'blue';
+    options.navigator.maxHandle.strokeWidth = 2;
+    options.navigator.maxHandle.width = 12;
+    options.navigator.maxHandle.height = 22;
+    options.navigator.maxHandle.gripLineGap = 4;
+    options.navigator.maxHandle.gripLineLength = 12;
+
     options.yAxis.gridStyle = [
         {
             stroke: '#80808044',

@@ -396,6 +396,36 @@ export abstract class ChartProxy<TChart extends Chart, TOptions extends ChartOpt
                     paddingY: 8,
                 },
             },
+            navigator: {
+                enabled: false,
+                height: 30,
+                min: 0,
+                max: 1,
+                mask: {
+                    fill: '#999999',
+                    stroke: '#999999',
+                    strokeWidth: 1,
+                    fillOpacity: 0.2
+                },
+                minHandle: {
+                    fill: '#f2f2f2',
+                    stroke: '#999999',
+                    strokeWidth: 1,
+                    width: 8,
+                    height: 16,
+                    gripLineGap: 2,
+                    gripLineLength: 8
+                },
+                maxHandle: {
+                    fill: '#f2f2f2',
+                    stroke: '#999999',
+                    strokeWidth: 1,
+                    width: 8,
+                    height: 16,
+                    gripLineGap: 2,
+                    gripLineLength: 8
+                }
+            },
             seriesDefaults: {
                 fill: {
                     colors: fills,

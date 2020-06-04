@@ -11,7 +11,7 @@ var columnDefs = [
 
 function createRowData() {
     var countries = [
-        "Ireland", "Spain", "United Kingdom", "France", "Germany", "Luxembourg", "Sweden",
+        "Ireland", "Spain", "UK", "France", "Germany", "Luxembourg", "Sweden",
         "Norway", "Italy", "Greece", "Iceland", "Portugal", "Malta", "Brazil", "Argentina",
         "Colombia", "Peru", "Venezuela", "Uruguay", "Belgium"
     ];
@@ -49,15 +49,15 @@ function processChartOptions(params) {
 
     console.log('chart options:', options);
 
-    options.width = 500;
-    options.height = 400;
+    // options.width = 500;
+    // options.height = 400;
 
     options.padding.top = 20;
     options.padding.right = 30;
     options.padding.bottom = 10;
     options.padding.left = 2;
 
-    options.background.fill = '#B0E0E6';
+    options.background.fill = '#e5e5e5';
 
     options.title.enabled = true;
     options.title.text = 'Precious Metals Production';
@@ -74,7 +74,7 @@ function processChartOptions(params) {
     options.subtitle.color = 'rgb(100, 100, 100)';
 
     options.legend.enabled = true;
-    options.legend.position = 'bottom';
+    options.legend.position = 'left';
     options.legend.padding = 20;
 
     options.legend.item.label.fontStyle = 'italic';
@@ -84,9 +84,35 @@ function processChartOptions(params) {
     options.legend.item.label.color = '#555';
 
     options.legend.item.marker.type = 'diamond';
-    options.legend.item.marker.size = 25;
+    options.legend.item.marker.size = 10;
     options.legend.item.marker.padding = 10;
     options.legend.item.marker.strokeWidth = 2;
+
+    options.navigator.enabled = true;
+    options.navigator.height = 36;
+    options.navigator.min = 0.7;
+    options.navigator.max = 1;
+
+    options.navigator.mask.fill = 'lime';
+    options.navigator.mask.stroke = 'black';
+    options.navigator.mask.strokeWidth = 2;
+    options.navigator.mask.fillOpacity = 0.3;
+
+    options.navigator.minHandle.fill = 'yellow';
+    options.navigator.minHandle.stroke = 'blue';
+    options.navigator.minHandle.strokeWidth = 2;
+    options.navigator.minHandle.width = 12;
+    options.navigator.minHandle.height = 22;
+    options.navigator.minHandle.gripLineGap = 4;
+    options.navigator.minHandle.gripLineLength = 12;
+
+    options.navigator.maxHandle.fill = 'yellow';
+    options.navigator.maxHandle.stroke = 'blue';
+    options.navigator.maxHandle.strokeWidth = 2;
+    options.navigator.maxHandle.width = 12;
+    options.navigator.maxHandle.height = 22;
+    options.navigator.maxHandle.gripLineGap = 4;
+    options.navigator.maxHandle.gripLineLength = 12;
 
     options.legend.item.paddingX = 120;
     options.legend.item.paddingY = 20;
