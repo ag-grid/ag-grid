@@ -1,9 +1,9 @@
-import {getFunctionName, ImportType, isInstanceMethod, modulesProcessor, removeFunctionKeyword} from './parser-utils';
-import {convertTemplate, getImport, toAssignment, toConst, toInput, toMember, toOutput} from './vue-utils';
-import {templatePlaceholder} from "./grid-vanilla-src-parser";
+import { getFunctionName, ImportType, isInstanceMethod, modulesProcessor, removeFunctionKeyword } from './parser-utils';
+import { convertTemplate, getImport, toAssignment, toConst, toInput, toMember, toOutput } from './vue-utils';
+import { templatePlaceholder } from "./grid-vanilla-src-parser";
 
 function getOnGridReadyCode(bindings: any): string {
-    const {onGridReady, resizeToFit, data} = bindings;
+    const { onGridReady, resizeToFit, data } = bindings;
     const additionalLines = [];
 
     if (onGridReady) {
@@ -15,7 +15,7 @@ function getOnGridReadyCode(bindings: any): string {
     }
 
     if (data) {
-        const {url, callback} = data;
+        const { url, callback } = data;
 
         const setRowDataBlock = callback.indexOf('api.setRowData') >= 0 ?
             callback.replace("params.api.setRowData(data);", "this.rowData = data;") :
@@ -38,8 +38,8 @@ function getOnGridReadyCode(bindings: any): string {
 }
 
 function getModuleImports(bindings: any, componentFileNames: string[]): string[] {
-    const {gridSettings} = bindings;
-    const {modules} = gridSettings;
+    const { gridSettings } = bindings;
+    const { modules } = gridSettings;
 
     const imports = [
         "import Vue from 'vue';",
@@ -48,7 +48,7 @@ function getModuleImports(bindings: any, componentFileNames: string[]): string[]
 
     if (modules) {
         let exampleModules = modules;
-        if(modules === true) {
+        if (modules === true) {
             exampleModules = ['clientside'];
         }
         const { moduleImports, suppliedModules } = modulesProcessor(exampleModules);
@@ -85,7 +85,7 @@ function getModuleImports(bindings: any, componentFileNames: string[]): string[]
 }
 
 function getPackageImports(bindings: any, componentFileNames: string[]): string[] {
-    const {gridSettings} = bindings;
+    const { gridSettings } = bindings;
 
     const imports = [
         "import Vue from 'vue';",
@@ -165,7 +165,7 @@ function getPropertyBindings(bindings: any, componentFileNames: string[], import
 }
 
 function getTemplate(bindings: any, attributes: string[]): string {
-    const {gridSettings} = bindings;
+    const { gridSettings } = bindings;
     const style = gridSettings.noStyle ? '' : `style="width: ${gridSettings.width}; height: ${gridSettings.height};"`;
 
     const agGridTag = `<ag-grid-vue
@@ -220,15 +220,16 @@ function getAllMethods(bindings: any): [string[], string[], string[], string[]] 
     return [eventHandlers, externalEventHandlers, instanceMethods, utilFunctions];
 }
 
-export function vanillaToVue(bindings: any, componentFileNames: string[], importType: ImportType): string {
-    const imports = getImports(bindings, componentFileNames, importType);
-    const [propertyAssignments, propertyVars, propertyAttributes] = getPropertyBindings(bindings, componentFileNames, importType);
-    const onGridReady = getOnGridReadyCode(bindings);
-    const eventAttributes = bindings.eventHandlers.filter(event => event.name !== 'onGridReady').map(toOutput);
-    const [eventHandlers, externalEventHandlers, instanceMethods, utilFunctions] = getAllMethods(bindings);
-    const template = getTemplate(bindings, propertyAttributes.concat(eventAttributes));
+export function vanillaToVue(bindings: any, componentFileNames: string[]): (importType: ImportType) => string {
+    return importType => {
+        const imports = getImports(bindings, componentFileNames, importType);
+        const [propertyAssignments, propertyVars, propertyAttributes] = getPropertyBindings(bindings, componentFileNames, importType);
+        const onGridReady = getOnGridReadyCode(bindings);
+        const eventAttributes = bindings.eventHandlers.filter(event => event.name !== 'onGridReady').map(toOutput);
+        const [eventHandlers, externalEventHandlers, instanceMethods, utilFunctions] = getAllMethods(bindings);
+        const template = getTemplate(bindings, propertyAttributes.concat(eventAttributes));
 
-    return `
+        return `
 ${imports.join('\n')}
 
 const VueExample = {
@@ -258,11 +259,11 @@ const VueExample = {
     },
     methods: {
         ${eventHandlers
-        .concat(externalEventHandlers)
-        .concat(onGridReady)
-        .concat(instanceMethods)
-        .map(snippet => `${snippet.trim()},`)
-        .join('\n')}
+                .concat(externalEventHandlers)
+                .concat(onGridReady)
+                .concat(instanceMethods)
+                .map(snippet => `${snippet.trim()},`)
+                .join('\n')}
     }
 }
 
@@ -275,6 +276,7 @@ new Vue({
     }
 });
 `;
+    };
 }
 
 if (typeof window !== 'undefined') {

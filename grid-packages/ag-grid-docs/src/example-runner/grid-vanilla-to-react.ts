@@ -14,7 +14,7 @@ function getModuleImports(bindings: any, componentFilenames: string[]): string[]
 
     if (modules) {
         let exampleModules = modules;
-        if(modules === true) {
+        if (modules === true) {
             exampleModules = ['clientside'];
         }
         const { moduleImports, suppliedModules } = modulesProcessor(exampleModules);
@@ -102,63 +102,64 @@ function getTemplate(bindings: any, componentAttributes: string[]): string {
     return convertTemplate(template);
 }
 
-export function vanillaToReact(bindings: any, componentFilenames: string[], importType: ImportType): string {
-    const { properties, data, gridSettings, onGridReady, resizeToFit } = bindings;
-    const imports = getImports(bindings, componentFilenames, importType);
-    const instanceBindings = [];
-    const stateProperties = [];
-    const componentAttributes = [];
+export function vanillaToReact(bindings: any, componentFilenames: string[]): (importType: ImportType) => string {
+    return importType => {
+        const { properties, data, gridSettings, onGridReady, resizeToFit } = bindings;
+        const imports = getImports(bindings, componentFilenames, importType);
+        const instanceBindings = [];
+        const stateProperties = [];
+        const componentAttributes = [];
 
-    if (importType === 'modules') {
-        stateProperties.push(`modules: ${bindings.gridSuppliedModules}`);
-        componentAttributes.push('modules={this.state.modules}');
-    }
-
-    properties.filter(property => property.name !== 'onGridReady').forEach(property => {
-        if (componentFilenames.length > 0 && property.name === 'components') {
-            property.name = 'frameworkComponents';
+        if (importType === 'modules') {
+            stateProperties.push(`modules: ${bindings.gridSuppliedModules}`);
+            componentAttributes.push('modules={this.state.modules}');
         }
 
-        if (property.value === 'true' || property.value === 'false') {
-            componentAttributes.push(`${property.name}={${property.value}}`);
-        } else if (property.value === null) {
-            componentAttributes.push(`${property.name}={this.${property.name}}`);
-        } else {
-            // for when binding a method
-            // see javascript-grid-keyboard-navigation for an example
-            // tabToNextCell needs to be bound to the react component
-            if (isInstanceMethod(bindings.instanceMethods, property)) {
-                instanceBindings.push(`this.${property.name}=${property.value}`);
+        properties.filter(property => property.name !== 'onGridReady').forEach(property => {
+            if (componentFilenames.length > 0 && property.name === 'components') {
+                property.name = 'frameworkComponents';
+            }
+
+            if (property.value === 'true' || property.value === 'false') {
+                componentAttributes.push(`${property.name}={${property.value}}`);
+            } else if (property.value === null) {
+                componentAttributes.push(`${property.name}={this.${property.name}}`);
             } else {
-                stateProperties.push(`${property.name}: ${property.value}`);
-                componentAttributes.push(`${property.name}={this.state.${property.name}}`);
+                // for when binding a method
+                // see javascript-grid-keyboard-navigation for an example
+                // tabToNextCell needs to be bound to the react component
+                if (isInstanceMethod(bindings.instanceMethods, property)) {
+                    instanceBindings.push(`this.${property.name}=${property.value}`);
+                } else {
+                    stateProperties.push(`${property.name}: ${property.value}`);
+                    componentAttributes.push(`${property.name}={this.state.${property.name}}`);
+                }
             }
-        }
-    });
+        });
 
-    const componentEventAttributes = bindings.eventHandlers.map(event => `${event.handlerName}={this.${event.handlerName}.bind(this)}`);
+        const componentEventAttributes = bindings.eventHandlers.map(event => `${event.handlerName}={this.${event.handlerName}.bind(this)}`);
 
-    componentAttributes.push('onGridReady={this.onGridReady}');
-    componentAttributes.push.apply(componentAttributes, componentEventAttributes);
+        componentAttributes.push('onGridReady={this.onGridReady}');
+        componentAttributes.push.apply(componentAttributes, componentEventAttributes);
 
-    const additionalInReady = [];
+        const additionalInReady = [];
 
-    if (data) {
-        let setRowDataBlock = data.callback;
+        if (data) {
+            let setRowDataBlock = data.callback;
 
-        if (data.callback.indexOf('api.setRowData') >= 0) {
-            if (stateProperties.filter(item => item.indexOf('rowData') >= 0).length === 0) {
-                stateProperties.push('rowData: []');
+            if (data.callback.indexOf('api.setRowData') >= 0) {
+                if (stateProperties.filter(item => item.indexOf('rowData') >= 0).length === 0) {
+                    stateProperties.push('rowData: []');
+                }
+
+                if (componentAttributes.filter(item => item.indexOf('rowData') >= 0).length === 0) {
+                    componentAttributes.push('rowData={this.state.rowData}');
+                }
+
+                setRowDataBlock = data.callback.replace('params.api.setRowData(data);', 'this.setState({ rowData: data });');
             }
 
-            if (componentAttributes.filter(item => item.indexOf('rowData') >= 0).length === 0) {
-                componentAttributes.push('rowData={this.state.rowData}');
-            }
-
-            setRowDataBlock = data.callback.replace('params.api.setRowData(data);', 'this.setState({ rowData: data });');
-        }
-
-        additionalInReady.push(`
+            additionalInReady.push(`
             const httpRequest = new XMLHttpRequest();
             const updateData = (data) => ${setRowDataBlock};
 
@@ -169,24 +170,24 @@ export function vanillaToReact(bindings: any, componentFilenames: string[], impo
                     updateData(JSON.parse(httpRequest.responseText));
                 }
             };`);
-    }
+        }
 
-    if (onGridReady) {
-        const hackedHandler = onGridReady.replace(/^\{|\}$/g, '');
-        additionalInReady.push(hackedHandler);
-    }
+        if (onGridReady) {
+            const hackedHandler = onGridReady.replace(/^\{|\}$/g, '');
+            additionalInReady.push(hackedHandler);
+        }
 
-    if (resizeToFit) {
-        additionalInReady.push('params.api.sizeColumnsToFit();');
-    }
+        if (resizeToFit) {
+            additionalInReady.push('params.api.sizeColumnsToFit();');
+        }
 
-    const template = getTemplate(bindings, componentAttributes);
-    const eventHandlers = bindings.eventHandlers.map(event => convertFunctionToProperty(event.handler));
-    const externalEventHandlers = bindings.externalEventHandlers.map(handler => convertFunctionToProperty(handler.body));
-    const instanceMethods = bindings.instanceMethods.map(convertFunctionToProperty);
-    const style = gridSettings.noStyle ? '' : `style={{ width: '100%', height: '100%' }}`;
+        const template = getTemplate(bindings, componentAttributes);
+        const eventHandlers = bindings.eventHandlers.map(event => convertFunctionToProperty(event.handler));
+        const externalEventHandlers = bindings.externalEventHandlers.map(handler => convertFunctionToProperty(handler.body));
+        const instanceMethods = bindings.instanceMethods.map(convertFunctionToProperty);
+        const style = gridSettings.noStyle ? '' : `style={{ width: '100%', height: '100%' }}`;
 
-    return `
+        return `
 'use strict'
 
 ${imports.join('\n')}
@@ -226,6 +227,7 @@ render(
     document.querySelector('#root')
 )
 `;
+    };
 }
 
 if (typeof window !== 'undefined') {
