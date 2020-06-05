@@ -31,21 +31,23 @@ include './intro.php';
   and configure some of the essential features of it. We will show you some of the fundamentals of the grid (passing properties, using the API, etc). As a bonus, we will also tweak the grid's visual appearance using Sass variables.
 </p>
 
-    <note>
-        <div style="display: flex;">
-        <span style="display: inline-block; background: radial-gradient(#41a3ff, #0273D4); border-radius: 5px; padding: 3px;">
-            <a href="https://thinkster.io/topics/ag-grid">
-                <img style="width: 150px;" src="../images/thinkster.png"/>
-            </a>
-        </span>
-            <span style="flex-grow: 1; display: inline-block; padding-left: 10px;">
-            Thinkster has provided a free course
-            <a href="https://thinkster.io/topics/ag-grid">
-                Learning ag-Grid with React
-            </a>
-        </span>
-        </div>
-    </note>
+<br />
+
+<note>
+    <div style="display: flex;">
+    <span style="display: inline-block; background: radial-gradient(#41a3ff, #0273D4); border-radius: 5px; padding: 3px;">
+        <a href="https://thinkster.io/topics/ag-grid">
+            <img style="width: 150px;" src="../images/thinkster.png"/>
+        </a>
+    </span>
+        <span style="flex-grow: 1; display: inline-block; padding-left: 10px;">
+        Thinkster has provided a free course
+        <a href="https://thinkster.io/topics/ag-grid">
+            Learning ag-Grid with React
+        </a>
+    </span>
+    </div>
+</note>
 
 <h2 id="add-ag-grid-to-your-project">Add ag-Grid to Your Project</h2>
 <p>For the purposes of this tutorial, we are going to scaffold a react app with <a href="https://github.com/facebook/create-react-app">create-react-app</a>.
