@@ -3,37 +3,33 @@
 
 <div class="card card-highlight mb-4">
     <div class="card-body">
-        <h5 class="card-title"><a href="../ag-grid-changelog/?fixVersion=23.1.0">Version 23.1.0</a></h5>
-        <h6 class="card-subtitle mb-2 text-muted">May 1</h6>
+        <h5 class="card-title"><a href="../ag-grid-changelog/?fixVersion=23.2.0">Version 23.2.0</a></h5>
+        <h6 class="card-subtitle mb-2 text-muted">Jun 5</h6>
         <p class="card-text">
             Minor release with new features and bug fixes:
         </p>
         <ul>
             <li>
-                <a class="learn-more" href="/javascript-grid-row-dragging-to-grid/">Row Dragging Between Grids</a>
+                <a class="learn-more" href="/javascript-grid-keyboard-navigation/">Keyboard Navigation Enhancements</a>
             </li>
 
             <li>
                 <a class="learn-more"
-                   href="/javascript-grid-row-dragging-to-external-dropzone/">Row Dragging to External Dropzone</a>
+                   href="/javascript-charts-navigator/">Charts Navigator</a>
             </li>
 
             <li>
                 <a class="learn-more"
-                   href="/javascript-grid-themes-customising/#setting-parameters-css-variables">Support for CSS Variables</a>
+                   href="/javascript-grid-filter-set-excel-mode/">Set Filter Excel Mode</a>
             </li>
 
             <li>
-                <a class="learn-more" href="/javascript-charts-histogram-series/">Histogram Chart</a>
-            </li>
-
-            <li>
-                <a class="learn-more" href="/javascript-charts-events/">Chart Events</a>
+                <a class="learn-more" href="/javascript-grid-master-detail/">Master Detail Enhancements</a>
             </li>
         </ul>
 
         <p class="text-right">
-            <a class="learn-more" href="../ag-grid-changelog/?fixVersion=23.1.0">Change Log</a>
+            <a class="learn-more" href="../ag-grid-changelog/?fixVersion=23.2.0">Change Log</a>
         </p>
     </div>
 </div>
