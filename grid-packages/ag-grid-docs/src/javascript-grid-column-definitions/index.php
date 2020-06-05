@@ -450,6 +450,6 @@ SNIPPET
     </ul>
 </p>
 
-<?= grid_example('Delta Columns', 'delta-columns', 'generated', ['enterprise' => true]) ?>
+<?= grid_example('Immutable Columns', 'immutable-columns', 'generated', ['enterprise' => true]) ?>
 
 <?php include '../documentation-main/documentation_footer.php';?>

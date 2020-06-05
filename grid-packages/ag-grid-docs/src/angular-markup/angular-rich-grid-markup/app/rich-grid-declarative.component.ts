@@ -1,6 +1,6 @@
 import {Component, ViewEncapsulation} from "@angular/core";
 
-import {GridOptions, Module, AllModules} from "@ag-grid-enterprise/all-modules";
+import {GridOptions, Module, AllModules, GridApi} from "@ag-grid-enterprise/all-modules";
 
 import "@ag-grid-community/all-modules/dist/styles/ag-grid.css";
 import "@ag-grid-community/all-modules/dist/styles/ag-theme-alpine.css";
@@ -31,6 +31,7 @@ export class RichGridDeclarativeComponent {
     public components = {
         headerGroupComponent: HeaderGroupComponent
     };
+    private api: GridApi;
 
     constructor() {
         // we pass an empty gridOptions in, so we can grab the api out
@@ -76,8 +77,8 @@ export class RichGridDeclarativeComponent {
     }
 
     private calculateRowCount() {
-        if (this.gridOptions.api && this.rowData) {
-            const model = this.gridOptions.api.getModel();
+        if (this.api && this.rowData) {
+            const model = this.api.getModel();
             const totalRows = this.rowData.length;
             const processedRows = model.getRowCount();
             this.rowCount = processedRows.toLocaleString() + ' / ' + totalRows.toLocaleString();
@@ -85,12 +86,12 @@ export class RichGridDeclarativeComponent {
     }
 
     public dobFilter() {
-        let dateFilterComponent = this.gridOptions.api.getFilterInstance('dob');
+        let dateFilterComponent = this.api.getFilterInstance('dob');
         dateFilterComponent.setModel({
             type: 'equals',
             dateFrom: '2000-01-01'
         });
-        this.gridOptions.api.onFilterChanged();
+        this.api.onFilterChanged();
     }
 
     private onModelUpdated() {
@@ -98,24 +99,26 @@ export class RichGridDeclarativeComponent {
         this.calculateRowCount();
     }
 
-    private onReady() {
+    private onReady(params: any) {
+        this.api = params.api;
         console.log('onReady');
         this.calculateRowCount();
+        this.api.sizeColumnsToFit();
     }
 
-    public onQuickFilterChanged($event) {
-        this.gridOptions.api.setQuickFilter($event.target.value);
+    public onQuickFilterChanged($event: any) {
+        this.api.setQuickFilter($event.target.value);
     }
 
-    private countryCellRenderer(params) {
-        const flag = "<img border='0' width='15' height='10' style='margin-bottom: 2px' src='https://www.ag-grid.com/images/flags/" + RefData.COUNTRY_CODES[params.value] + ".png'>";
+    private countryCellRenderer(params: any) {
+        const flag = "<img border='0' width='15' height='10' style='margin-bottom: 2px' src='https://www.ag-grid.com/images/flags/" + (RefData as any).COUNTRY_CODES[params.value] + ".png'>";
         return flag + " " + params.value;
     }
 
     //noinspection JSUnusedLocalSymbols
-    private skillsCellRenderer(params) {
+    private skillsCellRenderer(params: any) {
         const data = params.data;
-        const skills = [];
+        const skills: string[] = [];
         RefData.IT_SKILLS.forEach(function (skill) {
             if (data && data.skills && data.skills[skill]) {
                 skills.push('<img src="https://www.ag-grid.com/images/skills/' + skill + '.png" width="16px" title="' + skill + '" />');
@@ -125,7 +128,7 @@ export class RichGridDeclarativeComponent {
     }
 
     //noinspection JSUnusedLocalSymbols
-    private percentCellRenderer(params) {
+    private percentCellRenderer(params: any) {
         const value = params.value;
 
         const eDivPercentBar = document.createElement('div');
@@ -180,7 +183,7 @@ export class RichGridDeclarativeComponent {
         return result;
     }
 
-    public parseDate(params) {
+    public parseDate(params: any) {
         return pad(params.value.getDate(), 2) + '/' +
             pad(params.value.getMonth() + 1, 2) + '/' +
             params.value.getFullYear();
@@ -188,7 +191,7 @@ export class RichGridDeclarativeComponent {
 }
 
 //Utility function used to pad the date formatting.
-function pad(num, totalStringSize) {
+function pad(num: number, totalStringSize: number) {
     let asString = num + "";
     while (asString.length < totalStringSize) asString = "0" + asString;
     return asString;

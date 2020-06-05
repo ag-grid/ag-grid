@@ -17,7 +17,6 @@ export default Vue.extend({
         this.setState({
             athlete: valueToDisplay
         });
-        data.color = this.params.color || 'white';
     },
     methods: {
         setState(obj) {

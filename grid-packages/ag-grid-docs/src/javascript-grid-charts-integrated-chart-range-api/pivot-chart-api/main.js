@@ -29,6 +29,8 @@ function onFirstDataRendered(event) {
         chartContainer: chartContainer,
         processChartOptions: function(params) {
             params.options.legend.position = "bottom";
+            params.options.navigator.enabled = true;
+            params.options.navigator.height = 10;
 
             return params.options;
         }

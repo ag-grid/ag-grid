@@ -11,8 +11,9 @@
 }
 
 .test-header {
-    margin-bottom: 5px;
+    margin-bottom: 1rem;
 }
+
 .test-header button:not(:first-child) {
     margin-left: 5px;
 }

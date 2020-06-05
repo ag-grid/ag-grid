@@ -166,8 +166,8 @@ SNIPPET
 <h2 id="highlighting-rows-and-columns">Highlighting Rows and Columns</h2>
 
 <p>
-    The class <code>ag-row-hover</code> and <code>ag-column-hover</code> are added
-    to cells as the mouse is dragged over the cells row or column.
+    The classes <code>ag-row-hover</code> and <code>ag-column-hover</code> are added
+    to cells as the mouse is hovered over a cell's row or column.
 </p>
 
 <p>

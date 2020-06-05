@@ -68,7 +68,7 @@ export class MatRadioComponent implements ICellEditorAngularComp {
         // focus on next tick
         let fruitRadio = this.fruitRadios.find(radio => radio.value === this.favouriteFruit);
         window.setTimeout(() => {
-            fruitRadio.focus();
+            fruitRadio._inputElement.nativeElement.focus();
         }, 0);
     }
 

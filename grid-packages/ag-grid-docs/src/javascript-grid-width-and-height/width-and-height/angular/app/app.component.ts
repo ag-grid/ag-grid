@@ -15,9 +15,9 @@ import "@ag-grid-community/all-modules/dist/styles/ag-theme-alpine.css";
                 <button (click)="fillMedium()">Fill 60%</button>
                 <button (click)="fillExact()">Exactly 400 x 400 pixels</button>
             </div>
-            <div [ngStyle]="style">
+            <div [ngStyle]="style" >
                 <ag-grid-angular
-                        style="width: 100%; flex: 1 1 auto;"
+                        style="width: 100%; height:100%;"
                         #agGrid
                         class="ag-theme-alpine"
                         [rowData]="rowData"
@@ -35,7 +35,7 @@ export class AppComponent {
     style = {
         width: '100%',
         height: '100%',
-        boxSizing: 'border-box'
+        flex: '1 1 auto'
     };
     modules = [ClientSideRowModelModule];
 
