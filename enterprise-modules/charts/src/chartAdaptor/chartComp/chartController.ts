@@ -8,7 +8,6 @@ import {
     ChartType,
     ColumnApi,
     Events,
-    EventService,
     GridApi,
     IRangeController,
     PostConstruct,
@@ -22,9 +21,9 @@ export interface ChartModelUpdatedEvent extends AgEvent {
 }
 
 export class ChartController extends BeanStub {
+
     public static EVENT_CHART_UPDATED = 'chartUpdated';
 
-    @Autowired('eventService') private eventService: EventService;
     @Autowired('rangeController') rangeController: IRangeController;
     @Autowired('gridApi') private gridApi: GridApi;
     @Autowired('columnApi') private columnApi: ColumnApi;
@@ -42,18 +41,18 @@ export class ChartController extends BeanStub {
     private init(): void {
         this.setChartRange();
 
-        this.addDestroyableEventListener(this.eventService, Events.EVENT_RANGE_SELECTION_CHANGED, event => {
+        this.addManagedListener(this.eventService, Events.EVENT_RANGE_SELECTION_CHANGED, event => {
             if (event.id && event.id === this.model.getChartId()) {
                 this.updateForRangeChange();
             }
         });
 
-        this.addDestroyableEventListener(this.eventService, Events.EVENT_COLUMN_MOVED, this.updateForGridChange.bind(this));
-        this.addDestroyableEventListener(this.eventService, Events.EVENT_COLUMN_PINNED, this.updateForGridChange.bind(this));
-        this.addDestroyableEventListener(this.eventService, Events.EVENT_COLUMN_VISIBLE, this.updateForGridChange.bind(this));
+        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_MOVED, this.updateForGridChange.bind(this));
+        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_PINNED, this.updateForGridChange.bind(this));
+        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_VISIBLE, this.updateForGridChange.bind(this));
 
-        this.addDestroyableEventListener(this.eventService, Events.EVENT_MODEL_UPDATED, this.updateForDataChange.bind(this));
-        this.addDestroyableEventListener(this.eventService, Events.EVENT_CELL_VALUE_CHANGED, this.updateForDataChange.bind(this));
+        this.addManagedListener(this.eventService, Events.EVENT_MODEL_UPDATED, this.updateForDataChange.bind(this));
+        this.addManagedListener(this.eventService, Events.EVENT_CELL_VALUE_CHANGED, this.updateForDataChange.bind(this));
     }
 
     public updateForGridChange(): void {
@@ -206,7 +205,7 @@ export class ChartController extends BeanStub {
         this.eventService.dispatchEvent(event);
     }
 
-    public destroy(): void {
+    protected destroy(): void {
         super.destroy();
 
         if (this.rangeController) {

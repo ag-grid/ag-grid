@@ -1,1 +1,1 @@
-export {ClipboardModule} from "./clipboardModule"
+export { ClipboardModule } from "./clipboardModule"

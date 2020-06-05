@@ -25,5 +25,5 @@ export declare class ChartSettingsPanel extends Component {
     private next;
     private setActivePalette;
     private destroyMiniCharts;
-    destroy(): void;
+    protected destroy(): void;
 }

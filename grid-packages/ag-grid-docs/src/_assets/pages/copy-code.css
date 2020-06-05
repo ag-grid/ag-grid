@@ -1,6 +1,6 @@
 .copy-code-button {
-	color: black;
-    background-color: rgb(255, 255, 255, 0.8);
+    color: black;
+    background-color: rgba(255, 255, 255, 0.8);
     border-radius: 6px;
     display: block;
     padding: 3px 8px;

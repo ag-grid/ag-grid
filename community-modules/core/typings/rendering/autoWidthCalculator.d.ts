@@ -1,7 +1,8 @@
 import { GridPanel } from "../gridPanel/gridPanel";
 import { Column } from "../entities/column";
 import { HeaderRootComp } from "../headerRendering/headerRootComp";
-export declare class AutoWidthCalculator {
+import { BeanStub } from "../context/beanStub";
+export declare class AutoWidthCalculator extends BeanStub {
     private rowRenderer;
     private gridOptionsWrapper;
     private gridPanel;

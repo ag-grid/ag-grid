@@ -43,7 +43,6 @@ export class DropZoneColumnComp extends Component {
     @Autowired('popupService') popupService: PopupService;
     @Optional('aggFuncService') aggFuncService: IAggFuncService;
     @Autowired('gridOptionsWrapper') gridOptionsWrapper: GridOptionsWrapper;
-    @Autowired('eventService') eventService: EventService;
     @Autowired('columnApi') private columnApi: ColumnApi;
     @Autowired('gridApi') private gridApi: GridApi;
 
@@ -118,14 +117,14 @@ export class DropZoneColumnComp extends Component {
 
         _.setDisplayed(this.eButton, !this.gridOptionsWrapper.isFunctionsReadOnly());
 
-        this.addDestroyableEventListener(this.eButton, 'click', (mouseEvent: MouseEvent) => {
+        this.addManagedListener(this.eButton, 'click', (mouseEvent: MouseEvent) => {
             const agEvent: ColumnRemoveEvent = { type: DropZoneColumnComp.EVENT_COLUMN_REMOVE };
             this.dispatchEvent(agEvent);
             mouseEvent.stopPropagation();
         });
 
         const touchListener = new TouchListener(this.eButton);
-        this.addDestroyableEventListener(touchListener, TouchListener.EVENT_TAP, (event: TapEvent) => {
+        this.addManagedListener(touchListener, TouchListener.EVENT_TAP, (event: TapEvent) => {
             const agEvent: ColumnRemoveEvent = { type: DropZoneColumnComp.EVENT_COLUMN_REMOVE };
             this.dispatchEvent(agEvent);
         });
@@ -166,7 +165,7 @@ export class DropZoneColumnComp extends Component {
             getRowCount: function() { return rows.length; }
         });
 
-        this.getContext().wireBean(virtualList);
+        this.getContext().createBean(virtualList);
 
         const ePopup = _.loadTemplate('<div class="ag-select-agg-func-popup"></div>');
         ePopup.style.top = '0px';
@@ -176,7 +175,7 @@ export class DropZoneColumnComp extends Component {
         ePopup.style.width = this.getGui().clientWidth + 'px';
 
         const popupHiddenFunc = () => {
-            virtualList.destroy();
+            this.destroyBean(virtualList);
             this.popupShowing = false;
         };
 

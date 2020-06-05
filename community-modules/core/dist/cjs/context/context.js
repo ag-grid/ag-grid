@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v23.1.1
+ * @version v23.2.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -10,7 +10,6 @@ var utils_1 = require("../utils");
 var Context = /** @class */ (function () {
     function Context(params, logger) {
         this.beanWrappers = {};
-        this.componentsMappedByName = {};
         this.destroyed = false;
         if (!params || !params.beanClasses) {
             return;
@@ -18,7 +17,6 @@ var Context = /** @class */ (function () {
         this.contextParams = params;
         this.logger = logger;
         this.logger.log(">> creating ag-Application Context");
-        this.setupComponents();
         this.createBeans();
         var beanInstances = this.getBeanInstances();
         this.wireBeans(beanInstances);
@@ -27,42 +25,12 @@ var Context = /** @class */ (function () {
     Context.prototype.getBeanInstances = function () {
         return utils_1._.values(this.beanWrappers).map(function (beanEntry) { return beanEntry.beanInstance; });
     };
-    Context.prototype.setupComponents = function () {
-        var _this = this;
-        if (this.contextParams.components) {
-            this.contextParams.components.forEach(function (componentMeta) { return _this.addComponent(componentMeta); });
-        }
-    };
-    Context.prototype.addComponent = function (componentMeta) {
-        // get name of the class as a string
-        // let className = _.getNameOfClass(ComponentClass);
-        // insert a dash after every capital letter
-        // let classEscaped = className.replace(/([A-Z])/g, "-$1").toLowerCase();
-        var classEscaped = componentMeta.componentName.replace(/([a-z])([A-Z])/g, "$1-$2").toLowerCase();
-        // put all to upper case
-        var classUpperCase = classEscaped.toUpperCase();
-        // finally store
-        this.componentsMappedByName[classUpperCase] = componentMeta.componentClass;
-    };
-    Context.prototype.createComponentFromElement = function (element, afterPreCreateCallback, paramsMap) {
-        var key = element.nodeName;
-        var componentParams = paramsMap ? paramsMap[element.getAttribute('ref')] : undefined;
-        return this.createComponent(key, afterPreCreateCallback, element, componentParams);
-    };
-    Context.prototype.createComponent = function (key, afterPreCreateCallback, element, componentParams) {
-        if (this.componentsMappedByName && this.componentsMappedByName[key]) {
-            var cls = this.componentsMappedByName[key];
-            var newComponent = new this.componentsMappedByName[key](componentParams);
-            this.wireBean(newComponent, afterPreCreateCallback);
-            return newComponent;
-        }
-        return null;
-    };
-    Context.prototype.wireBean = function (bean, afterPreCreateCallback) {
+    Context.prototype.createBean = function (bean, afterPreCreateCallback) {
         if (!bean) {
             throw Error("Can't wire to bean since it is null");
         }
         this.wireBeans([bean], afterPreCreateCallback);
+        return bean;
     };
     Context.prototype.wireBeans = function (beanInstances, afterPreCreateCallback) {
         this.autoWireBeans(beanInstances);
@@ -197,14 +165,25 @@ var Context = /** @class */ (function () {
     Context.prototype.callLifeCycleMethods = function (beanInstances, lifeCycleMethod) {
         var _this = this;
         beanInstances.forEach(function (beanInstance) {
-            _this.forEachMetaDataInHierarchy(beanInstance, function (metaData) {
-                var methods = metaData[lifeCycleMethod];
-                if (!methods) {
-                    return;
-                }
-                methods.forEach(function (methodName) { return beanInstance[methodName](); });
-            });
+            _this.callLifeCycleMethodsOneBean(beanInstance, lifeCycleMethod);
         });
+    };
+    Context.prototype.callLifeCycleMethodsOneBean = function (beanInstance, lifeCycleMethod, methodToIgnore) {
+        // putting all methods into a map removes duplicates
+        var allMethods = {};
+        // dump methods from each level of the metadata hierarchy
+        this.forEachMetaDataInHierarchy(beanInstance, function (metaData) {
+            var methods = metaData[lifeCycleMethod];
+            if (methods) {
+                methods.forEach(function (methodName) {
+                    if (methodName != methodToIgnore) {
+                        allMethods[methodName] = true;
+                    }
+                });
+            }
+        });
+        var allMethodsList = Object.keys(allMethods);
+        allMethodsList.forEach(function (methodName) { return beanInstance[methodName](); });
     };
     Context.prototype.getBean = function (name) {
         return this.lookupBeanInstance("getBean", name, true);
@@ -216,10 +195,31 @@ var Context = /** @class */ (function () {
         }
         this.logger.log(">> Shutting down ag-Application Context");
         var beanInstances = this.getBeanInstances();
-        this.callLifeCycleMethods(beanInstances, 'preDestroyMethods');
+        this.destroyBeans(beanInstances);
         this.contextParams.providedBeanInstances = null;
         this.destroyed = true;
         this.logger.log(">> ag-Application Context shut down - component is dead");
+    };
+    Context.prototype.destroyBean = function (bean) {
+        if (!bean) {
+            return undefined;
+        }
+        this.destroyBeans([bean]);
+        return undefined;
+    };
+    Context.prototype.destroyBeans = function (beans) {
+        var _this = this;
+        if (!beans) {
+            return [];
+        }
+        beans.forEach(function (bean) {
+            _this.callLifeCycleMethodsOneBean(bean, 'preDestroyMethods', 'destroy');
+            // call destroy() explicitly if it exists
+            if (bean.destroy) {
+                bean.destroy();
+            }
+        });
+        return [];
     };
     return Context;
 }());

@@ -1,4 +1,5 @@
-export declare class LoggerFactory {
+import { BeanStub } from "./context/beanStub";
+export declare class LoggerFactory extends BeanStub {
     private logging;
     private setBeans;
     create(name: string): Logger;

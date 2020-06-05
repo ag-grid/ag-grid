@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v23.1.1
+ * @version v23.2.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -23,9 +23,9 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
+import { Autowired } from "../../context/context";
 import { Component } from "../../widgets/component";
 import { _ } from "../../utils";
-import { Autowired } from "../../context/context";
 var ARROW_UP = '\u2191';
 var ARROW_DOWN = '\u2193';
 var AnimateShowChangeCellRenderer = /** @class */ (function (_super) {

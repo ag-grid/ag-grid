@@ -1,17 +1,18 @@
 import {
     CellRange,
     CellPosition,
-    _,
-    CellRangeType
+    CellRangeType,
+    SelectionHandleType,
+    _
 } from "@ag-grid-community/core";
 
 import { AbstractSelectionHandle } from "./abstractSelectionHandle";
 
 export class RangeHandle extends AbstractSelectionHandle {
 
-    static TEMPLATE = '<div class="ag-range-handle"></div>';
+    static TEMPLATE = /* html */ `<div class="ag-range-handle"></div>`;
 
-    protected type = 'range';
+    protected type = SelectionHandleType.RANGE;
     private endPosition: CellPosition;
     private rangeFixed: boolean = false;
 

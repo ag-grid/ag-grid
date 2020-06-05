@@ -13,7 +13,7 @@ export declare class ChartDataPanel extends Component {
     private readonly chartController;
     constructor(chartController: ChartController);
     init(): void;
-    destroy(): void;
+    protected destroy(): void;
     private updatePanels;
     private addComponent;
     private addChangeListener;

@@ -26,6 +26,6 @@ export declare class TabbedChartMenu extends Component {
     updateCurrentChartType(chartType: ChartType): void;
     showTab(tab: number): void;
     getGui(): HTMLElement;
-    destroy(): void;
+    protected destroy(): void;
     private getPanelClass;
 }

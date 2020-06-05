@@ -6,7 +6,6 @@ export declare class TitleEdit extends Component {
     private readonly chartMenu;
     private static TEMPLATE;
     private chartTranslator;
-    private eventService;
     private chartProxy;
     private destroyableChartListeners;
     constructor(chartMenu: ChartMenu);

@@ -22,6 +22,7 @@ export declare class Grid {
     protected logger: Logger;
     private readonly gridOptions;
     constructor(eGridDiv: HTMLElement, gridOptions: GridOptions, params?: GridParams);
+    private registerStackComponents;
     private getRegisteredModules;
     private registerModuleUserComponents;
     private createProvidedBeans;

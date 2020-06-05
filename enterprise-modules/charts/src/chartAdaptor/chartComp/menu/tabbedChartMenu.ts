@@ -54,14 +54,14 @@ export class TabbedChartMenu extends Component {
             const { comp, tab } = this.createTab(panel, panelType, this.getPanelClass(panelType));
 
             this.tabs.push(tab);
-            this.addDestroyFunc(() => comp.destroy());
+            this.addDestroyFunc(() => this.destroyBean(comp));
         });
 
         this.tabbedLayout = new TabbedLayout({
             items: this.tabs,
             cssClass: 'ag-chart-tabbed-menu'
         });
-        this.getContext().wireBean(this.tabbedLayout);
+        this.getContext().createBean(this.tabbedLayout);
     }
 
     private createTab(
@@ -74,17 +74,19 @@ export class TabbedChartMenu extends Component {
         _.addCssClass(eWrapperDiv, `ag-chart-${title}`);
 
         const comp = new ChildClass(this.chartController);
-        this.getContext().wireBean(comp);
+        this.getContext().createBean(comp);
 
         eWrapperDiv.appendChild(comp.getGui());
 
         const titleEl = document.createElement('div');
-        titleEl.innerText = this.chartTranslator.translate(title);
+        const translatedTitle = this.chartTranslator.translate(title);
+        titleEl.innerText = translatedTitle;
 
         return {
             comp,
             tab: {
                 title: titleEl,
+                titleLabel: translatedTitle,
                 bodyPromise: Promise.resolve(eWrapperDiv),
                 name
             }
@@ -110,9 +112,9 @@ export class TabbedChartMenu extends Component {
         return this.tabbedLayout && this.tabbedLayout.getGui();
     }
 
-    public destroy(): void {
+    protected destroy(): void {
         if (this.parentComponent && this.parentComponent.isAlive()) {
-            this.parentComponent.destroy();
+            this.destroyBean(this.parentComponent);
         }
         super.destroy();
     }

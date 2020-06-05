@@ -1,3 +1,4 @@
+import { BeanStub } from "../context/beanStub";
 import { Column } from "../entities/column";
 import { RowNode } from "../entities/rowNode";
 import { Autowired, Bean, PostConstruct } from "../context/context";
@@ -5,9 +6,7 @@ import { GridOptionsWrapper } from "../gridOptionsWrapper";
 import { ChangedPath } from "../utils/changedPath";
 import { IRowModel } from "../interfaces/iRowModel";
 import { RowRenderer } from "../rendering/rowRenderer";
-import { EventService } from "../eventService";
 import { Constants } from "../constants";
-import { BeanStub } from "../context/beanStub";
 import { CellValueChangedEvent, Events } from "../events";
 import { IClientSideRowModel } from "../interfaces/iClientSideRowModel";
 
@@ -17,7 +16,6 @@ export class ChangeDetectionService extends BeanStub {
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('rowModel') private rowModel: IRowModel;
     @Autowired('rowRenderer') private rowRenderer: RowRenderer;
-    @Autowired('eventService') private eventService: EventService;
 
     private clientSideRowModel: IClientSideRowModel;
 
@@ -27,7 +25,7 @@ export class ChangeDetectionService extends BeanStub {
             this.clientSideRowModel = this.rowModel as IClientSideRowModel;
         }
 
-        this.addDestroyableEventListener(this.eventService, Events.EVENT_CELL_VALUE_CHANGED, this.onCellValueChanged.bind(this));
+        this.addManagedListener(this.eventService, Events.EVENT_CELL_VALUE_CHANGED, this.onCellValueChanged.bind(this));
     }
 
     private onCellValueChanged(event: CellValueChangedEvent): void {

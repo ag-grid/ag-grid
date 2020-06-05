@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v23.1.1
+ * @version v23.2.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -24,7 +24,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 import { Component } from '../widgets/component';
-import { Autowired, PostConstruct } from '../context/context';
+import { Autowired, PostConstruct, PreDestroy } from '../context/context';
 import { GridOptionsWrapper } from '../gridOptionsWrapper';
 import { Events } from '../events';
 import { HeaderWrapperComp } from './header/headerWrapperComp';
@@ -65,17 +65,31 @@ var HeaderRowComp = /** @class */ (function (_super) {
             callback(_this.headerComps[key]);
         });
     };
-    HeaderRowComp.prototype.destroy = function () {
-        var idsOfAllChildren = Object.keys(this.headerComps);
-        this.removeAndDestroyChildComponents(idsOfAllChildren);
-        _super.prototype.destroy.call(this);
+    HeaderRowComp.prototype.setRowIndex = function (idx) {
+        this.rowIndex = idx;
+        this.getGui().setAttribute('aria-rowindex', (idx + 1).toString());
     };
-    HeaderRowComp.prototype.removeAndDestroyChildComponents = function (idsToDestroy) {
+    HeaderRowComp.prototype.getRowIndex = function () {
+        return this.rowIndex;
+    };
+    HeaderRowComp.prototype.getType = function () {
+        return this.type;
+    };
+    HeaderRowComp.prototype.destroyAllChildComponents = function () {
+        var idsOfAllChildren = Object.keys(this.headerComps);
+        this.destroyChildComponents(idsOfAllChildren);
+    };
+    HeaderRowComp.prototype.destroyChildComponents = function (idsToDestroy, keepFocused) {
         var _this = this;
         idsToDestroy.forEach(function (id) {
-            var childHeaderComp = _this.headerComps[id];
-            _this.getGui().removeChild(childHeaderComp.getGui());
-            childHeaderComp.destroy();
+            var childHeaderWrapper = _this.headerComps[id];
+            if (keepFocused &&
+                !childHeaderWrapper.getColumn().isMoving() &&
+                _this.focusController.isHeaderWrapperFocused(childHeaderWrapper)) {
+                return;
+            }
+            _this.getGui().removeChild(childHeaderWrapper.getGui());
+            _this.destroyBean(childHeaderWrapper);
             delete _this.headerComps[id];
         });
     };
@@ -118,15 +132,15 @@ var HeaderRowComp = /** @class */ (function (_super) {
         this.onRowHeightChanged();
         this.onVirtualColumnsChanged();
         this.setWidth();
-        this.addDestroyableEventListener(this.gridOptionsWrapper, GridOptionsWrapper.PROP_HEADER_HEIGHT, this.onRowHeightChanged.bind(this));
-        this.addDestroyableEventListener(this.gridOptionsWrapper, GridOptionsWrapper.PROP_PIVOT_HEADER_HEIGHT, this.onRowHeightChanged.bind(this));
-        this.addDestroyableEventListener(this.gridOptionsWrapper, GridOptionsWrapper.PROP_GROUP_HEADER_HEIGHT, this.onRowHeightChanged.bind(this));
-        this.addDestroyableEventListener(this.gridOptionsWrapper, GridOptionsWrapper.PROP_PIVOT_GROUP_HEADER_HEIGHT, this.onRowHeightChanged.bind(this));
-        this.addDestroyableEventListener(this.gridOptionsWrapper, GridOptionsWrapper.PROP_FLOATING_FILTERS_HEIGHT, this.onRowHeightChanged.bind(this));
-        this.addDestroyableEventListener(this.eventService, Events.EVENT_VIRTUAL_COLUMNS_CHANGED, this.onVirtualColumnsChanged.bind(this));
-        this.addDestroyableEventListener(this.eventService, Events.EVENT_DISPLAYED_COLUMNS_CHANGED, this.onDisplayedColumnsChanged.bind(this));
-        this.addDestroyableEventListener(this.eventService, Events.EVENT_COLUMN_RESIZED, this.onColumnResized.bind(this));
-        this.addDestroyableEventListener(this.eventService, Events.EVENT_GRID_COLUMNS_CHANGED, this.onGridColumnsChanged.bind(this));
+        this.addManagedListener(this.gridOptionsWrapper, GridOptionsWrapper.PROP_HEADER_HEIGHT, this.onRowHeightChanged.bind(this));
+        this.addManagedListener(this.gridOptionsWrapper, GridOptionsWrapper.PROP_PIVOT_HEADER_HEIGHT, this.onRowHeightChanged.bind(this));
+        this.addManagedListener(this.gridOptionsWrapper, GridOptionsWrapper.PROP_GROUP_HEADER_HEIGHT, this.onRowHeightChanged.bind(this));
+        this.addManagedListener(this.gridOptionsWrapper, GridOptionsWrapper.PROP_PIVOT_GROUP_HEADER_HEIGHT, this.onRowHeightChanged.bind(this));
+        this.addManagedListener(this.gridOptionsWrapper, GridOptionsWrapper.PROP_FLOATING_FILTERS_HEIGHT, this.onRowHeightChanged.bind(this));
+        this.addManagedListener(this.eventService, Events.EVENT_VIRTUAL_COLUMNS_CHANGED, this.onVirtualColumnsChanged.bind(this));
+        this.addManagedListener(this.eventService, Events.EVENT_DISPLAYED_COLUMNS_CHANGED, this.onDisplayedColumnsChanged.bind(this));
+        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_RESIZED, this.onColumnResized.bind(this));
+        this.addManagedListener(this.eventService, Events.EVENT_GRID_COLUMNS_CHANGED, this.onGridColumnsChanged.bind(this));
     };
     HeaderRowComp.prototype.onColumnResized = function () {
         this.setWidth();
@@ -144,21 +158,17 @@ var HeaderRowComp = /** @class */ (function (_super) {
                     + this.columnController.getContainerWidth(Constants.PINNED_LEFT)
                     + this.columnController.getContainerWidth(null);
             }
-            else {
-                return 0;
-            }
+            return 0;
         }
-        else {
-            // if not printing, just return the width as normal
-            return this.columnController.getContainerWidth(this.pinned);
-        }
+        // if not printing, just return the width as normal
+        return this.columnController.getContainerWidth(this.pinned);
     };
     HeaderRowComp.prototype.onGridColumnsChanged = function () {
         this.removeAndDestroyAllChildComponents();
     };
     HeaderRowComp.prototype.removeAndDestroyAllChildComponents = function () {
         var idsOfAllChildren = Object.keys(this.headerComps);
-        this.removeAndDestroyChildComponents(idsOfAllChildren);
+        this.destroyChildComponents(idsOfAllChildren);
     };
     HeaderRowComp.prototype.onDisplayedColumnsChanged = function () {
         this.onVirtualColumnsChanged();
@@ -180,16 +190,12 @@ var HeaderRowComp = /** @class */ (function (_super) {
                 });
                 return result_1;
             }
-            else {
-                return [];
-            }
+            return [];
         }
-        else {
-            // when in normal layout, we add the columns for that container only
-            return this.columnController.getVirtualHeaderGroupRow(this.pinned, this.type == HeaderRowType.FLOATING_FILTER ?
-                this.dept - 1 :
-                this.dept);
-        }
+        // when in normal layout, we add the columns for that container only
+        return this.columnController.getVirtualHeaderGroupRow(this.pinned, this.type == HeaderRowType.FLOATING_FILTER ?
+            this.dept - 1 :
+            this.dept);
     };
     HeaderRowComp.prototype.onVirtualColumnsChanged = function () {
         var _this = this;
@@ -222,7 +228,7 @@ var HeaderRowComp = /** @class */ (function (_super) {
             correctChildIds.push(idOfChild);
         });
         // at this point, anything left in currentChildIds is an element that is no longer in the viewport
-        this.removeAndDestroyChildComponents(currentChildIds);
+        this.destroyChildComponents(currentChildIds, true);
         var ensureDomOrder = this.gridOptionsWrapper.isEnsureDomOrder();
         if (ensureDomOrder) {
             var correctChildOrder = correctChildIds.map(function (id) { return _this.headerComps[id].getGui(); });
@@ -239,11 +245,15 @@ var HeaderRowComp = /** @class */ (function (_super) {
                 result = new HeaderGroupWrapperComp(columnGroupChild, this.dropTarget, this.pinned);
                 break;
             case HeaderRowType.FLOATING_FILTER:
-                result = new FloatingFilterWrapper(columnGroupChild);
+                result = new FloatingFilterWrapper(columnGroupChild, this.pinned);
                 break;
         }
-        this.getContext().wireBean(result);
+        this.createBean(result);
+        result.setParentComponent(this);
         return result;
+    };
+    HeaderRowComp.prototype.getHeaderComps = function () {
+        return this.headerComps;
     };
     __decorate([
         Autowired('gridOptionsWrapper')
@@ -252,8 +262,11 @@ var HeaderRowComp = /** @class */ (function (_super) {
         Autowired('columnController')
     ], HeaderRowComp.prototype, "columnController", void 0);
     __decorate([
-        Autowired('eventService')
-    ], HeaderRowComp.prototype, "eventService", void 0);
+        Autowired('focusController')
+    ], HeaderRowComp.prototype, "focusController", void 0);
+    __decorate([
+        PreDestroy
+    ], HeaderRowComp.prototype, "destroyAllChildComponents", null);
     __decorate([
         PostConstruct
     ], HeaderRowComp.prototype, "init", null);

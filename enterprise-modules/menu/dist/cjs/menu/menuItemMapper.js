@@ -1,4 +1,17 @@
 "use strict";
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = function (d, b) {
+        extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+        return extendStatics(d, b);
+    };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -7,8 +20,10 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var core_1 = require("@ag-grid-community/core");
-var MenuItemMapper = /** @class */ (function () {
+var MenuItemMapper = /** @class */ (function (_super) {
+    __extends(MenuItemMapper, _super);
     function MenuItemMapper() {
+        return _super !== null && _super.apply(this, arguments) || this;
     }
     MenuItemMapper.prototype.mapWithStockItems = function (originalList, column) {
         var _this = this;
@@ -405,13 +420,10 @@ var MenuItemMapper = /** @class */ (function () {
     __decorate([
         core_1.Optional('chartService')
     ], MenuItemMapper.prototype, "chartService", void 0);
-    __decorate([
-        core_1.Optional('context')
-    ], MenuItemMapper.prototype, "context", void 0);
     MenuItemMapper = __decorate([
         core_1.Bean('menuItemMapper')
     ], MenuItemMapper);
     return MenuItemMapper;
-}());
+}(core_1.BeanStub));
 exports.MenuItemMapper = MenuItemMapper;
 //# sourceMappingURL=menuItemMapper.js.map

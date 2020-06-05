@@ -41,7 +41,7 @@ var DateTimeCellEditor = /** @class */ (function (_super) {
             onValueSelect: this.handleValueSelect.bind(this),
             initialValue: initialValue
         });
-        this.wireBean(this.editor);
+        this.createBean(this.editor);
         this.appendChild(this.editor);
     };
     DateTimeCellEditor.prototype.afterGuiAttached = function () {
@@ -66,7 +66,7 @@ var DateTimeCellEditor = /** @class */ (function (_super) {
         }
         return this.selectedDate || this.originalValue;
     };
-    DateTimeCellEditor.TEMPLATE = "<div class=\"ag-date-time-cell-editor\" tabindex=\"0\"></div>";
+    DateTimeCellEditor.TEMPLATE = "<div class=\"ag-date-time-cell-editor\" tabindex=\"-1\"></div>";
     return DateTimeCellEditor;
 }(PopupComponent));
 export { DateTimeCellEditor };

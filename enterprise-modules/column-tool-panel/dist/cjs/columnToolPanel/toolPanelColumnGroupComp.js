@@ -43,25 +43,42 @@ var ToolPanelColumnGroupComp = /** @class */ (function (_super) {
         if (core_1._.missing(this.displayName)) {
             this.displayName = '>>';
         }
+        this.cbSelect.setInputAriaLabel(this.displayName + " Toggle Selection");
         this.eLabel.innerHTML = this.displayName ? this.displayName : '';
         this.setupExpandContract();
         this.addCssClass('ag-column-select-indent-' + this.columnDept);
-        this.addDestroyableEventListener(this.eventService, core_1.Events.EVENT_COLUMN_PIVOT_MODE_CHANGED, this.onColumnStateChanged.bind(this));
-        this.addDestroyableEventListener(this.eLabel, 'click', this.onLabelClicked.bind(this));
-        this.addDestroyableEventListener(this.cbSelect, core_1.AgCheckbox.EVENT_CHANGED, this.onCheckboxChanged.bind(this));
+        this.addManagedListener(this.eventService, core_1.Events.EVENT_COLUMN_PIVOT_MODE_CHANGED, this.onColumnStateChanged.bind(this));
+        this.addManagedListener(this.eLabel, 'click', this.onLabelClicked.bind(this));
+        this.addManagedListener(this.cbSelect, core_1.AgCheckbox.EVENT_CHANGED, this.onCheckboxChanged.bind(this));
         this.setOpenClosedIcons();
         this.setupDragging();
         this.onColumnStateChanged();
         this.addVisibilityListenersToAllChildren();
         core_1.CssClassApplier.addToolPanelClassesFromColDef(this.columnGroup.getColGroupDef(), this.getGui(), this.gridOptionsWrapper, null, this.columnGroup);
     };
+    ToolPanelColumnGroupComp.prototype.handleKeyDown = function (e) {
+        switch (e.keyCode) {
+            case core_1.Constants.KEY_LEFT:
+            case core_1.Constants.KEY_RIGHT:
+                e.preventDefault();
+                if (this.isExpandable()) {
+                    this.toggleExpandOrContract(e.keyCode === core_1.Constants.KEY_RIGHT);
+                }
+                break;
+            case core_1.Constants.KEY_SPACE:
+                e.preventDefault();
+                if (this.isSelectable()) {
+                    this.onSelectAllChanged(!this.isSelected());
+                }
+        }
+    };
     ToolPanelColumnGroupComp.prototype.addVisibilityListenersToAllChildren = function () {
         var _this = this;
         this.columnGroup.getLeafColumns().forEach(function (column) {
-            _this.addDestroyableEventListener(column, core_1.Column.EVENT_VISIBLE_CHANGED, _this.onColumnStateChanged.bind(_this));
-            _this.addDestroyableEventListener(column, core_1.Column.EVENT_VALUE_CHANGED, _this.onColumnStateChanged.bind(_this));
-            _this.addDestroyableEventListener(column, core_1.Column.EVENT_PIVOT_CHANGED, _this.onColumnStateChanged.bind(_this));
-            _this.addDestroyableEventListener(column, core_1.Column.EVENT_ROW_GROUP_CHANGED, _this.onColumnStateChanged.bind(_this));
+            _this.addManagedListener(column, core_1.Column.EVENT_VISIBLE_CHANGED, _this.onColumnStateChanged.bind(_this));
+            _this.addManagedListener(column, core_1.Column.EVENT_VALUE_CHANGED, _this.onColumnStateChanged.bind(_this));
+            _this.addManagedListener(column, core_1.Column.EVENT_PIVOT_CHANGED, _this.onColumnStateChanged.bind(_this));
+            _this.addManagedListener(column, core_1.Column.EVENT_ROW_GROUP_CHANGED, _this.onColumnStateChanged.bind(_this));
         });
     };
     ToolPanelColumnGroupComp.prototype.setupDragging = function () {
@@ -92,10 +109,10 @@ var ToolPanelColumnGroupComp = /** @class */ (function (_super) {
     ToolPanelColumnGroupComp.prototype.setupExpandContract = function () {
         this.eGroupClosedIcon.appendChild(core_1._.createIcon('columnSelectClosed', this.gridOptionsWrapper, null));
         this.eGroupOpenedIcon.appendChild(core_1._.createIcon('columnSelectOpen', this.gridOptionsWrapper, null));
-        this.addDestroyableEventListener(this.eGroupClosedIcon, 'click', this.onExpandOrContractClicked.bind(this));
-        this.addDestroyableEventListener(this.eGroupOpenedIcon, 'click', this.onExpandOrContractClicked.bind(this));
+        this.addManagedListener(this.eGroupClosedIcon, 'click', this.onExpandOrContractClicked.bind(this));
+        this.addManagedListener(this.eGroupOpenedIcon, 'click', this.onExpandOrContractClicked.bind(this));
         var touchListener = new core_1.TouchListener(this.eColumnGroupIcons, true);
-        this.addDestroyableEventListener(touchListener, core_1.TouchListener.EVENT_TAP, this.onExpandOrContractClicked.bind(this));
+        this.addManagedListener(touchListener, core_1.TouchListener.EVENT_TAP, this.onExpandOrContractClicked.bind(this));
         this.addDestroyFunc(touchListener.destroy.bind(touchListener));
     };
     ToolPanelColumnGroupComp.prototype.onLabelClicked = function () {
@@ -260,7 +277,13 @@ var ToolPanelColumnGroupComp = /** @class */ (function (_super) {
         }
     };
     ToolPanelColumnGroupComp.prototype.onExpandOrContractClicked = function () {
-        this.expanded = !this.expanded;
+        this.toggleExpandOrContract();
+    };
+    ToolPanelColumnGroupComp.prototype.toggleExpandOrContract = function (expanded) {
+        if (expanded === undefined) {
+            expanded = !this.expanded;
+        }
+        this.expanded = expanded;
         this.setOpenClosedIcons();
         this.expandedCallback();
     };
@@ -300,10 +323,7 @@ var ToolPanelColumnGroupComp = /** @class */ (function (_super) {
     ToolPanelColumnGroupComp.prototype.setSelected = function (selected) {
         this.cbSelect.setValue(selected, true);
     };
-    ToolPanelColumnGroupComp.TEMPLATE = "<div class=\"ag-column-select-column-group\">\n            <span class=\"ag-column-group-icons\" ref=\"eColumnGroupIcons\" >\n                <span class=\"ag-column-group-closed-icon\" ref=\"eGroupClosedIcon\"></span>\n                <span class=\"ag-column-group-opened-icon\" ref=\"eGroupOpenedIcon\"></span>\n            </span>\n            <ag-checkbox ref=\"cbSelect\" class=\"ag-column-select-checkbox\"></ag-checkbox>\n            <span class=\"ag-column-select-column-label\" ref=\"eLabel\"></span>\n        </div>";
-    __decorate([
-        core_1.Autowired('eventService')
-    ], ToolPanelColumnGroupComp.prototype, "eventService", void 0);
+    ToolPanelColumnGroupComp.TEMPLATE = "<div class=\"ag-column-select-column-group\" tabindex=\"-1\">\n            <span class=\"ag-column-group-icons\" ref=\"eColumnGroupIcons\" >\n                <span class=\"ag-column-group-closed-icon\" ref=\"eGroupClosedIcon\"></span>\n                <span class=\"ag-column-group-opened-icon\" ref=\"eGroupOpenedIcon\"></span>\n            </span>\n            <ag-checkbox ref=\"cbSelect\" class=\"ag-column-select-checkbox\"></ag-checkbox>\n            <span class=\"ag-column-select-column-label\" ref=\"eLabel\"></span>\n        </div>";
     __decorate([
         core_1.Autowired('columnController')
     ], ToolPanelColumnGroupComp.prototype, "columnController", void 0);
@@ -332,6 +352,6 @@ var ToolPanelColumnGroupComp = /** @class */ (function (_super) {
         core_1.PostConstruct
     ], ToolPanelColumnGroupComp.prototype, "init", null);
     return ToolPanelColumnGroupComp;
-}(core_1.Component));
+}(core_1.ManagedFocusComponent));
 exports.ToolPanelColumnGroupComp = ToolPanelColumnGroupComp;
 //# sourceMappingURL=toolPanelColumnGroupComp.js.map

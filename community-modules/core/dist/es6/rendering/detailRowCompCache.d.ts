@@ -1,8 +1,9 @@
-// Type definitions for @ag-grid-community/core v23.1.1
+// Type definitions for @ag-grid-community/core v23.2.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { ICellRendererComp } from "./cellRenderers/iCellRenderer";
 import { RowNode } from "../entities/rowNode";
+import { BeanStub } from "../context/beanStub";
 /**
  * For Master Detail, it is required to keep components between expanding & collapsing parents.
  * For example a user expands row A (and shows a detail grid for this row), then when row A
@@ -10,7 +11,7 @@ import { RowNode } from "../entities/rowNode";
  * is showed with it's context intact, eg if user sorted in the detail grid, that sort should
  * still be applied after the detail grid is shown for the second time.
  */
-export declare class DetailRowCompCache {
+export declare class DetailRowCompCache extends BeanStub {
     private gridOptionsWrapper;
     private cacheItems;
     private maxCacheSize;
@@ -22,5 +23,5 @@ export declare class DetailRowCompCache {
     private destroyFullWidthRow;
     private purgeCache;
     get(rowNode: RowNode, pinned: string): ICellRendererComp;
-    destroy(): void;
+    protected destroy(): void;
 }

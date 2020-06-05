@@ -3,7 +3,6 @@ export declare class ChangeDetectionService extends BeanStub {
     private gridOptionsWrapper;
     private rowModel;
     private rowRenderer;
-    private eventService;
     private clientSideRowModel;
     private init;
     private onCellValueChanged;

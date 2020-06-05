@@ -4,13 +4,15 @@ export interface SideBarButtonClickedEvent extends AgEvent {
 }
 export declare class SideBarButtonsComp extends Component {
     static EVENT_SIDE_BAR_BUTTON_CLICKED: string;
-    private gridOptionsWrapper;
     private static readonly TEMPLATE;
     private buttonComps;
+    private focusController;
+    private headerPositionUtils;
     constructor();
+    private postConstruct;
+    private handleKeyDown;
     setToolPanelDefs(toolPanelDefs: ToolPanelDef[]): void;
     setActiveButton(id: string | undefined): void;
     private addButtonComp;
     clearButtons(): void;
-    destroy(): void;
 }

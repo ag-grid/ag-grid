@@ -50,5 +50,5 @@ export declare class AgColorPanel extends Component {
     setValue(val: string): void;
     private onRecentColorClick;
     private addRecentColor;
-    destroy(): void;
+    protected destroy(): void;
 }

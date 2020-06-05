@@ -72,5 +72,5 @@ export declare class AgPanel extends Component {
     getBodyWidth(): number;
     setTitle(title: string): void;
     private onBtClose;
-    destroy(): void;
+    protected destroy(): void;
 }

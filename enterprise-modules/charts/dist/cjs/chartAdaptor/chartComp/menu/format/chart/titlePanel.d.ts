@@ -3,7 +3,6 @@ import { ChartController } from "../../../chartController";
 export default class TitlePanel extends Component {
     static TEMPLATE: string;
     private chartTranslator;
-    private eventService;
     private activePanels;
     private readonly chartController;
     private disabledTitle;
@@ -12,5 +11,5 @@ export default class TitlePanel extends Component {
     private hasTitle;
     private initFontPanel;
     private destroyActivePanels;
-    destroy(): void;
+    protected destroy(): void;
 }

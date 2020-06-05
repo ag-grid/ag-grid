@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v23.1.1
+ * @version v23.2.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -29,8 +29,8 @@ var component_1 = require("../widgets/component");
 var context_1 = require("../context/context");
 var componentAnnotations_1 = require("../widgets/componentAnnotations");
 var events_1 = require("../events");
-var utils_1 = require("../utils");
 var constants_1 = require("../constants");
+var utils_1 = require("../utils");
 var PaginationComp = /** @class */ (function (_super) {
     __extends(PaginationComp, _super);
     function PaginationComp() {
@@ -56,11 +56,11 @@ var PaginationComp = /** @class */ (function (_super) {
             this.setDisplayed(false);
             return;
         }
-        this.addDestroyableEventListener(this.eventService, events_1.Events.EVENT_PAGINATION_CHANGED, this.onPaginationChanged.bind(this));
-        this.addDestroyableEventListener(this.btFirst, 'click', this.onBtFirst.bind(this));
-        this.addDestroyableEventListener(this.btLast, 'click', this.onBtLast.bind(this));
-        this.addDestroyableEventListener(this.btNext, 'click', this.onBtNext.bind(this));
-        this.addDestroyableEventListener(this.btPrevious, 'click', this.onBtPrevious.bind(this));
+        this.addManagedListener(this.eventService, events_1.Events.EVENT_PAGINATION_CHANGED, this.onPaginationChanged.bind(this));
+        this.addManagedListener(this.btFirst, 'click', this.onBtFirst.bind(this));
+        this.addManagedListener(this.btLast, 'click', this.onBtLast.bind(this));
+        this.addManagedListener(this.btNext, 'click', this.onBtNext.bind(this));
+        this.addManagedListener(this.btPrevious, 'click', this.onBtPrevious.bind(this));
         this.onPaginationChanged();
     };
     PaginationComp.prototype.onPaginationChanged = function () {
@@ -68,6 +68,11 @@ var PaginationComp = /** @class */ (function (_super) {
         this.updateRowLabels();
         this.setCurrentPageLabel();
         this.setTotalLabels();
+    };
+    PaginationComp.prototype.onBtFirst = function () {
+        if (!this.previousAndFirstButtonsDisabled) {
+            this.paginationProxy.goToFirstPage();
+        }
     };
     PaginationComp.prototype.setCurrentPageLabel = function () {
         var pagesExist = this.paginationProxy.getTotalPages() > 0;
@@ -103,11 +108,6 @@ var PaginationComp = /** @class */ (function (_super) {
     PaginationComp.prototype.onBtPrevious = function () {
         if (!this.previousAndFirstButtonsDisabled) {
             this.paginationProxy.goToPreviousPage();
-        }
-    };
-    PaginationComp.prototype.onBtFirst = function () {
-        if (!this.previousAndFirstButtonsDisabled) {
-            this.paginationProxy.goToFirstPage();
         }
     };
     PaginationComp.prototype.onBtLast = function () {
@@ -179,9 +179,6 @@ var PaginationComp = /** @class */ (function (_super) {
     __decorate([
         context_1.Autowired('gridOptionsWrapper')
     ], PaginationComp.prototype, "gridOptionsWrapper", void 0);
-    __decorate([
-        context_1.Autowired('eventService')
-    ], PaginationComp.prototype, "eventService", void 0);
     __decorate([
         context_1.Autowired('paginationProxy')
     ], PaginationComp.prototype, "paginationProxy", void 0);

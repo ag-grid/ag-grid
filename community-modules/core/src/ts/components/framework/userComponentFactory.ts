@@ -1,4 +1,4 @@
-import { Autowired, Bean, Context, Optional } from "../../context/context";
+import { Autowired, Bean, Optional } from "../../context/context";
 import { GridOptions } from "../../entities/gridOptions";
 import { FrameworkComponentWrapper } from "./frameworkComponentWrapper";
 import { IComponent } from "../../interfaces/iComponent";
@@ -15,7 +15,7 @@ import { ComponentMetadata, ComponentMetadataProvider } from "./componentMetadat
 import { ISetFilterParams } from "../../interfaces/iSetFilterParams";
 import { IRichCellEditorParams } from "../../interfaces/iRichCellEditorParams";
 import { ToolPanelDef } from "../../entities/sideBar";
-import { _, Promise } from "../../utils";
+import { Promise } from "../../utils";
 import { IDateComp, IDateParams } from "../../rendering/dateComponent";
 import { IHeaderComp, IHeaderParams } from "../../headerRendering/header/headerComp";
 import { IHeaderGroupComp, IHeaderGroupParams } from "../../headerRendering/headerGroup/headerGroupComp";
@@ -28,7 +28,7 @@ import { IFilterComp, IFilterParams } from "../../interfaces/iFilter";
 import { IFloatingFilterComp, IFloatingFilterParams } from "../../filter/floating/floatingFilter";
 import { ICellEditorComp, ICellEditorParams } from "../../interfaces/iCellEditor";
 import { IToolPanelComp, IToolPanelParams } from "../../interfaces/iToolPanel";
-import { StatusPanelDef } from "../../interfaces/iStatusPanel";
+import { IStatusPanelComp, IStatusPanelParams, StatusPanelDef } from "../../interfaces/iStatusPanel";
 import {
     CellEditorComponent,
     CellRendererComponent,
@@ -47,6 +47,8 @@ import {
     ToolPanelComponent,
     TooltipComponent
 } from "./componentTypes";
+import { BeanStub } from "../../context/beanStub";
+import { cloneObject, mergeDeep } from '../../utils/object';
 
 export type DefinitionObject =
     GridOptions
@@ -64,9 +66,9 @@ export enum ComponentSource {
     DEFAULT, REGISTERED_BY_NAME, HARDCODED
 }
 
-export interface ComponentSelectorResult<TParams> {
+export interface ComponentSelectorResult {
     component?: string;
-    params?: TParams;
+    params?: any;
 }
 
 /**
@@ -81,14 +83,13 @@ export interface ComponentClassDef<A extends IComponent<TParams> & B, B, TParams
 }
 
 export interface ModifyParamsCallback<TParams> {
-    (params: TParams, component: IComponent<TParams>): void;
+    (params: TParams, component: IComponent<TParams>): TParams;
 }
 
 @Bean('userComponentFactory')
-export class UserComponentFactory {
+export class UserComponentFactory extends BeanStub {
 
     @Autowired("gridOptions") private gridOptions: GridOptions;
-    @Autowired("context") private context: Context;
     @Autowired("agComponentUtils") private agComponentUtils: AgComponentUtils;
     @Autowired("componentMetadataProvider") private componentMetadataProvider: ComponentMetadataProvider;
     @Autowired("userComponentRegistry") private userComponentRegistry: UserComponentRegistry;
@@ -178,7 +179,7 @@ export class UserComponentFactory {
         return this.createAndInitUserComponent(toolPanelDef, params, ToolPanelComponent);
     }
 
-    public newStatusPanelComponent(def: StatusPanelDef, params: IToolPanelParams): Promise<IToolPanelComp> {
+    public newStatusPanelComponent(def: StatusPanelDef, params: IStatusPanelParams): Promise<IStatusPanelComp> {
         return this.createAndInitUserComponent(def, params, StatusPanelComponent);
     }
 
@@ -208,7 +209,6 @@ export class UserComponentFactory {
         // used by FilterManager only
         modifyParamsCallback?: ModifyParamsCallback<TParams>
     ): Promise<A> {
-
         if (!definitionObject) {
             definitionObject = this.gridOptions;
         }
@@ -233,21 +233,12 @@ export class UserComponentFactory {
         // componentInstance was not available when createUserComponent was called)
         const paramsAfterCallback = modifyParamsCallback ? modifyParamsCallback(params, componentInstance) : params;
 
-        const deferredInit: void | Promise<void> = this.initComponent(componentInstance, paramsAfterCallback);
+        const deferredInit = this.initComponent(componentInstance, paramsAfterCallback);
 
         if (deferredInit == null) {
-
-            // const p = new Promise<A>(resolve => {
-            //     setTimeout( ()=> {
-            //         resolve(componentInstance);
-            //     }, 1000);
-            // });
-            // return p;
-
             return Promise.resolve(componentInstance);
         } else {
-            const asPromise = deferredInit as Promise<void>;
-            return asPromise.map(_ => componentInstance);
+            return (deferredInit as Promise<void>).then(() => componentInstance);
         }
     }
 
@@ -257,7 +248,7 @@ export class UserComponentFactory {
         const agGridReact = this.context.getBean('agGridReact');
 
         if (agGridReact) {
-            params.agGridReact = _.cloneObject(agGridReact);
+            params.agGridReact = cloneObject(agGridReact);
         }
 
         // AG-1716 - directly related to AG-1574 and AG-1715
@@ -321,7 +312,7 @@ export class UserComponentFactory {
         let HardcodedJsComponent: { new(): A; } = null;
         let hardcodedJsFunction: AgGridComponentFunctionInput = null;
         let HardcodedFwComponent: { new(): B; } = null;
-        let componentSelectorFunc: (params: TParams) => ComponentSelectorResult<TParams>;
+        let componentSelectorFunc: (params: TParams) => ComponentSelectorResult;
 
         if (definitionObject != null) {
             const componentPropertyValue: AgComponentPropertyInput<IComponent<TParams>, TParams> = (definitionObject as any)[propertyName];
@@ -480,25 +471,26 @@ export class UserComponentFactory {
      *      specified by the user in the configuration
      * @returns {TParams} It merges the user agGridParams with the actual params specified by the user.
      */
-    public createFinalParams<TParams>(definitionObject: DefinitionObject,
+    public createFinalParams<TParams>(
+        definitionObject: DefinitionObject,
         propertyName: string,
         paramsFromGrid: TParams,
-        paramsFromSelector: TParams = null): TParams {
+        paramsFromSelector: any = null): TParams {
         const params = {} as TParams;
 
-        _.mergeDeep(params, paramsFromGrid);
+        mergeDeep(params, paramsFromGrid);
 
         const userParams: TParams = definitionObject ? (definitionObject as any)[propertyName + "Params"] : null;
 
         if (userParams != null) {
             if (typeof userParams === 'function') {
-                _.mergeDeep(params, userParams(paramsFromGrid));
+                mergeDeep(params, userParams(paramsFromGrid));
             } else if (typeof userParams === 'object') {
-                _.mergeDeep(params, userParams);
+                mergeDeep(params, userParams);
             }
         }
 
-        _.mergeDeep(params, paramsFromSelector);
+        mergeDeep(params, paramsFromSelector);
 
         return params;
     }
@@ -509,7 +501,7 @@ export class UserComponentFactory {
         paramsForSelector: TParams,
         defaultComponentName: string,
         optional: boolean
-    ): { componentInstance: A, paramsFromSelector: TParams; } {
+    ): { componentInstance: A, paramsFromSelector: any; } {
         const propertyName = componentType.propertyName;
         const componentToUse: ComponentClassDef<A, B, TParams> =
             this.lookupComponentClassDef(holder, propertyName, paramsForSelector, defaultComponentName) as ComponentClassDef<A, B, TParams>;
@@ -546,7 +538,7 @@ export class UserComponentFactory {
     }
 
     private initComponent<A extends IComponent<TParams>, TParams>(component: A, params: TParams): Promise<void> | void {
-        this.context.wireBean(component);
+        this.context.createBean(component);
 
         if (component.init == null) {
             return;

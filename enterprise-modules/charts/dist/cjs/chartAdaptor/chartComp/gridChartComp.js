@@ -48,8 +48,8 @@ var GridChartComp = /** @class */ (function (_super) {
         };
         var isRtl = this.gridOptionsWrapper.isEnableRtl();
         core_1._.addCssClass(this.getGui(), isRtl ? 'ag-rtl' : 'ag-ltr');
-        this.model = this.wireBean(new chartDataModel_1.ChartDataModel(modelParams));
-        this.chartController = this.wireBean(new chartController_1.ChartController(this.model, this.params.chartPaletteName));
+        this.model = this.createBean(new chartDataModel_1.ChartDataModel(modelParams));
+        this.chartController = this.createManagedBean(new chartController_1.ChartController(this.model, this.params.chartPaletteName));
         // create chart before dialog to ensure dialog is correct size
         this.createChart();
         if (this.params.insideDialog) {
@@ -57,9 +57,9 @@ var GridChartComp = /** @class */ (function (_super) {
         }
         this.addMenu();
         this.addTitleEditComp();
-        this.addDestroyableEventListener(this.getGui(), 'focusin', this.setActiveChartCellRange.bind(this));
-        this.addDestroyableEventListener(this.chartController, chartController_1.ChartController.EVENT_CHART_UPDATED, this.refresh.bind(this));
-        this.addDestroyableEventListener(this.chartMenu, chartMenu_1.ChartMenu.EVENT_DOWNLOAD_CHART, this.downloadChart.bind(this));
+        this.addManagedListener(this.getGui(), 'focusin', this.setActiveChartCellRange.bind(this));
+        this.addManagedListener(this.chartController, chartController_1.ChartController.EVENT_CHART_UPDATED, this.refresh.bind(this));
+        this.addManagedListener(this.chartMenu, chartMenu_1.ChartMenu.EVENT_DOWNLOAD_CHART, this.downloadChart.bind(this));
         this.refresh();
         this.raiseChartCreatedEvent();
     };
@@ -145,7 +145,7 @@ var GridChartComp = /** @class */ (function (_super) {
             centered: true,
             closable: true
         });
-        this.getContext().wireBean(this.chartDialog);
+        this.getContext().createBean(this.chartDialog);
         this.chartDialog.addEventListener(core_1.AgDialog.EVENT_DESTROYED, function () { return _this.destroy(); });
     };
     GridChartComp.prototype.getBestDialogSize = function () {
@@ -173,11 +173,11 @@ var GridChartComp = /** @class */ (function (_super) {
         return { width: width, height: height };
     };
     GridChartComp.prototype.addMenu = function () {
-        this.chartMenu = this.wireBean(new chartMenu_1.ChartMenu(this.eChartContainer, this.eMenuContainer, this.chartController));
+        this.chartMenu = this.createBean(new chartMenu_1.ChartMenu(this.eChartContainer, this.eMenuContainer, this.chartController));
         this.eChartContainer.appendChild(this.chartMenu.getGui());
     };
     GridChartComp.prototype.addTitleEditComp = function () {
-        this.titleEdit = this.wireBean(new titleEdit_1.TitleEdit(this.chartMenu));
+        this.titleEdit = this.createBean(new titleEdit_1.TitleEdit(this.chartMenu));
         this.eTitleEditContainer.appendChild(this.titleEdit.getGui());
         if (this.chartProxy) {
             this.titleEdit.setChartProxy(this.chartProxy);
@@ -266,6 +266,7 @@ var GridChartComp = /** @class */ (function (_super) {
             return;
         }
         this.chartController.setChartRange(true);
+        this.gridApi.focusController.clearFocusedCell();
     };
     GridChartComp.prototype.raiseChartCreatedEvent = function () {
         var chartModel = this.chartController.getChartModel();
@@ -289,18 +290,13 @@ var GridChartComp = /** @class */ (function (_super) {
     };
     GridChartComp.prototype.destroy = function () {
         _super.prototype.destroy.call(this);
-        if (this.chartController) {
-            this.chartController.destroy();
-        }
         if (this.chartProxy) {
             this.chartProxy.destroy();
         }
-        if (this.chartMenu) {
-            this.chartMenu.destroy();
-        }
+        this.destroyBean(this.chartMenu);
         // don't want to invoke destroy() on the Dialog (prevents destroy loop)
         if (this.chartDialog && this.chartDialog.isAlive()) {
-            this.chartDialog.destroy();
+            this.destroyBean(this.chartDialog);
         }
         // if the user is providing containers for the charts, we need to clean up, otherwise the old chart
         // data will still be visible although the chart is no longer bound to the grid
@@ -310,7 +306,7 @@ var GridChartComp = /** @class */ (function (_super) {
         core_1._.removeFromParent(eGui);
         this.raiseChartDestroyedEvent();
     };
-    GridChartComp.TEMPLATE = "<div class=\"ag-chart\" tabindex=\"-1\">\n            <div ref=\"eChartContainer\" tabindex=\"-1\" class=\"ag-chart-components-wrapper\">\n                <div ref=\"eChart\" class=\"ag-chart-canvas-wrapper\">\n                </div>\n                <div ref=\"eEmpty\" class=\"ag-chart-empty-text ag-unselectable\"></div>\n            </div>\n            <div ref=\"eTitleEditContainer\">\n            </div>\n            <div ref=\"eMenuContainer\" class=\"ag-chart-docked-container\"></div>\n        </div>";
+    GridChartComp.TEMPLATE = "<div class=\"ag-chart\" tabindex=\"-1\">\n            <div ref=\"eChartContainer\" tabindex=\"-1\" class=\"ag-chart-components-wrapper\">\n                <div ref=\"eChart\" class=\"ag-chart-canvas-wrapper\"></div>\n                <div ref=\"eEmpty\" class=\"ag-chart-empty-text ag-unselectable\"></div>\n            </div>\n            <div ref=\"eTitleEditContainer\"></div>\n            <div ref=\"eMenuContainer\" class=\"ag-chart-docked-container\"></div>\n        </div>";
     __decorate([
         core_1.RefSelector('eChart')
     ], GridChartComp.prototype, "eChart", void 0);
@@ -335,9 +331,6 @@ var GridChartComp = /** @class */ (function (_super) {
     __decorate([
         core_1.Autowired('chartTranslator')
     ], GridChartComp.prototype, "chartTranslator", void 0);
-    __decorate([
-        core_1.Autowired('eventService')
-    ], GridChartComp.prototype, "eventService", void 0);
     __decorate([
         core_1.Autowired('gridApi')
     ], GridChartComp.prototype, "gridApi", void 0);

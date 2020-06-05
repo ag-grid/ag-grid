@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v23.1.1
+ * @version v23.2.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -23,10 +23,10 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
+import { BeanStub } from "../context/beanStub";
 import { Autowired, Bean, PostConstruct } from "../context/context";
 import { ChangedPath } from "../utils/changedPath";
 import { Constants } from "../constants";
-import { BeanStub } from "../context/beanStub";
 import { Events } from "../events";
 var ChangeDetectionService = /** @class */ (function (_super) {
     __extends(ChangeDetectionService, _super);
@@ -37,7 +37,7 @@ var ChangeDetectionService = /** @class */ (function (_super) {
         if (this.rowModel.getType() === Constants.ROW_MODEL_TYPE_CLIENT_SIDE) {
             this.clientSideRowModel = this.rowModel;
         }
-        this.addDestroyableEventListener(this.eventService, Events.EVENT_CELL_VALUE_CHANGED, this.onCellValueChanged.bind(this));
+        this.addManagedListener(this.eventService, Events.EVENT_CELL_VALUE_CHANGED, this.onCellValueChanged.bind(this));
     };
     ChangeDetectionService.prototype.onCellValueChanged = function (event) {
         // Clipboard service manages its own change detection, so no need to do it here.
@@ -74,9 +74,6 @@ var ChangeDetectionService = /** @class */ (function (_super) {
     __decorate([
         Autowired('rowRenderer')
     ], ChangeDetectionService.prototype, "rowRenderer", void 0);
-    __decorate([
-        Autowired('eventService')
-    ], ChangeDetectionService.prototype, "eventService", void 0);
     __decorate([
         PostConstruct
     ], ChangeDetectionService.prototype, "init", null);

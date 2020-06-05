@@ -1,17 +1,16 @@
 import { Autowired, Bean } from "../context/context";
 import { GridOptionsWrapper } from "../gridOptionsWrapper";
-import { IFrameworkOverrides } from "../interfaces/iFrameworkOverrides";
+import { BeanStub } from "../context/beanStub";
 import { _ } from "../utils";
 
 @Bean('resizeObserverService')
-export class ResizeObserverService {
+export class ResizeObserverService extends BeanStub {
 
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
-    @Autowired('frameworkOverrides') private frameworkOverrides: IFrameworkOverrides;
 
     public observeResize(element: HTMLElement, callback: () => void, debounceDelay: number = 50): () => void {
         // put in variable, so available to usePolyfill() function below
-        const frameworkFactory = this.frameworkOverrides;
+        const frameworkFactory = this.getFrameworkOverrides();
         // this gets fired too often and might cause some relayout issues
         // so we add a debounce to the callback here to avoid the flashing effect.
         const debouncedCallback = _.debounce(callback, debounceDelay);

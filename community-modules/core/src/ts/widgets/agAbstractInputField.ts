@@ -1,14 +1,13 @@
-import { IAgLabel } from "./agAbstractLabel";
-import { RefSelector } from "./componentAnnotations";
-import { AgAbstractField } from "./agAbstractField";
-import { _ } from "../utils";
+import { IAgLabel } from './agAbstractLabel';
+import { RefSelector } from './componentAnnotations';
+import { AgAbstractField, FieldElement } from './agAbstractField';
+import { setDisabled, setElementWidth, addCssClass } from '../utils/dom';
 
 export interface IInputField extends IAgLabel {
     value?: any;
     width?: number;
 }
 
-export type FieldElement = HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement;
 export abstract class AgAbstractInputField<T extends FieldElement, K> extends AgAbstractField<K> {
     protected abstract inputType: string;
 
@@ -29,10 +28,11 @@ export abstract class AgAbstractInputField<T extends FieldElement, K> extends Ag
     protected postConstruct() {
         super.postConstruct();
         this.setInputType();
-        _.addCssClass(this.eLabel, `${this.className}-label`);
-        _.addCssClass(this.eWrapper, `${this.className}-input-wrapper`);
-        _.addCssClass(this.eInput, `${this.className}-input`);
-        _.addCssClass(this.getGui(), 'ag-input-field');
+
+        addCssClass(this.eLabel, `${this.className}-label`);
+        addCssClass(this.eWrapper, `${this.className}-input-wrapper`);
+        addCssClass(this.eInput, `${this.className}-input`);
+        addCssClass(this.getGui(), 'ag-input-field');
 
         const inputId = this.eInput.id ? this.eInput.id : `ag-input-id-${this.getCompId()}`;
         this.eLabel.htmlFor = inputId;
@@ -52,7 +52,7 @@ export abstract class AgAbstractInputField<T extends FieldElement, K> extends Ag
     }
 
     protected addInputListeners() {
-        this.addDestroyableEventListener(this.eInput, 'input', (e) => {
+        this.addManagedListener(this.eInput, 'input', (e) => {
             const value = e.target.value;
 
             this.setValue(value);
@@ -65,12 +65,13 @@ export abstract class AgAbstractInputField<T extends FieldElement, K> extends Ag
         }
     }
 
-    public getInputElement(): FieldElement {
+    public getInputElement(): T {
         return this.eInput;
     }
 
     public setInputWidth(width: number | 'flex'): this {
-        _.setElementWidth(this.eWrapper, width);
+        setElementWidth(this.eWrapper, width);
+
         return this;
     }
 
@@ -85,7 +86,7 @@ export abstract class AgAbstractInputField<T extends FieldElement, K> extends Ag
     }
 
     public setMaxLength(length: number): this {
-        const eInput = this.eInput as HTMLInputElement;
+        const eInput = this.eInput as HTMLInputElement | HTMLTextAreaElement;
         eInput.maxLength = length;
 
         return this;
@@ -93,23 +94,26 @@ export abstract class AgAbstractInputField<T extends FieldElement, K> extends Ag
 
     public setInputPlaceholder(placeholder: string): this {
         const eInput = this.eInput;
+        const attributeName = 'placeholder';
 
         if (placeholder) {
-            eInput.setAttribute('placeholder', placeholder);
+            eInput.setAttribute(attributeName, placeholder);
         } else {
-            eInput.removeAttribute('placeholder');
+            eInput.removeAttribute(attributeName);
         }
 
         return this;
     }
 
     public setDisabled(disabled: boolean): this {
-        if (disabled) {
-            this.eInput.setAttribute('disabled', 'true');
-        } else {
-            this.eInput.removeAttribute('disabled');
-        }
+        setDisabled(this.eInput, disabled);
 
         return super.setDisabled(disabled);
+    }
+
+    public setInputAriaLabel(label: string): this {
+        this.eInput.setAttribute('aria-label', label);
+
+        return this;
     }
 }

@@ -1,24 +1,23 @@
 import { RowNodeBlock } from "./rowNodeBlock";
 import { Logger, LoggerFactory } from "../../logger";
 import { Qualifier } from "../../context/context";
+import { IRowNodeBlock } from "../../interfaces/iRowNodeBlock";
+import { BeanStub } from "../../context/beanStub";
 import { _ } from "../../utils";
-import {IRowNodeBlock} from "../../interfaces/iRowNodeBlock";
 
-export class RowNodeBlockLoader {
+export class RowNodeBlockLoader extends BeanStub {
 
     private readonly maxConcurrentRequests: number;
-
     private readonly checkBlockToLoadDebounce: () => void;
 
     private activeBlockLoadsCount = 0;
-
     private blocks: IRowNodeBlock[] = [];
-
     private logger: Logger;
-
     private active = true;
 
     constructor(maxConcurrentRequests: number, blockLoadDebounceMillis: number | undefined) {
+        super();
+
         this.maxConcurrentRequests = maxConcurrentRequests;
 
         if (blockLoadDebounceMillis && blockLoadDebounceMillis > 0) {
@@ -38,7 +37,8 @@ export class RowNodeBlockLoader {
         _.removeFromArray(this.blocks, block);
     }
 
-    public destroy(): void {
+    protected destroy(): void {
+        super.destroy();
         this.active = false;
     }
 

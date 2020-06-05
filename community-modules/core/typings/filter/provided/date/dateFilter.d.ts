@@ -1,5 +1,6 @@
 import { ConditionPosition, ISimpleFilterModel } from '../simpleFilter';
 import { Comparator, IScalarFilterParams, ScalarFilter } from '../scalarFilter';
+import { Promise } from '../../../utils';
 export interface DateFilterModel extends ISimpleFilterModel {
     dateFrom: string;
     dateTo: string;
@@ -30,7 +31,7 @@ export declare class DateFilter extends ScalarFilter<DateFilterModel, Date> {
     };
     protected setValueFromFloatingFilter(value: string): void;
     protected setConditionIntoUi(model: DateFilterModel, position: ConditionPosition): void;
-    protected resetUiToDefaults(silent?: boolean): void;
+    protected resetUiToDefaults(silent?: boolean): Promise<void>;
     protected comparator(): Comparator<Date>;
     private defaultComparator;
     protected setParams(params: IDateFilterParams): void;

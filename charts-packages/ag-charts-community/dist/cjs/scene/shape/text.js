@@ -267,16 +267,14 @@ var Text = /** @class */ (function (_super) {
         }
         // this.matrix.transformBBox(this.computeBBox!()).render(ctx); // debug
         this.matrix.toContext(ctx);
-        var _a = this, opacity = _a.opacity, fill = _a.fill, stroke = _a.stroke, strokeWidth = _a.strokeWidth;
-        if (opacity < 1) {
-            ctx.globalAlpha = opacity;
-        }
+        var _a = this, fill = _a.fill, stroke = _a.stroke, strokeWidth = _a.strokeWidth;
         ctx.font = this.font;
         ctx.textAlign = this.textAlign;
         ctx.textBaseline = this.textBaseline;
         var pixelRatio = this.scene.canvas.pixelRatio || 1;
         if (fill) {
             ctx.fillStyle = fill;
+            ctx.globalAlpha = this.opacity * this.fillOpacity;
             var _b = this, fillShadow = _b.fillShadow, text = _b.text, x = _b.x, y = _b.y;
             if (fillShadow && fillShadow.enabled) {
                 ctx.shadowColor = fillShadow.color;
@@ -289,6 +287,7 @@ var Text = /** @class */ (function (_super) {
         if (stroke && strokeWidth) {
             ctx.strokeStyle = stroke;
             ctx.lineWidth = strokeWidth;
+            ctx.globalAlpha = this.opacity * this.strokeOpacity;
             var _c = this, lineDash = _c.lineDash, lineDashOffset = _c.lineDashOffset, lineCap = _c.lineCap, lineJoin = _c.lineJoin, strokeShadow = _c.strokeShadow, text = _c.text, x = _c.x, y = _c.y;
             if (lineDash) {
                 ctx.setLineDash(lineDash);

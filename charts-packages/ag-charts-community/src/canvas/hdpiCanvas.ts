@@ -14,11 +14,13 @@ export class HdpiCanvas {
     constructor(document = window.document, width = 600, height = 300) {
         this.document = document;
         this.element = document.createElement('canvas');
+        this.context = this.element.getContext('2d')!;
+
         this.element.style.userSelect = 'none';
         this.element.style.display = 'block';
-        this.context = this.element.getContext('2d')!;
-        this.updatePixelRatio(0, false);
-        this.resize(this._width = width, this._height = height);
+
+        this.setPixelRatio();
+        this.resize(width, height);
     }
 
     private _container: HTMLElement | undefined = undefined;
@@ -104,49 +106,28 @@ export class HdpiCanvas {
     }
 
     /**
-     * Updates the pixel ratio of the Canvas element with the given value,
+     * Changes the pixel ratio of the Canvas element to the given value,
      * or uses the window.devicePixelRatio (default), then resizes the Canvas
      * element accordingly (default).
-     * @param ratio
-     * @param resize
      */
-    updatePixelRatio(ratio = 0, resize = true) {
+    setPixelRatio(ratio?: number) {
         const pixelRatio = ratio || window.devicePixelRatio;
 
         if (pixelRatio === this.pixelRatio) {
             return;
         }
 
-        const canvas = this.element;
-        const ctx = this.context;
-        const overrides = HdpiCanvas.makeHdpiOverrides(pixelRatio);
-
-        for (const name in overrides) {
-            if (overrides.hasOwnProperty(name)) {
-                // Save native methods under prefixed names,
-                // if this hasn't been done by the previous overrides already.
-                if (!(ctx as any)['$' + name]) {
-                    (ctx as any)['$' + name] = (ctx as any)[name];
-                }
-                // Replace native methods with overrides,
-                // or previous overrides with the new ones.
-                (ctx as any)[name] = overrides[name];
-            }
-        }
-
-        if (resize) {
-            const logicalWidth = canvas.width / this.pixelRatio;
-            const logicalHeight = canvas.height / this.pixelRatio;
-
-            canvas.width = Math.round(logicalWidth * pixelRatio);
-            canvas.height = Math.round(logicalHeight * pixelRatio);
-            canvas.style.width = Math.round(logicalWidth) + 'px';
-            canvas.style.height = Math.round(logicalHeight) + 'px';
-
-            ctx.resetTransform(); // should be called every time Canvas size changes
-        }
+        HdpiCanvas.overrideScale(this.context, pixelRatio);
 
         this._pixelRatio = pixelRatio;
+        this.resize(this.width, this.height);
+    }
+
+    set pixelated(value: boolean) {
+        this.element.style.imageRendering = value ? 'pixelated' : 'auto';
+    }
+    get pixelated(): boolean {
+        return this.element.style.imageRendering === 'pixelated';
     }
 
     private _width: number;
@@ -159,22 +140,16 @@ export class HdpiCanvas {
         return this._height;
     }
 
-    resize(width: number, height: number, callbackWhenDone?: () => void) {
+    resize(width: number, height: number) {
+        const { element, context, pixelRatio } = this;
+        element.width = Math.round(width * pixelRatio);
+        element.height = Math.round(height * pixelRatio);
+        element.style.width = width + 'px';
+        element.style.height = height + 'px';
+        context.resetTransform();
+
         this._width = width;
         this._height = height;
-
-        requestAnimationFrame(() => {
-            const { element, context, pixelRatio } = this;
-            element.width = Math.round(width * pixelRatio);
-            element.height = Math.round(height * pixelRatio);
-            element.style.width = Math.round(width) + 'px';
-            element.style.height = Math.round(height) + 'px';
-            context.resetTransform();
-
-            // The canvas being resized is asynchronous. For the case where we
-            // need to do something after it is resized, return a promise.
-            callbackWhenDone && callbackWhenDone();
-        });
     }
 
     // 2D canvas context used for measuring text.
@@ -312,9 +287,9 @@ export class HdpiCanvas {
         return size;
     }
 
-    private static makeHdpiOverrides(pixelRatio: number) {
+    static overrideScale(ctx: CanvasRenderingContext2D, scale: number) {
         let depth = 0;
-        return {
+        const overrides = {
             save() {
                 this.$save();
                 depth++;
@@ -327,18 +302,18 @@ export class HdpiCanvas {
             },
             setTransform(a: number, b: number, c: number, d: number, e: number, f: number) {
                 this.$setTransform(
-                    a * pixelRatio,
-                    b * pixelRatio,
-                    c * pixelRatio,
-                    d * pixelRatio,
-                    e * pixelRatio,
-                    f * pixelRatio
+                    a * scale,
+                    b * scale,
+                    c * scale,
+                    d * scale,
+                    e * scale,
+                    f * scale
                 );
             },
             resetTransform() {
                 // As of Jan 8, 2019, `resetTransform` is still an "experimental technology",
                 // and doesn't work in IE11 and Edge 44.
-                this.$setTransform(pixelRatio, 0, 0, pixelRatio, 0, 0);
+                this.$setTransform(scale, 0, 0, scale, 0, 0);
                 this.save();
                 depth = 0;
                 // The scale above will be impossible to restore,
@@ -346,5 +321,18 @@ export class HdpiCanvas {
                 // check `depth` there.
             }
         } as any;
+
+        for (const name in overrides) {
+            if (overrides.hasOwnProperty(name)) {
+                // Save native methods under prefixed names,
+                // if this hasn't been done by the previous overrides already.
+                if (!(ctx as any)['$' + name]) {
+                    (ctx as any)['$' + name] = (ctx as any)[name];
+                }
+                // Replace native methods with overrides,
+                // or previous overrides with the new ones.
+                (ctx as any)[name] = overrides[name];
+            }
+        }
     }
 }

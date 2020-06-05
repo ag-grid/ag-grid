@@ -53,7 +53,7 @@ var AbstractSelectionHandle = /** @class */ (function (_super) {
                 }
             }
         });
-        this.addDestroyableEventListener(this.getGui(), 'mousedown', this.preventRangeExtension.bind(this));
+        this.addManagedListener(this.getGui(), 'mousedown', this.preventRangeExtension.bind(this));
     };
     AbstractSelectionHandle.prototype.isDragging = function () {
         return this.dragging;
@@ -90,7 +90,7 @@ var AbstractSelectionHandle = /** @class */ (function (_super) {
         e.stopPropagation();
     };
     AbstractSelectionHandle.prototype.onDragStart = function (e) {
-        this.cellHoverListener = this.addDestroyableEventListener(this.rowRenderer.getGridCore().getRootGui(), 'mousemove', this.updateLastCellPositionHovered.bind(this));
+        this.cellHoverListener = this.addManagedListener(this.rowRenderer.getGridCore().getRootGui(), 'mousemove', this.updateLastCellPositionHovered.bind(this));
         _.addCssClass(document.body, "ag-dragging-" + this.type + "-handle");
     };
     AbstractSelectionHandle.prototype.updateLastCellPositionHovered = function (e) {

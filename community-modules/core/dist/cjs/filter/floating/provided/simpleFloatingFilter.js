@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v23.1.1
+ * @version v23.2.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -29,6 +29,11 @@ var SimpleFloatingFilter = /** @class */ (function (_super) {
     }
     SimpleFloatingFilter.prototype.getDefaultDebounceMs = function () {
         return 0;
+    };
+    // this is a user component, and IComponent has "public destroy()" as part of the interface.
+    // so we need to override destroy() just to make the method public.
+    SimpleFloatingFilter.prototype.destroy = function () {
+        _super.prototype.destroy.call(this);
     };
     // used by:
     // 1) NumberFloatingFilter & TextFloatingFilter: Always, for both when editable and read only.

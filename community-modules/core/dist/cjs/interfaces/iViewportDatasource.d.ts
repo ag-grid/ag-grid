@@ -1,4 +1,4 @@
-// Type definitions for @ag-grid-community/core v23.1.1
+// Type definitions for @ag-grid-community/core v23.2.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { RowNode } from "../entities/rowNode";
@@ -12,7 +12,7 @@ export interface IViewportDatasource {
 }
 export interface IViewportDatasourceParams {
     /** datasource calls this method when the total row count changes. This in turn sets the height of the grids vertical scroll. */
-    setRowCount: (count: number) => void;
+    setRowCount: (count: number, keepRenderedRows: boolean) => void;
     /** datasource calls this when new data arrives. The grid then updates the provided rows. The rows are mapped [rowIndex]=>rowData].*/
     setRowData: (rowData: {
         [key: number]: any;

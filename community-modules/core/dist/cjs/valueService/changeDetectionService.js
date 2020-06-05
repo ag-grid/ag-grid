@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v23.1.1
+ * @version v23.2.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -25,10 +25,10 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+var beanStub_1 = require("../context/beanStub");
 var context_1 = require("../context/context");
 var changedPath_1 = require("../utils/changedPath");
 var constants_1 = require("../constants");
-var beanStub_1 = require("../context/beanStub");
 var events_1 = require("../events");
 var ChangeDetectionService = /** @class */ (function (_super) {
     __extends(ChangeDetectionService, _super);
@@ -39,7 +39,7 @@ var ChangeDetectionService = /** @class */ (function (_super) {
         if (this.rowModel.getType() === constants_1.Constants.ROW_MODEL_TYPE_CLIENT_SIDE) {
             this.clientSideRowModel = this.rowModel;
         }
-        this.addDestroyableEventListener(this.eventService, events_1.Events.EVENT_CELL_VALUE_CHANGED, this.onCellValueChanged.bind(this));
+        this.addManagedListener(this.eventService, events_1.Events.EVENT_CELL_VALUE_CHANGED, this.onCellValueChanged.bind(this));
     };
     ChangeDetectionService.prototype.onCellValueChanged = function (event) {
         // Clipboard service manages its own change detection, so no need to do it here.
@@ -76,9 +76,6 @@ var ChangeDetectionService = /** @class */ (function (_super) {
     __decorate([
         context_1.Autowired('rowRenderer')
     ], ChangeDetectionService.prototype, "rowRenderer", void 0);
-    __decorate([
-        context_1.Autowired('eventService')
-    ], ChangeDetectionService.prototype, "eventService", void 0);
     __decorate([
         context_1.PostConstruct
     ], ChangeDetectionService.prototype, "init", null);

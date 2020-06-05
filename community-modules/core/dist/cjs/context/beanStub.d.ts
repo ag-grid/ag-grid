@@ -1,4 +1,4 @@
-// Type definitions for @ag-grid-community/core v23.1.1
+// Type definitions for @ag-grid-community/core v23.2.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { IEventEmitter } from "../interfaces/iEventEmitter";
@@ -7,23 +7,27 @@ import { GridOptionsWrapper } from "../gridOptionsWrapper";
 import { AgEvent } from "../events";
 import { Context } from "./context";
 import { IFrameworkOverrides } from "../interfaces/iFrameworkOverrides";
+import { Component } from "../widgets/component";
 export declare class BeanStub implements IEventEmitter {
     static EVENT_DESTROYED: string;
     protected localEventService: EventService;
     private destroyFunctions;
     private destroyed;
-    private context;
     private frameworkOverrides;
+    protected context: Context;
+    protected eventService: EventService;
     protected getFrameworkOverrides(): IFrameworkOverrides;
     getContext: () => Context;
-    destroy(): void;
+    protected destroy(): void;
     addEventListener(eventType: string, listener: Function): void;
     removeEventListener(eventType: string, listener: Function): void;
     dispatchEventAsync(event: AgEvent): void;
     dispatchEvent<T extends AgEvent>(event: T): void;
-    addDestroyableEventListener(object: Window | HTMLElement | IEventEmitter | GridOptionsWrapper, event: string, listener: (event?: any) => void): (() => null) | undefined;
+    addManagedListener(object: Window | HTMLElement | GridOptionsWrapper | IEventEmitter, event: string, listener: (event?: any) => void): (() => null) | undefined;
     isAlive: () => boolean;
     addDestroyFunc(func: () => void): void;
-    wireDependentBean<T extends BeanStub>(bean: T, context?: Context): T;
-    protected wireBean<T extends BeanStub>(bean: T, context?: Context): T;
+    createManagedBean<T>(bean: T, context?: Context): T;
+    protected createBean<T>(bean: T, context?: Context, afterPreCreateCallback?: (comp: Component) => void): T;
+    protected destroyBean<T>(bean: T, context?: Context): T;
+    protected destroyBeans<T>(beans: T[], context?: Context): T[];
 }

@@ -1,9 +1,10 @@
+import { BeanStub } from "../context/beanStub";
 import { Column } from "./column";
 import { RowPosition } from "./rowPosition";
 export interface CellPosition extends RowPosition {
     column: Column;
 }
-export declare class CellPositionUtils {
+export declare class CellPositionUtils extends BeanStub {
     createId(cellPosition: CellPosition): string;
     createIdFromValues(rowIndex: number, column: Column, rowPinned: string | undefined): string;
     equals(cellA: CellPosition, cellB: CellPosition): boolean;

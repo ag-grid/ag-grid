@@ -8,9 +8,6 @@ include '../documentation-main/documentation_header.php';
 
 <h1>Angular Grid | Get Started with ag-Grid and Angular</h1>
 
-<note>Version 22.1.1 of <code>ag-grid-angular</code> / <code>@ag-grid-community/angular</code> is the last version that
-    supports Angular 5 and before.<br/><br/>Version 23 onwards of <code>ag-grid-angular</code> / <code>@ag-grid-community/angular</code> will support Angular 6+ only.</note>
-
 <p class="lead" id="angular-grid">
     ag-Grid is the industry standard for Angular Enterprise Applications. Developers using ag-Grid
     are building applications that would not be possible if ag-Grid did not exist.
@@ -20,9 +17,12 @@ include '../documentation-main/documentation_header.php';
 include './intro.php';
 ?>
 
-<?= videoSection("https://www.youtube.com/embed/AeEfiWAGyLc", "angular-demo", "Getting Started Video Tutorial") ?>
+<note>Please refer to our <a href="#compatibility">Compatibility Chart</a> for Supported Versions of Angular & ag-Grid.</note>
 
 <h2>Getting Started</h2>
+
+<?= videoSection("https://www.youtube.com/embed/AeEfiWAGyLc", "angular-demo", "Getting Started Video Tutorial") ?>
+
 <p>
     Below we walk through the necessary steps to add ag-Grid
     (both <a href="../javascript-grid-set-license/">Community and Enterprise</a> are covered) to an
@@ -31,7 +31,7 @@ include './intro.php';
 
 <div class="row">
   <div class="col">
-    <ol style="columns: 2">
+    <ol>
     <li><a href="#add-ag-grid-to-your-project">Add ag-Grid to Your Project</li></a>
     <li><a href="#enable-sorting-and-filtering">Enable Sorting and Filtering</li></a>
     <li><a href="#fetch-remote-data">Fetch Remote Data</li></a>
@@ -42,6 +42,22 @@ include './intro.php';
 </ol>
 </div>
 </div>
+
+<note>
+    <div style="display: flex;">
+        <span style="display: inline-block; background: radial-gradient(#41a3ff, #0273D4); border-radius: 5px; padding: 3px;">
+            <a href="https://thinkster.io/topics/ag-grid">
+                <img style="width: 150px;" src="../images/thinkster.png"/>
+            </a>
+        </span>
+        <span style="flex-grow: 1; display: inline-block; padding-left: 10px;">
+            Thinkster has provided a free course
+            <a href="https://thinkster.io/topics/ag-grid">
+                Learning ag-Grid with Angular
+            </a>
+        </span>
+    </div>
+</note>
 
 <h2 id="add-ag-grid-to-your-project">Add ag-Grid to Your Project</h2>
 
@@ -241,7 +257,7 @@ export class AppComponent implements OnInit {
     }
 
     ngOnInit() {
-        this.rowData = this.http.get('https://api.myjson.com/bins/15psn9');
+        this.rowData = this.http.get('https://raw.githubusercontent.com/ag-grid/ag-grid/master/grid-packages/ag-grid-docs/src/sample-data/smallRowData.json');
     }
 }
 </snippet>
@@ -293,7 +309,7 @@ export class AppComponent implements OnInit {
     }
 
     ngOnInit() {
-        this.rowData = this.http.get('https://api.myjson.com/bins/15psn9');
+        this.rowData = this.http.get('https://raw.githubusercontent.com/ag-grid/ag-grid/master/grid-packages/ag-grid-docs/src/sample-data/smallRowData.json');
     }
 }
 </snippet>
@@ -361,7 +377,7 @@ export class AppComponent implements OnInit {
     }
 
     ngOnInit() {
-        this.rowData = this.http.get('https://api.myjson.com/bins/15psn9');
+        this.rowData = this.http.get('https://raw.githubusercontent.com/ag-grid/ag-grid/master/grid-packages/ag-grid-docs/src/sample-data/smallRowData.json');
     }
 }
 </snippet>
@@ -410,7 +426,7 @@ export class AppComponent implements OnInit {
     }
 
     ngOnInit() {
-        this.rowData = this.http.get('https://api.myjson.com/bins/15psn9');
+        this.rowData = this.http.get('https://raw.githubusercontent.com/ag-grid/ag-grid/master/grid-packages/ag-grid-docs/src/sample-data/smallRowData');
     }
 
     getSelectedRows() {
@@ -433,16 +449,18 @@ Hopefully you will forgive us this shortcut for the sake of keeping the article 
     for production.
 </div>
 
-<p>In addition to filtering and sorting, <a href="https://www.ag-grid.com/javascript-grid-grouping/">grouping</a> is another  effective way for the user to make sense out of large amounts of data. In our case, the data is not that much. Let's switch to a slightly larger data set:</p>
+<p>In addition to filtering and sorting, <a href="https://www.ag-grid.com/javascript-grid-grouping/">grouping</a> is another  effective way for the user to make sense out of large amounts of data.</p>
+
+<p>Our current data set is pretty small so let's switch to a larger one:</p>
 
 <snippet language="diff">
-ngOnInit() {
--        this.rowData = this.http.get('https://api.myjson.com/bins/15psn9');
-+        this.rowData = this.http.get('https://api.myjson.com/bins/ly7d1');
-}
+    ngOnInit() {
+    -        this.rowData = this.http.get('https://raw.githubusercontent.com/ag-grid/ag-grid/master/grid-packages/ag-grid-docs/src/sample-data/smallRowData.json');
+    +        this.rowData = this.http.get('https://raw.githubusercontent.com/ag-grid/ag-grid/master/grid-packages/ag-grid-docs/src/sample-data/rowData.json');
+    }
 </snippet>
 
-<p>Afterwards, let's enable the enterprise features of ag-grid. Install the additional package:</p>
+<p>Let's enable the enterprise features of ag-grid. Install the additional package:</p>
 
 <snippet language="sh">
 npm install --save ag-grid-enterprise
@@ -495,7 +513,7 @@ export class AppComponent implements OnInit {
     }
 
     ngOnInit() {
-        this.rowData = this.http.get('https://api.myjson.com/bins/ly7d1');
+        this.rowData = this.http.get('https://raw.githubusercontent.com/ag-grid/ag-grid/master/grid-packages/ag-grid-docs/src/sample-data/rowData.json');
     }
 
     getSelectedRows() {
@@ -542,6 +560,25 @@ The grouping documentation section contains plenty of real-world runnable exampl
 <p>If everything is configured correctly, the second row of the grid will get slightly darker. Congratulations!
 You now know now bend the grid look to your will - there are a few dozens more Sass variables that let you control the font family and size, border color,
 header background color and even the amount of spacing in the cells and columns. The full <a href="https://www.ag-grid.com/javascript-grid-themes-provided/#customising-themes">theme parameter list</a> is available in the themes documentation section.</p>
+
+<h2 id="compatibility">ag-Grid & Angular Compatibility Chart</h2>
+
+<div>
+    <table class="properties">
+        <tr>
+            <th>Angular Version</th>
+            <th>ag-Grid Versions</th>
+        </tr>
+        <tr>
+            <td>6</td>
+            <td>18 - 22</td>
+        </tr>
+        <tr>
+            <td>7 - 9+</td>
+            <td>18 - 23+ (23+ recommended for Angular 9+)</td>
+        </tr>
+    </table>
+</div>
 
 <h2 id="summary">Summary</h2>
 

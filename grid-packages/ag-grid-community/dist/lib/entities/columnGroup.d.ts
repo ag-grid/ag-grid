@@ -22,7 +22,7 @@ export declare class ColumnGroup implements ColumnGroupChild {
     private oldLeft;
     private localEventService;
     private parent;
-    constructor(originalColumnGroup: OriginalColumnGroup, groupId: string, instanceId: number, pinned: string);
+    constructor(originalColumnGroup: OriginalColumnGroup, groupId: string, instanceId: number, pinned: 'left' | 'right');
     reset(): void;
     getParent(): ColumnGroup;
     setParent(parent: ColumnGroup): void;
@@ -33,7 +33,7 @@ export declare class ColumnGroup implements ColumnGroupChild {
     getLeft(): number;
     getOldLeft(): number;
     setLeft(left: number): void;
-    getPinned(): string;
+    getPinned(): 'left' | 'right';
     private createAgEvent;
     addEventListener(eventType: string, listener: Function): void;
     removeEventListener(eventType: string, listener: Function): void;
@@ -58,5 +58,6 @@ export declare class ColumnGroup implements ColumnGroupChild {
     getChildren(): ColumnGroupChild[];
     getColumnGroupShow(): string | undefined;
     getOriginalColumnGroup(): OriginalColumnGroup;
+    getPaddingLevel(): number;
     calculateDisplayedColumns(): void;
 }

@@ -22,11 +22,12 @@ var Square = /** @class */ (function (_super) {
     Square.prototype.updatePath = function () {
         var _a = this, path = _a.path, x = _a.x, y = _a.y;
         var hs = this.size / 2;
+        var _b = this, a = _b.alignment, al = _b.align;
         path.clear();
-        path.moveTo(x - hs, y - hs);
-        path.lineTo(x + hs, y - hs);
-        path.lineTo(x + hs, y + hs);
-        path.lineTo(x - hs, y + hs);
+        path.moveTo(al(a, x - hs), al(a, y - hs));
+        path.lineTo(al(a, x + hs), al(a, y - hs));
+        path.lineTo(al(a, x + hs), al(a, y + hs));
+        path.lineTo(al(a, x - hs), al(a, y + hs));
         path.closePath();
     };
     Square.className = 'Square';

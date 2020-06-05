@@ -18,9 +18,9 @@ include '../documentation-main/documentation_header.php';
 include './intro.php';
 ?>
 
-<?= videoSection("https://www.youtube.com/embed/KS-wg5zfCXc", "javascript-demo", "Getting Started Video Tutorial") ?>
-
 <h2>Getting Started</h2>
+
+<?= videoSection("https://www.youtube.com/embed/KS-wg5zfCXc", "javascript-demo", "Getting Started Video Tutorial") ?>
 
 <p>
     In this article, we will walk you through the necessary steps to add ag-Grid to an existing JavaScript
@@ -197,7 +197,7 @@ Notice that the actual data fetching is performed outside of the grid component 
   // create the grid passing in the div to use together with the columns &amp; data we want to use
   new agGrid.Grid(eGridDiv, gridOptions);
 
-  agGrid.simpleHttpRequest({url: 'https://api.myjson.com/bins/ly7d1'}).then(function(data) {
+  agGrid.simpleHttpRequest({url: 'https://raw.githubusercontent.com/ag-grid/ag-grid/master/grid-packages/ag-grid-docs/src/sample-data/rowData.json'}).then(function(data) {
       gridOptions.api.setRowData(data);
   });
 
@@ -267,12 +267,9 @@ Hopefully you will forgive us this shortcut for the sake of keeping the article 
     for production.
 </div>
 
-<p>In addition to filtering and sorting, <a href="../javascript-grid-grouping">grouping</a> is another  effective way for the user to make sense out of large amounts of data. In our case, the data is not that much. Let's switch to a slightly larger data set:</p>
+<p>In addition to filtering and sorting, <a href="https://www.ag-grid.com/javascript-grid-grouping/">grouping</a> is another effective way for the user to make sense out of large amounts of data.</p>
 
-<snippet language="diff">
--        agGrid.simpleHttpRequest({url: 'https://api.myjson.com/bins/ly7d1'}).then(function(data) {
-+        agGrid.simpleHttpRequest({url: 'https://api.myjson.com/bins/15psn9'}).then(function(data) {
-</snippet>
+<p>Let's enable the enterprise features of ag-grid. Install the additional package:</p>
 
 <p>Now, let's use ag-grid-enterprise! Replace the ag-grid script reference in the <code>head</code> with this one:</p>
 
@@ -364,7 +361,7 @@ var gridOptions = {
   // create the grid passing in the div to use together with the columns &amp; data we want to use
   new agGrid.Grid(eGridDiv, gridOptions);
 
-  agGrid.simpleHttpRequest({url: 'https://api.myjson.com/bins/15psn9'}).then(function(data) {
+  agGrid.simpleHttpRequest({url: 'https://raw.githubusercontent.com/ag-grid/ag-grid/master/grid-packages/ag-grid-docs/src/sample-data/rowData.json'}).then(function(data) {
       gridOptions.api.setRowData(data);
   });
 

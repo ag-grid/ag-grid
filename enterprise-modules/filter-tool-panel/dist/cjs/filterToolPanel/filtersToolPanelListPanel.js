@@ -44,10 +44,10 @@ var FiltersToolPanelListPanel = /** @class */ (function (_super) {
         core_1._.mergeDeep(defaultParams, params);
         this.params = defaultParams;
         if (!this.params.suppressSyncLayoutWithGrid) {
-            this.addDestroyableEventListener(this.eventService, core_1.Events.EVENT_COLUMN_MOVED, function () { return _this.onColumnsChanged(); });
+            this.addManagedListener(this.eventService, core_1.Events.EVENT_COLUMN_MOVED, function () { return _this.onColumnsChanged(); });
         }
-        this.addDestroyableEventListener(this.eventService, core_1.Events.EVENT_NEW_COLUMNS_LOADED, function () { return _this.onColumnsChanged(); });
-        this.addDestroyableEventListener(this.eventService, core_1.Events.EVENT_TOOL_PANEL_VISIBLE_CHANGED, function (event) {
+        this.addManagedListener(this.eventService, core_1.Events.EVENT_NEW_COLUMNS_LOADED, function () { return _this.onColumnsChanged(); });
+        this.addManagedListener(this.eventService, core_1.Events.EVENT_TOOL_PANEL_VISIBLE_CHANGED, function (event) {
             // when re-entering the filters tool panel we need to refresh the virtual lists in the set filters in case
             // filters have been changed elsewhere, i.e. via an api call.
             if (event.source === 'filters') {
@@ -113,13 +113,12 @@ var FiltersToolPanelListPanel = /** @class */ (function (_super) {
             ;
             var hideFilterCompHeader = depth === 0;
             var filterComp = new toolPanelFilterComp_1.ToolPanelFilterComp(hideFilterCompHeader);
-            _this.getContext().wireBean(filterComp);
+            _this.getContext().createBean(filterComp);
             filterComp.setColumn(column);
             if (depth > 0) {
                 return filterComp;
             }
-            var filterGroupComp = new toolPanelFilterGroupComp_1.ToolPanelFilterGroupComp(column, [filterComp], _this.onGroupExpanded.bind(_this), depth);
-            _this.getContext().wireBean(filterGroupComp);
+            var filterGroupComp = _this.createBean(new toolPanelFilterGroupComp_1.ToolPanelFilterGroupComp(column, [filterComp], _this.onGroupExpanded.bind(_this), depth));
             filterGroupComp.addCssClassToTitleBar('ag-filter-toolpanel-header');
             filterGroupComp.collapse();
             return filterGroupComp;
@@ -136,7 +135,7 @@ var FiltersToolPanelListPanel = /** @class */ (function (_super) {
         if (columnGroup.isPadding())
             return childFilterComps;
         var filterGroupComp = new toolPanelFilterGroupComp_1.ToolPanelFilterGroupComp(columnGroup, childFilterComps, this.onGroupExpanded.bind(this), depth);
-        this.getContext().wireBean(filterGroupComp);
+        this.getContext().createBean(filterGroupComp);
         filterGroupComp.addCssClassToTitleBar('ag-filter-toolpanel-header');
         return [filterGroupComp];
     };
@@ -331,8 +330,7 @@ var FiltersToolPanelListPanel = /** @class */ (function (_super) {
         this.filterGroupComps.forEach(function (filterGroupComp) { return filterGroupComp.refreshFilters(); });
     };
     FiltersToolPanelListPanel.prototype.destroyFilters = function () {
-        this.filterGroupComps.forEach(function (filterComp) { return filterComp.destroy(); });
-        this.filterGroupComps.length = 0;
+        this.filterGroupComps = this.destroyBeans(this.filterGroupComps);
         core_1._.clearElement(this.getGui());
     };
     FiltersToolPanelListPanel.prototype.destroy = function () {
@@ -346,9 +344,6 @@ var FiltersToolPanelListPanel = /** @class */ (function (_super) {
     __decorate([
         core_1.Autowired("columnApi")
     ], FiltersToolPanelListPanel.prototype, "columnApi", void 0);
-    __decorate([
-        core_1.Autowired("eventService")
-    ], FiltersToolPanelListPanel.prototype, "eventService", void 0);
     __decorate([
         core_1.Autowired('toolPanelColDefService')
     ], FiltersToolPanelListPanel.prototype, "toolPanelColDefService", void 0);

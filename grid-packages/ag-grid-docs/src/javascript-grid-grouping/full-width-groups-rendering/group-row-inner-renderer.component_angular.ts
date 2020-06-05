@@ -7,10 +7,10 @@ import {ICellRendererAngularComp} from "@ag-grid-community/angular";
     template: `
         <div class="row">
             <img *ngIf="flagCode" class="flag" border="0" width="20" height="15" [src]="flagCodeImg" />
-            <span class="groupTitle"> {{node.key}}</span>
-            <span class="medal gold"> Gold: {{node.aggData.gold}}</span>
-            <span class="medal silver"> Silver: {{node.aggData.silver}}</span>
-            <span class="medal bronze"> Bronze: {{node.aggData.bronze}}</span>
+            <span class="groupTitle">{{node.key}}</span>
+            <span class="medal gold" attr.aria-label="{{node.key}} - {{node.aggData.gold}} gold medals"><i class="fas fa-medal"></i>{{node.aggData.gold}}</span>
+            <span class="medal silver" attr.aria-label="{{node.key}} - {{node.aggData.silver}} silver medals"><i class="fas fa-medal"></i>{{node.aggData.silver}}</span>
+            <span class="medal bronze" attr.aria-label="{{node.key}} - {{node.aggData.bronze}} bronze medals"><i class="fas fa-medal"></i>{{node.aggData.bronze}}</span>
         </div>`,
     styles: [
         `
@@ -23,26 +23,23 @@ import {ICellRendererAngularComp} from "@ag-grid-community/angular";
         }
         
         .medal {
-            margin-left: 10px;
-            background-color: black;
-            padding: 2px;
-            border-radius: 2px;
+            margin: 0 5px;
         }
-        
+
         .gold {
-            color: gold;
+            color: #e4ab11;
         }
-        
+
         .silver {
-            color: silver;
+            color: #bbb4bb;
         }
-        
+
         .bronze {
-            color: lightsalmon;
+            color: #be9088;
         }
         
         .flag {
-            margin-left: 4px;
+            margin: 0 4px;
             position: relative;
             top: 2px;
         }

@@ -7,55 +7,59 @@ function FakeServer(allData) {
     return {
         getData: function(request) {
             var results = executeQuery(request);
+
             return {
                 success: true,
                 rows: results,
-                lastRow: getLastRowIndex(request, results)
+                lastRow: getLastRowIndex(request, results),
             };
         },
         getCountries: function() {
-            var SQL = 'SELECT DISTINCT country FROM ? ORDER BY country asc';
-            var result = alasql(SQL, [allData]);
-            return result.map(Object.values);
+            var sql = 'SELECT DISTINCT country FROM ? ORDER BY country ASC';
+
+            return alasql(sql, [allData]).map(function(x) { return x.country; });
+        },
+        getSports: function(countries) {
+            console.log('Returning sports for ' + (countries ? countries.join(', ') : 'all countries'));
+
+            var where = countries ? " WHERE country IN ('" + countries.join("', '") + "')" : '';
+            var sql = 'SELECT DISTINCT sport FROM ? ' + where + ' ORDER BY sport ASC';
+
+            return alasql(sql, [allData]).map(function(x) { return x.sport; });
         }
     };
 
     function executeQuery(request) {
-        var SQL = buildSql(request);
+        var sql = buildSql(request);
 
-        console.log('[FakeServer] - about to execute query:', SQL);
+        console.log('[FakeServer] - about to execute query:', sql);
 
-        return alasql(SQL, [allData]);
+        return alasql(sql, [allData]);
     }
 
     function buildSql(request) {
-        var select = 'SELECT * ';
-        var from = 'FROM ? ';
-        var where = whereSql(request);
-        var orderBy = orderBySql(request);
-        var limit = limitSql(request);
-
-        return select + from + where + orderBy + limit;
+        return 'SELECT * FROM ?' + whereSql(request) + orderBySql(request) + limitSql(request);
     }
 
     function whereSql(request) {
         var whereParts = [];
-
         var filterModel = request.filterModel;
+
         if (filterModel) {
-            var columnKeys = Object.keys(filterModel);
-            whereParts = columnKeys.map(function(columnKey) {
+            Object.keys(filterModel).forEach(function(columnKey) {
                 var filter = filterModel[columnKey];
+
                 if (filter.filterType === 'set') {
-                    return columnKey + ' IN (\'' + filter.values.join("', '") + '\')';
+                    whereParts.push(columnKey + ' IN (\'' + filter.values.join("', '") + '\')');
+                    return;
                 }
+
                 console.log('unsupported filter type: ' + filter.filterType);
-                return '';
             });
         }
 
         if (whereParts.length > 0) {
-            return ' WHERE ' + whereParts.join(' AND ') + ' ';
+            return ' WHERE ' + whereParts.join(' AND ');
         }
 
         return '';
@@ -63,17 +67,19 @@ function FakeServer(allData) {
 
     function orderBySql(request) {
         var sortModel = request.sortModel;
+
         if (sortModel.length === 0) return '';
 
         var sorts = sortModel.map(function(s) {
-            return s.colId + ' ' + s.sort;
+            return s.colId + ' ' + s.sort.toUpperCase();
         });
 
-        return 'ORDER BY ' + sorts.join(', ') + ' ';
+        return ' ORDER BY ' + sorts.join(', ');
     }
 
     function limitSql(request) {
         var blockSize = request.endRow - request.startRow;
+
         return ' LIMIT ' + (blockSize + 1) + ' OFFSET ' + request.startRow;
     }
 
@@ -81,28 +87,9 @@ function FakeServer(allData) {
         if (!results || results.length === 0) {
             return request.startRow;
         }
+
         var currentLastRow = request.startRow + results.length;
+
         return currentLastRow <= request.endRow ? currentLastRow : -1;
     }
-}
-
-function ServerSideDatasource(server) {
-    return {
-        getRows: function(params) {
-            console.log('[Datasource] - rows requested by grid: ', params.request);
-
-            // get data for request from our fake server
-            var response = server.getData(params.request);
-
-            // simulating real server call with a 500ms delay
-            setTimeout(function() {
-                if (response.success) {
-                    // supply rows for requested block to grid
-                    params.successCallback(response.rows, response.lastRow);
-                } else {
-                    params.failCallback();
-                }
-            }, 500);
-        }
-    };
 }

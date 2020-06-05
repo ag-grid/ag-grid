@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v23.1.1
+ * @version v23.2.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -26,6 +26,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 import { Component } from "./component";
 import { RefSelector } from "./componentAnnotations";
 import { Autowired, PostConstruct } from "../context/context";
+import { Constants } from "../constants";
 import { _ } from "../utils";
 var defaultItemAlign = 'center';
 var defaultDirection = 'vertical';
@@ -53,7 +54,7 @@ var AgGroupComponent = /** @class */ (function (_super) {
     AgGroupComponent.getTemplate = function (params) {
         var cssIdentifier = params.cssIdentifier || 'default';
         var direction = params.direction || 'vertical';
-        return "<div class=\"ag-group ag-" + cssIdentifier + "-group\">\n            <div class=\"ag-group-title-bar ag-" + cssIdentifier + "-group-title-bar ag-unselectable\" ref=\"eTitleBar\">\n                <span class=\"ag-group-title-bar-icon ag-" + cssIdentifier + "-group-title-bar-icon\" ref=\"eGroupOpenedIcon\"></span>\n                <span class=\"ag-group-title-bar-icon ag-" + cssIdentifier + "-group-title-bar-icon\" ref=\"eGroupClosedIcon\"></span>\n                <span ref=\"eTitle\" class=\"ag-group-title ag-" + cssIdentifier + "-group-title\"></span>\n            </div>\n            <div ref=\"eToolbar\" class=\"ag-group-toolbar ag-" + cssIdentifier + "-group-toolbar\">\n                <ag-checkbox ref=\"cbGroupEnabled\"></ag-checkbox>\n            </div>\n            <div ref=\"eContainer\" class=\"ag-group-container ag-group-container-" + direction + " ag-" + cssIdentifier + "-group-container\"></div>\n        </div>";
+        return /* html */ "<div class=\"ag-group ag-" + cssIdentifier + "-group\">\n            <div class=\"ag-group-title-bar ag-" + cssIdentifier + "-group-title-bar ag-unselectable\" ref=\"eTitleBar\">\n                <span class=\"ag-group-title-bar-icon ag-" + cssIdentifier + "-group-title-bar-icon\" ref=\"eGroupOpenedIcon\"></span>\n                <span class=\"ag-group-title-bar-icon ag-" + cssIdentifier + "-group-title-bar-icon\" ref=\"eGroupClosedIcon\"></span>\n                <span ref=\"eTitle\" class=\"ag-group-title ag-" + cssIdentifier + "-group-title\"></span>\n            </div>\n            <div ref=\"eToolbar\" class=\"ag-group-toolbar ag-" + cssIdentifier + "-group-toolbar\">\n                <ag-checkbox ref=\"cbGroupEnabled\"></ag-checkbox>\n            </div>\n            <div ref=\"eContainer\" class=\"ag-group-container ag-group-container-" + direction + " ag-" + cssIdentifier + "-group-container\"></div>\n        </div>";
     };
     AgGroupComponent.prototype.postConstruct = function () {
         if (this.items.length) {
@@ -79,7 +80,12 @@ var AgGroupComponent = /** @class */ (function (_super) {
         var _this = this;
         this.eGroupClosedIcon.appendChild(_.createIcon('columnSelectClosed', this.gridOptionsWrapper, null));
         this.eGroupOpenedIcon.appendChild(_.createIcon('columnSelectOpen', this.gridOptionsWrapper, null));
-        this.addDestroyableEventListener(this.eTitleBar, 'click', function () { return _this.toggleGroupExpand(); });
+        this.addManagedListener(this.eTitleBar, 'click', function () { return _this.toggleGroupExpand(); });
+        this.addManagedListener(this.eTitleBar, 'keydown', function (e) {
+            if (e.keyCode === Constants.KEY_ENTER) {
+                _this.toggleGroupExpand();
+            }
+        });
     };
     AgGroupComponent.prototype.refreshChildDisplay = function () {
         var showIcon = !this.suppressOpenCloseIcons;
@@ -115,16 +121,10 @@ var AgGroupComponent = /** @class */ (function (_super) {
         this.refreshChildDisplay();
         _.setDisplayed(this.eContainer, expanded);
         if (this.expanded) {
-            var event_1 = {
-                type: 'expanded',
-            };
-            this.dispatchEvent(event_1);
+            this.dispatchEvent({ type: AgGroupComponent.EVENT_EXPANDED });
         }
         else {
-            var event_2 = {
-                type: 'collapsed',
-            };
-            this.dispatchEvent(event_2);
+            this.dispatchEvent({ type: AgGroupComponent.EVENT_COLLAPSED });
         }
         return this;
     };
@@ -186,9 +186,18 @@ var AgGroupComponent = /** @class */ (function (_super) {
     };
     AgGroupComponent.prototype.refreshDisabledStyles = function () {
         _.addOrRemoveCssClass(this.getGui(), 'ag-disabled', !this.enabled);
-        _.addOrRemoveCssClass(this.eTitleBar, 'ag-disabled-group-title-bar', this.suppressEnabledCheckbox && !this.enabled);
+        if (this.suppressEnabledCheckbox && !this.enabled) {
+            _.addCssClass(this.eTitleBar, 'ag-disabled-group-title-bar');
+            this.eTitleBar.removeAttribute('tabindex');
+        }
+        else {
+            _.removeCssClass(this.eTitleBar, 'ag-disabled-group-title-bar');
+            this.eTitleBar.setAttribute('tabindex', '0');
+        }
         _.addOrRemoveCssClass(this.eContainer, 'ag-disabled-group-container', !this.enabled);
     };
+    AgGroupComponent.EVENT_EXPANDED = 'expanded';
+    AgGroupComponent.EVENT_COLLAPSED = 'collapsed';
     __decorate([
         Autowired('gridOptionsWrapper')
     ], AgGroupComponent.prototype, "gridOptionsWrapper", void 0);

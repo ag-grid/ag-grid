@@ -131,8 +131,8 @@ SNIPPET
 
 <p>
     The code below shows configuring the text filter on the Athlete column and providing extra filter parameters
-    (what <code>resetButton</code> and <code>applyButton</code> do are explained in
-    <a href="../javascript-grid-filter-provided/#apply-clear-and-reset-buttons">Apply, Clear and Reset Buttons</a>).
+    (what the <code>buttons</code> do is explained in
+    <a href="../javascript-grid-filter-provided/#apply-clear-reset-and-cancel-buttons">Apply, Clear, Reset and Cancel Buttons</a>).
 </p>
 
 <?= createSnippet(<<<SNIPPET
@@ -144,8 +144,7 @@ columnDefinition = {
 
     // pass in additional parameters to the text filter
     filterParams: {
-        resetButton: true,
-        applyButton: true,
+        buttons: ['reset', 'apply'],
         debounceMs: 200
     }
 }

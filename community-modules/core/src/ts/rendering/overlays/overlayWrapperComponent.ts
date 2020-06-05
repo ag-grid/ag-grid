@@ -95,11 +95,8 @@ export class OverlayWrapperComponent extends Component {
             return;
         }
 
-        if (this.activeOverlay.destroy) {
-            this.activeOverlay.destroy();
-        }
+        this.activeOverlay = this.getContext().destroyBean(this.activeOverlay);
 
-        this.activeOverlay = undefined;
         _.clearElement(this.eOverlayWrapper);
     }
 

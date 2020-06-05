@@ -18,6 +18,12 @@ export class DefaultDateComponent extends Component implements IDateComp {
         );
     }
 
+    // this is a user component, and IComponent has "public destroy()" as part of the interface.
+    // so we need to override destroy() just to make the method public.
+    public destroy(): void {
+        super.destroy();
+    }
+
     public init(params: IDateParams): void {
         if (this.shouldUseBrowserDatePicker(params)) {
             if (isBrowserIE()) {
@@ -29,7 +35,7 @@ export class DefaultDateComponent extends Component implements IDateComp {
 
         this.listener = params.onDateChanged;
 
-        this.addDestroyableEventListener(this.eDateInput.getInputElement(), 'input', e => {
+        this.addManagedListener(this.eDateInput.getInputElement(), 'input', e => {
             if (e.target !== document.activeElement) { return; }
 
             this.listener();

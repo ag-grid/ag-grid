@@ -14,6 +14,9 @@ import { TimeAxis } from "./axis/timeAxis";
 import { Caption } from "../caption";
 import { DropShadow } from "../scene/dropShadow";
 import { Legend, LegendPosition } from "./legend";
+import { Navigator } from "./navigator/navigator";
+import { NavigatorMask } from "./navigator/navigatorMask";
+import { NavigatorHandle } from "./navigator/navigatorHandle";
 import palette from "./palettes";
 
 /*
@@ -114,6 +117,7 @@ const chartMeta = {
 
 const axisDefaults = {
     defaults: {
+        visibleRange: [0, 1],
         gridStyle: [{
             stroke: 'rgba(219, 219, 219, 1)',
             lineDash: [4, 2]
@@ -250,7 +254,7 @@ const mappings = {
             [NumberAxis.type]: {
                 meta: {
                     constructor: NumberAxis,
-                    setAsIs: ['gridStyle'],
+                    setAsIs: ['gridStyle', 'visibleRange'],
                     ...axisDefaults
                 },
                 ...axisMappings
@@ -258,7 +262,7 @@ const mappings = {
             [CategoryAxis.type]: {
                 meta: {
                     constructor: CategoryAxis,
-                    setAsIs: ['gridStyle'],
+                    setAsIs: ['gridStyle', 'visibleRange'],
                     ...axisDefaults
                 },
                 ...axisMappings
@@ -266,7 +270,7 @@ const mappings = {
             [TimeAxis.type]: {
                 meta: {
                     constructor: TimeAxis,
-                    setAsIs: ['gridStyle'],
+                    setAsIs: ['gridStyle', 'visibleRange'],
                     ...axisDefaults
                 },
                 ...axisMappings
@@ -396,6 +400,56 @@ const mappings = {
                     }
                 },
                 highlightStyle: {}
+            }
+        },
+        navigator: {
+            meta: {
+                constructor: Navigator,
+                defaults: {
+                    enabled: false,
+                    height: 30,
+                    min: 0,
+                    max: 1
+                }
+            },
+            mask: {
+                meta: {
+                    constructor: NavigatorMask,
+                    defaults: {
+                        fill: '#999999',
+                        stroke: '#999999',
+                        strokeWidth: 1,
+                        fillOpacity: 0.2
+                    }
+                }
+            },
+            minHandle: {
+                meta: {
+                    constructor: NavigatorHandle,
+                    defaults: {
+                        fill: '#f2f2f2',
+                        stroke: '#999999',
+                        strokeWidth: 1,
+                        width: 8,
+                        height: 16,
+                        gripLineGap: 2,
+                        gripLineLength: 8
+                    }
+                }
+            },
+            maxHandle: {
+                meta: {
+                    constructor: NavigatorHandle,
+                    defaults: {
+                        fill: '#f2f2f2',
+                        stroke: '#999999',
+                        strokeWidth: 1,
+                        width: 8,
+                        height: 16,
+                        gripLineGap: 2,
+                        gripLineLength: 8
+                    }
+                }
             }
         }
     },

@@ -1,10 +1,23 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v23.1.1
+ * @version v23.2.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
 "use strict";
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = function (d, b) {
+        extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+        return extendStatics(d, b);
+    };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -17,8 +30,11 @@ var context_1 = require("../context/context");
 var events_1 = require("../events");
 var constants_1 = require("../constants");
 var utils_1 = require("../utils");
-var PinnedRowModel = /** @class */ (function () {
+var beanStub_1 = require("../context/beanStub");
+var PinnedRowModel = /** @class */ (function (_super) {
+    __extends(PinnedRowModel, _super);
     function PinnedRowModel() {
+        return _super !== null && _super.apply(this, arguments) || this;
     }
     PinnedRowModel.prototype.init = function () {
         this.setPinnedTopRowData(this.gridOptionsWrapper.getPinnedTopRowData());
@@ -72,9 +88,10 @@ var PinnedRowModel = /** @class */ (function () {
             var nextRowTop_1 = 0;
             allData.forEach(function (dataItem, index) {
                 var rowNode = new rowNode_1.RowNode();
-                _this.context.wireBean(rowNode);
+                _this.context.createBean(rowNode);
                 rowNode.data = dataItem;
-                rowNode.id = (isTop ? 't' : 'b') + "-" + index;
+                var idPrefix = isTop ? rowNode_1.RowNode.ID_PREFIX_TOP_PINNED : rowNode_1.RowNode.ID_PREFIX_BOTTOM_PINNED;
+                rowNode.id = idPrefix + index;
                 rowNode.rowPinned = isTop ? constants_1.Constants.PINNED_TOP : constants_1.Constants.PINNED_BOTTOM;
                 rowNode.setRowTop(nextRowTop_1);
                 rowNode.setRowHeight(_this.gridOptionsWrapper.getRowHeightForNode(rowNode).height);
@@ -134,12 +151,6 @@ var PinnedRowModel = /** @class */ (function () {
         context_1.Autowired('gridOptionsWrapper')
     ], PinnedRowModel.prototype, "gridOptionsWrapper", void 0);
     __decorate([
-        context_1.Autowired('eventService')
-    ], PinnedRowModel.prototype, "eventService", void 0);
-    __decorate([
-        context_1.Autowired('context')
-    ], PinnedRowModel.prototype, "context", void 0);
-    __decorate([
         context_1.Autowired('columnApi')
     ], PinnedRowModel.prototype, "columnApi", void 0);
     __decorate([
@@ -152,7 +163,7 @@ var PinnedRowModel = /** @class */ (function () {
         context_1.Bean('pinnedRowModel')
     ], PinnedRowModel);
     return PinnedRowModel;
-}());
+}(beanStub_1.BeanStub));
 exports.PinnedRowModel = PinnedRowModel;
 
 //# sourceMappingURL=pinnedRowModel.js.map

@@ -9,5 +9,6 @@ export declare class NoRowsOverlayComponent extends Component implements INoRows
     private static DEFAULT_NO_ROWS_TEMPLATE;
     gridOptionsWrapper: GridOptionsWrapper;
     constructor();
+    destroy(): void;
     init(params: INoRowsOverlayParams): void;
 }

@@ -1,5 +1,6 @@
 import { GridPanel } from "../gridPanel/gridPanel";
-export declare class ColumnAnimationService {
+import { BeanStub } from "../context/beanStub";
+export declare class ColumnAnimationService extends BeanStub {
     private gridOptionsWrapper;
     private gridPanel;
     private executeNextFuncs;

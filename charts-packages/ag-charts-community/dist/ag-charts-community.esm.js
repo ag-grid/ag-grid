@@ -1,5 +1,5 @@
 /**
- * ag-charts-community - Advanced Charting / Charts supporting Javascript / React / Angular * @version v1.1.0
+ * ag-charts-community - Advanced Charting / Charts supporting Javascript / React / Angular * @version v1.2.0
  * @link http://www.ag-grid.com/
 ' * @license MIT
  */
@@ -776,7 +776,7 @@ var Node = /** @class */ (function () {
         enumerable: true,
         configurable: true
     });
-    Node.prototype.isPointInNode = function (x, y) {
+    Node.prototype.containsPoint = function (x, y) {
         return false;
     };
     /**
@@ -788,7 +788,7 @@ var Node = /** @class */ (function () {
      * @param y
      */
     Node.prototype.pickNode = function (x, y) {
-        if (!this.visible || this.pointerEvents === PointerEvents.None || !this.isPointInNode(x, y)) {
+        if (!this.visible || this.pointerEvents === PointerEvents.None || !this.containsPoint(x, y)) {
             return;
         }
         var children = this.children;
@@ -1096,6 +1096,22 @@ var Shape = /** @class */ (function (_super) {
         enumerable: true,
         configurable: true
     });
+    Object.defineProperty(Shape.prototype, "alignment", {
+        // An offset value to align to the pixel grid.
+        get: function () {
+            return Math.floor(this.strokeWidth) % 2 / 2;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    // Returns the aligned `start` or `length` value.
+    // For example: `start` could be `y` and `length` could be `height` of a rectangle.
+    Shape.prototype.align = function (alignment, start, length) {
+        if (length != undefined) {
+            return Math.floor(length) + Math.floor(start % 1 + length % 1);
+        }
+        return Math.floor(start) + alignment;
+    };
     Object.defineProperty(Shape.prototype, "lineDash", {
         get: function () {
             return this._lineDash;
@@ -1260,7 +1276,7 @@ var Shape = /** @class */ (function (_super) {
             ctx.stroke();
         }
     };
-    Shape.prototype.isPointInNode = function (x, y) {
+    Shape.prototype.containsPoint = function (x, y) {
         return this.isPointInPath(x, y);
     };
     /**
@@ -1303,11 +1319,11 @@ var HdpiCanvas = /** @class */ (function () {
         this._pixelRatio = NaN;
         this.document = document;
         this.element = document.createElement('canvas');
+        this.context = this.element.getContext('2d');
         this.element.style.userSelect = 'none';
         this.element.style.display = 'block';
-        this.context = this.element.getContext('2d');
-        this.updatePixelRatio(0, false);
-        this.resize(this._width = width, this._height = height);
+        this.setPixelRatio();
+        this.resize(width, height);
     }
     Object.defineProperty(HdpiCanvas.prototype, "container", {
         get: function () {
@@ -1382,45 +1398,29 @@ var HdpiCanvas = /** @class */ (function () {
         configurable: true
     });
     /**
-     * Updates the pixel ratio of the Canvas element with the given value,
+     * Changes the pixel ratio of the Canvas element to the given value,
      * or uses the window.devicePixelRatio (default), then resizes the Canvas
      * element accordingly (default).
-     * @param ratio
-     * @param resize
      */
-    HdpiCanvas.prototype.updatePixelRatio = function (ratio, resize) {
-        if (ratio === void 0) { ratio = 0; }
-        if (resize === void 0) { resize = true; }
+    HdpiCanvas.prototype.setPixelRatio = function (ratio) {
         var pixelRatio = ratio || window.devicePixelRatio;
         if (pixelRatio === this.pixelRatio) {
             return;
         }
-        var canvas = this.element;
-        var ctx = this.context;
-        var overrides = HdpiCanvas.makeHdpiOverrides(pixelRatio);
-        for (var name_1 in overrides) {
-            if (overrides.hasOwnProperty(name_1)) {
-                // Save native methods under prefixed names,
-                // if this hasn't been done by the previous overrides already.
-                if (!ctx['$' + name_1]) {
-                    ctx['$' + name_1] = ctx[name_1];
-                }
-                // Replace native methods with overrides,
-                // or previous overrides with the new ones.
-                ctx[name_1] = overrides[name_1];
-            }
-        }
-        if (resize) {
-            var logicalWidth = canvas.width / this.pixelRatio;
-            var logicalHeight = canvas.height / this.pixelRatio;
-            canvas.width = Math.round(logicalWidth * pixelRatio);
-            canvas.height = Math.round(logicalHeight * pixelRatio);
-            canvas.style.width = Math.round(logicalWidth) + 'px';
-            canvas.style.height = Math.round(logicalHeight) + 'px';
-            ctx.resetTransform(); // should be called every time Canvas size changes
-        }
+        HdpiCanvas.overrideScale(this.context, pixelRatio);
         this._pixelRatio = pixelRatio;
+        this.resize(this.width, this.height);
     };
+    Object.defineProperty(HdpiCanvas.prototype, "pixelated", {
+        get: function () {
+            return this.element.style.imageRendering === 'pixelated';
+        },
+        set: function (value) {
+            this.element.style.imageRendering = value ? 'pixelated' : 'auto';
+        },
+        enumerable: true,
+        configurable: true
+    });
     Object.defineProperty(HdpiCanvas.prototype, "width", {
         get: function () {
             return this._width;
@@ -1435,21 +1435,15 @@ var HdpiCanvas = /** @class */ (function () {
         enumerable: true,
         configurable: true
     });
-    HdpiCanvas.prototype.resize = function (width, height, callbackWhenDone) {
-        var _this = this;
+    HdpiCanvas.prototype.resize = function (width, height) {
+        var _a = this, element = _a.element, context = _a.context, pixelRatio = _a.pixelRatio;
+        element.width = Math.round(width * pixelRatio);
+        element.height = Math.round(height * pixelRatio);
+        element.style.width = width + 'px';
+        element.style.height = height + 'px';
+        context.resetTransform();
         this._width = width;
         this._height = height;
-        requestAnimationFrame(function () {
-            var _a = _this, element = _a.element, context = _a.context, pixelRatio = _a.pixelRatio;
-            element.width = Math.round(width * pixelRatio);
-            element.height = Math.round(height * pixelRatio);
-            element.style.width = Math.round(width) + 'px';
-            element.style.height = Math.round(height) + 'px';
-            context.resetTransform();
-            // The canvas being resized is asynchronous. For the case where we
-            // need to do something after it is resized, return a promise.
-            callbackWhenDone && callbackWhenDone();
-        });
     };
     Object.defineProperty(HdpiCanvas, "textMeasuringContext", {
         get: function () {
@@ -1566,9 +1560,9 @@ var HdpiCanvas = /** @class */ (function () {
         cache[font][text] = size;
         return size;
     };
-    HdpiCanvas.makeHdpiOverrides = function (pixelRatio) {
+    HdpiCanvas.overrideScale = function (ctx, scale) {
         var depth = 0;
-        return {
+        var overrides = {
             save: function () {
                 this.$save();
                 depth++;
@@ -1580,12 +1574,12 @@ var HdpiCanvas = /** @class */ (function () {
                 }
             },
             setTransform: function (a, b, c, d, e, f) {
-                this.$setTransform(a * pixelRatio, b * pixelRatio, c * pixelRatio, d * pixelRatio, e * pixelRatio, f * pixelRatio);
+                this.$setTransform(a * scale, b * scale, c * scale, d * scale, e * scale, f * scale);
             },
             resetTransform: function () {
                 // As of Jan 8, 2019, `resetTransform` is still an "experimental technology",
                 // and doesn't work in IE11 and Edge 44.
-                this.$setTransform(pixelRatio, 0, 0, pixelRatio, 0, 0);
+                this.$setTransform(scale, 0, 0, scale, 0, 0);
                 this.save();
                 depth = 0;
                 // The scale above will be impossible to restore,
@@ -1593,6 +1587,18 @@ var HdpiCanvas = /** @class */ (function () {
                 // check `depth` there.
             }
         };
+        for (var name_1 in overrides) {
+            if (overrides.hasOwnProperty(name_1)) {
+                // Save native methods under prefixed names,
+                // if this hasn't been done by the previous overrides already.
+                if (!ctx['$' + name_1]) {
+                    ctx['$' + name_1] = ctx[name_1];
+                }
+                // Replace native methods with overrides,
+                // or previous overrides with the new ones.
+                ctx[name_1] = overrides[name_1];
+            }
+        }
     };
     HdpiCanvas.textSizeCache = {};
     return HdpiCanvas;
@@ -1861,16 +1867,14 @@ var Text = /** @class */ (function (_super) {
         }
         // this.matrix.transformBBox(this.computeBBox!()).render(ctx); // debug
         this.matrix.toContext(ctx);
-        var _a = this, opacity = _a.opacity, fill = _a.fill, stroke = _a.stroke, strokeWidth = _a.strokeWidth;
-        if (opacity < 1) {
-            ctx.globalAlpha = opacity;
-        }
+        var _a = this, fill = _a.fill, stroke = _a.stroke, strokeWidth = _a.strokeWidth;
         ctx.font = this.font;
         ctx.textAlign = this.textAlign;
         ctx.textBaseline = this.textBaseline;
         var pixelRatio = this.scene.canvas.pixelRatio || 1;
         if (fill) {
             ctx.fillStyle = fill;
+            ctx.globalAlpha = this.opacity * this.fillOpacity;
             var _b = this, fillShadow = _b.fillShadow, text = _b.text, x = _b.x, y = _b.y;
             if (fillShadow && fillShadow.enabled) {
                 ctx.shadowColor = fillShadow.color;
@@ -1883,6 +1887,7 @@ var Text = /** @class */ (function (_super) {
         if (stroke && strokeWidth) {
             ctx.strokeStyle = stroke;
             ctx.lineWidth = strokeWidth;
+            ctx.globalAlpha = this.opacity * this.strokeOpacity;
             var _c = this, lineDash = _c.lineDash, lineDashOffset = _c.lineDashOffset, lineCap = _c.lineCap, lineJoin = _c.lineJoin, strokeShadow = _c.strokeShadow, text = _c.text, x = _c.x, y = _c.y;
             if (lineDash) {
                 ctx.setLineDash(lineDash);
@@ -2396,7 +2401,7 @@ var Group = /** @class */ (function (_super) {
         return _this;
     }
     // We consider a group to be boundless, thus any point belongs to it.
-    Group.prototype.isPointInNode = function (x, y) {
+    Group.prototype.containsPoint = function (x, y) {
         return true;
     };
     Group.prototype.computeBBox = function () {
@@ -4013,16 +4018,22 @@ var Path = /** @class */ (function (_super) {
     };
     Path.prototype.updatePath = function () { };
     Path.prototype.render = function (ctx) {
+        var scene = this.scene;
         if (this.dirtyTransform) {
             this.computeTransformMatrix();
         }
-        // this.matrix.transformBBox(this.computeBBox()!).render(ctx);
+        // if (scene.debug.renderBoundingBoxes) {
+        //     const bbox = this.computeBBox();
+        //     if (bbox) {
+        //         this.matrix.transformBBox(bbox).render(ctx);
+        //     }
+        // }
         this.matrix.toContext(ctx);
         if (this.dirtyPath) {
             this.updatePath();
             this.dirtyPath = false;
         }
-        this.scene.appendPath(this.path);
+        scene.appendPath(this.path);
         this.fillStroke(ctx);
         this.dirty = false;
     };
@@ -4363,6 +4374,7 @@ var Axis = /** @class */ (function () {
         this.label = new AxisLabel();
         this.translation = { x: 0, y: 0 };
         this.rotation = 0; // axis rotation angle in degrees
+        this._visibleRange = [0, 1];
         this._title = undefined;
         /**
          * The length of the grid. The grid is only visible in case of a non-zero value.
@@ -4387,28 +4399,55 @@ var Axis = /** @class */ (function () {
          */
         this._radialGrid = false;
         this.scale = scale;
+        this.requestedRange = scale.range.slice();
         this.groupSelection = Selection.select(this.group).selectAll();
         this.label.onFormatChange = this.onTickFormatChange.bind(this);
         this.group.append(this.lineNode);
         this.onTickFormatChange();
         // this.group.append(this.bboxRect); // debug (bbox)
     }
+    Axis.prototype.updateRange = function () {
+        var _a = this, rr = _a.requestedRange, vr = _a.visibleRange, scale = _a.scale;
+        var span = (rr[1] - rr[0]) / (vr[1] - vr[0]);
+        var shift = span * vr[0];
+        var start = rr[0] - shift;
+        scale.range = [start, start + span];
+    };
     Object.defineProperty(Axis.prototype, "range", {
         get: function () {
-            return this.scale.range;
+            return this.requestedRange.slice();
         },
         set: function (value) {
-            this.scale.range = value;
+            this.requestedRange = value.slice();
+            this.updateRange();
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(Axis.prototype, "visibleRange", {
+        get: function () {
+            return this._visibleRange.slice();
+        },
+        set: function (value) {
+            if (value && value.length === 2) {
+                var min = value[0], max = value[1];
+                min = Math.max(0, min);
+                max = Math.min(1, max);
+                min = Math.min(min, max);
+                max = Math.max(min, max);
+                this._visibleRange = [min, max];
+                this.updateRange();
+            }
         },
         enumerable: true,
         configurable: true
     });
     Object.defineProperty(Axis.prototype, "domain", {
         get: function () {
-            return this.scale.domain;
+            return this.scale.domain.slice();
         },
         set: function (value) {
-            this.scale.domain = value;
+            this.scale.domain = value.slice();
         },
         enumerable: true,
         configurable: true
@@ -4490,7 +4529,9 @@ var Axis = /** @class */ (function () {
      */
     Axis.prototype.update = function () {
         var _this = this;
-        var _a = this, group = _a.group, scale = _a.scale, tick = _a.tick, label = _a.label, gridStyle = _a.gridStyle;
+        var _a = this, group = _a.group, scale = _a.scale, tick = _a.tick, label = _a.label, gridStyle = _a.gridStyle, requestedRange = _a.requestedRange;
+        var requestedRangeMin = Math.min(requestedRange[0], requestedRange[1]);
+        var requestedRangeMax = Math.max(requestedRange[0], requestedRange[1]);
         var rotation = toRadians(this.rotation);
         var parallelLabels = label.parallel;
         var labelRotation = normalizeAngle360(toRadians(label.rotation));
@@ -4534,7 +4575,12 @@ var Axis = /** @class */ (function () {
         enter.append(Text);
         var groupSelection = update.merge(enter);
         groupSelection
-            .attrFn('translationY', function (_, datum) { return Math.round(scale.convert(datum) + halfBandwidth); });
+            .attrFn('translationY', function (_, datum) {
+            return Math.round(scale.convert(datum) + halfBandwidth);
+        })
+            .attrFn('visible', function (node) {
+            return node.translationY >= requestedRangeMin && node.translationY <= requestedRangeMax;
+        });
         groupSelection.selectByTag(Tags.Tick)
             .each(function (line) {
             line.strokeWidth = tick.width;
@@ -4622,8 +4668,8 @@ var Axis = /** @class */ (function () {
         var lineNode = this.lineNode;
         lineNode.x1 = 0;
         lineNode.x2 = 0;
-        lineNode.y1 = scale.range[0];
-        lineNode.y2 = scale.range[scale.range.length - 1];
+        lineNode.y1 = requestedRange[0];
+        lineNode.y2 = requestedRange[1];
         lineNode.strokeWidth = this.line.width;
         lineNode.stroke = this.line.color;
         lineNode.visible = ticks.length > 0;
@@ -4637,6 +4683,7 @@ var Axis = /** @class */ (function () {
             var titleRotationFlag = sideFlag === -1 && parallelFlipRotation > Math.PI && parallelFlipRotation < Math.PI * 2 ? -1 : 1;
             titleNode.rotation = titleRotationFlag * sideFlag * Math.PI / 2;
             titleNode.x = titleRotationFlag * sideFlag * (lineNode.y1 + lineNode.y2) / 2;
+            titleNode.x = titleRotationFlag * sideFlag * (requestedRange[0] + requestedRange[1]) / 2;
             if (sideFlag === -1) {
                 titleNode.y = titleRotationFlag * (-padding - bbox.width + Math.max(bbox.x + bbox.width, 0));
             }
@@ -5313,6 +5360,7 @@ var GroupedCategoryAxis = /** @class */ (function (_super) {
         var _a = _this, group = _a.group, scale = _a.scale, tickScale = _a.tickScale;
         scale.paddingOuter = 0.1;
         scale.paddingInner = scale.paddingOuter * 2;
+        _this.requestedRange = scale.range.slice();
         tickScale.paddingInner = 1;
         tickScale.paddingOuter = 0;
         _this.gridLineSelection = Selection.select(group).selectAll();
@@ -5340,16 +5388,23 @@ var GroupedCategoryAxis = /** @class */ (function (_super) {
     });
     Object.defineProperty(GroupedCategoryAxis.prototype, "range", {
         get: function () {
-            return this.scale.range;
+            return this.requestedRange.slice();
         },
         set: function (value) {
-            this.scale.range = value;
-            this.tickScale.range = value;
-            this.resizeTickTree();
+            this.requestedRange = value.slice();
+            this.updateRange();
         },
         enumerable: true,
         configurable: true
     });
+    GroupedCategoryAxis.prototype.updateRange = function () {
+        var _a = this, rr = _a.requestedRange, vr = _a.visibleRange, scale = _a.scale;
+        var span = (rr[1] - rr[0]) / (vr[1] - vr[0]);
+        var shift = span * vr[0];
+        var start = rr[0] - shift;
+        this.tickScale.range = scale.range = [start, start + span];
+        this.resizeTickTree();
+    };
     GroupedCategoryAxis.prototype.resizeTickTree = function () {
         var s = this.scale;
         var range = s.domain.length ? [s.convert(s.domain[0]), s.convert(s.domain[s.domain.length - 1])] : s.range;
@@ -5399,7 +5454,7 @@ var GroupedCategoryAxis = /** @class */ (function (_super) {
      */
     GroupedCategoryAxis.prototype.update = function () {
         var _this = this;
-        var _a = this, group = _a.group, scale = _a.scale, label = _a.label, tickScale = _a.tickScale;
+        var _a = this, group = _a.group, scale = _a.scale, label = _a.label, tickScale = _a.tickScale, requestedRange = _a.requestedRange;
         var rangeStart = scale.range[0];
         var rangeEnd = scale.range[1];
         var rangeLength = Math.abs(rangeEnd - rangeStart);
@@ -5463,6 +5518,9 @@ var GroupedCategoryAxis = /** @class */ (function (_super) {
             // label.textBaseline = parallelLabels && !labelRotation
             //     ? (sideFlag * parallelFlipFlag === -1 ? 'hanging' : 'bottom')
             //     : 'middle';
+            node.textAlign = 'center';
+            node.translationX = datum.screenY - label.fontSize * 0.25;
+            node.translationY = datum.screenX;
             if (title && index === 0) { // use the phantom root as the axis title
                 node.text = title.text;
                 node.fontSize = title.fontSize;
@@ -5479,10 +5537,10 @@ var GroupedCategoryAxis = /** @class */ (function (_super) {
                         index: index
                     })
                     : String(datum.label);
+                node.visible =
+                    datum.screenX >= requestedRange[0] &&
+                        datum.screenX <= requestedRange[1];
             }
-            node.textAlign = 'center';
-            node.translationX = datum.screenY - label.fontSize * 0.25;
-            node.translationY = datum.screenX;
             var bbox = node.computeBBox();
             if (bbox && bbox.width > maxLeafLabelWidth) {
                 maxLeafLabelWidth = bbox.width;
@@ -5553,11 +5611,13 @@ var GroupedCategoryAxis = /** @class */ (function (_super) {
         var enterSeparators = updateSeparators.enter.append(Line);
         var separatorSelection = updateSeparators.merge(enterSeparators);
         this.separatorSelection = separatorSelection;
-        separatorSelection.each(function (line, datum) {
+        var epsilon = 0.0000001;
+        separatorSelection.each(function (line, datum, i) {
             line.x1 = datum.x1;
             line.x2 = datum.x2;
             line.y1 = datum.y;
             line.y2 = datum.y;
+            line.visible = datum.y >= requestedRange[0] - epsilon && datum.y <= requestedRange[1] + epsilon;
             line.stroke = _this.tick.color;
             line.fill = undefined;
             line.strokeWidth = 1;
@@ -5579,8 +5639,8 @@ var GroupedCategoryAxis = /** @class */ (function (_super) {
             var x = index > 0 ? -maxLeafLabelWidth - _this.label.padding * 2 - (index - 1) * lineHeight : 0;
             line.x1 = x;
             line.x2 = x;
-            line.y1 = rangeStart;
-            line.y2 = rangeEnd;
+            line.y1 = requestedRange[0];
+            line.y2 = requestedRange[1];
             line.strokeWidth = _this.line.width;
             line.stroke = _this.line.color;
             line.visible = labels.length > 0 && (index === 0 || (labelGrid && isLabelTree));
@@ -5595,7 +5655,8 @@ var GroupedCategoryAxis = /** @class */ (function (_super) {
                 line.x2 = -sideFlag * _this.gridLength;
                 line.y1 = y;
                 line.y2 = y;
-                line.visible = Math.abs(line.parent.translationY - rangeStart) > 1;
+                line.visible = y >= requestedRange[0] && y <= requestedRange[1] &&
+                    Math.abs(line.parent.translationY - rangeStart) > 1;
                 var style = styles_1[index % styleCount_1];
                 line.stroke = style.stroke;
                 line.strokeWidth = _this.tick.width;
@@ -5668,11 +5729,19 @@ var Scene = /** @class */ (function () {
         this._dirty = false;
         this.animationFrameId = 0;
         this._root = null;
+        this.debug = {
+            renderFrameIndex: false,
+            renderBoundingBoxes: false
+        };
         this._frameIndex = 0;
-        this._renderFrameIndex = false;
         this.render = function () {
-            var _a = _this, ctx = _a.ctx, root = _a.root;
+            var _a;
+            var _b = _this, ctx = _b.ctx, root = _b.root, pendingSize = _b.pendingSize;
             _this.animationFrameId = 0;
+            if (pendingSize) {
+                (_a = _this.canvas).resize.apply(_a, pendingSize);
+                _this.pendingSize = undefined;
+            }
             if (root && !root.visible) {
                 _this.dirty = false;
                 return;
@@ -5687,11 +5756,11 @@ var Scene = /** @class */ (function () {
                 ctx.restore();
             }
             _this._frameIndex++;
-            if (_this.renderFrameIndex) {
+            if (_this.debug.renderFrameIndex) {
                 ctx.fillStyle = 'white';
                 ctx.fillRect(0, 0, 40, 15);
                 ctx.fillStyle = 'black';
-                ctx.fillText(_this.frameIndex.toString(), 0, 10);
+                ctx.fillText(_this.frameIndex.toString(), 2, 10);
             }
             _this.dirty = false;
         };
@@ -5716,24 +5785,26 @@ var Scene = /** @class */ (function () {
     };
     Object.defineProperty(Scene.prototype, "width", {
         get: function () {
-            return this.canvas.width;
+            return this.pendingSize ? this.pendingSize[0] : this.canvas.width;
         },
         enumerable: true,
         configurable: true
     });
     Object.defineProperty(Scene.prototype, "height", {
         get: function () {
-            return this.canvas.height;
+            return this.pendingSize ? this.pendingSize[1] : this.canvas.height;
         },
         enumerable: true,
         configurable: true
     });
     Scene.prototype.resize = function (width, height) {
-        var _this = this;
-        this.canvas.resize(width, height, 
-        // resizing a canvas clears the pixel content so when resizing is done
-        // mark as dirty to ensure a re-render
-        function () { return _this.dirty = true; });
+        width = Math.round(width);
+        height = Math.round(height);
+        if (width === this.width && height === this.height) {
+            return;
+        }
+        this.pendingSize = [width, height];
+        this.dirty = true;
     };
     Object.defineProperty(Scene.prototype, "dirty", {
         get: function () {
@@ -5806,19 +5877,6 @@ var Scene = /** @class */ (function () {
     Object.defineProperty(Scene.prototype, "frameIndex", {
         get: function () {
             return this._frameIndex;
-        },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(Scene.prototype, "renderFrameIndex", {
-        get: function () {
-            return this._renderFrameIndex;
-        },
-        set: function (value) {
-            if (this._renderFrameIndex !== value) {
-                this._renderFrameIndex = value;
-                this.dirty = true;
-            }
         },
         enumerable: true,
         configurable: true
@@ -6005,15 +6063,16 @@ var Rect = /** @class */ (function (_super) {
         }
         this.effectiveStrokeWidth = strokeWidth;
         if (this.crisp && !borderSizing) {
-            var alignment = Math.floor(strokeWidth) % 2 / 2;
-            path.rect(Math.floor(x) + alignment, Math.floor(y) + alignment, Math.floor(width) + Math.floor(x % 1 + width % 1), Math.floor(height) + Math.floor(y % 1 + height % 1));
+            var _a = this, a = _a.alignment, al = _a.align;
+            path.rect(al(a, x), al(a, y), al(a, x, width), al(a, y, height));
         }
         else {
             path.rect(x, y, width, height);
         }
     };
     Rect.prototype.computeBBox = function () {
-        return new BBox(this.x, this.y, this.width, this.height);
+        var _a = this, x = _a.x, y = _a.y, width = _a.width, height = _a.height;
+        return new BBox(x, y, width, height);
     };
     Rect.prototype.isPointInPath = function (x, y) {
         var point = this.transformPoint(x, y);
@@ -6161,11 +6220,12 @@ var Square = /** @class */ (function (_super) {
     Square.prototype.updatePath = function () {
         var _a = this, path = _a.path, x = _a.x, y = _a.y;
         var hs = this.size / 2;
+        var _b = this, a = _b.alignment, al = _b.align;
         path.clear();
-        path.moveTo(x - hs, y - hs);
-        path.lineTo(x + hs, y - hs);
-        path.lineTo(x + hs, y + hs);
-        path.lineTo(x - hs, y + hs);
+        path.moveTo(al(a, x - hs), al(a, y - hs));
+        path.lineTo(al(a, x + hs), al(a, y - hs));
+        path.lineTo(al(a, x + hs), al(a, y + hs));
+        path.lineTo(al(a, x - hs), al(a, y + hs));
         path.closePath();
     };
     Square.className = 'Square';
@@ -7270,12 +7330,7 @@ var Chart = /** @class */ (function (_super) {
         _this._seriesChanged = false;
         _this.layoutCallbackId = 0;
         _this._performLayout = function () {
-            var _a;
             _this.layoutCallbackId = 0;
-            if (_this.pendingSize) {
-                (_a = _this.scene).resize.apply(_a, _this.pendingSize);
-                _this.pendingSize = undefined;
-            }
             _this.background.width = _this.width;
             _this.background.height = _this.height;
             _this.performLayout();
@@ -7284,68 +7339,11 @@ var Chart = /** @class */ (function (_super) {
             }
         };
         _this.dataCallbackId = 0;
-        _this.onMouseMove = function (event) {
-            var _a = _this, lastPick = _a.lastPick, tooltipTracking = _a.tooltipTracking;
-            var pick = _this.pickSeriesNode(event.offsetX, event.offsetY);
-            var nodeDatum;
-            if (pick && pick.node instanceof Shape) {
-                var node = pick.node;
-                nodeDatum = node.datum;
-                if (lastPick && lastPick.datum === nodeDatum) {
-                    lastPick.node = node;
-                }
-                // Marker nodes will have the `point` info in their datums.
-                // Highlight if not a marker node or, if not in the tracking mode, highlight markers too.
-                if ((!node.datum.point || !tooltipTracking)) {
-                    if (!lastPick // cursor moved from empty space to a node
-                        || lastPick.node !== node) { // cursor moved from one node to another
-                        _this.onSeriesDatumPick(event, node.datum, node);
-                    }
-                    else if (pick.series.tooltipEnabled) { // cursor moved within the same node
-                        _this.showTooltip(event);
-                    }
-                    // A non-marker node (takes precedence over marker nodes) was highlighted.
-                    // Or we are not in the tracking mode.
-                    // Either way, we are done at this point.
-                    return;
-                }
-            }
-            var hideTooltip = false;
-            // In tracking mode a tooltip is shown for the closest rendered datum.
-            // This makes it easier to show tooltips when markers are small and/or plentiful
-            // and also gives the ability to show tooltips even when the series were configured
-            // to not render markers.
-            if (tooltipTracking) {
-                var closestDatum = _this.pickClosestSeriesNodeDatum(event.offsetX, event.offsetY);
-                if (closestDatum && closestDatum.point) {
-                    var _b = closestDatum.point, x = _b.x, y = _b.y;
-                    var canvas = _this.scene.canvas;
-                    var point = closestDatum.series.group.inverseTransformPoint(x, y);
-                    var canvasRect = canvas.element.getBoundingClientRect();
-                    _this.onSeriesDatumPick({
-                        pageX: Math.round(canvasRect.left + window.pageXOffset + point.x),
-                        pageY: Math.round(canvasRect.top + window.pageYOffset + point.y)
-                    }, closestDatum, nodeDatum === closestDatum ? pick.node : undefined);
-                }
-                else {
-                    hideTooltip = true;
-                }
-            }
-            if (lastPick && (hideTooltip || !tooltipTracking)) {
-                // cursor moved from a non-marker node to empty space
-                // lastPick.datum.series.dehighlightDatum();
-                _this.dehighlightDatum();
-                _this.hideTooltip();
-                _this.lastPick = undefined;
-            }
-        };
-        _this.onMouseOut = function (_) {
-            _this.toggleTooltip(false);
-        };
-        _this.onClick = function (event) {
-            _this.checkSeriesNodeClick();
-            _this.checkLegendClick(event);
-        };
+        _this._onMouseDown = _this.onMouseDown.bind(_this);
+        _this._onMouseUp = _this.onMouseUp.bind(_this);
+        _this._onMouseMove = _this.onMouseMove.bind(_this);
+        _this._onMouseOut = _this.onMouseOut.bind(_this);
+        _this._onClick = _this.onClick.bind(_this);
         _this._tooltipClass = Chart.defaultTooltipClass;
         /**
          * If `true`, the tooltip will be shown for the marker closest to the mouse cursor.
@@ -7416,12 +7414,12 @@ var Chart = /** @class */ (function (_super) {
     });
     Object.defineProperty(Chart.prototype, "width", {
         get: function () {
-            return this.pendingSize ? this.pendingSize[0] : this.scene.width;
+            return this.scene.width;
         },
         set: function (value) {
             this.autoSize = false;
             if (this.width !== value) {
-                this.pendingSize = [value, this.height];
+                this.scene.resize(value, this.height);
                 this.fireEvent({ type: 'layoutChange' });
             }
         },
@@ -7430,12 +7428,12 @@ var Chart = /** @class */ (function (_super) {
     });
     Object.defineProperty(Chart.prototype, "height", {
         get: function () {
-            return this.pendingSize ? this.pendingSize[1] : this.scene.height;
+            return this.scene.height;
         },
         set: function (value) {
             this.autoSize = false;
             if (this.height !== value) {
-                this.pendingSize = [this.width, value];
+                this.scene.resize(this.width, value);
                 this.fireEvent({ type: 'layoutChange' });
             }
         },
@@ -7453,7 +7451,7 @@ var Chart = /** @class */ (function (_super) {
                     var chart_1 = this; // capture `this` for IE11
                     SizeMonitor.observe(this.element, function (size) {
                         if (size.width !== chart_1.width || size.height !== chart_1.height) {
-                            chart_1.pendingSize = [size.width, size.height];
+                            chart_1.scene.resize(size.width, size.height);
                             chart_1.fireEvent({ type: 'layoutChange' });
                         }
                     });
@@ -7512,16 +7510,21 @@ var Chart = /** @class */ (function (_super) {
         },
         set: function (values) {
             var _this = this;
-            var root = this.scene.root;
-            this._axes.forEach(function (axis) { return root.removeChild(axis.group); });
+            this._axes.forEach(function (axis) { return _this.detachAxis(axis); });
             // make linked axes go after the regular ones (simulates stable sort by `linkedTo` property)
             this._axes = values.filter(function (a) { return !a.linkedTo; }).concat(values.filter(function (a) { return a.linkedTo; }));
-            this._axes.forEach(function (axis) { return root.insertBefore(axis.group, _this.seriesRoot); });
+            this._axes.forEach(function (axis) { return _this.attachAxis(axis); });
             this.axesChanged = true;
         },
         enumerable: true,
         configurable: true
     });
+    Chart.prototype.attachAxis = function (axis) {
+        this.scene.root.insertBefore(axis.group, this.seriesRoot);
+    };
+    Chart.prototype.detachAxis = function (axis) {
+        this.scene.root.removeChild(axis.group);
+    };
     Object.defineProperty(Chart.prototype, "series", {
         get: function () {
             return this._series;
@@ -7858,17 +7861,24 @@ var Chart = /** @class */ (function (_super) {
         legendGroup.translationY = Math.floor(translationY + legendGroup.translationY);
     };
     Chart.prototype.setupDomListeners = function (chartElement) {
-        chartElement.addEventListener('mousemove', this.onMouseMove);
-        chartElement.addEventListener('mouseout', this.onMouseOut);
-        chartElement.addEventListener('click', this.onClick);
+        chartElement.addEventListener('mousedown', this._onMouseDown);
+        chartElement.addEventListener('mousemove', this._onMouseMove);
+        chartElement.addEventListener('mouseup', this._onMouseUp);
+        chartElement.addEventListener('mouseout', this._onMouseOut);
+        chartElement.addEventListener('click', this._onClick);
     };
     Chart.prototype.cleanupDomListeners = function (chartElement) {
-        chartElement.removeEventListener('mousemove', this.onMouseMove);
-        chartElement.removeEventListener('mouseout', this.onMouseMove);
-        chartElement.removeEventListener('click', this.onClick);
+        chartElement.removeEventListener('mousedown', this._onMouseDown);
+        chartElement.removeEventListener('mousemove', this._onMouseMove);
+        chartElement.removeEventListener('mouseup', this._onMouseUp);
+        chartElement.removeEventListener('mouseout', this._onMouseOut);
+        chartElement.removeEventListener('click', this._onClick);
     };
     // x/y are local canvas coordinates in CSS pixels, not actual pixels
     Chart.prototype.pickSeriesNode = function (x, y) {
+        if (!this.seriesRect || !this.seriesRect.containsPoint(x, y)) {
+            return undefined;
+        }
         var allSeries = this.series;
         var node = undefined;
         for (var i = allSeries.length - 1; i >= 0; i--) {
@@ -7917,6 +7927,69 @@ var Chart = /** @class */ (function (_super) {
             return closestDatum;
         }
     };
+    Chart.prototype.onMouseMove = function (event) {
+        var _a = this, lastPick = _a.lastPick, tooltipTracking = _a.tooltipTracking;
+        var pick = this.pickSeriesNode(event.offsetX, event.offsetY);
+        var nodeDatum;
+        if (pick && pick.node instanceof Shape) {
+            var node = pick.node;
+            nodeDatum = node.datum;
+            if (lastPick && lastPick.datum === nodeDatum) {
+                lastPick.node = node;
+            }
+            // Marker nodes will have the `point` info in their datums.
+            // Highlight if not a marker node or, if not in the tracking mode, highlight markers too.
+            if ((!node.datum.point || !tooltipTracking)) {
+                if (!lastPick // cursor moved from empty space to a node
+                    || lastPick.node !== node) { // cursor moved from one node to another
+                    this.onSeriesDatumPick(event, node.datum, node);
+                }
+                else if (pick.series.tooltipEnabled) { // cursor moved within the same node
+                    this.showTooltip(event);
+                }
+                // A non-marker node (takes precedence over marker nodes) was highlighted.
+                // Or we are not in the tracking mode.
+                // Either way, we are done at this point.
+                return;
+            }
+        }
+        var hideTooltip = false;
+        // In tracking mode a tooltip is shown for the closest rendered datum.
+        // This makes it easier to show tooltips when markers are small and/or plentiful
+        // and also gives the ability to show tooltips even when the series were configured
+        // to not render markers.
+        if (tooltipTracking) {
+            var closestDatum = this.pickClosestSeriesNodeDatum(event.offsetX, event.offsetY);
+            if (closestDatum && closestDatum.point) {
+                var _b = closestDatum.point, x = _b.x, y = _b.y;
+                var canvas = this.scene.canvas;
+                var point = closestDatum.series.group.inverseTransformPoint(x, y);
+                var canvasRect = canvas.element.getBoundingClientRect();
+                this.onSeriesDatumPick({
+                    pageX: Math.round(canvasRect.left + window.pageXOffset + point.x),
+                    pageY: Math.round(canvasRect.top + window.pageYOffset + point.y)
+                }, closestDatum, nodeDatum === closestDatum ? pick.node : undefined);
+            }
+            else {
+                hideTooltip = true;
+            }
+        }
+        if (lastPick && (hideTooltip || !tooltipTracking)) {
+            // cursor moved from a non-marker node to empty space
+            this.dehighlightDatum();
+            this.hideTooltip();
+            this.lastPick = undefined;
+        }
+    };
+    Chart.prototype.onMouseDown = function (event) { };
+    Chart.prototype.onMouseUp = function (event) { };
+    Chart.prototype.onMouseOut = function (event) {
+        this.toggleTooltip(false);
+    };
+    Chart.prototype.onClick = function (event) {
+        this.checkSeriesNodeClick();
+        this.checkLegendClick(event);
+    };
     Chart.prototype.checkSeriesNodeClick = function () {
         var lastPick = this.lastPick;
         if (lastPick && lastPick.node) {
@@ -7950,7 +8023,6 @@ var Chart = /** @class */ (function (_super) {
             node: node
         };
         this.highlightDatum(datum);
-        // datum.series.highlightDatum(datum);
         var html = datum.series.tooltipEnabled && datum.series.getTooltipHtml(datum);
         if (html) {
             this.showTooltip(meta, html);
@@ -8060,19 +8132,934 @@ var __extends$p = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-// import { ClipRect } from "../scene/clipRect";
+/**
+ * Acts as `Group` node but with specified bounds that form a rectangle.
+ * Any parts of the child nodes outside that rectangle will not be visible.
+ * Unlike the `Group` node, the `ClipRect` node cannot be transformed.
+ */
+var ClipRect = /** @class */ (function (_super) {
+    __extends$p(ClipRect, _super);
+    function ClipRect() {
+        var _this = _super !== null && _super.apply(this, arguments) || this;
+        _this.isContainerNode = true;
+        _this.path = new Path2D();
+        _this._active = true;
+        _this._dirtyPath = true;
+        _this._x = 0;
+        _this._y = 0;
+        _this._width = 10;
+        _this._height = 10;
+        return _this;
+    }
+    ClipRect.prototype.containsPoint = function (x, y) {
+        var point = this.transformPoint(x, y);
+        return point.x >= this.x && point.x <= this.x + this.width
+            && point.y >= this.y && point.y <= this.y + this.height;
+    };
+    Object.defineProperty(ClipRect.prototype, "active", {
+        get: function () {
+            return this._active;
+        },
+        set: function (value) {
+            if (this._active !== value) {
+                this._active = value;
+                this.dirty = true;
+            }
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(ClipRect.prototype, "dirtyPath", {
+        get: function () {
+            return this._dirtyPath;
+        },
+        set: function (value) {
+            if (this._dirtyPath !== value) {
+                this._dirtyPath = value;
+                if (value) {
+                    this.dirty = true;
+                }
+            }
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(ClipRect.prototype, "x", {
+        get: function () {
+            return this._x;
+        },
+        set: function (value) {
+            if (this._x !== value) {
+                this._x = value;
+                this.dirtyPath = true;
+            }
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(ClipRect.prototype, "y", {
+        get: function () {
+            return this._y;
+        },
+        set: function (value) {
+            if (this._y !== value) {
+                this._y = value;
+                this.dirtyPath = true;
+            }
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(ClipRect.prototype, "width", {
+        get: function () {
+            return this._width;
+        },
+        set: function (value) {
+            if (this._width !== value) {
+                this._width = value;
+                this.dirtyPath = true;
+            }
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(ClipRect.prototype, "height", {
+        get: function () {
+            return this._height;
+        },
+        set: function (value) {
+            if (this._height !== value) {
+                this._height = value;
+                this.dirtyPath = true;
+            }
+        },
+        enumerable: true,
+        configurable: true
+    });
+    ClipRect.prototype.updatePath = function () {
+        var path = this.path;
+        path.clear();
+        path.rect(this.x, this.y, this.width, this.height);
+        this.dirtyPath = false;
+    };
+    ClipRect.prototype.computeBBox = function () {
+        var _a = this, x = _a.x, y = _a.y, width = _a.width, height = _a.height;
+        return new BBox(x, y, width, height);
+    };
+    ClipRect.prototype.render = function (ctx) {
+        if (this.active) {
+            if (this.dirtyPath) {
+                this.updatePath();
+            }
+            this.scene.appendPath(this.path);
+            ctx.clip();
+        }
+        var children = this.children;
+        var n = children.length;
+        for (var i = 0; i < n; i++) {
+            ctx.save();
+            var child = children[i];
+            if (child.visible) {
+                child.render(ctx);
+            }
+            ctx.restore();
+        }
+        // debug
+        // this.computeBBox().render(ctx, {
+        //     label: this.id,
+        //     resetTransform: true,
+        //     fillStyle: 'rgba(0, 0, 0, 0.5)'
+        // });
+    };
+    ClipRect.className = 'ClipRect';
+    return ClipRect;
+}(Node));
+
+var __extends$q = (undefined && undefined.__extends) || (function () {
+    var extendStatics = function (d, b) {
+        extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+        return extendStatics(d, b);
+    };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
+var RangeHandle = /** @class */ (function (_super) {
+    __extends$q(RangeHandle, _super);
+    function RangeHandle() {
+        var _this = _super !== null && _super.apply(this, arguments) || this;
+        _this._fill = '#f2f2f2';
+        _this._stroke = '#999999';
+        _this._strokeWidth = 1;
+        _this._lineCap = 'square';
+        _this._centerX = 0;
+        _this._centerY = 0;
+        // Use an even number for better looking results.
+        _this._width = 8;
+        // Use an even number for better looking results.
+        _this._gripLineGap = 2;
+        // Use an even number for better looking results.
+        _this._gripLineLength = 8;
+        _this._height = 16;
+        return _this;
+    }
+    Object.defineProperty(RangeHandle.prototype, "centerX", {
+        get: function () {
+            return this._centerX;
+        },
+        set: function (value) {
+            if (this._centerX !== value) {
+                this._centerX = value;
+                this.dirtyPath = true;
+            }
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(RangeHandle.prototype, "centerY", {
+        get: function () {
+            return this._centerY;
+        },
+        set: function (value) {
+            if (this._centerY !== value) {
+                this._centerY = value;
+                this.dirtyPath = true;
+            }
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(RangeHandle.prototype, "width", {
+        get: function () {
+            return this._width;
+        },
+        set: function (value) {
+            if (this._width !== value) {
+                this._width = value;
+                this.dirtyPath = true;
+            }
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(RangeHandle.prototype, "gripLineGap", {
+        get: function () {
+            return this._gripLineGap;
+        },
+        set: function (value) {
+            if (this._gripLineGap !== value) {
+                this._gripLineGap = value;
+                this.dirtyPath = true;
+            }
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(RangeHandle.prototype, "gripLineLength", {
+        get: function () {
+            return this._gripLineLength;
+        },
+        set: function (value) {
+            if (this._gripLineLength !== value) {
+                this._gripLineLength = value;
+                this.dirtyPath = true;
+            }
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(RangeHandle.prototype, "height", {
+        get: function () {
+            return this._height;
+        },
+        set: function (value) {
+            if (this._height !== value) {
+                this._height = value;
+                this.dirtyPath = true;
+            }
+        },
+        enumerable: true,
+        configurable: true
+    });
+    RangeHandle.prototype.computeBBox = function () {
+        var _a = this, centerX = _a.centerX, centerY = _a.centerY, width = _a.width, height = _a.height;
+        var x = centerX - width / 2;
+        var y = centerY - height / 2;
+        return new BBox(x, y, width, height);
+    };
+    RangeHandle.prototype.isPointInPath = function (x, y) {
+        var point = this.transformPoint(x, y);
+        var bbox = this.computeBBox();
+        return bbox.containsPoint(point.x, point.y);
+    };
+    RangeHandle.prototype.updatePath = function () {
+        var _a = this, path = _a.path, centerX = _a.centerX, centerY = _a.centerY, width = _a.width, height = _a.height;
+        var _b = this, a = _b.alignment, al = _b.align;
+        path.clear();
+        var x = centerX - width / 2;
+        var y = centerY - height / 2;
+        var ax = al(a, x);
+        var ay = al(a, y);
+        var axw = ax + al(a, x, width);
+        var ayh = ay + al(a, y, height);
+        // Handle.
+        path.moveTo(ax, ay);
+        path.lineTo(axw, ay);
+        path.lineTo(axw, ayh);
+        path.lineTo(ax, ayh);
+        path.lineTo(ax, ay);
+        // Grip lines.
+        var dx = this.gripLineGap / 2;
+        var dy = this.gripLineLength / 2;
+        path.moveTo(al(a, centerX - dx), al(a, centerY - dy));
+        path.lineTo(al(a, centerX - dx), al(a, centerY + dy));
+        path.moveTo(al(a, centerX + dx), al(a, centerY - dy));
+        path.lineTo(al(a, centerX + dx), al(a, centerY + dy));
+    };
+    RangeHandle.className = 'RangeHandle';
+    return RangeHandle;
+}(Path));
+
+var __extends$r = (undefined && undefined.__extends) || (function () {
+    var extendStatics = function (d, b) {
+        extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+        return extendStatics(d, b);
+    };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
+var RangeMask = /** @class */ (function (_super) {
+    __extends$r(RangeMask, _super);
+    function RangeMask() {
+        var _this = _super !== null && _super.apply(this, arguments) || this;
+        _this._stroke = '#999999';
+        _this._strokeWidth = 1;
+        _this._fill = '#999999';
+        _this._fillOpacity = 0.2;
+        _this._lineCap = 'square';
+        _this._x = 0;
+        _this._y = 0;
+        _this._width = 200;
+        _this._height = 30;
+        _this.minRange = 0.05;
+        _this._min = 0;
+        _this._max = 1;
+        return _this;
+    }
+    Object.defineProperty(RangeMask.prototype, "x", {
+        get: function () {
+            return this._x;
+        },
+        set: function (value) {
+            if (this._x !== value) {
+                this._x = value;
+                this.dirtyPath = true;
+            }
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(RangeMask.prototype, "y", {
+        get: function () {
+            return this._y;
+        },
+        set: function (value) {
+            if (this._y !== value) {
+                this._y = value;
+                this.dirtyPath = true;
+            }
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(RangeMask.prototype, "width", {
+        get: function () {
+            return this._width;
+        },
+        set: function (value) {
+            if (this._width !== value) {
+                this._width = value;
+                this.dirtyPath = true;
+            }
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(RangeMask.prototype, "height", {
+        get: function () {
+            return this._height;
+        },
+        set: function (value) {
+            if (this._height !== value) {
+                this._height = value;
+                this.dirtyPath = true;
+            }
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(RangeMask.prototype, "min", {
+        get: function () {
+            return this._min;
+        },
+        set: function (value) {
+            value = Math.min(Math.max(value, 0), this.max - this.minRange);
+            if (isNaN(value)) {
+                return;
+            }
+            if (this._min !== value) {
+                this._min = value;
+                this.dirtyPath = true;
+                this.onRangeChange && this.onRangeChange(value, this.max);
+            }
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(RangeMask.prototype, "max", {
+        get: function () {
+            return this._max;
+        },
+        set: function (value) {
+            value = Math.max(Math.min(value, 1), this.min + this.minRange);
+            if (isNaN(value)) {
+                return;
+            }
+            if (this._max !== value) {
+                this._max = value;
+                this.dirtyPath = true;
+                this.onRangeChange && this.onRangeChange(this.min, value);
+            }
+        },
+        enumerable: true,
+        configurable: true
+    });
+    RangeMask.prototype.computeBBox = function () {
+        var _a = this, x = _a.x, y = _a.y, width = _a.width, height = _a.height;
+        return new BBox(x, y, width, height);
+    };
+    RangeMask.prototype.computeVisibleRangeBBox = function () {
+        var _a = this, x = _a.x, y = _a.y, width = _a.width, height = _a.height, min = _a.min, max = _a.max;
+        var minX = x + width * min;
+        var maxX = x + width * max;
+        return new BBox(minX, y, maxX - minX, height);
+    };
+    RangeMask.prototype.updatePath = function () {
+        var _a = this, path = _a.path, x = _a.x, y = _a.y, width = _a.width, height = _a.height, min = _a.min, max = _a.max;
+        var _b = this, a = _b.alignment, al = _b.align;
+        path.clear();
+        var ax = al(a, x);
+        var ay = al(a, y);
+        var axw = ax + al(a, x, width);
+        var ayh = ay + al(a, y, height);
+        // Whole range.
+        path.moveTo(ax, ay);
+        path.lineTo(axw, ay);
+        path.lineTo(axw, ayh);
+        path.lineTo(ax, ayh);
+        path.lineTo(ax, ay);
+        var minX = al(a, x + width * min);
+        var maxX = al(a, x + width * max);
+        // Visible range.
+        path.moveTo(minX, ay);
+        path.lineTo(minX, ayh);
+        path.lineTo(maxX, ayh);
+        path.lineTo(maxX, ay);
+        path.lineTo(minX, ay);
+    };
+    RangeMask.className = 'RangeMask';
+    return RangeMask;
+}(Path));
+
+var __extends$s = (undefined && undefined.__extends) || (function () {
+    var extendStatics = function (d, b) {
+        extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+        return extendStatics(d, b);
+    };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
+var RangeSelector = /** @class */ (function (_super) {
+    __extends$s(RangeSelector, _super);
+    function RangeSelector() {
+        var _this = _super !== null && _super.apply(this, arguments) || this;
+        _this.isContainerNode = true;
+        _this.minHandle = new RangeHandle();
+        _this.maxHandle = new RangeHandle();
+        _this.mask = (function () {
+            var _a = RangeSelector.defaults, x = _a.x, y = _a.y, width = _a.width, height = _a.height, min = _a.min, max = _a.max;
+            var mask = new RangeMask();
+            mask.x = x;
+            mask.y = y;
+            mask.width = width;
+            mask.height = height;
+            mask.min = min;
+            mask.max = max;
+            var _b = _this, minHandle = _b.minHandle, maxHandle = _b.maxHandle;
+            minHandle.centerX = x;
+            maxHandle.centerX = x + width;
+            minHandle.centerY = maxHandle.centerY = y + height / 2;
+            _this.append([mask, minHandle, maxHandle]);
+            mask.onRangeChange = function (min, max) {
+                _this.updateHandles();
+                _this.onRangeChange && _this.onRangeChange(min, max);
+            };
+            return mask;
+        })();
+        _this._x = RangeSelector.defaults.x;
+        _this._y = RangeSelector.defaults.y;
+        _this._width = RangeSelector.defaults.width;
+        _this._height = RangeSelector.defaults.height;
+        _this._min = RangeSelector.defaults.min;
+        _this._max = RangeSelector.defaults.max;
+        return _this;
+    }
+    Object.defineProperty(RangeSelector.prototype, "x", {
+        get: function () {
+            return this.mask.x;
+        },
+        set: function (value) {
+            this.mask.x = value;
+            this.updateHandles();
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(RangeSelector.prototype, "y", {
+        get: function () {
+            return this.mask.y;
+        },
+        set: function (value) {
+            this.mask.y = value;
+            this.updateHandles();
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(RangeSelector.prototype, "width", {
+        get: function () {
+            return this.mask.width;
+        },
+        set: function (value) {
+            this.mask.width = value;
+            this.updateHandles();
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(RangeSelector.prototype, "height", {
+        get: function () {
+            return this.mask.height;
+        },
+        set: function (value) {
+            this.mask.height = value;
+            this.updateHandles();
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(RangeSelector.prototype, "min", {
+        get: function () {
+            return this.mask.min;
+        },
+        set: function (value) {
+            this.mask.min = value;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(RangeSelector.prototype, "max", {
+        get: function () {
+            return this.mask.max;
+        },
+        set: function (value) {
+            this.mask.max = value;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    RangeSelector.prototype.updateHandles = function () {
+        var _a = this, minHandle = _a.minHandle, maxHandle = _a.maxHandle, x = _a.x, y = _a.y, width = _a.width, height = _a.height, mask = _a.mask;
+        minHandle.centerX = x + width * mask.min;
+        maxHandle.centerX = x + width * mask.max;
+        minHandle.centerY = maxHandle.centerY = y + height / 2;
+    };
+    RangeSelector.prototype.computeBBox = function () {
+        return this.mask.computeBBox();
+    };
+    RangeSelector.prototype.computeVisibleRangeBBox = function () {
+        return this.mask.computeVisibleRangeBBox();
+    };
+    RangeSelector.prototype.render = function (ctx) {
+        if (this.dirtyTransform) {
+            this.computeTransformMatrix();
+        }
+        this.matrix.toContext(ctx);
+        var _a = this, mask = _a.mask, minHandle = _a.minHandle, maxHandle = _a.maxHandle;
+        [mask, minHandle, maxHandle].forEach(function (child) {
+            ctx.save();
+            if (child.visible) {
+                child.render(ctx);
+            }
+            ctx.restore();
+        });
+    };
+    RangeSelector.className = 'Range';
+    RangeSelector.defaults = {
+        x: 0,
+        y: 0,
+        width: 200,
+        height: 30,
+        min: 0,
+        max: 1
+    };
+    return RangeSelector;
+}(Group));
+
+var NavigatorMask = /** @class */ (function () {
+    function NavigatorMask(rangeMask) {
+        this.rm = rangeMask;
+    }
+    Object.defineProperty(NavigatorMask.prototype, "fill", {
+        get: function () {
+            return this.rm.fill;
+        },
+        set: function (value) {
+            this.rm.fill = value;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(NavigatorMask.prototype, "stroke", {
+        get: function () {
+            return this.rm.stroke;
+        },
+        set: function (value) {
+            this.rm.stroke = value;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(NavigatorMask.prototype, "strokeWidth", {
+        get: function () {
+            return this.rm.strokeWidth;
+        },
+        set: function (value) {
+            this.rm.strokeWidth = value;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(NavigatorMask.prototype, "fillOpacity", {
+        get: function () {
+            return this.rm.fillOpacity;
+        },
+        set: function (value) {
+            this.rm.fillOpacity = value;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    return NavigatorMask;
+}());
+
+var NavigatorHandle = /** @class */ (function () {
+    function NavigatorHandle(rangeHandle) {
+        this.rh = rangeHandle;
+    }
+    Object.defineProperty(NavigatorHandle.prototype, "fill", {
+        get: function () {
+            return this.rh.fill;
+        },
+        set: function (value) {
+            this.rh.fill = value;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(NavigatorHandle.prototype, "stroke", {
+        get: function () {
+            return this.rh.stroke;
+        },
+        set: function (value) {
+            this.rh.stroke = value;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(NavigatorHandle.prototype, "strokeWidth", {
+        get: function () {
+            return this.rh.strokeWidth;
+        },
+        set: function (value) {
+            this.rh.strokeWidth = value;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(NavigatorHandle.prototype, "width", {
+        get: function () {
+            return this.rh.width;
+        },
+        set: function (value) {
+            this.rh.width = value;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(NavigatorHandle.prototype, "height", {
+        get: function () {
+            return this.rh.height;
+        },
+        set: function (value) {
+            this.rh.height = value;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(NavigatorHandle.prototype, "gripLineGap", {
+        get: function () {
+            return this.rh.gripLineGap;
+        },
+        set: function (value) {
+            this.rh.gripLineGap = value;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(NavigatorHandle.prototype, "gripLineLength", {
+        get: function () {
+            return this.rh.gripLineLength;
+        },
+        set: function (value) {
+            this.rh.gripLineLength = value;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    return NavigatorHandle;
+}());
+
+var Navigator = /** @class */ (function () {
+    function Navigator(chart) {
+        var _this = this;
+        this.rs = new RangeSelector();
+        this.mask = new NavigatorMask(this.rs.mask);
+        this.minHandle = new NavigatorHandle(this.rs.minHandle);
+        this.maxHandle = new NavigatorHandle(this.rs.maxHandle);
+        this.minHandleDragging = false;
+        this.maxHandleDragging = false;
+        this.panHandleOffset = NaN;
+        this._margin = 10;
+        this.chart = chart;
+        chart.scene.root.append(this.rs);
+        this.rs.onRangeChange = function (min, max) { return _this.updateAxes(min, max); };
+    }
+    Object.defineProperty(Navigator.prototype, "enabled", {
+        get: function () {
+            return this.rs.visible;
+        },
+        set: function (value) {
+            this.rs.visible = value;
+            this.chart.layoutPending = true;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(Navigator.prototype, "x", {
+        get: function () {
+            return this.rs.x;
+        },
+        set: function (value) {
+            this.rs.x = value;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(Navigator.prototype, "y", {
+        get: function () {
+            return this.rs.y;
+        },
+        set: function (value) {
+            this.rs.y = value;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(Navigator.prototype, "width", {
+        get: function () {
+            return this.rs.width;
+        },
+        set: function (value) {
+            this.rs.width = value;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(Navigator.prototype, "height", {
+        get: function () {
+            return this.rs.height;
+        },
+        set: function (value) {
+            this.rs.height = value;
+            this.chart.layoutPending = true;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(Navigator.prototype, "margin", {
+        get: function () {
+            return this._margin;
+        },
+        set: function (value) {
+            this._margin = value;
+            this.chart.layoutPending = true;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(Navigator.prototype, "min", {
+        get: function () {
+            return this.rs.min;
+        },
+        set: function (value) {
+            this.rs.min = value;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(Navigator.prototype, "max", {
+        get: function () {
+            return this.rs.max;
+        },
+        set: function (value) {
+            this.rs.max = value;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Navigator.prototype.updateAxes = function (min, max) {
+        this.chart.axes.forEach(function (axis) {
+            if (axis.direction === ChartAxisDirection.X) {
+                axis.visibleRange = [min, max];
+                axis.update();
+            }
+        });
+        this.chart.series.forEach(function (series) { return series.update(); });
+    };
+    Navigator.prototype.onMouseDown = function (event) {
+        var offsetX = event.offsetX, offsetY = event.offsetY;
+        var rs = this.rs;
+        var minHandle = rs.minHandle, maxHandle = rs.maxHandle, x = rs.x, width = rs.width, min = rs.min;
+        var visibleRange = rs.computeVisibleRangeBBox();
+        if (!(this.minHandleDragging || this.maxHandleDragging)) {
+            if (minHandle.containsPoint(offsetX, offsetY)) {
+                this.minHandleDragging = true;
+            }
+            else if (maxHandle.containsPoint(offsetX, offsetY)) {
+                this.maxHandleDragging = true;
+            }
+            else if (visibleRange.containsPoint(offsetX, offsetY)) {
+                this.panHandleOffset = (offsetX - x) / width - min;
+            }
+        }
+    };
+    Navigator.prototype.onMouseMove = function (event) {
+        var _a = this, rs = _a.rs, panHandleOffset = _a.panHandleOffset;
+        var x = rs.x, y = rs.y, width = rs.width, height = rs.height, minHandle = rs.minHandle, maxHandle = rs.maxHandle;
+        var style = this.chart.element.style;
+        var offsetX = event.offsetX, offsetY = event.offsetY;
+        var minX = x + width * rs.min;
+        var maxX = x + width * rs.max;
+        var visibleRange = new BBox(minX, y, maxX - minX, height);
+        function getRatio() {
+            return Math.min(Math.max((offsetX - x) / width, 0), 1);
+        }
+        if (minHandle.containsPoint(offsetX, offsetY)) {
+            style.cursor = 'ew-resize';
+        }
+        else if (maxHandle.containsPoint(offsetX, offsetY)) {
+            style.cursor = 'ew-resize';
+        }
+        else if (visibleRange.containsPoint(offsetX, offsetY)) {
+            style.cursor = 'grab';
+        }
+        else {
+            style.cursor = 'default';
+        }
+        if (this.minHandleDragging) {
+            rs.min = getRatio();
+        }
+        else if (this.maxHandleDragging) {
+            rs.max = getRatio();
+        }
+        else if (!isNaN(panHandleOffset)) {
+            var span = rs.max - rs.min;
+            var min = Math.min(getRatio() - panHandleOffset, 1 - span);
+            if (min <= rs.min) { // pan left
+                rs.min = min;
+                rs.max = rs.min + span;
+            }
+            else { // pan right
+                rs.max = min + span;
+                rs.min = rs.max - span;
+            }
+        }
+    };
+    Navigator.prototype.onMouseOut = function (event) {
+        this.stopHandleDragging();
+    };
+    Navigator.prototype.onMouseUp = function (event) {
+        this.stopHandleDragging();
+    };
+    Navigator.prototype.stopHandleDragging = function () {
+        this.minHandleDragging = this.maxHandleDragging = false;
+        this.panHandleOffset = NaN;
+    };
+    return Navigator;
+}());
+
+var __extends$t = (undefined && undefined.__extends) || (function () {
+    var extendStatics = function (d, b) {
+        extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+        return extendStatics(d, b);
+    };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
 var CartesianChart = /** @class */ (function (_super) {
-    __extends$p(CartesianChart, _super);
+    __extends$t(CartesianChart, _super);
     function CartesianChart(document) {
         if (document === void 0) { document = window.document; }
         var _this = _super.call(this, document) || this;
-        _this._seriesRoot = new Group();
+        _this._seriesRoot = new ClipRect();
+        _this.navigator = new Navigator(_this);
         // Prevent the scene from rendering chart components in an invalid state
         // (before first layout is performed).
         _this.scene.root.visible = false;
         var root = _this.scene.root;
-        root.append(_this._seriesRoot);
+        root.append(_this.seriesRoot);
         root.append(_this.legend.group);
+        _this.navigator.enabled = false;
         return _this;
     }
     Object.defineProperty(CartesianChart.prototype, "seriesRoot", {
@@ -8087,7 +9074,7 @@ var CartesianChart = /** @class */ (function (_super) {
             return;
         }
         this.scene.root.visible = true;
-        var _a = this, width = _a.width, height = _a.height, axes = _a.axes, legend = _a.legend;
+        var _a = this, width = _a.width, height = _a.height, axes = _a.axes, legend = _a.legend, navigator = _a.navigator;
         var shrinkRect = new BBox(0, 0, width, height);
         this.positionCaptions();
         this.positionLegend();
@@ -8121,6 +9108,10 @@ var CartesianChart = /** @class */ (function (_super) {
         shrinkRect.width -= padding.left + padding.right;
         shrinkRect.y += padding.top + captionAutoPadding;
         shrinkRect.height -= padding.top + captionAutoPadding + padding.bottom;
+        if (navigator.enabled) {
+            shrinkRect.height -= navigator.height + navigator.margin;
+        }
+        var bottomAxesHeight = 0;
         axes.forEach(function (axis) {
             axis.group.visible = true;
             var axisThickness = Math.floor(axis.computeBBox().width);
@@ -8138,6 +9129,7 @@ var CartesianChart = /** @class */ (function (_super) {
                     break;
                 case ChartAxisPosition.Bottom:
                     shrinkRect.height -= axisThickness;
+                    bottomAxesHeight += axisThickness;
                     axis.translation.y = Math.floor(shrinkRect.y + shrinkRect.height + 1);
                     break;
                 case ChartAxisPosition.Left:
@@ -8180,7 +9172,6 @@ var CartesianChart = /** @class */ (function (_super) {
                     axis.gridLength = shrinkRect.width;
                     break;
             }
-            // axis.tick.count = Math.abs(axis.range[1] - axis.range[0]) > 200 ? 10 : 5;
         });
         this.seriesRect = shrinkRect;
         this.series.forEach(function (series) {
@@ -8188,12 +9179,16 @@ var CartesianChart = /** @class */ (function (_super) {
             series.group.translationY = Math.floor(shrinkRect.y);
             series.update(); // this has to happen after the `updateAxes` call
         });
-        // When seriesRoot is a ClipRect:
-        // const { seriesRoot } = this;
-        // seriesRoot.x = shrinkRect.x;
-        // seriesRoot.y = shrinkRect.y;
-        // seriesRoot.width = shrinkRect.width;
-        // seriesRoot.height = shrinkRect.height;
+        var seriesRoot = this.seriesRoot;
+        seriesRoot.x = shrinkRect.x;
+        seriesRoot.y = shrinkRect.y;
+        seriesRoot.width = shrinkRect.width;
+        seriesRoot.height = shrinkRect.height;
+        if (navigator.enabled) {
+            navigator.x = shrinkRect.x;
+            navigator.y = shrinkRect.y + shrinkRect.height + bottomAxesHeight + navigator.margin;
+            navigator.width = shrinkRect.width;
+        }
         this.axes.forEach(function (axis) { return axis.update(); });
     };
     CartesianChart.prototype.initSeries = function (series) {
@@ -8203,6 +9198,22 @@ var CartesianChart = /** @class */ (function (_super) {
     CartesianChart.prototype.freeSeries = function (series) {
         _super.prototype.freeSeries.call(this, series);
         series.removeEventListener('dataProcessed', this.updateAxes, this);
+    };
+    CartesianChart.prototype.onMouseDown = function (event) {
+        _super.prototype.onMouseDown.call(this, event);
+        this.navigator.onMouseDown(event);
+    };
+    CartesianChart.prototype.onMouseMove = function (event) {
+        _super.prototype.onMouseMove.call(this, event);
+        this.navigator.onMouseMove(event);
+    };
+    CartesianChart.prototype.onMouseUp = function (event) {
+        _super.prototype.onMouseUp.call(this, event);
+        this.navigator.onMouseUp(event);
+    };
+    CartesianChart.prototype.onMouseOut = function (event) {
+        _super.prototype.onMouseOut.call(this, event);
+        this.navigator.onMouseUp(event);
     };
     CartesianChart.prototype.updateAxes = function () {
         this.axes.forEach(function (axis) {
@@ -8227,7 +9238,7 @@ var CartesianChart = /** @class */ (function (_super) {
     return CartesianChart;
 }(Chart));
 
-var __extends$q = (undefined && undefined.__extends) || (function () {
+var __extends$u = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -8241,7 +9252,7 @@ var __extends$q = (undefined && undefined.__extends) || (function () {
     };
 })();
 var GroupedCategoryChart = /** @class */ (function (_super) {
-    __extends$q(GroupedCategoryChart, _super);
+    __extends$u(GroupedCategoryChart, _super);
     function GroupedCategoryChart() {
         return _super !== null && _super.apply(this, arguments) || this;
     }
@@ -8408,7 +9419,7 @@ var palettes = (function () {
     return map;
 })();
 
-var __extends$r = (undefined && undefined.__extends) || (function () {
+var __extends$v = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -8422,7 +9433,7 @@ var __extends$r = (undefined && undefined.__extends) || (function () {
     };
 })();
 var PolarSeries = /** @class */ (function (_super) {
-    __extends$r(PolarSeries, _super);
+    __extends$v(PolarSeries, _super);
     function PolarSeries() {
         var _a;
         var _this = _super !== null && _super.apply(this, arguments) || this;
@@ -8449,14 +9460,14 @@ var PolarSeries = /** @class */ (function (_super) {
     return PolarSeries;
 }(Series));
 var PolarSeriesMarker = /** @class */ (function (_super) {
-    __extends$r(PolarSeriesMarker, _super);
+    __extends$v(PolarSeriesMarker, _super);
     function PolarSeriesMarker() {
         return _super !== null && _super.apply(this, arguments) || this;
     }
     return PolarSeriesMarker;
 }(SeriesMarker));
 
-var __extends$s = (undefined && undefined.__extends) || (function () {
+var __extends$w = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -8476,7 +9487,7 @@ var __decorate$5 = (undefined && undefined.__decorate) || function (decorators, 
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 var PolarChart = /** @class */ (function (_super) {
-    __extends$s(PolarChart, _super);
+    __extends$w(PolarChart, _super);
     function PolarChart(document) {
         if (document === void 0) { document = window.document; }
         var _this = _super.call(this, document) || this;
@@ -8611,7 +9622,7 @@ function equal(a, b) {
     return a !== a && b !== b;
 }
 
-var __extends$t = (undefined && undefined.__extends) || (function () {
+var __extends$x = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -8631,7 +9642,7 @@ var __decorate$6 = (undefined && undefined.__decorate) || function (decorators, 
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 var AreaSeries = /** @class */ (function (_super) {
-    __extends$t(AreaSeries, _super);
+    __extends$x(AreaSeries, _super);
     function AreaSeries() {
         var _this = _super.call(this) || this;
         _this.areaGroup = _this.group.appendChild(new Group);
@@ -9068,7 +10079,7 @@ var AreaSeries = /** @class */ (function (_super) {
     return AreaSeries;
 }(CartesianSeries));
 
-var __extends$u = (undefined && undefined.__extends) || (function () {
+var __extends$y = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -9088,7 +10099,7 @@ var __decorate$7 = (undefined && undefined.__decorate) || function (decorators, 
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 var Label = /** @class */ (function (_super) {
-    __extends$u(Label, _super);
+    __extends$y(Label, _super);
     function Label() {
         var _this = _super.call(this) || this;
         _this.enabled = true;
@@ -9118,7 +10129,7 @@ var Label = /** @class */ (function (_super) {
     return Label;
 }(Observable));
 
-var __extends$v = (undefined && undefined.__extends) || (function () {
+var __extends$z = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -9150,7 +10161,7 @@ var BarSeriesNodeTag;
     BarSeriesNodeTag[BarSeriesNodeTag["Label"] = 1] = "Label";
 })(BarSeriesNodeTag || (BarSeriesNodeTag = {}));
 var BarSeriesLabel = /** @class */ (function (_super) {
-    __extends$v(BarSeriesLabel, _super);
+    __extends$z(BarSeriesLabel, _super);
     function BarSeriesLabel() {
         return _super !== null && _super.apply(this, arguments) || this;
     }
@@ -9160,7 +10171,7 @@ var BarSeriesLabel = /** @class */ (function (_super) {
     return BarSeriesLabel;
 }(Label));
 var BarSeries = /** @class */ (function (_super) {
-    __extends$v(BarSeries, _super);
+    __extends$z(BarSeries, _super);
     function BarSeries() {
         var _a;
         var _this = _super.call(this) || this;
@@ -9885,7 +10896,7 @@ var ContinuousScale = /** @class */ (function () {
     return ContinuousScale;
 }());
 
-var __extends$w = (undefined && undefined.__extends) || (function () {
+var __extends$A = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -9905,7 +10916,7 @@ var __decorate$9 = (undefined && undefined.__decorate) || function (decorators, 
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 var LineSeries = /** @class */ (function (_super) {
-    __extends$w(LineSeries, _super);
+    __extends$A(LineSeries, _super);
     function LineSeries() {
         var _this = _super.call(this) || this;
         _this.xDomain = [];
@@ -10197,7 +11208,7 @@ var LineSeries = /** @class */ (function (_super) {
     return LineSeries;
 }(CartesianSeries));
 
-var __extends$x = (undefined && undefined.__extends) || (function () {
+var __extends$B = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -10244,7 +11255,7 @@ function tickIncrement(a, b, count) {
         : -Math.pow(10, -power) / (error >= e10 ? 10 : error >= e5 ? 5 : error >= e2 ? 2 : 1);
 }
 var NumericTicks = /** @class */ (function (_super) {
-    __extends$x(NumericTicks, _super);
+    __extends$B(NumericTicks, _super);
     function NumericTicks(fractionDigits, size) {
         if (size === void 0) { size = 0; }
         var _this = _super.call(this, size) || this;
@@ -10269,7 +11280,7 @@ function range(a, b, step) {
     return values;
 }
 
-var __extends$y = (undefined && undefined.__extends) || (function () {
+var __extends$C = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -10286,7 +11297,7 @@ var __extends$y = (undefined && undefined.__extends) || (function () {
  * Maps continuous domain to a continuous range.
  */
 var LinearScale = /** @class */ (function (_super) {
-    __extends$y(LinearScale, _super);
+    __extends$C(LinearScale, _super);
     function LinearScale() {
         return _super !== null && _super.apply(this, arguments) || this;
     }
@@ -10346,7 +11357,7 @@ function scaleLinear() {
     return new LinearScale();
 }
 
-var __extends$z = (undefined && undefined.__extends) || (function () {
+var __extends$D = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -10366,7 +11377,7 @@ var __decorate$a = (undefined && undefined.__decorate) || function (decorators, 
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 var ScatterSeries = /** @class */ (function (_super) {
-    __extends$z(ScatterSeries, _super);
+    __extends$D(ScatterSeries, _super);
     function ScatterSeries() {
         var _this = _super.call(this) || this;
         _this.xDomain = [];
@@ -10675,7 +11686,7 @@ var ScatterSeries = /** @class */ (function (_super) {
     return ScatterSeries;
 }(CartesianSeries));
 
-var __extends$A = (undefined && undefined.__extends) || (function () {
+var __extends$E = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -10707,7 +11718,7 @@ var HistogramSeriesNodeTag;
     HistogramSeriesNodeTag[HistogramSeriesNodeTag["Label"] = 1] = "Label";
 })(HistogramSeriesNodeTag || (HistogramSeriesNodeTag = {}));
 var HistogramSeriesLabel = /** @class */ (function (_super) {
-    __extends$A(HistogramSeriesLabel, _super);
+    __extends$E(HistogramSeriesLabel, _super);
     function HistogramSeriesLabel() {
         return _super !== null && _super.apply(this, arguments) || this;
     }
@@ -10763,7 +11774,7 @@ var HistogramBin = /** @class */ (function () {
     return HistogramBin;
 }());
 var HistogramSeries = /** @class */ (function (_super) {
-    __extends$A(HistogramSeries, _super);
+    __extends$E(HistogramSeries, _super);
     function HistogramSeries() {
         var _a;
         var _this = _super.call(this) || this;
@@ -11211,7 +12222,7 @@ var HistogramSeries = /** @class */ (function (_super) {
     return HistogramSeries;
 }(CartesianSeries));
 
-var __extends$B = (undefined && undefined.__extends) || (function () {
+var __extends$F = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -11225,7 +12236,7 @@ var __extends$B = (undefined && undefined.__extends) || (function () {
     };
 })();
 var Sector = /** @class */ (function (_super) {
-    __extends$B(Sector, _super);
+    __extends$F(Sector, _super);
     function Sector() {
         var _this = _super !== null && _super.apply(this, arguments) || this;
         _this.path = new Path2D();
@@ -11849,7 +12860,7 @@ var Color = /** @class */ (function () {
     return Color;
 }());
 
-var __extends$C = (undefined && undefined.__extends) || (function () {
+var __extends$G = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -11875,7 +12886,7 @@ var PieNodeTag;
     PieNodeTag[PieNodeTag["Label"] = 2] = "Label";
 })(PieNodeTag || (PieNodeTag = {}));
 var PieSeriesLabel = /** @class */ (function (_super) {
-    __extends$C(PieSeriesLabel, _super);
+    __extends$G(PieSeriesLabel, _super);
     function PieSeriesLabel() {
         var _this = _super !== null && _super.apply(this, arguments) || this;
         _this.offset = 3; // from the callout line
@@ -11891,7 +12902,7 @@ var PieSeriesLabel = /** @class */ (function (_super) {
     return PieSeriesLabel;
 }(Label));
 var PieSeriesCallout = /** @class */ (function (_super) {
-    __extends$C(PieSeriesCallout, _super);
+    __extends$G(PieSeriesCallout, _super);
     function PieSeriesCallout() {
         var _this = _super !== null && _super.apply(this, arguments) || this;
         _this.colors = borneo.strokes;
@@ -11911,7 +12922,7 @@ var PieSeriesCallout = /** @class */ (function (_super) {
     return PieSeriesCallout;
 }(Observable));
 var PieSeries = /** @class */ (function (_super) {
-    __extends$C(PieSeries, _super);
+    __extends$G(PieSeries, _super);
     function PieSeries() {
         var _this = _super.call(this) || this;
         _this.radiusScale = new LinearScale();
@@ -12300,7 +13311,7 @@ var PieSeries = /** @class */ (function (_super) {
     return PieSeries;
 }(PolarSeries));
 
-var __extends$D = (undefined && undefined.__extends) || (function () {
+var __extends$H = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -12320,7 +13331,7 @@ var __decorate$d = (undefined && undefined.__decorate) || function (decorators, 
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 var DropShadow = /** @class */ (function (_super) {
-    __extends$D(DropShadow, _super);
+    __extends$H(DropShadow, _super);
     function DropShadow() {
         var _this = _super !== null && _super.apply(this, arguments) || this;
         _this.enabled = true;
@@ -12348,7 +13359,7 @@ var DropShadow = /** @class */ (function (_super) {
     return DropShadow;
 }(Observable));
 
-var __extends$E = (undefined && undefined.__extends) || (function () {
+var __extends$I = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -12362,7 +13373,7 @@ var __extends$E = (undefined && undefined.__extends) || (function () {
     };
 })();
 var NumberAxis = /** @class */ (function (_super) {
-    __extends$E(NumberAxis, _super);
+    __extends$I(NumberAxis, _super);
     function NumberAxis() {
         var _this = _super.call(this, new LinearScale()) || this;
         _this._nice = true;
@@ -12448,7 +13459,7 @@ function convertToMap(list) {
     return map;
 }
 
-var __extends$F = (undefined && undefined.__extends) || (function () {
+var __extends$J = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -12573,7 +13584,7 @@ var TimeInterval = /** @class */ (function () {
     return TimeInterval;
 }());
 var CountableTimeInterval = /** @class */ (function (_super) {
-    __extends$F(CountableTimeInterval, _super);
+    __extends$J(CountableTimeInterval, _super);
     function CountableTimeInterval(floor, offset, count, field) {
         var _this = _super.call(this, floor, offset) || this;
         _this._count = count;
@@ -13447,7 +14458,7 @@ function setDefaultLocale(definition) {
     return locale = formatLocale(definition);
 }
 
-var __extends$G = (undefined && undefined.__extends) || (function () {
+var __extends$K = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -13461,7 +14472,7 @@ var __extends$G = (undefined && undefined.__extends) || (function () {
     };
 })();
 var TimeScale = /** @class */ (function (_super) {
-    __extends$G(TimeScale, _super);
+    __extends$K(TimeScale, _super);
     function TimeScale() {
         var _this = _super !== null && _super.apply(this, arguments) || this;
         _this.year = year;
@@ -13633,7 +14644,7 @@ var TimeScale = /** @class */ (function (_super) {
     return TimeScale;
 }(ContinuousScale));
 
-var __extends$H = (undefined && undefined.__extends) || (function () {
+var __extends$L = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
@@ -13647,7 +14658,7 @@ var __extends$H = (undefined && undefined.__extends) || (function () {
     };
 })();
 var TimeAxis = /** @class */ (function (_super) {
-    __extends$H(TimeAxis, _super);
+    __extends$L(TimeAxis, _super);
     function TimeAxis() {
         var _this = _super.call(this, new TimeScale()) || this;
         _this._nice = true;
@@ -13708,7 +14719,7 @@ var ChartBuilder = /** @class */ (function () {
     };
     ChartBuilder.createBarChart = function (container, options) {
         var chart = this.createCartesianChart(container, ChartBuilder.createAxis(options.xAxis, 'number'), ChartBuilder.createAxis(options.yAxis, 'category'), options.document);
-        ChartBuilder.initChart(chart, options);
+        ChartBuilder.initCartesianChart(chart, options);
         if (options.series) {
             chart.series = options.series.map(function (s) { return ChartBuilder.initBarSeries(new BarSeries(), s); });
         }
@@ -13716,7 +14727,7 @@ var ChartBuilder = /** @class */ (function () {
     };
     ChartBuilder.createGroupedBarChart = function (container, options) {
         var chart = this.createGroupedCategoryChart(container, ChartBuilder.createAxis(options.xAxis, 'number'), ChartBuilder.createGroupedCategoryAxis(options.yAxis), options.document);
-        ChartBuilder.initChart(chart, options);
+        ChartBuilder.initCartesianChart(chart, options);
         if (options.series) {
             chart.series = options.series.map(function (s) { return ChartBuilder.initBarSeries(new BarSeries(), s); });
         }
@@ -13724,7 +14735,7 @@ var ChartBuilder = /** @class */ (function () {
     };
     ChartBuilder.createColumnChart = function (container, options) {
         var chart = this.createCartesianChart(container, ChartBuilder.createAxis(options.xAxis, 'category'), ChartBuilder.createAxis(options.yAxis, 'number'), options.document);
-        ChartBuilder.initChart(chart, options);
+        ChartBuilder.initCartesianChart(chart, options);
         if (options.series) {
             chart.series = options.series.map(function (s) { return ChartBuilder.initBarSeries(new BarSeries(), s); });
         }
@@ -13732,7 +14743,7 @@ var ChartBuilder = /** @class */ (function () {
     };
     ChartBuilder.createGroupedColumnChart = function (container, options) {
         var chart = this.createGroupedCategoryChart(container, ChartBuilder.createGroupedCategoryAxis(options.xAxis), ChartBuilder.createAxis(options.yAxis, 'number'), options.document);
-        ChartBuilder.initChart(chart, options);
+        ChartBuilder.initCartesianChart(chart, options);
         if (options.series) {
             chart.series = options.series.map(function (s) { return ChartBuilder.initBarSeries(new BarSeries(), s); });
         }
@@ -13740,7 +14751,7 @@ var ChartBuilder = /** @class */ (function () {
     };
     ChartBuilder.createLineChart = function (container, options) {
         var chart = this.createCartesianChart(container, ChartBuilder.createAxis(options.xAxis, 'category'), ChartBuilder.createAxis(options.yAxis, 'number'), options.document);
-        ChartBuilder.initChart(chart, options);
+        ChartBuilder.initCartesianChart(chart, options);
         if (options.series) {
             chart.series = options.series.map(function (s) { return ChartBuilder.initLineSeries(new LineSeries(), s); });
         }
@@ -13748,7 +14759,7 @@ var ChartBuilder = /** @class */ (function () {
     };
     ChartBuilder.createGroupedLineChart = function (container, options) {
         var chart = this.createGroupedCategoryChart(container, ChartBuilder.createGroupedCategoryAxis(options.xAxis), ChartBuilder.createAxis(options.yAxis, 'number'), options.document);
-        ChartBuilder.initChart(chart, options);
+        ChartBuilder.initCartesianChart(chart, options);
         if (options.series) {
             chart.series = options.series.map(function (s) { return ChartBuilder.initLineSeries(new LineSeries(), s); });
         }
@@ -13756,7 +14767,7 @@ var ChartBuilder = /** @class */ (function () {
     };
     ChartBuilder.createScatterChart = function (container, options) {
         var chart = this.createCartesianChart(container, ChartBuilder.createAxis(options.xAxis, 'number'), ChartBuilder.createAxis(options.yAxis, 'number'), options.document);
-        ChartBuilder.initChart(chart, options);
+        ChartBuilder.initCartesianChart(chart, options);
         if (options.series) {
             chart.series = options.series.map(function (s) { return ChartBuilder.initScatterSeries(new ScatterSeries(), s); });
         }
@@ -13764,7 +14775,7 @@ var ChartBuilder = /** @class */ (function () {
     };
     ChartBuilder.createAreaChart = function (container, options) {
         var chart = this.createCartesianChart(container, ChartBuilder.createAxis(options.xAxis, 'category'), ChartBuilder.createAxis(options.yAxis, 'number'), options.document);
-        ChartBuilder.initChart(chart, options);
+        ChartBuilder.initCartesianChart(chart, options);
         if (options.series) {
             chart.series = options.series.map(function (s) { return ChartBuilder.initAreaSeries(new AreaSeries(), s); });
         }
@@ -13772,7 +14783,7 @@ var ChartBuilder = /** @class */ (function () {
     };
     ChartBuilder.createGroupedAreaChart = function (container, options) {
         var chart = this.createGroupedCategoryChart(container, ChartBuilder.createGroupedCategoryAxis(options.xAxis), ChartBuilder.createAxis(options.yAxis, 'number'), options.document);
-        ChartBuilder.initChart(chart, options);
+        ChartBuilder.initCartesianChart(chart, options);
         if (options.series) {
             chart.series = options.series.map(function (s) { return ChartBuilder.initAreaSeries(new AreaSeries(), s); });
         }
@@ -13780,7 +14791,7 @@ var ChartBuilder = /** @class */ (function () {
     };
     ChartBuilder.createHistogramChart = function (container, options) {
         var chart = this.createCartesianChart(container, ChartBuilder.createNumberAxis(options.xAxis), ChartBuilder.createNumberAxis(options.yAxis), options.document);
-        ChartBuilder.initChart(chart, options);
+        ChartBuilder.initCartesianChart(chart, options);
         return chart;
     };
     ChartBuilder.createPolarChart = function (container) {
@@ -13816,6 +14827,12 @@ var ChartBuilder = /** @class */ (function () {
             default:
                 return null;
         }
+    };
+    ChartBuilder.initCartesianChart = function (chart, options) {
+        if (options.navigator !== undefined) {
+            ChartBuilder.initNavigator(chart.navigator, options.navigator);
+        }
+        return this.initChart(chart, options);
     };
     ChartBuilder.initChart = function (chart, options) {
         this.setValueIfExists(chart, 'width', options.width);
@@ -14099,6 +15116,34 @@ var ChartBuilder = /** @class */ (function () {
             this.setValueIfExists(legend, 'layoutVerticalSpacing', item.paddingY);
         }
     };
+    ChartBuilder.initNavigator = function (navigator, options) {
+        this.setValueIfExists(navigator, 'enabled', options.enabled);
+        this.setValueIfExists(navigator, 'height', options.height);
+        this.setValueIfExists(navigator, 'min', options.min);
+        this.setValueIfExists(navigator, 'max', options.max);
+        this.initNavigatorMask(navigator.mask, options.mask);
+        this.initNavigatorHandle(navigator.minHandle, options.minHandle);
+        this.initNavigatorHandle(navigator.maxHandle, options.maxHandle);
+    };
+    ChartBuilder.initNavigatorMask = function (mask, options) {
+        if (options) {
+            this.setValueIfExists(mask, 'fill', options.fill);
+            this.setValueIfExists(mask, 'stroke', options.stroke);
+            this.setValueIfExists(mask, 'strokeWidth', options.strokeWidth);
+            this.setValueIfExists(mask, 'fillOpacity', options.fillOpacity);
+        }
+    };
+    ChartBuilder.initNavigatorHandle = function (handle, options) {
+        if (options) {
+            this.setValueIfExists(handle, 'fill', options.fill);
+            this.setValueIfExists(handle, 'stroke', options.stroke);
+            this.setValueIfExists(handle, 'strokeWidth', options.strokeWidth);
+            this.setValueIfExists(handle, 'width', options.width);
+            this.setValueIfExists(handle, 'height', options.height);
+            this.setValueIfExists(handle, 'gripLineGap', options.gripLineGap);
+            this.setValueIfExists(handle, 'gripLineLength', options.gripLineLength);
+        }
+    };
     ChartBuilder.initMarker = function (marker, options) {
         marker.shape = ChartBuilder.getMarkerByName(options.shape);
         this.setValueIfExists(marker, 'enabled', options.enabled);
@@ -14255,152 +15300,6 @@ var ChartBuilder = /** @class */ (function () {
     return ChartBuilder;
 }());
 
-var __extends$I = (undefined && undefined.__extends) || (function () {
-    var extendStatics = function (d, b) {
-        extendStatics = Object.setPrototypeOf ||
-            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
-        return extendStatics(d, b);
-    };
-    return function (d, b) {
-        extendStatics(d, b);
-        function __() { this.constructor = d; }
-        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-})();
-/**
- * Acts as `Group` node but with specified bounds that form a rectangle.
- * Any parts of the child nodes outside that rectangle will not be visible.
- * Unlike the `Group` node, the `ClipRect` node cannot be transformed.
- */
-var ClipRect = /** @class */ (function (_super) {
-    __extends$I(ClipRect, _super);
-    function ClipRect() {
-        var _this = _super !== null && _super.apply(this, arguments) || this;
-        _this.isContainerNode = true;
-        _this.path = new Path2D();
-        _this._active = true;
-        _this._dirtyPath = true;
-        _this._x = 0;
-        _this._y = 0;
-        _this._width = 10;
-        _this._height = 10;
-        return _this;
-    }
-    ClipRect.prototype.isPointInNode = function (x, y) {
-        var point = this.transformPoint(x, y);
-        return point.x >= this.x && point.x <= this.x + this.width
-            && point.y >= this.y && point.y <= this.y + this.height;
-    };
-    Object.defineProperty(ClipRect.prototype, "active", {
-        get: function () {
-            return this._active;
-        },
-        set: function (value) {
-            if (this._active !== value) {
-                this._active = value;
-                this.dirty = true;
-            }
-        },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(ClipRect.prototype, "dirtyPath", {
-        get: function () {
-            return this._dirtyPath;
-        },
-        set: function (value) {
-            if (this._dirtyPath !== value) {
-                this._dirtyPath = value;
-                if (value) {
-                    this.dirty = true;
-                }
-            }
-        },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(ClipRect.prototype, "x", {
-        get: function () {
-            return this._x;
-        },
-        set: function (value) {
-            if (this._x !== value) {
-                this._x = value;
-                this.dirtyPath = true;
-            }
-        },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(ClipRect.prototype, "y", {
-        get: function () {
-            return this._y;
-        },
-        set: function (value) {
-            if (this._y !== value) {
-                this._y = value;
-                this.dirtyPath = true;
-            }
-        },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(ClipRect.prototype, "width", {
-        get: function () {
-            return this._width;
-        },
-        set: function (value) {
-            if (this._width !== value) {
-                this._width = value;
-                this.dirtyPath = true;
-            }
-        },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(ClipRect.prototype, "height", {
-        get: function () {
-            return this._height;
-        },
-        set: function (value) {
-            if (this._height !== value) {
-                this._height = value;
-                this.dirtyPath = true;
-            }
-        },
-        enumerable: true,
-        configurable: true
-    });
-    ClipRect.prototype.updatePath = function () {
-        var path = this.path;
-        path.clear();
-        path.rect(this.x, this.y, this.width, this.height);
-        this.dirtyPath = false;
-    };
-    ClipRect.prototype.render = function (ctx) {
-        if (this.active) {
-            if (this.dirtyPath) {
-                this.updatePath();
-            }
-            this.scene.appendPath(this.path);
-            ctx.clip();
-        }
-        var children = this.children;
-        var n = children.length;
-        for (var i = 0; i < n; i++) {
-            ctx.save();
-            var child = children[i];
-            if (child.visible) {
-                child.render(ctx);
-            }
-            ctx.restore();
-        }
-    };
-    ClipRect.className = 'ClipRect';
-    return ClipRect;
-}(Node));
-
 function floor$9(date) {
     date.setUTCSeconds(0, 0);
 }
@@ -14550,6 +15449,7 @@ var chartMeta = {
 };
 var axisDefaults = {
     defaults: {
+        visibleRange: [0, 1],
         gridStyle: [{
                 stroke: 'rgba(219, 219, 219, 1)',
                 lineDash: [4, 2]
@@ -14664,9 +15564,9 @@ var mappings = (_a = {},
                         type: NumberAxis.type,
                         position: 'left'
                     }] }) }) }, commonChartMappings), { axes: (_b = {},
-            _b[NumberAxis.type] = __assign$2({ meta: __assign$2({ constructor: NumberAxis, setAsIs: ['gridStyle'] }, axisDefaults) }, axisMappings),
-            _b[CategoryAxis.type] = __assign$2({ meta: __assign$2({ constructor: CategoryAxis, setAsIs: ['gridStyle'] }, axisDefaults) }, axisMappings),
-            _b[TimeAxis.type] = __assign$2({ meta: __assign$2({ constructor: TimeAxis, setAsIs: ['gridStyle'] }, axisDefaults) }, axisMappings),
+            _b[NumberAxis.type] = __assign$2({ meta: __assign$2({ constructor: NumberAxis, setAsIs: ['gridStyle', 'visibleRange'] }, axisDefaults) }, axisMappings),
+            _b[CategoryAxis.type] = __assign$2({ meta: __assign$2({ constructor: CategoryAxis, setAsIs: ['gridStyle', 'visibleRange'] }, axisDefaults) }, axisMappings),
+            _b[TimeAxis.type] = __assign$2({ meta: __assign$2({ constructor: TimeAxis, setAsIs: ['gridStyle', 'visibleRange'] }, axisDefaults) }, axisMappings),
             _b), series: (_c = {},
             _c[LineSeries.type] = {
                 meta: {
@@ -14722,7 +15622,56 @@ var mappings = (_a = {},
                 },
                 highlightStyle: {}
             },
-            _c) }),
+            _c), navigator: {
+            meta: {
+                constructor: Navigator,
+                defaults: {
+                    enabled: false,
+                    height: 30,
+                    min: 0,
+                    max: 1
+                }
+            },
+            mask: {
+                meta: {
+                    constructor: NavigatorMask,
+                    defaults: {
+                        fill: '#999999',
+                        stroke: '#999999',
+                        strokeWidth: 1,
+                        fillOpacity: 0.2
+                    }
+                }
+            },
+            minHandle: {
+                meta: {
+                    constructor: NavigatorHandle,
+                    defaults: {
+                        fill: '#f2f2f2',
+                        stroke: '#999999',
+                        strokeWidth: 1,
+                        width: 8,
+                        height: 16,
+                        gripLineGap: 2,
+                        gripLineLength: 8
+                    }
+                }
+            },
+            maxHandle: {
+                meta: {
+                    constructor: NavigatorHandle,
+                    defaults: {
+                        fill: '#f2f2f2',
+                        stroke: '#999999',
+                        strokeWidth: 1,
+                        width: 8,
+                        height: 16,
+                        gripLineGap: 2,
+                        gripLineLength: 8
+                    }
+                }
+            }
+        } }),
     _a[PolarChart.type] = __assign$2(__assign$2({ meta: __assign$2(__assign$2({ constructor: PolarChart }, chartMeta), { defaults: __assign$2(__assign$2({}, chartDefaults), { padding: new Padding(40) }) }) }, commonChartMappings), { series: (_d = {},
             _d[PieSeries.type] = __assign$2({ meta: {
                     constructor: PieSeries,

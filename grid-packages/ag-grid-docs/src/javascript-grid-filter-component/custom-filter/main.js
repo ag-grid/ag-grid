@@ -1,13 +1,13 @@
 var columnDefs = [
-    { field: "athlete", minWidth: 150, filter: PersonFilter },
-    { field: "age", filter: 'agNumberColumnFilter' },
-    { field: "country", minWidth: 150 },
-    { field: "year", filter: YearFilter },
+    { field: 'athlete', minWidth: 150, filter: PersonFilter },
+    { field: 'age', filter: 'agNumberColumnFilter' },
+    { field: 'country', minWidth: 150 },
+    { field: 'year', filter: YearFilter },
     {
-        field: "date", minWidth: 130, filter: 'agDateColumnFilter', filterParams: {
+        field: 'date', minWidth: 130, filter: 'agDateColumnFilter', filterParams: {
             comparator: function(filterLocalDateAtMidnight, cellValue) {
                 var dateAsString = cellValue;
-                var dateParts = dateAsString.split("/");
+                var dateParts = dateAsString.split('/');
                 var cellDate = new Date(Number(dateParts[2]), Number(dateParts[1]) - 1, Number(dateParts[0]));
 
                 if (filterLocalDateAtMidnight.getTime() == cellDate.getTime()) {
@@ -24,11 +24,11 @@ var columnDefs = [
             }
         }
     },
-    { field: "sport" },
-    { field: "gold", filter: 'agNumberColumnFilter' },
-    { field: "silver", filter: 'agNumberColumnFilter' },
-    { field: "bronze", filter: 'agNumberColumnFilter' },
-    { field: "total", filter: 'agNumberColumnFilter' }
+    { field: 'sport' },
+    { field: 'gold', filter: 'agNumberColumnFilter' },
+    { field: 'silver', filter: 'agNumberColumnFilter' },
+    { field: 'bronze', filter: 'agNumberColumnFilter' },
+    { field: 'total', filter: 'agNumberColumnFilter' }
 ];
 
 var gridOptions = {
@@ -90,8 +90,10 @@ PersonFilter.prototype.doesFilterPass = function(params) {
     // make sure each word passes separately, ie search for firstname, lastname
     var passed = true;
     var valueGetter = this.valueGetter;
-    this.filterText.toLowerCase().split(" ").forEach(function(filterWord) {
+
+    this.filterText.toLowerCase().split(' ').forEach(function(filterWord) {
         var value = valueGetter(params);
+
         if (value.toString().toLowerCase().indexOf(filterWord) < 0) {
             passed = false;
         }
@@ -101,12 +103,11 @@ PersonFilter.prototype.doesFilterPass = function(params) {
 };
 
 PersonFilter.prototype.isFilterActive = function() {
-    return this.filterText !== null && this.filterText !== undefined && this.filterText !== '';
+    return this.filterText != null && this.filterText !== '';
 };
 
 PersonFilter.prototype.getModel = function() {
-    var model = { value: this.filterText.value };
-    return model;
+    return { value: this.filterText.value };
 };
 
 PersonFilter.prototype.setModel = function(model) {
@@ -156,19 +157,11 @@ YearFilter.prototype.isFilterActive = function() {
     return this.filterActive;
 };
 
-YearFilter.prototype.getModel = function() {
-    var model = { value: this.rbSince2010.checked };
-    return model;
-};
-
-YearFilter.prototype.setModel = function(model) {
-    this.rbSince2010.checked = model.value;
-};
-
 // this example isn't using getModel() and setModel(),
 // so safe to just leave these empty. don't do this in your code!!!
 YearFilter.prototype.getModel = function() {
 };
+
 YearFilter.prototype.setModel = function() {
 };
 

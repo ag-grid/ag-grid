@@ -3,19 +3,19 @@ const typescriptSimple = require('typescript-simple');
 const fs = require('fs');
 
 // satisfy ag-grid HTMLElement dependencies
-HTMLElement = typeof HTMLElement === 'undefined' ? function () {
+HTMLElement = typeof HTMLElement === 'undefined' ? function() {
 } : HTMLElement;
-HTMLSelectElement = typeof HTMLSelectElement === 'undefined' ? function () {
+HTMLSelectElement = typeof HTMLSelectElement === 'undefined' ? function() {
 } : HTMLSelectElement;
-HTMLInputElement = typeof HTMLInputElement === 'undefined' ? function () {
+HTMLInputElement = typeof HTMLInputElement === 'undefined' ? function() {
 } : HTMLInputElement;
-HTMLButtonElement = typeof HTMLButtonElement === 'undefined' ? function () {
+HTMLButtonElement = typeof HTMLButtonElement === 'undefined' ? function() {
 } : HTMLButtonElement;
-MouseEvent = typeof MouseEvent === 'undefined' ? function () {
+MouseEvent = typeof MouseEvent === 'undefined' ? function() {
 } : MouseEvent;
 
 function getGridPropertiesAndEventsJs() {
-    const {ComponentUtil} = require("@ag-grid-community/core");
+    const { ComponentUtil } = require("@ag-grid-community/core");
 
     let result = '';
 
@@ -38,7 +38,7 @@ function getGridPropertiesAndEventsJs() {
 }
 
 function getGridColumnPropertiesJs() {
-    const {ColDefUtil} = require("@ag-grid-community/core");
+    const { ColDefUtil } = require("@ag-grid-community/core");
 
     // colDef properties that dont make sense in an angular context (or are private)
     const skippableProperties = ['template',
@@ -66,7 +66,7 @@ function getGridColumnPropertiesJs() {
 
 function getJavascript(filename) {
     const src = fs.readFileSync(filename, 'utf8');
-    return typescriptSimple(src, {module: 'commonjs'});
+    return typescriptSimple(src, { module: 'commonjs' });
 }
 
 function getGridPropertiesAndEventsTs() {
@@ -174,34 +174,21 @@ const updateColProperties = (resolve, getGridColumnProperties) => {
 
 module.exports = {
     updatePropertiesBuilt: (cb) => {
-        const gridPromise = new Promise((resolve) => {
-            updateGridProperties(resolve, getGridPropertiesAndEventsJs);
-        });
-        const colPromise = new Promise((resolve) => {
-            updateColProperties(resolve, getGridColumnPropertiesJs);
-        });
+        const gridPromise = new Promise(resolve => updateGridProperties(resolve, getGridPropertiesAndEventsJs));
+        const colPromise = new Promise(resolve => updateColProperties(resolve, getGridColumnPropertiesJs));
 
         if (cb) {
-            Promise.all([gridPromise, colPromise]).then(() => {
-                cb();
-            });
+            Promise.all([gridPromise, colPromise]).then(() => cb());
         }
     },
     updatePropertiesSrc: (cb) => {
-        const gridPromise = new Promise((resolve) => {
-            updateGridProperties(resolve, getGridPropertiesAndEventsTs);
-        });
-        const colPromise = new Promise((resolve) => {
-            updateColProperties(resolve, getGridColumnPropertiesTs);
-        });
+        const gridPromise = new Promise(resolve => updateGridProperties(resolve, getGridPropertiesAndEventsTs));
+        const colPromise = new Promise(resolve => updateColProperties(resolve, getGridColumnPropertiesTs));
 
         if (cb) {
-            Promise.all([gridPromise, colPromise]).then(() => {
-                cb();
-            });
+            Promise.all([gridPromise, colPromise]).then(() => cb());
         }
     }
 };
-
 
 // module.exports.updatePropertiesSrc = updatePropertiesSrc;

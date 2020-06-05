@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v23.1.1
+ * @version v23.2.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -41,7 +41,7 @@ var AgList = /** @class */ (function (_super) {
         return _this;
     }
     AgList.prototype.init = function () {
-        this.addDestroyableEventListener(this.getGui(), 'keydown', this.handleKeyDown.bind(this));
+        this.addManagedListener(this.getGui(), 'keydown', this.handleKeyDown.bind(this));
     };
     AgList.getTemplate = function (cssIdentifier) {
         return "<div class=\"ag-list ag-" + cssIdentifier + "-list\"></div>";
@@ -97,9 +97,9 @@ var AgList = /** @class */ (function (_super) {
         itemEl.tabIndex = -1;
         itemContentEl.innerHTML = innerText;
         this.itemEls.push(itemEl);
-        this.addDestroyableEventListener(itemEl, 'mouseover', function (e) { return _this.highlightItem(itemEl); });
-        this.addDestroyableEventListener(itemEl, 'mouseleave', function () { return _this.clearHighlighted(); });
-        this.addDestroyableEventListener(itemEl, 'click', function () {
+        this.addManagedListener(itemEl, 'mouseover', function (e) { return _this.highlightItem(itemEl); });
+        this.addManagedListener(itemEl, 'mouseleave', function () { return _this.clearHighlighted(); });
+        this.addManagedListener(itemEl, 'click', function () {
             var idx = _this.itemEls.indexOf(itemEl);
             _this.setValueByIndex(idx);
         });

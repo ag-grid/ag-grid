@@ -125,6 +125,7 @@ var Axis = /** @class */ (function () {
         this.label = new AxisLabel();
         this.translation = { x: 0, y: 0 };
         this.rotation = 0; // axis rotation angle in degrees
+        this._visibleRange = [0, 1];
         this._title = undefined;
         /**
          * The length of the grid. The grid is only visible in case of a non-zero value.
@@ -149,28 +150,55 @@ var Axis = /** @class */ (function () {
          */
         this._radialGrid = false;
         this.scale = scale;
+        this.requestedRange = scale.range.slice();
         this.groupSelection = selection_1.Selection.select(this.group).selectAll();
         this.label.onFormatChange = this.onTickFormatChange.bind(this);
         this.group.append(this.lineNode);
         this.onTickFormatChange();
         // this.group.append(this.bboxRect); // debug (bbox)
     }
+    Axis.prototype.updateRange = function () {
+        var _a = this, rr = _a.requestedRange, vr = _a.visibleRange, scale = _a.scale;
+        var span = (rr[1] - rr[0]) / (vr[1] - vr[0]);
+        var shift = span * vr[0];
+        var start = rr[0] - shift;
+        scale.range = [start, start + span];
+    };
     Object.defineProperty(Axis.prototype, "range", {
         get: function () {
-            return this.scale.range;
+            return this.requestedRange.slice();
         },
         set: function (value) {
-            this.scale.range = value;
+            this.requestedRange = value.slice();
+            this.updateRange();
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(Axis.prototype, "visibleRange", {
+        get: function () {
+            return this._visibleRange.slice();
+        },
+        set: function (value) {
+            if (value && value.length === 2) {
+                var min = value[0], max = value[1];
+                min = Math.max(0, min);
+                max = Math.min(1, max);
+                min = Math.min(min, max);
+                max = Math.max(min, max);
+                this._visibleRange = [min, max];
+                this.updateRange();
+            }
         },
         enumerable: true,
         configurable: true
     });
     Object.defineProperty(Axis.prototype, "domain", {
         get: function () {
-            return this.scale.domain;
+            return this.scale.domain.slice();
         },
         set: function (value) {
-            this.scale.domain = value;
+            this.scale.domain = value.slice();
         },
         enumerable: true,
         configurable: true
@@ -252,7 +280,9 @@ var Axis = /** @class */ (function () {
      */
     Axis.prototype.update = function () {
         var _this = this;
-        var _a = this, group = _a.group, scale = _a.scale, tick = _a.tick, label = _a.label, gridStyle = _a.gridStyle;
+        var _a = this, group = _a.group, scale = _a.scale, tick = _a.tick, label = _a.label, gridStyle = _a.gridStyle, requestedRange = _a.requestedRange;
+        var requestedRangeMin = Math.min(requestedRange[0], requestedRange[1]);
+        var requestedRangeMax = Math.max(requestedRange[0], requestedRange[1]);
         var rotation = angle_1.toRadians(this.rotation);
         var parallelLabels = label.parallel;
         var labelRotation = angle_1.normalizeAngle360(angle_1.toRadians(label.rotation));
@@ -296,7 +326,12 @@ var Axis = /** @class */ (function () {
         enter.append(text_1.Text);
         var groupSelection = update.merge(enter);
         groupSelection
-            .attrFn('translationY', function (_, datum) { return Math.round(scale.convert(datum) + halfBandwidth); });
+            .attrFn('translationY', function (_, datum) {
+            return Math.round(scale.convert(datum) + halfBandwidth);
+        })
+            .attrFn('visible', function (node) {
+            return node.translationY >= requestedRangeMin && node.translationY <= requestedRangeMax;
+        });
         groupSelection.selectByTag(Tags.Tick)
             .each(function (line) {
             line.strokeWidth = tick.width;
@@ -384,8 +419,8 @@ var Axis = /** @class */ (function () {
         var lineNode = this.lineNode;
         lineNode.x1 = 0;
         lineNode.x2 = 0;
-        lineNode.y1 = scale.range[0];
-        lineNode.y2 = scale.range[scale.range.length - 1];
+        lineNode.y1 = requestedRange[0];
+        lineNode.y2 = requestedRange[1];
         lineNode.strokeWidth = this.line.width;
         lineNode.stroke = this.line.color;
         lineNode.visible = ticks.length > 0;
@@ -399,6 +434,7 @@ var Axis = /** @class */ (function () {
             var titleRotationFlag = sideFlag === -1 && parallelFlipRotation > Math.PI && parallelFlipRotation < Math.PI * 2 ? -1 : 1;
             titleNode.rotation = titleRotationFlag * sideFlag * Math.PI / 2;
             titleNode.x = titleRotationFlag * sideFlag * (lineNode.y1 + lineNode.y2) / 2;
+            titleNode.x = titleRotationFlag * sideFlag * (requestedRange[0] + requestedRange[1]) / 2;
             if (sideFlag === -1) {
                 titleNode.y = titleRotationFlag * (-padding - bbox.width + Math.max(bbox.x + bbox.width, 0));
             }

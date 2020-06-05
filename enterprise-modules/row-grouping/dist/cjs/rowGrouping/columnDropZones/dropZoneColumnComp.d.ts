@@ -1,4 +1,4 @@
-import { PopupService, Component, ColumnController, EventService, DragAndDropService, GridOptionsWrapper, DropTarget, Column, AgEvent, IAggFuncService } from "@ag-grid-community/core";
+import { PopupService, Component, ColumnController, DragAndDropService, GridOptionsWrapper, DropTarget, Column, AgEvent, IAggFuncService } from "@ag-grid-community/core";
 export interface ColumnRemoveEvent extends AgEvent {
 }
 export declare class DropZoneColumnComp extends Component {
@@ -14,7 +14,6 @@ export declare class DropZoneColumnComp extends Component {
     popupService: PopupService;
     aggFuncService: IAggFuncService;
     gridOptionsWrapper: GridOptionsWrapper;
-    eventService: EventService;
     private columnApi;
     private gridApi;
     private eText;

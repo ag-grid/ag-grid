@@ -1,23 +1,24 @@
-// Type definitions for @ag-grid-community/core v23.1.1
+// Type definitions for @ag-grid-community/core v23.2.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { ColGroupDef } from "../../entities/colDef";
-import { Component } from "../../widgets/component";
 import { ColumnGroup } from "../../entities/columnGroup";
 import { DragItem, DropTarget } from "../../dragAndDrop/dragAndDropService";
-export declare class HeaderGroupWrapperComp extends Component {
+import { AbstractHeaderWrapper } from "../header/abstractHeaderWrapper";
+import { Beans } from "../../rendering/beans";
+export declare class HeaderGroupWrapperComp extends AbstractHeaderWrapper {
     private static TEMPLATE;
     private gridOptionsWrapper;
     private columnController;
     private horizontalResizeService;
     private dragAndDropService;
     private userComponentFactory;
+    protected beans: Beans;
     private gridApi;
     private columnApi;
-    private beans;
-    private readonly columnGroup;
     private readonly dragSourceDropTarget;
-    private readonly pinned;
+    protected readonly column: ColumnGroup;
+    protected readonly pinned: string;
     private eHeaderCellResize;
     private resizeCols;
     private resizeStartWidth;
@@ -25,11 +26,12 @@ export declare class HeaderGroupWrapperComp extends Component {
     private resizeTakeFromCols;
     private resizeTakeFromStartWidth;
     private resizeTakeFromRatios;
-    private childColumnsDestroyFuncs;
+    private removeChildListenersFuncs;
     constructor(columnGroup: ColumnGroup, dragSourceDropTarget: DropTarget, pinned: string);
-    private postConstruct;
+    protected postConstruct(): void;
+    protected onFocusIn(e: FocusEvent): void;
+    protected handleKeyDown(e: KeyboardEvent): void;
     private setupMovingCss;
-    getColumn(): ColumnGroup;
     getComponentHolder(): ColGroupDef;
     getTooltipText(): string | undefined;
     private setupTooltip;
@@ -44,7 +46,7 @@ export declare class HeaderGroupWrapperComp extends Component {
     private setupWidth;
     private onDisplayedChildrenChanged;
     private addListenersToChildrenColumns;
-    private destroyListenersOnChildrenColumns;
+    private removeListenersOnChildrenColumns;
     private onWidthChanged;
     private setupResize;
     onResizeStart(shiftKey: boolean): void;

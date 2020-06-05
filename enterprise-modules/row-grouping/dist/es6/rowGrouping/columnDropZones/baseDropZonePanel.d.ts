@@ -34,7 +34,7 @@ export declare abstract class BaseDropZonePanel extends Component {
     constructor(horizontal: boolean, valueColumn: boolean);
     isHorizontal(): boolean;
     setBeans(beans: BaseDropZonePanelBeans): void;
-    destroy(): void;
+    protected destroy(): void;
     private destroyGui;
     init(params: BaseDropZonePanelParams): void;
     private addElementClasses;

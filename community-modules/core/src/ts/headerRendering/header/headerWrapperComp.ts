@@ -1,6 +1,5 @@
 import { AgCheckbox } from "../../widgets/agCheckbox";
-import { Autowired, PostConstruct } from "../../context/context";
-import { Component } from "../../widgets/component";
+import { Autowired } from "../../context/context";
 import { Beans } from "../../rendering/beans";
 import { Column } from "../../entities/column";
 import {
@@ -14,8 +13,7 @@ import { ColumnController } from "../../columnController/columnController";
 import { ColumnHoverService } from "../../rendering/columnHoverService";
 import { CssClassApplier } from "../cssClassApplier";
 import { Events } from "../../events";
-import { EventService } from "../../eventService";
-import { IHeaderComp, IHeaderParams, IHeader } from "./headerComp";
+import { IHeaderComp, IHeaderParams, HeaderComp } from "./headerComp";
 import { IMenuFactory } from "../../interfaces/iMenuFactory";
 import { GridApi } from "../../gridApi";
 import { GridOptionsWrapper } from "../../gridOptionsWrapper";
@@ -28,16 +26,17 @@ import { RefSelector } from "../../widgets/componentAnnotations";
 import { TouchListener } from "../../widgets/touchListener";
 import { TooltipFeature } from "../../widgets/tooltipFeature";
 import { UserComponentFactory } from "../../components/framework/userComponentFactory";
+import { AbstractHeaderWrapper } from "./abstractHeaderWrapper";
+import { HeaderRowComp } from "../headerRowComp";
 import { _ } from "../../utils";
 
-export class HeaderWrapperComp extends Component {
+export class HeaderWrapperComp extends AbstractHeaderWrapper {
 
-    private static TEMPLATE =
-        '<div class="ag-header-cell" role="presentation" unselectable="on">' +
-        '  <div ref="eResize" class="ag-header-cell-resize" role="presentation"></div>' +
-        '  <ag-checkbox ref="cbSelectAll" class="ag-header-select-all" role="presentation"></ag-checkbox>' +
-        // <inner component goes here>
-        '</div>';
+    private static TEMPLATE = /* html */
+        `<div class="ag-header-cell" role="presentation" unselectable="on" tabindex="-1">
+            <div ref="eResize" class="ag-header-cell-resize" role="presentation"></div>
+            <ag-checkbox ref="cbSelectAll" class="ag-header-select-all" role="presentation"></ag-checkbox>
+        </div>`;
 
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('dragAndDropService') private dragAndDropService: DragAndDropService;
@@ -47,22 +46,22 @@ export class HeaderWrapperComp extends Component {
     @Autowired('gridApi') private gridApi: GridApi;
     @Autowired('columnApi') private columnApi: ColumnApi;
     @Autowired('sortController') private sortController: SortController;
-    @Autowired('eventService') private eventService: EventService;
     @Autowired('userComponentFactory') private userComponentFactory: UserComponentFactory;
     @Autowired('columnHoverService') private columnHoverService: ColumnHoverService;
-    @Autowired('beans') private beans: Beans;
+    @Autowired('beans') protected beans: Beans;
 
     @RefSelector('eResize') private eResize: HTMLElement;
     @RefSelector('cbSelectAll') private cbSelectAll: AgCheckbox;
 
-    private headerComp: IHeaderComp;
-
-    private readonly column: Column;
     private readonly dragSourceDropTarget: DropTarget;
-    private readonly pinned: string;
+    protected readonly column: Column;
+    protected readonly pinned: string;
 
+    private headerComp: IHeaderComp;
     private resizeStartWidth: number;
     private resizeWithShiftKey: boolean;
+    private sortable: boolean;
+    private menuEnabled: boolean;
 
     constructor(column: Column, dragSourceDropTarget: DropTarget, pinned: string) {
         super(HeaderWrapperComp.TEMPLATE);
@@ -71,24 +70,15 @@ export class HeaderWrapperComp extends Component {
         this.pinned = pinned;
     }
 
-    public getColumn(): Column {
-        return this.column;
-    }
-
-    public getComponentHolder(): ColDef {
-        return this.column.getColDef();
-    }
-
-    @PostConstruct
-    public init(): void {
+    protected postConstruct(): void {
+        super.postConstruct();
 
         const colDef = this.getComponentHolder();
         const displayName = this.columnController.getDisplayNameForColumn(this.column, 'header', true);
         const enableSorting = colDef.sortable;
-        const enableMenu = this.menuFactory.isMenuEnabled(this.column) && !colDef.suppressMenu;
+        const enableMenu = this.menuEnabled = this.menuFactory.isMenuEnabled(this.column) && !colDef.suppressMenu;
 
         this.appendHeaderComp(displayName, enableSorting, enableMenu);
-
         this.setupWidth();
         this.setupMovingCss();
         this.setupTooltip();
@@ -96,25 +86,89 @@ export class HeaderWrapperComp extends Component {
         this.setupMenuClass();
         this.setupSortableClass(enableSorting);
         this.addColumnHoverListener();
-        this.addMouseListeners();
+        this.addDisplayMenuListeners();
+        this.cbSelectAll.setInputAriaLabel('Toggle Selection of All Rows');
 
-        this.addFeature(new HoverFeature([this.column], this.getGui()));
+        this.createManagedBean(new HoverFeature([this.column], this.getGui()));
 
-        this.addDestroyableEventListener(this.column, Column.EVENT_FILTER_ACTIVE_CHANGED, this.onFilterChanged.bind(this));
+        this.addManagedListener(this.column, Column.EVENT_FILTER_ACTIVE_CHANGED, this.onFilterChanged.bind(this));
         this.onFilterChanged();
 
-        this.addFeature(new SelectAllFeature(this.cbSelectAll, this.column));
+        this.createManagedBean(new SelectAllFeature(this.cbSelectAll, this.column));
 
         const setLeftFeature = new SetLeftFeature(this.column, this.getGui(), this.beans);
-        setLeftFeature.init();
-        this.addDestroyFunc(setLeftFeature.destroy.bind(setLeftFeature));
+        this.createManagedBean(setLeftFeature);
 
         this.addAttributes();
         CssClassApplier.addHeaderClassesFromColDef(colDef, this.getGui(), this.gridOptionsWrapper, this.column, null);
     }
 
+    private addDisplayMenuListeners(): void {
+        const mouseListener = this.onMouseOverOut.bind(this);
+        this.addGuiEventListener('mouseenter', mouseListener);
+        this.addGuiEventListener('mouseleave', mouseListener);
+    }
+
+    private onMouseOverOut(e: MouseEvent): void {
+        if (this.headerComp && this.headerComp.setActiveParent) {
+            this.headerComp.setActiveParent(e.type === 'mouseenter');
+        }
+    }
+
+    protected onFocusIn(e: FocusEvent) {
+        if (!this.getGui().contains(e.relatedTarget as HTMLElement)) {
+            const headerRow = this.getParentComponent() as HeaderRowComp;
+            this.focusController.setFocusedHeader(
+                headerRow.getRowIndex(),
+                this.getColumn()
+            );
+        }
+
+        if (this.headerComp && this.headerComp.setActiveParent) {
+            this.headerComp.setActiveParent(true);
+        }
+    }
+
+    protected onFocusOut(e: FocusEvent) {
+        if (
+            !this.headerComp ||
+            !this.headerComp.setActiveParent ||
+            this.getGui().contains(e.relatedTarget as HTMLElement)
+        ) { return; }
+
+        this.headerComp.setActiveParent(false);
+    }
+
+    protected handleKeyDown(e: KeyboardEvent): void {
+        const headerComp = this.headerComp as HeaderComp;
+        if (!headerComp) { return; }
+
+        if (e.keyCode === Constants.KEY_SPACE) {
+            const checkbox = this.cbSelectAll;
+            if (checkbox.isDisplayed() && !checkbox.getGui().contains(document.activeElement)) {
+                checkbox.setValue(!checkbox.getValue());
+            }
+        }
+
+        if (e.keyCode === Constants.KEY_ENTER) {
+            if (e.ctrlKey || e.metaKey) {
+                if (this.menuEnabled && headerComp.showMenu) {
+                    e.preventDefault();
+                    headerComp.showMenu();
+                }
+            } else if (this.sortable) {
+                const multiSort = e.shiftKey;
+                this.sortController.progressSort(this.column, multiSort, "uiColumnSorted");
+            }
+        }
+    }
+
+    public getComponentHolder(): ColDef {
+        return this.column.getColDef();
+    }
+
     private addColumnHoverListener(): void {
-        this.addDestroyableEventListener(this.eventService, Events.EVENT_COLUMN_HOVER_CHANGED, this.onColumnHover.bind(this));
+        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_HOVER_CHANGED, this.onColumnHover.bind(this));
         this.onColumnHover();
     }
 
@@ -123,23 +177,12 @@ export class HeaderWrapperComp extends Component {
         _.addOrRemoveCssClass(this.getGui(), 'ag-column-hover', isHovered);
     }
 
-    private addMouseListeners(): void {
-        const listener = this.onMouseOverOut.bind(this);
-        this.addGuiEventListener("mouseenter", listener);
-        this.addGuiEventListener("mouseleave", listener);
-    }
-
-    private onMouseOverOut(e: MouseEvent): void {
-        if (this.headerComp && this.headerComp.setMouseOverParent) {
-            this.headerComp.setMouseOverParent(e.type === "mouseenter");
-        }
-    }
-
     private setupSortableClass(enableSorting: boolean): void {
-        if (enableSorting) {
-            const element = this.getGui();
-            _.addCssClass(element, 'ag-header-cell-sortable');
-        }
+        if (!enableSorting) { return; }
+
+        const element = this.getGui();
+        _.addCssClass(element, 'ag-header-cell-sortable');
+        this.sortable = true;
     }
 
     private onFilterChanged(): void {
@@ -173,7 +216,11 @@ export class HeaderWrapperComp extends Component {
     }
 
     private afterHeaderCompCreated(displayName: string, headerComp: IHeaderComp): void {
-        this.appendChild(headerComp);
+        this.getGui().appendChild(headerComp.getGui());
+        this.addDestroyFunc(() => {
+            this.getContext().destroyBean(headerComp);
+        });
+
         this.setupMove(headerComp.getGui(), displayName);
         this.headerComp = headerComp;
     }
@@ -252,13 +299,13 @@ export class HeaderWrapperComp extends Component {
         const skipHeaderOnAutoSize = this.gridOptionsWrapper.isSkipHeaderOnAutoSize();
 
         if (weWantAutoSize) {
-            this.addDestroyableEventListener(this.eResize, 'dblclick', () => {
+            this.addManagedListener(this.eResize, 'dblclick', () => {
                 this.columnController.autoSizeColumn(this.column, skipHeaderOnAutoSize, "uiColumnResized");
             });
 
             const touchListener: TouchListener = new TouchListener(this.eResize);
 
-            this.addDestroyableEventListener(touchListener, TouchListener.EVENT_DOUBLE_TAP, () => {
+            this.addManagedListener(touchListener, TouchListener.EVENT_DOUBLE_TAP, () => {
                 this.columnController.autoSizeColumn(this.column, skipHeaderOnAutoSize, "uiColumnResized");
             });
 
@@ -298,12 +345,12 @@ export class HeaderWrapperComp extends Component {
         if (this.gridOptionsWrapper.isEnableBrowserTooltips()) {
             this.getGui().setAttribute('title', tooltipText);
         } else {
-            this.addFeature(new TooltipFeature(this, 'header'));
+            this.createManagedBean(new TooltipFeature(this, 'header'));
         }
     }
 
     private setupMovingCss(): void {
-        this.addDestroyableEventListener(this.column, Column.EVENT_MOVING_CHANGED, this.onColumnMovingChanged.bind(this));
+        this.addManagedListener(this.column, Column.EVENT_MOVING_CHANGED, this.onColumnMovingChanged.bind(this));
         this.onColumnMovingChanged();
     }
 
@@ -312,12 +359,12 @@ export class HeaderWrapperComp extends Component {
     }
 
     private setupWidth(): void {
-        this.addDestroyableEventListener(this.column, Column.EVENT_WIDTH_CHANGED, this.onColumnWidthChanged.bind(this));
+        this.addManagedListener(this.column, Column.EVENT_WIDTH_CHANGED, this.onColumnWidthChanged.bind(this));
         this.onColumnWidthChanged();
     }
 
     private setupMenuClass(): void {
-        this.addDestroyableEventListener(this.column, Column.EVENT_MENU_VISIBLE_CHANGED, this.onMenuVisible.bind(this));
+        this.addManagedListener(this.column, Column.EVENT_MENU_VISIBLE_CHANGED, this.onMenuVisible.bind(this));
         this.onColumnWidthChanged();
     }
 

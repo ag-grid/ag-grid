@@ -1,10 +1,15 @@
 var gridOptions = {
     columnDefs: [
-        { field: 'athlete', type: 'text', minWidth: 220 },
-        { field: 'year',
+        {
+            field: 'athlete',
+            filter: 'agTextColumnFilter',
+            minWidth: 220
+        },
+        {
+            field: 'year',
             filter: 'agNumberColumnFilter',
             filterParams: {
-                resetButton: true,
+                buttons: ['reset'],
                 debounceMs: 1000,
                 suppressAndOrCondition: true,
             }
@@ -21,15 +26,7 @@ var gridOptions = {
         menuTabs: ['filterMenuTab']
     },
     columnTypes: {
-        'text': {filter: 'agTextColumnFilter'},
-        'number': {filter: 'agNumberColumnFilter'},
-        'numberWithFilterReset': {
-            filter: 'agNumberColumnFilter',
-            filterParams: {
-                resetButton: true,
-                debounceMs: 1500
-            }
-        }
+        'number': { filter: 'agNumberColumnFilter' },
     },
     // use the server-side row model
     rowModelType: 'serverSide',
@@ -47,7 +44,7 @@ function ServerSideDatasource(server) {
             var response = server.getData(params.request);
 
             // simulating real server call with a 500ms delay
-            setTimeout(function () {
+            setTimeout(function() {
                 if (response.success) {
                     // supply rows for requested block to grid
                     params.successCallback(response.rows, response.lastRow);
@@ -60,11 +57,11 @@ function ServerSideDatasource(server) {
 }
 
 // setup the grid after the page has finished loading
-document.addEventListener('DOMContentLoaded', function () {
+document.addEventListener('DOMContentLoaded', function() {
     var gridDiv = document.querySelector('#myGrid');
     new agGrid.Grid(gridDiv, gridOptions);
 
-    agGrid.simpleHttpRequest({url: 'https://raw.githubusercontent.com/ag-grid/ag-grid/master/grid-packages/ag-grid-docs/src/olympicWinners.json'}).then(function (data) {
+    agGrid.simpleHttpRequest({ url: 'https://raw.githubusercontent.com/ag-grid/ag-grid/master/grid-packages/ag-grid-docs/src/olympicWinners.json' }).then(function(data) {
         // setup the fake server with entire dataset
         var fakeServer = new FakeServer(data);
 

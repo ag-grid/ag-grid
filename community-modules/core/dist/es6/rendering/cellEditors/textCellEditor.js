@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v23.1.1
+ * @version v23.2.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -25,8 +25,8 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 };
 import { Constants } from "../../constants";
 import { PopupComponent } from "../../widgets/popupComponent";
-import { _ } from '../../utils';
 import { RefSelector } from "../../widgets/componentAnnotations";
+import { _ } from '../../utils';
 var TextCellEditor = /** @class */ (function (_super) {
     __extends(TextCellEditor, _super);
     function TextCellEditor() {
@@ -61,7 +61,7 @@ var TextCellEditor = /** @class */ (function (_super) {
         if (_.exists(startValue)) {
             eInput.setValue(startValue, true);
         }
-        this.addDestroyableEventListener(eInput.getGui(), 'keydown', function (event) {
+        this.addManagedListener(eInput.getGui(), 'keydown', function (event) {
             var pageUp = event.keyCode === Constants.KEY_PAGE_UP;
             var pageDown = event.keyCode === Constants.KEY_PAGE_DOWN;
             if (pageUp || pageDown) {

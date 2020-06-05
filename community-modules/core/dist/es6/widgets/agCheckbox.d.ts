@@ -1,11 +1,10 @@
-// Type definitions for @ag-grid-community/core v23.1.1
+// Type definitions for @ag-grid-community/core v23.2.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { GridOptionsWrapper } from '../gridOptionsWrapper';
 import { AgEvent } from '../events';
 import { AgAbstractInputField } from './agAbstractInputField';
 import { LabelAlignment } from './agAbstractLabel';
-import { EventService } from '../eventService';
 export interface ChangeEvent extends AgEvent {
     selected: boolean;
 }
@@ -15,7 +14,6 @@ export declare class AgCheckbox extends AgAbstractInputField<HTMLInputElement, b
     protected inputType: string;
     protected labelAlignment: LabelAlignment;
     protected gridOptionsWrapper: GridOptionsWrapper;
-    protected eventService: EventService;
     private selected;
     private readOnly;
     private passive;

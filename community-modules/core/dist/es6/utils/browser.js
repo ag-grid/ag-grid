@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v23.1.1
+ * @version v23.2.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -61,6 +61,33 @@ export function isIOSUserAgent() {
             !window.MSStream;
     }
     return isIOS;
+}
+export function getTabIndex(el) {
+    if (!el) {
+        return null;
+    }
+    var numberTabIndex = el.tabIndex;
+    var tabIndex = el.getAttribute('tabIndex');
+    if (isBrowserIE() && numberTabIndex === 0 && el.getAttribute('tabIndex') === null) {
+        var map = {
+            a: true,
+            body: true,
+            button: true,
+            frame: true,
+            iframe: true,
+            img: true,
+            input: true,
+            isindex: true,
+            object: true,
+            select: true,
+            textarea: true
+        };
+        return map[el.nodeName.toLowerCase()] === true ? '0' : null;
+    }
+    if (numberTabIndex === -1 && (tabIndex === null || (tabIndex === '' && !isBrowserFirefox()))) {
+        return null;
+    }
+    return numberTabIndex.toString();
 }
 export function getMaxDivHeight() {
     if (!document.body) {

@@ -1,9 +1,9 @@
+import { BeanStub } from "../context/beanStub";
 export interface SetScrollsVisibleParams {
     horizontalScrollShowing: boolean;
     verticalScrollShowing: boolean;
 }
-export declare class ScrollVisibleService {
-    private eventService;
+export declare class ScrollVisibleService extends BeanStub {
     private columnController;
     private columnApi;
     private gridApi;

@@ -12,11 +12,19 @@ var Scene = /** @class */ (function () {
         this._dirty = false;
         this.animationFrameId = 0;
         this._root = null;
+        this.debug = {
+            renderFrameIndex: false,
+            renderBoundingBoxes: false
+        };
         this._frameIndex = 0;
-        this._renderFrameIndex = false;
         this.render = function () {
-            var _a = _this, ctx = _a.ctx, root = _a.root;
+            var _a;
+            var _b = _this, ctx = _b.ctx, root = _b.root, pendingSize = _b.pendingSize;
             _this.animationFrameId = 0;
+            if (pendingSize) {
+                (_a = _this.canvas).resize.apply(_a, pendingSize);
+                _this.pendingSize = undefined;
+            }
             if (root && !root.visible) {
                 _this.dirty = false;
                 return;
@@ -31,11 +39,11 @@ var Scene = /** @class */ (function () {
                 ctx.restore();
             }
             _this._frameIndex++;
-            if (_this.renderFrameIndex) {
+            if (_this.debug.renderFrameIndex) {
                 ctx.fillStyle = 'white';
                 ctx.fillRect(0, 0, 40, 15);
                 ctx.fillStyle = 'black';
-                ctx.fillText(_this.frameIndex.toString(), 0, 10);
+                ctx.fillText(_this.frameIndex.toString(), 2, 10);
             }
             _this.dirty = false;
         };
@@ -60,24 +68,26 @@ var Scene = /** @class */ (function () {
     };
     Object.defineProperty(Scene.prototype, "width", {
         get: function () {
-            return this.canvas.width;
+            return this.pendingSize ? this.pendingSize[0] : this.canvas.width;
         },
         enumerable: true,
         configurable: true
     });
     Object.defineProperty(Scene.prototype, "height", {
         get: function () {
-            return this.canvas.height;
+            return this.pendingSize ? this.pendingSize[1] : this.canvas.height;
         },
         enumerable: true,
         configurable: true
     });
     Scene.prototype.resize = function (width, height) {
-        var _this = this;
-        this.canvas.resize(width, height, 
-        // resizing a canvas clears the pixel content so when resizing is done
-        // mark as dirty to ensure a re-render
-        function () { return _this.dirty = true; });
+        width = Math.round(width);
+        height = Math.round(height);
+        if (width === this.width && height === this.height) {
+            return;
+        }
+        this.pendingSize = [width, height];
+        this.dirty = true;
     };
     Object.defineProperty(Scene.prototype, "dirty", {
         get: function () {
@@ -150,19 +160,6 @@ var Scene = /** @class */ (function () {
     Object.defineProperty(Scene.prototype, "frameIndex", {
         get: function () {
             return this._frameIndex;
-        },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(Scene.prototype, "renderFrameIndex", {
-        get: function () {
-            return this._renderFrameIndex;
-        },
-        set: function (value) {
-            if (this._renderFrameIndex !== value) {
-                this._renderFrameIndex = value;
-                this.dirty = true;
-            }
         },
         enumerable: true,
         configurable: true

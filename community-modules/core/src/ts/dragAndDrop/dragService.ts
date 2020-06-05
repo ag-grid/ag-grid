@@ -1,19 +1,18 @@
 import { Bean, PreDestroy, Autowired, PostConstruct } from "../context/context";
 import { LoggerFactory, Logger } from "../logger";
-import { EventService } from "../eventService";
 import { DragStartedEvent, DragStoppedEvent, Events } from "../events";
 import { GridOptionsWrapper } from "../gridOptionsWrapper";
 import { ColumnApi } from "../columnController/columnApi";
 import { GridApi } from "../gridApi";
 import { _ } from "../utils";
+import { BeanStub } from "../context/beanStub";
 
 /** Adds drag listening onto an element. In ag-Grid this is used twice, first is resizing columns,
  * second is moving the columns and column groups around (ie the 'drag' part of Drag and Drop. */
 @Bean('dragService')
-export class DragService {
+export class DragService extends BeanStub {
 
     @Autowired('loggerFactory') private loggerFactory: LoggerFactory;
-    @Autowired('eventService') private eventService: EventService;
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('columnApi') private columnApi: ColumnApi;
     @Autowired('gridApi') private gridApi: GridApi;
@@ -36,7 +35,7 @@ export class DragService {
     }
 
     @PreDestroy
-    private destroy(): void {
+    private removeAllListeners(): void {
         this.dragSources.forEach(this.removeListener.bind(this));
         this.dragSources.length = 0;
     }

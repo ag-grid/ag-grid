@@ -1,4 +1,4 @@
-import { CellComp, RowRenderer, DragService, Component, MouseEventService, ColumnController, CellNavigationService, CellRange, RowPosition, CellPosition, ISelectionHandle, RowPositionUtils } from "@ag-grid-community/core";
+import { CellComp, RowRenderer, DragService, Component, MouseEventService, ColumnController, CellNavigationService, CellRange, RowPosition, CellPosition, ISelectionHandle, RowPositionUtils, SelectionHandleType } from "@ag-grid-community/core";
 import { RangeController } from "./rangeController";
 export declare abstract class AbstractSelectionHandle extends Component implements ISelectionHandle {
     protected rowRenderer: RowRenderer;
@@ -16,7 +16,7 @@ export declare abstract class AbstractSelectionHandle extends Component implemen
     private lastCellHovered;
     private changedCell;
     private dragging;
-    protected abstract type: string;
+    protected abstract type: SelectionHandleType;
     protected shouldDestroyOnEndDragging: boolean;
     private init;
     protected abstract onDrag(e: MouseEvent | Touch): void;
@@ -34,9 +34,9 @@ export declare abstract class AbstractSelectionHandle extends Component implemen
     private preventRangeExtension;
     protected onDragStart(e: MouseEvent): void;
     private updateLastCellPositionHovered;
-    getType(): string;
+    getType(): SelectionHandleType;
     refresh(cellComp: CellComp): void;
     protected clearValues(): void;
     private removeListeners;
-    destroy(): void;
+    protected destroy(): void;
 }

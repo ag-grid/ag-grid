@@ -2,6 +2,7 @@ import { Autowired, Bean, PostConstruct } from "../../context/context";
 import { IComponent } from "../../interfaces/iComponent";
 import { AgGridComponentFunctionInput } from "./userComponentRegistry";
 import { AgComponentUtils } from "./agComponentUtils";
+import { BeanStub } from "../../context/beanStub";
 
 export interface ComponentMetadata {
     mandatoryMethodList: string[];
@@ -10,7 +11,8 @@ export interface ComponentMetadata {
 }
 
 @Bean("componentMetadataProvider")
-export class ComponentMetadataProvider {
+export class ComponentMetadataProvider extends BeanStub {
+
     private componentMetaData: { [key: string]: ComponentMetadata };
 
     @Autowired("agComponentUtils")

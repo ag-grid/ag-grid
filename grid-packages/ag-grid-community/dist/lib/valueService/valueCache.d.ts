@@ -1,5 +1,6 @@
 import { RowNode } from "../entities/rowNode";
-export declare class ValueCache {
+import { BeanStub } from "../context/beanStub";
+export declare class ValueCache extends BeanStub {
     private gridOptionsWrapper;
     private cacheVersion;
     private active;

@@ -1,22 +1,19 @@
 import {
     Autowired,
     Events,
-    EventService,
     GridApi,
     IStatusPanelComp,
     PostConstruct,
     _
 } from '@ag-grid-community/core';
-import {NameValueComp} from "./nameValueComp";
+import { NameValueComp } from "./nameValueComp";
 
 export class TotalAndFilteredRowsComp extends NameValueComp implements IStatusPanelComp {
 
     @Autowired('gridApi') private gridApi: GridApi;
-    @Autowired('eventService') private eventService: EventService;
 
     @PostConstruct
     protected postConstruct(): void {
-
         // this component is only really useful with client side row model
         if (this.gridApi.getModel().getType() !== 'clientSide') {
             console.warn(`ag-Grid: agTotalAndFilteredRowCountComponent should only be used with the client side row model.`);
@@ -30,7 +27,7 @@ export class TotalAndFilteredRowsComp extends NameValueComp implements IStatusPa
 
         this.setDisplayed(true);
 
-        this.addDestroyableEventListener(this.eventService, Events.EVENT_MODEL_UPDATED, this.onDataChanged.bind(this));
+        this.addManagedListener(this.eventService, Events.EVENT_MODEL_UPDATED, this.onDataChanged.bind(this));
     }
 
     private onDataChanged() {
@@ -62,4 +59,11 @@ export class TotalAndFilteredRowsComp extends NameValueComp implements IStatusPa
     }
 
     public init() {}
+
+    // this is a user component, and IComponent has "public destroy()" as part of the interface.
+    // so we need to override destroy() just to make the method public.
+    public destroy(): void {
+        super.destroy();
+    }
+
 }

@@ -17,12 +17,12 @@ import {
     PostConstruct,
     VerticalDirection
 } from "@ag-grid-community/core";
-import {ChartController} from "../../chartController";
-import {ColState} from "../../chartDataModel";
-import {ChartTranslator} from "../../chartTranslator";
+import { ChartController } from "../../chartController";
+import { ColState } from "../../chartDataModel";
+import { ChartTranslator } from "../../chartTranslator";
 
 export class ChartDataPanel extends Component {
-    public static TEMPLATE = `<div class="ag-chart-data-wrapper"></div>`;
+    public static TEMPLATE = /* html */ `<div class="ag-chart-data-wrapper"></div>`;
 
     @Autowired('dragAndDropService') private dragAndDropService: DragAndDropService;
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
@@ -44,10 +44,10 @@ export class ChartDataPanel extends Component {
     @PostConstruct
     public init() {
         this.updatePanels();
-        this.addDestroyableEventListener(this.chartController, ChartController.EVENT_CHART_UPDATED, this.updatePanels.bind(this));
+        this.addManagedListener(this.chartController, ChartController.EVENT_CHART_UPDATED, this.updatePanels.bind(this));
     }
 
-    public destroy(): void {
+    protected destroy(): void {
         this.clearComponents();
         super.destroy();
     }
@@ -89,14 +89,14 @@ export class ChartDataPanel extends Component {
     }
 
     private addChangeListener(component: AgRadioButton | AgCheckbox, columnState: ColState) {
-        this.addDestroyableEventListener(component, AgAbstractField.EVENT_CHANGED, () => {
+        this.addManagedListener(component, AgAbstractField.EVENT_CHANGED, () => {
             columnState.selected = component.getValue();
             this.chartController.updateForPanelChange(columnState);
         });
     }
 
     private createCategoriesGroupComponent(columns: ColState[]): void {
-        this.categoriesGroupComp = this.wireBean(new AgGroupComponent({
+        this.categoriesGroupComp = this.createBean(new AgGroupComponent({
             title: this.getCategoryGroupTitle(),
             enabled: true,
             suppressEnabledCheckbox: true,
@@ -107,7 +107,7 @@ export class ChartDataPanel extends Component {
         const inputName = `chartDimension${this.getCompId()}`;
 
         columns.forEach(col => {
-            const comp = this.categoriesGroupComp!.wireDependentBean(new AgRadioButton());
+            const comp = this.categoriesGroupComp!.createManagedBean(new AgRadioButton());
 
             comp.setLabel(_.escape(col.displayName)!);
             comp.setValue(col.selected);
@@ -122,7 +122,7 @@ export class ChartDataPanel extends Component {
     }
 
     private createSeriesGroupComponent(columns: ColState[]): void {
-        this.seriesGroupComp = this.wireDependentBean(new AgGroupComponent({
+        this.seriesGroupComp = this.createManagedBean(new AgGroupComponent({
             title: this.getSeriesGroupTitle(),
             enabled: true,
             suppressEnabledCheckbox: true,
@@ -131,7 +131,7 @@ export class ChartDataPanel extends Component {
         }));
 
         if (this.chartController.isActiveXYChart()) {
-            const pairedModeToggle = this.seriesGroupComp.wireDependentBean(new AgToggleButton());
+            const pairedModeToggle = this.seriesGroupComp.createManagedBean(new AgToggleButton());
             const chartProxy = this.chartController.getChartProxy();
 
             pairedModeToggle
@@ -151,7 +151,7 @@ export class ChartDataPanel extends Component {
         const getSeriesLabel = this.generateGetSeriesLabel();
 
         columns.forEach(col => {
-            const comp = this.seriesGroupComp.wireDependentBean(new AgCheckbox());
+            const comp = this.seriesGroupComp.createManagedBean(new AgCheckbox());
             comp.addCssClass('ag-data-select-checkbox');
 
             const label = getSeriesLabel(col);
@@ -251,17 +251,8 @@ export class ChartDataPanel extends Component {
 
     private clearComponents() {
         _.clearElement(this.getGui());
-
-        if (this.categoriesGroupComp) {
-            this.categoriesGroupComp.destroy();
-            this.categoriesGroupComp = undefined;
-        }
-
-        if (this.seriesGroupComp) {
-            this.seriesGroupComp.destroy();
-            this.seriesGroupComp = undefined;
-        }
-
+        this.categoriesGroupComp = this.destroyBean(this.categoriesGroupComp);
+        this.seriesGroupComp = this.destroyBean(this.seriesGroupComp);
         this.columnComps.clear();
     }
 

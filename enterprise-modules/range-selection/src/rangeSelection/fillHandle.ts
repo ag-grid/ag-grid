@@ -8,10 +8,10 @@ import {
     RowNode,
     RowPosition,
     ValueService,
-    EventService,
     Events,
     FillEndEvent,
     FillStartEvent,
+    SelectionHandleType,
     _
 } from '@ag-grid-community/core';
 import { AbstractSelectionHandle } from "./abstractSelectionHandle";
@@ -26,10 +26,9 @@ type Direction = 'x' | 'y';
 export class FillHandle extends AbstractSelectionHandle {
 
     @Autowired('valueService') private valueService: ValueService;
-    @Autowired('eventService') private eventService: EventService;
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
 
-    static TEMPLATE = '<div class="ag-fill-handle"></div>';
+    static TEMPLATE = /* html */ `<div class="ag-fill-handle"></div>`;
 
     private initialPosition: CellPosition | undefined;
     private initialXY: { x: number, y: number };
@@ -42,7 +41,7 @@ export class FillHandle extends AbstractSelectionHandle {
     private isLeft: boolean = false;
     private isReduce: boolean = false;
 
-    protected type = 'fill';
+    protected type = SelectionHandleType.FILL;
 
     constructor() {
         super(FillHandle.TEMPLATE);

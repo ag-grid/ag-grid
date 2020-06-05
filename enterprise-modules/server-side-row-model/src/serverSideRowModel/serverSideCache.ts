@@ -2,13 +2,11 @@ import {
     _,
     Autowired,
     ColumnVO,
-    EventService,
     GridOptionsWrapper,
     IServerSideCache,
     IServerSideDatasource,
     LoggerFactory,
     NumberSequence,
-    PostConstruct,
     Qualifier,
     RowBounds,
     RowNode,
@@ -367,7 +365,7 @@ export class ServerSideCache extends RowNodeCache<ServerSideBlock, ServerSideCac
     private createBlock(blockNumber: number, displayIndex: number, nextRowTop: { value: number }): ServerSideBlock {
 
         const newBlock = new ServerSideBlock(blockNumber, this.parentRowNode, this.cacheParams, this);
-        this.getContext().wireBean(newBlock);
+        this.createBean(newBlock);
 
         const displayIndexSequence = new NumberSequence(displayIndex);
 

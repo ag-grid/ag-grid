@@ -1,6 +1,6 @@
-export declare class AnimationFrameService {
+import { BeanStub } from "../context/beanStub";
+export declare class AnimationFrameService extends BeanStub {
     private gridOptionsWrapper;
-    private eventService;
     private createTasksP1;
     private createTasksP2;
     private destroyTasks;

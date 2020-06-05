@@ -24,7 +24,7 @@ export class SelectCellEditor extends PopupComponent implements ICellEditorComp 
         super('<div class="ag-cell-edit-wrapper"><ag-select class="ag-cell-editor" ref="eSelect"></ag-select></div>');
     }
 
-    public init(params: ISelectCellEditorParams) {
+    public init(params: ISelectCellEditorParams): void {
         this.focusAfterAttached = params.cellStartedEdit;
 
         if (_.missing(params.values)) {

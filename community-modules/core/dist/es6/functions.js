@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v23.1.1
+ * @version v23.2.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -15,13 +15,11 @@ export function defaultGroupComparator(valueA, valueB, nodeA, nodeB, accentedCom
     if (bothAreGroups) {
         return _.defaultComparator(nodeA.key, nodeB.key, accentedCompare);
     }
-    else if (bothAreNormal) {
+    if (bothAreNormal) {
         return _.defaultComparator(valueA, valueB, accentedCompare);
     }
-    else if (nodeAIsGroup) {
+    if (nodeAIsGroup) {
         return 1;
     }
-    else {
-        return -1;
-    }
+    return -1;
 }

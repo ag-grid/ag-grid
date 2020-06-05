@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v23.1.1
+ * @version v23.2.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -17,8 +17,8 @@ var __extends = (this && this.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-import { AgAbstractLabel } from "./agAbstractLabel";
-import { _ } from "../utils";
+import { AgAbstractLabel } from './agAbstractLabel';
+import { setDisabled, addOrRemoveCssClass, setFixedWidth, addCssClass } from '../utils/dom';
 var AgAbstractField = /** @class */ (function (_super) {
     __extends(AgAbstractField, _super);
     function AgAbstractField() {
@@ -28,20 +28,18 @@ var AgAbstractField = /** @class */ (function (_super) {
     }
     AgAbstractField.prototype.postConstruct = function () {
         _super.prototype.postConstruct.call(this);
-        _.addCssClass(this.getGui(), this.className);
+        addCssClass(this.getGui(), this.className);
     };
     AgAbstractField.prototype.onValueChange = function (callbackFn) {
         var _this = this;
-        this.addDestroyableEventListener(this, AgAbstractField.EVENT_CHANGED, function () {
-            callbackFn(_this.getValue());
-        });
+        this.addManagedListener(this, AgAbstractField.EVENT_CHANGED, function () { return callbackFn(_this.getValue()); });
         return this;
     };
     AgAbstractField.prototype.getWidth = function () {
         return this.getGui().clientWidth;
     };
     AgAbstractField.prototype.setWidth = function (width) {
-        _.setFixedWidth(this.getGui(), width);
+        setFixedWidth(this.getGui(), width);
         return this;
     };
     AgAbstractField.prototype.getValue = function () {
@@ -59,11 +57,9 @@ var AgAbstractField = /** @class */ (function (_super) {
     };
     AgAbstractField.prototype.setDisabled = function (disabled) {
         disabled = !!disabled;
-        var eGui = this.getGui();
-        if (disabled) {
-            eGui.setAttribute('disabled', 'true');
-        }
-        _.addOrRemoveCssClass(eGui, 'ag-disabled', disabled);
+        var element = this.getGui();
+        setDisabled(element, disabled);
+        addOrRemoveCssClass(element, 'ag-disabled', disabled);
         this.disabled = disabled;
         return this;
     };

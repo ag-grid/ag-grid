@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v23.1.1
+ * @version v23.2.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -20,6 +20,7 @@ var __extends = (this && this.__extends) || (function () {
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
 var agAbstractInputField_1 = require("./agAbstractInputField");
+var utils_1 = require("../utils");
 var AgInputTextField = /** @class */ (function (_super) {
     __extends(AgInputTextField, _super);
     function AgInputTextField(config) {
@@ -36,7 +37,7 @@ var AgInputTextField = /** @class */ (function (_super) {
     AgInputTextField.prototype.setValue = function (value, silent) {
         var ret = _super.prototype.setValue.call(this, value, silent);
         if (this.eInput.value !== value) {
-            this.eInput.value = value;
+            this.eInput.value = utils_1._.exists(value) ? value : '';
         }
         return ret;
     };

@@ -1,4 +1,4 @@
-// Type definitions for @ag-grid-community/core v23.1.1
+// Type definitions for @ag-grid-community/core v23.2.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { Component } from "../../widgets/component";
@@ -22,14 +22,13 @@ export interface IHeaderParams {
 export interface IHeader {
 }
 export interface IHeaderComp extends IHeader, IComponent<IHeaderParams> {
-    setMouseOverParent?(overParent: boolean): void;
+    setActiveParent?(activeParent: boolean): void;
 }
 export declare class HeaderComp extends Component implements IHeaderComp {
     private static TEMPLATE;
     private gridOptionsWrapper;
     private sortController;
     private menuFactory;
-    private eventService;
     private eFilter;
     private eSortAsc;
     private eSortDesc;
@@ -40,14 +39,15 @@ export declare class HeaderComp extends Component implements IHeaderComp {
     private eText;
     private params;
     private lastMovingChanged;
+    destroy(): void;
     init(params: IHeaderParams): void;
     private setupText;
     private setupIcons;
     private addInIcon;
     private setupTap;
     private setupMenu;
-    setMouseOverParent(overParent: boolean): void;
-    showMenu(eventSource: HTMLElement): void;
+    setActiveParent(activeParent: boolean): void;
+    showMenu(eventSource?: HTMLElement): void;
     private removeSortIcons;
     setupSort(): void;
     private onSortChanged;

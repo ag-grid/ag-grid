@@ -1,4 +1,5 @@
-import { ColDef, Column, IRowModel, ValueFormatterService, IEventEmitter, RowNode } from '@ag-grid-community/core';
+import { ColDef, Column, IRowModel, Promise, ValueFormatterService, IEventEmitter, RowNode } from '@ag-grid-community/core';
+import { ISetFilterLocaleText } from './localeText';
 export declare enum SetFilterModelValuesType {
     PROVIDED_LIST = 0,
     PROVIDED_CALLBACK = 1,
@@ -6,12 +7,13 @@ export declare enum SetFilterModelValuesType {
 }
 export declare class SetValueModel implements IEventEmitter {
     private readonly colDef;
+    private readonly column;
     private readonly valueGetter;
     private readonly doesRowPassOtherFilters;
     private readonly suppressSorting;
     private readonly setIsLoading;
     private readonly valueFormatterService;
-    private readonly column;
+    private readonly translate;
     static EVENT_AVAILABLE_VALUES_CHANGED: string;
     private readonly localEventService;
     private readonly filterParams;
@@ -31,21 +33,21 @@ export declare class SetValueModel implements IEventEmitter {
     private displayedValues;
     /** Values that have been selected for this filter. */
     private selectedValues;
-    constructor(colDef: ColDef, rowModel: IRowModel, valueGetter: (node: RowNode) => any, doesRowPassOtherFilters: (node: RowNode) => boolean, suppressSorting: boolean, setIsLoading: (loading: boolean) => void, valueFormatterService: ValueFormatterService, column: Column);
+    constructor(rowModel: IRowModel, colDef: ColDef, column: Column, valueGetter: (node: RowNode) => any, doesRowPassOtherFilters: (node: RowNode) => boolean, suppressSorting: boolean, setIsLoading: (loading: boolean) => void, valueFormatterService: ValueFormatterService, translate: (key: keyof ISetFilterLocaleText) => string);
     addEventListener(eventType: string, listener: Function, async?: boolean): void;
     removeEventListener(eventType: string, listener: Function, async?: boolean): void;
     /**
      * Re-fetches the values used in the filter from the value source.
-     * If keepSelection is false or selectAll is true, the filter selection will be reset to everything selected,
+     * If keepSelection is false, the filter selection will be reset to everything selected,
      * otherwise the current selection will be preserved.
      */
-    refetchValues(keepSelection?: boolean): void;
+    refreshValues(keepSelection?: boolean): Promise<void>;
     /**
      * Overrides the current values being used for the set filter.
      * If keepSelection is false, the filter selection will be reset to everything selected,
      * otherwise the current selection will be preserved.
      */
-    overrideValues(valuesToUse: string[], keepSelection?: boolean): void;
+    overrideValues(valuesToUse: string[], keepSelection?: boolean): Promise<void>;
     refreshAfterAnyFilterChanged(): void;
     private updateAllValues;
     setValuesType(value: SetFilterModelValuesType): void;
@@ -64,14 +66,15 @@ export declare class SetValueModel implements IEventEmitter {
     isFilterActive(): boolean;
     getUniqueValueCount(): number;
     getUniqueValue(index: any): string | null;
-    selectAll(clearExistingSelection?: boolean): void;
-    selectNothing(): void;
+    getValues(): string[];
+    selectAllMatchingMiniFilter(clearExistingSelection?: boolean): void;
+    deselectAllMatchingMiniFilter(): void;
     selectValue(value: string): void;
     deselectValue(value: string): void;
     isValueSelected(value: string): boolean;
-    isEverythingSelected(): boolean;
-    isNothingSelected(): boolean;
+    isEverythingVisibleSelected(): boolean;
+    isNothingVisibleSelected(): boolean;
     getModel(): string[] | null;
-    setModel(model: string[]): void;
-    onFilterValuesReady(callback: (values: string[]) => void): void;
+    setModel(model: string[]): Promise<void>;
+    private resetSelectionState;
 }

@@ -1,6 +1,6 @@
 {
   "name": "@ag-grid-enterprise/charts",
-  "version": "23.1.1",
+  "version": "23.2.0",
   "description": "Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components",
   "main": "./dist/cjs/main.js",
   "module": "./dist/es6/main.js",
@@ -10,7 +10,8 @@
     "build-cjs": "tsc -p tsconfig.json",
     "build-es6": "tsc -p tsconfig.es6.json",
     "package": "node ../../module-build/rollup/build.js",
-    "build": "npm run build-cjs && npm run build-es6"
+    "build": "npm run build-cjs && npm run build-es6 && npm run hash",
+    "hash": "sh ../../scripts/hashDirectory.sh > .hash"
   },
   "repository": {
     "type": "git",
@@ -42,10 +43,10 @@
   ],
   "homepage": "http://www.ag-grid.com/",
   "dependencies": {
-    "ag-charts-community": "~1.1.0",
-    "@ag-grid-community/core": "~23.1.0",
-    "@ag-grid-enterprise/core": "~23.1.0",
-    "@ag-grid-enterprise/range-selection": "~23.1.0"
+    "ag-charts-community": "~1.2.0",
+    "@ag-grid-community/core": "~23.2.0",
+    "@ag-grid-enterprise/core": "~23.2.0",
+    "@ag-grid-enterprise/range-selection": "~23.2.0"
   },
   "devDependencies": {
     "@types/jest": "^25.2.1",

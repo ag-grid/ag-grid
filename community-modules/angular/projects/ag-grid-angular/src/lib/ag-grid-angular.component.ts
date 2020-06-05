@@ -51,10 +51,7 @@ export class AgGridAngular implements AfterViewInit {
     private gridParams: GridParams;
 
     // in order to ensure firing of gridReady is deterministic
-    private _fullyReady: Promise<boolean> = new Promise<boolean>(resolve => {
-        resolve(true);
-    }
-    );
+    private _fullyReady: Promise<boolean> = Promise.resolve(true);
 
     // making these public, so they are accessible to people using the ng2 component references
     public api: GridApi;
@@ -246,6 +243,8 @@ export class AgGridAngular implements AfterViewInit {
     @Input() public blockLoadDebounceMillis : any = undefined;
     @Input() public keepDetailRowsCount : any = undefined;
     @Input() public undoRedoCellEditingLimit : any = undefined;
+    @Input() public cellFlashDelay : any = undefined;
+    @Input() public cellFadeDelay : any = undefined;
     @Input() public localeTextFunc : any = undefined;
     @Input() public groupRowInnerRenderer : any = undefined;
     @Input() public groupRowInnerRendererFramework : any = undefined;

@@ -1,10 +1,10 @@
 import {
     ColDef,
     ColGroupDef,
-    Component,
     ToolPanelColumnCompParams,
     RefSelector,
     IPrimaryColsPanel,
+    ManagedFocusComponent,
     _
 } from "@ag-grid-community/core";
 import { PrimaryColsListPanel } from "./primaryColsListPanel";
@@ -19,9 +19,9 @@ export interface BaseColumnItem {
     setExpanded(value: boolean): void;
 }
 
-export class PrimaryColsPanel extends Component implements IPrimaryColsPanel {
+export class PrimaryColsPanel extends ManagedFocusComponent implements IPrimaryColsPanel {
 
-    private static TEMPLATE =
+    private static TEMPLATE = /* html */
         `<div class="ag-column-select">
             <ag-primary-cols-header ref="primaryColsHeaderPanel"></ag-primary-cols-header>
             <ag-primary-cols-list ref="primaryColsListPanel"></ag-primary-cols-list>
@@ -52,16 +52,30 @@ export class PrimaryColsPanel extends Component implements IPrimaryColsPanel {
             this.primaryColsHeaderPanel.setDisplayed(false);
         }
 
-        this.addDestroyableEventListener(this.primaryColsListPanel, 'groupExpanded', this.onGroupExpanded.bind(this));
-        this.addDestroyableEventListener(this.primaryColsListPanel, 'selectionChanged', this.onSelectionChange.bind(this));
+        this.addManagedListener(this.primaryColsListPanel, 'groupExpanded', this.onGroupExpanded.bind(this));
+        this.addManagedListener(this.primaryColsListPanel, 'selectionChanged', this.onSelectionChange.bind(this));
 
         this.primaryColsListPanel.init(this.params, this.allowDragging);
 
-        this.addDestroyableEventListener(this.primaryColsHeaderPanel, 'expandAll', this.onExpandAll.bind(this));
-        this.addDestroyableEventListener(this.primaryColsHeaderPanel, 'collapseAll', this.onCollapseAll.bind(this));
-        this.addDestroyableEventListener(this.primaryColsHeaderPanel, 'selectAll', this.onSelectAll.bind(this));
-        this.addDestroyableEventListener(this.primaryColsHeaderPanel, 'unselectAll', this.onUnselectAll.bind(this));
-        this.addDestroyableEventListener(this.primaryColsHeaderPanel, 'filterChanged', this.onFilterChanged.bind(this));
+        this.addManagedListener(this.primaryColsHeaderPanel, 'expandAll', this.onExpandAll.bind(this));
+        this.addManagedListener(this.primaryColsHeaderPanel, 'collapseAll', this.onCollapseAll.bind(this));
+        this.addManagedListener(this.primaryColsHeaderPanel, 'selectAll', this.onSelectAll.bind(this));
+        this.addManagedListener(this.primaryColsHeaderPanel, 'unselectAll', this.onUnselectAll.bind(this));
+        this.addManagedListener(this.primaryColsHeaderPanel, 'filterChanged', this.onFilterChanged.bind(this));
+        this.wireFocusManagement();
+    }
+
+    protected isFocusableContainer(): boolean {
+        return true;
+    }
+
+    protected onTabKeyDown(e: KeyboardEvent): void {
+        const nextEl = this.focusController.findNextFocusableElement(this.getFocusableElement(), false, e.shiftKey);
+
+        if (nextEl) {
+            e.preventDefault();
+            nextEl.focus();
+        }
     }
 
     public onExpandAll(): void {

@@ -95,6 +95,8 @@
         height: ag-param(list-item-height);
     }
 
+    @include ag-keyboard-focus((ag-virtual-list-item), 4px);
+
     .ag-select-list {
         @include ag-color-property(background-color, background-color);
         overflow-y: auto;
@@ -125,8 +127,10 @@
         .ag-picker-field-wrapper {
             @include ag-color-property(background-color, background-color);
             min-height: ag-param(list-item-height);
-            height: ag-param(list-item-height);
             cursor: default;
+        }
+        &:not(.ag-cell-editor) {
+            height: ag-param(list-item-height);
         }
         .ag-picker-field-display {
             margin: 4px;
@@ -439,6 +443,8 @@
         cursor: pointer;
     }
 
+    @include ag-keyboard-focus((ag-column-select-header-icon), 0px);
+
     .ag-column-group-icons,
     .ag-column-select-header-icon,
     .ag-column-select-header-checkbox,
@@ -451,6 +457,11 @@
             @include ag-theme-rtl((margin-right: ag-param(widget-horizontal-spacing)))
         }
     }
+
+    @include ag-keyboard-focus((
+        ag-column-select-column-group,
+        ag-column-select-column
+    ), ag-param(grid-size) / -2);
 
     .ag-column-select-column-group,
     .ag-column-select-column {

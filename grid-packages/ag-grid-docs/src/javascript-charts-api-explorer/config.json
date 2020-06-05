@@ -330,6 +330,159 @@
         ],
         "description": "The font family to use for the legend."
       }
+    },
+    "navigator": {
+      "meta": {
+        "description": "Configuration for the chart navigator. Not supported in pie charts."
+      },
+      "enabled": {
+        "default": false,
+        "description": "Whether or not to show the navigator."
+      },
+      "height": {
+        "default": 30,
+        "description": "The height of the navigator.",
+        "min": 10,
+        "max": 100,
+        "unit": "px"
+      },
+      "min": {
+        "default": 0,
+        "description": "The start of the visible range in the [0, 1] interval.",
+        "min": 0,
+        "max": 1,
+        "step": 0.01
+      },
+      "max": {
+        "default": 1,
+        "description": "The end of the visible range in the [0, 1] interval.",
+        "min": 0,
+        "max": 1,
+        "step": 0.01
+      },
+      "mask": {
+        "meta": {
+          "description": "Configuration for the navigator's visible range mask."
+        },
+        "fill": {
+          "default": "#999999",
+          "description": "The fill color used by the mask."
+        },
+        "stroke": {
+          "default": "#999999",
+          "description": "The stroke color used by the mask."
+        },
+        "strokeWidth": {
+          "default": 1,
+          "description": "The stroke width used by the mask.",
+          "min": 0,
+          "max": 5,
+          "unit": "px"
+        },
+        "fillOpacity": {
+          "default": 0.2,
+          "description": "The opacity of the mask's fill in the [0, 1] interval, where 0 is effectively no masking.",
+          "min": 0,
+          "max": 1,
+          "step": 0.05
+        }
+      },
+      "minHandle": {
+        "meta": {
+          "description": "Configuration for the navigator's left handle."
+        },
+        "fill": {
+          "default": "#f2f2f2",
+          "description": "The fill color used by the handle."
+        },
+        "stroke": {
+          "default": "#999999",
+          "description": "The stroke color used by the handle."
+        },
+        "strokeWidth": {
+          "default": 1,
+          "description": "The stroke width used by the handle.",
+          "min": 0,
+          "max": 5,
+          "unit": "px"
+        },
+        "width": {
+          "default": 8,
+          "description": "The width of the handle.",
+          "min": 4,
+          "max": 20,
+          "unit": "px"
+        },
+        "height": {
+          "default": 16,
+          "description": "The height of the handle.",
+          "min": 8,
+          "max": 26,
+          "unit": "px"
+        },
+        "gripLineLength": {
+          "default": 8,
+          "description": "The length of the handle's grip lines.",
+          "min": 4,
+          "max": 16,
+          "unit": "px"
+        },
+        "gripLineGap": {
+          "default": 2,
+          "description": "The distance between the handle's grip lines.",
+          "min": 1,
+          "max": 8,
+          "unit": "px"
+        }
+      },
+      "maxHandle": {
+        "meta": {
+          "description": "Configuration for the navigator's right handle."
+        },
+        "fill": {
+          "default": "#f2f2f2",
+          "description": "The fill color used by the handle."
+        },
+        "stroke": {
+          "default": "#999999",
+          "description": "The stroke color used by the handle."
+        },
+        "strokeWidth": {
+          "default": 1,
+          "description": "The stroke width used by the handle.",
+          "min": 0,
+          "max": 5,
+          "unit": "px"
+        },
+        "width": {
+          "default": 8,
+          "description": "The width of the handle.",
+          "min": 4,
+          "max": 20,
+          "unit": "px"
+        },
+        "height": {
+          "default": 16,
+          "description": "The height of the handle.",
+          "min": 8,
+          "max": 26,
+          "unit": "px"
+        },
+        "gripLineLength": {
+          "default": 8,
+          "description": "The length of the handle's grip lines.",
+          "min": 4,
+          "max": 16,
+          "unit": "px"
+        },
+        "gripLineGap": {
+          "default": 2,
+          "description": "The distance between the handle's grip lines.",
+          "min": 1,
+          "max": 8,
+          "unit": "px"
+        }
+      }
     }
   },
   "axisConfig": {

@@ -4,18 +4,17 @@ import {
     Component,
     GridOptionsWrapper,
     PostConstruct,
-    PreDestroy,
     RefSelector
 } from "@ag-grid-community/core";
 import { MiniChartsContainer } from "./miniChartsContainer";
-import {ChartPalette, ChartPaletteName} from "ag-charts-community";
-import {ChartController} from "../../chartController";
+import { ChartPalette, ChartPaletteName } from "ag-charts-community";
+import { ChartController } from "../../chartController";
 
 type AnimationDirection = 'left' | 'right';
 
 export class ChartSettingsPanel extends Component {
 
-    public static TEMPLATE =
+    public static TEMPLATE = /* html */
         `<div class="ag-chart-settings-wrapper">
             <div ref="eMiniChartsContainer" class="ag-chart-settings-mini-charts-container"></div>
             <div ref="eNavBar" class="ag-chart-settings-nav-bar">
@@ -61,9 +60,9 @@ export class ChartSettingsPanel extends Component {
         this.ePrevBtn.insertAdjacentElement('afterbegin', _.createIconNoSpan('previous', this.gridOptionsWrapper));
         this.eNextBtn.insertAdjacentElement('afterbegin', _.createIconNoSpan('next', this.gridOptionsWrapper));
 
-        this.addDestroyableEventListener(this.ePrevBtn, 'click', this.prev.bind(this));
-        this.addDestroyableEventListener(this.eNextBtn, 'click', this.next.bind(this));
-        this.addDestroyableEventListener(this.chartController, ChartController.EVENT_CHART_UPDATED, this.resetPalettes.bind(this));
+        this.addManagedListener(this.ePrevBtn, 'click', this.prev.bind(this));
+        this.addManagedListener(this.eNextBtn, 'click', this.next.bind(this));
+        this.addManagedListener(this.chartController, ChartController.EVENT_CHART_UPDATED, this.resetPalettes.bind(this));
     }
 
     private resetPalettes(): void {
@@ -96,7 +95,7 @@ export class ChartSettingsPanel extends Component {
 
             const isActivePalette = this.activePalette === name;
             const { fills, strokes } = palette;
-            const miniChartsContainer = this.wireBean(new MiniChartsContainer(this.chartController, fills, strokes));
+            const miniChartsContainer = this.createBean(new MiniChartsContainer(this.chartController, fills, strokes));
 
             this.miniCharts.push(miniChartsContainer);
             this.eMiniChartsContainer.appendChild(miniChartsContainer.getGui());
@@ -119,7 +118,7 @@ export class ChartSettingsPanel extends Component {
         const link = document.createElement('div');
         _.addCssClass(link, 'ag-chart-settings-card-item');
 
-        this.addDestroyableEventListener(link, 'click', () => {
+        this.addManagedListener(link, 'click', () => {
             const { activePalette, isAnimating, paletteNames } = this;
 
             if (paletteName === activePalette || isAnimating) {
@@ -210,15 +209,10 @@ export class ChartSettingsPanel extends Component {
     private destroyMiniCharts(): void {
         _.clearElement(this.eMiniChartsContainer);
 
-        if (this.miniCharts) {
-            this.miniCharts.forEach(c => c.destroy());
-        }
-
-        this.miniCharts = [];
+        this.miniCharts = this.destroyBeans(this.miniCharts);
     }
 
-    @PreDestroy
-    public destroy(): void {
+    protected destroy(): void {
         this.destroyMiniCharts();
         super.destroy();
     }

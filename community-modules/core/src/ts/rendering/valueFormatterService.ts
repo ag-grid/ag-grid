@@ -4,9 +4,11 @@ import { RowNode } from '../entities/rowNode';
 import { GridOptionsWrapper } from '../gridOptionsWrapper';
 import { ExpressionService } from '../valueService/expressionService';
 import { ValueFormatterParams } from '../entities/colDef';
+import { BeanStub } from "../context/beanStub";
 
 @Bean('valueFormatterService')
-export class ValueFormatterService {
+export class ValueFormatterService extends BeanStub {
+
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('expressionService') private expressionService: ExpressionService;
 
@@ -24,10 +26,10 @@ export class ValueFormatterService {
         const colDef = column.getColDef();
 
         if (suppliedFormatter) {
-            // favour supplied, e.g. set filter items can have their own value formatters
+            // use supplied formatter if provided, e.g. set filter items can have their own value formatters
             formatter = suppliedFormatter;
         } else if (useFormatterFromColumn) {
-            // if floating, give preference to the floating formatter
+            // if row is pinned, give preference to the pinned formatter
             formatter = node && node.rowPinned && colDef.pinnedRowValueFormatter ?
                 colDef.pinnedRowValueFormatter : colDef.valueFormatter;
         }
@@ -56,7 +58,7 @@ export class ValueFormatterService {
             return colDef.refData[value] || '';
         }
 
-        // if we don't do this, then arrays get displayed as 1,2,3, but we want 1, 2, 3 (ie with spaces)
+        // if we don't do this, then arrays get displayed as 1,2,3, but we want 1, 2, 3 (i.e. with spaces)
         if (result == null && Array.isArray(value)) {
             result = value.join(', ');
         }

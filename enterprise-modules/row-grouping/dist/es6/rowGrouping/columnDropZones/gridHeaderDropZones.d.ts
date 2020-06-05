@@ -2,7 +2,6 @@ import { Component } from "@ag-grid-community/core";
 export declare class GridHeaderDropZones extends Component {
     private gridOptionsWrapper;
     private columnController;
-    private eventService;
     private rowGroupComp;
     private pivotComp;
     constructor();

@@ -55,7 +55,7 @@ function copyFilesSync(files, dest, tokenToReplace, replaceValue = '') {
 // childMessageRenderer_react.jsx -> childMessageRenderer.jsx
 // childMessageRenderer_angular.ts -> childMessageRenderer.ts
 // childMessageRenderer_vue.js -> childMessageRendererVue.js
-function extractComponentFileNames(scripts, token, replaceValue='') {
+function extractComponentFileNames(scripts, token, replaceValue = '') {
     return scripts.map(script => path.basename(script).replace(token, replaceValue));
 }
 
@@ -141,7 +141,7 @@ function createExampleGenerator(prefix, importType) {
 
         const document = getMatchingPaths('index.html')[0];
 
-        if( !document ) {
+        if (!document) {
             throw new Error('examples are required to have an index.html file');
         }
 
@@ -152,7 +152,7 @@ function createExampleGenerator(prefix, importType) {
             // multiple scripts - main.js is the main one, the rest are supplemental
             mainScript = getMatchingPaths('main.js')[0];
 
-            if( !mainScript ) {
+            if (!mainScript) {
                 throw new Error('for an example with multiple scripts matching *.js, one must be named main.js');
             }
 

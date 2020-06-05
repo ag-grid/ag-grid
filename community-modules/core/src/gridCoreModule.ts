@@ -1,3 +1,1 @@
-
-export const GridCoreModule = {
-};
+export const GridCoreModule = { };

@@ -1,9 +1,10 @@
 import { Logger, LoggerFactory } from "../logger";
 import { Bean } from "../context/context";
 import { Qualifier } from "../context/context";
+import { BeanStub } from "../context/beanStub";
 
 @Bean('expressionService')
-export class ExpressionService {
+export class ExpressionService extends BeanStub {
 
     private expressionToFunctionCache = {} as any;
     private logger: Logger;

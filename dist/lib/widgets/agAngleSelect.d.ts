@@ -32,5 +32,5 @@ export declare class AgAngleSelect extends AgAbstractLabel {
     getValue(radians?: boolean): number;
     setValue(degrees: number, radians?: boolean): this;
     setWidth(width: number): this;
-    destroy(): void;
+    protected destroy(): void;
 }

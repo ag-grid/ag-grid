@@ -1,10 +1,23 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v23.1.1
+ * @version v23.2.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
 "use strict";
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = function (d, b) {
+        extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+        return extendStatics(d, b);
+    };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -16,14 +29,18 @@ var context_1 = require("../../context/context");
 var userComponentRegistry_1 = require("./userComponentRegistry");
 var utils_1 = require("../../utils");
 var componentTypes_1 = require("./componentTypes");
+var beanStub_1 = require("../../context/beanStub");
+var object_1 = require("../../utils/object");
 var ComponentSource;
 (function (ComponentSource) {
     ComponentSource[ComponentSource["DEFAULT"] = 0] = "DEFAULT";
     ComponentSource[ComponentSource["REGISTERED_BY_NAME"] = 1] = "REGISTERED_BY_NAME";
     ComponentSource[ComponentSource["HARDCODED"] = 2] = "HARDCODED";
 })(ComponentSource = exports.ComponentSource || (exports.ComponentSource = {}));
-var UserComponentFactory = /** @class */ (function () {
+var UserComponentFactory = /** @class */ (function (_super) {
+    __extends(UserComponentFactory, _super);
     function UserComponentFactory() {
+        return _super !== null && _super.apply(this, arguments) || this;
     }
     UserComponentFactory.prototype.newDateComponent = function (params) {
         return this.createAndInitUserComponent(this.gridOptions, params, componentTypes_1.DateComponent, 'agDateInput');
@@ -118,17 +135,10 @@ var UserComponentFactory = /** @class */ (function () {
         var paramsAfterCallback = modifyParamsCallback ? modifyParamsCallback(params, componentInstance) : params;
         var deferredInit = this.initComponent(componentInstance, paramsAfterCallback);
         if (deferredInit == null) {
-            // const p = new Promise<A>(resolve => {
-            //     setTimeout( ()=> {
-            //         resolve(componentInstance);
-            //     }, 1000);
-            // });
-            // return p;
             return utils_1.Promise.resolve(componentInstance);
         }
         else {
-            var asPromise = deferredInit;
-            return asPromise.map(function (_) { return componentInstance; });
+            return deferredInit.then(function () { return componentInstance; });
         }
     };
     UserComponentFactory.prototype.addReactHacks = function (params) {
@@ -136,7 +146,7 @@ var UserComponentFactory = /** @class */ (function () {
         // AG-1715 raised to do a wider ranging refactor to improve this
         var agGridReact = this.context.getBean('agGridReact');
         if (agGridReact) {
-            params.agGridReact = utils_1._.cloneObject(agGridReact);
+            params.agGridReact = object_1.cloneObject(agGridReact);
         }
         // AG-1716 - directly related to AG-1574 and AG-1715
         var frameworkComponentWrapper = this.context.getBean('frameworkComponentWrapper');
@@ -327,17 +337,17 @@ var UserComponentFactory = /** @class */ (function () {
     UserComponentFactory.prototype.createFinalParams = function (definitionObject, propertyName, paramsFromGrid, paramsFromSelector) {
         if (paramsFromSelector === void 0) { paramsFromSelector = null; }
         var params = {};
-        utils_1._.mergeDeep(params, paramsFromGrid);
+        object_1.mergeDeep(params, paramsFromGrid);
         var userParams = definitionObject ? definitionObject[propertyName + "Params"] : null;
         if (userParams != null) {
             if (typeof userParams === 'function') {
-                utils_1._.mergeDeep(params, userParams(paramsFromGrid));
+                object_1.mergeDeep(params, userParams(paramsFromGrid));
             }
             else if (typeof userParams === 'object') {
-                utils_1._.mergeDeep(params, userParams);
+                object_1.mergeDeep(params, userParams);
             }
         }
-        utils_1._.mergeDeep(params, paramsFromSelector);
+        object_1.mergeDeep(params, paramsFromSelector);
         return params;
     };
     UserComponentFactory.prototype.createComponentInstance = function (holder, componentType, paramsForSelector, defaultComponentName, optional) {
@@ -368,7 +378,7 @@ var UserComponentFactory = /** @class */ (function () {
         return { componentInstance: componentInstance, paramsFromSelector: componentToUse.paramsFromSelector };
     };
     UserComponentFactory.prototype.initComponent = function (component, params) {
-        this.context.wireBean(component);
+        this.context.createBean(component);
         if (component.init == null) {
             return;
         }
@@ -377,9 +387,6 @@ var UserComponentFactory = /** @class */ (function () {
     __decorate([
         context_1.Autowired("gridOptions")
     ], UserComponentFactory.prototype, "gridOptions", void 0);
-    __decorate([
-        context_1.Autowired("context")
-    ], UserComponentFactory.prototype, "context", void 0);
     __decorate([
         context_1.Autowired("agComponentUtils")
     ], UserComponentFactory.prototype, "agComponentUtils", void 0);
@@ -396,7 +403,7 @@ var UserComponentFactory = /** @class */ (function () {
         context_1.Bean('userComponentFactory')
     ], UserComponentFactory);
     return UserComponentFactory;
-}());
+}(beanStub_1.BeanStub));
 exports.UserComponentFactory = UserComponentFactory;
 
 //# sourceMappingURL=userComponentFactory.js.map

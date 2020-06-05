@@ -1,13 +1,13 @@
-// Type definitions for @ag-grid-community/core v23.1.1
+// Type definitions for @ag-grid-community/core v23.2.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { ColDef, ColGroupDef } from "../entities/colDef";
 import { OriginalColumnGroupChild } from "../entities/originalColumnGroupChild";
 import { Column } from "../entities/column";
-export declare class ColumnFactory {
+import { BeanStub } from "../context/beanStub";
+export declare class ColumnFactory extends BeanStub {
     private gridOptionsWrapper;
     private columnUtils;
-    private context;
     private logger;
     private setBeans;
     createColumnTree(defs: (ColDef | ColGroupDef)[] | null, primaryColumns: boolean, existingColumns?: Column[]): {

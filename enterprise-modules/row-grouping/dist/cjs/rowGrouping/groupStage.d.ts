@@ -1,12 +1,9 @@
-import { IRowNodeStage, StageExecuteParams } from "@ag-grid-community/core";
-export declare class GroupStage implements IRowNodeStage {
-    private selectionController;
+import { BeanStub, IRowNodeStage, StageExecuteParams } from "@ag-grid-community/core";
+export declare class GroupStage extends BeanStub implements IRowNodeStage {
     private gridOptionsWrapper;
     private columnController;
     private selectableService;
     private valueService;
-    private eventService;
-    private context;
     private usingTreeData;
     private getDataPath;
     private groupIdSequence;

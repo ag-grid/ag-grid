@@ -10,6 +10,7 @@ export declare abstract class SimpleFloatingFilter extends Component implements 
     private lastType;
     private optionsFactory;
     protected getDefaultDebounceMs(): number;
+    destroy(): void;
     protected getTextFromModel(model: ProvidedFilterModel): string;
     protected isEventFromFloatingFilter(event: FilterChangedEvent): boolean;
     protected getLastType(): string;

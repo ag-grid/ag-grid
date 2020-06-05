@@ -20,8 +20,8 @@ include '../documentation-main/documentation_header.php';
 
     <p>
         You can also explicitly flash cells using the grid API <code>flashCells(params)</code>.
-        The params takes a list of columns and rows to flash, e.g. to flash one cell pass in
-        one column and one row that identifies that cell.
+        The params takes a list of columns and rows to flash, the flashDelay and the fadeDelay values
+        e.g. to flash one cell pass in one column and one row that identifies that cell.
     </p>
 
     <p>
@@ -56,15 +56,42 @@ include '../documentation-main/documentation_header.php';
 
     <p>
         Each time the call value is changed, the grid adds the CSS class <code>ag-cell-data-changed</code>
-        for 500ms, and then then CSS class <code>ag-cell-data-changed-animation</code> for 1,000ms.
-        The grid provided themes use this to apply a background color (for the first 500ms) and then a fade
-        out transition (for the remaining 1,000ms).
+        for 500ms by default, and then then CSS class <code>ag-cell-data-changed-animation</code> for 1,000ms by default.
+        The grid provided themes use this to apply a background color.
     </p>
 
     <p>
-        If you want to override how the flash presents itself (eg change the background color, or remove
-        the animation) then override the relevant CSS classes.
+        If you want to override the flash background color, this has to be done by overriding the relevant CSS class. There are two ways
+        to change how long a cell remains "flashed".
+        <ol>
+            <li>Change the <code>cellFlashDelay</code> and <code>cellFadeDelay</code> configs in the gridOptions</li>
+            <li>When calling <code>flashCells()</code>, pass the <code>flashDelay</code> and <code>fadeDelay</code> values (in milliseconds) as params.
+        </ol>
     </p>
+
+    <p>
+        The example below demonstrates flashing delay changes. The following can be noted:
+    </p>
+
+    <ul>
+        <li>
+            The <code>cellFlashDelay</code> value has been changed to 2000ms, so cells will remain in 
+            their "flashed" state for 2 seconds.
+        </li>
+        <li>
+            The <code>cellFadeDelay</code> value has been changed to 500ms, so the fading animation will
+            happen faster than what it normally would (1 second).
+        </li>
+        <li>
+            Clicking <b>Update Some Data</b> will update some data to demonstrate the changes mentioned above.
+        </li>
+        <li>
+            Clicking <strong>Flash Two Rows</strong> will pass a custom <code>flashDelay</code> of 3000ms and a 
+            custom <code>fadeDelay</code> delay of 2000ms to demonstrate default values can be overridden.
+        </li>
+    </ul>
+
+    <?= grid_example('Changing Flashing Delay', 'flashing-delay-changes', 'generated', ['enterprise' => true]) ?>
 
     <h2>Filtering & Aggregations</h2>
 

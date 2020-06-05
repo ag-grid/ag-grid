@@ -125,14 +125,15 @@ var LegendPanel = /** @class */ (function (_super) {
             initialFont: initialFont,
             setFont: setFont
         };
-        var fontPanelComp = this.wireBean(new fontPanel_1.FontPanel(params));
+        var fontPanelComp = this.createBean(new fontPanel_1.FontPanel(params));
         this.legendGroup.addItem(fontPanelComp);
         this.activePanels.push(fontPanelComp);
     };
     LegendPanel.prototype.destroyActivePanels = function () {
+        var _this = this;
         this.activePanels.forEach(function (panel) {
             core_1._.removeFromParent(panel.getGui());
-            panel.destroy();
+            _this.destroyBean(panel);
         });
     };
     LegendPanel.prototype.destroy = function () {

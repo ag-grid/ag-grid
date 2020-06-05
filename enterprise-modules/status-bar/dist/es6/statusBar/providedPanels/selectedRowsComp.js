@@ -36,10 +36,8 @@ var SelectedRowsComp = /** @class */ (function (_super) {
         this.setValue(_.formatNumberCommas(selectedRowCount));
         this.setDisplayed(selectedRowCount > 0);
         var eventListener = this.onRowSelectionChanged.bind(this);
-        this.events = [
-            this.eventService.addEventListener(Events.EVENT_MODEL_UPDATED, eventListener),
-            this.eventService.addEventListener(Events.EVENT_SELECTION_CHANGED, eventListener)
-        ];
+        this.addManagedListener(this.eventService, Events.EVENT_MODEL_UPDATED, eventListener);
+        this.addManagedListener(this.eventService, Events.EVENT_SELECTION_CHANGED, eventListener);
     };
     SelectedRowsComp.prototype.isValidRowModel = function () {
         // this component is only really useful with client or server side rowmodels
@@ -53,9 +51,11 @@ var SelectedRowsComp = /** @class */ (function (_super) {
     };
     SelectedRowsComp.prototype.init = function () {
     };
-    __decorate([
-        Autowired('eventService')
-    ], SelectedRowsComp.prototype, "eventService", void 0);
+    // this is a user component, and IComponent has "public destroy()" as part of the interface.
+    // so we need to override destroy() just to make the method public.
+    SelectedRowsComp.prototype.destroy = function () {
+        _super.prototype.destroy.call(this);
+    };
     __decorate([
         Autowired('gridApi')
     ], SelectedRowsComp.prototype, "gridApi", void 0);

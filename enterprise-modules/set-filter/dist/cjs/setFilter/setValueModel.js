@@ -8,15 +8,16 @@ var SetFilterModelValuesType;
     SetFilterModelValuesType[SetFilterModelValuesType["TAKEN_FROM_GRID_VALUES"] = 2] = "TAKEN_FROM_GRID_VALUES";
 })(SetFilterModelValuesType = exports.SetFilterModelValuesType || (exports.SetFilterModelValuesType = {}));
 var SetValueModel = /** @class */ (function () {
-    function SetValueModel(colDef, rowModel, valueGetter, doesRowPassOtherFilters, suppressSorting, setIsLoading, valueFormatterService, column) {
+    function SetValueModel(rowModel, colDef, column, valueGetter, doesRowPassOtherFilters, suppressSorting, setIsLoading, valueFormatterService, translate) {
         var _this = this;
         this.colDef = colDef;
+        this.column = column;
         this.valueGetter = valueGetter;
         this.doesRowPassOtherFilters = doesRowPassOtherFilters;
         this.suppressSorting = suppressSorting;
         this.setIsLoading = setIsLoading;
         this.valueFormatterService = valueFormatterService;
-        this.column = column;
+        this.translate = translate;
         this.localEventService = new core_1.EventService();
         this.miniFilterText = null;
         // The lookup for a set is much faster than the lookup for an array, especially when the length of the array is
@@ -46,9 +47,7 @@ var SetValueModel = /** @class */ (function () {
                 SetFilterModelValuesType.PROVIDED_CALLBACK;
             this.providedValues = values;
         }
-        this.updateAllValues();
-        // start with everything selected
-        this.allValuesPromise.then(function (values) { return _this.selectedValues = core_1._.convertToSet(values); });
+        this.updateAllValues().then(function (values) { return _this.resetSelectionState(values); });
     }
     SetValueModel.prototype.addEventListener = function (eventType, listener, async) {
         this.localEventService.addEventListener(eventType, listener, async);
@@ -58,16 +57,15 @@ var SetValueModel = /** @class */ (function () {
     };
     /**
      * Re-fetches the values used in the filter from the value source.
-     * If keepSelection is false or selectAll is true, the filter selection will be reset to everything selected,
+     * If keepSelection is false, the filter selection will be reset to everything selected,
      * otherwise the current selection will be preserved.
      */
-    SetValueModel.prototype.refetchValues = function (keepSelection) {
-        var _this = this;
+    SetValueModel.prototype.refreshValues = function (keepSelection) {
         if (keepSelection === void 0) { keepSelection = true; }
         var currentModel = this.getModel();
         this.updateAllValues();
         // ensure model is updated for new values
-        this.allValuesPromise.then(function () { return _this.setModel(keepSelection ? currentModel : null); });
+        return this.setModel(keepSelection ? currentModel : null);
     };
     /**
      * Overrides the current values being used for the set filter.
@@ -77,54 +75,56 @@ var SetValueModel = /** @class */ (function () {
     SetValueModel.prototype.overrideValues = function (valuesToUse, keepSelection) {
         var _this = this;
         if (keepSelection === void 0) { keepSelection = true; }
-        // wait for any existing values to be populated before overriding
-        this.allValuesPromise.then(function () {
-            _this.valuesType = SetFilterModelValuesType.PROVIDED_LIST;
-            _this.providedValues = valuesToUse;
-            _this.refetchValues(keepSelection);
+        return new core_1.Promise(function (resolve) {
+            // wait for any existing values to be populated before overriding
+            _this.allValuesPromise.then(function () {
+                _this.valuesType = SetFilterModelValuesType.PROVIDED_LIST;
+                _this.providedValues = valuesToUse;
+                _this.refreshValues(keepSelection).then(function () { return resolve(); });
+            });
         });
     };
     SetValueModel.prototype.refreshAfterAnyFilterChanged = function () {
+        var _this = this;
         if (this.showAvailableOnly()) {
-            this.updateAvailableValues();
+            this.allValuesPromise.then(function (values) { return _this.updateAvailableValues(values); });
         }
     };
     SetValueModel.prototype.updateAllValues = function () {
         var _this = this;
-        switch (this.valuesType) {
-            case SetFilterModelValuesType.TAKEN_FROM_GRID_VALUES:
-            case SetFilterModelValuesType.PROVIDED_LIST: {
-                var values = this.valuesType === SetFilterModelValuesType.TAKEN_FROM_GRID_VALUES ?
-                    this.getValuesFromRows(false) : core_1._.toStrings(this.providedValues);
-                var sortedValues = this.sortValues(values);
-                this.allValues = sortedValues;
-                this.allValuesPromise = core_1.Promise.resolve(sortedValues);
-                break;
-            }
-            case SetFilterModelValuesType.PROVIDED_CALLBACK: {
-                this.setIsLoading(true);
-                this.allValuesPromise = new core_1.Promise(function (resolve) {
-                    var callback = _this.providedValues;
-                    var params = {
+        this.allValuesPromise = new core_1.Promise(function (resolve) {
+            switch (_this.valuesType) {
+                case SetFilterModelValuesType.TAKEN_FROM_GRID_VALUES:
+                case SetFilterModelValuesType.PROVIDED_LIST: {
+                    var values = _this.valuesType === SetFilterModelValuesType.TAKEN_FROM_GRID_VALUES ?
+                        _this.getValuesFromRows(false) : core_1._.toStrings(_this.providedValues);
+                    var sortedValues = _this.sortValues(values);
+                    _this.allValues = sortedValues;
+                    resolve(sortedValues);
+                    break;
+                }
+                case SetFilterModelValuesType.PROVIDED_CALLBACK: {
+                    _this.setIsLoading(true);
+                    var callback_1 = _this.providedValues;
+                    var params_1 = {
                         success: function (values) {
                             var processedValues = core_1._.toStrings(values);
                             _this.setIsLoading(false);
-                            _this.valuesType = SetFilterModelValuesType.PROVIDED_LIST;
-                            _this.providedValues = processedValues;
                             var sortedValues = _this.sortValues(processedValues);
                             _this.allValues = sortedValues;
                             resolve(sortedValues);
                         },
                         colDef: _this.colDef
                     };
-                    window.setTimeout(function () { return callback(params); }, 0);
-                });
-                break;
+                    window.setTimeout(function () { return callback_1(params_1); }, 0);
+                    break;
+                }
+                default:
+                    throw new Error('Unrecognised valuesType');
             }
-            default:
-                throw new Error('Unrecognised valuesType');
-        }
-        this.updateAvailableValues();
+        });
+        this.allValuesPromise.then(function (values) { return _this.updateAvailableValues(values); });
+        return this.allValuesPromise;
     };
     SetValueModel.prototype.setValuesType = function (value) {
         this.valuesType = value;
@@ -139,14 +139,11 @@ var SetValueModel = /** @class */ (function () {
         return this.valuesType === SetFilterModelValuesType.TAKEN_FROM_GRID_VALUES &&
             !this.filterParams.suppressRemoveEntries;
     };
-    SetValueModel.prototype.updateAvailableValues = function () {
-        var _this = this;
-        this.allValuesPromise.then(function (values) {
-            var availableValues = _this.showAvailableOnly() ? _this.sortValues(_this.getValuesFromRows(true)) : values;
-            _this.availableValues = core_1._.convertToSet(availableValues);
-            _this.localEventService.dispatchEvent({ type: SetValueModel.EVENT_AVAILABLE_VALUES_CHANGED });
-            _this.updateDisplayedValues();
-        });
+    SetValueModel.prototype.updateAvailableValues = function (allValues) {
+        var availableValues = this.showAvailableOnly() ? this.sortValues(this.getValuesFromRows(true)) : allValues;
+        this.availableValues = core_1._.convertToSet(availableValues);
+        this.localEventService.dispatchEvent({ type: SetValueModel.EVENT_AVAILABLE_VALUES_CHANGED });
+        this.updateDisplayedValues();
     };
     SetValueModel.prototype.sortValues = function (values) {
         if (this.suppressSorting) {
@@ -155,7 +152,11 @@ var SetValueModel = /** @class */ (function () {
         var comparator = this.filterParams.comparator ||
             this.colDef.comparator ||
             core_1._.defaultComparator;
-        return values.sort(comparator);
+        if (!this.filterParams.excelMode || values.indexOf(null) < 0) {
+            return values.sort(comparator);
+        }
+        // ensure the blank value always appears last
+        return core_1._.filter(values, function (v) { return v != null; }).sort(comparator).concat(null);
     };
     SetValueModel.prototype.getValuesFromRows = function (removeUnavailableValues) {
         var _this = this;
@@ -218,12 +219,17 @@ var SetValueModel = /** @class */ (function () {
         };
         this.availableValues.forEach(function (value) {
             if (value == null) {
-                return;
+                if (_this.filterParams.excelMode && matchesFilter("(" + _this.translate('blanks') + ")")) {
+                    _this.displayedValues.push(value);
+                }
             }
-            var displayedValue = _this.formatter(value);
-            var formattedValue = _this.valueFormatterService.formatValue(_this.column, null, null, displayedValue);
-            if (matchesFilter(displayedValue) || matchesFilter(formattedValue)) {
-                _this.displayedValues.push(value);
+            else {
+                var textFormatterValue = _this.formatter(value);
+                // TODO: should this be applying the text formatter *after* the value formatter?
+                var valueFormatterValue = _this.valueFormatterService.formatValue(_this.column, null, null, textFormatterValue);
+                if (matchesFilter(textFormatterValue) || matchesFilter(valueFormatterValue)) {
+                    _this.displayedValues.push(value);
+                }
             }
         });
     };
@@ -234,7 +240,9 @@ var SetValueModel = /** @class */ (function () {
         return this.displayedValues[index];
     };
     SetValueModel.prototype.isFilterActive = function () {
-        return this.allValues.length !== this.selectedValues.size;
+        return this.filterParams.defaultToNothingSelected ?
+            this.selectedValues.size > 0 :
+            this.allValues.length !== this.selectedValues.size;
     };
     SetValueModel.prototype.getUniqueValueCount = function () {
         return this.allValues.length;
@@ -242,7 +250,10 @@ var SetValueModel = /** @class */ (function () {
     SetValueModel.prototype.getUniqueValue = function (index) {
         return this.allValues[index];
     };
-    SetValueModel.prototype.selectAll = function (clearExistingSelection) {
+    SetValueModel.prototype.getValues = function () {
+        return this.allValues.slice();
+    };
+    SetValueModel.prototype.selectAllMatchingMiniFilter = function (clearExistingSelection) {
         var _this = this;
         if (clearExistingSelection === void 0) { clearExistingSelection = false; }
         if (this.miniFilterText == null) {
@@ -254,10 +265,10 @@ var SetValueModel = /** @class */ (function () {
             if (clearExistingSelection) {
                 this.selectedValues.clear();
             }
-            core_1._.forEach(this.displayedValues, function (value) { return _this.selectValue(value); });
+            core_1._.forEach(this.displayedValues, function (value) { return _this.selectedValues.add(value); });
         }
     };
-    SetValueModel.prototype.selectNothing = function () {
+    SetValueModel.prototype.deselectAllMatchingMiniFilter = function () {
         var _this = this;
         if (this.miniFilterText == null) {
             // ensure everything is deselected
@@ -265,45 +276,38 @@ var SetValueModel = /** @class */ (function () {
         }
         else {
             // ensure everything that matches the mini filter is deselected
-            core_1._.forEach(this.displayedValues, function (it) { return _this.deselectValue(it); });
+            core_1._.forEach(this.displayedValues, function (value) { return _this.selectedValues.delete(value); });
         }
     };
     SetValueModel.prototype.selectValue = function (value) {
         this.selectedValues.add(value);
     };
     SetValueModel.prototype.deselectValue = function (value) {
+        if (this.filterParams.excelMode && this.isEverythingVisibleSelected()) {
+            // ensure we're starting from the correct "everything selected" state
+            this.resetSelectionState(this.displayedValues);
+        }
         this.selectedValues.delete(value);
     };
     SetValueModel.prototype.isValueSelected = function (value) {
         return this.selectedValues.has(value);
     };
-    SetValueModel.prototype.isEverythingSelected = function () {
+    SetValueModel.prototype.isEverythingVisibleSelected = function () {
         var _this = this;
-        if (this.miniFilterText == null) {
-            return this.allValues.length === this.selectedValues.size;
-        }
-        else {
-            return core_1._.filter(this.displayedValues, function (it) { return _this.isValueSelected(it); }).length === this.displayedValues.length;
-        }
+        return core_1._.filter(this.displayedValues, function (it) { return _this.isValueSelected(it); }).length === this.displayedValues.length;
     };
-    SetValueModel.prototype.isNothingSelected = function () {
+    SetValueModel.prototype.isNothingVisibleSelected = function () {
         var _this = this;
-        if (this.miniFilterText == null) {
-            return this.selectedValues.size === 0;
-        }
-        else {
-            return core_1._.filter(this.displayedValues, function (it) { return _this.isValueSelected(it); }).length === 0;
-        }
+        return core_1._.filter(this.displayedValues, function (it) { return _this.isValueSelected(it); }).length === 0;
     };
     SetValueModel.prototype.getModel = function () {
         return this.isFilterActive() ? core_1._.values(this.selectedValues) : null;
     };
     SetValueModel.prototype.setModel = function (model) {
         var _this = this;
-        this.allValuesPromise.then(function (values) {
+        return this.allValuesPromise.then(function (values) {
             if (model == null) {
-                // reset to everything selected
-                _this.selectedValues = core_1._.convertToSet(values);
+                _this.resetSelectionState(values);
             }
             else {
                 // select all values from the model that exist in the filter
@@ -311,14 +315,19 @@ var SetValueModel = /** @class */ (function () {
                 var allValues_1 = core_1._.convertToSet(values);
                 core_1._.forEach(model, function (value) {
                     if (allValues_1.has(value)) {
-                        _this.selectValue(value);
+                        _this.selectedValues.add(value);
                     }
                 });
             }
         });
     };
-    SetValueModel.prototype.onFilterValuesReady = function (callback) {
-        this.allValuesPromise.then(callback);
+    SetValueModel.prototype.resetSelectionState = function (values) {
+        if (this.filterParams.defaultToNothingSelected) {
+            this.selectedValues.clear();
+        }
+        else {
+            this.selectedValues = core_1._.convertToSet(values);
+        }
     };
     SetValueModel.EVENT_AVAILABLE_VALUES_CHANGED = 'availableValuesChanged';
     return SetValueModel;

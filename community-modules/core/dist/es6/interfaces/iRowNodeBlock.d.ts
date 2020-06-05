@@ -1,4 +1,4 @@
-// Type definitions for @ag-grid-community/core v23.1.1
+// Type definitions for @ag-grid-community/core v23.2.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { IEventEmitter } from "./iEventEmitter";
@@ -12,7 +12,6 @@ export interface IRowNodeBlock extends IEventEmitter {
     isAnyNodeOpen(rowCount: number): boolean;
     getBlockNumber(): number;
     forEachNodeDeep(callback: (rowNode: RowNode, index: number) => void, sequence: NumberSequence, rowCount: number): void;
-    destroy(): void;
     forEachNodeShallow(callback: (rowNode: RowNode, index: number) => void, sequence: NumberSequence, rowCount: number): void;
     load(): void;
 }

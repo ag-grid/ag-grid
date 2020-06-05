@@ -30,7 +30,8 @@ export declare class GroupedCategoryAxis extends ChartAxis {
     private longestSeparatorLength;
     constructor();
     domain: any[];
-    range: [number, number];
+    range: number[];
+    protected updateRange(): void;
     private resizeTickTree;
     readonly translation: {
         /**

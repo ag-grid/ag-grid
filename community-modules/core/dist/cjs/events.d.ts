@@ -1,4 +1,4 @@
-// Type definitions for @ag-grid-community/core v23.1.1
+// Type definitions for @ag-grid-community/core v23.2.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { RowNode } from './entities/rowNode';
@@ -230,6 +230,7 @@ export interface RowEvent extends AgGridEvent {
     event?: Event | null;
 }
 export interface RowGroupOpenedEvent extends RowEvent {
+    expanded: boolean;
 }
 export interface RowValueChangedEvent extends RowEvent {
 }

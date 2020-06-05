@@ -1,4 +1,4 @@
-import { ChangedPath, Column, RowNode } from "@ag-grid-community/core";
+import { ChangedPath, Column, RowNode, BeanStub } from "@ag-grid-community/core";
 export interface SortOption {
     inverter: number;
     column: Column;
@@ -7,7 +7,7 @@ export interface SortedRowNode {
     currentPos: number;
     rowNode: RowNode;
 }
-export declare class SortService {
+export declare class SortService extends BeanStub {
     private sortController;
     private columnController;
     private valueService;

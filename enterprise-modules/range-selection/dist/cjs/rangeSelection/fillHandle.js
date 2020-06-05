@@ -48,7 +48,7 @@ var FillHandle = /** @class */ (function (_super) {
         _this.isUp = false;
         _this.isLeft = false;
         _this.isReduce = false;
-        _this.type = 'fill';
+        _this.type = core_1.SelectionHandleType.FILL;
         return _this;
     }
     FillHandle.prototype.onDrag = function (e) {
@@ -481,13 +481,10 @@ var FillHandle = /** @class */ (function (_super) {
         }
         _super.prototype.refresh.call(this, cellComp);
     };
-    FillHandle.TEMPLATE = '<div class="ag-fill-handle"></div>';
+    FillHandle.TEMPLATE = "<div class=\"ag-fill-handle\"></div>";
     __decorate([
         core_1.Autowired('valueService')
     ], FillHandle.prototype, "valueService", void 0);
-    __decorate([
-        core_1.Autowired('eventService')
-    ], FillHandle.prototype, "eventService", void 0);
     __decorate([
         core_1.Autowired('gridOptionsWrapper')
     ], FillHandle.prototype, "gridOptionsWrapper", void 0);

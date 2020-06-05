@@ -22,13 +22,13 @@ var __assign = (this && this.__assign) || function () {
     };
     return __assign.apply(this, arguments);
 };
-import { _, CellRangeType } from "@ag-grid-community/core";
+import { CellRangeType, SelectionHandleType, _ } from "@ag-grid-community/core";
 import { AbstractSelectionHandle } from "./abstractSelectionHandle";
 var RangeHandle = /** @class */ (function (_super) {
     __extends(RangeHandle, _super);
     function RangeHandle() {
         var _this = _super.call(this, RangeHandle.TEMPLATE) || this;
-        _this.type = 'range';
+        _this.type = SelectionHandleType.RANGE;
         _this.rangeFixed = false;
         return _this;
     }
@@ -71,7 +71,7 @@ var RangeHandle = /** @class */ (function (_super) {
         cellRange.endRow = endRow;
         cellRange.startColumn = column;
     };
-    RangeHandle.TEMPLATE = '<div class="ag-range-handle"></div>';
+    RangeHandle.TEMPLATE = "<div class=\"ag-range-handle\"></div>";
     return RangeHandle;
 }(AbstractSelectionHandle));
 export { RangeHandle };

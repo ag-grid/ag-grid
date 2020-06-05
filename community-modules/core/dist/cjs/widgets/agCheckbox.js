@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v23.1.1
+ * @version v23.2.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -26,9 +26,9 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var context_1 = require("../context/context");
+var events_1 = require("../events");
 var agAbstractInputField_1 = require("./agAbstractInputField");
 var utils_1 = require("../utils");
-var events_1 = require("../events");
 var AgCheckbox = /** @class */ (function (_super) {
     __extends(AgCheckbox, _super);
     function AgCheckbox() {
@@ -44,7 +44,7 @@ var AgCheckbox = /** @class */ (function (_super) {
         return _this;
     }
     AgCheckbox.prototype.addInputListeners = function () {
-        this.addDestroyableEventListener(this.eInput, 'click', this.onCheckboxClick.bind(this));
+        this.addManagedListener(this.eInput, 'click', this.onCheckboxClick.bind(this));
     };
     AgCheckbox.prototype.getNextValue = function () {
         return this.selected === undefined ? true : !this.selected;
@@ -123,9 +123,6 @@ var AgCheckbox = /** @class */ (function (_super) {
     __decorate([
         context_1.Autowired('gridOptionsWrapper')
     ], AgCheckbox.prototype, "gridOptionsWrapper", void 0);
-    __decorate([
-        context_1.Autowired('eventService')
-    ], AgCheckbox.prototype, "eventService", void 0);
     return AgCheckbox;
 }(agAbstractInputField_1.AgAbstractInputField));
 exports.AgCheckbox = AgCheckbox;

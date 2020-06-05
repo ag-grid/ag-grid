@@ -855,9 +855,7 @@
             this._initialised = false;
             this._destroyed = false;
             // in order to ensure firing of gridReady is deterministic
-            this._fullyReady = new core$1.Promise(function (resolve) {
-                resolve(true);
-            });
+            this._fullyReady = core$1.Promise.resolve(true);
             // @START@
             this.slaveGrids = undefined;
             this.alignedGrids = undefined;
@@ -940,6 +938,8 @@
             this.blockLoadDebounceMillis = undefined;
             this.keepDetailRowsCount = undefined;
             this.undoRedoCellEditingLimit = undefined;
+            this.cellFlashDelay = undefined;
+            this.cellFadeDelay = undefined;
             this.localeTextFunc = undefined;
             this.groupRowInnerRenderer = undefined;
             this.groupRowInnerRendererFramework = undefined;
@@ -1647,6 +1647,14 @@
             core.Input(),
             __metadata("design:type", Object)
         ], AgGridAngular.prototype, "undoRedoCellEditingLimit", void 0);
+        __decorate([
+            core.Input(),
+            __metadata("design:type", Object)
+        ], AgGridAngular.prototype, "cellFlashDelay", void 0);
+        __decorate([
+            core.Input(),
+            __metadata("design:type", Object)
+        ], AgGridAngular.prototype, "cellFadeDelay", void 0);
         __decorate([
             core.Input(),
             __metadata("design:type", Object)

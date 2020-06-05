@@ -1,4 +1,4 @@
-// Type definitions for @ag-grid-community/core v23.1.1
+// Type definitions for @ag-grid-community/core v23.2.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { RowNode } from "./rowNode";
@@ -129,14 +129,14 @@ export interface ColDef extends AbstractColDef {
     } | ICellRendererFunc | string;
     cellRendererFramework?: any;
     cellRendererParams?: any;
-    cellRendererSelector?: (params: ICellRendererParams) => ComponentSelectorResult<ICellRendererParams>;
+    cellRendererSelector?: (params: ICellRendererParams) => ComponentSelectorResult;
     /** Cell editor */
     cellEditor?: {
         new (): ICellEditorComp;
     } | string;
     cellEditorFramework?: any;
     cellEditorParams?: any;
-    cellEditorSelector?: (params: ICellEditorParams) => ComponentSelectorResult<ICellEditorParams>;
+    cellEditorSelector?: (params: ICellEditorParams) => ComponentSelectorResult;
     /** A function for rendering a pinned row cell. */
     pinnedRowCellRenderer?: {
         new (): ICellRendererComp;

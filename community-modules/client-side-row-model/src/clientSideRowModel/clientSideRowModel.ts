@@ -1,5 +1,4 @@
 import {
-    _,
     Autowired,
     Bean,
     ChangedPath,
@@ -7,9 +6,7 @@ import {
     ColumnController,
     Constants as constants,
     Constants,
-    Context,
     Events,
-    EventService,
     ExpandCollapseAllEvent,
     FilterManager,
     GridApi,
@@ -30,7 +27,8 @@ import {
     ValueService,
     IClientSideRowModel,
     FilterChangedEvent,
-    PreDestroy
+    BeanStub,
+    _
 } from "@ag-grid-community/core";
 import { ClientSideNodeManager } from "./clientSideNodeManager";
 
@@ -46,7 +44,7 @@ export interface RowNodeMap {
 }
 
 @Bean('rowModel')
-export class ClientSideRowModel implements IClientSideRowModel {
+export class ClientSideRowModel extends BeanStub implements IClientSideRowModel {
 
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
 
@@ -54,8 +52,6 @@ export class ClientSideRowModel implements IClientSideRowModel {
     @Autowired('filterManager') private filterManager: FilterManager;
     @Autowired('$scope') private $scope: any;
     @Autowired('selectionController') private selectionController: SelectionController;
-    @Autowired('eventService') private eventService: EventService;
-    @Autowired('context') private context: Context;
     @Autowired('valueService') private valueService: ValueService;
     @Autowired('valueCache') private valueCache: ValueCache;
     @Autowired('columnApi') private columnApi: ColumnApi;
@@ -77,54 +73,38 @@ export class ClientSideRowModel implements IClientSideRowModel {
     private nodeManager: ClientSideNodeManager;
     private rowDataTransactionBatch: BatchTransactionItem[] | null;
     private lastHighlightedRow: RowNode | null;
-    private events: (() => void)[] = [];
-    private refreshMapFunc: any;
 
     @PostConstruct
     public init(): void {
 
         const refreshEverythingFunc = this.refreshModel.bind(this, { step: Constants.STEP_EVERYTHING });
         const refreshEverythingAfterColsChangedFunc
-            = this.refreshModel.bind(this, { step: Constants.STEP_EVERYTHING, afterColumnsChanged: true });
+            = this.refreshModel.bind(this, { step: Constants.STEP_EVERYTHING, afterColumnsChanged: true, keepRenderedRows: true });
 
-        this.events = [
-            this.eventService.addModalPriorityEventListener(Events.EVENT_COLUMN_EVERYTHING_CHANGED, refreshEverythingAfterColsChangedFunc),
-            this.eventService.addModalPriorityEventListener(Events.EVENT_COLUMN_ROW_GROUP_CHANGED, refreshEverythingFunc),
-            this.eventService.addModalPriorityEventListener(Events.EVENT_COLUMN_VALUE_CHANGED, this.onValueChanged.bind(this)),
-            this.eventService.addModalPriorityEventListener(Events.EVENT_COLUMN_PIVOT_CHANGED, this.refreshModel.bind(this, { step: Constants.STEP_PIVOT })),
+        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_EVERYTHING_CHANGED, refreshEverythingAfterColsChangedFunc);
+        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_ROW_GROUP_CHANGED, refreshEverythingFunc);
+        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_VALUE_CHANGED, this.onValueChanged.bind(this));
+        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_PIVOT_CHANGED, this.refreshModel.bind(this, { step: Constants.STEP_PIVOT }));
+        this.addManagedListener(this.eventService, Events.EVENT_ROW_GROUP_OPENED, this.onRowGroupOpened.bind(this));
+        this.addManagedListener(this.eventService, Events.EVENT_FILTER_CHANGED, this.onFilterChanged.bind(this));
+        this.addManagedListener(this.eventService, Events.EVENT_SORT_CHANGED, this.onSortChanged.bind(this));
+        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_PIVOT_MODE_CHANGED, refreshEverythingFunc);
 
-            this.eventService.addModalPriorityEventListener(Events.EVENT_ROW_GROUP_OPENED, this.onRowGroupOpened.bind(this)),
-            this.eventService.addModalPriorityEventListener(Events.EVENT_FILTER_CHANGED, this.onFilterChanged.bind(this)),
-            this.eventService.addModalPriorityEventListener(Events.EVENT_SORT_CHANGED, this.onSortChanged.bind(this)),
-            this.eventService.addModalPriorityEventListener(Events.EVENT_COLUMN_PIVOT_MODE_CHANGED, refreshEverythingFunc)
-        ];
-
-        this.refreshMapFunc = this.refreshModel.bind(this, {
+        const refreshMapListener = this.refreshModel.bind(this, {
             step: Constants.STEP_MAP,
             keepRenderedRows: true,
             animate: true
         });
 
-        this.gridOptionsWrapper.addEventListener(GridOptionsWrapper.PROP_GROUP_REMOVE_SINGLE_CHILDREN, this.refreshMapFunc);
-        this.gridOptionsWrapper.addEventListener(GridOptionsWrapper.PROP_GROUP_REMOVE_LOWEST_SINGLE_CHILDREN, this.refreshMapFunc);
+        this.addManagedListener(this.gridOptionsWrapper, GridOptionsWrapper.PROP_GROUP_REMOVE_SINGLE_CHILDREN, refreshMapListener);
+        this.addManagedListener(this.gridOptionsWrapper, GridOptionsWrapper.PROP_GROUP_REMOVE_LOWEST_SINGLE_CHILDREN, refreshMapListener);
 
         this.rootNode = new RowNode();
         this.nodeManager = new ClientSideNodeManager(this.rootNode, this.gridOptionsWrapper,
-            this.context, this.eventService, this.columnController, this.gridApi, this.columnApi,
+            this.getContext(), this.eventService, this.columnController, this.gridApi, this.columnApi,
             this.selectionController);
 
-        this.context.wireBean(this.rootNode);
-    }
-
-    @PreDestroy
-    public destroy(): void {
-        if (this.events.length) {
-            this.events.forEach(func => func());
-            this.events = [];
-        }
-
-        this.gridOptionsWrapper.removeEventListener(GridOptionsWrapper.PROP_GROUP_REMOVE_SINGLE_CHILDREN, this.refreshMapFunc);
-        this.gridOptionsWrapper.removeEventListener(GridOptionsWrapper.PROP_GROUP_REMOVE_LOWEST_SINGLE_CHILDREN, this.refreshMapFunc);
+        this.createBean(this.rootNode);
     }
 
     public start(): void {
@@ -716,19 +696,9 @@ export class ClientSideRowModel implements IClientSideRowModel {
         if (this.groupStage) {
 
             if (rowNodeTransactions) {
-                const merged: RowNodeTransaction = {
-                    add: [],
-                    remove: [],
-                    update: []
-                };
-                rowNodeTransactions.forEach(tran => {
-                    _.pushAll(merged.add, tran.add);
-                    _.pushAll(merged.remove, tran.remove);
-                    _.pushAll(merged.update, tran.update);
-                });
                 this.groupStage.execute({
                     rowNode: this.rootNode,
-                    rowNodeTransaction: merged,
+                    rowNodeTransactions: rowNodeTransactions,
                     rowNodeOrder: rowNodeOrder,
                     changedPath: changedPath
                 });
@@ -897,7 +867,14 @@ export class ClientSideRowModel implements IClientSideRowModel {
     }
 
     public resetRowHeights(): void {
-        this.forEachNode(rowNode => rowNode.setRowHeight(null));
+        this.forEachNode(rowNode => {
+            rowNode.setRowHeight(null);
+            // forEachNode doesn't go through detail rows, so need to check
+            // for detail nodes explicitly.
+            if (rowNode.detailNode) {
+                rowNode.detailNode.setRowHeight(null);
+            }
+        });
         this.onRowHeightChanged();
     }
 

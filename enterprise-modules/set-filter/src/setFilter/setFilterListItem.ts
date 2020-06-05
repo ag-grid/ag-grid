@@ -11,10 +11,11 @@ import {
     UserComponentFactory,
     ValueFormatterService,
     RefSelector,
-    _,
     TooltipFeature,
     ISetFilterCellRendererParams,
+    _
 } from '@ag-grid-community/core';
+import { ISetFilterLocaleText } from './localeText';
 
 export interface SelectedEvent extends AgEvent { }
 
@@ -38,7 +39,10 @@ export class SetFilterListItem extends Component {
     private selected: boolean = true;
     private tooltipText: string;
 
-    constructor(private readonly value: any, private readonly params: ISetFilterParams) {
+    constructor(
+        private readonly value: any,
+        private readonly params: ISetFilterParams,
+        private readonly translate: (key: keyof ISetFilterLocaleText) => string) {
         super(SetFilterListItem.TEMPLATE);
     }
 
@@ -61,13 +65,13 @@ export class SetFilterListItem extends Component {
         return this.selected;
     }
 
-    public setSelected(selected: boolean): void {
+    public setSelected(selected: boolean, forceEvent?: boolean): void {
         this.selected = selected;
-        this.updateCheckboxIcon();
+        this.updateCheckboxIcon(forceEvent);
     }
 
-    private updateCheckboxIcon() {
-        this.eCheckbox.setValue(this.isSelected(), true);
+    private updateCheckboxIcon(forceEvent?: boolean) {
+        this.eCheckbox.setValue(this.isSelected(), !forceEvent);
     }
 
     public render(): void {
@@ -81,7 +85,7 @@ export class SetFilterListItem extends Component {
                 if (this.gridOptionsWrapper.isEnableBrowserTooltips()) {
                     this.eFilterItemValue.title = this.tooltipText;
                 } else {
-                    this.addFeature(new TooltipFeature(this, 'setFilterValue'));
+                    this.createManagedBean(new TooltipFeature(this, 'setFilterValue'));
                 }
             }
         }
@@ -109,23 +113,14 @@ export class SetFilterListItem extends Component {
         if (cellRendererPromise == null) {
             const valueToRender = params.valueFormatted == null ? params.value : params.valueFormatted;
 
-            if (valueToRender == null) {
-                const localeTextFunc = this.gridOptionsWrapper.getLocaleTextFunc();
-                eTarget.innerText = `(${localeTextFunc('blanks', 'Blanks')})`;
-            } else {
-                eTarget.innerText = valueToRender;
-            }
+            eTarget.innerText = valueToRender == null ? `(${this.translate('blanks')})` : valueToRender;
 
             return;
         }
 
         _.bindCellRendererToHtmlElement(cellRendererPromise, eTarget);
 
-        cellRendererPromise.then(component => {
-            if (component && component.destroy) {
-                this.addDestroyFunc(component.destroy.bind(component));
-            }
-        });
+        cellRendererPromise.then(component => this.addDestroyFunc(() => this.getContext().destroyBean(component)));
     }
 
     public getComponentHolder(): ColDef {

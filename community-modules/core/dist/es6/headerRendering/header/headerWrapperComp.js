@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v23.1.1
+ * @version v23.2.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -23,8 +23,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
-import { Autowired, PostConstruct } from "../../context/context";
-import { Component } from "../../widgets/component";
+import { Autowired } from "../../context/context";
 import { Column } from "../../entities/column";
 import { DragAndDropService, DragSourceType } from "../../dragAndDrop/dragAndDropService";
 import { Constants } from "../../constants";
@@ -36,6 +35,7 @@ import { SelectAllFeature } from "./selectAllFeature";
 import { RefSelector } from "../../widgets/componentAnnotations";
 import { TouchListener } from "../../widgets/touchListener";
 import { TooltipFeature } from "../../widgets/tooltipFeature";
+import { AbstractHeaderWrapper } from "./abstractHeaderWrapper";
 import { _ } from "../../utils";
 var HeaderWrapperComp = /** @class */ (function (_super) {
     __extends(HeaderWrapperComp, _super);
@@ -46,17 +46,12 @@ var HeaderWrapperComp = /** @class */ (function (_super) {
         _this.pinned = pinned;
         return _this;
     }
-    HeaderWrapperComp.prototype.getColumn = function () {
-        return this.column;
-    };
-    HeaderWrapperComp.prototype.getComponentHolder = function () {
-        return this.column.getColDef();
-    };
-    HeaderWrapperComp.prototype.init = function () {
+    HeaderWrapperComp.prototype.postConstruct = function () {
+        _super.prototype.postConstruct.call(this);
         var colDef = this.getComponentHolder();
         var displayName = this.columnController.getDisplayNameForColumn(this.column, 'header', true);
         var enableSorting = colDef.sortable;
-        var enableMenu = this.menuFactory.isMenuEnabled(this.column) && !colDef.suppressMenu;
+        var enableMenu = this.menuEnabled = this.menuFactory.isMenuEnabled(this.column) && !colDef.suppressMenu;
         this.appendHeaderComp(displayName, enableSorting, enableMenu);
         this.setupWidth();
         this.setupMovingCss();
@@ -65,40 +60,86 @@ var HeaderWrapperComp = /** @class */ (function (_super) {
         this.setupMenuClass();
         this.setupSortableClass(enableSorting);
         this.addColumnHoverListener();
-        this.addMouseListeners();
-        this.addFeature(new HoverFeature([this.column], this.getGui()));
-        this.addDestroyableEventListener(this.column, Column.EVENT_FILTER_ACTIVE_CHANGED, this.onFilterChanged.bind(this));
+        this.addDisplayMenuListeners();
+        this.cbSelectAll.setInputAriaLabel('Toggle Selection of All Rows');
+        this.createManagedBean(new HoverFeature([this.column], this.getGui()));
+        this.addManagedListener(this.column, Column.EVENT_FILTER_ACTIVE_CHANGED, this.onFilterChanged.bind(this));
         this.onFilterChanged();
-        this.addFeature(new SelectAllFeature(this.cbSelectAll, this.column));
+        this.createManagedBean(new SelectAllFeature(this.cbSelectAll, this.column));
         var setLeftFeature = new SetLeftFeature(this.column, this.getGui(), this.beans);
-        setLeftFeature.init();
-        this.addDestroyFunc(setLeftFeature.destroy.bind(setLeftFeature));
+        this.createManagedBean(setLeftFeature);
         this.addAttributes();
         CssClassApplier.addHeaderClassesFromColDef(colDef, this.getGui(), this.gridOptionsWrapper, this.column, null);
     };
+    HeaderWrapperComp.prototype.addDisplayMenuListeners = function () {
+        var mouseListener = this.onMouseOverOut.bind(this);
+        this.addGuiEventListener('mouseenter', mouseListener);
+        this.addGuiEventListener('mouseleave', mouseListener);
+    };
+    HeaderWrapperComp.prototype.onMouseOverOut = function (e) {
+        if (this.headerComp && this.headerComp.setActiveParent) {
+            this.headerComp.setActiveParent(e.type === 'mouseenter');
+        }
+    };
+    HeaderWrapperComp.prototype.onFocusIn = function (e) {
+        if (!this.getGui().contains(e.relatedTarget)) {
+            var headerRow = this.getParentComponent();
+            this.focusController.setFocusedHeader(headerRow.getRowIndex(), this.getColumn());
+        }
+        if (this.headerComp && this.headerComp.setActiveParent) {
+            this.headerComp.setActiveParent(true);
+        }
+    };
+    HeaderWrapperComp.prototype.onFocusOut = function (e) {
+        if (!this.headerComp ||
+            !this.headerComp.setActiveParent ||
+            this.getGui().contains(e.relatedTarget)) {
+            return;
+        }
+        this.headerComp.setActiveParent(false);
+    };
+    HeaderWrapperComp.prototype.handleKeyDown = function (e) {
+        var headerComp = this.headerComp;
+        if (!headerComp) {
+            return;
+        }
+        if (e.keyCode === Constants.KEY_SPACE) {
+            var checkbox = this.cbSelectAll;
+            if (checkbox.isDisplayed() && !checkbox.getGui().contains(document.activeElement)) {
+                checkbox.setValue(!checkbox.getValue());
+            }
+        }
+        if (e.keyCode === Constants.KEY_ENTER) {
+            if (e.ctrlKey || e.metaKey) {
+                if (this.menuEnabled && headerComp.showMenu) {
+                    e.preventDefault();
+                    headerComp.showMenu();
+                }
+            }
+            else if (this.sortable) {
+                var multiSort = e.shiftKey;
+                this.sortController.progressSort(this.column, multiSort, "uiColumnSorted");
+            }
+        }
+    };
+    HeaderWrapperComp.prototype.getComponentHolder = function () {
+        return this.column.getColDef();
+    };
     HeaderWrapperComp.prototype.addColumnHoverListener = function () {
-        this.addDestroyableEventListener(this.eventService, Events.EVENT_COLUMN_HOVER_CHANGED, this.onColumnHover.bind(this));
+        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_HOVER_CHANGED, this.onColumnHover.bind(this));
         this.onColumnHover();
     };
     HeaderWrapperComp.prototype.onColumnHover = function () {
         var isHovered = this.columnHoverService.isHovered(this.column);
         _.addOrRemoveCssClass(this.getGui(), 'ag-column-hover', isHovered);
     };
-    HeaderWrapperComp.prototype.addMouseListeners = function () {
-        var listener = this.onMouseOverOut.bind(this);
-        this.addGuiEventListener("mouseenter", listener);
-        this.addGuiEventListener("mouseleave", listener);
-    };
-    HeaderWrapperComp.prototype.onMouseOverOut = function (e) {
-        if (this.headerComp && this.headerComp.setMouseOverParent) {
-            this.headerComp.setMouseOverParent(e.type === "mouseenter");
-        }
-    };
     HeaderWrapperComp.prototype.setupSortableClass = function (enableSorting) {
-        if (enableSorting) {
-            var element = this.getGui();
-            _.addCssClass(element, 'ag-header-cell-sortable');
+        if (!enableSorting) {
+            return;
         }
+        var element = this.getGui();
+        _.addCssClass(element, 'ag-header-cell-sortable');
+        this.sortable = true;
     };
     HeaderWrapperComp.prototype.onFilterChanged = function () {
         var filterPresent = this.column.isFilterActive();
@@ -128,7 +169,11 @@ var HeaderWrapperComp = /** @class */ (function (_super) {
         this.userComponentFactory.newHeaderComponent(params).then(callback);
     };
     HeaderWrapperComp.prototype.afterHeaderCompCreated = function (displayName, headerComp) {
-        this.appendChild(headerComp);
+        var _this = this;
+        this.getGui().appendChild(headerComp.getGui());
+        this.addDestroyFunc(function () {
+            _this.getContext().destroyBean(headerComp);
+        });
         this.setupMove(headerComp.getGui(), displayName);
         this.headerComp = headerComp;
     };
@@ -198,11 +243,11 @@ var HeaderWrapperComp = /** @class */ (function (_super) {
         var weWantAutoSize = !this.gridOptionsWrapper.isSuppressAutoSize() && !colDef.suppressAutoSize;
         var skipHeaderOnAutoSize = this.gridOptionsWrapper.isSkipHeaderOnAutoSize();
         if (weWantAutoSize) {
-            this.addDestroyableEventListener(this.eResize, 'dblclick', function () {
+            this.addManagedListener(this.eResize, 'dblclick', function () {
                 _this.columnController.autoSizeColumn(_this.column, skipHeaderOnAutoSize, "uiColumnResized");
             });
             var touchListener = new TouchListener(this.eResize);
-            this.addDestroyableEventListener(touchListener, TouchListener.EVENT_DOUBLE_TAP, function () {
+            this.addManagedListener(touchListener, TouchListener.EVENT_DOUBLE_TAP, function () {
                 _this.columnController.autoSizeColumn(_this.column, skipHeaderOnAutoSize, "uiColumnResized");
             });
             this.addDestroyFunc(touchListener.destroy.bind(touchListener));
@@ -235,22 +280,22 @@ var HeaderWrapperComp = /** @class */ (function (_super) {
             this.getGui().setAttribute('title', tooltipText);
         }
         else {
-            this.addFeature(new TooltipFeature(this, 'header'));
+            this.createManagedBean(new TooltipFeature(this, 'header'));
         }
     };
     HeaderWrapperComp.prototype.setupMovingCss = function () {
-        this.addDestroyableEventListener(this.column, Column.EVENT_MOVING_CHANGED, this.onColumnMovingChanged.bind(this));
+        this.addManagedListener(this.column, Column.EVENT_MOVING_CHANGED, this.onColumnMovingChanged.bind(this));
         this.onColumnMovingChanged();
     };
     HeaderWrapperComp.prototype.addAttributes = function () {
         this.getGui().setAttribute("col-id", this.column.getColId());
     };
     HeaderWrapperComp.prototype.setupWidth = function () {
-        this.addDestroyableEventListener(this.column, Column.EVENT_WIDTH_CHANGED, this.onColumnWidthChanged.bind(this));
+        this.addManagedListener(this.column, Column.EVENT_WIDTH_CHANGED, this.onColumnWidthChanged.bind(this));
         this.onColumnWidthChanged();
     };
     HeaderWrapperComp.prototype.setupMenuClass = function () {
-        this.addDestroyableEventListener(this.column, Column.EVENT_MENU_VISIBLE_CHANGED, this.onMenuVisible.bind(this));
+        this.addManagedListener(this.column, Column.EVENT_MENU_VISIBLE_CHANGED, this.onMenuVisible.bind(this));
         this.onColumnWidthChanged();
     };
     HeaderWrapperComp.prototype.onMenuVisible = function () {
@@ -277,11 +322,7 @@ var HeaderWrapperComp = /** @class */ (function (_super) {
         }
         return result;
     };
-    HeaderWrapperComp.TEMPLATE = '<div class="ag-header-cell" role="presentation" unselectable="on">' +
-        '  <div ref="eResize" class="ag-header-cell-resize" role="presentation"></div>' +
-        '  <ag-checkbox ref="cbSelectAll" class="ag-header-select-all" role="presentation"></ag-checkbox>' +
-        // <inner component goes here>
-        '</div>';
+    HeaderWrapperComp.TEMPLATE = "<div class=\"ag-header-cell\" role=\"presentation\" unselectable=\"on\" tabindex=\"-1\">\n            <div ref=\"eResize\" class=\"ag-header-cell-resize\" role=\"presentation\"></div>\n            <ag-checkbox ref=\"cbSelectAll\" class=\"ag-header-select-all\" role=\"presentation\"></ag-checkbox>\n        </div>";
     __decorate([
         Autowired('gridOptionsWrapper')
     ], HeaderWrapperComp.prototype, "gridOptionsWrapper", void 0);
@@ -307,9 +348,6 @@ var HeaderWrapperComp = /** @class */ (function (_super) {
         Autowired('sortController')
     ], HeaderWrapperComp.prototype, "sortController", void 0);
     __decorate([
-        Autowired('eventService')
-    ], HeaderWrapperComp.prototype, "eventService", void 0);
-    __decorate([
         Autowired('userComponentFactory')
     ], HeaderWrapperComp.prototype, "userComponentFactory", void 0);
     __decorate([
@@ -324,9 +362,6 @@ var HeaderWrapperComp = /** @class */ (function (_super) {
     __decorate([
         RefSelector('cbSelectAll')
     ], HeaderWrapperComp.prototype, "cbSelectAll", void 0);
-    __decorate([
-        PostConstruct
-    ], HeaderWrapperComp.prototype, "init", null);
     return HeaderWrapperComp;
-}(Component));
+}(AbstractHeaderWrapper));
 export { HeaderWrapperComp };

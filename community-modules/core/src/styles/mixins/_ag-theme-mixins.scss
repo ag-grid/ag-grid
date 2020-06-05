@@ -39,6 +39,29 @@
     }
 }
 
+@mixin ag-keyboard-focus($selectors, $offset) {
+    .ag-keyboard-focus {
+        @each $selector in $selectors {
+            .#{$selector}:focus {
+                outline: none;
+                &:after {
+                    content: '';
+                    position: absolute;
+                    background-color: transparent;
+                    pointer-events: none;
+                    top: $offset;
+                    left: $offset;
+                    display: block;
+                    width: calc(100% - #{$offset * 2});
+                    height: calc(100% - #{$offset * 2});
+                    border: 1px solid;
+                    @include ag-color-property(border-color, input-focus-border-color);
+                }
+            }
+        }
+    }
+}
+
 @mixin ag-vertical-widget-container {
     padding: ag-param(widget-container-vertical-padding) ag-param(widget-container-horizontal-padding);
     padding-bottom: ag-param(widget-container-vertical-padding) - ag-param(widget-vertical-spacing);

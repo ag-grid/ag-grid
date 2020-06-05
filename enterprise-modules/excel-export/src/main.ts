@@ -1,1 +1,1 @@
-export {ExcelExportModule} from "./excelExportModule"
+export { ExcelExportModule } from "./excelExportModule"

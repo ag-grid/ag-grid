@@ -1,7 +1,7 @@
-// Type definitions for @ag-grid-community/core v23.1.1
+// Type definitions for @ag-grid-community/core v23.2.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
-import { AgAbstractLabel } from "./agAbstractLabel";
+import { AgAbstractLabel } from './agAbstractLabel';
 export declare type FieldElement = HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement;
 export declare abstract class AgAbstractField<T> extends AgAbstractLabel {
     static EVENT_CHANGED: string;

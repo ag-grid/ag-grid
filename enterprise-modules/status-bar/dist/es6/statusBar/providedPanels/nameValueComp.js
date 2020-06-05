@@ -21,9 +21,7 @@ import { Autowired, Component, RefSelector } from '@ag-grid-community/core';
 var NameValueComp = /** @class */ (function (_super) {
     __extends(NameValueComp, _super);
     function NameValueComp() {
-        var _this = _super.call(this, NameValueComp.TEMPLATE) || this;
-        _this.events = [];
-        return _this;
+        return _super.call(this, NameValueComp.TEMPLATE) || this;
     }
     NameValueComp.prototype.setLabel = function (key, defaultValue) {
         // we want to hide until the first value comes in
@@ -33,11 +31,6 @@ var NameValueComp = /** @class */ (function (_super) {
     };
     NameValueComp.prototype.setValue = function (value) {
         this.eValue.innerHTML = value;
-    };
-    NameValueComp.prototype.destroy = function () {
-        this.events.forEach(function (func) { return func(); });
-        this.events = [];
-        _super.prototype.destroy.call(this);
     };
     NameValueComp.TEMPLATE = "<div class=\"ag-status-name-value\">  \n            <span ref=\"eLabel\"></span>:&nbsp;\n            <span ref=\"eValue\" class=\"ag-status-name-value-value\"></span>\n        </div>";
     __decorate([

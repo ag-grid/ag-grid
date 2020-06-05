@@ -1,6 +1,6 @@
 {
   "name": "@ag-grid-enterprise/row-grouping",
-  "version": "23.1.1",
+  "version": "23.2.0",
   "description": "Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components",
   "main": "./dist/cjs/main.js",
   "module": "./dist/es6/main.js",
@@ -43,8 +43,8 @@
   ],
   "homepage": "http://www.ag-grid.com/",
   "dependencies": {
-    "@ag-grid-community/core": "~23.1.0",
-    "@ag-grid-enterprise/core": "~23.1.0"
+    "@ag-grid-community/core": "~23.2.0",
+    "@ag-grid-enterprise/core": "~23.2.0"
   },
   "devDependencies": {
     "@types/jest": "^25.2.1",

@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v23.1.1
+ * @version v23.2.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -29,38 +29,91 @@ var gridOptionsWrapper_1 = require("../gridOptionsWrapper");
 var context_1 = require("../context/context");
 var headerContainer_1 = require("./headerContainer");
 var events_1 = require("../events");
-var component_1 = require("../widgets/component");
 var componentAnnotations_1 = require("../widgets/componentAnnotations");
 var constants_1 = require("../constants");
 var dom_1 = require("../utils/dom");
+var managedFocusComponent_1 = require("../widgets/managedFocusComponent");
+var headerNavigationService_1 = require("./header/headerNavigationService");
+var utils_1 = require("../utils");
 var HeaderRootComp = /** @class */ (function (_super) {
     __extends(HeaderRootComp, _super);
     function HeaderRootComp() {
-        return _super.call(this, HeaderRootComp.TEMPLATE) || this;
+        var _this = _super.call(this, HeaderRootComp.TEMPLATE) || this;
+        _this.headerContainers = new Map();
+        return _this;
     }
-    HeaderRootComp.prototype.registerGridComp = function (gridPanel) {
-        this.gridPanel = gridPanel;
-        this.childContainers.forEach(function (c) { return c.registerGridComp(gridPanel); });
-    };
     HeaderRootComp.prototype.postConstruct = function () {
         var _this = this;
+        _super.prototype.postConstruct.call(this);
         this.printLayout = this.gridOptionsWrapper.getDomLayout() === constants_1.Constants.DOM_LAYOUT_PRINT;
         this.gridApi.registerHeaderRootComp(this);
         this.autoWidthCalculator.registerHeaderRootComp(this);
-        var centerContainer = new headerContainer_1.HeaderContainer(this.eHeaderContainer, this.eHeaderViewport, null);
-        var pinnedLeftContainer = new headerContainer_1.HeaderContainer(this.ePinnedLeftHeader, null, constants_1.Constants.PINNED_LEFT);
-        var pinnedRightContainer = new headerContainer_1.HeaderContainer(this.ePinnedRightHeader, null, constants_1.Constants.PINNED_RIGHT);
-        this.childContainers = [centerContainer, pinnedLeftContainer, pinnedRightContainer];
-        this.childContainers.forEach(function (container) { return _this.getContext().wireBean(container); });
+        this.registerHeaderContainer(new headerContainer_1.HeaderContainer(this.eHeaderContainer, this.eHeaderViewport, null), 'center');
+        this.registerHeaderContainer(new headerContainer_1.HeaderContainer(this.ePinnedLeftHeader, null, constants_1.Constants.PINNED_LEFT), 'left');
+        this.registerHeaderContainer(new headerContainer_1.HeaderContainer(this.ePinnedRightHeader, null, constants_1.Constants.PINNED_RIGHT), 'right');
+        this.headerContainers.forEach(function (container) { return _this.createManagedBean(container); });
+        this.headerNavigationService.registerHeaderRoot(this);
         // shotgun way to get labels to change, eg from sum(amount) to avg(amount)
-        this.addDestroyableEventListener(this.eventService, events_1.Events.EVENT_COLUMN_VALUE_CHANGED, this.refreshHeader.bind(this));
-        this.addDestroyableEventListener(this.gridOptionsWrapper, gridOptionsWrapper_1.GridOptionsWrapper.PROP_DOM_LAYOUT, this.onDomLayoutChanged.bind(this));
+        this.addManagedListener(this.eventService, events_1.Events.EVENT_COLUMN_VALUE_CHANGED, this.refreshHeader.bind(this));
+        this.addManagedListener(this.gridOptionsWrapper, gridOptionsWrapper_1.GridOptionsWrapper.PROP_DOM_LAYOUT, this.onDomLayoutChanged.bind(this));
         // for setting ag-pivot-on / ag-pivot-off CSS classes
-        this.addDestroyableEventListener(this.eventService, events_1.Events.EVENT_COLUMN_PIVOT_MODE_CHANGED, this.onPivotModeChanged.bind(this));
+        this.addManagedListener(this.eventService, events_1.Events.EVENT_COLUMN_PIVOT_MODE_CHANGED, this.onPivotModeChanged.bind(this));
         this.onPivotModeChanged();
         this.addPreventHeaderScroll();
         if (this.columnController.isReady()) {
             this.refreshHeader();
+        }
+    };
+    HeaderRootComp.prototype.registerGridComp = function (gridPanel) {
+        this.gridPanel = gridPanel;
+        this.headerContainers.forEach(function (c) { return c.setupDragAndDrop(gridPanel); });
+    };
+    HeaderRootComp.prototype.registerHeaderContainer = function (headerContainer, type) {
+        this.headerContainers.set(type, headerContainer);
+    };
+    HeaderRootComp.prototype.onTabKeyDown = function (e) {
+        var isRtl = this.gridOptionsWrapper.isEnableRtl();
+        var direction = e.shiftKey !== isRtl
+            ? headerNavigationService_1.HeaderNavigationDirection.LEFT
+            : headerNavigationService_1.HeaderNavigationDirection.RIGHT;
+        if (this.headerNavigationService.navigateHorizontally(direction, true) ||
+            this.focusController.focusNextGridCoreContainer(e.shiftKey)) {
+            e.preventDefault();
+        }
+    };
+    HeaderRootComp.prototype.handleKeyDown = function (e) {
+        var direction;
+        switch (e.keyCode) {
+            case constants_1.Constants.KEY_LEFT:
+                direction = headerNavigationService_1.HeaderNavigationDirection.LEFT;
+            case constants_1.Constants.KEY_RIGHT:
+                if (!utils_1._.exists(direction)) {
+                    direction = headerNavigationService_1.HeaderNavigationDirection.RIGHT;
+                }
+                this.headerNavigationService.navigateHorizontally(direction);
+                break;
+            case constants_1.Constants.KEY_UP:
+                direction = headerNavigationService_1.HeaderNavigationDirection.UP;
+            case constants_1.Constants.KEY_DOWN:
+                if (!utils_1._.exists(direction)) {
+                    direction = headerNavigationService_1.HeaderNavigationDirection.DOWN;
+                }
+                if (this.headerNavigationService.navigateVertically(direction)) {
+                    e.preventDefault();
+                }
+                break;
+            default:
+                return;
+        }
+    };
+    HeaderRootComp.prototype.onFocusOut = function (e) {
+        var relatedTarget = e.relatedTarget;
+        var eGui = this.getGui();
+        if (!relatedTarget && eGui.contains(document.activeElement)) {
+            return;
+        }
+        if (!eGui.contains(relatedTarget)) {
+            this.focusController.clearFocusedHeader();
         }
     };
     HeaderRootComp.prototype.onDomLayoutChanged = function () {
@@ -74,14 +127,10 @@ var HeaderRootComp = /** @class */ (function (_super) {
         this.eHeaderContainer.style.transform = "translateX(" + offset + "px)";
     };
     HeaderRootComp.prototype.forEachHeaderElement = function (callback) {
-        this.childContainers.forEach(function (childContainer) { return childContainer.forEachHeaderElement(callback); });
-    };
-    HeaderRootComp.prototype.destroy = function () {
-        this.childContainers.forEach(function (container) { return container.destroy(); });
-        _super.prototype.destroy.call(this);
+        this.headerContainers.forEach(function (childContainer) { return childContainer.forEachHeaderElement(callback); });
     };
     HeaderRootComp.prototype.refreshHeader = function () {
-        this.childContainers.forEach(function (container) { return container.refresh(); });
+        this.headerContainers.forEach(function (container) { return container.refresh(); });
     };
     HeaderRootComp.prototype.onPivotModeChanged = function () {
         var pivotMode = this.columnController.isPivotMode();
@@ -100,7 +149,7 @@ var HeaderRootComp = /** @class */ (function (_super) {
     // and the grid columns no longer in sync.
     HeaderRootComp.prototype.addPreventHeaderScroll = function () {
         var _this = this;
-        this.addDestroyableEventListener(this.eHeaderViewport, 'scroll', function () {
+        this.addManagedListener(this.eHeaderViewport, 'scroll', function () {
             // if the header scrolls, the header will be out of sync. so we reset the
             // header scroll, and then scroll the body, which will in turn set the offset
             // on the header, giving the impression that the header scrolled as expected.
@@ -111,6 +160,9 @@ var HeaderRootComp = /** @class */ (function (_super) {
             }
         });
     };
+    HeaderRootComp.prototype.getHeaderContainers = function () {
+        return this.headerContainers;
+    };
     HeaderRootComp.prototype.setHeaderContainerWidth = function (width) {
         this.eHeaderContainer.style.width = width + "px";
     };
@@ -120,10 +172,7 @@ var HeaderRootComp = /** @class */ (function (_super) {
     HeaderRootComp.prototype.setRightVisible = function (visible) {
         dom_1.setDisplayed(this.ePinnedRightHeader, visible);
     };
-    HeaderRootComp.prototype.getHeaderRowCount = function () {
-        return this.childContainers.length === 0 ? 0 : this.childContainers[0].getRowComps().length;
-    };
-    HeaderRootComp.TEMPLATE = "\n        <div class=\"ag-header\" role=\"presentation\">\n            <div class=\"ag-pinned-left-header\" ref=\"ePinnedLeftHeader\" role=\"presentation\"></div>\n            <div class=\"ag-header-viewport\" ref=\"eHeaderViewport\" role=\"presentation\">\n                <div class=\"ag-header-container\" ref=\"eHeaderContainer\" role=\"rowgroup\"></div>\n            </div>\n            <div class=\"ag-pinned-right-header\" ref=\"ePinnedRightHeader\" role=\"presentation\"></div>\n        </div>";
+    HeaderRootComp.TEMPLATE = "<div class=\"ag-header\" role=\"presentation\">\n            <div class=\"ag-pinned-left-header\" ref=\"ePinnedLeftHeader\" role=\"presentation\"></div>\n            <div class=\"ag-header-viewport\" ref=\"eHeaderViewport\" role=\"presentation\">\n                <div class=\"ag-header-container\" ref=\"eHeaderContainer\" role=\"rowgroup\"></div>\n            </div>\n            <div class=\"ag-pinned-right-header\" ref=\"ePinnedRightHeader\" role=\"presentation\"></div>\n        </div>";
     __decorate([
         componentAnnotations_1.RefSelector('ePinnedLeftHeader')
     ], HeaderRootComp.prototype, "ePinnedLeftHeader", void 0);
@@ -143,19 +192,16 @@ var HeaderRootComp = /** @class */ (function (_super) {
         context_1.Autowired('columnController')
     ], HeaderRootComp.prototype, "columnController", void 0);
     __decorate([
-        context_1.Autowired('eventService')
-    ], HeaderRootComp.prototype, "eventService", void 0);
-    __decorate([
         context_1.Autowired('gridApi')
     ], HeaderRootComp.prototype, "gridApi", void 0);
     __decorate([
         context_1.Autowired('autoWidthCalculator')
     ], HeaderRootComp.prototype, "autoWidthCalculator", void 0);
     __decorate([
-        context_1.PostConstruct
-    ], HeaderRootComp.prototype, "postConstruct", null);
+        context_1.Autowired('headerNavigationService')
+    ], HeaderRootComp.prototype, "headerNavigationService", void 0);
     return HeaderRootComp;
-}(component_1.Component));
+}(managedFocusComponent_1.ManagedFocusComponent));
 exports.HeaderRootComp = HeaderRootComp;
 
 //# sourceMappingURL=headerRootComp.js.map

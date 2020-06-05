@@ -1,4 +1,5 @@
-export declare class XmlFactory {
+import { BeanStub } from "./context/beanStub";
+export declare class XmlFactory extends BeanStub {
     createXml(xmlElement: XmlElement, booleanTransformer?: (currentValue: boolean) => string): string;
     private returnAttributeIfPopulated;
 }

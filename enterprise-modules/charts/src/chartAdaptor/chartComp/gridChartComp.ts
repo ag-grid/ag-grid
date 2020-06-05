@@ -8,7 +8,6 @@ import {
     ChartType,
     Component,
     Environment,
-    EventService,
     GridOptionsWrapper,
     IAggFunc,
     PostConstruct,
@@ -48,15 +47,13 @@ export interface GridChartParams {
 }
 
 export class GridChartComp extends Component {
-    private static TEMPLATE =
+    private static TEMPLATE = /* html */
         `<div class="ag-chart" tabindex="-1">
             <div ref="eChartContainer" tabindex="-1" class="ag-chart-components-wrapper">
-                <div ref="eChart" class="ag-chart-canvas-wrapper">
-                </div>
+                <div ref="eChart" class="ag-chart-canvas-wrapper"></div>
                 <div ref="eEmpty" class="ag-chart-empty-text ag-unselectable"></div>
             </div>
-            <div ref="eTitleEditContainer">
-            </div>
+            <div ref="eTitleEditContainer"></div>
             <div ref="eMenuContainer" class="ag-chart-docked-container"></div>
         </div>`;
 
@@ -69,7 +66,6 @@ export class GridChartComp extends Component {
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('environment') private environment: Environment;
     @Autowired('chartTranslator') private chartTranslator: ChartTranslator;
-    @Autowired('eventService') private eventService: EventService;
     @Autowired('gridApi') private gridApi: GridApi;
     @Autowired('columnApi') private columnApi: ColumnApi;
     @Autowired('popupService') private popupService: PopupService;
@@ -101,8 +97,8 @@ export class GridChartComp extends Component {
         const isRtl = this.gridOptionsWrapper.isEnableRtl();
         _.addCssClass(this.getGui(), isRtl ? 'ag-rtl' : 'ag-ltr');
 
-        this.model = this.wireBean(new ChartDataModel(modelParams));
-        this.chartController = this.wireBean(new ChartController(this.model, this.params.chartPaletteName));
+        this.model = this.createBean(new ChartDataModel(modelParams));
+        this.chartController = this.createManagedBean(new ChartController(this.model, this.params.chartPaletteName));
 
         // create chart before dialog to ensure dialog is correct size
         this.createChart();
@@ -114,9 +110,9 @@ export class GridChartComp extends Component {
         this.addMenu();
         this.addTitleEditComp();
 
-        this.addDestroyableEventListener(this.getGui(), 'focusin', this.setActiveChartCellRange.bind(this));
-        this.addDestroyableEventListener(this.chartController, ChartController.EVENT_CHART_UPDATED, this.refresh.bind(this));
-        this.addDestroyableEventListener(this.chartMenu, ChartMenu.EVENT_DOWNLOAD_CHART, this.downloadChart.bind(this));
+        this.addManagedListener(this.getGui(), 'focusin', this.setActiveChartCellRange.bind(this));
+        this.addManagedListener(this.chartController, ChartController.EVENT_CHART_UPDATED, this.refresh.bind(this));
+        this.addManagedListener(this.chartMenu, ChartMenu.EVENT_DOWNLOAD_CHART, this.downloadChart.bind(this));
 
         this.refresh();
         this.raiseChartCreatedEvent();
@@ -216,7 +212,7 @@ export class GridChartComp extends Component {
             closable: true
         });
 
-        this.getContext().wireBean(this.chartDialog);
+        this.getContext().createBean(this.chartDialog);
 
         this.chartDialog.addEventListener(AgDialog.EVENT_DESTROYED, () => this.destroy());
     }
@@ -252,12 +248,12 @@ export class GridChartComp extends Component {
     }
 
     private addMenu(): void {
-        this.chartMenu = this.wireBean(new ChartMenu(this.eChartContainer, this.eMenuContainer, this.chartController));
+        this.chartMenu = this.createBean(new ChartMenu(this.eChartContainer, this.eMenuContainer, this.chartController));
         this.eChartContainer.appendChild(this.chartMenu.getGui());
     }
 
     private addTitleEditComp(): void {
-        this.titleEdit = this.wireBean(new TitleEdit(this.chartMenu));
+        this.titleEdit = this.createBean(new TitleEdit(this.chartMenu));
         this.eTitleEditContainer.appendChild(this.titleEdit.getGui());
 
         if( this.chartProxy ) {
@@ -370,6 +366,7 @@ export class GridChartComp extends Component {
         }
 
         this.chartController.setChartRange(true);
+        (this.gridApi as any).focusController.clearFocusedCell();
     }
 
     private raiseChartCreatedEvent(): void {
@@ -396,24 +393,18 @@ export class GridChartComp extends Component {
         this.eventService.dispatchEvent(event);
     }
 
-    public destroy(): void {
+    protected destroy(): void {
         super.destroy();
-
-        if (this.chartController) {
-            this.chartController.destroy();
-        }
 
         if (this.chartProxy) {
             this.chartProxy.destroy();
         }
 
-        if (this.chartMenu) {
-            this.chartMenu.destroy();
-        }
+        this.destroyBean(this.chartMenu);
 
         // don't want to invoke destroy() on the Dialog (prevents destroy loop)
         if (this.chartDialog && this.chartDialog.isAlive()) {
-            this.chartDialog.destroy();
+            this.destroyBean(this.chartDialog);
         }
 
         // if the user is providing containers for the charts, we need to clean up, otherwise the old chart

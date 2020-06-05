@@ -17,7 +17,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
-import { Autowired, Component, PostConstruct, RefSelector, _ } from "@ag-grid-community/core";
+import { Autowired, Component, PostConstruct, RefSelector, PreDestroy, Constants, _ } from "@ag-grid-community/core";
 var SideBarButtonsComp = /** @class */ (function (_super) {
     __extends(SideBarButtonsComp, _super);
     function SideBarButtonsComp() {
@@ -25,6 +25,23 @@ var SideBarButtonsComp = /** @class */ (function (_super) {
         _this.buttonComps = [];
         return _this;
     }
+    SideBarButtonsComp.prototype.postConstruct = function () {
+        this.addManagedListener(this.getFocusableElement(), 'keydown', this.handleKeyDown.bind(this));
+    };
+    SideBarButtonsComp.prototype.handleKeyDown = function (e) {
+        if (e.keyCode !== Constants.KEY_TAB || !e.shiftKey) {
+            return;
+        }
+        var prevEl = this.focusController.findNextFocusableElement(this.getFocusableElement(), null, true);
+        if (!prevEl) {
+            var headerPosition = this.headerPositionUtils.findColAtEdgeForHeaderRow(0, 'start');
+            if (!headerPosition) {
+                return;
+            }
+            e.preventDefault();
+            this.focusController.focusHeaderPosition(headerPosition);
+        }
+    };
     SideBarButtonsComp.prototype.setToolPanelDefs = function (toolPanelDefs) {
         toolPanelDefs.forEach(this.addButtonComp.bind(this));
     };
@@ -35,10 +52,9 @@ var SideBarButtonsComp = /** @class */ (function (_super) {
     };
     SideBarButtonsComp.prototype.addButtonComp = function (def) {
         var _this = this;
-        var buttonComp = new SideBarButtonComp(def);
-        this.getContext().wireBean(buttonComp);
+        var buttonComp = this.createBean(new SideBarButtonComp(def));
         this.buttonComps.push(buttonComp);
-        this.getGui().appendChild(buttonComp.getGui());
+        this.appendChild(buttonComp);
         buttonComp.addEventListener(SideBarButtonComp.EVENT_TOGGLE_BUTTON_CLICKED, function () {
             _this.dispatchEvent({
                 type: SideBarButtonsComp.EVENT_SIDE_BAR_BUTTON_CLICKED,
@@ -47,21 +63,23 @@ var SideBarButtonsComp = /** @class */ (function (_super) {
         });
     };
     SideBarButtonsComp.prototype.clearButtons = function () {
-        if (this.buttonComps) {
-            this.buttonComps.forEach(function (comp) { return comp.destroy(); });
-        }
+        this.buttonComps = this.destroyBeans(this.buttonComps);
         _.clearElement(this.getGui());
-        this.buttonComps.length = 0;
-    };
-    SideBarButtonsComp.prototype.destroy = function () {
-        this.clearButtons();
-        _super.prototype.destroy.call(this);
     };
     SideBarButtonsComp.EVENT_SIDE_BAR_BUTTON_CLICKED = 'sideBarButtonClicked';
     SideBarButtonsComp.TEMPLATE = "<div class=\"ag-side-buttons\"></div>";
     __decorate([
-        Autowired("gridOptionsWrapper")
-    ], SideBarButtonsComp.prototype, "gridOptionsWrapper", void 0);
+        Autowired('focusController')
+    ], SideBarButtonsComp.prototype, "focusController", void 0);
+    __decorate([
+        Autowired('headerPositionUtils')
+    ], SideBarButtonsComp.prototype, "headerPositionUtils", void 0);
+    __decorate([
+        PostConstruct
+    ], SideBarButtonsComp.prototype, "postConstruct", null);
+    __decorate([
+        PreDestroy
+    ], SideBarButtonsComp.prototype, "clearButtons", null);
     return SideBarButtonsComp;
 }(Component));
 export { SideBarButtonsComp };
@@ -79,7 +97,7 @@ var SideBarButtonComp = /** @class */ (function (_super) {
         var template = this.createTemplate();
         this.setTemplate(template);
         this.eIconWrapper.insertAdjacentElement('afterbegin', _.createIconNoSpan(this.toolPanelDef.iconKey, this.gridOptionsWrapper));
-        this.addDestroyableEventListener(this.eToggleButton, 'click', this.onButtonPressed.bind(this));
+        this.addManagedListener(this.eToggleButton, 'click', this.onButtonPressed.bind(this));
     };
     SideBarButtonComp.prototype.createTemplate = function () {
         var translate = this.gridOptionsWrapper.getLocaleTextFunc();

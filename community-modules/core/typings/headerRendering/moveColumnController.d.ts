@@ -1,7 +1,7 @@
 import { Column } from "../entities/column";
 import { DraggingEvent } from "../dragAndDrop/dragAndDropService";
-import { GridPanel } from "../gridPanel/gridPanel";
 import { DropListener } from "./bodyDropTarget";
+import { GridPanel } from "../gridPanel/gridPanel";
 import { ColumnEventType } from "../events";
 export declare class MoveColumnController implements DropListener {
     private loggerFactory;

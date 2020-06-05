@@ -156,9 +156,10 @@ var FontPanel = /** @class */ (function (_super) {
             .onValueChange(function (newColor) { return _this.params.setFont({ color: newColor }); });
     };
     FontPanel.prototype.destroyActiveComps = function () {
+        var _this = this;
         this.activeComps.forEach(function (comp) {
             core_1._.removeFromParent(comp.getGui());
-            comp.destroy();
+            _this.destroyBean(comp);
         });
     };
     FontPanel.prototype.destroy = function () {

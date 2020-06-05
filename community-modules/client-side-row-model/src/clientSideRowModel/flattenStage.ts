@@ -2,9 +2,8 @@ import {
     _,
     Autowired,
     Bean,
+    BeanStub,
     ColumnController,
-    Context,
-    EventService,
     GridOptionsWrapper,
     IRowNodeStage,
     RowNode,
@@ -13,12 +12,10 @@ import {
 } from "@ag-grid-community/core"
 
 @Bean('flattenStage')
-export class FlattenStage implements IRowNodeStage {
+export class FlattenStage extends BeanStub implements IRowNodeStage {
 
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('selectionController') private selectionController: SelectionController;
-    @Autowired('eventService') private eventService: EventService;
-    @Autowired('context') private context: Context;
     @Autowired('columnController') private columnController: ColumnController;
 
     public execute(params: StageExecuteParams): RowNode[] {
@@ -141,7 +138,7 @@ export class FlattenStage implements IRowNodeStage {
         if (_.exists(groupNode.sibling)) { return; }
 
         const footerNode = new RowNode();
-        this.context.wireBean(footerNode);
+        this.context.createBean(footerNode);
 
         Object.keys(groupNode).forEach(function (key) {
             (footerNode as any)[key] = (groupNode as any)[key];
@@ -165,7 +162,7 @@ export class FlattenStage implements IRowNodeStage {
         if (_.exists(masterNode.detailNode)) { return masterNode.detailNode; }
 
         const detailNode = new RowNode();
-        this.context.wireBean(detailNode);
+        this.context.createBean(detailNode);
 
         detailNode.detail = true;
         detailNode.selectable = false;

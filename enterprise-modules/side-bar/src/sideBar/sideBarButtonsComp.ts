@@ -6,6 +6,10 @@ import {
     PostConstruct,
     ToolPanelDef,
     RefSelector,
+    PreDestroy,
+    Constants,
+    FocusController,
+    HeaderPositionUtils,
     _
 } from "@ag-grid-community/core";
 
@@ -16,15 +20,31 @@ export interface SideBarButtonClickedEvent extends AgEvent {
 export class SideBarButtonsComp extends Component {
 
     public static EVENT_SIDE_BAR_BUTTON_CLICKED = 'sideBarButtonClicked';
-
-    @Autowired("gridOptionsWrapper") private gridOptionsWrapper: GridOptionsWrapper;
-
-    private static readonly TEMPLATE: string = `<div class="ag-side-buttons"></div>`;
-
+    private static readonly TEMPLATE: string = /* html */ `<div class="ag-side-buttons"></div>`;
     private buttonComps: SideBarButtonComp[] = [];
+
+    @Autowired('focusController') private focusController: FocusController;
+    @Autowired('headerPositionUtils') private headerPositionUtils: HeaderPositionUtils;
 
     constructor() {
         super(SideBarButtonsComp.TEMPLATE);
+    }
+
+    @PostConstruct
+    private postConstruct(): void {
+        this.addManagedListener(this.getFocusableElement(), 'keydown', this.handleKeyDown.bind(this));
+    }
+
+    private handleKeyDown(e: KeyboardEvent): void {
+        if (e.keyCode !== Constants.KEY_TAB || !e.shiftKey) { return; }
+        const prevEl = this.focusController.findNextFocusableElement(this.getFocusableElement(), null, true);
+
+        if (!prevEl) {
+            const headerPosition = this.headerPositionUtils.findColAtEdgeForHeaderRow(0, 'start');
+            if (!headerPosition) { return; }
+            e.preventDefault();
+            this.focusController.focusHeaderPosition(headerPosition);
+        }
     }
 
     public setToolPanelDefs(toolPanelDefs: ToolPanelDef[]): void {
@@ -38,10 +58,9 @@ export class SideBarButtonsComp extends Component {
     }
 
     private addButtonComp(def: ToolPanelDef): void {
-        const buttonComp = new SideBarButtonComp(def);
-        this.getContext().wireBean(buttonComp);
+        const buttonComp = this.createBean(new SideBarButtonComp(def));
         this.buttonComps.push(buttonComp);
-        this.getGui().appendChild(buttonComp.getGui());
+        this.appendChild(buttonComp);
 
         buttonComp.addEventListener(SideBarButtonComp.EVENT_TOGGLE_BUTTON_CLICKED, () => {
             this.dispatchEvent({
@@ -51,18 +70,12 @@ export class SideBarButtonsComp extends Component {
         });
     }
 
+    @PreDestroy
     public clearButtons(): void {
-        if (this.buttonComps) {
-            this.buttonComps.forEach(comp => comp.destroy());
-        }
+        this.buttonComps = this.destroyBeans(this.buttonComps);
         _.clearElement(this.getGui());
-        this.buttonComps.length = 0;
     }
 
-    public destroy(): void {
-        this.clearButtons();
-        super.destroy();
-    }
 }
 
 class SideBarButtonComp extends Component {
@@ -90,7 +103,7 @@ class SideBarButtonComp extends Component {
         const template = this.createTemplate();
         this.setTemplate(template);
         this.eIconWrapper.insertAdjacentElement('afterbegin', _.createIconNoSpan(this.toolPanelDef.iconKey, this.gridOptionsWrapper));
-        this.addDestroyableEventListener(this.eToggleButton, 'click', this.onButtonPressed.bind(this));
+        this.addManagedListener(this.eToggleButton, 'click', this.onButtonPressed.bind(this));
     }
 
     private createTemplate(): string {

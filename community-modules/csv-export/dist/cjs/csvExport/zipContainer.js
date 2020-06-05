@@ -1,4 +1,17 @@
 "use strict";
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = function (d, b) {
+        extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+        return extendStatics(d, b);
+    };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -43,17 +56,19 @@ var crcTable = [
     -893730166, 1404277552, 615818150, -1160759803, -841546093, 1423857449, 601450431, -1285129682,
     -1000256840, 1567103746, 711928724, -1274298825, -1022587231, 1510334235, 755167117
 ];
-var ZipContainer = /** @class */ (function () {
+var ZipContainer = /** @class */ (function (_super) {
+    __extends(ZipContainer, _super);
     function ZipContainer() {
-        var _this = this;
-        this.folders = [];
-        this.files = [];
-        this.addFolder = function (path) {
+        var _this = _super !== null && _super.apply(this, arguments) || this;
+        _this.folders = [];
+        _this.files = [];
+        _this.addFolder = function (path) {
             _this.folders.push({
                 path: path,
                 created: new Date()
             });
         };
+        return _this;
     }
     ZipContainer.prototype.addFolders = function (paths) {
         paths.forEach(this.addFolder);
@@ -184,6 +199,6 @@ var ZipContainer = /** @class */ (function () {
         core_1.Bean('zipContainer')
     ], ZipContainer);
     return ZipContainer;
-}());
+}(core_1.BeanStub));
 exports.ZipContainer = ZipContainer;
 //# sourceMappingURL=zipContainer.js.map

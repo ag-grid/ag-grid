@@ -120,22 +120,23 @@ var PieSeriesPanel = /** @class */ (function (_super) {
             initialFont: initialFont,
             setFont: setFont
         };
-        var labelPanelComp = this.wireBean(new FontPanel(params));
+        var labelPanelComp = this.createBean(new FontPanel(params));
         this.activePanels.push(labelPanelComp);
-        var calloutPanelComp = this.wireBean(new CalloutPanel(this.chartController));
+        var calloutPanelComp = this.createBean(new CalloutPanel(this.chartController));
         labelPanelComp.addCompToPanel(calloutPanelComp);
         this.activePanels.push(calloutPanelComp);
         this.seriesGroup.addItem(labelPanelComp);
     };
     PieSeriesPanel.prototype.initShadowPanel = function () {
-        var shadowPanelComp = this.wireBean(new ShadowPanel(this.chartController));
+        var shadowPanelComp = this.createBean(new ShadowPanel(this.chartController));
         this.seriesGroup.getGui().appendChild(shadowPanelComp.getGui());
         this.seriesGroup.addItem(shadowPanelComp);
     };
     PieSeriesPanel.prototype.destroyActivePanels = function () {
+        var _this = this;
         this.activePanels.forEach(function (panel) {
             _.removeFromParent(panel.getGui());
-            panel.destroy();
+            _this.destroyBean(panel);
         });
     };
     PieSeriesPanel.prototype.getChartProxy = function () {

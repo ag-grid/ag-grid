@@ -8,13 +8,14 @@ import {
     IRowModel,
     PostConstruct,
     RowDataTransaction,
-    RowNode
+    RowNode,
+    BeanStub
 } from "@ag-grid-community/core"
 
 import {ClientSideRowModel} from "./clientSideRowModel";
 
 @Bean('immutableService')
-export class ImmutableService implements IImmutableService {
+export class ImmutableService extends BeanStub implements IImmutableService {
 
     @Autowired('rowModel') private rowModel: IRowModel;
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;

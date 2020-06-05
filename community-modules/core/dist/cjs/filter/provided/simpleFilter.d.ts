@@ -1,9 +1,10 @@
-// Type definitions for @ag-grid-community/core v23.1.1
+// Type definitions for @ag-grid-community/core v23.2.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { IDoesFilterPassParams, IFilterOptionDef, ProvidedFilterModel } from '../../interfaces/iFilter';
 import { OptionsFactory } from './optionsFactory';
 import { IProvidedFilterParams, ProvidedFilter } from './providedFilter';
+import { Promise } from '../../utils';
 export interface ISimpleFilterParams extends IProvidedFilterParams {
     filterOptions?: (IFilterOptionDef | string)[];
     defaultOption?: string;
@@ -20,6 +21,25 @@ export interface ICombinedSimpleModel<M extends ISimpleFilterModel> extends Prov
 export declare enum ConditionPosition {
     One = 0,
     Two = 1
+}
+interface ISimpleFilterTranslations {
+    filterOoo: string;
+    empty: string;
+    equals: string;
+    notEqual: string;
+    lessThan: string;
+    greaterThan: string;
+    inRange: string;
+    inRangeStart: string;
+    inRangeEnd: string;
+    lessThanOrEqual: string;
+    greaterThanOrEqual: string;
+    contains: string;
+    notContains: string;
+    startsWith: string;
+    endsWith: string;
+    andCondition: string;
+    orCondition: string;
 }
 /**
  * Every filter with a dropdown where the user can specify a comparing type against the filter values
@@ -63,7 +83,7 @@ export declare abstract class SimpleFilter<M extends ISimpleFilterModel> extends
     protected getCondition2Type(): string;
     protected getJoinOperator(): string;
     protected areModelsEqual(a: M | ICombinedSimpleModel<M>, b: M | ICombinedSimpleModel<M>): boolean;
-    protected setModelIntoUi(model: ISimpleFilterModel | ICombinedSimpleModel<M>): void;
+    protected setModelIntoUi(model: ISimpleFilterModel | ICombinedSimpleModel<M>): Promise<void>;
     doesFilterPass(params: IDoesFilterPassParams): boolean;
     protected setParams(params: ISimpleFilterParams): void;
     private putOptionsIntoDropdown;
@@ -71,8 +91,9 @@ export declare abstract class SimpleFilter<M extends ISimpleFilterModel> extends
     protected createBodyTemplate(): string;
     protected getCssIdentifier(): string;
     protected updateUiVisibility(): void;
-    protected resetUiToDefaults(silent?: boolean): void;
-    translate(toTranslate: string): string;
+    protected resetUiToDefaults(silent?: boolean): Promise<void>;
+    translate(toTranslate: keyof ISimpleFilterTranslations): string;
     addChangedListeners(): void;
     protected doesFilterHaveHiddenInput(filterType: string): boolean;
 }
+export {};

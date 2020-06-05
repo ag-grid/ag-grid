@@ -1,7 +1,6 @@
 import { BeanStub, IServerSideDatasource, IServerSideRowModel, RowBounds, RowNode } from "@ag-grid-community/core";
 export declare class ServerSideRowModel extends BeanStub implements IServerSideRowModel {
     private gridOptionsWrapper;
-    private eventService;
     private columnController;
     private filterManager;
     private sortController;
@@ -12,8 +11,8 @@ export declare class ServerSideRowModel extends BeanStub implements IServerSideR
     private datasource;
     private rowHeight;
     private cacheParams;
-    private logger;
     private rowNodeBlockLoader;
+    private logger;
     ensureRowHeightsValid(startPixel: number, endPixel: number, startLimitIndex: number, endLimitIndex: number): boolean;
     private postConstruct;
     start(): void;

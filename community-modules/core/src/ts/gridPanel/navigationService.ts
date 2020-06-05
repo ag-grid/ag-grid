@@ -10,10 +10,11 @@ import { AnimationFrameService } from "../misc/animationFrameService";
 import { IRangeController } from "../interfaces/iRangeController";
 import { ColumnController } from "../columnController/columnController";
 import { GridOptionsWrapper } from "../gridOptionsWrapper";
+import { BeanStub } from "../context/beanStub";
 import { _ } from "../utils";
 
 @Bean('navigationService')
-export class NavigationService {
+export class NavigationService extends BeanStub {
 
     @Autowired('mouseEventService') private mouseEventService: MouseEventService;
     @Autowired('paginationProxy') private paginationProxy: PaginationProxy;
@@ -38,7 +39,6 @@ export class NavigationService {
     }
 
     public handlePageScrollingKey(event: KeyboardEvent): boolean {
-
         const key = event.which || event.keyCode;
         const alt = event.altKey;
         const ctrl = event.ctrlKey;
@@ -106,6 +106,7 @@ export class NavigationService {
     private isTimeSinceLastPageEventToRecent(): boolean {
         const now = new Date().getTime();
         const diff = now - this.timeLastPageEventProcessed;
+
         return (diff < 100);
     }
 
@@ -114,7 +115,6 @@ export class NavigationService {
     }
 
     private onPageDown(gridCell: CellPosition): void {
-
         if (this.isTimeSinceLastPageEventToRecent()) { return; }
 
         const scrollPosition = this.gridPanel.getVScrollPosition();
@@ -145,7 +145,6 @@ export class NavigationService {
     }
 
     private onPageUp(gridCell: CellPosition): void {
-
         if (this.isTimeSinceLastPageEventToRecent()) { return; }
 
         const scrollPosition = this.gridPanel.getVScrollPosition();
@@ -195,15 +194,15 @@ export class NavigationService {
         // if we don't do this, the range will be left on the last cell, which will leave the last focused cell
         // highlighted.
         this.focusController.setFocusedCell(focusIndex, focusColumn, null, true);
+
         if (this.rangeController) {
-            const cellPosition: CellPosition = {rowIndex: focusIndex, rowPinned: null, column: focusColumn};
+            const cellPosition: CellPosition = { rowIndex: focusIndex, rowPinned: null, column: focusColumn };
             this.rangeController.setRangeToCell(cellPosition);
         }
     }
 
     // ctrl + up/down will bring focus to same column, first/last row. no horizontal scrolling.
     private onCtrlUpOrDown(key: number, gridCell: CellPosition): void {
-
         const upKey = key === Constants.KEY_UP;
         const rowIndexToScrollTo = upKey ? 0 : this.paginationProxy.getPageLastRow();
 
@@ -212,9 +211,7 @@ export class NavigationService {
 
     // ctrl + left/right will bring focus to same row, first/last cell. no vertical scrolling.
     private onCtrlLeftOrRight(key: number, gridCell: CellPosition): void {
-
         const leftKey = key === Constants.KEY_LEFT;
-
         const allColumns: Column[] = this.columnController.getAllDisplayedColumns();
         const columnToSelect: Column = leftKey ? allColumns[0] : _.last(allColumns);
 
@@ -224,9 +221,7 @@ export class NavigationService {
     // home brings focus to top left cell, end brings focus to bottom right, grid scrolled to bring
     // same cell into view (which means either scroll all the way up, or all the way down).
     private onHomeOrEndKey(key: number): void {
-
         const homeKey = key === Constants.KEY_PAGE_HOME;
-
         const allColumns: Column[] = this.columnController.getAllDisplayedColumns();
         const columnToSelect = homeKey ? allColumns[0] : _.last(allColumns);
         const rowIndexToScrollTo = homeKey ? 0 : this.paginationProxy.getPageLastRow();

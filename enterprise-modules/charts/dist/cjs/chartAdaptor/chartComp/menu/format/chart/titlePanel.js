@@ -89,18 +89,19 @@ var TitlePanel = /** @class */ (function (_super) {
                 }
             }
         };
-        var fontPanelComp = this.wireBean(new fontPanel_1.FontPanel(fontPanelParams));
+        var fontPanelComp = this.createBean(new fontPanel_1.FontPanel(fontPanelParams));
         this.getGui().appendChild(fontPanelComp.getGui());
         this.activePanels.push(fontPanelComp);
         // edits to the title can disable it, so keep the checkbox in sync:
-        this.addDestroyableEventListener(this.eventService, 'chartTitleEdit', function () {
+        this.addManagedListener(this.eventService, 'chartTitleEdit', function () {
             fontPanelComp.setEnabled(_this.hasTitle());
         });
     };
     TitlePanel.prototype.destroyActivePanels = function () {
+        var _this = this;
         this.activePanels.forEach(function (panel) {
             core_1._.removeFromParent(panel.getGui());
-            panel.destroy();
+            _this.destroyBean(panel);
         });
     };
     TitlePanel.prototype.destroy = function () {
@@ -111,9 +112,6 @@ var TitlePanel = /** @class */ (function (_super) {
     __decorate([
         core_1.Autowired('chartTranslator')
     ], TitlePanel.prototype, "chartTranslator", void 0);
-    __decorate([
-        core_1.Autowired('eventService')
-    ], TitlePanel.prototype, "eventService", void 0);
     __decorate([
         core_1.PostConstruct
     ], TitlePanel.prototype, "init", null);

@@ -1,10 +1,10 @@
 import { RowNode } from "../entities/rowNode";
 import { Column } from "../entities/column";
-export declare class ValueService {
+import { BeanStub } from "../context/beanStub";
+export declare class ValueService extends BeanStub {
     private gridOptionsWrapper;
     private expressionService;
     private columnController;
-    private eventService;
     private valueCache;
     private cellExpressions;
     private initialised;

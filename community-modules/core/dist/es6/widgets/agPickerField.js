@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v23.1.1
+ * @version v23.2.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -51,7 +51,7 @@ var AgPickerField = /** @class */ (function (_super) {
             _this.pickerComponent = _this.showPicker();
         };
         var eGui = this.getGui();
-        this.addDestroyableEventListener(eGui, 'mousedown', function (e) {
+        this.addManagedListener(eGui, 'mousedown', function (e) {
             if (!_this.skipClick &&
                 _this.pickerComponent &&
                 _this.pickerComponent.isAlive() &&
@@ -60,7 +60,7 @@ var AgPickerField = /** @class */ (function (_super) {
                 _this.skipClick = true;
             }
         });
-        this.addDestroyableEventListener(eGui, 'keydown', function (e) {
+        this.addManagedListener(eGui, 'keydown', function (e) {
             switch (e.keyCode) {
                 case Constants.KEY_UP:
                 case Constants.KEY_DOWN:
@@ -72,8 +72,8 @@ var AgPickerField = /** @class */ (function (_super) {
                     break;
             }
         });
-        this.addDestroyableEventListener(this.eWrapper, 'click', clickHandler);
-        this.addDestroyableEventListener(this.eLabel, 'click', clickHandler);
+        this.addManagedListener(this.eWrapper, 'click', clickHandler);
+        this.addManagedListener(this.eLabel, 'click', clickHandler);
         if (this.pickerIcon) {
             this.eIcon.appendChild(_.createIconNoSpan(this.pickerIcon, this.gridOptionsWrapper, null));
         }

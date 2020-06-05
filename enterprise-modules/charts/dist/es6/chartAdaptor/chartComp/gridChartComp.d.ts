@@ -21,7 +21,6 @@ export declare class GridChartComp extends Component {
     private gridOptionsWrapper;
     private environment;
     private chartTranslator;
-    private eventService;
     private gridApi;
     private columnApi;
     private popupService;
@@ -52,5 +51,5 @@ export declare class GridChartComp extends Component {
     private setActiveChartCellRange;
     private raiseChartCreatedEvent;
     private raiseChartDestroyedEvent;
-    destroy(): void;
+    protected destroy(): void;
 }

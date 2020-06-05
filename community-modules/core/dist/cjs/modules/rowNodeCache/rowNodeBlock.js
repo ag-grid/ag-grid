@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v23.1.1
+ * @version v23.2.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -18,9 +18,16 @@ var __extends = (this && this.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 var utils_1 = require("../../utils");
 var rowNode_1 = require("../../entities/rowNode");
+var context_1 = require("../../context/context");
 var beanStub_1 = require("../../context/beanStub");
 var RowNodeBlock = /** @class */ (function (_super) {
     __extends(RowNodeBlock, _super);
@@ -129,7 +136,7 @@ var RowNodeBlock = /** @class */ (function (_super) {
     };
     RowNodeBlock.prototype.createBlankRowNode = function (rowIndex) {
         var rowNode = new rowNode_1.RowNode();
-        this.beans.context.wireBean(rowNode);
+        this.beans.context.createBean(rowNode);
         rowNode.setRowHeight(this.rowNodeCacheParams.rowHeight);
         return rowNode;
     };
@@ -170,10 +177,11 @@ var RowNodeBlock = /** @class */ (function (_super) {
             this.beans.rowRenderer.redrawRows(rowNodesToRefresh);
         }
     };
-    RowNodeBlock.prototype.destroy = function () {
+    RowNodeBlock.prototype.destroyRowNodes = function () {
+        var _this = this;
         this.rowNodes.forEach(function (rowNode) {
             if (rowNode.childrenCache) {
-                rowNode.childrenCache.destroy();
+                _this.destroyBean(rowNode.childrenCache);
                 rowNode.childrenCache = null;
             }
             // this is needed, so row render knows to fade out the row, otherwise it
@@ -181,7 +189,6 @@ var RowNodeBlock = /** @class */ (function (_super) {
             // rowNode should have a flag on whether it is visible???
             rowNode.clearRowTop();
         });
-        _super.prototype.destroy.call(this);
     };
     RowNodeBlock.prototype.pageLoaded = function (version, rows, lastRow) {
         // we need to check the version, in case there was an old request
@@ -206,6 +213,9 @@ var RowNodeBlock = /** @class */ (function (_super) {
     RowNodeBlock.STATE_LOADING = 'loading';
     RowNodeBlock.STATE_LOADED = 'loaded';
     RowNodeBlock.STATE_FAILED = 'failed';
+    __decorate([
+        context_1.PreDestroy
+    ], RowNodeBlock.prototype, "destroyRowNodes", null);
     return RowNodeBlock;
 }(beanStub_1.BeanStub));
 exports.RowNodeBlock = RowNodeBlock;

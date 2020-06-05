@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v23.1.1
+ * @version v23.2.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -29,34 +29,31 @@ var componentAnnotations_1 = require("../../widgets/componentAnnotations");
 var optionsFactory_1 = require("./optionsFactory");
 var providedFilter_1 = require("./providedFilter");
 var utils_1 = require("../../utils");
+var array_1 = require("../../utils/array");
+var dom_1 = require("../../utils/dom");
 var ConditionPosition;
 (function (ConditionPosition) {
     ConditionPosition[ConditionPosition["One"] = 0] = "One";
     ConditionPosition[ConditionPosition["Two"] = 1] = "Two";
 })(ConditionPosition = exports.ConditionPosition || (exports.ConditionPosition = {}));
 var DEFAULT_TRANSLATIONS = {
-    loadingOoo: 'Loading...',
+    filterOoo: 'Filter...',
     empty: 'Choose One',
     equals: 'Equals',
     notEqual: 'Not equal',
     lessThan: 'Less than',
     greaterThan: 'Greater than',
     inRange: 'In range',
-    lessThanOrEqual: 'Less than or equals',
-    greaterThanOrEqual: 'Greater than or equals',
-    filterOoo: 'Filter...',
     inRangeStart: 'From',
     inRangeEnd: 'To',
+    lessThanOrEqual: 'Less than or equals',
+    greaterThanOrEqual: 'Greater than or equals',
     contains: 'Contains',
     notContains: 'Not contains',
     startsWith: 'Starts with',
     endsWith: 'Ends with',
-    searchOoo: 'Search...',
-    selectAll: 'Select All',
-    applyFilter: 'Apply Filter',
-    clearFilter: 'Clear Filter',
     andCondition: 'AND',
-    orCondition: 'OR'
+    orCondition: 'OR',
 };
 /**
  * Every filter with a dropdown where the user can specify a comparing type against the filter values
@@ -161,6 +158,7 @@ var SimpleFilter = /** @class */ (function (_super) {
             this.setConditionIntoUi(simpleModel, ConditionPosition.One);
             this.setConditionIntoUi(null, ConditionPosition.Two);
         }
+        return utils_1.Promise.resolve();
     };
     SimpleFilter.prototype.doesFilterPass = function (params) {
         var model = this.getModel();
@@ -189,15 +187,19 @@ var SimpleFilter = /** @class */ (function (_super) {
     SimpleFilter.prototype.putOptionsIntoDropdown = function () {
         var _this = this;
         var filterOptions = this.optionsFactory.getFilterOptions();
-        filterOptions.forEach(function (option) {
-            var createOption = function () {
-                var key = (typeof option === 'string') ? option : option.displayKey;
-                var localName = _this.translate(key);
-                return {
-                    value: key,
-                    text: localName
-                };
-            };
+        array_1.forEach(filterOptions, function (option) {
+            var value;
+            var text;
+            if (typeof option === 'string') {
+                value = option;
+                text = _this.translate(value);
+            }
+            else {
+                value = option.displayKey;
+                var customOption = _this.optionsFactory.getCustomOption(value);
+                text = customOption ? customOption.displayName : _this.translate(value);
+            }
+            var createOption = function () { return ({ value: value, text: text }); };
             _this.eType1.addOption(createOption());
             _this.eType2.addOption(createOption());
         });
@@ -217,32 +219,28 @@ var SimpleFilter = /** @class */ (function (_super) {
     SimpleFilter.prototype.updateUiVisibility = function () {
         var firstConditionComplete = this.isConditionUiComplete(ConditionPosition.One);
         var showSecondFilter = this.allowTwoConditions && firstConditionComplete;
-        utils_1._.setDisplayed(this.eCondition2Body, showSecondFilter);
-        utils_1._.setDisplayed(this.eType2.getGui(), showSecondFilter);
-        utils_1._.setDisplayed(this.eJoinOperatorPanel, showSecondFilter);
+        dom_1.setDisplayed(this.eCondition2Body, showSecondFilter);
+        dom_1.setDisplayed(this.eType2.getGui(), showSecondFilter);
+        dom_1.setDisplayed(this.eJoinOperatorPanel, showSecondFilter);
     };
     SimpleFilter.prototype.resetUiToDefaults = function (silent) {
         var uniqueGroupId = 'ag-simple-filter-and-or-' + this.getCompId();
-        var translate = this.gridOptionsWrapper.getLocaleTextFunc();
         var defaultOption = this.optionsFactory.getDefaultOption();
         this.eType1.setValue(defaultOption, silent);
         this.eType2.setValue(defaultOption, silent);
         this.eJoinOperatorAnd
             .setValue(true, silent)
             .setName(uniqueGroupId)
-            .setLabel(translate('andCondition', 'AND'));
+            .setLabel(this.translate('andCondition'));
         this.eJoinOperatorOr
             .setValue(false, silent)
             .setName(uniqueGroupId)
-            .setLabel(translate('orCondition', 'OR'));
+            .setLabel(this.translate('orCondition'));
+        return utils_1.Promise.resolve();
     };
     SimpleFilter.prototype.translate = function (toTranslate) {
         var translate = this.gridOptionsWrapper.getLocaleTextFunc();
-        var defaultTranslation = DEFAULT_TRANSLATIONS[toTranslate];
-        if (!defaultTranslation && this.optionsFactory.getCustomOption(toTranslate)) {
-            defaultTranslation = this.optionsFactory.getCustomOption(toTranslate).displayName;
-        }
-        return translate(toTranslate, defaultTranslation);
+        return translate(toTranslate, DEFAULT_TRANSLATIONS[toTranslate]);
     };
     SimpleFilter.prototype.addChangedListeners = function () {
         var _this = this;

@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v23.1.1
+ * @version v23.2.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -36,22 +36,22 @@ var Promise = /** @class */ (function () {
         });
     };
     Promise.resolve = function (value) {
+        if (value === void 0) { value = null; }
         return new Promise(function (resolve) { return resolve(value); });
     };
     Promise.prototype.then = function (func) {
-        if (this.status === PromiseStatus.IN_PROGRESS) {
-            this.waiters.push(func);
-        }
-        else {
-            func(this.resolution);
-        }
-    };
-    Promise.prototype.map = function (adapter) {
         var _this = this;
-        return new Promise(function (resolve) { return _this.then(function (value) { return resolve(adapter(value)); }); });
+        return new Promise(function (resolve) {
+            if (_this.status === PromiseStatus.RESOLVED) {
+                resolve(func(_this.resolution));
+            }
+            else {
+                _this.waiters.push(function (value) { return resolve(func(value)); });
+            }
+        });
     };
     Promise.prototype.resolveNow = function (ifNotResolvedValue, ifResolved) {
-        return this.status == PromiseStatus.IN_PROGRESS ? ifNotResolvedValue : ifResolved(this.resolution);
+        return this.status === PromiseStatus.RESOLVED ? ifResolved(this.resolution) : ifNotResolvedValue;
     };
     Promise.prototype.onDone = function (value) {
         this.status = PromiseStatus.RESOLVED;

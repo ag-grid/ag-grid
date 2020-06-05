@@ -3,6 +3,11 @@ import { Node } from "./node";
 import { Path2D } from "./path2D";
 import { createId } from "../util/id";
 
+interface DebugOptions {
+    renderFrameIndex: boolean;
+    renderBoundingBoxes: boolean;
+}
+
 export class Scene {
 
     static className = 'Scene';
@@ -37,21 +42,24 @@ export class Scene {
     }
 
     get width(): number {
-        return this.canvas.width;
+        return this.pendingSize ? this.pendingSize[0] : this.canvas.width;
     }
 
     get height(): number {
-        return this.canvas.height;
+        return this.pendingSize ? this.pendingSize[1] : this.canvas.height;
     }
 
+    private pendingSize?: [number, number];
     resize(width: number, height: number) {
-        this.canvas.resize(
-            width, height,
+        width = Math.round(width);
+        height = Math.round(height);
 
-            // resizing a canvas clears the pixel content so when resizing is done
-            // mark as dirty to ensure a re-render
-            () => this.dirty = true
-        );
+        if (width === this.width && height === this.height) {
+            return;
+        }
+
+        this.pendingSize = [width, height];
+        this.dirty = true;
     }
 
     private _dirty = false;
@@ -130,26 +138,25 @@ export class Scene {
         }
     }
 
+    readonly debug: DebugOptions = {
+        renderFrameIndex: false,
+        renderBoundingBoxes: false
+    };
+
     private _frameIndex = 0;
     get frameIndex(): number {
         return this._frameIndex;
     }
 
-    private _renderFrameIndex = false;
-    set renderFrameIndex(value: boolean) {
-        if (this._renderFrameIndex !== value) {
-            this._renderFrameIndex = value;
-            this.dirty = true;
-        }
-    }
-    get renderFrameIndex(): boolean {
-        return this._renderFrameIndex;
-    }
-
     readonly render = () => {
-        const { ctx, root } = this;
+        const { ctx, root, pendingSize } = this;
 
         this.animationFrameId = 0;
+
+        if (pendingSize) {
+            this.canvas.resize(...pendingSize);
+            this.pendingSize = undefined;
+        }
 
         if (root && !root.visible) {
             this.dirty = false;
@@ -169,11 +176,11 @@ export class Scene {
 
         this._frameIndex++;
 
-        if (this.renderFrameIndex) {
+        if (this.debug.renderFrameIndex) {
             ctx.fillStyle = 'white';
             ctx.fillRect(0, 0, 40, 15);
             ctx.fillStyle = 'black';
-            ctx.fillText(this.frameIndex.toString(), 0, 10);
+            ctx.fillText(this.frameIndex.toString(), 2, 10);
         }
 
         this.dirty = false;

@@ -1,7 +1,6 @@
 import {
     Autowired,
     Events,
-    EventService,
     GridApi,
     PostConstruct,
     IStatusPanelComp,
@@ -11,7 +10,6 @@ import { NameValueComp } from "./nameValueComp";
 
 export class FilteredRowsComp extends NameValueComp implements IStatusPanelComp {
 
-    @Autowired('eventService') private eventService: EventService;
     @Autowired('gridApi') private gridApi: GridApi;
 
     @PostConstruct
@@ -30,7 +28,7 @@ export class FilteredRowsComp extends NameValueComp implements IStatusPanelComp 
         this.setDisplayed(true);
 
         const listener = this.onDataChanged.bind(this);
-        this.events = [this.eventService.addEventListener(Events.EVENT_MODEL_UPDATED, listener)];
+        this.addManagedListener(this.eventService, Events.EVENT_MODEL_UPDATED, listener);
     }
 
     private onDataChanged() {
@@ -58,4 +56,11 @@ export class FilteredRowsComp extends NameValueComp implements IStatusPanelComp 
     }
 
     public init() {}
+
+    // this is a user component, and IComponent has "public destroy()" as part of the interface.
+    // so we need to override destroy() just to make the method public.
+    public destroy(): void {
+        super.destroy();
+    }
+
 }

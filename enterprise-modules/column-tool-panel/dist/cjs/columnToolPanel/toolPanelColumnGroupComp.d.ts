@@ -1,9 +1,8 @@
-import { Component, OriginalColumnGroup } from "@ag-grid-community/core";
+import { OriginalColumnGroup, ManagedFocusComponent } from "@ag-grid-community/core";
 import { BaseColumnItem } from "./primaryColsPanel";
 import { ColumnFilterResults } from "./primaryColsListPanel";
-export declare class ToolPanelColumnGroupComp extends Component implements BaseColumnItem {
+export declare class ToolPanelColumnGroupComp extends ManagedFocusComponent implements BaseColumnItem {
     private static TEMPLATE;
-    private eventService;
     private columnController;
     private dragAndDropService;
     private gridOptionsWrapper;
@@ -23,6 +22,7 @@ export declare class ToolPanelColumnGroupComp extends Component implements BaseC
     private getFilterResultsCallback;
     constructor(columnGroup: OriginalColumnGroup, columnDept: number, allowDragging: boolean, expandByDefault: boolean, expandedCallback: () => void, getFilterResults: () => ColumnFilterResults);
     init(): void;
+    protected handleKeyDown(e: KeyboardEvent): void;
     private addVisibilityListenersToAllChildren;
     private setupDragging;
     private createDragItem;
@@ -37,6 +37,7 @@ export declare class ToolPanelColumnGroupComp extends Component implements BaseC
     private workOutReadOnlyValue;
     private isColumnVisible;
     private onExpandOrContractClicked;
+    private toggleExpandOrContract;
     private setOpenClosedIcons;
     isExpanded(): boolean;
     getDisplayName(): string | null;

@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v23.1.1
+ * @version v23.2.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -69,7 +69,7 @@ var BeanStub = /** @class */ (function () {
             this.localEventService.dispatchEvent(event);
         }
     };
-    BeanStub.prototype.addDestroyableEventListener = function (object, event, listener) {
+    BeanStub.prototype.addManagedListener = function (object, event, listener) {
         var _this = this;
         if (this.destroyed) {
             return;
@@ -97,23 +97,34 @@ var BeanStub = /** @class */ (function () {
             func();
         }
     };
-    BeanStub.prototype.wireDependentBean = function (bean, context) {
-        if (bean.destroy) {
-            this.addDestroyFunc(bean.destroy.bind(bean));
-        }
-        return this.wireBean(bean, context);
+    BeanStub.prototype.createManagedBean = function (bean, context) {
+        var res = this.createBean(bean, context);
+        this.addDestroyFunc(this.destroyBean.bind(this, bean, context));
+        return res;
     };
-    BeanStub.prototype.wireBean = function (bean, context) {
-        (context || this.getContext()).wireBean(bean);
-        return bean;
+    BeanStub.prototype.createBean = function (bean, context, afterPreCreateCallback) {
+        return (context || this.getContext()).createBean(bean, afterPreCreateCallback);
+    };
+    BeanStub.prototype.destroyBean = function (bean, context) {
+        return (context || this.getContext()).destroyBean(bean);
+    };
+    BeanStub.prototype.destroyBeans = function (beans, context) {
+        var _this = this;
+        if (beans) {
+            beans.forEach(function (bean) { return _this.destroyBean(bean, context); });
+        }
+        return [];
     };
     BeanStub.EVENT_DESTROYED = 'destroyed';
+    __decorate([
+        Autowired('frameworkOverrides')
+    ], BeanStub.prototype, "frameworkOverrides", void 0);
     __decorate([
         Autowired('context')
     ], BeanStub.prototype, "context", void 0);
     __decorate([
-        Autowired('frameworkOverrides')
-    ], BeanStub.prototype, "frameworkOverrides", void 0);
+        Autowired('eventService')
+    ], BeanStub.prototype, "eventService", void 0);
     __decorate([
         PreDestroy
     ], BeanStub.prototype, "destroy", null);

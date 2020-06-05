@@ -25,18 +25,17 @@ export declare class HdpiCanvas {
     _pixelRatio: number;
     readonly pixelRatio: number;
     /**
-     * Updates the pixel ratio of the Canvas element with the given value,
+     * Changes the pixel ratio of the Canvas element to the given value,
      * or uses the window.devicePixelRatio (default), then resizes the Canvas
      * element accordingly (default).
-     * @param ratio
-     * @param resize
      */
-    updatePixelRatio(ratio?: number, resize?: boolean): void;
+    setPixelRatio(ratio?: number): void;
+    pixelated: boolean;
     private _width;
     readonly width: number;
     private _height;
     readonly height: number;
-    resize(width: number, height: number, callbackWhenDone?: () => void): void;
+    resize(width: number, height: number): void;
     private static _textMeasuringContext?;
     private static readonly textMeasuringContext;
     private static _svgText?;
@@ -55,6 +54,6 @@ export declare class HdpiCanvas {
     static getTextSize(text: string, font: string): Size;
     private static textSizeCache;
     private static measureSvgText;
-    private static makeHdpiOverrides;
+    static overrideScale(ctx: CanvasRenderingContext2D, scale: number): void;
 }
 export {};

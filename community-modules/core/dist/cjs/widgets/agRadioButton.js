@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v23.1.1
+ * @version v23.2.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -38,7 +38,7 @@ var AgRadioButton = /** @class */ (function (_super) {
     };
     AgRadioButton.prototype.addInputListeners = function () {
         _super.prototype.addInputListeners.call(this);
-        this.addDestroyableEventListener(this.eventService, eventKeys_1.Events.EVENT_CHECKBOX_CHANGED, this.onChange.bind(this));
+        this.addManagedListener(this.eventService, eventKeys_1.Events.EVENT_CHECKBOX_CHANGED, this.onChange.bind(this));
     };
     /**
      * This ensures that if another radio button in the same named group is selected, we deselect this radio button.

@@ -257,20 +257,20 @@ SNIPPET
 </p>
 
 <ul>
-    <li>The example has two groups: Athlete Details and Sports Results</li>
-    <li>The example has two sets of columns, Normal Cols and Extra Cols.</li>
+    <li>The example has two groups: <strong>Athlete Details</strong> and <strong>Sports Results</strong></li>
+    <li>The example has two sets of columns, <strong>Normal Cols</strong> and <strong>Extra Cols</strong>.</li>
     <li>
-        When you moved from Normal Cols to Extra Cols, three new columns are
-        added to the list. Two belong to Athlete Details group, the other belongs to no group.
+        When you moved from <strong>Normal Cols</strong> to <strong>Extra Cols</strong>, three new columns are
+        added to the list. Two belong to the <strong>Athlete Details</strong> group, the other belongs to no group.
     </li>
     <li>
         When a column is added to the grid that is not in a group, it is always added to the
-        end of the list of columns. In this example column Distance is always added to the end.
+        end of the list of columns. In this example the <strong>Distance</strong> column is always added to the end.
     </li>
     <li>
         When a column is added to the grid that is part of a group, it is always added after
-        the last column belonging to that group. In this example columns Region1 and Region2
-        are always added after either Athlete or Country, whichever appears last in the grid.
+        the last column belonging to that group. In this example columns <strong>Region1</strong> and <strong>Region2</strong>
+        are always added after either <strong>Athlete</strong> or <strong>Country</strong>, whichever appears last in the grid.
     </li>
 </ul>
 

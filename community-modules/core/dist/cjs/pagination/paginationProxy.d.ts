@@ -1,12 +1,11 @@
-// Type definitions for @ag-grid-community/core v23.1.1
+// Type definitions for @ag-grid-community/core v23.2.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
-import { BeanStub } from "../context/beanStub";
 import { RowBounds } from "../interfaces/iRowModel";
+import { BeanStub } from "../context/beanStub";
 import { RowNode } from "../entities/rowNode";
 export declare class PaginationProxy extends BeanStub {
     private rowModel;
-    private eventService;
     private gridOptionsWrapper;
     private selectionController;
     private columnApi;

@@ -13,7 +13,7 @@ export declare class SetLeftFeature extends BeanStub {
     constructor(columnOrGroup: ColumnGroupChild, eCell: HTMLElement, beans: Beans, colsSpanning?: Column[]);
     setColsSpanning(colsSpanning: Column[]): void;
     getColumnOrGroup(): ColumnGroupChild;
-    init(): void;
+    private postConstruct;
     private setLeftFirstTime;
     private animateInLeft;
     private onLeftChanged;

@@ -2,24 +2,24 @@ import {
     Autowired,
     Constants,
     GridOptionsWrapper,
-    ManagedTabComponent,
+    ManagedFocusComponent,
     MenuItemDef,
     PopupService,
-    PostConstruct,
     _
 } from "@ag-grid-community/core";
 import { MenuItemComponent, MenuItemSelectedEvent } from "./menuItemComponent";
 
 type MenuItem = { comp: MenuItemComponent, params: MenuItemDef };
 
-export class MenuList extends ManagedTabComponent {
+export class MenuList extends ManagedFocusComponent {
 
     @Autowired('popupService') private popupService: PopupService;
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
 
-    private static TEMPLATE = '<div class="ag-menu-list" tabindex="-1"></div>';
+    private static TEMPLATE = /* html */ `
+        <div class="ag-menu-list"><div class="ag-menu-list-body"></div>`;
 
-    private static SEPARATOR_TEMPLATE =
+    private static SEPARATOR_TEMPLATE = /* html */
         `<div class="ag-menu-separator">
             <span class="ag-menu-separator-cell"></span>
             <span class="ag-menu-separator-cell"></span>
@@ -44,9 +44,40 @@ export class MenuList extends ManagedTabComponent {
         super(MenuList.TEMPLATE);
     }
 
-    @PostConstruct
-    public init(): void {
-        this.addDestroyableEventListener(this.getGui(), 'keydown', this.handleKeyDown.bind(this));
+    protected onTabKeyDown(e: KeyboardEvent) {
+        const parent = this.getParentComponent();
+        const isManaged = parent && parent instanceof ManagedFocusComponent;
+
+        if (!isManaged) {
+            e.preventDefault();
+        }
+
+        if (e.shiftKey) {
+            this.closeIfIsChild(e);
+        }
+    }
+
+    protected handleKeyDown(e: KeyboardEvent): void {
+        switch (e.keyCode) {
+            case Constants.KEY_UP:
+            case Constants.KEY_RIGHT:
+            case Constants.KEY_DOWN:
+            case Constants.KEY_LEFT:
+                e.preventDefault();
+                this.handleNavKey(e.keyCode);
+                break;
+            case Constants.KEY_ESCAPE:
+                const topMenu = this.findTopMenu();
+
+                if (topMenu) {
+                    topMenu.getGui().focus();
+                }
+                break;
+        }
+    }
+
+    protected isFocusableContainer(): boolean {
+        return true;
     }
 
     public clearActiveItem(): void {
@@ -70,12 +101,10 @@ export class MenuList extends ManagedTabComponent {
     }
 
     public addItem(menuItemDef: MenuItemDef): void {
-        const cMenuItem = new MenuItemComponent(menuItemDef);
-        this.getContext().wireBean(cMenuItem);
+        const cMenuItem = this.createManagedBean(new MenuItemComponent(menuItemDef));
         this.menuItems.push({comp: cMenuItem, params: menuItemDef });
 
-        this.getGui().appendChild(cMenuItem.getGui());
-        this.addDestroyFunc(() => cMenuItem.destroy());
+        this.appendChild(cMenuItem.getGui());
 
         cMenuItem.addEventListener(MenuItemComponent.EVENT_ITEM_SELECTED, (event: MenuItemSelectedEvent) => {
             if (menuItemDef.subMenu && !menuItemDef.action) {
@@ -192,25 +221,6 @@ export class MenuList extends ManagedTabComponent {
         this.activeMenuItemParams = null;
     }
 
-    private handleKeyDown(e: KeyboardEvent): void {
-        switch (e.keyCode) {
-            case Constants.KEY_UP:
-            case Constants.KEY_RIGHT:
-            case Constants.KEY_DOWN:
-            case Constants.KEY_LEFT:
-                e.preventDefault();
-                this.handleNavKey(e.keyCode);
-                break;
-            case Constants.KEY_ESCAPE:
-                const topMenu = this.findTopMenu();
-
-                if (topMenu) {
-                    topMenu.getGui().focus();
-                }
-                break;
-        }
-    }
-
     private findTopMenu(): MenuList | undefined {
         let parent = this.getParentComponent();
         
@@ -248,14 +258,6 @@ export class MenuList extends ManagedTabComponent {
             this.closeIfIsChild();
         } else {
             this.openChild();
-        }
-    }
-
-    protected onTabKeyDown(e: KeyboardEvent) {
-        super.onTabKeyDown(e);
-
-        if (e.shiftKey) {
-            this.closeIfIsChild(e);
         }
     }
 
@@ -320,7 +322,8 @@ export class MenuList extends ManagedTabComponent {
     }
 
     public addSeparator(): void {
-        this.getGui().appendChild(_.loadTemplate(MenuList.SEPARATOR_TEMPLATE));
+        const template = _.loadTemplate(MenuList.SEPARATOR_TEMPLATE);
+        this.appendChild(template);
     }
 
     private showChildMenu(menuItemComp: MenuItemComponent, menuItemDef: MenuItemDef): void {
@@ -329,7 +332,7 @@ export class MenuList extends ManagedTabComponent {
         const childMenu = new MenuList();
         childMenu.setParentComponent(menuItemComp);
 
-        this.getContext().wireBean(childMenu);
+        this.getContext().createBean(childMenu);
         childMenu.addMenuItems(menuItemDef.subMenu);
 
         const ePopup = _.loadTemplate('<div class="ag-menu" tabindex="-1"></div>');
@@ -345,7 +348,7 @@ export class MenuList extends ManagedTabComponent {
         this.subMenuParentComp = menuItemComp;
         this.subMenuComp = childMenu;
 
-        childMenu.addDestroyableEventListener(ePopup, 'mouseover', () => {
+        childMenu.addManagedListener(ePopup, 'mouseover', () => {
             if (this.subMenuHideTimer && menuItemComp === this.subMenuParentComp) {
                 window.clearTimeout(this.subMenuHideTimer);
                 window.clearTimeout(this.subMenuShowTimer);
@@ -374,7 +377,7 @@ export class MenuList extends ManagedTabComponent {
         this.removeChildFuncs = [];
     }
 
-    public destroy(): void {
+    protected destroy(): void {
         this.removeChildPopup();
         super.destroy();
     }

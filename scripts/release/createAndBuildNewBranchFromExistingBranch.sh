@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-if [ "$#" -lt 3 ]
+if [ "$#" -ne 6 ]
   then
     echo "You must supply a source branch, new branch name, release version and dependency version"
     echo "For example: ./scripts/release/checkoutAndBuildNewBranchFromLatest.sh latest b19.1.2 19.1.2 ~19.1.0 2.0.0 ~2.0.0"

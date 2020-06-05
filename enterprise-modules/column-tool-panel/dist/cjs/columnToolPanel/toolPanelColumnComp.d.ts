@@ -1,10 +1,9 @@
-import { Column, Component } from "@ag-grid-community/core";
+import { Column, ManagedFocusComponent } from "@ag-grid-community/core";
 import { BaseColumnItem } from "./primaryColsPanel";
-export declare class ToolPanelColumnComp extends Component implements BaseColumnItem {
+export declare class ToolPanelColumnComp extends ManagedFocusComponent implements BaseColumnItem {
     private static TEMPLATE;
     private gridOptionsWrapper;
     private columnController;
-    private eventService;
     private dragAndDropService;
     private columnApi;
     private gridApi;
@@ -19,6 +18,7 @@ export declare class ToolPanelColumnComp extends Component implements BaseColumn
     private groupsExist;
     constructor(column: Column, columnDept: number, allowDragging: boolean, groupsExist: boolean);
     init(): void;
+    protected handleKeyDown(e: KeyboardEvent): void;
     private onLabelClicked;
     private onCheckboxChanged;
     private onChangeCommon;

@@ -33,7 +33,7 @@ export declare class TooltipFeature extends BeanStub {
     private tooltipMouseTrack;
     constructor(parentComp: TooltipParentComp, location: string);
     private postConstruct;
-    destroy(): void;
+    protected destroy(): void;
     onMouseEnter(e: MouseEvent): void;
     onMouseLeave(): void;
     private setToDoNothing;

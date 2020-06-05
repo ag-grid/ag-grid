@@ -1,10 +1,23 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v23.1.1
+ * @version v23.2.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
 "use strict";
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = function (d, b) {
+        extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+        return extendStatics(d, b);
+    };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -16,36 +29,29 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var context_1 = require("./context/context");
+var beanStub_1 = require("./context/beanStub");
 var context_2 = require("./context/context");
 var events_1 = require("./events");
 var context_3 = require("./context/context");
 var context_4 = require("./context/context");
 var constants_1 = require("./constants");
-var utils_1 = require("./utils");
 var changedPath_1 = require("./utils/changedPath");
-var SelectionController = /** @class */ (function () {
+var utils_1 = require("./utils");
+var SelectionController = /** @class */ (function (_super) {
+    __extends(SelectionController, _super);
     function SelectionController() {
-        this.events = [];
+        return _super !== null && _super.apply(this, arguments) || this;
     }
     SelectionController.prototype.setBeans = function (loggerFactory) {
         this.logger = loggerFactory.create('SelectionController');
         this.reset();
         if (this.gridOptionsWrapper.isRowModelDefault()) {
-            this.events.push(this.eventService.addEventListener(events_1.Events.EVENT_ROW_DATA_CHANGED, this.reset.bind(this)));
-        }
-        else {
-            this.logger.log('dont know what to do here');
+            this.addManagedListener(this.eventService, events_1.Events.EVENT_ROW_DATA_CHANGED, this.reset.bind(this));
         }
     };
     SelectionController.prototype.init = function () {
         this.groupSelectsChildren = this.gridOptionsWrapper.isGroupSelectsChildren();
-        this.events.push(this.eventService.addEventListener(events_1.Events.EVENT_ROW_SELECTED, this.onRowSelected.bind(this)));
-    };
-    SelectionController.prototype.destroy = function () {
-        if (this.events.length) {
-            this.events.forEach(function (func) { return func(); });
-        }
-        this.events = [];
+        this.addManagedListener(this.eventService, events_1.Events.EVENT_ROW_SELECTED, this.onRowSelected.bind(this));
     };
     SelectionController.prototype.setLastSelectedNode = function (rowNode) {
         this.lastSelectedNode = rowNode;
@@ -323,9 +329,6 @@ var SelectionController = /** @class */ (function () {
         this.selectNode(node, tryMulti);
     };
     __decorate([
-        context_3.Autowired('eventService')
-    ], SelectionController.prototype, "eventService", void 0);
-    __decorate([
         context_3.Autowired('rowModel')
     ], SelectionController.prototype, "rowModel", void 0);
     __decorate([
@@ -343,14 +346,11 @@ var SelectionController = /** @class */ (function () {
     __decorate([
         context_4.PostConstruct
     ], SelectionController.prototype, "init", null);
-    __decorate([
-        context_1.PreDestroy
-    ], SelectionController.prototype, "destroy", null);
     SelectionController = __decorate([
         context_1.Bean('selectionController')
     ], SelectionController);
     return SelectionController;
-}());
+}(beanStub_1.BeanStub));
 exports.SelectionController = SelectionController;
 
 //# sourceMappingURL=selectionController.js.map

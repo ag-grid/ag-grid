@@ -1,4 +1,4 @@
-// Type definitions for @ag-grid-community/core v23.1.1
+// Type definitions for @ag-grid-community/core v23.2.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { AgPickerField } from "./agPickerField";
@@ -18,6 +18,6 @@ export declare class AgSelect extends AgPickerField<HTMLSelectElement, string> {
     addOptions(options: ListOption[]): this;
     addOption(option: ListOption): this;
     setValue(value: string, silent?: boolean, fromPicker?: boolean): this;
-    destroy(): void;
+    protected destroy(): void;
 }
 export {};

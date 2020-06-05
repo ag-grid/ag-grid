@@ -1,25 +1,29 @@
 import { Column } from '../../entities/column';
-import { Component } from '../../widgets/component';
-export declare class FloatingFilterWrapper extends Component {
+import { AbstractHeaderWrapper } from '../../headerRendering/header/abstractHeaderWrapper';
+import { Beans } from '../../rendering/beans';
+export declare class FloatingFilterWrapper extends AbstractHeaderWrapper {
     private static filterToFloatingFilterNames;
     private static TEMPLATE;
     private columnHoverService;
-    private eventService;
-    private beans;
     private gridOptionsWrapper;
     private userComponentFactory;
     private gridApi;
     private columnApi;
     private filterManager;
     private menuFactory;
+    protected beans: Beans;
     private eFloatingFilterBody;
     private eButtonWrapper;
     private eButtonShowMainFilter;
-    private readonly column;
+    protected readonly column: Column;
+    protected readonly pinned: string;
     private suppressFilterButton;
     private floatingFilterCompPromise;
-    constructor(column: Column);
-    private postConstruct;
+    constructor(column: Column, pinned: string);
+    protected postConstruct(): void;
+    protected onTabKeyDown(e: KeyboardEvent): void;
+    protected handleKeyDown(e: KeyboardEvent): void;
+    protected onFocusIn(e: FocusEvent): void;
     private setupFloatingFilter;
     private setupLeftPositioning;
     private setupSyncWithFilter;

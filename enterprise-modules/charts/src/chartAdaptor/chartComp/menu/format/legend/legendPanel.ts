@@ -18,7 +18,7 @@ import { ChartTranslator } from "../../../chartTranslator";
 
 export class LegendPanel extends Component {
 
-    public static TEMPLATE =
+    public static TEMPLATE = /* html */
         `<div>
             <ag-group-component ref="legendGroup">
                 <ag-select ref="legendPositionSelect"></ag-select>
@@ -154,7 +154,7 @@ export class LegendPanel extends Component {
             setFont: setFont
         };
 
-        const fontPanelComp = this.wireBean(new FontPanel(params));
+        const fontPanelComp = this.createBean(new FontPanel(params));
         this.legendGroup.addItem(fontPanelComp);
         this.activePanels.push(fontPanelComp);
     }
@@ -162,11 +162,11 @@ export class LegendPanel extends Component {
     private destroyActivePanels(): void {
         this.activePanels.forEach(panel => {
             _.removeFromParent(panel.getGui());
-            panel.destroy();
+            this.destroyBean(panel);
         });
     }
 
-    public destroy(): void {
+    protected destroy(): void {
         this.destroyActivePanels();
         super.destroy();
     }

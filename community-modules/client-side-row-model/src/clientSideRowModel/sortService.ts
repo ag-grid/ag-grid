@@ -9,7 +9,8 @@ import {
     PostConstruct,
     RowNode,
     SortController,
-    ValueService
+    ValueService,
+    BeanStub
 } from "@ag-grid-community/core";
 
 import {RowNodeMap} from "./clientSideRowModel";
@@ -25,7 +26,7 @@ export interface SortedRowNode {
 }
 
 @Bean('sortService')
-export class SortService {
+export class SortService extends BeanStub {
 
     @Autowired('sortController') private sortController: SortController;
     @Autowired('columnController') private columnController: ColumnController;

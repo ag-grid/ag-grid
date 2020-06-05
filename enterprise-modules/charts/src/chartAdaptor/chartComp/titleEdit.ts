@@ -2,7 +2,6 @@ import {
     _,
     Autowired,
     Component,
-    EventService,
     PostConstruct
 } from "@ag-grid-community/core";
 import { ChartMenu } from "./menu/chartMenu";
@@ -14,17 +13,15 @@ import { ChartProxy } from "./chartProxies/chartProxy";
 type BBox = { x: number; y: number; width: number; height: number };
 
 export class TitleEdit extends Component {
-    private static TEMPLATE =
+    private static TEMPLATE = /* html */
         `<input
             class="ag-chart-title-edit"
-            style="padding:0; border:none; border-radius: 0; min-height: 0; text-align: center;"
-        ></input>`;
+            style="padding:0; border:none; border-radius: 0; min-height: 0; text-align: center;" />
+        `;
 
     @Autowired('chartTranslator') private chartTranslator: ChartTranslator;
-    @Autowired('eventService') private eventService: EventService;
 
     private chartProxy: ChartProxy<Chart, any>;
-
     private destroyableChartListeners: (() => void)[];
 
     constructor(private readonly chartMenu: ChartMenu) {
@@ -33,12 +30,12 @@ export class TitleEdit extends Component {
 
     @PostConstruct
     public init(): void {
-        this.addDestroyableEventListener(this.getGui(), 'keypress', (e: KeyboardEvent) => {
+        this.addManagedListener(this.getGui(), 'keypress', (e: KeyboardEvent) => {
             if (e.key === 'Enter') {
                 this.endEditing();
             }
         });
-        this.addDestroyableEventListener(this.getGui(), 'blur', this.endEditing.bind(this));
+        this.addManagedListener(this.getGui(), 'blur', this.endEditing.bind(this));
     }
 
     /* should be called when the containing component changes to a new chart proxy */
@@ -54,10 +51,10 @@ export class TitleEdit extends Component {
         const chart = this.chartProxy.getChart();
         const canvas = chart.scene.canvas.element;
 
-        const destroyDbleClickListener = this.addDestroyableEventListener(canvas, 'dblclick', event => {
+        const destroyDbleClickListener = this.addManagedListener(canvas, 'dblclick', event => {
             const { title } = chart;
 
-            if (title && title.node.isPointInNode(event.offsetX, event.offsetY)) {
+            if (title && title.node.containsPoint(event.offsetX, event.offsetY)) {
                 const bbox = title.node.computeBBox();
                 const xy = title.node.inverseTransformPoint(bbox.x, bbox.y);
 
@@ -65,10 +62,10 @@ export class TitleEdit extends Component {
             }
         });
 
-        const destroyMouseMoveListener = this.addDestroyableEventListener(canvas, 'mousemove', event => {
+        const destroyMouseMoveListener = this.addManagedListener(canvas, 'mousemove', event => {
             const { title } = chart;
 
-            const inTitle = title && title.node.isPointInNode(event.offsetX, event.offsetY);
+            const inTitle = title && title.node.containsPoint(event.offsetX, event.offsetY);
 
             canvas.style.cursor = inTitle ? 'pointer' : '';
         });

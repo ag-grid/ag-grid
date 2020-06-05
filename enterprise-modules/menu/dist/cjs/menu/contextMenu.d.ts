@@ -1,6 +1,5 @@
-import { Column, IContextMenuFactory, RowNode } from "@ag-grid-community/core";
-export declare class ContextMenuFactory implements IContextMenuFactory {
-    private context;
+import { BeanStub, Column, IContextMenuFactory, RowNode } from "@ag-grid-community/core";
+export declare class ContextMenuFactory extends BeanStub implements IContextMenuFactory {
     private popupService;
     private gridOptionsWrapper;
     private rangeController;
@@ -8,5 +7,5 @@ export declare class ContextMenuFactory implements IContextMenuFactory {
     private activeMenu;
     hideActiveMenu(): void;
     private getMenuItems;
-    showMenu(node: RowNode, column: Column, value: any, mouseEvent: MouseEvent | Touch): void;
+    showMenu(node: RowNode, column: Column, value: any, mouseEvent: MouseEvent | Touch): boolean;
 }

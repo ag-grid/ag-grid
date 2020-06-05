@@ -4,7 +4,6 @@ export declare type ToolPanelFilterItem = ToolPanelFilterGroupComp | ToolPanelFi
 export declare class ToolPanelFilterGroupComp extends Component {
     private static TEMPLATE;
     private filterGroupComp;
-    private eventService;
     private columnController;
     private readonly depth;
     private readonly columnGroup;
@@ -23,7 +22,8 @@ export declare class ToolPanelFilterGroupComp extends Component {
     getFilterGroupId(): string;
     hideGroupItem(hide: boolean, index: number): void;
     hideGroup(hide: boolean): void;
-    private addTopLevelColumnGroupExpandListener;
+    private forEachToolPanelFilterChild;
+    private addExpandCollapseListeners;
     private addFilterChangedListeners;
     private onFilterOpened;
     expand(): void;
@@ -32,5 +32,5 @@ export declare class ToolPanelFilterGroupComp extends Component {
     private getColumnGroupName;
     private getColumnName;
     private destroyFilters;
-    destroy(): void;
+    protected destroy(): void;
 }

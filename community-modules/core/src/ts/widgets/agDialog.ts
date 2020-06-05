@@ -36,8 +36,8 @@ export interface DialogOptions extends PanelOptions {
 
 export class AgDialog extends AgPanel {
 
-    private RESIZE_TEMPLATE = `
-        <div class="ag-resizer-wrapper">
+    private RESIZE_TEMPLATE = /* html */
+        `<div class="ag-resizer-wrapper">
             <div ref="eTopLeftResizer" class="ag-resizer ag-resizer-topLeft"></div>
             <div ref="eTopResizer" class="ag-resizer ag-resizer-top"></div>
             <div ref="eTopRightResizer" class="ag-resizer ag-resizer-topRight"></div>
@@ -46,8 +46,7 @@ export class AgDialog extends AgPanel {
             <div ref="eBottomResizer" class="ag-resizer ag-resizer-bottom"></div>
             <div ref="eBottomLeftResizer" class="ag-resizer ag-resizer-bottomLeft"></div>
             <div ref="eLeftResizer" class="ag-resizer ag-resizer-left"></div>
-        </div>
-    `;
+        </div>`;
 
     private MAXIMIZE_BTN_TEMPLATE = `<div class="ag-dialog-button"></span>`;
 
@@ -94,7 +93,7 @@ export class AgDialog extends AgPanel {
 
         super.postConstruct();
 
-        this.addDestroyableEventListener(eGui, 'focusin', (e: FocusEvent) => {
+        this.addManagedListener(eGui, 'focusin', (e: FocusEvent) => {
             if (eGui.contains(e.relatedTarget as HTMLElement)) { return; }
             this.popupService.bringPopupToFront(eGui);
         });
@@ -296,14 +295,11 @@ export class AgDialog extends AgPanel {
         }
     }
 
-    public destroy(): void {
+    protected destroy(): void {
         this.setResizable(false);
         this.setMovable(false);
 
-        if (this.maximizeButtonComp) {
-            this.maximizeButtonComp.destroy();
-            this.maximizeButtonComp = undefined;
-        }
+        this.maximizeButtonComp = this.destroyBean(this.maximizeButtonComp);
 
         this.clearMaximizebleListeners();
         super.destroy();
@@ -375,7 +371,7 @@ export class AgDialog extends AgPanel {
             this.clearMaximizebleListeners();
 
             if (this.maximizeButtonComp) {
-                this.maximizeButtonComp.destroy();
+                this.destroyBean(this.maximizeButtonComp);
                 this.maximizeButtonComp = this.maximizeIcon = this.minimizeIcon = undefined;
             }
             return;
@@ -385,7 +381,7 @@ export class AgDialog extends AgPanel {
         if (!eTitleBar || maximizable === this.isMaximizable) { return; }
 
         const maximizeButtonComp = this.maximizeButtonComp = new Component(this.MAXIMIZE_BTN_TEMPLATE);
-        this.getContext().wireBean(maximizeButtonComp);
+        this.getContext().createBean(maximizeButtonComp);
 
         const eGui = maximizeButtonComp.getGui();
         eGui.appendChild(this.maximizeIcon = _.createIconNoSpan('maximize', this.gridOptionsWrapper));
@@ -395,14 +391,14 @@ export class AgDialog extends AgPanel {
 
         _.addCssClass(this.minimizeIcon, 'ag-hidden');
 
-        maximizeButtonComp.addDestroyableEventListener(eGui, 'click', this.toggleMaximize.bind(this));
+        maximizeButtonComp.addManagedListener(eGui, 'click', this.toggleMaximize.bind(this));
         this.addTitleBarButton(maximizeButtonComp, 0);
 
         this.maximizeListeners.push(
-            this.addDestroyableEventListener(eTitleBar, 'dblclick', this.toggleMaximize.bind(this))
+            this.addManagedListener(eTitleBar, 'dblclick', this.toggleMaximize.bind(this))
         );
 
-        this.resizeListenerDestroy = this.addDestroyableEventListener(this, 'resize', () => {
+        this.resizeListenerDestroy = this.addManagedListener(this, 'resize', () => {
             this.isMaximized = false;
             this.refreshMaximizeIcon();
         });

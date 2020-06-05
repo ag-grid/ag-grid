@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v23.1.1
+ * @version v23.2.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -27,6 +27,7 @@ import { RefSelector } from '../../../widgets/componentAnnotations';
 import { SimpleFilter, ConditionPosition } from '../simpleFilter';
 import { makeNull } from '../../../utils/generic';
 import { setDisplayed } from '../../../utils/dom';
+import { forEach } from '../../../utils/array';
 var TextFilter = /** @class */ (function (_super) {
     __extends(TextFilter, _super);
     function TextFilter() {
@@ -85,16 +86,18 @@ var TextFilter = /** @class */ (function (_super) {
         return aSimple.filter === bSimple.filter && aSimple.type === bSimple.type;
     };
     TextFilter.prototype.resetUiToDefaults = function (silent) {
-        _super.prototype.resetUiToDefaults.call(this, silent);
-        var fields = [this.eValue1, this.eValue2];
-        fields.forEach(function (field) { return field.setValue(null, silent); });
-        this.resetPlaceholder();
+        var _this = this;
+        return _super.prototype.resetUiToDefaults.call(this, silent).then(function () {
+            _this.forEachInput(function (field) { return field.setValue(null, silent); });
+            _this.resetPlaceholder();
+        });
     };
     TextFilter.prototype.resetPlaceholder = function () {
-        var translate = this.translate.bind(this);
-        var placeholder = translate('filterOoo', 'Filter...');
-        var fields = [this.eValue1, this.eValue2];
-        fields.forEach(function (field) { return field.setInputPlaceholder(placeholder); });
+        var placeholder = this.translate('filterOoo');
+        this.forEachInput(function (field) { return field.setInputPlaceholder(placeholder); });
+    };
+    TextFilter.prototype.forEachInput = function (action) {
+        forEach([this.eValue1, this.eValue2], action);
     };
     TextFilter.prototype.setValueFromFloatingFilter = function (value) {
         this.eValue1.setValue(value);

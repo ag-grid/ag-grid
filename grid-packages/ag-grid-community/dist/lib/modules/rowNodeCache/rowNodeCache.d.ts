@@ -5,7 +5,6 @@ import { RowNodeBlockLoader } from "./rowNodeBlockLoader";
 import { AgEvent } from "../../events";
 import { NumberSequence } from "../../utils";
 import { IRowNodeBlock } from "../../interfaces/iRowNodeBlock";
-import { EventService } from "../../eventService";
 import { RowRenderer } from "../../rendering/rowRenderer";
 export interface RowNodeCacheParams {
     initialRowCount: number;
@@ -27,7 +26,6 @@ export declare abstract class RowNodeCache<T extends IRowNodeBlock, P extends Ro
     private static MAX_EMPTY_BLOCKS_TO_KEEP;
     private virtualRowCount;
     private maxRowFound;
-    protected eventService: EventService;
     protected rowRenderer: RowRenderer;
     protected cacheParams: P;
     private active;
@@ -38,7 +36,7 @@ export declare abstract class RowNodeCache<T extends IRowNodeBlock, P extends Ro
     protected logger: Logger;
     abstract getRow(rowIndex: number): RowNode | null;
     protected constructor(cacheParams: P);
-    destroy(): void;
+    private destroyAllBlocks;
     protected init(): void;
     isActive(): boolean;
     getVirtualRowCount(): number;

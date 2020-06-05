@@ -1,9 +1,9 @@
-// Type definitions for @ag-grid-community/core v23.1.1
+// Type definitions for @ag-grid-community/core v23.2.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
-export declare class AnimationFrameService {
+import { BeanStub } from "../context/beanStub";
+export declare class AnimationFrameService extends BeanStub {
     private gridOptionsWrapper;
-    private eventService;
     private createTasksP1;
     private createTasksP2;
     private destroyTasks;

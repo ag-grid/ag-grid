@@ -1,5 +1,5 @@
-import { _ } from '../utils';
 import { AgAbstractInputField, IInputField } from './agAbstractInputField';
+import { _ } from '../utils';
 
 export class AgInputTextField extends AgAbstractInputField<HTMLInputElement, string> {
     protected className = 'ag-text-field';
@@ -21,7 +21,7 @@ export class AgInputTextField extends AgAbstractInputField<HTMLInputElement, str
         const ret = super.setValue(value, silent);
 
         if (this.eInput.value !== value) {
-            this.eInput.value = value;
+            this.eInput.value = _.exists(value) ? value : '';
         }
 
         return ret;

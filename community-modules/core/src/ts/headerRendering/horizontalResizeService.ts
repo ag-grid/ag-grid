@@ -1,6 +1,6 @@
-import { GridOptionsWrapper } from "../gridOptionsWrapper";
 import { Autowired, Bean } from "../context/context";
 import { DragListenerParams, DragService } from "../dragAndDrop/dragService";
+import { BeanStub } from "../context/beanStub";
 
 export interface HorizontalResizeParams {
     eResizeBar: HTMLElement;
@@ -11,13 +11,11 @@ export interface HorizontalResizeParams {
 }
 
 @Bean('horizontalResizeService')
-export class HorizontalResizeService {
+export class HorizontalResizeService extends BeanStub {
 
-    @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('dragService') private dragService: DragService;
     @Autowired('eGridDiv') private eGridDiv: HTMLElement;
 
-    private draggingStarted: boolean;
     private dragStartX: number;
     private resizeAmount: number;
 
@@ -44,7 +42,6 @@ export class HorizontalResizeService {
     }
 
     private onDragStart(params: HorizontalResizeParams, mouseEvent: MouseEvent | Touch): void {
-        this.draggingStarted = true;
         this.dragStartX = mouseEvent.clientX;
 
         this.setResizeIcons();

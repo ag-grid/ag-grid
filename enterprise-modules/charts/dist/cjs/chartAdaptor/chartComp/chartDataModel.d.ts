@@ -75,5 +75,4 @@ export declare class ChartDataModel extends BeanStub {
     private reorderColState;
     private setDimensionCellRange;
     private setValueCellRange;
-    destroy(): void;
 }

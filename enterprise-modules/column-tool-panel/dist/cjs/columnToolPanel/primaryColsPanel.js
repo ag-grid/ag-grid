@@ -37,14 +37,25 @@ var PrimaryColsPanel = /** @class */ (function (_super) {
         if (hideExpand && hideFilter && hideSelect) {
             this.primaryColsHeaderPanel.setDisplayed(false);
         }
-        this.addDestroyableEventListener(this.primaryColsListPanel, 'groupExpanded', this.onGroupExpanded.bind(this));
-        this.addDestroyableEventListener(this.primaryColsListPanel, 'selectionChanged', this.onSelectionChange.bind(this));
+        this.addManagedListener(this.primaryColsListPanel, 'groupExpanded', this.onGroupExpanded.bind(this));
+        this.addManagedListener(this.primaryColsListPanel, 'selectionChanged', this.onSelectionChange.bind(this));
         this.primaryColsListPanel.init(this.params, this.allowDragging);
-        this.addDestroyableEventListener(this.primaryColsHeaderPanel, 'expandAll', this.onExpandAll.bind(this));
-        this.addDestroyableEventListener(this.primaryColsHeaderPanel, 'collapseAll', this.onCollapseAll.bind(this));
-        this.addDestroyableEventListener(this.primaryColsHeaderPanel, 'selectAll', this.onSelectAll.bind(this));
-        this.addDestroyableEventListener(this.primaryColsHeaderPanel, 'unselectAll', this.onUnselectAll.bind(this));
-        this.addDestroyableEventListener(this.primaryColsHeaderPanel, 'filterChanged', this.onFilterChanged.bind(this));
+        this.addManagedListener(this.primaryColsHeaderPanel, 'expandAll', this.onExpandAll.bind(this));
+        this.addManagedListener(this.primaryColsHeaderPanel, 'collapseAll', this.onCollapseAll.bind(this));
+        this.addManagedListener(this.primaryColsHeaderPanel, 'selectAll', this.onSelectAll.bind(this));
+        this.addManagedListener(this.primaryColsHeaderPanel, 'unselectAll', this.onUnselectAll.bind(this));
+        this.addManagedListener(this.primaryColsHeaderPanel, 'filterChanged', this.onFilterChanged.bind(this));
+        this.wireFocusManagement();
+    };
+    PrimaryColsPanel.prototype.isFocusableContainer = function () {
+        return true;
+    };
+    PrimaryColsPanel.prototype.onTabKeyDown = function (e) {
+        var nextEl = this.focusController.findNextFocusableElement(this.getFocusableElement(), false, e.shiftKey);
+        if (nextEl) {
+            e.preventDefault();
+            nextEl.focus();
+        }
     };
     PrimaryColsPanel.prototype.onExpandAll = function () {
         this.primaryColsListPanel.doSetExpandedAll(true);
@@ -87,6 +98,6 @@ var PrimaryColsPanel = /** @class */ (function (_super) {
         core_1.RefSelector('primaryColsListPanel')
     ], PrimaryColsPanel.prototype, "primaryColsListPanel", void 0);
     return PrimaryColsPanel;
-}(core_1.Component));
+}(core_1.ManagedFocusComponent));
 exports.PrimaryColsPanel = PrimaryColsPanel;
 //# sourceMappingURL=primaryColsPanel.js.map

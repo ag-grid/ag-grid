@@ -1,5 +1,6 @@
 import {
     Bean,
+    BeanStub,
     IRowNodeStage,
     Autowired,
     GridOptionsWrapper,
@@ -9,6 +10,8 @@ import {
     Column,
     StageExecuteParams,
     IAggFunc,
+    GridApi,
+    ColumnApi,
     ChangedPath,
     _
 } from "@ag-grid-community/core";
@@ -22,13 +25,16 @@ interface AggregationDetails {
 }
 
 @Bean('aggregationStage')
-export class AggregationStage implements IRowNodeStage {
+export class AggregationStage extends BeanStub implements IRowNodeStage {
 
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('columnController') private columnController: ColumnController;
     @Autowired('valueService') private valueService: ValueService;
     @Autowired('pivotStage') private pivotStage: PivotStage;
     @Autowired('aggFuncService') private aggFuncService: AggFuncService;
+
+    @Autowired('aggFuncService') private gridApi: GridApi;
+    @Autowired('aggFuncService') private columnApi: ColumnApi;
 
     // it's possible to recompute the aggregate without doing the other parts
     // + gridApi.recomputeAggregates()
@@ -146,7 +152,7 @@ export class AggregationStage implements IRowNodeStage {
                     values = this.getValuesPivotNonLeaf(rowNode, colId);
                 }
 
-                result[colId] = this.aggregateValues(values, valueColumn.getAggFunc());
+                result[colId] = this.aggregateValues(values, valueColumn.getAggFunc(), valueColumn, rowNode);
             });
 
         // Step 2: process total columns
@@ -165,7 +171,7 @@ export class AggregationStage implements IRowNodeStage {
                     aggResults.push(result[colId]);
                 });
 
-                result[colId as string] = this.aggregateValues(aggResults, (pivotValueColumn as Column).getAggFunc());
+                result[colId as string] = this.aggregateValues(aggResults, (pivotValueColumn as Column).getAggFunc(), pivotValueColumn, rowNode);
             });
 
         return result;
@@ -186,7 +192,7 @@ export class AggregationStage implements IRowNodeStage {
         const oldValues = rowNode.aggData;
 
         changedValueColumns.forEach((valueColumn: Column, index: number) => {
-            result[valueColumn.getId()] = this.aggregateValues(values2d[index], valueColumn.getAggFunc());
+            result[valueColumn.getId()] = this.aggregateValues(values2d[index], valueColumn.getAggFunc(), valueColumn, rowNode);
         });
 
         if (notChangedValueColumns && oldValues) {
@@ -246,7 +252,7 @@ export class AggregationStage implements IRowNodeStage {
         return values;
     }
 
-    public aggregateValues(values: any[], aggFuncOrString: string | IAggFunc): any {
+    public aggregateValues(values: any[], aggFuncOrString: string | IAggFunc, column?: Column, rowNode?: RowNode): any {
         const aggFunction = typeof aggFuncOrString === 'string' ? 
             this.aggFuncService.getAggFunc(aggFuncOrString) : 
             aggFuncOrString;
@@ -256,6 +262,16 @@ export class AggregationStage implements IRowNodeStage {
             return null;
         }
 
-        return aggFunction(values);
+        const aggFuncAny = aggFunction as any;
+
+        return aggFuncAny(values, {
+            values: values,
+            column: column,
+            colDef: column ? column.getColDef() : undefined,
+            rowNode: rowNode,
+            data: rowNode ? rowNode.data : undefined,
+            api: this.gridApi,
+            columnApi: this.columnApi
+        });
     }
 }

@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v23.1.1
+ * @version v23.2.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -63,9 +63,9 @@ var TextInputFloatingFilter = /** @class */ (function (_super) {
         var debounceMs = providedFilter_1.ProvidedFilter.getDebounceMs(this.params.filterParams, this.getDefaultDebounceMs());
         var toDebounce = function_1.debounce(this.syncUpWithParentFilter.bind(this), debounceMs);
         var filterGui = this.eFloatingFilterInput.getGui();
-        this.addDestroyableEventListener(filterGui, 'input', toDebounce);
-        this.addDestroyableEventListener(filterGui, 'keypress', toDebounce);
-        this.addDestroyableEventListener(filterGui, 'keydown', toDebounce);
+        this.addManagedListener(filterGui, 'input', toDebounce);
+        this.addManagedListener(filterGui, 'keypress', toDebounce);
+        this.addManagedListener(filterGui, 'keydown', toDebounce);
         var columnDef = params.column.getDefinition();
         if (columnDef.filterParams &&
             columnDef.filterParams.filterOptions &&
@@ -73,6 +73,8 @@ var TextInputFloatingFilter = /** @class */ (function (_super) {
             columnDef.filterParams.filterOptions[0] === 'inRange') {
             this.eFloatingFilterInput.setDisabled(true);
         }
+        var displayName = this.columnController.getDisplayNameForColumn(params.column, 'header', true);
+        this.eFloatingFilterInput.setInputAriaLabel(displayName + " Filter Input");
     };
     TextInputFloatingFilter.prototype.syncUpWithParentFilter = function (e) {
         var _this = this;
@@ -91,6 +93,9 @@ var TextInputFloatingFilter = /** @class */ (function (_super) {
     TextInputFloatingFilter.prototype.setEditable = function (editable) {
         this.eFloatingFilterInput.setDisabled(!editable);
     };
+    __decorate([
+        context_1.Autowired('columnController')
+    ], TextInputFloatingFilter.prototype, "columnController", void 0);
     __decorate([
         componentAnnotations_1.RefSelector('eFloatingFilterInput')
     ], TextInputFloatingFilter.prototype, "eFloatingFilterInput", void 0);

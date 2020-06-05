@@ -37,7 +37,7 @@ var FilteredRowsComp = /** @class */ (function (_super) {
         this.addCssClass('ag-status-panel-filtered-row-count');
         this.setDisplayed(true);
         var listener = this.onDataChanged.bind(this);
-        this.events = [this.eventService.addEventListener(core_1.Events.EVENT_MODEL_UPDATED, listener)];
+        this.addManagedListener(this.eventService, core_1.Events.EVENT_MODEL_UPDATED, listener);
     };
     FilteredRowsComp.prototype.onDataChanged = function () {
         var totalRowCountValue = this.getTotalRowCountValue();
@@ -60,9 +60,11 @@ var FilteredRowsComp = /** @class */ (function (_super) {
         return filteredRowCount;
     };
     FilteredRowsComp.prototype.init = function () { };
-    __decorate([
-        core_1.Autowired('eventService')
-    ], FilteredRowsComp.prototype, "eventService", void 0);
+    // this is a user component, and IComponent has "public destroy()" as part of the interface.
+    // so we need to override destroy() just to make the method public.
+    FilteredRowsComp.prototype.destroy = function () {
+        _super.prototype.destroy.call(this);
+    };
     __decorate([
         core_1.Autowired('gridApi')
     ], FilteredRowsComp.prototype, "gridApi", void 0);

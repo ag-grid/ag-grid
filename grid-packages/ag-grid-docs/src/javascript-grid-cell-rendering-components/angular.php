@@ -9,10 +9,6 @@
     registering framework components</a> for how to register framework components.
 </p>
 
-<note>
-    Note: Here we are referring to Angular versions 2 and up. This section is not relevant to AngularJS 1.
-</note>
-
 <h3>Example: Rendering using Angular Components</h3>
 
 <?= grid_example('Simple Dynamic Component', 'dynamic-components', 'generated', ['enterprise' => false, 'onlyShow' => 'angular', 'extras' => ['fontawesome', 'bootstrap']]) ?>

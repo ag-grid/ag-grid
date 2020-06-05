@@ -118,19 +118,20 @@ var BarSeriesPanel = /** @class */ (function (_super) {
             initialFont: initialFont,
             setFont: setFont
         };
-        var labelPanelComp = this.wireBean(new fontPanel_1.FontPanel(params));
+        var labelPanelComp = this.createBean(new fontPanel_1.FontPanel(params));
         this.activePanels.push(labelPanelComp);
         this.seriesGroup.addItem(labelPanelComp);
     };
     BarSeriesPanel.prototype.initShadowPanel = function () {
-        var shadowPanelComp = this.wireBean(new shadowPanel_1.ShadowPanel(this.chartController));
+        var shadowPanelComp = this.createBean(new shadowPanel_1.ShadowPanel(this.chartController));
         this.seriesGroup.addItem(shadowPanelComp);
         this.activePanels.push(shadowPanelComp);
     };
     BarSeriesPanel.prototype.destroyActivePanels = function () {
+        var _this = this;
         this.activePanels.forEach(function (panel) {
             core_1._.removeFromParent(panel.getGui());
-            panel.destroy();
+            _this.destroyBean(panel);
         });
     };
     BarSeriesPanel.prototype.getChartProxy = function () {

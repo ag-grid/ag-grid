@@ -56,14 +56,15 @@ var ScatterSeriesPanel = /** @class */ (function (_super) {
             .onValueChange(function (newValue) { return _this.getChartProxy().setSeriesOption("tooltip.enabled", newValue); });
     };
     ScatterSeriesPanel.prototype.initMarkersPanel = function () {
-        var markersPanelComp = this.wireBean(new markersPanel_1.MarkersPanel(this.chartController));
+        var markersPanelComp = this.createBean(new markersPanel_1.MarkersPanel(this.chartController));
         this.seriesGroup.addItem(markersPanelComp);
         this.activePanels.push(markersPanelComp);
     };
     ScatterSeriesPanel.prototype.destroyActivePanels = function () {
+        var _this = this;
         this.activePanels.forEach(function (panel) {
             core_1._.removeFromParent(panel.getGui());
-            panel.destroy();
+            _this.destroyBean(panel);
         });
     };
     ScatterSeriesPanel.prototype.getChartProxy = function () {

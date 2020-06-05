@@ -2,25 +2,22 @@ import {
     _,
     Autowired,
     ColumnController,
-    Component,
     Events,
-    EventService,
     GridOptionsWrapper,
-    PostConstruct,
     PreConstruct,
     RefSelector,
     ToolPanelColumnCompParams,
     Constants,
     AgCheckbox,
-    AgInputTextField
+    AgInputTextField,
+    ManagedFocusComponent
 } from "@ag-grid-community/core";
 
 export enum EXPAND_STATE { EXPANDED, COLLAPSED, INDETERMINATE }
 
-export class PrimaryColsHeaderPanel extends Component {
+export class PrimaryColsHeaderPanel extends ManagedFocusComponent {
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('columnController') private columnController: ColumnController;
-    @Autowired('eventService') private eventService: EventService;
 
     @RefSelector('eExpand') private eExpand: HTMLElement;
     @RefSelector('eSelect') private eSelect: AgCheckbox;
@@ -39,43 +36,53 @@ export class PrimaryColsHeaderPanel extends Component {
 
     @PreConstruct
     private preConstruct(): void {
-        this.setTemplate(
-            `<div class="ag-column-select-header" role="presentation">
-                <div ref="eExpand" class="ag-column-select-header-icon"></div>
+        this.setTemplate(/* html */
+            `<div class="ag-column-select-header" role="presentation" tabindex="-1">
+                <div ref="eExpand" class="ag-column-select-header-icon" tabindex="0"></div>
                 <ag-checkbox ref="eSelect" class="ag-column-select-header-checkbox"></ag-checkbox>
                 <ag-input-text-field class="ag-column-select-header-filter-wrapper" ref="eFilterTextField"></ag-input-text-field>
             </div>`
         );
     }
 
-    @PostConstruct
-    public postConstruct(): void {
+    protected postConstruct(): void {
         this.createExpandIcons();
 
-        this.addDestroyableEventListener(
+        this.addManagedListener(
             this.eExpand,
             "click",
             this.onExpandClicked.bind(this)
         );
 
-        this.addDestroyableEventListener(this.eSelect.getInputElement(),
+        this.addManagedListener(this.eExpand, 'keydown', (e: KeyboardEvent) => {
+            if (e.keyCode === Constants.KEY_SPACE) {
+                this.onExpandClicked();
+            }
+        });
+
+        this.addManagedListener(this.eSelect.getInputElement(),
             'click',
             this.onSelectClicked.bind(this)
         );
 
         this.eFilterTextField.onValueChange(() => this.onFilterTextChanged());
         
-        this.addDestroyableEventListener(
+        this.addManagedListener(
             this.eFilterTextField.getInputElement(),
             "keypress",
             this.onMiniFilterKeyPress.bind(this)
         );
 
-        this.addDestroyableEventListener(
+        this.addManagedListener(
             this.eventService,
             Events.EVENT_NEW_COLUMNS_LOADED,
             this.showOrHideOptions.bind(this)
         );
+
+        this.eSelect.setInputAriaLabel('Toggle Select All Columns');
+        this.eFilterTextField.setInputAriaLabel('Filter Columns Input');
+
+        super.postConstruct();
     }
 
     public init(params: ToolPanelColumnCompParams): void {
@@ -83,6 +90,15 @@ export class PrimaryColsHeaderPanel extends Component {
 
         if (this.columnController.isReady()) {
             this.showOrHideOptions();
+        }
+    }
+
+    protected onTabKeyDown(e: KeyboardEvent): void {
+        const nextEl = this.focusController.findNextFocusableElement(this.getFocusableElement(), false, e.shiftKey);
+
+        if (nextEl) {
+            e.preventDefault();
+            nextEl.focus();
         }
     }
 

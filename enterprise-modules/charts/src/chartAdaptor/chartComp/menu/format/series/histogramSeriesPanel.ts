@@ -11,15 +11,15 @@ import {
     RefSelector,
     AgGroupComponentParams,
 } from "@ag-grid-community/core";
-import {ChartController} from "../../../chartController";
-import {ShadowPanel} from "./shadowPanel";
-import {Font, FontPanel, FontPanelParams} from "../fontPanel";
-import {ChartTranslator} from "../../../chartTranslator";
-import {HistogramChartProxy} from "../../../chartProxies/cartesian/histogramChartProxy";
+import { ChartController } from "../../../chartController";
+import { ShadowPanel } from "./shadowPanel";
+import { Font, FontPanel, FontPanelParams } from "../fontPanel";
+import { ChartTranslator } from "../../../chartTranslator";
+import { HistogramChartProxy } from "../../../chartProxies/cartesian/histogramChartProxy";
 
 export class HistogramSeriesPanel extends Component {
 
-    public static TEMPLATE =
+    public static TEMPLATE = /* html */
         `<div>
             <ag-group-component ref="seriesGroup">
                 <ag-toggle-button ref="seriesTooltipsToggle"></ag-toggle-button>
@@ -154,14 +154,14 @@ export class HistogramSeriesPanel extends Component {
             setFont: setFont
         };
 
-        const labelPanelComp = this.wireBean(new FontPanel(params));
+        const labelPanelComp = this.createBean(new FontPanel(params));
         this.activePanels.push(labelPanelComp);
 
         this.seriesGroup.addItem(labelPanelComp);
     }
 
     private initShadowPanel() {
-        const shadowPanelComp = this.wireBean(new ShadowPanel(this.chartController));
+        const shadowPanelComp = this.createBean(new ShadowPanel(this.chartController));
         this.seriesGroup.addItem(shadowPanelComp);
         this.activePanels.push(shadowPanelComp);
     }
@@ -169,7 +169,7 @@ export class HistogramSeriesPanel extends Component {
     private destroyActivePanels(): void {
         this.activePanels.forEach(panel => {
             _.removeFromParent(panel.getGui());
-            panel.destroy();
+            this.destroyBean(panel);
         });
     }
 
@@ -177,7 +177,7 @@ export class HistogramSeriesPanel extends Component {
         return this.chartController.getChartProxy() as HistogramChartProxy;
     }
 
-    public destroy(): void {
+    protected destroy(): void {
         this.destroyActivePanels();
         super.destroy();
     }

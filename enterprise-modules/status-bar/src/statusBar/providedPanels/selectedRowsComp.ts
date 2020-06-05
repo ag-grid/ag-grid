@@ -1,9 +1,8 @@
-import { Autowired, Events, EventService, GridApi, PostConstruct, IStatusPanelComp, _ } from '@ag-grid-community/core';
+import { Autowired, Events, GridApi, PostConstruct, IStatusPanelComp, _ } from '@ag-grid-community/core';
 import { NameValueComp } from "./nameValueComp";
 
 export class SelectedRowsComp extends NameValueComp implements IStatusPanelComp {
 
-    @Autowired('eventService') private eventService: EventService;
     @Autowired('gridApi') private gridApi: GridApi;
 
     @PostConstruct
@@ -24,10 +23,8 @@ export class SelectedRowsComp extends NameValueComp implements IStatusPanelComp 
         this.setDisplayed(selectedRowCount > 0);
 
         const eventListener = this.onRowSelectionChanged.bind(this);
-        this.events = [
-            this.eventService.addEventListener(Events.EVENT_MODEL_UPDATED, eventListener),
-            this.eventService.addEventListener(Events.EVENT_SELECTION_CHANGED, eventListener)
-        ];
+        this.addManagedListener(this.eventService, Events.EVENT_MODEL_UPDATED, eventListener);
+        this.addManagedListener(this.eventService, Events.EVENT_SELECTION_CHANGED, eventListener);
     }
 
     private isValidRowModel() {
@@ -44,4 +41,11 @@ export class SelectedRowsComp extends NameValueComp implements IStatusPanelComp 
 
     public init() {
     }
+
+    // this is a user component, and IComponent has "public destroy()" as part of the interface.
+    // so we need to override destroy() just to make the method public.
+    public destroy(): void {
+        super.destroy();
+    }
+
 }

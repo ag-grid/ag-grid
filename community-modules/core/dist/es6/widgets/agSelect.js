@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v23.1.1
+ * @version v23.2.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -41,13 +41,13 @@ var AgSelect = /** @class */ (function (_super) {
     AgSelect.prototype.init = function () {
         var _this = this;
         this.listComponent = new AgList('select');
-        this.getContext().wireBean(this.listComponent);
+        this.getContext().createBean(this.listComponent);
         this.listComponent.setParentComponent(this);
         this.eWrapper.tabIndex = 0;
-        this.listComponent.addDestroyableEventListener(this.listComponent, AgList.EVENT_ITEM_SELECTED, function () { if (_this.hideList) {
+        this.listComponent.addManagedListener(this.listComponent, AgList.EVENT_ITEM_SELECTED, function () { if (_this.hideList) {
             _this.hideList();
         } });
-        this.listComponent.addDestroyableEventListener(this.listComponent, AgAbstractField.EVENT_CHANGED, function () {
+        this.listComponent.addManagedListener(this.listComponent, AgAbstractField.EVENT_CHANGED, function () {
             _this.setValue(_this.listComponent.getValue(), false, true);
             if (_this.hideList) {
                 _this.hideList();
@@ -57,12 +57,12 @@ var AgSelect = /** @class */ (function (_super) {
     AgSelect.prototype.showPicker = function () {
         var _this = this;
         var listGui = this.listComponent.getGui();
-        var mouseWheelFunc = this.addDestroyableEventListener(document.body, 'wheel', function (e) {
+        var mouseWheelFunc = this.addManagedListener(document.body, 'wheel', function (e) {
             if (!listGui.contains(e.target) && _this.hideList) {
                 _this.hideList();
             }
         });
-        var focusOutFunc = this.addDestroyableEventListener(listGui, 'focusout', function (e) {
+        var focusOutFunc = this.addManagedListener(listGui, 'focusout', function (e) {
             if (!listGui.contains(e.relatedTarget) && _this.hideList) {
                 _this.hideList();
             }
@@ -114,7 +114,7 @@ var AgSelect = /** @class */ (function (_super) {
         if (this.hideList) {
             this.hideList();
         }
-        this.listComponent.destroy();
+        this.getContext().destroyBean(this.listComponent);
         _super.prototype.destroy.call(this);
     };
     __decorate([

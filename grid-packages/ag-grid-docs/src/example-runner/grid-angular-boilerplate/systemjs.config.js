@@ -9,6 +9,17 @@
     var ANGULAR_CDK_VERSION = "5.2.5";
     var ANGULAR_MATERIAL_VERSION = "5.2.5";
 
+    function assign() {
+        var result = {};
+        for (var i = 0, len = arguments.length; i < len; i++) {
+            var arg = arguments[i];
+            for (var prop in arg) {
+                result[prop] = arg[prop];
+            }
+        }
+        return result;
+    }
+
     System.config({
         // DEMO ONLY! REAL CODE SHOULD NOT TRANSPILE IN THE BROWSER
         transpiler: "ts",
@@ -51,7 +62,7 @@
             ]
         },
         // map tells the System loader where to look for things
-        map: Object.assign(
+        map: assign(
             {
                 // css plugin
                 'css': 'npm:systemjs-plugin-css/css.js',

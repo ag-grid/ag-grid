@@ -1,9 +1,22 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v23.1.1
+ * @version v23.2.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = function (d, b) {
+        extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+        return extendStatics(d, b);
+    };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -12,24 +25,28 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 };
 import { Autowired, Bean, PostConstruct } from "../context/context";
 import { Events } from "../eventKeys";
-var AnimationFrameService = /** @class */ (function () {
+import { BeanStub } from "../context/beanStub";
+var AnimationFrameService = /** @class */ (function (_super) {
+    __extends(AnimationFrameService, _super);
     function AnimationFrameService() {
+        var _this = _super !== null && _super.apply(this, arguments) || this;
         // p1 and p2 are create tasks are to do with row and cell creation.
         // for them we want to execute according to row order, so we use
         // TaskItem so we know what index the item is for.
-        this.createTasksP1 = { list: [], sorted: false }; // eg drawing back-ground of rows
-        this.createTasksP2 = { list: [], sorted: false }; // eg cell renderers, adding hover functionality
+        _this.createTasksP1 = { list: [], sorted: false }; // eg drawing back-ground of rows
+        _this.createTasksP2 = { list: [], sorted: false }; // eg cell renderers, adding hover functionality
         // destroy tasks are to do with row removal. they are done after row creation as the user will need to see new
         // rows first (as blank is scrolled into view), when we remove the old rows (no longer in view) is not as
         // important.
-        this.destroyTasks = [];
-        this.ticking = false;
+        _this.destroyTasks = [];
+        _this.ticking = false;
         // we need to know direction of scroll, to build up rows in the direction of
         // the scroll. eg if user scrolls down, we extend the rows by building down.
-        this.scrollGoingDown = true;
-        this.lastScrollTop = 0;
-        this.taskCount = 0;
-        this.cancelledTasks = new Set();
+        _this.scrollGoingDown = true;
+        _this.lastScrollTop = 0;
+        _this.taskCount = 0;
+        _this.cancelledTasks = new Set();
+        return _this;
     }
     AnimationFrameService.prototype.setScrollTop = function (scrollTop) {
         this.scrollGoingDown = scrollTop > this.lastScrollTop;
@@ -160,14 +177,11 @@ var AnimationFrameService = /** @class */ (function () {
         Autowired('gridOptionsWrapper')
     ], AnimationFrameService.prototype, "gridOptionsWrapper", void 0);
     __decorate([
-        Autowired('eventService')
-    ], AnimationFrameService.prototype, "eventService", void 0);
-    __decorate([
         PostConstruct
     ], AnimationFrameService.prototype, "init", null);
     AnimationFrameService = __decorate([
         Bean('animationFrameService')
     ], AnimationFrameService);
     return AnimationFrameService;
-}());
+}(BeanStub));
 export { AnimationFrameService };

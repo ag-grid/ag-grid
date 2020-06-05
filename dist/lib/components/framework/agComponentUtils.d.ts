@@ -2,7 +2,8 @@ import { AgGridComponentFunctionInput, AgGridRegisteredComponentInput } from "./
 import { IComponent } from "../../interfaces/iComponent";
 import { ComponentClassDef, ComponentSource } from "./userComponentFactory";
 import { ICellRendererParams } from "../../rendering/cellRenderers/iCellRenderer";
-export declare class AgComponentUtils {
+import { BeanStub } from "../../context/beanStub";
+export declare class AgComponentUtils extends BeanStub {
     private componentMetadataProvider;
     adaptFunction<A extends IComponent<any> & B, B, TParams>(propertyName: string, hardcodedJsFunction: AgGridComponentFunctionInput, componentFromFramework: boolean, source: ComponentSource): ComponentClassDef<A, B, TParams>;
     adaptCellRendererFunction(callback: AgGridComponentFunctionInput): {

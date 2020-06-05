@@ -3,6 +3,7 @@ import { IPopupComponent } from "../interfaces/iPopupComponent";
 import { _ } from "../utils";
 
 export class PopupComponent extends Component implements IPopupComponent<any> {
+
     public isPopup(): boolean {
         return true;
     }

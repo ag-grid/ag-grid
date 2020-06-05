@@ -15,6 +15,6 @@ export declare class AgSelect extends AgPickerField<HTMLSelectElement, string> {
     addOptions(options: ListOption[]): this;
     addOption(option: ListOption): this;
     setValue(value: string, silent?: boolean, fromPicker?: boolean): this;
-    destroy(): void;
+    protected destroy(): void;
 }
 export {};

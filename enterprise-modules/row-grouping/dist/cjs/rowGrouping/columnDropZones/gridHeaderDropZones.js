@@ -29,11 +29,8 @@ var GridHeaderDropZones = /** @class */ (function (_super) {
     }
     GridHeaderDropZones.prototype.postConstruct = function () {
         this.setGui(this.createNorthPanel());
-        var events = [
-            this.eventService.addEventListener(core_1.Events.EVENT_COLUMN_ROW_GROUP_CHANGED, this.onRowGroupChanged.bind(this)),
-            this.eventService.addEventListener(core_1.Events.EVENT_COLUMN_EVERYTHING_CHANGED, this.onRowGroupChanged.bind(this))
-        ];
-        this.addDestroyFunc(function () { return events.forEach(function (func) { return func(); }); });
+        this.addManagedListener(this.eventService, core_1.Events.EVENT_COLUMN_ROW_GROUP_CHANGED, this.onRowGroupChanged.bind(this));
+        this.addManagedListener(this.eventService, core_1.Events.EVENT_COLUMN_EVERYTHING_CHANGED, this.onRowGroupChanged.bind(this));
         this.onRowGroupChanged();
     };
     GridHeaderDropZones.prototype.createNorthPanel = function () {
@@ -42,11 +39,9 @@ var GridHeaderDropZones = /** @class */ (function (_super) {
         var dropPanelVisibleListener = this.onDropPanelVisible.bind(this);
         core_1._.addCssClass(topPanelGui, 'ag-column-drop-wrapper');
         this.rowGroupComp = new rowGroupDropZonePanel_1.RowGroupDropZonePanel(true);
-        this.getContext().wireBean(this.rowGroupComp);
-        this.addDestroyFunc(function () { return _this.rowGroupComp.destroy(); });
+        this.createManagedBean(this.rowGroupComp);
         this.pivotComp = new pivotDropZonePanel_1.PivotDropZonePanel(true);
-        this.getContext().wireBean(this.pivotComp);
-        this.addDestroyFunc(function () { return _this.pivotComp.destroy(); });
+        this.createManagedBean(this.pivotComp);
         topPanelGui.appendChild(this.rowGroupComp.getGui());
         topPanelGui.appendChild(this.pivotComp.getGui());
         this.rowGroupComp.addEventListener(core_1.Component.EVENT_DISPLAYED_CHANGED, dropPanelVisibleListener);
@@ -85,9 +80,6 @@ var GridHeaderDropZones = /** @class */ (function (_super) {
     __decorate([
         core_1.Autowired('columnController')
     ], GridHeaderDropZones.prototype, "columnController", void 0);
-    __decorate([
-        core_1.Autowired('eventService')
-    ], GridHeaderDropZones.prototype, "eventService", void 0);
     __decorate([
         core_1.PostConstruct
     ], GridHeaderDropZones.prototype, "postConstruct", null);

@@ -1,9 +1,22 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v23.1.1
+ * @version v23.2.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = function (d, b) {
+        extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+        return extendStatics(d, b);
+    };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -16,41 +29,46 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
 import { ColumnGroup } from '../entities/columnGroup';
 import { Column } from '../entities/column';
 import { Events } from '../events';
+import { BeanStub } from "../context/beanStub";
 import { OriginalColumnGroup } from '../entities/originalColumnGroup';
 import { GroupInstanceIdCreator } from './groupInstanceIdCreator';
 import { Autowired, Bean, Optional, PostConstruct, Qualifier } from '../context/context';
 import { Constants } from '../constants';
 import { areEqual } from '../utils/array';
 import { _ } from '../utils';
-var ColumnController = /** @class */ (function () {
+var ColumnController = /** @class */ (function (_super) {
+    __extends(ColumnController, _super);
     function ColumnController() {
+        var _this = _super !== null && _super.apply(this, arguments) || this;
         // header row count, based on user provided columns
-        this.primaryHeaderRowCount = 0;
-        this.secondaryHeaderRowCount = 0;
-        this.secondaryColumnsPresent = false;
+        _this.primaryHeaderRowCount = 0;
+        _this.secondaryHeaderRowCount = 0;
+        _this.secondaryColumnsPresent = false;
         // header row count, either above, or based on pivoting if we are pivoting
-        this.gridHeaderRowCount = 0;
+        _this.gridHeaderRowCount = 0;
         // these are the lists used by the rowRenderer to render nodes. almost the leaf nodes of the above
         // displayed trees, however it also takes into account if the groups are open or not.
-        this.displayedLeftColumns = [];
-        this.displayedRightColumns = [];
-        this.displayedCenterColumns = [];
+        _this.displayedLeftColumns = [];
+        _this.displayedRightColumns = [];
+        _this.displayedCenterColumns = [];
         // all three lists above combined
-        this.allDisplayedColumns = [];
+        _this.allDisplayedColumns = [];
         // same as above, except trimmed down to only columns within the viewport
-        this.allDisplayedVirtualColumns = [];
-        this.allDisplayedCenterVirtualColumns = [];
-        this.rowGroupColumns = [];
-        this.valueColumns = [];
-        this.pivotColumns = [];
-        this.ready = false;
-        this.autoGroupsNeedBuilding = false;
-        this.pivotMode = false;
-        this.bodyWidth = 0;
-        this.leftWidth = 0;
-        this.rightWidth = 0;
-        this.bodyWidthDirty = true;
-        this.flexActive = false;
+        _this.allDisplayedVirtualColumns = [];
+        _this.allDisplayedCenterVirtualColumns = [];
+        _this.rowGroupColumns = [];
+        _this.valueColumns = [];
+        _this.pivotColumns = [];
+        _this.ready = false;
+        _this.autoGroupsNeedBuilding = false;
+        _this.forceRecreateAutoGroups = false;
+        _this.pivotMode = false;
+        _this.bodyWidth = 0;
+        _this.leftWidth = 0;
+        _this.rightWidth = 0;
+        _this.bodyWidthDirty = true;
+        _this.flexActive = false;
+        return _this;
     }
     ColumnController.prototype.init = function () {
         this.suppressColumnVirtualisation = this.gridOptionsWrapper.isSuppressColumnVirtualisation();
@@ -59,6 +77,13 @@ var ColumnController = /** @class */ (function () {
             this.pivotMode = pivotMode;
         }
         this.usingTreeData = this.gridOptionsWrapper.isTreeData();
+        this.addManagedListener(this.gridOptionsWrapper, 'autoGroupColumnDef', this.onAutoGroupColumnDefChanged.bind(this));
+    };
+    ColumnController.prototype.onAutoGroupColumnDefChanged = function () {
+        this.autoGroupsNeedBuilding = true;
+        this.forceRecreateAutoGroups = true;
+        this.updateGridColumns();
+        this.updateDisplayedColumns('gridOptionsChanged');
     };
     ColumnController.prototype.setColumnDefs = function (columnDefs, source) {
         if (source === void 0) { source = 'api'; }
@@ -1188,25 +1213,44 @@ var ColumnController = /** @class */ (function () {
         return null;
     };
     ColumnController.prototype.getDisplayedGroupAfter = function (columnGroup) {
-        // pick one col in this group at random
-        var col = columnGroup.getDisplayedLeafColumns()[0];
-        var requiredLevel = columnGroup.getOriginalColumnGroup().getLevel();
+        return this.getDisplayedGroupAtDirection(columnGroup, 'After');
+    };
+    ColumnController.prototype.getDisplayedGroupBefore = function (columnGroup) {
+        return this.getDisplayedGroupAtDirection(columnGroup, 'Before');
+    };
+    ColumnController.prototype.getDisplayedGroupAtDirection = function (columnGroup, direction) {
+        // pick the last displayed column in this group
+        var requiredLevel = columnGroup.getOriginalColumnGroup().getLevel() + columnGroup.getPaddingLevel();
+        var colGroupLeafColumns = columnGroup.getDisplayedLeafColumns();
+        var col = direction === 'After' ? _.last(colGroupLeafColumns) : colGroupLeafColumns[0];
+        var getDisplayColMethod = "getDisplayedCol" + direction;
         while (true) {
             // keep moving to the next col, until we get to another group
-            col = this.getDisplayedColAfter(col);
-            // if no col after, means no group after
-            if (!col) {
+            var column = this[getDisplayColMethod](col);
+            if (!column) {
                 return null;
             }
-            // get group at same level as the one we are looking for
-            var groupPointer = col.getParent();
-            while (groupPointer.getOriginalColumnGroup().getLevel() !== requiredLevel) {
-                groupPointer = groupPointer.getParent();
-            }
+            var groupPointer = this.getColumnGroupAtLevel(column, requiredLevel);
             if (groupPointer !== columnGroup) {
                 return groupPointer;
             }
         }
+    };
+    ColumnController.prototype.getColumnGroupAtLevel = function (column, level) {
+        // get group at same level as the one we are looking for
+        var groupPointer = column.getParent();
+        var originalGroupLevel;
+        var groupPointerLevel;
+        while (true) {
+            var groupPointerOriginalColumnGroup = groupPointer.getOriginalColumnGroup();
+            originalGroupLevel = groupPointerOriginalColumnGroup.getLevel();
+            groupPointerLevel = groupPointer.getPaddingLevel();
+            if (originalGroupLevel + groupPointerLevel <= level) {
+                break;
+            }
+            groupPointer = groupPointer.getParent();
+        }
+        return groupPointer;
     };
     ColumnController.prototype.isPinningLeft = function () {
         return this.displayedLeftColumns.length > 0;
@@ -2450,6 +2494,12 @@ var ColumnController = /** @class */ (function () {
             _.removeFromArray(colsToSpread, column);
             colsToNotSpread.push(column);
         };
+        // resetting cols to their original width makes the sizeColumnsToFit more deterministic,
+        // rather than depending on the current size of the columns. most users call sizeColumnsToFit
+        // immediately after grid is created, so will make no difference. however if application is calling
+        // sizeColumnsToFit repeatedly (eg after column group is opened / closed repeatedly) we don't want
+        // the columns to start shrinking / growing over time.
+        colsToSpread.forEach(function (column) { return column.resetActualWidth(); });
         while (!finishedResizing) {
             finishedResizing = true;
             var availablePixels = gridWidth - this.getWidthOfColsInList(colsToNotSpread);
@@ -2568,7 +2618,9 @@ var ColumnController = /** @class */ (function () {
         if (needAutoColumns) {
             var newAutoGroupCols = this.autoGroupColService.createAutoGroupColumns(this.rowGroupColumns);
             var autoColsDifferent = !this.autoColsEqual(newAutoGroupCols, this.groupAutoColumns);
-            if (autoColsDifferent) {
+            // we force recreate when suppressSetColumnStateEvents changes, so new group cols pick up the new
+            // definitions. otherwise we could ignore the new cols becasue they appear to be the same.
+            if (autoColsDifferent || this.forceRecreateAutoGroups) {
                 this.groupAutoColumns = newAutoGroupCols;
             }
         }
@@ -2590,6 +2642,24 @@ var ColumnController = /** @class */ (function () {
         return (defaultColDef != null && defaultColDef.floatingFilter === true) ||
             (this.columnDefs != null && this.columnDefs.some(function (c) { return c.floatingFilter === true; }));
     };
+    ColumnController.prototype.getFirstDisplayedColumn = function () {
+        var isRtl = this.gridOptionsWrapper.isEnableRtl();
+        var queryOrder = [
+            'getDisplayedLeftColumns',
+            'getDisplayedCenterColumns',
+            'getDisplayedRightColumns'
+        ];
+        if (isRtl) {
+            queryOrder.reverse();
+        }
+        for (var i = 0; i < queryOrder.length; i++) {
+            var container = this[queryOrder[i]]();
+            if (container.length) {
+                return isRtl ? _.last(container) : container[0];
+            }
+        }
+        return null;
+    };
     __decorate([
         Autowired('gridOptionsWrapper')
     ], ColumnController.prototype, "gridOptionsWrapper", void 0);
@@ -2605,9 +2675,6 @@ var ColumnController = /** @class */ (function () {
     __decorate([
         Autowired('autoWidthCalculator')
     ], ColumnController.prototype, "autoWidthCalculator", void 0);
-    __decorate([
-        Autowired('eventService')
-    ], ColumnController.prototype, "eventService", void 0);
     __decorate([
         Autowired('columnUtils')
     ], ColumnController.prototype, "columnUtils", void 0);
@@ -2642,5 +2709,5 @@ var ColumnController = /** @class */ (function () {
         Bean('columnController')
     ], ColumnController);
     return ColumnController;
-}());
+}(BeanStub));
 export { ColumnController };

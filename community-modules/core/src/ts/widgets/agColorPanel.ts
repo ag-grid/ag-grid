@@ -25,7 +25,7 @@ export class AgColorPanel extends Component {
     private static maxRecentColors = 8;
     private static recentColors: string[] = [];
 
-    private static TEMPLATE =
+    private static TEMPLATE = /* html */
         `<div class="ag-color-panel">
             <div ref="spectrumColor" class="ag-spectrum-color">
                 <div class="ag-spectrum-sat ag-spectrum-fill">
@@ -67,21 +67,21 @@ export class AgColorPanel extends Component {
 
         this.initRecentColors();
 
-        this.addDestroyableEventListener(this.spectrumVal, 'mousedown', this.onSpectrumDraggerDown.bind(this));
-        this.addDestroyableEventListener(eGui, 'mousemove', this.onSpectrumDraggerMove.bind(this));
+        this.addManagedListener(this.spectrumVal, 'mousedown', this.onSpectrumDraggerDown.bind(this));
+        this.addManagedListener(eGui, 'mousemove', this.onSpectrumDraggerMove.bind(this));
 
-        this.addDestroyableEventListener(this.spectrumHue, 'mousedown', this.onSpectrumHueDown.bind(this));
-        this.addDestroyableEventListener(eGui, 'mousemove', this.onSpectrumHueMove.bind(this));
+        this.addManagedListener(this.spectrumHue, 'mousedown', this.onSpectrumHueDown.bind(this));
+        this.addManagedListener(eGui, 'mousemove', this.onSpectrumHueMove.bind(this));
 
-        this.addDestroyableEventListener(this.spectrumAlpha, 'mousedown', this.onSpectrumAlphaDown.bind(this));
-        this.addDestroyableEventListener(eGui, 'mousemove', this.onSpectrumAlphaMove.bind(this));
+        this.addManagedListener(this.spectrumAlpha, 'mousedown', this.onSpectrumAlphaDown.bind(this));
+        this.addManagedListener(eGui, 'mousemove', this.onSpectrumAlphaMove.bind(this));
 
         // Listening to `mouseup` on the document on purpose. The user might release the mouse button
         // outside the UI control. When the mouse returns back to the control's area, the dragging
         // of the thumb is not expected and seen as a bug.
-        this.addDestroyableEventListener(document, 'mouseup', this.onMouseUp.bind(this));
+        this.addManagedListener(document, 'mouseup', this.onMouseUp.bind(this));
 
-        this.addDestroyableEventListener(this.recentColors, 'click', this.onRecentColorClick.bind(this));
+        this.addManagedListener(this.recentColors, 'click', this.onRecentColorClick.bind(this));
     }
 
     private refreshSpectrumRect() {
@@ -304,7 +304,7 @@ export class AgColorPanel extends Component {
         AgColorPanel.recentColors = recentColors;
     }
 
-    public destroy(): void {
+    protected destroy(): void {
         this.addRecentColor();
         super.destroy();
     }

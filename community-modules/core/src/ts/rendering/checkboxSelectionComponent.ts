@@ -3,7 +3,6 @@ import { Autowired } from '../context/context';
 import { Column } from '../entities/column';
 import { Component } from '../widgets/component';
 import { Events } from '../events';
-import { EventService } from '../eventService';
 import { GridOptionsWrapper } from '../gridOptionsWrapper';
 import { IsRowSelectable } from '../entities/gridOptions';
 import { RefSelector } from '../widgets/componentAnnotations';
@@ -11,8 +10,8 @@ import { RowNode } from '../entities/rowNode';
 import { _ } from '../utils';
 
 export class CheckboxSelectionComponent extends Component {
+
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
-    @Autowired('eventService') private eventService: EventService;
 
     @RefSelector('eCheckbox') private eCheckbox: AgCheckbox;
 
@@ -21,7 +20,11 @@ export class CheckboxSelectionComponent extends Component {
     private isRowSelectableFunc: IsRowSelectable;
 
     constructor() {
-        super(`<div class="ag-selection-checkbox"><ag-checkbox role="presentation" ref="eCheckbox"></ag-checkbox></div>`);
+        super(/* html*/`
+            <div class="ag-selection-checkbox">
+                <ag-checkbox role="presentation" ref="eCheckbox"></ag-checkbox>
+            </div>`
+        );
     }
 
     private onDataChanged(): void {
@@ -64,7 +67,7 @@ export class CheckboxSelectionComponent extends Component {
         // likewise we don't want double click on this icon to open a group
         this.addGuiEventListener('dblclick', event => _.stopPropagationForAgGrid(event));
 
-        this.addDestroyableEventListener(this.eCheckbox, AgCheckbox.EVENT_CHANGED, (params) => {
+        this.addManagedListener(this.eCheckbox, AgCheckbox.EVENT_CHANGED, (params) => {
             if (params.selected) {
                 this.onUncheckedClicked(params.event || {});
             } else {
@@ -72,16 +75,18 @@ export class CheckboxSelectionComponent extends Component {
             }
         });
 
-        this.addDestroyableEventListener(this.rowNode, RowNode.EVENT_ROW_SELECTED, this.onSelectionChanged.bind(this));
-        this.addDestroyableEventListener(this.rowNode, RowNode.EVENT_DATA_CHANGED, this.onDataChanged.bind(this));
-        this.addDestroyableEventListener(this.rowNode, RowNode.EVENT_SELECTABLE_CHANGED, this.onSelectableChanged.bind(this));
+        this.addManagedListener(this.rowNode, RowNode.EVENT_ROW_SELECTED, this.onSelectionChanged.bind(this));
+        this.addManagedListener(this.rowNode, RowNode.EVENT_DATA_CHANGED, this.onDataChanged.bind(this));
+        this.addManagedListener(this.rowNode, RowNode.EVENT_SELECTABLE_CHANGED, this.onSelectableChanged.bind(this));
 
         this.isRowSelectableFunc = this.gridOptionsWrapper.getIsRowSelectableFunc();
         const checkboxVisibleIsDynamic = this.isRowSelectableFunc || this.checkboxCallbackExists();
         if (checkboxVisibleIsDynamic) {
-            this.addDestroyableEventListener(this.eventService, Events.EVENT_DISPLAYED_COLUMNS_CHANGED, this.showOrHideSelect.bind(this));
+            this.addManagedListener(this.eventService, Events.EVENT_DISPLAYED_COLUMNS_CHANGED, this.showOrHideSelect.bind(this));
             this.showOrHideSelect();
         }
+
+        this.eCheckbox.setInputAriaLabel('Toggle Row Selection');
     }
 
     private showOrHideSelect(): void {

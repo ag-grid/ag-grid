@@ -634,9 +634,7 @@ var AgGridAngular = /** @class */ (function () {
         this._initialised = false;
         this._destroyed = false;
         // in order to ensure firing of gridReady is deterministic
-        this._fullyReady = new Promise(function (resolve) {
-            resolve(true);
-        });
+        this._fullyReady = Promise.resolve(true);
         // @START@
         this.slaveGrids = undefined;
         this.alignedGrids = undefined;
@@ -719,6 +717,8 @@ var AgGridAngular = /** @class */ (function () {
         this.blockLoadDebounceMillis = undefined;
         this.keepDetailRowsCount = undefined;
         this.undoRedoCellEditingLimit = undefined;
+        this.cellFlashDelay = undefined;
+        this.cellFadeDelay = undefined;
         this.localeTextFunc = undefined;
         this.groupRowInnerRenderer = undefined;
         this.groupRowInnerRendererFramework = undefined;
@@ -1426,6 +1426,14 @@ var AgGridAngular = /** @class */ (function () {
         Input(),
         __metadata("design:type", Object)
     ], AgGridAngular.prototype, "undoRedoCellEditingLimit", void 0);
+    __decorate([
+        Input(),
+        __metadata("design:type", Object)
+    ], AgGridAngular.prototype, "cellFlashDelay", void 0);
+    __decorate([
+        Input(),
+        __metadata("design:type", Object)
+    ], AgGridAngular.prototype, "cellFadeDelay", void 0);
     __decorate([
         Input(),
         __metadata("design:type", Object)

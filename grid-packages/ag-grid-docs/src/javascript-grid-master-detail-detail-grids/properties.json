@@ -1,0 +1,16 @@
+{
+  "detailCellRenderer": {
+    "detailGridOptions": {
+      "description": "Provide Grid Options to use for the Detail Grid. It should be either an object (for once set of Grid Options for all Detail Grids) or a function (to set different Grid Options for different Detail Grids)."
+    },
+    "getDetailRowData": {
+      "description": "A function that provides what rows to display in the Detail Grid."
+    },
+    "template": {
+      "description": "Allows changing the template used around the Detail Grid."
+    },
+    "refreshStrategy": {
+      "description": "Defines how to refresh the Detail Grids as data is changing in the Master Grid."
+    }
+  }
+}

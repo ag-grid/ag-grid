@@ -1,5 +1,5 @@
-import { CellPositionUtils, Column, GridCore, IClipboardService, RowPositionUtils } from "@ag-grid-community/core";
-export declare class ClipboardService implements IClipboardService {
+import { BeanStub, CellPositionUtils, Column, GridCore, IClipboardService, RowPositionUtils } from "@ag-grid-community/core";
+export declare class ClipboardService extends BeanStub implements IClipboardService {
     private csvCreator;
     private loggerFactory;
     private selectionController;
@@ -9,7 +9,6 @@ export declare class ClipboardService implements IClipboardService {
     private focusController;
     private rowRenderer;
     private columnController;
-    private eventService;
     private cellNavigationService;
     private gridOptionsWrapper;
     private columnApi;

@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v23.1.1
+ * @version v23.2.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -37,6 +37,11 @@ var HeaderComp = /** @class */ (function (_super) {
         _this.lastMovingChanged = 0;
         return _this;
     }
+    // this is a user component, and IComponent has "public destroy()" as part of the interface.
+    // so we need to override destroy() just to make the method public.
+    HeaderComp.prototype.destroy = function () {
+        _super.prototype.destroy.call(this);
+    };
     HeaderComp.prototype.init = function (params) {
         var template = _.firstExistingValue(params.template, HeaderComp.TEMPLATE);
         // take account of any newlines & whitespace before/after the actual template
@@ -85,7 +90,7 @@ var HeaderComp = /** @class */ (function (_super) {
             var showMenuFn = function (event) {
                 options.getApi().showColumnMenuAfterMouseClick(_this.params.column, event.touchStart);
             };
-            this.addDestroyableEventListener(menuTouchListener, TouchListener[eventType], showMenuFn);
+            this.addManagedListener(menuTouchListener, TouchListener[eventType], showMenuFn);
         }
         if (this.params.enableSorting) {
             var tapListener = function (event) {
@@ -97,7 +102,7 @@ var HeaderComp = /** @class */ (function (_super) {
                 }
                 _this.sortController.progressSort(_this.params.column, false, "uiColumnSorted");
             };
-            this.addDestroyableEventListener(touchListener, TouchListener.EVENT_TAP, tapListener);
+            this.addManagedListener(touchListener, TouchListener.EVENT_TAP, tapListener);
         }
         // if tapMenuButton is true `touchListener` and `menuTouchListener` are different
         // so we need to make sure to destroy both listeners here
@@ -121,7 +126,7 @@ var HeaderComp = /** @class */ (function (_super) {
             _.removeFromParent(this.eMenu);
             return;
         }
-        this.addDestroyableEventListener(this.eMenu, 'click', function () { return _this.showMenu(_this.eMenu); });
+        this.addManagedListener(this.eMenu, 'click', function () { return _this.showMenu(_this.eMenu); });
         if (!suppressMenuHide) {
             this.eMenu.style.opacity = '0';
         }
@@ -129,12 +134,15 @@ var HeaderComp = /** @class */ (function (_super) {
         style.transition = 'opacity 0.2s, border 0.2s';
         style['-webkit-transition'] = 'opacity 0.2s, border 0.2s';
     };
-    HeaderComp.prototype.setMouseOverParent = function (overParent) {
+    HeaderComp.prototype.setActiveParent = function (activeParent) {
         if (!this.gridOptionsWrapper.isSuppressMenuHide()) {
-            this.eMenu.style.opacity = overParent ? '1' : '0';
+            this.eMenu.style.opacity = activeParent ? '1' : '0';
         }
     };
     HeaderComp.prototype.showMenu = function (eventSource) {
+        if (!eventSource) {
+            eventSource = this.eMenu;
+        }
         this.menuFactory.showMenuAfterButtonClick(this.params.column, eventSource);
     };
     HeaderComp.prototype.removeSortIcons = function () {
@@ -152,12 +160,12 @@ var HeaderComp = /** @class */ (function (_super) {
         }
         var sortUsingCtrl = this.gridOptionsWrapper.isMultiSortKeyCtrl();
         // keep track of last time the moving changed flag was set
-        this.addDestroyableEventListener(this.params.column, Column.EVENT_MOVING_CHANGED, function () {
+        this.addManagedListener(this.params.column, Column.EVENT_MOVING_CHANGED, function () {
             _this.lastMovingChanged = new Date().getTime();
         });
         // add the event on the header, so when clicked, we do sorting
         if (this.eLabel) {
-            this.addDestroyableEventListener(this.eLabel, 'click', function (event) {
+            this.addManagedListener(this.eLabel, 'click', function (event) {
                 // sometimes when moving a column via dragging, this was also firing a clicked event.
                 // here is issue raised by user: https://ag-grid.zendesk.com/agent/tickets/1076
                 // this check stops sort if a) column is moving or b) column moved less than 200ms ago (so caters for race condition)
@@ -172,9 +180,9 @@ var HeaderComp = /** @class */ (function (_super) {
                 }
             });
         }
-        this.addDestroyableEventListener(this.params.column, Column.EVENT_SORT_CHANGED, this.onSortChanged.bind(this));
+        this.addManagedListener(this.params.column, Column.EVENT_SORT_CHANGED, this.onSortChanged.bind(this));
         this.onSortChanged();
-        this.addDestroyableEventListener(this.eventService, Events.EVENT_SORT_CHANGED, this.setMultiSortOrder.bind(this));
+        this.addManagedListener(this.eventService, Events.EVENT_SORT_CHANGED, this.setMultiSortOrder.bind(this));
         this.setMultiSortOrder();
     };
     HeaderComp.prototype.onSortChanged = function () {
@@ -216,24 +224,14 @@ var HeaderComp = /** @class */ (function (_super) {
         if (!this.eFilter) {
             return;
         }
-        this.addDestroyableEventListener(this.params.column, Column.EVENT_FILTER_CHANGED, this.onFilterChanged.bind(this));
+        this.addManagedListener(this.params.column, Column.EVENT_FILTER_CHANGED, this.onFilterChanged.bind(this));
         this.onFilterChanged();
     };
     HeaderComp.prototype.onFilterChanged = function () {
         var filterPresent = this.params.column.isFilterActive();
         _.addOrRemoveCssClass(this.eFilter, 'ag-hidden', !filterPresent);
     };
-    HeaderComp.TEMPLATE = '<div class="ag-cell-label-container" role="presentation">' +
-        '  <span ref="eMenu" class="ag-header-icon ag-header-cell-menu-button" aria-hidden="true"></span>' +
-        '  <div ref="eLabel" class="ag-header-cell-label" role="presentation" unselectable="on">' +
-        '    <span ref="eText" class="ag-header-cell-text" role="columnheader" unselectable="on"></span>' +
-        '    <span ref="eFilter" class="ag-header-icon ag-header-label-icon ag-filter-icon" aria-hidden="true"></span>' +
-        '    <span ref="eSortOrder" class="ag-header-icon ag-header-label-icon ag-sort-order" aria-hidden="true"></span>' +
-        '    <span ref="eSortAsc" class="ag-header-icon ag-header-label-icon ag-sort-ascending-icon" aria-hidden="true"></span>' +
-        '    <span ref="eSortDesc" class="ag-header-icon ag-header-label-icon ag-sort-descending-icon" aria-hidden="true"></span>' +
-        '    <span ref="eSortNone" class="ag-header-icon ag-header-label-icon ag-sort-none-icon" aria-hidden="true"></span>' +
-        '  </div>' +
-        '</div>';
+    HeaderComp.TEMPLATE = "<div class=\"ag-cell-label-container\">\n            <span ref=\"eMenu\" class=\"ag-header-icon ag-header-cell-menu-button\" aria-hidden=\"true\"></span>\n            <div ref=\"eLabel\" class=\"ag-header-cell-label\" role=\"presentation\" unselectable=\"on\">\n                <span ref=\"eText\" class=\"ag-header-cell-text\" role=\"columnheader\" unselectable=\"on\"></span>\n                <span ref=\"eFilter\" class=\"ag-header-icon ag-header-label-icon ag-filter-icon\" aria-hidden=\"true\"></span>\n                <span ref=\"eSortOrder\" class=\"ag-header-icon ag-header-label-icon ag-sort-order\" aria-hidden=\"true\"></span>\n                <span ref=\"eSortAsc\" class=\"ag-header-icon ag-header-label-icon ag-sort-ascending-icon\" aria-hidden=\"true\"></span>\n                <span ref=\"eSortDesc\" class=\"ag-header-icon ag-header-label-icon ag-sort-descending-icon\" aria-hidden=\"true\"></span>\n                <span ref=\"eSortNone\" class=\"ag-header-icon ag-header-label-icon ag-sort-none-icon\" aria-hidden=\"true\"></span>\n            </div>\n        </div>";
     __decorate([
         Autowired('gridOptionsWrapper')
     ], HeaderComp.prototype, "gridOptionsWrapper", void 0);
@@ -243,9 +241,6 @@ var HeaderComp = /** @class */ (function (_super) {
     __decorate([
         Autowired('menuFactory')
     ], HeaderComp.prototype, "menuFactory", void 0);
-    __decorate([
-        Autowired('eventService')
-    ], HeaderComp.prototype, "eventService", void 0);
     __decorate([
         RefSelector('eFilter')
     ], HeaderComp.prototype, "eFilter", void 0);

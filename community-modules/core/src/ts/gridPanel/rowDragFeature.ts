@@ -2,13 +2,12 @@ import {
     DragAndDropService, DraggingEvent, DragSourceType, DropTarget,
     VerticalDirection
 } from "../dragAndDrop/dragAndDropService";
-import { Autowired, Optional, PostConstruct, PreDestroy } from "../context/context";
+import { Autowired, Optional, PostConstruct } from "../context/context";
 import { ColumnController } from "../columnController/columnController";
 import { FocusController } from "../focusController";
 import { IRangeController } from "../interfaces/iRangeController";
 import { GridPanel } from "./gridPanel";
 import { GridOptionsWrapper } from "../gridOptionsWrapper";
-import { EventService } from "../eventService";
 import { RowDragEvent, RowDragEnterEvent, RowDragLeaveEvent, RowDragMoveEvent, RowDragEndEvent } from "../events";
 import { Events } from "../eventKeys";
 import { IRowModel } from "../interfaces/iRowModel";
@@ -19,6 +18,7 @@ import { MouseEventService } from "./mouseEventService";
 import { last } from '../utils/array';
 import { SortController } from "../sortController";
 import { FilterManager } from "../filter/filterManager";
+import { BeanStub } from "../context/beanStub";
 import { _ } from "../utils";
 
 export interface RowDropZoneEvents {
@@ -33,7 +33,7 @@ export interface RowDropZoneParams extends RowDropZoneEvents {
     fromGrid?: boolean;
 }
 
-export class RowDragFeature implements DropTarget {
+export class RowDragFeature extends BeanStub implements DropTarget {
 
     @Autowired('dragAndDropService') private dragAndDropService: DragAndDropService;
     // this feature is only created when row model is ClientSide, so we can type it as ClientSide
@@ -46,7 +46,6 @@ export class RowDragFeature implements DropTarget {
     @Autowired('selectionController') private selectionController: SelectionController;
     @Optional('rangeController') private rangeController: IRangeController;
     @Autowired('mouseEventService') private mouseEventService: MouseEventService;
-    @Autowired('eventService') private eventService: EventService;
 
     private gridPanel: GridPanel;
     private clientSideRowModel: IClientSideRowModel;
@@ -57,12 +56,12 @@ export class RowDragFeature implements DropTarget {
     private intervalCount: number;
     private lastDraggingEvent: DraggingEvent;
     private isMultiRowDrag: boolean = false;
-    private events: (() => void)[] = [];
     private isGridSorted: boolean = false;
     private isGridFiltered: boolean = false;
     private isRowGroupActive: boolean = false;
 
     constructor(eContainer: HTMLElement, gridPanel: GridPanel) {
+        super();
         this.eContainer = eContainer;
         this.gridPanel = gridPanel;
     }
@@ -73,22 +72,13 @@ export class RowDragFeature implements DropTarget {
             this.clientSideRowModel = this.rowModel as IClientSideRowModel;
         }
 
-        this.events.push(
-            this.eventService.addEventListener(Events.EVENT_SORT_CHANGED, this.onSortChanged.bind(this)),
-            this.eventService.addEventListener(Events.EVENT_FILTER_CHANGED, this.onFilterChanged.bind(this)),
-            this.eventService.addEventListener(Events.EVENT_COLUMN_ROW_GROUP_CHANGED, this.onRowGroupChanged.bind(this))
-        );
+        this.addManagedListener(this.eventService, Events.EVENT_SORT_CHANGED, this.onSortChanged.bind(this))
+        this.addManagedListener(this.eventService, Events.EVENT_FILTER_CHANGED, this.onFilterChanged.bind(this))
+        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_ROW_GROUP_CHANGED, this.onRowGroupChanged.bind(this))
 
         this.onSortChanged();
         this.onFilterChanged();
         this.onRowGroupChanged();
-    }
-
-    @PreDestroy
-    public destroy(): void {
-        if (this.events.length) {
-            this.events.forEach(func => func());
-        }
     }
 
     private onSortChanged(): void {
@@ -149,7 +139,7 @@ export class RowDragFeature implements DropTarget {
     public onDragEnter(draggingEvent: DraggingEvent): void {
         // when entering, we fire the enter event, then in onEnterOrDragging,
         // we also fire the move event. so we get both events when entering.
-        this.dispatchEvent(Events.EVENT_ROW_DRAG_ENTER, draggingEvent);
+        this.dispatchGridEvent(Events.EVENT_ROW_DRAG_ENTER, draggingEvent);
 
         this.getRowNodes(draggingEvent).forEach(rowNode => {
             rowNode.setDragging(true);
@@ -175,7 +165,7 @@ export class RowDragFeature implements DropTarget {
 
     private onEnterOrDragging(draggingEvent: DraggingEvent): void {
         // this event is fired for enter and move
-        this.dispatchEvent(Events.EVENT_ROW_DRAG_MOVE, draggingEvent);
+        this.dispatchGridEvent(Events.EVENT_ROW_DRAG_MOVE, draggingEvent);
 
         this.lastDraggingEvent = draggingEvent;
 
@@ -469,14 +459,14 @@ export class RowDragFeature implements DropTarget {
         return event;
     }
 
-    public dispatchEvent(type: string, draggingEvent: DraggingEvent): void {
+    private dispatchGridEvent(type: string, draggingEvent: DraggingEvent): void {
         const event = this.draggingToRowDragEvent(type, draggingEvent);
 
         this.eventService.dispatchEvent(event);
     }
 
     public onDragLeave(draggingEvent: DraggingEvent): void {
-        this.dispatchEvent(Events.EVENT_ROW_DRAG_LEAVE, draggingEvent);
+        this.dispatchGridEvent(Events.EVENT_ROW_DRAG_LEAVE, draggingEvent);
         this.stopDragging(draggingEvent);
         this.clearRowHighlight();
 
@@ -486,7 +476,7 @@ export class RowDragFeature implements DropTarget {
     }
 
     public onDragStop(draggingEvent: DraggingEvent): void {
-        this.dispatchEvent(Events.EVENT_ROW_DRAG_END, draggingEvent);
+        this.dispatchGridEvent(Events.EVENT_ROW_DRAG_END, draggingEvent);
         this.stopDragging(draggingEvent);
 
         if (

@@ -1,10 +1,23 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v23.1.1
+ * @version v23.2.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
 "use strict";
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = function (d, b) {
+        extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+        return extendStatics(d, b);
+    };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -15,17 +28,21 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var context_1 = require("../context/context");
 var events_1 = require("../events");
 var utils_1 = require("../utils");
+var beanStub_1 = require("../context/beanStub");
 /** Adds drag listening onto an element. In ag-Grid this is used twice, first is resizing columns,
  * second is moving the columns and column groups around (ie the 'drag' part of Drag and Drop. */
-var DragService = /** @class */ (function () {
+var DragService = /** @class */ (function (_super) {
+    __extends(DragService, _super);
     function DragService() {
-        this.dragEndFunctions = [];
-        this.dragSources = [];
+        var _this = _super !== null && _super.apply(this, arguments) || this;
+        _this.dragEndFunctions = [];
+        _this.dragSources = [];
+        return _this;
     }
     DragService.prototype.init = function () {
         this.logger = this.loggerFactory.create('DragService');
     };
-    DragService.prototype.destroy = function () {
+    DragService.prototype.removeAllListeners = function () {
         this.dragSources.forEach(this.removeListener.bind(this));
         this.dragSources.length = 0;
     };
@@ -249,9 +266,6 @@ var DragService = /** @class */ (function () {
         context_1.Autowired('loggerFactory')
     ], DragService.prototype, "loggerFactory", void 0);
     __decorate([
-        context_1.Autowired('eventService')
-    ], DragService.prototype, "eventService", void 0);
-    __decorate([
         context_1.Autowired('gridOptionsWrapper')
     ], DragService.prototype, "gridOptionsWrapper", void 0);
     __decorate([
@@ -265,12 +279,12 @@ var DragService = /** @class */ (function () {
     ], DragService.prototype, "init", null);
     __decorate([
         context_1.PreDestroy
-    ], DragService.prototype, "destroy", null);
+    ], DragService.prototype, "removeAllListeners", null);
     DragService = __decorate([
         context_1.Bean('dragService')
     ], DragService);
     return DragService;
-}());
+}(beanStub_1.BeanStub));
 exports.DragService = DragService;
 
 //# sourceMappingURL=dragService.js.map

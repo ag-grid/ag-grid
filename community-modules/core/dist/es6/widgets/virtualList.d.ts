@@ -1,22 +1,33 @@
-// Type definitions for @ag-grid-community/core v23.1.1
+// Type definitions for @ag-grid-community/core v23.2.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
-import { Component } from "./component";
-import { GridOptionsWrapper } from "../gridOptionsWrapper";
+import { Component } from './component';
+import { GridOptionsWrapper } from '../gridOptionsWrapper';
+import { ManagedFocusComponent } from './managedFocusComponent';
 export interface VirtualListModel {
     getRowCount(): number;
     getRow(index: number): any;
 }
-export declare class VirtualList extends Component {
-    private cssIdentifier;
+export declare class VirtualList extends ManagedFocusComponent {
+    private readonly cssIdentifier;
     private model;
-    private eListContainer;
-    private rowsInBodyContainer;
+    private renderedRows;
     private componentCreator;
     private rowHeight;
+    private lastFocusedRow;
     gridOptionsWrapper: GridOptionsWrapper;
+    private eContainer;
     constructor(cssIdentifier?: string);
-    private init;
+    protected postConstruct(): void;
+    protected isFocusableContainer(): boolean;
+    protected focusInnerElement(fromBottom: boolean): void;
+    protected onFocusIn(e: FocusEvent): void;
+    protected onFocusOut(e: FocusEvent): void;
+    protected handleKeyDown(e: KeyboardEvent): void;
+    private navigate;
+    getLastFocusedRow(): number;
+    focusRow(rowNumber: number): void;
+    getComponentAt(rowIndex: number): Component;
     private static getTemplate;
     private getItemHeight;
     ensureIndexVisible(index: number): void;
@@ -28,8 +39,8 @@ export declare class VirtualList extends Component {
     private clearVirtualRows;
     private drawVirtualRows;
     private ensureRowsRendered;
-    private removeVirtualRows;
     private insertRow;
+    private removeRow;
     private addScrollListener;
     setModel(model: VirtualListModel): void;
 }

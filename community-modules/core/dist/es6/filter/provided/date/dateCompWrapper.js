@@ -1,21 +1,20 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v23.1.1
+ * @version v23.2.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
 /** Provides sync access to async component. Date component can be lazy created - this class encapsulates
  * this by keeping value locally until DateComp has loaded, then passing DateComp the value. */
 var DateCompWrapper = /** @class */ (function () {
-    function DateCompWrapper(userComponentFactory, dateComponentParams, eParent) {
+    function DateCompWrapper(context, userComponentFactory, dateComponentParams, eParent) {
         var _this = this;
         this.alive = true;
+        this.context = context;
         userComponentFactory.newDateComponent(dateComponentParams).then(function (dateComp) {
             // because async, check the filter still exists after component comes back
             if (!_this.alive) {
-                if (dateComp.destroy) {
-                    dateComp.destroy();
-                }
+                context.destroyBean(dateComp);
                 return;
             }
             _this.dateComp = dateComp;
@@ -30,9 +29,7 @@ var DateCompWrapper = /** @class */ (function () {
     }
     DateCompWrapper.prototype.destroy = function () {
         this.alive = false;
-        if (this.dateComp && this.dateComp.destroy) {
-            this.dateComp.destroy();
-        }
+        this.dateComp = this.context.destroyBean(this.dateComp);
     };
     DateCompWrapper.prototype.getDate = function () {
         return this.dateComp ? this.dateComp.getDate() : this.tempValue;

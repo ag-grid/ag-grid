@@ -1,4 +1,3 @@
-
 @mixin ag-theme-base-part-menu {
 
     .ag-menu {
@@ -14,8 +13,9 @@
     }
 
     .ag-menu-option-part {
-        padding-top: ag-param(grid-size) * 1.5;
-        padding-bottom: ag-param(grid-size) * 1.5;
+        padding-top: ag-param(grid-size) + 2;
+        padding-bottom: ag-param(grid-size) + 2;
+        line-height: ag-param(icon-size);
     }
 
     .ag-menu-option-active {
@@ -48,14 +48,13 @@
     .ag-menu-separator-cell:after {
         content: "";
         display: block;
-        @include ag-border(secondary, top);
+        @include ag-border(critical, top);
     }
 
     .ag-menu-option-popup-pointer {
         width: ag-param(icon-size) + ag-param(grid-size) * 2;
         text-align: center;
     }
-
 
     ////////////////////////////////////////
     // Column Filter
@@ -83,12 +82,7 @@
         }
     }
 
-    .ag-keyboard-focus .ag-tab:focus {
-        outline-width: 1px;
-        outline-style: solid;
-        @include ag-color-property(outline-color, input-focus-border-color);
-        outline-offset: -4px;
-    }
+    @include ag-keyboard-focus((ag-tab), 4px);
 
     .ag-tab-selected {
         @include ag-color-property(border-bottom-color, selected-tab-underline-color);
@@ -111,7 +105,7 @@
     }
 
     .ag-set-filter-select-all {
-        padding: ag-param(widget-container-vertical-padding) 0;
+        padding-top: ag-param(widget-container-vertical-padding);
     }
 
     .ag-set-filter-list {
@@ -129,7 +123,8 @@
     }
 
     .ag-mini-filter {
-        margin: ag-param(widget-container-vertical-padding) ag-param(widget-container-horizontal-padding) 0;
+        margin: ag-param(widget-container-vertical-padding) ag-param(widget-container-horizontal-padding);
+        margin-bottom: 0;
     }
 
     .ag-set-filter-item {
@@ -141,12 +136,11 @@
     }
 
     .ag-filter-header-container {
+        padding-bottom: ag-param(widget-container-vertical-padding);
         @include ag-border(secondary, bottom);
     }
 
     .ag-filter-apply-panel {
-        display: flex;
-        justify-content: flex-end;
         padding: ag-param(widget-container-vertical-padding) ag-param(widget-container-horizontal-padding);
 
         @include ag-border(secondary, top);
@@ -159,5 +153,9 @@
 
     .ag-simple-filter-body-wrapper {
         @include ag-vertical-widget-container();
+    }
+
+    .ag-filter-no-matches {
+        margin: ag-param(widget-container-vertical-padding) ag-param(widget-container-horizontal-padding);
     }
 }

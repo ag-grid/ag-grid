@@ -172,7 +172,7 @@
           },
           {
             "title": "Column Interface",
-            "url": "javascript-grid-column-definitions/",
+            "url": "javascript-grid-column-interface/",
             "showInCollapsed": true,
             "items": [
               {
@@ -199,6 +199,12 @@
         "icon": "icon-columns",
         "matrixExclude": true,
         "items": [
+          {
+            "title": "Column Definitions",
+            "box-title": "Definitions",
+            "url": "javascript-grid-column-definitions/",
+            "showInCollapsed": true
+          },
           {
             "title": "Column Headers",
             "box-title": "Headers",
@@ -673,6 +679,7 @@
                 "title": "Set Filter",
                 "url": "javascript-grid-filter-set/",
                 "enterprise": true,
+                "matrixExcludeChildren": true,
                 "showInCollapsed": true,
                 "items": [
                   {
@@ -688,6 +695,11 @@
                   {
                     "title": "Mini Filter",
                     "url": "javascript-grid-filter-set-mini-filter/",
+                    "enterprise": true
+                  },
+                  {
+                    "title": "Excel Mode",
+                    "url": "javascript-grid-filter-set-excel-mode/",
                     "enterprise": true
                   },
                   {
@@ -853,7 +865,52 @@
             "title": "Master Detail",
             "url": "javascript-grid-master-detail/",
             "enterprise": true,
-            "showInCollapsed": true
+            "showInCollapsed": true,
+            "matrixExcludeChildren": true,
+            "items": [
+              {
+                "title": "Detail Grids",
+                "url": "javascript-grid-master-detail-detail-grids/",
+                "enterprise": true,
+                "showInCollapsed": false
+              },
+              {
+                "title": "Detail Height",
+                "url": "javascript-grid-master-detail-height/",
+                "enterprise": true,
+                "showInCollapsed": false
+              },
+              {
+                "title": "Detail Refresh",
+                "url": "javascript-grid-master-detail-refresh/",
+                "enterprise": true,
+                "showInCollapsed": false
+              },
+              {
+                "title": "Master Rows",
+                "url": "javascript-grid-master-detail-master-rows/",
+                "enterprise": true,
+                "showInCollapsed": false
+              },
+              {
+                "title": "Nesting",
+                "url": "javascript-grid-master-detail-nesting/",
+                "enterprise": true,
+                "showInCollapsed": false
+              },
+              {
+                "title": "Custom Detail",
+                "url": "javascript-grid-master-detail-custom-detail/",
+                "enterprise": true,
+                "showInCollapsed": false
+              },
+              {
+                "title": "Other",
+                "url": "javascript-grid-master-detail-other/",
+                "enterprise": true,
+                "showInCollapsed": false
+              }
+            ]
           },
           {
             "title": "Tree Data",
@@ -1109,6 +1166,7 @@
             "title": "Customisation",
             "url": "javascript-grid-charts-integrated-customisation/",
             "enterprise": true,
+            "matrixExcludeChildren": true,
             "showInCollapsed": true,
             "items": [
               {
@@ -1436,6 +1494,10 @@
               {
                 "title": "Legend",
                 "url": "javascript-charts-legend/"
+              },
+              {
+                "title": "Navigator",
+                "url": "javascript-charts-navigator/"
               },
               {
                 "title": "Markers",

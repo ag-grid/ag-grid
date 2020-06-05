@@ -1,7 +1,7 @@
-import {Beans} from "./beans";
-import {CellComp} from "./cellComp";
-import {CellChangedEvent, DataChangedEvent, RowNode} from "../entities/rowNode";
-import {Column} from "../entities/column";
+import { Beans } from "./beans";
+import { CellComp } from "./cellComp";
+import { DataChangedEvent, RowNode } from "../entities/rowNode";
+import { Column } from "../entities/column";
 import {
     Events,
     RowClickedEvent,
@@ -13,16 +13,16 @@ import {
     VirtualRowRemovedEvent
 } from "../events";
 
-import {ICellRendererComp} from "./cellRenderers/iCellRenderer";
-import {RowContainerComponent} from "./rowContainerComponent";
-import {Component} from "../widgets/component";
+import { ICellRendererComp } from "./cellRenderers/iCellRenderer";
+import { RowContainerComponent } from "./rowContainerComponent";
+import { Component } from "../widgets/component";
 
-import {ProcessRowParams} from "../entities/gridOptions";
-import {IFrameworkOverrides} from "../interfaces/iFrameworkOverrides";
-import {Constants} from "../constants";
-import {ModuleNames} from "../modules/moduleNames";
-import {ModuleRegistry} from "../modules/moduleRegistry";
-import {_} from "../utils";
+import { ProcessRowParams } from "../entities/gridOptions";
+import { IFrameworkOverrides } from "../interfaces/iFrameworkOverrides";
+import { Constants } from "../constants";
+import { ModuleNames } from "../modules/moduleNames";
+import { ModuleRegistry } from "../modules/moduleRegistry";
+import { _ } from "../utils";
 
 interface CellTemplate {
     template: string;
@@ -175,7 +175,7 @@ export class RowComp extends Component {
         const businessKeySanitised = _.escape(businessKey);
         const rowTopStyle = this.getInitialRowTopStyle();
         const rowIdx = this.rowNode.getRowIndexString();
-        const headerRowCount = this.beans.gridPanel.headerRootComp.getHeaderRowCount();
+        const headerRowCount = this.beans.headerNavigationService.getHeaderRowCount();
 
         templateParts.push(`<div`);
         templateParts.push(` role="row"`);
@@ -453,45 +453,38 @@ export class RowComp extends Component {
     }
 
     private addListeners(): void {
-        this.addDestroyableEventListener(this.rowNode, RowNode.EVENT_HEIGHT_CHANGED, this.onRowHeightChanged.bind(this));
-        this.addDestroyableEventListener(this.rowNode, RowNode.EVENT_ROW_SELECTED, this.onRowSelected.bind(this));
-        this.addDestroyableEventListener(this.rowNode, RowNode.EVENT_ROW_INDEX_CHANGED, this.onRowIndexChanged.bind(this));
-        this.addDestroyableEventListener(this.rowNode, RowNode.EVENT_TOP_CHANGED, this.onTopChanged.bind(this));
-        this.addDestroyableEventListener(this.rowNode, RowNode.EVENT_EXPANDED_CHANGED, this.onExpandedChanged.bind(this));
-        this.addDestroyableEventListener(this.rowNode, RowNode.EVENT_DATA_CHANGED, this.onRowNodeDataChanged.bind(this));
-        this.addDestroyableEventListener(this.rowNode, RowNode.EVENT_CELL_CHANGED, this.onRowNodeCellChanged.bind(this));
-        this.addDestroyableEventListener(this.rowNode, RowNode.EVENT_HIGHLIGHT_CHANGED, this.onRowNodeHighlightChanged.bind(this));
-        this.addDestroyableEventListener(this.rowNode, RowNode.EVENT_DRAGGING_CHANGED, this.onRowNodeDraggingChanged.bind(this));
+        this.addManagedListener(this.rowNode, RowNode.EVENT_HEIGHT_CHANGED, this.onRowHeightChanged.bind(this));
+        this.addManagedListener(this.rowNode, RowNode.EVENT_ROW_SELECTED, this.onRowSelected.bind(this));
+        this.addManagedListener(this.rowNode, RowNode.EVENT_ROW_INDEX_CHANGED, this.onRowIndexChanged.bind(this));
+        this.addManagedListener(this.rowNode, RowNode.EVENT_TOP_CHANGED, this.onTopChanged.bind(this));
+        this.addManagedListener(this.rowNode, RowNode.EVENT_EXPANDED_CHANGED, this.onExpandedChanged.bind(this));
+        this.addManagedListener(this.rowNode, RowNode.EVENT_DATA_CHANGED, this.onRowNodeDataChanged.bind(this));
+        this.addManagedListener(this.rowNode, RowNode.EVENT_CELL_CHANGED, this.onRowNodeCellChanged.bind(this));
+        this.addManagedListener(this.rowNode, RowNode.EVENT_HIGHLIGHT_CHANGED, this.onRowNodeHighlightChanged.bind(this));
+        this.addManagedListener(this.rowNode, RowNode.EVENT_DRAGGING_CHANGED, this.onRowNodeDraggingChanged.bind(this));
 
         const eventService = this.beans.eventService;
-        this.addDestroyableEventListener(eventService, Events.EVENT_HEIGHT_SCALE_CHANGED, this.onTopChanged.bind(this));
-        this.addDestroyableEventListener(eventService, Events.EVENT_DISPLAYED_COLUMNS_CHANGED, this.onDisplayedColumnsChanged.bind(this));
-        this.addDestroyableEventListener(eventService, Events.EVENT_VIRTUAL_COLUMNS_CHANGED, this.onVirtualColumnsChanged.bind(this));
-        this.addDestroyableEventListener(eventService, Events.EVENT_COLUMN_RESIZED, this.onColumnResized.bind(this));
-        this.addDestroyableEventListener(eventService, Events.EVENT_CELL_FOCUSED, this.onCellFocusChanged.bind(this));
-        this.addDestroyableEventListener(eventService, Events.EVENT_PAGINATION_CHANGED, this.onPaginationChanged.bind(this));
-        this.addDestroyableEventListener(eventService, Events.EVENT_GRID_COLUMNS_CHANGED, this.onGridColumnsChanged.bind(this));
-        this.addDestroyableEventListener(eventService, Events.EVENT_MODEL_UPDATED, this.onModelUpdated.bind(this));
-        this.addDestroyableEventListener(eventService, Events.EVENT_COLUMN_MOVED, this.onColumnMoved.bind(this));
+        this.addManagedListener(eventService, Events.EVENT_HEIGHT_SCALE_CHANGED, this.onTopChanged.bind(this));
+        this.addManagedListener(eventService, Events.EVENT_DISPLAYED_COLUMNS_CHANGED, this.onDisplayedColumnsChanged.bind(this));
+        this.addManagedListener(eventService, Events.EVENT_VIRTUAL_COLUMNS_CHANGED, this.onVirtualColumnsChanged.bind(this));
+        this.addManagedListener(eventService, Events.EVENT_COLUMN_RESIZED, this.onColumnResized.bind(this));
+        this.addManagedListener(eventService, Events.EVENT_CELL_FOCUSED, this.onCellFocusChanged.bind(this));
+        this.addManagedListener(eventService, Events.EVENT_PAGINATION_CHANGED, this.onPaginationChanged.bind(this));
+        this.addManagedListener(eventService, Events.EVENT_MODEL_UPDATED, this.onModelUpdated.bind(this));
+        this.addManagedListener(eventService, Events.EVENT_COLUMN_MOVED, this.onColumnMoved.bind(this));
 
         this.addListenersForCellComps();
     }
 
     private addListenersForCellComps(): void {
 
-        this.addDestroyableEventListener(this.rowNode, RowNode.EVENT_ROW_INDEX_CHANGED, () => {
+        this.addManagedListener(this.rowNode, RowNode.EVENT_ROW_INDEX_CHANGED, () => {
             this.forEachCellComp(cellComp => cellComp.onRowIndexChanged());
         });
-        this.addDestroyableEventListener(this.rowNode, RowNode.EVENT_CELL_CHANGED, event => {
+        this.addManagedListener(this.rowNode, RowNode.EVENT_CELL_CHANGED, event => {
             this.forEachCellComp(cellComp => cellComp.onCellChanged(event));
         });
 
-    }
-
-    // when grid columns change, then all cells should be cleaned out,
-    // as the new columns could have same id as the previous columns and may conflict
-    private onGridColumnsChanged(): void {
-        this.removeRenderedCells(Object.keys(this.cellComps));
     }
 
     private onRowNodeDataChanged(event: DataChangedEvent): void {
@@ -892,8 +885,8 @@ export class RowComp extends Component {
                     const gui = cellRenderer.getGui();
                     eRow.appendChild(gui);
                     cellRendererCallback(cellRenderer);
-                } else if (cellRenderer.destroy) {
-                    cellRenderer.destroy();
+                } else {
+                    this.beans.context.destroyBean(cellRenderer);
                 }
             };
 
@@ -1318,11 +1311,11 @@ export class RowComp extends Component {
         // all are listening for event on the row node.
 
         // step 1 - add listener, to set flag on row node
-        this.addDestroyableEventListener(eRow, 'mouseenter', () => this.rowNode.onMouseEnter());
-        this.addDestroyableEventListener(eRow, 'mouseleave', () => this.rowNode.onMouseLeave());
+        this.addManagedListener(eRow, 'mouseenter', () => this.rowNode.onMouseEnter());
+        this.addManagedListener(eRow, 'mouseleave', () => this.rowNode.onMouseLeave());
 
         // step 2 - listen for changes on row node (which any eRow can trigger)
-        this.addDestroyableEventListener(this.rowNode, RowNode.EVENT_MOUSE_ENTER, () => {
+        this.addManagedListener(this.rowNode, RowNode.EVENT_MOUSE_ENTER, () => {
             // if hover turned off, we don't add the class. we do this here so that if the application
             // toggles this property mid way, we remove the hover form the last row, but we stop
             // adding hovers from that point onwards.
@@ -1331,7 +1324,7 @@ export class RowComp extends Component {
             }
         });
 
-        this.addDestroyableEventListener(this.rowNode, RowNode.EVENT_MOUSE_LEAVE, () => {
+        this.addManagedListener(this.rowNode, RowNode.EVENT_MOUSE_LEAVE, () => {
             _.removeCssClass(eRow, 'ag-row-hover');
         });
     }
@@ -1379,6 +1372,7 @@ export class RowComp extends Component {
         super.removeEventListener(eventType, listener);
     }
 
+    // note - this is NOT called by context, as we don't wire / unwire the CellComp for performance reasons.
     public destroy(animate = false): void {
         this.active = false;
 
@@ -1507,7 +1501,7 @@ export class RowComp extends Component {
         // we only bother updating if the rowIndex is present. if it is not present, it means this row
         // is child of a group node, and the group node was closed, it's the only way to have no row index.
         // when this happens, row is about to be de-rendered, so we don't care, rowComp is about to die!
-        if (this.rowNode.rowIndex!=null) {
+        if (this.rowNode.rowIndex != null) {
             this.onCellFocusChanged();
             this.updateRowIndexes();
         }
@@ -1517,7 +1511,7 @@ export class RowComp extends Component {
         const rowIndexStr = this.rowNode.getRowIndexString();
         const rowIsEven = this.rowNode.rowIndex % 2 === 0;
         const rowIsEvenChanged = this.rowIsEven !== rowIsEven;
-        const headerRowCount = this.beans.gridPanel.headerRootComp.getHeaderRowCount();
+        const headerRowCount = this.beans.headerNavigationService.getHeaderRowCount();
 
         if (rowIsEvenChanged) {
             this.rowIsEven = rowIsEven;

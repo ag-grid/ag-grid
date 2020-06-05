@@ -1,6 +1,7 @@
+import { BeanStub } from "./context/beanStub";
 import { CellPosition } from "./entities/cellPosition";
 import { RowPosition } from "./entities/rowPosition";
-export declare class CellNavigationService {
+export declare class CellNavigationService extends BeanStub {
     private columnController;
     private rowModel;
     private pinnedRowModel;

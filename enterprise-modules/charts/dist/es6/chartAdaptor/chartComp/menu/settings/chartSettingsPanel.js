@@ -17,7 +17,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
-import { _, Autowired, Component, PostConstruct, PreDestroy, RefSelector } from "@ag-grid-community/core";
+import { _, Autowired, Component, PostConstruct, RefSelector } from "@ag-grid-community/core";
 import { MiniChartsContainer } from "./miniChartsContainer";
 import { ChartController } from "../../chartController";
 var ChartSettingsPanel = /** @class */ (function (_super) {
@@ -33,9 +33,9 @@ var ChartSettingsPanel = /** @class */ (function (_super) {
         this.resetPalettes();
         this.ePrevBtn.insertAdjacentElement('afterbegin', _.createIconNoSpan('previous', this.gridOptionsWrapper));
         this.eNextBtn.insertAdjacentElement('afterbegin', _.createIconNoSpan('next', this.gridOptionsWrapper));
-        this.addDestroyableEventListener(this.ePrevBtn, 'click', this.prev.bind(this));
-        this.addDestroyableEventListener(this.eNextBtn, 'click', this.next.bind(this));
-        this.addDestroyableEventListener(this.chartController, ChartController.EVENT_CHART_UPDATED, this.resetPalettes.bind(this));
+        this.addManagedListener(this.ePrevBtn, 'click', this.prev.bind(this));
+        this.addManagedListener(this.eNextBtn, 'click', this.next.bind(this));
+        this.addManagedListener(this.chartController, ChartController.EVENT_CHART_UPDATED, this.resetPalettes.bind(this));
     };
     ChartSettingsPanel.prototype.resetPalettes = function () {
         var _this = this;
@@ -59,7 +59,7 @@ var ChartSettingsPanel = /** @class */ (function (_super) {
             _this.paletteNames.push(name);
             var isActivePalette = _this.activePalette === name;
             var fills = palette.fills, strokes = palette.strokes;
-            var miniChartsContainer = _this.wireBean(new MiniChartsContainer(_this.chartController, fills, strokes));
+            var miniChartsContainer = _this.createBean(new MiniChartsContainer(_this.chartController, fills, strokes));
             _this.miniCharts.push(miniChartsContainer);
             _this.eMiniChartsContainer.appendChild(miniChartsContainer.getGui());
             _this.addCardLink(name);
@@ -78,7 +78,7 @@ var ChartSettingsPanel = /** @class */ (function (_super) {
         var _this = this;
         var link = document.createElement('div');
         _.addCssClass(link, 'ag-chart-settings-card-item');
-        this.addDestroyableEventListener(link, 'click', function () {
+        this.addManagedListener(link, 'click', function () {
             var _a = _this, activePalette = _a.activePalette, isAnimating = _a.isAnimating, paletteNames = _a.paletteNames;
             if (paletteName === activePalette || isAnimating) {
                 return;
@@ -145,10 +145,7 @@ var ChartSettingsPanel = /** @class */ (function (_super) {
     };
     ChartSettingsPanel.prototype.destroyMiniCharts = function () {
         _.clearElement(this.eMiniChartsContainer);
-        if (this.miniCharts) {
-            this.miniCharts.forEach(function (c) { return c.destroy(); });
-        }
-        this.miniCharts = [];
+        this.miniCharts = this.destroyBeans(this.miniCharts);
     };
     ChartSettingsPanel.prototype.destroy = function () {
         this.destroyMiniCharts();
@@ -176,9 +173,6 @@ var ChartSettingsPanel = /** @class */ (function (_super) {
     __decorate([
         PostConstruct
     ], ChartSettingsPanel.prototype, "postConstruct", null);
-    __decorate([
-        PreDestroy
-    ], ChartSettingsPanel.prototype, "destroy", null);
     return ChartSettingsPanel;
 }(Component));
 export { ChartSettingsPanel };

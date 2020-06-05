@@ -1,25 +1,21 @@
-import {BeanStub} from "../context/beanStub";
-import {EventService} from "../eventService";
-import {Events} from "../events";
-import {Autowired, Bean} from "../context/context";
-import {GridOptionsWrapper} from "../gridOptionsWrapper";
-import {GridPanel} from "../gridPanel/gridPanel";
-import {ScrollVisibleService} from "../gridPanel/scrollVisibleService";
+import { BeanStub } from "../context/beanStub";
+import { Events } from "../events";
+import { Autowired, Bean } from "../context/context";
+import { GridOptionsWrapper } from "../gridOptionsWrapper";
+import { GridPanel } from "../gridPanel/gridPanel";
 
 @Bean('paginationAutoPageSizeService')
 export class PaginationAutoPageSizeService extends BeanStub {
 
-    @Autowired('eventService') private eventService: EventService;
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
-    @Autowired('scrollVisibleService') private scrollVisibleService: ScrollVisibleService;
 
     private gridPanel: GridPanel;
 
     public registerGridComp(gridPanel: GridPanel): void {
         this.gridPanel = gridPanel;
 
-        this.addDestroyableEventListener(this.eventService, Events.EVENT_BODY_HEIGHT_CHANGED, this.onBodyHeightChanged.bind(this));
-        this.addDestroyableEventListener(this.eventService, Events.EVENT_SCROLL_VISIBILITY_CHANGED, this.onScrollVisibilityChanged.bind(this));
+        this.addManagedListener(this.eventService, Events.EVENT_BODY_HEIGHT_CHANGED, this.onBodyHeightChanged.bind(this));
+        this.addManagedListener(this.eventService, Events.EVENT_SCROLL_VISIBILITY_CHANGED, this.onScrollVisibilityChanged.bind(this));
         this.checkPageSize();
     }
 

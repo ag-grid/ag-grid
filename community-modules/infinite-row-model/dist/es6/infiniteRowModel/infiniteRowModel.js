@@ -48,9 +48,7 @@ var InfiniteRowModel = /** @class */ (function (_super) {
     };
     InfiniteRowModel.prototype.destroyDatasource = function () {
         if (this.datasource) {
-            if (this.datasource.destroy) {
-                this.datasource.destroy();
-            }
+            this.getContext().destroyBean(this.datasource);
             this.rowRenderer.datasourceChanged();
             this.datasource = null;
         }
@@ -59,9 +57,9 @@ var InfiniteRowModel = /** @class */ (function (_super) {
         return this.infiniteCache ? this.infiniteCache.isMaxRowFound() : false;
     };
     InfiniteRowModel.prototype.addEventListeners = function () {
-        this.addDestroyableEventListener(this.eventService, Events.EVENT_FILTER_CHANGED, this.onFilterChanged.bind(this));
-        this.addDestroyableEventListener(this.eventService, Events.EVENT_SORT_CHANGED, this.onSortChanged.bind(this));
-        this.addDestroyableEventListener(this.eventService, Events.EVENT_COLUMN_EVERYTHING_CHANGED, this.onColumnEverything.bind(this));
+        this.addManagedListener(this.eventService, Events.EVENT_FILTER_CHANGED, this.onFilterChanged.bind(this));
+        this.addManagedListener(this.eventService, Events.EVENT_SORT_CHANGED, this.onSortChanged.bind(this));
+        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_EVERYTHING_CHANGED, this.onColumnEverything.bind(this));
     };
     InfiniteRowModel.prototype.onFilterChanged = function () {
         this.reset();
@@ -163,7 +161,7 @@ var InfiniteRowModel = /** @class */ (function (_super) {
         // there is a bi-directional dependency between the loader and the cache,
         // so we create loader here, and then pass dependencies in setDependencies() method later
         this.rowNodeBlockLoader = new RowNodeBlockLoader(maxConcurrentRequests, blockLoadDebounceMillis);
-        this.getContext().wireBean(this.rowNodeBlockLoader);
+        this.getContext().createBean(this.rowNodeBlockLoader);
         this.cacheParams = {
             // the user provided datasource
             datasource: this.datasource,
@@ -203,17 +201,15 @@ var InfiniteRowModel = /** @class */ (function (_super) {
             this.cacheParams.overflowSize = 1;
         }
         this.infiniteCache = new InfiniteCache(this.cacheParams);
-        this.getContext().wireBean(this.infiniteCache);
+        this.getContext().createBean(this.infiniteCache);
         this.infiniteCache.addEventListener(RowNodeCache.EVENT_CACHE_UPDATED, this.onCacheUpdated.bind(this));
     };
     InfiniteRowModel.prototype.destroyCache = function () {
         if (this.infiniteCache) {
-            this.infiniteCache.destroy();
-            this.infiniteCache = null;
+            this.infiniteCache = this.destroyBean(this.infiniteCache);
         }
         if (this.rowNodeBlockLoader) {
-            this.rowNodeBlockLoader.destroy();
-            this.rowNodeBlockLoader = null;
+            this.rowNodeBlockLoader = this.destroyBean(this.rowNodeBlockLoader);
         }
     };
     InfiniteRowModel.prototype.onCacheUpdated = function () {
@@ -328,9 +324,6 @@ var InfiniteRowModel = /** @class */ (function (_super) {
     __decorate([
         Autowired('selectionController')
     ], InfiniteRowModel.prototype, "selectionController", void 0);
-    __decorate([
-        Autowired('eventService')
-    ], InfiniteRowModel.prototype, "eventService", void 0);
     __decorate([
         Autowired('gridApi')
     ], InfiniteRowModel.prototype, "gridApi", void 0);

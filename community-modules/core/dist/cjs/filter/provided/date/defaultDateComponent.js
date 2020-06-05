@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v23.1.1
+ * @version v23.2.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -34,6 +34,11 @@ var DefaultDateComponent = /** @class */ (function (_super) {
     function DefaultDateComponent() {
         return _super.call(this, /* html */ "\n            <div class=\"ag-filter-filter\">\n                <ag-input-text-field class=\"ag-date-filter\" ref=\"eDateInput\"></ag-input-text-field>\n            </div>") || this;
     }
+    // this is a user component, and IComponent has "public destroy()" as part of the interface.
+    // so we need to override destroy() just to make the method public.
+    DefaultDateComponent.prototype.destroy = function () {
+        _super.prototype.destroy.call(this);
+    };
     DefaultDateComponent.prototype.init = function (params) {
         var _this = this;
         if (this.shouldUseBrowserDatePicker(params)) {
@@ -45,7 +50,7 @@ var DefaultDateComponent = /** @class */ (function (_super) {
             }
         }
         this.listener = params.onDateChanged;
-        this.addDestroyableEventListener(this.eDateInput.getInputElement(), 'input', function (e) {
+        this.addManagedListener(this.eDateInput.getInputElement(), 'input', function (e) {
             if (e.target !== document.activeElement) {
                 return;
             }

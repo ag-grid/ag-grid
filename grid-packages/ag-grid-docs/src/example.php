@@ -4,8 +4,8 @@ require "example-runner/example-runners.php";
 include_once 'includes/html-helpers.php';
 ?>
 <!DOCTYPE html>
-<html class="stretch-html">
-<head lang="en">
+<html lang="en" class="stretch-html">
+<head>
 <meta http-equiv="Content-Security-Policy" content="default-src 'self' https://*; script-src 'self' 'unsafe-eval' 'unsafe-inline' https://*; style-src 'self' 'unsafe-inline' blob: https://*; img-src 'self' data: https://*; font-src 'self' data: https://*">
 <?php
 meta_and_links("Demo of ag-Grid: Datagrid with 63 features and great performance", "react angular angularjs data grid example", "ag-Grid is a feature-rich datagrid available in Free or Enterprise versions. This is our fully interactive demo showcasing all of our features and our performance with large datasets.", false);
@@ -20,7 +20,7 @@ meta_and_links("Demo of ag-Grid: Datagrid with 63 features and great performance
     include './includes/navbar.php';
  ?>
 </header>
-<div id="example-wrapper" class="page-content">
+<main id="example-wrapper" class="page-content">
     <div class="example-toolbar collapsed">
         <div class="options-container">
             <div>
@@ -86,10 +86,10 @@ meta_and_links("Demo of ag-Grid: Datagrid with 63 features and great performance
     </div>
 
     <!-- The table div -->
-    <div id="grid-wrapper" style="padding: 1rem; padding-top: 0;">
+    <section id="grid-wrapper" style="padding: 1rem; padding-top: 0;">
         <div id="myGrid" style="height: 100%; overflow: hidden;" class="ag-theme-alpine"></div>
-    </div>
-</div> <!-- example wrapper -->
+    </section>
+</main> <!-- example wrapper -->
 
 <?= globalAgGridScript(true) ?>
 

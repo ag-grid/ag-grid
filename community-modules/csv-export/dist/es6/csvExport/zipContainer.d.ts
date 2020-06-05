@@ -1,3 +1,4 @@
+import { BeanStub } from "@ag-grid-community/core";
 export interface ZipFolder {
     path: string;
     created: Date;
@@ -5,7 +6,7 @@ export interface ZipFolder {
 export interface ZipFile extends ZipFolder {
     content?: string;
 }
-export declare class ZipContainer {
+export declare class ZipContainer extends BeanStub {
     private folders;
     private files;
     private addFolder;

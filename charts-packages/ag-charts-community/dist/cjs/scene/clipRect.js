@@ -15,6 +15,7 @@ var __extends = (this && this.__extends) || (function () {
 Object.defineProperty(exports, "__esModule", { value: true });
 var node_1 = require("./node");
 var path2D_1 = require("./path2D");
+var bbox_1 = require("./bbox");
 /**
  * Acts as `Group` node but with specified bounds that form a rectangle.
  * Any parts of the child nodes outside that rectangle will not be visible.
@@ -34,7 +35,7 @@ var ClipRect = /** @class */ (function (_super) {
         _this._height = 10;
         return _this;
     }
-    ClipRect.prototype.isPointInNode = function (x, y) {
+    ClipRect.prototype.containsPoint = function (x, y) {
         var point = this.transformPoint(x, y);
         return point.x >= this.x && point.x <= this.x + this.width
             && point.y >= this.y && point.y <= this.y + this.height;
@@ -125,6 +126,10 @@ var ClipRect = /** @class */ (function (_super) {
         path.rect(this.x, this.y, this.width, this.height);
         this.dirtyPath = false;
     };
+    ClipRect.prototype.computeBBox = function () {
+        var _a = this, x = _a.x, y = _a.y, width = _a.width, height = _a.height;
+        return new bbox_1.BBox(x, y, width, height);
+    };
     ClipRect.prototype.render = function (ctx) {
         if (this.active) {
             if (this.dirtyPath) {
@@ -143,6 +148,12 @@ var ClipRect = /** @class */ (function (_super) {
             }
             ctx.restore();
         }
+        // debug
+        // this.computeBBox().render(ctx, {
+        //     label: this.id,
+        //     resetTransform: true,
+        //     fillStyle: 'rgba(0, 0, 0, 0.5)'
+        // });
     };
     ClipRect.className = 'ClipRect';
     return ClipRect;

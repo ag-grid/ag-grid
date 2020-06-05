@@ -45,11 +45,11 @@ export class DateTimeList extends Component {
     @PostConstruct
     public init(): void {
         this.setTemplate(DateTimeList.TEMPLATE);
-        this.addDestroyableEventListener(this.ePrevPageButton, 'click', this.navigatePage.bind(this, -1));
-        this.addDestroyableEventListener(this.eNextPageButton, 'click', this.navigatePage.bind(this, 1));
-        this.addDestroyableEventListener(this.getGui(), 'focus', this.handleFocusChange.bind(this, true));
-        this.addDestroyableEventListener(this.getGui(), 'blur', this.handleFocusChange.bind(this, false));
-        this.addDestroyableEventListener(this.getGui(), 'keydown', this.handleKeyDown.bind(this));
+        this.addManagedListener(this.ePrevPageButton, 'click', this.navigatePage.bind(this, -1));
+        this.addManagedListener(this.eNextPageButton, 'click', this.navigatePage.bind(this, 1));
+        this.addManagedListener(this.getGui(), 'focus', this.handleFocusChange.bind(this, true));
+        this.addManagedListener(this.getGui(), 'blur', this.handleFocusChange.bind(this, false));
+        this.addManagedListener(this.getGui(), 'keydown', this.handleKeyDown.bind(this));
         this.showPage(0);
     }
 
@@ -156,7 +156,7 @@ class DateTimeListPageEntryComp extends Component {
 
     public constructor(private onValueSelect: (value: Date) => void) {
         super(DateTimeListPageEntryComp.TEMPLATE);
-        this.addDestroyableEventListener(this.getGui(), 'click', this.handleClick.bind(this));
+        this.addManagedListener(this.getGui(), 'click', this.handleClick.bind(this));
     }
 
     public setEntry(entry: Entry, currentValue?: Date) {

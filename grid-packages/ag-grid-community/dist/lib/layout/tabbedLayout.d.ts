@@ -1,7 +1,6 @@
 import { Promise } from '../utils';
-import { ManagedTabComponent } from '../widgets/managedTabComponent';
-export declare class TabbedLayout extends ManagedTabComponent {
-    private focusController;
+import { ManagedFocusComponent } from '../widgets/managedFocusComponent';
+export declare class TabbedLayout extends ManagedFocusComponent {
     private eHeader;
     private eBody;
     private params;
@@ -9,10 +8,9 @@ export declare class TabbedLayout extends ManagedTabComponent {
     private items;
     private activeItem;
     constructor(params: TabbedLayoutParams);
-    init(): void;
-    private handleKeyDown;
-    protected onTabKeyDown(e: KeyboardEvent): void;
     private static getTemplate;
+    protected handleKeyDown(e: KeyboardEvent): void;
+    protected onTabKeyDown(e: KeyboardEvent): void;
     setAfterAttachedParams(params: any): void;
     getMinDimensions(): {
         width: number;
@@ -31,6 +29,7 @@ export interface TabbedLayoutParams {
 }
 export interface TabbedItem {
     title: Element;
+    titleLabel: string;
     bodyPromise: Promise<HTMLElement>;
     name: string;
     afterAttachedCallback?: Function;

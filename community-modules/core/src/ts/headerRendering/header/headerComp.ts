@@ -6,7 +6,6 @@ import { GridOptionsWrapper } from "../../gridOptionsWrapper";
 import { SortController } from "../../sortController";
 import { TapEvent, LongTapEvent, TouchListener } from "../../widgets/touchListener";
 import { IComponent } from "../../interfaces/iComponent";
-import { EventService } from "../../eventService";
 import { RefSelector } from "../../widgets/componentAnnotations";
 import { Events } from "../../events";
 import { ColumnApi } from "../../columnController/columnApi";
@@ -27,33 +26,30 @@ export interface IHeaderParams {
     template: string;
 }
 
-export interface IHeader {
-
-}
+export interface IHeader { }
 
 export interface IHeaderComp extends IHeader, IComponent<IHeaderParams> {
-    setMouseOverParent?(overParent: boolean): void;
+    setActiveParent?(activeParent: boolean): void;
 }
 
 export class HeaderComp extends Component implements IHeaderComp {
 
-    private static TEMPLATE =
-        '<div class="ag-cell-label-container" role="presentation">' +
-        '  <span ref="eMenu" class="ag-header-icon ag-header-cell-menu-button" aria-hidden="true"></span>' +
-        '  <div ref="eLabel" class="ag-header-cell-label" role="presentation" unselectable="on">' +
-        '    <span ref="eText" class="ag-header-cell-text" role="columnheader" unselectable="on"></span>' +
-        '    <span ref="eFilter" class="ag-header-icon ag-header-label-icon ag-filter-icon" aria-hidden="true"></span>' +
-        '    <span ref="eSortOrder" class="ag-header-icon ag-header-label-icon ag-sort-order" aria-hidden="true"></span>' +
-        '    <span ref="eSortAsc" class="ag-header-icon ag-header-label-icon ag-sort-ascending-icon" aria-hidden="true"></span>' +
-        '    <span ref="eSortDesc" class="ag-header-icon ag-header-label-icon ag-sort-descending-icon" aria-hidden="true"></span>' +
-        '    <span ref="eSortNone" class="ag-header-icon ag-header-label-icon ag-sort-none-icon" aria-hidden="true"></span>' +
-        '  </div>' +
-        '</div>';
+    private static TEMPLATE = /* html */
+        `<div class="ag-cell-label-container">
+            <span ref="eMenu" class="ag-header-icon ag-header-cell-menu-button" aria-hidden="true"></span>
+            <div ref="eLabel" class="ag-header-cell-label" role="presentation" unselectable="on">
+                <span ref="eText" class="ag-header-cell-text" role="columnheader" unselectable="on"></span>
+                <span ref="eFilter" class="ag-header-icon ag-header-label-icon ag-filter-icon" aria-hidden="true"></span>
+                <span ref="eSortOrder" class="ag-header-icon ag-header-label-icon ag-sort-order" aria-hidden="true"></span>
+                <span ref="eSortAsc" class="ag-header-icon ag-header-label-icon ag-sort-ascending-icon" aria-hidden="true"></span>
+                <span ref="eSortDesc" class="ag-header-icon ag-header-label-icon ag-sort-descending-icon" aria-hidden="true"></span>
+                <span ref="eSortNone" class="ag-header-icon ag-header-label-icon ag-sort-none-icon" aria-hidden="true"></span>
+            </div>
+        </div>`;
 
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('sortController') private sortController: SortController;
     @Autowired('menuFactory') private menuFactory: IMenuFactory;
-    @Autowired('eventService') private eventService: EventService;
 
     @RefSelector('eFilter') private eFilter: HTMLElement;
     @RefSelector('eSortAsc') private eSortAsc: HTMLElement;
@@ -68,6 +64,12 @@ export class HeaderComp extends Component implements IHeaderComp {
     private params:IHeaderParams;
 
     private lastMovingChanged = 0;
+
+    // this is a user component, and IComponent has "public destroy()" as part of the interface.
+    // so we need to override destroy() just to make the method public.
+    public destroy(): void {
+        super.destroy();
+    }
 
     public init(params: IHeaderParams): void {
         let template:string = _.firstExistingValue(
@@ -126,7 +128,7 @@ export class HeaderComp extends Component implements IHeaderComp {
             const showMenuFn = (event: TapEvent | LongTapEvent) => {
                 options.getApi().showColumnMenuAfterMouseClick(this.params.column, event.touchStart);
             };
-            this.addDestroyableEventListener(menuTouchListener, TouchListener[eventType], showMenuFn);
+            this.addManagedListener(menuTouchListener, TouchListener[eventType], showMenuFn);
         }
 
         if (this.params.enableSorting) {
@@ -139,7 +141,7 @@ export class HeaderComp extends Component implements IHeaderComp {
                 this.sortController.progressSort(this.params.column, false, "uiColumnSorted");
             };
 
-            this.addDestroyableEventListener(touchListener, TouchListener.EVENT_TAP, tapListener);
+            this.addManagedListener(touchListener, TouchListener.EVENT_TAP, tapListener);
         }
 
         // if tapMenuButton is true `touchListener` and `menuTouchListener` are different
@@ -166,7 +168,7 @@ export class HeaderComp extends Component implements IHeaderComp {
             return;
         }
 
-        this.addDestroyableEventListener(this.eMenu, 'click', () => this.showMenu(this.eMenu));
+        this.addManagedListener(this.eMenu, 'click', () => this.showMenu(this.eMenu));
 
         if (!suppressMenuHide) {
             this.eMenu.style.opacity = '0';
@@ -176,13 +178,16 @@ export class HeaderComp extends Component implements IHeaderComp {
         style['-webkit-transition'] = 'opacity 0.2s, border 0.2s';
     }
 
-    public setMouseOverParent(overParent: boolean): void {
+    public setActiveParent(activeParent: boolean): void {
         if (!this.gridOptionsWrapper.isSuppressMenuHide()) {
-            this.eMenu.style.opacity = overParent ? '1' : '0';
+            this.eMenu.style.opacity = activeParent ? '1' : '0';
         }
     }
 
-    public showMenu(eventSource: HTMLElement) {
+    public showMenu(eventSource?: HTMLElement) {
+        if (!eventSource) {
+            eventSource = this.eMenu;
+        }
         this.menuFactory.showMenuAfterButtonClick(this.params.column, eventSource);
     }
 
@@ -204,13 +209,13 @@ export class HeaderComp extends Component implements IHeaderComp {
         const sortUsingCtrl = this.gridOptionsWrapper.isMultiSortKeyCtrl();
 
         // keep track of last time the moving changed flag was set
-        this.addDestroyableEventListener(this.params.column, Column.EVENT_MOVING_CHANGED, () => {
+        this.addManagedListener(this.params.column, Column.EVENT_MOVING_CHANGED, () => {
             this.lastMovingChanged = new Date().getTime();
         });
 
         // add the event on the header, so when clicked, we do sorting
         if (this.eLabel) {
-            this.addDestroyableEventListener(this.eLabel, 'click', (event:MouseEvent) => {
+            this.addManagedListener(this.eLabel, 'click', (event:MouseEvent) => {
 
                 // sometimes when moving a column via dragging, this was also firing a clicked event.
                 // here is issue raised by user: https://ag-grid.zendesk.com/agent/tickets/1076
@@ -228,10 +233,10 @@ export class HeaderComp extends Component implements IHeaderComp {
             });
         }
 
-        this.addDestroyableEventListener(this.params.column, Column.EVENT_SORT_CHANGED, this.onSortChanged.bind(this));
+        this.addManagedListener(this.params.column, Column.EVENT_SORT_CHANGED, this.onSortChanged.bind(this));
         this.onSortChanged();
 
-        this.addDestroyableEventListener(this.eventService, Events.EVENT_SORT_CHANGED, this.setMultiSortOrder.bind(this));
+        this.addManagedListener(this.eventService, Events.EVENT_SORT_CHANGED, this.setMultiSortOrder.bind(this));
         this.setMultiSortOrder();
     }
 
@@ -281,7 +286,7 @@ export class HeaderComp extends Component implements IHeaderComp {
 
         if (!this.eFilter) { return; }
 
-        this.addDestroyableEventListener(this.params.column, Column.EVENT_FILTER_CHANGED, this.onFilterChanged.bind(this));
+        this.addManagedListener(this.params.column, Column.EVENT_FILTER_CHANGED, this.onFilterChanged.bind(this));
         this.onFilterChanged();
     }
 

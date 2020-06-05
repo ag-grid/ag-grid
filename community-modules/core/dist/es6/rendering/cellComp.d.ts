@@ -1,4 +1,4 @@
-// Type definitions for @ag-grid-community/core v23.1.1
+// Type definitions for @ag-grid-community/core v23.2.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { Column } from "../entities/column";
@@ -83,7 +83,10 @@ export declare class CellComp extends Component implements TooltipParentComp {
         newData?: boolean;
         forceRefresh?: boolean;
     }): void;
-    flashCell(): void;
+    flashCell(delays?: {
+        flashDelay: number;
+        fadeDelay: number;
+    }): void;
     private animateCell;
     private replaceContentsAfterRefresh;
     private updateAngular1ScopeAndCompile;

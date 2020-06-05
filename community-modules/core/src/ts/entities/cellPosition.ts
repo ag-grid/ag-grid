@@ -1,4 +1,5 @@
 import { Bean } from "../context/context";
+import { BeanStub } from "../context/beanStub";
 import { Column } from "./column";
 import { RowPosition } from "./rowPosition";
 
@@ -8,7 +9,7 @@ export interface CellPosition extends RowPosition {
 }
 
 @Bean('cellPositionUtils')
-export class CellPositionUtils {
+export class CellPositionUtils extends BeanStub {
 
     public createId(cellPosition: CellPosition): string {
         const { rowIndex, rowPinned, column } = cellPosition;

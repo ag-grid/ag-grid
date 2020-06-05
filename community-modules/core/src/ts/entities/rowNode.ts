@@ -13,8 +13,8 @@ import { RowNodeCache, RowNodeCacheParams } from "../modules/rowNodeCache/rowNod
 import { IEventEmitter } from "../interfaces/iEventEmitter";
 import { ValueCache } from "../valueService/valueCache";
 import { DetailGridInfo, GridApi } from "../gridApi";
+import { IRowNodeBlock } from "../interfaces/iRowNodeBlock";
 import { _ } from "../utils";
-import {IRowNodeBlock} from "../interfaces/iRowNodeBlock";
 
 export interface SetSelectedParams {
     // true or false, whatever you want to set selection to
@@ -46,11 +46,18 @@ export interface CellChangedEvent extends RowNodeEvent {
 }
 
 export class RowNode implements IEventEmitter {
+
+    public static ID_PREFIX_ROW_GROUP = 'row-group-';
+    public static ID_PREFIX_TOP_PINNED = 't-';
+    public static ID_PREFIX_BOTTOM_PINNED = 'b-';
+
     private static OBJECT_ID_SEQUENCE = 0;
+
     public static EVENT_ROW_SELECTED = 'rowSelected';
     public static EVENT_DATA_CHANGED = 'dataChanged';
     public static EVENT_CELL_CHANGED = 'cellChanged';
     public static EVENT_ALL_CHILDREN_COUNT_CHANGED = 'allChildrenCountChanged';
+    public static EVENT_MASTER_CHANGED = 'masterChanged';
     public static EVENT_MOUSE_ENTER = 'mouseEnter';
     public static EVENT_MOUSE_LEAVE = 'mouseLeave';
     public static EVENT_HEIGHT_CHANGED = 'heightChanged';
@@ -272,7 +279,7 @@ export class RowNode implements IEventEmitter {
     private createDaemonNode(): RowNode {
         const oldNode = new RowNode();
 
-        this.context.wireBean(oldNode);
+        this.context.createBean(oldNode);
         // just copy the id and data, this is enough for the node to be used
         // in the selection controller (the selection controller is the only
         // place where daemon nodes can live).
@@ -325,6 +332,11 @@ export class RowNode implements IEventEmitter {
             // this is important for virtual pagination and viewport, where empty rows exist.
             if (this.data) {
                 this.id = getRowNodeId(this.data);
+                // make sure id provided doesn't start with 'row-group-' as this is reserved. also check that
+                // it has 'startsWith' in case the user provided a number.
+                if (this.id && this.id.startsWith && this.id.startsWith(RowNode.ID_PREFIX_ROW_GROUP)) {
+                    console.error(`ag-Grid: Row ID's cannot start with ${RowNode.ID_PREFIX_ROW_GROUP}, this is a reserved prefix for ag-Grid's row grouping feature.`);
+                }
             } else {
                 // this can happen if user has set blank into the rowNode after the row previously
                 // having data. this happens in virtual page row model, when data is delete and
@@ -415,6 +427,22 @@ export class RowNode implements IEventEmitter {
         }
     }
 
+    public setMaster(master: boolean): void {
+        if (this.master === master) { return; }
+
+        // if changing AWAY from master, then unexpand, otherwise
+        // next time it's shown it is expanded again
+        if (this.master && !master) {
+            this.expanded = false;
+        }
+
+        this.master = master;
+
+        if (this.eventService) {
+            this.eventService.dispatchEvent(this.createLocalRowEvent(RowNode.EVENT_MASTER_CHANGED));
+        }
+    }
+
     public setRowHeight(rowHeight: number | undefined | null, estimated = false): void {
         this.rowHeight = rowHeight;
         this.rowHeightEstimated = estimated;
@@ -451,7 +479,10 @@ export class RowNode implements IEventEmitter {
             this.eventService.dispatchEvent(this.createLocalRowEvent(RowNode.EVENT_EXPANDED_CHANGED));
         }
 
-        const event: RowGroupOpenedEvent = this.createGlobalRowEvent(Events.EVENT_ROW_GROUP_OPENED);
+        const event = _.assign({}, this.createGlobalRowEvent(Events.EVENT_ROW_GROUP_OPENED), {
+            expanded
+        });
+
         this.mainEventService.dispatchEvent(event);
 
         if (this.gridOptionsWrapper.isGroupIncludeFooter()) {
@@ -759,7 +790,13 @@ export class RowNode implements IEventEmitter {
     }
 
     public selectThisNode(newValue: boolean): boolean {
-        if (!this.selectable || this.selected === newValue) { return false; }
+
+        // we only check selectable when newValue=true (ie selecting) to allow unselecting values,
+        // as selectable is dynamic, need a way to unselect rows when selectable becomes false.
+        const selectionNotAllowed = !this.selectable && newValue;
+        const selectionNotChanged = this.selected === newValue;
+
+        if ( selectionNotAllowed || selectionNotChanged) { return false; }
 
         this.selected = newValue;
 

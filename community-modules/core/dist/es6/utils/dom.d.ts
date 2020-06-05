@@ -1,4 +1,4 @@
-// Type definitions for @ag-grid-community/core v23.1.1
+// Type definitions for @ag-grid-community/core v23.2.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 export declare function addCssClass(element: HTMLElement, className: string): HTMLElement;
@@ -15,6 +15,7 @@ export declare function radioCssClass(element: HTMLElement, elementClass: string
 export declare function containsClass(element: HTMLElement, className: string): boolean;
 export declare function setDisplayed(element: HTMLElement, displayed: boolean): void;
 export declare function setVisible(element: HTMLElement, visible: boolean): void;
+export declare function setDisabled(element: HTMLElement, disabled: boolean): void;
 export declare function isElementChildOfClass(element: HTMLElement, cls: string, maxNest?: number): boolean;
 export declare function getElementSize(el: HTMLElement): {
     height: number;

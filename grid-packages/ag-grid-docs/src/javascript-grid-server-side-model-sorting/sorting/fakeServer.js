@@ -7,6 +7,7 @@ function FakeServer(allData) {
     return {
         getData: function(request) {
             var results = executeQuery(request);
+
             return {
                 success: true,
                 rows: results,
@@ -16,41 +17,40 @@ function FakeServer(allData) {
     };
 
     function executeQuery(request) {
-        var SQL = buildSql(request);
+        var sql = buildSql(request);
 
-        console.log('[FakeServer] - about to execute query:', SQL);
+        console.log('[FakeServer] - about to execute query:', sql);
 
-        return alasql(SQL, [allData]);
+        return alasql(sql, [allData]);
     }
 
     function buildSql(request) {
-        var select = 'SELECT * ';
-        var from = 'FROM ? ';
-        var orderBy = orderBySql(request);
-        var limit = limitSql(request);
-
-        return select + from + orderBy + limit;
+        return 'SELECT * FROM ?' + orderBySql(request) + limitSql(request);
     }
 
     function orderBySql(request) {
         var sortModel = request.sortModel;
+
         if (sortModel.length === 0) return '';
 
         var sorts = sortModel.map(function(s) {
-            return s.colId + ' ' + s.sort;
+            return s.colId + ' ' + s.sort.toUpperCase();
         });
 
-        return 'ORDER BY ' + sorts.join(', ') + ' ';
+        return ' ORDER BY ' + sorts.join(', ');
     }
 
     function limitSql(request) {
         var blockSize = request.endRow - request.startRow;
+
         return ' LIMIT ' + (blockSize + 1) + ' OFFSET ' + request.startRow;
     }
 
     function getLastRowIndex(request, results) {
-        if (!results || results.length === 0) return -1;
+        if (!results || results.length === 0) { return null; };
+
         var currentLastRow = request.startRow + results.length;
+
         return currentLastRow <= request.endRow ? currentLastRow : -1;
     }
 }

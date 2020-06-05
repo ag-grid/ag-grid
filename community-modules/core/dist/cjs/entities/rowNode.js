@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v23.1.1
+ * @version v23.2.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -88,7 +88,7 @@ var RowNode = /** @class */ (function () {
     };
     RowNode.prototype.createDaemonNode = function () {
         var oldNode = new RowNode();
-        this.context.wireBean(oldNode);
+        this.context.createBean(oldNode);
         // just copy the id and data, this is enough for the node to be used
         // in the selection controller (the selection controller is the only
         // place where daemon nodes can live).
@@ -131,6 +131,11 @@ var RowNode = /** @class */ (function () {
             // this is important for virtual pagination and viewport, where empty rows exist.
             if (this.data) {
                 this.id = getRowNodeId(this.data);
+                // make sure id provided doesn't start with 'row-group-' as this is reserved. also check that
+                // it has 'startsWith' in case the user provided a number.
+                if (this.id && this.id.startsWith && this.id.startsWith(RowNode.ID_PREFIX_ROW_GROUP)) {
+                    console.error("ag-Grid: Row ID's cannot start with " + RowNode.ID_PREFIX_ROW_GROUP + ", this is a reserved prefix for ag-Grid's row grouping feature.");
+                }
             }
             else {
                 // this can happen if user has set blank into the rowNode after the row previously
@@ -213,6 +218,20 @@ var RowNode = /** @class */ (function () {
             this.eventService.dispatchEvent(this.createLocalRowEvent(RowNode.EVENT_ALL_CHILDREN_COUNT_CHANGED));
         }
     };
+    RowNode.prototype.setMaster = function (master) {
+        if (this.master === master) {
+            return;
+        }
+        // if changing AWAY from master, then unexpand, otherwise
+        // next time it's shown it is expanded again
+        if (this.master && !master) {
+            this.expanded = false;
+        }
+        this.master = master;
+        if (this.eventService) {
+            this.eventService.dispatchEvent(this.createLocalRowEvent(RowNode.EVENT_MASTER_CHANGED));
+        }
+    };
     RowNode.prototype.setRowHeight = function (rowHeight, estimated) {
         if (estimated === void 0) { estimated = false; }
         this.rowHeight = rowHeight;
@@ -244,7 +263,9 @@ var RowNode = /** @class */ (function () {
         if (this.eventService) {
             this.eventService.dispatchEvent(this.createLocalRowEvent(RowNode.EVENT_EXPANDED_CHANGED));
         }
-        var event = this.createGlobalRowEvent(events_1.Events.EVENT_ROW_GROUP_OPENED);
+        var event = utils_1._.assign({}, this.createGlobalRowEvent(events_1.Events.EVENT_ROW_GROUP_OPENED), {
+            expanded: expanded
+        });
         this.mainEventService.dispatchEvent(event);
         if (this.gridOptionsWrapper.isGroupIncludeFooter()) {
             this.gridApi.redrawRows({ rowNodes: [this] });
@@ -511,7 +532,11 @@ var RowNode = /** @class */ (function () {
         return false;
     };
     RowNode.prototype.selectThisNode = function (newValue) {
-        if (!this.selectable || this.selected === newValue) {
+        // we only check selectable when newValue=true (ie selecting) to allow unselecting values,
+        // as selectable is dynamic, need a way to unselect rows when selectable becomes false.
+        var selectionNotAllowed = !this.selectable && newValue;
+        var selectionNotChanged = this.selected === newValue;
+        if (selectionNotAllowed || selectionNotChanged) {
             return false;
         }
         this.selected = newValue;
@@ -580,11 +605,15 @@ var RowNode = /** @class */ (function () {
         var isFullWidthCellFunc = this.gridOptionsWrapper.getIsFullWidthCellFunc();
         return isFullWidthCellFunc ? isFullWidthCellFunc(this) : false;
     };
+    RowNode.ID_PREFIX_ROW_GROUP = 'row-group-';
+    RowNode.ID_PREFIX_TOP_PINNED = 't-';
+    RowNode.ID_PREFIX_BOTTOM_PINNED = 'b-';
     RowNode.OBJECT_ID_SEQUENCE = 0;
     RowNode.EVENT_ROW_SELECTED = 'rowSelected';
     RowNode.EVENT_DATA_CHANGED = 'dataChanged';
     RowNode.EVENT_CELL_CHANGED = 'cellChanged';
     RowNode.EVENT_ALL_CHILDREN_COUNT_CHANGED = 'allChildrenCountChanged';
+    RowNode.EVENT_MASTER_CHANGED = 'masterChanged';
     RowNode.EVENT_MOUSE_ENTER = 'mouseEnter';
     RowNode.EVENT_MOUSE_LEAVE = 'mouseLeave';
     RowNode.EVENT_HEIGHT_CHANGED = 'heightChanged';

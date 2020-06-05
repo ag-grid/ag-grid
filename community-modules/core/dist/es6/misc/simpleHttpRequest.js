@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v23.1.1
+ * @version v23.2.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -11,9 +11,8 @@ export function simpleHttpRequest(params) {
         httpRequest.open('GET', params.url);
         httpRequest.send();
         httpRequest.onreadystatechange = function () {
-            if (httpRequest.readyState == 4 && httpRequest.status == 200) {
-                var httpResponse = JSON.parse(httpRequest.responseText);
-                resolve(httpResponse);
+            if (httpRequest.readyState === 4 && httpRequest.status === 200) {
+                resolve(JSON.parse(httpRequest.responseText));
             }
         };
     });

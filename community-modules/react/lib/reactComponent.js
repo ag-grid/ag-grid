@@ -1,4 +1,4 @@
-// @ag-grid-community/react v23.1.1
+// @ag-grid-community/react v23.2.0
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -48,9 +48,7 @@ var ReactComponent = /** @class */ (function (_super) {
         var _this = this;
         this.eParentElement = this.createParentElement(params);
         this.renderStaticMarkup(params);
-        return new core_1.Promise(function (resolve) {
-            _this.createReactComponent(params, resolve);
-        });
+        return new core_1.Promise(function (resolve) { return _this.createReactComponent(params, resolve); });
     };
     ReactComponent.prototype.getGui = function () {
         return this.eParentElement;
@@ -137,7 +135,7 @@ var ReactComponent = /** @class */ (function (_super) {
      * Note: Some use cases will throw an error (ie when using Context) so if an error occurs just ignore it any move on
      */
     ReactComponent.prototype.renderStaticMarkup = function (params) {
-        if (this.parentComponent.isDisableStaticMarkup() || !this.componentType.isCellRenderer()) {
+        if (this.parentComponent.isDisableStaticMarkup() || (this.componentType.isCellRenderer && !this.componentType.isCellRenderer())) {
             return;
         }
         var originalConsoleError = console.error;

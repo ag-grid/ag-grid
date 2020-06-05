@@ -6,17 +6,17 @@ import { ColumnKeyCreator } from "./columnKeyCreator";
 import { OriginalColumnGroupChild } from "../entities/originalColumnGroupChild";
 import { OriginalColumnGroup } from "../entities/originalColumnGroup";
 import { Column } from "../entities/column";
-import { Autowired, Bean, Context, Qualifier } from "../context/context";
+import { Autowired, Bean, Qualifier } from "../context/context";
 import { DefaultColumnTypes } from "../entities/defaultColumnTypes";
 import { _ } from "../utils";
+import { BeanStub } from "../context/beanStub";
 
 // takes ColDefs and ColGroupDefs and turns them into Columns and OriginalGroups
 @Bean('columnFactory')
-export class ColumnFactory {
+export class ColumnFactory extends BeanStub {
 
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('columnUtils') private columnUtils: ColumnUtils;
-    @Autowired('context') private context: Context;
 
     private logger: Logger;
 
@@ -88,7 +88,7 @@ export class ColumnFactory {
                 true,
                 i
             );
-            this.context.wireBean(autoGroup);
+            this.context.createBean(autoGroup);
             autoGroup.setChildren([nextChild]);
             nextChild.setOriginalParent(autoGroup);
             nextChild = autoGroup;
@@ -140,7 +140,7 @@ export class ColumnFactory {
                     const colGroupDefMerged = this.createMergedColGroupDef(null);
 
                     const paddedGroup = new OriginalColumnGroup(colGroupDefMerged, newColId, true, currentDept);
-                    this.context.wireBean(paddedGroup);
+                    this.context.createBean(paddedGroup);
 
                     if (currentPaddedGroup) {
                         currentPaddedGroup.setChildren([paddedGroup]);
@@ -232,7 +232,7 @@ export class ColumnFactory {
         const groupId = columnKeyCreator.getUniqueKey(colGroupDefMerged.groupId, null);
         const originalGroup = new OriginalColumnGroup(colGroupDefMerged, groupId, false, level);
 
-        this.context.wireBean(originalGroup);
+        this.context.createBean(originalGroup);
 
         const children = this.recursivelyCreateColumns(colGroupDefMerged.children,
             level + 1, primaryColumns, existingColumns, columnKeyCreator, originalGroup);
@@ -269,7 +269,7 @@ export class ColumnFactory {
             // no existing column, need to create one
             const colId = columnKeyCreator.getUniqueKey(colDefMerged.colId, colDefMerged.field);
             column = new Column(colDefMerged, colDef, colId, primaryColumns);
-            this.context.wireBean(column);
+            this.context.createBean(column);
         } else {
             column.setColDef(colDefMerged, colDef);
         }
@@ -340,7 +340,16 @@ export class ColumnFactory {
         }
 
         // merge user defined with default column types
-        const allColumnTypes = _.assign({}, this.gridOptionsWrapper.getColumnTypes(), DefaultColumnTypes);
+        const allColumnTypes = _.assign({}, DefaultColumnTypes);
+        const userTypes = this.gridOptionsWrapper.getColumnTypes() || {};
+
+        _.iterateObject(userTypes, (key, value) => {
+            if (key in allColumnTypes) {
+                console.warn(`ag-Grid: the column type '${key}' is a default column type and cannot be overridden.`);
+            } else {
+                allColumnTypes[key] = value;
+            }
+        });
 
         typeKeys.forEach((t) => {
             const typeColDef = allColumnTypes[t.trim()];

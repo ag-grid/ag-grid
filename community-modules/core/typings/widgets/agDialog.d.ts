@@ -49,7 +49,7 @@ export declare class AgDialog extends AgPanel {
     private toggleMaximize;
     private refreshMaximizeIcon;
     private clearMaximizebleListeners;
-    destroy(): void;
+    protected destroy(): void;
     setResizable(resizable: boolean | ResizableStructure): void;
     setMovable(movable: boolean): void;
     setMaximizable(maximizable: boolean): void;

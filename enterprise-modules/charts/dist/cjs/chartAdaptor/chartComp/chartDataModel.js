@@ -46,7 +46,7 @@ var ChartDataModel = /** @class */ (function (_super) {
         return _this;
     }
     ChartDataModel.prototype.init = function () {
-        this.datasource = this.wireBean(new chartDatasource_1.ChartDatasource());
+        this.datasource = this.createManagedBean(new chartDatasource_1.ChartDatasource());
         this.updateCellRanges();
     };
     ChartDataModel.prototype.updateCellRanges = function (updatedColState) {
@@ -407,12 +407,6 @@ var ChartDataModel = /** @class */ (function (_super) {
             }
             selectedValueCols.sort(function (a, b) { return orderedColIds_1.indexOf(a.getColId()) - orderedColIds_1.indexOf(b.getColId()); });
             this.valueCellRange = this.createCellRange.apply(this, __spreadArrays([core_1.CellRangeType.VALUE], selectedValueCols));
-        }
-    };
-    ChartDataModel.prototype.destroy = function () {
-        _super.prototype.destroy.call(this);
-        if (this.datasource) {
-            this.datasource.destroy();
         }
     };
     ChartDataModel.DEFAULT_CATEGORY = 'AG-GRID-DEFAULT-CATEGORY';

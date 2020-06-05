@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v23.1.1
+ * @version v23.2.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -23,9 +23,9 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
-import { RefSelector } from "./componentAnnotations";
-import { AgAbstractField } from "./agAbstractField";
-import { _ } from "../utils";
+import { RefSelector } from './componentAnnotations';
+import { AgAbstractField } from './agAbstractField';
+import { setDisabled, setElementWidth, addCssClass } from '../utils/dom';
 var AgAbstractInputField = /** @class */ (function (_super) {
     __extends(AgAbstractInputField, _super);
     function AgAbstractInputField() {
@@ -37,10 +37,10 @@ var AgAbstractInputField = /** @class */ (function (_super) {
     AgAbstractInputField.prototype.postConstruct = function () {
         _super.prototype.postConstruct.call(this);
         this.setInputType();
-        _.addCssClass(this.eLabel, this.className + "-label");
-        _.addCssClass(this.eWrapper, this.className + "-input-wrapper");
-        _.addCssClass(this.eInput, this.className + "-input");
-        _.addCssClass(this.getGui(), 'ag-input-field');
+        addCssClass(this.eLabel, this.className + "-label");
+        addCssClass(this.eWrapper, this.className + "-input-wrapper");
+        addCssClass(this.eInput, this.className + "-input");
+        addCssClass(this.getGui(), 'ag-input-field');
         var inputId = this.eInput.id ? this.eInput.id : "ag-input-id-" + this.getCompId();
         this.eLabel.htmlFor = inputId;
         this.eInput.id = inputId;
@@ -55,7 +55,7 @@ var AgAbstractInputField = /** @class */ (function (_super) {
     };
     AgAbstractInputField.prototype.addInputListeners = function () {
         var _this = this;
-        this.addDestroyableEventListener(this.eInput, 'input', function (e) {
+        this.addManagedListener(this.eInput, 'input', function (e) {
             var value = e.target.value;
             _this.setValue(value);
         });
@@ -69,7 +69,7 @@ var AgAbstractInputField = /** @class */ (function (_super) {
         return this.eInput;
     };
     AgAbstractInputField.prototype.setInputWidth = function (width) {
-        _.setElementWidth(this.eWrapper, width);
+        setElementWidth(this.eWrapper, width);
         return this;
     };
     AgAbstractInputField.prototype.setInputName = function (name) {
@@ -86,22 +86,22 @@ var AgAbstractInputField = /** @class */ (function (_super) {
     };
     AgAbstractInputField.prototype.setInputPlaceholder = function (placeholder) {
         var eInput = this.eInput;
+        var attributeName = 'placeholder';
         if (placeholder) {
-            eInput.setAttribute('placeholder', placeholder);
+            eInput.setAttribute(attributeName, placeholder);
         }
         else {
-            eInput.removeAttribute('placeholder');
+            eInput.removeAttribute(attributeName);
         }
         return this;
     };
     AgAbstractInputField.prototype.setDisabled = function (disabled) {
-        if (disabled) {
-            this.eInput.setAttribute('disabled', 'true');
-        }
-        else {
-            this.eInput.removeAttribute('disabled');
-        }
+        setDisabled(this.eInput, disabled);
         return _super.prototype.setDisabled.call(this, disabled);
+    };
+    AgAbstractInputField.prototype.setInputAriaLabel = function (label) {
+        this.eInput.setAttribute('aria-label', label);
+        return this;
     };
     __decorate([
         RefSelector('eLabel')

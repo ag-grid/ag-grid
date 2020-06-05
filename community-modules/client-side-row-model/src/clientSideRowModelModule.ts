@@ -1,11 +1,11 @@
-import {Module, ModuleNames} from "@ag-grid-community/core";
-import {ClientSideRowModel} from "./clientSideRowModel/clientSideRowModel";
-import {FilterStage} from "./clientSideRowModel/filterStage";
-import {SortStage} from "./clientSideRowModel/sortStage";
-import {FlattenStage} from "./clientSideRowModel/flattenStage";
-import {SortService} from "./clientSideRowModel/sortService";
-import {FilterService} from "./clientSideRowModel/filterService";
-import {ImmutableService} from "./clientSideRowModel/immutableService";
+import { Module, ModuleNames } from "@ag-grid-community/core";
+import { ClientSideRowModel } from "./clientSideRowModel/clientSideRowModel";
+import { FilterStage } from "./clientSideRowModel/filterStage";
+import { SortStage } from "./clientSideRowModel/sortStage";
+import { FlattenStage } from "./clientSideRowModel/flattenStage";
+import { SortService } from "./clientSideRowModel/sortService";
+import { FilterService } from "./clientSideRowModel/filterService";
+import { ImmutableService } from "./clientSideRowModel/immutableService";
 
 export const ClientSideRowModelModule: Module = {
     moduleName: ModuleNames.ClientSideRowModelModule,

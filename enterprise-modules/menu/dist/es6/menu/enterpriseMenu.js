@@ -20,27 +20,29 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 import { _, Autowired, Bean, BeanStub, Constants, Events, ModuleNames, ModuleRegistry, PostConstruct, Promise, TabbedLayout } from "@ag-grid-community/core";
 import { MenuList } from "./menuList";
 import { MenuItemComponent } from "./menuItemComponent";
-var EnterpriseMenuFactory = /** @class */ (function () {
+import { PrimaryColsPanel } from "@ag-grid-enterprise/column-tool-panel";
+var EnterpriseMenuFactory = /** @class */ (function (_super) {
+    __extends(EnterpriseMenuFactory, _super);
     function EnterpriseMenuFactory() {
+        return _super !== null && _super.apply(this, arguments) || this;
     }
     EnterpriseMenuFactory.prototype.hideActiveMenu = function () {
-        if (this.activeMenu) {
-            this.activeMenu.destroy();
-        }
+        this.destroyBean(this.activeMenu);
     };
     EnterpriseMenuFactory.prototype.showMenuAfterMouseEvent = function (column, mouseEvent, defaultTab) {
         var _this = this;
         this.showMenu(column, function (menu) {
+            var ePopup = menu.getGui();
             _this.popupService.positionPopupUnderMouseEvent({
-                column: column,
                 type: 'columnMenu',
+                column: column,
                 mouseEvent: mouseEvent,
-                ePopup: menu.getGui()
+                ePopup: ePopup
             });
             if (defaultTab) {
                 menu.showTab(defaultTab);
             }
-        }, defaultTab);
+        }, defaultTab, undefined, mouseEvent.target);
     };
     EnterpriseMenuFactory.prototype.showMenuAfterButtonClick = function (column, eventSource, defaultTab, restrictToTabs) {
         var _this = this;
@@ -52,33 +54,42 @@ var EnterpriseMenuFactory = /** @class */ (function () {
         }
         this.showMenu(column, function (menu) {
             var minDims = menu.getMinDimensions();
+            var minWidth = minDims.width, minHeight = minDims.height;
+            var ePopup = menu.getGui();
             _this.popupService.positionPopupUnderComponent({
-                column: column,
                 type: 'columnMenu',
+                column: column,
                 eventSource: eventSource,
-                ePopup: menu.getGui(),
+                ePopup: ePopup,
+                minWidth: minWidth,
+                minHeight: minHeight,
+                alignSide: alignSide,
                 nudgeX: 9 * multiplier,
                 nudgeY: -23,
-                minWidth: minDims.width,
-                minHeight: minDims.height,
-                alignSide: alignSide,
                 keepWithinBounds: true
             });
             if (defaultTab) {
                 menu.showTab(defaultTab);
             }
-        }, defaultTab, restrictToTabs);
+        }, defaultTab, restrictToTabs, eventSource);
     };
-    EnterpriseMenuFactory.prototype.showMenu = function (column, positionCallback, defaultTab, restrictToTabs) {
+    EnterpriseMenuFactory.prototype.showMenu = function (column, positionCallback, defaultTab, restrictToTabs, eventSource) {
         var _this = this;
         var menu = new EnterpriseMenu(column, this.lastSelectedTab, restrictToTabs);
-        this.context.wireBean(menu);
+        this.createBean(menu);
         var eMenuGui = menu.getGui();
         // need to show filter before positioning, as only after filter
         // is visible can we find out what the width of it is
-        var hidePopup = this.popupService.addAsModalPopup(eMenuGui, true, function () {
-            menu.destroy();
+        var hidePopup = this.popupService.addAsModalPopup(eMenuGui, true, function (e) {
+            _this.destroyBean(menu);
             column.setMenuVisible(false, "contextMenu");
+            var isKeyboardEvent = e instanceof KeyboardEvent;
+            if (isKeyboardEvent && eventSource && _.isVisible(eventSource)) {
+                var focusableEl = _this.focusController.findTabbableParent(eventSource);
+                if (focusableEl) {
+                    focusableEl.focus();
+                }
+            }
         });
         menu.afterGuiAttached({
             hidePopup: hidePopup
@@ -102,19 +113,19 @@ var EnterpriseMenuFactory = /** @class */ (function () {
         return column.getMenuTabs(EnterpriseMenu.TABS_DEFAULT).length > 0;
     };
     __decorate([
-        Autowired('context')
-    ], EnterpriseMenuFactory.prototype, "context", void 0);
-    __decorate([
         Autowired('popupService')
     ], EnterpriseMenuFactory.prototype, "popupService", void 0);
     __decorate([
         Autowired('gridOptionsWrapper')
     ], EnterpriseMenuFactory.prototype, "gridOptionsWrapper", void 0);
+    __decorate([
+        Autowired('focusController')
+    ], EnterpriseMenuFactory.prototype, "focusController", void 0);
     EnterpriseMenuFactory = __decorate([
         Bean('menuFactory')
     ], EnterpriseMenuFactory);
     return EnterpriseMenuFactory;
-}());
+}(BeanStub));
 export { EnterpriseMenuFactory };
 var EnterpriseMenu = /** @class */ (function (_super) {
     __extends(EnterpriseMenu, _super);
@@ -147,9 +158,11 @@ var EnterpriseMenu = /** @class */ (function (_super) {
             onActiveItemClicked: this.onHidePopup.bind(this),
             onItemClicked: this.onTabItemClicked.bind(this)
         });
-        this.getContext().wireBean(this.tabbedLayout);
-        var displayedListener = this.eventService.addEventListener(Events.EVENT_DISPLAYED_COLUMNS_CHANGED, this.onDisplayedColumnsChanged.bind(this));
-        this.addDestroyFunc(function () { return displayedListener(); });
+        this.createBean(this.tabbedLayout);
+        if (this.mainMenuList) {
+            this.mainMenuList.setParentComponent(this.tabbedLayout);
+        }
+        this.addManagedListener(this.eventService, Events.EVENT_DISPLAYED_COLUMNS_CHANGED, this.onDisplayedColumnsChanged.bind(this));
     };
     EnterpriseMenu.prototype.getTabsToCreate = function () {
         var _this = this;
@@ -227,15 +240,6 @@ var EnterpriseMenu = /** @class */ (function (_super) {
             key: tab
         };
         this.dispatchEvent(ev);
-    };
-    EnterpriseMenu.prototype.destroy = function () {
-        if (this.columnSelectPanel) {
-            this.columnSelectPanel.destroy();
-        }
-        if (this.mainMenuList) {
-            this.mainMenuList.destroy();
-        }
-        _super.prototype.destroy.call(this);
     };
     EnterpriseMenu.prototype.getMenuItems = function () {
         var defaultMenuOptions = this.getDefaultMenuOptions();
@@ -319,13 +323,14 @@ var EnterpriseMenu = /** @class */ (function (_super) {
     };
     EnterpriseMenu.prototype.createMainPanel = function () {
         this.mainMenuList = new MenuList();
-        this.getContext().wireBean(this.mainMenuList);
+        this.createManagedBean(this.mainMenuList);
         var menuItems = this.getMenuItems();
         var menuItemsMapped = this.menuItemMapper.mapWithStockItems(menuItems, this.column);
         this.mainMenuList.addMenuItems(menuItemsMapped);
         this.mainMenuList.addEventListener(MenuItemComponent.EVENT_ITEM_SELECTED, this.onHidePopup.bind(this));
         this.tabItemGeneral = {
             title: _.createIconNoSpan('menu', this.gridOptionsWrapper, this.column),
+            titleLabel: EnterpriseMenu.TAB_GENERAL.replace('MenuTab', ''),
             bodyPromise: Promise.resolve(this.mainMenuList.getGui()),
             name: EnterpriseMenu.TAB_GENERAL
         };
@@ -333,6 +338,13 @@ var EnterpriseMenu = /** @class */ (function (_super) {
     };
     EnterpriseMenu.prototype.onHidePopup = function () {
         this.hidePopupFunc();
+        // this method only gets called when the menu was closed by selection an option
+        // in this case we highlight the cell that was previously highlighted
+        var focusedCell = this.focusController.getFocusedCell();
+        if (focusedCell) {
+            var rowIndex = focusedCell.rowIndex, rowPinned = focusedCell.rowPinned, column = focusedCell.column;
+            this.focusController.setFocusedCell(rowIndex, column, rowPinned, true);
+        }
     };
     EnterpriseMenu.prototype.createFilterPanel = function () {
         var filterWrapper = this.filterManager.getOrCreateFilterWrapper(this.column, 'COLUMN_MENU');
@@ -350,6 +362,7 @@ var EnterpriseMenu = /** @class */ (function (_super) {
         }
         this.tabItemFilter = {
             title: _.createIconNoSpan('filter', this.gridOptionsWrapper, this.column),
+            titleLabel: EnterpriseMenu.TAB_FILTER.replace('MenuTab', ''),
             bodyPromise: filterWrapper.guiPromise,
             afterAttachedCallback: afterFilterAttachedCallback,
             name: EnterpriseMenu.TAB_FILTER
@@ -359,7 +372,7 @@ var EnterpriseMenu = /** @class */ (function (_super) {
     EnterpriseMenu.prototype.createColumnsPanel = function () {
         var eWrapperDiv = document.createElement('div');
         _.addCssClass(eWrapperDiv, 'ag-menu-column-select-wrapper');
-        this.columnSelectPanel = this.getContext().createComponent('AG-PRIMARY-COLS');
+        this.columnSelectPanel = this.createManagedBean(new PrimaryColsPanel());
         this.columnSelectPanel.init(false, {
             suppressValues: false,
             suppressPivots: false,
@@ -378,6 +391,7 @@ var EnterpriseMenu = /** @class */ (function (_super) {
         eWrapperDiv.appendChild(this.columnSelectPanel.getGui());
         this.tabItemColumns = {
             title: _.createIconNoSpan('columns', this.gridOptionsWrapper, this.column),
+            titleLabel: EnterpriseMenu.TAB_COLUMNS.replace('MenuTab', ''),
             bodyPromise: Promise.resolve(eWrapperDiv),
             name: EnterpriseMenu.TAB_COLUMNS
         };
@@ -407,7 +421,7 @@ var EnterpriseMenu = /** @class */ (function (_super) {
             }
         };
         this.addDestroyFunc(params.hidePopup);
-        this.addDestroyableEventListener(this.eventService, 'bodyScroll', onBodyScroll);
+        this.addManagedListener(this.eventService, 'bodyScroll', onBodyScroll);
     };
     EnterpriseMenu.prototype.getGui = function () {
         return this.tabbedLayout.getGui();
@@ -437,14 +451,14 @@ var EnterpriseMenu = /** @class */ (function (_super) {
         Autowired('gridOptionsWrapper')
     ], EnterpriseMenu.prototype, "gridOptionsWrapper", void 0);
     __decorate([
-        Autowired('eventService')
-    ], EnterpriseMenu.prototype, "eventService", void 0);
-    __decorate([
         Autowired('menuItemMapper')
     ], EnterpriseMenu.prototype, "menuItemMapper", void 0);
     __decorate([
         Autowired('rowModel')
     ], EnterpriseMenu.prototype, "rowModel", void 0);
+    __decorate([
+        Autowired('focusController')
+    ], EnterpriseMenu.prototype, "focusController", void 0);
     __decorate([
         PostConstruct
     ], EnterpriseMenu.prototype, "init", null);

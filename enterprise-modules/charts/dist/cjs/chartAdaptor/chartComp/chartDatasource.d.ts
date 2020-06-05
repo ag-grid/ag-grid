@@ -18,8 +18,8 @@ interface IData {
 export declare class ChartDatasource extends BeanStub {
     gridRowModel: IRowModel;
     valueService: ValueService;
-    aggregationStage: IAggregationStage;
     private columnController;
+    aggregationStage: IAggregationStage;
     getData(params: ChartDatasourceParams): IData;
     private extractRowsFromGridRowModel;
     private aggregateRowsByDimension;

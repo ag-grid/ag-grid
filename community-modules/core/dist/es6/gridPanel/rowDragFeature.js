@@ -1,9 +1,22 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v23.1.1
+ * @version v23.2.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = function (d, b) {
+        extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+        return extendStatics(d, b);
+    };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
 var __assign = (this && this.__assign) || function () {
     __assign = Object.assign || function(t) {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
@@ -29,33 +42,33 @@ var __spreadArrays = (this && this.__spreadArrays) || function () {
     return r;
 };
 import { DragAndDropService, DragSourceType, VerticalDirection } from "../dragAndDrop/dragAndDropService";
-import { Autowired, Optional, PostConstruct, PreDestroy } from "../context/context";
+import { Autowired, Optional, PostConstruct } from "../context/context";
 import { Events } from "../eventKeys";
 import { last } from '../utils/array';
+import { BeanStub } from "../context/beanStub";
 import { _ } from "../utils";
-var RowDragFeature = /** @class */ (function () {
+var RowDragFeature = /** @class */ (function (_super) {
+    __extends(RowDragFeature, _super);
     function RowDragFeature(eContainer, gridPanel) {
-        this.isMultiRowDrag = false;
-        this.events = [];
-        this.isGridSorted = false;
-        this.isGridFiltered = false;
-        this.isRowGroupActive = false;
-        this.eContainer = eContainer;
-        this.gridPanel = gridPanel;
+        var _this = _super.call(this) || this;
+        _this.isMultiRowDrag = false;
+        _this.isGridSorted = false;
+        _this.isGridFiltered = false;
+        _this.isRowGroupActive = false;
+        _this.eContainer = eContainer;
+        _this.gridPanel = gridPanel;
+        return _this;
     }
     RowDragFeature.prototype.postConstruct = function () {
         if (this.gridOptionsWrapper.isRowModelDefault()) {
             this.clientSideRowModel = this.rowModel;
         }
-        this.events.push(this.eventService.addEventListener(Events.EVENT_SORT_CHANGED, this.onSortChanged.bind(this)), this.eventService.addEventListener(Events.EVENT_FILTER_CHANGED, this.onFilterChanged.bind(this)), this.eventService.addEventListener(Events.EVENT_COLUMN_ROW_GROUP_CHANGED, this.onRowGroupChanged.bind(this)));
+        this.addManagedListener(this.eventService, Events.EVENT_SORT_CHANGED, this.onSortChanged.bind(this));
+        this.addManagedListener(this.eventService, Events.EVENT_FILTER_CHANGED, this.onFilterChanged.bind(this));
+        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_ROW_GROUP_CHANGED, this.onRowGroupChanged.bind(this));
         this.onSortChanged();
         this.onFilterChanged();
         this.onRowGroupChanged();
-    };
-    RowDragFeature.prototype.destroy = function () {
-        if (this.events.length) {
-            this.events.forEach(function (func) { return func(); });
-        }
     };
     RowDragFeature.prototype.onSortChanged = function () {
         var sortModel = this.sortController.getSortModel();
@@ -101,7 +114,7 @@ var RowDragFeature = /** @class */ (function () {
     RowDragFeature.prototype.onDragEnter = function (draggingEvent) {
         // when entering, we fire the enter event, then in onEnterOrDragging,
         // we also fire the move event. so we get both events when entering.
-        this.dispatchEvent(Events.EVENT_ROW_DRAG_ENTER, draggingEvent);
+        this.dispatchGridEvent(Events.EVENT_ROW_DRAG_ENTER, draggingEvent);
         this.getRowNodes(draggingEvent).forEach(function (rowNode) {
             rowNode.setDragging(true);
         });
@@ -120,7 +133,7 @@ var RowDragFeature = /** @class */ (function () {
     };
     RowDragFeature.prototype.onEnterOrDragging = function (draggingEvent) {
         // this event is fired for enter and move
-        this.dispatchEvent(Events.EVENT_ROW_DRAG_MOVE, draggingEvent);
+        this.dispatchGridEvent(Events.EVENT_ROW_DRAG_MOVE, draggingEvent);
         this.lastDraggingEvent = draggingEvent;
         var pixel = this.mouseEventService.getNormalisedPosition(draggingEvent).y;
         var managedDrag = this.gridOptionsWrapper.isRowDragManaged();
@@ -366,12 +379,12 @@ var RowDragFeature = /** @class */ (function () {
         };
         return event;
     };
-    RowDragFeature.prototype.dispatchEvent = function (type, draggingEvent) {
+    RowDragFeature.prototype.dispatchGridEvent = function (type, draggingEvent) {
         var event = this.draggingToRowDragEvent(type, draggingEvent);
         this.eventService.dispatchEvent(event);
     };
     RowDragFeature.prototype.onDragLeave = function (draggingEvent) {
-        this.dispatchEvent(Events.EVENT_ROW_DRAG_LEAVE, draggingEvent);
+        this.dispatchGridEvent(Events.EVENT_ROW_DRAG_LEAVE, draggingEvent);
         this.stopDragging(draggingEvent);
         this.clearRowHighlight();
         if (this.isFromThisGrid(draggingEvent)) {
@@ -379,7 +392,7 @@ var RowDragFeature = /** @class */ (function () {
         }
     };
     RowDragFeature.prototype.onDragStop = function (draggingEvent) {
-        this.dispatchEvent(Events.EVENT_ROW_DRAG_END, draggingEvent);
+        this.dispatchGridEvent(Events.EVENT_ROW_DRAG_END, draggingEvent);
         this.stopDragging(draggingEvent);
         if (this.gridOptionsWrapper.isRowDragManaged() &&
             (this.gridOptionsWrapper.isSuppressMoveWhenRowDragging() || !this.isFromThisGrid(draggingEvent)) &&
@@ -424,14 +437,8 @@ var RowDragFeature = /** @class */ (function () {
         Autowired('mouseEventService')
     ], RowDragFeature.prototype, "mouseEventService", void 0);
     __decorate([
-        Autowired('eventService')
-    ], RowDragFeature.prototype, "eventService", void 0);
-    __decorate([
         PostConstruct
     ], RowDragFeature.prototype, "postConstruct", null);
-    __decorate([
-        PreDestroy
-    ], RowDragFeature.prototype, "destroy", null);
     return RowDragFeature;
-}());
+}(BeanStub));
 export { RowDragFeature };

@@ -47,31 +47,32 @@ var ChartPanel = /** @class */ (function (_super) {
             .hideEnabledCheckbox(true);
     };
     ChartPanel.prototype.initTitles = function () {
-        var titlePanelComp = this.wireBean(new TitlePanel(this.chartController));
+        var titlePanelComp = this.createBean(new TitlePanel(this.chartController));
         this.chartGroup.addItem(titlePanelComp);
         this.activePanels.push(titlePanelComp);
     };
     ChartPanel.prototype.initPaddingPanel = function () {
-        var paddingPanelComp = this.wireBean(new PaddingPanel(this.chartController));
+        var paddingPanelComp = this.createBean(new PaddingPanel(this.chartController));
         this.chartGroup.addItem(paddingPanelComp);
         this.activePanels.push(paddingPanelComp);
     };
     ChartPanel.prototype.initBackgroundPanel = function () {
-        var backgroundPanelComp = this.wireBean(new BackgroundPanel(this.chartController));
+        var backgroundPanelComp = this.createBean(new BackgroundPanel(this.chartController));
         this.chartGroup.addItem(backgroundPanelComp);
         this.activePanels.push(backgroundPanelComp);
     };
     ChartPanel.prototype.destroyActivePanels = function () {
+        var _this = this;
         this.activePanels.forEach(function (panel) {
             _.removeFromParent(panel.getGui());
-            panel.destroy();
+            _this.destroyBean(panel);
         });
     };
     ChartPanel.prototype.destroy = function () {
         this.destroyActivePanels();
         _super.prototype.destroy.call(this);
     };
-    ChartPanel.TEMPLATE = "<div>\n            <ag-group-component ref=\"chartGroup\">\n            </ag-group-component>\n        </div>";
+    ChartPanel.TEMPLATE = "<div>\n            <ag-group-component ref=\"chartGroup\"></ag-group-component>\n        </div>";
     __decorate([
         RefSelector('chartGroup')
     ], ChartPanel.prototype, "chartGroup", void 0);

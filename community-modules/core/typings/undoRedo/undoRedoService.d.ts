@@ -1,7 +1,7 @@
-export declare class UndoRedoService {
+import { BeanStub } from "../context/beanStub";
+export declare class UndoRedoService extends BeanStub {
     private gridOptionsWrapper;
     private focusController;
-    private eventService;
     private gridApi;
     private rowModel;
     private pinnedRowModel;
@@ -12,9 +12,7 @@ export declare class UndoRedoService {
     private isRowEditing;
     private isPasting;
     private isFilling;
-    private events;
     init(): void;
-    destroy(): void;
     private onCellValueChanged;
     private clearStacks;
     undo(): void;

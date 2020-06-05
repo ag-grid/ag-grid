@@ -8,7 +8,7 @@ import { _ } from "../utils";
 
 export class AgAngleSelect extends AgAbstractLabel {
 
-    private static TEMPLATE =
+    private static TEMPLATE = /* html */
         `<div class="ag-angle-select">
             <label ref="eLabel"></label>
             <div class="ag-wrapper ag-angle-select-wrapper">
@@ -79,7 +79,7 @@ export class AgAngleSelect extends AgAbstractLabel {
             this.eAngleValue.setValue(this.normalizeNegativeValue(this.getValue()).toString());
         }
 
-        this.addDestroyableEventListener(this, AgAbstractField.EVENT_CHANGED, () => {
+        this.addManagedListener(this, AgAbstractField.EVENT_CHANGED, () => {
             if (this.eAngleValue.getInputElement().contains(document.activeElement)) {
                 return;
             }
@@ -193,7 +193,7 @@ export class AgAngleSelect extends AgAbstractLabel {
     }
 
     public onValueChange(callbackFn: (newValue: number) => void): this {
-        this.addDestroyableEventListener(this, AgAbstractField.EVENT_CHANGED, () => {
+        this.addManagedListener(this, AgAbstractField.EVENT_CHANGED, () => {
             callbackFn(this.degrees);
         });
         return this;
@@ -228,7 +228,7 @@ export class AgAngleSelect extends AgAbstractLabel {
         return this;
     }
 
-    public destroy(): void {
+    protected destroy(): void {
         this.dragService.removeDragSource(this.dragListener);
         super.destroy();
     }

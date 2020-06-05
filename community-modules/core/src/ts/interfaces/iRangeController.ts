@@ -32,10 +32,15 @@ export interface IRangeController {
 
 export interface ISelectionHandle {
     getGui(): HTMLElement;
-    destroy(): void;
-    getType(): string;
+    getType(): SelectionHandleType;
     refresh(cellComp: CellComp): void;
 }
+
+export interface ISelectionHandleFactory {
+    createSelectionHandle(type: SelectionHandleType): ISelectionHandle;
+}
+
+export enum SelectionHandleType { FILL,  RANGE }
 
 export enum CellRangeType { VALUE, DIMENSION }
 

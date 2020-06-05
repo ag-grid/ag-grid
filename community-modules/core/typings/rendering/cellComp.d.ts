@@ -80,7 +80,10 @@ export declare class CellComp extends Component implements TooltipParentComp {
         newData?: boolean;
         forceRefresh?: boolean;
     }): void;
-    flashCell(): void;
+    flashCell(delays?: {
+        flashDelay: number;
+        fadeDelay: number;
+    }): void;
     private animateCell;
     private replaceContentsAfterRefresh;
     private updateAngular1ScopeAndCompile;

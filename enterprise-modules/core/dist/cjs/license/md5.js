@@ -1,4 +1,17 @@
 "use strict";
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = function (d, b) {
+        extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+        return extendStatics(d, b);
+    };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -7,9 +20,12 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var core_1 = require("@ag-grid-community/core");
-var MD5 = /** @class */ (function () {
+var MD5 = /** @class */ (function (_super) {
+    __extends(MD5, _super);
     function MD5() {
-        this.ieCompatibility = false;
+        var _this = _super !== null && _super.apply(this, arguments) || this;
+        _this.ieCompatibility = false;
+        return _this;
     }
     MD5.prototype.init = function () {
         this.ieCompatibility = (this.md5('hello') != '5d41402abc4b2a76b9719d911017c592');
@@ -180,6 +196,6 @@ var MD5 = /** @class */ (function () {
         core_1.Bean('md5')
     ], MD5);
     return MD5;
-}());
+}(core_1.BeanStub));
 exports.MD5 = MD5;
 //# sourceMappingURL=md5.js.map

@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v23.1.1
+ * @version v23.2.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -28,7 +28,7 @@ export { initialiseAgGridWithWebComponents } from "./components/agGridWebCompone
 // context
 export { BeanStub } from "./context/beanStub";
 export { Context, Autowired, PostConstruct, PreConstruct, Optional, Bean, Qualifier, PreDestroy } from "./context/context";
-export { QuerySelector, Listener, RefSelector } from "./widgets/componentAnnotations";
+export { QuerySelector, GuiListener, RefSelector, GridListener } from "./widgets/componentAnnotations";
 // dragAndDrop
 export { DragAndDropService, DragSourceType, HorizontalDirection, VerticalDirection } from "./dragAndDrop/dragAndDropService";
 export { DragService } from "./dragAndDrop/dragService";
@@ -109,13 +109,13 @@ export { AgGroupComponent } from "./widgets/agGroupComponent";
 export { AgDialog } from "./widgets/agDialog";
 export { AgPanel } from "./widgets/agPanel";
 export { Component } from "./widgets/component";
-export { ManagedTabComponent } from "./widgets/managedTabComponent";
+export { ManagedFocusComponent } from "./widgets/managedFocusComponent";
 export { PopupComponent } from "./widgets/popupComponent";
 export { PopupService } from "./widgets/popupService";
 export { TouchListener } from "./widgets/touchListener";
 export { VirtualList } from "./widgets/virtualList";
 // range
-export { CellRangeType } from "./interfaces/iRangeController";
+export { CellRangeType, SelectionHandleType } from "./interfaces/iRangeController";
 // root
 export { VanillaFrameworkOverrides } from "./vanillaFrameworkOverrides";
 export { CellNavigationService } from "./cellNavigationService";
@@ -140,6 +140,8 @@ export { ValueCache } from "./valueService/valueCache";
 export { ExpressionService } from "./valueService/expressionService";
 export { CellPositionUtils } from "./entities/cellPosition";
 export { RowPositionUtils } from "./entities/rowPosition";
+export { HeaderPositionUtils } from "./headerRendering/header/headerPosition";
+export { HeaderNavigationService, HeaderNavigationDirection } from "./headerRendering/header/headerNavigationService";
 export * from "./propertyKeys";
 export { ColumnApi } from "./columnController/columnApi";
 export { BaseComponentWrapper } from "./components/framework/frameworkComponentWrapper";

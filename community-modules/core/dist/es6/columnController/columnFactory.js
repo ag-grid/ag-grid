@@ -1,9 +1,22 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v23.1.1
+ * @version v23.2.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = function (d, b) {
+        extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+        return extendStatics(d, b);
+    };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -19,9 +32,12 @@ import { Column } from "../entities/column";
 import { Autowired, Bean, Qualifier } from "../context/context";
 import { DefaultColumnTypes } from "../entities/defaultColumnTypes";
 import { _ } from "../utils";
+import { BeanStub } from "../context/beanStub";
 // takes ColDefs and ColGroupDefs and turns them into Columns and OriginalGroups
-var ColumnFactory = /** @class */ (function () {
+var ColumnFactory = /** @class */ (function (_super) {
+    __extends(ColumnFactory, _super);
     function ColumnFactory() {
+        return _super !== null && _super.apply(this, arguments) || this;
     }
     ColumnFactory.prototype.setBeans = function (loggerFactory) {
         this.logger = loggerFactory.create('ColumnFactory');
@@ -71,7 +87,7 @@ var ColumnFactory = /** @class */ (function () {
         var nextChild = column;
         for (var i = dept - 1; i >= 0; i--) {
             var autoGroup = new OriginalColumnGroup(null, "FAKE_PATH_" + column.getId() + "}_" + i, true, i);
-            this.context.wireBean(autoGroup);
+            this.context.createBean(autoGroup);
             autoGroup.setChildren([nextChild]);
             nextChild.setOriginalParent(autoGroup);
             nextChild = autoGroup;
@@ -110,7 +126,7 @@ var ColumnFactory = /** @class */ (function () {
                     var newColId = columnKeyCreator.getUniqueKey(null, null);
                     var colGroupDefMerged = this.createMergedColGroupDef(null);
                     var paddedGroup = new OriginalColumnGroup(colGroupDefMerged, newColId, true, currentDept);
-                    this.context.wireBean(paddedGroup);
+                    this.context.createBean(paddedGroup);
                     if (currentPaddedGroup) {
                         currentPaddedGroup.setChildren([paddedGroup]);
                     }
@@ -173,7 +189,7 @@ var ColumnFactory = /** @class */ (function () {
         var colGroupDefMerged = this.createMergedColGroupDef(colGroupDef);
         var groupId = columnKeyCreator.getUniqueKey(colGroupDefMerged.groupId, null);
         var originalGroup = new OriginalColumnGroup(colGroupDefMerged, groupId, false, level);
-        this.context.wireBean(originalGroup);
+        this.context.createBean(originalGroup);
         var children = this.recursivelyCreateColumns(colGroupDefMerged.children, level + 1, primaryColumns, existingColumns, columnKeyCreator, originalGroup);
         originalGroup.setChildren(children);
         return originalGroup;
@@ -194,7 +210,7 @@ var ColumnFactory = /** @class */ (function () {
             // no existing column, need to create one
             var colId = columnKeyCreator.getUniqueKey(colDefMerged.colId, colDefMerged.field);
             column = new Column(colDefMerged, colDef, colId, primaryColumns);
-            this.context.wireBean(column);
+            this.context.createBean(column);
         }
         else {
             column.setColDef(colDefMerged, colDef);
@@ -257,7 +273,16 @@ var ColumnFactory = /** @class */ (function () {
             return;
         }
         // merge user defined with default column types
-        var allColumnTypes = _.assign({}, this.gridOptionsWrapper.getColumnTypes(), DefaultColumnTypes);
+        var allColumnTypes = _.assign({}, DefaultColumnTypes);
+        var userTypes = this.gridOptionsWrapper.getColumnTypes() || {};
+        _.iterateObject(userTypes, function (key, value) {
+            if (key in allColumnTypes) {
+                console.warn("ag-Grid: the column type '" + key + "' is a default column type and cannot be overridden.");
+            }
+            else {
+                allColumnTypes[key] = value;
+            }
+        });
         typeKeys.forEach(function (t) {
             var typeColDef = allColumnTypes[t.trim()];
             if (typeColDef) {
@@ -306,14 +331,11 @@ var ColumnFactory = /** @class */ (function () {
         Autowired('columnUtils')
     ], ColumnFactory.prototype, "columnUtils", void 0);
     __decorate([
-        Autowired('context')
-    ], ColumnFactory.prototype, "context", void 0);
-    __decorate([
         __param(0, Qualifier('loggerFactory'))
     ], ColumnFactory.prototype, "setBeans", null);
     ColumnFactory = __decorate([
         Bean('columnFactory')
     ], ColumnFactory);
     return ColumnFactory;
-}());
+}(BeanStub));
 export { ColumnFactory };

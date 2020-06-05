@@ -7,7 +7,6 @@ export interface ChartModelUpdatedEvent extends AgEvent {
 export declare class ChartController extends BeanStub {
     private readonly model;
     static EVENT_CHART_UPDATED: string;
-    private eventService;
     rangeController: IRangeController;
     private gridApi;
     private columnApi;
@@ -40,5 +39,5 @@ export declare class ChartController extends BeanStub {
     private raiseChartUpdatedEvent;
     private raiseChartOptionsChangedEvent;
     private raiseChartRangeSelectionChangedEvent;
-    destroy(): void;
+    protected destroy(): void;
 }

@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v23.1.1
+ * @version v23.2.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -50,7 +50,7 @@ var AgPanel = /** @class */ (function (_super) {
     }
     AgPanel.getTemplate = function (config) {
         var cssIdentifier = (config && config.cssIdentifier) || 'default';
-        return "<div class=\"ag-panel ag-" + cssIdentifier + "-panel\" tabindex=\"-1\">\n            <div ref=\"eTitleBar\" class=\"ag-panel-title-bar ag-" + cssIdentifier + "-panel-title-bar ag-unselectable\">\n                <span ref=\"eTitle\" class=\"ag-panel-title-bar-title ag-" + cssIdentifier + "-panel-title-bar-title\"></span>\n                <div ref=\"eTitleBarButtons\" class=\"ag-panel-title-bar-buttons ag-" + cssIdentifier + "-panel-title-bar-buttons\"></div>\n            </div>\n            <div ref=\"eContentWrapper\" class=\"ag-panel-content-wrapper ag-" + cssIdentifier + "-panel-content-wrapper\"></div>\n        </div>";
+        return /* html */ "<div class=\"ag-panel ag-" + cssIdentifier + "-panel\" tabindex=\"-1\">\n            <div ref=\"eTitleBar\" class=\"ag-panel-title-bar ag-" + cssIdentifier + "-panel-title-bar ag-unselectable\">\n                <span ref=\"eTitle\" class=\"ag-panel-title-bar-title ag-" + cssIdentifier + "-panel-title-bar-title\"></span>\n                <div ref=\"eTitleBarButtons\" class=\"ag-panel-title-bar-buttons ag-" + cssIdentifier + "-panel-title-bar-buttons\"></div>\n            </div>\n            <div ref=\"eContentWrapper\" class=\"ag-panel-content-wrapper ag-" + cssIdentifier + "-panel-content-wrapper\"></div>\n        </div>";
     };
     AgPanel.prototype.postConstruct = function () {
         var _this = this;
@@ -68,7 +68,7 @@ var AgPanel = /** @class */ (function (_super) {
         else {
             _.addCssClass(this.eTitleBar, 'ag-hidden');
         }
-        this.addDestroyableEventListener(this.eTitleBar, 'mousedown', function (e) {
+        this.addManagedListener(this.eTitleBar, 'mousedown', function (e) {
             if (eGui.contains(e.relatedTarget) ||
                 eGui.contains(document.activeElement) ||
                 _this.eTitleBarButtons.contains(e.target)) {
@@ -278,17 +278,16 @@ var AgPanel = /** @class */ (function (_super) {
         }
         if (closable) {
             var closeButtonComp = this.closeButtonComp = new Component(AgPanel.CLOSE_BTN_TEMPLATE);
-            this.getContext().wireBean(closeButtonComp);
+            this.getContext().createBean(closeButtonComp);
             var eGui = closeButtonComp.getGui();
             eGui.appendChild(_.addCssClass(_.createIconNoSpan('close', this.gridOptionsWrapper), 'ag-panel-title-bar-button-icon'));
             this.addTitleBarButton(closeButtonComp);
-            closeButtonComp.addDestroyableEventListener(eGui, 'click', this.onBtClose.bind(this));
+            closeButtonComp.addManagedListener(eGui, 'click', this.onBtClose.bind(this));
         }
         else if (this.closeButtonComp) {
             var eGui = this.closeButtonComp.getGui();
             eGui.parentElement.removeChild(eGui);
-            this.closeButtonComp.destroy();
-            this.closeButtonComp = undefined;
+            this.closeButtonComp = this.destroyBean(this.closeButtonComp);
         }
     };
     AgPanel.prototype.setBodyComponent = function (bodyComponent) {
@@ -331,8 +330,7 @@ var AgPanel = /** @class */ (function (_super) {
     };
     AgPanel.prototype.destroy = function () {
         if (this.closeButtonComp) {
-            this.closeButtonComp.destroy();
-            this.closeButtonComp = undefined;
+            this.closeButtonComp = this.destroyBean(this.closeButtonComp);
         }
         var eGui = this.getGui();
         if (eGui && eGui.offsetParent) {

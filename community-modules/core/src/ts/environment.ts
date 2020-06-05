@@ -1,4 +1,5 @@
 import { Bean, Autowired } from './context/context';
+import { BeanStub } from "./context/beanStub";
 import { _ } from './utils';
 
 export type SASS_PROPERTIES = 'headerHeight' | 'headerCellMinWidth' | 'listItemHeight' | 'rowHeight' | 'chartMenuPanelWidth';
@@ -67,7 +68,8 @@ const SASS_PROPERTY_BUILDER: { [key in SASS_PROPERTIES]: string[] } = {
 const CALCULATED_SIZES: HardCodedSize = {};
 
 @Bean('environment')
-export class Environment {
+export class Environment extends BeanStub {
+
     @Autowired('eGridDiv') private eGridDiv: HTMLElement;
 
     public getSassVariable(theme: string, key: SASS_PROPERTIES): number {

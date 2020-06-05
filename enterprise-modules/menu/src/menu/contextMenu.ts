@@ -6,14 +6,11 @@ import {
     Column,
     ColumnController,
     Component,
-    Context,
-    EventService,
     FocusController,
     GetContextMenuItems,
     GetContextMenuItemsParams,
     GridOptionsWrapper,
     IAfterGuiAttachedParams,
-    IComponent,
     IContextMenuFactory,
     MenuItemDef,
     ModuleNames,
@@ -31,9 +28,8 @@ import { MenuList } from "./menuList";
 import { MenuItemMapper } from "./menuItemMapper";
 
 @Bean('contextMenuFactory')
-export class ContextMenuFactory implements IContextMenuFactory {
+export class ContextMenuFactory extends BeanStub implements IContextMenuFactory {
 
-    @Autowired('context') private context: Context;
     @Autowired('popupService') private popupService: PopupService;
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Optional('rangeController') private rangeController: IRangeController;
@@ -42,9 +38,7 @@ export class ContextMenuFactory implements IContextMenuFactory {
     private activeMenu: ContextMenu | null;
 
     public hideActiveMenu(): void {
-        if (!this.activeMenu) { return; }
-
-        this.activeMenu.destroy();
+        this.destroyBean(this.activeMenu);
     }
 
     private getMenuItems(node: RowNode, column: Column, value: any): (MenuItemDef | string)[] | undefined {
@@ -100,13 +94,13 @@ export class ContextMenuFactory implements IContextMenuFactory {
         return defaultMenuOptions;
     }
 
-    public showMenu(node: RowNode, column: Column, value: any, mouseEvent: MouseEvent | Touch): void {
+    public showMenu(node: RowNode, column: Column, value: any, mouseEvent: MouseEvent | Touch): boolean {
         const menuItems = this.getMenuItems(node, column, value);
 
-        if (menuItems === undefined || _.missingOrEmpty(menuItems)) { return; }
+        if (menuItems === undefined || _.missingOrEmpty(menuItems)) { return false; }
 
         const menu = new ContextMenu(menuItems);
-        this.context.wireBean(menu);
+        this.createBean(menu);
 
         const eMenuGui = menu.getGui();
 
@@ -115,7 +109,7 @@ export class ContextMenuFactory implements IContextMenuFactory {
         const hidePopup = this.popupService.addAsModalPopup(
             eMenuGui,
             true,
-            () => menu.destroy(),
+            () => this.destroyBean(menu),
             mouseEvent
         );
 
@@ -142,16 +136,16 @@ export class ContextMenuFactory implements IContextMenuFactory {
                 this.activeMenu = null;
             }
         });
+
+        return true;
     }
 }
 
-class ContextMenu extends Component implements IComponent<any> {
+class ContextMenu extends Component {
 
-    @Autowired('eventService') private eventService: EventService;
     @Autowired('menuItemMapper') private menuItemMapper: MenuItemMapper;
     @Autowired('focusController') private focusController: FocusController;
     @Autowired('cellPositionUtils') private cellPositionUtils: CellPositionUtils;
-
 
     private menuItems: (MenuItemDef | string)[];
     private menuList: MenuList | null = null;
@@ -165,7 +159,7 @@ class ContextMenu extends Component implements IComponent<any> {
     @PostConstruct
     private addMenuItems(): void {
         const menuList = new MenuList();
-        this.getContext().wireBean(menuList);
+        this.getContext().createBean(menuList);
 
         const menuItemsMapped = this.menuItemMapper.mapWithStockItems(this.menuItems, null);
 
@@ -184,14 +178,14 @@ class ContextMenu extends Component implements IComponent<any> {
         this.focusedCell = this.focusController.getFocusedCell();
 
         if (this.menuList) {
-            this.menuList.getGui().focus();
+            this.focusController.focusFirstFocusableElement(this.menuList.getGui());
         }
 
         // if the body scrolls, we want to hide the menu, as the menu will not appear in the right location anymore
-        this.addDestroyableEventListener(this.eventService, 'bodyScroll', this.destroy.bind(this));
+        this.addManagedListener(this.eventService, 'bodyScroll', this.destroy.bind(this));
     }
 
-    public destroy(): void {
+    protected destroy(): void {
         const currentFocusedCell = this.focusController.getFocusedCell();
 
         if (currentFocusedCell && this.focusedCell && this.cellPositionUtils.equals(currentFocusedCell, this.focusedCell)) {

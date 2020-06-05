@@ -22,7 +22,7 @@ var Group = /** @class */ (function (_super) {
         return _this;
     }
     // We consider a group to be boundless, thus any point belongs to it.
-    Group.prototype.isPointInNode = function (x, y) {
+    Group.prototype.containsPoint = function (x, y) {
         return true;
     };
     Group.prototype.computeBBox = function () {

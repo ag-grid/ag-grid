@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v23.1.1
+ * @version v23.2.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -55,10 +55,10 @@ var TooltipFeature = /** @class */ (function (_super) {
         this.tooltipShowDelay = this.gridOptionsWrapper.getTooltipShowDelay() || 2000;
         this.tooltipMouseTrack = this.gridOptionsWrapper.isTooltipMouseTrack();
         var el = this.parentComp.getGui();
-        this.addDestroyableEventListener(el, 'mouseenter', this.onMouseEnter.bind(this));
-        this.addDestroyableEventListener(el, 'mouseleave', this.onMouseLeave.bind(this));
-        this.addDestroyableEventListener(el, 'mousemove', this.onMouseMove.bind(this));
-        this.addDestroyableEventListener(el, 'mousedown', this.onMouseDown.bind(this));
+        this.addManagedListener(el, 'mouseenter', this.onMouseEnter.bind(this));
+        this.addManagedListener(el, 'mouseleave', this.onMouseLeave.bind(this));
+        this.addManagedListener(el, 'mousemove', this.onMouseMove.bind(this));
+        this.addManagedListener(el, 'mousedown', this.onMouseDown.bind(this));
     };
     TooltipFeature.prototype.destroy = function () {
         // if this component gets destroyed while tooltip is showing, need to make sure
@@ -107,6 +107,7 @@ var TooltipFeature = /** @class */ (function (_super) {
         this.state = TooltipStates.NOTHING;
     };
     TooltipFeature.prototype.destroyTooltipComp = function () {
+        var _this = this;
         // add class to fade out the tooltip
         utils_1._.addCssClass(this.tooltipComp.getGui(), 'ag-tooltip-hiding');
         // make local copies of these variables, as we use them in the async function below,
@@ -115,9 +116,7 @@ var TooltipFeature = /** @class */ (function (_super) {
         var tooltipComp = this.tooltipComp;
         window.setTimeout(function () {
             tooltipPopupDestroyFunc();
-            if (tooltipComp.destroy) {
-                tooltipComp.destroy();
-            }
+            _this.getContext().destroyBean(tooltipComp);
         }, this.FADE_OUT_TOOLTIP_TIMEOUT);
         this.tooltipPopupDestroyFunc = undefined;
         this.tooltipComp = undefined;
@@ -155,9 +154,7 @@ var TooltipFeature = /** @class */ (function (_super) {
     TooltipFeature.prototype.newTooltipComponentCallback = function (tooltipInstanceCopy, tooltipComp) {
         var compNoLongerNeeded = this.state !== TooltipStates.SHOWING || this.tooltipInstanceCount !== tooltipInstanceCopy;
         if (compNoLongerNeeded) {
-            if (tooltipComp.destroy) {
-                tooltipComp.destroy();
-            }
+            this.getContext().destroyBean(tooltipComp);
             return;
         }
         var eGui = tooltipComp.getGui();

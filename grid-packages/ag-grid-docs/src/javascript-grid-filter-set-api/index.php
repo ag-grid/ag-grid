@@ -27,10 +27,7 @@ var countryFilterComponent = gridOptions.api.getFilterInstance('country');
 var model = countryFilterComponent.getModel();
 
 // set filter model and update
-countryFilterComponent.setModel({
-    type: 'set',
-    values: ['Spain', 'Ireland', 'South Africa', 'Australia', 'England']
-});
+countryFilterComponent.setModel({ values: ['Spain', 'Ireland', 'South Africa'] });
 
 gridApi.onFilterChanged();
 SNIPPET
@@ -57,8 +54,8 @@ SNIPPET
 </p>
 
 <p>
-    If no call is made to <code>filterInstance.applyModel()</code> then the filter UI will show the changes, but
-    it won't be reflected in the filter model. This will appear as if the user never hit the Apply Button (regardless
+    If no call is made to <code>filterInstance.applyModel()</code> then the filter UI will show any changes, but
+    they won't be reflected in the filter model. This will appear as if the user never hit the Apply Button (regardless
     of whether the Apply Button is active or not).
 </p>
 
@@ -66,25 +63,6 @@ SNIPPET
     If no call to <code>gridOptions.api.onFilterChanged()</code> is provided the grid will still show the data relevant
     to the filter before it was updated through the API.
 </p>
-
-<p>This code demonstrates a correct update:</p>
-
-<?= createSnippet(<<<SNIPPET
-// Get filter instance
-var instance = gridOptions.api.getFilterInstance('athlete');
-
-// Set filter properties
-instance.selectNothing();
-instance.selectValue('John Joe Nevin');
-instance.selectValue('Kenny Egan');
-
-// Apply the model
-instance.applyModel();
-
-// Get the grid to refresh the rows based on new filter
-gridOptions.api.onFilterChanged();
-SNIPPET
-) ?>
 
 <p>
     In the example below, you can see how the filter for the Athlete column is modified through the API and how at the

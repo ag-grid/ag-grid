@@ -13,7 +13,8 @@ import {
     PostConstruct,
     ISelectionHandle,
     RowPositionUtils,
-    _
+    _,
+    SelectionHandleType
 } from "@ag-grid-community/core";
 import { RangeController } from "./rangeController";
 
@@ -38,7 +39,7 @@ export abstract class AbstractSelectionHandle extends Component implements ISele
     private changedCell: boolean = false;
     private dragging: boolean = false;
     
-    protected abstract type: string;
+    protected abstract type: SelectionHandleType;
     protected shouldDestroyOnEndDragging: boolean = false;
 
     @PostConstruct
@@ -69,7 +70,7 @@ export abstract class AbstractSelectionHandle extends Component implements ISele
             }
         });
 
-        this.addDestroyableEventListener(
+        this.addManagedListener(
             this.getGui(),
             'mousedown',
             this.preventRangeExtension.bind(this)
@@ -125,7 +126,7 @@ export abstract class AbstractSelectionHandle extends Component implements ISele
     }
 
     protected onDragStart(e: MouseEvent) {
-        this.cellHoverListener = this.addDestroyableEventListener(
+        this.cellHoverListener = this.addManagedListener(
             this.rowRenderer.getGridCore().getRootGui(), 
             'mousemove', 
             this.updateLastCellPositionHovered.bind(this)
@@ -144,7 +145,7 @@ export abstract class AbstractSelectionHandle extends Component implements ISele
         this.changedCell = true;
     }
 
-    public getType(): string {
+    public getType(): SelectionHandleType {
         return this.type;
     }
 
@@ -193,7 +194,7 @@ export abstract class AbstractSelectionHandle extends Component implements ISele
         }
     }
 
-    public destroy() {
+    protected destroy() {
         if (!this.shouldDestroyOnEndDragging && this.isDragging()) {
             _.setDisplayed(this.getGui(), false);
             this.shouldDestroyOnEndDragging = true;

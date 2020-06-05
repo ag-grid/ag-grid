@@ -67,11 +67,14 @@
         "setColumnsPinned(colKeys, pinned)": {
             "description": "Same as <code>setColumnPinned</code>, but provide a list of column keys."
         },
-        "autoSizeColumn(colKey)": {
+        "autoSizeColumn(colKey, skipHeader)": {
             "description": "Auto-sizes a column based on its contents."
         },
-        "autoSizeColumns(colKeys)": {
+        "autoSizeColumns(colKeys, skipHeader)": {
             "description": "Same as <code>autoSizeColumn</code>, but provide a list of column keys."
+        },
+        "autoSizeAllColumns(skipHeader)": {
+            "description": "Calls <code>autoSizeColumns</code> on all displayed columns."
         },
         "getAllColumns()": {
             "description": "Returns all the columns, regardless of visible or not."

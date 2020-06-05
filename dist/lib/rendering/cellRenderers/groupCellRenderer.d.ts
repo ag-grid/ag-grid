@@ -49,7 +49,7 @@ export declare class GroupCellRenderer extends Component implements ICellRendere
     private isUserWantsSelected;
     private addCheckboxIfNeeded;
     private addExpandAndContract;
-    private onAllChildrenCountChanged;
+    private onRowNodeIsExpandableChanged;
     private onKeyDown;
     private setupDragOpenParents;
     onExpandClicked(mouseEvent: MouseEvent): void;

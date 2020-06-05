@@ -1,12 +1,11 @@
 {
   "name": "@ag-grid-community/angular",
-  "version": "23.1.1",
+  "version": "23.2.0",
   "license": "MIT",
   "peerDependencies": {
-    "@ag-grid-community/core": "~23.1.0",
+    "@ag-grid-community/core": "~23.2.0",
     "@angular/common": "^9.0.0",
-    "@angular/core": "^9.0.0",
-    "tslib": "^1.10.0"
+    "@angular/core": "^9.0.0"
   },
   "main": "bundles/ag-grid-community-angular.umd.js",
   "module": "fesm5/ag-grid-community-angular.js",
@@ -17,5 +16,8 @@
   "fesm2015": "fesm2015/ag-grid-community-angular.js",
   "typings": "ag-grid-community-angular.d.ts",
   "metadata": "ag-grid-community-angular.metadata.json",
-  "sideEffects": false
+  "sideEffects": false,
+  "dependencies": {
+    "tslib": "^1.10.0"
+  }
 }

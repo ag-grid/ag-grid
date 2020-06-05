@@ -43,10 +43,10 @@ var FiltersToolPanel = /** @class */ (function (_super) {
         if (hideExpand && hideSearch) {
             this.filtersToolPanelHeaderPanel.setDisplayed(false);
         }
-        this.addDestroyableEventListener(this.filtersToolPanelHeaderPanel, 'expandAll', this.onExpandAll.bind(this));
-        this.addDestroyableEventListener(this.filtersToolPanelHeaderPanel, 'collapseAll', this.onCollapseAll.bind(this));
-        this.addDestroyableEventListener(this.filtersToolPanelHeaderPanel, 'searchChanged', this.onSearchChanged.bind(this));
-        this.addDestroyableEventListener(this.filtersToolPanelListPanel, 'groupExpanded', this.onGroupExpanded.bind(this));
+        this.addManagedListener(this.filtersToolPanelHeaderPanel, 'expandAll', this.onExpandAll.bind(this));
+        this.addManagedListener(this.filtersToolPanelHeaderPanel, 'collapseAll', this.onCollapseAll.bind(this));
+        this.addManagedListener(this.filtersToolPanelHeaderPanel, 'searchChanged', this.onSearchChanged.bind(this));
+        this.addManagedListener(this.filtersToolPanelListPanel, 'groupExpanded', this.onGroupExpanded.bind(this));
     };
     // lazy initialise the panel
     FiltersToolPanel.prototype.setVisible = function (visible) {
@@ -88,6 +88,8 @@ var FiltersToolPanel = /** @class */ (function (_super) {
     FiltersToolPanel.prototype.refresh = function () {
         this.init(this.params);
     };
+    // this is a user component, and IComponent has "public destroy()" as part of the interface.
+    // so we need to override destroy() just to make the method public.
     FiltersToolPanel.prototype.destroy = function () {
         _super.prototype.destroy.call(this);
     };
@@ -104,12 +106,6 @@ var FiltersToolPanel = /** @class */ (function (_super) {
     __decorate([
         Autowired('columnApi')
     ], FiltersToolPanel.prototype, "columnApi", void 0);
-    __decorate([
-        Autowired('eventService')
-    ], FiltersToolPanel.prototype, "eventService", void 0);
-    __decorate([
-        Autowired('columnController')
-    ], FiltersToolPanel.prototype, "columnController", void 0);
     return FiltersToolPanel;
 }(Component));
 export { FiltersToolPanel };

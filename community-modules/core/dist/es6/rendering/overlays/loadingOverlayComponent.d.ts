@@ -1,4 +1,4 @@
-// Type definitions for @ag-grid-community/core v23.1.1
+// Type definitions for @ag-grid-community/core v23.2.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { GridOptionsWrapper } from "../../gridOptionsWrapper";
@@ -12,5 +12,6 @@ export declare class LoadingOverlayComponent extends Component implements ILoadi
     private static DEFAULT_LOADING_OVERLAY_TEMPLATE;
     gridOptionsWrapper: GridOptionsWrapper;
     constructor();
+    destroy(): void;
     init(params: ILoadingOverlayParams): void;
 }

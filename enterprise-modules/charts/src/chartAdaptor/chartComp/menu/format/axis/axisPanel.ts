@@ -14,16 +14,16 @@ import {
     RefSelector,
     AgGroupComponentParams,
 } from "@ag-grid-community/core";
-import {ChartController} from "../../../chartController";
-import {AxisTicksPanel} from "./axisTicksPanel";
-import {Font, FontPanel, FontPanelParams} from "../fontPanel";
-import {ChartTranslator} from "../../../chartTranslator";
-import {ChartAxisPosition, find} from "ag-charts-community";
-import {CartesianChartProxy} from "../../../chartProxies/cartesian/cartesianChartProxy";
+import { ChartController } from "../../../chartController";
+import { AxisTicksPanel } from "./axisTicksPanel";
+import { Font, FontPanel, FontPanelParams } from "../fontPanel";
+import { ChartTranslator } from "../../../chartTranslator";
+import { ChartAxisPosition, find } from "ag-charts-community";
+import { CartesianChartProxy } from "../../../chartProxies/cartesian/cartesianChartProxy";
 
 export class AxisPanel extends Component {
 
-    public static TEMPLATE =
+    public static TEMPLATE = /* html */
         `<div>
             <ag-group-component ref="axisGroup">
                 <ag-color-picker ref="axisColorInput"></ag-color-picker>
@@ -109,7 +109,7 @@ export class AxisPanel extends Component {
     }
 
     private initAxisTicks() {
-        const axisTicksComp = this.wireBean(new AxisTicksPanel(this.chartController));
+        const axisTicksComp = this.createBean(new AxisTicksPanel(this.chartController));
         this.axisGroup.addItem(axisTicksComp);
         this.activePanels.push(axisTicksComp);
     }
@@ -143,7 +143,7 @@ export class AxisPanel extends Component {
             setFont
         };
 
-        const labelPanelComp = this.wireBean(new FontPanel(params));
+        const labelPanelComp = this.createBean(new FontPanel(params));
         this.axisGroup.addItem(labelPanelComp);
         this.activePanels.push(labelPanelComp);
 
@@ -152,7 +152,7 @@ export class AxisPanel extends Component {
 
     private addAdditionalLabelComps(labelPanelComp: FontPanel) {
         const createAngleComp = (label: string, initialValue: number, updateFunc: (value: number) => void) => {
-            const rotationInput = this.wireBean(new AgAngleSelect()
+            const rotationInput = this.createBean(new AgAngleSelect()
                 .setLabel(label)
                 .setLabelWidth("flex")
                 .setValue(initialValue || 0)
@@ -163,11 +163,17 @@ export class AxisPanel extends Component {
 
         const degreesSymbol = String.fromCharCode(176);
         const createLabelUpdateFunc = (axisPosition: ChartAxisPosition) => (newValue: number) => {
-            const chart = this.getChartProxy().getChart();
+            const chartProxy = this.getChartProxy();
+            const chart = chartProxy.getChart();
             const axis = find(chart.axes, axis => axis.position === axisPosition);
 
             if (axis) {
                 axis.label.rotation = newValue;
+                if (axis.position === ChartAxisPosition.Bottom) {
+                    _.set(chartProxy.getChartOptions().xAxis, "label.rotation", newValue);
+                } else if (axis.position === ChartAxisPosition.Left) {
+                    _.set(chartProxy.getChartOptions().yAxis, "label.rotation", newValue);
+                }
                 chart.performLayout();
             }
         };
@@ -178,7 +184,7 @@ export class AxisPanel extends Component {
         createAngleComp(xRotationLabel, this.getChartProxy().getChartOption("xAxis.label.rotation"), createLabelUpdateFunc(ChartAxisPosition.Bottom));
         createAngleComp(yRotationLabel, this.getChartProxy().getChartOption("yAxis.label.rotation"), createLabelUpdateFunc(ChartAxisPosition.Left));
 
-        const labelPaddingSlider = this.wireBean(new AgSlider());
+        const labelPaddingSlider = this.createBean(new AgSlider());
 
         labelPaddingSlider.setLabel(this.chartTranslator.translate("padding"))
             .setValue(this.getChartProxy().getAxisProperty("label.padding"))
@@ -192,7 +198,7 @@ export class AxisPanel extends Component {
     private destroyActivePanels(): void {
         this.activePanels.forEach(panel => {
             _.removeFromParent(panel.getGui());
-            panel.destroy();
+            this.destroyBean(panel);
         });
     }
 
@@ -200,7 +206,7 @@ export class AxisPanel extends Component {
         return this.chartController.getChartProxy() as CartesianChartProxy<any>;
     }
 
-    public destroy(): void {
+    protected destroy(): void {
         this.destroyActivePanels();
         super.destroy();
     }

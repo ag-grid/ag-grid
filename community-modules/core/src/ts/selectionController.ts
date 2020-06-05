@@ -1,9 +1,9 @@
 import { RowNode } from "./entities/rowNode";
-import { Bean, PreDestroy } from "./context/context";
+import { Bean } from "./context/context";
+import { BeanStub } from "./context/beanStub";
 import { Qualifier } from "./context/context";
 import { Logger } from "./logger";
 import { LoggerFactory } from "./logger";
-import { EventService } from "./eventService";
 import { Events, SelectionChangedEvent } from "./events";
 import { Autowired } from "./context/context";
 import { IRowModel } from "./interfaces/iRowModel";
@@ -12,14 +12,13 @@ import { PostConstruct } from "./context/context";
 import { Constants } from "./constants";
 import { ColumnApi } from "./columnController/columnApi";
 import { GridApi } from "./gridApi";
-import { _ } from './utils';
 import { ChangedPath } from "./utils/changedPath";
-import {IClientSideRowModel} from "./interfaces/iClientSideRowModel";
+import { IClientSideRowModel } from "./interfaces/iClientSideRowModel";
+import { _ } from './utils';
 
 @Bean('selectionController')
-export class SelectionController {
+export class SelectionController extends BeanStub {
 
-    @Autowired('eventService') private eventService: EventService;
     @Autowired('rowModel') private rowModel: IRowModel;
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('columnApi') private columnApi: ColumnApi;
@@ -33,31 +32,19 @@ export class SelectionController {
 
     private groupSelectsChildren: boolean;
 
-    private events: (() => void)[] = [];
-
     private setBeans(@Qualifier('loggerFactory') loggerFactory: LoggerFactory) {
         this.logger = loggerFactory.create('SelectionController');
         this.reset();
 
         if (this.gridOptionsWrapper.isRowModelDefault()) {
-            this.events.push(this.eventService.addEventListener(Events.EVENT_ROW_DATA_CHANGED, this.reset.bind(this)));
-        } else {
-            this.logger.log('dont know what to do here');
+            this.addManagedListener(this.eventService, Events.EVENT_ROW_DATA_CHANGED, this.reset.bind(this));
         }
     }
 
     @PostConstruct
-    public init(): void {
+    private init(): void {
         this.groupSelectsChildren = this.gridOptionsWrapper.isGroupSelectsChildren();
-        this.events.push(this.eventService.addEventListener(Events.EVENT_ROW_SELECTED, this.onRowSelected.bind(this)));
-    }
-
-    @PreDestroy
-    public destroy(): void {
-        if (this.events.length) {
-            this.events.forEach(func => func());
-        }
-        this.events = [];
+        this.addManagedListener(this.eventService, Events.EVENT_ROW_SELECTED, this.onRowSelected.bind(this));
     }
 
     public setLastSelectedNode(rowNode: RowNode): void {

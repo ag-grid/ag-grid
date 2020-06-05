@@ -6,7 +6,6 @@ import {
     ColumnApi,
     Constants,
     Events,
-    EventService,
     FilterManager,
     GridApi,
     GridOptionsWrapper,
@@ -25,7 +24,7 @@ import {
     SortController,
     IInfiniteRowModel
 } from "@ag-grid-community/core";
-import {InfiniteCache, InfiniteCacheParams} from "./infiniteCache";
+import { InfiniteCache, InfiniteCacheParams } from "./infiniteCache";
 
 @Bean('rowModel')
 export class InfiniteRowModel extends BeanStub implements IInfiniteRowModel {
@@ -34,7 +33,6 @@ export class InfiniteRowModel extends BeanStub implements IInfiniteRowModel {
     @Autowired('filterManager') private filterManager: FilterManager;
     @Autowired('sortController') private sortController: SortController;
     @Autowired('selectionController') private selectionController: SelectionController;
-    @Autowired('eventService') private eventService: EventService;
     @Autowired('gridApi') private gridApi: GridApi;
     @Autowired('columnApi') private columnApi: ColumnApi;
     @Autowired('rowRenderer') private rowRenderer: RowRenderer;
@@ -80,9 +78,7 @@ export class InfiniteRowModel extends BeanStub implements IInfiniteRowModel {
     @PreDestroy
     private destroyDatasource(): void {
         if (this.datasource) {
-            if (this.datasource.destroy) {
-                this.datasource.destroy();
-            }
+            this.getContext().destroyBean(this.datasource);
             this.rowRenderer.datasourceChanged();
             this.datasource = null;
         }
@@ -93,9 +89,9 @@ export class InfiniteRowModel extends BeanStub implements IInfiniteRowModel {
     }
 
     private addEventListeners(): void {
-        this.addDestroyableEventListener(this.eventService, Events.EVENT_FILTER_CHANGED, this.onFilterChanged.bind(this));
-        this.addDestroyableEventListener(this.eventService, Events.EVENT_SORT_CHANGED, this.onSortChanged.bind(this));
-        this.addDestroyableEventListener(this.eventService, Events.EVENT_COLUMN_EVERYTHING_CHANGED, this.onColumnEverything.bind(this));
+        this.addManagedListener(this.eventService, Events.EVENT_FILTER_CHANGED, this.onFilterChanged.bind(this));
+        this.addManagedListener(this.eventService, Events.EVENT_SORT_CHANGED, this.onSortChanged.bind(this));
+        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_EVERYTHING_CHANGED, this.onColumnEverything.bind(this));
     }
 
     private onFilterChanged(): void {
@@ -218,7 +214,7 @@ export class InfiniteRowModel extends BeanStub implements IInfiniteRowModel {
         // there is a bi-directional dependency between the loader and the cache,
         // so we create loader here, and then pass dependencies in setDependencies() method later
         this.rowNodeBlockLoader = new RowNodeBlockLoader(maxConcurrentRequests, blockLoadDebounceMillis);
-        this.getContext().wireBean(this.rowNodeBlockLoader);
+        this.getContext().createBean(this.rowNodeBlockLoader);
 
         this.cacheParams = {
             // the user provided datasource
@@ -265,19 +261,17 @@ export class InfiniteRowModel extends BeanStub implements IInfiniteRowModel {
         }
 
         this.infiniteCache = new InfiniteCache(this.cacheParams);
-        this.getContext().wireBean(this.infiniteCache);
+        this.getContext().createBean(this.infiniteCache);
 
         this.infiniteCache.addEventListener(RowNodeCache.EVENT_CACHE_UPDATED, this.onCacheUpdated.bind(this));
     }
 
     private destroyCache(): void {
         if (this.infiniteCache) {
-            this.infiniteCache.destroy();
-            this.infiniteCache = null;
+            this.infiniteCache = this.destroyBean(this.infiniteCache);
         }
         if (this.rowNodeBlockLoader) {
-            this.rowNodeBlockLoader.destroy();
-            this.rowNodeBlockLoader = null;
+            this.rowNodeBlockLoader = this.destroyBean(this.rowNodeBlockLoader);
         }
     }
 

@@ -1,4 +1,3 @@
-
 export interface RowDataTransaction {
     /** deprecated */ addIndex?: number;
     add?: any[];

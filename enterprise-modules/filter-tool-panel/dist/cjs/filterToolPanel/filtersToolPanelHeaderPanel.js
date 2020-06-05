@@ -32,14 +32,14 @@ var FiltersToolPanelHeaderPanel = /** @class */ (function (_super) {
         return _super !== null && _super.apply(this, arguments) || this;
     }
     FiltersToolPanelHeaderPanel.prototype.preConstruct = function () {
-        this.setTemplate("<div class=\"ag-filter-toolpanel-search\" role=\"presentation\">\n            <div ref=\"eExpand\" class=\"ag-filter-toolpanel-expand\"></div>\n            <ag-input-text-field ref=\"eFilterTextField\" class=\"ag-filter-toolpanel-search-input\"></ag-input-text-field>\n        </div>");
+        this.setTemplate(/* html */ "<div class=\"ag-filter-toolpanel-search\" role=\"presentation\">\n                <div ref=\"eExpand\" class=\"ag-filter-toolpanel-expand\"></div>\n                <ag-input-text-field ref=\"eFilterTextField\" class=\"ag-filter-toolpanel-search-input\"></ag-input-text-field>\n            </div>");
     };
     FiltersToolPanelHeaderPanel.prototype.postConstruct = function () {
         this.eSearchTextField.onValueChange(this.onSearchTextChanged.bind(this));
         this.createExpandIcons();
         this.setExpandState(EXPAND_STATE.EXPANDED);
-        this.addDestroyableEventListener(this.eExpand, 'click', this.onExpandClicked.bind(this));
-        this.addDestroyableEventListener(this.eventService, core_1.Events.EVENT_NEW_COLUMNS_LOADED, this.showOrHideOptions.bind(this));
+        this.addManagedListener(this.eExpand, 'click', this.onExpandClicked.bind(this));
+        this.addManagedListener(this.eventService, core_1.Events.EVENT_NEW_COLUMNS_LOADED, this.showOrHideOptions.bind(this));
     };
     FiltersToolPanelHeaderPanel.prototype.init = function (params) {
         this.params = params;
@@ -88,9 +88,6 @@ var FiltersToolPanelHeaderPanel = /** @class */ (function (_super) {
     __decorate([
         core_1.Autowired('columnController')
     ], FiltersToolPanelHeaderPanel.prototype, "columnController", void 0);
-    __decorate([
-        core_1.Autowired('eventService')
-    ], FiltersToolPanelHeaderPanel.prototype, "eventService", void 0);
     __decorate([
         core_1.RefSelector('eExpand')
     ], FiltersToolPanelHeaderPanel.prototype, "eExpand", void 0);

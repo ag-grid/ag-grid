@@ -41,7 +41,7 @@ var RowGroupDropZonePanel = /** @class */ (function (_super) {
             emptyMessage: emptyMessage,
             title: title
         });
-        this.addDestroyableEventListener(this.eventService, Events.EVENT_COLUMN_ROW_GROUP_CHANGED, this.refreshGui.bind(this));
+        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_ROW_GROUP_CHANGED, this.refreshGui.bind(this));
     };
     RowGroupDropZonePanel.prototype.isColumnDroppable = function (column) {
         // we never allow grouping of secondary columns
@@ -73,9 +73,6 @@ var RowGroupDropZonePanel = /** @class */ (function (_super) {
     __decorate([
         Autowired('columnController')
     ], RowGroupDropZonePanel.prototype, "columnController", void 0);
-    __decorate([
-        Autowired('eventService')
-    ], RowGroupDropZonePanel.prototype, "eventService", void 0);
     __decorate([
         Autowired('gridOptionsWrapper')
     ], RowGroupDropZonePanel.prototype, "gridOptionsWrapper", void 0);

@@ -1,5 +1,5 @@
 import { Bean, Autowired } from "../context/context";
-import { EventService } from "../eventService";
+import { BeanStub } from "../context/beanStub";
 import { Events, ScrollVisibilityChangedEvent } from "../events";
 import { ColumnController } from "../columnController/columnController";
 import { ColumnApi } from "../columnController/columnApi";
@@ -13,9 +13,8 @@ export interface SetScrollsVisibleParams {
 }
 
 @Bean('scrollVisibleService')
-export class ScrollVisibleService {
+export class ScrollVisibleService extends BeanStub {
 
-    @Autowired('eventService') private eventService: EventService;
     @Autowired('columnController') private columnController: ColumnController;
     @Autowired('columnApi') private columnApi: ColumnApi;
     @Autowired('gridApi') private gridApi: GridApi;

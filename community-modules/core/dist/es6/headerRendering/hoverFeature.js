@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v23.1.1
+ * @version v23.2.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -37,8 +37,8 @@ var HoverFeature = /** @class */ (function (_super) {
         this.addMouseHoverListeners();
     };
     HoverFeature.prototype.addMouseHoverListeners = function () {
-        this.addDestroyableEventListener(this.element, 'mouseout', this.onMouseOut.bind(this));
-        this.addDestroyableEventListener(this.element, 'mouseover', this.onMouseOver.bind(this));
+        this.addManagedListener(this.element, 'mouseout', this.onMouseOut.bind(this));
+        this.addManagedListener(this.element, 'mouseover', this.onMouseOver.bind(this));
     };
     HoverFeature.prototype.onMouseOut = function () {
         this.columnHoverService.clearMouseOver();

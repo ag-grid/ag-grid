@@ -31,7 +31,7 @@ include '../documentation-main/documentation_header.php';
     The following can be noted:
 </p>
 
-<ul>
+<ul class="content">
     <li>Adding or removing Athlete, Age or Sport will not reload the data as they have
     no row group, pivot, value, sort or filter set.</li>
     <li>Adding or removing Country or Year will reload the data as they are part of the grouping.</li>

@@ -3,8 +3,9 @@ import { EventService } from "../eventService";
 import { GridOptionsWrapper } from "../gridOptionsWrapper";
 import { AgEvent } from "../events";
 import { Autowired, Context, PreDestroy } from "./context";
-import { _ } from "../utils";
 import { IFrameworkOverrides } from "../interfaces/iFrameworkOverrides";
+import { Component } from "../widgets/component";
+import { _ } from "../utils";
 
 export class BeanStub implements IEventEmitter {
 
@@ -15,8 +16,10 @@ export class BeanStub implements IEventEmitter {
     private destroyFunctions: (() => void)[] = [];
     private destroyed = false;
 
-    @Autowired('context') private context: Context;
     @Autowired('frameworkOverrides') private frameworkOverrides: IFrameworkOverrides;
+
+    @Autowired('context') protected context: Context;
+    @Autowired('eventService') protected eventService: EventService;
 
     // this was a test constructor niall built, when active, it prints after 5 seconds all beans/components that are
     // not destroyed. to use, create a new grid, then api.destroy() before 5 seconds. then anything that gets printed
@@ -41,7 +44,7 @@ export class BeanStub implements IEventEmitter {
     public getContext = (): Context => this.context;
 
     @PreDestroy
-    public destroy(): void {
+    protected destroy(): void {
 
         // let prototype: any = Object.getPrototypeOf(this);
         // const constructor: any = prototype.constructor;
@@ -79,8 +82,8 @@ export class BeanStub implements IEventEmitter {
         }
     }
 
-    public addDestroyableEventListener(
-        object: Window | HTMLElement | IEventEmitter | GridOptionsWrapper,
+    public addManagedListener(
+        object: Window | HTMLElement | GridOptionsWrapper | IEventEmitter,
         event: string,
         listener: (event?: any) => void
     ): (() => null) | undefined {
@@ -91,11 +94,11 @@ export class BeanStub implements IEventEmitter {
         if (object instanceof HTMLElement) {
             _.addSafePassiveEventListener(this.getFrameworkOverrides(), object as HTMLElement, event, listener);
         } else {
-            (object as any).addEventListener(event, listener);
+            object.addEventListener(event, listener);
         }
 
         const destroyFunc: () => null = () => {
-            (object as any).removeEventListener(event, listener);
+            object.removeEventListener(event, listener);
 
             this.destroyFunctions = this.destroyFunctions.filter(fn => fn !== destroyFunc);
 
@@ -118,16 +121,24 @@ export class BeanStub implements IEventEmitter {
         }
     }
 
-    public wireDependentBean<T extends BeanStub>(bean: T, context?: Context): T {
-        if (bean.destroy) {
-            this.addDestroyFunc(bean.destroy.bind(bean));
-        }
-
-        return this.wireBean(bean, context);
+    public createManagedBean<T>(bean: T, context?: Context): T {
+        const res = this.createBean(bean, context);
+        this.addDestroyFunc(this.destroyBean.bind(this, bean, context));
+        return res;
     }
 
-    protected wireBean<T extends BeanStub>(bean: T, context?: Context): T {
-        (context || this.getContext()).wireBean(bean);
-        return bean;
+    protected createBean<T>(bean: T, context?: Context, afterPreCreateCallback?: (comp: Component) => void): T {
+        return (context || this.getContext()).createBean(bean, afterPreCreateCallback);
+    }
+
+    protected destroyBean<T>(bean: T, context?: Context): T {
+        return (context || this.getContext()).destroyBean(bean);
+    }
+
+    protected destroyBeans<T>(beans: T[], context?: Context): T[] {
+        if (beans) {
+            beans.forEach( bean => this.destroyBean(bean, context));
+        }
+        return [];
     }
 }

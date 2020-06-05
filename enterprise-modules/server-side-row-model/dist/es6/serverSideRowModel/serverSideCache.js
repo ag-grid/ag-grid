@@ -305,7 +305,7 @@ var ServerSideCache = /** @class */ (function (_super) {
     };
     ServerSideCache.prototype.createBlock = function (blockNumber, displayIndex, nextRowTop) {
         var newBlock = new ServerSideBlock(blockNumber, this.parentRowNode, this.cacheParams, this);
-        this.getContext().wireBean(newBlock);
+        this.createBean(newBlock);
         var displayIndexSequence = new NumberSequence(displayIndex);
         newBlock.setDisplayIndexes(displayIndexSequence, this.getVirtualRowCount(), nextRowTop);
         this.postCreateBlock(newBlock);

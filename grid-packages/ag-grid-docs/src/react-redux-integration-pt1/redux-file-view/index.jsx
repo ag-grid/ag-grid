@@ -8,12 +8,12 @@ import FileView from './FileView.jsx';
 const rootDiv = document.getElementById('root');
 
 const comp =
-  <div>
+  <div style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
     <div className={'btn-padding'}>
-    <button onClick={reloadComponent}>Reload Component</button>
+      <button onClick={reloadComponent}>Reload Component</button>
     </div>
     <Provider store={store}>
-      <FileView/>
+      <FileView />
     </Provider>
   </div>;
 

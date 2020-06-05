@@ -61,6 +61,7 @@ export declare class Column implements ColumnGroupChild, OriginalColumnGroupChil
     setOriginalParent(originalParent: OriginalColumnGroup | null): void;
     getOriginalParent(): OriginalColumnGroup | null;
     initialise(): void;
+    resetActualWidth(): void;
     isEmptyGroup(): boolean;
     isRowGroupDisplayed(colId: string): boolean;
     getUniqueId(): string;
@@ -109,7 +110,7 @@ export declare class Column implements ColumnGroupChild, OriginalColumnGroupChil
     isPinned(): boolean;
     isPinnedLeft(): boolean;
     isPinnedRight(): boolean;
-    getPinned(): string;
+    getPinned(): 'left' | 'right';
     setVisible(visible: boolean, source?: ColumnEventType): void;
     isVisible(): boolean;
     getColDef(): ColDef;

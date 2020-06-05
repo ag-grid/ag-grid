@@ -415,7 +415,7 @@ var Node = /** @class */ (function () {
         enumerable: true,
         configurable: true
     });
-    Node.prototype.isPointInNode = function (x, y) {
+    Node.prototype.containsPoint = function (x, y) {
         return false;
     };
     /**
@@ -427,7 +427,7 @@ var Node = /** @class */ (function () {
      * @param y
      */
     Node.prototype.pickNode = function (x, y) {
-        if (!this.visible || this.pointerEvents === PointerEvents.None || !this.isPointInNode(x, y)) {
+        if (!this.visible || this.pointerEvents === PointerEvents.None || !this.containsPoint(x, y)) {
             return;
         }
         var children = this.children;

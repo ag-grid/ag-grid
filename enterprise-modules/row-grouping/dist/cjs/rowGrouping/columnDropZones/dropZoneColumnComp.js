@@ -80,13 +80,13 @@ var DropZoneColumnComp = /** @class */ (function (_super) {
     DropZoneColumnComp.prototype.setupRemove = function () {
         var _this = this;
         core_1._.setDisplayed(this.eButton, !this.gridOptionsWrapper.isFunctionsReadOnly());
-        this.addDestroyableEventListener(this.eButton, 'click', function (mouseEvent) {
+        this.addManagedListener(this.eButton, 'click', function (mouseEvent) {
             var agEvent = { type: DropZoneColumnComp.EVENT_COLUMN_REMOVE };
             _this.dispatchEvent(agEvent);
             mouseEvent.stopPropagation();
         });
         var touchListener = new core_1.TouchListener(this.eButton);
-        this.addDestroyableEventListener(touchListener, core_1.TouchListener.EVENT_TAP, function (event) {
+        this.addManagedListener(touchListener, core_1.TouchListener.EVENT_TAP, function (event) {
             var agEvent = { type: DropZoneColumnComp.EVENT_COLUMN_REMOVE };
             _this.dispatchEvent(agEvent);
         });
@@ -120,7 +120,7 @@ var DropZoneColumnComp = /** @class */ (function (_super) {
             getRow: function (index) { return rows[index]; },
             getRowCount: function () { return rows.length; }
         });
-        this.getContext().wireBean(virtualList);
+        this.getContext().createBean(virtualList);
         var ePopup = core_1._.loadTemplate('<div class="ag-select-agg-func-popup"></div>');
         ePopup.style.top = '0px';
         ePopup.style.left = '0px';
@@ -128,7 +128,7 @@ var DropZoneColumnComp = /** @class */ (function (_super) {
         // ePopup.style.height = this.gridOptionsWrapper.getAggFuncPopupHeight() + 'px';
         ePopup.style.width = this.getGui().clientWidth + 'px';
         var popupHiddenFunc = function () {
-            virtualList.destroy();
+            _this.destroyBean(virtualList);
             _this.popupShowing = false;
         };
         var hidePopup = this.popupService.addAsModalPopup(ePopup, true, popupHiddenFunc);
@@ -189,9 +189,6 @@ var DropZoneColumnComp = /** @class */ (function (_super) {
     __decorate([
         core_1.Autowired('gridOptionsWrapper')
     ], DropZoneColumnComp.prototype, "gridOptionsWrapper", void 0);
-    __decorate([
-        core_1.Autowired('eventService')
-    ], DropZoneColumnComp.prototype, "eventService", void 0);
     __decorate([
         core_1.Autowired('columnApi')
     ], DropZoneColumnComp.prototype, "columnApi", void 0);

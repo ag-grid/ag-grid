@@ -1,6 +1,9 @@
 import { GridPanel } from '../gridPanel/gridPanel';
+import { HeaderContainer } from './headerContainer';
 import { Component } from '../widgets/component';
-export declare class HeaderRootComp extends Component {
+import { ManagedFocusComponent } from '../widgets/managedFocusComponent';
+export declare type HeaderContainerPosition = 'left' | 'right' | 'center';
+export declare class HeaderRootComp extends ManagedFocusComponent {
     private static TEMPLATE;
     private ePinnedLeftHeader;
     private ePinnedRightHeader;
@@ -8,25 +11,28 @@ export declare class HeaderRootComp extends Component {
     private eHeaderViewport;
     private gridOptionsWrapper;
     private columnController;
-    private eventService;
     private gridApi;
     private autoWidthCalculator;
-    private childContainers;
+    private headerNavigationService;
     private gridPanel;
     private printLayout;
+    private headerContainers;
     constructor();
+    protected postConstruct(): void;
     registerGridComp(gridPanel: GridPanel): void;
-    private postConstruct;
+    private registerHeaderContainer;
+    protected onTabKeyDown(e: KeyboardEvent): void;
+    protected handleKeyDown(e: KeyboardEvent): void;
+    protected onFocusOut(e: FocusEvent): void;
     private onDomLayoutChanged;
     setHorizontalScroll(offset: number): void;
     forEachHeaderElement(callback: (renderedHeaderElement: Component) => void): void;
-    destroy(): void;
     refreshHeader(): void;
     private onPivotModeChanged;
     setHeight(height: number): void;
     private addPreventHeaderScroll;
+    getHeaderContainers(): Map<HeaderContainerPosition, HeaderContainer>;
     setHeaderContainerWidth(width: number): void;
     setLeftVisible(visible: boolean): void;
     setRightVisible(visible: boolean): void;
-    getHeaderRowCount(): number;
 }

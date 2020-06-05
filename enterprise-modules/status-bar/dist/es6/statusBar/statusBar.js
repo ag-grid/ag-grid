@@ -60,9 +60,7 @@ var StatusBar = /** @class */ (function (_super) {
             componentDetails.forEach(function (componentDetail) {
                 componentDetail.promise.then(function (component) {
                     var destroyFunc = function () {
-                        if (component.destroy) {
-                            component.destroy();
-                        }
+                        _this.getContext().destroyBean(component);
                     };
                     if (_this.isAlive()) {
                         _this.statusBarService.registerStatusPanel(componentDetail.key, component);
@@ -76,7 +74,7 @@ var StatusBar = /** @class */ (function (_super) {
             });
         });
     };
-    StatusBar.TEMPLATE = "<div class=\"ag-status-bar\">\n        <div ref=\"eStatusBarLeft\" class=\"ag-status-bar-left\"></div>\n        <div ref=\"eStatusBarCenter\" class=\"ag-status-bar-center\"></div>\n        <div ref=\"eStatusBarRight\" class=\"ag-status-bar-right\"></div>\n    </div>";
+    StatusBar.TEMPLATE = "<div class=\"ag-status-bar\">\n            <div ref=\"eStatusBarLeft\" class=\"ag-status-bar-left\"></div>\n            <div ref=\"eStatusBarCenter\" class=\"ag-status-bar-center\"></div>\n            <div ref=\"eStatusBarRight\" class=\"ag-status-bar-right\"></div>\n        </div>";
     __decorate([
         Autowired('gridOptionsWrapper')
     ], StatusBar.prototype, "gridOptionsWrapper", void 0);

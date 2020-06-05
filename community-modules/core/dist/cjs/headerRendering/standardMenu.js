@@ -1,10 +1,23 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v23.1.1
+ * @version v23.2.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
 "use strict";
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = function (d, b) {
+        extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+        return extendStatics(d, b);
+    };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -13,9 +26,13 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var context_1 = require("../context/context");
+var beanStub_1 = require("../context/beanStub");
+var constants_1 = require("../constants");
 var utils_1 = require("../utils");
-var StandardMenuFactory = /** @class */ (function () {
+var StandardMenuFactory = /** @class */ (function (_super) {
+    __extends(StandardMenuFactory, _super);
     function StandardMenuFactory() {
+        return _super !== null && _super.apply(this, arguments) || this;
     }
     StandardMenuFactory.prototype.hideActiveMenu = function () {
         if (this.hidePopup) {
@@ -31,7 +48,7 @@ var StandardMenuFactory = /** @class */ (function () {
                 mouseEvent: mouseEvent,
                 ePopup: eMenu
             });
-        });
+        }, mouseEvent.target);
     };
     StandardMenuFactory.prototype.showMenuAfterButtonClick = function (column, eventSource) {
         var _this = this;
@@ -43,13 +60,14 @@ var StandardMenuFactory = /** @class */ (function () {
                 keepWithinBounds: true,
                 column: column
             });
-        });
+        }, eventSource);
     };
-    StandardMenuFactory.prototype.showPopup = function (column, positionCallback) {
+    StandardMenuFactory.prototype.showPopup = function (column, positionCallback, eventSource) {
         var _this = this;
         var filterWrapper = this.filterManager.getOrCreateFilterWrapper(column, 'COLUMN_MENU');
         var eMenu = document.createElement('div');
         utils_1._.addCssClass(eMenu, 'ag-menu');
+        this.tabListener = this.addManagedListener(eMenu, 'keydown', function (e) { return _this.trapFocusWithin(e, eMenu); });
         filterWrapper.guiPromise.then(function (gui) { return eMenu.appendChild(gui); });
         var hidePopup;
         var bodyScrollListener = function (event) {
@@ -59,9 +77,19 @@ var StandardMenuFactory = /** @class */ (function () {
             }
         };
         this.eventService.addEventListener('bodyScroll', bodyScrollListener);
-        var closedCallback = function () {
+        var closedCallback = function (e) {
             _this.eventService.removeEventListener('bodyScroll', bodyScrollListener);
             column.setMenuVisible(false, 'contextMenu');
+            var isKeyboardEvent = e instanceof KeyboardEvent;
+            if (_this.tabListener) {
+                _this.tabListener = _this.tabListener();
+            }
+            if (isKeyboardEvent && eventSource && utils_1._.isVisible(eventSource)) {
+                var focusableEl = _this.focusController.findTabbableParent(eventSource);
+                if (focusableEl) {
+                    focusableEl.focus();
+                }
+            }
         };
         // need to show filter before positioning, as only after filter
         // is visible can we find out what the width of it is
@@ -78,24 +106,39 @@ var StandardMenuFactory = /** @class */ (function () {
         this.hidePopup = hidePopup;
         column.setMenuVisible(true, 'contextMenu');
     };
+    StandardMenuFactory.prototype.trapFocusWithin = function (e, menu) {
+        if (e.keyCode !== constants_1.Constants.KEY_TAB) {
+            return;
+        }
+        if (this.focusController.findNextFocusableElement(menu, false, e.shiftKey)) {
+            return;
+        }
+        e.preventDefault();
+        if (e.shiftKey) {
+            this.focusController.focusLastFocusableElement(menu);
+        }
+        else {
+            this.focusController.focusFirstFocusableElement(menu);
+        }
+    };
     StandardMenuFactory.prototype.isMenuEnabled = function (column) {
         // for standard, we show menu if filter is enabled, and the menu is not suppressed
         return column.isFilterAllowed();
     };
-    __decorate([
-        context_1.Autowired('eventService')
-    ], StandardMenuFactory.prototype, "eventService", void 0);
     __decorate([
         context_1.Autowired('filterManager')
     ], StandardMenuFactory.prototype, "filterManager", void 0);
     __decorate([
         context_1.Autowired('popupService')
     ], StandardMenuFactory.prototype, "popupService", void 0);
+    __decorate([
+        context_1.Autowired('focusController')
+    ], StandardMenuFactory.prototype, "focusController", void 0);
     StandardMenuFactory = __decorate([
         context_1.Bean('menuFactory')
     ], StandardMenuFactory);
     return StandardMenuFactory;
-}());
+}(beanStub_1.BeanStub));
 exports.StandardMenuFactory = StandardMenuFactory;
 
 //# sourceMappingURL=standardMenu.js.map

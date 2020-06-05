@@ -28,17 +28,17 @@ var SetFloatingFilterComp = /** @class */ (function (_super) {
         _this.availableValuesListenerAdded = false;
         return _this;
     }
-    SetFloatingFilterComp.prototype.init = function (params) {
-        this.eFloatingFilterText.setDisabled(true);
-        this.params = params;
+    // this is a user component, and IComponent has "public destroy()" as part of the interface.
+    // so we need to override destroy() just to make the method public.
+    SetFloatingFilterComp.prototype.destroy = function () {
+        _super.prototype.destroy.call(this);
     };
-    // unlike other filters, what we show in the floating filter can be different, even
-    // if another filter changes. this is due to how set filter restricts its values based
-    // on selections in other filters, e.g. if you filter Language to English, then the set filter
-    // on Country will only show English speaking countries. Thus the list of items to show
-    // in the floating filter can change.
-    SetFloatingFilterComp.prototype.onAvailableValuesChanged = function (filterChangedEvent) {
-        this.updateSetFilterText();
+    SetFloatingFilterComp.prototype.init = function (params) {
+        var displayName = this.columnController.getDisplayNameForColumn(params.column, 'header', true);
+        this.eFloatingFilterText
+            .setDisabled(true)
+            .setInputAriaLabel(displayName + " Filter Input");
+        this.params = params;
     };
     SetFloatingFilterComp.prototype.onParentModelChanged = function (parentModel) {
         this.lastKnownModel = parentModel;
@@ -48,7 +48,12 @@ var SetFloatingFilterComp = /** @class */ (function (_super) {
         var _this = this;
         this.params.parentFilterInstance(function (setFilter) {
             var setValueModel = setFilter.getValueModel();
-            _this.addDestroyableEventListener(setValueModel, setValueModel_1.SetValueModel.EVENT_AVAILABLE_VALUES_CHANGED, _this.onAvailableValuesChanged.bind(_this));
+            // unlike other filters, what we show in the floating filter can be different, even
+            // if another filter changes. this is due to how set filter restricts its values based
+            // on selections in other filters, e.g. if you filter Language to English, then the set filter
+            // on Country will only show English speaking countries. Thus the list of items to show
+            // in the floating filter can change.
+            _this.addManagedListener(setValueModel, setValueModel_1.SetValueModel.EVENT_AVAILABLE_VALUES_CHANGED, function () { return _this.updateSetFilterText(); });
         });
         this.availableValuesListenerAdded = true;
     };
@@ -63,17 +68,19 @@ var SetFloatingFilterComp = /** @class */ (function (_super) {
         }
         // also supporting old filter model for backwards compatibility
         var values = this.lastKnownModel instanceof Array ? this.lastKnownModel : this.lastKnownModel.values;
-        if (!values || values.length === 0) {
+        if (!values) {
             this.eFloatingFilterText.setValue('');
             return;
         }
         this.params.parentFilterInstance(function (setFilter) {
             var valueModel = setFilter.getValueModel();
             var availableValues = core_1._.filter(values, function (v) { return valueModel.isValueAvailable(v); });
+            var localeTextFunc = _this.gridOptionsWrapper.getLocaleTextFunc();
             // format all the values, if a formatter is provided
             var formattedValues = core_1._.map(availableValues, function (value) {
                 var formattedValue = _this.valueFormatterService.formatValue(_this.params.column, null, null, value);
-                return formattedValue != null ? formattedValue : value;
+                var valueToRender = formattedValue != null ? formattedValue : value;
+                return valueToRender == null ? "(" + localeTextFunc('blanks', 'Blanks') + ")" : valueToRender;
             });
             var arrayToDisplay = formattedValues.length > 10 ? formattedValues.slice(0, 10).concat('...') : formattedValues;
             var valuesString = "(" + formattedValues.length + ") " + arrayToDisplay.join(',');
@@ -86,6 +93,12 @@ var SetFloatingFilterComp = /** @class */ (function (_super) {
     __decorate([
         core_1.Autowired('valueFormatterService')
     ], SetFloatingFilterComp.prototype, "valueFormatterService", void 0);
+    __decorate([
+        core_1.Autowired('gridOptionsWrapper')
+    ], SetFloatingFilterComp.prototype, "gridOptionsWrapper", void 0);
+    __decorate([
+        core_1.Autowired('columnController')
+    ], SetFloatingFilterComp.prototype, "columnController", void 0);
     return SetFloatingFilterComp;
 }(core_1.Component));
 exports.SetFloatingFilterComp = SetFloatingFilterComp;

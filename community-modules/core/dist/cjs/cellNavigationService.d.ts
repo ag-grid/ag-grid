@@ -1,9 +1,10 @@
-// Type definitions for @ag-grid-community/core v23.1.1
+// Type definitions for @ag-grid-community/core v23.2.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
+import { BeanStub } from "./context/beanStub";
 import { CellPosition } from "./entities/cellPosition";
 import { RowPosition } from "./entities/rowPosition";
-export declare class CellNavigationService {
+export declare class CellNavigationService extends BeanStub {
     private columnController;
     private rowModel;
     private pinnedRowModel;

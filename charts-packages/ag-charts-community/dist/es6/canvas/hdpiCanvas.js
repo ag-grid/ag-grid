@@ -15,11 +15,11 @@ var HdpiCanvas = /** @class */ (function () {
         this._pixelRatio = NaN;
         this.document = document;
         this.element = document.createElement('canvas');
+        this.context = this.element.getContext('2d');
         this.element.style.userSelect = 'none';
         this.element.style.display = 'block';
-        this.context = this.element.getContext('2d');
-        this.updatePixelRatio(0, false);
-        this.resize(this._width = width, this._height = height);
+        this.setPixelRatio();
+        this.resize(width, height);
     }
     Object.defineProperty(HdpiCanvas.prototype, "container", {
         get: function () {
@@ -94,45 +94,29 @@ var HdpiCanvas = /** @class */ (function () {
         configurable: true
     });
     /**
-     * Updates the pixel ratio of the Canvas element with the given value,
+     * Changes the pixel ratio of the Canvas element to the given value,
      * or uses the window.devicePixelRatio (default), then resizes the Canvas
      * element accordingly (default).
-     * @param ratio
-     * @param resize
      */
-    HdpiCanvas.prototype.updatePixelRatio = function (ratio, resize) {
-        if (ratio === void 0) { ratio = 0; }
-        if (resize === void 0) { resize = true; }
+    HdpiCanvas.prototype.setPixelRatio = function (ratio) {
         var pixelRatio = ratio || window.devicePixelRatio;
         if (pixelRatio === this.pixelRatio) {
             return;
         }
-        var canvas = this.element;
-        var ctx = this.context;
-        var overrides = HdpiCanvas.makeHdpiOverrides(pixelRatio);
-        for (var name_1 in overrides) {
-            if (overrides.hasOwnProperty(name_1)) {
-                // Save native methods under prefixed names,
-                // if this hasn't been done by the previous overrides already.
-                if (!ctx['$' + name_1]) {
-                    ctx['$' + name_1] = ctx[name_1];
-                }
-                // Replace native methods with overrides,
-                // or previous overrides with the new ones.
-                ctx[name_1] = overrides[name_1];
-            }
-        }
-        if (resize) {
-            var logicalWidth = canvas.width / this.pixelRatio;
-            var logicalHeight = canvas.height / this.pixelRatio;
-            canvas.width = Math.round(logicalWidth * pixelRatio);
-            canvas.height = Math.round(logicalHeight * pixelRatio);
-            canvas.style.width = Math.round(logicalWidth) + 'px';
-            canvas.style.height = Math.round(logicalHeight) + 'px';
-            ctx.resetTransform(); // should be called every time Canvas size changes
-        }
+        HdpiCanvas.overrideScale(this.context, pixelRatio);
         this._pixelRatio = pixelRatio;
+        this.resize(this.width, this.height);
     };
+    Object.defineProperty(HdpiCanvas.prototype, "pixelated", {
+        get: function () {
+            return this.element.style.imageRendering === 'pixelated';
+        },
+        set: function (value) {
+            this.element.style.imageRendering = value ? 'pixelated' : 'auto';
+        },
+        enumerable: true,
+        configurable: true
+    });
     Object.defineProperty(HdpiCanvas.prototype, "width", {
         get: function () {
             return this._width;
@@ -147,21 +131,15 @@ var HdpiCanvas = /** @class */ (function () {
         enumerable: true,
         configurable: true
     });
-    HdpiCanvas.prototype.resize = function (width, height, callbackWhenDone) {
-        var _this = this;
+    HdpiCanvas.prototype.resize = function (width, height) {
+        var _a = this, element = _a.element, context = _a.context, pixelRatio = _a.pixelRatio;
+        element.width = Math.round(width * pixelRatio);
+        element.height = Math.round(height * pixelRatio);
+        element.style.width = width + 'px';
+        element.style.height = height + 'px';
+        context.resetTransform();
         this._width = width;
         this._height = height;
-        requestAnimationFrame(function () {
-            var _a = _this, element = _a.element, context = _a.context, pixelRatio = _a.pixelRatio;
-            element.width = Math.round(width * pixelRatio);
-            element.height = Math.round(height * pixelRatio);
-            element.style.width = Math.round(width) + 'px';
-            element.style.height = Math.round(height) + 'px';
-            context.resetTransform();
-            // The canvas being resized is asynchronous. For the case where we
-            // need to do something after it is resized, return a promise.
-            callbackWhenDone && callbackWhenDone();
-        });
     };
     Object.defineProperty(HdpiCanvas, "textMeasuringContext", {
         get: function () {
@@ -278,9 +256,9 @@ var HdpiCanvas = /** @class */ (function () {
         cache[font][text] = size;
         return size;
     };
-    HdpiCanvas.makeHdpiOverrides = function (pixelRatio) {
+    HdpiCanvas.overrideScale = function (ctx, scale) {
         var depth = 0;
-        return {
+        var overrides = {
             save: function () {
                 this.$save();
                 depth++;
@@ -292,12 +270,12 @@ var HdpiCanvas = /** @class */ (function () {
                 }
             },
             setTransform: function (a, b, c, d, e, f) {
-                this.$setTransform(a * pixelRatio, b * pixelRatio, c * pixelRatio, d * pixelRatio, e * pixelRatio, f * pixelRatio);
+                this.$setTransform(a * scale, b * scale, c * scale, d * scale, e * scale, f * scale);
             },
             resetTransform: function () {
                 // As of Jan 8, 2019, `resetTransform` is still an "experimental technology",
                 // and doesn't work in IE11 and Edge 44.
-                this.$setTransform(pixelRatio, 0, 0, pixelRatio, 0, 0);
+                this.$setTransform(scale, 0, 0, scale, 0, 0);
                 this.save();
                 depth = 0;
                 // The scale above will be impossible to restore,
@@ -305,6 +283,18 @@ var HdpiCanvas = /** @class */ (function () {
                 // check `depth` there.
             }
         };
+        for (var name_1 in overrides) {
+            if (overrides.hasOwnProperty(name_1)) {
+                // Save native methods under prefixed names,
+                // if this hasn't been done by the previous overrides already.
+                if (!ctx['$' + name_1]) {
+                    ctx['$' + name_1] = ctx[name_1];
+                }
+                // Replace native methods with overrides,
+                // or previous overrides with the new ones.
+                ctx[name_1] = overrides[name_1];
+            }
+        }
     };
     HdpiCanvas.textSizeCache = {};
     return HdpiCanvas;

@@ -6,7 +6,6 @@ import {
     Events,
     EventService,
     GridOptionsWrapper,
-    ModuleNames,
     PostConstruct,
     _
 } from "@ag-grid-community/core";
@@ -17,7 +16,6 @@ export class GridHeaderDropZones extends Component {
 
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('columnController') private columnController: ColumnController;
-    @Autowired('eventService') private eventService: EventService;
 
     private rowGroupComp: Component;
     private pivotComp: Component;
@@ -30,11 +28,8 @@ export class GridHeaderDropZones extends Component {
     private postConstruct(): void {
         this.setGui(this.createNorthPanel());
 
-        const events = [
-            this.eventService.addEventListener(Events.EVENT_COLUMN_ROW_GROUP_CHANGED, this.onRowGroupChanged.bind(this)),
-            this.eventService.addEventListener(Events.EVENT_COLUMN_EVERYTHING_CHANGED, this.onRowGroupChanged.bind(this))
-        ];
-        this.addDestroyFunc(() => events.forEach(func => func()));
+        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_ROW_GROUP_CHANGED, this.onRowGroupChanged.bind(this));
+        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_EVERYTHING_CHANGED, this.onRowGroupChanged.bind(this));
 
         this.onRowGroupChanged();
     }
@@ -46,12 +41,10 @@ export class GridHeaderDropZones extends Component {
         _.addCssClass(topPanelGui, 'ag-column-drop-wrapper');
 
         this.rowGroupComp = new RowGroupDropZonePanel(true);
-        this.getContext().wireBean(this.rowGroupComp);
-        this.addDestroyFunc(() => this.rowGroupComp.destroy());
+        this.createManagedBean(this.rowGroupComp);
 
         this.pivotComp = new PivotDropZonePanel(true);
-        this.getContext().wireBean(this.pivotComp);
-        this.addDestroyFunc(() => this.pivotComp.destroy());
+        this.createManagedBean(this.pivotComp);
 
         topPanelGui.appendChild(this.rowGroupComp.getGui());
         topPanelGui.appendChild(this.pivotComp.getGui());

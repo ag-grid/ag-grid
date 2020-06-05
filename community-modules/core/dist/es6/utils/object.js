@@ -1,19 +1,20 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v23.1.1
+ * @version v23.2.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
 import { missing, exists, values } from './generic';
+import { forEach } from './array';
 export function iterateObject(object, callback) {
-    if (!object || missing(object)) {
+    if (object == null) {
         return;
     }
     if (Array.isArray(object)) {
-        object.forEach(function (value, index) { return callback("" + index, value); });
+        forEach(object, function (value, index) { return callback("" + index, value); });
     }
     else {
-        Object.keys(object).forEach(function (key) { return callback(key, object[key]); });
+        forEach(Object.keys(object), function (key) { return callback(key, object[key]); });
     }
 }
 export function cloneObject(object) {
@@ -44,7 +45,7 @@ export function copyPropertiesIfPresent(source, target) {
     for (var _i = 2; _i < arguments.length; _i++) {
         properties[_i - 2] = arguments[_i];
     }
-    properties.forEach(function (p) { return copyPropertyIfPresent(source, target, p); });
+    forEach(properties, function (p) { return copyPropertyIfPresent(source, target, p); });
 }
 /**
  * Will copy the specified property from `source` into the equivalent property on `target`, unless the property has a
@@ -59,7 +60,7 @@ export function copyPropertyIfPresent(source, target, property, transform) {
 export function getAllKeysInObjects(objects) {
     var allValues = {};
     objects.filter(function (obj) { return obj != null; }).forEach(function (obj) {
-        Object.keys(obj).forEach(function (key) { return allValues[key] = null; });
+        forEach(Object.keys(obj), function (key) { return allValues[key] = null; });
     });
     return Object.keys(allValues);
 }
@@ -86,13 +87,7 @@ export function assign(object) {
     for (var _i = 1; _i < arguments.length; _i++) {
         sources[_i - 1] = arguments[_i];
     }
-    sources.forEach(function (source) {
-        if (exists(source)) {
-            iterateObject(source, function (key, value) {
-                object[key] = value;
-            });
-        }
-    });
+    forEach(sources, function (source) { return iterateObject(source, function (key, value) { return object[key] = value; }); });
     return object;
 }
 export function missingOrEmptyObject(value) {
@@ -129,8 +124,8 @@ export function set(target, expression, value) {
 }
 export function deepFreeze(object) {
     Object.freeze(object);
-    values(object).filter(function (v) { return v != null; }).forEach(function (v) {
-        if (typeof v === 'object' || typeof v === 'function') {
+    forEach(values(object), function (v) {
+        if (v != null && (typeof v === 'object' || typeof v === 'function')) {
             deepFreeze(v);
         }
     });

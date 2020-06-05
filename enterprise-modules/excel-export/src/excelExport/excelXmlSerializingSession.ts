@@ -15,7 +15,7 @@ import {
 import { ExcelMixedStyle } from './excelCreator';
 import { ExcelXmlFactory } from './excelXmlFactory';
 import { ExcelXlsxFactory } from './excelXlsxFactory';
-import {GridSerializingParams, RowType, BaseGridSerializingSession, RowAccumulator, RowSpanningAccumulator} from "@ag-grid-community/csv-export";
+import { GridSerializingParams, RowType, BaseGridSerializingSession, RowAccumulator, RowSpanningAccumulator } from "@ag-grid-community/csv-export";
 
 export interface ExcelGridSerializingParams extends GridSerializingParams {
     sheetName: string;

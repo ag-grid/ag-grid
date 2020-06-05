@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v23.1.1
+ * @version v23.2.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -30,6 +30,11 @@ var LoadingOverlayComponent = /** @class */ (function (_super) {
     function LoadingOverlayComponent() {
         return _super.call(this) || this;
     }
+    // this is a user component, and IComponent has "public destroy()" as part of the interface.
+    // so we need to override destroy() just to make the method public.
+    LoadingOverlayComponent.prototype.destroy = function () {
+        _super.prototype.destroy.call(this);
+    };
     LoadingOverlayComponent.prototype.init = function (params) {
         var template = this.gridOptionsWrapper.getOverlayLoadingTemplate() ?
             this.gridOptionsWrapper.getOverlayLoadingTemplate() : LoadingOverlayComponent.DEFAULT_LOADING_OVERLAY_TEMPLATE;

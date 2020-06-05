@@ -2,19 +2,17 @@ import { Component } from "../widgets/component";
 import { Autowired, PostConstruct } from "../context/context";
 import { GridOptionsWrapper } from "../gridOptionsWrapper";
 import { RefSelector } from "../widgets/componentAnnotations";
-import { EventService } from "../eventService";
 import { Events } from "../events";
 import { RowRenderer } from "../rendering/rowRenderer";
 import { PaginationProxy } from "./paginationProxy";
-import { _ } from "../utils";
 import { IServerSideRowModel } from "../interfaces/iServerSideRowModel";
 import { IRowModel } from "../interfaces/iRowModel";
 import { Constants } from "../constants";
+import { _ } from "../utils";
 
 export class PaginationComp extends Component {
 
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
-    @Autowired('eventService') private eventService: EventService;
     @Autowired('paginationProxy') private paginationProxy: PaginationProxy;
     @Autowired('rowRenderer') private rowRenderer: RowRenderer;
     @Autowired('rowModel') private rowModel: IRowModel;
@@ -61,12 +59,12 @@ export class PaginationComp extends Component {
             return;
         }
 
-        this.addDestroyableEventListener(this.eventService, Events.EVENT_PAGINATION_CHANGED, this.onPaginationChanged.bind(this));
+        this.addManagedListener(this.eventService, Events.EVENT_PAGINATION_CHANGED, this.onPaginationChanged.bind(this));
 
-        this.addDestroyableEventListener(this.btFirst, 'click', this.onBtFirst.bind(this));
-        this.addDestroyableEventListener(this.btLast, 'click', this.onBtLast.bind(this));
-        this.addDestroyableEventListener(this.btNext, 'click', this.onBtNext.bind(this));
-        this.addDestroyableEventListener(this.btPrevious, 'click', this.onBtPrevious.bind(this));
+        this.addManagedListener(this.btFirst, 'click', this.onBtFirst.bind(this));
+        this.addManagedListener(this.btLast, 'click', this.onBtLast.bind(this));
+        this.addManagedListener(this.btNext, 'click', this.onBtNext.bind(this));
+        this.addManagedListener(this.btPrevious, 'click', this.onBtPrevious.bind(this));
 
         this.onPaginationChanged();
     }
@@ -76,6 +74,12 @@ export class PaginationComp extends Component {
         this.updateRowLabels();
         this.setCurrentPageLabel();
         this.setTotalLabels();
+    }
+
+    private onBtFirst() {
+        if (!this.previousAndFirstButtonsDisabled) {
+            this.paginationProxy.goToFirstPage();
+        }
     }
 
     private setCurrentPageLabel(): void {
@@ -149,12 +153,6 @@ export class PaginationComp extends Component {
     private onBtPrevious() {
         if (!this.previousAndFirstButtonsDisabled) {
             this.paginationProxy.goToPreviousPage();
-        }
-    }
-
-    private onBtFirst() {
-        if (!this.previousAndFirstButtonsDisabled) {
-            this.paginationProxy.goToFirstPage();
         }
     }
 

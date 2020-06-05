@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v23.1.1
+ * @version v23.2.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -72,11 +72,13 @@ var DateFilter = /** @class */ (function (_super) {
         compTo.setDate(dateTo);
     };
     DateFilter.prototype.resetUiToDefaults = function (silent) {
-        _super.prototype.resetUiToDefaults.call(this, silent);
-        this.dateCondition1FromComp.setDate(null);
-        this.dateCondition1ToComp.setDate(null);
-        this.dateCondition2FromComp.setDate(null);
-        this.dateCondition2ToComp.setDate(null);
+        var _this = this;
+        return _super.prototype.resetUiToDefaults.call(this, silent).then(function () {
+            _this.dateCondition1FromComp.setDate(null);
+            _this.dateCondition1ToComp.setDate(null);
+            _this.dateCondition2FromComp.setDate(null);
+            _this.dateCondition2ToComp.setDate(null);
+        });
     };
     DateFilter.prototype.comparator = function () {
         return this.dateFilterParams.comparator ? this.dateFilterParams.comparator : this.defaultComparator.bind(this);
@@ -104,10 +106,10 @@ var DateFilter = /** @class */ (function (_super) {
             onDateChanged: function () { return _this.onUiChanged(); },
             filterParams: this.dateFilterParams
         };
-        this.dateCondition1FromComp = new dateCompWrapper_1.DateCompWrapper(this.userComponentFactory, dateComponentParams, this.eCondition1PanelFrom);
-        this.dateCondition1ToComp = new dateCompWrapper_1.DateCompWrapper(this.userComponentFactory, dateComponentParams, this.eCondition1PanelTo);
-        this.dateCondition2FromComp = new dateCompWrapper_1.DateCompWrapper(this.userComponentFactory, dateComponentParams, this.eCondition2PanelFrom);
-        this.dateCondition2ToComp = new dateCompWrapper_1.DateCompWrapper(this.userComponentFactory, dateComponentParams, this.eCondition2PanelTo);
+        this.dateCondition1FromComp = new dateCompWrapper_1.DateCompWrapper(this.getContext(), this.userComponentFactory, dateComponentParams, this.eCondition1PanelFrom);
+        this.dateCondition1ToComp = new dateCompWrapper_1.DateCompWrapper(this.getContext(), this.userComponentFactory, dateComponentParams, this.eCondition1PanelTo);
+        this.dateCondition2FromComp = new dateCompWrapper_1.DateCompWrapper(this.getContext(), this.userComponentFactory, dateComponentParams, this.eCondition2PanelFrom);
+        this.dateCondition2ToComp = new dateCompWrapper_1.DateCompWrapper(this.getContext(), this.userComponentFactory, dateComponentParams, this.eCondition2PanelTo);
         this.addDestroyFunc(function () {
             _this.dateCondition1FromComp.destroy();
             _this.dateCondition1ToComp.destroy();

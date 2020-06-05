@@ -1,4 +1,4 @@
-import { ChangedPath, RefreshModelParams, RowBounds, RowDataTransaction, RowNode, RowNodeTransaction, IClientSideRowModel } from "@ag-grid-community/core";
+import { ChangedPath, RefreshModelParams, RowBounds, RowDataTransaction, RowNode, RowNodeTransaction, IClientSideRowModel, BeanStub } from "@ag-grid-community/core";
 export interface BatchTransactionItem {
     rowDataTransaction: RowDataTransaction;
     callback: ((res: RowNodeTransaction) => void) | undefined;
@@ -6,14 +6,12 @@ export interface BatchTransactionItem {
 export interface RowNodeMap {
     [id: string]: RowNode;
 }
-export declare class ClientSideRowModel implements IClientSideRowModel {
+export declare class ClientSideRowModel extends BeanStub implements IClientSideRowModel {
     private gridOptionsWrapper;
     private columnController;
     private filterManager;
     private $scope;
     private selectionController;
-    private eventService;
-    private context;
     private valueService;
     private valueCache;
     private columnApi;
@@ -29,10 +27,7 @@ export declare class ClientSideRowModel implements IClientSideRowModel {
     private nodeManager;
     private rowDataTransactionBatch;
     private lastHighlightedRow;
-    private events;
-    private refreshMapFunc;
     init(): void;
-    destroy(): void;
     start(): void;
     ensureRowHeightsValid(startPixel: number, endPixel: number, startLimitIndex: number, endLimitIndex: number): boolean;
     private setRowTops;

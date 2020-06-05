@@ -3,7 +3,6 @@ import {
     CellNavigationService,
     Component,
     Events,
-    EventService,
     GridApi,
     GridOptions,
     GridOptionsWrapper,
@@ -21,16 +20,15 @@ import { NameValueComp } from "./nameValueComp";
 
 export class AggregationComp extends Component implements IStatusPanelComp {
 
-    private static TEMPLATE =
-            `<div class="ag-status-panel ag-status-panel-aggregations">
-                <ag-name-value ref="avgAggregationComp"></ag-name-value>
-                <ag-name-value ref="countAggregationComp"></ag-name-value>
-                <ag-name-value ref="minAggregationComp"></ag-name-value>
-                <ag-name-value ref="maxAggregationComp"></ag-name-value>
-                <ag-name-value ref="sumAggregationComp"></ag-name-value>
-            </div>`;
+    private static TEMPLATE = /* html */
+        `<div class="ag-status-panel ag-status-panel-aggregations">
+            <ag-name-value ref="avgAggregationComp"></ag-name-value>
+            <ag-name-value ref="countAggregationComp"></ag-name-value>
+            <ag-name-value ref="minAggregationComp"></ag-name-value>
+            <ag-name-value ref="maxAggregationComp"></ag-name-value>
+            <ag-name-value ref="sumAggregationComp"></ag-name-value>
+        </div>`;
 
-    @Autowired('eventService') private eventService: EventService;
     @Optional('rangeController') private rangeController: IRangeController;
     @Autowired('valueService') private valueService: ValueService;
     @Autowired('cellNavigationService') private cellNavigationService: CellNavigationService;
@@ -51,6 +49,12 @@ export class AggregationComp extends Component implements IStatusPanelComp {
         super(AggregationComp.TEMPLATE);
     }
 
+    // this is a user component, and IComponent has "public destroy()" as part of the interface.
+    // so we need to override destroy() just to make the method public.
+    public destroy(): void {
+        super.destroy();
+    }
+
     @PostConstruct
     private postConstruct(): void {
         if (!this.isValidRowModel()) {
@@ -64,8 +68,8 @@ export class AggregationComp extends Component implements IStatusPanelComp {
         this.maxAggregationComp.setLabel('max', 'Max');
         this.sumAggregationComp.setLabel('sum', 'Sum');
 
-        this.addDestroyableEventListener(this.eventService, Events.EVENT_RANGE_SELECTION_CHANGED, this.onRangeSelectionChanged.bind(this));
-        this.addDestroyableEventListener(this.eventService, Events.EVENT_MODEL_UPDATED, this.onRangeSelectionChanged.bind(this));
+        this.addManagedListener(this.eventService, Events.EVENT_RANGE_SELECTION_CHANGED, this.onRangeSelectionChanged.bind(this));
+        this.addManagedListener(this.eventService, Events.EVENT_MODEL_UPDATED, this.onRangeSelectionChanged.bind(this));
     }
 
     private isValidRowModel() {

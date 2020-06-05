@@ -7,17 +7,19 @@ import {
     PostConstruct,
     Promise,
     RefSelector,
-    _
+    _,
+    IStatusPanelComp
 } from '@ag-grid-community/core';
 import { StatusBarService } from "./statusBarService";
 
 export class StatusBar extends Component {
 
-    private static TEMPLATE = `<div class="ag-status-bar">
-        <div ref="eStatusBarLeft" class="ag-status-bar-left"></div>
-        <div ref="eStatusBarCenter" class="ag-status-bar-center"></div>
-        <div ref="eStatusBarRight" class="ag-status-bar-right"></div>
-    </div>`;
+    private static TEMPLATE = /* html */
+        `<div class="ag-status-bar">
+            <div ref="eStatusBarLeft" class="ag-status-bar-left"></div>
+            <div ref="eStatusBarCenter" class="ag-status-bar-center"></div>
+            <div ref="eStatusBarRight" class="ag-status-bar-right"></div>
+        </div>`;
 
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('gridOptions') private gridOptions: GridOptions;
@@ -52,7 +54,7 @@ export class StatusBar extends Component {
     }
 
     private createAndRenderComponents(statusBarComponents: any[], ePanelComponent: HTMLElement) {
-        const componentDetails: { key: string; promise: Promise<any> }[] = [];
+        const componentDetails: { key: string; promise: Promise<IStatusPanelComp> }[] = [];
 
         statusBarComponents.forEach(componentConfig => {
             const params = {
@@ -73,11 +75,9 @@ export class StatusBar extends Component {
         Promise.all(componentDetails.map((details) => details.promise))
             .then(() => {
                 componentDetails.forEach(componentDetail => {
-                    componentDetail.promise.then((component: Component) => {
+                    componentDetail.promise.then((component: IStatusPanelComp) => {
                         const destroyFunc = () => {
-                            if (component.destroy) {
-                                component.destroy();
-                            }
+                            this.getContext().destroyBean(component);
                         };
 
                         if (this.isAlive()) {

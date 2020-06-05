@@ -4,7 +4,6 @@ export declare class FiltersToolPanelListPanel extends Component {
     private static TEMPLATE;
     private gridApi;
     private columnApi;
-    private eventService;
     private toolPanelColDefService;
     private columnController;
     private initialised;
@@ -32,5 +31,5 @@ export declare class FiltersToolPanelListPanel extends Component {
     private setFirstAndLastVisible;
     private refreshFilters;
     private destroyFilters;
-    destroy(): void;
+    protected destroy(): void;
 }

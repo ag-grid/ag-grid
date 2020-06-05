@@ -1,6 +1,7 @@
-// Type definitions for @ag-grid-community/core v23.1.1
+// Type definitions for @ag-grid-community/core v23.2.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
+import { BeanStub } from "../context/beanStub";
 import { Column } from "../entities/column";
 import { ColumnApi } from "../columnController/columnApi";
 import { GridApi } from "../gridApi";
@@ -88,7 +89,7 @@ export interface DraggingEvent {
     columnApi: ColumnApi;
     dropZoneTarget: HTMLElement;
 }
-export declare class DragAndDropService {
+export declare class DragAndDropService extends BeanStub {
     private gridOptionsWrapper;
     private dragService;
     private environment;
@@ -126,7 +127,7 @@ export declare class DragAndDropService {
     private init;
     addDragSource(dragSource: DragSource, allowTouch?: boolean): void;
     removeDragSource(dragSource: DragSource): void;
-    private destroy;
+    private clearDragSourceParamsList;
     nudge(): void;
     private onDragStart;
     private onDragStop;

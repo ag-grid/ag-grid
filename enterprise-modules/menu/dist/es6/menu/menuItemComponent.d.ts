@@ -26,5 +26,5 @@ export declare class MenuItemComponent extends Component {
     getTooltipText(): string;
     getComponentHolder(): undefined;
     private onOptionSelected;
-    destroy(): void;
+    protected destroy(): void;
 }

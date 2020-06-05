@@ -2,7 +2,6 @@ import { Component } from "@ag-grid-community/core";
 export declare class HorizontalResizeComp extends Component {
     private horizontalResizeService;
     private gridOptionsWrapper;
-    private eventService;
     private startingWidth;
     private elementToResize;
     private inverted;

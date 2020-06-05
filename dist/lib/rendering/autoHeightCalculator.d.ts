@@ -1,6 +1,7 @@
 import { GridPanel } from "../gridPanel/gridPanel";
 import { RowNode } from "../entities/rowNode";
-export declare class AutoHeightCalculator {
+import { BeanStub } from "../context/beanStub";
+export declare class AutoHeightCalculator extends BeanStub {
     private beans;
     private $scope;
     private columnController;

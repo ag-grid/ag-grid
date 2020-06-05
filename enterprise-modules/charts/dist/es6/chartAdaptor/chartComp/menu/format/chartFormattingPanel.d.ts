@@ -11,5 +11,5 @@ export declare class ChartFormattingPanel extends Component {
     private createPanels;
     private addComponent;
     private destroyPanels;
-    destroy(): void;
+    protected destroy(): void;
 }

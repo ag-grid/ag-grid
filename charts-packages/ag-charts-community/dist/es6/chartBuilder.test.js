@@ -96,7 +96,8 @@ describe('createBarChart', function () {
             yAxis: {},
             title: {},
             subtitle: {},
-            legend: {}
+            legend: {},
+            navigator: {}
         };
         var chart = ChartBuilder.createBarChart(null, options);
         expect(chart.axes[0]).toBeInstanceOf(NumberAxis);
@@ -110,7 +111,8 @@ describe('createColumnChart', function () {
             yAxis: {},
             title: {},
             subtitle: {},
-            legend: {}
+            legend: {},
+            navigator: {}
         };
         var chart = ChartBuilder.createColumnChart(null, options);
         expect(chart.axes[0]).toBeInstanceOf(CategoryAxis);
@@ -124,7 +126,8 @@ describe('createLineChart', function () {
             yAxis: {},
             title: {},
             subtitle: {},
-            legend: {}
+            legend: {},
+            navigator: {}
         };
         var chart = ChartBuilder.createLineChart(null, options);
         expect(chart.axes[0]).toBeInstanceOf(CategoryAxis);
@@ -138,7 +141,8 @@ describe('createScatterChart', function () {
             yAxis: {},
             title: {},
             subtitle: {},
-            legend: {}
+            legend: {},
+            navigator: {}
         };
         var chart = ChartBuilder.createScatterChart(null, options);
         expect(chart.axes[0]).toBeInstanceOf(NumberAxis);
@@ -152,7 +156,8 @@ describe('createAreaChart', function () {
             yAxis: {},
             title: {},
             subtitle: {},
-            legend: {}
+            legend: {},
+            navigator: {}
         };
         var chart = ChartBuilder.createAreaChart(null, options);
         expect(chart.axes[0]).toBeInstanceOf(CategoryAxis);
@@ -166,7 +171,8 @@ describe('createGroupedColumnChart', function () {
             yAxis: {},
             title: {},
             subtitle: {},
-            legend: {}
+            legend: {},
+            navigator: {}
         };
         var chart = ChartBuilder.createGroupedColumnChart(null, options);
         expect(chart.axes[0]).toBeInstanceOf(GroupedCategoryAxis);
@@ -180,7 +186,8 @@ describe('createGroupedBarChart', function () {
             yAxis: {},
             title: {},
             subtitle: {},
-            legend: {}
+            legend: {},
+            navigator: {}
         };
         var chart = ChartBuilder.createGroupedBarChart(null, options);
         expect(chart.axes[0]).toBeInstanceOf(NumberAxis);
@@ -194,7 +201,8 @@ describe('createGroupedLineChart', function () {
             yAxis: {},
             title: {},
             subtitle: {},
-            legend: {}
+            legend: {},
+            navigator: {}
         };
         var chart = ChartBuilder.createGroupedLineChart(null, options);
         expect(chart.axes[0]).toBeInstanceOf(GroupedCategoryAxis);
@@ -208,7 +216,8 @@ describe('createGroupedAreaChart', function () {
             yAxis: {},
             title: {},
             subtitle: {},
-            legend: {}
+            legend: {},
+            navigator: {}
         };
         var chart = ChartBuilder.createGroupedAreaChart(null, options);
         expect(chart.axes[0]).toBeInstanceOf(GroupedCategoryAxis);

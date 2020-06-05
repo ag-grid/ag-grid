@@ -34,6 +34,7 @@ export interface ChartOptions<T extends SeriesOptions> {
     background: BackgroundOptions;
     title: CaptionOptions;
     subtitle: CaptionOptions;
+    navigator: NavigatorOptions;
     legend: LegendOptions;
     tooltipClass?: string;
     listeners?: { [key in string]: Function };
@@ -91,6 +92,33 @@ export interface LegendItemOptions {
 export interface LegendLabelOptions extends FontOptions {
 }
 
+export interface NavigatorOptions {
+    enabled: boolean;
+    height: number;
+    min: number;
+    max: number;
+    mask: NavigatorMaskOptions;
+    minHandle: NavigatorHandleOptions;
+    maxHandle: NavigatorHandleOptions;
+}
+
+export interface NavigatorMaskOptions {
+    fill: string;
+    stroke: string;
+    strokeWidth: number;
+    fillOpacity: number;
+}
+
+export interface NavigatorHandleOptions {
+    fill: string;
+    stroke: string;
+    strokeWidth: number;
+    width: number;
+    height: number;
+    gripLineGap: number;
+    gripLineLength: number;
+}
+
 export type MarkerShape = 'circle' | 'cross' | 'diamond' | 'plus' | 'square' | 'triangle';
 
 export interface LegendMarkerOptions {
@@ -103,6 +131,7 @@ export interface LegendMarkerOptions {
 export interface CartesianChartOptions<T extends SeriesOptions> extends ChartOptions<T> {
     xAxis: AxisOptions;
     yAxis: AxisOptions;
+    navigator: NavigatorOptions;
 }
 
 export interface PolarChartOptions<T extends SeriesOptions> extends ChartOptions<T> {

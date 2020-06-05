@@ -1,4 +1,4 @@
-// Type definitions for @ag-grid-community/core v23.1.1
+// Type definitions for @ag-grid-community/core v23.2.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { BeanStub } from "../context/beanStub";
@@ -8,7 +8,6 @@ import { GridPanel } from "../gridPanel/gridPanel";
  * the max div height actually allows.
  */
 export declare class MaxDivHeightScaler extends BeanStub {
-    private eventService;
     private gridOptionsWrapper;
     private gridPanel;
     private maxDivHeight;

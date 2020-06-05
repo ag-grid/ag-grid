@@ -226,7 +226,7 @@ SNIPPET
 <p>
     In the examples above, the data for the detail grid was returned with the master row. However it is also possible
     to lazy-load data for the detail row, see:
-    <a href="../javascript-grid-master-detail/#lazy-load-detail-rows">Lazy-Loading Detail Rows</a>.
+    <a href="../javascript-grid-master-detail-detail-grids/#providing-rows">Providing Rows</a>.
 </p>
 
 <p>

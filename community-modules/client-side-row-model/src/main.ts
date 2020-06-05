@@ -1,1 +1,1 @@
-export {ClientSideRowModelModule} from "./clientSideRowModelModule"
+export { ClientSideRowModelModule } from "./clientSideRowModelModule"

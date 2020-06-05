@@ -20,14 +20,13 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 import { Autowired, Bean, BeanStub, Component, ModuleNames, ModuleRegistry, PostConstruct, Optional, _ } from "@ag-grid-community/core";
 import { MenuItemComponent } from "./menuItemComponent";
 import { MenuList } from "./menuList";
-var ContextMenuFactory = /** @class */ (function () {
+var ContextMenuFactory = /** @class */ (function (_super) {
+    __extends(ContextMenuFactory, _super);
     function ContextMenuFactory() {
+        return _super !== null && _super.apply(this, arguments) || this;
     }
     ContextMenuFactory.prototype.hideActiveMenu = function () {
-        if (!this.activeMenu) {
-            return;
-        }
-        this.activeMenu.destroy();
+        this.destroyBean(this.activeMenu);
     };
     ContextMenuFactory.prototype.getMenuItems = function (node, column, value) {
         var defaultMenuOptions = [];
@@ -78,14 +77,14 @@ var ContextMenuFactory = /** @class */ (function () {
         var _this = this;
         var menuItems = this.getMenuItems(node, column, value);
         if (menuItems === undefined || _.missingOrEmpty(menuItems)) {
-            return;
+            return false;
         }
         var menu = new ContextMenu(menuItems);
-        this.context.wireBean(menu);
+        this.createBean(menu);
         var eMenuGui = menu.getGui();
         // need to show filter before positioning, as only after filter
         // is visible can we find out what the width of it is
-        var hidePopup = this.popupService.addAsModalPopup(eMenuGui, true, function () { return menu.destroy(); }, mouseEvent);
+        var hidePopup = this.popupService.addAsModalPopup(eMenuGui, true, function () { return _this.destroyBean(menu); }, mouseEvent);
         this.popupService.positionPopupUnderMouseEvent({
             column: column,
             rowNode: node,
@@ -106,10 +105,8 @@ var ContextMenuFactory = /** @class */ (function () {
                 _this.activeMenu = null;
             }
         });
+        return true;
     };
-    __decorate([
-        Autowired('context')
-    ], ContextMenuFactory.prototype, "context", void 0);
     __decorate([
         Autowired('popupService')
     ], ContextMenuFactory.prototype, "popupService", void 0);
@@ -126,7 +123,7 @@ var ContextMenuFactory = /** @class */ (function () {
         Bean('contextMenuFactory')
     ], ContextMenuFactory);
     return ContextMenuFactory;
-}());
+}(BeanStub));
 export { ContextMenuFactory };
 var ContextMenu = /** @class */ (function (_super) {
     __extends(ContextMenu, _super);
@@ -139,7 +136,7 @@ var ContextMenu = /** @class */ (function (_super) {
     }
     ContextMenu.prototype.addMenuItems = function () {
         var menuList = new MenuList();
-        this.getContext().wireBean(menuList);
+        this.getContext().createBean(menuList);
         var menuItemsMapped = this.menuItemMapper.mapWithStockItems(this.menuItems, null);
         menuList.addMenuItems(menuItemsMapped);
         this.appendChild(menuList);
@@ -152,10 +149,10 @@ var ContextMenu = /** @class */ (function (_super) {
         }
         this.focusedCell = this.focusController.getFocusedCell();
         if (this.menuList) {
-            this.menuList.getGui().focus();
+            this.focusController.focusFirstFocusableElement(this.menuList.getGui());
         }
         // if the body scrolls, we want to hide the menu, as the menu will not appear in the right location anymore
-        this.addDestroyableEventListener(this.eventService, 'bodyScroll', this.destroy.bind(this));
+        this.addManagedListener(this.eventService, 'bodyScroll', this.destroy.bind(this));
     };
     ContextMenu.prototype.destroy = function () {
         var currentFocusedCell = this.focusController.getFocusedCell();
@@ -165,9 +162,6 @@ var ContextMenu = /** @class */ (function (_super) {
         }
         _super.prototype.destroy.call(this);
     };
-    __decorate([
-        Autowired('eventService')
-    ], ContextMenu.prototype, "eventService", void 0);
     __decorate([
         Autowired('menuItemMapper')
     ], ContextMenu.prototype, "menuItemMapper", void 0);

@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v23.1.1
+ * @version v23.2.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -26,10 +26,10 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var component_1 = require("../../widgets/component");
-var componentAnnotations_1 = require("../../widgets/componentAnnotations");
 var context_1 = require("../../context/context");
-var utils_1 = require("../../utils");
 var constants_1 = require("../../constants");
+var dom_1 = require("../../utils/dom");
+var function_1 = require("../../utils/function");
 /**
  * Contains common logic to all provided filters (apply button, clear button, etc).
  * All the filters that come with ag-Grid extend this class. User filters do not
@@ -60,57 +60,97 @@ var ProvidedFilter = /** @class */ (function (_super) {
         return !!this.appliedModel;
     };
     ProvidedFilter.prototype.postConstruct = function () {
-        var templateString = /* html */ "\n            <div>\n                <div class=\"ag-filter-body-wrapper ag-" + this.getCssIdentifier() + "-body-wrapper\" ref=\"eFilterBodyWrapper\">\n                    " + this.createBodyTemplate() + "\n                </div>\n            </div>";
+        var templateString = /* html */ "\n            <div>\n                <div class=\"ag-filter-body-wrapper ag-" + this.getCssIdentifier() + "-body-wrapper\">\n                    " + this.createBodyTemplate() + "\n                </div>\n            </div>";
         this.setTemplate(templateString);
     };
     ProvidedFilter.prototype.init = function (params) {
+        var _this = this;
         this.setParams(params);
-        this.resetUiToDefaults(true);
-        this.updateUiVisibility();
-        this.setupOnBtApplyDebounce();
+        this.resetUiToDefaults(true).then(function () {
+            _this.updateUiVisibility();
+            _this.setupOnBtApplyDebounce();
+        });
     };
     ProvidedFilter.prototype.setParams = function (params) {
+        ProvidedFilter.checkForDeprecatedParams(params);
         this.providedFilterParams = params;
-        if (params.newRowsAction === ProvidedFilter.NEW_ROWS_ACTION_KEEP) {
+        if (params.newRowsAction === 'keep') {
             this.newRowsActionKeep = true;
         }
-        else if (params.newRowsAction === ProvidedFilter.NEW_ROWS_ACTION_CLEAR) {
+        else if (params.newRowsAction === 'clear') {
             this.newRowsActionKeep = false;
         }
         else {
             // the default for SSRM and IRM is 'keep', for CSRM and VRM the default is 'clear'
-            var rowModelType = this.rowModel.getType();
             var modelsForKeep = [constants_1.Constants.ROW_MODEL_TYPE_SERVER_SIDE, constants_1.Constants.ROW_MODEL_TYPE_INFINITE];
-            this.newRowsActionKeep = modelsForKeep.indexOf(rowModelType) >= 0;
+            this.newRowsActionKeep = modelsForKeep.indexOf(this.rowModel.getType()) >= 0;
         }
         this.applyActive = ProvidedFilter.isUseApplyButton(params);
-        this.createButtonPanel(params);
+        this.createButtonPanel();
     };
-    ProvidedFilter.prototype.createButtonPanel = function (params) {
+    ProvidedFilter.prototype.createButtonPanel = function () {
         var _this = this;
-        var clearActive = params.clearButton === true;
-        var resetActive = params.resetButton === true;
-        var anyButtonVisible = this.applyActive || clearActive || resetActive;
-        if (anyButtonVisible) {
-            var translate = this.gridOptionsWrapper.getLocaleTextFunc();
-            var eButtonsPanel_1 = document.createElement('div');
-            utils_1._.addCssClass(eButtonsPanel_1, 'ag-filter-apply-panel');
-            var addButton = function (text, clickListener) {
-                var button = utils_1._.loadTemplate(/* html */ "<button type=\"button\" class=\"ag-standard-button ag-filter-apply-panel-button\">" + text + "</button>");
-                eButtonsPanel_1.appendChild(button);
-                _this.addDestroyableEventListener(button, 'click', clickListener);
-            };
-            if (clearActive) {
-                addButton(translate('clearFilter', 'Clear Filter'), function () { return _this.onBtClear(); });
-            }
-            if (resetActive) {
-                addButton(translate('resetFilter', 'Reset Filter'), function () { return _this.onBtReset(); });
-            }
-            if (this.applyActive) {
-                addButton(translate('applyFilter', 'Apply Filter'), function () { return _this.onBtApply(); });
-            }
-            this.eFilterBodyWrapper.parentElement.appendChild(eButtonsPanel_1);
+        var buttons = this.providedFilterParams.buttons;
+        if (!buttons || buttons.length < 1) {
+            return;
         }
+        var translate = this.gridOptionsWrapper.getLocaleTextFunc();
+        var eButtonsPanel = document.createElement('div');
+        dom_1.addCssClass(eButtonsPanel, 'ag-filter-apply-panel');
+        var addButton = function (type) {
+            var text;
+            var clickListener;
+            switch (type) {
+                case 'apply':
+                    text = translate('applyFilter', 'Apply Filter');
+                    clickListener = function (e) { return _this.onBtApply(false, false, e); };
+                    break;
+                case 'clear':
+                    text = translate('clearFilter', 'Clear Filter');
+                    clickListener = function () { return _this.onBtClear(); };
+                    break;
+                case 'reset':
+                    text = translate('resetFilter', 'Reset Filter');
+                    clickListener = function () { return _this.onBtReset(); };
+                    break;
+                case 'cancel':
+                    text = translate('cancelFilter', 'Cancel Filter');
+                    clickListener = function (e) { _this.onBtCancel(e); };
+                    break;
+                default:
+                    console.warn('Unknown button type specified');
+                    return;
+            }
+            var button = dom_1.loadTemplate(/* html */ "<button\n                    type=\"button\"\n                    ref=\"" + type + "FilterButton\"\n                    class=\"ag-standard-button ag-filter-apply-panel-button\">" + text + "</button>");
+            eButtonsPanel.appendChild(button);
+            _this.addManagedListener(button, 'click', clickListener);
+        };
+        new Set(buttons).forEach(function (type) { return addButton(type); });
+        this.getGui().appendChild(eButtonsPanel);
+    };
+    ProvidedFilter.checkForDeprecatedParams = function (params) {
+        var buttons = params.buttons || [];
+        if (buttons.length > 0) {
+            return;
+        }
+        var applyButton = params.applyButton, resetButton = params.resetButton, clearButton = params.clearButton;
+        if (clearButton) {
+            console.warn('ag-Grid: as of ag-Grid v23.2, filterParams.clearButton is deprecated. Please use filterParams.buttons instead');
+            buttons.push('clear');
+        }
+        if (resetButton) {
+            console.warn('ag-Grid: as of ag-Grid v23.2, filterParams.resetButton is deprecated. Please use filterParams.buttons instead');
+            buttons.push('reset');
+        }
+        if (applyButton) {
+            console.warn('ag-Grid: as of ag-Grid v23.2, filterParams.applyButton is deprecated. Please use filterParams.buttons instead');
+            buttons.push('apply');
+        }
+        if (params.apply) {
+            console.warn('ag-Grid: as of ag-Grid v21, filterParams.apply is deprecated. Please use filterParams.buttons instead');
+            buttons.push('apply');
+        }
+        params.buttons = buttons;
     };
     // subclasses can override this to provide alternative debounce defaults
     ProvidedFilter.prototype.getDefaultDebounceMs = function () {
@@ -118,42 +158,57 @@ var ProvidedFilter = /** @class */ (function (_super) {
     };
     ProvidedFilter.prototype.setupOnBtApplyDebounce = function () {
         var debounceMs = ProvidedFilter.getDebounceMs(this.providedFilterParams, this.getDefaultDebounceMs());
-        this.onBtApplyDebounce = utils_1._.debounce(this.onBtApply.bind(this), debounceMs);
+        this.onBtApplyDebounce = function_1.debounce(this.onBtApply.bind(this), debounceMs);
     };
     ProvidedFilter.prototype.getModel = function () {
         return this.appliedModel;
     };
     ProvidedFilter.prototype.setModel = function (model) {
-        if (model) {
-            this.setModelIntoUi(model);
-        }
-        else {
-            this.resetUiToDefaults();
-        }
-        this.updateUiVisibility();
-        // we set the model from the gui, rather than the provided model,
-        // so the model is consistent. eg handling of null/undefined will be the same,
-        // of if model is case insensitive, then casing is removed.
-        this.applyModel();
+        var _this = this;
+        var promise = model ? this.setModelIntoUi(model) : this.resetUiToDefaults();
+        return promise.then(function () {
+            _this.updateUiVisibility();
+            // we set the model from the gui, rather than the provided model,
+            // so the model is consistent. eg handling of null/undefined will be the same,
+            // of if model is case insensitive, then casing is removed.
+            _this.applyModel();
+        });
+    };
+    ProvidedFilter.prototype.onBtCancel = function (e) {
+        var _this = this;
+        this.setModelIntoUi(this.getModel()).then(function () {
+            _this.onUiChanged(false, 'prevent');
+            if (_this.providedFilterParams.closeOnApply) {
+                _this.close(e);
+            }
+        });
     };
     ProvidedFilter.prototype.onBtClear = function () {
-        this.resetUiToDefaults();
-        this.updateUiVisibility();
-        this.onUiChanged();
+        var _this = this;
+        this.resetUiToDefaults().then(function () { return _this.onUiChanged(); });
     };
     ProvidedFilter.prototype.onBtReset = function () {
         this.onBtClear();
         this.onBtApply();
     };
-    // returns true if the new model is different to the old model
+    /**
+     * Applies changes made in the UI to the filter, and returns true if the model has changed.
+     */
     ProvidedFilter.prototype.applyModel = function () {
-        var oldAppliedModel = this.appliedModel;
-        this.appliedModel = this.getModelFromUi();
+        var newModel = this.getModelFromUi();
+        if (!this.isModelValid(newModel)) {
+            return false;
+        }
+        var previousModel = this.appliedModel;
+        this.appliedModel = newModel;
         // models can be same if user pasted same content into text field, or maybe just changed the case
         // and it's a case insensitive filter
-        return !this.areModelsEqual(this.appliedModel, oldAppliedModel);
+        return !this.areModelsEqual(previousModel, newModel);
     };
-    ProvidedFilter.prototype.onBtApply = function (afterFloatingFilter, afterDataChange) {
+    ProvidedFilter.prototype.isModelValid = function (model) {
+        return true;
+    };
+    ProvidedFilter.prototype.onBtApply = function (afterFloatingFilter, afterDataChange, e) {
         if (afterFloatingFilter === void 0) { afterFloatingFilter = false; }
         if (afterDataChange === void 0) { afterDataChange = false; }
         if (this.applyModel()) {
@@ -161,32 +216,52 @@ var ProvidedFilter = /** @class */ (function (_super) {
             // came from floating filter
             this.providedFilterParams.filterChangedCallback({ afterFloatingFilter: afterFloatingFilter, afterDataChange: afterDataChange });
         }
-        var _a = this.providedFilterParams, closeOnApply = _a.closeOnApply, applyButton = _a.applyButton, resetButton = _a.resetButton;
-        if (closeOnApply && !afterFloatingFilter && this.hidePopup && (applyButton || resetButton)) {
-            this.hidePopup();
-            this.hidePopup = null;
+        var closeOnApply = this.providedFilterParams.closeOnApply;
+        // only close if an apply button is visible, otherwise we'd be closing every time a change was made!
+        if (closeOnApply && !afterFloatingFilter && this.applyActive) {
+            this.close(e);
         }
     };
     ProvidedFilter.prototype.onNewRowsLoaded = function () {
+        var _this = this;
         if (!this.newRowsActionKeep) {
-            this.resetUiToDefaults();
-            this.appliedModel = null;
+            this.resetUiToDefaults().then(function () { return _this.appliedModel = null; });
         }
+    };
+    ProvidedFilter.prototype.close = function (e) {
+        if (!this.hidePopup) {
+            return;
+        }
+        var keyboardEvent = e;
+        var key = keyboardEvent && keyboardEvent.key;
+        var params;
+        if (key === 'Enter' || key === 'Space') {
+            params = { keyboardEvent: keyboardEvent };
+        }
+        this.hidePopup(params);
+        this.hidePopup = null;
     };
     // called by set filter
     ProvidedFilter.prototype.isNewRowsActionKeep = function () {
         return this.newRowsActionKeep;
     };
-    ProvidedFilter.prototype.onUiChanged = function (afterFloatingFilter) {
-        if (afterFloatingFilter === void 0) { afterFloatingFilter = false; }
+    /**
+     * By default, if the change came from a floating filter it will be applied immediately, otherwise if there is no
+     * apply button it will be applied after a debounce, otherwise it will not be applied at all. This behaviour can
+     * be adjusted by using the apply parameter.
+     */
+    ProvidedFilter.prototype.onUiChanged = function (fromFloatingFilter, apply) {
+        if (fromFloatingFilter === void 0) { fromFloatingFilter = false; }
         this.updateUiVisibility();
         this.providedFilterParams.filterModifiedCallback();
-        if (afterFloatingFilter) {
-            // floating filter changes are always applied immediately
-            this.onBtApply(true);
+        if (this.applyActive) {
+            var isValid = this.isModelValid(this.getModelFromUi());
+            dom_1.setDisabled(this.getRefElement('applyFilterButton'), !isValid);
         }
-        else if (!this.applyActive) {
-            // if no apply button, we apply (but debounce for time delay)
+        if ((fromFloatingFilter && !apply) || apply === 'immediately') {
+            this.onBtApply(fromFloatingFilter);
+        }
+        else if ((!this.applyActive && !apply) || apply === 'debounce') {
             this.onBtApplyDebounce();
         }
     };
@@ -195,10 +270,9 @@ var ProvidedFilter = /** @class */ (function (_super) {
     };
     // static, as used by floating filter also
     ProvidedFilter.getDebounceMs = function (params, debounceDefault) {
-        var applyActive = ProvidedFilter.isUseApplyButton(params);
-        if (applyActive) {
+        if (ProvidedFilter.isUseApplyButton(params)) {
             if (params.debounceMs != null) {
-                console.warn('ag-Grid: debounceMs is ignored when applyButton = true');
+                console.warn('ag-Grid: debounceMs is ignored when apply button is present');
             }
             return 0;
         }
@@ -206,21 +280,13 @@ var ProvidedFilter = /** @class */ (function (_super) {
     };
     // static, as used by floating filter also
     ProvidedFilter.isUseApplyButton = function (params) {
-        if (params.apply && !params.applyButton) {
-            console.warn('ag-Grid: as of ag-Grid v21, filterParams.apply is now filterParams.applyButton, please change to applyButton');
-            params.applyButton = true;
-        }
-        return params.applyButton === true;
+        ProvidedFilter.checkForDeprecatedParams(params);
+        return params.buttons && params.buttons.indexOf('apply') >= 0;
     };
     ProvidedFilter.prototype.destroy = function () {
         this.hidePopup = null;
         _super.prototype.destroy.call(this);
     };
-    ProvidedFilter.NEW_ROWS_ACTION_KEEP = 'keep';
-    ProvidedFilter.NEW_ROWS_ACTION_CLEAR = 'clear';
-    __decorate([
-        componentAnnotations_1.RefSelector('eFilterBodyWrapper')
-    ], ProvidedFilter.prototype, "eFilterBodyWrapper", void 0);
     __decorate([
         context_1.Autowired('gridOptionsWrapper')
     ], ProvidedFilter.prototype, "gridOptionsWrapper", void 0);

@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v23.1.1
+ * @version v23.2.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -56,15 +56,15 @@ var AgColorPicker = /** @class */ (function (_super) {
             x: eGuiRect.right - 190,
             y: eGuiRect.top - 250
         });
-        this.getContext().wireBean(colorDialog);
+        this.createBean(colorDialog);
         utils_1._.addCssClass(colorDialog.getGui(), 'ag-color-dialog');
         var colorPanel = new agColorPanel_1.AgColorPanel({
             picker: this
         });
-        this.getContext().wireBean(colorPanel);
+        this.createBean(colorPanel);
         colorPanel.addDestroyFunc(function () {
             if (colorDialog.isAlive()) {
-                colorDialog.destroy();
+                _this.destroyBean(colorDialog);
             }
         });
         colorDialog.setParentComponent(this);
@@ -77,7 +77,7 @@ var AgColorPicker = /** @class */ (function (_super) {
             if (!wasDestroying) {
                 _this.isDestroyingPicker = true;
                 if (colorPanel.isAlive()) {
-                    colorPanel.destroy();
+                    _this.destroyBean(colorPanel);
                 }
             }
             else {

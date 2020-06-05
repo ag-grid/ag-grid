@@ -1,55 +1,69 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v23.1.1
+ * @version v23.2.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = function (d, b) {
+        extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+        return extendStatics(d, b);
+    };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
-import { Bean, Autowired, PostConstruct, PreDestroy } from "./context/context";
+import { Bean, Autowired, PostConstruct, Optional } from "./context/context";
+import { BeanStub } from "./context/beanStub";
 import { Events } from "./events";
 import { CellComp } from "./rendering/cellComp";
+import { ManagedFocusComponent } from "./widgets/managedFocusComponent";
 import { _ } from "./utils";
-var FocusController = /** @class */ (function () {
+var FocusController = /** @class */ (function (_super) {
+    __extends(FocusController, _super);
     function FocusController() {
-        this.keyboardFocusActive = false;
-        this.events = [];
+        var _this = _super !== null && _super.apply(this, arguments) || this;
+        _this.keyboardFocusActive = false;
+        return _this;
     }
+    FocusController_1 = FocusController;
     FocusController.prototype.init = function () {
         var eDocument = this.gridOptionsWrapper.getDocument();
         var clearFocusedCellListener = this.clearFocusedCell.bind(this);
-        this.events = [
-            this.eventService.addEventListener(Events.EVENT_COLUMN_PIVOT_MODE_CHANGED, clearFocusedCellListener),
-            this.eventService.addEventListener(Events.EVENT_COLUMN_EVERYTHING_CHANGED, clearFocusedCellListener),
-            this.eventService.addEventListener(Events.EVENT_COLUMN_GROUP_OPENED, clearFocusedCellListener),
-            this.eventService.addEventListener(Events.EVENT_COLUMN_ROW_GROUP_CHANGED, clearFocusedCellListener)
-        ];
-        var activateKeyboardModeListener = this.activateKeyboardMode.bind(this);
-        eDocument.addEventListener('keydown', activateKeyboardModeListener);
-        this.events.push(function () { return eDocument.removeEventListener('keydown', activateKeyboardModeListener); });
-        var activateMouseModeListener = this.activateMouseMode.bind(this);
-        eDocument.addEventListener('mousedown', activateMouseModeListener);
-        this.events.push(function () { return eDocument.removeEventListener('mousedown', activateMouseModeListener); });
+        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_PIVOT_MODE_CHANGED, clearFocusedCellListener);
+        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_EVERYTHING_CHANGED, this.onColumnEverythingChanged.bind(this));
+        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_GROUP_OPENED, clearFocusedCellListener);
+        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_ROW_GROUP_CHANGED, clearFocusedCellListener);
+        this.addManagedListener(eDocument, 'keydown', this.activateKeyboardMode.bind(this));
+        this.addManagedListener(eDocument, 'mousedown', this.activateMouseMode.bind(this));
     };
-    FocusController.prototype.destroy = function () {
-        if (this.events.length) {
-            this.events.forEach(function (func) { return func(); });
-            this.events = [];
+    FocusController.prototype.registerGridCore = function (gridCore) {
+        this.gridCore = gridCore;
+    };
+    FocusController.prototype.onColumnEverythingChanged = function () {
+        // if the columns change, check and see if this column still exists. if it does,
+        // then we can keep the focused cell. if it doesn't, then we need to drop the focused
+        // cell.
+        if (this.focusedCellPosition) {
+            var col = this.focusedCellPosition.column;
+            var colFromColumnController = this.columnController.getGridColumn(col.getId());
+            if (col !== colFromColumnController) {
+                this.clearFocusedCell();
+            }
         }
     };
     FocusController.prototype.isKeyboardFocus = function () {
         return this.keyboardFocusActive;
-    };
-    FocusController.prototype.clearFocusedCell = function () {
-        this.focusedCellPosition = null;
-        this.onCellFocused(false);
-    };
-    FocusController.prototype.getFocusedCell = function () {
-        return this.focusedCellPosition;
     };
     FocusController.prototype.activateMouseMode = function () {
         this.keyboardFocusActive = false;
@@ -67,10 +81,7 @@ var FocusController = /** @class */ (function () {
     // grid cell will still be focused as far as the grid is concerned,
     // however the browser focus will have moved somewhere else.
     FocusController.prototype.getFocusCellToUseAfterRefresh = function () {
-        if (this.gridOptionsWrapper.isSuppressFocusAfterRefresh()) {
-            return null;
-        }
-        if (!this.focusedCellPosition) {
+        if (this.gridOptionsWrapper.isSuppressFocusAfterRefresh() || !this.focusedCellPosition) {
             return null;
         }
         // we check that the browser is actually focusing on the grid, if it is not, then
@@ -92,6 +103,13 @@ var FocusController = /** @class */ (function () {
         }
         return null;
     };
+    FocusController.prototype.clearFocusedCell = function () {
+        this.focusedCellPosition = null;
+        this.onCellFocused(false);
+    };
+    FocusController.prototype.getFocusedCell = function () {
+        return this.focusedCellPosition;
+    };
     FocusController.prototype.setFocusedCell = function (rowIndex, colKey, floating, forceBrowserFocus) {
         if (forceBrowserFocus === void 0) { forceBrowserFocus = false; }
         var column = _.makeNull(this.columnController.getGridColumn(colKey));
@@ -107,6 +125,41 @@ var FocusController = /** @class */ (function () {
     FocusController.prototype.isRowNodeFocused = function (rowNode) {
         return this.isRowFocused(rowNode.rowIndex, rowNode.rowPinned);
     };
+    FocusController.prototype.isHeaderWrapperFocused = function (headerWrapper) {
+        if (_.missing(this.focusedHeaderPosition)) {
+            return false;
+        }
+        var column = headerWrapper.getColumn();
+        var headerRowIndex = headerWrapper.getParentComponent().getRowIndex();
+        var pinned = headerWrapper.getPinned();
+        var _a = this.focusedHeaderPosition, focusedColumn = _a.column, focusedHeaderRowIndex = _a.headerRowIndex;
+        return column === focusedColumn &&
+            headerRowIndex === focusedHeaderRowIndex &&
+            pinned == focusedColumn.getPinned();
+    };
+    FocusController.prototype.clearFocusedHeader = function () {
+        this.focusedHeaderPosition = null;
+    };
+    FocusController.prototype.getFocusedHeader = function () {
+        return this.focusedHeaderPosition;
+    };
+    FocusController.prototype.setFocusedHeader = function (headerRowIndex, column) {
+        this.focusedHeaderPosition = { headerRowIndex: headerRowIndex, column: column };
+    };
+    FocusController.prototype.focusHeaderPosition = function (headerPosition, direction) {
+        this.headerNavigationService.scrollToColumn(headerPosition.column, direction);
+        var childContainer = this.headerNavigationService.getHeaderContainer(headerPosition.column.getPinned());
+        var rowComps = childContainer.getRowComps();
+        var nextRowComp = rowComps[headerPosition.headerRowIndex];
+        var headerComps = nextRowComp.getHeaderComps();
+        var nextHeader = headerComps[headerPosition.column.getUniqueId()];
+        if (nextHeader) {
+            // this will automatically call the setFocusedHeader method above
+            nextHeader.getFocusableElement().focus();
+            return true;
+        }
+        return false;
+    };
     FocusController.prototype.isAnyCellFocused = function () {
         return !!this.focusedCellPosition;
     };
@@ -117,19 +170,76 @@ var FocusController = /** @class */ (function () {
         var floatingOrNull = _.makeNull(floating);
         return this.focusedCellPosition.rowIndex === rowIndex && this.focusedCellPosition.rowPinned === floatingOrNull;
     };
-    FocusController.prototype.findFocusableElements = function (rootNode, exclude) {
-        var focusableString = '[tabindex], input, select, button, textarea';
-        var excludeString = '.ag-hidden, .ag-hidden *, .ag-disabled, .ag-disabled *';
+    FocusController.prototype.findFocusableElements = function (rootNode, exclude, onlyUnmanaged) {
+        var focusableString = FocusController_1.FOCUSABLE_SELECTOR;
+        var excludeString = FocusController_1.FOCUSABLE_EXCLUDE;
         if (exclude) {
             excludeString += ', ' + exclude;
         }
-        var nodes = Array.from(rootNode.querySelectorAll(focusableString));
-        var excludeNodes = Array.from(rootNode.querySelectorAll(excludeString));
+        if (onlyUnmanaged) {
+            excludeString += ', [tabindex="-1"]';
+        }
+        var nodes = Array.prototype.slice.apply(rootNode.querySelectorAll(focusableString));
+        var excludeNodes = Array.prototype.slice.apply(rootNode.querySelectorAll(excludeString));
         if (!excludeNodes.length) {
             return nodes;
         }
         var diff = function (a, b) { return a.filter(function (element) { return b.indexOf(element) === -1; }); };
         return diff(nodes, excludeNodes);
+    };
+    FocusController.prototype.focusFirstFocusableElement = function (rootNode, onlyUnmanaged) {
+        var focusable = this.findFocusableElements(rootNode, null, onlyUnmanaged)[0];
+        if (focusable) {
+            focusable.focus();
+            return true;
+        }
+        return false;
+    };
+    FocusController.prototype.focusLastFocusableElement = function (rootNode, onlyUnmanaged) {
+        var focusable = _.last(this.findFocusableElements(rootNode, null, onlyUnmanaged));
+        if (focusable) {
+            focusable.focus();
+            return true;
+        }
+        return false;
+    };
+    FocusController.prototype.findNextFocusableElement = function (rootNode, onlyManaged, backwards) {
+        var focusable = this.findFocusableElements(rootNode, onlyManaged ? ':not([tabindex="-1"])' : null);
+        var currentIndex;
+        if (onlyManaged) {
+            currentIndex = _.findIndex(focusable, function (el) { return el.contains(document.activeElement); });
+        }
+        else {
+            currentIndex = focusable.indexOf(document.activeElement);
+        }
+        var nextIndex = currentIndex + (backwards ? -1 : 1);
+        if (nextIndex < 0 || nextIndex > focusable.length) {
+            return;
+        }
+        return focusable[nextIndex];
+    };
+    FocusController.prototype.isFocusUnderManagedComponent = function (rootNode) {
+        var managedContainers = rootNode.querySelectorAll("." + ManagedFocusComponent.FOCUS_MANAGED_CLASS);
+        if (!managedContainers.length) {
+            return false;
+        }
+        for (var i = 0; i < managedContainers.length; i++) {
+            if (managedContainers[i].contains(document.activeElement)) {
+                return true;
+            }
+        }
+        return false;
+    };
+    FocusController.prototype.findTabbableParent = function (node, limit) {
+        if (limit === void 0) { limit = 5; }
+        var counter = 0;
+        while (node && _.getTabIndex(node) === null && ++counter <= limit) {
+            node = node.parentElement;
+        }
+        if (_.getTabIndex(node) === null) {
+            return null;
+        }
+        return node;
     };
     FocusController.prototype.onCellFocused = function (forceBrowserFocus) {
         var event = {
@@ -149,9 +259,38 @@ var FocusController = /** @class */ (function () {
         }
         this.eventService.dispatchEvent(event);
     };
-    __decorate([
-        Autowired('eventService')
-    ], FocusController.prototype, "eventService", void 0);
+    FocusController.prototype.focusGridView = function (column) {
+        var firstRow = this.rowPositionUtils.getFirstRow();
+        if (!firstRow) {
+            return false;
+        }
+        var rowIndex = firstRow.rowIndex, rowPinned = firstRow.rowPinned;
+        var focusedHeader = this.getFocusedHeader();
+        if (!column) {
+            column = focusedHeader.column;
+        }
+        if (!_.exists(rowIndex)) {
+            return false;
+        }
+        this.rowRenderer.ensureCellVisible({ rowIndex: rowIndex, column: column, rowPinned: rowPinned });
+        this.setFocusedCell(rowIndex, column, _.makeNull(rowPinned), true);
+        if (this.rangeController) {
+            var cellPosition = { rowIndex: rowIndex, rowPinned: rowPinned, column: column };
+            this.rangeController.setRangeToCell(cellPosition);
+        }
+        return true;
+    };
+    FocusController.prototype.focusNextGridCoreContainer = function (backwards) {
+        if (this.gridCore.focusNextInnerContainer(backwards)) {
+            return true;
+        }
+        if (!backwards) {
+            this.gridCore.forceFocusOutOfContainer();
+        }
+    };
+    var FocusController_1;
+    FocusController.FOCUSABLE_SELECTOR = '[tabindex], input, select, button, textarea';
+    FocusController.FOCUSABLE_EXCLUDE = '.ag-hidden, .ag-hidden *, .ag-disabled, .ag-disabled *';
     __decorate([
         Autowired('gridOptionsWrapper')
     ], FocusController.prototype, "gridOptionsWrapper", void 0);
@@ -159,20 +298,29 @@ var FocusController = /** @class */ (function () {
         Autowired('columnController')
     ], FocusController.prototype, "columnController", void 0);
     __decorate([
+        Autowired('headerNavigationService')
+    ], FocusController.prototype, "headerNavigationService", void 0);
+    __decorate([
         Autowired('columnApi')
     ], FocusController.prototype, "columnApi", void 0);
     __decorate([
         Autowired('gridApi')
     ], FocusController.prototype, "gridApi", void 0);
     __decorate([
+        Autowired('rowRenderer')
+    ], FocusController.prototype, "rowRenderer", void 0);
+    __decorate([
+        Autowired('rowPositionUtils')
+    ], FocusController.prototype, "rowPositionUtils", void 0);
+    __decorate([
+        Optional('rangeController')
+    ], FocusController.prototype, "rangeController", void 0);
+    __decorate([
         PostConstruct
     ], FocusController.prototype, "init", null);
-    __decorate([
-        PreDestroy
-    ], FocusController.prototype, "destroy", null);
-    FocusController = __decorate([
+    FocusController = FocusController_1 = __decorate([
         Bean('focusController')
     ], FocusController);
     return FocusController;
-}());
+}(BeanStub));
 export { FocusController };

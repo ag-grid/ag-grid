@@ -7,10 +7,11 @@ import { Column } from "../entities/column";
 import { Bean } from "../context/context";
 import { Autowired } from "../context/context";
 import { _ } from "../utils";
+import { BeanStub } from "../context/beanStub";
 
 // takes in a list of columns, as specified by the column definitions, and returns column groups
 @Bean('columnUtils')
-export class ColumnUtils {
+export class ColumnUtils extends BeanStub {
 
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
 

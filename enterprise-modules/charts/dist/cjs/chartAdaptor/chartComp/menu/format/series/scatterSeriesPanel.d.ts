@@ -14,5 +14,5 @@ export declare class ScatterSeriesPanel extends Component {
     private initMarkersPanel;
     private destroyActivePanels;
     private getChartProxy;
-    destroy(): void;
+    protected destroy(): void;
 }

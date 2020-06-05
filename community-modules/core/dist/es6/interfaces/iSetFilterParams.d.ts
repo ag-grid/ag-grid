@@ -1,4 +1,4 @@
-// Type definitions for @ag-grid-community/core v23.1.1
+// Type definitions for @ag-grid-community/core v23.2.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { ICellRendererComp, ICellRendererFunc } from '../rendering/cellRenderers/iCellRenderer';
@@ -13,19 +13,22 @@ export declare type SetFilterValues = SetFilterValuesFunc | any[];
 export interface ISetFilterParams extends IProvidedFilterParams {
     /** @deprecated */ suppressRemoveEntries?: boolean;
     values?: SetFilterValues;
+    refreshValuesOnOpen?: boolean;
     cellHeight?: number;
     suppressSorting?: boolean;
     cellRenderer?: {
         new (): ICellRendererComp;
     } | ICellRendererFunc | string;
     suppressMiniFilter?: boolean;
+    applyMiniFilterWhileTyping?: boolean;
     suppressSelectAll?: boolean;
+    defaultToNothingSelected?: boolean;
     /** @deprecated */ suppressSyncValuesAfterDataChange?: boolean;
     comparator?: (a: any, b: any) => number;
-    miniFilterSearchByRefDataKey?: boolean;
     textFormatter?: (from: string) => string;
     valueFormatter?: (params: ValueFormatterParams) => string;
     /** @deprecated */ selectAllOnMiniFilter?: boolean;
     /** @deprecated */ syncValuesLikeExcel?: boolean;
     showTooltips?: boolean;
+    excelMode?: 'mac' | 'windows';
 }

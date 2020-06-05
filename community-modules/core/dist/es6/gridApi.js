@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v23.1.1
+ * @version v23.2.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -14,11 +14,12 @@ import { GridOptionsWrapper } from "./gridOptionsWrapper";
 import { Constants } from "./constants";
 import { Autowired, Bean, Optional, PostConstruct } from "./context/context";
 import { ModuleNames } from "./modules/moduleNames";
-import { _ } from "./utils";
 import { ModuleRegistry } from "./modules/moduleRegistry";
+import { _ } from "./utils";
 var GridApi = /** @class */ (function () {
     function GridApi() {
         this.detailGridInfoMap = {};
+        this.destroyCalled = false;
     }
     GridApi.prototype.registerGridComp = function (gridPanel) {
         this.gridPanel = gridPanel;
@@ -121,7 +122,11 @@ var GridApi = /** @class */ (function () {
     GridApi.prototype.setRowData = function (rowData) {
         if (this.gridOptionsWrapper.isRowModelDefault()) {
             if (this.gridOptionsWrapper.isImmutableData()) {
-                var _a = this.immutableService.createTransactionForRowData(rowData), transaction = _a[0], orderIdMap = _a[1];
+                var res = this.immutableService.createTransactionForRowData(rowData);
+                if (!res) {
+                    return;
+                }
+                var transaction = res[0], orderIdMap = res[1];
                 this.clientSideRowModel.updateRowData(transaction, orderIdMap);
                 // need to force updating of full width rows - note this wouldn't be necessary the full width cell comp listened
                 // to the data change event on the row node and refreshed itself.
@@ -187,6 +192,10 @@ var GridApi = /** @class */ (function () {
     GridApi.prototype.setColumnDefs = function (colDefs, source) {
         if (source === void 0) { source = "api"; }
         this.columnController.setColumnDefs(colDefs, source);
+    };
+    GridApi.prototype.setAutoGroupColumnDef = function (colDef, source) {
+        if (source === void 0) { source = "api"; }
+        this.gridOptionsWrapper.setProperty('autoGroupColumnDef', colDef, true);
     };
     GridApi.prototype.expireValueCache = function () {
         this.valueCache.expire();
@@ -729,8 +738,14 @@ var GridApi = /** @class */ (function () {
         this.eventService.dispatchEvent(event);
     };
     GridApi.prototype.destroy = function () {
+        // this is needed as GridAPI is a bean, and GridAPI.destroy() is called as part
+        // of context.destroy(). so we need to stop the infinite loop.
+        if (this.destroyCalled) {
+            return;
+        }
+        this.destroyCalled = true;
         // destroy the UI first (as they use the services)
-        this.gridCore.destroy();
+        this.context.destroyBean(this.gridCore);
         // destroy the services
         this.context.destroy();
     };
@@ -745,10 +760,8 @@ var GridApi = /** @class */ (function () {
         if (this.rangeController) {
             return this.rangeController.getCellRanges();
         }
-        else {
-            console.warn('ag-Grid: cell range selection is only available in ag-Grid Enterprise');
-            return null;
-        }
+        console.warn('ag-Grid: cell range selection is only available in ag-Grid Enterprise');
+        return null;
     };
     GridApi.prototype.camelCaseToHumanReadable = function (camelCase) {
         return _.camelCaseToHumanText(camelCase);
@@ -818,6 +831,13 @@ var GridApi = /** @class */ (function () {
     GridApi.prototype.showColumnMenuAfterMouseClick = function (colKey, mouseEvent) {
         // use grid column so works with pivot mode
         var column = this.columnController.getGridColumn(colKey);
+        if (!column) {
+            column = this.columnController.getPrimaryColumn(colKey);
+        }
+        if (!column) {
+            console.error("ag-Grid: column '" + colKey + "' not found");
+            return;
+        }
         this.menuFactory.showMenuAfterMouseEvent(column, mouseEvent);
     };
     GridApi.prototype.hidePopupMenu = function () {

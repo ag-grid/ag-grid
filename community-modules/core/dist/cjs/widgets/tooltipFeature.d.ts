@@ -1,4 +1,4 @@
-// Type definitions for @ag-grid-community/core v23.1.1
+// Type definitions for @ag-grid-community/core v23.2.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { BeanStub } from "../context/beanStub";
@@ -36,7 +36,7 @@ export declare class TooltipFeature extends BeanStub {
     private tooltipMouseTrack;
     constructor(parentComp: TooltipParentComp, location: string);
     private postConstruct;
-    destroy(): void;
+    protected destroy(): void;
     onMouseEnter(e: MouseEvent): void;
     onMouseLeave(): void;
     private setToDoNothing;

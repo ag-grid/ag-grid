@@ -13,10 +13,8 @@ export interface ToolPanelColumnCompParams extends IToolPanelParams {
 }
 export declare class ColumnToolPanel extends Component implements IColumnToolPanel, IToolPanelComp {
     private static TEMPLATE;
-    private gridOptionsWrapper;
     private gridApi;
     private columnApi;
-    private eventService;
     private initialised;
     private params;
     private childDestroyFuncs;
@@ -38,7 +36,6 @@ export declare class ColumnToolPanel extends Component implements IColumnToolPan
     collapseColumnGroups(groupIds?: string[]): void;
     setColumnLayout(colDefs: (ColDef | ColGroupDef)[]): void;
     syncLayoutWithGrid(): void;
-    private addComponent;
     destroyChildren(): void;
     refresh(): void;
     destroy(): void;

@@ -1,0 +1,120 @@
+{
+    "filterParams": {
+        "filterOptions": {
+            "description": "Array of <a href='../javascript-grid-filter-provided-simple/#filterOptions'>Filter Options</a> to present to the user.",
+            "options": [
+                "equals",
+                "notEqual",
+                "contains",
+                "notContains",
+                "startsWith",
+                "endsWith",
+                "lessThan",
+                "lessThanOrEqual",
+                "greaterThan",
+                "greaterThanOrEqual",
+                "inRange",
+                "empty"
+            ],
+            "relevantTo": [
+                "Text",
+                "Number",
+                "Date"
+            ]
+        },
+        "defaultOption": {
+            "description": "The default <a href='../javascript-grid-filter-provided-simple/#filterOptions'>Filter Option</a> to be selected.",
+            "options": [
+                "equals",
+                "notEqual",
+                "contains",
+                "notContains",
+                "startsWith",
+                "endsWith",
+                "lessThan",
+                "lessThanOrEqual",
+                "greaterThan",
+                "greaterThanOrEqual",
+                "inRange",
+                "empty"
+            ],
+            "relevantTo": [
+                "Text",
+                "Number",
+                "Date"
+            ]
+        },
+        "suppressAndOrCondition": {
+            "description": "If <code>true</code>, the filter will only allow one condition.",
+            "default": false,
+            "relevantTo": [
+                "Text",
+                "Number",
+                "Date"
+            ]
+        },
+        "textCustomComparator": {
+            "description": "Used to override how to filter based on the user input.",
+            "more": {
+                "name": "Text Custom Comparator",
+                "url": "../javascript-grid-filter-text/#text-custom-comparator"
+            },
+            "relevantTo": [
+                "Text"
+            ]
+        },
+        "caseSensitive": {
+            "description": "By default, text filtering is case-insensitive. Set this to <code>true</code> to make text filtering case-sensitive.",
+            "default": false,
+            "relevantTo": [
+                "Text"
+            ]
+        },
+        "textFormatter": {
+            "description": "Formats the text before applying the filter compare logic. Useful if you want to substitute accented characters, for example.",
+            "relevantTo": [
+                "Text"
+            ]
+        },
+        "inRangeInclusive": {
+            "description": "If <code>true</code>, the <code>'inRange'</code> filter option will include values equal to the start and end of the range.",
+            "relevantTo": [
+                "Number",
+                "Date"
+            ]
+        },
+        "includeBlanksInEquals": {
+            "description": "If <code>true</code>, blank (<code>null</code> or <code>undefined</code>) values will pass the <code>'equals'</code> filter option.",
+            "relevantTo": [
+                "Number",
+                "Date"
+            ]
+        },
+        "includeBlanksInLessThan": {
+            "description": "If <code>true</code>, blank (<code>null</code> or <code>undefined</code>) values will pass the <code>'lessThan'</code> and <code>'lessThanOrEqual'</code> filter options.",
+            "relevantTo": [
+                "Number",
+                "Date"
+            ]
+        },
+        "includeBlanksInGreaterThan": {
+            "description": "If <code>true</code>, blank (<code>null</code> or <code>undefined</code>) values will pass the <code>'greaterThan'</code> and <code>'greaterThanOrEqual'</code> filter options.",
+            "relevantTo": [
+                "Number",
+                "Date"
+            ]
+        },
+        "comparator": {
+            "description": "Required if the data for the column are not native JS <code>Date</code> objects.",
+            "relevantTo": [
+                "Date"
+            ]
+        },
+        "browserDatePicker": {
+            "description": "This is only used if a date component is not provided. By default the grid will use the browser date picker in Chrome and Firefox and a plain text box for all other browsers (this is because Chrome and Firefox are the only current browsers providing a decent out-of-the-box date picker). If this property is set to <code>true</code>, the browser date picker will be used regardless of the browser type. If set to <code>false</code>, a plain text box will be used for all browsers.",
+            "relevantTo": [
+                "Date"
+            ]
+        }
+    }
+}

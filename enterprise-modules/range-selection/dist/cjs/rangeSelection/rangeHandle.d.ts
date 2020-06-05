@@ -1,7 +1,8 @@
+import { SelectionHandleType } from "@ag-grid-community/core";
 import { AbstractSelectionHandle } from "./abstractSelectionHandle";
 export declare class RangeHandle extends AbstractSelectionHandle {
     static TEMPLATE: string;
-    protected type: string;
+    protected type: SelectionHandleType;
     private endPosition;
     private rangeFixed;
     constructor();

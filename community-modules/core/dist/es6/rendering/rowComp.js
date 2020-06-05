@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v23.1.1
+ * @version v23.2.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -103,7 +103,7 @@ var RowComp = /** @class */ (function (_super) {
         var businessKeySanitised = _.escape(businessKey);
         var rowTopStyle = this.getInitialRowTopStyle();
         var rowIdx = this.rowNode.getRowIndexString();
-        var headerRowCount = this.beans.gridPanel.headerRootComp.getHeaderRowCount();
+        var headerRowCount = this.beans.headerNavigationService.getHeaderRowCount();
         templateParts.push("<div");
         templateParts.push(" role=\"row\"");
         templateParts.push(" row-index=\"" + rowIdx + "\" aria-rowindex=\"" + (headerRowCount + this.rowNode.rowIndex + 1) + "\"");
@@ -341,40 +341,34 @@ var RowComp = /** @class */ (function (_super) {
         return allFullWidthRowsRefreshed;
     };
     RowComp.prototype.addListeners = function () {
-        this.addDestroyableEventListener(this.rowNode, RowNode.EVENT_HEIGHT_CHANGED, this.onRowHeightChanged.bind(this));
-        this.addDestroyableEventListener(this.rowNode, RowNode.EVENT_ROW_SELECTED, this.onRowSelected.bind(this));
-        this.addDestroyableEventListener(this.rowNode, RowNode.EVENT_ROW_INDEX_CHANGED, this.onRowIndexChanged.bind(this));
-        this.addDestroyableEventListener(this.rowNode, RowNode.EVENT_TOP_CHANGED, this.onTopChanged.bind(this));
-        this.addDestroyableEventListener(this.rowNode, RowNode.EVENT_EXPANDED_CHANGED, this.onExpandedChanged.bind(this));
-        this.addDestroyableEventListener(this.rowNode, RowNode.EVENT_DATA_CHANGED, this.onRowNodeDataChanged.bind(this));
-        this.addDestroyableEventListener(this.rowNode, RowNode.EVENT_CELL_CHANGED, this.onRowNodeCellChanged.bind(this));
-        this.addDestroyableEventListener(this.rowNode, RowNode.EVENT_HIGHLIGHT_CHANGED, this.onRowNodeHighlightChanged.bind(this));
-        this.addDestroyableEventListener(this.rowNode, RowNode.EVENT_DRAGGING_CHANGED, this.onRowNodeDraggingChanged.bind(this));
+        this.addManagedListener(this.rowNode, RowNode.EVENT_HEIGHT_CHANGED, this.onRowHeightChanged.bind(this));
+        this.addManagedListener(this.rowNode, RowNode.EVENT_ROW_SELECTED, this.onRowSelected.bind(this));
+        this.addManagedListener(this.rowNode, RowNode.EVENT_ROW_INDEX_CHANGED, this.onRowIndexChanged.bind(this));
+        this.addManagedListener(this.rowNode, RowNode.EVENT_TOP_CHANGED, this.onTopChanged.bind(this));
+        this.addManagedListener(this.rowNode, RowNode.EVENT_EXPANDED_CHANGED, this.onExpandedChanged.bind(this));
+        this.addManagedListener(this.rowNode, RowNode.EVENT_DATA_CHANGED, this.onRowNodeDataChanged.bind(this));
+        this.addManagedListener(this.rowNode, RowNode.EVENT_CELL_CHANGED, this.onRowNodeCellChanged.bind(this));
+        this.addManagedListener(this.rowNode, RowNode.EVENT_HIGHLIGHT_CHANGED, this.onRowNodeHighlightChanged.bind(this));
+        this.addManagedListener(this.rowNode, RowNode.EVENT_DRAGGING_CHANGED, this.onRowNodeDraggingChanged.bind(this));
         var eventService = this.beans.eventService;
-        this.addDestroyableEventListener(eventService, Events.EVENT_HEIGHT_SCALE_CHANGED, this.onTopChanged.bind(this));
-        this.addDestroyableEventListener(eventService, Events.EVENT_DISPLAYED_COLUMNS_CHANGED, this.onDisplayedColumnsChanged.bind(this));
-        this.addDestroyableEventListener(eventService, Events.EVENT_VIRTUAL_COLUMNS_CHANGED, this.onVirtualColumnsChanged.bind(this));
-        this.addDestroyableEventListener(eventService, Events.EVENT_COLUMN_RESIZED, this.onColumnResized.bind(this));
-        this.addDestroyableEventListener(eventService, Events.EVENT_CELL_FOCUSED, this.onCellFocusChanged.bind(this));
-        this.addDestroyableEventListener(eventService, Events.EVENT_PAGINATION_CHANGED, this.onPaginationChanged.bind(this));
-        this.addDestroyableEventListener(eventService, Events.EVENT_GRID_COLUMNS_CHANGED, this.onGridColumnsChanged.bind(this));
-        this.addDestroyableEventListener(eventService, Events.EVENT_MODEL_UPDATED, this.onModelUpdated.bind(this));
-        this.addDestroyableEventListener(eventService, Events.EVENT_COLUMN_MOVED, this.onColumnMoved.bind(this));
+        this.addManagedListener(eventService, Events.EVENT_HEIGHT_SCALE_CHANGED, this.onTopChanged.bind(this));
+        this.addManagedListener(eventService, Events.EVENT_DISPLAYED_COLUMNS_CHANGED, this.onDisplayedColumnsChanged.bind(this));
+        this.addManagedListener(eventService, Events.EVENT_VIRTUAL_COLUMNS_CHANGED, this.onVirtualColumnsChanged.bind(this));
+        this.addManagedListener(eventService, Events.EVENT_COLUMN_RESIZED, this.onColumnResized.bind(this));
+        this.addManagedListener(eventService, Events.EVENT_CELL_FOCUSED, this.onCellFocusChanged.bind(this));
+        this.addManagedListener(eventService, Events.EVENT_PAGINATION_CHANGED, this.onPaginationChanged.bind(this));
+        this.addManagedListener(eventService, Events.EVENT_MODEL_UPDATED, this.onModelUpdated.bind(this));
+        this.addManagedListener(eventService, Events.EVENT_COLUMN_MOVED, this.onColumnMoved.bind(this));
         this.addListenersForCellComps();
     };
     RowComp.prototype.addListenersForCellComps = function () {
         var _this = this;
-        this.addDestroyableEventListener(this.rowNode, RowNode.EVENT_ROW_INDEX_CHANGED, function () {
+        this.addManagedListener(this.rowNode, RowNode.EVENT_ROW_INDEX_CHANGED, function () {
             _this.forEachCellComp(function (cellComp) { return cellComp.onRowIndexChanged(); });
         });
-        this.addDestroyableEventListener(this.rowNode, RowNode.EVENT_CELL_CHANGED, function (event) {
+        this.addManagedListener(this.rowNode, RowNode.EVENT_CELL_CHANGED, function (event) {
             _this.forEachCellComp(function (cellComp) { return cellComp.onCellChanged(event); });
         });
-    };
-    // when grid columns change, then all cells should be cleaned out,
-    // as the new columns could have same id as the previous columns and may conflict
-    RowComp.prototype.onGridColumnsChanged = function () {
-        this.removeRenderedCells(Object.keys(this.cellComps));
     };
     RowComp.prototype.onRowNodeDataChanged = function (event) {
         // if this is an update, we want to refresh, as this will allow the user to put in a transition
@@ -730,8 +724,8 @@ var RowComp = /** @class */ (function (_super) {
                     eRow.appendChild(gui);
                     cellRendererCallback(cellRenderer);
                 }
-                else if (cellRenderer.destroy) {
-                    cellRenderer.destroy();
+                else {
+                    _this.beans.context.destroyBean(cellRenderer);
                 }
             };
             // if doing master detail, it's possible we have a cached row comp from last time detail was displayed
@@ -1097,10 +1091,10 @@ var RowComp = /** @class */ (function (_super) {
         // mouse hover, it sets such in the rowNode, and then all three reflect the change as
         // all are listening for event on the row node.
         // step 1 - add listener, to set flag on row node
-        this.addDestroyableEventListener(eRow, 'mouseenter', function () { return _this.rowNode.onMouseEnter(); });
-        this.addDestroyableEventListener(eRow, 'mouseleave', function () { return _this.rowNode.onMouseLeave(); });
+        this.addManagedListener(eRow, 'mouseenter', function () { return _this.rowNode.onMouseEnter(); });
+        this.addManagedListener(eRow, 'mouseleave', function () { return _this.rowNode.onMouseLeave(); });
         // step 2 - listen for changes on row node (which any eRow can trigger)
-        this.addDestroyableEventListener(this.rowNode, RowNode.EVENT_MOUSE_ENTER, function () {
+        this.addManagedListener(this.rowNode, RowNode.EVENT_MOUSE_ENTER, function () {
             // if hover turned off, we don't add the class. we do this here so that if the application
             // toggles this property mid way, we remove the hover form the last row, but we stop
             // adding hovers from that point onwards.
@@ -1108,7 +1102,7 @@ var RowComp = /** @class */ (function (_super) {
                 _.addCssClass(eRow, 'ag-row-hover');
             }
         });
-        this.addDestroyableEventListener(this.rowNode, RowNode.EVENT_MOUSE_LEAVE, function () {
+        this.addManagedListener(this.rowNode, RowNode.EVENT_MOUSE_LEAVE, function () {
             _.removeCssClass(eRow, 'ag-row-hover');
         });
     };
@@ -1148,6 +1142,7 @@ var RowComp = /** @class */ (function (_super) {
         }
         _super.prototype.removeEventListener.call(this, eventType, listener);
     };
+    // note - this is NOT called by context, as we don't wire / unwire the CellComp for performance reasons.
     RowComp.prototype.destroy = function (animate) {
         if (animate === void 0) { animate = false; }
         this.active = false;
@@ -1269,7 +1264,7 @@ var RowComp = /** @class */ (function (_super) {
         var rowIndexStr = this.rowNode.getRowIndexString();
         var rowIsEven = this.rowNode.rowIndex % 2 === 0;
         var rowIsEvenChanged = this.rowIsEven !== rowIsEven;
-        var headerRowCount = this.beans.gridPanel.headerRootComp.getHeaderRowCount();
+        var headerRowCount = this.beans.headerNavigationService.getHeaderRowCount();
         if (rowIsEvenChanged) {
             this.rowIsEven = rowIsEven;
         }

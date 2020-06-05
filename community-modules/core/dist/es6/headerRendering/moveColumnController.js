@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v23.1.1
+ * @version v23.2.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -11,9 +11,9 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 import { Autowired, PostConstruct } from "../context/context";
-import { _ } from "../utils";
-import { DragAndDropService, DragSourceType, HorizontalDirection } from "../dragAndDrop/dragAndDropService";
 import { Constants } from "../constants";
+import { DragAndDropService, DragSourceType, HorizontalDirection } from "../dragAndDrop/dragAndDropService";
+import { _ } from "../utils";
 var MoveColumnController = /** @class */ (function () {
     function MoveColumnController(pinned, eContainer) {
         this.needToMoveLeft = false;

@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v23.1.1
+ * @version v23.2.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -26,8 +26,8 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 import { RefSelector } from "./componentAnnotations";
 import { AgAbstractLabel } from "./agAbstractLabel";
 import { AgAbstractField } from "./agAbstractField";
-import { _ } from "../utils";
 import { PostConstruct } from "../context/context";
+import { _ } from "../utils";
 var AgSlider = /** @class */ (function (_super) {
     __extends(AgSlider, _super);
     function AgSlider() {
@@ -41,12 +41,12 @@ var AgSlider = /** @class */ (function (_super) {
     AgSlider.prototype.onValueChange = function (callbackFn) {
         var _this = this;
         var eventChanged = AgAbstractField.EVENT_CHANGED;
-        this.addDestroyableEventListener(this.eText, eventChanged, function () {
+        this.addManagedListener(this.eText, eventChanged, function () {
             var textValue = parseFloat(_this.eText.getValue());
             _this.eSlider.setValue(textValue.toString(), true);
             callbackFn(textValue || 0);
         });
-        this.addDestroyableEventListener(this.eSlider, eventChanged, function () {
+        this.addManagedListener(this.eSlider, eventChanged, function () {
             var sliderValue = _this.eSlider.getValue();
             _this.eText.setValue(sliderValue, true);
             callbackFn(parseFloat(sliderValue));

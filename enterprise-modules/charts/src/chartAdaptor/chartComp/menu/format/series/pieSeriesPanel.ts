@@ -11,17 +11,17 @@ import {
     RefSelector,
     AgGroupComponentParams
 } from "@ag-grid-community/core";
-import {ChartController} from "../../../chartController";
-import {ShadowPanel} from "./shadowPanel";
-import {Font, FontPanel, FontPanelParams} from "../fontPanel";
-import {CalloutPanel} from "./calloutPanel";
-import {ChartTranslator} from "../../../chartTranslator";
-import {PieChartProxy} from "../../../chartProxies/polar/pieChartProxy";
-import {DoughnutChartProxy} from "../../../chartProxies/polar/doughnutChartProxy";
+import { ChartController } from "../../../chartController";
+import { ShadowPanel } from "./shadowPanel";
+import { Font, FontPanel, FontPanelParams } from "../fontPanel";
+import { CalloutPanel } from "./calloutPanel";
+import { ChartTranslator } from "../../../chartTranslator";
+import { PieChartProxy } from "../../../chartProxies/polar/pieChartProxy";
+import { DoughnutChartProxy } from "../../../chartProxies/polar/doughnutChartProxy";
 
 export class PieSeriesPanel extends Component {
 
-    public static TEMPLATE =
+    public static TEMPLATE = /* html */
         `<div>
             <ag-group-component ref="seriesGroup">
                 <ag-toggle-button ref="seriesTooltipsToggle"></ag-toggle-button>
@@ -146,10 +146,10 @@ export class PieSeriesPanel extends Component {
             setFont: setFont
         };
 
-        const labelPanelComp = this.wireBean(new FontPanel(params));
+        const labelPanelComp = this.createBean(new FontPanel(params));
         this.activePanels.push(labelPanelComp);
 
-        const calloutPanelComp = this.wireBean(new CalloutPanel(this.chartController));
+        const calloutPanelComp = this.createBean(new CalloutPanel(this.chartController));
         labelPanelComp.addCompToPanel(calloutPanelComp);
         this.activePanels.push(calloutPanelComp);
 
@@ -157,7 +157,7 @@ export class PieSeriesPanel extends Component {
     }
 
     private initShadowPanel() {
-        const shadowPanelComp = this.wireBean(new ShadowPanel(this.chartController));
+        const shadowPanelComp = this.createBean(new ShadowPanel(this.chartController));
         this.seriesGroup.getGui().appendChild(shadowPanelComp.getGui());
         this.seriesGroup.addItem(shadowPanelComp);
     }
@@ -165,7 +165,7 @@ export class PieSeriesPanel extends Component {
     private destroyActivePanels(): void {
         this.activePanels.forEach(panel => {
             _.removeFromParent(panel.getGui());
-            panel.destroy();
+            this.destroyBean(panel);
         });
     }
 
@@ -173,7 +173,7 @@ export class PieSeriesPanel extends Component {
         return this.chartController.getChartProxy() as PieChartProxy | DoughnutChartProxy;
     }
 
-    public destroy(): void {
+    protected destroy(): void {
         this.destroyActivePanels();
         super.destroy();
     }

@@ -17,6 +17,21 @@ include '../documentation-main/documentation_header.php';
     details that are specific to the text filter.
 </p>
 
+<h2>Text Filter Parameters</h2>
+
+<p>
+    Text Filters are configured though the <code>filterParams</code> attribute of the column definition. All of the
+    parameters from Provided Filters are available:
+</p>
+
+<?= createDocumentationFromFile('../javascript-grid-filter-provided/providedFilters.json', 'filterParams'); ?>
+
+<p>
+    In addition, the following parameters are also available:
+</p>
+
+<?= createDocumentationFromFile('../javascript-grid-filter-provided-simple/simpleFilters.json', 'filterParams', ['Text']); ?>
+
 <h2>Text Custom Comparator</h2>
 
 <p>
@@ -85,29 +100,28 @@ SNIPPET
 <h2>Text Formatter</h2>
 
 <p>
-    By default, the grid compares the text filter with the values in a case-insensitive way, thus <code>'o'</code> will match <code>'Olivia'</code> and <code>'Salmon'</code>,
-    but will not match <code>'Bj&ouml;rk'</code>. If you want to match in any other way (e.g. you want to ignore
-    accents), or you want to have case-sensitive matches, then you should provide your own <code>textFormatter</code>.
+    By default, the grid compares the text filter with the values in a case-insensitive way, by converting both the
+    filter text and the values to lower-case and comparing them; for example, <code>'o'</code> will match
+    <code>'Olivia'</code> and <code>'Salmon'</code>. If you instead want to have case-sensitive matches, you can set
+    <code>caseSensitive = true</code> in the <code>filterParams</code>, so that no lower-casing is performed. In this
+    case, <code>'o'</code> would no longer match <code>'Olivia'</code>.
 </p>
+
 <p>
-    The <code>textFormatter</code> is a function with the following signature:
+    You might have more advanced requirements, for example to ignore accented characters. In this case, you can provide
+    your own <code>textFormatter</code>, which is a function with the following signature:
 </p>
 
 <?= createSnippet('function textFormatter(gridValue: string): string;', 'ts') ?>
 
-<ul class="content">
-    <li><b>gridValue: string</b> The value coming from the grid. This can be the <code>valueGetter</code> if there is any for the
-        column, or the value as originally provided in the <code>rowData</code>.</li>
-    <li><b>returns: string</b> The string to be used for the purpose of filtering.</li>
-</ul>
-
 <p>
-    If no <code>textFormatter</code> is provided the grid will convert the text to lower-case. It is important to note that when
-    comparing to the text entered in the filter box, the text in the filter box is always converted to lower case.
+    <code>gridValue</code> is the value coming from the grid. This can be from the <code>valueGetter</code> if there is
+    any for the column, or the value as originally provided in the <code>rowData</code>. The function should return a
+    string to be used for the purpose of filtering.
 </p>
 
 <p>
-    The following is an example to remove accents and convert to lower case.
+    The following is an example function to remove accents and convert to lower case.
 </p>
 
 <?= createSnippet(<<<SNIPPET
@@ -132,21 +146,23 @@ SNIPPET
 <h2>Example: Text Filter</h2>
 
 <ul class="content">
-    <li>The Athlete column has only two filter options: <code>filterOptions = ['contains', 'notContains']</code></li>
-    <li>The Athlete column has a text formatter, so if you search for <code>'o'</code> it will find <code>&oslash;</code>. You can try this by
-        searching the string <code>'Bjo'</code>.</li>
+    <li>The <strong>Athlete</strong> column has only two filter options: <code>filterOptions = ['contains', 'notContains']</code></li>
     <li>
-        The Athlete column has a debounce of 0ms (<code>debounceMs = 0</code>). This is used by both the parent and
+        The <strong>Athlete</strong> column has a text formatter, so if you search for <code>'o'</code> it will find <code>&oslash;</code>. You can try this by
+        searching the string <code>'Bjo'</code>.
+    </li>
+    <li>
+        The <strong>Athlete</strong> column has a debounce of 0ms (<code>debounceMs = 0</code>). This is used by both the parent and
         floating filter components.
     </li>
-    <li>The Athlete column filter is case-sensitive (<code>caseSensitive = true</code>)</li>
-    <li>The Athlete column filter has the AND/OR additional filter suppressed (<code>suppressAndOrCondition = true</code>)</li>
-    <li>The Country column has only one filter option: <code>filterOptions = ['contains']</code></li>
-    <li>The Country column has a <code>textCustomComparator</code> so that aliases can be entered in the filter,
+    <li>The <strong>Athlete</strong> column filter has the AND/OR additional filter suppressed (<code>suppressAndOrCondition = true</code>)</li>
+    <li>The <strong>Country</strong> column has only one filter option: <code>filterOptions = ['contains']</code></li>
+    <li>The <strong>Country</strong> column has a <code>textCustomComparator</code> so that aliases can be entered in the filter,
         e.g. if you filter using the text <code>'usa'</code> it will match <code>United States</code> or <code>'holland'</code> will match <code>'Netherlands'</code></li>
-    <li>The country column filter has a debounce of 2000ms (<code>debounceMs = 2000</code>)</li>
-    <li>The year column has one filter option: <code>filterOptions = ['inRange']</code></li>
-    <li>The sports column has a different default option (<code>defaultOption = 'startsWith'</code>)</li>
+    <li>The <strong>Country</strong> column filter has a debounce of 2000ms (<code>debounceMs = 2000</code>)</li>
+    <li>The <strong>Year</strong> column has one filter option: <code>filterOptions = ['inRange']</code></li>
+    <li>The <strong>Sport</strong> column has a different default option (<code>defaultOption = 'startsWith'</code>)</li>
+    <li>The <strong>Sport</strong> column filter is case-sensitive (<code>caseSensitive = true</code>)</li>
 </ul>
 
 <?= grid_example('Text Filter', 'text-filter', 'generated', ['exampleHeight' => 555, 'modules' => true]) ?>

@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v23.1.1
+ * @version v23.2.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -29,7 +29,7 @@ var AgInputNumberField = /** @class */ (function (_super) {
     AgInputNumberField.prototype.postConstruct = function () {
         var _this = this;
         _super.prototype.postConstruct.call(this);
-        this.addDestroyableEventListener(this.eInput, 'blur', function () {
+        this.addManagedListener(this.eInput, 'blur', function () {
             var floatedValue = parseFloat(_this.eInput.value);
             var value = isNaN(floatedValue) ? '' : _this.normalizeValue(floatedValue.toString());
             if (_this.value !== value) {

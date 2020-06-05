@@ -30,7 +30,7 @@ var RangeHandle = /** @class */ (function (_super) {
     __extends(RangeHandle, _super);
     function RangeHandle() {
         var _this = _super.call(this, RangeHandle.TEMPLATE) || this;
-        _this.type = 'range';
+        _this.type = core_1.SelectionHandleType.RANGE;
         _this.rangeFixed = false;
         return _this;
     }
@@ -73,7 +73,7 @@ var RangeHandle = /** @class */ (function (_super) {
         cellRange.endRow = endRow;
         cellRange.startColumn = column;
     };
-    RangeHandle.TEMPLATE = '<div class="ag-range-handle"></div>';
+    RangeHandle.TEMPLATE = "<div class=\"ag-range-handle\"></div>";
     return RangeHandle;
 }(abstractSelectionHandle_1.AbstractSelectionHandle));
 exports.RangeHandle = RangeHandle;

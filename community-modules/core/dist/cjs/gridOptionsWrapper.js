@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v23.1.1
+ * @version v23.2.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -22,7 +22,6 @@ var __spreadArrays = (this && this.__spreadArrays) || function () {
     return r;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var utils_1 = require("./utils");
 var eventService_1 = require("./eventService");
 var constants_1 = require("./constants");
 var componentUtil_1 = require("./components/componentUtil");
@@ -33,6 +32,7 @@ var eventKeys_1 = require("./eventKeys");
 var sideBar_1 = require("./entities/sideBar");
 var moduleNames_1 = require("./modules/moduleNames");
 var moduleRegistry_1 = require("./modules/moduleRegistry");
+var utils_1 = require("./utils");
 var DEFAULT_ROW_HEIGHT = 25;
 var DEFAULT_DETAIL_ROW_HEIGHT = 300;
 var DEFAULT_VIEWPORT_ROW_MODEL_PAGE_SIZE = 5;
@@ -249,6 +249,12 @@ var GridOptionsWrapper = /** @class */ (function () {
     };
     GridOptionsWrapper.prototype.isEnableCellChangeFlash = function () {
         return isTrue(this.gridOptions.enableCellChangeFlash);
+    };
+    GridOptionsWrapper.prototype.getCellFlashDelay = function () {
+        return this.gridOptions.cellFlashDelay || 500;
+    };
+    GridOptionsWrapper.prototype.getCellFadeDelay = function () {
+        return this.gridOptions.cellFadeDelay || 1000;
     };
     GridOptionsWrapper.prototype.isGroupSelectsChildren = function () {
         var result = isTrue(this.gridOptions.groupSelectsChildren);
@@ -848,10 +854,11 @@ var GridOptionsWrapper = /** @class */ (function () {
     GridOptionsWrapper.prototype.getClipboardDeliminator = function () {
         return utils_1._.exists(this.gridOptions.clipboardDeliminator) ? this.gridOptions.clipboardDeliminator : '\t';
     };
-    GridOptionsWrapper.prototype.setProperty = function (key, value) {
+    GridOptionsWrapper.prototype.setProperty = function (key, value, force) {
+        if (force === void 0) { force = false; }
         var gridOptionsNoType = this.gridOptions;
         var previousValue = gridOptionsNoType[key];
-        if (previousValue !== value) {
+        if (force || previousValue !== value) {
             gridOptionsNoType[key] = value;
             var event_1 = {
                 type: key,
@@ -1271,13 +1278,9 @@ var GridOptionsWrapper = /** @class */ (function () {
         if (this.gridOptions.localeTextFunc) {
             return this.gridOptions.localeTextFunc;
         }
-        var that = this;
+        var localeText = this.gridOptions.localeText;
         return function (key, defaultValue) {
-            var localeText = that.gridOptions.localeText;
-            if (localeText && localeText[key]) {
-                return localeText[key];
-            }
-            return defaultValue;
+            return localeText && localeText[key] ? localeText[key] : defaultValue;
         };
     };
     // responsible for calling the onXXX functions on gridOptions
@@ -1387,20 +1390,11 @@ var GridOptionsWrapper = /** @class */ (function () {
         context_1.Autowired('eventService')
     ], GridOptionsWrapper.prototype, "eventService", void 0);
     __decorate([
-        context_1.Autowired('gridApi')
-    ], GridOptionsWrapper.prototype, "gridApi", void 0);
-    __decorate([
-        context_1.Autowired('columnApi')
-    ], GridOptionsWrapper.prototype, "columnApi", void 0);
-    __decorate([
         context_1.Autowired('environment')
     ], GridOptionsWrapper.prototype, "environment", void 0);
     __decorate([
         context_1.Autowired('autoHeightCalculator')
     ], GridOptionsWrapper.prototype, "autoHeightCalculator", void 0);
-    __decorate([
-        context_1.Autowired('context')
-    ], GridOptionsWrapper.prototype, "context", void 0);
     __decorate([
         __param(0, context_1.Qualifier('gridApi')), __param(1, context_1.Qualifier('columnApi'))
     ], GridOptionsWrapper.prototype, "agWire", null);

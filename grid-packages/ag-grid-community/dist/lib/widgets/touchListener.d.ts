@@ -1,5 +1,5 @@
-import { IEventEmitter } from "../interfaces/iEventEmitter";
 import { AgEvent } from "../events";
+import { IEventEmitter } from "../interfaces/iEventEmitter";
 export interface TapEvent extends AgEvent {
     touchStart: Touch;
 }

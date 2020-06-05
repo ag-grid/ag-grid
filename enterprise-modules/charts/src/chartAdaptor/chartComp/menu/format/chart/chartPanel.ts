@@ -15,10 +15,9 @@ import TitlePanel from "./titlePanel";
 
 export class ChartPanel extends Component {
 
-    public static TEMPLATE =
+    public static TEMPLATE = /* html */
         `<div>
-            <ag-group-component ref="chartGroup">
-            </ag-group-component>
+            <ag-group-component ref="chartGroup"></ag-group-component>
         </div>`;
 
     @RefSelector('chartGroup') private chartGroup: AgGroupComponent;
@@ -55,20 +54,20 @@ export class ChartPanel extends Component {
     }
 
     private initTitles(): void {
-        const titlePanelComp = this.wireBean(new TitlePanel(this.chartController));
+        const titlePanelComp = this.createBean(new TitlePanel(this.chartController));
 
         this.chartGroup.addItem(titlePanelComp);
         this.activePanels.push(titlePanelComp);
     }
 
     private initPaddingPanel(): void {
-        const paddingPanelComp = this.wireBean(new PaddingPanel(this.chartController));
+        const paddingPanelComp = this.createBean(new PaddingPanel(this.chartController));
         this.chartGroup.addItem(paddingPanelComp);
         this.activePanels.push(paddingPanelComp);
     }
 
     private initBackgroundPanel(): void {
-        const backgroundPanelComp = this.wireBean(new BackgroundPanel(this.chartController));
+        const backgroundPanelComp = this.createBean(new BackgroundPanel(this.chartController));
         this.chartGroup.addItem(backgroundPanelComp);
         this.activePanels.push(backgroundPanelComp);
     }
@@ -76,11 +75,11 @@ export class ChartPanel extends Component {
     private destroyActivePanels(): void {
         this.activePanels.forEach(panel => {
             _.removeFromParent(panel.getGui());
-            panel.destroy();
+            this.destroyBean(panel);
         });
     }
 
-    public destroy(): void {
+    protected destroy(): void {
         this.destroyActivePanels();
         super.destroy();
     }

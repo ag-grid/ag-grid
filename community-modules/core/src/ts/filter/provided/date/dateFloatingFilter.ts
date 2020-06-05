@@ -48,11 +48,13 @@ export class DateFloatingFilter extends SimpleFloatingFilter {
         return `${condition.type}`;
     }
 
-    public init(params: IFloatingFilterParams) {
+    public init(params: IFloatingFilterParams): void {
         super.init(params);
         this.params = params;
         this.createDateComponent();
-        this.eReadOnlyText.setDisabled(true);
+        this.eReadOnlyText
+            .setDisabled(true)
+            .setInputAriaLabel('Date Filter Input');
     }
 
     protected setEditable(editable: boolean): void {
@@ -107,7 +109,7 @@ export class DateFloatingFilter extends SimpleFloatingFilter {
             filterParams: this.params.column.getColDef().filterParams
         };
 
-        this.dateComp = new DateCompWrapper(this.userComponentFactory, dateComponentParams, this.eDateWrapper);
+        this.dateComp = new DateCompWrapper(this.getContext(), this.userComponentFactory, dateComponentParams, this.eDateWrapper);
 
         this.addDestroyFunc(() => this.dateComp.destroy());
     }

@@ -1,9 +1,9 @@
-import {Bean, HeaderElement, PrefixedXmlAttributes, XmlElement} from "@ag-grid-community/core";
+import { Bean, BeanStub, HeaderElement, PrefixedXmlAttributes, XmlElement } from "@ag-grid-community/core";
 
 const LINE_SEPARATOR = '\r\n';
 
 @Bean('xmlFactory')
-export class XmlFactory {
+export class XmlFactory extends BeanStub {
     createHeader(headerElement: HeaderElement = {}): string {
         const headerStart = '<?';
         const headerEnd = '?>';

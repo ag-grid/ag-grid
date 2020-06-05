@@ -1,10 +1,23 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v23.1.1
+ * @version v23.2.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
 "use strict";
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = function (d, b) {
+        extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+        return extendStatics(d, b);
+    };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -14,6 +27,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 Object.defineProperty(exports, "__esModule", { value: true });
 var context_1 = require("../context/context");
 var constants_1 = require("../constants");
+var beanStub_1 = require("../context/beanStub");
 /**
  * For Master Detail, it is required to keep components between expanding & collapsing parents.
  * For example a user expands row A (and shows a detail grid for this row), then when row A
@@ -21,9 +35,12 @@ var constants_1 = require("../constants");
  * is showed with it's context intact, eg if user sorted in the detail grid, that sort should
  * still be applied after the detail grid is shown for the second time.
  */
-var DetailRowCompCache = /** @class */ (function () {
+var DetailRowCompCache = /** @class */ (function (_super) {
+    __extends(DetailRowCompCache, _super);
     function DetailRowCompCache() {
-        this.cacheItems = [];
+        var _this = _super !== null && _super.apply(this, arguments) || this;
+        _this.cacheItems = [];
+        return _this;
     }
     DetailRowCompCache.prototype.postConstruct = function () {
         this.active = this.gridOptionsWrapper.isKeepDetailRows();
@@ -86,9 +103,7 @@ var DetailRowCompCache = /** @class */ (function () {
         item.lastAccessedTime = new Date().getTime();
     };
     DetailRowCompCache.prototype.destroyFullWidthRow = function (comp) {
-        if (comp && comp.destroy) {
-            comp.destroy();
-        }
+        this.getContext().destroyBean(comp);
     };
     DetailRowCompCache.prototype.purgeCache = function (startIndex) {
         // delete all rows past the index of interest
@@ -134,6 +149,7 @@ var DetailRowCompCache = /** @class */ (function () {
         return res;
     };
     DetailRowCompCache.prototype.destroy = function () {
+        _super.prototype.destroy.call(this);
         this.purgeCache(0);
     };
     __decorate([
@@ -149,7 +165,7 @@ var DetailRowCompCache = /** @class */ (function () {
         context_1.Bean('detailRowCompCache')
     ], DetailRowCompCache);
     return DetailRowCompCache;
-}());
+}(beanStub_1.BeanStub));
 exports.DetailRowCompCache = DetailRowCompCache;
 
 //# sourceMappingURL=detailRowCompCache.js.map

@@ -1,11 +1,11 @@
 import { NumberSequence, _ } from "../../utils";
 import { RowNode } from "../../entities/rowNode";
-import { Context } from "../../context/context";
+import { Context, PreDestroy } from "../../context/context";
 import { BeanStub } from "../../context/beanStub";
 import { RowNodeCacheParams } from "./rowNodeCache";
 import { RowRenderer } from "../../rendering/rowRenderer";
 import { AgEvent } from "../../events";
-import {IRowNodeBlock} from "../../interfaces/iRowNodeBlock";
+import { IRowNodeBlock } from "../../interfaces/iRowNodeBlock";
 
 export interface RowNodeBlockBeans {
     context: Context;
@@ -189,7 +189,7 @@ export abstract class RowNodeBlock extends BeanStub implements IRowNodeBlock {
 
     protected createBlankRowNode(rowIndex: number): RowNode {
         const rowNode = new RowNode();
-        this.beans.context.wireBean(rowNode);
+        this.beans.context.createBean(rowNode);
         rowNode.setRowHeight(this.rowNodeCacheParams.rowHeight);
         return rowNode;
     }
@@ -234,10 +234,11 @@ export abstract class RowNodeBlock extends BeanStub implements IRowNodeBlock {
         }
     }
 
-    public destroy(): void {
+    @PreDestroy
+    private destroyRowNodes(): void {
         this.rowNodes.forEach(rowNode => {
             if (rowNode.childrenCache) {
-                rowNode.childrenCache.destroy();
+                this.destroyBean(rowNode.childrenCache);
                 rowNode.childrenCache = null;
             }
             // this is needed, so row render knows to fade out the row, otherwise it
@@ -245,8 +246,6 @@ export abstract class RowNodeBlock extends BeanStub implements IRowNodeBlock {
             // rowNode should have a flag on whether it is visible???
             rowNode.clearRowTop();
         });
-
-        super.destroy();
     }
 
     protected pageLoaded(version: number, rows: any[], lastRow: number) {

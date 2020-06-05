@@ -35,7 +35,7 @@ var __spreadArrays = (this && this.__spreadArrays) || function () {
             r[k] = a[j];
     return r;
 };
-import { Autowired, Events, _ } from '@ag-grid-community/core';
+import { Autowired, Events, SelectionHandleType, _ } from '@ag-grid-community/core';
 import { AbstractSelectionHandle } from "./abstractSelectionHandle";
 var FillHandle = /** @class */ (function (_super) {
     __extends(FillHandle, _super);
@@ -46,7 +46,7 @@ var FillHandle = /** @class */ (function (_super) {
         _this.isUp = false;
         _this.isLeft = false;
         _this.isReduce = false;
-        _this.type = 'fill';
+        _this.type = SelectionHandleType.FILL;
         return _this;
     }
     FillHandle.prototype.onDrag = function (e) {
@@ -479,13 +479,10 @@ var FillHandle = /** @class */ (function (_super) {
         }
         _super.prototype.refresh.call(this, cellComp);
     };
-    FillHandle.TEMPLATE = '<div class="ag-fill-handle"></div>';
+    FillHandle.TEMPLATE = "<div class=\"ag-fill-handle\"></div>";
     __decorate([
         Autowired('valueService')
     ], FillHandle.prototype, "valueService", void 0);
-    __decorate([
-        Autowired('eventService')
-    ], FillHandle.prototype, "eventService", void 0);
     __decorate([
         Autowired('gridOptionsWrapper')
     ], FillHandle.prototype, "gridOptionsWrapper", void 0);

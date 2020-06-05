@@ -7,32 +7,31 @@ import {
     ColumnPivotChangeRequestEvent,
     ColumnRowGroupChangeRequestEvent,
     ColumnValueChangeRequestEvent,
-    Component,
     CssClassApplier,
     DragAndDropService,
     DragSource,
     DragSourceType,
     Events,
-    EventService,
     GridApi,
     GridOptionsWrapper,
     PostConstruct,
     RefSelector,
-    _
+    ManagedFocusComponent,
+    _,
+    Constants
 } from "@ag-grid-community/core";
 import { BaseColumnItem } from "./primaryColsPanel";
 
-export class ToolPanelColumnComp extends Component implements BaseColumnItem {
+export class ToolPanelColumnComp extends ManagedFocusComponent implements BaseColumnItem {
 
-    private static TEMPLATE =
-        `<div class="ag-column-select-column">
+    private static TEMPLATE = /* html */
+        `<div class="ag-column-select-column" tabindex="-1">
             <ag-checkbox ref="cbSelect" class="ag-column-select-checkbox"></ag-checkbox>
             <span class="ag-column-select-column-label" ref="eLabel"></span>
         </div>`;
 
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('columnController') private columnController: ColumnController;
-    @Autowired('eventService') private eventService: EventService;
     @Autowired('dragAndDropService') private dragAndDropService: DragAndDropService;
     @Autowired('columnApi') private columnApi: ColumnApi;
     @Autowired('gridApi') private gridApi: GridApi;
@@ -70,6 +69,7 @@ export class ToolPanelColumnComp extends Component implements BaseColumnItem {
         this.displayName = this.columnController.getDisplayNameForColumn(this.column, 'toolPanel');
         const displayNameSanitised: any = _.escape(this.displayName);
         this.eLabel.innerHTML = displayNameSanitised;
+        this.cbSelect.setInputAriaLabel(`${this.displayName} Toggle Selection`);
 
         // if grouping, we add an extra level of indent, to cater for expand/contract icons we need to indent for
         const indent = this.columnDept;
@@ -80,20 +80,30 @@ export class ToolPanelColumnComp extends Component implements BaseColumnItem {
 
         this.setupDragging();
 
-        this.addDestroyableEventListener(this.eventService, Events.EVENT_COLUMN_PIVOT_MODE_CHANGED, this.onColumnStateChanged.bind(this));
-        this.addDestroyableEventListener(this.column, Column.EVENT_VALUE_CHANGED, this.onColumnStateChanged.bind(this));
-        this.addDestroyableEventListener(this.column, Column.EVENT_PIVOT_CHANGED, this.onColumnStateChanged.bind(this));
-        this.addDestroyableEventListener(this.column, Column.EVENT_ROW_GROUP_CHANGED, this.onColumnStateChanged.bind(this));
-        this.addDestroyableEventListener(this.column, Column.EVENT_VISIBLE_CHANGED, this.onColumnStateChanged.bind(this));
+        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_PIVOT_MODE_CHANGED, this.onColumnStateChanged.bind(this));
+        this.addManagedListener(this.column, Column.EVENT_VALUE_CHANGED, this.onColumnStateChanged.bind(this));
+        this.addManagedListener(this.column, Column.EVENT_PIVOT_CHANGED, this.onColumnStateChanged.bind(this));
+        this.addManagedListener(this.column, Column.EVENT_ROW_GROUP_CHANGED, this.onColumnStateChanged.bind(this));
+        this.addManagedListener(this.column, Column.EVENT_VISIBLE_CHANGED, this.onColumnStateChanged.bind(this));
 
-        this.addDestroyableEventListener(this.gridOptionsWrapper, 'functionsReadOnly', this.onColumnStateChanged.bind(this));
+        this.addManagedListener(this.gridOptionsWrapper, 'functionsReadOnly', this.onColumnStateChanged.bind(this));
 
-        this.addDestroyableEventListener(this.cbSelect, AgCheckbox.EVENT_CHANGED, this.onCheckboxChanged.bind(this));
-        this.addDestroyableEventListener(this.eLabel, 'click', this.onLabelClicked.bind(this));
+        this.addManagedListener(this.cbSelect, AgCheckbox.EVENT_CHANGED, this.onCheckboxChanged.bind(this));
+        this.addManagedListener(this.eLabel, 'click', this.onLabelClicked.bind(this));
 
         this.onColumnStateChanged();
 
         CssClassApplier.addToolPanelClassesFromColDef(this.column.getColDef(), this.getGui(), this.gridOptionsWrapper, this.column, null);
+    }
+
+    protected handleKeyDown(e: KeyboardEvent): void {
+        switch (e.keyCode) {
+            case Constants.KEY_SPACE:
+                e.preventDefault();
+                if (this.isSelectable()) {
+                    this.onSelectAllChanged(!this.isSelected());
+                }
+        }
     }
 
     private onLabelClicked(): void {

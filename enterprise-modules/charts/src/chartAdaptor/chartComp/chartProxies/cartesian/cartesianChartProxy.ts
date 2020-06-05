@@ -1,5 +1,5 @@
-import {ChartProxy, ChartProxyParams} from "../chartProxy";
-import {_, AxisOptions, AxisType, CartesianChartOptions, SeriesOptions} from "@ag-grid-community/core";
+import { ChartProxy, ChartProxyParams } from "../chartProxy";
+import { _, AxisOptions, AxisType, CartesianChartOptions, SeriesOptions } from "@ag-grid-community/core";
 import {
     CartesianChart,
     ChartAxis,
@@ -9,9 +9,10 @@ import {
     GroupedCategoryAxis,
     GroupedCategoryChart
 } from "ag-charts-community";
-import {ChartDataModel} from "../../chartDataModel";
+import { ChartDataModel } from "../../chartDataModel";
 
 export abstract class CartesianChartProxy<T extends SeriesOptions> extends ChartProxy<CartesianChart | GroupedCategoryChart, CartesianChartOptions<T>> {
+
     protected constructor(params: ChartProxyParams) {
         super(params);
     }

@@ -21,7 +21,7 @@ export declare class BandScale<D> implements Scale<D, number> {
     private _domain;
     domain: D[];
     private _range;
-    range: [number, number];
+    range: number[];
     ticks(): D[];
     convert(d: D): number;
     private _bandwidth;

@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v23.1.1
+ * @version v23.2.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -28,7 +28,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var context_1 = require("../../context/context");
 var column_1 = require("../../entities/column");
 var setLeftFeature_1 = require("../../rendering/features/setLeftFeature");
-var component_1 = require("../../widgets/component");
 var componentAnnotations_1 = require("../../widgets/componentAnnotations");
 var hoverFeature_1 = require("../../headerRendering/hoverFeature");
 var events_1 = require("../../events");
@@ -38,20 +37,76 @@ var moduleNames_1 = require("../../modules/moduleNames");
 var moduleRegistry_1 = require("../../modules/moduleRegistry");
 var dom_1 = require("../../utils/dom");
 var icon_1 = require("../../utils/icon");
+var abstractHeaderWrapper_1 = require("../../headerRendering/header/abstractHeaderWrapper");
+var constants_1 = require("../../constants");
 var FloatingFilterWrapper = /** @class */ (function (_super) {
     __extends(FloatingFilterWrapper, _super);
-    function FloatingFilterWrapper(column) {
+    function FloatingFilterWrapper(column, pinned) {
         var _this = _super.call(this, FloatingFilterWrapper.TEMPLATE) || this;
         _this.column = column;
+        _this.pinned = pinned;
         return _this;
     }
     FloatingFilterWrapper.prototype.postConstruct = function () {
+        _super.prototype.postConstruct.call(this);
         this.setupFloatingFilter();
         this.setupWidth();
         this.setupLeftPositioning();
         this.setupColumnHover();
-        this.addFeature(new hoverFeature_1.HoverFeature([this.column], this.getGui()));
-        this.addDestroyableEventListener(this.eButtonShowMainFilter, 'click', this.showParentFilter.bind(this));
+        this.createManagedBean(new hoverFeature_1.HoverFeature([this.column], this.getGui()));
+        this.addManagedListener(this.eButtonShowMainFilter, 'click', this.showParentFilter.bind(this));
+    };
+    FloatingFilterWrapper.prototype.onTabKeyDown = function (e) {
+        var activeEl = document.activeElement;
+        var eGui = this.getGui();
+        var wrapperHasFocus = activeEl === eGui;
+        if (wrapperHasFocus) {
+            return;
+        }
+        e.preventDefault();
+        var nextFocusableEl = this.focusController.findNextFocusableElement(eGui, null, e.shiftKey);
+        if (nextFocusableEl) {
+            nextFocusableEl.focus();
+        }
+        else {
+            eGui.focus();
+        }
+    };
+    FloatingFilterWrapper.prototype.handleKeyDown = function (e) {
+        var activeEl = document.activeElement;
+        var eGui = this.getGui();
+        var wrapperHasFocus = activeEl === eGui;
+        switch (e.keyCode) {
+            case constants_1.Constants.KEY_UP:
+            case constants_1.Constants.KEY_DOWN:
+                if (!wrapperHasFocus) {
+                    e.preventDefault();
+                }
+            case constants_1.Constants.KEY_LEFT:
+            case constants_1.Constants.KEY_RIGHT:
+                if (wrapperHasFocus) {
+                    return;
+                }
+                e.stopPropagation();
+            case constants_1.Constants.KEY_ENTER:
+                if (wrapperHasFocus) {
+                    if (this.focusController.focusFirstFocusableElement(eGui)) {
+                        e.preventDefault();
+                    }
+                }
+                break;
+            case constants_1.Constants.KEY_ESCAPE:
+                if (!wrapperHasFocus) {
+                    this.getGui().focus();
+                }
+        }
+    };
+    FloatingFilterWrapper.prototype.onFocusIn = function (e) {
+        var eGui = this.getGui();
+        if (!eGui.contains(e.relatedTarget)) {
+            var headerRow = this.getParentComponent();
+            this.beans.focusController.setFocusedHeader(headerRow.getRowIndex(), this.getColumn());
+        }
     };
     FloatingFilterWrapper.prototype.setupFloatingFilter = function () {
         var _this = this;
@@ -79,8 +134,7 @@ var FloatingFilterWrapper = /** @class */ (function (_super) {
     };
     FloatingFilterWrapper.prototype.setupLeftPositioning = function () {
         var setLeftFeature = new setLeftFeature_1.SetLeftFeature(this.column, this.getGui(), this.beans);
-        setLeftFeature.init();
-        this.addDestroyFunc(setLeftFeature.destroy.bind(setLeftFeature));
+        this.createManagedBean(setLeftFeature);
     };
     FloatingFilterWrapper.prototype.setupSyncWithFilter = function () {
         var _this = this;
@@ -88,7 +142,7 @@ var FloatingFilterWrapper = /** @class */ (function (_super) {
             var parentModel = _this.getFilterComponent().resolveNow(null, function (filter) { return filter.getModel(); });
             _this.onParentModelChanged(parentModel, filterChangedEvent);
         };
-        this.addDestroyableEventListener(this.column, column_1.Column.EVENT_FILTER_CHANGED, syncWithFilter);
+        this.addManagedListener(this.column, column_1.Column.EVENT_FILTER_CHANGED, syncWithFilter);
         if (this.filterManager.isFilterActive(this.column)) {
             syncWithFilter(null);
         }
@@ -98,24 +152,23 @@ var FloatingFilterWrapper = /** @class */ (function (_super) {
         this.menuFactory.showMenuAfterButtonClick(this.column, this.eButtonShowMainFilter, 'filterMenuTab', ['filterMenuTab']);
     };
     FloatingFilterWrapper.prototype.setupColumnHover = function () {
-        this.addDestroyableEventListener(this.eventService, events_1.Events.EVENT_COLUMN_HOVER_CHANGED, this.onColumnHover.bind(this));
+        this.addManagedListener(this.eventService, events_1.Events.EVENT_COLUMN_HOVER_CHANGED, this.onColumnHover.bind(this));
         this.onColumnHover();
     };
     FloatingFilterWrapper.prototype.onColumnHover = function () {
         dom_1.addOrRemoveCssClass(this.getGui(), 'ag-column-hover', this.columnHoverService.isHovered(this.column));
     };
     FloatingFilterWrapper.prototype.setupWidth = function () {
-        this.addDestroyableEventListener(this.column, column_1.Column.EVENT_WIDTH_CHANGED, this.onColumnWidthChanged.bind(this));
+        this.addManagedListener(this.column, column_1.Column.EVENT_WIDTH_CHANGED, this.onColumnWidthChanged.bind(this));
         this.onColumnWidthChanged();
     };
     FloatingFilterWrapper.prototype.onColumnWidthChanged = function () {
         this.getGui().style.width = this.column.getActualWidth() + "px";
     };
     FloatingFilterWrapper.prototype.setupWithFloatingFilter = function (floatingFilterComp) {
+        var _this = this;
         var disposeFunc = function () {
-            if (floatingFilterComp.destroy) {
-                floatingFilterComp.destroy();
-            }
+            _this.getContext().destroyBean(floatingFilterComp);
         };
         if (!this.isAlive()) {
             disposeFunc();
@@ -219,17 +272,10 @@ var FloatingFilterWrapper = /** @class */ (function (_super) {
         text: 'agTextColumnFloatingFilter',
         agTextColumnFilter: 'agTextColumnFloatingFilter'
     };
-    FloatingFilterWrapper.TEMPLATE = 
-    /* html */ "<div class=\"ag-header-cell\" role=\"presentation\">\n            <div ref=\"eFloatingFilterBody\" role=\"columnheader\"></div>\n            <div class=\"ag-floating-filter-button\" ref=\"eButtonWrapper\" role=\"presentation\">\n                <button type=\"button\" class=\"ag-floating-filter-button-button\" ref=\"eButtonShowMainFilter\"></button>\n            </div>\n        </div>";
+    FloatingFilterWrapper.TEMPLATE = "<div class=\"ag-header-cell\" role=\"presentation\" tabindex=\"-1\">\n            <div ref=\"eFloatingFilterBody\" role=\"columnheader\"></div>\n            <div class=\"ag-floating-filter-button\" ref=\"eButtonWrapper\" role=\"presentation\">\n                <button type=\"button\" aria-label=\"Open Filter Menu\" class=\"ag-floating-filter-button-button\" ref=\"eButtonShowMainFilter\" tabindex=\"-1\"></button>\n            </div>\n        </div>";
     __decorate([
         context_1.Autowired('columnHoverService')
     ], FloatingFilterWrapper.prototype, "columnHoverService", void 0);
-    __decorate([
-        context_1.Autowired('eventService')
-    ], FloatingFilterWrapper.prototype, "eventService", void 0);
-    __decorate([
-        context_1.Autowired('beans')
-    ], FloatingFilterWrapper.prototype, "beans", void 0);
     __decorate([
         context_1.Autowired('gridOptionsWrapper')
     ], FloatingFilterWrapper.prototype, "gridOptionsWrapper", void 0);
@@ -249,6 +295,9 @@ var FloatingFilterWrapper = /** @class */ (function (_super) {
         context_1.Autowired('menuFactory')
     ], FloatingFilterWrapper.prototype, "menuFactory", void 0);
     __decorate([
+        context_1.Autowired('beans')
+    ], FloatingFilterWrapper.prototype, "beans", void 0);
+    __decorate([
         componentAnnotations_1.RefSelector('eFloatingFilterBody')
     ], FloatingFilterWrapper.prototype, "eFloatingFilterBody", void 0);
     __decorate([
@@ -257,11 +306,8 @@ var FloatingFilterWrapper = /** @class */ (function (_super) {
     __decorate([
         componentAnnotations_1.RefSelector('eButtonShowMainFilter')
     ], FloatingFilterWrapper.prototype, "eButtonShowMainFilter", void 0);
-    __decorate([
-        context_1.PostConstruct
-    ], FloatingFilterWrapper.prototype, "postConstruct", null);
     return FloatingFilterWrapper;
-}(component_1.Component));
+}(abstractHeaderWrapper_1.AbstractHeaderWrapper));
 exports.FloatingFilterWrapper = FloatingFilterWrapper;
 
 //# sourceMappingURL=floatingFilterWrapper.js.map

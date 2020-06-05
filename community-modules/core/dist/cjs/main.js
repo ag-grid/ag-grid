@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v23.1.1
+ * @version v23.2.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -56,8 +56,9 @@ exports.Qualifier = context_1.Qualifier;
 exports.PreDestroy = context_1.PreDestroy;
 var componentAnnotations_1 = require("./widgets/componentAnnotations");
 exports.QuerySelector = componentAnnotations_1.QuerySelector;
-exports.Listener = componentAnnotations_1.Listener;
+exports.GuiListener = componentAnnotations_1.GuiListener;
 exports.RefSelector = componentAnnotations_1.RefSelector;
+exports.GridListener = componentAnnotations_1.GridListener;
 // dragAndDrop
 var dragAndDropService_1 = require("./dragAndDrop/dragAndDropService");
 exports.DragAndDropService = dragAndDropService_1.DragAndDropService;
@@ -209,8 +210,8 @@ var agPanel_1 = require("./widgets/agPanel");
 exports.AgPanel = agPanel_1.AgPanel;
 var component_1 = require("./widgets/component");
 exports.Component = component_1.Component;
-var managedTabComponent_1 = require("./widgets/managedTabComponent");
-exports.ManagedTabComponent = managedTabComponent_1.ManagedTabComponent;
+var managedFocusComponent_1 = require("./widgets/managedFocusComponent");
+exports.ManagedFocusComponent = managedFocusComponent_1.ManagedFocusComponent;
 var popupComponent_1 = require("./widgets/popupComponent");
 exports.PopupComponent = popupComponent_1.PopupComponent;
 var popupService_1 = require("./widgets/popupService");
@@ -222,6 +223,7 @@ exports.VirtualList = virtualList_1.VirtualList;
 // range
 var iRangeController_1 = require("./interfaces/iRangeController");
 exports.CellRangeType = iRangeController_1.CellRangeType;
+exports.SelectionHandleType = iRangeController_1.SelectionHandleType;
 // root
 var vanillaFrameworkOverrides_1 = require("./vanillaFrameworkOverrides");
 exports.VanillaFrameworkOverrides = vanillaFrameworkOverrides_1.VanillaFrameworkOverrides;
@@ -269,6 +271,11 @@ var cellPosition_1 = require("./entities/cellPosition");
 exports.CellPositionUtils = cellPosition_1.CellPositionUtils;
 var rowPosition_1 = require("./entities/rowPosition");
 exports.RowPositionUtils = rowPosition_1.RowPositionUtils;
+var headerPosition_1 = require("./headerRendering/header/headerPosition");
+exports.HeaderPositionUtils = headerPosition_1.HeaderPositionUtils;
+var headerNavigationService_1 = require("./headerRendering/header/headerNavigationService");
+exports.HeaderNavigationService = headerNavigationService_1.HeaderNavigationService;
+exports.HeaderNavigationDirection = headerNavigationService_1.HeaderNavigationDirection;
 __export(require("./propertyKeys"));
 var columnApi_1 = require("./columnController/columnApi");
 exports.ColumnApi = columnApi_1.ColumnApi;

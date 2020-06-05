@@ -81,7 +81,7 @@ var AxisPanel = /** @class */ (function (_super) {
         }
     };
     AxisPanel.prototype.initAxisTicks = function () {
-        var axisTicksComp = this.wireBean(new AxisTicksPanel(this.chartController));
+        var axisTicksComp = this.createBean(new AxisTicksPanel(this.chartController));
         this.axisGroup.addItem(axisTicksComp);
         this.activePanels.push(axisTicksComp);
     };
@@ -120,7 +120,7 @@ var AxisPanel = /** @class */ (function (_super) {
             initialFont: initialFont,
             setFont: setFont
         };
-        var labelPanelComp = this.wireBean(new FontPanel(params));
+        var labelPanelComp = this.createBean(new FontPanel(params));
         this.axisGroup.addItem(labelPanelComp);
         this.activePanels.push(labelPanelComp);
         this.addAdditionalLabelComps(labelPanelComp);
@@ -128,7 +128,7 @@ var AxisPanel = /** @class */ (function (_super) {
     AxisPanel.prototype.addAdditionalLabelComps = function (labelPanelComp) {
         var _this = this;
         var createAngleComp = function (label, initialValue, updateFunc) {
-            var rotationInput = _this.wireBean(new AgAngleSelect()
+            var rotationInput = _this.createBean(new AgAngleSelect()
                 .setLabel(label)
                 .setLabelWidth("flex")
                 .setValue(initialValue || 0)
@@ -137,10 +137,17 @@ var AxisPanel = /** @class */ (function (_super) {
         };
         var degreesSymbol = String.fromCharCode(176);
         var createLabelUpdateFunc = function (axisPosition) { return function (newValue) {
-            var chart = _this.getChartProxy().getChart();
+            var chartProxy = _this.getChartProxy();
+            var chart = chartProxy.getChart();
             var axis = find(chart.axes, function (axis) { return axis.position === axisPosition; });
             if (axis) {
                 axis.label.rotation = newValue;
+                if (axis.position === ChartAxisPosition.Bottom) {
+                    _.set(chartProxy.getChartOptions().xAxis, "label.rotation", newValue);
+                }
+                else if (axis.position === ChartAxisPosition.Left) {
+                    _.set(chartProxy.getChartOptions().yAxis, "label.rotation", newValue);
+                }
                 chart.performLayout();
             }
         }; };
@@ -148,7 +155,7 @@ var AxisPanel = /** @class */ (function (_super) {
         var yRotationLabel = this.chartTranslator.translate("yRotation") + " " + degreesSymbol;
         createAngleComp(xRotationLabel, this.getChartProxy().getChartOption("xAxis.label.rotation"), createLabelUpdateFunc(ChartAxisPosition.Bottom));
         createAngleComp(yRotationLabel, this.getChartProxy().getChartOption("yAxis.label.rotation"), createLabelUpdateFunc(ChartAxisPosition.Left));
-        var labelPaddingSlider = this.wireBean(new AgSlider());
+        var labelPaddingSlider = this.createBean(new AgSlider());
         labelPaddingSlider.setLabel(this.chartTranslator.translate("padding"))
             .setValue(this.getChartProxy().getAxisProperty("label.padding"))
             .setMaxValue(30)
@@ -157,9 +164,10 @@ var AxisPanel = /** @class */ (function (_super) {
         labelPanelComp.addCompToPanel(labelPaddingSlider);
     };
     AxisPanel.prototype.destroyActivePanels = function () {
+        var _this = this;
         this.activePanels.forEach(function (panel) {
             _.removeFromParent(panel.getGui());
-            panel.destroy();
+            _this.destroyBean(panel);
         });
     };
     AxisPanel.prototype.getChartProxy = function () {

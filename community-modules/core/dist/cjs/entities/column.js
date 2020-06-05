@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v23.1.1
+ * @version v23.2.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -81,11 +81,14 @@ var Column = /** @class */ (function () {
         if (this.colDef.flex) {
             this.flex = this.colDef.flex;
         }
-        this.actualWidth = this.columnUtils.calculateColInitialWidth(this.colDef);
+        this.resetActualWidth();
         var suppressDotNotation = this.gridOptionsWrapper.isSuppressFieldDotNotation();
         this.fieldContainsDots = utils_1._.exists(this.colDef.field) && this.colDef.field.indexOf('.') >= 0 && !suppressDotNotation;
         this.tooltipFieldContainsDots = utils_1._.exists(this.colDef.tooltipField) && this.colDef.tooltipField.indexOf('.') >= 0 && !suppressDotNotation;
         this.validate();
+    };
+    Column.prototype.resetActualWidth = function () {
+        this.actualWidth = this.columnUtils.calculateColInitialWidth(this.colDef);
     };
     Column.prototype.isEmptyGroup = function () {
         return false;

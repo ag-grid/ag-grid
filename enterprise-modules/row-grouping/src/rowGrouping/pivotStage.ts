@@ -1,13 +1,12 @@
 import {
     Autowired,
     Bean,
+    BeanStub,
     ChangedPath,
     ColDef,
     ColGroupDef,
     Column,
     ColumnController,
-    EventService,
-    IRowModel,
     IRowNodeStage,
     RowNode,
     StageExecuteParams,
@@ -17,13 +16,11 @@ import {
 import { PivotColDefService } from "./pivotColDefService";
 
 @Bean('pivotStage')
-export class PivotStage implements IRowNodeStage {
+export class PivotStage extends BeanStub implements IRowNodeStage {
 
     // these should go into the pivot column creator
-    @Autowired('rowModel') private rowModel: IRowModel;
     @Autowired('valueService') private valueService: ValueService;
     @Autowired('columnController') private columnController: ColumnController;
-    @Autowired('eventService') private eventService: EventService;
     @Autowired('pivotColDefService') private pivotColDefService: PivotColDefService;
 
     private uniqueValues: any = {};

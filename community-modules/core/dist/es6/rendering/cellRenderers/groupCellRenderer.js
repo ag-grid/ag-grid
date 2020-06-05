@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v23.1.1
+ * @version v23.2.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -125,7 +125,7 @@ var GroupCellRenderer = /** @class */ (function (_super) {
         var node = this.params.node;
         var suppressPadding = this.params.suppressPadding;
         if (!suppressPadding) {
-            this.addDestroyableEventListener(node, RowNode.EVENT_UI_LEVEL_CHANGED, this.setIndent.bind(this));
+            this.addManagedListener(node, RowNode.EVENT_UI_LEVEL_CHANGED, this.setIndent.bind(this));
             this.setIndent();
         }
     };
@@ -265,7 +265,7 @@ var GroupCellRenderer = /** @class */ (function (_super) {
         if (this.params.suppressCount) {
             return;
         }
-        this.addDestroyableEventListener(this.displayedGroup, RowNode.EVENT_ALL_CHILDREN_COUNT_CHANGED, this.updateChildCount.bind(this));
+        this.addManagedListener(this.displayedGroup, RowNode.EVENT_ALL_CHILDREN_COUNT_CHANGED, this.updateChildCount.bind(this));
         // filtering changes the child count, so need to cater for it
         this.updateChildCount();
     };
@@ -286,6 +286,7 @@ var GroupCellRenderer = /** @class */ (function (_super) {
         return paramsCheckbox === true;
     };
     GroupCellRenderer.prototype.addCheckboxIfNeeded = function () {
+        var _this = this;
         var rowNode = this.displayedGroup;
         var checkboxNeeded = this.isUserWantsSelected() &&
             // footers cannot be selected
@@ -296,10 +297,10 @@ var GroupCellRenderer = /** @class */ (function (_super) {
             !rowNode.detail;
         if (checkboxNeeded) {
             var cbSelectionComponent_1 = new CheckboxSelectionComponent();
-            this.getContext().wireBean(cbSelectionComponent_1);
+            this.getContext().createBean(cbSelectionComponent_1);
             cbSelectionComponent_1.init({ rowNode: rowNode, column: this.params.column });
             this.eCheckbox.appendChild(cbSelectionComponent_1.getGui());
-            this.addDestroyFunc(function () { return cbSelectionComponent_1.destroy(); });
+            this.addDestroyFunc(function () { return _this.getContext().destroyBean(cbSelectionComponent_1); });
         }
         _.addOrRemoveCssClass(this.eCheckbox, 'ag-invisible', !checkboxNeeded);
     };
@@ -310,21 +311,22 @@ var GroupCellRenderer = /** @class */ (function (_super) {
         var eContractedIcon = _.createIconNoSpan('groupContracted', this.gridOptionsWrapper, null);
         this.eExpanded.appendChild(eExpandedIcon);
         this.eContracted.appendChild(eContractedIcon);
-        this.addDestroyableEventListener(this.eExpanded, 'click', this.onExpandClicked.bind(this));
-        this.addDestroyableEventListener(this.eContracted, 'click', this.onExpandClicked.bind(this));
+        this.addManagedListener(this.eExpanded, 'click', this.onExpandClicked.bind(this));
+        this.addManagedListener(this.eContracted, 'click', this.onExpandClicked.bind(this));
         // expand / contract as the user hits enter
-        this.addDestroyableEventListener(eGroupCell, 'keydown', this.onKeyDown.bind(this));
-        this.addDestroyableEventListener(params.node, RowNode.EVENT_EXPANDED_CHANGED, this.showExpandAndContractIcons.bind(this));
+        this.addManagedListener(eGroupCell, 'keydown', this.onKeyDown.bind(this));
+        this.addManagedListener(params.node, RowNode.EVENT_EXPANDED_CHANGED, this.showExpandAndContractIcons.bind(this));
         this.showExpandAndContractIcons();
         // because we don't show the expand / contract when there are no children, we need to check every time
         // the number of children change.
-        this.addDestroyableEventListener(this.displayedGroup, RowNode.EVENT_ALL_CHILDREN_COUNT_CHANGED, this.onAllChildrenCountChanged.bind(this));
+        this.addManagedListener(this.displayedGroup, RowNode.EVENT_ALL_CHILDREN_COUNT_CHANGED, this.onRowNodeIsExpandableChanged.bind(this));
+        this.addManagedListener(this.displayedGroup, RowNode.EVENT_MASTER_CHANGED, this.onRowNodeIsExpandableChanged.bind(this));
         // if editing groups, then double click is to start editing
         if (!this.gridOptionsWrapper.isEnableGroupEdit() && this.isExpandable() && !params.suppressDoubleClickExpand) {
-            this.addDestroyableEventListener(eGroupCell, 'dblclick', this.onCellDblClicked.bind(this));
+            this.addManagedListener(eGroupCell, 'dblclick', this.onCellDblClicked.bind(this));
         }
     };
-    GroupCellRenderer.prototype.onAllChildrenCountChanged = function () {
+    GroupCellRenderer.prototype.onRowNodeIsExpandableChanged = function () {
         // maybe if no children now, we should hide the expand / contract icons
         this.showExpandAndContractIcons();
         // if we have no children, this impacts the indent
@@ -439,10 +441,10 @@ var GroupCellRenderer = /** @class */ (function (_super) {
         this.addOrRemoveCssClass('ag-row-group', !addLeafIndentClass);
         this.addOrRemoveCssClass('ag-row-group-leaf-indent', addLeafIndentClass);
     };
+    // this is a user component, and IComponent has "public destroy()" as part of the interface.
+    // so we need to have public here instead of private or protected
     GroupCellRenderer.prototype.destroy = function () {
-        if (this.innerCellRenderer && this.innerCellRenderer.destroy) {
-            this.innerCellRenderer.destroy();
-        }
+        this.getContext().destroyBean(this.innerCellRenderer);
         _super.prototype.destroy.call(this);
     };
     GroupCellRenderer.prototype.refresh = function () {

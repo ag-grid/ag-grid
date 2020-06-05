@@ -46,9 +46,8 @@ var BaseDropZonePanel = /** @class */ (function (_super) {
     };
     BaseDropZonePanel.prototype.init = function (params) {
         this.params = params;
-        var refreshEvent = this.beans.eventService.addEventListener(Events.EVENT_COLUMN_EVERYTHING_CHANGED, this.refreshGui.bind(this));
-        this.addDestroyFunc(function () { return refreshEvent(); });
-        this.addDestroyableEventListener(this.beans.gridOptionsWrapper, 'functionsReadOnly', this.refreshGui.bind(this));
+        this.addManagedListener(this.beans.eventService, Events.EVENT_COLUMN_EVERYTHING_CHANGED, this.refreshGui.bind(this));
+        this.addManagedListener(this.beans.gridOptionsWrapper, 'functionsReadOnly', this.refreshGui.bind(this));
         this.setupDropTarget();
         // we don't know if this bean will be initialised before columnController.
         // if columnController first, then below will work
@@ -269,10 +268,11 @@ var BaseDropZonePanel = /** @class */ (function (_super) {
         });
     };
     BaseDropZonePanel.prototype.createColumnComponent = function (column, ghost) {
+        var _this = this;
         var columnComponent = new DropZoneColumnComp(column, this.dropTarget, ghost, this.valueColumn, this.horizontal);
         columnComponent.addEventListener(DropZoneColumnComp.EVENT_COLUMN_REMOVE, this.removeColumns.bind(this, [column]));
-        this.beans.context.wireBean(columnComponent);
-        this.guiDestroyFunctions.push(function () { return columnComponent.destroy(); });
+        this.beans.context.createBean(columnComponent);
+        this.guiDestroyFunctions.push(function () { return _this.destroyBean(columnComponent); });
         if (!ghost) {
             this.childColumnComponents.push(columnComponent);
         }

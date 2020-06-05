@@ -9,10 +9,8 @@ export declare type RowContainerComponents = {
 export declare class GridPanel extends Component {
     private alignedGridsService;
     private gridOptionsWrapper;
-    private columnController;
     private rowRenderer;
     private pinnedRowModel;
-    private eventService;
     private animationFrameService;
     private navigationService;
     private autoHeightCalculator;
@@ -32,6 +30,8 @@ export declare class GridPanel extends Component {
     private heightScaler;
     private resizeObserverService;
     private undoRedoService;
+    private columnController;
+    private headerNavigationService;
     private rangeController;
     private contextMenuFactory;
     private clipboardService;

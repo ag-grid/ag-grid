@@ -2,12 +2,15 @@ import { IFloatingFilterComp, IFloatingFilterParams } from '../floatingFilter';
 import { Component } from '../../../widgets/component';
 import { RefSelector } from '../../../widgets/componentAnnotations';
 import { AgInputTextField } from '../../../widgets/agInputTextField';
+import { Autowired } from '../../../context/context';
+import { ColumnController } from '../../../columnController/columnController';
 
 // optional floating filter for user provided filters - instead of providing a floating filter,
 // they can provide a getModelAsString() method on the filter instead. this class just displays
 // the string returned from getModelAsString()
 export class ReadOnlyFloatingFilter extends Component implements IFloatingFilterComp {
     @RefSelector('eFloatingFilterText') private eFloatingFilterText: AgInputTextField;
+    @Autowired('columnController') private columnController: ColumnController;
 
     private params: IFloatingFilterParams;
 
@@ -18,9 +21,18 @@ export class ReadOnlyFloatingFilter extends Component implements IFloatingFilter
             </div>`);
     }
 
+    // this is a user component, and IComponent has "public destroy()" as part of the interface.
+    // so we need to override destroy() just to make the method public.
+    public destroy(): void {
+        super.destroy();
+    }
+
     public init(params: IFloatingFilterParams): void {
         this.params = params;
-        this.eFloatingFilterText.setDisabled(true);
+        const displayName = this.columnController.getDisplayNameForColumn(params.column, 'header', true);
+        this.eFloatingFilterText
+            .setDisabled(true)
+            .setInputAriaLabel(`${displayName} Filter Input`);
     }
 
     public onParentModelChanged(parentModel: any): void {

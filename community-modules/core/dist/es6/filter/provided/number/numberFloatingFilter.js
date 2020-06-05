@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v23.1.1
+ * @version v23.2.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -17,9 +17,9 @@ var __extends = (this && this.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-import { NumberFilter } from "./numberFilter";
-import { SimpleFilter } from "../simpleFilter";
-import { TextInputFloatingFilter } from "../../floating/provided/textInputFloatingFilter";
+import { NumberFilter } from './numberFilter';
+import { SimpleFilter } from '../simpleFilter';
+import { TextInputFloatingFilter } from '../../floating/provided/textInputFloatingFilter';
 var NumberFloatingFilter = /** @class */ (function (_super) {
     __extends(NumberFloatingFilter, _super);
     function NumberFloatingFilter() {

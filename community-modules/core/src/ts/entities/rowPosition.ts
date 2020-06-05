@@ -1,9 +1,11 @@
-import {Constants} from "../constants";
-import {Autowired, Bean} from "../context/context";
-import {IRowModel} from "../interfaces/iRowModel";
-import {RowNode} from "./rowNode";
-import {_} from "../utils";
-import {PinnedRowModel} from "../pinnedRowModel/pinnedRowModel";
+import { Autowired, Bean } from "../context/context";
+import { BeanStub } from "../context/beanStub";
+import { Constants } from "../constants";
+import { IRowModel } from "../interfaces/iRowModel";
+import { RowNode } from "./rowNode";
+import { PinnedRowModel } from "../pinnedRowModel/pinnedRowModel";
+import { RowRenderer } from "../rendering/rowRenderer";
+import { _ } from "../utils";
 
 export interface RowPosition {
     rowIndex: number;
@@ -11,10 +13,26 @@ export interface RowPosition {
 }
 
 @Bean('rowPositionUtils')
-export class RowPositionUtils {
+export class RowPositionUtils extends BeanStub {
 
     @Autowired('rowModel') private rowModel: IRowModel;
+    @Autowired('rowRenderer') private rowRenderer: RowRenderer;
     @Autowired('pinnedRowModel') private pinnedRowModel: PinnedRowModel;
+
+    public getFirstRow(): RowPosition {
+        const rowIndex = 0;
+        let rowPinned;
+
+        if (this.pinnedRowModel.getPinnedTopRowCount()) {
+            rowPinned = Constants.PINNED_TOP;
+        } else if (this.rowModel.getRowCount()) {
+            rowPinned = null;
+        } else if (this.pinnedRowModel.getPinnedBottomRowCount()) {
+            rowPinned = Constants.PINNED_BOTTOM;
+        }
+
+        return rowPinned === undefined ? null : { rowIndex, rowPinned };
+    }
 
     public getRowNode(gridRow: RowPosition): RowNode | null {
         switch (gridRow.rowPinned) {

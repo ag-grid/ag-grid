@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v23.1.1
+ * @version v23.2.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -26,7 +26,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 import { BeanStub } from "../../context/beanStub";
 import { RowNodeBlock } from "./rowNodeBlock";
 import { NumberSequence, _ } from "../../utils";
-import { Autowired, PostConstruct } from "../../context/context";
+import { Autowired, PostConstruct, PreDestroy } from "../../context/context";
 var RowNodeCache = /** @class */ (function (_super) {
     __extends(RowNodeCache, _super);
     function RowNodeCache(cacheParams) {
@@ -38,10 +38,9 @@ var RowNodeCache = /** @class */ (function (_super) {
         _this.cacheParams = cacheParams;
         return _this;
     }
-    RowNodeCache.prototype.destroy = function () {
+    RowNodeCache.prototype.destroyAllBlocks = function () {
         var _this = this;
         this.forEachBlockInOrder(function (block) { return _this.destroyBlock(block); });
-        _super.prototype.destroy.call(this);
     };
     RowNodeCache.prototype.init = function () {
         var _this = this;
@@ -230,7 +229,7 @@ var RowNodeCache = /** @class */ (function (_super) {
     };
     RowNodeCache.prototype.destroyBlock = function (block) {
         delete this.blocks[block.getBlockNumber()];
-        block.destroy();
+        this.destroyBean(block);
         this.blockCount--;
         this.cacheParams.rowNodeBlockLoader.removeBlock(block);
     };
@@ -316,11 +315,11 @@ var RowNodeCache = /** @class */ (function (_super) {
     // scrolled over are not needed to be loaded.
     RowNodeCache.MAX_EMPTY_BLOCKS_TO_KEEP = 2;
     __decorate([
-        Autowired('eventService')
-    ], RowNodeCache.prototype, "eventService", void 0);
-    __decorate([
         Autowired('rowRenderer')
     ], RowNodeCache.prototype, "rowRenderer", void 0);
+    __decorate([
+        PreDestroy
+    ], RowNodeCache.prototype, "destroyAllBlocks", null);
     __decorate([
         PostConstruct
     ], RowNodeCache.prototype, "init", null);

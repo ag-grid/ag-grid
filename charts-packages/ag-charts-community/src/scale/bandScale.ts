@@ -46,13 +46,13 @@ export class BandScale<D> implements Scale<D, number> {
         return this._domain;
     }
 
-    private _range: [number, number] = [0, 1];
-    set range(values: [number, number]) {
+    private _range: number[] = [0, 1];
+    set range(values: number[]) {
         this._range[0] = values[0];
         this._range[1] = values[1];
         this.rescale();
     }
-    get range(): [number, number] {
+    get range(): number[] {
         return this._range;
     }
 

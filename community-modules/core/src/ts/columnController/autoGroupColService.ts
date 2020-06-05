@@ -1,19 +1,19 @@
-import { Autowired, Bean, Context } from "../context/context";
+import { Autowired, Bean } from "../context/context";
 import { Column } from "../entities/column";
 import { GridOptionsWrapper } from "../gridOptionsWrapper";
 import { ColDef } from "../entities/colDef";
 import { ColumnController } from "./columnController";
 import { ColumnFactory } from "./columnFactory";
 import { Constants } from "../constants";
+import { BeanStub } from "../context/beanStub";
 import { _ } from "../utils";
 
 @Bean('autoGroupColService')
-export class AutoGroupColService {
+export class AutoGroupColService extends BeanStub {
 
     public static GROUP_AUTO_COLUMN_BUNDLE_ID = Constants.GROUP_AUTO_COLUMN_ID;
 
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
-    @Autowired('context') private context: Context;
     @Autowired('columnController') private columnController: ColumnController;
     @Autowired('columnFactory') private columnFactory: ColumnFactory;
 
@@ -76,7 +76,7 @@ export class AutoGroupColService {
         }
 
         const newCol = new Column(defaultAutoColDef, null, colId, true);
-        this.context.wireBean(newCol);
+        this.context.createBean(newCol);
 
         return newCol;
     }

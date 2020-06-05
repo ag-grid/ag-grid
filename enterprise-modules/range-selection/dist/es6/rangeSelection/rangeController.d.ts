@@ -1,8 +1,7 @@
-import { CellPosition, CellPositionUtils, Column, GridOptionsWrapper, GridPanel, IRangeController, CellRangeParams, CellRange, RowPosition, RowPositionUtils } from "@ag-grid-community/core";
-export declare class RangeController implements IRangeController {
+import { CellPosition, CellPositionUtils, Column, GridOptionsWrapper, GridPanel, IRangeController, CellRangeParams, CellRange, RowPosition, RowPositionUtils, BeanStub } from "@ag-grid-community/core";
+export declare class RangeController extends BeanStub implements IRangeController {
     private loggerFactory;
     private rowModel;
-    private eventService;
     private columnController;
     private mouseEventService;
     private gridOptionsWrapper;
@@ -21,11 +20,9 @@ export declare class RangeController implements IRangeController {
     private dragging;
     private draggingCell?;
     private draggingRange?;
-    private events;
     autoScrollService: AutoScrollService;
     registerGridComp(gridPanel: GridPanel): void;
     private init;
-    destroy(): void;
     onColumnVisibleChange(): void;
     refreshLastRangeStart(): void;
     isContiguousRange(cellRange: CellRange): boolean;

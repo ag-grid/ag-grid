@@ -1,33 +1,36 @@
 import { LoggerFactory } from "./logger";
-import { Component } from "./widgets/component";
 import { SideBarDef } from "./entities/sideBar";
 import { IToolPanel } from "./interfaces/iToolPanel";
-export declare class GridCore extends Component {
+import { ManagedFocusComponent } from "./widgets/managedFocusComponent";
+export declare class GridCore extends ManagedFocusComponent {
     private gridOptions;
     private gridOptionsWrapper;
     private rowModel;
     private resizeObserverService;
-    private columnController;
     private rowRenderer;
     private filterManager;
-    private eventService;
     private eGridDiv;
     private $scope;
     private quickFilterOnScope;
     private popupService;
-    private focusController;
+    private columnController;
     loggerFactory: LoggerFactory;
     private columnApi;
     private gridApi;
-    private environment;
     private clipboardService;
     private gridPanel;
     private sideBarComp;
     private eRootWrapperBody;
     private doingVirtualPaging;
     private logger;
-    init(): void;
+    protected postConstruct(): void;
+    getFocusableElement(): HTMLElement;
     private createTemplate;
+    protected isFocusableContainer(): boolean;
+    protected getFocusableContainers(): HTMLElement[];
+    focusNextInnerContainer(backwards: boolean): boolean;
+    focusInnerElement(fromBottom?: boolean): boolean;
+    private focusGridHeader;
     private onGridSizeChanged;
     private addRtlSupport;
     getRootGui(): HTMLElement;
@@ -42,6 +45,6 @@ export declare class GridCore extends Component {
     getOpenedToolPanel(): string;
     openToolPanel(key: string): void;
     isToolPanelShowing(): boolean;
-    destroy(): void;
+    protected destroy(): void;
     ensureNodeVisible(comparator: any, position?: string | null): void;
 }

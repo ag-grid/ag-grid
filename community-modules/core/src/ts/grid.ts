@@ -68,7 +68,6 @@ import { AgPanel } from "./widgets/agPanel";
 import { AgInputTextField } from "./widgets/agInputTextField";
 import { AgInputTextArea } from "./widgets/agInputTextArea";
 import { AgSlider } from "./widgets/agSlider";
-import { _ } from "./utils";
 import { AgColorPicker } from "./widgets/agColorPicker";
 import { AgInputNumberField } from "./widgets/agInputNumberField";
 import { AgInputRange } from "./widgets/agInputRange";
@@ -84,6 +83,10 @@ import { ModuleRegistry } from "./modules/moduleRegistry";
 import { ModuleNames } from "./modules/moduleNames";
 import { UndoRedoService } from "./undoRedo/undoRedoService";
 import { Component } from "./widgets/component";
+import { AgStackComponentsRegistry } from "./components/agStackComponentsRegistry";
+import { HeaderPositionUtils } from "./headerRendering/header/headerPosition";
+import { HeaderNavigationService } from "./headerRendering/header/headerNavigationService";
+import { _ } from "./utils";
 
 export interface GridParams {
     // used by Web Components
@@ -132,7 +135,6 @@ export class Grid {
         const registeredModules = this.getRegisteredModules(params);
 
         const beanClasses = this.createBeansList(registeredModules);
-        const agStackComponents = this.createAgStackComponentsList(registeredModules);
         const providedBeanInstances = this.createProvidedBeans(eGridDiv, params);
 
         if (!beanClasses) {
@@ -142,7 +144,6 @@ export class Grid {
         const contextParams: ContextParams = {
             providedBeanInstances: providedBeanInstances,
             beanClasses: beanClasses,
-            components: agStackComponents,
             debug: debug
         };
 
@@ -152,14 +153,23 @@ export class Grid {
 
         this.registerModuleUserComponents(registeredModules);
 
+        this.registerStackComponents(registeredModules);
+
         const gridCoreClass = (params && params.rootComponent) || GridCore;
         const gridCore = new gridCoreClass();
-        this.context.wireBean(gridCore);
+        this.context.createBean(gridCore);
 
         this.setColumnsAndData();
         this.dispatchGridReadyEvent(gridOptions);
         const isEnterprise = ModuleRegistry.isRegistered(ModuleNames.EnterpriseCoreModule);
         this.logger.log(`initialised successfully, enterprise = ${isEnterprise}`);
+    }
+
+    private registerStackComponents(registeredModules: Module[]): void {
+        const agStackComponents = this.createAgStackComponentsList(registeredModules);
+        const agStackComponentsRegistry =
+            this.context.getBean('agStackComponentsRegistry') as AgStackComponentsRegistry;
+        agStackComponentsRegistry.setupComponents(agStackComponents);
     }
 
     private getRegisteredModules(params: GridParams): Module[] {
@@ -270,18 +280,19 @@ export class Grid {
         // beans should only contain SERVICES, it should NEVER contain COMPONENTS
 
         const beans = [
-            rowModelClass, Beans, RowPositionUtils, CellPositionUtils,
+            rowModelClass, Beans, RowPositionUtils, CellPositionUtils, HeaderPositionUtils,
             PaginationAutoPageSizeService, GridApi, UserComponentRegistry, AgComponentUtils,
             ComponentMetadataProvider, ResizeObserverService, UserComponentFactory,
             MaxDivHeightScaler, AutoHeightCalculator, CellRendererFactory, HorizontalResizeService,
-            PinnedRowModel, DragService, DisplayedGroupCreator, EventService, GridOptionsWrapper, PopupService,
-            SelectionController, FilterManager, ColumnController, PaginationProxy, RowRenderer, ExpressionService,
-            ColumnFactory, TemplateService, AlignedGridsService,
-            NavigationService, ValueCache, ValueService, LoggerFactory, ColumnUtils, AutoWidthCalculator,
-            StandardMenuFactory, DragAndDropService, ColumnApi, FocusController, MouseEventService, Environment,
-            CellNavigationService, ValueFormatterService, StylingService, ScrollVisibleService, SortController,
-            ColumnHoverService, ColumnAnimationService, SelectableService, AutoGroupColService,
-            ChangeDetectionService, AnimationFrameService, DetailRowCompCache, UndoRedoService
+            PinnedRowModel, DragService, DisplayedGroupCreator, EventService, GridOptionsWrapper,
+            PopupService, SelectionController, FilterManager, ColumnController, HeaderNavigationService,
+            PaginationProxy, RowRenderer, ExpressionService, ColumnFactory, TemplateService,
+            AlignedGridsService, NavigationService, ValueCache, ValueService, LoggerFactory,
+            ColumnUtils, AutoWidthCalculator, StandardMenuFactory, DragAndDropService, ColumnApi,
+            FocusController, MouseEventService, Environment, CellNavigationService, ValueFormatterService,
+            StylingService, ScrollVisibleService, SortController, ColumnHoverService, ColumnAnimationService,
+            SelectableService, AutoGroupColService, ChangeDetectionService, AnimationFrameService,
+            DetailRowCompCache, UndoRedoService, AgStackComponentsRegistry
         ];
 
         const moduleBeans = this.extractModuleEntity(registeredModules, (module) => module.beans ? module.beans : []);

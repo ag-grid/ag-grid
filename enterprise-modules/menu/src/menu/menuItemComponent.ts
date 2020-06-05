@@ -30,7 +30,7 @@ export class MenuItemComponent extends Component {
 
     // private instance = Math.random();
 
-    private static TEMPLATE =
+    private static TEMPLATE = /* html */
         `<div class="ag-menu-option" tabindex="-1">
             <span ref="eIcon" class="ag-menu-option-icon ag-menu-option-part"></span>
             <span ref="eName" class="ag-menu-option-text ag-menu-option-part"></span>
@@ -78,7 +78,7 @@ export class MenuItemComponent extends Component {
             if (this.gridOptionsWrapper.isEnableBrowserTooltips()) {
                 this.getGui().setAttribute('title', this.tooltip);
             } else {
-                this.addFeature(new TooltipFeature(this, 'menu'))
+                this.createManagedBean(new TooltipFeature(this, 'menu'));
             }
         }
 
@@ -144,7 +144,7 @@ export class MenuItemComponent extends Component {
         }
     }
 
-    public destroy(): void {
+    protected destroy(): void {
         // console.log('MenuItemComponent->destroy() ' + this.instance);
         super.destroy();
     }

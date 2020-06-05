@@ -1,4 +1,4 @@
-// Type definitions for @ag-grid-community/core v23.1.1
+// Type definitions for @ag-grid-community/core v23.2.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { AgEvent } from "../events";
@@ -28,11 +28,15 @@ export interface CellChangedEvent extends RowNodeEvent {
     oldValue: any;
 }
 export declare class RowNode implements IEventEmitter {
+    static ID_PREFIX_ROW_GROUP: string;
+    static ID_PREFIX_TOP_PINNED: string;
+    static ID_PREFIX_BOTTOM_PINNED: string;
     private static OBJECT_ID_SEQUENCE;
     static EVENT_ROW_SELECTED: string;
     static EVENT_DATA_CHANGED: string;
     static EVENT_CELL_CHANGED: string;
     static EVENT_ALL_CHILDREN_COUNT_CHANGED: string;
+    static EVENT_MASTER_CHANGED: string;
     static EVENT_MOUSE_ENTER: string;
     static EVENT_MOUSE_LEAVE: string;
     static EVENT_HEIGHT_CHANGED: string;
@@ -188,6 +192,7 @@ export declare class RowNode implements IEventEmitter {
     setDragging(dragging: boolean): void;
     setHighlighted(highlighted: 'above' | 'below' | null): void;
     setAllChildrenCount(allChildrenCount: number | null): void;
+    setMaster(master: boolean): void;
     setRowHeight(rowHeight: number | undefined | null, estimated?: boolean): void;
     setRowIndex(rowIndex: number): void;
     setUiLevel(uiLevel: number): void;

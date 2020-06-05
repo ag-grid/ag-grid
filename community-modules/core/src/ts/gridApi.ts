@@ -35,7 +35,7 @@ import { AgEvent, ColumnEventType } from "./events";
 import { IContextMenuFactory } from "./interfaces/iContextMenuFactory";
 import { ICellRendererComp } from "./rendering/cellRenderers/iCellRenderer";
 import { ICellEditorComp } from "./interfaces/iCellEditor";
-import { DragAndDropService, DragSourceType } from "./dragAndDrop/dragAndDropService";
+import { DragAndDropService } from "./dragAndDrop/dragAndDropService";
 import { HeaderRootComp } from "./headerRendering/headerRootComp";
 import { AnimationFrameService } from "./misc/animationFrameService";
 import { IServerSideRowModel } from "./interfaces/iServerSideRowModel";
@@ -44,7 +44,6 @@ import { IStatusPanelComp } from "./interfaces/iStatusPanel";
 import { SideBarDef } from "./entities/sideBar";
 import { IChartService, ChartModel } from "./interfaces/IChartService";
 import { ModuleNames } from "./modules/moduleNames";
-import { _ } from "./utils";
 import { ChartRef, ProcessChartOptionsParams } from "./entities/gridOptions";
 import { ChartOptions, ChartType } from "./interfaces/iChartOptions";
 import { IToolPanel } from "./interfaces/iToolPanel";
@@ -59,6 +58,7 @@ import { ICsvCreator } from "./interfaces/iCsvCreator";
 import { ModuleRegistry } from "./modules/moduleRegistry";
 import { UndoRedoService } from "./undoRedo/undoRedoService";
 import { RowDropZoneParams, RowDropZoneEvents } from "./gridPanel/rowDragFeature";
+import { _ } from "./utils";
 
 export interface StartEditingCellParams {
     rowIndex: number;
@@ -75,9 +75,13 @@ export interface GetCellsParams {
 
 export interface RefreshCellsParams extends GetCellsParams {
     force?: boolean;
+    suppressFlash?: boolean;
 }
 
-export interface FlashCellsParams extends GetCellsParams { }
+export interface FlashCellsParams extends GetCellsParams {
+    flashDelay?: number;
+    fadeDelay?: number;
+}
 
 export interface GetCellRendererInstancesParams extends GetCellsParams { }
 
@@ -153,6 +157,8 @@ export class GridApi {
     private serverSideRowModel: IServerSideRowModel;
 
     private detailGridInfoMap: { [id: string]: DetailGridInfo } = {};
+
+    private destroyCalled = false;
 
     public registerGridComp(gridPanel: GridPanel): void {
         this.gridPanel = gridPanel;
@@ -269,7 +275,9 @@ export class GridApi {
     public setRowData(rowData: any[]) {
         if (this.gridOptionsWrapper.isRowModelDefault()) {
             if (this.gridOptionsWrapper.isImmutableData()) {
-                const [transaction, orderIdMap] = this.immutableService.createTransactionForRowData(rowData);
+                const res = this.immutableService.createTransactionForRowData(rowData);
+                if (!res) { return; }
+                const [transaction, orderIdMap] = res;
                 this.clientSideRowModel.updateRowData(transaction, orderIdMap);
                 // need to force updating of full width rows - note this wouldn't be necessary the full width cell comp listened
                 // to the data change event on the row node and refreshed itself.
@@ -347,6 +355,10 @@ export class GridApi {
         this.columnController.setColumnDefs(colDefs, source);
     }
 
+    public setAutoGroupColumnDef(colDef: ColDef, source: ColumnEventType = "api") {
+        this.gridOptionsWrapper.setProperty('autoGroupColumnDef', colDef, true);
+    }
+
     public expireValueCache(): void {
         this.valueCache.expire();
     }
@@ -389,7 +401,6 @@ export class GridApi {
     }
 
     public timeFullRedraw(count = 1) {
-
         let iterationCount = 0;
         let totalProcessing = 0;
         let totalReflow = 0;
@@ -988,8 +999,13 @@ export class GridApi {
     }
 
     public destroy(): void {
+        // this is needed as GridAPI is a bean, and GridAPI.destroy() is called as part
+        // of context.destroy(). so we need to stop the infinite loop.
+        if (this.destroyCalled) { return; }
+        this.destroyCalled = true;
+
         // destroy the UI first (as they use the services)
-        this.gridCore.destroy();
+        this.context.destroyBean(this.gridCore);
         // destroy the services
         this.context.destroy();
     }
@@ -1008,10 +1024,10 @@ export class GridApi {
     public getCellRanges(): CellRange[] {
         if (this.rangeController) {
             return this.rangeController.getCellRanges();
-        } else {
-            console.warn('ag-Grid: cell range selection is only available in ag-Grid Enterprise');
-            return null;
         }
+
+        console.warn('ag-Grid: cell range selection is only available in ag-Grid Enterprise');
+        return null;
     }
 
     public camelCaseToHumanReadable(camelCase: string): string {
@@ -1084,7 +1100,17 @@ export class GridApi {
 
     public showColumnMenuAfterMouseClick(colKey: string | Column, mouseEvent: MouseEvent | Touch): void {
         // use grid column so works with pivot mode
-        const column = this.columnController.getGridColumn(colKey);
+        let column = this.columnController.getGridColumn(colKey);
+
+        if (!column) {
+            column = this.columnController.getPrimaryColumn(colKey);
+        }
+
+        if (!column) {
+            console.error(`ag-Grid: column '${colKey}' not found`);
+            return;
+        }
+
         this.menuFactory.showMenuAfterMouseEvent(column, mouseEvent);
     }
 

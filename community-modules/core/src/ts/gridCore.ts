@@ -1,16 +1,13 @@
 import { GridOptions } from "./entities/gridOptions";
 import { GridOptionsWrapper } from "./gridOptionsWrapper";
 import { ColumnApi } from "./columnController/columnApi";
-import { ColumnController } from "./columnController/columnController";
 import { RowRenderer } from "./rendering/rowRenderer";
 import { FilterManager } from "./filter/filterManager";
-import { EventService } from "./eventService";
 import { GridPanel } from "./gridPanel/gridPanel";
 import { Logger, LoggerFactory } from "./logger";
 import { PopupService } from "./widgets/popupService";
-import { Autowired, Optional, PostConstruct } from "./context/context";
+import { Autowired, Optional } from "./context/context";
 import { IRowModel } from "./interfaces/iRowModel";
-import { FocusController } from "./focusController";
 import { Component } from "./widgets/component";
 import { IClipboardService } from "./interfaces/iClipboardService";
 import { GridApi } from "./gridApi";
@@ -19,34 +16,34 @@ import { RefSelector } from "./widgets/componentAnnotations";
 import { Events, GridSizeChangedEvent } from "./events";
 import { ResizeObserverService } from "./misc/resizeObserverService";
 import { SideBarDef, SideBarDefParser } from "./entities/sideBar";
-import { _ } from "./utils";
 import { IToolPanel } from "./interfaces/iToolPanel";
 import { ModuleNames } from "./modules/moduleNames";
 import { ModuleRegistry } from "./modules/moduleRegistry";
-import { Environment } from "./environment";
+import { ManagedFocusComponent } from "./widgets/managedFocusComponent";
+import { ColumnController } from "./columnController/columnController";
+import { ColumnGroup } from "./entities/columnGroup";
+import { Column } from "./entities/column";
+import { _ } from "./utils";
 
-export class GridCore extends Component {
+export class GridCore extends ManagedFocusComponent {
 
     @Autowired('gridOptions') private gridOptions: GridOptions;
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('rowModel') private rowModel: IRowModel;
     @Autowired('resizeObserverService') private resizeObserverService: ResizeObserverService;
 
-    @Autowired('columnController') private columnController: ColumnController;
     @Autowired('rowRenderer') private rowRenderer: RowRenderer;
     @Autowired('filterManager') private filterManager: FilterManager;
-    @Autowired('eventService') private eventService: EventService;
 
     @Autowired('eGridDiv') private eGridDiv: HTMLElement;
     @Autowired('$scope') private $scope: any;
     @Autowired('quickFilterOnScope') private quickFilterOnScope: string;
     @Autowired('popupService') private popupService: PopupService;
-    @Autowired('focusController') private focusController: FocusController;
+    @Autowired('columnController') private columnController: ColumnController;
     @Autowired('loggerFactory') loggerFactory: LoggerFactory;
 
     @Autowired('columnApi') private columnApi: ColumnApi;
     @Autowired('gridApi') private gridApi: GridApi;
-    @Autowired('environment') private environment: Environment;
 
     @Optional('clipboardService') private clipboardService: IClipboardService;
 
@@ -55,12 +52,9 @@ export class GridCore extends Component {
     @RefSelector('rootWrapperBody') private eRootWrapperBody: HTMLElement;
 
     private doingVirtualPaging: boolean;
-
     private logger: Logger;
 
-    @PostConstruct
-    public init(): void {
-
+    protected postConstruct(): void {
         this.logger = this.loggerFactory.create('GridCore');
 
         const template = this.createTemplate();
@@ -70,7 +64,8 @@ export class GridCore extends Component {
         [
             this.gridApi,
             this.rowRenderer,
-            this.popupService
+            this.popupService,
+            this.focusController
         ].forEach(service => service.registerGridCore(this));
 
         if (ModuleRegistry.isRegistered(ModuleNames.ClipboardModule)) {
@@ -104,17 +99,22 @@ export class GridCore extends Component {
 
         const eGui = this.getGui();
 
-        this.addDestroyableEventListener(this.eventService, Events.EVENT_KEYBOARD_FOCUS, () => {
+        this.addManagedListener(this.eventService, Events.EVENT_KEYBOARD_FOCUS, () => {
             _.addCssClass(eGui, 'ag-keyboard-focus');
         });
 
-        this.addDestroyableEventListener(this.eventService, Events.EVENT_MOUSE_FOCUS, () => {
+        this.addManagedListener(this.eventService, Events.EVENT_MOUSE_FOCUS, () => {
             _.removeCssClass(eGui, 'ag-keyboard-focus');
         });
+
+        super.postConstruct();
+    }
+
+    public getFocusableElement(): HTMLElement {
+        return this.eRootWrapperBody;
     }
 
     private createTemplate(): string {
-
         const sideBarModuleLoaded = ModuleRegistry.isRegistered(ModuleNames.SideBarModule);
         const statusBarModuleLoaded = ModuleRegistry.isRegistered(ModuleNames.StatusBarModule);
         const rowGroupingLoaded = ModuleRegistry.isRegistered(ModuleNames.RowGroupingModule);
@@ -126,7 +126,7 @@ export class GridCore extends Component {
         const watermark = enterpriseCoreLoaded ? '<ag-watermark></ag-watermark>' : '';
 
         const template =
-            `<div class="ag-root-wrapper">
+            `<div ref="eRootWrapper" class="ag-root-wrapper">
                 ${dropZones}
                 <div class="ag-root-wrapper-body" ref="rootWrapperBody">
                     <ag-grid-comp ref="gridPanel"></ag-grid-comp>
@@ -138,6 +138,66 @@ export class GridCore extends Component {
             </div>`;
 
         return template;
+    }
+
+    protected isFocusableContainer(): boolean {
+        return true;
+    }
+
+    protected getFocusableContainers(): HTMLElement[] {
+        const focusableContainers = [
+            this.gridPanel.getGui()
+        ];
+
+        if (this.sideBarComp) {
+            focusableContainers.push(
+                this.sideBarComp.getGui()
+            );
+        }
+
+        return focusableContainers.filter(el => _.isVisible(el));
+    }
+
+    public focusNextInnerContainer(backwards: boolean): boolean {
+        const focusableContainers = this.getFocusableContainers();
+        const idxWithFocus = _.findIndex(focusableContainers, container => container.contains(document.activeElement));
+        const nextIdx = idxWithFocus + (backwards ? -1 : 1);
+
+        if (nextIdx < 0 || nextIdx >= focusableContainers.length) {
+            return false;
+        }
+
+        if (nextIdx === 0) {
+            return this.focusGridHeader();
+        }
+
+        return this.focusController.focusFirstFocusableElement(focusableContainers[nextIdx]);
+
+    }
+
+    public focusInnerElement(fromBottom?: boolean): boolean {
+        const focusableContainers = this.getFocusableContainers();
+        if (fromBottom && focusableContainers.length > 1) {
+            return this.focusController.focusFirstFocusableElement(_.last(focusableContainers));
+        }
+
+        return this.focusGridHeader();
+    }
+
+    private focusGridHeader(): boolean {
+        let firstColumn: Column | ColumnGroup = this.columnController.getAllDisplayedColumns()[0];
+        if (!firstColumn) { return false; }
+
+        if (firstColumn.getParent()) {
+            firstColumn = this.columnController.getColumnGroupAtLevel(firstColumn, 0);
+        }
+
+        this.focusController.focusHeaderPosition({
+            headerRowIndex: 0,
+            column: firstColumn
+        });
+
+        return true;
     }
 
     private onGridSizeChanged(): void {
@@ -243,7 +303,7 @@ export class GridCore extends Component {
         return this.sideBarComp.isToolPanelShowing();
     }
 
-    public destroy(): void {
+    protected destroy(): void {
         this.logger.log('Grid DOM removed');
         super.destroy();
     }

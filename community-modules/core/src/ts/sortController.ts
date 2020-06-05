@@ -1,21 +1,20 @@
-import { Column } from "./entities/column";
 import { Autowired, Bean } from "./context/context";
-import { GridOptionsWrapper } from "./gridOptionsWrapper";
+import { BeanStub } from "./context/beanStub";
+import { Column } from "./entities/column";
+import { Constants } from "./constants";
 import { ColumnApi } from "./columnController/columnApi";
 import { ColumnController } from "./columnController/columnController";
-import { EventService } from "./eventService";
 import { ColumnEventType, Events, SortChangedEvent } from "./events";
 import { GridApi } from "./gridApi";
-import {Constants} from "./constants";
+import { GridOptionsWrapper } from "./gridOptionsWrapper";
 
 @Bean('sortController')
-export class SortController {
+export class SortController extends BeanStub {
 
     private static DEFAULT_SORTING_ORDER = [Constants.SORT_ASC, Constants.SORT_DESC, null];
 
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('columnController') private columnController: ColumnController;
-    @Autowired('eventService') private eventService: EventService;
     @Autowired('columnApi') private columnApi: ColumnApi;
     @Autowired('gridApi') private gridApi: GridApi;
 

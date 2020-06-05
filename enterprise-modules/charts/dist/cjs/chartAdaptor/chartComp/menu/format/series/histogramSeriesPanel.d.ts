@@ -21,5 +21,5 @@ export declare class HistogramSeriesPanel extends Component {
     private initShadowPanel;
     private destroyActivePanels;
     private getChartProxy;
-    destroy(): void;
+    protected destroy(): void;
 }

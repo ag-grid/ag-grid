@@ -1,5 +1,6 @@
 import { GridPanel } from "./gridPanel";
-export declare class NavigationService {
+import { BeanStub } from "../context/beanStub";
+export declare class NavigationService extends BeanStub {
     private mouseEventService;
     private paginationProxy;
     private focusController;

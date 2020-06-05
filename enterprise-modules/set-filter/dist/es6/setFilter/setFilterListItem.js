@@ -17,13 +17,14 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
-import { Autowired, Component, PostConstruct, RefSelector, _, TooltipFeature, } from '@ag-grid-community/core';
+import { Autowired, Component, PostConstruct, RefSelector, TooltipFeature, _ } from '@ag-grid-community/core';
 var SetFilterListItem = /** @class */ (function (_super) {
     __extends(SetFilterListItem, _super);
-    function SetFilterListItem(value, params) {
+    function SetFilterListItem(value, params, translate) {
         var _this = _super.call(this, SetFilterListItem.TEMPLATE) || this;
         _this.value = value;
         _this.params = params;
+        _this.translate = translate;
         _this.selected = true;
         return _this;
     }
@@ -41,12 +42,12 @@ var SetFilterListItem = /** @class */ (function (_super) {
     SetFilterListItem.prototype.isSelected = function () {
         return this.selected;
     };
-    SetFilterListItem.prototype.setSelected = function (selected) {
+    SetFilterListItem.prototype.setSelected = function (selected, forceEvent) {
         this.selected = selected;
-        this.updateCheckboxIcon();
+        this.updateCheckboxIcon(forceEvent);
     };
-    SetFilterListItem.prototype.updateCheckboxIcon = function () {
-        this.eCheckbox.setValue(this.isSelected(), true);
+    SetFilterListItem.prototype.updateCheckboxIcon = function (forceEvent) {
+        this.eCheckbox.setValue(this.isSelected(), !forceEvent);
     };
     SetFilterListItem.prototype.render = function () {
         var _a = this, value = _a.value, _b = _a.params, column = _b.column, colDef = _b.colDef;
@@ -58,7 +59,7 @@ var SetFilterListItem = /** @class */ (function (_super) {
                     this.eFilterItemValue.title = this.tooltipText;
                 }
                 else {
-                    this.addFeature(new TooltipFeature(this, 'setFilterValue'));
+                    this.createManagedBean(new TooltipFeature(this, 'setFilterValue'));
                 }
             }
         }
@@ -80,21 +81,11 @@ var SetFilterListItem = /** @class */ (function (_super) {
         var cellRendererPromise = this.userComponentFactory.newSetFilterCellRenderer(filterParams, params);
         if (cellRendererPromise == null) {
             var valueToRender = params.valueFormatted == null ? params.value : params.valueFormatted;
-            if (valueToRender == null) {
-                var localeTextFunc = this.gridOptionsWrapper.getLocaleTextFunc();
-                eTarget.innerText = "(" + localeTextFunc('blanks', 'Blanks') + ")";
-            }
-            else {
-                eTarget.innerText = valueToRender;
-            }
+            eTarget.innerText = valueToRender == null ? "(" + this.translate('blanks') + ")" : valueToRender;
             return;
         }
         _.bindCellRendererToHtmlElement(cellRendererPromise, eTarget);
-        cellRendererPromise.then(function (component) {
-            if (component && component.destroy) {
-                _this.addDestroyFunc(component.destroy.bind(component));
-            }
-        });
+        cellRendererPromise.then(function (component) { return _this.addDestroyFunc(function () { return _this.getContext().destroyBean(component); }); });
     };
     SetFilterListItem.prototype.getComponentHolder = function () {
         return this.params.column.getColDef();

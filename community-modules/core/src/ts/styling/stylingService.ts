@@ -1,9 +1,11 @@
 import { CellClassParams, ColDef } from "../entities/colDef";
 import { Autowired, Bean } from "../context/context";
 import { ExpressionService } from "../valueService/expressionService";
+import { BeanStub } from "../context/beanStub";
 
 @Bean('stylingService')
-export class StylingService {
+export class StylingService extends BeanStub {
+
     @Autowired('expressionService') private expressionService: ExpressionService;
 
     public processAllCellClasses(colDef: ColDef, params: CellClassParams, onApplicableClass: (className: string) => void, onNotApplicableClass?: (className: string) => void) {

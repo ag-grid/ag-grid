@@ -49,8 +49,8 @@ export declare class Constants {
     static DOM_LAYOUT_AUTO_HEIGHT: string;
     static GROUP_AUTO_COLUMN_ID: string;
     static SOURCE_PASTE: string;
-    static PINNED_RIGHT: string;
-    static PINNED_LEFT: string;
+    static PINNED_RIGHT: 'right';
+    static PINNED_LEFT: 'left';
     static SORT_ASC: string;
     static SORT_DESC: string;
 }

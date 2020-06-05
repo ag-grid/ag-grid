@@ -22,6 +22,7 @@ import { ChartController } from "../../chartController";
 import { LegendPanel } from "./legend/legendPanel";
 import { BarSeriesPanel } from "./series/barSeriesPanel";
 import { AxisPanel } from "./axis/axisPanel";
+import { NavigatorPanel } from "./navigator/navigatorPanel";
 import { LineSeriesPanel } from "./series/lineSeriesPanel";
 import { PieSeriesPanel } from "./series/pieSeriesPanel";
 import { ChartPanel } from "./chart/chartPanel";
@@ -38,7 +39,7 @@ var ChartFormattingPanel = /** @class */ (function (_super) {
     }
     ChartFormattingPanel.prototype.init = function () {
         this.createPanels();
-        this.addDestroyableEventListener(this.chartController, ChartController.EVENT_CHART_UPDATED, this.createPanels.bind(this));
+        this.addManagedListener(this.chartController, ChartController.EVENT_CHART_UPDATED, this.createPanels.bind(this));
     };
     ChartFormattingPanel.prototype.createPanels = function () {
         var chartType = this.chartController.getChartType();
@@ -58,6 +59,7 @@ var ChartFormattingPanel = /** @class */ (function (_super) {
             case ChartType.StackedBar:
             case ChartType.NormalizedBar:
                 this.addComponent(new AxisPanel(this.chartController));
+                this.addComponent(new NavigatorPanel(this.chartController));
                 this.addComponent(new BarSeriesPanel(this.chartController));
                 break;
             case ChartType.Pie:
@@ -66,21 +68,25 @@ var ChartFormattingPanel = /** @class */ (function (_super) {
                 break;
             case ChartType.Line:
                 this.addComponent(new AxisPanel(this.chartController));
+                this.addComponent(new NavigatorPanel(this.chartController));
                 this.addComponent(new LineSeriesPanel(this.chartController));
                 break;
             case ChartType.Scatter:
             case ChartType.Bubble:
                 this.addComponent(new AxisPanel(this.chartController));
+                this.addComponent(new NavigatorPanel(this.chartController));
                 this.addComponent(new ScatterSeriesPanel(this.chartController));
                 break;
             case ChartType.Area:
             case ChartType.StackedArea:
             case ChartType.NormalizedArea:
                 this.addComponent(new AxisPanel(this.chartController));
+                this.addComponent(new NavigatorPanel(this.chartController));
                 this.addComponent(new AreaSeriesPanel(this.chartController));
                 break;
             case ChartType.Histogram:
                 this.addComponent(new AxisPanel(this.chartController));
+                this.addComponent(new NavigatorPanel(this.chartController));
                 this.addComponent(new HistogramSeriesPanel(this.chartController));
                 break;
             default:
@@ -90,15 +96,16 @@ var ChartFormattingPanel = /** @class */ (function (_super) {
         this.isGrouping = isGrouping;
     };
     ChartFormattingPanel.prototype.addComponent = function (component) {
-        this.wireBean(component);
+        this.createBean(component);
         this.panels.push(component);
         _.addCssClass(component.getGui(), 'ag-chart-format-section');
         this.getGui().appendChild(component.getGui());
     };
     ChartFormattingPanel.prototype.destroyPanels = function () {
+        var _this = this;
         this.panels.forEach(function (panel) {
             _.removeFromParent(panel.getGui());
-            panel.destroy();
+            _this.destroyBean(panel);
         });
     };
     ChartFormattingPanel.prototype.destroy = function () {

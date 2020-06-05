@@ -79,7 +79,6 @@ export declare class RowComp extends Component {
     refreshFullWidth(): boolean;
     private addListeners;
     private addListenersForCellComps;
-    private onGridColumnsChanged;
     private onRowNodeDataChanged;
     private onRowNodeCellChanged;
     private postProcessCss;

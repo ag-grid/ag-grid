@@ -1,4 +1,17 @@
 "use strict";
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = function (d, b) {
+        extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+        return extendStatics(d, b);
+    };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -7,9 +20,12 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var core_1 = require("@ag-grid-community/core");
-var LicenseManager = /** @class */ (function () {
+var LicenseManager = /** @class */ (function (_super) {
+    __extends(LicenseManager, _super);
     function LicenseManager() {
-        this.watermarkMessage = undefined;
+        var _this = _super !== null && _super.apply(this, arguments) || this;
+        _this.watermarkMessage = undefined;
+        return _this;
     }
     LicenseManager_1 = LicenseManager;
     LicenseManager.prototype.validateLicense = function () {
@@ -247,7 +263,7 @@ var LicenseManager = /** @class */ (function () {
         this.watermarkMessage = "License Expired";
     };
     var LicenseManager_1;
-    LicenseManager.RELEASE_INFORMATION = 'MTU4OTM3NDAxNzU0Ng==';
+    LicenseManager.RELEASE_INFORMATION = 'MTU5MTEyOTU2NjcyNg==';
     __decorate([
         core_1.Autowired('md5')
     ], LicenseManager.prototype, "md5", void 0);
@@ -258,6 +274,6 @@ var LicenseManager = /** @class */ (function () {
         core_1.Bean('licenseManager')
     ], LicenseManager);
     return LicenseManager;
-}());
+}(core_1.BeanStub));
 exports.LicenseManager = LicenseManager;
 //# sourceMappingURL=licenseManager.js.map

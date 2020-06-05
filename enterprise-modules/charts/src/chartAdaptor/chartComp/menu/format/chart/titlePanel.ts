@@ -14,10 +14,9 @@ import { CaptionOptions } from "ag-charts-community";
 
 export default class TitlePanel extends Component {
 
-    public static TEMPLATE = `<div></div>`;
+    public static TEMPLATE = /* html */ `<div></div>`;
 
     @Autowired('chartTranslator') private chartTranslator: ChartTranslator;
-    @Autowired('eventService') private eventService: EventService;
 
     private activePanels: Component[] = [];
     private readonly chartController: ChartController;
@@ -90,12 +89,12 @@ export default class TitlePanel extends Component {
             }
         };
 
-        const fontPanelComp = this.wireBean(new FontPanel(fontPanelParams));
+        const fontPanelComp = this.createBean(new FontPanel(fontPanelParams));
         this.getGui().appendChild(fontPanelComp.getGui());
         this.activePanels.push(fontPanelComp);
 
         // edits to the title can disable it, so keep the checkbox in sync:
-        this.addDestroyableEventListener(this.eventService, 'chartTitleEdit', () => {
+        this.addManagedListener(this.eventService, 'chartTitleEdit', () => {
             fontPanelComp.setEnabled(this.hasTitle());
         });
     }
@@ -103,11 +102,11 @@ export default class TitlePanel extends Component {
     private destroyActivePanels(): void {
         this.activePanels.forEach(panel => {
             _.removeFromParent(panel.getGui());
-            panel.destroy();
+            this.destroyBean(panel);
         });
     }
 
-    public destroy(): void {
+    protected destroy(): void {
         this.destroyActivePanels();
         super.destroy();
     }

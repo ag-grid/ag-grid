@@ -3,15 +3,15 @@ import { Column } from '../entities/column';
 import { ColumnEventType } from '../events';
 import { IFilterComp, IFilterParams } from '../interfaces/iFilter';
 import { ColDef } from '../entities/colDef';
+import { BeanStub } from '../context/beanStub';
 export declare type FilterRequestSource = 'COLUMN_MENU' | 'TOOLBAR' | 'NO_UI';
-export declare class FilterManager {
+export declare class FilterManager extends BeanStub {
     private $compile;
     private $scope;
     private gridOptionsWrapper;
     private valueService;
     private columnController;
     private rowModel;
-    private eventService;
     private columnApi;
     private gridApi;
     private userComponentFactory;
@@ -23,7 +23,6 @@ export declare class FilterManager {
     private externalFilterPresent;
     private processingFilterChange;
     private allowShowChangeAfterFilter;
-    private eventListenerDestroyers;
     init(): void;
     private setQuickFilterParts;
     setFilterModel(model: {
@@ -41,7 +40,7 @@ export declare class FilterManager {
     private parseQuickFilter;
     setQuickFilter(newFilter: any): void;
     private checkExternalFilter;
-    onFilterChanged(additionalEventAttributes?: any): void;
+    onFilterChanged(filterInstance?: IFilterComp, additionalEventAttributes?: any): void;
     isSuppressFlashingCellsBecauseFiltering(): boolean;
     isQuickFilterPresent(): boolean;
     doesRowPassOtherFilters(filterToSkip: any, node: any): boolean;
@@ -64,7 +63,7 @@ export declare class FilterManager {
     private onNewColumnsLoaded;
     destroyFilter(column: Column, source?: ColumnEventType): void;
     private disposeFilterWrapper;
-    destroy(): void;
+    protected destroy(): void;
 }
 export interface FilterWrapper {
     compiledElement: any;

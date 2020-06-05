@@ -1,4 +1,4 @@
-// Type definitions for @ag-grid-community/core v23.1.1
+// Type definitions for @ag-grid-community/core v23.2.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { ColumnGroup } from '../entities/columnGroup';
@@ -7,6 +7,7 @@ import { ColDef, ColGroupDef, IAggFunc } from '../entities/colDef';
 import { ColumnGroupChild } from '../entities/columnGroupChild';
 import { OriginalColumnGroupChild } from '../entities/originalColumnGroupChild';
 import { ColumnEventType } from '../events';
+import { BeanStub } from "../context/beanStub";
 import { OriginalColumnGroup } from '../entities/originalColumnGroup';
 import { RowNode } from '../entities/rowNode';
 export interface ColumnResizeSet {
@@ -24,13 +25,12 @@ export interface ColumnState {
     rowGroupIndex?: number | null;
     flex?: number;
 }
-export declare class ColumnController {
+export declare class ColumnController extends BeanStub {
     private gridOptionsWrapper;
     private expressionService;
     private columnFactory;
     private displayedGroupCreator;
     private autoWidthCalculator;
-    private eventService;
     private columnUtils;
     private columnAnimationService;
     private autoGroupColService;
@@ -75,6 +75,7 @@ export declare class ColumnController {
     private ready;
     private logger;
     private autoGroupsNeedBuilding;
+    private forceRecreateAutoGroups;
     private pivotMode;
     private usingTreeData;
     private scrollWidth;
@@ -89,6 +90,7 @@ export declare class ColumnController {
     private columnDefs;
     private flexActive;
     init(): void;
+    onAutoGroupColumnDefChanged(): void;
     setColumnDefs(columnDefs: (ColDef | ColGroupDef)[], source?: ColumnEventType): void;
     isAutoRowHeightActive(): boolean;
     getAllAutoRowHeightCols(): Column[];
@@ -185,6 +187,9 @@ export declare class ColumnController {
     getDisplayedColBefore(col: Column): Column | null;
     getDisplayedColAfter(col: Column): Column | null;
     getDisplayedGroupAfter(columnGroup: ColumnGroup): ColumnGroup | null;
+    getDisplayedGroupBefore(columnGroup: ColumnGroup): ColumnGroup | null;
+    getDisplayedGroupAtDirection(columnGroup: ColumnGroup, direction: 'After' | 'Before'): ColumnGroup | null;
+    getColumnGroupAtLevel(column: Column, level: number): ColumnGroup | null;
     isPinningLeft(): boolean;
     isPinningRight(): boolean;
     getPrimaryAndSecondaryAndAutoColumns(): Column[];
@@ -269,4 +274,5 @@ export declare class ColumnController {
     private getWidthOfColsInList;
     getGridBalancedTree(): OriginalColumnGroupChild[];
     hasFloatingFilters(): boolean;
+    getFirstDisplayedColumn(): Column;
 }

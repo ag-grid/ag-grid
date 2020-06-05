@@ -32,16 +32,16 @@ var ChartController = /** @class */ (function (_super) {
     ChartController.prototype.init = function () {
         var _this = this;
         this.setChartRange();
-        this.addDestroyableEventListener(this.eventService, Events.EVENT_RANGE_SELECTION_CHANGED, function (event) {
+        this.addManagedListener(this.eventService, Events.EVENT_RANGE_SELECTION_CHANGED, function (event) {
             if (event.id && event.id === _this.model.getChartId()) {
                 _this.updateForRangeChange();
             }
         });
-        this.addDestroyableEventListener(this.eventService, Events.EVENT_COLUMN_MOVED, this.updateForGridChange.bind(this));
-        this.addDestroyableEventListener(this.eventService, Events.EVENT_COLUMN_PINNED, this.updateForGridChange.bind(this));
-        this.addDestroyableEventListener(this.eventService, Events.EVENT_COLUMN_VISIBLE, this.updateForGridChange.bind(this));
-        this.addDestroyableEventListener(this.eventService, Events.EVENT_MODEL_UPDATED, this.updateForDataChange.bind(this));
-        this.addDestroyableEventListener(this.eventService, Events.EVENT_CELL_VALUE_CHANGED, this.updateForDataChange.bind(this));
+        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_MOVED, this.updateForGridChange.bind(this));
+        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_PINNED, this.updateForGridChange.bind(this));
+        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_VISIBLE, this.updateForGridChange.bind(this));
+        this.addManagedListener(this.eventService, Events.EVENT_MODEL_UPDATED, this.updateForDataChange.bind(this));
+        this.addManagedListener(this.eventService, Events.EVENT_CELL_VALUE_CHANGED, this.updateForDataChange.bind(this));
     };
     ChartController.prototype.updateForGridChange = function () {
         if (this.model.isDetached()) {
@@ -175,9 +175,6 @@ var ChartController = /** @class */ (function (_super) {
         }
     };
     ChartController.EVENT_CHART_UPDATED = 'chartUpdated';
-    __decorate([
-        Autowired('eventService')
-    ], ChartController.prototype, "eventService", void 0);
     __decorate([
         Autowired('rangeController')
     ], ChartController.prototype, "rangeController", void 0);

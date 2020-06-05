@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v23.1.1
+ * @version v23.2.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -54,12 +54,8 @@ var PopupEditorWrapper = /** @class */ (function (_super) {
         var _this = this;
         this.params = params;
         this.gridOptionsWrapper.setDomData(this.getGui(), PopupEditorWrapper.DOM_KEY_POPUP_EDITOR_WRAPPER, true);
-        this.addDestroyFunc(function () {
-            if (_this.cellEditor.destroy) {
-                _this.cellEditor.destroy();
-            }
-        });
-        this.addDestroyableEventListener(
+        this.addDestroyFunc(function () { return _this.destroyBean(_this.cellEditor); });
+        this.addManagedListener(
         // this needs to be 'super' and not 'this' as if we call 'this',
         // it ends up called 'getGui()' on the child before 'init' was called,
         // which is not good

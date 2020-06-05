@@ -3,7 +3,6 @@ import {
     Autowired,
     Component,
     Events,
-    EventService,
     GridOptionsWrapper,
     IComponent,
     ISideBar,
@@ -16,8 +15,8 @@ import {
     ToolPanelDef,
     ToolPanelVisibleChangedEvent
 } from "@ag-grid-community/core";
-import {SideBarButtonClickedEvent, SideBarButtonsComp} from "./sideBarButtonsComp";
-import {ToolPanelWrapper} from "./toolPanelWrapper";
+import { SideBarButtonClickedEvent, SideBarButtonsComp } from "./sideBarButtonsComp";
+import { ToolPanelWrapper } from "./toolPanelWrapper";
 
 export interface IToolPanelChildComp extends IComponent<any> {
     refresh(): void;
@@ -25,17 +24,16 @@ export interface IToolPanelChildComp extends IComponent<any> {
 
 export class SideBarComp extends Component implements ISideBar {
 
-    @Autowired("eventService") private eventService: EventService;
     @Autowired("gridOptionsWrapper") private gridOptionsWrapper: GridOptionsWrapper;
 
     @RefSelector('sideBarButtons') private sideBarButtonsComp: SideBarButtonsComp;
 
     private toolPanelWrappers: ToolPanelWrapper[] = [];
 
-    private static readonly TEMPLATE =
+    private static readonly TEMPLATE = /* html */
         `<div class="ag-side-bar ag-unselectable">
-              <ag-side-bar-buttons ref="sideBarButtons">
-          </div>`;
+            <ag-side-bar-buttons ref="sideBarButtons"></ag-side-bar-buttons>
+        </div>`;
 
     constructor() {
         super(SideBarComp.TEMPLATE);
@@ -125,7 +123,7 @@ export class SideBarComp extends Component implements ISideBar {
             }
 
             const wrapper = new ToolPanelWrapper();
-            this.getContext().wireBean(wrapper);
+            this.getContext().createBean(wrapper);
             wrapper.setToolPanelDef(def);
             wrapper.setDisplayed(false);
             this.getGui().appendChild(wrapper.getGui());
@@ -203,12 +201,12 @@ export class SideBarComp extends Component implements ISideBar {
     private destroyToolPanelWrappers(): void {
         this.toolPanelWrappers.forEach(wrapper => {
             _.removeFromParent(wrapper.getGui());
-            wrapper.destroy();
+            this.destroyBean(wrapper);
         });
         this.toolPanelWrappers.length = 0;
     }
 
-    public destroy(): void {
+    protected destroy(): void {
         this.destroyToolPanelWrappers();
         super.destroy();
     }

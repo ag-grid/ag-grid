@@ -1,13 +1,12 @@
-import { Component, ToolPanelColumnCompParams } from "@ag-grid-community/core";
+import { ToolPanelColumnCompParams, ManagedFocusComponent } from "@ag-grid-community/core";
 export declare enum EXPAND_STATE {
     EXPANDED = 0,
     COLLAPSED = 1,
     INDETERMINATE = 2
 }
-export declare class PrimaryColsHeaderPanel extends Component {
+export declare class PrimaryColsHeaderPanel extends ManagedFocusComponent {
     private gridOptionsWrapper;
     private columnController;
-    private eventService;
     private eExpand;
     private eSelect;
     private eFilterTextField;
@@ -19,8 +18,9 @@ export declare class PrimaryColsHeaderPanel extends Component {
     private onFilterTextChangedDebounced;
     private params;
     private preConstruct;
-    postConstruct(): void;
+    protected postConstruct(): void;
     init(params: ToolPanelColumnCompParams): void;
+    protected onTabKeyDown(e: KeyboardEvent): void;
     private createExpandIcons;
     private showOrHideOptions;
     private onFilterTextChanged;

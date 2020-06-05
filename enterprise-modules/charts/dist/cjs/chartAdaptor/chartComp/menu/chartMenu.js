@@ -97,7 +97,7 @@ var ChartMenu = /** @class */ (function (_super) {
             var iconName = buttonConfig[0], callback = buttonConfig[1];
             var buttonEl = core_1._.createIconNoSpan(iconName, _this.gridOptionsWrapper, undefined, true);
             core_1._.addCssClass(buttonEl, 'ag-chart-menu-icon');
-            _this.addDestroyableEventListener(buttonEl, 'click', callback);
+            _this.addManagedListener(buttonEl, 'click', callback);
             gui.appendChild(buttonEl);
         });
     };
@@ -108,7 +108,7 @@ var ChartMenu = /** @class */ (function (_super) {
     ChartMenu.prototype.createMenuPanel = function (defaultTab) {
         var _this = this;
         var width = this.gridOptionsWrapper.chartMenuPanelWidth();
-        var menuPanel = this.menuPanel = this.wireBean(new core_1.AgPanel({
+        var menuPanel = this.menuPanel = this.createBean(new core_1.AgPanel({
             minWidth: width,
             width: width,
             height: '100%',
@@ -118,17 +118,17 @@ var ChartMenu = /** @class */ (function (_super) {
         }));
         menuPanel.setParentComponent(this);
         this.eMenuPanelContainer.appendChild(menuPanel.getGui());
-        this.tabbedMenu = this.wireBean(new tabbedChartMenu_1.TabbedChartMenu({
+        this.tabbedMenu = this.createBean(new tabbedChartMenu_1.TabbedChartMenu({
             controller: this.chartController,
             type: this.chartController.getChartType(),
             panels: this.tabs
         }));
-        this.addDestroyableEventListener(menuPanel, core_1.Component.EVENT_DESTROYED, function () { return _this.tabbedMenu.destroy(); });
+        this.addManagedListener(menuPanel, core_1.Component.EVENT_DESTROYED, function () { return _this.destroyBean(_this.tabbedMenu); });
         return new core_1.Promise(function (res) {
             window.setTimeout(function () {
                 menuPanel.setBodyComponent(_this.tabbedMenu);
                 _this.tabbedMenu.showTab(defaultTab);
-                _this.addDestroyableEventListener(_this.eChartContainer, 'click', function (event) {
+                _this.addManagedListener(_this.eChartContainer, 'click', function (event) {
                     if (_this.getGui().contains(event.target)) {
                         return;
                     }
@@ -178,7 +178,7 @@ var ChartMenu = /** @class */ (function (_super) {
     ChartMenu.prototype.destroy = function () {
         _super.prototype.destroy.call(this);
         if (this.menuPanel && this.menuPanel.isAlive()) {
-            this.menuPanel.destroy();
+            this.destroyBean(this.menuPanel);
         }
     };
     ChartMenu.EVENT_DOWNLOAD_CHART = "downloadChart";

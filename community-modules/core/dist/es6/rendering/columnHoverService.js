@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v23.1.1
+ * @version v23.2.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -52,9 +52,6 @@ var ColumnHoverService = /** @class */ (function (_super) {
     ColumnHoverService.prototype.isHovered = function (column) {
         return this.selectedColumns && this.selectedColumns.indexOf(column) >= 0;
     };
-    __decorate([
-        Autowired('eventService')
-    ], ColumnHoverService.prototype, "eventService", void 0);
     __decorate([
         Autowired('columnApi')
     ], ColumnHoverService.prototype, "columnApi", void 0);

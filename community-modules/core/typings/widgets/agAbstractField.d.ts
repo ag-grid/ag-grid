@@ -1,4 +1,4 @@
-import { AgAbstractLabel } from "./agAbstractLabel";
+import { AgAbstractLabel } from './agAbstractLabel';
 export declare type FieldElement = HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement;
 export declare abstract class AgAbstractField<T> extends AgAbstractLabel {
     static EVENT_CHANGED: string;

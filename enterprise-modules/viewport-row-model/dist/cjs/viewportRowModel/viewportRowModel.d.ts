@@ -1,9 +1,6 @@
-import { IRowModel, RowNode, IViewportDatasource, RowBounds } from "@ag-grid-community/core";
-export declare class ViewportRowModel implements IRowModel {
+import { BeanStub, IRowModel, IViewportDatasource, RowBounds, RowNode } from "@ag-grid-community/core";
+export declare class ViewportRowModel extends BeanStub implements IRowModel {
     private gridOptionsWrapper;
-    private eventService;
-    private selectionController;
-    private context;
     private gridApi;
     private columnApi;
     private rowRenderer;
@@ -13,7 +10,6 @@ export declare class ViewportRowModel implements IRowModel {
     private rowNodesByIndex;
     private rowHeight;
     private viewportDatasource;
-    private events;
     ensureRowHeightsValid(startPixel: number, endPixel: number, startLimitIndex: number, endLimitIndex: number): boolean;
     private init;
     start(): void;

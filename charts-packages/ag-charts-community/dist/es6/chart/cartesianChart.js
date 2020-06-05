@@ -13,24 +13,26 @@ var __extends = (this && this.__extends) || (function () {
 })();
 import { Chart } from "./chart";
 import { numericExtent } from "../util/array";
-import { Group } from "../scene/group";
 import { CategoryAxis } from "./axis/categoryAxis";
 import { GroupedCategoryAxis } from "./axis/groupedCategoryAxis";
 import { ChartAxisPosition } from "./chartAxis";
 import { BBox } from "../scene/bbox";
-// import { ClipRect } from "../scene/clipRect";
+import { ClipRect } from "../scene/clipRect";
+import { Navigator } from "./navigator/navigator";
 var CartesianChart = /** @class */ (function (_super) {
     __extends(CartesianChart, _super);
     function CartesianChart(document) {
         if (document === void 0) { document = window.document; }
         var _this = _super.call(this, document) || this;
-        _this._seriesRoot = new Group();
+        _this._seriesRoot = new ClipRect();
+        _this.navigator = new Navigator(_this);
         // Prevent the scene from rendering chart components in an invalid state
         // (before first layout is performed).
         _this.scene.root.visible = false;
         var root = _this.scene.root;
-        root.append(_this._seriesRoot);
+        root.append(_this.seriesRoot);
         root.append(_this.legend.group);
+        _this.navigator.enabled = false;
         return _this;
     }
     Object.defineProperty(CartesianChart.prototype, "seriesRoot", {
@@ -45,7 +47,7 @@ var CartesianChart = /** @class */ (function (_super) {
             return;
         }
         this.scene.root.visible = true;
-        var _a = this, width = _a.width, height = _a.height, axes = _a.axes, legend = _a.legend;
+        var _a = this, width = _a.width, height = _a.height, axes = _a.axes, legend = _a.legend, navigator = _a.navigator;
         var shrinkRect = new BBox(0, 0, width, height);
         this.positionCaptions();
         this.positionLegend();
@@ -79,6 +81,10 @@ var CartesianChart = /** @class */ (function (_super) {
         shrinkRect.width -= padding.left + padding.right;
         shrinkRect.y += padding.top + captionAutoPadding;
         shrinkRect.height -= padding.top + captionAutoPadding + padding.bottom;
+        if (navigator.enabled) {
+            shrinkRect.height -= navigator.height + navigator.margin;
+        }
+        var bottomAxesHeight = 0;
         axes.forEach(function (axis) {
             axis.group.visible = true;
             var axisThickness = Math.floor(axis.computeBBox().width);
@@ -96,6 +102,7 @@ var CartesianChart = /** @class */ (function (_super) {
                     break;
                 case ChartAxisPosition.Bottom:
                     shrinkRect.height -= axisThickness;
+                    bottomAxesHeight += axisThickness;
                     axis.translation.y = Math.floor(shrinkRect.y + shrinkRect.height + 1);
                     break;
                 case ChartAxisPosition.Left:
@@ -138,7 +145,6 @@ var CartesianChart = /** @class */ (function (_super) {
                     axis.gridLength = shrinkRect.width;
                     break;
             }
-            // axis.tick.count = Math.abs(axis.range[1] - axis.range[0]) > 200 ? 10 : 5;
         });
         this.seriesRect = shrinkRect;
         this.series.forEach(function (series) {
@@ -146,12 +152,16 @@ var CartesianChart = /** @class */ (function (_super) {
             series.group.translationY = Math.floor(shrinkRect.y);
             series.update(); // this has to happen after the `updateAxes` call
         });
-        // When seriesRoot is a ClipRect:
-        // const { seriesRoot } = this;
-        // seriesRoot.x = shrinkRect.x;
-        // seriesRoot.y = shrinkRect.y;
-        // seriesRoot.width = shrinkRect.width;
-        // seriesRoot.height = shrinkRect.height;
+        var seriesRoot = this.seriesRoot;
+        seriesRoot.x = shrinkRect.x;
+        seriesRoot.y = shrinkRect.y;
+        seriesRoot.width = shrinkRect.width;
+        seriesRoot.height = shrinkRect.height;
+        if (navigator.enabled) {
+            navigator.x = shrinkRect.x;
+            navigator.y = shrinkRect.y + shrinkRect.height + bottomAxesHeight + navigator.margin;
+            navigator.width = shrinkRect.width;
+        }
         this.axes.forEach(function (axis) { return axis.update(); });
     };
     CartesianChart.prototype.initSeries = function (series) {
@@ -161,6 +171,22 @@ var CartesianChart = /** @class */ (function (_super) {
     CartesianChart.prototype.freeSeries = function (series) {
         _super.prototype.freeSeries.call(this, series);
         series.removeEventListener('dataProcessed', this.updateAxes, this);
+    };
+    CartesianChart.prototype.onMouseDown = function (event) {
+        _super.prototype.onMouseDown.call(this, event);
+        this.navigator.onMouseDown(event);
+    };
+    CartesianChart.prototype.onMouseMove = function (event) {
+        _super.prototype.onMouseMove.call(this, event);
+        this.navigator.onMouseMove(event);
+    };
+    CartesianChart.prototype.onMouseUp = function (event) {
+        _super.prototype.onMouseUp.call(this, event);
+        this.navigator.onMouseUp(event);
+    };
+    CartesianChart.prototype.onMouseOut = function (event) {
+        _super.prototype.onMouseOut.call(this, event);
+        this.navigator.onMouseUp(event);
     };
     CartesianChart.prototype.updateAxes = function () {
         this.axes.forEach(function (axis) {

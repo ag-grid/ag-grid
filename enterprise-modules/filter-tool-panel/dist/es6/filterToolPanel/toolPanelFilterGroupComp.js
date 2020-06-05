@@ -17,7 +17,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
-import { _, Autowired, Column, Component, Events, OriginalColumnGroup, PostConstruct, PreConstruct, RefSelector } from "@ag-grid-community/core";
+import { _, AgGroupComponent, Autowired, Column, Component, Events, OriginalColumnGroup, PostConstruct, PreConstruct, RefSelector } from "@ag-grid-community/core";
 import { ToolPanelFilterComp } from "./toolPanelFilterComp";
 var ToolPanelFilterGroupComp = /** @class */ (function (_super) {
     __extends(ToolPanelFilterGroupComp, _super);
@@ -46,17 +46,7 @@ var ToolPanelFilterGroupComp = /** @class */ (function (_super) {
             _this.filterGroupComp.addItem(filterComp);
             filterComp.addCssClassToTitleBar("ag-filter-toolpanel-group-level-" + (_this.depth + 1) + "-header");
         });
-        if (!this.isColumnGroup()) {
-            this.addTopLevelColumnGroupExpandListener();
-        }
-        else {
-            this.addDestroyableEventListener(this.filterGroupComp, 'expanded', function () {
-                _this.expandedCallback();
-            });
-            this.addDestroyableEventListener(this.filterGroupComp, 'collapsed', function () {
-                _this.expandedCallback();
-            });
-        }
+        this.addExpandCollapseListeners();
         this.addFilterChangedListeners();
     };
     ToolPanelFilterGroupComp.prototype.addCssClassToTitleBar = function (cssClass) {
@@ -93,20 +83,23 @@ var ToolPanelFilterGroupComp = /** @class */ (function (_super) {
     ToolPanelFilterGroupComp.prototype.hideGroup = function (hide) {
         _.addOrRemoveCssClass(this.getGui(), 'ag-hidden', hide);
     };
-    ToolPanelFilterGroupComp.prototype.addTopLevelColumnGroupExpandListener = function () {
-        var _this = this;
-        this.addDestroyableEventListener(this.filterGroupComp, 'expanded', function () {
-            _this.childFilterComps.forEach(function (filterComp) {
-                // also need to refresh the virtual list on set filters as the filter may have been updated elsewhere
-                if (filterComp instanceof ToolPanelFilterComp) {
-                    filterComp.expand();
-                    filterComp.refreshFilter();
-                }
-                else {
-                    filterComp.refreshFilters();
-                }
-            });
+    ToolPanelFilterGroupComp.prototype.forEachToolPanelFilterChild = function (action) {
+        _.forEach(this.childFilterComps, function (filterComp) {
+            if (filterComp instanceof ToolPanelFilterComp) {
+                action(filterComp);
+            }
         });
+    };
+    ToolPanelFilterGroupComp.prototype.addExpandCollapseListeners = function () {
+        var _this = this;
+        var expandListener = this.isColumnGroup() ?
+            function () { return _this.expandedCallback(); } :
+            function () { return _this.forEachToolPanelFilterChild(function (filterComp) { return filterComp.expand(); }); };
+        var collapseListener = this.isColumnGroup() ?
+            function () { return _this.expandedCallback(); } :
+            function () { return _this.forEachToolPanelFilterChild(function (filterComp) { return filterComp.collapse(); }); };
+        this.addManagedListener(this.filterGroupComp, AgGroupComponent.EVENT_EXPANDED, expandListener);
+        this.addManagedListener(this.filterGroupComp, AgGroupComponent.EVENT_COLLAPSED, collapseListener);
     };
     ToolPanelFilterGroupComp.prototype.addFilterChangedListeners = function () {
         var _this = this;
@@ -114,15 +107,15 @@ var ToolPanelFilterGroupComp = /** @class */ (function (_super) {
             var group_1 = this.columnGroup;
             var anyChildFiltersActive_1 = function () { return group_1.getLeafColumns().some(function (col) { return col.isFilterActive(); }); };
             group_1.getLeafColumns().forEach(function (column) {
-                _this.addDestroyableEventListener(column, Column.EVENT_FILTER_CHANGED, function () {
+                _this.addManagedListener(column, Column.EVENT_FILTER_CHANGED, function () {
                     _.addOrRemoveCssClass(_this.filterGroupComp.getGui(), 'ag-has-filter', anyChildFiltersActive_1());
                 });
             });
         }
         else {
             var column_1 = this.columnGroup;
-            this.addDestroyableEventListener(this.eventService, Events.EVENT_FILTER_OPENED, this.onFilterOpened.bind(this));
-            this.addDestroyableEventListener(column_1, Column.EVENT_FILTER_CHANGED, function () {
+            this.addManagedListener(this.eventService, Events.EVENT_FILTER_OPENED, this.onFilterOpened.bind(this));
+            this.addManagedListener(column_1, Column.EVENT_FILTER_CHANGED, function () {
                 _.addOrRemoveCssClass(_this.filterGroupComp.getGui(), 'ag-has-filter', column_1.isFilterActive());
             });
         }
@@ -159,21 +152,17 @@ var ToolPanelFilterGroupComp = /** @class */ (function (_super) {
         return this.columnController.getDisplayNameForColumn(column, 'header', false);
     };
     ToolPanelFilterGroupComp.prototype.destroyFilters = function () {
-        this.childFilterComps.forEach(function (filterComp) { return filterComp.destroy(); });
-        this.childFilterComps.length = 0;
+        this.childFilterComps = this.destroyBeans(this.childFilterComps);
         _.clearElement(this.getGui());
     };
     ToolPanelFilterGroupComp.prototype.destroy = function () {
         this.destroyFilters();
         _super.prototype.destroy.call(this);
     };
-    ToolPanelFilterGroupComp.TEMPLATE = "<div class=\"ag-filter-toolpanel-group-wrapper\">\n            <ag-group-component ref=\"filterGroupComp\"></ag-group-component>\n         </div>";
+    ToolPanelFilterGroupComp.TEMPLATE = "<div class=\"ag-filter-toolpanel-group-wrapper\">\n            <ag-group-component ref=\"filterGroupComp\"></ag-group-component>\n        </div>";
     __decorate([
         RefSelector('filterGroupComp')
     ], ToolPanelFilterGroupComp.prototype, "filterGroupComp", void 0);
-    __decorate([
-        Autowired('eventService')
-    ], ToolPanelFilterGroupComp.prototype, "eventService", void 0);
     __decorate([
         Autowired('columnController')
     ], ToolPanelFilterGroupComp.prototype, "columnController", void 0);

@@ -1,4 +1,5 @@
-export declare class ExpressionService {
+import { BeanStub } from "../context/beanStub";
+export declare class ExpressionService extends BeanStub {
     private expressionToFunctionCache;
     private logger;
     private setBeans;

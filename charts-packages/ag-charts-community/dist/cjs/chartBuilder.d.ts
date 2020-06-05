@@ -1,4 +1,4 @@
-import { ChartOptions, CartesianChartOptions, PolarChartOptions, SeriesOptions, BarSeriesOptions, LineSeriesOptions, ScatterSeriesOptions, AreaSeriesOptions, PieSeriesOptions, HistogramSeriesOptions, LegendOptions, CaptionOptions, FontWeight, DropShadowOptions, AxisOptions, SeriesLabelOptions, MarkerOptions, HighlightOptions, AxisType } from "./chartOptions";
+import { ChartOptions, CartesianChartOptions, PolarChartOptions, SeriesOptions, BarSeriesOptions, LineSeriesOptions, ScatterSeriesOptions, AreaSeriesOptions, PieSeriesOptions, HistogramSeriesOptions, LegendOptions, CaptionOptions, FontWeight, DropShadowOptions, AxisOptions, SeriesLabelOptions, MarkerOptions, HighlightOptions, AxisType, NavigatorOptions, NavigatorHandleOptions, NavigatorMaskOptions } from "./chartOptions";
 import { CartesianChart } from "./chart/cartesianChart";
 import { PolarChart } from "./chart/polarChart";
 import { LineSeries } from "./chart/series/cartesian/lineSeries";
@@ -18,6 +18,9 @@ import { Caption } from "./caption";
 import { GroupedCategoryAxis } from "./chart/axis/groupedCategoryAxis";
 import { GroupedCategoryChart } from "./chart/groupedCategoryChart";
 import { TimeAxis } from "./chart/axis/timeAxis";
+import { Navigator } from "./chart/navigator/navigator";
+import { NavigatorHandle } from "./chart/navigator/navigatorHandle";
+import { NavigatorMask } from "./chart/navigator/navigatorMask";
 export declare class ChartBuilder {
     private static createCartesianChart;
     private static createGroupedCategoryChart;
@@ -35,6 +38,7 @@ export declare class ChartBuilder {
     static createDoughnutChart(container: HTMLElement, options: PolarChartOptions<PieSeriesOptions>): PolarChart;
     static createPieChart(container: HTMLElement, options: PolarChartOptions<PieSeriesOptions>): PolarChart;
     static createSeries(options: SeriesOptions): Series;
+    static initCartesianChart<C extends CartesianChart, T extends SeriesOptions>(chart: C, options: CartesianChartOptions<T>): C;
     static initChart<C extends Chart, T extends SeriesOptions>(chart: C, options: ChartOptions<T>): C;
     static initSeries<S extends Series>(series: S, options: SeriesOptions): S;
     static initLineSeries(series: LineSeries, options: LineSeriesOptions): LineSeries;
@@ -47,6 +51,9 @@ export declare class ChartBuilder {
     private static markerShapes;
     private static getMarkerByName;
     static initLegend(legend: Legend, options: LegendOptions): void;
+    static initNavigator(navigator: Navigator, options: NavigatorOptions): void;
+    static initNavigatorMask(mask: NavigatorMask, options: NavigatorMaskOptions): void;
+    static initNavigatorHandle(handle: NavigatorHandle, options: NavigatorHandleOptions): void;
     static initMarker(marker: SeriesMarker, options: MarkerOptions): void;
     static initHighlightStyle(highlightStyle: HighlightStyle, options: HighlightOptions): void;
     static setDefaultFontOptions(options: CaptionOptions, fontSize?: number, fontWeight?: FontWeight, fontFamily?: string): void;

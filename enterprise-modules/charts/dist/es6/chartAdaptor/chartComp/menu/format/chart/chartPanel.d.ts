@@ -13,5 +13,5 @@ export declare class ChartPanel extends Component {
     private initPaddingPanel;
     private initBackgroundPanel;
     private destroyActivePanels;
-    destroy(): void;
+    protected destroy(): void;
 }

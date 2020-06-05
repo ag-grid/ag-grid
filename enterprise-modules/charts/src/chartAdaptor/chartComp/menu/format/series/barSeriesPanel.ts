@@ -11,15 +11,15 @@ import {
     RefSelector,
     AgGroupComponentParams,
 } from "@ag-grid-community/core";
-import {ChartController} from "../../../chartController";
-import {ShadowPanel} from "./shadowPanel";
-import {Font, FontPanel, FontPanelParams} from "../fontPanel";
-import {ChartTranslator} from "../../../chartTranslator";
-import {BarChartProxy} from "../../../chartProxies/cartesian/barChartProxy";
+import { ChartController } from "../../../chartController";
+import { ShadowPanel } from "./shadowPanel";
+import { Font, FontPanel, FontPanelParams } from "../fontPanel";
+import { ChartTranslator } from "../../../chartTranslator";
+import { BarChartProxy } from "../../../chartProxies/cartesian/barChartProxy";
 
 export class BarSeriesPanel extends Component {
 
-    public static TEMPLATE =
+    public static TEMPLATE = /* html */
         `<div>
             <ag-group-component ref="seriesGroup">
                 <ag-toggle-button ref="seriesTooltipsToggle"></ag-toggle-button>
@@ -141,14 +141,14 @@ export class BarSeriesPanel extends Component {
             setFont: setFont
         };
 
-        const labelPanelComp = this.wireBean(new FontPanel(params));
+        const labelPanelComp = this.createBean(new FontPanel(params));
         this.activePanels.push(labelPanelComp);
 
         this.seriesGroup.addItem(labelPanelComp);
     }
 
     private initShadowPanel() {
-        const shadowPanelComp = this.wireBean(new ShadowPanel(this.chartController));
+        const shadowPanelComp = this.createBean(new ShadowPanel(this.chartController));
         this.seriesGroup.addItem(shadowPanelComp);
         this.activePanels.push(shadowPanelComp);
     }
@@ -156,7 +156,7 @@ export class BarSeriesPanel extends Component {
     private destroyActivePanels(): void {
         this.activePanels.forEach(panel => {
             _.removeFromParent(panel.getGui());
-            panel.destroy();
+            this.destroyBean(panel);
         });
     }
 
@@ -164,7 +164,7 @@ export class BarSeriesPanel extends Component {
         return this.chartController.getChartProxy() as BarChartProxy;
     }
 
-    public destroy(): void {
+    protected destroy(): void {
         this.destroyActivePanels();
         super.destroy();
     }

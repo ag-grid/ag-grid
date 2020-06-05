@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v23.1.1
+ * @version v23.2.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -35,8 +35,8 @@ var PaginationAutoPageSizeService = /** @class */ (function (_super) {
     }
     PaginationAutoPageSizeService.prototype.registerGridComp = function (gridPanel) {
         this.gridPanel = gridPanel;
-        this.addDestroyableEventListener(this.eventService, events_1.Events.EVENT_BODY_HEIGHT_CHANGED, this.onBodyHeightChanged.bind(this));
-        this.addDestroyableEventListener(this.eventService, events_1.Events.EVENT_SCROLL_VISIBILITY_CHANGED, this.onScrollVisibilityChanged.bind(this));
+        this.addManagedListener(this.eventService, events_1.Events.EVENT_BODY_HEIGHT_CHANGED, this.onBodyHeightChanged.bind(this));
+        this.addManagedListener(this.eventService, events_1.Events.EVENT_SCROLL_VISIBILITY_CHANGED, this.onScrollVisibilityChanged.bind(this));
         this.checkPageSize();
     };
     PaginationAutoPageSizeService.prototype.notActive = function () {
@@ -60,14 +60,8 @@ var PaginationAutoPageSizeService = /** @class */ (function (_super) {
         }
     };
     __decorate([
-        context_1.Autowired('eventService')
-    ], PaginationAutoPageSizeService.prototype, "eventService", void 0);
-    __decorate([
         context_1.Autowired('gridOptionsWrapper')
     ], PaginationAutoPageSizeService.prototype, "gridOptionsWrapper", void 0);
-    __decorate([
-        context_1.Autowired('scrollVisibleService')
-    ], PaginationAutoPageSizeService.prototype, "scrollVisibleService", void 0);
     PaginationAutoPageSizeService = __decorate([
         context_1.Bean('paginationAutoPageSizeService')
     ], PaginationAutoPageSizeService);

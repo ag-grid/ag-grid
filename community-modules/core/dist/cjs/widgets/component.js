@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v23.1.1
+ * @version v23.2.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -25,16 +25,15 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var beanStub_1 = require("../context/beanStub");
 var context_1 = require("../context/context");
+var beanStub_1 = require("../context/beanStub");
 var utils_1 = require("../utils");
 var compIdSequence = new utils_1.NumberSequence();
 var Component = /** @class */ (function (_super) {
     __extends(Component, _super);
     function Component(template) {
         var _this = _super.call(this) || this;
-        _this.childComponents = [];
-        _this.annotatedEventListeners = [];
+        _this.annotatedGuiListeners = [];
         // if false, then CSS class "ag-hidden" is applied, which sets "display: none"
         _this.displayed = true;
         // if false, then CSS class "ag-invisible" is applied, which sets "visibility: hidden"
@@ -61,7 +60,7 @@ var Component = /** @class */ (function (_super) {
             if (!(childNode instanceof HTMLElement)) {
                 return;
             }
-            var childComp = _this.getContext().createComponentFromElement(childNode, function (childComp) {
+            var childComp = _this.createComponentFromElement(childNode, function (childComp) {
                 // copy over all attributes, including css classes, so any attributes user put on the tag
                 // wll be carried across
                 _this.copyAttributesFromNode(childNode, childComp.getGui());
@@ -81,6 +80,17 @@ var Component = /** @class */ (function (_super) {
             }
         });
     };
+    Component.prototype.createComponentFromElement = function (element, afterPreCreateCallback, paramsMap) {
+        var key = element.nodeName;
+        var componentParams = paramsMap ? paramsMap[element.getAttribute('ref')] : undefined;
+        var ComponentClass = this.agStackComponentsRegistry.getComponentClass(key);
+        if (ComponentClass) {
+            var newComponent = new ComponentClass(componentParams);
+            this.createBean(newComponent, null, afterPreCreateCallback);
+            return newComponent;
+        }
+        return null;
+    };
     Component.prototype.copyAttributesFromNode = function (source, dest) {
         utils_1._.iterateNamedNodeMap(source.attributes, function (name, value) { return dest.setAttribute(name, value); });
     };
@@ -88,7 +98,7 @@ var Component = /** @class */ (function (_super) {
         var eComponent = newComponent.getGui();
         parentNode.replaceChild(eComponent, childNode);
         parentNode.insertBefore(document.createComment(childNode.nodeName), eComponent);
-        this.childComponents.push(newComponent);
+        this.addDestroyFunc(this.destroyBean.bind(this, newComponent));
         this.swapInComponentForQuerySelectors(newComponent, childNode);
     };
     Component.prototype.swapInComponentForQuerySelectors = function (newComponent, childNode) {
@@ -117,7 +127,7 @@ var Component = /** @class */ (function (_super) {
     Component.prototype.setTemplateFromElement = function (element, paramsMap) {
         this.eGui = element;
         this.eGui.__agComponent = this;
-        this.addAnnotatedEventListeners();
+        this.addAnnotatedGuiEventListeners();
         this.wireQuerySelectors();
         // context will not be available when user sets template in constructor
         if (!!this.getContext()) {
@@ -147,23 +157,38 @@ var Component = /** @class */ (function (_super) {
             }
         });
     };
-    Component.prototype.addAnnotatedEventListeners = function () {
+    Component.prototype.addAnnotatedGuiEventListeners = function () {
         var _this = this;
-        this.removeAnnotatedEventListeners();
+        this.removeAnnotatedGuiEventListeners();
         if (!this.eGui) {
             return;
         }
-        var listenerMethods = this.getAgComponentMetaData('listenerMethods');
-        if (utils_1._.missingOrEmpty(listenerMethods)) {
+        var listenerMethods = this.getAgComponentMetaData('guiListenerMethods');
+        if (!listenerMethods) {
             return;
         }
-        if (!this.annotatedEventListeners) {
-            this.annotatedEventListeners = [];
+        if (!this.annotatedGuiListeners) {
+            this.annotatedGuiListeners = [];
         }
-        utils_1._.forEach(listenerMethods, function (eventListener) {
-            var listener = _this[eventListener.methodName].bind(_this);
-            _this.eGui.addEventListener(eventListener.eventName, listener);
-            _this.annotatedEventListeners.push({ eventName: eventListener.eventName, listener: listener });
+        listenerMethods.forEach(function (meta) {
+            var element = _this.getRefElement(meta.ref);
+            if (!element) {
+                return;
+            }
+            var listener = _this[meta.methodName].bind(_this);
+            element.addEventListener(meta.eventName, listener);
+            _this.annotatedGuiListeners.push({ eventName: meta.eventName, listener: listener, element: element });
+        });
+    };
+    Component.prototype.addAnnotatedGridEventListeners = function () {
+        var _this = this;
+        var listenerMetas = this.getAgComponentMetaData('gridListenerMethods');
+        if (!listenerMetas) {
+            return;
+        }
+        listenerMetas.forEach(function (meta) {
+            var listener = _this[meta.methodName].bind(_this);
+            _this.addManagedListener(_this.eventService, meta.eventName, listener);
         });
     };
     Component.prototype.getAgComponentMetaData = function (key) {
@@ -189,13 +214,14 @@ var Component = /** @class */ (function (_super) {
         }
         return res;
     };
-    Component.prototype.removeAnnotatedEventListeners = function () {
-        var _this = this;
-        if (!this.annotatedEventListeners || !this.eGui) {
+    Component.prototype.removeAnnotatedGuiEventListeners = function () {
+        if (!this.annotatedGuiListeners) {
             return;
         }
-        utils_1._.forEach(this.annotatedEventListeners, function (e) { return _this.eGui.removeEventListener(e.eventName, e.listener); });
-        this.annotatedEventListeners = [];
+        utils_1._.forEach(this.annotatedGuiListeners, function (e) {
+            e.element.removeEventListener(e.eventName, e.listener);
+        });
+        this.annotatedGuiListeners = [];
     };
     Component.prototype.getGui = function () {
         return this.eGui;
@@ -230,11 +256,8 @@ var Component = /** @class */ (function (_super) {
         else {
             var childComponent = newChild;
             container.appendChild(childComponent.getGui());
-            this.childComponents.push(childComponent);
+            this.addDestroyFunc(this.destroyBean.bind(this, childComponent));
         }
-    };
-    Component.prototype.addFeature = function (feature, context) {
-        this.wireDependentBean(feature, context);
     };
     Component.prototype.isDisplayed = function () {
         return this.displayed;
@@ -257,13 +280,7 @@ var Component = /** @class */ (function (_super) {
         }
     };
     Component.prototype.destroy = function () {
-        utils_1._.forEach(this.childComponents, function (childComponent) {
-            if (childComponent && childComponent.destroy) {
-                childComponent.destroy();
-            }
-        });
-        this.childComponents.length = 0;
-        this.removeAnnotatedEventListeners();
+        this.removeAnnotatedGuiEventListeners();
         _super.prototype.destroy.call(this);
     };
     Component.prototype.addGuiEventListener = function (event, listener) {
@@ -289,8 +306,14 @@ var Component = /** @class */ (function (_super) {
     };
     Component.EVENT_DISPLAYED_CHANGED = 'displayedChanged';
     __decorate([
+        context_1.Autowired('agStackComponentsRegistry')
+    ], Component.prototype, "agStackComponentsRegistry", void 0);
+    __decorate([
         context_1.PreConstruct
     ], Component.prototype, "createChildComponentsPreConstruct", null);
+    __decorate([
+        context_1.PostConstruct
+    ], Component.prototype, "addAnnotatedGridEventListeners", null);
     return Component;
 }(beanStub_1.BeanStub));
 exports.Component = Component;

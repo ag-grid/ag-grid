@@ -43,9 +43,9 @@ var PivotDropZonePanel = /** @class */ (function (_super) {
             emptyMessage: emptyMessage,
             title: title
         });
-        this.addDestroyableEventListener(this.eventService, core_1.Events.EVENT_COLUMN_EVERYTHING_CHANGED, this.refresh.bind(this));
-        this.addDestroyableEventListener(this.eventService, core_1.Events.EVENT_COLUMN_PIVOT_CHANGED, this.refresh.bind(this));
-        this.addDestroyableEventListener(this.eventService, core_1.Events.EVENT_COLUMN_PIVOT_MODE_CHANGED, this.checkVisibility.bind(this));
+        this.addManagedListener(this.eventService, core_1.Events.EVENT_COLUMN_EVERYTHING_CHANGED, this.refresh.bind(this));
+        this.addManagedListener(this.eventService, core_1.Events.EVENT_COLUMN_PIVOT_CHANGED, this.refresh.bind(this));
+        this.addManagedListener(this.eventService, core_1.Events.EVENT_COLUMN_PIVOT_MODE_CHANGED, this.checkVisibility.bind(this));
         this.refresh();
     };
     PivotDropZonePanel.prototype.refresh = function () {
@@ -106,9 +106,6 @@ var PivotDropZonePanel = /** @class */ (function (_super) {
     __decorate([
         core_1.Autowired('columnController')
     ], PivotDropZonePanel.prototype, "columnController", void 0);
-    __decorate([
-        core_1.Autowired('eventService')
-    ], PivotDropZonePanel.prototype, "eventService", void 0);
     __decorate([
         core_1.Autowired('gridOptionsWrapper')
     ], PivotDropZonePanel.prototype, "gridOptionsWrapper", void 0);

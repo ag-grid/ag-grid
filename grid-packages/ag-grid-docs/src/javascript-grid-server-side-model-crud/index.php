@@ -21,7 +21,7 @@ include '../documentation-main/documentation_header.php';
     scenario:
 </p>
 
-<ol>
+<ol class="content">
     <li>The grid asks for rows 0 to 99 (i.e. first block of 100 rows) and these get read from a database.</li>
     <li>Another application inserts a row at index 50.</li>
     <li>The grid asks for rows 100 to 199 (the second block of 100 rows) and again these get read from the database.</li>

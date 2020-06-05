@@ -42,13 +42,17 @@ var ToolPanelWrapper = /** @class */ (function (_super) {
     };
     ToolPanelWrapper.prototype.setupResize = function () {
         var resizeBar = this.resizeBar = new HorizontalResizeComp();
-        this.getContext().wireBean(resizeBar);
+        this.getContext().createBean(resizeBar);
         resizeBar.setElementToResize(this.getGui());
         this.appendChild(resizeBar);
     };
     ToolPanelWrapper.prototype.setToolPanelComponent = function (compInstance) {
+        var _this = this;
         this.toolPanelCompInstance = compInstance;
-        this.appendChild(compInstance);
+        this.appendChild(compInstance.getGui());
+        this.addDestroyFunc(function () {
+            _this.destroyBean(compInstance);
+        });
     };
     ToolPanelWrapper.prototype.getToolPanelInstance = function () {
         return this.toolPanelCompInstance;

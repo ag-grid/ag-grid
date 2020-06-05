@@ -1,6 +1,5 @@
 import { GridOptionsWrapper } from "../gridOptionsWrapper";
 import { GridPanel, RowContainerComponents } from "../gridPanel/gridPanel";
-import { EventService } from "../eventService";
 import { RowComp } from "./rowComp";
 import { Column } from "../entities/column";
 import { RowNode } from "../entities/rowNode";
@@ -27,9 +26,9 @@ import { MaxDivHeightScaler } from "./maxDivHeightScaler";
 import { ICellRendererComp } from "./cellRenderers/iCellRenderer";
 import { ICellEditorComp } from "../interfaces/iCellEditor";
 import { IRowModel } from "../interfaces/iRowModel";
-import { _ } from "../utils";
 import { RowPosition, RowPositionUtils } from "../entities/rowPosition";
-import {PinnedRowModel} from "../pinnedRowModel/pinnedRowModel";
+import { PinnedRowModel } from "../pinnedRowModel/pinnedRowModel";
+import { _ } from "../utils";
 
 @Bean("rowRenderer")
 export class RowRenderer extends BeanStub {
@@ -38,7 +37,6 @@ export class RowRenderer extends BeanStub {
     @Autowired("columnController") private columnController: ColumnController;
     @Autowired("gridOptionsWrapper") private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired("$scope") private $scope: any;
-    @Autowired("eventService") private eventService: EventService;
     @Autowired("pinnedRowModel") private pinnedRowModel: PinnedRowModel;
     @Autowired("rowModel") private rowModel: IRowModel;
     @Autowired("loggerFactory") private loggerFactory: LoggerFactory;
@@ -99,12 +97,12 @@ export class RowRenderer extends BeanStub {
         this.gridPanel = gridPanel;
 
         this.rowContainers = this.gridPanel.getRowContainers();
-        this.addDestroyableEventListener(this.eventService, Events.EVENT_PAGINATION_CHANGED, this.onPageLoaded.bind(this));
-        this.addDestroyableEventListener(this.eventService, Events.EVENT_PINNED_ROW_DATA_CHANGED, this.onPinnedRowDataChanged.bind(this));
-        this.addDestroyableEventListener(this.eventService, Events.EVENT_DISPLAYED_COLUMNS_CHANGED, this.onDisplayedColumnsChanged.bind(this));
-        this.addDestroyableEventListener(this.eventService, Events.EVENT_BODY_SCROLL, this.redrawAfterScroll.bind(this));
-        this.addDestroyableEventListener(this.eventService, Events.EVENT_BODY_HEIGHT_CHANGED, this.redrawAfterScroll.bind(this));
-        this.addDestroyableEventListener(this.gridOptionsWrapper, GridOptionsWrapper.PROP_DOM_LAYOUT, this.onDomLayoutChanged.bind(this));
+        this.addManagedListener(this.eventService, Events.EVENT_PAGINATION_CHANGED, this.onPageLoaded.bind(this));
+        this.addManagedListener(this.eventService, Events.EVENT_PINNED_ROW_DATA_CHANGED, this.onPinnedRowDataChanged.bind(this));
+        this.addManagedListener(this.eventService, Events.EVENT_DISPLAYED_COLUMNS_CHANGED, this.onDisplayedColumnsChanged.bind(this));
+        this.addManagedListener(this.eventService, Events.EVENT_BODY_SCROLL, this.redrawAfterScroll.bind(this));
+        this.addManagedListener(this.eventService, Events.EVENT_BODY_HEIGHT_CHANGED, this.redrawAfterScroll.bind(this));
+        this.addManagedListener(this.gridOptionsWrapper, GridOptionsWrapper.PROP_DOM_LAYOUT, this.onDomLayoutChanged.bind(this));
 
         this.registerCellEventListeners();
 
@@ -119,15 +117,15 @@ export class RowRenderer extends BeanStub {
     // all active cells.
     private registerCellEventListeners(): void {
 
-        this.addDestroyableEventListener(this.eventService, Events.EVENT_CELL_FOCUSED, event => {
+        this.addManagedListener(this.eventService, Events.EVENT_CELL_FOCUSED, event => {
             this.forEachCellComp(cellComp => cellComp.onCellFocused(event));
         });
 
-        this.addDestroyableEventListener(this.eventService, Events.EVENT_FLASH_CELLS, event => {
+        this.addManagedListener(this.eventService, Events.EVENT_FLASH_CELLS, event => {
             this.forEachCellComp(cellComp => cellComp.onFlashCells(event));
         });
 
-        this.addDestroyableEventListener(this.eventService, Events.EVENT_COLUMN_HOVER_CHANGED, () => {
+        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_HOVER_CHANGED, () => {
             this.forEachCellComp(cellComp => cellComp.onColumnHover());
         });
 
@@ -136,7 +134,7 @@ export class RowRenderer extends BeanStub {
         // left position adjusted by the width of the left pinned column, so if the pinned left column width changes,
         // all the center cols need to be shifted to accommodate this. when in normal layout, the pinned cols are
         // in different containers so doesn't impact.
-        this.addDestroyableEventListener(this.eventService, Events.EVENT_DISPLAYED_COLUMNS_WIDTH_CHANGED, () => {
+        this.addManagedListener(this.eventService, Events.EVENT_DISPLAYED_COLUMNS_WIDTH_CHANGED, () => {
             if (this.printLayout) {
                 this.forEachCellComp(cellComp => cellComp.onLeftChanged());
             }
@@ -145,16 +143,16 @@ export class RowRenderer extends BeanStub {
         const rangeSelectionEnabled = this.gridOptionsWrapper.isEnableRangeSelection();
         if (rangeSelectionEnabled) {
 
-            this.addDestroyableEventListener(this.eventService, Events.EVENT_RANGE_SELECTION_CHANGED, () => {
+            this.addManagedListener(this.eventService, Events.EVENT_RANGE_SELECTION_CHANGED, () => {
                 this.forEachCellComp(cellComp => cellComp.onRangeSelectionChanged());
             });
-            this.addDestroyableEventListener(this.eventService, Events.EVENT_COLUMN_MOVED, () => {
+            this.addManagedListener(this.eventService, Events.EVENT_COLUMN_MOVED, () => {
                 this.forEachCellComp(cellComp => cellComp.updateRangeBordersIfRangeCount());
             });
-            this.addDestroyableEventListener(this.eventService, Events.EVENT_COLUMN_PINNED, () => {
+            this.addManagedListener(this.eventService, Events.EVENT_COLUMN_PINNED, () => {
                 this.forEachCellComp(cellComp => cellComp.updateRangeBordersIfRangeCount());
             });
-            this.addDestroyableEventListener(this.eventService, Events.EVENT_COLUMN_VISIBLE, () => {
+            this.addManagedListener(this.eventService, Events.EVENT_COLUMN_VISIBLE, () => {
                 this.forEachCellComp(cellComp => cellComp.updateRangeBordersIfRangeCount());
             });
 
@@ -163,7 +161,7 @@ export class RowRenderer extends BeanStub {
         // add listeners to the grid columns
         this.refreshListenersToColumnsForCellComps();
         // if the grid columns change, then refresh the listeners again
-        this.addDestroyableEventListener(this.eventService, Events.EVENT_GRID_COLUMNS_CHANGED, this.refreshListenersToColumnsForCellComps.bind(this));
+        this.addManagedListener(this.eventService, Events.EVENT_GRID_COLUMNS_CHANGED, this.refreshListenersToColumnsForCellComps.bind(this));
 
         this.addDestroyFunc(this.removeGridColumnListeners.bind(this));
     }
@@ -527,13 +525,15 @@ export class RowRenderer extends BeanStub {
     }
 
     public flashCells(params: FlashCellsParams = {}): void {
-        this.forEachCellCompFiltered(params.rowNodes, params.columns, cellComp => cellComp.flashCell());
+        const { flashDelay, fadeDelay }  = params;
+        this.forEachCellCompFiltered(params.rowNodes, params.columns, cellComp => cellComp.flashCell({ flashDelay, fadeDelay }));
     }
 
     public refreshCells(params: RefreshCellsParams = {}): void {
         const refreshCellParams = {
             forceRefresh: params.force,
-            newData: false
+            newData: false,
+            suppressFlash: params.suppressFlash
         };
         this.forEachCellCompFiltered(params.rowNodes, params.columns, cellComp => cellComp.refreshCell(refreshCellParams));
     }
@@ -663,7 +663,7 @@ export class RowRenderer extends BeanStub {
         }
     }
 
-    public destroy(): void {
+    protected destroy(): void {
         const rowIndexesToRemove = Object.keys(this.rowCompsByIndex);
 
         this.removeRowComps(rowIndexesToRemove);
@@ -1119,9 +1119,9 @@ export class RowRenderer extends BeanStub {
     public navigateToNextCell(event: KeyboardEvent | null, key: number, currentCell: CellPosition, allowUserOverride: boolean) {
         // we keep searching for a next cell until we find one. this is how the group rows get skipped
         let nextCell = currentCell;
-        let finished = false;
+        let hitEdgeOfGrid = false;
 
-        while (!finished) {
+        while (nextCell && (nextCell === currentCell || !this.isValidNavigateCell(nextCell))) {
             // if the current cell is spanning across multiple columns, we need to move
             // our current position to be the last cell on the right before finding the
             // the next target.
@@ -1136,33 +1136,15 @@ export class RowRenderer extends BeanStub {
             nextCell = this.cellNavigationService.getNextCellToFocus(key, nextCell);
 
             // eg if going down, and nextCell=undefined, means we are gone past the last row
-            const hitEdgeOfGrid = _.missing(nextCell);
+            hitEdgeOfGrid = _.missing(nextCell);
+        }
 
-            if (hitEdgeOfGrid) {
-                finished = true;
-                continue;
-            }
-
-            const rowNode = this.rowPositionUtils.getRowNode(nextCell);
-
-            // we do not allow focusing on detail rows and full width rows
-            if (rowNode.detail || rowNode.isFullWidthCell()) {
-                continue;
-            }
-
-            // if not a group, then we have a valid row, so quit the search
-            if (!rowNode.group) {
-                finished = true;
-                continue;
-            }
-
-            // full width rows cannot be focused, so if it's a group and using full width rows,
-            // we need to skip over the row
-            const pivotMode = this.columnController.isPivotMode();
-            const usingFullWidthRows = this.gridOptionsWrapper.isGroupUseEntireRow(pivotMode);
-            if (!usingFullWidthRows) {
-                finished = true;
-            }
+        if (hitEdgeOfGrid && event.keyCode === Constants.KEY_UP) {
+            nextCell = {
+                rowIndex: -1,
+                rowPinned: null,
+                column: currentCell.column
+            };
         }
 
         // allow user to override what cell to go to next. when doing normal cell navigation (with keys)
@@ -1196,6 +1178,16 @@ export class RowRenderer extends BeanStub {
         // no next cell means we have reached a grid boundary, eg left, right, top or bottom of grid
         if (!nextCell) { return; }
 
+        if (nextCell.rowIndex < 0) {
+            const headerLen = this.beans.headerNavigationService.getHeaderRowCount();
+
+            this.focusController.focusHeaderPosition({
+                headerRowIndex: headerLen + (nextCell.rowIndex), column: currentCell.column
+            });
+
+            return;
+        }
+
         // in case we have col spanning we get the cellComp and use it to
         // get the position. This was we always focus the first cell inside
         // the spanning.
@@ -1219,6 +1211,25 @@ export class RowRenderer extends BeanStub {
         if (this.rangeController) {
             this.rangeController.setRangeToCell(nextCell);
         }
+    }
+
+    private isValidNavigateCell(cell: CellPosition): boolean {
+        const rowNode = this.rowPositionUtils.getRowNode(cell);
+
+        // we do not allow focusing on detail rows and full width rows
+        if (rowNode.detail || rowNode.isFullWidthCell()) { return false; }
+
+        // if not a group, then we have a valid row, so quit the search
+        if (!rowNode.group) { return true; }
+
+        // full width rows cannot be focused, so if it's a group and using full width rows,
+        // we need to skip over the row
+        const pivotMode = this.columnController.isPivotMode();
+        const usingFullWidthRows = this.gridOptionsWrapper.isGroupUseEntireRow(pivotMode);
+
+        if (!usingFullWidthRows) { return true; }
+
+        return false;
     }
 
     private getLastCellOfColSpan(cell: CellPosition): CellPosition {
@@ -1302,6 +1313,15 @@ export class RowRenderer extends BeanStub {
 
         if (success) {
             keyboardEvent.preventDefault();
+        } else if (keyboardEvent.shiftKey) {
+            const cellPosition = previousRenderedCell.getCellPosition();
+            if (cellPosition.rowIndex === 0) {
+                keyboardEvent.preventDefault();
+                this.focusController.focusHeaderPosition({
+                    headerRowIndex: this.beans.headerNavigationService.getHeaderRowCount() - 1,
+                    column: _.last(this.columnController.getAllDisplayedColumns())
+                });
+            }
         }
     }
 

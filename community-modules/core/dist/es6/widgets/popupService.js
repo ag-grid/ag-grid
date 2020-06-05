@@ -1,9 +1,22 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v23.1.1
+ * @version v23.2.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = function (d, b) {
+        extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+        return extendStatics(d, b);
+    };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -11,34 +24,29 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 import { Constants } from "../constants";
-import { Autowired, Bean, PostConstruct, PreDestroy } from "../context/context";
+import { Autowired, Bean, PostConstruct } from "../context/context";
 import { Events } from '../events';
+import { BeanStub } from "../context/beanStub";
 import { _ } from "../utils";
-var PopupService = /** @class */ (function () {
+var PopupService = /** @class */ (function (_super) {
+    __extends(PopupService, _super);
     function PopupService() {
-        this.popupList = [];
-        this.events = [];
+        var _this = _super !== null && _super.apply(this, arguments) || this;
+        _this.popupList = [];
+        return _this;
     }
     PopupService.prototype.init = function () {
         var _this = this;
-        this.events = [
-            this.eventService.addEventListener(Events.EVENT_KEYBOARD_FOCUS, function () {
-                _this.popupList.forEach(function (popup) {
-                    _.addCssClass(popup.element, 'ag-keyboard-focus');
-                });
-            }),
-            this.eventService.addEventListener(Events.EVENT_MOUSE_FOCUS, function () {
-                _this.popupList.forEach(function (popup) {
-                    _.removeCssClass(popup.element, 'ag-keyboard-focus');
-                });
-            })
-        ];
-    };
-    PopupService.prototype.destroy = function () {
-        if (this.events.length) {
-            this.events.forEach(function (func) { return func(); });
-            this.events = [];
-        }
+        this.addManagedListener(this.eventService, Events.EVENT_KEYBOARD_FOCUS, function () {
+            _this.popupList.forEach(function (popup) {
+                _.addCssClass(popup.element, 'ag-keyboard-focus');
+            });
+        });
+        this.addManagedListener(this.eventService, Events.EVENT_MOUSE_FOCUS, function () {
+            _this.popupList.forEach(function (popup) {
+                _.removeCssClass(popup.element, 'ag-keyboard-focus');
+            });
+        });
     };
     PopupService.prototype.registerGridCore = function (gridCore) {
         this.gridCore = gridCore;
@@ -102,7 +110,7 @@ var PopupService = /** @class */ (function () {
             nudgeY: nudgeY,
             keepWithinBounds: true
         });
-        this.callPostProcessPopup(params.ePopup, null, params.mouseEvent, params.type, params.column, params.rowNode);
+        this.callPostProcessPopup(params.type, params.ePopup, null, params.mouseEvent, params.column, params.rowNode);
     };
     PopupService.prototype.calculatePointerAlign = function (e) {
         var parentRect = this.getParentRect();
@@ -129,7 +137,7 @@ var PopupService = /** @class */ (function () {
             y: sourceRect.top - parentRect.top + sourceRect.height,
             keepWithinBounds: params.keepWithinBounds
         });
-        this.callPostProcessPopup(params.ePopup, params.eventSource, null, params.type, params.column, params.rowNode);
+        this.callPostProcessPopup(params.type, params.ePopup, params.eventSource, null, params.column, params.rowNode);
     };
     PopupService.prototype.positionPopupOverComponent = function (params) {
         var sourceRect = params.eventSource.getBoundingClientRect();
@@ -143,9 +151,9 @@ var PopupService = /** @class */ (function () {
             y: sourceRect.top - parentRect.top,
             keepWithinBounds: params.keepWithinBounds
         });
-        this.callPostProcessPopup(params.ePopup, params.eventSource, null, params.type, params.column, params.rowNode);
+        this.callPostProcessPopup(params.type, params.ePopup, params.eventSource, null, params.column, params.rowNode);
     };
-    PopupService.prototype.callPostProcessPopup = function (ePopup, eventSource, mouseEvent, type, column, rowNode) {
+    PopupService.prototype.callPostProcessPopup = function (type, ePopup, eventSource, mouseEvent, column, rowNode) {
         var callback = this.gridOptionsWrapper.getPostProcessPopupFunc();
         if (callback) {
             var params = {
@@ -175,6 +183,9 @@ var PopupService = /** @class */ (function () {
         }
         params.ePopup.style.left = x + "px";
         params.ePopup.style.top = y + "px";
+    };
+    PopupService.prototype.getActivePopups = function () {
+        return this.popupList.map(function (popup) { return popup.element; });
     };
     PopupService.prototype.getParentRect = function () {
         // subtract the popup parent borders, because popupParent.getBoundingClientRect
@@ -252,7 +263,6 @@ var PopupService = /** @class */ (function () {
     PopupService.prototype.addPopup = function (modal, eChild, closeOnEsc, closedCallback, click, alwaysOnTop) {
         var _this = this;
         var eDocument = this.gridOptionsWrapper.getDocument();
-        var processedAt = new Date().getTime();
         if (!eDocument) {
             console.warn('ag-grid: could not find the document, document is empty');
             return function () { };
@@ -289,23 +299,29 @@ var PopupService = /** @class */ (function () {
         var popupHidden = false;
         var hidePopupOnKeyboardEvent = function (event) {
             var key = event.which || event.keyCode;
-            if (key === Constants.KEY_ESCAPE && eWrapper.contains(document.activeElement)) {
-                hidePopup(null);
+            if (!eWrapper.contains(document.activeElement)) {
+                return;
+            }
+            switch (key) {
+                case Constants.KEY_ESCAPE:
+                    hidePopup({ keyboardEvent: event });
             }
         };
         var hidePopupOnMouseEvent = function (event) {
-            hidePopup(event);
+            hidePopup({ mouseEvent: event });
         };
         var hidePopupOnTouchEvent = function (event) {
-            hidePopup(null, event);
+            hidePopup({ touchEvent: event });
         };
-        var hidePopup = function (mouseEvent, touchEvent) {
+        var hidePopup = function (params) {
+            if (params === void 0) { params = {}; }
+            var mouseEvent = params.mouseEvent, touchEvent = params.touchEvent, keyboardEvent = params.keyboardEvent;
             if (
             // we don't hide popup if the event was on the child, or any
             // children of this child
-            _this.isEventFromCurrentPopup(mouseEvent, touchEvent, eChild) ||
+            _this.isEventFromCurrentPopup({ mouseEvent: mouseEvent, touchEvent: touchEvent }, eChild) ||
                 // if the event to close is actually the open event, then ignore it
-                _this.isEventSameChainAsOriginalEvent(click, mouseEvent, touchEvent) ||
+                _this.isEventSameChainAsOriginalEvent({ originalMouseEvent: click, mouseEvent: mouseEvent, touchEvent: touchEvent }) ||
                 // this method should only be called once. the client can have different
                 // paths, each one wanting to close, so this method may be called multiple times.
                 popupHidden) {
@@ -319,7 +335,7 @@ var PopupService = /** @class */ (function () {
             eDocument.removeEventListener('contextmenu', hidePopupOnMouseEvent);
             _this.eventService.removeEventListener(Events.EVENT_DRAG_STARTED, hidePopupOnMouseEvent);
             if (closedCallback) {
-                closedCallback();
+                closedCallback(mouseEvent || touchEvent || keyboardEvent);
             }
             _this.popupList = _this.popupList.filter(function (popup) { return popup.element !== eChild; });
         };
@@ -342,12 +358,13 @@ var PopupService = /** @class */ (function () {
         });
         return hidePopup;
     };
-    PopupService.prototype.isEventFromCurrentPopup = function (mouseEvent, touchEvent, eChild) {
+    PopupService.prototype.isEventFromCurrentPopup = function (params, target) {
+        var mouseEvent = params.mouseEvent, touchEvent = params.touchEvent;
         var event = mouseEvent ? mouseEvent : touchEvent;
         if (!event) {
             return false;
         }
-        var indexOfThisChild = _.findIndex(this.popupList, function (popup) { return popup.element === eChild; });
+        var indexOfThisChild = _.findIndex(this.popupList, function (popup) { return popup.element === target; });
         if (indexOfThisChild === -1) {
             return false;
         }
@@ -358,19 +375,26 @@ var PopupService = /** @class */ (function () {
             }
         }
         // if the user did not write their own Custom Element to be rendered as popup
-        // and this component has additional popup element, they should have the
+        // and this component has an additional popup element, they should have the
         // `ag-custom-component-popup` class to be detected as part of the Custom Component
-        var el = event.target;
-        while (el && el != document.body) {
+        return this.isElementWithinCustomPopup(event.target);
+    };
+    PopupService.prototype.isElementWithinCustomPopup = function (el) {
+        if (!this.popupList.length) {
+            return false;
+        }
+        while (el && el !== document.body) {
             if (el.classList.contains('ag-custom-component-popup') || el.parentElement === null) {
                 return true;
             }
             el = el.parentElement;
         }
+        return false;
     };
     // in some browsers, the context menu event can be fired before the click event, which means
     // the context menu event could open the popup, but then the click event closes it straight away.
-    PopupService.prototype.isEventSameChainAsOriginalEvent = function (originalClick, mouseEvent, touchEvent) {
+    PopupService.prototype.isEventSameChainAsOriginalEvent = function (params) {
+        var originalMouseEvent = params.originalMouseEvent, mouseEvent = params.mouseEvent, touchEvent = params.touchEvent;
         // we check the coordinates of the event, to see if it's the same event. there is a 1 / 1000 chance that
         // the event is a different event, however that is an edge case that is not very relevant (the user clicking
         // twice on the same location isn't a normal path).
@@ -384,13 +408,13 @@ var PopupService = /** @class */ (function () {
             // touch event doesn't have coordinates, need it's touch object
             mouseEventOrTouch = touchEvent.touches[0];
         }
-        if (mouseEventOrTouch && originalClick) {
+        if (mouseEventOrTouch && originalMouseEvent) {
             // for x, allow 4px margin, to cover iPads, where touch (which opens menu) is followed
             // by browser click (when you finger up, touch is interrupted as click in browser)
             var screenX_1 = mouseEvent ? mouseEvent.screenX : 0;
             var screenY_1 = mouseEvent ? mouseEvent.screenY : 0;
-            var xMatch = Math.abs(originalClick.screenX - screenX_1) < 5;
-            var yMatch = Math.abs(originalClick.screenY - screenY_1) < 5;
+            var xMatch = Math.abs(originalMouseEvent.screenX - screenX_1) < 5;
+            var yMatch = Math.abs(originalMouseEvent.screenY - screenY_1) < 5;
             if (xMatch && yMatch) {
                 return true;
             }
@@ -453,17 +477,11 @@ var PopupService = /** @class */ (function () {
         Autowired('environment')
     ], PopupService.prototype, "environment", void 0);
     __decorate([
-        Autowired('eventService')
-    ], PopupService.prototype, "eventService", void 0);
-    __decorate([
         PostConstruct
     ], PopupService.prototype, "init", null);
-    __decorate([
-        PreDestroy
-    ], PopupService.prototype, "destroy", null);
     PopupService = __decorate([
         Bean('popupService')
     ], PopupService);
     return PopupService;
-}());
+}(BeanStub));
 export { PopupService };

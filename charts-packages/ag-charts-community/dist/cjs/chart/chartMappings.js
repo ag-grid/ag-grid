@@ -28,6 +28,9 @@ var timeAxis_1 = require("./axis/timeAxis");
 var caption_1 = require("../caption");
 var dropShadow_1 = require("../scene/dropShadow");
 var legend_1 = require("./legend");
+var navigator_1 = require("./navigator/navigator");
+var navigatorMask_1 = require("./navigator/navigatorMask");
+var navigatorHandle_1 = require("./navigator/navigatorHandle");
 var palettes_1 = require("./palettes");
 /*
     This file defines the specs for creating different kinds of charts, but
@@ -123,6 +126,7 @@ var chartMeta = {
 };
 var axisDefaults = {
     defaults: {
+        visibleRange: [0, 1],
         gridStyle: [{
                 stroke: 'rgba(219, 219, 219, 1)',
                 lineDash: [4, 2]
@@ -237,9 +241,9 @@ var mappings = (_a = {},
                         type: numberAxis_1.NumberAxis.type,
                         position: 'left'
                     }] }) }) }, commonChartMappings), { axes: (_b = {},
-            _b[numberAxis_1.NumberAxis.type] = __assign({ meta: __assign({ constructor: numberAxis_1.NumberAxis, setAsIs: ['gridStyle'] }, axisDefaults) }, axisMappings),
-            _b[categoryAxis_1.CategoryAxis.type] = __assign({ meta: __assign({ constructor: categoryAxis_1.CategoryAxis, setAsIs: ['gridStyle'] }, axisDefaults) }, axisMappings),
-            _b[timeAxis_1.TimeAxis.type] = __assign({ meta: __assign({ constructor: timeAxis_1.TimeAxis, setAsIs: ['gridStyle'] }, axisDefaults) }, axisMappings),
+            _b[numberAxis_1.NumberAxis.type] = __assign({ meta: __assign({ constructor: numberAxis_1.NumberAxis, setAsIs: ['gridStyle', 'visibleRange'] }, axisDefaults) }, axisMappings),
+            _b[categoryAxis_1.CategoryAxis.type] = __assign({ meta: __assign({ constructor: categoryAxis_1.CategoryAxis, setAsIs: ['gridStyle', 'visibleRange'] }, axisDefaults) }, axisMappings),
+            _b[timeAxis_1.TimeAxis.type] = __assign({ meta: __assign({ constructor: timeAxis_1.TimeAxis, setAsIs: ['gridStyle', 'visibleRange'] }, axisDefaults) }, axisMappings),
             _b), series: (_c = {},
             _c[lineSeries_1.LineSeries.type] = {
                 meta: {
@@ -295,7 +299,56 @@ var mappings = (_a = {},
                 },
                 highlightStyle: {}
             },
-            _c) }),
+            _c), navigator: {
+            meta: {
+                constructor: navigator_1.Navigator,
+                defaults: {
+                    enabled: false,
+                    height: 30,
+                    min: 0,
+                    max: 1
+                }
+            },
+            mask: {
+                meta: {
+                    constructor: navigatorMask_1.NavigatorMask,
+                    defaults: {
+                        fill: '#999999',
+                        stroke: '#999999',
+                        strokeWidth: 1,
+                        fillOpacity: 0.2
+                    }
+                }
+            },
+            minHandle: {
+                meta: {
+                    constructor: navigatorHandle_1.NavigatorHandle,
+                    defaults: {
+                        fill: '#f2f2f2',
+                        stroke: '#999999',
+                        strokeWidth: 1,
+                        width: 8,
+                        height: 16,
+                        gripLineGap: 2,
+                        gripLineLength: 8
+                    }
+                }
+            },
+            maxHandle: {
+                meta: {
+                    constructor: navigatorHandle_1.NavigatorHandle,
+                    defaults: {
+                        fill: '#f2f2f2',
+                        stroke: '#999999',
+                        strokeWidth: 1,
+                        width: 8,
+                        height: 16,
+                        gripLineGap: 2,
+                        gripLineLength: 8
+                    }
+                }
+            }
+        } }),
     _a[polarChart_1.PolarChart.type] = __assign(__assign({ meta: __assign(__assign({ constructor: polarChart_1.PolarChart }, chartMeta), { defaults: __assign(__assign({}, chartDefaults), { padding: new padding_1.Padding(40) }) }) }, commonChartMappings), { series: (_d = {},
             _d[pieSeries_1.PieSeries.type] = __assign({ meta: {
                     constructor: pieSeries_1.PieSeries,

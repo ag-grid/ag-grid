@@ -123,7 +123,11 @@ export declare class Axis<S extends Scale<D, number>, D = any> {
     };
     rotation: number;
     constructor(scale: S);
+    protected updateRange(): void;
+    protected requestedRange: number[];
     range: number[];
+    protected _visibleRange: number[];
+    visibleRange: number[];
     domain: D[];
     private tickFormatter?;
     private onTickFormatChange;

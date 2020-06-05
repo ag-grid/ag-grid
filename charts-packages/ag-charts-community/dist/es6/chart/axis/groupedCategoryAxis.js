@@ -72,6 +72,7 @@ var GroupedCategoryAxis = /** @class */ (function (_super) {
         var _a = _this, group = _a.group, scale = _a.scale, tickScale = _a.tickScale;
         scale.paddingOuter = 0.1;
         scale.paddingInner = scale.paddingOuter * 2;
+        _this.requestedRange = scale.range.slice();
         tickScale.paddingInner = 1;
         tickScale.paddingOuter = 0;
         _this.gridLineSelection = Selection.select(group).selectAll();
@@ -99,16 +100,23 @@ var GroupedCategoryAxis = /** @class */ (function (_super) {
     });
     Object.defineProperty(GroupedCategoryAxis.prototype, "range", {
         get: function () {
-            return this.scale.range;
+            return this.requestedRange.slice();
         },
         set: function (value) {
-            this.scale.range = value;
-            this.tickScale.range = value;
-            this.resizeTickTree();
+            this.requestedRange = value.slice();
+            this.updateRange();
         },
         enumerable: true,
         configurable: true
     });
+    GroupedCategoryAxis.prototype.updateRange = function () {
+        var _a = this, rr = _a.requestedRange, vr = _a.visibleRange, scale = _a.scale;
+        var span = (rr[1] - rr[0]) / (vr[1] - vr[0]);
+        var shift = span * vr[0];
+        var start = rr[0] - shift;
+        this.tickScale.range = scale.range = [start, start + span];
+        this.resizeTickTree();
+    };
     GroupedCategoryAxis.prototype.resizeTickTree = function () {
         var s = this.scale;
         var range = s.domain.length ? [s.convert(s.domain[0]), s.convert(s.domain[s.domain.length - 1])] : s.range;
@@ -158,7 +166,7 @@ var GroupedCategoryAxis = /** @class */ (function (_super) {
      */
     GroupedCategoryAxis.prototype.update = function () {
         var _this = this;
-        var _a = this, group = _a.group, scale = _a.scale, label = _a.label, tickScale = _a.tickScale;
+        var _a = this, group = _a.group, scale = _a.scale, label = _a.label, tickScale = _a.tickScale, requestedRange = _a.requestedRange;
         var rangeStart = scale.range[0];
         var rangeEnd = scale.range[1];
         var rangeLength = Math.abs(rangeEnd - rangeStart);
@@ -222,6 +230,9 @@ var GroupedCategoryAxis = /** @class */ (function (_super) {
             // label.textBaseline = parallelLabels && !labelRotation
             //     ? (sideFlag * parallelFlipFlag === -1 ? 'hanging' : 'bottom')
             //     : 'middle';
+            node.textAlign = 'center';
+            node.translationX = datum.screenY - label.fontSize * 0.25;
+            node.translationY = datum.screenX;
             if (title && index === 0) { // use the phantom root as the axis title
                 node.text = title.text;
                 node.fontSize = title.fontSize;
@@ -238,10 +249,10 @@ var GroupedCategoryAxis = /** @class */ (function (_super) {
                         index: index
                     })
                     : String(datum.label);
+                node.visible =
+                    datum.screenX >= requestedRange[0] &&
+                        datum.screenX <= requestedRange[1];
             }
-            node.textAlign = 'center';
-            node.translationX = datum.screenY - label.fontSize * 0.25;
-            node.translationY = datum.screenX;
             var bbox = node.computeBBox();
             if (bbox && bbox.width > maxLeafLabelWidth) {
                 maxLeafLabelWidth = bbox.width;
@@ -312,11 +323,13 @@ var GroupedCategoryAxis = /** @class */ (function (_super) {
         var enterSeparators = updateSeparators.enter.append(Line);
         var separatorSelection = updateSeparators.merge(enterSeparators);
         this.separatorSelection = separatorSelection;
-        separatorSelection.each(function (line, datum) {
+        var epsilon = 0.0000001;
+        separatorSelection.each(function (line, datum, i) {
             line.x1 = datum.x1;
             line.x2 = datum.x2;
             line.y1 = datum.y;
             line.y2 = datum.y;
+            line.visible = datum.y >= requestedRange[0] - epsilon && datum.y <= requestedRange[1] + epsilon;
             line.stroke = _this.tick.color;
             line.fill = undefined;
             line.strokeWidth = 1;
@@ -338,8 +351,8 @@ var GroupedCategoryAxis = /** @class */ (function (_super) {
             var x = index > 0 ? -maxLeafLabelWidth - _this.label.padding * 2 - (index - 1) * lineHeight : 0;
             line.x1 = x;
             line.x2 = x;
-            line.y1 = rangeStart;
-            line.y2 = rangeEnd;
+            line.y1 = requestedRange[0];
+            line.y2 = requestedRange[1];
             line.strokeWidth = _this.line.width;
             line.stroke = _this.line.color;
             line.visible = labels.length > 0 && (index === 0 || (labelGrid && isLabelTree));
@@ -354,7 +367,8 @@ var GroupedCategoryAxis = /** @class */ (function (_super) {
                 line.x2 = -sideFlag * _this.gridLength;
                 line.y1 = y;
                 line.y2 = y;
-                line.visible = Math.abs(line.parent.translationY - rangeStart) > 1;
+                line.visible = y >= requestedRange[0] && y <= requestedRange[1] &&
+                    Math.abs(line.parent.translationY - rangeStart) > 1;
                 var style = styles_1[index % styleCount_1];
                 line.stroke = style.stroke;
                 line.strokeWidth = _this.tick.width;

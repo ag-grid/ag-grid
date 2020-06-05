@@ -20,20 +20,21 @@ export interface IHeaderGroupParams {
     context: any;
 }
 
-export interface IHeaderGroup {}
+export interface IHeaderGroup { }
 
-export interface IHeaderGroupComp extends IHeaderGroup, IComponent<IHeaderGroupParams> {}
+export interface IHeaderGroupComp extends IHeaderGroup, IComponent<IHeaderGroupParams> { }
 
 export class HeaderGroupComp extends Component implements IHeaderGroupComp {
 
     @Autowired("columnController") private columnController: ColumnController;
     @Autowired("gridOptionsWrapper") private gridOptionsWrapper: GridOptionsWrapper;
 
-    static TEMPLATE = `<div class="ag-header-group-cell-label" ref="agContainer" role="presentation">` +
-        `<span ref="agLabel" class="ag-header-group-text" role="columnheader"></span>` +
-        `<span ref="agOpened" class="ag-header-icon ag-header-expand-icon ag-header-expand-icon-expanded"></span>` +
-        `<span ref="agClosed" class="ag-header-icon ag-header-expand-icon ag-header-expand-icon-collapsed"></span>` +
-        `</div>`;
+    static TEMPLATE = /* html */
+        `<div class="ag-header-group-cell-label" ref="agContainer" role="presentation">
+            <span ref="agLabel" class="ag-header-group-text" role="columnheader"></span>
+            <span ref="agOpened" class="ag-header-icon ag-header-expand-icon ag-header-expand-icon-expanded"></span>
+            <span ref="agClosed" class="ag-header-icon ag-header-expand-icon ag-header-expand-icon-collapsed"></span>
+        </div>`;
 
     private params: IHeaderGroupParams;
 
@@ -44,7 +45,13 @@ export class HeaderGroupComp extends Component implements IHeaderGroupComp {
         super(HeaderGroupComp.TEMPLATE);
     }
 
-    public init(params: IHeaderGroupParams) {
+    // this is a user component, and IComponent has "public destroy()" as part of the interface.
+    // so we need to override destroy() just to make the method public.
+    public destroy(): void {
+        super.destroy();
+    }
+
+    public init(params: IHeaderGroupParams): void {
         this.params = params;
 
         this.setupLabel();
@@ -77,24 +84,24 @@ export class HeaderGroupComp extends Component implements IHeaderGroupComp {
         // then close again straight away. if we also listened to double click, then the group would open,
         // close, then open, which is not what we want. double click should only action if the user double
         // clicks outside of the icons.
-        this.addDestroyableEventListener(this.eCloseIcon, "dblclick", stopPropagationAction);
-        this.addDestroyableEventListener(this.eOpenIcon, "dblclick", stopPropagationAction);
+        this.addManagedListener(this.eCloseIcon, "dblclick", stopPropagationAction);
+        this.addManagedListener(this.eOpenIcon, "dblclick", stopPropagationAction);
 
-        this.addDestroyableEventListener(this.getGui(), "dblclick", expandAction);
+        this.addManagedListener(this.getGui(), "dblclick", expandAction);
 
         this.updateIconVisibility();
 
         const originalColumnGroup = this.params.columnGroup.getOriginalColumnGroup();
-        this.addDestroyableEventListener(originalColumnGroup, OriginalColumnGroup.EVENT_EXPANDED_CHANGED, this.updateIconVisibility.bind(this));
-        this.addDestroyableEventListener(originalColumnGroup, OriginalColumnGroup.EVENT_EXPANDABLE_CHANGED, this.updateIconVisibility.bind(this));
+        this.addManagedListener(originalColumnGroup, OriginalColumnGroup.EVENT_EXPANDED_CHANGED, this.updateIconVisibility.bind(this));
+        this.addManagedListener(originalColumnGroup, OriginalColumnGroup.EVENT_EXPANDABLE_CHANGED, this.updateIconVisibility.bind(this));
     }
 
     private addTouchAndClickListeners(eElement: HTMLElement, action: (event: MouseEvent) => void): void {
         const touchListener = new TouchListener(eElement);
 
-        this.addDestroyableEventListener(touchListener, TouchListener.EVENT_TAP, action);
+        this.addManagedListener(touchListener, TouchListener.EVENT_TAP, action);
         this.addDestroyFunc(() => touchListener.destroy());
-        this.addDestroyableEventListener(eElement, "click", action);
+        this.addManagedListener(eElement, "click", action);
     }
 
     private updateIconVisibility(): void {

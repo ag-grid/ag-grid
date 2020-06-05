@@ -17,7 +17,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
-import { AgCheckbox, Autowired, Column, Component, CssClassApplier, DragSourceType, Events, PostConstruct, RefSelector, _ } from "@ag-grid-community/core";
+import { AgCheckbox, Autowired, Column, CssClassApplier, DragSourceType, Events, PostConstruct, RefSelector, ManagedFocusComponent, _, Constants } from "@ag-grid-community/core";
 var ToolPanelColumnComp = /** @class */ (function (_super) {
     __extends(ToolPanelColumnComp, _super);
     function ToolPanelColumnComp(column, columnDept, allowDragging, groupsExist) {
@@ -38,6 +38,7 @@ var ToolPanelColumnComp = /** @class */ (function (_super) {
         this.displayName = this.columnController.getDisplayNameForColumn(this.column, 'toolPanel');
         var displayNameSanitised = _.escape(this.displayName);
         this.eLabel.innerHTML = displayNameSanitised;
+        this.cbSelect.setInputAriaLabel(this.displayName + " Toggle Selection");
         // if grouping, we add an extra level of indent, to cater for expand/contract icons we need to indent for
         var indent = this.columnDept;
         if (this.groupsExist) {
@@ -45,16 +46,25 @@ var ToolPanelColumnComp = /** @class */ (function (_super) {
         }
         this.addCssClass("ag-column-select-indent-" + indent);
         this.setupDragging();
-        this.addDestroyableEventListener(this.eventService, Events.EVENT_COLUMN_PIVOT_MODE_CHANGED, this.onColumnStateChanged.bind(this));
-        this.addDestroyableEventListener(this.column, Column.EVENT_VALUE_CHANGED, this.onColumnStateChanged.bind(this));
-        this.addDestroyableEventListener(this.column, Column.EVENT_PIVOT_CHANGED, this.onColumnStateChanged.bind(this));
-        this.addDestroyableEventListener(this.column, Column.EVENT_ROW_GROUP_CHANGED, this.onColumnStateChanged.bind(this));
-        this.addDestroyableEventListener(this.column, Column.EVENT_VISIBLE_CHANGED, this.onColumnStateChanged.bind(this));
-        this.addDestroyableEventListener(this.gridOptionsWrapper, 'functionsReadOnly', this.onColumnStateChanged.bind(this));
-        this.addDestroyableEventListener(this.cbSelect, AgCheckbox.EVENT_CHANGED, this.onCheckboxChanged.bind(this));
-        this.addDestroyableEventListener(this.eLabel, 'click', this.onLabelClicked.bind(this));
+        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_PIVOT_MODE_CHANGED, this.onColumnStateChanged.bind(this));
+        this.addManagedListener(this.column, Column.EVENT_VALUE_CHANGED, this.onColumnStateChanged.bind(this));
+        this.addManagedListener(this.column, Column.EVENT_PIVOT_CHANGED, this.onColumnStateChanged.bind(this));
+        this.addManagedListener(this.column, Column.EVENT_ROW_GROUP_CHANGED, this.onColumnStateChanged.bind(this));
+        this.addManagedListener(this.column, Column.EVENT_VISIBLE_CHANGED, this.onColumnStateChanged.bind(this));
+        this.addManagedListener(this.gridOptionsWrapper, 'functionsReadOnly', this.onColumnStateChanged.bind(this));
+        this.addManagedListener(this.cbSelect, AgCheckbox.EVENT_CHANGED, this.onCheckboxChanged.bind(this));
+        this.addManagedListener(this.eLabel, 'click', this.onLabelClicked.bind(this));
         this.onColumnStateChanged();
         CssClassApplier.addToolPanelClassesFromColDef(this.column.getColDef(), this.getGui(), this.gridOptionsWrapper, this.column, null);
+    };
+    ToolPanelColumnComp.prototype.handleKeyDown = function (e) {
+        switch (e.keyCode) {
+            case Constants.KEY_SPACE:
+                e.preventDefault();
+                if (this.isSelectable()) {
+                    this.onSelectAllChanged(!this.isSelected());
+                }
+        }
     };
     ToolPanelColumnComp.prototype.onLabelClicked = function () {
         if (this.gridOptionsWrapper.isFunctionsReadOnly()) {
@@ -279,16 +289,13 @@ var ToolPanelColumnComp = /** @class */ (function (_super) {
     ToolPanelColumnComp.prototype.setExpanded = function (value) {
         console.warn('ag-grid: can not expand a column item that does not represent a column group header');
     };
-    ToolPanelColumnComp.TEMPLATE = "<div class=\"ag-column-select-column\">\n            <ag-checkbox ref=\"cbSelect\" class=\"ag-column-select-checkbox\"></ag-checkbox>\n            <span class=\"ag-column-select-column-label\" ref=\"eLabel\"></span>\n        </div>";
+    ToolPanelColumnComp.TEMPLATE = "<div class=\"ag-column-select-column\" tabindex=\"-1\">\n            <ag-checkbox ref=\"cbSelect\" class=\"ag-column-select-checkbox\"></ag-checkbox>\n            <span class=\"ag-column-select-column-label\" ref=\"eLabel\"></span>\n        </div>";
     __decorate([
         Autowired('gridOptionsWrapper')
     ], ToolPanelColumnComp.prototype, "gridOptionsWrapper", void 0);
     __decorate([
         Autowired('columnController')
     ], ToolPanelColumnComp.prototype, "columnController", void 0);
-    __decorate([
-        Autowired('eventService')
-    ], ToolPanelColumnComp.prototype, "eventService", void 0);
     __decorate([
         Autowired('dragAndDropService')
     ], ToolPanelColumnComp.prototype, "dragAndDropService", void 0);
@@ -308,5 +315,5 @@ var ToolPanelColumnComp = /** @class */ (function (_super) {
         PostConstruct
     ], ToolPanelColumnComp.prototype, "init", null);
     return ToolPanelColumnComp;
-}(Component));
+}(ManagedFocusComponent));
 export { ToolPanelColumnComp };

@@ -1,4 +1,5 @@
 import { RowNode } from "../entities/rowNode";
+
 export interface IViewportDatasource {
 
     /** Gets called exactly once before viewPort is used. Passes methods to be used to tell viewPort of data loads / changes. */
@@ -13,7 +14,7 @@ export interface IViewportDatasource {
 
 export interface IViewportDatasourceParams {
     /** datasource calls this method when the total row count changes. This in turn sets the height of the grids vertical scroll. */
-    setRowCount: (count: number) => void;
+    setRowCount: (count: number, keepRenderedRows: boolean) => void;
     /** datasource calls this when new data arrives. The grid then updates the provided rows. The rows are mapped [rowIndex]=>rowData].*/
     setRowData: (rowData: {[key: number]: any}) => void;
     /** datasource calls this when it wants a row node - typically used when it wants to update the row node */

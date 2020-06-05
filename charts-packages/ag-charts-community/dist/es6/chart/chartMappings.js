@@ -26,6 +26,9 @@ import { TimeAxis } from "./axis/timeAxis";
 import { Caption } from "../caption";
 import { DropShadow } from "../scene/dropShadow";
 import { Legend, LegendPosition } from "./legend";
+import { Navigator } from "./navigator/navigator";
+import { NavigatorMask } from "./navigator/navigatorMask";
+import { NavigatorHandle } from "./navigator/navigatorHandle";
 import palette from "./palettes";
 /*
     This file defines the specs for creating different kinds of charts, but
@@ -121,6 +124,7 @@ var chartMeta = {
 };
 var axisDefaults = {
     defaults: {
+        visibleRange: [0, 1],
         gridStyle: [{
                 stroke: 'rgba(219, 219, 219, 1)',
                 lineDash: [4, 2]
@@ -235,9 +239,9 @@ var mappings = (_a = {},
                         type: NumberAxis.type,
                         position: 'left'
                     }] }) }) }, commonChartMappings), { axes: (_b = {},
-            _b[NumberAxis.type] = __assign({ meta: __assign({ constructor: NumberAxis, setAsIs: ['gridStyle'] }, axisDefaults) }, axisMappings),
-            _b[CategoryAxis.type] = __assign({ meta: __assign({ constructor: CategoryAxis, setAsIs: ['gridStyle'] }, axisDefaults) }, axisMappings),
-            _b[TimeAxis.type] = __assign({ meta: __assign({ constructor: TimeAxis, setAsIs: ['gridStyle'] }, axisDefaults) }, axisMappings),
+            _b[NumberAxis.type] = __assign({ meta: __assign({ constructor: NumberAxis, setAsIs: ['gridStyle', 'visibleRange'] }, axisDefaults) }, axisMappings),
+            _b[CategoryAxis.type] = __assign({ meta: __assign({ constructor: CategoryAxis, setAsIs: ['gridStyle', 'visibleRange'] }, axisDefaults) }, axisMappings),
+            _b[TimeAxis.type] = __assign({ meta: __assign({ constructor: TimeAxis, setAsIs: ['gridStyle', 'visibleRange'] }, axisDefaults) }, axisMappings),
             _b), series: (_c = {},
             _c[LineSeries.type] = {
                 meta: {
@@ -293,7 +297,56 @@ var mappings = (_a = {},
                 },
                 highlightStyle: {}
             },
-            _c) }),
+            _c), navigator: {
+            meta: {
+                constructor: Navigator,
+                defaults: {
+                    enabled: false,
+                    height: 30,
+                    min: 0,
+                    max: 1
+                }
+            },
+            mask: {
+                meta: {
+                    constructor: NavigatorMask,
+                    defaults: {
+                        fill: '#999999',
+                        stroke: '#999999',
+                        strokeWidth: 1,
+                        fillOpacity: 0.2
+                    }
+                }
+            },
+            minHandle: {
+                meta: {
+                    constructor: NavigatorHandle,
+                    defaults: {
+                        fill: '#f2f2f2',
+                        stroke: '#999999',
+                        strokeWidth: 1,
+                        width: 8,
+                        height: 16,
+                        gripLineGap: 2,
+                        gripLineLength: 8
+                    }
+                }
+            },
+            maxHandle: {
+                meta: {
+                    constructor: NavigatorHandle,
+                    defaults: {
+                        fill: '#f2f2f2',
+                        stroke: '#999999',
+                        strokeWidth: 1,
+                        width: 8,
+                        height: 16,
+                        gripLineGap: 2,
+                        gripLineLength: 8
+                    }
+                }
+            }
+        } }),
     _a[PolarChart.type] = __assign(__assign({ meta: __assign(__assign({ constructor: PolarChart }, chartMeta), { defaults: __assign(__assign({}, chartDefaults), { padding: new Padding(40) }) }) }, commonChartMappings), { series: (_d = {},
             _d[PieSeries.type] = __assign({ meta: {
                     constructor: PieSeries,

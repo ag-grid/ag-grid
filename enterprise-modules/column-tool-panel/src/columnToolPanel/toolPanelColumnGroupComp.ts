@@ -4,26 +4,26 @@ import {
     Autowired,
     Column,
     ColumnController,
-    Component,
     CssClassApplier,
     DragAndDropService,
     DragSource,
     DragSourceType,
     Events,
-    EventService,
     GridOptionsWrapper,
     OriginalColumnGroup,
     PostConstruct,
     RefSelector,
-    TouchListener
+    TouchListener,
+    ManagedFocusComponent,
+    Constants
 } from "@ag-grid-community/core";
 import { BaseColumnItem } from "./primaryColsPanel";
 import { ColumnFilterResults } from "./primaryColsListPanel";
 
-export class ToolPanelColumnGroupComp extends Component implements BaseColumnItem {
+export class ToolPanelColumnGroupComp extends ManagedFocusComponent implements BaseColumnItem {
 
-    private static TEMPLATE =
-        `<div class="ag-column-select-column-group">
+    private static TEMPLATE = /* html */
+        `<div class="ag-column-select-column-group" tabindex="-1">
             <span class="ag-column-group-icons" ref="eColumnGroupIcons" >
                 <span class="ag-column-group-closed-icon" ref="eGroupClosedIcon"></span>
                 <span class="ag-column-group-opened-icon" ref="eGroupOpenedIcon"></span>
@@ -32,7 +32,6 @@ export class ToolPanelColumnGroupComp extends Component implements BaseColumnIte
             <span class="ag-column-select-column-label" ref="eLabel"></span>
         </div>`;
 
-    @Autowired('eventService') private eventService: EventService;
     @Autowired('columnController') private columnController: ColumnController;
     @Autowired('dragAndDropService') private dragAndDropService: DragAndDropService;
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
@@ -82,15 +81,17 @@ export class ToolPanelColumnGroupComp extends Component implements BaseColumnIte
             this.displayName = '>>';
         }
 
+        this.cbSelect.setInputAriaLabel(`${this.displayName} Toggle Selection`);
+
         this.eLabel.innerHTML = this.displayName ? this.displayName : '';
         this.setupExpandContract();
 
         this.addCssClass('ag-column-select-indent-' + this.columnDept);
 
-        this.addDestroyableEventListener(this.eventService, Events.EVENT_COLUMN_PIVOT_MODE_CHANGED, this.onColumnStateChanged.bind(this));
+        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_PIVOT_MODE_CHANGED, this.onColumnStateChanged.bind(this));
 
-        this.addDestroyableEventListener(this.eLabel, 'click', this.onLabelClicked.bind(this));
-        this.addDestroyableEventListener(this.cbSelect, AgCheckbox.EVENT_CHANGED, this.onCheckboxChanged.bind(this));
+        this.addManagedListener(this.eLabel, 'click', this.onLabelClicked.bind(this));
+        this.addManagedListener(this.cbSelect, AgCheckbox.EVENT_CHANGED, this.onCheckboxChanged.bind(this));
 
         this.setOpenClosedIcons();
 
@@ -102,17 +103,33 @@ export class ToolPanelColumnGroupComp extends Component implements BaseColumnIte
         CssClassApplier.addToolPanelClassesFromColDef(this.columnGroup.getColGroupDef(), this.getGui(), this.gridOptionsWrapper, null, this.columnGroup);
     }
 
+    protected handleKeyDown(e: KeyboardEvent): void {
+        switch (e.keyCode) {
+            case Constants.KEY_LEFT:
+            case Constants.KEY_RIGHT:
+                e.preventDefault();
+                if (this.isExpandable()){
+                    this.toggleExpandOrContract(e.keyCode === Constants.KEY_RIGHT);
+                }
+                break;
+            case Constants.KEY_SPACE:
+                e.preventDefault();
+                if (this.isSelectable()) {
+                    this.onSelectAllChanged(!this.isSelected());
+                }
+        }
+    }
+
     private addVisibilityListenersToAllChildren(): void {
         this.columnGroup.getLeafColumns().forEach(column => {
-            this.addDestroyableEventListener(column, Column.EVENT_VISIBLE_CHANGED, this.onColumnStateChanged.bind(this));
-            this.addDestroyableEventListener(column, Column.EVENT_VALUE_CHANGED, this.onColumnStateChanged.bind(this));
-            this.addDestroyableEventListener(column, Column.EVENT_PIVOT_CHANGED, this.onColumnStateChanged.bind(this));
-            this.addDestroyableEventListener(column, Column.EVENT_ROW_GROUP_CHANGED, this.onColumnStateChanged.bind(this));
+            this.addManagedListener(column, Column.EVENT_VISIBLE_CHANGED, this.onColumnStateChanged.bind(this));
+            this.addManagedListener(column, Column.EVENT_VALUE_CHANGED, this.onColumnStateChanged.bind(this));
+            this.addManagedListener(column, Column.EVENT_PIVOT_CHANGED, this.onColumnStateChanged.bind(this));
+            this.addManagedListener(column, Column.EVENT_ROW_GROUP_CHANGED, this.onColumnStateChanged.bind(this));
         });
     }
 
     private setupDragging(): void {
-
         if (!this.allowDragging) {
             _.setDisplayed(this.eDragHandle, false);
             return;
@@ -145,11 +162,11 @@ export class ToolPanelColumnGroupComp extends Component implements BaseColumnIte
         this.eGroupClosedIcon.appendChild(_.createIcon('columnSelectClosed', this.gridOptionsWrapper, null));
         this.eGroupOpenedIcon.appendChild(_.createIcon('columnSelectOpen', this.gridOptionsWrapper, null));
 
-        this.addDestroyableEventListener(this.eGroupClosedIcon, 'click', this.onExpandOrContractClicked.bind(this));
-        this.addDestroyableEventListener(this.eGroupOpenedIcon, 'click', this.onExpandOrContractClicked.bind(this));
+        this.addManagedListener(this.eGroupClosedIcon, 'click', this.onExpandOrContractClicked.bind(this));
+        this.addManagedListener(this.eGroupOpenedIcon, 'click', this.onExpandOrContractClicked.bind(this));
 
         const touchListener = new TouchListener(this.eColumnGroupIcons, true);
-        this.addDestroyableEventListener(touchListener, TouchListener.EVENT_TAP, this.onExpandOrContractClicked.bind(this));
+        this.addManagedListener(touchListener, TouchListener.EVENT_TAP, this.onExpandOrContractClicked.bind(this));
         this.addDestroyFunc(touchListener.destroy.bind(touchListener));
     }
 
@@ -342,7 +359,14 @@ export class ToolPanelColumnGroupComp extends Component implements BaseColumnIte
     }
 
     private onExpandOrContractClicked(): void {
-        this.expanded = !this.expanded;
+        this.toggleExpandOrContract();
+    }
+
+    private toggleExpandOrContract(expanded?: boolean) {
+        if (expanded === undefined) {
+            expanded = !this.expanded;
+        }
+        this.expanded = expanded;
         this.setOpenClosedIcons();
         this.expandedCallback();
     }

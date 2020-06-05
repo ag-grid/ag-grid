@@ -32,21 +32,36 @@ var PrimaryColsHeaderPanel = /** @class */ (function (_super) {
         return _super !== null && _super.apply(this, arguments) || this;
     }
     PrimaryColsHeaderPanel.prototype.preConstruct = function () {
-        this.setTemplate("<div class=\"ag-column-select-header\" role=\"presentation\">\n                <div ref=\"eExpand\" class=\"ag-column-select-header-icon\"></div>\n                <ag-checkbox ref=\"eSelect\" class=\"ag-column-select-header-checkbox\"></ag-checkbox>\n                <ag-input-text-field class=\"ag-column-select-header-filter-wrapper\" ref=\"eFilterTextField\"></ag-input-text-field>\n            </div>");
+        this.setTemplate(/* html */ "<div class=\"ag-column-select-header\" role=\"presentation\" tabindex=\"-1\">\n                <div ref=\"eExpand\" class=\"ag-column-select-header-icon\" tabindex=\"0\"></div>\n                <ag-checkbox ref=\"eSelect\" class=\"ag-column-select-header-checkbox\"></ag-checkbox>\n                <ag-input-text-field class=\"ag-column-select-header-filter-wrapper\" ref=\"eFilterTextField\"></ag-input-text-field>\n            </div>");
     };
     PrimaryColsHeaderPanel.prototype.postConstruct = function () {
         var _this = this;
         this.createExpandIcons();
-        this.addDestroyableEventListener(this.eExpand, "click", this.onExpandClicked.bind(this));
-        this.addDestroyableEventListener(this.eSelect.getInputElement(), 'click', this.onSelectClicked.bind(this));
+        this.addManagedListener(this.eExpand, "click", this.onExpandClicked.bind(this));
+        this.addManagedListener(this.eExpand, 'keydown', function (e) {
+            if (e.keyCode === core_1.Constants.KEY_SPACE) {
+                _this.onExpandClicked();
+            }
+        });
+        this.addManagedListener(this.eSelect.getInputElement(), 'click', this.onSelectClicked.bind(this));
         this.eFilterTextField.onValueChange(function () { return _this.onFilterTextChanged(); });
-        this.addDestroyableEventListener(this.eFilterTextField.getInputElement(), "keypress", this.onMiniFilterKeyPress.bind(this));
-        this.addDestroyableEventListener(this.eventService, core_1.Events.EVENT_NEW_COLUMNS_LOADED, this.showOrHideOptions.bind(this));
+        this.addManagedListener(this.eFilterTextField.getInputElement(), "keypress", this.onMiniFilterKeyPress.bind(this));
+        this.addManagedListener(this.eventService, core_1.Events.EVENT_NEW_COLUMNS_LOADED, this.showOrHideOptions.bind(this));
+        this.eSelect.setInputAriaLabel('Toggle Select All Columns');
+        this.eFilterTextField.setInputAriaLabel('Filter Columns Input');
+        _super.prototype.postConstruct.call(this);
     };
     PrimaryColsHeaderPanel.prototype.init = function (params) {
         this.params = params;
         if (this.columnController.isReady()) {
             this.showOrHideOptions();
+        }
+    };
+    PrimaryColsHeaderPanel.prototype.onTabKeyDown = function (e) {
+        var nextEl = this.focusController.findNextFocusableElement(this.getFocusableElement(), false, e.shiftKey);
+        if (nextEl) {
+            e.preventDefault();
+            nextEl.focus();
         }
     };
     PrimaryColsHeaderPanel.prototype.createExpandIcons = function () {
@@ -107,9 +122,6 @@ var PrimaryColsHeaderPanel = /** @class */ (function (_super) {
         core_1.Autowired('columnController')
     ], PrimaryColsHeaderPanel.prototype, "columnController", void 0);
     __decorate([
-        core_1.Autowired('eventService')
-    ], PrimaryColsHeaderPanel.prototype, "eventService", void 0);
-    __decorate([
         core_1.RefSelector('eExpand')
     ], PrimaryColsHeaderPanel.prototype, "eExpand", void 0);
     __decorate([
@@ -121,10 +133,7 @@ var PrimaryColsHeaderPanel = /** @class */ (function (_super) {
     __decorate([
         core_1.PreConstruct
     ], PrimaryColsHeaderPanel.prototype, "preConstruct", null);
-    __decorate([
-        core_1.PostConstruct
-    ], PrimaryColsHeaderPanel.prototype, "postConstruct", null);
     return PrimaryColsHeaderPanel;
-}(core_1.Component));
+}(core_1.ManagedFocusComponent));
 exports.PrimaryColsHeaderPanel = PrimaryColsHeaderPanel;
 //# sourceMappingURL=primaryColsHeaderPanel.js.map

@@ -5,7 +5,6 @@ import { GridPanel } from "../gridPanel/gridPanel";
  * the max div height actually allows.
  */
 export declare class MaxDivHeightScaler extends BeanStub {
-    private eventService;
     private gridOptionsWrapper;
     private gridPanel;
     private maxDivHeight;

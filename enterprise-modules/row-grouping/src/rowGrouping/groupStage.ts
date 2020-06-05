@@ -1,11 +1,11 @@
 import {
     Autowired,
     Bean,
+    BeanStub,
     ChangedPath,
     Column,
     ColumnController,
     Context,
-    EventService,
     GetDataPath,
     GridOptionsWrapper,
     IRowNodeStage,
@@ -14,7 +14,6 @@ import {
     RowNode,
     RowNodeTransaction,
     SelectableService,
-    SelectionController,
     StageExecuteParams,
     ValueService,
     _
@@ -34,20 +33,17 @@ interface GroupingDetails {
     rootNode: RowNode;
     groupedCols: Column[];
     groupedColCount: number;
-    transaction: RowNodeTransaction;
+    transactions: RowNodeTransaction[];
     rowNodeOrder: { [id: string]: number; };
 }
 
 @Bean('groupStage')
-export class GroupStage implements IRowNodeStage {
+export class GroupStage extends BeanStub implements IRowNodeStage {
 
-    @Autowired('selectionController') private selectionController: SelectionController;
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('columnController') private columnController: ColumnController;
     @Autowired('selectableService') private selectableService: SelectableService;
     @Autowired('valueService') private valueService: ValueService;
-    @Autowired('eventService') private eventService: EventService;
-    @Autowired('context') private context: Context;
 
     // if doing tree data, this is true. we set this at create time - as our code does not
     // cater for the scenario where this is switched on / off dynamically
@@ -56,9 +52,8 @@ export class GroupStage implements IRowNodeStage {
 
     // we use a sequence variable so that each time we do a grouping, we don't
     // reuse the ids - otherwise the rowRenderer will confuse rowNodes between redraws
-    // when it tries to animate between rows. we set to -1 as others row id 0 will be shared
-    // with the other rows.
-    private groupIdSequence = new NumberSequence(1);
+    // when it tries to animate between rows.
+    private groupIdSequence = new NumberSequence();
 
     // when grouping, these items are of note:
     // rowNode.parent: RowNode: set to the parent
@@ -80,7 +75,7 @@ export class GroupStage implements IRowNodeStage {
 
         const details = this.createGroupingDetails(params);
 
-        if (details.transaction) {
+        if (details.transactions) {
             this.handleTransaction(details);
         } else {
             const afterColsChanged = params.afterColumnsChanged === true;
@@ -93,11 +88,9 @@ export class GroupStage implements IRowNodeStage {
     }
 
     private createGroupingDetails(params: StageExecuteParams): GroupingDetails {
-        const { rowNode, changedPath, rowNodeTransaction, rowNodeOrder } = params;
+        const { rowNode, changedPath, rowNodeTransactions, rowNodeOrder } = params;
 
         const groupedCols = this.usingTreeData ? null : this.columnController.getRowGroupColumns();
-        const isGrouping = this.usingTreeData || (groupedCols && groupedCols.length > 0);
-        const usingTransaction = isGrouping && _.exists(rowNodeTransaction);
 
         const details: GroupingDetails = {
             // someone complained that the parent attribute was causing some change detection
@@ -111,11 +104,7 @@ export class GroupStage implements IRowNodeStage {
             pivotMode: this.columnController.isPivotMode(),
             groupedColCount: this.usingTreeData || !groupedCols ? 0 : groupedCols.length,
             rowNodeOrder: rowNodeOrder,
-
-            // important not to do transaction if we are not grouping, as otherwise the 'insert index' is ignored.
-            // ie, if not grouping, then we just want to shotgun so the rootNode.allLeafChildren gets copied
-            // to rootNode.childrenAfterGroup and maintaining order (as delta transaction misses the order).
-            transaction: usingTransaction ? rowNodeTransaction : null,
+            transactions: rowNodeTransactions,
 
             // if no transaction, then it's shotgun, changed path would be 'not active' at this point anyway
             changedPath: changedPath
@@ -125,17 +114,22 @@ export class GroupStage implements IRowNodeStage {
     }
 
     private handleTransaction(details: GroupingDetails): void {
-        const tran = details.transaction;
-        // remove nodes first in case a node is removed and re-added in the same transaction
-        if (tran.remove) {
-            this.removeNodes(tran.remove, details);
-        }
-        if (tran.add) {
-            this.insertNodes(tran.add, details, false);
-        }
-        if (tran.update) {
-            this.moveNodesInWrongPath(tran.update, details);
-        }
+
+        details.transactions.forEach( tran => {
+            // the order here of [add, remove, update] needs to be the same as in ClientSideNodeManager,
+            // as the order is important when a record with the same id is added and removed in the same
+            // transaction.
+            if (_.existsAndNotEmpty(tran.add)) {
+                this.insertNodes(tran.add, details, false);
+            }
+            if (_.existsAndNotEmpty(tran.remove)) {
+                this.removeNodes(tran.remove, details);
+            }
+            if (_.existsAndNotEmpty(tran.update)) {
+                this.moveNodesInWrongPath(tran.update, details);
+            }
+        });
+
         if (details.rowNodeOrder) {
             this.sortChildren(details);
         }
@@ -480,7 +474,7 @@ export class GroupStage implements IRowNodeStage {
 
     private createGroup(groupInfo: GroupInfo, parent: RowNode, level: number, details: GroupingDetails): RowNode {
         const groupNode = new RowNode();
-        this.context.wireBean(groupNode);
+        this.context.createBean(groupNode);
 
         groupNode.group = true;
         groupNode.field = groupInfo.field;
@@ -498,9 +492,9 @@ export class GroupStage implements IRowNodeStage {
             }
         });
 
-        // we use negative number for the ids of the groups, this makes sure we don't clash with the
-        // id's of the leaf nodes.
-        groupNode.id = (this.groupIdSequence.next() * -1).toString();
+        // we put 'row-group-' before the group id, so it doesn't clash with standard row id's. we also use 't-' and 'b-'
+        // for top pinned and bottom pinned rows.
+        groupNode.id = RowNode.ID_PREFIX_ROW_GROUP + this.groupIdSequence.next();
         groupNode.key = groupInfo.key;
 
         groupNode.level = level;

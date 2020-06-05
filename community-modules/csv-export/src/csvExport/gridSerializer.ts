@@ -23,7 +23,8 @@ import {
     RowNode,
     SelectionController,
     ShouldRowBeSkippedParams,
-    ValueService
+    ValueService,
+    BeanStub
 } from "@ag-grid-community/core";
 
 /**
@@ -183,7 +184,7 @@ export abstract class BaseGridSerializingSession<T> implements GridSerializingSe
 }
 
 @Bean("gridSerializer")
-export class GridSerializer {
+export class GridSerializer extends BeanStub {
 
     @Autowired('displayedGroupCreator') private displayedGroupCreator: DisplayedGroupCreator;
     @Autowired('columnController') private columnController: ColumnController;

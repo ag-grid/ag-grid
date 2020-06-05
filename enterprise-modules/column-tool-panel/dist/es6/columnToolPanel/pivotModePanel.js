@@ -24,16 +24,17 @@ var PivotModePanel = /** @class */ (function (_super) {
         return _super !== null && _super.apply(this, arguments) || this;
     }
     PivotModePanel.prototype.createTemplate = function () {
-        return "<div class=\"ag-pivot-mode-panel\">\n                <ag-toggle-button ref=\"cbPivotMode\" class=\"ag-pivot-mode-select\"></ag-checkbox>\n            </div>";
+        return /* html */ "<div class=\"ag-pivot-mode-panel\">\n                <ag-toggle-button ref=\"cbPivotMode\" class=\"ag-pivot-mode-select\"></ag-toggle-button>\n            </div>";
     };
     PivotModePanel.prototype.init = function () {
         this.setTemplate(this.createTemplate());
+        this.cbPivotMode.setInputAriaLabel('Toggle Pivot Mode');
         this.cbPivotMode.setValue(this.columnController.isPivotMode());
         var localeTextFunc = this.gridOptionsWrapper.getLocaleTextFunc();
         this.cbPivotMode.setLabel(localeTextFunc('pivotMode', 'Pivot Mode'));
-        this.addDestroyableEventListener(this.cbPivotMode, AgCheckbox.EVENT_CHANGED, this.onBtPivotMode.bind(this));
-        this.addDestroyableEventListener(this.eventService, Events.EVENT_COLUMN_EVERYTHING_CHANGED, this.onPivotModeChanged.bind(this));
-        this.addDestroyableEventListener(this.eventService, Events.EVENT_COLUMN_PIVOT_MODE_CHANGED, this.onPivotModeChanged.bind(this));
+        this.addManagedListener(this.cbPivotMode, AgCheckbox.EVENT_CHANGED, this.onBtPivotMode.bind(this));
+        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_EVERYTHING_CHANGED, this.onPivotModeChanged.bind(this));
+        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_PIVOT_MODE_CHANGED, this.onPivotModeChanged.bind(this));
     };
     PivotModePanel.prototype.onBtPivotMode = function () {
         var newValue = this.cbPivotMode.getValue();
@@ -52,9 +53,6 @@ var PivotModePanel = /** @class */ (function (_super) {
     __decorate([
         Autowired('columnController')
     ], PivotModePanel.prototype, "columnController", void 0);
-    __decorate([
-        Autowired('eventService')
-    ], PivotModePanel.prototype, "eventService", void 0);
     __decorate([
         Autowired('gridOptionsWrapper')
     ], PivotModePanel.prototype, "gridOptionsWrapper", void 0);

@@ -1,3 +1,4 @@
+import { BeanStub } from "../context/beanStub";
 export interface HorizontalResizeParams {
     eResizeBar: HTMLElement;
     dragStartPixels?: number;
@@ -5,11 +6,9 @@ export interface HorizontalResizeParams {
     onResizing: (delta: number) => void;
     onResizeEnd: (delta: number) => void;
 }
-export declare class HorizontalResizeService {
-    private gridOptionsWrapper;
+export declare class HorizontalResizeService extends BeanStub {
     private dragService;
     private eGridDiv;
-    private draggingStarted;
     private dragStartX;
     private resizeAmount;
     private oldBodyCursor;

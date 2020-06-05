@@ -17,7 +17,6 @@ import {
     ProcessDataFromClipboardParams,
     TabToNextCellParams
 } from './entities/gridOptions';
-import { _ } from './utils';
 import { EventService } from './eventService';
 import { Constants } from './constants';
 import { ComponentUtil } from './components/componentUtil';
@@ -41,6 +40,7 @@ import { SideBarDef, SideBarDefParser, ToolPanelDef } from './entities/sideBar';
 import { ModuleNames } from './modules/moduleNames';
 import { ChartOptions } from './interfaces/iChartOptions';
 import { ModuleRegistry } from './modules/moduleRegistry';
+import { _ } from './utils';
 
 const DEFAULT_ROW_HEIGHT = 25;
 const DEFAULT_DETAIL_ROW_HEIGHT = 300;
@@ -94,14 +94,11 @@ export class GridOptionsWrapper {
 
     public static PROP_DOM_LAYOUT = 'domLayout';
 
-    @Autowired('gridOptions') private gridOptions: GridOptions;
-    @Autowired('columnController') private columnController: ColumnController;
-    @Autowired('eventService') private eventService: EventService;
-    @Autowired('gridApi') private gridApi: GridApi;
-    @Autowired('columnApi') private columnApi: ColumnApi;
-    @Autowired('environment') private environment: Environment;
-    @Autowired('autoHeightCalculator') private autoHeightCalculator: AutoHeightCalculator;
-    @Autowired('context') private context: Context;
+    @Autowired('gridOptions') private readonly gridOptions: GridOptions;
+    @Autowired('columnController') private readonly columnController: ColumnController;
+    @Autowired('eventService') private readonly eventService: EventService;
+    @Autowired('environment') private readonly environment: Environment;
+    @Autowired('autoHeightCalculator') private readonly autoHeightCalculator: AutoHeightCalculator;
 
     private propertyEventService: EventService = new EventService();
 
@@ -380,6 +377,14 @@ export class GridOptionsWrapper {
 
     public isEnableCellChangeFlash() {
         return isTrue(this.gridOptions.enableCellChangeFlash);
+    }
+
+    public getCellFlashDelay(): number {
+        return this.gridOptions.cellFlashDelay || 500;
+    }
+
+    public getCellFadeDelay(): number {
+        return this.gridOptions.cellFadeDelay || 1000;
     }
 
     public isGroupSelectsChildren() {
@@ -1171,11 +1176,11 @@ export class GridOptionsWrapper {
         return _.exists(this.gridOptions.clipboardDeliminator) ? this.gridOptions.clipboardDeliminator : '\t';
     }
 
-    public setProperty(key: string, value: any): void {
+    public setProperty(key: string, value: any, force = false): void {
         const gridOptionsNoType = this.gridOptions as any;
         const previousValue = gridOptionsNoType[key];
 
-        if (previousValue !== value) {
+        if (force || previousValue !== value) {
             gridOptionsNoType[key] = value;
             const event: PropertyChangedEvent = {
                 type: key,
@@ -1679,18 +1684,15 @@ export class GridOptionsWrapper {
         }
     }
 
-    public getLocaleTextFunc() {
+    public getLocaleTextFunc(): (key: string, defaultValue: string) => string {
         if (this.gridOptions.localeTextFunc) {
             return this.gridOptions.localeTextFunc;
         }
-        const that = this;
-        return function(key: any, defaultValue: any) {
-            const localeText = that.gridOptions.localeText;
-            if (localeText && localeText[key]) {
-                return localeText[key];
-            }
 
-            return defaultValue;
+        const { localeText } = this.gridOptions;
+
+        return (key: string, defaultValue: string) => {
+            return localeText && localeText[key] ? localeText[key] : defaultValue;
         };
     }
 

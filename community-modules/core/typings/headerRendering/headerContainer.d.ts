@@ -1,11 +1,10 @@
-import { GridPanel } from '../gridPanel/gridPanel';
 import { HeaderRowComp } from './headerRowComp';
 import { Component } from '../widgets/component';
-export declare class HeaderContainer {
+import { BeanStub } from "../context/beanStub";
+import { GridPanel } from '../gridPanel/gridPanel';
+export declare class HeaderContainer extends BeanStub {
     private gridOptionsWrapper;
-    private context;
     private columnController;
-    private eventService;
     private scrollVisibleService;
     private eContainer;
     private eViewport;
@@ -13,9 +12,7 @@ export declare class HeaderContainer {
     private pinned;
     private scrollWidth;
     private dropTarget;
-    private events;
     constructor(eContainer: HTMLElement, eViewport: HTMLElement, pinned: string);
-    registerGridComp(gridPanel: GridPanel): void;
     forEachHeaderElement(callback: (renderedHeaderElement: Component) => void): void;
     private init;
     private onColumnRowGroupChanged;
@@ -24,12 +21,11 @@ export declare class HeaderContainer {
     private onDisplayedColumnsChanged;
     private onScrollVisibilityChanged;
     private setWidthOfPinnedContainer;
-    destroy(): void;
     getRowComps(): HeaderRowComp[];
     private onGridColumnsChanged;
     private removeAndCreateAllRowComps;
     refresh(): void;
-    private setupDragAndDrop;
+    setupDragAndDrop(gridComp: GridPanel): void;
     private removeHeaderRowComps;
     private createHeaderRowComps;
 }

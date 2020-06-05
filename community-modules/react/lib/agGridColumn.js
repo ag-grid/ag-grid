@@ -1,4 +1,4 @@
-// @ag-grid-community/react v23.1.1
+// @ag-grid-community/react v23.2.0
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {

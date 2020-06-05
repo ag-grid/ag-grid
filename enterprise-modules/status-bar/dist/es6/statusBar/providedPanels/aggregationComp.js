@@ -23,6 +23,11 @@ var AggregationComp = /** @class */ (function (_super) {
     function AggregationComp() {
         return _super.call(this, AggregationComp.TEMPLATE) || this;
     }
+    // this is a user component, and IComponent has "public destroy()" as part of the interface.
+    // so we need to override destroy() just to make the method public.
+    AggregationComp.prototype.destroy = function () {
+        _super.prototype.destroy.call(this);
+    };
     AggregationComp.prototype.postConstruct = function () {
         if (!this.isValidRowModel()) {
             console.warn("ag-Grid: agAggregationComponent should only be used with the client and server side row model.");
@@ -33,8 +38,8 @@ var AggregationComp = /** @class */ (function (_super) {
         this.minAggregationComp.setLabel('min', 'Min');
         this.maxAggregationComp.setLabel('max', 'Max');
         this.sumAggregationComp.setLabel('sum', 'Sum');
-        this.addDestroyableEventListener(this.eventService, Events.EVENT_RANGE_SELECTION_CHANGED, this.onRangeSelectionChanged.bind(this));
-        this.addDestroyableEventListener(this.eventService, Events.EVENT_MODEL_UPDATED, this.onRangeSelectionChanged.bind(this));
+        this.addManagedListener(this.eventService, Events.EVENT_RANGE_SELECTION_CHANGED, this.onRangeSelectionChanged.bind(this));
+        this.addManagedListener(this.eventService, Events.EVENT_MODEL_UPDATED, this.onRangeSelectionChanged.bind(this));
     };
     AggregationComp.prototype.isValidRowModel = function () {
         // this component is only really useful with client or server side rowmodels
@@ -148,10 +153,7 @@ var AggregationComp = /** @class */ (function (_super) {
         this.setAggregationComponentValue('max', max, gotNumberResult);
         this.setAggregationComponentValue('avg', (sum / numberCount), gotNumberResult);
     };
-    AggregationComp.TEMPLATE = "<div class=\"ag-status-panel ag-status-panel-aggregations\">\n                <ag-name-value ref=\"avgAggregationComp\"></ag-name-value>\n                <ag-name-value ref=\"countAggregationComp\"></ag-name-value>\n                <ag-name-value ref=\"minAggregationComp\"></ag-name-value>\n                <ag-name-value ref=\"maxAggregationComp\"></ag-name-value>\n                <ag-name-value ref=\"sumAggregationComp\"></ag-name-value>\n            </div>";
-    __decorate([
-        Autowired('eventService')
-    ], AggregationComp.prototype, "eventService", void 0);
+    AggregationComp.TEMPLATE = "<div class=\"ag-status-panel ag-status-panel-aggregations\">\n            <ag-name-value ref=\"avgAggregationComp\"></ag-name-value>\n            <ag-name-value ref=\"countAggregationComp\"></ag-name-value>\n            <ag-name-value ref=\"minAggregationComp\"></ag-name-value>\n            <ag-name-value ref=\"maxAggregationComp\"></ag-name-value>\n            <ag-name-value ref=\"sumAggregationComp\"></ag-name-value>\n        </div>";
     __decorate([
         Optional('rangeController')
     ], AggregationComp.prototype, "rangeController", void 0);

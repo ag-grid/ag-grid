@@ -86,19 +86,20 @@ var AreaSeriesPanel = /** @class */ (function (_super) {
             .onValueChange(function (newValue) { return _this.getChartProxy().setSeriesOption("fill.opacity", newValue); });
     };
     AreaSeriesPanel.prototype.initMarkersPanel = function () {
-        var markersPanelComp = this.wireBean(new markersPanel_1.MarkersPanel(this.chartController));
+        var markersPanelComp = this.createBean(new markersPanel_1.MarkersPanel(this.chartController));
         this.seriesGroup.addItem(markersPanelComp);
         this.activePanels.push(markersPanelComp);
     };
     AreaSeriesPanel.prototype.initShadowPanel = function () {
-        var shadowPanelComp = this.wireBean(new shadowPanel_1.ShadowPanel(this.chartController));
+        var shadowPanelComp = this.createBean(new shadowPanel_1.ShadowPanel(this.chartController));
         this.seriesGroup.addItem(shadowPanelComp);
         this.activePanels.push(shadowPanelComp);
     };
     AreaSeriesPanel.prototype.destroyActivePanels = function () {
+        var _this = this;
         this.activePanels.forEach(function (panel) {
             core_1._.removeFromParent(panel.getGui());
-            panel.destroy();
+            _this.destroyBean(panel);
         });
     };
     AreaSeriesPanel.prototype.getChartProxy = function () {

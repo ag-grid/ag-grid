@@ -176,7 +176,9 @@ SNIPPET
             ├── RowDoubleClickedEvent <span class="event-properties">{}</span>
             ├── RowEditingStartedEvent <span class="event-properties">{}</span>
             ├── RowEditingStoppedEvent <span class="event-properties">{}</span>
-            ├── RowGroupOpenedEvent <span class="event-properties">{}</span>
+            ├── RowGroupOpenedEvent <span class="event-properties">{
+            │     <span class="event-attribute">expanded</span>: boolean // true if the group is expanded.
+            }</span>
             ├── RowValueChangedEvent <span class="event-properties">{}</span>
             ├── VirtualRowRemovedEvent <span class="event-properties">{}</span>
             └── CellEvent <span class="event-properties">{

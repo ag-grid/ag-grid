@@ -15,7 +15,7 @@
         transpiler: 'plugin-babel',
         defaultExtension: 'js',
         paths:
-            Object.assign(
+            assign(
                 {
                     // paths serve as alias
                     "npm:": "https://unpkg.com/",

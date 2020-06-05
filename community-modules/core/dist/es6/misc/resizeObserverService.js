@@ -1,9 +1,22 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v23.1.1
+ * @version v23.2.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = function (d, b) {
+        extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+        return extendStatics(d, b);
+    };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -11,14 +24,17 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 import { Autowired, Bean } from "../context/context";
+import { BeanStub } from "../context/beanStub";
 import { _ } from "../utils";
-var ResizeObserverService = /** @class */ (function () {
+var ResizeObserverService = /** @class */ (function (_super) {
+    __extends(ResizeObserverService, _super);
     function ResizeObserverService() {
+        return _super !== null && _super.apply(this, arguments) || this;
     }
     ResizeObserverService.prototype.observeResize = function (element, callback, debounceDelay) {
         if (debounceDelay === void 0) { debounceDelay = 50; }
         // put in variable, so available to usePolyfill() function below
-        var frameworkFactory = this.frameworkOverrides;
+        var frameworkFactory = this.getFrameworkOverrides();
         // this gets fired too often and might cause some relayout issues
         // so we add a debounce to the callback here to avoid the flashing effect.
         var debouncedCallback = _.debounce(callback, debounceDelay);
@@ -62,12 +78,9 @@ var ResizeObserverService = /** @class */ (function () {
     __decorate([
         Autowired('gridOptionsWrapper')
     ], ResizeObserverService.prototype, "gridOptionsWrapper", void 0);
-    __decorate([
-        Autowired('frameworkOverrides')
-    ], ResizeObserverService.prototype, "frameworkOverrides", void 0);
     ResizeObserverService = __decorate([
         Bean('resizeObserverService')
     ], ResizeObserverService);
     return ResizeObserverService;
-}());
+}(BeanStub));
 export { ResizeObserverService };

@@ -26,17 +26,17 @@ export class AgSelect extends AgPickerField<HTMLSelectElement, string> {
     @PostConstruct
     public init(): void {
         this.listComponent = new AgList('select');
-        this.getContext().wireBean(this.listComponent);
+        this.getContext().createBean(this.listComponent);
         this.listComponent.setParentComponent(this);
         this.eWrapper.tabIndex = 0;
 
-        this.listComponent.addDestroyableEventListener(
+        this.listComponent.addManagedListener(
             this.listComponent,
             AgList.EVENT_ITEM_SELECTED,
             () => { if (this.hideList) { this.hideList(); } }
         );
 
-        this.listComponent.addDestroyableEventListener(
+        this.listComponent.addManagedListener(
             this.listComponent,
             AgAbstractField.EVENT_CHANGED,
             () => {
@@ -48,12 +48,12 @@ export class AgSelect extends AgPickerField<HTMLSelectElement, string> {
 
     protected showPicker() {
         const listGui = this.listComponent.getGui();
-        const mouseWheelFunc = this.addDestroyableEventListener(document.body, 'wheel', (e: MouseEvent) => {
+        const mouseWheelFunc = this.addManagedListener(document.body, 'wheel', (e: MouseEvent) => {
             if (!listGui.contains(e.target as HTMLElement) && this.hideList) {
                 this.hideList();
             }
         });
-        const focusOutFunc = this.addDestroyableEventListener(listGui, 'focusout', (e: FocusEvent) => {
+        const focusOutFunc = this.addManagedListener(listGui, 'focusout', (e: FocusEvent) => {
             if (!listGui.contains(e.relatedTarget as HTMLElement) && this.hideList) {
                 this.hideList();
             }
@@ -113,12 +113,12 @@ export class AgSelect extends AgPickerField<HTMLSelectElement, string> {
         return super.setValue(value, silent);
     }
 
-    public destroy(): void {
+    protected destroy(): void {
         if (this.hideList) {
             this.hideList();
         }
 
-        this.listComponent.destroy();
+        this.getContext().destroyBean(this.listComponent);
         super.destroy();
     }
 }

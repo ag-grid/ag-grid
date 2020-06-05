@@ -121,7 +121,7 @@ export declare abstract class Node {
     translationX: number;
     private _translationY;
     translationY: number;
-    isPointInNode(x: number, y: number): boolean;
+    containsPoint(x: number, y: number): boolean;
     /**
      * Hit testing method.
      * Recursively checks if the given point is inside this node or any of its children.

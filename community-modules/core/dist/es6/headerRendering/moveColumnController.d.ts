@@ -1,10 +1,10 @@
-// Type definitions for @ag-grid-community/core v23.1.1
+// Type definitions for @ag-grid-community/core v23.2.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { Column } from "../entities/column";
 import { DraggingEvent } from "../dragAndDrop/dragAndDropService";
-import { GridPanel } from "../gridPanel/gridPanel";
 import { DropListener } from "./bodyDropTarget";
+import { GridPanel } from "../gridPanel/gridPanel";
 import { ColumnEventType } from "../events";
 export declare class MoveColumnController implements DropListener {
     private loggerFactory;

@@ -3,7 +3,7 @@
 
 @mixin ag-theme-alpine($params: ()) {
     @include ag-allow-color-param-access-with-ag-param(false);
-    
+
     $params: ag-process-theme-variables($params, $ag-theme-alpine-default-params);
     @include ag-theme-base($params);
 
@@ -68,7 +68,7 @@
         @include ag-color-property(background-color, control-panel-background-color);
         padding-top: 1px; // hack to align column menu tab header border with header row border
     }
-    
+
     .ag-tabs-header {
         @include ag-border(primary, bottom);
     }
@@ -83,11 +83,11 @@
     .ag-chart-mini-thumbnail {
         @include ag-color-property(background-color, background-color);
     }
-    
+
     .ag-chart-settings-nav-bar {
         @include ag-border(secondary, top);
     }
-    
+
     .ag-group-title-bar-icon {
         @include ag-theme-rtl((margin-right: ag-param(grid-size)))
     }
@@ -118,7 +118,7 @@
     .ag-charts-format-sub-level-group-item:last-child {
         margin-bottom: 0;
     }
-    
+
     .ag-dnd-ghost {
         font-size: ag-param(font-size) - 1;
         font-weight: 700;
@@ -138,16 +138,22 @@
         @include ag-color-property(background-color, background-color);
         font-weight: 600;
         padding: ag-param(grid-size) ag-param(grid-size) * 2;
-    
+
         &:hover {
             @include ag-color-property(border-color, alpine-active-color);
             @include ag-color-property(background-color, row-hover-color);
         }
-    
+
         &:active {
             @include ag-color-property(border-color, alpine-active-color);
             @include ag-color-property(background-color, alpine-active-color);
             @include ag-color-property(color, background-color);
+        }
+
+        &:disabled {
+            @include ag-color-property(color, disabled-foreground-color);
+            @include ag-color-property(background-color, input-disabled-background-color);
+            @include ag-color-property(border-color, input-disabled-border-color);
         }
     }
 

@@ -1,6 +1,7 @@
 import {
     Autowired,
     Bean,
+    BeanStub,
     ColDef,
     ColGroupDef,
     Column,
@@ -16,7 +17,7 @@ export interface PivotColDefServiceResult {
 }
 
 @Bean('pivotColDefService')
-export class PivotColDefService {
+export class PivotColDefService extends BeanStub {
 
     @Autowired('columnController') private columnController: ColumnController;
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;

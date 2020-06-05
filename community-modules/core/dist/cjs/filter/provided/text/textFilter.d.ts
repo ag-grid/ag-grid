@@ -1,9 +1,10 @@
-// Type definitions for @ag-grid-community/core v23.1.1
+// Type definitions for @ag-grid-community/core v23.2.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { IDoesFilterPassParams } from '../../../interfaces/iFilter';
 import { SimpleFilter, ConditionPosition, ISimpleFilterParams, ISimpleFilterModel } from '../simpleFilter';
 import { IAfterGuiAttachedParams } from '../../../interfaces/iAfterGuiAttachedParams';
+import { Promise } from '../../../utils';
 export interface TextFilterModel extends ISimpleFilterModel {
     filter?: string;
 }
@@ -37,10 +38,11 @@ export declare class TextFilter extends SimpleFilter<TextFilterModel> {
     protected createCondition(position: ConditionPosition): TextFilterModel;
     protected getFilterType(): string;
     protected areSimpleModelsEqual(aSimple: TextFilterModel, bSimple: TextFilterModel): boolean;
-    protected resetUiToDefaults(silent?: boolean): void;
+    protected resetUiToDefaults(silent?: boolean): Promise<void>;
     private resetPlaceholder;
+    private forEachInput;
     protected setValueFromFloatingFilter(value: string): void;
-    getDefaultFilterOptions(): string[];
+    protected getDefaultFilterOptions(): string[];
     protected createValueTemplate(position: ConditionPosition): string;
     protected updateUiVisibility(): void;
     afterGuiAttached(params: IAfterGuiAttachedParams): void;

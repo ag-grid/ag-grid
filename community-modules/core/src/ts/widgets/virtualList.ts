@@ -1,38 +1,115 @@
-import { Component } from "./component";
-import { Autowired, PostConstruct } from "../context/context";
-import { GridOptionsWrapper } from "../gridOptionsWrapper";
-import { _ } from "../utils";
+import { Component } from './component';
+import { Autowired } from '../context/context';
+import { GridOptionsWrapper } from '../gridOptionsWrapper';
+import { RefSelector } from './componentAnnotations';
+import { ManagedFocusComponent } from './managedFocusComponent';
+import { Constants } from '../constants';
+import { _ } from '../utils';
 
 export interface VirtualListModel {
     getRowCount(): number;
     getRow(index: number): any;
 }
 
-export class VirtualList extends Component {
+export class VirtualList extends ManagedFocusComponent {
     private model: VirtualListModel;
-    private eListContainer: HTMLElement;
-    private rowsInBodyContainer: any = {};
+    private renderedRows = new Map<number, { rowComponent: Component, eDiv: HTMLDivElement; }>();
     private componentCreator: (value: any) => Component;
     private rowHeight = 20;
+    private lastFocusedRow: number;
 
     @Autowired('gridOptionsWrapper') gridOptionsWrapper: GridOptionsWrapper;
+    @RefSelector('eContainer') private eContainer: HTMLElement;
 
-    constructor(private cssIdentifier = 'default') {
+    constructor(private readonly cssIdentifier = 'default') {
         super(VirtualList.getTemplate(cssIdentifier));
     }
 
-    @PostConstruct
-    private init(): void {
-        this.eListContainer = this.queryForHtmlElement('.ag-virtual-list-container');
-
+    protected postConstruct(): void {
         this.addScrollListener();
         this.rowHeight = this.getItemHeight();
+
+        super.postConstruct();
+    }
+
+    protected isFocusableContainer(): boolean {
+        return true;
+    }
+
+    protected focusInnerElement(fromBottom: boolean): void {
+        const rowCount = this.model.getRowCount();
+        this.focusRow(fromBottom ? rowCount - 1 : 0);
+    }
+
+    protected onFocusIn(e: FocusEvent): void {
+        super.onFocusIn(e);
+        const target = e.target as HTMLElement;
+
+        if (_.containsClass(target, 'ag-virtual-list-item')) {
+            this.lastFocusedRow = parseInt(target.getAttribute('aria-rowindex'), 10) - 1;
+        }
+    }
+
+    protected onFocusOut(e: FocusEvent) {
+        super.onFocusOut(e);
+
+        if (!this.getFocusableElement().contains(e.relatedTarget as HTMLElement)) {
+            this.lastFocusedRow = null;
+        }
+    }
+
+    protected handleKeyDown(e: KeyboardEvent) {
+        switch (e.keyCode) {
+            case Constants.KEY_UP:
+            case Constants.KEY_DOWN:
+            case Constants.KEY_TAB:
+                if (this.navigate(
+                    e.keyCode === Constants.KEY_UP ||
+                    (e.keyCode === Constants.KEY_TAB && e.shiftKey)
+                )) {
+                    e.preventDefault();
+                }
+                break;
+        }
+    }
+
+    private navigate(up: boolean): boolean {
+        if (!_.exists(this.lastFocusedRow)) { return false; }
+
+        const nextRow = this.lastFocusedRow + (up ? -1 : 1);
+
+        if (nextRow < 0 || nextRow >= this.model.getRowCount()) { return false; }
+
+        this.focusRow(nextRow);
+
+        return true;
+    }
+
+    public getLastFocusedRow(): number {
+        return this.lastFocusedRow;
+    }
+
+    public focusRow(rowNumber: number): void {
+        this.ensureIndexVisible(rowNumber);
+        window.setTimeout(() => {
+            const renderedRow = this.renderedRows.get(rowNumber);
+
+            if (renderedRow) {
+                renderedRow.eDiv.focus();
+            }
+        }, 10);
+    }
+
+    public getComponentAt(rowIndex: number): Component {
+        const comp = this.renderedRows.get(rowIndex);
+
+        return comp && comp.rowComponent;
     }
 
     private static getTemplate(cssIdentifier: string) {
         return /* html */`
             <div class="ag-virtual-list-viewport ag-${cssIdentifier}-virtual-list-viewport">
-                <div class="ag-virtual-list-container ag-${cssIdentifier}-virtual-list-container"></div>
+                <div class="ag-virtual-list-container ag-${cssIdentifier}-virtual-list-container" ref="eContainer"></div>
             </div>`;
     }
 
@@ -87,82 +164,79 @@ export class VirtualList extends Component {
     }
 
     public refresh(): void {
-        if (_.missing(this.model)) { return; }
+        if (this.model == null) { return; }
 
-        this.eListContainer.style.height = `${this.model.getRowCount() * this.rowHeight}px`;
+        const rowCount = this.model.getRowCount();
 
-        this.clearVirtualRows();
-        this.drawVirtualRows();
+        this.eContainer.style.height = `${rowCount * this.rowHeight}px`;
+        this.eContainer.setAttribute('aria-rowcount', rowCount.toString());
+
+        // ensure height is applied before attempting to redraw rows
+        setTimeout(() => {
+            this.clearVirtualRows();
+            this.drawVirtualRows();
+        }, 0);
     }
 
     private clearVirtualRows() {
-        const rowsToRemove = Object.keys(this.rowsInBodyContainer);
-        this.removeVirtualRows(rowsToRemove);
+        this.renderedRows.forEach((_, rowIndex) => this.removeRow(rowIndex));
     }
 
     private drawVirtualRows() {
-        const topPixel = this.getGui().scrollTop;
-        const bottomPixel = topPixel + this.getGui().offsetHeight;
-
+        const gui = this.getGui();
+        const topPixel = gui.scrollTop;
+        const bottomPixel = topPixel + gui.offsetHeight;
         const firstRow = Math.floor(topPixel / this.rowHeight);
         const lastRow = Math.floor(bottomPixel / this.rowHeight);
 
         this.ensureRowsRendered(firstRow, lastRow);
     }
 
-    private ensureRowsRendered(start: any, finish: any) {
-        // at the end, this array will contain the items we need to remove
-        const rowsToRemove = Object.keys(this.rowsInBodyContainer);
-
-        // add in new rows
-        for (let rowIndex = start; rowIndex <= finish; rowIndex++) {
-            // see if item already there, and if yes, take it out of the 'to remove' array
-            if (rowsToRemove.indexOf(rowIndex.toString()) >= 0) {
-                rowsToRemove.splice(rowsToRemove.indexOf(rowIndex.toString()), 1);
-                continue;
+    private ensureRowsRendered(start: number, finish: number) {
+        // remove any rows that are no longer required
+        this.renderedRows.forEach((_, rowIndex) => {
+            if ((rowIndex < start || rowIndex > finish) && rowIndex !== this.lastFocusedRow) {
+                this.removeRow(rowIndex);
             }
+        });
+
+        // insert any required new rows
+        for (let rowIndex = start; rowIndex <= finish; rowIndex++) {
+            if (this.renderedRows.has(rowIndex)) { continue; }
 
             // check this row actually exists (in case overflow buffer window exceeds real data)
-            if (this.model.getRowCount() > rowIndex) {
+            if (rowIndex < this.model.getRowCount()) {
                 const value = this.model.getRow(rowIndex);
                 this.insertRow(value, rowIndex);
             }
         }
-
-        // at this point, everything in our 'rowsToRemove' . . .
-        this.removeVirtualRows(rowsToRemove);
     }
 
-    // takes array of row id's
-    private removeVirtualRows(rowsToRemove: string[]) {
-        rowsToRemove.forEach(index => {
-            const component = this.rowsInBodyContainer[index];
-            this.eListContainer.removeChild(component.eDiv);
-
-            if (component.rowComponent.destroy) {
-                component.rowComponent.destroy();
-            }
-
-            delete this.rowsInBodyContainer[index];
-        });
-    }
-
-    private insertRow(value: any, rowIndex: any) {
+    private insertRow(value: any, rowIndex: number) {
         const eDiv = document.createElement('div');
+
         _.addCssClass(eDiv, 'ag-virtual-list-item');
         _.addCssClass(eDiv, `ag-${this.cssIdentifier}-virtual-list-item`);
+        eDiv.setAttribute('aria-rowindex', (rowIndex + 1).toString());
+        eDiv.setAttribute('tabindex', '-1');
 
         eDiv.style.height = `${this.rowHeight}px`;
         eDiv.style.top = `${this.rowHeight * rowIndex}px`;
 
         const rowComponent = this.componentCreator(value);
+
         eDiv.appendChild(rowComponent.getGui());
 
-        this.eListContainer.appendChild(eDiv);
-        this.rowsInBodyContainer[rowIndex] = {
-            rowComponent: rowComponent,
-            eDiv: eDiv
-        };
+        this.eContainer.appendChild(eDiv);
+        this.renderedRows.set(rowIndex, { rowComponent, eDiv });
+    }
+
+    private removeRow(rowIndex: number) {
+        const component = this.renderedRows.get(rowIndex);
+
+        this.eContainer.removeChild(component.eDiv);
+        this.destroyBean(component.rowComponent);
+        this.renderedRows.delete(rowIndex);
     }
 
     private addScrollListener() {

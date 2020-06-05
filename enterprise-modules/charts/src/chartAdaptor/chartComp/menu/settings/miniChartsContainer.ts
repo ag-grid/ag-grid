@@ -1,6 +1,6 @@
-import {_, AgGroupComponent, Autowired, Component, PostConstruct} from "@ag-grid-community/core";
-import {ChartController} from "../../chartController";
-import {ChartTranslator} from "../../chartTranslator";
+import { _, AgGroupComponent, Autowired, Component, PostConstruct } from "@ag-grid-community/core";
+import { ChartController } from "../../chartController";
+import { ChartTranslator } from "../../chartTranslator";
 import {
     MiniArea,
     MiniBar,
@@ -26,7 +26,8 @@ type ChartGroups = {
 };
 
 export class MiniChartsContainer extends Component {
-    static TEMPLATE = '<div class="ag-chart-settings-mini-wrapper"></div>';
+
+    static TEMPLATE = /* html */ `<div class="ag-chart-settings-mini-wrapper"></div>`;
 
     private readonly fills: string[];
     private readonly strokes: string[];
@@ -81,7 +82,7 @@ export class MiniChartsContainer extends Component {
 
         Object.keys(chartGroups).forEach(group => {
             const chartGroup = chartGroups[group as ChartGroupsType];
-            const groupComponent = this.wireBean(new AgGroupComponent({
+            const groupComponent = this.createBean(new AgGroupComponent({
                 title: this.chartTranslator.translate(group),
                 suppressEnabledCheckbox: true,
                 enabled: true,
@@ -94,14 +95,14 @@ export class MiniChartsContainer extends Component {
                 const miniWrapper = document.createElement('div');
                 _.addCssClass(miniWrapper, 'ag-chart-mini-thumbnail');
 
-                this.addDestroyableEventListener(miniWrapper, 'click', () => {
+                this.addManagedListener(miniWrapper, 'click', () => {
                     this.chartController.setChartType(MiniClass.chartType);
                     this.refreshSelected();
                 });
 
                 this.wrappers[MiniClass.chartType] = miniWrapper;
 
-                this.wireBean(new MiniClass(miniWrapper, this.fills, this.strokes));
+                this.createBean(new MiniClass(miniWrapper, this.fills, this.strokes));
                 groupComponent.addItem(miniWrapper);
             });
 

@@ -10,7 +10,7 @@ import {
 } from '@ag-grid-community/core';
 
 import { ExcelXmlSerializingSession } from './excelXmlSerializingSession';
-import {RowSpanningAccumulator, RowType} from "@ag-grid-community/csv-export";
+import { RowSpanningAccumulator, RowType } from "@ag-grid-community/csv-export";
 
 export class ExcelXlsxSerializingSession extends ExcelXmlSerializingSession {
 

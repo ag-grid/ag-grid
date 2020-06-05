@@ -1,21 +1,19 @@
-// Type definitions for @ag-grid-community/core v23.1.1
+// Type definitions for @ag-grid-community/core v23.2.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { GridPanel } from "./gridPanel/gridPanel";
 import { AgEvent, ColumnEvent } from "./events";
 import { Column } from "./entities/column";
-export declare class AlignedGridsService {
+import { BeanStub } from "./context/beanStub";
+export declare class AlignedGridsService extends BeanStub {
     private gridOptionsWrapper;
     private columnController;
-    private eventService;
     private logger;
     private gridPanel;
     private consuming;
     private setBeans;
     registerGridComp(gridPanel: GridPanel): void;
-    private events;
-    init(): void;
-    destroy(): void;
+    private init;
     private fireEvent;
     private onEvent;
     private fireColumnEvent;

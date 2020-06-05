@@ -1,9 +1,8 @@
-import { ChartModel, ChartRef, ChartType, CreatePivotChartParams, CreateRangeChartParams, IChartService } from "@ag-grid-community/core";
-export declare class ChartService implements IChartService {
+import { ChartModel, ChartRef, ChartType, CreatePivotChartParams, CreateRangeChartParams, IChartService, BeanStub } from "@ag-grid-community/core";
+export declare class ChartService extends BeanStub implements IChartService {
     private rangeController;
     private columnController;
     private environment;
-    private context;
     private gridOptionsWrapper;
     private activeCharts;
     private activeChartComps;

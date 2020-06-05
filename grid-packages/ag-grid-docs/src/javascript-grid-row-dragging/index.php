@@ -142,7 +142,7 @@ SNIPPET
 </p>
 
 <p>
-    The example below is almost identical to the previous example with the following differences:
+    The example below is almost identical to the <a href="#managed-dragging">Managed Dragging</a> example with the following differences:
 </p>
 
 <ul class="content">
@@ -167,9 +167,9 @@ function rowDragText(params: IRowDragItem, dragItemCount: number) => string;
 
 // interface for params
 interface IRowDragItem {
-    rowNode: RowNode, // the current RowNode
-    columns: Column[], // an array containing the column that initiated the drag
-    defaultTextValue: string // The default text that would be applied to this Drag Element
+    rowNode: RowNode; // the current RowNode
+    columns: Column[]; // an array containing the column that initiated the drag
+    defaultTextValue: string; // The default text that would be applied to this Drag Element
 }
 SNIPPET
 , 'ts') ?>
@@ -330,8 +330,8 @@ SNIPPET
 
 <p>
     The example below shows how to implement simple row dragging using
-    unmanaged row dragging and events. The example behaves the same as the first example above,
-    however the logic for moving the rows is with the application and not the grid.
+    unmanaged row dragging and events. The example behaves the same as the <a href="#managed-dragging">Managed Dragging</a> example above,
+    however the logic for moving the rows is in the application rather than the grid.
 </p>
 
 <p>
@@ -384,11 +384,11 @@ SNIPPET
 
 <ul class="content">
     <li>
-        The column 'Athlete' has row drag true for non-group rows. This is achieved
+        The <strong>Athlete</strong> column has row drag enabled for non-group rows. This is achieved
         using the function variant of the <code>rowDrag</code> property.
     </li>
     <li>
-        The grid has not set <code>rowDragManaged</code> property which results in
+        The grid has not set the <code>rowDragManaged</code> property which results in
         unmanaged row dragging.
     </li>
     <li>

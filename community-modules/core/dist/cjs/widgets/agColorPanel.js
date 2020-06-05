@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v23.1.1
+ * @version v23.2.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -47,17 +47,17 @@ var AgColorPanel = /** @class */ (function (_super) {
     AgColorPanel.prototype.postConstruct = function () {
         var eGui = this.getGui();
         this.initRecentColors();
-        this.addDestroyableEventListener(this.spectrumVal, 'mousedown', this.onSpectrumDraggerDown.bind(this));
-        this.addDestroyableEventListener(eGui, 'mousemove', this.onSpectrumDraggerMove.bind(this));
-        this.addDestroyableEventListener(this.spectrumHue, 'mousedown', this.onSpectrumHueDown.bind(this));
-        this.addDestroyableEventListener(eGui, 'mousemove', this.onSpectrumHueMove.bind(this));
-        this.addDestroyableEventListener(this.spectrumAlpha, 'mousedown', this.onSpectrumAlphaDown.bind(this));
-        this.addDestroyableEventListener(eGui, 'mousemove', this.onSpectrumAlphaMove.bind(this));
+        this.addManagedListener(this.spectrumVal, 'mousedown', this.onSpectrumDraggerDown.bind(this));
+        this.addManagedListener(eGui, 'mousemove', this.onSpectrumDraggerMove.bind(this));
+        this.addManagedListener(this.spectrumHue, 'mousedown', this.onSpectrumHueDown.bind(this));
+        this.addManagedListener(eGui, 'mousemove', this.onSpectrumHueMove.bind(this));
+        this.addManagedListener(this.spectrumAlpha, 'mousedown', this.onSpectrumAlphaDown.bind(this));
+        this.addManagedListener(eGui, 'mousemove', this.onSpectrumAlphaMove.bind(this));
         // Listening to `mouseup` on the document on purpose. The user might release the mouse button
         // outside the UI control. When the mouse returns back to the control's area, the dragging
         // of the thumb is not expected and seen as a bug.
-        this.addDestroyableEventListener(document, 'mouseup', this.onMouseUp.bind(this));
-        this.addDestroyableEventListener(this.recentColors, 'click', this.onRecentColorClick.bind(this));
+        this.addManagedListener(document, 'mouseup', this.onMouseUp.bind(this));
+        this.addManagedListener(this.recentColors, 'click', this.onRecentColorClick.bind(this));
     };
     AgColorPanel.prototype.refreshSpectrumRect = function () {
         return this.spectrumValRect = this.spectrumVal.getBoundingClientRect();

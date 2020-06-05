@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v23.1.1
+ * @version v23.2.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -49,7 +49,7 @@ var AgInputRange = /** @class */ (function (_super) {
         var _this = this;
         var isIE = utils_1._.isBrowserIE();
         var eventName = isIE ? 'change' : 'input';
-        this.addDestroyableEventListener(this.eInput, eventName, function (e) {
+        this.addManagedListener(this.eInput, eventName, function (e) {
             var value = e.target.value;
             _this.setValue(value);
         });

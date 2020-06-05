@@ -1,15 +1,14 @@
 import { AgEvent } from "../events";
+import { AgStackComponentsRegistry } from "../components/agStackComponentsRegistry";
 import { BeanStub } from "../context/beanStub";
-import { Context } from "../context/context";
-import { IComponent } from "../interfaces/iComponent";
 export interface VisibleChangedEvent extends AgEvent {
     visible: boolean;
 }
 export declare class Component extends BeanStub {
     static EVENT_DISPLAYED_CHANGED: string;
     private eGui;
-    private childComponents;
-    private annotatedEventListeners;
+    private annotatedGuiListeners;
+    protected agStackComponentsRegistry: AgStackComponentsRegistry;
     private displayed;
     private visible;
     protected parentComponent: Component | undefined;
@@ -17,6 +16,7 @@ export declare class Component extends BeanStub {
     constructor(template?: string);
     getCompId(): number;
     private createChildComponentsFromTags;
+    createComponentFromElement(element: HTMLElement, afterPreCreateCallback?: (comp: Component) => void, paramsMap?: any): Component;
     private copyAttributesFromNode;
     private swapComponentForNode;
     private swapInComponentForQuerySelectors;
@@ -25,9 +25,10 @@ export declare class Component extends BeanStub {
     setTemplateFromElement(element: HTMLElement, paramsMap?: any): void;
     private createChildComponentsPreConstruct;
     protected wireQuerySelectors(): void;
-    private addAnnotatedEventListeners;
+    private addAnnotatedGuiEventListeners;
+    private addAnnotatedGridEventListeners;
     private getAgComponentMetaData;
-    private removeAnnotatedEventListeners;
+    private removeAnnotatedGuiEventListeners;
     getGui(): HTMLElement;
     getFocusableElement(): HTMLElement;
     setParentComponent(component: Component): void;
@@ -35,12 +36,11 @@ export declare class Component extends BeanStub {
     protected setGui(eGui: HTMLElement): void;
     protected queryForHtmlElement(cssSelector: string): HTMLElement;
     protected queryForHtmlInputElement(cssSelector: string): HTMLInputElement;
-    appendChild(newChild: Node | IComponent<any>, container?: HTMLElement): void;
-    addFeature(feature: BeanStub, context?: Context): void;
+    appendChild(newChild: HTMLElement | Component, container?: HTMLElement): void;
     isDisplayed(): boolean;
     setVisible(visible: boolean): void;
     setDisplayed(displayed: boolean): void;
-    destroy(): void;
+    protected destroy(): void;
     addGuiEventListener(event: string, listener: (event: any) => void): void;
     addCssClass(className: string): void;
     removeCssClass(className: string): void;

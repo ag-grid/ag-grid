@@ -9,9 +9,9 @@ import {
     GridApi,
     ColumnApi,
     SelectionController,
-    _,
     RowDataTransaction,
-    RowNodeTransaction
+    RowNodeTransaction,
+    _
 } from "@ag-grid-community/core";
 
 export class ClientSideNodeManager {
@@ -35,6 +35,7 @@ export class ClientSideNodeManager {
     private suppressParentsInRowNodes: boolean;
 
     private doingLegacyTreeData: boolean;
+    private doingTreeData: boolean;
     private doingMasterDetail: boolean;
 
     // when user is provide the id's, we also keep a map of ids to row nodes for convenience
@@ -74,7 +75,8 @@ export class ClientSideNodeManager {
         this.doesDataFlower = this.gridOptionsWrapper.getDoesDataFlowerFunc();
         this.isRowMasterFunc = this.gridOptionsWrapper.getIsRowMasterFunc();
 
-        this.doingLegacyTreeData = _.exists(this.getNodeChildDetails);
+        this.doingTreeData = this.gridOptionsWrapper.isTreeData();
+        this.doingLegacyTreeData = !this.doingTreeData && _.exists(this.getNodeChildDetails);
         this.doingMasterDetail = this.gridOptionsWrapper.isMasterDetail();
 
         if (this.getNodeChildDetails) {
@@ -84,6 +86,8 @@ export class ClientSideNodeManager {
                                     tree data. If you are reading this message, please go to the docs to see how
                                     to implement Tree Data without using nodeChildDetailsFunc().`);
         }
+
+
     }
 
     public getCopyOfNodesMap(): {[id:string]: RowNode} {
@@ -134,15 +138,43 @@ export class ClientSideNodeManager {
             add: []
         };
 
+        const nodesToUnselect: RowNode[] = [];
+
         this.executeAdd(rowDataTran, rowNodeTransaction);
-        this.executeRemove(rowDataTran, rowNodeTransaction);
-        this.executeUpdate(rowDataTran, rowNodeTransaction);
+        this.executeRemove(rowDataTran, rowNodeTransaction, nodesToUnselect);
+        this.executeUpdate(rowDataTran, rowNodeTransaction, nodesToUnselect);
+
+        this.updateSelection(nodesToUnselect);
 
         if (rowNodeOrder) {
             _.sortRowNodesByOrder(this.rootNode.allLeafChildren, rowNodeOrder);
         }
 
         return rowNodeTransaction;
+    }
+
+    private updateSelection(nodesToUnselect: RowNode[]): void {
+        const selectionChanged = nodesToUnselect.length > 0;
+        if (selectionChanged) {
+            nodesToUnselect.forEach(rowNode => {
+                rowNode.setSelected(false, false, true);
+            });
+        }
+
+        // we do this regardless of nodes to unselect or not, as it's possible
+        // a new node was inserted, so a parent that was previously selected (as all
+        // children were selected) should not be tri-state (as new one unselected against
+        // all other selected children).
+        this.selectionController.updateGroupsFromChildrenSelections();
+
+        if (selectionChanged) {
+            const event: SelectionChangedEvent = {
+                type: Events.EVENT_SELECTION_CHANGED,
+                api: this.gridApi,
+                columnApi: this.columnApi
+            };
+            this.eventService.dispatchEvent(event);
+        }
     }
 
     private executeAdd(rowDataTran: RowDataTransaction, rowNodeTransaction: RowNodeTransaction): void {
@@ -164,26 +196,23 @@ export class ClientSideNodeManager {
         }
     }
 
-    private executeRemove(rowDataTran: RowDataTransaction, rowNodeTransaction: RowNodeTransaction): void {
+    private executeRemove(rowDataTran: RowDataTransaction, rowNodeTransaction: RowNodeTransaction, nodesToUnselect: RowNode[]): void {
         const {remove} = rowDataTran;
 
         if (!remove) { return; }
 
         const rowIdsRemoved: {[key: string]: boolean} = {};
-        let anyNodesSelected = false;
 
         remove.forEach(item => {
             const rowNode = this.lookupRowNode(item);
 
             if (!rowNode) { return; }
 
-            if (rowNode.isSelected()) {
-                anyNodesSelected = true;
-            }
-
-            // do delete - setting 'tailingNodeInSequence = true' to ensure EVENT_SELECTION_CHANGED is not raised for
+            // do delete - setting 'suppressFinishActions = true' to ensure EVENT_SELECTION_CHANGED is not raised for
             // each row node updated, instead it is raised once by the calling code if any selected nodes exist.
-            rowNode.setSelected(false, false, true);
+            if (rowNode.isSelected()) {
+                nodesToUnselect.push(rowNode);
+            }
 
             // so row renderer knows to fade row out (and not reposition it)
             rowNode.clearRowTop();
@@ -198,19 +227,9 @@ export class ClientSideNodeManager {
         });
 
         this.rootNode.allLeafChildren = this.rootNode.allLeafChildren.filter(rowNode => !rowIdsRemoved[rowNode.id]);
-
-        if (anyNodesSelected) {
-            this.selectionController.updateGroupsFromChildrenSelections();
-            const event: SelectionChangedEvent = {
-                type: Events.EVENT_SELECTION_CHANGED,
-                api: this.gridApi,
-                columnApi: this.columnApi
-            };
-            this.eventService.dispatchEvent(event);
-        }
     }
 
-    private executeUpdate(rowDataTran: RowDataTransaction, rowNodeTransaction: RowNodeTransaction): void {
+    private executeUpdate(rowDataTran: RowDataTransaction, rowNodeTransaction: RowNodeTransaction, nodesToUnselect: RowNode[]): void {
         const {update} = rowDataTran;
         if (!update) { return; }
 
@@ -220,6 +239,11 @@ export class ClientSideNodeManager {
             if (!rowNode) { return; }
 
             rowNode.updateData(item);
+            if (!rowNode.selectable && rowNode.isSelected()) {
+                nodesToUnselect.push(rowNode);
+            }
+
+            this.setMasterForRow(rowNode, item, ClientSideNodeManager.TOP_LEVEL, false);
 
             rowNodeTransaction.update.push(rowNode);
         });
@@ -280,12 +304,9 @@ export class ClientSideNodeManager {
 
     private createNode(dataItem: any, parent: RowNode, level: number): RowNode {
         const node = new RowNode();
-        this.context.wireBean(node);
+        this.context.createBean(node);
 
-        const doingTreeData = this.gridOptionsWrapper.isTreeData();
-        const doingLegacyTreeData = !doingTreeData && _.exists(this.getNodeChildDetails);
-
-        const nodeChildDetails = doingLegacyTreeData ? this.getNodeChildDetails(dataItem) : null;
+        const nodeChildDetails = this.doingLegacyTreeData ? this.getNodeChildDetails(dataItem) : null;
 
         if (nodeChildDetails && nodeChildDetails.group) {
             node.group = true;
@@ -293,44 +314,15 @@ export class ClientSideNodeManager {
             node.expanded = nodeChildDetails.expanded === true;
             node.field = nodeChildDetails.field;
             node.key = nodeChildDetails.key;
-            /** @deprecated is now 'master' */
-            node.canFlower = node.master;
             // pull out all the leaf children and add to our node
             this.setLeafChildren(node);
         } else {
-
             node.group = false;
-
-            if (doingTreeData) {
-                node.master = false;
-                node.expanded = false;
-            } else {
-                // this is the default, for when doing grid data
-                if (this.doesDataFlower) {
-                    node.master = this.doesDataFlower(dataItem);
-                } else if (this.doingMasterDetail) {
-                    // if we are doing master detail, then the
-                    // default is that everything can flower.
-                    if (this.isRowMasterFunc) {
-                        node.master = this.isRowMasterFunc(dataItem);
-                    } else {
-                        node.master = true;
-                    }
-                } else {
-                    node.master = false;
-                }
-
-                const rowGroupColumns = this.columnController.getRowGroupColumns();
-                const numRowGroupColumns = rowGroupColumns ? rowGroupColumns.length : 0;
-
-                // need to take row group into account when determining level
-                const masterRowLevel = level + numRowGroupColumns;
-
-                node.expanded = node.master ? this.isExpanded(masterRowLevel) : false;
-            }
+            this.setMasterForRow(node, dataItem, level, true);
         }
 
         // support for backwards compatibility, canFlow is now called 'master'
+        /** @deprecated is now 'master' */
         node.canFlower = node.master;
 
         if (parent && !this.suppressParentsInRowNodes) {
@@ -347,6 +339,40 @@ export class ClientSideNodeManager {
         this.nextId++;
 
         return node;
+    }
+
+    private setMasterForRow(rowNode: RowNode, data: any, level: number, setExpanded: boolean): void {
+        if (this.doingTreeData) {
+            rowNode.setMaster(false);
+            if (setExpanded) {
+                rowNode.expanded = false;
+            }
+        } else {
+            // this is the default, for when doing grid data
+            if (this.doesDataFlower) {
+                rowNode.setMaster(this.doesDataFlower(data));
+            } else if (this.doingMasterDetail) {
+                // if we are doing master detail, then the
+                // default is that everything can be a Master Row.
+                if (this.isRowMasterFunc) {
+                    rowNode.setMaster(this.isRowMasterFunc(data));
+                } else {
+                    rowNode.setMaster(true);
+                }
+            } else {
+                rowNode.setMaster(false);
+            }
+
+            if (setExpanded) {
+                const rowGroupColumns = this.columnController.getRowGroupColumns();
+                const numRowGroupColumns = rowGroupColumns ? rowGroupColumns.length : 0;
+
+                // need to take row group into account when determining level
+                const masterRowLevel = level + numRowGroupColumns;
+
+                rowNode.expanded = rowNode.master ? this.isExpanded(masterRowLevel) : false;
+            }
+        }
     }
 
     private isExpanded(level: any) {

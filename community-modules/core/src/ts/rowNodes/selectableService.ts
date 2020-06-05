@@ -3,9 +3,10 @@ import { Autowired, Bean, PostConstruct } from "../context/context";
 import { GridOptionsWrapper } from "../gridOptionsWrapper";
 import { IsRowSelectable } from "../entities/gridOptions";
 import { _ } from "../utils";
+import { BeanStub } from "../context/beanStub";
 
 @Bean('selectableService')
-export class SelectableService {
+export class SelectableService extends BeanStub {
 
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
 

@@ -1,0 +1,20 @@
+.example-wrapper {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+#myGrid {
+    flex: 1 1 auto;
+    width: 100%;
+}
+
+.fa-hourglass-half {
+    color: navy;
+    font-size: 18px
+}
+
+.fa-frown {
+    color: navy;
+    font-size: 18px
+}

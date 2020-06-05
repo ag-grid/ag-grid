@@ -1,5 +1,6 @@
 import { Node } from "./node";
 import { Path2D } from "./path2D";
+import { BBox } from "./bbox";
 /**
  * Acts as `Group` node but with specified bounds that form a rectangle.
  * Any parts of the child nodes outside that rectangle will not be visible.
@@ -9,7 +10,7 @@ export declare class ClipRect extends Node {
     static className: string;
     protected isContainerNode: boolean;
     protected path: Path2D;
-    isPointInNode(x: number, y: number): boolean;
+    containsPoint(x: number, y: number): boolean;
     private _active;
     active: boolean;
     private _dirtyPath;
@@ -23,5 +24,6 @@ export declare class ClipRect extends Node {
     private _height;
     height: number;
     updatePath(): void;
+    computeBBox(): BBox;
     render(ctx: CanvasRenderingContext2D): void;
 }

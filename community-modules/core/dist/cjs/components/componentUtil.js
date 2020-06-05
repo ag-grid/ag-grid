@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v23.1.1
+ * @version v23.2.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -96,6 +96,9 @@ var ComponentUtil = /** @class */ (function () {
         }
         if (changes.pinnedBottomRowData) {
             api.setPinnedBottomRowData(changes.pinnedBottomRowData.currentValue);
+        }
+        if (changes.autoGroupColumnDef) {
+            api.setAutoGroupColumnDef(changes.autoGroupColumnDef.currentValue, "gridOptionsChanged");
         }
         if (changes.columnDefs) {
             api.setColumnDefs(changes.columnDefs.currentValue, "gridOptionsChanged");

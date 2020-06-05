@@ -181,15 +181,16 @@ var Rect = /** @class */ (function (_super) {
         }
         this.effectiveStrokeWidth = strokeWidth;
         if (this.crisp && !borderSizing) {
-            var alignment = Math.floor(strokeWidth) % 2 / 2;
-            path.rect(Math.floor(x) + alignment, Math.floor(y) + alignment, Math.floor(width) + Math.floor(x % 1 + width % 1), Math.floor(height) + Math.floor(y % 1 + height % 1));
+            var _a = this, a = _a.alignment, al = _a.align;
+            path.rect(al(a, x), al(a, y), al(a, x, width), al(a, y, height));
         }
         else {
             path.rect(x, y, width, height);
         }
     };
     Rect.prototype.computeBBox = function () {
-        return new bbox_1.BBox(this.x, this.y, this.width, this.height);
+        var _a = this, x = _a.x, y = _a.y, width = _a.width, height = _a.height;
+        return new bbox_1.BBox(x, y, width, height);
     };
     Rect.prototype.isPointInPath = function (x, y) {
         var point = this.transformPoint(x, y);

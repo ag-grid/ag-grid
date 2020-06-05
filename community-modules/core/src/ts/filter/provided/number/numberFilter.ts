@@ -1,14 +1,11 @@
-import { RefSelector } from "../../../widgets/componentAnnotations";
-import { _ } from "../../../utils";
-
-import {
-    SimpleFilter,
-    ConditionPosition,
-    ISimpleFilterModel
-} from "../simpleFilter";
-import { ScalarFilter, Comparator, IScalarFilterParams } from "../scalarFilter";
-import { AgInputNumberField } from "../../../widgets/agInputNumberField";
+import { RefSelector } from '../../../widgets/componentAnnotations';
+import { Promise } from '../../../utils';
+import { SimpleFilter, ConditionPosition, ISimpleFilterModel } from '../simpleFilter';
+import { ScalarFilter, Comparator, IScalarFilterParams } from '../scalarFilter';
+import { AgInputNumberField } from '../../../widgets/agInputNumberField';
 import { IAfterGuiAttachedParams } from '../../../interfaces/iAfterGuiAttachedParams';
+import { makeNull } from '../../../utils/generic';
+import { setDisplayed } from '../../../utils/dom';
 
 export interface NumberFilterModel extends ISimpleFilterModel {
     filter?: number;
@@ -49,13 +46,14 @@ export class NumberFilter extends ScalarFilter<NumberFilterModel, number> {
         return 500;
     }
 
-    protected resetUiToDefaults(silent?: boolean): void {
-        super.resetUiToDefaults(silent);
+    protected resetUiToDefaults(silent?: boolean): Promise<void> {
+        return super.resetUiToDefaults(silent).then(() => {
+            const fields = [this.eValueFrom1, this.eValueFrom2, this.eValueTo1, this.eValueTo2];
 
-        const fields = [this.eValueFrom1, this.eValueFrom2, this.eValueTo1, this.eValueTo2];
+            fields.forEach(field => field.setValue(null, silent));
 
-        fields.forEach(field => field.setValue(null, silent));
-        this.resetPlaceholder();
+            this.resetPlaceholder();
+        });
     }
 
     protected setConditionIntoUi(model: NumberFilterModel, position: ConditionPosition): void {
@@ -99,15 +97,14 @@ export class NumberFilter extends ScalarFilter<NumberFilterModel, number> {
     }
 
     private resetPlaceholder(): void {
-        const translate = this.translate.bind(this);
         const isRange1 = this.getCondition1Type() === ScalarFilter.IN_RANGE;
         const isRange2 = this.getCondition2Type() === ScalarFilter.IN_RANGE;
 
-        this.eValueFrom1.setInputPlaceholder(translate(isRange1 ? 'inRangeStart' : 'filterOoo'));
-        this.eValueTo1.setInputPlaceholder(translate(isRange1 ? 'inRangeEnd' : 'filterOoo'));
+        this.eValueFrom1.setInputPlaceholder(this.translate(isRange1 ? 'inRangeStart' : 'filterOoo'));
+        this.eValueTo1.setInputPlaceholder(this.translate(isRange1 ? 'inRangeEnd' : 'filterOoo'));
 
-        this.eValueFrom2.setInputPlaceholder(translate(isRange2 ? 'inRangeStart' : 'filterOoo'));
-        this.eValueTo2.setInputPlaceholder(translate(isRange2 ? 'inRangeEnd' : 'filterOoo'));
+        this.eValueFrom2.setInputPlaceholder(this.translate(isRange2 ? 'inRangeStart' : 'filterOoo'));
+        this.eValueTo2.setInputPlaceholder(this.translate(isRange2 ? 'inRangeEnd' : 'filterOoo'));
     }
 
     public afterGuiAttached(params: IAfterGuiAttachedParams): void {
@@ -165,11 +162,11 @@ export class NumberFilter extends ScalarFilter<NumberFilterModel, number> {
     }
 
     private stringToFloat(value: string | number): number {
-        if (typeof value === "number") {
+        if (typeof value === 'number') {
             return value;
         }
 
-        let filterText = _.makeNull(value);
+        let filterText = makeNull(value);
 
         if (filterText && filterText.trim() === '') {
             filterText = null;
@@ -212,16 +209,15 @@ export class NumberFilter extends ScalarFilter<NumberFilterModel, number> {
         this.resetPlaceholder();
 
         const showFrom1 = this.showValueFrom(this.getCondition1Type());
-        _.setDisplayed(this.eValueFrom1.getGui(), showFrom1);
+        setDisplayed(this.eValueFrom1.getGui(), showFrom1);
 
         const showTo1 = this.showValueTo(this.getCondition1Type());
-        _.setDisplayed(this.eValueTo1.getGui(), showTo1);
+        setDisplayed(this.eValueTo1.getGui(), showTo1);
 
         const showFrom2 = this.showValueFrom(this.getCondition2Type());
-        _.setDisplayed(this.eValueFrom2.getGui(), showFrom2);
+        setDisplayed(this.eValueFrom2.getGui(), showFrom2);
 
         const showTo2 = this.showValueTo(this.getCondition2Type());
-        _.setDisplayed(this.eValueTo2.getGui(), showTo2);
+        setDisplayed(this.eValueTo2.getGui(), showTo2);
     }
-
 }

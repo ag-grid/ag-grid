@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v23.1.1
+ * @version v23.2.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -70,7 +70,6 @@ import { AgPanel } from "./widgets/agPanel";
 import { AgInputTextField } from "./widgets/agInputTextField";
 import { AgInputTextArea } from "./widgets/agInputTextArea";
 import { AgSlider } from "./widgets/agSlider";
-import { _ } from "./utils";
 import { AgColorPicker } from "./widgets/agColorPicker";
 import { AgInputNumberField } from "./widgets/agInputNumberField";
 import { AgInputRange } from "./widgets/agInputRange";
@@ -84,6 +83,10 @@ import { PinnedRowModel } from "./pinnedRowModel/pinnedRowModel";
 import { ModuleRegistry } from "./modules/moduleRegistry";
 import { ModuleNames } from "./modules/moduleNames";
 import { UndoRedoService } from "./undoRedo/undoRedoService";
+import { AgStackComponentsRegistry } from "./components/agStackComponentsRegistry";
+import { HeaderPositionUtils } from "./headerRendering/header/headerPosition";
+import { HeaderNavigationService } from "./headerRendering/header/headerNavigationService";
+import { _ } from "./utils";
 var Grid = /** @class */ (function () {
     function Grid(eGridDiv, gridOptions, params) {
         if (!eGridDiv) {
@@ -98,7 +101,6 @@ var Grid = /** @class */ (function () {
         this.gridOptions = gridOptions;
         var registeredModules = this.getRegisteredModules(params);
         var beanClasses = this.createBeansList(registeredModules);
-        var agStackComponents = this.createAgStackComponentsList(registeredModules);
         var providedBeanInstances = this.createProvidedBeans(eGridDiv, params);
         if (!beanClasses) {
             return;
@@ -106,21 +108,26 @@ var Grid = /** @class */ (function () {
         var contextParams = {
             providedBeanInstances: providedBeanInstances,
             beanClasses: beanClasses,
-            components: agStackComponents,
             debug: debug
         };
         this.logger = new Logger('ag-Grid', function () { return gridOptions.debug; });
         var contextLogger = new Logger('Context', function () { return contextParams.debug; });
         this.context = new Context(contextParams, contextLogger);
         this.registerModuleUserComponents(registeredModules);
+        this.registerStackComponents(registeredModules);
         var gridCoreClass = (params && params.rootComponent) || GridCore;
         var gridCore = new gridCoreClass();
-        this.context.wireBean(gridCore);
+        this.context.createBean(gridCore);
         this.setColumnsAndData();
         this.dispatchGridReadyEvent(gridOptions);
         var isEnterprise = ModuleRegistry.isRegistered(ModuleNames.EnterpriseCoreModule);
         this.logger.log("initialised successfully, enterprise = " + isEnterprise);
     }
+    Grid.prototype.registerStackComponents = function (registeredModules) {
+        var agStackComponents = this.createAgStackComponentsList(registeredModules);
+        var agStackComponentsRegistry = this.context.getBean('agStackComponentsRegistry');
+        agStackComponentsRegistry.setupComponents(agStackComponents);
+    };
     Grid.prototype.getRegisteredModules = function (params) {
         var passedViaConstructor = params ? params.modules : null;
         var registered = ModuleRegistry.getRegisteredModules();
@@ -206,18 +213,19 @@ var Grid = /** @class */ (function () {
         }
         // beans should only contain SERVICES, it should NEVER contain COMPONENTS
         var beans = [
-            rowModelClass, Beans, RowPositionUtils, CellPositionUtils,
+            rowModelClass, Beans, RowPositionUtils, CellPositionUtils, HeaderPositionUtils,
             PaginationAutoPageSizeService, GridApi, UserComponentRegistry, AgComponentUtils,
             ComponentMetadataProvider, ResizeObserverService, UserComponentFactory,
             MaxDivHeightScaler, AutoHeightCalculator, CellRendererFactory, HorizontalResizeService,
-            PinnedRowModel, DragService, DisplayedGroupCreator, EventService, GridOptionsWrapper, PopupService,
-            SelectionController, FilterManager, ColumnController, PaginationProxy, RowRenderer, ExpressionService,
-            ColumnFactory, TemplateService, AlignedGridsService,
-            NavigationService, ValueCache, ValueService, LoggerFactory, ColumnUtils, AutoWidthCalculator,
-            StandardMenuFactory, DragAndDropService, ColumnApi, FocusController, MouseEventService, Environment,
-            CellNavigationService, ValueFormatterService, StylingService, ScrollVisibleService, SortController,
-            ColumnHoverService, ColumnAnimationService, SelectableService, AutoGroupColService,
-            ChangeDetectionService, AnimationFrameService, DetailRowCompCache, UndoRedoService
+            PinnedRowModel, DragService, DisplayedGroupCreator, EventService, GridOptionsWrapper,
+            PopupService, SelectionController, FilterManager, ColumnController, HeaderNavigationService,
+            PaginationProxy, RowRenderer, ExpressionService, ColumnFactory, TemplateService,
+            AlignedGridsService, NavigationService, ValueCache, ValueService, LoggerFactory,
+            ColumnUtils, AutoWidthCalculator, StandardMenuFactory, DragAndDropService, ColumnApi,
+            FocusController, MouseEventService, Environment, CellNavigationService, ValueFormatterService,
+            StylingService, ScrollVisibleService, SortController, ColumnHoverService, ColumnAnimationService,
+            SelectableService, AutoGroupColService, ChangeDetectionService, AnimationFrameService,
+            DetailRowCompCache, UndoRedoService, AgStackComponentsRegistry
         ];
         var moduleBeans = this.extractModuleEntity(registeredModules, function (module) { return module.beans ? module.beans : []; });
         beans.push.apply(beans, moduleBeans);

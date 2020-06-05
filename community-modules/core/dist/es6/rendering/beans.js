@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v23.1.1
+ * @version v23.2.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -62,6 +62,9 @@ var Beans = /** @class */ (function () {
         Autowired('columnController')
     ], Beans.prototype, "columnController", void 0);
     __decorate([
+        Autowired('headerNavigationService')
+    ], Beans.prototype, "headerNavigationService", void 0);
+    __decorate([
         Autowired('columnAnimationService')
     ], Beans.prototype, "columnAnimationService", void 0);
     __decorate([
@@ -121,6 +124,9 @@ var Beans = /** @class */ (function () {
     __decorate([
         Autowired('selectionController')
     ], Beans.prototype, "selectionController", void 0);
+    __decorate([
+        Optional('selectionHandleFactory')
+    ], Beans.prototype, "selectionHandleFactory", void 0);
     __decorate([
         PostConstruct
     ], Beans.prototype, "postConstruct", null);

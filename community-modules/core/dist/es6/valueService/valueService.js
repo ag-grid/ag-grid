@@ -1,9 +1,22 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v23.1.1
+ * @version v23.2.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = function (d, b) {
+        extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+        return extendStatics(d, b);
+    };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -13,9 +26,13 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 import { Autowired, Bean, PostConstruct } from "../context/context";
 import { Events } from "../events";
 import { _ } from "../utils";
-var ValueService = /** @class */ (function () {
+import { BeanStub } from "../context/beanStub";
+var ValueService = /** @class */ (function (_super) {
+    __extends(ValueService, _super);
     function ValueService() {
-        this.initialised = false;
+        var _this = _super !== null && _super.apply(this, arguments) || this;
+        _this.initialised = false;
+        return _this;
     }
     ValueService.prototype.init = function () {
         this.cellExpressions = this.gridOptionsWrapper.isEnableCellExpressions();
@@ -246,9 +263,6 @@ var ValueService = /** @class */ (function () {
         Autowired('columnController')
     ], ValueService.prototype, "columnController", void 0);
     __decorate([
-        Autowired('eventService')
-    ], ValueService.prototype, "eventService", void 0);
-    __decorate([
         Autowired('valueCache')
     ], ValueService.prototype, "valueCache", void 0);
     __decorate([
@@ -258,5 +272,5 @@ var ValueService = /** @class */ (function () {
         Bean('valueService')
     ], ValueService);
     return ValueService;
-}());
+}(BeanStub));
 export { ValueService };

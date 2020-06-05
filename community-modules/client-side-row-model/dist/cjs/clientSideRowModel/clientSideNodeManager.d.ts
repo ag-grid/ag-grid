@@ -14,6 +14,7 @@ export declare class ClientSideNodeManager {
     private isRowMasterFunc;
     private suppressParentsInRowNodes;
     private doingLegacyTreeData;
+    private doingTreeData;
     private doingMasterDetail;
     private allNodesMap;
     private columnApi;
@@ -28,6 +29,7 @@ export declare class ClientSideNodeManager {
     updateRowData(rowDataTran: RowDataTransaction, rowNodeOrder: {
         [id: string]: number;
     } | null | undefined): RowNodeTransaction | null;
+    private updateSelection;
     private executeAdd;
     private executeRemove;
     private executeUpdate;
@@ -35,6 +37,7 @@ export declare class ClientSideNodeManager {
     private lookupRowNode;
     private recursiveFunction;
     private createNode;
+    private setMasterForRow;
     private isExpanded;
     private setLeafChildren;
     isLegacyTreeData(): boolean;

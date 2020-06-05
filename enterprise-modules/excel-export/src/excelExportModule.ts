@@ -1,10 +1,10 @@
-import {Module, ModuleNames} from "@ag-grid-community/core";
-import {EnterpriseCoreModule} from "@ag-grid-enterprise/core";
-import {ExcelXlsxFactory} from "./excelExport/excelXlsxFactory";
-import {ExcelXmlFactory} from "./excelExport/excelXmlFactory";
-import {ExcelCreator} from "./excelExport/excelCreator";
-import {CsvCreator, Downloader, GridSerializer, XmlFactory, ZipContainer} from "@ag-grid-community/csv-export";
-import {CsvExportModule} from "@ag-grid-community/csv-export";
+import { Module, ModuleNames } from "@ag-grid-community/core";
+import { EnterpriseCoreModule } from "@ag-grid-enterprise/core";
+import { ExcelXlsxFactory } from "./excelExport/excelXlsxFactory";
+import { ExcelXmlFactory } from "./excelExport/excelXmlFactory";
+import { ExcelCreator } from "./excelExport/excelCreator";
+import { CsvCreator, Downloader, GridSerializer, XmlFactory, ZipContainer } from "@ag-grid-community/csv-export";
+import { CsvExportModule } from "@ag-grid-community/csv-export";
 
 export const ExcelExportModule: Module = {
     moduleName: ModuleNames.ExcelExportModule,

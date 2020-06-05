@@ -19,6 +19,9 @@ import {
     MarkerShape,
     HighlightOptions,
     AxisType,
+    NavigatorOptions,
+    NavigatorHandleOptions,
+    NavigatorMaskOptions,
 } from "./chartOptions";
 import { CartesianChart } from "./chart/cartesianChart";
 import { PolarChart } from "./chart/polarChart";
@@ -50,6 +53,9 @@ import { ChartAxis, ChartAxisPosition } from "./chart/chartAxis";
 import { convertToMap } from "./util/map";
 import { TimeAxis } from "./chart/axis/timeAxis";
 import { SourceEventListener } from "./util/observable";
+import { Navigator } from "./chart/navigator/navigator";
+import { NavigatorHandle } from "./chart/navigator/navigatorHandle";
+import { NavigatorMask } from "./chart/navigator/navigatorMask";
 
 export class ChartBuilder {
     private static createCartesianChart(container: HTMLElement, xAxis: ChartAxis, yAxis: ChartAxis, document?: Document): CartesianChart {
@@ -78,7 +84,7 @@ export class ChartBuilder {
             ChartBuilder.createAxis(options.yAxis, 'category'),
             options.document);
 
-        ChartBuilder.initChart(chart, options);
+        ChartBuilder.initCartesianChart(chart, options);
 
         if (options.series) {
             chart.series = options.series.map(s => ChartBuilder.initBarSeries(new BarSeries(), s));
@@ -95,7 +101,7 @@ export class ChartBuilder {
             options.document
         );
 
-        ChartBuilder.initChart(chart, options);
+        ChartBuilder.initCartesianChart(chart, options);
 
         if (options.series) {
             chart.series = options.series.map(s => ChartBuilder.initBarSeries(new BarSeries(), s));
@@ -111,7 +117,7 @@ export class ChartBuilder {
             ChartBuilder.createAxis(options.yAxis, 'number'),
             options.document);
 
-        ChartBuilder.initChart(chart, options);
+        ChartBuilder.initCartesianChart(chart, options);
 
         if (options.series) {
             chart.series = options.series.map(s => ChartBuilder.initBarSeries(new BarSeries(), s));
@@ -128,7 +134,7 @@ export class ChartBuilder {
             options.document
         );
 
-        ChartBuilder.initChart(chart, options);
+        ChartBuilder.initCartesianChart(chart, options);
 
         if (options.series) {
             chart.series = options.series.map(s => ChartBuilder.initBarSeries(new BarSeries(), s));
@@ -144,7 +150,7 @@ export class ChartBuilder {
             ChartBuilder.createAxis(options.yAxis, 'number'),
             options.document);
 
-        ChartBuilder.initChart(chart, options);
+        ChartBuilder.initCartesianChart(chart, options);
 
         if (options.series) {
             chart.series = options.series.map(s => ChartBuilder.initLineSeries(new LineSeries(), s));
@@ -161,7 +167,7 @@ export class ChartBuilder {
             options.document,
         );
 
-        ChartBuilder.initChart(chart, options);
+        ChartBuilder.initCartesianChart(chart, options);
 
         if (options.series) {
             chart.series = options.series.map(s => ChartBuilder.initLineSeries(new LineSeries(), s));
@@ -177,7 +183,7 @@ export class ChartBuilder {
             ChartBuilder.createAxis(options.yAxis, 'number'),
             options.document);
 
-        ChartBuilder.initChart(chart, options);
+        ChartBuilder.initCartesianChart(chart, options);
 
         if (options.series) {
             chart.series = options.series.map(s => ChartBuilder.initScatterSeries(new ScatterSeries(), s));
@@ -193,7 +199,7 @@ export class ChartBuilder {
             ChartBuilder.createAxis(options.yAxis, 'number'),
             options.document);
 
-        ChartBuilder.initChart(chart, options);
+        ChartBuilder.initCartesianChart(chart, options);
 
         if (options.series) {
             chart.series = options.series.map(s => ChartBuilder.initAreaSeries(new AreaSeries(), s));
@@ -210,7 +216,7 @@ export class ChartBuilder {
             options.document
         );
 
-        ChartBuilder.initChart(chart, options);
+        ChartBuilder.initCartesianChart(chart, options);
 
         if (options.series) {
             chart.series = options.series.map(s => ChartBuilder.initAreaSeries(new AreaSeries(), s));
@@ -228,7 +234,7 @@ export class ChartBuilder {
             options.document
         );
 
-        ChartBuilder.initChart(chart, options);
+        ChartBuilder.initCartesianChart(chart, options);
 
         return chart;
     }
@@ -272,6 +278,14 @@ export class ChartBuilder {
             default:
                 return null;
         }
+    }
+
+    static initCartesianChart<C extends CartesianChart, T extends SeriesOptions>(chart: C, options: CartesianChartOptions<T>): C {
+        if (options.navigator !== undefined) {
+            ChartBuilder.initNavigator(chart.navigator, options.navigator);
+        }
+
+        return this.initChart(chart, options);
     }
 
     static initChart<C extends Chart, T extends SeriesOptions>(chart: C, options: ChartOptions<T>): C {
@@ -645,6 +659,38 @@ export class ChartBuilder {
 
             this.setValueIfExists(legend, 'layoutHorizontalSpacing', item.paddingX);
             this.setValueIfExists(legend, 'layoutVerticalSpacing', item.paddingY);
+        }
+    }
+
+    static initNavigator(navigator: Navigator, options: NavigatorOptions): void {
+        this.setValueIfExists(navigator, 'enabled', options.enabled);
+        this.setValueIfExists(navigator, 'height', options.height);
+        this.setValueIfExists(navigator, 'min', options.min);
+        this.setValueIfExists(navigator, 'max', options.max);
+
+        this.initNavigatorMask(navigator.mask, options.mask);
+        this.initNavigatorHandle(navigator.minHandle, options.minHandle);
+        this.initNavigatorHandle(navigator.maxHandle, options.maxHandle);
+    }
+
+    static initNavigatorMask(mask: NavigatorMask, options: NavigatorMaskOptions): void {
+        if (options) {
+            this.setValueIfExists(mask, 'fill', options.fill);
+            this.setValueIfExists(mask, 'stroke', options.stroke);
+            this.setValueIfExists(mask, 'strokeWidth', options.strokeWidth);
+            this.setValueIfExists(mask, 'fillOpacity', options.fillOpacity);
+        }
+    }
+
+    static initNavigatorHandle(handle: NavigatorHandle, options: NavigatorHandleOptions): void {
+        if (options) {
+            this.setValueIfExists(handle, 'fill', options.fill);
+            this.setValueIfExists(handle, 'stroke', options.stroke);
+            this.setValueIfExists(handle, 'strokeWidth', options.strokeWidth);
+            this.setValueIfExists(handle, 'width', options.width);
+            this.setValueIfExists(handle, 'height', options.height);
+            this.setValueIfExists(handle, 'gripLineGap', options.gripLineGap);
+            this.setValueIfExists(handle, 'gripLineLength', options.gripLineLength);
         }
     }
 

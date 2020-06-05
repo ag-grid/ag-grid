@@ -48,17 +48,7 @@ var ToolPanelFilterGroupComp = /** @class */ (function (_super) {
             _this.filterGroupComp.addItem(filterComp);
             filterComp.addCssClassToTitleBar("ag-filter-toolpanel-group-level-" + (_this.depth + 1) + "-header");
         });
-        if (!this.isColumnGroup()) {
-            this.addTopLevelColumnGroupExpandListener();
-        }
-        else {
-            this.addDestroyableEventListener(this.filterGroupComp, 'expanded', function () {
-                _this.expandedCallback();
-            });
-            this.addDestroyableEventListener(this.filterGroupComp, 'collapsed', function () {
-                _this.expandedCallback();
-            });
-        }
+        this.addExpandCollapseListeners();
         this.addFilterChangedListeners();
     };
     ToolPanelFilterGroupComp.prototype.addCssClassToTitleBar = function (cssClass) {
@@ -95,20 +85,23 @@ var ToolPanelFilterGroupComp = /** @class */ (function (_super) {
     ToolPanelFilterGroupComp.prototype.hideGroup = function (hide) {
         core_1._.addOrRemoveCssClass(this.getGui(), 'ag-hidden', hide);
     };
-    ToolPanelFilterGroupComp.prototype.addTopLevelColumnGroupExpandListener = function () {
-        var _this = this;
-        this.addDestroyableEventListener(this.filterGroupComp, 'expanded', function () {
-            _this.childFilterComps.forEach(function (filterComp) {
-                // also need to refresh the virtual list on set filters as the filter may have been updated elsewhere
-                if (filterComp instanceof toolPanelFilterComp_1.ToolPanelFilterComp) {
-                    filterComp.expand();
-                    filterComp.refreshFilter();
-                }
-                else {
-                    filterComp.refreshFilters();
-                }
-            });
+    ToolPanelFilterGroupComp.prototype.forEachToolPanelFilterChild = function (action) {
+        core_1._.forEach(this.childFilterComps, function (filterComp) {
+            if (filterComp instanceof toolPanelFilterComp_1.ToolPanelFilterComp) {
+                action(filterComp);
+            }
         });
+    };
+    ToolPanelFilterGroupComp.prototype.addExpandCollapseListeners = function () {
+        var _this = this;
+        var expandListener = this.isColumnGroup() ?
+            function () { return _this.expandedCallback(); } :
+            function () { return _this.forEachToolPanelFilterChild(function (filterComp) { return filterComp.expand(); }); };
+        var collapseListener = this.isColumnGroup() ?
+            function () { return _this.expandedCallback(); } :
+            function () { return _this.forEachToolPanelFilterChild(function (filterComp) { return filterComp.collapse(); }); };
+        this.addManagedListener(this.filterGroupComp, core_1.AgGroupComponent.EVENT_EXPANDED, expandListener);
+        this.addManagedListener(this.filterGroupComp, core_1.AgGroupComponent.EVENT_COLLAPSED, collapseListener);
     };
     ToolPanelFilterGroupComp.prototype.addFilterChangedListeners = function () {
         var _this = this;
@@ -116,15 +109,15 @@ var ToolPanelFilterGroupComp = /** @class */ (function (_super) {
             var group_1 = this.columnGroup;
             var anyChildFiltersActive_1 = function () { return group_1.getLeafColumns().some(function (col) { return col.isFilterActive(); }); };
             group_1.getLeafColumns().forEach(function (column) {
-                _this.addDestroyableEventListener(column, core_1.Column.EVENT_FILTER_CHANGED, function () {
+                _this.addManagedListener(column, core_1.Column.EVENT_FILTER_CHANGED, function () {
                     core_1._.addOrRemoveCssClass(_this.filterGroupComp.getGui(), 'ag-has-filter', anyChildFiltersActive_1());
                 });
             });
         }
         else {
             var column_1 = this.columnGroup;
-            this.addDestroyableEventListener(this.eventService, core_1.Events.EVENT_FILTER_OPENED, this.onFilterOpened.bind(this));
-            this.addDestroyableEventListener(column_1, core_1.Column.EVENT_FILTER_CHANGED, function () {
+            this.addManagedListener(this.eventService, core_1.Events.EVENT_FILTER_OPENED, this.onFilterOpened.bind(this));
+            this.addManagedListener(column_1, core_1.Column.EVENT_FILTER_CHANGED, function () {
                 core_1._.addOrRemoveCssClass(_this.filterGroupComp.getGui(), 'ag-has-filter', column_1.isFilterActive());
             });
         }
@@ -161,21 +154,17 @@ var ToolPanelFilterGroupComp = /** @class */ (function (_super) {
         return this.columnController.getDisplayNameForColumn(column, 'header', false);
     };
     ToolPanelFilterGroupComp.prototype.destroyFilters = function () {
-        this.childFilterComps.forEach(function (filterComp) { return filterComp.destroy(); });
-        this.childFilterComps.length = 0;
+        this.childFilterComps = this.destroyBeans(this.childFilterComps);
         core_1._.clearElement(this.getGui());
     };
     ToolPanelFilterGroupComp.prototype.destroy = function () {
         this.destroyFilters();
         _super.prototype.destroy.call(this);
     };
-    ToolPanelFilterGroupComp.TEMPLATE = "<div class=\"ag-filter-toolpanel-group-wrapper\">\n            <ag-group-component ref=\"filterGroupComp\"></ag-group-component>\n         </div>";
+    ToolPanelFilterGroupComp.TEMPLATE = "<div class=\"ag-filter-toolpanel-group-wrapper\">\n            <ag-group-component ref=\"filterGroupComp\"></ag-group-component>\n        </div>";
     __decorate([
         core_1.RefSelector('filterGroupComp')
     ], ToolPanelFilterGroupComp.prototype, "filterGroupComp", void 0);
-    __decorate([
-        core_1.Autowired('eventService')
-    ], ToolPanelFilterGroupComp.prototype, "eventService", void 0);
     __decorate([
         core_1.Autowired('columnController')
     ], ToolPanelFilterGroupComp.prototype, "columnController", void 0);

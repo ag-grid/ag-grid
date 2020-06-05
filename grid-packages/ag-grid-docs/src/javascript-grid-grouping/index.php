@@ -8,14 +8,12 @@ include '../documentation-main/documentation_header.php';
 
 <h1 class="heading-enterprise">Row Grouping</h1>
 
+<?= videoSection("https://www.youtube.com/embed/gzqjP_kF4NI", "row-grouping-video", "Row Grouping Video Tutorial") ?>
+
 <p class="lead">
     This page shows how to group your rows. It starts off with Auto Column Groups, the simplest way to configure row
     groups and then builds up into more advanced topics for row grouping.<br>
 </p>
-
-<? enterprise_feature("Row Grouping"); ?>
-
-<?= videoSection("https://www.youtube.com/embed/gzqjP_kF4NI", "row-grouping-video", "Row Grouping Video Tutorial") ?>
 
 <h2 id="specifying-group-columns">Specifying Group Columns</h2>
 
@@ -490,7 +488,7 @@ SNIPPET
     </i>
 </p>
 
-<?= grid_example('Full Width Groups Rendering', 'full-width-groups-rendering', 'generated', ['enterprise' => true, 'exampleHeight' => 515, 'modules'=>['clientside', 'rowgrouping']]) ?>
+<?= grid_example('Full Width Groups Rendering', 'full-width-groups-rendering', 'generated', ['enterprise' => true, 'exampleHeight' => 515, 'modules' => ['clientside', 'rowgrouping'], 'extras' => ['fontawesome']]) ?>
 
 <h2 id="default-group-order">Default Group Order</h2>
 

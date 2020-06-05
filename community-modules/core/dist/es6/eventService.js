@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v23.1.1
+ * @version v23.2.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -26,7 +26,6 @@ var EventService = /** @class */ (function () {
         // using an object performs better than a Set for the number of different events we have
         this.firedEvents = {};
     }
-    EventService_1 = EventService;
     // because this class is used both inside the context and outside the context, we do not
     // use autowired attributes, as that would be confusing, as sometimes the attributes
     // would be wired, and sometimes not.
@@ -54,21 +53,12 @@ var EventService = /** @class */ (function () {
         return listeners;
     };
     EventService.prototype.addEventListener = function (eventType, listener, async) {
-        var _this = this;
         if (async === void 0) { async = false; }
         this.getListeners(eventType, async).add(listener);
-        return function () { return _this.removeEventListener(eventType, listener, async); };
     };
     EventService.prototype.removeEventListener = function (eventType, listener, async) {
         if (async === void 0) { async = false; }
         this.getListeners(eventType, async).delete(listener);
-    };
-    // for some events, it's important that the model gets to hear about them before the view,
-    // as the model may need to update before the view works on the info. if you register
-    // via this method, you get notified before the view parts
-    EventService.prototype.addModalPriorityEventListener = function (eventType, listener, async) {
-        if (async === void 0) { async = false; }
-        return this.addEventListener(eventType + EventService_1.PRIORITY, listener, async);
     };
     EventService.prototype.addGlobalListener = function (listener, async) {
         if (async === void 0) { async = false; }
@@ -99,8 +89,6 @@ var EventService = /** @class */ (function () {
                 listener(event);
             }
         }); };
-        // PRIORITY events should be processed first
-        processEventListeners(this.getListeners(eventType + EventService_1.PRIORITY, async));
         processEventListeners(this.getListeners(eventType, async));
         var globalListeners = async ? this.globalAsyncListeners : this.globalSyncListeners;
         globalListeners.forEach(function (listener) {
@@ -143,16 +131,12 @@ var EventService = /** @class */ (function () {
         // execute the queue
         queueCopy.forEach(function (func) { return func(); });
     };
-    var EventService_1;
-    // this is an old idea niall had, should really take it out, was to do with ordering who gets to process
-    // events first, to give model and service objects preference over the view
-    EventService.PRIORITY = '-P1';
     __decorate([
         __param(0, Qualifier('loggerFactory')),
         __param(1, Qualifier('gridOptionsWrapper')),
         __param(2, Qualifier('globalEventListener'))
     ], EventService.prototype, "setBeans", null);
-    EventService = EventService_1 = __decorate([
+    EventService = __decorate([
         Bean('eventService')
     ], EventService);
     return EventService;

@@ -1,9 +1,22 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v23.1.1
+ * @version v23.2.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = function (d, b) {
+        extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+        return extendStatics(d, b);
+    };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -33,14 +46,17 @@ import { DateFloatingFilter } from "../../filter/provided/date/dateFloatingFilte
 import { TextFilter } from "../../filter/provided/text/textFilter";
 import { NumberFloatingFilter } from "../../filter/provided/number/numberFloatingFilter";
 import { TextFloatingFilter } from "../../filter/provided/text/textFloatingFilter";
+import { BeanStub } from "../../context/beanStub";
 export var RegisteredComponentSource;
 (function (RegisteredComponentSource) {
     RegisteredComponentSource[RegisteredComponentSource["DEFAULT"] = 0] = "DEFAULT";
     RegisteredComponentSource[RegisteredComponentSource["REGISTERED"] = 1] = "REGISTERED";
 })(RegisteredComponentSource || (RegisteredComponentSource = {}));
-var UserComponentRegistry = /** @class */ (function () {
+var UserComponentRegistry = /** @class */ (function (_super) {
+    __extends(UserComponentRegistry, _super);
     function UserComponentRegistry() {
-        this.agGridDefaults = {
+        var _this = _super !== null && _super.apply(this, arguments) || this;
+        _this.agGridDefaults = {
             //date
             agDateInput: DefaultDateComponent,
             //header
@@ -73,7 +89,7 @@ var UserComponentRegistry = /** @class */ (function () {
             // tooltips
             agTooltipComponent: TooltipComponent
         };
-        this.agDeprecatedNames = {
+        _this.agDeprecatedNames = {
             set: {
                 newComponentName: 'agSetColumnFilter',
                 propertyHolder: 'filter'
@@ -127,8 +143,9 @@ var UserComponentRegistry = /** @class */ (function () {
                 propertyHolder: 'headerComponent'
             }
         };
-        this.jsComponents = {};
-        this.frameworkComponents = {};
+        _this.jsComponents = {};
+        _this.frameworkComponents = {};
+        return _this;
     }
     UserComponentRegistry.prototype.init = function () {
         var _this = this;
@@ -219,14 +236,11 @@ var UserComponentRegistry = /** @class */ (function () {
         Autowired('gridOptions')
     ], UserComponentRegistry.prototype, "gridOptions", void 0);
     __decorate([
-        Autowired('context')
-    ], UserComponentRegistry.prototype, "context", void 0);
-    __decorate([
         PostConstruct
     ], UserComponentRegistry.prototype, "init", null);
     UserComponentRegistry = __decorate([
         Bean('userComponentRegistry')
     ], UserComponentRegistry);
     return UserComponentRegistry;
-}());
+}(BeanStub));
 export { UserComponentRegistry };

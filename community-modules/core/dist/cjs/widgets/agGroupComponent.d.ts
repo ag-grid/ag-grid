@@ -1,4 +1,4 @@
-// Type definitions for @ag-grid-community/core v23.1.1
+// Type definitions for @ag-grid-community/core v23.2.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { Component } from "./component";
@@ -16,6 +16,8 @@ export interface AgGroupComponentParams {
     direction?: Direction;
 }
 export declare class AgGroupComponent extends Component {
+    static EVENT_EXPANDED: string;
+    static EVENT_COLLAPSED: string;
     private items;
     private title;
     private cssIdentifier;

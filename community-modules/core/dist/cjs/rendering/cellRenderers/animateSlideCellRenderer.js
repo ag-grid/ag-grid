@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v23.1.1
+ * @version v23.2.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -25,9 +25,9 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+var context_1 = require("../../context/context");
 var component_1 = require("../../widgets/component");
 var utils_1 = require("../../utils");
-var context_1 = require("../../context/context");
 var AnimateSlideCellRenderer = /** @class */ (function (_super) {
     __extends(AnimateSlideCellRenderer, _super);
     function AnimateSlideCellRenderer() {

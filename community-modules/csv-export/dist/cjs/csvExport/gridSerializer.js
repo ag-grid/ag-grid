@@ -1,4 +1,17 @@
 "use strict";
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = function (d, b) {
+        extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+        return extendStatics(d, b);
+    };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -93,8 +106,10 @@ var BaseGridSerializingSession = /** @class */ (function () {
     return BaseGridSerializingSession;
 }());
 exports.BaseGridSerializingSession = BaseGridSerializingSession;
-var GridSerializer = /** @class */ (function () {
+var GridSerializer = /** @class */ (function (_super) {
+    __extends(GridSerializer, _super);
     function GridSerializer() {
+        return _super !== null && _super.apply(this, arguments) || this;
     }
     GridSerializer.prototype.serialize = function (gridSerializingSession, params) {
         if (params === void 0) { params = {}; }
@@ -278,7 +293,7 @@ var GridSerializer = /** @class */ (function () {
         core_1.Bean("gridSerializer")
     ], GridSerializer);
     return GridSerializer;
-}());
+}(core_1.BeanStub));
 exports.GridSerializer = GridSerializer;
 var RowType;
 (function (RowType) {

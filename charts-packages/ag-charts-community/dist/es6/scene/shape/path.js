@@ -75,16 +75,22 @@ var Path = /** @class */ (function (_super) {
     };
     Path.prototype.updatePath = function () { };
     Path.prototype.render = function (ctx) {
+        var scene = this.scene;
         if (this.dirtyTransform) {
             this.computeTransformMatrix();
         }
-        // this.matrix.transformBBox(this.computeBBox()!).render(ctx);
+        // if (scene.debug.renderBoundingBoxes) {
+        //     const bbox = this.computeBBox();
+        //     if (bbox) {
+        //         this.matrix.transformBBox(bbox).render(ctx);
+        //     }
+        // }
         this.matrix.toContext(ctx);
         if (this.dirtyPath) {
             this.updatePath();
             this.dirtyPath = false;
         }
-        this.scene.appendPath(this.path);
+        scene.appendPath(this.path);
         this.fillStroke(ctx);
         this.dirty = false;
     };

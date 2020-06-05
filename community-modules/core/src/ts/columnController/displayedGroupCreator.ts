@@ -6,15 +6,15 @@ import { GroupInstanceIdCreator } from "./groupInstanceIdCreator";
 import { ColumnGroupChild } from "../entities/columnGroupChild";
 import { ColumnGroup } from "../entities/columnGroup";
 import { OriginalColumnGroup } from "../entities/originalColumnGroup";
-import { Bean, Context } from "../context/context";
+import { Bean } from "../context/context";
 import { _ } from "../utils";
+import { BeanStub } from "../context/beanStub";
 
 // takes in a list of columns, as specified by the column definitions, and returns column groups
 @Bean('displayedGroupCreator')
-export class DisplayedGroupCreator {
+export class DisplayedGroupCreator extends BeanStub {
 
     @Autowired('columnUtils') private columnUtils: ColumnUtils;
-    @Autowired('context') private context: Context;
 
     public createDisplayedGroups(
         // all displayed columns sorted - this is the columns the grid should show
@@ -24,7 +24,7 @@ export class DisplayedGroupCreator {
         // creates unique id's for the group
         groupInstanceIdCreator: GroupInstanceIdCreator,
         // whether it's left, right or center col
-        pinned: string | null,
+        pinned: 'left' | 'right' | null,
         // we try to reuse old groups if we can, to allow gui to do animation
         oldDisplayedGroups?: ColumnGroupChild[]): ColumnGroupChild[] {
 
@@ -88,7 +88,7 @@ export class DisplayedGroupCreator {
             originalGroup: OriginalColumnGroup,
             groupInstanceIdCreator: GroupInstanceIdCreator,
             oldColumnsMapped: {[key: string]: ColumnGroup},
-            pinned: string
+            pinned: 'left' | 'right'
         ): ColumnGroup {
 
         const groupId = originalGroup.getGroupId();
@@ -109,7 +109,7 @@ export class DisplayedGroupCreator {
             columnGroup.reset();
         } else {
             columnGroup = new ColumnGroup(originalGroup, groupId, instanceId, pinned);
-            this.context.wireBean(columnGroup);
+            this.context.createBean(columnGroup);
         }
 
         return columnGroup;

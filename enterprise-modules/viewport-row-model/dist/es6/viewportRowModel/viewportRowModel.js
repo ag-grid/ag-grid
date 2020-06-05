@@ -1,27 +1,40 @@
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = function (d, b) {
+        extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+        return extendStatics(d, b);
+    };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
-import { Bean, PostConstruct, Autowired, PreDestroy, RowNode, Constants, Events, _ } from "@ag-grid-community/core";
-var ViewportRowModel = /** @class */ (function () {
+import { _, Autowired, Bean, BeanStub, Constants, Events, PostConstruct, PreDestroy, RowNode } from "@ag-grid-community/core";
+var ViewportRowModel = /** @class */ (function (_super) {
+    __extends(ViewportRowModel, _super);
     function ViewportRowModel() {
+        var _this = _super !== null && _super.apply(this, arguments) || this;
         // rowRenderer tells us these
-        this.firstRow = -1;
-        this.lastRow = -1;
+        _this.firstRow = -1;
+        _this.lastRow = -1;
         // datasource tells us this
-        this.rowCount = -1;
-        this.rowNodesByIndex = {};
-        this.events = [];
+        _this.rowCount = -1;
+        _this.rowNodesByIndex = {};
+        return _this;
     }
     // we don't implement as lazy row heights is not supported in this row model
     ViewportRowModel.prototype.ensureRowHeightsValid = function (startPixel, endPixel, startLimitIndex, endLimitIndex) { return false; };
     ViewportRowModel.prototype.init = function () {
         this.rowHeight = this.gridOptionsWrapper.getRowHeightAsNumber();
-        this.events = [
-            this.eventService.addEventListener(Events.EVENT_VIEWPORT_CHANGED, this.onViewportChanged.bind(this))
-        ];
+        this.addManagedListener(this.eventService, Events.EVENT_VIEWPORT_CHANGED, this.onViewportChanged.bind(this));
     };
     ViewportRowModel.prototype.start = function () {
         if (this.gridOptionsWrapper.getViewportDatasource()) {
@@ -41,10 +54,6 @@ var ViewportRowModel = /** @class */ (function () {
         this.rowRenderer.datasourceChanged();
         this.firstRow = -1;
         this.lastRow = -1;
-        if (this.events.length) {
-            this.events.forEach(function (func) { return func(); });
-            this.events = [];
-        }
     };
     ViewportRowModel.prototype.calculateFirstRow = function (firstRenderedRow) {
         var bufferSize = this.gridOptionsWrapper.getViewportRowModelBufferSize();
@@ -200,7 +209,7 @@ var ViewportRowModel = /** @class */ (function () {
     };
     ViewportRowModel.prototype.createBlankRowNode = function (rowIndex) {
         var rowNode = new RowNode();
-        this.context.wireBean(rowNode);
+        this.createBean(rowNode);
         rowNode.setRowHeight(this.rowHeight);
         rowNode.setRowTop(this.rowHeight * rowIndex);
         rowNode.setRowIndex(rowIndex);
@@ -230,15 +239,6 @@ var ViewportRowModel = /** @class */ (function () {
         Autowired('gridOptionsWrapper')
     ], ViewportRowModel.prototype, "gridOptionsWrapper", void 0);
     __decorate([
-        Autowired('eventService')
-    ], ViewportRowModel.prototype, "eventService", void 0);
-    __decorate([
-        Autowired('selectionController')
-    ], ViewportRowModel.prototype, "selectionController", void 0);
-    __decorate([
-        Autowired('context')
-    ], ViewportRowModel.prototype, "context", void 0);
-    __decorate([
         Autowired('gridApi')
     ], ViewportRowModel.prototype, "gridApi", void 0);
     __decorate([
@@ -257,5 +257,5 @@ var ViewportRowModel = /** @class */ (function () {
         Bean('rowModel')
     ], ViewportRowModel);
     return ViewportRowModel;
-}());
+}(BeanStub));
 export { ViewportRowModel };

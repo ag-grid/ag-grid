@@ -21,7 +21,7 @@ import { _, Autowired, Component } from "@ag-grid-community/core";
 var RichSelectRow = /** @class */ (function (_super) {
     __extends(RichSelectRow, _super);
     function RichSelectRow(params) {
-        var _this = _super.call(this, '<div class="ag-rich-select-row"></div>') || this;
+        var _this = _super.call(this, /* html */ "<div class=\"ag-rich-select-row\"></div>") || this;
         _this.params = params;
         return _this;
     }
@@ -62,9 +62,9 @@ var RichSelectRow = /** @class */ (function (_super) {
         }
         if (cellRendererPromise) {
             cellRendererPromise.then(function (childComponent) {
-                if (childComponent && childComponent.destroy) {
-                    _this.addDestroyFunc(childComponent.destroy.bind(childComponent));
-                }
+                _this.addDestroyFunc(function () {
+                    _this.getContext().destroyBean(childComponent);
+                });
             });
             return true;
         }

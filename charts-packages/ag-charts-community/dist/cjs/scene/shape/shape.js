@@ -166,6 +166,22 @@ var Shape = /** @class */ (function (_super) {
         enumerable: true,
         configurable: true
     });
+    Object.defineProperty(Shape.prototype, "alignment", {
+        // An offset value to align to the pixel grid.
+        get: function () {
+            return Math.floor(this.strokeWidth) % 2 / 2;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    // Returns the aligned `start` or `length` value.
+    // For example: `start` could be `y` and `length` could be `height` of a rectangle.
+    Shape.prototype.align = function (alignment, start, length) {
+        if (length != undefined) {
+            return Math.floor(length) + Math.floor(start % 1 + length % 1);
+        }
+        return Math.floor(start) + alignment;
+    };
     Object.defineProperty(Shape.prototype, "lineDash", {
         get: function () {
             return this._lineDash;
@@ -330,7 +346,7 @@ var Shape = /** @class */ (function (_super) {
             ctx.stroke();
         }
     };
-    Shape.prototype.isPointInNode = function (x, y) {
+    Shape.prototype.containsPoint = function (x, y) {
         return this.isPointInPath(x, y);
     };
     /**

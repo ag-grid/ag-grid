@@ -7,6 +7,7 @@ function FakeServer(allData) {
     return {
         getData: function(request) {
             var result = executeQuery(request);
+
             return {
                 success: true,
                 rows: result,
@@ -23,13 +24,20 @@ function FakeServer(allData) {
         // 'alasql' only supports pivoting on a single value column, to workaround this limitation we need to perform
         // separate queries for each value column and combine the results
         var results = [];
+
         request.valueCols.forEach(function(valueCol) {
-            var pivotResult = executePivotQuery(request, pivotCol, valueCol);
+            var pivotResults = executePivotQuery(request, pivotCol, valueCol);
 
             // merge each row into existing results
-            for (var i = 0; i < pivotResult.length; i++) {
-                var existing = results[i] ? results[i] : {};
-                results[i] = Object.assign(existing, pivotResult[i]);
+            for (var i = 0; i < pivotResults.length; i++) {
+                var pivotResult = pivotResults[i];
+                var result = results[i] || {};
+
+                Object.keys(pivotResult).forEach(function(key) {
+                    result[key] = pivotResult[key];
+                });
+
+                results[i] = result;
             }
         });
 
@@ -39,9 +47,9 @@ function FakeServer(allData) {
     function executePivotQuery(request, pivotCol, valueCol) {
         var groupKeys = request.groupKeys;
         var groupsToUse = request.rowGroupCols.slice(groupKeys.length, groupKeys.length + 1);
-        var selectGroupCols = groupsToUse.map(function(groupCol) { return groupCol.id; }).join(", ");
+        var selectGroupCols = groupsToUse.map(function(groupCol) { return groupCol.id; }).join(', ');
 
-        var SQL_TEMPLATE = 'SELECT {0}, ({1} + "_{2}") AS {1}, {2} FROM ? PIVOT (SUM([{2}]) FOR {1})';
+        var SQL_TEMPLATE = "SELECT {0}, ({1} + '_{2}') AS {1}, {2} FROM ? PIVOT (SUM([{2}]) FOR {1})";
         var SQL = interpolate(SQL_TEMPLATE, [selectGroupCols, pivotCol.id, valueCol.id]) + whereSql(request);
 
         console.log('[FakeServer] - about to execute query:', SQL);
@@ -55,41 +63,48 @@ function FakeServer(allData) {
     function whereSql(request) {
         var rowGroups = request.rowGroupCols;
         var groupKeys = request.groupKeys;
+        var whereParts = [];
 
-        var whereClause = '';
         if (groupKeys) {
-            for (var i = 0; i < groupKeys.length; i++) {
-                whereClause += (i === 0) ? ' WHERE ' : ' AND ';
-                var value = typeof groupKeys[i] === 'string' ? ' = "' + groupKeys[i] + '"' : ' = ' + groupKeys[i];
-                whereClause += rowGroups[i].id + value;
-            }
+            groupKeys.forEach(function(key, i) {
+                var value = typeof key === 'string' ? "'" + key + "'" : key;
+
+                whereParts.push(rowGroups[i].id + ' = ' + value);
+            });
         }
-        return whereClause;
+
+        if (whereParts.length > 0) {
+            return ' WHERE ' + whereParts.join(' AND ');
+        }
+
+        return '';
     }
 
     function extractRowsForBlock(request, results) {
         var blockSize = request.endRow - request.startRow + 1;
+
         return results.slice(request.startRow, request.startRow + blockSize);
     }
 
     function getPivotFields(request) {
         var pivotCol = request.pivotCols[0];
+        var template = "SELECT DISTINCT ({0} + '_{1}') AS {0} FROM ? ORDER BY {0}";
 
         var result = flatten(request.valueCols.map(function(valueCol) {
-            var SQL_TEMPLATE = 'SELECT DISTINCT ({0} + "_{1}") AS {0} FROM ? ORDER BY {0}';
             var args = [pivotCol.id, valueCol.id];
-            var SQL = interpolate(SQL_TEMPLATE, args);
-            return alasql(SQL, [allData]);
+            var sql = interpolate(template, args);
+
+            return alasql(sql, [allData]);
         }));
 
-        return flatten(result.map(Object.values));
+        return flatten(result.map(function(x) { return x[pivotCol.id]; }));
     }
 
     function getLastRowIndex(request, results) {
-        if (!results || results.length === 0) {
-            return -1;
-        }
+        if (!results || results.length === 0) { return null; }
+
         var currentLastRow = request.startRow + results.length;
+
         return currentLastRow <= request.endRow ? currentLastRow : -1;
     }
 }

@@ -1,10 +1,10 @@
-// Type definitions for @ag-grid-community/core v23.1.1
+// Type definitions for @ag-grid-community/core v23.2.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { RowNode } from "./entities/rowNode";
+import { BeanStub } from "./context/beanStub";
 import { ChangedPath } from "./utils/changedPath";
-export declare class SelectionController {
-    private eventService;
+export declare class SelectionController extends BeanStub {
     private rowModel;
     private gridOptionsWrapper;
     private columnApi;
@@ -13,10 +13,8 @@ export declare class SelectionController {
     private logger;
     private lastSelectedNode;
     private groupSelectsChildren;
-    private events;
     private setBeans;
-    init(): void;
-    destroy(): void;
+    private init;
     setLastSelectedNode(rowNode: RowNode): void;
     getLastSelectedNode(): RowNode | null;
     getSelectedNodes(): RowNode[];

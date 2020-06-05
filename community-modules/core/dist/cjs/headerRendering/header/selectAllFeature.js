@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v23.1.1
+ * @version v23.2.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -44,10 +44,10 @@ var SelectAllFeature = /** @class */ (function (_super) {
     }
     SelectAllFeature.prototype.postConstruct = function () {
         this.showOrHideSelectAll();
-        this.addDestroyableEventListener(this.eventService, events_1.Events.EVENT_DISPLAYED_COLUMNS_CHANGED, this.showOrHideSelectAll.bind(this));
-        this.addDestroyableEventListener(this.eventService, events_1.Events.EVENT_SELECTION_CHANGED, this.onSelectionChanged.bind(this));
-        this.addDestroyableEventListener(this.eventService, events_1.Events.EVENT_MODEL_UPDATED, this.onModelChanged.bind(this));
-        this.addDestroyableEventListener(this.cbSelectAll, agCheckbox_1.AgCheckbox.EVENT_CHANGED, this.onCbSelectAll.bind(this));
+        this.addManagedListener(this.eventService, events_1.Events.EVENT_DISPLAYED_COLUMNS_CHANGED, this.showOrHideSelectAll.bind(this));
+        this.addManagedListener(this.eventService, events_1.Events.EVENT_SELECTION_CHANGED, this.onSelectionChanged.bind(this));
+        this.addManagedListener(this.eventService, events_1.Events.EVENT_MODEL_UPDATED, this.onModelChanged.bind(this));
+        this.addManagedListener(this.cbSelectAll, agCheckbox_1.AgCheckbox.EVENT_CHANGED, this.onCbSelectAll.bind(this));
     };
     SelectAllFeature.prototype.showOrHideSelectAll = function () {
         this.cbSelectAllVisible = this.isCheckboxSelection();
@@ -183,9 +183,6 @@ var SelectAllFeature = /** @class */ (function (_super) {
     __decorate([
         context_1.Autowired('columnApi')
     ], SelectAllFeature.prototype, "columnApi", void 0);
-    __decorate([
-        context_1.Autowired('eventService')
-    ], SelectAllFeature.prototype, "eventService", void 0);
     __decorate([
         context_1.Autowired('rowModel')
     ], SelectAllFeature.prototype, "rowModel", void 0);

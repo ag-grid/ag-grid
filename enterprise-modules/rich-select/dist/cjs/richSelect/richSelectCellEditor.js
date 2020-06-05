@@ -38,7 +38,7 @@ var RichSelectCellEditor = /** @class */ (function (_super) {
         core_1._.addCssClass(icon, 'ag-rich-select-value-icon');
         this.eValue.appendChild(icon);
         this.virtualList = new core_1.VirtualList('rich-select');
-        this.getContext().wireBean(this.virtualList);
+        this.getContext().createBean(this.virtualList);
         this.virtualList.setComponentCreator(this.createRowComponent.bind(this));
         this.eList.appendChild(this.virtualList.getGui());
         if (core_1._.exists(this.params.cellHeight)) {
@@ -56,8 +56,8 @@ var RichSelectCellEditor = /** @class */ (function (_super) {
         });
         this.addGuiEventListener('keydown', this.onKeyDown.bind(this));
         var virtualListGui = this.virtualList.getGui();
-        this.addDestroyableEventListener(virtualListGui, 'click', this.onClick.bind(this));
-        this.addDestroyableEventListener(virtualListGui, 'mousemove', this.onMouseMove.bind(this));
+        this.addManagedListener(virtualListGui, 'click', this.onClick.bind(this));
+        this.addManagedListener(virtualListGui, 'mousemove', this.onMouseMove.bind(this));
         this.clearSearchString = core_1._.debounce(this.clearSearchString, 300);
         if (core_1._.exists(params.charPress)) {
             this.searchText(params.charPress);
@@ -143,9 +143,7 @@ var RichSelectCellEditor = /** @class */ (function (_super) {
         }
         if (promise) {
             promise.then(function (renderer) {
-                if (renderer && renderer.destroy) {
-                    _this.addDestroyFunc(function () { return renderer.destroy(); });
-                }
+                _this.addDestroyFunc(function () { return _this.getContext().destroyBean(renderer); });
             });
         }
         else {
@@ -171,7 +169,7 @@ var RichSelectCellEditor = /** @class */ (function (_super) {
     RichSelectCellEditor.prototype.createRowComponent = function (value) {
         var valueFormatted = this.params.formatValue(value);
         var row = new richSelectRow_1.RichSelectRow(this.params);
-        this.getContext().wireBean(row);
+        this.getContext().createBean(row);
         row.setState(value, valueFormatted, value === this.selectedValue);
         return row;
     };
@@ -213,7 +211,7 @@ var RichSelectCellEditor = /** @class */ (function (_super) {
         return this.selectionConfirmed ? this.selectedValue : this.originalSelectedValue;
     };
     // tab index is needed so we can focus, which is needed for keyboard events
-    RichSelectCellEditor.TEMPLATE = "<div class=\"ag-rich-select\" tabindex=\"0\">\n            <div ref=\"eValue\" class=\"ag-rich-select-value\"></div>\n            <div ref=\"eList\" class=\"ag-rich-select-list\"></div>\n        </div>";
+    RichSelectCellEditor.TEMPLATE = "<div class=\"ag-rich-select\" tabindex=\"-1\">\n            <div ref=\"eValue\" class=\"ag-rich-select-value\"></div>\n            <div ref=\"eList\" class=\"ag-rich-select-list\"></div>\n        </div>";
     __decorate([
         core_1.Autowired('userComponentFactory')
     ], RichSelectCellEditor.prototype, "userComponentFactory", void 0);

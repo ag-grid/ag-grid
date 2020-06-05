@@ -4,7 +4,6 @@ export declare class InfiniteRowModel extends BeanStub implements IInfiniteRowMo
     private filterManager;
     private sortController;
     private selectionController;
-    private eventService;
     private gridApi;
     private columnApi;
     private rowRenderer;

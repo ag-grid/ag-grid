@@ -19,5 +19,5 @@ export declare class BarSeriesPanel extends Component {
     private initShadowPanel;
     private destroyActivePanels;
     private getChartProxy;
-    destroy(): void;
+    protected destroy(): void;
 }

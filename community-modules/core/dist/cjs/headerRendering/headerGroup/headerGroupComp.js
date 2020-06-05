@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v23.1.1
+ * @version v23.2.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -36,6 +36,11 @@ var HeaderGroupComp = /** @class */ (function (_super) {
     function HeaderGroupComp() {
         return _super.call(this, HeaderGroupComp.TEMPLATE) || this;
     }
+    // this is a user component, and IComponent has "public destroy()" as part of the interface.
+    // so we need to override destroy() just to make the method public.
+    HeaderGroupComp.prototype.destroy = function () {
+        _super.prototype.destroy.call(this);
+    };
     HeaderGroupComp.prototype.init = function (params) {
         this.params = params;
         this.setupLabel();
@@ -63,19 +68,19 @@ var HeaderGroupComp = /** @class */ (function (_super) {
         // then close again straight away. if we also listened to double click, then the group would open,
         // close, then open, which is not what we want. double click should only action if the user double
         // clicks outside of the icons.
-        this.addDestroyableEventListener(this.eCloseIcon, "dblclick", stopPropagationAction);
-        this.addDestroyableEventListener(this.eOpenIcon, "dblclick", stopPropagationAction);
-        this.addDestroyableEventListener(this.getGui(), "dblclick", expandAction);
+        this.addManagedListener(this.eCloseIcon, "dblclick", stopPropagationAction);
+        this.addManagedListener(this.eOpenIcon, "dblclick", stopPropagationAction);
+        this.addManagedListener(this.getGui(), "dblclick", expandAction);
         this.updateIconVisibility();
         var originalColumnGroup = this.params.columnGroup.getOriginalColumnGroup();
-        this.addDestroyableEventListener(originalColumnGroup, originalColumnGroup_1.OriginalColumnGroup.EVENT_EXPANDED_CHANGED, this.updateIconVisibility.bind(this));
-        this.addDestroyableEventListener(originalColumnGroup, originalColumnGroup_1.OriginalColumnGroup.EVENT_EXPANDABLE_CHANGED, this.updateIconVisibility.bind(this));
+        this.addManagedListener(originalColumnGroup, originalColumnGroup_1.OriginalColumnGroup.EVENT_EXPANDED_CHANGED, this.updateIconVisibility.bind(this));
+        this.addManagedListener(originalColumnGroup, originalColumnGroup_1.OriginalColumnGroup.EVENT_EXPANDABLE_CHANGED, this.updateIconVisibility.bind(this));
     };
     HeaderGroupComp.prototype.addTouchAndClickListeners = function (eElement, action) {
         var touchListener = new touchListener_1.TouchListener(eElement);
-        this.addDestroyableEventListener(touchListener, touchListener_1.TouchListener.EVENT_TAP, action);
+        this.addManagedListener(touchListener, touchListener_1.TouchListener.EVENT_TAP, action);
         this.addDestroyFunc(function () { return touchListener.destroy(); });
-        this.addDestroyableEventListener(eElement, "click", action);
+        this.addManagedListener(eElement, "click", action);
     };
     HeaderGroupComp.prototype.updateIconVisibility = function () {
         var columnGroup = this.params.columnGroup;
@@ -108,11 +113,7 @@ var HeaderGroupComp = /** @class */ (function (_super) {
             this.getRefElement("agLabel").innerHTML = displayNameSanitised;
         }
     };
-    HeaderGroupComp.TEMPLATE = "<div class=\"ag-header-group-cell-label\" ref=\"agContainer\" role=\"presentation\">" +
-        "<span ref=\"agLabel\" class=\"ag-header-group-text\" role=\"columnheader\"></span>" +
-        "<span ref=\"agOpened\" class=\"ag-header-icon ag-header-expand-icon ag-header-expand-icon-expanded\"></span>" +
-        "<span ref=\"agClosed\" class=\"ag-header-icon ag-header-expand-icon ag-header-expand-icon-collapsed\"></span>" +
-        "</div>";
+    HeaderGroupComp.TEMPLATE = "<div class=\"ag-header-group-cell-label\" ref=\"agContainer\" role=\"presentation\">\n            <span ref=\"agLabel\" class=\"ag-header-group-text\" role=\"columnheader\"></span>\n            <span ref=\"agOpened\" class=\"ag-header-icon ag-header-expand-icon ag-header-expand-icon-expanded\"></span>\n            <span ref=\"agClosed\" class=\"ag-header-icon ag-header-expand-icon ag-header-expand-icon-collapsed\"></span>\n        </div>";
     __decorate([
         context_1.Autowired("columnController")
     ], HeaderGroupComp.prototype, "columnController", void 0);

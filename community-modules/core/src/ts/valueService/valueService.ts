@@ -9,14 +9,14 @@ import { CellValueChangedEvent, Events } from "../events";
 import { EventService } from "../eventService";
 import { ValueCache } from "./valueCache";
 import { _ } from "../utils";
+import { BeanStub } from "../context/beanStub";
 
 @Bean('valueService')
-export class ValueService {
+export class ValueService extends BeanStub {
 
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('expressionService') private expressionService: ExpressionService;
     @Autowired('columnController') private columnController: ColumnController;
-    @Autowired('eventService') private eventService: EventService;
     @Autowired('valueCache') private valueCache: ValueCache;
 
     private cellExpressions: boolean;

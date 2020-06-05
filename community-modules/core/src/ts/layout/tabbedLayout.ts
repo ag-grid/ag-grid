@@ -1,13 +1,9 @@
 import { Promise, _ } from '../utils';
 import { RefSelector } from '../widgets/componentAnnotations';
-import { PostConstruct, Autowired } from '../context/context';
 import { Constants } from '../constants';
-import { FocusController } from '../focusController';
-import { ManagedTabComponent } from '../widgets/managedTabComponent';
+import { ManagedFocusComponent } from '../widgets/managedFocusComponent';
 
-export class TabbedLayout extends ManagedTabComponent {
-
-    @Autowired('focusController') private focusController: FocusController;
+export class TabbedLayout extends ManagedFocusComponent {
 
     @RefSelector('eHeader') private eHeader: HTMLElement;
     @RefSelector('eBody') private eBody: HTMLElement;
@@ -26,12 +22,14 @@ export class TabbedLayout extends ManagedTabComponent {
         }
     }
 
-    @PostConstruct
-    public init(): void {
-        this.addDestroyableEventListener(this.getGui(), 'keydown', this.handleKeyDown.bind(this));
+    private static getTemplate(cssClass?: string) {
+        return /* html */ `<div class="ag-tabs ${cssClass}">
+            <div ref="eHeader" class="ag-tabs-header ${cssClass ? `${cssClass}-header` : ''}"></div>
+            <div ref="eBody" class="ag-tabs-body ${cssClass ? `${cssClass}-body` : ''}"></div>
+        </div>`;
     }
 
-    private handleKeyDown(e: KeyboardEvent): void {
+    protected handleKeyDown(e: KeyboardEvent): void {
         switch (e.keyCode) {
             case Constants.KEY_RIGHT:
             case Constants.KEY_LEFT:
@@ -54,35 +52,34 @@ export class TabbedLayout extends ManagedTabComponent {
     }
 
     protected onTabKeyDown(e: KeyboardEvent) {
-        super.onTabKeyDown(e);
+        const { focusController, eHeader, eBody, activeItem } = this;
 
-        const focusableItems = this.focusController.findFocusableElements(this.eBody, '.ag-set-filter-list *, .ag-menu-list *');
         const activeElement = document.activeElement as HTMLElement;
+        const focusInHeader = eHeader.contains(activeElement);
 
-        if (this.eHeader.contains(activeElement)) {
-            if (focusableItems.length) {
-                focusableItems[e.shiftKey ? focusableItems.length - 1 : 0].focus();
+        e.preventDefault();
+
+        if (focusInHeader) {
+            if (e.shiftKey) {
+                focusController.focusLastFocusableElement(eBody);
+            } else {
+                focusController.focusFirstFocusableElement(eBody);
             }
         } else {
-            const focusedPosition = focusableItems.indexOf(activeElement);
-            const nextPosition = e.shiftKey ? focusedPosition - 1 : focusedPosition + 1;
+            const isFocusManaged = focusController.isFocusUnderManagedComponent(eBody);
 
-            if (nextPosition < 0 || nextPosition >= focusableItems.length) {
-                this.activeItem.eHeaderButton.focus();
-                return;
+            if (isFocusManaged) {
+                activeItem.eHeaderButton.focus();
+            } else {
+                const nextEl = focusController.findNextFocusableElement(eBody, false, e.shiftKey);
+
+                if (nextEl) {
+                    nextEl.focus();
+                } else {
+                    activeItem.eHeaderButton.focus();
+                }
             }
-
-            const nextItem = focusableItems[nextPosition];
-
-            if (nextItem) { nextItem.focus(); }
         }
-    }
-
-    private static getTemplate(cssClass?: string) {
-        return `<div class="ag-tabs ${cssClass}">
-            <div ref="eHeader" class="ag-tabs-header ${cssClass ? `${cssClass}-header` : ''}"></div>
-            <div ref="eBody" class="ag-tabs-body ${cssClass ? `${cssClass}-body` : ''}"></div>
-        </div>`;
     }
 
     public setAfterAttachedParams(params: any): void {
@@ -136,6 +133,7 @@ export class TabbedLayout extends ManagedTabComponent {
         eHeaderButton.appendChild(item.title);
         _.addCssClass(eHeaderButton, 'ag-tab');
         this.eHeader.appendChild(eHeaderButton);
+        eHeaderButton.setAttribute('aria-label', item.titleLabel);
 
         const wrapper: TabbedItemWrapper = {
             tabbedItem: item,
@@ -168,7 +166,9 @@ export class TabbedLayout extends ManagedTabComponent {
         _.clearElement(this.eBody);
         wrapper.tabbedItem.bodyPromise.then(body => {
             this.eBody.appendChild(body);
-            body.focus();
+            const onlyUnmanaged = !this.focusController.isKeyboardFocus();
+
+            this.focusController.focusFirstFocusableElement(this.eBody, onlyUnmanaged);
         });
 
         if (this.activeItem) {
@@ -193,6 +193,7 @@ export interface TabbedLayoutParams {
 
 export interface TabbedItem {
     title: Element;
+    titleLabel: string;
     bodyPromise: Promise<HTMLElement>;
     name: string;
     afterAttachedCallback?: Function;

@@ -20,6 +20,7 @@ GroupRowInnerRenderer.prototype.refreshGui = function() {
     var flagCode = this.params.flagCodes[this.params.node.key];
 
     var html = '';
+
     if (flagCode) {
         html += '<img class="flag" border="0" width="20" height="15" src="https://flags.fmcdn.net/data/flags/mini/' + flagCode + '.png">';
     }
@@ -27,10 +28,15 @@ GroupRowInnerRenderer.prototype.refreshGui = function() {
     var node = this.params.node;
     var aggData = node.aggData;
 
-    html += '<span class="groupTitle"> COUNTRY_NAME</span>'.replace('COUNTRY_NAME', node.key);
-    html += '<span class="medal gold"> Gold: GOLD_COUNT</span>'.replace('GOLD_COUNT', aggData.gold);
-    html += '<span class="medal silver"> Silver: SILVER_COUNT</span>'.replace('SILVER_COUNT', aggData.silver);
-    html += '<span class="medal bronze"> Bronze: BRONZE_COUNT</span>'.replace('BRONZE_COUNT', aggData.bronze);
+    html += '<span class="groupTitle">COUNTRY_NAME</span>';
+    html += '<span class="medal gold" aria-label="COUNTRY_NAME - GOLD_COUNT gold medals"><i class="fas fa-medal"></i>GOLD_COUNT</span>';
+    html += '<span class="medal silver" aria-label="COUNTRY_NAME - SILVER_COUNT silver medals"><i class="fas fa-medal"></i>SILVER_COUNT</span>';
+    html += '<span class="medal bronze" aria-label="COUNTRY_NAME - BRONZE_COUNT bronze medals"><i class="fas fa-medal"></i>BRONZE_COUNT</span>';
+
+    html = html.replace(/COUNTRY_NAME/g, node.key)
+        .replace(/GOLD_COUNT/g, aggData.gold)
+        .replace(/SILVER_COUNT/g, aggData.silver)
+        .replace(/BRONZE_COUNT/g, aggData.bronze);
 
     this.eGui.innerHTML = html;
 };

@@ -20,6 +20,14 @@
         color: $ag-icon-color;
     }
 
+    .ag-icon-tree-closed::before {
+        content: map-get($ag-theme-base-icons-font-codes, "contracted");
+    }
+    
+    .ag-icon-tree-open::before {
+        content: map-get($ag-theme-base-icons-font-codes, "expanded"); 
+    }
+
     @if $header-background-image {
         .ag-header, .ag-column-drop-cell {
             background-image: $header-background-image;

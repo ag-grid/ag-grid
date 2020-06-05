@@ -1,14 +1,13 @@
-import { AbstractColDef, Component, ToolPanelColumnCompParams } from "@ag-grid-community/core";
+import { AbstractColDef, Component, ToolPanelColumnCompParams, ManagedFocusComponent } from "@ag-grid-community/core";
 import { BaseColumnItem } from "./primaryColsPanel";
 export declare type ColumnItem = BaseColumnItem & Component;
 export declare type ColumnFilterResults = {
     [id: string]: boolean;
 };
-export declare class PrimaryColsListPanel extends Component {
+export declare class PrimaryColsListPanel extends ManagedFocusComponent {
     static TEMPLATE: string;
     private columnController;
     private colDefService;
-    private eventService;
     private columnApi;
     private columnTree;
     private allowDragging;
@@ -20,6 +19,8 @@ export declare class PrimaryColsListPanel extends Component {
     private columnComps;
     constructor();
     init(params: ToolPanelColumnCompParams, allowDragging: boolean): void;
+    protected handleKeyDown(e: KeyboardEvent): void;
+    private nagivateToNextItem;
     onColumnsChanged(): void;
     syncColumnLayout(): void;
     setColumnLayout(colDefs: AbstractColDef[]): void;
@@ -42,5 +43,5 @@ export declare class PrimaryColsListPanel extends Component {
     private fireGroupExpandedEvent;
     private fireSelectionChangedEvent;
     private destroyColumnComps;
-    destroy(): void;
+    protected destroy(): void;
 }

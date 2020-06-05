@@ -1,9 +1,9 @@
-import { _, Autowired, Bean, PreConstruct } from '@ag-grid-community/core';
+import { _, Autowired, Bean, BeanStub, PreConstruct } from '@ag-grid-community/core';
 import { MD5 } from './license/md5';
 
 @Bean('licenseManager')
-export class LicenseManager {
-    private static RELEASE_INFORMATION: string = 'MTU4OTM3NDAxNzU0Ng==';
+export class LicenseManager extends BeanStub {
+    private static RELEASE_INFORMATION: string = 'MTU5MTEyOTU2NjcyNg==';
     private static licenseKey: string;
     private watermarkMessage: string | undefined = undefined;
 

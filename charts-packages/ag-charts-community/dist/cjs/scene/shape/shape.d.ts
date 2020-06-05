@@ -49,11 +49,11 @@ export declare abstract class Shape extends Node {
      * Restores the base class default styles that have been overridden by this subclass.
      */
     protected restoreOverriddenStyles(): void;
-    private _fillOpacity;
+    protected _fillOpacity: number;
     fillOpacity: number;
-    private _strokeOpacity;
+    protected _strokeOpacity: number;
     strokeOpacity: number;
-    private _fill;
+    protected _fill: string | undefined;
     fill: string | undefined;
     /**
      * Note that `strokeStyle = null` means invisible stroke,
@@ -65,27 +65,29 @@ export declare abstract class Shape extends Node {
      * The preferred way of making the stroke invisible is setting the `lineWidth` to zero,
      * unless specific looks that is achieved by having an invisible stroke is desired.
      */
-    private _stroke;
+    protected _stroke: string | undefined;
     stroke: string | undefined;
     protected _strokeWidth: number;
     strokeWidth: number;
-    private _lineDash;
+    readonly alignment: number;
+    align(alignment: number, start: number, length?: number): number;
+    protected _lineDash: number[] | undefined;
     lineDash: number[] | undefined;
-    private _lineDashOffset;
+    protected _lineDashOffset: number;
     lineDashOffset: number;
-    private _lineCap;
+    protected _lineCap: ShapeLineCap;
     lineCap: ShapeLineCap;
-    private _lineJoin;
+    protected _lineJoin: ShapeLineJoin;
     lineJoin: ShapeLineJoin;
-    private _opacity;
+    protected _opacity: number;
     opacity: number;
     private readonly onShadowChange;
-    private _fillShadow;
+    protected _fillShadow: DropShadow | undefined;
     fillShadow: DropShadow | undefined;
-    private _strokeShadow;
+    protected _strokeShadow: DropShadow | undefined;
     strokeShadow: DropShadow | undefined;
     protected fillStroke(ctx: CanvasRenderingContext2D): void;
-    isPointInNode(x: number, y: number): boolean;
+    containsPoint(x: number, y: number): boolean;
     abstract isPointInPath(x: number, y: number): boolean;
     abstract isPointInStroke(x: number, y: number): boolean;
 }

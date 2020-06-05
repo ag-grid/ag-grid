@@ -1,4 +1,4 @@
-// Type definitions for @ag-grid-community/core v23.1.1
+// Type definitions for @ag-grid-community/core v23.2.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { Column } from "../entities/column";
@@ -33,9 +33,15 @@ export interface IRangeController {
 }
 export interface ISelectionHandle {
     getGui(): HTMLElement;
-    destroy(): void;
-    getType(): string;
+    getType(): SelectionHandleType;
     refresh(cellComp: CellComp): void;
+}
+export interface ISelectionHandleFactory {
+    createSelectionHandle(type: SelectionHandleType): ISelectionHandle;
+}
+export declare enum SelectionHandleType {
+    FILL = 0,
+    RANGE = 1
 }
 export declare enum CellRangeType {
     VALUE = 0,

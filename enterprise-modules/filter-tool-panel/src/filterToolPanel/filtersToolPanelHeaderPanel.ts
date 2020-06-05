@@ -4,14 +4,13 @@ import {
     ColumnController,
     Component,
     Events,
-    EventService,
     GridOptionsWrapper,
     PostConstruct,
     PreConstruct,
     RefSelector,
     AgInputTextField
 } from "@ag-grid-community/core";
-import {ToolPanelFiltersCompParams} from "./filtersToolPanel";
+import { ToolPanelFiltersCompParams } from "./filtersToolPanel";
 
 export enum EXPAND_STATE { EXPANDED, COLLAPSED, INDETERMINATE }
 
@@ -19,7 +18,6 @@ export class FiltersToolPanelHeaderPanel extends Component {
 
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('columnController') private columnController: ColumnController;
-    @Autowired('eventService') private eventService: EventService;
 
     @RefSelector('eExpand') private eExpand: HTMLElement;
     @RefSelector('eFilterTextField') private eSearchTextField: AgInputTextField;
@@ -36,11 +34,12 @@ export class FiltersToolPanelHeaderPanel extends Component {
 
     @PreConstruct
     private preConstruct(): void {
-        this.setTemplate(
-        `<div class="ag-filter-toolpanel-search" role="presentation">
-            <div ref="eExpand" class="ag-filter-toolpanel-expand"></div>
-            <ag-input-text-field ref="eFilterTextField" class="ag-filter-toolpanel-search-input"></ag-input-text-field>
-        </div>`);
+        this.setTemplate( /* html */
+            `<div class="ag-filter-toolpanel-search" role="presentation">
+                <div ref="eExpand" class="ag-filter-toolpanel-expand"></div>
+                <ag-input-text-field ref="eFilterTextField" class="ag-filter-toolpanel-search-input"></ag-input-text-field>
+            </div>`
+        );
     }
 
     @PostConstruct
@@ -49,8 +48,8 @@ export class FiltersToolPanelHeaderPanel extends Component {
 
         this.createExpandIcons();
         this.setExpandState(EXPAND_STATE.EXPANDED);
-        this.addDestroyableEventListener(this.eExpand, 'click', this.onExpandClicked.bind(this));
-        this.addDestroyableEventListener(this.eventService, Events.EVENT_NEW_COLUMNS_LOADED, this.showOrHideOptions.bind(this));
+        this.addManagedListener(this.eExpand, 'click', this.onExpandClicked.bind(this));
+        this.addManagedListener(this.eventService, Events.EVENT_NEW_COLUMNS_LOADED, this.showOrHideOptions.bind(this));
     }
 
     public init(params: ToolPanelFiltersCompParams): void {

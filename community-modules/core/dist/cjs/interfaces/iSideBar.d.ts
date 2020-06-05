@@ -1,9 +1,8 @@
-// Type definitions for @ag-grid-community/core v23.1.1
+// Type definitions for @ag-grid-community/core v23.2.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
-import { IComponent } from "./iComponent";
 import { IToolPanel } from "./iToolPanel";
-export interface ISideBar extends IComponent<any> {
+export interface ISideBar {
     refresh(): void;
     setDisplayed(show: boolean): void;
     setSideBarPosition(position?: 'left' | 'right'): void;

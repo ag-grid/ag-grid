@@ -17,7 +17,9 @@ export declare function copyPropertiesIfPresent<S, T extends S, K extends keyof 
 export declare function copyPropertyIfPresent<S, T extends S, K extends keyof S>(source: S, target: T, property: K, transform?: (value: S[K]) => any): void;
 export declare function getAllKeysInObjects(objects: any[]): string[];
 export declare function mergeDeep(dest: any, source: any, copyUndefined?: boolean): void;
-export declare function assign(object: any, ...sources: any[]): any;
+export declare function assign<T, U>(target: T, source: U): T & U;
+export declare function assign<T, U, V>(target: T, source1: U, source2: V): T & U & V;
+export declare function assign<T, U, V, W>(target: T, source1: U, source2: V, source3: W): T & U & V & W;
 export declare function missingOrEmptyObject(value: any): boolean;
 export declare function get(source: any, expression: string, defaultValue: any): any;
 export declare function set(target: any, expression: string, value: any): void;

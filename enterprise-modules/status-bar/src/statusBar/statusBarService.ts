@@ -1,12 +1,14 @@
-import { Bean, IStatusPanelComp, IStatusBarService } from '@ag-grid-community/core';
+import { Bean, BeanStub, IStatusPanelComp, IStatusBarService } from '@ag-grid-community/core';
 
 @Bean('statusBarService')
-export class StatusBarService implements IStatusBarService {
+export class StatusBarService extends BeanStub implements IStatusBarService {
 
     private allComponents: { [p: string]: IStatusPanelComp } = {};
 
     // tslint:disable-next-line
-    constructor() {}
+    constructor() {
+        super();
+    }
 
     public registerStatusPanel(key: string, component: IStatusPanelComp): void {
         this.allComponents[key] = component;

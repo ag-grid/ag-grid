@@ -1,10 +1,23 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v23.1.1
+ * @version v23.2.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
 "use strict";
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = function (d, b) {
+        extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+        return extendStatics(d, b);
+    };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -17,9 +30,12 @@ var columnGroup_1 = require("../entities/columnGroup");
 var originalColumnGroup_1 = require("../entities/originalColumnGroup");
 var context_2 = require("../context/context");
 var utils_1 = require("../utils");
+var beanStub_1 = require("../context/beanStub");
 // takes in a list of columns, as specified by the column definitions, and returns column groups
-var DisplayedGroupCreator = /** @class */ (function () {
+var DisplayedGroupCreator = /** @class */ (function (_super) {
+    __extends(DisplayedGroupCreator, _super);
     function DisplayedGroupCreator() {
+        return _super !== null && _super.apply(this, arguments) || this;
     }
     DisplayedGroupCreator.prototype.createDisplayedGroups = function (
     // all displayed columns sorted - this is the columns the grid should show
@@ -94,7 +110,7 @@ var DisplayedGroupCreator = /** @class */ (function () {
         }
         else {
             columnGroup = new columnGroup_1.ColumnGroup(originalGroup, groupId, instanceId, pinned);
-            this.context.wireBean(columnGroup);
+            this.context.createBean(columnGroup);
         }
         return columnGroup;
     };
@@ -158,14 +174,11 @@ var DisplayedGroupCreator = /** @class */ (function () {
     __decorate([
         context_1.Autowired('columnUtils')
     ], DisplayedGroupCreator.prototype, "columnUtils", void 0);
-    __decorate([
-        context_1.Autowired('context')
-    ], DisplayedGroupCreator.prototype, "context", void 0);
     DisplayedGroupCreator = __decorate([
         context_2.Bean('displayedGroupCreator')
     ], DisplayedGroupCreator);
     return DisplayedGroupCreator;
-}());
+}(beanStub_1.BeanStub));
 exports.DisplayedGroupCreator = DisplayedGroupCreator;
 
 //# sourceMappingURL=displayedGroupCreator.js.map

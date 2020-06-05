@@ -3,6 +3,8 @@ import React, {Component} from "react";
 const KEY_BACKSPACE = 8;
 const KEY_DELETE = 46;
 const KEY_F2 = 113;
+const KEY_ENTER = 13;
+const KEY_TAB = 9;
 
 export default class NumericEditor extends Component {
     constructor(props) {
@@ -92,7 +94,7 @@ export default class NumericEditor extends Component {
             return;
         }
 
-        if (!this.isKeyPressedNumeric(event)) {
+        if (!this.finishedEditingPressed(event) && !this.isKeyPressedNumeric(event)) {
             if (event.preventDefault) event.preventDefault();
         }
     }
@@ -132,5 +134,10 @@ export default class NumericEditor extends Component {
 
     deleteOrBackspace(event) {
         return [KEY_DELETE, KEY_BACKSPACE].indexOf(event.keyCode) > -1;
+    }
+
+    finishedEditingPressed(event) {
+        const charCode = this.getCharCodeFromEvent(event);
+        return charCode === KEY_ENTER || charCode === KEY_TAB;
     }
 }

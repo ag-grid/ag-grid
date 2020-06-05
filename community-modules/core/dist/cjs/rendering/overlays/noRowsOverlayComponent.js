@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v23.1.1
+ * @version v23.2.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -32,6 +32,11 @@ var NoRowsOverlayComponent = /** @class */ (function (_super) {
     function NoRowsOverlayComponent() {
         return _super.call(this) || this;
     }
+    // this is a user component, and IComponent has "public destroy()" as part of the interface.
+    // so we need to override destroy() just to make the method public.
+    NoRowsOverlayComponent.prototype.destroy = function () {
+        _super.prototype.destroy.call(this);
+    };
     NoRowsOverlayComponent.prototype.init = function (params) {
         var template = this.gridOptionsWrapper.getOverlayNoRowsTemplate() ?
             this.gridOptionsWrapper.getOverlayNoRowsTemplate() : NoRowsOverlayComponent.DEFAULT_NO_ROWS_TEMPLATE;

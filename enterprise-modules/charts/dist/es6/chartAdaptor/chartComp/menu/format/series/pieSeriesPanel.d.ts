@@ -20,5 +20,5 @@ export declare class PieSeriesPanel extends Component {
     private initShadowPanel;
     private destroyActivePanels;
     private getChartProxy;
-    destroy(): void;
+    protected destroy(): void;
 }

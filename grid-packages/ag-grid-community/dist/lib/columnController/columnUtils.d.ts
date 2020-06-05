@@ -2,7 +2,8 @@ import { ColumnGroupChild } from "../entities/columnGroupChild";
 import { OriginalColumnGroupChild } from "../entities/originalColumnGroupChild";
 import { OriginalColumnGroup } from "../entities/originalColumnGroup";
 import { Column } from "../entities/column";
-export declare class ColumnUtils {
+import { BeanStub } from "../context/beanStub";
+export declare class ColumnUtils extends BeanStub {
     private gridOptionsWrapper;
     calculateColInitialWidth(colDef: any): number;
     getOriginalPathForColumn(column: Column, originalBalancedTree: OriginalColumnGroupChild[]): OriginalColumnGroup[];

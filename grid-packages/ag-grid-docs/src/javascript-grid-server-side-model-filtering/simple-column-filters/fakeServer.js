@@ -7,6 +7,7 @@ function FakeServer(allData) {
     return {
         getData: function(request) {
             var results = executeQuery(request);
+
             return {
                 success: true,
                 rows: results,
@@ -16,76 +17,71 @@ function FakeServer(allData) {
     };
 
     function executeQuery(request) {
-        var SQL = buildSql(request);
+        var sql = buildSql(request);
 
-        console.log('[FakeServer] - about to execute query:', SQL);
+        console.log('[FakeServer] - about to execute query:', sql);
 
-        return alasql(SQL, [allData]);
+        return alasql(sql, [allData]);
     }
 
     function buildSql(request) {
-        var select = 'SELECT * ';
-        var from = 'FROM ? ';
-        var where = whereSql(request);
-        var orderBy = orderBySql(request);
-        var limit = limitSql(request);
-
-        return select + from + where + orderBy + limit;
+        return 'SELECT * FROM ?' + whereSql(request) + orderBySql(request) + limitSql(request);
     }
 
     function whereSql(request) {
         var whereParts = [];
-
         var filterModel = request.filterModel;
+
         if (filterModel) {
-            var keySet = Object.keys(filterModel);
-            keySet.forEach(function(key) {
+            Object.keys(filterModel).forEach(function(key) {
                 var item = filterModel[key];
-                whereParts.push(filterSql(key, item));
+
+                switch (item.filterType) {
+                    case 'text':
+                        whereParts.push(createFilterSql(textFilterMapper, key, item));
+                        break;
+                    case 'number':
+                        whereParts.push(createFilterSql(numberFilterMapper, key, item));
+                        break;
+                    default:
+                        console.log('unknown filter type: ' + item.filterType);
+                        break;
+                }
             });
         }
 
         if (whereParts.length > 0) {
-            return ' WHERE ' + whereParts.join(' AND ') + ' ';
+            return ' WHERE ' + whereParts.join(' AND ');
         }
 
         return '';
-    }
-
-    function filterSql(key, item) {
-        switch (item.filterType) {
-            case 'text':
-                return createFilterSql(textFilterMapper, key, item);
-            case 'number':
-                return createFilterSql(numberFilterMapper, key, item);
-            default:
-                console.log('unknown filter type: ' + item.filterType);
-        }
     }
 
     function createFilterSql(mapper, key, item) {
         if (item.operator) {
             var condition1 = mapper(key, item.condition1);
             var condition2 = mapper(key, item.condition2);
+
             return '(' + condition1 + ' ' + item.operator + ' ' + condition2 + ')';
         }
+
         return mapper(key, item);
     }
 
     function textFilterMapper(key, item) {
         switch (item.type) {
             case 'equals':
-                return key + ' = "' + item.filter + '"';
+                return key + " = '" + item.filter + "'";
             case 'notEqual':
-                return key + ' != "' + item.filter + '"';
+                return key + "' != '" + item.filter + "'";
             case 'contains':
-                return key + ' like "%' + item.filter + '%"';
+                return key + " LIKE '%" + item.filter + "%'";
             case 'notContains':
-                return key + ' not like "%' + item.filter + '%"';
+                return key + " NOT LIKE '%" + item.filter + "%'";
             case 'startsWith':
-                return key + ' like "' + item.filter + '%"';
+                return key + " LIKE '" + item.filter + "%'";
             case 'endsWith':
-                return key + ' like "%' + item.filter + '"';
+                return key + " LIKE '%" + item.filter + "'";
             default:
                 console.log('unknown text filter type: ' + item.type);
         }
@@ -114,17 +110,19 @@ function FakeServer(allData) {
 
     function orderBySql(request) {
         var sortModel = request.sortModel;
+
         if (sortModel.length === 0) return '';
 
         var sorts = sortModel.map(function(s) {
-            return s.colId + ' ' + s.sort;
+            return s.colId + ' ' + s.sort.toUpperCase();
         });
 
-        return 'ORDER BY ' + sorts.join(', ') + ' ';
+        return ' ORDER BY ' + sorts.join(', ');
     }
 
     function limitSql(request) {
         var blockSize = request.endRow - request.startRow;
+
         return ' LIMIT ' + (blockSize + 1) + ' OFFSET ' + request.startRow;
     }
 
@@ -132,7 +130,9 @@ function FakeServer(allData) {
         if (!results || results.length === 0) {
             return request.startRow;
         }
+
         var currentLastRow = request.startRow + results.length;
+
         return currentLastRow <= request.endRow ? currentLastRow : -1;
     }
 }

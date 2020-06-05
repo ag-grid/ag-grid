@@ -9,23 +9,45 @@ include '../documentation-main/documentation_header.php';
 <div>
   <h1>React Grid | Get Started with ag-Grid and React</h1>
 
-  <p class="lead" id="react-grid-description">
-    ag-Grid is the industry standard for React Enterprise Applications. Developers using ag-Grid
-    are building applications that would not be possible if ag-Grid did not exist.
-  </p>
+
+<p class="lead" id="react-grid-description">
+ag-Grid is the industry standard for React Enterprise Applications. Developers using ag-Grid
+are building applications that would not be possible if ag-Grid did not exist.
+</p>
+
+<note>Please refer to our <a href="#compatibility">Compatibility Chart</a> for Supported Versions of React & ag-Grid.</note>
 
 <?php
 include './intro.php';
 ?>
 
+<h2>Getting Started</h2>
+
 <?= videoSection("https://www.youtube.com/embed/6PA45adHun8", "react-demo", "Getting Started Video Tutorial") ?>
 
-<h2>Getting Started</h2>
 <p>In this article, we will walk you through the necessary steps to add ag-Grid
   (both <a href="../javascript-grid-set-license/">Community and Enterprise</a> are covered)
   to an existing React project,
   and configure some of the essential features of it. We will show you some of the fundamentals of the grid (passing properties, using the API, etc). As a bonus, we will also tweak the grid's visual appearance using Sass variables.
 </p>
+
+<br />
+
+<note>
+    <div style="display: flex;">
+    <span style="display: inline-block; background: radial-gradient(#41a3ff, #0273D4); border-radius: 5px; padding: 3px;">
+        <a href="https://thinkster.io/topics/ag-grid">
+            <img style="width: 150px;" src="../images/thinkster.png"/>
+        </a>
+    </span>
+        <span style="flex-grow: 1; display: inline-block; padding-left: 10px;">
+        Thinkster has provided a free course
+        <a href="https://thinkster.io/topics/ag-grid">
+            Learning ag-Grid with React
+        </a>
+    </span>
+    </div>
+</note>
 
 <h2 id="add-ag-grid-to-your-project">Add ag-Grid to Your Project</h2>
 <p>For the purposes of this tutorial, we are going to scaffold a react app with <a href="https://github.com/facebook/create-react-app">create-react-app</a>.
@@ -51,7 +73,6 @@ npm install --save ag-grid-community ag-grid-react
 <snippet language="jsx">
 <div ng-non-bindable>
 import React, { Component } from 'react';
-import logo from './logo.svg';
 import './App.css';
 import { AgGridReact } from 'ag-grid-react';
 import 'ag-grid-community/dist/styles/ag-grid.css';
@@ -83,7 +104,7 @@ class App extends Component {
       &lt;div
         className="ag-theme-alpine"
         style={{
-        height: '500px',
+        height: '250px',
         width: '600px' }}
       &gt;
         &lt;AgGridReact
@@ -140,7 +161,7 @@ each column entry specifies the header label and the data field to be displayed 
 
 <snippet language="jsx">
 <div ng-non-bindable>
-&lt;div style={{ height: '150px', width: '600px' }} className="ag-theme-alpine"&gt;
+&lt;div style={{ height: '250px', width: '600px' }} className="ag-theme-alpine"&gt;
     &lt;AgGridReact
         columnDefs={this.state.columnDefs}
         rowData={this.state.rowData}&gt;
@@ -200,7 +221,7 @@ Notice that the actual data fetching is performed outside of the grid component 
 }
 
 + componentDidMount() {
-+   fetch('https://api.myjson.com/bins/15psn9')
++   fetch('https://raw.githubusercontent.com/ag-grid/ag-grid/master/grid-packages/ag-grid-docs/src/sample-data/smallRowData.json')
 +     .then(result =&gt; result.json())
 +     .then(rowData =&gt; this.setState({rowData}))
 + }
@@ -235,24 +256,25 @@ this.state = {
 
 <p>Great! Now the first column contains a checkbox that, when clicked, selects the row. The only thing we have to add is a button that gets the selected data and sends it to the server. To do this, we need the following change:</p>
 
-<snippet language="diff" >
-<div ng-non-bindable>
-  &lt;div style={{ height: '150px', width: '600px' }} className="ag-theme-alpine"&gt;
-  +    &lt;button onClick={this.onButtonClick}&gt;Get selected rows&lt;/button&gt;
-  +
-   &lt;AgGridReact
-  +      onGridReady={ params =&gt; this.gridApi = params.api }
-</div>
+<snippet language="jsx">
+&lt;div style=<span>{</span>{ height: '250px', width: '600px' }<span>}</span> className="ag-theme-alpine"&gt;
+      &lt;button onClick=<span>{</span>this.onButtonClick}&gt;Get selected rows&lt;/button&gt;
+      &lt;AgGridReact
+        onGridReady={ params =&gt; this.gridApi = params.api }
+        columnDefs={this.state.columnDefs}
+        rowData={this.state.rowData}&gt;
+    &lt;/AgGridReact&gt;
+&lt;/div&gt;
 </snippet>
 
 <p>Afterwards, add the following event handler at the end of the component class:</p>
 
 <snippet language="jsx">
 onButtonClick = e =&gt; {
-const selectedNodes = this.gridApi.getSelectedNodes()
-const selectedData = selectedNodes.map( node =&gt; node.data )
-const selectedDataStringPresentation = selectedData.map( node =&gt; node.make + ' ' + node.model).join(', ')
-alert(`Selected nodes: ${selectedDataStringPresentation}`)
+    const selectedNodes = this.gridApi.getSelectedNodes()
+    const selectedData = selectedNodes.map( node =&gt; node.data )
+    const selectedDataStringPresentation = selectedData.map( node =&gt; node.make + ' ' + node.model).join(', ')
+    alert(`Selected nodes: ${selectedDataStringPresentation}`)
 }
 </snippet>
 
@@ -274,18 +296,16 @@ Hopefully you will forgive us this shortcut for the sake of keeping the article 
     for production.
 </div>
 
-<p>In addition to filtering and sorting, <a href="https://www.ag-grid.com/javascript-grid-grouping/">grouping</a> is another  effective way for the user to make sense out of large amounts of data. In our case, the data is not that much. Let's switch to a slightly larger data set:</p>
+<p>In addition to filtering and sorting, <a href="https://www.ag-grid.com/javascript-grid-grouping/">grouping</a> is another effective way for the user to make sense out of large amounts of data.</p>
+
+<p>Our current data set is pretty small so let's switch to a larger one:</p>
 
 <snippet language="diff">
-componentDidMount() {
--        fetch('https://api.myjson.com/bins/15psn9')
-+        fetch('https://api.myjson.com/bins/ly7d1')
-.then(result =&gt; result.json())
-.then(rowData =&gt; this.setState({rowData}))
-}
+    - fetch('https://raw.githubusercontent.com/ag-grid/ag-grid/master/grid-packages/ag-grid-docs/src/sample-data/smallRowData.json')
+    + fetch('https://raw.githubusercontent.com/ag-grid/ag-grid/master/grid-packages/ag-grid-docs/src/sample-data/rowData.json')
 </snippet>
 
-<p>Afterwards, let's enable the enterprise features of ag-grid. Install the additional package:</p>
+<p>Let's enable the enterprise features of ag-grid. Install the additional package:</p>
 
 <snippet language="sh">
 npm install --save ag-grid-enterprise
@@ -318,6 +338,7 @@ this.state = {
   },{
     headerName: "Price", field: "price"
   }],
+  rowData: null,
   autoGroupColumnDef: {
     headerName: "Model",
     field: "model",
@@ -368,6 +389,26 @@ import { AgGridReact } from 'ag-grid-react';
 <p>If everything is configured correctly, the second row of the grid will be blue. Congratulations!
   You now know now bend the grid look to your will - there are a few dozens more theme parameters variables that let you control the font family and size, border color,
   header background color and even the amount of spacing in the cells and columns. The <a href="https://www.ag-grid.com/javascript-grid-themes-provided/#customising-themes">full list of theme parameters</a> is available in the themes documentation section.</p>
+
+<h2 id="compatibility">ag-Grid & React Compatibility Chart</h2>
+
+<div>
+    <table class="properties">
+        <tr>
+            <th>React Version</th>
+            <th>ag-Grid Versions</th>
+        </tr>
+        <tr>
+            <td>15.x</td>
+            <td>18 - 21.2.0</td>
+        </tr>
+        <tr>
+            <td>16.3+</td>
+            <td>22+</td>
+        </tr>
+    </table>
+</div>
+
 
   <h2 id="summary">Summary</h2>
 

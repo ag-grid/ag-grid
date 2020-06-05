@@ -1,8 +1,7 @@
 import { RowNode } from "../entities/rowNode";
-export declare class PinnedRowModel {
+import { BeanStub } from "../context/beanStub";
+export declare class PinnedRowModel extends BeanStub {
     private gridOptionsWrapper;
-    private eventService;
-    private context;
     private columnApi;
     private gridApi;
     private pinnedTopRows;

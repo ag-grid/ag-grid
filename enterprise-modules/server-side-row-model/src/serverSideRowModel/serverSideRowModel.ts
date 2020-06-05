@@ -9,7 +9,6 @@ import {
     ColumnVO,
     Constants,
     Events,
-    EventService,
     FilterManager,
     GridApi,
     GridOptionsWrapper,
@@ -37,7 +36,6 @@ import { ServerSideBlock } from "./serverSideBlock";
 export class ServerSideRowModel extends BeanStub implements IServerSideRowModel {
 
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
-    @Autowired('eventService') private eventService: EventService;
     @Autowired('columnController') private columnController: ColumnController;
     @Autowired('filterManager') private filterManager: FilterManager;
     @Autowired('sortController') private sortController: SortController;
@@ -49,12 +47,10 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
     private datasource: IServerSideDatasource | undefined;
 
     private rowHeight: number;
-
     private cacheParams: ServerSideCacheParams;
-
-    private logger: Logger;
-
     private rowNodeBlockLoader: RowNodeBlockLoader | undefined;
+
+    private logger: Logger;    
 
     // we don't implement as lazy row heights is not supported in this row model
     public ensureRowHeightsValid(startPixel: number, endPixel: number, startLimitIndex: number, endLimitIndex: number): boolean { return false; }
@@ -67,6 +63,7 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
 
     public start(): void {
         const datasource = this.gridOptionsWrapper.getServerSideDatasource();
+
         if (datasource) {
             this.setDatasource(datasource!);
         }
@@ -74,13 +71,14 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
 
     @PreDestroy
     private destroyDatasource(): void {
-        if (this.datasource) {
-            if (this.datasource.destroy) {
-                this.datasource.destroy();
-            }
-            this.rowRenderer.datasourceChanged();
-            this.datasource = undefined;
+        if (!this.datasource) { return; }
+
+        if (this.datasource.destroy) {
+            this.datasource.destroy();
         }
+
+        this.rowRenderer.datasourceChanged();
+        this.datasource = undefined;
     }
 
     private setBeans(@Qualifier('loggerFactory') loggerFactory: LoggerFactory) {
@@ -88,15 +86,15 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
     }
 
     private addEventListeners(): void {
-        this.addDestroyableEventListener(this.eventService, Events.EVENT_COLUMN_ROW_GROUP_CHANGED, this.onColumnRowGroupChanged.bind(this));
-        this.addDestroyableEventListener(this.eventService, Events.EVENT_ROW_GROUP_OPENED, this.onRowGroupOpened.bind(this));
-        this.addDestroyableEventListener(this.eventService, Events.EVENT_COLUMN_PIVOT_MODE_CHANGED, this.onPivotModeChanged.bind(this));
-        this.addDestroyableEventListener(this.eventService, Events.EVENT_COLUMN_EVERYTHING_CHANGED, this.onColumnEverything.bind(this));
+        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_ROW_GROUP_CHANGED, this.onColumnRowGroupChanged.bind(this));
+        this.addManagedListener(this.eventService, Events.EVENT_ROW_GROUP_OPENED, this.onRowGroupOpened.bind(this));
+        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_PIVOT_MODE_CHANGED, this.onPivotModeChanged.bind(this));
+        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_EVERYTHING_CHANGED, this.onColumnEverything.bind(this));
 
-        this.addDestroyableEventListener(this.eventService, Events.EVENT_COLUMN_VALUE_CHANGED, this.onValueChanged.bind(this));
-        this.addDestroyableEventListener(this.eventService, Events.EVENT_COLUMN_PIVOT_CHANGED, this.onColumnPivotChanged.bind(this));
-        this.addDestroyableEventListener(this.eventService, Events.EVENT_FILTER_CHANGED, this.onFilterChanged.bind(this));
-        this.addDestroyableEventListener(this.eventService, Events.EVENT_SORT_CHANGED, this.onSortChanged.bind(this));
+        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_VALUE_CHANGED, this.onValueChanged.bind(this));
+        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_PIVOT_CHANGED, this.onColumnPivotChanged.bind(this));
+        this.addManagedListener(this.eventService, Events.EVENT_FILTER_CHANGED, this.onFilterChanged.bind(this));
+        this.addManagedListener(this.eventService, Events.EVENT_SORT_CHANGED, this.onSortChanged.bind(this));
     }
 
     public setDatasource(datasource: IServerSideDatasource): void {
@@ -108,9 +106,9 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
     public isLastRowFound(): boolean {
         if (this.cacheExists()) {
             return this.rootNode.childrenCache!.isMaxRowFound();
-        } else {
-            return false;
         }
+
+        return false;
     }
 
     private onColumnEverything(): void {
@@ -187,9 +185,7 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
     }
 
     private onSortChanged(): void {
-        if (!this.cacheExists()) {
-            return;
-        }
+        if (!this.cacheExists()) { return; }
 
         const newSortModel = this.extractSortModel();
         const oldSortModel = this.cacheParams.sortModel;
@@ -236,16 +232,15 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
             } else if (_.missing(rowNode.childrenCache)) {
                 this.createNodeCache(rowNode);
             }
-        } else {
-            if (this.gridOptionsWrapper.isPurgeClosedRowNodes() && _.exists(rowNode.childrenCache)) {
-                rowNode.childrenCache!.destroy();
-                rowNode.childrenCache = null;
-            }
+        } else if (this.gridOptionsWrapper.isPurgeClosedRowNodes() && _.exists(rowNode.childrenCache)) {
+            rowNode.childrenCache = this.destroyBean(rowNode.childrenCache);
         }
 
         const shouldAnimate = () => {
             const rowAnimationEnabled = this.gridOptionsWrapper.isAnimateRows();
+
             if (rowNode.master) { return rowAnimationEnabled && rowNode.expanded; }
+
             return rowAnimationEnabled;
         };
 
@@ -265,11 +260,10 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
     }
 
     private reset(): void {
-
         this.rootNode = new RowNode();
         this.rootNode.group = true;
         this.rootNode.level = -1;
-        this.getContext().wireBean(this.rootNode);
+        this.createBean(this.rootNode);
 
         if (this.datasource) {
             this.createNewRowNodeBlockLoader();
@@ -307,12 +301,13 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
         const maxConcurrentRequests = this.gridOptionsWrapper.getMaxConcurrentDatasourceRequests();
         const blockLoadDebounceMillis = this.gridOptionsWrapper.getBlockLoadDebounceMillis();
         this.rowNodeBlockLoader = new RowNodeBlockLoader(maxConcurrentRequests, blockLoadDebounceMillis);
-        this.getContext().wireBean(this.rowNodeBlockLoader);
+        this.createBean(this.rowNodeBlockLoader);
     }
 
+    @PreDestroy
     private destroyRowNodeBlockLoader(): void {
         if (this.rowNodeBlockLoader) {
-            this.rowNodeBlockLoader.destroy();
+            this.destroyBean(this.rowNodeBlockLoader);
             this.rowNodeBlockLoader = undefined;
         }
     }
@@ -395,7 +390,7 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
 
     private createNodeCache(rowNode: RowNode): void {
         const cache = new ServerSideCache(this.cacheParams, rowNode);
-        this.getContext().wireBean(cache);
+        this.getContext().createBean(cache);
 
         cache.addEventListener(RowNodeCache.EVENT_CACHE_UPDATED, this.onCacheUpdated.bind(this));
 
@@ -447,9 +442,7 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
     }
 
     public getRowCount(): number {
-        if (!this.cacheExists()) {
-            return 1;
-        }
+        if (!this.cacheExists()) { return 1; }
 
         const serverSideCache = this.rootNode.childrenCache as ServerSideCache;
         const res = serverSideCache.getDisplayIndexEnd();
@@ -458,18 +451,14 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
     }
 
     public getTopLevelRowCount(): number {
-        if (!this.cacheExists()) {
-            return 1;
-        }
+        if (!this.cacheExists()) { return 1; }
 
         const serverSideCache = this.rootNode.childrenCache as ServerSideCache;
         return serverSideCache.getVirtualRowCount();
     }
 
     public getTopLevelRowDisplayedIndex(topLevelIndex: number): number {
-        if (!this.cacheExists()) {
-            return topLevelIndex;
-        }
+        if (!this.cacheExists()) { return topLevelIndex; }
 
         const serverSideCache = this.rootNode.childrenCache as ServerSideCache;
         return serverSideCache.getTopLevelRowDisplayedIndex(topLevelIndex);
@@ -523,12 +512,13 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
     }
 
     private executeOnCache(route: string[], callback: (cache: ServerSideCache) => void) {
-        if (this.cacheExists()) {
-            const topLevelCache = this.rootNode.childrenCache as ServerSideCache;
-            const cacheToPurge = topLevelCache.getChildCache(route);
-            if (cacheToPurge) {
-                callback(cacheToPurge);
-            }
+        if (!this.cacheExists()) { return; }
+
+        const topLevelCache = this.rootNode.childrenCache as ServerSideCache;
+        const cacheToPurge = topLevelCache.getChildCache(route);
+
+        if (cacheToPurge) {
+            callback(cacheToPurge);
         }
     }
 
@@ -559,9 +549,9 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
     public getBlockState(): any {
         if (this.rowNodeBlockLoader) {
             return this.rowNodeBlockLoader.getBlockState();
-        } else {
-            return null;
         }
+ 
+        return null;
     }
 
     // always returns true - this is used by the
@@ -664,29 +654,30 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
     }
 
     private createDetailNode(masterNode: RowNode): RowNode {
+        if (_.exists(masterNode.detailNode)) { return masterNode.detailNode; }
 
-        if (_.exists(masterNode.detailNode)) {
-            return masterNode.detailNode;
-        } else {
-            const detailNode = new RowNode();
-            this.getContext().wireBean(detailNode);
-            detailNode.detail = true;
-            detailNode.selectable = false;
+        const detailNode = new RowNode();
 
-            detailNode.parent = masterNode;
-            if (_.exists(masterNode.id)) {
-                detailNode.id = 'detail_' + masterNode.id;
-            }
-            detailNode.data = masterNode.data;
-            detailNode.level = masterNode.level + 1;
+        this.getContext().createBean(detailNode);
 
-            const defaultDetailRowHeight = 200;
-            const rowHeight = this.gridOptionsWrapper.getRowHeightForNode(detailNode).height;
-            detailNode.rowHeight = rowHeight ? rowHeight : defaultDetailRowHeight;
+        detailNode.detail = true;
+        detailNode.selectable = false;
+        detailNode.parent = masterNode;
 
-            masterNode.detailNode = detailNode;
-            return detailNode;
+        if (_.exists(masterNode.id)) {
+            detailNode.id = 'detail_' + masterNode.id;
         }
+
+        detailNode.data = masterNode.data;
+        detailNode.level = masterNode.level + 1;
+
+        const defaultDetailRowHeight = 200;
+        const rowHeight = this.gridOptionsWrapper.getRowHeightForNode(detailNode).height;
+
+        detailNode.rowHeight = rowHeight ? rowHeight : defaultDetailRowHeight;
+        masterNode.detailNode = detailNode;
+
+        return detailNode;
     }
 
     public isLoading(): boolean {

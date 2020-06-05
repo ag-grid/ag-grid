@@ -1,5 +1,5 @@
-import { Column, IAggFunc, IAggFuncService } from "@ag-grid-community/core";
-export declare class AggFuncService implements IAggFuncService {
+import { BeanStub, Column, IAggFunc, IAggFuncService } from "@ag-grid-community/core";
+export declare class AggFuncService extends BeanStub implements IAggFuncService {
     private static AGG_SUM;
     private static AGG_FIRST;
     private static AGG_LAST;

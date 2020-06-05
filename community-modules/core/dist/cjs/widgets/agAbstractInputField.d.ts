@@ -1,13 +1,12 @@
-// Type definitions for @ag-grid-community/core v23.1.1
+// Type definitions for @ag-grid-community/core v23.2.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
-import { IAgLabel } from "./agAbstractLabel";
-import { AgAbstractField } from "./agAbstractField";
+import { IAgLabel } from './agAbstractLabel';
+import { AgAbstractField, FieldElement } from './agAbstractField';
 export interface IInputField extends IAgLabel {
     value?: any;
     width?: number;
 }
-export declare type FieldElement = HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement;
 export declare abstract class AgAbstractInputField<T extends FieldElement, K> extends AgAbstractField<K> {
     protected abstract inputType: string;
     protected config: IInputField;
@@ -18,11 +17,12 @@ export declare abstract class AgAbstractInputField<T extends FieldElement, K> ex
     protected postConstruct(): void;
     protected addInputListeners(): void;
     private setInputType;
-    getInputElement(): FieldElement;
+    getInputElement(): T;
     setInputWidth(width: number | 'flex'): this;
     setInputName(name: string): this;
     getFocusableElement(): HTMLElement;
     setMaxLength(length: number): this;
     setInputPlaceholder(placeholder: string): this;
     setDisabled(disabled: boolean): this;
+    setInputAriaLabel(label: string): this;
 }

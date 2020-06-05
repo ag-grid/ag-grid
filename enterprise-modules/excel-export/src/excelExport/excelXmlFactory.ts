@@ -1,5 +1,5 @@
 import { XmlElement,  _ } from '@ag-grid-community/core';
-import { Bean, Autowired } from '@ag-grid-community/core';
+import { Bean, BeanStub, Autowired } from '@ag-grid-community/core';
 
 import workbook from './files/xml/workbook';
 import excelWorkbook from './files/xml/excelWorkbook';
@@ -15,13 +15,13 @@ import numberFormat from './files/xml/styles/numberFormat';
 import style from './files/xml/styles/style';
 
 import { ExcelStyle, ExcelWorksheet, ExcelXMLTemplate } from '@ag-grid-community/core';
-import {XmlFactory} from "@ag-grid-community/csv-export";
+import { XmlFactory } from "@ag-grid-community/csv-export";
 
 /**
  * See https://msdn.microsoft.com/en-us/library/aa140066(v=office.10).aspx
  */
 @Bean('excelXmlFactory')
-export class ExcelXmlFactory {
+export class ExcelXmlFactory extends BeanStub {
 
     @Autowired('xmlFactory') private xmlFactory: XmlFactory;
 

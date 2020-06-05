@@ -1,5 +1,5 @@
-import { ChangedPath } from "@ag-grid-community/core";
-export declare class FilterService {
+import { ChangedPath, BeanStub } from "@ag-grid-community/core";
+export declare class FilterService extends BeanStub {
     private filterManager;
     private gridOptionsWrapper;
     private doingTreeData;

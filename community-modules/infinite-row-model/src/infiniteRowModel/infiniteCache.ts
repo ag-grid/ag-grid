@@ -2,18 +2,16 @@ import {
     Autowired,
     ColumnApi,
     Events,
-    EventService,
     GridApi,
     IDatasource,
     LoggerFactory,
-    PostConstruct,
     Qualifier,
     RowDataUpdatedEvent,
     RowNode,
     RowNodeCache,
     RowNodeCacheParams,
 } from "@ag-grid-community/core";
-import {InfiniteBlock} from "./infiniteBlock";
+import { InfiniteBlock } from "./infiniteBlock";
 
 export interface InfiniteCacheParams extends RowNodeCacheParams {
     datasource: IDatasource;
@@ -129,7 +127,7 @@ export class InfiniteCache extends RowNodeCache<InfiniteBlock, InfiniteCachePara
 
     private createBlock(blockNumber: number): InfiniteBlock {
         const newBlock = new InfiniteBlock(blockNumber, this.cacheParams);
-        this.getContext().wireBean(newBlock);
+        this.getContext().createBean(newBlock);
         this.postCreateBlock(newBlock);
         return newBlock;
     }

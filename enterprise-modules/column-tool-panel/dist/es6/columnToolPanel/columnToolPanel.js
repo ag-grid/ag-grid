@@ -20,6 +20,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 import { _, Autowired, Component, Events, ModuleNames, ModuleRegistry } from "@ag-grid-community/core";
 import { PivotModePanel } from "./pivotModePanel";
 import { PivotDropZonePanel, RowGroupDropZonePanel, ValuesDropZonePanel } from "@ag-grid-enterprise/row-grouping";
+import { PrimaryColsPanel } from "./primaryColsPanel";
 var ColumnToolPanel = /** @class */ (function (_super) {
     __extends(ColumnToolPanel, _super);
     function ColumnToolPanel() {
@@ -53,32 +54,33 @@ var ColumnToolPanel = /** @class */ (function (_super) {
         _.mergeDeep(defaultParams, params);
         this.params = defaultParams;
         if (this.isRowGroupingModuleLoaded() && !this.params.suppressPivotMode) {
-            this.pivotModePanel = new PivotModePanel();
-            this.addComponent(this.pivotModePanel);
+            this.pivotModePanel = this.createManagedBean(new PivotModePanel());
+            this.appendChild(this.pivotModePanel);
         }
-        this.primaryColsPanel = this.getContext().createComponent('AG-PRIMARY-COLS');
+        this.primaryColsPanel = this.createManagedBean(new PrimaryColsPanel());
         this.primaryColsPanel.init(true, this.params);
         _.addCssClass(this.primaryColsPanel.getGui(), 'ag-column-panel-column-select');
-        this.addComponent(this.primaryColsPanel);
+        this.appendChild(this.primaryColsPanel);
         if (this.isRowGroupingModuleLoaded()) {
             if (!this.params.suppressRowGroups) {
-                this.rowGroupDropZonePanel = new RowGroupDropZonePanel(false);
-                this.addComponent(this.rowGroupDropZonePanel);
+                this.rowGroupDropZonePanel = this.createManagedBean(new RowGroupDropZonePanel(false));
+                this.appendChild(this.rowGroupDropZonePanel);
             }
             if (!this.params.suppressValues) {
-                this.valuesDropZonePanel = new ValuesDropZonePanel(false);
-                this.addComponent(this.valuesDropZonePanel);
+                this.valuesDropZonePanel = this.createManagedBean(new ValuesDropZonePanel(false));
+                this.appendChild(this.valuesDropZonePanel);
             }
             if (!this.params.suppressPivots) {
-                this.pivotDropZonePanel = new PivotDropZonePanel(false);
-                this.addComponent(this.pivotDropZonePanel);
+                this.pivotDropZonePanel = this.createManagedBean(new PivotDropZonePanel(false));
+                this.appendChild(this.pivotDropZonePanel);
             }
             this.setLastVisible();
-            this.addDestroyableEventListener(this.eventService, Events.EVENT_COLUMN_PIVOT_MODE_CHANGED, this.setLastVisible.bind(this));
+            this.addManagedListener(this.eventService, Events.EVENT_COLUMN_PIVOT_MODE_CHANGED, this.setLastVisible.bind(this));
         }
         this.initialised = true;
     };
     ColumnToolPanel.prototype.setPivotModeSectionVisible = function (visible) {
+        var _this = this;
         if (!this.isRowGroupingModuleLoaded()) {
             return;
         }
@@ -87,11 +89,10 @@ var ColumnToolPanel = /** @class */ (function (_super) {
             this.pivotModePanel.setDisplayed(visible);
         }
         else if (visible) {
-            this.pivotModePanel = new PivotModePanel();
-            this.getContext().wireBean(this.pivotModePanel);
+            this.pivotModePanel = this.createBean(new PivotModePanel());
             // ensure pivot mode panel is positioned at the top of the columns tool panel
             this.getGui().insertBefore(this.pivotModePanel.getGui(), this.getGui().firstChild);
-            this.childDestroyFuncs.push(this.pivotModePanel.destroy.bind(this.pivotModePanel));
+            this.childDestroyFuncs.push(function () { return _this.destroyBean(_this.pivotModePanel); });
         }
         this.setLastVisible();
     };
@@ -104,8 +105,8 @@ var ColumnToolPanel = /** @class */ (function (_super) {
             this.rowGroupDropZonePanel.setDisplayed(visible);
         }
         else if (visible) {
-            this.rowGroupDropZonePanel = new RowGroupDropZonePanel(false);
-            this.addComponent(new RowGroupDropZonePanel(false));
+            this.rowGroupDropZonePanel = this.createManagedBean(new RowGroupDropZonePanel(false));
+            this.appendChild(this.rowGroupDropZonePanel);
         }
         this.setLastVisible();
     };
@@ -118,8 +119,8 @@ var ColumnToolPanel = /** @class */ (function (_super) {
             this.valuesDropZonePanel.setDisplayed(visible);
         }
         else if (visible) {
-            this.valuesDropZonePanel = new ValuesDropZonePanel(false);
-            this.addComponent(this.valuesDropZonePanel);
+            this.valuesDropZonePanel = this.createManagedBean(new ValuesDropZonePanel(false));
+            this.appendChild(this.valuesDropZonePanel);
         }
         this.setLastVisible();
     };
@@ -132,8 +133,8 @@ var ColumnToolPanel = /** @class */ (function (_super) {
             this.pivotDropZonePanel.setDisplayed(visible);
         }
         else if (visible) {
-            this.pivotDropZonePanel = new PivotDropZonePanel(false);
-            this.addComponent(this.pivotDropZonePanel);
+            this.pivotDropZonePanel = this.createManagedBean(new PivotDropZonePanel(false));
+            this.appendChild(this.pivotDropZonePanel);
             this.pivotDropZonePanel.setDisplayed(visible);
         }
         this.setLastVisible();
@@ -162,11 +163,6 @@ var ColumnToolPanel = /** @class */ (function (_super) {
     ColumnToolPanel.prototype.syncLayoutWithGrid = function () {
         this.primaryColsPanel.syncLayoutWithGrid();
     };
-    ColumnToolPanel.prototype.addComponent = function (component) {
-        this.getContext().wireBean(component);
-        this.getGui().appendChild(component.getGui());
-        this.childDestroyFuncs.push(component.destroy.bind(component));
-    };
     ColumnToolPanel.prototype.destroyChildren = function () {
         this.childDestroyFuncs.forEach(function (func) { return func(); });
         this.childDestroyFuncs.length = 0;
@@ -176,23 +172,19 @@ var ColumnToolPanel = /** @class */ (function (_super) {
         this.destroyChildren();
         this.init(this.params);
     };
+    // this is a user component, and IComponent has "public destroy()" as part of the interface.
+    // so this must be public.
     ColumnToolPanel.prototype.destroy = function () {
         this.destroyChildren();
         _super.prototype.destroy.call(this);
     };
     ColumnToolPanel.TEMPLATE = "<div class=\"ag-column-panel\"></div>";
     __decorate([
-        Autowired("gridOptionsWrapper")
-    ], ColumnToolPanel.prototype, "gridOptionsWrapper", void 0);
-    __decorate([
         Autowired("gridApi")
     ], ColumnToolPanel.prototype, "gridApi", void 0);
     __decorate([
         Autowired("columnApi")
     ], ColumnToolPanel.prototype, "columnApi", void 0);
-    __decorate([
-        Autowired("eventService")
-    ], ColumnToolPanel.prototype, "eventService", void 0);
     return ColumnToolPanel;
 }(Component));
 export { ColumnToolPanel };

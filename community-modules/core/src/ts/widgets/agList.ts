@@ -24,7 +24,7 @@ export class AgList extends Component {
 
     @PostConstruct
     private init(): void {
-        this.addDestroyableEventListener(this.getGui(), 'keydown', this.handleKeyDown.bind(this));
+        this.addManagedListener(this.getGui(), 'keydown', this.handleKeyDown.bind(this));
     }
 
     private static getTemplate(cssIdentifier: string) {
@@ -88,9 +88,9 @@ export class AgList extends Component {
         itemContentEl.innerHTML = innerText;
         this.itemEls.push(itemEl);
 
-        this.addDestroyableEventListener(itemEl, 'mouseover', (e: MouseEvent) => this.highlightItem(itemEl));
-        this.addDestroyableEventListener(itemEl, 'mouseleave', () => this.clearHighlighted());
-        this.addDestroyableEventListener(itemEl, 'click', () => {
+        this.addManagedListener(itemEl, 'mouseover', (e: MouseEvent) => this.highlightItem(itemEl));
+        this.addManagedListener(itemEl, 'mouseleave', () => this.clearHighlighted());
+        this.addManagedListener(itemEl, 'click', () => {
             const idx = this.itemEls.indexOf(itemEl);
             this.setValueByIndex(idx);
         });

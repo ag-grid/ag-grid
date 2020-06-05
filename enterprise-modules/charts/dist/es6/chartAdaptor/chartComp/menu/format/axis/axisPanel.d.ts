@@ -17,5 +17,5 @@ export declare class AxisPanel extends Component {
     private addAdditionalLabelComps;
     private destroyActivePanels;
     private getChartProxy;
-    destroy(): void;
+    protected destroy(): void;
 }

@@ -1,4 +1,4 @@
-// Type definitions for @ag-grid-community/core v23.1.1
+// Type definitions for @ag-grid-community/core v23.2.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { ColumnApi } from "./columnController/columnApi";
@@ -43,8 +43,11 @@ export interface GetCellsParams {
 }
 export interface RefreshCellsParams extends GetCellsParams {
     force?: boolean;
+    suppressFlash?: boolean;
 }
 export interface FlashCellsParams extends GetCellsParams {
+    flashDelay?: number;
+    fadeDelay?: number;
 }
 export interface GetCellRendererInstancesParams extends GetCellsParams {
 }
@@ -110,6 +113,7 @@ export declare class GridApi {
     private infiniteRowModel;
     private serverSideRowModel;
     private detailGridInfoMap;
+    private destroyCalled;
     registerGridComp(gridPanel: GridPanel): void;
     registerGridCore(gridCore: GridCore): void;
     registerHeaderRootComp(headerRootComp: HeaderRootComp): void;
@@ -149,6 +153,7 @@ export declare class GridApi {
     getPinnedTopRow(index: number): RowNode;
     getPinnedBottomRow(index: number): RowNode;
     setColumnDefs(colDefs: (ColDef | ColGroupDef)[], source?: ColumnEventType): void;
+    setAutoGroupColumnDef(colDef: ColDef, source?: ColumnEventType): void;
     expireValueCache(): void;
     getVerticalPixelRange(): {
         top: number;

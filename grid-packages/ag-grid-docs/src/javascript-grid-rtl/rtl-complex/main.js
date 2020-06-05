@@ -83,7 +83,6 @@ var gridOptions = {
     defaultColDef: {
         editable: true,
         sortable: true,
-        flex: 1,
         minWidth: 100,
         filter: true,
         floatingFilter: true,
@@ -168,7 +167,7 @@ var gridOptions = {
         console.log('Callback onGridSizeChanged: clientWidth = ' + event.clientWidth + ', clientHeight = ' + event.clientHeight);
     },
     onRowGroupOpened: function(event) {
-        console.log('Callback onRowGroupOpened: node = ' + event.node.key + ', ' + event.node.expanded);
+        console.log('Callback onRowGroupOpened: node = ' + event.node.key + ', ' + event.expanded);
     },
     onRangeSelectionChanged: function(event) {
         // console.log('Callback onRangeSelectionChanged: finished = ' + event.finished);
@@ -659,8 +658,7 @@ PersonFilter.prototype.getApi = function() {
     var that = this;
     return {
         getModel: function() {
-            var model = { value: that.filterText.value };
-            return model;
+            return { value: that.filterText.value };
         },
         setModel: function(model) {
             that.eFilterText.value = model.value;
@@ -671,6 +669,7 @@ PersonFilter.prototype.getApi = function() {
 // lazy, the example doesn't use getModel() and setModel()
 PersonFilter.prototype.getModel = function() {
 };
+
 PersonFilter.prototype.setModel = function() {
 };
 
@@ -733,6 +732,7 @@ WinningsFilter.prototype.isFilterActive = function() {
 // lazy, the example doesn't use getModel() and setModel()
 WinningsFilter.prototype.getModel = function() {
 };
+
 WinningsFilter.prototype.setModel = function() {
 };
 

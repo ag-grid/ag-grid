@@ -1,4 +1,4 @@
-// ag-charts-react v1.1.0
+// ag-charts-react v1.2.0
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {

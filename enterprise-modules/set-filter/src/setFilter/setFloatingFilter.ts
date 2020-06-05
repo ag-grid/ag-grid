@@ -1,5 +1,4 @@
 import {
-    FilterChangedEvent,
     Autowired,
     Component,
     IFloatingFilter,
@@ -7,7 +6,9 @@ import {
     ValueFormatterService,
     IFloatingFilterParams,
     AgInputTextField,
-    _
+    _,
+    GridOptionsWrapper,
+    ColumnController
 } from '@ag-grid-community/core';
 
 import { SetFilterModel } from './setFilterModel';
@@ -17,6 +18,8 @@ import { SetValueModel } from './setValueModel';
 export class SetFloatingFilterComp extends Component implements IFloatingFilter {
     @RefSelector('eFloatingFilterText') private eFloatingFilterText: AgInputTextField;
     @Autowired('valueFormatterService') private valueFormatterService: ValueFormatterService;
+    @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
+    @Autowired('columnController') private columnController: ColumnController;
 
     private params: IFloatingFilterParams;
     private lastKnownModel: SetFilterModel;
@@ -30,18 +33,19 @@ export class SetFloatingFilterComp extends Component implements IFloatingFilter 
         );
     }
 
-    public init(params: IFloatingFilterParams): void {
-        this.eFloatingFilterText.setDisabled(true);
-        this.params = params;
+    // this is a user component, and IComponent has "public destroy()" as part of the interface.
+    // so we need to override destroy() just to make the method public.
+    public destroy(): void {
+        super.destroy();
     }
 
-    // unlike other filters, what we show in the floating filter can be different, even
-    // if another filter changes. this is due to how set filter restricts its values based
-    // on selections in other filters, e.g. if you filter Language to English, then the set filter
-    // on Country will only show English speaking countries. Thus the list of items to show
-    // in the floating filter can change.
-    public onAvailableValuesChanged(filterChangedEvent: FilterChangedEvent): void {
-        this.updateSetFilterText();
+    public init(params: IFloatingFilterParams): void {
+        const displayName = this.columnController.getDisplayNameForColumn(params.column, 'header', true);
+        this.eFloatingFilterText
+            .setDisabled(true)
+            .setInputAriaLabel(`${displayName} Filter Input`);
+
+        this.params = params;
     }
 
     public onParentModelChanged(parentModel: SetFilterModel): void {
@@ -52,7 +56,13 @@ export class SetFloatingFilterComp extends Component implements IFloatingFilter 
     private addAvailableValuesListener(): void {
         this.params.parentFilterInstance((setFilter: SetFilter) => {
             const setValueModel = setFilter.getValueModel();
-            this.addDestroyableEventListener(setValueModel, SetValueModel.EVENT_AVAILABLE_VALUES_CHANGED, this.onAvailableValuesChanged.bind(this));
+            // unlike other filters, what we show in the floating filter can be different, even
+            // if another filter changes. this is due to how set filter restricts its values based
+            // on selections in other filters, e.g. if you filter Language to English, then the set filter
+            // on Country will only show English speaking countries. Thus the list of items to show
+            // in the floating filter can change.
+            this.addManagedListener(
+                setValueModel, SetValueModel.EVENT_AVAILABLE_VALUES_CHANGED, () => this.updateSetFilterText());
         });
 
         this.availableValuesListenerAdded = true;
@@ -71,7 +81,7 @@ export class SetFloatingFilterComp extends Component implements IFloatingFilter 
         // also supporting old filter model for backwards compatibility
         const values = this.lastKnownModel instanceof Array ? this.lastKnownModel as string[] : this.lastKnownModel.values;
 
-        if (!values || values.length === 0) {
+        if (!values) {
             this.eFloatingFilterText.setValue('');
             return;
         }
@@ -79,11 +89,14 @@ export class SetFloatingFilterComp extends Component implements IFloatingFilter 
         this.params.parentFilterInstance((setFilter: SetFilter) => {
             const valueModel = setFilter.getValueModel();
             const availableValues = _.filter(values, v => valueModel.isValueAvailable(v));
+            const localeTextFunc = this.gridOptionsWrapper.getLocaleTextFunc();
 
             // format all the values, if a formatter is provided
             const formattedValues = _.map(availableValues, value => {
                 const formattedValue = this.valueFormatterService.formatValue(this.params.column, null, null, value);
-                return formattedValue != null ? formattedValue : value;
+                const valueToRender = formattedValue != null ? formattedValue : value;
+
+                return valueToRender == null ? `(${localeTextFunc('blanks', 'Blanks')})` : valueToRender;
             });
 
             const arrayToDisplay = formattedValues.length > 10 ? formattedValues.slice(0, 10).concat('...') : formattedValues;

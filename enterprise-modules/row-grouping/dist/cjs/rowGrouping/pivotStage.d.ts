@@ -1,9 +1,7 @@
-import { ColDef, IRowNodeStage, StageExecuteParams } from "@ag-grid-community/core";
-export declare class PivotStage implements IRowNodeStage {
-    private rowModel;
+import { BeanStub, ColDef, IRowNodeStage, StageExecuteParams } from "@ag-grid-community/core";
+export declare class PivotStage extends BeanStub implements IRowNodeStage {
     private valueService;
     private columnController;
-    private eventService;
     private pivotColDefService;
     private uniqueValues;
     private pivotColumnGroupDefs;

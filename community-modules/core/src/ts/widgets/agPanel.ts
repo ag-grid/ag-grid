@@ -22,7 +22,7 @@ export interface PanelOptions {
 
 export class AgPanel extends Component {
 
-    protected static CLOSE_BTN_TEMPLATE = `<div class="ag-button"></div>`;
+    protected static CLOSE_BTN_TEMPLATE = /* html */ `<div class="ag-button"></div>`;
 
     @Autowired('popupService') protected popupService: PopupService;
     @Autowired('gridOptionsWrapper') protected gridOptionsWrapper: GridOptionsWrapper;
@@ -65,7 +65,7 @@ export class AgPanel extends Component {
 
     private static getTemplate(config?: PanelOptions) {
         const cssIdentifier = (config && config.cssIdentifier) || 'default';
-        return `<div class="ag-panel ag-${cssIdentifier}-panel" tabindex="-1">
+        return /* html */ `<div class="ag-panel ag-${cssIdentifier}-panel" tabindex="-1">
             <div ref="eTitleBar" class="ag-panel-title-bar ag-${cssIdentifier}-panel-title-bar ag-unselectable">
                 <span ref="eTitle" class="ag-panel-title-bar-title ag-${cssIdentifier}-panel-title-bar-title"></span>
                 <div ref="eTitleBarButtons" class="ag-panel-title-bar-buttons ag-${cssIdentifier}-panel-title-bar-buttons"></div>
@@ -101,7 +101,7 @@ export class AgPanel extends Component {
             _.addCssClass(this.eTitleBar, 'ag-hidden');
         }
 
-        this.addDestroyableEventListener(this.eTitleBar, 'mousedown', (e: MouseEvent) => {
+        this.addManagedListener(this.eTitleBar, 'mousedown', (e: MouseEvent) => {
             if (
                 eGui.contains(e.relatedTarget as HTMLElement) ||
                 eGui.contains(document.activeElement) ||
@@ -355,7 +355,7 @@ export class AgPanel extends Component {
 
         if (closable) {
             const closeButtonComp = this.closeButtonComp = new Component(AgPanel.CLOSE_BTN_TEMPLATE);
-            this.getContext().wireBean(closeButtonComp);
+            this.getContext().createBean(closeButtonComp);
 
             const eGui = closeButtonComp.getGui();
             eGui.appendChild(_.addCssClass(
@@ -364,12 +364,12 @@ export class AgPanel extends Component {
             );
 
             this.addTitleBarButton(closeButtonComp);
-            closeButtonComp.addDestroyableEventListener(eGui, 'click', this.onBtClose.bind(this));
+            closeButtonComp.addManagedListener(eGui, 'click', this.onBtClose.bind(this));
         } else if (this.closeButtonComp) {
             const eGui = this.closeButtonComp.getGui();
             eGui.parentElement.removeChild(eGui);
-            this.closeButtonComp.destroy();
-            this.closeButtonComp = undefined;
+
+            this.closeButtonComp = this.destroyBean(this.closeButtonComp);
         }
     }
 
@@ -421,10 +421,9 @@ export class AgPanel extends Component {
         this.close();
     }
 
-    public destroy(): void {
+    protected destroy(): void {
         if (this.closeButtonComp) {
-            this.closeButtonComp.destroy();
-            this.closeButtonComp = undefined;
+            this.closeButtonComp = this.destroyBean(this.closeButtonComp);
         }
 
         const eGui = this.getGui();

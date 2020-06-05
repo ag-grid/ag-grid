@@ -142,7 +142,11 @@ function lookupValue(mappings, key) {
 }
 
 function lookupKey(mappings, name) {
-    for (var key in Object.keys(mappings)) {
+    var keys = Object.keys(mappings);
+
+    for (var i = 0; i < keys.length; i++) {
+        var key = keys[i];
+
         if (mappings[key] === name) {
             return key;
         }

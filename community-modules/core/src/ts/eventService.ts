@@ -20,10 +20,6 @@ export class EventService implements IEventEmitter {
     private asyncFunctionsQueue: Function[] = [];
     private scheduled = false;
 
-    // this is an old idea niall had, should really take it out, was to do with ordering who gets to process
-    // events first, to give model and service objects preference over the view
-    private static PRIORITY = '-P1';
-
     // using an object performs better than a Set for the number of different events we have
     private firedEvents: { [key: string]: boolean; } = {};
 
@@ -60,21 +56,12 @@ export class EventService implements IEventEmitter {
         return listeners;
     }
 
-    public addEventListener(eventType: string, listener: Function, async = false): () => void {
+    public addEventListener(eventType: string, listener: Function, async = false): void {
         this.getListeners(eventType, async).add(listener);
-
-        return () => this.removeEventListener(eventType, listener, async);
     }
 
     public removeEventListener(eventType: string, listener: Function, async = false): void {
         this.getListeners(eventType, async).delete(listener);
-    }
-
-    // for some events, it's important that the model gets to hear about them before the view,
-    // as the model may need to update before the view works on the info. if you register
-    // via this method, you get notified before the view parts
-    public addModalPriorityEventListener(eventType: string, listener: Function, async = false): () => void {
-        return this.addEventListener(eventType + EventService.PRIORITY, listener, async);
     }
 
     public addGlobalListener(listener: Function, async = false): void {
@@ -108,8 +95,6 @@ export class EventService implements IEventEmitter {
             }
         });
 
-        // PRIORITY events should be processed first
-        processEventListeners(this.getListeners(eventType + EventService.PRIORITY, async));
         processEventListeners(this.getListeners(eventType, async));
 
         const globalListeners = async ? this.globalAsyncListeners : this.globalSyncListeners;

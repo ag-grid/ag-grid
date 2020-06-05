@@ -1,16 +1,19 @@
-import { Component, GridOptions, ICellRendererParams, ICellRenderer, RowNode } from "@ag-grid-community/core";
+import { Component, GridOptions, ICellRenderer, ICellRendererParams, RowNode } from "@ag-grid-community/core";
 export declare class DetailCellRenderer extends Component implements ICellRenderer {
     private static TEMPLATE;
-    private eDetailGrid;
-    private gridOptionsWrapper;
     private environment;
+    private eDetailGrid;
+    private resizeObserverService;
     private detailGridOptions;
-    private masterGridApi;
-    private rowId;
     private needRefresh;
-    private suppressRefresh;
-    refresh(): boolean;
+    private params;
+    private loadRowDataVersion;
     init(params: IDetailCellRendererParams): void;
+    refresh(): boolean;
+    destroy(): void;
+    private checkForDeprecations;
+    private ensureValidRefreshStrategy;
+    private setupAutoGridHeight;
     private addThemeToDetailGrid;
     private registerDetailWithMaster;
     private selectAndSetTemplate;
@@ -21,11 +24,15 @@ export declare class DetailCellRenderer extends Component implements ICellRender
 export interface IDetailCellRendererParams extends ICellRendererParams {
     detailGridOptions: GridOptions;
     getDetailRowData: GetDetailRowData;
-    suppressRefresh: boolean;
+    refreshStrategy: 'rows' | 'everything' | 'nothing';
     agGridReact: any;
     frameworkComponentWrapper: any;
     $compile: any;
     pinned: string;
+    template: string | TemplateFunc;
+    autoHeight: boolean;
+    /** @deprecated */
+    suppressRefresh: boolean;
 }
 export interface GetDetailRowData {
     (params: GetDetailRowDataParams): void;
@@ -35,3 +42,7 @@ export interface GetDetailRowDataParams {
     data: any;
     successCallback(rowData: any[]): void;
 }
+interface TemplateFunc {
+    (params: ICellRendererParams): string;
+}
+export {};

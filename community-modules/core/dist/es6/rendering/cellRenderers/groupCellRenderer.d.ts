@@ -1,4 +1,4 @@
-// Type definitions for @ag-grid-community/core v23.1.1
+// Type definitions for @ag-grid-community/core v23.2.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { Component } from "../../widgets/component";
@@ -52,7 +52,7 @@ export declare class GroupCellRenderer extends Component implements ICellRendere
     private isUserWantsSelected;
     private addCheckboxIfNeeded;
     private addExpandAndContract;
-    private onAllChildrenCountChanged;
+    private onRowNodeIsExpandableChanged;
     private onKeyDown;
     private setupDragOpenParents;
     onExpandClicked(mouseEvent: MouseEvent): void;

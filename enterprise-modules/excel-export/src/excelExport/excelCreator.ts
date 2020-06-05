@@ -19,7 +19,7 @@ import { ExcelGridSerializingParams, ExcelXmlSerializingSession } from './excelX
 import { ExcelXlsxSerializingSession } from './excelXlsxSerializingSession';
 import { ExcelXmlFactory } from './excelXmlFactory';
 import { ExcelXlsxFactory } from './excelXlsxFactory';
-import {BaseCreator, Downloader, GridSerializer, ZipContainer, RowType} from "@ag-grid-community/csv-export";
+import { BaseCreator, Downloader, GridSerializer, ZipContainer, RowType } from "@ag-grid-community/csv-export";
 
 export interface ExcelMixedStyle {
     key: string;

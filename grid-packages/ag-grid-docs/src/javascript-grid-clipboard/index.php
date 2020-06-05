@@ -5,8 +5,6 @@ $pageKeywords = "Javascript Grid Clipboard";
 $pageGroup = "feature";
 include '../documentation-main/documentation_header.php';
 ?>
-
-
     <h1 class="heading-enterprise">Clipboard</h1>
 
     <p class="lead">
@@ -87,22 +85,18 @@ include '../documentation-main/documentation_header.php';
         ranges and then copy.
     </note>
 
-    <h2>Safari Support</h2>
-
-    <p>
-        Copy to clipboard is not supported in Safari. This is because the Safari browser does not implement the
-        required API that ag-Grid uses, further details are described
-        <a href="https://developer.mozilla.org/en-US/docs/Web/API/Document/execCommand">here</a>. ag-Grid does
-        not plan to support Safari clipboard as Safari is not generally used in corporate environments where
-        the target audience for this feature resides.
-    </p>
-
     <h2>Toggle Paste On / Off</h2>
 
     <p>
         Pasting is on by default as long as cells are editable (non-editable cells cannot be modified, even
         with a paste operation). To turn paste operations off, set grid property
         <code>suppressClipboardPaste=true</code>.
+    </p>
+
+    <p>
+        The colDef has a property <code>suppressPaste</code> where you can specify to not allowing
+        clipboard paste for a particular cell. This can be a boolean or a function (use a function
+        to specify for a particular cell, or boolean for the whole column).
     </p>
 
     <h2 id="events">Clipboard Events</h2>
@@ -228,7 +222,8 @@ include '../documentation-main/documentation_header.php';
     <h3>Processing Individual Cells</h3>
 
     <p>The interfaces and parameters for processing individual cells are as follows:</p>
-    <snippet>
+
+<?= createSnippet(<<<SNIPPET
 // for processing cell during a copy / cut operation
 processCellForClipboard(params: ProcessCellForExportParams): any;
 
@@ -239,24 +234,25 @@ processHeaderForClipboard?params: ProcessHeaderForExportParams): any;
 processCellFromClipboard(params: ProcessCellForExportParams): any;
 
 // for processCellForClipboard and processCellFromClipboard
-export interface ProcessCellForExportParams {
+interface ProcessCellForExportParams {
     value: any, // the value to paste
     node: RowNode, // the row node
     column: Column, // the column
     api: GridApi, // the grid's API
-    columnApi: ColumnApi, // the grids column API
+    columnApi: ColumnApi, // the grid's column API
     context: any, // the context object
     type: string // clipboard, dragCopy (ctrl+D), export
 }
 
 // for processHeaderForClipboard
-export interface ProcessHeaderForExportParams {
+interface ProcessHeaderForExportParams {
     column: Column, // the column
-    api: GridApi, // the api
-    columnApi: ColumnApi, // the column aPI
+    api: GridApi, // the grid API
+    columnApi: ColumnApi, // the column API
     context: any // the context object
 }
-    </snippet>
+SNIPPET
+, 'ts_') ?>
 
     <p>
         These three callbacks above are demonstrated in the example below. Note the following:
@@ -282,15 +278,16 @@ export interface ProcessHeaderForExportParams {
 
     <p>The interface and parameters for processing the whole paste operation is as follows:</p>
 
-    <snippet>
+<?= createSnippet(<<<SNIPPET
 // for processing data from the clipboard
-processDataFromClipboard(params: ProcessDataFromClipboardParams)=>string[][];
+processDataFromClipboard(params: ProcessDataFromClipboardParams) => string[][];
 
 // params for processDataFromClipboard
-export interface ProcessDataFromClipboardParams {
-    data: string[][]; // 2d array of all cells from the clipboard
+interface ProcessDataFromClipboardParams {
+    data: string[][]; // 2D array of all cells from the clipboard
 }
-    </snippet>
+SNIPPET
+, 'ts') ?>
 
     <p>
         In summary the <code>processDataFromClipboard</code> takes a 2d array of data that was taken from
@@ -336,20 +333,13 @@ export interface ProcessDataFromClipboardParams {
     <p>
         If instead of using the Clipboard service to copy/paste the contents from a cell, you
         just want to manually select the text and use the operating system copy/paste. You should
-        set <code>enableCellTextSelection=true</code> in the gridOptions <br>
-
-        <note> This is not an enterprise config and can be at any time to enable cell text selection. </note>
+        set <code>enableCellTextSelection=true</code> in the gridOptions. It's important to mention
+        that this config should be combined with <code>ensureDomOrder=true</code> also in the gridOptions.
     </p>
+
+    <note>This is not an enterprise config and can be used at any time to enable cell text selection.</note>
 
     <?= grid_example('Using enableCellTextSelection', 'cellTextSelection', 'generated') ?>
-
-    <h2>Suppress Paste</h2>
-
-    <p>
-        The colDef has a property <code>suppressPaste</code> where you can specify to not allowing
-        clipboard paste for a particular cell. This can be a boolean or a function (use a function
-        to specify for a particular cell, or boolean for the whole column).
-    </p>
 
     <h2>More Complex Example</h2>
 

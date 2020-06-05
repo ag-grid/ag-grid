@@ -1,4 +1,4 @@
-// Type definitions for @ag-grid-community/core v23.1.1
+// Type definitions for @ag-grid-community/core v23.2.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { GridOptions } from "./entities/gridOptions";
@@ -25,6 +25,7 @@ export declare class Grid {
     protected logger: Logger;
     private readonly gridOptions;
     constructor(eGridDiv: HTMLElement, gridOptions: GridOptions, params?: GridParams);
+    private registerStackComponents;
     private getRegisteredModules;
     private registerModuleUserComponents;
     private createProvidedBeans;

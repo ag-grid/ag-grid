@@ -1,4 +1,17 @@
 "use strict";
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = function (d, b) {
+        extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+        return extendStatics(d, b);
+    };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -7,13 +20,15 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var core_1 = require("@ag-grid-community/core");
-var GroupStage = /** @class */ (function () {
+var GroupStage = /** @class */ (function (_super) {
+    __extends(GroupStage, _super);
     function GroupStage() {
+        var _this = _super !== null && _super.apply(this, arguments) || this;
         // we use a sequence variable so that each time we do a grouping, we don't
         // reuse the ids - otherwise the rowRenderer will confuse rowNodes between redraws
-        // when it tries to animate between rows. we set to -1 as others row id 0 will be shared
-        // with the other rows.
-        this.groupIdSequence = new core_1.NumberSequence(1);
+        // when it tries to animate between rows.
+        _this.groupIdSequence = new core_1.NumberSequence();
+        return _this;
     }
     GroupStage.prototype.postConstruct = function () {
         this.usingTreeData = this.gridOptionsWrapper.isTreeData();
@@ -23,7 +38,7 @@ var GroupStage = /** @class */ (function () {
     };
     GroupStage.prototype.execute = function (params) {
         var details = this.createGroupingDetails(params);
-        if (details.transaction) {
+        if (details.transactions) {
             this.handleTransaction(details);
         }
         else {
@@ -34,10 +49,8 @@ var GroupStage = /** @class */ (function () {
         this.selectableService.updateSelectableAfterGrouping(details.rootNode);
     };
     GroupStage.prototype.createGroupingDetails = function (params) {
-        var rowNode = params.rowNode, changedPath = params.changedPath, rowNodeTransaction = params.rowNodeTransaction, rowNodeOrder = params.rowNodeOrder;
+        var rowNode = params.rowNode, changedPath = params.changedPath, rowNodeTransactions = params.rowNodeTransactions, rowNodeOrder = params.rowNodeOrder;
         var groupedCols = this.usingTreeData ? null : this.columnController.getRowGroupColumns();
-        var isGrouping = this.usingTreeData || (groupedCols && groupedCols.length > 0);
-        var usingTransaction = isGrouping && core_1._.exists(rowNodeTransaction);
         var details = {
             // someone complained that the parent attribute was causing some change detection
             // to break is some angular add-on - which i never used. taking the parent out breaks
@@ -50,27 +63,28 @@ var GroupStage = /** @class */ (function () {
             pivotMode: this.columnController.isPivotMode(),
             groupedColCount: this.usingTreeData || !groupedCols ? 0 : groupedCols.length,
             rowNodeOrder: rowNodeOrder,
-            // important not to do transaction if we are not grouping, as otherwise the 'insert index' is ignored.
-            // ie, if not grouping, then we just want to shotgun so the rootNode.allLeafChildren gets copied
-            // to rootNode.childrenAfterGroup and maintaining order (as delta transaction misses the order).
-            transaction: usingTransaction ? rowNodeTransaction : null,
+            transactions: rowNodeTransactions,
             // if no transaction, then it's shotgun, changed path would be 'not active' at this point anyway
             changedPath: changedPath
         };
         return details;
     };
     GroupStage.prototype.handleTransaction = function (details) {
-        var tran = details.transaction;
-        // remove nodes first in case a node is removed and re-added in the same transaction
-        if (tran.remove) {
-            this.removeNodes(tran.remove, details);
-        }
-        if (tran.add) {
-            this.insertNodes(tran.add, details, false);
-        }
-        if (tran.update) {
-            this.moveNodesInWrongPath(tran.update, details);
-        }
+        var _this = this;
+        details.transactions.forEach(function (tran) {
+            // the order here of [add, remove, update] needs to be the same as in ClientSideNodeManager,
+            // as the order is important when a record with the same id is added and removed in the same
+            // transaction.
+            if (core_1._.existsAndNotEmpty(tran.add)) {
+                _this.insertNodes(tran.add, details, false);
+            }
+            if (core_1._.existsAndNotEmpty(tran.remove)) {
+                _this.removeNodes(tran.remove, details);
+            }
+            if (core_1._.existsAndNotEmpty(tran.update)) {
+                _this.moveNodesInWrongPath(tran.update, details);
+            }
+        });
         if (details.rowNodeOrder) {
             this.sortChildren(details);
         }
@@ -368,7 +382,7 @@ var GroupStage = /** @class */ (function () {
     GroupStage.prototype.createGroup = function (groupInfo, parent, level, details) {
         var _this = this;
         var groupNode = new core_1.RowNode();
-        this.context.wireBean(groupNode);
+        this.context.createBean(groupNode);
         groupNode.group = true;
         groupNode.field = groupInfo.field;
         groupNode.rowGroupColumn = groupInfo.rowGroupColumn;
@@ -382,9 +396,9 @@ var GroupStage = /** @class */ (function () {
                 groupNode.groupData[col.getColId()] = groupInfo.key;
             }
         });
-        // we use negative number for the ids of the groups, this makes sure we don't clash with the
-        // id's of the leaf nodes.
-        groupNode.id = (this.groupIdSequence.next() * -1).toString();
+        // we put 'row-group-' before the group id, so it doesn't clash with standard row id's. we also use 't-' and 'b-'
+        // for top pinned and bottom pinned rows.
+        groupNode.id = core_1.RowNode.ID_PREFIX_ROW_GROUP + this.groupIdSequence.next();
         groupNode.key = groupInfo.key;
         groupNode.level = level;
         groupNode.leafGroup = this.usingTreeData ? false : level === (details.groupedColCount - 1);
@@ -465,9 +479,6 @@ var GroupStage = /** @class */ (function () {
         return res;
     };
     __decorate([
-        core_1.Autowired('selectionController')
-    ], GroupStage.prototype, "selectionController", void 0);
-    __decorate([
         core_1.Autowired('gridOptionsWrapper')
     ], GroupStage.prototype, "gridOptionsWrapper", void 0);
     __decorate([
@@ -480,19 +491,13 @@ var GroupStage = /** @class */ (function () {
         core_1.Autowired('valueService')
     ], GroupStage.prototype, "valueService", void 0);
     __decorate([
-        core_1.Autowired('eventService')
-    ], GroupStage.prototype, "eventService", void 0);
-    __decorate([
-        core_1.Autowired('context')
-    ], GroupStage.prototype, "context", void 0);
-    __decorate([
         core_1.PostConstruct
     ], GroupStage.prototype, "postConstruct", null);
     GroupStage = __decorate([
         core_1.Bean('groupStage')
     ], GroupStage);
     return GroupStage;
-}());
+}(core_1.BeanStub));
 exports.GroupStage = GroupStage;
 // doing _.removeFromArray() multiple times on a large list can be a bottleneck.
 // when doing large deletes (eg removing 1,000 rows) then we would be calling _.removeFromArray()

@@ -1,2 +1,2 @@
-export {DateTimeCellEditorModule} from "./dateTimeCellEditorModule";
+export { DateTimeCellEditorModule } from "./dateTimeCellEditorModule";
 

@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v23.1.1
+ * @version v23.2.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -142,7 +142,7 @@ var CellComp = /** @class */ (function (_super) {
         this.angular1Compile();
         this.refreshHandle();
         if (utils_1._.exists(this.tooltip) && !this.beans.gridOptionsWrapper.isEnableBrowserTooltips()) {
-            this.addFeature(new tooltipFeature_1.TooltipFeature(this, 'cell'), this.beans.context);
+            this.createManagedBean(new tooltipFeature_1.TooltipFeature(this, 'cell'), this.beans.context);
         }
     };
     CellComp.prototype.onColumnHover = function () {
@@ -184,12 +184,12 @@ var CellComp = /** @class */ (function (_super) {
             return;
         }
         // because we are col spanning, a reorder of the cols can change what cols we are spanning over
-        this.addDestroyableEventListener(this.beans.eventService, events_1.Events.EVENT_DISPLAYED_COLUMNS_CHANGED, this.onDisplayColumnsChanged.bind(this));
+        this.addManagedListener(this.beans.eventService, events_1.Events.EVENT_DISPLAYED_COLUMNS_CHANGED, this.onDisplayColumnsChanged.bind(this));
         // because we are spanning over multiple cols, we check for width any time any cols width changes.
         // this is expensive - really we should be explicitly checking only the cols we are spanning over
         // instead of every col, however it would be tricky code to track the cols we are spanning over, so
         // because hardly anyone will be using colSpan, am favouring this easier way for more maintainable code.
-        this.addDestroyableEventListener(this.beans.eventService, events_1.Events.EVENT_DISPLAYED_COLUMNS_WIDTH_CHANGED, this.onWidthChanged.bind(this));
+        this.addManagedListener(this.beans.eventService, events_1.Events.EVENT_DISPLAYED_COLUMNS_WIDTH_CHANGED, this.onWidthChanged.bind(this));
         this.colsSpanning = this.getColSpanningList();
     };
     CellComp.prototype.getColSpanningList = function () {
@@ -355,13 +355,22 @@ var CellComp = /** @class */ (function (_super) {
         this.postProcessCellClassRules();
     };
     // user can also call this via API
-    CellComp.prototype.flashCell = function () {
-        this.animateCell('data-changed');
+    CellComp.prototype.flashCell = function (delays) {
+        var flashDelay = delays && delays.flashDelay;
+        var fadeDelay = delays && delays.fadeDelay;
+        this.animateCell('data-changed', flashDelay, fadeDelay);
     };
-    CellComp.prototype.animateCell = function (cssName) {
+    CellComp.prototype.animateCell = function (cssName, flashDelay, fadeDelay) {
         var fullName = "ag-cell-" + cssName;
         var animationFullName = "ag-cell-" + cssName + "-animation";
         var element = this.getGui();
+        var gridOptionsWrapper = this.beans.gridOptionsWrapper;
+        if (!flashDelay) {
+            flashDelay = gridOptionsWrapper.getCellFlashDelay();
+        }
+        if (!fadeDelay) {
+            fadeDelay = gridOptionsWrapper.getCellFadeDelay();
+        }
         // we want to highlight the cells, without any animation
         utils_1._.addCssClass(element, fullName);
         utils_1._.removeCssClass(element, animationFullName);
@@ -369,20 +378,19 @@ var CellComp = /** @class */ (function (_super) {
         window.setTimeout(function () {
             utils_1._.removeCssClass(element, fullName);
             utils_1._.addCssClass(element, animationFullName);
+            element.style.transition = "background-color " + fadeDelay + "ms";
             window.setTimeout(function () {
                 // and then to leave things as we got them, we remove the animation
                 utils_1._.removeCssClass(element, animationFullName);
-            }, 1000);
-        }, 500);
+                element.style.transition = null;
+            }, fadeDelay);
+        }, flashDelay);
     };
     CellComp.prototype.replaceContentsAfterRefresh = function () {
         // otherwise we rip out the cell and replace it
         utils_1._.clearElement(this.eParentOfValue);
         // remove old renderer component if it exists
-        if (this.cellRenderer && this.cellRenderer.destroy) {
-            this.cellRenderer.destroy();
-        }
-        this.cellRenderer = null;
+        this.cellRenderer = this.beans.context.destroyBean(this.cellRenderer);
         this.cellRendererGui = null;
         // populate
         this.putDataIntoCellAfterRefresh();
@@ -669,11 +677,9 @@ var CellComp = /** @class */ (function (_super) {
         }
     };
     CellComp.prototype.afterCellRendererCreated = function (cellRendererVersion, cellRenderer) {
-        // see if daemon
-        if (!this.isAlive() || (cellRendererVersion !== this.cellRendererVersion)) {
-            if (cellRenderer.destroy) {
-                cellRenderer.destroy();
-            }
+        var cellRendererNotRequired = !this.isAlive() || (cellRendererVersion !== this.cellRendererVersion);
+        if (cellRendererNotRequired) {
+            this.beans.context.destroyBean(cellRenderer);
             return;
         }
         this.cellRenderer = cellRenderer;
@@ -866,7 +872,7 @@ var CellComp = /** @class */ (function (_super) {
     CellComp.prototype.createCellEditor = function (params) {
         var _this = this;
         var cellEditorPromise = this.beans.userComponentFactory.newCellEditor(this.column.getColDef(), params);
-        return cellEditorPromise.map(function (cellEditor) {
+        return cellEditorPromise.then(function (cellEditor) {
             var isPopup = cellEditor.isPopup && cellEditor.isPopup();
             if (!isPopup) {
                 return cellEditor;
@@ -877,7 +883,7 @@ var CellComp = /** @class */ (function (_super) {
             }
             // if a popup, then we wrap in a popup editor and return the popup
             var popupEditorWrapper = new popupEditorWrapper_1.PopupEditorWrapper(cellEditor);
-            _this.beans.context.wireBean(popupEditorWrapper);
+            _this.beans.context.createBean(popupEditorWrapper);
             popupEditorWrapper.init(params);
             return popupEditorWrapper;
         });
@@ -887,16 +893,14 @@ var CellComp = /** @class */ (function (_super) {
         // if versionMismatch, then user cancelled the edit, then started the edit again, and this
         //   is the first editor which is now stale.
         var versionMismatch = cellEditorVersion !== this.cellEditorVersion;
-        if (versionMismatch || !this.editingCell) {
-            if (cellEditor.destroy) {
-                cellEditor.destroy();
-            }
+        var cellEditorNotNeeded = versionMismatch || !this.editingCell;
+        if (cellEditorNotNeeded) {
+            this.beans.context.destroyBean(cellEditor);
             return;
         }
-        if (cellEditor.isCancelBeforeStart && cellEditor.isCancelBeforeStart()) {
-            if (cellEditor.destroy) {
-                cellEditor.destroy();
-            }
+        var editingCancelledByUserComp = cellEditor.isCancelBeforeStart && cellEditor.isCancelBeforeStart();
+        if (editingCancelledByUserComp) {
+            this.beans.context.destroyBean(cellEditor);
             this.editingCell = false;
             return;
         }
@@ -906,9 +910,7 @@ var CellComp = /** @class */ (function (_super) {
             if (cellEditor.render) {
                 console.warn("ag-Grid: we found 'render' on the component, are you trying to set a React renderer but added it as colDef.cellEditor instead of colDef.cellEditorFmk?");
             }
-            if (cellEditor.destroy) {
-                cellEditor.destroy();
-            }
+            this.beans.context.destroyBean(cellEditor);
             this.editingCell = false;
             return;
         }
@@ -1070,7 +1072,7 @@ var CellComp = /** @class */ (function (_super) {
         var key = event.which || event.keyCode;
         switch (key) {
             case constants_1.Constants.KEY_ENTER:
-                this.onEnterKeyDown();
+                this.onEnterKeyDown(event);
                 break;
             case constants_1.Constants.KEY_F2:
                 this.onF2KeyDown();
@@ -1128,7 +1130,7 @@ var CellComp = /** @class */ (function (_super) {
             this.startRowOrCellEdit(key);
         }
     };
-    CellComp.prototype.onEnterKeyDown = function () {
+    CellComp.prototype.onEnterKeyDown = function (e) {
         if (this.editingCell || this.rowComp.isEditing()) {
             this.stopEditingAndFocus();
         }
@@ -1137,6 +1139,7 @@ var CellComp = /** @class */ (function (_super) {
                 this.beans.rowRenderer.navigateToNextCell(null, constants_1.Constants.KEY_DOWN, this.cellPosition, false);
             }
             else {
+                e.preventDefault();
                 this.startRowOrCellEdit(constants_1.Constants.KEY_ENTER);
             }
         }
@@ -1205,9 +1208,9 @@ var CellComp = /** @class */ (function (_super) {
         }
         if (!shiftKey || (rangeController && !rangeController.getCellRanges().length)) {
             // We only need to pass true to focusCell when the browser is IE/Edge and we are trying
-            // to focus the cell itself (element with ag-cell). This should never be true if the
-            // mousedown was triggered due to a click on a cell editor for example.
-            var forceBrowserFocus = (utils_1._.isBrowserIE() || utils_1._.isBrowserEdge()) && target.classList.contains('ag-cell');
+            // to focus the cell itself. This should never be true if the mousedown was triggered
+            // due to a click on a cell editor for example.
+            var forceBrowserFocus = (utils_1._.isBrowserIE() || utils_1._.isBrowserEdge()) && !this.editingCell;
             this.focusCell(forceBrowserFocus);
         }
         else {
@@ -1304,18 +1307,15 @@ var CellComp = /** @class */ (function (_super) {
     // as the row will also get removed, so no need to take out the cells from the row
     // if the row is going (removing is an expensive operation, so only need to remove
     // the top part)
+    //
+    // note - this is NOT called by context, as we don't wire / unwire the CellComp for performance reasons.
     CellComp.prototype.destroy = function () {
         if (this.createCellRendererFunc) {
             this.beans.taskQueue.cancelTask(this.createCellRendererFunc);
         }
         this.stopEditing();
-        if (this.cellRenderer && this.cellRenderer.destroy) {
-            this.cellRenderer.destroy();
-            this.cellRenderer = null;
-        }
-        if (this.selectionHandle) {
-            this.selectionHandle.destroy();
-        }
+        this.cellRenderer = this.beans.context.destroyBean(this.cellRenderer);
+        this.beans.context.destroyBean(this.selectionHandle);
         _super.prototype.destroy.call(this);
     };
     CellComp.prototype.onLeftChanged = function () {
@@ -1492,13 +1492,13 @@ var CellComp = /** @class */ (function (_super) {
     CellComp.prototype.addSelectionHandle = function () {
         var _a = this.beans, gridOptionsWrapper = _a.gridOptionsWrapper, context = _a.context, rangeController = _a.rangeController;
         var cellRangeType = utils_1._.last(rangeController.getCellRanges()).type;
-        var type = (gridOptionsWrapper.isEnableFillHandle() && utils_1._.missing(cellRangeType)) ? 'fill' : 'range';
+        var selectionHandleFill = gridOptionsWrapper.isEnableFillHandle() && utils_1._.missing(cellRangeType);
+        var type = selectionHandleFill ? iRangeController_1.SelectionHandleType.FILL : iRangeController_1.SelectionHandleType.RANGE;
         if (this.selectionHandle && this.selectionHandle.getType() !== type) {
-            this.selectionHandle.destroy();
-            this.selectionHandle = undefined;
+            this.selectionHandle = this.beans.context.destroyBean(this.selectionHandle);
         }
         if (!this.selectionHandle) {
-            this.selectionHandle = context.createComponentFromElement(document.createElement("ag-" + type + "-handle"));
+            this.selectionHandle = this.beans.selectionHandleFactory.createSelectionHandle(type);
         }
         this.selectionHandle.refresh(this);
     };
@@ -1515,8 +1515,7 @@ var CellComp = /** @class */ (function (_super) {
         }
         var shouldHaveSelectionHandle = this.shouldHaveSelectionHandle();
         if (this.selectionHandle && !shouldHaveSelectionHandle) {
-            this.selectionHandle.destroy();
-            this.selectionHandle = null;
+            this.selectionHandle = this.beans.context.destroyBean(this.selectionHandle);
         }
         if (shouldHaveSelectionHandle) {
             this.addSelectionHandle();
@@ -1588,23 +1587,24 @@ var CellComp = /** @class */ (function (_super) {
             }
         }
         var rowDraggingComp = new rowDragComp_1.RowDragComp(this.rowNode, this.column, this.getValueToUse(), this.beans);
-        this.addFeature(rowDraggingComp, this.beans.context);
+        this.createManagedBean(rowDraggingComp, this.beans.context);
         // put the checkbox in before the value
         this.eCellWrapper.insertBefore(rowDraggingComp.getGui(), this.eParentOfValue);
     };
     CellComp.prototype.addDndSource = function () {
         var dndSourceComp = new dndSourceComp_1.DndSourceComp(this.rowNode, this.column, this.getValueToUse(), this.beans, this.getGui());
-        this.addFeature(dndSourceComp, this.beans.context);
+        this.createManagedBean(dndSourceComp, this.beans.context);
         // put the checkbox in before the value
         this.eCellWrapper.insertBefore(dndSourceComp.getGui(), this.eParentOfValue);
     };
     CellComp.prototype.addSelectionCheckbox = function () {
+        var _this = this;
         var cbSelectionComponent = new checkboxSelectionComponent_1.CheckboxSelectionComponent();
-        this.beans.context.wireBean(cbSelectionComponent);
+        this.beans.context.createBean(cbSelectionComponent);
         var visibleFunc = this.getComponentHolder().checkboxSelection;
         visibleFunc = typeof visibleFunc === 'function' ? visibleFunc : null;
         cbSelectionComponent.init({ rowNode: this.rowNode, column: this.column, visibleFunc: visibleFunc });
-        this.addDestroyFunc(function () { return cbSelectionComponent.destroy(); });
+        this.addDestroyFunc(function () { return _this.beans.context.destroyBean(cbSelectionComponent); });
         // put the checkbox in before the value
         this.eCellWrapper.insertBefore(cbSelectionComponent.getGui(), this.eParentOfValue);
     };
@@ -1666,9 +1666,9 @@ var CellComp = /** @class */ (function (_super) {
             this.editingCell = false;
             return;
         }
+        var oldValue = this.getValue();
         var newValueExists = false;
         var newValue;
-        var oldValue = this.getValue();
         if (!cancel) {
             // also have another option here to cancel after editing, so for example user could have a popup editor and
             // it is closed by user clicking outside the editor. then the editor will close automatically (with false
@@ -1684,11 +1684,9 @@ var CellComp = /** @class */ (function (_super) {
         // thus it will skip the refresh on this cell until the end of this method where we call
         // refresh directly and we suppress the flash.
         this.editingCell = false;
-        if (this.cellEditor.destroy) {
-            this.cellEditor.destroy();
-        }
         // important to clear this out - as parts of the code will check for
         // this to see if an async cellEditor has yet to be created
+        this.cellEditor = this.beans.context.destroyBean(this.cellEditor);
         this.cellEditor = null;
         if (this.cellEditorInPopup && this.hideEditorPopup) {
             this.hideEditorPopup();
@@ -1701,23 +1699,22 @@ var CellComp = /** @class */ (function (_super) {
                 // if wrapper, then put the wrapper back
                 this.getGui().appendChild(this.eCellWrapper);
             }
-            else {
+            else if (this.cellRenderer) {
                 // if cellRenderer, then put the gui back in. if the renderer has
                 // a refresh, it will be called. however if it doesn't, then later
                 // the renderer will be destroyed and a new one will be created.
-                if (this.cellRenderer) {
-                    // we know it's a dom element (not a string) because we converted
-                    // it after the gui was attached if it was a string.
-                    var eCell = this.cellRendererGui;
-                    // can be null if cell was previously null / contained empty string,
-                    // this will result in new value not being rendered.
-                    if (eCell) {
-                        this.getGui().appendChild(eCell);
-                    }
+                // we know it's a dom element (not a string) because we converted
+                // it after the gui was attached if it was a string.
+                var eCell = this.cellRendererGui;
+                // can be null if cell was previously null / contained empty string,
+                // this will result in new value not being rendered.
+                if (eCell) {
+                    this.getGui().appendChild(eCell);
                 }
             }
         }
         this.setInlineEditingClass();
+        this.refreshHandle();
         if (newValueExists && newValue !== oldValue) {
             // we suppressRefreshCell because the call to rowNode.setDataValue() results in change detection
             // getting triggered, which results in all cells getting refreshed. we do not want this refresh

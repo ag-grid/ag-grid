@@ -53,7 +53,7 @@ var MenuItemComponent = /** @class */ (function (_super) {
                 this.getGui().setAttribute('title', this.tooltip);
             }
             else {
-                this.addFeature(new TooltipFeature(this, 'menu'));
+                this.createManagedBean(new TooltipFeature(this, 'menu'));
             }
         }
         if (this.params.shortcut) {

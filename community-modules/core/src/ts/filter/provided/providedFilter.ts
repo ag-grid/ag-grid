@@ -1,17 +1,22 @@
 import { Component } from '../../widgets/component';
 import { ProvidedFilterModel, IDoesFilterPassParams, IFilterComp, IFilterParams } from '../../interfaces/iFilter';
-import { RefSelector } from '../../widgets/componentAnnotations';
 import { Autowired, PostConstruct } from '../../context/context';
 import { GridOptionsWrapper } from '../../gridOptionsWrapper';
-import { _ } from '../../utils';
 import { IRowModel } from '../../interfaces/iRowModel';
 import { Constants } from '../../constants';
 import { IAfterGuiAttachedParams } from '../../interfaces/iAfterGuiAttachedParams';
+import { loadTemplate, addCssClass, setDisabled } from '../../utils/dom';
+import { debounce } from '../../utils/function';
+import { Promise } from '../../utils/promise';
+import { PopupEventParams } from '../../widgets/popupService';
+
+type FilterButtonType = 'apply' | 'clear' | 'reset' | 'cancel';
 
 export interface IProvidedFilterParams extends IFilterParams {
-    clearButton?: boolean;
-    resetButton?: boolean;
-    applyButton?: boolean;
+    /** @deprecated */ clearButton?: boolean;
+    /** @deprecated */ resetButton?: boolean;
+    /** @deprecated */ applyButton?: boolean;
+    buttons?: FilterButtonType[];
     closeOnApply?: boolean;
     /** @deprecated */ newRowsAction?: string;
     debounceMs?: number;
@@ -23,18 +28,13 @@ export interface IProvidedFilterParams extends IFilterParams {
  * extend this class.
  */
 export abstract class ProvidedFilter extends Component implements IFilterComp {
-    private static NEW_ROWS_ACTION_KEEP = 'keep';
-    private static NEW_ROWS_ACTION_CLEAR = 'clear';
-
     private newRowsActionKeep: boolean;
 
     // each level in the hierarchy will save params with the appropriate type for that level.
     private providedFilterParams: IProvidedFilterParams;
 
     private applyActive = false;
-    private hidePopup: () => void = null;
-
-    @RefSelector('eFilterBodyWrapper') protected eFilterBodyWrapper: HTMLElement;
+    private hidePopup: (params: PopupEventParams) => void = null;
 
     @Autowired('gridOptionsWrapper') protected gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('rowModel') protected rowModel: IRowModel;
@@ -46,9 +46,9 @@ export abstract class ProvidedFilter extends Component implements IFilterComp {
 
     protected abstract createBodyTemplate(): string;
     protected abstract getCssIdentifier(): string;
-    protected abstract resetUiToDefaults(silent?: boolean): void;
+    protected abstract resetUiToDefaults(silent?: boolean): Promise<void>;
 
-    protected abstract setModelIntoUi(model: ProvidedFilterModel): void;
+    protected abstract setModelIntoUi(model: ProvidedFilterModel): Promise<void>;
     protected abstract areModelsEqual(a: ProvidedFilterModel, b: ProvidedFilterModel): boolean;
 
     public abstract getModelFromUi(): ProvidedFilterModel | null;
@@ -81,7 +81,7 @@ export abstract class ProvidedFilter extends Component implements IFilterComp {
     protected postConstruct(): void {
         const templateString = /* html */`
             <div>
-                <div class="ag-filter-body-wrapper ag-${this.getCssIdentifier()}-body-wrapper" ref="eFilterBodyWrapper">
+                <div class="ag-filter-body-wrapper ag-${this.getCssIdentifier()}-body-wrapper">
                     ${this.createBodyTemplate()}
                 </div>
             </div>`;
@@ -91,63 +91,112 @@ export abstract class ProvidedFilter extends Component implements IFilterComp {
 
     public init(params: IFilterParams): void {
         this.setParams(params);
-        this.resetUiToDefaults(true);
-        this.updateUiVisibility();
-        this.setupOnBtApplyDebounce();
+
+        this.resetUiToDefaults(true).then(() => {
+            this.updateUiVisibility();
+            this.setupOnBtApplyDebounce();
+        });
     }
 
     protected setParams(params: IProvidedFilterParams): void {
+        ProvidedFilter.checkForDeprecatedParams(params);
+
         this.providedFilterParams = params;
 
-        if (params.newRowsAction === ProvidedFilter.NEW_ROWS_ACTION_KEEP) {
+        if (params.newRowsAction === 'keep') {
             this.newRowsActionKeep = true;
-        } else if (params.newRowsAction === ProvidedFilter.NEW_ROWS_ACTION_CLEAR) {
+        } else if (params.newRowsAction === 'clear') {
             this.newRowsActionKeep = false;
         } else {
             // the default for SSRM and IRM is 'keep', for CSRM and VRM the default is 'clear'
-            const rowModelType = this.rowModel.getType();
             const modelsForKeep = [Constants.ROW_MODEL_TYPE_SERVER_SIDE, Constants.ROW_MODEL_TYPE_INFINITE];
-            this.newRowsActionKeep = modelsForKeep.indexOf(rowModelType) >= 0;
+            this.newRowsActionKeep = modelsForKeep.indexOf(this.rowModel.getType()) >= 0;
         }
 
         this.applyActive = ProvidedFilter.isUseApplyButton(params);
 
-        this.createButtonPanel(params);
+        this.createButtonPanel();
     }
 
-    private createButtonPanel(params: IProvidedFilterParams): void {
-        const clearActive = params.clearButton === true;
-        const resetActive = params.resetButton === true;
-        const anyButtonVisible = this.applyActive || clearActive || resetActive;
+    private createButtonPanel(): void {
+        const { buttons } = this.providedFilterParams;
 
-        if (anyButtonVisible) {
-            const translate = this.gridOptionsWrapper.getLocaleTextFunc();
-            const eButtonsPanel = document.createElement('div');
+        if (!buttons || buttons.length < 1) { return; }
 
-            _.addCssClass(eButtonsPanel, 'ag-filter-apply-panel');
+        const translate = this.gridOptionsWrapper.getLocaleTextFunc();
+        const eButtonsPanel = document.createElement('div');
 
-            const addButton = (text: string, clickListener: () => void): void => {
-                const button = _.loadTemplate(/* html */
-                    `<button type="button" class="ag-standard-button ag-filter-apply-panel-button">${text}</button>`);
+        addCssClass(eButtonsPanel, 'ag-filter-apply-panel');
 
-                eButtonsPanel.appendChild(button);
-                this.addDestroyableEventListener(button, 'click', clickListener);
-            };
+        const addButton = (type: FilterButtonType): void => {
+            let text;
+            let clickListener: (e?: Event) => void;
 
-            if (clearActive) {
-                addButton(translate('clearFilter', 'Clear Filter'), () => this.onBtClear());
+            switch (type) {
+                case 'apply':
+                    text = translate('applyFilter', 'Apply Filter');
+                    clickListener = (e) => this.onBtApply(false, false, e);
+                    break;
+                case 'clear':
+                    text = translate('clearFilter', 'Clear Filter');
+                    clickListener = () => this.onBtClear();
+                    break;
+                case 'reset':
+                    text = translate('resetFilter', 'Reset Filter');
+                    clickListener = () => this.onBtReset();
+                    break;
+                case 'cancel':
+                    text = translate('cancelFilter', 'Cancel Filter');
+                    clickListener = (e) => { this.onBtCancel(e); };
+                    break;
+                default:
+                    console.warn('Unknown button type specified');
+                    return;
             }
 
-            if (resetActive) {
-                addButton(translate('resetFilter', 'Reset Filter'), () => this.onBtReset());
-            }
+            const button = loadTemplate(/* html */
+                `<button
+                    type="button"
+                    ref="${type}FilterButton"
+                    class="ag-standard-button ag-filter-apply-panel-button">${text}</button>`);
 
-            if (this.applyActive) {
-                addButton(translate('applyFilter', 'Apply Filter'), () => this.onBtApply());
-            }
+            eButtonsPanel.appendChild(button);
+            this.addManagedListener(button, 'click', clickListener);
+        };
 
-            this.eFilterBodyWrapper.parentElement.appendChild(eButtonsPanel);
+        new Set(buttons).forEach(type => addButton(type));
+
+        this.getGui().appendChild(eButtonsPanel);
+    }
+
+    private static checkForDeprecatedParams(params: IProvidedFilterParams): void {
+        const buttons = params.buttons || [];
+
+        if (buttons.length > 0) { return; }
+
+        const { applyButton, resetButton, clearButton } = params;
+
+        if (clearButton) {
+            console.warn('ag-Grid: as of ag-Grid v23.2, filterParams.clearButton is deprecated. Please use filterParams.buttons instead');
+            buttons.push('clear');
         }
+
+        if (resetButton) {
+            console.warn('ag-Grid: as of ag-Grid v23.2, filterParams.resetButton is deprecated. Please use filterParams.buttons instead');
+            buttons.push('reset');
+        }
+
+        if (applyButton) {
+            console.warn('ag-Grid: as of ag-Grid v23.2, filterParams.applyButton is deprecated. Please use filterParams.buttons instead');
+            buttons.push('apply');
+        }
+
+        if ((params as any).apply) {
+            console.warn('ag-Grid: as of ag-Grid v21, filterParams.apply is deprecated. Please use filterParams.buttons instead');
+            buttons.push('apply');
+        }
+
+        params.buttons = buttons;
     }
 
     // subclasses can override this to provide alternative debounce defaults
@@ -157,69 +206,100 @@ export abstract class ProvidedFilter extends Component implements IFilterComp {
 
     private setupOnBtApplyDebounce(): void {
         const debounceMs = ProvidedFilter.getDebounceMs(this.providedFilterParams, this.getDefaultDebounceMs());
-        this.onBtApplyDebounce = _.debounce(this.onBtApply.bind(this), debounceMs);
+        this.onBtApplyDebounce = debounce(this.onBtApply.bind(this), debounceMs);
     }
 
     public getModel(): ProvidedFilterModel {
         return this.appliedModel;
     }
 
-    public setModel(model: ProvidedFilterModel): void {
-        if (model) {
-            this.setModelIntoUi(model);
-        } else {
-            this.resetUiToDefaults();
-        }
+    public setModel(model: ProvidedFilterModel): Promise<void> {
+        const promise = model ? this.setModelIntoUi(model) : this.resetUiToDefaults();
 
-        this.updateUiVisibility();
+        return promise.then(() => {
+            this.updateUiVisibility();
 
-        // we set the model from the gui, rather than the provided model,
-        // so the model is consistent. eg handling of null/undefined will be the same,
-        // of if model is case insensitive, then casing is removed.
-        this.applyModel();
+            // we set the model from the gui, rather than the provided model,
+            // so the model is consistent. eg handling of null/undefined will be the same,
+            // of if model is case insensitive, then casing is removed.
+            this.applyModel();
+        });
     }
 
-    private onBtClear() {
-        this.resetUiToDefaults();
-        this.updateUiVisibility();
-        this.onUiChanged();
+    private onBtCancel(e: Event): void {
+        this.setModelIntoUi(this.getModel()).then(() => {
+            this.onUiChanged(false, 'prevent');
+
+            if (this.providedFilterParams.closeOnApply) {
+                this.close(e);
+            }
+        });
     }
 
-    private onBtReset() {
+    private onBtClear(): void {
+        this.resetUiToDefaults().then(() => this.onUiChanged());
+    }
+
+    private onBtReset(): void {
         this.onBtClear();
         this.onBtApply();
     }
 
-    // returns true if the new model is different to the old model
+    /**
+     * Applies changes made in the UI to the filter, and returns true if the model has changed.
+     */
     public applyModel(): boolean {
-        const oldAppliedModel = this.appliedModel;
-        this.appliedModel = this.getModelFromUi();
+        const newModel = this.getModelFromUi();
+
+        if (!this.isModelValid(newModel)) { return false; }
+
+        const previousModel = this.appliedModel;
+
+        this.appliedModel = newModel;
 
         // models can be same if user pasted same content into text field, or maybe just changed the case
         // and it's a case insensitive filter
-        return !this.areModelsEqual(this.appliedModel, oldAppliedModel);
+        return !this.areModelsEqual(previousModel, newModel);
     }
 
-    protected onBtApply(afterFloatingFilter = false, afterDataChange = false) {
+    protected isModelValid(model: ProvidedFilterModel): boolean {
+        return true;
+    }
+
+    protected onBtApply(afterFloatingFilter = false, afterDataChange = false, e?: Event): void {
         if (this.applyModel()) {
             // the floating filter uses 'afterFloatingFilter' info, so it doesn't refresh after filter changed if change
             // came from floating filter
             this.providedFilterParams.filterChangedCallback({ afterFloatingFilter, afterDataChange });
         }
 
-        const { closeOnApply, applyButton, resetButton } = this.providedFilterParams;
+        const { closeOnApply } = this.providedFilterParams;
 
-        if (closeOnApply && !afterFloatingFilter && this.hidePopup && (applyButton || resetButton)) {
-            this.hidePopup();
-            this.hidePopup = null;
+        // only close if an apply button is visible, otherwise we'd be closing every time a change was made!
+        if (closeOnApply && !afterFloatingFilter && this.applyActive) {
+            this.close(e);
         }
     }
 
-    public onNewRowsLoaded() {
+    public onNewRowsLoaded(): void {
         if (!this.newRowsActionKeep) {
-            this.resetUiToDefaults();
-            this.appliedModel = null;
+            this.resetUiToDefaults().then(() => this.appliedModel = null);
         }
+    }
+
+    public close(e?: Event): void {
+        if (!this.hidePopup) { return; }
+
+        const keyboardEvent = e as KeyboardEvent;
+        const key = keyboardEvent && keyboardEvent.key;
+        let params: PopupEventParams;
+
+        if (key === 'Enter' || key === 'Space') {
+            params = { keyboardEvent };
+        }
+
+        this.hidePopup(params);
+        this.hidePopup = null;
     }
 
     // called by set filter
@@ -227,15 +307,24 @@ export abstract class ProvidedFilter extends Component implements IFilterComp {
         return this.newRowsActionKeep;
     }
 
-    protected onUiChanged(afterFloatingFilter = false): void {
+    /**
+     * By default, if the change came from a floating filter it will be applied immediately, otherwise if there is no
+     * apply button it will be applied after a debounce, otherwise it will not be applied at all. This behaviour can
+     * be adjusted by using the apply parameter.
+     */
+    protected onUiChanged(fromFloatingFilter = false, apply?: 'immediately' | 'debounce' | 'prevent'): void {
         this.updateUiVisibility();
         this.providedFilterParams.filterModifiedCallback();
 
-        if (afterFloatingFilter) {
-            // floating filter changes are always applied immediately
-            this.onBtApply(true);
-        } else if (!this.applyActive) {
-            // if no apply button, we apply (but debounce for time delay)
+        if (this.applyActive) {
+            const isValid = this.isModelValid(this.getModelFromUi());
+
+            setDisabled(this.getRefElement('applyFilterButton'), !isValid);
+        }
+
+        if ((fromFloatingFilter && !apply) || apply === 'immediately') {
+            this.onBtApply(fromFloatingFilter);
+        } else if ((!this.applyActive && !apply) || apply === 'debounce') {
             this.onBtApplyDebounce();
         }
     }
@@ -246,11 +335,9 @@ export abstract class ProvidedFilter extends Component implements IFilterComp {
 
     // static, as used by floating filter also
     public static getDebounceMs(params: IProvidedFilterParams, debounceDefault: number): number {
-        const applyActive = ProvidedFilter.isUseApplyButton(params);
-
-        if (applyActive) {
+        if (ProvidedFilter.isUseApplyButton(params)) {
             if (params.debounceMs != null) {
-                console.warn('ag-Grid: debounceMs is ignored when applyButton = true');
+                console.warn('ag-Grid: debounceMs is ignored when apply button is present');
             }
 
             return 0;
@@ -261,15 +348,12 @@ export abstract class ProvidedFilter extends Component implements IFilterComp {
 
     // static, as used by floating filter also
     public static isUseApplyButton(params: IProvidedFilterParams): boolean {
-        if ((params as any).apply && !params.applyButton) {
-            console.warn('ag-Grid: as of ag-Grid v21, filterParams.apply is now filterParams.applyButton, please change to applyButton');
-            params.applyButton = true;
-        }
+        ProvidedFilter.checkForDeprecatedParams(params);
 
-        return params.applyButton === true;
+        return params.buttons && params.buttons.indexOf('apply') >= 0;
     }
 
-    public destroy() {
+    public destroy(): void {
         this.hidePopup = null;
 
         super.destroy();

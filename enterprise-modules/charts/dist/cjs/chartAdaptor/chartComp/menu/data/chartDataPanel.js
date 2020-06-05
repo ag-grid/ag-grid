@@ -38,7 +38,7 @@ var ChartDataPanel = /** @class */ (function (_super) {
     }
     ChartDataPanel.prototype.init = function () {
         this.updatePanels();
-        this.addDestroyableEventListener(this.chartController, chartController_1.ChartController.EVENT_CHART_UPDATED, this.updatePanels.bind(this));
+        this.addManagedListener(this.chartController, chartController_1.ChartController.EVENT_CHART_UPDATED, this.updatePanels.bind(this));
     };
     ChartDataPanel.prototype.destroy = function () {
         this.clearComponents();
@@ -77,14 +77,14 @@ var ChartDataPanel = /** @class */ (function (_super) {
     };
     ChartDataPanel.prototype.addChangeListener = function (component, columnState) {
         var _this = this;
-        this.addDestroyableEventListener(component, core_1.AgAbstractField.EVENT_CHANGED, function () {
+        this.addManagedListener(component, core_1.AgAbstractField.EVENT_CHANGED, function () {
             columnState.selected = component.getValue();
             _this.chartController.updateForPanelChange(columnState);
         });
     };
     ChartDataPanel.prototype.createCategoriesGroupComponent = function (columns) {
         var _this = this;
-        this.categoriesGroupComp = this.wireBean(new core_1.AgGroupComponent({
+        this.categoriesGroupComp = this.createBean(new core_1.AgGroupComponent({
             title: this.getCategoryGroupTitle(),
             enabled: true,
             suppressEnabledCheckbox: true,
@@ -93,7 +93,7 @@ var ChartDataPanel = /** @class */ (function (_super) {
         }));
         var inputName = "chartDimension" + this.getCompId();
         columns.forEach(function (col) {
-            var comp = _this.categoriesGroupComp.wireDependentBean(new core_1.AgRadioButton());
+            var comp = _this.categoriesGroupComp.createManagedBean(new core_1.AgRadioButton());
             comp.setLabel(core_1._.escape(col.displayName));
             comp.setValue(col.selected);
             comp.setInputName(inputName);
@@ -105,7 +105,7 @@ var ChartDataPanel = /** @class */ (function (_super) {
     };
     ChartDataPanel.prototype.createSeriesGroupComponent = function (columns) {
         var _this = this;
-        this.seriesGroupComp = this.wireDependentBean(new core_1.AgGroupComponent({
+        this.seriesGroupComp = this.createManagedBean(new core_1.AgGroupComponent({
             title: this.getSeriesGroupTitle(),
             enabled: true,
             suppressEnabledCheckbox: true,
@@ -113,7 +113,7 @@ var ChartDataPanel = /** @class */ (function (_super) {
             cssIdentifier: 'charts-data'
         }));
         if (this.chartController.isActiveXYChart()) {
-            var pairedModeToggle = this.seriesGroupComp.wireDependentBean(new core_1.AgToggleButton());
+            var pairedModeToggle = this.seriesGroupComp.createManagedBean(new core_1.AgToggleButton());
             var chartProxy_1 = this.chartController.getChartProxy();
             pairedModeToggle
                 .setLabel(this.chartTranslator.translate('paired'))
@@ -129,7 +129,7 @@ var ChartDataPanel = /** @class */ (function (_super) {
         }
         var getSeriesLabel = this.generateGetSeriesLabel();
         columns.forEach(function (col) {
-            var comp = _this.seriesGroupComp.wireDependentBean(new core_1.AgCheckbox());
+            var comp = _this.seriesGroupComp.createManagedBean(new core_1.AgCheckbox());
             comp.addCssClass('ag-data-select-checkbox');
             var label = getSeriesLabel(col);
             comp.setLabel(label);
@@ -207,14 +207,8 @@ var ChartDataPanel = /** @class */ (function (_super) {
     };
     ChartDataPanel.prototype.clearComponents = function () {
         core_1._.clearElement(this.getGui());
-        if (this.categoriesGroupComp) {
-            this.categoriesGroupComp.destroy();
-            this.categoriesGroupComp = undefined;
-        }
-        if (this.seriesGroupComp) {
-            this.seriesGroupComp.destroy();
-            this.seriesGroupComp = undefined;
-        }
+        this.categoriesGroupComp = this.destroyBean(this.categoriesGroupComp);
+        this.seriesGroupComp = this.destroyBean(this.seriesGroupComp);
         this.columnComps.clear();
     };
     ChartDataPanel.prototype.onDragging = function (draggingEvent) {

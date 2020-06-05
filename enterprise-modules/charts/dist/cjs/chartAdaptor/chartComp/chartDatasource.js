@@ -174,11 +174,11 @@ var ChartDatasource = /** @class */ (function (_super) {
         core_1.Autowired('valueService')
     ], ChartDatasource.prototype, "valueService", void 0);
     __decorate([
-        core_1.Optional('aggregationStage')
-    ], ChartDatasource.prototype, "aggregationStage", void 0);
-    __decorate([
         core_1.Autowired('columnController')
     ], ChartDatasource.prototype, "columnController", void 0);
+    __decorate([
+        core_1.Optional('aggregationStage')
+    ], ChartDatasource.prototype, "aggregationStage", void 0);
     return ChartDatasource;
 }(core_1.BeanStub));
 exports.ChartDatasource = ChartDatasource;

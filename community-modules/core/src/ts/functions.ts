@@ -11,11 +11,15 @@ export function defaultGroupComparator(valueA: any, valueB: any, nodeA: RowNode,
 
     if (bothAreGroups) {
         return _.defaultComparator(nodeA.key, nodeB.key, accentedCompare);
-    } else if (bothAreNormal) {
-        return _.defaultComparator(valueA, valueB, accentedCompare);
-    } else if (nodeAIsGroup) {
-        return 1;
-    } else {
-        return -1;
     }
+
+    if (bothAreNormal) {
+        return _.defaultComparator(valueA, valueB, accentedCompare);
+    }
+
+    if (nodeAIsGroup) {
+        return 1;
+    }
+
+    return -1;
 }

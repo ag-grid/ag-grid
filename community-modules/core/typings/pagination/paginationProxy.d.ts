@@ -1,9 +1,8 @@
-import { BeanStub } from "../context/beanStub";
 import { RowBounds } from "../interfaces/iRowModel";
+import { BeanStub } from "../context/beanStub";
 import { RowNode } from "../entities/rowNode";
 export declare class PaginationProxy extends BeanStub {
     private rowModel;
-    private eventService;
     private gridOptionsWrapper;
     private selectionController;
     private columnApi;

@@ -60,6 +60,6 @@ export declare abstract class RowNodeBlock extends BeanStub implements IRowNodeB
     load(): void;
     protected pageLoadFailed(): void;
     private populateWithRowData;
-    destroy(): void;
+    private destroyRowNodes;
     protected pageLoaded(version: number, rows: any[], lastRow: number): void;
 }

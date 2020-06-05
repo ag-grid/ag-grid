@@ -33,7 +33,9 @@ include '../documentation-main/documentation_header.php';
         comparator: function(a, b) {
             var valA = parseInt(a);
             var valB = parseInt(b);
+
             if (valA === valB) return 0;
+
             return valA > valB ? 1 : -1;
         }
     }
@@ -192,68 +194,6 @@ SNIPPET
 
 <?= grid_example('Filter List Cell Renderers', 'filter-list-cell-renderer', 'generated', ['enterprise' => true, 'exampleHeight' => 745, 'modules' => ['clientside', 'setfilter', 'menu', 'filterpanel']]) ?>
 
-<h2>Complex Objects</h2>
-
-<p>
-    If you are providing complex objects as values, then you need to provide a Key Creator function (<code>colDef.keyCreator</code>)
-    to convert the objects to strings when using the Set Filter. Note the string is used to compare objects when
-    filtering and to render a label in the filter UI.
-</p>
-
-<?= createSnippet(<<<SNIPPET
-// ColDef
-{
-    field: 'country',
-    keyCreator: countryKeyCreator,
-    valueFormatter: countryValueFormatter,
-    filter: 'agSetColumnFilter',
-},
-
-function countryKeyCreator(params) {
-    var countryObject = params.value;
-    return countryObject.name;
-}
-
-function countryValueFormatter(params) {
-    return params.value.name;
-}
-SNIPPET
-) ?>
-
-<p>
-    The snippet above shows a Key Creator function that returns the country name from the complex object.
-    If the Key Creator was not provided on the Column Definition, the Set Filter would not work.
-</p>
-
-<p>
-    If the value returned by Key Creator is not human-readable then you should consider also providing
-    a Formatter for the Filter List label.
-</p>
-
-<p>
-    The following example shows the Key Creator handling complex objects for the Set Filter. Note the following:
-</p>
-
-<ul class="content">
-    <li>
-        <b>Country (Complex Object)</b> column is supplied a complex object through <code>colDef.field</code>.
-    </li>
-    <li>
-        A Key Creator is supplied to the column using <code>colDef.keyCreator = countryKeyCreator</code> which extracts
-        the <code>name</code> property for the Set Filter.
-    </li>
-    <li>
-        A value formatter is supplied to the column using <code>colDef.valueFormatter = countryValueFormatter</code>
-        which extracts the <code>name</code> property for the cell values.
-    </li>
-    <li>
-        Click <b>Print Filter Model</b> with a filter active and note the logged Filter Model (dev console) uses the <code>name</code>
-        property from the complex object.
-    </li>
-</ul>
-
-<?= grid_example('Complex Objects', 'complex-objects', 'generated', ['enterprise' => true, 'exampleHeight' => 505, 'modules' => ['clientside', 'setfilter', 'menu', 'filterpanel']]) ?>
-
 <h2>Supplying Filter Values</h2>
 
 <p>
@@ -307,7 +247,7 @@ SNIPPET
         As all days are supplied the filter list also contains <code>'Saturday'</code> and <code>'Sunday'</code>.
     </li>
     <li>
-        As the <b>Days (Values Not Provided)</b> filter values are provided in the correct order, the default filter list
+        As the <b>Days (Values Provided)</b> filter values are provided in the correct order, the default filter list
         sorting is turned off using: <code>filterParams.suppressSorting=true</code>.
     </li>
 </ul>
@@ -363,7 +303,7 @@ SNIPPET
 , 'ts') ?>
 
 <p>
-    The following example demonstrates loading set filter values asynchronous. Note the following:
+    The following example demonstrates loading set filter values asynchronously. Note the following:
 </p>
 
 <ul class="content">
@@ -382,6 +322,86 @@ SNIPPET
 
 <?= grid_example('Callback/Async', 'callback-async', 'generated', ['enterprise' => true, 'exampleHeight' => 510, 'modules' => ['clientside', 'setfilter', 'menu', 'columnpanel']]) ?>
 
+<h3>Refreshing Values</h3>
+
+<p>
+    By default, when values are passed to the set filter they are only loaded once when the set filter is initially
+    created. It may be desirable to refresh the values at a later point, for example to
+    reflect other filtering that has occurred in the grid. To achieve this, you can call
+    <code>refreshFilterValues</code> on the relevant filter that you would like to refresh. This will cause the values
+    used in the filter to be refreshed from the original source, whether that is by looking at the provided
+    <code>values</code> array again, or by re-executing the <code>values</code> callback. For example, you might use
+    something like the following:
+</p>
+
+<?= createSnippet(<<<SNIPPET
+gridOptions: {
+    onFilterChanged: function(params) {
+        var setFilter = gridOptions.api.getFilterInstance('columnName');
+        setFilter.refreshFilterValues();
+    }
+}
+SNIPPET
+) ?>
+
+<p>
+    If you are using the grid as a source of values (i.e. you are not providing values yourself), calling this method
+    will also refresh the filter values using values taken from the grid, but this should not be necessary as the values
+    are automatically refreshed for you whenever any data changes in the grid.
+</p>
+
+<p>
+    If instead you want to refresh the values every time the Set Filter is opened, you can configure that using
+    <code>refreshValuesOnOpen</code>:
+</p>
+
+<?= createSnippet(<<<SNIPPET
+// ColDef
+{
+    field: 'col1',
+    filter: 'agSetColumnFilter',
+    filterParams: {
+        values: function(params) {
+            params.success(getValuesFromServer());
+        },
+        refreshValuesOnOpen: true,
+    }
+}
+SNIPPET
+) ?>
+
+<p>
+    When you refresh the values, any values that were selected in the filter that still exist in the new values will
+    stay selected, but any other selected values will be discarded.
+</p>
+
+<p>
+    The following example demonstrates refreshing values. Note the following:
+</p>
+
+<ul class="content">
+    <li>
+        The Values Array column has values provided as an array. Clicking the buttons to change the values will update
+        the values in the array provided to the filter and call <code>refreshFilterValues()</code> to immediately refresh
+        the filter for the column.
+    </li>
+    <li>
+        The Values Callback column has values provided as a callback and is configured with
+        <?= inlineCode('refreshValuesOnOpen = true') ?>. Clicking the buttons to change the values will update
+        the values that will be returned the next time the callback is called. Note that the values are not updated until
+        the next time the filter is opened.
+    </li>
+    <li>
+        If you select <code>'Elephant'</code> and change the values, it will stay selected as it is present in both lists.
+    </li>
+    <li>If you select any of the other options, that selection will be lost when you change to different values.</li>
+    <li>
+        A filter is re-applied after values have been refreshed.
+    </li>
+</ul>
+
+<?= grid_example('Refreshing Values', 'refreshing-values', 'generated', ['enterprise' => true, 'exampleHeight' => 755, 'modules' => ['clientside', 'setfilter', 'menu', 'columnpanel']]) ?>
+
 <h2>Missing Values</h2>
 
 <p>
@@ -390,6 +410,141 @@ SNIPPET
     which can be used to select / deselect all of these values. If this not the desired behaviour,
     provide a <a href="#value-formatter">Formatter</a> to present blank values in a different way.
 </p>
+
+<h2>Complex Objects</h2>
+
+<p>
+    If you are providing complex objects as values, then you need to provide a Key Creator function (<code>colDef.keyCreator</code>)
+    to convert the objects to strings when using the Set Filter. Note the string is used to compare objects when
+    filtering and to render a label in the filter UI.
+</p>
+
+<?= createSnippet(<<<SNIPPET
+// ColDef
+{
+    field: 'country',
+    keyCreator: countryKeyCreator,
+    valueFormatter: countryValueFormatter,
+    filter: 'agSetColumnFilter',
+}
+
+function countryKeyCreator(params) {
+    return params.value.name;
+}
+
+function countryValueFormatter(params) {
+    return params.value.name;
+}
+SNIPPET
+) ?>
+
+<p>
+    The snippet above shows a Key Creator function that returns the country name from the complex object.
+    If the Key Creator was not provided on the Column Definition, the Set Filter would not work.
+</p>
+
+<p>
+    If the value returned by Key Creator is not human-readable then you should consider also providing
+    a Formatter for the Filter List label.
+</p>
+
+<p>
+    The following example shows the Key Creator handling complex objects for the Set Filter. Note the following:
+</p>
+
+<ul class="content">
+    <li>
+        <b>Country (Complex Object)</b> column is supplied a complex object through <code>colDef.field</code>.
+    </li>
+    <li>
+        A Key Creator is supplied to the column using <code>colDef.keyCreator = countryKeyCreator</code> which extracts
+        the <code>name</code> property for the Set Filter.
+    </li>
+    <li>
+        A value formatter is supplied to the column using <code>colDef.valueFormatter = countryValueFormatter</code>
+        which extracts the <code>name</code> property for the cell values.
+    </li>
+    <li>
+        Click <b>Print Filter Model</b> with a filter active and note the logged Filter Model (dev console) uses the <code>name</code>
+        property from the complex object.
+    </li>
+</ul>
+
+<?= grid_example('Complex Objects', 'complex-objects', 'generated', ['enterprise' => true, 'exampleHeight' => 505, 'modules' => ['clientside', 'setfilter', 'menu', 'filterpanel']]) ?>
+
+<h2>Multiple Values Per Cell</h2>
+
+<p>
+    Sometimes you might wish to support multiple values in a single cell, for example when using tags. In this case,
+    the Set Filter can extract each of the individual values from the cells, creating an entry in the Filter List for
+    each individual value. Selecting a value will then show rows where any of the values in the cell match the selected
+    value.
+</p>
+
+<p>
+    The example below demonstrates this in action. Note the following:
+</p>
+
+<ul>
+    <li>The <strong>Animals (array)</strong> column uses an array in the data containing multiple values.</li>
+    <li>
+        The <strong>Animals (string)</strong> column uses a single string in the data to represent multiple values, with a
+        <a href="../javascript-grid-value-getters/">Value Getter</a> used to extract an array of values from the data.
+    </li>
+    <li>
+        The <strong>Animals (objects)</strong> column retrieves values from an array of objects, using a
+        <a href="#complex-objects">Key Creator</a>.
+    </li>
+    <li>
+        For all scenarios, the Set Filter displays a list of all the individual, unique values present from the data.
+    </li>
+    <li>
+        Selecting values in the Set Filter will show rows where the data for that row contains <strong>any</strong> of
+        the selected values.
+    </li>
+</ul>
+
+<?= grid_example('Multiple Values', 'multiple-values', 'generated', ['enterprise' => true, 'modules' => ['clientside', 'setfilter', 'menu']]) ?>
+
+<h2>Default State</h2>
+
+<p>
+    By default, when the Set Filter is created all values are selected. If you would prefer to invert this behaviour
+    and have everything de-selected by default, you can use the following:
+</p>
+
+<?= createSnippet(<<<SNIPPET
+// ColDef
+{
+    field: 'country',
+    filter: 'agSetColumnFilter',
+    filterParams: {
+        defaultToNothingSelected: true,
+    }
+}
+SNIPPET
+) ?>
+
+<p>In this case, no filtering will occur until at least one value is selected.</p>
+
+<p>
+    The following example demonstrates different default states. Note the following:
+</p>
+
+<ul class="content">
+    <li>
+        The Athlete column has everything selected when the Set Filter is first opened, which is the default
+    </li>
+    <li>
+        The Country column has nothing selected by default, as <?= inlineCode('defaultToNothingSelected = true') ?>
+    </li>
+    <li>
+        When the Set Filter for the Country column is opened, the grid is not filtered until at least one value has
+        been selected
+    </li>
+</ul>
+
+<?= grid_example('Default State', 'default-state', 'generated', ['enterprise' => true, 'modules' => ['clientside', 'setfilter', 'menu']]) ?>
 
 <h2>Filter Value Tooltips</h2>
 

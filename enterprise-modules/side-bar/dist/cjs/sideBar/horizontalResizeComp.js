@@ -23,7 +23,7 @@ var core_1 = require("@ag-grid-community/core");
 var HorizontalResizeComp = /** @class */ (function (_super) {
     __extends(HorizontalResizeComp, _super);
     function HorizontalResizeComp() {
-        return _super.call(this, "<div class=\"ag-tool-panel-horizontal-resize\"></div>") || this;
+        return _super.call(this, /* html */ "<div class=\"ag-tool-panel-horizontal-resize\"></div>") || this;
     }
     HorizontalResizeComp.prototype.setElementToResize = function (elementToResize) {
         this.elementToResize = elementToResize;
@@ -56,9 +56,6 @@ var HorizontalResizeComp = /** @class */ (function (_super) {
     __decorate([
         core_1.Autowired('gridOptionsWrapper')
     ], HorizontalResizeComp.prototype, "gridOptionsWrapper", void 0);
-    __decorate([
-        core_1.Autowired('eventService')
-    ], HorizontalResizeComp.prototype, "eventService", void 0);
     __decorate([
         core_1.PostConstruct
     ], HorizontalResizeComp.prototype, "postConstruct", null);

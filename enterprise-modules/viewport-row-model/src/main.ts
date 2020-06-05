@@ -1,1 +1,1 @@
-export {ViewportRowModelModule} from "./viewportRowModelModule"
+export { ViewportRowModelModule } from "./viewportRowModelModule"

@@ -9,7 +9,6 @@ import {
     ColumnController,
     Constants,
     Events,
-    EventService,
     GridApi,
     GridOptionsWrapper,
     GridPanel,
@@ -25,16 +24,15 @@ import {
     RowPosition,
     RowPositionUtils,
     PinnedRowModel,
-    _,
-    PreDestroy,
+    BeanStub,
+    _
 } from "@ag-grid-community/core";
 
 @Bean('rangeController')
-export class RangeController implements IRangeController {
+export class RangeController extends BeanStub implements IRangeController {
 
     @Autowired('loggerFactory') private loggerFactory: LoggerFactory;
     @Autowired('rowModel') private rowModel: IRowModel;
-    @Autowired('eventService') private eventService: EventService;
     @Autowired('columnController') private columnController: ColumnController;
     @Autowired('mouseEventService') private mouseEventService: MouseEventService;
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
@@ -59,7 +57,6 @@ export class RangeController implements IRangeController {
     private dragging = false;
     private draggingCell?: CellPosition;
     private draggingRange?: CellRange;
-    private events: (() => void)[] = [];
 
     public autoScrollService: AutoScrollService;
 
@@ -72,25 +69,13 @@ export class RangeController implements IRangeController {
     private init(): void {
         this.logger = this.loggerFactory.create('RangeController');
 
-        this.events = [
-            this.eventService.addEventListener(Events.EVENT_COLUMN_EVERYTHING_CHANGED, this.removeAllCellRanges.bind(this)),
-            this.eventService.addEventListener(Events.EVENT_COLUMN_PIVOT_MODE_CHANGED, this.removeAllCellRanges.bind(this)),
-            this.eventService.addEventListener(Events.EVENT_COLUMN_ROW_GROUP_CHANGED, this.removeAllCellRanges.bind(this)),
-
-            this.eventService.addEventListener(Events.EVENT_COLUMN_GROUP_OPENED, this.refreshLastRangeStart.bind(this)),
-            this.eventService.addEventListener(Events.EVENT_COLUMN_MOVED, this.refreshLastRangeStart.bind(this)),
-            this.eventService.addEventListener(Events.EVENT_COLUMN_PINNED, this.refreshLastRangeStart.bind(this)),
-
-            this.eventService.addEventListener(Events.EVENT_COLUMN_VISIBLE, this.onColumnVisibleChange.bind(this))
-        ]
-    }
-
-    @PreDestroy
-    public destroy(): void {
-        if (this.events.length) {
-            this.events.forEach(func => func());
-            this.events = [];
-        }
+        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_EVERYTHING_CHANGED, this.removeAllCellRanges.bind(this));
+        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_PIVOT_MODE_CHANGED, this.removeAllCellRanges.bind(this));
+        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_ROW_GROUP_CHANGED, this.removeAllCellRanges.bind(this));
+        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_GROUP_OPENED, this.refreshLastRangeStart.bind(this));
+        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_MOVED, this.refreshLastRangeStart.bind(this));
+        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_PINNED, this.refreshLastRangeStart.bind(this));
+        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_VISIBLE, this.onColumnVisibleChange.bind(this));
     }
 
     public onColumnVisibleChange(): void {
@@ -494,7 +479,7 @@ export class RangeController implements IRangeController {
         const lastRow = this.rowPositionUtils.before(startRow, endRow) ? endRow : startRow;
 
         const isRightColumn = allColumns.indexOf(cell.column) === _.last(allPositions);
-        const isLastRow = cell.rowIndex === lastRow.rowIndex && cell.rowPinned === lastRow.rowPinned;
+        const isLastRow = cell.rowIndex === lastRow.rowIndex && _.makeNull(cell.rowPinned) === _.makeNull(lastRow.rowPinned);
 
         return isRightColumn && isLastRow;
     }

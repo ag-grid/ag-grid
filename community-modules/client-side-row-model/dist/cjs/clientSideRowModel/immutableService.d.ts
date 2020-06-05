@@ -1,5 +1,5 @@
-import { IImmutableService, RowDataTransaction } from "@ag-grid-community/core";
-export declare class ImmutableService implements IImmutableService {
+import { IImmutableService, RowDataTransaction, BeanStub } from "@ag-grid-community/core";
+export declare class ImmutableService extends BeanStub implements IImmutableService {
     private rowModel;
     private gridOptionsWrapper;
     private clientSideRowModel;

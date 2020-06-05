@@ -105,6 +105,8 @@ export declare class AgGridAngular implements AfterViewInit {
     blockLoadDebounceMillis: any;
     keepDetailRowsCount: any;
     undoRedoCellEditingLimit: any;
+    cellFlashDelay: any;
+    cellFadeDelay: any;
     localeTextFunc: any;
     groupRowInnerRenderer: any;
     groupRowInnerRendererFramework: any;

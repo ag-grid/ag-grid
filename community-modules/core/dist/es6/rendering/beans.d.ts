@@ -1,9 +1,10 @@
-// Type definitions for @ag-grid-community/core v23.1.1
+// Type definitions for @ag-grid-community/core v23.2.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { Context } from "../context/context";
 import { ColumnApi } from "../columnController/columnApi";
 import { ColumnController } from "../columnController/columnController";
+import { HeaderNavigationService } from "../headerRendering/header/headerNavigationService";
 import { GridApi } from "../gridApi";
 import { GridOptionsWrapper } from "../gridOptionsWrapper";
 import { ExpressionService } from "../valueService/expressionService";
@@ -12,7 +13,7 @@ import { TemplateService } from "../templateService";
 import { ValueService } from "../valueService/valueService";
 import { EventService } from "../eventService";
 import { ColumnAnimationService } from "./columnAnimationService";
-import { IRangeController } from "../interfaces/iRangeController";
+import { IRangeController, ISelectionHandleFactory } from "../interfaces/iRangeController";
 import { FocusController } from "../focusController";
 import { IContextMenuFactory } from "../interfaces/iContextMenuFactory";
 import { CellRendererFactory } from "./cellRendererFactory";
@@ -51,6 +52,7 @@ export declare class Beans {
     valueService: ValueService;
     eventService: EventService;
     columnController: ColumnController;
+    headerNavigationService: HeaderNavigationService;
     columnAnimationService: ColumnAnimationService;
     rangeController: IRangeController;
     focusController: FocusController;
@@ -71,6 +73,7 @@ export declare class Beans {
     cellPositionUtils: CellPositionUtils;
     rowPositionUtils: RowPositionUtils;
     selectionController: SelectionController;
+    selectionHandleFactory: ISelectionHandleFactory;
     doingMasterDetail: boolean;
     gridPanel: GridPanel;
     registerGridComp(gridPanel: GridPanel): void;

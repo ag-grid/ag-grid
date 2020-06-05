@@ -1,2 +1,2 @@
-export {EnterpriseCoreModule} from "./agGridEnterpriseModule";
-export {LicenseManager} from "./licenseManager";
+export { EnterpriseCoreModule } from "./agGridEnterpriseModule";
+export { LicenseManager } from "./licenseManager";

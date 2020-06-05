@@ -1,4 +1,4 @@
-// ag-charts-react v1.1.0
+// ag-charts-react v1.2.0
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 // effectively Object.assign - here for IE compatibility

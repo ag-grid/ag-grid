@@ -9,5 +9,6 @@ export declare class LoadingOverlayComponent extends Component implements ILoadi
     private static DEFAULT_LOADING_OVERLAY_TEMPLATE;
     gridOptionsWrapper: GridOptionsWrapper;
     constructor();
+    destroy(): void;
     init(params: ILoadingOverlayParams): void;
 }

@@ -27,6 +27,23 @@ var SideBarButtonsComp = /** @class */ (function (_super) {
         _this.buttonComps = [];
         return _this;
     }
+    SideBarButtonsComp.prototype.postConstruct = function () {
+        this.addManagedListener(this.getFocusableElement(), 'keydown', this.handleKeyDown.bind(this));
+    };
+    SideBarButtonsComp.prototype.handleKeyDown = function (e) {
+        if (e.keyCode !== core_1.Constants.KEY_TAB || !e.shiftKey) {
+            return;
+        }
+        var prevEl = this.focusController.findNextFocusableElement(this.getFocusableElement(), null, true);
+        if (!prevEl) {
+            var headerPosition = this.headerPositionUtils.findColAtEdgeForHeaderRow(0, 'start');
+            if (!headerPosition) {
+                return;
+            }
+            e.preventDefault();
+            this.focusController.focusHeaderPosition(headerPosition);
+        }
+    };
     SideBarButtonsComp.prototype.setToolPanelDefs = function (toolPanelDefs) {
         toolPanelDefs.forEach(this.addButtonComp.bind(this));
     };
@@ -37,10 +54,9 @@ var SideBarButtonsComp = /** @class */ (function (_super) {
     };
     SideBarButtonsComp.prototype.addButtonComp = function (def) {
         var _this = this;
-        var buttonComp = new SideBarButtonComp(def);
-        this.getContext().wireBean(buttonComp);
+        var buttonComp = this.createBean(new SideBarButtonComp(def));
         this.buttonComps.push(buttonComp);
-        this.getGui().appendChild(buttonComp.getGui());
+        this.appendChild(buttonComp);
         buttonComp.addEventListener(SideBarButtonComp.EVENT_TOGGLE_BUTTON_CLICKED, function () {
             _this.dispatchEvent({
                 type: SideBarButtonsComp.EVENT_SIDE_BAR_BUTTON_CLICKED,
@@ -49,21 +65,23 @@ var SideBarButtonsComp = /** @class */ (function (_super) {
         });
     };
     SideBarButtonsComp.prototype.clearButtons = function () {
-        if (this.buttonComps) {
-            this.buttonComps.forEach(function (comp) { return comp.destroy(); });
-        }
+        this.buttonComps = this.destroyBeans(this.buttonComps);
         core_1._.clearElement(this.getGui());
-        this.buttonComps.length = 0;
-    };
-    SideBarButtonsComp.prototype.destroy = function () {
-        this.clearButtons();
-        _super.prototype.destroy.call(this);
     };
     SideBarButtonsComp.EVENT_SIDE_BAR_BUTTON_CLICKED = 'sideBarButtonClicked';
     SideBarButtonsComp.TEMPLATE = "<div class=\"ag-side-buttons\"></div>";
     __decorate([
-        core_1.Autowired("gridOptionsWrapper")
-    ], SideBarButtonsComp.prototype, "gridOptionsWrapper", void 0);
+        core_1.Autowired('focusController')
+    ], SideBarButtonsComp.prototype, "focusController", void 0);
+    __decorate([
+        core_1.Autowired('headerPositionUtils')
+    ], SideBarButtonsComp.prototype, "headerPositionUtils", void 0);
+    __decorate([
+        core_1.PostConstruct
+    ], SideBarButtonsComp.prototype, "postConstruct", null);
+    __decorate([
+        core_1.PreDestroy
+    ], SideBarButtonsComp.prototype, "clearButtons", null);
     return SideBarButtonsComp;
 }(core_1.Component));
 exports.SideBarButtonsComp = SideBarButtonsComp;
@@ -81,7 +99,7 @@ var SideBarButtonComp = /** @class */ (function (_super) {
         var template = this.createTemplate();
         this.setTemplate(template);
         this.eIconWrapper.insertAdjacentElement('afterbegin', core_1._.createIconNoSpan(this.toolPanelDef.iconKey, this.gridOptionsWrapper));
-        this.addDestroyableEventListener(this.eToggleButton, 'click', this.onButtonPressed.bind(this));
+        this.addManagedListener(this.eToggleButton, 'click', this.onButtonPressed.bind(this));
     };
     SideBarButtonComp.prototype.createTemplate = function () {
         var translate = this.gridOptionsWrapper.getLocaleTextFunc();

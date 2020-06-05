@@ -1,21 +1,22 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v23.1.1
+ * @version v23.2.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 var generic_1 = require("./generic");
+var array_1 = require("./array");
 function iterateObject(object, callback) {
-    if (!object || generic_1.missing(object)) {
+    if (object == null) {
         return;
     }
     if (Array.isArray(object)) {
-        object.forEach(function (value, index) { return callback("" + index, value); });
+        array_1.forEach(object, function (value, index) { return callback("" + index, value); });
     }
     else {
-        Object.keys(object).forEach(function (key) { return callback(key, object[key]); });
+        array_1.forEach(Object.keys(object), function (key) { return callback(key, object[key]); });
     }
 }
 exports.iterateObject = iterateObject;
@@ -51,7 +52,7 @@ function copyPropertiesIfPresent(source, target) {
     for (var _i = 2; _i < arguments.length; _i++) {
         properties[_i - 2] = arguments[_i];
     }
-    properties.forEach(function (p) { return copyPropertyIfPresent(source, target, p); });
+    array_1.forEach(properties, function (p) { return copyPropertyIfPresent(source, target, p); });
 }
 exports.copyPropertiesIfPresent = copyPropertiesIfPresent;
 /**
@@ -68,7 +69,7 @@ exports.copyPropertyIfPresent = copyPropertyIfPresent;
 function getAllKeysInObjects(objects) {
     var allValues = {};
     objects.filter(function (obj) { return obj != null; }).forEach(function (obj) {
-        Object.keys(obj).forEach(function (key) { return allValues[key] = null; });
+        array_1.forEach(Object.keys(obj), function (key) { return allValues[key] = null; });
     });
     return Object.keys(allValues);
 }
@@ -97,13 +98,7 @@ function assign(object) {
     for (var _i = 1; _i < arguments.length; _i++) {
         sources[_i - 1] = arguments[_i];
     }
-    sources.forEach(function (source) {
-        if (generic_1.exists(source)) {
-            iterateObject(source, function (key, value) {
-                object[key] = value;
-            });
-        }
-    });
+    array_1.forEach(sources, function (source) { return iterateObject(source, function (key, value) { return object[key] = value; }); });
     return object;
 }
 exports.assign = assign;
@@ -144,8 +139,8 @@ function set(target, expression, value) {
 exports.set = set;
 function deepFreeze(object) {
     Object.freeze(object);
-    generic_1.values(object).filter(function (v) { return v != null; }).forEach(function (v) {
-        if (typeof v === 'object' || typeof v === 'function') {
+    array_1.forEach(generic_1.values(object), function (v) {
+        if (v != null && (typeof v === 'object' || typeof v === 'function')) {
             deepFreeze(v);
         }
     });

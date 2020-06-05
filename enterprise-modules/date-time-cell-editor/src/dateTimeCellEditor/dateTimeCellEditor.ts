@@ -14,7 +14,7 @@ export interface IDateTimeCellEditorParams extends ICellEditorParams {
 
 export class DateTimeCellEditor extends PopupComponent implements ICellEditor {
 
-    private static TEMPLATE = /*html*/ `<div class="ag-date-time-cell-editor" tabindex="0"></div>`;
+    private static TEMPLATE = /*html*/ `<div class="ag-date-time-cell-editor" tabindex="-1"></div>`;
 
     private params: IDateTimeCellEditorParams;
     private cancelled = false;
@@ -46,7 +46,7 @@ export class DateTimeCellEditor extends PopupComponent implements ICellEditor {
             onValueSelect: this.handleValueSelect.bind(this),
             initialValue: initialValue
         });
-        this.wireBean(this.editor);
+        this.createBean(this.editor);
         this.appendChild(this.editor);
     }
 

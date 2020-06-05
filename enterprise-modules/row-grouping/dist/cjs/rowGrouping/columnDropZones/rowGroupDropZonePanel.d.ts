@@ -2,7 +2,6 @@ import { Column } from "@ag-grid-community/core";
 import { BaseDropZonePanel } from "./baseDropZonePanel";
 export declare class RowGroupDropZonePanel extends BaseDropZonePanel {
     private columnController;
-    private eventService;
     private gridOptionsWrapper;
     private loggerFactory;
     private dragAndDropService;

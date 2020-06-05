@@ -19,8 +19,8 @@ import { RichSelectRow } from "./richSelectRow";
 export class RichSelectCellEditor extends PopupComponent implements ICellEditor {
 
     // tab index is needed so we can focus, which is needed for keyboard events
-    private static TEMPLATE =
-        `<div class="ag-rich-select" tabindex="0">
+    private static TEMPLATE = /* html */
+        `<div class="ag-rich-select" tabindex="-1">
             <div ref="eValue" class="ag-rich-select-value"></div>
             <div ref="eList" class="ag-rich-select-list"></div>
         </div>`;
@@ -62,7 +62,7 @@ export class RichSelectCellEditor extends PopupComponent implements ICellEditor 
         this.eValue.appendChild(icon);
 
         this.virtualList = new VirtualList('rich-select');
-        this.getContext().wireBean(this.virtualList);
+        this.getContext().createBean(this.virtualList);
 
         this.virtualList.setComponentCreator(this.createRowComponent.bind(this));
 
@@ -88,8 +88,8 @@ export class RichSelectCellEditor extends PopupComponent implements ICellEditor 
         this.addGuiEventListener('keydown', this.onKeyDown.bind(this));
         const virtualListGui = this.virtualList.getGui();
 
-        this.addDestroyableEventListener(virtualListGui, 'click', this.onClick.bind(this));
-        this.addDestroyableEventListener(virtualListGui, 'mousemove', this.onMouseMove.bind(this));
+        this.addManagedListener(virtualListGui, 'click', this.onClick.bind(this));
+        this.addManagedListener(virtualListGui, 'mousemove', this.onMouseMove.bind(this));
 
         this.clearSearchString = _.debounce(this.clearSearchString, 300);
 
@@ -195,9 +195,7 @@ export class RichSelectCellEditor extends PopupComponent implements ICellEditor 
 
         if (promise) {
             promise.then(renderer => {
-                if (renderer && renderer.destroy) {
-                    this.addDestroyFunc(() => renderer.destroy());
-                }
+                this.addDestroyFunc(() => this.getContext().destroyBean(renderer))
             });
         } else {
             if (_.exists(this.selectedValue)) {
@@ -225,7 +223,7 @@ export class RichSelectCellEditor extends PopupComponent implements ICellEditor 
     private createRowComponent(value: any): Component {
         const valueFormatted = this.params.formatValue(value);
         const row = new RichSelectRow(this.params);
-        this.getContext().wireBean(row);
+        this.getContext().createBean(row);
         row.setState(value, valueFormatted, value === this.selectedValue);
 
         return row;

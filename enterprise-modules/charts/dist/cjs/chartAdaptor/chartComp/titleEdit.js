@@ -40,12 +40,12 @@ var TitleEdit = /** @class */ (function (_super) {
     }
     TitleEdit.prototype.init = function () {
         var _this = this;
-        this.addDestroyableEventListener(this.getGui(), 'keypress', function (e) {
+        this.addManagedListener(this.getGui(), 'keypress', function (e) {
             if (e.key === 'Enter') {
                 _this.endEditing();
             }
         });
-        this.addDestroyableEventListener(this.getGui(), 'blur', this.endEditing.bind(this));
+        this.addManagedListener(this.getGui(), 'blur', this.endEditing.bind(this));
     };
     /* should be called when the containing component changes to a new chart proxy */
     TitleEdit.prototype.setChartProxy = function (chartProxy) {
@@ -59,17 +59,17 @@ var TitleEdit = /** @class */ (function (_super) {
         this.chartProxy = chartProxy;
         var chart = this.chartProxy.getChart();
         var canvas = chart.scene.canvas.element;
-        var destroyDbleClickListener = this.addDestroyableEventListener(canvas, 'dblclick', function (event) {
+        var destroyDbleClickListener = this.addManagedListener(canvas, 'dblclick', function (event) {
             var title = chart.title;
-            if (title && title.node.isPointInNode(event.offsetX, event.offsetY)) {
+            if (title && title.node.containsPoint(event.offsetX, event.offsetY)) {
                 var bbox = title.node.computeBBox();
                 var xy = title.node.inverseTransformPoint(bbox.x, bbox.y);
                 _this.startEditing(__assign(__assign({}, bbox), xy));
             }
         });
-        var destroyMouseMoveListener = this.addDestroyableEventListener(canvas, 'mousemove', function (event) {
+        var destroyMouseMoveListener = this.addManagedListener(canvas, 'mousemove', function (event) {
             var title = chart.title;
-            var inTitle = title && title.node.isPointInNode(event.offsetX, event.offsetY);
+            var inTitle = title && title.node.containsPoint(event.offsetX, event.offsetY);
             canvas.style.cursor = inTitle ? 'pointer' : '';
         });
         this.destroyableChartListeners = [
@@ -112,13 +112,10 @@ var TitleEdit = /** @class */ (function (_super) {
         this.eventService.dispatchEvent({ 'type': 'chartTitleEdit' });
         core_1._.removeCssClass(this.getGui(), 'currently-editing');
     };
-    TitleEdit.TEMPLATE = "<input\n            class=\"ag-chart-title-edit\"\n            style=\"padding:0; border:none; border-radius: 0; min-height: 0; text-align: center;\"\n        ></input>";
+    TitleEdit.TEMPLATE = "<input\n            class=\"ag-chart-title-edit\"\n            style=\"padding:0; border:none; border-radius: 0; min-height: 0; text-align: center;\" />\n        ";
     __decorate([
         core_1.Autowired('chartTranslator')
     ], TitleEdit.prototype, "chartTranslator", void 0);
-    __decorate([
-        core_1.Autowired('eventService')
-    ], TitleEdit.prototype, "eventService", void 0);
     __decorate([
         core_1.PostConstruct
     ], TitleEdit.prototype, "init", null);

@@ -7,9 +7,10 @@ import { HeaderWrapperComp } from "../headerRendering/header/headerWrapperComp";
 import { Component } from "../widgets/component";
 import { HeaderRootComp } from "../headerRendering/headerRootComp";
 import { _ } from "../utils";
+import { BeanStub } from "../context/beanStub";
 
 @Bean('autoWidthCalculator')
-export class AutoWidthCalculator {
+export class AutoWidthCalculator extends BeanStub {
 
     @Autowired('rowRenderer') private rowRenderer: RowRenderer;
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;

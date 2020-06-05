@@ -1,9 +1,22 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v23.1.1
+ * @version v23.2.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = function (d, b) {
+        extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+        return extendStatics(d, b);
+    };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -13,37 +26,30 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
-import { Bean, PreDestroy } from "./context/context";
+import { Bean } from "./context/context";
+import { BeanStub } from "./context/beanStub";
 import { Qualifier } from "./context/context";
 import { Events } from "./events";
 import { Autowired } from "./context/context";
 import { PostConstruct } from "./context/context";
 import { Constants } from "./constants";
-import { _ } from './utils';
 import { ChangedPath } from "./utils/changedPath";
-var SelectionController = /** @class */ (function () {
+import { _ } from './utils';
+var SelectionController = /** @class */ (function (_super) {
+    __extends(SelectionController, _super);
     function SelectionController() {
-        this.events = [];
+        return _super !== null && _super.apply(this, arguments) || this;
     }
     SelectionController.prototype.setBeans = function (loggerFactory) {
         this.logger = loggerFactory.create('SelectionController');
         this.reset();
         if (this.gridOptionsWrapper.isRowModelDefault()) {
-            this.events.push(this.eventService.addEventListener(Events.EVENT_ROW_DATA_CHANGED, this.reset.bind(this)));
-        }
-        else {
-            this.logger.log('dont know what to do here');
+            this.addManagedListener(this.eventService, Events.EVENT_ROW_DATA_CHANGED, this.reset.bind(this));
         }
     };
     SelectionController.prototype.init = function () {
         this.groupSelectsChildren = this.gridOptionsWrapper.isGroupSelectsChildren();
-        this.events.push(this.eventService.addEventListener(Events.EVENT_ROW_SELECTED, this.onRowSelected.bind(this)));
-    };
-    SelectionController.prototype.destroy = function () {
-        if (this.events.length) {
-            this.events.forEach(function (func) { return func(); });
-        }
-        this.events = [];
+        this.addManagedListener(this.eventService, Events.EVENT_ROW_SELECTED, this.onRowSelected.bind(this));
     };
     SelectionController.prototype.setLastSelectedNode = function (rowNode) {
         this.lastSelectedNode = rowNode;
@@ -321,9 +327,6 @@ var SelectionController = /** @class */ (function () {
         this.selectNode(node, tryMulti);
     };
     __decorate([
-        Autowired('eventService')
-    ], SelectionController.prototype, "eventService", void 0);
-    __decorate([
         Autowired('rowModel')
     ], SelectionController.prototype, "rowModel", void 0);
     __decorate([
@@ -341,12 +344,9 @@ var SelectionController = /** @class */ (function () {
     __decorate([
         PostConstruct
     ], SelectionController.prototype, "init", null);
-    __decorate([
-        PreDestroy
-    ], SelectionController.prototype, "destroy", null);
     SelectionController = __decorate([
         Bean('selectionController')
     ], SelectionController);
     return SelectionController;
-}());
+}(BeanStub));
 export { SelectionController };

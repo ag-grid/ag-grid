@@ -1,5 +1,5 @@
-import { IFilterOptionDef } from "../../interfaces/iFilter";
-import { IScalarFilterParams } from "./scalarFilter";
+import { IFilterOptionDef } from '../../interfaces/iFilter';
+import { IScalarFilterParams } from './scalarFilter';
 export declare class OptionsFactory {
     protected customFilterOptions: {
         [name: string]: IFilterOptionDef;

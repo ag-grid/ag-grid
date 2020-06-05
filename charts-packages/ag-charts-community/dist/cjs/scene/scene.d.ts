@@ -1,6 +1,10 @@
 import { HdpiCanvas } from "../canvas/hdpiCanvas";
 import { Node } from "./node";
 import { Path2D } from "./path2D";
+interface DebugOptions {
+    renderFrameIndex: boolean;
+    renderBoundingBoxes: boolean;
+}
 export declare class Scene {
     static className: string;
     readonly id: string;
@@ -12,6 +16,7 @@ export declare class Scene {
     getDataURL(type?: string): string;
     readonly width: number;
     readonly height: number;
+    private pendingSize?;
     resize(width: number, height: number): void;
     private _dirty;
     private animationFrameId;
@@ -20,9 +25,9 @@ export declare class Scene {
     _root: Node | null;
     root: Node | null;
     appendPath(path: Path2D): void;
+    readonly debug: DebugOptions;
     private _frameIndex;
     readonly frameIndex: number;
-    private _renderFrameIndex;
-    renderFrameIndex: boolean;
     readonly render: () => void;
 }
+export {};

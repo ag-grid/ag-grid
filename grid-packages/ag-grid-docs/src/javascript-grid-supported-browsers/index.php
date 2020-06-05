@@ -27,14 +27,14 @@ include '../documentation-main/documentation_header.php';
 </p>
 
 <style>
-
-
     .icon-and-title {
         text-align: center;
     }
+
     .browser-icon {
-        width: 80px;
+        max-width: 80px;
     }
+
     .browser-row {
         margin-bottom: 20px;
     }

@@ -1,3 +1,16 @@
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = function (d, b) {
+        extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+        return extendStatics(d, b);
+    };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -11,13 +24,15 @@ var __spreadArrays = (this && this.__spreadArrays) || function () {
             r[k] = a[j];
     return r;
 };
-import { Autowired, Bean, Constants, Events, PostConstruct, _, PreDestroy, } from "@ag-grid-community/core";
-var RangeController = /** @class */ (function () {
+import { Autowired, Bean, Constants, Events, PostConstruct, BeanStub, _ } from "@ag-grid-community/core";
+var RangeController = /** @class */ (function (_super) {
+    __extends(RangeController, _super);
     function RangeController() {
-        this.cellRanges = [];
-        this.bodyScrollListener = this.onBodyScroll.bind(this);
-        this.dragging = false;
-        this.events = [];
+        var _this = _super !== null && _super.apply(this, arguments) || this;
+        _this.cellRanges = [];
+        _this.bodyScrollListener = _this.onBodyScroll.bind(_this);
+        _this.dragging = false;
+        return _this;
     }
     RangeController.prototype.registerGridComp = function (gridPanel) {
         this.gridPanel = gridPanel;
@@ -25,21 +40,13 @@ var RangeController = /** @class */ (function () {
     };
     RangeController.prototype.init = function () {
         this.logger = this.loggerFactory.create('RangeController');
-        this.events = [
-            this.eventService.addEventListener(Events.EVENT_COLUMN_EVERYTHING_CHANGED, this.removeAllCellRanges.bind(this)),
-            this.eventService.addEventListener(Events.EVENT_COLUMN_PIVOT_MODE_CHANGED, this.removeAllCellRanges.bind(this)),
-            this.eventService.addEventListener(Events.EVENT_COLUMN_ROW_GROUP_CHANGED, this.removeAllCellRanges.bind(this)),
-            this.eventService.addEventListener(Events.EVENT_COLUMN_GROUP_OPENED, this.refreshLastRangeStart.bind(this)),
-            this.eventService.addEventListener(Events.EVENT_COLUMN_MOVED, this.refreshLastRangeStart.bind(this)),
-            this.eventService.addEventListener(Events.EVENT_COLUMN_PINNED, this.refreshLastRangeStart.bind(this)),
-            this.eventService.addEventListener(Events.EVENT_COLUMN_VISIBLE, this.onColumnVisibleChange.bind(this))
-        ];
-    };
-    RangeController.prototype.destroy = function () {
-        if (this.events.length) {
-            this.events.forEach(function (func) { return func(); });
-            this.events = [];
-        }
+        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_EVERYTHING_CHANGED, this.removeAllCellRanges.bind(this));
+        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_PIVOT_MODE_CHANGED, this.removeAllCellRanges.bind(this));
+        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_ROW_GROUP_CHANGED, this.removeAllCellRanges.bind(this));
+        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_GROUP_OPENED, this.refreshLastRangeStart.bind(this));
+        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_MOVED, this.refreshLastRangeStart.bind(this));
+        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_PINNED, this.refreshLastRangeStart.bind(this));
+        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_VISIBLE, this.onColumnVisibleChange.bind(this));
     };
     RangeController.prototype.onColumnVisibleChange = function () {
         var _this = this;
@@ -366,7 +373,7 @@ var RangeController = /** @class */ (function () {
         var startRow = cellRange.startRow, endRow = cellRange.endRow;
         var lastRow = this.rowPositionUtils.before(startRow, endRow) ? endRow : startRow;
         var isRightColumn = allColumns.indexOf(cell.column) === _.last(allPositions);
-        var isLastRow = cell.rowIndex === lastRow.rowIndex && cell.rowPinned === lastRow.rowPinned;
+        var isLastRow = cell.rowIndex === lastRow.rowIndex && _.makeNull(cell.rowPinned) === _.makeNull(lastRow.rowPinned);
         return isRightColumn && isLastRow;
     };
     // returns the number of ranges this cell is in
@@ -525,9 +532,6 @@ var RangeController = /** @class */ (function () {
         Autowired('rowModel')
     ], RangeController.prototype, "rowModel", void 0);
     __decorate([
-        Autowired('eventService')
-    ], RangeController.prototype, "eventService", void 0);
-    __decorate([
         Autowired('columnController')
     ], RangeController.prototype, "columnController", void 0);
     __decorate([
@@ -557,14 +561,11 @@ var RangeController = /** @class */ (function () {
     __decorate([
         PostConstruct
     ], RangeController.prototype, "init", null);
-    __decorate([
-        PreDestroy
-    ], RangeController.prototype, "destroy", null);
     RangeController = __decorate([
         Bean('rangeController')
     ], RangeController);
     return RangeController;
-}());
+}(BeanStub));
 export { RangeController };
 var AutoScrollService = /** @class */ (function () {
     function AutoScrollService(gridPanel, gridOptionsWrapper) {

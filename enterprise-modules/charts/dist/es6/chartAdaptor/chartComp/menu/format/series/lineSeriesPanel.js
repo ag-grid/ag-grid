@@ -64,14 +64,15 @@ var LineSeriesPanel = /** @class */ (function (_super) {
             .onValueChange(function (newValue) { return _this.getChartProxy().setSeriesOption("stroke.width", newValue); });
     };
     LineSeriesPanel.prototype.initMarkersPanel = function () {
-        var markersPanelComp = this.wireBean(new MarkersPanel(this.chartController));
+        var markersPanelComp = this.createBean(new MarkersPanel(this.chartController));
         this.seriesGroup.addItem(markersPanelComp);
         this.activePanels.push(markersPanelComp);
     };
     LineSeriesPanel.prototype.destroyActivePanels = function () {
+        var _this = this;
         this.activePanels.forEach(function (panel) {
             _.removeFromParent(panel.getGui());
-            panel.destroy();
+            _this.destroyBean(panel);
         });
     };
     LineSeriesPanel.prototype.getChartProxy = function () {

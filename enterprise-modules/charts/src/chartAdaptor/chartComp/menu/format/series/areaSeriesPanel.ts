@@ -9,15 +9,15 @@ import {
     RefSelector,
     AgGroupComponentParams
 } from "@ag-grid-community/core";
-import {ChartController} from "../../../chartController";
-import {MarkersPanel} from "./markersPanel";
-import {ChartTranslator} from "../../../chartTranslator";
-import {ShadowPanel} from "./shadowPanel";
-import {AreaChartProxy} from "../../../chartProxies/cartesian/areaChartProxy";
+import { ChartController } from "../../../chartController";
+import { MarkersPanel } from "./markersPanel";
+import { ChartTranslator } from "../../../chartTranslator";
+import { ShadowPanel } from "./shadowPanel";
+import { AreaChartProxy } from "../../../chartProxies/cartesian/areaChartProxy";
 
 export class AreaSeriesPanel extends Component {
 
-    public static TEMPLATE =
+    public static TEMPLATE = /* html */
         `<div>
             <ag-group-component ref="seriesGroup">
                 <ag-toggle-button ref="seriesTooltipsToggle"></ag-toggle-button>
@@ -104,13 +104,13 @@ export class AreaSeriesPanel extends Component {
     }
 
     private initMarkersPanel() {
-        const markersPanelComp = this.wireBean(new MarkersPanel(this.chartController));
+        const markersPanelComp = this.createBean(new MarkersPanel(this.chartController));
         this.seriesGroup.addItem(markersPanelComp);
         this.activePanels.push(markersPanelComp);
     }
 
     private initShadowPanel() {
-        const shadowPanelComp = this.wireBean(new ShadowPanel(this.chartController));
+        const shadowPanelComp = this.createBean(new ShadowPanel(this.chartController));
         this.seriesGroup.addItem(shadowPanelComp);
         this.activePanels.push(shadowPanelComp);
     }
@@ -118,7 +118,7 @@ export class AreaSeriesPanel extends Component {
     private destroyActivePanels(): void {
         this.activePanels.forEach(panel => {
             _.removeFromParent(panel.getGui());
-            panel.destroy();
+            this.destroyBean(panel);
         });
     }
 
@@ -126,7 +126,7 @@ export class AreaSeriesPanel extends Component {
         return this.chartController.getChartProxy() as AreaChartProxy;
     }
 
-    public destroy(): void {
+    protected destroy(): void {
         this.destroyActivePanels();
         super.destroy();
     }

@@ -1,4 +1,4 @@
-// Type definitions for @ag-grid-community/core v23.1.1
+// Type definitions for @ag-grid-community/core v23.2.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { PanelOptions, AgPanel } from "./agPanel";
@@ -52,7 +52,7 @@ export declare class AgDialog extends AgPanel {
     private toggleMaximize;
     private refreshMaximizeIcon;
     private clearMaximizebleListeners;
-    destroy(): void;
+    protected destroy(): void;
     setResizable(resizable: boolean | ResizableStructure): void;
     setMovable(movable: boolean): void;
     setMaximizable(maximizable: boolean): void;

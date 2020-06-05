@@ -1,1 +1,1 @@
-export {StatusBarModule} from "./statusBarModule"
+export { StatusBarModule } from "./statusBarModule"

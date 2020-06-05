@@ -1,9 +1,9 @@
 import { Constants } from "../../constants";
 import { PopupComponent } from "../../widgets/popupComponent";
 import { ICellEditorComp, ICellEditorParams } from "../../interfaces/iCellEditor";
-import { _ } from '../../utils';
 import { AgInputTextField } from "../../widgets/agInputTextField";
 import { RefSelector } from "../../widgets/componentAnnotations";
+import { _ } from '../../utils';
 
 /**
  * useFormatter: used when the cell value needs formatting prior to editing, such as when using reference data and you
@@ -61,7 +61,7 @@ export class TextCellEditor extends PopupComponent implements ICellEditorComp {
             eInput.setValue(startValue, true);
         }
 
-        this.addDestroyableEventListener(eInput.getGui(), 'keydown', (event: KeyboardEvent) => {
+        this.addManagedListener(eInput.getGui(), 'keydown', (event: KeyboardEvent) => {
             const pageUp = event.keyCode === Constants.KEY_PAGE_UP;
             const pageDown = event.keyCode === Constants.KEY_PAGE_DOWN;
             if (pageUp || pageDown) {

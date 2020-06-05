@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v23.1.1
+ * @version v23.2.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -87,10 +87,7 @@ var OverlayWrapperComponent = /** @class */ (function (_super) {
         if (!this.activeOverlay) {
             return;
         }
-        if (this.activeOverlay.destroy) {
-            this.activeOverlay.destroy();
-        }
-        this.activeOverlay = undefined;
+        this.activeOverlay = this.getContext().destroyBean(this.activeOverlay);
         _.clearElement(this.eOverlayWrapper);
     };
     OverlayWrapperComponent.prototype.hideOverlay = function () {

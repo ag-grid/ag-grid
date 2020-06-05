@@ -6,44 +6,15 @@ $pageGroup = "feature";
 include '../documentation-main/documentation_header.php';
 ?>
 
-<h1>Column Interface</h1>
-
-<p class="lead">
-    Your application interacts with columns through the grid's column interface. The column interface
-    is defined as all the public facing parts of the columns that your application interacts with.
-    This section list all the column methods, properties, events etc. for interacting with
-    the grid's columns.
-</p>
-
-<p>
-    The column interface is the combination of the following items:
-</p>
-
-<ul>
-    <li>
-        <a href="../javascript-grid-column-properties/">Column Properties</a>:
-        Columns are configured through column definitions. A column definition contains the column properties
-        e.g. <code>colDef.pinned='left'</code>.
-    </li>
-    <li>
-        <a href="../javascript-grid-column-api/">Column API</a>:
-        The column API is similar to the grid API, the difference is that the column API provides methods
-        relevant to columns e.g. <code>columnApi.setColumnVisible('country', false)</code>.
-    </li>
-    <li>
-        <a href="../javascript-grid-column/">Column Object</a>:
-        Each column in the grid is represented by a Column object, which in turn has a reference to the column
-        definition provided by the application. The Column wraps the Column Definition.
-        The Column object has attributes, methods and events for interacting
-        with the specific column e.g. <code>column.isVisible()</code>.
-    </li>
-</ul>
-
-<h2>Column Definitions</h2>
+<h1>Column Definitions</h1>
 
 <p class="lead">
     Each column in the grid is defined using a column definition. Columns are positioned in the grid according to the order
-    the <code>ColDefs</code> are specified in the grid options. The following example shows a simple grid with 3 columns defined:
+    the <code>ColDefs</code> are specified in the grid options.
+</p>
+
+<p>
+    The following example shows a simple grid with 3 columns defined:
 </p>
 
 <?= createSnippet(<<<SNIPPET
@@ -235,7 +206,7 @@ SNIPPET
 
 <p>
     If the user provides <code>colId</code> in the column definition, then this is used, otherwise the <code>field</code>
-    is used. If both <code>coldId</code> and <code>field</code> then <code>colId</code> gets preference. If neither
+    is used. If both <code>colId</code> and <code>field</code> then <code>colId</code> gets preference. If neither
     <code>colId</code> or <code>field</code> then numeric is provided. Then finally the ID ensured to be unique by
     appending <code>'_n'</code> where <code>n</code> is the first positive number that allows uniqueness.
 </p>
@@ -370,7 +341,7 @@ SNIPPET
         </li>
         <li>
             <b>Column Filter:</b> If you filter the data by a column (e.g. Year)
-            and then add or remove other columns (e.g. remove Year) then the filter
+            and then add or remove other columns (e.g. remove Age) then the filter (on Year)
             remains unchanged. Conversely if you remove a column with a filter
             (e.g. remove Year while also filtering on Year) then the filter
             is removed.
@@ -479,6 +450,6 @@ SNIPPET
     </ul>
 </p>
 
-<?= grid_example('Delta Columns', 'delta-columns', 'generated', ['enterprise' => true]) ?>
+<?= grid_example('Immutable Columns', 'immutable-columns', 'generated', ['enterprise' => true]) ?>
 
 <?php include '../documentation-main/documentation_footer.php';?>

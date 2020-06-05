@@ -1,4 +1,4 @@
-// Type definitions for @ag-grid-community/core v23.1.1
+// Type definitions for @ag-grid-community/core v23.2.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 /************************************************************************************************
@@ -9,7 +9,7 @@ import { GridApi } from "../gridApi";
 import { ColumnApi } from "../columnController/columnApi";
 import { Column } from "./column";
 import { IViewportDatasource } from "../interfaces/iViewportDatasource";
-import { ICellRendererComp, ICellRendererFunc, ICellRenderer } from "../rendering/cellRenderers/iCellRenderer";
+import { ICellRendererComp, ICellRendererFunc, ICellRenderer, ICellRendererParams } from "../rendering/cellRenderers/iCellRenderer";
 import { ColDef, ColGroupDef, IAggFunc, SuppressKeyboardEventParams } from "./colDef";
 import { IDatasource } from "../interfaces/iDatasource";
 import { CellPosition } from "./cellPosition";
@@ -148,6 +148,8 @@ export interface GridOptions {
     viewportRowModelPageSize?: number;
     viewportRowModelBufferSize?: number;
     enableCellChangeFlash?: boolean;
+    cellFlashDelay?: number;
+    cellFadeDelay?: number;
     allowShowChangeAfterFilter?: boolean;
     quickFilterText?: string;
     cacheQuickFilter?: boolean;
@@ -204,7 +206,7 @@ export interface GridOptions {
         statusPanels: StatusPanelDef[];
     };
     localeText?: any;
-    localeTextFunc?: Function;
+    localeTextFunc?: (key: string, defaultValue: string) => string;
     suppressAnimationFrame?: boolean;
     defaultColGroupDef?: ColGroupDef;
     defaultColDef?: ColDef;
@@ -252,7 +254,7 @@ export interface GridOptions {
         new (): ICellRendererComp;
     } | ICellRendererFunc | string;
     detailCellRendererFramework?: any;
-    detailCellRendererParams?: any;
+    detailCellRendererParams?: ICellRendererParams;
     rowData?: any[];
     pinnedTopRowData?: any[];
     pinnedBottomRowData?: any[];

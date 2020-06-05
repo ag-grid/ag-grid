@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v23.1.1
+ * @version v23.2.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -74,7 +74,7 @@ var AgAngleSelect = /** @class */ (function (_super) {
         if (utils_1._.exists(this.getValue())) {
             this.eAngleValue.setValue(this.normalizeNegativeValue(this.getValue()).toString());
         }
-        this.addDestroyableEventListener(this, agAbstractField_1.AgAbstractField.EVENT_CHANGED, function () {
+        this.addManagedListener(this, agAbstractField_1.AgAbstractField.EVENT_CHANGED, function () {
             if (_this.eAngleValue.getInputElement().contains(document.activeElement)) {
                 return;
             }
@@ -165,7 +165,7 @@ var AgAngleSelect = /** @class */ (function (_super) {
     };
     AgAngleSelect.prototype.onValueChange = function (callbackFn) {
         var _this = this;
-        this.addDestroyableEventListener(this, agAbstractField_1.AgAbstractField.EVENT_CHANGED, function () {
+        this.addManagedListener(this, agAbstractField_1.AgAbstractField.EVENT_CHANGED, function () {
             callbackFn(_this.degrees);
         });
         return this;

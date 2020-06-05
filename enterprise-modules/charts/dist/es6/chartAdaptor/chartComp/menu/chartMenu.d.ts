@@ -26,5 +26,5 @@ export declare class ChartMenu extends Component {
     private refreshMenuClasses;
     private showParent;
     private hideParent;
-    destroy(): void;
+    protected destroy(): void;
 }

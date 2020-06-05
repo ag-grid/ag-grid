@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v23.1.1
+ * @version v23.2.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -27,6 +27,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 Object.defineProperty(exports, "__esModule", { value: true });
 var component_1 = require("../../../widgets/component");
 var componentAnnotations_1 = require("../../../widgets/componentAnnotations");
+var context_1 = require("../../../context/context");
 // optional floating filter for user provided filters - instead of providing a floating filter,
 // they can provide a getModelAsString() method on the filter instead. this class just displays
 // the string returned from getModelAsString()
@@ -35,9 +36,17 @@ var ReadOnlyFloatingFilter = /** @class */ (function (_super) {
     function ReadOnlyFloatingFilter() {
         return _super.call(this, /* html */ "\n            <div class=\"ag-floating-filter-input\" role=\"presentation\">\n                <ag-input-text-field ref=\"eFloatingFilterText\"></ag-input-text-field>\n            </div>") || this;
     }
+    // this is a user component, and IComponent has "public destroy()" as part of the interface.
+    // so we need to override destroy() just to make the method public.
+    ReadOnlyFloatingFilter.prototype.destroy = function () {
+        _super.prototype.destroy.call(this);
+    };
     ReadOnlyFloatingFilter.prototype.init = function (params) {
         this.params = params;
-        this.eFloatingFilterText.setDisabled(true);
+        var displayName = this.columnController.getDisplayNameForColumn(params.column, 'header', true);
+        this.eFloatingFilterText
+            .setDisabled(true)
+            .setInputAriaLabel(displayName + " Filter Input");
     };
     ReadOnlyFloatingFilter.prototype.onParentModelChanged = function (parentModel) {
         var _this = this;
@@ -57,6 +66,9 @@ var ReadOnlyFloatingFilter = /** @class */ (function (_super) {
     __decorate([
         componentAnnotations_1.RefSelector('eFloatingFilterText')
     ], ReadOnlyFloatingFilter.prototype, "eFloatingFilterText", void 0);
+    __decorate([
+        context_1.Autowired('columnController')
+    ], ReadOnlyFloatingFilter.prototype, "columnController", void 0);
     return ReadOnlyFloatingFilter;
 }(component_1.Component));
 exports.ReadOnlyFloatingFilter = ReadOnlyFloatingFilter;

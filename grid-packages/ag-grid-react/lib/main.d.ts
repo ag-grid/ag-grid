@@ -1,3 +1,3 @@
-// ag-grid-react v23.1.1
+// ag-grid-react v23.2.0
 export { AgGridReact } from './agGridReact';
 export { AgGridColumn } from './agGridColumn';

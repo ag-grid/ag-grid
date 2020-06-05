@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v23.1.1
+ * @version v23.2.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -221,6 +221,13 @@ var ColumnGroup = /** @class */ (function () {
     };
     ColumnGroup.prototype.getOriginalColumnGroup = function () {
         return this.originalColumnGroup;
+    };
+    ColumnGroup.prototype.getPaddingLevel = function () {
+        var parent = this.getParent();
+        if (!this.isPadding() || !parent || !parent.isPadding()) {
+            return 0;
+        }
+        return 1 + parent.getPaddingLevel();
     };
     ColumnGroup.prototype.calculateDisplayedColumns = function () {
         var _this = this;

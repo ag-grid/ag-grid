@@ -39,27 +39,29 @@ var TabbedChartMenu = /** @class */ (function (_super) {
             var panelType = panel.replace('chart', '').toLowerCase();
             var _a = _this.createTab(panel, panelType, _this.getPanelClass(panelType)), comp = _a.comp, tab = _a.tab;
             _this.tabs.push(tab);
-            _this.addDestroyFunc(function () { return comp.destroy(); });
+            _this.addDestroyFunc(function () { return _this.destroyBean(comp); });
         });
         this.tabbedLayout = new TabbedLayout({
             items: this.tabs,
             cssClass: 'ag-chart-tabbed-menu'
         });
-        this.getContext().wireBean(this.tabbedLayout);
+        this.getContext().createBean(this.tabbedLayout);
     };
     TabbedChartMenu.prototype.createTab = function (name, title, ChildClass) {
         var eWrapperDiv = document.createElement('div');
         _.addCssClass(eWrapperDiv, 'ag-chart-tab');
         _.addCssClass(eWrapperDiv, "ag-chart-" + title);
         var comp = new ChildClass(this.chartController);
-        this.getContext().wireBean(comp);
+        this.getContext().createBean(comp);
         eWrapperDiv.appendChild(comp.getGui());
         var titleEl = document.createElement('div');
-        titleEl.innerText = this.chartTranslator.translate(title);
+        var translatedTitle = this.chartTranslator.translate(title);
+        titleEl.innerText = translatedTitle;
         return {
             comp: comp,
             tab: {
                 title: titleEl,
+                titleLabel: translatedTitle,
                 bodyPromise: Promise.resolve(eWrapperDiv),
                 name: name
             }
@@ -82,7 +84,7 @@ var TabbedChartMenu = /** @class */ (function (_super) {
     };
     TabbedChartMenu.prototype.destroy = function () {
         if (this.parentComponent && this.parentComponent.isAlive()) {
-            this.parentComponent.destroy();
+            this.destroyBean(this.parentComponent);
         }
         _super.prototype.destroy.call(this);
     };

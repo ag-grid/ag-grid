@@ -31,8 +31,35 @@ var MenuList = /** @class */ (function (_super) {
         _this.removeChildFuncs = [];
         return _this;
     }
-    MenuList.prototype.init = function () {
-        this.addDestroyableEventListener(this.getGui(), 'keydown', this.handleKeyDown.bind(this));
+    MenuList.prototype.onTabKeyDown = function (e) {
+        var parent = this.getParentComponent();
+        var isManaged = parent && parent instanceof core_1.ManagedFocusComponent;
+        if (!isManaged) {
+            e.preventDefault();
+        }
+        if (e.shiftKey) {
+            this.closeIfIsChild(e);
+        }
+    };
+    MenuList.prototype.handleKeyDown = function (e) {
+        switch (e.keyCode) {
+            case core_1.Constants.KEY_UP:
+            case core_1.Constants.KEY_RIGHT:
+            case core_1.Constants.KEY_DOWN:
+            case core_1.Constants.KEY_LEFT:
+                e.preventDefault();
+                this.handleNavKey(e.keyCode);
+                break;
+            case core_1.Constants.KEY_ESCAPE:
+                var topMenu = this.findTopMenu();
+                if (topMenu) {
+                    topMenu.getGui().focus();
+                }
+                break;
+        }
+    };
+    MenuList.prototype.isFocusableContainer = function () {
+        return true;
     };
     MenuList.prototype.clearActiveItem = function () {
         this.deactivateItem();
@@ -58,11 +85,9 @@ var MenuList = /** @class */ (function (_super) {
     };
     MenuList.prototype.addItem = function (menuItemDef) {
         var _this = this;
-        var cMenuItem = new menuItemComponent_1.MenuItemComponent(menuItemDef);
-        this.getContext().wireBean(cMenuItem);
+        var cMenuItem = this.createManagedBean(new menuItemComponent_1.MenuItemComponent(menuItemDef));
         this.menuItems.push({ comp: cMenuItem, params: menuItemDef });
-        this.getGui().appendChild(cMenuItem.getGui());
-        this.addDestroyFunc(function () { return cMenuItem.destroy(); });
+        this.appendChild(cMenuItem.getGui());
         cMenuItem.addEventListener(menuItemComponent_1.MenuItemComponent.EVENT_ITEM_SELECTED, function (event) {
             if (menuItemDef.subMenu && !menuItemDef.action) {
                 _this.showChildMenu(cMenuItem, menuItemDef);
@@ -160,23 +185,6 @@ var MenuList = /** @class */ (function (_super) {
         this.activeMenuItem = null;
         this.activeMenuItemParams = null;
     };
-    MenuList.prototype.handleKeyDown = function (e) {
-        switch (e.keyCode) {
-            case core_1.Constants.KEY_UP:
-            case core_1.Constants.KEY_RIGHT:
-            case core_1.Constants.KEY_DOWN:
-            case core_1.Constants.KEY_LEFT:
-                e.preventDefault();
-                this.handleNavKey(e.keyCode);
-                break;
-            case core_1.Constants.KEY_ESCAPE:
-                var topMenu = this.findTopMenu();
-                if (topMenu) {
-                    topMenu.getGui().focus();
-                }
-                break;
-        }
-    };
     MenuList.prototype.findTopMenu = function () {
         var parent = this.getParentComponent();
         if (!parent && this instanceof MenuList) {
@@ -211,12 +219,6 @@ var MenuList = /** @class */ (function (_super) {
         }
         else {
             this.openChild();
-        }
-    };
-    MenuList.prototype.onTabKeyDown = function (e) {
-        _super.prototype.onTabKeyDown.call(this, e);
-        if (e.shiftKey) {
-            this.closeIfIsChild(e);
         }
     };
     MenuList.prototype.closeIfIsChild = function (e) {
@@ -277,14 +279,15 @@ var MenuList = /** @class */ (function (_super) {
         }, 300);
     };
     MenuList.prototype.addSeparator = function () {
-        this.getGui().appendChild(core_1._.loadTemplate(MenuList.SEPARATOR_TEMPLATE));
+        var template = core_1._.loadTemplate(MenuList.SEPARATOR_TEMPLATE);
+        this.appendChild(template);
     };
     MenuList.prototype.showChildMenu = function (menuItemComp, menuItemDef) {
         var _this = this;
         this.removeChildPopup();
         var childMenu = new MenuList();
         childMenu.setParentComponent(menuItemComp);
-        this.getContext().wireBean(childMenu);
+        this.getContext().createBean(childMenu);
         childMenu.addMenuItems(menuItemDef.subMenu);
         var ePopup = core_1._.loadTemplate('<div class="ag-menu" tabindex="-1"></div>');
         ePopup.appendChild(childMenu.getGui());
@@ -295,7 +298,7 @@ var MenuList = /** @class */ (function (_super) {
         });
         this.subMenuParentComp = menuItemComp;
         this.subMenuComp = childMenu;
-        childMenu.addDestroyableEventListener(ePopup, 'mouseover', function () {
+        childMenu.addManagedListener(ePopup, 'mouseover', function () {
             if (_this.subMenuHideTimer && menuItemComp === _this.subMenuParentComp) {
                 window.clearTimeout(_this.subMenuHideTimer);
                 window.clearTimeout(_this.subMenuShowTimer);
@@ -324,7 +327,7 @@ var MenuList = /** @class */ (function (_super) {
         this.removeChildPopup();
         _super.prototype.destroy.call(this);
     };
-    MenuList.TEMPLATE = '<div class="ag-menu-list" tabindex="-1"></div>';
+    MenuList.TEMPLATE = "\n        <div class=\"ag-menu-list\"><div class=\"ag-menu-list-body\"></div>";
     MenuList.SEPARATOR_TEMPLATE = "<div class=\"ag-menu-separator\">\n            <span class=\"ag-menu-separator-cell\"></span>\n            <span class=\"ag-menu-separator-cell\"></span>\n            <span class=\"ag-menu-separator-cell\"></span>\n            <span class=\"ag-menu-separator-cell\"></span>\n        </div>";
     MenuList.HIDE_MENU_DELAY = 80;
     __decorate([
@@ -333,10 +336,7 @@ var MenuList = /** @class */ (function (_super) {
     __decorate([
         core_1.Autowired('gridOptionsWrapper')
     ], MenuList.prototype, "gridOptionsWrapper", void 0);
-    __decorate([
-        core_1.PostConstruct
-    ], MenuList.prototype, "init", null);
     return MenuList;
-}(core_1.ManagedTabComponent));
+}(core_1.ManagedFocusComponent));
 exports.MenuList = MenuList;
 //# sourceMappingURL=menuList.js.map

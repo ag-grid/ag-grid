@@ -1,4 +1,5 @@
 import { IComponent } from "../../interfaces/iComponent";
+import { BeanStub } from "../../context/beanStub";
 export declare enum RegisteredComponentSource {
     DEFAULT = 0,
     REGISTERED = 1
@@ -23,9 +24,8 @@ export interface DeprecatedComponentName {
     propertyHolder: string;
     newComponentName: string;
 }
-export declare class UserComponentRegistry {
+export declare class UserComponentRegistry extends BeanStub {
     private gridOptions;
-    private context;
     private agGridDefaults;
     private agDeprecatedNames;
     private jsComponents;

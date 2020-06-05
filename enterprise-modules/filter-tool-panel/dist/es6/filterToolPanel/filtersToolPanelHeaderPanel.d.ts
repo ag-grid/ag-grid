@@ -8,7 +8,6 @@ export declare enum EXPAND_STATE {
 export declare class FiltersToolPanelHeaderPanel extends Component {
     private gridOptionsWrapper;
     private columnController;
-    private eventService;
     private eExpand;
     private eSearchTextField;
     private eExpandChecked;

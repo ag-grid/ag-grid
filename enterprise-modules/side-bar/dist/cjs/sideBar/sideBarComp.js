@@ -100,7 +100,7 @@ var SideBarComp = /** @class */ (function (_super) {
                 }
             }
             var wrapper = new toolPanelWrapper_1.ToolPanelWrapper();
-            _this.getContext().wireBean(wrapper);
+            _this.getContext().createBean(wrapper);
             wrapper.setToolPanelDef(def);
             wrapper.setDisplayed(false);
             _this.getGui().appendChild(wrapper.getGui());
@@ -164,9 +164,10 @@ var SideBarComp = /** @class */ (function (_super) {
         this.setSideBarDef();
     };
     SideBarComp.prototype.destroyToolPanelWrappers = function () {
+        var _this = this;
         this.toolPanelWrappers.forEach(function (wrapper) {
             core_1._.removeFromParent(wrapper.getGui());
-            wrapper.destroy();
+            _this.destroyBean(wrapper);
         });
         this.toolPanelWrappers.length = 0;
     };
@@ -174,10 +175,7 @@ var SideBarComp = /** @class */ (function (_super) {
         this.destroyToolPanelWrappers();
         _super.prototype.destroy.call(this);
     };
-    SideBarComp.TEMPLATE = "<div class=\"ag-side-bar ag-unselectable\">\n              <ag-side-bar-buttons ref=\"sideBarButtons\">\n          </div>";
-    __decorate([
-        core_1.Autowired("eventService")
-    ], SideBarComp.prototype, "eventService", void 0);
+    SideBarComp.TEMPLATE = "<div class=\"ag-side-bar ag-unselectable\">\n            <ag-side-bar-buttons ref=\"sideBarButtons\"></ag-side-bar-buttons>\n        </div>";
     __decorate([
         core_1.Autowired("gridOptionsWrapper")
     ], SideBarComp.prototype, "gridOptionsWrapper", void 0);

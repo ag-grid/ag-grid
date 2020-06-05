@@ -40,6 +40,7 @@ var ToolPanelColumnComp = /** @class */ (function (_super) {
         this.displayName = this.columnController.getDisplayNameForColumn(this.column, 'toolPanel');
         var displayNameSanitised = core_1._.escape(this.displayName);
         this.eLabel.innerHTML = displayNameSanitised;
+        this.cbSelect.setInputAriaLabel(this.displayName + " Toggle Selection");
         // if grouping, we add an extra level of indent, to cater for expand/contract icons we need to indent for
         var indent = this.columnDept;
         if (this.groupsExist) {
@@ -47,16 +48,25 @@ var ToolPanelColumnComp = /** @class */ (function (_super) {
         }
         this.addCssClass("ag-column-select-indent-" + indent);
         this.setupDragging();
-        this.addDestroyableEventListener(this.eventService, core_1.Events.EVENT_COLUMN_PIVOT_MODE_CHANGED, this.onColumnStateChanged.bind(this));
-        this.addDestroyableEventListener(this.column, core_1.Column.EVENT_VALUE_CHANGED, this.onColumnStateChanged.bind(this));
-        this.addDestroyableEventListener(this.column, core_1.Column.EVENT_PIVOT_CHANGED, this.onColumnStateChanged.bind(this));
-        this.addDestroyableEventListener(this.column, core_1.Column.EVENT_ROW_GROUP_CHANGED, this.onColumnStateChanged.bind(this));
-        this.addDestroyableEventListener(this.column, core_1.Column.EVENT_VISIBLE_CHANGED, this.onColumnStateChanged.bind(this));
-        this.addDestroyableEventListener(this.gridOptionsWrapper, 'functionsReadOnly', this.onColumnStateChanged.bind(this));
-        this.addDestroyableEventListener(this.cbSelect, core_1.AgCheckbox.EVENT_CHANGED, this.onCheckboxChanged.bind(this));
-        this.addDestroyableEventListener(this.eLabel, 'click', this.onLabelClicked.bind(this));
+        this.addManagedListener(this.eventService, core_1.Events.EVENT_COLUMN_PIVOT_MODE_CHANGED, this.onColumnStateChanged.bind(this));
+        this.addManagedListener(this.column, core_1.Column.EVENT_VALUE_CHANGED, this.onColumnStateChanged.bind(this));
+        this.addManagedListener(this.column, core_1.Column.EVENT_PIVOT_CHANGED, this.onColumnStateChanged.bind(this));
+        this.addManagedListener(this.column, core_1.Column.EVENT_ROW_GROUP_CHANGED, this.onColumnStateChanged.bind(this));
+        this.addManagedListener(this.column, core_1.Column.EVENT_VISIBLE_CHANGED, this.onColumnStateChanged.bind(this));
+        this.addManagedListener(this.gridOptionsWrapper, 'functionsReadOnly', this.onColumnStateChanged.bind(this));
+        this.addManagedListener(this.cbSelect, core_1.AgCheckbox.EVENT_CHANGED, this.onCheckboxChanged.bind(this));
+        this.addManagedListener(this.eLabel, 'click', this.onLabelClicked.bind(this));
         this.onColumnStateChanged();
         core_1.CssClassApplier.addToolPanelClassesFromColDef(this.column.getColDef(), this.getGui(), this.gridOptionsWrapper, this.column, null);
+    };
+    ToolPanelColumnComp.prototype.handleKeyDown = function (e) {
+        switch (e.keyCode) {
+            case core_1.Constants.KEY_SPACE:
+                e.preventDefault();
+                if (this.isSelectable()) {
+                    this.onSelectAllChanged(!this.isSelected());
+                }
+        }
     };
     ToolPanelColumnComp.prototype.onLabelClicked = function () {
         if (this.gridOptionsWrapper.isFunctionsReadOnly()) {
@@ -281,16 +291,13 @@ var ToolPanelColumnComp = /** @class */ (function (_super) {
     ToolPanelColumnComp.prototype.setExpanded = function (value) {
         console.warn('ag-grid: can not expand a column item that does not represent a column group header');
     };
-    ToolPanelColumnComp.TEMPLATE = "<div class=\"ag-column-select-column\">\n            <ag-checkbox ref=\"cbSelect\" class=\"ag-column-select-checkbox\"></ag-checkbox>\n            <span class=\"ag-column-select-column-label\" ref=\"eLabel\"></span>\n        </div>";
+    ToolPanelColumnComp.TEMPLATE = "<div class=\"ag-column-select-column\" tabindex=\"-1\">\n            <ag-checkbox ref=\"cbSelect\" class=\"ag-column-select-checkbox\"></ag-checkbox>\n            <span class=\"ag-column-select-column-label\" ref=\"eLabel\"></span>\n        </div>";
     __decorate([
         core_1.Autowired('gridOptionsWrapper')
     ], ToolPanelColumnComp.prototype, "gridOptionsWrapper", void 0);
     __decorate([
         core_1.Autowired('columnController')
     ], ToolPanelColumnComp.prototype, "columnController", void 0);
-    __decorate([
-        core_1.Autowired('eventService')
-    ], ToolPanelColumnComp.prototype, "eventService", void 0);
     __decorate([
         core_1.Autowired('dragAndDropService')
     ], ToolPanelColumnComp.prototype, "dragAndDropService", void 0);
@@ -310,6 +317,6 @@ var ToolPanelColumnComp = /** @class */ (function (_super) {
         core_1.PostConstruct
     ], ToolPanelColumnComp.prototype, "init", null);
     return ToolPanelColumnComp;
-}(core_1.Component));
+}(core_1.ManagedFocusComponent));
 exports.ToolPanelColumnComp = ToolPanelColumnComp;
 //# sourceMappingURL=toolPanelColumnComp.js.map

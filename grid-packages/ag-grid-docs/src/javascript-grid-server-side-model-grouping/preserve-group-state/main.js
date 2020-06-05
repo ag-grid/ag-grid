@@ -28,7 +28,7 @@ var gridOptions = {
     // cache expanded group ids when groups opened
     onRowGroupOpened: function(params) {
         var id = params.data.id;
-        if (params.node.expanded) {
+        if (params.expanded) {
             expandedGroupIds.push(id);
         } else {
             expandedGroupIds = expandedGroupIds.filter(function(grpId) {

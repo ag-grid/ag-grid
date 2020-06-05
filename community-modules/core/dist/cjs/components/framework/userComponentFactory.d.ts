@@ -1,4 +1,4 @@
-// Type definitions for @ag-grid-community/core v23.1.1
+// Type definitions for @ag-grid-community/core v23.2.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { GridOptions } from "../../entities/gridOptions";
@@ -21,7 +21,8 @@ import { IFilterComp, IFilterParams } from "../../interfaces/iFilter";
 import { IFloatingFilterComp, IFloatingFilterParams } from "../../filter/floating/floatingFilter";
 import { ICellEditorComp, ICellEditorParams } from "../../interfaces/iCellEditor";
 import { IToolPanelComp, IToolPanelParams } from "../../interfaces/iToolPanel";
-import { StatusPanelDef } from "../../interfaces/iStatusPanel";
+import { IStatusPanelComp, IStatusPanelParams, StatusPanelDef } from "../../interfaces/iStatusPanel";
+import { BeanStub } from "../../context/beanStub";
 export declare type DefinitionObject = GridOptions | ColDef | ColGroupDef | ISetFilterParams | IRichCellEditorParams | ToolPanelDef | StatusPanelDef;
 export declare type AgComponentPropertyInput<A extends IComponent<TParams>, TParams> = AgGridRegisteredComponentInput<A> | string | boolean;
 export declare enum ComponentSource {
@@ -29,9 +30,9 @@ export declare enum ComponentSource {
     REGISTERED_BY_NAME = 1,
     HARDCODED = 2
 }
-export interface ComponentSelectorResult<TParams> {
+export interface ComponentSelectorResult {
     component?: string;
-    params?: TParams;
+    params?: any;
 }
 /**
  * B the business interface (ie IHeader)
@@ -48,11 +49,10 @@ export interface ComponentClassDef<A extends IComponent<TParams> & B, B, TParams
     paramsFromSelector: TParams;
 }
 export interface ModifyParamsCallback<TParams> {
-    (params: TParams, component: IComponent<TParams>): void;
+    (params: TParams, component: IComponent<TParams>): TParams;
 }
-export declare class UserComponentFactory {
+export declare class UserComponentFactory extends BeanStub {
     private gridOptions;
-    private context;
     private agComponentUtils;
     private componentMetadataProvider;
     private userComponentRegistry;
@@ -72,7 +72,7 @@ export declare class UserComponentFactory {
     newSetFilterCellRenderer(target: ISetFilterParams, params: ISetFilterCellRendererParams): Promise<ICellRendererComp>;
     newFloatingFilterComponent(colDef: ColDef, params: IFloatingFilterParams, defaultFloatingFilter: string): Promise<IFloatingFilterComp>;
     newToolPanelComponent(toolPanelDef: ToolPanelDef, params: IToolPanelParams): Promise<IToolPanelComp>;
-    newStatusPanelComponent(def: StatusPanelDef, params: IToolPanelParams): Promise<IToolPanelComp>;
+    newStatusPanelComponent(def: StatusPanelDef, params: IStatusPanelParams): Promise<IStatusPanelComp>;
     /**
      * This method creates a component given everything needed to guess what sort of component needs to be instantiated
      * It takes
@@ -132,7 +132,7 @@ export declare class UserComponentFactory {
      *      specified by the user in the configuration
      * @returns {TParams} It merges the user agGridParams with the actual params specified by the user.
      */
-    createFinalParams<TParams>(definitionObject: DefinitionObject, propertyName: string, paramsFromGrid: TParams, paramsFromSelector?: TParams): TParams;
+    createFinalParams<TParams>(definitionObject: DefinitionObject, propertyName: string, paramsFromGrid: TParams, paramsFromSelector?: any): TParams;
     private createComponentInstance;
     private initComponent;
 }

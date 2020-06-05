@@ -8,7 +8,6 @@ import { ColumnFactory } from './columnFactory';
 import { DisplayedGroupCreator } from './displayedGroupCreator';
 import { AutoWidthCalculator } from '../rendering/autoWidthCalculator';
 import { OriginalColumnGroupChild } from '../entities/originalColumnGroupChild';
-import { EventService } from '../eventService';
 import { ColumnUtils } from './columnUtils';
 import { Logger, LoggerFactory } from '../logger';
 import {
@@ -30,6 +29,7 @@ import {
     NewColumnsLoadedEvent,
     VirtualColumnsChangedEvent
 } from '../events';
+import { BeanStub } from "../context/beanStub";
 import { OriginalColumnGroup } from '../entities/originalColumnGroup';
 import { GroupInstanceIdCreator } from './groupInstanceIdCreator';
 import { Autowired, Bean, Optional, PostConstruct, Qualifier } from '../context/context';
@@ -63,13 +63,13 @@ export interface ColumnState {
 }
 
 @Bean('columnController')
-export class ColumnController {
+export class ColumnController extends BeanStub {
+
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('expressionService') private expressionService: ExpressionService;
     @Autowired('columnFactory') private columnFactory: ColumnFactory;
     @Autowired('displayedGroupCreator') private displayedGroupCreator: DisplayedGroupCreator;
     @Autowired('autoWidthCalculator') private autoWidthCalculator: AutoWidthCalculator;
-    @Autowired('eventService') private eventService: EventService;
     @Autowired('columnUtils') private columnUtils: ColumnUtils;
     @Autowired('columnAnimationService') private columnAnimationService: ColumnAnimationService;
     @Autowired('autoGroupColService') private autoGroupColService: AutoGroupColService;
@@ -151,6 +151,7 @@ export class ColumnController {
     private logger: Logger;
 
     private autoGroupsNeedBuilding = false;
+    private forceRecreateAutoGroups = false;
 
     private pivotMode = false;
     private usingTreeData: boolean;
@@ -183,6 +184,15 @@ export class ColumnController {
         }
 
         this.usingTreeData = this.gridOptionsWrapper.isTreeData();
+
+        this.addManagedListener(this.gridOptionsWrapper, 'autoGroupColumnDef', this.onAutoGroupColumnDefChanged.bind(this));
+    }
+
+    public onAutoGroupColumnDefChanged() {
+        this.autoGroupsNeedBuilding = true;
+        this.forceRecreateAutoGroups = true;
+        this.updateGridColumns();
+        this.updateDisplayedColumns('gridOptionsChanged');
     }
 
     public setColumnDefs(columnDefs: (ColDef | ColGroupDef)[], source: ColumnEventType = 'api') {
@@ -1525,27 +1535,50 @@ export class ColumnController {
     }
 
     public getDisplayedGroupAfter(columnGroup: ColumnGroup): ColumnGroup | null {
-        // pick one col in this group at random
-        let col: Column | null = columnGroup.getDisplayedLeafColumns()[0];
-        const requiredLevel = columnGroup.getOriginalColumnGroup().getLevel();
+        return this.getDisplayedGroupAtDirection(columnGroup, 'After');
+    }
+
+    public getDisplayedGroupBefore(columnGroup: ColumnGroup): ColumnGroup | null {
+        return this.getDisplayedGroupAtDirection(columnGroup, 'Before');
+    }
+
+    public getDisplayedGroupAtDirection(columnGroup: ColumnGroup, direction: 'After' | 'Before'): ColumnGroup | null {
+        // pick the last displayed column in this group
+        const requiredLevel = columnGroup.getOriginalColumnGroup().getLevel() + columnGroup.getPaddingLevel();
+        const colGroupLeafColumns = columnGroup.getDisplayedLeafColumns();
+        const col: Column | null = direction === 'After' ? _.last(colGroupLeafColumns) : colGroupLeafColumns[0];
+        const getDisplayColMethod: 'getDisplayedColAfter' | 'getDisplayedColBefore' = `getDisplayedCol${direction}` as any;
 
         while (true) {
             // keep moving to the next col, until we get to another group
-            col = this.getDisplayedColAfter(col);
+            const column = this[getDisplayColMethod](col);
 
-            // if no col after, means no group after
-            if (!col) { return null; }
+            if (!column) { return null; }
 
-            // get group at same level as the one we are looking for
-            let groupPointer = col.getParent();
-            while (groupPointer.getOriginalColumnGroup().getLevel() !== requiredLevel) {
-                groupPointer = groupPointer.getParent();
-            }
+            const groupPointer = this.getColumnGroupAtLevel(column, requiredLevel);
 
             if (groupPointer !== columnGroup) {
                 return groupPointer;
             }
         }
+    }
+
+    public getColumnGroupAtLevel(column: Column, level: number): ColumnGroup | null {
+        // get group at same level as the one we are looking for
+        let groupPointer: ColumnGroup = column.getParent();
+        let originalGroupLevel: number;
+        let groupPointerLevel: number;
+
+        while (true) {
+            const groupPointerOriginalColumnGroup = groupPointer.getOriginalColumnGroup();
+            originalGroupLevel = groupPointerOriginalColumnGroup.getLevel();
+            groupPointerLevel = groupPointer.getPaddingLevel();
+
+            if (originalGroupLevel + groupPointerLevel <= level) { break; }
+            groupPointer = groupPointer.getParent();
+        }
+
+        return groupPointer;
     }
 
     public isPinningLeft(): boolean {
@@ -2991,6 +3024,13 @@ export class ColumnController {
             colsToNotSpread.push(column);
         };
 
+        // resetting cols to their original width makes the sizeColumnsToFit more deterministic,
+        // rather than depending on the current size of the columns. most users call sizeColumnsToFit
+        // immediately after grid is created, so will make no difference. however if application is calling
+        // sizeColumnsToFit repeatedly (eg after column group is opened / closed repeatedly) we don't want
+        // the columns to start shrinking / growing over time.
+        colsToSpread.forEach(column => column.resetActualWidth() );
+
         while (!finishedResizing) {
             finishedResizing = true;
             const availablePixels = gridWidth - this.getWidthOfColsInList(colsToNotSpread);
@@ -3119,7 +3159,9 @@ export class ColumnController {
         if (needAutoColumns) {
             const newAutoGroupCols = this.autoGroupColService.createAutoGroupColumns(this.rowGroupColumns);
             const autoColsDifferent = !this.autoColsEqual(newAutoGroupCols, this.groupAutoColumns);
-            if (autoColsDifferent) {
+            // we force recreate when suppressSetColumnStateEvents changes, so new group cols pick up the new
+            // definitions. otherwise we could ignore the new cols becasue they appear to be the same.
+            if (autoColsDifferent || this.forceRecreateAutoGroups) {
                 this.groupAutoColumns = newAutoGroupCols;
             }
         } else {
@@ -3144,5 +3186,27 @@ export class ColumnController {
 
         return (defaultColDef != null && defaultColDef.floatingFilter === true) ||
             (this.columnDefs != null && this.columnDefs.some((c: ColDef) => c.floatingFilter === true));
+    }
+
+    public getFirstDisplayedColumn(): Column {
+        const isRtl = this.gridOptionsWrapper.isEnableRtl();
+        const queryOrder: ('getDisplayedLeftColumns' | 'getDisplayedCenterColumns' | 'getDisplayedRightColumns')[] = [
+            'getDisplayedLeftColumns',
+            'getDisplayedCenterColumns',
+            'getDisplayedRightColumns'
+        ];
+
+        if (isRtl) {
+            queryOrder.reverse();
+        }
+
+        for (let i = 0; i < queryOrder.length; i++) {
+            const container = this[queryOrder[i]]();
+            if (container.length) {
+                return isRtl ? _.last(container) : container[0];
+            }
+        }
+
+        return null;
     }
 }

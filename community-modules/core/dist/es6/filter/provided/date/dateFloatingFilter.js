@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v23.1.1
+ * @version v23.2.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -55,7 +55,9 @@ var DateFloatingFilter = /** @class */ (function (_super) {
         _super.prototype.init.call(this, params);
         this.params = params;
         this.createDateComponent();
-        this.eReadOnlyText.setDisabled(true);
+        this.eReadOnlyText
+            .setDisabled(true)
+            .setInputAriaLabel('Date Filter Input');
     };
     DateFloatingFilter.prototype.setEditable = function (editable) {
         setDisplayed(this.eDateWrapper, editable);
@@ -104,7 +106,7 @@ var DateFloatingFilter = /** @class */ (function (_super) {
             onDateChanged: debounce(this.onDateChanged.bind(this), debounceMs),
             filterParams: this.params.column.getColDef().filterParams
         };
-        this.dateComp = new DateCompWrapper(this.userComponentFactory, dateComponentParams, this.eDateWrapper);
+        this.dateComp = new DateCompWrapper(this.getContext(), this.userComponentFactory, dateComponentParams, this.eDateWrapper);
         this.addDestroyFunc(function () { return _this.dateComp.destroy(); });
     };
     __decorate([

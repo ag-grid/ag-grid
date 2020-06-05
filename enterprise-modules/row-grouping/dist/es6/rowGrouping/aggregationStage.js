@@ -1,12 +1,27 @@
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = function (d, b) {
+        extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+        return extendStatics(d, b);
+    };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
-import { Bean, Autowired, _ } from "@ag-grid-community/core";
-var AggregationStage = /** @class */ (function () {
+import { Bean, BeanStub, Autowired, _ } from "@ag-grid-community/core";
+var AggregationStage = /** @class */ (function (_super) {
+    __extends(AggregationStage, _super);
     function AggregationStage() {
+        return _super !== null && _super.apply(this, arguments) || this;
     }
     // it's possible to recompute the aggregate without doing the other parts
     // + gridApi.recomputeAggregates()
@@ -112,7 +127,7 @@ var AggregationStage = /** @class */ (function () {
                 // value columns and pivot columns, non-leaf group
                 values = _this.getValuesPivotNonLeaf(rowNode, colId);
             }
-            result[colId] = _this.aggregateValues(values, valueColumn.getAggFunc());
+            result[colId] = _this.aggregateValues(values, valueColumn.getAggFunc(), valueColumn, rowNode);
         });
         // Step 2: process total columns
         pivotColumnDefs
@@ -127,7 +142,7 @@ var AggregationStage = /** @class */ (function () {
             pivotTotalColumnIds.forEach(function (colId) {
                 aggResults.push(result[colId]);
             });
-            result[colId] = _this.aggregateValues(aggResults, pivotValueColumn.getAggFunc());
+            result[colId] = _this.aggregateValues(aggResults, pivotValueColumn.getAggFunc(), pivotValueColumn, rowNode);
         });
         return result;
     };
@@ -143,7 +158,7 @@ var AggregationStage = /** @class */ (function () {
         var values2d = this.getValuesNormal(rowNode, changedValueColumns);
         var oldValues = rowNode.aggData;
         changedValueColumns.forEach(function (valueColumn, index) {
-            result[valueColumn.getId()] = _this.aggregateValues(values2d[index], valueColumn.getAggFunc());
+            result[valueColumn.getId()] = _this.aggregateValues(values2d[index], valueColumn.getAggFunc(), valueColumn, rowNode);
         });
         if (notChangedValueColumns && oldValues) {
             notChangedValueColumns.forEach(function (valueColumn) {
@@ -192,7 +207,7 @@ var AggregationStage = /** @class */ (function () {
         }
         return values;
     };
-    AggregationStage.prototype.aggregateValues = function (values, aggFuncOrString) {
+    AggregationStage.prototype.aggregateValues = function (values, aggFuncOrString, column, rowNode) {
         var aggFunction = typeof aggFuncOrString === 'string' ?
             this.aggFuncService.getAggFunc(aggFuncOrString) :
             aggFuncOrString;
@@ -200,7 +215,16 @@ var AggregationStage = /** @class */ (function () {
             console.error("ag-Grid: unrecognised aggregation function " + aggFuncOrString);
             return null;
         }
-        return aggFunction(values);
+        var aggFuncAny = aggFunction;
+        return aggFuncAny(values, {
+            values: values,
+            column: column,
+            colDef: column ? column.getColDef() : undefined,
+            rowNode: rowNode,
+            data: rowNode ? rowNode.data : undefined,
+            api: this.gridApi,
+            columnApi: this.columnApi
+        });
     };
     __decorate([
         Autowired('gridOptionsWrapper')
@@ -217,9 +241,15 @@ var AggregationStage = /** @class */ (function () {
     __decorate([
         Autowired('aggFuncService')
     ], AggregationStage.prototype, "aggFuncService", void 0);
+    __decorate([
+        Autowired('aggFuncService')
+    ], AggregationStage.prototype, "gridApi", void 0);
+    __decorate([
+        Autowired('aggFuncService')
+    ], AggregationStage.prototype, "columnApi", void 0);
     AggregationStage = __decorate([
         Bean('aggregationStage')
     ], AggregationStage);
     return AggregationStage;
-}());
+}(BeanStub));
 export { AggregationStage };

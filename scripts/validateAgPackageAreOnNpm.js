@@ -9,8 +9,8 @@ const WINDOWS = /^win/.test(os.platform());
 const npm = WINDOWS ? 'npm.cmd' : 'npm';
 
 if (process.argv.length < 4) {
-    console.log("Usage: node scripts/sanityCheckPackages.js [Grid Version] [Grid Dependency Version] [Chart Version] [Chart Dependency Version]");
-    console.log("For example: node scripts/sanityCheckPackages.js 23.0.0 ~23.0.0 1.0.0 ~1.0.0");
+    console.log("Usage: node scripts/validateAgPackageAreOnNpm.js [Grid Version] [Chart Version]");
+    console.log("For example: node scripts/validateAgPackageAreOnNpm.js 23.1.0 1.1.0");
     console.log("Note: This script should be run from the root of the monorepo");
     process.exit(1);
 }
@@ -37,6 +37,8 @@ packageNames
             const expectedVersion = isGridPackage ? gridNewVersion : chartNewVersion;
             if(expectedVersion.trim() !== publishedVersion.trim()) {
                 console.log(`Published version of ${packageName} is ${publishedVersion}, but expected version is ${expectedVersion}`);
+            } else {
+                console.log(`Published version of ${packageName} is ${publishedVersion}`);
             }
         }
     });

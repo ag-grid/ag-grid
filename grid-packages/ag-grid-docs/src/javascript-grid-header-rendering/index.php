@@ -142,8 +142,8 @@ interface IHeaderComp {
 
     <p>The params passed to <code>init()</code> are as follows:</p>
 
-    <snippet>
-export interface IHeaderCompParams {
+<?= createSnippet(<<<SNIPPET
+interface IHeaderCompParams {
 
     // the column the header is for
     column: Column;
@@ -179,7 +179,9 @@ export interface IHeaderCompParams {
 
     // The grid API
     api: any;
-}</snippet>
+}
+SNIPPET
+, 'ts') ?>
 
     <h3 id="sorting">Sorting</h3>
 
@@ -342,8 +344,8 @@ colDef = {
         The only difference is the params object passed to the <code>init()</code> method.
     </p>
 
-    <snippet>
-export interface IHeaderGroupComp {
+<?= createSnippet(<<<SNIPPET
+interface IHeaderGroupComp {
 
     // optional method, gets called once with params
     init?(params: IHeaderGroupCompParams): void;
@@ -354,12 +356,14 @@ export interface IHeaderGroupComp {
     // optional method, gets called once, when component is destroyed
     destroy?(): void;
 
-}</snippet>
-
+}
+SNIPPET
+, 'ts') ?>
 
     <p>The params passed to <code>init()</code> are as follows:</p>
-    <snippet>
-export interface IHeaderGroupParams {
+
+<?= createSnippet(<<<SNIPPET
+interface IHeaderGroupParams {
 
     // the column group the header is for
     columnGroup: ColumnGroup;
@@ -370,7 +374,9 @@ export interface IHeaderGroupParams {
 
     // opens / closes the column group
     setExpanded(expanded: boolean): void;
-}</snippet>
+}
+SNIPPET
+, 'ts') ?>
 
     <h3 id="opening-closing-groups">Opening / Closing Groups</h3>
 

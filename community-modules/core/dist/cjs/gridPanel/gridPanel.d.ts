@@ -1,4 +1,4 @@
-// Type definitions for @ag-grid-community/core v23.1.1
+// Type definitions for @ag-grid-community/core v23.2.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { RowContainerComponent } from '../rendering/rowContainerComponent';
@@ -12,10 +12,8 @@ export declare type RowContainerComponents = {
 export declare class GridPanel extends Component {
     private alignedGridsService;
     private gridOptionsWrapper;
-    private columnController;
     private rowRenderer;
     private pinnedRowModel;
-    private eventService;
     private animationFrameService;
     private navigationService;
     private autoHeightCalculator;
@@ -35,6 +33,8 @@ export declare class GridPanel extends Component {
     private heightScaler;
     private resizeObserverService;
     private undoRedoService;
+    private columnController;
+    private headerNavigationService;
     private rangeController;
     private contextMenuFactory;
     private clipboardService;

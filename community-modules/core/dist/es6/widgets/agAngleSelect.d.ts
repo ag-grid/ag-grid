@@ -1,4 +1,4 @@
-// Type definitions for @ag-grid-community/core v23.1.1
+// Type definitions for @ag-grid-community/core v23.2.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { AgAbstractLabel } from "./agAbstractLabel";
@@ -35,5 +35,5 @@ export declare class AgAngleSelect extends AgAbstractLabel {
     getValue(radians?: boolean): number;
     setValue(degrees: number, radians?: boolean): this;
     setWidth(width: number): this;
-    destroy(): void;
+    protected destroy(): void;
 }

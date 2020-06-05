@@ -3,6 +3,7 @@ import { Column } from "../../entities/column";
 import { BeanStub } from "../../context/beanStub";
 import { Beans } from "../beans";
 import { Constants } from "../../constants";
+import { PostConstruct } from "../../context/context";
 import { _ } from "../../utils";
 
 export class SetLeftFeature extends BeanStub {
@@ -43,8 +44,9 @@ export class SetLeftFeature extends BeanStub {
         return this.columnOrGroup;
     }
 
-    public init(): void {
-        this.addDestroyableEventListener(this.columnOrGroup, Column.EVENT_LEFT_CHANGED, this.onLeftChanged.bind(this));
+    @PostConstruct
+    private postConstruct(): void {
+        this.addManagedListener(this.columnOrGroup, Column.EVENT_LEFT_CHANGED, this.onLeftChanged.bind(this));
         this.setLeftFirstTime();
     }
 

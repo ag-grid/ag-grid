@@ -7,7 +7,7 @@ import { RefSelector } from "./componentAnnotations";
 import { _ } from "../utils";
 
 export abstract class AgPickerField<T, K> extends AgAbstractField<K> {
-    protected TEMPLATE =
+    protected TEMPLATE = /* html */
         `<div class="ag-picker-field" role="presentation">
             <label ref="eLabel"></label>
             <div ref="eWrapper" class="ag-wrapper ag-picker-field-wrapper" tabIndex="-1">
@@ -44,7 +44,7 @@ export abstract class AgPickerField<T, K> extends AgAbstractField<K> {
 
         const eGui = this.getGui();
 
-        this.addDestroyableEventListener(eGui, 'mousedown', (e: MouseEvent) => {
+        this.addManagedListener(eGui, 'mousedown', (e: MouseEvent) => {
             if (
                 !this.skipClick &&
                 this.pickerComponent &&
@@ -56,7 +56,7 @@ export abstract class AgPickerField<T, K> extends AgAbstractField<K> {
             }
         });
 
-        this.addDestroyableEventListener(eGui, 'keydown', (e: KeyboardEvent) => {
+        this.addManagedListener(eGui, 'keydown', (e: KeyboardEvent) => {
             switch (e.keyCode) {
                 case Constants.KEY_UP:
                 case Constants.KEY_DOWN:
@@ -69,8 +69,8 @@ export abstract class AgPickerField<T, K> extends AgAbstractField<K> {
             }
         });
 
-        this.addDestroyableEventListener(this.eWrapper, 'click', clickHandler);
-        this.addDestroyableEventListener(this.eLabel, 'click', clickHandler);
+        this.addManagedListener(this.eWrapper, 'click', clickHandler);
+        this.addManagedListener(this.eLabel, 'click', clickHandler);
 
         if (this.pickerIcon) {
             this.eIcon.appendChild(_.createIconNoSpan(this.pickerIcon, this.gridOptionsWrapper, null));

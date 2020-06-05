@@ -23,38 +23,56 @@ function querySelectorFunc(selector: string, classPrototype: any, methodOrAttrib
 }
 
 // think we should take this out, put property bindings on the
-export function Listener(eventName?: string): Function {
-    return listenerFunc.bind(this, eventName);
+export function GridListener(eventName: string): Function {
+    return gridListenerFunc.bind(this, eventName);
 }
 
-function listenerFunc(eventName: string, target: Object, methodName: string) {
-    if (eventName === null) {
-        console.error("ag-Grid: EventListener eventName should not be null");
+function gridListenerFunc(eventName: string, target: Object, methodName: string) {
+    if (eventName == null) {
+        console.error("ag-Grid: GridListener eventName is missing");
         return;
     }
 
-    addToObjectProps(target, 'listenerMethods', {
+    addToObjectProps(target, 'gridListenerMethods', {
         methodName: methodName,
         eventName: eventName
     });
 }
 
 // think we should take this out, put property bindings on the
-export function Method(eventName?: string): Function {
-    return methodFunc.bind(this, eventName);
+export function GuiListener(ref: string, eventName: string): Function {
+    return guiListenerFunc.bind(this, ref, eventName);
 }
 
-function methodFunc(alias: string, target: Object, methodName: string) {
-    if (alias === null) {
-        console.error("ag-Grid: EventListener eventName should not be null");
+function guiListenerFunc(ref: string, eventName: string, target: Object, methodName: string) {
+    if (eventName == null) {
+        console.error("ag-Grid: GuiListener eventName is missing");
         return;
     }
 
-    addToObjectProps(target, 'methods', {
+    addToObjectProps(target, 'guiListenerMethods', {
         methodName: methodName,
-        alias: alias
+        eventName: eventName,
+        ref: ref
     });
 }
+
+// // think we should take this out, put property bindings on the
+// export function Method(eventName?: string): Function {
+//     return methodFunc.bind(this, eventName);
+// }
+//
+// function methodFunc(alias: string, target: Object, methodName: string) {
+//     if (alias === null) {
+//         console.error("ag-Grid: EventListener eventName should not be null");
+//         return;
+//     }
+//
+//     addToObjectProps(target, 'methods', {
+//         methodName: methodName,
+//         alias: alias
+//     });
+// }
 
 function addToObjectProps(target: Object, key: string, value: any): void {
     // it's an attribute on the class

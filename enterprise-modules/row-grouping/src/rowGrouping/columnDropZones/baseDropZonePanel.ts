@@ -10,7 +10,6 @@ import {
     EventService,
     GridOptionsWrapper,
     HorizontalDirection,
-    Logger,
     LoggerFactory,
     VerticalDirection,
     _
@@ -83,7 +82,7 @@ export abstract class BaseDropZonePanel extends Component {
         this.beans = beans;
     }
 
-    public destroy(): void {
+    protected destroy(): void {
         this.destroyGui();
         super.destroy();
     }
@@ -99,10 +98,9 @@ export abstract class BaseDropZonePanel extends Component {
     public init(params: BaseDropZonePanelParams): void {
         this.params = params;
 
-        const refreshEvent = this.beans.eventService.addEventListener(Events.EVENT_COLUMN_EVERYTHING_CHANGED, this.refreshGui.bind(this));
-        this.addDestroyFunc(() => refreshEvent());
+        this.addManagedListener(this.beans.eventService, Events.EVENT_COLUMN_EVERYTHING_CHANGED, this.refreshGui.bind(this));
 
-        this.addDestroyableEventListener(this.beans.gridOptionsWrapper, 'functionsReadOnly', this.refreshGui.bind(this));
+        this.addManagedListener(this.beans.gridOptionsWrapper, 'functionsReadOnly', this.refreshGui.bind(this));
 
         this.setupDropTarget();
         // we don't know if this bean will be initialised before columnController.
@@ -383,8 +381,8 @@ export abstract class BaseDropZonePanel extends Component {
         const columnComponent = new DropZoneColumnComp(column, this.dropTarget, ghost, this.valueColumn, this.horizontal);
         columnComponent.addEventListener(DropZoneColumnComp.EVENT_COLUMN_REMOVE, this.removeColumns.bind(this, [column]));
 
-        this.beans.context.wireBean(columnComponent);
-        this.guiDestroyFunctions.push(() => columnComponent.destroy());
+        this.beans.context.createBean(columnComponent);
+        this.guiDestroyFunctions.push(() => this.destroyBean(columnComponent));
 
         if (!ghost) {
             this.childColumnComponents.push(columnComponent);

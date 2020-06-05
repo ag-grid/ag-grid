@@ -16,7 +16,7 @@ export class ToolPanelWrapper extends Component {
     @Autowired("userComponentFactory") private userComponentFactory: UserComponentFactory;
     @Autowired("gridOptionsWrapper") private gridOptionsWrapper: GridOptionsWrapper;
 
-    private static TEMPLATE =
+    private static TEMPLATE = /* html */
         `<div class="ag-tool-panel-wrapper"/>`;
 
     private toolPanelCompInstance: IToolPanelComp;
@@ -52,14 +52,18 @@ export class ToolPanelWrapper extends Component {
     @PostConstruct
     private setupResize(): void {
         const resizeBar = this.resizeBar = new HorizontalResizeComp();
-        this.getContext().wireBean(resizeBar);
+        this.getContext().createBean(resizeBar);
         resizeBar.setElementToResize(this.getGui());
         this.appendChild(resizeBar);
     }
 
     private setToolPanelComponent(compInstance: IToolPanelComp): void {
         this.toolPanelCompInstance = compInstance;
-        this.appendChild(compInstance);
+
+        this.appendChild(compInstance.getGui());
+        this.addDestroyFunc(()=> {
+            this.destroyBean(compInstance);
+        });
     }
 
     public getToolPanelInstance(): IToolPanelComp {

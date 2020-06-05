@@ -1,3 +1,4 @@
+import { BeanStub } from "../context/beanStub";
 import { PostConstruct, Bean, Autowired, PreDestroy } from "../context/context";
 import { Column } from "../entities/column";
 import { ColumnApi } from "../columnController/columnApi";
@@ -90,7 +91,7 @@ export interface DraggingEvent {
 }
 
 @Bean('dragAndDropService')
-export class DragAndDropService {
+export class DragAndDropService extends BeanStub {
 
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('dragService') private dragService: DragService;
@@ -175,7 +176,7 @@ export class DragAndDropService {
     }
 
     @PreDestroy
-    private destroy(): void {
+    private clearDragSourceParamsList(): void {
         this.dragSourceAndParamsList.forEach(sourceAndParams => this.dragService.removeDragSource(sourceAndParams.params));
         this.dragSourceAndParamsList.length = 0;
     }

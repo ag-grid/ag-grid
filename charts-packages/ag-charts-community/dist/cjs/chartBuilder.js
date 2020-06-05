@@ -45,7 +45,7 @@ var ChartBuilder = /** @class */ (function () {
     };
     ChartBuilder.createBarChart = function (container, options) {
         var chart = this.createCartesianChart(container, ChartBuilder.createAxis(options.xAxis, 'number'), ChartBuilder.createAxis(options.yAxis, 'category'), options.document);
-        ChartBuilder.initChart(chart, options);
+        ChartBuilder.initCartesianChart(chart, options);
         if (options.series) {
             chart.series = options.series.map(function (s) { return ChartBuilder.initBarSeries(new barSeries_1.BarSeries(), s); });
         }
@@ -53,7 +53,7 @@ var ChartBuilder = /** @class */ (function () {
     };
     ChartBuilder.createGroupedBarChart = function (container, options) {
         var chart = this.createGroupedCategoryChart(container, ChartBuilder.createAxis(options.xAxis, 'number'), ChartBuilder.createGroupedCategoryAxis(options.yAxis), options.document);
-        ChartBuilder.initChart(chart, options);
+        ChartBuilder.initCartesianChart(chart, options);
         if (options.series) {
             chart.series = options.series.map(function (s) { return ChartBuilder.initBarSeries(new barSeries_1.BarSeries(), s); });
         }
@@ -61,7 +61,7 @@ var ChartBuilder = /** @class */ (function () {
     };
     ChartBuilder.createColumnChart = function (container, options) {
         var chart = this.createCartesianChart(container, ChartBuilder.createAxis(options.xAxis, 'category'), ChartBuilder.createAxis(options.yAxis, 'number'), options.document);
-        ChartBuilder.initChart(chart, options);
+        ChartBuilder.initCartesianChart(chart, options);
         if (options.series) {
             chart.series = options.series.map(function (s) { return ChartBuilder.initBarSeries(new barSeries_1.BarSeries(), s); });
         }
@@ -69,7 +69,7 @@ var ChartBuilder = /** @class */ (function () {
     };
     ChartBuilder.createGroupedColumnChart = function (container, options) {
         var chart = this.createGroupedCategoryChart(container, ChartBuilder.createGroupedCategoryAxis(options.xAxis), ChartBuilder.createAxis(options.yAxis, 'number'), options.document);
-        ChartBuilder.initChart(chart, options);
+        ChartBuilder.initCartesianChart(chart, options);
         if (options.series) {
             chart.series = options.series.map(function (s) { return ChartBuilder.initBarSeries(new barSeries_1.BarSeries(), s); });
         }
@@ -77,7 +77,7 @@ var ChartBuilder = /** @class */ (function () {
     };
     ChartBuilder.createLineChart = function (container, options) {
         var chart = this.createCartesianChart(container, ChartBuilder.createAxis(options.xAxis, 'category'), ChartBuilder.createAxis(options.yAxis, 'number'), options.document);
-        ChartBuilder.initChart(chart, options);
+        ChartBuilder.initCartesianChart(chart, options);
         if (options.series) {
             chart.series = options.series.map(function (s) { return ChartBuilder.initLineSeries(new lineSeries_1.LineSeries(), s); });
         }
@@ -85,7 +85,7 @@ var ChartBuilder = /** @class */ (function () {
     };
     ChartBuilder.createGroupedLineChart = function (container, options) {
         var chart = this.createGroupedCategoryChart(container, ChartBuilder.createGroupedCategoryAxis(options.xAxis), ChartBuilder.createAxis(options.yAxis, 'number'), options.document);
-        ChartBuilder.initChart(chart, options);
+        ChartBuilder.initCartesianChart(chart, options);
         if (options.series) {
             chart.series = options.series.map(function (s) { return ChartBuilder.initLineSeries(new lineSeries_1.LineSeries(), s); });
         }
@@ -93,7 +93,7 @@ var ChartBuilder = /** @class */ (function () {
     };
     ChartBuilder.createScatterChart = function (container, options) {
         var chart = this.createCartesianChart(container, ChartBuilder.createAxis(options.xAxis, 'number'), ChartBuilder.createAxis(options.yAxis, 'number'), options.document);
-        ChartBuilder.initChart(chart, options);
+        ChartBuilder.initCartesianChart(chart, options);
         if (options.series) {
             chart.series = options.series.map(function (s) { return ChartBuilder.initScatterSeries(new scatterSeries_1.ScatterSeries(), s); });
         }
@@ -101,7 +101,7 @@ var ChartBuilder = /** @class */ (function () {
     };
     ChartBuilder.createAreaChart = function (container, options) {
         var chart = this.createCartesianChart(container, ChartBuilder.createAxis(options.xAxis, 'category'), ChartBuilder.createAxis(options.yAxis, 'number'), options.document);
-        ChartBuilder.initChart(chart, options);
+        ChartBuilder.initCartesianChart(chart, options);
         if (options.series) {
             chart.series = options.series.map(function (s) { return ChartBuilder.initAreaSeries(new areaSeries_1.AreaSeries(), s); });
         }
@@ -109,7 +109,7 @@ var ChartBuilder = /** @class */ (function () {
     };
     ChartBuilder.createGroupedAreaChart = function (container, options) {
         var chart = this.createGroupedCategoryChart(container, ChartBuilder.createGroupedCategoryAxis(options.xAxis), ChartBuilder.createAxis(options.yAxis, 'number'), options.document);
-        ChartBuilder.initChart(chart, options);
+        ChartBuilder.initCartesianChart(chart, options);
         if (options.series) {
             chart.series = options.series.map(function (s) { return ChartBuilder.initAreaSeries(new areaSeries_1.AreaSeries(), s); });
         }
@@ -117,7 +117,7 @@ var ChartBuilder = /** @class */ (function () {
     };
     ChartBuilder.createHistogramChart = function (container, options) {
         var chart = this.createCartesianChart(container, ChartBuilder.createNumberAxis(options.xAxis), ChartBuilder.createNumberAxis(options.yAxis), options.document);
-        ChartBuilder.initChart(chart, options);
+        ChartBuilder.initCartesianChart(chart, options);
         return chart;
     };
     ChartBuilder.createPolarChart = function (container) {
@@ -153,6 +153,12 @@ var ChartBuilder = /** @class */ (function () {
             default:
                 return null;
         }
+    };
+    ChartBuilder.initCartesianChart = function (chart, options) {
+        if (options.navigator !== undefined) {
+            ChartBuilder.initNavigator(chart.navigator, options.navigator);
+        }
+        return this.initChart(chart, options);
     };
     ChartBuilder.initChart = function (chart, options) {
         this.setValueIfExists(chart, 'width', options.width);
@@ -434,6 +440,34 @@ var ChartBuilder = /** @class */ (function () {
             }
             this.setValueIfExists(legend, 'layoutHorizontalSpacing', item.paddingX);
             this.setValueIfExists(legend, 'layoutVerticalSpacing', item.paddingY);
+        }
+    };
+    ChartBuilder.initNavigator = function (navigator, options) {
+        this.setValueIfExists(navigator, 'enabled', options.enabled);
+        this.setValueIfExists(navigator, 'height', options.height);
+        this.setValueIfExists(navigator, 'min', options.min);
+        this.setValueIfExists(navigator, 'max', options.max);
+        this.initNavigatorMask(navigator.mask, options.mask);
+        this.initNavigatorHandle(navigator.minHandle, options.minHandle);
+        this.initNavigatorHandle(navigator.maxHandle, options.maxHandle);
+    };
+    ChartBuilder.initNavigatorMask = function (mask, options) {
+        if (options) {
+            this.setValueIfExists(mask, 'fill', options.fill);
+            this.setValueIfExists(mask, 'stroke', options.stroke);
+            this.setValueIfExists(mask, 'strokeWidth', options.strokeWidth);
+            this.setValueIfExists(mask, 'fillOpacity', options.fillOpacity);
+        }
+    };
+    ChartBuilder.initNavigatorHandle = function (handle, options) {
+        if (options) {
+            this.setValueIfExists(handle, 'fill', options.fill);
+            this.setValueIfExists(handle, 'stroke', options.stroke);
+            this.setValueIfExists(handle, 'strokeWidth', options.strokeWidth);
+            this.setValueIfExists(handle, 'width', options.width);
+            this.setValueIfExists(handle, 'height', options.height);
+            this.setValueIfExists(handle, 'gripLineGap', options.gripLineGap);
+            this.setValueIfExists(handle, 'gripLineLength', options.gripLineLength);
         }
     };
     ChartBuilder.initMarker = function (marker, options) {

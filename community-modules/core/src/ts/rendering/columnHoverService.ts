@@ -1,4 +1,3 @@
-import { EventService } from "../eventService";
 import { Autowired, Bean } from "../context/context";
 import { Events, ColumnHoverChangedEvent } from "../events";
 import { Column } from "../entities/column";
@@ -9,7 +8,6 @@ import { GridApi } from "../gridApi";
 @Bean('columnHoverService')
 export class ColumnHoverService extends BeanStub {
 
-    @Autowired('eventService') private eventService: EventService;
     @Autowired('columnApi') private columnApi: ColumnApi;
     @Autowired('gridApi') private gridApi: GridApi;
 

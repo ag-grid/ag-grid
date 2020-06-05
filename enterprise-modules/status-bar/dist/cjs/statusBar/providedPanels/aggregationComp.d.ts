@@ -1,7 +1,6 @@
 import { Component, IStatusPanelComp, CellPositionUtils, RowPositionUtils } from '@ag-grid-community/core';
 export declare class AggregationComp extends Component implements IStatusPanelComp {
     private static TEMPLATE;
-    private eventService;
     private rangeController;
     private valueService;
     private cellNavigationService;
@@ -17,6 +16,7 @@ export declare class AggregationComp extends Component implements IStatusPanelCo
     private maxAggregationComp;
     private avgAggregationComp;
     constructor();
+    destroy(): void;
     private postConstruct;
     private isValidRowModel;
     init(): void;

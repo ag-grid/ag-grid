@@ -1,20 +1,18 @@
-import {BeanStub} from "../context/beanStub";
-import {IRowModel, RowBounds} from "../interfaces/iRowModel";
-import {EventService} from "../eventService";
-import {Events, ModelUpdatedEvent, PaginationChangedEvent} from "../events";
-import {RowNode} from "../entities/rowNode";
-import {Autowired, Bean, PostConstruct} from "../context/context";
-import {GridOptionsWrapper} from "../gridOptionsWrapper";
-import {SelectionController} from "../selectionController";
-import {ColumnApi} from "../columnController/columnApi";
-import {GridApi} from "../gridApi";
-import {_} from "../utils";
+import { IRowModel, RowBounds } from "../interfaces/iRowModel";
+import { BeanStub } from "../context/beanStub";
+import { Events, ModelUpdatedEvent, PaginationChangedEvent } from "../events";
+import { RowNode } from "../entities/rowNode";
+import { Autowired, Bean, PostConstruct } from "../context/context";
+import { GridOptionsWrapper } from "../gridOptionsWrapper";
+import { SelectionController } from "../selectionController";
+import { ColumnApi } from "../columnController/columnApi";
+import { GridApi } from "../gridApi";
+import { _ } from "../utils";
 
 @Bean('paginationProxy')
 export class PaginationProxy extends BeanStub {
 
     @Autowired('rowModel') private rowModel: IRowModel;
-    @Autowired('eventService') private eventService: EventService;
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('selectionController') private selectionController: SelectionController;
     @Autowired('columnApi') private columnApi: ColumnApi;
@@ -41,9 +39,9 @@ export class PaginationProxy extends BeanStub {
         this.active = this.gridOptionsWrapper.isPagination();
         this.paginateChildRows = this.gridOptionsWrapper.isPaginateChildRows();
 
-        this.addDestroyableEventListener(this.eventService, Events.EVENT_MODEL_UPDATED, this.onModelUpdated.bind(this));
+        this.addManagedListener(this.eventService, Events.EVENT_MODEL_UPDATED, this.onModelUpdated.bind(this));
 
-        this.addDestroyableEventListener(this.gridOptionsWrapper, 'paginationPageSize', this.onModelUpdated.bind(this));
+        this.addManagedListener(this.gridOptionsWrapper, 'paginationPageSize', this.onModelUpdated.bind(this));
 
         this.onModelUpdated();
     }

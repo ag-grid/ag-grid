@@ -8,14 +8,14 @@ import {
     RefSelector,
     AgGroupComponentParams
 } from "@ag-grid-community/core";
-import {ChartController} from "../../../chartController";
-import {MarkersPanel} from "./markersPanel";
-import {ChartTranslator} from "../../../chartTranslator";
-import {ScatterChartProxy} from "../../../chartProxies/cartesian/scatterChartProxy";
+import { ChartController } from "../../../chartController";
+import { MarkersPanel } from "./markersPanel";
+import { ChartTranslator } from "../../../chartTranslator";
+import { ScatterChartProxy } from "../../../chartProxies/cartesian/scatterChartProxy";
 
 export class ScatterSeriesPanel extends Component {
 
-    public static TEMPLATE =
+    public static TEMPLATE = /* html */
         `<div>
             <ag-group-component ref="seriesGroup">
                 <ag-toggle-button ref="seriesTooltipsToggle"></ag-toggle-button>
@@ -67,7 +67,7 @@ export class ScatterSeriesPanel extends Component {
     }
 
     private initMarkersPanel() {
-        const markersPanelComp = this.wireBean(new MarkersPanel(this.chartController));
+        const markersPanelComp = this.createBean(new MarkersPanel(this.chartController));
         this.seriesGroup.addItem(markersPanelComp);
         this.activePanels.push(markersPanelComp);
     }
@@ -75,7 +75,7 @@ export class ScatterSeriesPanel extends Component {
     private destroyActivePanels(): void {
         this.activePanels.forEach(panel => {
             _.removeFromParent(panel.getGui());
-            panel.destroy();
+            this.destroyBean(panel);
         });
     }
 
@@ -83,7 +83,7 @@ export class ScatterSeriesPanel extends Component {
         return this.chartController.getChartProxy() as ScatterChartProxy;
     }
 
-    public destroy(): void {
+    protected destroy(): void {
         this.destroyActivePanels();
         super.destroy();
     }

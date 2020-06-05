@@ -179,8 +179,9 @@ SNIPPET
 </p>
 
 <ul class="content">
-    <li><b>apply</b>: ignored unless <code>applyButton = true</code>. If <code>true</code> the filter is changed AND applied, otherwise if
-        it is <code>false</code>, the filter is only changed.
+    <li><b>apply</b>: If <code>true</code> the filter is changed AND applied, otherwise if
+        it is <code>false</code>, the filter is only changed. However, this is ignored unless <code>buttons</code>
+        contains <code>'apply'</code> (i.e. it is ignored unless the Apply button is being used).
     </li>
     <li><b>model</b>: The model object that represents the new filter state.</li>
 </ul>

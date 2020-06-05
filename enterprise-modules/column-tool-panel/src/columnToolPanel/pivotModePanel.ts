@@ -4,7 +4,6 @@ import {
     ColumnController,
     Component,
     Events,
-    EventService,
     GridOptionsWrapper,
     PreConstruct,
     RefSelector
@@ -13,14 +12,13 @@ import {
 export class PivotModePanel extends Component {
 
     @Autowired('columnController') private columnController: ColumnController;
-    @Autowired('eventService') private eventService: EventService;
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
 
     @RefSelector('cbPivotMode') private cbPivotMode: AgCheckbox;
 
     private createTemplate(): string {
-        return `<div class="ag-pivot-mode-panel">
-                <ag-toggle-button ref="cbPivotMode" class="ag-pivot-mode-select"></ag-checkbox>
+        return /* html */ `<div class="ag-pivot-mode-panel">
+                <ag-toggle-button ref="cbPivotMode" class="ag-pivot-mode-select"></ag-toggle-button>
             </div>`;
     }
 
@@ -28,13 +26,14 @@ export class PivotModePanel extends Component {
     public init(): void {
         this.setTemplate(this.createTemplate());
 
+        this.cbPivotMode.setInputAriaLabel('Toggle Pivot Mode');
         this.cbPivotMode.setValue(this.columnController.isPivotMode());
         const localeTextFunc = this.gridOptionsWrapper.getLocaleTextFunc();
         this.cbPivotMode.setLabel(localeTextFunc('pivotMode', 'Pivot Mode'));
 
-        this.addDestroyableEventListener(this.cbPivotMode, AgCheckbox.EVENT_CHANGED, this.onBtPivotMode.bind(this));
-        this.addDestroyableEventListener(this.eventService, Events.EVENT_COLUMN_EVERYTHING_CHANGED, this.onPivotModeChanged.bind(this));
-        this.addDestroyableEventListener(this.eventService, Events.EVENT_COLUMN_PIVOT_MODE_CHANGED, this.onPivotModeChanged.bind(this));
+        this.addManagedListener(this.cbPivotMode, AgCheckbox.EVENT_CHANGED, this.onBtPivotMode.bind(this));
+        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_EVERYTHING_CHANGED, this.onPivotModeChanged.bind(this));
+        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_PIVOT_MODE_CHANGED, this.onPivotModeChanged.bind(this));
     }
 
     private onBtPivotMode(): void {

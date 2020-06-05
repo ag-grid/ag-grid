@@ -30,14 +30,11 @@ export declare class GridOptionsWrapper {
     static PROP_SUPPRESS_MOVE_WHEN_ROW_DRAG: string;
     static PROP_POPUP_PARENT: string;
     static PROP_DOM_LAYOUT: string;
-    private gridOptions;
-    private columnController;
-    private eventService;
-    private gridApi;
-    private columnApi;
-    private environment;
-    private autoHeightCalculator;
-    private context;
+    private readonly gridOptions;
+    private readonly columnController;
+    private readonly eventService;
+    private readonly environment;
+    private readonly autoHeightCalculator;
     private propertyEventService;
     private domDataKey;
     private layoutElements;
@@ -77,6 +74,8 @@ export declare class GridOptionsWrapper {
     isAllowDragFromColumnsToolPanel(): boolean;
     useAsyncEvents(): boolean;
     isEnableCellChangeFlash(): boolean;
+    getCellFlashDelay(): number;
+    getCellFadeDelay(): number;
     isGroupSelectsChildren(): boolean;
     isSuppressRowHoverHighlight(): boolean;
     isGroupSelectsFiltered(): boolean;
@@ -266,7 +265,7 @@ export declare class GridOptionsWrapper {
     getPostSortFunc(): ((rowNodes: RowNode[]) => void) | undefined;
     getProcessChartOptionsFunc(): (params: ProcessChartOptionsParams) => ChartOptions<any>;
     getClipboardDeliminator(): string;
-    setProperty(key: string, value: any): void;
+    setProperty(key: string, value: any, force?: boolean): void;
     addLayoutElement(element: HTMLElement): void;
     private updateLayoutClasses;
     addEventListener(key: string, listener: Function): void;
@@ -293,7 +292,7 @@ export declare class GridOptionsWrapper {
     private checkForDeprecated;
     private checkForViolations;
     private treeDataViolations;
-    getLocaleTextFunc(): Function;
+    getLocaleTextFunc(): (key: string, defaultValue: string) => string;
     globalEventHandler(eventName: string, event?: any): void;
     getRowHeightAsNumber(): number;
     getRowHeightForNode(rowNode: RowNode, allowEstimate?: boolean): {

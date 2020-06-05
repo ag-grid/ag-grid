@@ -7,25 +7,23 @@ import {
     ColumnController,
     Component,
     Events,
-    EventService,
     GridApi,
     OriginalColumnGroup,
     OriginalColumnGroupChild
 } from "@ag-grid-community/core";
 
-import {ToolPanelFilterComp} from "./toolPanelFilterComp";
-import {ToolPanelFiltersCompParams} from "./filtersToolPanel";
-import {ToolPanelFilterGroupComp, ToolPanelFilterItem} from "./toolPanelFilterGroupComp";
-import {EXPAND_STATE} from "./filtersToolPanelHeaderPanel";
-import {ToolPanelColDefService} from "@ag-grid-enterprise/side-bar";
+import { ToolPanelFilterComp } from "./toolPanelFilterComp";
+import { ToolPanelFiltersCompParams } from "./filtersToolPanel";
+import { ToolPanelFilterGroupComp, ToolPanelFilterItem } from "./toolPanelFilterGroupComp";
+import { EXPAND_STATE } from "./filtersToolPanelHeaderPanel";
+import { ToolPanelColDefService } from "@ag-grid-enterprise/side-bar";
 
 export class FiltersToolPanelListPanel extends Component {
 
-    private static TEMPLATE = `<div class="ag-filter-list-panel"></div>`;
+    private static TEMPLATE = /* html */ `<div class="ag-filter-list-panel"></div>`;
 
     @Autowired("gridApi") private gridApi: GridApi;
     @Autowired("columnApi") private columnApi: ColumnApi;
-    @Autowired("eventService") private eventService: EventService;
     @Autowired('toolPanelColDefService') private toolPanelColDefService: ToolPanelColDefService;
     @Autowired('columnController') private columnController: ColumnController;
 
@@ -55,12 +53,12 @@ export class FiltersToolPanelListPanel extends Component {
         this.params = defaultParams;
 
         if (!this.params.suppressSyncLayoutWithGrid) {
-            this.addDestroyableEventListener(this.eventService, Events.EVENT_COLUMN_MOVED, () => this.onColumnsChanged());
+            this.addManagedListener(this.eventService, Events.EVENT_COLUMN_MOVED, () => this.onColumnsChanged());
         }
 
-        this.addDestroyableEventListener(this.eventService, Events.EVENT_NEW_COLUMNS_LOADED, () => this.onColumnsChanged());
+        this.addManagedListener(this.eventService, Events.EVENT_NEW_COLUMNS_LOADED, () => this.onColumnsChanged());
 
-        this.addDestroyableEventListener(this.eventService, Events.EVENT_TOOL_PANEL_VISIBLE_CHANGED, (event) => {
+        this.addManagedListener(this.eventService, Events.EVENT_TOOL_PANEL_VISIBLE_CHANGED, (event) => {
             // when re-entering the filters tool panel we need to refresh the virtual lists in the set filters in case
             // filters have been changed elsewhere, i.e. via an api call.
             if (event.source === 'filters') {
@@ -91,7 +89,7 @@ export class FiltersToolPanelListPanel extends Component {
 
         if (len) {
             this.filterGroupComps.forEach(comp => this.appendChild(comp));
-            this.setFirstAndLastVisible(0, len -1);
+            this.setFirstAndLastVisible(0, len - 1);
         }
 
         // perform search if searchFilterText exists
@@ -112,7 +110,7 @@ export class FiltersToolPanelListPanel extends Component {
 
         if (len) {
             this.filterGroupComps.forEach(comp => this.appendChild(comp));
-            this.setFirstAndLastVisible(0, len -1);
+            this.setFirstAndLastVisible(0, len - 1);
         }
 
         // perform search if searchFilterText exists
@@ -132,19 +130,16 @@ export class FiltersToolPanelListPanel extends Component {
 
             const column = child as Column;
 
-            if (!this.shouldDisplayFilter(column)) { return [] };
+            if (!this.shouldDisplayFilter(column)) { return []; };
 
             const hideFilterCompHeader = depth === 0;
             const filterComp = new ToolPanelFilterComp(hideFilterCompHeader);
-            this.getContext().wireBean(filterComp);
+            this.getContext().createBean(filterComp);
             filterComp.setColumn(column);
 
             if (depth > 0) { return filterComp; }
 
-            const filterGroupComp =
-                new ToolPanelFilterGroupComp(column, [filterComp], this.onGroupExpanded.bind(this), depth);
-
-            this.getContext().wireBean(filterGroupComp);
+            const filterGroupComp = this.createBean(new ToolPanelFilterGroupComp(column, [filterComp], this.onGroupExpanded.bind(this), depth));
             filterGroupComp.addCssClassToTitleBar('ag-filter-toolpanel-header');
             filterGroupComp.collapse();
             return filterGroupComp;
@@ -166,7 +161,7 @@ export class FiltersToolPanelListPanel extends Component {
         const filterGroupComp =
             new ToolPanelFilterGroupComp(columnGroup, childFilterComps, this.onGroupExpanded.bind(this), depth);
 
-        this.getContext().wireBean(filterGroupComp);
+        this.getContext().createBean(filterGroupComp);
         filterGroupComp.addCssClassToTitleBar('ag-filter-toolpanel-header');
         return [filterGroupComp];
     }
@@ -187,7 +182,7 @@ export class FiltersToolPanelListPanel extends Component {
     }
 
     // we don't support refreshing, but must implement because it's on the tool panel interface
-    public refresh(): void {}
+    public refresh(): void { }
 
     // lazy initialise the panel
     public setVisible(visible: boolean): void {
@@ -310,7 +305,7 @@ export class FiltersToolPanelListPanel extends Component {
             state = EXPAND_STATE.EXPANDED;
         }
 
-       this.dispatchEvent({type: 'groupExpanded', state: state});
+        this.dispatchEvent({ type: 'groupExpanded', state: state });
     }
 
     public performFilterSearch(searchText: string) {
@@ -395,12 +390,11 @@ export class FiltersToolPanelListPanel extends Component {
     }
 
     private destroyFilters() {
-        this.filterGroupComps.forEach(filterComp => filterComp.destroy());
-        this.filterGroupComps.length = 0;
+        this.filterGroupComps = this.destroyBeans(this.filterGroupComps);
         _.clearElement(this.getGui());
     }
 
-    public destroy() {
+    protected destroy() {
         this.destroyFilters();
         super.destroy();
     }

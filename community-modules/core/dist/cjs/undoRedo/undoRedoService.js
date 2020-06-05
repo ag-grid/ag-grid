@@ -1,10 +1,23 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v23.1.1
+ * @version v23.2.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
 "use strict";
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = function (d, b) {
+        extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+        return extendStatics(d, b);
+    };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -18,16 +31,17 @@ var undoRedoStack_1 = require("./undoRedoStack");
 var constants_1 = require("../constants");
 var moduleNames_1 = require("../modules/moduleNames");
 var moduleRegistry_1 = require("../modules/moduleRegistry");
-var UndoRedoService = /** @class */ (function () {
+var beanStub_1 = require("../context/beanStub");
+var UndoRedoService = /** @class */ (function (_super) {
+    __extends(UndoRedoService, _super);
     function UndoRedoService() {
-        var _this = this;
-        this.cellValueChanges = [];
-        this.isCellEditing = false;
-        this.isRowEditing = false;
-        this.isPasting = false;
-        this.isFilling = false;
-        this.events = [];
-        this.onCellValueChanged = function (event) {
+        var _this = _super !== null && _super.apply(this, arguments) || this;
+        _this.cellValueChanges = [];
+        _this.isCellEditing = false;
+        _this.isRowEditing = false;
+        _this.isPasting = false;
+        _this.isFilling = false;
+        _this.onCellValueChanged = function (event) {
             var shouldCaptureAction = _this.isCellEditing || _this.isRowEditing || _this.isPasting || _this.isFilling;
             if (!shouldCaptureAction) {
                 return;
@@ -42,10 +56,11 @@ var UndoRedoService = /** @class */ (function () {
             };
             _this.cellValueChanges.push(cellValueChange);
         };
-        this.clearStacks = function () {
+        _this.clearStacks = function () {
             _this.undoStack.clear();
             _this.redoStack.clear();
         };
+        return _this;
     }
     UndoRedoService.prototype.init = function () {
         if (!this.gridOptionsWrapper.isUndoRedoCellEditing()) {
@@ -57,26 +72,22 @@ var UndoRedoService = /** @class */ (function () {
         }
         this.undoStack = new undoRedoStack_1.UndoRedoStack(undoRedoLimit);
         this.redoStack = new undoRedoStack_1.UndoRedoStack(undoRedoLimit);
-        this.events = [].concat(this.addRowEditingListeners(), this.addCellEditingListeners(), this.addPasteListeners(), this.addFillListeners(), [
-            this.eventService.addEventListener(eventKeys_1.Events.EVENT_CELL_VALUE_CHANGED, this.onCellValueChanged),
-            // undo / redo is restricted to actual editing so we clear the stacks when other operations are
-            // performed that change the order of the row / cols.
-            this.eventService.addEventListener(eventKeys_1.Events.EVENT_MODEL_UPDATED, this.clearStacks),
-            this.eventService.addEventListener(eventKeys_1.Events.EVENT_COLUMN_PIVOT_MODE_CHANGED, this.clearStacks),
-            this.eventService.addEventListener(eventKeys_1.Events.EVENT_COLUMN_EVERYTHING_CHANGED, this.clearStacks),
-            this.eventService.addEventListener(eventKeys_1.Events.EVENT_COLUMN_GROUP_OPENED, this.clearStacks),
-            this.eventService.addEventListener(eventKeys_1.Events.EVENT_COLUMN_ROW_GROUP_CHANGED, this.clearStacks),
-            this.eventService.addEventListener(eventKeys_1.Events.EVENT_COLUMN_MOVED, this.clearStacks),
-            this.eventService.addEventListener(eventKeys_1.Events.EVENT_COLUMN_PINNED, this.clearStacks),
-            this.eventService.addEventListener(eventKeys_1.Events.EVENT_COLUMN_VISIBLE, this.clearStacks),
-            this.eventService.addEventListener(eventKeys_1.Events.EVENT_ROW_DRAG_END, this.clearStacks),
-        ]);
-    };
-    UndoRedoService.prototype.destroy = function () {
-        if (this.events.length) {
-            this.events.forEach(function (func) { return func(); });
-            this.events = [];
-        }
+        this.addRowEditingListeners();
+        this.addCellEditingListeners();
+        this.addPasteListeners();
+        this.addFillListeners();
+        this.addManagedListener(this.eventService, eventKeys_1.Events.EVENT_CELL_VALUE_CHANGED, this.onCellValueChanged);
+        // undo / redo is restricted to actual editing so we clear the stacks when other operations are
+        // performed that change the order of the row / cols.
+        this.addManagedListener(this.eventService, eventKeys_1.Events.EVENT_MODEL_UPDATED, this.clearStacks);
+        this.addManagedListener(this.eventService, eventKeys_1.Events.EVENT_COLUMN_PIVOT_MODE_CHANGED, this.clearStacks);
+        this.addManagedListener(this.eventService, eventKeys_1.Events.EVENT_COLUMN_EVERYTHING_CHANGED, this.clearStacks);
+        this.addManagedListener(this.eventService, eventKeys_1.Events.EVENT_COLUMN_GROUP_OPENED, this.clearStacks);
+        this.addManagedListener(this.eventService, eventKeys_1.Events.EVENT_COLUMN_ROW_GROUP_CHANGED, this.clearStacks);
+        this.addManagedListener(this.eventService, eventKeys_1.Events.EVENT_COLUMN_MOVED, this.clearStacks);
+        this.addManagedListener(this.eventService, eventKeys_1.Events.EVENT_COLUMN_PINNED, this.clearStacks);
+        this.addManagedListener(this.eventService, eventKeys_1.Events.EVENT_COLUMN_VISIBLE, this.clearStacks);
+        this.addManagedListener(this.eventService, eventKeys_1.Events.EVENT_ROW_DRAG_END, this.clearStacks);
     };
     UndoRedoService.prototype.undo = function () {
         if (!this.undoStack) {
@@ -168,58 +179,50 @@ var UndoRedoService = /** @class */ (function () {
     };
     UndoRedoService.prototype.addRowEditingListeners = function () {
         var _this = this;
-        return [
-            this.eventService.addEventListener(eventKeys_1.Events.EVENT_ROW_EDITING_STARTED, function () {
-                _this.isRowEditing = true;
-            }),
-            this.eventService.addEventListener(eventKeys_1.Events.EVENT_ROW_EDITING_STOPPED, function () {
-                var action = new undoRedoStack_1.UndoRedoAction(_this.cellValueChanges);
-                _this.pushActionsToUndoStack(action);
-                _this.isRowEditing = false;
-            })
-        ];
+        this.addManagedListener(this.eventService, eventKeys_1.Events.EVENT_ROW_EDITING_STARTED, function () {
+            _this.isRowEditing = true;
+        });
+        this.addManagedListener(this.eventService, eventKeys_1.Events.EVENT_ROW_EDITING_STOPPED, function () {
+            var action = new undoRedoStack_1.UndoRedoAction(_this.cellValueChanges);
+            _this.pushActionsToUndoStack(action);
+            _this.isRowEditing = false;
+        });
     };
     UndoRedoService.prototype.addCellEditingListeners = function () {
         var _this = this;
-        return [
-            this.eventService.addEventListener(eventKeys_1.Events.EVENT_CELL_EDITING_STARTED, function () {
-                _this.isCellEditing = true;
-            }),
-            this.eventService.addEventListener(eventKeys_1.Events.EVENT_CELL_EDITING_STOPPED, function () {
-                _this.isCellEditing = false;
-                var shouldPushAction = !_this.isRowEditing && !_this.isPasting && !_this.isFilling;
-                if (shouldPushAction) {
-                    var action = new undoRedoStack_1.UndoRedoAction(_this.cellValueChanges);
-                    _this.pushActionsToUndoStack(action);
-                }
-            })
-        ];
+        this.addManagedListener(this.eventService, eventKeys_1.Events.EVENT_CELL_EDITING_STARTED, function () {
+            _this.isCellEditing = true;
+        });
+        this.addManagedListener(this.eventService, eventKeys_1.Events.EVENT_CELL_EDITING_STOPPED, function () {
+            _this.isCellEditing = false;
+            var shouldPushAction = !_this.isRowEditing && !_this.isPasting && !_this.isFilling;
+            if (shouldPushAction) {
+                var action = new undoRedoStack_1.UndoRedoAction(_this.cellValueChanges);
+                _this.pushActionsToUndoStack(action);
+            }
+        });
     };
     UndoRedoService.prototype.addPasteListeners = function () {
         var _this = this;
-        return [
-            this.eventService.addEventListener(eventKeys_1.Events.EVENT_PASTE_START, function () {
-                _this.isPasting = true;
-            }),
-            this.eventService.addEventListener(eventKeys_1.Events.EVENT_PASTE_END, function () {
-                var action = new undoRedoStack_1.UndoRedoAction(_this.cellValueChanges);
-                _this.pushActionsToUndoStack(action);
-                _this.isPasting = false;
-            })
-        ];
+        this.addManagedListener(this.eventService, eventKeys_1.Events.EVENT_PASTE_START, function () {
+            _this.isPasting = true;
+        });
+        this.addManagedListener(this.eventService, eventKeys_1.Events.EVENT_PASTE_END, function () {
+            var action = new undoRedoStack_1.UndoRedoAction(_this.cellValueChanges);
+            _this.pushActionsToUndoStack(action);
+            _this.isPasting = false;
+        });
     };
     UndoRedoService.prototype.addFillListeners = function () {
         var _this = this;
-        return [
-            this.eventService.addEventListener(eventKeys_1.Events.EVENT_FILL_START, function () {
-                _this.isFilling = true;
-            }),
-            this.eventService.addEventListener(eventKeys_1.Events.EVENT_FILL_END, function (event) {
-                var action = new undoRedoStack_1.FillUndoRedoAction(_this.cellValueChanges, event.initialRange, event.finalRange);
-                _this.pushActionsToUndoStack(action);
-                _this.isFilling = false;
-            })
-        ];
+        this.addManagedListener(this.eventService, eventKeys_1.Events.EVENT_FILL_START, function () {
+            _this.isFilling = true;
+        });
+        this.addManagedListener(this.eventService, eventKeys_1.Events.EVENT_FILL_END, function (event) {
+            var action = new undoRedoStack_1.FillUndoRedoAction(_this.cellValueChanges, event.initialRange, event.finalRange);
+            _this.pushActionsToUndoStack(action);
+            _this.isFilling = false;
+        });
     };
     UndoRedoService.prototype.pushActionsToUndoStack = function (action) {
         this.undoStack.push(action);
@@ -243,9 +246,6 @@ var UndoRedoService = /** @class */ (function () {
         context_1.Autowired('focusController')
     ], UndoRedoService.prototype, "focusController", void 0);
     __decorate([
-        context_1.Autowired('eventService')
-    ], UndoRedoService.prototype, "eventService", void 0);
-    __decorate([
         context_1.Autowired('gridApi')
     ], UndoRedoService.prototype, "gridApi", void 0);
     __decorate([
@@ -257,14 +257,11 @@ var UndoRedoService = /** @class */ (function () {
     __decorate([
         context_1.PostConstruct
     ], UndoRedoService.prototype, "init", null);
-    __decorate([
-        context_1.PreDestroy
-    ], UndoRedoService.prototype, "destroy", null);
     UndoRedoService = __decorate([
         context_1.Bean('undoRedoService')
     ], UndoRedoService);
     return UndoRedoService;
-}());
+}(beanStub_1.BeanStub));
 exports.UndoRedoService = UndoRedoService;
 
 //# sourceMappingURL=undoRedoService.js.map

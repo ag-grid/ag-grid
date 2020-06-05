@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v23.1.1
+ * @version v23.2.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -25,7 +25,6 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var component_1 = require("../../widgets/component");
 var column_1 = require("../../entities/column");
 var columnGroup_1 = require("../../entities/columnGroup");
 var constants_1 = require("../../constants");
@@ -35,21 +34,23 @@ var dragAndDropService_1 = require("../../dragAndDrop/dragAndDropService");
 var setLeftFeature_1 = require("../../rendering/features/setLeftFeature");
 var hoverFeature_1 = require("../hoverFeature");
 var tooltipFeature_1 = require("../../widgets/tooltipFeature");
+var abstractHeaderWrapper_1 = require("../header/abstractHeaderWrapper");
 var utils_1 = require("../../utils");
 var HeaderGroupWrapperComp = /** @class */ (function (_super) {
     __extends(HeaderGroupWrapperComp, _super);
     function HeaderGroupWrapperComp(columnGroup, dragSourceDropTarget, pinned) {
         var _this = _super.call(this, HeaderGroupWrapperComp.TEMPLATE) || this;
         // the children can change, we keep destroy functions related to listening to the children here
-        _this.childColumnsDestroyFuncs = [];
-        _this.columnGroup = columnGroup;
+        _this.removeChildListenersFuncs = [];
+        _this.column = columnGroup;
         _this.dragSourceDropTarget = dragSourceDropTarget;
         _this.pinned = pinned;
         return _this;
     }
     HeaderGroupWrapperComp.prototype.postConstruct = function () {
-        cssClassApplier_1.CssClassApplier.addHeaderClassesFromColDef(this.getComponentHolder(), this.getGui(), this.gridOptionsWrapper, null, this.columnGroup);
-        var displayName = this.columnController.getDisplayNameForColumnGroup(this.columnGroup, 'header');
+        _super.prototype.postConstruct.call(this);
+        cssClassApplier_1.CssClassApplier.addHeaderClassesFromColDef(this.getComponentHolder(), this.getGui(), this.gridOptionsWrapper, null, this.column);
+        var displayName = this.columnController.getDisplayNameForColumnGroup(this.column, 'header');
         this.appendHeaderGroupComp(displayName);
         this.setupResize();
         this.addClasses();
@@ -57,25 +58,42 @@ var HeaderGroupWrapperComp = /** @class */ (function (_super) {
         this.addAttributes();
         this.setupMovingCss();
         this.setupTooltip();
-        this.addFeature(new hoverFeature_1.HoverFeature(this.columnGroup.getOriginalColumnGroup().getLeafColumns(), this.getGui()));
-        var setLeftFeature = new setLeftFeature_1.SetLeftFeature(this.columnGroup, this.getGui(), this.beans);
-        setLeftFeature.init();
-        this.addDestroyFunc(setLeftFeature.destroy.bind(setLeftFeature));
+        this.createManagedBean(new hoverFeature_1.HoverFeature(this.column.getOriginalColumnGroup().getLeafColumns(), this.getGui()));
+        this.createManagedBean(new setLeftFeature_1.SetLeftFeature(this.column, this.getGui(), this.beans));
+    };
+    HeaderGroupWrapperComp.prototype.onFocusIn = function (e) {
+        if (!this.getGui().contains(e.relatedTarget)) {
+            var headerRow = this.getParentComponent();
+            this.beans.focusController.setFocusedHeader(headerRow.getRowIndex(), this.getColumn());
+        }
+    };
+    HeaderGroupWrapperComp.prototype.handleKeyDown = function (e) {
+        var activeEl = document.activeElement;
+        var eGui = this.getGui();
+        var wrapperHasFocus = activeEl === eGui;
+        switch (e.keyCode) {
+            case constants_1.Constants.KEY_ENTER:
+                if (wrapperHasFocus) {
+                    var column = this.getColumn();
+                    var expandable = column.isExpandable();
+                    if (expandable) {
+                        var newExpandedValue = !column.isExpanded();
+                        this.columnController.setColumnGroupOpened(column.getOriginalColumnGroup(), newExpandedValue, "uiColumnExpanded");
+                    }
+                }
+        }
     };
     HeaderGroupWrapperComp.prototype.setupMovingCss = function () {
         var _this = this;
-        var originalColumnGroup = this.columnGroup.getOriginalColumnGroup();
+        var originalColumnGroup = this.column.getOriginalColumnGroup();
         var leafColumns = originalColumnGroup.getLeafColumns();
         leafColumns.forEach(function (col) {
-            _this.addDestroyableEventListener(col, column_1.Column.EVENT_MOVING_CHANGED, _this.onColumnMovingChanged.bind(_this));
+            _this.addManagedListener(col, column_1.Column.EVENT_MOVING_CHANGED, _this.onColumnMovingChanged.bind(_this));
         });
         this.onColumnMovingChanged();
     };
-    HeaderGroupWrapperComp.prototype.getColumn = function () {
-        return this.columnGroup;
-    };
     HeaderGroupWrapperComp.prototype.getComponentHolder = function () {
-        return this.columnGroup.getColGroupDef();
+        return this.column.getColGroupDef();
     };
     HeaderGroupWrapperComp.prototype.getTooltipText = function () {
         var colGroupDef = this.getComponentHolder();
@@ -90,32 +108,32 @@ var HeaderGroupWrapperComp = /** @class */ (function (_super) {
             this.getGui().setAttribute('title', tooltipText);
         }
         else {
-            this.addFeature(new tooltipFeature_1.TooltipFeature(this, 'headerGroup'));
+            this.createManagedBean(new tooltipFeature_1.TooltipFeature(this, 'headerGroup'));
         }
     };
     HeaderGroupWrapperComp.prototype.onColumnMovingChanged = function () {
         // this function adds or removes the moving css, based on if the col is moving.
         // this is what makes the header go dark when it is been moved (gives impression to
         // user that the column was picked up).
-        utils_1._.addOrRemoveCssClass(this.getGui(), 'ag-header-cell-moving', this.columnGroup.isMoving());
+        utils_1._.addOrRemoveCssClass(this.getGui(), 'ag-header-cell-moving', this.column.isMoving());
     };
     HeaderGroupWrapperComp.prototype.addAttributes = function () {
-        this.getGui().setAttribute("col-id", this.columnGroup.getUniqueId());
+        this.getGui().setAttribute("col-id", this.column.getUniqueId());
     };
     HeaderGroupWrapperComp.prototype.appendHeaderGroupComp = function (displayName) {
         var _this = this;
         var params = {
             displayName: displayName,
-            columnGroup: this.columnGroup,
+            columnGroup: this.column,
             setExpanded: function (expanded) {
-                _this.columnController.setColumnGroupOpened(_this.columnGroup.getOriginalColumnGroup(), expanded, "gridInitializing");
+                _this.columnController.setColumnGroupOpened(_this.column.getOriginalColumnGroup(), expanded, "gridInitializing");
             },
             api: this.gridApi,
             columnApi: this.columnApi,
             context: this.gridOptionsWrapper.getContext()
         };
         if (!displayName) {
-            var columnGroup = this.columnGroup;
+            var columnGroup = this.column;
             var leafCols = columnGroup.getLeafColumns();
             // find the top most column group that represents the same columns. so if we are dragging a group, we also
             // want to visually show the parent groups dragging for the same column set. for example imaging 5 levels
@@ -137,14 +155,18 @@ var HeaderGroupWrapperComp = /** @class */ (function (_super) {
         this.userComponentFactory.newHeaderGroupComponent(params).then(callback);
     };
     HeaderGroupWrapperComp.prototype.afterHeaderCompCreated = function (displayName, headerGroupComp) {
-        this.appendChild(headerGroupComp);
+        var _this = this;
+        this.getGui().appendChild(headerGroupComp.getGui());
+        this.addDestroyFunc(function () {
+            _this.getContext().destroyBean(headerGroupComp);
+        });
         this.setupMove(headerGroupComp.getGui(), displayName);
     };
     HeaderGroupWrapperComp.prototype.addClasses = function () {
         // having different classes below allows the style to not have a bottom border
         // on the group header, if no group is specified
         // columnGroup.getColGroupDef
-        var style = this.columnGroup.isPadding() ? 'no' : 'with';
+        var style = this.column.isPadding() ? 'no' : 'with';
         this.addCssClass("ag-header-group-cell-" + style + "-group");
     };
     HeaderGroupWrapperComp.prototype.setupMove = function (eHeaderGroup, displayName) {
@@ -155,7 +177,7 @@ var HeaderGroupWrapperComp = /** @class */ (function (_super) {
         if (this.isSuppressMoving()) {
             return;
         }
-        var allLeafColumns = this.columnGroup.getOriginalColumnGroup().getLeafColumns();
+        var allLeafColumns = this.column.getOriginalColumnGroup().getLeafColumns();
         var dragSource = {
             type: dragAndDropService_1.DragSourceType.HeaderCell,
             eElement: eHeaderGroup,
@@ -173,7 +195,7 @@ var HeaderGroupWrapperComp = /** @class */ (function (_super) {
     // when moving the columns, we want to move all the columns (contained within the DragItem) in this group in one go,
     // and in the order they are currently in the screen.
     HeaderGroupWrapperComp.prototype.getDragItemForGroup = function () {
-        var allColumnsOriginalOrder = this.columnGroup.getOriginalColumnGroup().getLeafColumns();
+        var allColumnsOriginalOrder = this.column.getOriginalColumnGroup().getLeafColumns();
         // capture visible state, used when re-entering grid to dictate which columns should be visible
         var visibleState = {};
         allColumnsOriginalOrder.forEach(function (column) { return visibleState[column.getId()] = column.isVisible(); });
@@ -195,7 +217,7 @@ var HeaderGroupWrapperComp = /** @class */ (function (_super) {
     HeaderGroupWrapperComp.prototype.isSuppressMoving = function () {
         // if any child is fixed, then don't allow moving
         var childSuppressesMoving = false;
-        this.columnGroup.getLeafColumns().forEach(function (column) {
+        this.column.getLeafColumns().forEach(function (column) {
             if (column.getColDef().suppressMovable || column.getColDef().lockPosition) {
                 childSuppressesMoving = true;
             }
@@ -207,12 +229,12 @@ var HeaderGroupWrapperComp = /** @class */ (function (_super) {
         // we need to listen to changes in child columns, as they impact our width
         this.addListenersToChildrenColumns();
         // the children belonging to this group can change, so we need to add and remove listeners as they change
-        this.addDestroyableEventListener(this.columnGroup, columnGroup_1.ColumnGroup.EVENT_DISPLAYED_CHILDREN_CHANGED, this.onDisplayedChildrenChanged.bind(this));
+        this.addManagedListener(this.column, columnGroup_1.ColumnGroup.EVENT_DISPLAYED_CHILDREN_CHANGED, this.onDisplayedChildrenChanged.bind(this));
         this.onWidthChanged();
         // the child listeners are not tied to this components life-cycle, as children can get added and removed
         // to the group - hence they are on a different life-cycle. so we must make sure the existing children
         // listeners are removed when we finally get destroyed
-        this.addDestroyFunc(this.destroyListenersOnChildrenColumns.bind(this));
+        this.addDestroyFunc(this.removeListenersOnChildrenColumns.bind(this));
     };
     HeaderGroupWrapperComp.prototype.onDisplayedChildrenChanged = function () {
         this.addListenersToChildrenColumns();
@@ -221,29 +243,29 @@ var HeaderGroupWrapperComp = /** @class */ (function (_super) {
     HeaderGroupWrapperComp.prototype.addListenersToChildrenColumns = function () {
         var _this = this;
         // first destroy any old listeners
-        this.destroyListenersOnChildrenColumns();
+        this.removeListenersOnChildrenColumns();
         // now add new listeners to the new set of children
         var widthChangedListener = this.onWidthChanged.bind(this);
-        this.columnGroup.getLeafColumns().forEach(function (column) {
+        this.column.getLeafColumns().forEach(function (column) {
             column.addEventListener(column_1.Column.EVENT_WIDTH_CHANGED, widthChangedListener);
             column.addEventListener(column_1.Column.EVENT_VISIBLE_CHANGED, widthChangedListener);
-            _this.childColumnsDestroyFuncs.push(function () {
+            _this.removeChildListenersFuncs.push(function () {
                 column.removeEventListener(column_1.Column.EVENT_WIDTH_CHANGED, widthChangedListener);
                 column.removeEventListener(column_1.Column.EVENT_VISIBLE_CHANGED, widthChangedListener);
             });
         });
     };
-    HeaderGroupWrapperComp.prototype.destroyListenersOnChildrenColumns = function () {
-        this.childColumnsDestroyFuncs.forEach(function (func) { return func(); });
-        this.childColumnsDestroyFuncs = [];
+    HeaderGroupWrapperComp.prototype.removeListenersOnChildrenColumns = function () {
+        this.removeChildListenersFuncs.forEach(function (func) { return func(); });
+        this.removeChildListenersFuncs = [];
     };
     HeaderGroupWrapperComp.prototype.onWidthChanged = function () {
-        this.getGui().style.width = this.columnGroup.getActualWidth() + 'px';
+        this.getGui().style.width = this.column.getActualWidth() + 'px';
     };
     HeaderGroupWrapperComp.prototype.setupResize = function () {
         var _this = this;
         this.eHeaderCellResize = this.getRefElement('agResize');
-        if (!this.columnGroup.isResizable()) {
+        if (!this.column.isResizable()) {
             utils_1._.removeFromParent(this.eHeaderCellResize);
             return;
         }
@@ -259,7 +281,7 @@ var HeaderGroupWrapperComp = /** @class */ (function (_super) {
             this.eHeaderCellResize.addEventListener('dblclick', function (event) {
                 // get list of all the column keys we are responsible for
                 var keys = [];
-                _this.columnGroup.getDisplayedLeafColumns().forEach(function (column) {
+                _this.column.getDisplayedLeafColumns().forEach(function (column) {
                     // not all cols in the group may be participating with auto-resize
                     if (!column.getColDef().suppressAutoSize) {
                         keys.push(column.getColId());
@@ -273,7 +295,7 @@ var HeaderGroupWrapperComp = /** @class */ (function (_super) {
     };
     HeaderGroupWrapperComp.prototype.onResizeStart = function (shiftKey) {
         var _this = this;
-        var leafCols = this.columnGroup.getDisplayedLeafColumns();
+        var leafCols = this.column.getDisplayedLeafColumns();
         this.resizeCols = leafCols.filter(function (col) { return col.isResizable(); });
         this.resizeStartWidth = 0;
         this.resizeCols.forEach(function (col) { return _this.resizeStartWidth += col.getActualWidth(); });
@@ -281,7 +303,7 @@ var HeaderGroupWrapperComp = /** @class */ (function (_super) {
         this.resizeCols.forEach(function (col) { return _this.resizeRatios.push(col.getActualWidth() / _this.resizeStartWidth); });
         var takeFromGroup = null;
         if (shiftKey) {
-            takeFromGroup = this.columnController.getDisplayedGroupAfter(this.columnGroup);
+            takeFromGroup = this.columnController.getDisplayedGroupAfter(this.column);
         }
         if (takeFromGroup) {
             var takeFromLeafCols = takeFromGroup.getDisplayedLeafColumns();
@@ -334,9 +356,7 @@ var HeaderGroupWrapperComp = /** @class */ (function (_super) {
         }
         return result;
     };
-    HeaderGroupWrapperComp.TEMPLATE = '<div class="ag-header-group-cell" role="presentation">' +
-        '  <div ref="agResize" class="ag-header-cell-resize" role="presentation"></div>' +
-        '</div>';
+    HeaderGroupWrapperComp.TEMPLATE = "<div class=\"ag-header-group-cell\" role=\"presentation\" tabindex=\"-1\">\n            <div ref=\"agResize\" class=\"ag-header-cell-resize\" role=\"presentation\"></div>\n        </div>";
     __decorate([
         context_1.Autowired('gridOptionsWrapper')
     ], HeaderGroupWrapperComp.prototype, "gridOptionsWrapper", void 0);
@@ -353,19 +373,16 @@ var HeaderGroupWrapperComp = /** @class */ (function (_super) {
         context_1.Autowired('userComponentFactory')
     ], HeaderGroupWrapperComp.prototype, "userComponentFactory", void 0);
     __decorate([
+        context_1.Autowired('beans')
+    ], HeaderGroupWrapperComp.prototype, "beans", void 0);
+    __decorate([
         context_1.Autowired('gridApi')
     ], HeaderGroupWrapperComp.prototype, "gridApi", void 0);
     __decorate([
         context_1.Autowired('columnApi')
     ], HeaderGroupWrapperComp.prototype, "columnApi", void 0);
-    __decorate([
-        context_1.Autowired('beans')
-    ], HeaderGroupWrapperComp.prototype, "beans", void 0);
-    __decorate([
-        context_1.PostConstruct
-    ], HeaderGroupWrapperComp.prototype, "postConstruct", null);
     return HeaderGroupWrapperComp;
-}(component_1.Component));
+}(abstractHeaderWrapper_1.AbstractHeaderWrapper));
 exports.HeaderGroupWrapperComp = HeaderGroupWrapperComp;
 
 //# sourceMappingURL=headerGroupWrapperComp.js.map

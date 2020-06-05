@@ -1,17 +1,18 @@
-import {_, ChartType, Component, PostConstruct} from "@ag-grid-community/core";
-import {ChartController} from "../../chartController";
-import {LegendPanel} from "./legend/legendPanel";
-import {BarSeriesPanel} from "./series/barSeriesPanel";
-import {AxisPanel} from "./axis/axisPanel";
-import {LineSeriesPanel} from "./series/lineSeriesPanel";
-import {PieSeriesPanel} from "./series/pieSeriesPanel";
-import {ChartPanel} from "./chart/chartPanel";
-import {AreaSeriesPanel} from "./series/areaSeriesPanel";
-import {ScatterSeriesPanel} from "./series/scatterSeriesPanel";
-import {HistogramSeriesPanel} from "./series/histogramSeriesPanel";
+import { _, ChartType, Component, PostConstruct } from "@ag-grid-community/core";
+import { ChartController } from "../../chartController";
+import { LegendPanel } from "./legend/legendPanel";
+import { BarSeriesPanel } from "./series/barSeriesPanel";
+import { AxisPanel } from "./axis/axisPanel";
+import { NavigatorPanel } from "./navigator/navigatorPanel";
+import { LineSeriesPanel } from "./series/lineSeriesPanel";
+import { PieSeriesPanel } from "./series/pieSeriesPanel";
+import { ChartPanel } from "./chart/chartPanel";
+import { AreaSeriesPanel } from "./series/areaSeriesPanel";
+import { ScatterSeriesPanel } from "./series/scatterSeriesPanel";
+import { HistogramSeriesPanel } from "./series/histogramSeriesPanel";
 
 export class ChartFormattingPanel extends Component {
-    public static TEMPLATE = `<div class="ag-chart-format-wrapper"></div>`;
+    public static TEMPLATE = /* html */ `<div class="ag-chart-format-wrapper"></div>`;
 
     private chartType: ChartType;
     private isGrouping: boolean;
@@ -27,7 +28,7 @@ export class ChartFormattingPanel extends Component {
     @PostConstruct
     private init() {
         this.createPanels();
-        this.addDestroyableEventListener(this.chartController, ChartController.EVENT_CHART_UPDATED, this.createPanels.bind(this));
+        this.addManagedListener(this.chartController, ChartController.EVENT_CHART_UPDATED, this.createPanels.bind(this));
     }
 
     private createPanels() {
@@ -52,6 +53,7 @@ export class ChartFormattingPanel extends Component {
             case ChartType.StackedBar:
             case ChartType.NormalizedBar:
                 this.addComponent(new AxisPanel(this.chartController));
+                this.addComponent(new NavigatorPanel(this.chartController));
                 this.addComponent(new BarSeriesPanel(this.chartController));
                 break;
             case ChartType.Pie:
@@ -60,21 +62,25 @@ export class ChartFormattingPanel extends Component {
                 break;
             case ChartType.Line:
                 this.addComponent(new AxisPanel(this.chartController));
+                this.addComponent(new NavigatorPanel(this.chartController));
                 this.addComponent(new LineSeriesPanel(this.chartController));
                 break;
             case ChartType.Scatter:
             case ChartType.Bubble:
                 this.addComponent(new AxisPanel(this.chartController));
+                this.addComponent(new NavigatorPanel(this.chartController));
                 this.addComponent(new ScatterSeriesPanel(this.chartController));
                 break;
             case ChartType.Area:
             case ChartType.StackedArea:
             case ChartType.NormalizedArea:
                 this.addComponent(new AxisPanel(this.chartController));
+                this.addComponent(new NavigatorPanel(this.chartController));
                 this.addComponent(new AreaSeriesPanel(this.chartController));
                 break;
             case ChartType.Histogram:
                 this.addComponent(new AxisPanel(this.chartController));
+                this.addComponent(new NavigatorPanel(this.chartController));
                 this.addComponent(new HistogramSeriesPanel(this.chartController));
                 break;
             default:
@@ -86,7 +92,7 @@ export class ChartFormattingPanel extends Component {
     }
 
     private addComponent(component: Component): void {
-        this.wireBean(component);
+        this.createBean(component);
         this.panels.push(component);
         _.addCssClass(component.getGui(), 'ag-chart-format-section');
         this.getGui().appendChild(component.getGui());
@@ -95,11 +101,11 @@ export class ChartFormattingPanel extends Component {
     private destroyPanels(): void {
         this.panels.forEach(panel => {
             _.removeFromParent(panel.getGui());
-            panel.destroy();
+            this.destroyBean(panel);
         });
     }
 
-    public destroy(): void {
+    protected destroy(): void {
         this.destroyPanels();
         super.destroy();
     }

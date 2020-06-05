@@ -1,8 +1,7 @@
-import { CellComp } from '@ag-grid-community/core';
+import { CellComp, SelectionHandleType } from '@ag-grid-community/core';
 import { AbstractSelectionHandle } from "./abstractSelectionHandle";
 export declare class FillHandle extends AbstractSelectionHandle {
     private valueService;
-    private eventService;
     private gridOptionsWrapper;
     static TEMPLATE: string;
     private initialPosition;
@@ -14,7 +13,7 @@ export declare class FillHandle extends AbstractSelectionHandle {
     private isUp;
     private isLeft;
     private isReduce;
-    protected type: string;
+    protected type: SelectionHandleType;
     constructor();
     protected onDrag(e: MouseEvent): void;
     protected onDragEnd(e: MouseEvent): void;

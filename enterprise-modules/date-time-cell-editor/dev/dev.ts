@@ -22,7 +22,7 @@ export class DevHarness extends Component {
         const component = new DateTimeList({
             onValueSelect: value => console.log(value),
         });
-        this.getContext().wireBean(component);
+        this.getContext().createBean(component);
         this.getGui().appendChild(component.getGui());
         component.focus();
     }

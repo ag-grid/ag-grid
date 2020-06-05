@@ -1,9 +1,22 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v23.1.1
+ * @version v23.2.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = function (d, b) {
+        extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+        return extendStatics(d, b);
+    };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -14,9 +27,13 @@ import { Bean, PostConstruct } from "../context/context";
 import { Autowired } from "../context/context";
 import { NumberSequence, _ } from '../utils';
 import { Constants } from "../constants";
-var MouseEventService = /** @class */ (function () {
+import { BeanStub } from "../context/beanStub";
+var MouseEventService = /** @class */ (function (_super) {
+    __extends(MouseEventService, _super);
     function MouseEventService() {
-        this.gridInstanceId = MouseEventService_1.gridInstanceSequence.next();
+        var _this = _super !== null && _super.apply(this, arguments) || this;
+        _this.gridInstanceId = MouseEventService_1.gridInstanceSequence.next();
+        return _this;
     }
     MouseEventService_1 = MouseEventService;
     MouseEventService.prototype.init = function () {
@@ -79,5 +96,5 @@ var MouseEventService = /** @class */ (function () {
         Bean('mouseEventService')
     ], MouseEventService);
     return MouseEventService;
-}());
+}(BeanStub));
 export { MouseEventService };

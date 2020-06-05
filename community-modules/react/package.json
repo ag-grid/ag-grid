@@ -1,6 +1,6 @@
 {
   "name": "@ag-grid-community/react",
-  "version": "23.1.1",
+  "version": "23.2.0",
   "description": "ag-Grid React Component",
   "main": "main.js",
   "typings": "./main.d.ts",
@@ -35,8 +35,8 @@
     "prop-types": "^15.6.2"
   },
   "devDependencies": {
-    "@ag-grid-community/client-side-row-model": "~23.1.0",
-    "@ag-grid-community/core": "~23.1.0",
+    "@ag-grid-community/client-side-row-model": "~23.2.0",
+    "@ag-grid-community/core": "~23.2.0",
     "@types/jest": "^25.2.1",
     "@types/react": "16.9.2",
     "@types/react-dom": "16.9.0",
@@ -70,7 +70,7 @@
     "vinyl-source-stream": "^2.0.0"
   },
   "peerDependencies": {
-    "@ag-grid-community/core": "~23.1.0",
+    "@ag-grid-community/core": "~23.2.0",
     "react": "^16.3.0",
     "react-dom": "^16.3.0"
   },

@@ -1,17 +1,33 @@
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = function (d, b) {
+        extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+        return extendStatics(d, b);
+    };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
-import { _, Autowired, Bean, ChartType, Optional, PreDestroy } from "@ag-grid-community/core";
+import { _, Autowired, Bean, ChartType, Optional, PreDestroy, BeanStub } from "@ag-grid-community/core";
 import { GridChartComp } from "./chartComp/gridChartComp";
-var ChartService = /** @class */ (function () {
+var ChartService = /** @class */ (function (_super) {
+    __extends(ChartService, _super);
     function ChartService() {
+        var _this = _super !== null && _super.apply(this, arguments) || this;
         // we destroy all charts bound to this grid when grid is destroyed. activeCharts contains all charts, including
         // those in developer provided containers.
-        this.activeCharts = new Set();
-        this.activeChartComps = new Set();
+        _this.activeCharts = new Set();
+        _this.activeChartComps = new Set();
+        return _this;
     }
     ChartService.prototype.getChartModels = function () {
         var models = [];
@@ -67,7 +83,7 @@ var ChartService = /** @class */ (function () {
             processChartOptions: processChartOptions,
         };
         var chartComp = new GridChartComp(params);
-        this.context.wireBean(chartComp);
+        this.context.createBean(chartComp);
         var chartRef = this.createChartRef(chartComp);
         if (container) {
             // if container exists, means developer initiated chart create via API, so place in provided container
@@ -99,7 +115,7 @@ var ChartService = /** @class */ (function () {
         var chartRef = {
             destroyChart: function () {
                 if (_this.activeCharts.has(chartRef)) {
-                    chartComp.destroy();
+                    _this.context.destroyBean(chartComp);
                     _this.activeChartComps.delete(chartComp);
                     _this.activeCharts.delete(chartRef);
                 }
@@ -127,9 +143,6 @@ var ChartService = /** @class */ (function () {
         Autowired('environment')
     ], ChartService.prototype, "environment", void 0);
     __decorate([
-        Autowired('context')
-    ], ChartService.prototype, "context", void 0);
-    __decorate([
         Autowired('gridOptionsWrapper')
     ], ChartService.prototype, "gridOptionsWrapper", void 0);
     __decorate([
@@ -139,5 +152,5 @@ var ChartService = /** @class */ (function () {
         Bean('chartService')
     ], ChartService);
     return ChartService;
-}());
+}(BeanStub));
 export { ChartService };

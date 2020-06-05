@@ -81,12 +81,12 @@ SNIPPET
 
 <ul class="content">
     <li>
-        The Athlete column is configured to span 2 rows for 'Aleksey Nemov' and 4 rows
+        The <strong>Athlete</strong> column is configured to span 2 rows for 'Aleksey Nemov' and 4 rows
         for 'Ryan Lochte'.
     </li>
     <li>
-        The Athlete column is configured to apply a CSS class to give a background to
-        the cell. This is important as if background was not given, the cell background
+        The <strong>Athlete</strong> column is configured to apply a CSS class to give a background to
+        the cell. This is important because if a background was not set, the cell background
         would be transparent and the underlying cell would still be visible.
     </li>
 </ul>

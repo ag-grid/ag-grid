@@ -1,8 +1,8 @@
+import { Autowired } from "../../context/context";
 import { ICellRenderer } from "./iCellRenderer";
 import { Component } from "../../widgets/component";
-import { _ } from "../../utils";
 import { FilterManager } from "../../filter/filterManager";
-import { Autowired } from "../../context/context";
+import { _ } from "../../utils";
 
 const ARROW_UP = '\u2191';
 const ARROW_DOWN = '\u2193';

@@ -34,5 +34,5 @@ export declare class FontPanel extends Component {
     private initFontWeightStyleSelect;
     private initFontColorPicker;
     private destroyActiveComps;
-    destroy(): void;
+    protected destroy(): void;
 }

@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v23.1.1
+ * @version v23.2.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -94,6 +94,15 @@ export function setDisplayed(element, displayed) {
 }
 export function setVisible(element, visible) {
     addOrRemoveCssClass(element, 'ag-invisible', !visible);
+}
+export function setDisabled(element, disabled) {
+    var attributeName = 'disabled';
+    if (disabled) {
+        element.setAttribute(attributeName, '');
+    }
+    else {
+        element.removeAttribute(attributeName);
+    }
 }
 export function isElementChildOfClass(element, cls, maxNest) {
     var counter = 0;

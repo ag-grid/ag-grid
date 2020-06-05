@@ -217,7 +217,7 @@ var gridOptions = {
     // unSortIcon: true,
     enableRtl: /[?&]rtl=true/.test(window.location.search),
     enableCharts: true,
-    multiSortKey: 'ctrl',
+    // multiSortKey: 'ctrl',
     animateRows: true,
 
     enableRangeSelection: true,
@@ -365,7 +365,8 @@ var gridOptions = {
         console.log("Callback onColumnVisible:", event);
     },
     onColumnResized: function(event) {
-        console.log("Callback onColumnResized:", event);
+        // leave this out, as it slows things down when resizing
+        // console.log("Callback onColumnResized:", event);
     },
     onCellValueChanged: function(params) {
         // taking this out, as clipboard paste operation can result in this getting called
@@ -400,7 +401,7 @@ var gridOptions = {
         }
     },
     onRowGroupOpened: function(event) {
-        console.log('Callback onRowGroupOpened: node = ' + event.node.key + ', ' + event.node.expanded);
+        console.log('Callback onRowGroupOpened: node = ' + event.node.key + ', ' + event.expanded);
     },
     onRangeSelectionChanged: function(event) {
         // console.log('Callback onRangeSelectionChanged: finished = ' + event.finished);
@@ -667,7 +668,7 @@ var desktopDefaultCols = [
                 headerTooltip: "Example tooltip for Language",
                 filterParams: {
                     newRowsAction: 'keep',
-                    resetButton: true
+                    buttons: ['reset']
                 }
             },
             {
@@ -719,7 +720,7 @@ var desktopDefaultCols = [
                     cellRenderer: 'countryCellRenderer',
                     // cellHeight: 20,
                     newRowsAction: 'keep',
-                    resetButton: true,
+                    buttons: ['reset'],
                     // suppressSelectAll: true
                 },
                 floatingFilterComponent: 'countryFloatingFilterComponent',
@@ -742,7 +743,7 @@ var desktopDefaultCols = [
                 },
                 filterParams: {
                     newRowsAction: 'keep',
-                    resetButton: true
+                    buttons: ['reset'],
                 },
                 enableRowGroup: true,
                 enablePivot: true,
@@ -766,7 +767,7 @@ var desktopDefaultCols = [
                 filterParams: {
                     cellRenderer: 'booleanFilterCellRenderer',
                     newRowsAction: 'keep',
-                    resetButton: true
+                    buttons: ['reset'],
                 }
             }
         ]
@@ -921,8 +922,12 @@ var monthGroup = {
 
 months.forEach(function(month) {
     monthGroup.children.push({
-        headerName: month, field: month.toLocaleLowerCase(),
-        width: 150, filter: 'agNumberColumnFilter', editable: true, type: 'numericColumn',
+        headerName: month,
+        field: month.toLocaleLowerCase(),
+        width: 150,
+        filter: 'agNumberColumnFilter',
+        editable: true,
+        type: 'numericColumn',
         enableValue: true,
         // aggFunc: 'sum',
         //hide: true,
@@ -931,9 +936,10 @@ months.forEach(function(month) {
             'bad-score': 'typeof x === "number" && x < 10000',
             'currencyCell': 'typeof x === "number" && x >= 10000 && x <= 50000'
         },
-        valueParser: numberParser, valueFormatter: currencyFormatter,
+        valueParser: numberParser,
+        valueFormatter: currencyFormatter,
         filterParams: {
-            resetButton: true,
+            buttons: ['reset'],
             inRangeInclusive: true
         }
     });
@@ -1290,6 +1296,7 @@ PersonFloatingFilterComponent.prototype.init = function(params) {
     eGui.className = 'ag-input-wrapper';
     var input = this.input = document.createElement('input');
     input.className = 'ag-floating-filter-input';
+    input.setAttribute('aria-label', 'Name Filter Input');
     eGui.appendChild(input);
     this.changeEventListener = function() {
         params.parentFilterInstance(function(instance) {
@@ -1416,7 +1423,7 @@ function ratingRendererGeneral(value, forFilter) {
     var result = '<span>';
     for (var i = 0; i < 5; i++) {
         if (value > i) {
-            result += '<img src="images/star.svg" class="star" width=12 height=12 />';
+            result += '<img src="images/star.svg" alt="' + value + ' stars" class="star" width=12 height=12 />';
         }
     }
     if (forFilter && value === 0) {
@@ -1565,7 +1572,7 @@ function countryCellRenderer(params) {
     if (params.value === "" || params.value === undefined || params.value === null) {
         return '';
     } else {
-        var flag = '<img class="flag" border="0" width="15" height="10" src="https://flags.fmcdn.net/data/flags/mini/' + COUNTRY_CODES[params.value] + '.png">';
+        var flag = '<img class="flag" alt="' + params.value + '" border="0" width="15" height="10" src="https://flags.fmcdn.net/data/flags/mini/' + COUNTRY_CODES[params.value] + '.png">';
         return flag + ' ' + params.value;
     }
 }

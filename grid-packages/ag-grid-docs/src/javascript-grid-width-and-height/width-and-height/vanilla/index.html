@@ -1,12 +1,10 @@
-<div style="height: 100%;">
-    <div style="margin-bottom: 5px;">
+<div class="example-wrapper">
+    <div style="margin-bottom: 1rem;">
         <button onclick="fillLarge()">Fill 100%</button>
         <button onclick="fillMedium()">Fill 60%</button>
         <button onclick="fillExact()">Exactly 400 x 400 pixels</button>
     </div>
-    <div style="height: calc(100% - 25px);">
-        <!-- Give the grid a default size of 100% x 100%. The buttons then change this
-             style as the user selects. -->
-        <div id="myGrid" class="ag-theme-alpine" style="width: 100%; height: 100%;"></div>
+    <div class="grid-wrapper">
+        <div id="myGrid" class="ag-theme-alpine"></div>
     </div>
 </div>

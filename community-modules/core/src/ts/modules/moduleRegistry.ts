@@ -1,6 +1,6 @@
-import {Module} from "../interfaces/iModule";
-import {ModuleNames} from "./moduleNames";
-import {_} from "../utils";
+import { Module } from "../interfaces/iModule";
+import { ModuleNames } from "./moduleNames";
+import { _ } from "../utils";
 
 export class ModuleRegistry {
 

@@ -23,6 +23,7 @@ export declare class HeaderGroupComp extends Component implements IHeaderGroupCo
     private eOpenIcon;
     private eCloseIcon;
     constructor();
+    destroy(): void;
     init(params: IHeaderGroupParams): void;
     private setupExpandIcons;
     private addTouchAndClickListeners;

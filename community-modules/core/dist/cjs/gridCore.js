@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v23.1.1
+ * @version v23.2.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -26,19 +26,19 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var context_1 = require("./context/context");
-var component_1 = require("./widgets/component");
 var componentAnnotations_1 = require("./widgets/componentAnnotations");
 var events_1 = require("./events");
 var sideBar_1 = require("./entities/sideBar");
-var utils_1 = require("./utils");
 var moduleNames_1 = require("./modules/moduleNames");
 var moduleRegistry_1 = require("./modules/moduleRegistry");
+var managedFocusComponent_1 = require("./widgets/managedFocusComponent");
+var utils_1 = require("./utils");
 var GridCore = /** @class */ (function (_super) {
     __extends(GridCore, _super);
     function GridCore() {
         return _super !== null && _super.apply(this, arguments) || this;
     }
-    GridCore.prototype.init = function () {
+    GridCore.prototype.postConstruct = function () {
         var _this = this;
         this.logger = this.loggerFactory.create('GridCore');
         var template = this.createTemplate();
@@ -47,7 +47,8 @@ var GridCore = /** @class */ (function (_super) {
         [
             this.gridApi,
             this.rowRenderer,
-            this.popupService
+            this.popupService,
+            this.focusController
         ].forEach(function (service) { return service.registerGridCore(_this); });
         if (moduleRegistry_1.ModuleRegistry.isRegistered(moduleNames_1.ModuleNames.ClipboardModule)) {
             this.clipboardService.registerGridCore(this);
@@ -70,12 +71,16 @@ var GridCore = /** @class */ (function (_super) {
         var unsubscribeFromResize = this.resizeObserverService.observeResize(this.eGridDiv, this.onGridSizeChanged.bind(this));
         this.addDestroyFunc(function () { return unsubscribeFromResize(); });
         var eGui = this.getGui();
-        this.addDestroyableEventListener(this.eventService, events_1.Events.EVENT_KEYBOARD_FOCUS, function () {
+        this.addManagedListener(this.eventService, events_1.Events.EVENT_KEYBOARD_FOCUS, function () {
             utils_1._.addCssClass(eGui, 'ag-keyboard-focus');
         });
-        this.addDestroyableEventListener(this.eventService, events_1.Events.EVENT_MOUSE_FOCUS, function () {
+        this.addManagedListener(this.eventService, events_1.Events.EVENT_MOUSE_FOCUS, function () {
             utils_1._.removeCssClass(eGui, 'ag-keyboard-focus');
         });
+        _super.prototype.postConstruct.call(this);
+    };
+    GridCore.prototype.getFocusableElement = function () {
+        return this.eRootWrapperBody;
     };
     GridCore.prototype.createTemplate = function () {
         var sideBarModuleLoaded = moduleRegistry_1.ModuleRegistry.isRegistered(moduleNames_1.ModuleNames.SideBarModule);
@@ -86,8 +91,53 @@ var GridCore = /** @class */ (function (_super) {
         var sideBar = sideBarModuleLoaded ? '<ag-side-bar ref="sideBar"></ag-side-bar>' : '';
         var statusBar = statusBarModuleLoaded ? '<ag-status-bar ref="statusBar"></ag-status-bar>' : '';
         var watermark = enterpriseCoreLoaded ? '<ag-watermark></ag-watermark>' : '';
-        var template = "<div class=\"ag-root-wrapper\">\n                " + dropZones + "\n                <div class=\"ag-root-wrapper-body\" ref=\"rootWrapperBody\">\n                    <ag-grid-comp ref=\"gridPanel\"></ag-grid-comp>\n                    " + sideBar + "\n                </div>\n                " + statusBar + "\n                <ag-pagination></ag-pagination>\n                " + watermark + "\n            </div>";
+        var template = "<div ref=\"eRootWrapper\" class=\"ag-root-wrapper\">\n                " + dropZones + "\n                <div class=\"ag-root-wrapper-body\" ref=\"rootWrapperBody\">\n                    <ag-grid-comp ref=\"gridPanel\"></ag-grid-comp>\n                    " + sideBar + "\n                </div>\n                " + statusBar + "\n                <ag-pagination></ag-pagination>\n                " + watermark + "\n            </div>";
         return template;
+    };
+    GridCore.prototype.isFocusableContainer = function () {
+        return true;
+    };
+    GridCore.prototype.getFocusableContainers = function () {
+        var focusableContainers = [
+            this.gridPanel.getGui()
+        ];
+        if (this.sideBarComp) {
+            focusableContainers.push(this.sideBarComp.getGui());
+        }
+        return focusableContainers.filter(function (el) { return utils_1._.isVisible(el); });
+    };
+    GridCore.prototype.focusNextInnerContainer = function (backwards) {
+        var focusableContainers = this.getFocusableContainers();
+        var idxWithFocus = utils_1._.findIndex(focusableContainers, function (container) { return container.contains(document.activeElement); });
+        var nextIdx = idxWithFocus + (backwards ? -1 : 1);
+        if (nextIdx < 0 || nextIdx >= focusableContainers.length) {
+            return false;
+        }
+        if (nextIdx === 0) {
+            return this.focusGridHeader();
+        }
+        return this.focusController.focusFirstFocusableElement(focusableContainers[nextIdx]);
+    };
+    GridCore.prototype.focusInnerElement = function (fromBottom) {
+        var focusableContainers = this.getFocusableContainers();
+        if (fromBottom && focusableContainers.length > 1) {
+            return this.focusController.focusFirstFocusableElement(utils_1._.last(focusableContainers));
+        }
+        return this.focusGridHeader();
+    };
+    GridCore.prototype.focusGridHeader = function () {
+        var firstColumn = this.columnController.getAllDisplayedColumns()[0];
+        if (!firstColumn) {
+            return false;
+        }
+        if (firstColumn.getParent()) {
+            firstColumn = this.columnController.getColumnGroupAtLevel(firstColumn, 0);
+        }
+        this.focusController.focusHeaderPosition({
+            headerRowIndex: 0,
+            column: firstColumn
+        });
+        return true;
     };
     GridCore.prototype.onGridSizeChanged = function () {
         var event = {
@@ -223,17 +273,11 @@ var GridCore = /** @class */ (function (_super) {
         context_1.Autowired('resizeObserverService')
     ], GridCore.prototype, "resizeObserverService", void 0);
     __decorate([
-        context_1.Autowired('columnController')
-    ], GridCore.prototype, "columnController", void 0);
-    __decorate([
         context_1.Autowired('rowRenderer')
     ], GridCore.prototype, "rowRenderer", void 0);
     __decorate([
         context_1.Autowired('filterManager')
     ], GridCore.prototype, "filterManager", void 0);
-    __decorate([
-        context_1.Autowired('eventService')
-    ], GridCore.prototype, "eventService", void 0);
     __decorate([
         context_1.Autowired('eGridDiv')
     ], GridCore.prototype, "eGridDiv", void 0);
@@ -247,8 +291,8 @@ var GridCore = /** @class */ (function (_super) {
         context_1.Autowired('popupService')
     ], GridCore.prototype, "popupService", void 0);
     __decorate([
-        context_1.Autowired('focusController')
-    ], GridCore.prototype, "focusController", void 0);
+        context_1.Autowired('columnController')
+    ], GridCore.prototype, "columnController", void 0);
     __decorate([
         context_1.Autowired('loggerFactory')
     ], GridCore.prototype, "loggerFactory", void 0);
@@ -258,9 +302,6 @@ var GridCore = /** @class */ (function (_super) {
     __decorate([
         context_1.Autowired('gridApi')
     ], GridCore.prototype, "gridApi", void 0);
-    __decorate([
-        context_1.Autowired('environment')
-    ], GridCore.prototype, "environment", void 0);
     __decorate([
         context_1.Optional('clipboardService')
     ], GridCore.prototype, "clipboardService", void 0);
@@ -273,11 +314,8 @@ var GridCore = /** @class */ (function (_super) {
     __decorate([
         componentAnnotations_1.RefSelector('rootWrapperBody')
     ], GridCore.prototype, "eRootWrapperBody", void 0);
-    __decorate([
-        context_1.PostConstruct
-    ], GridCore.prototype, "init", null);
     return GridCore;
-}(component_1.Component));
+}(managedFocusComponent_1.ManagedFocusComponent));
 exports.GridCore = GridCore;
 
 //# sourceMappingURL=gridCore.js.map

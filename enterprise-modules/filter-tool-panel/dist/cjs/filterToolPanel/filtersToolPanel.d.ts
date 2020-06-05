@@ -10,8 +10,6 @@ export declare class FiltersToolPanel extends Component implements IFiltersToolP
     private filtersToolPanelListPanel;
     private gridApi;
     private columnApi;
-    private eventService;
-    private columnController;
     private initialised;
     private params;
     constructor();

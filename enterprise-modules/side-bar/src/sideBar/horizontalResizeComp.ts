@@ -1,7 +1,6 @@
 import {
     Autowired,
     Component,
-    EventService,
     GridOptionsWrapper,
     HorizontalResizeService,
     PostConstruct
@@ -11,14 +10,13 @@ export class HorizontalResizeComp extends Component {
 
     @Autowired('horizontalResizeService') private horizontalResizeService: HorizontalResizeService;
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
-    @Autowired('eventService') private eventService: EventService;
 
     private startingWidth: number;
     private elementToResize: HTMLElement;
     private inverted: boolean;
 
     constructor() {
-        super(`<div class="ag-tool-panel-horizontal-resize"></div>`);
+        super(/* html */ `<div class="ag-tool-panel-horizontal-resize"></div>`);
     }
 
     public setElementToResize(elementToResize: HTMLElement): void {

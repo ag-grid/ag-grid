@@ -4,7 +4,6 @@ import { Column } from "../../entities/column";
 export declare class SelectAllFeature extends BeanStub {
     private gridApi;
     private columnApi;
-    private eventService;
     private rowModel;
     private selectionController;
     private gridOptionsWrapper;

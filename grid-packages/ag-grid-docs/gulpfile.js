@@ -246,9 +246,4 @@ gulp.task('release', series('generate-examples', 'process-src', 'bundle-site-rel
 gulp.task('default', series('release'));
 gulp.task('serve-dist', serveDist);
 
-// buildSourceModuleOnly = false, legacy = false, alreadyRunningCheck = false, moduleChangedCheck = true
-gulp.task('serve-legacy',          require('./dev-server').bind(null, false, true,  false, false));
-gulp.task('serve-source-mod-only', require('./dev-server').bind(null, true,  true,  false, true));
-gulp.task('serve',                 require('./dev-server').bind(null, true,  false, false, false));
-gulp.task('serve-speedy',          require('./dev-server').bind(null, true,  false, false, true));
-gulp.task('serve-check',           require('./dev-server').bind(null, false, true,  false, true));
+gulp.task('serve',        require('./dev-server'));

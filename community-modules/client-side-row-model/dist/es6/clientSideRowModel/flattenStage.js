@@ -1,12 +1,27 @@
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = function (d, b) {
+        extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+        return extendStatics(d, b);
+    };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
-import { _, Autowired, Bean, RowNode } from "@ag-grid-community/core";
-var FlattenStage = /** @class */ (function () {
+import { _, Autowired, Bean, BeanStub, RowNode } from "@ag-grid-community/core";
+var FlattenStage = /** @class */ (function (_super) {
+    __extends(FlattenStage, _super);
     function FlattenStage() {
+        return _super !== null && _super.apply(this, arguments) || this;
     }
     FlattenStage.prototype.execute = function (params) {
         var rootNode = params.rowNode;
@@ -106,7 +121,7 @@ var FlattenStage = /** @class */ (function () {
             return;
         }
         var footerNode = new RowNode();
-        this.context.wireBean(footerNode);
+        this.context.createBean(footerNode);
         Object.keys(groupNode).forEach(function (key) {
             footerNode[key] = groupNode[key];
         });
@@ -127,7 +142,7 @@ var FlattenStage = /** @class */ (function () {
             return masterNode.detailNode;
         }
         var detailNode = new RowNode();
-        this.context.wireBean(detailNode);
+        this.context.createBean(detailNode);
         detailNode.detail = true;
         detailNode.selectable = false;
         // flower was renamed to 'detail', but keeping for backwards compatibility
@@ -149,17 +164,11 @@ var FlattenStage = /** @class */ (function () {
         Autowired('selectionController')
     ], FlattenStage.prototype, "selectionController", void 0);
     __decorate([
-        Autowired('eventService')
-    ], FlattenStage.prototype, "eventService", void 0);
-    __decorate([
-        Autowired('context')
-    ], FlattenStage.prototype, "context", void 0);
-    __decorate([
         Autowired('columnController')
     ], FlattenStage.prototype, "columnController", void 0);
     FlattenStage = __decorate([
         Bean('flattenStage')
     ], FlattenStage);
     return FlattenStage;
-}());
+}(BeanStub));
 export { FlattenStage };

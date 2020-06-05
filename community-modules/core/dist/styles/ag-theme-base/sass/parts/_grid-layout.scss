@@ -59,15 +59,10 @@
 
     .ag-cell-data-changed-animation {
         background-color: transparent;
-        transition: background-color 1s;
     }
 
     .ag-cell-highlight {
         @include ag-color-property(background-color, range-selection-highlight-color, $important: true);
-    }
-
-    .ag-cell-highlight-animation {
-        transition: background-color 1s;
     }
 
     .ag-row {

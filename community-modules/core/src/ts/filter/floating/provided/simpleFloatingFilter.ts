@@ -25,6 +25,12 @@ export abstract class SimpleFloatingFilter extends Component implements IFloatin
         return 0;
     }
 
+    // this is a user component, and IComponent has "public destroy()" as part of the interface.
+    // so we need to override destroy() just to make the method public.
+    public destroy(): void {
+        super.destroy();
+    }
+
     // used by:
     // 1) NumberFloatingFilter & TextFloatingFilter: Always, for both when editable and read only.
     // 2) DateFloatingFilter: Only when read only (as we show text rather than a date picker when read only)

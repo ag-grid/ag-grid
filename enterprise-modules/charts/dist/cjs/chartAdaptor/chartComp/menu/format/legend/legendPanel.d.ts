@@ -21,5 +21,5 @@ export declare class LegendPanel extends Component {
     private initLegendItems;
     private initLabelPanel;
     private destroyActivePanels;
-    destroy(): void;
+    protected destroy(): void;
 }

@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v23.1.1
+ * @version v23.2.0
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -41,8 +41,8 @@ var PaginationProxy = /** @class */ (function (_super) {
     PaginationProxy.prototype.postConstruct = function () {
         this.active = this.gridOptionsWrapper.isPagination();
         this.paginateChildRows = this.gridOptionsWrapper.isPaginateChildRows();
-        this.addDestroyableEventListener(this.eventService, Events.EVENT_MODEL_UPDATED, this.onModelUpdated.bind(this));
-        this.addDestroyableEventListener(this.gridOptionsWrapper, 'paginationPageSize', this.onModelUpdated.bind(this));
+        this.addManagedListener(this.eventService, Events.EVENT_MODEL_UPDATED, this.onModelUpdated.bind(this));
+        this.addManagedListener(this.gridOptionsWrapper, 'paginationPageSize', this.onModelUpdated.bind(this));
         this.onModelUpdated();
     };
     PaginationProxy.prototype.ensureRowHeightsValid = function (startPixel, endPixel, startLimitIndex, endLimitIndex) {
@@ -276,9 +276,6 @@ var PaginationProxy = /** @class */ (function (_super) {
     __decorate([
         Autowired('rowModel')
     ], PaginationProxy.prototype, "rowModel", void 0);
-    __decorate([
-        Autowired('eventService')
-    ], PaginationProxy.prototype, "eventService", void 0);
     __decorate([
         Autowired('gridOptionsWrapper')
     ], PaginationProxy.prototype, "gridOptionsWrapper", void 0);

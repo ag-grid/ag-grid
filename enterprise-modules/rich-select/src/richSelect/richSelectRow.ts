@@ -18,7 +18,7 @@ export class RichSelectRow extends Component {
     private readonly params: IRichCellEditorParams;
 
     constructor(params: IRichCellEditorParams) {
-        super('<div class="ag-rich-select-row"></div>');
+        super(/* html */`<div class="ag-rich-select-row"></div>`);
         this.params = params;
     }
 
@@ -62,9 +62,9 @@ export class RichSelectRow extends Component {
 
         if (cellRendererPromise) {
             cellRendererPromise.then(childComponent => {
-                if (childComponent && childComponent.destroy) {
-                    this.addDestroyFunc(childComponent.destroy.bind(childComponent));
-                }
+                this.addDestroyFunc( ()=> {
+                    this.getContext().destroyBean(childComponent);
+                });
             });
             return true;
         }

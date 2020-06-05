@@ -6,9 +6,7 @@ export declare class ToolPanelFilterComp extends Component {
     private agFilterToolPanelBody;
     private eFilterIcon;
     private eExpand;
-    private gridApi;
     private filterManager;
-    private eventService;
     private gridOptionsWrapper;
     private columnController;
     private eExpandChecked;

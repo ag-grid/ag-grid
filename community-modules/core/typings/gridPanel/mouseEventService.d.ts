@@ -2,7 +2,8 @@ import { CellPosition } from "../entities/cellPosition";
 import { CellComp } from "../rendering/cellComp";
 import { GridPanel } from "./gridPanel";
 import { DraggingEvent } from "../dragAndDrop/dragAndDropService";
-export declare class MouseEventService {
+import { BeanStub } from "../context/beanStub";
+export declare class MouseEventService extends BeanStub {
     private gridOptionsWrapper;
     private eGridDiv;
     private static gridInstanceSequence;

@@ -1,7 +1,7 @@
 import { AgEvent } from "../events";
+import { Autowired, PostConstruct, PreConstruct } from "../context/context";
+import { AgStackComponentsRegistry } from "../components/agStackComponentsRegistry";
 import { BeanStub } from "../context/beanStub";
-import { Context, PreConstruct } from "../context/context";
-import { IComponent } from "../interfaces/iComponent";
 import { _, NumberSequence } from "../utils";
 
 const compIdSequence = new NumberSequence();
@@ -14,8 +14,9 @@ export class Component extends BeanStub {
 
     public static EVENT_DISPLAYED_CHANGED = 'displayedChanged';
     private eGui: HTMLElement;
-    private childComponents: IComponent<any>[] = [];
-    private annotatedEventListeners: any[] = [];
+    private annotatedGuiListeners: any[] = [];
+
+    @Autowired('agStackComponentsRegistry') protected agStackComponentsRegistry: AgStackComponentsRegistry;
 
     // if false, then CSS class "ag-hidden" is applied, which sets "display: none"
     private displayed = true;
@@ -53,7 +54,7 @@ export class Component extends BeanStub {
                 return;
             }
 
-            const childComp = this.getContext().createComponentFromElement(childNode, (childComp) => {
+            const childComp = this.createComponentFromElement(childNode, (childComp) => {
                 // copy over all attributes, including css classes, so any attributes user put on the tag
                 // wll be carried across
                 this.copyAttributesFromNode(childNode, childComp.getGui());
@@ -76,6 +77,18 @@ export class Component extends BeanStub {
         });
     }
 
+    public createComponentFromElement(element: HTMLElement, afterPreCreateCallback?: (comp: Component) => void, paramsMap?: any): Component {
+        const key = element.nodeName;
+        const componentParams = paramsMap ? paramsMap[element.getAttribute('ref')] : undefined;
+        const ComponentClass = this.agStackComponentsRegistry.getComponentClass(key);
+        if (ComponentClass) {
+            const newComponent = new ComponentClass(componentParams) as Component;
+            this.createBean(newComponent, null, afterPreCreateCallback);
+            return newComponent;
+        }
+        return null;
+    }
+
     private copyAttributesFromNode(source: Element, dest: Element): void {
         _.iterateNamedNodeMap(source.attributes, (name, value) => dest.setAttribute(name, value));
     }
@@ -84,7 +97,7 @@ export class Component extends BeanStub {
         const eComponent = newComponent.getGui();
         parentNode.replaceChild(eComponent, childNode);
         parentNode.insertBefore(document.createComment(childNode.nodeName), eComponent);
-        this.childComponents.push(newComponent);
+        this.addDestroyFunc(this.destroyBean.bind(this, newComponent));
         this.swapInComponentForQuerySelectors(newComponent, childNode);
     }
 
@@ -121,7 +134,7 @@ export class Component extends BeanStub {
     public setTemplateFromElement(element: HTMLElement, paramsMap?: any): void {
         this.eGui = element;
         (this.eGui as any).__agComponent = this;
-        this.addAnnotatedEventListeners();
+        this.addAnnotatedGuiEventListeners();
         this.wireQuerySelectors();
 
         // context will not be available when user sets template in constructor
@@ -157,27 +170,40 @@ export class Component extends BeanStub {
         });
     }
 
-    private addAnnotatedEventListeners(): void {
-        this.removeAnnotatedEventListeners();
+    private addAnnotatedGuiEventListeners(): void {
+        this.removeAnnotatedGuiEventListeners();
 
         if (!this.eGui) {
             return;
         }
 
-        const listenerMethods = this.getAgComponentMetaData('listenerMethods');
+        const listenerMethods = this.getAgComponentMetaData('guiListenerMethods');
 
-        if (_.missingOrEmpty(listenerMethods)) {
-            return;
+        if (!listenerMethods) { return; }
+
+        if (!this.annotatedGuiListeners) {
+            this.annotatedGuiListeners = [];
         }
 
-        if (!this.annotatedEventListeners) {
-            this.annotatedEventListeners = [];
-        }
+        listenerMethods.forEach(meta => {
+            const element = this.getRefElement(meta.ref);
+            if (!element) { return; }
+            const listener = (this as any)[meta.methodName].bind(this);
+            element.addEventListener(meta.eventName, listener);
+            this.annotatedGuiListeners.push({ eventName: meta.eventName, listener, element });
+        });
+    }
 
-        _.forEach(listenerMethods, (eventListener: any) => {
-            const listener = (this as any)[eventListener.methodName].bind(this);
-            this.eGui.addEventListener(eventListener.eventName, listener);
-            this.annotatedEventListeners.push({ eventName: eventListener.eventName, listener });
+    @PostConstruct
+    private addAnnotatedGridEventListeners(): void {
+        const listenerMetas = this.getAgComponentMetaData('gridListenerMethods');
+
+        if (!listenerMetas) { return; }
+
+        listenerMetas.forEach(meta => {
+
+            const listener = (this as any)[meta.methodName].bind(this);
+            this.addManagedListener(this.eventService, meta.eventName, listener);
         });
     }
 
@@ -212,14 +238,16 @@ export class Component extends BeanStub {
         return res;
     }
 
-    private removeAnnotatedEventListeners(): void {
-        if (!this.annotatedEventListeners || !this.eGui) {
+    private removeAnnotatedGuiEventListeners(): void {
+        if (!this.annotatedGuiListeners) {
             return;
         }
 
-        _.forEach(this.annotatedEventListeners, e => this.eGui.removeEventListener(e.eventName, e.listener));
+        _.forEach(this.annotatedGuiListeners, e => {
+            e.element.removeEventListener(e.eventName, e.listener);
+        });
 
-        this.annotatedEventListeners = [];
+        this.annotatedGuiListeners = [];
     }
 
     public getGui(): HTMLElement {
@@ -252,22 +280,18 @@ export class Component extends BeanStub {
         return this.eGui.querySelector(cssSelector) as HTMLInputElement;
     }
 
-    public appendChild(newChild: Node | IComponent<any>, container?: HTMLElement): void {
+    public appendChild(newChild: HTMLElement | Component, container?: HTMLElement): void {
         if (!container) {
             container = this.eGui;
         }
 
         if (_.isNodeOrElement(newChild)) {
-            container.appendChild(newChild as Node);
+            container.appendChild(newChild as HTMLElement);
         } else {
-            const childComponent = newChild as IComponent<any>;
+            const childComponent = newChild as Component;
             container.appendChild(childComponent.getGui());
-            this.childComponents.push(childComponent);
+            this.addDestroyFunc(this.destroyBean.bind(this, childComponent));
         }
-    }
-
-    public addFeature(feature: BeanStub, context?: Context): void {
-        this.wireDependentBean(feature, context);
     }
 
     public isDisplayed(): boolean {
@@ -297,16 +321,8 @@ export class Component extends BeanStub {
         }
     }
 
-    public destroy(): void {
-        _.forEach(this.childComponents, childComponent => {
-            if (childComponent && childComponent.destroy) {
-                (childComponent as any).destroy();
-            }
-        });
-
-        this.childComponents.length = 0;
-        this.removeAnnotatedEventListeners();
-
+    protected destroy(): void {
+        this.removeAnnotatedGuiEventListeners();
         super.destroy();
     }
 

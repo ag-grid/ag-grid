@@ -123,7 +123,7 @@ export class ChartMenu extends Component {
             );
             _.addCssClass(buttonEl, 'ag-chart-menu-icon');
 
-            this.addDestroyableEventListener(buttonEl, 'click', callback);
+            this.addManagedListener(buttonEl, 'click', callback);
 
             gui.appendChild(buttonEl);
         });
@@ -137,7 +137,7 @@ export class ChartMenu extends Component {
     private createMenuPanel(defaultTab: number): Promise<AgPanel> {
         const width = this.gridOptionsWrapper.chartMenuPanelWidth();
 
-        const menuPanel = this.menuPanel = this.wireBean(new AgPanel({
+        const menuPanel = this.menuPanel = this.createBean(new AgPanel({
             minWidth: width,
             width,
             height: '100%',
@@ -149,23 +149,23 @@ export class ChartMenu extends Component {
         menuPanel.setParentComponent(this);
         this.eMenuPanelContainer.appendChild(menuPanel.getGui());
 
-        this.tabbedMenu = this.wireBean(new TabbedChartMenu({
+        this.tabbedMenu = this.createBean(new TabbedChartMenu({
             controller: this.chartController,
             type: this.chartController.getChartType(),
             panels: this.tabs
         }));
 
-        this.addDestroyableEventListener(
+        this.addManagedListener(
             menuPanel,
             Component.EVENT_DESTROYED,
-            () => this.tabbedMenu.destroy()
+            () => this.destroyBean(this.tabbedMenu)
         );
 
         return new Promise((res: (arg0: any) => void) => {
             window.setTimeout(() => {
                 menuPanel.setBodyComponent(this.tabbedMenu);
                 this.tabbedMenu.showTab(defaultTab);
-                this.addDestroyableEventListener(
+                this.addManagedListener(
                     this.eChartContainer,
                     'click',
                     (event: MouseEvent) => {
@@ -223,11 +223,11 @@ export class ChartMenu extends Component {
         this.eMenuPanelContainer.style.minWidth = '0';
     }
 
-    public destroy() {
+    protected destroy() {
         super.destroy();
 
         if (this.menuPanel && this.menuPanel.isAlive()) {
-            this.menuPanel.destroy();
+            this.destroyBean(this.menuPanel);
         }
     }
 }

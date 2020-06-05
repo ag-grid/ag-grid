@@ -132,6 +132,10 @@ export class ComponentUtil {
             api.setPinnedBottomRowData(changes.pinnedBottomRowData.currentValue);
         }
 
+        if (changes.autoGroupColumnDef) {
+            api.setAutoGroupColumnDef(changes.autoGroupColumnDef.currentValue, "gridOptionsChanged");
+        }
+
         if (changes.columnDefs) {
             api.setColumnDefs(changes.columnDefs.currentValue, "gridOptionsChanged");
         }

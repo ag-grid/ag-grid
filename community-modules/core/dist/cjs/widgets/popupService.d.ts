@@ -1,18 +1,22 @@
-// Type definitions for @ag-grid-community/core v23.1.1
+// Type definitions for @ag-grid-community/core v23.2.0
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { GridCore } from "../gridCore";
 import { RowNode } from "../entities/rowNode";
 import { Column } from "../entities/column";
-export declare class PopupService {
+import { BeanStub } from "../context/beanStub";
+export interface PopupEventParams {
+    originalMouseEvent?: MouseEvent | Touch;
+    mouseEvent?: MouseEvent;
+    touchEvent?: TouchEvent;
+    keyboardEvent?: KeyboardEvent;
+}
+export declare class PopupService extends BeanStub {
     private gridOptionsWrapper;
     private environment;
-    private eventService;
     private gridCore;
     private popupList;
-    private events;
     private init;
-    destroy(): void;
     registerGridCore(gridCore: GridCore): void;
     getPopupParent(): HTMLElement;
     positionPopupForMenu(params: {
@@ -64,12 +68,14 @@ export declare class PopupService {
         y: number;
         keepWithinBounds?: boolean;
     }): void;
+    getActivePopups(): HTMLElement[];
     private getParentRect;
     private keepYWithinBounds;
     private keepXWithinBounds;
-    addAsModalPopup(eChild: any, closeOnEsc: boolean, closedCallback?: () => void, click?: MouseEvent | Touch | null): (event?: any) => void;
-    addPopup(modal: boolean, eChild: any, closeOnEsc: boolean, closedCallback?: () => void, click?: MouseEvent | Touch | null, alwaysOnTop?: boolean): (event?: any) => void;
+    addAsModalPopup(eChild: any, closeOnEsc: boolean, closedCallback?: (e?: MouseEvent | TouchEvent | KeyboardEvent) => void, click?: MouseEvent | Touch | null): (event?: any) => void;
+    addPopup(modal: boolean, eChild: any, closeOnEsc: boolean, closedCallback?: (e?: MouseEvent | TouchEvent | KeyboardEvent) => void, click?: MouseEvent | Touch | null, alwaysOnTop?: boolean): (params?: PopupEventParams) => void;
     private isEventFromCurrentPopup;
+    isElementWithinCustomPopup(el: HTMLElement): boolean;
     private isEventSameChainAsOriginalEvent;
     private getWrapper;
     setAlwaysOnTop(ePopup: HTMLElement, alwaysOnTop?: boolean): void;

@@ -3,6 +3,7 @@ import { RefSelector } from "./componentAnnotations";
 import { Autowired, PostConstruct } from "../context/context";
 import { GridOptionsWrapper } from "../gridOptionsWrapper";
 import { AgCheckbox } from "./agCheckbox";
+import { Constants } from "../constants";
 import { _ } from "../utils";
 
 type GroupItem = Component | HTMLElement;
@@ -25,6 +26,8 @@ export interface AgGroupComponentParams {
 }
 
 export class AgGroupComponent extends Component {
+    public static EVENT_EXPANDED = 'expanded';
+    public static EVENT_COLLAPSED = 'collapsed';
 
     private items: GroupItem[];
     private title: string;
@@ -69,7 +72,8 @@ export class AgGroupComponent extends Component {
     private static getTemplate(params: AgGroupComponentParams) {
         const cssIdentifier = params.cssIdentifier || 'default';
         const direction: Direction = params.direction || 'vertical';
-        return `<div class="ag-group ag-${cssIdentifier}-group">
+
+        return /* html */ `<div class="ag-group ag-${cssIdentifier}-group">
             <div class="ag-group-title-bar ag-${cssIdentifier}-group-title-bar ag-unselectable" ref="eTitleBar">
                 <span class="ag-group-title-bar-icon ag-${cssIdentifier}-group-title-bar-icon" ref="eGroupOpenedIcon"></span>
                 <span class="ag-group-title-bar-icon ag-${cssIdentifier}-group-title-bar-icon" ref="eGroupClosedIcon"></span>
@@ -114,7 +118,12 @@ export class AgGroupComponent extends Component {
     private setupExpandContract(): void {
         this.eGroupClosedIcon.appendChild(_.createIcon('columnSelectClosed', this.gridOptionsWrapper, null));
         this.eGroupOpenedIcon.appendChild(_.createIcon('columnSelectOpen', this.gridOptionsWrapper, null));
-        this.addDestroyableEventListener(this.eTitleBar, 'click', () => this.toggleGroupExpand());
+        this.addManagedListener(this.eTitleBar, 'click', () => this.toggleGroupExpand());
+        this.addManagedListener(this.eTitleBar, 'keydown', (e: KeyboardEvent) => {
+            if (e.keyCode === Constants.KEY_ENTER) {
+                this.toggleGroupExpand();
+            }
+        });
     }
 
     private refreshChildDisplay(): void {
@@ -162,15 +171,9 @@ export class AgGroupComponent extends Component {
         _.setDisplayed(this.eContainer, expanded);
 
         if (this.expanded) {
-            const event = {
-                type: 'expanded',
-            };
-            this.dispatchEvent(event);
+            this.dispatchEvent({ type: AgGroupComponent.EVENT_EXPANDED });
         } else {
-            const event = {
-                type: 'collapsed',
-            };
-            this.dispatchEvent(event);
+            this.dispatchEvent({ type: AgGroupComponent.EVENT_COLLAPSED });
         }
 
         return this;
@@ -248,7 +251,13 @@ export class AgGroupComponent extends Component {
 
     private refreshDisabledStyles() {
         _.addOrRemoveCssClass(this.getGui(), 'ag-disabled', !this.enabled);
-        _.addOrRemoveCssClass(this.eTitleBar, 'ag-disabled-group-title-bar', this.suppressEnabledCheckbox && !this.enabled);
+        if (this.suppressEnabledCheckbox && !this.enabled) {
+            _.addCssClass(this.eTitleBar, 'ag-disabled-group-title-bar');
+            this.eTitleBar.removeAttribute('tabindex');
+        } else {
+            _.removeCssClass(this.eTitleBar, 'ag-disabled-group-title-bar');
+            this.eTitleBar.setAttribute('tabindex', '0');
+        }
         _.addOrRemoveCssClass(this.eContainer, 'ag-disabled-group-container', !this.enabled);
     }
 }

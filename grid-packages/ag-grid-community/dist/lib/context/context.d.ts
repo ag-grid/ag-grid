@@ -3,7 +3,6 @@ import { Component } from "../widgets/component";
 export interface ContextParams {
     providedBeanInstances: any;
     beanClasses: any[];
-    components: ComponentMeta[];
     debug: boolean;
 }
 export interface ComponentMeta {
@@ -14,15 +13,10 @@ export declare class Context {
     private beanWrappers;
     private contextParams;
     private logger;
-    private componentsMappedByName;
     private destroyed;
     constructor(params: ContextParams, logger: ILogger);
     private getBeanInstances;
-    private setupComponents;
-    private addComponent;
-    createComponentFromElement(element: HTMLElement, afterPreCreateCallback?: (comp: Component) => void, paramsMap?: any): Component;
-    createComponent(key: string, afterPreCreateCallback?: (comp: Component) => void, element?: HTMLElement, componentParams?: any): Component;
-    wireBean(bean: any, afterPreCreateCallback?: (comp: Component) => void): void;
+    createBean<T extends any>(bean: T, afterPreCreateCallback?: (comp: Component) => void): T;
     private wireBeans;
     private createBeans;
     private createBeanWrapper;
@@ -33,8 +27,11 @@ export declare class Context {
     private getBeansForParameters;
     private lookupBeanInstance;
     private callLifeCycleMethods;
+    private callLifeCycleMethodsOneBean;
     getBean(name: string): any;
     destroy(): void;
+    destroyBean<T extends any>(bean: T): T;
+    destroyBeans<T extends any>(beans: T[]): T[];
 }
 export declare function PreConstruct(target: Object, methodName: string, descriptor: TypedPropertyDescriptor<any>): void;
 export declare function PostConstruct(target: Object, methodName: string, descriptor: TypedPropertyDescriptor<any>): void;

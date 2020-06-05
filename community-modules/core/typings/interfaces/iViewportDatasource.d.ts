@@ -9,7 +9,7 @@ export interface IViewportDatasource {
 }
 export interface IViewportDatasourceParams {
     /** datasource calls this method when the total row count changes. This in turn sets the height of the grids vertical scroll. */
-    setRowCount: (count: number) => void;
+    setRowCount: (count: number, keepRenderedRows: boolean) => void;
     /** datasource calls this when new data arrives. The grid then updates the provided rows. The rows are mapped [rowIndex]=>rowData].*/
     setRowData: (rowData: {
         [key: number]: any;

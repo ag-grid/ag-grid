@@ -60,12 +60,7 @@ var Chart = /** @class */ (function (_super) {
         _this._seriesChanged = false;
         _this.layoutCallbackId = 0;
         _this._performLayout = function () {
-            var _a;
             _this.layoutCallbackId = 0;
-            if (_this.pendingSize) {
-                (_a = _this.scene).resize.apply(_a, _this.pendingSize);
-                _this.pendingSize = undefined;
-            }
             _this.background.width = _this.width;
             _this.background.height = _this.height;
             _this.performLayout();
@@ -74,68 +69,11 @@ var Chart = /** @class */ (function (_super) {
             }
         };
         _this.dataCallbackId = 0;
-        _this.onMouseMove = function (event) {
-            var _a = _this, lastPick = _a.lastPick, tooltipTracking = _a.tooltipTracking;
-            var pick = _this.pickSeriesNode(event.offsetX, event.offsetY);
-            var nodeDatum;
-            if (pick && pick.node instanceof Shape) {
-                var node = pick.node;
-                nodeDatum = node.datum;
-                if (lastPick && lastPick.datum === nodeDatum) {
-                    lastPick.node = node;
-                }
-                // Marker nodes will have the `point` info in their datums.
-                // Highlight if not a marker node or, if not in the tracking mode, highlight markers too.
-                if ((!node.datum.point || !tooltipTracking)) {
-                    if (!lastPick // cursor moved from empty space to a node
-                        || lastPick.node !== node) { // cursor moved from one node to another
-                        _this.onSeriesDatumPick(event, node.datum, node);
-                    }
-                    else if (pick.series.tooltipEnabled) { // cursor moved within the same node
-                        _this.showTooltip(event);
-                    }
-                    // A non-marker node (takes precedence over marker nodes) was highlighted.
-                    // Or we are not in the tracking mode.
-                    // Either way, we are done at this point.
-                    return;
-                }
-            }
-            var hideTooltip = false;
-            // In tracking mode a tooltip is shown for the closest rendered datum.
-            // This makes it easier to show tooltips when markers are small and/or plentiful
-            // and also gives the ability to show tooltips even when the series were configured
-            // to not render markers.
-            if (tooltipTracking) {
-                var closestDatum = _this.pickClosestSeriesNodeDatum(event.offsetX, event.offsetY);
-                if (closestDatum && closestDatum.point) {
-                    var _b = closestDatum.point, x = _b.x, y = _b.y;
-                    var canvas = _this.scene.canvas;
-                    var point = closestDatum.series.group.inverseTransformPoint(x, y);
-                    var canvasRect = canvas.element.getBoundingClientRect();
-                    _this.onSeriesDatumPick({
-                        pageX: Math.round(canvasRect.left + window.pageXOffset + point.x),
-                        pageY: Math.round(canvasRect.top + window.pageYOffset + point.y)
-                    }, closestDatum, nodeDatum === closestDatum ? pick.node : undefined);
-                }
-                else {
-                    hideTooltip = true;
-                }
-            }
-            if (lastPick && (hideTooltip || !tooltipTracking)) {
-                // cursor moved from a non-marker node to empty space
-                // lastPick.datum.series.dehighlightDatum();
-                _this.dehighlightDatum();
-                _this.hideTooltip();
-                _this.lastPick = undefined;
-            }
-        };
-        _this.onMouseOut = function (_) {
-            _this.toggleTooltip(false);
-        };
-        _this.onClick = function (event) {
-            _this.checkSeriesNodeClick();
-            _this.checkLegendClick(event);
-        };
+        _this._onMouseDown = _this.onMouseDown.bind(_this);
+        _this._onMouseUp = _this.onMouseUp.bind(_this);
+        _this._onMouseMove = _this.onMouseMove.bind(_this);
+        _this._onMouseOut = _this.onMouseOut.bind(_this);
+        _this._onClick = _this.onClick.bind(_this);
         _this._tooltipClass = Chart.defaultTooltipClass;
         /**
          * If `true`, the tooltip will be shown for the marker closest to the mouse cursor.
@@ -206,12 +144,12 @@ var Chart = /** @class */ (function (_super) {
     });
     Object.defineProperty(Chart.prototype, "width", {
         get: function () {
-            return this.pendingSize ? this.pendingSize[0] : this.scene.width;
+            return this.scene.width;
         },
         set: function (value) {
             this.autoSize = false;
             if (this.width !== value) {
-                this.pendingSize = [value, this.height];
+                this.scene.resize(value, this.height);
                 this.fireEvent({ type: 'layoutChange' });
             }
         },
@@ -220,12 +158,12 @@ var Chart = /** @class */ (function (_super) {
     });
     Object.defineProperty(Chart.prototype, "height", {
         get: function () {
-            return this.pendingSize ? this.pendingSize[1] : this.scene.height;
+            return this.scene.height;
         },
         set: function (value) {
             this.autoSize = false;
             if (this.height !== value) {
-                this.pendingSize = [this.width, value];
+                this.scene.resize(this.width, value);
                 this.fireEvent({ type: 'layoutChange' });
             }
         },
@@ -243,7 +181,7 @@ var Chart = /** @class */ (function (_super) {
                     var chart_1 = this; // capture `this` for IE11
                     SizeMonitor.observe(this.element, function (size) {
                         if (size.width !== chart_1.width || size.height !== chart_1.height) {
-                            chart_1.pendingSize = [size.width, size.height];
+                            chart_1.scene.resize(size.width, size.height);
                             chart_1.fireEvent({ type: 'layoutChange' });
                         }
                     });
@@ -302,16 +240,21 @@ var Chart = /** @class */ (function (_super) {
         },
         set: function (values) {
             var _this = this;
-            var root = this.scene.root;
-            this._axes.forEach(function (axis) { return root.removeChild(axis.group); });
+            this._axes.forEach(function (axis) { return _this.detachAxis(axis); });
             // make linked axes go after the regular ones (simulates stable sort by `linkedTo` property)
             this._axes = values.filter(function (a) { return !a.linkedTo; }).concat(values.filter(function (a) { return a.linkedTo; }));
-            this._axes.forEach(function (axis) { return root.insertBefore(axis.group, _this.seriesRoot); });
+            this._axes.forEach(function (axis) { return _this.attachAxis(axis); });
             this.axesChanged = true;
         },
         enumerable: true,
         configurable: true
     });
+    Chart.prototype.attachAxis = function (axis) {
+        this.scene.root.insertBefore(axis.group, this.seriesRoot);
+    };
+    Chart.prototype.detachAxis = function (axis) {
+        this.scene.root.removeChild(axis.group);
+    };
     Object.defineProperty(Chart.prototype, "series", {
         get: function () {
             return this._series;
@@ -648,17 +591,24 @@ var Chart = /** @class */ (function (_super) {
         legendGroup.translationY = Math.floor(translationY + legendGroup.translationY);
     };
     Chart.prototype.setupDomListeners = function (chartElement) {
-        chartElement.addEventListener('mousemove', this.onMouseMove);
-        chartElement.addEventListener('mouseout', this.onMouseOut);
-        chartElement.addEventListener('click', this.onClick);
+        chartElement.addEventListener('mousedown', this._onMouseDown);
+        chartElement.addEventListener('mousemove', this._onMouseMove);
+        chartElement.addEventListener('mouseup', this._onMouseUp);
+        chartElement.addEventListener('mouseout', this._onMouseOut);
+        chartElement.addEventListener('click', this._onClick);
     };
     Chart.prototype.cleanupDomListeners = function (chartElement) {
-        chartElement.removeEventListener('mousemove', this.onMouseMove);
-        chartElement.removeEventListener('mouseout', this.onMouseMove);
-        chartElement.removeEventListener('click', this.onClick);
+        chartElement.removeEventListener('mousedown', this._onMouseDown);
+        chartElement.removeEventListener('mousemove', this._onMouseMove);
+        chartElement.removeEventListener('mouseup', this._onMouseUp);
+        chartElement.removeEventListener('mouseout', this._onMouseOut);
+        chartElement.removeEventListener('click', this._onClick);
     };
     // x/y are local canvas coordinates in CSS pixels, not actual pixels
     Chart.prototype.pickSeriesNode = function (x, y) {
+        if (!this.seriesRect || !this.seriesRect.containsPoint(x, y)) {
+            return undefined;
+        }
         var allSeries = this.series;
         var node = undefined;
         for (var i = allSeries.length - 1; i >= 0; i--) {
@@ -707,6 +657,69 @@ var Chart = /** @class */ (function (_super) {
             return closestDatum;
         }
     };
+    Chart.prototype.onMouseMove = function (event) {
+        var _a = this, lastPick = _a.lastPick, tooltipTracking = _a.tooltipTracking;
+        var pick = this.pickSeriesNode(event.offsetX, event.offsetY);
+        var nodeDatum;
+        if (pick && pick.node instanceof Shape) {
+            var node = pick.node;
+            nodeDatum = node.datum;
+            if (lastPick && lastPick.datum === nodeDatum) {
+                lastPick.node = node;
+            }
+            // Marker nodes will have the `point` info in their datums.
+            // Highlight if not a marker node or, if not in the tracking mode, highlight markers too.
+            if ((!node.datum.point || !tooltipTracking)) {
+                if (!lastPick // cursor moved from empty space to a node
+                    || lastPick.node !== node) { // cursor moved from one node to another
+                    this.onSeriesDatumPick(event, node.datum, node);
+                }
+                else if (pick.series.tooltipEnabled) { // cursor moved within the same node
+                    this.showTooltip(event);
+                }
+                // A non-marker node (takes precedence over marker nodes) was highlighted.
+                // Or we are not in the tracking mode.
+                // Either way, we are done at this point.
+                return;
+            }
+        }
+        var hideTooltip = false;
+        // In tracking mode a tooltip is shown for the closest rendered datum.
+        // This makes it easier to show tooltips when markers are small and/or plentiful
+        // and also gives the ability to show tooltips even when the series were configured
+        // to not render markers.
+        if (tooltipTracking) {
+            var closestDatum = this.pickClosestSeriesNodeDatum(event.offsetX, event.offsetY);
+            if (closestDatum && closestDatum.point) {
+                var _b = closestDatum.point, x = _b.x, y = _b.y;
+                var canvas = this.scene.canvas;
+                var point = closestDatum.series.group.inverseTransformPoint(x, y);
+                var canvasRect = canvas.element.getBoundingClientRect();
+                this.onSeriesDatumPick({
+                    pageX: Math.round(canvasRect.left + window.pageXOffset + point.x),
+                    pageY: Math.round(canvasRect.top + window.pageYOffset + point.y)
+                }, closestDatum, nodeDatum === closestDatum ? pick.node : undefined);
+            }
+            else {
+                hideTooltip = true;
+            }
+        }
+        if (lastPick && (hideTooltip || !tooltipTracking)) {
+            // cursor moved from a non-marker node to empty space
+            this.dehighlightDatum();
+            this.hideTooltip();
+            this.lastPick = undefined;
+        }
+    };
+    Chart.prototype.onMouseDown = function (event) { };
+    Chart.prototype.onMouseUp = function (event) { };
+    Chart.prototype.onMouseOut = function (event) {
+        this.toggleTooltip(false);
+    };
+    Chart.prototype.onClick = function (event) {
+        this.checkSeriesNodeClick();
+        this.checkLegendClick(event);
+    };
     Chart.prototype.checkSeriesNodeClick = function () {
         var lastPick = this.lastPick;
         if (lastPick && lastPick.node) {
@@ -740,7 +753,6 @@ var Chart = /** @class */ (function (_super) {
             node: node
         };
         this.highlightDatum(datum);
-        // datum.series.highlightDatum(datum);
         var html = datum.series.tooltipEnabled && datum.series.getTooltipHtml(datum);
         if (html) {
             this.showTooltip(meta, html);

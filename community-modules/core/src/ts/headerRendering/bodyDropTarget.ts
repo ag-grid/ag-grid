@@ -1,11 +1,12 @@
 import { DragAndDropService, DraggingEvent, DragSourceType, DropTarget } from "../dragAndDrop/dragAndDropService";
-import { Autowired, Context, PostConstruct } from "../context/context";
+import { Autowired, PostConstruct } from "../context/context";
 import { MoveColumnController } from "./moveColumnController";
 import { GridPanel } from "../gridPanel/gridPanel";
 import { BodyDropPivotTarget } from "./bodyDropPivotTarget";
 import { ColumnController } from "../columnController/columnController";
-import {Constants} from "../constants";
+import { Constants } from "../constants";
 import { GridOptionsWrapper } from "../gridOptionsWrapper";
+import { BeanStub } from "../context/beanStub";
 
 export interface DropListener {
     getIconName(): string;
@@ -17,9 +18,8 @@ export interface DropListener {
 
 enum DropType { ColumnMove, Pivot }
 
-export class BodyDropTarget implements DropTarget {
+export class BodyDropTarget extends BeanStub implements DropTarget {
 
-    @Autowired('context') private context: Context;
     @Autowired('dragAndDropService') private dragAndDropService: DragAndDropService;
     @Autowired('columnController') private columnController: ColumnController;
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
@@ -35,6 +35,7 @@ export class BodyDropTarget implements DropTarget {
     private moveColumnController: MoveColumnController;
 
     constructor(pinned: string, eContainer: HTMLElement) {
+        super();
         this.pinned = pinned;
         this.eContainer = eContainer;
     }
@@ -67,11 +68,10 @@ export class BodyDropTarget implements DropTarget {
     @PostConstruct
     private init(): void {
 
-        this.moveColumnController = new MoveColumnController(this.pinned, this.eContainer);
-        this.context.wireBean(this.moveColumnController);
+        this.moveColumnController = this.createBean(new MoveColumnController(this.pinned, this.eContainer));
 
         const bodyDropPivotTarget = new BodyDropPivotTarget(this.pinned);
-        this.context.wireBean(bodyDropPivotTarget);
+        this.createBean(bodyDropPivotTarget);
 
         this.dropListeners[DropType.ColumnMove] = this.moveColumnController;
         this.dropListeners[DropType.Pivot] = bodyDropPivotTarget;

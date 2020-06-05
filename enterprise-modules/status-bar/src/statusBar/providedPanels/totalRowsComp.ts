@@ -3,7 +3,6 @@ import { NameValueComp } from "./nameValueComp";
 
 export class TotalRowsComp extends NameValueComp implements IStatusPanelComp {
 
-    @Autowired('eventService') private eventService: EventService;
     @Autowired('gridApi') private gridApi: GridApi;
 
     @PostConstruct
@@ -21,8 +20,7 @@ export class TotalRowsComp extends NameValueComp implements IStatusPanelComp {
 
         this.setDisplayed(true);
 
-        const listener = this.onDataChanged.bind(this);
-        this.events = [this.eventService.addEventListener(Events.EVENT_MODEL_UPDATED, listener)];
+        this.addManagedListener(this.eventService, Events.EVENT_MODEL_UPDATED, this.onDataChanged.bind(this));
     }
 
     private onDataChanged() {
@@ -37,4 +35,11 @@ export class TotalRowsComp extends NameValueComp implements IStatusPanelComp {
 
     public init() {
     }
+
+    // this is a user component, and IComponent has "public destroy()" as part of the interface.
+    // so we need to override destroy() just to make the method public.
+    public destroy(): void {
+        super.destroy();
+    }
+
 }

@@ -43,7 +43,7 @@ var ValuesDropZonePanel = /** @class */ (function (_super) {
             emptyMessage: emptyMessage,
             title: title
         });
-        this.addDestroyableEventListener(this.eventService, core_1.Events.EVENT_COLUMN_VALUE_CHANGED, this.refreshGui.bind(this));
+        this.addManagedListener(this.eventService, core_1.Events.EVENT_COLUMN_VALUE_CHANGED, this.refreshGui.bind(this));
     };
     ValuesDropZonePanel.prototype.getIconName = function () {
         return this.isPotentialDndColumns() ? core_1.DragAndDropService.ICON_AGGREGATE : core_1.DragAndDropService.ICON_NOT_ALLOWED;
@@ -75,9 +75,6 @@ var ValuesDropZonePanel = /** @class */ (function (_super) {
     __decorate([
         core_1.Autowired('columnController')
     ], ValuesDropZonePanel.prototype, "columnController", void 0);
-    __decorate([
-        core_1.Autowired('eventService')
-    ], ValuesDropZonePanel.prototype, "eventService", void 0);
     __decorate([
         core_1.Autowired('gridOptionsWrapper')
     ], ValuesDropZonePanel.prototype, "gridOptionsWrapper", void 0);

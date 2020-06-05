@@ -1,1 +1,1 @@
-export {InfiniteRowModelModule} from "./infiniteRowModelModule"
+export { InfiniteRowModelModule } from "./infiniteRowModelModule"

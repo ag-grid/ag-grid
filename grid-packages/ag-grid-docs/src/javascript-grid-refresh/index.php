@@ -59,6 +59,7 @@ interface RefreshCellsParams {
     rowNodes?: RowNode[]; // specify rows, or all rows by default
     columns?: (string|Column)[]; // specify columns, or all columns by default
     force?: boolean; // skips change detection, refresh everything
+    suppressFlash?: boolean; // skips cell flashing, if cell flashing is enabled
 }</snippet>
 
     <p>
@@ -108,9 +109,13 @@ interface RefreshCellsParams {
             This will show the grid refreshing one row at a time from top to bottom.
         </li>
         <li>
-            The checkbox <b>Force Refresh</b> sets how the above three refreshes work. If checked, all the cells
+            The checkbox <b>Force Refresh</b> impacts how the above three refreshes work. If checked, all the cells
             will get refreshed regardless of whether they have changes. In other words, change detection will not
             but used as part of the refresh.
+        </li>
+        <li>
+            The checkbox <b>Suppress Flash</b> impacts how the above three refreshes work. If checked, flashing
+            will not occur on any cell.
         </li>
     </ul>
 

@@ -13,6 +13,8 @@ export interface AgGroupComponentParams {
     direction?: Direction;
 }
 export declare class AgGroupComponent extends Component {
+    static EVENT_EXPANDED: string;
+    static EVENT_COLLAPSED: string;
     private items;
     private title;
     private cssIdentifier;

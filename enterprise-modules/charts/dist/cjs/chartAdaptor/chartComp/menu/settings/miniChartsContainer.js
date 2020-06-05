@@ -67,7 +67,7 @@ var MiniChartsContainer = /** @class */ (function (_super) {
         var eGui = this.getGui();
         Object.keys(chartGroups).forEach(function (group) {
             var chartGroup = chartGroups[group];
-            var groupComponent = _this.wireBean(new core_1.AgGroupComponent({
+            var groupComponent = _this.createBean(new core_1.AgGroupComponent({
                 title: _this.chartTranslator.translate(group),
                 suppressEnabledCheckbox: true,
                 enabled: true,
@@ -78,12 +78,12 @@ var MiniChartsContainer = /** @class */ (function (_super) {
             chartGroup.forEach(function (MiniClass) {
                 var miniWrapper = document.createElement('div');
                 core_1._.addCssClass(miniWrapper, 'ag-chart-mini-thumbnail');
-                _this.addDestroyableEventListener(miniWrapper, 'click', function () {
+                _this.addManagedListener(miniWrapper, 'click', function () {
                     _this.chartController.setChartType(MiniClass.chartType);
                     _this.refreshSelected();
                 });
                 _this.wrappers[MiniClass.chartType] = miniWrapper;
-                _this.wireBean(new MiniClass(miniWrapper, _this.fills, _this.strokes));
+                _this.createBean(new MiniClass(miniWrapper, _this.fills, _this.strokes));
                 groupComponent.addItem(miniWrapper);
             });
             eGui.appendChild(groupComponent.getGui());
@@ -96,7 +96,7 @@ var MiniChartsContainer = /** @class */ (function (_super) {
             core_1._.addOrRemoveCssClass(this.wrappers[wrapper], 'ag-selected', wrapper === type);
         }
     };
-    MiniChartsContainer.TEMPLATE = '<div class="ag-chart-settings-mini-wrapper"></div>';
+    MiniChartsContainer.TEMPLATE = "<div class=\"ag-chart-settings-mini-wrapper\"></div>";
     __decorate([
         core_1.Autowired('chartTranslator')
     ], MiniChartsContainer.prototype, "chartTranslator", void 0);

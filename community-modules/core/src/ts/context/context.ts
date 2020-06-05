@@ -14,7 +14,6 @@ import { _ } from "../utils";
 export interface ContextParams {
     providedBeanInstances: any;
     beanClasses: any[];
-    components: ComponentMeta[];
     debug: boolean;
 }
 
@@ -35,8 +34,6 @@ export class Context {
     private contextParams: ContextParams;
     private logger: ILogger;
 
-    private componentsMappedByName: { [key: string]: any } = {};
-
     private destroyed = false;
 
     public constructor(params: ContextParams, logger: ILogger) {
@@ -48,8 +45,6 @@ export class Context {
 
         this.logger = logger;
         this.logger.log(">> creating ag-Application Context");
-
-        this.setupComponents();
 
         this.createBeans();
 
@@ -64,45 +59,12 @@ export class Context {
         return _.values(this.beanWrappers).map(beanEntry => beanEntry.beanInstance);
     }
 
-    private setupComponents(): void {
-        if (this.contextParams.components) {
-            this.contextParams.components.forEach(componentMeta => this.addComponent(componentMeta));
-        }
-    }
-
-    private addComponent(componentMeta: ComponentMeta): void {
-        // get name of the class as a string
-        // let className = _.getNameOfClass(ComponentClass);
-        // insert a dash after every capital letter
-        // let classEscaped = className.replace(/([A-Z])/g, "-$1").toLowerCase();
-        const classEscaped = componentMeta.componentName.replace(/([a-z])([A-Z])/g, "$1-$2").toLowerCase();
-        // put all to upper case
-        const classUpperCase = classEscaped.toUpperCase();
-        // finally store
-        this.componentsMappedByName[classUpperCase] = componentMeta.componentClass;
-    }
-
-    public createComponentFromElement(element: HTMLElement, afterPreCreateCallback?: (comp: Component) => void, paramsMap?: any): Component {
-        const key = element.nodeName;
-        const componentParams = paramsMap ? paramsMap[element.getAttribute('ref')] : undefined;
-        return this.createComponent(key, afterPreCreateCallback, element, componentParams);
-    }
-
-    public createComponent(key: string, afterPreCreateCallback?: (comp: Component) => void, element?: HTMLElement, componentParams?: any): Component {
-        if (this.componentsMappedByName && this.componentsMappedByName[key]) {
-            const cls = this.componentsMappedByName[key];
-            const newComponent = new this.componentsMappedByName[key](componentParams) as Component;
-            this.wireBean(newComponent, afterPreCreateCallback);
-            return newComponent;
-        }
-        return null;
-    }
-
-    public wireBean(bean: any, afterPreCreateCallback?: (comp: Component) => void): void {
+    public createBean<T extends any>(bean: T, afterPreCreateCallback?: (comp: Component) => void): T {
         if (!bean) {
             throw Error(`Can't wire to bean since it is null`);
         }
         this.wireBeans([bean], afterPreCreateCallback);
+        return bean;
     }
 
     private wireBeans(beanInstances: any[], afterPreCreateCallback?: (comp: Component) => void): void {
@@ -252,12 +214,28 @@ export class Context {
 
     private callLifeCycleMethods(beanInstances: any[], lifeCycleMethod: string): void {
         beanInstances.forEach((beanInstance: any) => {
-            this.forEachMetaDataInHierarchy(beanInstance, (metaData: any) => {
-                const methods = metaData[lifeCycleMethod] as string[];
-                if (!methods) { return; }
-                methods.forEach(methodName => beanInstance[methodName]());
-            });
+            this.callLifeCycleMethodsOneBean(beanInstance, lifeCycleMethod);
         });
+    }
+
+    private callLifeCycleMethodsOneBean(beanInstance: any, lifeCycleMethod: string, methodToIgnore?: string): void {
+        // putting all methods into a map removes duplicates
+        const allMethods: {[methodName: string]: boolean} = {};
+
+        // dump methods from each level of the metadata hierarchy
+        this.forEachMetaDataInHierarchy(beanInstance, (metaData: any) => {
+            const methods = metaData[lifeCycleMethod] as string[];
+            if (methods) {
+                methods.forEach(methodName => {
+                    if (methodName!=methodToIgnore) {
+                        allMethods[methodName] = true;
+                    }
+                });
+            }
+        });
+
+        const allMethodsList = Object.keys(allMethods);
+        allMethodsList.forEach(methodName => beanInstance[methodName]());
     }
 
     public getBean(name: string): any {
@@ -270,12 +248,33 @@ export class Context {
         this.logger.log(">> Shutting down ag-Application Context");
 
         const beanInstances = this.getBeanInstances();
-        this.callLifeCycleMethods(beanInstances, 'preDestroyMethods');
+        this.destroyBeans(beanInstances);
 
         this.contextParams.providedBeanInstances = null;
 
         this.destroyed = true;
         this.logger.log(">> ag-Application Context shut down - component is dead");
+    }
+
+    public destroyBean<T extends any>(bean: T): T {
+        if (!bean) { return undefined; }
+        this.destroyBeans([bean]);
+        return undefined;
+    }
+
+    public destroyBeans<T extends any>(beans: T[]): T[] {
+        if (!beans) { return []; }
+
+        beans.forEach( bean => {
+            this.callLifeCycleMethodsOneBean(bean, 'preDestroyMethods', 'destroy')
+
+            // call destroy() explicitly if it exists
+            if (bean.destroy) {
+                bean.destroy();
+            }
+        });
+
+        return [];
     }
 }
 

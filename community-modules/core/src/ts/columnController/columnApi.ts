@@ -1,10 +1,10 @@
-import {ColDef, ColGroupDef} from "../entities/colDef";
-import {ColumnGroupChild} from "../entities/columnGroupChild";
-import {ColumnController, ColumnState} from "./columnController";
-import {OriginalColumnGroup} from "../entities/originalColumnGroup";
-import {ColumnGroup} from "../entities/columnGroup";
-import {Column} from "../entities/column";
-import {Autowired, Bean} from "../context/context";
+import { ColDef, ColGroupDef } from "../entities/colDef";
+import { ColumnGroupChild } from "../entities/columnGroupChild";
+import { ColumnController, ColumnState } from "./columnController";
+import { OriginalColumnGroup } from "../entities/originalColumnGroup";
+import { ColumnGroup } from "../entities/columnGroup";
+import { Column } from "../entities/column";
+import { Autowired, Bean } from "../context/context";
 
 @Bean('columnApi')
 export class ColumnApi {

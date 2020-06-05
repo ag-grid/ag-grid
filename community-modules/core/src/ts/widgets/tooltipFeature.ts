@@ -8,7 +8,7 @@ import { ColumnGroup } from "../entities/columnGroup";
 import { CellPosition } from "../entities/cellPosition";
 import { GridApi } from "../gridApi";
 import { GridOptionsWrapper } from "../gridOptionsWrapper";
-import { ITooltipParams } from "../rendering/tooltipComponent";
+import { ITooltipComp, ITooltipParams } from "../rendering/tooltipComponent";
 import { PopupService } from "./popupService";
 import { UserComponentFactory } from "../components/framework/userComponentFactory";
 import { _ } from "../utils";
@@ -51,7 +51,7 @@ export class TooltipFeature extends BeanStub {
 
     private lastMouseEvent: MouseEvent;
 
-    private tooltipComp: Component;
+    private tooltipComp: ITooltipComp;
     private tooltipPopupDestroyFunc: () => void;
     // when showing the tooltip, we need to make sure it's the most recent instance we request, as due to
     // async we could request two tooltips before the first instance returns, in which case we should
@@ -73,13 +73,13 @@ export class TooltipFeature extends BeanStub {
 
         const el = this.parentComp.getGui();
 
-        this.addDestroyableEventListener(el, 'mouseenter', this.onMouseEnter.bind(this));
-        this.addDestroyableEventListener(el, 'mouseleave', this.onMouseLeave.bind(this));
-        this.addDestroyableEventListener(el, 'mousemove', this.onMouseMove.bind(this));
-        this.addDestroyableEventListener(el, 'mousedown', this.onMouseDown.bind(this));
+        this.addManagedListener(el, 'mouseenter', this.onMouseEnter.bind(this));
+        this.addManagedListener(el, 'mouseleave', this.onMouseLeave.bind(this));
+        this.addManagedListener(el, 'mousemove', this.onMouseMove.bind(this));
+        this.addManagedListener(el, 'mousedown', this.onMouseDown.bind(this));
     }
 
-    public destroy(): void {
+    protected destroy(): void {
         // if this component gets destroyed while tooltip is showing, need to make sure
         // we don't end with no mouseLeave event resulting in zombie tooltip
         this.setToDoNothing();
@@ -150,9 +150,7 @@ export class TooltipFeature extends BeanStub {
 
         window.setTimeout(() => {
             tooltipPopupDestroyFunc();
-            if (tooltipComp.destroy) {
-                tooltipComp.destroy();
-            }
+            this.getContext().destroyBean(tooltipComp);
         }, this.FADE_OUT_TOOLTIP_TIMEOUT);
 
         this.tooltipPopupDestroyFunc = undefined;
@@ -197,13 +195,11 @@ export class TooltipFeature extends BeanStub {
         this.userComponentFactory.newTooltipComponent(params).then(callback);
     }
 
-    private newTooltipComponentCallback(tooltipInstanceCopy: number, tooltipComp: Component): void {
+    private newTooltipComponentCallback(tooltipInstanceCopy: number, tooltipComp: ITooltipComp): void {
         const compNoLongerNeeded = this.state !== TooltipStates.SHOWING || this.tooltipInstanceCount !== tooltipInstanceCopy;
 
         if (compNoLongerNeeded) {
-            if (tooltipComp.destroy) {
-                tooltipComp.destroy();
-            }
+            this.getContext().destroyBean(tooltipComp);
             return;
         }
 

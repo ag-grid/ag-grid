@@ -5,10 +5,9 @@ import { Logger } from "../../logger";
 import { RowNodeBlockLoader } from "./rowNodeBlockLoader";
 import { AgEvent } from "../../events";
 import { NumberSequence,  _ } from "../../utils";
-import {IRowNodeBlock} from "../../interfaces/iRowNodeBlock";
-import {Autowired, PostConstruct} from "../../context/context";
-import {EventService} from "../../eventService";
-import {RowRenderer} from "../../rendering/rowRenderer";
+import { IRowNodeBlock } from "../../interfaces/iRowNodeBlock";
+import { Autowired, PostConstruct, PreDestroy } from "../../context/context";
+import { RowRenderer } from "../../rendering/rowRenderer";
 
 export interface RowNodeCacheParams {
     initialRowCount: number;
@@ -40,7 +39,6 @@ export abstract class RowNodeCache<T extends IRowNodeBlock, P extends RowNodeCac
     private virtualRowCount: number;
     private maxRowFound = false;
 
-    @Autowired('eventService') protected eventService: EventService;
     @Autowired('rowRenderer') protected rowRenderer: RowRenderer;
 
     protected cacheParams: P;
@@ -60,9 +58,9 @@ export abstract class RowNodeCache<T extends IRowNodeBlock, P extends RowNodeCac
         this.cacheParams = cacheParams;
     }
 
-    public destroy(): void {
+    @PreDestroy
+    private destroyAllBlocks(): void {
         this.forEachBlockInOrder(block => this.destroyBlock(block));
-        super.destroy();
     }
 
     @PostConstruct
@@ -283,7 +281,7 @@ export abstract class RowNodeCache<T extends IRowNodeBlock, P extends RowNodeCac
 
     protected destroyBlock(block: T): void {
         delete this.blocks[block.getBlockNumber()];
-        block.destroy();
+        this.destroyBean(block);
         this.blockCount--;
         this.cacheParams.rowNodeBlockLoader.removeBlock(block);
     }

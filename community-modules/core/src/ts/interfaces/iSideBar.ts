@@ -1,7 +1,6 @@
-import { IComponent } from "./iComponent";
-import {IToolPanel} from "./iToolPanel";
+import { IToolPanel } from "./iToolPanel";
 
-export interface ISideBar extends IComponent<any> {
+export interface ISideBar {
     refresh(): void;
     setDisplayed(show:boolean): void;
     setSideBarPosition(position?: 'left' | 'right'): void;
