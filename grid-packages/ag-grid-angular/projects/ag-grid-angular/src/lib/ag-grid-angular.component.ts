@@ -446,6 +446,7 @@ export class AgGridAngular implements AfterViewInit {
     @Input() public immutableData : any = undefined;
     @Input() public immutableColumns : any = undefined;
     @Input() public pivotSuppressAutoColumn : any = undefined;
+    @Input() public suppressCellMouseEvents : any = undefined;
 
     @Output() public columnEverythingChanged: EventEmitter<any> = new EventEmitter<any>();
     @Output() public newColumnsLoaded: EventEmitter<any> = new EventEmitter<any>();
@@ -518,6 +519,7 @@ export class AgGridAngular implements AfterViewInit {
     @Output() public scrollVisibilityChanged: EventEmitter<any> = new EventEmitter<any>();
     @Output() public columnHoverChanged: EventEmitter<any> = new EventEmitter<any>();
     @Output() public flashCells: EventEmitter<any> = new EventEmitter<any>();
+    @Output() public paginationPixelOffsetChanged: EventEmitter<any> = new EventEmitter<any>();
     @Output() public rowDragEnter: EventEmitter<any> = new EventEmitter<any>();
     @Output() public rowDragMove: EventEmitter<any> = new EventEmitter<any>();
     @Output() public rowDragLeave: EventEmitter<any> = new EventEmitter<any>();
