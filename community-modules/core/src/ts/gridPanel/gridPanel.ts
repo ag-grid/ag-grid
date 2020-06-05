@@ -458,6 +458,9 @@ export class GridPanel extends Component {
     }
 
     private addMouseListeners(): void {
+
+        if (this.gridOptionsWrapper.isSuppressCellMouseEvents()) { return; }
+
         const eventNames = ['click', 'mousedown', 'dblclick', 'contextmenu', 'mouseover', 'mouseout'];
 
         eventNames.forEach(eventName => {

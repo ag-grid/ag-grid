@@ -279,6 +279,8 @@ export interface GridOptions {
     suppressPropertyNamesCheck?: boolean;
     serverSideSortingAlwaysResets?: boolean;
 
+    suppressCellMouseEvents?: boolean;
+
     statusBar?: {
         statusPanels: StatusPanelDef[];
     };
