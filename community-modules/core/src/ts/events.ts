@@ -213,6 +213,9 @@ export interface PaginationChangedEvent extends AgGridEvent {
     newPage: boolean;
 }
 
+export interface PaginationPixelOffsetChangedEvent extends AgGridEvent {
+}
+
 // this does not extent CellEvent as the focus service doesn't keep a reference to
 // the rowNode.
 export interface CellFocusedEvent extends AgGridEvent {

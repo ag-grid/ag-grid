@@ -464,6 +464,7 @@ export class RowComp extends Component {
         this.addManagedListener(this.rowNode, RowNode.EVENT_DRAGGING_CHANGED, this.onRowNodeDraggingChanged.bind(this));
 
         const eventService = this.beans.eventService;
+        this.addManagedListener(eventService, Events.EVENT_PAGINATION_PIXEL_OFFSET_CHANGED, this.onPaginationPixelOffsetChanged.bind(this));
         this.addManagedListener(eventService, Events.EVENT_HEIGHT_SCALE_CHANGED, this.onTopChanged.bind(this));
         this.addManagedListener(eventService, Events.EVENT_DISPLAYED_COLUMNS_CHANGED, this.onDisplayedColumnsChanged.bind(this));
         this.addManagedListener(eventService, Events.EVENT_VIRTUAL_COLUMNS_CHANGED, this.onVirtualColumnsChanged.bind(this));
@@ -1439,6 +1440,11 @@ export class RowComp extends Component {
 
     private onTopChanged(): void {
         this.setRowTop(this.rowNode.rowTop);
+    }
+
+    private onPaginationPixelOffsetChanged(): void {
+        // the pixel offset is used when calculating rowTop to set on the row DIV
+        this.onTopChanged();
     }
 
     // applies pagination offset, eg if on second page, and page height is 500px, then removes
