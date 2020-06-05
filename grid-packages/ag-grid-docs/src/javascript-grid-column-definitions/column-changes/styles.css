@@ -1,6 +1,4 @@
 .test-grid {
-    height: 1px;
-    min-height: 1px;
     flex-grow: 1;
 }
 
@@ -13,11 +11,11 @@
 .test-header {
     font-family: Verdana, Geneva, Tahoma, sans-serif;
     font-size: 13px;
-    margin-bottom: 5px;
+    margin-bottom: 1rem;
 }
 
 .test-header label {
-    margin-right: 10px;
+    margin-right: 0.5rem;
 }
 
 .test-header input {

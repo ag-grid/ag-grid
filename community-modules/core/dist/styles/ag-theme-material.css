@@ -956,32 +956,25 @@
   .ag-theme-material .ag-row-selected {
     background-color: #eee;
     background-color: var(--ag-selected-row-background-color, #eee); }
-  .ag-theme-material .ag-cell-range-selected:not(.ag-cell-focus),
-  .ag-theme-material .ag-body-viewport:not(.ag-has-focus) .ag-cell-range-single-cell {
+  .ag-theme-material .ag-cell-range-selected:not(.ag-cell-focus) {
     background-color: rgba(122, 134, 203, 0.1);
     background-color: var(--ag-range-selection-background-color, rgba(122, 134, 203, 0.1)); }
-    .ag-theme-material .ag-cell-range-selected:not(.ag-cell-focus).ag-cell-range-chart,
-    .ag-theme-material .ag-body-viewport:not(.ag-has-focus) .ag-cell-range-single-cell.ag-cell-range-chart {
+    .ag-theme-material .ag-cell-range-selected:not(.ag-cell-focus).ag-cell-range-chart {
       background-color: rgba(0, 88, 255, 0.1);
       background-color: var(--ag-range-selection-chart-background-color, rgba(0, 88, 255, 0.1)); }
-    .ag-theme-material .ag-cell-range-selected:not(.ag-cell-focus).ag-cell-range-chart.ag-cell-range-chart-category,
-    .ag-theme-material .ag-body-viewport:not(.ag-has-focus) .ag-cell-range-single-cell.ag-cell-range-chart.ag-cell-range-chart-category {
+    .ag-theme-material .ag-cell-range-selected:not(.ag-cell-focus).ag-cell-range-chart.ag-cell-range-chart-category {
       background-color: rgba(0, 255, 132, 0.1);
       background-color: var(--ag-range-selection-chart-category-background-color, rgba(0, 255, 132, 0.1)); }
-  .ag-theme-material .ag-cell-range-selected-1:not(.ag-cell-focus),
-  .ag-theme-material .ag-body-viewport:not(.ag-has-focus) .ag-cell-range-selected-1 {
+  .ag-theme-material .ag-cell-range-selected-1:not(.ag-cell-focus) {
     background-color: rgba(122, 134, 203, 0.1);
     background-color: var(--ag-range-selection-background-color-1, var(--ag-range-selection-background-color, rgba(122, 134, 203, 0.1))); }
-  .ag-theme-material .ag-cell-range-selected-2:not(.ag-cell-focus),
-  .ag-theme-material .ag-body-viewport:not(.ag-has-focus) .ag-cell-range-selected-2 {
+  .ag-theme-material .ag-cell-range-selected-2:not(.ag-cell-focus) {
     background-color: rgba(122, 134, 203, 0.19);
     background-color: var(--ag-range-selection-background-color-2, rgba(122, 134, 203, 0.19)); }
-  .ag-theme-material .ag-cell-range-selected-3:not(.ag-cell-focus),
-  .ag-theme-material .ag-body-viewport:not(.ag-has-focus) .ag-cell-range-selected-3 {
+  .ag-theme-material .ag-cell-range-selected-3:not(.ag-cell-focus) {
     background-color: rgba(122, 134, 203, 0.271);
     background-color: var(--ag-range-selection-background-color-3, rgba(122, 134, 203, 0.271)); }
-  .ag-theme-material .ag-cell-range-selected-4:not(.ag-cell-focus),
-  .ag-theme-material .ag-body-viewport:not(.ag-has-focus) .ag-cell-range-selected-4 {
+  .ag-theme-material .ag-cell-range-selected-4:not(.ag-cell-focus) {
     background-color: rgba(122, 134, 203, 0.3439);
     background-color: var(--ag-range-selection-background-color-4, rgba(122, 134, 203, 0.3439)); }
   .ag-theme-material .ag-cell.ag-cell-range-selected:not(.ag-cell-range-single-cell).ag-cell-range-top {
@@ -997,9 +990,9 @@
     border-left-color: #3f51b5;
     border-left-color: var(--ag-range-selection-border-color, var(--ag-material-primary-color, #3f51b5)); }
   .ag-theme-material .ag-ltr .ag-has-focus .ag-cell-focus:not(.ag-cell-range-selected),
-  .ag-theme-material .ag-ltr .ag-cell-range-single-cell,
+  .ag-theme-material .ag-ltr .ag-has-focus .ag-cell-focus.ag-cell-range-single-cell,
   .ag-theme-material .ag-ltr .ag-cell-range-single-cell.ag-cell-range-handle, .ag-theme-material .ag-rtl .ag-has-focus .ag-cell-focus:not(.ag-cell-range-selected),
-  .ag-theme-material .ag-rtl .ag-cell-range-single-cell,
+  .ag-theme-material .ag-rtl .ag-has-focus .ag-cell-focus.ag-cell-range-single-cell,
   .ag-theme-material .ag-rtl .ag-cell-range-single-cell.ag-cell-range-handle {
     border: 1px solid;
     border-color: #3f51b5;
@@ -1150,8 +1143,6 @@
   .ag-theme-material .ag-filter-header-container {
     padding-bottom: 16px; }
   .ag-theme-material .ag-filter-apply-panel {
-    display: flex;
-    justify-content: flex-end;
     padding: 16px 12px; }
   .ag-theme-material .ag-filter-apply-panel-button {
     line-height: 1.5; }

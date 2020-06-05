@@ -978,32 +978,25 @@
   .ag-theme-blue .ag-row-selected {
     background-color: #c8c8c8;
     background-color: var(--ag-selected-row-background-color, #c8c8c8); }
-  .ag-theme-blue .ag-cell-range-selected:not(.ag-cell-focus),
-  .ag-theme-blue .ag-body-viewport:not(.ag-has-focus) .ag-cell-range-single-cell {
+  .ag-theme-blue .ag-cell-range-selected:not(.ag-cell-focus) {
     background-color: rgba(34, 34, 34, 0.2);
     background-color: var(--ag-range-selection-background-color, rgba(34, 34, 34, 0.2)); }
-    .ag-theme-blue .ag-cell-range-selected:not(.ag-cell-focus).ag-cell-range-chart,
-    .ag-theme-blue .ag-body-viewport:not(.ag-has-focus) .ag-cell-range-single-cell.ag-cell-range-chart {
+    .ag-theme-blue .ag-cell-range-selected:not(.ag-cell-focus).ag-cell-range-chart {
       background-color: rgba(0, 88, 255, 0.1);
       background-color: var(--ag-range-selection-chart-background-color, rgba(0, 88, 255, 0.1)); }
-    .ag-theme-blue .ag-cell-range-selected:not(.ag-cell-focus).ag-cell-range-chart.ag-cell-range-chart-category,
-    .ag-theme-blue .ag-body-viewport:not(.ag-has-focus) .ag-cell-range-single-cell.ag-cell-range-chart.ag-cell-range-chart-category {
+    .ag-theme-blue .ag-cell-range-selected:not(.ag-cell-focus).ag-cell-range-chart.ag-cell-range-chart-category {
       background-color: rgba(0, 255, 132, 0.1);
       background-color: var(--ag-range-selection-chart-category-background-color, rgba(0, 255, 132, 0.1)); }
-  .ag-theme-blue .ag-cell-range-selected-1:not(.ag-cell-focus),
-  .ag-theme-blue .ag-body-viewport:not(.ag-has-focus) .ag-cell-range-selected-1 {
+  .ag-theme-blue .ag-cell-range-selected-1:not(.ag-cell-focus) {
     background-color: rgba(34, 34, 34, 0.2);
     background-color: var(--ag-range-selection-background-color-1, var(--ag-range-selection-background-color, rgba(34, 34, 34, 0.2))); }
-  .ag-theme-blue .ag-cell-range-selected-2:not(.ag-cell-focus),
-  .ag-theme-blue .ag-body-viewport:not(.ag-has-focus) .ag-cell-range-selected-2 {
+  .ag-theme-blue .ag-cell-range-selected-2:not(.ag-cell-focus) {
     background-color: rgba(34, 34, 34, 0.36);
     background-color: var(--ag-range-selection-background-color-2, rgba(34, 34, 34, 0.36)); }
-  .ag-theme-blue .ag-cell-range-selected-3:not(.ag-cell-focus),
-  .ag-theme-blue .ag-body-viewport:not(.ag-has-focus) .ag-cell-range-selected-3 {
+  .ag-theme-blue .ag-cell-range-selected-3:not(.ag-cell-focus) {
     background-color: rgba(34, 34, 34, 0.488);
     background-color: var(--ag-range-selection-background-color-3, rgba(34, 34, 34, 0.488)); }
-  .ag-theme-blue .ag-cell-range-selected-4:not(.ag-cell-focus),
-  .ag-theme-blue .ag-body-viewport:not(.ag-has-focus) .ag-cell-range-selected-4 {
+  .ag-theme-blue .ag-cell-range-selected-4:not(.ag-cell-focus) {
     background-color: rgba(34, 34, 34, 0.5904);
     background-color: var(--ag-range-selection-background-color-4, rgba(34, 34, 34, 0.5904)); }
   .ag-theme-blue .ag-cell.ag-cell-range-selected:not(.ag-cell-range-single-cell).ag-cell-range-top {
@@ -1019,9 +1012,9 @@
     border-left-color: #222;
     border-left-color: var(--ag-range-selection-border-color, var(--ag-foreground-color, #222)); }
   .ag-theme-blue .ag-ltr .ag-has-focus .ag-cell-focus:not(.ag-cell-range-selected),
-  .ag-theme-blue .ag-ltr .ag-cell-range-single-cell,
+  .ag-theme-blue .ag-ltr .ag-has-focus .ag-cell-focus.ag-cell-range-single-cell,
   .ag-theme-blue .ag-ltr .ag-cell-range-single-cell.ag-cell-range-handle, .ag-theme-blue .ag-rtl .ag-has-focus .ag-cell-focus:not(.ag-cell-range-selected),
-  .ag-theme-blue .ag-rtl .ag-cell-range-single-cell,
+  .ag-theme-blue .ag-rtl .ag-has-focus .ag-cell-focus.ag-cell-range-single-cell,
   .ag-theme-blue .ag-rtl .ag-cell-range-single-cell.ag-cell-range-handle {
     border: 1px solid;
     border-color: #222;
@@ -1175,8 +1168,6 @@
     border-bottom-color: #9bc2e6;
     border-bottom-color: var(--ag-secondary-border-color, var(--ag-border-color, #9bc2e6)); }
   .ag-theme-blue .ag-filter-apply-panel {
-    display: flex;
-    justify-content: flex-end;
     padding: 6px 6px;
     border-top: solid 1px;
     border-top-color: #9bc2e6;

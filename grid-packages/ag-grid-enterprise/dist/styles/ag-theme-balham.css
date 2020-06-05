@@ -995,32 +995,25 @@
   .ag-theme-balham .ag-row-selected {
     background-color: #b7e4ff;
     background-color: var(--ag-selected-row-background-color, #b7e4ff); }
-  .ag-theme-balham .ag-cell-range-selected:not(.ag-cell-focus),
-  .ag-theme-balham .ag-body-viewport:not(.ag-has-focus) .ag-cell-range-single-cell {
+  .ag-theme-balham .ag-cell-range-selected:not(.ag-cell-focus) {
     background-color: rgba(0, 145, 234, 0.2);
     background-color: var(--ag-range-selection-background-color, rgba(0, 145, 234, 0.2)); }
-    .ag-theme-balham .ag-cell-range-selected:not(.ag-cell-focus).ag-cell-range-chart,
-    .ag-theme-balham .ag-body-viewport:not(.ag-has-focus) .ag-cell-range-single-cell.ag-cell-range-chart {
+    .ag-theme-balham .ag-cell-range-selected:not(.ag-cell-focus).ag-cell-range-chart {
       background-color: rgba(0, 88, 255, 0.1);
       background-color: var(--ag-range-selection-chart-background-color, rgba(0, 88, 255, 0.1)); }
-    .ag-theme-balham .ag-cell-range-selected:not(.ag-cell-focus).ag-cell-range-chart.ag-cell-range-chart-category,
-    .ag-theme-balham .ag-body-viewport:not(.ag-has-focus) .ag-cell-range-single-cell.ag-cell-range-chart.ag-cell-range-chart-category {
+    .ag-theme-balham .ag-cell-range-selected:not(.ag-cell-focus).ag-cell-range-chart.ag-cell-range-chart-category {
       background-color: rgba(0, 255, 132, 0.1);
       background-color: var(--ag-range-selection-chart-category-background-color, rgba(0, 255, 132, 0.1)); }
-  .ag-theme-balham .ag-cell-range-selected-1:not(.ag-cell-focus),
-  .ag-theme-balham .ag-body-viewport:not(.ag-has-focus) .ag-cell-range-selected-1 {
+  .ag-theme-balham .ag-cell-range-selected-1:not(.ag-cell-focus) {
     background-color: rgba(0, 145, 234, 0.2);
     background-color: var(--ag-range-selection-background-color-1, var(--ag-range-selection-background-color, rgba(0, 145, 234, 0.2))); }
-  .ag-theme-balham .ag-cell-range-selected-2:not(.ag-cell-focus),
-  .ag-theme-balham .ag-body-viewport:not(.ag-has-focus) .ag-cell-range-selected-2 {
+  .ag-theme-balham .ag-cell-range-selected-2:not(.ag-cell-focus) {
     background-color: rgba(0, 145, 234, 0.36);
     background-color: var(--ag-range-selection-background-color-2, rgba(0, 145, 234, 0.36)); }
-  .ag-theme-balham .ag-cell-range-selected-3:not(.ag-cell-focus),
-  .ag-theme-balham .ag-body-viewport:not(.ag-has-focus) .ag-cell-range-selected-3 {
+  .ag-theme-balham .ag-cell-range-selected-3:not(.ag-cell-focus) {
     background-color: rgba(0, 145, 234, 0.488);
     background-color: var(--ag-range-selection-background-color-3, rgba(0, 145, 234, 0.488)); }
-  .ag-theme-balham .ag-cell-range-selected-4:not(.ag-cell-focus),
-  .ag-theme-balham .ag-body-viewport:not(.ag-has-focus) .ag-cell-range-selected-4 {
+  .ag-theme-balham .ag-cell-range-selected-4:not(.ag-cell-focus) {
     background-color: rgba(0, 145, 234, 0.5904);
     background-color: var(--ag-range-selection-background-color-4, rgba(0, 145, 234, 0.5904)); }
   .ag-theme-balham .ag-cell.ag-cell-range-selected:not(.ag-cell-range-single-cell).ag-cell-range-top {
@@ -1036,9 +1029,9 @@
     border-left-color: #0091ea;
     border-left-color: var(--ag-range-selection-border-color, var(--ag-balham-active-color, #0091ea)); }
   .ag-theme-balham .ag-ltr .ag-has-focus .ag-cell-focus:not(.ag-cell-range-selected),
-  .ag-theme-balham .ag-ltr .ag-cell-range-single-cell,
+  .ag-theme-balham .ag-ltr .ag-has-focus .ag-cell-focus.ag-cell-range-single-cell,
   .ag-theme-balham .ag-ltr .ag-cell-range-single-cell.ag-cell-range-handle, .ag-theme-balham .ag-rtl .ag-has-focus .ag-cell-focus:not(.ag-cell-range-selected),
-  .ag-theme-balham .ag-rtl .ag-cell-range-single-cell,
+  .ag-theme-balham .ag-rtl .ag-has-focus .ag-cell-focus.ag-cell-range-single-cell,
   .ag-theme-balham .ag-rtl .ag-cell-range-single-cell.ag-cell-range-handle {
     border: 1px solid;
     border-color: #0091ea;
@@ -1194,8 +1187,6 @@
     border-bottom-color: #bdc3c7;
     border-bottom-color: var(--ag-secondary-border-color, var(--ag-border-color, #bdc3c7)); }
   .ag-theme-balham .ag-filter-apply-panel {
-    display: flex;
-    justify-content: flex-end;
     padding: 6px 6px;
     border-top: solid 1px;
     border-top-color: #bdc3c7;

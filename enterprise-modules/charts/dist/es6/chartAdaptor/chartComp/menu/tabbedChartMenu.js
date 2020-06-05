@@ -55,11 +55,13 @@ var TabbedChartMenu = /** @class */ (function (_super) {
         this.getContext().createBean(comp);
         eWrapperDiv.appendChild(comp.getGui());
         var titleEl = document.createElement('div');
-        titleEl.innerText = this.chartTranslator.translate(title);
+        var translatedTitle = this.chartTranslator.translate(title);
+        titleEl.innerText = translatedTitle;
         return {
             comp: comp,
             tab: {
                 title: titleEl,
+                titleLabel: translatedTitle,
                 bodyPromise: Promise.resolve(eWrapperDiv),
                 name: name
             }

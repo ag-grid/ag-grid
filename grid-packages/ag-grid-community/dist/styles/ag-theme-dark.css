@@ -973,32 +973,25 @@
   .ag-theme-dark .ag-row-selected {
     background-color: #4a708b;
     background-color: var(--ag-selected-row-background-color, #4a708b); }
-  .ag-theme-dark .ag-cell-range-selected:not(.ag-cell-focus),
-  .ag-theme-dark .ag-body-viewport:not(.ag-has-focus) .ag-cell-range-single-cell {
+  .ag-theme-dark .ag-cell-range-selected:not(.ag-cell-focus) {
     background-color: rgba(100, 160, 160, 0.4);
     background-color: var(--ag-range-selection-background-color, rgba(100, 160, 160, 0.4)); }
-    .ag-theme-dark .ag-cell-range-selected:not(.ag-cell-focus).ag-cell-range-chart,
-    .ag-theme-dark .ag-body-viewport:not(.ag-has-focus) .ag-cell-range-single-cell.ag-cell-range-chart {
+    .ag-theme-dark .ag-cell-range-selected:not(.ag-cell-focus).ag-cell-range-chart {
       background-color: rgba(0, 88, 255, 0.1);
       background-color: var(--ag-range-selection-chart-background-color, rgba(0, 88, 255, 0.1)); }
-    .ag-theme-dark .ag-cell-range-selected:not(.ag-cell-focus).ag-cell-range-chart.ag-cell-range-chart-category,
-    .ag-theme-dark .ag-body-viewport:not(.ag-has-focus) .ag-cell-range-single-cell.ag-cell-range-chart.ag-cell-range-chart-category {
+    .ag-theme-dark .ag-cell-range-selected:not(.ag-cell-focus).ag-cell-range-chart.ag-cell-range-chart-category {
       background-color: rgba(0, 255, 132, 0.1);
       background-color: var(--ag-range-selection-chart-category-background-color, rgba(0, 255, 132, 0.1)); }
-  .ag-theme-dark .ag-cell-range-selected-1:not(.ag-cell-focus),
-  .ag-theme-dark .ag-body-viewport:not(.ag-has-focus) .ag-cell-range-selected-1 {
+  .ag-theme-dark .ag-cell-range-selected-1:not(.ag-cell-focus) {
     background-color: rgba(100, 160, 160, 0.4);
     background-color: var(--ag-range-selection-background-color-1, var(--ag-range-selection-background-color, rgba(100, 160, 160, 0.4))); }
-  .ag-theme-dark .ag-cell-range-selected-2:not(.ag-cell-focus),
-  .ag-theme-dark .ag-body-viewport:not(.ag-has-focus) .ag-cell-range-selected-2 {
+  .ag-theme-dark .ag-cell-range-selected-2:not(.ag-cell-focus) {
     background-color: rgba(100, 160, 160, 0.64);
     background-color: var(--ag-range-selection-background-color-2, rgba(100, 160, 160, 0.64)); }
-  .ag-theme-dark .ag-cell-range-selected-3:not(.ag-cell-focus),
-  .ag-theme-dark .ag-body-viewport:not(.ag-has-focus) .ag-cell-range-selected-3 {
+  .ag-theme-dark .ag-cell-range-selected-3:not(.ag-cell-focus) {
     background-color: rgba(100, 160, 160, 0.784);
     background-color: var(--ag-range-selection-background-color-3, rgba(100, 160, 160, 0.784)); }
-  .ag-theme-dark .ag-cell-range-selected-4:not(.ag-cell-focus),
-  .ag-theme-dark .ag-body-viewport:not(.ag-has-focus) .ag-cell-range-selected-4 {
+  .ag-theme-dark .ag-cell-range-selected-4:not(.ag-cell-focus) {
     background-color: rgba(100, 160, 160, 0.8704);
     background-color: var(--ag-range-selection-background-color-4, rgba(100, 160, 160, 0.8704)); }
   .ag-theme-dark .ag-cell.ag-cell-range-selected:not(.ag-cell-range-single-cell).ag-cell-range-top {
@@ -1014,9 +1007,9 @@
     border-left-color: #ccc;
     border-left-color: var(--ag-range-selection-border-color, var(--ag-foreground-color, #ccc)); }
   .ag-theme-dark .ag-ltr .ag-has-focus .ag-cell-focus:not(.ag-cell-range-selected),
-  .ag-theme-dark .ag-ltr .ag-cell-range-single-cell,
+  .ag-theme-dark .ag-ltr .ag-has-focus .ag-cell-focus.ag-cell-range-single-cell,
   .ag-theme-dark .ag-ltr .ag-cell-range-single-cell.ag-cell-range-handle, .ag-theme-dark .ag-rtl .ag-has-focus .ag-cell-focus:not(.ag-cell-range-selected),
-  .ag-theme-dark .ag-rtl .ag-cell-range-single-cell,
+  .ag-theme-dark .ag-rtl .ag-has-focus .ag-cell-focus.ag-cell-range-single-cell,
   .ag-theme-dark .ag-rtl .ag-cell-range-single-cell.ag-cell-range-handle {
     border: 1px solid;
     border-color: #ccc;
@@ -1169,8 +1162,6 @@
     border-bottom-color: darkgrey;
     border-bottom-color: var(--ag-secondary-border-color, var(--ag-border-color, darkgrey)); }
   .ag-theme-dark .ag-filter-apply-panel {
-    display: flex;
-    justify-content: flex-end;
     padding: 6px 6px;
     border-top: solid 1px;
     border-top-color: darkgrey;

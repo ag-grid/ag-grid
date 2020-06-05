@@ -136,6 +136,7 @@ var TabbedLayout = /** @class */ (function (_super) {
         eHeaderButton.appendChild(item.title);
         utils_1._.addCssClass(eHeaderButton, 'ag-tab');
         this.eHeader.appendChild(eHeaderButton);
+        eHeaderButton.setAttribute('aria-label', item.titleLabel);
         var wrapper = {
             tabbedItem: item,
             eHeaderButton: eHeaderButton

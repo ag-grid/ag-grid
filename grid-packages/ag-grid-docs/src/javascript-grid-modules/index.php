@@ -34,7 +34,7 @@ function printFeature($item)
     echo "<tr>";
     echo "<td style='white-space: nowrap'>$itemTitle ";
     if ($item['enterprise']) {
-        echo "<img src=\"../_assets/svg/enterprise.svg\" style=\"width: 16px;\"/>";
+        echo "<img src=\"../_assets/svg/enterprise.svg\" style=\"max-width: 16px;\"/>";
     }
     echo "</span></td>";
     echo "<td style='white-space: nowrap'>$module</td>";
@@ -77,7 +77,7 @@ function printFeature($item)
 
     <tr>
         <th></th>
-        <th>Enterprise Module <img src="../_assets/svg/enterprise.svg" style="width: 16px;"/></th>
+        <th>Enterprise Module <img src="../_assets/svg/enterprise.svg" style="max-width: 16px;"/></th>
         <th>Exported</th>
     </tr>
     <?php printFeatures(true, false) ?>

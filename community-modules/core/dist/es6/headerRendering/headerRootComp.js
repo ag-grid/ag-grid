@@ -70,7 +70,11 @@ var HeaderRootComp = /** @class */ (function (_super) {
         this.headerContainers.set(type, headerContainer);
     };
     HeaderRootComp.prototype.onTabKeyDown = function (e) {
-        if (this.headerNavigationService.navigateHorizontally(e.shiftKey ? HeaderNavigationDirection.LEFT : HeaderNavigationDirection.RIGHT, true) ||
+        var isRtl = this.gridOptionsWrapper.isEnableRtl();
+        var direction = e.shiftKey !== isRtl
+            ? HeaderNavigationDirection.LEFT
+            : HeaderNavigationDirection.RIGHT;
+        if (this.headerNavigationService.navigateHorizontally(direction, true) ||
             this.focusController.focusNextGridCoreContainer(e.shiftKey)) {
             e.preventDefault();
         }

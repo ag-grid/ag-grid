@@ -29,6 +29,7 @@ export interface TabbedLayoutParams {
 }
 export interface TabbedItem {
     title: Element;
+    titleLabel: string;
     bodyPromise: Promise<HTMLElement>;
     name: string;
     afterAttachedCallback?: Function;

@@ -38,6 +38,11 @@ interface ScatterChartOptions {
         // the first column is used for X and every other column is treated as Y
         // (or alternates between Y and size for bubble)
         paired: boolean;
+
+        // A map of series events to their listener functions.
+        // Please see the feature section on series events in standalone charts
+        // documentation.
+        listeners?: { [key in string]: Function };
     };
 }
 

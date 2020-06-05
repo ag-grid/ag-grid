@@ -141,8 +141,6 @@
     }
 
     .ag-filter-apply-panel {
-        display: flex;
-        justify-content: flex-end;
         padding: ag-param(widget-container-vertical-padding) ag-param(widget-container-horizontal-padding);
 
         @include ag-border(secondary, top);

@@ -37,7 +37,7 @@ const getNextUntitledFileNumber = (existingFiles, folder) => {
   };
 
   return existingFiles
-    .filter(f => f.folder === folder && f.file.startsWith('untitled'))
+    .filter(f => f.folder === folder && f.file.slice(0, 8) === 'untitled')
     .map(untitledNumberMapper)
     .reduce((n1, n2) => Math.max(n1, n2), -1) + 1;
 };

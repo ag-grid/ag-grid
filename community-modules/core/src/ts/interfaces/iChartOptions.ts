@@ -34,6 +34,7 @@ export interface ChartOptions<T extends SeriesOptions> {
     background: BackgroundOptions;
     title: CaptionOptions;
     subtitle: CaptionOptions;
+    navigator: NavigatorOptions;
     legend: LegendOptions;
     tooltipClass?: string;
     listeners?: { [key in string]: Function };

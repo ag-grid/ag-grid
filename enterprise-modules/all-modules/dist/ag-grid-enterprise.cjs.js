@@ -25522,7 +25522,11 @@ var HeaderRootComp = /** @class */ (function (_super) {
         this.headerContainers.set(type, headerContainer);
     };
     HeaderRootComp.prototype.onTabKeyDown = function (e) {
-        if (this.headerNavigationService.navigateHorizontally(e.shiftKey ? exports.HeaderNavigationDirection.LEFT : exports.HeaderNavigationDirection.RIGHT, true) ||
+        var isRtl = this.gridOptionsWrapper.isEnableRtl();
+        var direction = e.shiftKey !== isRtl
+            ? exports.HeaderNavigationDirection.LEFT
+            : exports.HeaderNavigationDirection.RIGHT;
+        if (this.headerNavigationService.navigateHorizontally(direction, true) ||
             this.focusController.focusNextGridCoreContainer(e.shiftKey)) {
             e.preventDefault();
         }
@@ -38928,6 +38932,7 @@ var TabbedLayout = /** @class */ (function (_super) {
         eHeaderButton.appendChild(item.title);
         _.addCssClass(eHeaderButton, 'ag-tab');
         this.eHeader.appendChild(eHeaderButton);
+        eHeaderButton.setAttribute('aria-label', item.titleLabel);
         var wrapper = {
             tabbedItem: item,
             eHeaderButton: eHeaderButton
@@ -70582,6 +70587,36 @@ var ChartProxy = /** @class */ (function () {
                     paddingY: 8,
                 },
             },
+            navigator: {
+                enabled: false,
+                height: 30,
+                min: 0,
+                max: 1,
+                mask: {
+                    fill: '#999999',
+                    stroke: '#999999',
+                    strokeWidth: 1,
+                    fillOpacity: 0.2
+                },
+                minHandle: {
+                    fill: '#f2f2f2',
+                    stroke: '#999999',
+                    strokeWidth: 1,
+                    width: 8,
+                    height: 16,
+                    gripLineGap: 2,
+                    gripLineLength: 8
+                },
+                maxHandle: {
+                    fill: '#f2f2f2',
+                    stroke: '#999999',
+                    strokeWidth: 1,
+                    width: 8,
+                    height: 16,
+                    gripLineGap: 2,
+                    gripLineLength: 8
+                }
+            },
             seriesDefaults: {
                 fill: {
                     colors: fills,
@@ -73406,11 +73441,13 @@ var TabbedChartMenu = /** @class */ (function (_super) {
         this.getContext().createBean(comp);
         eWrapperDiv.appendChild(comp.getGui());
         var titleEl = document.createElement('div');
-        titleEl.innerText = this.chartTranslator.translate(title);
+        var translatedTitle = this.chartTranslator.translate(title);
+        titleEl.innerText = translatedTitle;
         return {
             comp: comp,
             tab: {
                 title: titleEl,
+                titleLabel: translatedTitle,
                 bodyPromise: Promise.resolve(eWrapperDiv),
                 name: name
             }
@@ -77523,6 +77560,7 @@ var EnterpriseMenu = /** @class */ (function (_super) {
         this.mainMenuList.addEventListener(MenuItemComponent.EVENT_ITEM_SELECTED, this.onHidePopup.bind(this));
         this.tabItemGeneral = {
             title: _.createIconNoSpan('menu', this.gridOptionsWrapper, this.column),
+            titleLabel: EnterpriseMenu.TAB_GENERAL.replace('MenuTab', ''),
             bodyPromise: Promise.resolve(this.mainMenuList.getGui()),
             name: EnterpriseMenu.TAB_GENERAL
         };
@@ -77554,6 +77592,7 @@ var EnterpriseMenu = /** @class */ (function (_super) {
         }
         this.tabItemFilter = {
             title: _.createIconNoSpan('filter', this.gridOptionsWrapper, this.column),
+            titleLabel: EnterpriseMenu.TAB_FILTER.replace('MenuTab', ''),
             bodyPromise: filterWrapper.guiPromise,
             afterAttachedCallback: afterFilterAttachedCallback,
             name: EnterpriseMenu.TAB_FILTER
@@ -77582,6 +77621,7 @@ var EnterpriseMenu = /** @class */ (function (_super) {
         eWrapperDiv.appendChild(this.columnSelectPanel.getGui());
         this.tabItemColumns = {
             title: _.createIconNoSpan('columns', this.gridOptionsWrapper, this.column),
+            titleLabel: EnterpriseMenu.TAB_COLUMNS.replace('MenuTab', ''),
             bodyPromise: Promise.resolve(eWrapperDiv),
             name: EnterpriseMenu.TAB_COLUMNS
         };

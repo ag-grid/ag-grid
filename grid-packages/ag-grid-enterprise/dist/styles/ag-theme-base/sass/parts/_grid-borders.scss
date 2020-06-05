@@ -19,8 +19,7 @@
     }
 
     // we do not want to color the range color when the cell is also focused
-    .ag-cell-range-selected:not(.ag-cell-focus),
-    .ag-body-viewport:not(.ag-has-focus) .ag-cell-range-single-cell {
+    .ag-cell-range-selected:not(.ag-cell-focus) {
         @include ag-color-property(background-color, range-selection-background-color);
         &.ag-cell-range-chart {
             @include ag-color-property(background-color, range-selection-chart-background-color);
@@ -31,23 +30,19 @@
         }
     }
 
-    .ag-cell-range-selected-1:not(.ag-cell-focus),
-    .ag-body-viewport:not(.ag-has-focus) .ag-cell-range-selected-1 {
+    .ag-cell-range-selected-1:not(.ag-cell-focus) {
         @include ag-color-property(background-color, range-selection-background-color-1);
     }
 
-    .ag-cell-range-selected-2:not(.ag-cell-focus),
-    .ag-body-viewport:not(.ag-has-focus) .ag-cell-range-selected-2 {
+    .ag-cell-range-selected-2:not(.ag-cell-focus) {
         @include ag-color-property(background-color, range-selection-background-color-2);
     }
 
-    .ag-cell-range-selected-3:not(.ag-cell-focus),
-    .ag-body-viewport:not(.ag-has-focus) .ag-cell-range-selected-3 {
+    .ag-cell-range-selected-3:not(.ag-cell-focus) {
         @include ag-color-property(background-color, range-selection-background-color-3);
     }
 
-    .ag-cell-range-selected-4:not(.ag-cell-focus),
-    .ag-body-viewport:not(.ag-has-focus) .ag-cell-range-selected-4 {
+    .ag-cell-range-selected-4:not(.ag-cell-focus) {
         @include ag-color-property(background-color, range-selection-background-color-4);
     }
 
@@ -69,7 +64,7 @@
     // ltr/rtl needed so that this overrides the rtl/ltr styles of pinned column borders
     .ag-ltr, .ag-rtl {
         .ag-has-focus .ag-cell-focus:not(.ag-cell-range-selected),
-        .ag-cell-range-single-cell,
+        .ag-has-focus .ag-cell-focus.ag-cell-range-single-cell,
         .ag-cell-range-single-cell.ag-cell-range-handle {
             border: 1px solid;
             @include ag-color-property(border-color, range-selection-border-color);

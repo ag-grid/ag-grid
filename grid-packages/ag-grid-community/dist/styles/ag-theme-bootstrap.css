@@ -915,32 +915,25 @@
   .ag-theme-bootstrap .ag-row-selected {
     background-color: #bde2e5;
     background-color: var(--ag-selected-row-background-color, #bde2e5); }
-  .ag-theme-bootstrap .ag-cell-range-selected:not(.ag-cell-focus),
-  .ag-theme-bootstrap .ag-body-viewport:not(.ag-has-focus) .ag-cell-range-single-cell {
+  .ag-theme-bootstrap .ag-cell-range-selected:not(.ag-cell-focus) {
     background-color: rgba(0, 0, 0, 0.2);
     background-color: var(--ag-range-selection-background-color, rgba(0, 0, 0, 0.2)); }
-    .ag-theme-bootstrap .ag-cell-range-selected:not(.ag-cell-focus).ag-cell-range-chart,
-    .ag-theme-bootstrap .ag-body-viewport:not(.ag-has-focus) .ag-cell-range-single-cell.ag-cell-range-chart {
+    .ag-theme-bootstrap .ag-cell-range-selected:not(.ag-cell-focus).ag-cell-range-chart {
       background-color: rgba(0, 88, 255, 0.1);
       background-color: var(--ag-range-selection-chart-background-color, rgba(0, 88, 255, 0.1)); }
-    .ag-theme-bootstrap .ag-cell-range-selected:not(.ag-cell-focus).ag-cell-range-chart.ag-cell-range-chart-category,
-    .ag-theme-bootstrap .ag-body-viewport:not(.ag-has-focus) .ag-cell-range-single-cell.ag-cell-range-chart.ag-cell-range-chart-category {
+    .ag-theme-bootstrap .ag-cell-range-selected:not(.ag-cell-focus).ag-cell-range-chart.ag-cell-range-chart-category {
       background-color: rgba(0, 255, 132, 0.1);
       background-color: var(--ag-range-selection-chart-category-background-color, rgba(0, 255, 132, 0.1)); }
-  .ag-theme-bootstrap .ag-cell-range-selected-1:not(.ag-cell-focus),
-  .ag-theme-bootstrap .ag-body-viewport:not(.ag-has-focus) .ag-cell-range-selected-1 {
+  .ag-theme-bootstrap .ag-cell-range-selected-1:not(.ag-cell-focus) {
     background-color: rgba(0, 0, 0, 0.2);
     background-color: var(--ag-range-selection-background-color-1, var(--ag-range-selection-background-color, rgba(0, 0, 0, 0.2))); }
-  .ag-theme-bootstrap .ag-cell-range-selected-2:not(.ag-cell-focus),
-  .ag-theme-bootstrap .ag-body-viewport:not(.ag-has-focus) .ag-cell-range-selected-2 {
+  .ag-theme-bootstrap .ag-cell-range-selected-2:not(.ag-cell-focus) {
     background-color: rgba(0, 0, 0, 0.36);
     background-color: var(--ag-range-selection-background-color-2, rgba(0, 0, 0, 0.36)); }
-  .ag-theme-bootstrap .ag-cell-range-selected-3:not(.ag-cell-focus),
-  .ag-theme-bootstrap .ag-body-viewport:not(.ag-has-focus) .ag-cell-range-selected-3 {
+  .ag-theme-bootstrap .ag-cell-range-selected-3:not(.ag-cell-focus) {
     background-color: rgba(0, 0, 0, 0.488);
     background-color: var(--ag-range-selection-background-color-3, rgba(0, 0, 0, 0.488)); }
-  .ag-theme-bootstrap .ag-cell-range-selected-4:not(.ag-cell-focus),
-  .ag-theme-bootstrap .ag-body-viewport:not(.ag-has-focus) .ag-cell-range-selected-4 {
+  .ag-theme-bootstrap .ag-cell-range-selected-4:not(.ag-cell-focus) {
     background-color: rgba(0, 0, 0, 0.5904);
     background-color: var(--ag-range-selection-background-color-4, rgba(0, 0, 0, 0.5904)); }
   .ag-theme-bootstrap .ag-cell.ag-cell-range-selected:not(.ag-cell-range-single-cell).ag-cell-range-top {
@@ -956,9 +949,9 @@
     border-left-color: #000;
     border-left-color: var(--ag-range-selection-border-color, var(--ag-foreground-color, #000)); }
   .ag-theme-bootstrap .ag-ltr .ag-has-focus .ag-cell-focus:not(.ag-cell-range-selected),
-  .ag-theme-bootstrap .ag-ltr .ag-cell-range-single-cell,
+  .ag-theme-bootstrap .ag-ltr .ag-has-focus .ag-cell-focus.ag-cell-range-single-cell,
   .ag-theme-bootstrap .ag-ltr .ag-cell-range-single-cell.ag-cell-range-handle, .ag-theme-bootstrap .ag-rtl .ag-has-focus .ag-cell-focus:not(.ag-cell-range-selected),
-  .ag-theme-bootstrap .ag-rtl .ag-cell-range-single-cell,
+  .ag-theme-bootstrap .ag-rtl .ag-has-focus .ag-cell-focus.ag-cell-range-single-cell,
   .ag-theme-bootstrap .ag-rtl .ag-cell-range-single-cell.ag-cell-range-handle {
     border: 1px solid;
     border-color: #000;
@@ -1102,8 +1095,6 @@
   .ag-theme-bootstrap .ag-filter-header-container {
     padding-bottom: 6px; }
   .ag-theme-bootstrap .ag-filter-apply-panel {
-    display: flex;
-    justify-content: flex-end;
     padding: 6px 6px; }
   .ag-theme-bootstrap .ag-filter-apply-panel-button {
     line-height: 1.5; }

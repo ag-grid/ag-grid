@@ -25522,7 +25522,11 @@ var HeaderRootComp = /** @class */ (function (_super) {
         this.headerContainers.set(type, headerContainer);
     };
     HeaderRootComp.prototype.onTabKeyDown = function (e) {
-        if (this.headerNavigationService.navigateHorizontally(e.shiftKey ? exports.HeaderNavigationDirection.LEFT : exports.HeaderNavigationDirection.RIGHT, true) ||
+        var isRtl = this.gridOptionsWrapper.isEnableRtl();
+        var direction = e.shiftKey !== isRtl
+            ? exports.HeaderNavigationDirection.LEFT
+            : exports.HeaderNavigationDirection.RIGHT;
+        if (this.headerNavigationService.navigateHorizontally(direction, true) ||
             this.focusController.focusNextGridCoreContainer(e.shiftKey)) {
             e.preventDefault();
         }
@@ -38928,6 +38932,7 @@ var TabbedLayout = /** @class */ (function (_super) {
         eHeaderButton.appendChild(item.title);
         _.addCssClass(eHeaderButton, 'ag-tab');
         this.eHeader.appendChild(eHeaderButton);
+        eHeaderButton.setAttribute('aria-label', item.titleLabel);
         var wrapper = {
             tabbedItem: item,
             eHeaderButton: eHeaderButton
