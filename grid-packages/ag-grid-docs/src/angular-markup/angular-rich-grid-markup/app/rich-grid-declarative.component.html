@@ -56,24 +56,24 @@
                          suppressRowClickSelection
                          rowSelection="multiple">
             <ag-grid-column headerName="Employee" [headerGroupComponentFramework]="components.headerGroupComponent">
-                <ag-grid-column headerName="#" [width]="30" [checkboxSelection]="true"
+                <ag-grid-column headerName="#" [minWidth]="30" [checkboxSelection]="true"
                                 [suppressMenu]="true" [pinned]="true" [resizable]="true" [filter]="true"></ag-grid-column>
-                <ag-grid-column headerName="Name" field="name" [width]="150" [pinned]="true"  [sortable]="true" [resizable]="true" [filter]="true"></ag-grid-column>
-                <ag-grid-column headerName="Country" field="country" [width]="150" [cellRenderer]="countryCellRenderer"
+                <ag-grid-column headerName="Name" field="name" [minWidth]="150" [pinned]="true"  [sortable]="true" [resizable]="true" [filter]="true"></ag-grid-column>
+                <ag-grid-column headerName="Country" field="country" [minWidth]="150" [cellRenderer]="countryCellRenderer"
                                 [pinned]="true" [filterParams]="getCountryFilterParams()" [sortable]="true" [resizable]="true" [filter]="true"></ag-grid-column>
-                <ag-grid-column headerName="Date of Birth" field="dob" [width]="130" [pinned]="true" [columnGroupShow]="'open'"
+                <ag-grid-column headerName="Date of Birth" field="dob" [minWidth]="130" [pinned]="true" [columnGroupShow]="'open'"
                                 [cellRenderer]="parseDate" [filter]="'agDateColumnFilter'"  [sortable]="true" [resizable]="true"></ag-grid-column>
             </ag-grid-column>
             <ag-grid-column headerName="IT Skills">
-                <ag-grid-column headerName="Skills" [width]="125"
+                <ag-grid-column headerName="Skills" [minWidth]="125"
                                 [cellRenderer]="skillsCellRenderer" [filter]="getSkillFilter()" [resizable]="true"></ag-grid-column>
-                <ag-grid-column headerName="Proficiency" field="proficiency" [width]="120"
+                <ag-grid-column headerName="Proficiency" field="proficiency" [minWidth]="170"
                                 [cellRenderer]="percentCellRenderer" [filter]="getProficiencyFilter()" [sortable]="true" [resizable]="true"></ag-grid-column>
             </ag-grid-column>
             <ag-grid-column headerName="Contact">
-                <ag-grid-column headerName="Mobile" field="mobile" [width]="150" filter="agTextColumnFilter" [sortable]="true" [resizable]="true"></ag-grid-column>
-                <ag-grid-column headerName="Land-line" field="landline" [width]="150" filter="agTextColumnFilter" [sortable]="true" [resizable]="true"></ag-grid-column>
-                <ag-grid-column headerName="Address" field="address" [width]="500" filter="agTextColumnFilter" [sortable]="true" [resizable]="true"></ag-grid-column>
+                <ag-grid-column headerName="Mobile" field="mobile" [minWidth]="150" filter="agTextColumnFilter" [sortable]="true" [resizable]="true"></ag-grid-column>
+                <ag-grid-column headerName="Land-line" field="landline" [minWidth]="160" filter="agTextColumnFilter" [sortable]="true" [resizable]="true"></ag-grid-column>
+                <ag-grid-column headerName="Address" field="address" [minWidth]="500" filter="agTextColumnFilter" [sortable]="true" [resizable]="true"></ag-grid-column>
             </ag-grid-column>
         </ag-grid-angular>
     </div>
