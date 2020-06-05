@@ -131,24 +131,34 @@ function getTemplate(bindings: any, attributes: string[]): string {
 }
 
 export function vanillaToAngular(bindings: any, componentFileNames: string[]): (importType: ImportType) => string {
+    const { data, properties } = bindings;
+    const diParams = [];
+    const additional = [getOnGridReadyCode(bindings.onGridReady, bindings.resizeToFit, data)];
+
+    if (data) {
+        diParams.push('private http: HttpClient');
+    }
+
+    const instanceMethods = bindings.instanceMethods.map(removeFunctionKeyword);
+    const eventAttributes = bindings.eventHandlers
+        .filter(event => event.name !== 'onGridReady')
+        .map(toOutput)
+        .concat('(gridReady)="onGridReady($event)"');
+
+    const eventHandlers = bindings.eventHandlers.map(event => event.handler).map(removeFunctionKeyword);
+    const externalEventHandlers = bindings.externalEventHandlers.map(handler => removeFunctionKeyword(handler.body));
+
     return importType => {
-        const { data, properties } = bindings;
         const imports = getImports(bindings, componentFileNames, importType);
-        const diParams = [];
-        const additional = [];
-
-        if (data) {
-            diParams.push('private http: HttpClient');
-        }
-
         const propertyAttributes = [];
         const propertyVars = [];
+        const propertyAssignments = [];
+
         if (importType === 'modules') {
             propertyAttributes.push('[modules]="modules"');
             propertyVars.push(`public modules: Module[] = ${bindings.gridSuppliedModules};`);
         }
 
-        const propertyAssignments = [];
         properties.filter(property => property.name !== 'onGridReady').forEach(property => {
             if (componentFileNames.length > 0 && property.name === 'components') {
                 property.name = 'frameworkComponents';
@@ -179,15 +189,7 @@ export function vanillaToAngular(bindings: any, componentFileNames: string[]): (
             propertyVars.push('private rowData: []');
         }
 
-        const instanceMethods = bindings.instanceMethods.map(removeFunctionKeyword);
-        const eventAttributes = bindings.eventHandlers.filter(event => event.name !== 'onGridReady').map(toOutput);
-        const eventHandlers = bindings.eventHandlers.map(event => event.handler).map(removeFunctionKeyword);
-
-        eventAttributes.push('(gridReady)="onGridReady($event)"');
-        additional.push(getOnGridReadyCode(bindings.onGridReady, bindings.resizeToFit, data));
-
         const template = getTemplate(bindings, propertyAttributes.concat(eventAttributes));
-        const externalEventHandlers = bindings.externalEventHandlers.map(handler => removeFunctionKeyword(handler.body));
 
         return `
 ${imports.join('\n')}

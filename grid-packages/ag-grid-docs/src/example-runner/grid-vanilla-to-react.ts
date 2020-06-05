@@ -77,11 +77,7 @@ function getPackageImports(bindings: any, componentFilenames: string[]): string[
 }
 
 function getImports(bindings: any, componentFileNames: string[], importType: ImportType): string[] {
-    if (importType === 'packages') {
-        return getPackageImports(bindings, componentFileNames);
-    } else {
-        return getModuleImports(bindings, componentFileNames);
-    }
+    return (importType === 'packages' ? getPackageImports : getModuleImports)(bindings, componentFileNames);
 }
 
 function getTemplate(bindings: any, componentAttributes: string[]): string {
@@ -103,8 +99,44 @@ function getTemplate(bindings: any, componentAttributes: string[]): string {
 }
 
 export function vanillaToReact(bindings: any, componentFilenames: string[]): (importType: ImportType) => string {
+    const { properties, data, gridSettings, onGridReady, resizeToFit } = bindings;
+    const eventHandlers = bindings.eventHandlers.map(event => convertFunctionToProperty(event.handler));
+    const externalEventHandlers = bindings.externalEventHandlers.map(handler => convertFunctionToProperty(handler.body));
+    const instanceMethods = bindings.instanceMethods.map(convertFunctionToProperty);
+    const componentEventAttributes = bindings.eventHandlers.map(event => `${event.handlerName}={this.${event.handlerName}.bind(this)}`);
+    const style = gridSettings.noStyle ? '' : `style={{ width: '100%', height: '100%' }}`;
+    const additionalInReady = [];
+
+    if (data) {
+        let setRowDataBlock = data.callback;
+
+        if (data.callback.indexOf('api.setRowData') >= 0) {
+            setRowDataBlock = data.callback.replace('params.api.setRowData(data);', 'this.setState({ rowData: data });');
+        }
+
+        additionalInReady.push(`
+        const httpRequest = new XMLHttpRequest();
+        const updateData = (data) => ${setRowDataBlock};
+
+        httpRequest.open('GET', ${data.url});
+        httpRequest.send();
+        httpRequest.onreadystatechange = () => {
+            if (httpRequest.readyState === 4 && httpRequest.status === 200) {
+                updateData(JSON.parse(httpRequest.responseText));
+            }
+        };`);
+    }
+
+    if (onGridReady) {
+        const hackedHandler = onGridReady.replace(/^\{|\}$/g, '');
+        additionalInReady.push(hackedHandler);
+    }
+
+    if (resizeToFit) {
+        additionalInReady.push('params.api.sizeColumnsToFit();');
+    }
+
     return importType => {
-        const { properties, data, gridSettings, onGridReady, resizeToFit } = bindings;
         const imports = getImports(bindings, componentFilenames, importType);
         const instanceBindings = [];
         const stateProperties = [];
@@ -137,55 +169,20 @@ export function vanillaToReact(bindings: any, componentFilenames: string[]): (im
             }
         });
 
-        const componentEventAttributes = bindings.eventHandlers.map(event => `${event.handlerName}={this.${event.handlerName}.bind(this)}`);
-
         componentAttributes.push('onGridReady={this.onGridReady}');
         componentAttributes.push.apply(componentAttributes, componentEventAttributes);
 
-        const additionalInReady = [];
-
-        if (data) {
-            let setRowDataBlock = data.callback;
-
-            if (data.callback.indexOf('api.setRowData') >= 0) {
-                if (stateProperties.filter(item => item.indexOf('rowData') >= 0).length === 0) {
-                    stateProperties.push('rowData: []');
-                }
-
-                if (componentAttributes.filter(item => item.indexOf('rowData') >= 0).length === 0) {
-                    componentAttributes.push('rowData={this.state.rowData}');
-                }
-
-                setRowDataBlock = data.callback.replace('params.api.setRowData(data);', 'this.setState({ rowData: data });');
+        if (data && data.callback.indexOf('api.setRowData') >= 0) {
+            if (stateProperties.filter(item => item.indexOf('rowData') >= 0).length === 0) {
+                stateProperties.push('rowData: []');
             }
 
-            additionalInReady.push(`
-            const httpRequest = new XMLHttpRequest();
-            const updateData = (data) => ${setRowDataBlock};
-
-            httpRequest.open('GET', ${data.url});
-            httpRequest.send();
-            httpRequest.onreadystatechange = () => {
-                if (httpRequest.readyState === 4 && httpRequest.status === 200) {
-                    updateData(JSON.parse(httpRequest.responseText));
-                }
-            };`);
-        }
-
-        if (onGridReady) {
-            const hackedHandler = onGridReady.replace(/^\{|\}$/g, '');
-            additionalInReady.push(hackedHandler);
-        }
-
-        if (resizeToFit) {
-            additionalInReady.push('params.api.sizeColumnsToFit();');
+            if (componentAttributes.filter(item => item.indexOf('rowData') >= 0).length === 0) {
+                componentAttributes.push('rowData={this.state.rowData}');
+            }
         }
 
         const template = getTemplate(bindings, componentAttributes);
-        const eventHandlers = bindings.eventHandlers.map(event => convertFunctionToProperty(event.handler));
-        const externalEventHandlers = bindings.externalEventHandlers.map(handler => convertFunctionToProperty(handler.body));
-        const instanceMethods = bindings.instanceMethods.map(convertFunctionToProperty);
-        const style = gridSettings.noStyle ? '' : `style={{ width: '100%', height: '100%' }}`;
 
         return `
 'use strict'

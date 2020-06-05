@@ -221,12 +221,13 @@ function getAllMethods(bindings: any): [string[], string[], string[], string[]] 
 }
 
 export function vanillaToVue(bindings: any, componentFileNames: string[]): (importType: ImportType) => string {
+    const onGridReady = getOnGridReadyCode(bindings);
+    const eventAttributes = bindings.eventHandlers.filter(event => event.name !== 'onGridReady').map(toOutput);
+    const [eventHandlers, externalEventHandlers, instanceMethods, utilFunctions] = getAllMethods(bindings);
+
     return importType => {
         const imports = getImports(bindings, componentFileNames, importType);
         const [propertyAssignments, propertyVars, propertyAttributes] = getPropertyBindings(bindings, componentFileNames, importType);
-        const onGridReady = getOnGridReadyCode(bindings);
-        const eventAttributes = bindings.eventHandlers.filter(event => event.name !== 'onGridReady').map(toOutput);
-        const [eventHandlers, externalEventHandlers, instanceMethods, utilFunctions] = getAllMethods(bindings);
         const template = getTemplate(bindings, propertyAttributes.concat(eventAttributes));
 
         return `
