@@ -226,7 +226,7 @@ interface IFiltersToolPanel {
 </snippet>
 
     <p>
-        Notice that the same <a href="../javascript-grid-column-definitions/#column-definitions">Column Definitions</a>
+        Notice that the same <a href="../javascript-grid-column-definitions/">Column Definitions</a>
         that are supplied in the grid options are also passed to <code>setFilterLayout(colDefs)</code>.
     </p>
 
