@@ -46,10 +46,17 @@
     }
 
     @for $i from 1 through 10 {
-        .ag-filter-toolpanel-group-level-#{$i}-header {
-            @include ag-theme-rtl((
-                padding-left: ag-param(filter-tool-panel-group-indent) * $i + ag-param(grid-size)
-            ));
+        .ag-filter-toolpanel-group-level-#{$i} {
+            .ag-filter-toolpanel-group-level-#{$i}-header {
+                &.ag-filter-toolpanel-group-title-bar { 
+                    background-color: transparent;
+                }
+            }
+            .ag-filter-toolpanel-group-level-#{$i + 1}-header {
+                @include ag-theme-rtl((
+                    padding-left: ag-param(filter-tool-panel-group-indent) * $i + ag-param(grid-size)
+                ));    
+            }
         }
     }
 

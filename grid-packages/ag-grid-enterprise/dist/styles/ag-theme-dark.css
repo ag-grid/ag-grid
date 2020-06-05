@@ -1334,45 +1334,65 @@
     margin-right: 4px; }
   .ag-theme-dark .ag-rtl .ag-filter-toolpanel-expand, .ag-theme-dark .ag-rtl .ag-filter-toolpanel-group-title-bar-icon {
     margin-left: 4px; }
-  .ag-theme-dark .ag-ltr .ag-filter-toolpanel-group-level-1-header {
+  .ag-theme-dark .ag-filter-toolpanel-group-level-1 .ag-filter-toolpanel-group-level-1-header.ag-filter-toolpanel-group-title-bar {
+    background-color: transparent; }
+  .ag-theme-dark .ag-ltr .ag-filter-toolpanel-group-level-1 .ag-filter-toolpanel-group-level-2-header {
     padding-left: 20px; }
-  .ag-theme-dark .ag-rtl .ag-filter-toolpanel-group-level-1-header {
+  .ag-theme-dark .ag-rtl .ag-filter-toolpanel-group-level-1 .ag-filter-toolpanel-group-level-2-header {
     padding-right: 20px; }
-  .ag-theme-dark .ag-ltr .ag-filter-toolpanel-group-level-2-header {
+  .ag-theme-dark .ag-filter-toolpanel-group-level-2 .ag-filter-toolpanel-group-level-2-header.ag-filter-toolpanel-group-title-bar {
+    background-color: transparent; }
+  .ag-theme-dark .ag-ltr .ag-filter-toolpanel-group-level-2 .ag-filter-toolpanel-group-level-3-header {
     padding-left: 36px; }
-  .ag-theme-dark .ag-rtl .ag-filter-toolpanel-group-level-2-header {
+  .ag-theme-dark .ag-rtl .ag-filter-toolpanel-group-level-2 .ag-filter-toolpanel-group-level-3-header {
     padding-right: 36px; }
-  .ag-theme-dark .ag-ltr .ag-filter-toolpanel-group-level-3-header {
+  .ag-theme-dark .ag-filter-toolpanel-group-level-3 .ag-filter-toolpanel-group-level-3-header.ag-filter-toolpanel-group-title-bar {
+    background-color: transparent; }
+  .ag-theme-dark .ag-ltr .ag-filter-toolpanel-group-level-3 .ag-filter-toolpanel-group-level-4-header {
     padding-left: 52px; }
-  .ag-theme-dark .ag-rtl .ag-filter-toolpanel-group-level-3-header {
+  .ag-theme-dark .ag-rtl .ag-filter-toolpanel-group-level-3 .ag-filter-toolpanel-group-level-4-header {
     padding-right: 52px; }
-  .ag-theme-dark .ag-ltr .ag-filter-toolpanel-group-level-4-header {
+  .ag-theme-dark .ag-filter-toolpanel-group-level-4 .ag-filter-toolpanel-group-level-4-header.ag-filter-toolpanel-group-title-bar {
+    background-color: transparent; }
+  .ag-theme-dark .ag-ltr .ag-filter-toolpanel-group-level-4 .ag-filter-toolpanel-group-level-5-header {
     padding-left: 68px; }
-  .ag-theme-dark .ag-rtl .ag-filter-toolpanel-group-level-4-header {
+  .ag-theme-dark .ag-rtl .ag-filter-toolpanel-group-level-4 .ag-filter-toolpanel-group-level-5-header {
     padding-right: 68px; }
-  .ag-theme-dark .ag-ltr .ag-filter-toolpanel-group-level-5-header {
+  .ag-theme-dark .ag-filter-toolpanel-group-level-5 .ag-filter-toolpanel-group-level-5-header.ag-filter-toolpanel-group-title-bar {
+    background-color: transparent; }
+  .ag-theme-dark .ag-ltr .ag-filter-toolpanel-group-level-5 .ag-filter-toolpanel-group-level-6-header {
     padding-left: 84px; }
-  .ag-theme-dark .ag-rtl .ag-filter-toolpanel-group-level-5-header {
+  .ag-theme-dark .ag-rtl .ag-filter-toolpanel-group-level-5 .ag-filter-toolpanel-group-level-6-header {
     padding-right: 84px; }
-  .ag-theme-dark .ag-ltr .ag-filter-toolpanel-group-level-6-header {
+  .ag-theme-dark .ag-filter-toolpanel-group-level-6 .ag-filter-toolpanel-group-level-6-header.ag-filter-toolpanel-group-title-bar {
+    background-color: transparent; }
+  .ag-theme-dark .ag-ltr .ag-filter-toolpanel-group-level-6 .ag-filter-toolpanel-group-level-7-header {
     padding-left: 100px; }
-  .ag-theme-dark .ag-rtl .ag-filter-toolpanel-group-level-6-header {
+  .ag-theme-dark .ag-rtl .ag-filter-toolpanel-group-level-6 .ag-filter-toolpanel-group-level-7-header {
     padding-right: 100px; }
-  .ag-theme-dark .ag-ltr .ag-filter-toolpanel-group-level-7-header {
+  .ag-theme-dark .ag-filter-toolpanel-group-level-7 .ag-filter-toolpanel-group-level-7-header.ag-filter-toolpanel-group-title-bar {
+    background-color: transparent; }
+  .ag-theme-dark .ag-ltr .ag-filter-toolpanel-group-level-7 .ag-filter-toolpanel-group-level-8-header {
     padding-left: 116px; }
-  .ag-theme-dark .ag-rtl .ag-filter-toolpanel-group-level-7-header {
+  .ag-theme-dark .ag-rtl .ag-filter-toolpanel-group-level-7 .ag-filter-toolpanel-group-level-8-header {
     padding-right: 116px; }
-  .ag-theme-dark .ag-ltr .ag-filter-toolpanel-group-level-8-header {
+  .ag-theme-dark .ag-filter-toolpanel-group-level-8 .ag-filter-toolpanel-group-level-8-header.ag-filter-toolpanel-group-title-bar {
+    background-color: transparent; }
+  .ag-theme-dark .ag-ltr .ag-filter-toolpanel-group-level-8 .ag-filter-toolpanel-group-level-9-header {
     padding-left: 132px; }
-  .ag-theme-dark .ag-rtl .ag-filter-toolpanel-group-level-8-header {
+  .ag-theme-dark .ag-rtl .ag-filter-toolpanel-group-level-8 .ag-filter-toolpanel-group-level-9-header {
     padding-right: 132px; }
-  .ag-theme-dark .ag-ltr .ag-filter-toolpanel-group-level-9-header {
+  .ag-theme-dark .ag-filter-toolpanel-group-level-9 .ag-filter-toolpanel-group-level-9-header.ag-filter-toolpanel-group-title-bar {
+    background-color: transparent; }
+  .ag-theme-dark .ag-ltr .ag-filter-toolpanel-group-level-9 .ag-filter-toolpanel-group-level-10-header {
     padding-left: 148px; }
-  .ag-theme-dark .ag-rtl .ag-filter-toolpanel-group-level-9-header {
+  .ag-theme-dark .ag-rtl .ag-filter-toolpanel-group-level-9 .ag-filter-toolpanel-group-level-10-header {
     padding-right: 148px; }
-  .ag-theme-dark .ag-ltr .ag-filter-toolpanel-group-level-10-header {
+  .ag-theme-dark .ag-filter-toolpanel-group-level-10 .ag-filter-toolpanel-group-level-10-header.ag-filter-toolpanel-group-title-bar {
+    background-color: transparent; }
+  .ag-theme-dark .ag-ltr .ag-filter-toolpanel-group-level-10 .ag-filter-toolpanel-group-level-11-header {
     padding-left: 164px; }
-  .ag-theme-dark .ag-rtl .ag-filter-toolpanel-group-level-10-header {
+  .ag-theme-dark .ag-rtl .ag-filter-toolpanel-group-level-10 .ag-filter-toolpanel-group-level-11-header {
     padding-right: 164px; }
   .ag-theme-dark .ag-filter-toolpanel-instance-header.ag-filter-toolpanel-group-level-1-header {
     padding-left: 4px; }

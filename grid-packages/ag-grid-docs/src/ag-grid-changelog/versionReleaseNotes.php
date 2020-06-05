@@ -1,3 +1,98 @@
+<div class="note" style="display: none" fixVersionNote id="fix_version_23_2_0">
+    <p>Release 23.2.0 (5th Jun 2020)</p>
+
+    <p>Feature Highlights:</p>
+
+    <ul>
+        <li>
+            AG-3253: Allow keyboard navigation through all parts of the grid
+            (see <a href="/javascript-grid-keyboard-navigation/">Keyboard Navigation</a>)
+        </li>
+
+        <li>
+            AG-4227: Add chart navigator to allowing panning and zooming
+            (see <a href="/javascript-charts-navigator/">Chart Navigator</a>)
+        </li>
+
+        <li>Filter Enhancements</li>
+        <ul>
+            <li>
+                AG-1594: All row values to be expanded to multiple values in set filter
+                (see <a href="/javascript-grid-filter-set-filter-list/#multiple-values-per-cell">Set Filter - Multiple Values Per Cell</a>)
+            </li>
+
+            <li>
+                AG-4220: Create Excel mode for set filter
+                (see <a href="/javascript-grid-filter-set-excel-mode/">Set Filter - Excel Mode</a>)
+            </li>
+
+            <li>
+                AG-1645: When using asynchronous values for set filter, setting filter model should work
+                (see <a href="/javascript-grid-filter-api/">Filter API</a>)
+            </li>
+
+            <li>
+
+                <div>
+                    AG-2216 - Allow filter values to be loaded every time the user opens the set filter
+                </div>
+                <div>
+                    AG-3089 - Update all asynchronously-loaded set filter values when any filters change
+                </div>
+                <div>
+                    AG-2298 - Allow async set values to be fetched on-demand via an API, not only when filter opened initially
+                </div>
+                (see <a href="/javascript-grid-filter-set-filter-list/#refreshing-values">Set Filter - Refreshing Values</a>)
+            </li>
+        </ul>
+
+
+        <li>Master Detail Enhancements</li>
+        <ul>
+            <li>
+                AG-2546 - Allow Master / Detail to auto-height as detail data changes
+                (see <a href="/javascript-grid-master-detail-height/#auto-height">Master Detail - Auto Height</a>)
+            </li>
+
+            <li>
+                AG-2651 - Master/Detail refresh isRowMaster when updating data for a row
+                (see <a href="/javascript-grid-master-detail-master-rows/#dynamic-master-rows">Dynamic Master Rows</a>)
+            </li>
+
+            <li>
+                AG-3589 - Allow for dynamically changing master rows into leaf nodes
+                (see <a href="/javascript-grid-master-detail-master-rows/#changing-dynamic-master-rows">Changing Dynamic Master Rows</a>)
+            </li>
+
+            <li>
+                AG-3916 - Allow for the refresh of detail rows when using immutable data
+                (see <a href="/javascript-grid-master-detail-refresh/#refresh-rows">Master Detail - Refresh Rows</a>)
+            </li>
+        </ul>
+
+    </ul>
+
+    <p>Deprecations:</p>
+
+    <ul>
+        <li>SetFilter.setLoading() is deprecated. The loading screen is displayed automatically when the set filter is retrieving values</li>
+        <li>SetFilter.selectEverything() is deprecated. setModel should be used instead</li>
+        <li>SetFilter.selectNothing() is deprecated. setModel should be used instead</li>
+        <li>SetFilter.selectValue() is deprecated. setModel should be used instead</li>
+        <li>SetFilter.unselectValue() is deprecated. setModel should be used instead</li>
+        <li>SetFilter.isValueSelected() is deprecated. getModel should be used instead</li>
+        <li>SetFilter.isEverythingSelected() is deprecated. getModel should be used instead</li>
+        <li>SetFilter.isNothingSelected() is deprecated. getModel should be used instead</li>
+        <li>SetFilter.getUniqueValueCount() is deprecated. getValues should be used instead</li>
+        <li>SetFilter.getUniqueValue() is deprecated. getValues should be used instead</li>
+
+        <li>Provided filter filterParams.applyButton has been deprecated. Use filterParams.buttons instead</li>
+        <li>Provided filter filterParams.clearButton has been deprecated. Use filterParams.buttons instead</li>
+        <li>Provided filter filterParams.resetButton has been deprecated. Use filterParams.buttons instead</li>
+    </ul>
+
+</div>
+
 <div class="note" style="display: none" fixVersionNote id="fix_version_23_1_0">
     <p>Release 23.1.0 (1st May 2020)</p>
 
@@ -228,7 +323,7 @@
 
     <p>Breaking Changes:</p>
     <ul>
-         <li>
+        <li>
             In taking Charts out of Beta it was neccessary to to make numourous interface / chart option changes
             (see <a href="/javascript-grid-charts-chart-range-api/">Chart API</a> and <a href="/javascript-grid-charts-customisation/">Chart Customisation</a>).
         </li>
@@ -618,13 +713,13 @@
         </li>
         <li>
             <p>AG-424
-            Text, Number and Date filters now support two filter conditions instead of just one. The user through the UI
-            can decide which sort of logic to apply: 'AND'/'OR'</p>
+                Text, Number and Date filters now support two filter conditions instead of just one. The user through the UI
+                can decide which sort of logic to apply: 'AND'/'OR'</p>
 
             <p>This also means that the model for the filter changes when two conditions are applied.</p>
 
             <p>The ability to add an additional filter condition can be suppressed with
-            <code>filterParams.suppressAndOrCondition = true</code></p>
+                <code>filterParams.suppressAndOrCondition = true</code></p>
 
             <p>The documentation of each filter has been updated to reflect these changes accordingly:
 

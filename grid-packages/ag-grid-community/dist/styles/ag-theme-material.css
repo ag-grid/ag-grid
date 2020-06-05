@@ -1273,45 +1273,65 @@
     margin-right: 8px; }
   .ag-theme-material .ag-rtl .ag-filter-toolpanel-expand, .ag-theme-material .ag-rtl .ag-filter-toolpanel-group-title-bar-icon {
     margin-left: 8px; }
-  .ag-theme-material .ag-ltr .ag-filter-toolpanel-group-level-1-header {
+  .ag-theme-material .ag-filter-toolpanel-group-level-1 .ag-filter-toolpanel-group-level-1-header.ag-filter-toolpanel-group-title-bar {
+    background-color: transparent; }
+  .ag-theme-material .ag-ltr .ag-filter-toolpanel-group-level-1 .ag-filter-toolpanel-group-level-2-header {
     padding-left: 24px; }
-  .ag-theme-material .ag-rtl .ag-filter-toolpanel-group-level-1-header {
+  .ag-theme-material .ag-rtl .ag-filter-toolpanel-group-level-1 .ag-filter-toolpanel-group-level-2-header {
     padding-right: 24px; }
-  .ag-theme-material .ag-ltr .ag-filter-toolpanel-group-level-2-header {
+  .ag-theme-material .ag-filter-toolpanel-group-level-2 .ag-filter-toolpanel-group-level-2-header.ag-filter-toolpanel-group-title-bar {
+    background-color: transparent; }
+  .ag-theme-material .ag-ltr .ag-filter-toolpanel-group-level-2 .ag-filter-toolpanel-group-level-3-header {
     padding-left: 40px; }
-  .ag-theme-material .ag-rtl .ag-filter-toolpanel-group-level-2-header {
+  .ag-theme-material .ag-rtl .ag-filter-toolpanel-group-level-2 .ag-filter-toolpanel-group-level-3-header {
     padding-right: 40px; }
-  .ag-theme-material .ag-ltr .ag-filter-toolpanel-group-level-3-header {
+  .ag-theme-material .ag-filter-toolpanel-group-level-3 .ag-filter-toolpanel-group-level-3-header.ag-filter-toolpanel-group-title-bar {
+    background-color: transparent; }
+  .ag-theme-material .ag-ltr .ag-filter-toolpanel-group-level-3 .ag-filter-toolpanel-group-level-4-header {
     padding-left: 56px; }
-  .ag-theme-material .ag-rtl .ag-filter-toolpanel-group-level-3-header {
+  .ag-theme-material .ag-rtl .ag-filter-toolpanel-group-level-3 .ag-filter-toolpanel-group-level-4-header {
     padding-right: 56px; }
-  .ag-theme-material .ag-ltr .ag-filter-toolpanel-group-level-4-header {
+  .ag-theme-material .ag-filter-toolpanel-group-level-4 .ag-filter-toolpanel-group-level-4-header.ag-filter-toolpanel-group-title-bar {
+    background-color: transparent; }
+  .ag-theme-material .ag-ltr .ag-filter-toolpanel-group-level-4 .ag-filter-toolpanel-group-level-5-header {
     padding-left: 72px; }
-  .ag-theme-material .ag-rtl .ag-filter-toolpanel-group-level-4-header {
+  .ag-theme-material .ag-rtl .ag-filter-toolpanel-group-level-4 .ag-filter-toolpanel-group-level-5-header {
     padding-right: 72px; }
-  .ag-theme-material .ag-ltr .ag-filter-toolpanel-group-level-5-header {
+  .ag-theme-material .ag-filter-toolpanel-group-level-5 .ag-filter-toolpanel-group-level-5-header.ag-filter-toolpanel-group-title-bar {
+    background-color: transparent; }
+  .ag-theme-material .ag-ltr .ag-filter-toolpanel-group-level-5 .ag-filter-toolpanel-group-level-6-header {
     padding-left: 88px; }
-  .ag-theme-material .ag-rtl .ag-filter-toolpanel-group-level-5-header {
+  .ag-theme-material .ag-rtl .ag-filter-toolpanel-group-level-5 .ag-filter-toolpanel-group-level-6-header {
     padding-right: 88px; }
-  .ag-theme-material .ag-ltr .ag-filter-toolpanel-group-level-6-header {
+  .ag-theme-material .ag-filter-toolpanel-group-level-6 .ag-filter-toolpanel-group-level-6-header.ag-filter-toolpanel-group-title-bar {
+    background-color: transparent; }
+  .ag-theme-material .ag-ltr .ag-filter-toolpanel-group-level-6 .ag-filter-toolpanel-group-level-7-header {
     padding-left: 104px; }
-  .ag-theme-material .ag-rtl .ag-filter-toolpanel-group-level-6-header {
+  .ag-theme-material .ag-rtl .ag-filter-toolpanel-group-level-6 .ag-filter-toolpanel-group-level-7-header {
     padding-right: 104px; }
-  .ag-theme-material .ag-ltr .ag-filter-toolpanel-group-level-7-header {
+  .ag-theme-material .ag-filter-toolpanel-group-level-7 .ag-filter-toolpanel-group-level-7-header.ag-filter-toolpanel-group-title-bar {
+    background-color: transparent; }
+  .ag-theme-material .ag-ltr .ag-filter-toolpanel-group-level-7 .ag-filter-toolpanel-group-level-8-header {
     padding-left: 120px; }
-  .ag-theme-material .ag-rtl .ag-filter-toolpanel-group-level-7-header {
+  .ag-theme-material .ag-rtl .ag-filter-toolpanel-group-level-7 .ag-filter-toolpanel-group-level-8-header {
     padding-right: 120px; }
-  .ag-theme-material .ag-ltr .ag-filter-toolpanel-group-level-8-header {
+  .ag-theme-material .ag-filter-toolpanel-group-level-8 .ag-filter-toolpanel-group-level-8-header.ag-filter-toolpanel-group-title-bar {
+    background-color: transparent; }
+  .ag-theme-material .ag-ltr .ag-filter-toolpanel-group-level-8 .ag-filter-toolpanel-group-level-9-header {
     padding-left: 136px; }
-  .ag-theme-material .ag-rtl .ag-filter-toolpanel-group-level-8-header {
+  .ag-theme-material .ag-rtl .ag-filter-toolpanel-group-level-8 .ag-filter-toolpanel-group-level-9-header {
     padding-right: 136px; }
-  .ag-theme-material .ag-ltr .ag-filter-toolpanel-group-level-9-header {
+  .ag-theme-material .ag-filter-toolpanel-group-level-9 .ag-filter-toolpanel-group-level-9-header.ag-filter-toolpanel-group-title-bar {
+    background-color: transparent; }
+  .ag-theme-material .ag-ltr .ag-filter-toolpanel-group-level-9 .ag-filter-toolpanel-group-level-10-header {
     padding-left: 152px; }
-  .ag-theme-material .ag-rtl .ag-filter-toolpanel-group-level-9-header {
+  .ag-theme-material .ag-rtl .ag-filter-toolpanel-group-level-9 .ag-filter-toolpanel-group-level-10-header {
     padding-right: 152px; }
-  .ag-theme-material .ag-ltr .ag-filter-toolpanel-group-level-10-header {
+  .ag-theme-material .ag-filter-toolpanel-group-level-10 .ag-filter-toolpanel-group-level-10-header.ag-filter-toolpanel-group-title-bar {
+    background-color: transparent; }
+  .ag-theme-material .ag-ltr .ag-filter-toolpanel-group-level-10 .ag-filter-toolpanel-group-level-11-header {
     padding-left: 168px; }
-  .ag-theme-material .ag-rtl .ag-filter-toolpanel-group-level-10-header {
+  .ag-theme-material .ag-rtl .ag-filter-toolpanel-group-level-10 .ag-filter-toolpanel-group-level-11-header {
     padding-right: 168px; }
   .ag-theme-material .ag-filter-toolpanel-instance-header.ag-filter-toolpanel-group-level-1-header {
     padding-left: 8px; }

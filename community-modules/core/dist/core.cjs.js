@@ -7439,7 +7439,7 @@ var ColumnController = /** @class */ (function (_super) {
                 originalColumnGroup: originalColumnGroup,
                 location: location,
                 api: this.gridOptionsWrapper.getApi(),
-                context: this.getContext()
+                context: this.gridOptionsWrapper.getContext()
             };
             if (typeof headerValueGetter === 'function') {
                 // valueGetter is a function, so just call it

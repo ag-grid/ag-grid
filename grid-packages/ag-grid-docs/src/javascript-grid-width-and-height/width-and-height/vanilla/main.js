@@ -14,21 +14,21 @@ var gridOptions = {
 };
 
 function fillLarge() {
-    setWidthAndHeight('100%', '100%');
+    setWidthAndHeight('100%');
 }
 
 function fillMedium() {
-    setWidthAndHeight('60%', '60%');
+    setWidthAndHeight('60%');
 }
 
 function fillExact() {
-    setWidthAndHeight('400px', '400px');
+    setWidthAndHeight('400px');
 }
 
-function setWidthAndHeight(width, height) {
+function setWidthAndHeight(size) {
     var eGridDiv = document.querySelector('#myGrid');
-    eGridDiv.style.width = width;
-    eGridDiv.style.height = height;
+    eGridDiv.style.setProperty('width', size);
+    eGridDiv.style.setProperty('height', size);
     gridOptions.api.doLayout();
 }
 
