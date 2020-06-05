@@ -179,6 +179,10 @@ var gridOptions = {
     onGridReady: function(params) {
         createRowData();
 
+        params.api.setFilterModel({
+            value: {value: '5'}
+        });
+
         timeOperation('Initialisation', function() {
             params.api.setRowData(myRowData);
         });
@@ -226,7 +230,4 @@ function createDataItem(id, name, distro, laptop, city, value) {
 document.addEventListener("DOMContentLoaded", function() {
     var eGridDiv = document.querySelector('#myGrid');
     new agGrid.Grid(eGridDiv, gridOptions);
-    gridOptions.api.setFilterModel({
-        value: {value: '5'}
-    });
 });
