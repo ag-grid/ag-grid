@@ -21,4 +21,4 @@ checkFileExists ~/.ssh/ag_ssh
 FILENAME=$1
 
 # backup the old public_html, unzip the new release and update permissions etc
-ssh -i ~/.ssh/ag_ssh ceolter@ag-grid.com "./prepareNewDeploymentRemote.sh.sh $FILENAME"
+ssh -i ~/.ssh/ag_ssh ceolter@ag-grid.com "cd /home/ceolter/ && ./prepareNewDeploymentRemote.sh.sh $FILENAME"
