@@ -5,7 +5,6 @@ window.Date = Date;
 global.window = window;
 global.document = document;
 
-const jQuery = require('jquery');
 const glob = require('glob');
 const fs = require('fs');
 const path = require('path');
@@ -42,6 +41,9 @@ const parsers = {
     ts: 'typescript',
 };
 
+const useAsyncFileOperations = false;
+const encodingOptions = { encoding: 'utf8' };
+
 function writeFile(destination, contents) {
     // allow developers to override the example theme with an environment variable
     const themeOverride = process.env.AG_EXAMPLE_THEME_OVERRIDE;
@@ -52,17 +54,25 @@ function writeFile(destination, contents) {
 
     const extension = path.extname(destination).slice(1);
     const parser = parsers[extension] || extension;
+    const formattedContent = format(contents, parser);
 
-    fs.writeFileSync(destination, format(contents, parser), 'utf8');
+    if (useAsyncFileOperations) {
+        fs.writeFile(destination, formattedContent, encodingOptions, () => { });
+    } else {
+        fs.writeFileSync(destination, formattedContent, encodingOptions);
+    }
 }
 
 function copyFiles(files, dest, tokenToReplace, replaceValue = '') {
     files.forEach(sourceFile => {
         const filename = path.basename(sourceFile);
         const destinationFile = path.join(dest, tokenToReplace ? filename.replace(tokenToReplace, replaceValue) : filename);
-        const contents = getFileContents(sourceFile);
 
-        writeFile(destinationFile, contents);
+        if (useAsyncFileOperations) {
+            fs.readFile(sourceFile, encodingOptions, (_, contents) => writeFile(destinationFile, contents));
+        } else {
+            writeFile(destinationFile, getFileContents(sourceFile));
+        }
     });
 }
 
@@ -222,8 +232,8 @@ function createExampleGenerator(prefix, importTypes) {
 
         // inline styles in the examples index.html
         // will be added to styles.css in the various generated fw examples
-        const style = jQuery(`<div>${indexHtml}</div>`).find('style');
-        let inlineStyles = style.length > 0 && format(style.text(), 'css');
+        const style = /<style>(.*)<\/style>/s.exec(indexHtml);
+        let inlineStyles = style && style.length > 0 && format(style[1], 'css');
 
         const reactScripts = getMatchingPaths('*_react*');
         const reactConfigs = new Map();
