@@ -106,7 +106,7 @@ function forEachExample(done, name, regex, generateExample, scope = '*', trigger
 
     glob(pattern, {}, (_, files) => {
         const startTime = Date.now();
-        let count = 0;
+        const examplesToProcess = [];
 
         files.forEach(file => {
             const contents = getFileContents(file);
@@ -118,17 +118,28 @@ function forEachExample(done, name, regex, generateExample, scope = '*', trigger
                 const [example, type, options] = matches.slice(1);
 
                 if (type === 'generated' && (!specificExample || example === specificExample)) {
-                    try {
-                        const examplePath = path.join('./src', section, example);
-                        generateExample(examplePath, phpArrayToJSON(options));
-                        count++;
-                    } catch (error) {
-                        console.error(`Could not process example ${example} in ${file}. Does the example directory exist?`);
-                        console.error(error);
-                    }
+                    examplesToProcess.push({ file, section, example, options });
                 }
             }
         });
+
+        const processedExamples = new Set();
+
+        examplesToProcess.forEach(({ file, section, example, options }) => {
+            try {
+                const examplePath = path.join('./src', section, example);
+
+                if (processedExamples.has(examplePath)) { return; }
+
+                generateExample(examplePath, phpArrayToJSON(options));
+                processedExamples.add(examplePath);
+            } catch (error) {
+                console.error(`Could not process example ${example} in ${file}. Does the example directory exist?`);
+                console.error(error);
+            }
+        });
+
+        const count = processedExamples.size;
 
         console.log(`\u2714 ${count} ${name} example${count === 1 ? '' : 's'} generated in ${Date.now() - startTime}ms.`);
 
