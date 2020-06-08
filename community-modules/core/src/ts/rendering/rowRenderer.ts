@@ -1179,7 +1179,7 @@ export class RowRenderer extends BeanStub {
         if (!nextCell) { return; }
 
         if (nextCell.rowIndex < 0) {
-            const headerLen = this.beans.headerController.getHeaderRowCount();
+            const headerLen = this.beans.headerNavigationService.getHeaderRowCount();
 
             this.focusController.focusHeaderPosition({
                 headerRowIndex: headerLen + (nextCell.rowIndex), column: currentCell.column
@@ -1318,7 +1318,7 @@ export class RowRenderer extends BeanStub {
             if (cellPosition.rowIndex === 0) {
                 keyboardEvent.preventDefault();
                 this.focusController.focusHeaderPosition({
-                    headerRowIndex: this.beans.headerController.getHeaderRowCount() - 1,
+                    headerRowIndex: this.beans.headerNavigationService.getHeaderRowCount() - 1,
                     column: _.last(this.columnController.getAllDisplayedColumns())
                 });
             }

@@ -321,6 +321,8 @@ export class Axis<S extends Scale<D, number>, D = any> {
      */
     update() {
         const { group, scale, tick, label, gridStyle, requestedRange } = this;
+        const requestedRangeMin = Math.min(requestedRange[0], requestedRange[1]);
+        const requestedRangeMax = Math.max(requestedRange[0], requestedRange[1]);
         const rotation = toRadians(this.rotation);
         const parallelLabels = label.parallel;
         const labelRotation = normalizeAngle360(toRadians(label.rotation));
@@ -373,8 +375,12 @@ export class Axis<S extends Scale<D, number>, D = any> {
         const groupSelection = update.merge(enter);
 
         groupSelection
-            .attrFn('translationY', (_, datum) => Math.round(scale.convert(datum) + halfBandwidth))
-            .attrFn('visible', node => node.translationY >= requestedRange[0] && node.translationY <= requestedRange[1]);
+            .attrFn('translationY', function (_, datum) {
+                return Math.round(scale.convert(datum) + halfBandwidth);
+            })
+            .attrFn('visible', function (node) {
+                return node.translationY >= requestedRangeMin && node.translationY <= requestedRangeMax;
+            });
 
         groupSelection.selectByTag<Line>(Tags.Tick)
             .each(line => {

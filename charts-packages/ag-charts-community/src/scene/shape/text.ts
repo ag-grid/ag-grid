@@ -253,11 +253,7 @@ export class Text extends Shape {
         // this.matrix.transformBBox(this.computeBBox!()).render(ctx); // debug
         this.matrix.toContext(ctx);
 
-        const { opacity, fill, stroke, strokeWidth } = this;
-
-        if (opacity < 1) {
-            ctx.globalAlpha = opacity;
-        }
+        const { fill, stroke, strokeWidth } = this;
 
         ctx.font = this.font;
         ctx.textAlign = this.textAlign;
@@ -267,6 +263,7 @@ export class Text extends Shape {
 
         if (fill) {
             ctx.fillStyle = fill;
+            ctx.globalAlpha = this.opacity * this.fillOpacity;
 
             const { fillShadow, text, x, y } = this;
 
@@ -283,6 +280,7 @@ export class Text extends Shape {
         if (stroke && strokeWidth) {
             ctx.strokeStyle = stroke;
             ctx.lineWidth = strokeWidth;
+            ctx.globalAlpha = this.opacity * this.strokeOpacity;
 
             const { lineDash, lineDashOffset, lineCap, lineJoin, strokeShadow, text, x, y } = this;
 

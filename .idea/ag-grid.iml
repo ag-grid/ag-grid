@@ -26,6 +26,7 @@
       <excludeFolder url="file://$MODULE_DIR$/community-modules/client-side-row-model/node_modules.nosync" />
       <excludeFolder url="file://$MODULE_DIR$/community-modules/core/dist" />
       <excludeFolder url="file://$MODULE_DIR$/community-modules/core/node_modules.nosync" />
+      <excludeFolder url="file://$MODULE_DIR$/community-modules/core/typings" />
       <excludeFolder url="file://$MODULE_DIR$/community-modules/csv-export/dist" />
       <excludeFolder url="file://$MODULE_DIR$/community-modules/csv-export/node_modules.nosync" />
       <excludeFolder url="file://$MODULE_DIR$/community-modules/infinite-row-model/dist" />

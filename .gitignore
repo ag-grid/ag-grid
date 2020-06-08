@@ -47,6 +47,7 @@ grid-packages/ag-grid-community/main.d.ts
 grid-packages/ag-grid-community/main.js
 grid-packages/ag-grid-enterprise/main.d.ts
 grid-packages/ag-grid-enterprise/main.js
+!grid-packages/ag-grid-enterprise/dist
 
 grid-packages/ag-grid-vue/lib/**
 grid-packages/ag-grid-vue/main.js

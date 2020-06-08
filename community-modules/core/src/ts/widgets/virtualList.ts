@@ -165,6 +165,7 @@ export class VirtualList extends ManagedFocusComponent {
 
     public refresh(): void {
         if (this.model == null) { return; }
+
         const rowCount = this.model.getRowCount();
 
         this.eContainer.style.height = `${rowCount * this.rowHeight}px`;

@@ -167,6 +167,12 @@ var gridOptions = {
         cellRenderer:'agGroupCellRenderer',
         field: 'symbol'
     },
+    enableRangeSelection: true,
+    statusBar: {
+        statusPanels: [
+            { statusPanel: 'agAggregationComponent', align: 'right' }
+        ]
+    },
     groupDefaultExpanded: 1,
     rowData: immutableStore,
     getRowNodeId: function(data) {

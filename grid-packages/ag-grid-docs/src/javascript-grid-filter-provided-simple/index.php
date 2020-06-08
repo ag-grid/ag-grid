@@ -107,117 +107,17 @@ include '../documentation-main/documentation_header.php';
 <h2 id="filterParams">Simple Filters Parameters</h2>
 
 <p>
-    Simple Filters are configured though the <code>filterParams</code> attribute of the column definition.
-    The list of filter parameters for all simple filters is as follows:
+    Simple Filters are configured though the <code>filterParams</code> attribute of the column definition. All of the
+    parameters from Provided Filters are available:
 </p>
 
-<style>
-    .supported-filters {
-        white-space: nowrap;
-    }
-</style>
+<?= createDocumentationFromFile('../javascript-grid-filter-provided/providedFilters.json', 'filterParams'); ?>
 
-<table class="reference">
-    <tr>
-        <th>Parameter</th>
-        <th>Description</th>
-        <th>Supported Filters</th>
-    </tr>
-    <tr>
-        <td class="reference__name"><code>applyButton<br/>clearButton<br/>resetButton<br/>debounceMs<br/>newRowsAction</code></td>
-        <td>See <a href="../javascript-grid-filter-provided/#providedFilterParams">Provided Filter Params</a>.</td>
-        <td class="supported-filters">Text, Number, Date</td>
-    </tr>
-    <tr>
-        <td class="reference__name"><code>filterOptions</code></td>
-        <td>
-            Which <a href="#filterOptions">Filter Options</a> to present to the user.
-        </td>
-        <td class="supported-filters">Text, Number, Date</td>
-    </tr>
-    <tr>
-        <td class="reference__name"><code>defaultOption</code></td>
-        <td>
-            The default <a href="#filterOptions">Filter Options</a> to be selected.
-        </td>
-        <td class="supported-filters">Text, Number, Date</td>
-    </tr>
-    <tr>
-        <td class="reference__name"><code>suppressAndOrCondition</code></td>
-        <td>
-            If <code>true</code>, the filter will only offer Condition 1.
-        </td>
-        <td class="supported-filters">Text, Number, Date</td>
-    </tr>
-    <tr>
-        <td class="reference__name"><code>textCustomComparator</code></td>
-        <td>
-            Used to override how to filter based on the user input. See <code>textCustomComparator</code> section below.
-        </td>
-        <td class="supported-filters">Text</td>
-    </tr>
-    <tr>
-        <td class="reference__name"><code>caseSensitive</code></td>
-        <td>
-            Set to <code>true</code> to make text filtering case-sensitive. By default the filtering will be case-insensitive.
-        </td>
-        <td class="supported-filters">Text</td>
-    </tr>
-    <tr>
-        <td class="reference__name"><code>textFormatter</code></td>
-        <td>
-            Formats the text before applying the filter compare logic. Useful for example if substituting
-            accented characters, or if you want to do case-sensitive filtering.
-        </td>
-        <td class="supported-filters">Text</td>
-    </tr>
-    <tr>
-        <td class="reference__name"><code>inRangeInclusive</code></td>
-        <td>
-            If <code>true</code>, the <code>'inRange'</code> filter option will include values equal to the start and end of the range.
-        </td>
-        <td class="supported-filters">Number, Date</td>
-    </tr>
-    <tr>
-        <td class="reference__name"><code>includeBlanksInEquals</code></td>
-        <td>
-            If <code>true</code>, blank (<code>null</code> or <code>undefined</code>) values will pass the <code>'equals'</code> filter option.
-        </td>
-        <td class="supported-filters">Number, Date</td>
-    </tr>
-    <tr>
-        <td class="reference__name"><code>includeBlanksInLessThan</code></td>
-        <td>
-            If <code>true</code>, blank (<code>null</code> or <code>undefined</code>) values will pass the <code>'lessThan'</code> and <code>'lessThanOrEqual'</code> filter options.
-        </td>
-        <td class="supported-filters">Number, Date</td>
-    </tr>
-    <tr>
-        <td class="reference__name"><code>includeBlanksInGreaterThan</code></td>
-        <td>
-            If <code>true</code> then blank (<code>null</code> or <code>undefined</code>) values will pass the <code>'greaterThan'</code> and <code>'greaterThanOrEqual'</code> filter options.
-        </td>
-        <td class="supported-filters">Number, Date</td>
-    </tr>
-    <tr>
-        <td class="reference__name"><code>comparator</code></td>
-        <td>
-            Needed if the data for this column are not native JS Date objects.
-        </td>
-        <td class="supported-filters">Date</td>
-    </tr>
-    <tr>
-        <td class="reference__name"><code>browserDatePicker</code></td>
-        <td>
-            This is only used if a date component is not provided. By default the
-            grid will use the browser date picker in Chrome and Firefox and a plain text box for all other browsers
-            (this is because Chrome and Firefox are the only current browsers providing a decent out-of-the-box date picker).
-            If this property is set to <code>true</code>, the browser date picker will be used regardless of the browser
-            type. If set to <code>false</code>, a plain text box will be used for all browsers.
-        </td>
-        <td class="supported-filters">Date</td>
-    </tr>
-</table>
+<p>
+    In addition, the following parameters are also available, depending on the type of filter being used:
+</p>
+
+<?= createDocumentationFromFile('simpleFilters.json', 'filterParams'); ?>
 
 <h2 id="filterOptions">Filter Options</h2>
 
@@ -517,14 +417,14 @@ SNIPPET
 </p>
 
 <?= createSnippet(<<<SNIPPET
-export interface IFilterOptionDef {
+interface IFilterOptionDef {
     displayKey: string;
     displayName: string;
     test: (filterValue: any, cellValue: any) => boolean;
     hideFilterInput?: boolean;
 }
 SNIPPET
-) ?>
+, 'ts') ?>
 
 <p>
     The <code>displayKey</code> should contain a unique key value that doesn't clash with the built-in filter keys.
@@ -580,7 +480,7 @@ SNIPPET
 
 <ul class="content">
     <li>The 'Athlete' column contains two custom filter options: <code>Starts with "A"</code> and
-        <code>Starts with "B"</code>. Both these options take no text filter input.
+        <code>Starts with "N"</code>. Both these options take no text filter input.
     </li>
     <li>The 'Age' column contains three custom filter options: <code>evenNumbers</code>, <code>oddNumbers</code> and
         <code>blanks</code>. It also uses the built-in <code>'empty'</code> filter along with <code>suppressAndOrCondition=true</code>.

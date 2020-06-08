@@ -79,12 +79,14 @@ export class TabbedChartMenu extends Component {
         eWrapperDiv.appendChild(comp.getGui());
 
         const titleEl = document.createElement('div');
-        titleEl.innerText = this.chartTranslator.translate(title);
+        const translatedTitle = this.chartTranslator.translate(title);
+        titleEl.innerText = translatedTitle;
 
         return {
             comp,
             tab: {
                 title: titleEl,
+                titleLabel: translatedTitle,
                 bodyPromise: Promise.resolve(eWrapperDiv),
                 name
             }

@@ -40,7 +40,7 @@ import { ModuleRegistry } from '../modules/moduleRegistry';
 import { ModuleNames } from '../modules/moduleNames';
 import { UndoRedoService } from '../undoRedo/undoRedoService';
 import { ColumnController } from '../columnController/columnController';
-import { HeaderController } from '../headerRendering/header/headerController';
+import { HeaderNavigationService } from '../headerRendering/header/headerNavigationService';
 import { _ } from "../utils";
 
 // in the html below, it is important that there are no white space between some of the divs, as if there is white space,
@@ -125,7 +125,7 @@ export class GridPanel extends Component {
     @Autowired('resizeObserverService') private resizeObserverService: ResizeObserverService;
     @Autowired('undoRedoService') private undoRedoService: UndoRedoService;
     @Autowired('columnController') private columnController: ColumnController;
-    @Autowired('headerController') private headerController: HeaderController;
+    @Autowired('headerNavigationService') private headerNavigationService: HeaderNavigationService;
 
     @Optional('rangeController') private rangeController: IRangeController;
     @Optional('contextMenuFactory') private contextMenuFactory: IContextMenuFactory;
@@ -275,6 +275,7 @@ export class GridPanel extends Component {
         this.alignedGridsService.registerGridComp(this);
         this.headerRootComp.registerGridComp(this);
         this.navigationService.registerGridComp(this);
+        this.headerNavigationService.registerGridComp(this);
         this.heightScaler.registerGridComp(this);
         this.autoHeightCalculator.registerGridComp(this);
         this.columnAnimationService.registerGridComp(this);
@@ -457,6 +458,9 @@ export class GridPanel extends Component {
     }
 
     private addMouseListeners(): void {
+
+        if (this.gridOptionsWrapper.isSuppressCellMouseEvents()) { return; }
+
         const eventNames = ['click', 'mousedown', 'dblclick', 'contextmenu', 'mouseover', 'mouseout'];
 
         eventNames.forEach(eventName => {
@@ -912,7 +916,7 @@ export class GridPanel extends Component {
     }
 
     public updateRowCount(): void {
-        const headerCount = this.headerController.getHeaderRowCount();
+        const headerCount = this.headerNavigationService.getHeaderRowCount();
         const rowCount = this.paginationProxy.getRowCount();
         const total = (headerCount + rowCount).toString();
 
@@ -1383,17 +1387,29 @@ export class GridPanel extends Component {
 
     private onBodyHorizontalScroll(eSource: HTMLElement): void {
         const { scrollWidth, clientWidth } = this.eCenterViewport;
+
         // in chrome, fractions can be in the scroll left, eg 250.342234 - which messes up our 'scrollWentPastBounds'
         // formula. so we floor it to allow the formula to work.
-        const scrollLeft = Math.floor(_.getScrollLeft(eSource, this.enableRtl));
+        let scrollLeft = Math.floor(_.getScrollLeft(eSource, this.enableRtl));
 
         // touch devices allow elastic scroll - which temporally scrolls the panel outside of the viewport
         // (eg user uses touch to go to the left of the grid, but drags past the left, the rows will actually
         // scroll past the left until the user releases the mouse). when this happens, we want ignore the scroll,
         // as otherwise it was causing the rows and header to flicker.
-        const scrollWentPastBounds = scrollLeft < 0 || (scrollLeft + clientWidth > scrollWidth);
 
-        if (scrollWentPastBounds) { return; }
+        // sometimes when scrolling, we got values that extended the maximum scroll allowed. we used to
+        // ignore these scrolls. problem is the max scroll position could be skipped (eg the previous scroll event
+        // could be 10px before the max position, and then current scroll event could be 20px after the max position).
+        // if we just ignored the last event, we would be setting the scroll to 10px before the max position, when in
+        // actual fact the user has exceeded the max scroll and thus scroll should be set to the max.
+
+        const minScroll = 0;
+        const maxScroll = scrollWidth - clientWidth;
+        if (scrollLeft < minScroll) {
+            scrollLeft = minScroll;
+        } else if (scrollLeft > maxScroll) {
+            scrollLeft = maxScroll;
+        }
 
         this.doHorizontalScroll(scrollLeft);
         this.resetLastHorizontalScrollElementDebounced();

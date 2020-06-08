@@ -66,7 +66,7 @@ gridOptions = {
 
 <p>
     In order for the Detail Grid's API to be available via the Master Grid as explained in
-    <a href="../javascript-grid-master-detail-custom-detail/#accessing-detail-grids">Accessing Detail Grids</a>,
+    <a href="../javascript-grid-master-detail-detail-grids/#accessing-detail-grids">Accessing Detail Grids</a>,
     a Grid Info object needs to be registered with the Master Grid.
 </p>
 

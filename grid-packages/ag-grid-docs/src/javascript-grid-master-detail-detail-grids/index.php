@@ -21,10 +21,13 @@ include '../documentation-main/documentation_header.php';
 </p>
 
 <p>
+    This page explains how to configure the Detail Cell Renderer using the <code>detailCellRendererParams</code> Grid
+    Option and how you can interact with the Detail Grids using the Master Grid's API.
+</p>
+
+<p>
     The Detail Grid fits inside one row of the Master Grid without using any of the Master Grid's columns.
     It is the job of the Detail Cell Renderer to draw the Detail Grid into the provided detail row.
-    This page explains how to configure the Detail Cell Renderer using the grid property
-    <code>detailCellRendererParams</code> and how you can interact with the Detail Grids using the Master Grid's API.
 </p>
 
 <h2 id="detail-grid-options">Detail Grid Definition</h2>
@@ -44,7 +47,8 @@ include '../documentation-main/documentation_header.php';
 <p>
     The example below shows configuring a Detail Grid with some additional Grid Options set. Note the following:
 </p>
-<ul>
+
+<ul class="content">
     <li>
         The <code>detailGridOptions</code> is provided inside the <code>detailCellRendererParams</code>.
     </li>
@@ -74,7 +78,8 @@ include '../documentation-main/documentation_header.php';
     Row data is provided to the Detail Grid by implementing the <code>getDetailRowData</code> callback of the
     Detail Cell Renderer Params. The interface of this callback is as follows:
 </p>
-<snippet>
+
+<?= createSnippet(<<<SNIPPET
 function getDetailRowData(params: GetDetailRowDataParams): void;
 
 interface GetDetailRowDataParams {
@@ -85,11 +90,12 @@ interface GetDetailRowDataParams {
     // success callback, pass the rows back the grid asked for
     successCallback(rowData: any[]): void;
 }
-</snippet>
+SNIPPET
+) ?>
 
 <p>
-    The <code>successCallback</code> can be called synchronously immediately (typical if the data is already available) or
-    asynchronously sometime in the future (typical if the data needs to be fetched remotely).
+    The <code>successCallback</code> can be called immediately in a synchronous fashion (typical if the data is already available) or
+    asynchronously at a later time (typical if the data needs to be fetched remotely).
 </p>
 
 <p>
@@ -117,8 +123,10 @@ interface GetDetailRowDataParams {
 
 <p>
     There will be many instances of Detail Grids within one Master Grid, as each time you expand a Master Row,
-    a new instance of Detail Grid is created. It is possible to dynamically create Detail Cell Renderer Params
+    a new Detail Grid instance is created. It is possible to dynamically create Detail Cell Renderer Params
     so each Detail Grid gets it's own version of the params, allowing each Detail Grid to be configured differently.
+</p>
+<p>
     This is done by providing a function to <code>detailCellRendererParams</code> that in turn returns the params to
     use for that Detail Grid.
 </p>
@@ -150,15 +158,16 @@ interface GetDetailRowDataParams {
 </p>
 
 <p>
-    If providing an alternative template, you <b>must</b> contain an element with attribute
-    <code>ref="eDetailGrid"</code>. This tells the grid where to place the Detail Grid.
+    If providing an alternative template, you <b>must</b> include an element with <code>ref="eDetailGrid"</code>. This
+    tells the grid where to place the Detail Grid.
 </p>
 
 <p>
     For comparison, the default template is as follows. It is simplistic, only intended for allowing
     spacing around the Detail Grid.
 </p>
-<snippet>
+
+<?= createSnippet(<<<SNIPPET
 // for when fixed height (normal)
 &lt;div class="ag-details-row ag-details-row-fixed-height">
     &lt;div ref="eDetailGrid" class="ag-details-grid ag-details-grid-fixed-height"/>
@@ -168,11 +177,12 @@ interface GetDetailRowDataParams {
 &lt;div class="ag-details-row ag-details-row-auto-height">
     &lt;div ref="eDetailGrid" class="ag-details-grid ag-details-grid-auto-height"/>
 &lt;/div>
-</snippet>
+SNIPPET
+) ?>
 
 <p>
     To change the Detail Template, set the <code>template</code> inside the Detail Cell Renderer Params.
-    The Detail Template can be a String of Function depending on whether you want to provide the template
+    The Detail Template can be a String or Function depending on whether you want to provide the template
     statically or dynamically:
 </p>
 
@@ -182,7 +192,7 @@ interface GetDetailRowDataParams {
         The same fixed template is used for each row. This is useful for styling
         or generic information.
 
-        <snippet>
+<?= createSnippet(<<<SNIPPET
 // example override using string template
 detailCellRendererParams: {
     template:
@@ -192,14 +202,15 @@ detailCellRendererParams: {
         '&lt;/div>'
     }
 }
-        </snippet>
+SNIPPET
+) ?>
+
     </li>
     <li>
-        <b>Function Template</b> - Called each time a detail row is shown so can
-        dynamically provide a template based on the data. Useful for displaying information
-        specific to the Detail Grid dataset
+        <b>Function Template</b> - Called each time a detail row is shown to dynamically provide a template based on
+        the data. Useful for displaying information specific to the Detail Grid dataset
 
-        <snippet>
+<?= createSnippet(<<<SNIPPET
 // override using template callback
 detailCellRendererParams: {
     template: function (params) {
@@ -210,7 +221,8 @@ detailCellRendererParams: {
             + '&lt;/div>';
     }
 }
-        </snippet>
+SNIPPET
+) ?>
     </li>
 </ul>
 
@@ -224,7 +236,7 @@ detailCellRendererParams: {
     In this first example, the template is set statically. Note the following:
 </p>
 
-<ul>
+<ul class="content">
     <li>All Detail Grid's have a spacing with blue background.</li>
     <li>All Detail Grid's have the same static title 'Call Details'.</li>
 </ul>
@@ -237,7 +249,7 @@ detailCellRendererParams: {
     In this second example, the template is set dynamically. Note the following:
 </p>
 
-<ul>
+<ul class="content">
     <li>All Detail Grid's have a spacing with blue background.</li>
     <li>All Detail Grid's have the a different dynamic title including the persons name eg 'Mila Smith'.</li>
 </ul>
@@ -258,7 +270,7 @@ detailCellRendererParams: {
     Info is as follows:
 </p>
 
-<snippet>
+<?= createSnippet(<<<SNIPPET
 interface DetailGridInfo {
     // id of the detail grid, the format is detail_&lt;row-id>
     // where row-id is the id of the parent row.
@@ -270,25 +282,27 @@ interface DetailGridInfo {
     // the column API of the detail grid
     columnApi: ColumnApi;
 }
-</snippet>
+SNIPPET
+) ?>
 
 <p>
     The Detail Grid Info objects are accessed via the Master Grid's API via the following
     methods:
 </p>
 
-<ul>
+<ul class="content">
     <li>
         <p>
             <code>getDetailGridInfo(id)</code>: Returns back the Detail Grid Info for the Detail Grid
             with the provided ID.
         </p>
 
-        <snippet>
+<?= createSnippet(<<<SNIPPET
 // lookup a specific DetailGridInfo by id, and then call stopEditing() on it
 var detailGridInfo = masterGridOptions.api.getDetailGridInfo('detail_someId');
 detailGridInfo.api.flashCells();
-        </snippet>
+SNIPPET
+) ?>
 
         <p>
             The grid generates ID's for detail grids by prefixing the parent row's ID with "detail_".
@@ -302,18 +316,19 @@ detailGridInfo.api.flashCells();
             of a Detail Grid.
         </p>
 
-        <snippet>
+<?= createSnippet(<<<SNIPPET
 // iterate over all DetailGridInfo's, and call stopEditing() on each one
 masterGridOptions.api.forEachDetailGridInfo(function(detailGridInfo) {
     detailGridInfo.api.flashCells();
 });
-        </snippet>
+SNIPPET
+) ?>
 
     </li>
 </ul>
 
 <p>
-    This example shows flashing cells on the details grids by using the Grid API <code>flashCells()</code>.
+    The following example shows flashing cells on the detail grids by using the Grid API <code>flashCells()</code>.
     Note the following:
 </p>
 

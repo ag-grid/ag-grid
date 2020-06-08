@@ -22,6 +22,7 @@ import {
 import { SetFilterModelValuesType, SetValueModel } from './setValueModel';
 import { SetFilterListItem } from './setFilterListItem';
 import { SetFilterModel } from './setFilterModel';
+import { ISetFilterLocaleText, DEFAULT_LOCALE_TEXT } from './localeText';
 
 export class SetFilter extends ProvidedFilter {
     private valueModel: SetValueModel;
@@ -29,8 +30,10 @@ export class SetFilter extends ProvidedFilter {
     @RefSelector('eSelectAll') private eSelectAll: AgCheckbox;
     @RefSelector('eSelectAllLabel') private eSelectAllLabel: HTMLElement;
     @RefSelector('eMiniFilter') private eMiniFilter: AgInputTextField;
-    @RefSelector('eFilterLoading') private eFilterLoading: HTMLInputElement;
+    @RefSelector('eFilterLoading') private eFilterLoading: HTMLElement;
     @RefSelector('eSetFilterList') private eSetFilterList: HTMLElement;
+    @RefSelector('eFilterNoMatches') private eNoMatches: HTMLElement;
+    @RefSelector('eSelectAllContainer') private eSelectAllContainer: HTMLElement;
 
     @Autowired('valueFormatterService') private valueFormatterService: ValueFormatterService;
     @Autowired('focusController') private focusController: FocusController;
@@ -59,11 +62,9 @@ export class SetFilter extends ProvidedFilter {
     }
 
     protected createBodyTemplate(): string {
-        const translate = this.gridOptionsWrapper.getLocaleTextFunc();
-
         return /* html */`
-            <div ref="eFilterLoading" class="ag-filter-loading ag-hidden">${translate('loadingOoo', 'Loading...')}</div>
             <div>
+                <div ref="eFilterLoading" class="ag-filter-loading ag-hidden">${this.translate('loadingOoo')}</div>
                 <div class="ag-filter-header-container" role="presentation">
                     <ag-input-text-field class="ag-mini-filter" ref="eMiniFilter"></ag-input-text-field>
                     <label ref="eSelectAllContainer" class="ag-set-filter-item ag-set-filter-select-all">
@@ -71,6 +72,7 @@ export class SetFilter extends ProvidedFilter {
                         <span ref="eSelectAllLabel" class="ag-set-filter-item-value"></span>
                     </label>
                 </div>
+                <div ref="eFilterNoMatches" class="ag-filter-no-matches ag-hidden">${this.translate('noMatches')}</div>
                 <div ref="eSetFilterList" class="ag-set-filter-list" role="presentation"></div>
             </div>`;
     }
@@ -203,14 +205,15 @@ export class SetFilter extends ProvidedFilter {
         this.setFilterParams = params;
 
         this.valueModel = new SetValueModel(
-            params.colDef,
             params.rowModel,
+            params.colDef,
+            params.column,
             params.valueGetter,
             params.doesRowPassOtherFilter,
             params.suppressSorting,
             loading => this.setLoading(loading),
             this.valueFormatterService,
-            params.column
+            key => this.translate(key),
         );
 
         this.initialiseFilterBodyUi();
@@ -307,7 +310,11 @@ export class SetFilter extends ProvidedFilter {
         });
     }
 
+    /** @deprecated since version 23.2. The loading screen is displayed automatically when the set filter is retrieving values. */
     public setLoading(loading: boolean): void {
+        const message = 'ag-Grid: since version 23.2, setLoading has been deprecated. The loading screen is displayed automatically when the set filter is retrieving values.';
+        _.doOnce(() => console.warn(message), 'setFilter.setLoading');
+
         _.setDisplayed(this.eFilterLoading, loading);
     }
 
@@ -336,7 +343,7 @@ export class SetFilter extends ProvidedFilter {
     }
 
     private createSetListItem(value: any): Component {
-        const listItem = this.createBean(new SetFilterListItem(value, this.setFilterParams));
+        const listItem = this.createBean(new SetFilterListItem(value, this.setFilterParams, key => this.translate(key)));
         const selected = this.valueModel.isValueSelected(value);
 
         listItem.setSelected(selected);
@@ -359,12 +366,10 @@ export class SetFilter extends ProvidedFilter {
     }
 
     private initSelectAll() {
-        const eSelectAllContainer = this.getRefElement('eSelectAllContainer');
-
         if (this.setFilterParams.suppressSelectAll) {
-            _.setDisplayed(eSelectAllContainer, false);
+            _.setDisplayed(this.eSelectAllContainer, false);
         } else {
-            this.eSelectAll.onValueChange(() => { this.onSelectAll(); });
+            this.eSelectAll.onValueChange(() => this.onSelectAll());
         }
     }
 
@@ -379,10 +384,9 @@ export class SetFilter extends ProvidedFilter {
             this.resetUiToActiveModel();
         }
 
-        const translate = this.gridOptionsWrapper.getLocaleTextFunc();
         const { eMiniFilter } = this;
 
-        eMiniFilter.setInputPlaceholder(translate('searchOoo', 'Search...'));
+        eMiniFilter.setInputPlaceholder(this.translate('searchOoo'));
         eMiniFilter.getFocusableElement().focus();
     }
 
@@ -512,22 +516,26 @@ export class SetFilter extends ProvidedFilter {
         } else {
             this.refresh();
         }
+
+        const hideResults = this.valueModel.getMiniFilter() != null && this.valueModel.getDisplayedValueCount() < 1;
+
+        _.setDisplayed(this.eNoMatches, hideResults);
+
+        if (!this.setFilterParams.suppressSelectAll) {
+            _.setDisplayed(this.eSelectAllContainer, !hideResults);
+        }
     }
 
     private resetUiToActiveModel(): void {
         this.eMiniFilter.setValue(null, true);
         this.valueModel.setMiniFilter(null);
-        this.setModelIntoUi(this.getModel() as SetFilterModel).then(() => {
-            this.refresh();
-            this.onUiChanged(false, 'prevent');
-        });
+        this.setModelIntoUi(this.getModel() as SetFilterModel).then(() => this.onUiChanged(false, 'prevent'));
     }
 
     private updateSelectAllLabel() {
-        const translate = this.gridOptionsWrapper.getLocaleTextFunc();
         const label = this.valueModel.getMiniFilter() == null || !this.setFilterParams.excelMode ?
-            translate('selectAll', 'Select All') :
-            translate('selectAllSearchResults', 'Select All Search Results');
+            this.translate('selectAll') :
+            this.translate('selectAllSearchResults');
 
         this.eSelectAllLabel.innerText = `(${label})`;
     }
@@ -587,22 +595,38 @@ export class SetFilter extends ProvidedFilter {
         return this.valueModel.getMiniFilter();
     }
 
+    /** @deprecated since version 23.2. Please use setModel instead. */
     public selectEverything() {
+        const message = 'ag-Grid: since version 23.2, selectEverything has been deprecated. Please use setModel instead.';
+        _.doOnce(() => console.warn(message), 'setFilter.selectEverything');
+
         this.valueModel.selectAllMatchingMiniFilter();
         this.refresh();
     }
 
+    /** @deprecated since version 23.2. Please use setModel instead. */
     public selectNothing() {
+        const message = 'ag-Grid: since version 23.2, selectNothing has been deprecated. Please use setModel instead.';
+        _.doOnce(() => console.warn(message), 'setFilter.selectNothing');
+
         this.valueModel.deselectAllMatchingMiniFilter();
         this.refresh();
     }
 
+    /** @deprecated since version 23.2. Please use setModel instead. */
     public unselectValue(value: string) {
+        const message = 'ag-Grid: since version 23.2, unselectValue has been deprecated. Please use setModel instead.';
+        _.doOnce(() => console.warn(message), 'setFilter.unselectValue');
+
         this.valueModel.deselectValue(value);
         this.refresh();
     }
 
+    /** @deprecated since version 23.2. Please use setModel instead. */
     public selectValue(value: string) {
+        const message = 'ag-Grid: since version 23.2, selectValue has been deprecated. Please use setModel instead.';
+        _.doOnce(() => console.warn(message), 'setFilter.selectValue');
+
         this.valueModel.selectValue(value);
         this.refresh();
     }
@@ -613,24 +637,48 @@ export class SetFilter extends ProvidedFilter {
         this.updateSelectAllLabel();
     }
 
+    /** @deprecated since version 23.2. Please use getModel instead. */
     public isValueSelected(value: string) {
+        const message = 'ag-Grid: since version 23.2, isValueSelected has been deprecated. Please use getModel instead.';
+        _.doOnce(() => console.warn(message), 'setFilter.isValueSelected');
+
         return this.valueModel.isValueSelected(value);
     }
 
+    /** @deprecated since version 23.2. Please use getModel instead. */
     public isEverythingSelected() {
+        const message = 'ag-Grid: since version 23.2, isEverythingSelected has been deprecated. Please use getModel instead.';
+        _.doOnce(() => console.warn(message), 'setFilter.isEverythingSelected');
+
         return this.valueModel.isEverythingVisibleSelected();
     }
 
+    /** @deprecated since version 23.2. Please use getModel instead. */
     public isNothingSelected() {
+        const message = 'ag-Grid: since version 23.2, isNothingSelected has been deprecated. Please use getModel instead.';
+        _.doOnce(() => console.warn(message), 'setFilter.isNothingSelected');
+
         return this.valueModel.isNothingVisibleSelected();
     }
 
+    /** @deprecated since version 23.2. Please use getValues instead. */
     public getUniqueValueCount() {
+        const message = 'ag-Grid: since version 23.2, getUniqueValueCount has been deprecated. Please use getValues instead.';
+        _.doOnce(() => console.warn(message), 'setFilter.getUniqueValueCount');
+
         return this.valueModel.getUniqueValueCount();
     }
 
+    /** @deprecated since version 23.2. Please use getValues instead. */
     public getUniqueValue(index: any) {
+        const message = 'ag-Grid: since version 23.2, getUniqueValue has been deprecated. Please use getValues instead.';
+        _.doOnce(() => console.warn(message), 'setFilter.getUniqueValue');
+
         return this.valueModel.getUniqueValue(index);
+    }
+
+    public getValues(): string[] {
+        return this.valueModel.getValues();
     }
 
     public refreshVirtualList(): void {
@@ -640,6 +688,12 @@ export class SetFilter extends ProvidedFilter {
         else {
             this.virtualList.refresh();
         }
+    }
+
+    private translate(key: keyof ISetFilterLocaleText): string {
+        const translate = this.gridOptionsWrapper.getLocaleTextFunc();
+
+        return translate(key, DEFAULT_LOCALE_TEXT[key]);
     }
 }
 

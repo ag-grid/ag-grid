@@ -1,17 +1,16 @@
 import {
+    _,
     Autowired,
     Component,
     DetailGridInfo,
     Environment,
     Grid,
-    GridApi,
     GridOptions,
-    ICellRendererParams,
     ICellRenderer,
+    ICellRendererParams,
     RefSelector,
-    RowNode,
     ResizeObserverService,
-    _
+    RowNode
 } from "@ag-grid-community/core";
 
 export class DetailCellRenderer extends Component implements ICellRenderer {
@@ -25,10 +24,6 @@ export class DetailCellRenderer extends Component implements ICellRenderer {
     @RefSelector('eDetailGrid') private eDetailGrid: HTMLElement;
     @Autowired('resizeObserverService') private resizeObserverService: ResizeObserverService;
 
-    private static REFRESH_STRATEGY_ROWS = 'rows';
-    private static REFRESH_STRATEGY_EVERYTHING = 'everything';
-    private static REFRESH_STRATEGY_NOTHING = 'nothing';
-
     private detailGridOptions: GridOptions;
 
     private needRefresh = false;
@@ -36,58 +31,6 @@ export class DetailCellRenderer extends Component implements ICellRenderer {
     private params: IDetailCellRendererParams;
 
     private loadRowDataVersion = 0;
-
-    // this is a user component, and IComponent has "public destroy()" as part of the interface.
-    // so we need to override destroy() just to make the method public.
-    public destroy(): void {
-        super.destroy();
-    }
-
-    public refresh(): boolean {
-        const GET_GRID_TO_REFRESH = false;
-        const GET_GRID_TO_DO_NOTHING = true;
-
-        const refreshStrategy = this.getRefreshStrategy();
-
-        // if we return true, it means we pretend to the grid
-        // that we have refreshed, so refresh will never happen.
-        const doNotRefresh = !this.needRefresh || refreshStrategy===DetailCellRenderer.REFRESH_STRATEGY_NOTHING;
-        if (doNotRefresh) {
-            // we do nothing in this refresh method, and also tell the grid to do nothing
-            return GET_GRID_TO_DO_NOTHING;
-        }
-
-        // reset flag, so don't refresh again until more data changes.
-        this.needRefresh = false;
-
-        if (refreshStrategy===DetailCellRenderer.REFRESH_STRATEGY_EVERYTHING) {
-            // we want full refresh, so tell the grid to destroy and recreate this cell
-            return GET_GRID_TO_REFRESH;
-        } else {
-            // do the refresh here, and tell the grid to do nothing
-            this.loadRowData();
-            return GET_GRID_TO_DO_NOTHING;
-        }
-    }
-
-    private checkForDeprecations(): void {
-        if (this.params.suppressRefresh) {
-            console.warn(`ag-Grid: as of v23.2.0, cellRendererParams.suppressRefresh for Detail Cell Renderer is no longer used. Please set cellRendererParams.refreshStrategy = ${DetailCellRenderer.REFRESH_STRATEGY_NOTHING} instead.`);
-            this.params.refreshStrategy = DetailCellRenderer.REFRESH_STRATEGY_NOTHING;
-        }
-    }
-
-    private getRefreshStrategy(): string {
-        if (this.params.refreshStrategy===DetailCellRenderer.REFRESH_STRATEGY_NOTHING) {
-            return DetailCellRenderer.REFRESH_STRATEGY_NOTHING;
-        } else if (this.params.refreshStrategy===DetailCellRenderer.REFRESH_STRATEGY_EVERYTHING) {
-            return DetailCellRenderer.REFRESH_STRATEGY_EVERYTHING;
-        } else {
-            // this is the default, so no need to check explicitly, if it isn't the other two strategies,
-            // we always use this one.
-            return DetailCellRenderer.REFRESH_STRATEGY_ROWS;
-        }
-    }
 
     public init(params: IDetailCellRendererParams): void {
 
@@ -101,6 +44,7 @@ export class DetailCellRenderer extends Component implements ICellRenderer {
         this.params = params;
 
         this.checkForDeprecations();
+        this.ensureValidRefreshStrategy();
         this.selectAndSetTemplate();
 
         if (_.exists(this.eDetailGrid)) {
@@ -127,17 +71,75 @@ export class DetailCellRenderer extends Component implements ICellRenderer {
         this.setupAutoGridHeight();
     }
 
+    public refresh(): boolean {
+        const GET_GRID_TO_REFRESH = false;
+        const GET_GRID_TO_DO_NOTHING = true;
+
+        // if we return true, it means we pretend to the grid
+        // that we have refreshed, so refresh will never happen.
+        const doNotRefresh = !this.needRefresh || this.params.refreshStrategy === 'nothing';
+        if (doNotRefresh) {
+            // we do nothing in this refresh method, and also tell the grid to do nothing
+            return GET_GRID_TO_DO_NOTHING;
+        }
+
+        // reset flag, so don't refresh again until more data changes.
+        this.needRefresh = false;
+
+        if (this.params.refreshStrategy === 'everything') {
+            // we want full refresh, so tell the grid to destroy and recreate this cell
+            return GET_GRID_TO_REFRESH;
+        } else {
+            // do the refresh here, and tell the grid to do nothing
+            this.loadRowData();
+            return GET_GRID_TO_DO_NOTHING;
+        }
+    }
+
+    // this is a user component, and IComponent has "public destroy()" as part of the interface.
+    // so we need to override destroy() just to make the method public.
+    public destroy(): void {
+        super.destroy();
+    }
+
+    private checkForDeprecations(): void {
+        if (this.params.suppressRefresh) {
+            console.warn("ag-Grid: as of v23.2.0, cellRendererParams.suppressRefresh for Detail Cell Renderer is no " +
+                "longer used. Please set cellRendererParams.refreshStrategy = 'nothing' instead.");
+            this.params.refreshStrategy = 'nothing';
+        }
+    }
+
+    private ensureValidRefreshStrategy(): void {
+        switch (this.params.refreshStrategy) {
+            case 'rows': return;
+            case 'nothing': return;
+            case 'everything': return;
+        }
+
+        // check for incorrectly supplied refresh strategy
+        if (this.params.refreshStrategy) {
+            console.warn("ag-Grid: invalid cellRendererParams.refreshStrategy = '" + this.params.refreshStrategy +
+                "' supplied, defaulting to refreshStrategy = 'rows'.");
+        }
+
+        // use default strategy
+        this.params.refreshStrategy = 'rows';
+    }
+
     private setupAutoGridHeight(): void {
 
-        if (!this.params.autoHeight) { return; }
+        if (!this.params.autoHeight) {
+            return;
+        }
 
         const gridApi = this.params.api;
         const onRowHeightChangedDebounced = _.debounce(gridApi.onRowHeightChanged.bind(gridApi), 20);
 
-        const checkRowSizeFunc = ()=> {
+        const checkRowSizeFunc = () => {
             const clientHeight = this.getGui().clientHeight;
 
-            if (clientHeight!=null) {
+            if (clientHeight != null) {
                 this.params.node.setRowHeight(clientHeight);
                 onRowHeightChangedDebounced();
             }
@@ -153,7 +155,7 @@ export class DetailCellRenderer extends Component implements ICellRenderer {
     private addThemeToDetailGrid(): void {
         // this is needed by environment service of the child grid, the class needs to be on
         // the grid div itself - the browser's CSS on the other hand just inherits from the parent grid theme.
-        const { theme } = this.environment.getTheme();
+        const {theme} = this.environment.getTheme();
         if (theme) {
             _.addCssClass(this.eDetailGrid, theme);
         }
@@ -262,7 +264,7 @@ export class DetailCellRenderer extends Component implements ICellRenderer {
             return;
         }
 
-        const successCallback = (rowData: any[])=> {
+        const successCallback = (rowData: any[]) => {
             const mostRecentCall = this.loadRowDataVersion === versionThisCall;
             if (mostRecentCall) {
                 this.setRowData(rowData);
@@ -290,7 +292,7 @@ export class DetailCellRenderer extends Component implements ICellRenderer {
 export interface IDetailCellRendererParams extends ICellRendererParams {
     detailGridOptions: GridOptions;
     getDetailRowData: GetDetailRowData;
-    refreshStrategy: string;
+    refreshStrategy: 'rows' | 'everything' | 'nothing';
     agGridReact: any;
     frameworkComponentWrapper: any;
     $compile: any;

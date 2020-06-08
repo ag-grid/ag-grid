@@ -1,46 +1,13 @@
 {
     "api": {
-        "setMiniFilter(newMiniFilter)": {
-            "description": "Sets the filter at the top of the filter (the 'quick search' in the popup)."
+        "getValues()": {
+            "description": "Returns the full list of unique values used by the Set Filter."
+        },
+        "setMiniFilter(text)": {
+            "description": "Sets the text in the Mini Filter at the top of the filter (the 'quick search' in the popup)."
         },
         "getMiniFilter()": {
-            "description": "Gets the mini filter text."
-        },
-        "selectEverything()": {
-            "description": "Selects everything."
-        },
-        "selectNothing()": {
-            "description": "Clears the selection."
-        },
-        "isFilterActive()": {
-            "description": "Returns <code>true</code> if anything except 'everything selected'."
-        },
-        "unselectValue(value)": {
-            "description": "Unselects a value."
-        },
-        "selectValue(value)": {
-            "description": "Selects a value."
-        },
-        "isValueSelected(value)": {
-            "description": "Returns <code>true</code> if a value is selected."
-        },
-        "isEverythingSelected()": {
-            "description": "Returns <code>true</code> if everything selected (inverse of <code>isFilterActive()</code>)."
-        },
-        "isNothingSelected()": {
-            "description": "Returns <code>true</code> if nothing is selected."
-        },
-        "getUniqueValueCount()": {
-            "description": "Returns number of unique values. Useful for iterating with <code>getUniqueValue(index)</code>."
-        },
-        "getUniqueValue(index)": {
-            "description": "Returns the unique value at the given <code>index</code>."
-        },
-        "setFilterValues(arrayOfStringOptions)": {
-            "description": "Useful if you want to change the available options on the fly."
-        },
-        "resetFilterValues()": {
-            "description": "Configures the set filter to use values from the grid, rather than any values that have been provided directly to the filter. Useful if you want to rebuild the filter options based on the underlying data."
+            "description": "Gets the Mini Filter text."
         },
         "refreshFilterValues()": {
             "description": "Refreshes the values shown in the filter from the original source. For example, if a callback was provided, the callback will be executed again and the filter will refresh using the values returned.",
@@ -49,11 +16,11 @@
                 "url": "../javascript-grid-filter-set-filter-list/#refreshing-values"
             }
         },
-        "setLoading(loading)": {
-            "description": "Useful if you want to show/hide the loading overlay in the set filter."
+        "setFilterValues(values[])": {
+            "description": "Sets the values used in the Set Filter on the fly."
         },
-        "applyModel()": {
-            "description": "Applies the model from the UI."
+        "resetFilterValues()": {
+            "description": "Resets the Set Filter to use values from the grid, rather than any values that have been provided directly."
         }
     }
 }

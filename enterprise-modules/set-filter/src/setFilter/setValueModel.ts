@@ -17,6 +17,7 @@ import {
     EventService,
     RowNode
 } from '@ag-grid-community/core';
+import { ISetFilterLocaleText } from './localeText';
 
 export enum SetFilterModelValuesType {
     PROVIDED_LIST, PROVIDED_CALLBACK, TAKEN_FROM_GRID_VALUES
@@ -55,14 +56,15 @@ export class SetValueModel implements IEventEmitter {
     private selectedValues = new Set<string>();
 
     constructor(
-        private readonly colDef: ColDef,
         rowModel: IRowModel,
+        private readonly colDef: ColDef,
+        private readonly column: Column,
         private readonly valueGetter: (node: RowNode) => any,
         private readonly doesRowPassOtherFilters: (node: RowNode) => boolean,
         private readonly suppressSorting: boolean,
         private readonly setIsLoading: (loading: boolean) => void,
         private readonly valueFormatterService: ValueFormatterService,
-        private readonly column: Column
+        private readonly translate: (key: keyof ISetFilterLocaleText) => string
     ) {
         if (rowModel.getType() === Constants.ROW_MODEL_TYPE_CLIENT_SIDE) {
             this.clientSideRowModel = rowModel as IClientSideRowModel;
@@ -294,13 +296,19 @@ export class SetValueModel implements IEventEmitter {
             valueToCheck != null && valueToCheck.toUpperCase().indexOf(formattedFilterText) >= 0;
 
         this.availableValues.forEach(value => {
-            if (value == null) { return; }
+            if (value == null) {
+                if (this.filterParams.excelMode && matchesFilter(`(${this.translate('blanks')})`)) {
+                    this.displayedValues.push(value);
+                }
+            } else {
+                const textFormatterValue = this.formatter(value);
 
-            const displayedValue = this.formatter(value);
-            const formattedValue = this.valueFormatterService.formatValue(this.column, null, null, displayedValue);
+                // TODO: should this be applying the text formatter *after* the value formatter?
+                const valueFormatterValue = this.valueFormatterService.formatValue(this.column, null, null, textFormatterValue);
 
-            if (matchesFilter(displayedValue) || matchesFilter(formattedValue)) {
-                this.displayedValues.push(value);
+                if (matchesFilter(textFormatterValue) || matchesFilter(valueFormatterValue)) {
+                    this.displayedValues.push(value);
+                }
             }
         });
     }
@@ -325,6 +333,10 @@ export class SetValueModel implements IEventEmitter {
 
     public getUniqueValue(index: any): string | null {
         return this.allValues[index];
+    }
+
+    public getValues(): string[] {
+        return this.allValues.slice();
     }
 
     public selectAllMatchingMiniFilter(clearExistingSelection = false): void {

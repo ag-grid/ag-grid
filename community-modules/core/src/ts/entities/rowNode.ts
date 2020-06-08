@@ -47,6 +47,10 @@ export interface CellChangedEvent extends RowNodeEvent {
 
 export class RowNode implements IEventEmitter {
 
+    public static ID_PREFIX_ROW_GROUP = 'row-group-';
+    public static ID_PREFIX_TOP_PINNED = 't-';
+    public static ID_PREFIX_BOTTOM_PINNED = 'b-';
+
     private static OBJECT_ID_SEQUENCE = 0;
 
     public static EVENT_ROW_SELECTED = 'rowSelected';
@@ -328,6 +332,11 @@ export class RowNode implements IEventEmitter {
             // this is important for virtual pagination and viewport, where empty rows exist.
             if (this.data) {
                 this.id = getRowNodeId(this.data);
+                // make sure id provided doesn't start with 'row-group-' as this is reserved. also check that
+                // it has 'startsWith' in case the user provided a number.
+                if (this.id && this.id.startsWith && this.id.startsWith(RowNode.ID_PREFIX_ROW_GROUP)) {
+                    console.error(`ag-Grid: Row ID's cannot start with ${RowNode.ID_PREFIX_ROW_GROUP}, this is a reserved prefix for ag-Grid's row grouping feature.`);
+                }
             } else {
                 // this can happen if user has set blank into the rowNode after the row previously
                 // having data. this happens in virtual page row model, when data is delete and
@@ -470,7 +479,10 @@ export class RowNode implements IEventEmitter {
             this.eventService.dispatchEvent(this.createLocalRowEvent(RowNode.EVENT_EXPANDED_CHANGED));
         }
 
-        const event: RowGroupOpenedEvent = this.createGlobalRowEvent(Events.EVENT_ROW_GROUP_OPENED);
+        const event = _.assign({}, this.createGlobalRowEvent(Events.EVENT_ROW_GROUP_OPENED), {
+            expanded
+        });
+
         this.mainEventService.dispatchEvent(event);
 
         if (this.gridOptionsWrapper.isGroupIncludeFooter()) {

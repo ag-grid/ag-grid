@@ -102,7 +102,7 @@ SNIPPET
 </p>
 <ul>
     <li>
-        Columns Auto A, Auto B and Auto C have <code>autoHeight=true</code>,
+        Columns <strong>Auto A</strong>, <strong>Auto B</strong> and <strong>Auto C</strong> have <code>autoHeight=true</code>,
         so the height of each row is such that it fits all contents from these
         three columns.
     </li>

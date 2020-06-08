@@ -175,7 +175,7 @@ export class RowComp extends Component {
         const businessKeySanitised = _.escape(businessKey);
         const rowTopStyle = this.getInitialRowTopStyle();
         const rowIdx = this.rowNode.getRowIndexString();
-        const headerRowCount = this.beans.headerController.getHeaderRowCount();
+        const headerRowCount = this.beans.headerNavigationService.getHeaderRowCount();
 
         templateParts.push(`<div`);
         templateParts.push(` role="row"`);
@@ -464,6 +464,7 @@ export class RowComp extends Component {
         this.addManagedListener(this.rowNode, RowNode.EVENT_DRAGGING_CHANGED, this.onRowNodeDraggingChanged.bind(this));
 
         const eventService = this.beans.eventService;
+        this.addManagedListener(eventService, Events.EVENT_PAGINATION_PIXEL_OFFSET_CHANGED, this.onPaginationPixelOffsetChanged.bind(this));
         this.addManagedListener(eventService, Events.EVENT_HEIGHT_SCALE_CHANGED, this.onTopChanged.bind(this));
         this.addManagedListener(eventService, Events.EVENT_DISPLAYED_COLUMNS_CHANGED, this.onDisplayedColumnsChanged.bind(this));
         this.addManagedListener(eventService, Events.EVENT_VIRTUAL_COLUMNS_CHANGED, this.onVirtualColumnsChanged.bind(this));
@@ -1441,6 +1442,11 @@ export class RowComp extends Component {
         this.setRowTop(this.rowNode.rowTop);
     }
 
+    private onPaginationPixelOffsetChanged(): void {
+        // the pixel offset is used when calculating rowTop to set on the row DIV
+        this.onTopChanged();
+    }
+
     // applies pagination offset, eg if on second page, and page height is 500px, then removes
     // 500px from the top position, so a row with rowTop 600px is displayed at location 100px.
     // reverse will take the offset away rather than add.
@@ -1511,7 +1517,7 @@ export class RowComp extends Component {
         const rowIndexStr = this.rowNode.getRowIndexString();
         const rowIsEven = this.rowNode.rowIndex % 2 === 0;
         const rowIsEvenChanged = this.rowIsEven !== rowIsEven;
-        const headerRowCount = this.beans.headerController.getHeaderRowCount();
+        const headerRowCount = this.beans.headerNavigationService.getHeaderRowCount();
 
         if (rowIsEvenChanged) {
             this.rowIsEven = rowIsEven;

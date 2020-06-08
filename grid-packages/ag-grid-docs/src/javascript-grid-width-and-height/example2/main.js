@@ -36,6 +36,8 @@ var gridOptions = {
         params.api.sizeColumnsToFit();
     },
 
+    onFirstDataRendered: onFirstDataRendered,
+
     rowData: rowData,
 
     onGridSizeChanged: onGridSizeChanged,
@@ -44,6 +46,14 @@ var gridOptions = {
         return currentRowHeight;
     }
 };
+
+function onFirstDataRendered(params) {
+    if (this.onGridSizeChanged) {
+        this.onGridSizeChanged(params);
+    } else if (onGridSizeChanged) {
+        onGridSizeChanged(params);
+    }
+}
 
 function onGridSizeChanged(params) {
     // get the height of the grid body - this excludes the height of the headers

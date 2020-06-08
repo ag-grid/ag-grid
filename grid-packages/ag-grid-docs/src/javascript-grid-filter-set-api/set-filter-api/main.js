@@ -41,8 +41,7 @@ function countryCellRenderer(params) {
 }
 
 function countryKeyCreator(params) {
-    var countryObject = params.value;
-    return countryObject.name;
+    return params.value.name;
 }
 
 function patchData(data) {
@@ -59,24 +58,19 @@ function patchData(data) {
 
 function selectJohnAndKenny() {
     var instance = gridOptions.api.getFilterInstance('athlete');
-    instance.selectNothing();
-    instance.selectValue('John Joe Nevin');
-    instance.selectValue('Kenny Egan');
-    instance.applyModel();
+    instance.setModel({ values: ['John Joe Nevin', 'Kenny Egan'] });
     gridOptions.api.onFilterChanged();
 }
 
 function selectEverything() {
     var instance = gridOptions.api.getFilterInstance('athlete');
-    instance.selectEverything();
-    instance.applyModel();
+    instance.setModel(null);
     gridOptions.api.onFilterChanged();
 }
 
 function selectNothing() {
     var instance = gridOptions.api.getFilterInstance('athlete');
-    instance.selectNothing();
-    instance.applyModel();
+    instance.setModel({ values: [] });
     gridOptions.api.onFilterChanged();
 }
 

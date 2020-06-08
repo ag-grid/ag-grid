@@ -58,8 +58,8 @@ SNIPPET
         to in-range filtering, where the floating filter is read-only (Age and Date columns)
     </li>
     <li>
-        Columns with the <code>applyButton</code> require the user to press <code>Enter</code> on the floating filter
-        for the filter to take effect (Gold column)
+        Columns with <code>buttons</code> containing <code>'apply'</code> require the user to press <code>Enter</code>
+        on the floating filter for the filter to take effect (Gold column)
     </li>
     <li>
         Changes made directly to the main filter are reflected automatically in the floating filters

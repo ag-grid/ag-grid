@@ -11,10 +11,8 @@ const webpackMiddleware = require('webpack-dev-middleware');
 const chokidar = require('chokidar');
 const tcpPortUsed = require('tcp-port-used');
 const generateExamples = require('./example-generator').generateExamples;
-const {updateBetweenStrings, getAllModules} = require("./utils");
-const {getFlattenedBuildChainInfo, buildPackages, buildCss, watchCss} = require('./lernaOperations');
-
-const flattenArray = array => [].concat.apply([], array);
+const { updateBetweenStrings, getAllModules } = require("./utils");
+const docsLock = require('./../../scripts/docsLock');
 
 const lnk = require('lnk').sync;
 const mkdirp = require('mkdir-p').sync;
@@ -24,34 +22,12 @@ const PHP_PORT = 8888;
 const HOST = '127.0.0.1';
 const WINDOWS = /^win/.test(os.platform());
 
-// to be removed from the root package.json when this becomes the default
-// "chokidar": "^3.2.2",
-// "command-line-args": "^5.1.1",
-// "commander": "^3.0.2",
-// "execa": "^3.2.0",
-// "fs-extra": "^8.1.0",
-
-
 // if (!process.env.AG_EXAMPLE_THEME_OVERRIDE) {
 //     process.env.AG_EXAMPLE_THEME_OVERRIDE = 'alpine';
 // }
 
-const lernaBuildChainInfo = {};
-(async () => {
-    Object.assign(lernaBuildChainInfo, await getFlattenedBuildChainInfo());
-
-    // we filter out all "core" modules as they'll be dealt with by TSC itself
-    // this will leave us with frameworks and "legacy" packages like ag-grid-community
-    const includes = ['angular', 'react', 'vue']
-    Object.keys(lernaBuildChainInfo).forEach(packageName => {
-        lernaBuildChainInfo[packageName] = lernaBuildChainInfo[packageName]
-            .filter(dependent => (dependent.startsWith('@ag-') && includes.some(inclusion => dependent.includes(inclusion))) || dependent.startsWith('ag-'));
-    })
-})();
-
-
 function reporter(middlewareOptions, options) {
-    const {log, state, stats} = options;
+    const { log, state, stats } = options;
 
     if (state) {
         const displayStats = middlewareOptions.stats !== false;
@@ -81,7 +57,7 @@ function reporter(middlewareOptions, options) {
     }
 }
 
-function addWebpackMiddlewareForConfig(app, configFile, prefix, bundleDescriptor) {
+function addWebpackMiddleware(app, configFile, prefix, bundleDescriptor) {
     const webpackConfig = require(path.resolve(`./webpack-config/${configFile}`));
 
     const compiler = realWebpack(webpackConfig);
@@ -103,13 +79,13 @@ function addWebpackMiddlewareForConfig(app, configFile, prefix, bundleDescriptor
 function launchPhpCP(app) {
     const php = cp.spawn('php', ['-S', `${HOST}:${PHP_PORT}`, '-t', 'src'], {
         stdio: ['ignore', 'ignore', 'ignore'],
-        env: {AG_DEV: 'true'}
+        env: { AG_DEV: 'true' }
     });
 
     app.use(
         '/',
         proxy(`${HOST}:${PHP_PORT}`, {
-            proxyReqOptDecorator: function (proxyReqOpts, srcReq) {
+            proxyReqOptDecorator: function(proxyReqOpts, srcReq) {
                 proxyReqOpts.headers['X-PROXY-HTTP-HOST'] = srcReq.headers.host;
                 return proxyReqOpts;
             }
@@ -124,12 +100,12 @@ function launchPhpCP(app) {
     });
 }
 
-function servePackage(app, framework) {
+function serveFramework(app, framework) {
     console.log(`serving ${framework}`);
     app.use(`/dev/${framework}`, express.static(`./_dev/${framework}`));
 }
 
-function serveCoreModules(app, gridCommunityModules, gridEnterpriseModules, chartCommunityModules) {
+function serveModules(app, gridCommunityModules, gridEnterpriseModules, chartCommunityModules) {
     console.log("serving modules");
     gridCommunityModules.concat(gridEnterpriseModules).concat(chartCommunityModules).forEach(module => {
         console.log(`serving modules ${module.publishedName} from ./_dev/${module.publishedName} - available at /dev/${module.publishedName}`);
@@ -139,6 +115,22 @@ function serveCoreModules(app, gridCommunityModules, gridEnterpriseModules, char
 
 function getTscPath() {
     return WINDOWS ? 'node_modules\\.bin\\tsc.cmd' : 'node_modules/.bin/tsc';
+}
+
+function launchTSCCheck() {
+    const tscPath = getTscPath();
+    const tsChecker = cp.spawn(tscPath, ['--watch', '--noEmit']);
+
+    tsChecker.stdout.on('data', data => {
+        data
+            .toString()
+            .trim()
+            .split('\n')
+            .filter(line => line.indexOf('Watching for') === -1 && line.indexOf('File change') === -1)
+            .filter(line => line.indexOf('__tests__') === -1 && line.indexOf('.test.') === -1 && line.indexOf('setupTests.ts') === -1)
+            .filter(line => line.indexOf('Experimental') === -1)
+            .forEach(line => console.log(line.replace('_dev', '..').replace('/dist/lib/', '/src/ts/')));
+    });
 }
 
 function symlinkModules(gridCommunityModules, gridEnterpriseModules, chartCommunityModules) {
@@ -158,7 +150,7 @@ function symlinkModules(gridCommunityModules, gridEnterpriseModules, chartCommun
         linkType = 'junction';
     }
 
-    lnk('../../community-modules/vue/', '_dev/@ag-grid-community', {force: true, type: linkType, rename: 'vue'});
+    lnk('../../community-modules/vue/', '_dev/@ag-grid-community', { force: true, type: linkType, rename: 'vue' });
     lnk('../../community-modules/angular/', '_dev/@ag-grid-community', {
         force: true,
         type: linkType,
@@ -258,16 +250,9 @@ function regenerateExamplesForFileChange(file) {
 }
 
 function watchAndGenerateExamples(scope) {
-    if (moduleChanged('.')) {
-        generateExamples(scope);
+    generateExamples(scope);
 
-        const npm = WINDOWS ? 'npm.cmd' : 'npm';
-        cp.spawnSync(npm, ['run', 'hash']);
-    } else {
-        console.log("Docs contents haven't changed - skipping example generation");
-    }
-
-    chokidar.watch([`./src/${scope || '*'}/**/*.{php,html,css,js}`], {ignored: ['**/_gen/**/*']}).on('change', regenerateExamplesForFileChange);
+    chokidar.watch([`./src/${scope || '*'}/**/*.{php,html,css,js}`], { ignored: ['**/_gen/**/*'] }).on('change', regenerateExamplesForFileChange);
 }
 
 const updateLegacyWebpackSourceFiles = (gridCommunityModules, gridEnterpriseModules) => {
@@ -419,10 +404,7 @@ function updateUtilsSystemJsMappingsForFrameworks(gridCommunityModules, gridEnte
         '/* END OF GRID CSS DEV - DO NOT DELETE */',
         cssFiles,
         [],
-        cssFile => {
-            return `        "@ag-grid-community/all-modules/dist/styles/${cssFile}" => "$prefix/@ag-grid-community/all-modules/dist/styles/${cssFile}",
-        "@ag-grid-community/core/dist/styles/${cssFile}" => "$prefix/@ag-grid-community/core/dist/styles/${cssFile}",`
-        },
+        cssFile => `        "@ag-grid-community/all-modules/dist/styles/${cssFile}" => "$prefix/@ag-grid-community/all-modules/dist/styles/${cssFile}",`,
         () => {
         });
 
@@ -448,56 +430,55 @@ function updateUtilsSystemJsMappingsForFrameworks(gridCommunityModules, gridEnte
         '/* END OF GRID CSS PROD - DO NOT DELETE */',
         cssFiles,
         [],
-        cssFile => {
-            return `        "@ag-grid-community/all-modules/dist/styles/${cssFile}" => "https://unpkg.com/@ag-grid-community/all-modules@" . AG_GRID_VERSION . "/dist/styles/${cssFile}",
-        "@ag-grid-community/core/dist/styles/${cssFile}" => "https://unpkg.com/@ag-grid-community/core@" . AG_GRID_VERSION . "/dist/styles/${cssFile}",`
-        },
+        cssFile => `        "@ag-grid-community/all-modules/dist/styles/${cssFile}" => "https://unpkg.com/@ag-grid-community/all-modules@" . AG_GRID_VERSION . "/dist/styles/${cssFile}",`,
         () => {
         });
 
     fs.writeFileSync(utilityFilename, updatedUtilFileContents, 'UTF-8');
 }
 
-const rebuildPackagesBasedOnChangeState = async (skipSelf = true) => {
-    const modulesState = readModulesState()
 
-    const changedPackages = flattenArray(Object.keys(modulesState)
-        .filter(key => modulesState[key].moduleChanged)
-        .map(changedPackage => skipSelf && lernaBuildChainInfo[changedPackage][0] === changedPackage ? lernaBuildChainInfo[changedPackage].slice(1) : lernaBuildChainInfo[changedPackage]));
-
-    const lernaPackagesToRebuild = new Set();
-    changedPackages.forEach(lernaPackagesToRebuild.add, lernaPackagesToRebuild);
-
-    if (lernaPackagesToRebuild.size > 0) {
-        console.log("Rebuilding changed packages...");
-
-        await buildPackages(Array.from(lernaPackagesToRebuild))
-
-        if (lernaPackagesToRebuild.has("@ag-grid-community/core")) {
-            await buildCss();
-        }
-    } else {
-        console.log("No non-core packages are out of date - skipping");
-    }
-}
-
-const watchCoreModules = async () => {
-    console.log("Watching TS files only...");
-    const tsc = getTscPath();
-    const tsWatch = cp.spawn(tsc, ["--build", "--preserveWatchOutput", '--watch'], {
+function watchModulesLegacy(buildSourceModuleOnly) {
+    console.log("Watching modules [legacy]...");
+    const lernaScript = WINDOWS ? '.\\scripts\\modules\\lernaWatch.js' : './scripts/modules/lernaWatch.js';
+    const node = 'node';
+    const watchMode = buildSourceModuleOnly ? '-s' : '-w';
+    const lernaWatch = cp.spawn(node, [lernaScript, watchMode], {
+        stdio: 'inherit',
         cwd: WINDOWS ? '..\\..\\' : '../../'
     });
 
-    tsWatch.stdout.on('data', async (data) => {
-        const output = data.toString().trim();
-        console.log(output);
-        if (output.includes("Found 0 errors. Watching for file changes.")) {
-            await rebuildPackagesBasedOnChangeState()
+    process.on('exit', () => {
+        lernaWatch.kill();
+    });
+    process.on('SIGINT', () => {
+        lernaWatch.kill();
+    });
+}
 
-            // because we use TSC to build the core modules (and not npm) we need to manuall update the changed
-            // hashes on build
-            updateCoreModuleHashes();
-        }
+function watchCssModules() {
+    console.log("Watching CSS only...");
+    const cssScript = WINDOWS ? '.\\scripts\\modules\\lernaWatch.js' : './scripts/modules/lernaWatch.js';
+    const node = 'node';
+    const cssWatch = cp.spawn(node, [cssScript, "--watchBeta"], {
+        stdio: 'inherit',
+        cwd: WINDOWS ? '..\\..\\' : '../../'
+    });
+
+    process.on('exit', () => {
+        cssWatch.kill();
+    });
+    process.on('SIGINT', () => {
+        cssWatch.kill();
+    });
+}
+
+function watchModules() {
+    console.log("Watching TS files only...");
+    const tsc = getTscPath();
+    const tsWatch = cp.spawn(tsc, ["--build", "--preserveWatchOutput", '--watch'], {
+        stdio: 'inherit',
+        cwd: WINDOWS ? '..\\..\\' : '../../'
     });
 
     process.on('exit', () => {
@@ -508,24 +489,7 @@ const watchCoreModules = async () => {
     });
 }
 
-const updateCoreModuleHashes = () => {
-    const coreModuleRootNames = ['community-modules', 'enterprise-modules'];
-    const exclusions = ['react', 'angular', 'vue', 'polymer'];
-
-    coreModuleRootNames.forEach(moduleRootName => {
-        const moduleRootDirectory = WINDOWS ? `..\\..\\${moduleRootName}\\` : `../../${moduleRootName}/`;
-        const moduleRootSubDirNames = fs.readdirSync(moduleRootDirectory, {
-            withFileTypes: true
-        })
-            .filter(d => d.isDirectory())
-            .filter(d => !exclusions.includes(d.name))
-            .map(d => WINDOWS ? `..\\..\\${moduleRootName}\\${d.name}` : `../../${moduleRootName}/${d.name}`);
-
-        moduleRootSubDirNames.forEach(moduleRoot => updateModuleChangedHash(moduleRoot));
-    });
-}
-
-const buildCoreModules = async (exitOnError) => {
+function buildCoreModules() {
     console.log("Building Core Modules...");
     const tsc = getTscPath();
     const result = cp.spawnSync(tsc, ['--build'], {
@@ -535,46 +499,56 @@ const buildCoreModules = async (exitOnError) => {
 
     if (result && result.status !== 0) {
         console.log('ERROR Building Modules');
-
-        if (exitOnError) {
-            process.exit(result.status)
-        }
-
         return result.status;
     }
-
-    await rebuildPackagesBasedOnChangeState(false);
-
-    // because we use TSC to build the core modules (and not npm) we need to manually update the changed
-    // hashes on build
-    updateCoreModuleHashes();
-
     return 0;
 }
 
-function moduleChanged(moduleRoot) {
-    let changed = true;
+function buildFrameworks(rootDirectory, frameworkDirectories, exitOnError) {
+    frameworkDirectories.forEach(frameworkDirectory => {
+        const frameworkRoot = WINDOWS ? `..\\..\\${rootDirectory}\\${frameworkDirectory}\\` : `../../${rootDirectory}/${frameworkDirectory}/`;
+        const npm = WINDOWS ? 'npm.cmd' : 'npm';
+        const result = cp.spawnSync(npm, ['run', 'build'], {
+            stdio: 'inherit',
+            cwd: frameworkRoot
+        });
 
-    // Windows... convert c:\\xxx to /c/xxx - can only work in git bash
-    const resolvedPath = path.resolve(moduleRoot).replace(/\\/g, '/').replace("C:", "/c");
+        if (result && result.status !== 0) {
+            console.log(`ERROR Building The ${frameworkDirectory} Module`);
+            console.error(result.error);
 
-    const checkResult = cp.spawnSync('sh', ['../../scripts/hashChanged.sh', resolvedPath], {
-        stdio: 'pipe',
-        encoding: 'utf-8'
+            if(exitOnError) {
+                process.exit(result.status)
+            }
+        }
     });
-
-    if (checkResult && checkResult.status !== 1) {
-        changed = checkResult.output[1].trim() === '1';
-    }
-    return changed;
 }
 
-function updateModuleChangedHash(moduleRoot) {
-    // Windows... convert c:\\xxx to /c/xxx - can only work in git bash
-    const npm = WINDOWS ? 'npm.cmd' : 'npm';
-    const resolvedPath = path.resolve(moduleRoot).replace(/\\/g, '/').replace("C:", "/c");
-    cp.spawnSync(npm, ['run', 'hash'], {
-        cwd: resolvedPath
+function buildGridFrameworkModules(exitOnError) {
+    console.log("Building Grid Framework Modules...");
+    return buildFrameworks('community-modules', ['react', 'angular', 'vue'], exitOnError);
+}
+
+function buildGridPackages(exitOnError) {
+    console.log("Building Grid Packages...");
+    return buildFrameworks('grid-packages', ['ag-grid-community', 'ag-grid-enterprise', 'ag-grid-react', 'ag-grid-angular', 'ag-grid-vue'], exitOnError);
+}
+
+function buildChartsPackages(exitOnError) {
+    console.log("Building Chart Framework Packages...");
+    return buildFrameworks('charts-packages', ['ag-charts-react', 'ag-charts-angular', 'ag-charts-vue'], exitOnError);
+}
+
+function buildCss() {
+    console.log("Building all modules...");
+    const lernaScript = WINDOWS ?
+        `node .\\scripts\\modules\\lernaWatch.js --buildBeta`
+        :
+        `node ./scripts/modules/lernaWatch.js --buildBeta`
+        ;
+    require('child_process').execSync(lernaScript, {
+        stdio: 'inherit',
+        cwd: WINDOWS ? '..\\..\\' : '../../'
     });
 }
 
@@ -611,98 +585,9 @@ defaultExtension: 'js'
     });
 }
 
-const performInitialBuild = async () => {
-    // if we encounter a build failure on startup we exit
-    // prevents the need to have to CTRL+C several times for certain types of error
-    await buildCoreModules(true);
-};
-
-const addWebpackMiddleware = (app) => {
-    // for js examples that just require community functionality (landing pages, vanilla community examples etc)
-    // webpack.community-grid-all.config.js -> AG_GRID_SCRIPT_PATH -> //localhost:8080/dev/@ag-grid-community/all-modules/dist/ag-grid-community.js
-    addWebpackMiddlewareForConfig(app, 'webpack.community-grid-all-umd.beta.config.js', '/dev/@ag-grid-community/all-modules/dist', 'ag-grid-community.js');
-
-    // for js examples that just require enterprise functionality (landing pages, vanilla enterprise examples etc)
-    // webpack.community-grid-all.config.js -> AG_GRID_SCRIPT_PATH -> //localhost:8080/dev/@ag-grid-enterprise/all-modules/dist/ag-grid-enterprise.js
-    addWebpackMiddlewareForConfig(app, 'webpack.enterprise-grid-all-umd.beta.config.js', '/dev/@ag-grid-enterprise/all-modules/dist', 'ag-grid-enterprise.js');
-
-    // for js examples that just require charts community functionality (landing pages, vanilla enterprise examples etc)
-    // webpack.charts-community-umd.config.js -> AG_GRID_SCRIPT_PATH -> //localhost:8080/dev/ag-charts-community/dist/ag-charts-community.js
-    addWebpackMiddlewareForConfig(app, 'webpack.charts-community-umd.config.js', '/dev/ag-charts-community/dist', 'ag-charts-community.js');
-
-    // for the actual site - php, css etc
-    addWebpackMiddlewareForConfig(app, 'webpack.site.config.js', '/dist', 'site bundle');
-};
-
-const watchCoreModulesAndCss = async () => {
-    watchCss();
-    await watchCoreModules();
-};
-
-const watchFrameworkModules = async () => {
-    console.log("Watching Framework Modules");
-    const moduleFrameworks = ['angular', 'vue', 'react'];
-    const moduleRootDirectory = WINDOWS ? `..\\..\\community-modules\\` : `../../community-modules/`;
-    moduleFrameworks.forEach(moduleFramework => {
-        const frameworkDirectory = `${moduleRootDirectory}${moduleFramework}`
-        chokidar.watch([`${frameworkDirectory}`], {
-            ignored: [
-                '**/node_modules/**/*',
-                '**/lib/**/*',
-                '**/dist/**/*',
-                '**/bundles/**/*',
-                '.hash',
-            ],
-            cwd: frameworkDirectory,
-            persistent: true
-        }).on('change', async (data) => {
-            await rebuildPackagesBasedOnChangeState(false);
-        });
-    })
-};
-
-const serveModuleAndPackages = (app, gridCommunityModules, gridEnterpriseModules, chartCommunityModules) => {
-    serveCoreModules(app, gridCommunityModules, gridEnterpriseModules, chartCommunityModules);
-
-    servePackage(app, '@ag-grid-community/angular');
-    servePackage(app, '@ag-grid-community/vue');
-    servePackage(app, '@ag-grid-community/react');
-    servePackage(app, 'ag-charts-react');
-    servePackage(app, 'ag-charts-angular');
-    servePackage(app, 'ag-charts-vue');
-    servePackage(app, 'ag-grid-community');
-    servePackage(app, 'ag-grid-enterprise');
-    servePackage(app, 'ag-grid-angular');
-    servePackage(app, 'ag-grid-vue');
-    servePackage(app, 'ag-grid-react');
-};
-
-const readModulesState = () => {
-    const moduleRootNames = ['grid-packages', 'community-modules', 'enterprise-modules', 'charts-packages'];
-    const exclusions = ['ag-grid-dev', 'ag-grid-docs', 'polymer', 'ag-grid-polymer'];
-
-    const modulesState = {};
-
-    moduleRootNames.forEach(moduleRootName => {
-        const moduleRootDirectory = WINDOWS ? `..\\..\\${moduleRootName}\\` : `../../${moduleRootName}/`;
-        fs.readdirSync(moduleRootDirectory, {
-            withFileTypes: true
-        })
-            .filter(d => d.isDirectory())
-            .filter(d => !exclusions.includes(d.name))
-            .map(d => WINDOWS ? `..\\..\\${moduleRootName}\\${d.name}` : `../../${moduleRootName}/${d.name}`)
-            .map(d => {
-                const packageName = require(WINDOWS ? `${d}\\package.json` : `${d}/package.json`).name;
-                modulesState[packageName] = {moduleChanged: moduleChanged(d)}
-            })
-    });
-
-    return modulesState;
-}
-
-module.exports = async (done) => {
+module.exports = (buildSourceModuleOnly = false, legacy = false, alreadyRunningCheck = false, done) => {
     tcpPortUsed.check(EXPRESS_PORT)
-        .then(async (inUse) => {
+        .then(inUse => {
             if (inUse) {
                 console.log(`Port ${EXPRESS_PORT} is already in use - please ensure previous instances of docs has shutdown/completed.`);
                 console.log(`If you run using npm run docs-xxx and kill it the gulp process will continue until it's finished.`);
@@ -711,51 +596,128 @@ module.exports = async (done) => {
                 return;
             }
 
+            if (alreadyRunningCheck) {
+                if (!docsLock.add('One `gulp serve` task is already running.')) {
+                    return;
+                }
+
+                process.on('exit', () => {
+                    docsLock.remove();
+                });
+                process.on('SIGINT', () => {
+                    docsLock.remove();
+                });
+            }
+
             process.on('SIGINT', () => {
                 console.log("Docs process killed. Safe to restart.");
                 process.exit(0);
             });
 
-            const {gridCommunityModules, gridEnterpriseModules, chartCommunityModules} = getAllModules();
+            const { gridCommunityModules, gridEnterpriseModules, chartCommunityModules } = getAllModules();
 
             const app = express();
 
             // necessary for plunkers
-            app.use(function (req, res, next) {
+            app.use(function(req, res, next) {
                 res.setHeader('Access-Control-Allow-Origin', '*');
                 return next();
             });
 
             updateWebpackConfigWithBundles(gridCommunityModules, gridEnterpriseModules);
 
-            await performInitialBuild();
-            await watchCoreModulesAndCss();
-            watchFrameworkModules();
+            // if we encounter a build failure on startup we exit
+            // prevents the need to have to CTRL+C several times for certain types of error
+            // buildCoreModules(!legacy);
+            // buildGridFrameworkModules(!legacy);
+            // buildGridPackages(!legacy);
+            // buildChartsPackages(!legacy);
 
-            addWebpackMiddleware(app);
+            // buildCss();
+
+            if (!legacy) {
+                watchCssModules();
+                watchModules();
+
+                // serve community, enterprise and react
+
+                // for js examples that just require community functionality (landing pages, vanilla community examples etc)
+                // webpack.community-grid-all.config.js -> AG_GRID_SCRIPT_PATH -> //localhost:8080/dev/@ag-grid-community/all-modules/dist/ag-grid-community.js
+                addWebpackMiddleware(app, 'webpack.community-grid-all-umd.beta.config.js', '/dev/@ag-grid-community/all-modules/dist', 'ag-grid-community.js');
+
+                // for js examples that just require enterprise functionality (landing pages, vanilla enterprise examples etc)
+                // webpack.community-grid-all.config.js -> AG_GRID_SCRIPT_PATH -> //localhost:8080/dev/@ag-grid-enterprise/all-modules/dist/ag-grid-enterprise.js
+                addWebpackMiddleware(app, 'webpack.enterprise-grid-all-umd.beta.config.js', '/dev/@ag-grid-enterprise/all-modules/dist', 'ag-grid-enterprise.js');
+
+            } else {
+                watchModulesLegacy(buildSourceModuleOnly);
+
+                // serve community, enterprise and react
+
+                // for js examples that just require community functionality (landing pages, vanilla community examples etc)
+                // webpack.community-grid-all.config.js -> AG_GRID_SCRIPT_PATH -> //localhost:8080/dev/@ag-grid-community/all-modules/dist/ag-grid-community.js
+                addWebpackMiddleware(app, 'webpack.community-grid-all-umd.config.js', '/dev/@ag-grid-community/all-modules/dist', 'ag-grid-community.js');
+
+                // for js examples that just require enterprise functionality (landing pages, vanilla enterprise examples etc)
+                // webpack.community-grid-all.config.js -> AG_GRID_SCRIPT_PATH -> //localhost:8080/dev/@ag-grid-enterprise/all-modules/dist/ag-grid-enterprise.js
+                addWebpackMiddleware(app, 'webpack.enterprise-grid-all-umd.config.js', '/dev/@ag-grid-enterprise/all-modules/dist', 'ag-grid-enterprise.js');
+            }
+
+            // for js examples that just require charts community functionality (landing pages, vanilla enterprise examples etc)
+            // webpack.charts-community-umd.config.js -> AG_GRID_SCRIPT_PATH -> //localhost:8080/dev/ag-charts-community/dist/ag-charts-community.js
+            addWebpackMiddleware(app, 'webpack.charts-community-umd.config.js', '/dev/ag-charts-community/dist', 'ag-charts-community.js');
+
+            // for the actual site - php, css etc
+            addWebpackMiddleware(app, 'webpack.site.config.js', '/dist', 'site bundle');
+
+            // add community & enterprise modules to express (for importing in the fw examples)
             symlinkModules(gridCommunityModules, gridEnterpriseModules, chartCommunityModules);
+
             updateUtilsSystemJsMappingsForFrameworks(gridCommunityModules, gridEnterpriseModules, chartCommunityModules);
             updateSystemJsBoilerplateMappingsForFrameworks(gridCommunityModules, gridEnterpriseModules, chartCommunityModules);
-            serveModuleAndPackages(app, gridCommunityModules, gridEnterpriseModules, chartCommunityModules);
+            serveModules(app, gridCommunityModules, gridEnterpriseModules, chartCommunityModules);
 
-            // regenerate examples and then watch them
-            watchAndGenerateExamples();
+            serveFramework(app, '@ag-grid-community/angular');
+            serveFramework(app, '@ag-grid-community/vue');
+            serveFramework(app, '@ag-grid-community/react');
+            serveFramework(app, 'ag-charts-react');
+            serveFramework(app, 'ag-charts-angular');
+            serveFramework(app, 'ag-charts-vue');
+
+            // old style packages
+            serveFramework(app, 'ag-grid-community');
+            serveFramework(app, 'ag-grid-enterprise');
+            serveFramework(app, 'ag-grid-angular');
+            serveFramework(app, 'ag-grid-vue');
+            serveFramework(app, 'ag-grid-react');
+
+            // regenerate examples
+            // watchAndGenerateExamples();
 
             // PHP
             launchPhpCP(app);
 
-            app.listen(EXPRESS_PORT, function () {
+            // Watch TS for errors. No actual transpiling happens here, just error reporting
+            if (legacy) {
+                launchTSCCheck(gridCommunityModules, gridEnterpriseModules);
+            }
+
+            app.listen(EXPRESS_PORT, function() {
                 console.log(`ag-Grid dev server available on http://${HOST}:${EXPRESS_PORT}`);
             });
             done();
         });
 };
 
-
 // *** Don't remove these unused vars! ***
 //     node dev-server.js generate-examples [src directory]
 // eg: node dev-server.js generate-examples javascript-grid-accessing-data
-const [cmd, script, execFunc, exampleDir] = process.argv;
-if (process.argv.length >= 4 && exampleDir && execFunc === 'generate-examples') {
-    generateExamples(exampleDir);
+const [cmd, script, execFunc, exampleDir, watch] = process.argv;
+
+if (process.argv.length >= 3 && execFunc === 'generate-examples') {
+    if (watch && exampleDir) {
+        watchAndGenerateExamples(exampleDir);
+    } else {
+        generateExamples(exampleDir);
+    }
 }

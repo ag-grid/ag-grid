@@ -79,7 +79,7 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild, IEven
     private actualWidth: any;
 
     private visible: any;
-    private pinned: string | null;
+    private pinned: 'left' | 'right' | null;
     private left: number;
     private oldLeft: number;
     private aggFunc: string | IAggFunc | null;
@@ -171,13 +171,17 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild, IEven
             this.flex = this.colDef.flex;
         }
 
-        this.actualWidth = this.columnUtils.calculateColInitialWidth(this.colDef);
+        this.resetActualWidth();
 
         const suppressDotNotation = this.gridOptionsWrapper.isSuppressFieldDotNotation();
         this.fieldContainsDots = _.exists(this.colDef.field) && this.colDef.field.indexOf('.') >= 0 && !suppressDotNotation;
         this.tooltipFieldContainsDots = _.exists(this.colDef.tooltipField) && this.colDef.tooltipField.indexOf('.') >= 0 && !suppressDotNotation;
 
         this.validate();
+    }
+
+    public resetActualWidth(): void {
+        this.actualWidth = this.columnUtils.calculateColInitialWidth(this.colDef);
     }
 
     public isEmptyGroup(): boolean {
@@ -589,7 +593,7 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild, IEven
         return this.pinned === Constants.PINNED_RIGHT;
     }
 
-    public getPinned(): string {
+    public getPinned(): 'left' | 'right' {
         return this.pinned;
     }
 

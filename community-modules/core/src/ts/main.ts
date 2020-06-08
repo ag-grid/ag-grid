@@ -109,7 +109,7 @@ export { BodyDropPivotTarget } from "./headerRendering/bodyDropPivotTarget";
 export { BodyDropTarget } from "./headerRendering/bodyDropTarget";
 export { CssClassApplier } from "./headerRendering/cssClassApplier";
 export { HeaderContainer } from "./headerRendering/headerContainer";
-export { HeaderRootComp } from "./headerRendering/headerRootComp";
+export { HeaderRootComp, HeaderContainerPosition } from "./headerRendering/headerRootComp";
 export { HeaderRowComp } from "./headerRendering/headerRowComp";
 export { HorizontalResizeService } from "./headerRendering/horizontalResizeService";
 export { MoveColumnController } from "./headerRendering/moveColumnController";
@@ -258,7 +258,7 @@ export { IMenuFactory } from "./interfaces/iMenuFactory";
 export { CellPosition, CellPositionUtils } from "./entities/cellPosition";
 export { RowPosition, RowPositionUtils } from "./entities/rowPosition";
 export { HeaderPosition, HeaderPositionUtils } from "./headerRendering/header/headerPosition";
-export { HeaderController, HeaderContainerTypes, HeaderNavigationDirection } from "./headerRendering/header/headerController";
+export { HeaderNavigationService, HeaderNavigationDirection } from "./headerRendering/header/headerNavigationService";
 export {
     IAggFunc,
     ColGroupDef,

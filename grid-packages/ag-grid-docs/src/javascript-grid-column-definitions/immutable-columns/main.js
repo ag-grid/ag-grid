@@ -45,7 +45,6 @@ function columnDefsWidths() {
         {
             colId: 'athlete',
             field: 'athlete',
-            headerName: 'The New Header',
             width: 150
         },
         {

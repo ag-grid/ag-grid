@@ -10,11 +10,26 @@ include '../documentation-main/documentation_header.php';
 
 <p class="lead">
     Date filters allow you to filter date data.
-    The pages <a href="../javascript-grid-filter-provided/">Provided Filters</a> and
-    <a href="../javascript-grid-filter-provided-simple/">Provided Simple Filters</a> explains the parts of the
+    The <a href="../javascript-grid-filter-provided/">Provided Filters</a> and
+    <a href="../javascript-grid-filter-provided-simple/">Simple Filters</a> pages explain the parts of the
     date filter that are the same as the other provided filters. This page builds on that and explains some
     details that are specific to the date filter.
 </p>
+
+<h2>Date Filter Parameters</h2>
+
+<p>
+    Date Filters are configured though the <code>filterParams</code> attribute of the column definition. All of the
+    parameters from Provided Filters are available:
+</p>
+
+<?= createDocumentationFromFile('../javascript-grid-filter-provided/providedFilters.json', 'filterParams'); ?>
+
+<p>
+    In addition, the following parameters are also available:
+</p>
+
+<?= createDocumentationFromFile('../javascript-grid-filter-provided-simple/simpleFilters.json', 'filterParams', ['Date']); ?>
 
 <h2>Date Selection Component</h2>
 
@@ -32,22 +47,24 @@ include '../documentation-main/documentation_header.php';
 </p>
 
 <p>
-    The date filter by default assumes you are using JavaScript <code>Date</code> objects. If this is the case, the
-    date filter will work out-of-the-box. However, if your date is in any other format you will have to provide
-    your own <code>comparator</code> callback to perform the date comparisons.
+    By default, the date filter assumes you are using JavaScript <code>Date</code> objects. If this is the case, the
+    date filter will work out of the box. However, if your date is in any other format you will have to provide
+    your own <code>comparator</code> to perform the date comparisons.
 </p>
 
 <p>
-    The <code>comparator</code> callback takes two parameters. The first parameter is a
+    The <code>comparator</code> function takes two parameters. The first parameter is a
     JavaScript <code>Date</code> object for the selected date in the filter (with the time set to midnight). The second
-    parameter is the current value of the cell in the row being evaluated. The callback must return:
+    parameter is the current value of the cell in the row being evaluated. The function must return:
+</p>
 
-    <ul class="content">
-        <li>Any number < 0 if the cell value is less than the filter date</li>
-        <li>0 if the dates are the same</li>
-        <li>Any number > 0 if the cell value is greater than the filter date</li>
-    </ul>
+<ul class="content">
+    <li>Any number < 0 if the cell value is less than the filter date</li>
+    <li>0 if the dates are the same</li>
+    <li>Any number > 0 if the cell value is greater than the filter date</li>
+</ul>
 
+<p>
     This pattern is intended to be similar to the JavaScript <code>compareTo(a, b)</code> function.
 </p>
 
@@ -95,7 +112,7 @@ SNIPPET
 
 <p>
     Once the date comparator callback is provided, then the Date Filter is able to perform all the
-    comparison operations it needs, e.g. 'Less Then', 'Greater Than' and 'Equals'.
+    comparison operations it needs, e.g. 'Less Than', 'Greater Than' and 'Equals'.
 </p>
 
 <h2>Date Model vs Comparison Types</h2>
@@ -107,4 +124,4 @@ SNIPPET
     issues.
 </p>
 
-<?php include '../documentation-main/documentation_footer.php';?>
+<?php include '../documentation-main/documentation_footer.php'; ?>

@@ -340,7 +340,16 @@ export class ColumnFactory extends BeanStub {
         }
 
         // merge user defined with default column types
-        const allColumnTypes = _.assign({}, this.gridOptionsWrapper.getColumnTypes(), DefaultColumnTypes);
+        const allColumnTypes = _.assign({}, DefaultColumnTypes);
+        const userTypes = this.gridOptionsWrapper.getColumnTypes() || {};
+
+        _.iterateObject(userTypes, (key, value) => {
+            if (key in allColumnTypes) {
+                console.warn(`ag-Grid: the column type '${key}' is a default column type and cannot be overridden.`);
+            } else {
+                allColumnTypes[key] = value;
+            }
+        });
 
         typeKeys.forEach((t) => {
             const typeColDef = allColumnTypes[t.trim()];

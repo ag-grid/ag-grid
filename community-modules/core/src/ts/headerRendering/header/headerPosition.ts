@@ -3,7 +3,7 @@ import { ColumnGroup } from "../../entities/columnGroup";
 import { Bean, Autowired } from "../../context/context";
 import { BeanStub } from "../../context/beanStub";
 import { ColumnController } from "../../columnController/columnController";
-import { HeaderController } from "./headerController";
+import { HeaderNavigationService } from "./headerNavigationService";
 import { HeaderRowType } from "../headerRowComp";
 
 export interface HeaderPosition {
@@ -15,7 +15,7 @@ export interface HeaderPosition {
 export class HeaderPositionUtils extends BeanStub {
 
     @Autowired('columnController') private columnController: ColumnController;
-    @Autowired('headerController') private headerController: HeaderController;
+    @Autowired('headerNavigationService') private headerNavigationService: HeaderNavigationService;
 
     public findHeader(focusedHeader: HeaderPosition, direction: 'Before' | 'After'): HeaderPosition {
         let nextColumn: Column | ColumnGroup;
@@ -44,7 +44,7 @@ export class HeaderPositionUtils extends BeanStub {
 
         if (!column) { return; }
 
-        const childContainer = this.headerController.getHeaderContainer(column.getPinned());
+        const childContainer = this.headerNavigationService.getHeaderContainer(column.getPinned());
         const headerRowComp = childContainer.getRowComps()[level];
         const type = headerRowComp && headerRowComp.getType();
 

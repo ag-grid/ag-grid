@@ -42,94 +42,111 @@ var gridOptions = {
     enableRangeSelection: true,
     enableCharts: true,
     localeText: {
-        // for filter panel
-        page: 'daPage',
-        more: 'daMore',
-        to: 'daTo',
-        of: 'daOf',
-        next: 'daNexten',
-        last: 'daLasten',
-        first: 'daFirsten',
-        previous: 'daPreviousen',
-        loadingOoo: 'daLoading...',
-
-        // for set filter
-        selectAll: 'daSelect Allen',
-        selectAllSearchResults: 'daSelect Allen Searchen Resulten',
+        // Set Filter
+        selectAll: 'daSelect All',
+        selectAllSearchResults: 'daSelect All Search Results',
         searchOoo: 'daSearch...',
-        blanks: 'daBlanc',
+        blanks: 'daBlanks',
+        noMatches: 'daNo matches.',
 
-        // for number filter and text filter
+        // Number Filter & Text Filter
         filterOoo: 'daFilter...',
         equals: 'daEquals',
-        notEqual: 'daNotEqual',
+        notEqual: 'daNot equal',
 
-        // for the date filter
-        dateFormatOoo: 'daYyyy-mm-dd',
-
-        // for number filter
-        lessThan: 'daLessThan',
-        greaterThan: 'daGreaterThan',
-        lessThanOrEqual: 'daLessThanOrEqual',
-        greaterThanOrEqual: 'daGreaterThanOrEqual',
-        inRange: 'daInRange',
+        // Number Filter
+        lessThan: 'daLess than',
+        greaterThan: 'daGreater than',
+        lessThanOrEqual: 'daLess than or equal',
+        greaterThanOrEqual: 'daGreater than or equal',
+        inRange: 'daIn range',
         inRangeStart: 'daTo',
         inRangeEnd: 'daFrom',
 
-        // for text filter
+        // Text Filter
         contains: 'daContains',
-        notContains: 'daNotContains',
-        startsWith: 'daStarts dawith',
-        endsWith: 'daEnds dawith',
+        notContains: 'daNot contains',
+        startsWith: 'daStarts with',
+        endsWith: 'daEnds with',
 
-        // filter conditions
+        // Date Filter
+        dateFormatOoo: 'daYyyy-mm-dd',
+
+        // Filter Conditions
         andCondition: 'daAND',
         orCondition: 'daOR',
 
-        // filter buttons
+        // Filter Buttons
         applyFilter: 'daApply',
         resetFilter: 'daReset',
         clearFilter: 'daClear',
         cancelFilter: 'daCancel',
 
-        // the header of the default group column
-        group: 'laGroup',
-
-        // tool panel
+        // Side Bar
         columns: 'laColumns',
         filters: 'laFilters',
-        rowGroupColumns: 'laPivot Cols',
-        rowGroupColumnsEmptyMessage: 'la drag cols to group',
-        valueColumns: 'laValue Cols',
-        pivotMode: 'laPivot-Mode',
-        groups: 'laGroups',
-        values: 'laValues',
-        pivots: 'laPivots',
-        valueColumnsEmptyMessage: 'la drag cols to aggregate',
-        pivotColumnsEmptyMessage: 'la drag here to pivot',
-        toolPanelButton: 'la tool panel',
 
-        // other
-        noRowsToShow: 'la no rows',
+        // columns tool panel
+        pivotMode: 'laPivot Mode',
+        groups: 'laRow Groups',
+        rowGroupColumnsEmptyMessage: 'laDrag here to set row groups',
+        values: 'laValues',
+        valueColumnsEmptyMessage: 'laDrag here to aggregate',
+        pivots: 'laColumn Labels',
+        pivotColumnsEmptyMessage: 'laDrag here to set column labels',
+
+        // Header of the Default Group Column
+        group: 'laGroup',
+
+        // Other
+        loadingOoo: 'daLoading...',
+        noRowsToShow: 'laNo Rows To Show',
         enabled: 'laEnabled',
 
-        // enterprise menu
+        // Menu
         pinColumn: 'laPin Column',
-        valueAggregation: 'laValue Agg',
-        autosizeThiscolumn: 'laAutosize Diz',
-        autosizeAllColumns: 'laAutsoie em All',
+        pinLeft: 'laPin Left',
+        pinRight: 'laPin Right',
+        noPin: 'laNo Pin',
+        valueAggregation: 'laValue Aggregation',
+        autosizeThiscolumn: 'laAutosize This Column',
+        autosizeAllColumns: 'laAutosize All Columns',
         groupBy: 'laGroup by',
-        ungroupBy: 'laUnGroup by',
-        resetColumns: 'laReset Those Cols',
-        expandAll: 'laOpen-em-up',
-        collapseAll: 'laClose-em-up',
-        toolPanel: 'laTool Panelo',
-        export: 'laExporto',
-        csvExport: 'laCSV Exportp',
-        excelExport: 'laExcel Exporto (.xlsx)',
-        excelXmlExport: 'laExcel Exporto (.xml)',
+        ungroupBy: 'laUn-Group by',
+        resetColumns: 'laReset Columns',
+        expandAll: 'laExpand All',
+        collapseAll: 'laClose All',
+        copy: 'laCopy',
+        ctrlC: 'laCtrl+C',
+        copyWithHeaders: 'laCopy With Headers',
+        paste: 'laPaste',
+        ctrlV: 'laCtrl+V',
+        export: 'laExport',
+        csvExport: 'laCSV Export',
+        excelExport: 'laExcel Export (.xlsx)',
+        excelXmlExport: 'laExcel Export (.xml)',
 
-        // enterprise menu (charts)
+        // Enterprise Menu Aggregation and Status Bar
+        sum: 'laSum',
+        min: 'laMin',
+        max: 'laMax',
+        none: 'laNone',
+        count: 'laCount',
+        avg: 'laAverage',
+        filteredRows: 'laFiltered',
+        selectedRows: 'laSelected',
+        totalRows: 'laTotal Rows',
+        totalAndFilteredRows: 'laRows',
+        page: 'daPage',
+        more: 'daMore',
+        to: 'daTo',
+        of: 'daOf',
+        next: 'daNext',
+        last: 'daLast',
+        first: 'daFirst',
+        previous: 'daPrevious',
+
+        // Enterprise Menu (Charts)
         pivotChartAndPivotMode: 'laPivot Chart & Pivot Mode',
         pivotChart: 'laPivot Chart',
         chartRange: 'laChart Range',
@@ -161,31 +178,7 @@ var gridOptions = {
 
         histogramChart: 'laHistogram',
 
-        // enterprise menu pinning
-        pinLeft: 'laPin &lt;&lt;',
-        pinRight: 'laPin &gt;&gt;',
-        noPin: 'laDontPin &lt;&gt;',
-
-        // enterprise menu aggregation and status bar
-        sum: 'laSum',
-        min: 'laMin',
-        max: 'laMax',
-        none: 'laNone',
-        count: 'laCount',
-        avg: 'laAverage',
-        filteredRows: 'laFiltered',
-        selectedRows: 'laSelected',
-        totalRows: 'laTotal Rows',
-        totalAndFilteredRows: 'laRows',
-
-        // standard menu
-        copy: 'laCopy',
-        copyWithHeaders: 'laCopy With Headers',
-        ctrlC: 'laCtrl n C',
-        paste: 'laPaste',
-        ctrlV: 'laCtrl n V',
-
-        // charts
+        // Charts
         pivotChartTitle: 'laPivot Chart',
         rangeChartTitle: 'laRange Chart',
         settings: 'laSettings',
@@ -208,6 +201,7 @@ var gridOptions = {
         yRotation: 'laY Rotation',
         ticks: 'laTicks',
         width: 'laWidth',
+        height: 'laHeight',
         length: 'laLength',
         padding: 'laPadding',
         chart: 'laChart',
@@ -271,7 +265,8 @@ var gridOptions = {
         bubbleTooltip: 'laBubble',
         histogramTooltip: 'laHistogram',
         noDataToChart: 'laNo data available to be charted.',
-        pivotChartRequiresPivotMode: 'laPivot Chart requires Pivot Mode enabled.'
+        pivotChartRequiresPivotMode: 'laPivot Chart requires Pivot Mode enabled.',
+        navigator: 'laNavigator'
     }
 };
 

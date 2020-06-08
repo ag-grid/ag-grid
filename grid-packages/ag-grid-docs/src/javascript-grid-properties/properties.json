@@ -677,17 +677,17 @@
         },
         "masterDetail": {
             "default": false,
-            "description": "Set to <code>true</code> to enable the Master Detail.",
+            "description": "Used to enable Master Detail.",
             "more": {
-                "name": "Master Detail",
-                "url": "../javascript-grid-master-detail"
+                "name": "Enabling Master Detail",
+                "url": "../javascript-grid-master-detail/#enabling-master-detail"
             }
         },
         "detailCellRendererParams": {
             "description": "Specifies the params to be used by the default detail <a href='../javascript-grid-cell-rendering-components'>Cell Renderer</a>.",
             "more": {
-                "name": "Master Detail",
-                "url": "../javascript-grid-master-detail"
+                "name": " DetailDetail Grids",
+                "url": "../javascript-grid-master-detail-detail-grids"
             }
         },
         "keepDetailRows": {
@@ -697,6 +697,13 @@
         "keepDetailRowsCount": {
             "default": 10,
             "description": "Sets the number of details rows to keep."
+        },
+        "detailRowHeight": {
+            "description": "Set fixed height for each detail row."
+        },
+        "autoHeight": {
+            "default": false,
+            "description": "Set to true to have the detail grid to dynamically change it's height to fit it's rows."
         }
     },
     "renderingStyling": {

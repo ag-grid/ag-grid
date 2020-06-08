@@ -17,7 +17,7 @@ class TestFilter extends ProvidedFilter {
         this.setGui(eGui);
 
         const gridOptionsWrapper = mock<GridOptionsWrapper>('getLocaleTextFunc');
-        gridOptionsWrapper.getLocaleTextFunc.mockReturnValue(() => (_: string, defaultValue: string) => defaultValue);
+        gridOptionsWrapper.getLocaleTextFunc.mockReturnValue((_: string, defaultValue: string) => defaultValue);
         this.gridOptionsWrapper = gridOptionsWrapper;
 
         const rowModel = mock<IRowModel>('getType');

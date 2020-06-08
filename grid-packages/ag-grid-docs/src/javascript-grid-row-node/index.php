@@ -71,19 +71,22 @@ SNIPPET
 <p>
     By default IDs are assigned by the grid when data is set into the grid. The grid
     uses a sequence starting at 0 and incrementing by 1 to assign row IDs, so if for example there are three rows
-    they will have IDs of <code>0</code>, <code>1</code> and <code>2</code>.
+    they will have IDs of <code>0</code>, <code>1</code> and <code>2</code>. The row ID is constant
+    for as long as the data item lives in the grid.
 </p>
 
 <p>
-    When using <a href="../javascript-grid-grouping/">Row Grouping</a> the grid assigns IDs to the group rows,
-    however it uses a different sequence starting at -1 and decrementing by 1, so if for example there are three groups
-    they will have IDs of <code>-1</code>, <code>-2</code> and <code>-3</code>.
+    When using <a href="../javascript-grid-grouping/">Row Grouping</a> the grid assigns IDs to the row groups
+    as the row groups are created. It uses another sequence again starting at 0 and incrementing by 1 and
+    also prefixes the sequence number with <code>row-group-</code>. So if for example there are three groups
+    they will have IDs of <code>row-group-0</code>, <code>row-group-1</code> and <code>row-group-2</code>.
+    If the groups are destroyed (eg the user removes the grouping) and recreated again (the user groups by a
+    column) then new ID's will be created e.g. <code>row-group-3</code>, <code>row-group-4</code> and
+    <code>row-group-5</code>. As with normal rows, the ID's for group rows do not change for as long as the
+    row group exists, however removing and re-adding the grouping will result in new row group ID's even
+    if the row group represents the same group as before.
 </p>
 
-<p>
-    In other words, normal rows get positive numbers starting at <code>0</code> and group rows get negative numbers
-    starting at <code>-1</code>.
-</p>
 
 <h3>Application Assigned IDs</h3>
 

@@ -24,7 +24,7 @@ export class DisplayedGroupCreator extends BeanStub {
         // creates unique id's for the group
         groupInstanceIdCreator: GroupInstanceIdCreator,
         // whether it's left, right or center col
-        pinned: string | null,
+        pinned: 'left' | 'right' | null,
         // we try to reuse old groups if we can, to allow gui to do animation
         oldDisplayedGroups?: ColumnGroupChild[]): ColumnGroupChild[] {
 
@@ -88,7 +88,7 @@ export class DisplayedGroupCreator extends BeanStub {
             originalGroup: OriginalColumnGroup,
             groupInstanceIdCreator: GroupInstanceIdCreator,
             oldColumnsMapped: {[key: string]: ColumnGroup},
-            pinned: string
+            pinned: 'left' | 'right'
         ): ColumnGroup {
 
         const groupId = originalGroup.getGroupId();

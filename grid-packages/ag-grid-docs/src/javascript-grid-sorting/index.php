@@ -68,15 +68,16 @@ SNIPPET
 
 <h2>Example: Custom Sorting</h2>
 
-<p> Example below shows the following: </p>
-    <ul class="content">
-        <li>Default sorting on the Athlete column.</li>
-        <li>When the Year column is not sorted, it shows a custom icon (up/down arrow).</li>
-        <li>
-            The Date column has strings as the row data, but there is custom comparator so that when you sort this column
-            it sorts as dates, not as strings.
-        </li>
-    </ul>
+<p> Example below shows the following:</p>
+
+<ul class="content">
+    <li>Default sorting on the <strong>Athlete</strong> column.</li>
+    <li>When the <strong>Year</strong> column is not sorted, it shows a custom icon (up/down arrow).</li>
+    <li>
+        The <strong>Date</strong> column has strings as the row data, but has a custom comparator so that when you sort this column
+        it sorts as dates, not as strings.
+    </li>
+</ul>
 
 <?= grid_example('Custom Sorting', 'custom-sorting', 'generated', ['modules' => true]) ?>
 
@@ -90,14 +91,15 @@ SNIPPET
 
 <p>
     The example below demonstrates the following:
-    <ul>
-        <li>The grid sorts by Country then Athlete by default.</li>
-        <li>
-            The property <code>multiSortKey='ctrl'</code> is set so multiple column selection
-            is achieved by holding down <code>Ctrl</code> and selecting multiple columns.
-        </li>
-    </ul>
 </p>
+
+<ul>
+    <li>The grid sorts by <strong>Country</strong> then <strong>Athlete</strong> by default.</li>
+    <li>
+        The property <code>multiSortKey='ctrl'</code> is set so multiple column sorting
+        is achieved by holding down <code>Ctrl</code> and selecting multiple columns.
+    </li>
+</ul>
 
 <?= grid_example('Multi Column Sort', 'multi-column', 'generated', ['modules' => true]) ?>
 

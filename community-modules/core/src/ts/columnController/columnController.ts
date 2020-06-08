@@ -151,6 +151,7 @@ export class ColumnController extends BeanStub {
     private logger: Logger;
 
     private autoGroupsNeedBuilding = false;
+    private forceRecreateAutoGroups = false;
 
     private pivotMode = false;
     private usingTreeData: boolean;
@@ -183,6 +184,15 @@ export class ColumnController extends BeanStub {
         }
 
         this.usingTreeData = this.gridOptionsWrapper.isTreeData();
+
+        this.addManagedListener(this.gridOptionsWrapper, 'autoGroupColumnDef', this.onAutoGroupColumnDefChanged.bind(this));
+    }
+
+    public onAutoGroupColumnDefChanged() {
+        this.autoGroupsNeedBuilding = true;
+        this.forceRecreateAutoGroups = true;
+        this.updateGridColumns();
+        this.updateDisplayedColumns('gridOptionsChanged');
     }
 
     public setColumnDefs(columnDefs: (ColDef | ColGroupDef)[], source: ColumnEventType = 'api') {
@@ -2125,7 +2135,7 @@ export class ColumnController extends BeanStub {
                 originalColumnGroup: originalColumnGroup,
                 location: location,
                 api: this.gridOptionsWrapper.getApi(),
-                context: this.getContext()
+                context: this.gridOptionsWrapper.getContext()
             };
 
             if (typeof headerValueGetter === 'function') {
@@ -3014,6 +3024,13 @@ export class ColumnController extends BeanStub {
             colsToNotSpread.push(column);
         };
 
+        // resetting cols to their original width makes the sizeColumnsToFit more deterministic,
+        // rather than depending on the current size of the columns. most users call sizeColumnsToFit
+        // immediately after grid is created, so will make no difference. however if application is calling
+        // sizeColumnsToFit repeatedly (eg after column group is opened / closed repeatedly) we don't want
+        // the columns to start shrinking / growing over time.
+        colsToSpread.forEach(column => column.resetActualWidth() );
+
         while (!finishedResizing) {
             finishedResizing = true;
             const availablePixels = gridWidth - this.getWidthOfColsInList(colsToNotSpread);
@@ -3142,7 +3159,9 @@ export class ColumnController extends BeanStub {
         if (needAutoColumns) {
             const newAutoGroupCols = this.autoGroupColService.createAutoGroupColumns(this.rowGroupColumns);
             const autoColsDifferent = !this.autoColsEqual(newAutoGroupCols, this.groupAutoColumns);
-            if (autoColsDifferent) {
+            // we force recreate when suppressSetColumnStateEvents changes, so new group cols pick up the new
+            // definitions. otherwise we could ignore the new cols becasue they appear to be the same.
+            if (autoColsDifferent || this.forceRecreateAutoGroups) {
                 this.groupAutoColumns = newAutoGroupCols;
             }
         } else {

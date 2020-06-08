@@ -11,8 +11,10 @@ import { AutoWidthCalculator } from '../rendering/autoWidthCalculator';
 import { Constants } from '../constants';
 import { addOrRemoveCssClass, setDisplayed } from '../utils/dom';
 import { ManagedFocusComponent } from '../widgets/managedFocusComponent';
-import { HeaderController, HeaderContainerTypes, HeaderNavigationDirection } from './header/headerController';
+import { HeaderNavigationService, HeaderNavigationDirection } from './header/headerNavigationService';
 import { _ } from '../utils';
+
+export type HeaderContainerPosition = 'left' | 'right' | 'center';
 
 export class HeaderRootComp extends ManagedFocusComponent {
     private static TEMPLATE = /* html */
@@ -33,10 +35,11 @@ export class HeaderRootComp extends ManagedFocusComponent {
     @Autowired('columnController') private columnController: ColumnController;
     @Autowired('gridApi') private gridApi: GridApi;
     @Autowired('autoWidthCalculator') private autoWidthCalculator: AutoWidthCalculator;
-    @Autowired('headerController') private headerController: HeaderController;
+    @Autowired('headerNavigationService') private headerNavigationService: HeaderNavigationService;
 
     private gridPanel: GridPanel;
     private printLayout: boolean;
+    private headerContainers: Map<HeaderContainerPosition, HeaderContainer> = new Map();
 
     constructor() {
         super(HeaderRootComp.TEMPLATE);
@@ -50,24 +53,26 @@ export class HeaderRootComp extends ManagedFocusComponent {
         this.gridApi.registerHeaderRootComp(this);
         this.autoWidthCalculator.registerHeaderRootComp(this);
 
-        this.headerController.registerHeaderContainer(
+        this.registerHeaderContainer(
             new HeaderContainer(this.eHeaderContainer, this.eHeaderViewport, null),
-            HeaderContainerTypes.CenterContainer
+            'center'
         );
 
-        this.headerController.registerHeaderContainer(
+        this.registerHeaderContainer(
             new HeaderContainer(this.ePinnedLeftHeader, null, Constants.PINNED_LEFT),
-            HeaderContainerTypes.LeftContainer
+            'left'
         );
 
-        this.headerController.registerHeaderContainer(
+        this.registerHeaderContainer(
             new HeaderContainer(this.ePinnedRightHeader, null, Constants.PINNED_RIGHT),
-            HeaderContainerTypes.RightContainer
+            'right'
         );
 
-        this.headerController.getHeaderContainers().forEach(
+        this.headerContainers.forEach(
             container => this.createManagedBean(container)
         );
+
+        this.headerNavigationService.registerHeaderRoot(this);
 
         // shotgun way to get labels to change, eg from sum(amount) to avg(amount)
         this.addManagedListener(this.eventService, Events.EVENT_COLUMN_VALUE_CHANGED, this.refreshHeader.bind(this));
@@ -86,13 +91,20 @@ export class HeaderRootComp extends ManagedFocusComponent {
 
     public registerGridComp(gridPanel: GridPanel): void {
         this.gridPanel = gridPanel;
-        this.headerController.registerGridComp(gridPanel);
-        this.headerController.getHeaderContainers().forEach(c => c.setupDragAndDrop(gridPanel));
+        this.headerContainers.forEach(c => c.setupDragAndDrop(gridPanel));
+    }
+
+    private registerHeaderContainer(headerContainer: HeaderContainer, type: HeaderContainerPosition): void {
+        this.headerContainers.set(type, headerContainer);
     }
 
     protected onTabKeyDown(e: KeyboardEvent): void {
-        if (this.headerController.navigateHorizontally(
-            e.shiftKey ? HeaderNavigationDirection.LEFT : HeaderNavigationDirection.RIGHT, true) ||
+        const isRtl = this.gridOptionsWrapper.isEnableRtl();
+        const direction = e.shiftKey !== isRtl
+            ? HeaderNavigationDirection.LEFT
+            : HeaderNavigationDirection.RIGHT;
+
+        if (this.headerNavigationService.navigateHorizontally(direction, true) ||
             this.focusController.focusNextGridCoreContainer(e.shiftKey)
         ) {
             e.preventDefault();
@@ -109,7 +121,7 @@ export class HeaderRootComp extends ManagedFocusComponent {
                 if (!_.exists(direction)) {
                     direction = HeaderNavigationDirection.RIGHT;
                 }
-                this.headerController.navigateHorizontally(direction);
+                this.headerNavigationService.navigateHorizontally(direction);
                 break;
             case Constants.KEY_UP:
                 direction = HeaderNavigationDirection.UP;
@@ -117,7 +129,7 @@ export class HeaderRootComp extends ManagedFocusComponent {
                 if (!_.exists(direction)) {
                     direction = HeaderNavigationDirection.DOWN;
                 }
-                if (this.headerController.navigateVertically(direction)) {
+                if (this.headerNavigationService.navigateVertically(direction)) {
                     e.preventDefault();
                 }
                 break;
@@ -150,13 +162,13 @@ export class HeaderRootComp extends ManagedFocusComponent {
     }
 
     public forEachHeaderElement(callback: (renderedHeaderElement: Component) => void): void {
-        this.headerController.getHeaderContainers().forEach(
+        this.headerContainers.forEach(
             childContainer => childContainer.forEachHeaderElement(callback)
         );
     }
 
     public refreshHeader() {
-        this.headerController.getHeaderContainers().forEach(
+        this.headerContainers.forEach(
             container => container.refresh()
         );
     }
@@ -190,6 +202,10 @@ export class HeaderRootComp extends ManagedFocusComponent {
                 this.eHeaderViewport.scrollLeft = 0;
             }
         });
+    }
+
+    public getHeaderContainers(): Map<HeaderContainerPosition, HeaderContainer> {
+        return this.headerContainers;
     }
 
     public setHeaderContainerWidth(width: number) {

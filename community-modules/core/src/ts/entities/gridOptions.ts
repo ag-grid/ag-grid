@@ -6,7 +6,7 @@ import { GridApi } from "../gridApi";
 import { ColumnApi } from "../columnController/columnApi";
 import { Column } from "./column";
 import { IViewportDatasource } from "../interfaces/iViewportDatasource";
-import { ICellRendererComp, ICellRendererFunc, ICellRenderer } from "../rendering/cellRenderers/iCellRenderer";
+import { ICellRendererComp, ICellRendererFunc, ICellRenderer, ICellRendererParams } from "../rendering/cellRenderers/iCellRenderer";
 import { ColDef, ColGroupDef, IAggFunc, SuppressKeyboardEventParams } from "./colDef";
 import { IDatasource } from "../interfaces/iDatasource";
 import { CellPosition } from "./cellPosition";
@@ -279,13 +279,15 @@ export interface GridOptions {
     suppressPropertyNamesCheck?: boolean;
     serverSideSortingAlwaysResets?: boolean;
 
+    suppressCellMouseEvents?: boolean;
+
     statusBar?: {
         statusPanels: StatusPanelDef[];
     };
 
     // just set once
     localeText?: any;
-    localeTextFunc?: Function;
+    localeTextFunc?: (key: string, defaultValue: string) => string;
     suppressAnimationFrame?: boolean;
     /* a map of strings (cellRenderer keys) to cellRenderers (that can be ICellRenderer or ICellRendererFunc) */
     // cellRenderers?: {[key: string]: {new(): ICellRenderer} | ICellRendererFunc};
@@ -339,7 +341,7 @@ export interface GridOptions {
     isRowMaster?: IsRowMaster;
     detailCellRenderer?: { new(): ICellRendererComp; } | ICellRendererFunc | string;
     detailCellRendererFramework?: any;
-    detailCellRendererParams?: any;
+    detailCellRendererParams?: ICellRendererParams;
 
     // changeable with impact
     rowData?: any[];

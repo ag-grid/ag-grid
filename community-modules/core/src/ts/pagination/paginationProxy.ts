@@ -231,7 +231,14 @@ export class PaginationProxy extends BeanStub {
             this.bottomRowBounds.rowIndex = this.bottomDisplayedRowIndex;
         }
 
-        this.pixelOffset = _.exists(this.topRowBounds) ? this.topRowBounds.rowTop : 0;
+        this.setPixelOffset(_.exists(this.topRowBounds) ? this.topRowBounds.rowTop : 0);
+    }
+
+    private setPixelOffset(value: number): void {
+        if (this.pixelOffset===value) { return; }
+
+        this.pixelOffset = value;
+        this.eventService.dispatchEvent({type: Events.EVENT_PAGINATION_PIXEL_OFFSET_CHANGED});
     }
 
     private setZeroRows(): void {

@@ -18,7 +18,7 @@ class TreeNode {
     screenX: number = 0;
     screenY: number = 0;
     parent?: TreeNode;
-    children = [] as TreeNode[];
+    children: TreeNode[] = [];
     leafCount: number = 0;
     depth: number;
     prelim: number = 0;

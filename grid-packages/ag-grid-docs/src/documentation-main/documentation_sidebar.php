@@ -3,48 +3,58 @@
 
 <div class="card card-highlight mb-4">
     <div class="card-body">
-        <h5 class="card-title"><a href="../ag-grid-changelog/?fixVersion=23.1.0">Version 23.1.0</a></h5>
-        <h6 class="card-subtitle mb-2 text-muted">May 1</h6>
+        <h5 class="card-title"><a href="../ag-grid-changelog/?fixVersion=23.2.0">Version 23.2.0</a></h5>
+        <h6 class="card-subtitle mb-2 text-muted">Jun 5</h6>
         <p class="card-text">
             Minor release with new features and bug fixes:
         </p>
         <ul>
             <li>
-                <a class="learn-more" href="/javascript-grid-row-dragging-to-grid/">Row Dragging Between Grids</a>
+                <a class="learn-more" href="/javascript-grid-keyboard-navigation/">Keyboard Navigation Enhancements</a>
             </li>
 
             <li>
                 <a class="learn-more"
-                   href="/javascript-grid-row-dragging-to-external-dropzone/">Row Dragging to External Dropzone</a>
+                   href="/javascript-charts-navigator/">Charts Navigator</a>
             </li>
 
             <li>
                 <a class="learn-more"
-                   href="/javascript-grid-themes-customising/#setting-parameters-css-variables">Support for CSS Variables</a>
+                   href="/javascript-grid-filter-set-excel-mode/">Set Filter Excel Mode</a>
             </li>
 
             <li>
-                <a class="learn-more" href="/javascript-charts-histogram-series/">Histogram Chart</a>
-            </li>
-
-            <li>
-                <a class="learn-more" href="/javascript-charts-events/">Chart Events</a>
+                <a class="learn-more" href="/javascript-grid-master-detail/">Master Detail Enhancements</a>
             </li>
         </ul>
 
         <p class="text-right">
-            <a class="learn-more" href="../ag-grid-changelog/?fixVersion=23.1.0">Change Log</a>
+            <a class="learn-more" href="../ag-grid-changelog/?fixVersion=23.2.0">Change Log</a>
         </p>
     </div>
 </div>
 
+<div class="card card-highlight mb-4">
+    <div class="card-body">
+        <h5 class="card-title">
+            <a class="learn-more" href="https://thinkster.io/topics/ag-grid">
+                <img style="width: 100%;" src="../images/thinkster.png"/>
+            </a>
+        </h5>
+        <p class="card-text">
+            There are free <a class="learn-more" href="https://thinkster.io/topics/ag-grid">Thinkster Courses</a> for learning
+            ag-Grid with Angular and React.
+        </p>
+    </div>
+</div>
 
 <div class="card card-highlight mb-4">
     <div class="card-body">
         <h5 class="card-title"><a href="../ag-grid-changelog/?fixVersion=22.0.0">Best Web Grids for 2020</a></h5>
         <h6 class="card-subtitle mb-2 text-muted">Jan 27th</h6>
         <p class="card-text">
-            ag-Grid is the "Absolute Winner" according to <a href="https://www.crankuptheamps.com//blog/posts/2020/01/23/grid-comparison-2/#">Best Web Grids for 2020</a>.
+            ag-Grid is the "Absolute Winner" according to
+            <a class="learn-more" href="https://www.crankuptheamps.com//blog/posts/2020/01/23/grid-comparison-2/#">Best Web Grids for 2020</a>.
         </p>
     </div>
 </div>
@@ -86,7 +96,7 @@
         <a class="learn-more" href="https://angularconnect.com" target="_blank"> Angular Connect</a>
         <p class="card-subtitle mb-2 text-muted" style="margin-top: 1px">Oct 13-14</p>
 
-        <p/>
+        <p></p>
 
         <h6 class="card-subtitle mb-2 text-muted">React</h6>
         <img src="../images/flags/netherlands.png" style="height: 18px; width: 18px">
@@ -97,7 +107,7 @@
         <a class="learn-more" href="https://reactadvanced.com" target="_blank"> React Advanced</a>
         <p class="card-subtitle mb-2 text-muted" style="margin-top: 1px">Oct 25</p>
 
-        <p/>
+        <p></p>
 
         <h6 class="card-subtitle mb-2 text-muted">JavaScript</h6>
 

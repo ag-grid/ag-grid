@@ -205,7 +205,7 @@
             "description": "Params to be passed to cell renderer component."
         },
         "pinnedRowCellRenderer<br />pinnedRowCellRendererFramework": {
-            "description": "<code>cellRenderer</code> to use for pinned rows in this column. Floating cells will use <code>floatingCellRenderer</code> if available, or <code>cellRenderer</code> if not."
+            "description": "<code>cellRenderer</code> to use for pinned rows in this column. Pinned cells will use <code>pinnedCellRenderer</code> if available, or <code>cellRenderer</code> if not."
         },
         "pinnedRowCellRendererParams": {
             "description": "Params to be passed to pinned row cell renderer component."
@@ -237,7 +237,7 @@
         "valueFormatter(params)": {
             "description": "Function or expression. Formats the value for display."
         },
-        "floatingCellFormatter(params)": {
+        "pinnedRowValueFormatter(params)": {
             "description": "Function or expression. Formatter to use for a pinned row. If missing, the normal <code>valueFormatter</code> will be used."
         },
         "valueSetter(params)": {

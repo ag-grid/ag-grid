@@ -179,18 +179,8 @@ SNIPPET
     <li><b>Move to For Sale:</b> Move selected items to 'For Sale' group.</li>
     <li><b>Move to In Workshop:</b> Move selected items to 'In Workshop' group.</li>
     <li><b>Move to Sold:</b> Move selected items to 'Sold' group.</li>
+    <li>When moving items, the grid animates the rows to the new location with minimal DOM updates.</li>
     <li><b>Get Row Data:</b> Prints all row data to the console.</li>
-</ul>
-
-<p>
-    Things to try with the below example include:
-</p>
-
-<ul class="content">
-    <li>Move rows between groups to see how the grid animates the rows to
-        the new location with minimal DOM updates.</li>
-    <li>Order by 'Created' and then add rows - notice how the new rows
-        are always added to the top as they are ordered 'latest first'</li>
 </ul>
 
 <?= grid_example('Updating with Transaction and Groups', 'updating-with-transaction-and-groups', 'generated', ['enterprise' => true]) ?>
@@ -247,7 +237,9 @@ SNIPPET
     </li>
     <li>
         When the example first loads, all the data is set into the grid which results in 171 aggregation
-        operations (one for each group), 48,131 comparisons (for sorting all rows in each group) and 10,000 filter
+        operations (one for each group), approximately 48,000 comparisons (for sorting all rows in each group,
+        the number of sorts differs slightly dependent on the data values which are random in this example)
+        and 10,000 filter
         passes (one for each row). The number of milliseconds to complete the operation is also printed (this
         value will depend on your hardware).
     </li>

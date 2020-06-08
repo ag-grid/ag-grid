@@ -9,13 +9,8 @@ import { HeaderRowType } from "../headerRowComp";
 import { GridOptionsWrapper } from "../../gridOptionsWrapper";
 import { GridPanel } from "../../gridPanel/gridPanel";
 import { AnimationFrameService } from "../../misc/animationFrameService";
+import { HeaderRootComp, HeaderContainerPosition } from "../headerRootComp";
 import { _ } from "../../utils";
-
-export enum HeaderContainerTypes {
-    LeftContainer,
-    CenterContainer,
-    RightContainer
-}
 
 export enum HeaderNavigationDirection {
     UP,
@@ -24,48 +19,42 @@ export enum HeaderNavigationDirection {
     RIGHT
 }
 
-@Bean('headerController')
-export class HeaderController extends BeanStub {
+@Bean('headerNavigationService')
+export class HeaderNavigationService extends BeanStub {
 
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
     @Autowired('focusController') private focusController: FocusController;
     @Autowired('headerPositionUtils') private headerPositionUtils: HeaderPositionUtils;
     @Autowired('animationFrameService') private animationFrameService: AnimationFrameService;
 
-    private headerContainers: HeaderContainer[] = [];
     private gridPanel: GridPanel;
+    private headerRoot: HeaderRootComp;
 
     public registerGridComp(gridPanel: GridPanel): void {
         this.gridPanel = gridPanel;
     }
 
-    public registerHeaderContainer(headerContainer: HeaderContainer, type: HeaderContainerTypes): void {
-        this.headerContainers[type] = headerContainer;
-    }
-
-    public getHeaderContainers(): HeaderContainer[] {
-        return this.headerContainers;
+    public registerHeaderRoot(headerRoot: HeaderRootComp): void {
+        this.headerRoot = headerRoot;
     }
 
     public getHeaderRowCount(): number {
-        return this.headerContainers.length === 0 ? 0 : this.headerContainers[0].getRowComps().length;
+        const headerContainers = this.headerRoot.getHeaderContainers();
+
+        return headerContainers.size === 0 ? 0 : this.getHeaderContainer().getRowComps().length;
     }
 
     public getHeaderRowType(idx: number): HeaderRowType {
         if (this.getHeaderRowCount()) {
-            return this.headerContainers[0].getRowComps()[idx].getType();
+            return this.getHeaderContainer().getRowComps()[idx].getType();
         }
     }
 
-    public getHeaderContainer(pinned: string): HeaderContainer {
-        const containerIdx = pinned === 'left'
-            ? HeaderContainerTypes.LeftContainer
-            : (pinned === 'right'
-                ? HeaderContainerTypes.RightContainer
-                : HeaderContainerTypes.CenterContainer
-            );
-
-        return this.headerContainers[containerIdx];
+    public getHeaderContainer(position: HeaderContainerPosition = 'center'): HeaderContainer {
+        if (position === null) {
+            position = 'center';
+        }
+        return this.headerRoot.getHeaderContainers().get(position);
     }
 
     /*
@@ -121,11 +110,13 @@ export class HeaderController extends BeanStub {
      */
     public navigateHorizontally(direction: HeaderNavigationDirection, fromTab?: boolean): boolean {
         const focusedHeader = this.focusController.getFocusedHeader();
+        const isLeft = direction === HeaderNavigationDirection.LEFT;
         const isRtl = this.gridOptionsWrapper.isEnableRtl();
         let nextHeader: HeaderPosition;
         let normalisedDirection: 'Before' |  'After';
 
-        if (direction === HeaderNavigationDirection.LEFT !== isRtl) {
+        // either navigating to the left or isRtl (cannot be both)
+        if (isLeft !== isRtl) {
             normalisedDirection = 'Before';
             nextHeader = this.headerPositionUtils.findHeader(focusedHeader, normalisedDirection);
         } else {

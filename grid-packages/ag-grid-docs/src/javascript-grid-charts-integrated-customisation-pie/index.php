@@ -29,6 +29,11 @@ interface PieChartOptions {
         label: PieSeriesLabelOptions;
         callout: PieSeriesCalloutOptions;
         tooltip: TooltipOptions;
+
+        // A map of series events to their listener functions.
+        // Please see the feature section on series events in standalone charts
+        // documentation.
+        listeners?: { [key in string]: Function };
     };
 }
 

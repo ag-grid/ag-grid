@@ -4,13 +4,24 @@ import { Constants } from "../constants";
 import { FocusController } from "../focusController";
 import { _ } from "../utils";
 
+/**
+ * This provides logic to override the default browser focus logic.
+ *
+ * When the component gets focus, it uses the grid logic to find out what should be focused,
+ * and then focuses that instead.
+ *
+ * This is how we ensure when user tabs into the relevant section, we focus the correct item.
+ * For example GridCore extends ManagedFocusComponent, and it ensures when it receives focus
+ * that focus goes to the first cell of the first header row.
+ */
 export class ManagedFocusComponent extends Component {
 
     protected onTabKeyDown?(e: KeyboardEvent): void;
     protected handleKeyDown?(e: KeyboardEvent): void;
 
     public static FOCUS_MANAGED_CLASS = 'ag-focus-managed';
-    private tabGuards: HTMLElement[] = [];
+    private topTabGuard: HTMLElement;
+    private bottomTabGuard: HTMLElement;
     private skipTabGuardFocus:boolean = false;
 
     @Autowired('focusController') protected focusController: FocusController;
@@ -29,7 +40,9 @@ export class ManagedFocusComponent extends Component {
         _.addCssClass(focusableElement, ManagedFocusComponent.FOCUS_MANAGED_CLASS);
 
         if (this.isFocusableContainer()) {
-            this.createTabGuards().addTabGuards();
+            this.topTabGuard = this.createTabGuard('top');
+            this.bottomTabGuard = this.createTabGuard('bottom');
+            this.addTabGuards();
             this.activateTabGuards();
             this.forEachTabGuard(tabGuards => {
                 this.addManagedListener(tabGuards, 'focus', this.onFocus.bind(this));
@@ -80,15 +93,11 @@ export class ManagedFocusComponent extends Component {
         }
     }
 
-    protected getTabGuards(): HTMLElement[] {
-        return this.tabGuards;
-    }
-
     public forceFocusOutOfContainer(): void {
         this.activateTabGuards();
 
         this.skipTabGuardFocus = true;
-        this.getTabGuards()[1].focus();
+        this.bottomTabGuard.focus();
 
     }
 
@@ -96,40 +105,36 @@ export class ManagedFocusComponent extends Component {
         if (!this.isFocusableContainer()) {
             super.appendChild(newChild, container);
         } else {
-            const tabGuards = this.getTabGuards();
-
             if (!_.isNodeOrElement(newChild)) {
                 newChild = (newChild as Component).getGui();
             }
 
-            if (tabGuards.length) {
-                _.last(tabGuards).insertAdjacentElement('beforebegin', newChild as HTMLElement);
+            const bottomTabGuard = this.bottomTabGuard;
+
+            if (bottomTabGuard) {
+                bottomTabGuard.insertAdjacentElement('beforebegin', newChild as HTMLElement);
             } else {
                 super.appendChild(newChild, container);
             }
         }
     }
 
-    private createTabGuards(): this {
-        this.tabGuards = ['top', 'bottom'].map(side => {
-            const tabGuard = document.createElement('div');
-            tabGuard.classList.add('ag-tab-guard');
-            tabGuard.classList.add(`ag-tab-guard-${side}`);
+    private createTabGuard(side: 'top' | 'bottom'): HTMLElement {
+        const tabGuard = document.createElement('div');
+        tabGuard.classList.add('ag-tab-guard');
+        tabGuard.classList.add(`ag-tab-guard-${side}`);
 
-            return tabGuard as HTMLElement;
-        });
-
-        return this;
+        return tabGuard as HTMLElement;
     }
 
     private addTabGuards(): void {
         const focusableEl = this.getFocusableElement();
-        focusableEl.insertAdjacentElement('afterbegin', this.tabGuards[0]);
-        focusableEl.insertAdjacentElement('beforeend', this.tabGuards[1]);
+        focusableEl.insertAdjacentElement('afterbegin', this.topTabGuard);
+        focusableEl.insertAdjacentElement('beforeend', this.bottomTabGuard);
     }
 
     private forEachTabGuard(callback: (tabGuard: HTMLElement) => void) {
-        this.tabGuards.forEach(callback);
+        [this.topTabGuard, this.bottomTabGuard].forEach(callback);
     }
 
     private addKeyDownListeners(eGui: HTMLElement): void {
@@ -151,7 +156,7 @@ export class ManagedFocusComponent extends Component {
             return;
         }
 
-        this.focusInnerElement(e.target === this.tabGuards[1]);
+        this.focusInnerElement(e.target === this.bottomTabGuard);
     }
 
     private activateTabGuards(): void {
