@@ -25,6 +25,7 @@ function emptyDirectory(directory) {
             }
             else {
                 emptyDirectory(filePath);
+                fs.rmdirSync(filePath);
             }
         });
     }
@@ -34,21 +35,34 @@ function emptyDirectory(directory) {
     }
 };
 
-function copyFilesSync(files, dest, tokenToReplace, replaceValue = '') {
+const extensionsToOverride = new Set(['html', 'js', 'jsx', 'ts']);
+const parsers = {
+    js: 'babel',
+    jsx: 'babel',
+    ts: 'typescript',
+};
+
+function writeFile(destination, contents) {
+    // allow developers to override the example theme with an environment variable
+    const themeOverride = process.env.AG_EXAMPLE_THEME_OVERRIDE;
+
+    if (themeOverride && extensionsToOverride.has(path.extname(destination).slice(1))) {
+        contents = contents.replace(/ag-theme-alpine/g, `ag-theme-${themeOverride}`);
+    }
+
+    const extension = path.extname(destination).slice(1);
+    const parser = parsers[extension] || extension;
+
+    fs.writeFileSync(destination, format(contents, parser), 'utf8');
+}
+
+function copyFiles(files, dest, tokenToReplace, replaceValue = '') {
     files.forEach(sourceFile => {
         const filename = path.basename(sourceFile);
         const destinationFile = path.join(dest, tokenToReplace ? filename.replace(tokenToReplace, replaceValue) : filename);
-        const extension = path.extname(sourceFile).slice(1);
-        const parsers = {
-            js: 'babel',
-            jsx: 'babel',
-            ts: 'typescript',
-        };
+        const contents = getFileContents(sourceFile);
 
-        const parser = parsers[extension] || extension;
-        const content = format(getFileContents(sourceFile), parser);
-
-        fs.writeFileSync(destinationFile, content, 'utf8');
+        writeFile(destinationFile, contents);
     });
 }
 
@@ -83,7 +97,7 @@ function phpArrayToJSON(string) {
 }
 
 function getFileContents(path) {
-    return fs.readFileSync(path, { encoding: 'utf8' });
+    return fs.readFileSync(path, 'utf8');
 }
 
 function forEachExample(done, name, regex, generateExample, scope = '*', trigger) {
@@ -132,6 +146,11 @@ function format(source, parser) {
 
 function createExampleGenerator(prefix, importTypes) {
     const [parser, vanillaToVue, vanillaToReact, vanillaToAngular] = getGeneratorCode(prefix);
+    const appModuleAngular = new Map();
+
+    importTypes.forEach(importType => {
+        appModuleAngular.set(importType, require(`${prefix}${importType}-angular-app-module.ts`).appModuleAngular);
+    });
 
     return (examplePath, options) => {
         //    src section                        example        glob
@@ -173,25 +192,21 @@ function createExampleGenerator(prefix, importTypes) {
 
         const writeExampleFiles = (importType, framework, frameworkScripts, files, subdirectory, componentPostfix = '') => {
             const basePath = path.join(createExamplePath(`_gen/${importType}`), framework);
-
-            fs.mkdirSync(basePath, { recursive: true });
-            emptyDirectory(basePath);
-
             const scriptsPath = subdirectory ? path.join(basePath, subdirectory) : basePath;
 
             fs.mkdirSync(scriptsPath, { recursive: true });
 
             Object.keys(files).forEach(name => {
-                fs.writeFileSync(path.join(scriptsPath, name), files[name], 'utf8');
+                writeFile(path.join(scriptsPath, name), files[name]);
             });
 
             if (inlineStyles) {
-                fs.writeFileSync(path.join(basePath, 'styles.css'), inlineStyles, 'utf8');
+                writeFile(path.join(basePath, 'styles.css'), inlineStyles);
             }
 
-            copyFilesSync(stylesheets, basePath);
-            copyFilesSync(scripts, basePath);
-            copyFilesSync(frameworkScripts, scriptsPath, `_${framework}`, componentPostfix);
+            copyFiles(stylesheets, basePath);
+            copyFiles(scripts, basePath);
+            copyFiles(frameworkScripts, scriptsPath, `_${framework}`, componentPostfix);
         };
 
         // inline styles in the examples index.html
@@ -205,9 +220,7 @@ function createExampleGenerator(prefix, importTypes) {
         try {
             const getSource = vanillaToReact(bindings, extractComponentFileNames(reactScripts, '_react'));
 
-            importTypes.forEach(importType => {
-                reactConfigs.set(importType, { 'index.jsx': format(getSource(importType), 'babel') });
-            });
+            importTypes.forEach(importType => reactConfigs.set(importType, { 'index.jsx': getSource(importType) }));
         } catch (e) {
             console.error(`Failed to process React example in ${examplePath}`, e);
             throw e;
@@ -217,16 +230,13 @@ function createExampleGenerator(prefix, importTypes) {
         const angularConfigs = new Map();
 
         try {
-            const angularFormat = source => format(source, 'typescript');
             const angularComponentFileNames = extractComponentFileNames(angularScripts, '_angular');
             const getSource = vanillaToAngular(bindings, angularComponentFileNames);
-            const getAppModuleAngular =
-                importType => require(`${prefix}${importType}-angular-app-module.ts`).appModuleAngular;
 
             importTypes.forEach(importType => {
                 angularConfigs.set(importType, {
-                    'app.component.ts': angularFormat(getSource(importType)),
-                    'app.module.ts': angularFormat(getAppModuleAngular(importType)(angularComponentFileNames)),
+                    'app.component.ts': getSource(importType),
+                    'app.module.ts': appModuleAngular.get(importType)(angularComponentFileNames),
                 });
             });
         } catch (e) {
@@ -240,13 +250,13 @@ function createExampleGenerator(prefix, importTypes) {
         try {
             const getSource = vanillaToVue(bindings, extractComponentFileNames(vueScripts, '_vue', 'Vue'));
 
-            importTypes.forEach(importType => {
-                vueConfigs.set(importType, { 'main.js': format(getSource(importType), 'babel') });
-            });
+            importTypes.forEach(importType => vueConfigs.set(importType, { 'main.js': getSource(importType) }));
         } catch (e) {
             console.error(`Failed to process Vue example in ${examplePath}`, e);
             throw e;
         }
+
+        emptyDirectory(createExamplePath(`_gen`));
 
         importTypes.forEach(importType => writeExampleFiles(importType, 'react', reactScripts, reactConfigs.get(importType)));
         importTypes.forEach(importType => writeExampleFiles(importType, 'angular', angularScripts, angularConfigs.get(importType), 'app'));
@@ -260,18 +270,6 @@ function createExampleGenerator(prefix, importTypes) {
         const vanillaScripts = getMatchingPaths('*.{html,js}', { ignore: ['**/*_{angular,react,vue}.js'] });
 
         importTypes.forEach(importType => writeExampleFiles(importType, 'vanilla', vanillaScripts, {}));
-
-        // allow developers to override the example theme with an environment variable
-        const themeOverride = process.env.AG_EXAMPLE_THEME_OVERRIDE;
-
-        if (themeOverride) {
-            const generatedFiles = glob.sync(path.join('_gen', '**/*.{html,js,jsx,ts}'));
-
-            generatedFiles.forEach(file => {
-                let content = getFileContents(file).replace(/ag-theme-alpine/g, `ag-theme-${themeOverride}`);
-                fs.writeFileSync(file, content, 'utf8');
-            });
-        }
     };
 }
 
