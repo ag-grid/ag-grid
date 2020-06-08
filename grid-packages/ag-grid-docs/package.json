@@ -55,7 +55,7 @@
     "mkdir-p": "0.0.7",
     "mkdirp": "0.5.1",
     "moment": "2.22.2",
-    "prettier": "~1.18.2",
+    "prettier": "2.0.5",
     "puppeteer": "1.7.0",
     "tcp-port-used": "^1.0.1",
     "ts-node": "7.0.1",
