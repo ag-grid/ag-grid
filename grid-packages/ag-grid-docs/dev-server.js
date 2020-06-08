@@ -36,19 +36,6 @@ const WINDOWS = /^win/.test(os.platform());
 //     process.env.AG_EXAMPLE_THEME_OVERRIDE = 'alpine';
 // }
 
-const lernaBuildChainInfo = {};
-(async () => {
-    Object.assign(lernaBuildChainInfo, await getFlattenedBuildChainInfo());
-
-    // we filter out all "core" modules as they'll be dealt with by TSC itself
-    // this will leave us with frameworks and "legacy" packages like ag-grid-community
-    const includes = ['angular', 'react', 'vue']
-    Object.keys(lernaBuildChainInfo).forEach(packageName => {
-        lernaBuildChainInfo[packageName] = lernaBuildChainInfo[packageName]
-            .filter(dependent => (dependent.startsWith('@ag-') && includes.some(inclusion => dependent.includes(inclusion))) || dependent.startsWith('ag-'));
-    })
-})();
-
 
 function reporter(middlewareOptions, options) {
     const {log, state, stats} = options;
@@ -458,8 +445,23 @@ function updateUtilsSystemJsMappingsForFrameworks(gridCommunityModules, gridEnte
     fs.writeFileSync(utilityFilename, updatedUtilFileContents, 'UTF-8');
 }
 
+const getLernaChainBuildInfo = async () => {
+    const lernaBuildChainInfo = await getFlattenedBuildChainInfo();
+
+    // we filter out all "core" modules as they'll be dealt with by TSC itself
+    // this will leave us with frameworks and "legacy" packages like ag-grid-community
+    const includes = ['angular', 'react', 'vue']
+    Object.keys(lernaBuildChainInfo).forEach(packageName => {
+        lernaBuildChainInfo[packageName] = lernaBuildChainInfo[packageName]
+            .filter(dependent => (dependent.startsWith('@ag-') && includes.some(inclusion => dependent.includes(inclusion))) || dependent.startsWith('ag-'));
+    })
+
+    return lernaBuildChainInfo;
+}
+
 const rebuildPackagesBasedOnChangeState = async (skipSelf = true) => {
-    const modulesState = readModulesState()
+    const lernaBuildChainInfo = await getLernaChainBuildInfo();
+    const modulesState = readModulesState();
 
     const changedPackages = flattenArray(Object.keys(modulesState)
         .filter(key => modulesState[key].moduleChanged)
@@ -750,3 +752,4 @@ module.exports = async (done) => {
             done();
         });
 };
+
