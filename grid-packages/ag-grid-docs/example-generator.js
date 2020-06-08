@@ -160,7 +160,11 @@ function forEachExample(done, name, regex, generateExample, scope = '*', trigger
 }
 
 function format(source, parser) {
-    const formatted = source.replace(/\/\/\s*inScope\[.*\n/, ''); // strip out inScope comments
+    const formatted = source.replace(/\/\/\s*inScope\[.*\n/g, ''); // strip out inScope comments
+
+    if (process.env.AG_EXAMPLE_DISABLE_FORMATTING === 'true') {
+        return formatted;
+    }
 
     return prettier.format(formatted, { parser, singleQuote: true, trailingComma: 'es5' });
 }
@@ -217,9 +221,7 @@ function createExampleGenerator(prefix, importTypes) {
 
             fs.mkdirSync(scriptsPath, { recursive: true });
 
-            Object.keys(files).forEach(name => {
-                writeFile(path.join(scriptsPath, name), files[name]);
-            });
+            Object.keys(files).forEach(name => writeFile(path.join(scriptsPath, name), files[name]));
 
             if (inlineStyles) {
                 writeFile(path.join(basePath, 'styles.css'), inlineStyles);
