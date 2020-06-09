@@ -127,7 +127,7 @@
                 main: "./main.ts",
                 defaultExtension: "ts",
                 meta: {
-                    "./*.ts": {
+                    "*.ts": {
                         loader: boilerplatePath + "systemjs-angular-loader.js"
                     }
                 }
