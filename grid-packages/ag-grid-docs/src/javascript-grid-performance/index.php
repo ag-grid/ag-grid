@@ -6,8 +6,6 @@ $pageGroup = "feature";
 include '../documentation-main/documentation_header.php';
 ?>
 
-
-
     <h1>Performance</h1>
 
     <p class="lead">
@@ -42,19 +40,19 @@ include '../documentation-main/documentation_header.php';
     <p> The fastest cell renderers have the following properties:</p>
 
     <note>
-        Do NOT use a framework (eg Angular or React) for the cell renderers. The grid rendering is highly
-        customised and plain JavaScript cell renderers will work faster than framework equivalents. It is
-        still fine to use the framework version of ag-Grid (eg for setting ag-Grid properties etc) however
-        because there are so many cells getting created and destroyed, the additional layer the frameworks
+        The grid rendering is highly customised and plain JavaScript cell renderers will work faster than framework
+        equivalents. It is still fine to use the framework version of ag-Grid (eg for setting ag-Grid properties etc)
+        however because there are so many cells getting created and destroyed, the additional layer the frameworks
         add do not help performance and should be provided if you are having performance concerns.
     </note>
 
-   <p>     Not everyone needs blazing fast cell renderers (eg maybe you have users on fast machines with fast browsers,
-        or maybe your grids have few columns) in which case framework cell renderers may work fine. The suggestion
-        of not using frameworks for cells is only applicable when you are looking to squeeze for performance gains.
+   <p>
+       Not everyone needs blazing fast cell renderers (eg maybe you have users on fast machines with fast browsers, or
+       maybe your grids have few columns) in which case framework cell renderers may work fine. The suggestion of not
+       using frameworks for cells is only applicable when you are looking to squeeze for performance gains.
     </p>
 
-    <note>We suggest not using frameworks for cell renderers for because of the large number of cells getting
+    <note>Using frameworks for cell renderers can be slower because of the large number of cells getting
     created and destroyed. Most of the time a cell will not have complex features in it, so using plain
     JavaScript should not be a problem. For all other components (filters, editors etc) using the frameworks
     won't make much noticeable difference as these components are not created and destroyed as often as
