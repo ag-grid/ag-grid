@@ -1,4 +1,4 @@
-import { ChartBuilder, PieSeries, PieSeriesOptions as PieSeriesInternalOptions, PolarChart } from "ag-charts-community";
+import { PieSeries, PolarChart, AgChart } from "ag-charts-community";
 import { PieSeriesOptions, PolarChartOptions } from "@ag-grid-community/core";
 import { ChartProxyParams, UpdateChartParams } from "../chartProxy";
 import { PolarChartProxy } from "./polarChartProxy";
@@ -12,8 +12,20 @@ export class PieChartProxy extends PolarChartProxy {
         this.recreateChart();
     }
 
-    protected createChart(options?: PolarChartOptions<PieSeriesOptions>): PolarChart {
-        return ChartBuilder.createPieChart(this.chartProxyParams.parentElement, options || this.chartOptions);
+    protected createChart(options: any): PolarChart {
+        options = options || this.chartOptions;
+        const seriesDefaults = options.seriesDefaults;
+        options.series = [{
+            ...seriesDefaults,
+            fills: seriesDefaults.fill.colors,
+            fillOpacity: seriesDefaults.fill.opacity,
+            strokes: seriesDefaults.stroke.colors,
+            strokeOpacity: seriesDefaults.stroke.opacity,
+            strokeWidth: seriesDefaults.stroke.width,
+            type: 'pie'
+        }];
+
+        return AgChart.create(options, this.chartProxyParams.parentElement);
     }
 
     public update(params: UpdateChartParams): void {
@@ -36,19 +48,20 @@ export class PieChartProxy extends PolarChartProxy {
         if (existingSeriesId !== pieSeriesField.colId) {
             chart.removeSeries(existingSeries);
 
-            const seriesOptions: PieSeriesInternalOptions = {
+            pieSeries = AgChart.createComponent({
                 ...seriesDefaults,
-                type: "pie",
-                field: {
-                    angleKey: pieSeriesField.colId,
-                },
+                type: 'pie',
+                angleKey: pieSeriesField.colId,
                 title: {
                     ...seriesDefaults.title,
                     text: seriesDefaults.title.text || params.fields[0].displayName,
-                }
-            };
-
-            pieSeries = ChartBuilder.createSeries(seriesOptions) as PieSeries;
+                },
+                fills: seriesDefaults.fill.colors,
+                fillOpacity: seriesDefaults.fill.opacity,
+                strokes: seriesDefaults.stroke.colors,
+                strokeOpacity: seriesDefaults.stroke.opacity,
+                strokeWidth: seriesDefaults.stroke.width,
+            }, 'pie.series');
         }
 
         pieSeries.angleName = pieSeriesField.displayName;

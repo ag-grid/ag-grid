@@ -1,13 +1,5 @@
 import { AreaSeriesOptions, CartesianChartOptions, ChartType } from "@ag-grid-community/core";
-import {
-    AreaSeries,
-    AreaSeriesOptions as InternalAreaSeriesOptions,
-    BandScale,
-    CartesianChart,
-    CategoryAxis,
-    ChartAxisPosition,
-    ChartBuilder
-} from "ag-charts-community";
+import { AreaSeries, CartesianChart, AgChart } from "ag-charts-community";
 import { ChartProxyParams, UpdateChartParams } from "../chartProxy";
 import { CartesianChartProxy } from "./cartesianChartProxy";
 
@@ -20,18 +12,33 @@ export class AreaChartProxy extends CartesianChartProxy<AreaSeriesOptions> {
         this.recreateChart();
     }
 
-    protected createChart(options?: CartesianChartOptions<AreaSeriesOptions>): CartesianChart {
+    protected createChart(options: any): CartesianChart {
         const { grouping, parentElement } = this.chartProxyParams;
-        const chart = ChartBuilder[grouping ? "createGroupedAreaChart" : "createAreaChart"](parentElement, options || this.chartOptions);
+        const seriesDefaults = this.getSeriesDefaults();
 
-        chart.axes
-            .filter(axis => axis.position === ChartAxisPosition.Bottom && axis instanceof CategoryAxis)
-            .forEach(axis => {
-                (axis.scale as BandScale<any>).paddingInner = 1;
-                (axis.scale as BandScale<any>).paddingOuter = 0;
-            });
+        options = options || this.chartOptions;
+        options.axes = [{
+            ...options.xAxis,
+            position: 'bottom',
+            type: grouping ? 'groupedCategory' : 'category',
+            paddingInner: 1,
+            paddingOuter: 0
+        }, {
+            ...options.yAxis,
+            position: 'left',
+            type: 'number'
+        }];
+        options.series = [{
+            ...seriesDefaults,
+            fills: seriesDefaults.fill.colors,
+            fillOpacity: seriesDefaults.fill.opacity,
+            strokes: seriesDefaults.stroke.colors,
+            strokeOpacity: seriesDefaults.stroke.opacity,
+            strokeWidth: seriesDefaults.stroke.width,
+            type: 'area'
+        }];
 
-        return chart;
+        return AgChart.create(options, parentElement);
     }
 
     public update(params: UpdateChartParams): void {
@@ -47,7 +54,15 @@ export class AreaChartProxy extends CartesianChartProxy<AreaSeriesOptions> {
             let areaSeries = this.chart.series[0] as AreaSeries;
 
             if (!areaSeries) {
-                areaSeries = ChartBuilder.createSeries(this.getSeriesDefaults()) as AreaSeries;
+                const seriesDefaults = this.getSeriesDefaults();
+                areaSeries = AgChart.createComponent({
+                    ...seriesDefaults,
+                    fills: seriesDefaults.fill.colors,
+                    fillOpacity: seriesDefaults.fill.opacity,
+                    strokes: seriesDefaults.stroke.colors,
+                    strokeOpacity: seriesDefaults.stroke.opacity,
+                    strokeWidth: seriesDefaults.stroke.width
+                }, 'area.series');
 
                 if (areaSeries) {
                     this.chart.addSeries(areaSeries);
@@ -111,26 +126,35 @@ export class AreaChartProxy extends CartesianChartProxy<AreaSeriesOptions> {
                 areaSeries.strokes = [stroke];
             } else {
                 const seriesDefaults = this.getSeriesDefaults();
-                const options: InternalAreaSeriesOptions = {
+                const options: any /*InternalAreaSeriesOptions */ = {
                     ...seriesDefaults,
                     data,
-                    field: {
-                        xKey: params.category.id,
-                        xName: params.category.name,
-                        yKeys: [f.colId],
-                        yNames: [f.displayName],
-                    },
-                    fill: {
-                        ...seriesDefaults.fill,
-                        colors: [fill],
-                    },
-                    stroke: {
-                        ...seriesDefaults.stroke,
-                        colors: [stroke],
-                    }
+                    // field: {
+                    //     xKey: params.category.id,
+                    //     xName: params.category.name,
+                    //     yKeys: [f.colId],
+                    //     yNames: [f.displayName],
+                    // },
+                    xKey: params.category.id,
+                    xName: params.category.name,
+                    yKeys: [f.colId],
+                    yNames: [f.displayName],
+                    fills: [fill],
+                    fillOpacity: seriesDefaults.fill.opacity,
+                    strokes: [stroke],
+                    strokeOpacity: seriesDefaults.stroke.opacity,
+                    strokeWidth: seriesDefaults.stroke.width,
+                    // fill: {
+                    //     ...seriesDefaults.fill,
+                    //     colors: [fill],
+                    // },
+                    // stroke: {
+                    //     ...seriesDefaults.stroke,
+                    //     colors: [stroke],
+                    // }
                 };
 
-                areaSeries = ChartBuilder.createSeries(options) as AreaSeries;
+                areaSeries = AgChart.createComponent(options, 'area.series');
 
                 chart.addSeriesAfter(areaSeries, previousSeries);
             }
@@ -169,7 +193,7 @@ export class AreaChartProxy extends CartesianChartProxy<AreaSeriesOptions> {
         return options;
     }
 
-    private getSeriesDefaults(): InternalAreaSeriesOptions {
+    private getSeriesDefaults(): any /*InternalAreaSeriesOptions*/ {
         return {
             ...this.chartOptions.seriesDefaults,
             type: 'area',

@@ -1,5 +1,5 @@
 import { _, CartesianChartOptions, ChartType, ScatterSeriesOptions } from "@ag-grid-community/core";
-import { CartesianChart, ChartBuilder, ScatterSeries, SeriesOptions } from "ag-charts-community";
+import { CartesianChart, ScatterSeries, AgChart } from "ag-charts-community";
 import { ChartProxyParams, FieldDefinition, UpdateChartParams } from "../chartProxy";
 import { ChartDataModel } from "../../chartDataModel";
 import { CartesianChartProxy } from "./cartesianChartProxy";
@@ -20,8 +20,30 @@ export class ScatterChartProxy extends CartesianChartProxy<ScatterSeriesOptions>
         this.recreateChart();
     }
 
-    protected createChart(options?: CartesianChartOptions<ScatterSeriesOptions>): CartesianChart {
-        return ChartBuilder.createScatterChart(this.chartProxyParams.parentElement, options || this.chartOptions);
+    protected createChart(options: any): CartesianChart {
+        // return ChartBuilder.createScatterChart(this.chartProxyParams.parentElement, options || this.chartOptions);
+        options = options || this.chartOptions;
+        const seriesDefaults = options.seriesDefaults;
+        options.axes = [{
+            ...options.xAxis,
+            position: 'bottom',
+            type: 'number'
+        }, {
+            ...options.yAxis,
+            position: 'left',
+            type: 'number'
+        }];
+        options.series = [{
+            ...seriesDefaults,
+            fills: seriesDefaults.fill.colors,
+            fillOpacity: seriesDefaults.fill.opacity,
+            strokes: seriesDefaults.stroke.colors,
+            strokeOpacity: seriesDefaults.stroke.opacity,
+            strokeWidth: seriesDefaults.stroke.width,
+            type: 'scatter'
+        }];
+
+        return AgChart.create(options, this.chartProxyParams.parentElement);
     }
 
     public update(params: UpdateChartParams): void {
@@ -40,7 +62,6 @@ export class ScatterChartProxy extends CartesianChartProxy<ScatterSeriesOptions>
 
         const { chart } = this;
         const { fills, strokes } = this.getPalette();
-        const seriesOptions: SeriesOptions = { type: "scatter", ...seriesDefaults };
         const labelFieldDefinition = params.category.id === ChartDataModel.DEFAULT_CATEGORY ? undefined : params.category;
 
         const existingSeriesById = (chart.series as ScatterSeries[]).reduceRight((map, series, i) => {
@@ -62,7 +83,16 @@ export class ScatterChartProxy extends CartesianChartProxy<ScatterSeriesOptions>
 
         seriesDefinitions.forEach((seriesDefinition, index) => {
             const existingSeries = existingSeriesById.get(seriesDefinition.yField.colId);
-            const series = existingSeries || ChartBuilder.createSeries(seriesOptions) as ScatterSeries;
+            const series = existingSeries || AgChart.createComponent({
+                ...seriesDefaults,
+                fills: seriesDefaults.fill.colors,
+                fillOpacity: seriesDefaults.fill.opacity,
+                strokes: seriesDefaults.stroke.colors,
+                strokeOpacity: seriesDefaults.stroke.opacity,
+                strokeWidth: seriesDefaults.stroke.width,
+                type: 'scatter'
+
+            }, 'scatter.series');
 
             if (!series) {
                 return;

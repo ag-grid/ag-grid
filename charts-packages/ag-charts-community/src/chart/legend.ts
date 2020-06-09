@@ -36,6 +36,10 @@ export enum LegendPosition {
     Left = 'left'
 }
 
+export class LegendItem extends Observable {
+
+}
+
 export class Legend extends Observable {
 
     static className = 'Legend';
