@@ -12,4 +12,20 @@ export class CategoryAxis extends ChartAxis {
 
         super(scale);
     }
+
+    readonly scale: BandScale<string>;
+
+    set paddingInner(value: number) {
+        this.scale.paddingInner = value;
+    }
+    get paddingInner(): number {
+        return this.scale.paddingInner;
+    }
+
+    set paddingOuter(value: number) {
+        this.scale.paddingOuter = value;
+    }
+    get paddingOuter(): number {
+        return this.scale.paddingOuter;
+    }
 }

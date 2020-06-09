@@ -2,6 +2,7 @@ import { Padding } from "../util/padding";
 import { CartesianChart } from "./cartesianChart";
 import { NumberAxis } from "./axis/numberAxis";
 import { CategoryAxis } from "./axis/categoryAxis";
+import { GroupedCategoryAxis } from "./axis/groupedCategoryAxis";
 import { LineSeries } from "./series/cartesian/lineSeries";
 import { BarSeries } from "./series/cartesian/barSeries";
 import { HistogramSeries } from "./series/cartesian/histogramSeries";
@@ -241,11 +242,14 @@ const mappings = {
             defaults: { // These values will be used if properties in question are not in the config object.
                 ...chartDefaults,
                 axes: [{
+                    type: NumberAxis.type,
+                    position: 'left'
+                }, {
                     type: CategoryAxis.type,
                     position: 'bottom'
                 }, {
-                    type: NumberAxis.type,
-                    position: 'left'
+                    type: GroupedCategoryAxis.type,
+                    position: 'bottom'
                 }]
             },
         },
@@ -399,7 +403,8 @@ const mappings = {
                         },
                     }
                 },
-                highlightStyle: {}
+                highlightStyle: {},
+                ...shadowMapping
             }
         },
         navigator: {

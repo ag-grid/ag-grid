@@ -2,8 +2,8 @@ import { _, HistogramSeriesOptions, CartesianChartOptions } from "@ag-grid-commu
 import {
     HistogramSeriesOptions as InternalHistogramSeriesOptions,
     CartesianChart,
-    ChartBuilder,
-    HistogramSeries
+    HistogramSeries,
+    AgChart
 } from "ag-charts-community";
 import { ChartProxyParams, UpdateChartParams } from "../chartProxy";
 import { CartesianChartProxy } from "./cartesianChartProxy";
@@ -17,17 +17,31 @@ export class HistogramChartProxy extends CartesianChartProxy<HistogramSeriesOpti
         this.recreateChart();
     }
 
-    protected createChart(options?: CartesianChartOptions<HistogramSeriesOptions>): CartesianChart {
+    protected createChart(options: any): CartesianChart {
         const { parentElement } = this.chartProxyParams;
+        const seriesDefaults = this.getSeriesDefaults();
 
-        const chart = ChartBuilder.createHistogramChart(parentElement, options || this.chartOptions);
-        const histogramSeries = ChartBuilder.createSeries(this.getSeriesDefaults());
+        options = options || this.chartOptions;
+        options.axes = [{
+            ...options.xAxis,
+            position: 'bottom',
+            type: 'number'
+        }, {
+            ...options.yAxis,
+            position: 'left',
+            type: 'number'
+        }];
+        options.series = [{
+            ...seriesDefaults,
+            fill: seriesDefaults.fill.color,
+            fillOpacity: seriesDefaults.fill.opacity,
+            stroke: seriesDefaults.stroke.color,
+            strokeOpacity: seriesDefaults.stroke.opacity,
+            strokeWidth: seriesDefaults.stroke.width,
+            type: 'histogram'
+        }];
 
-        if (histogramSeries) {
-            chart.addSeries(histogramSeries);
-        }
-
-        return chart;
+        return AgChart.create(options, parentElement);
     }
 
     public update(params: UpdateChartParams): void {

@@ -2,8 +2,8 @@ import { _, BarSeriesOptions, CartesianChartOptions, ChartType } from "@ag-grid-
 import {
     BarSeriesOptions as InternalBarSeriesOptions,
     CartesianChart,
-    ChartBuilder,
-    BarSeries
+    BarSeries,
+    AgChart
 } from "ag-charts-community";
 import { ChartProxyParams, UpdateChartParams } from "../chartProxy";
 import { CartesianChartProxy } from "./cartesianChartProxy";
@@ -17,25 +17,26 @@ export class BarChartProxy extends CartesianChartProxy<BarSeriesOptions> {
         this.recreateChart();
     }
 
-    protected createChart(options?: CartesianChartOptions<BarSeriesOptions>): CartesianChart {
+    protected createChart(options: any): CartesianChart {
         const { grouping, parentElement } = this.chartProxyParams;
-        let builderFunction: keyof typeof ChartBuilder;
+        const isColumn = this.isColumnChart();
 
-        if (this.isColumnChart()) {
-            builderFunction = grouping ? 'createGroupedColumnChart' : 'createColumnChart';
-        } else {
-            builderFunction = grouping ? 'createGroupedBarChart' : 'createBarChart';
-        }
+        options = options || this.chartOptions;
+        options.axes = [{
+            ...options.xAxis,
+            position: isColumn ? 'bottom' : 'left',
+            type: grouping ? 'groupedCategory' : 'category'
+        }, {
+            ...options.yAxis,
+            position: isColumn ? 'left' : 'bottom',
+            type: 'number'
+        }];
+        options.series = [{
+            ...this.getSeriesDefaults(),
+            type: isColumn ? 'column' : 'bar'
+        }];
 
-        const chart = ChartBuilder[builderFunction](parentElement, options || this.chartOptions);
-        const barSeries = ChartBuilder.createSeries(this.getSeriesDefaults());
-
-        if (barSeries) {
-            (barSeries as BarSeries).flipXY = !this.isColumnChart();
-            chart.addSeries(barSeries);
-        }
-
-        return chart;
+        return AgChart.create(options, parentElement);
     }
 
     public update(params: UpdateChartParams): void {

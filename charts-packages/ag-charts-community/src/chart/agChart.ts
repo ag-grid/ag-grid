@@ -30,6 +30,8 @@ export abstract class AgChart {
             chart.autoSize = true;
         }
     }
+
+    static createComponent = create;
 }
 
 const pathToSeriesTypeMap: { [key in string]: string } = {
@@ -254,23 +256,24 @@ function update(component: any, options: any, path?: string) {
 }
 
 function provideDefaultChartType(options: any) {
+    if (options.type) {
+        return;
+    }
     // If chart type is not specified, try to infer it from the type of first series.
-    if (!options.type) {
-        const series = options.series && options.series[0];
+    const series = options.series && options.series[0];
 
-        if (series && series.type) {
-            outerLoop: for (const chartType in mappings) {
-                for (const seriesType in mappings[chartType].series) {
-                    if (series.type === seriesType) {
-                        options.type = chartType;
-                        break outerLoop;
-                    }
+    if (series && series.type) {
+        outerLoop: for (const chartType in mappings) {
+            for (const seriesType in mappings[chartType].series) {
+                if (series.type === seriesType) {
+                    options.type = chartType;
+                    break outerLoop;
                 }
             }
         }
-        if (!options.type) {
-            options.type = 'cartesian';
-        }
+    }
+    if (!options.type) {
+        options.type = 'cartesian';
     }
 }
 

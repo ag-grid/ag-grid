@@ -1,10 +1,5 @@
 import { CartesianChartOptions, LineSeriesOptions } from "@ag-grid-community/core";
-import {
-    CartesianChart,
-    ChartBuilder,
-    LineSeries,
-    LineSeriesOptions as InternalLineSeriesOptions
-} from "ag-charts-community";
+import { CartesianChart, LineSeries, AgChart } from "ag-charts-community";
 import { ChartProxyParams, UpdateChartParams } from "../chartProxy";
 import { CartesianChartProxy } from "./cartesianChartProxy";
 import { isDate } from '../../typeChecker';
@@ -18,10 +13,27 @@ export class LineChartProxy extends CartesianChartProxy<LineSeriesOptions> {
         this.recreateChart();
     }
 
-    protected createChart(options?: CartesianChartOptions<LineSeriesOptions>): CartesianChart {
+    protected createChart(options: any): CartesianChart {
         const { grouping, parentElement } = this.chartProxyParams;
 
-        return ChartBuilder[grouping ? "createGroupedLineChart" : "createLineChart"](parentElement, options || this.chartOptions);
+        options = options || this.chartOptions;
+        options.axes = [{
+            ...options.xAxis,
+            position: 'bottom',
+            type: grouping ? 'groupedCategory' : 'category',
+            paddingInner: 1,
+            paddingOuter: 0
+        }, {
+            ...options.yAxis,
+            position: 'left',
+            type: 'number'
+        }];
+        options.series = [{
+            // ...this.getSeriesDefaults(),
+            type: 'line'
+        }];
+
+        return AgChart.create(options, parentElement);
     }
 
     public update(params: UpdateChartParams): void {
@@ -73,32 +85,42 @@ export class LineChartProxy extends CartesianChartProxy<LineSeriesOptions> {
                 lineSeries.stroke = fill; // this is deliberate, so that the line colours match the fills of other series
             } else {
                 const { seriesDefaults } = this.chartOptions;
-                const options: InternalLineSeriesOptions = {
+                const options: any /*InternalLineSeriesOptions*/ = {
                     ...seriesDefaults,
                     type: 'line',
                     title: f.displayName,
                     data,
-                    field: {
-                        xKey: params.category.id,
-                        xName: params.category.name,
-                        yKey: f.colId,
-                        yName: f.displayName,
-                    },
-                    fill: {
-                        ...seriesDefaults.fill,
-                        color: fill,
-                    },
-                    stroke: {
-                        ...seriesDefaults.stroke,
-                        color: fill, // this is deliberate, so that the line colours match the fills of other series
-                    },
+                    // field: {
+                    //     xKey: params.category.id,
+                    //     xName: params.category.name,
+                    //     yKey: f.colId,
+                    //     yName: f.displayName,
+                    // },
+                    xKey: params.category.id,
+                    xName: params.category.name,
+                    yKey: f.colId,
+                    yName: f.displayName,
+                    fill,
+                    fillOpacity: seriesDefaults.fill.opacity,
+                    stroke: fill,
+                    strokeOpacity: seriesDefaults.stroke.opacity,
+                    strokeWidth: seriesDefaults.stroke.width,
+                    // fill: {
+                    //     ...seriesDefaults.fill,
+                    //     color: fill,
+                    // },
+                    // stroke: {
+                    //     ...seriesDefaults.stroke,
+                    //     color: fill, // this is deliberate, so that the line colours match the fills of other series
+                    // },
                     marker: {
                         ...seriesDefaults.marker,
                         stroke
                     }
                 };
 
-                lineSeries = ChartBuilder.createSeries(options) as LineSeries;
+                // lineSeries = ChartBuilder.createSeries(options) as LineSeries;
+                lineSeries = AgChart.createComponent(options, 'line.series');
 
                 chart.addSeriesAfter(lineSeries, previousSeries);
             }

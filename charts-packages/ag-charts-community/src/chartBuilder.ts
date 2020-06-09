@@ -781,7 +781,7 @@ export class ChartBuilder {
         return shadow;
     }
 
-    static initAxis<T extends NumberAxis | CategoryAxis | GroupedCategoryAxis>(axis: T, options: AxisOptions): void {
+    static initAxis<T extends NumberAxis | CategoryAxis | GroupedCategoryAxis | TimeAxis>(axis: T, options: AxisOptions): void {
         this.setTransformedValueIfExists(axis, 'title', t => ChartBuilder.createTitle(t), options.title);
         this.setValueIfExists(axis, 'gridStyle', options.gridStyle);
 
