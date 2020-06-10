@@ -39,5 +39,6 @@ document.addEventListener('DOMContentLoaded', function () {
                 dataItem.rowHeight = differentHeights[index % 4];
             });
             gridOptions.api.setRowData(data);
+            gridOptions.api.sizeColumnsToFit();
         });
 });

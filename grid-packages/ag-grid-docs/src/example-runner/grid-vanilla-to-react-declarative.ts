@@ -1,4 +1,4 @@
-import {convertFunctionToProperty, ImportType, isInstanceMethod, modulesProcessor} from './parser-utils';
+import {convertFunctionToConstProperty, ImportType, isInstanceMethod, modulesProcessor} from './parser-utils';
 import {convertTemplate, getImport} from './react-utils';
 import {templatePlaceholder} from "./grid-vanilla-src-parser";
 
@@ -7,7 +7,7 @@ function getModuleImports(bindings: any, componentFilenames: string[]): string[]
     const {modules} = gridSettings;
 
     const imports = [
-        "import React, { Component } from 'react';",
+        "import React, { useState } from 'react';",
         "import { render } from 'react-dom';",
         "import { AgGridReact, AgGridColumn } from '@ag-grid-community/react';"
     ];
@@ -54,7 +54,7 @@ function getPackageImports(bindings: any, componentFilenames: string[]): string[
     const {gridSettings} = bindings;
 
     const imports = [
-        "import React, { Component } from 'react';",
+        "import React, { useState } from 'react';",
         "import { render } from 'react-dom';",
         "import { AgGridReact } from 'ag-grid-react';"
     ];
@@ -157,13 +157,13 @@ export function vanillaToReactDeclarative(bindings: any, componentFilenames: str
         if (property.value === 'true' || property.value === 'false') {
             componentAttributes.push(`${property.name}={${property.value}}`);
         } else if (property.value === null) {
-            componentAttributes.push(`${property.name}={this.${property.name}}`);
+            componentAttributes.push(`${property.name}={${property.name}}`);
         } else {
             // for when binding a method
             // see javascript-grid-keyboard-navigation for an example
             // tabToNextCell needs to be bound to the react component
             if (isInstanceMethod(bindings.instanceMethods, property)) {
-                instanceBindings.push(`this.${property.name}=${property.value}`);
+                instanceBindings.push(`${property.name}=${property.value}`);
             } else {
                 if (property.name === 'columnDefs') {
                     rawColumnDefs = JSON.parse(property.value);
@@ -176,9 +176,9 @@ export function vanillaToReactDeclarative(bindings: any, componentFilenames: str
 
     const columnDefs = convertColumnDefs(rawColumnDefs);
 
-    const componentEventAttributes = bindings.eventHandlers.map(event => `${event.handlerName}={this.${event.handlerName}.bind(this)}`);
+    const componentEventAttributes = bindings.eventHandlers.map(event => `${event.handlerName}={${event.handlerName}.bind(this)}`);
 
-    componentAttributes.push('onGridReady={this.onGridReady}');
+    componentAttributes.push('onGridReady={onGridReady}');
     componentAttributes.push.apply(componentAttributes, componentEventAttributes);
 
     const additionalInReady = [];
@@ -188,14 +188,14 @@ export function vanillaToReactDeclarative(bindings: any, componentFilenames: str
 
         if (data.callback.indexOf('api.setRowData') >= 0) {
             if (stateProperties.filter(item => item.indexOf('rowData') >= 0).length === 0) {
-                stateProperties.push('rowData: []');
+                stateProperties.push('const [rowData, setRowData] = useState([]);');
             }
 
             if (componentAttributes.filter(item => item.indexOf('rowData') >= 0).length === 0) {
-                componentAttributes.push('rowData={this.state.rowData}');
+                componentAttributes.push('rowData={rowData}');
             }
 
-            setRowDataBlock = data.callback.replace('params.api.setRowData(data);', 'this.setState({ rowData: data });');
+            setRowDataBlock = data.callback.replace('params.api.setRowData(data);', 'setRowData(data);');
         }
 
         additionalInReady.push(`
@@ -221,9 +221,9 @@ export function vanillaToReactDeclarative(bindings: any, componentFilenames: str
     }
 
     const template = getTemplate(bindings, componentAttributes, columnDefs);
-    const eventHandlers = bindings.eventHandlers.map(event => convertFunctionToProperty(event.handler));
-    const externalEventHandlers = bindings.externalEventHandlers.map(handler => convertFunctionToProperty(handler.body));
-    const instanceMethods = bindings.instanceMethods.map(convertFunctionToProperty);
+    const eventHandlers = bindings.eventHandlers.map(event => convertFunctionToConstProperty(event.handler));
+    const externalEventHandlers = bindings.externalEventHandlers.map(handler => convertFunctionToConstProperty(handler.body));
+    const instanceMethods = bindings.instanceMethods.map(convertFunctionToConstProperty);
     const style = gridSettings.noStyle ? '' : `style={{ width: '100%', height: '100%' }}`;
 
     return `
@@ -231,32 +231,27 @@ export function vanillaToReactDeclarative(bindings: any, componentFilenames: str
 
 ${imports.join('\n')}
 
-class GridExample extends Component {
-    constructor(props) {
-        super(props);
+const GridExample = () => {
+    const [gridApi, setGridApi] = useState(null);
+    const [gridColumnApi, setGridColumnApi] = useState(null);
+    
+    ${stateProperties.join(',\n    ')}
+    
+    function onGridReady(params) {
+        setGridApi(params.api);
+        setGridColumnApi(params.columnApi);
 
-        this.state = {
-            ${stateProperties.join(',\n    ')}
-        };
-
-        ${instanceBindings.join(';\n    ')}
-    }
-
-    onGridReady = params => {
-        this.gridApi = params.api;
-        this.gridColumnApi = params.columnApi;
         ${additionalInReady.join('\n')}
     }
 
 ${[].concat(eventHandlers, externalEventHandlers, instanceMethods).join('\n\n   ')}
 
-    render() {
-        return (
+    return  (
             <div ${style}>
                 ${template}
             </div>
         );
-    }
+    
 }
 
 ${bindings.utils.join('\n')}

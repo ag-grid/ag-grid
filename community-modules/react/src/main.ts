@@ -1,5 +1,6 @@
 export { AgGridReact } from './agGridReact';
 export { AgGridColumn } from './agGridColumn';
+export * from './agSideBar';
 
 // https://github.com/rollup/rollup-plugin-typescript/issues/109
 // export {ICellEditorReactComp} from './interfaces';

@@ -692,7 +692,7 @@ module.exports = (buildSourceModuleOnly = false, legacy = false, alreadyRunningC
             serveFramework(app, 'ag-grid-react');
 
             // regenerate examples
-            // watchAndGenerateExamples();
+            watchAndGenerateExamples();
 
             // PHP
             launchPhpCP(app);

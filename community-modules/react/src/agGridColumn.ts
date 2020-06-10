@@ -11,6 +11,8 @@ export interface AgGridColumnGroupProps extends ColGroupDef {
 }
 
 export class AgGridColumn extends Component<AgGridColumnProps | AgGridColumnGroupProps, {}> {
+    static _type = 'AgGridColumn';
+
     constructor(public props: any, public state: any) {
         super(props, state);
     }
@@ -33,8 +35,8 @@ export class AgGridColumn extends Component<AgGridColumnProps | AgGridColumnGrou
         return colDef;
     }
 
-    public static hasChildColumns(columnProps: any): boolean {
-        return React.Children.count(columnProps.children) > 0;
+    public static hasChildColumns(gridOrColumnProps: any): boolean {
+        return React.Children.count(gridOrColumnProps.children) > 0;
     }
 
     private static getChildColDefs(columnChildren: any) {
@@ -50,7 +52,7 @@ export class AgGridColumn extends Component<AgGridColumnProps | AgGridColumnGrou
         return colDef;
     };
 
-    private static assign(colDef: any, from: AgGridColumn): ColDef {
+    public static assign(colDef: any, from: AgGridColumn): ColDef {
         // effectively Object.assign - here for IE compatibility
         return [from].reduce(function (r, o) {
             Object.keys(o).forEach(function (k) {
@@ -60,6 +62,10 @@ export class AgGridColumn extends Component<AgGridColumnProps | AgGridColumnGrou
         }, colDef);
     }
 
+
+    public static isColumn(child: any) {
+        return child && child.type && child.type._type && child.type._type === AgGridColumn._type;
+    }
 }
 
 addProperties(AgGrid.ColDefUtil.BOOLEAN_PROPERTIES, PropTypes.bool);
