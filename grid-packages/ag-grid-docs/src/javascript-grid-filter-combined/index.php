@@ -12,6 +12,6 @@ include '../documentation-main/documentation_header.php';
     The Combined Filter allows you to combine the Set Filter with one of the other Provided Filters.
 </p>
 
-<?= grid_example('Combined Filter', 'combined-filter', 'generated', ['enterprise' => true, 'exampleHeight' => 565, 'modules' => ['clientside', 'setfilter', 'menu']]) ?>
+<?= grid_example('Combined Filter', 'combined-filter', 'generated', ['enterprise' => true, 'exampleHeight' => 700, 'modules' => ['clientside', 'setfilter', 'menu']]) ?>
 
 <?php include '../documentation-main/documentation_footer.php';?>

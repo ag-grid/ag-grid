@@ -208,7 +208,7 @@ export class TextFilter extends SimpleFilter<TextFilterModel> {
         return this.getValue(positionOne ? this.eValue1 : this.eValue2) != null;
     }
 
-    public individualConditionPasses(params: IDoesFilterPassParams, filterModel: TextFilterModel): boolean {
+    protected individualConditionPasses(params: IDoesFilterPassParams, filterModel: TextFilterModel): boolean {
         const filterText = filterModel.filter;
         const filterOption = filterModel.type;
         const cellValue = this.textFilterParams.valueGetter(params.node);
