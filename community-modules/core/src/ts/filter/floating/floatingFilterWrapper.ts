@@ -20,7 +20,7 @@ import { ModuleNames } from '../../modules/moduleNames';
 import { ModuleRegistry } from '../../modules/moduleRegistry';
 import { addOrRemoveCssClass, setDisplayed } from '../../utils/dom';
 import { createIconNoSpan } from '../../utils/icon';
-import { AbstractHeaderWrapper  } from '../../headerRendering/header/abstractHeaderWrapper';
+import { AbstractHeaderWrapper } from '../../headerRendering/header/abstractHeaderWrapper';
 import { Constants } from '../../constants';
 import { Beans } from '../../rendering/beans';
 import { HeaderRowComp } from '../../headerRendering/headerRowComp';
@@ -29,6 +29,9 @@ export class FloatingFilterWrapper extends AbstractHeaderWrapper {
     private static filterToFloatingFilterNames: { [p: string]: string; } = {
         set: 'agSetColumnFloatingFilter',
         agSetColumnFilter: 'agSetColumnFloatingFilter',
+
+        combined: 'agCombinedColumnFloatingFilter',
+        agCombinedColumnFilter: 'agCombinedColumnFloatingFilter',
 
         number: 'agNumberColumnFloatingFilter',
         agNumberColumnFilter: 'agNumberColumnFloatingFilter',

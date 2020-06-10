@@ -1,0 +1,86 @@
+{
+    "filterParams": {
+        "applyMiniFilterWhileTyping": {
+            "default": false,
+            "description": "Set to <code>true</code> to apply the Set Filter immediately when the user is typing in the Mini Filter.",
+            "more": {
+                "name": "Keyboard Shortcuts",
+                "url": "../javascript-grid-filter-set-mini-filter/#keyboard-shortcuts"
+            }
+        },
+        "cellHeight": {
+            "description": "The height of values in the Filter List in pixels."
+        },
+        "cellRenderer": {
+            "description": "Similar to the Cell Renderer for the grid. Setting it separately here allows for the value to be rendered differently in the filter.",
+            "more": {
+                "name": "Filter List Cell Renderer",
+                "url": "../javascript-grid-filter-set-filter-list/#cell-renderer"
+            }
+        },
+        "comparator(a, b)": {
+            "description": "Comparator for sorting. If not provided, the Column Definition comparator is used. If Column Definition comparator is also not provided, the default (grid provided) comparator is used.",
+            "more": {
+                "name": "Sorting Filter Lists",
+                "url": "../javascript-grid-filter-set-filter-list/#sorting-filter-lists"
+            }
+        },
+        "defaultToNothingSelected": {
+            "default": false,
+            "description": "By default, when the Set Filter is opened all values are shown selected. Set this to <code>true</code> to instead show all values as de-selected by default.",
+            "more": {
+                "name": "Default State",
+                "url": "../javascript-grid-filter-set-filter-list/#default-state"
+            }
+        },
+        "excelMode": {
+            "description": "Changes the behaviour of the Set Filter to match that of Excel's AutoFilter.",
+            "more": {
+                "name": "Excel Mode",
+                "url": "../javascript-grid-filter-set-excel-mode/"
+            }
+        },
+        "showTooltips": {
+            "default": false,
+            "description": "If <code>true</code>, hovering over a value in the Set Filter will show a tooltip containing the full, untruncated value.",
+            "more": {
+                "name": "Filter Value Tooltips",
+                "url": "../javascript-grid-filter-set-filter-list/#filter-value-tooltips"
+            }
+        },
+        "suppressMiniFilter": {
+            "default": false,
+            "description": "Set to <code>true</code> to hide the Mini Filter.",
+            "more": {
+                "name": "Hiding the Mini Filter",
+                "url": "../javascript-grid-filter-set-mini-filter/#hiding-the-mini-filter"
+            }
+        },
+        "suppressSelectAll": {
+            "default": false,
+            "description": "Set to <code>true</code> to remove the Select All checkbox."
+        },
+        "suppressSorting": {
+            "default": false,
+            "description": "If <code>true</code>, the Set Filter values will not be sorted. Use this if you are providing your own values and don't want them sorted as you are providing in the order you want.",
+            "more": {
+                "name": "Supplying Filter Values",
+                "url": "../javascript-grid-filter-set-filter-list/#supplying-filter-values"
+            }
+        },
+        "textFormatter": {
+            "description": "If specified, this formats the text before applying the Mini Filter compare logic, useful for instance if substituting accented characters or if you want to perform case-sensitive Mini Filtering.",
+            "more": {
+                "name": "Custom Searches",
+                "url": "../javascript-grid-filter-set-mini-filter/#custom-searches"
+            }
+        },
+        "values": {
+            "description": "The values to display in the Filter List. If this is not set, the filter will takes its values from what is loaded in the table.",
+            "more": {
+                "name": "Supplying Filter Values",
+                "url": "../javascript-grid-filter-set-filter-list/#supplying-filter-values"
+            }
+        }
+    }
+}
