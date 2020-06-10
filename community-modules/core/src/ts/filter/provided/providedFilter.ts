@@ -80,7 +80,7 @@ export abstract class ProvidedFilter extends Component implements IFilterComp {
     @PostConstruct
     protected postConstruct(): void {
         const templateString = /* html */`
-            <div>
+            <div class="ag-filter-wrapper">
                 <div class="ag-filter-body-wrapper ag-${this.getCssIdentifier()}-body-wrapper">
                     ${this.createBodyTemplate()}
                 </div>
