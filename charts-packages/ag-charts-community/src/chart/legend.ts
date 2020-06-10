@@ -36,8 +36,55 @@ export enum LegendPosition {
     Left = 'left'
 }
 
-export class LegendItem extends Observable {
+export class LegendLabel extends Observable {
+    @reactive('change') color = 'black';
+    @reactive('layoutChange') fontStyle?: FontStyle;
+    @reactive('layoutChange') fontWeight?: FontWeight;
+    @reactive('layoutChange') fontSize = 12;
+    @reactive('layoutChange') fontFamily = 'Verdana, sans-serif';
+}
 
+export class LegendMarker extends Observable {
+    @reactive('layoutChange') size = 15;
+    /**
+     * If the marker type is set, the legend will always use that marker type for all its items,
+     * regardless of the type that comes from the `data`.
+     */
+    @reactive('layoutChange') shape?: string | (new () => Marker);
+    /**
+     * Padding between the marker and the label within each legend item.
+     */
+    @reactive('layoutChange') padding: number = 8;
+    @reactive('change') strokeWidth: number = 1;
+}
+
+export class LegendItem extends Observable {
+    readonly marker = new LegendMarker();
+    readonly label = new LegendLabel();
+    /**
+     * The legend uses grid layout for its items, occupying as few columns as possible when positioned to left or right,
+     * and as few rows as possible when positioned to top or bottom. This config specifies the amount of horizontal
+     * padding between legend items.
+     */
+    @reactive('layoutChange') paddingX = 16;
+    /**
+     * The legend uses grid layout for its items, occupying as few columns as possible when positioned to left or right,
+     * and as few rows as possible when positioned to top or bottom. This config specifies the amount of vertical
+     * padding between legend items.
+     */
+    @reactive('layoutChange') paddingY = 8;
+
+    constructor() {
+        super();
+
+        const changeListener = () => this.fireEvent({ type: 'change' });
+        this.marker.addEventListener('change', changeListener);
+        this.label.addEventListener('change', changeListener);
+
+        const layoutChangeListener = () => this.fireEvent({ type: 'layoutChange' });
+        this.marker.addEventListener('layoutChange', layoutChangeListener);
+        this.label.addEventListener('layoutChange', layoutChangeListener);
+    }
 }
 
 export class Legend extends Observable {
@@ -54,6 +101,8 @@ export class Legend extends Observable {
 
     private oldSize: [number, number] = [0, 0];
 
+    readonly item = new LegendItem();
+
     @reactive('layoutChange') data: LegendDatum[] = [];
     @reactive('layoutChange') enabled = true;
     @reactive('layoutChange') orientation: LegendOrientation = LegendOrientation.Vertical;
@@ -63,34 +112,116 @@ export class Legend extends Observable {
      * Spacing between the legend and the edge of the chart's element.
      */
     @reactive('layoutChange') spacing = 20;
-    /**
-     * The legend uses grid layout for its items, occupying as few columns as possible when positioned to left or right,
-     * and as few rows as possible when positioned to top or bottom. This config specifies the amount of horizontal
-     * spacing between legend items.
-     */
-    @reactive('layoutChange') layoutHorizontalSpacing = 16;
-    /**
-     * The legend uses grid layout for its items, occupying as few columns as possible when positioned to left or right,
-     * and as few rows as possible when positioned to top or bottom. This config specifies the amount of vertical
-     * spacing between legend items.
-     */
-    @reactive('layoutChange') layoutVerticalSpacing = 8;
-    /**
-     * Spacing between the marker and the label within each legend item.
-     */
-    @reactive('layoutChange') itemSpacing = 8;
 
-    // If the marker type is set, the legend will always use that marker type for all its items,
-    // regardless of the type that comes from the `data`.
-    @reactive('layoutChange') markerShape?: string | (new () => Marker);
-    @reactive('layoutChange') markerSize = 15;
-    @reactive('change') strokeWidth = 1;
+    /**
+     * @deprecated Please use {@link item.paddingX} instead.
+     */
+    set layoutHorizontalSpacing(value: number) {
+        this.item.paddingX = value;
+    }
+    get layoutHorizontalSpacing(): number {
+        return this.item.paddingX;
+    }
 
-    @reactive('change') color = 'black';
-    @reactive('layoutChange') fontStyle?: FontStyle;
-    @reactive('layoutChange') fontWeight?: FontWeight;
-    @reactive('layoutChange') fontSize = 12;
-    @reactive('layoutChange') fontFamily = 'Verdana, sans-serif';
+    /**
+     * @deprecated Please use {@link item.paddingY} instead.
+     */
+    set layoutVerticalSpacing(value: number) {
+        this.item.paddingY = value;
+    }
+    get layoutVerticalSpacing(): number {
+        return this.item.paddingY;
+    }
+
+    /**
+     * @deprecated Please use {@link item.marker.padding} instead.
+     */
+    set itemSpacing(value: number) {
+        this.item.marker.padding = value;
+    }
+    get itemSpacing(): number {
+        return this.item.marker.padding;
+    }
+
+    /**
+     * @deprecated Please use {@link item.marker.shape} instead.
+     */
+    set markerShape(value: string | (new () => Marker) | undefined) {
+        this.item.marker.shape = value;
+    }
+    get markerShape(): string | (new () => Marker) | undefined {
+        return this.item.marker.shape;
+    }
+
+    /**
+     * @deprecated Please use {@link item.marker.size} instead.
+     */
+    set markerSize(value: number) {
+        this.item.marker.size = value;
+    }
+    get markerSize(): number {
+        return this.item.marker.size;
+    }
+
+    /**
+     * @deprecated Please use {@link item.marker.strokeWidth} instead.
+     */
+    set strokeWidth(value: number) {
+        this.item.marker.strokeWidth = value;
+    }
+    get strokeWidth(): number {
+        return this.item.marker.strokeWidth;
+    }
+
+    /**
+     * @deprecated Please use {@link item.label.color} instead.
+     */
+    set color(value: string) {
+        this.item.label.color = value;
+    }
+    get color(): string {
+        return this.item.label.color;
+    }
+
+    /**
+     * @deprecated Please use {@link item.label.fontStyle} instead.
+     */
+    set fontStyle(value: FontStyle | undefined) {
+        this.item.label.fontStyle = value;
+    }
+    get fontStyle(): FontStyle | undefined {
+        return this.item.label.fontStyle;
+    }
+
+    /**
+     * @deprecated Please use {@link item.label.fontWeight} instead.
+     */
+    set fontWeight(value: FontWeight | undefined) {
+        this.item.label.fontWeight = value;
+    }
+    get fontWeight(): FontWeight | undefined {
+        return this.item.label.fontWeight;
+    }
+
+    /**
+     * @deprecated Please use {@link item.label.fontSize} instead.
+     */
+    set fontSize(value: number) {
+        this.item.label.fontSize = value;
+    }
+    get fontSize(): number {
+        return this.item.label.fontSize;
+    }
+
+    /**
+     * @deprecated Please use {@link item.label.fontFamily} instead.
+     */
+    set fontFamily(value: string) {
+        this.item.label.fontFamily = value;
+    }
+    get fontFamily(): string {
+        return this.item.label.fontFamily;
+    }
 
     constructor() {
         super();
@@ -101,6 +232,9 @@ export class Legend extends Observable {
         this.addPropertyListener('markerShape', this.onMarkerShapeChange);
 
         this.addEventListener('change', this.update);
+
+        this.item.addEventListener('change', () => this.fireEvent({ type: 'change' }));
+        this.item.addEventListener('layoutChange', () => this.fireEvent({ type: 'layoutChange' }));
     }
 
     private _size: [number, number] = [0, 0];
