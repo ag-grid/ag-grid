@@ -89,7 +89,7 @@ export abstract class ProvidedFilter extends Component implements IFilterComp {
         this.setTemplate(templateString);
     }
 
-    public init(params: IFilterParams): void {
+    public init(params: IProvidedFilterParams): void {
         this.setParams(params);
 
         this.resetUiToDefaults(true).then(() => {

@@ -1,4 +1,4 @@
-import { ProvidedFilter, Promise, ProvidedFilterModel, IDoesFilterPassParams, PostConstruct, RefSelector, IFilterParams, TextFilter, IAfterGuiAttachedParams } from '@ag-grid-community/core';
+import { ProvidedFilter, Promise, ProvidedFilterModel, IDoesFilterPassParams, PostConstruct, RefSelector, IFilterParams, TextFilter, IAfterGuiAttachedParams, ISimpleFilterParams } from '@ag-grid-community/core';
 import { SetFilter } from '../setFilter/setFilter';
 
 export class CombinedFilter extends ProvidedFilter {
@@ -26,8 +26,16 @@ export class CombinedFilter extends ProvidedFilter {
     public init(params: IFilterParams): void {
         this.filterModifiedCallback = params.filterModifiedCallback;
 
-        this.providedFilter.init({ ...params, filterModifiedCallback: () => this.onFilterModified('provided') });
-        this.setFilter.init({ ...params, filterModifiedCallback: () => this.onFilterModified('set') });
+        this.providedFilter.init({
+            ...params,
+            alwaysShowBothConditions: true,
+            filterModifiedCallback: () => this.onFilterModified('provided')
+        } as ISimpleFilterParams);
+
+        this.setFilter.init({
+            ...params,
+            filterModifiedCallback: () => this.onFilterModified('set')
+        });
     }
 
     public afterGuiAttached(params: IAfterGuiAttachedParams): void {

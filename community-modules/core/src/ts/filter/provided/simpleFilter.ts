@@ -5,13 +5,14 @@ import { IProvidedFilterParams, ProvidedFilter } from './providedFilter';
 import { Promise } from '../../utils';
 import { AgSelect } from '../../widgets/agSelect';
 import { AgRadioButton } from '../../widgets/agRadioButton';
-import { forEach } from '../../utils/array';
+import { forEach, every, some } from '../../utils/array';
 import { setDisplayed } from '../../utils/dom';
 
 export interface ISimpleFilterParams extends IProvidedFilterParams {
     filterOptions?: (IFilterOptionDef | string)[];
     defaultOption?: string;
     suppressAndOrCondition?: boolean;
+    alwaysShowBothConditions?: boolean;
 }
 
 export interface ISimpleFilterModel extends ProvidedFilterModel {
@@ -93,6 +94,7 @@ export abstract class SimpleFilter<M extends ISimpleFilterModel> extends Provide
     @RefSelector('eJoinOperatorPanel') private eJoinOperatorPanel: HTMLElement;
 
     private allowTwoConditions: boolean;
+    private alwaysShowBothConditions: boolean;
 
     protected optionsFactory: OptionsFactory;
     protected abstract getDefaultFilterOptions(): string[];
@@ -149,7 +151,9 @@ export abstract class SimpleFilter<M extends ISimpleFilterModel> extends Provide
     }
 
     public getModelFromUi(): M | ICombinedSimpleModel<M> {
-        if (!this.isConditionUiComplete(ConditionPosition.One)) { return null; }
+        if (!this.isConditionUiComplete(ConditionPosition.One)) {
+            return null;
+        }
 
         if (this.isAllowTwoConditions() && this.isConditionUiComplete(ConditionPosition.Two)) {
             return {
@@ -241,25 +245,20 @@ export abstract class SimpleFilter<M extends ISimpleFilterModel> extends Provide
 
     public doesFilterPass(params: IDoesFilterPassParams): boolean {
         const model = this.getModel();
-        const isCombined = (model as any).operator;
+        const { operator } = model as ICombinedSimpleModel<M>;
+        const models: ISimpleFilterModel[] = [];
 
-        if (isCombined) {
+        if (operator) {
             const combinedModel = model as ICombinedSimpleModel<M>;
 
-            const firstResult = this.individualConditionPasses(params, combinedModel.condition1);
-            const secondResult = this.individualConditionPasses(params, combinedModel.condition2);
-
-            if (combinedModel.operator === 'AND') {
-                return firstResult && secondResult;
-            }
-
-            return firstResult || secondResult;
+            models.push(combinedModel.condition1, combinedModel.condition2);
+        } else {
+            models.push(model as ISimpleFilterModel);
         }
 
-        const simpleModel = model as ISimpleFilterModel;
-        const result = this.individualConditionPasses(params, simpleModel);
+        const combineFunction = operator && operator === 'OR' ? some : every;
 
-        return result;
+        return combineFunction(models, m => this.individualConditionPasses(params, m));
     }
 
     protected setParams(params: ISimpleFilterParams): void {
@@ -269,6 +268,7 @@ export abstract class SimpleFilter<M extends ISimpleFilterModel> extends Provide
         this.optionsFactory.init(params, this.getDefaultFilterOptions());
 
         this.allowTwoConditions = !params.suppressAndOrCondition;
+        this.alwaysShowBothConditions = !!params.alwaysShowBothConditions;
 
         this.putOptionsIntoDropdown();
         this.addChangedListeners();
@@ -325,8 +325,8 @@ export abstract class SimpleFilter<M extends ISimpleFilterModel> extends Provide
     }
 
     protected updateUiVisibility(): void {
-        const firstConditionComplete = this.isConditionUiComplete(ConditionPosition.One);
-        const showSecondFilter = this.allowTwoConditions && firstConditionComplete;
+        const showSecondFilter = this.allowTwoConditions &&
+            (this.alwaysShowBothConditions || this.isConditionUiComplete(ConditionPosition.One));
 
         setDisplayed(this.eCondition2Body, showSecondFilter);
         setDisplayed(this.eType2.getGui(), showSecondFilter);
