@@ -14,7 +14,7 @@ import { AxisLabel, AxisTick } from "../axis";
 import { TimeAxis } from "./axis/timeAxis";
 import { Caption } from "../caption";
 import { DropShadow } from "../scene/dropShadow";
-import { Legend, LegendPosition } from "./legend";
+import { Legend, LegendPosition, LegendItem, LegendMarker, LegendLabel } from "./legend";
 import { Navigator } from "./navigator/navigator";
 import { NavigatorMask } from "./navigator/navigatorMask";
 import { NavigatorHandle } from "./navigator/navigatorHandle";
@@ -82,17 +82,49 @@ const commonChartMappings = {
                 enabled: true,
                 position: LegendPosition.Right,
                 spacing: 20,
-                layoutHorizontalSpacing: 16,
-                layoutVerticalSpacing: 8,
-                itemSpacing: 8,
-                markerShape: undefined,
-                markerSize: 15,
-                strokeWidth: 1,
-                color: 'black',
-                fontStyle: undefined,
-                fontWeight: undefined,
-                fontSize: 12,
-                fontFamily: 'Verdana, sans-serif'
+                // layoutHorizontalSpacing: 16,
+                // layoutVerticalSpacing: 8,
+                // itemSpacing: 8,
+                // markerShape: undefined,
+                // markerSize: 15,
+                // strokeWidth: 1,
+                // color: 'black',
+                // fontStyle: undefined,
+                // fontWeight: undefined,
+                // fontSize: 12,
+                // fontFamily: 'Verdana, sans-serif'
+            }
+        },
+        item: {
+            meta: {
+                constructor: LegendItem,
+                defaults: {
+                    paddingX: 16,
+                    paddingY: 8
+                }
+            },
+            marker: {
+                meta: {
+                    constructor: LegendMarker,
+                    defaults: {
+                        shape: undefined,
+                        size: 15,
+                        strokeWidth: 1,
+                        padding: 8
+                    }
+                }
+            },
+            label: {
+                meta: {
+                    constructor: LegendLabel,
+                    defaults: {
+                        color: 'black',
+                        fontStyle: undefined,
+                        fontWeight: undefined,
+                        fontSize: 12,
+                        fontFamily: 'Verdana, sans-serif'
+                    }
+                }
             }
         }
     }
