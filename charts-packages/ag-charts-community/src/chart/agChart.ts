@@ -3,6 +3,7 @@ import { Series } from "./series/series";
 import { ChartAxis } from "./chartAxis";
 import { find } from "../util/array";
 import mappings from './chartMappings';
+import { LegendMarker } from "./legend";
 
 export abstract class AgChart {
     static create(options: any, container?: HTMLElement, data?: any[]) {
@@ -68,14 +69,20 @@ function getMapping(path: string) {
 }
 
 function create(options: any, path?: string, component?: any) {
-    provideDefaultType(options, path);
-
-    if (path) {
+    // Deprecate `chart.legend.item.marker.type` in integrated chart options.
+    if (component instanceof LegendMarker) {
         if (options.type) {
-            path = path + '.' + options.type;
+            options.shape = options.type;
         }
     } else {
-        path = options.type;
+        provideDefaultType(options, path);
+        if (path) {
+            if (options.type) {
+                path = path + '.' + options.type;
+            }
+        } else {
+            path = options.type;
+        }
     }
 
     const mapping = getMapping(path);
@@ -141,14 +148,20 @@ function update(component: any, options: any, path?: string) {
         return;
     }
 
-    provideDefaultType(options, path);
-
-    if (path) {
+    // Deprecate `chart.legend.item.marker.type` in integrated chart options.
+    if (component instanceof LegendMarker) {
         if (options.type) {
-            path = path + '.' + options.type;
+            options.shape = options.type;
         }
     } else {
-        path = options.type;
+        provideDefaultType(options, path);
+        if (path) {
+            if (options.type) {
+                path = path + '.' + options.type;
+            }
+        } else {
+            path = options.type;
+        }
     }
 
     const mapping = getMapping(path);

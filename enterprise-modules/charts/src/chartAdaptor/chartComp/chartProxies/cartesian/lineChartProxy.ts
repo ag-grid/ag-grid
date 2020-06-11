@@ -28,10 +28,6 @@ export class LineChartProxy extends CartesianChartProxy<LineSeriesOptions> {
             position: 'left',
             type: 'number'
         }];
-        options.series = [{
-            // ...this.getSeriesDefaults(),
-            type: 'line'
-        }];
 
         return AgChart.create(options, parentElement);
     }
@@ -85,41 +81,33 @@ export class LineChartProxy extends CartesianChartProxy<LineSeriesOptions> {
                 lineSeries.stroke = fill; // this is deliberate, so that the line colours match the fills of other series
             } else {
                 const { seriesDefaults } = this.chartOptions;
+                const marker = {
+                    ...seriesDefaults.marker,
+                    fill,
+                    stroke
+                } as any;
+                if (marker.type) { // deprecated
+                    marker.shape = marker.type;
+                    delete marker.type;
+                }
                 const options: any /*InternalLineSeriesOptions*/ = {
                     ...seriesDefaults,
                     type: 'line',
                     title: f.displayName,
                     data,
-                    // field: {
-                    //     xKey: params.category.id,
-                    //     xName: params.category.name,
-                    //     yKey: f.colId,
-                    //     yName: f.displayName,
-                    // },
                     xKey: params.category.id,
                     xName: params.category.name,
                     yKey: f.colId,
                     yName: f.displayName,
                     fill,
                     fillOpacity: seriesDefaults.fill.opacity,
-                    stroke: fill,
+                    stroke: fill, // this is deliberate, so that the line colours match the fills of other series
                     strokeOpacity: seriesDefaults.stroke.opacity,
                     strokeWidth: seriesDefaults.stroke.width,
-                    // fill: {
-                    //     ...seriesDefaults.fill,
-                    //     color: fill,
-                    // },
-                    // stroke: {
-                    //     ...seriesDefaults.stroke,
-                    //     color: fill, // this is deliberate, so that the line colours match the fills of other series
-                    // },
-                    marker: {
-                        ...seriesDefaults.marker,
-                        stroke
-                    }
+                    marker
                 };
 
-                // lineSeries = ChartBuilder.createSeries(options) as LineSeries;
+                debugger;
                 lineSeries = AgChart.createComponent(options, 'line.series');
 
                 chart.addSeriesAfter(lineSeries, previousSeries);
