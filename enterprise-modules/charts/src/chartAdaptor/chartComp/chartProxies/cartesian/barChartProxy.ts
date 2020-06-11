@@ -19,9 +19,11 @@ export class BarChartProxy extends CartesianChartProxy<BarSeriesOptions> {
 
     protected createChart(options: any): CartesianChart {
         const { grouping, parentElement } = this.chartProxyParams;
+        const isGroupedSeries = this.chartType === 'groupedBar' || this.chartType === 'groupedColumn';
         const isColumn = this.isColumnChart();
 
         options = options || this.chartOptions;
+        const { seriesDefaults } = options;
         options.axes = [{
             ...options.xAxis,
             position: isColumn ? 'bottom' : 'left',
@@ -32,7 +34,19 @@ export class BarChartProxy extends CartesianChartProxy<BarSeriesOptions> {
             type: 'number'
         }];
         options.series = [{
-            ...this.getSeriesDefaults(),
+            ...seriesDefaults,
+            grouped: isGroupedSeries,
+            fills: seriesDefaults.fills || seriesDefaults.fill.colors,
+            fillOpacity: seriesDefaults.fillOpacity !== undefined
+                ? seriesDefaults.fillOpacity
+                : seriesDefaults.fill.opacity,
+            strokes: seriesDefaults.strokes || seriesDefaults.stroke.colors,
+            strokeOpacity: seriesDefaults.strokeOpacity !== undefined
+                ? seriesDefaults.strokeOpacity
+                : seriesDefaults.stroke.opacity,
+            strokeWidth: seriesDefaults.strokeWidth !== undefined
+                ? seriesDefaults.strokeWidth
+                : seriesDefaults.stroke.width,
             type: isColumn ? 'column' : 'bar'
         }];
 
