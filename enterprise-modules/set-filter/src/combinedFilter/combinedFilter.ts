@@ -1,12 +1,14 @@
-import { ProvidedFilter, Promise, ProvidedFilterModel, IDoesFilterPassParams, PostConstruct, RefSelector, IFilterParams, TextFilter, IAfterGuiAttachedParams, ISimpleFilterParams } from '@ag-grid-community/core';
+import { ProvidedFilter, Promise, ProvidedFilterModel, IDoesFilterPassParams, PostConstruct, RefSelector, IFilterParams, TextFilter, IAfterGuiAttachedParams, ISimpleFilterParams, ColDef, IClientSideRowModel, _, RowNode, Constants } from '@ag-grid-community/core';
 import { SetFilter } from '../setFilter/setFilter';
+import { ClientSideValuesExtractor } from '../clientSideValueExtractor';
 
 export class CombinedFilter extends ProvidedFilter {
     @RefSelector('eCombinedFilter') private readonly eCombinedFilter: HTMLElement;
 
     private providedFilter: ProvidedFilter;
     private setFilter: SetFilter;
-    private filterModifiedCallback: () => void;
+    private filterChangedCallback: () => void;
+    private uniqueValuesExtractor: ClientSideValuesExtractor;
 
     @PostConstruct
     protected postConstruct(): void {
@@ -24,17 +26,25 @@ export class CombinedFilter extends ProvidedFilter {
     }
 
     public init(params: IFilterParams): void {
-        this.filterModifiedCallback = params.filterModifiedCallback;
+        if (params.rowModel.getType() === Constants.ROW_MODEL_TYPE_CLIENT_SIDE) {
+            this.uniqueValuesExtractor = new ClientSideValuesExtractor(
+                params.rowModel as IClientSideRowModel,
+                params.colDef,
+                params.valueGetter
+            );
+        }
+
+        this.filterChangedCallback = params.filterChangedCallback;
 
         this.providedFilter.init({
             ...params,
             alwaysShowBothConditions: true,
-            filterModifiedCallback: () => this.onFilterModified('provided')
+            filterChangedCallback: () => this.filterChanged('provided')
         } as ISimpleFilterParams);
 
         this.setFilter.init({
             ...params,
-            filterModifiedCallback: () => this.onFilterModified('set')
+            filterChangedCallback: () => this.filterChanged('set')
         });
     }
 
@@ -83,15 +93,33 @@ export class CombinedFilter extends ProvidedFilter {
         return this.setFilter.getModel();
     }
 
-    private onFilterModified(filterType: 'provided' | 'set'): void {
-        if (filterType === 'provided' && this.setFilter.isFilterActive()) {
-            this.setFilter.setModel(null);
+    private filterChanged(filterType: 'provided' | 'set'): void {
+        if (filterType === 'provided') {
+            if (this.setFilter.isFilterActive()) {
+                this.setFilter.setModel(null);
+            }
+
+            this.filterChangedCallback();
+
+            if (this.providedFilter.isFilterActive() && this.uniqueValuesExtractor) {
+                const predicate = (node: RowNode) => this.providedFilter.doesFilterPass({ node, data: node.data });
+                const values = this.uniqueValuesExtractor.extractUniqueValues(predicate);
+                this.setFilter.setModelIntoUi({ filterType: 'set', values });
+            } else {
+                this.setFilter.setModelIntoUi(null);
+            }
         }
 
-        if (filterType === 'set' && this.providedFilter.isFilterActive()) {
-            this.providedFilter.setModel(null);
-        }
+        if (filterType === 'set') {
+            if (this.providedFilter.isFilterActive()) {
+                this.providedFilter.setModel(null);
+            }
 
-        this.filterModifiedCallback();
+            this.filterChangedCallback();
+        }
+    }
+
+    public onAnyFilterChanged(): void {
+        this.setFilter.onAnyFilterChanged();
     }
 }

@@ -156,7 +156,7 @@ export class SetFilter extends ProvidedFilter {
         return this.valueModel.setModel(null).then(() => this.refresh());
     }
 
-    protected setModelIntoUi(model: SetFilterModel): Promise<void> {
+    public setModelIntoUi(model: SetFilterModel): Promise<void> {
         this.setMiniFilter(null);
 
         if (model instanceof Array) {
@@ -206,9 +206,9 @@ export class SetFilter extends ProvidedFilter {
 
         this.valueModel = new SetValueModel(
             params.rowModel,
+            params.valueGetter,
             params.colDef,
             params.column,
-            params.valueGetter,
             params.doesRowPassOtherFilter,
             params.suppressSorting,
             loading => this.setLoading(loading),
