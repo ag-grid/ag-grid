@@ -29,6 +29,13 @@ export function addCssClass(element: HTMLElement, className: string) {
 }
 
 export function removeCssClass(element: HTMLElement, className: string) {
+    if (!className || className.length === 0) { return; }
+
+    if (className.indexOf(' ') >= 0) {
+        className.split(' ').forEach(value => removeCssClass(element, value));
+        return;
+    }
+
     if (element.classList) {
         element.classList.remove(className);
     } else if (element.className && element.className.length > 0) {
