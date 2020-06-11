@@ -16,8 +16,9 @@ export abstract class AgPickerField<T, K> extends AgAbstractField<K> {
             </div>
         </div>`;
 
-    protected abstract showPicker(): Component;
+    public abstract showPicker(): Component;
     protected abstract pickerIcon: string;
+    protected abstract isPickerDisplayed: boolean;
     protected value: K;
     protected isDestroyingPicker: boolean = false;
     private skipClick: boolean = false;
@@ -64,7 +65,9 @@ export abstract class AgPickerField<T, K> extends AgAbstractField<K> {
                 case Constants.KEY_SPACE:
                     clickHandler();
                 case Constants.KEY_ESCAPE:
-                    e.preventDefault();
+                    if (this.isPickerDisplayed) {
+                        e.preventDefault();
+                    }
                     break;
             }
         });
