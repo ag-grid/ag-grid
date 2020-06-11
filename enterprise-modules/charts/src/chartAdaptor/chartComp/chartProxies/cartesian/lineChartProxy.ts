@@ -107,7 +107,6 @@ export class LineChartProxy extends CartesianChartProxy<LineSeriesOptions> {
                     marker
                 };
 
-                debugger;
                 lineSeries = AgChart.createComponent(options, 'line.series');
 
                 chart.addSeriesAfter(lineSeries, previousSeries);
