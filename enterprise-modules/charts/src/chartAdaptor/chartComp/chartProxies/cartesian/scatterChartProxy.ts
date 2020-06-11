@@ -21,7 +21,6 @@ export class ScatterChartProxy extends CartesianChartProxy<ScatterSeriesOptions>
     }
 
     protected createChart(options: any): CartesianChart {
-        // return ChartBuilder.createScatterChart(this.chartProxyParams.parentElement, options || this.chartOptions);
         options = options || this.chartOptions;
         const seriesDefaults = options.seriesDefaults;
         options.axes = [{

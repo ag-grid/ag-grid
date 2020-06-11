@@ -129,12 +129,6 @@ export class AreaChartProxy extends CartesianChartProxy<AreaSeriesOptions> {
                 const options: any /*InternalAreaSeriesOptions */ = {
                     ...seriesDefaults,
                     data,
-                    // field: {
-                    //     xKey: params.category.id,
-                    //     xName: params.category.name,
-                    //     yKeys: [f.colId],
-                    //     yNames: [f.displayName],
-                    // },
                     xKey: params.category.id,
                     xName: params.category.name,
                     yKeys: [f.colId],

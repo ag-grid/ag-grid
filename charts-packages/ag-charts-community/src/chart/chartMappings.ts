@@ -81,18 +81,7 @@ const commonChartMappings = {
             defaults: {
                 enabled: true,
                 position: LegendPosition.Right,
-                spacing: 20,
-                // layoutHorizontalSpacing: 16,
-                // layoutVerticalSpacing: 8,
-                // itemSpacing: 8,
-                // markerShape: undefined,
-                // markerSize: 15,
-                // strokeWidth: 1,
-                // color: 'black',
-                // fontStyle: undefined,
-                // fontWeight: undefined,
-                // fontSize: 12,
-                // fontFamily: 'Verdana, sans-serif'
+                spacing: 20
             }
         },
         item: {
