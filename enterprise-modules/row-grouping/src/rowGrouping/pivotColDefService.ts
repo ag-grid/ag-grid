@@ -36,6 +36,8 @@ export class PivotColDefService extends BeanStub {
 
         this.recursivelyAddGroup(pivotColumnGroupDefs, pivotColumnDefs, 1, uniqueValues, [], columnIdSequence, levelsDeep, pivotColumns);
 
+        this.addCollapsedSubTotals(pivotColumnGroupDefs, pivotColumnDefs, columnIdSequence);
+
         this.addRowGroupTotals(pivotColumnGroupDefs, pivotColumnDefs, valueColumns, pivotColumns, columnIdSequence);
 
         this.addPivotTotalsToGroups(pivotColumnGroupDefs, pivotColumnDefs, columnIdSequence);
@@ -66,8 +68,7 @@ export class PivotColDefService extends BeanStub {
 
         _.iterateObject(uniqueValues, (key: string, value: any) => {
 
-            const newPivotKeys = pivotKeys.slice(0);
-            newPivotKeys.push(key);
+            const newPivotKeys = [...pivotKeys, key];
 
             const createGroup = index !== levelsDeep;
             if (createGroup) {
@@ -117,6 +118,62 @@ export class PivotColDefService extends BeanStub {
         const comparator = this.headerNameComparator.bind(this, userComparator);
 
         parentChildren.sort(comparator);
+    }
+
+    private addCollapsedSubTotals(pivotColumnGroupDefs: (ColDef | ColGroupDef)[],
+                                      pivotColumnDefs: ColDef[],
+                                      columnIdSequence: NumberSequence) {
+
+        if (!this.gridOptionsWrapper.isPivotExpandableGroups()) { return; }
+
+        const recursivelyAddSubTotals = (groupDef: (ColGroupDef | ColDef),
+                                         pivotColumnDefs: ColDef[],
+                                         columnIdSequence: NumberSequence,
+                                         acc: Map<string, string[]>) => {
+
+            const group = groupDef as ColGroupDef;
+
+            if (group.children) {
+                const childAcc = new Map();
+
+                group.children.forEach((grp: ColDef | ColGroupDef) => {
+                    recursivelyAddSubTotals(grp, pivotColumnDefs, columnIdSequence, childAcc);
+                });
+
+                const firstGroup = !group.children.some(child => (child as ColGroupDef).children);
+
+                this.columnController.getValueColumns().forEach(valueColumn => {
+                    const columnName: string | null = this.columnController.getDisplayNameForColumn(valueColumn, 'header');
+                    const totalColDef = this.createColDef(valueColumn, columnName, groupDef.pivotKeys, columnIdSequence);
+                    totalColDef.pivotTotalColumnIds = childAcc.get(valueColumn.getColId());
+
+                    totalColDef.columnGroupShow = 'closed';
+
+                    totalColDef.aggFunc = valueColumn.getAggFunc();
+
+                    if (!firstGroup) {
+                        // add total colDef to group and pivot colDefs array
+                        const children = (groupDef as ColGroupDef).children;
+                        children.push(totalColDef);
+                        pivotColumnDefs.push(totalColDef);
+                    }
+                });
+
+                this.merge(acc, childAcc);
+
+            } else {
+                const def: ColDef = groupDef as ColDef;
+                const pivotValueColId = def.pivotValueColumn.getColId();
+
+                const arr = acc.has(pivotValueColId) ? acc.get(pivotValueColId) : [];
+                arr.push(def.colId);
+                acc.set(pivotValueColId, arr);
+            }
+        };
+
+        pivotColumnGroupDefs.forEach((groupDef: (ColGroupDef | ColDef)) => {
+            recursivelyAddSubTotals(groupDef, pivotColumnDefs, columnIdSequence, new Map());
+        });
     }
 
     private addPivotTotalsToGroups(pivotColumnGroupDefs: (ColDef | ColGroupDef)[],
@@ -333,5 +390,13 @@ export class PivotColDefService extends BeanStub {
                 return 0;
             }
         }
+    }
+
+    private merge(m1: Map<string, string[]>, m2: Map<any, any>) {
+        m2.forEach((value, key, map) => {
+            const existingList = m1.has(key) ? m1.get(key) : [];
+            const updatedList = [...existingList, ...value];
+            m1.set(key, updatedList);
+        });
     }
 }
