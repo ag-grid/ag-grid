@@ -69,7 +69,7 @@ function processChartOptions(params) {
     options.seriesDefaults.highlightStyle.stroke = 'yellow';
 
     options.seriesDefaults.marker.enabled = true;
-    options.seriesDefaults.marker.type = 'square';
+    options.seriesDefaults.marker.shape = 'square';
     options.seriesDefaults.marker.size = 12;
     options.seriesDefaults.marker.minSize = 5;
     options.seriesDefaults.marker.strokeWidth = 4;

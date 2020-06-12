@@ -68,7 +68,7 @@ function processChartOptions(params) {
     options.seriesDefaults.highlightStyle.stroke = 'yellow';
 
     options.seriesDefaults.marker.enabled = true;
-    options.seriesDefaults.marker.type = 'diamond';
+    options.seriesDefaults.marker.shape = 'diamond';
     options.seriesDefaults.marker.size = 12;
     options.seriesDefaults.marker.strokeWidth = 4;
 

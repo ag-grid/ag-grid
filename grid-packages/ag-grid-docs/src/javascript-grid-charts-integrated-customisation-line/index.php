@@ -65,7 +65,8 @@ interface HighlightOptions {
 
 interface MarkerOptions {
     enabled: boolean; // default: true
-    type: MarkerType; // default: 'circle'
+    type: MarkerType; // deprecated
+    shape: MarkerType; // default: 'circle'
     size: number; // default: 6
     strokeWidth: number; // default: 1
 }
