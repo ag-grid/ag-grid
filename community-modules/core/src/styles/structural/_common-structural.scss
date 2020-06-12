@@ -258,9 +258,10 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia  {
     min-width: 100%;
 }
 
-.ag-layout-auto-height .ag-center-cols-clipper,
-.ag-layout-auto-height .ag-center-cols-container {
-    min-height: 50px;
+.ag-layout-auto-height, .ag-layout-print {
+    .ag-center-cols-clipper, .ag-center-cols-container {
+        min-height: 150px;
+    }
 }
 
 .ag-pinned-right-cols-container {
