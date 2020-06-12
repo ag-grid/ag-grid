@@ -100,8 +100,8 @@ export class LineChartProxy extends CartesianChartProxy<LineSeriesOptions> {
                     yKey: f.colId,
                     yName: f.displayName,
                     fill,
-                    fillOpacity: seriesDefaults.fill.opacity,
                     stroke: fill, // this is deliberate, so that the line colours match the fills of other series
+                    fillOpacity: seriesDefaults.fill.opacity,
                     strokeOpacity: seriesDefaults.stroke.opacity,
                     strokeWidth: seriesDefaults.stroke.width,
                     marker

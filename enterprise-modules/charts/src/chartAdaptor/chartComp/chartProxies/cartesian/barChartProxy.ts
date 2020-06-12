@@ -35,16 +35,10 @@ export class BarChartProxy extends CartesianChartProxy<BarSeriesOptions> {
         options.series = [{
             ...this.getSeriesDefaults(),
             fills: seriesDefaults.fills || seriesDefaults.fill.colors,
-            fillOpacity: seriesDefaults.fillOpacity !== undefined
-                ? seriesDefaults.fillOpacity
-                : seriesDefaults.fill.opacity, // deprecated
+            fillOpacity: seriesDefaults.fill.opacity,
             strokes: seriesDefaults.strokes || seriesDefaults.stroke.colors,
-            strokeOpacity: seriesDefaults.strokeOpacity !== undefined
-                ? seriesDefaults.strokeOpacity
-                : seriesDefaults.stroke.opacity, // deprecated
-            strokeWidth: seriesDefaults.strokeWidth !== undefined
-                ? seriesDefaults.strokeWidth
-                : seriesDefaults.stroke.width // deprecated
+            strokeOpacity: seriesDefaults.stroke.opacity,
+            strokeWidth: seriesDefaults.stroke.width
         }];
 
         return AgChart.create(options, parentElement);

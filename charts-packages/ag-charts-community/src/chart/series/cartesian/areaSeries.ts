@@ -327,7 +327,10 @@ export class AreaSeries extends CartesianSeries {
     }
 
     private updateAreaSelection(areaSelectionData: AreaSelectionDatum[]): void {
-        const { fills, fillOpacity, seriesItemEnabled, shadow } = this;
+        const {
+            fills, fillOpacity, strokes, strokeOpacity, strokeWidth,
+            seriesItemEnabled, shadow
+        } = this;
         const updateAreas = this.areaSelection.setData(areaSelectionData);
 
         updateAreas.exit.remove();
@@ -345,6 +348,9 @@ export class AreaSeries extends CartesianSeries {
 
             shape.fill = fills[index % fills.length];
             shape.fillOpacity = fillOpacity;
+            shape.stroke = strokes[index % strokes.length];
+            shape.strokeOpacity = strokeOpacity;
+            shape.strokeWidth = strokeWidth;
             shape.fillShadow = shadow;
             shape.visible = !!seriesItemEnabled.get(datum.yKey);
 

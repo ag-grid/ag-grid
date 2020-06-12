@@ -83,15 +83,9 @@ export class ScatterChartProxy extends CartesianChartProxy<ScatterSeriesOptions>
             const series = existingSeries || AgChart.createComponent({
                 ...seriesDefaults,
                 type: 'scatter',
-                fillOpacity: seriesDefaults.fillOpacity !== undefined
-                    ? seriesDefaults.fillOpacity
-                    : seriesDefaults.fill.opacity, // deprecated
-                strokeOpacity: seriesDefaults.strokeOpacity !== undefined
-                    ? seriesDefaults.strokeOpacity
-                    : seriesDefaults.stroke.opacity, // deprecated
-                strokeWidth: seriesDefaults.strokeWidth !== undefined
-                    ? seriesDefaults.strokeWidth
-                    : seriesDefaults.stroke.width, // deprecated
+                fillOpacity: seriesDefaults.fill.opacity,
+                strokeOpacity: seriesDefaults.stroke.opacity,
+                strokeWidth: seriesDefaults.stroke.width,
                 marker
             }, 'scatter.series');
 
