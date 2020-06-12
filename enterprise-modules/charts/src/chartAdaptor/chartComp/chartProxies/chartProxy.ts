@@ -140,7 +140,8 @@ export abstract class ChartProxy<TChart extends Chart, TOptions extends ChartOpt
 
         const { fills: defaultFills, strokes: defaultStrokes } = this.getPredefinedPalette();
         const { seriesDefaults } = chartOptions;
-        const { fill: { colors: fills }, stroke: { colors: strokes } } = seriesDefaults;
+        const fills = seriesDefaults.fills || seriesDefaults.fill.colors; // the latter is deprecated
+        const strokes = seriesDefaults.strokes || seriesDefaults.stroke.colors; // the latter is deprecated
         const fillsOverridden = fills && fills.length > 0 && fills !== defaultFills;
         const strokesOverridden = strokes && strokes.length > 0 && strokes !== defaultStrokes;
 
