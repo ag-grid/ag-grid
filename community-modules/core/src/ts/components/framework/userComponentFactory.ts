@@ -199,7 +199,7 @@ export class UserComponentFactory extends BeanStub {
      *  @param modifyParamsCallback: A chance to customise the params passed to the init method. It receives what the current
      *  params are and the component that init is about to get called for
      */
-    private createAndInitUserComponent<A extends IComponent<TParams>, TParams>(
+    public createAndInitUserComponent<A extends IComponent<TParams>, TParams>(
         definitionObject: DefinitionObject,
         paramsFromGrid: TParams,
         componentType: ComponentType,

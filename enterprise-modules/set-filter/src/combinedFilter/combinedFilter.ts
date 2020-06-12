@@ -1,32 +1,63 @@
-import { ProvidedFilter, Promise, ProvidedFilterModel, IDoesFilterPassParams, PostConstruct, RefSelector, IFilterParams, TextFilter, IAfterGuiAttachedParams, ISimpleFilterParams, ColDef, IClientSideRowModel, _, RowNode, Constants } from '@ag-grid-community/core';
+import {
+    ProvidedFilter,
+    Promise,
+    ProvidedFilterModel,
+    IDoesFilterPassParams,
+    RefSelector,
+    IAfterGuiAttachedParams,
+    IClientSideRowModel,
+    _,
+    RowNode,
+    Constants,
+    IProvidedFilterParams,
+    IFilterComp,
+    Autowired,
+    UserComponentFactory,
+} from '@ag-grid-community/core';
 import { SetFilter } from '../setFilter/setFilter';
 import { ClientSideValuesExtractor } from '../clientSideValueExtractor';
 import { SetValueModel } from '../setFilter/setValueModel';
 
+interface CombinedFilterParams extends IProvidedFilterParams {
+    combineWithFilter: string;
+}
+
 export class CombinedFilter extends ProvidedFilter {
     @RefSelector('eCombinedFilter') private readonly eCombinedFilter: HTMLElement;
+    @Autowired('userComponentFactory') private readonly userComponentFactory: UserComponentFactory;
 
-    private providedFilter: ProvidedFilter;
+    private providedFilter: IFilterComp;
     private setFilter: SetFilter;
     private filterChangedCallback: () => void;
     private clientSideValuesExtractor: ClientSideValuesExtractor;
 
-    @PostConstruct
-    protected postConstruct(): void {
-        super.postConstruct();
+    public init(params: CombinedFilterParams): void {
+        this.filterChangedCallback = params.filterChangedCallback;
 
-        this.providedFilter = this.createManagedBean(new TextFilter());
+        this.providedFilter = this.userComponentFactory.createAndInitUserComponent(
+            { filter: params.combineWithFilter || 'agTextColumnFilter' },
+            {
+                ...params,
+                alwaysShowBothConditions: true,
+                filterChangedCallback: () => this.filterChanged('provided')
+            },
+            { propertyName: 'filter', isCellRenderer: () => false }).resolveNow(null, c => c) as IFilterComp;
+
         this.eCombinedFilter.appendChild(this.providedFilter.getGui());
 
         const divider = document.createElement('div');
         divider.style.borderBottom = 'solid 1px var(--ag-secondary-border-color, #dde2eb)';
         this.eCombinedFilter.appendChild(divider);
 
-        this.setFilter = this.createManagedBean(new SetFilter());
-        this.eCombinedFilter.appendChild(this.setFilter.getGui());
-    }
+        this.setFilter = this.userComponentFactory.createUserComponentFromConcreteClass(
+            SetFilter,
+            {
+                ...params,
+                filterChangedCallback: () => this.filterChanged('set')
+            });
 
-    public init(params: IFilterParams): void {
+        this.eCombinedFilter.appendChild(this.setFilter.getGui());
+
         if (params.rowModel.getType() === Constants.ROW_MODEL_TYPE_CLIENT_SIDE) {
             this.clientSideValuesExtractor = new ClientSideValuesExtractor(
                 params.rowModel as IClientSideRowModel,
@@ -34,19 +65,6 @@ export class CombinedFilter extends ProvidedFilter {
                 params.valueGetter
             );
         }
-
-        this.filterChangedCallback = params.filterChangedCallback;
-
-        this.providedFilter.init({
-            ...params,
-            alwaysShowBothConditions: true,
-            filterChangedCallback: () => this.filterChanged('provided')
-        } as ISimpleFilterParams);
-
-        this.setFilter.init({
-            ...params,
-            filterChangedCallback: () => this.filterChanged('set')
-        });
     }
 
     public afterGuiAttached(params: IAfterGuiAttachedParams): void {

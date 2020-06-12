@@ -1,13 +1,21 @@
 var gridOptions = {
     columnDefs: [
-        // set filters
         { field: 'athlete', filter: 'agCombinedColumnFilter' },
-        { field: 'country', filter: 'agSetColumnFilter' },
-
-        // number filters
-        { field: 'gold', filter: 'agNumberColumnFilter' },
-        { field: 'silver', filter: 'agNumberColumnFilter' },
-        { field: 'bronze', filter: 'agNumberColumnFilter' },
+        {
+            field: 'country',
+            filter: 'agCombinedColumnFilter',
+            filterParams: { combineWithFilter: 'text' }
+        },
+        {
+            field: 'gold',
+            filter: 'agCombinedColumnFilter',
+            filterParams: { combineWithFilter: 'agNumberColumnFilter' }
+        },
+        {
+            field: 'date',
+            filter: 'agCombinedColumnFilter',
+            filterParams: { combineWithFilter: 'agDateColumnFilter' }
+        },
     ],
     defaultColDef: {
         flex: 1,
