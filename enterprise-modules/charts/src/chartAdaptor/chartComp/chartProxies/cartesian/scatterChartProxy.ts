@@ -22,7 +22,6 @@ export class ScatterChartProxy extends CartesianChartProxy<ScatterSeriesOptions>
 
     protected createChart(options: any): CartesianChart {
         options = options || this.chartOptions;
-        const seriesDefaults = options.seriesDefaults;
         options.axes = [{
             ...options.xAxis,
             position: 'bottom',
@@ -31,15 +30,6 @@ export class ScatterChartProxy extends CartesianChartProxy<ScatterSeriesOptions>
             ...options.yAxis,
             position: 'left',
             type: 'number'
-        }];
-        options.series = [{
-            ...seriesDefaults,
-            fills: seriesDefaults.fill.colors,
-            fillOpacity: seriesDefaults.fill.opacity,
-            strokes: seriesDefaults.stroke.colors,
-            strokeOpacity: seriesDefaults.stroke.opacity,
-            strokeWidth: seriesDefaults.stroke.width,
-            type: 'scatter'
         }];
 
         return AgChart.create(options, this.chartProxyParams.parentElement);
@@ -52,16 +42,17 @@ export class ScatterChartProxy extends CartesianChartProxy<ScatterSeriesOptions>
         }
 
         const { fields } = params;
-        const { seriesDefaults } = this.chartOptions;
+        const { seriesDefaults } = this.chartOptions as any;
         const seriesDefinitions = this.getSeriesDefinitions(fields, seriesDefaults.paired);
         const testDatum = params.data[0];
-        const xValuesAreDates = seriesDefinitions.map(d => d.xField.colId).map(xKey => testDatum && testDatum[xKey]).every(test => isDate(test));
+        const xValuesAreDates = seriesDefinitions
+            .map(d => d.xField.colId)
+            .map(xKey => testDatum && testDatum[xKey])
+            .every(test => isDate(test));
 
         this.updateAxes(xValuesAreDates ? 'time' : 'number');
 
         const { chart } = this;
-        const { fills, strokes } = this.getPalette();
-        const labelFieldDefinition = params.category.id === ChartDataModel.DEFAULT_CATEGORY ? undefined : params.category;
 
         const existingSeriesById = (chart.series as ScatterSeries[]).reduceRight((map, series, i) => {
             const matchingIndex = _.findIndex(seriesDefinitions, (s: any) =>
@@ -78,26 +69,41 @@ export class ScatterChartProxy extends CartesianChartProxy<ScatterSeriesOptions>
             return map;
         }, new Map<string, ScatterSeries>());
 
+        const { fills, strokes } = this.getPalette();
+        const labelFieldDefinition = params.category.id === ChartDataModel.DEFAULT_CATEGORY ? undefined : params.category;
         let previousSeries: ScatterSeries | undefined = undefined;
 
         seriesDefinitions.forEach((seriesDefinition, index) => {
             const existingSeries = existingSeriesById.get(seriesDefinition.yField.colId);
+            const marker = { ...seriesDefaults.marker } as any;
+            if (marker.type) { // deprecated
+                marker.shape = marker.type;
+                delete marker.type;
+            }
             const series = existingSeries || AgChart.createComponent({
                 ...seriesDefaults,
-                fills: seriesDefaults.fill.colors,
-                fillOpacity: seriesDefaults.fill.opacity,
-                strokes: seriesDefaults.stroke.colors,
-                strokeOpacity: seriesDefaults.stroke.opacity,
-                strokeWidth: seriesDefaults.stroke.width,
-                type: 'scatter'
-
+                type: 'scatter',
+                fillOpacity: seriesDefaults.fillOpacity !== undefined
+                    ? seriesDefaults.fillOpacity
+                    : seriesDefaults.fill.opacity, // deprecated
+                strokeOpacity: seriesDefaults.strokeOpacity !== undefined
+                    ? seriesDefaults.strokeOpacity
+                    : seriesDefaults.stroke.opacity, // deprecated
+                strokeWidth: seriesDefaults.strokeWidth !== undefined
+                    ? seriesDefaults.strokeWidth
+                    : seriesDefaults.stroke.width, // deprecated
+                marker
             }, 'scatter.series');
 
             if (!series) {
                 return;
             }
 
-            const { xField: xFieldDefinition, yField: yFieldDefinition, sizeField: sizeFieldDefinition } = seriesDefinition;
+            const {
+                xField: xFieldDefinition,
+                yField: yFieldDefinition,
+                sizeField: sizeFieldDefinition
+            } = seriesDefinition;
 
             series.title = `${yFieldDefinition.displayName} vs ${xFieldDefinition.displayName}`;
             series.xKey = xFieldDefinition.colId;

@@ -126,6 +126,11 @@ export class AreaChartProxy extends CartesianChartProxy<AreaSeriesOptions> {
                 areaSeries.strokes = [stroke];
             } else {
                 const seriesDefaults = this.getSeriesDefaults();
+                const marker = { ...seriesDefaults.marker } as any;
+                if (marker.type) { // deprecated
+                    marker.shape = marker.type;
+                    delete marker.type;
+                }
                 const options: any /*InternalAreaSeriesOptions */ = {
                     ...seriesDefaults,
                     data,
@@ -138,14 +143,7 @@ export class AreaChartProxy extends CartesianChartProxy<AreaSeriesOptions> {
                     strokes: [stroke],
                     strokeOpacity: seriesDefaults.stroke.opacity,
                     strokeWidth: seriesDefaults.stroke.width,
-                    // fill: {
-                    //     ...seriesDefaults.fill,
-                    //     colors: [fill],
-                    // },
-                    // stroke: {
-                    //     ...seriesDefaults.stroke,
-                    //     colors: [stroke],
-                    // }
+                    marker
                 };
 
                 areaSeries = AgChart.createComponent(options, 'area.series');

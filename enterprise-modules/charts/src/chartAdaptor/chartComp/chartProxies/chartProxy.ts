@@ -119,9 +119,9 @@ export abstract class ChartProxy<TChart extends Chart, TOptions extends ChartOpt
 
         // allow users to override options before they are applied
         if (processChartOptions) {
-            const params: ProcessChartOptionsParams = { type: this.chartType, options: this.getDefaultOptions() };
-            const overriddenOptions = processChartOptions(params) as TOptions;
             const safeOptions = this.getDefaultOptions();
+            const params: ProcessChartOptionsParams = { type: this.chartType, options: _.deepCloneObject(safeOptions) };
+            const overriddenOptions = processChartOptions(params) as TOptions;
 
             // ensure we have everything we need, in case the processing removed necessary options
             _.mergeDeep(safeOptions, overriddenOptions, false);
