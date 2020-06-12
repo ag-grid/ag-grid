@@ -126,8 +126,11 @@ export interface ColDef extends AbstractColDef {
      * want to a) group by this field or b) use set filter on this field. */
     keyCreator?: (value: any) => string;
 
-    /** Initial width, in pixels, of the cell */
+    /** Actual width, in pixels, of the cell */
     width?: number;
+
+    /** Default width, in pixels, of the cell */
+    defaultWidth?: number;
 
     /** Min width, in pixels, of the cell */
     minWidth?: number;
@@ -176,6 +179,7 @@ export interface ColDef extends AbstractColDef {
 
     /** Name of function to use for aggregation. One of [sum,min,max,first,last] or a function. */
     aggFunc?: string | IAggFunc;
+    defaultAggFunc?: string | IAggFunc;
 
     /** Agg funcs allowed on this column. If missing, all installed agg funcs are allowed.
      * Can be eg ['sum','avg']. This will restrict what the GUI allows to select only.*/
@@ -185,12 +189,18 @@ export interface ColDef extends AbstractColDef {
     rowGroupIndex?: number;
     rowGroup?: boolean;
 
+    defaultRowGroupIndex?: number;
+    defaultRowGroup?: boolean;
+
     /** Set to true to have the grid place the values for the group into the cell, or put the name of a grouped column to just show that group. */
     showRowGroup?: string | boolean;
 
     /** To pivot by this column by default, either provide an index (eg pivotIndex=1), or set pivot=true. */
     pivotIndex?: number;
     pivot?: boolean;
+
+    defaultPivotIndex?: number;
+    defaultPivot?: boolean;
 
     /** Comparator function for custom sorting. */
     comparator?: (valueA: any, valueB: any, nodeA: RowNode, nodeB: RowNode, isInverted: boolean) => number;

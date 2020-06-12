@@ -265,6 +265,10 @@ export class ColumnFactory extends BeanStub {
         // see if column already exists
         let column = this.findExistingColumn(colDef, existingColsCopy);
 
+        if (this.gridOptionsWrapper.isColumnsSpike()) {
+            console.log(`id = ${colDef.colId}, field = ${colDef.field}, match = ${!!column}`, colDef, column);
+        }
+
         if (!column) {
             // no existing column, need to create one
             const colId = columnKeyCreator.getUniqueKey(colDefMerged.colId, colDefMerged.field);
@@ -272,6 +276,13 @@ export class ColumnFactory extends BeanStub {
             this.context.createBean(column);
         } else {
             column.setColDef(colDefMerged, colDef);
+
+            if (this.gridOptionsWrapper.isColumnsSpike()) {
+                const colDefMergedWidth = _.attrToNumber(colDefMerged.width);
+                if (colDefMergedWidth!=null) {
+                    column.setActualWidth(colDefMergedWidth);
+                }
+            }
         }
 
         return column;
@@ -285,11 +296,32 @@ export class ColumnFactory extends BeanStub {
 
             // first check object references
             if (oldColDef === colDef) { return true; }
-            // second check id's
-            const oldColHadId = oldColDef.colId !== null && oldColDef.colId !== undefined;
 
-            if (oldColHadId) {
-                return oldColDef.colId === colDef.colId;
+            if (this.gridOptionsWrapper.isColumnsSpike()) {
+                /// NEW SPIKE WAY
+
+                const newDefHasId = colDef.colId != null;
+                const newDefHasField = colDef.field != null;
+                const oldDefHasId = oldColDef.colId != null;
+
+                if (newDefHasId && oldDefHasId) {
+                    return oldColDef.colId === colDef.colId;
+                }
+
+                const bothIdsMissing = !newDefHasId && !oldDefHasId;
+                if (bothIdsMissing && newDefHasField) {
+                    return oldColDef.field === colDef.field;
+                }
+
+            } else {
+                /// OLD WAY
+
+                // second check id's
+                const oldColHadId = oldColDef.colId !== null && oldColDef.colId !== undefined;
+
+                if (oldColHadId) {
+                    return oldColDef.colId === colDef.colId;
+                }
             }
 
             return false;

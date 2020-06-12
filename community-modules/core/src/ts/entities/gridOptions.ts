@@ -106,6 +106,7 @@ export interface GridOptions {
     deltaColumnMode?: boolean;
     immutableData?: boolean;
     immutableColumns?: boolean;
+    columnsSpike?: boolean;
     scrollbarWidth?: number;
     /** @deprecated */
     toolPanelSuppressRowGroups?: boolean;

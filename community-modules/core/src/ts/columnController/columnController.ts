@@ -2259,14 +2259,45 @@ export class ColumnController extends BeanStub {
             (col: Column, flag: boolean) => col.setValueActive(flag, source),
             // aggFunc doesn't have index variant, cos order of value cols doesn't matter, so always return null
             () => null,
+            () => null,
             // aggFunc is a string, so return it's existence
-            (colDef: ColDef) => !!colDef.aggFunc,
+            (colDef: ColDef) => {
+                if (this.gridOptionsWrapper.isColumnsSpike()) {
+                    if (colDef.aggFunc==null) {
+                        return undefined;
+                    } else {
+                        return colDef.aggFunc != '';
+                    }
+                } else {
+                    return !!colDef.aggFunc;
+                }
+            },
+            (colDef: ColDef) => {
+                if (colDef.defaultAggFunc==null) {
+                    return undefined;
+                } else {
+                    return colDef.defaultAggFunc != '';
+                }
+            }
         );
 
         // all new columns added will have aggFunc missing, so set it to what is in the colDef
         this.valueColumns.forEach(col => {
-            if (!col.getAggFunc()) {
-                col.setAggFunc(col.getColDef().aggFunc);
+            if (this.gridOptionsWrapper.isColumnsSpike()) {
+                const colDef = col.getColDef();
+                // if aggFunc provided, we always override, as reactive property
+                if (colDef.aggFunc != null && colDef.aggFunc != '') {
+                    col.setAggFunc(colDef.aggFunc);
+                } else {
+                    // otherwise we use defaultAggFunc only if no agg func set - which happens when new column only
+                    if (!col.getAggFunc()) {
+                        col.setAggFunc(colDef.defaultAggFunc);
+                    }
+                }
+            } else {
+                if (!col.getAggFunc()) {
+                    col.setAggFunc(col.getColDef().aggFunc);
+                }
             }
         });
     }
@@ -2275,7 +2306,9 @@ export class ColumnController extends BeanStub {
         this.rowGroupColumns = this.extractColumns(oldPrimaryColumns, this.rowGroupColumns,
             (col: Column, flag: boolean) => col.setRowGroupActive(flag, source),
             (colDef: ColDef) => colDef.rowGroupIndex,
+            (colDef: ColDef) => colDef.defaultRowGroupIndex,
             (colDef: ColDef) => colDef.rowGroup,
+            (colDef: ColDef) => colDef.defaultRowGroup,
         );
     }
 
@@ -2283,8 +2316,15 @@ export class ColumnController extends BeanStub {
         oldPrimaryColumns: Column[], previousCols: Column[],
         setFlagFunc: (col: Column, flag: boolean) => void,
         getIndexFunc: (colDef: ColDef) => number | null | undefined,
-        getValueFunc: (colDef: ColDef) => boolean | undefined
+        getDefaultIndexFunc: (colDef: ColDef) => number | null | undefined,
+        getValueFunc: (colDef: ColDef) => boolean | undefined,
+        getDefaultValueFunc: (colDef: ColDef) => boolean | undefined
     ): Column[] {
+
+        if (this.gridOptionsWrapper.isColumnsSpike()) {
+            return this.extractColumns_columnSpike(oldPrimaryColumns, previousCols,
+                setFlagFunc, getIndexFunc, getDefaultIndexFunc, getValueFunc, getDefaultValueFunc);
+        }
 
         if (!previousCols) { previousCols = []; }
 
@@ -2341,11 +2381,127 @@ export class ColumnController extends BeanStub {
         return res;
     }
 
+    private extractColumns_columnSpike(
+        oldPrimaryColumns: Column[] = [],
+        previousCols: Column[] = [],
+        setFlagFunc: (col: Column, flag: boolean) => void,
+        getIndexFunc: (colDef: ColDef) => number | null | undefined,
+        getDefaultIndexFunc: (colDef: ColDef) => number | null | undefined,
+        getValueFunc: (colDef: ColDef) => boolean | undefined,
+        getDefaultValueFunc: (colDef: ColDef) => boolean | undefined
+    ): Column[] {
+
+        const colsWithIndex: Column[] = [];
+        const colsWithValue: Column[] = [];
+
+        // go though all cols.
+        // if value, change
+        // if default only, change only if new
+        this.primaryColumns.forEach( col => {
+            const colIsNew = oldPrimaryColumns.indexOf(col) < 0;
+            const colDef = col.getColDef();
+
+            const value = _.attrToBoolean(getValueFunc(colDef));
+            const defaultValue = _.attrToBoolean(getDefaultValueFunc(colDef));
+            const index = _.attrToNumber(getIndexFunc(colDef));
+            const defaultIndex = _.attrToNumber(getDefaultIndexFunc(colDef));
+
+            let include: boolean;
+
+            if (colIsNew) {
+                // col is new, use reactive values if present, otherwise use default values if present
+                const reactiveValuePresent = value!=null || index!=null;
+                if (reactiveValuePresent) {
+                    if (value!=null) {
+                        // if boolean value present, we take it's value, even if 'false'
+                        include = value;
+                    } else {
+                        // otherwise we based on number value, and treat negative numbers as 'dont include'
+                        include = index >= 0;
+                    }
+                } else {
+                    include = defaultValue==true || defaultIndex>=0;
+                }
+            } else {
+                // col is not new, so we ignore the default values, just use the reactive values if provided
+                if (value!=null) {
+                    include = value;
+                } else if (index!=null) {
+                    include = index >= 0;
+                } else {
+                    // no reactive values provided, we include if it was included last time
+                    include = previousCols.indexOf(col) >= 0;
+                }
+            }
+
+            if (include) {
+                if (index!=null || defaultIndex!=null) {
+                    colsWithIndex.push(col);
+                } else {
+                    colsWithValue.push(col);
+                }
+            }
+        });
+
+        const getIndexForCol = (col: Column): number => {
+            const index = getIndexFunc(col.getColDef());
+            const defaultIndex = getDefaultIndexFunc(col.getColDef());
+            return index != null ? index : defaultIndex;
+        };
+
+        // sort cols with index, and add these first
+        colsWithIndex.sort(function(colA: Column, colB: Column): number {
+            const indexA = getIndexForCol(colA);
+            const indexB = getIndexForCol(colB);
+            if (indexA === indexB) {
+                return 0;
+            } else if (indexA < indexB) {
+                return -1;
+            } else {
+                return 1;
+            }
+        });
+
+        const res: Column[] = [].concat(colsWithIndex);
+
+        // second add columns that were there before and in the same order as they were before,
+        // so we are preserving order of current grouping of columns that simply have rowGroup=true
+        previousCols.forEach(col => {
+            if (colsWithValue.indexOf(col)>=0) {
+                res.push(col);
+            }
+        });
+
+        // lastly put in all remaining cols
+        colsWithValue.forEach( col => {
+            if (res.indexOf(col)<0) {
+                res.push(col);
+            }
+        });
+
+        // set flag=false for removed cols
+        previousCols.forEach( col => {
+            if (res.indexOf(col)<0) {
+                setFlagFunc(col, false);
+            }
+        });
+        // set flag=true for newly added cols
+        res.forEach(col => {
+            if (oldPrimaryColumns.indexOf(col)<0) {
+                setFlagFunc(col, true);
+            }
+        });
+
+        return res;
+    }
+
     private extractPivotColumns(source: ColumnEventType, oldPrimaryColumns: Column[]): void {
         this.pivotColumns = this.extractColumns(oldPrimaryColumns, this.pivotColumns,
             (col: Column, flag: boolean) => col.setPivotActive(flag, source),
             (colDef: ColDef) => colDef.pivotIndex,
+            (colDef: ColDef) => colDef.defaultPivotIndex,
             (colDef: ColDef) => colDef.pivot,
+            (colDef: ColDef) => colDef.defaultPivot,
         );
     }
 

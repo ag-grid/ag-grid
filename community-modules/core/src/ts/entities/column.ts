@@ -149,7 +149,7 @@ export class Column implements ColumnGroupChild, OriginalColumnGroupChild, IEven
 
     // this is done after constructor as it uses gridOptionsWrapper
     @PostConstruct
-    public initialise(): void {
+    private initialise(): void {
         this.setPinned(this.colDef.pinned);
 
         const minColWidth = this.gridOptionsWrapper.getMinColWidth();

@@ -114,6 +114,11 @@ export class ColumnApi {
 
     // below goes through deprecated items, prints message to user, then calls the new version of the same method
 
+    // public getColumnDefs(): (ColDef | ColGroupDef)[] {
+    //     this.setColumnGroupOpened(group, newValue);
+    //     return null;
+    // }
+
     public columnGroupOpened(group: OriginalColumnGroup | string, newValue: boolean): void {
         console.error('ag-Grid: columnGroupOpened no longer exists, use setColumnGroupOpened');
         this.setColumnGroupOpened(group, newValue);

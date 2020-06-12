@@ -23,6 +23,38 @@ export function toStringOrNull(value: any): string | null {
     return exists(value) && value.toString ? value.toString() : null;
 }
 
+// for parsing html attributes, where we want empty strings and missing attributes to be undefined
+export function attrToNumber(value: number | string): number | undefined {
+    if (value == null) {
+        return undefined;
+    } else if (typeof value === 'number') {
+        return isNaN(value) ? undefined : value;
+    } else {
+        const valueParsed = parseInt(value as string);
+        return isNaN(valueParsed) ? undefined : valueParsed;
+    }
+}
+
+// for parsing html attributes, where we want empty strings and missing attributes to be undefined
+export function attrToBoolean(value: boolean | string): boolean | undefined {
+    if (value == null || value==='') {
+        return undefined;
+    } else if (value===true || value===false) {
+        return value;
+    } else {
+        return (/true/i).test(value);
+    }
+}
+
+// for parsing html attributes, where we want empty strings and missing attributes to be undefined
+export function attrToString(value: string): string | undefined {
+    if (value == null || value==='') {
+        return undefined;
+    } else {
+        return value;
+    }
+}
+
 /** @deprecated */
 export function referenceCompare<T>(left: T, right: T): boolean {
     if (left == null && right == null) {

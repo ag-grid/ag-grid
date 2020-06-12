@@ -19,7 +19,23 @@ export class ColumnUtils extends BeanStub {
         const optionsWrapper = this.gridOptionsWrapper;
         const minColWidth = colDef.minWidth != null ? colDef.minWidth : optionsWrapper.getMinColWidth();
         const maxColWidth = colDef.maxWidth != null ? colDef.maxWidth : (optionsWrapper.getMaxColWidth() || _.getMaxSafeInteger());
-        const width = colDef.width != null ? colDef.width : optionsWrapper.getColWidth();
+
+        let width : number;
+        if (this.gridOptionsWrapper.isColumnsSpike()) {
+            // new spike way
+            const colDefWidth = _.attrToNumber(colDef.width);
+            const colDefDefaultWidth = _.attrToNumber(colDef.defaultWidth);
+            if (colDefWidth!=null) {
+                width = colDefWidth;
+            } else if (colDefDefaultWidth!=null) {
+                width = colDefDefaultWidth;
+            } else {
+                width = optionsWrapper.getColWidth();
+            }
+        } else {
+            // old way
+            width = colDef.width != null ? colDef.width : optionsWrapper.getColWidth();
+        }
 
         return Math.max(Math.min(width, maxColWidth), minColWidth);
     }
@@ -50,41 +66,6 @@ export class ColumnUtils extends BeanStub {
         // will make it fail rather than provide a 'hard to track down' bug
         return found ? result : null;
     }
-
-/*    public getPathForColumn(column: Column, allDisplayedColumnGroups: ColumnGroupChild[]): ColumnGroup[] {
-        let result: ColumnGroup[] = [];
-        let found = false;
-
-        recursePath(allDisplayedColumnGroups, 0);
-
-        // we should always find the path, but in case there is a bug somewhere, returning null
-        // will make it fail rather than provide a 'hard to track down' bug
-        if (found) {
-            return result;
-        } else {
-            return null;
-        }
-
-        function recursePath(balancedColumnTree: ColumnGroupChild[], dept: number): void {
-
-            for (let i = 0; i<balancedColumnTree.length; i++) {
-                if (found) {
-                    // quit the search, so 'result' is kept with the found result
-                    return;
-                }
-                let node = balancedColumnTree[i];
-                if (node instanceof ColumnGroup) {
-                    let nextNode = <ColumnGroup> node;
-                    recursePath(nextNode.getChildren(), dept+1);
-                    result[dept] = node;
-                } else {
-                    if (node === column) {
-                        found = true;
-                    }
-                }
-            }
-        }
-    }*/
 
     public depthFirstOriginalTreeSearch(parent: OriginalColumnGroup | null, tree: OriginalColumnGroupChild[], callback: (treeNode: OriginalColumnGroupChild, parent: OriginalColumnGroup) => void): void {
         if (!tree) { return; }
