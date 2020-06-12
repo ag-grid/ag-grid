@@ -15,6 +15,11 @@ export class AreaChartProxy extends CartesianChartProxy<AreaSeriesOptions> {
     protected createChart(options: any): CartesianChart {
         const { grouping, parentElement } = this.chartProxyParams;
         const seriesDefaults = this.getSeriesDefaults();
+        const marker = { ...seriesDefaults.marker } as any;
+        if (marker.type) { // deprecated
+            marker.shape = marker.type;
+            delete marker.type;
+        }
 
         options = options || this.chartOptions;
         options.axes = [{
@@ -30,12 +35,13 @@ export class AreaChartProxy extends CartesianChartProxy<AreaSeriesOptions> {
         }];
         options.series = [{
             ...seriesDefaults,
+            type: 'area',
             fills: seriesDefaults.fill.colors,
             fillOpacity: seriesDefaults.fill.opacity,
             strokes: seriesDefaults.stroke.colors,
             strokeOpacity: seriesDefaults.stroke.opacity,
             strokeWidth: seriesDefaults.stroke.width,
-            type: 'area'
+            marker
         }];
 
         return AgChart.create(options, parentElement);
@@ -55,13 +61,19 @@ export class AreaChartProxy extends CartesianChartProxy<AreaSeriesOptions> {
 
             if (!areaSeries) {
                 const seriesDefaults = this.getSeriesDefaults();
+                const marker = { ...seriesDefaults.marker } as any;
+                if (marker.type) { // deprecated
+                    marker.shape = marker.type;
+                    delete marker.type;
+                }
                 areaSeries = AgChart.createComponent({
                     ...seriesDefaults,
                     fills: seriesDefaults.fill.colors,
                     fillOpacity: seriesDefaults.fill.opacity,
                     strokes: seriesDefaults.stroke.colors,
                     strokeOpacity: seriesDefaults.stroke.opacity,
-                    strokeWidth: seriesDefaults.stroke.width
+                    strokeWidth: seriesDefaults.stroke.width,
+                    marker
                 }, 'area.series');
 
                 if (areaSeries) {
@@ -139,8 +151,8 @@ export class AreaChartProxy extends CartesianChartProxy<AreaSeriesOptions> {
                     yKeys: [f.colId],
                     yNames: [f.displayName],
                     fills: [fill],
-                    fillOpacity: seriesDefaults.fill.opacity,
                     strokes: [stroke],
+                    fillOpacity: seriesDefaults.fill.opacity,
                     strokeOpacity: seriesDefaults.stroke.opacity,
                     strokeWidth: seriesDefaults.stroke.width,
                     marker
