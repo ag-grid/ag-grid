@@ -58,10 +58,10 @@ function processChartOptions(params) {
     }
 
     options.seriesDefaults.fill.colors = ['#e1ba00', 'silver', 'peru'];
-    options.seriesDefaults.fill.opacity = 0.8;
+    options.seriesDefaults.fill.opacity = 0.5;
 
     options.seriesDefaults.stroke.colors = ['black', '#ff0000'];
-    options.seriesDefaults.stroke.opacity = 0.7;
+    options.seriesDefaults.stroke.opacity = 0.5;
     options.seriesDefaults.stroke.width = 2;
 
     options.seriesDefaults.highlightStyle.fill = 'red';

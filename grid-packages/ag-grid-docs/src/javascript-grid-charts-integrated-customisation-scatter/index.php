@@ -69,7 +69,8 @@ interface HighlightOptions {
 
 interface MarkerOptions {
     enabled: boolean; // default: true
-    type: MarkerType; // default: 'circle'
+    type: MarkerType; // deprecated
+    shape: MarkerType; // default: 'circle'
 
     // In bubble charts the marker size is determined by data. In this case, `size`
     // is the maximum size a marker can be and `minSize` is the minimum. For scatter
