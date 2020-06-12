@@ -98,6 +98,7 @@ export { TextFilter, ITextFilterParams, TextFilterModel, TextFormatter } from ".
 export { DateFilter, IDateFilterParams, DateFilterModel } from "./filter/provided/date/dateFilter";
 
 export { IFloatingFilter, IFloatingFilterParams, IFloatingFilterComp, BaseFloatingFilterChange } from "./filter/floating/floatingFilter";
+export { TextFloatingFilter } from './filter/provided/text/textFloatingFilter';
 
 // gridPanel
 export { GridPanel } from "./gridPanel/gridPanel";
