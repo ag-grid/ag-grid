@@ -19,7 +19,6 @@ export class BarChartProxy extends CartesianChartProxy<BarSeriesOptions> {
 
     protected createChart(options: any): CartesianChart {
         const { grouping, parentElement } = this.chartProxyParams;
-        const isGroupedSeries = this.chartType === 'groupedBar' || this.chartType === 'groupedColumn';
         const isColumn = this.isColumnChart();
 
         options = options || this.chartOptions;
@@ -34,20 +33,18 @@ export class BarChartProxy extends CartesianChartProxy<BarSeriesOptions> {
             type: 'number'
         }];
         options.series = [{
-            ...seriesDefaults,
-            grouped: isGroupedSeries,
+            ...this.getSeriesDefaults(),
             fills: seriesDefaults.fills || seriesDefaults.fill.colors,
             fillOpacity: seriesDefaults.fillOpacity !== undefined
                 ? seriesDefaults.fillOpacity
-                : seriesDefaults.fill.opacity,
+                : seriesDefaults.fill.opacity, // deprecated
             strokes: seriesDefaults.strokes || seriesDefaults.stroke.colors,
             strokeOpacity: seriesDefaults.strokeOpacity !== undefined
                 ? seriesDefaults.strokeOpacity
-                : seriesDefaults.stroke.opacity,
+                : seriesDefaults.stroke.opacity, // deprecated
             strokeWidth: seriesDefaults.strokeWidth !== undefined
                 ? seriesDefaults.strokeWidth
-                : seriesDefaults.stroke.width,
-            type: isColumn ? 'column' : 'bar'
+                : seriesDefaults.stroke.width // deprecated
         }];
 
         return AgChart.create(options, parentElement);
@@ -100,14 +97,16 @@ export class BarChartProxy extends CartesianChartProxy<BarSeriesOptions> {
         return _.includes([ChartType.GroupedColumn, ChartType.StackedColumn, ChartType.NormalizedColumn], this.chartType);
     }
 
-    private getSeriesDefaults(): InternalBarSeriesOptions {
+    private getSeriesDefaults(): any {
+        debugger;
         const { chartType } = this;
+        const isColumn = this.isColumnChart();
         const isGrouped = chartType === ChartType.GroupedColumn || chartType === ChartType.GroupedBar;
         const isNormalized = chartType === ChartType.NormalizedColumn || chartType === ChartType.NormalizedBar;
 
         return {
             ...this.chartOptions.seriesDefaults,
-            type: 'bar',
+            type: isColumn ? 'column' : 'bar',
             grouped: isGrouped,
             normalizedTo: isNormalized ? 100 : undefined,
         };
