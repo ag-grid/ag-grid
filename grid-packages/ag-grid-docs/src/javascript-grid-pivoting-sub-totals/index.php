@@ -9,11 +9,14 @@ include '../documentation-main/documentation_header.php';
     <h1 class="heading-enterprise">Pivoting - Sub Totals</h1>
 
     <p class="lead">
-        This section covers Pivoting Sub Totals
+        There are several ways to provide sub total details.
     </p>
 
+    <h2>Collapsable Groups</h2>
 
-    <h2 id="pivotColumnGroupTotals">Pivot Column Group Totals</h2>
+    <?= grid_example('Collapsable Groups', 'collapsable-groups', 'generated', ['enterprise' => true, 'exampleHeight' => 655, 'modules' => ['clientside', 'rowgrouping', 'menu', 'columnpanel', 'filterpanel']]) ?>
+
+    <h2>Pivot Column Group Totals</h2>
     <p>
         When in pivot mode you can also include automatically calculated total pivot columns. These total columns will use the provided
         aggregation function on the value columns to 'roll-up' each group level.
@@ -49,7 +52,7 @@ include '../documentation-main/documentation_header.php';
 
     <?= grid_example('Pivot Column Group Totals', 'totals', 'generated', ['enterprise' => true, 'exampleHeight' => 655, 'modules' => ['clientside', 'rowgrouping', 'menu', 'columnpanel', 'filterpanel']]) ?>
 
-    <h2 id="pivotRowTotals">Pivot Row Totals</h2>
+    <h2>Pivot Row Totals</h2>
 
     <p>
         When in pivot mode you can also include automatically calculated Row Total Columns. These total columns will use

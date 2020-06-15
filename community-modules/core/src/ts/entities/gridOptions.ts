@@ -203,8 +203,8 @@ export interface GridOptions {
     /** @deprecated */
     pivotTotals?: boolean;
     pivotColumnGroupTotals?: string;
+    pivotColumnGroupsCollapsed?: boolean;
     pivotRowTotals?: string;
-    pivotExpandableGroups?: boolean;
 
     suppressEnterpriseResetOnNewColumns?: boolean;
     // enterprise only

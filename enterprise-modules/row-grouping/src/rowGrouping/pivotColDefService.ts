@@ -124,7 +124,7 @@ export class PivotColDefService extends BeanStub {
                                       pivotColumnDefs: ColDef[],
                                       columnIdSequence: NumberSequence) {
 
-        if (!this.gridOptionsWrapper.isPivotExpandableGroups()) { return; }
+        if (!this.gridOptionsWrapper.isPivotColumnGroupsCollapsed()) { return; }
 
         const recursivelyAddSubTotals = (groupDef: (ColGroupDef | ColDef),
                                          pivotColumnDefs: ColDef[],
