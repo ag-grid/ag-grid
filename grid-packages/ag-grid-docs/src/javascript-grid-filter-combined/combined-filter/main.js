@@ -14,7 +14,27 @@ var gridOptions = {
         {
             field: 'date',
             filter: 'agCombinedColumnFilter',
-            filterParams: { combineWithFilter: 'agDateColumnFilter' }
+            filterParams: {
+                combineWithFilter: 'agDateColumnFilter',
+                comparator: function(filterDate, cellValue) {
+                    var dateAsString = cellValue;
+                    if (dateAsString == null) return -1;
+                    var dateParts = dateAsString.split("/");
+                    var cellDate = new Date(Number(dateParts[2]), Number(dateParts[1]) - 1, Number(dateParts[0]));
+
+                    if (filterDate.getTime() == cellDate.getTime()) {
+                        return 0;
+                    }
+
+                    if (cellDate < filterDate) {
+                        return -1;
+                    }
+
+                    if (cellDate > filterDate) {
+                        return 1;
+                    }
+                },
+            }
         },
     ],
     defaultColDef: {

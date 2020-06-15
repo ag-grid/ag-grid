@@ -24,25 +24,9 @@ import { AbstractHeaderWrapper } from '../../headerRendering/header/abstractHead
 import { Constants } from '../../constants';
 import { Beans } from '../../rendering/beans';
 import { HeaderRowComp } from '../../headerRendering/headerRowComp';
+import { FloatingFilterMapper } from './floatingFilterMapper';
 
 export class FloatingFilterWrapper extends AbstractHeaderWrapper {
-    private static filterToFloatingFilterNames: { [p: string]: string; } = {
-        set: 'agSetColumnFloatingFilter',
-        agSetColumnFilter: 'agSetColumnFloatingFilter',
-
-        combined: 'agCombinedColumnFloatingFilter',
-        agCombinedColumnFilter: 'agCombinedColumnFloatingFilter',
-
-        number: 'agNumberColumnFloatingFilter',
-        agNumberColumnFilter: 'agNumberColumnFloatingFilter',
-
-        date: 'agDateColumnFloatingFilter',
-        agDateColumnFilter: 'agDateColumnFloatingFilter',
-
-        text: 'agTextColumnFloatingFilter',
-        agTextColumnFilter: 'agTextColumnFloatingFilter'
-    };
-
     private static TEMPLATE = /* html */
         `<div class="ag-header-cell" role="presentation" tabindex="-1">
             <div ref="eFloatingFilterBody" role="columnheader"></div>
@@ -254,7 +238,7 @@ export class FloatingFilterWrapper extends AbstractHeaderWrapper {
 
         if (typeof colDef.filter === 'string') {
             // will be undefined if not in the map
-            defaultFloatingFilterType = FloatingFilterWrapper.filterToFloatingFilterNames[colDef.filter];
+            defaultFloatingFilterType = FloatingFilterMapper.getFloatingFilterType(colDef.filter);
         } else if (colDef.filterFramework) {
             // If filterFramework, then grid is NOT using one of the provided filters, hence no default.
             // Note: We could combine this with another part of the 'if' statement, however explicitly

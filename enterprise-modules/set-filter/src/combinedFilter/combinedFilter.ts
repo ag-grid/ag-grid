@@ -18,7 +18,7 @@ import { SetFilter } from '../setFilter/setFilter';
 import { ClientSideValuesExtractor } from '../clientSideValueExtractor';
 import { SetValueModel } from '../setFilter/setValueModel';
 
-interface CombinedFilterParams extends IProvidedFilterParams {
+export interface CombinedFilterParams extends IProvidedFilterParams {
     combineWithFilter: string;
 }
 

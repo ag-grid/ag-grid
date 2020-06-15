@@ -3,15 +3,20 @@ import {
     FilterChangedEvent,
     _,
     IFloatingFilterComp,
-    TextFloatingFilter,
     IFloatingFilterParams,
     ProvidedFilterModel,
+    UserComponentFactory,
+    Autowired,
+    FloatingFilterMapper,
 } from '@ag-grid-community/core';
 import { SetFloatingFilterComp } from '../setFilter/setFloatingFilter';
 import { SetFilterModel } from '../setFilter/setFilterModel';
+import { CombinedFilterParams } from './combinedFilter';
 
 export class CombinedFloatingFilterComp extends Component implements IFloatingFilterComp {
-    private providedFilter: TextFloatingFilter;
+    @Autowired('userComponentFactory') private readonly userComponentFactory: UserComponentFactory;
+
+    private providedFilter: IFloatingFilterComp;
     private setFilter: SetFloatingFilterComp;
 
     constructor() {
@@ -19,13 +24,19 @@ export class CombinedFloatingFilterComp extends Component implements IFloatingFi
     }
 
     public init(params: IFloatingFilterParams): void {
-        this.providedFilter = this.createManagedBean(new TextFloatingFilter());
-        this.providedFilter.init(params);
+        const filterParams = params.filterParams as CombinedFilterParams;
+        const combineWithFilter = filterParams.combineWithFilter || 'agTextColumnFilter';
+        const floatingFilterType = FloatingFilterMapper.getFloatingFilterType(combineWithFilter);
 
-        this.setFilter = this.createManagedBean(new SetFloatingFilterComp());
-        this.setFilter.init(params);
+        this.providedFilter = this.userComponentFactory.createAndInitUserComponent(
+            { floatingFilter: floatingFilterType } as any,
+            params,
+            { propertyName: 'floatingFilter', isCellRenderer: () => false }).resolveNow(null, c => c) as IFloatingFilterComp;
 
-        this.appendChild(this.providedFilter);
+        this.appendChild(this.providedFilter.getGui());
+
+        this.setFilter = this.userComponentFactory.createUserComponentFromConcreteClass(SetFloatingFilterComp, params);
+
         this.appendChild(this.setFilter);
 
         _.setDisplayed(this.setFilter.getGui(), false);
