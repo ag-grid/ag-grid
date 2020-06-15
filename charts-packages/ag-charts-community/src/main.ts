@@ -1,5 +1,6 @@
 export * from "./caption";
 export * from "./chart/axis/categoryAxis";
+export * from "./chart/axis/numberAxis";
 export * from "./chart/axis/groupedCategoryAxis";
 export * from "./chart/cartesianChart";
 export * from "./chart/chart";
