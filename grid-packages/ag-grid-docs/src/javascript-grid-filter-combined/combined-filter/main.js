@@ -17,10 +17,18 @@ var gridOptions = {
             filterParams: {
                 combineWithFilter: 'agDateColumnFilter',
                 comparator: function(filterDate, cellValue) {
-                    var dateAsString = cellValue;
-                    if (dateAsString == null) return -1;
-                    var dateParts = dateAsString.split("/");
-                    var cellDate = new Date(Number(dateParts[2]), Number(dateParts[1]) - 1, Number(dateParts[0]));
+                    if (cellValue == null) return -1;
+
+                    var getDate = function(value) {
+                        var dateParts = value.split('/');
+                        return new Date(Number(dateParts[2]), Number(dateParts[1]) - 1, Number(dateParts[0]));
+                    };
+
+                    if (!(filterDate instanceof Date)) {
+                        filterDate = getDate(filterDate);
+                    }
+
+                    var cellDate = getDate(cellValue);
 
                     if (filterDate.getTime() == cellDate.getTime()) {
                         return 0;

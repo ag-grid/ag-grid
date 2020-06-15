@@ -10,7 +10,7 @@ import { Events, FilterChangedEvent } from '../../events';
 import { ColumnHoverService } from '../../rendering/columnHoverService';
 import { Promise } from '../../utils';
 import { ColDef } from '../../entities/colDef';
-import { IFilterComp, IFilterParams } from '../../interfaces/iFilter';
+import { IFilterComp } from '../../interfaces/iFilter';
 import { UserComponentFactory } from '../../components/framework/userComponentFactory';
 import { GridApi } from '../../gridApi';
 import { ColumnApi } from '../../columnController/columnApi';
