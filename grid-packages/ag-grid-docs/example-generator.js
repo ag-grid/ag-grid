@@ -11,7 +11,7 @@ const path = require('path');
 const prettier = require('prettier');
 
 function emptyDirectory(directory) {
-    if (!directory || directory.trim().indexOf('/') === 0) { return; }
+    if (!directory || directory.trim().indexOf('/') === 0 || !fs.existsSync(directory)) { return; }
 
     try {
         const files = fs.readdirSync(directory);
