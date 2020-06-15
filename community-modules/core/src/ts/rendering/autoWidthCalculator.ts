@@ -107,6 +107,8 @@ export class AutoWidthCalculator extends BeanStub {
             _.addCssClass(eCloneParent, 'ag-header');
             _.addCssClass(eCloneParent, 'ag-header-row');
             eCloneParent.style.position = 'static';
+        } else {
+            _.addCssClass(eCloneParent, 'ag-row');
         }
 
         // table-row, so that each cell is on a row. i also tried display='block', but this
