@@ -25,6 +25,7 @@ import palette from "./palettes";
     contains no code that uses the specs to actually create charts
 */
 
+const chartPadding = 20;
 const commonChartMappings = {
     background: {
         meta: {
@@ -38,10 +39,10 @@ const commonChartMappings = {
         meta: {
             constructor: Padding,
             defaults: {
-                top: 20,
-                right: 20,
-                bottom: 20,
-                left: 20
+                top: chartPadding,
+                right: chartPadding,
+                bottom: chartPadding,
+                left: chartPadding
             }
         }
     },
@@ -122,7 +123,19 @@ const commonChartMappings = {
 const chartDefaults = {
     container: undefined,
     data: [],
-    padding: new Padding(20),
+    padding: new Padding(chartPadding),
+    background: {},
+    legend: {
+        item: {
+            marker: {},
+            label: {}
+        }
+    },
+    navigator: {
+        mask: {},
+        minHandle: {},
+        maxHandle: {}
+    },
     title: undefined,
     subtitle: undefined,
 } as any;
@@ -140,6 +153,10 @@ const chartMeta = {
 const axisDefaults = {
     defaults: {
         visibleRange: [0, 1],
+        label: {},
+        tick: {},
+        title: {},
+        line: {},
         gridStyle: [{
             stroke: 'rgba(219, 219, 219, 1)',
             lineDash: [4, 2]

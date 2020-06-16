@@ -25,12 +25,13 @@ import { pastel as palette } from "./palettes";
     contains no code that uses the specs to actually create charts
 */
 
+const chartPadding = 10;
 const commonChartMappings = {
     background: {
         meta: {
             defaults: {
                 visible: true,
-                fill: 'gray'
+                fill: 'rgb(52, 52, 53)'
             }
         }
     },
@@ -38,10 +39,10 @@ const commonChartMappings = {
         meta: {
             constructor: Padding,
             defaults: {
-                top: 20,
-                right: 20,
-                bottom: 20,
-                left: 20
+                top: chartPadding,
+                right: chartPadding,
+                bottom: chartPadding,
+                left: chartPadding
             }
         }
     },
@@ -56,7 +57,7 @@ const commonChartMappings = {
                 fontWeight: 'bold',
                 fontSize: 14,
                 fontFamily: 'Verdana, sans-serif',
-                color: 'rgba(70, 70, 70, 1)'
+                color: 'rgb(224, 224, 227)'
             }
         }
     },
@@ -71,7 +72,7 @@ const commonChartMappings = {
                 fontWeight: undefined,
                 fontSize: 12,
                 fontFamily: 'Verdana, sans-serif',
-                color: 'rgba(140, 140, 140, 1)'
+                color: 'rgb(224, 224, 227)'
             }
         }
     },
@@ -107,7 +108,7 @@ const commonChartMappings = {
                 meta: {
                     constructor: LegendLabel,
                     defaults: {
-                        color: 'black',
+                        color: 'rgb(224, 224, 227)',
                         fontStyle: undefined,
                         fontWeight: undefined,
                         fontSize: 12,
@@ -122,7 +123,19 @@ const commonChartMappings = {
 const chartDefaults = {
     container: undefined,
     data: [],
-    padding: new Padding(20),
+    padding: new Padding(chartPadding),
+    background: {},
+    legend: {
+        item: {
+            marker: {},
+            label: {}
+        }
+    },
+    navigator: {
+        mask: {},
+        minHandle: {},
+        maxHandle: {}
+    },
     title: undefined,
     subtitle: undefined,
 } as any;
@@ -140,6 +153,10 @@ const chartMeta = {
 const axisDefaults = {
     defaults: {
         visibleRange: [0, 1],
+        label: {},
+        tick: {},
+        title: {},
+        line: {},
         gridStyle: [{
             stroke: 'rgba(219, 219, 219, 1)',
             lineDash: [4, 2]
@@ -191,7 +208,7 @@ const labelDefaults = {
     fontWeight: undefined,
     fontSize: 12,
     fontFamily: 'Verdana, sans-serif',
-    color: 'rgba(70, 70, 70, 1)'
+    color: 'rgb(224, 224, 227)'
 } as any;
 
 const labelMapping = {
@@ -224,7 +241,7 @@ const axisMappings = {
                 fontWeight: 'bold',
                 fontSize: 12,
                 fontFamily: 'Verdana, sans-serif',
-                color: 'rgba(70, 70, 70, 1)'
+                color: 'rgb(224, 224, 227)'
             }
         }
     },
@@ -237,7 +254,7 @@ const axisMappings = {
                 fontSize: 12,
                 fontFamily: 'Verdana, sans-serif',
                 padding: 5,
-                color: 'rgba(87, 87, 87, 1)',
+                color: 'rgb(224, 224, 227)',
                 formatter: undefined
             }
         }
@@ -587,3 +604,5 @@ mappings['histogram'] = {
         }
     }
 };
+
+export default mappings;
