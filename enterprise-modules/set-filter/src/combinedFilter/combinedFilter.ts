@@ -13,36 +13,36 @@ import {
     IFilterComp,
     Autowired,
     UserComponentFactory,
+    FilterManager,
+    Column,
+    IFilterDef,
 } from '@ag-grid-community/core';
 import { SetFilter } from '../setFilter/setFilter';
 import { ClientSideValuesExtractor } from '../clientSideValueExtractor';
 import { SetValueModel } from '../setFilter/setValueModel';
 
 export interface CombinedFilterParams extends IProvidedFilterParams {
-    combineWithFilter: string;
+    combineWith: IFilterDef;
 }
 
 export class CombinedFilter extends ProvidedFilter {
     @RefSelector('eCombinedFilter') private readonly eCombinedFilter: HTMLElement;
+    @Autowired('filterManager') private readonly filterManager: FilterManager;
     @Autowired('userComponentFactory') private readonly userComponentFactory: UserComponentFactory;
 
+    private column: Column;
     private providedFilter: IFilterComp;
     private setFilter: SetFilter;
     private filterChangedCallback: () => void;
     private clientSideValuesExtractor: ClientSideValuesExtractor;
 
     public init(params: CombinedFilterParams): void {
-        this.filterChangedCallback = params.filterChangedCallback;
+        const { column, combineWith, filterChangedCallback, filterModifiedCallback, doesRowPassOtherFilter } = params;
 
-        this.providedFilter = this.userComponentFactory.createAndInitUserComponent(
-            { filter: params.combineWithFilter || 'agTextColumnFilter' },
-            {
-                ...params,
-                alwaysShowBothConditions: true,
-                filterChangedCallback: () => this.filterChanged('provided')
-            },
-            { propertyName: 'filter', isCellRenderer: () => false }).resolveNow(null, c => c) as IFilterComp;
+        this.column = column;
+        this.filterChangedCallback = filterChangedCallback;
 
+        this.providedFilter = this.createProvidedFilter(params);
         this.eCombinedFilter.appendChild(this.providedFilter.getGui());
 
         const divider = document.createElement('div');
@@ -53,7 +53,9 @@ export class CombinedFilter extends ProvidedFilter {
             SetFilter,
             {
                 ...params,
-                filterChangedCallback: () => this.filterChanged('set')
+                filterModifiedCallback,
+                filterChangedCallback: () => this.filterChanged('set'),
+                doesRowPassOtherFilter,
             });
 
         this.eCombinedFilter.appendChild(this.setFilter.getGui());
@@ -158,5 +160,22 @@ export class CombinedFilter extends ProvidedFilter {
         if ((this.providedFilter as any).onFloatingFilterChanged) {
             (this.providedFilter as any).onFloatingFilterChanged(type, value);
         }
+    }
+
+    private createProvidedFilter(params: CombinedFilterParams): IFilterComp {
+        const { combineWith, filterModifiedCallback, doesRowPassOtherFilter } = params;
+        const filterDef = combineWith || {};
+        const filterParams =
+        {
+            ...this.filterManager.createFilterParams(this.column, this.column.getColDef()),
+            alwaysShowBothConditions: true, // default to always show both conditions for combined filter,
+            filterModifiedCallback,
+            filterChangedCallback: () => this.filterChanged('provided'),
+            doesRowPassOtherFilter
+        };
+
+        return this.userComponentFactory
+            .newFilterComponent(filterDef, filterParams, 'agTextColumnFilter')
+            .resolveNow(null, c => c);
     }
 }

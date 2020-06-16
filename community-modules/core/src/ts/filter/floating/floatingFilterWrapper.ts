@@ -10,7 +10,7 @@ import { Events, FilterChangedEvent } from '../../events';
 import { ColumnHoverService } from '../../rendering/columnHoverService';
 import { Promise } from '../../utils';
 import { ColDef } from '../../entities/colDef';
-import { IFilterComp } from '../../interfaces/iFilter';
+import { IFilterComp, IFilterDef } from '../../interfaces/iFilter';
 import { UserComponentFactory } from '../../components/framework/userComponentFactory';
 import { GridApi } from '../../gridApi';
 import { ColumnApi } from '../../columnController/columnApi';
@@ -232,23 +232,32 @@ export class FloatingFilterWrapper extends AbstractHeaderWrapper {
         return this.filterManager.getFilterComponent(this.column, 'NO_UI');
     }
 
-    private getFloatingFilterInstance(): Promise<IFloatingFilterComp> {
-        const colDef = this.column.getColDef();
-        let defaultFloatingFilterType: string;
+    public static getDefaultFloatingFilterType(def: IFilterDef): string {
+        if (def == null) {
+            return null;
+        }
 
-        if (typeof colDef.filter === 'string') {
+        let defaultFloatingFilterType: string = null;
+
+        if (typeof def.filter === 'string') {
             // will be undefined if not in the map
-            defaultFloatingFilterType = FloatingFilterMapper.getFloatingFilterType(colDef.filter);
-        } else if (colDef.filterFramework) {
+            defaultFloatingFilterType = FloatingFilterMapper.getFloatingFilterType(def.filter);
+        } else if (def.filterFramework) {
             // If filterFramework, then grid is NOT using one of the provided filters, hence no default.
             // Note: We could combine this with another part of the 'if' statement, however explicitly
             // having this section makes the code easier to read.
-        } else if (colDef.filter === true) {
+        } else if (def.filter === true) {
             const setFilterModuleLoaded = ModuleRegistry.isRegistered(ModuleNames.SetFilterModule);
             defaultFloatingFilterType = setFilterModuleLoaded ? 'agSetColumnFloatingFilter' : 'agTextColumnFloatingFilter';
         }
 
-        const filterParams = this.filterManager.createFilterParams(this.column, this.column.getColDef());
+        return defaultFloatingFilterType;
+    }
+
+    private getFloatingFilterInstance(): Promise<IFloatingFilterComp> {
+        const colDef = this.column.getColDef();
+        const defaultFloatingFilterType = FloatingFilterWrapper.getDefaultFloatingFilterType(colDef);
+        const filterParams = this.filterManager.createFilterParams(this.column, colDef);
         const finalFilterParams = this.userComponentFactory.createFinalParams(colDef, 'filter', filterParams);
 
         const params: IFloatingFilterParams = {

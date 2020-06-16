@@ -7,7 +7,8 @@ import {
     ProvidedFilterModel,
     UserComponentFactory,
     Autowired,
-    FloatingFilterMapper,
+    FloatingFilterWrapper,
+    IFilterDef,
 } from '@ag-grid-community/core';
 import { SetFloatingFilterComp } from '../setFilter/setFloatingFilter';
 import { SetFilterModel } from '../setFilter/setFilterModel';
@@ -25,18 +26,11 @@ export class CombinedFloatingFilterComp extends Component implements IFloatingFi
 
     public init(params: IFloatingFilterParams): void {
         const filterParams = params.filterParams as CombinedFilterParams;
-        const combineWithFilter = filterParams.combineWithFilter || 'agTextColumnFilter';
-        const floatingFilterType = FloatingFilterMapper.getFloatingFilterType(combineWithFilter);
 
-        this.providedFilter = this.userComponentFactory.createAndInitUserComponent(
-            { floatingFilter: floatingFilterType } as any,
-            params,
-            { propertyName: 'floatingFilter', isCellRenderer: () => false }).resolveNow(null, c => c) as IFloatingFilterComp;
-
+        this.providedFilter = this.createProvidedFilter(filterParams.combineWith, params);
         this.appendChild(this.providedFilter.getGui());
 
         this.setFilter = this.userComponentFactory.createUserComponentFromConcreteClass(SetFloatingFilterComp, params);
-
         this.appendChild(this.setFilter);
 
         _.setDisplayed(this.setFilter.getGui(), false);
@@ -66,5 +60,13 @@ export class CombinedFloatingFilterComp extends Component implements IFloatingFi
     // so we need to override destroy() just to make the method public.
     public destroy(): void {
         super.destroy();
+    }
+
+    private createProvidedFilter(filterDef: IFilterDef, params: IFloatingFilterParams): IFloatingFilterComp {
+        const defaultComponentName = FloatingFilterWrapper.getDefaultFloatingFilterType(filterDef) || 'agTextColumnFloatingFilter';
+
+        return this.userComponentFactory
+            .newFloatingFilterComponent(filterDef, params, defaultComponentName)
+            .resolveNow(null, c => c);
     }
 }

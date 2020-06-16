@@ -4,44 +4,41 @@ var gridOptions = {
         {
             field: 'country',
             filter: 'agCombinedColumnFilter',
-            filterParams: { combineWithFilter: 'text' }
+            filterParams: {
+                combineWith: {
+                    filter: 'text',
+                    filterParams: {
+                        defaultOption: 'contains'
+                    }
+                }
+            }
         },
         {
             field: 'gold',
             filter: 'agCombinedColumnFilter',
-            filterParams: { combineWithFilter: 'agNumberColumnFilter' }
+            filterParams: {
+                combineWith: {
+                    filter: 'agNumberColumnFilter',
+                }
+            }
         },
         {
             field: 'date',
             filter: 'agCombinedColumnFilter',
             filterParams: {
-                combineWithFilter: 'agDateColumnFilter',
-                comparator: function(filterDate, cellValue) {
-                    if (cellValue == null) return -1;
+                combineWith: {
+                    filter: 'agDateColumnFilter',
+                    filterParams: {
+                        comparator: function(filterDate, cellValue) {
+                            if (cellValue == null) return -1;
 
-                    var getDate = function(value) {
-                        var dateParts = value.split('/');
-                        return new Date(Number(dateParts[2]), Number(dateParts[1]) - 1, Number(dateParts[0]));
-                    };
-
-                    if (!(filterDate instanceof Date)) {
-                        filterDate = getDate(filterDate);
-                    }
-
-                    var cellDate = getDate(cellValue);
-
-                    if (filterDate.getTime() == cellDate.getTime()) {
-                        return 0;
-                    }
-
-                    if (cellDate < filterDate) {
-                        return -1;
-                    }
-
-                    if (cellDate > filterDate) {
-                        return 1;
+                            return getDate(cellValue) - filterDate;
+                        },
                     }
                 },
+                comparator: function(a, b) {
+                    return getDate(a) - getDate(b);
+                }
             }
         },
     ],
@@ -51,6 +48,11 @@ var gridOptions = {
         resizable: true,
         floatingFilter: true,
     }
+};
+
+function getDate(value) {
+    var dateParts = value.split('/');
+    return new Date(Number(dateParts[2]), Number(dateParts[1]) - 1, Number(dateParts[0]));
 };
 
 // setup the grid after the page has finished loading
