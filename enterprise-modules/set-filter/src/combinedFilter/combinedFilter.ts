@@ -6,7 +6,6 @@ import {
     RefSelector,
     IAfterGuiAttachedParams,
     IClientSideRowModel,
-    _,
     RowNode,
     Constants,
     IProvidedFilterParams,
@@ -16,6 +15,7 @@ import {
     FilterManager,
     Column,
     IFilterDef,
+    SimpleFilter,
 } from '@ag-grid-community/core';
 import { SetFilter } from '../setFilter/setFilter';
 import { ClientSideValuesExtractor } from '../clientSideValueExtractor';
@@ -70,7 +70,10 @@ export class CombinedFilter extends ProvidedFilter {
     }
 
     public afterGuiAttached(params: IAfterGuiAttachedParams): void {
-        this.providedFilter.afterGuiAttached(params);
+        if (typeof this.providedFilter.afterGuiAttached === 'function') {
+            this.providedFilter.afterGuiAttached(params);
+        }
+
         this.setFilter.afterGuiAttached(params);
     }
 
@@ -78,7 +81,7 @@ export class CombinedFilter extends ProvidedFilter {
         return this.providedFilter.isFilterActive() || this.setFilter.isFilterActive();
     }
 
-    doesFilterPass(params: IDoesFilterPassParams): boolean {
+    public doesFilterPass(params: IDoesFilterPassParams): boolean {
         return (!this.providedFilter.isFilterActive() || this.providedFilter.doesFilterPass(params)) &&
             (!this.setFilter.isFilterActive() || this.setFilter.doesFilterPass(params));
     }
@@ -122,6 +125,51 @@ export class CombinedFilter extends ProvidedFilter {
         return null;
     }
 
+    public getValueModel(): SetValueModel {
+        return this.setFilter.getValueModel();
+    }
+
+    public onAnyFilterChanged(): void {
+        if (typeof this.providedFilter.onAnyFilterChanged === 'function') {
+            this.providedFilter.onAnyFilterChanged();
+        }
+
+        this.setFilter.onAnyFilterChanged();
+    }
+
+    public onNewRowsLoaded(): void {
+        if (typeof this.providedFilter.onNewRowsLoaded === 'function') {
+            this.providedFilter.onNewRowsLoaded();
+        }
+
+        this.setFilter.onNewRowsLoaded();
+    }
+
+    public onFloatingFilterChanged(type: string, value: any): void {
+        const filter = this.providedFilter as SimpleFilter<any>;
+
+        if (typeof filter.onFloatingFilterChanged === 'function') {
+            filter.onFloatingFilterChanged(type, value);
+        }
+    }
+
+    private createProvidedFilter(params: CombinedFilterParams): IFilterComp {
+        const { combineWith, filterModifiedCallback, doesRowPassOtherFilter } = params;
+        const filterDef = combineWith || {};
+        const filterParams =
+        {
+            ...this.filterManager.createFilterParams(this.column, this.column.getColDef()),
+            alwaysShowBothConditions: true, // default to always show both conditions for combined filter,
+            filterModifiedCallback,
+            filterChangedCallback: () => this.filterChanged('provided'),
+            doesRowPassOtherFilter
+        };
+
+        return this.userComponentFactory
+            .newFilterComponent(filterDef, filterParams, 'agTextColumnFilter')
+            .resolveNow(null, c => c);
+    }
+
     private filterChanged(filterType: 'provided' | 'set'): void {
         if (filterType === 'provided') {
             if (this.setFilter.isFilterActive()) {
@@ -146,36 +194,5 @@ export class CombinedFilter extends ProvidedFilter {
 
             this.filterChangedCallback();
         }
-    }
-
-    public onAnyFilterChanged(): void {
-        this.setFilter.onAnyFilterChanged();
-    }
-
-    public getValueModel(): SetValueModel {
-        return this.setFilter.getValueModel();
-    }
-
-    public onFloatingFilterChanged(type: string, value: any): void {
-        if ((this.providedFilter as any).onFloatingFilterChanged) {
-            (this.providedFilter as any).onFloatingFilterChanged(type, value);
-        }
-    }
-
-    private createProvidedFilter(params: CombinedFilterParams): IFilterComp {
-        const { combineWith, filterModifiedCallback, doesRowPassOtherFilter } = params;
-        const filterDef = combineWith || {};
-        const filterParams =
-        {
-            ...this.filterManager.createFilterParams(this.column, this.column.getColDef()),
-            alwaysShowBothConditions: true, // default to always show both conditions for combined filter,
-            filterModifiedCallback,
-            filterChangedCallback: () => this.filterChanged('provided'),
-            doesRowPassOtherFilter
-        };
-
-        return this.userComponentFactory
-            .newFilterComponent(filterDef, filterParams, 'agTextColumnFilter')
-            .resolveNow(null, c => c);
     }
 }

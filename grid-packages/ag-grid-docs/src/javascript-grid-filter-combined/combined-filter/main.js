@@ -6,7 +6,7 @@ var gridOptions = {
             filter: 'agCombinedColumnFilter',
             filterParams: {
                 combineWith: {
-                    filter: 'text',
+                    filter: 'agTextColumnFilter',
                     filterParams: {
                         defaultOption: 'contains'
                     }
