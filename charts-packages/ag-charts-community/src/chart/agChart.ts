@@ -3,8 +3,8 @@ import { Series } from "./series/series";
 import { ChartAxis } from "./chartAxis";
 import { find } from "../util/array";
 import { LegendMarker } from "./legend";
-// import mappings from './chartMappings';
-import { mappings as pastel } from './pastelMappings';
+import defaultMappings from './chartMappings';
+import pastelMappings from './pastelMappings';
 
 export abstract class AgChart {
     static create(options: any, container?: HTMLElement, data?: any[]) {
@@ -17,8 +17,11 @@ export abstract class AgChart {
         }
         // special handling when both `autoSize` and `width` / `height` are present in the options
         const autoSize = options && options.autoSize;
-        // const chart = create(mappings, options);
-        const chart = create(pastel, options);
+        let mappings = defaultMappings;
+        if (options.theme && options.theme !== 'default') {
+            mappings = pastelMappings;
+        }
+        const chart = create(mappings, options);
         if (chart && autoSize) { // `autoSize` takes precedence over `width` / `height`
             chart.autoSize = true;
         }
@@ -28,7 +31,11 @@ export abstract class AgChart {
 
     static update(chart: any, options: any) {
         const autoSize = options && options.autoSize;
-        update(pastel, chart, Object.create(options));
+        let mappings = defaultMappings;
+        if (options && options.theme && options.theme !== 'default') {
+            mappings = pastelMappings;
+        }
+        update(mappings, chart, Object.create(options));
         if (chart && autoSize) {
             chart.autoSize = true;
         }
