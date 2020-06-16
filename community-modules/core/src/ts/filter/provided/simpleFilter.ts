@@ -6,7 +6,7 @@ import { Promise } from '../../utils';
 import { AgSelect } from '../../widgets/agSelect';
 import { AgRadioButton } from '../../widgets/agRadioButton';
 import { forEach, every, some } from '../../utils/array';
-import { setDisplayed } from '../../utils/dom';
+import { setDisplayed, setDisabled } from '../../utils/dom';
 
 export interface ISimpleFilterParams extends IProvidedFilterParams {
     filterOptions?: (IFilterOptionDef | string)[];
@@ -88,10 +88,10 @@ export abstract class SimpleFilter<M extends ISimpleFilterModel> extends Provide
 
     @RefSelector('eOptions1') private eType1: AgSelect;
     @RefSelector('eOptions2') private eType2: AgSelect;
+    @RefSelector('eJoinOperatorPanel') private eJoinOperatorPanel: HTMLElement;
     @RefSelector('eJoinOperatorAnd') private eJoinOperatorAnd: AgRadioButton;
     @RefSelector('eJoinOperatorOr') private eJoinOperatorOr: AgRadioButton;
     @RefSelector('eCondition2Body') private eCondition2Body: HTMLElement;
-    @RefSelector('eJoinOperatorPanel') private eJoinOperatorPanel: HTMLElement;
 
     private allowTwoConditions: boolean;
     private alwaysShowBothConditions: boolean;
@@ -325,12 +325,26 @@ export abstract class SimpleFilter<M extends ISimpleFilterModel> extends Provide
     }
 
     protected updateUiVisibility(): void {
-        const showSecondFilter = this.allowTwoConditions &&
-            (this.alwaysShowBothConditions || this.isConditionUiComplete(ConditionPosition.One));
+        if (!this.allowTwoConditions) {
+            setDisplayed(this.eJoinOperatorPanel, false);
+            setDisplayed(this.eType2.getGui(), false);
+            setDisplayed(this.eCondition2Body, false);
 
-        setDisplayed(this.eCondition2Body, showSecondFilter);
-        setDisplayed(this.eType2.getGui(), showSecondFilter);
-        setDisplayed(this.eJoinOperatorPanel, showSecondFilter);
+            return;
+        }
+
+        const secondFilterEnabled = this.isConditionUiComplete(ConditionPosition.One);
+
+        if (this.alwaysShowBothConditions) {
+            this.eJoinOperatorAnd.setDisabled(!secondFilterEnabled);
+            this.eJoinOperatorOr.setDisabled(!secondFilterEnabled);
+            this.eType2.setDisabled(!secondFilterEnabled);
+            setDisabled(this.eCondition2Body, !secondFilterEnabled);
+        } else {
+            setDisplayed(this.eJoinOperatorPanel, secondFilterEnabled);
+            setDisplayed(this.eType2.getGui(), secondFilterEnabled);
+            setDisplayed(this.eCondition2Body, secondFilterEnabled);
+        }
     }
 
     protected resetUiToDefaults(silent?: boolean): Promise<void> {

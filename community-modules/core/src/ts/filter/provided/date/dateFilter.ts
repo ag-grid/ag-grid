@@ -150,10 +150,8 @@ export class DateFilter extends ScalarFilter<DateFilterModel, Date> {
 
         return /* html */`
             <div class="ag-filter-body" ref="eCondition${pos}Body">
-                <div class="ag-filter-from ag-filter-date-from" ref="eCondition${pos}PanelFrom">
-                </div>
-                <div class="ag-filter-to ag-filter-date-to" ref="eCondition${pos}PanelTo">
-                </div>
+                <div class="ag-filter-from ag-filter-date-from" ref="eCondition${pos}PanelFrom"></div>
+                <div class="ag-filter-to ag-filter-date-to" ref="eCondition${pos}PanelTo"></div>
             </div>`;
     }
 
