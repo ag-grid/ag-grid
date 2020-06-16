@@ -2,8 +2,9 @@ import { Chart } from "./chart";
 import { Series } from "./series/series";
 import { ChartAxis } from "./chartAxis";
 import { find } from "../util/array";
-import mappings from './chartMappings';
 import { LegendMarker } from "./legend";
+// import mappings from './chartMappings';
+import { mappings as pastel } from './pastelMappings';
 
 export abstract class AgChart {
     static create(options: any, container?: HTMLElement, data?: any[]) {
@@ -16,7 +17,8 @@ export abstract class AgChart {
         }
         // special handling when both `autoSize` and `width` / `height` are present in the options
         const autoSize = options && options.autoSize;
-        const chart = create(options);
+        // const chart = create(mappings, options);
+        const chart = create(pastel, options);
         if (chart && autoSize) { // `autoSize` takes precedence over `width` / `height`
             chart.autoSize = true;
         }
@@ -26,7 +28,7 @@ export abstract class AgChart {
 
     static update(chart: any, options: any) {
         const autoSize = options && options.autoSize;
-        update(chart, Object.create(options));
+        update(pastel, chart, Object.create(options));
         if (chart && autoSize) {
             chart.autoSize = true;
         }
@@ -46,9 +48,9 @@ const pathToSeriesTypeMap: { [key in string]: string } = {
     'pie.series': 'pie'
 };
 
-function provideDefaultType(options: any, path?: string) {
+function provideDefaultType(mappings: any, options: any, path?: string) {
     if (!path) { // if `path` is undefined, `options` is a top-level (chart) config
-        provideDefaultChartType(options);
+        provideDefaultChartType(mappings, options);
     }
 
     if (!options.type) {
@@ -59,7 +61,7 @@ function provideDefaultType(options: any, path?: string) {
     }
 }
 
-function getMapping(path: string) {
+function getMapping(mappings: any, path: string) {
     const parts = path.split('.');
     let value = mappings;
     parts.forEach(part => {
@@ -68,14 +70,14 @@ function getMapping(path: string) {
     return value;
 }
 
-function create(options: any, path?: string, component?: any) {
+function create(mappings: any, options: any, path?: string, component?: any) {
     // Deprecate `chart.legend.item.marker.type` in integrated chart options.
     if (component instanceof LegendMarker) {
         if (options.type) {
             options.shape = options.type;
         }
     } else {
-        provideDefaultType(options, path);
+        provideDefaultType(mappings, options, path);
         if (path) {
             if (options.type) {
                 path = path + '.' + options.type;
@@ -85,7 +87,7 @@ function create(options: any, path?: string, component?: any) {
         }
     }
 
-    const mapping = getMapping(path);
+    const mapping = getMapping(mappings, path);
 
     if (mapping) {
         provideDefaultOptions(options, mapping);
@@ -107,15 +109,15 @@ function create(options: any, path?: string, component?: any) {
 
                 if (value && key in mapping && !(meta.setAsIs && meta.setAsIs.indexOf(key) >= 0)) {
                     if (Array.isArray(value)) {
-                        const subComponents = value.map(config => create(config, path + '.' + key)).filter(config => !!config);
+                        const subComponents = value.map(config => create(mappings, config, path + '.' + key)).filter(config => !!config);
                         component[key] = subComponents;
                     } else {
                         if (mapping[key] && component[key]) {
                             // The instance property already exists on the component (e.g. chart.legend).
                             // Simply configure the existing instance, without creating a new one.
-                            create(value, path + '.' + key, component[key]);
+                            create(mappings, value, path + '.' + key, component[key]);
                         } else {
-                            const subComponent = create(value, value.type ? path : path + '.' + key);
+                            const subComponent = create(mappings, value, value.type ? path : path + '.' + key);
                             if (subComponent) {
                                 component[key] = subComponent;
                             }
@@ -143,7 +145,7 @@ function create(options: any, path?: string, component?: any) {
     }
 }
 
-function update(component: any, options: any, path?: string) {
+function update(mappings: any, component: any, options: any, path?: string) {
     if (!(options && typeof options === 'object')) {
         return;
     }
@@ -154,7 +156,7 @@ function update(component: any, options: any, path?: string) {
             options.shape = options.type;
         }
     } else {
-        provideDefaultType(options, path);
+        provideDefaultType(mappings, options, path);
         if (path) {
             if (options.type) {
                 path = path + '.' + options.type;
@@ -164,7 +166,7 @@ function update(component: any, options: any, path?: string) {
         }
     }
 
-    const mapping = getMapping(path);
+    const mapping = getMapping(mappings, path);
 
     if (mapping) {
         provideDefaultOptions(options, mapping);
@@ -186,72 +188,21 @@ function update(component: any, options: any, path?: string) {
                     if (Array.isArray(oldValue) && Array.isArray(value)) {
                         if (path in mappings) { // component is a chart
                             if (key === 'series') {
-                                const chart = component as Chart;
-                                const configs = value;
-                                const allSeries = oldValue as Series[];
-                                let prevSeries: Series | undefined;
-                                let i = 0;
-                                for (; i < configs.length; i++) {
-                                    const config = configs[i];
-                                    let series = allSeries[i];
-                                    if (series) {
-                                        provideDefaultType(config, keyPath);
-                                        if (series.type === config.type) {
-                                            update(series, config, keyPath);
-                                        } else {
-                                            const newSeries = create(config, keyPath);
-                                            chart.removeSeries(series);
-                                            chart.addSeriesAfter(newSeries, prevSeries);
-                                            series = newSeries;
-                                        }
-                                    } else { // more new configs than existing series
-                                        const newSeries = create(config, keyPath);
-                                        chart.addSeries(newSeries);
-                                    }
-                                    prevSeries = series;
-                                }
-                                // more existing series than new configs
-                                for (; i < allSeries.length; i++) {
-                                    const series = allSeries[i];
-                                    if (series) {
-                                        chart.removeSeries(series);
-                                    }
-                                }
+                                updateSeries(mappings, component, value, keyPath);
                             } else if (key === 'axes') {
-                                const chart = component as Chart;
-                                const configs = value;
-                                const axes = oldValue as ChartAxis[];
-                                const axesToAdd: ChartAxis[] = [];
-                                const axesToUpdate: ChartAxis[] = [];
-
-                                for (const config of configs) {
-                                    const axisToUpdate = find(axes, axis => {
-                                        return axis.type === config.type && axis.position === config.position;
-                                    });
-                                    if (axisToUpdate) {
-                                        axesToUpdate.push(axisToUpdate);
-                                        update(axisToUpdate, config, keyPath);
-                                    } else {
-                                        const axisToAdd = create(config, keyPath);
-                                        if (axisToAdd) {
-                                            axesToAdd.push(axisToAdd);
-                                        }
-                                    }
-                                }
-
-                                chart.axes = axesToUpdate.concat(axesToAdd);
+                                updateAxes(mappings, component, value, keyPath);
                             }
                         } else {
                             component[key] = value;
                         }
                     } else if (typeof oldValue === 'object') {
                         if (value) {
-                            update(oldValue, value, value.type ? path : keyPath);
+                            update(mappings, oldValue, value, value.type ? path : keyPath);
                         } else if (key in options) {
                             component[key] = value;
                         }
                     } else {
-                        const subComponent = isObject(value) && create(value, value.type ? path : keyPath);
+                        const subComponent = isObject(value) && create(mappings, value, value.type ? path : keyPath);
                         if (subComponent) {
                             component[key] = subComponent;
                         } else {
@@ -268,7 +219,62 @@ function update(component: any, options: any, path?: string) {
     }
 }
 
-function provideDefaultChartType(options: any) {
+function updateSeries(mappings: any, chart: Chart, configs: any[], keyPath: string) {
+    const allSeries = chart.series;
+    let prevSeries: Series | undefined;
+    let i = 0;
+    for (; i < configs.length; i++) {
+        const config = configs[i];
+        let series = allSeries[i];
+        if (series) {
+            provideDefaultType(mappings, config, keyPath);
+            if (series.type === config.type) {
+                update(mappings, series, config, keyPath);
+            } else {
+                const newSeries = create(mappings, config, keyPath);
+                chart.removeSeries(series);
+                chart.addSeriesAfter(newSeries, prevSeries);
+                series = newSeries;
+            }
+        } else { // more new configs than existing series
+            const newSeries = create(mappings, config, keyPath);
+            chart.addSeries(newSeries);
+        }
+        prevSeries = series;
+    }
+    // more existing series than new configs
+    for (; i < allSeries.length; i++) {
+        const series = allSeries[i];
+        if (series) {
+            chart.removeSeries(series);
+        }
+    }
+}
+
+function updateAxes(mappings: any, chart: Chart, configs: any[], keyPath: string) {
+    const axes = chart.axes as ChartAxis[];
+    const axesToAdd: ChartAxis[] = [];
+    const axesToUpdate: ChartAxis[] = [];
+
+    for (const config of configs) {
+        const axisToUpdate = find(axes, axis => {
+            return axis.type === config.type && axis.position === config.position;
+        });
+        if (axisToUpdate) {
+            axesToUpdate.push(axisToUpdate);
+            update(mappings, axisToUpdate, config, keyPath);
+        } else {
+            const axisToAdd = create(mappings, config, keyPath);
+            if (axisToAdd) {
+                axesToAdd.push(axisToAdd);
+            }
+        }
+    }
+
+    chart.axes = axesToUpdate.concat(axesToAdd);
+}
+
+function provideDefaultChartType(mappings: any, options: any) {
     if (options.type) {
         return;
     }
