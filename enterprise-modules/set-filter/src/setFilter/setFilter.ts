@@ -182,7 +182,15 @@ export class SetFilter extends ProvidedFilter {
             return (values as any) as SetFilterModel;
         }
 
-        return { values, filterType: 'set' };
+        return { values, filterType: this.getFilterType() };
+    }
+
+    public getModel(): SetFilterModel {
+        return super.getModel() as SetFilterModel;
+    }
+
+    public getFilterType(): string {
+        return 'set';
     }
 
     public getValueModel(): SetValueModel {
@@ -401,7 +409,7 @@ export class SetFilter extends ProvidedFilter {
 
         if (result) {
             // keep appliedModelValues in sync with the applied model
-            const appliedModel = this.getModel() as SetFilterModel;
+            const appliedModel = this.getModel();
 
             if (appliedModel) {
                 this.appliedModelValues = {};
@@ -529,7 +537,7 @@ export class SetFilter extends ProvidedFilter {
     private resetUiToActiveModel(): void {
         this.eMiniFilter.setValue(null, true);
         this.valueModel.setMiniFilter(null);
-        this.setModelIntoUi(this.getModel() as SetFilterModel).then(() => this.onUiChanged(false, 'prevent'));
+        this.setModelIntoUi(this.getModel()).then(() => this.onUiChanged(false, 'prevent'));
     }
 
     private updateSelectAllLabel() {

@@ -80,7 +80,6 @@ export abstract class SimpleFilter<M extends ISimpleFilterModel> extends Provide
     public static GREATER_THAN = 'greaterThan';
     public static GREATER_THAN_OR_EQUAL = 'greaterThanOrEqual';
     public static IN_RANGE = 'inRange';
-
     public static CONTAINS = 'contains';
     public static NOT_CONTAINS = 'notContains';
     public static STARTS_WITH = 'startsWith';
@@ -111,9 +110,6 @@ export abstract class SimpleFilter<M extends ISimpleFilterModel> extends Provide
 
     // filter uses this to know if new model is different from previous model, ie if filter has changed
     protected abstract areSimpleModelsEqual(a: ISimpleFilterModel, b: ISimpleFilterModel): boolean;
-
-    // returns the type selected from the drop down. base classes use this.
-    protected abstract getFilterType(): string;
 
     // after floating filter changes, this sets the 'value' section. this is implemented by the base class
     // (as that's where value is controlled), the 'type' part from the floating filter is dealt with in this class.

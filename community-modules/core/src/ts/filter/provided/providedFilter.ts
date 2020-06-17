@@ -51,6 +51,9 @@ export abstract class ProvidedFilter extends Component implements IFilterComp {
     protected abstract setModelIntoUi(model: ProvidedFilterModel): Promise<void>;
     protected abstract areModelsEqual(a: ProvidedFilterModel, b: ProvidedFilterModel): boolean;
 
+    /** Used to get the filter type for filter models. */
+    protected abstract getFilterType(): string;
+
     public abstract getModelFromUi(): ProvidedFilterModel | null;
 
     // after the user hits 'apply' the model gets copied to here. this is then the model that we use for

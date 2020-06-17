@@ -21,9 +21,15 @@ import {
 import { SetFilter } from '../setFilter/setFilter';
 import { ClientSideValuesExtractor } from '../clientSideValueExtractor';
 import { SetValueModel } from '../setFilter/setValueModel';
+import { SetFilterModel } from '../setFilter/setFilterModel';
 
 export interface CombinedFilterParams extends IProvidedFilterParams {
     combineWith: IFilterDef;
+}
+
+export interface CombinedFilterModel extends ProvidedFilterModel {
+    combinedFilterModel: any;
+    setFilterModel: SetFilterModel;
 }
 
 export class CombinedFilter extends ProvidedFilter {
@@ -87,57 +93,75 @@ export class CombinedFilter extends ProvidedFilter {
             (!this.setFilter.isFilterActive() || this.setFilter.doesFilterPass(params));
     }
 
-    protected updateUiVisibility(): void {
+    protected getFilterType(): string {
+        return 'combined';
     }
 
-    protected createBodyTemplate(): string {
-        return `<div ref="eCombinedFilter"></div>`;
-    }
+    public getModelFromUi(): CombinedFilterModel {
+        const model: CombinedFilterModel = {
+            filterType: this.getFilterType(),
+            combinedFilterModel: null,
+            setFilterModel: null,
+        };
 
-    protected getCssIdentifier(): string {
-        return 'combined-filter';
-    }
-
-    // -----------------------------------------------------------------------------------------------------------------
-    // These methods have "dummy" implementations because they are not really used - the wrapped filters have the
-    // relevant implementations.
-    protected resetUiToDefaults(silent?: boolean): Promise<void> {
-        return Promise.resolve();
-    }
-
-    protected setModelIntoUi(model: ProvidedFilterModel): Promise<void> {
-        return Promise.resolve();
-    }
-
-    protected areModelsEqual(a: ProvidedFilterModel, b: ProvidedFilterModel): boolean {
-        return false;
-    }
-    // -----------------------------------------------------------------------------------------------------------------
-
-    public getModelFromUi(): ProvidedFilterModel {
         if (this.combineWithFilter.isFilterActive()) {
             const providedFilter = this.combineWithFilter as ProvidedFilter;
 
-            return typeof providedFilter.getModelFromUi === 'function' ? providedFilter.getModelFromUi() : null;
+            if (typeof providedFilter.getModelFromUi === 'function') {
+                model.combinedFilterModel = providedFilter.getModelFromUi();
+            }
         }
 
         if (this.setFilter.isFilterActive()) {
-            return this.setFilter.getModelFromUi();
+            model.setFilterModel = this.setFilter.getModelFromUi();
         }
 
-        return null;
+        return model;
     }
 
     public getModel(): ProvidedFilterModel {
+        if (!this.combineWithFilter.isFilterActive() && !this.setFilter.isFilterActive()) {
+            return null;
+        }
+
+        const model: CombinedFilterModel = {
+            filterType: this.getFilterType(),
+            combinedFilterModel: null,
+            setFilterModel: null,
+        };
+
         if (this.combineWithFilter.isFilterActive()) {
-            return this.combineWithFilter.getModel();
+            model.combinedFilterModel = this.combineWithFilter.getModel();
         }
 
         if (this.setFilter.isFilterActive()) {
-            return this.setFilter.getModel();
+            model.setFilterModel = this.setFilter.getModel();
         }
 
-        return null;
+        return model;
+    }
+
+    public setModel(model: CombinedFilterModel): Promise<void> {
+        const setCombineFilterModel = (model: any) => {
+            return new Promise<void>(resolve => {
+                const promise = this.combineWithFilter.setModel(model);
+
+                if (promise == null) {
+                    resolve();
+                } else {
+                    (promise as Promise<void>).then(() => resolve());
+                }
+            });
+        };
+
+        return new Promise(resolve => {
+            if (model == null) {
+                setCombineFilterModel(null).then(() => this.setFilter.setModel(null).then(() => resolve()));
+            } else {
+                setCombineFilterModel(model.combinedFilterModel)
+                    .then(() => this.setFilter.setModel(model.setFilterModel).then(() => resolve()));
+            }
+        });
     }
 
     public getCombineWithFilter(): IFilterComp {
@@ -174,7 +198,37 @@ export class CombinedFilter extends ProvidedFilter {
         if (typeof filter.onFloatingFilterChanged === 'function') {
             filter.onFloatingFilterChanged(type, value);
         }
+
+        // floating set filter is read-only, so will never trigger a change
     }
+
+    protected updateUiVisibility(): void {
+    }
+
+    protected createBodyTemplate(): string {
+        return `<div ref="eCombinedFilter"></div>`;
+    }
+
+    protected getCssIdentifier(): string {
+        return 'combined-filter';
+    }
+
+    // -----------------------------------------------------------------------------------------------------------------
+    // These methods have "dummy" implementations because they are not really used - the wrapped filters have the
+    // relevant implementations.
+    protected resetUiToDefaults(silent?: boolean): Promise<void> {
+        return Promise.resolve();
+    }
+
+    protected setModelIntoUi(model: ProvidedFilterModel): Promise<void> {
+        return Promise.resolve();
+    }
+
+    protected areModelsEqual(a: ProvidedFilterModel, b: ProvidedFilterModel): boolean {
+        return false;
+    }
+    // -----------------------------------------------------------------------------------------------------------------
+
 
     private createProvidedFilter(params: CombinedFilterParams): IFilterComp {
         const { combineWith, filterModifiedCallback, doesRowPassOtherFilter } = params;

@@ -26,8 +26,6 @@ export interface IDateComparatorFunc {
 }
 
 export class DateFilter extends ScalarFilter<DateFilterModel, Date> {
-    private static readonly FILTER_TYPE = 'date';
-
     public static DEFAULT_FILTER_OPTIONS = [
         ScalarFilter.EQUALS,
         ScalarFilter.GREATER_THAN,
@@ -176,9 +174,8 @@ export class DateFilter extends ScalarFilter<DateFilterModel, Date> {
             && aSimple.type === bSimple.type;
     }
 
-    // needed for creating filter model
     protected getFilterType(): string {
-        return DateFilter.FILTER_TYPE;
+        return 'date';
     }
 
     protected createCondition(position: ConditionPosition): DateFilterModel {
@@ -190,7 +187,7 @@ export class DateFilter extends ScalarFilter<DateFilterModel, Date> {
             dateFrom: serialiseDate(compFrom.getDate()),
             dateTo: serialiseDate(compTo.getDate()),
             type,
-            filterType: DateFilter.FILTER_TYPE
+            filterType: this.getFilterType()
         };
     }
 

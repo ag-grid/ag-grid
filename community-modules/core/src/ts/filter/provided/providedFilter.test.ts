@@ -55,6 +55,10 @@ class TestFilter extends ProvidedFilter {
         return !this.modelHasChanged;
     }
 
+    protected getFilterType(): string {
+        return 'test';
+    }
+
     public getModelFromUi(): ProvidedFilterModel {
         return this.uiModel;
     }
