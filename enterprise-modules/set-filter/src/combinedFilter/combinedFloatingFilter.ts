@@ -17,7 +17,7 @@ import { CombinedFilterParams } from './combinedFilter';
 export class CombinedFloatingFilterComp extends Component implements IFloatingFilterComp {
     @Autowired('userComponentFactory') private readonly userComponentFactory: UserComponentFactory;
 
-    private providedFilter: IFloatingFilterComp;
+    private combineWithFilter: IFloatingFilterComp;
     private setFilter: SetFloatingFilterComp;
 
     constructor() {
@@ -27,8 +27,8 @@ export class CombinedFloatingFilterComp extends Component implements IFloatingFi
     public init(params: IFloatingFilterParams): void {
         const filterParams = params.filterParams as CombinedFilterParams;
 
-        this.providedFilter = this.createProvidedFilter(filterParams.combineWith, params);
-        this.appendChild(this.providedFilter.getGui());
+        this.combineWithFilter = this.createProvidedFilter(filterParams.combineWith, params);
+        this.appendChild(this.combineWithFilter.getGui());
 
         this.setFilter = this.userComponentFactory.createUserComponentFromConcreteClass(SetFloatingFilterComp, params);
         this.appendChild(this.setFilter);
@@ -44,14 +44,14 @@ export class CombinedFloatingFilterComp extends Component implements IFloatingFi
 
         const showSetFilter = model && model.filterType === 'set';
 
-        _.setDisplayed(this.providedFilter.getGui(), !showSetFilter);
+        _.setDisplayed(this.combineWithFilter.getGui(), !showSetFilter);
         _.setDisplayed(this.setFilter.getGui(), showSetFilter);
 
         if (showSetFilter) {
             this.setFilter.onParentModelChanged(model as SetFilterModel);
-            this.providedFilter.onParentModelChanged(null, event);
+            this.combineWithFilter.onParentModelChanged(null, event);
         } else {
-            this.providedFilter.onParentModelChanged(model, event);
+            this.combineWithFilter.onParentModelChanged(model, event);
             this.setFilter.onParentModelChanged(null);
         }
     }
