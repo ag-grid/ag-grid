@@ -1,24 +1,24 @@
-import { Padding } from "../util/padding";
-import { CartesianChart } from "./cartesianChart";
-import { NumberAxis } from "./axis/numberAxis";
-import { CategoryAxis } from "./axis/categoryAxis";
-import { GroupedCategoryAxis } from "./axis/groupedCategoryAxis";
-import { LineSeries } from "./series/cartesian/lineSeries";
-import { BarSeries } from "./series/cartesian/barSeries";
-import { HistogramSeries } from "./series/cartesian/histogramSeries";
-import { ScatterSeries } from "./series/cartesian/scatterSeries";
-import { AreaSeries } from "./series/cartesian/areaSeries";
-import { PolarChart } from "./polarChart";
-import { PieSeries } from "./series/polar/pieSeries";
-import { AxisLabel, AxisTick } from "../axis";
-import { TimeAxis } from "./axis/timeAxis";
-import { Caption } from "../caption";
-import { DropShadow } from "../scene/dropShadow";
-import { Legend, LegendPosition, LegendItem, LegendMarker, LegendLabel } from "./legend";
-import { Navigator } from "./navigator/navigator";
-import { NavigatorMask } from "./navigator/navigatorMask";
-import { NavigatorHandle } from "./navigator/navigatorHandle";
-import { pastel as palette } from "./palettes";
+import { Padding } from "../../util/padding";
+import { CartesianChart } from "../cartesianChart";
+import { NumberAxis } from "../axis/numberAxis";
+import { CategoryAxis } from "../axis/categoryAxis";
+import { GroupedCategoryAxis } from "../axis/groupedCategoryAxis";
+import { LineSeries } from "../series/cartesian/lineSeries";
+import { BarSeries } from "../series/cartesian/barSeries";
+import { HistogramSeries } from "../series/cartesian/histogramSeries";
+import { ScatterSeries } from "../series/cartesian/scatterSeries";
+import { AreaSeries } from "../series/cartesian/areaSeries";
+import { PolarChart } from "../polarChart";
+import { PieSeries } from "../series/polar/pieSeries";
+import { AxisLabel, AxisTick } from "../../axis";
+import { TimeAxis } from "../axis/timeAxis";
+import { Caption } from "../../caption";
+import { DropShadow } from "../../scene/dropShadow";
+import { Legend, LegendPosition, LegendItem, LegendMarker, LegendLabel } from "../legend";
+import { Navigator } from "../navigator/navigator";
+import { NavigatorMask } from "../navigator/navigatorMask";
+import { NavigatorHandle } from "../navigator/navigatorHandle";
+import { pastel as palette } from "../palettes";
 
 /*
     This file defines the specs for creating different kinds of charts, but
