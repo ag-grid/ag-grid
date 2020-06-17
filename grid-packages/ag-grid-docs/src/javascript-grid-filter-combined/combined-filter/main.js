@@ -5,7 +5,7 @@ var gridOptions = {
             field: 'country',
             filter: 'agCombinedColumnFilter',
             filterParams: {
-                combineWith: {
+                wrappedFilter: {
                     filter: 'agTextColumnFilter',
                     filterParams: {
                         defaultOption: 'contains',
@@ -18,7 +18,7 @@ var gridOptions = {
             field: 'gold',
             filter: 'agCombinedColumnFilter',
             filterParams: {
-                combineWith: {
+                wrappedFilter: {
                     filter: 'agNumberColumnFilter',
                 }
             }
@@ -27,7 +27,7 @@ var gridOptions = {
             field: 'date',
             filter: 'agCombinedColumnFilter',
             filterParams: {
-                combineWith: {
+                wrappedFilter: {
                     filter: 'agDateColumnFilter',
                     filterParams: {
                         comparator: function(filterDate, cellValue) {

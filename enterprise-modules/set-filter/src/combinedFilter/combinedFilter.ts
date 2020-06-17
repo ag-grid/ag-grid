@@ -24,11 +24,11 @@ import { SetValueModel } from '../setFilter/setValueModel';
 import { SetFilterModel } from '../setFilter/setFilterModel';
 
 export interface CombinedFilterParams extends IProvidedFilterParams {
-    combineWith: IFilterDef;
+    wrappedFilter: IFilterDef;
 }
 
 export interface CombinedFilterModel extends ProvidedFilterModel {
-    combinedFilterModel: any;
+    wrappedFilterModel: any;
     setFilterModel: SetFilterModel;
 }
 
@@ -38,7 +38,7 @@ export class CombinedFilter extends ProvidedFilter {
     @Autowired('userComponentFactory') private readonly userComponentFactory: UserComponentFactory;
 
     private column: Column;
-    private combineWithFilter: IFilterComp;
+    private wrappedFilter: IFilterComp;
     private setFilter: SetFilter;
     private filterChangedCallback: () => void;
     private clientSideValuesExtractor: ClientSideValuesExtractor;
@@ -49,8 +49,8 @@ export class CombinedFilter extends ProvidedFilter {
         this.column = column;
         this.filterChangedCallback = filterChangedCallback;
 
-        this.combineWithFilter = this.createProvidedFilter(params);
-        this.eCombinedFilter.appendChild(this.combineWithFilter.getGui());
+        this.wrappedFilter = this.createWrappedFilter(params);
+        this.eCombinedFilter.appendChild(this.wrappedFilter.getGui());
 
         const divider = document.createElement('div');
         _.addCssClass(divider, 'ag-combined-filter-divider');
@@ -77,19 +77,19 @@ export class CombinedFilter extends ProvidedFilter {
     }
 
     public afterGuiAttached(params: IAfterGuiAttachedParams): void {
-        if (typeof this.combineWithFilter.afterGuiAttached === 'function') {
-            this.combineWithFilter.afterGuiAttached(params);
+        if (typeof this.wrappedFilter.afterGuiAttached === 'function') {
+            this.wrappedFilter.afterGuiAttached(params);
         }
 
         this.setFilter.afterGuiAttached(params);
     }
 
     public isFilterActive(): boolean {
-        return this.combineWithFilter.isFilterActive() || this.setFilter.isFilterActive();
+        return this.wrappedFilter.isFilterActive() || this.setFilter.isFilterActive();
     }
 
     public doesFilterPass(params: IDoesFilterPassParams): boolean {
-        return (!this.combineWithFilter.isFilterActive() || this.combineWithFilter.doesFilterPass(params)) &&
+        return (!this.wrappedFilter.isFilterActive() || this.wrappedFilter.doesFilterPass(params)) &&
             (!this.setFilter.isFilterActive() || this.setFilter.doesFilterPass(params));
     }
 
@@ -100,15 +100,15 @@ export class CombinedFilter extends ProvidedFilter {
     public getModelFromUi(): CombinedFilterModel {
         const model: CombinedFilterModel = {
             filterType: this.getFilterType(),
-            combinedFilterModel: null,
+            wrappedFilterModel: null,
             setFilterModel: null,
         };
 
-        if (this.combineWithFilter.isFilterActive()) {
-            const providedFilter = this.combineWithFilter as ProvidedFilter;
+        if (this.wrappedFilter.isFilterActive()) {
+            const providedFilter = this.wrappedFilter as ProvidedFilter;
 
             if (typeof providedFilter.getModelFromUi === 'function') {
-                model.combinedFilterModel = providedFilter.getModelFromUi();
+                model.wrappedFilterModel = providedFilter.getModelFromUi();
             }
         }
 
@@ -120,18 +120,18 @@ export class CombinedFilter extends ProvidedFilter {
     }
 
     public getModel(): ProvidedFilterModel {
-        if (!this.combineWithFilter.isFilterActive() && !this.setFilter.isFilterActive()) {
+        if (!this.wrappedFilter.isFilterActive() && !this.setFilter.isFilterActive()) {
             return null;
         }
 
         const model: CombinedFilterModel = {
             filterType: this.getFilterType(),
-            combinedFilterModel: null,
+            wrappedFilterModel: null,
             setFilterModel: null,
         };
 
-        if (this.combineWithFilter.isFilterActive()) {
-            model.combinedFilterModel = this.combineWithFilter.getModel();
+        if (this.wrappedFilter.isFilterActive()) {
+            model.wrappedFilterModel = this.wrappedFilter.getModel();
         }
 
         if (this.setFilter.isFilterActive()) {
@@ -144,7 +144,7 @@ export class CombinedFilter extends ProvidedFilter {
     public setModel(model: CombinedFilterModel): Promise<void> {
         const setCombineFilterModel = (model: any) => {
             return new Promise<void>(resolve => {
-                const promise = this.combineWithFilter.setModel(model);
+                const promise = this.wrappedFilter.setModel(model);
 
                 if (promise == null) {
                     resolve();
@@ -158,14 +158,14 @@ export class CombinedFilter extends ProvidedFilter {
             if (model == null) {
                 setCombineFilterModel(null).then(() => this.setFilter.setModel(null).then(() => resolve()));
             } else {
-                setCombineFilterModel(model.combinedFilterModel)
+                setCombineFilterModel(model.wrappedFilterModel)
                     .then(() => this.setFilter.setModel(model.setFilterModel).then(() => resolve()));
             }
         });
     }
 
-    public getCombineWithFilter(): IFilterComp {
-        return this.combineWithFilter;
+    public getWrappedFilter(): IFilterComp {
+        return this.wrappedFilter;
     }
 
     public getSetFilter(): SetFilter {
@@ -177,23 +177,23 @@ export class CombinedFilter extends ProvidedFilter {
     }
 
     public onAnyFilterChanged(): void {
-        if (typeof this.combineWithFilter.onAnyFilterChanged === 'function') {
-            this.combineWithFilter.onAnyFilterChanged();
+        if (typeof this.wrappedFilter.onAnyFilterChanged === 'function') {
+            this.wrappedFilter.onAnyFilterChanged();
         }
 
         this.setFilter.onAnyFilterChanged();
     }
 
     public onNewRowsLoaded(): void {
-        if (typeof this.combineWithFilter.onNewRowsLoaded === 'function') {
-            this.combineWithFilter.onNewRowsLoaded();
+        if (typeof this.wrappedFilter.onNewRowsLoaded === 'function') {
+            this.wrappedFilter.onNewRowsLoaded();
         }
 
         this.setFilter.onNewRowsLoaded();
     }
 
     public onFloatingFilterChanged(type: string, value: any): void {
-        const filter = this.combineWithFilter as SimpleFilter<any>;
+        const filter = this.wrappedFilter as SimpleFilter<any>;
 
         if (typeof filter.onFloatingFilterChanged === 'function') {
             filter.onFloatingFilterChanged(type, value);
@@ -230,8 +230,8 @@ export class CombinedFilter extends ProvidedFilter {
     // -----------------------------------------------------------------------------------------------------------------
 
 
-    private createProvidedFilter(params: CombinedFilterParams): IFilterComp {
-        const { combineWith, filterModifiedCallback, doesRowPassOtherFilter } = params;
+    private createWrappedFilter(params: CombinedFilterParams): IFilterComp {
+        const { wrappedFilter: combineWith, filterModifiedCallback, doesRowPassOtherFilter } = params;
         const filterDef = combineWith || {};
         const filterParams =
         {
@@ -255,8 +255,8 @@ export class CombinedFilter extends ProvidedFilter {
 
             this.filterChangedCallback();
 
-            if (this.combineWithFilter.isFilterActive() && this.clientSideValuesExtractor) {
-                const predicate = (node: RowNode) => this.combineWithFilter.doesFilterPass({ node, data: node.data });
+            if (this.wrappedFilter.isFilterActive() && this.clientSideValuesExtractor) {
+                const predicate = (node: RowNode) => this.wrappedFilter.doesFilterPass({ node, data: node.data });
                 const values = this.clientSideValuesExtractor.extractUniqueValues(predicate);
                 this.setFilter.setModelIntoUi({ filterType: 'set', values });
             } else {
@@ -265,8 +265,8 @@ export class CombinedFilter extends ProvidedFilter {
         }
 
         if (filterType === 'set') {
-            if (this.combineWithFilter.isFilterActive()) {
-                this.combineWithFilter.setModel(null);
+            if (this.wrappedFilter.isFilterActive()) {
+                this.wrappedFilter.setModel(null);
             }
 
             this.filterChangedCallback();

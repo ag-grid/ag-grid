@@ -4,21 +4,19 @@ import {
     _,
     IFloatingFilterComp,
     IFloatingFilterParams,
-    ProvidedFilterModel,
     UserComponentFactory,
     Autowired,
     FloatingFilterWrapper,
     IFilterDef,
 } from '@ag-grid-community/core';
 import { SetFloatingFilterComp } from '../setFilter/setFloatingFilter';
-import { SetFilterModel } from '../setFilter/setFilterModel';
 import { CombinedFilterParams, CombinedFilterModel } from './combinedFilter';
 
 export class CombinedFloatingFilterComp extends Component implements IFloatingFilterComp {
     @Autowired('userComponentFactory') private readonly userComponentFactory: UserComponentFactory;
 
-    private combineWithFilter: IFloatingFilterComp;
-    private setFilter: SetFloatingFilterComp;
+    private wrappedFloatingFilter: IFloatingFilterComp;
+    private setFloatingFilter: SetFloatingFilterComp;
 
     constructor() {
         super('<div class="ag-floating-filter-input"></div>');
@@ -27,13 +25,13 @@ export class CombinedFloatingFilterComp extends Component implements IFloatingFi
     public init(params: IFloatingFilterParams): void {
         const filterParams = params.filterParams as CombinedFilterParams;
 
-        this.combineWithFilter = this.createProvidedFilter(filterParams.combineWith, params);
-        this.appendChild(this.combineWithFilter.getGui());
+        this.wrappedFloatingFilter = this.createProvidedFilter(filterParams.wrappedFilter, params);
+        this.appendChild(this.wrappedFloatingFilter.getGui());
 
-        this.setFilter = this.userComponentFactory.createUserComponentFromConcreteClass(SetFloatingFilterComp, params);
-        this.appendChild(this.setFilter);
+        this.setFloatingFilter = this.userComponentFactory.createUserComponentFromConcreteClass(SetFloatingFilterComp, params);
+        this.appendChild(this.setFloatingFilter);
 
-        _.setDisplayed(this.setFilter.getGui(), false);
+        _.setDisplayed(this.setFloatingFilter.getGui(), false);
     }
 
     public onParentModelChanged(model: CombinedFilterModel, event: FilterChangedEvent): void {
@@ -44,11 +42,11 @@ export class CombinedFloatingFilterComp extends Component implements IFloatingFi
 
         const showSetFilter = model && !!model.setFilterModel;
 
-        _.setDisplayed(this.combineWithFilter.getGui(), !showSetFilter);
-        _.setDisplayed(this.setFilter.getGui(), showSetFilter);
+        _.setDisplayed(this.wrappedFloatingFilter.getGui(), !showSetFilter);
+        _.setDisplayed(this.setFloatingFilter.getGui(), showSetFilter);
 
-        this.setFilter.onParentModelChanged(model == null ? null : model.setFilterModel);
-        this.combineWithFilter.onParentModelChanged(model == null ? null : model.combinedFilterModel, event);
+        this.setFloatingFilter.onParentModelChanged(model == null ? null : model.setFilterModel);
+        this.wrappedFloatingFilter.onParentModelChanged(model == null ? null : model.wrappedFilterModel, event);
     }
 
     // this is a user component, and IComponent has "public destroy()" as part of the interface.
@@ -58,7 +56,8 @@ export class CombinedFloatingFilterComp extends Component implements IFloatingFi
     }
 
     private createProvidedFilter(filterDef: IFilterDef, params: IFloatingFilterParams): IFloatingFilterComp {
-        const defaultComponentName = FloatingFilterWrapper.getDefaultFloatingFilterType(filterDef) || 'agTextColumnFloatingFilter';
+        const defaultComponentName =
+            FloatingFilterWrapper.getDefaultFloatingFilterType(filterDef) || 'agTextColumnFloatingFilter';
 
         return this.userComponentFactory
             .newFloatingFilterComponent(filterDef, params, defaultComponentName)
