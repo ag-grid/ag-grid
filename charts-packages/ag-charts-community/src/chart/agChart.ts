@@ -4,7 +4,7 @@ import { ChartAxis } from "./chartAxis";
 import { find } from "../util/array";
 import { LegendMarker } from "./legend";
 import defaultMappings from './chartMappings';
-import pastelMappings from './pastelMappings';
+import pastelMappings from './themes/pastel';
 
 export abstract class AgChart {
     static create(options: any, container?: HTMLElement, data?: any[]) {
@@ -29,7 +29,14 @@ export abstract class AgChart {
         return chart;
     }
 
-    static update(chart: any, options: any) {
+    static update(chart: any, options: any, container?: HTMLElement, data?: any[]) {
+        options = Object.create(options);
+        if (container) {
+            options.container = container;
+        }
+        if (data) {
+            options.data = data;
+        }
         const autoSize = options && options.autoSize;
         let mappings = defaultMappings;
         if (options && options.theme && options.theme !== 'default') {
