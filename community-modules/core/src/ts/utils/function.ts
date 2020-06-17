@@ -14,6 +14,17 @@ export function doOnce(func: () => void, key: string) {
     doOnceFlags[key] = true;
 }
 
+export function getFunctionName(funcConstructor: any) {
+    // for every other browser in the world
+    if (funcConstructor.name) {
+        return funcConstructor.name
+    }
+
+    // for the pestilence that is ie11
+    const matches = /function\s+([^\(]+)/.exec(funcConstructor.toString());
+    return matches && matches.length === 2 ? matches[1].trim() : null;
+}
+
 /** @deprecated */
 export function getFunctionParameters(func: any) {
     const fnStr = func.toString().replace(FUNCTION_STRIP_COMMENTS, '');

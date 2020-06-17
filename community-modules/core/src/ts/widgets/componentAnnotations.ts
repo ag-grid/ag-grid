@@ -1,3 +1,5 @@
+import {getFunctionName} from "../utils/function";
+
 export function QuerySelector(selector?: string): Function {
     return querySelectorFunc.bind(this, selector);
 }
@@ -75,8 +77,9 @@ function guiListenerFunc(ref: string, eventName: string, target: Object, methodN
 // }
 
 function addToObjectProps(target: Object, key: string, value: any): void {
+
     // it's an attribute on the class
-    const props = getOrCreateProps(target, (target.constructor as any).name);
+    const props = getOrCreateProps(target, getFunctionName(target.constructor));
     if (!props[key]) {
         props[key] = [];
     }
