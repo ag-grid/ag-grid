@@ -1,5 +1,14 @@
 {
     "filterParams": {
+        "alwaysShowBothConditions": {
+            "default": false,
+            "description": "By default, only one condition is shown, and a second is made visible once a first condition has been entered. Set this to <code>true</code> to always show both conditions. In this case the second condition will be disabled until a first condition has been entered.",
+            "relevantTo": [
+                "Text",
+                "Number",
+                "Date"
+            ]
+        },
         "filterOptions": {
             "description": "Array of <a href='../javascript-grid-filter-provided-simple/#filterOptions'>Filter Options</a> to present to the user.",
             "options": [
