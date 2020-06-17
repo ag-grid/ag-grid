@@ -204,6 +204,8 @@ export class CartesianChart extends Chart {
     }
 
     updateAxes() {
+        const { navigator } = this;
+
         this.axes.forEach(axis => {
             const { direction, boundSeries } = axis;
 
@@ -217,6 +219,10 @@ export class CartesianChart extends Chart {
 
                 const domain = new Array<any>().concat(...domains);
                 axis.domain = numericExtent(domain) || domain; // if numeric extent can't be found, it's categories
+            }
+
+            if (axis.direction === ChartAxisDirection.X) {
+                axis.visibleRange = [navigator.min, navigator.max];
             }
 
             axis.update();
