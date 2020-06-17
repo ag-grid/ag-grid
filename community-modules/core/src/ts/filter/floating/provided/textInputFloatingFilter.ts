@@ -1,5 +1,4 @@
 import { IFloatingFilterParams } from '../floatingFilter';
-import { RefSelector } from '../../../widgets/componentAnnotations';
 import { ProvidedFilterModel } from '../../../interfaces/iFilter';
 import { debounce } from '../../../utils/function';
 import { Constants } from '../../../constants';
@@ -14,19 +13,13 @@ import { ColumnController } from '../../../columnController/columnController';
 
 export abstract class TextInputFloatingFilter extends SimpleFloatingFilter {
     @Autowired('columnController') private columnController: ColumnController;
-    @RefSelector('eFloatingFilterInput') private eFloatingFilterInput: AgInputTextField;
+    protected eFloatingFilterInput: AgInputTextField;
 
     protected params: IFloatingFilterParams;
 
     private applyActive: boolean;
 
-    @PostConstruct
-    private postConstruct(): void {
-        this.setTemplate(/* html */`
-            <div class="ag-floating-filter-input" role="presentation">
-                <ag-input-text-field ref="eFloatingFilterInput"></ag-input-text-field>
-            </div>`);
-    }
+   
 
     protected getDefaultDebounceMs(): number {
         return 500;
