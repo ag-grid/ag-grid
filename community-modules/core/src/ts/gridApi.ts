@@ -958,8 +958,10 @@ export class GridApi {
     }
 
     public onRowHeightChanged() {
-        if (_.exists(this.clientSideRowModel)) {
+        if (this.clientSideRowModel) {
             this.clientSideRowModel.onRowHeightChanged();
+        } else if (this.serverSideRowModel) {
+            this.serverSideRowModel.onRowHeightChanged();
         }
     }
 
