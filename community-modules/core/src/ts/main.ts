@@ -10,7 +10,7 @@ globalObj.MouseEvent = typeof MouseEvent === 'undefined' ? {} : MouseEvent;
 
 // columnController
 export { ColumnFactory } from "./columnController/columnFactory";
-export { ColumnController } from "./columnController/columnController";
+export { ColumnController, ColumnState } from "./columnController/columnController";
 export { ColumnKeyCreator } from "./columnController/columnKeyCreator";
 export { ColumnUtils } from "./columnController/columnUtils";
 export { DisplayedGroupCreator } from "./columnController/displayedGroupCreator";
