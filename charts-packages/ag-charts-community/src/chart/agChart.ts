@@ -4,7 +4,11 @@ import { ChartAxis } from "./chartAxis";
 import { find } from "../util/array";
 import { LegendMarker } from "./legend";
 import defaultMappings from './chartMappings';
-import pastelMappings from './themes/pastel';
+import darkEgypt from './themes/darkEgypt';
+
+const themes = {
+    'dark-egypt': darkEgypt
+} as any;
 
 export abstract class AgChart {
     static create(options: any, container?: HTMLElement, data?: any[]) {
@@ -17,10 +21,7 @@ export abstract class AgChart {
         }
         // special handling when both `autoSize` and `width` / `height` are present in the options
         const autoSize = options && options.autoSize;
-        let mappings = defaultMappings;
-        if (options.theme && options.theme !== 'default') {
-            mappings = pastelMappings;
-        }
+        const mappings = themes[options.theme] || defaultMappings;
         const chart = create(mappings, options);
         if (chart && autoSize) { // `autoSize` takes precedence over `width` / `height`
             chart.autoSize = true;
@@ -38,10 +39,7 @@ export abstract class AgChart {
             options.data = data;
         }
         const autoSize = options && options.autoSize;
-        let mappings = defaultMappings;
-        if (options && options.theme && options.theme !== 'default') {
-            mappings = pastelMappings;
-        }
+        const mappings = themes[options.theme] || defaultMappings;
         update(mappings, chart, Object.create(options));
         if (chart && autoSize) {
             chart.autoSize = true;
@@ -62,7 +60,7 @@ const pathToSeriesTypeMap: { [key in string]: string } = {
     'pie.series': 'pie'
 };
 
-function provideDefaultType(mappings: any, options: any, path?: string) {
+function provideDefaultType(mappings: any, options: any, path?: string): any {
     if (!path) { // if `path` is undefined, `options` is a top-level (chart) config
         provideDefaultChartType(mappings, options);
     }
@@ -70,9 +68,12 @@ function provideDefaultType(mappings: any, options: any, path?: string) {
     if (!options.type) {
         const seriesType = pathToSeriesTypeMap[path];
         if (seriesType) {
+            options = Object.create(options);
             options.type = seriesType;
         }
     }
+
+    return options;
 }
 
 function getMapping(mappings: any, path: string) {
@@ -86,12 +87,13 @@ function getMapping(mappings: any, path: string) {
 
 function create(mappings: any, options: any, path?: string, component?: any) {
     // Deprecate `chart.legend.item.marker.type` in integrated chart options.
+    options = Object.create(options);
     if (component instanceof LegendMarker) {
         if (options.type) {
             options.shape = options.type;
         }
     } else {
-        provideDefaultType(mappings, options, path);
+        options = provideDefaultType(mappings, options, path);
         if (path) {
             if (options.type) {
                 path = path + '.' + options.type;
@@ -104,7 +106,7 @@ function create(mappings: any, options: any, path?: string, component?: any) {
     const mapping = getMapping(mappings, path);
 
     if (mapping) {
-        provideDefaultOptions(options, mapping);
+        options = provideDefaultOptions(options, mapping);
 
         const meta = mapping.meta || {};
         const constructorParams = meta.constructorParams || [];
@@ -170,7 +172,7 @@ function update(mappings: any, component: any, options: any, path?: string) {
             options.shape = options.type;
         }
     } else {
-        provideDefaultType(mappings, options, path);
+        options = provideDefaultType(mappings, options, path);
         if (path) {
             if (options.type) {
                 path = path + '.' + options.type;
@@ -183,7 +185,7 @@ function update(mappings: any, component: any, options: any, path?: string) {
     const mapping = getMapping(mappings, path);
 
     if (mapping) {
-        provideDefaultOptions(options, mapping);
+        options = provideDefaultOptions(options, mapping);
 
         const meta = mapping.meta || {};
         const constructorParams = meta && meta.constructorParams || [];
@@ -238,10 +240,10 @@ function updateSeries(mappings: any, chart: Chart, configs: any[], keyPath: stri
     let prevSeries: Series | undefined;
     let i = 0;
     for (; i < configs.length; i++) {
-        const config = configs[i];
+        let config = configs[i];
         let series = allSeries[i];
         if (series) {
-            provideDefaultType(mappings, config, keyPath);
+            config = provideDefaultType(mappings, config, keyPath);
             if (series.type === config.type) {
                 update(mappings, series, config, keyPath);
             } else {
@@ -315,16 +317,19 @@ function provideDefaultChartType(mappings: any, options: any) {
  * @param options
  * @param mapping
  */
-function provideDefaultOptions(options: any, mapping: any) {
+function provideDefaultOptions(options: any, mapping: any): any {
     const defaults = mapping && mapping.meta && mapping.meta.defaults;
 
     if (defaults) {
+        options = Object.create(options);
         for (const key in defaults) {
             if (!(key in options)) {
                 options[key] = defaults[key];
             }
         }
     }
+
+    return options;
 }
 
 function isObject(value: any): boolean {
