@@ -8,7 +8,6 @@ import {
     IClientSideRowModel,
     RowNode,
     Constants,
-    IProvidedFilterParams,
     IFilterComp,
     Autowired,
     UserComponentFactory,
@@ -17,14 +16,15 @@ import {
     IFilterDef,
     SimpleFilter,
     _,
+    ISetFilterParams,
 } from '@ag-grid-community/core';
 import { SetFilter } from '../setFilter/setFilter';
 import { ClientSideValuesExtractor } from '../clientSideValueExtractor';
 import { SetValueModel } from '../setFilter/setValueModel';
 import { SetFilterModel } from '../setFilter/setFilterModel';
 
-export interface CombinedFilterParams extends IProvidedFilterParams {
-    wrappedFilter: IFilterDef;
+export interface CombinedFilterParams extends ISetFilterParams {
+    wrappedFilter?: IFilterDef;
 }
 
 export interface CombinedFilterModel extends ProvidedFilterModel {
@@ -85,7 +85,7 @@ export class CombinedFilter extends ProvidedFilter {
     }
 
     public isFilterActive(): boolean {
-        return this.wrappedFilter.isFilterActive() || this.setFilter.isFilterActive();
+        return !!(this.wrappedFilter.isFilterActive() || this.setFilter.isFilterActive());
     }
 
     public doesFilterPass(params: IDoesFilterPassParams): boolean {
@@ -98,6 +98,10 @@ export class CombinedFilter extends ProvidedFilter {
     }
 
     public getModelFromUi(): CombinedFilterModel {
+        if (!this.isFilterActive()) {
+            return null;
+        }
+
         const model: CombinedFilterModel = {
             filterType: this.getFilterType(),
             wrappedFilterModel: null,
@@ -120,7 +124,7 @@ export class CombinedFilter extends ProvidedFilter {
     }
 
     public getModel(): ProvidedFilterModel {
-        if (!this.wrappedFilter.isFilterActive() && !this.setFilter.isFilterActive()) {
+        if (!this.isFilterActive()) {
             return null;
         }
 
@@ -229,7 +233,6 @@ export class CombinedFilter extends ProvidedFilter {
     }
     // -----------------------------------------------------------------------------------------------------------------
 
-
     private createWrappedFilter(params: CombinedFilterParams): IFilterComp {
         const { wrappedFilter: combineWith, filterModifiedCallback, doesRowPassOtherFilter } = params;
         const filterDef = combineWith || {};
@@ -255,9 +258,14 @@ export class CombinedFilter extends ProvidedFilter {
 
             this.filterChangedCallback();
 
-            if (this.wrappedFilter.isFilterActive() && this.clientSideValuesExtractor) {
-                const predicate = (node: RowNode) => this.wrappedFilter.doesFilterPass({ node, data: node.data });
-                const values = this.clientSideValuesExtractor.extractUniqueValues(predicate);
+            if (this.wrappedFilter.isFilterActive()) {
+                let values: string[] = [];
+
+                if (this.clientSideValuesExtractor) {
+                    const predicate = (node: RowNode) => this.wrappedFilter.doesFilterPass({ node, data: node.data });
+                    values = this.clientSideValuesExtractor.extractUniqueValues(predicate);
+                }
+
                 this.setFilter.setModelIntoUi({ filterType: 'set', values });
             } else {
                 this.setFilter.setModelIntoUi(null);
