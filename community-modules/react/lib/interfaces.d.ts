@@ -1,4 +1,4 @@
-// @ag-grid-community/react v23.2.0
+// @ag-grid-community/react v23.2.1
 import { ICellEditor, ICellEditorParams, ICellRenderer, ICellRendererParams, IDate, IDateParams, IFilter, IFilterParams, IHeader, IHeaderGroup, IHeaderGroupParams, IHeaderParams, ILoadingCellRendererParams, ILoadingOverlayParams, INoRowsOverlayParams, IStatusPanel, IToolPanel, IToolPanelParams, IAfterGuiAttachedParams, IStatusPanelParams } from '@ag-grid-community/core';
 export interface AgReactFrameworkComponent<T> {
     afterGuiAttached?(params?: IAfterGuiAttachedParams): void;

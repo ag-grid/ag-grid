@@ -1,4 +1,4 @@
-// ag-grid-react v23.2.0
+// ag-grid-react v23.2.1
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 var BaseReactComponent = /** @class */ (function () {

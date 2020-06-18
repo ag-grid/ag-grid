@@ -723,7 +723,7 @@ vue_class_component_esm_Component.registerHooks = function registerHooks(keys) {
 
 
 // CONCATENATED MODULE: ./node_modules/vue-property-decorator/lib/vue-property-decorator.js
-/** vue-property-decorator verson 8.4.2 MIT LICENSE copyright 2019 kaorun343 */
+/** vue-property-decorator verson 8.5.0 MIT LICENSE copyright 2020 kaorun343 */
 /// <reference types='reflect-metadata'/>
 
 
@@ -781,12 +781,10 @@ function produceProvide(original) {
         }
         var _loop_1 = function (i) {
             rv[provide.managedReactive[i]] = this_1[i]; // Duplicates the behavior of `@Provide`
-            if (!rv[reactiveInjectKey].hasOwnProperty(provide.managedReactive[i])) {
-                Object.defineProperty(rv[reactiveInjectKey], provide.managedReactive[i], {
-                    enumerable: true,
-                    get: function () { return _this[i]; },
-                });
-            }
+            Object.defineProperty(rv[reactiveInjectKey], provide.managedReactive[i], {
+                enumerable: true,
+                get: function () { return _this[i]; },
+            });
         };
         var this_1 = this;
         for (var i in provide.managedReactive) {
@@ -978,9 +976,7 @@ function Emit(event) {
             };
             var returnValue = original.apply(this, args);
             if (isPromise(returnValue)) {
-                returnValue.then(function (returnValue) {
-                    emit(returnValue);
-                });
+                returnValue.then(emit);
             }
             else {
                 emit(returnValue);
