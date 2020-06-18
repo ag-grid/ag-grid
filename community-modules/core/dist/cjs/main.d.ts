@@ -2,7 +2,7 @@
 // Project: http://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 export { ColumnFactory } from "./columnController/columnFactory";
-export { ColumnController } from "./columnController/columnController";
+export { ColumnController, ColumnState } from "./columnController/columnController";
 export { ColumnKeyCreator } from "./columnController/columnKeyCreator";
 export { ColumnUtils } from "./columnController/columnUtils";
 export { DisplayedGroupCreator } from "./columnController/displayedGroupCreator";

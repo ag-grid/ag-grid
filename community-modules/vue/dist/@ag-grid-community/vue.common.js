@@ -22396,8 +22396,11 @@ var GridApi = /** @class */ (function () {
         this.gridOptionsWrapper.setProperty(_gridOptionsWrapper__WEBPACK_IMPORTED_MODULE_0__[/* GridOptionsWrapper */ "a"].PROP_GROUP_REMOVE_LOWEST_SINGLE_CHILDREN, value);
     };
     GridApi.prototype.onRowHeightChanged = function () {
-        if (_utils__WEBPACK_IMPORTED_MODULE_5__[/* _ */ "d"].exists(this.clientSideRowModel)) {
+        if (this.clientSideRowModel) {
             this.clientSideRowModel.onRowHeightChanged();
+        }
+        else if (this.serverSideRowModel) {
+            this.serverSideRowModel.onRowHeightChanged();
         }
     };
     GridApi.prototype.getValue = function (colKey, rowNode) {

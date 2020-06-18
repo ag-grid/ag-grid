@@ -29018,8 +29018,11 @@ var GridApi = /** @class */ (function () {
         this.gridOptionsWrapper.setProperty(GridOptionsWrapper.PROP_GROUP_REMOVE_LOWEST_SINGLE_CHILDREN, value);
     };
     GridApi.prototype.onRowHeightChanged = function () {
-        if (_.exists(this.clientSideRowModel)) {
+        if (this.clientSideRowModel) {
             this.clientSideRowModel.onRowHeightChanged();
+        }
+        else if (this.serverSideRowModel) {
+            this.serverSideRowModel.onRowHeightChanged();
         }
     };
     GridApi.prototype.getValue = function (colKey, rowNode) {
@@ -79787,6 +79790,19 @@ var ServerSideRowModel = /** @class */ (function (_super) {
             keepRenderedRows: true,
             newPage: false,
             newData: false
+        };
+        this.eventService.dispatchEvent(modelUpdatedEvent);
+    };
+    ServerSideRowModel.prototype.onRowHeightChanged = function () {
+        this.updateRowIndexesAndBounds();
+        var modelUpdatedEvent = {
+            type: Events.EVENT_MODEL_UPDATED,
+            api: this.gridOptionsWrapper.getApi(),
+            columnApi: this.gridOptionsWrapper.getColumnApi(),
+            newPage: false,
+            newData: false,
+            animate: true,
+            keepRenderedRows: true
         };
         this.eventService.dispatchEvent(modelUpdatedEvent);
     };

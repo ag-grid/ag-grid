@@ -37,6 +37,7 @@ export declare class ServerSideRowModel extends BeanStub implements IServerSideR
     private createCacheParams;
     private createNodeCache;
     private onCacheUpdated;
+    onRowHeightChanged(): void;
     updateRowIndexesAndBounds(): void;
     private setDisplayIndexes;
     private resetRowTops;

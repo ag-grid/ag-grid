@@ -330,6 +330,19 @@ var ServerSideRowModel = /** @class */ (function (_super) {
         };
         this.eventService.dispatchEvent(modelUpdatedEvent);
     };
+    ServerSideRowModel.prototype.onRowHeightChanged = function () {
+        this.updateRowIndexesAndBounds();
+        var modelUpdatedEvent = {
+            type: core_1.Events.EVENT_MODEL_UPDATED,
+            api: this.gridOptionsWrapper.getApi(),
+            columnApi: this.gridOptionsWrapper.getColumnApi(),
+            newPage: false,
+            newData: false,
+            animate: true,
+            keepRenderedRows: true
+        };
+        this.eventService.dispatchEvent(modelUpdatedEvent);
+    };
     ServerSideRowModel.prototype.updateRowIndexesAndBounds = function () {
         if (this.cacheExists()) {
             // NOTE: should not be casting here, the RowModel should use IServerSideRowModel interface?
