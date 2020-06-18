@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
- * @version v23.2.0
+ * @version v23.2.1
  * @link http://www.ag-grid.com/
  * @license MIT
  */
@@ -704,8 +704,11 @@ var GridApi = /** @class */ (function () {
         this.gridOptionsWrapper.setProperty(GridOptionsWrapper.PROP_GROUP_REMOVE_LOWEST_SINGLE_CHILDREN, value);
     };
     GridApi.prototype.onRowHeightChanged = function () {
-        if (_.exists(this.clientSideRowModel)) {
+        if (this.clientSideRowModel) {
             this.clientSideRowModel.onRowHeightChanged();
+        }
+        else if (this.serverSideRowModel) {
+            this.serverSideRowModel.onRowHeightChanged();
         }
     };
     GridApi.prototype.getValue = function (colKey, rowNode) {
