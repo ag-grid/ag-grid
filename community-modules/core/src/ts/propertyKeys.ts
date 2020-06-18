@@ -59,7 +59,7 @@ export class PropertyKeys {
         'suppressSetColumnStateEvents', 'enableCharts', 'deltaColumnMode', 'suppressMaintainUnsortedOrder', 'enableCellTextSelection',
         'suppressBrowserResizeObserver', 'suppressMaxRenderedRowRestriction', 'excludeChildrenWhenTreeDataFiltering', 'tooltipMouseTrack',
         'keepDetailRows', 'paginateChildRows', 'preventDefaultOnContextMenu', 'undoRedoCellEditing', 'allowDragFromColumnsToolPanel',
-        'immutableData', 'immutableColumns', 'pivotSuppressAutoColumn', 'suppressCellMouseEvents', 'columnsSpike', 'pivotColumnGroupsCollapsed'
+        'immutableData', 'immutableColumns', 'pivotSuppressAutoColumn', 'columnsSpike', 'pivotColumnGroupsCollapsed'
     ];
 
     /** You do not need to include event callbacks in this list, as they are generated automatically. */

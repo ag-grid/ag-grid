@@ -443,10 +443,6 @@ export class GridOptionsWrapper {
         return isTrue(this.gridOptions.suppressRowClickSelection);
     }
 
-    public isSuppressCellMouseEvents() {
-        return isTrue(this.gridOptions.suppressCellMouseEvents);
-    }
-
     public isSuppressCellSelection() {
         return isTrue(this.gridOptions.suppressCellSelection);
     }
