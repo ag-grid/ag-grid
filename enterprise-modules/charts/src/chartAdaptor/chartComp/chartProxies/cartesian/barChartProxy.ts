@@ -92,7 +92,6 @@ export class BarChartProxy extends CartesianChartProxy<BarSeriesOptions> {
     }
 
     private getSeriesDefaults(): any {
-        debugger;
         const { chartType } = this;
         const isColumn = this.isColumnChart();
         const isGrouped = chartType === ChartType.GroupedColumn || chartType === ChartType.GroupedBar;

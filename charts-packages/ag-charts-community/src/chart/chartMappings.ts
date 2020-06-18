@@ -122,8 +122,10 @@ const commonChartMappings = {
 
 const chartDefaults = {
     container: undefined,
+    width: 600,
+    height: 300,
     data: [],
-    padding: new Padding(chartPadding),
+    padding: {},
     background: {},
     legend: {
         item: {

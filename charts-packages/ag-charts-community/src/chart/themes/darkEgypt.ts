@@ -41,7 +41,7 @@ const commonChartMappings = {
             defaults: {
                 top: chartPadding,
                 right: chartPadding,
-                bottom: chartPadding,
+                bottom: chartPadding + 10,
                 left: chartPadding
             }
         }
@@ -52,11 +52,11 @@ const commonChartMappings = {
             defaults: {
                 enabled: true,
                 padding: new Padding(10),
-                text: 'Title',
+                text: 'Dark Egypt Theme',
                 fontStyle: undefined,
                 fontWeight: 'bold',
-                fontSize: 14,
-                fontFamily: 'Verdana, sans-serif',
+                fontSize: 22,
+                fontFamily: 'Papyrus, Verdana, sans-serif',
                 color: 'rgb(224, 224, 227)'
             }
         }
@@ -67,11 +67,11 @@ const commonChartMappings = {
             defaults: {
                 enabled: true,
                 padding: new Padding(10),
-                text: 'Subtitle',
+                text: 'Made with love in London, UK',
                 fontStyle: undefined,
                 fontWeight: undefined,
-                fontSize: 12,
-                fontFamily: 'Verdana, sans-serif',
+                fontSize: 16,
+                fontFamily: 'Papyrus, Verdana, sans-serif',
                 color: 'rgb(224, 224, 227)'
             }
         }
@@ -82,7 +82,7 @@ const commonChartMappings = {
             defaults: {
                 enabled: true,
                 position: LegendPosition.Bottom,
-                spacing: 20
+                spacing: 10
             }
         },
         item: {
@@ -111,8 +111,8 @@ const commonChartMappings = {
                         color: 'rgb(224, 224, 227)',
                         fontStyle: undefined,
                         fontWeight: undefined,
-                        fontSize: 12,
-                        fontFamily: 'Verdana, sans-serif'
+                        fontSize: 16,
+                        fontFamily: 'Papyrus, Verdana, sans-serif'
                     }
                 }
             }
@@ -122,8 +122,10 @@ const commonChartMappings = {
 
 const chartDefaults = {
     container: undefined,
+    width: 900,
+    height: 600,
     data: [],
-    padding: new Padding(chartPadding),
+    padding: {},
     background: {},
     legend: {
         item: {
@@ -158,8 +160,11 @@ const axisDefaults = {
         title: {},
         line: {},
         gridStyle: [{
-            stroke: 'rgba(219, 219, 219, 1)',
-            lineDash: [4, 2]
+            stroke: '#888',
+            lineDash: [2, 4]
+        }, {
+            stroke: undefined,
+            lineDash: []
         }]
     }
 };
@@ -207,7 +212,7 @@ const labelDefaults = {
     fontStyle: undefined,
     fontWeight: undefined,
     fontSize: 12,
-    fontFamily: 'Verdana, sans-serif',
+    fontFamily: 'Papyrus, Verdana, sans-serif',
     color: 'rgb(224, 224, 227)'
 } as any;
 
@@ -236,11 +241,11 @@ const axisMappings = {
             defaults: {
                 enabled: true,
                 padding: new Padding(10),
-                text: 'Axis Title',
+                text: 'Some Values',
                 fontStyle: undefined,
                 fontWeight: 'bold',
-                fontSize: 12,
-                fontFamily: 'Verdana, sans-serif',
+                fontSize: 18,
+                fontFamily: 'Papyrus, Verdana, sans-serif',
                 color: 'rgb(224, 224, 227)'
             }
         }
@@ -252,7 +257,7 @@ const axisMappings = {
                 fontStyle: undefined,
                 fontWeight: undefined,
                 fontSize: 12,
-                fontFamily: 'Verdana, sans-serif',
+                fontFamily: 'Papyrus, Verdana, sans-serif',
                 padding: 5,
                 color: 'rgb(224, 224, 227)',
                 formatter: undefined
@@ -544,7 +549,7 @@ export const mappings = {
                             fontStyle: undefined,
                             fontWeight: 'bold',
                             fontSize: 14,
-                            fontFamily: 'Verdana, sans-serif',
+                            fontFamily: 'Papyrus, Verdana, sans-serif',
                             color: 'black'
                         }
                     }
