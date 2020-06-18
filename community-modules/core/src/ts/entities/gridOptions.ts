@@ -1,18 +1,18 @@
 /************************************************************************************************
  * If you change the GridOptions interface, you must also update PropertyKeys to be consistent. *
  ************************************************************************************************/
-import { RowNode } from "./rowNode";
-import { GridApi } from "../gridApi";
-import { ColumnApi } from "../columnController/columnApi";
-import { Column } from "./column";
-import { IViewportDatasource } from "../interfaces/iViewportDatasource";
-import { ICellRendererComp, ICellRendererFunc, ICellRenderer, ICellRendererParams } from "../rendering/cellRenderers/iCellRenderer";
-import { ColDef, ColGroupDef, IAggFunc, SuppressKeyboardEventParams } from "./colDef";
-import { IDatasource } from "../interfaces/iDatasource";
-import { CellPosition } from "./cellPosition";
-import { IDateComp } from "../rendering/dateComponent";
-import { IServerSideDatasource } from "../interfaces/iServerSideDatasource";
-import { CsvExportParams, ProcessCellForExportParams, ProcessHeaderForExportParams } from "../interfaces/exportParams";
+import {RowNode} from "./rowNode";
+import {GridApi} from "../gridApi";
+import {ColumnApi} from "../columnController/columnApi";
+import {Column} from "./column";
+import {IViewportDatasource} from "../interfaces/iViewportDatasource";
+import {ICellRenderer, ICellRendererComp, ICellRendererFunc} from "../rendering/cellRenderers/iCellRenderer";
+import {ColDef, ColGroupDef, IAggFunc, SuppressKeyboardEventParams} from "./colDef";
+import {IDatasource} from "../interfaces/iDatasource";
+import {CellPosition} from "./cellPosition";
+import {IDateComp} from "../rendering/dateComponent";
+import {IServerSideDatasource} from "../interfaces/iServerSideDatasource";
+import {CsvExportParams, ProcessCellForExportParams, ProcessHeaderForExportParams} from "../interfaces/exportParams";
 import {
     BodyScrollEvent,
     CellClickedEvent,
@@ -27,7 +27,10 @@ import {
     CellMouseOutEvent,
     CellMouseOverEvent,
     CellValueChangedEvent,
+    ChartCreated,
+    ChartDestroyed,
     ChartOptionsChanged,
+    ChartRangeSelectionChanged,
     ColumnAggFuncChangeRequestEvent,
     ColumnEverythingChangedEvent,
     ColumnGroupOpenedEvent,
@@ -46,6 +49,8 @@ import {
     DragStartedEvent,
     DragStoppedEvent,
     ExpandCollapseAllEvent,
+    FillEndEvent,
+    FillStartEvent,
     FilterChangedEvent,
     FilterModifiedEvent,
     FirstDataRenderedEvent,
@@ -54,13 +59,10 @@ import {
     ModelUpdatedEvent,
     NewColumnsLoadedEvent,
     PaginationChangedEvent,
-    PasteStartEvent,
     PasteEndEvent,
-    FillStartEvent,
-    FillEndEvent,
+    PasteStartEvent,
     PinnedRowDataChangedEvent,
     RangeSelectionChangedEvent,
-    ChartRangeSelectionChanged,
     RowClickedEvent,
     RowDataChangedEvent,
     RowDataUpdatedEvent,
@@ -73,20 +75,18 @@ import {
     RowValueChangedEvent,
     SelectionChangedEvent,
     SortChangedEvent,
+    ToolPanelVisibleChangedEvent,
     ViewportChangedEvent,
     VirtualColumnsChangedEvent,
-    VirtualRowRemovedEvent,
-    ToolPanelVisibleChangedEvent,
-    ChartCreated,
-    ChartDestroyed
+    VirtualRowRemovedEvent
 } from "../events";
-import { IComponent } from "../interfaces/iComponent";
-import { AgGridRegisteredComponentInput } from "../components/framework/userComponentRegistry";
-import { ILoadingOverlayComp } from "../rendering/overlays/loadingOverlayComponent";
-import { INoRowsOverlayComp } from "../rendering/overlays/noRowsOverlayComponent";
-import { StatusPanelDef } from "../interfaces/iStatusPanel";
-import { SideBarDef } from "./sideBar";
-import { ChartOptions, ChartType, ChartMenuOptions } from "../interfaces/iChartOptions";
+import {IComponent} from "../interfaces/iComponent";
+import {AgGridRegisteredComponentInput} from "../components/framework/userComponentRegistry";
+import {ILoadingOverlayComp} from "../rendering/overlays/loadingOverlayComponent";
+import {INoRowsOverlayComp} from "../rendering/overlays/noRowsOverlayComponent";
+import {StatusPanelDef} from "../interfaces/iStatusPanel";
+import {SideBarDef} from "./sideBar";
+import {ChartMenuOptions, ChartOptions, ChartType} from "../interfaces/iChartOptions";
 
 export interface GridOptions {
     /*******************************************************************************************************
@@ -339,7 +339,7 @@ export interface GridOptions {
     isRowMaster?: IsRowMaster;
     detailCellRenderer?: { new(): ICellRendererComp; } | ICellRendererFunc | string;
     detailCellRendererFramework?: any;
-    detailCellRendererParams?: ICellRendererParams;
+    detailCellRendererParams?: any;
 
     // changeable with impact
     rowData?: any[];
