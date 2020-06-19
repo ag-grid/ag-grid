@@ -25,11 +25,11 @@ export class CombinedFloatingFilterComp extends Component implements IFloatingFi
     public init(params: IFloatingFilterParams): void {
         const filterParams = params.filterParams as CombinedFilterParams;
 
-        this.wrappedFloatingFilter = this.createProvidedFilter(filterParams.wrappedFilter, params);
+        this.wrappedFloatingFilter = this.createWrappedFloatingFilter(filterParams.wrappedFilter, params);
         this.appendChild(this.wrappedFloatingFilter.getGui());
 
         this.setFloatingFilter = this.userComponentFactory.createUserComponentFromConcreteClass(SetFloatingFilterComp, params);
-        this.appendChild(this.setFloatingFilter);
+        this.appendChild(this.setFloatingFilter.getGui());
 
         _.setDisplayed(this.setFloatingFilter.getGui(), false);
     }
@@ -45,8 +45,8 @@ export class CombinedFloatingFilterComp extends Component implements IFloatingFi
         _.setDisplayed(this.wrappedFloatingFilter.getGui(), !showSetFilter);
         _.setDisplayed(this.setFloatingFilter.getGui(), showSetFilter);
 
-        this.setFloatingFilter.onParentModelChanged(model == null ? null : model.setFilterModel);
         this.wrappedFloatingFilter.onParentModelChanged(model == null ? null : model.wrappedFilterModel, event);
+        this.setFloatingFilter.onParentModelChanged(model == null ? null : model.setFilterModel);
     }
 
     // this is a user component, and IComponent has "public destroy()" as part of the interface.
@@ -55,7 +55,7 @@ export class CombinedFloatingFilterComp extends Component implements IFloatingFi
         super.destroy();
     }
 
-    private createProvidedFilter(filterDef: IFilterDef, params: IFloatingFilterParams): IFloatingFilterComp {
+    private createWrappedFloatingFilter(filterDef: IFilterDef, params: IFloatingFilterParams): IFloatingFilterComp {
         const defaultComponentName =
             FloatingFilterWrapper.getDefaultFloatingFilterType(filterDef) || 'agTextColumnFloatingFilter';
 
