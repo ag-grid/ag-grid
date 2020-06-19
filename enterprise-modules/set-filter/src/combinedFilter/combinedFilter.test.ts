@@ -83,30 +83,10 @@ describe('init', () => {
         setFilter = mock<SetFilter>('getGui');
     });
 
-    it('creates combined filter with wrapped filter and set filter', () => {
-        const combinedFilter = createCombinedFilter();
-
-        expect(combinedFilter.getWrappedFilter()).toBe(wrappedFilter);
-    });
-
-    it('will default to text filter for wrapped filter', () => {
-        createCombinedFilter();
-
-        expect(userComponentFactory.newFilterComponent)
-            .toHaveBeenCalledWith(expect.anything(), expect.anything(), 'agTextColumnFilter');
-    });
-
-    it('defaults to always show both conditions in the wrapped filter', () => {
-        createCombinedFilter();
-
-        expect(userComponentFactory.newFilterComponent)
-            .toHaveBeenCalledWith(expect.anything(), expect.objectContaining({ alwaysShowBothConditions: true }), expect.anything());
-    });
-
     it('presents the wrapped filter then the set filter with a divider inbetween', () => {
         const wrappedFilterElement = document.createElement('div');
         wrappedFilterElement.id = 'wrapped-filter';
-        wrappedFilter = mock<TextFilter>('getGui');
+        wrappedFilter = mock<IFilterComp>('getGui');
         wrappedFilter.getGui.mockReturnValue(wrappedFilterElement);
 
         const setFilterElement = document.createElement('div');
@@ -123,6 +103,20 @@ describe('init', () => {
         expect((calls[0][0] as HTMLElement)).toBe(wrappedFilterElement);
         expect((calls[1][0] as HTMLElement).outerHTML).toBe('<div class="ag-combined-filter-divider"></div>');
         expect((calls[2][0] as HTMLElement)).toBe(setFilterElement);
+    });
+
+    it('will default to text filter for wrapped filter', () => {
+        createCombinedFilter();
+
+        expect(userComponentFactory.newFilterComponent)
+            .toHaveBeenCalledWith(expect.anything(), expect.anything(), 'agTextColumnFilter');
+    });
+
+    it('defaults to always show both conditions in the wrapped filter', () => {
+        createCombinedFilter();
+
+        expect(userComponentFactory.newFilterComponent)
+            .toHaveBeenCalledWith(expect.anything(), expect.objectContaining({ alwaysShowBothConditions: true }), expect.anything());
     });
 });
 

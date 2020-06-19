@@ -4,7 +4,7 @@ import { hyphenToCamelCase } from './string';
 import { forEach } from './array';
 
 export function addCssClass(element: HTMLElement, className: string) {
-    if (!className || className.length === 0) { return; }
+    if (!element || !className || className.length === 0) { return; }
 
     if (className.indexOf(' ') >= 0) {
         className.split(' ').forEach(value => addCssClass(element, value));
@@ -30,7 +30,7 @@ export function addCssClass(element: HTMLElement, className: string) {
 }
 
 export function removeCssClass(element: HTMLElement, className: string) {
-    if (!className || className.length === 0) { return; }
+    if (!element || !className || className.length === 0) { return; }
 
     if (className.indexOf(' ') >= 0) {
         className.split(' ').forEach(value => removeCssClass(element, value));
