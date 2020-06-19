@@ -45,13 +45,13 @@
         font-size: inherit;
         line-height: inherit;
         color: inherit;
-    
+
         @if ag-param-is-set(input-border-color) {
             border-width: 1px;
             border-style: solid;
             @include ag-color-property(border-color, input-border-color);
         }
-    
+
         &:disabled {
             @include ag-color-property(color, disabled-foreground-color);
             @include ag-color-property(background-color, input-disabled-background-color);
@@ -129,6 +129,11 @@
             min-height: ag-param(list-item-height);
             cursor: default;
         }
+
+        &.ag-disabled .ag-picker-field-wrapper:focus {
+            box-shadow: none;
+        }
+
         &:not(.ag-cell-editor) {
             height: ag-param(list-item-height);
         }
@@ -163,7 +168,7 @@
     .ag-rich-select-value {
         padding: 0 ag-param(grid-size) 0 ag-param(cell-horizontal-padding);
         height: ag-param(row-height);
-        
+
         @include ag-border(secondary, bottom);
     }
 
@@ -209,13 +214,13 @@
     .ag-group-contracted {
         cursor: pointer;
     }
-    
+
     .ag-group-title-bar-icon {
         cursor: pointer;
         flex: none;
         @include ag-color-property(color, secondary-foreground-color);
     }
-    
+
     .ag-group-child-count {
         @include ag-theme-rtl(( margin-left: 2px ));
     }
@@ -224,7 +229,7 @@
         @include ag-color-property(background-color, subheader-background-color);
         padding: ag-param(grid-size);
     }
-    
+
     .ag-group-toolbar {
         padding: ag-param(grid-size);
     }
@@ -278,7 +283,7 @@
             box-shadow: ag-param(input-focus-box-shadow);
         }
     }
-    
+
     .ag-picker-field-button {
         @include ag-color-property(background-color, background-color);
         @include ag-color-property(color, secondary-foreground-color);
@@ -432,7 +437,7 @@
     }
 
     // Column select
-    
+
     @for $i from 1 to 10 {
         .ag-column-select-indent-#{$i} {
             @include ag-theme-rtl((padding-left: $i * ag-param(column-select-indent-size)));
@@ -536,12 +541,12 @@
     display: inline-block;
     vertical-align: middle;
     flex: none;
-    
+
     &:focus-within, &:active {
         outline: none;
         box-shadow: ag-param(input-focus-box-shadow);
     }
-    
+
     &.ag-disabled {
         opacity: 0.5;
     }
@@ -585,7 +590,7 @@
 
 @mixin ag-radio {
     @include ag-check-button-base();
-    
+
     border-radius: ag-param(icon-size);
 
     &::after {

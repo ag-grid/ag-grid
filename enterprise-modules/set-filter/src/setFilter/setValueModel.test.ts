@@ -21,9 +21,9 @@ function createSetValueModel(
 
     return new SetValueModel(
         rowModel,
+        node => node.data.value,
         colDef,
         null,
-        node => node.data.value,
         doesRowPassOtherFilters,
         suppressSorting,
         _ => { },

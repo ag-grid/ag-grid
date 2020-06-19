@@ -2,19 +2,18 @@ import { RowNode } from "./rowNode";
 import { ICellEditorComp, ICellEditorParams } from "../interfaces/iCellEditor";
 import { ICellRendererComp, ICellRendererFunc, ICellRendererParams } from "../rendering/cellRenderers/iCellRenderer";
 import { Column } from "./column";
-import { IFilterComp } from "../interfaces/iFilter";
 import { GridApi } from "../gridApi";
 import { ColumnApi } from "../columnController/columnApi";
 import { IHeaderGroupComp } from "../headerRendering/headerGroup/headerGroupComp";
-import { IFloatingFilterComp } from "../filter/floating/floatingFilter";
 import { CellClickedEvent, CellContextMenuEvent, CellDoubleClickedEvent } from "../events";
 import { ITooltipComp, ITooltipParams } from "../rendering/tooltipComponent";
 import { ComponentSelectorResult } from "../components/framework/userComponentFactory";
 import { IRowDragItem } from "../rendering/rowDragComp";
+import { IFilterDef } from '../interfaces/iFilter';
 
-/****************************************************************
- * Don't forget to update ComponentUtil if changing this class. PLEASE!*
- ****************************************************************/
+/***********************************************************************
+ * Don't forget to update PropertyKeys if changing this class. PLEASE! *
+ ***********************************************************************/
 
 /** AbstractColDef can be a group or a column definition */
 export interface AbstractColDef {
@@ -69,10 +68,10 @@ export interface IAggFunc {
     (input: any[]): any;
 }
 
-/****************************************************************
- * Don't forget to update ComponentUtil if changing this class. PLEASE!*
- ****************************************************************/
-export interface ColDef extends AbstractColDef {
+/***********************************************************************
+ * Don't forget to update PropertyKeys if changing this class. PLEASE! *
+ ***********************************************************************/
+export interface ColDef extends AbstractColDef, IFilterDef {
 
     /** The unique ID to give the column. This is optional. If missing, the ID will default to the field.
      *  If both field and colId are missing, a unique ID will be generated.
@@ -321,14 +320,6 @@ export interface ColDef extends AbstractColDef {
     /** Cell template URL to load template from to use for cell. Useful for AngularJS cells. */
     templateUrl?: string;
 
-    /** one of the built in filter names: [set, number, text], or a filter function*/
-    filter?: string | { new(): IFilterComp; } | boolean;
-
-    filterFramework?: any;
-
-    /** The filter params are specific to each filter! */
-    filterParams?: any;
-
     /** Rules for applying css classes */
     cellClassRules?: { [cssClassName: string]: (Function | string); };
 
@@ -365,11 +356,6 @@ export interface ColDef extends AbstractColDef {
 
     /** Whether to display a floating filter for this column. */
     floatingFilter?: boolean;
-
-    /** The custom header component to be used for rendering the floating filter. If none specified the default ag-Grid is used**/
-    floatingFilterComponent?: string | { new(): IFloatingFilterComp; };
-    floatingFilterComponentParams?: any;
-    floatingFilterComponentFramework?: any;
 
     refData?: { [key: string]: string; };
 

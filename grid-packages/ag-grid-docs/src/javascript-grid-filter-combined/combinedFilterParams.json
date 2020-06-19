@@ -1,0 +1,18 @@
+{
+    "filterParams": {
+        "wrappedFilter": {
+            "filter<br />filterFramework": {
+                "description": "Filter component to wrap in the Combined Filter."
+            },
+            "filterParams": {
+                "description": "Custom parameters to be passed to the wrapped filter component."
+            },
+            "floatingFilterComponent<br />floatingFilterComponentFramework": {
+                "description": "Floating filter component to use for the wrapped filter."
+            },
+            "floatingFilterComponentParams": {
+                "description": "Custom parameters to be passed to the floating filter component."
+            }
+        }
+    }
+}

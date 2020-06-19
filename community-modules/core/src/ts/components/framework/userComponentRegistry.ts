@@ -25,6 +25,7 @@ import { TextFilter } from "../../filter/provided/text/textFilter";
 import { NumberFloatingFilter } from "../../filter/provided/number/numberFloatingFilter";
 import { TextFloatingFilter } from "../../filter/provided/text/textFloatingFilter";
 import { BeanStub } from "../../context/beanStub";
+import { iterateObject } from '../../utils/object';
 
 export enum RegisteredComponentSource {
     DEFAULT, REGISTERED
@@ -42,9 +43,9 @@ export interface RegisteredComponent<A extends IComponent<any> & B, B> {
 
 export type RegisteredComponentInput<A extends IComponent<any> & B, B> =
     AgGridRegisteredComponentInput<A>
-    | { new(): B };
-export type AgGridRegisteredComponentInput<A extends IComponent<any>> = AgGridComponentFunctionInput | { new(): A };
-export type AgGridComponentFunctionInput = (params: any) => string | HTMLElement ;
+    | { new(): B; };
+export type AgGridRegisteredComponentInput<A extends IComponent<any>> = AgGridComponentFunctionInput | { new(): A; };
+export type AgGridComponentFunctionInput = (params: any) => string | HTMLElement;
 
 export interface DeprecatedComponentName {
     propertyHolder: string;
@@ -57,7 +58,7 @@ export class UserComponentRegistry extends BeanStub {
     @Autowired('gridOptions')
     private gridOptions: GridOptions;
 
-    private agGridDefaults: { [key: string]: AgGridRegisteredComponentInput<any> } = {
+    private agGridDefaults: { [key: string]: AgGridRegisteredComponentInput<any>; } = {
         //date
         agDateInput: DefaultDateComponent,
 
@@ -98,7 +99,7 @@ export class UserComponentRegistry extends BeanStub {
         agTooltipComponent: TooltipComponent
     };
 
-    private agDeprecatedNames: { [key: string]: DeprecatedComponentName } = {
+    private agDeprecatedNames: { [key: string]: DeprecatedComponentName; } = {
         set: {
             newComponentName: 'agSetColumnFilter',
             propertyHolder: 'filter'
@@ -156,25 +157,24 @@ export class UserComponentRegistry extends BeanStub {
         }
 
     };
-    private jsComponents: { [key: string]: AgGridRegisteredComponentInput<any> } = {};
-    private frameworkComponents: { [key: string]: { new(): any } } = {};
+    private jsComponents: { [key: string]: AgGridRegisteredComponentInput<any>; } = {};
+    private frameworkComponents: { [key: string]: { new(): any; }; } = {};
 
     @PostConstruct
     private init(): void {
         if (this.gridOptions.components != null) {
-            Object.keys(this.gridOptions.components).forEach(it => {
-                this.registerComponent(it, this.gridOptions.components[it]);
-            });
+            iterateObject(this.gridOptions.components, (key, component) => this.registerComponent(key, component));
         }
+
         if (this.gridOptions.frameworkComponents != null) {
-            Object.keys(this.gridOptions.frameworkComponents).forEach(it => {
-                this.registerFwComponent(it, this.gridOptions.frameworkComponents[it]);
-            });
+            iterateObject(this.gridOptions.frameworkComponents,
+                (key, component) => this.registerFwComponent(key, component as any));
         }
     }
 
     public registerDefaultComponent<A extends IComponent<any>>(rawName: string, component: AgGridRegisteredComponentInput<A>) {
-        const name: string = this.translateIfDeprecated(rawName);
+        const name = this.translateIfDeprecated(rawName);
+
         if (this.agGridDefaults[name]) {
             console.error(`Trying to overwrite a default component. You should call registerComponent`);
             return;
@@ -184,7 +184,8 @@ export class UserComponentRegistry extends BeanStub {
     }
 
     public registerComponent<A extends IComponent<any>>(rawName: string, component: AgGridRegisteredComponentInput<A>) {
-        const name: string = this.translateIfDeprecated(rawName);
+        const name = this.translateIfDeprecated(rawName);
+
         if (this.frameworkComponents[name]) {
             console.error(`Trying to register a component that you have already registered for frameworks: ${name}`);
             return;
@@ -197,8 +198,9 @@ export class UserComponentRegistry extends BeanStub {
      * B the business interface (ie IHeader)
      * A the agGridComponent interface (ie IHeaderComp). The final object acceptable by ag-grid
      */
-    public registerFwComponent<A extends IComponent<any> & B, B>(rawName: string, component: { new(): IComponent<B> }) {
-        const name: string = this.translateIfDeprecated(rawName);
+    public registerFwComponent<A extends IComponent<any> & B, B>(rawName: string, component: { new(): IComponent<B>; }) {
+        const name = this.translateIfDeprecated(rawName);
+
         if (this.jsComponents[name]) {
             console.error(`Trying to register a component that you have already registered for plain javascript: ${name}`);
             return;
@@ -212,45 +214,55 @@ export class UserComponentRegistry extends BeanStub {
      * A the agGridComponent interface (ie IHeaderComp). The final object acceptable by ag-grid
      */
     public retrieve<A extends IComponent<any> & B, B>(rawName: string): RegisteredComponent<A, B> {
-        const name: string = this.translateIfDeprecated(rawName);
-        if (this.frameworkComponents[name]) {
+        const name = this.translateIfDeprecated(rawName);
+        const frameworkComponent = this.frameworkComponents[name];
+
+        if (frameworkComponent) {
             return {
                 componentFromFramework: true,
-                component: this.frameworkComponents[name] as { new(): B },
+                component: frameworkComponent as { new(): B; },
                 source: RegisteredComponentSource.REGISTERED
             };
         }
-        if (this.jsComponents[name]) {
+
+        const jsComponent = this.jsComponents[name];
+
+        if (jsComponent) {
             return {
                 componentFromFramework: false,
-                component: this.jsComponents[name] as { new(): A },
+                component: jsComponent as { new(): A; },
                 source: RegisteredComponentSource.REGISTERED
             };
         }
-        if (this.agGridDefaults[name]) {
-            return this.agGridDefaults[name] ?
-                {
-                    componentFromFramework: false,
-                    component: this.agGridDefaults[name] as { new(): A },
-                    source: RegisteredComponentSource.DEFAULT
-                } :
-                null;
+
+        const defaultComponent = this.agGridDefaults[name];
+
+        if (defaultComponent) {
+            return {
+                componentFromFramework: false,
+                component: defaultComponent as { new(): A; },
+                source: RegisteredComponentSource.DEFAULT
+            };
         }
 
         if (Object.keys(this.agGridDefaults).indexOf(name) < 0) {
             console.warn(`ag-Grid: Looking for component [${name}] but it wasn't found.`);
         }
+
         return null;
     }
 
     private translateIfDeprecated(raw: string): string {
-        const deprecatedInfo: DeprecatedComponentName = this.agDeprecatedNames[raw];
+        const deprecatedInfo = this.agDeprecatedNames[raw];
+
         if (deprecatedInfo != null) {
             _.doOnce(() => {
                 console.warn(`ag-grid. Since v15.0 component names have been renamed to be namespaced. You should rename ${deprecatedInfo.propertyHolder}:${raw} to ${deprecatedInfo.propertyHolder}:${deprecatedInfo.newComponentName}`);
             }, 'DEPRECATE_COMPONENT_' + raw);
+
             return deprecatedInfo.newComponentName;
         }
+
         return raw;
     }
 }

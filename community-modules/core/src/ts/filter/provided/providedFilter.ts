@@ -51,6 +51,9 @@ export abstract class ProvidedFilter extends Component implements IFilterComp {
     protected abstract setModelIntoUi(model: ProvidedFilterModel): Promise<void>;
     protected abstract areModelsEqual(a: ProvidedFilterModel, b: ProvidedFilterModel): boolean;
 
+    /** Used to get the filter type for filter models. */
+    protected abstract getFilterType(): string;
+
     public abstract getModelFromUi(): ProvidedFilterModel | null;
 
     // after the user hits 'apply' the model gets copied to here. this is then the model that we use for
@@ -80,7 +83,7 @@ export abstract class ProvidedFilter extends Component implements IFilterComp {
     @PostConstruct
     protected postConstruct(): void {
         const templateString = /* html */`
-            <div>
+            <div class="ag-filter-wrapper">
                 <div class="ag-filter-body-wrapper ag-${this.getCssIdentifier()}-body-wrapper">
                     ${this.createBodyTemplate()}
                 </div>
@@ -89,7 +92,7 @@ export abstract class ProvidedFilter extends Component implements IFilterComp {
         this.setTemplate(templateString);
     }
 
-    public init(params: IFilterParams): void {
+    public init(params: IProvidedFilterParams): void {
         this.setParams(params);
 
         this.resetUiToDefaults(true).then(() => {

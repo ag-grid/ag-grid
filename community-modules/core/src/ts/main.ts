@@ -87,6 +87,8 @@ export { RowNode } from "./entities/rowNode";
 export { SideBarDef, ToolPanelDef } from "./entities/sideBar";
 
 // filter
+export { IFilterDef, IFilterParams, IFilterOptionDef, IDoesFilterPassParams, ProvidedFilterModel, IFilter, IFilterComp } from "./interfaces/iFilter";
+export { ISetFilterParams, SetFilterValues, SetFilterValuesFunc, SetFilterValuesFuncParams } from "./interfaces/iSetFilterParams";
 export { FilterManager, FilterWrapper, FilterRequestSource } from "./filter/filterManager";
 
 export { ProvidedFilter, IProvidedFilterParams } from "./filter/provided/providedFilter";
@@ -98,6 +100,9 @@ export { TextFilter, ITextFilterParams, TextFilterModel, TextFormatter } from ".
 export { DateFilter, IDateFilterParams, DateFilterModel } from "./filter/provided/date/dateFilter";
 
 export { IFloatingFilter, IFloatingFilterParams, IFloatingFilterComp, BaseFloatingFilterChange } from "./filter/floating/floatingFilter";
+export { TextFloatingFilter } from './filter/provided/text/textFloatingFilter';
+export { FloatingFilterWrapper } from './filter/floating/floatingFilterWrapper';
+export { FloatingFilterMapper } from './filter/floating/floatingFilterMapper';
 
 // gridPanel
 export { GridPanel } from "./gridPanel/gridPanel";
@@ -306,8 +311,6 @@ export { ColumnGroupChild } from "./entities/columnGroupChild";
 export { IViewportDatasource, IViewportDatasourceParams } from "./interfaces/iViewportDatasource";
 export { IContextMenuFactory } from "./interfaces/iContextMenuFactory";
 export { IRowNodeStage, StageExecuteParams } from "./interfaces/iRowNodeStage";
-export { IFilterParams, IFilterOptionDef, IDoesFilterPassParams, ProvidedFilterModel, IFilter, IFilterComp } from "./interfaces/iFilter";
-export { ISetFilterParams, SetFilterValues, SetFilterValuesFunc, SetFilterValuesFuncParams } from "./interfaces/iSetFilterParams";
 export { IDateParams, IDate, IDateComp } from "./rendering/dateComponent";
 export { IAfterGuiAttachedParams } from "./interfaces/iAfterGuiAttachedParams";
 export { IComponent } from "./interfaces/iComponent";

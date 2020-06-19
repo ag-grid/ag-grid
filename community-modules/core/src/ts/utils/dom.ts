@@ -1,6 +1,7 @@
 import { isBrowserChrome, isBrowserSafari, isBrowserFirefox } from './browser';
 import { exists } from './generic';
 import { hyphenToCamelCase } from './string';
+import { forEach } from './array';
 
 export function addCssClass(element: HTMLElement, className: string) {
     if (!className || className.length === 0) { return; }
@@ -109,12 +110,13 @@ export function setVisible(element: HTMLElement, visible: boolean) {
 
 export function setDisabled(element: HTMLElement, disabled: boolean) {
     const attributeName = 'disabled';
+    const addOrRemoveDisabledAttribute = disabled ?
+        (e: HTMLElement) => e.setAttribute(attributeName, '') :
+        (e: HTMLElement) => e.removeAttribute(attributeName);
 
-    if (disabled) {
-        element.setAttribute(attributeName, '');
-    } else {
-        element.removeAttribute(attributeName);
-    }
+    addOrRemoveDisabledAttribute(element);
+
+    forEach(Array.from(element.querySelectorAll('input')), input => addOrRemoveDisabledAttribute(input));
 }
 
 export function isElementChildOfClass(element: HTMLElement, cls: string, maxNest?: number): boolean {

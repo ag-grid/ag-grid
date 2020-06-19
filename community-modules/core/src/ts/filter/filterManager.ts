@@ -18,7 +18,7 @@ import { forEach, some, every } from '../utils/array';
 import { BeanStub } from '../context/beanStub';
 import { convertToSet } from '../utils/set';
 import { exists } from '../utils/generic';
-import { mergeDeep, cloneObject, assign } from '../utils/object';
+import { mergeDeep, cloneObject } from '../utils/object';
 import { loadTemplate } from '../utils/dom';
 
 export type FilterRequestSource = 'COLUMN_MENU' | 'TOOLBAR' | 'NO_UI';
@@ -418,33 +418,29 @@ export class FilterManager extends BeanStub {
         const defaultFilter =
             ModuleRegistry.isRegistered(ModuleNames.SetFilterModule) ? 'agSetColumnFilter' : 'agTextColumnFilter';
 
-        const sanitisedColDef = cloneObject(column.getColDef());
+        const colDef = column.getColDef();
 
         let filterInstance: IFilterComp;
 
-        const params = this.createFilterParams(column, sanitisedColDef, $scope);
+        const params = {
+            ...this.createFilterParams(column, colDef, $scope),
+            filterModifiedCallback: () => {
+                const event: FilterModifiedEvent = {
+                    type: Events.EVENT_FILTER_MODIFIED,
+                    api: this.gridApi,
+                    columnApi: this.columnApi,
+                    column,
+                    filterInstance
+                };
 
-        params.filterModifiedCallback = () => {
-            const event: FilterModifiedEvent = {
-                type: Events.EVENT_FILTER_MODIFIED,
-                api: this.gridApi,
-                columnApi: this.columnApi,
-                column,
-                filterInstance
-            };
-
-            this.eventService.dispatchEvent(event);
+                this.eventService.dispatchEvent(event);
+            },
+            filterChangedCallback: (additionalEventAttributes?: any) =>
+                this.onFilterChanged(filterInstance, additionalEventAttributes),
+            doesRowPassOtherFilter: (node: RowNode) => this.doesRowPassOtherFilters(filterInstance, node),
         };
 
-        // we modify params in a callback as we need the filter instance, and this isn't available
-        // when creating the params above
-        const modifyParamsCallback = (params: any, filterInstance: IFilterComp) => assign(params, {
-            doesRowPassOtherFilter: (node: RowNode) => this.doesRowPassOtherFilters(filterInstance, node),
-            filterChangedCallback: (additionalEventAttributes?: any) =>
-                this.onFilterChanged(filterInstance, additionalEventAttributes)
-        });
-
-        const res = this.userComponentFactory.newFilterComponent(sanitisedColDef, params, defaultFilter, modifyParamsCallback);
+        const res = this.userComponentFactory.newFilterComponent(colDef, params, defaultFilter);
 
         if (res) {
             res.then(r => filterInstance = r);
@@ -457,7 +453,7 @@ export class FilterManager extends BeanStub {
         const params: IFilterParams = {
             api: this.gridOptionsWrapper.getApi(),
             column,
-            colDef,
+            colDef: cloneObject(colDef),
             rowModel: this.rowModel,
             filterChangedCallback: null,
             filterModifiedCallback: null,

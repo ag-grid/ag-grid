@@ -32,9 +32,6 @@ export interface ITextFilterParams extends ISimpleFilterParams {
 }
 
 export class TextFilter extends SimpleFilter<TextFilterModel> {
-
-    private static readonly FILTER_TYPE = 'text';
-
     public static DEFAULT_FILTER_OPTIONS = [
         SimpleFilter.CONTAINS,
         SimpleFilter.NOT_CONTAINS,
@@ -126,9 +123,10 @@ export class TextFilter extends SimpleFilter<TextFilterModel> {
         const type = positionOne ? this.getCondition1Type() : this.getCondition2Type();
         const eValue = positionOne ? this.eValue1 : this.eValue2;
         const value = this.getValue(eValue);
+
         const model: TextFilterModel = {
-            filterType: TextFilter.FILTER_TYPE,
-            type: type
+            filterType: this.getFilterType(),
+            type
         };
 
         if (!this.doesFilterHaveHiddenInput(type)) {
@@ -139,7 +137,7 @@ export class TextFilter extends SimpleFilter<TextFilterModel> {
     }
 
     protected getFilterType(): string {
-        return TextFilter.FILTER_TYPE;
+        return 'text';
     }
 
     protected areSimpleModelsEqual(aSimple: TextFilterModel, bSimple: TextFilterModel): boolean {
@@ -208,7 +206,7 @@ export class TextFilter extends SimpleFilter<TextFilterModel> {
         return this.getValue(positionOne ? this.eValue1 : this.eValue2) != null;
     }
 
-    public individualConditionPasses(params: IDoesFilterPassParams, filterModel: TextFilterModel): boolean {
+    protected individualConditionPasses(params: IDoesFilterPassParams, filterModel: TextFilterModel): boolean {
         const filterText = filterModel.filter;
         const filterOption = filterModel.type;
         const cellValue = this.textFilterParams.valueGetter(params.node);
