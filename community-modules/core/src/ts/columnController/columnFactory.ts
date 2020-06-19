@@ -10,6 +10,7 @@ import { Autowired, Bean, Qualifier } from "../context/context";
 import { DefaultColumnTypes } from "../entities/defaultColumnTypes";
 import { _ } from "../utils";
 import { BeanStub } from "../context/beanStub";
+import {Constants} from "../constants";
 
 // takes ColDefs and ColGroupDefs and turns them into Columns and OriginalGroups
 @Bean('columnFactory')
@@ -272,20 +273,37 @@ export class ColumnFactory extends BeanStub {
         if (!column) {
             // no existing column, need to create one
             const colId = columnKeyCreator.getUniqueKey(colDefMerged.colId, colDefMerged.field);
-            column = new Column(colDefMerged, colDef, colId, primaryColumns);
+            column = new Column(colDefMerged, colDef, colId, primaryColumns, this.gridOptionsWrapper.isColumnsSpike());
             this.context.createBean(column);
         } else {
             column.setColDef(colDefMerged, colDef);
 
             if (this.gridOptionsWrapper.isColumnsSpike()) {
-                const colDefMergedWidth = _.attrToNumber(colDefMerged.width);
-                if (colDefMergedWidth!=null) {
-                    column.setActualWidth(colDefMergedWidth);
-                }
+                this.applyColumnSpike(column, colDefMerged);
             }
         }
 
         return column;
+    }
+
+    private applyColumnSpike(column: Column, colDef: ColDef): void {
+        const colDefMergedWidth = _.attrToNumber(colDef.width);
+        if (colDefMergedWidth!=null) {
+            column.setActualWidth(colDefMergedWidth);
+        }
+
+        if (colDef.sort!==undefined) {
+            if (colDef.sort==Constants.SORT_ASC || colDef.sort==Constants.SORT_DESC) {
+                column.setSort(colDef.sort);
+            } else {
+                column.setSort(undefined);
+            }
+        }
+
+        if (colDef.sortedAt!==undefined) {
+            column.setSortedAt(colDef.sortedAt);
+        }
+
     }
 
     private findExistingColumn(colDef: ColDef, existingColsCopy: Column[]): Column {

@@ -81,8 +81,14 @@ export interface ColDef extends AbstractColDef, IFilterDef {
     /** If sorting by default, set it here. Set to 'asc' or 'desc' */
     sort?: string;
 
+    /** If sorting by default, set it here. Set to 'asc' or 'desc' */
+    defaultSort?: string;
+
     /** If sorting more than one column by default, the milliseconds when this column was sorted, so we know what order to sort the columns in. */
     sortedAt?: number;
+
+    /** If sorting more than one column by default, the milliseconds when this column was sorted, so we know what order to sort the columns in. */
+    defaultSortedAt?: number;
 
     /** The sort order, provide an array with any of the following in any order ['asc','desc',null] */
     sortingOrder?: (string | null)[];
