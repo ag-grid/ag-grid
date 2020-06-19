@@ -2,7 +2,6 @@ import { CombinedFilter, CombinedFilterParams, CombinedFilterModel } from './com
 import {
     ColDef,
     IClientSideRowModel,
-    TextFilter,
     FilterManager,
     IProvidedFilterParams,
     Column,
@@ -502,10 +501,23 @@ describe('onFilterChanged', () => {
     });
 
     it('blanks set filter when wrapped filter is active and not using client-side row model', () => {
-        rowModel = mock<IRowModel>('getType');
         rowModel.getType.mockReturnValue(Constants.ROW_MODEL_TYPE_SERVER_SIDE);
 
         createCombinedFilter();
+
+        const { filterChangedCallback } = userComponentFactory.newFilterComponent.mock.calls[0][1];
+        wrappedFilter.isFilterActive.mockReturnValue(true);
+
+        filterChangedCallback();
+
+        expect(setFilter.setModelIntoUi).toHaveBeenCalledTimes(1);
+        expect(setFilter.setModelIntoUi).toHaveBeenCalledWith({ filterType: 'set', values: [] });
+    });
+
+    it('blanks set filter when wrapped filter is active and synchronisation is suppressed', () => {
+        rowModel.getType.mockReturnValue(Constants.ROW_MODEL_TYPE_CLIENT_SIDE);
+
+        createCombinedFilter({ suppressSynchronisation: true });
 
         const { filterChangedCallback } = userComponentFactory.newFilterComponent.mock.calls[0][1];
         wrappedFilter.isFilterActive.mockReturnValue(true);

@@ -25,6 +25,7 @@ import { SetFilterModel } from '../setFilter/setFilterModel';
 
 export interface CombinedFilterParams extends ISetFilterParams {
     wrappedFilter?: IFilterDef;
+    suppressSynchronisation?: boolean;
 }
 
 export interface CombinedFilterModel extends ProvidedFilterModel {
@@ -42,12 +43,20 @@ export class CombinedFilter extends ProvidedFilter {
     private setFilter: SetFilter;
     private filterChangedCallback: () => void;
     private clientSideValuesExtractor: ClientSideValuesExtractor;
+    private suppressSynchronisation: boolean;
 
     public init(params: CombinedFilterParams): void {
-        const { column, filterChangedCallback, filterModifiedCallback, doesRowPassOtherFilter } = params;
+        const {
+            column,
+            filterChangedCallback,
+            filterModifiedCallback,
+            doesRowPassOtherFilter,
+            suppressSynchronisation
+        } = params;
 
         this.column = column;
         this.filterChangedCallback = filterChangedCallback;
+        this.suppressSynchronisation = !!suppressSynchronisation;
 
         this.wrappedFilter = this.createWrappedFilter(params);
         this.eCombinedFilter.appendChild(this.wrappedFilter.getGui());
@@ -261,7 +270,7 @@ export class CombinedFilter extends ProvidedFilter {
             if (this.wrappedFilter.isFilterActive()) {
                 let values: string[] = [];
 
-                if (this.clientSideValuesExtractor) {
+                if (!this.suppressSynchronisation && this.clientSideValuesExtractor) {
                     const predicate = (node: RowNode) => this.wrappedFilter.doesFilterPass({ node, data: node.data });
                     values = this.clientSideValuesExtractor.extractUniqueValues(predicate);
                 }

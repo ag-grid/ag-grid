@@ -83,8 +83,37 @@ SNIPPET
 
 <p>
     This synchronisation does not happen when using any other row model; instead the Set Filter will simply show
-    everything as deselected when the wrapped filter is active.
+    everything as deselected when the wrapped filter is active. You can also specify this behaviour if you would prefer
+    it by setting <code>suppressSynchronisation</code> in the <code>filterParams</code>:
 </p>
+
+<?= createSnippet(<<<SNIPPET
+// ColDef
+{
+    filter: 'agCombinedColumnFilter',
+    filterParams: {
+        suppressSynchronisation: true,
+    }
+}
+SNIPPET
+) ?>
+
+<p>
+    The following example demonstrates synchronisation.
+</p>
+
+<ul>
+    <li>
+        The <strong>Athlete</strong> column shows the default behaviour, where the selections in the Set Filter are
+        kept in sync when the wrapped filter is used.
+    </li>
+    <li>
+        The <strong>Country</strong> column has synchronisation disabled so the Set Filter has everything deselected
+        whenever the wrapped filter is used.
+    </li>
+</ul>
+
+<?= grid_example('Sychronisation', 'sychronisation', 'generated', ['enterprise' => true, 'exampleHeight' => 700, 'modules' => ['clientside', 'setfilter', 'menu']]) ?>
 
 <h2>Combined Filter Parameters</h2>
 
