@@ -1276,6 +1276,30 @@ export class ColumnController extends BeanStub {
         this.moveColumn(column, toIndex, source);
     }
 
+    public getColumnDefs(): (ColDef | ColGroupDef)[] {
+        const res: (ColDef | ColGroupDef)[] = [];
+
+        const cols = this.primaryColumns.slice();
+        if (this.gridColsArePrimary) {
+            cols.sort( (a: Column, b: Column) => this.gridColumns.indexOf(a) - this.gridColumns.indexOf(b) );
+        }
+
+        cols.forEach( col => {
+            const colDefCloned = _.deepCloneDefinition(col.getColDef());
+
+            colDefCloned.width = col.getActualWidth();
+            colDefCloned.rowGroupIndex = col.isRowGroupActive() ? this.rowGroupColumns.indexOf(col) : undefined;
+            colDefCloned.pivotIndex = col.isPivotActive() ? this.pivotColumns.indexOf(col) : null;
+            colDefCloned.aggFunc = col.isValueActive() ? col.getAggFunc() : null;
+            colDefCloned.hide = col.isVisible() ? undefined : true;
+            colDefCloned.pinned = col.isPinned() ? col.getPinned() : undefined;
+
+            res.push(colDefCloned);
+        });
+
+        return res;
+    }
+
     // used by:
     // + angularGrid -> for setting body width
     // + rowController -> setting main row widths (when inserting and resizing)
