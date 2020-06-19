@@ -82,7 +82,7 @@ describe('init', () => {
         setFilter = mock<SetFilter>('getGui');
     });
 
-    it('presents the wrapped filter then the set filter with a divider inbetween', () => {
+    it('presents the wrapped filter then the set filter with a divider in-between', () => {
         const wrappedFilterElement = document.createElement('div');
         wrappedFilterElement.id = 'wrapped-filter';
         wrappedFilter = mock<IFilterComp>('getGui');
@@ -229,6 +229,42 @@ describe('doesFilterPass', () => {
         const combinedFilter = createCombinedFilter();
         const params: IDoesFilterPassParams = { node: null, data: null };
 
+        setFilter.isFilterActive.mockReturnValue(true);
+        setFilter.doesFilterPass.mockReturnValue(false);
+
+        expect(combinedFilter.doesFilterPass(params)).toBe(false);
+    });
+
+    it('returns true if both filters are active and both pass', () => {
+        const combinedFilter = createCombinedFilter();
+        const params: IDoesFilterPassParams = { node: null, data: null };
+
+        wrappedFilter.isFilterActive.mockReturnValue(true);
+        wrappedFilter.doesFilterPass.mockReturnValue(true);
+        setFilter.isFilterActive.mockReturnValue(true);
+        setFilter.doesFilterPass.mockReturnValue(true);
+
+        expect(combinedFilter.doesFilterPass(params)).toBe(true);
+    });
+
+    it('returns false if both filters are active and wrapped filter does not pass', () => {
+        const combinedFilter = createCombinedFilter();
+        const params: IDoesFilterPassParams = { node: null, data: null };
+
+        wrappedFilter.isFilterActive.mockReturnValue(true);
+        wrappedFilter.doesFilterPass.mockReturnValue(false);
+        setFilter.isFilterActive.mockReturnValue(true);
+        setFilter.doesFilterPass.mockReturnValue(true);
+
+        expect(combinedFilter.doesFilterPass(params)).toBe(false);
+    });
+
+    it('returns false if both filters are active and set filter does not pass', () => {
+        const combinedFilter = createCombinedFilter();
+        const params: IDoesFilterPassParams = { node: null, data: null };
+
+        wrappedFilter.isFilterActive.mockReturnValue(true);
+        wrappedFilter.doesFilterPass.mockReturnValue(true);
         setFilter.isFilterActive.mockReturnValue(true);
         setFilter.doesFilterPass.mockReturnValue(false);
 
@@ -488,6 +524,44 @@ describe('onFilterChanged', () => {
         expect(combinedFilterChangedCallback).toHaveBeenCalledTimes(1);
     });
 
+    it('triggers filterChangedCallback from combined filter if set filter changes', () => {
+        const combinedFilterChangedCallback = jest.fn();
+
+        createCombinedFilter({ filterChangedCallback: combinedFilterChangedCallback });
+
+        const params = userComponentFactory.createUserComponentFromConcreteClass.mock.calls[0][1] as ISetFilterParams;
+        const { filterChangedCallback } = params;
+
+        filterChangedCallback();
+
+        expect(combinedFilterChangedCallback).toHaveBeenCalledTimes(1);
+    });
+
+    it('triggers filterChangedCallback from combined filter if wrapped filter changes and both filters are enabled', () => {
+        const combinedFilterChangedCallback = jest.fn();
+
+        createCombinedFilter({ filterChangedCallback: combinedFilterChangedCallback, allowBothFiltersConcurrently: true });
+
+        const { filterChangedCallback } = userComponentFactory.newFilterComponent.mock.calls[0][1];
+
+        filterChangedCallback();
+
+        expect(combinedFilterChangedCallback).toHaveBeenCalledTimes(1);
+    });
+
+    it('triggers filterChangedCallback from combined filter if set filter changes and both filters are enabled', () => {
+        const combinedFilterChangedCallback = jest.fn();
+
+        createCombinedFilter({ filterChangedCallback: combinedFilterChangedCallback, allowBothFiltersConcurrently: true });
+
+        const params = userComponentFactory.createUserComponentFromConcreteClass.mock.calls[0][1] as ISetFilterParams;
+        const { filterChangedCallback } = params;
+
+        filterChangedCallback();
+
+        expect(combinedFilterChangedCallback).toHaveBeenCalledTimes(1);
+    });
+
     it('resets set filter if wrapped filter changes', () => {
         createCombinedFilter();
 
@@ -539,17 +613,16 @@ describe('onFilterChanged', () => {
         expect(setFilter.setModelIntoUi).toHaveBeenCalledWith(null);
     });
 
-    it('triggers filterChangedCallback from combined filter if set filter changes', () => {
-        const combinedFilterChangedCallback = jest.fn();
+    it('does not change set filter if wrapped filter changes and both filters are allowed', () => {
+        createCombinedFilter({ allowBothFiltersConcurrently: true });
 
-        createCombinedFilter({ filterChangedCallback: combinedFilterChangedCallback });
-
-        const params = userComponentFactory.createUserComponentFromConcreteClass.mock.calls[0][1] as ISetFilterParams;
-        const { filterChangedCallback } = params;
+        const { filterChangedCallback } = userComponentFactory.newFilterComponent.mock.calls[0][1];
+        setFilter.isFilterActive.mockReturnValue(true);
 
         filterChangedCallback();
 
-        expect(combinedFilterChangedCallback).toHaveBeenCalledTimes(1);
+        expect(setFilter.setModel).toHaveBeenCalledTimes(0);
+        expect(setFilter.setModelIntoUi).toHaveBeenCalledTimes(0);
     });
 
     it('resets wrapped filter if set filter changes', () => {
@@ -564,5 +637,18 @@ describe('onFilterChanged', () => {
 
         expect(wrappedFilter.setModel).toHaveBeenCalledTimes(1);
         expect(wrappedFilter.setModel).toHaveBeenCalledWith(null);
+    });
+
+    it('does not change wrapped filter if set filter changes and both filters are allowed', () => {
+        createCombinedFilter({ allowBothFiltersConcurrently: true });
+
+        const params = userComponentFactory.createUserComponentFromConcreteClass.mock.calls[0][1] as ISetFilterParams;
+        const { filterChangedCallback } = params;
+
+        wrappedFilter.isFilterActive.mockReturnValue(true);
+
+        filterChangedCallback();
+
+        expect(wrappedFilter.setModel).toHaveBeenCalledTimes(0);
     });
 });

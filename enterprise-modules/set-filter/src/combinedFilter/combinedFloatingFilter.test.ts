@@ -112,7 +112,7 @@ describe('onParentModelChanged', () => {
         expect(setFloatingFilter.onParentModelChanged).toHaveBeenCalledTimes(0);
     });
 
-    it('shows wrapped floating filter if set filter model is null', () => {
+    it('shows wrapped floating filter if only wrapped filter is active', () => {
         const combinedFloatingFilter = createCombinedFloatingFilter();
         const event = mock<FilterChangedEvent>();
         const model: CombinedFilterModel = {
@@ -127,7 +127,22 @@ describe('onParentModelChanged', () => {
         expect(setFloatingFilter.getGui().className).toBe('ag-hidden');
     });
 
-    it('shows set floating filter if set filter model is not null', () => {
+    it('shows set floating filter if only set filter is active', () => {
+        const combinedFloatingFilter = createCombinedFloatingFilter();
+        const event = mock<FilterChangedEvent>();
+        const model: CombinedFilterModel = {
+            filterType: 'combined',
+            wrappedFilterModel: null,
+            setFilterModel: { filterType: 'set', values: [] },
+        };
+
+        combinedFloatingFilter.onParentModelChanged(model, event);
+
+        expect(wrappedFloatingFilter.getGui().className).toBe('ag-hidden');
+        expect(setFloatingFilter.getGui().className).toBe('');
+    });
+
+    it('shows neither floating filter if both filters are active', () => {
         const combinedFloatingFilter = createCombinedFloatingFilter();
         const event = mock<FilterChangedEvent>();
         const model: CombinedFilterModel = {
@@ -139,6 +154,6 @@ describe('onParentModelChanged', () => {
         combinedFloatingFilter.onParentModelChanged(model, event);
 
         expect(wrappedFloatingFilter.getGui().className).toBe('ag-hidden');
-        expect(setFloatingFilter.getGui().className).toBe('');
+        expect(setFloatingFilter.getGui().className).toBe('ag-hidden');
     });
 });

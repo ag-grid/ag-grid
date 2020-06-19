@@ -1,5 +1,13 @@
 {
     "filterParams": {
+        "allowBothFiltersConcurrently": {
+            "default": false,
+            "description": "Set to <code>true</code> if you would like to allow both filters inside the Combined Filter to be active at the same time."
+        },
+        "suppressSynchronisation": {
+            "default": true,
+            "description": "Set to <code>true</code> to prevent the Set Filter selection from being synchronised with the results from the wrapped filter. This has no effect if <code>allowBothFiltersConcurrently = true</code>."
+        },
         "wrappedFilter": {
             "filter<br />filterFramework": {
                 "description": "Filter component to wrap in the Combined Filter."

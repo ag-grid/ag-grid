@@ -17,6 +17,7 @@ export class CombinedFloatingFilterComp extends Component implements IFloatingFi
 
     private wrappedFloatingFilter: IFloatingFilterComp;
     private setFloatingFilter: SetFloatingFilterComp;
+    private allowBothFiltersConcurrently: boolean;
 
     constructor() {
         super('<div class="ag-floating-filter-input"></div>');
@@ -24,6 +25,8 @@ export class CombinedFloatingFilterComp extends Component implements IFloatingFi
 
     public init(params: IFloatingFilterParams): void {
         const filterParams = params.filterParams as CombinedFilterParams;
+
+        this.allowBothFiltersConcurrently = !!filterParams.allowBothFiltersConcurrently;
 
         this.wrappedFloatingFilter = this.createWrappedFloatingFilter(filterParams.wrappedFilter, params);
         this.appendChild(this.wrappedFloatingFilter.getGui());
@@ -40,9 +43,15 @@ export class CombinedFloatingFilterComp extends Component implements IFloatingFi
         // as it would be updating as the user is typing
         if (event && event.afterFloatingFilter) { return; }
 
-        const showSetFilter = model && !!model.setFilterModel;
+        let showWrappedFilter = model == null || model.wrappedFilterModel != null;
+        let showSetFilter = model != null && model.setFilterModel != null;
 
-        _.setDisplayed(this.wrappedFloatingFilter.getGui(), !showSetFilter);
+        if (model != null && model.wrappedFilterModel != null && model.setFilterModel != null) {
+            // show nothing if both filters are active
+            showWrappedFilter = showSetFilter = false;
+        }
+
+        _.setDisplayed(this.wrappedFloatingFilter.getGui(), showWrappedFilter);
         _.setDisplayed(this.setFloatingFilter.getGui(), showSetFilter);
 
         this.wrappedFloatingFilter.onParentModelChanged(model == null ? null : model.wrappedFilterModel, event);

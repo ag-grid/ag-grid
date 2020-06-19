@@ -115,6 +115,51 @@ SNIPPET
 
 <?= grid_example('Sychronisation', 'sychronisation', 'generated', ['enterprise' => true, 'exampleHeight' => 700, 'modules' => ['clientside', 'setfilter', 'menu']]) ?>
 
+<h2>Concurrent Filtering</h2>
+
+<p>
+    By default, only one filter from the Combined Filter can be active at any time. If you interact with either filter
+    it will reset the other filter to prevent both being active concurrently.
+</p>
+
+<p>
+    If you would like both filters to be allowed at the same time, set <code>allowBothFiltersConcurrently</code> in the
+    <code>filterParams</code>:
+</p>
+
+<?= createSnippet(<<<SNIPPET
+// ColDef
+{
+    filter: 'agCombinedColumnFilter',
+    filterParams: {
+        allowBothFiltersConcurrently: true,
+    }
+}
+SNIPPET
+) ?>
+
+<p>
+    In this case, when both filters are active, the floating filter will be hidden, and synchronisation will be
+    disabled automatically. The filters will be applied using AND in the same way that filters from different columns
+    are combined.
+</p>
+
+<p>
+    The following example demonstrates the different behaviour.
+</p>
+
+<ul>
+    <li>
+        The <strong>Athlete</strong> column shows the default behaviour, where only one filter is allowed to be active
+        at any time.
+    </li>
+    <li>
+        The <strong>Country</strong> column is configured to allow both filters to be used at the same time.
+    </li>
+</ul>
+
+<?= grid_example('Allow Both Filters', 'allow-both-filters', 'generated', ['enterprise' => true, 'exampleHeight' => 700, 'modules' => ['clientside', 'setfilter', 'menu']]) ?>
+
 <h2>Combined Filter Parameters</h2>
 
 <p>

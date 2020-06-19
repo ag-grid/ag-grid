@@ -26,6 +26,7 @@ import { SetFilterModel } from '../setFilter/setFilterModel';
 export interface CombinedFilterParams extends ISetFilterParams {
     wrappedFilter?: IFilterDef;
     suppressSynchronisation?: boolean;
+    allowBothFiltersConcurrently?: boolean;
 }
 
 export interface CombinedFilterModel extends ProvidedFilterModel {
@@ -44,6 +45,7 @@ export class CombinedFilter extends ProvidedFilter {
     private filterChangedCallback: () => void;
     private clientSideValuesExtractor: ClientSideValuesExtractor;
     private suppressSynchronisation: boolean;
+    private allowBothFiltersConcurrently: boolean;
 
     public init(params: CombinedFilterParams): void {
         const {
@@ -51,12 +53,14 @@ export class CombinedFilter extends ProvidedFilter {
             filterChangedCallback,
             filterModifiedCallback,
             doesRowPassOtherFilter,
-            suppressSynchronisation
+            suppressSynchronisation,
+            allowBothFiltersConcurrently,
         } = params;
 
         this.column = column;
         this.filterChangedCallback = filterChangedCallback;
         this.suppressSynchronisation = !!suppressSynchronisation;
+        this.allowBothFiltersConcurrently = !!allowBothFiltersConcurrently;
 
         this.wrappedFilter = this.createWrappedFilter(params);
         this.eCombinedFilter.appendChild(this.wrappedFilter.getGui());
@@ -260,6 +264,11 @@ export class CombinedFilter extends ProvidedFilter {
     }
 
     private filterChanged(filterType: 'provided' | 'set'): void {
+        if (this.allowBothFiltersConcurrently) {
+            this.filterChangedCallback();
+            return;
+        }
+
         if (filterType === 'provided') {
             if (this.setFilter.isFilterActive()) {
                 this.setFilter.setModel(null);
