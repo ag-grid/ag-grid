@@ -18,6 +18,7 @@ import { Legend, LegendPosition, LegendItem, LegendMarker, LegendLabel } from ".
 import { Navigator } from "./navigator/navigator";
 import { NavigatorMask } from "./navigator/navigatorMask";
 import { NavigatorHandle } from "./navigator/navigatorHandle";
+import { CartesianSeriesMarker } from "./series/cartesian/cartesianSeries";
 import palette from "./palettes";
 
 /*
@@ -26,7 +27,7 @@ import palette from "./palettes";
 */
 
 const chartPadding = 20;
-const commonChartMappings = {
+const commonChartMappings: any = {
     background: {
         meta: {
             defaults: {
@@ -51,7 +52,17 @@ const commonChartMappings = {
             constructor: Caption,
             defaults: {
                 enabled: true,
-                padding: new Padding(10),
+                padding: {
+                    meta: {
+                        constructor: Padding,
+                        defaults: {
+                            top: 10,
+                            right: 10,
+                            bottom: 10,
+                            left: 10
+                        }
+                    }
+                },
                 text: 'Title',
                 fontStyle: undefined,
                 fontWeight: 'bold',
@@ -66,7 +77,17 @@ const commonChartMappings = {
             constructor: Caption,
             defaults: {
                 enabled: true,
-                padding: new Padding(10),
+                padding: {
+                    meta: {
+                        constructor: Padding,
+                        defaults: {
+                            top: 10,
+                            right: 10,
+                            bottom: 10,
+                            left: 10
+                        }
+                    }
+                },
                 text: 'Subtitle',
                 fontStyle: undefined,
                 fontWeight: undefined,
@@ -118,9 +139,9 @@ const commonChartMappings = {
             }
         }
     }
-} as any;
+};
 
-const chartDefaults = {
+const chartDefaults: any = {
     container: undefined,
     width: 600,
     height: 300,
@@ -140,7 +161,7 @@ const chartDefaults = {
     },
     title: undefined,
     subtitle: undefined,
-} as any;
+};
 
 const chartMeta = {
     // Charts components' constructors normally don't take any parameters (which makes things consistent -- everything
@@ -204,16 +225,16 @@ const shadowMapping = {
     }
 };
 
-const labelDefaults = {
+const labelDefaults: any = {
     enabled: true,
     fontStyle: undefined,
     fontWeight: undefined,
     fontSize: 12,
     fontFamily: 'Verdana, sans-serif',
     color: 'rgba(70, 70, 70, 1)'
-} as any;
+};
 
-const labelMapping = {
+const labelMapping: any = {
     label: {
         meta: {
             defaults: {
@@ -221,9 +242,9 @@ const labelMapping = {
             }
         }
     }
-} as any;
+};
 
-const axisMappings = {
+const axisMappings: any = {
     line: {
         meta: {
             defaults: {
@@ -237,7 +258,17 @@ const axisMappings = {
             constructor: Caption,
             defaults: {
                 enabled: true,
-                padding: new Padding(10),
+                padding: {
+                    meta: {
+                        constructor: Padding,
+                        defaults: {
+                            top: 10,
+                            right: 10,
+                            bottom: 10,
+                            left: 10
+                        }
+                    }
+                },
                 text: 'Axis Title',
                 fontStyle: undefined,
                 fontWeight: 'bold',
@@ -256,6 +287,7 @@ const axisMappings = {
                 fontSize: 12,
                 fontFamily: 'Verdana, sans-serif',
                 padding: 5,
+                rotation: 0,
                 color: 'rgba(87, 87, 87, 1)',
                 formatter: undefined
             }
@@ -272,9 +304,9 @@ const axisMappings = {
             }
         }
     }
-} as any;
+};
 
-const mappings = {
+const mappings: any = {
     [CartesianChart.type]: {
         meta: { // unlike other entries, 'meta' is not a component type or a config name
             constructor: CartesianChart, // Constructor function for the `cartesian` type.
@@ -321,27 +353,6 @@ const mappings = {
             }
         },
         series: {
-            [LineSeries.type]: {
-                meta: {
-                    constructor: LineSeries,
-                    defaults: {
-                        title: undefined,
-                        xKey: '',
-                        xName: '',
-                        yKey: '',
-                        yName: '',
-                        stroke: palette.fills[0],
-                        strokeWidth: 2,
-                        fillOpacity: 1,
-                        strokeOpacity: 1,
-                        highlightStyle: {
-                            fill: 'yellow'
-                        }
-                    }
-                },
-                highlightStyle: {},
-                marker: {}
-            },
             column: {
                 meta: {
                     constructor: BarSeries,
@@ -355,7 +366,7 @@ const mappings = {
                 ...labelMapping,
                 ...shadowMapping
             },
-            bar: {
+            [BarSeries.type]: {
                 meta: {
                     constructor: BarSeries,
                     defaults: {
@@ -367,6 +378,42 @@ const mappings = {
                 highlightStyle: {},
                 ...labelMapping,
                 ...shadowMapping
+            },
+            [LineSeries.type]: {
+                meta: {
+                    constructor: LineSeries,
+                    defaults: {
+                        ...seriesDefaults,
+                        title: undefined,
+                        xKey: '',
+                        xName: '',
+                        yKey: '',
+                        yName: '',
+                        stroke: palette.fills[0],
+                        strokeWidth: 2,
+                        strokeOpacity: 1,
+                        tooltipRenderer: undefined,
+                        highlightStyle: {
+                            fill: 'yellow'
+                        }
+                    }
+                },
+                highlightStyle: {},
+                marker: {
+                    meta: {
+                        constructor: CartesianSeriesMarker,
+                        defaults: {
+                            enabled: true,
+                            shape: 'circle',
+                            size: 8,
+                            minSize: 8,
+                            fill: palette.fills[0],
+                            stroke: palette.strokes[0],
+                            strokeWidth: 1,
+                            formatter: undefined
+                        }
+                    }
+                }
             },
             [ScatterSeries.type]: {
                 meta: {
@@ -394,7 +441,21 @@ const mappings = {
                     }
                 },
                 highlightStyle: {},
-                marker: {}
+                marker: {
+                    meta: {
+                        constructor: CartesianSeriesMarker,
+                        defaults: {
+                            enabled: true,
+                            shape: 'circle',
+                            size: 8,
+                            minSize: 8,
+                            fill: palette.fills[0],
+                            stroke: palette.strokes[0],
+                            strokeWidth: 1,
+                            formatter: undefined
+                        }
+                    }
+                }
             },
             [AreaSeries.type]: {
                 meta: {
@@ -412,13 +473,28 @@ const mappings = {
                         strokeOpacity: 1,
                         strokeWidth: 2,
                         shadow: undefined,
+                        tooltipRenderer: undefined,
                         highlightStyle: {
                             fill: 'yellow'
                         }
                     }
                 },
                 highlightStyle: {},
-                marker: {},
+                marker: {
+                    meta: {
+                        constructor: CartesianSeriesMarker,
+                        defaults: {
+                            enabled: true,
+                            shape: 'circle',
+                            size: 8,
+                            minSize: 8,
+                            fill: palette.fills[0],
+                            stroke: palette.strokes[0],
+                            strokeWidth: 1,
+                            formatter: undefined
+                        }
+                    }
+                },
                 ...shadowMapping
             },
             [HistogramSeries.type]: {
@@ -504,7 +580,17 @@ const mappings = {
             ...chartMeta,
             defaults: {
                 ...chartDefaults,
-                padding: new Padding(40),
+                padding: {
+                    meta: {
+                        constructor: Padding,
+                        defaults: {
+                            top: 40,
+                            right: 40,
+                            bottom: 40,
+                            left: 40
+                        }
+                    }
+                }
             }
         },
         ...commonChartMappings,
@@ -541,7 +627,17 @@ const mappings = {
                         constructor: Caption,
                         defaults: {
                             enabled: true,
-                            padding: new Padding(10),
+                            padding: {
+                                meta: {
+                                    constructor: Padding,
+                                    defaults: {
+                                        top: 10,
+                                        right: 10,
+                                        bottom: 10,
+                                        left: 10
+                                    }
+                                }
+                            },
                             text: 'Series Title',
                             fontStyle: undefined,
                             fontWeight: 'bold',
@@ -573,7 +669,7 @@ const mappings = {
             }
         }
     }
-} as any;
+};
 
 // Amend the `mappings` object with aliases for different chart types.
 {
