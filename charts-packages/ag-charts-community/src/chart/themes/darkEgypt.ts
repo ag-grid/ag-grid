@@ -19,6 +19,470 @@ import { Navigator } from "../navigator/navigator";
 import { NavigatorMask } from "../navigator/navigatorMask";
 import { NavigatorHandle } from "../navigator/navigatorHandle";
 import { pastel as palette } from "../palettes";
+import { ChartTheme } from "./chartTheme";
+
+export class DarkEgypt extends ChartTheme {
+
+    constructor() {
+        super();
+    }
+
+    readonly defaults: any = {
+        cartesian: {
+            background: {
+                visible: true,
+                fill: 'rgb(52, 52, 53)'
+            },
+            padding: {
+                top: 20,
+                right: 20,
+                bottom: 20,
+                left: 20
+            },
+            title: {
+                enabled: true,
+                padding: {
+                    top: 10,
+                    right: 10,
+                    bottom: 10,
+                    left: 10
+                },
+                text: 'Dark Egypt Theme',
+                fontStyle: undefined,
+                fontWeight: 'bold',
+                fontSize: 14,
+                fontFamily: 'Papyrus, Verdana, sans-serif',
+                color: 'rgb(224, 224, 227)'
+            },
+            subtitle: {
+                enabled: true,
+                padding: {
+                    top: 10,
+                    right: 10,
+                    bottom: 10,
+                    left: 10
+                },
+                text: 'Subtitle',
+                fontStyle: undefined,
+                fontWeight: undefined,
+                fontSize: 12,
+                fontFamily: 'Papyrus, Verdana, sans-serif',
+                color: 'rgba(224, 224, 227, 0.7)'
+            },
+            legend: {
+                enabled: true,
+                position: 'right',
+                spacing: 20,
+                item: {
+                    paddingX: 16,
+                    paddingY: 8,
+                    marker: {
+                        shape: undefined,
+                        size: 15,
+                        strokeWidth: 1,
+                        padding: 8
+                    },
+                    label: {
+                        color: 'black',
+                        fontStyle: undefined,
+                        fontWeight: undefined,
+                        fontSize: 12,
+                        fontFamily: 'Papyrus, Verdana, sans-serif'
+                    }
+                }
+            },
+            axes: {
+                number: {
+                    title: {
+                        enabled: true,
+                        padding: {
+                            top: 10,
+                            right: 10,
+                            bottom: 10,
+                            left: 10
+                        },
+                        text: 'Axis Title',
+                        fontStyle: undefined,
+                        fontWeight: 'bold',
+                        fontSize: 12,
+                        fontFamily: 'Papyrus, Verdana, sans-serif',
+                        color: 'rgb(224, 224, 227)'
+                    },
+                    label: {
+                        fontStyle: undefined,
+                        fontWeight: undefined,
+                        fontSize: 12,
+                        fontFamily: 'Papyrus, Verdana, sans-serif',
+                        padding: 5,
+                        rotation: 0,
+                        color: 'rgb(224, 224, 227)',
+                        formatter: undefined
+                    },
+                    line: {
+                        width: 1,
+                        color: 'rgba(195, 195, 195, 1)'
+                    },
+                    tick: {
+                        width: 1,
+                        size: 6,
+                        color: 'rgba(195, 195, 195, 1)',
+                        count: 10
+                    },
+                    gridStyle: [{
+                        stroke: 'rgba(219, 219, 219, 1)',
+                        lineDash: [4, 2]
+                    }]
+                },
+                category: {
+                    title: {
+                        enabled: true,
+                        padding: {
+                            top: 10,
+                            right: 10,
+                            bottom: 10,
+                            left: 10
+                        },
+                        text: 'Axis Title',
+                        fontStyle: undefined,
+                        fontWeight: 'bold',
+                        fontSize: 12,
+                        fontFamily: 'Papyrus, Verdana, sans-serif',
+                        color: 'rgb(224, 224, 227)'
+                    },
+                    label: {
+                        fontStyle: undefined,
+                        fontWeight: undefined,
+                        fontSize: 12,
+                        fontFamily: 'Papyrus, Verdana, sans-serif',
+                        padding: 5,
+                        rotation: 0,
+                        color: 'rgb(224, 224, 227)',
+                        formatter: undefined
+                    },
+                    line: {
+                        width: 1,
+                        color: 'rgba(195, 195, 195, 1)'
+                    },
+                    tick: {
+                        width: 1,
+                        size: 6,
+                        color: 'rgba(195, 195, 195, 1)',
+                        count: 10
+                    },
+                    gridStyle: [{
+                        stroke: 'rgba(219, 219, 219, 1)',
+                        lineDash: [4, 2]
+                    }]
+                },
+                time: {
+                    title: {
+                        enabled: true,
+                        padding: {
+                            top: 10,
+                            right: 10,
+                            bottom: 10,
+                            left: 10
+                        },
+                        text: 'Axis Title',
+                        fontStyle: undefined,
+                        fontWeight: 'bold',
+                        fontSize: 12,
+                        fontFamily: 'Papyrus, Verdana, sans-serif',
+                        color: 'rgb(224, 224, 227)'
+                    },
+                    label: {
+                        fontStyle: undefined,
+                        fontWeight: undefined,
+                        fontSize: 12,
+                        fontFamily: 'Papyrus, Verdana, sans-serif',
+                        padding: 5,
+                        rotation: 0,
+                        color: 'rgb(224, 224, 227)',
+                        formatter: undefined
+                    },
+                    line: {
+                        width: 1,
+                        color: 'rgba(195, 195, 195, 1)'
+                    },
+                    tick: {
+                        width: 1,
+                        size: 6,
+                        color: 'rgba(195, 195, 195, 1)',
+                        count: 10
+                    },
+                    gridStyle: [{
+                        stroke: 'rgba(219, 219, 219, 1)',
+                        lineDash: [4, 2]
+                    }]
+                }
+            },
+            series: {
+                column: {
+                    visible: true,
+                    showInLegend: true,
+                    flipXY: false,
+                    fills: palette.fills,
+                    strokes: palette.strokes,
+                    fillOpacity: 1,
+                    strokeOpacity: 1,
+                    xKey: '',
+                    xName: '',
+                    yKeys: [],
+                    yNames: [],
+                    grouped: false,
+                    normalizedTo: undefined,
+                    strokeWidth: 1,
+                    highlightStyle: {
+                        fill: 'yellow'
+                    },
+                    label: {
+                        enabled: true,
+                        fontStyle: undefined,
+                        fontWeight: undefined,
+                        fontSize: 12,
+                        fontFamily: 'Papyrus, Verdana, sans-serif',
+                        color: 'rgb(224, 224, 227)'
+                    },
+                    shadow: undefined,
+                    // shadow: {
+                    //     enabled: true,
+                    //     color: 'rgba(0, 0, 0, 0.5)',
+                    //     xOffset: 0,
+                    //     yOffset: 0,
+                    //     blur: 5
+                    // }
+                },
+                bar: {
+                    visible: true,
+                    showInLegend: true,
+                    flipXY: true,
+                    fills: palette.fills,
+                    strokes: palette.strokes,
+                    fillOpacity: 1,
+                    strokeOpacity: 1,
+                    xKey: '',
+                    xName: '',
+                    yKeys: [],
+                    yNames: [],
+                    grouped: false,
+                    normalizedTo: undefined,
+                    strokeWidth: 1,
+                    highlightStyle: {
+                        fill: 'yellow'
+                    },
+                    label: {
+                        enabled: true,
+                        fontStyle: undefined,
+                        fontWeight: undefined,
+                        fontSize: 12,
+                        fontFamily: 'Papyrus, Verdana, sans-serif',
+                        color: 'rgba(70, 70, 70, 1)'
+                    },
+                    shadow: undefined,
+                    // shadow: {
+                    //     enabled: true,
+                    //     color: 'rgba(0, 0, 0, 0.5)',
+                    //     xOffset: 0,
+                    //     yOffset: 0,
+                    //     blur: 5
+                    // }
+                },
+                line: {
+                    visible: true,
+                    showInLegend: true,
+                    title: undefined,
+                    xKey: '',
+                    xName: '',
+                    yKey: '',
+                    yName: '',
+                    stroke: palette.fills[0],
+                    strokeWidth: 2,
+                    strokeOpacity: 1,
+                    tooltipRenderer: undefined,
+                    highlightStyle: {
+                        fill: 'yellow'
+                    },
+                    marker: {
+                        enabled: true,
+                        shape: 'circle',
+                        size: 8,
+                        minSize: 8,
+                        fill: palette.fills[0],
+                        stroke: palette.strokes[0],
+                        strokeWidth: 1,
+                        formatter: undefined
+                    }
+                },
+                scatter: {
+                    visible: true,
+                    showInLegend: true,
+                    title: undefined,
+                    xKey: '',
+                    yKey: '',
+                    sizeKey: undefined,
+                    labelKey: undefined,
+                    xName: '',
+                    yName: '',
+                    sizeName: 'Size',
+                    labelName: 'Label',
+                    fill: palette.fills[0],
+                    stroke: palette.strokes[0],
+                    strokeWidth: 2,
+                    fillOpacity: 1,
+                    strokeOpacity: 1,
+                    tooltipRenderer: undefined,
+                    highlightStyle: {
+                        fill: 'yellow'
+                    },
+                    marker: {
+                        enabled: true,
+                        shape: 'circle',
+                        size: 8,
+                        minSize: 8,
+                        fill: palette.fills[0],
+                        stroke: palette.strokes[0],
+                        strokeWidth: 1,
+                        formatter: undefined
+                    }
+                },
+                area: {
+                    visible: true,
+                    showInLegend: true,
+                    title: undefined,
+                    xKey: '',
+                    xName: '',
+                    yKeys: [],
+                    yNames: [],
+                    normalizedTo: undefined,
+                    fills: palette.fills,
+                    strokes: palette.strokes,
+                    fillOpacity: 1,
+                    strokeOpacity: 1,
+                    strokeWidth: 2,
+                    shadow: undefined,
+                    tooltipRenderer: undefined,
+                    highlightStyle: {
+                        fill: 'yellow'
+                    },
+                    marker: {
+                        enabled: true,
+                        shape: 'circle',
+                        size: 8,
+                        minSize: 8,
+                        fill: palette.fills[0],
+                        stroke: palette.strokes[0],
+                        strokeWidth: 1,
+                        formatter: undefined
+                    }
+                }
+            }
+        },
+        polar: {
+            background: {
+                visible: true,
+                fill: 'white'
+            },
+            padding: {
+                top: 20,
+                right: 20,
+                bottom: 20,
+                left: 20
+            },
+            title: {
+                enabled: true,
+                padding: {
+                    top: 10,
+                    right: 10,
+                    bottom: 10,
+                    left: 10
+                },
+                text: 'Title',
+                fontStyle: undefined,
+                fontWeight: 'bold',
+                fontSize: 14,
+                fontFamily: 'Papyrus, Verdana, sans-serif',
+                color: 'rgb(224, 224, 227)'
+            },
+            subtitle: {
+                enabled: true,
+                padding: {
+                    top: 10,
+                    right: 10,
+                    bottom: 10,
+                    left: 10
+                },
+                text: 'Subtitle',
+                fontStyle: undefined,
+                fontWeight: undefined,
+                fontSize: 12,
+                fontFamily: 'Papyrus, Verdana, sans-serif',
+                color: 'rgba(140, 140, 140, 1)'
+            },
+            legend: {
+                enabled: true,
+                position: 'right',
+                spacing: 20,
+                item: {
+                    paddingX: 16,
+                    paddingY: 8,
+                    marker: {
+                        shape: undefined,
+                        size: 15,
+                        strokeWidth: 1,
+                        padding: 8
+                    },
+                    label: {
+                        color: 'black',
+                        fontStyle: undefined,
+                        fontWeight: undefined,
+                        fontSize: 12,
+                        fontFamily: 'Papyrus, Verdana, sans-serif'
+                    }
+                }
+            },
+            series: {
+                pie: {
+                    visible: true,
+                    showInLegend: true,
+                    title: undefined, // Caption
+                    angleKey: '',
+                    angleName: '',
+                    radiusKey: undefined,
+                    radiusName: undefined,
+                    labelKey: undefined,
+                    labelName: undefined,
+                    label: {
+                        enabled: true,
+                        fontStyle: undefined,
+                        fontWeight: undefined,
+                        fontSize: 12,
+                        fontFamily: 'Papyrus, Verdana, sans-serif',
+                        color: 'rgb(224, 224, 227)',
+                        offset: 3,
+                        minAngle: 20
+                    },
+                    callout: {
+                        colors: palette.strokes,
+                        length: 10,
+                        strokeWidth: 1
+                    },
+                    fills: palette.fills,
+                    strokes: palette.strokes,
+                    fillOpacity: 1,
+                    strokeOpacity: 1,
+                    strokeWidth: 1,
+                    rotation: 0,
+                    outerRadiusOffset: 0,
+                    innerRadiusOffset: 0,
+                    highlightStyle: {
+                        fill: 'yellow'
+                    },
+                    shadow: undefined
+                }
+            }
+        }
+    }
+}
 
 /*
     This file defines the specs for creating different kinds of charts, but

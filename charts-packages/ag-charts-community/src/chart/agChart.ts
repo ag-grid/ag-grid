@@ -4,11 +4,24 @@ import { ChartAxis } from "./chartAxis";
 import { find } from "../util/array";
 import { LegendMarker } from "./legend";
 import defaultMappings from './chartMappings';
-import darkEgypt from './themes/darkEgypt';
+import { ChartTheme } from "./themes/chartTheme";
+import { DarkEgypt } from './themes/darkEgypt';
+import { getValue } from "../util/object";
 
 const themes = {
-    'dark-egypt': darkEgypt
+    default: new ChartTheme(),
+    'dark-egypt': new DarkEgypt()
 } as any;
+
+function getTheme(name: string | ChartTheme): ChartTheme {
+    if (typeof name === 'string') {
+        return themes[name] || themes.default;
+    }
+    if (name instanceof ChartTheme) {
+        return name;
+    }
+    return themes.default;
+}
 
 export abstract class AgChart {
     static create(options: any, container?: HTMLElement, data?: any[]) {
@@ -21,8 +34,7 @@ export abstract class AgChart {
         }
         // special handling when both `autoSize` and `width` / `height` are present in the options
         const autoSize = options && options.autoSize;
-        const mappings = themes[options.theme] || defaultMappings;
-        const chart = create(mappings, options);
+        const chart = create(defaultMappings, options, undefined, undefined, getTheme(options.theme));
         if (chart && autoSize) { // `autoSize` takes precedence over `width` / `height`
             chart.autoSize = true;
         }
@@ -39,8 +51,7 @@ export abstract class AgChart {
             options.data = data;
         }
         const autoSize = options && options.autoSize;
-        const mappings = themes[options.theme] || defaultMappings;
-        update(mappings, chart, Object.create(options));
+        update(defaultMappings, chart, options, undefined, getTheme(options.theme));
         if (chart && autoSize) {
             chart.autoSize = true;
         }
@@ -76,16 +87,7 @@ function provideDefaultType(mappings: any, options: any, path?: string): any {
     return options;
 }
 
-function getMapping(mappings: any, path: string) {
-    const parts = path.split('.');
-    let value = mappings;
-    parts.forEach(part => {
-        value = value[part];
-    });
-    return value;
-}
-
-function create(mappings: any, options: any, path?: string, component?: any) {
+function create(mappings: any, options: any, path?: string, component?: any, theme?: ChartTheme) {
     // Deprecate `chart.legend.item.marker.type` in integrated chart options.
     options = Object.create(options);
     if (component instanceof LegendMarker) {
@@ -103,10 +105,10 @@ function create(mappings: any, options: any, path?: string, component?: any) {
         }
     }
 
-    const mapping = getMapping(mappings, path);
+    const mapping = getValue(mappings, path);
 
     if (mapping) {
-        options = provideDefaultOptions(options, mapping);
+        options = provideDefaultOptions(options, mapping, theme && theme.getDefaults(path));
 
         const meta = mapping.meta || {};
         const constructorParams = meta.constructorParams || [];
@@ -125,15 +127,15 @@ function create(mappings: any, options: any, path?: string, component?: any) {
 
                 if (value && key in mapping && !(meta.setAsIs && meta.setAsIs.indexOf(key) >= 0)) {
                     if (Array.isArray(value)) {
-                        const subComponents = value.map(config => create(mappings, config, path + '.' + key)).filter(config => !!config);
+                        const subComponents = value.map(config => create(mappings, config, path + '.' + key, undefined, theme)).filter(config => !!config);
                         component[key] = subComponents;
                     } else {
                         if (mapping[key] && component[key]) {
                             // The instance property already exists on the component (e.g. chart.legend).
                             // Simply configure the existing instance, without creating a new one.
-                            create(mappings, value, path + '.' + key, component[key]);
+                            create(mappings, value, path + '.' + key, component[key], theme);
                         } else {
-                            const subComponent = create(mappings, value, value.type ? path : path + '.' + key);
+                            const subComponent = create(mappings, value, value.type ? path : path + '.' + key, undefined, theme);
                             if (subComponent) {
                                 component[key] = subComponent;
                             }
@@ -161,7 +163,7 @@ function create(mappings: any, options: any, path?: string, component?: any) {
     }
 }
 
-function update(mappings: any, component: any, options: any, path?: string) {
+function update(mappings: any, component: any, options: any, path?: string, theme?: ChartTheme) {
     if (!(options && typeof options === 'object')) {
         return;
     }
@@ -182,10 +184,10 @@ function update(mappings: any, component: any, options: any, path?: string) {
         }
     }
 
-    const mapping = getMapping(mappings, path);
+    const mapping = getValue(mappings, path);
 
     if (mapping) {
-        options = provideDefaultOptions(options, mapping);
+        options = provideDefaultOptions(options, mapping, theme && theme.getDefaults(path));
 
         const meta = mapping.meta || {};
         const constructorParams = meta && meta.constructorParams || [];
@@ -204,21 +206,21 @@ function update(mappings: any, component: any, options: any, path?: string) {
                     if (Array.isArray(oldValue) && Array.isArray(value)) {
                         if (path in mappings) { // component is a chart
                             if (key === 'series') {
-                                updateSeries(mappings, component, value, keyPath);
+                                updateSeries(mappings, component, value, keyPath, theme);
                             } else if (key === 'axes') {
-                                updateAxes(mappings, component, value, keyPath);
+                                updateAxes(mappings, component, value, keyPath, theme);
                             }
                         } else {
                             component[key] = value;
                         }
                     } else if (typeof oldValue === 'object') {
                         if (value) {
-                            update(mappings, oldValue, value, value.type ? path : keyPath);
+                            update(mappings, oldValue, value, value.type ? path : keyPath, theme);
                         } else if (key in options) {
                             component[key] = value;
                         }
                     } else {
-                        const subComponent = isObject(value) && create(mappings, value, value.type ? path : keyPath);
+                        const subComponent = isObject(value) && create(mappings, value, value.type ? path : keyPath, undefined, theme);
                         if (subComponent) {
                             component[key] = subComponent;
                         } else {
@@ -235,7 +237,7 @@ function update(mappings: any, component: any, options: any, path?: string) {
     }
 }
 
-function updateSeries(mappings: any, chart: Chart, configs: any[], keyPath: string) {
+function updateSeries(mappings: any, chart: Chart, configs: any[], keyPath: string, theme?: ChartTheme) {
     const allSeries = chart.series;
     let prevSeries: Series | undefined;
     let i = 0;
@@ -245,15 +247,15 @@ function updateSeries(mappings: any, chart: Chart, configs: any[], keyPath: stri
         if (series) {
             config = provideDefaultType(mappings, config, keyPath);
             if (series.type === config.type) {
-                update(mappings, series, config, keyPath);
+                update(mappings, series, config, keyPath, theme);
             } else {
-                const newSeries = create(mappings, config, keyPath);
+                const newSeries = create(mappings, config, keyPath, undefined, theme);
                 chart.removeSeries(series);
                 chart.addSeriesAfter(newSeries, prevSeries);
                 series = newSeries;
             }
         } else { // more new configs than existing series
-            const newSeries = create(mappings, config, keyPath);
+            const newSeries = create(mappings, config, keyPath, undefined, theme);
             chart.addSeries(newSeries);
         }
         prevSeries = series;
@@ -267,7 +269,7 @@ function updateSeries(mappings: any, chart: Chart, configs: any[], keyPath: stri
     }
 }
 
-function updateAxes(mappings: any, chart: Chart, configs: any[], keyPath: string) {
+function updateAxes(mappings: any, chart: Chart, configs: any[], keyPath: string, theme?: ChartTheme) {
     const axes = chart.axes as ChartAxis[];
     const axesToAdd: ChartAxis[] = [];
     const axesToUpdate: ChartAxis[] = [];
@@ -278,9 +280,9 @@ function updateAxes(mappings: any, chart: Chart, configs: any[], keyPath: string
         });
         if (axisToUpdate) {
             axesToUpdate.push(axisToUpdate);
-            update(mappings, axisToUpdate, config, keyPath);
+            update(mappings, axisToUpdate, config, keyPath, theme);
         } else {
-            const axisToAdd = create(mappings, config, keyPath);
+            const axisToAdd = create(mappings, config, keyPath, undefined, theme);
             if (axisToAdd) {
                 axesToAdd.push(axisToAdd);
             }
@@ -317,15 +319,20 @@ function provideDefaultChartType(mappings: any, options: any) {
  * @param options
  * @param mapping
  */
-function provideDefaultOptions(options: any, mapping: any): any {
+function provideDefaultOptions(options: any, mapping: any, themeDefaults?: any): any {
     const defaults = mapping && mapping.meta && mapping.meta.defaults;
 
-    if (defaults) {
+    if (defaults || themeDefaults) {
         options = Object.create(options);
-        for (const key in defaults) {
-            if (!(key in options)) {
-                options[key] = defaults[key];
-            }
+    }
+    for (const key in themeDefaults) {
+        if (!(key in options)) {
+            options[key] = themeDefaults[key];
+        }
+    }
+    for (const key in defaults) {
+        if ((!themeDefaults || !(key in themeDefaults)) && !(key in options)) {
+            options[key] = defaults[key];
         }
     }
 
