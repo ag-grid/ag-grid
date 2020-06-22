@@ -1,6 +1,7 @@
 import { ILogger } from "../iLogger";
 import { Component } from "../widgets/component";
 import { _ } from "../utils";
+import {getFunctionName} from "../utils/function";
 
 // steps in booting up:
 // 1. create all beans
@@ -109,7 +110,7 @@ export class Context {
         if (!metaData) {
             let beanName: string;
             if (Bean.prototype.constructor) {
-                beanName = Bean.prototype.constructor.name;
+                beanName = getFunctionName(Bean.prototype.constructor);
             } else {
                 beanName = "" + Bean;
             }
