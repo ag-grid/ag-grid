@@ -36,7 +36,7 @@ export interface IServerSideGetRowsParams {
     parentNode: RowNode;
 
     // success callback, pass the rows back the grid asked for
-    successCallback(rowsThisPage: any[], lastRow: number): void;
+    successCallback(rowsThisPage: any[], lastRow?: number): void;
 
     // fail callback, tell the grid the call failed so it can adjust it's state
     failCallback(): void;
