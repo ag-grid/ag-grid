@@ -3,7 +3,7 @@ import { Series } from "./series/series";
 import { ChartAxis } from "./chartAxis";
 import { find } from "../util/array";
 import { LegendMarker } from "./legend";
-import defaultMappings from './chartMappings';
+import mappings from './chartMappings';
 import { ChartTheme } from "./themes/chartTheme";
 import { DarkTheme } from './themes/darkTheme';
 import { getValue } from "../util/object";
@@ -34,7 +34,7 @@ export abstract class AgChart {
         }
         // special handling when both `autoSize` and `width` / `height` are present in the options
         const autoSize = options && options.autoSize;
-        const chart = create(defaultMappings, options, undefined, undefined, getTheme(options.theme));
+        const chart = create(options, undefined, undefined, getTheme(options.theme));
         if (chart && autoSize) { // `autoSize` takes precedence over `width` / `height`
             chart.autoSize = true;
         }
@@ -51,7 +51,7 @@ export abstract class AgChart {
             options.data = data;
         }
         const autoSize = options && options.autoSize;
-        update(defaultMappings, chart, options, undefined, getTheme(options.theme));
+        update(chart, options, undefined, getTheme(options.theme));
         if (chart && autoSize) {
             chart.autoSize = true;
         }
@@ -71,9 +71,9 @@ const pathToSeriesTypeMap: { [key in string]: string } = {
     'pie.series': 'pie'
 };
 
-function provideDefaultType(mappings: any, options: any, path?: string): any {
+function provideDefaultType(options: any, path?: string): any {
     if (!path) { // if `path` is undefined, `options` is a top-level (chart) config
-        provideDefaultChartType(mappings, options);
+        provideDefaultChartType(options);
     }
 
     if (!options.type) {
@@ -87,7 +87,7 @@ function provideDefaultType(mappings: any, options: any, path?: string): any {
     return options;
 }
 
-function create(mappings: any, options: any, path?: string, component?: any, theme?: ChartTheme) {
+function create(options: any, path?: string, component?: any, theme?: ChartTheme) {
     // Deprecate `chart.legend.item.marker.type` in integrated chart options.
     options = Object.create(options);
     if (component instanceof LegendMarker) {
@@ -95,7 +95,7 @@ function create(mappings: any, options: any, path?: string, component?: any, the
             options.shape = options.type;
         }
     } else {
-        options = provideDefaultType(mappings, options, path);
+        options = provideDefaultType(options, path);
         if (path) {
             if (options.type) {
                 path = path + '.' + options.type;
@@ -127,15 +127,15 @@ function create(mappings: any, options: any, path?: string, component?: any, the
 
                 if (value && key in mapping && !(meta.setAsIs && meta.setAsIs.indexOf(key) >= 0)) {
                     if (Array.isArray(value)) {
-                        const subComponents = value.map(config => create(mappings, config, path + '.' + key, undefined, theme)).filter(config => !!config);
+                        const subComponents = value.map(config => create(config, path + '.' + key, undefined, theme)).filter(config => !!config);
                         component[key] = subComponents;
                     } else {
                         if (mapping[key] && component[key]) {
                             // The instance property already exists on the component (e.g. chart.legend).
                             // Simply configure the existing instance, without creating a new one.
-                            create(mappings, value, path + '.' + key, component[key], theme);
+                            create(value, path + '.' + key, component[key], theme);
                         } else {
-                            const subComponent = create(mappings, value, value.type ? path : path + '.' + key, undefined, theme);
+                            const subComponent = create(value, value.type ? path : path + '.' + key, undefined, theme);
                             if (subComponent) {
                                 component[key] = subComponent;
                             }
@@ -163,7 +163,7 @@ function create(mappings: any, options: any, path?: string, component?: any, the
     }
 }
 
-function update(mappings: any, component: any, options: any, path?: string, theme?: ChartTheme) {
+function update(component: any, options: any, path?: string, theme?: ChartTheme) {
     if (!(options && typeof options === 'object')) {
         return;
     }
@@ -174,7 +174,7 @@ function update(mappings: any, component: any, options: any, path?: string, them
             options.shape = options.type;
         }
     } else {
-        options = provideDefaultType(mappings, options, path);
+        options = provideDefaultType(options, path);
         if (path) {
             if (options.type) {
                 path = path + '.' + options.type;
@@ -206,21 +206,21 @@ function update(mappings: any, component: any, options: any, path?: string, them
                     if (Array.isArray(oldValue) && Array.isArray(value)) {
                         if (path in mappings) { // component is a chart
                             if (key === 'series') {
-                                updateSeries(mappings, component, value, keyPath, theme);
+                                updateSeries(component, value, keyPath, theme);
                             } else if (key === 'axes') {
-                                updateAxes(mappings, component, value, keyPath, theme);
+                                updateAxes(component, value, keyPath, theme);
                             }
                         } else {
                             component[key] = value;
                         }
                     } else if (typeof oldValue === 'object') {
                         if (value) {
-                            update(mappings, oldValue, value, value.type ? path : keyPath, theme);
+                            update(oldValue, value, value.type ? path : keyPath, theme);
                         } else if (key in options) {
                             component[key] = value;
                         }
                     } else {
-                        const subComponent = isObject(value) && create(mappings, value, value.type ? path : keyPath, undefined, theme);
+                        const subComponent = isObject(value) && create(value, value.type ? path : keyPath, undefined, theme);
                         if (subComponent) {
                             component[key] = subComponent;
                         } else {
@@ -237,7 +237,7 @@ function update(mappings: any, component: any, options: any, path?: string, them
     }
 }
 
-function updateSeries(mappings: any, chart: Chart, configs: any[], keyPath: string, theme?: ChartTheme) {
+function updateSeries(chart: Chart, configs: any[], keyPath: string, theme?: ChartTheme) {
     const allSeries = chart.series;
     let prevSeries: Series | undefined;
     let i = 0;
@@ -245,17 +245,17 @@ function updateSeries(mappings: any, chart: Chart, configs: any[], keyPath: stri
         let config = configs[i];
         let series = allSeries[i];
         if (series) {
-            config = provideDefaultType(mappings, config, keyPath);
+            config = provideDefaultType(config, keyPath);
             if (series.type === config.type) {
-                update(mappings, series, config, keyPath, theme);
+                update(series, config, keyPath, theme);
             } else {
-                const newSeries = create(mappings, config, keyPath, undefined, theme);
+                const newSeries = create(config, keyPath, undefined, theme);
                 chart.removeSeries(series);
                 chart.addSeriesAfter(newSeries, prevSeries);
                 series = newSeries;
             }
         } else { // more new configs than existing series
-            const newSeries = create(mappings, config, keyPath, undefined, theme);
+            const newSeries = create(config, keyPath, undefined, theme);
             chart.addSeries(newSeries);
         }
         prevSeries = series;
@@ -269,7 +269,7 @@ function updateSeries(mappings: any, chart: Chart, configs: any[], keyPath: stri
     }
 }
 
-function updateAxes(mappings: any, chart: Chart, configs: any[], keyPath: string, theme?: ChartTheme) {
+function updateAxes(chart: Chart, configs: any[], keyPath: string, theme?: ChartTheme) {
     const axes = chart.axes as ChartAxis[];
     const axesToAdd: ChartAxis[] = [];
     const axesToUpdate: ChartAxis[] = [];
@@ -280,9 +280,9 @@ function updateAxes(mappings: any, chart: Chart, configs: any[], keyPath: string
         });
         if (axisToUpdate) {
             axesToUpdate.push(axisToUpdate);
-            update(mappings, axisToUpdate, config, keyPath, theme);
+            update(axisToUpdate, config, keyPath, theme);
         } else {
-            const axisToAdd = create(mappings, config, keyPath, undefined, theme);
+            const axisToAdd = create(config, keyPath, undefined, theme);
             if (axisToAdd) {
                 axesToAdd.push(axisToAdd);
             }
@@ -292,7 +292,7 @@ function updateAxes(mappings: any, chart: Chart, configs: any[], keyPath: string
     chart.axes = axesToUpdate.concat(axesToAdd);
 }
 
-function provideDefaultChartType(mappings: any, options: any) {
+function provideDefaultChartType(options: any) {
     if (options.type) {
         return;
     }
