@@ -48,6 +48,9 @@ var gridOptions = {
         minWidth: 200,
         resizable: true,
         floatingFilter: true,
+    },
+    sideBar: {
+        toolPanels: ['filters'],
     }
 };
 

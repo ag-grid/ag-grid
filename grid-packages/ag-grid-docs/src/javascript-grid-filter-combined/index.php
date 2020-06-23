@@ -66,7 +66,7 @@ SNIPPET
     </li>
 </ul>
 
-<?= grid_example('Combined Filter', 'combined-filter', 'generated', ['enterprise' => true, 'exampleHeight' => 700, 'modules' => ['clientside', 'setfilter', 'menu']]) ?>
+<?= grid_example('Combined Filter', 'combined-filter', 'generated', ['enterprise' => true, 'exampleHeight' => 700]) ?>
 
 <h2>Synchronisation</h2>
 
