@@ -1139,7 +1139,7 @@ export class RowRenderer extends BeanStub {
             hitEdgeOfGrid = _.missing(nextCell);
         }
 
-        if (hitEdgeOfGrid && event.keyCode === Constants.KEY_UP) {
+        if (hitEdgeOfGrid && event && event.keyCode === Constants.KEY_UP) {
             nextCell = {
                 rowIndex: -1,
                 rowPinned: null,
