@@ -292,6 +292,7 @@ export class ColumnFactory extends BeanStub {
             column.setActualWidth(colDefMergedWidth);
         }
 
+        // anything but undefined will set sort, thus null or empty string will clear the sort
         if (colDef.sort!==undefined) {
             if (colDef.sort==Constants.SORT_ASC || colDef.sort==Constants.SORT_DESC) {
                 column.setSort(colDef.sort);
@@ -300,6 +301,7 @@ export class ColumnFactory extends BeanStub {
             }
         }
 
+        // anything but undefined, thus null will clear the sortedAt
         if (colDef.sortedAt!==undefined) {
             column.setSortedAt(colDef.sortedAt);
         }
