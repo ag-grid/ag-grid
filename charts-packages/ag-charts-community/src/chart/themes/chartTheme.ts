@@ -2,9 +2,9 @@ import palette from "../palettes";
 import { deepMerge, getValue } from "../../util/object";
 
 export class ChartTheme {
-    readonly mergedDefaults: any;
-    readonly defaults: any = {};
-    static readonly baseDefaults: any = (() => {
+    readonly configs: any;
+
+    static readonly defaults: any = (() => {
         const defaults: any = {
             cartesian: {
                 width: 600,
@@ -27,7 +27,7 @@ export class ChartTheme {
                         bottom: 10,
                         left: 10
                     },
-                    text: 'Title',
+                    text: 'Official Default Theme',
                     fontStyle: undefined,
                     fontWeight: 'bold',
                     fontSize: 14,
@@ -42,7 +42,7 @@ export class ChartTheme {
                         bottom: 10,
                         left: 10
                     },
-                    text: 'Subtitle',
+                    text: 'Source: ag-grid.com',
                     fontStyle: undefined,
                     fontWeight: undefined,
                     fontSize: 12,
@@ -408,7 +408,7 @@ export class ChartTheme {
                         bottom: 10,
                         left: 10
                     },
-                    text: 'Title',
+                    text: 'Official Default Theme',
                     fontStyle: undefined,
                     fontWeight: 'bold',
                     fontSize: 14,
@@ -423,7 +423,7 @@ export class ChartTheme {
                         bottom: 10,
                         left: 10
                     },
-                    text: 'Subtitle',
+                    text: 'Source: ag-grid.com',
                     fontStyle: undefined,
                     fontWeight: undefined,
                     fontSize: 12,
@@ -509,10 +509,26 @@ export class ChartTheme {
     })();
 
     constructor() {
-        this.mergedDefaults = deepMerge(deepMerge({}, ChartTheme.baseDefaults), this.defaults);
+        const options = { arrayMerge };
+        this.configs = deepMerge(deepMerge({}, ChartTheme.defaults, options), this.getOverrides(), options);
     }
 
-    getDefaults(path: string): any {
-        return getValue(this.mergedDefaults, path);
+    private applyOverrides() {
+        return deepMerge(deepMerge({}, ChartTheme.defaults), this.getOverrides());
     }
+
+    getConfig(path: string): any {
+        return getValue(this.configs, path);
+    }
+
+    /**
+     * Meant to be overridden in subclasses.
+     */
+    getOverrides(): any {
+        return {};
+    }
+}
+
+function arrayMerge(target: any, source: any, options: any) {
+    return source;
 }

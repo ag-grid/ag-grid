@@ -5,12 +5,12 @@ import { find } from "../util/array";
 import { LegendMarker } from "./legend";
 import defaultMappings from './chartMappings';
 import { ChartTheme } from "./themes/chartTheme";
-import { DarkEgypt } from './themes/darkEgypt';
+import { DarkTheme } from './themes/darkTheme';
 import { getValue } from "../util/object";
 
 const themes = {
     default: new ChartTheme(),
-    'dark-egypt': new DarkEgypt()
+    dark: new DarkTheme()
 } as any;
 
 function getTheme(name: string | ChartTheme): ChartTheme {
@@ -108,7 +108,7 @@ function create(mappings: any, options: any, path?: string, component?: any, the
     const mapping = getValue(mappings, path);
 
     if (mapping) {
-        options = provideDefaultOptions(options, mapping, theme && theme.getDefaults(path));
+        options = provideDefaultOptions(options, mapping, theme && theme.getConfig(path));
 
         const meta = mapping.meta || {};
         const constructorParams = meta.constructorParams || [];
@@ -187,7 +187,7 @@ function update(mappings: any, component: any, options: any, path?: string, them
     const mapping = getValue(mappings, path);
 
     if (mapping) {
-        options = provideDefaultOptions(options, mapping, theme && theme.getDefaults(path));
+        options = provideDefaultOptions(options, mapping, theme && theme.getConfig(path));
 
         const meta = mapping.meta || {};
         const constructorParams = meta && meta.constructorParams || [];
