@@ -347,7 +347,10 @@ export interface CellContextMenuEvent extends CellEvent { }
 
 export interface CellEditingStartedEvent extends CellEvent { }
 
-export interface CellEditingStoppedEvent extends CellEvent { }
+export interface CellEditingStoppedEvent extends CellEvent {
+    oldValue: any;
+    newValue: any;
+}
 
 export interface CellValueChangedEvent extends CellEvent {
     oldValue: any;
