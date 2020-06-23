@@ -63,7 +63,7 @@ Usage Overview
 
 #### Install dependencies
 
-    $ npm i --save ag-grid
+    $ npm i --save ag-grid-community
 
 ### Add a placeholder to HTML
 
