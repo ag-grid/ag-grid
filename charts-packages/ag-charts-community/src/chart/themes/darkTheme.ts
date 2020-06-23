@@ -1,6 +1,7 @@
 import { ChartTheme } from "./chartTheme";
 
 export class DarkTheme extends ChartTheme {
+
     getOverrides(): any {
         const fontColor = 'rgb(200, 200, 200)';
         const mutedFontColor = 'rgb(150, 150, 150)';
@@ -16,6 +17,12 @@ export class DarkTheme extends ChartTheme {
                 stroke: 'rgb(120, 120, 120)',
                 lineDash: [4, 2]
             }]
+        };
+
+        const seriesLabelDefaults = {
+            label: {
+                color: fontColor
+            }
         };
 
         const chartOverrides = {
@@ -52,10 +59,26 @@ export class DarkTheme extends ChartTheme {
 
         return {
             cartesian: {
-                ...chartOverrides
+                ...chartOverrides,
+                series: {
+                    bar: {
+                        ...seriesLabelDefaults
+                    },
+                    column: {
+                        ...seriesLabelDefaults
+                    },
+                    histogram: {
+                        ...seriesLabelDefaults
+                    }
+                }
             },
             polar: {
-                ...chartOverrides
+                ...chartOverrides,
+                series: {
+                    pie: {
+                        ...seriesLabelDefaults
+                    }
+                }
             }
         };
     }
