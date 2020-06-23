@@ -219,7 +219,7 @@ export class SetFilter extends ProvidedFilter {
             params.column,
             params.doesRowPassOtherFilter,
             params.suppressSorting,
-            loading => this.setLoading(loading),
+            loading => this.showOrHideLoadingScreen(loading),
             this.valueFormatterService,
             key => this.translate(key),
         );
@@ -323,7 +323,11 @@ export class SetFilter extends ProvidedFilter {
         const message = 'ag-Grid: since version 23.2, setLoading has been deprecated. The loading screen is displayed automatically when the set filter is retrieving values.';
         _.doOnce(() => console.warn(message), 'setFilter.setLoading');
 
-        _.setDisplayed(this.eFilterLoading, loading);
+        this.showOrHideLoadingScreen(loading);
+    }
+
+    private showOrHideLoadingScreen(isLoading: boolean): void {
+        _.setDisplayed(this.eFilterLoading, isLoading);
     }
 
     private initialiseFilterBodyUi(): void {

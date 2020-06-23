@@ -40,14 +40,10 @@ SNIPPET
     <li>The <strong>Athlete</strong> has a Combined Filter with default behaviour.</li>
     <li>
         The <strong>Country</strong>, <strong>Gold</strong> and <strong>Date</strong> columns have Combined Filters with
-        the type of the wrapped filter stated explicitly, using
+        the type of the wrapped filter stated explicitly, using the
         <a href="../javascript-grid-filter-text/">Text</a>,
         <a href="../javascript-grid-filter-number/">Number</a> and
         <a href="../javascript-grid-filter-date/">Date</a> Simple Filters respectively.
-    </li>
-    <li>
-        The <strong>Year</strong> column has a <a href="../javascript-grid-filter-custom/">Custom Filter</a>
-        specified.
     </li>
     <li>
         Filter params supplied to the Combined Filter will be passed to the Set Filter, but different
@@ -70,7 +66,7 @@ SNIPPET
     </li>
 </ul>
 
-<?= grid_example('Combined Filter', 'combined-filter', 'generated', ['enterprise' => true, 'exampleHeight' => 700, 'modules' => ['clientside', 'setfilter', 'menu']]) ?>
+<?= grid_example('Combined Filter', 'combined-filter', 'generated', ['enterprise' => true, 'exampleHeight' => 700]) ?>
 
 <h2>Synchronisation</h2>
 
@@ -159,6 +155,18 @@ SNIPPET
 </ul>
 
 <?= grid_example('Allow Both Filters', 'allow-both-filters', 'generated', ['enterprise' => true, 'exampleHeight' => 700, 'modules' => ['clientside', 'setfilter', 'menu']]) ?>
+
+<h2>Custom Filters</h2>
+
+<p>
+    You can also use your own <a href="../javascript-grid-filter-custom/">Custom Filters</a> with the Combined Filter.
+</p>
+
+<p>
+    The example below shows a Custom Filter in use on the <strong>Year</strong> column.
+</p>
+
+<?= grid_example('Custom Filters', 'custom-filter', 'vanilla', ['enterprise' => true, 'exampleHeight' => 700]) ?>
 
 <h2>Combined Filter Parameters</h2>
 
