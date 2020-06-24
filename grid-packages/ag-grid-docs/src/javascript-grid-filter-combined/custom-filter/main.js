@@ -8,6 +8,7 @@ var gridOptions = {
             filterParams: {
                 wrappedFilter: {
                     filter: YearFilter,
+                    floatingFilterComponent: YearFloatingFilter,
                 }
             }
         }

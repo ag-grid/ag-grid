@@ -182,8 +182,6 @@ export class UserComponentFactory extends BeanStub {
      *      some cases is not, like floatingFilter, if it is the same is not necessary to specify
      *  @param optional: Handy method to tell if this should return a component ALWAYS. if that is the case, but there is no
      *      component found, it throws an error, by default all components are MANDATORY
-     *  @param modifyParamsCallback: A chance to customise the params passed to the init method. It receives what the current
-     *  params are and the component that init is about to get called for
      */
     public createAndInitUserComponent<A extends IComponent<TParams>, TParams>(
         definitionObject: DefinitionObject,

@@ -17,7 +17,6 @@ export class CombinedFloatingFilterComp extends Component implements IFloatingFi
 
     private wrappedFloatingFilter: IFloatingFilterComp;
     private setFloatingFilter: SetFloatingFilterComp;
-    private allowBothFiltersConcurrently: boolean;
 
     constructor() {
         super('<div class="ag-floating-filter-input"></div>');
@@ -25,8 +24,6 @@ export class CombinedFloatingFilterComp extends Component implements IFloatingFi
 
     public init(params: IFloatingFilterParams): void {
         const filterParams = params.filterParams as CombinedFilterParams;
-
-        this.allowBothFiltersConcurrently = !!filterParams.allowBothFiltersConcurrently;
 
         this.wrappedFloatingFilter = this.createWrappedFloatingFilter(filterParams.wrappedFilter, params);
         this.appendChild(this.wrappedFloatingFilter.getGui());

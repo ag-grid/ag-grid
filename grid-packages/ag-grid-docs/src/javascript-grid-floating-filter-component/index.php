@@ -59,7 +59,7 @@ interface IFloatingFilterComp {
     // state. The provided parentModel is what the parent filter returns
     // from its getModel() method. The event is the FilterChangedEvent
     // that the grid fires.
-    onParentModelChanged(parentModel: any, event: FilterChangeEvent): void;
+    onParentModelChanged(parentModel: any, event: FilterChangedEvent): void;
 
     // Returns the HTML element for this floating filter.
     getGui(): HTMLElement;
@@ -94,16 +94,16 @@ interface IFloatingFilterParams {
     // filter params.
     filterParams: IFilterParams;
 
-    // This is a shortcut to invoke getModel on the parent parent filter.
+    // This is a shortcut to invoke getModel on the parent filter.
     // If the parent filter doesn't exist (filters are lazily created as needed)
-    // then returns null rather than calling getModel() on the parent filter.
+    // then it returns null rather than calling getModel() on the parent filter.
     currentParentModel(): any;
 
     // Boolean flag to indicate if the button in the floating filter that
     // opens the parent filter in a popup should be displayed
     suppressFilterButton: boolean;
 
-    // Gets a reference to the parent filter. The result is returned asynchonously
+    // Gets a reference to the parent filter. The result is returned asynchronously
     // via a callback as the parent filter may not exist yet. If it does
     // not exist, it is created and asynchronously returned (ag-Grid itself
     // does not create components asynchronously, however if providing a framework

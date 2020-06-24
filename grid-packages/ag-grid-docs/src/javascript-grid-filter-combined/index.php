@@ -47,7 +47,7 @@ SNIPPET
     </li>
     <li>
         Filter params supplied to the Combined Filter will be passed to the Set Filter, but different
-        <code>filterParams</code> can be supplied to wrapped filter, as shown in the <strong>Date</strong> column.
+        <code>filterParams</code> can be supplied to the wrapped filter, as shown in the <strong>Date</strong> column.
     </li>
     <li>
         Floating filters are enabled for all columns. The floating filter reflects the active filter for that column,

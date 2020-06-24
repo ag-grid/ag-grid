@@ -2,19 +2,22 @@ function YearFilter() {
 }
 
 YearFilter.prototype.init = function(params) {
+    this.filterChangedCallback = params.filterChangedCallback.bind(this);
     this.eGui = document.createElement('div');
     this.eGui.innerHTML =
         '<div style="display: flex; justify-content: center;">' +
         '<label style="padding: 0.5rem;">' +
-        '  <input type="radio" name="yearFilter" checked="true" id="rbAllYears" /> All' +
+        '  <input type="radio" name="yearFilter" checked="checked" id="rbYearAll" /> All' +
         '</label>' +
         '<label style="padding: 0.5rem;">' +
-        '  <input type="radio" name="yearFilter" id="rbSince2010" /> Since 2010' +
+        '  <input type="radio" name="yearFilter" id="rbYearAfter2004" /> After 2004' +
         '</label>' +
         '</div>';
-    this.eGui.querySelector('#rbAllYears').addEventListener('change', params.filterChangedCallback.bind(this));
-    this.rbSince2010 = this.eGui.querySelector('#rbSince2010');
-    this.rbSince2010.addEventListener('change', params.filterChangedCallback.bind(this));
+
+    this.rbAllYears = this.eGui.querySelector('#rbYearAll');
+    this.rbAllYears.addEventListener('change', this.filterChangedCallback);
+    this.rbAfter2004 = this.eGui.querySelector('#rbYearAfter2004');
+    this.rbAfter2004.addEventListener('change', this.filterChangedCallback);
     this.filterActive = false;
 };
 
@@ -23,17 +26,28 @@ YearFilter.prototype.getGui = function() {
 };
 
 YearFilter.prototype.doesFilterPass = function(params) {
-    return params.data.year >= 2010;
+    return params.data.year > 2004;
 };
 
 YearFilter.prototype.isFilterActive = function() {
-    return this.rbSince2010.checked;
+    return this.rbAfter2004.checked;
 };
 
-// this example isn't using getModel() and setModel(),
-// so safe to just leave these empty. don't do this in your code!!!
 YearFilter.prototype.getModel = function() {
+    return this.isFilterActive() || null;
 };
 
-YearFilter.prototype.setModel = function() {
+YearFilter.prototype.onFloatingFilterChanged = function(value) {
+    this.setModel(value);
+    this.filterChangedCallback();
+};
+
+YearFilter.prototype.setModel = function(model) {
+    if (model) {
+        this.rbAllYears.checked = false;
+        this.rbAfter2004.checked = true;
+    } else {
+        this.rbAllYears.checked = true;
+        this.rbAfter2004.checked = false;
+    }
 };
