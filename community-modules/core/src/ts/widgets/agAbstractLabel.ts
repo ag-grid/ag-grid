@@ -42,7 +42,7 @@ export abstract class AgAbstractLabel extends Component {
         this.refreshLabel();
     }
 
-    private refreshLabel() {
+    protected refreshLabel() {
         this.eLabel.innerText = this.label + this.labelSeparator;
         _.addOrRemoveCssClass(this.eLabel, 'ag-hidden', this.label === '');
     }
@@ -59,6 +59,16 @@ export abstract class AgAbstractLabel extends Component {
         }
 
         return this;
+    }
+
+    public getLabelId(): string {
+        this.eLabel.id = this.eLabel.id || `ag-${this.getCompId()}-label`;
+
+        return this.eLabel.id;
+    }
+
+    public getLabel(): string {
+        return this.label;
     }
 
     public setLabel(label: string): this {

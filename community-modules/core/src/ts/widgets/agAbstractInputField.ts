@@ -2,6 +2,7 @@ import { IAgLabel } from './agAbstractLabel';
 import { RefSelector } from './componentAnnotations';
 import { AgAbstractField, FieldElement } from './agAbstractField';
 import { setDisabled, setElementWidth, addCssClass } from '../utils/dom';
+import { _ } from '../utils';
 
 export interface IInputField extends IAgLabel {
     value?: any;
@@ -15,13 +16,13 @@ export abstract class AgAbstractInputField<T extends FieldElement, K> extends Ag
 
     protected TEMPLATE = /* html */`
         <div role="presentation">
-            <label ref="eLabel" class="ag-input-field-label"></label>
+            <div ref="eLabel" class="ag-input-field-label"></div>
             <div ref="eWrapper" class="ag-wrapper ag-input-wrapper" role="presentation">
                 <%displayField% ref="eInput" class="ag-input-field-input"></%displayField%>
             </div>
         </div>`;
 
-    @RefSelector('eLabel') protected eLabel: HTMLLabelElement;
+    @RefSelector('eLabel') protected eLabel: HTMLElement;
     @RefSelector('eWrapper') protected eWrapper: HTMLElement;
     @RefSelector('eInput') protected eInput: T;
 
@@ -34,9 +35,7 @@ export abstract class AgAbstractInputField<T extends FieldElement, K> extends Ag
         addCssClass(this.eInput, `${this.className}-input`);
         addCssClass(this.getGui(), 'ag-input-field');
 
-        const inputId = this.eInput.id ? this.eInput.id : `ag-input-id-${this.getCompId()}`;
-        this.eLabel.htmlFor = inputId;
-        this.eInput.id = inputId;
+        this.eInput.id = this.eInput.id || `ag-${this.getCompId()}-input`;
 
         const { width, value } = this.config;
 
@@ -49,6 +48,16 @@ export abstract class AgAbstractInputField<T extends FieldElement, K> extends Ag
         }
 
         this.addInputListeners();
+    }
+
+    protected refreshLabel() {
+        if (_.exists(this.getLabel())) {
+            this.eInput.setAttribute('aria-labelledby', this.getLabelId());
+        } else {
+            this.eInput.removeAttribute('aria-labelledby');
+        }
+
+        super.refreshLabel();
     }
 
     protected addInputListeners() {

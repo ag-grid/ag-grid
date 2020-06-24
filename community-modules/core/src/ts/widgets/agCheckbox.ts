@@ -29,6 +29,7 @@ export class AgCheckbox extends AgAbstractInputField<HTMLInputElement, boolean> 
 
     protected addInputListeners() {
         this.addManagedListener(this.eInput, 'click', this.onCheckboxClick.bind(this));
+        this.addManagedListener(this.eLabel, 'click', this.toggle.bind(this));
     }
 
     public getNextValue(): boolean {
