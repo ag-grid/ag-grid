@@ -1,8 +1,35 @@
 import palette from "../palettes";
 import { deepMerge, getValue } from "../../util/object";
+import { Chart } from "../chart";
+import { ChartPalette } from "./darkTheme";
+import { copy } from "../../util/array";
 
 export class ChartTheme {
-    readonly configs: any;
+
+    readonly palette: ChartPalette = {
+        fills: [
+            '#f3622d',
+            '#fba71b',
+            '#57b757',
+            '#41a9c9',
+            '#4258c9',
+            '#9a42c8',
+            '#c84164',
+            '#888888'
+        ],
+        strokes: [
+            '#aa4520',
+            '#b07513',
+            '#3d803d',
+            '#2d768d',
+            '#2e3e8d',
+            '#6c2e8c',
+            '#8c2d46',
+            '#5f5f5f'
+        ]
+    }
+
+    private readonly configs: any;
 
     static readonly defaults: any = (() => {
         const defaults: any = {
@@ -513,10 +540,6 @@ export class ChartTheme {
         this.configs = deepMerge(deepMerge({}, ChartTheme.defaults, options), this.getOverrides(), options);
     }
 
-    private applyOverrides() {
-        return deepMerge(deepMerge({}, ChartTheme.defaults), this.getOverrides());
-    }
-
     getConfig(path: string): any {
         return getValue(this.configs, path);
     }
@@ -526,6 +549,24 @@ export class ChartTheme {
      */
     getOverrides(): any {
         return {};
+    }
+
+    updateChart(chart: Chart) {
+        const { palette } = this;
+        const allSeries = chart.series;
+        let colorIndex = 0;
+
+        allSeries.forEach(series => {
+            const { colorCount } = series;
+            if (colorCount === Infinity) {
+                series.setColors(palette.fills, palette.strokes);
+            } else {
+                const fills = copy(palette.fills, colorIndex, colorCount);
+                const strokes = copy(palette.strokes, colorIndex, colorCount);
+                series.setColors(fills, strokes);
+            }
+            colorIndex += colorCount;
+        });
     }
 }
 

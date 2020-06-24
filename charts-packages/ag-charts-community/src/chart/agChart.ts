@@ -3,10 +3,10 @@ import { Series } from "./series/series";
 import { ChartAxis } from "./chartAxis";
 import { find } from "../util/array";
 import { LegendMarker } from "./legend";
-import mappings from './chartMappings';
 import { ChartTheme } from "./themes/chartTheme";
 import { DarkTheme } from './themes/darkTheme';
 import { getValue } from "../util/object";
+import mappings from './chartMappings';
 
 const themes = {
     default: new ChartTheme(),
@@ -34,9 +34,15 @@ export abstract class AgChart {
         }
         // special handling when both `autoSize` and `width` / `height` are present in the options
         const autoSize = options && options.autoSize;
-        const chart = create(options, undefined, undefined, getTheme(options.theme));
-        if (chart && autoSize) { // `autoSize` takes precedence over `width` / `height`
-            chart.autoSize = true;
+        const theme = getTheme(options.theme);
+        const chart = create(options, undefined, undefined, theme);
+        if (chart) {
+            if (autoSize) {  // `autoSize` takes precedence over `width` / `height`
+                chart.autoSize = true;
+            }
+            if (theme) {
+                theme.updateChart(chart);
+            }
         }
         // console.log(JSON.stringify(flattenObject(options), null, 4));
         return chart;
@@ -51,9 +57,15 @@ export abstract class AgChart {
             options.data = data;
         }
         const autoSize = options && options.autoSize;
-        update(chart, options, undefined, getTheme(options.theme));
-        if (chart && autoSize) {
-            chart.autoSize = true;
+        const theme = getTheme(options.theme);
+        update(chart, options, undefined, theme);
+        if (chart) {
+            if (autoSize) {
+                chart.autoSize = true;
+            }
+            if (theme) {
+                theme.updateChart(chart);
+            }
         }
     }
 
@@ -70,22 +82,6 @@ const pathToSeriesTypeMap: { [key in string]: string } = {
     'polar.series': 'pie', // default series type for polar charts
     'pie.series': 'pie'
 };
-
-function provideDefaultType(options: any, path?: string): any {
-    if (!path) { // if `path` is undefined, `options` is a top-level (chart) config
-        provideDefaultChartType(options);
-    }
-
-    if (!options.type) {
-        const seriesType = pathToSeriesTypeMap[path];
-        if (seriesType) {
-            options = Object.create(options);
-            options.type = seriesType;
-        }
-    }
-
-    return options;
-}
 
 function create(options: any, path?: string, component?: any, theme?: ChartTheme) {
     // Deprecate `chart.legend.item.marker.type` in integrated chart options.
@@ -292,7 +288,7 @@ function updateAxes(chart: Chart, configs: any[], keyPath: string, theme?: Chart
     chart.axes = axesToUpdate.concat(axesToAdd);
 }
 
-function provideDefaultChartType(options: any) {
+function provideDefaultChartType(options: any): any {
     if (options.type) {
         return;
     }
@@ -303,6 +299,7 @@ function provideDefaultChartType(options: any) {
         outerLoop: for (const chartType in mappings) {
             for (const seriesType in mappings[chartType].series) {
                 if (series.type === seriesType) {
+                    options = Object.create(options);
                     options.type = chartType;
                     break outerLoop;
                 }
@@ -310,14 +307,35 @@ function provideDefaultChartType(options: any) {
         }
     }
     if (!options.type) {
+        options = Object.create(options);
         options.type = 'cartesian';
     }
+
+    return options;
+}
+
+function provideDefaultType(options: any, path?: string): any {
+    if (!path) { // if `path` is undefined, `options` is a top-level (chart) config
+        options = provideDefaultChartType(options);
+    }
+
+    if (!options.type) {
+        const seriesType = pathToSeriesTypeMap[path];
+        if (seriesType) {
+            options = Object.create(options);
+            options.type = seriesType;
+        }
+    }
+
+    return options;
 }
 
 /**
- * If certain options were not provided by the user, use the defaults from the mapping.
+ * If certain options were not provided by the user, use the defaults from the theme and the mapping.
+ * All three objects are provided for the current path in the config tree, not necessarily top-level.
  * @param options
  * @param mapping
+ * @param themeDefaults
  */
 function provideDefaultOptions(options: any, mapping: any, themeDefaults?: any): any {
     const defaults = mapping && mapping.meta && mapping.meta.defaults;
@@ -325,11 +343,13 @@ function provideDefaultOptions(options: any, mapping: any, themeDefaults?: any):
     if (defaults || themeDefaults) {
         options = Object.create(options);
     }
+    // Fill in the gaps for properties not configured by the user using theme provided values.
     for (const key in themeDefaults) {
         if (!(key in options)) {
             options[key] = themeDefaults[key];
         }
     }
+    // Fill in the gaps for properties not configured by the user, nor theme using chart mappings.
     for (const key in defaults) {
         if ((!themeDefaults || !(key in themeDefaults)) && !(key in options)) {
             options[key] = defaults[key];

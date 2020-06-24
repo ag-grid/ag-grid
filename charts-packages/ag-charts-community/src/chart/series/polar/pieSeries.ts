@@ -4,7 +4,6 @@ import { Text } from "../../../scene/shape/text";
 import { Selection } from "../../../scene/selection";
 import { DropShadow } from "../../../scene/dropShadow";
 import { LinearScale } from "../../../scale/linearScale";
-import palette from "../../palettes";
 import { Sector } from "../../../scene/shape/sector";
 import { PolarTooltipRendererParams, SeriesNodeDatum, HighlightStyle } from "./../series";
 import { Label } from "../../label";
@@ -64,9 +63,9 @@ class PieSeriesLabel extends Label {
 }
 
 class PieSeriesCallout extends Observable {
-    @reactive('change') colors = palette.strokes;
-    @reactive('change') length = 10;
-    @reactive('change') strokeWidth = 1;
+    @reactive('change') colors: string[] = [];
+    @reactive('change') length: number = 10;
+    @reactive('change') strokeWidth: number = 1;
 }
 
 export class PieSeries extends PolarSeries {
@@ -153,7 +152,7 @@ export class PieSeries extends PolarSeries {
     @reactive('dataChange') labelKey?: string;
     @reactive('update') labelName?: string;
 
-    private _fills: string[] = palette.fills;
+    private _fills: string[] = [];
     set fills(values: string[]) {
         this._fills = values;
         this.strokes = values.map(color => Color.fromString(color).darker().toHexString());
@@ -163,7 +162,7 @@ export class PieSeries extends PolarSeries {
         return this._fills;
     }
 
-    private _strokes: string[] = palette.strokes;
+    private _strokes: string[] = [];
     set strokes(values: string[]) {
         this._strokes = values;
         this.callout.colors = values;
@@ -193,6 +192,16 @@ export class PieSeries extends PolarSeries {
 
     onHighlightChange() {
         this.updateNodes();
+    }
+
+    get colorCount(): number {
+        return Infinity;
+    }
+
+    setColors(fills: string[], strokes: string[]) {
+        this.fills = fills;
+        this.strokes = strokes;
+        this.callout.colors = strokes;
     }
 
     getDomain(direction: ChartAxisDirection): any[] {

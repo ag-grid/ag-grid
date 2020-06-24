@@ -2,7 +2,6 @@ import { Path } from "../../../scene/shape/path";
 import ContinuousScale from "../../../scale/continuousScale";
 import { Selection } from "../../../scene/selection";
 import { Group } from "../../../scene/group";
-import palette from "../../palettes";
 import { SeriesNodeDatum, CartesianTooltipRendererParams as LineTooltipRendererParams, HighlightStyle } from "../series";
 import { numericExtent } from "../../../util/array";
 import { toFixed } from "../../../util/number";
@@ -52,7 +51,7 @@ export class LineSeries extends CartesianSeries {
 
     @reactive('layoutChange') title?: string;
 
-    @reactive('update') stroke: string = palette.fills[0];
+    @reactive('update') stroke?: string = undefined;
     @reactive('update') strokeWidth: number = 2;
     @reactive('update') strokeOpacity: number = 1;
 
@@ -70,8 +69,8 @@ export class LineSeries extends CartesianSeries {
         this.addEventListener('update', this.update);
 
         const { marker } = this;
-        marker.fill = palette.fills[0];
-        marker.stroke = palette.strokes[0];
+        marker.fill = undefined;
+        marker.stroke = undefined;
         marker.addPropertyListener('shape', this.onMarkerShapeChange, this);
         marker.addPropertyListener('enabled', this.onMarkerEnabledChange, this);
         marker.addEventListener('change', this.update, this);
@@ -90,6 +89,10 @@ export class LineSeries extends CartesianSeries {
             this.nodeSelection = this.nodeSelection.setData([]);
             this.nodeSelection.exit.remove();
         }
+    }
+
+    setColors(fills: string[], strokes: string[]) {
+        this.stroke = strokes[0];
     }
 
     protected _xKey: string = '';

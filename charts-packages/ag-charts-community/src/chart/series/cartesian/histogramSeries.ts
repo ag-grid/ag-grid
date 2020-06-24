@@ -3,7 +3,6 @@ import { Selection } from "../../../scene/selection";
 import { Rect } from "../../../scene/shape/rect";
 import { Text, FontStyle, FontWeight } from "../../../scene/shape/text";
 import { DropShadow } from "../../../scene/dropShadow";
-import palette from "../../palettes";
 import {
     HighlightStyle,
     SeriesNodeDatum,
@@ -134,8 +133,8 @@ export class HistogramSeries extends CartesianSeries {
 
     tooltipRenderer?: (params: HistogramTooltipRendererParams) => string;
 
-    @reactive('dataChange') fill: string = palette.fills[0];
-    @reactive('dataChange') stroke: string = palette.strokes[0];
+    @reactive('dataChange') fill: string | undefined = undefined;
+    @reactive('dataChange') stroke: string | undefined = undefined;
 
     @reactive('layoutChange') fillOpacity = 1;
     @reactive('layoutChange') strokeOpacity = 1;
@@ -281,6 +280,11 @@ export class HistogramSeries extends CartesianSeries {
 
     onHighlightChange() {
         this.updateRectNodes();
+    }
+
+    setColors(fills: string[], strokes: string[]) {
+        this.fill = fills[0];
+        this.stroke = strokes[0];
     }
 
     protected highlightedDatum?: HistogramNodeDatum;

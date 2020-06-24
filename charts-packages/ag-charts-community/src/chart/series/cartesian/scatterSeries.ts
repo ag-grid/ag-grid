@@ -8,7 +8,6 @@ import { LinearScale } from "../../../scale/linearScale";
 import { reactive, TypedEvent } from "../../../util/observable";
 import { CartesianSeries, CartesianSeriesMarker, CartesianSeriesMarkerFormat } from "./cartesianSeries";
 import { ChartAxisDirection } from "../../chartAxis";
-import palette from "../../palettes";
 import { getMarker } from "../../marker/util";
 import { Chart } from "../../chart";
 import ContinuousScale from "../../../scale/continuousScale";
@@ -55,25 +54,25 @@ export class ScatterSeries extends CartesianSeries {
 
     readonly marker = new CartesianSeriesMarker();
 
-    private _fill: string = palette.fills[0];
-    set fill(value: string) {
+    private _fill: string | undefined = undefined;
+    set fill(value: string | undefined) {
         if (this._fill !== value) {
             this._fill = value;
             this.scheduleData();
         }
     }
-    get fill(): string {
+    get fill(): string | undefined {
         return this._fill;
     }
 
-    private _stroke: string = palette.strokes[0];
-    set stroke(value: string) {
+    private _stroke: string | undefined = undefined;
+    set stroke(value: string | undefined) {
         if (this._stroke !== value) {
             this._stroke = value;
             this.scheduleData();
         }
     }
-    get stroke(): string {
+    get stroke(): string | undefined {
         return this._stroke;
     }
 
@@ -147,6 +146,11 @@ export class ScatterSeries extends CartesianSeries {
         this.update();
 
         this.fireEvent({ type: 'legendChange' });
+    }
+
+    setColors(fills: string[], strokes: string[]) {
+        this.fill = fills[0];
+        this.stroke = strokes[0];
     }
 
     processData(): boolean {

@@ -19,7 +19,6 @@ import { Navigator } from "./navigator/navigator";
 import { NavigatorMask } from "./navigator/navigatorMask";
 import { NavigatorHandle } from "./navigator/navigatorHandle";
 import { CartesianSeriesMarker } from "./series/cartesian/cartesianSeries";
-import palette from "./palettes";
 
 /*
     This file defines the specs for creating different kinds of charts, but
@@ -193,8 +192,8 @@ const seriesDefaults = {
 } as any;
 
 const columnSeriesDefaults = {
-    fills: palette.fills,
-    strokes: palette.strokes,
+    fills: [],
+    strokes: [],
     fillOpacity: 1,
     strokeOpacity: 1,
     xKey: '',
@@ -389,7 +388,7 @@ const mappings: any = {
                         xName: '',
                         yKey: '',
                         yName: '',
-                        stroke: palette.fills[0],
+                        stroke: undefined,
                         strokeWidth: 2,
                         strokeOpacity: 1,
                         tooltipRenderer: undefined,
@@ -407,8 +406,8 @@ const mappings: any = {
                             shape: 'circle',
                             size: 8,
                             minSize: 8,
-                            fill: palette.fills[0],
-                            stroke: palette.strokes[0],
+                            fill: undefined,
+                            stroke: undefined,
                             strokeWidth: 1,
                             formatter: undefined
                         }
@@ -429,8 +428,8 @@ const mappings: any = {
                         yName: '',
                         sizeName: 'Size',
                         labelName: 'Label',
-                        fill: palette.fills[0],
-                        stroke: palette.strokes[0],
+                        fill: undefined,
+                        stroke: undefined,
                         strokeWidth: 2,
                         fillOpacity: 1,
                         strokeOpacity: 1,
@@ -449,8 +448,8 @@ const mappings: any = {
                             shape: 'circle',
                             size: 8,
                             minSize: 8,
-                            fill: palette.fills[0],
-                            stroke: palette.strokes[0],
+                            fill: undefined,
+                            stroke: undefined,
                             strokeWidth: 1,
                             formatter: undefined
                         }
@@ -467,8 +466,8 @@ const mappings: any = {
                         yKeys: [],
                         yNames: [],
                         normalizedTo: undefined,
-                        fills: palette.fills,
-                        strokes: palette.strokes,
+                        fills: [],
+                        strokes: [],
                         fillOpacity: 1,
                         strokeOpacity: 1,
                         strokeWidth: 2,
@@ -488,8 +487,8 @@ const mappings: any = {
                             shape: 'circle',
                             size: 8,
                             minSize: 8,
-                            fill: palette.fills[0],
-                            stroke: palette.strokes[0],
+                            fill: undefined,
+                            stroke: undefined,
                             strokeWidth: 1,
                             formatter: undefined
                         }
@@ -507,8 +506,8 @@ const mappings: any = {
                         yKey: '',
                         xName: '',
                         yName: '',
-                        fill: palette.fills[0],
-                        stroke: palette.strokes[0],
+                        fill: undefined,
+                        stroke: undefined,
                         strokeWidth: 1,
                         fillOpacity: 1,
                         strokeOpacity: 1,
@@ -608,8 +607,8 @@ const mappings: any = {
                         labelKey: undefined,
                         labelName: undefined,
                         callout: {},
-                        fills: palette.fills,
-                        strokes: palette.strokes,
+                        fills: [],
+                        strokes: [],
                         fillOpacity: 1,
                         strokeOpacity: 1,
                         rotation: 0,
@@ -657,7 +656,7 @@ const mappings: any = {
                 callout: {
                     meta: {
                         defaults: {
-                            colors: palette.strokes,
+                            colors: [],
                             length: 10,
                             strokeWidth: 1
                         }

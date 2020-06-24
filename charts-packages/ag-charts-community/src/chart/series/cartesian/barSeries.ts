@@ -4,7 +4,6 @@ import { Rect } from "../../../scene/shape/rect";
 import { Text, FontStyle, FontWeight } from "../../../scene/shape/text";
 import { BandScale } from "../../../scale/bandScale";
 import { DropShadow } from "../../../scene/dropShadow";
-import palette from "../../palettes";
 import {
     HighlightStyle,
     SeriesNodeDatum,
@@ -99,8 +98,8 @@ export class BarSeries extends CartesianSeries {
 
     @reactive('layoutChange') flipXY = false;
 
-    @reactive('dataChange') fills: string[] = palette.fills;
-    @reactive('dataChange') strokes: string[] = palette.strokes;
+    @reactive('dataChange') fills: string[] = [];
+    @reactive('dataChange') strokes: string[] = [];
 
     @reactive('layoutChange') fillOpacity = 1;
     @reactive('layoutChange') strokeOpacity = 1;
@@ -202,6 +201,15 @@ export class BarSeries extends CartesianSeries {
     }
     get yNames(): string[] {
         return this._yNames;
+    }
+
+    get colorCount(): number {
+        return this.yKeys.length;
+    }
+
+    setColors(fills: string[], strokes: string[]) {
+        this.fills = fills;
+        this.strokes = strokes;
     }
 
     @reactive('dataChange') grouped = false;
