@@ -120,3 +120,16 @@ export function findLargestMinMax(totals: { min: number, max: number }[]): { min
 
     return {min, max};
 }
+
+export function copy(array: any[], start: number = 0, count: number = array.length): any[] {
+    const result = [];
+    let n = array.length;
+
+    if (n) {
+        for (let i = 0; i < count; i++) {
+            result.push(array[(start + i) % n]);
+        }
+    }
+
+    return result;
+}

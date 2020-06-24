@@ -5,7 +5,6 @@ import { SeriesNodeDatum, CartesianTooltipRendererParams as AreaTooltipRendererP
 import { PointerEvents } from "../../../scene/node";
 import { LegendDatum } from "../../legend";
 import { Path } from "../../../scene/shape/path";
-import palette from "../../palettes";
 import { Marker } from "../../marker/marker";
 import { CartesianSeries, CartesianSeriesMarker, CartesianSeriesMarkerFormat } from "./cartesianSeries";
 import { ChartAxisDirection } from "../../chartAxis";
@@ -75,8 +74,8 @@ export class AreaSeries extends CartesianSeries {
 
     readonly marker = new CartesianSeriesMarker();
 
-    @reactive('dataChange') fills: string[] = palette.fills;
-    @reactive('dataChange') strokes: string[] = palette.strokes;
+    @reactive('dataChange') fills: string[] = [];
+    @reactive('dataChange') strokes: string[] = [];
 
     @reactive('update') fillOpacity = 1;
     @reactive('update') strokeOpacity = 1;
@@ -128,6 +127,15 @@ export class AreaSeries extends CartesianSeries {
     }
     get yKeys(): string[] {
         return this._yKeys;
+    }
+
+    get colorCount(): number {
+        return this.yKeys.length;
+    }
+
+    setColors(fills: string[], strokes: string[]) {
+        this.fills = fills;
+        this.strokes = strokes;
     }
 
     @reactive('update') yNames: string[] = [];

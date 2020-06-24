@@ -1,5 +1,10 @@
 import { ChartTheme } from "./chartTheme";
 
+export interface ChartPalette {
+    fills: string[];
+    strokes: string[];
+}
+
 export class DarkTheme extends ChartTheme {
 
     getOverrides(): any {
