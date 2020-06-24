@@ -19,7 +19,7 @@ export class DarkTheme extends ChartTheme {
                 color: fontColor
             },
             gridStyle: [{
-                stroke: 'rgb(120, 120, 120)',
+                stroke: 'rgb(88, 88, 88)',
                 lineDash: [4, 2]
             }]
         };

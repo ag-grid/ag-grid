@@ -67,7 +67,7 @@ const commonChartMappings: any = {
                 fontWeight: 'bold',
                 fontSize: 14,
                 fontFamily: 'Verdana, sans-serif',
-                color: 'rgba(70, 70, 70, 1)'
+                color: 'rgb(70, 70, 70)'
             }
         }
     },
@@ -92,7 +92,7 @@ const commonChartMappings: any = {
                 fontWeight: undefined,
                 fontSize: 12,
                 fontFamily: 'Verdana, sans-serif',
-                color: 'rgba(140, 140, 140, 1)'
+                color: 'rgb(140, 140, 140)'
             }
         }
     },
@@ -180,7 +180,7 @@ const axisDefaults = {
         title: {},
         line: {},
         gridStyle: [{
-            stroke: 'rgba(219, 219, 219, 1)',
+            stroke: 'rgb(219, 219, 219)',
             lineDash: [4, 2]
         }]
     }
@@ -230,7 +230,7 @@ const labelDefaults: any = {
     fontWeight: undefined,
     fontSize: 12,
     fontFamily: 'Verdana, sans-serif',
-    color: 'rgba(70, 70, 70, 1)'
+    color: 'rgb(70, 70, 70)'
 };
 
 const labelMapping: any = {
@@ -248,7 +248,7 @@ const axisMappings: any = {
         meta: {
             defaults: {
                 width: 1,
-                color: 'rgba(195, 195, 195, 1)'
+                color: 'rgb(195, 195, 195)'
             }
         }
     },
@@ -273,7 +273,7 @@ const axisMappings: any = {
                 fontWeight: 'bold',
                 fontSize: 12,
                 fontFamily: 'Verdana, sans-serif',
-                color: 'rgba(70, 70, 70, 1)'
+                color: 'rgb(70, 70, 70)'
             }
         }
     },
@@ -287,7 +287,7 @@ const axisMappings: any = {
                 fontFamily: 'Verdana, sans-serif',
                 padding: 5,
                 rotation: 0,
-                color: 'rgba(87, 87, 87, 1)',
+                color: 'rgb(87, 87, 87)',
                 formatter: undefined
             }
         }
@@ -298,7 +298,7 @@ const axisMappings: any = {
             defaults: {
                 width: 1,
                 size: 6,
-                color: 'rgba(195, 195, 195, 1)',
+                color: 'rgb(195, 195, 195)',
                 count: 10
             }
         }
