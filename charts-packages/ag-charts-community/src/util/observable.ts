@@ -127,6 +127,7 @@ export class Observable {
 }
 
 export function reactive(...events: string[]) {
+    let debug = events.indexOf('debugger') >= 0;
     return function (target: any, key: string) {
         // `target` is either a constructor (static member) or prototype (instance member)
         const privateKey = Observable.privateKeyPrefix + key;
@@ -138,10 +139,11 @@ export function reactive(...events: string[]) {
             }
             Object.defineProperty(target, key, {
                 set: function (value: any) {
-                    let oldValue: any;
+                    const oldValue = this[privateKey];
 
-                    oldValue = this[privateKey];
-
+                    if (debug) {
+                        debugger;
+                    }
                     if (oldValue !== value || (typeof value === 'object' && value !== null)) {
                         this[privateKey] = value;
                         this.notifyPropertyListeners(key, oldValue, value);
@@ -152,9 +154,7 @@ export function reactive(...events: string[]) {
                     }
                 },
                 get: function (): any {
-                    let value: any;
-                    value = this[privateKey];
-                    return value;
+                    return this[privateKey];
                 },
                 enumerable: true,
                 configurable: true

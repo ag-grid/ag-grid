@@ -93,6 +93,8 @@ export class LineSeries extends CartesianSeries {
 
     setColors(fills: string[], strokes: string[]) {
         this.stroke = strokes[0];
+        this.marker.stroke = strokes[0];
+        this.marker.fill = fills[0];
     }
 
     protected _xKey: string = '';
