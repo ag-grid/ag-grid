@@ -165,7 +165,7 @@ export class DateFilter extends ScalarFilter<DateFilterModel, Date> {
 
         const [compFrom, compTo] = this.getFromToComponents(position);
 
-        return compFrom.getDate() != null && (option !== SimpleFilter.IN_RANGE || compTo.getDate() != null);
+        return compFrom.getDate() != null && (!this.showValueTo(option) || compTo.getDate() != null);
     }
 
     protected areSimpleModelsEqual(aSimple: DateFilterModel, bSimple: DateFilterModel): boolean {

@@ -1,7 +1,7 @@
 import { IAgLabel } from './agAbstractLabel';
 import { RefSelector } from './componentAnnotations';
 import { AgAbstractField, FieldElement } from './agAbstractField';
-import { setDisabled, setElementWidth, addCssClass } from '../utils/dom';
+import { setDisabled, setElementWidth, addCssClass, addOrRemoveAttribute } from '../utils/dom';
 import { _ } from '../utils';
 
 export interface IInputField extends IAgLabel {
@@ -102,14 +102,7 @@ export abstract class AgAbstractInputField<T extends FieldElement, K> extends Ag
     }
 
     public setInputPlaceholder(placeholder: string): this {
-        const eInput = this.eInput;
-        const attributeName = 'placeholder';
-
-        if (placeholder) {
-            eInput.setAttribute(attributeName, placeholder);
-        } else {
-            eInput.removeAttribute(attributeName);
-        }
+        addOrRemoveAttribute(this.eInput, 'placeholder', placeholder);
 
         return this;
     }

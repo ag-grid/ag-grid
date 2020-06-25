@@ -362,13 +362,13 @@ export abstract class SimpleFilter<M extends ISimpleFilterModel> extends Provide
         return Promise.resolve();
     }
 
-    public translate(toTranslate: keyof ISimpleFilterTranslations): string {
+    protected translate(toTranslate: keyof ISimpleFilterTranslations): string {
         const translate = this.gridOptionsWrapper.getLocaleTextFunc();
 
         return translate(toTranslate, DEFAULT_TRANSLATIONS[toTranslate]);
     }
 
-    public addChangedListeners() {
+    private addChangedListeners() {
         const listener = () => this.onUiChanged();
         this.eType1.onValueChange(listener);
         this.eType2.onValueChange(listener);

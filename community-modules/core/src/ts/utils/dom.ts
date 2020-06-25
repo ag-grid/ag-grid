@@ -503,3 +503,11 @@ export function setCheckboxState(eCheckbox: HTMLInputElement, state: any) {
         eCheckbox.indeterminate = true;
     }
 }
+
+export function addOrRemoveAttribute(element: HTMLElement, name: string, value: any) {
+    if (value == null) {
+        element.removeAttribute(name);
+    } else {
+        element.setAttribute(name, value.toString());
+    }
+}
