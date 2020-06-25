@@ -22,6 +22,7 @@ export class AreaChartProxy extends CartesianChartProxy<AreaSeriesOptions> {
         }
 
         options = options || this.chartOptions;
+        options.autoSize = true;
         options.axes = [{
             ...options.xAxis,
             position: 'bottom',

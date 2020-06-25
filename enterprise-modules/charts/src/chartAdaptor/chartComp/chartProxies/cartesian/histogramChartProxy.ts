@@ -22,6 +22,7 @@ export class HistogramChartProxy extends CartesianChartProxy<HistogramSeriesOpti
         const seriesDefaults = this.getSeriesDefaults();
 
         options = options || this.chartOptions;
+        options.autoSize = true;
         options.axes = [{
             ...options.xAxis,
             position: 'bottom',

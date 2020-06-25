@@ -1,6 +1,5 @@
 import { _, BarSeriesOptions, CartesianChartOptions, ChartType } from "@ag-grid-community/core";
 import {
-    BarSeriesOptions as InternalBarSeriesOptions,
     CartesianChart,
     BarSeries,
     AgChart
@@ -22,6 +21,7 @@ export class BarChartProxy extends CartesianChartProxy<BarSeriesOptions> {
         const isColumn = this.isColumnChart();
 
         options = options || this.chartOptions;
+        options.autoSize = true;
         const { seriesDefaults } = options;
         options.axes = [{
             ...options.xAxis,

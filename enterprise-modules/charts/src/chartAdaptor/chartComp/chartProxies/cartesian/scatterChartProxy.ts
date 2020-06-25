@@ -22,6 +22,7 @@ export class ScatterChartProxy extends CartesianChartProxy<ScatterSeriesOptions>
 
     protected createChart(options: any): CartesianChart {
         options = options || this.chartOptions;
+        options.autoSize = true;
         options.axes = [{
             ...options.xAxis,
             position: 'bottom',
