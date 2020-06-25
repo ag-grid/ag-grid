@@ -31,7 +31,7 @@ export class HeaderGroupComp extends Component implements IHeaderGroupComp {
 
     static TEMPLATE = /* html */
         `<div class="ag-header-group-cell-label" ref="agContainer" role="presentation">
-            <span ref="agLabel" class="ag-header-group-text" role="columnheader"></span>
+            <span ref="agLabel" class="ag-header-group-text" role="presentation"></span>
             <span ref="agOpened" class="ag-header-icon ag-header-expand-icon ag-header-expand-icon-expanded"></span>
             <span ref="agClosed" class="ag-header-icon ag-header-expand-icon ag-header-expand-icon-collapsed"></span>
         </div>`;

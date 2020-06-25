@@ -28,8 +28,8 @@ import { FloatingFilterMapper } from './floatingFilterMapper';
 
 export class FloatingFilterWrapper extends AbstractHeaderWrapper {
     private static TEMPLATE = /* html */
-        `<div class="ag-header-cell" role="presentation" tabindex="-1">
-            <div ref="eFloatingFilterBody" role="columnheader"></div>
+        `<div class="ag-header-cell" role="columnheader" tabindex="-1">
+            <div ref="eFloatingFilterBody" role="presentation"></div>
             <div class="ag-floating-filter-button" ref="eButtonWrapper" role="presentation">
                 <button type="button" aria-label="Open Filter Menu" class="ag-floating-filter-button-button" ref="eButtonShowMainFilter" tabindex="-1"></button>
             </div>

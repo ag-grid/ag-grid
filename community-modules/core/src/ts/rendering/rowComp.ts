@@ -184,6 +184,7 @@ export class RowComp extends Component {
         templateParts.push(businessKey ? ` row-business-key="${businessKeySanitised}"` : ``);
         templateParts.push(` comp-id="${this.getCompId()}"`);
         templateParts.push(` class="${rowClasses}"`);
+        templateParts.push(` aria-selected="${this.rowNode.isSelected() ? 'true' : 'false'}"`);
         templateParts.push(` style="height: ${rowHeight}px; ${rowTopStyle} ${userRowStyles}">`);
 
         // add in the template for the cells
@@ -1244,7 +1245,10 @@ export class RowComp extends Component {
 
     private onRowSelected(): void {
         const selected = this.rowNode.isSelected();
-        this.eAllRowContainers.forEach((row) => _.addOrRemoveCssClass(row, 'ag-row-selected', selected));
+        this.eAllRowContainers.forEach((row) => {
+            row.setAttribute('aria-selected', selected ? 'true' : 'false');
+            _.addOrRemoveCssClass(row, 'ag-row-selected', selected);
+        });
     }
 
     // called:

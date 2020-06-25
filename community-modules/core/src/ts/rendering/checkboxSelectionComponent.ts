@@ -21,7 +21,7 @@ export class CheckboxSelectionComponent extends Component {
 
     constructor() {
         super(/* html*/`
-            <div class="ag-selection-checkbox">
+            <div class="ag-selection-checkbox" aria-hidden="true">
                 <ag-checkbox role="presentation" ref="eCheckbox"></ag-checkbox>
             </div>`
         );

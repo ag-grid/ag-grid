@@ -33,7 +33,7 @@ import { _ } from "../../utils";
 export class HeaderWrapperComp extends AbstractHeaderWrapper {
 
     private static TEMPLATE = /* html */
-        `<div class="ag-header-cell" role="presentation" unselectable="on" tabindex="-1">
+        `<div class="ag-header-cell" role="columnheader" unselectable="on" tabindex="-1">
             <div ref="eResize" class="ag-header-cell-resize" role="presentation"></div>
             <ag-checkbox ref="cbSelectAll" class="ag-header-select-all" role="presentation"></ag-checkbox>
         </div>`;

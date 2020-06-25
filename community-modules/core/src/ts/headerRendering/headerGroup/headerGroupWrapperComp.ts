@@ -29,7 +29,7 @@ import { _ } from "../../utils";
 export class HeaderGroupWrapperComp extends AbstractHeaderWrapper {
 
     private static TEMPLATE = /* html */
-        `<div class="ag-header-group-cell" role="presentation" tabindex="-1">
+        `<div class="ag-header-group-cell" role="columnheader" tabindex="-1">
             <div ref="agResize" class="ag-header-cell-resize" role="presentation"></div>
         </div>`;
 
