@@ -383,6 +383,25 @@ export class ChartTheme {
                         strokeWidth: 1,
                         formatter: undefined
                     }
+                },
+                histogram: {
+                    visible: true,
+                    showInLegend: true,
+                    title: undefined,
+                    xKey: '',
+                    yKey: '',
+                    xName: '',
+                    yName: '',
+                    fill: undefined,
+                    stroke: undefined,
+                    strokeWidth: 1,
+                    fillOpacity: 1,
+                    strokeOpacity: 1,
+                    aggregation: 'sum',
+                    tooltipRenderer: undefined,
+                    highlightStyle: {
+                        fill: 'yellow'
+                    }
                 }
             },
             navigator: {
