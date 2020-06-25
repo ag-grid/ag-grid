@@ -515,7 +515,7 @@ const mappings: any = {
                         tooltipRenderer: undefined,
                         highlightStyle: {
                             fill: 'yellow'
-                        },
+                        }
                     }
                 },
                 highlightStyle: {},
