@@ -81,6 +81,7 @@
       <excludeFolder url="file://$MODULE_DIR$/examples-grid/ag-grid-angular-cli-example/dist" />
       <excludeFolder url="file://$MODULE_DIR$/examples-grid/ag-grid-angular-cli-package-example/dist" />
       <excludeFolder url="file://$MODULE_DIR$/examples-grid/ag-grid-angular-cli-package-example/tmp" />
+      <excludeFolder url="file://$MODULE_DIR$/examples-grid/ag-grid-charts-example/dist" />
       <excludeFolder url="file://$MODULE_DIR$/examples-grid/ag-grid-react-example/dist" />
       <excludeFolder url="file://$MODULE_DIR$/examples-grid/ag-grid-react-package-example/dist" />
       <excludeFolder url="file://$MODULE_DIR$/examples-grid/ag-grid-vue-example/dist" />
