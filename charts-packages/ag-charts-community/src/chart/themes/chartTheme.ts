@@ -1,8 +1,7 @@
-import palette from "../palettes";
 import { deepMerge, getValue } from "../../util/object";
+import { copy } from "../../util/array";
 import { Chart } from "../chart";
 import { ChartPalette } from "./darkTheme";
-import { copy } from "../../util/array";
 
 export class ChartTheme {
 
@@ -228,8 +227,8 @@ export class ChartTheme {
                         visible: true,
                         showInLegend: true,
                         flipXY: false,
-                        fills: palette.fills,
-                        strokes: palette.strokes,
+                        fills: [],
+                        strokes: [],
                         fillOpacity: 1,
                         strokeOpacity: 1,
                         xKey: '',
@@ -263,8 +262,8 @@ export class ChartTheme {
                         visible: true,
                         showInLegend: true,
                         flipXY: true,
-                        fills: palette.fills,
-                        strokes: palette.strokes,
+                        fills: [],
+                        strokes: [],
                         fillOpacity: 1,
                         strokeOpacity: 1,
                         xKey: '',
@@ -302,7 +301,7 @@ export class ChartTheme {
                         xName: '',
                         yKey: '',
                         yName: '',
-                        stroke: palette.fills[0],
+                        stroke: undefined,
                         strokeWidth: 2,
                         strokeOpacity: 1,
                         tooltipRenderer: undefined,
@@ -314,8 +313,8 @@ export class ChartTheme {
                             shape: 'circle',
                             size: 8,
                             minSize: 8,
-                            fill: palette.fills[0],
-                            stroke: palette.strokes[0],
+                            fill: undefined,
+                            stroke: undefined,
                             strokeWidth: 1,
                             formatter: undefined
                         }
@@ -332,8 +331,8 @@ export class ChartTheme {
                         yName: '',
                         sizeName: 'Size',
                         labelName: 'Label',
-                        fill: palette.fills[0],
-                        stroke: palette.strokes[0],
+                        fill: undefined,
+                        stroke: undefined,
                         strokeWidth: 2,
                         fillOpacity: 1,
                         strokeOpacity: 1,
@@ -346,8 +345,8 @@ export class ChartTheme {
                             shape: 'circle',
                             size: 8,
                             minSize: 8,
-                            fill: palette.fills[0],
-                            stroke: palette.strokes[0],
+                            fill: undefined,
+                            stroke: undefined,
                             strokeWidth: 1,
                             formatter: undefined
                         }
@@ -361,9 +360,9 @@ export class ChartTheme {
                         yKeys: [],
                         yNames: [],
                         normalizedTo: undefined,
-                        fills: palette.fills,
-                        strokes: palette.strokes,
-                        fillOpacity: 1,
+                        fills: [],
+                        strokes: [],
+                        fillOpacity: 0.8,
                         strokeOpacity: 1,
                         strokeWidth: 2,
                         shadow: undefined,
@@ -376,8 +375,8 @@ export class ChartTheme {
                             shape: 'circle',
                             size: 8,
                             minSize: 8,
-                            fill: palette.fills[0],
-                            stroke: palette.strokes[0],
+                            fill: undefined,
+                            stroke: undefined,
                             strokeWidth: 1,
                             formatter: undefined
                         }
@@ -501,12 +500,12 @@ export class ChartTheme {
                             minAngle: 20
                         },
                         callout: {
-                            colors: palette.strokes,
+                            colors: [],
                             length: 10,
                             strokeWidth: 1
                         },
-                        fills: palette.fills,
-                        strokes: palette.strokes,
+                        fills: [],
+                        strokes: [],
                         fillOpacity: 1,
                         strokeOpacity: 1,
                         strokeWidth: 1,
@@ -564,8 +563,8 @@ export class ChartTheme {
                 const fills = copy(palette.fills, colorIndex, colorCount);
                 const strokes = copy(palette.strokes, colorIndex, colorCount);
                 series.setColors(fills, strokes);
+                colorIndex += colorCount;
             }
-            colorIndex += colorCount;
         });
     }
 }
