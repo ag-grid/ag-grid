@@ -8,8 +8,10 @@ import { DarkTheme } from './themes/darkTheme';
 import { getValue } from "../util/object";
 import mappings from './chartMappings';
 
+const lightTheme = new ChartTheme();
 const themes = {
-    default: new ChartTheme(),
+    default: lightTheme,
+    light: lightTheme,
     dark: new DarkTheme()
 } as any;
 

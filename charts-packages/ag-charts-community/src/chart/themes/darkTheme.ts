@@ -1,10 +1,5 @@
 import { ChartTheme } from "./chartTheme";
 
-export interface ChartPalette {
-    fills: string[];
-    strokes: string[];
-}
-
 export class DarkTheme extends ChartTheme {
 
     getOverrides(): any {
@@ -35,11 +30,9 @@ export class DarkTheme extends ChartTheme {
                 fill: 'rgb(52, 52, 52)'
             },
             title: {
-                text: 'Official Dark Theme',
                 color: fontColor
             },
             subtitle: {
-                text: 'Source: ag-grid.com',
                 color: mutedFontColor
             },
             axes: {
@@ -62,7 +55,7 @@ export class DarkTheme extends ChartTheme {
             }
         };
 
-        return {
+        return this.mergeWithParentOverrides({
             cartesian: {
                 ...chartOverrides,
                 series: {
@@ -85,7 +78,7 @@ export class DarkTheme extends ChartTheme {
                     }
                 }
             }
-        };
+        });
     }
 
     constructor() {
