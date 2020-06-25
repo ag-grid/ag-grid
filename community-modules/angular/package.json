@@ -8,7 +8,7 @@
     "build-cjs": "npm run build",
     "test": "ng test --watch false --browsers ChromeHeadless",
     "lint": "ng lint",
-    "update-properties": "node -e 'require(\"./updateGridAndColumnProperties.js\").updatePropertiesBuilt()'",
+    "update-properties": "node -e \"require('./updateGridAndColumnProperties.js').updatePropertiesBuilt()\"",
     "verify-properties": "node agGridPropertiesCheck.js",
     "hash": "sh ../../scripts/hashDirectory.sh > .hash"
   },
