@@ -45,7 +45,8 @@ const webpackTask = (minify, styles, libraryTarget) => {
                     new TerserPlugin({
                         terserOptions: {
                             output: {
-                                comments: false
+                                comments: false,
+                                ascii_only: true
                             }
                         },
                         extractComments: false
