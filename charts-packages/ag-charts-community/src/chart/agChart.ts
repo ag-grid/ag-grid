@@ -290,7 +290,7 @@ function updateAxes(chart: Chart, configs: any[], keyPath: string, theme?: Chart
 
 function provideDefaultChartType(options: any): any {
     if (options.type) {
-        return;
+        return options;
     }
     // If chart type is not specified, try to infer it from the type of first series.
     const series = options.series && options.series[0];
