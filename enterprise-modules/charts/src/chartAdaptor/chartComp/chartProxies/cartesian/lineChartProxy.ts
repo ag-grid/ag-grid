@@ -17,6 +17,7 @@ export class LineChartProxy extends CartesianChartProxy<LineSeriesOptions> {
         const { grouping, parentElement } = this.chartProxyParams;
 
         options = options || this.chartOptions;
+        options.autoSize = true;
         options.axes = [{
             ...options.xAxis,
             position: 'bottom',

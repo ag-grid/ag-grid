@@ -14,6 +14,7 @@ export class PieChartProxy extends PolarChartProxy {
 
     protected createChart(options: any): PolarChart {
         options = options || this.chartOptions;
+        options.autoSize = true;
         const seriesDefaults = options.seriesDefaults;
         options.series = [{
             ...seriesDefaults,
