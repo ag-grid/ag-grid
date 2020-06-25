@@ -61,11 +61,7 @@ export abstract class AgAbstractInputField<T extends FieldElement, K> extends Ag
     }
 
     protected addInputListeners() {
-        this.addManagedListener(this.eInput, 'input', (e) => {
-            const value = e.target.value;
-
-            this.setValue(value);
-        });
+        this.addManagedListener(this.eInput, 'input', e => this.setValue(e.target.value));
     }
 
     private setInputType() {

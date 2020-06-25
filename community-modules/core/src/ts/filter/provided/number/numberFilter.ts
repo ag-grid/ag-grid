@@ -68,8 +68,8 @@ export class NumberFilter extends ScalarFilter<NumberFilterModel, number> {
 
     protected setValueFromFloatingFilter(value: string): void {
         this.eValueFrom1.setValue(value);
-        this.eValueFrom2.setValue(null);
         this.eValueTo1.setValue(null);
+        this.eValueFrom2.setValue(null);
         this.eValueTo2.setValue(null);
     }
 
@@ -84,8 +84,17 @@ export class NumberFilter extends ScalarFilter<NumberFilterModel, number> {
     protected setParams(params: INumberFilterParams): void {
         this.numberFilterParams = params;
 
-        if (this.numberFilterParams.allowedCharPattern) {
-            this.resetTemplate();
+        const { allowedCharPattern } = params;
+
+        if (allowedCharPattern) {
+            const config = { allowedCharPattern };
+
+            this.resetTemplate({
+                eValueFrom1: config,
+                eValueTo1: config,
+                eValueFrom2: config,
+                eValueTo2: config,
+            });
         }
 
         super.setParams(params);
@@ -94,25 +103,11 @@ export class NumberFilter extends ScalarFilter<NumberFilterModel, number> {
     }
 
     private addValueChangedListeners(): void {
-        if (this.numberFilterParams.allowedCharPattern) {
-            const pattern = new RegExp(`[${this.numberFilterParams.allowedCharPattern}]`);
-            const preventDisallowedCharacters = (event: KeyboardEvent) => {
-                if (event.key && !pattern.test(event.key)) {
-                    event.preventDefault();
-                }
-            };
-
-            this.eValueFrom1.addGuiEventListener('keypress', preventDisallowedCharacters);
-            this.eValueFrom2.addGuiEventListener('keypress', preventDisallowedCharacters);
-            this.eValueTo1.addGuiEventListener('keypress', preventDisallowedCharacters);
-            this.eValueTo2.addGuiEventListener('keypress', preventDisallowedCharacters);
-        }
-
         const listener = () => this.onUiChanged();
 
         this.eValueFrom1.onValueChange(listener);
-        this.eValueFrom2.onValueChange(listener);
         this.eValueTo1.onValueChange(listener);
+        this.eValueFrom2.onValueChange(listener);
         this.eValueTo2.onValueChange(listener);
     }
 
@@ -141,11 +136,8 @@ export class NumberFilter extends ScalarFilter<NumberFilterModel, number> {
     protected createValueTemplate(position: ConditionPosition): string {
         const positionOne = position === ConditionPosition.One;
         const pos = positionOne ? '1' : '2';
-        let agElementTag = 'ag-input-number-field';
-
-        if (this.numberFilterParams && this.numberFilterParams.allowedCharPattern) {
-            agElementTag = 'ag-input-text-field';
-        }
+        const { allowedCharPattern } = this.numberFilterParams || {};
+        const agElementTag = allowedCharPattern ? 'ag-input-text-field' : 'ag-input-number-field';
 
         return /* html */`
             <div class="ag-filter-body" ref="eCondition${pos}Body" role="presentation">

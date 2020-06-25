@@ -85,7 +85,7 @@ export abstract class ProvidedFilter extends Component implements IFilterComp {
         this.resetTemplate();
     }
 
-    protected resetTemplate() {
+    protected resetTemplate(paramsMap?: any) {
         const templateString = /* html */`
             <div class="ag-filter-wrapper">
                 <div class="ag-filter-body-wrapper ag-${this.getCssIdentifier()}-body-wrapper">
@@ -93,7 +93,7 @@ export abstract class ProvidedFilter extends Component implements IFilterComp {
                 </div>
             </div>`;
 
-        this.setTemplate(templateString);
+        this.setTemplate(templateString, paramsMap);
     }
 
     public init(params: IProvidedFilterParams): void {
