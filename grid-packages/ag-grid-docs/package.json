@@ -6,6 +6,7 @@
     "postinstall": "webdriver-manager update",
     "build": "gulp generate-examples && npm run hash",
     "start": "gulp serve",
+    "serve-core-only": "gulp serve-core-only",
     "tsc": "tsc -p tests/config/tsconfig.json",
     "validate-es5": "eslint src/",
     "test": "npm run validate-es5 && jest",
